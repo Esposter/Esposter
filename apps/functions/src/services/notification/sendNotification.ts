@@ -11,7 +11,7 @@ import {
   AppNotificationTypeSeverityMap,
   NOTIFICATION_RETENTION_MS,
   NotificationChannel,
-  notifications,
+  notificationsInNotification,
 } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, inArray, lt } from "drizzle-orm";
@@ -38,7 +38,7 @@ export const sendNotification = async (context: InvocationContext, data: Notific
     // One statement for every recipient: the bell is a row per user, and a notification with a hundred recipients
     // Is still one round trip
     await db
-      .insert(notifications)
+      .insert(notificationsInNotification)
       .values(userIds.map((userId) => ({ body, path, severity, title, type: data.type, userId })));
     // The retention trim rides the write rather than a sweep of its own: the recipients are already known here,
     // So bounding the table costs one indexed delete against the rows that were just added to. Best-effort,
@@ -47,11 +47,11 @@ export const sendNotification = async (context: InvocationContext, data: Notific
     // Handler does not cause
     await getResultAsync(() =>
       db
-        .delete(notifications)
+        .delete(notificationsInNotification)
         .where(
           and(
-            inArray(notifications.userId, userIds),
-            lt(notifications.createdAt, new Date(Date.now() - NOTIFICATION_RETENTION_MS)),
+            inArray(notificationsInNotification.userId, userIds),
+            lt(notificationsInNotification.createdAt, new Date(Date.now() - NOTIFICATION_RETENTION_MS)),
           ),
         ),
     ).match(noop, (error) => {

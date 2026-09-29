@@ -1,57 +1,32 @@
-import { schema } from "#src/schema";
+import { schema } from "#src/generated/schema";
+import { capitalize } from "@esposter/shared";
 import { is } from "drizzle-orm";
 import { getTableConfig, isPgEnum, PgDialect, PgTable } from "drizzle-orm/pg-core";
-import { glob } from "node:fs/promises";
-import { resolve } from "node:path";
-import { pathToFileURL } from "node:url";
 import { describe, expect, test } from "vitest";
 
 describe("schema", () => {
-  // The `pgTable` wrapper's camelCase casing applies to columns and passes the table name through verbatim, and
-  // `pgEnum` is not wrapped at all — so nothing normalises either name and nothing else would catch a snake_case
-  // One. That is exactly how five tables and eleven enums drifted while the stated rule said the opposite; this is
-  // The rule, rather than a sentence about it. Both kinds are checked in one pass so a declaration cannot be added
-  // Under a kind the invariant forgot to look at. The suffixes disambiguate the export rather than the identifier:
-  // The `message` schema already qualifies a table name, and an enum shares its name with the TS enum it is built from
-  test("every table and enum name is its exported const name without the suffix", () => {
+  // Every table and enum lives in the Postgres schema of the product area that owns it, never in `public`, and its
+  // Export is derived from its DDL name rather than chosen: a table's is suffixed with its schema — `usersInAuth` for
+  // `auth.users` — so it can never collide with a local, a row type or a library name and always says where the table
+  // Lives, and an enum's with `Enum`, since it shares its name with the TS enum it is built from. Nothing normalises a
+  // DDL name, so a snake_case one would otherwise go unnoticed, and both kinds are checked in one pass so a
+  // Declaration cannot be added under a kind this invariant forgot to look at
+  test("every table and enum lives in a named schema and exports its name with its suffix", () => {
     expect.hasAssertions();
 
     const mismatched = Object.entries(schema)
       .flatMap(([exportName, value]) => {
-        if (is(value, PgTable)) return [[exportName.replace(/InMessage$/u, ""), getTableConfig(value).name] as const];
-        else if (isPgEnum(value)) return [[exportName.replace(/Enum$/u, ""), value.enumName] as const];
+        if (is(value, PgTable)) {
+          const { name, schema: tableSchema } = getTableConfig(value);
+          return [[exportName, tableSchema ? `${name}In${capitalize(tableSchema)}` : `${name} in public`] as const];
+        } else if (isPgEnum(value))
+          return [[exportName, value.schema ? `${value.enumName}Enum` : `${value.enumName} in public`] as const];
         else return [];
       })
-      .filter(([expected, name]) => name !== expected)
-      .map(([expected, name]) => `${name} should be ${expected}`);
+      .filter(([exportName, expected]) => exportName !== expected)
+      .map(([exportName, expected]) => `${exportName} should be ${expected}`);
 
     expect(mismatched).toStrictEqual([]);
-  });
-
-  // Every other check here reads the `schema` object, so none of them can see a table that never reached it —
-  // And nothing else can either: `db:gen` diffs that object, so an unregistered table emits no migration and no
-  // Column, and the first failure is a query against a relation that does not exist. Comparing by identity
-  // Rather than by name means a table registered under the wrong key still counts as registered, which is what
-  // The naming check above is for
-  test("registers every table and enum the schema directory declares", async () => {
-    expect.hasAssertions();
-
-    const registered = new Set<unknown>(Object.values(schema));
-    const schemaDirectory = resolve(import.meta.dirname, "schema");
-    const fileNames = await Array.fromAsync(glob("*.ts", { cwd: schemaDirectory }));
-    const unregistered: string[] = [];
-    const modules = await Promise.all(
-      fileNames.map(async (fileName) => ({
-        fileName,
-        module: (await import(pathToFileURL(resolve(schemaDirectory, fileName)).href)) as Record<string, unknown>,
-      })),
-    );
-    for (const { fileName, module } of modules)
-      for (const [exportName, value] of Object.entries(module))
-        if ((is(value, PgTable) || isPgEnum(value)) && !registered.has(value))
-          unregistered.push(`${fileName}: ${exportName}`);
-
-    expect(unregistered).toStrictEqual([]);
   });
 
   // Drizzle-kit hashes the SQL a CHECK renders to, and a migration is already applied against that exact
@@ -71,22 +46,22 @@ describe("schema", () => {
 
     expect(renderedChecks).toMatchInlineSnapshot(`
       "appUsers_name_length_check: LENGTH(TRIM("message"."appUsers"."name")) BETWEEN 1 AND 100
-      blocks_blockerId_blockedId_check: "blocks"."blockerId" != "blocks"."blockedId"
-      bookmarks_path_length_check: LENGTH("bookmarks"."path") <= 2048
-      bookmarks_title_length_check: LENGTH("bookmarks"."title") <= 100
+      blocks_blockerId_blockedId_check: "social"."blocks"."blockerId" != "social"."blocks"."blockedId"
+      bookmarks_path_length_check: LENGTH("app"."bookmarks"."path") <= 2048
+      bookmarks_title_length_check: LENGTH("app"."bookmarks"."title") <= 100
       callSessions_id_length_check: LENGTH("message"."callSessions"."id") = 12
-      friendRequests_senderId_receiverId_check: "friendRequests"."senderId" != "friendRequests"."receiverId"
-      friends_senderId_receiverId_check: "friends"."senderId" != "friends"."receiverId"
+      friendRequests_senderId_receiverId_check: "social"."friendRequests"."senderId" != "social"."friendRequests"."receiverId"
+      friends_senderId_receiverId_check: "social"."friends"."senderId" != "social"."friends"."receiverId"
       invites_id_length_check: LENGTH("message"."invites"."id") = 8
       invites_maxUses_check: "message"."invites"."maxUses" >= 0
       invites_uses_check: "message"."invites"."uses" >= 0
       invites_uses_maxUses_check: "message"."invites"."maxUses" = 0 OR "message"."invites"."uses" <= "message"."invites"."maxUses"
-      likes_value_check: "likes"."value" = 1 OR "likes"."value" = -1
-      posts_title_length_check: LENGTH("posts"."title") <= 300
-      posts_description_length_check: LENGTH("posts"."description") <= 1000
-      resources_name_length_check: LENGTH(TRIM("resources"."name")) BETWEEN 1 AND 100
-      resourceVersions_plaintextBytes_check: "resourceVersions"."plaintextBytes" >= 0
-      resourceVersions_storedBytes_check: "resourceVersions"."storedBytes" >= 0
+      likes_value_check: "post"."likes"."value" = 1 OR "post"."likes"."value" = -1
+      posts_title_length_check: LENGTH("post"."posts"."title") <= 300
+      posts_description_length_check: LENGTH("post"."posts"."description") <= 1000
+      resources_name_length_check: LENGTH(TRIM("resource"."resources"."name")) BETWEEN 1 AND 100
+      resourceVersions_plaintextBytes_check: "resource"."resourceVersions"."plaintextBytes" >= 0
+      resourceVersions_storedBytes_check: "resource"."resourceVersions"."storedBytes" >= 0
       roomCategories_name_length_check: LENGTH(TRIM("message"."roomCategories"."name")) BETWEEN 1 AND 100
       roomCategories_position_check: "message"."roomCategories"."position" >= 0
       roomEmojis_name_length_check: LENGTH(TRIM("message"."roomEmojis"."name")) BETWEEN 1 AND 32
@@ -106,17 +81,17 @@ describe("schema", () => {
                 OR ("message"."scheduledMessageJobs"."payload"->>'type' = 'ScheduledMessage' AND "message"."scheduledMessageJobs"."payload" ? 'message')
               
       searchHistories_query_length_check: LENGTH("message"."searchHistories"."query") <= 10000
-      storageLedger_declaredBytes_check: "storageLedger"."declaredBytes" >= 0
-      storageLedger_countedBytes_check: "storageLedger"."countedBytes" >= 0
-      userAchievements_amount_check: "userAchievements"."amount" >= 1
-      users_biography_length_check: LENGTH("users"."biography") <= 160
-      users_name_length_check: LENGTH(TRIM("users"."name")) BETWEEN 1 AND 100
+      storageLedger_declaredBytes_check: "storage"."storageLedger"."declaredBytes" >= 0
+      storageLedger_countedBytes_check: "storage"."storageLedger"."countedBytes" >= 0
+      userAchievements_amount_check: "achievement"."userAchievements"."amount" >= 1
       userSettings_inputSensitivityDecibels_check: "message"."userSettings"."inputSensitivityDecibels" BETWEEN -100 AND 0
       userSettings_microphoneVolumePercentage_check: "message"."userSettings"."microphoneVolumePercentage" BETWEEN 0 AND 200
       userSettings_speakerVolumePercentage_check: "message"."userSettings"."speakerVolumePercentage" BETWEEN 0 AND 200
       userSettings_autoIdleThresholdMs_check: "message"."userSettings"."autoIdleThresholdMs" BETWEEN 60000 AND 86400000
       userSettings_pushToTalkKeybind_length_check: LENGTH("message"."userSettings"."pushToTalkKeybind") <= 64
       userSettings_pushToTalkReleaseDelayMs_check: "message"."userSettings"."pushToTalkReleaseDelayMs" BETWEEN 0 AND 2000
+      users_biography_length_check: LENGTH("auth"."users"."biography") <= 160
+      users_name_length_check: LENGTH(TRIM("auth"."users"."name")) BETWEEN 1 AND 100
       userStatuses_message_length_check: LENGTH("message"."userStatuses"."message") <= 64
       usersToRooms_nickname_length_check: LENGTH("message"."usersToRooms"."nickname") <= 32
       usersToRooms_mentionCount_check: "message"."usersToRooms"."mentionCount" >= 0

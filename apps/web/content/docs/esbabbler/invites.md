@@ -63,7 +63,7 @@ All in `server/trpc/routers/room/index.ts`:
 
 | File                                                                  | Role                                        |
 | :-------------------------------------------------------------------- | :------------------------------------------ |
-| `packages/db-schema/src/schema/invitesInMessage.ts`                   | table + check constraints                   |
+| `packages/db-schema/src/schema/message/invitesInMessage.ts`           | table + check constraints                   |
 | `apps/web/shared/services/room/invite/InviteExpireAfterMinutesMap.ts` | Expiry options in minutes (single source)   |
 | `apps/web/shared/models/db/room/CreateInviteInput.ts`                 | Zod input — only the fixed option values    |
 | `apps/web/shared/services/room/invite/checkIsInviteUsable.ts`         | shared usability predicate, client included |

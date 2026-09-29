@@ -189,22 +189,22 @@ The channel rides with the version on every command, because a version alone nam
 
 ## Key files
 
-| File                                                                  | Role                                                           |
-| --------------------------------------------------------------------- | -------------------------------------------------------------- |
-| `apps/web/shared/services/resource/SnapshotChannelDefinitionMap.ts`   | what a channel is — kind, retention, title                     |
-| `apps/web/shared/services/resource/SnapshotSummaryMap.ts`             | the per-type one line a history row carries                    |
-| `apps/web/server/services/resource/snapshot/takeResourceRevision.ts`  | the revision take, its eviction and its ledger charge          |
-| `apps/web/shared/services/resource/getSnapshotRetainedSince.ts`       | the cutoff a version is gone past, which every read compares   |
-| `apps/web/server/services/resource/snapshot/readSnapshotHistory.ts`   | a channel's version rows as history rows                       |
-| `apps/web/server/services/resource/ResourceLiveContentMap.ts`         | the boundary — what a type declares live                       |
-| `apps/web/server/services/resource/reapplyLiveResourceContent.ts`     | the reconstitution every snapshot read goes through            |
-| `apps/web/server/trpc/routers/resource.ts`                            | history, restore and save-version procedures                   |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts` | the publish take, its version claim and its succession repair  |
-| `apps/web/app/components/Resource/VersionHistory/`                    | the panel, its rows, the preview banner and the restore dialog |
-| `apps/web/app/store/resource/versionHistory.ts`                       | the timeline, the restore and its Undo                         |
-| `packages/db-schema/src/schema/resources.ts`                          | `revisionVersion`, `revisionTakenAt`                           |
-| `packages/db-schema/src/schema/resourceVersions.ts`                   | one row per retained version, in either channel                |
-| `packages/db-schema/src/schema/resourcePublications.ts`               | `publishedContentVersion`                                      |
+| File                                                                       | Role                                                           |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `apps/web/shared/services/resource/SnapshotChannelDefinitionMap.ts`        | what a channel is — kind, retention, title                     |
+| `apps/web/shared/services/resource/SnapshotSummaryMap.ts`                  | the per-type one line a history row carries                    |
+| `apps/web/server/services/resource/snapshot/takeResourceRevision.ts`       | the revision take, its eviction and its ledger charge          |
+| `apps/web/shared/services/resource/getSnapshotRetainedSince.ts`            | the cutoff a version is gone past, which every read compares   |
+| `apps/web/server/services/resource/snapshot/readSnapshotHistory.ts`        | a channel's version rows as history rows                       |
+| `apps/web/server/services/resource/ResourceLiveContentMap.ts`              | the boundary — what a type declares live                       |
+| `apps/web/server/services/resource/reapplyLiveResourceContent.ts`          | the reconstitution every snapshot read goes through            |
+| `apps/web/server/trpc/routers/resource.ts`                                 | history, restore and save-version procedures                   |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`      | the publish take, its version claim and its succession repair  |
+| `apps/web/app/components/Resource/VersionHistory/`                         | the panel, its rows, the preview banner and the restore dialog |
+| `apps/web/app/store/resource/versionHistory.ts`                            | the timeline, the restore and its Undo                         |
+| `packages/db-schema/src/schema/resource/resourcesInResource.ts`            | `revisionVersion`, `revisionTakenAt`                           |
+| `packages/db-schema/src/schema/resource/resourceVersionsInResource.ts`     | one row per retained version, in either channel                |
+| `packages/db-schema/src/schema/resource/resourcePublicationsInResource.ts` | `publishedContentVersion`                                      |
 
 ## Notes
 

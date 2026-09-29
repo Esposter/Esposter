@@ -1,3 +1,3 @@
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
-export const getContentBlobName = (resourceId: Resource["id"]) => `${resourceId}/content.json`;
+export const getContentBlobName = (resourceId: ResourceInResource["id"]) => `${resourceId}/content.json`;

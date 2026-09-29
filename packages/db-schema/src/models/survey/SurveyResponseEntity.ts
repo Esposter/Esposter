@@ -2,7 +2,7 @@ import type { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEnt
 import type { ToData } from "@esposter/shared";
 
 import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
-import { selectResourceSchema } from "#src/schema/resources";
+import { selectResourceInResourceSchema } from "#src/schema/resource/resourcesInResource";
 import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
@@ -28,7 +28,8 @@ export class SurveyResponseEntity extends AzureEntity {
 export const SurveyResponseEntityPropertyNames = getPropertyNames<SurveyResponseEntity>();
 
 export const surveyResponseEntitySchema = z.object({
-  ...createAzureEntitySchema(z.object({ partitionKey: selectResourceSchema.shape.id, rowKey: z.uuid() })).shape,
+  ...createAzureEntitySchema(z.object({ partitionKey: selectResourceInResourceSchema.shape.id, rowKey: z.uuid() }))
+    .shape,
   isDraft: z.literal(true).optional(),
   model: z.record(z.string().min(1), z.unknown()),
   modelVersion: z.int().nonnegative(),

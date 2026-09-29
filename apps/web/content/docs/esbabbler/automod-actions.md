@@ -40,7 +40,7 @@ Automod adds no procedure of its own — it is a caller of the moderation intern
 
 | File                                                                            | Role                                                          |
 | :------------------------------------------------------------------------------ | :------------------------------------------------------------ |
-| `packages/db-schema/src/schema/roomFiltersInMessage.ts`                         | `action` + `timeoutDurationMs` + enum                         |
+| `packages/db-schema/src/schema/message/roomFiltersInMessage.ts`                 | `action` + `timeoutDurationMs` + enum                         |
 | `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`    | the shared gate — returns the matched filter, applies nothing |
 | `packages/db/src/services/message/moderation/executeAutomodAction.ts`           | timeout + moderation-log core                                 |
 | `apps/web/server/services/message/moderation/executeAutomodAction.ts`           | app wrapper — adds the `onAdminAction` emit                   |

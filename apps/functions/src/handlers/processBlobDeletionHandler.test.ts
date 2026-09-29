@@ -6,7 +6,7 @@ import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureContainer, storageLedger, users } from "@esposter/db-schema";
+import { AzureContainer, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { MockBlockBlobClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -69,7 +69,7 @@ describe(processBlobDeletionHandler, () => {
   // A blob storage has already reported, so the counter is carrying its bytes and a release gives them back
   const seedStorageLedgerEntry = (name: string) =>
     mockDb
-      .insert(storageLedger)
+      .insert(storageLedgerInStorage)
       .values({
         blobName: name,
         containerName: AzureContainer.MessageAssets,
@@ -80,19 +80,19 @@ describe(processBlobDeletionHandler, () => {
         userId,
       });
   const readStorageBytesUsed = async () =>
-    (await mockDb.query.users.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))
+    (await mockDb.query.usersInAuth.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))
       ?.storageBytesUsed;
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    await mockDb.insert(users).values(createUser(userId));
+    await mockDb.insert(usersInAuth).values(createUser(userId));
   });
 
   afterEach(async () => {
     MockContainerDatabase.clear();
     vi.restoreAllMocks();
-    await mockDb.delete(storageLedger);
-    await mockDb.update(users).set({ storageBytesUsed: 0 });
+    await mockDb.delete(storageLedgerInStorage);
+    await mockDb.update(usersInAuth).set({ storageBytesUsed: 0 });
   });
 
   test("deletes every blob in the batch", async () => {
@@ -110,7 +110,7 @@ describe(processBlobDeletionHandler, () => {
 
     await seedBlob(blobName);
     await seedStorageLedgerEntry(blobName);
-    await mockDb.update(users).set({ storageBytesUsed: countedBytes });
+    await mockDb.update(usersInAuth).set({ storageBytesUsed: countedBytes });
     await processBlobDeletionHandler(createEvent([blobName]), context);
 
     await expect(readStorageBytesUsed()).resolves.toBe(0);
@@ -185,7 +185,7 @@ describe(processBlobDeletionHandler, () => {
     await seedBlob(secondBlobName);
     await seedStorageLedgerEntry(blobName);
     await seedStorageLedgerEntry(secondBlobName);
-    await mockDb.update(users).set({ storageBytesUsed: countedBytes * 2 });
+    await mockDb.update(usersInAuth).set({ storageBytesUsed: countedBytes * 2 });
     vi.spyOn(MockBlockBlobClient.prototype, "deleteIfExists").mockRejectedValueOnce(new Error(" "));
 
     await expect(
@@ -194,7 +194,7 @@ describe(processBlobDeletionHandler, () => {
 
     expect(readContainer()).toStrictEqual([blobName]);
     await expect(readStorageBytesUsed()).resolves.toBe(countedBytes);
-    await expect(mockDb.query.storageLedger.findMany({ columns: { blobName: true } })).resolves.toStrictEqual([
+    await expect(mockDb.query.storageLedgerInStorage.findMany({ columns: { blobName: true } })).resolves.toStrictEqual([
       { blobName },
     ]);
   });

@@ -1,0 +1,49 @@
+import { createNameSchema } from "#src/models/shared/Name";
+import { StorageTier } from "#src/models/user/StorageTier";
+import { pgTable } from "#src/pgTable";
+import { authSchema } from "#src/schema/auth/authSchema";
+import { URL_MAX_LENGTH } from "#src/services/shared/constants";
+import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
+import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
+import { AUTH_ID_MAX_LENGTH, USER_BIOGRAPHY_MAX_LENGTH, USER_NAME_MAX_LENGTH } from "#src/services/user/constants";
+import { createNormalizedStringSchema } from "@esposter/shared";
+import { bigint, boolean, check, text } from "drizzle-orm/pg-core";
+import { createSelectSchema } from "drizzle-orm/zod";
+import { z } from "zod";
+
+export const storageTierEnum = authSchema.enum("storageTier", StorageTier);
+
+export const usersInAuth = pgTable(
+  "users",
+  {
+    biography: text().notNull().default(""),
+    email: text().notNull().unique(),
+    emailVerified: boolean().notNull(),
+    id: text().primaryKey(),
+    image: text().notNull().default(""),
+    name: text().notNull(),
+    // The running total of blob bytes this user is accountable for, moved only through the storageLedger
+    // Ledger so every increment has a row that can later give it back. Stored rather than recomputed:
+    // There is no per-user blob prefix or size index, so recomputing means enumerating every directory.
+    // `number` mode is safe — a 10 GiB quota is ~1e10, far under the 2^53 integer ceiling.
+    storageBytesUsed: bigint({ mode: "number" }).notNull().default(0),
+    storageTier: storageTierEnum().notNull().default(StorageTier.Free),
+  },
+  {
+    extraConfig: ({ biography, name }) => [
+      check("users_biography_length_check", createMaxLengthCheckSql(biography, USER_BIOGRAPHY_MAX_LENGTH)),
+      check("users_name_length_check", createNameCheckSql(name, USER_NAME_MAX_LENGTH)),
+    ],
+    schema: authSchema,
+  },
+);
+
+export type UserInAuth = typeof usersInAuth.$inferSelect;
+
+export const selectUserInAuthSchema = createSelectSchema(usersInAuth, {
+  biography: (schema) => createNormalizedStringSchema(USER_BIOGRAPHY_MAX_LENGTH, schema),
+  email: (schema) => schema.pipe(z.email()),
+  id: (schema) => schema.max(AUTH_ID_MAX_LENGTH),
+  image: (schema) => schema.max(URL_MAX_LENGTH),
+  name: (schema) => createNameSchema(USER_NAME_MAX_LENGTH, schema),
+});

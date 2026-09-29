@@ -132,8 +132,8 @@ Closing these needs a recompute that lists real object sizes per user. Worth doi
 | File                                                                                             | Role                                                   |
 | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
 | `packages/db-schema/src/models/user/StorageTier.ts`                                              | tier enum                                              |
-| `packages/db-schema/src/schema/users.ts`                                                         | `storageTier` + `storageBytesUsed`                     |
-| `packages/db-schema/src/schema/storageLedger.ts`                                                 | the ledger                                             |
+| `packages/db-schema/src/schema/auth/usersInAuth.ts`                                              | `storageTier` + `storageBytesUsed`                     |
+| `packages/db-schema/src/schema/storage/storageLedgerInStorage.ts`                                | the ledger                                             |
 | `packages/db-schema/src/services/azure/container/getBlobSubjectPrefix.ts`                        | storage's event subject shape, read by both ends       |
 | `packages/db-schema/src/services/azure/container/parseBlobSubject.ts`                            | subject → (container, blob name)                       |
 | `apps/web/shared/services/storage/StorageTierQuotaMap.ts`                                        | tier → quota bytes                                     |

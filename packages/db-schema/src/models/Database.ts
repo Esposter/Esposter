@@ -1,4 +1,4 @@
-import type { relations } from "#src/relations";
+import type { relations } from "#src/generated/relations";
 import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 
 // The one spelling of the drizzle handle. It names the relations object rather than the schema object because

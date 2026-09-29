@@ -63,7 +63,7 @@ Leaving a room deletes the row with the membership. A permission bit that is ret
 
 | File                                                                           | Change                                                   |
 | :----------------------------------------------------------------------------- | :------------------------------------------------------- |
-| `packages/db-schema/src/schema.ts`                                             | registers the new `roomMemberPermissions` table          |
+| `packages/db-schema/src/generated/schema.ts`                                   | registers the new `roomMemberPermissions` table          |
 | `packages/db/src/services/room/rbac/checkHasPermission.ts`                     | the resolution chain above                               |
 | `apps/web/server/services/room/rbac/getRoomMemberAuthority.ts`                 | an override counts toward what a member may be given     |
 | `apps/web/server/trpc/routers/role.ts`                                         | write and delete an override, behind the hierarchy check |

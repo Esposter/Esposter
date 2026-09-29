@@ -79,4 +79,4 @@ Opening a thread replaces whatever the right drawer was showing. Split view keep
 | `apps/web/app/store/message/input/index.ts`                       | per-composer text and drafts                              |
 | `apps/web/app/store/message/input/uploadFile.ts`                  | per-composer attachments                                  |
 | `apps/web/app/pages/messages/[id]/thread/[rowKey].vue`            | the thread route                                          |
-| `packages/db-schema/src/schema/callSessionsInMessage.ts`          | `threadRootRowKey` and the one-call-per-thread constraint |
+| `packages/db-schema/src/schema/message/callSessionsInMessage.ts`  | `threadRootRowKey` and the one-call-per-thread constraint |

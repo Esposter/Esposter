@@ -43,13 +43,13 @@ Tests run against PGlite, which loads `pg_trgm` as a contrib extension in both `
 
 ## Key files
 
-| File                                                      | Role                           |
-| --------------------------------------------------------- | ------------------------------ |
-| `server/trpc/routers/resource.ts`                         | The OR-arm, the ranking ladder |
-| `server/services/resource/constants.ts`                   | `SEARCH_SIMILARITY_THRESHOLD`  |
-| `packages/db-schema/src/schema/resources.ts`              | Trigram index declaration      |
-| `server/db/migrations/20260715000200_resource_name_trgm/` | Extension + index              |
-| `packages/db-mock/src/createMockDb.ts`                    | Loads `pg_trgm` into PGlite    |
+| File                                                            | Role                           |
+| --------------------------------------------------------------- | ------------------------------ |
+| `server/trpc/routers/resource.ts`                               | The OR-arm, the ranking ladder |
+| `server/services/resource/constants.ts`                         | `SEARCH_SIMILARITY_THRESHOLD`  |
+| `packages/db-schema/src/schema/resource/resourcesInResource.ts` | Trigram index declaration      |
+| `server/db/migrations/20260715000200_resource_name_trgm/`       | Extension + index              |
+| `packages/db-mock/src/createMockDb.ts`                          | Loads `pg_trgm` into PGlite    |
 
 ## Notes
 

@@ -57,7 +57,7 @@ moves to another file; a video renders with its own controls and does neither. D
 
 ## Data model
 
-Two columns on `rooms` (`packages/db-schema/src/schema/roomsInMessage.ts`):
+Two columns on `rooms` (`packages/db-schema/src/schema/message/roomsInMessage.ts`):
 
 - `maxFileSizeBytes` — integer; `0` (the default) falls back to the global `MAX_FILE_REQUEST_SIZE`. The server clamps the effective cap to that global maximum regardless of the stored value.
 - `allowedMimeCategories` — a `mime_category` enum array (`Image` / `Video` / `Audio` / `Document`), defaulting to every category. A file's category is derived from its mimetype prefix via `getMimeCategory`.
@@ -89,7 +89,7 @@ Removing an attachment (`deleteFile`), deleting a message with attachments, or d
 | `apps/web/app/composables/message/file/useUploadFiles.ts`                        | Composer path — validate, upload original, upload thumbnail |
 | `apps/web/app/composables/message/file/useReadFileUrls.ts`                       | Batch-resolves originals and thumbnails into read urls      |
 | `apps/web/app/components/Message/Model/FileRenderer/Image.vue`                   | Renders the thumbnail inline, original in the viewer        |
-| `packages/db-schema/src/schema/roomsInMessage.ts`                                | `maxFileSizeBytes` + `allowedMimeCategories` columns        |
+| `packages/db-schema/src/schema/message/roomsInMessage.ts`                        | `maxFileSizeBytes` + `allowedMimeCategories` columns        |
 | `packages/db-schema/src/services/file/getMimeCategory.ts`                        | Mimetype to coarse category mapping                         |
 | `packages/db/src/services/azure/container/generateUploadFileSasEntities.ts`      | Issues the original and sibling thumbnail write SAS         |
 | `packages/db/src/services/azure/search/filtersToClauses.ts`                      | `has: file` — the non-empty-attachments clause              |

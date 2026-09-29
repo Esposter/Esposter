@@ -37,14 +37,14 @@ The achievement router is merged separately from the main root router to break a
 
 Paths relative to `apps/web`; `packages/` ones to the repo root.
 
-| File                                                       | Role                               |
-| ---------------------------------------------------------- | ---------------------------------- |
-| `server/trpc/plugins/achievementPlugin.ts`                 | the middleware                     |
-| `server/services/achievement/checkAchievementCondition.ts` | condition evaluation               |
-| `shared/services/achievement/achievementDefinitions.ts`    | merged definition map              |
-| `server/trpc/routers/achievement.ts`                       | read + subscription procedures     |
-| `app/components/Achievement/`                              | gallery grid + notification toasts |
-| `packages/db-schema/src/schema/userAchievements.ts`        | progress rows                      |
+| File                                                                         | Role                               |
+| ---------------------------------------------------------------------------- | ---------------------------------- |
+| `server/trpc/plugins/achievementPlugin.ts`                                   | the middleware                     |
+| `server/services/achievement/checkAchievementCondition.ts`                   | condition evaluation               |
+| `shared/services/achievement/achievementDefinitions.ts`                      | merged definition map              |
+| `server/trpc/routers/achievement.ts`                                         | read + subscription procedures     |
+| `app/components/Achievement/`                                                | gallery grid + notification toasts |
+| `packages/db-schema/src/schema/achievement/userAchievementsInAchievement.ts` | progress rows                      |
 
 ## Notes
 

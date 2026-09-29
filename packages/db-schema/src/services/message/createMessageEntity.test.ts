@@ -1,4 +1,4 @@
-import type { AppUserInMessage } from "#src/schema/appUsersInMessage";
+import type { AppUserInMessage } from "#src/schema/message/appUsersInMessage";
 
 import { MessageType } from "#src/models/message/MessageType";
 import { createMessageEntity } from "#src/services/message/createMessageEntity";

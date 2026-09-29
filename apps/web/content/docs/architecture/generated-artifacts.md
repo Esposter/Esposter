@@ -18,6 +18,7 @@ Some files in this repository are written by a script from a source outside it �
 | `pnpm zstd:gen`               | `apps/web/app/generated/zstd/zstd.wasm` — the browser's zstd encoder, from pinned upstream source                            | delta content saves        |
 | `pnpm flow-map:gen`           | `apps/web/app/generated/flowMap/flowMap.mmd` — which page links to which, one flowchart                                      | the UI library's docs page |
 | `pnpm ai:voice-match --write` | `packages/genshin-persona/src/generated/PersonaReferenceMap.ts` — the reference line and its likeness per character, one map | the persona plugin         |
+| `pnpm registry:gen`           | `packages/db-schema/src/generated/` — every table, enum and Postgres schema, and every relation part, one registry each      | drizzle and better-auth    |
 
 Within `apps/web`, a file only the client reads through a query suffix — the flow map's `?raw` — sits under `app/generated/` rather than `shared/generated/`: the server build leaves everything under `shared/` for Nitro to bundle, and Nitro cannot load a path carrying a query.
 
@@ -57,13 +58,14 @@ A regenerated folder is the emptiest thing a reviewer can read: hundreds of file
 
 ## Key files
 
-| File                                                              | Role                                          |
-| :---------------------------------------------------------------- | :-------------------------------------------- |
-| `apps/web/scripts/tiled/index.ts`                                 | The map generator                             |
-| `apps/web/scripts/phaser/index.ts`                                | The asset generator                           |
-| `apps/web/scripts/flowMap/index.ts`                               | The flow map generator                        |
-| `scripts/src/voiceMatch/index.ts`                                 | Rewrites the plugin's reference map whole     |
-| `packages/genshin-persona/src/services/readPersonaModule.ts`      | Loads one character's card by path            |
-| `packages/genshin-persona/src/services/readCharacterReference.ts` | The authored reference over the generated one |
-| `oxfmt.config.ts`                                                 | The formatter's ignore list                   |
-| `.coderabbit.yaml`                                                | The review's ignore list                      |
+| File                                                              | Role                                                                |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------ |
+| `apps/web/scripts/tiled/index.ts`                                 | The map generator                                                   |
+| `apps/web/scripts/phaser/index.ts`                                | The asset generator                                                 |
+| `apps/web/scripts/flowMap/index.ts`                               | The flow map generator                                              |
+| `scripts/src/voiceMatch/index.ts`                                 | Rewrites the plugin's reference map whole                           |
+| `packages/db-schema/scripts/generateRegistry.ts`                  | Writes the database registries from the schema and relation folders |
+| `packages/genshin-persona/src/services/readPersonaModule.ts`      | Loads one character's card by path                                  |
+| `packages/genshin-persona/src/services/readCharacterReference.ts` | The authored reference over the generated one                       |
+| `oxfmt.config.ts`                                                 | The formatter's ignore list                                         |
+| `.coderabbit.yaml`                                                | The review's ignore list                                            |

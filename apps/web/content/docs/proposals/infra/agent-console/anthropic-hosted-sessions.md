@@ -35,7 +35,7 @@ flowchart TD
 | `packages/agent-console-server/src/models/driver/Driver.ts` | the contract the Managed Agents driver implements beside the Agent SDK driver       |
 | `apps/web/app/store/agentConsole/connection.ts`             | the hosted connection beside the paired hosts                                       |
 | `apps/web/server/trpc/routers/user.ts`                      | the write-only key procedures: set, replace, remove, and read the last four         |
-| `packages/db-schema/src/schema/users.ts`                    | the encrypted key and its last four characters, beside the user they belong to      |
+| `packages/db-schema/src/schema/auth/usersInAuth.ts`         | the encrypted key and its last four characters, beside the user they belong to      |
 | `apps/web/configuration/runtimeConfig.ts`                   | the key-encryption secret, read from the app's environment beside its other secrets |
 
 ## Sources

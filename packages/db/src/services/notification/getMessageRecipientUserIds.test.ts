@@ -9,7 +9,7 @@ import {
   roomsInMessage,
   RoomType,
   threadFollowsInMessage,
-  users,
+  usersInAuth,
   UserStatus,
   userStatusesInMessage,
   usersToRoomsInMessage,
@@ -43,7 +43,7 @@ describe(getMessageRecipientUserIds, () => {
 
   beforeAll(async () => {
     db = await createMockDb();
-    await db.insert(users).values(userIds.map((id) => createUser(id, new Date(0), name)));
+    await db.insert(usersInAuth).values(userIds.map((id) => createUser(id, new Date(0), name)));
     await db.insert(roomsInMessage).values({ id: roomId, name, type: RoomType.Room, userId: allOnlineUserId });
     await db.insert(usersToRoomsInMessage).values([
       { notificationType: NotificationType.All, roomId, userId: allOnlineUserId },
@@ -74,7 +74,7 @@ describe(getMessageRecipientUserIds, () => {
   });
 
   afterAll(async () => {
-    await db.delete(users);
+    await db.delete(usersInAuth);
   });
 
   test("no mention notifies All members excluding sender", async () => {

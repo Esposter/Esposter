@@ -1,5 +1,5 @@
 import type { ContainerClient } from "@azure/storage-blob";
-import type { AzureContainer, Database, User } from "@esposter/db-schema";
+import type { AzureContainer, Database, UserInAuth } from "@esposter/db-schema";
 
 import { releaseStorageLedgerEntries } from "#src/services/storage/releaseStorageLedgerEntries";
 import { MAX_CONCURRENT_BLOB_DELETIONS } from "@esposter/db-schema";
@@ -23,9 +23,9 @@ export const deleteStorageBlobs = async (
   containerClient: ContainerClient,
   containerName: AzureContainer,
   blobNames: string[],
-  onReleased: (userIds: User["id"][]) => Promise<void>,
+  onReleased: (userIds: UserInAuth["id"][]) => Promise<void>,
 ): Promise<void> => {
-  const releasedUserIds = new Set<User["id"]>();
+  const releasedUserIds = new Set<UserInAuth["id"]>();
   for (const blobNamesChunk of chunk(blobNames, MAX_CONCURRENT_BLOB_DELETIONS)) {
     const deletedBlobNames: string[] = [];
     const errors: Error[] = [];

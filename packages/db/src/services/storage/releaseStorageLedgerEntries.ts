@@ -1,7 +1,7 @@
-import type { AzureContainer, Database, User } from "@esposter/db-schema";
+import type { AzureContainer, Database, UserInAuth } from "@esposter/db-schema";
 
 import { releaseStorageLedgerEntriesByWhere } from "#src/services/storage/releaseStorageLedgerEntriesByWhere";
-import { storageLedger } from "@esposter/db-schema";
+import { storageLedgerInStorage } from "@esposter/db-schema";
 import { and, eq, inArray } from "drizzle-orm";
 
 // Give a named set of blobs' bytes back. One statement per set, so the set is what bounds the bind parameters
@@ -10,11 +10,11 @@ export const releaseStorageLedgerEntries = (
   db: Database,
   containerName: AzureContainer,
   blobNames: string[],
-): Promise<User["id"][]> => {
+): Promise<UserInAuth["id"][]> => {
   if (blobNames.length === 0) return Promise.resolve([]);
 
   return releaseStorageLedgerEntriesByWhere(
     db,
-    and(eq(storageLedger.containerName, containerName), inArray(storageLedger.blobName, blobNames)),
+    and(eq(storageLedgerInStorage.containerName, containerName), inArray(storageLedgerInStorage.blobName, blobNames)),
   );
 };

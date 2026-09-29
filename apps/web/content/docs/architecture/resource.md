@@ -37,7 +37,7 @@ flowchart LR
 
 ## Data model
 
-Drizzle table `resources` (`packages/db-schema/src/schema/resources.ts`) — pure identity + content lifecycle:
+Drizzle table `resources` (`packages/db-schema/src/schema/resource/resourcesInResource.ts`) — pure identity + content lifecycle:
 
 | Column           | Type                   | Notes                                                                                   |
 | ---------------- | ---------------------- | --------------------------------------------------------------------------------------- |
@@ -216,17 +216,17 @@ sequenceDiagram
 
 ## Key files
 
-| File                                                                  | Role                                       |
-| --------------------------------------------------------------------- | ------------------------------------------ |
-| `packages/db-schema/src/schema/resources.ts`                          | identity table                             |
-| `packages/db-schema/src/schema/resourcePublications.ts`               | publish state table                        |
-| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`          | type definitions + capability declarations |
-| `apps/web/shared/models/resource/CapabilityResourceType.ts`           | derived capability unions                  |
-| `apps/web/shared/services/resource/getFilesDirectoryName.ts`          | the `{id}/files` path convention           |
-| `apps/web/shared/services/resource/checkHasCapability.ts`             | runtime capability guard                   |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts` | the procedure factory                      |
-| `apps/web/server/trpc/procedure/resource/getOwnerProcedure.ts`        | ownership middleware                       |
-| `apps/web/app/store/resource/index.ts`                                | the open resource — state and every write  |
-| `apps/web/app/services/resource/ResourceBladeDefinitionMap.ts`        | type-specific blades                       |
-| `apps/web/app/services/resource/ViewComponentMap.ts`                  | public view renderers (Publishable)        |
-| `apps/web/app/services/resource/PortableFormatMap.ts`                 | import/export formats (Portable)           |
+| File                                                                       | Role                                       |
+| -------------------------------------------------------------------------- | ------------------------------------------ |
+| `packages/db-schema/src/schema/resource/resourcesInResource.ts`            | identity table                             |
+| `packages/db-schema/src/schema/resource/resourcePublicationsInResource.ts` | publish state table                        |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`               | type definitions + capability declarations |
+| `apps/web/shared/models/resource/CapabilityResourceType.ts`                | derived capability unions                  |
+| `apps/web/shared/services/resource/getFilesDirectoryName.ts`               | the `{id}/files` path convention           |
+| `apps/web/shared/services/resource/checkHasCapability.ts`                  | runtime capability guard                   |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`      | the procedure factory                      |
+| `apps/web/server/trpc/procedure/resource/getOwnerProcedure.ts`             | ownership middleware                       |
+| `apps/web/app/store/resource/index.ts`                                     | the open resource — state and every write  |
+| `apps/web/app/services/resource/ResourceBladeDefinitionMap.ts`             | type-specific blades                       |
+| `apps/web/app/services/resource/ViewComponentMap.ts`                       | public view renderers (Publishable)        |
+| `apps/web/app/services/resource/PortableFormatMap.ts`                      | import/export formats (Portable)           |

@@ -9,12 +9,12 @@ import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AppNotificationType,
-  notifications,
+  notificationsInNotification,
   NotificationType,
-  pushSubscriptions,
+  pushSubscriptionsInNotification,
   roomsInMessage,
-  sessions,
-  users,
+  sessionsInAuth,
+  usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -48,11 +48,11 @@ describe(sendNotification, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    await mockDb.insert(users).values([createUser(senderUserId), createUser(subscriberUserId)]);
+    await mockDb.insert(usersInAuth).values([createUser(senderUserId), createUser(subscriberUserId)]);
     await seedSession();
     // The subscriber's second device, so a notification the first one caused still has somewhere to land
     await mockDb
-      .insert(sessions)
+      .insert(sessionsInAuth)
       .values({
         expiresAt: new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds")),
         id: actingSessionId,
@@ -67,13 +67,13 @@ describe(sendNotification, () => {
   });
 
   afterEach(async () => {
-    await mockDb.delete(notifications);
+    await mockDb.delete(notificationsInNotification);
   });
 
   test("returns early when a message has no text content", async () => {
     expect.hasAssertions();
 
-    await mockDb.insert(pushSubscriptions).values(pushSubscription);
+    await mockDb.insert(pushSubscriptionsInNotification).values(pushSubscription);
     await sendNotification(context, {
       message: { ...standardMessage, message: "<p></p>" },
       type: AppNotificationType.Message,
@@ -85,11 +85,11 @@ describe(sendNotification, () => {
   test("a message reaches the device without writing a bell row", async () => {
     expect.hasAssertions();
 
-    await mockDb.insert(pushSubscriptions).values(pushSubscription);
+    await mockDb.insert(pushSubscriptionsInNotification).values(pushSubscription);
     await sendNotification(context, { message: standardMessage, type: AppNotificationType.Message });
 
     expect(vi.mocked(webpush.sendNotification)).toHaveBeenCalledTimes(1);
-    await expect(mockDb.select().from(notifications)).resolves.toStrictEqual([]);
+    await expect(mockDb.select().from(notificationsInNotification)).resolves.toStrictEqual([]);
   });
 
   // The bell insert is the last step allowed to fail this handler. Event Grid reads a throw as a retry request
@@ -105,7 +105,7 @@ describe(sendNotification, () => {
     await expect(
       sendNotification(context, { path, title, type: AppNotificationType.ResourceOperation, userId: subscriberUserId }),
     ).resolves.toBeUndefined();
-    await expect(mockDb.select().from(notifications)).resolves.toHaveLength(1);
+    await expect(mockDb.select().from(notificationsInNotification)).resolves.toHaveLength(1);
     expect(trim).toHaveBeenCalledTimes(1);
 
     trim.mockRestore();
@@ -115,7 +115,7 @@ describe(sendNotification, () => {
     expect.hasAssertions();
 
     await mockDb
-      .insert(pushSubscriptions)
+      .insert(pushSubscriptionsInNotification)
       .values([pushSubscription, { ...pushSubscription, endpoint: " ", sessionId: actingSessionId }]);
     await sendNotification(context, {
       excludedSessionId: actingSessionId,
@@ -124,7 +124,7 @@ describe(sendNotification, () => {
       type: AppNotificationType.ResourceOperation,
       userId: subscriberUserId,
     });
-    const [notification] = await mockDb.select().from(notifications);
+    const [notification] = await mockDb.select().from(notificationsInNotification);
 
     expect(vi.mocked(webpush.sendNotification)).toHaveBeenCalledTimes(1);
     expect(vi.mocked(webpush.sendNotification).mock.calls[0]?.[0].endpoint).toBe(MOCK_ENDPOINT);

@@ -1,7 +1,7 @@
-import type { Database, User } from "@esposter/db-schema";
+import type { Database, UserInAuth } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
-import { storageLedger, users } from "@esposter/db-schema";
+import { storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { eq, sql } from "drizzle-orm";
 
 // The one place bytes leave `users.storageBytesUsed`. The amount is read off the ledger row being dropped
@@ -17,14 +17,14 @@ export const releaseStorageLedgerEntriesByWhere = (
   // Undefined is what `and()` collapses to when every operand is, and an unfiltered delete here would empty
   // The ledger for every user — so it is a no-op rather than a filter drizzle would happily drop
   where: SQL | undefined,
-): Promise<User["id"][]> => {
+): Promise<UserInAuth["id"][]> => {
   if (!where) return Promise.resolve([]);
 
   return db.transaction(async (transaction) => {
     const releasedStorageLedgerEntries = await transaction
-      .delete(storageLedger)
+      .delete(storageLedgerInStorage)
       .where(where)
-      .returning({ countedBytes: storageLedger.countedBytes, userId: storageLedger.userId });
+      .returning({ countedBytes: storageLedgerInStorage.countedBytes, userId: storageLedgerInStorage.userId });
     if (releasedStorageLedgerEntries.length === 0) return [];
     // One statement per owner rather than per blob: a prefix release covers a whole directory, and a
     // Deletion event carries hundreds of names, so decrementing row by row is that many round trips
@@ -39,9 +39,9 @@ export const releaseStorageLedgerEntriesByWhere = (
     for (const [userId, releasedBytes] of releasedUserEntries)
       // oxlint-disable-next-line no-await-in-loop -- Lock order: owners are updated in sorted order so two releases cannot deadlock
       await transaction
-        .update(users)
-        .set({ storageBytesUsed: sql`GREATEST(0, ${users.storageBytesUsed} - ${releasedBytes})` })
-        .where(eq(users.id, userId));
+        .update(usersInAuth)
+        .set({ storageBytesUsed: sql`GREATEST(0, ${usersInAuth.storageBytesUsed} - ${releasedBytes})` })
+        .where(eq(usersInAuth.id, userId));
     return releasedUserEntries.map(([userId]) => userId);
   });
 };

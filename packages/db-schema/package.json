@@ -53,8 +53,8 @@
     }
   },
   "scripts": {
-    "build": "tsdown",
-    "db:gen": "drizzle-kit generate",
+    "build": "pnpm registry:gen && tsdown",
+    "db:gen": "pnpm registry:gen && drizzle-kit generate",
     "db:pull": "drizzle-kit pull",
     "db:studio": "drizzle-kit studio",
     "db:up": "drizzle-kit up",
@@ -63,6 +63,7 @@
     "format:check": "oxfmt --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
+    "registry:gen": "node scripts/generateRegistry.ts",
     "test": "vitest",
     "typecheck": "tsc"
   },

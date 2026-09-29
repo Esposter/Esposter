@@ -3,7 +3,7 @@ import { OPERATION_PREFIXES } from "#src/services/sweeps/fileOrganization/consta
 import { getNameWords } from "#src/services/sweeps/fileOrganization/getNameWords";
 
 // Whether one export is a second spelling of another's concern rather than a second concern: it carries every
-// Word of the base (`serializableValueSchema` beside `SerializableValue`, `selectPostSchema` beside `posts`),
+// Word of the base (`serializableValueSchema` beside `SerializableValue`, `selectPostInPostSchema` beside `postsInPost`),
 // Or opens on the same two words (`SceneComponentEntries` beside `SceneComponentMap`, `BanInMessageWithUsers`
 // Beside `bansInMessageRelation`). A companion is what the skill's exceptions all look like once named — a
 // Schema beside its type, an enum beside its values array, a property-names twin, a composable's own shapes

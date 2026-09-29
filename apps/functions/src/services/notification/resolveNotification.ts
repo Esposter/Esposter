@@ -20,7 +20,7 @@ export const resolveNotification = async (
 ): Promise<ResolvedNotification | undefined> => {
   switch (data.type) {
     case AppNotificationType.FriendRequest: {
-      const sender = await db.query.users.findFirst({
+      const sender = await db.query.usersInAuth.findFirst({
         columns: { image: true, name: true },
         where: { id: { eq: data.senderId } },
       });

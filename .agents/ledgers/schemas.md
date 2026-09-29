@@ -4,7 +4,7 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 
 | Unit                                                       | Swept                 | Notes                                                                                                |
 | ---------------------------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------- |
-| `packages/db-schema/src/schema.ts` + `relations`           | 2026-09-27 · Opus 5.5 | a `r.many` key is the child table's own name; an `r.one` off a role column is the role               |
+| `packages/db-schema/src/generated/schema.ts` + `relations` | 2026-09-27 · Opus 5.5 | a `r.many` key is the child table's own name; an `r.one` off a role column is the role               |
 | `packages/db-schema/src/schema` — the message tables       | 2026-09-25 · Opus 5.5 | the `*InMessage` family                                                                              |
 | `packages/db-schema/src/schema` — the rest                 | 2026-09-27 · Opus 5.5 | the twin `friends`/`friendRequests` blocks stay, and the `drizzle` skill says why                    |
 | `shared/models/db/message`                                 | 2026-09-25 · Opus 5.5 | every input is composed by `.pick`/`.shape` spread, so a derived type alias is sanctioned            |

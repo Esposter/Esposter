@@ -1,0 +1,56 @@
+import type { AnyPgColumn } from "drizzle-orm/pg-core";
+
+import { createNameSchema } from "#src/models/shared/Name";
+import { pgTable } from "#src/pgTable";
+import { usersInAuth } from "#src/schema/auth/usersInAuth";
+import { postSchema } from "#src/schema/post/postSchema";
+import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "#src/services/post/constants";
+import { createPostDescriptionSchema } from "#src/services/post/createPostDescriptionSchema";
+import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
+import { sql } from "drizzle-orm";
+import { check, doublePrecision, index, integer, text, uuid } from "drizzle-orm/pg-core";
+import { createSelectSchema } from "drizzle-orm/zod";
+
+export const postsInPost = pgTable(
+  "posts",
+  {
+    // Every post above this one, root first. Both writes a reply forces are questions about that chain — which
+    // Counters move, and how many rows a delete takes with it — and holding it on the row answers both with an
+    // Ordinary predicate rather than a walk down a level at a time
+    ancestorIds: uuid().array().notNull().default([]),
+    commentCount: integer().notNull().default(0),
+    depth: integer().notNull().default(0),
+    description: text().notNull().default(""),
+    id: uuid().primaryKey().defaultRandom(),
+    likeCount: integer().notNull().default(0),
+    parentId: uuid().references((): AnyPgColumn => postsInPost.id, { onDelete: "cascade" }),
+    ranking: doublePrecision().notNull(),
+    title: text().notNull().default(""),
+    userId: text()
+      .notNull()
+      .references(() => usersInAuth.id, { onDelete: "cascade" }),
+  },
+  {
+    extraConfig: ({ ancestorIds, description, parentId, title }) => [
+      // No min(1): a post may be a comment, which has no title
+      check("posts_title_length_check", createMaxLengthCheckSql(title, POST_TITLE_MAX_LENGTH)),
+      check("posts_description_length_check", createMaxLengthCheckSql(description, POST_DESCRIPTION_MAX_LENGTH)),
+      // A foreign key gets no index of its own in Postgres, and every read of a thread asks this one question:
+      // One parent's children, best first. The feed asks it too — a root post is the parent that is null
+      index("posts_parentId_ranking_index").on(parentId, sql`"ranking" DESC`, sql`"id" DESC`),
+      // Containment is the whole-subtree question, which only a delete asks — the size of what its cascade takes
+      index("posts_ancestorIds_index").using("gin", ancestorIds),
+    ],
+    schema: postSchema,
+  },
+);
+
+export type PostInPost = typeof postsInPost.$inferSelect;
+
+export const selectPostInPostSchema = createSelectSchema(postsInPost, {
+  description: (schema) => createPostDescriptionSchema(schema, 0),
+  title: (schema) => createNameSchema(POST_TITLE_MAX_LENGTH, schema),
+});
+export const selectCommentInPostSchema = createSelectSchema(postsInPost, {
+  description: (schema) => createPostDescriptionSchema(schema, 1),
+});

@@ -17,7 +17,7 @@ import {
   scheduledMessageJobsInMessage,
   ScheduledMessageJobType,
   threadFollowsInMessage,
-  users,
+  usersInAuth,
   usersToRoomsInMessage,
   WordFilterAction,
 } from "@esposter/db-schema";
@@ -96,7 +96,7 @@ describe(processScheduledMessageJobHandler, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    await mockDb.insert(users).values([createUser(userId), createUser(memberUserId)]);
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(memberUserId)]);
     await mockDb.insert(roomsInMessage).values([
       { id: roomId, name, userId },
       { id: otherRoomId, name, userId },
@@ -124,7 +124,7 @@ describe(processScheduledMessageJobHandler, () => {
   });
 
   afterAll(async () => {
-    await mockDb.delete(users);
+    await mockDb.delete(usersInAuth);
   });
 
   test("skips when no active job exists", async () => {

@@ -5,7 +5,7 @@ import { createEventGridEvent } from "#src/services/azure/createEventGridEvent.t
 import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureContainer, getBlobSubjectPrefix, storageLedger, users } from "@esposter/db-schema";
+import { AzureContainer, getBlobSubjectPrefix, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -43,22 +43,22 @@ describe(reconcileStorageLedgerEntryHandler, () => {
   const createBlobCreatedEvent = (subject: string) =>
     createEventGridEvent({ data: { contentLength, sequencer } satisfies BlobCreatedEventGridData, subject });
   const readStorageBytesUsed = async () =>
-    (await mockDb.query.users.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))
+    (await mockDb.query.usersInAuth.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))
       ?.storageBytesUsed;
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    await mockDb.insert(users).values(createUser(userId));
+    await mockDb.insert(usersInAuth).values(createUser(userId));
   });
 
   afterEach(async () => {
-    await mockDb.delete(storageLedger);
-    await mockDb.update(users).set({ storageBytesUsed: 0 });
+    await mockDb.delete(storageLedgerInStorage);
+    await mockDb.update(usersInAuth).set({ storageBytesUsed: 0 });
   });
 
   const createStorageLedgerEntry = () =>
     mockDb
-      .insert(storageLedger)
+      .insert(storageLedgerInStorage)
       .values({ blobName, containerName, countedBytes: 0, declaredBytes: 1, expiresAt: new Date(0), userId });
 
   test("charges the owner what storage reported", async () => {

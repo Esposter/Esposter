@@ -4,7 +4,7 @@ import { SNAPSHOT_FILENAME } from "#src/constants";
 import { createMockDb } from "#src/createMockDb";
 import { PGlite } from "@electric-sql/pglite";
 import { pg_trgm } from "@electric-sql/pglite/contrib/pg_trgm";
-import { messageSchema, schema, users } from "@esposter/db-schema";
+import { schema, usersInAuth } from "@esposter/db-schema";
 import { generateDrizzleJson, generateMigration } from "drizzle-kit/api-postgres";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -33,7 +33,6 @@ describe(createMockDb, () => {
       expect.hasAssertions();
 
       const migratedPGlite = new PGlite({ extensions: { pg_trgm } });
-      await migratedPGlite.exec(`CREATE SCHEMA "${messageSchema.schemaName}"`);
       // Mirrors generateSnapshot.ts — the generated DDL includes the resources trigram index,
       // Which cannot be created without pg_trgm installed
       await migratedPGlite.exec("CREATE EXTENSION IF NOT EXISTS pg_trgm");
@@ -56,7 +55,7 @@ describe(createMockDb, () => {
   test("returns a queryable db", async () => {
     expect.hasAssertions();
 
-    const count = await db.$count(users);
+    const count = await db.$count(usersInAuth);
 
     expect(count).toBe(0);
   });

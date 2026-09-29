@@ -9,7 +9,7 @@ import {
   roomRolesInMessage,
   roomsInMessage,
   RoomType,
-  users,
+  usersInAuth,
   UserStatus,
   userStatusesInMessage,
   usersToRoomRolesInMessage,
@@ -39,7 +39,7 @@ describe(incrementMentionCounts, () => {
     db = await createMockDb();
     const createdAt = new Date(0);
     await db
-      .insert(users)
+      .insert(usersInAuth)
       .values(
         [onlineUserId, offlineUserId, nullStatusUserId, neverUserId, roleMemberUserId, senderUserId].map((id) =>
           createUser(id, createdAt, name),
@@ -78,7 +78,7 @@ describe(incrementMentionCounts, () => {
   });
 
   afterAll(async () => {
-    await db.delete(users);
+    await db.delete(usersInAuth);
     await db.delete(roomsInMessage);
   });
 

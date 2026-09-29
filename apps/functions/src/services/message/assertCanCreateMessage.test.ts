@@ -8,7 +8,7 @@ import {
   DatabaseEntityType,
   roomFiltersInMessage,
   roomsInMessage,
-  users,
+  usersInAuth,
   usersToRoomsInMessage,
   WordFilterAction,
 } from "@esposter/db-schema";
@@ -34,7 +34,7 @@ describe(assertCanCreateMessage, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    await mockDb.insert(users).values([createUser(ownerUserId), createUser(memberUserId)]);
+    await mockDb.insert(usersInAuth).values([createUser(ownerUserId), createUser(memberUserId)]);
     await mockDb.insert(roomsInMessage).values({ id: roomId, name, userId: ownerUserId });
     await mockDb.insert(usersToRoomsInMessage).values([
       { roomId, userId: ownerUserId },
@@ -57,7 +57,7 @@ describe(assertCanCreateMessage, () => {
   });
 
   afterAll(async () => {
-    await mockDb.delete(users);
+    await mockDb.delete(usersInAuth);
   });
 
   test("throws when room not found", async () => {
