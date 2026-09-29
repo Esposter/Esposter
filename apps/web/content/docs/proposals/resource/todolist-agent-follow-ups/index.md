@@ -20,11 +20,11 @@ flowchart LR
     DRAIN["drain skill — take, do, tick, repeat"]
   end
   subgraph App["Esposter app"]
-    MCP["MCP endpoint — token scoped to one TodoList"]
+    MCP["MCP endpoint — an API key, and the procedures that opt in"]
     SAVE["saveResourceContent — the one content door"]
   end
-  CAP -->|"add_follow_up"| MCP
-  DRAIN -->|"list_follow_ups · complete_follow_up · hand_back_follow_up"| MCP
+  CAP -->|"addFollowUp"| MCP
+  DRAIN -->|"readFollowUps · completeFollowUp · handBackFollowUp"| MCP
   MCP --> SAVE
   SAVE -->|"onSaveResourceContent"| PAGE["the open Items blade, live"]
   SAVE -->|"after-save hook"| REM["due reminders, web push"]
@@ -39,17 +39,17 @@ It also avoids the platform decision that [AI resource generation](/docs/resourc
 
 ## Scope
 
-| Works today                                                                 | This proposal adds                                                                        |
-| --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| A TodoList edited in the browser, saved through `saveResourceContent`       | A second writer: an MCP endpoint on the app, authorised by a token scoped to one TodoList |
-| Saves from another device stream into the open list over a subscription     | The endpoint writes through the same door, so an agent's write appears live the same way  |
-| Due reminders scheduled from every content save                             | Nothing — a follow-up with a due date reminds like any todo                               |
-| A todo carries a name, notes, steps, a due date, a star and a recurrence    | An optional `origin`: the repository and the Claude Code session that wrote it            |
-| The repository's change loop: finishing, checks, commit, queue push, review | A drain that feeds that loop one follow-up at a time, and a stop rule for the drain       |
+| Works today                                                                 | This proposal adds                                                                       |
+| --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| A TodoList edited in the browser, saved through `saveResourceContent`       | A second writer: an MCP endpoint serving opted-in procedures, authorised by an API key   |
+| Saves from another device stream into the open list over a subscription     | The endpoint writes through the same door, so an agent's write appears live the same way |
+| Due reminders scheduled from every content save                             | Nothing — a follow-up with a due date reminds like any todo                              |
+| A todo carries a name, notes, steps, a due date, a star and a recurrence    | An optional `origin`: the repository and the Claude Code session that wrote it           |
+| The repository's change loop: finishing, checks, commit, queue push, review | A drain that feeds that loop one follow-up at a time, and a stop rule for the drain      |
 
 ## The sub-specs
 
-- [Agent access](/docs/proposals/resource/todolist-agent-follow-ups/agent-access) — the token, the MCP endpoint and its four tools, the rate limit, and how an agent's write reaches the open page.
+- [Agent access](/docs/proposals/resource/todolist-agent-follow-ups/agent-access) — the API key, the MCP endpoint, the bridge that makes every opted-in procedure a tool, and how an agent's write reaches the open page.
 - [Capture](/docs/proposals/resource/todolist-agent-follow-ups/capture) — the `origin` field, the Claude Code plugin that carries the endpoint and the session id into every repository, and what counts as a follow-up.
 - [Drain](/docs/proposals/resource/todolist-agent-follow-ups/drain) — the loop, what it may and may not do on its own, handing a follow-up back to the owner, and the stop rule that keeps it converging.
 

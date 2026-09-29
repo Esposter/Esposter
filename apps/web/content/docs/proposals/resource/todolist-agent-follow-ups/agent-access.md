@@ -1,87 +1,80 @@
 ---
 title: Agent access
-description: Proposal — a bearer token scoped to one TodoList, minted from the list's command bar, and an MCP endpoint on the app whose four tools read and write that list through the same save door and live stream the browser uses.
+description: Proposal — one MCP endpoint that serves every tRPC procedure opting in through its meta, authorised by a better-auth API key the owner creates in settings, so exposing a new operation to an agent is one line on its procedure and the follow-up tools are four ordinary procedures.
 model: claude-opus-5-5
 ---
 
 # Agent Access
 
-Part of [TodoList agent follow-ups](/docs/proposals/resource/todolist-agent-follow-ups). Every write to a resource today comes from a signed-in browser session: `saveResourceContent` takes an authed context, and the only credential the app issues is a better-auth session cookie. A Claude Code session has no cookie and should not have one, since a cookie is the whole account. It needs a credential that can do exactly one thing: read and write one TodoList.
+Part of [TodoList agent follow-ups](/docs/proposals/resource/todolist-agent-follow-ups). Every read and write in the app is a tRPC procedure that already carries what an agent's tool needs: a name, a Zod input schema, and the guards that authorise it. A Claude Code session has no session cookie, and should not have one, since a cookie is the whole account in a browser. It needs a credential and a way to call the procedures the owner means an agent to reach.
 
-## The token
+This is written once, per [write once](/docs/architecture/write-once): one endpoint, one bridge from procedures to tools, one credential. After it ships, exposing any operation to an agent is a line on its procedure, and nothing in this spec changes.
 
-The model is the [webhook](/docs/esbabbler/webhooks)'s, which is already the app's one machine credential: a secret bound to a single target and revoked by rotating it. It departs from the webhook in one place, how the secret is kept.
+## The credential
 
-- **One token per TodoList, at most.** A new `agentTokens` table holds `resourceId` (unique, cascading on delete), `tokenHash`, and `createdAt`. The owner of the list is read from the resource row, never stored twice.
-- **Minted from the list.** The resource page's overflow menu gains, on a TodoList only, **Connect an agent**, a dialog that creates the token if there is none, shows it once with a copy button beside the one line of plugin setup it goes into ([capture](/docs/proposals/resource/todolist-agent-follow-ups/capture)), and offers **Rotate** and **Disconnect**. Reopened later, it says when the list was connected; a lost token is replaced by rotating. Rotate mints a new token and invalidates the old one; Disconnect deletes the row. Both ask first, as every destructive action does.
-- **Procedures on the TodoList router**, owner-only: `createAgentToken` and `rotateAgentToken` on the slow budget, since they mint a credential as `createWebhook` does, and are the only ones that return the token; `readAgentToken`, which returns whether one exists and its `createdAt`, and `deleteAgentToken` on the standard one.
-- **Sent as a header, not in a URL.** A webhook's token rides in its URL because the sender can only be given a URL. An MCP client can send headers, so the token travels as `Authorization: Bearer …` and never lands in a request log.
+An **API key** from better-auth's own plugin, `@better-auth/api-key`, never a token table of ours. Key storage and verification are security-shaped, which the [dependency admission](/docs/architecture/dependency-admission) stop list keeps in a library:
 
-The token is stored as its SHA-256 hash, not as the webhook's is. A webhook's token must stay readable because its url is what a member copies again; this token is copied once, into a credential store ([capture](/docs/proposals/resource/todolist-agent-follow-ups/capture)). The list's content lives in blob storage rather than the database, so a database read that exposed the token would hand out a write the read alone does not give. The token is random and long, so a plain hash is enough and the lookup stays one indexed equality.
+- **Stored hashed**, shown once when it is created, and listed afterwards by its name and first few characters.
+- **Created, listed and deleted in the user settings**, under **API keys**, through the plugin's client. Deleting one is how a leaked key is revoked.
+- **Rate-limited per key** by the plugin, with a window and budget set to what a drain loop spends rather than the plugin's default of ten a day.
+- **Never a session.** The plugin's `enableSessionForAPIKeys` stays off, so a key opens nothing in the app's ordinary tRPC route. It is verified only by the MCP endpoint, and reaches only the procedures that opt in there.
+- **Its table is ours to declare.** The plugin's `apikey` model is a table in `@esposter/db-schema`, named `apiKeys`, and the adapter's schema check suite covers it, so a field the plugin adds fails a test rather than a sign-in.
 
 ## The endpoint
 
-A Nitro route at `/api/todo-list/mcp` serves the Model Context Protocol over its Streamable HTTP transport in stateless mode: each POST builds a server with the four tools, handles one JSON-RPC message and returns. Nothing is held between requests, so the route scales like any other. The transport requires the endpoint to answer GET too, for a server that pushes messages unprompted; this one never does, so GET answers 405, which the transport allows.
+A Nitro route, `server/api/mcp.post.ts`, serves the Model Context Protocol over its Streamable HTTP transport in stateless mode. Each POST builds a server, handles one JSON-RPC message and returns. The transport requires the endpoint to answer GET too, for a server that pushes messages unprompted. This one never does, so the router's 405 for any method other than POST is the answer the transport allows.
 
-The transport also requires the server to validate `Origin`, so a web page cannot drive the endpoint from a reader's browser. Its only callers are command-line clients, which send no `Origin`, so any request that carries one is refused before the token is looked at.
+The transport also requires the server to validate `Origin`, so a web page cannot drive the endpoint from a reader's browser. Its only callers are command-line clients, which send no `Origin`, so any request that carries one is refused before the key is looked at.
 
 ```mermaid
 sequenceDiagram
   participant S as Claude Code session
   participant R as MCP route
-  participant L as agent rate limiter
-  participant DB as agentTokens + resources
-  participant SV as saveResourceContent
-  participant P as open Items blade
+  participant K as better-auth API key plugin
+  participant B as procedure bridge
+  participant P as tRPC procedure
+  participant O as the owner's open tabs
 
-  S->>R: POST, Authorization: Bearer token
-  R->>DB: find the token's row and its TodoList
-  alt no row
-    R-->>S: 401, the same answer as a wrong token
+  S->>R: POST, Authorization: Bearer key
+  R->>K: verifyApiKey
+  alt invalid, expired or over its budget
+    R-->>S: 401 or 429
   end
-  R->>L: spend a point keyed on the TodoList id
-  alt over budget
-    R-->>S: 429
-  end
-  R->>SV: read, change the items, save with the version read
-  alt stale version
-    R->>SV: read again and reapply, a bounded number of times
-  end
-  SV-->>P: onSaveResourceContent, the new content
-  R-->>S: the tool's result
+  R->>B: a server whose tools are the opted-in procedures
+  B->>P: call with the key owner's context
+  P->>P: the procedure's own guards, parsing and writes
+  P-->>O: a content save streams to every other device
+  B-->>S: the procedure's result as the tool's result
 ```
 
-- **Authorisation** hashes the bearer token, finds the row whose `tokenHash` matches and loads its resource. A missing row and a wrong token get the same 401, as a webhook's 404 does. The resource's owner becomes the authed context's user, with a synthetic device id of `agent:<resourceId>`, so the owner's own browser does not skip the write as its own.
-- **Rate limiting** is a new limiter beside the webhook's, keyed on the TodoList id rather than on a caller, for the same reason: one runaway loop exhausts its own list's budget and nobody else's ([rate limiting](/docs/architecture/rate-limiting)).
-- **Writes are read, change, save.** A tool reads the current content and its `contentVersion`, applies its change to the items, and saves through `saveResourceContent` with that version. That one door brings everything a browser save brings: parsing against the content schema, a revision for [version history](/docs/resource/resource-snapshots), rescheduled [due reminders](/docs/resource/todolist-due-reminders), and the save event. A stale version means the owner saved in between, so the tool reads again and reapplies its change, up to a small fixed number of times, then fails the tool call rather than write over the owner.
-- **The open page follows along.** `onSaveResourceContent` already streams every save from another device into the open list, and the agent's device id is another device. A follow-up added by a session appears in the owner's open tab with nothing new on the client. If the owner's own save was in flight against the version the agent replaced, that save goes stale and shows the existing [conflict surface](/docs/resource/resource-page-parity), as a save from a second browser would.
+## The bridge
 
-## The tools
+- **A procedure opts in through its meta.** The tRPC root declares a meta type with one optional key, `mcp: { description }`, and a procedure that should be a tool says so: `.meta({ mcp: { description: "…" } })`. The description is the one thing a procedure has no other place for, since an agent chooses a tool by what it is told the tool is for.
+- **The bridge walks the router once per request.** Every query or mutation whose meta has `mcp` becomes a tool. Its name is its path with the dots turned to underscores (`todoList_addFollowUp`), its input schema is the procedure's own input, and calling it calls the procedure through tRPC's own call path, so its middleware, parsing, guards and rate limit all run as they do for the browser.
+- **The key owner is the caller.** The route verifies the key, reads its owner's user row, and builds the context with a session payload the authed middleware uses instead of reading a cookie. That payload's device is the key's own, `agent-<key id>`, so the owner's open tabs take the agent's writes as another device's and show them live.
+- **One invariant, held by a test.** Every opted-in procedure has exactly one input and it is an object, since an MCP tool's input schema must be one. A suite walks the router and fails on a procedure that opts in without one.
 
-Each tool is scoped by the token to its one list, so none takes a list id.
-
-| Tool                  | Input                                    | Does                                                                                                                           |
-| --------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `add_follow_up`       | name, notes, optional due date, `origin` | appends an open todo at the foot of the list, as quick add does                                                                |
-| `list_follow_ups`     | repository                               | the open todos whose `origin.repository` matches and which are not handed back, in the list's manual order                     |
-| `complete_follow_up`  | id, a line on what was done              | ticks it through the same completion the checkbox uses, so a recurring one rolls forward, and appends the line to its notes    |
-| `hand_back_follow_up` | id, the reason                           | marks it for the owner and appends the reason to its notes ([drain](/docs/proposals/resource/todolist-agent-follow-ups/drain)) |
-
-Names, notes and dates are validated by the same `todoListItemSchema` the browser's saves are, so a tool can write nothing the list could not already hold. There is deliberately no delete and no edit of a todo the owner wrote: a session can add, tick and hand back, and anything else is the owner's. `complete_follow_up` and `hand_back_follow_up` enforce that on the item they read: an id naming no todo, or a todo with no `origin`, fails the call before anything is saved, so a token cannot tick or annotate a todo the owner wrote.
+Where a browser procedure is the wrong shape for an agent, the answer is a procedure shaped for the agent, never a branch in the bridge. The follow-up tools are four such procedures ([capture](/docs/proposals/resource/todolist-agent-follow-ups/capture), [drain](/docs/proposals/resource/todolist-agent-follow-ups/drain)): a whole-list save at a content version is a poor interface for adding one todo, so `addFollowUp` reads, changes and saves the list on the server, and retries against a save the owner made in between.
 
 ## Dependencies
 
-The MCP TypeScript SDK (`@modelcontextprotocol/sdk`) serves the transport. It is a new direct dependency of the app and owes the [dependency admission](/docs/architecture/dependency-admission) check; the protocol's framing and schema negotiation are not worth owning by hand.
+- `@modelcontextprotocol/sdk` serves the transport and the tool registry. It tracks an outside spec, so it is kept and bumped, never absorbed.
+- `@better-auth/api-key` owns the keys. It is better-auth's own plugin, versioned with it.
 
 ## Key files
 
-| File                                                                  | Role after the change                                                           |
-| --------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `packages/db-schema/src/schema/webhooksInMessage.ts`                  | the machine credential `agentTokens` is modelled on                             |
-| `packages/db-schema/src/schema/resources.ts`                          | the resource an agent token cascades from                                       |
-| `apps/web/server/trpc/routers/todoList.ts`                            | the owner-only token procedures                                                 |
-| `apps/web/server/services/resource/saveResourceContent.ts`            | the write every tool ends in                                                    |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts` | `onSaveResourceContent`, which carries an agent's write to the open page        |
-| `apps/web/server/services/rateLimiter/webhookRateLimiter.ts`          | the per-target limiter the agent limiter sits beside                            |
-| `apps/web/app/components/Resource/Blade/Header.vue`                   | the overflow menu's `Item` list, which gains **Connect an agent** on a TodoList |
-| `apps/web/package.json`                                               | gains `@modelcontextprotocol/sdk`                                               |
+| File                                                                | Role after the change                                                         |
+| ------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `apps/web/server/auth.ts`                                           | registers the API key plugin, with sessions for keys left off                 |
+| `apps/web/server/trpc/index.ts`                                     | the meta type every procedure may opt into MCP with                           |
+| `apps/web/server/trpc/middleware/getRateLimitedMiddleware.ts`       | takes a session the context already holds before reading one from the cookie  |
+| `apps/web/server/trpc/context.ts`                                   | carries that session for a call the MCP route makes                           |
+| `apps/web/server/services/auth/drizzleAdapterConfiguration.test.ts` | runs better-auth's schema check with the plugin, covering the `apiKeys` table |
+| `packages/db-schema/src/schema.ts`                                  | registers `apiKeys`                                                           |
+| `apps/web/app/pages/user/settings.vue`                              | the API keys section                                                          |
+| `apps/web/package.json`                                             | gains `@modelcontextprotocol/sdk` and `@better-auth/api-key`                  |
+
+## Sources
+
+- [Model Context Protocol — transports](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports) — one endpoint path taking POST, a GET that may answer 405, optional sessions, and the requirement to validate `Origin`.
+- [Better Auth — API key plugin](https://www.better-auth.com/docs/plugins/api-key) — hashed keys shown once, per-key rate limits, `verifyApiKey`, and sessions for keys as an opt-in this spec leaves off.

@@ -12,7 +12,7 @@ Part of [TodoList agent follow-ups](/docs/proposals/resource/todolist-agent-foll
 
 ```mermaid
 flowchart TD
-  START["drain starts — note the open count as the checkpoint"] --> LIST["list_follow_ups for this repository"]
+  START["drain starts — note the open count as the checkpoint"] --> LIST["readFollowUps for this repository"]
   LIST --> EMPTY{"any left?"}
   EMPTY -->|"none"| DONE["stop — report what was done"]
   EMPTY -->|"yes"| DUE{"taken as many as the checkpoint since it was set?"}
@@ -22,16 +22,16 @@ flowchart TD
   CONV -->|"yes"| RESET["the open count becomes the checkpoint"]
   RESET --> TAKE
   TAKE --> FITS{"one change, no design, nothing spent?"}
-  FITS -->|"no"| BACK["hand_back_follow_up with the reason"]
+  FITS -->|"no"| BACK["handBackFollowUp with the reason"]
   FITS -->|"yes"| WORK["do it through the repository's change loop"]
   WORK --> FOUND["new follow-ups found — captured as they appear"]
-  WORK --> TICK["complete_follow_up with the commit"]
+  WORK --> TICK["completeFollowUp with the commit"]
   BACK --> LIST
   TICK --> LIST
 ```
 
 - **One follow-up per change.** The session does the follow-up the way the repository says any change is done: in Esposter, the finishing ritual, the checks, a commit by pathspec and a queue push; elsewhere, whatever that repository's own instructions say. The follow-up is ticked only after the commit exists, and the line written on it names the commit.
-- **The order is the owner's.** `list_follow_ups` returns the list's manual order, so dragging a follow-up to the top of the list is how the owner says what goes first.
+- **The order is the owner's.** `readFollowUps` returns the list's manual order, so dragging a follow-up to the top of the list is how the owner says what goes first.
 - **Fresh reads every turn.** The list is read again after every follow-up, never cached, so a follow-up the owner ticked, deleted or reordered in the browser while the drain ran is respected on the next turn.
 
 ## Handing back
@@ -42,13 +42,13 @@ The drain takes only what it may do alone. A follow-up is handed back when doing
 - anything that spends outside the repository's review queue: opening a pull request, pushing a protected branch, a paid service, a destructive change to shared infrastructure;
 - more than one change.
 
-`hand_back_follow_up` sets `handedBackAt` and appends the reason to the notes. The todo stays in the owner's list as an ordinary open todo, so it is read with everything else, and it no longer appears in `list_follow_ups`, so the drain does not take it again. When the owner has answered it, clearing the handback from the edit dialog returns it to the drain.
+`handBackFollowUp` sets `handedBackAt` and appends the reason to the notes. The todo stays in the owner's list as an ordinary open todo, so it is read with everything else, and it no longer appears in `readFollowUps`, so the drain does not take it again. When the owner has answered it, clearing the handback from the edit dialog returns it to the drain.
 
 ## The stop rule
 
 The drain stops in exactly two cases:
 
-1. **Nothing is left.** `list_follow_ups` returns nothing: every follow-up for the repository is done or handed back.
+1. **Nothing is left.** `readFollowUps` returns nothing: every follow-up for the repository is done or handed back.
 2. **The list is not shrinking.** Draining one follow-up can capture new ones, and new ones can capture more. The drain notes the open count when it starts, as its checkpoint. Once it has taken that many follow-ups, if the open count is not lower than the checkpoint, the work is producing follow-ups as fast as it closes them and more turns will not converge. It stops and says so, leaving everything open for the owner to read. If the count is lower, the new count becomes the checkpoint and the check repeats after that many more, so a drain that shrank once cannot grow unchecked afterwards.
 
 This is the same convergence test every loop in the repository uses: each pass should find less than the one before ([engineering loops](/docs/architecture/engineering-loops)).
