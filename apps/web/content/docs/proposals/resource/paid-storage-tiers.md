@@ -1,7 +1,7 @@
 ---
 title: Paid storage tiers
 description: Proposal — sell a larger storage allowance through a merchant-of-record checkout, with the tier column staying the one thing the quota gate reads.
-model: claude-opus-5
+model: claude-opus-5-5
 ---
 
 # Paid Storage Tiers
@@ -26,7 +26,7 @@ Either way the integration shape is the same and is chosen to keep card data and
 
 ### Data
 
-One row per subscriber — `userSubscriptions`, keyed by `userId`, carrying the provider's customer and subscription ids, the subscription status, and the current period end. The **tier column stays the only thing the quota gate reads**: this table records why a user is on a tier, never what their allowance is. Two sources of allowance is exactly the failure the derived-quota design exists to prevent.
+One row per subscriber — `storage.userSubscriptions` (exported as `userSubscriptionsInStorage`, the storage schema being the product area it pays for), keyed by `userId`, carrying the provider's customer and subscription ids, the subscription status, and the current period end. The **tier column stays the only thing the quota gate reads**: this table records why a user is on a tier, never what their allowance is. Two sources of allowance is exactly the failure the derived-quota design exists to prevent.
 
 New tier values land in the enum and the quota map together, and every allowance stays a pure function of the tier.
 
@@ -89,7 +89,7 @@ Ship this only alongside those, or not at all — a paid tier without a way out 
 | :-------------------------------------------------------- | :------------------------------------------------- |
 | `packages/db-schema/src/models/user/StorageTier.ts`       | the paid tier values                               |
 | `apps/web/shared/services/storage/StorageTierQuotaMap.ts` | one allowance entry per tier                       |
-| `packages/db-schema/src/schema/`                          | the subscription table, registered in the schema   |
+| `packages/db-schema/src/schema/storage/`                  | the subscription table, registered by existing     |
 | `apps/web/server/api/`                                    | the signed, idempotent provider webhook route      |
 | `apps/web/app/components/Resource/StorageMeter.vue`       | the upgrade affordance and the over-quota state    |
 | `apps/infra/src/`                                         | the provider secret, wherever secrets are declared |

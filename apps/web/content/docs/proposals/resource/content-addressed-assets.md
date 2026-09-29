@@ -55,7 +55,7 @@ That is what makes it separable and what makes it second. It wants the scan to b
 | `apps/web/server/services/emailEditor/transformPublishedEmail.ts`      | stops rewriting asset urls                                              |
 | `apps/web/server/services/resource/snapshot/writeSnapshotVersion.ts`   | scans each version it writes and records its reference rows             |
 | `apps/web/server/services/resource/snapshot/collectSnapshotObjects.ts` | drops a collected version's rows and counts the orphaned assets         |
-| `packages/db-schema/src/schema/`                                       | the version-to-asset reference table, registered in the schema          |
+| `packages/db-schema/src/schema/resource/`                              | the version-to-asset reference table, registered by existing            |
 
 ## Why not now
 
