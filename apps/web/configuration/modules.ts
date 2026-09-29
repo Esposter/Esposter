@@ -1,5 +1,21 @@
 import type { NuxtConfig } from "nuxt/schema";
+import type { ModuleOptions } from "trpc-nuxt-module";
 
+import { TRPC_CLIENT_PATH, TRPC_WS_PATH } from "../app/services/trpc/constants";
+
+// Registered by its source rather than its package name: `nuxt prepare` loads every module from the app's `postinstall`,
+// Before any workspace package is built, and a name resolves to the `dist` a fresh clone does not have yet. Its
+// Options are the router and context the generated handlers import, the endpoints they are registered at, and the
+// Keep-alive the WebSocket handler pings its connections with
+const trpcModule: [string, ModuleOptions] = [
+  "../../packages/trpc-nuxt-module/src/module.ts",
+  {
+    createContext: { from: "~~/server/trpc/context", name: "createContext" },
+    endpoint: TRPC_CLIENT_PATH,
+    router: { from: "~~/server/trpc/routers", name: "trpcRouter" },
+    webSocket: { endpoint: TRPC_WS_PATH, keepAlive: { enabled: true } },
+  },
+];
 // Unit tests need only the modules whose runtime/auto-imports they actually exercise. The rest are
 // SSR/build/styling concerns that don't run under Vitest but DO break or slow Nuxt config resolution —
 // E.g. @unocss/nuxt trips the Windows `spawn EPERM` / "filename must be a file URL" crash (taking down
@@ -7,7 +23,7 @@ import type { NuxtConfig } from "nuxt/schema";
 // Leaks an EnvironmentTeardownError after teardown, and nuxt-security adds headers/CSP nothing asserts.
 // Allowlist instead of subtract: add a module to the Vitest branch only when a test needs it (then re-run).
 export const modules: NuxtConfig["modules"] = process.env.VITEST
-  ? ["@nuxt/image", "@nuxt/scripts", "@nuxt/test-utils/module", "@pinia/nuxt", "@vueuse/nuxt"]
+  ? ["@nuxt/image", "@nuxt/scripts", "@nuxt/test-utils/module", "@pinia/nuxt", "@vueuse/nuxt", trpcModule]
   : [
       "@nuxt/content",
       "@nuxt/eslint",
@@ -22,4 +38,5 @@ export const modules: NuxtConfig["modules"] = process.env.VITEST
       "@vite-pwa/nuxt",
       "@vueuse/nuxt",
       "nuxt-security",
+      trpcModule,
     ];

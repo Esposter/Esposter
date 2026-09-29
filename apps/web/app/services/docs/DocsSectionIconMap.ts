@@ -13,6 +13,7 @@ export const DocsSectionIconMap: Readonly<Record<string, string>> = {
   proposals: "i-mdi:lightbulb",
   resource: "i-mdi:apps",
   "trpc-msw": "i-mdi:api",
+  "trpc-nuxt-module": "i-mdi:nuxt",
   user: "i-mdi:account-group",
   virrun: "i-mdi:console",
   "vue-phaserjs": "i-mdi:gamepad-variant",

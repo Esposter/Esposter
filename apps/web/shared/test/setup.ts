@@ -96,11 +96,16 @@ if (!checkIsServer() && (window as { __NUXT_VITEST_ENVIRONMENT__?: true }).__NUX
   beforeEach(async () => {
     if (isNuxtRuntimeWarm) return;
     isNuxtRuntimeWarm = true;
-    const [{ mountSuspended }, { defineComponent, h }] = await Promise.all([
+    const [{ mountSuspended }, { useRouter }, { defineComponent, h }] = await Promise.all([
       import("@nuxt/test-utils/runtime"),
+      import("nuxt/app"),
       import("vue"),
     ]);
     (await mountSuspended(defineComponent({ render: () => h("div") }))).unmount();
+    // The app's initial navigation settles on its own schedule and replaces the route when it lands, so a suite that
+    // Writes route params before then loses them to it — the first test's reads, whenever an answer arrives later than
+    // That navigation, find no route id. Waiting for it here puts every test after it
+    await useRouter().isReady();
   });
 
 // A component a test mounts is unmounted after it, so nothing it teleported, listened to or scheduled reaches the next

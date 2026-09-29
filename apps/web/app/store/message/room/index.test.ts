@@ -47,8 +47,10 @@ describe(useRoomStore, () => {
     expect.hasAssertions();
 
     const { promise: isSecondDeleted, resolve: onSecondDeleted } = Promise.withResolvers<true>();
+    const { promise: isFirstCalled, resolve: onFirstCalled } = Promise.withResolvers<true>();
     trpcMsw.room.deleteRoom.mutation(async ({ input }) => {
       if (input !== first.id) return second;
+      onFirstCalled(true);
       await isSecondDeleted;
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
@@ -57,6 +59,8 @@ describe(useRoomStore, () => {
     const { rooms } = storeToRefs(roomStore);
     pushRooms(first, second);
     const rejectedDeleteRoom = deleteRoom(first.id);
+    // A second call issued in the same tick would share the first one's batch and settle with it
+    await isFirstCalled;
     await deleteRoom(second.id);
     onSecondDeleted(true);
     await rejectedDeleteRoom;
@@ -69,8 +73,10 @@ describe(useRoomStore, () => {
     expect.hasAssertions();
 
     const { promise: isSecondLeft, resolve: onSecondLeft } = Promise.withResolvers<true>();
+    const { promise: isFirstCalled, resolve: onFirstCalled } = Promise.withResolvers<true>();
     trpcMsw.room.leaveRoom.mutation(async ({ input }) => {
       if (input !== first.id) return second.id;
+      onFirstCalled(true);
       await isSecondLeft;
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
@@ -79,6 +85,8 @@ describe(useRoomStore, () => {
     const { rooms } = storeToRefs(roomStore);
     pushRooms(first, second);
     const rejectedLeaveRoom = leaveRoom(first.id);
+    // A second call issued in the same tick would share the first one's batch and settle with it
+    await isFirstCalled;
     await leaveRoom(second.id);
     onSecondLeft(true);
     await rejectedLeaveRoom;

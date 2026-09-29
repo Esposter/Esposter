@@ -30,6 +30,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "./scripts/src/oxlint/propsInterface.ts",
     "./scripts/src/oxlint/setupScope.ts",
     "./scripts/src/oxlint/templateRef.ts",
+    "./scripts/src/oxlint/testing.ts",
     "./scripts/src/oxlint/testValues.ts",
     "./scripts/src/oxlint/trpcProcedure.ts",
   ],
@@ -113,6 +114,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     },
     { files: ["apps/web/server/trpc/**/*.test.ts"], rules: { "trpc-procedure/require-query-verb": "off" } },
     { files: ["**/*.test.ts", "**/*.test-d.ts", "**/*.bench.ts"], rules: { "test-values/no-typed-date": "error" } },
+    { files: ["**/*.test.ts"], rules: { "testing/no-faked-batch-timer": "error" } },
     {
       files: [
         "apps/web/app/components/Ui/**",

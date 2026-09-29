@@ -174,7 +174,7 @@
     "temporal-polyfill": "catalog:",
     "three": "catalog:",
     "three-globe": "catalog:",
-    "trpc-nuxt": "catalog:",
+    "trpc-nuxt-module": "workspace:*",
     "unicode-emoji-json": "catalog:",
     "vue": "catalog:",
     "vue-codemirror": "catalog:",
@@ -236,6 +236,7 @@
     "unocss": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
-    "vue-tsc": "catalog:"
+    "vue-tsc": "catalog:",
+    "xss": "catalog:"
   }
 }

@@ -94,19 +94,27 @@ describe(useReadSearchedMessages, () => {
 
     const { promise: roomSearch, resolve: releaseRoomSearch } = Promise.withResolvers<void>();
     const { promise: otherRoomSearch, resolve: releaseOtherRoomSearch } = Promise.withResolvers<void>();
+    const { promise: isRoomSearchReached, resolve: onRoomSearchReached } = Promise.withResolvers<void>();
+    const { promise: isOtherRoomSearchReached, resolve: onOtherRoomSearchReached } = Promise.withResolvers<void>();
     trpcMsw.message.searchMessages.query(async ({ input }) => {
-      await (input.roomId === roomId ? roomSearch : otherRoomSearch);
+      if (input.roomId === roomId) {
+        onRoomSearchReached();
+        await roomSearch;
+      } else {
+        onOtherRoomSearchReached();
+        await otherRoomSearch;
+      }
       return { count: newCount, data: { hasMore: false, items: [] } };
     });
     await mountRead();
     searchQuery.value = query;
     const pendingRoomSearch = readSearchedMessages();
-    // The search is issued a microtask after the call, so let it go out before the room moves
-    await flushPromises();
+    // Let the search reach its resolver before the room moves, so the next one is a request of its own
+    await isRoomSearchReached;
     setCurrentRoomId(otherRoomId);
     searchQuery.value = query;
     const pendingOtherRoomSearch = readSearchedMessages();
-    await flushPromises();
+    await isOtherRoomSearchReached;
     releaseRoomSearch();
     await pendingRoomSearch;
 

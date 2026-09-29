@@ -14,8 +14,11 @@ const { test } = getVitestConfiguration(import.meta.dirname, {
   // Would otherwise be a forgeable token in production and nothing at all in a test.
   env: { BETTER_AUTH_SECRET: "mock-auth-secret" },
   // Root the Nuxt project at this package, not the vitest cwd (the repo root, where `@nuxt/kit` and the
-  // App don't resolve) — the run is driven by the root `projects` config.
-  environmentOptions: { nuxt: { rootDir: import.meta.dirname } },
+  // App don't resolve) — the run is driven by the root `projects` config. The origin is a `.test` host, which never
+  // Resolves, rather than Nuxt's default of `localhost:3000`: msw intercepts beneath happy-dom's `fetch`, and a
+  // Request it misses there went out to whatever listened on the default port — a running dev server answered
+  // With the real router, so a suite failed only while one was up. On this origin a missed request fails at once
+  environmentOptions: { nuxt: { rootDir: import.meta.dirname, url: "http://nuxt.test" } },
   // Cold `setupNuxt()` (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes
   // On a loaded CI runner and trips "Hook timed out". 5 min gives the cold build ample headroom.
   hookTimeout: Temporal.Duration.from({ minutes: 5 }).total("milliseconds"),

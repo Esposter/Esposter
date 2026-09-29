@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "filepath": "src/runtime/server/createTRPCEventHandler.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.2054599999999994,
+              "name": "native — tRPC's fetch adapter",
+              "p99": 0.31342200000002324,
+              "rme": 17.92566474074238,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.27429000000000203,
+              "name": "createTRPCEventHandler — through an h3 event",
+              "p99": 0.3594070000000471,
+              "rme": 12.742975158231257,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "createTRPCEventHandler > a mutation"
+        }
+      ]
+    }
+  ]
+}

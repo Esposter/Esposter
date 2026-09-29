@@ -32,6 +32,7 @@ Every line here is a direction a reader reaches for on meeting the rules below. 
 - **`deps.onlyImport` gates every bundle's externals, and a published package adds `publint` and `attw`** — none is ever widened or disabled to get a build through (`references/gates.md`).
 - **A package reaches its own source through `#src/*` subpath imports, never `@/`**, which is what gives every package its `source` export arm; `apps/web` keeps `@/` because Nuxt generates it (`references/source-exports.md`).
 - **A moved `dist` size snapshot is something newly bundled, never a `-u` to take** — and an export added to a bundled package moves `apps/functions`' and `apps/infra`'s snapshots too (`references/dist-size.md`).
+- **A package that is a Nuxt module builds its runtime unbundled beside a `src/module.ts` entry, and the app registers it by the path to that source**, never its package name, which `nuxt prepare` cannot load before the packages build (`references/nuxt-module-packages.md`).
 - **Presets live in `@esposter/configuration`, extended by path, and the base carries no framework assumption** (`references/tsconfig-presets.md`).
 - **Installs and the workspace graph are root `CLAUDE.md` and `apps/web/content/docs/architecture/monorepo-tooling.md`** — where `pnpm i` needs the network, ask for plain `pnpm i` rather than changing pnpm store settings.
 
@@ -47,3 +48,4 @@ Every line here is a direction a reader reaches for on meeting the rules below. 
 - `references/dependency-placement.md` — when adding, moving or removing a dependency, or deciding whether one is bundled.
 - `references/shared-configs.md` — when writing a package's `tsdown.config.ts` or a configuration factory.
 - `references/dist-size.md` — when a size snapshot moves after a manifest, `deps`, factory or export change.
+- `references/nuxt-module-packages.md` — when a workspace package is a Nuxt module, or the app registers one.

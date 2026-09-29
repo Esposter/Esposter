@@ -1,3 +1,4 @@
+// @vitest-environment nuxt
 import { describe, expect, test } from "vitest";
 import { createSSRApp, h } from "vue";
 import { renderToString } from "vue/server-renderer";
@@ -18,5 +19,11 @@ describe("vitest.config", () => {
     );
 
     expect(html).toBe("<span></span>");
+  });
+
+  test("runs on an origin nothing answers, so a request no mock handles fails rather than reaching a server", async () => {
+    expect.hasAssertions();
+
+    await expect(fetch(window.location.origin)).rejects.toThrowErrorMatchingInlineSnapshot(`[TypeError: fetch failed]`);
   });
 });

@@ -148,15 +148,20 @@ describe(useSurveyStore, () => {
 
     const otherResourceId = crypto.randomUUID();
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
+    const { promise: isReadReached, resolve: onReadReached } = Promise.withResolvers<void>();
     trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(), id: input.id, publication: null }));
     trpcMsw.survey.readResourceContent.query(async ({ input }) => {
-      if (input.id === resourceId) await readGate;
-      return input.id === resourceId ? content : { ...content, model: newModel };
+      if (input.id !== resourceId) return { ...content, model: newModel };
+      onReadReached();
+      await readGate;
+      return content;
     });
     const surveyStore = useSurveyStore();
     const { loadContent } = surveyStore;
     const { model: storedModel } = storeToRefs(surveyStore);
     const pendingLoad = loadContent();
+    // A read issued in the same tick would share the held one's batch and settle with it
+    await isReadReached;
     useRouter().currentRoute.value.params.id = otherResourceId;
     const resourceStore = useResourceStore();
     const { readResource } = resourceStore;
@@ -174,10 +179,12 @@ describe(useSurveyStore, () => {
     expect.hasAssertions();
 
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
+    const { promise: isReadReached, resolve: onReadReached } = Promise.withResolvers<void>();
     let readCount = 0;
     trpcMsw.survey.readResourceContent.query(async () => {
       readCount++;
       if (readCount > 1) return { ...content, model: newModel };
+      onReadReached();
       await readGate;
       return content;
     });
@@ -185,6 +192,8 @@ describe(useSurveyStore, () => {
     const { loadContent } = surveyStore;
     const { model: storedModel } = storeToRefs(surveyStore);
     const pendingLoad = loadContent();
+    // A read issued in the same tick would share the held one's batch and settle with it
+    await isReadReached;
     const resourceStore = useResourceStore();
     const { clearResource, readResource } = resourceStore;
     clearResource(resourceId);
@@ -202,10 +211,12 @@ describe(useSurveyStore, () => {
     expect.hasAssertions();
 
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
+    const { promise: isReadReached, resolve: onReadReached } = Promise.withResolvers<void>();
     let readCount = 0;
     trpcMsw.survey.readResourceContent.query(async () => {
       readCount++;
       if (readCount > 1) return { ...content, model: newModel };
+      onReadReached();
       await readGate;
       return content;
     });
@@ -213,6 +224,8 @@ describe(useSurveyStore, () => {
     const { loadContent } = surveyStore;
     const { model: storedModel } = storeToRefs(surveyStore);
     const pendingLoad = loadContent();
+    // A read issued in the same tick would share the held one's batch and settle with it
+    await isReadReached;
     const resourceStore = useResourceStore();
     const { reloadResourceContent } = resourceStore;
     await reloadResourceContent();

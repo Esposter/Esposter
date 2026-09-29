@@ -15,3 +15,41 @@ successful one has **already** shortened. Issued together, the rejection can lan
 list nothing has shortened yet — which passes against the whole-list rollback the test exists to rule out. Gate
 the failing handler on a promise the successful one resolves, so the order is the test's rather than the
 scheduler's.
+
+**The held call signals its arrival, and the next call waits for it.** Over tRPC the client batches every call
+issued in one tick into a single request, and a batch answers only once every call in it has settled — so a
+second call issued beside a held one joins its batch and waits for the release it was meant to precede, and the
+test hangs. Production never issues the two in one tick, so the test issues them apart: the held resolver
+resolves a second promise as it is reached, and the test awaits that before the next call.
+
+```ts
+const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
+const { promise: isReadReached, resolve: onReadReached } = Promise.withResolvers<void>();
+trpcMsw.resource.readResource.query(async ({ input }) => {
+  if (input.id === resourceId) {
+    onReadReached();
+    await readGate;
+  }
+  return createResource(input.id);
+});
+const pendingRead = readResource();
+await isReadReached;
+await readResource();
+releaseRead();
+await pendingRead;
+```
+
+## Awaiting a call's effect: the effect, never a flush
+
+A test reading what a tRPC call caused awaits the effect itself — the mocked function it calls resolving a
+promise, the ref it writes changing under a `watch` — never `flushPromises()` or a tick count. The transport
+decides how many turns a call takes: a batch dispatches a macrotask after the call, and a flush that happened to
+outlast an unbatched request no longer outlasts a batched one. A flush count encodes today's scheduling; the
+effect is what the test means. Where the effect is local to a component and nothing outside it can await it, the
+resolver resolves a promise as the call reaches it and the test awaits that, then flushes once — the flush then
+covers only the answer's way back, which is the same for every transport, rather than a dispatch it cannot
+predict.
+
+**A `fetch failed` from a call issued after the test ended is a symptom, not the failure.** A test that fails
+early leaves its batch to dispatch after `afterAll` has closed msw, so the call reaches the network through the
+native `fetch` and fails there — read the first failure in the file, not the rejected call beside it.

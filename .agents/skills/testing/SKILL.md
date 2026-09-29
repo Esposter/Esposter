@@ -31,7 +31,7 @@ Assertions and waiting:
 - `references/error-assertions.md` — when filling in the inline snapshot a thrown or rejected error is asserted with.
 - `references/polling.md` — when a test waits for something to happen.
 - `references/timers-and-hand-resolved-promises.md` — when a test fakes timers, pins the clock, or holds a call in flight.
-- `references/awaiting-a-double.md` — when a test proves a caller awaits its side effect, or orders two overlapping writes.
+- `references/awaiting-a-double.md` — when a test proves a caller awaits its side effect, orders two overlapping calls, or reads what a tRPC call caused.
 
 Doubles:
 

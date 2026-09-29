@@ -76,7 +76,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 
 ## Environment Checks
 
-- **Never `import.meta.dev` or `import.meta.env.MODE` directly** (`no-restricted-syntax`) — `IS_PRODUCTION`/`IS_DEVELOPMENT`/`IS_TEST` from `#shared/util/environment/constants`, the one file that reads them.
+- **Never `import.meta.dev` or `import.meta.env.MODE` directly** (`no-restricted-syntax`) — `IS_PRODUCTION`/`IS_DEVELOPMENT` from `#shared/util/environment/constants`, the one file that reads them.
 
 ## Absent Values
 
