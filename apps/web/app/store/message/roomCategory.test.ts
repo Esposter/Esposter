@@ -13,6 +13,7 @@ describe(useRoomCategoryStore, () => {
   const name = "name";
   const updatedName = "updatedName";
   const rejectedName = "rejectedName";
+
   // Two renames of one room category queue under its id, so the second one's rollback has to undo its own write
   // Rather than what the user typed over — nothing reconciles a dropped rename until a reload
   test("rolls a failed update back to the state the update ahead of it stored", async () => {
