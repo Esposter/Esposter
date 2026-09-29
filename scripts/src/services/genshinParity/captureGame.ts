@@ -25,10 +25,11 @@ export const captureGame = async (name: string, seconds?: number): Promise<void>
     `gfxcapture=window_exe=${GAME_EXECUTABLE_NAME}:capture_cursor=0:max_framerate=${RECORD_FRAME_RATE},hwdownload,format=bgra`,
   ];
   const path = join(CAPTURES_DIRECTORY, seconds === undefined ? `${name}.png` : `${name}.mkv`);
-  await runFfmpeg(
-    seconds === undefined
-      ? [...input, "-frames:v", "1", path]
-      : [...input, "-t", String(seconds), ...RECORD_ENCODING, path],
-  );
+  if (seconds === undefined) await runFfmpeg([...input, "-frames:v", "1", path]);
+  else
+    await runFfmpeg(
+      [...input, "-t", String(seconds), ...RECORD_ENCODING, path],
+      Temporal.Duration.from({ seconds }).total("milliseconds"),
+    );
   console.log(path);
 };
