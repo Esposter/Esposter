@@ -2,6 +2,7 @@ import type { SpeakerTensors } from "genshin-persona/src/models/SpeakerTensors.t
 import type { VoiceSynthesizer } from "genshin-persona/src/models/VoiceSynthesizer.ts";
 
 import { MODELS_DIRECTORY } from "#src/services/voiceMatch/constants";
+import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { PersonaReferenceMap } from "genshin-persona/src/generated/PersonaReferenceMap.ts";
 import { VoiceLanguage } from "genshin-persona/src/models/VoiceLanguage.ts";
 import { createClipDecoder } from "genshin-persona/src/services/createClipDecoder.ts";
@@ -9,7 +10,6 @@ import { createVoiceSynthesizer } from "genshin-persona/src/services/createVoice
 import { readReferenceClip } from "genshin-persona/src/services/readReferenceClip.ts";
 import { readVoiceDevice } from "genshin-persona/src/services/readVoiceDevice.ts";
 import { readVoiceRuntime } from "genshin-persona/src/services/readVoiceRuntime.ts";
-import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { assert, beforeAll, describe, test } from "vitest";
 
 // The plugin's synthesizer timed through the runner's own copy of the engine's runtime, which is why the bench

@@ -16,8 +16,8 @@ import {
 import { getCosineSimilarity } from "#src/services/voiceMatch/getCosineSimilarity";
 import { getMeanEmbedding } from "#src/services/voiceMatch/getMeanEmbedding";
 import { readReferenceCandidates } from "#src/services/voiceMatch/readReferenceCandidates";
-import { resampleClip } from "genshin-persona/src/services/resampleClip.ts";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { resampleClip } from "genshin-persona/src/services/resampleClip.ts";
 
 // One character's reference and its likeness. The profile is the centre of their lines' embeddings; the reference
 // Is the line nearest it among those long and clean enough to condition a clone on — the most typically them —

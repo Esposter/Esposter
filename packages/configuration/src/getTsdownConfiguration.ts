@@ -106,7 +106,7 @@ export const getTsdownConfiguration = ({
         // Against all of them. `esm-only` rather than `node16`: every package here is `"type": "module"` with
         // No CJS output, and the stricter profiles fail on a dual-format contract we do not offer. A stylesheet
         // Export has no declarations to resolve, so it is no entrypoint of theirs.
-        attw: { excludeEntrypoints: [/\.css$/], level: "error", profile: "esm-only" },
+        attw: { excludeEntrypoints: [/\.css$/u], level: "error", profile: "esm-only" },
         // Publishability is a build-time error rather than a release-time surprise: this fails a build whose
         // Manifest points at a file it does not ship.
         publint: { level: "error" },

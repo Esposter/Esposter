@@ -5,13 +5,13 @@ import { MODELS_DIRECTORY, PERSONA_REFERENCE_MAP_PATH } from "#src/services/voic
 import { createSpeakerEmbedder } from "#src/services/voiceMatch/createSpeakerEmbedder";
 import { getPersonaReferenceMapSource } from "#src/services/voiceMatch/getPersonaReferenceMapSource";
 import { measureCharacterReference } from "#src/services/voiceMatch/measureCharacterReference";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { PersonaReferenceMap } from "genshin-persona/src/generated/PersonaReferenceMap.ts";
 import { DEFAULT_LANGUAGE } from "genshin-persona/src/services/constants.ts";
 import { createClipDecoder } from "genshin-persona/src/services/createClipDecoder.ts";
 import { createVoiceSynthesizer } from "genshin-persona/src/services/createVoiceSynthesizer.ts";
 import { readRoster } from "genshin-persona/src/services/readRoster.ts";
 import { readVoiceRuntime } from "genshin-persona/src/services/readVoiceRuntime.ts";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { writeFileSync } from "node:fs";
 
 // The reference selection: for every roster character — or the ones named — in one dub, the story line that best
