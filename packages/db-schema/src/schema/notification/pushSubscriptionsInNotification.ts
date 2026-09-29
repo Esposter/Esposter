@@ -4,7 +4,7 @@ import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { notificationSchema } from "#src/schema/notification/notificationSchema";
 import { index, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
 
-// Public schema rather than messageSchema: a row is per-session and per-user with nothing message-shaped about
+// The notification schema rather than messageSchema: a row is per-session and per-user with nothing message-shaped about
 // It, and every notification type — a resource operation, a todo reminder — resolves its devices through this
 // Table. Filed under the message domain, none of them could reach it without importing that domain.
 export const pushSubscriptionsInNotification = pgTable(
