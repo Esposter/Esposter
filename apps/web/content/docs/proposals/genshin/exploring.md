@@ -46,13 +46,10 @@ flowchart TD
 
 ## Key files
 
-| File                                                | Role after the change                               |
-| :-------------------------------------------------- | :-------------------------------------------------- |
-| `apps/web/app/components/AgentConsole/Joystick.vue` | The touch joystick the free camera reuses on phones |
-
 New files:
 
 ```text
+apps/web/app/components/Genshin/Joystick.vue
 apps/web/app/components/Genshin/FreeCamera.vue
 apps/web/app/components/Genshin/JumpList.vue
 apps/web/app/components/Genshin/MapOverlay.vue
@@ -61,7 +58,7 @@ apps/web/app/components/Genshin/ClockControl.vue
 
 ## Notes
 
-- **The joystick moves to a shared home.** It is written for the agent console today. The free camera's use makes it shared, so it moves out of the console's folder in the same change rather than being copied.
+- **The touch joystick is written anew.** The voxel world's went with it, and nothing on the Genshin world walks by touch yet, so the free camera is its first consumer.
 
 ## Sources
 
