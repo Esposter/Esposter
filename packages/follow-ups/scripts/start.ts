@@ -1,10 +1,12 @@
 import { getRepository } from "#src/services/getRepository";
 import { getSessionContext } from "#src/services/getSessionContext";
+import { registerQuietExit } from "#src/services/registerQuietExit";
 import { spawnSync } from "node:child_process";
 
 // The session id, the repository, the time zone and the configured list, put into the session's context: a tool call
 // Cannot see which session made it, but every hook's input names the session. A session start is never blocked by
 // This, so anything missing or unreadable adds nothing
+registerQuietExit();
 let input = "";
 process.stdin.setEncoding("utf8");
 for await (const chunk of process.stdin) input += chunk;
