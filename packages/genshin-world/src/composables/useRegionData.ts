@@ -1,4 +1,3 @@
-import { useLoop, useTres } from "@tresjs/core";
 import type { RegionData } from "#src/models/world/RegionData";
 import type { Vector3 } from "three";
 
@@ -6,6 +5,7 @@ import { regionDataSchema } from "#src/models/world/RegionData";
 import { REGION_REACH, REGION_RECHECK_DISTANCE } from "#src/services/constants";
 import { catalogue } from "#src/services/world/catalogue";
 import { getResultAsync } from "@esposter/shared";
+import { useLoop, useTres } from "@tresjs/core";
 import { computeOutlineDistance } from "genshin-engine";
 
 // Each region's data is fetched when the camera comes within reach of any of its areas' outlines, and released when it

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useLoop, useTres } from "@tresjs/core";
 import type { FogUniforms, LightUniforms, SkyUniforms, WaterUniforms } from "genshin-engine";
 
 import { WATER_SURFACE_SIZE } from "#src/services/constants";
+import { useLoop, useTres } from "@tresjs/core";
 import { createUnderwaterFogState, createWaterMaterial, updateUnderwaterFog } from "genshin-engine";
 import { Mesh, PlaneGeometry, Vector3 } from "three";
 

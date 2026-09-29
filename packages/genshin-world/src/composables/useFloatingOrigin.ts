@@ -1,5 +1,5 @@
-import { useLoop, useTres } from "@tresjs/core";
 import { ORIGIN_SHIFT_STEP, ORIGIN_SHIFT_THRESHOLD } from "#src/services/constants";
+import { useLoop, useTres } from "@tresjs/core";
 import { computeOriginShift } from "genshin-engine";
 import { Vector3 } from "three";
 

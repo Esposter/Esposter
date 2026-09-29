@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Statue from "#src/components/world/landmark/Statue.vue";
-import Tree from "#src/components/world/landmark/Tree.vue";
 import type { RegionData } from "#src/models/world/RegionData";
 import type { LightUniforms, WindUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
 
+import Statue from "#src/components/world/landmark/Statue.vue";
+import Tree from "#src/components/world/landmark/Tree.vue";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 
 interface Props {

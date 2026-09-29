@@ -1,4 +1,3 @@
-import type { Ref } from "vue";
 import type {
   FogUniforms,
   GameClock,
@@ -12,6 +11,7 @@ import type {
   WindUniforms,
 } from "genshin-engine";
 import type { Data3DTexture, DataTexture } from "three";
+import type { Ref } from "vue";
 
 export interface GenshinTuningOptions {
   fogUniforms: FogUniforms;

@@ -1,8 +1,8 @@
-import { useLoop, useTres } from "@tresjs/core";
 import type { SkyOptions } from "#src/models/SkyOptions";
 import type { GameClock } from "genshin-engine";
 
 import { CLOUD_DRIFT_PER_WIND } from "#src/services/constants";
+import { useLoop, useTres } from "@tresjs/core";
 import {
   advanceGameClock,
   applySkyState,

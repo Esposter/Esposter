@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { QualityTier } from "genshin-engine";
+
 import Grass from "#src/components/world/Grass.vue";
 import Landmarks from "#src/components/world/landmark/Landmarks.vue";
 import Terrain from "#src/components/world/Terrain.vue";
@@ -8,9 +10,6 @@ import { useGenshinTuning } from "#src/composables/useGenshinTuning";
 import { usePostPipeline } from "#src/composables/usePostPipeline";
 import { useRegionData } from "#src/composables/useRegionData";
 import { useSky } from "#src/composables/useSky";
-import { useTres } from "@tresjs/core";
-import type { QualityTier } from "genshin-engine";
-
 import {
   CLOUD_COVERAGE,
   FOG_DENSITY,
@@ -46,6 +45,7 @@ import {
   WINDRISE_TERRAIN_OPTIONS,
 } from "#src/services/windrise/constants";
 import { getWindriseHeight } from "#src/services/windrise/getWindriseHeight";
+import { useTres } from "@tresjs/core";
 import {
   createFogUniforms,
   createGodraysLight,

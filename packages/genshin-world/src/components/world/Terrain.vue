@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useLoop, useTres } from "@tresjs/core";
 import type { TerrainTileRequest } from "#src/models/TerrainTileRequest";
 import type { LightUniforms, TerrainOptions, TerrainTile, WaterUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
@@ -10,6 +9,7 @@ import {
   TERRAIN_WORKER_COUNT,
   TILE_SELECTION_CAPACITY,
 } from "#src/services/constants";
+import { useLoop, useTres } from "@tresjs/core";
 import {
   computeTerrainIndices,
   createTerrainMaterial,

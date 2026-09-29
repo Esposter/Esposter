@@ -1,5 +1,5 @@
-import type { MaybeRefOrGetter } from "vue";
 import type { PostPipeline, PostPipelineOptions, QualityTier } from "genshin-engine";
+import type { MaybeRefOrGetter } from "vue";
 
 import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
 import { watchImmediate } from "@vueuse/core";
