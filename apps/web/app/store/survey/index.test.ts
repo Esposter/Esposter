@@ -8,7 +8,6 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { useSurveyStore } from "@/store/survey";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const setupStore = async () => {
@@ -30,7 +29,6 @@ describe(useSurveyStore, () => {
   let saveResourceContent: ReturnType<typeof vi.fn<(options: { input: { content: unknown } }) => ResourceInResource>>;
 
   beforeEach(async () => {
-    setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     content = { model, settings: surveySettingsSchema.parse({}) };
     saveResourceContent = vi.fn<(options: { input: { content: unknown } }) => ResourceInResource>(() =>

@@ -64,8 +64,7 @@ pulumi stack select prod
 Run from `apps/infra/`:
 
 ```bash
-pnpm build             # regenerate the ctix barrel and compile the Pulumi program to dist/
-pnpm export:gen        # regenerate src/index.ts alone, via the shared generate-exports bin
+pnpm build             # regenerate the barrel and compile the Pulumi program to dist/
 pnpm infra:preview     # preview Pulumi changes
 pnpm infra:refresh     # refresh Pulumi state from Azure
 pnpm infra:up          # apply Pulumi changes

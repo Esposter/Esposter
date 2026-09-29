@@ -3,8 +3,7 @@ import type { InviteInMessage } from "@esposter/db-schema";
 
 import { useInviteStore } from "@/store/message/room/invite";
 import { INVITE_ID_LENGTH } from "@esposter/db-schema";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useInviteStore, () => {
   const roomId = crypto.randomUUID();
@@ -19,10 +18,6 @@ describe(useInviteStore, () => {
     userId: crypto.randomUUID(),
     uses: 0,
   };
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   test("seeds", () => {
     expect.hasAssertions();

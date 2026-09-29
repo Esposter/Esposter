@@ -8,7 +8,6 @@ import { useAlertStore } from "@/store/alert";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 interface MockSessionValue {
@@ -35,7 +34,6 @@ describe(useFriendRequestStore, () => {
   const secondFriendRequest = createFriendRequest(second);
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     useSession.mockReturnValue(ref<MockSessionValue>({ data: undefined }));
   });
 

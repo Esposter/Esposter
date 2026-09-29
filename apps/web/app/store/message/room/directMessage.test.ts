@@ -6,8 +6,7 @@ import { useAlertStore } from "@/store/alert";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 import { RoomType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useDirectMessageStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -15,10 +14,6 @@ describe(useDirectMessageStore, () => {
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
   const third = createUser({ name: "third" });
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // Each participant is its own target, so removals overlap: the failing one is rolled back into a list the
   // Successful one has already shortened, and an index captured before that would put it back in the wrong place.

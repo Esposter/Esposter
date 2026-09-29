@@ -8,7 +8,6 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
 import { ResourceType } from "@esposter/db-schema";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useWebpageEditorStore, () => {
@@ -23,7 +22,6 @@ describe(useWebpageEditorStore, () => {
   let saveResourceContent: ReturnType<typeof vi.fn<() => ResourceInResource>>;
 
   beforeEach(async () => {
-    setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     content = new WebpageEditor();
     savedContentIds = [];

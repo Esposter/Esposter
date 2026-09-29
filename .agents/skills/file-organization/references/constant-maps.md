@@ -21,7 +21,7 @@ the service that builds its entries, which inverts the layering.
 `FooConfigurationMap.ts` exports only `FooConfigurationMap`. Never colocate two independent maps in one file.
 
 **A map nothing exports stays in the file that reads it.** The rule above places an _exported_ map; under
-`packages/*/src`, extracting a module-private one is not a move but a publication, because `ctix` barrels every
+`packages/*/src`, extracting a module-private one is not a move but a publication, because the generated barrel lists every
 export in the tree and the package's public API grows by a wiring detail nobody outside can use. The map is at
 the top of its consumer's file, above the runtime logic, like any other local declaration.
 

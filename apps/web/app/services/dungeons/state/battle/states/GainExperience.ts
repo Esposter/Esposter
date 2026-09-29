@@ -3,7 +3,6 @@ import type { State } from "@/models/dungeons/state/State";
 import type { PhaserEvents } from "@/models/phaser/PhaserEvents";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { getSynchronizedFunction } from "@esposter/shared";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { getExperienceGain } from "@/services/dungeons/monster/getExperienceGain";
 import { getLevelExperience } from "@/services/dungeons/monster/getLevelExperience";
@@ -16,6 +15,7 @@ import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
+import { getSynchronizedFunction } from "@esposter/shared";
 
 export const GainExperience: State<StateName.GainExperience> = {
   name: StateName.GainExperience,

@@ -6,7 +6,6 @@ import { useDataStore } from "@/store/message/data";
 import { usePinStore } from "@/store/message/pin";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(usePinStore, () => {
@@ -16,7 +15,6 @@ describe(usePinStore, () => {
   const createMessage = () => createMessageEntity({ message, roomId, type: MessageType.Message, userId });
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     setCurrentRoomId(roomId);
   });
 

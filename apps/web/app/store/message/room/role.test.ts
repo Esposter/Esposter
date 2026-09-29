@@ -3,18 +3,13 @@ import { createRoomRole } from "@/services/message/member/createRoomRole.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoleStore } from "@/store/message/room/role";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useRoleStore, () => {
   const roomId = crypto.randomUUID();
   const { trpcMsw } = setupMswTrpc();
   const first = createRoomRole({ name: "first", position: 1, roomId });
   const second = createRoomRole({ name: "second", position: 2, roomId });
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // Every role is its own target, so a settings panel's writes overlap and a rejected edit unwinds only its own
   test("restores only the role whose edit was rejected", async () => {

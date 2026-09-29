@@ -4,10 +4,10 @@ import type { PaginationCacheOptions } from "@/models/cache/indexedDb/Pagination
 import type { PartitionKey } from "@/models/cache/indexedDb/PartitionKey";
 import type { IndexNames } from "idb";
 
-import { getSynchronizedFunction } from "@esposter/shared";
 import { getCachedItems } from "@/services/cache/indexedDb/getCachedItems";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
+import { getSynchronizedFunction } from "@esposter/shared";
 
 export const usePaginationCache = <
   TStore extends IndexedDbStoreName,

@@ -2,7 +2,6 @@
 import type { RectangleConfiguration } from "vue-phaserjs";
 
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
-import { getSynchronizedFunction, getResultAsync, noop } from "@esposter/shared";
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import {
   INITIAL_SETTINGS_VALUE_POSITION,
@@ -16,6 +15,7 @@ import {
 } from "@/services/dungeons/scene/settings/constants";
 import { getSettingsOptionY } from "@/services/dungeons/scene/settings/getSettingsOptionY";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
+import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 import { Input } from "phaser";
 import { Rectangle, Text } from "vue-phaserjs";
 

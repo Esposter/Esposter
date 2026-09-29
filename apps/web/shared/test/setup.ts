@@ -87,31 +87,31 @@ vi.mock("nitropack/runtime", () => ({
 // Rather than duplicated per file. It must be a beforeEach, not a beforeAll: the nuxt env registers its own
 // `beforeAll(setupNuxt)` after this setup file, and beforeAll order is registration order, so a beforeAll here
 // Runs before the app is built; every beforeEach runs after all beforeAlls, so the app is ready by then. The
-// Module-scoped flag makes it fire only on the first test of the worker, no-op thereafter. Node-env files
+// Module-scoped flag keeps the warm-up to the first test of the worker. Node-env files
 // (`checkIsServer()` — no `window`) skip it — they never mount, and importing the nuxt runtime there would break them.
 // Plain happy-dom files (a `window` but no Nuxt app) skip it via the env's own marker — mounting there would crash.
 let isNuxtRuntimeWarm = false;
 // oxlint-disable-next-line no-underscore-dangle -- marker property name is owned by @nuxt/test-utils
 if (!checkIsServer() && (window as { __NUXT_VITEST_ENVIRONMENT__?: true }).__NUXT_VITEST_ENVIRONMENT__)
   beforeEach(async () => {
-    if (isNuxtRuntimeWarm) return;
-    isNuxtRuntimeWarm = true;
-    const [{ mountSuspended }, { useRouter }, { defineComponent, h }] = await Promise.all([
-      import("@nuxt/test-utils/runtime"),
-      import("nuxt/app"),
-      import("vue"),
-    ]);
-    (await mountSuspended(defineComponent({ render: () => h("div") }))).unmount();
-    // The app's initial navigation settles on its own schedule and replaces the route when it lands, so a suite that
-    // Writes route params before then loses them to it — the first test's reads, whenever an answer arrives later than
-    // That navigation, find no route id. Waiting for it here puts every test after it
-    await useRouter().isReady();
-    // The head renders to the DOM on a timer after the mount, and a plugin's `dom:rendered` hook calls a store action
-    // There, which makes the app's own pinia the active one — landing inside the first test, it takes over from the
-    // Pinia the suite set, so that test's stores split across two. Draining that timer here renders it first
-    await new Promise((resolve) => {
-      setTimeout(resolve, 0);
-    });
+    const [{ mountSuspended }, { useNuxtApp, useRouter }, { setActivePinia }, { defineComponent, h }] =
+      await Promise.all([import("@nuxt/test-utils/runtime"), import("nuxt/app"), import("pinia"), import("vue")]);
+    if (!isNuxtRuntimeWarm) {
+      isNuxtRuntimeWarm = true;
+      (await mountSuspended(defineComponent({ render: () => h("div") }))).unmount();
+      // The app's initial navigation settles on its own schedule and replaces the route when it lands, so a suite that
+      // Writes route params before then loses them to it — the first test's reads, whenever an answer arrives later
+      // Than that navigation, find no route id. Waiting for it here puts every test after it
+      await useRouter().isReady();
+    }
+    // One Pinia per environment — the app's own, emptied before every test. Every store action re-activates the Pinia
+    // Its store belongs to, and the app calls actions on its own stores whenever it likes (a plugin's head-render or
+    // `afterEach` hook), so a suite holding a second Pinia of its own reads the app's from that moment on
+    const { $pinia } = useNuxtApp();
+    // oxlint-disable-next-line no-underscore-dangle -- Pinia's store registry has no public accessor, and `$dispose` removes each entry
+    for (const store of [...$pinia._s.values()]) store.$dispose();
+    $pinia.state.value = {};
+    setActivePinia($pinia);
   });
 
 // A component a test mounts is unmounted after it, so nothing it teleported, listened to or scheduled reaches the next

@@ -5,8 +5,7 @@ import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMa
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useStorageStore } from "@/store/storage";
 import { StorageTier } from "@esposter/db-schema";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe(useStorageStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -15,10 +14,6 @@ describe(useStorageStore, () => {
     quotaBytes: StorageTierQuotaMap[StorageTier.Free],
     tier: StorageTier.Free,
   };
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // The meter is remounted on every navigation inside the explorer, because the layout it lives in is declared
   // Per page — so the number is read once and held here, rather than the bar blanking and re-reading per page

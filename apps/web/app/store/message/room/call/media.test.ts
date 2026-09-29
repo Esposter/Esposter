@@ -1,14 +1,9 @@
 // @vitest-environment nuxt
 import { useMediaStore } from "@/store/message/room/call/media";
 import { getMockSession } from "@@/server/trpc/context.test";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useMediaStore, () => {
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
-
   test("setRemoteScreenShareStream stores the remote screen share stream", () => {
     expect.hasAssertions();
 

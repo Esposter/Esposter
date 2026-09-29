@@ -47,9 +47,6 @@ export const DOCS_API_DIRECTORY: string = `${DOCS_DIRECTORY}/api`;
 export const DISTRIBUTION_DIRECTORY = "dist";
 
 export const KIBIBYTE: number = 2 ** 10;
-// Every package build — the bundle, the declarations and the ctix barrel — reads this one tsconfig, so the
-// Program that emits a package is always the program its source was typechecked with.
-export const BUILD_TSCONFIG = "tsconfig.build.json";
 // Shared by the SFC build and the SFC test run, so a component cannot compile against one set of ambient
 // Imports and be tested against another.
 export const VUE_AUTO_IMPORTS = ["pinia", "vue"] as const;
@@ -63,17 +60,10 @@ export const VUE_AUTO_IMPORTS = ["pinia", "vue"] as const;
 // Ugliness if the condition could reach a stranger, and it cannot — tsdown writes a `dist`-only map into
 // `publishConfig.exports`, so nothing published carries a source arm for someone else's resolver to match.
 export const SOURCE_CONDITION = "source";
-// The two ctix configs, which live in this package because every package's barrel is generated from them. The
-// TypeScript one is what a package gets by default; the Vue one runs ahead of it in the single package that
-// Ships `.vue` files, writing the component barrel the TypeScript pass then reaches.
-export const CTIX_TS_CONFIGURATION = ".ctirc-ts";
-
-export const CTIX_VUE_CONFIGURATION = ".ctirc-vue";
 // A file that is neither listed by a barrel nor compiled by a build program: a test, a type test or a benchmark.
-// Two configs define it and they have to agree — the ctix configs exclude it from the barrel, and
-// `tsconfig.build.base.json` excludes it from the program the barrel is generated against. Both are JSON with no
-// Import mechanism, so they repeat the literal and `constants.test.ts` is the only thing holding the copies to
-// This one. Drift is silent: a suffix ctix stops excluding puts a test file in the published barrel.
+// The barrel generator reads this list, and `tsconfig.build.base.json` repeats it as the excludes of the one
+// Declaration program loaded from a tsconfig's file list — JSON with no import mechanism, so `constants.test.ts` is
+// The only thing holding that copy to this one. Drift is silent: that program compiles every test again.
 export const NON_SOURCE_SUFFIXES = [".bench.ts", ".test-d.ts", ".test.ts"] as const;
 // `pnpm`'s workspace manifest, at the repository root — the one list of members every tool that runs across the
 // Workspace derives its own from, since a copy is a member the tool silently stops covering the day one is added.

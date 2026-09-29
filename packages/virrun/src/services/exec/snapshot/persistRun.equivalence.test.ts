@@ -74,7 +74,7 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
   );
 
   test(
-    "a newly created nested file under a new directory is flushed (the ctix barrel / db:gen migration shape)",
+    "a newly created nested file under a new directory is flushed (the generated barrel / db:gen migration shape)",
     async () => {
       expect.hasAssertions();
 

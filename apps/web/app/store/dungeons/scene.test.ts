@@ -1,14 +1,9 @@
 // @vitest-environment nuxt
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { useSceneStore } from "@/store/dungeons/scene";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useSceneStore, () => {
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
-
   // Using an item from the monster party scene unwinds every in-between scene back to the battle at once
   test("pops every key stacked above the one it unwinds to, top first", () => {
     expect.hasAssertions();

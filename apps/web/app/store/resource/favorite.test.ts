@@ -7,17 +7,12 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useCacheStore } from "@/store/cache";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe(useFavoriteStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const resource = createResourceListItem();
   const otherResource = createResourceListItem();
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // Two tabs on the same list: the second still holds the pre-star rows, so its optimistic flip stars the row
   // While the server's delete-then-insert finds the star the first tab set, removes it and answers false

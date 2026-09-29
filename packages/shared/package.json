@@ -47,7 +47,6 @@
   },
   "scripts": {
     "build": "tsdown",
-    "export:gen": "generate-exports",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "eslint .",

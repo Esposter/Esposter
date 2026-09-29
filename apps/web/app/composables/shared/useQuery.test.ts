@@ -1,16 +1,11 @@
 // @vitest-environment nuxt
-import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { useAlertStore } from "@/store/alert";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { waitForSynchronizedFunctions } from "@esposter/shared";
+import { describe, expect, test } from "vitest";
 
 describe(useQuery, () => {
   const result = "result";
   const rejection = new Error(" ");
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   test("populates data with the resolved result", async () => {
     expect.hasAssertions();

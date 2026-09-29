@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
-import { getSynchronizedFunction } from "@esposter/shared";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useVisualStore } from "@/store/dashboard/visual";
+import { getSynchronizedFunction } from "@esposter/shared";
 
 interface Props {
   id: Visual["id"];

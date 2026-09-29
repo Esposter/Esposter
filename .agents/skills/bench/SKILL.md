@@ -26,7 +26,7 @@ A reporter writes each bench file's results to colocated `*.bench.{json,md}` you
 
 - **The number a session would quote, compare or re-check lives in a committed `*.bench.md`, and nowhere else** — an ad-hoc timing only locates where a run's time goes before a bench is written (`references/speed-gate.md`).
 - **The bench is the speed gate** — never a `*.speed.test.ts` asserting a ratio in the unit suite (`references/speed-gate.md`).
-- **Colocate `*.bench.ts` next to the source**, like `*.test.ts`. ctix and the build exclude them; Vitest's `bench` glob picks them up and `vitest run` ignores them, so the two never collide.
+- **Colocate `*.bench.ts` next to the source**, like `*.test.ts`. The barrel and the build exclude them; Vitest's `bench` glob picks them up and `vitest run` ignores them, so the two never collide.
 - **One `test()` per group, one `bench.compare()` inside it.** The test's full name is the markdown section title, so a `describe` around it nests exactly as it reads: `describe(Command, () => test("insert 100 rows", …))` renders `## Command > insert 100 rows`. A second `compare` in the same test renders a second table under a title of its own, so it has to earn one.
 - **Pass `BENCHMARK_RUN_OPTIONS` (`@esposter/shared-node/bench`) as the last `compare` argument.** It zeroes the wall-clock budget and names the iteration count, which is what keeps a committed sample count machine-stable rather than a function of the host. A heavier group spreads its own counts on top: `{ ...BENCHMARK_RUN_OPTIONS, iterations: 3, warmupIterations: 0 }`.
 - **A mutating op rebuilds its fixture inside the callback, fresh all the way down**; a read-only input is hoisted to module scope (`references/fixtures.md`).

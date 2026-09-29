@@ -1,7 +1,6 @@
 // @vitest-environment nuxt
 import { AGENT_CONSOLE_ID } from "@/services/agentConsole/constants";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
-import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(useAgentConsolePanelStore, () => {
@@ -9,7 +8,6 @@ describe(useAgentConsolePanelStore, () => {
   const composer = document.createElement("textarea");
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     sheet.id = AGENT_CONSOLE_ID;
     sheet.append(composer);
     document.body.append(sheet);

@@ -52,7 +52,6 @@
   },
   "scripts": {
     "build": "tsdown",
-    "export:gen": "generate-exports vue",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "eslint .",

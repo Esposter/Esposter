@@ -68,7 +68,7 @@ file, `constants.ts` excepted. The next pass that writes it writes the oxlint pl
 
 ## Exclusions
 
-- Generated barrels (`index.ts` from `ctix`) and `snapshot.json` — machine state.
+- Generated barrels (the generated `index.ts`) and `snapshot.json` — machine state.
 - Literals a postinstall-evaluated or JSON config must repeat, which the skill names as the one sanctioned duplication.
 - Two exports sharing module-private state through closure — a pending set, a cached promise, a code set, a
   dispatch map, the four names `initTRPC` hands out. One-export-per-file cannot reach them without making that

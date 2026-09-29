@@ -8,7 +8,6 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { RoutePath } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useDeleteResources, () => {
@@ -22,7 +21,6 @@ describe(useDeleteResources, () => {
   });
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     trpcMsw.resource.deleteResources.mutation(() => []);
   });
 

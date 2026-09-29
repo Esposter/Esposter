@@ -15,7 +15,6 @@ import {
   MENTION_TYPE_ATTRIBUTE,
 } from "@esposter/shared";
 import { getMockSasUrl } from "azure-mock";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 const createMention = (id: string) =>
@@ -41,7 +40,6 @@ describe(useMessageHtml, () => {
     `<span ${CUSTOM_EMOJI_ID_ATTRIBUTE}="${id}" ${CUSTOM_EMOJI_NAME_ATTRIBUTE}="${name}">:${name}:</span>`;
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     // The rewrite reads the room on screen's emoji set, which is the room these messages are rendered in
     setCurrentRoomId(roomId);
   });

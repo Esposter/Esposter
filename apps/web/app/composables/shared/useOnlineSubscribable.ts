@@ -4,7 +4,7 @@ import type { OnlineSubscribableValues } from "@/models/shared/OnlineSubscribabl
 import type { Promisable } from "type-fest";
 import type { MultiWatchSources, WatchSource } from "vue";
 
-import { getSynchronizedFunction, getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export function useOnlineSubscribable<const TSources extends readonly OnlineSubscribableSource[]>(
   source: TSources,

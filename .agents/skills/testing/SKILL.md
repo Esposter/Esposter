@@ -45,7 +45,7 @@ Environment and running:
 
 - `references/test-environment.md` — when a test needs a DOM or the nuxt runtime, or tests a composable with lifecycle hooks.
 - `references/nuxt-environment-and-mounting.md` — when a test mounts a component: a routed link, a mount attached to the body, a dispatched event.
-- `references/mounted-stores.md` — when a test seeds a store a mounted component reads, room-scoped stores included.
+- `references/mounted-stores.md` — when a test seeds a store a mounted component reads, room-scoped stores included, or a suite reaches for its own Pinia.
 - `references/platform-and-bundle-tests.md` — when a suite is skipped on some hosts, or its output depends on the host.
 - `references/bundle-size.md` — when a size snapshot fails or moves, or a new library package needs one.
 - `references/running-the-suite.md` — when narrowing a run with `-t` or `-u`, or reading a failure only the full parallel run produces.

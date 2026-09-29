@@ -5,17 +5,12 @@ import { useBlockStore } from "@/store/message/user/block";
 import { useFriendStore } from "@/store/message/user/friend";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useBlockStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // Each blocked user is its own target, so two blocks overlap on the friend list and the failing one must put
   // Back only the friend it removed

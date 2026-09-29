@@ -8,7 +8,7 @@ outputs:
     description: The package-builds cache key — a sha256 over every tracked file `pnpm build:packages` could read
     value: ${{ steps.keys.outputs.package-builds-key }}
   package-builds-paths:
-    # `*/dist` is the build output and `*/src/**/index.ts` the ctix-generated barrels (gitignored). Libraries
+    # `*/dist` is the build output and `*/src/**/index.ts` the generated barrels (gitignored). Libraries
     # only — an app's `dist` is deploy payload nothing imports — and their common ancestor `packages` is where
     # the artifact unpacks.
     description: The paths the package-builds cache entry and its artifact hold — every library's `dist` and the generated barrels

@@ -4,7 +4,6 @@ import type { ComputedRef, Ref } from "vue";
 
 import { useNotificationStore } from "@/store/notification";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useNotificationStore, () => {
@@ -26,7 +25,6 @@ describe(useNotificationStore, () => {
   let unreadCount: ComputedRef<number>;
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     notificationStore = useNotificationStore();
     ({ notifications, snackbarNotification, unreadCount } = storeToRefs(notificationStore));
   });

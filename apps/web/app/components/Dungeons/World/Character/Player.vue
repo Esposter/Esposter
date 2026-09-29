@@ -2,7 +2,6 @@
 import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
 import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
 import { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/SpritesheetKey";
-import { getSynchronizedFunction, getResultAsync, noop } from "@esposter/shared";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import { PlayerWalkingAnimationMapping } from "@/services/dungeons/scene/world/constants";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
@@ -11,6 +10,7 @@ import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 import { Direction } from "grid-engine";
 import { Cameras } from "phaser";
 import { onCreate, onNextTick, onShutdown, useInjectSceneKey } from "vue-phaserjs";

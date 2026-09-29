@@ -5,7 +5,6 @@ import { useDataStore } from "@/store/message/data";
 import { useReplyStore } from "@/store/message/input/reply";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useReplyStore, () => {
@@ -14,7 +13,6 @@ describe(useReplyStore, () => {
   const userId = crypto.randomUUID();
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     setCurrentRoomId(roomId);
   });
 

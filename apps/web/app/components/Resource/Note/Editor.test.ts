@@ -7,7 +7,6 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { Editor } from "@tiptap/vue-3";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("resourceNoteEditor", () => {
@@ -15,7 +14,6 @@ describe("resourceNoteEditor", () => {
   const resourceId = crypto.randomUUID();
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     trpcMsw.resource.readResource.query(() => ({
       ...createResourceListItem({ id: resourceId, type: ResourceType.Note }),

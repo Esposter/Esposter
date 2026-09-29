@@ -4,14 +4,9 @@ import type { Dataset } from "#shared/models/dataset/Dataset";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
 import { useResourceStore } from "@/store/resource";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useEmailExportDialogStore, () => {
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
-
   // The dataset is read after an await, so the reader can have opened another email by the time it is staged —
   // Confirmed there, one email's audience would be exported into the next one's template
   test("stages a capped dataset only for the email the export was started on", () => {

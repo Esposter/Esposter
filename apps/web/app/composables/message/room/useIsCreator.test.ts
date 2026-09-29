@@ -2,7 +2,6 @@
 import { useIsCreator } from "@/composables/message/room/useIsCreator";
 import { useSession } from "@/services/auth/authClient.test";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -12,7 +11,6 @@ describe(useIsCreator, () => {
   const userId = crypto.randomUUID();
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     useSession.mockImplementation((fetcher?: unknown) =>
       fetcher ? { data: ref({ user: { id: userId } }) } : ref({ data: { user: { id: userId } } }),
     );

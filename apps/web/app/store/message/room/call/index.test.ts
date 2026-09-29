@@ -11,7 +11,6 @@ import { getMockSession } from "@@/server/trpc/context.test";
 import { AdminActionType } from "@esposter/db-schema";
 import { RoutePath, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -26,10 +25,6 @@ describe(useCallStore, () => {
   const imagePath = "imagePath";
   const roomId = crypto.randomUUID();
   const threadRootRowKey = crypto.randomUUID();
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // The camera flag is a participant row like any other, so the primitive unwinds and reports its rejection.
   // Rethrowing lets a rejected server write cancel the local work it is composed with — the picked background

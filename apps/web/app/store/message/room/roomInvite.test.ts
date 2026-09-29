@@ -6,8 +6,7 @@ import { inviteCreateHooks } from "@/services/message/room/invite/inviteCreateHo
 import { createUser } from "@/services/message/user/createUser.test";
 import { useRoomInviteStore } from "@/store/message/room/roomInvite";
 import { INVITE_ID_LENGTH } from "@esposter/db-schema";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useRoomInviteStore, () => {
   const roomId = crypto.randomUUID();
@@ -29,10 +28,6 @@ describe(useRoomInviteStore, () => {
   const ownInvite = createRoomInvite("a");
   const replacementInvite = createRoomInvite("b");
   const otherMembersInvite = createRoomInvite("c", otherUser);
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // Every other member's row stays, and a room nobody has opened the panel for is left unread rather than seeded
   test("files a created link into the list that was read, replacing that member's own row", async () => {

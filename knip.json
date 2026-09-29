@@ -12,7 +12,6 @@
       "ignore": ["public/**", "shared/generated/**"],
       "ignoreDependencies": ["@iconify-json/.+", "@takumi-rs/core", "@vueuse/router", "vue-tsc"]
     },
-    "packages/configuration": { "ignoreDependencies": ["ctix"] },
     "packages/follow-ups": { "entry": ["scripts/**/*.ts"] },
     "packages/genshin-persona": { "entry": ["scripts/**/*.ts", "src/personaCards/**/*.ts", "src/services/**/*.ts"] },
     "packages/trpc-nuxt-module": { "entry": ["test/fixture/nuxt.config.ts"] },

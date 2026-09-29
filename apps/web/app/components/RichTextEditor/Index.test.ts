@@ -2,14 +2,9 @@
 import RichTextEditor from "@/components/RichTextEditor/Index.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { Editor } from "@tiptap/vue-3";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe("richTextEditor", () => {
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
-
   test("tears the editor down once on unmount", async () => {
     expect.hasAssertions();
 

@@ -1,10 +1,10 @@
-import { getSynchronizedFunction, getResult, getResultAsync, noop } from "@esposter/shared";
 import {
   TODO_COMPLETION_CHIME_FREQUENCIES_HZ,
   TODO_COMPLETION_CHIME_GAIN,
   TODO_COMPLETION_CHIME_NOTE_GAP_SECONDS,
   TODO_COMPLETION_CHIME_RING_SECONDS,
 } from "@/services/resource/constants";
+import { getResult, getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 const closeAudioContext = getSynchronizedFunction((audioContext: AudioContext) =>
   getResultAsync(() => audioContext.close()).match(noop, console.error),

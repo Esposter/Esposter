@@ -1,12 +1,12 @@
 import type { State } from "@/models/dungeons/state/State";
 
-import { getSynchronizedFunction } from "@esposter/shared";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { createPhaserSubscriptions } from "@/services/phaser/createPhaserSubscriptions";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { prettify } from "@/util/text/prettify";
+import { getSynchronizedFunction } from "@esposter/shared";
 
 const { subscribe, unsubscribeAll } = createPhaserSubscriptions();
 

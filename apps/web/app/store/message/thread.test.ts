@@ -11,7 +11,6 @@ import { useThreadStore } from "@/store/message/thread";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { noop, Operation } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 // The store reaches the layout store, which reads the library's breakpoints — an injection that needs a component
@@ -28,7 +27,6 @@ describe(useThreadStore, () => {
     createMessageEntity({ message, replyRowKey, roomId, type: MessageType.Message, userId });
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     // Every read that returns replies reads their authors, the root they quote and their reactions too, which no
     // Test here is about
     trpcMsw.room.readMembersByIds.query(() => []);

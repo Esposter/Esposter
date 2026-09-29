@@ -1,9 +1,9 @@
 import type { Promisable } from "type-fest";
 
-import { getSynchronizedFunction, getResultAsync, noop } from "@esposter/shared";
 import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
 import { useResourceStore } from "@/store/resource";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 // The one shared autosave cadence, bound to the resource that was open when the edit landed. Both halves
 // Are load-bearing: useTimeoutFn drops its pending timer with the surrounding scope (VueUse's debounce arms a

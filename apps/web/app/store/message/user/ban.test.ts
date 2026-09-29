@@ -5,8 +5,7 @@ import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useBanStore } from "@/store/message/user/ban";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useBanStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -22,10 +21,6 @@ describe(useBanStore, () => {
     updatedAt: new Date(0),
     user,
     userId: user.id,
-  });
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
   });
 
   // Each ban is its own target, so two unbans overlap on one list and the failing one must put back only the

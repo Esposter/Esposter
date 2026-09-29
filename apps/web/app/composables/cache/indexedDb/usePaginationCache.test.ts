@@ -15,7 +15,6 @@ import { getMockSession } from "@@/server/trpc/context.test";
 import { StandardMessageEntity } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 type MessageValue = IndexedDbDatabaseSchema[IndexedDbStoreName.Messages]["value"];
@@ -135,7 +134,6 @@ describe.each<PaginationCacheVariant>([
   };
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     // Emptied rather than dropped: `items` and `isLoaded` below are computeds over whichever slice the key
     // Names, and a plain Map going away is not a reactive change — they would keep serving the last test's
     // Slice until something else invalidated them

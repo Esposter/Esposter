@@ -5,8 +5,7 @@ import { useLikeOperations } from "@/composables/post/useLikeOperations";
 import { createPost } from "@/services/post/createPost.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useLikeOperations, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -19,10 +18,6 @@ describe(useLikeOperations, () => {
     updatedAt: new Date(0),
     userId,
     value,
-  });
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
   });
 
   // Two quick votes on one post queue under the same key, so the second's rollback has to undo its own vote. The

@@ -9,7 +9,6 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const createNode = (): GraphNode => ({
@@ -34,7 +33,6 @@ describe(useFlowchartEditorStore, () => {
   let saveResourceContent: ReturnType<typeof vi.fn<() => ResourceInResource>>;
 
   beforeEach(async () => {
-    setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     content = new FlowchartEditor({ nodes: [createNode()] });
     saveResourceContent = vi.fn<() => ResourceInResource>(() => createResource(1));

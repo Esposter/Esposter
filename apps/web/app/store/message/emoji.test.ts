@@ -8,7 +8,6 @@ import { getMockSession } from "@@/server/trpc/context.test";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { MockContainerDatabase } from "azure-mock";
-import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 interface MockSessionValue {
@@ -23,7 +22,6 @@ describe(useEmojiStore, () => {
   const messageRowKey = crypto.randomUUID();
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     useSession.mockReturnValue(ref<MockSessionValue>({ data: undefined }));
   });
 

@@ -2,10 +2,10 @@
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { Operation } from "@trpc/client";
 
-import { waitForSynchronizedFunctions, RoutePath } from "@esposter/shared";
 import { getSession } from "@/services/auth/authClient.test";
 import { errorLink } from "@/services/trpc/errorLink";
 import { useAlertStore } from "@/store/alert";
+import { RoutePath, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCClientError } from "@trpc/client";
 import { observable } from "@trpc/server/observable";
 import { createPinia, setActivePinia } from "pinia";

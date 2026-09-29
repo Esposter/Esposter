@@ -2,18 +2,13 @@
 import { CacheTag } from "@/models/cache/CacheTag";
 import { useCacheStore } from "@/store/cache";
 import { noop } from "@esposter/shared";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe(useCachedRead, () => {
   const key = "key";
   const otherKey = "otherKey";
   const result = "result";
   const createQuery = () => vi.fn<(cacheKey: string) => Promise<string>>(() => Promise.resolve(result));
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // The gate is the caching layer and isExclusive is the concurrency one: concurrent first callers join one
   // Request, and every caller after it landed issues nothing at all

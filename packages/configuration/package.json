@@ -6,7 +6,6 @@
   "keywords": [
     "build",
     "configuration",
-    "ctix",
     "eslint",
     "formatting",
     "linting",
@@ -26,9 +25,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
-  },
-  "bin": {
-    "generate-exports": "bin/generateExports.js"
   },
   "type": "module",
   "sideEffects": false,
@@ -56,7 +52,6 @@
   },
   "scripts": {
     "build": "tsdown",
-    "export:gen": "node bin/generateExports.js",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "eslint .",
@@ -71,13 +66,13 @@
     "@eslint/json": "catalog:",
     "@types/node": "catalog:",
     "@unocss/eslint-config": "catalog:",
-    "ctix": "catalog:",
     "eslint-plugin-depend": "catalog:",
     "eslint-plugin-jsonc": "catalog:",
     "eslint-plugin-oxlint": "catalog:",
     "eslint-plugin-perfectionist": "catalog:",
     "eslint-plugin-pinia": "catalog:",
     "eslint-plugin-vuejs-accessibility": "catalog:",
+    "rolldown": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",
     "unplugin-auto-import": "catalog:",

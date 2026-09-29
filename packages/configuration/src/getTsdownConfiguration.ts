@@ -1,7 +1,7 @@
 import type { TsdownConfigurationOptions } from "#src/models/TsdownConfigurationOptions";
 import type { UserConfig } from "tsdown";
 
-import { BUILD_TSCONFIG, SOURCE_CONDITION } from "#src/constants";
+import { SOURCE_CONDITION } from "#src/constants";
 import { generateExports } from "#src/generateExports";
 import { getPackagePatterns } from "#src/getPackagePatterns";
 import { readPackageManifest } from "#src/readPackageManifest";
@@ -20,7 +20,9 @@ import { mergeConfig } from "tsdown";
 //
 // `exportsGeneration` says which barrel the build generates for itself, and the three answers it can give are
 // The whole of what a package may vary here.
-export const getTsdownConfiguration = ({ exportsGeneration }: TsdownConfigurationOptions = {}): UserConfig => {
+export const getTsdownConfiguration = ({
+  exportsGeneration = "typescript",
+}: TsdownConfigurationOptions = {}): UserConfig => {
   const {
     dependencies,
     optionalDependencies,
@@ -77,14 +79,13 @@ export const getTsdownConfiguration = ({ exportsGeneration }: TsdownConfiguratio
     // Differ between the node packages and the neutral ones.
     fixedExtension: false,
     // Barrel generation belongs to the build rather than to a line in front of it — one definition here
-    // Instead of the same command repeated in every manifest, and the one place a guard can live.
+    // Instead of the same command repeated in every manifest.
     hooks: {
-      "build:prepare": () => {
-        generateExports(exportsGeneration);
+      "build:prepare": ({ options: { cwd } }) => {
+        generateExports(cwd, exportsGeneration);
       },
     },
     platform: "neutral",
-    tsconfig: BUILD_TSCONFIG,
   } satisfies UserConfig;
   return isPrivate
     ? // No declarations. A private package's `dist` is only ever reached through the `default` arm, by something
@@ -105,7 +106,6 @@ export const getTsdownConfiguration = ({ exportsGeneration }: TsdownConfiguratio
         // Against all of them. `esm-only` rather than `node16`: every package here is `"type": "module"` with
         // No CJS output, and the stricter profiles fail on a dual-format contract we do not offer.
         attw: { level: "error", profile: "esm-only" },
-        dts: { tsconfig: BUILD_TSCONFIG },
         // Publishability is a build-time error rather than a release-time surprise: this fails a build whose
         // Manifest points at a file it does not ship.
         publint: { level: "error" },

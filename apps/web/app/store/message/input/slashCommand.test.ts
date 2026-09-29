@@ -6,12 +6,10 @@ import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test"
 import { useInputStore } from "@/store/message/input";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { ID_SEPARATOR } from "@esposter/shared";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useSlashCommandStore, () => {
   beforeEach(() => {
-    setActivePinia(createPinia());
     setCurrentRoomId(crypto.randomUUID());
   });
 

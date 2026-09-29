@@ -2,17 +2,12 @@
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useBookmarkStore } from "@/store/bookmark";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useBookmarkStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const path = "";
   const title = "title";
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // A second tab bookmarked the page first, so this tab's optimistic flip bookmarks it while the server's
   // Delete-then-insert finds the bookmark, removes it and answers false

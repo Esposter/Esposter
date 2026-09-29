@@ -1,5 +1,5 @@
-import { getSynchronizedFunction } from "@esposter/shared";
 import { db } from "@@/server/db";
+import { getSynchronizedFunction } from "@esposter/shared";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 
 // A Nitro plugin is a synchronous slot the host neither awaits nor reports a rejection from, so the migration

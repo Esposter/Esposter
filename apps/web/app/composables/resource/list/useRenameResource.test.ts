@@ -5,18 +5,13 @@ import { useRenameResource } from "@/composables/resource/list/useRenameResource
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe(useRenameResource, () => {
   const { trpcMsw } = setupMswTrpc();
   const name = "name";
   const newName = "newName";
   const createResource = () => ref<ResourceInResource>(createResourceListItem({ name }));
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   test("renames the row optimistically and keeps the server's answer on success", async () => {
     expect.hasAssertions();

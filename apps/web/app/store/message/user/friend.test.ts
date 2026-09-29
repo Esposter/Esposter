@@ -4,17 +4,12 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useFriendStore } from "@/store/message/user/friend";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useFriendStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // Each friend is its own target, so two removals overlap on one list and the failing one has to unwind to the
   // List the removal ahead of it left, not to the one the user was looking at when they clicked

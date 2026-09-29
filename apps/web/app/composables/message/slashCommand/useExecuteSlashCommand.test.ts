@@ -5,7 +5,6 @@ import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test"
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoomStore } from "@/store/message/room";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useExecuteSlashCommand, () => {
@@ -16,7 +15,6 @@ describe(useExecuteSlashCommand, () => {
   const rejectedTopic = "rejectedTopic";
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     setCurrentRoomId(room.id);
   });
 

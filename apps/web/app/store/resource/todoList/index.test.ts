@@ -11,7 +11,6 @@ import { useTodoListStore } from "@/store/resource/todoList";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 const setupStore = async () => {
@@ -33,7 +32,6 @@ describe(useTodoListStore, () => {
   let saveResourceContent: ReturnType<typeof vi.fn<() => ResourceInResource>>;
 
   beforeEach(async () => {
-    setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     content = { items: [new TodoListItem({ name: itemName })] };
     saveResourceContent = vi.fn<() => ResourceInResource>(() => createResource(1));

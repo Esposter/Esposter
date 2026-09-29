@@ -5,7 +5,6 @@ import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useUserStore } from "@/store/message/user";
 import { useAppUserStore } from "@/store/message/user/appUser";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useCreator, () => {
@@ -15,7 +14,6 @@ describe(useCreator, () => {
   const user = createUser({ name: "globalName" });
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     const userStore = useUserStore();
     const { storeUser } = userStore;
     storeUser(user);
