@@ -9,30 +9,23 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-09-29T09:27:39.973Z
-- Commit: 019990305c
+- Date: 2026-09-29T10:30:16.371Z
+- Commit: af7f333dc6
 - Node: v26.10.0
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
 - RAM: 31.9 GiB
 
-## computeHeightfield > 65 vertices a side
+## computeTerrainTile > 32 cells a side
 
 | task  | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ----- | ------- | --------- | ------- | -------- | ------- |
-| flat  | 1.00×   | 0.2531    | ±15.78% | 0.3585   | 10      |
-| noise | 0.4×    | 0.6322    | ±36.76% | 1.4283   | 10      |
+| flat  | 1.00×   | 0.0680    | ±17.81% | 0.1105   | 10      |
+| noise | 0.43×   | 0.1585    | ±12.88% | 0.2231   | 10      |
 
-## computeHeightfield > 129 vertices a side
+## computeTerrainTile > 64 cells a side
 
-| task  | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| ----- | ------- | --------- | ------ | -------- | ------- |
-| flat  | 1.00×   | 0.8164    | ±2.19% | 0.8590   | 10      |
-| noise | 0.4×    | 2.0352    | ±8.18% | 2.3457   | 10      |
-
-## computeHeightfield > 257 vertices a side
-
-| task  | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| ----- | ------- | --------- | ------ | -------- | ------- |
-| flat  | 1.00×   | 3.7038    | ±9.35% | 4.4801   | 10      |
-| noise | 0.47×   | 7.8555    | ±8.04% | 9.8395   | 10      |
+| task  | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ----- | ------- | --------- | ------- | -------- | ------- |
+| flat  | 1.00×   | 0.2811    | ±19.20% | 0.3918   | 10      |
+| noise | 0.46×   | 0.6171    | ±14.24% | 0.7620   | 10      |

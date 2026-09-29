@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # World map
 
-This page belongs to the [Genshin](/docs/proposals/genshin) program. Its data is drawn by the [reference board](/docs/proposals/genshin/reference-board)'s authoring page. Every other page reads the world through it. [Terrain](/docs/proposals/genshin/terrain) takes its shapes from it, [weather](/docs/proposals/genshin/weather) each area's weather, [vegetation](/docs/proposals/genshin/vegetation) its biomes, and [exploring](/docs/proposals/genshin/exploring) its waypoints. It is the one place a region is described, and it is organised as the game organises its own map.
+This page belongs to the [Genshin](/docs/proposals/genshin) program. Its data is drawn by the [reference board](/docs/proposals/genshin/reference-board)'s authoring page. Every other page reads the world through it. [Terrain shapes](/docs/proposals/genshin/terrain-shapes) take their data from it, [weather](/docs/proposals/genshin/weather) each area's weather, [vegetation](/docs/proposals/genshin/vegetation) its biomes, and [exploring](/docs/proposals/genshin/exploring) its waypoints. It is the one place a region is described, and it is organised as the game organises its own map.
 
 ## Decisions
 

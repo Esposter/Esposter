@@ -42,11 +42,11 @@ flowchart TD
 | Page                                                               | What it adds                                                                      |
 | :----------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
 | [Engine architecture](/docs/proposals/genshin/engine-architecture) | the engine as modules with one job each, and the order a frame runs in            |
-| [Terrain](/docs/proposals/genshin/terrain)                         | the continent as streamed heightfield tiles, and the ground painted by biome      |
 | [Water](/docs/proposals/genshin/water)                             | shores, rivers, waterfalls, the sea, and swimming under it                        |
 | [Vegetation](/docs/proposals/genshin/vegetation)                   | grass, trees and flowers on one wind field                                        |
 | [Reference board](/docs/proposals/genshin/reference-board)         | how a region is referenced, calibrated and compared so the recreation stays close |
 | [World map](/docs/proposals/genshin/world-map)                     | the coordinate system, the region catalogue and the landmark schema               |
+| [Terrain shapes](/docs/proposals/genshin/terrain-shapes)           | the continent's heights from authored shapes, and the ground painted by biome     |
 | [Weather](/docs/proposals/genshin/weather)                         | rain, storms, snow, fog and sandstorms, set per area as the game sets them        |
 | [Exploring](/docs/proposals/genshin/exploring)                     | a free camera, waypoints to jump between, and the map overlay                     |
 

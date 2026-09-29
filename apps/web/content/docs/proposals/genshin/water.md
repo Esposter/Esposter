@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Water
 
-This page builds on [terrain](/docs/proposals/genshin/terrain), whose authored coastlines and river courses decide where water is. Water is everywhere in the world: Mondstadt's lake, Liyue's harbour and its river valleys, Inazuma's seas between the islands, Sumeru's rainforest rivers, and Fontaine, half of which lies under the surface. The game draws it clear and bright. The floor shows through the shallows, a white band of foam marks every shore, and the sun breaks on the surface into hard glints.
+This page builds on the [terrain](/docs/genshin/terrain) and its [shapes](/docs/proposals/genshin/terrain-shapes), whose authored coastlines and river courses decide where water is. Water is everywhere in the world: Mondstadt's lake, Liyue's harbour and its river valleys, Inazuma's seas between the islands, Sumeru's rainforest rivers, and Fontaine, half of which lies under the surface. The game draws it clear and bright. The floor shows through the shallows, a white band of foam marks every shore, and the sun breaks on the surface into hard glints.
 
 ## Decisions
 

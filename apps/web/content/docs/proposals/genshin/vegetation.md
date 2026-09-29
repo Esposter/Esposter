@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Vegetation
 
-This page builds on [terrain](/docs/proposals/genshin/terrain), whose biome weights and paint strokes decide what grows where. Wind is what makes Genshin's meadows feel alive. Gusts roll across Mondstadt's grass in visible waves, crowns sway, and petals and leaves drift past. Here plants are drawn at the density the game shows, and one wind field moves all of them together.
+This page builds on the [terrain](/docs/genshin/terrain) and its [shapes](/docs/proposals/genshin/terrain-shapes), whose biome weights and paint strokes decide what grows where. Wind is what makes Genshin's meadows feel alive. Gusts roll across Mondstadt's grass in visible waves, crowns sway, and petals and leaves drift past. Here plants are drawn at the density the game shows, and one wind field moves all of them together.
 
 ## Decisions
 

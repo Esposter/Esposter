@@ -17,10 +17,11 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 
 ## The pages of this area
 
-| Page                                             | What it covers                                                              |
-| :----------------------------------------------- | :-------------------------------------------------------------------------- |
-| [Rendering style](/docs/genshin/rendering-style) | the toon materials, outlines, cascaded shadows, god rays, fog, grade and AA |
-| [Sky and time](/docs/genshin/sky-and-time)       | the twenty-four-minute day, the painted sky, and the light it casts         |
+| Page                                             | What it covers                                                                            |
+| :----------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| [Rendering style](/docs/genshin/rendering-style) | the toon materials, outlines, cascaded shadows, god rays, fog, grade and AA               |
+| [Sky and time](/docs/genshin/sky-and-time)       | the twenty-four-minute day, the painted sky, and the light it casts                       |
+| [Terrain](/docs/genshin/terrain)                 | the ground on a streamed CDLOD quadtree, morphing between levels, and the floating origin |
 
 What is still to build is the [Genshin proposal](/docs/proposals/genshin). Decided ideas: [deferred](/docs/genshin/deferred).
 
@@ -28,6 +29,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin). Decid
 
 - The rendering style, in the Windrise scene, replacing the console's voxel world.
 - The sky and the game's day over it.
+- The terrain, streamed and morphing, in place of Windrise's one fixed heightfield.
 
 ## Key files
 

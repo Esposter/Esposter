@@ -7,4 +7,5 @@ description: Genshin world ideas not built yet — one page per idea, each with 
 
 Ideas we chose not to build yet. Check here before proposing.
 
+- [One instanced terrain draw](/docs/genshin/deferred/terrain-instanced-draw) — the visible ground in one draw over a height texture array; waits until the terrain's draws show in a frame.
 - [Specular ramp](/docs/genshin/deferred/specular-ramp) — a second ramp giving wet stone and metal a hard highlight band; waits on the first region with either.

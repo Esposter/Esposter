@@ -1,11 +1,19 @@
-import type { GradeOptions, RampOptions, SkyKeyframe, TreeOptions } from "genshin-engine";
+import type { GradeOptions, RampOptions, SkyKeyframe, TerrainOptions, TreeOptions } from "genshin-engine";
 
 import { Color, Vector2 } from "three";
 
-// The valley's side and grid, in metres and vertices: a few hundred metres around the oak, fine enough that the knoll
-// Reads round
-export const WINDRISE_SIZE = 480;
-export const WINDRISE_RESOLUTION = 193;
+// The ground's quadtree: half-metre cells under the eye in tiles of sixteen metres, six levels out to a root tile of
+// Half a kilometre drawn a kilometre and a half away, well past where the fog closes. The finest range clears twice
+// A finest tile's diagonal, which CDLOD needs for a level's tiles to morph before their neighbours change level
+export const WINDRISE_TERRAIN_OPTIONS: TerrainOptions = {
+  cellsPerSide: 32,
+  finestRange: 48,
+  finestTileSize: 16,
+  levelCount: 6,
+  maxHeight: 60,
+  minHeight: -10,
+  morphShare: 0.3,
+};
 export const WINDRISE_SEED = 0;
 // The knoll the oak stands on, and the hills that close the valley around it
 export const KNOLL_HEIGHT = 9;

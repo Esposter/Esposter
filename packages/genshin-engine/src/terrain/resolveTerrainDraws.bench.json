@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/terrain/resolveTerrainDraws.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.04239000000000033,
+              "name": "all arrived",
+              "p99": 0.05664700000000949,
+              "rme": 11.062199155227184,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.1747800000000012,
+              "name": "none arrived",
+              "p99": 0.18401499999999005,
+              "rme": 1.8880448891519492,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "resolveTerrainDraws > eye 2 m up"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.003489999999999327,
+              "name": "all arrived",
+              "p99": 0.006739000000004013,
+              "rme": 26.61059394859833,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.05004999999999882,
+              "name": "none arrived",
+              "p99": 0.17722100000000043,
+              "rme": 70.80813487700695,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "resolveTerrainDraws > eye 300 m up"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/terrain/selectTerrainTiles.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.049710000000004584,
+              "name": "far from the origin",
+              "p99": 0.06367500000001826,
+              "rme": 12.045669733960796,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.0531599999999969,
+              "name": "near the origin",
+              "p99": 0.06493299999998754,
+              "rme": 8.280492063214698,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "selectTerrainTiles > eye 2 m up"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.0182200000000023,
+              "name": "far from the origin",
+              "p99": 0.024970000000022596,
+              "rme": 10.35939707017021,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.021050000000002456,
+              "name": "near the origin",
+              "p99": 0.030928000000008355,
+              "rme": 13.061270487736895,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "selectTerrainTiles > eye 300 m up"
+        }
+      ]
+    }
+  ]
+}

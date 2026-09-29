@@ -22,18 +22,15 @@ import {
   WINDRISE_GRADE_OPTIONS,
   WINDRISE_OAK_OPTIONS,
   WINDRISE_RAMP_OPTIONS,
-  WINDRISE_RESOLUTION,
-  WINDRISE_SIZE,
   WINDRISE_SKY_KEYFRAMES,
   WINDRISE_START_MINUTES,
+  WINDRISE_TERRAIN_OPTIONS,
 } from "@/services/genshin/windrise/constants";
 import { getWindriseHeight } from "@/services/genshin/windrise/getWindriseHeight";
-import { writeWindriseColor } from "@/services/genshin/windrise/writeWindriseColor";
 import {
   createFogUniforms,
   createGodraysLight,
   createGradeLutTexture,
-  createHeightfieldGeometry,
   createLeafMaterial,
   createLightUniforms,
   createPostUniforms,
@@ -59,13 +56,6 @@ const rampTexture = createRampTexture(WINDRISE_RAMP_OPTIONS);
 const lightUniforms = createLightUniforms();
 lightUniforms.rimStrength.value = RIM_STRENGTH;
 
-const groundGeometry = createHeightfieldGeometry({
-  getHeight: getWindriseHeight,
-  resolution: WINDRISE_RESOLUTION,
-  size: WINDRISE_SIZE,
-  writeColor: writeWindriseColor,
-});
-const groundMaterial = createToonMaterial({ isOutlined: false, isVertexColors: true, lightUniforms, rampTexture });
 const { branchGeometry, leafGeometry } = createTreeGeometry(WINDRISE_OAK_OPTIONS);
 const barkMaterial = createToonMaterial({ color: BARK_COLOR, lightUniforms, rampTexture });
 const leafMaterial = createLeafMaterial({ color: LEAF_COLOR, lightUniforms, rampTexture });
@@ -79,6 +69,7 @@ const godraysLight = createGodraysLight(GODRAYS_SHADOW_MAP_SIZE, GODRAYS_HALF_EX
 godraysLight.target.position.set(0, knollHeight, 0);
 // Shade is lit only by this, so the sky's colour above and the grass's below are the shade's colours
 const hemisphere = new HemisphereLight();
+const { origin, worldOffset } = useFloatingOrigin();
 const fogUniforms = createFogUniforms();
 fogUniforms.density.value = FOG_DENSITY;
 fogUniforms.heightFalloff.value = FOG_HEIGHT_FALLOFF;
@@ -119,8 +110,8 @@ if (IS_DEVELOPMENT)
   });
 
 onUnmounted(() => {
-  for (const geometry of [groundGeometry, branchGeometry, leafGeometry, statueGeometry]) geometry.dispose();
-  for (const material of [groundMaterial, barkMaterial, leafMaterial, stoneMaterial]) material.dispose();
+  for (const geometry of [branchGeometry, leafGeometry, statueGeometry]) geometry.dispose();
+  for (const material of [barkMaterial, leafMaterial, stoneMaterial]) material.dispose();
   rampTexture.dispose();
   gradeLutTexture.dispose();
   cascadedShadowNode.dispose();
@@ -133,19 +124,28 @@ onUnmounted(() => {
 <template>
   <primitive :object="sun" />
   <primitive :object="sun.target" />
-  <primitive :object="godraysLight" />
-  <primitive :object="godraysLight.target" />
   <primitive :object="hemisphere" />
-  <TresMesh :geometry="groundGeometry" :material="groundMaterial" cast-shadow receive-shadow />
-  <TresGroup :position="[0, knollHeight - 0.5, 0]">
-    <TresMesh :geometry="branchGeometry" :material="barkMaterial" cast-shadow receive-shadow />
-    <TresMesh :geometry="leafGeometry" :material="leafMaterial" cast-shadow receive-shadow />
+  <!-- Everything placed in the world is in this group, which the floating origin offsets -->
+  <TresGroup :position="worldOffset">
+    <primitive :object="godraysLight" />
+    <primitive :object="godraysLight.target" />
+    <GenshinTerrain
+      :light-uniforms
+      :origin
+      :ramp-texture
+      :terrain-options="WINDRISE_TERRAIN_OPTIONS"
+      @change="godraysLight.shadow.needsUpdate = true"
+    />
+    <TresGroup :position="[0, knollHeight - 0.5, 0]">
+      <TresMesh :geometry="branchGeometry" :material="barkMaterial" cast-shadow receive-shadow />
+      <TresMesh :geometry="leafGeometry" :material="leafMaterial" cast-shadow receive-shadow />
+    </TresGroup>
+    <TresMesh
+      :geometry="statueGeometry"
+      :material="stoneMaterial"
+      :position="[STATUE_OFFSET_X, statueHeight - 0.2, STATUE_OFFSET_Z]"
+      cast-shadow
+      receive-shadow
+    />
   </TresGroup>
-  <TresMesh
-    :geometry="statueGeometry"
-    :material="stoneMaterial"
-    :position="[STATUE_OFFSET_X, statueHeight - 0.2, STATUE_OFFSET_Z]"
-    cast-shadow
-    receive-shadow
-  />
 </template>
