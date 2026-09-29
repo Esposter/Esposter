@@ -53,6 +53,7 @@ From `scripts/`, as `pnpm genshin:parity <command>`; the parity page from `packa
 | `luma <x> <y> <w> <h> <image or folder>…`         | One region's darkness across images, or a folder's frames, as a curve                         |
 | `measure <image> <x,y>…`                          | The image's size and the colour under each point                                              |
 | `zoom <image> <x> <y> <w> <h>`                    | A region enlarged with hard edges                                                             |
+| `polar <image> <bands> <angles>`                  | A ring mark's colours about the image's centre, by radius and angle                           |
 | `trace <image or File:…> <x> <y> <w> <h> [scale]` | A glyph as one SVG path, and the region beside it to check                                    |
 | `launch`, `still`, `record <name> [seconds]`      | Start the game, capture its window once, or record it once it opens (two minutes unless told) |
 
