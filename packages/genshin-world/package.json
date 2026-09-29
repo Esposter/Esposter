@@ -29,6 +29,7 @@
   "sideEffects": false,
   "types": "dist/index.d.ts",
   "imports": {
+    "#parity/*": "./parity/*.ts",
     "#src/*": "./src/*.ts",
     "#src/*.json": "./src/*.json",
     "#src/*.vue": "./src/*.vue"
@@ -42,13 +43,15 @@
       "source": "./src/workers/terrainTile.worker.ts",
       "default": "./dist/terrainTileWorker.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./style.css": "./dist/style.css"
   },
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
       "./terrainTileWorker": "./dist/terrainTileWorker.js",
-      "./package.json": "./package.json"
+      "./package.json": "./package.json",
+      "./style.css": "./dist/style.css"
     }
   },
   "scripts": {
@@ -57,15 +60,22 @@
     "format:check": "oxfmt --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
+    "parity": "vite --config parity/vite.config.ts --port 3002 --strictPort",
     "test": "vitest",
+    "test:visual": "vitest --config vitest.browser.config.ts",
     "typecheck": "vue-tsc"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
+    "@tsdown/css": "catalog:",
     "@types/node": "catalog:",
     "@types/three": "catalog:",
+    "@vitest/browser-playwright": "catalog:",
+    "playwright": "catalog:",
     "tsdown": "catalog:",
+    "vite": "catalog:",
     "vitest": "catalog:",
+    "vitest-browser-vue": "catalog:",
     "vue-tsc": "catalog:"
   },
   "peerDependencies": {

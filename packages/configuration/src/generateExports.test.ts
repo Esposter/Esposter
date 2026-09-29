@@ -34,4 +34,17 @@ describe(generateExports, () => {
       `export * from "./${TEST_FILENAME}/${TEST_FILENAME}";\n`,
     );
   });
+
+  test("exports every component at any depth by its file name", () => {
+    expect.hasAssertions();
+
+    mkdirSync(join(sourceDirectory, "components", TEST_FILENAME), { recursive: true });
+    writeFileSync(join(sourceDirectory, "components", TEST_FILENAME, "B.vue"), "<template><i /></template>");
+    generateExports(packageDirectory, "vue");
+
+    expect(readFileSync(join(sourceDirectory, "components", "index.ts"), "utf8")).toBe(
+      `export { default as B } from "./${TEST_FILENAME}/B.vue";
+`,
+    );
+  });
 });

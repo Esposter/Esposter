@@ -383,6 +383,9 @@ catalogs:
     '@trpc/server':
       specifier: ^11.19.0
       version: 11.19.0
+    '@tsdown/css':
+      specifier: ^0.23.0
+      version: 0.23.0
     '@types/cross-spawn':
       specifier: ^6.0.6
       version: 6.0.6
@@ -434,6 +437,9 @@ catalogs:
     '@vite-pwa/nuxt':
       specifier: ^1.1.1
       version: 1.1.1
+    '@vitest/browser-playwright':
+      specifier: ^5.0.2
+      version: 5.0.2
     '@vitest/coverage-v8':
       specifier: ^5.0.2
       version: 5.0.2
@@ -557,6 +563,9 @@ catalogs:
     fflate:
       specifier: ^0.8.3
       version: 0.8.3
+    ffmpeg-static:
+      specifier: ^5.3.0
+      version: 5.3.0
     fs-extra:
       specifier: ^11.4.1
       version: 11.4.1
@@ -620,6 +629,9 @@ catalogs:
     idb:
       specifier: ^8.0.3
       version: 8.0.3
+    imagetracerjs:
+      specifier: ^1.2.6
+      version: 1.2.6
     js-beautify:
       specifier: ^2.0.3
       version: 2.0.3
@@ -707,6 +719,9 @@ catalogs:
     pinia:
       specifier: ^4.0.3
       version: 4.0.3
+    playwright:
+      specifier: ^1.63.0
+      version: 1.63.0
     postgres:
       specifier: ^3.4.9
       version: 3.4.9
@@ -737,6 +752,9 @@ catalogs:
     semver:
       specifier: ^7.8.5
       version: 7.8.5
+    sharp:
+      specifier: ^0.35.5
+      version: 0.35.5
     show-open-file-picker:
       specifier: ^0.4.0
       version: 0.4.0
@@ -797,6 +815,9 @@ catalogs:
     vitest:
       specifier: ^5.0.2
       version: 5.0.2
+    vitest-browser-vue:
+      specifier: ^3.1.0
+      version: 3.1.0
     vue:
       specifier: ^3.5.43
       version: 3.5.43
@@ -871,7 +892,7 @@ importers:
         version: 26.6.3
       '@vitest/coverage-v8':
         specifier: 'catalog:'
-        version: 5.0.2(vitest@5.0.2)
+        version: 5.0.2(@vitest/browser@5.0.2)(vitest@5.0.2)
       dotenv:
         specifier: 'catalog:'
         version: 18.0.4
@@ -904,7 +925,7 @@ importers:
         version: link:packages/virrun
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
   apps/functions:
     dependencies:
@@ -974,13 +995,13 @@ importers:
         version: link:../../packages/azure-mock
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       typedoc:
         specifier: 'catalog:'
         version: 0.28.20(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
   apps/infra:
     dependencies:
@@ -1008,13 +1029,13 @@ importers:
         version: 26.6.3
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       type-fest:
         specifier: 'catalog:'
         version: 5.10.0
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
   apps/web:
     dependencies:
@@ -1438,10 +1459,10 @@ importers:
         version: 1.3.10(f780e1e0ba4fd6fa7401f51b50e4d3b8)
       '@nuxt/test-utils':
         specifier: 'catalog:'
-        version: 4.3.2(@vue/test-utils@2.5.1(@vue/compiler-dom@3.5.43)(@vue/server-renderer@3.5.43)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(esbuild@0.28.2)(happy-dom@20.14.5)(magicast@0.5.5)(rolldown@1.2.11)(rollup@4.63.5)(srvx@0.11.22)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.2)(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.5(@types/node@26.6.3))(svgo@4.1.0)(uglify-js@3.19.3))
+        version: 4.3.2(@vitest/ui@5.0.2)(@vue/test-utils@2.5.1(@vue/compiler-dom@3.5.43)(@vue/server-renderer@3.5.43)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(esbuild@0.28.2)(happy-dom@20.14.5)(magicast@0.5.5)(playwright-core@1.63.0)(rolldown@1.2.11)(rollup@4.63.5)(srvx@0.11.22)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.2)(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.5(@types/node@26.6.3))(svgo@4.1.0)(uglify-js@3.19.3))
       '@nuxtjs/seo':
         specifier: 'catalog:'
-        version: 5.3.16(48305d6122957d6ad8047c4d0e3fd068)
+        version: 5.3.16(7549f5c3f4db4110abc7abb8f99a002e)
       '@pinia/nuxt':
         specifier: 'catalog:'
         version: 1.0.2(magic-string@1.4.2)(magicast@0.5.5)(oxc-parser@0.151.0)(pinia@4.0.3(@vue/devtools-api@8.2.1)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(rolldown@1.2.11)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.5(@types/node@26.6.3))(svgo@4.1.0)(uglify-js@3.19.3)))
@@ -1543,7 +1564,7 @@ importers:
         version: 8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
       vue-tsc:
         specifier: 'catalog:'
         version: 3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
@@ -1583,10 +1604,10 @@ importers:
         version: 0.3.24
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
     optionalDependencies:
       node-pty:
         specifier: 'catalog:'
@@ -1615,13 +1636,13 @@ importers:
         version: 0.3.24
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       type-fest:
         specifier: 'catalog:'
         version: 5.10.0
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/azure-mock:
     dependencies:
@@ -1670,7 +1691,7 @@ importers:
         version: 0.3.24
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       type-fest:
         specifier: 'catalog:'
         version: 5.10.0
@@ -1679,7 +1700,7 @@ importers:
         version: 0.28.20(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/configuration:
     devDependencies:
@@ -1724,7 +1745,7 @@ importers:
         version: 1.2.11
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       type-fest:
         specifier: 'catalog:'
         version: 5.10.0
@@ -1739,7 +1760,7 @@ importers:
         version: 8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
       vue-eslint-parser:
         specifier: 'catalog:'
         version: 10.4.1(eslint@10.11.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
@@ -1809,13 +1830,13 @@ importers:
         version: 3.0.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       type-fest:
         specifier: 'catalog:'
         version: 5.10.0
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/db-mock:
     dependencies:
@@ -1840,13 +1861,13 @@ importers:
         version: 1.0.0-rc.4
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       tsx:
         specifier: 'catalog:'
         version: 4.23.15
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/db-schema:
     dependencies:
@@ -1880,13 +1901,13 @@ importers:
         version: 1.0.0-rc.4
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       type-fest:
         specifier: 'catalog:'
         version: 5.10.0
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/follow-ups: {}
 
@@ -1916,10 +1937,10 @@ importers:
         version: 0.3.24
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/genshin-persona:
     dependencies:
@@ -1963,18 +1984,33 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
+      '@tsdown/css':
+        specifier: 'catalog:'
+        version: 0.23.0(jiti@2.7.0)(postcss@8.5.28)(sass-embedded@1.105.0)(sass@1.105.0)(tsdown@0.23.0)(tsx@4.23.15)(yaml@2.9.1)
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.3
       '@types/three':
         specifier: 'catalog:'
         version: 0.186.0
+      '@vitest/browser-playwright':
+        specifier: 'catalog:'
+        version: 5.0.2(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(playwright@1.63.0)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.2)
+      playwright:
+        specifier: 'catalog:'
+        version: 1.63.0
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      vitest-browser-vue:
+        specifier: 'catalog:'
+        version: 3.1.0(@vue/compiler-dom@3.5.43)(@vue/server-renderer@3.5.43)(vitest@5.0.2)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       vue-tsc:
         specifier: 'catalog:'
         version: 3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
@@ -2005,10 +2041,10 @@ importers:
         version: 0.3.24
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/parse-tmx:
     dependencies:
@@ -2030,13 +2066,13 @@ importers:
         version: 0.3.24
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       type-fest:
         specifier: 'catalog:'
         version: 5.10.0
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/shared:
     dependencies:
@@ -2073,13 +2109,13 @@ importers:
         version: 0.3.24
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       type-fest:
         specifier: 'catalog:'
         version: 5.10.0
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
       vue:
         specifier: 'catalog:'
         version: 3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
@@ -2091,7 +2127,7 @@ importers:
         version: link:../shared
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*
@@ -2101,7 +2137,7 @@ importers:
         version: 26.6.3
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
 
   packages/trpc-msw:
     dependencies:
@@ -2135,13 +2171,13 @@ importers:
         version: 2.2.6
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       type-fest:
         specifier: 'catalog:'
         version: 5.10.0
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
       zod:
         specifier: 'catalog:'
         version: 4.6.5
@@ -2196,7 +2232,7 @@ importers:
         version: 4.5.2(14097e4e25ef16ade05a027e5b6fde3c)
       '@nuxt/test-utils':
         specifier: 'catalog:'
-        version: 4.3.2(@vue/test-utils@2.5.1(@vue/compiler-dom@3.5.43)(@vue/server-renderer@3.5.43)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(esbuild@0.28.2)(happy-dom@20.14.5)(magicast@0.5.5)(rolldown@1.2.11)(rollup@4.63.5)(srvx@0.11.22)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.2)(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.5(@types/node@26.6.3))(svgo@4.1.0)(uglify-js@3.19.3))
+        version: 4.3.2(@vitest/ui@5.0.2)(@vue/test-utils@2.5.1(@vue/compiler-dom@3.5.43)(@vue/server-renderer@3.5.43)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(esbuild@0.28.2)(happy-dom@20.14.5)(magicast@0.5.5)(playwright-core@1.63.0)(rolldown@1.2.11)(rollup@4.63.5)(srvx@0.11.22)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.2)(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.5(@types/node@26.6.3))(svgo@4.1.0)(uglify-js@3.19.3))
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.3
@@ -2211,10 +2247,10 @@ importers:
         version: 2.2.6
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
       zod:
         specifier: 'catalog:'
         version: 4.6.5
@@ -2263,10 +2299,10 @@ importers:
         version: 0.3.24
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
       zod:
         specifier: 'catalog:'
         version: 4.6.5
@@ -2306,7 +2342,7 @@ importers:
         version: 0.3.24
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       type-fest:
         specifier: 'catalog:'
         version: 5.10.0
@@ -2315,7 +2351,7 @@ importers:
         version: 0.28.20(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
       vue-tsc:
         specifier: 'catalog:'
         version: 3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
@@ -2349,13 +2385,13 @@ importers:
         version: 0.3.24
       tsdown:
         specifier: 'catalog:'
-        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       type-fest:
         specifier: 'catalog:'
         version: 5.10.0
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
   scripts:
     devDependencies:
@@ -2392,9 +2428,21 @@ importers:
       '@wasm-audio-decoders/ogg-vorbis':
         specifier: 'catalog:'
         version: 0.1.20
+      ffmpeg-static:
+        specifier: 'catalog:'
+        version: 5.3.0(supports-color@10.2.2)
+      imagetracerjs:
+        specifier: 'catalog:'
+        version: 1.2.6
+      playwright:
+        specifier: 'catalog:'
+        version: 1.63.0
       semver:
         specifier: 'catalog:'
         version: 7.8.5
+      sharp:
+        specifier: 'catalog:'
+        version: 0.35.5(@types/node@26.6.3)
       tsx:
         specifier: 'catalog:'
         version: 4.23.15
@@ -2403,7 +2451,7 @@ importers:
         version: typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2
       vitest:
         specifier: 'catalog:'
-        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
 packages:
 
@@ -3237,6 +3285,9 @@ packages:
   '@better-fetch/fetch@1.3.2':
     resolution: {integrity: sha512-Gs7n99b5tqUC6cQAPbV0uED3IraHB6xQbHLQ/C3l7ZFafHScOx9pQ+DYmP5blbLFShVWLqxNUlI9wi4xU/X+ow==}
 
+  '@blazediff/core@1.10.0':
+    resolution: {integrity: sha512-AOQff0zgR7cGsZL+4E7hVkmujoPUpm0J9xzWGWZj5wCjd3gmxESXAPfKyuzs93VdpQNFhHlBhfOjrcZ+XTERtQ==}
+
   '@bomb.sh/tab@0.0.19':
     resolution: {integrity: sha512-dTRfo9Q9B+lbLG3JCu8a/AGQSfD2XXcFcnakQzVjSOX+VvR/s9zpsH8TlqV3iHqazniRn1Ypwd1hcRlXcu/4BA==}
     hasBin: true
@@ -3420,6 +3471,10 @@ packages:
   '@conventional-changelog/template@1.4.0':
     resolution: {integrity: sha512-aalGyl7dbB5PArRebDIX43ZvBlXrYm9uWzGJ26t+4SzJVPsOuvfILGGbw5X4yX7i50YEmJ8zvbiWnqH/AAnZqg==}
     engines: {node: '>=22'}
+
+  '@derhuerst/http-basic@8.2.4':
+    resolution: {integrity: sha512-F9rL9k9Xjf5blCz8HsJRO4diy111cayL2vkY2XE4r4t3n0yPXVYy3KD3nJ1qbrSn9743UWSXH4IwuCa/HWlGFw==}
+    engines: {node: '>=6.0.0'}
 
   '@devframes/agentic@1.1.0':
     resolution: {integrity: sha512-YLD+yCMiNuUnf1EslRWx0j+kwY8+ByX8RjKghC1ElqX/SrkMGw21K1u8+sd0REdX3uHy22nxL+X/tFaEjk0oLg==}
@@ -7395,6 +7450,28 @@ packages:
     peerDependencies:
       typescript: '>=5.7.2'
 
+  '@tsdown/css@0.23.0':
+    resolution: {integrity: sha512-EfSQCVAz24CRz92WdJj/Yb+gJMV3m2C/iDsFO4XJkd12Ez9WnW0KtpLohAFtc4gDzflFlh9I0UHTZc6BQmxSHw==}
+    engines: {node: ^22.18.0 || ^24.11.0 || >=26.0.0}
+    peerDependencies:
+      postcss: ^8.4.0
+      postcss-import: ^16.0.0 || ^17.0.0
+      postcss-modules: ^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0
+      sass: '*'
+      sass-embedded: '*'
+      tsdown: 0.23.0
+    peerDependenciesMeta:
+      postcss:
+        optional: true
+      postcss-import:
+        optional: true
+      postcss-modules:
+        optional: true
+      sass:
+        optional: true
+      sass-embedded:
+        optional: true
+
   '@tufjs/canonical-json@2.0.0':
     resolution: {integrity: sha512-yVtV8zsdo8qFHe+/3kw81dSLyF7D576A5cCFCi4X7B39tWT7SekaEFUnvnWJHz+9qO7qJTah1JbrDjWKqFtdWA==}
     engines: {node: ^16.14.0 || >=18.0.0}
@@ -7597,6 +7674,9 @@ packages:
 
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
+
+  '@types/node@10.17.60':
+    resolution: {integrity: sha512-F0KIgDJfy2nA3zMLmWGKxcH2ZVEtCZXHHdOQs2gSaQ27+lNeEfGxzkIw90aXswATX7AZ33tahPbzy6KAfUreVw==}
 
   '@types/node@25.9.8':
     resolution: {integrity: sha512-VfMrScDmMhUJQmd5hArdQnFvK0OIeD36uN2Va1FcpYaLB/BgkgM8Ulc50XtYISPMz7APJ30+N0T5EM0jlcdfRw==}
@@ -8055,6 +8135,17 @@ packages:
       vite: ^8.3.1
       vue: ^3.2.25
 
+  '@vitest/browser-playwright@5.0.2':
+    resolution: {integrity: sha512-wU0B1Zy9+a55fdUT7JBCcnnjpTx0HHvUlQT6yFnuwCSY244BkPPwabNX+9PAljc96gRELcfm5APtnsn/3qiaPw==}
+    peerDependencies:
+      playwright: '*'
+      vitest: 5.0.2
+
+  '@vitest/browser@5.0.2':
+    resolution: {integrity: sha512-nX9xXZ/j8YfU7KTeFa+tpSP331SbI81qBQTASRlcopYeaTgBerNmJryzHXHrFOW0NYldd3Dn5gw651zGnmaQzw==}
+    peerDependencies:
+      vitest: 5.0.2
+
   '@vitest/coverage-v8@5.0.2':
     resolution: {integrity: sha512-3ffHBEi8DOOBLwIGBhOBZbRfYFYWjMUuxZicONdhuFEFEG5AVsMOSrVeuROskqnqpbOmEJwxM2eTVZ9N3a1t+A==}
     peerDependencies:
@@ -8083,8 +8174,19 @@ packages:
       vite:
         optional: true
 
+  '@vitest/pretty-format@5.0.2':
+    resolution: {integrity: sha512-YHM+mQQ7N1ROHMugJ7P/M+fC/q1G4zs/iAMZZCvhHcY8WkwPQcXBHD+z18oz+808Cfa12K7jOr3XPQMcLIovjw==}
+
   '@vitest/spy@5.0.2':
     resolution: {integrity: sha512-Ijc7T1nT9efNb5LxvjaBrEqw3f/QwUv5EE0nKqZxgqsaV/FxAAZ8baGylA8X/Z2oS4Lp+K74Jr6dTJsDKxJDeg==}
+
+  '@vitest/ui@5.0.2':
+    resolution: {integrity: sha512-FRGWhLK/S+aaAtty/5d+jTtY5l+9pGNcjz6IHbyUiP3VWs6a+zIgU4lc1SzWCR7H+OXgetAI06i/VpCWQmVorQ==}
+    peerDependencies:
+      vitest: 5.0.2
+
+  '@vitest/utils@5.0.2':
+    resolution: {integrity: sha512-mgpUtxFhKeOKVaArBVHNJGdYHAeRh135o59l13uVmPUCS1OUtis5pBqXEgE25iqRgFqEBwXvJlkhknRsYnMeqg==}
 
   '@volar/language-core@2.4.28':
     resolution: {integrity: sha512-w4qhIJ8ZSitgLAkVay6AbcnC7gP3glYM3fYwKV3srj8m494E3xtrCv6E+bWviiK/8hs6e6t1ij1s2Endql7vzQ==}
@@ -8604,6 +8706,10 @@ packages:
     resolution: {integrity: sha512-Xwrja8nx9e5o2N1my4DsKCeKpdrnACyr1wtbPxBDgGzKzKyE9kRtBFA8mWldI+RVlD7CBZNWY/wQ2+ydwOR6kQ==}
     engines: {node: '>=14.0'}
 
+  agent-base@6.0.2:
+    resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
+    engines: {node: '>= 6.0.0'}
+
   agent-base@7.1.4:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
     engines: {node: '>= 14'}
@@ -9047,6 +9153,9 @@ packages:
   caniuse-lite@1.0.30001813:
     resolution: {integrity: sha512-zfjJo4rM0+fUomGDBW/xcDjhIwz/210DGvip2MAMDZ8KHcRPnOHmEgHPZP0UHlZoxr8fYKVJOqcORhYQcG4FKQ==}
 
+  caseless@0.12.0:
+    resolution: {integrity: sha512-4tYFyifaFfGacoiObjJegolkwSU4xQNGbVgUiNYVUxbQ2x2lUsFvY4hVgVzGiIe6WLOPqycWXA40l+PWsxthUw==}
+
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
 
@@ -9221,6 +9330,10 @@ packages:
   compress-commons@6.0.2:
     resolution: {integrity: sha512-6FqVXeETqWPoGcfzrXb37E50NP0LXT8kAMu5ooZayhWWdgEY4lBEEcbQNXtkuKQsGduxiIcI4gOTsxTmuq/bSg==}
     engines: {node: '>= 14'}
+
+  concat-stream@2.0.0:
+    resolution: {integrity: sha512-MWufYdFw53ccGjCA+Ol7XJYpAlW6/prSMzuPOTRnJGcGzuhLn4Scrz7qf6o8bROZ514ltazcIFJZevcfbo0x7A==}
+    engines: {'0': node >= 6.0}
 
   confbox@0.1.8:
     resolution: {integrity: sha512-RMtmw0iFkeR4YV+fUOSucriAQNb9g8zFR52MWCtl+cCZOFRNL6zeB395vPzFhEjjn4fMxXudmELnl/KF/WrK6w==}
@@ -10513,6 +10626,10 @@ packages:
   fflate@0.8.3:
     resolution: {integrity: sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==}
 
+  ffmpeg-static@5.3.0:
+    resolution: {integrity: sha512-H+K6sW6TiIX6VGend0KQwthe+kaceeH/luE8dIZyOP35ik7ahYojDuqlTV1bOrtEwl01sy2HFNGQfi5IDJvotg==}
+    engines: {node: '>=16'}
+
   file-entry-cache@11.1.5:
     resolution: {integrity: sha512-+PFTHITI08JIGhnNpGNI8T8inUpgZfk3GNEqfT9R2zZV2iFXg3CvqzSl/uEhs7TSGujYRELEANyDvS8Fj7+S7Q==}
 
@@ -11040,6 +11157,9 @@ packages:
     resolution: {integrity: sha512-T1gkAiYYDWYx3V5Bmyu7HcfcvL7mUrTWiM6yOfa3PIphViJ/gFPbvidQ+veqSOHci/PxBcDabeUNCzpOODJZig==}
     engines: {node: '>= 14'}
 
+  http-response-object@3.0.2:
+    resolution: {integrity: sha512-bqX0XTF6fnXSQcEJ2Iuyr75yVakyjIDCqroJQ/aHfSdlM743Cwqoi2nDYMzLGWUcuTWGWy8AAvOKXTfiv6q9RA==}
+
   http-shutdown@1.2.2:
     resolution: {integrity: sha512-S9wWkJ/VSY9/k4qcjG318bqJNruzE4HySUhFYknwmu6LBP97KLLfwNf+n4V1BHurvFNkSKLFnK/RsuUnRTf9Vw==}
     engines: {iojs: '>= 1.0.0', node: '>= 0.12.0'}
@@ -11047,6 +11167,10 @@ packages:
   http_ece@1.2.0:
     resolution: {integrity: sha512-JrF8SSLVmcvc5NducxgyOrKXe3EsyHMgBFgSaIUGmArKe+rwr0uphRkRXvwiom3I+fpIfoItveHrfudL8/rxuA==}
     engines: {node: '>=16'}
+
+  https-proxy-agent@5.0.1:
+    resolution: {integrity: sha512-dFcAjpTQFgoLMzC2VwU+C/CbS7uRL0lWmxDITmqm7C+7F0Odmj6s9l6alZc6AELXhrnggM2CeWSXHGOdX2YtwA==}
+    engines: {node: '>= 6'}
 
   https-proxy-agent@7.0.6:
     resolution: {integrity: sha512-vK9P5/iUfdl95AI+JVyUuIcVtd4ofvtrOr3HNtM2yxC9bnMbEdp3x01OhQNnjb8IJYi38VlTE3mBXwcfvywuSw==}
@@ -11104,6 +11228,9 @@ packages:
 
   image-meta@0.2.2:
     resolution: {integrity: sha512-3MOLanc3sb3LNGWQl1RlQlNWURE5g32aUphrDyFeCsxBTk08iE3VNe4CwsUZ0Qs1X+EfX0+r29Sxdpza4B+yRA==}
+
+  imagetracerjs@1.2.6:
+    resolution: {integrity: sha512-LKJlnKmXFzDdh6IZtXTyBxXcCLTAkwgKYS+NMiPXiXVnlTLjQC8fq7U89laUSgHtypJB3TdMMDK4ecG5NI/Cgw==}
 
   immutable@5.1.9:
     resolution: {integrity: sha512-m8nVez3rwrgmWxtLMt1ZYXB2Lv7OKYn/disyxAlSDYAlKSlFoPPfIAmAM/M5xqL4m4C/wAPw7S2/CNaUii1Hxg==}
@@ -12912,6 +13039,9 @@ packages:
   papaparse@5.7.0:
     resolution: {integrity: sha512-qBGxg/7Q3Kl9Wfhrz2Z74UnvnHTXLNG6jmKJFeBvP2+y4lV7So+7SR62+Zd47JvdrCkX+nDcnr0ObPzek/+6RA==}
 
+  parse-cache-control@1.0.1:
+    resolution: {integrity: sha512-60zvsJReQPX5/QP0Kzfd/VrpjScIQ7SHBW6bFCYfEP+fp0Eppr1SHhIO5nd1PjZtvclzSzES9D/p5nFJurwfWg==}
+
   parse-conflict-json@5.0.1:
     resolution: {integrity: sha512-ZHEmNKMq1wyJXNwLxyHnluPfRAFSIliBvbK/UiOceROt4Xh9Pz0fq49NytIaeaCUf5VR86hwQ/34FCcNU5/LKQ==}
     engines: {node: ^20.17.0 || >=22.9.0}
@@ -13050,9 +13180,23 @@ packages:
   platform@1.3.6:
     resolution: {integrity: sha512-fnWVljUchTro6RiCFvCXBbNhJc2NijN7oIQxbwsyL0buWJPG85v81ehlHI9fXrJsMNgTofEoWIQeClKpgxFLrg==}
 
+  playwright-core@1.63.0:
+    resolution: {integrity: sha512-rYCsBF/M5HjUch52bbtVONEFjv6Xu8sm8h72dNlR5bzIE1fvC/bxgspzkjSfU+MweEMmPM8KJebG6nnyxo5mCg==}
+    engines: {node: '>=20'}
+    hasBin: true
+
+  playwright@1.63.0:
+    resolution: {integrity: sha512-+7ziBLidS4NaNCdt57SUDT+wYmmd5fmiQejUic/kb+YsYSCPyOOE9sebzMjNmQrsnNpDJqd4WHvV/8lfKfUDUg==}
+    engines: {node: '>=20'}
+    hasBin: true
+
   pluralize@8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
     engines: {node: '>=4'}
+
+  pngjs@7.0.0:
+    resolution: {integrity: sha512-LKWqWJRhstyYo9pGvgor/ivk2w94eSjE3RGVuzLGlr3NmD8bf7RcYGze1mNdEHRP6TRP6rMuDHk5t44hnTRyow==}
+    engines: {node: '>=14.19.0'}
 
   point-in-polygon-hao@1.2.4:
     resolution: {integrity: sha512-x2pcvXeqhRHlNRdhLs/tgFapAbSSe86wa/eqmj1G6pWftbEs5aVRJhRGM6FYSUERKu0PjekJzMq0gsI2XyiclQ==}
@@ -13108,6 +13252,24 @@ packages:
     engines: {node: ^22.11.0 || ^24.11.0 || >=26.0}
     peerDependencies:
       postcss: ^8.5.26
+
+  postcss-load-config@6.0.1:
+    resolution: {integrity: sha512-oPtTM4oerL+UXmx+93ytZVN82RrlY/wPUV8IeDxFrzIjXOLF1pN+EmKPLbubvKHT2HC20xXsCAH2Z+CKV6Oz/g==}
+    engines: {node: '>= 18'}
+    peerDependencies:
+      jiti: '>=1.21.0'
+      postcss: '>=8.0.9'
+      tsx: ^4.8.1
+      yaml: ^2.4.2
+    peerDependenciesMeta:
+      jiti:
+        optional: true
+      postcss:
+        optional: true
+      tsx:
+        optional: true
+      yaml:
+        optional: true
 
   postcss-merge-longhand@8.0.4:
     resolution: {integrity: sha512-ammolHhMvuTz/L9YN/ge1SWbUDcD3Y9o2gXlo3S6H4MCJHheyVPwcI/LAnSuNT4gcUmSF9pNTXo7+3M/2MFPAQ==}
@@ -13286,6 +13448,10 @@ packages:
     resolution: {integrity: sha512-MbA4R+WQT76ZBm/5JUpV9yqcJt92175+Y0Bodg3HgiXzrmKu7Ggq+bpn6y6wHH+gN9NcyKn3yg1+d47VaKwNAQ==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
+  progress@2.0.3:
+    resolution: {integrity: sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==}
+    engines: {node: '>=0.4.0'}
+
   promise-all-reject-late@1.0.1:
     resolution: {integrity: sha512-vuf0Lf0lOxyQREH7GDIOUMLS7kz+gs8i6B+Yi8dC68a2sychGrHTJYghMBD6k7eUcH0H5P73EckCA48xijWqXw==}
 
@@ -13429,6 +13595,10 @@ packages:
 
   readable-stream@2.3.8:
     resolution: {integrity: sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA==}
+
+  readable-stream@3.6.2:
+    resolution: {integrity: sha512-9u/sniCrY3D5WdsERHzHE4G2YCXqoG5FTHUiCC4SIbr6XcLZBY05ya9EKjYek9O5xOAwjGq+1JdGBAS7Q9ScoA==}
+    engines: {node: '>= 6'}
 
   readable-stream@4.7.0:
     resolution: {integrity: sha512-oIGGmcpTLwPga8Bn6/Z75SVaH1z5dUut2ibSyAMVhmUggWpmDn2dapB0n7f8nwaSiRtepAsfJyfXIO5DCVAODg==}
@@ -14616,6 +14786,9 @@ packages:
     resolution: {integrity: sha512-VwaXim9Gp1bngi/q3do8hgttYn2uC3MoT/gfuMWylnj1IeZBUAyPddHZlo1K05BDoj8DYPpMdiHqH1dDYdJf2A==}
     engines: {node: '>= 18'}
 
+  typedarray@0.0.6:
+    resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
+
   typedoc@0.28.20:
     resolution: {integrity: sha512-uSKqkh8Cr48vllnEy+jdaAgOeR6Y+QCBW7usgUsKj7gJEfR7stw9U/fE49LBnj2tPRKPY0c0EBJSWe9Appmplg==}
     engines: {node: '>= 18', pnpm: '>= 10'}
@@ -15191,6 +15364,12 @@ packages:
         optional: true
       yaml:
         optional: true
+
+  vitest-browser-vue@3.1.0:
+    resolution: {integrity: sha512-HTWGzixoI9sSPb9LVuPOKtGy7URS6ipAIOiLD9ofdW/zgT3XGngXbMAJ3U9H/w1A6LWj4waGpYZsd3RPm8zPkw==}
+    peerDependencies:
+      vitest: ^4.0.0 || ^5.0.0
+      vue: ^3.0.0
 
   vitest-environment-nuxt@2.0.0:
     resolution: {integrity: sha512-zEGFRiCAaRR3fHnqISHKMNTRvCzkQEI1XyFeqNgR2IBD0oYkfZ1rUHwi7C+h3Cns3KPykfB0av1B3MtLEbChDw==}
@@ -16802,6 +16981,8 @@ snapshots:
 
   '@better-fetch/fetch@1.3.2': {}
 
+  '@blazediff/core@1.10.0': {}
+
   '@bomb.sh/tab@0.0.19(cac@7.0.0)(citty@0.2.2)(commander@14.0.3)':
     optionalDependencies:
       cac: 7.0.0
@@ -17145,6 +17326,13 @@ snapshots:
       conventional-commits-parser: 7.1.2
 
   '@conventional-changelog/template@1.4.0': {}
+
+  '@derhuerst/http-basic@8.2.4':
+    dependencies:
+      caseless: 0.12.0
+      concat-stream: 2.0.0
+      http-response-object: 3.0.2
+      parse-cache-control: 1.0.1
 
   '@devframes/agentic@1.1.0(devframe@1.1.0)(srvx@0.11.22)':
     dependencies:
@@ -19288,7 +19476,7 @@ snapshots:
       rc9: 3.1.0
       std-env: 4.2.0
 
-  '@nuxt/test-utils@4.3.2(@vue/test-utils@2.5.1(@vue/compiler-dom@3.5.43)(@vue/server-renderer@3.5.43)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(esbuild@0.28.2)(happy-dom@20.14.5)(magicast@0.5.5)(rolldown@1.2.11)(rollup@4.63.5)(srvx@0.11.22)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.2)(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.5(@types/node@26.6.3))(svgo@4.1.0)(uglify-js@3.19.3))':
+  '@nuxt/test-utils@4.3.2(@vitest/ui@5.0.2)(@vue/test-utils@2.5.1(@vue/compiler-dom@3.5.43)(@vue/server-renderer@3.5.43)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(esbuild@0.28.2)(happy-dom@20.14.5)(magicast@0.5.5)(playwright-core@1.63.0)(rolldown@1.2.11)(rollup@4.63.5)(srvx@0.11.22)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.2)(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.5(@types/node@26.6.3))(svgo@4.1.0)(uglify-js@3.19.3))':
     dependencies:
       '@clack/prompts': 1.7.0
       '@nuxt/devtools-kit': 2.7.0(magicast@0.5.5)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
@@ -19319,9 +19507,11 @@ snapshots:
       vitest-environment-nuxt: 2.0.0
       vue: 3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
     optionalDependencies:
+      '@vitest/ui': 5.0.2(vitest@5.0.2)
       '@vue/test-utils': 2.5.1(@vue/compiler-dom@3.5.43)(@vue/server-renderer@3.5.43)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       happy-dom: 20.14.5
-      vitest: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      playwright-core: 1.63.0
+      vitest: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
     transitivePeerDependencies:
       - '@farmfe/core'
       - '@rsbuild/core'
@@ -19697,14 +19887,14 @@ snapshots:
       - vite
       - vue
 
-  '@nuxtjs/seo@5.3.16(48305d6122957d6ad8047c4d0e3fd068)':
+  '@nuxtjs/seo@5.3.16(7549f5c3f4db4110abc7abb8f99a002e)':
     dependencies:
       '@nuxt/kit': 4.5.2(magic-string@1.4.2)(magicast@0.5.5)(oxc-parser@0.151.0)(rolldown@1.2.11)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.5(@types/node@26.6.3))(svgo@4.1.0)(uglify-js@3.19.3)))
       '@nuxtjs/robots': 6.2.3(@nuxt/schema@4.5.2)(magic-string@1.4.2)(magicast@0.5.5)(nuxt@4.5.2(0d8c86da1e5ed5e996e757afd65f4bc5))(oxc-parser@0.151.0)(rolldown@1.2.11)(srvx@0.11.22)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.5(@types/node@26.6.3))(svgo@4.1.0)(uglify-js@3.19.3)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(zod@4.6.5)
       '@nuxtjs/sitemap': 8.5.1(@nuxt/schema@4.5.2)(magic-string@1.4.2)(magicast@0.5.5)(nuxt@4.5.2(0d8c86da1e5ed5e996e757afd65f4bc5))(oxc-parser@0.151.0)(rolldown@1.2.11)(srvx@0.11.22)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.5(@types/node@26.6.3))(svgo@4.1.0)(uglify-js@3.19.3)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(zod@4.6.5)
       nuxt: 4.5.2(0d8c86da1e5ed5e996e757afd65f4bc5)
       nuxt-link-checker: 5.3.0(0df96c4b4c183af6eecee70b0f6b0014)
-      nuxt-og-image: 6.9.1(dfec5baf2ae7b98feacc5999a990f669)
+      nuxt-og-image: 6.9.1(a5088ec583e1d1b8cc15bfcd493dd7bf)
       nuxt-schema-org: 6.3.2(3253afc367aa78b226f975de20eeb059)
       nuxt-seo-utils: 8.5.2(54ccc84fb204fda1c2b9e0adca7d41d7)
       nuxt-site-config: 4.2.3(@nuxt/schema@4.5.2)(magic-string@1.4.2)(magicast@0.5.5)(nuxt@4.5.2(0d8c86da1e5ed5e996e757afd65f4bc5))(oxc-parser@0.151.0)(rolldown@1.2.11)(srvx@0.11.22)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.5(@types/node@26.6.3))(svgo@4.1.0)(uglify-js@3.19.3)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(zod@4.6.5)
@@ -21573,6 +21763,21 @@ snapshots:
     dependencies:
       typescript: typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2
 
+  '@tsdown/css@0.23.0(jiti@2.7.0)(postcss@8.5.28)(sass-embedded@1.105.0)(sass@1.105.0)(tsdown@0.23.0)(tsx@4.23.15)(yaml@2.9.1)':
+    dependencies:
+      lightningcss: 1.33.0
+      postcss-load-config: 6.0.1(jiti@2.7.0)(postcss@8.5.28)(tsx@4.23.15)(yaml@2.9.1)
+      rolldown: 1.2.11
+      tsdown: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+    optionalDependencies:
+      postcss: 8.5.28
+      sass: 1.105.0
+      sass-embedded: 1.105.0
+    transitivePeerDependencies:
+      - jiti
+      - tsx
+      - yaml
+
   '@tufjs/canonical-json@2.0.0': {}
 
   '@tufjs/models@4.1.0':
@@ -21805,6 +22010,8 @@ snapshots:
       '@types/mjml-core': 5.1.0
 
   '@types/ms@2.1.0': {}
+
+  '@types/node@10.17.60': {}
 
   '@types/node@25.9.8':
     dependencies:
@@ -22390,7 +22597,38 @@ snapshots:
       vite: 8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
       vue: 3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
 
-  '@vitest/coverage-v8@5.0.2(vitest@5.0.2)':
+  '@vitest/browser-playwright@5.0.2(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(playwright@1.63.0)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.2)':
+    dependencies:
+      '@vitest/browser': 5.0.2(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.2)
+      '@vitest/mocker': 5.0.2(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      playwright: 1.63.0
+      tinyrainbow: 3.1.1
+      vitest: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+    transitivePeerDependencies:
+      - bufferutil
+      - msw
+      - utf-8-validate
+      - vite
+
+  '@vitest/browser@5.0.2(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.2)':
+    dependencies:
+      '@blazediff/core': 1.10.0
+      '@vitest/mocker': 5.0.2(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@vitest/ui': 5.0.2(vitest@5.0.2)
+      '@vitest/utils': 5.0.2
+      magic-string: 1.4.2
+      pngjs: 7.0.0
+      sirv: 3.0.2
+      tinyrainbow: 3.1.1
+      vitest: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      ws: 8.22.0
+    transitivePeerDependencies:
+      - bufferutil
+      - msw
+      - utf-8-validate
+      - vite
+
+  '@vitest/coverage-v8@5.0.2(@vitest/browser@5.0.2)(vitest@5.0.2)':
     dependencies:
       '@bcoe/v8-coverage': 1.0.2
       '@vitest/istanbul-lib-coverage': 1.0.2
@@ -22400,7 +22638,9 @@ snapshots:
       obug: 2.2.1
       std-env: 4.2.0
       tinyrainbow: 3.1.1
-      vitest: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      vitest: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+    optionalDependencies:
+      '@vitest/browser': 5.0.2(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.2)
 
   '@vitest/istanbul-lib-coverage@1.0.2': {}
 
@@ -22418,7 +22658,27 @@ snapshots:
       msw: 3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
       vite: 8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
 
+  '@vitest/pretty-format@5.0.2':
+    dependencies:
+      tinyrainbow: 3.1.1
+
   '@vitest/spy@5.0.2': {}
+
+  '@vitest/ui@5.0.2(vitest@5.0.2)':
+    dependencies:
+      '@vitest/utils': 5.0.2
+      fflate: 0.8.3
+      flatted: 3.4.4
+      pathe: 2.0.3
+      sirv: 3.0.2
+      tinyrainbow: 3.1.1
+      vitest: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+
+  '@vitest/utils@5.0.2':
+    dependencies:
+      '@vitest/pretty-format': 5.0.2
+      convert-source-map: 2.0.0
+      tinyrainbow: 3.1.1
 
   '@volar/language-core@2.4.28':
     dependencies:
@@ -22911,6 +23171,12 @@ snapshots:
 
   adm-zip@0.6.1: {}
 
+  agent-base@6.0.2(supports-color@10.2.2):
+    dependencies:
+      debug: 4.4.3(supports-color@10.2.2)
+    transitivePeerDependencies:
+      - supports-color
+
   agent-base@7.1.4: {}
 
   aggregate-error@4.0.1:
@@ -23195,7 +23461,7 @@ snapshots:
     optionalDependencies:
       drizzle-kit: 1.0.0-rc.4
       drizzle-orm: 1.0.0-rc.4(@electric-sql/pglite@0.5.8)(@opentelemetry/api@1.9.1)(arktype@2.2.5)(postgres@3.4.9)(valibot@1.5.0(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(zod@4.6.5)
-      vitest: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      vitest: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
       vue: 3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
     transitivePeerDependencies:
       - '@opentelemetry/api'
@@ -23363,6 +23629,8 @@ snapshots:
 
   caniuse-lite@1.0.30001813: {}
 
+  caseless@0.12.0: {}
+
   ccount@2.0.1: {}
 
   chai@6.2.2: {}
@@ -23522,6 +23790,13 @@ snapshots:
       is-stream: 2.0.1
       normalize-path: 3.0.0
       readable-stream: 4.7.0
+
+  concat-stream@2.0.0:
+    dependencies:
+      buffer-from: 1.1.2
+      inherits: 2.0.4
+      readable-stream: 3.6.2
+      typedarray: 0.0.6
 
   confbox@0.1.8: {}
 
@@ -24875,6 +25150,15 @@ snapshots:
 
   fflate@0.8.3: {}
 
+  ffmpeg-static@5.3.0(supports-color@10.2.2):
+    dependencies:
+      '@derhuerst/http-basic': 8.2.4
+      env-paths: 2.2.1
+      https-proxy-agent: 5.0.1(supports-color@10.2.2)
+      progress: 2.0.3
+    transitivePeerDependencies:
+      - supports-color
+
   file-entry-cache@11.1.5:
     dependencies:
       flat-cache: 6.1.23
@@ -25562,9 +25846,20 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  http-response-object@3.0.2:
+    dependencies:
+      '@types/node': 10.17.60
+
   http-shutdown@1.2.2: {}
 
   http_ece@1.2.0: {}
+
+  https-proxy-agent@5.0.1(supports-color@10.2.2):
+    dependencies:
+      agent-base: 6.0.2(supports-color@10.2.2)
+      debug: 4.4.3(supports-color@10.2.2)
+    transitivePeerDependencies:
+      - supports-color
 
   https-proxy-agent@7.0.6(supports-color@10.2.2):
     dependencies:
@@ -25616,6 +25911,8 @@ snapshots:
   ignore@7.0.10: {}
 
   image-meta@0.2.2: {}
+
+  imagetracerjs@1.2.6: {}
 
   immutable@5.1.9: {}
 
@@ -27361,7 +27658,7 @@ snapshots:
       - vue
       - zod
 
-  nuxt-og-image@6.9.1(dfec5baf2ae7b98feacc5999a990f669):
+  nuxt-og-image@6.9.1(a5088ec583e1d1b8cc15bfcd493dd7bf):
     dependencies:
       '@clack/prompts': 1.8.1
       '@nuxt/kit': 4.5.2(magic-string@1.4.2)(magicast@0.5.5)(oxc-parser@0.151.0)(rolldown@1.2.11)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.5(@types/node@26.6.3))(svgo@4.1.0)(uglify-js@3.19.3)))
@@ -27399,6 +27696,7 @@ snapshots:
       '@takumi-rs/core': 2.14.0(csstype@3.2.3)
       fontless: 0.2.1(@azure/data-tables@13.3.2(supports-color@10.2.2))(@azure/identity@4.13.3(supports-color@10.2.2))(@azure/storage-blob@12.34.0(supports-color@10.2.2))(db0@0.3.4(@electric-sql/pglite@0.5.8)(drizzle-orm@1.0.0-rc.4(@electric-sql/pglite@0.5.8)(@opentelemetry/api@1.9.1)(arktype@2.2.5)(postgres@3.4.9)(valibot@1.5.0(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(zod@4.6.5)))(ioredis@5.11.1(supports-color@10.2.2))(srvx@0.11.22)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
       nitropack: 2.13.4(@azure/data-tables@13.3.2(supports-color@10.2.2))(@azure/identity@4.13.3(supports-color@10.2.2))(@azure/storage-blob@12.34.0(supports-color@10.2.2))(@electric-sql/pglite@0.5.8)(@parcel/watcher@2.6.0)(drizzle-orm@1.0.0-rc.4(@electric-sql/pglite@0.5.8)(@opentelemetry/api@1.9.1)(arktype@2.2.5)(postgres@3.4.9)(valibot@1.5.0(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(zod@4.6.5))(oxc-parser@0.151.0)(rolldown@1.2.11)(srvx@0.11.22)(supports-color@10.2.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.5(@types/node@26.6.3))(svgo@4.1.0)(uglify-js@3.19.3))
+      playwright-core: 1.63.0
       sharp: 0.35.5(@types/node@26.6.3)
       tailwindcss: 4.3.3
       unifont: 0.7.5
@@ -28276,6 +28574,8 @@ snapshots:
 
   papaparse@5.7.0: {}
 
+  parse-cache-control@1.0.1: {}
+
   parse-conflict-json@5.0.1:
     dependencies:
       json-parse-even-better-errors: 5.0.0
@@ -28418,7 +28718,15 @@ snapshots:
 
   platform@1.3.6: {}
 
+  playwright-core@1.63.0: {}
+
+  playwright@1.63.0:
+    dependencies:
+      playwright-core: 1.63.0
+
   pluralize@8.0.0: {}
+
+  pngjs@7.0.0: {}
 
   point-in-polygon-hao@1.2.4:
     dependencies:
@@ -28469,6 +28777,15 @@ snapshots:
   postcss-discard-overridden@8.0.4(postcss@8.5.28):
     dependencies:
       postcss: 8.5.28
+
+  postcss-load-config@6.0.1(jiti@2.7.0)(postcss@8.5.28)(tsx@4.23.15)(yaml@2.9.1):
+    dependencies:
+      lilconfig: 3.1.3
+    optionalDependencies:
+      jiti: 2.7.0
+      postcss: 8.5.28
+      tsx: 4.23.15
+      yaml: 2.9.1
 
   postcss-merge-longhand@8.0.4(postcss@8.5.28):
     dependencies:
@@ -28620,6 +28937,8 @@ snapshots:
   process@0.11.10: {}
 
   proggy@4.0.0: {}
+
+  progress@2.0.3: {}
 
   promise-all-reject-late@1.0.1: {}
 
@@ -28809,6 +29128,12 @@ snapshots:
       process-nextick-args: 2.0.1
       safe-buffer: 5.1.2
       string_decoder: 1.1.1
+      util-deprecate: 1.0.2
+
+  readable-stream@3.6.2:
+    dependencies:
+      inherits: 2.0.4
+      string_decoder: 1.3.0
       util-deprecate: 1.0.2
 
   readable-stream@4.7.0:
@@ -30109,7 +30434,7 @@ snapshots:
 
   ts-dedent@2.3.0: {}
 
-  tsdown@0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)):
+  tsdown@0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)):
     dependencies:
       cac: 7.0.0
       defu: 6.1.7
@@ -30127,6 +30452,7 @@ snapshots:
       verkit: 0.4.1
     optionalDependencies:
       '@arethetypeswrong/core': 0.18.5
+      '@tsdown/css': 0.23.0(jiti@2.7.0)(postcss@8.5.28)(sass-embedded@1.105.0)(sass@1.105.0)(tsdown@0.23.0)(tsx@4.23.15)(yaml@2.9.1)
       publint: 0.3.24
       tsx: 4.23.15
       typescript: typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2
@@ -30212,6 +30538,8 @@ snapshots:
       rxjs: 7.8.2
 
   typed-function@4.2.2: {}
+
+  typedarray@0.0.6: {}
 
   typedoc@0.28.20(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2):
     dependencies:
@@ -30921,11 +31249,20 @@ snapshots:
       tsx: 4.23.15
       yaml: 2.9.1
 
+  vitest-browser-vue@3.1.0(@vue/compiler-dom@3.5.43)(@vue/server-renderer@3.5.43)(vitest@5.0.2)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)):
+    dependencies:
+      '@vue/test-utils': 2.5.1(@vue/compiler-dom@3.5.43)(@vue/server-renderer@3.5.43)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+      vitest: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      vue: 3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
+    transitivePeerDependencies:
+      - '@vue/compiler-dom'
+      - '@vue/server-renderer'
+
   vitest-environment-nuxt@2.0.0:
     dependencies:
-      '@nuxt/test-utils': 4.3.2(@vue/test-utils@2.5.1(@vue/compiler-dom@3.5.43)(@vue/server-renderer@3.5.43)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(esbuild@0.28.2)(happy-dom@20.14.5)(magicast@0.5.5)(rolldown@1.2.11)(rollup@4.63.5)(srvx@0.11.22)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.2)(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.5(@types/node@26.6.3))(svgo@4.1.0)(uglify-js@3.19.3))
+      '@nuxt/test-utils': 4.3.2(@vitest/ui@5.0.2)(@vue/test-utils@2.5.1(@vue/compiler-dom@3.5.43)(@vue/server-renderer@3.5.43)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(esbuild@0.28.2)(happy-dom@20.14.5)(magicast@0.5.5)(playwright-core@1.63.0)(rolldown@1.2.11)(rollup@4.63.5)(srvx@0.11.22)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.2)(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.5(@types/node@26.6.3))(svgo@4.1.0)(uglify-js@3.19.3))
 
-  vitest@5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)):
+  vitest@5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)):
     dependencies:
       '@types/chai': 5.2.3
       '@vitest/mocker': 5.0.2(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
@@ -30944,7 +31281,9 @@ snapshots:
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
       '@types/node': 26.6.3
-      '@vitest/coverage-v8': 5.0.2(vitest@5.0.2)
+      '@vitest/browser-playwright': 5.0.2(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(playwright@1.63.0)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.2)
+      '@vitest/coverage-v8': 5.0.2(@vitest/browser@5.0.2)(vitest@5.0.2)
+      '@vitest/ui': 5.0.2(vitest@5.0.2)
       happy-dom: 20.14.5
     transitivePeerDependencies:
       - msw

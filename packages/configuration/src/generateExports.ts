@@ -25,12 +25,14 @@ const writeBarrel = (directory: string, specifiers: string[], toLine: (specifier
 const checkHasExport = (path: string): boolean =>
   parseSync(path, readFileSync(path, "utf8")).module.staticExports.length > 0;
 
+// Every component at any depth, named by its file, so a package can group its components into folders; two files of
+// One name are two exports of one name, which the build rejects rather than letting one shadow the other
 const generateComponentBarrel = (sourceDirectory: string): void => {
   const directory = join(sourceDirectory, COMPONENTS_DIRECTORY);
   writeBarrel(
     directory,
-    globSync("*.vue", { cwd: directory }),
-    (fileName) => `export { default as ${basename(fileName, ".vue")} } from "./${fileName}";`,
+    globSync("**/*.vue", { cwd: directory }).map((path) => path.replaceAll("\\", "/")),
+    (path) => `export { default as ${basename(path, ".vue")} } from "./${path}";`,
   );
 };
 

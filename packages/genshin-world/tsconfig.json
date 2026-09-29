@@ -1,1 +1,4 @@
-{ "extends": "../configuration/tsconfig.vue.json" }
+{
+  "extends": "../configuration/tsconfig.vue.json",
+  "include": ["../configuration/types/*.d.ts", "*.ts", "parity/**/*.ts", "src/**/*.ts", "src/**/*.vue"]
+}
