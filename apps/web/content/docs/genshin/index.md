@@ -11,7 +11,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 
 ## Key concepts
 
-- **Windrise is the first scene.** The valley where the game's world opens: a great oak on a grassy rise with a Statue of The Seven in its shade, lit at one fixed afternoon hour. Every engine page is first shown there.
+- **Windrise is the first scene.** The valley where the game's world opens: a great oak on a grassy rise with a Statue of The Seven in its shade, loaded at three in the afternoon. Every engine page is first shown there.
 - **Light is shared uniforms.** Every material reads one set of light uniforms, and the fog one set of fog uniforms, so the hour and the weather will move the whole world by writing a few values.
 - **A quality tier removes cost, never the style.** The ramp, the rim and the outline stay at every tier.
 
@@ -20,12 +20,14 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | Page                                             | What it covers                                                              |
 | :----------------------------------------------- | :-------------------------------------------------------------------------- |
 | [Rendering style](/docs/genshin/rendering-style) | the toon materials, outlines, cascaded shadows, god rays, fog, grade and AA |
+| [Sky and time](/docs/genshin/sky-and-time)       | the twenty-four-minute day, the painted sky, and the light it casts         |
 
 What is still to build is the [Genshin proposal](/docs/proposals/genshin). Decided ideas: [deferred](/docs/genshin/deferred).
 
 ## Shipped
 
 - The rendering style, in the Windrise scene, replacing the console's voxel world.
+- The sky and the game's day over it.
 
 ## Key files
 

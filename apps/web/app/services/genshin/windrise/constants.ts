@@ -1,4 +1,6 @@
-import type { GradeOptions, RampOptions, TreeOptions } from "genshin-engine";
+import type { GradeOptions, RampOptions, SkyKeyframe, TreeOptions } from "genshin-engine";
+
+import { Color, Vector2 } from "three";
 
 // The valley's side and grid, in metres and vertices: a few hundred metres around the oak, fine enough that the knoll
 // Reads round
@@ -27,16 +29,10 @@ export const WINDRISE_OAK_OPTIONS: TreeOptions = {
 // The statue stands in the oak's shade, a few metres from its trunk
 export const STATUE_OFFSET_X = 7;
 export const STATUE_OFFSET_Z = 5;
-// An early afternoon sun, high in the south-west
-export const SUN_DIRECTION = [0.45, 0.78, 0.43] as const;
+// How far the sun and the god rays' sun stand from what they look at
 export const SUN_DISTANCE = 120;
-export const SUN_INTENSITY = 2.6;
-export const HEMISPHERE_INTENSITY = 1.3;
 export const RIM_STRENGTH = 0.55;
 // Colours as the palette sees them, in sRGB
-export const SKY_COLOR = 0x8ec8ff;
-export const HORIZON_COLOR = 0xcfe8ff;
-export const GROUND_BOUNCE_COLOR = 0x5d7f3a;
 export const GRASS_LIGHT_COLOR = 0x9ed05a;
 export const GRASS_DARK_COLOR = 0x5f9e3b;
 export const ROCK_COLOR = 0x9c9486;
@@ -64,3 +60,131 @@ export const WINDRISE_GRADE_OPTIONS: GradeOptions = {
   shadowTint: [-0.01, 0, 0.04],
   size: 32,
 };
+// The reference screenshots' hour, three in the afternoon, which a load starts at
+export const WINDRISE_START_MINUTES = 900;
+// How far the sun's path leans south of overhead, in radians: its noon stands about sixty-four degrees high
+export const SUN_TILT = 0.45;
+// A fair-weather sky of scattered cumulus, drifting slowly north-east, in cloud-layer units a second
+export const CLOUD_COVERAGE = 0.42;
+export const CLOUD_DRIFT_PER_SECOND = new Vector2(0.004, 0.0015);
+// Windrise's day: a deep blue night lit by the moon, an apricot dawn, a high clear afternoon, a gold and violet dusk.
+// The light is near nothing at six and eighteen, where the moon hands the sky to the sun and back
+export const WINDRISE_SKY_KEYFRAMES: readonly SkyKeyframe[] = [
+  {
+    cloudLitColor: new Color(0x3c5288),
+    cloudShadeColor: new Color(0x1d2a4c),
+    hemisphereGroundColor: new Color(0x1a2a2a),
+    hemisphereIntensity: 0.7,
+    hemisphereSkyColor: new Color(0x2c4478),
+    horizonColor: new Color(0x1f3868),
+    lightColor: new Color(0x8fa8ff),
+    lightIntensity: 0.45,
+    minutes: 0,
+    starIntensity: 1,
+    zenithColor: new Color(0x0b1a3a),
+  },
+  {
+    cloudLitColor: new Color(0x6a6a98),
+    cloudShadeColor: new Color(0x2e3460),
+    hemisphereGroundColor: new Color(0x22302a),
+    hemisphereIntensity: 0.65,
+    hemisphereSkyColor: new Color(0x384e82),
+    horizonColor: new Color(0x5a5a8a),
+    lightColor: new Color(0x8fa8ff),
+    lightIntensity: 0.3,
+    minutes: 300,
+    starIntensity: 0.6,
+    zenithColor: new Color(0x1d2d5e),
+  },
+  {
+    cloudLitColor: new Color(0xffc8a8),
+    cloudShadeColor: new Color(0x8a7aa0),
+    hemisphereGroundColor: new Color(0x4a5a3a),
+    hemisphereIntensity: 0.8,
+    hemisphereSkyColor: new Color(0x7a8cbc),
+    horizonColor: new Color(0xf2a98a),
+    lightColor: new Color(0xffb080),
+    lightIntensity: 0.05,
+    minutes: 360,
+    starIntensity: 0.1,
+    zenithColor: new Color(0x4a6aa8),
+  },
+  {
+    cloudLitColor: new Color(0xffe4cc),
+    cloudShadeColor: new Color(0xa898b8),
+    hemisphereGroundColor: new Color(0x6a7a44),
+    hemisphereIntensity: 1,
+    hemisphereSkyColor: new Color(0x9ab8e0),
+    horizonColor: new Color(0xffcfa0),
+    lightColor: new Color(0xffc890),
+    lightIntensity: 1.4,
+    minutes: 420,
+    starIntensity: 0,
+    zenithColor: new Color(0x6a9ed8),
+  },
+  {
+    cloudLitColor: new Color(0xffffff),
+    cloudShadeColor: new Color(0xb8c8e2),
+    hemisphereGroundColor: new Color(0x5d7f3a),
+    hemisphereIntensity: 1.3,
+    hemisphereSkyColor: new Color(0x8ec8ff),
+    horizonColor: new Color(0xcfe8ff),
+    lightColor: new Color(0xfff6e8),
+    lightIntensity: 2.8,
+    minutes: 720,
+    starIntensity: 0,
+    zenithColor: new Color(0x3f8fe6),
+  },
+  {
+    cloudLitColor: new Color(0xffffff),
+    cloudShadeColor: new Color(0xbccae2),
+    hemisphereGroundColor: new Color(0x5d7f3a),
+    hemisphereIntensity: 1.3,
+    hemisphereSkyColor: new Color(0x8ec8ff),
+    horizonColor: new Color(0xcfe8ff),
+    lightColor: new Color(0xfff4e0),
+    lightIntensity: 2.6,
+    minutes: 900,
+    starIntensity: 0,
+    zenithColor: new Color(0x4c98ec),
+  },
+  {
+    cloudLitColor: new Color(0xffd0a8),
+    cloudShadeColor: new Color(0x8a78a8),
+    hemisphereGroundColor: new Color(0x5a6038),
+    hemisphereIntensity: 1.05,
+    hemisphereSkyColor: new Color(0x9a94c8),
+    horizonColor: new Color(0xffba78),
+    lightColor: new Color(0xffae66),
+    lightIntensity: 1.5,
+    minutes: 1020,
+    starIntensity: 0,
+    zenithColor: new Color(0x5a78c0),
+  },
+  {
+    cloudLitColor: new Color(0xe89aa8),
+    cloudShadeColor: new Color(0x5a4a88),
+    hemisphereGroundColor: new Color(0x3a4032),
+    hemisphereIntensity: 0.8,
+    hemisphereSkyColor: new Color(0x6a64a8),
+    horizonColor: new Color(0xd98aa0),
+    lightColor: new Color(0xff8a70),
+    lightIntensity: 0.05,
+    minutes: 1080,
+    starIntensity: 0.2,
+    zenithColor: new Color(0x3a3c86),
+  },
+  {
+    cloudLitColor: new Color(0x4a5890),
+    cloudShadeColor: new Color(0x222c52),
+    hemisphereGroundColor: new Color(0x1e2c2c),
+    hemisphereIntensity: 0.7,
+    hemisphereSkyColor: new Color(0x34467a),
+    horizonColor: new Color(0x3a3f78),
+    lightColor: new Color(0x8fa8ff),
+    lightIntensity: 0.35,
+    minutes: 1140,
+    starIntensity: 0.8,
+    zenithColor: new Color(0x16224c),
+  },
+];

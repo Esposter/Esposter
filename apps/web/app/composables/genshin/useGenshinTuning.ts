@@ -1,7 +1,7 @@
 import type { GenshinTuningOptions } from "@/models/genshin/GenshinTuningOptions";
 
 import { isWebGPURenderer } from "@tresjs/core";
-import { computeGradeLut, computeRampValues } from "genshin-engine";
+import { computeGradeLut, computeRampValues, MINUTES_PER_DAY } from "genshin-engine";
 import { InspectorBase } from "three/webgpu";
 
 const TINT_RANGE = 0.1;
@@ -11,12 +11,13 @@ const TINT_CHANNELS = [
   { key: "1", name: "green" },
   { key: "2", name: "blue" },
 ] as const;
-// Development's tuning panel: three's inspector over the look's every uniform, so the ramp, rim, outline, fog, grade,
-// God rays and bloom are set against reference screenshots rather than guessed. A slider writes the uniform or the
-// Texture it drives at once, and nothing is saved: a value that looks right is copied into the region's constants.
-// The inspector is imported only here, so a production build never loads it
+// Development's tuning panel: three's inspector over the look's every uniform, so the hour, clouds, ramp, rim,
+// Outline, fog, grade, god rays and bloom are set against reference screenshots rather than guessed. A slider writes
+// The uniform or the texture it drives at once, and nothing is saved: a value that looks right is copied into the
+// Region's constants. The inspector is imported only here, so a production build never loads it
 export const useGenshinTuning = ({
   fogUniforms,
+  gameClock,
   gradeLutTexture,
   gradeOptions,
   lightUniforms,
@@ -24,6 +25,7 @@ export const useGenshinTuning = ({
   postUniforms,
   rampOptions,
   rampTexture,
+  skyUniforms,
 }: GenshinTuningOptions) => {
   const { renderer } = useTres();
   const ramp = { ...rampOptions };
@@ -47,6 +49,12 @@ export const useGenshinTuning = ({
     const inspector = new Inspector();
     renderer.inspector = inspector;
     const parameters = inspector.createParameters("Look");
+
+    const skyFolder = parameters.addFolder("Sky");
+    skyFolder.add(gameClock, "minutes", 0, MINUTES_PER_DAY, 1).name("minutes into the day").listen();
+    // Zero holds the hour still to compare it against a screenshot
+    skyFolder.add(gameClock, "minutesPerSecond", 0, 60, 1).name("minutes a second");
+    skyFolder.add(skyUniforms.cloudCoverage, "value", 0, 1, 0.01).name("cloud coverage");
 
     const rampFolder = parameters.addFolder("Ramp");
     rampFolder.add(ramp, "terminator", 0, 1, 0.01).onChange(writeRamp);

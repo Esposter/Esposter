@@ -5,7 +5,7 @@ description: Genshin's anime environment look on three's WebGPU renderer. Light 
 
 # Rendering style
 
-Genshin's world does not read as anime because of its models. It reads that way because of how light lands on them. Surfaces step from lit to shade across a narrow painted band instead of a physical falloff. Shadow is a colour, a cool sky blue, rather than black. Edges catch a rim of sky light, and distance dissolves into a haze the colour of the sky. The engine sets that look once, in the materials and passes every later page draws with, and it is shown in Windrise, the valley where the game's world opens: a great oak on a grassy rise, with a Statue of The Seven in its shade, at one fixed afternoon hour.
+Genshin's world does not read as anime because of its models. It reads that way because of how light lands on them. Surfaces step from lit to shade across a narrow painted band instead of a physical falloff. Shadow is a colour, a cool sky blue, rather than black. Edges catch a rim of sky light, and distance dissolves into a haze the colour of the sky. The engine sets that look once, in the materials and passes every later page draws with, and it is shown in Windrise, the valley where the game's world opens: a great oak on a grassy rise, with a Statue of The Seven in its shade, through the day the [sky](/docs/genshin/sky-and-time) runs.
 
 ## How it works
 
@@ -41,7 +41,7 @@ flowchart TD
 
 - **One toon material for the environment.** Every surface uses `createToonMaterial`, three's `MeshToonNodeMaterial` reading the world's ramp: a short row of bytes from dark to lit with a narrow smooth step (`computeRampValues`), so light steps across a band rather than a Lambert curve. The ramp's dark side is zero, so a face turned from the sun takes only ambient light.
 - **Shadow is a colour, not an absence.** Cast shadow and the ramp's dark side both leave only the hemisphere light, whose sky is above and whose bounce is the grass below, so shade reads as the sky's blue and the ground's green. Nothing is multiplied toward black.
-- **A rim picks out silhouettes.** A Fresnel term, masked to the side the sun lights and tinted by the sky, is the material's emissive node (`createRimNode`), so it lights on top of the ramp. Its colour and strength are the shared `LightUniforms` every material reads, so the hour will move them by writing a few values.
+- **A rim picks out silhouettes.** A Fresnel term, masked to the side the sun lights and tinted by the sky, is the material's emissive node (`createRimNode`), so it lights on top of the ramp. Its colour and strength are the shared `LightUniforms` every material reads, so the [sky](/docs/genshin/sky-and-time) moves them through the day by writing a few values.
 - **Leaves are cut in the shader.** A leaf card is a plain quad cut to a pointed oval by its opacity (`createLeafMaterial`), so a crown needs no leaf texture.
 
 ### Outlines
@@ -57,8 +57,8 @@ flowchart TD
 
 ### After the scene
 
-- **God rays march through a shadow of their own.** Three's `GodraysNode` reads one light's single shadow map, but the sun's shadow is split into cascades, each covering only a slice of the view. So `createGodraysLight` adds a second sun that lights nothing, whose one map spans the view. The ground and the landmarks stand still, so its map is drawn once and again only when `shadow.needsUpdate` is set. The rays are marched at half resolution, smoothed by a bilateral blur, and blended in the sun's colour by `depthAwareBlend`, which keeps them from bleeding over the edges of what stands in front.
-- **A height fog in the sky's colour.** `createHeightFogNode` integrates a haze whose density falls off exponentially with height along the ray from the eye to what each pixel shows, starting past a start distance. Low ground and the far world thicken toward the fog's colour, the peaks rise out of it, and a level ray takes the limit the general form divides by zero to reach. It runs after the outline pass, so an outline fades with what it outlines, and it skips the sky, which is already the fog's colour. Its colour, density, falloff, base height and start distance are `FogUniforms`, which the sky will write.
+- **God rays march through a shadow of their own.** Three's `GodraysNode` reads one light's single shadow map, but the sun's shadow is split into cascades, each covering only a slice of the view. So `createGodraysLight` adds a second sun that lights nothing, whose one map spans the view. The ground and the landmarks stand still, so its map is drawn only when `shadow.needsUpdate` is set, which the sky does each time the light has turned half a degree. The rays are marched at half resolution, smoothed by a bilateral blur, and blended in the sun's colour by `depthAwareBlend`, which keeps them from bleeding over the edges of what stands in front.
+- **A height fog in the sky's colour.** `createHeightFogNode` integrates a haze whose density falls off exponentially with height along the ray from the eye to what each pixel shows, starting past a start distance. Low ground and the far world thicken toward the fog's colour, the peaks rise out of it, and a level ray takes the limit the general form divides by zero to reach. It runs after the outline pass, so an outline fades with what it outlines, and it skips the sky, which is already the fog's colour. Its colour, density, falloff, base height and start distance are `FogUniforms`, whose colour the sky writes.
 - **Bloom lifts only the brightest light**: what is brighter than nearly white, which is the sun, glints and elemental light.
 - **A colour grade per region.** `computeGradeLut` builds a cube of display colours from a region's `GradeOptions`: contrast about the middle, saturation about each colour's grey, a shadow tint weighted toward the dark and a highlight tint toward the light. `Lut3DNode` maps the frame through it after the tone mapping, so the grade follows the tone curve rather than feeding it. The grade is authored as numbers against the region's reference screenshots, never sampled from their pixels. Windrise's is cool in shade and warm in light.
 - **Anti-aliasing by tier.** TRAA resolves the scene's edges before the tone mapping from a velocity target the scene pass writes beside its colour, and it settles the thin outlines and leaf edges that SMAA leaves shimmering. A tier that pays for neither the velocity target nor a frame of history takes SMAA over the graded frame instead.
@@ -73,7 +73,7 @@ In development, `useGenshinTuning` opens three's inspector with a **Look** panel
 
 ## What it costs to run
 
-- **The god rays' map is drawn once**, not every frame, since nothing it shadows moves. Every material still samples it with the sun's, which is the price of a light the god rays can read.
+- **The god rays' map is drawn about every two seconds**, as the sun turns, not every frame, since nothing it shadows moves. Every material still samples it with the sun's, which is the price of a light the god rays can read.
 - **The god rays march at half resolution**, and a tier drops them before it drops pixels.
 - **The fog and the grade are arithmetic** in the passes the frame already runs through, with no render target of their own.
 - **Every generator is benched at two scales or more.** The grade's cube costs its texels, and the bench beside `computeGradeLut` holds that at two sizes.
@@ -101,7 +101,7 @@ In development, `useGenshinTuning` opens three's inspector with a **Look** panel
 
 - **Characters are not styled here.** Character shading, with its face shadow map, hair highlights and material masks, belongs to the character page the program writes once the world is walkable. The environment material stays the one the world uses.
 - **The ramp is a small texture, not a TSL function.** A row of sixty-four bytes filtered linearly is as smooth as the function would be, costs one texel fetch, and is regenerated in place when the tuning panel moves the step.
-- **The god rays' sun is not free.** It lights nothing, but three evaluates every light's shadow in every material that receives shadows. Its map is drawn once, so the cost is one sample per shaded fragment; a light three can render a shadow for without any material reading it would remove that.
+- **The god rays' sun is not free.** It lights nothing, but three evaluates every light's shadow in every material that receives shadows. Its map is rarely redrawn, so the cost is one sample per shaded fragment; a light three can render a shadow for without any material reading it would remove that.
 
 ## Sources
 

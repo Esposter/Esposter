@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Fontaine
 
-This region is built on [terrain](/docs/proposals/genshin/terrain), [vegetation](/docs/proposals/genshin/vegetation), [water](/docs/proposals/genshin/water) and [sky and time](/docs/proposals/genshin/sky-and-time), authored by the [reference board](/docs/proposals/genshin/reference-board)'s method. Fontaine is the nation of the Hydro Archon, its culture drawn from Western Europe, especially France and Britain. Its plate is raised above the rest of the continent and ends in a massive waterfall, and it prides itself on the arts and on machinery. Half of it is under water. The [water](/docs/proposals/genshin/water) page's world under the surface was made part of the engine for this region.
+This region is built on [terrain](/docs/proposals/genshin/terrain), [vegetation](/docs/proposals/genshin/vegetation), [water](/docs/proposals/genshin/water), [sky and time](/docs/genshin/sky-and-time) and [weather](/docs/proposals/genshin/weather), authored by the [reference board](/docs/proposals/genshin/reference-board)'s method. Fontaine is the nation of the Hydro Archon, its culture drawn from Western Europe, especially France and Britain. Its plate is raised above the rest of the continent and ends in a massive waterfall, and it prides itself on the arts and on machinery. Half of it is under water. The [water](/docs/proposals/genshin/water) page's world under the surface was made part of the engine for this region.
 
 ## Decisions
 

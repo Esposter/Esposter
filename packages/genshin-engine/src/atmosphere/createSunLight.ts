@@ -11,15 +11,9 @@ const SHADOW_NORMAL_BIAS = 0.05;
 // The sun, casting through cascades split from the eye outward, so near shadows stay crisp and far ones cheap: each
 // Cascade's map spans more ground than the last, which blurs the far shadows into the soft blotches the game draws.
 // Neighbouring cascades fade into each other rather than meeting at a seam. The cascades follow the camera on their
-// Own, so the light's position sets only the sun's direction
-export const createSunLight = ({
-  cascadeCount,
-  color,
-  intensity,
-  maxFar,
-  shadowMapSize,
-}: SunLightOptions): SunLight => {
-  const light = new DirectionalLight(color, intensity);
+// Own, so the light's position sets only the sun's direction, and its colour and strength are the sky's to write
+export const createSunLight = ({ cascadeCount, maxFar, shadowMapSize }: SunLightOptions): SunLight => {
+  const light = new DirectionalLight();
   light.castShadow = true;
   light.shadow.mapSize.set(shadowMapSize, shadowMapSize);
   light.shadow.bias = SHADOW_BIAS;

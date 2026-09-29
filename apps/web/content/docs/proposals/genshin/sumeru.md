@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Sumeru
 
-This region is built on [terrain](/docs/proposals/genshin/terrain), [vegetation](/docs/proposals/genshin/vegetation), [water](/docs/proposals/genshin/water) and [sky and time](/docs/proposals/genshin/sky-and-time), authored by the [reference board](/docs/proposals/genshin/reference-board)'s method. Sumeru is the nation of the Dendro Archon, its culture drawn from ancient India, Egypt and Persia, and the home of the Akademiya. As its people say, it is all rainforest and desert. The two halves are so different that they are two biomes with two kits, joined along a wall of cliffs.
+This region is built on [terrain](/docs/proposals/genshin/terrain), [vegetation](/docs/proposals/genshin/vegetation), [water](/docs/proposals/genshin/water), [sky and time](/docs/genshin/sky-and-time) and [weather](/docs/proposals/genshin/weather), authored by the [reference board](/docs/proposals/genshin/reference-board)'s method. Sumeru is the nation of the Dendro Archon, its culture drawn from ancient India, Egypt and Persia, and the home of the Akademiya. As its people say, it is all rainforest and desert. The two halves are so different that they are two biomes with two kits, joined along a wall of cliffs.
 
 ## Decisions
 
@@ -18,7 +18,7 @@ This region is built on [terrain](/docs/proposals/genshin/terrain), [vegetation]
 
   Rain and mist are its regular weather.
 
-- **The desert is scale and wind.** Its dunes are heightfield features from authored ridge lines, with sand ground, ripples from noise, and wind carrying sand off the crests. Oases are water and palms. Sandstorms in the Desert of Hadramaveth come from [sky and time](/docs/proposals/genshin/sky-and-time), and rain never falls here.
+- **The desert is scale and wind.** Its dunes are heightfield features from authored ridge lines, with sand ground, ripples from noise, and wind carrying sand off the crests. Oases are water and palms. Sandstorms in the Desert of Hadramaveth come from [weather](/docs/proposals/genshin/weather), and rain never falls here.
 - **Two kits.** The rainforest kit builds Sumeru City's terraces, walkways and domed buildings grown into and around the colossal tree, plus village huts on stilts. The desert kit builds sandstone ruins, colonnades, obelisks, stepped pyramids and half-buried halls. The Mausoleum of King Deshret and Khaj-Nisut are landmark-tier.
 - **Sumeru is all surface.** The Ashavan Realm and the Realm of Farakhkert are surface areas like any other, not separate maps, so Sumeru adds no layer to the [world map](/docs/proposals/genshin/world-map). Its caves stay part of the surface, as the world map does for any cave the surface map shows.
 

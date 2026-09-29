@@ -6,12 +6,12 @@ model: claude-opus-5-5
 
 # Liyue
 
-This region is built on [terrain](/docs/proposals/genshin/terrain), [vegetation](/docs/proposals/genshin/vegetation), [water](/docs/proposals/genshin/water) and [sky and time](/docs/proposals/genshin/sky-and-time), authored by the [reference board](/docs/proposals/genshin/reference-board)'s method. Liyue is the nation of the Geo Archon, its culture drawn from traditional China and its fantasy. Its land is vertical. Karst pillars rise from plains and from clouds, stone spears stand in the sea where an archon is said to have pinned a god, and the harbour city is built in tiers up its cliff. Much of what makes Liyue is exactly what a heightfield cannot hold, so this region is where the terrain's rule of meshes on top of the heights is used most.
+This region is built on [terrain](/docs/proposals/genshin/terrain), [vegetation](/docs/proposals/genshin/vegetation), [water](/docs/proposals/genshin/water), [sky and time](/docs/genshin/sky-and-time) and [weather](/docs/proposals/genshin/weather), authored by the [reference board](/docs/proposals/genshin/reference-board)'s method. Liyue is the nation of the Geo Archon, its culture drawn from traditional China and its fantasy. Its land is vertical. Karst pillars rise from plains and from clouds, stone spears stand in the sea where an archon is said to have pinned a god, and the harbour city is built in tiers up its cliff. Much of what makes Liyue is exactly what a heightfield cannot hold, so this region is where the terrain's rule of meshes on top of the heights is used most.
 
 ## Decisions
 
 - **Karst and stone forests are meshes.** Jueyun Karst's pillars, Huaguang Stone Forest, Guyun Stone Forest's spears in the sea, and the sea stacks are generated rock meshes: layered strata, eroded vertical faces, flat tops carrying trees and grass. They are placed as landmarks or scattered by rule within their area's outline, and they rise from a heightfield that keeps only the ground between them.
-- **A sea of clouds.** Around Jueyun Karst and the high peaks, a layer of stepped cloud sits below the summits, drawn with the [sky](/docs/proposals/genshin/sky-and-time)'s cloud material on a flat layer at a set height.
+- **A sea of clouds.** Around Jueyun Karst and the high peaks, a layer of stepped cloud sits below the summits, drawn with the [sky](/docs/genshin/sky-and-time)'s cloud material on a flat layer at a set height.
 - **A warm, golden palette.** Ochre and grey rock, jade-green water, golden ginkgo and autumn maples, and red and gold architecture. Glaze lilies, silk flowers and qingxin on the peaks are scattered by biome. Dihua Marsh is reed beds and shallow water.
 - **The Liyue building kit.**
   - a stone terrace or platform base

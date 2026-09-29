@@ -4,29 +4,28 @@ import type { QualityTier } from "genshin-engine";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import {
   BARK_COLOR,
+  CLOUD_COVERAGE,
+  CLOUD_DRIFT_PER_SECOND,
   FOG_DENSITY,
   FOG_HEIGHT_FALLOFF,
   FOG_START_DISTANCE,
   GODRAYS_HALF_EXTENT,
   GODRAYS_SHADOW_MAP_SIZE,
-  GROUND_BOUNCE_COLOR,
-  HEMISPHERE_INTENSITY,
-  HORIZON_COLOR,
   LEAF_COLOR,
   RIM_STRENGTH,
   SHADOW_MAX_FAR,
-  SKY_COLOR,
   STATUE_OFFSET_X,
   STATUE_OFFSET_Z,
   STONE_COLOR,
-  SUN_DIRECTION,
   SUN_DISTANCE,
-  SUN_INTENSITY,
+  SUN_TILT,
   WINDRISE_GRADE_OPTIONS,
   WINDRISE_OAK_OPTIONS,
   WINDRISE_RAMP_OPTIONS,
   WINDRISE_RESOLUTION,
   WINDRISE_SIZE,
+  WINDRISE_SKY_KEYFRAMES,
+  WINDRISE_START_MINUTES,
 } from "@/services/genshin/windrise/constants";
 import { getWindriseHeight } from "@/services/genshin/windrise/getWindriseHeight";
 import { writeWindriseColor } from "@/services/genshin/windrise/writeWindriseColor";
@@ -39,13 +38,14 @@ import {
   createLightUniforms,
   createPostUniforms,
   createRampTexture,
+  createSkyUniforms,
   createStatueGeometry,
   createSunLight,
   createToonMaterial,
   createTreeGeometry,
   QualityTierSettingsMap,
 } from "genshin-engine";
-import { Color, HemisphereLight, Vector3 } from "three";
+import { HemisphereLight } from "three";
 
 interface Props {
   qualityTier: QualityTier;
@@ -57,9 +57,6 @@ const knollHeight = getWindriseHeight(0, 0);
 const statueHeight = getWindriseHeight(STATUE_OFFSET_X, STATUE_OFFSET_Z);
 const rampTexture = createRampTexture(WINDRISE_RAMP_OPTIONS);
 const lightUniforms = createLightUniforms();
-const sunDirection = new Vector3(...SUN_DIRECTION).normalize();
-lightUniforms.sunDirection.value.copy(sunDirection);
-lightUniforms.rimColor.value.set(HORIZON_COLOR);
 lightUniforms.rimStrength.value = RIM_STRENGTH;
 
 const groundGeometry = createHeightfieldGeometry({
@@ -76,35 +73,41 @@ const statueGeometry = createStatueGeometry();
 const stoneMaterial = createToonMaterial({ color: STONE_COLOR, lightUniforms, rampTexture });
 // The tier is read once: its cascades are built with the sun, and the scene is remounted to change it
 const { cascadeCount, shadowMapSize } = QualityTierSettingsMap[qualityTier];
-const { cascadedShadowNode, light: sun } = createSunLight({
-  cascadeCount,
-  color: 0xfff4e0,
-  intensity: SUN_INTENSITY,
-  maxFar: SHADOW_MAX_FAR,
-  shadowMapSize,
-});
-sun.position.copy(sunDirection).multiplyScalar(SUN_DISTANCE);
-// The god rays' sun stands where the scene's does, looking at the oak, and its map is drawn once: the sun is fixed
+const { cascadedShadowNode, light: sun } = createSunLight({ cascadeCount, maxFar: SHADOW_MAX_FAR, shadowMapSize });
+// The god rays' sun looks at the oak, so its one map is centred on what the camera circles
 const godraysLight = createGodraysLight(GODRAYS_SHADOW_MAP_SIZE, GODRAYS_HALF_EXTENT);
-godraysLight.position
-  .copy(sunDirection)
-  .multiplyScalar(SUN_DISTANCE)
-  .setY(godraysLight.position.y + knollHeight);
 godraysLight.target.position.set(0, knollHeight, 0);
-// Shade is lit only by this, so the sky's blue above and the grass's green below are the shade's colours
-const hemisphere = new HemisphereLight(SKY_COLOR, GROUND_BOUNCE_COLOR, HEMISPHERE_INTENSITY);
-scene.value.background = new Color(SKY_COLOR);
+// Shade is lit only by this, so the sky's colour above and the grass's below are the shade's colours
+const hemisphere = new HemisphereLight();
 const fogUniforms = createFogUniforms();
-fogUniforms.color.value.set(HORIZON_COLOR);
 fogUniforms.density.value = FOG_DENSITY;
 fogUniforms.heightFalloff.value = FOG_HEIGHT_FALLOFF;
 fogUniforms.startDistance.value = FOG_START_DISTANCE;
 const postUniforms = createPostUniforms();
+const skyUniforms = createSkyUniforms();
+skyUniforms.cloudCoverage.value = CLOUD_COVERAGE;
+const gameClock = useSky({
+  cloudDriftPerSecond: CLOUD_DRIFT_PER_SECOND,
+  skyKeyframes: WINDRISE_SKY_KEYFRAMES,
+  skyTargets: {
+    fogUniforms,
+    godraysLight,
+    hemisphere,
+    light: sun,
+    lightDistance: SUN_DISTANCE,
+    lightUniforms,
+    postUniforms,
+    skyUniforms,
+  },
+  startMinutes: WINDRISE_START_MINUTES,
+  tilt: SUN_TILT,
+});
 const gradeLutTexture = createGradeLutTexture(WINDRISE_GRADE_OPTIONS);
 const postPipeline = usePostPipeline(() => qualityTier, { fogUniforms, godraysLight, gradeLutTexture, postUniforms });
 if (IS_DEVELOPMENT)
   useGenshinTuning({
     fogUniforms,
+    gameClock,
     gradeLutTexture,
     gradeOptions: WINDRISE_GRADE_OPTIONS,
     lightUniforms,
@@ -112,10 +115,10 @@ if (IS_DEVELOPMENT)
     postUniforms,
     rampOptions: WINDRISE_RAMP_OPTIONS,
     rampTexture,
+    skyUniforms,
   });
 
 onUnmounted(() => {
-  scene.value.background = null;
   for (const geometry of [groundGeometry, branchGeometry, leafGeometry, statueGeometry]) geometry.dispose();
   for (const material of [groundMaterial, barkMaterial, leafMaterial, stoneMaterial]) material.dispose();
   rampTexture.dispose();
