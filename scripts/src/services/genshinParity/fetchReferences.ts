@@ -19,12 +19,13 @@ export const fetchReferences = async (): Promise<void> => {
   const wikiTitles = missing.flatMap(([, { wikiTitle }]) => (wikiTitle === undefined ? [] : [wikiTitle]));
   const urls = await readWikiFileUrls(wikiTitles);
   const lines = await Promise.all(
-    missing.map(async ([id, { capture, seconds, wikiTitle }]) => {
+    missing.map(async ([id, { capture, crop, seconds, wikiTitle }]) => {
       const path = join(REFERENCES_DIRECTORY, `${id}.png`);
       if (capture !== undefined) {
         const capturePath = join(CAPTURES_DIRECTORY, capture);
         if (!existsSync(capturePath)) return `${id}: no recording at ${capturePath}`;
-        await runFfmpeg(["-ss", String(seconds), "-i", capturePath, "-frames:v", "1", path]);
+        const filter = crop ? ["-vf", `crop=${crop.width}:${crop.height}:${crop.x}:${crop.y}`] : [];
+        await runFfmpeg(["-ss", String(seconds), "-i", capturePath, ...filter, "-frames:v", "1", path]);
         return path;
       }
       const url = urls.get(wikiTitle);

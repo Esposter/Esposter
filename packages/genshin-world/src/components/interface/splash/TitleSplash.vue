@@ -17,15 +17,15 @@ import { TITLE_LOGO_PATH } from "#src/services/interface/splash/TitleLogoPath";
   background: #fff;
 }
 
-/* Centred, in the flat grey the game draws its title in on the splash, as tall as the Japanese client's logo stands */
+/* Its box placed so its ink sits where the English client's does: 590 units wide, 420 down, a hair left of centre,
+   In the flat grey the game draws its title in on the splash */
 .logo {
   --unit: calc(100cqh / 1080);
   position: absolute;
-  top: 50%;
-  left: 50%;
-  height: calc(var(--unit) * 399);
+  top: calc(var(--unit) * 410.45);
+  left: calc(50% - var(--unit) * 306.9);
+  width: calc(var(--unit) * 611.4);
   aspect-ratio: 3840 / 1453;
-  fill: #303030;
-  translate: -50% -50%;
+  fill: #333;
 }
 </style>
