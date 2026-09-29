@@ -42,6 +42,3 @@ export const CARRIER_TEXT = "Please call Stella. Ask her to bring these things w
 export const LIKENESS_DECIMALS = 2;
 // The wiki answers this many titles in one imageinfo call
 export const MAX_WIKI_TITLES_PER_QUERY = 50;
-export const WRITE_FLAG = "--write";
-// Asks the wiki for every stem the map already holds, in every dub, instead of measuring
-export const CHECK_FLAG = "--check";
