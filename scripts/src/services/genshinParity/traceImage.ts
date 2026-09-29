@@ -26,6 +26,10 @@ export const traceImage = async (
   width: number,
   height: number,
   scale: number,
+  // Where between the faintest and strongest ink the split falls: halfway for a mark whose antialiased edge is its
+  // Outline, lower for a mark the game draws flat over one printed with lighter detail (a logo's sparkles), so that
+  // Detail stays ink rather than notching the edge it touches
+  inkShare: number,
 ): Promise<void> => {
   const path = await resolveSource(source);
   const region = sharp(path).flatten({ background: "#fff" }).extract({ height, left: x, top: y, width });
@@ -53,7 +57,7 @@ export const traceImage = async (
     faintest = Math.min(faintest, ink);
     strongest = Math.max(strongest, ink);
   }
-  const threshold = (faintest + strongest) / 2;
+  const threshold = faintest + (strongest - faintest) * inkShare;
   const pixels = new Uint8ClampedArray(pixelCount * 4);
   for (const [pixel, ink] of inks.entries()) {
     const { a, b, g, r } = ink > threshold ? INK : PAPER;

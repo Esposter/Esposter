@@ -16,6 +16,8 @@ Typecheck cannot see layout, so the question of what proves a visual change is r
 
 A Genshin screen is compared with the game by `pnpm -C scripts genshin:parity compare`, which drives the machine's own Edge against the world package's parity page on plain Vite, never the app. It costs seconds, not a Nuxt build, and the user asked for it so the agent checks its own screens. The `genshin-parity` skill owns it.
 
+The app serves a workspace package's `dist` from outside its own root, which its dev server does not watch: after a package rebuild, the page keeps the module it first served until the dev server restarts. A screen that looks unchanged in the app after a rebuild is stale, not wrong; ask for a restart before judging it.
+
 ## A browser never runs inside the edit loop
 
 No headless Chrome, no CDP, no screenshot after each edit, no poll loop for async components. A dev server, a client-bundle warmup and a seeded session cost more wall clock than the edit, and inside the loop that wait is paid on every iteration. So while the change is being made: make it, run the check suite (the `package-scripts` skill, `references/check-suite.md`), and move on.

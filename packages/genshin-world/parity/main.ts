@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-syntax -- the parity page's entry runs only in a browser, never under server rendering */
+import "@fontsource/signika/600.css";
 import { screens } from "#parity/screens";
 
 // One screen at a time, by `?screen=<Name>`, or the list of them. `&motion` asks for a motion held at its start for

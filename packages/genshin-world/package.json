@@ -67,6 +67,7 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
+    "@fontsource/signika": "catalog:",
     "@tsdown/css": "catalog:",
     "@types/node": "catalog:",
     "@types/three": "catalog:",

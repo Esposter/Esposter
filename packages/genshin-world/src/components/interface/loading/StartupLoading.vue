@@ -50,7 +50,7 @@ whenever(isComplete, start, { once: true });
 </template>
 
 <style scoped>
-/* Laid out on the game's 1080-unit-high screen, which scales with the height as the game's interface does */
+/* Laid out on the game's 1920 by 1080 unit screen, scaled to fit the window's height or its width, whichever is less, as the game's interface is */
 .startup-loading {
   position: absolute;
   inset: 0;
@@ -60,7 +60,7 @@ whenever(isComplete, start, { once: true });
 
 /* The row is as wide as its marks, so the lit row's clip is a share of the row rather than of the screen */
 .marks {
-  --unit: calc(100cqh / 1080);
+  --unit: min(100cqh / 1080, 100cqw / 1920);
   position: absolute;
   top: 50%;
   left: 50%;

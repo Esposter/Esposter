@@ -5,7 +5,8 @@ import sharp from "sharp";
 
 // How dark one region is across a run of images, one line each: its mean darkness (0 is white) and its darkest
 // Pixel, so a fade or a fill is read as a curve over the frames of the game and the shots of ours alike. A folder
-// Stands for its frames in order, since a second of frames at 60 a second outruns Windows' command line
+// Stands for its frames in order, since a second of frames at 60 a second outruns Windows' command line, each labelled
+// With its folder so two folders' frames stay apart
 export const measureLuma = async (
   x: number,
   y: number,
@@ -13,20 +14,20 @@ export const measureLuma = async (
   height: number,
   paths: string[],
 ): Promise<void> => {
-  const imagePaths = (
+  const images = (
     await Promise.all(
       paths.map(async (path) => {
-        if (!(await stat(path)).isDirectory()) return [path];
+        if (!(await stat(path)).isDirectory()) return [{ label: basename(path), path }];
         const names = await readdir(path);
         return names
           .filter((name) => name.endsWith(".png") && name !== CONTACT_SHEET_NAME)
           .toSorted()
-          .map((name) => join(path, name));
+          .map((name) => ({ label: `${basename(path)}/${name}`, path: join(path, name) }));
       }),
     )
   ).flat();
   const lines = await Promise.all(
-    imagePaths.map(async (path) => {
+    images.map(async ({ label, path }) => {
       const { data } = await sharp(path)
         .extract({ height, left: x, top: y, width })
         .greyscale()
@@ -38,7 +39,7 @@ export const measureLuma = async (
         sum += value;
         darkest = Math.min(darkest, value);
       }
-      return `${basename(path).padEnd(28)} ${(255 - sum / data.length).toFixed(1).padStart(6)} ${String(darkest).padStart(4)}`;
+      return `${label.padEnd(28)} ${(255 - sum / data.length).toFixed(1).padStart(6)} ${String(darkest).padStart(4)}`;
     }),
   );
   console.log(`${"image".padEnd(28)} ${"dark".padStart(6)} ${"min".padStart(4)}`);

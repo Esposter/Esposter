@@ -13,7 +13,7 @@ The world map is the one place a region is described. Every other page reads the
 flowchart TD
   CAT[Catalogue: regions, areas, subareas, layers, imported] --> R{Camera moved a stretch: which regions have an area in reach?}
   CAM[Camera plus the floating origin] --> R
-  R -->|newly in reach| F[Fetch /genshin/region.json]
+  R -->|newly in reach| F["Fetch /data/genshin/regions/<region>.json"]
   F --> Z{Valid against the schema?}
   Z -->|no| ERR[Logged; that region undrawn, the rest load]
   Z -->|yes, still wanted| USE[Landmarks built by their kits]

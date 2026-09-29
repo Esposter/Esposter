@@ -22,14 +22,15 @@ const USAGE = `genshin:parity <command>
   measure <image> <x,y>…                 the colour under each point
   luma <x> <y> <w> <h> <image>…          a region's darkness across images, as a curve
   zoom <image> <x> <y> <w> <h> [scale]   a region enlarged with hard edges
-  trace <image | File:title> <x> <y> <w> <h> [scale]
+  trace <image | File:title> <x> <y> <w> <h> [scale] [ink share]
                                          a glyph in a region as an SVG path at full resolution (scale 1), and
-                                         region | trace to check; enlarge a small mark with a scale above 1
+                                         region | trace to check; enlarge a small mark with a scale above 1,
+                                         and lower the ink share (0.5) for a flat logo printed with detail
   launch                                 start the game (it asks for elevation)
   still <name>                           the game's window, once
   record <name> [seconds]                the game's window once it opens, two minutes unless told`;
 const [command, ...parameters] = process.argv.slice(2);
-const [first = "", second = "", third = "", fourth = "", fifth = "", sixth = ""] = parameters;
+const [first = "", second = "", third = "", fourth = "", fifth = "", sixth = "", seventh = ""] = parameters;
 
 if (command === "fetch") await fetchReferences();
 else if (command === "compare") await compareScreen(first);
@@ -46,7 +47,15 @@ else if (command === "luma")
 else if (command === "zoom")
   await zoomImage(first, Number(second), Number(third), Number(fourth), Number(fifth), Number(sixth || 8));
 else if (command === "trace")
-  await traceImage(first, Number(second), Number(third), Number(fourth), Number(fifth), Number(sixth || 1));
+  await traceImage(
+    first,
+    Number(second),
+    Number(third),
+    Number(fourth),
+    Number(fifth),
+    Number(sixth || 1),
+    Number(seventh || 0.5),
+  );
 else if (command === "launch") launchGame();
 else if (command === "still") await captureGame(first);
 else if (command === "record") await captureGame(first, Number(second || RECORD_DEFAULT_SECONDS));
