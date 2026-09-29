@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Agent Access
 
-Part of [TodoList agent follow-ups](/docs/proposals/resource/todolist-agent-follow-ups). Every read and write in the app is a tRPC procedure that already carries what an agent's tool needs: a name, a Zod input schema, and the guards that authorise it. A Claude Code session has no session cookie, and should not have one, since a cookie is the whole account in a browser. It needs a credential and a way to call the procedures the owner means an agent to reach.
+Part of [TodoList agent follow-ups](/docs/proposals/resource/todolist-agent-follow-ups). Every read and write in the app is a tRPC procedure that already describes itself the way [write once](/docs/architecture/write-once) asks, which is everything an agent's tool needs. A Claude Code session has no session cookie, and should not have one, since a cookie is the whole account in a browser. It needs a credential and a way to call the procedures the owner means an agent to reach.
 
 This is written once, per [write once](/docs/architecture/write-once): one endpoint, one bridge from procedures to tools, one credential. After it ships, exposing any operation to an agent is a line on its procedure, and nothing in this spec changes.
 
@@ -22,7 +22,7 @@ An **API key** from better-auth's own plugin, `@better-auth/api-key`, never a to
 
 ## The endpoint
 
-A Nitro route, `server/api/mcp.post.ts`, serves the Model Context Protocol over its Streamable HTTP transport in stateless mode. Each POST builds a server, handles one JSON-RPC message and returns. The transport requires the endpoint to answer GET too, for a server that pushes messages unprompted. This one never does, so the router's 405 for any method other than POST is the answer the transport allows.
+A new Nitro POST route under the server's API directory serves the Model Context Protocol over its Streamable HTTP transport in stateless mode. Each POST builds a server, handles one JSON-RPC message and returns. The transport requires the endpoint to answer GET too, for a server that pushes messages unprompted. This one never does, so the router's 405 for any method other than POST is the answer the transport allows.
 
 The transport also requires the server to validate `Origin`, so a web page cannot drive the endpoint from a reader's browser. Its only callers are command-line clients, which send no `Origin`, so any request that carries one is refused before the key is looked at.
 

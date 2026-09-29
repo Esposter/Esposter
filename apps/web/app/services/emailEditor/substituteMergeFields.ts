@@ -1,7 +1,7 @@
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 
-import { toMergeField } from "@/services/emailEditor/toMergeField";
 import { escapeHtml } from "#shared/util/text/escapeHtml";
+import { toMergeField } from "@/services/emailEditor/toMergeField";
 
 export const substituteMergeFields = (html: string, row: Record<string, ColumnValue>) =>
   Object.entries(row).reduce((personalizedHtml, [columnName, value]) => {
