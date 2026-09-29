@@ -19,7 +19,7 @@ import { HEALTH_NOTICE_PARAGRAPHS, HEALTH_NOTICE_TITLE } from "#src/services/int
 /* Laid out on the game's 1920 by 1080 unit screen, scaled to fit the window's height or its width, whichever is less, as the game's interface is. Measured
    From the English client's notice and held against the Japanese one's at 60 frames: the divider spans the screen's
    Width less 190 units a side and the text 20 units inside it, so a wider screen sets the notice in fewer lines. The
-   Sizes are the ones that score best against the English client's notice in Asap (heading 57 units, text 39.5), since
+   Sizes are the ones that score best against the English client's notice in Signika (heading 58 units, text 40.5), since
    Its letters are proportioned apart from the game's own face. The text's grey is the Japanese recording's, which the English
    Picture's text agrees with; the English heading is near black, darker than the Japanese one's */
 .health-notice {
@@ -44,7 +44,7 @@ import { HEALTH_NOTICE_PARAGRAPHS, HEALTH_NOTICE_TITLE } from "#src/services/int
 .title {
   margin: 0;
   color: #1d1d1d;
-  font-size: calc(var(--unit) * 57);
+  font-size: calc(var(--unit) * 58);
   font-weight: 600;
   line-height: calc(var(--unit) * 60);
 }
@@ -58,7 +58,7 @@ import { HEALTH_NOTICE_PARAGRAPHS, HEALTH_NOTICE_TITLE } from "#src/services/int
   max-width: calc(100cqw - var(--unit) * 420);
   margin: calc(var(--unit) * 12.5) 0 0;
   color: #656565;
-  font-size: calc(var(--unit) * 39.5);
+  font-size: calc(var(--unit) * 40.5);
   font-weight: 600;
   line-height: calc(var(--unit) * 48.36);
 }

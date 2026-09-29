@@ -3,9 +3,9 @@ import { UiStyleToken } from "../app/models/ui/UiStyleToken";
 
 const PIXEL_FACE = "VT323, monospace";
 const SANS_FACE = "Inter, ui-sans-serif, system-ui, sans-serif";
-// The game's own face for a reader who has it, then Asap, the open face nearest it (the world package's
+// The game's own face for a reader who has it, then Signika, the open face nearest it (the world package's
 // `GAME_FONT_FAMILY` says how it was picked)
-const GAME_FACE = '"HYWenHei 85W", "HYWenHei-85W", Asap, ui-sans-serif, system-ui, sans-serif';
+const GAME_FACE = '"HYWenHei 85W", "HYWenHei-85W", Signika, ui-sans-serif, system-ui, sans-serif';
 const MONO_FACE = '"JetBrains Mono", ui-monospace, monospace';
 // A ring one step out on each side, which leaves the corners notched, and a faint lit line along the top
 const VOXEL_FRAME_SHADOW = [

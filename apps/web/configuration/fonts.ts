@@ -8,7 +8,7 @@ export const fonts: Partial<ModuleOptions> = {
   families: [
     { global: true, name: "Inter", weights: [400, 600] },
     { global: true, name: "JetBrains Mono", weights: [400] },
-    { global: true, name: "Asap", weights: [400, 600] },
+    { global: true, name: "Signika", weights: [400, 600] },
     { global: true, name: "VT323" },
   ],
 };

@@ -1,4 +1,4 @@
-import "@fontsource/asap/600.css";
+import "@fontsource/signika/600.css";
 import { screens } from "#parity/screens";
 import { describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
