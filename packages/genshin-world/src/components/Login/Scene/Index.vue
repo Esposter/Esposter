@@ -17,16 +17,16 @@ import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoo
 import {
   LOGIN_CAMERA_FAR,
   LOGIN_CAMERA_FOV,
-  LOGIN_CAMERA_HEIGHT,
+  LOGIN_CAMERA_END_Z,
   LOGIN_CAMERA_PITCH,
-  LOGIN_CAMERA_START_Z,
+  LOGIN_CAMERA_START,
+  LOGIN_CAMERA_YAW,
   LOGIN_CLOUD_COVERAGE,
   LOGIN_CLOUD_SEA_HEIGHT,
   LOGIN_CLOUD_SEA_SIZE,
   LOGIN_DOOR_RUSH_LIMIT,
   LOGIN_DOOR_RUSH_MS,
   LOGIN_DOOR_RUSH_SHARE,
-  LOGIN_FLIGHT_DISTANCE,
   LOGIN_FOG_DENSITY,
   LOGIN_FOG_HEIGHT_FALLOFF,
   LOGIN_FOG_SCATTER_POWER,
@@ -178,7 +178,6 @@ const loginClouds = createLoginClouds(skyUniforms);
 const gradeLutTexture = createGradeLutTexture(LOGIN_GRADE_OPTIONS);
 usePostPipeline(QualityTier.High, { fogUniforms, godraysLight, gradeLutTexture, postUniforms });
 let renderedFrameCount = 0;
-// The camera flies along -z, three's own forward, from beyond the walkway's far end toward the door, pitched down
 // How long the door has been lit, which the rush toward it follows, and how long it has been rising into place
 const rushMs = shallowRef(0);
 const riseMs = shallowRef(0);
@@ -191,8 +190,13 @@ const doorPosition = computed((): [number, number, number] => {
   const [x, y, z] = LOGIN_DOOR_POSITION;
   return [x, y - LOGIN_DOOR_RISE_DEPTH * (1 - share), z];
 });
+// The camera flies along -z from the matched first pose to the door's, its sideways offset and heading easing to none,
+// And on the click rushes on toward the door
+const [startX, cameraHeight, startZ] = LOGIN_CAMERA_START;
+const cameraX = computed(() => startX * (1 - flight));
+const cameraYaw = computed(() => LOGIN_CAMERA_YAW * (1 - flight));
 const cameraZ = computed(() => {
-  const flownZ = LOGIN_CAMERA_START_Z - flight * LOGIN_FLIGHT_DISTANCE;
+  const flownZ = startZ + (LOGIN_CAMERA_END_Z - startZ) * flight;
   const share = Math.min(LOGIN_DOOR_RUSH_SHARE * (rushMs.value / LOGIN_DOOR_RUSH_MS) ** 2, LOGIN_DOOR_RUSH_LIMIT);
   return flownZ - share * (flownZ - LOGIN_DOOR_POSITION[2]);
 });
@@ -232,8 +236,9 @@ onUnmounted(() => {
   <TresPerspectiveCamera
     :far="LOGIN_CAMERA_FAR"
     :fov="LOGIN_CAMERA_FOV"
-    :position="[0, LOGIN_CAMERA_HEIGHT, cameraZ]"
-    :rotation="[LOGIN_CAMERA_PITCH, 0, 0]"
+    :position="[cameraX, cameraHeight, cameraZ]"
+    :rotation="[LOGIN_CAMERA_PITCH, cameraYaw, 0]"
+    rotation-order="YXZ"
   />
   <primitive :object="light" />
   <primitive :object="light.target" />

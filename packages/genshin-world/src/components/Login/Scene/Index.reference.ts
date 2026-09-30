@@ -94,6 +94,11 @@ export const reference: ComponentReference = {
         "The click lights the door from its middle while the camera pushes toward it, the door growing about 1.7 times in a third of a second and gathering speed, under the white",
       search: "The recording's last second at 15 frames a second (13.6 s to 15.2 s)",
     },
+    {
+      found:
+        "The walkway's top stood 0.33 metres up and the door's foot 5 metres down, so 5.3 of the door's 13.5 metres sank into the walkway and it read short: the walkway's lost parent took its height as well as its place, and the walkway moves 5.33 metres down to meet the door's foot",
+      search: "Why the door read short against the walkway",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",

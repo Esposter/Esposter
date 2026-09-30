@@ -20,8 +20,9 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
     namePattern:
       "^(LoginScene_|Enviro_(Sky_Gradient|Clouds_(Middle_|Top_)?Particle_Atlas|Clouds_(Voronoi|Wispis|Normal)|Cloud_(Layer|Particle|Mid_Particle|Top_Particle)_Mat|Atmosphere_Layer_Mat)$|(Sky|Cloud)_LOD0$)",
     // The walkway's own parent is in a block not read, so it is dumped at the origin; its far edge, 80 metres out, meets
-    // The door the stage stands 32.3 metres out along its axis (Login/Scene/Index.reference.ts, source `door`)
-    rootOffsets: { LoginScene_Bridge01_Vo: [0, 0, -112.3] },
+    // The door the stage stands 32.3 metres out along its axis, and its top, 0.33 metres up, the door's foot 5 metres
+    // Down (Login/Scene/Index.reference.ts, source `door`)
+    rootOffsets: { LoginScene_Bridge01_Vo: [0, -5.33, -112.3] },
     roots: ["CharacterSelectSceneNew", "LoginScene_Bridge01_Vo"],
   },
 };
