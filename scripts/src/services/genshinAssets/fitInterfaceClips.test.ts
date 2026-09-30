@@ -12,7 +12,7 @@ const createCurve = (path: string, property: string, samples: number[]): Decoded
 });
 
 describe(fitInterfaceClips, () => {
-  test("keeps a moving curve on a named piece as keyframes where it bends, and leaves out hashes and held curves", () => {
+  test("keeps a curve on a named piece as keyframes where it bends, a held one as its value held, and leaves out hashes", () => {
     expect.hasAssertions();
 
     const clips = [
@@ -39,6 +39,14 @@ describe(fitInterfaceClips, () => {
             ],
             property: "opacity",
             target: "Bottom",
+          },
+          {
+            keyframes: [
+              [0, 1],
+              [1, 1],
+            ],
+            property: "opacity",
+            target: "Center",
           },
         ],
       },

@@ -15,7 +15,7 @@ const toProperty = ({ component, property }: DecodedCurve): string => {
   return "";
 };
 // The interface clips a screen plays, from the component's decoded clips: each clip's span in milliseconds and a track
-// For each curve that moves an interface piece its tree names (a path, not a hash) in a property the screen draws,
+// For each curve that sets an interface piece its tree names (a path, not a hash) in a property the screen draws,
 // Its keyframes simplified to where the curve bends, each an offset through the clip and a value
 export const fitInterfaceClips = (
   clips: readonly { curves: DecodedCurve[]; duration: number; name: string }[],
@@ -31,16 +31,29 @@ export const fitInterfaceClips = (
         tracks: curves.flatMap((curve) => {
           const property = toProperty(curve);
           const { path, samples } = curve;
+          if (!property || /^\d+$/u.test(path)) return [];
+          const target = path === "(the animator)" ? "" : path;
           const low = Math.min(...samples);
           const range = Math.max(...samples) - low;
-          if (!property || /^\d+$/u.test(path) || range < 1e-3) return [];
+          // A held curve still sets its piece's value, as a clip of no length (the white curtain's) does all it does
+          if (range < 1e-3)
+            return [
+              {
+                keyframes: [
+                  [0, roundFitted(low)],
+                  [1, roundFitted(low)],
+                ],
+                property,
+                target,
+              },
+            ];
           const span = Math.max(samples.length - 1, 1);
           const normalised = samples.map((sample, index): [number, number] => [index / span, (sample - low) / range]);
           const keyframes = simplifyPath(normalised, KEYFRAME_TOLERANCE).map(([offset, share]): [number, number] => [
             Math.round(offset * 1e4) / 1e4,
             roundFitted(low + share * range),
           ]);
-          return [{ keyframes, property, target: path === "(the animator)" ? "" : path }];
+          return [{ keyframes, property, target }];
         }),
       },
     ]),
