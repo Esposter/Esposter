@@ -2,11 +2,9 @@ import type { ParityReference } from "#src/models/genshinParity/ParityReference"
 
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
-  "exit-prompt": { screen: "exit-prompt", wikiTitle: "File:Paimon Menu Exit Prompt.png" },
   // The English client's notice, a 597 by 335 screenshot of a 16:9 screen, sharpened, so its geometry is read from it
   // And its ink's colour from the Japanese recording
   "health-notice": { capture: "health-notice-en.png", screen: "SplashHealthNotice", seconds: 0 },
-  "loading-region": { screen: "loading-region", wikiTitle: "File:Loading Screen Mondstadt.png" },
   "loading-startup": { screen: "LoadingStartup", wikiTitle: "File:Loading Screen Startup.png" },
   // The wiki's four skies are clean captures of the scene at one pose, early in the camera's flight, with no interface
   "login-dawn": {
@@ -61,10 +59,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "LoginScreen",
     wikiTitle: "File:Login Menu Night.png",
   },
-  "paimon-menu": { screen: "pause-menu", wikiTitle: "File:Paimon Menu Version 1.3.png" },
-  "paimon-menu-grid": { screen: "pause-menu", wikiTitle: "File:Paimon Menu Version 3.2.png" },
   "publisher-splash": { capture: "session-2.mp4", screen: "SplashPublisher", seconds: 1 },
-  settings: { screen: "settings", wikiTitle: "File:Login Menu Settings.png" },
   // The English client's splash, from a public video of its phone build letterboxed in a 1080p frame; scored over the
   // Logo, since the video's own watermark sits in a corner
   "title-splash": {

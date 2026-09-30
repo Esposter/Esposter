@@ -61,3 +61,12 @@ export const CONTACT_SHEET_CELL_WIDTH = 320;
 export const COMPARISON_HEIGHT = 540;
 // The contact sheet `frames` writes beside its frames, which is not one of them
 export const CONTACT_SHEET_NAME = "sheet.png";
+// The committed report of every reference's last scores, beside the map naming them
+export const PARITY_SCORES_PATH: string = join(
+  REPOSITORY_ROOT,
+  "scripts",
+  "src",
+  "services",
+  "genshinParity",
+  "ParityReferenceMap.snapshot.md",
+);
