@@ -59,7 +59,8 @@ export const loadWitness = async (
   );
   const witness = new Group();
   const getFamilyGroup = (family: string): Group => {
-    const familyGroup = witness.getObjectByName(family);
+    // Only its children: the root's own name is empty too, which `getObjectByName` would match for the unnamed family
+    const familyGroup = witness.children.find(({ name }) => name === family);
     if (familyGroup instanceof Group) return familyGroup;
     const group = new Group();
     group.name = family;

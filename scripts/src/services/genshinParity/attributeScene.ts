@@ -26,14 +26,17 @@ export const attributeScene = async (
   return withFinalizerAsync(
     async () => {
       const familyList = (await pages[0]?.page.evaluate(() => window.document.body.dataset.witnessFamilies)) ?? "";
-      const families = familyList.split(",").filter(Boolean);
+      // The unnamed family, the parts no family names, is drawn with the witness but never handed back on its own
+      const families = familyList.split(",");
       const views: { name: string; view: PageWitnessView }[] = [
         { name: "witness", view: { camera, families } },
         { name: "witness, textures flattened", view: { camera, families, shading: "Flat" } },
-        ...families.map((family) => ({
-          name: `ours: ${family}`,
-          view: { camera, families: families.filter((drawn) => drawn !== family) },
-        })),
+        ...families
+          .filter(Boolean)
+          .map((family) => ({
+            name: `ours: ${family}`,
+            view: { camera, families: families.filter((drawn) => drawn !== family) },
+          })),
         { name: "ours", view: { camera, families: [] } },
       ];
       const rows: AttributionRow[] = [];
