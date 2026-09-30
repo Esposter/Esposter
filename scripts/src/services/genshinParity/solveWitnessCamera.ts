@@ -1,4 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
+import type { Page } from "playwright";
 
 import { COMPARISONS_DIRECTORY, REFERENCES_DIRECTORY, STRUCTURE_WIDTH } from "#src/services/genshinParity/constants";
 import { fetchReferences } from "#src/services/genshinParity/fetchReferences";
@@ -6,8 +7,6 @@ import { minimizeNelderMead } from "#src/services/genshinParity/minimizeNelderMe
 import { openParityPage } from "#src/services/genshinParity/openParityPage";
 import { ParityReferenceMap } from "#src/services/genshinParity/ParityReferenceMap";
 import { scoreEdgeDistance } from "#src/services/genshinParity/scoreEdgeDistance";
-import type { Page } from "playwright";
-
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";

@@ -17,7 +17,7 @@ describe(selectFinestLevels, () => {
   test("keeps each part's finest exported level and every exported mesh without levels", () => {
     expect.hasAssertions();
 
-    const exported = new Set(["Tower_Lod1", "Tower_Lod2", "Door", "Arch_Lod0"]);
+    const exported = new Set(["Arch_Lod0", "Door", "Tower_Lod1", "Tower_Lod2"]);
     const placements = ["Tower_Lod0", "Tower_Lod1", "Tower_Lod2", "Door", "Lamp", "Arch_Lod0"].map((mesh) =>
       createPlacement(mesh),
     );

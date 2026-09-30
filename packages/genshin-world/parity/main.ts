@@ -46,7 +46,7 @@ if (screen && root) {
   const readyProps = screen.readyEvent ? { [`on${capitalize(screen.readyEvent)}`]: resolveReady } : {};
   if (!screen.readyEvent) resolveReady();
   const witnessLayoutUrl = searchParameters.get("witness");
-  const witness: SceneWitness | null = witnessLayoutUrl
+  const witness: null | SceneWitness = witnessLayoutUrl
     ? { isAlone: ref(false), parts: await loadWitness(witnessLayoutUrl) }
     : null;
   createApp({

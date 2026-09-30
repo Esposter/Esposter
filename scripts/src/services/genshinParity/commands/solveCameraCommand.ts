@@ -11,7 +11,7 @@ const axes: readonly string[] = CAMERA_POSE_AXES;
 const parseRange = (range: string): [string, number[]] => {
   const [axis = "", ...bounds] = range.split(":");
   const [from = 0, to = 0, step = 1] = bounds.map(Number);
-  if (!axes.includes(axis) || ![from, to, step].every(Number.isFinite) || step <= 0 || to < from)
+  if (!axes.includes(axis) || ![from, to, step].every((bound) => Number.isFinite(bound)) || step <= 0 || to < from)
     throw new InvalidOperationError(
       Operation.Read,
       range,

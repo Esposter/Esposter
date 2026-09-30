@@ -1,5 +1,5 @@
-import { STRUCTURE_WIDTH } from "#src/services/genshinParity/constants";
 import { computeDistanceTransform } from "#src/services/genshinParity/computeDistanceTransform";
+import { STRUCTURE_WIDTH } from "#src/services/genshinParity/constants";
 import { readStructureEdges } from "#src/services/genshinParity/readStructureEdges";
 import sharp from "sharp";
 
