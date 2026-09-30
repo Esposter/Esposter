@@ -16,7 +16,10 @@ const emit = defineEmits<{ finish: [] }>();
 // Has loaded. The marks fade in as it starts; once loading completes they fade out, the white holds, and `finish` says
 // The world may cut in
 const litInset = computed(() => `inset(0 ${(1 - Math.min(Math.max(progress, 0), 1)) * 100}% 0 0)`);
-const isComplete = computed(() => progress >= 1);
+// Loading counts as complete only once the marks have faded in, so a page that finished loading while the splashes
+// Played still shows its row, lit, before it goes, as the game's always does
+const isFadedIn = ref(false);
+const isComplete = computed(() => isFadedIn.value && progress >= 1);
 const { start } = useTimeoutFn(() => emit("finish"), MARKS_FADE_MS + WHITE_HOLD_MS, { immediate: false });
 whenever(isComplete, start, { immediate: true, once: true });
 </script>
@@ -35,6 +38,7 @@ whenever(isComplete, start, { immediate: true, once: true });
       :key="String(isLit)"
       :class="['marks', { complete: isComplete, lit: isLit }]"
       :style="isLit ? { clipPath: litInset } : undefined"
+      @animationend="isFadedIn = true"
     >
       <svg
         v-for="elementType of ElementTypes"
