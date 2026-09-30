@@ -44,6 +44,31 @@ flowchart TD
 - **A witness render draws the exports through our own scene.** With `--witness`, the shooting browser serves a component's exports to the page and the scene draws them in place of its own parts (`SceneWitnessKey`), under its own camera, light and frame, so a stand-in of ours is priced against the game's own data ([scene derivation](/docs/proposals/genshin/scene-derivation)). Nothing of it is bundled: the page only fetches what the shoot serves it. `solve-camera` matches the camera on the exports' real geometry, over every reference that shares one pose: it holds a page open for each, sets each pose through the page's `setWitnessCamera` with the scene's own fog and clouds off, and scores the line distance, the mean distance of each image's long vertical lines from the other's. Those are the towers' sides, which the clouds do not draw: the reference's clouds are most of its edges, and an edge distance over all of them rewarded whichever pose showed the most clutter. It tries every pose of a grid, then refines the best few with a Nelder–Mead simplex.
 - **The world's shapes are measured off the game's own assets, never copied.** The interface is rebuilt from screenshots, which its overlay compare holds exactly; a scene's towers, doors and profiles come from the installed game's files. AnimeStudio exports them with the game closed into the references folder, outside the repository like every other reference, and a transform fits our own kits' parameters to them, so only numbers of ours ship ([derived assets](/docs/genshin/derived-assets)).
 
+## Deriving a screen
+
+A new screen, or a new piece of one, is derived in one order, so every source is found once, recorded where it is used, and never searched for again:
+
+```mermaid
+flowchart TD
+  P["Search what is published: the wiki, data dumps, public videos"] --> REF["References: ParityReferenceMap, and the component's Index.reference.ts sources"]
+  P --> B["Find the screen's blocks through an indexed asset: a mesh, a clip, a material"]
+  B --> MAP["Its DerivedAssetComponentMap entry: names, roots, interface root and anchor, clips"]
+  MAP --> RUN["genshin:assets extract, shaders, inventory, interface, clips, witness"]
+  RUN --> REF
+  RUN --> K{What is the piece?}
+  K -->|"interface"| UI["Placed from the interface tree's rects, moved by its decoded clips"]
+  K -->|"3D"| SD["The scene derivation: witness, camera, calibration, loss table"]
+  UI --> C["compare against its references"]
+  SD --> C
+  C -->|off| K
+  C -->|matches| V["Approve in the visual suite"]
+  V --> R["Record: findings in the reference, conventions in the skill"]
+```
+
+- **Read before searching.** A component's `Index.reference.ts` and the [game data formats](/docs/genshin/game-data-formats) page's shortcuts come first; a search whose answer is recorded is not run again.
+- **Every derived value cites its source.** A rect, a curve, a fitted shape or a constant names the key of the reference source it is taken from.
+- **Exact data outranks measurement.** A RectTransform's anchor, a clip's curve or a shader's program is used before a position, a timing or a model measured off a recording; a recording measures only what is fieldless, such as a layout group's spacing or a script's settings.
+
 ## Commands
 
 From `scripts/`, as `pnpm genshin:parity <command>`, each with its own `--help`; the parity page from `packages/genshin-world`, as `pnpm parity`.
