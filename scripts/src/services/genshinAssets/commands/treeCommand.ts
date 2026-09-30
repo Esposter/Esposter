@@ -48,7 +48,7 @@ export const treeCommand: SubCommandsDef[string] = defineCommand({
     const nodes = root ? tops.flatMap((top) => findNodes(top, root)) : tops;
     const depth = args.depth === undefined ? Infinity : Number(args.depth);
     // A depth that is no count would prune every child and pass the tops off as a flat hierarchy
-    if (depth !== Infinity && !(Number.isInteger(depth) && depth >= 0))
+    if (args.depth !== undefined && !(Number.isInteger(depth) && depth >= 0))
       throw new InvalidOperationError(Operation.Read, "depth", `not a whole number of levels: ${args.depth}`);
     console.log(nodes.map((node) => formatSceneTree(pruneNode(node, depth))).join("\n"));
   },
