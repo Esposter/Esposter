@@ -1,6 +1,6 @@
 ---
 title: Scene toolbox
-description: Proposal — the tools that make each unknown of a 3D scene answerable on its own, so a scene is solved rather than searched and converges in a pass or two the way the interface does. The scene's hierarchy is printed with what it lost and closed over by path ID, a script's raw bytes are scanned for the pointers and values that name its settings, the arrangement is checked by ratios before any pose, the camera is solved from correspondences and tracked across a recording, the witness render is made deterministic and writes a G-buffer, and the grade, fog and light are fitted by regression over it. Superseded searches are deleted.
+description: Proposal — the tools that make each unknown of a 3D scene answerable on its own, so a scene is solved rather than searched and converges in a pass or two the way the interface does. The scene's hierarchy is printed with what it lost and closed over by file and path ID, a script's raw bytes are scanned for the pointers and values that name its settings, the arrangement is checked by ratios before any pose, the camera is solved from correspondences and tracked across a recording, the witness render is made deterministic and writes a G-buffer, and the grade, fog and light are fitted by regression over it. Superseded searches are deleted.
 model: claude-opus-5-5
 ---
 
@@ -45,7 +45,7 @@ flowchart TD
 
 **The scene tree.** `genshin:assets tree <component> [--root <name>] [--block <block>]` prints the hierarchy the layout dumps hold, every block's roots and each node beneath: its block, its local position, rotation and scale, its composed world scale, what it draws, and its child count. It flags what the arrangement questions turn on: an empty anchor (no children, no renderer), a father or a child no dump holds, a root dumped at the origin, a script's object, and a mesh laid out under several roots. It reads `readSceneLayout` as `fit` does, and the interface tree's printer and this one share one tree formatter, since the interface's is already one (`formatInterfaceTree`). It replaces reading the dumps by hand, which is how the login's lost-block theory survived several sessions.
 
-**Closure extraction.** `extract` today finds blocks by name pattern, which misses anything named otherwise and reaches every block that reuses a shared name. A component instead names its roots, and `extract` follows every reference from them by path ID, father and children, each object's components, each renderer's materials and mesh, each material's textures and shader, through the asset index to the blocks holding them, exporting until nothing new is reached. A reference into another file (`m_FileID` not zero) is resolved through the index by its path ID. Name patterns stay only for what no pointer reaches, such as a shared sky whose owner is a script. The closure prints every reference it could not resolve, which is the tree's dangling flag at the level of blocks.
+**Closure extraction.** `extract` today finds blocks by name pattern, which misses anything named otherwise and reaches every block that reuses a shared name. A component instead names its roots, and `extract` follows every reference from them, father and children, each object's components, each renderer's materials and mesh, each material's textures and shader, through the asset index to the blocks holding them, exporting until nothing new is reached. A path ID names an object only within its file, so every object is held as its file and its path ID throughout: a reference with `m_FileID` zero stays in its own file, and one with `m_FileID` not zero is first resolved through its own file's external-reference table, then looked up by path ID within the file that names. Name patterns stay only for what no pointer reaches, such as a shared sky whose owner is a script. The closure prints every reference it could not resolve, which is the tree's dangling flag at the level of blocks.
 
 **Raw behaviours.** `genshin:assets behaviours <component>` exports each of the component's MonoBehaviours raw, beside its JSON, and `scanSerializedFields` reads the bytes after the header the JSON already names. A MonoBehaviour's fields are serialized in declaration order, aligned to four bytes, with no names, so the scanner reports what the bytes' shapes identify rather than fields by name. The shapes:
 
@@ -63,7 +63,7 @@ A reading the scene uses is kept as its offset and shape in the component's refe
 
 ### 2. The arrangement
 
-`genshin:assets arrangement <component>` checks the arrangement with no pixels. Each proportion a reference shows between two parts standing side by side (the door's width over the walkway's at its foot, a tower's over the next) is declared in a ratio map beside the fitted data, citing its reference, and the command prints each against the placements. A unit test holds the same map, so a change of arrangement that breaks one fails before any render. It also diffs the scene's own placements against the witness layout's, family by family, so a fit that drifts from the exports shows as a number. The walkway that stood 2.5 times too wide beside the door would have failed its ratio at once.
+`genshin:assets arrangement <component>` checks the arrangement with no pixels. Each proportion a reference shows between two parts standing together, measured along one direction (the door's width over the walkway's at its foot), is declared in a ratio map beside the fitted data, citing its reference, and the command prints each against the placements. A unit test holds the same map, so a change of arrangement that breaks one fails before any render. It also diffs the scene's own placements against the witness layout's, family by family, so a fit that drifts from the exports shows as a number. Only parts that meet keep their ratio from any pose, since only they share one depth from every camera; parts apart, such as a tower and the next, differ in depth by the pose and are compared once `pose` has solved it. The walkway that stood 2.5 times too wide beside the door would have failed its ratio at once.
 
 ### 3. The camera
 
@@ -112,7 +112,7 @@ The `shaders` step already disassembles each program. It also writes each progra
 ```text
 scripts/src/services/genshinAssets/
   formatSceneTree.ts            ← the tree, on the interface tree's formatter
-  readAssetClosure.ts           ← every reference from a component's roots, by path ID
+  readAssetClosure.ts           ← every reference from a component's roots, by file and path ID
   scanSerializedFields.ts       ← pointers, colours, curves, arrays and scalars in a script's raw bytes
   composeUnityTransform.ts      ← Transform composition to Unity's semantics
   checkArrangement.ts           ← ratios and the placement diff
