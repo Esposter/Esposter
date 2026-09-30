@@ -9,7 +9,7 @@ describe("genshin-ui", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 34.46 KB (35283 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 34.49 KB (35317 bytes)"`);
   });
 
   test("types size", () => {
