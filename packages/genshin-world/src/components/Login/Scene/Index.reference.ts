@@ -84,8 +84,19 @@ export const reference: ComponentReference = {
         "Rows within noise of each other: a loss table priced at a pose that fits nothing means nothing, so it waits on the pose",
       search: "genshin:parity attribute over dawn, dusk and night at (0, 5, 75), heading 0, pitch 3, Build_All witness",
     },
+    {
+      found:
+        "Ani_LogginScene_Door01_Liftting is the door assembling itself over 1.33 s at the flight's end, its pieces rising about 60 metres from below into place; Ani_Login_Lift raises its animator's root 50 metres over a second, easing in and overshooting to 52.5 before settling",
+      search: "genshin:assets clips login: what the scene's clips move",
+    },
+    {
+      found:
+        "The click lights the door from its middle while the camera pushes toward it, the door growing about 1.7 times in a third of a second and gathering speed, under the white",
+      search: "The recording's last second at 15 frames a second (13.6 s to 15.2 s)",
+    },
   ],
   open: [
+    "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
     "The walkway's exact offset along the stage's axis, and the door's heading, solved on the door reference",
     "The dawn, dusk and night pose with the walkway moved, on the towers' lines; then the day's",
   ],
@@ -122,6 +133,12 @@ export const reference: ComponentReference = {
       kind: GameSourceKind.Capture,
       name: "File:Login Menu Day.png",
       role: "The day sky, at a pose of its own",
+    },
+    doorRise: {
+      block: "00/16000354.blk",
+      kind: GameSourceKind.AnimationClip,
+      name: "Ani_LogginScene_Door01_Liftting",
+      role: "The door assembling itself at the flight's end, its pieces rising into place over 1.33 s",
     },
     door: {
       block: "00/04803507.blk",

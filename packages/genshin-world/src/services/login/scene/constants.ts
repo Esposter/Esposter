@@ -26,6 +26,12 @@ const DOOR_DISTANCE_SHARE = 3.93;
 export const LOGIN_FLIGHT_DISTANCE =
   LOGIN_CAMERA_START_Z - (LOGIN_DOOR_POSITION[2] + LOGIN_CAMERA_HEIGHT * DOOR_DISTANCE_SHARE);
 export const LOGIN_CAMERA_FAR = 8000;
+// The rush to the door on the click: the camera closes 41% of its distance to the door in its first 333 ms, gathering
+// Speed with the square of the time, as the door grows about 1.7 times in the recording's last third of a second
+// (Login/Scene/Index.reference.ts, source `recording`), and stops short of the door under the white
+export const LOGIN_DOOR_RUSH_SHARE = 0.41;
+export const LOGIN_DOOR_RUSH_MS = 333;
+export const LOGIN_DOOR_RUSH_LIMIT = 0.9;
 // The cloud sea's top, far under the walkway where the towers' feet vanish, and how far it reaches
 export const LOGIN_CLOUD_SEA_HEIGHT = -80;
 export const LOGIN_CLOUD_SEA_SIZE = 12_000;
