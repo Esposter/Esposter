@@ -22,25 +22,30 @@ export const composeAssetPlacements = (
     idWorldMatrixMap.set(transformId, world);
     return world;
   };
-  // An object is placed where its chain of parents reaches a root; a chain that loops back on itself reaches none
-  const checkIsPlaced = ({ parentId }: SceneObject, visitedIds: ReadonlySet<string> = new Set()): boolean => {
-    if (parentId === ROOT_PARENT_ID) return true;
-    const parent = idObjectMap.get(parentId);
-    return parent && !visitedIds.has(parentId) ? checkIsPlaced(parent, new Set([...visitedIds, parentId])) : false;
+  // The root an object's chain of parents reaches, where it is placed; a chain that loops back on itself reaches none
+  const getRoot = (object: SceneObject, visitedIds: ReadonlySet<string> = new Set()): SceneObject | undefined => {
+    if (object.parentId === ROOT_PARENT_ID) return object;
+    const parent = idObjectMap.get(object.parentId);
+    return parent && !visitedIds.has(object.parentId)
+      ? getRoot(parent, new Set([...visitedIds, object.parentId]))
+      : undefined;
   };
-  return objects
-    .filter((object) => checkIsPlaced(object))
-    .map((object) => {
-      const position = new Vector3();
-      const rotation = new Quaternion();
-      const scale = new Vector3();
-      getWorldMatrix(object).decompose(position, rotation, scale);
-      return {
+  return objects.flatMap((object) => {
+    const root = getRoot(object);
+    if (!root) return [];
+    const position = new Vector3();
+    const rotation = new Quaternion();
+    const scale = new Vector3();
+    getWorldMatrix(object).decompose(position, rotation, scale);
+    return [
+      {
         mesh: nameMeshMap.get(object.name) ?? "",
         name: object.name,
         position: position.toArray(),
+        root: root.name,
         rotation: rotation.toArray(),
         scale: scale.toArray(),
-      };
-    });
+      },
+    ];
+  });
 };

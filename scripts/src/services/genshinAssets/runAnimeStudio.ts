@@ -1,4 +1,6 @@
 import { ANIMESTUDIO_CLI_PATH } from "#src/services/genshinAssets/constants";
+import { checkIsGameRunning } from "#src/services/genshinParity/checkIsGameRunning";
+import { GAME_EXECUTABLE_NAME } from "#src/services/genshinParity/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
@@ -6,8 +8,14 @@ import { dirname } from "node:path";
 
 // Runs AnimeStudio's command line for the game, from its own folder since it keeps its CAB map beside its working
 // Directory, blocking and quiet but for warnings and errors. It reads the game's files alone and sends the game
-// Nothing, so the game is kept closed while it runs
+// Nothing, and it refuses to start while the game runs, whose files it would be reading under the game's own guard
 export const runAnimeStudio = (args: string[]): void => {
+  if (checkIsGameRunning())
+    throw new InvalidOperationError(
+      Operation.Read,
+      GAME_EXECUTABLE_NAME,
+      "is running: close the game before AnimeStudio reads its blocks",
+    );
   if (!existsSync(ANIMESTUDIO_CLI_PATH))
     throw new InvalidOperationError(
       Operation.Read,

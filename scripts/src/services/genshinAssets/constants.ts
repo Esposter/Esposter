@@ -41,3 +41,12 @@ export const SILHOUETTE_CELL_SIZE = 0.5;
 export const SILHOUETTE_TOLERANCE = 0.25;
 // The path ID a root's parent is written as
 export const ROOT_PARENT_ID = "0";
+// A cloud atlas holds its painted clouds in two columns of four rows, each traced on a grid of four texels and kept
+// Within one grid cell of it; a texel is the cloud where its alpha passes half, and its lit crown where its red (the
+// Light the painter put on it) does
+export const CLOUD_ATLAS_COLUMNS = 2;
+export const CLOUD_ATLAS_ROWS = 4;
+export const CLOUD_TRACE_TEXELS = 4;
+export const CLOUD_TRACE_TOLERANCE = 1;
+export const CLOUD_COVERAGE_THRESHOLD = 0.5;
+export const CLOUD_LIT_THRESHOLD = 0.5;
