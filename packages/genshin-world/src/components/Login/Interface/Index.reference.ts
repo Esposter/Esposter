@@ -1,14 +1,26 @@
-import type { ComponentReference } from "#src/models/reference/ComponentReference";
+import type { ComponentReference } from "genshin-ui";
 
-import { GameSourceKind } from "#src/models/reference/GameSourceKind";
+import { GameSourceKind } from "genshin-ui";
 
 // The login interface's sources in the game's data, what every search over them found, and what is still open. Its
 // Layout is the RectTransforms under `LoginMainPage` in units of the canvas's 1600 by 900 reference
 export const reference: ComponentReference = {
   findings: [
     {
-      found: "In 11790361, beside the Ani_LoginMainPage_Waiting clips: GameObjects are not in the asset index",
-      search: "Which block holds the login interface",
+      found:
+        "In 11790361 (838 RectTransforms, with BtnHelp, BtnLogin, BtnRepair, BtnSetting and DoorNode); 16000354 holds 51 and 03544574 334, none of the page's: GameObjects are not in the asset index, so a block is found through an indexed asset beside them, the Ani_LoginMainPage_Waiting clips",
+      search:
+        "Which block holds the login interface, dumping the RectTransforms and GameObjects of 16000354, 11790361 and 03544574",
+    },
+    {
+      found:
+        "Its JSON export has the Transform fields alone; its raw export's last 40 bytes are the anchors, anchored position, size and pivot, and the raw and JSON files share their numbering",
+      search: "Where a RectTransform's anchors are",
+    },
+    {
+      found:
+        "A RectTransform's own path ID is not in its dump: it is its GameObject's first component, so the tree joins through the GameObjects",
+      search: "How the page's tree is built from the dumps",
     },
     {
       found: "1600 by 900, drawn 1.2 times at 1080 high: the server bar's top is 128 plus 32 units up, 192 pixels",

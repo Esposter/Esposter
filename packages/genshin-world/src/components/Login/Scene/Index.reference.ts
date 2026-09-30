@@ -1,42 +1,88 @@
-import type { ComponentReference } from "#src/models/reference/ComponentReference";
+import type { ComponentReference } from "genshin-ui";
 
-import { GameSourceKind } from "#src/models/reference/GameSourceKind";
+import { GameSourceKind } from "genshin-ui";
 
-// The login scene's sources in the game's data, what every search over them found, and what is still open
+// The login scene's sources in the game's data, what every search over them found, and what is still open. Poses are
+// In three's axes (metres) with the heading, pitch and field of view in degrees; distances in pixels at 480 wide
 export const reference: ComponentReference = {
   findings: [
     {
+      found: "Shape 0.318, the same as our kits': the camera, not the kits, is the first loss",
+      search:
+        "The exports drawn from the scene's derived pose (0, 15.2, 105, heading 0, pitch -3.37, fov 45) against login-day",
+    },
+    {
       found:
-        "A pose facing nothing: a reference's clouds are most of its edges, and a flat frame's noise read as edges",
-      search: "The four skies' camera by edge distance over the stage",
-    },
-    { found: "Only a little nearer than the derived pose", search: "The same with an edge floor" },
-    { found: "Too weak a signal on its own", search: "A landmark solve from hand-read tower tops" },
-    {
-      found: "Build_All's towers are too large and too spread; the stage's are the recording's kinds",
-      search: "A contact sheet of both arrangements at eight headings from each end of the walkway",
+        "5.23 px at (-5.35, 2.83, 81.07), heading 140.7, pitch -2.0, fov 46.1: facing almost nothing. Rejected: the reference's clouds are most of its edges, and a flat frame's noise read as edges; the edge floor was added",
+      search:
+        "solve-camera login-day, edge distance, stage and walkway at the origin: x -8 to 8 by 4, y 2 to 14 by 4, z -60 to 140 by 20, heading 0 to 330 by 30 (2640 poses), then the simplex from the best three",
     },
     {
-      found: "A pose into the tower forest with no walkway: more towers always find a nearer line",
-      search: "Dawn, dusk and night by the towers' long vertical lines over Build_All",
+      found:
+        "9.27 px at (3, 6, 100), heading 10, pitch -3, against 11.23 px at the derived pose: the walkway fills the frame's foot where the reference's is narrow. Rejected",
+      search:
+        "The same with the edge floor: x -6 to 6 by 3, y 2 to 14 by 4, z 20 to 160 by 20, heading -30 to 30 by 10 (1120 poses)",
     },
     {
-      found: "A pose at the end of the range searched, still not the reference",
-      search: "The same over the stage, constrained to the walkway facing the door",
+      found:
+        "Stage: cost 5.62 at (-0.17, 17.37, 207.69), heading -2.5, pitch 10.4, fov 60.9; Build_All: 9.13. Its render matched neither: too weak a signal on its own",
+      search:
+        "A landmark solve from six hand-read tower positions, widths and tops and the walkway's edges at the frame's foot, 400000 random poses then a local refinement, no rendering",
     },
-    { found: "Towers on the reference's sides, the walkway still wrong", search: "The stage mirrored across its axis" },
     {
-      found: "The door stands mid-walkway: the walkway's root is dumped at the origin, its parent in a block not read",
+      found:
+        "Build_All's towers are several hundred metres tall, spread far and cut off above the cloud sea; the stage's towers are the recording's kinds",
+      search:
+        "A contact sheet: both arrangements from each end of the walkway (z 75 and -75), 5 metres up, pitch 3, at eight headings",
+    },
+    {
+      found:
+        "7.74 px at (-4.56, 13.35, -0.87), heading 219.6, pitch 3.2, fov 45.4: into the tower forest with no walkway. Rejected: more towers always find a nearer line",
+      search:
+        "solve-camera login-dawn, login-dusk, login-night by the towers' long vertical lines, Build_All with the walkway: x -8 to 8 by 4, y 1 to 13 by 4, z -90 to 150 by 30, heading 0 to 340 by 20 (3240 poses)",
+    },
+    {
+      found: "14.22 px: the walkway lines up, the towers float cut off above the cloud sea and crowd the frame",
+      search: "Build_All from (0, 12.5, -110), heading 180, pitch 3",
+    },
+    {
+      found:
+        "8.71 px at (3.99, 8.98, 20.06), heading 5.0, pitch 3.0, fov 45.0: at the end of the range searched, with the towers on the wrong sides. Rejected",
+      search:
+        "The same three skies by lines over the stage, on the walkway facing the door: x -4 to 4 by 4, y 8 to 16 by 4, z 20 to 160 by 20, heading -20 to 20 by 5 (648 poses)",
+    },
+    {
+      found: "12.39 px: almost no towers that way; the forest lies toward -z",
+      search: "The stage from z -20 facing +z (heading 180)",
+    },
+    {
+      found:
+        "13.48 px but a gothic tower near the left and a column and arched bridge on the right, as the reference; the walkway still wrong. Its search (729 poses) was stopped once the walkway's place was found wrong",
+      search: "The stage's placements mirrored across its axis, from (-4, 9, 20), heading -5",
+    },
+    {
+      found:
+        "The door is under the stage at (0, -5, 32.3), 0.4 scale, 8 by 13.5 metres; the walkway's root is dumped at the origin spanning z -75 to 72, so the door stood mid-walkway: the walkway's own parent is in a block not read",
       search: "The door's placement against the walkway's",
     },
     {
-      found: "The recording's composition: the walkway straight to the door on its dais, towers either side",
-      search: "The walkway moved along the stage's axis so its far end meets the door",
+      found:
+        "12.22 px, and the recording's composition: the walkway straight to the door on its dais, towers either side, arched bridges to the right",
+      search: "The walkway moved 107.3 metres along +z so its far end meets the door, from (0, 12, 170), heading 0",
     },
-    { found: "Dawn, dusk and night share one pose; the day sky is another", search: "Which references share a pose" },
     {
-      found: "Not a clip: the flight is the MonoLoginScene script's, so its path is solved from the captures",
+      found: "Dawn, dusk and night share one; the day sky is another",
+      search: "Which references share a pose, by their towers' lines",
+    },
+    {
+      found:
+        "None: Start and End hold a constant 50-metre lift, Ani_Login_Lift moves between them; the flight is the MonoLoginScene script's",
       search: "A clip for the flight down the walkway",
+    },
+    {
+      found:
+        "Rows within noise of each other: a loss table priced at a pose that fits nothing means nothing, so it waits on the pose",
+      search: "genshin:parity attribute over dawn, dusk and night at (0, 5, 75), heading 0, pitch 3, Build_All witness",
     },
   ],
   open: [

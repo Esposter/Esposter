@@ -12,9 +12,9 @@ the shot shares, 1 identical. Commit it with the change that moved it, as a benc
 | `login-day` | `LoginScreen` | 20.85% | 0.318 | 17.85% |
 | `login-door` | `LoginScreen` | 25.90% | 0.237 | 25.05% |
 | `login-dusk` | `LoginScreen` | 26.07% | 0.302 | 22.17% |
-| `login-interface-door` | `LoginInterface` | 0.64% | 0.986 | 0.43% |
-| `login-interface-loading` | `LoginInterface` | 0.17% | 0.995 | 0.09% |
-| `login-interface-title` | `LoginInterface` | 0.36% | 0.997 | 0.23% |
+| `login-interface-door` | `LoginInterface` | 0.57% | 0.987 | 0.43% |
+| `login-interface-loading` | `LoginInterface` | 0.07% | 0.995 | 0.03% |
+| `login-interface-title` | `LoginInterface` | 0.23% | 0.999 | 0.17% |
 | `login-night` | `LoginScreen` | 17.45% | 0.278 | 13.95% |
 | `publisher-splash` | `SplashPublisher` | 0.46% | 1.000 | 0.77% |
 | `title-splash` | `SplashTitle` | 1.29% | 1.000 | 0.26% |
