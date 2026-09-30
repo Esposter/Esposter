@@ -36,17 +36,14 @@ export const fitInterfaceClips = (
           const low = Math.min(...samples);
           const range = Math.max(...samples) - low;
           // A held curve still sets its piece's value, as a clip of no length (the white curtain's) does all it does
-          if (range < 1e-3)
-            return [
-              {
-                keyframes: [
-                  [0, roundFitted(low)],
-                  [1, roundFitted(low)],
-                ],
-                property,
-                target,
-              },
+          if (range < 1e-3) {
+            const value = roundFitted(low);
+            const keyframes: [number, number][] = [
+              [0, value],
+              [1, value],
             ];
+            return [{ keyframes, property, target }];
+          }
           const span = Math.max(samples.length - 1, 1);
           const normalised = samples.map((sample, index): [number, number] => [index / span, (sample - low) / range]);
           const keyframes = simplifyPath(normalised, KEYFRAME_TOLERANCE).map(([offset, share]): [number, number] => [
