@@ -375,8 +375,8 @@ catalogs:
       specifier: ^5.9.2
       version: 5.9.2
     '@tresjs/core':
-      specifier: ^5.9.1
-      version: 5.9.1
+      specifier: ^5.9.2
+      version: 5.9.2
     '@tresjs/nuxt':
       specifier: ^5.7.1
       version: 5.7.1
@@ -1146,10 +1146,10 @@ importers:
         version: 3.31.3(@floating-ui/dom@1.8.0)(@tiptap/core@3.31.3(@tiptap/pm@3.31.3))(@tiptap/pm@3.31.3)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       '@tresjs/cientos':
         specifier: 'catalog:'
-        version: 5.9.2(@tresjs/core@5.9.1(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 5.9.2(@tresjs/core@5.9.2(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       '@tresjs/core':
         specifier: 'catalog:'
-        version: 5.9.1(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 5.9.2(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       '@tresjs/nuxt':
         specifier: 'catalog:'
         version: 5.7.1(97348e30561889c1ba6412a64415f5e5)
@@ -1961,10 +1961,10 @@ importers:
         version: link:../shared
       '@tresjs/cientos':
         specifier: 'catalog:'
-        version: 5.9.2(@tresjs/core@5.9.1(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 5.9.2(@tresjs/core@5.9.2(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       '@tresjs/core':
         specifier: 'catalog:'
-        version: 5.9.1(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 5.9.2(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       '@vueuse/core':
         specifier: 'catalog:'
         version: 15.0.0(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
@@ -7423,6 +7423,12 @@ packages:
 
   '@tresjs/core@5.9.1':
     resolution: {integrity: sha512-dwONcoXw1YAzmaBUCZN/M1YI1A2l9SgY7aJGrbwcO6U95pE1/C5eZUnxhABd4QdVcJQtPK3sxjyia+AhKiEBow==}
+    peerDependencies:
+      three: '>=0.133'
+      vue: '>=3.4'
+
+  '@tresjs/core@5.9.2':
+    resolution: {integrity: sha512-Qm2bCn7eG3O83e0u5DTrEIQh+7IzVa+CRqdbbIuMblCPuY/siUC4XC12cdk4OvUaaQrW0T3vJszL5E283SSmpQ==}
     peerDependencies:
       three: '>=0.133'
       vue: '>=3.4'
@@ -21581,9 +21587,9 @@ snapshots:
       y-protocols: 1.0.7(yjs@13.6.33)
       yjs: 13.6.33
 
-  '@tresjs/cientos@5.9.2(@tresjs/core@5.9.1(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))':
+  '@tresjs/cientos@5.9.2(@tresjs/core@5.9.2(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))':
     dependencies:
-      '@tresjs/core': 5.9.1(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+      '@tresjs/core': 5.9.2(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       '@vueuse/core': 15.0.0(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       camera-controls: 3.1.2(three@0.186.1)
       stats-gl: 4.2.3(three@0.186.1)
@@ -21602,6 +21608,15 @@ snapshots:
       '@pmndrs/pointer-events': 6.6.31
       '@vue/devtools-api': 8.2.1
       '@vueuse/core': 14.4.0(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+      radashi: 12.9.6
+      three: 0.186.1
+      vue: 3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
+
+  '@tresjs/core@5.9.2(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))':
+    dependencies:
+      '@pmndrs/pointer-events': 6.6.31
+      '@vue/devtools-api': 8.2.1
+      '@vueuse/core': 15.0.0(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       radashi: 12.9.6
       three: 0.186.1
       vue: 3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)

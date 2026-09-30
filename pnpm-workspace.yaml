@@ -101,7 +101,7 @@ catalog:
   "@tiptap/suggestion": ^3.31.3
   "@tiptap/vue-3": ^3.31.3
   "@tresjs/cientos": ^5.9.2
-  "@tresjs/core": ^5.9.1
+  "@tresjs/core": ^5.9.2
   "@tresjs/nuxt": ^5.7.1
   "@trpc/client": ^11.19.0
   "@trpc/server": ^11.19.0
