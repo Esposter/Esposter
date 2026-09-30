@@ -25,7 +25,7 @@ describe(formatSceneTree, () => {
     };
 
     expect(formatSceneTree(root)).toBe(
-      "b [a] at 1,0,0, turn 0,1,0,0, scale 0.1,0.1,0.1, world scale 0.1,0.1,0.1, draws c, components d, 2 children, 1 dumped\n  b [a] at 1,0,0, world scale 0.1,0.1,0.1: empty anchor",
+      "b [a] at 1,0,0, turn 0,1,0,0, scale 0.1,0.1,0.1, world scale 0.1,0.1,0.1, draws c, components d, 2 children\n  b [a] at 1,0,0, world scale 0.1,0.1,0.1: empty anchor",
     );
   });
 });

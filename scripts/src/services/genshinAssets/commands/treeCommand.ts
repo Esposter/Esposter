@@ -4,9 +4,8 @@ import type { SubCommandsDef } from "citty";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { composeSceneTree } from "#src/services/genshinAssets/composeSceneTree";
 import { formatSceneTree } from "#src/services/genshinAssets/formatSceneTree";
-import { getComponentDirectory } from "#src/services/genshinAssets/getComponentDirectory";
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
-import { readSceneLayout } from "#src/services/genshinAssets/readSceneLayout";
+import { readComponentLayout } from "#src/services/genshinAssets/readComponentLayout";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
@@ -34,13 +33,11 @@ export const treeCommand: SubCommandsDef[string] = defineCommand({
   },
   meta: {
     description:
-      "Print a component's scene hierarchy from its layout dumps: each object's block, place, turn, scale and world scale, what it draws, its named components and children, flagging empty anchors, lost fathers and children, roots at the origin and meshes under several roots",
+      "Print a component's scene hierarchy from its layout dumps, each spawned prefab under its anchor: each object's block, place, turn, scale and world scale, what it draws, its named components and children, flagging empty anchors, lost fathers and children, roots at the origin and meshes under several roots",
     name: "tree",
   },
   run: async ({ args }) => {
-    const { gameObjectDrawingMap, objects } = await readSceneLayout(
-      getComponentDirectory(parseDerivedAssetComponent(args.component)).layout,
-    );
+    const { gameObjectDrawingMap, objects } = await readComponentLayout(parseDerivedAssetComponent(args.component));
     const tops = composeSceneTree(objects, gameObjectDrawingMap).filter(
       ({ object }) => !args.block || object.block === args.block,
     );

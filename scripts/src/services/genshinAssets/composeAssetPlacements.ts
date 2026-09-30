@@ -19,7 +19,7 @@ export const composeAssetPlacements = (
   // The root an object's chain of parents reaches, where it is placed; a chain that loops back on itself reaches none
   const getRoot = (object: SceneObject, visitedKeys: ReadonlySet<string> = new Set()): SceneObject | undefined => {
     if (object.parentId === ROOT_PARENT_ID) return object;
-    const parentKey = toObjectKey(object.file, object.parentId);
+    const parentKey = toObjectKey(object.parentFile, object.parentId);
     const parent = keyObjectMap.get(parentKey);
     return parent && !visitedKeys.has(parentKey) ? getRoot(parent, new Set([...visitedKeys, parentKey])) : undefined;
   };

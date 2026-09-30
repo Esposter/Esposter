@@ -136,10 +136,16 @@ export const reference: ComponentReference = {
         "Its raw bytes (genshin:assets behaviours) point at the five anchors SceneBeginNode, BridgeBeginNode, DoorNode, CloudEffect and LightShaft, then at three records of a prefab, an integer and a float: LoginScene_Build_All in 16000354 (3, 200), LoginScene_Bridge01_Vo in 16000354 (3, 16) and Eff_SeaOfCloud_Login (2, 300), then at LoginScene_Door01_Vo, the door prefab's root in 11790361. Two curves sit before them at 0x70 (1 falling to 0.02 over a second) and 0xa4 (0.2 rising to 1 over half a second), and two runs of four hours at 0x178 (4.5, 8, 17, 19) and 0x18c (9.5, 18, 23, 6)",
       search: "What MonoLoginScene spawns into its anchors, from the pointers in its raw serialized bytes",
     },
+    {
+      found:
+        "Set as the component's spawns, the tree shows the login as it draws: LoginScene_Build_All's towers, bridges and pillars under SceneBeginNode (237, -180, -533 in SceneObj's units, a quarter turn about y), the walkway's 23 pieces under BridgeBeginNode at SceneObj's origin, and the door prefab under DoorNode (-262, 341, 700), all at SceneObj's tenth. Every walkway piece carries a MonoBlockController, a script of its own, so the walkway's blocks are moved at run time",
+      search: "genshin:assets tree login --root SceneObj with the three spawns applied",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
     "What each spawn record's integer and float are (3 and 200, 3 and 16, 2 and 300), and so whether the towers and the walkway are laid more than once along the flight",
+    "What MonoBlockController does to each walkway piece: its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$)",
     "The day sky's pose, by the same perspective reading",
   ],
   sources: {

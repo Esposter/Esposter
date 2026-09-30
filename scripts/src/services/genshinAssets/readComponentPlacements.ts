@@ -3,32 +3,16 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAss
 
 import { composeAssetPlacements } from "#src/services/genshinAssets/composeAssetPlacements";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/DerivedAssetComponentMap";
-import { getComponentDirectory } from "#src/services/genshinAssets/getComponentDirectory";
-import { readSceneLayout } from "#src/services/genshinAssets/readSceneLayout";
+import { readComponentLayout } from "#src/services/genshinAssets/readComponentLayout";
 
-// Where every object of a component's blocks stands, composed from their layout dumps, kept to the arrangements hanging
-// From the roots its map names: one set of meshes is laid out several times across a scene's blocks, and only some of
-// Those arrangements are the component's. A root whose parent was lost with a block not read hangs from the parent its
-// Map names, which moves and scales it as Unity composes a Transform.
-// Other roots can be named in their place, to try another arrangement
+// Where every object of a component stands, composed from its layout dumps with each spawned prefab under its anchor,
+// Kept to the arrangements hanging from the roots its map names: one set of meshes is laid out several times across a
+// Scene's blocks, and only some of those arrangements are the component's. Other roots can be named in their place, to
+// Try another arrangement
 export const readComponentPlacements = async (
   component: DerivedAssetComponent,
   roots: readonly string[] = DerivedAssetComponentMap[component].roots.map(({ name }) => name),
 ): Promise<AssetPlacement[]> => {
-  const { gameObjectDrawingMap, objects } = await readSceneLayout(getComponentDirectory(component).layout);
-  const { rootParents = {} } = DerivedAssetComponentMap[component];
-  const placements = composeAssetPlacements(objects, gameObjectDrawingMap).filter(({ root }) => roots.includes(root));
-  for (const placement of placements) {
-    const parent = rootParents[placement.root];
-    if (!parent) continue;
-    const {
-      position: [x, y, z],
-      scale,
-    } = parent;
-    const [px, py, pz] = placement.position;
-    const [sx, sy, sz] = placement.scale;
-    placement.position = [x + px * scale, y + py * scale, z + pz * scale];
-    placement.scale = [sx * scale, sy * scale, sz * scale];
-  }
-  return placements;
+  const { gameObjectDrawingMap, objects } = await readComponentLayout(component);
+  return composeAssetPlacements(objects, gameObjectDrawingMap).filter(({ root }) => roots.includes(root));
 };

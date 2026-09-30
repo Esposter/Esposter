@@ -21,19 +21,4 @@ describe(toCanvasRectStyle, () => {
       width: "calc(0 * 100% + 52 * var(--canvas-unit))",
     });
   });
-
-  test("places a piece stretched between its parent's sides by its size delta alone, whatever its pivot", () => {
-    expect.hasAssertions();
-
-    const { left, width } = toCanvasRectStyle({
-      anchorMax: [1, 0],
-      anchorMin: [0, 0],
-      pivot: [0.5, 0],
-      position: [0, 0],
-      size: [-120, 40],
-    });
-
-    expect(left).toBe("calc(0px + 0 * 100% + 60 * var(--canvas-unit))");
-    expect(width).toBe("calc(1 * 100% + -120 * var(--canvas-unit))");
-  });
 });

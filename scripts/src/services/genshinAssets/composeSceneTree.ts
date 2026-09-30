@@ -17,6 +17,8 @@ export const composeSceneTree = (
   gameObjectDrawingMap: ReadonlyMap<string, SceneDrawing>,
 ): SceneTreeNode[] => {
   const keyObjectMap = new Map(objects.map((object) => [toObjectKey(object.file, object.transformId), object]));
+  const checkHasFather = ({ parentFile, parentId }: SceneObject): boolean =>
+    keyObjectMap.has(toObjectKey(parentFile, parentId));
   const childrenMap = groupSceneChildren(objects);
   const keyWorldMatrixMap = composeWorldMatrices(objects);
   const meshTopsMap = new Map<string, Set<string>>();
@@ -32,7 +34,7 @@ export const composeSceneTree = (
     const isRoot = object.parentId === ROOT_PARENT_ID;
     if (object.childIds.length === 0 && !mesh && object.components.length === 0) flags.push(SceneTreeFlag.EmptyAnchor);
     if (children.length < object.childIds.length) flags.push(SceneTreeFlag.LostChildren);
-    if (!isRoot && !keyObjectMap.has(toObjectKey(object.file, object.parentId))) flags.push(SceneTreeFlag.LostFather);
+    if (!isRoot && !checkHasFather(object)) flags.push(SceneTreeFlag.LostFather);
     if (
       isRoot &&
       object.position.every((value) => value === 0) &&
@@ -44,7 +46,7 @@ export const composeSceneTree = (
     return { children, flags, mesh, object, worldScale: worldScale.toArray() };
   };
   const tops = objects
-    .filter(({ file, parentId }) => parentId === ROOT_PARENT_ID || !keyObjectMap.has(toObjectKey(file, parentId)))
+    .filter((object) => object.parentId === ROOT_PARENT_ID || !checkHasFather(object))
     .map((top) => toNode(top, top, new Set()));
   const flagSharedMeshes = (node: SceneTreeNode): void => {
     if ((meshTopsMap.get(node.mesh)?.size ?? 0) > 1) node.flags.push(SceneTreeFlag.SharedMesh);
