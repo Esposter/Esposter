@@ -2,12 +2,21 @@ import type { SubCommandsDef } from "citty";
 
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
 import { CAMERA_POSE_AXES, solveWitnessCamera } from "#src/services/genshinParity/solveWitnessCamera";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
-// A range as `axis:from:to:step`, every value from its start to its end by its step
+const axes: readonly string[] = CAMERA_POSE_AXES;
+// A range as `axis:from:to:step`, every value from its start to its end by its step; a step that is not positive would
+// Never reach its end
 const parseRange = (range: string): [string, number[]] => {
   const [axis = "", ...bounds] = range.split(":");
   const [from = 0, to = 0, step = 1] = bounds.map(Number);
+  if (!axes.includes(axis) || ![from, to, step].every(Number.isFinite) || step <= 0 || to < from)
+    throw new InvalidOperationError(
+      Operation.Read,
+      range,
+      `not axis:from:to:step with an axis of ${CAMERA_POSE_AXES.join(", ")}, from at most to and a positive step`,
+    );
   const values: number[] = [];
   for (let value = from; value <= to + step / 2; value += step) values.push(value);
   return [axis, values];
