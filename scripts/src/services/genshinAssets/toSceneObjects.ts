@@ -15,11 +15,13 @@ export const toSceneObjects = (
   transforms: readonly DumpedTransform[],
   {
     block,
-    gameObjectScriptsMap = new Map(),
+    file,
+    gameObjectComponentsMap = new Map(),
     gameObjectTransformIdMap,
   }: {
     block: string;
-    gameObjectScriptsMap?: ReadonlyMap<string, string[]>;
+    file: string;
+    gameObjectComponentsMap?: ReadonlyMap<string, string[]>;
     gameObjectTransformIdMap: ReadonlyMap<string, string>;
   },
 ): SceneObject[] => {
@@ -78,13 +80,14 @@ export const toSceneObjects = (
     ({ m_Children, m_Father, m_GameObject, m_LocalPosition: p, m_LocalRotation: r, m_LocalScale: s }, index) => ({
       block,
       childIds: m_Children.map(({ m_PathID }) => m_PathID),
+      components: gameObjectComponentsMap.get(m_GameObject.m_PathID) ?? [],
+      file,
       gameObjectId: m_GameObject.m_PathID,
       name: m_GameObject.Name,
       parentId: m_Father.m_PathID,
       position: [p.X, p.Y, p.Z],
       rotation: [r.X, r.Y, r.Z, r.W],
       scale: [s.X, s.Y, s.Z],
-      scripts: gameObjectScriptsMap.get(m_GameObject.m_PathID) ?? [],
       transformId: transformIds[index] || `gameObject:${gameObjectIds[index]}`,
     }),
   );

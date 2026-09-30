@@ -13,7 +13,7 @@ import { readSceneLayout } from "#src/services/genshinAssets/readSceneLayout";
 // Other roots can be named in their place, to try another arrangement
 export const readComponentPlacements = async (
   component: DerivedAssetComponent,
-  roots: readonly string[] = DerivedAssetComponentMap[component].roots,
+  roots: readonly string[] = DerivedAssetComponentMap[component].roots.map(({ name }) => name),
 ): Promise<AssetPlacement[]> => {
   const { gameObjectDrawingMap, objects } = await readSceneLayout(getComponentDirectory(component).layout);
   const { rootParents = {} } = DerivedAssetComponentMap[component];

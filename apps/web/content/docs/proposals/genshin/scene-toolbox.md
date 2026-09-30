@@ -1,6 +1,6 @@
 ---
 title: Scene toolbox
-description: Proposal — the tools that make each unknown of a 3D scene answerable on its own, so a scene is solved rather than searched and converges in a pass or two the way the interface does. A scene is closed over by file and path ID from its roots, a script's raw bytes are scanned for the pointers and values that name its settings, the arrangement is checked by ratios before any pose, the camera is solved from correspondences and tracked across a recording, the witness render is made deterministic and writes a G-buffer, and the grade, fog and light are fitted by regression over it. Superseded searches are deleted.
+description: Proposal — the tools that make each unknown of a 3D scene answerable on its own, so a scene is solved rather than searched and converges in a pass or two the way the interface does. A script's spawns are composed as Unity composes a Transform, the arrangement is checked by ratios before any pose, the camera is solved from correspondences and tracked across a recording, the witness render is made deterministic and writes a G-buffer, and the grade, fog and light are fitted by regression over it. Superseded searches are deleted.
 model: claude-opus-5-5
 ---
 
@@ -42,18 +42,6 @@ flowchart TD
 ## The tools
 
 ### 1. The scene graph
-
-**Closure extraction.** `extract` today finds blocks by name pattern, which misses anything named otherwise and reaches every block that reuses a shared name. A component instead names its roots, and `extract` follows every reference from them, father and children, each object's components, each renderer's materials and mesh, each material's textures and shader, through the asset index to the blocks holding them, exporting until nothing new is reached. A path ID names an object only within its file, so every object is held as its file and its path ID throughout: a reference with `m_FileID` zero stays in its own file, and one with `m_FileID` not zero is first resolved through its own file's external-reference table, then looked up by path ID within the file that names. Name patterns stay only for what no pointer reaches, such as a shared sky whose owner is a script. The closure prints every reference it could not resolve, which is the tree's dangling flag at the level of blocks.
-
-**Raw behaviours.** `genshin:assets behaviours <component>` exports each of the component's MonoBehaviours raw, beside its JSON, and `scanSerializedFields` reads the bytes after the header the JSON already names. A MonoBehaviour's fields are serialized in declaration order, aligned to four bytes, with no names, so the scanner reports what the bytes' shapes identify rather than fields by name. The shapes:
-
-- **Pointers.** A 32-bit file index followed by a 64-bit path ID that the component's index or layout holds, printed with what it points at.
-- **Colours.** Four floats, each within a colour's range.
-- **Curves.** An array length followed by keyframes of seven values (time, value, the two slopes, the weighted mode and the two weights), then the curve's wrap modes.
-- **Arrays.** A length followed by that many records of one shape.
-- **Scalars.** Every other finite float in a plausible range, with its offset.
-
-A reading the scene uses is kept as its offset and shape in the component's reference, with a test on the bytes that holds it. `MonoLoginScene`'s pointers answer what it spawns into its anchors. `EnviroSky`'s colours and curves are the sky's gradients by hour. The post-processing profile's pointer names its grading table.
 
 **Spawns.** What a script places at run time becomes the component map's `spawns`: a prefab's root placed at an anchor node, composed as Unity composes a Transform. It replaces `rootParents`, which set a parent's place and scale by hand where the anchor already holds both.
 
@@ -109,11 +97,10 @@ The `shaders` step already disassembles each program. It also writes each progra
 
 ```text
 scripts/src/services/genshinAssets/
-  readAssetClosure.ts           ← every reference from a component's roots, by file and path ID
   scanSerializedFields.ts       ← pointers, colours, curves, arrays and scalars in a script's raw bytes
   composeUnityTransform.ts      ← Transform composition to Unity's semantics
   checkArrangement.ts           ← ratios and the placement diff
-  commands/behavioursCommand.ts, arrangementCommand.ts
+  commands/arrangementCommand.ts
 scripts/src/services/genshinParity/
   solveCameraPose.ts            ← DLT and PnP from correspondences, then Gauss–Newton
   refineCameraPose.ts           ← the chamfer over the identifier edges
@@ -135,7 +122,6 @@ Deleted as each is superseded: `solveWitnessCamera.ts` with its command, `create
 | File                                                             | Role after the change                                                     |
 | :--------------------------------------------------------------- | :------------------------------------------------------------------------ |
 | `scripts/src/services/genshinAssets/readSceneLayout.ts`          | The layout dumps read once for the tree, the closure, the fits and spawns |
-| `scripts/src/services/genshinAssets/extractComponent.ts`         | Exports a component's closure from its roots                              |
 | `scripts/src/services/genshinAssets/readComponentPlacements.ts`  | Composes spawns through the transform module                              |
 | `scripts/src/services/genshinAssets/DerivedAssetComponentMap.ts` | A component's roots, spawns and landmarks                                 |
 | `scripts/src/services/genshinAssets/extractComponentShaders.ts`  | Writes each program's HLSL beside its assembly                            |
@@ -150,7 +136,6 @@ Deleted as each is superseded: `solveWitnessCamera.ts` with its command, `create
 ## Notes
 
 - **The order is the unknowns' dependency order.** A later tool's solve absorbs an earlier unknown's error, so a pose is not solved on an unchecked arrangement and a light is not fitted at an unsolved pose; each tool refuses to commit a score whose earlier gate has not passed.
-- **The scanner reads shapes, not names.** A float run it reports is a candidate until a scene's use of it is checked against the captures once; the test that holds the reading then pins the offset, so a patch that moves the script's fields fails there rather than in the frame.
 
 ## Sources
 
@@ -159,4 +144,3 @@ Deleted as each is superseded: `solveWitnessCamera.ts` with its command, `create
 - [FLIP](https://github.com/NVlabs/flip), NVIDIA: the perceptual difference and the reference values its port is tested against.
 - [Camera calibration and 3D reconstruction](https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html), OpenCV: the perspective-n-point solve and the reprojection error it minimises.
 - [RectTransform](https://docs.unity3d.com/Manual/class-RectTransform.html) and [Transform](https://docs.unity3d.com/Manual/class-Transform.html), Unity Manual: the anchors, pivot and size delta, and the parent's composition, the transform module is written to.
-- [Script serialization](https://docs.unity3d.com/Manual/script-serialization.html), Unity Manual: which fields are serialized and in what order, which the scanner's shapes rest on.

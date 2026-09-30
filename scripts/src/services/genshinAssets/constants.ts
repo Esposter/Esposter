@@ -15,6 +15,10 @@ export const ASSET_INDEX_PATH: string = join(EXTRACTED_DIRECTORY, "maps", "index
 // Into a `Maps` folder beside its working directory, so it is run from its own folder
 export const ANIMESTUDIO_CLI_PATH: string =
   process.env.GENSHIN_ANIMESTUDIO_CLI ?? join(homedir(), "Downloads", "AnimeStudio", "AnimeStudio.CLI.exe");
+// The CAB map `map` builds there: every serialized file's block and the files it points into
+export const CAB_MAP_PATH: string = join(dirname(ANIMESTUDIO_CLI_PATH), "Maps", `${ASSET_MAP_NAME}.bin`);
+// The suffix AnimeStudio gives the folder it exports a block into when its assets are grouped by source
+export const SOURCE_EXPORT_SUFFIX = ".blk_export";
 // The installed game's asset blocks, every one AnimeStudio reads
 export const GAME_BLOCKS_DIRECTORY: string = join(
   dirname(GAME_EXECUTABLE_PATH),

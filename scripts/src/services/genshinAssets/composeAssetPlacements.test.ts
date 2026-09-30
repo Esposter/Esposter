@@ -1,30 +1,26 @@
-import type { SceneObject } from "#src/models/genshinAssets/SceneObject";
-
 import { composeAssetPlacements } from "#src/services/genshinAssets/composeAssetPlacements";
 import { createSceneObject } from "#src/services/genshinAssets/createSceneObject.test";
+import { toObjectKey } from "#src/services/genshinAssets/toObjectKey";
 import { describe, expect, test } from "vitest";
 
 describe(composeAssetPlacements, () => {
-  // A quarter turn about y
-  const quarterTurn: SceneObject["rotation"] = [0, Math.SQRT1_2, 0, Math.SQRT1_2];
-
-  test("places a child through its parent's position, rotation and scale, under its root", () => {
+  test("places a child under its root with what it draws", () => {
     expect.hasAssertions();
 
     const [, child] = composeAssetPlacements(
-      [
-        createSceneObject("1", "0", { position: [10, 0, 0], rotation: quarterTurn, scale: [2, 2, 2] }),
-        createSceneObject("2", "1", { position: [1, 0, 0] }),
-      ],
-      new Map([["2", { materials: ["b"], mesh: "a" }]]),
+      [createSceneObject("1", "0", { position: [1, 0, 0] }), createSceneObject("2", "1")],
+      new Map([[toObjectKey("", "2"), { materials: ["b"], mesh: "a", pointers: [] }]]),
     );
 
-    expect(child?.mesh).toBe("a");
-    expect(child?.materials).toStrictEqual(["b"]);
-    expect(child?.position[0]).toBeCloseTo(10);
-    expect(child?.position[2]).toBeCloseTo(-2);
-    expect(child?.scale[0]).toBeCloseTo(2);
-    expect(child?.root).toBe("1");
+    expect(child).toStrictEqual({
+      materials: ["b"],
+      mesh: "a",
+      name: "2",
+      position: [1, 0, 0],
+      root: "1",
+      rotation: [0, 0, 0, 1],
+      scale: [1, 1, 1],
+    });
   });
 
   test("leaves out an object whose parent the dump lacks, and every object under it", () => {
