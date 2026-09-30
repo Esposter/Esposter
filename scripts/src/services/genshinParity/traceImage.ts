@@ -1,4 +1,5 @@
 import { PARITY_DIRECTORY } from "#src/services/genshinParity/constants";
+import { fillSpeckHoles } from "#src/services/genshinParity/fillSpeckHoles";
 import { resolveSource } from "#src/services/genshinParity/resolveSource";
 import ImageTracer from "imagetracerjs";
 import { writeFile } from "node:fs/promises";
@@ -58,9 +59,12 @@ export const traceImage = async (
     strongest = Math.max(strongest, ink);
   }
   const threshold = faintest + (strongest - faintest) * inkShare;
+  const speckArea = tracedWidth * tracedHeight * SPECK_SHARE;
+  const isInk = Uint8Array.from(inks, (ink) => Number(ink > threshold));
+  fillSpeckHoles(isInk, tracedWidth, tracedHeight, speckArea);
   const pixels = new Uint8ClampedArray(pixelCount * 4);
-  for (const [pixel, ink] of inks.entries()) {
-    const { a, b, g, r } = ink > threshold ? INK : PAPER;
+  for (const [pixel, ink] of isInk.entries()) {
+    const { a, b, g, r } = ink ? INK : PAPER;
     pixels.set([r, g, b, a], pixel * 4);
   }
   const traced = ImageTracer.imagedataToSVG(
@@ -76,9 +80,8 @@ export const traceImage = async (
       roundcoords: 2,
     },
   );
-  // A speck, an island or a hole smaller than a sliver of the region, is noise the source carries (a sparkle printed
-  // On a logo, a pixel of compression) rather than part of the mark, so its outline is dropped
-  const speckArea = tracedWidth * tracedHeight * SPECK_SHARE;
+  // A speck, an island smaller than a sliver of the region, is noise the source carries (a sparkle printed on a logo, a
+  // Pixel of compression) rather than part of the mark, so its outline is dropped
   const inkPaths = Array.from(traced.matchAll(/<path[^>]*fill="rgb\(0,0,0\)"[^>]*\sd="(?<d>[^"]+)"/gu), ({ groups }) =>
     (groups?.d ?? "")
       .split(/(?=M )/u)

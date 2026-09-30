@@ -18,4 +18,4 @@ the shot shares, 1 identical. Commit it with the change that moved it, as a benc
 | `login-interface-title` | `LoginInterface` | 0.23% | 0.999 | 0.17% |
 | `login-night` | `LoginScreen` | 17.45% | 0.278 | 13.95% |
 | `publisher-splash` | `SplashPublisher` | 0.46% | 1.000 | 0.77% |
-| `title-splash` | `SplashTitle` | 1.29% | 1.000 | 0.26% |
+| `title-splash` | `SplashTitle` | 1.30% | 1.000 | 0.28% |
