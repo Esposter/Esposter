@@ -7,7 +7,7 @@ description: Apply when adding links, navigating in code, reading route params/q
 
 ## Links — `NuxtLink` / `NuxtInvisibleLink` or `:to`, Never a Raw `<a>`
 
-A link is `NuxtLink`, `NuxtInvisibleLink` or a library component's `:to`, never a raw `<a>` (`vue/no-restricted-html-elements`), with its target from `RoutePath` (`references/links.md`).
+A link is `NuxtLink`, `NuxtInvisibleLink` or a library component's `:to`, never a raw `<a>` (`vue/no-restricted-html-elements`), with its target from `RoutePath` (`references/links.md`). A route is `RoutePath`'s wherever it is written, a test's address or a template string as much as a link, so a rename moves every reader; `routing/no-route-literal` (`scripts/src/oxlint/routing.ts`) reports a string spelling one of its paths, read off `RoutePath` itself.
 
 ## Imperative Navigation — `navigateTo`
 

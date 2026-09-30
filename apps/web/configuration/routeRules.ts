@@ -1,3 +1,4 @@
+// oxlint-disable routing/no-route-literal -- the Nuxt configuration loads before `@esposter/shared` is built
 import type { NitroConfig } from "nitropack/types";
 
 // Client-only pages (no SSR/SEO benefit) that touch window/localStorage during setup.

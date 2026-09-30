@@ -1,3 +1,4 @@
+// oxlint-disable routing/no-route-literal -- the one place every route is spelled out, for the rest to name
 import { SITE_NAME } from "#src/services/app/constants";
 
 export const RoutePath: {
