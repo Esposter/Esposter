@@ -9,7 +9,7 @@ import {
   WITNESS_LAYOUT_PATH,
   WITNESS_PATH_PREFIX,
 } from "#src/services/genshinParity/constants";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { join } from "node:path";
 import { chromium } from "playwright";
 
@@ -27,31 +27,40 @@ export const openParityPage = async ({
   witness,
 }: ParityPageOptions): Promise<{ browser: Browser; page: Page }> => {
   const browser = await chromium.launch({ channel: "msedge" });
-  const deviceScaleFactor = height / INTERFACE_HEIGHT;
-  const page = await browser.newPage({
-    deviceScaleFactor,
-    viewport: { height: INTERFACE_HEIGHT, width: Math.round(width / deviceScaleFactor) },
-  });
-  const motionQuery = motion ? `&motion=${motion}` : "";
-  const propsQuery = props ? `&props=${encodeURIComponent(JSON.stringify(props))}` : "";
-  const backdropQuery = backdropPath ? `&backdrop=${PARITY_BACKDROP_FILE}` : "";
-  if (backdropPath) await page.route(`**/${PARITY_BACKDROP_FILE}`, (route) => route.fulfill({ path: backdropPath }));
-  const witnessQuery = witness ? `&witness=${encodeURIComponent(`${WITNESS_PATH_PREFIX}${WITNESS_LAYOUT_PATH}`)}` : "";
-  if (witness) {
-    const { assets, root } = getComponentDirectory(witness);
-    await page.route(`**${WITNESS_PATH_PREFIX}**`, (route) => {
-      const path = decodeURIComponent(new URL(route.request().url()).pathname.slice(WITNESS_PATH_PREFIX.length));
-      return route.fulfill({ path: path === WITNESS_LAYOUT_PATH ? join(root, "witness.json") : join(assets, path) });
+  // A failure once the browser is open closes it, since no caller receives a browser to close
+  return getResultAsync(async () => {
+    const deviceScaleFactor = height / INTERFACE_HEIGHT;
+    const page = await browser.newPage({
+      deviceScaleFactor,
+      viewport: { height: INTERFACE_HEIGHT, width: Math.round(width / deviceScaleFactor) },
     });
-  }
-  await page.goto(`${PARITY_PAGE_URL}${screen}${motionQuery}${propsQuery}${backdropQuery}${witnessQuery}`, {
-    waitUntil: "networkidle",
-  });
-  const readyScreen = await page.locator("[data-parity-ready]").getAttribute("data-parity-ready");
-  // An unknown name draws the list of screens, which would otherwise be shot and scored as the screen
-  if (readyScreen !== screen) {
-    await browser.close();
-    throw new InvalidOperationError(Operation.Read, screen, "not a screen with a fixture on the parity page");
-  }
-  return { browser, page };
+    const motionQuery = motion ? `&motion=${motion}` : "";
+    const propsQuery = props ? `&props=${encodeURIComponent(JSON.stringify(props))}` : "";
+    const backdropQuery = backdropPath ? `&backdrop=${PARITY_BACKDROP_FILE}` : "";
+    if (backdropPath) await page.route(`**/${PARITY_BACKDROP_FILE}`, (route) => route.fulfill({ path: backdropPath }));
+    const witnessQuery = witness
+      ? `&witness=${encodeURIComponent(`${WITNESS_PATH_PREFIX}${WITNESS_LAYOUT_PATH}`)}`
+      : "";
+    if (witness) {
+      const { assets, root } = getComponentDirectory(witness);
+      await page.route(`**${WITNESS_PATH_PREFIX}**`, (route) => {
+        const path = decodeURIComponent(new URL(route.request().url()).pathname.slice(WITNESS_PATH_PREFIX.length));
+        return route.fulfill({ path: path === WITNESS_LAYOUT_PATH ? join(root, "witness.json") : join(assets, path) });
+      });
+    }
+    await page.goto(`${PARITY_PAGE_URL}${screen}${motionQuery}${propsQuery}${backdropQuery}${witnessQuery}`, {
+      waitUntil: "networkidle",
+    });
+    const readyScreen = await page.locator("[data-parity-ready]").getAttribute("data-parity-ready");
+    // An unknown name draws the list of screens, which would otherwise be shot and scored as the screen
+    if (readyScreen !== screen)
+      throw new InvalidOperationError(Operation.Read, screen, "not a screen with a fixture on the parity page");
+    return { browser, page };
+  }).match(
+    (value) => value,
+    async (error) => {
+      await browser.close();
+      throw error;
+    },
+  );
 };
