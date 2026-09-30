@@ -10,6 +10,7 @@ import {
   LOGIN_ARRIVE_FADE_MS,
   LOGIN_FLASH_MS,
   LOGIN_FLIGHT_MS,
+  LOGIN_PROGRESS_FILL_MS,
   LOGIN_SPINNER_START_MS,
   LOGIN_STATUS_STEPS,
   LOGIN_TITLE_START_MS,
@@ -27,7 +28,7 @@ interface Props {
   // The scene alone, as the wiki's clean captures of it show it, for a reference to be scored against
   isInterfaceHidden?: true;
   playerName?: string;
-  // How far loading has gone, from 0 to 1, which the camera's flight never runs ahead of
+  // How far loading has gone, from 0 to 1, which the bar shown and the camera's flight never run ahead of
   progress: number;
   timeOfDay: LoginTimeOfDay;
 }
@@ -41,6 +42,8 @@ const stage = defineModel<LoginStage>("stage", { default: LoginStage.Arriving })
 const isSpinnerShown = ref(false);
 const isWelcomeShown = ref(false);
 const statusStep = ref(LoginStatusStep.PreparingDownload);
+// The share of loading shown, which runs toward loading's own no faster than the bar's fill
+const shownProgress = ref(0);
 // The share of the flight flown, from the title's pose at 0 to the door's at 1
 const flight = ref(stage.value === LoginStage.Door || stage.value === LoginStage.Entering ? 1 : 0);
 const { start: showSpinner } = useTimeoutFn(() => (isSpinnerShown.value = true), LOGIN_SPINNER_START_MS, {
@@ -62,8 +65,9 @@ const statusTimeouts = LOGIN_STATUS_STEPS.map(({ ms, step }) =>
 );
 const { pause: pauseFlight, resume: flyOn } = useRafFn(
   ({ delta }) => {
-    const reach = statusStep.value === LoginStatusStep.LoadingData ? Math.min(progress, 1) : 0;
-    flight.value = Math.min(flight.value + delta / LOGIN_FLIGHT_MS, Math.max(flight.value, reach));
+    if (statusStep.value === LoginStatusStep.LoadingData)
+      shownProgress.value = Math.min(shownProgress.value + delta / LOGIN_PROGRESS_FILL_MS, Math.min(progress, 1));
+    flight.value = Math.min(flight.value + delta / LOGIN_FLIGHT_MS, Math.max(flight.value, shownProgress.value));
     if (flight.value < 1) return;
     pauseFlight();
     stage.value = LoginStage.Door;
@@ -104,7 +108,7 @@ const onClick = (event: MouseEvent): void => {
       :is-spinner-shown
       :is-welcome-shown
       :player-name
-      :progress
+      :progress="shownProgress"
       :stage
       :status-step
     />

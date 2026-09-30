@@ -12,7 +12,8 @@ interface Props {
 const { progress, step } = defineProps<Props>();
 // The game's status at the foot of its login screen as it prepares: a line of text, then from loading on its share
 // Done to two places, over the ornament's double diamond while the game loads and over the progress bar while data
-// Does. Once loading is done the words go and the bar folds into its diamond under the full share
+// Does. Once loading is done the words go, the bar folds into its diamond under the full share, and then the whole row
+// Fades, leaving the flight's last stretch bare before the door rises, as the English recording's does
 const isDone = computed(() => step === LoginStatusStep.LoadingData && progress >= 1);
 const percentText = computed(() =>
   step === LoginStatusStep.LoadingGame ? "0.00%" : `${(Math.min(progress, 1) * 100).toFixed(2)}%`,
@@ -20,7 +21,7 @@ const percentText = computed(() =>
 </script>
 
 <template>
-  <div class="login-status" role="status">
+  <div :class="['login-status', { done: isDone }]" role="status">
     <p class="text">{{ isDone ? "" : LoginStatusStepTextMap[step] }}</p>
     <template v-if="step === LoginStatusStep.LoadingGame || step === LoginStatusStep.LoadingData">
       <p class="percent">{{ percentText }}</p>
@@ -42,6 +43,13 @@ const percentText = computed(() =>
   color: #fff;
   pointer-events: none;
   text-align: center;
+}
+
+/* The row fades over 250 ms once the bar's 250 ms fold is done: gone half a second after loading ends, as the English
+   Recording at 4 frames a second shows */
+.done {
+  opacity: 0;
+  transition: opacity 250ms linear 250ms;
 }
 
 .text,

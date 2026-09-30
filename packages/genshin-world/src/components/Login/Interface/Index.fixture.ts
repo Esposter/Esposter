@@ -13,7 +13,6 @@ export const props = {
 export const variants = {
   arriving: { isSpinnerShown: true, isWelcomeShown: false, stage: LoginStage.Arriving },
   door: { isWelcomeShown: false, stage: LoginStage.Door },
-  loaded: { isWelcomeShown: false, progress: 1, stage: LoginStage.Preparing, statusStep: LoginStatusStep.LoadingData },
   loadingData: {
     isWelcomeShown: false,
     progress: 0.2797,
