@@ -2,8 +2,11 @@
 import type { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
 
 import { usePostPipeline } from "#src/composables/usePostPipeline";
+import palette from "#src/data/login/palette.json";
+import sky from "#src/data/login/sky.json";
+import { createLoginClouds } from "#src/services/login/cloud/createLoginClouds";
 import { LOGIN_DOOR_LIGHT_MS } from "#src/services/login/constants";
-import { LOGIN_DOOR_COLOR, LOGIN_DOOR_GLOW_COLOR, LOGIN_DOOR_POSITION } from "#src/services/login/door/constants";
+import { LOGIN_DOOR_GLOW_COLOR, LOGIN_DOOR_POSITION } from "#src/services/login/door/constants";
 import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoorGeometry";
 import {
   LOGIN_CAMERA_FAR,
@@ -27,7 +30,6 @@ import {
   LOGIN_SHADOW_EXTENT,
   LOGIN_SHADOW_MAP_SIZE,
   LOGIN_SHADOW_NORMAL_BIAS,
-  LOGIN_STONE_COLOR,
 } from "#src/services/login/scene/constants";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
 import { createLoginSilhouettesGeometry } from "#src/services/login/silhouette/createLoginSilhouettesGeometry";
@@ -112,6 +114,7 @@ fogUniforms.startDistance.value = LOGIN_FOG_START_DISTANCE;
 const postUniforms = createPostUniforms();
 const skyUniforms = createSkyUniforms();
 skyUniforms.cloudCoverage.value = LOGIN_CLOUD_COVERAGE;
+skyUniforms.horizonBand.value = sky.horizonBand;
 const skyTargets = {
   fogUniforms,
   godraysLight,
@@ -130,8 +133,9 @@ watchImmediate(
     postUniforms.godraysColor.value.setScalar(0);
   },
 );
-const stoneMaterial = createToonMaterial({ color: LOGIN_STONE_COLOR, lightUniforms, rampTexture });
-const doorMaterial = createToonMaterial({ color: LOGIN_DOOR_COLOR, lightUniforms, rampTexture });
+// The stone every part is carved from, the door's panel with its frame, fitted from their diffuse textures
+const stoneMaterial = createToonMaterial({ color: palette.stone, lightUniforms, rampTexture });
+const doorMaterial = createToonMaterial({ color: palette.stone, lightUniforms, rampTexture });
 // The door lights from a line down its middle outward, over the panel's own glow, as the game opens it
 const doorGlow = uniform(0);
 doorMaterial.emissiveNode = createRimNode(lightUniforms).add(
@@ -153,14 +157,14 @@ cloudSeaMaterial.colorNode = mix(
   skyUniforms.cloudLitColor,
   smoothstep(CLOUD_SEA_EDGE_START, CLOUD_SEA_EDGE_END, mx_fractal_noise_float(positionWorld.xz.mul(CLOUD_SEA_SCALE))),
 );
+const loginClouds = createLoginClouds(skyUniforms);
 const gradeLutTexture = createGradeLutTexture(LOGIN_GRADE_OPTIONS);
 usePostPipeline(QualityTier.High, { fogUniforms, godraysLight, gradeLutTexture, postUniforms });
 let renderedFrameCount = 0;
-// The camera flies along +z, from beyond the walkway's end toward the door: turned half round from three's -z, and
-// Pitched down, which the half turn makes a positive rotation about x
-const cameraZ = computed(() => LOGIN_CAMERA_START_Z + flight * LOGIN_FLIGHT_DISTANCE);
+// The camera flies along -z, three's own forward, from beyond the walkway's far end toward the door, pitched down
+const cameraZ = computed(() => LOGIN_CAMERA_START_Z - flight * LOGIN_FLIGHT_DISTANCE);
 onRender(({ delta }) => {
-  light.target.position.set(0, 0, cameraZ.value + LOGIN_SHADOW_EXTENT / 2);
+  light.target.position.set(0, 0, cameraZ.value - LOGIN_SHADOW_EXTENT / 2);
   light.position
     .copy(light.target.position)
     .addScaledVector(LoginSkyStateMap[timeOfDay].lightDirection, LOGIN_LIGHT_DISTANCE);
@@ -176,6 +180,7 @@ onUnmounted(() => {
   stoneMaterial.dispose();
   doorMaterial.dispose();
   cloudSeaMaterial.dispose();
+  loginClouds.dispose();
   walkwayGeometry.dispose();
   towersGeometry.dispose();
   silhouettesGeometry.dispose();
@@ -192,18 +197,20 @@ onUnmounted(() => {
     :far="LOGIN_CAMERA_FAR"
     :fov="LOGIN_CAMERA_FOV"
     :position="[0, LOGIN_CAMERA_HEIGHT, cameraZ]"
-    :rotation="[-LOGIN_CAMERA_PITCH, Math.PI, 0]"
+    :rotation="[LOGIN_CAMERA_PITCH, 0, 0]"
   />
   <primitive :object="light" />
   <primitive :object="light.target" />
   <primitive :object="hemisphere" />
+  <primitive :object="loginClouds.group" />
   <primitive :object="godraysLight" />
   <primitive :object="godraysLight.target" />
   <TresMesh :geometry="walkwayGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
   <TresMesh :geometry="towersGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
   <TresMesh :geometry="silhouettesGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
-  <!-- The door faces the camera coming down the walkway, along -z -->
-  <TresGroup :position="LOGIN_DOOR_POSITION" :rotation="[0, Math.PI, 0]">
+  <!-- The door faces the camera coming down the walkway from +z, and stands only once the flight has brought the -->
+  <!-- Camera to it: the title's frames show the walkway running on with no door on it -->
+  <TresGroup v-if="flight >= 1" :position="LOGIN_DOOR_POSITION">
     <TresMesh :geometry="doorFrameGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
     <TresMesh :geometry="doorPanelGeometry" cast-shadow receive-shadow :material="doorMaterial" />
   </TresGroup>
