@@ -3,19 +3,21 @@ import type { GradeOptions, RampOptions } from "genshin-engine";
 import walkway from "#src/data/login/walkway.json";
 import { LOGIN_DOOR_POSITION } from "#src/services/login/door/constants";
 
-// The flight's first pose, matched on the witness render: the game's own towers, bridges and walkway drawn through
-// The scene from each pose of a search, their long vertical lines scored against the dawn, dusk and night skies, which
-// Share one pose, then refined by a simplex (Login/Scene/Index.reference.ts's findings). The eye stands 18 metres over
-// The walkway's top, turned 7.3 degrees off its line and pitched 3 degrees up, at a 42.8 degree vertical field of view
-export const LOGIN_CAMERA_START: [number, number, number] = [-3.27, 12.99, 200.34];
-export const LOGIN_CAMERA_YAW = (7.29 * Math.PI) / 180;
-export const LOGIN_CAMERA_PITCH = (3.04 * Math.PI) / 180;
-export const LOGIN_CAMERA_FOV = 42.76;
-// The flight ends 3.93 of the eye's height over the walkway short of the door, where the door's foot meets the frame
-// 0.722 down in the English recording's last pose, looking straight down the walkway: its offset and heading ease to
-// None as it flies along -z
-const DOOR_DISTANCE_SHARE = 3.93;
-export const LOGIN_CAMERA_END_Z = LOGIN_DOOR_POSITION[2] + (LOGIN_CAMERA_START[1] - walkway.top) * DOOR_DISTANCE_SHARE;
+// The flight down the walkway toward the door, read off the walkway in the captures by perspective alone
+// (Login/Scene/Index.reference.ts's findings): its crossbars' and the door's widths give each frame's focal length and
+// Distance, and the rows they stand at the eye's height. The eye holds 3.96 metres over the walkway's top, straight down
+// Its middle toward the door along +z (a heading of half a turn), flying from 72.1 metres short of the door at the
+// Dawn, dusk and night frames to 45.3 at the recording's last pose, pitching up from 5.6 to 6.9 degrees as its vertical
+// Field of view widens from 44.6 to 51.2
+const EYE_HEIGHT = 3.96;
+export const LOGIN_CAMERA_HEIGHT = walkway.top + EYE_HEIGHT;
+export const LOGIN_CAMERA_START_Z = LOGIN_DOOR_POSITION[2] - 72.1;
+export const LOGIN_CAMERA_END_Z = LOGIN_DOOR_POSITION[2] - 45.3;
+export const LOGIN_CAMERA_YAW = Math.PI;
+export const LOGIN_CAMERA_START_PITCH = (5.6 * Math.PI) / 180;
+export const LOGIN_CAMERA_END_PITCH = (6.9 * Math.PI) / 180;
+export const LOGIN_CAMERA_START_FOV = 44.6;
+export const LOGIN_CAMERA_END_FOV = 51.2;
 export const LOGIN_CAMERA_FAR = 8000;
 // The rush to the door on the click: the camera closes 41% of its distance to the door in its first 333 ms, gathering
 // Speed with the square of the time, as the door grows about 1.7 times in the recording's last third of a second

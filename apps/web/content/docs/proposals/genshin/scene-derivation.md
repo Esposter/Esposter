@@ -96,7 +96,9 @@ packages/genshin-world/parity/witness/
 
 It also takes three checks that make each render cheaper and each failure plainer:
 
-- **The arrangement checked without pixels.** The scene's placements, family by family, compared against the witness layout's positions and scales before any render; the walkway dumped at the origin would have shown as a 107-metre offset at once.
+- **The arrangement checked without pixels.** The scene's placements, family by family, compared against the witness layout's positions and scales before any render, and each width ratio a reference shows between neighbouring parts held against the fit. The walkway, dumped at the origin at its own scale, stood 2.5 times too wide beside the door; its ratio would have shown that at once, where five camera searches absorbed it into wrong poses.
+- **A pose read by perspective.** A `read-pose` step that takes a reference's labelled widths and rows (a crossbar's corners, a door's foot and top) with their fitted sizes, and solves the focal length, distance, height and pitch in closed form, leaving `solve-camera` to refine; the login's two poses were read this way by hand.
+- **Unity's own transforms as a module.** A Transform's composition (the lost parent's position and scale) and a RectTransform's layout (`offsetMin = anchoredPosition − sizeDelta × pivot`, anchors as shares of the parent) each written once to Unity's documented semantics and tested on Unity's own cases, so a screen never re-derives them; the stretched-axis pivot slip that hid the build string was one such re-derivation.
 - **Deterministic shots.** During a camera solve or a loss table, the temporal anti-aliasing's jitter and the clock are held, so each pose settles in one frame instead of eight.
 - **The canvas read directly.** A shot is the canvas's own pixels rather than a screenshot of the page.
 

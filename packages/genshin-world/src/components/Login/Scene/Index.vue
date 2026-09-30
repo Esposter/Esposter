@@ -15,11 +15,14 @@ import {
 } from "#src/services/login/door/constants";
 import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoorGeometry";
 import {
-  LOGIN_CAMERA_FAR,
-  LOGIN_CAMERA_FOV,
+  LOGIN_CAMERA_END_FOV,
+  LOGIN_CAMERA_END_PITCH,
   LOGIN_CAMERA_END_Z,
-  LOGIN_CAMERA_PITCH,
-  LOGIN_CAMERA_START,
+  LOGIN_CAMERA_FAR,
+  LOGIN_CAMERA_HEIGHT,
+  LOGIN_CAMERA_START_FOV,
+  LOGIN_CAMERA_START_PITCH,
+  LOGIN_CAMERA_START_Z,
   LOGIN_CAMERA_YAW,
   LOGIN_CLOUD_COVERAGE,
   LOGIN_CLOUD_SEA_HEIGHT,
@@ -190,18 +193,19 @@ const doorPosition = computed((): [number, number, number] => {
   const [x, y, z] = LOGIN_DOOR_POSITION;
   return [x, y - LOGIN_DOOR_RISE_DEPTH * (1 - share), z];
 });
-// The camera flies along -z from the matched first pose to the door's, its sideways offset and heading easing to none,
+// The camera flies along +z from the flight's first pose to the door's, pitching up and widening its view as it goes,
 // And on the click rushes on toward the door
-const [startX, cameraHeight, startZ] = LOGIN_CAMERA_START;
-const cameraX = computed(() => startX * (1 - flight));
-const cameraYaw = computed(() => LOGIN_CAMERA_YAW * (1 - flight));
+const cameraPitch = computed(
+  () => LOGIN_CAMERA_START_PITCH + (LOGIN_CAMERA_END_PITCH - LOGIN_CAMERA_START_PITCH) * flight,
+);
+const cameraFov = computed(() => LOGIN_CAMERA_START_FOV + (LOGIN_CAMERA_END_FOV - LOGIN_CAMERA_START_FOV) * flight);
 const cameraZ = computed(() => {
-  const flownZ = startZ + (LOGIN_CAMERA_END_Z - startZ) * flight;
+  const flownZ = LOGIN_CAMERA_START_Z + (LOGIN_CAMERA_END_Z - LOGIN_CAMERA_START_Z) * flight;
   const share = Math.min(LOGIN_DOOR_RUSH_SHARE * (rushMs.value / LOGIN_DOOR_RUSH_MS) ** 2, LOGIN_DOOR_RUSH_LIMIT);
   return flownZ - share * (flownZ - LOGIN_DOOR_POSITION[2]);
 });
 onRender(({ delta }) => {
-  light.target.position.set(0, 0, cameraZ.value - LOGIN_SHADOW_EXTENT / 2);
+  light.target.position.set(0, 0, cameraZ.value + LOGIN_SHADOW_EXTENT / 2);
   light.position
     .copy(light.target.position)
     .addScaledVector(LoginSkyStateMap[timeOfDay].lightDirection, LOGIN_LIGHT_DISTANCE);
@@ -235,9 +239,9 @@ onUnmounted(() => {
 <template>
   <TresPerspectiveCamera
     :far="LOGIN_CAMERA_FAR"
-    :fov="LOGIN_CAMERA_FOV"
-    :position="[cameraX, cameraHeight, cameraZ]"
-    :rotation="[LOGIN_CAMERA_PITCH, cameraYaw, 0]"
+    :fov="cameraFov"
+    :position="[0, LOGIN_CAMERA_HEIGHT, cameraZ]"
+    :rotation="[cameraPitch, LOGIN_CAMERA_YAW, 0]"
     rotation-order="YXZ"
   />
   <primitive :object="light" />
@@ -268,9 +272,13 @@ onUnmounted(() => {
     receive-shadow
     :material="stoneMaterial"
   />
-  <!-- The door faces the camera coming down the walkway from +z, and stands only once the flight has brought the -->
-  <!-- Camera to it: the title's frames show the walkway running on with no door on it -->
-  <TresGroup v-if="flight >= 1 && checkIsOwnFamilyDrawn(LoginPartFamily.Door)" :position="doorPosition">
+  <!-- The door turns to face the camera coming up the walkway from -z, and stands only once the flight has brought -->
+  <!-- The camera to it: the title's frames show the walkway running on with no door on it -->
+  <TresGroup
+    v-if="flight >= 1 && checkIsOwnFamilyDrawn(LoginPartFamily.Door)"
+    :position="doorPosition"
+    :rotation="[0, Math.PI, 0]"
+  >
     <TresMesh :geometry="doorFrameGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
     <TresMesh :geometry="doorPanelGeometry" cast-shadow receive-shadow :material="doorMaterial" />
   </TresGroup>

@@ -19,10 +19,11 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
     interface: { anchorPattern: "^Ani_LoginMainPage_Waiting", root: "LoginMainPage" },
     namePattern:
       "^(LoginScene_|Enviro_(Sky_Gradient|Clouds_(Middle_|Top_)?Particle_Atlas|Clouds_(Voronoi|Wispis|Normal)|Cloud_(Layer|Particle|Mid_Particle|Top_Particle)_Mat|Atmosphere_Layer_Mat)$|(Sky|Cloud)_LOD0$)",
-    // The walkway's own parent is in a block not read, so it is dumped at the origin; its far edge, 80 metres out, meets
-    // The door the stage stands 32.3 metres out along its axis, and its top, 0.33 metres up, the door's foot 5 metres
-    // Down (Login/Scene/Index.reference.ts, source `door`)
-    rootOffsets: { LoginScene_Bridge01_Vo: [0, -5.33, -112.3] },
+    // The walkway's own parent is in a block not read, so it is dumped at the origin at full scale. The login's own scene
+    // Hangs the walkway and the door at one scale (its BridgeBeginNode and DoorNode), so its parent is the door's: 0.4
+    // Scale, 5 metres down, which brings its far edge to the door 32.3 metres out with no shift along its axis, and
+    // Its width to the door's as the current build's door frame shows (Login/Scene/Index.reference.ts, source `door`)
+    rootParents: { LoginScene_Bridge01_Vo: { position: [0, -5, 0], scale: 0.4 } },
     roots: ["CharacterSelectSceneNew", "LoginScene_Bridge01_Vo"],
   },
 };
