@@ -7,6 +7,7 @@ import { formatSceneTree } from "#src/services/genshinAssets/formatSceneTree";
 import { getComponentDirectory } from "#src/services/genshinAssets/getComponentDirectory";
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
 import { readSceneLayout } from "#src/services/genshinAssets/readSceneLayout";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
 // Every node named so at any depth, or the node itself when it is
@@ -46,6 +47,9 @@ export const treeCommand: SubCommandsDef[string] = defineCommand({
     const { root } = args;
     const nodes = root ? tops.flatMap((top) => findNodes(top, root)) : tops;
     const depth = args.depth === undefined ? Infinity : Number(args.depth);
+    // A depth that is no count would prune every child and pass the tops off as a flat hierarchy
+    if (depth !== Infinity && !(Number.isInteger(depth) && depth >= 0))
+      throw new InvalidOperationError(Operation.Read, "depth", `not a whole number of levels: ${args.depth}`);
     console.log(nodes.map((node) => formatSceneTree(pruneNode(node, depth))).join("\n"));
   },
 });
