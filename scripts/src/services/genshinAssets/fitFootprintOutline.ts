@@ -1,3 +1,5 @@
+import { simplifyPath } from "#src/services/genshinAssets/simplifyPath";
+
 // The outline of what a set of triangles covers seen from above, in the game's x and z, for a slab whose every row
 // Across it is one run (a walkway, a platform): each row's outermost edges on a grid of `cellSize`, the right edge
 // Down and the left edge back up, then simplified by Douglas-Peucker to within `tolerance`
@@ -31,26 +33,4 @@ export const fitFootprintOutline = (
     ...ordered.toReversed().map(([row, [left]]): [number, number] => [left, row * cellSize]),
   ];
   return simplifyPath(outline, tolerance);
-};
-// Douglas-Peucker: the point farthest from the chord kept while it strays past the tolerance, split there and again
-const simplifyPath = (points: [number, number][], tolerance: number): [number, number][] => {
-  if (points.length < 3) return points;
-  const [ax, az] = points[0] ?? [0, 0];
-  const [bx, bz] = points.at(-1) ?? [0, 0];
-  const length = Math.hypot(bx - ax, bz - az) || 1;
-  let farthestIndex = 0;
-  let farthestDistance = 0;
-  for (let index = 1; index < points.length - 1; index++) {
-    const [px, pz] = points[index] ?? [0, 0];
-    const distance = Math.abs((bx - ax) * (az - pz) - (ax - px) * (bz - az)) / length;
-    if (distance > farthestDistance) {
-      farthestDistance = distance;
-      farthestIndex = index;
-    }
-  }
-  if (farthestDistance <= tolerance) return [points[0] ?? [ax, az], points.at(-1) ?? [bx, bz]];
-  return [
-    ...simplifyPath(points.slice(0, farthestIndex + 1), tolerance).slice(0, -1),
-    ...simplifyPath(points.slice(farthestIndex), tolerance),
-  ];
 };

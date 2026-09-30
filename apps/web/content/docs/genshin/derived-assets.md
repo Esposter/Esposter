@@ -32,51 +32,73 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-  B[The game's blocks] -->|"map, once a patch"| M["maps: every asset's name, type and block"]
-  M -->|"extract component"| E["extracted/component: meshes, textures, materials, the blocks' layout, placements.json"]
-  E -->|"fit component"| D["genshin-world/src/data/component: our kits' parameters"]
+  B[The game's blocks] -->|"map, once a patch"| M["maps: every asset's name, type, block and path ID"]
+  M -->|"extract component: AnimeStudio"| E["extracted/component: meshes, textures, materials, the blocks' layout"]
+  E -->|"fit component: no game files"| D["genshin-world/src/data/component: our kits' parameters"]
   D --> K[The scene builds them with the engine's kits]
 ```
 
 1. **`map`** indexes every block into the asset map, about a gigabyte of JSON, and streams it into `index.tsv`, which a search reads in seconds. AnimeStudio writes the CAB map it needs into its own folder.
-2. **`extract <component>`** finds the blocks holding the component's assets by the name pattern `DerivedAssetComponentMap` gives it, and exports them block by block. It dumps each block's Transform, GameObject and MeshFilter as JSON, and composes every object's world placement into `placements.json`.
-3. **`fit <component>`** fits our kits' parameters to the meshes where they stand, and writes them as the world package's data, the only output that enters the repository.
+2. **`extract <component>`** finds the blocks holding the component's assets by the name pattern `DerivedAssetComponentMap` gives it, exports them block by block, and dumps each block's Transform, GameObject and MeshFilter as JSON. It is the only step that reads the game.
+3. **`fit <component>`** composes every object's world placement from the layout dumps, keeps the arrangements under the component's roots (`readComponentPlacements`), fits our kits' parameters to the meshes and textures, and writes them as the world package's data, the only output that enters the repository. A change of fit or selection reruns it alone.
 
 A new component is one name pattern in `DerivedAssetComponentMap` and one fit in `DerivedAssetFitMap`; everything else is shared.
 
+### Finding what a scene draws
+
+A scene's parts are found by name, but its sky, its effects and its prefab parts often live under other names and blocks. What a scene actually draws is read off its renderers:
+
+```mermaid
+flowchart TD
+  O[An object in the layout] --> R["its MeshRenderer: the path IDs of its materials"]
+  R --> A["the asset map by path ID: each material's name and block"]
+  A --> T["each material's texture slots: their path IDs, through the map again"]
+  T --> P["the exact names, added to the component's name pattern"]
+```
+
+The login sky was found this way: `Clouds`, `Atmosphere` and the three cloud emitters draw `Enviro_*` materials whose textures sit in the login blocks under names no `LoginScene_` search reaches. Names shared across the game (`Cloud_LOD0`) are matched exactly, or the pattern reaches every block that reuses them.
+
 ### What the exports hold
 
-- **Axes.** Unity is left-handed, and an OBJ export has its x negated back to Unity's mesh space, so a fit reads meshes and placements in the game's own axes throughout, then converts what it writes to three.js as `(x, y, -z)` (`toRightHanded`).
-- **Placements.** A path ID is 64-bit, so the layout is parsed with a `JSON.parse` reviver reading each number's source text. A root's parent is `0`. A GameObject is dumped under its name, so of the objects sharing one (each level of detail under its group) only the last survives; the layout is read from the Transforms, each dumped under a number of its own, and a Transform whose GameObject was lost takes its ID from a child whose own is known (`toSceneObjects`). An object whose parent sits in a block not read is dropped, never set down at the origin: those are a prefab's levels of detail, placed by an instance elsewhere.
-- **What a dump cannot hold.** A MonoBehaviour exports without its fields, since the blocks carry no type data. The login camera's path and the scene's weather live in scripts, so they are measured from the captures instead: the camera from where the walkway's edges meet the frame in the four skies, scaled by the walkway's fitted width.
+- **Axes.** Unity is left-handed, and an OBJ export has its x negated back to Unity's mesh space, so a fit reads meshes and placements in the game's own axes throughout, then converts what it writes to three.js as `(x, y, -z)` (`toRightHanded`), a rotation as `(-x, -y, z, w)` (`toRightHandedRotation`).
+- **Placements.** A path ID is 64-bit, so the layout is parsed with a `JSON.parse` reviver reading each number's source text. A root's parent is `0`. A GameObject is dumped under its name, so of the objects sharing one (each level of detail under its group) only the last survives; the layout is read from the Transforms, each dumped under a number of its own, and a Transform whose GameObject was lost takes its ID from a child whose own is known (`toSceneObjects`). A level-of-detail group whose own GameObject and every level's were lost is given the levels of its part that name one father: two groups of one part hold the same levels, so either pairing places the same parts. An object whose parent sits in a block not read is dropped, never set down at the origin.
+- **One set of meshes, several arrangements.** Blocks lay one set of meshes out several times, each under its own root, so a component names the roots it is (`fitLoginScene`'s `LOGIN_ROOTS`). The login screen is `CharacterSelectSceneNew`'s stage (its towers, bridges, pillars and door at 0.4 scale, the door capture's size) and the walkway, a root of its own; the root `LoginScene_Build_All`, its `CG_opening01` groups and the full-scale door are the opening cinematic's. Only from the walkway's far end, looking down it along −z, do the stage's towers stand where the captures show them.
+- **What a dump cannot hold.** A MonoBehaviour and a particle system export without their fields, since the blocks carry no type data. The camera's path, the door's appearance, the cloud emitters' spread and every light's strength and colour live in scripts, so they are measured from the captures, and expressed over what the blocks do give: the camera's height as a share of the walkway's width, the lights' strengths over the stone's fitted albedo, the cloud bands over the cloud layer's height.
+- **Packed textures.** A texture's channels are rarely colours: read what each holds before fitting it. The sky gradient's are three falloff curves over the sky's height, not the hour's colours, which are the sky profile's. A cloud atlas holds two columns of four painted clouds, alpha their silhouette and red the light the painter put on them. A diffuse texture is the part's albedo, which the light warms and cools.
 
 ### The fits
 
-| Fit                              | Reads                                         | Writes                                                                                       |
-| :------------------------------- | :-------------------------------------------- | :------------------------------------------------------------------------------------------- |
-| Lathe, `fitLatheProfile`         | A round mesh's vertices                       | Its axis, its foot, and a section per two-metre band of its outer radius, merged within 3%   |
-| Footprint, `fitFootprintOutline` | The triangles of every piece, seen from above | The outline they cover, traced on a quarter-metre grid and simplified within ten centimetres |
-| Bounds, `fitLoginDoor`           | One placed mesh                               | Its foot and its size, which the kit's measured shares divide                                |
+| Fit                              | Reads                                                     | Writes                                                                                                                                                                                             |
+| :------------------------------- | :-------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lathe, `fitLatheProfile`         | A round mesh's vertices                                   | Its axis, its foot, and a section per two-metre band of its outer radius, merged within 3%                                                                                                         |
+| Footprint, `fitFootprintOutline` | The triangles of every piece, seen from above             | The outline they cover, traced on a quarter-metre grid and simplified within ten centimetres                                                                                                       |
+| Silhouette, `fitSilhouette`      | A slab's triangles on its broad face (a bridge, a pillar) | Every loop round what they cover, holes (its arches) clockwise, traced on a half-metre grid and simplified within a quarter metre; `createSilhouetteGeometry` extrudes it through the slab's depth |
+| Bounds, `fitLoginDoor`           | One placed mesh                                           | Its foot and its size, which the kit's measured shares divide                                                                                                                                      |
+| Cloud sprites, `fitCloudSprites` | A cloud atlas's alpha and red                             | Each cell's outline and lit crown as loops in its unit square; `createCloudAtlasTexture` paints them into an atlas of our own at run time                                                          |
+| Horizon band, `fitHorizonBand`   | The sky gradient's red curve                              | The end of the smoothstep that falls as it does, by least squares: how far up the zenith's colour takes over                                                                                       |
+| Albedo, `fitAlbedo`              | Every part's diffuse texture                              | The median of each channel over all their texels, as one hex                                                                                                                                       |
 
-Every number is kept to the centimetre (`roundFitted`).
+A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit filled it (a mesh's triangles, a texture's thresholded channel), and a part drawn at several levels of detail is fitted from its finest by one `readLevelOfDetailParts`. Every number is kept to the centimetre (`roundFitted`).
 
 ## Inventory
 
-| Component                         | Source                                             | Status                                                          |
-| :-------------------------------- | :------------------------------------------------- | :-------------------------------------------------------------- |
-| `Splash/Publisher`                | Commons' vector logo, the recording's ring         | Compared, approved                                              |
-| `Splash/Title`                    | The English phone video's logo                     | Compared, approved                                              |
-| `Splash/HealthNotice`             | The English client's notice                        | Compared, approved                                              |
-| `Loading/Startup`                 | The wiki's capture, the element marks' vectors     | Compared, approved                                              |
-| `Login/Interface`                 | The English recording's frames                     | Compared over its frames at each stage, approved                |
-| `genshin-ui` pieces               | The English and the 1440 high recordings           | Measured, approved in their own suite                           |
-| `Login/Scene` camera              | The walkway's edges in the four skies              | Derived                                                         |
-| `Login/Scene` towers              | `LoginScene_Build*` meshes and placements          | Fitted as lathes, placed where the game stands them             |
-| `Login/Scene` walkway             | `LoginScene_Bridge01_*` meshes                     | Fitted as a footprint and its two heights                       |
-| `Login/Scene` door                | `LoginScene_Door01_Vo`                             | Placed and sized by its mesh; the outline's shares measured     |
-| `Login/Scene` bridges and pillars | `LoginScene_Bridge02`–`04`, `Pillar03`, `Broken_*` | Exported; to be fitted                                          |
-| `Login/Scene` clouds              | The captures                                       | A noise field; cloud banks and the cloud sea's billows to build |
-| `Login/Scene` sky and haze        | The four skies' pixels                             | Sampled; to be fitted by tone                                   |
+| Component                         | Source                                                    | Status                                                              |
+| :-------------------------------- | :-------------------------------------------------------- | :------------------------------------------------------------------ |
+| `Splash/Publisher`                | Commons' vector logo, the recording's ring                | Compared, approved                                                  |
+| `Splash/Title`                    | The English phone video's logo                            | Compared, approved                                                  |
+| `Splash/HealthNotice`             | The English client's notice                               | Compared, approved                                                  |
+| `Loading/Startup`                 | The wiki's capture, the element marks' vectors            | Compared, approved                                                  |
+| `Login/Interface`                 | The English recording's frames                            | Compared over its frames at each stage, approved                    |
+| `genshin-ui` pieces               | The English and the 1440 high recordings                  | Measured, approved in their own suite                               |
+| `Login/Scene` camera              | The walkway's edges in the four skies                     | Derived, flying along −z from the walkway's far end                 |
+| `Login/Scene` towers              | The stage's `LoginScene_Build*` meshes and placements     | Fitted as lathes, placed where the game stands them                 |
+| `Login/Scene` walkway             | `LoginScene_Bridge01_*` meshes                            | Fitted as a footprint and its two heights                           |
+| `Login/Scene` door                | The stage's `LoginScene_Door01_Vo`                        | Placed and sized by its mesh; stands once the flight reaches it     |
+| `Login/Scene` bridges and pillars | The stage's `LoginScene_Bridge02`–`04`, `Pillar03` meshes | Fitted as silhouettes, placed and turned where the game stands them |
+| `Login/Scene` stone               | Every `LoginScene_*_Diffuse`                              | Fitted as one albedo                                                |
+| `Login/Scene` clouds              | The three `Enviro_Clouds_*_Particle_Atlas` textures       | Fitted as sprites; each band's spread measured off the captures     |
+| `Login/Scene` sky and haze        | `Enviro_Sky_Gradient`, the four skies' pixels             | Horizon band fitted; colours and light strengths measured           |
+| `Login/Scene` broken pieces       | `LoginScene_Broken_*` meshes                              | Exported; no placement in the arrangements shown                    |
 
 ## Key files
 
@@ -85,8 +107,11 @@ Every number is kept to the centimetre (`roundFitted`).
 | `scripts/src/services/genshinAssets/constants.ts`                | Where the exports are kept, and every fit's tolerance |
 | `scripts/src/services/genshinAssets/DerivedAssetComponentMap.ts` | Each component's assets by name                       |
 | `scripts/src/services/genshinAssets/DerivedAssetFitMap.ts`       | Each component's fit                                  |
+| `scripts/src/services/genshinAssets/fitLoginScene.ts`            | The login screen's roots and every fit it writes      |
+| `scripts/src/services/genshinAssets/traceCoveredGrid.ts`         | The loops round a grid's covered cells                |
 | `packages/genshin-world/src/data`                                | The fitted parameters the scenes read                 |
-| `packages/genshin-engine/src/kits/architecture`                  | The kits every fitted parameter drives                |
+| `packages/genshin-engine/src/kits/architecture`                  | The kits the fitted shapes drive                      |
+| `packages/genshin-engine/src/atmosphere/placeCloudBand.ts`       | A band of painted clouds scattered round a centre     |
 
 ## Sources
 

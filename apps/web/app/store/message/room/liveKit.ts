@@ -200,12 +200,14 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
       await handler?.();
     }).match(noop, console.error),
   );
-  // LiveKit unmutes every remote audio element as it starts them, so a reader who is deafened is muted again after
+  // LiveKit unmutes every remote audio element as it calls play on them, before either play settles, so a reader who
+  // Is deafened is muted again straight after the call rather than after the await, which a failed play would skip
   const startAudio = () =>
     getResultAsync(async () => {
       if (!activeRoom) return;
-      await activeRoom.startAudio();
+      const playback = activeRoom.startAudio();
       setRemoteAudioMuted(mediaStore.isDeafened);
+      await playback;
     }).match(noop, console.error);
   const setCamera = async (isCameraEnabled: boolean) => {
     if (!activeRoom) return;

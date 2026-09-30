@@ -20,4 +20,12 @@ describe(toSceneColor, () => {
 
     expect(b).toBeGreaterThan(1);
   });
+
+  test("stops a white the tone mapping cannot reach at a bounded scene colour", () => {
+    expect.hasAssertions();
+
+    const { r } = toSceneColor(new Color(1, 1, 1));
+
+    expect(r).toBeLessThanOrEqual(1.5);
+  });
 });

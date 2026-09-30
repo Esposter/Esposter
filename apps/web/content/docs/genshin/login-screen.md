@@ -1,6 +1,6 @@
 ---
 title: Login screen
-description: The game's login screen in the opening, between the health notice and the startup loading screen. It fades up out of white on a walkway among towers over a cloud sea, under the sky of the player's hour. A click on its title sets the camera flying to a door as the game loads, and a click on the door lights it as the screen whitens. The scene is built by the engine's kits at the references' measures, its camera re-derived from the walkway's edges. The interface is compared over the English recording's own frames.
+description: The game's login screen in the opening, between the health notice and the startup loading screen. It fades up out of white on a walkway among towers over a cloud sea, under the sky of the player's hour. A click on its title sets the camera flying to a door as the game loads, and a click on the door lights it as the screen whitens. The scene is built by the engine's kits from parameters fitted to the game's own assets, its camera re-derived from the walkway's edges. The interface is compared over the English recording's own frames.
 ---
 
 # Login screen
@@ -26,45 +26,50 @@ flowchart LR
 
 ## The scene
 
+Every part's shape, place and stone is fitted from the game's own assets ([derived assets](/docs/genshin/derived-assets)), and what the blocks cannot hold is measured from the captures over what they can:
+
 ```mermaid
 flowchart TD
-  REF[The four skies at the title's pose, the door capture, the flight's frames] --> CAM[Camera: the walkway's edges meet 0.503 across, 0.571 down]
-  CAM --> NEAR[Near towers: each kind's shaft one width, so its width in the frame is its depth]
-  CAM --> WALK[Walkway: 5.4 m wide, wings and a raised platform every 24 m, the door's dais]
-  REF --> FIELD[The rest: a seeded field of towers, arcades through the cloud sea]
-  REF --> SKY[Each time of day's sky, haze colour, light and shadow]
-  NEAR --> SCORE{compare: shape and tone per time of day}
-  WALK --> SCORE
-  FIELD --> SCORE
-  SKY --> SCORE
+  DATA["genshin-world/src/data/login: towers, walkway, door, bridges and pillars, clouds, stone, horizon band"] --> SCENE[Login/Scene builds them with the engine's kits]
+  REF[The four skies, the door capture, the flight's frames] --> CAM["Camera: its height a share of the walkway's width, flying along −z"]
+  REF --> BANDS[Each cloud band's heights and spread]
+  REF --> LIGHT["Each time of day's colours, and its lights' strengths over the fitted stone"]
+  CAM --> SCENE
+  BANDS --> SCENE
+  LIGHT --> SCENE
+  SCENE --> SCORE{compare: shape and tone per time of day}
 ```
 
-- **The camera is re-derived from the walkway, never guessed.** The references share one pose. The walkway's two edges meet 0.503 across and 0.571 down the frame, so the camera looks straight down it pitched 3.37 degrees down. The walkway's 5.4 metres fill 0.42 of the frame's foot, which puts the eye 4.1 metres over its surface at the game's 45-degree vertical field of view. A first pass measured the edges by eye, pitched the camera up, and scored a third of the edges shared.
-- **Each near tower's depth is its kind's width.** A tower's width in the frame gives its depth only once its true width is known. So each kind's shaft is one width: a crowned tower 2.2 metres, set by the one left of the walkway, whose moulding meets the first wing; a ringed one 3, set by the right one's base ring at the walkway's level; a slender pole half a metre. The rest stand in a field scattered from a seed, clear of the walkway and of each other, and the door has its own towers where its frame shows them.
-- **The haze is the cloud sea's, and brighter than the sky's horizon.** The haze is dense five metres under the walkway and thins a third of itself a metre up. So a tower 17 metres out is white below the walkway's level, as the references show, while the far towers at eye height are half hazed at 150 metres. Its colour is each reference's own, sampled low in the frame (the engine's `fogColor`), since the horizon's colour is far darker than the lit haze.
-- **The light casts shadows and draws no god rays.** The moon's and the sun's shadows fall across the walkway from a shadow camera that follows the flight. The god rays, which march that shadow, lit the whole sky in the light's colour, so the login's sky states turn them off.
-- **The door lights from its middle.** Its panel's emission is a bright line down its middle over a glow across the whole panel, raised over the door's light time, which the bloom then spreads.
+- **The login screen is one arrangement of its meshes.** The blocks lay the towers out more than once; the login screen is the character select's stage, its towers and its door at 0.4 scale, with the walkway, and only from the walkway's far end, looking down it along −z, do the stage's towers stand beside it where the captures show them.
+- **Each part is built from its fit.** Each tower profile is a lathe of its fitted sections, built once per placement at its scale and merged into one geometry. The walkway is its fitted outline, wings and all, extruded from its underside to its surface.
+- **The camera is derived from the walkway.** The references share one pose. The walkway's two edges meet 0.503 across and 0.571 down the frame, so the camera looks straight down it pitched 3.37 degrees down, and the walkway's fitted width fills 0.42 of the frame's foot, which puts the eye 0.76 of that width over its surface at the game's 45-degree vertical field of view. The flight ends 3.93 camera heights short of the door.
+- **The door stands once the flight reaches it.** The title's frames show the walkway running on with no door on it, so the scene draws the door only at the flight's end. It lights from its middle: a bright line down its panel over a glow across the whole of it, raised over the door's light time.
+- **The clouds are the game's painted clouds.** Each of the sky's three emitters, the cloud sea's billows and the middle and top cumulus, is a band of its own atlas's clouds, traced as shapes and drawn as billboards in the sky's cloud colours, so the hour recolours them without repainting. The sky itself draws no cloud layer of its own.
+- **Colours are measured on the screen and inverted into the scene.** The sky's, the haze's and the clouds' colours are display colours read off the references, written through the tone mapping's inverse (`toSceneColor`); the lights' strengths are measured over the stone's fitted albedo, by `compare`.
+- **The haze is the cloud sea's.** The haze rises off the cloud sea far under the walkway and thins up past it. It is dense enough 20 metres under the walkway that the towers' feet are white, as the references show, and thin enough at the eye that a tower half a kilometre out is still half seen.
+- **The light casts shadows and draws no god rays.** The moon's and the sun's shadows fall across the walkway from a shadow camera that follows the flight ahead of it. The god rays lit the whole sky in the light's colour, so the login's sky states turn them off.
 
 ## Tests
 
 - `Game/Opening/Index.browser.test.ts` plays the whole opening with timers and frames faked, through the login's title, flight and door, and checks every handoff and the finish.
-- The walkway, the door and the tower field have unit tests of their measures: the walkway runs from behind the camera to the dais with wings at every segment and nothing between them, the door stands on its plinth with its panel recessed, and the field stands the same towers every time, clear of the walkway and of each other.
+- The walkway and the door have unit tests of their measures: the walkway spans its fitted outline from its underside to its surface and stands nowhere past its widest, and the door stands on its plinth with its panel recessed. Each fit that builds the data has its own test in `scripts/src/services/genshinAssets`.
 - `Login/Interface` is shot in each stage as fixture variants and held to its approved images; its references are the English recording's frames, over which it is compared.
 
 ## Key files
 
-| File                                                                              | Role                                                                   |
-| :-------------------------------------------------------------------------------- | :--------------------------------------------------------------------- |
-| `packages/genshin-world/src/components/Login/Screen/Index.vue`                    | The stages, the flight, and the fades out of and into white            |
-| `packages/genshin-world/src/components/Login/Interface/Index.vue`                 | Each stage's interface, from `genshin-ui`'s pieces                     |
-| `packages/genshin-world/src/components/Login/Scene/Index.vue`                     | The camera, towers, arcades, walkway, door, cloud sea, sky and shadows |
-| `packages/genshin-world/src/services/login/constants.ts`                          | The words and the timings                                              |
-| `packages/genshin-world/src/services/login/scene/constants.ts`                    | The camera, the flight, the haze, the light and the shadows            |
-| `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`             | Each time of day's sky, haze and light                                 |
-| `packages/genshin-world/src/services/login/tower/getLoginTowers.ts`               | The near towers, the door's and the seeded field                       |
-| `packages/genshin-world/src/services/login/walkway/createLoginWalkwayGeometry.ts` | The walkway, its wings and platforms, and the door's dais              |
-| `packages/genshin-world/src/services/login/door/createLoginDoorGeometry.ts`       | The door's frame and its panel                                         |
-| `packages/genshin-engine/src/kits/architecture/createArcadeGeometry.ts`           | An arcade: round-headed openings through a wall, and a railing         |
+| File                                                                              | Role                                                                    |
+| :-------------------------------------------------------------------------------- | :---------------------------------------------------------------------- |
+| `packages/genshin-world/src/components/Login/Screen/Index.vue`                    | The stages, the flight, and the fades out of and into white             |
+| `packages/genshin-world/src/components/Login/Interface/Index.vue`                 | Each stage's interface, from `genshin-ui`'s pieces                      |
+| `packages/genshin-world/src/components/Login/Scene/Index.vue`                     | The camera, the fitted parts, the clouds, the sky and the shadows       |
+| `packages/genshin-world/src/services/login/constants.ts`                          | The words and the timings                                               |
+| `packages/genshin-world/src/services/login/scene/constants.ts`                    | The camera, the flight, the haze, the light and the shadows             |
+| `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`             | Each time of day's colours and light strengths                          |
+| `packages/genshin-world/src/services/login/cloud/LoginCloudBandMap.ts`            | Each cloud band's heights, spread and widths                            |
+| `packages/genshin-world/src/services/login/tower/createLoginTowersGeometry.ts`    | Every fitted tower, built as a lathe and stood where the game stands it |
+| `packages/genshin-world/src/services/login/walkway/createLoginWalkwayGeometry.ts` | The walkway, its fitted outline extruded between its two heights        |
+| `packages/genshin-world/src/services/login/door/createLoginDoorGeometry.ts`       | The door's frame and its panel, from its fitted size                    |
+| `packages/genshin-world/src/data/login`                                           | Every fitted part                                                       |
 
 ## Sources
 

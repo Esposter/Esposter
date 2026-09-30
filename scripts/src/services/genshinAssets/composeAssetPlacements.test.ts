@@ -8,12 +8,19 @@ describe(composeAssetPlacements, () => {
   // A quarter turn about y
   const quarterTurn: SceneObject["rotation"] = [0, Math.SQRT1_2, 0, Math.SQRT1_2];
 
-  test("places a child through its parent's position, rotation and scale", () => {
+  test("places a child through its parent's position, rotation and scale, under its root", () => {
     expect.hasAssertions();
 
     const [, child] = composeAssetPlacements(
       [
-        { name: "", parentId: "0", position: [10, 0, 0], rotation: quarterTurn, scale: [2, 2, 2], transformId: "1" },
+        {
+          name: "root",
+          parentId: "0",
+          position: [10, 0, 0],
+          rotation: quarterTurn,
+          scale: [2, 2, 2],
+          transformId: "1",
+        },
         { ...identity, name: "a", parentId: "1", position: [1, 0, 0], transformId: "2" },
       ],
       new Map([["a", "a"]]),
@@ -23,6 +30,7 @@ describe(composeAssetPlacements, () => {
     expect(child?.position[0]).toBeCloseTo(10);
     expect(child?.position[2]).toBeCloseTo(-2);
     expect(child?.scale[0]).toBeCloseTo(2);
+    expect(child?.root).toBe("root");
   });
 
   test("leaves out an object whose parent the dump lacks, and every object under it", () => {

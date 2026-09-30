@@ -10,6 +10,9 @@ const DESATURATION = 0.15;
 // Pull on one another, so a handful of steps meet the measured colour well within the display's precision
 const INVERSE_STEP_COUNT = 16;
 const SLOPE_NUDGE = 1e-4;
+// The tone mapping only nears white, so a measured white has no scene colour: each channel stops here, which it shows
+// Within a step of the display's precision of white
+const SCENE_CHANNEL_LIMIT = 1.5;
 
 const toneMap = ([red, green, blue]: [number, number, number]): [number, number, number] => {
   const lowest = Math.min(red, green, blue);
@@ -37,7 +40,10 @@ export const toSceneColor = (displayColor: Color): Color => {
       const nudged: [number, number, number] = [...current];
       nudged[index] = channel + SLOPE_NUDGE;
       const slope = ((toneMap(nudged)[index] ?? 0) - (output[index] ?? 0)) / SLOPE_NUDGE;
-      return Math.max(channel + ((target[index] ?? 0) - (output[index] ?? 0)) / slope, 0);
+      return Math.min(
+        Math.max(channel + ((target[index] ?? 0) - (output[index] ?? 0)) / slope, 0),
+        SCENE_CHANNEL_LIMIT,
+      );
     }) as [number, number, number];
   }
   return new Color(...input);

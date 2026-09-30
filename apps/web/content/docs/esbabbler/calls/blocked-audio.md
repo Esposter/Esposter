@@ -11,7 +11,7 @@ A browser plays sound only after the page has had a gesture of the reader's own.
 
 LiveKit reports the refusal itself: a remote audio element that fails to play flips `Room.canPlaybackAudio` and emits `RoomEvent.AudioPlaybackStatusChanged`. `useLiveKitStore` keeps that as `isAudioPlaybackBlocked`, cleared on disconnect, and `startAudio` calls `Room.startAudio()` from inside the button's click.
 
-`Room.startAudio()` unmutes every remote audio element it starts, which would undo deafen, so the store lays `isDeafened` back over them straight after. A reader deafened while the sound was blocked is still deafened once it plays.
+`Room.startAudio()` unmutes every remote audio element as it calls `play()` on them, which would undo deafen, so the store lays `isDeafened` back over them straight after the call, before its playback settles. A reader deafened while the sound was blocked is still deafened once it plays, and still deafened if the browser refuses it again.
 
 ```mermaid
 flowchart TD

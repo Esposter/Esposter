@@ -21,6 +21,5 @@ export const LOGIN_DOOR = {
   recess: doorDepth * RECESS_SHARE,
   width: doorWidth,
 };
-// The door's panel, a blue slate darker than its frame, and the light it opens with, from the English recording
-export const LOGIN_DOOR_COLOR = 0x6f7a96;
+// The light the door opens with, from the English recording
 export const LOGIN_DOOR_GLOW_COLOR = 0x8fe8ff;

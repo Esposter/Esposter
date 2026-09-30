@@ -8,6 +8,7 @@ export const createSkyUniforms = (): SkyUniforms => ({
   cloudDrift: uniform(new Vector2()),
   cloudLitColor: uniform(new Color()),
   cloudShadeColor: uniform(new Color()),
+  horizonBand: uniform(0.45),
   horizonColor: uniform(new Color()),
   lightColor: uniform(new Color()),
   moonDirection: uniform(new Vector3(0, -1, 0)),

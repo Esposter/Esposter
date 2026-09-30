@@ -5,6 +5,8 @@ export interface AssetPlacement {
   mesh: string;
   name: string;
   position: [number, number, number];
+  // The name of the root it hangs from, which says which of a block's arrangements it belongs to
+  root: string;
   rotation: [number, number, number, number];
   scale: [number, number, number];
 }

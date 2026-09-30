@@ -1,7 +1,6 @@
 import type { ChildProcess } from "node:child_process";
 import type { PackageJson } from "type-fest";
 
-import { jsonDateParse } from "@esposter/shared";
 import { spawn, spawnSync } from "node:child_process";
 import { globSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -14,7 +13,8 @@ const WORKSPACE_PROTOCOL = "workspace:";
 const logger = useLogger("watch-packages");
 
 const readPackageJson = (directory: string): PackageJson =>
-  jsonDateParse<PackageJson>(readFileSync(join(directory, "package.json"), "utf8"));
+  // oxlint-disable-next-line no-restricted-properties -- a manifest carries no dates, and no workspace dist exists yet at install
+  JSON.parse(readFileSync(join(directory, "package.json"), "utf8")) as PackageJson;
 // A sibling a package lists as a dependency or peer stays external in its `dist`, so the app loads that sibling's `dist`
 // Too; a devDependency is bundled from source, which the package's own watcher already follows
 const getRuntimeWorkspaceDependencies = (packageJson: PackageJson): string[] =>
