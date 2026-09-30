@@ -222,7 +222,7 @@ flowchart TD
 ```
 
 - **The dock holds the reader's places, not the app's catalogue.** Below the launcher come the pages the reader bookmarked, then the pages they come back to most, and a bookmarked one wears a small bookmark in the accent in its corner, so the two read apart wherever they are drawn. A product's own page, a page of the account menu's and the settings show their own icon and name — a product's page can redirect before its title is ever recorded, as the messages page opens the last room — and a docs page its section's icon. A page its path says nothing about shows the icon of its mark (below) when it has one, and any other, a room, its title's first letter in a frame, so two side by side stay told apart, which is why every page sets a title of its own: a test fails on a page file that neither does nor is named by a list or its layout. On a narrow screen the bar has no room for them, so they lead the launcher's panel instead. Which edge the dock takes is CSS alone, the `md` breakpoint through UnoCSS's variant, so no script decides it.
-- **Bookmarks are server-side and recent pages are not.** A bookmark follows the reader between devices, so it is a row of `bookmarks`, toggled from the launcher's panel by a button that says in words whether it bookmarks the page open now or removes it, and capped at a handful, since the dock shows every one. A recent page is a convenience of the device, kept in local storage and ranked by frecency: each visit weighted by how long ago the last one was, in Firefox's age buckets. Home, sign-in and an address no page matches are never recent, and a signed-out reader has recent pages only. A page's title is the last part of its document title, read each time its head renders, so a room's name that arrives after its messages is picked up.
+- **Bookmarks are server-side and recent pages are not.** A bookmark follows the reader between devices, so it is a row of `bookmarks`, toggled from the launcher's panel by a button that says in words whether it bookmarks the page open now or removes it, and capped at a handful, since the dock shows every one. A recent page is a convenience of the device, kept in local storage and ranked by frecency: each visit weighted by how long ago the last one was, in Firefox's age buckets. Home, sign-in and an address no page matches are never recent, a page renamed or removed since its visit is forgotten the next time the app starts rather than kept as a link to nowhere, and a signed-out reader has recent pages only. A page's title is the last part of its document title, read each time its head renders, so a room's name that arrives after its messages is picked up.
 - **A place carries the mark of what it is.** A resource's address says nothing about whether it is a to-do list or a sheet, so a page declares a mark while it is mounted — `usePageMark`, called in its setup with a getter, as `useCommands` registers a surface's commands — and the resource page declares its resource's type. A mark is data, never an icon class: the dock resolves its icon when it draws it, a resource type's from `ResourceDefinitionMap`, so the icon follows the map and the server can refuse a type outside the enum. The recent-pages plugin writes the mark of the page open now beside its title, the bookmark button sends it with a new bookmark, which keeps it in the `resourceType` column of `bookmarks` (null for any other page) until it is toggled again, and a place's context menu bookmarks it with the mark it already holds. The mark store finds a mark by path and reads the page mounted last first, because a page swap mounts the next page before the last one leaves. A place visited before it had a mark draws its letter until its next visit.
 
 ```mermaid
@@ -298,44 +298,44 @@ flowchart TD
 
 ## Key files
 
-| File                                                  | Role                                                                                                 |
-| :---------------------------------------------------- | :--------------------------------------------------------------------------------------------------- |
-| `apps/web/app/components/Ui/`                         | The components, each beside its component test                                                       |
-| `apps/web/app/components/Ui/setupUiStyle.test.ts`     | Runs a component test once per design style                                                          |
-| `apps/web/app/composables/ui/`                        | The library's composables over Vuetify 0's                                                           |
-| `apps/web/app/models/ui/UiIconMeaning.ts`             | What each library icon says                                                                          |
-| `apps/web/app/services/ui/UiIconMap.ts`               | Each style's class for every meaning                                                                 |
-| `apps/web/app/components/Ui/Icon.vue`                 | The icon element, by meaning, decorative unless labelled                                             |
-| `apps/web/app/models/shared/Item.ts`                  | One action a menu or a list shows, by meaning or a whole class                                       |
-| `apps/web/app/composables/ui/useTypeahead.ts`         | The typeahead the menu and the select share                                                          |
-| `apps/web/app/models/ui/UiMenuItem.ts`                | One choice in a menu, a select or suggestions                                                        |
-| `apps/web/app/models/ui/UiDialogPlacement.ts`         | Where a dialog stands: high, in the middle, as a sheet, as a drawer from one edge, or over the page  |
-| `apps/web/app/services/ui/UiRules.ts`                 | The rules a field takes, worded as one voice                                                         |
-| `apps/web/app/services/ui/constants.ts`               | The spinner's frames, the loading bar's blocks, the typeahead's pause and where a popover opens      |
-| `apps/web/app/services/ui/getNextGridCellPosition.ts` | Where a key moves a data table grid's active cell                                                    |
-| `apps/web/app/composables/ui/useGridKeyboard.ts`      | One tab stop in a grid, walked by the keys each grid maps; the calendars and the data table share it |
-| `apps/web/app/plugins/ui.ts`                          | Vuetify 0's hydration, breakpoints and theme plugins                                                 |
-| `apps/web/app/composables/ui/useUiDisplay.ts`         | The library's reading of Vuetify 0's breakpoints                                                     |
-| `apps/web/uno.config.ts`                              | The icons preset and the app's own icon set                                                          |
-| `apps/web/uno.config.test.ts`                         | Every icon a source file names generates its rule                                                    |
-| `apps/web/app/assets/icons/`                          | The app's own marks, served by UnoCSS as the `i-custom:` set                                         |
-| `apps/web/scripts/flowMap/services/getFlowMap.ts`     | Walks the pages and the shell into the flow map                                                      |
-| `apps/web/app/generated/flowMap/flowMap.mmd`          | The flow map, committed                                                                              |
-| `apps/web/app/components/content/FlowMap.vue`         | Draws the flow map on this page                                                                      |
-| `apps/web/app/components/App/Dock/`                   | The dock: places, launcher, bookmark button, theme, style and account menus                          |
-| `apps/web/app/components/App/ToastStack.vue`          | Every source of a toast, drawn in the one stack                                                      |
-| `apps/web/app/store/bookmark.ts`                      | The reader's bookmarks, toggled optimistically                                                       |
-| `apps/web/shared/models/app/PageMark.ts`              | What a place is: a union with a resource type as its one member                                      |
-| `apps/web/app/composables/app/usePageMark.ts`         | Declares the mark of the calling page while it is mounted                                            |
-| `apps/web/app/store/pageMark.ts`                      | The mark each mounted page declares, found by path                                                   |
-| `apps/web/app/services/app/getPageIcon.ts`            | A place's icon: the path's own, then its mark's, else none                                           |
-| `apps/web/app/store/recentPage.ts`                    | The device's recent pages, ranked by frecency                                                        |
-| `apps/web/app/plugins/recentPages.client.ts`          | Records each visit, and the title the page's head settles on beside the page's mark                  |
-| `apps/web/server/trpc/routers/bookmark.ts`            | Reads and toggles bookmarks, capped per reader                                                       |
-| `packages/db-schema/src/schema/app/bookmarksInApp.ts` | One row per bookmarked page, with the resource type it was bookmarked with                           |
-| `apps/web/app/components/Styled/Dialog.vue`           | The dialog shell over the library's dialog                                                           |
-| `oxlint.config.ts`                                    | The import boundary                                                                                  |
-| `.agents/skills/ui-library/SKILL.md`                  | The library's conventions                                                                            |
+| File                                                  | Role                                                                                                                 |
+| :---------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Ui/`                         | The components, each beside its component test                                                                       |
+| `apps/web/app/components/Ui/setupUiStyle.test.ts`     | Runs a component test once per design style                                                                          |
+| `apps/web/app/composables/ui/`                        | The library's composables over Vuetify 0's                                                                           |
+| `apps/web/app/models/ui/UiIconMeaning.ts`             | What each library icon says                                                                                          |
+| `apps/web/app/services/ui/UiIconMap.ts`               | Each style's class for every meaning                                                                                 |
+| `apps/web/app/components/Ui/Icon.vue`                 | The icon element, by meaning, decorative unless labelled                                                             |
+| `apps/web/app/models/shared/Item.ts`                  | One action a menu or a list shows, by meaning or a whole class                                                       |
+| `apps/web/app/composables/ui/useTypeahead.ts`         | The typeahead the menu and the select share                                                                          |
+| `apps/web/app/models/ui/UiMenuItem.ts`                | One choice in a menu, a select or suggestions                                                                        |
+| `apps/web/app/models/ui/UiDialogPlacement.ts`         | Where a dialog stands: high, in the middle, as a sheet, as a drawer from one edge, or over the page                  |
+| `apps/web/app/services/ui/UiRules.ts`                 | The rules a field takes, worded as one voice                                                                         |
+| `apps/web/app/services/ui/constants.ts`               | The spinner's frames, the loading bar's blocks, the typeahead's pause and where a popover opens                      |
+| `apps/web/app/services/ui/getNextGridCellPosition.ts` | Where a key moves a data table grid's active cell                                                                    |
+| `apps/web/app/composables/ui/useGridKeyboard.ts`      | One tab stop in a grid, walked by the keys each grid maps; the calendars and the data table share it                 |
+| `apps/web/app/plugins/ui.ts`                          | Vuetify 0's hydration, breakpoints and theme plugins                                                                 |
+| `apps/web/app/composables/ui/useUiDisplay.ts`         | The library's reading of Vuetify 0's breakpoints                                                                     |
+| `apps/web/uno.config.ts`                              | The icons preset and the app's own icon set                                                                          |
+| `apps/web/uno.config.test.ts`                         | Every icon a source file names generates its rule                                                                    |
+| `apps/web/app/assets/icons/`                          | The app's own marks, served by UnoCSS as the `i-custom:` set                                                         |
+| `apps/web/scripts/flowMap/services/getFlowMap.ts`     | Walks the pages and the shell into the flow map                                                                      |
+| `apps/web/app/generated/flowMap/flowMap.mmd`          | The flow map, committed                                                                                              |
+| `apps/web/app/components/content/FlowMap.vue`         | Draws the flow map on this page                                                                                      |
+| `apps/web/app/components/App/Dock/`                   | The dock: places, launcher, bookmark button, theme, style and account menus                                          |
+| `apps/web/app/components/App/ToastStack.vue`          | Every source of a toast, drawn in the one stack                                                                      |
+| `apps/web/app/store/bookmark.ts`                      | The reader's bookmarks, toggled optimistically                                                                       |
+| `apps/web/shared/models/app/PageMark.ts`              | What a place is: a union with a resource type as its one member                                                      |
+| `apps/web/app/composables/app/usePageMark.ts`         | Declares the mark of the calling page while it is mounted                                                            |
+| `apps/web/app/store/pageMark.ts`                      | The mark each mounted page declares, found by path                                                                   |
+| `apps/web/app/services/app/getPageIcon.ts`            | A place's icon: the path's own, then its mark's, else none                                                           |
+| `apps/web/app/store/recentPage.ts`                    | The device's recent pages, ranked by frecency                                                                        |
+| `apps/web/app/plugins/recentPages.client.ts`          | Records each visit, and the title the page's head settles on beside the page's mark; forgets a page no route matches |
+| `apps/web/server/trpc/routers/bookmark.ts`            | Reads and toggles bookmarks, capped per reader                                                                       |
+| `packages/db-schema/src/schema/app/bookmarksInApp.ts` | One row per bookmarked page, with the resource type it was bookmarked with                                           |
+| `apps/web/app/components/Styled/Dialog.vue`           | The dialog shell over the library's dialog                                                                           |
+| `oxlint.config.ts`                                    | The import boundary                                                                                                  |
+| `.agents/skills/ui-library/SKILL.md`                  | The library's conventions                                                                                            |
 
 ## Sources
 
