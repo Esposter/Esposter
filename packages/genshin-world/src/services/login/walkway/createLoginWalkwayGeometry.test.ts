@@ -1,42 +1,37 @@
-import { LOGIN_DAIS, LOGIN_DOOR_Z } from "#src/services/login/door/constants";
-import {
-  LOGIN_FIRST_WING_CENTRE,
-  LOGIN_SEGMENT_LENGTH,
-  LOGIN_WALKWAY_START,
-  LOGIN_WALKWAY_WIDTH,
-  LOGIN_WING,
-} from "#src/services/login/walkway/constants";
+import walkway from "#src/data/login/walkway.json";
 import { createLoginWalkwayGeometry } from "#src/services/login/walkway/createLoginWalkwayGeometry";
 import { Box3, DoubleSide, Mesh, MeshBasicMaterial, Raycaster, Vector3 } from "three";
 import { describe, expect, test } from "vitest";
 
 describe(createLoginWalkwayGeometry, () => {
   const mesh = new Mesh(createLoginWalkwayGeometry(), new MeshBasicMaterial({ side: DoubleSide }));
-  const raycaster = new Raycaster();
-  const down = new Vector3(0, -1, 0);
-  const hitsAt = (x: number, z: number): boolean => {
-    raycaster.set(new Vector3(x, 10, z), down);
-    return raycaster.intersectObject(mesh).length > 0;
-  };
+  const xs = walkway.outline.map(([x = 0]) => x);
+  const zs = walkway.outline.map(([, z = 0]) => z);
 
-  test("runs from behind the camera to the door's dais", () => {
+  test("spans its outline from its underside to its surface", () => {
     expect.hasAssertions();
 
     mesh.geometry.computeBoundingBox();
     const { max, min } = mesh.geometry.boundingBox ?? new Box3();
 
-    expect(max.z).toBeCloseTo(LOGIN_WALKWAY_START);
-    expect(min.z).toBeCloseTo(LOGIN_DOOR_Z - LOGIN_DAIS.length / 2);
-    expect(max.y).toBeCloseTo(LOGIN_DAIS.height);
+    expect(min.y).toBeCloseTo(walkway.bottom);
+    expect(max.y).toBeCloseTo(walkway.top);
+    expect(max.x).toBeCloseTo(Math.max(...xs));
+    expect(min.z).toBeCloseTo(Math.min(...zs));
   });
 
-  test("crosses the walkway with wings at each segment, and nothing beside it between them", () => {
+  test("stands under every corner of its outline and nowhere past its widest", () => {
     expect.hasAssertions();
 
-    const besideWalkway = LOGIN_WALKWAY_WIDTH / 2 + LOGIN_WING.overhang / 2;
+    const raycaster = new Raycaster();
+    const down = new Vector3(0, -1, 0);
+    const [x = 0, z = 0] = walkway.outline[0] ?? [];
+    raycaster.set(new Vector3(x * 0.99, walkway.top + 1, z * 0.99), down);
 
-    expect(hitsAt(besideWalkway, LOGIN_FIRST_WING_CENTRE)).toBe(true);
-    expect(hitsAt(-besideWalkway, LOGIN_FIRST_WING_CENTRE - LOGIN_SEGMENT_LENGTH)).toBe(true);
-    expect(hitsAt(besideWalkway, LOGIN_FIRST_WING_CENTRE - LOGIN_SEGMENT_LENGTH / 2)).toBe(false);
+    expect(raycaster.intersectObject(mesh).length).toBeGreaterThan(0);
+
+    raycaster.set(new Vector3(Math.max(...xs) + 1, walkway.top + 1, 0), down);
+
+    expect(raycaster.intersectObject(mesh)).toHaveLength(0);
   });
 });

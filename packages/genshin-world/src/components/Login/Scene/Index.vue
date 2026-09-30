@@ -2,14 +2,15 @@
 import type { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
 
 import { usePostPipeline } from "#src/composables/usePostPipeline";
-import { LOGIN_ARCADE, LOGIN_ARCADE_BALUSTRADE, LOGIN_ARCADES } from "#src/services/login/arcade/constants";
 import { LOGIN_DOOR_LIGHT_MS } from "#src/services/login/constants";
-import { LOGIN_DAIS, LOGIN_DOOR_COLOR, LOGIN_DOOR_GLOW_COLOR, LOGIN_DOOR_Z } from "#src/services/login/door/constants";
+import { LOGIN_DOOR_COLOR, LOGIN_DOOR_GLOW_COLOR, LOGIN_DOOR_POSITION } from "#src/services/login/door/constants";
 import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoorGeometry";
 import {
+  LOGIN_CAMERA_FAR,
   LOGIN_CAMERA_FOV,
   LOGIN_CAMERA_HEIGHT,
   LOGIN_CAMERA_PITCH,
+  LOGIN_CAMERA_START_Z,
   LOGIN_CLOUD_COVERAGE,
   LOGIN_CLOUD_SEA_HEIGHT,
   LOGIN_CLOUD_SEA_SIZE,
@@ -27,17 +28,14 @@ import {
   LOGIN_SHADOW_MAP_SIZE,
   LOGIN_SHADOW_NORMAL_BIAS,
   LOGIN_STONE_COLOR,
-  LOGIN_TOWER_FLOOR,
 } from "#src/services/login/scene/constants";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
-import { createLoginTowerGeometry } from "#src/services/login/tower/createLoginTowerGeometry";
-import { getLoginTowers } from "#src/services/login/tower/getLoginTowers";
+import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
 import { createLoginWalkwayGeometry } from "#src/services/login/walkway/createLoginWalkwayGeometry";
 import { useLoop, useTres } from "@tresjs/core";
 import { watchImmediate } from "@vueuse/core";
 import {
   applySkyState,
-  createArcadeGeometry,
   createFogUniforms,
   createGodraysLight,
   createGradeLutTexture,
@@ -50,8 +48,7 @@ import {
   createToonMaterial,
   QualityTier,
 } from "genshin-engine";
-import { BufferGeometry, DirectionalLight, HemisphereLight } from "three";
-import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import { DirectionalLight, HemisphereLight } from "three";
 import {
   abs,
   color,
@@ -143,24 +140,7 @@ doorMaterial.emissiveNode = createRimNode(lightUniforms).add(
     ),
   ),
 );
-// Every tower as one geometry, and every arcade as another, each part placed where it stands
-const mergeParts = (parts: BufferGeometry[]): BufferGeometry => {
-  const merged = mergeGeometries(parts) ?? new BufferGeometry();
-  for (const part of parts) part.dispose();
-  return merged;
-};
-const towersGeometry = mergeParts(
-  getLoginTowers().map((tower) =>
-    createLoginTowerGeometry(tower, LOGIN_TOWER_FLOOR).translate(tower.position[0], 0, tower.position[1]),
-  ),
-);
-const arcadesGeometry = mergeParts(
-  LOGIN_ARCADES.map(({ bayCount, heading, start: [x, z] }) =>
-    createArcadeGeometry({ ...LOGIN_ARCADE, balustrade: LOGIN_ARCADE_BALUSTRADE, bayCount })
-      .rotateY(-heading)
-      .translate(x, LOGIN_TOWER_FLOOR, z),
-  ),
-);
+const towersGeometry = createLoginTowersGeometry();
 const walkwayGeometry = createLoginWalkwayGeometry();
 const { frame: doorFrameGeometry, panel: doorPanelGeometry } = createLoginDoorGeometry();
 // The cloud sea as billows of the clouds' own two colours, lit tops over shaded hollows, which the fog then pales
@@ -174,9 +154,11 @@ cloudSeaMaterial.colorNode = mix(
 const gradeLutTexture = createGradeLutTexture(LOGIN_GRADE_OPTIONS);
 usePostPipeline(QualityTier.High, { fogUniforms, godraysLight, gradeLutTexture, postUniforms });
 let renderedFrameCount = 0;
-const cameraZ = computed(() => -flight * LOGIN_FLIGHT_DISTANCE);
+// The camera flies along +z, from beyond the walkway's end toward the door: turned half round from three's -z, and
+// Pitched down, which the half turn makes a positive rotation about x
+const cameraZ = computed(() => LOGIN_CAMERA_START_Z + flight * LOGIN_FLIGHT_DISTANCE);
 onRender(({ delta }) => {
-  light.target.position.set(0, 0, cameraZ.value - LOGIN_SHADOW_EXTENT / 2);
+  light.target.position.set(0, 0, cameraZ.value + LOGIN_SHADOW_EXTENT / 2);
   light.position
     .copy(light.target.position)
     .addScaledVector(LoginSkyStateMap[timeOfDay].lightDirection, LOGIN_LIGHT_DISTANCE);
@@ -194,7 +176,6 @@ onUnmounted(() => {
   cloudSeaMaterial.dispose();
   walkwayGeometry.dispose();
   towersGeometry.dispose();
-  arcadesGeometry.dispose();
   doorFrameGeometry.dispose();
   doorPanelGeometry.dispose();
   light.dispose();
@@ -205,10 +186,10 @@ onUnmounted(() => {
 
 <template>
   <TresPerspectiveCamera
+    :far="LOGIN_CAMERA_FAR"
     :fov="LOGIN_CAMERA_FOV"
-    :far="3000"
     :position="[0, LOGIN_CAMERA_HEIGHT, cameraZ]"
-    :rotation="[LOGIN_CAMERA_PITCH, 0, 0]"
+    :rotation="[-LOGIN_CAMERA_PITCH, Math.PI, 0]"
   />
   <primitive :object="light" />
   <primitive :object="light.target" />
@@ -217,8 +198,8 @@ onUnmounted(() => {
   <primitive :object="godraysLight.target" />
   <TresMesh :geometry="walkwayGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
   <TresMesh :geometry="towersGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
-  <TresMesh :geometry="arcadesGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
-  <TresGroup :position="[0, LOGIN_DAIS.height, LOGIN_DOOR_Z]">
+  <!-- The door faces the camera coming down the walkway, along -z -->
+  <TresGroup :position="LOGIN_DOOR_POSITION" :rotation="[0, Math.PI, 0]">
     <TresMesh :geometry="doorFrameGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
     <TresMesh :geometry="doorPanelGeometry" cast-shadow receive-shadow :material="doorMaterial" />
   </TresGroup>

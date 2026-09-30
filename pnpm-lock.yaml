@@ -2484,6 +2484,9 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.8.0
+      '@types/three':
+        specifier: 'catalog:'
+        version: 0.186.0
       '@typesafe-ai/sdk':
         specifier: 'catalog:'
         version: 0.6.0
@@ -2505,6 +2508,9 @@ importers:
       sharp:
         specifier: 'catalog:'
         version: 0.35.5(@types/node@26.6.3)
+      three:
+        specifier: 'catalog:'
+        version: 0.186.1
       tsx:
         specifier: 'catalog:'
         version: 4.23.15
