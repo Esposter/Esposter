@@ -57,7 +57,13 @@ flowchart TD
   RUN --> REF
   RUN --> K{What is the piece?}
   K -->|"interface"| UI["Placed from the interface tree's rects, moved by its decoded clips"]
-  K -->|"3D"| SD["The scene derivation: witness, camera, calibration, loss table"]
+  K -->|"3D"| AR{"Width ratios of neighbouring parts match the reference?"}
+  AR -->|no| PAR["Fix the arrangement: a lost parent's place and scale"]
+  PAR --> AR
+  AR -->|yes| POSE["Read the pose by perspective from parts of known size"]
+  POSE --> W{"Witness render at that pose lines up?"}
+  W -->|no| AR
+  W -->|yes| SD["The scene derivation: calibration, loss table"]
   UI --> C["compare against its references"]
   SD --> C
   C -->|off| K
