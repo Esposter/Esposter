@@ -2,7 +2,7 @@ import type { FogUniforms } from "#src/post/FogUniforms";
 import type { Camera } from "three";
 import type { Node, TextureNode } from "three/webgpu";
 
-import { exp, float, Fn, getViewPosition, If, max, mix, uniform, uv, vec4 } from "three/tsl";
+import { exp, float, Fn, getViewPosition, If, max, mix, pow, uniform, uv, vec4 } from "three/tsl";
 
 const MIN_RAY_CLIMB = 0.000001;
 // Fog as a haze whose density falls off exponentially with height, integrated along the ray from the eye to what the
@@ -13,7 +13,17 @@ export const createHeightFogNode = (
   colorNode: Node<"vec4">,
   depthNode: TextureNode,
   camera: Camera,
-  { baseHeight, color, density, heightFalloff, startDistance }: FogUniforms,
+  {
+    baseHeight,
+    color,
+    density,
+    heightFalloff,
+    scatterColor,
+    scatterDirection,
+    scatterPower,
+    scatterStrength,
+    startDistance,
+  }: FogUniforms,
 ): Node<"vec4"> => {
   const cameraWorldMatrix = uniform(camera.matrixWorld);
   const cameraProjectionMatrixInverse = uniform(camera.projectionMatrixInverse);
@@ -38,7 +48,9 @@ export const createHeightFogNode = (
         opticalDepth.assign(densityAtStart.mul(float(1).sub(exp(fogLength.mul(climb).negate()))).div(climb));
       });
       const opacity = float(1).sub(exp(opticalDepth.negate()));
-      output.assign(vec4(mix(output.rgb, color, opacity), output.a));
+      // Looking toward the sun, the haze is lit by the light it scatters, gathered round the sun by the power
+      const scatter = pow(max(ray.normalize().dot(scatterDirection), 0), scatterPower).mul(scatterStrength);
+      output.assign(vec4(mix(output.rgb, mix(color, scatterColor, scatter.min(1)), opacity), output.a));
     });
     return output;
   })();

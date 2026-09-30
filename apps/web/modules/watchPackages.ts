@@ -2,7 +2,7 @@ import type { ChildProcess } from "node:child_process";
 import type { PackageJson } from "type-fest";
 
 import { spawn, spawnSync } from "node:child_process";
-import { globSync, readFileSync } from "node:fs";
+import { globSync, readFileSync, rmSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { defineNuxtModule, useLogger } from "nuxt/kit";
@@ -51,10 +51,17 @@ export default defineNuxtModule({
     spawnSync(process.execPath, [tsdownPath], { cwd: configurationDirectory, stdio: "inherit" });
     const watcherMap = new Map<string, ChildProcess>();
     let isClosing = false;
+    // A cleaning tsdown watcher deletes the last build's files as each rebuild starts, so a page loaded mid-rebuild finds
+    // No `dist` to import. The watchers overwrite in place instead, and each `dist` is cleared once here so a hashed
+    // Chunk from an earlier session is not left for a size snapshot to measure
+    for (const packageName of watchedPackageNames) {
+      const packageDirectory = packageDirectoryMap.get(packageName);
+      if (packageDirectory) rmSync(join(packageDirectory, "dist"), { force: true, recursive: true });
+    }
     // A watcher exits when its config fails to reload, which a rebuild of the configuration `dist` it imports causes by
     // Cleaning it mid-reload, so an exit respawns it after a pause rather than leaving its package silently stale
     const spawnWatcher = (packageName: string) => {
-      const watcher = spawn(process.execPath, [tsdownPath, "--watch"], {
+      const watcher = spawn(process.execPath, [tsdownPath, "--watch", "--no-clean"], {
         cwd: packageDirectoryMap.get(packageName),
         stdio: "inherit",
       });

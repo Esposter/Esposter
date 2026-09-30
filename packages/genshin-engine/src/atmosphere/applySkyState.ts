@@ -28,6 +28,8 @@ export const applySkyState = (
   lightUniforms.sunDirection.value.copy(lightDirection);
   lightUniforms.rimColor.value.copy(horizonColor);
   fogUniforms.color.value.copy(toSceneColor(skyState.fogColor ?? horizonColor));
+  fogUniforms.scatterColor.value.copy(toSceneColor(lightColor));
+  fogUniforms.scatterDirection.value.copy(lightDirection);
   postUniforms.godraysColor.value.copy(lightColor);
   skyUniforms.cloudLitColor.value.copy(toSceneColor(skyState.cloudLitColor));
   skyUniforms.cloudShadeColor.value.copy(toSceneColor(skyState.cloudShadeColor));

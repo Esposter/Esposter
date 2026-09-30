@@ -44,6 +44,10 @@ export const LOGIN_GRADE_OPTIONS: GradeOptions = {
 export const LOGIN_FOG_DENSITY = 0.004;
 export const LOGIN_FOG_HEIGHT_FALLOFF = 0.03;
 export const LOGIN_FOG_START_DISTANCE = 40;
+// The haze's light scattered toward the sun, which bathes the sunward side of the dawn's and the dusk's frames: how
+// Narrowly it gathers round the sun and how strongly, measured off the references
+export const LOGIN_FOG_SCATTER_POWER = 2;
+export const LOGIN_FOG_SCATTER_STRENGTH = 1;
 export const LOGIN_LIGHT_DISTANCE = 500;
 // The light's shadow map: its size, the half width of the square it covers about the camera's view, and its biases
 export const LOGIN_SHADOW_MAP_SIZE = 2048;

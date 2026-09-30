@@ -1,11 +1,21 @@
 import type { SkyState } from "genshin-engine";
 
 import { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
+import { getLoginScreenDirection } from "#src/services/login/scene/getLoginScreenDirection";
 import { Color, Vector3 } from "three";
+
+// Where each sky's sun or moon stands, from where its reference shows it, through the login camera: the dawn's and the
+// Dusk's suns just past the frame's left edge on the horizon, where their glow is brightest, and the night's moon
+// Behind the lantern tower. The day's sun is behind the camera, off its frame, so its direction is measured from the
+// Faces it lights. The light comes from the sun or the moon, and the other stands opposite
+const DAWN_SUN_DIRECTION = getLoginScreenDirection([-0.05, 0.35]);
+const DAY_SUN_DIRECTION = new Vector3(-0.526, 0.789, -0.316).normalize();
+const DUSK_SUN_DIRECTION = getLoginScreenDirection([-0.05, 0.35]);
+const NIGHT_MOON_DIRECTION = getLoginScreenDirection([0.27, 0.11]);
 
 // Each time of day's sky and light, its colours read off its reference: the gradient's zenith and horizon, the haze
 // Over the cloud sea (the mean of its brightest two samples low in the frame), the clouds,
-// And where the light comes from, which is from the left in all four (low at dawn and dusk, and the moon's at night).
+// And the sun or the moon the light comes from.
 // The light's and the sky's strengths are measured over the stone's fitted albedo, as the game's lighting is its
 // Scripts' and never exported
 export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
@@ -13,64 +23,64 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     cloudLitColor: new Color(0xf2dfc8),
     cloudShadeColor: new Color(0x8c91a7),
     fogColor: new Color(0xe9d8c7),
-    hemisphereGroundColor: new Color(0xf2dfc8),
+    hemisphereGroundColor: new Color(0x8c91a7),
     hemisphereIntensity: 3,
-    hemisphereSkyColor: new Color(0x8c91a7),
+    hemisphereSkyColor: new Color(0xf2dfc8),
     horizonColor: new Color(0xf2c9a4),
     lightColor: new Color(0xffd8a8),
-    lightDirection: new Vector3(-0.951, 0.08, -0.3).normalize(),
+    lightDirection: DAWN_SUN_DIRECTION,
     lightIntensity: 3.55,
-    moonDirection: new Vector3(0.951, -0.08, 0.3).normalize(),
+    moonDirection: DAWN_SUN_DIRECTION.clone().negate(),
     starIntensity: 0,
-    sunDirection: new Vector3(-0.951, 0.08, -0.3).normalize(),
+    sunDirection: DAWN_SUN_DIRECTION,
     zenithColor: new Color(0x42608c),
   },
   [LoginTimeOfDay.Day]: {
     cloudLitColor: new Color(0xffffff),
     cloudShadeColor: new Color(0xb8cbe0),
     fogColor: new Color(0xceddee),
-    hemisphereGroundColor: new Color(0xd4e4ef),
+    hemisphereGroundColor: new Color(0x9ec0e8),
     hemisphereIntensity: 3.55,
-    hemisphereSkyColor: new Color(0x9ec0e8),
+    hemisphereSkyColor: new Color(0xd4e4ef),
     horizonColor: new Color(0xb0c9e3),
     lightColor: new Color(0xfff4e6),
-    lightDirection: new Vector3(-0.526, 0.789, -0.316).normalize(),
+    lightDirection: DAY_SUN_DIRECTION,
     lightIntensity: 4.1,
-    moonDirection: new Vector3(0.526, -0.789, 0.316).normalize(),
+    moonDirection: DAY_SUN_DIRECTION.clone().negate(),
     starIntensity: 0,
-    sunDirection: new Vector3(-0.526, 0.789, -0.316).normalize(),
+    sunDirection: DAY_SUN_DIRECTION,
     zenithColor: new Color(0x3b68a0),
   },
   [LoginTimeOfDay.Dusk]: {
     cloudLitColor: new Color(0xfcdbad),
     cloudShadeColor: new Color(0xa9708d),
     fogColor: new Color(0xf0c4aa),
-    hemisphereGroundColor: new Color(0xfcdbad),
+    hemisphereGroundColor: new Color(0xa9708d),
     hemisphereIntensity: 3,
-    hemisphereSkyColor: new Color(0xa9708d),
+    hemisphereSkyColor: new Color(0xfcdbad),
     horizonColor: new Color(0xf2b08a),
     lightColor: new Color(0xffc890),
-    lightDirection: new Vector3(-0.902, 0.251, -0.351).normalize(),
+    lightDirection: DUSK_SUN_DIRECTION,
     lightIntensity: 3.55,
-    moonDirection: new Vector3(0.902, -0.251, 0.351).normalize(),
+    moonDirection: DUSK_SUN_DIRECTION.clone().negate(),
     starIntensity: 0,
-    sunDirection: new Vector3(-0.902, 0.251, -0.351).normalize(),
+    sunDirection: DUSK_SUN_DIRECTION,
     zenithColor: new Color(0x7e5485),
   },
   [LoginTimeOfDay.Night]: {
     cloudLitColor: new Color(0x56b0f5),
     cloudShadeColor: new Color(0x255abb),
     fogColor: new Color(0x5ab4f8),
-    hemisphereGroundColor: new Color(0x2d6fd0),
+    hemisphereGroundColor: new Color(0x2a4aa8),
     hemisphereIntensity: 2.7,
-    hemisphereSkyColor: new Color(0x2a4aa8),
+    hemisphereSkyColor: new Color(0x2d6fd0),
     horizonColor: new Color(0x1f51c6),
     lightColor: new Color(0x9cc8ff),
-    lightDirection: new Vector3(-0.551, 0.451, -0.702).normalize(),
+    lightDirection: NIGHT_MOON_DIRECTION,
     lightIntensity: 2.45,
-    moonDirection: new Vector3(-0.551, 0.451, -0.702).normalize(),
+    moonDirection: NIGHT_MOON_DIRECTION,
     starIntensity: 1,
-    sunDirection: new Vector3(0.551, -0.451, 0.702).normalize(),
+    sunDirection: NIGHT_MOON_DIRECTION.clone().negate(),
     zenithColor: new Color(0x172161),
   },
 };

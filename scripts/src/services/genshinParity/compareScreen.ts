@@ -1,3 +1,5 @@
+import type { ParityScore } from "#src/models/genshinParity/ParityScore";
+
 import { COMPARISON_HEIGHT, COMPARISONS_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/constants";
 import { fetchReferences } from "#src/services/genshinParity/fetchReferences";
 import { ParityReferenceMap } from "#src/services/genshinParity/ParityReferenceMap";
@@ -10,10 +12,11 @@ import { join } from "node:path";
 import sharp from "sharp";
 
 const GRID_SIZE = 6;
-const toPercent = (sum: number, count: number): string => ((sum / Math.max(count, 1) / 255) * 100).toFixed(2);
+const toPercent = (sum: number, count: number): number => (sum / Math.max(count, 1) / 255) * 100;
 // The reference, ours and their difference side by side in one image, and how far apart they are: the mean over the
-// Compared region, then the same over a grid of cells, row by row, so where they differ is read without looking
-export const compareScreen = async (referenceId: string): Promise<void> => {
+// Compared region, then the same over a grid of cells, row by row, so where they differ is read without looking; the
+// Scores are handed back for the committed report
+export const compareScreen = async (referenceId: string): Promise<ParityScore> => {
   const reference = ParityReferenceMap[referenceId];
   if (!reference)
     throw new InvalidOperationError(
@@ -58,12 +61,13 @@ export const compareScreen = async (referenceId: string): Promise<void> => {
     cell.count++;
   }
   const total = cellMeans.reduce((sum, cell) => sum + cell.sum, 0);
-  console.log(`mean difference ${toPercent(total, data.length)}% (0 is identical)`);
+  const meanDifference = toPercent(total, data.length);
+  console.log(`mean difference ${meanDifference.toFixed(2)}% (0 is identical)`);
   for (let row = 0; row < GRID_SIZE; row++)
     console.log(
       cellMeans
         .slice(row * GRID_SIZE, (row + 1) * GRID_SIZE)
-        .map(({ count, sum }) => toPercent(sum, count).padStart(6))
+        .map(({ count, sum }) => toPercent(sum, count).toFixed(2).padStart(6))
         .join(" "),
     );
   // A scene rebuilt from shapes never matches pixel for pixel, so its shape and its light are scored apart
@@ -84,4 +88,5 @@ export const compareScreen = async (referenceId: string): Promise<void> => {
     .png()
     .toFile(outputPath);
   console.log(`reference | ours | difference: ${outputPath}`);
+  return { edgeScore, meanDifference, screen: reference.screen, toneDifference };
 };
