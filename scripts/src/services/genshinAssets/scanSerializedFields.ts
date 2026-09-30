@@ -47,9 +47,9 @@ export const scanSerializedFields = (
   const wordCount = Math.floor(bytes.length / WORD);
   const readInt = (offset: number): number => bytes.readInt32LE(offset);
   const readFloat = (offset: number): number => bytes.readFloatLE(offset);
-  const hasBytes = (offset: number, count: number): boolean => offset + count <= wordCount * WORD;
+  const checkHasBytes = (offset: number, count: number): boolean => offset + count <= wordCount * WORD;
   const readPointer: Reader = (offset) => {
-    if (!hasBytes(offset, POINTER_BYTES)) return undefined;
+    if (!checkHasBytes(offset, POINTER_BYTES)) return undefined;
     const pointer = { fileIndex: readInt(offset), pathId: bytes.readBigInt64LE(offset + WORD).toString() };
     return pointer.pathId !== "0" && checkIsPointer(pointer)
       ? { end: offset + POINTER_BYTES, field: { kind: SerializedFieldKind.Pointer, offset, pointer } }
@@ -60,7 +60,7 @@ export const scanSerializedFields = (
   const readCurveOf = (keyframeWords: number, offset: number): ReturnType<Reader> => {
     const count = readInt(offset);
     const end = offset + WORD + count * keyframeWords * WORD + 3 * WORD;
-    if (count < 1 || count > MAX_COUNT || !hasBytes(offset, end - offset)) return undefined;
+    if (count < 1 || count > MAX_COUNT || !checkHasBytes(offset, end - offset)) return undefined;
     const keys: Extract<SerializedField, { kind: SerializedFieldKind.Curve }>["keys"] = [];
     for (let index = 0; index < count; index++) {
       const key = offset + WORD + index * keyframeWords * WORD;
@@ -92,7 +92,7 @@ export const scanSerializedFields = (
   const readCurve: Reader = (offset) =>
     readCurveOf(WEIGHTED_KEYFRAME_WORDS, offset) ?? readCurveOf(KEYFRAME_WORDS, offset);
   const readGradient: Reader = (offset) => {
-    if (!hasBytes(offset, GRADIENT_BYTES)) return undefined;
+    if (!checkHasBytes(offset, GRADIENT_BYTES)) return undefined;
     const timesOffset = offset + GRADIENT_KEYS * 16;
     const alphaTimesOffset = timesOffset + GRADIENT_KEYS * 2;
     const modeOffset = alphaTimesOffset + GRADIENT_KEYS * 2;
@@ -135,7 +135,7 @@ export const scanSerializedFields = (
     };
   };
   const readColor: Reader = (offset) => {
-    if (!hasBytes(offset, 4 * WORD)) return undefined;
+    if (!checkHasBytes(offset, 4 * WORD)) return undefined;
     const [red = 0, green = 0, blue = 0, alpha = 0] = [0, 1, 2, 3].map((word) => readFloat(offset + word * WORD));
     // Four zeros say nothing a scalar does not
     return [red, green, blue].every((channel) => checkIsChannel(channel, MAX_COLOR_CHANNEL)) &&
@@ -173,9 +173,9 @@ export const scanSerializedFields = (
   };
   const readers = [readPointer, readCurve, readArray, readGradient, readColor, readScalar];
   const fields: SerializedField[] = [];
-  const nameLength = hasBytes(NAME_LENGTH_OFFSET, WORD) ? readInt(NAME_LENGTH_OFFSET) : 0;
+  const nameLength = checkHasBytes(NAME_LENGTH_OFFSET, WORD) ? readInt(NAME_LENGTH_OFFSET) : 0;
   let offset = NAME_LENGTH_OFFSET + WORD + Math.ceil(nameLength / WORD) * WORD;
-  while (hasBytes(offset, WORD)) {
+  while (checkHasBytes(offset, WORD)) {
     const start = offset;
     const read = readers
       .values()

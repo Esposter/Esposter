@@ -1,9 +1,9 @@
-import { AnimeStudioExportType } from "#src/models/genshinAssets/AnimeStudioExportType";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import type { ExportedMaterial } from "#src/models/genshinAssets/ExportedMaterial";
 import type { IndexedAsset } from "#src/models/genshinAssets/IndexedAsset";
 import type { ResolvedObject } from "#src/models/genshinAssets/ResolvedObject";
 
+import { AnimeStudioExportType } from "#src/models/genshinAssets/AnimeStudioExportType";
 import {
   CAB_MAP_PATH,
   EXPORTED_ASSET_TYPES,
@@ -92,7 +92,7 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
   );
   const textures = (
     await Promise.all(
-      [...nameFileMap].map(async ([name, file]) => {
+      Array.from(nameFileMap, async ([name, file]) => {
         const path = join(materialDirectory, `${name}.json`);
         if (!existsSync(path)) return [];
         const { textures: slots } = readMaterialValues(
