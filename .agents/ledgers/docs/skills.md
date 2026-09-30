@@ -40,6 +40,7 @@
 | `product-review`          | 2026-09-27 · Opus 5.5 |       |
 | `pulumi-infra`            | 2026-09-27 · Opus 5.5 |       |
 | `readme-standards`        | 2026-09-27 · Opus 5.5 |       |
+| `recreation-tooling`      | —                     |       |
 | `responsive`              | 2026-09-27 · Opus 5.5 |       |
 | `review-queue`            | 2026-09-27 · Opus 5.5 |       |
 | `routing`                 | 2026-09-27 · Opus 5.5 |       |
