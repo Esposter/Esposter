@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.8.1](https://github.com/Esposter/Esposter/compare/v3.8.0...v3.8.1) (2026-09-30)
+
+### Bug Fixes
+
+* bundle size ([97a6dfb](https://github.com/Esposter/Esposter/commit/97a6dfb28c48fde35acce0a4c6d4e9aebc2cf2f0))
+
 # [3.8.0](https://github.com/Esposter/Esposter/compare/v3.7.0...v3.8.0) (2026-09-30)
 
 ### Bug Fixes
