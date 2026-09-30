@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.8.0](https://github.com/Esposter/Esposter/compare/v3.7.0...v3.8.0) (2026-09-30)
+
+### Features
+
+* **oxlint:** process.argv read by citty alone ([27e836a](https://github.com/Esposter/Esposter/commit/27e836a3d5df47868eb6b0a0c47e46aa8a65081c))
+
 # [3.7.0](https://github.com/Esposter/Esposter/compare/v3.6.0...v3.7.0) (2026-09-29)
 
 **Note:** Version bump only for package agent-console-server

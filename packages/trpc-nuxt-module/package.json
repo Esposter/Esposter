@@ -1,6 +1,6 @@
 {
   "name": "trpc-nuxt-module",
-  "version": "3.7.0",
+  "version": "3.8.0",
   "description": "tRPC for Nuxt — a Nuxt module that registers your router's HTTP and WebSocket handlers, fetches through the request event during SSR, and decorates the typed client with useQuery, useMutation and useSubscription over useAsyncData.",
   "keywords": [
     "nitro",

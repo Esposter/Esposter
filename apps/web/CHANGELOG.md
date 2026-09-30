@@ -3,6 +3,62 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.8.0](https://github.com/Esposter/Esposter/compare/v3.7.0...v3.8.0) (2026-09-30)
+
+### Bug Fixes
+
+* **app:** a recent page no route matches any more is forgotten rather than linked ([fc37ea2](https://github.com/Esposter/Esposter/commit/fc37ea2ff5164f072f2cf9e09dbb40eec43441ee))
+* **genshin-world:** each login sky lit from its own sun or moon, where its reference shows it ([0430f94](https://github.com/Esposter/Esposter/commit/0430f94229266402c14555280099ffb443726785))
+* **genshin-world:** the publisher's ring coloured by radius as well as angle, where the game places it ([9c75d5d](https://github.com/Esposter/Esposter/commit/9c75d5d16f30bf38b81fffd01d841edb1d59747a))
+* **genshin-world:** the startup screen's marks show when loading finished during the splashes ([f7ae298](https://github.com/Esposter/Esposter/commit/f7ae298231163c1736a31589f99d019db54b0c48))
+* **genshin:** a stretched rect keeps Unity's pivot, and the loading row and prompt ride in the login's foot ([9855c32](https://github.com/Esposter/Esposter/commit/9855c32f863ac7553f2ef92ced20785c70d23634))
+* **genshin:** every login scene object placed, read from its transform ([0b2a7c2](https://github.com/Esposter/Esposter/commit/0b2a7c27a0204bfab93643fad478b6956f572cba))
+* **genshin:** level-of-detail groups the dump lost every name of, placed ([c5c4d1d](https://github.com/Esposter/Esposter/commit/c5c4d1d4532bccfcf693d2c475340142cbb2807f))
+* **genshin:** the door constants test typechecks and scopes its constants, and the size snapshots follow the build ([60d19ac](https://github.com/Esposter/Esposter/commit/60d19ac98860a29cc62a7b7d00c7854464b2adb6))
+* **genshin:** the login's bar catches loading up within a tenth of a second ([bce80ba](https://github.com/Esposter/Esposter/commit/bce80baae5ebd6759517cad357258d8c31bc78aa))
+* **genshin:** the login's bar fills evenly however fast loading is, then folds and leaves the flight bare before the door ([b8290b7](https://github.com/Esposter/Esposter/commit/b8290b7cb165d497c752fe596b9a5ceff24f90b1))
+* **genshin:** the login's flight ends 3 s after loading does, not on a fixed clock ([72ab785](https://github.com/Esposter/Esposter/commit/72ab78525cc8e9ac976a61029447e4a9f5e8b6a0))
+* **genshin:** the neutral tone mapping on every canvas, and measured sky colours through it ([5a9b82d](https://github.com/Esposter/Esposter/commit/5a9b82d0373fdcbef0b5d3641ad318bfa7ae6a77))
+* **genshin:** the walkway hangs at the door's scale, and the flight's poses are read off it by perspective ([1a53768](https://github.com/Esposter/Esposter/commit/1a53768af9f7357d2b5cbc8b2d8d7948ca7f1ca0))
+* main goes green — knip, duplicate prose, docs paths, component placement and generated artefacts ([7ec21d8](https://github.com/Esposter/Esposter/commit/7ec21d84b6360c085181b6e54521df10bf5580b4))
+* main goes green — lint, knip, constant scope, stale names, duplicate prose and size snapshots ([e4884d9](https://github.com/Esposter/Esposter/commit/e4884d9acb940783203b60b376fb35b6b9f51b4d))
+* main goes green — watchPackages lint and types, graph and genshin-world snapshots ([2cdb493](https://github.com/Esposter/Esposter/commit/2cdb4930729d5a79102cc6cb554e32378f8844e7))
+* repair main's duplicate-prose and genshin-world bundle-size reds ([03f2f05](https://github.com/Esposter/Esposter/commit/03f2f0529a35738606a99a61ceed7329e5a26adf))
+* the cli skill's ledger row, and the checks today's changes owed ([3d5d6a6](https://github.com/Esposter/Esposter/commit/3d5d6a60d0c75a495ce3d95ffbe95a82111af8ef))
+* the inspector's parameters panel starts closed ([7687fba](https://github.com/Esposter/Esposter/commit/7687fba4c0fab8f4bc35d9914ed37f9c64cf5a9c))
+* the inspector's parameters start collapsed ([21923c9](https://github.com/Esposter/Esposter/commit/21923c9c85bdc4e9c7ae16c13ac153f32b965730))
+* the world's console warnings ([134f462](https://github.com/Esposter/Esposter/commit/134f462d3bda578f41c1a82bbb7d1fb2c974f3a6))
+* **web:** a package watcher that exits under nuxt dev respawns ([d440909](https://github.com/Esposter/Esposter/commit/d4409091067825c3f1398781a9bd2f6d0523ab6b))
+* **web:** keyframe-store is a runtime dependency ([fb2321e](https://github.com/Esposter/Esposter/commit/fb2321e4f37845dcaa2699b3a9242a186634a6e6))
+* **web:** package watchers overwrite dist in place under nuxt dev ([139569a](https://github.com/Esposter/Esposter/commit/139569a60f2556eb11cb5df14243011806e5bf36))
+* **web:** startAudio re-applies deafen before its playback settles ([21aea37](https://github.com/Esposter/Esposter/commit/21aea37a73073a942ee4fe54c8e55199136e0055))
+* **web:** the package watcher module's typecheck and lint errors ([fa33353](https://github.com/Esposter/Esposter/commit/fa33353a0cf7d0dcae9cd8f23e4e9c72850c0277))
+* **web:** the package watcher reads manifests without a workspace dist ([4151721](https://github.com/Esposter/Esposter/commit/415172158e04056a9372711a61acde3dcd1a1456))
+
+### Features
+
+* **genshin-world:** the login scene's derived sky, clouds and stone, flown from the walkway's far end ([5a3054d](https://github.com/Esposter/Esposter/commit/5a3054d057c05b092fa0af97eb75414529216d21))
+* **genshin-world:** the login screen in the opening, a first pass of its scene ([1ee2bc1](https://github.com/Esposter/Esposter/commit/1ee2bc100c72b2d8e89342c50b8775040b015cb8))
+* **genshin:** genshin:assets, and the login scene built from what it fits ([4496603](https://github.com/Esposter/Esposter/commit/4496603690a8c9f468641c3bce2cc7f57cb51f87))
+* **genshin:** references beside each component, the loss table, the line cost, and shader layouts named ([0dff3fe](https://github.com/Esposter/Esposter/commit/0dff3fe8e8583b2aa728fb4a70790629b7f8621e))
+* **genshin:** the interface laid out where the game's RectTransforms anchor it, glyphs centred on their ink ([c11934b](https://github.com/Esposter/Esposter/commit/c11934b58af5c89a566d3ed03efbbe6014df21aa))
+* **genshin:** the login scene's bridges and pillars, fitted as silhouettes ([3f5b9e3](https://github.com/Esposter/Esposter/commit/3f5b9e3f8e86c11491506681d6af9e0f509947df))
+* **genshin:** the login screen's flight and door, and genshin-ui for the game's interface ([b53f509](https://github.com/Esposter/Esposter/commit/b53f509c9dc04833338c71cd30206704d68f8bc5))
+* **genshin:** the scene derivation's first tools, and the login's exports drawn through our own scene ([36d90ed](https://github.com/Esposter/Esposter/commit/36d90ed97a21285bb99411c6ff2c50ea65026c69))
+* **genshin:** the walkway placed where it meets the door, the door assembling itself, and the click's rush ([367b21a](https://github.com/Esposter/Esposter/commit/367b21a89497c300eab869f826a8d8f2ef63633e))
+* **genshin:** the witness lays out any arrangement, and the login's first run recorded ([101b324](https://github.com/Esposter/Esposter/commit/101b3245265a423dafd5ce56fc5cf1a57fdc926c))
+* **oxlint:** a route is spelled through RoutePath everywhere ([6486d60](https://github.com/Esposter/Esposter/commit/6486d60c2d2591cc9c7e309a00d4081ac0926dee))
+* **scripts:** command lines on citty, the parity tool first ([f28499a](https://github.com/Esposter/Esposter/commit/f28499a50c940f4c63ac584b8152a8d097518f50))
+* **scripts:** genshin:assets clips, a component's animation clips decoded, each curve named and sampled ([86b6fe0](https://github.com/Esposter/Esposter/commit/86b6fe0fa31de1e3825255313daa4dcf07b2af87))
+* **scripts:** genshin:assets interface, a screen's RectTransform tree with each piece's layout and components ([07f8862](https://github.com/Esposter/Esposter/commit/07f8862396bddcf0c9dbb309153e51d26931a68b))
+* **scripts:** parity scores a scene by its shape and tone, and a reference sets its screen's props ([e602c8e](https://github.com/Esposter/Esposter/commit/e602c8ef9e16ed5a30f09365929029927d13e8af))
+* **scripts:** parity scores committed beside the reference map, as a bench's are ([c923d99](https://github.com/Esposter/Esposter/commit/c923d99dba565f81078e33efd8e563914e232d4d))
+* **web:** /genshin plays the game alone, the agent console hidden from it ([e9a05b4](https://github.com/Esposter/Esposter/commit/e9a05b4b7150732b2a4356d94f169cdfbd24ccf3))
+* **web:** a call the browser keeps silent offers Play sound ([85c0280](https://github.com/Esposter/Esposter/commit/85c0280c49e7368756cb38b97cb6ef548b5dcabf))
+* **web:** pnpm dev starts watch:packages beside nuxt dev ([9fe4c0c](https://github.com/Esposter/Esposter/commit/9fe4c0c465e976897a8cd5e165228b80c85dea55))
+* **web:** the dev server watches every package in-process ([07a701b](https://github.com/Esposter/Esposter/commit/07a701b21ff1481bed381146e951bd04ded5319d))
+* **web:** the dev server watches only the packages the app loads ([06e6c56](https://github.com/Esposter/Esposter/commit/06e6c56a27d0394d737c3884ce6fa4f5aaae27f2))
+
 # [3.7.0](https://github.com/Esposter/Esposter/compare/v3.6.0...v3.7.0) (2026-09-29)
 
 ### Bug Fixes

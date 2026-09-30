@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.8.0](https://github.com/Esposter/Esposter/compare/v3.7.0...v3.8.0) (2026-09-30)
+
+### Features
+
+* **genshin:** the login screen's flight and door, and genshin-ui for the game's interface ([b53f509](https://github.com/Esposter/Esposter/commit/b53f509c9dc04833338c71cd30206704d68f8bc5))
+* **oxlint:** a route is spelled through RoutePath everywhere ([6486d60](https://github.com/Esposter/Esposter/commit/6486d60c2d2591cc9c7e309a00d4081ac0926dee))
+
 # [3.7.0](https://github.com/Esposter/Esposter/compare/v3.6.0...v3.7.0) (2026-09-29)
 
 **Note:** Version bump only for package @esposter/shared

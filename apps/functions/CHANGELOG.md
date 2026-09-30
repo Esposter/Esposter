@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.8.0](https://github.com/Esposter/Esposter/compare/v3.7.0...v3.8.0) (2026-09-30)
+
+### Bug Fixes
+
+* main goes green — knip, duplicate prose, docs paths, component placement and generated artefacts ([7ec21d8](https://github.com/Esposter/Esposter/commit/7ec21d84b6360c085181b6e54521df10bf5580b4))
+
 # [3.7.0](https://github.com/Esposter/Esposter/compare/v3.6.0...v3.7.0) (2026-09-29)
 
 **Note:** Version bump only for package @esposter/functions

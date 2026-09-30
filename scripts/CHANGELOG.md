@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.8.0](https://github.com/Esposter/Esposter/compare/v3.7.0...v3.8.0) (2026-09-30)
+
+### Bug Fixes
+
+* **ci:** the reds on e92e030440 — scripts and genshin-world lint, three size snapshots, the graph and a module-scope constant ([120561f](https://github.com/Esposter/Esposter/commit/120561ff9c35d38c4846d9e685f79e491c3804ca))
+* **genshin-world:** each login sky lit from its own sun or moon, where its reference shows it ([0430f94](https://github.com/Esposter/Esposter/commit/0430f94229266402c14555280099ffb443726785))
+* **genshin-world:** the publisher's ring coloured by radius as well as angle, where the game places it ([9c75d5d](https://github.com/Esposter/Esposter/commit/9c75d5d16f30bf38b81fffd01d841edb1d59747a))
+* **genshin:** a held clip curve's keyframes typed as the fit's pairs ([85d5716](https://github.com/Esposter/Esposter/commit/85d5716803e6a55de1d4b0ce651de0b8923e6b12))
+* **genshin:** an interface clip keeps its held curves, so a clip of no length still sets its pieces ([a18b92e](https://github.com/Esposter/Esposter/commit/a18b92ebdea57c1ffef20b63d6a0a3d86a201619))
+* **genshin:** every login scene object placed, read from its transform ([0b2a7c2](https://github.com/Esposter/Esposter/commit/0b2a7c27a0204bfab93643fad478b6956f572cba))
+* **genshin:** level-of-detail groups the dump lost every name of, placed ([c5c4d1d](https://github.com/Esposter/Esposter/commit/c5c4d1d4532bccfcf693d2c475340142cbb2807f))
+* **genshin:** shaders skips a block AnimeStudio exported no shader from ([9ede9f9](https://github.com/Esposter/Esposter/commit/9ede9f964072ec751cbee6099bfd7054cafd818d))
+* **genshin:** solve-camera counts each range value from its start, so a step too small to move a sum cannot repeat forever ([2439604](https://github.com/Esposter/Esposter/commit/2439604fa6354d3f322f7377ba3c49bc4d4fd261))
+* **genshin:** solve-camera rejects a range that names no axis or never reaches its end ([9a599cb](https://github.com/Esposter/Esposter/commit/9a599cbcb972c329cd9d6dc95e4805eadedf4c53))
+* **genshin:** the walkway hangs at the door's scale, and the flight's poses are read off it by perspective ([1a53768](https://github.com/Esposter/Esposter/commit/1a53768af9f7357d2b5cbc8b2d8d7948ca7f1ca0))
+* **genshin:** the walkway meets the door's foot, and the login's first pose is matched on the witness ([3e28d14](https://github.com/Esposter/Esposter/commit/3e28d14324de9e28ac535a9ae1e3ec7f0441f0d2))
+* **genshin:** the witness's unnamed family kept whole and drawn in every witness view ([b13eb90](https://github.com/Esposter/Esposter/commit/b13eb9005ffb8d54f0e30bcad4379592ef269c7a))
+* main goes green — lint, knip, constant scope, stale names, duplicate prose and size snapshots ([e4884d9](https://github.com/Esposter/Esposter/commit/e4884d9acb940783203b60b376fb35b6b9f51b4d))
+* **scripts:** clips extraction fails clearly on no block and appends keys in place ([676b3e7](https://github.com/Esposter/Esposter/commit/676b3e7cf1d7b876f912eccfd1324a817d82ed16))
+* **scripts:** genshin:parity polar rejects a band or angle count that is not a positive integer ([392e5c2](https://github.com/Esposter/Esposter/commit/392e5c232252affc58991bb655d6a2e3366ae72c))
+* **scripts:** parity page closes its browser when any setup step after launch fails ([79602d0](https://github.com/Esposter/Esposter/commit/79602d016bc9f2cdde1236848875c1a7e02d4e89))
+* **scripts:** the structure scores' lint and types ([f21fff7](https://github.com/Esposter/Esposter/commit/f21fff73814f6cdf0f6e3b08b0fa0752841abe50))
+* **scripts:** witness pages close their browsers when any opening fails ([8a53aa2](https://github.com/Esposter/Esposter/commit/8a53aa222089b2b42e2409cad128c9465ced3988))
+
+### Features
+
+* **genshin-world:** the login screen in the opening, a first pass of its scene ([1ee2bc1](https://github.com/Esposter/Esposter/commit/1ee2bc100c72b2d8e89342c50b8775040b015cb8))
+* **genshin:** genshin:assets, and the login scene built from what it fits ([4496603](https://github.com/Esposter/Esposter/commit/4496603690a8c9f468641c3bce2cc7f57cb51f87))
+* **genshin:** references beside each component, the loss table, the line cost, and shader layouts named ([0dff3fe](https://github.com/Esposter/Esposter/commit/0dff3fe8e8583b2aa728fb4a70790629b7f8621e))
+* **genshin:** the interface laid out where the game's RectTransforms anchor it, glyphs centred on their ink ([c11934b](https://github.com/Esposter/Esposter/commit/c11934b58af5c89a566d3ed03efbbe6014df21aa))
+* **genshin:** the login interface's clips fitted to keyframes, and a player for them on the Web Animations API ([c57bb0e](https://github.com/Esposter/Esposter/commit/c57bb0ec93abe27b6e50bfb80c32c8d7262e3252))
+* **genshin:** the login scene's bridges and pillars, fitted as silhouettes ([3f5b9e3](https://github.com/Esposter/Esposter/commit/3f5b9e3f8e86c11491506681d6af9e0f509947df))
+* **genshin:** the login screen's flight and door, and genshin-ui for the game's interface ([b53f509](https://github.com/Esposter/Esposter/commit/b53f509c9dc04833338c71cd30206704d68f8bc5))
+* **genshin:** the scene derivation's first tools, and the login's exports drawn through our own scene ([36d90ed](https://github.com/Esposter/Esposter/commit/36d90ed97a21285bb99411c6ff2c50ea65026c69))
+* **genshin:** the walkway placed where it meets the door, the door assembling itself, and the click's rush ([367b21a](https://github.com/Esposter/Esposter/commit/367b21a89497c300eab869f826a8d8f2ef63633e))
+* **genshin:** the witness lays out any arrangement, and the login's first run recorded ([101b324](https://github.com/Esposter/Esposter/commit/101b3245265a423dafd5ce56fc5cf1a57fdc926c))
+* **oxlint:** a route is spelled through RoutePath everywhere ([6486d60](https://github.com/Esposter/Esposter/commit/6486d60c2d2591cc9c7e309a00d4081ac0926dee))
+* **scripts:** command lines on citty, the parity tool first ([f28499a](https://github.com/Esposter/Esposter/commit/f28499a50c940f4c63ac584b8152a8d097518f50))
+* **scripts:** genshin:assets clips, a component's animation clips decoded, each curve named and sampled ([86b6fe0](https://github.com/Esposter/Esposter/commit/86b6fe0fa31de1e3825255313daa4dcf07b2af87))
+* **scripts:** genshin:assets fits the login sky and selects the login screen's arrangement ([93a6334](https://github.com/Esposter/Esposter/commit/93a633463553a3bb69723342cff40ddac17a3a83))
+* **scripts:** genshin:assets interface, a screen's RectTransform tree with each piece's layout and components ([07f8862](https://github.com/Esposter/Esposter/commit/07f8862396bddcf0c9dbb309153e51d26931a68b))
+* **scripts:** parity scores a scene by its shape and tone, and a reference sets its screen's props ([e602c8e](https://github.com/Esposter/Esposter/commit/e602c8ef9e16ed5a30f09365929029927d13e8af))
+* **scripts:** parity scores committed beside the reference map, as a bench's are ([c923d99](https://github.com/Esposter/Esposter/commit/c923d99dba565f81078e33efd8e563914e232d4d))
+
 # [3.7.0](https://github.com/Esposter/Esposter/compare/v3.6.0...v3.7.0) (2026-09-29)
 
 ### Bug Fixes

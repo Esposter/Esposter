@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.8.0](https://github.com/Esposter/Esposter/compare/v3.7.0...v3.8.0) (2026-09-30)
+
+### Bug Fixes
+
+* **configuration:** an unchanged barrel is never rewritten ([0c38769](https://github.com/Esposter/Esposter/commit/0c3876948e11fd7926ac7d7c27486e8575b9adec))
+* main goes green — lint, knip, constant scope, stale names, duplicate prose and size snapshots ([e4884d9](https://github.com/Esposter/Esposter/commit/e4884d9acb940783203b60b376fb35b6b9f51b4d))
+* the cli skill's ledger row, and the checks today's changes owed ([3d5d6a6](https://github.com/Esposter/Esposter/commit/3d5d6a60d0c75a495ce3d95ffbe95a82111af8ef))
+
+### Features
+
+* **genshin-world:** the login screen in the opening, a first pass of its scene ([1ee2bc1](https://github.com/Esposter/Esposter/commit/1ee2bc100c72b2d8e89342c50b8775040b015cb8))
+* **genshin:** references beside each component, the loss table, the line cost, and shader layouts named ([0dff3fe](https://github.com/Esposter/Esposter/commit/0dff3fe8e8583b2aa728fb4a70790629b7f8621e))
+* **genshin:** the login screen's flight and door, and genshin-ui for the game's interface ([b53f509](https://github.com/Esposter/Esposter/commit/b53f509c9dc04833338c71cd30206704d68f8bc5))
+* **oxlint:** process.argv read by citty alone ([27e836a](https://github.com/Esposter/Esposter/commit/27e836a3d5df47868eb6b0a0c47e46aa8a65081c))
+* **scripts:** command lines on citty, the parity tool first ([f28499a](https://github.com/Esposter/Esposter/commit/f28499a50c940f4c63ac584b8152a8d097518f50))
+
 # [3.7.0](https://github.com/Esposter/Esposter/compare/v3.6.0...v3.7.0) (2026-09-29)
 
 ### Bug Fixes

@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.8.0](https://github.com/Esposter/Esposter/compare/v3.7.0...v3.8.0) (2026-09-30)
+
+### Bug Fixes
+
+* **ci:** the reds on e92e030440 — scripts and genshin-world lint, three size snapshots, the graph and a module-scope constant ([120561f](https://github.com/Esposter/Esposter/commit/120561ff9c35d38c4846d9e685f79e491c3804ca))
+* **genshin-engine:** the renderer reads the browser's navigator through window ([5a6b74b](https://github.com/Esposter/Esposter/commit/5a6b74b0ae34f0238f5471bc8d30e59b2e73ca53))
+* **genshin:** the door constants test typechecks and scopes its constants, and the size snapshots follow the build ([60d19ac](https://github.com/Esposter/Esposter/commit/60d19ac98860a29cc62a7b7d00c7854464b2adb6))
+* **genshin:** the neutral tone mapping on every canvas, and measured sky colours through it ([5a9b82d](https://github.com/Esposter/Esposter/commit/5a9b82d0373fdcbef0b5d3641ad318bfa7ae6a77))
+* **genshin:** the walkway meets the door's foot, and the login's first pose is matched on the witness ([3e28d14](https://github.com/Esposter/Esposter/commit/3e28d14324de9e28ac535a9ae1e3ec7f0441f0d2))
+* the world's console warnings ([134f462](https://github.com/Esposter/Esposter/commit/134f462d3bda578f41c1a82bbb7d1fb2c974f3a6))
+
+### Features
+
+* **genshin-engine:** a screen point as a direction, and haze that scatters toward the sun ([ebeaed2](https://github.com/Esposter/Esposter/commit/ebeaed263967958421d1c59004bc90848ae97d18))
+* **genshin-engine:** painted cloud sprites, a fitted horizon band, and a bounded tone-map inverse ([7269802](https://github.com/Esposter/Esposter/commit/7269802fe265c5f603301de4743174993f3df66b))
+* **genshin-world:** the login screen in the opening, a first pass of its scene ([1ee2bc1](https://github.com/Esposter/Esposter/commit/1ee2bc100c72b2d8e89342c50b8775040b015cb8))
+* **genshin:** the login scene's bridges and pillars, fitted as silhouettes ([3f5b9e3](https://github.com/Esposter/Esposter/commit/3f5b9e3f8e86c11491506681d6af9e0f509947df))
+* **genshin:** the login screen's flight and door, and genshin-ui for the game's interface ([b53f509](https://github.com/Esposter/Esposter/commit/b53f509c9dc04833338c71cd30206704d68f8bc5))
+* **genshin:** the scene derivation's first tools, and the login's exports drawn through our own scene ([36d90ed](https://github.com/Esposter/Esposter/commit/36d90ed97a21285bb99411c6ff2c50ea65026c69))
+
 # [3.7.0](https://github.com/Esposter/Esposter/compare/v3.6.0...v3.7.0) (2026-09-29)
 
 **Note:** Version bump only for package genshin-engine
