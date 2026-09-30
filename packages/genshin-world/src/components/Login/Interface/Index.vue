@@ -2,6 +2,7 @@
 import type { LoginStatusStep } from "#src/models/login/LoginStatusStep";
 
 import LoginStatus from "#src/components/Login/Status/Index.vue";
+import { LoginInterfaceRect } from "#src/models/login/LoginInterfaceRect";
 import { LoginStage } from "#src/models/login/LoginStage";
 import {
   LOGIN_BEGIN_TEXT,
@@ -12,7 +13,6 @@ import {
   LOGIN_WELCOME_FADE_MS,
   LOGIN_WELCOME_TEXT,
 } from "#src/services/login/constants";
-import { LoginInterfaceRect } from "#src/models/login/LoginInterfaceRect";
 import { LoginInterfaceRectMap } from "#src/services/login/interface/LoginInterfaceRectMap";
 import {
   GameScreen,
@@ -22,8 +22,8 @@ import {
   PromptBand,
   RoundButton,
   ServerBar,
-  toCanvasRectStyle,
   ToastNotice,
+  toCanvasRectStyle,
 } from "genshin-ui";
 
 interface Props {

@@ -29,7 +29,9 @@ const checkIsDisjoint = (layout: readonly ShaderConstant[]): boolean => {
 export const annotateProgramConstants = (assembly: string, layouts: readonly ShaderConstant[][]): string => {
   const size = Number(BUFFER_SIZE_REGEX.exec(assembly)?.groups?.size ?? 0);
   if (size === 0) return assembly;
-  const usedRegisters = new Set([...assembly.matchAll(REGISTER_REGEX)].map((match) => Number(match.groups?.register)));
+  const usedRegisters = new Set(
+    Array.from(assembly.matchAll(REGISTER_REGEX), (match) => Number(match.groups?.register)),
+  );
   let best: ShaderConstant[] | undefined;
   let bestCount = 0;
   for (const layout of layouts) {

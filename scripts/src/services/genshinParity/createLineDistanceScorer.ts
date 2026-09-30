@@ -1,5 +1,5 @@
-import { STRUCTURE_WIDTH } from "#src/services/genshinParity/constants";
 import { computeDistanceTransform } from "#src/services/genshinParity/computeDistanceTransform";
+import { STRUCTURE_WIDTH } from "#src/services/genshinParity/constants";
 import { readVerticalLines } from "#src/services/genshinParity/readVerticalLines";
 
 // A line farther than this from the other image's, in pixels at the structure's width, counts as missing and no more,

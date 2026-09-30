@@ -1,11 +1,10 @@
 import type { SceneMaterial } from "genshin-engine";
 import type { Texture } from "three";
 
-import { Color } from "three";
-
 import { readTextureMean } from "#parity/witness/readTextureMean";
 import { WitnessProperty } from "#parity/witness/WitnessProperty";
 import { WitnessShading } from "#parity/witness/WitnessShading";
+import { Color } from "three";
 import { color, float, texture } from "three/tsl";
 import { MeshStandardNodeMaterial } from "three/webgpu";
 

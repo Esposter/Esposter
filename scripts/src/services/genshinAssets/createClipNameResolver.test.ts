@@ -1,8 +1,8 @@
 import type { InterfaceNode } from "#src/models/genshinAssets/InterfaceNode";
 
 import { createClipNameResolver } from "#src/services/genshinAssets/createClipNameResolver";
-import { describe, expect, test } from "vitest";
 import { crc32 } from "node:zlib";
+import { describe, expect, test } from "vitest";
 
 describe(createClipNameResolver, () => {
   test("resolves a property, a path from any ancestor, and the animator's own empty path", () => {

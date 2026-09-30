@@ -55,7 +55,7 @@ flowchart TD
 
 ### Scripts
 
-- **A MonoBehaviour exports without its fields**, since the blocks carry no type data: the login scene's `EnviroSky`, `LoginSceneEnviro`, `MonoLoginScene` and its post-processing profile among them. What they hold is measured off the captures, over what the other data gives exactly.
+- **A MonoBehaviour exports without its fields**, since the blocks carry no type data: the login scene's "EnviroSky", "LoginSceneEnviro", "MonoLoginScene" and its post-processing profile among them. What they hold is measured off the captures, over what the other data gives exactly.
 
 ## References beside each component
 

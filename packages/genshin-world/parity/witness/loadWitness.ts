@@ -71,7 +71,7 @@ export const loadWitness = async (
     for (const submesh of nameSubmeshesMap.get(mesh) ?? []) {
       const material = materials[Number(SUBMESH_INDEX_REGEX.exec(submesh.name)?.groups?.index ?? 0)] ?? "";
       const shadingMaterialMap = Object.fromEntries(
-        [...shadingNameMaterialMap].map(([shading, nameMaterialMap]) => [
+        Array.from(shadingNameMaterialMap, ([shading, nameMaterialMap]) => [
           shading,
           nameMaterialMap.get(material) ?? fallbackMaterial,
         ]),

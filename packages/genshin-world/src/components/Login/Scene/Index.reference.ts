@@ -97,19 +97,19 @@ export const reference: ComponentReference = {
       pathId: "-5017021742717319217",
       role: "The sky dome: its gradient, top and bottom colours front and back of the sun, halos, stars and scattering",
     },
-    cloudParticleShader: {
-      block: "00/12903389.blk",
-      kind: GameSourceKind.Shader,
-      name: "Shader#10",
-      pathId: "7325196393018652092",
-      role: "The three cloud emitters' particles: atlas, curl, age dissolve, light and dark colours, rim",
-    },
     cloudLayerShader: {
       block: "00/12903389.blk",
       kind: GameSourceKind.Shader,
       name: "Enviro_Cloud_Layer_Mat's shader",
       pathId: "5100823853164162496",
       role: "The cloud layer",
+    },
+    cloudParticleShader: {
+      block: "00/12903389.blk",
+      kind: GameSourceKind.Shader,
+      name: "Shader#10",
+      pathId: "7325196393018652092",
+      role: "The three cloud emitters' particles: atlas, curl, age dissolve, light and dark colours, rim",
     },
     dawnDuskNightSkies: {
       block: "login-dawn, login-dusk, login-night",
