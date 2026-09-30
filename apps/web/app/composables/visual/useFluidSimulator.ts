@@ -117,7 +117,9 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     controls.maxDistance = 200;
     controls.update();
 
-    const gui = inspector.createParameters("Settings").close();
+    const gui = inspector.createParameters("Settings");
+    // Creating parameters opens their panel, which starts closed behind its button instead
+    inspector.hide();
     const folderSky = gui.addFolder("Sky");
     folderSky.add(parameters, "elevation", 0, 90, 0.1).onChange(() => {
       updateSun();
