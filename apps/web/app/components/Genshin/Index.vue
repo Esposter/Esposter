@@ -1,54 +1,24 @@
 <script setup lang="ts">
-import type { TresRendererSetupContext } from "@tresjs/core";
+import { GameOpening } from "genshin-world";
 
-import { GENSHIN_REGION_DATA_BASE_URL } from "#shared/services/genshin/constants";
-import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
-import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
-import { createGenshinRenderer, GENSHIN_TONE_MAPPING, QualityTier, QualityTierSettingsMap } from "genshin-engine";
-import { GenshinWorld } from "genshin-world";
-import TerrainTileWorker from "genshin-world/terrainTileWorker?worker";
-import { PCFShadowMap } from "three";
-
-const qualityTier = QualityTier.High;
-const { maxPixelRatio } = QualityTierSettingsMap[qualityTier];
-const agentConsolePanelStore = useAgentConsolePanelStore();
-const { isWorldLoaded, isWorldReady } = storeToRefs(agentConsolePanelStore);
-// A world that cannot start, where neither WebGPU nor WebGL 2 is available, still lets the loading screen go: the
-// Panels work without it
-onMounted(() => {
-  isWorldLoaded.value = true;
-});
-
-onUnmounted(() => {
-  isWorldLoaded.value = false;
-  isWorldReady.value = false;
-});
+// The game as it plays: its opening at once, over the world loading behind it, the login screen's flight following
+// That loading, and the world once the opening's white has held. The world's code arriving and its first frame are
+// The two steps loading can see, since neither the lazy chunk nor the scene reports any finer progress
+const isWorldLoaded = ref(false);
+const isWorldReady = ref(false);
+const progress = computed(() => (Number(isWorldLoaded.value) + Number(isWorldReady.value)) / 2);
+const isOpeningShown = ref(true);
 </script>
 
 <template>
-  <div class="world" size-full relative>
-    <TresCanvas
-      :dpr="[1, maxPixelRatio]"
-      :renderer="({ canvas }: TresRendererSetupContext) => createGenshinRenderer(unref(canvas))"
-      :tone-mapping="GENSHIN_TONE_MAPPING"
-      shadows
-      :shadow-map-type="PCFShadowMap"
-      @error="isWorldReady = true"
-      @ready="isWorldReady = true"
-    >
-      <GenshinWorld
-        :create-terrain-worker="() => new TerrainTileWorker()"
-        :is-tuning="IS_DEVELOPMENT"
-        :quality-tier
-        :region-data-base-url="GENSHIN_REGION_DATA_BASE_URL"
-      />
-    </TresCanvas>
+  <div size-full relative of-hidden>
+    <ClientOnly>
+      <LazyGenshinWorld @load="isWorldLoaded = true" @ready="isWorldReady = true" />
+    </ClientOnly>
+    <div v-if="isOpeningShown" inset-0 absolute z-1>
+      <GameOpening :progress @finish="isOpeningShown = false" />
+      <!-- The opening shows no words, so what is loading is announced to a screen reader alone -->
+      <p role="status" sr-only>{{ isWorldReady ? "Ready" : "Loading the world…" }}</p>
+    </div>
   </div>
 </template>
-
-<style scoped>
-.world :deep(canvas) {
-  /* A drag on the world turns the camera, so a touch is never taken for scrolling or zooming the page */
-  touch-action: none;
-}
-</style>

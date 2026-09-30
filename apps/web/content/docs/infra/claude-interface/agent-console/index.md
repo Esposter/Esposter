@@ -5,6 +5,8 @@ description: The /agent-console page, which works Claude Code sessions from the 
 
 # Agent console
 
+**Hidden from the game for now.** `/genshin` is the game alone, its opening and then its world, so it is faithful to the game with nothing of the console over it. The console's page code stays, unmounted, until it is rebuilt in the game's own style from `genshin-ui`; until then the link a host prints opens the game and pairs nothing.
+
 The agent console is one page of the app, shown as Genshin at `/genshin`, that works the Claude Code sessions on a machine instead of the terminal: the conversation, every tool call and its result, the diffs, the permission prompts, the model, mode, context, cost and usage, subagents and the todo list, across every session on the host. It works the same sessions the terminal does. A session started here resumes with `claude --resume <id>`, and one started in a terminal resumes here. Nothing is lost moving between them, because both read and write the same transcripts.
 
 It has two halves. The **host**, `agent-console-server`, runs on the machine with the code and the Claude Code login ([host](/docs/infra/claude-interface/agent-console/host)). The **page** is served by the app on the deployed site or on `pnpm dev`, and knows only which host it is paired with. Between them is one WebSocket carrying Zod contracts, which the page imports from the host's `contracts` subpath, so a change to the wire fails typecheck on both sides.
@@ -56,7 +58,7 @@ What the terminal shows and does, and where the console carries each part, is [t
 | `packages/agent-console-server/src/contracts.ts`                                                  | The wire the page imports: sessions, events, commands, server messages           |
 | `packages/agent-console-server/src/services/server/createAgentConsoleServer.ts`                   | The host's socket, handshake, event log and command dispatch                     |
 | `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createClaudeAgentSdkDriver.ts` | The Claude Code driver                                                           |
-| `apps/web/app/pages/genshin.vue`                                                                  | The route, and pairing from the link the host prints                             |
+| `apps/web/app/components/AgentConsole/Index.vue`                                                  | The console over the world, unmounted while it is hidden                         |
 | `apps/web/app/store/agentConsole/connection.ts`                                                   | The socket, reconnection, and routing the host's messages into the session store |
 | `apps/web/app/store/agentConsole/session.ts`                                                      | Every session's folded view of its event log, which the page reads               |
 | `apps/web/app/services/agentConsole/themes/AgentConsoleThemeMap.ts`                               | The theme registry: the default, and the Genshin theme's avatar                  |

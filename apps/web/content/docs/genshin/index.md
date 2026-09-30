@@ -5,7 +5,7 @@ description: Genshin Impact's world rebuilt in the browser as an unofficial, non
 
 # Genshin
 
-Genshin Impact's continent is being rebuilt in the app as a fan work, walkable at the game's own scale and in its anime look. It is the [agent console](/docs/infra/claude-interface/agent-console)'s world: the console at `/genshin` draws it full screen, under its [console overlay](/docs/infra/claude-interface/agent-console/console-overlay). The world is drawn by `genshin-engine`, a published package of plain TypeScript and TSL modules that knows no place by name. The game's world on it is `genshin-world`, a published package holding the catalogue, each region's data (its heights, colours, landmarks and look) and the TresJS components that build it. The game's 2D interface is `genshin-ui`, a published package of presentational Vue components with no three.js in it, which the world's screens are built from. The app keeps only the canvas, `apps/web/app/components/Genshin/Index.vue`, and hands the world what only it can: the terrain worker its bundler builds, the URL its server serves region data at, and whether the tuning panel shows.
+Genshin Impact's continent is being rebuilt in the app as a fan work, walkable at the game's own scale and in its anime look. `/genshin` plays it as the game does: the opening, then the world full screen, with nothing over it (the [agent console](/docs/infra/claude-interface/agent-console) is hidden from it until it is rebuilt in the game's style). The world is drawn by `genshin-engine`, a published package of plain TypeScript and TSL modules that knows no place by name. The game's world on it is `genshin-world`, a published package holding the catalogue, each region's data (its heights, colours, landmarks and look) and the TresJS components that build it. The game's 2D interface is `genshin-ui`, a published package of presentational Vue components with no three.js in it, which the world's screens are built from. The app keeps only the game's two pieces: `apps/web/app/components/Genshin/Index.vue`, the opening over the world loading behind it, and `Genshin/World.vue`, the canvas, loaded lazily so the opening shows at once, which hands the world what only the app can: the terrain worker its bundler builds, the URL its server serves region data at, and whether the tuning panel shows.
 
 ```mermaid
 flowchart LR
@@ -57,7 +57,8 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin). Decid
 | File                                                           | Role                                                        |
 | :------------------------------------------------------------- | :---------------------------------------------------------- |
 | `packages/genshin-engine/src/index.ts`                         | The engine's entry, which the app imports every module from |
-| `apps/web/app/components/Genshin/Index.vue`                    | The canvas on the WebGPU renderer, and the world's loading  |
+| `apps/web/app/components/Genshin/Index.vue`                    | The game: the opening over the world's loading              |
+| `apps/web/app/components/Genshin/World.vue`                    | The canvas on the WebGPU renderer                           |
 | `packages/genshin-world/src/components/GenshinWorld/Index.vue` | The camera and the scene it looks at                        |
 | `packages/genshin-ui/src/components/GameScreen/Index.vue`      | The root every screen of the game's is drawn in             |
 | `packages/genshin-world/src/services/windrise`                 | Windrise's heights, colours and look                        |

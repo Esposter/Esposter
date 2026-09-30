@@ -5,6 +5,8 @@ description: What the agent console draws over its world. The Genshin world fill
 
 # Console overlay
 
+**Hidden from the game for now** ([agent console](/docs/infra/claude-interface/agent-console)): this is the design it had over the world, which its rebuild in the game's style replaces.
+
 The [agent console](/docs/infra/claude-interface/agent-console) is a place the session happens in, not an app page with a scene added to it. `/genshin` uses the `immersive` layout, which has no app bar, drawer, footer or progress bar. The Genshin world fills the page ([Genshin](/docs/proposals/genshin)). One heads-up bar runs along its foot. Everything a person types or reads is in the console, a sheet that opens above the bar the way a game calls up its chat. A pause menu over the world holds unpairing and leaving, and the bar's home mark also leaves, in one click from any input. The world needs no host: a page that has never been paired can be looked around like any other, and the console is where a host is paired, the first time it is opened. The game's opening plays first: its logos and health notice on white, its login screen, whose flight to the door follows the page's loading, and a loading screen that covers the page until the page, the world and any paired host are ready.
 
 ## How it works

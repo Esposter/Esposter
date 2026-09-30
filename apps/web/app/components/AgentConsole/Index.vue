@@ -55,7 +55,7 @@ const isOpeningShown = ref(true);
     <section :inert="!isLoaded" flex flex-col size-full>
       <ClientOnly>
         <div flex-1 min-h-0 relative>
-          <LazyGenshin />
+          <LazyGenshinWorld @load="isWorldLoaded = true" @ready="isWorldReady = true" />
           <AgentConsoleChatLines :key="currentSessionId" p-2 pointer-events-none inset-x-0 bottom-0 absolute />
           <AgentConsoleSheet v-if="isLoaded" />
         </div>
