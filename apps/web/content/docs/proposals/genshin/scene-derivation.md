@@ -58,7 +58,7 @@ flowchart TD
 ### The order of the unknowns
 
 1. **What the scene holds.** The scene tree prints every root, every node and what each lost; the closure exports everything the roots reach. An empty anchor under a script's object is where that script spawns a prefab, which its raw bytes name.
-2. **Where it stands.** Every ratio a reference shows between parts that meet, measured along one direction across the cross-section where they meet, holds against the placements, in a unit test, before any render.
+2. **Where it stands.** Every proportion a reference shows between parts that meet, taken as the cross-ratio of the four ends their widths mark on the line where they meet, holds against the placements, in a unit test, before any render.
 3. **The camera.** Solved from landmark correspondences in closed form, refined on the stone's silhouette edges, and tracked across a recording for a path no clip holds. The gate is a reprojection error of about a pixel, and an overlay on which every family lands.
 4. **The frame.** With the pose fixed, the witness writes a G-buffer, and the light, the fog and the grade are fitted by least squares over the masks it gives, each holding the one before. A material tuned under the wrong tone curve is tuned twice, so no material is touched before this.
 5. **The stand-ins.** The loss table per layer prices each of ours against the exports, and the largest is closed first.
