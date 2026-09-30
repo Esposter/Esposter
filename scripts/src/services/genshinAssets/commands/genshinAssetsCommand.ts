@@ -7,6 +7,7 @@ import { interfaceCommand } from "#src/services/genshinAssets/commands/interface
 import { inventoryCommand } from "#src/services/genshinAssets/commands/inventoryCommand";
 import { mapCommand } from "#src/services/genshinAssets/commands/mapCommand";
 import { shadersCommand } from "#src/services/genshinAssets/commands/shadersCommand";
+import { treeCommand } from "#src/services/genshinAssets/commands/treeCommand";
 import { witnessCommand } from "#src/services/genshinAssets/commands/witnessCommand";
 import { defineCommand } from "citty";
 
@@ -16,6 +17,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
   subCommands: {
     map: mapCommand,
     extract: extractCommand,
+    tree: treeCommand,
     shaders: shadersCommand,
     inventory: inventoryCommand,
     interface: interfaceCommand,

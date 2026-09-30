@@ -1,6 +1,6 @@
 ---
 title: Scene toolbox
-description: Proposal — the tools that make each unknown of a 3D scene answerable on its own, so a scene is solved rather than searched and converges in a pass or two the way the interface does. The scene's hierarchy is printed with what it lost and closed over by file and path ID, a script's raw bytes are scanned for the pointers and values that name its settings, the arrangement is checked by ratios before any pose, the camera is solved from correspondences and tracked across a recording, the witness render is made deterministic and writes a G-buffer, and the grade, fog and light are fitted by regression over it. Superseded searches are deleted.
+description: Proposal — the tools that make each unknown of a 3D scene answerable on its own, so a scene is solved rather than searched and converges in a pass or two the way the interface does. A scene is closed over by file and path ID from its roots, a script's raw bytes are scanned for the pointers and values that name its settings, the arrangement is checked by ratios before any pose, the camera is solved from correspondences and tracked across a recording, the witness render is made deterministic and writes a G-buffer, and the grade, fog and light are fitted by regression over it. Superseded searches are deleted.
 model: claude-opus-5-5
 ---
 
@@ -8,7 +8,7 @@ model: claude-opus-5-5
 
 The [scene derivation](/docs/proposals/genshin/scene-derivation) is the method a 3D scene of the [Genshin](/docs/proposals/genshin) program is re-derived by. This page is the tools the method needs. The interface converges in a pass or two because every one of its unknowns can be answered on its own: the recording drawn behind the screen leaves only the piece under test able to differ, the game's anchors translate one for one into CSS positions, and the per-cell grid points at whichever piece is wrong. The login scene has not converged after many guided passes, and every stall had the cause the [scene derivation](/docs/proposals/genshin/scene-derivation) names first: its unknowns were searched together on one score rather than answered apart.
 
-The arrangement itself is the plainest case. The login's towers were thought to hang in a block not yet read. They do not: the login's own `SceneObj` holds three empty anchor nodes, and a script spawns the scene's prefabs into them at run time. A printed tree of the scene shows that in one command. Each tool below answers one unknown with the most exact query the data allows, in the order the unknowns depend on each other, and the protocol for finding the next missing one is the repository's recreation-tooling skill.
+The arrangement itself is the plainest case. The login's towers were thought to hang in a block not yet read. They do not: the login's own `SceneObj` holds three empty anchor nodes, and a script spawns the scene's prefabs into them at run time. The printed tree (`genshin:assets tree`, [derived assets](/docs/genshin/derived-assets)) shows that in one command. Each tool below answers one unknown with the most exact query the data allows, in the order the unknowns depend on each other, and the protocol for finding the next missing one is the repository's recreation-tooling skill.
 
 ## Decisions
 
@@ -42,8 +42,6 @@ flowchart TD
 ## The tools
 
 ### 1. The scene graph
-
-**The scene tree.** `genshin:assets tree <component> [--root <name>] [--block <block>]` prints the hierarchy the layout dumps hold, every block's roots and each node beneath: its block, its local position, rotation and scale, its composed world scale, what it draws, and its child count. It flags what the arrangement questions turn on: an empty anchor (no children, no renderer), a father or a child no dump holds, a root dumped at the origin, a script's object, and a mesh laid out under several roots. It reads `readSceneLayout` as `fit` does, and the interface tree's printer and this one share one tree formatter, since the interface's is already one (`formatInterfaceTree`). It replaces reading the dumps by hand, which is how the login's lost-block theory survived several sessions.
 
 **Closure extraction.** `extract` today finds blocks by name pattern, which misses anything named otherwise and reaches every block that reuses a shared name. A component instead names its roots, and `extract` follows every reference from them, father and children, each object's components, each renderer's materials and mesh, each material's textures and shader, through the asset index to the blocks holding them, exporting until nothing new is reached. A path ID names an object only within its file, so every object is held as its file and its path ID throughout: a reference with `m_FileID` zero stays in its own file, and one with `m_FileID` not zero is first resolved through its own file's external-reference table, then looked up by path ID within the file that names. Name patterns stay only for what no pointer reaches, such as a shared sky whose owner is a script. The closure prints every reference it could not resolve, which is the tree's dangling flag at the level of blocks.
 
@@ -111,12 +109,11 @@ The `shaders` step already disassembles each program. It also writes each progra
 
 ```text
 scripts/src/services/genshinAssets/
-  formatSceneTree.ts            ← the tree, on the interface tree's formatter
   readAssetClosure.ts           ← every reference from a component's roots, by file and path ID
   scanSerializedFields.ts       ← pointers, colours, curves, arrays and scalars in a script's raw bytes
   composeUnityTransform.ts      ← Transform composition to Unity's semantics
   checkArrangement.ts           ← ratios and the placement diff
-  commands/treeCommand.ts, behavioursCommand.ts, arrangementCommand.ts
+  commands/behavioursCommand.ts, arrangementCommand.ts
 scripts/src/services/genshinParity/
   solveCameraPose.ts            ← DLT and PnP from correspondences, then Gauss–Newton
   refineCameraPose.ts           ← the chamfer over the identifier edges
@@ -138,7 +135,6 @@ Deleted as each is superseded: `solveWitnessCamera.ts` with its command, `create
 | File                                                             | Role after the change                                                     |
 | :--------------------------------------------------------------- | :------------------------------------------------------------------------ |
 | `scripts/src/services/genshinAssets/readSceneLayout.ts`          | The layout dumps read once for the tree, the closure, the fits and spawns |
-| `scripts/src/services/genshinAssets/formatInterfaceTree.ts`      | Folded into the one tree formatter both trees print through               |
 | `scripts/src/services/genshinAssets/extractComponent.ts`         | Exports a component's closure from its roots                              |
 | `scripts/src/services/genshinAssets/readComponentPlacements.ts`  | Composes spawns through the transform module                              |
 | `scripts/src/services/genshinAssets/DerivedAssetComponentMap.ts` | A component's roots, spawns and landmarks                                 |

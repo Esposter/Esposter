@@ -13,7 +13,15 @@ const LOD_LEVEL_SUFFIX_REGEX = /_Lod\d+$/u;
 // Lost, keeps a stand-in ID from its game object's, which no child refers to
 export const toSceneObjects = (
   transforms: readonly DumpedTransform[],
-  gameObjectTransformIdMap: ReadonlyMap<string, string>,
+  {
+    block,
+    gameObjectScriptsMap = new Map(),
+    gameObjectTransformIdMap,
+  }: {
+    block: string;
+    gameObjectScriptsMap?: ReadonlyMap<string, string[]>;
+    gameObjectTransformIdMap: ReadonlyMap<string, string>;
+  },
 ): SceneObject[] => {
   const gameObjectIds = transforms.map(({ m_GameObject }) => m_GameObject.m_PathID);
   const transformIds = gameObjectIds.map((gameObjectId) => gameObjectTransformIdMap.get(gameObjectId) ?? "");
@@ -67,12 +75,16 @@ export const toSceneObjects = (
     takenGroups.add(group.index);
   }
   return transforms.map(
-    ({ m_Father, m_GameObject, m_LocalPosition: p, m_LocalRotation: r, m_LocalScale: s }, index) => ({
+    ({ m_Children, m_Father, m_GameObject, m_LocalPosition: p, m_LocalRotation: r, m_LocalScale: s }, index) => ({
+      block,
+      childIds: m_Children.map(({ m_PathID }) => m_PathID),
+      gameObjectId: m_GameObject.m_PathID,
       name: m_GameObject.Name,
       parentId: m_Father.m_PathID,
       position: [p.X, p.Y, p.Z],
       rotation: [r.X, r.Y, r.Z, r.W],
       scale: [s.X, s.Y, s.Z],
+      scripts: gameObjectScriptsMap.get(m_GameObject.m_PathID) ?? [],
       transformId: transformIds[index] || `gameObject:${gameObjectIds[index]}`,
     }),
   );

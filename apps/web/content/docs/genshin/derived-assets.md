@@ -54,6 +54,16 @@ flowchart LR
 
 A new component is one name pattern in `DerivedAssetComponentMap` and one fit in `DerivedAssetFitMap`; everything else is shared.
 
+### Commands
+
+From `scripts/`, as `pnpm genshin:assets <command> <component>`, each with its own `--help`:
+
+| Command                                    | What it does                                                                                                                                               |
+| :----------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tree [--root <name>] [--block] [--depth]` | The hierarchy the layout dumps hold, each object's block, place, scale in the world, drawing, scripts and children, flagging what its arrangement turns on |
+
+- **Read the tree before the arrangement.** `tree` flags an empty anchor (no children, nothing drawn, no script: where a script spawns a prefab), a father or children no dump holds, a root at the origin (a prefab's root), and a mesh laid out under several tops (only some of those arrangements are the scene's). The login's lost-block theory survived several sessions of reading the dumps by hand; `tree login --root SceneObj` shows its three empty anchors in one line each.
+
 ### Finding what a scene draws
 
 A scene's parts are found by name, but its sky, its effects and its prefab parts often live under other names and blocks. What a scene actually draws is read off its renderers:

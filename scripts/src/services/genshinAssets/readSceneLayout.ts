@@ -10,15 +10,15 @@ import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 interface GameObject {
-  m_Components: { m_PathID: string }[];
+  m_Components: { m_PathID: string; Name: string }[];
   m_Transform: { m_GameObject: { m_PathID: string } };
 }
 interface MeshFilter {
-  m_GameObject: { Name: string };
+  m_GameObject: { m_PathID: string };
   m_Mesh: { Name: string };
 }
 interface MeshRenderer {
-  m_GameObject: { Name: string };
+  m_GameObject: { m_PathID: string };
   m_Materials: { IsNull: boolean; m_PathID: string }[];
 }
 // A skinned renderer draws its mesh itself, with no filter beside it: a part whose pieces a clip moves, such as a door
@@ -33,16 +33,22 @@ const readAll = async <T>(directory: string): Promise<T[]> => {
     names.map(async (name) => parseMachineJson<T>(await readFile(join(directory, name), "utf8"), reviveSourcePathId)),
   );
 };
+const toMaterialIds = (materials: MeshRenderer["m_Materials"]): string[] =>
+  materials.filter(({ IsNull }) => !IsNull).map(({ m_PathID }) => m_PathID);
 // A scene's objects from its blocks' JSON dumps, one folder per block holding a folder per type: every transform, its
 // Path ID from its game object where that survived the dump (a game object's first component is its transform), and
-// The mesh each object draws and the materials it draws it with, by its name, which is how a filter and a renderer (or
-// A skinned renderer alone) name the object they sit on
+// Its game object's scripts, the components the dump names. Beside them, the mesh each game object draws and the
+// Materials it draws it with, by the game object's path ID, which a filter and a renderer (or a skinned renderer
+// Alone) name
 export const readSceneLayout = async (
   layoutDirectory: string,
-): Promise<{ nameDrawingMap: Map<string, Pick<AssetPlacement, "materials" | "mesh">>; objects: SceneObject[] }> => {
+): Promise<{
+  gameObjectDrawingMap: Map<string, Pick<AssetPlacement, "materials" | "mesh">>;
+  objects: SceneObject[];
+}> => {
   const blocks = await readdir(layoutDirectory);
   const objects: SceneObject[] = [];
-  const nameDrawingMap = new Map<string, Pick<AssetPlacement, "materials" | "mesh">>();
+  const gameObjectDrawingMap = new Map<string, Pick<AssetPlacement, "materials" | "mesh">>();
   for (const block of blocks) {
     // oxlint-disable-next-line no-await-in-loop -- one block's dump is read at a time, holding its thousands of files
     const [gameObjects, transforms, meshFilters, meshRenderers, skinnedMeshRenderers] = await Promise.all([
@@ -52,11 +58,8 @@ export const readSceneLayout = async (
       readAll<MeshRenderer>(join(layoutDirectory, block, "MeshRenderer")),
       readAll<SkinnedMeshRenderer>(join(layoutDirectory, block, "SkinnedMeshRenderer")),
     ]);
-    const nameMaterialsMap = new Map(
-      meshRenderers.map(({ m_GameObject, m_Materials }) => [
-        m_GameObject.Name,
-        m_Materials.filter(({ IsNull }) => !IsNull).map(({ m_PathID }) => m_PathID),
-      ]),
+    const gameObjectMaterialsMap = new Map(
+      meshRenderers.map(({ m_GameObject, m_Materials }) => [m_GameObject.m_PathID, toMaterialIds(m_Materials)]),
     );
     const gameObjectTransformIdMap = new Map(
       gameObjects.flatMap(({ m_Components, m_Transform }) => {
@@ -64,18 +67,25 @@ export const readSceneLayout = async (
         return transformId ? [[m_Transform.m_GameObject.m_PathID, transformId] as const] : [];
       }),
     );
-    objects.push(...toSceneObjects(transforms, gameObjectTransformIdMap));
+    // A component the dump names is a script; the engine's own (a renderer, an animator) are dumped unnamed
+    const gameObjectScriptsMap = new Map(
+      gameObjects.map(({ m_Components, m_Transform }) => [
+        m_Transform.m_GameObject.m_PathID,
+        m_Components.slice(1).flatMap(({ Name }) => (Name ? [Name] : [])),
+      ]),
+    );
+    objects.push(...toSceneObjects(transforms, { block, gameObjectScriptsMap, gameObjectTransformIdMap }));
     for (const { m_GameObject, m_Mesh } of meshFilters)
-      nameDrawingMap.set(m_GameObject.Name, {
-        materials: nameMaterialsMap.get(m_GameObject.Name) ?? [],
+      gameObjectDrawingMap.set(m_GameObject.m_PathID, {
+        materials: gameObjectMaterialsMap.get(m_GameObject.m_PathID) ?? [],
         mesh: m_Mesh.Name,
       });
     // A skinned mesh in another file is named by its path ID alone, which the asset index names
     for (const { m_GameObject, m_Materials, m_Mesh } of skinnedMeshRenderers)
-      nameDrawingMap.set(m_GameObject.Name, {
-        materials: m_Materials.filter(({ IsNull }) => !IsNull).map(({ m_PathID }) => m_PathID),
+      gameObjectDrawingMap.set(m_GameObject.m_PathID, {
+        materials: toMaterialIds(m_Materials),
         mesh: m_Mesh.Name || m_Mesh.m_PathID,
       });
   }
-  return { nameDrawingMap, objects };
+  return { gameObjectDrawingMap, objects };
 };
