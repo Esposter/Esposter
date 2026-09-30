@@ -9,6 +9,8 @@ export interface SkyUniforms {
   cloudDrift: UniformNode<"vec2", Vector2>;
   cloudLitColor: UniformNode<"color", Color>;
   cloudShadeColor: UniformNode<"color", Color>;
+  // Where the zenith's colour has fully taken over from the horizon's, as the ray's height
+  horizonBand: UniformNode<"float", number>;
   horizonColor: UniformNode<"color", Color>;
   lightColor: UniformNode<"color", Color>;
   moonDirection: UniformNode<"vec3", Vector3>;

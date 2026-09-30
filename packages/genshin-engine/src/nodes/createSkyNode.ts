@@ -14,8 +14,6 @@ import {
   vec3,
 } from "three/tsl";
 
-// Where the zenith's colour has fully taken over from the horizon's, as the ray's height
-const HORIZON_BAND = 0.45;
 // The sun's and the moon's discs, as the cosine of their angular radius, and how far each's glow spreads
 const SUN_DISC_COSINE = Math.cos(0.035);
 const MOON_DISC_COSINE = Math.cos(0.05);
@@ -40,6 +38,7 @@ export const createSkyNode = ({
   cloudDrift,
   cloudLitColor,
   cloudShadeColor,
+  horizonBand,
   horizonColor,
   lightColor,
   moonDirection,
@@ -50,7 +49,7 @@ export const createSkyNode = ({
   Fn(() => {
     const direction = normalWorldGeometry.normalize();
     const height = direction.y;
-    const gradient = mix(horizonColor, zenithColor, smoothstep(0, HORIZON_BAND, height));
+    const gradient = mix(horizonColor, zenithColor, smoothstep(0, horizonBand, height));
     const sunCosine = direction.dot(sunDirection);
     const sunVisibility = smoothstep(-0.1, 0.05, sunDirection.y);
     const sunGlow = pow(max(sunCosine, 0), SUN_GLOW_POWER).mul(sunVisibility);
