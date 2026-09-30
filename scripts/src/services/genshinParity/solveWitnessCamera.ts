@@ -2,31 +2,23 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAss
 import type { WitnessPage } from "#src/services/genshinParity/openWitnessPages";
 import type { Page } from "playwright";
 
-import { COMPARISONS_DIRECTORY, STRUCTURE_WIDTH } from "#src/services/genshinParity/constants";
+import { CAMERA_POSE_AXES, COMPARISONS_DIRECTORY, STRUCTURE_WIDTH } from "#src/services/genshinParity/constants";
 import { minimizeNelderMead } from "#src/services/genshinParity/minimizeNelderMead";
 import { openWitnessPages } from "#src/services/genshinParity/openWitnessPages";
 import { setPageWitnessView } from "#src/services/genshinParity/setPageWitnessView";
+import { toPageCamera } from "#src/services/genshinParity/toPageCamera";
 import { withFinalizerAsync } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
 
-// A pose as the search moves it: the eye's x, y and z in three's axes, its heading and pitch in degrees, and its
-// Vertical field of view in degrees
-export const CAMERA_POSE_AXES = ["x", "y", "z", "yaw", "pitch", "fov"] as const;
 // The simplex's first steps along each axis: metres, then degrees
 const POSE_STEPS = [2, 1, 4, 2, 0.5, 1];
 // How many of the grid's best cells the simplex refines from, since a grid cell's best is only near a basin's floor
 const REFINE_STARTS = 3;
 // The page's shot from one pose, the scene drawing the witness alone
-const shootPose = async (
-  page: Page,
-  [x = 0, y = 0, z = 0, yaw = 0, pitch = 0, fov = 45]: readonly number[],
-): Promise<Buffer> => {
-  await setPageWitnessView(page, {
-    camera: { fov, pitch: (pitch * Math.PI) / 180, position: [x, y, z], yaw: (yaw * Math.PI) / 180 },
-    isAlone: true,
-  });
+const shootPose = async (page: Page, pose: readonly number[]): Promise<Buffer> => {
+  await setPageWitnessView(page, { camera: toPageCamera(pose), isAlone: true });
   return page.screenshot();
 };
 // A pose's cost: the mean over every reference's page of its line distance from that reference

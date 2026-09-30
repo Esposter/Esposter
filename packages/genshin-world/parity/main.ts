@@ -5,6 +5,7 @@ import type { SceneWitness } from "#src/models/scene/SceneWitness";
 import "@fontsource/signika/600.css";
 import { screens } from "#parity/screens";
 import { loadWitness } from "#parity/witness/loadWitness";
+import { renderWitnessTargets } from "#parity/witness/renderWitnessTargets";
 import { setWitnessView } from "#parity/witness/setWitnessView";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { capitalize, jsonDateParse } from "@esposter/shared";
@@ -49,8 +50,10 @@ if (screen && root) {
   const witnessParts = witnessLayoutUrl ? await loadWitness(witnessLayoutUrl, screen.witnessFamilies) : null;
   const witness: null | SceneWitness = witnessParts
     ? {
+        context: shallowRef(),
         families: ref(witnessParts.children.map(({ name: family }) => family)),
         isAlone: ref(false),
+        isClockHeld: ref(false),
         parts: witnessParts,
       }
     : null;
@@ -63,6 +66,8 @@ if (screen && root) {
   // The camera solve and the loss table set the witness's view from the shooting browser, one view a call
   if (witness) {
     Reflect.set(window, "setWitnessView", (view: WitnessView) => setWitnessView(witness, view));
+    // Its G-buffer at the view last set, which the pose, the overlay, the layers' scores and calibration read
+    Reflect.set(window, "renderWitnessTargets", () => renderWitnessTargets(witness));
     // The families the witness draws, which the loss table hands back to the scene one at a time
     window.document.body.dataset.witnessFamilies = witness.families.value.join(",");
   }

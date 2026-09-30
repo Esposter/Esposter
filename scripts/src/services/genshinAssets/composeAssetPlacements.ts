@@ -14,19 +14,18 @@ export const composeAssetPlacements = (
   objects: readonly SceneObject[],
   gameObjectDrawingMap: ReadonlyMap<string, SceneDrawing>,
 ): AssetPlacement[] => {
-  const idObjectMap = new Map(objects.map((object) => [object.transformId, object]));
-  const idWorldMatrixMap = composeWorldMatrices(objects);
+  const keyObjectMap = new Map(objects.map((object) => [toObjectKey(object.file, object.transformId), object]));
+  const keyWorldMatrixMap = composeWorldMatrices(objects);
   // The root an object's chain of parents reaches, where it is placed; a chain that loops back on itself reaches none
-  const getRoot = (object: SceneObject, visitedIds: ReadonlySet<string> = new Set()): SceneObject | undefined => {
+  const getRoot = (object: SceneObject, visitedKeys: ReadonlySet<string> = new Set()): SceneObject | undefined => {
     if (object.parentId === ROOT_PARENT_ID) return object;
-    const parent = idObjectMap.get(object.parentId);
-    return parent && !visitedIds.has(object.parentId)
-      ? getRoot(parent, new Set([...visitedIds, object.parentId]))
-      : undefined;
+    const parentKey = toObjectKey(object.parentFile, object.parentId);
+    const parent = keyObjectMap.get(parentKey);
+    return parent && !visitedKeys.has(parentKey) ? getRoot(parent, new Set([...visitedKeys, parentKey])) : undefined;
   };
   return objects.flatMap((object) => {
     const root = getRoot(object);
-    const world = idWorldMatrixMap.get(object.transformId);
+    const world = keyWorldMatrixMap.get(toObjectKey(object.file, object.transformId));
     if (!root || !world) return [];
     const position = new Vector3();
     const rotation = new Quaternion();

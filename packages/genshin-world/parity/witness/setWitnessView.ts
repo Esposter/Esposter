@@ -4,8 +4,9 @@ import { WitnessShading } from "#parity/witness/WitnessShading";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { Mesh, PerspectiveCamera, Vector3 } from "three";
 
-// The frames drawn after a view is set before it is read back, for the temporal anti-aliasing's history to settle on it
-const SETTLE_FRAME_COUNT = 8;
+// The animation frames waited for after a view is set: the view is drawn in the frame between them, which settles it,
+// Since the witness resolves edges with no temporal history and its clock is held
+const SETTLE_FRAME_COUNT = 2;
 // How far the drawn eye may stand from the pose set, in metres, before the view is refused
 const POSE_TOLERANCE = 1e-3;
 // A view of the witness render as the tools set it: a camera pose (the eye in three's axes, its heading about y and its
@@ -18,14 +19,15 @@ export interface WitnessView {
   isAlone?: boolean;
   shading?: WitnessShading;
 }
-// Sets the witness render's view and waits for the frames that draw it. The scene's own bindings move its camera on any
+// Sets the witness render's view, holding the scene's clock, and waits for the frame that draws it. The scene's own bindings move its camera on any
 // Frame its stage animates (the flight, the door's rush), so a pose set here freezes the camera's matrix, which those
 // Bindings then cannot reach, and is read back off the drawn matrix once the frames settle: a pose that did not hold
 // Throws rather than scoring the scene's own view
 export const setWitnessView = async (
-  { families, isAlone, parts }: SceneWitness,
+  { families, isAlone, isClockHeld, parts }: SceneWitness,
   { camera, families: viewFamilies, isAlone: isViewAlone = false, shading = WitnessShading.Exported }: WitnessView,
 ): Promise<void> => {
+  isClockHeld.value = true;
   isAlone.value = isViewAlone;
   families.value = viewFamilies ?? parts.children.map(({ name }) => name);
   for (const group of parts.children) group.visible = families.value.includes(group.name);

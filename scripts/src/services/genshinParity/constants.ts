@@ -12,6 +12,8 @@ export const FRAMES_DIRECTORY: string = join(PARITY_DIRECTORY, "frames");
 export const CAPTURES_DIRECTORY: string = join(PARITY_DIRECTORY, "captures");
 export const SHOTS_DIRECTORY: string = join(PARITY_DIRECTORY, "shots");
 export const COMPARISONS_DIRECTORY: string = join(PARITY_DIRECTORY, "comparisons");
+// Each reference's witness G-buffer, its targets as raw floats beside a header and a preview
+export const GBUFFER_DIRECTORY: string = join(PARITY_DIRECTORY, "gbuffer");
 // FFmpeg, pinned to one release and its checksum and unpacked inside the checkout the first time the tool needs it:
 // Window capture (`gfxcapture`, Windows Graphics Capture) arrived in FFmpeg 8, which no npm package bundles, and this
 // One build serves every other job the tool gives FFmpeg too. Gyan's releases are versioned and kept
@@ -78,3 +80,17 @@ export const PARITY_SCORES_PATH: string = join(
 );
 // A scene's structure is read at this width, small enough that its texture is gone and its shapes and light remain
 export const STRUCTURE_WIDTH = 480;
+// The colours a preview and an overlay draw each family of a scene's parts in, by its index, distinct on any ground
+export const FAMILY_COLORS: readonly [number, number, number][] = [
+  [230, 25, 75],
+  [60, 180, 75],
+  [255, 225, 25],
+  [0, 130, 200],
+  [245, 130, 48],
+  [145, 30, 180],
+  [70, 240, 240],
+  [240, 50, 230],
+];
+// A camera pose as the witness tools take it: the eye's x, y and z in three's axes, its heading and pitch in degrees,
+// And its vertical field of view in degrees
+export const CAMERA_POSE_AXES = ["x", "y", "z", "yaw", "pitch", "fov"] as const;

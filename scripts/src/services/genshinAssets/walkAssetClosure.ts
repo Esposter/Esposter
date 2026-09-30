@@ -4,10 +4,10 @@ import type { ResolvedObject } from "#src/models/genshinAssets/ResolvedObject";
 import type { SceneDrawing } from "#src/models/genshinAssets/SceneDrawing";
 import type { SceneObject } from "#src/models/genshinAssets/SceneObject";
 
+import { findRootObject } from "#src/services/genshinAssets/findRootObject";
 import { groupSceneChildren } from "#src/services/genshinAssets/groupSceneChildren";
 import { resolveObjectPointer } from "#src/services/genshinAssets/resolveObjectPointer";
 import { toObjectKey } from "#src/services/genshinAssets/toObjectKey";
-import { basename } from "node:path";
 
 // Everything a component's roots reach through the layout dumps, held as file and path ID throughout: each root's
 // Objects down its children, and the meshes and materials their renderers draw, each pointer resolved through its own
@@ -42,9 +42,7 @@ export const walkAssetClosure = (
     for (const child of children) visit(child);
   };
   for (const root of roots) {
-    // A layout folder is named after its block without its folder or extension
-    const blockName = basename(root.block, ".blk");
-    const object = objects.find(({ block, gameObjectId }) => block === blockName && gameObjectId === root.pathId);
+    const object = findRootObject(objects, root);
     if (object) visit(object);
     else unresolved.push(`${root.name}: game object ${root.pathId} in ${root.block}`);
   }

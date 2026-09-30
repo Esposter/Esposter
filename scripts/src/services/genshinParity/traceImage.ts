@@ -1,4 +1,5 @@
 import { PARITY_DIRECTORY } from "#src/services/genshinParity/constants";
+import { removeMaskSpecks } from "#src/services/genshinParity/removeMaskSpecks";
 import { resolveSource } from "#src/services/genshinParity/resolveSource";
 import ImageTracer from "imagetracerjs";
 import { writeFile } from "node:fs/promises";
@@ -7,14 +8,8 @@ import sharp from "sharp";
 
 const INK = { a: 255, b: 0, g: 0, r: 0 };
 const PAPER = { a: 255, b: 255, g: 255, r: 255 };
+// The share of the region under which a run of ink, or of paper the ink encloses, is a speck the source carries
 const SPECK_SHARE = 0.0002;
-// The area of an outline's bounding box, from the coordinates its path data lists
-const getOutlineArea = (outline: string): number => {
-  const values = Array.from(outline.matchAll(/-?\d+(?:\.\d+)?/gu), ([value]) => Number(value));
-  const xs = values.filter((_, index) => index % 2 === 0);
-  const ys = values.filter((_, index) => index % 2 === 1);
-  return (Math.max(...xs) - Math.min(...xs)) * (Math.max(...ys) - Math.min(...ys));
-};
 // A glyph in a region of an image as one filled path, so a mark is derived from the game's own shape rather than
 // Guessed: the region is split into ink and paper halfway between its faintest and strongest ink (a pale mark on a
 // Pale ground splits as well as a dark one), traced into curves, and the ink's paths kept. The SVG is written beside
@@ -58,9 +53,12 @@ export const traceImage = async (
     strongest = Math.max(strongest, ink);
   }
   const threshold = faintest + (strongest - faintest) * inkShare;
+  const speckArea = tracedWidth * tracedHeight * SPECK_SHARE;
+  const isInk = Uint8Array.from(inks, (ink) => Number(ink > threshold));
+  removeMaskSpecks(isInk, tracedWidth, tracedHeight, speckArea);
   const pixels = new Uint8ClampedArray(pixelCount * 4);
-  for (const [pixel, ink] of inks.entries()) {
-    const { a, b, g, r } = ink > threshold ? INK : PAPER;
+  for (const [pixel, ink] of isInk.entries()) {
+    const { a, b, g, r } = ink ? INK : PAPER;
     pixels.set([r, g, b, a], pixel * 4);
   }
   const traced = ImageTracer.imagedataToSVG(
@@ -71,20 +69,15 @@ export const traceImage = async (
       ltres: 0.5,
       numberofcolors: 2,
       pal: [INK, PAPER],
-      pathomit: 8,
+      // Every path is kept: the mask holds no speck by now, and a part of the mark only a few points long is still one
+      pathomit: 0,
       qtres: 0.5,
       roundcoords: 2,
     },
   );
-  // A speck, an island or a hole smaller than a sliver of the region, is noise the source carries (a sparkle printed
-  // On a logo, a pixel of compression) rather than part of the mark, so its outline is dropped
-  const speckArea = tracedWidth * tracedHeight * SPECK_SHARE;
-  const inkPaths = Array.from(traced.matchAll(/<path[^>]*fill="rgb\(0,0,0\)"[^>]*\sd="(?<d>[^"]+)"/gu), ({ groups }) =>
-    (groups?.d ?? "")
-      .split(/(?=M )/u)
-      .filter((outline) => getOutlineArea(outline) >= speckArea)
-      .join(" ")
-      .trim(),
+  const inkPaths = Array.from(
+    traced.matchAll(/<path[^>]*fill="rgb\(0,0,0\)"[^>]*\sd="(?<d>[^"]+)"/gu),
+    ({ groups }) => groups?.d?.trim() ?? "",
   ).filter(Boolean);
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${tracedWidth} ${tracedHeight}"><path fill-rule="evenodd" d="${inkPaths.join(" ")}"/></svg>`;
   const name = `${basename(path, extname(path))}-trace-${x}-${y}`;

@@ -84,6 +84,7 @@ export const toSceneObjects = (
       file,
       gameObjectId: m_GameObject.m_PathID,
       name: m_GameObject.Name,
+      parentFile: file,
       parentId: m_Father.m_PathID,
       position: [p.X, p.Y, p.Z],
       rotation: [r.X, r.Y, r.Z, r.W],
