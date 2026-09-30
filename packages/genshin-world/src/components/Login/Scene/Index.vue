@@ -20,6 +20,8 @@ import {
   LOGIN_FLIGHT_DISTANCE,
   LOGIN_FOG_DENSITY,
   LOGIN_FOG_HEIGHT_FALLOFF,
+  LOGIN_FOG_SCATTER_POWER,
+  LOGIN_FOG_SCATTER_STRENGTH,
   LOGIN_FOG_START_DISTANCE,
   LOGIN_GRADE_OPTIONS,
   LOGIN_LIGHT_DISTANCE,
@@ -110,6 +112,8 @@ fogUniforms.baseHeight.value = LOGIN_CLOUD_SEA_HEIGHT;
 fogUniforms.density.value = LOGIN_FOG_DENSITY;
 fogUniforms.heightFalloff.value = LOGIN_FOG_HEIGHT_FALLOFF;
 fogUniforms.startDistance.value = LOGIN_FOG_START_DISTANCE;
+fogUniforms.scatterPower.value = LOGIN_FOG_SCATTER_POWER;
+fogUniforms.scatterStrength.value = LOGIN_FOG_SCATTER_STRENGTH;
 const postUniforms = createPostUniforms();
 const skyUniforms = createSkyUniforms();
 skyUniforms.cloudCoverage.value = LOGIN_CLOUD_COVERAGE;
