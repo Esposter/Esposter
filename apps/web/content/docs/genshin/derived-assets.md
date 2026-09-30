@@ -44,7 +44,7 @@ flowchart LR
 ```
 
 1. **`map`** indexes every block into the asset map, about a gigabyte of JSON, and streams it into `index.tsv`, which a search reads in seconds. AnimeStudio writes the CAB map it needs into its own folder.
-2. **`extract <component>`** finds the blocks holding the component's assets by the name pattern `DerivedAssetComponentMap` gives it, exports them block by block, and dumps each block's Transform, GameObject, MeshFilter and MeshRenderer as JSON.
+2. **`extract <component>`** exports the component's closure: each of its roots' blocks has its Transforms, GameObjects, MeshFilters, MeshRenderers and SkinnedMeshRenderers dumped as JSON by the file (the CAB) each came from, then everything the roots reach down their children, the meshes and materials those draw and the textures each material samples, is exported from the block holding it by its exact name (`walkAssetClosure`). What no pointer from the roots reaches is exported by the component's name pattern, and every pointer that could not be resolved is printed.
 3. **`shaders <component>`** exports every shader in the blocks holding the shaders its materials name, raw, since a shader is exported nameless and its block also holds the sky's and the post-processing's. The game keeps each compiled variant as a plain DXBC container, so `readDxbcPrograms` carves them out by their own stated sizes and Windows' own `d3dcompiler_47` disassembles each into its assembly (`disassembleDxbcDirectory`), beside the property names the shader declares, which tell a nameless shader apart. A shader AnimeStudio cannot parse, which includes the login stone's, is left out. This and `extract` are the only steps that read the game.
 4. **`inventory <component>`** writes `inventory.md` beside the exports: each material's shader, texture slots and values, each texture's size and what each channel spans, each mesh's vertices and the materials its renderers draw it with, and each shader's program count and properties. A scene's derivation starts from it ([scene derivation](/docs/proposals/genshin/scene-derivation)).
 5. **`interface <component>`** lays a screen's interface out as the game does: the block holding it is found through an indexed asset beside it (`DerivedAssetComponentMap`'s `interface`, since GameObjects are not in the asset index), its RectTransforms are dumped as JSON for their tree and raw for their layout, and the tree under the interface's root, each piece's anchors, pivot, position, size and components, is written beside the exports and printed (`extractComponentInterface`). A screen places each piece from it ([interface library](/docs/genshin/interface-library)).
@@ -52,7 +52,7 @@ flowchart LR
 7. **`witness <component>`** lays the exports out as the witness render draws them (`writeWitnessLayout`): the component's placements at each part's finest level, in three's axes, with every material each submesh draws with, as a `SceneLayout`.
 8. **`fit <component>`** composes every object's world placement from the layout dumps, keeps the arrangements under the component's roots (`readComponentPlacements`), fits our kits' parameters to the meshes and textures, and writes them as the world package's data, the only output that enters the repository. A change of fit or selection reruns it alone.
 
-A new component is one name pattern in `DerivedAssetComponentMap` and one fit in `DerivedAssetFitMap`; everything else is shared.
+A new component is its roots in `DerivedAssetComponentMap` and one fit in `DerivedAssetFitMap`; everything else is shared.
 
 ### Commands
 
@@ -60,33 +60,39 @@ From `scripts/`, as `pnpm genshin:assets <command> <component>`, each with its o
 
 | Command                                    | What it does                                                                                                                                               |
 | :----------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `extract`                                  | The closure of the component's roots, exported by file and path ID; prints what it reached and every pointer it could not resolve                          |
+| `behaviours [--script <pattern>]`          | Every MonoBehaviour of the component's layout blocks exported raw, its fields read by their shapes, each pointer named by what it points at                |
 | `tree [--root <name>] [--block] [--depth]` | The hierarchy the layout dumps hold, each object's block, place, scale in the world, drawing, scripts and children, flagging what its arrangement turns on |
 
 - **Read the tree before the arrangement.** `tree` flags an empty anchor (no children, nothing drawn, no script: where a script spawns a prefab), a father or children no dump holds, a root at the origin (a prefab's root), and a mesh laid out under several tops (only some of those arrangements are the scene's). The login's lost-block theory survived several sessions of reading the dumps by hand; `tree login --root SceneObj` shows its three empty anchors in one line each.
 
-### Finding what a scene draws
+### Following a scene's pointers
 
-A scene's parts are found by name, but its sky, its effects and its prefab parts often live under other names and blocks. What a scene actually draws is read off its renderers:
+A scene's parts are found from its roots, never by name: its sky, its effects and its prefab parts live under other names and blocks, and one name is shared across the game (`Cloud_LOD0`).
 
 ```mermaid
 flowchart TD
-  O[An object in the layout] --> R["its MeshRenderer: the path IDs of its materials"]
-  R --> A["the asset map by path ID: each material's name and block"]
-  A --> T["each material's texture slots: their path IDs, through the map again"]
-  T --> P["the exact names, added to the component's name pattern"]
+  R["A root: its block and its game object's path ID"] --> L["its block's layout, dumped per file"]
+  L --> C["its objects, down their children within their file"]
+  C --> D["what each draws: a mesh and materials, by file index and path ID"]
+  D --> X["the file index through the object's own file's external references: the CAB map"]
+  X --> A["the file's block and the path ID: the asset index names it"]
+  A --> T["each material's texture slots, resolved from the material's own file"]
 ```
 
-The login sky was found this way: `Clouds`, `Atmosphere` and the three cloud emitters draw `Enviro_*` materials whose textures sit in the login blocks under names no `LoginScene_` search reaches. Names shared across the game (`Cloud_LOD0`) are matched exactly, or the pattern reaches every block that reuses them.
+- **A path ID names an object only within its file.** The asset index repeats tens of thousands of path IDs across the game, so every object is held as its file and its path ID. A pointer with a file index of zero stays in its own file; any other is its file's external reference that many places down, less one, which the CAB map AnimeStudio builds with `map` lists in order (`parseCabMap`, `resolveObjectPointer`).
+- **The layout is dumped by source.** Grouped by type, a block's dumps are named by their objects' names, and each name keeps only its last object; grouped by the file each came from, the character select's block keeps about four times as many GameObjects, and every object's pointers resolve from its file.
+- **A name pattern is only for what no pointer reaches.** A particle system's renderer exports without the fields that point at its materials, so the login's cloud emitters' materials and atlases stay in its pattern, named exactly.
 
 ### What the exports hold
 
 - **Axes.** Unity is left-handed, and an OBJ export has its x negated back to Unity's mesh space, so a fit reads meshes and placements in the game's own axes throughout, then converts what it writes to three.js as `(x, y, -z)` (`toRightHanded`), a rotation as `(-x, -y, z, w)` (`toRightHandedRotation`).
-- **Placements.** A path ID is 64-bit, so the layout is parsed with a `JSON.parse` reviver reading each number's source text. A root's parent is `0`. A GameObject is dumped under its name, so of the objects sharing one (each level of detail under its group) only the last survives; the layout is read from the Transforms, each dumped under a number of its own, and a Transform whose GameObject was lost takes its ID from a child whose own is known (`toSceneObjects`). A level-of-detail group whose own GameObject and every level's were lost is given the levels of its part that name one father: two groups of one part hold the same levels, so either pairing places the same parts. An object whose parent sits in a block not read is dropped, never set down at the origin.
+- **Placements.** A path ID is 64-bit, so the layout is parsed with a `JSON.parse` reviver reading each number's source text. A root's parent is `0`. A GameObject is dumped under its name, so of the objects of one file sharing one (each level of detail under its group) only the last survives; the layout is read from the Transforms, each dumped under a number of its own, and a Transform whose GameObject was lost takes its ID from a child whose own is known (`toSceneObjects`). A level-of-detail group whose own GameObject and every level's were lost is given the levels of its part that name one father: two groups of one part hold the same levels, so either pairing places the same parts. An object whose parent sits in a block not read is dropped, never set down at the origin.
 - **One set of meshes, several arrangements.** Blocks lay one set of meshes out several times, each under its own root, so a component names the roots it is (`DerivedAssetComponentMap`'s `roots`). The login screen is `CharacterSelectSceneNew`'s stage (its towers, bridges, pillars and door at 0.4 scale, the door capture's size) and the walkway, a root of its own; the root `LoginScene_Build_All`, its `CG_opening01` groups and the full-scale door are the opening cinematic's.
 - **A root whose parent was not read hangs from that parent.** The walkway's own parent sits in a block not read, so it is dumped at the origin at its own scale. The login's own root, `LoginScene`, hangs the walkway's node and the door's at one scale, so the walkway's lost parent is the door's: 0.4 scale, 5 metres down. That brings its far end to the door with no shift along its axis, and makes it as wide as the door, as the recording shows. The parent is the component map's `rootParents`, a position and a scale composed as Unity composes a Transform wherever placements are read, so the witness and every fit see it. A bare offset cannot stand in for it: the walkway moved into place at its own scale was 2.5 times too large, and the door read short beside it.
 - **A skinned renderer draws its own mesh.** A part whose pieces a clip moves, such as the door, has no filter: its mesh and materials are its `SkinnedMeshRenderer`'s, a mesh in another file named by its path ID through the asset index.
 - **Renderers name their materials by path ID.** A MeshRenderer's materials are references into other files, with no name, so the index's path ID column names them. A mesh draws one material a submesh, and an OBJ export writes each submesh as a group named after the mesh with its index appended. A renderer carries no lightmap fields.
-- **What a dump cannot hold.** A MonoBehaviour and a particle system export without their fields, since the blocks carry no type data. The camera's path, the door's appearance, the cloud emitters' spread and every light's strength and colour live in scripts, so they are measured from the captures, and expressed over what the blocks do give: the camera's height as a share of the walkway's width, the lights' strengths over the stone's fitted albedo, the cloud bands over the cloud layer's height.
+- **What a dump cannot hold.** A particle system exports without its fields, and a MonoBehaviour's fields survive only in its raw bytes, read by their shapes (`behaviours`). Where no shape names a setting, it is measured: the camera's path, the door's appearance, the cloud emitters' spread and every light's strength and colour live in scripts, so they are measured from the captures, and expressed over what the blocks do give: the camera's height as a share of the walkway's width, the lights' strengths over the stone's fitted albedo, the cloud bands over the cloud layer's height.
 - **Packed textures.** A texture's channels are rarely colours: read what each holds before fitting it. The sky gradient's are three falloff curves over the sky's height, not the hour's colours, which are the sky profile's. A cloud atlas holds two columns of four painted clouds, alpha their silhouette and red the light the painter put on them. A diffuse texture is the part's albedo, which the light warms and cools.
 
 ### The fits

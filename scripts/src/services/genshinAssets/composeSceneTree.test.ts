@@ -1,6 +1,7 @@
 import { SceneTreeFlag } from "#src/models/genshinAssets/SceneTreeFlag";
 import { composeSceneTree } from "#src/services/genshinAssets/composeSceneTree";
 import { createSceneObject } from "#src/services/genshinAssets/createSceneObject.test";
+import { toObjectKey } from "#src/services/genshinAssets/toObjectKey";
 import { describe, expect, test } from "vitest";
 
 describe(composeSceneTree, () => {
@@ -9,7 +10,7 @@ describe(composeSceneTree, () => {
 
     const [root] = composeSceneTree(
       [
-        createSceneObject("1", "0", { childIds: ["2"], scale: [0.1, 0.1, 0.1], scripts: [" "] }),
+        createSceneObject("1", "0", { childIds: ["2"], components: [" "], scale: [0.1, 0.1, 0.1] }),
         createSceneObject("2", "1"),
       ],
       new Map(),
@@ -26,7 +27,7 @@ describe(composeSceneTree, () => {
 
     const tops = composeSceneTree(
       [createSceneObject("1", "0", { childIds: ["-1"], position: [0.1, 0, 0] }), createSceneObject("2", "-1")],
-      new Map([["2", { materials: [], mesh: "" }]]),
+      new Map([[toObjectKey("", "2"), { materials: [], mesh: "", pointers: [] }]]),
     );
 
     expect(tops.map(({ flags }) => flags)).toStrictEqual([
@@ -41,8 +42,8 @@ describe(composeSceneTree, () => {
     const tops = composeSceneTree(
       [createSceneObject("1", "0", { position: [0.1, 0, 0] }), createSceneObject("2", "0", { position: [0.1, 0, 0] })],
       new Map([
-        ["1", { materials: [], mesh: " " }],
-        ["2", { materials: [], mesh: " " }],
+        [toObjectKey("", "1"), { materials: [], mesh: " ", pointers: [] }],
+        [toObjectKey("", "2"), { materials: [], mesh: " ", pointers: [] }],
       ]),
     );
 

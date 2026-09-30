@@ -131,10 +131,15 @@ export const reference: ComponentReference = {
         "SceneObj is in 00/11790361.blk at a tenth of LoginScene's scale, and its five children are in the same file: Atmosphere, ModelCamera, and SceneBeginNode, BridgeBeginNode and DoorNode, empty anchors with no children and no renderer, SceneBeginNode turned a quarter about y. No block is missing: the login's towers are a prefab MonoLoginScene spawns into SceneBeginNode at run time, and the walkway and the door into their own nodes",
       search: "SceneObj's children in the login block's Transform and GameObject dumps, by their path IDs",
     },
+    {
+      found:
+        "Its raw bytes (genshin:assets behaviours) point at the five anchors SceneBeginNode, BridgeBeginNode, DoorNode, CloudEffect and LightShaft, then at three records of a prefab, an integer and a float: LoginScene_Build_All in 16000354 (3, 200), LoginScene_Bridge01_Vo in 16000354 (3, 16) and Eff_SeaOfCloud_Login (2, 300), then at LoginScene_Door01_Vo, the door prefab's root in 11790361. Two curves sit before them at 0x70 (1 falling to 0.02 over a second) and 0xa4 (0.2 rising to 1 over half a second), and two runs of four hours at 0x178 (4.5, 8, 17, 19) and 0x18c (9.5, 18, 23, 6)",
+      search: "What MonoLoginScene spawns into its anchors, from the pointers in its raw serialized bytes",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
-    "Which prefab MonoLoginScene spawns into SceneBeginNode, BridgeBeginNode and DoorNode, from the pointers in its raw serialized bytes, and so the towers' arrangement round the walkway",
+    "What each spawn record's integer and float are (3 and 200, 3 and 16, 2 and 300), and so whether the towers and the walkway are laid more than once along the flight",
     "The day sky's pose, by the same perspective reading",
   ],
   sources: {

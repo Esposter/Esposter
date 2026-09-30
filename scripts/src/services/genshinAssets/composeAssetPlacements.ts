@@ -1,8 +1,10 @@
 import type { AssetPlacement } from "#src/models/genshinAssets/AssetPlacement";
+import type { SceneDrawing } from "#src/models/genshinAssets/SceneDrawing";
 import type { SceneObject } from "#src/models/genshinAssets/SceneObject";
 
 import { composeWorldMatrices } from "#src/services/genshinAssets/composeWorldMatrices";
 import { ROOT_PARENT_ID } from "#src/services/genshinAssets/constants";
+import { toObjectKey } from "#src/services/genshinAssets/toObjectKey";
 import { Quaternion, Vector3 } from "three";
 
 // Every object's world placement, its local transform composed with each parent's up to its root. An object whose
@@ -10,7 +12,7 @@ import { Quaternion, Vector3 } from "three";
 // Compose, so it is left out rather than set down at the world's origin
 export const composeAssetPlacements = (
   objects: readonly SceneObject[],
-  gameObjectDrawingMap: ReadonlyMap<string, Pick<AssetPlacement, "materials" | "mesh">>,
+  gameObjectDrawingMap: ReadonlyMap<string, SceneDrawing>,
 ): AssetPlacement[] => {
   const idObjectMap = new Map(objects.map((object) => [object.transformId, object]));
   const idWorldMatrixMap = composeWorldMatrices(objects);
@@ -30,7 +32,7 @@ export const composeAssetPlacements = (
     const rotation = new Quaternion();
     const scale = new Vector3();
     world.decompose(position, rotation, scale);
-    const drawing = gameObjectDrawingMap.get(object.gameObjectId);
+    const drawing = gameObjectDrawingMap.get(toObjectKey(object.file, object.gameObjectId));
     return [
       {
         materials: drawing?.materials ?? [],

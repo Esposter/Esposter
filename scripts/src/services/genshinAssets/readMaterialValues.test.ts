@@ -15,7 +15,7 @@ describe(readMaterialValues, () => {
         m_Floats: { _Metal: 1 },
         m_TexEnvs: {
           _BumpMap: { ...tiling, m_Texture: { IsNull: true, m_FileID: 0, m_PathID: "0" } },
-          _MainTex: { ...tiling, m_Texture: { IsNull: false, m_FileID: 0, m_PathID: "1" } },
+          _MainTex: { ...tiling, m_Texture: { IsNull: false, m_FileID: 1, m_PathID: "1" } },
         },
       },
       m_Shader: { IsNull: false, m_FileID: 0, m_PathID: "2" },
@@ -26,7 +26,7 @@ describe(readMaterialValues, () => {
       floats: { _Metal: 1 },
       name: "",
       shaderPathId: "2",
-      textures: { _MainTex: { offset: [0, 0], pathId: "1", scale: [1, 1] } },
+      textures: { _MainTex: { fileIndex: 1, offset: [0, 0], pathId: "1", scale: [1, 1] } },
     });
   });
 });

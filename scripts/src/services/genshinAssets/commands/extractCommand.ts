@@ -13,6 +13,12 @@ export const extractCommand: SubCommandsDef[string] = defineCommand({
       type: "positional",
     },
   },
-  meta: { description: "Export a component's assets and layout from the blocks holding them", name: "extract" },
-  run: ({ args }) => extractComponent(parseDerivedAssetComponent(args.component)),
+  meta: {
+    description:
+      "Export a component's closure: its roots' layout per file, then every mesh, material and texture they reach through their pointers, printing what could not be resolved",
+    name: "extract",
+  },
+  run: async ({ args }) => {
+    console.log(await extractComponent(parseDerivedAssetComponent(args.component)));
+  },
 });

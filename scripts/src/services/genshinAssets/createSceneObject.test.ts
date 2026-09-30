@@ -10,13 +10,14 @@ export const createSceneObject = (
 ): SceneObject => ({
   block: "",
   childIds: [],
+  components: [],
+  file: "",
   gameObjectId: transformId,
   name: transformId,
   parentId,
   position: [0, 0, 0],
   rotation: [0, 0, 0, 1],
   scale: [1, 1, 1],
-  scripts: [],
   transformId,
   ...overrides,
 });

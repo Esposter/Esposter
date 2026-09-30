@@ -1,10 +1,12 @@
-import type { AssetPlacement } from "#src/models/genshinAssets/AssetPlacement";
+import type { SceneDrawing } from "#src/models/genshinAssets/SceneDrawing";
 import type { SceneObject } from "#src/models/genshinAssets/SceneObject";
 import type { SceneTreeNode } from "#src/models/genshinAssets/SceneTreeNode";
 
 import { SceneTreeFlag } from "#src/models/genshinAssets/SceneTreeFlag";
 import { composeWorldMatrices } from "#src/services/genshinAssets/composeWorldMatrices";
 import { ROOT_PARENT_ID } from "#src/services/genshinAssets/constants";
+import { groupSceneChildren } from "#src/services/genshinAssets/groupSceneChildren";
+import { toObjectKey } from "#src/services/genshinAssets/toObjectKey";
 import { Quaternion, Vector3 } from "three";
 
 // A scene's hierarchy as the dumps hold it, from every root and every object whose father no dump holds, each node
@@ -12,22 +14,22 @@ import { Quaternion, Vector3 } from "three";
 // Root at the origin, and a mesh laid out under several of these tops
 export const composeSceneTree = (
   objects: readonly SceneObject[],
-  gameObjectDrawingMap: ReadonlyMap<string, Pick<AssetPlacement, "materials" | "mesh">>,
+  gameObjectDrawingMap: ReadonlyMap<string, SceneDrawing>,
 ): SceneTreeNode[] => {
   const idObjectMap = new Map(objects.map((object) => [object.transformId, object]));
+  const childrenMap = groupSceneChildren(objects);
   const idWorldMatrixMap = composeWorldMatrices(objects);
   const meshTopsMap = new Map<string, Set<string>>();
   const toNode = (object: SceneObject, top: SceneObject, visitedIds: ReadonlySet<string>): SceneTreeNode => {
-    const mesh = gameObjectDrawingMap.get(object.gameObjectId)?.mesh ?? "";
+    const mesh = gameObjectDrawingMap.get(toObjectKey(object.file, object.gameObjectId))?.mesh ?? "";
     if (mesh) meshTopsMap.set(mesh, (meshTopsMap.get(mesh) ?? new Set()).add(top.transformId));
     const nextVisitedIds = new Set([...visitedIds, object.transformId]);
-    const children = object.childIds.flatMap((childId) => {
-      const child = idObjectMap.get(childId);
-      return child && !nextVisitedIds.has(childId) ? [toNode(child, top, nextVisitedIds)] : [];
-    });
+    const children = (childrenMap.get(toObjectKey(object.file, object.transformId)) ?? [])
+      .filter(({ transformId }) => !nextVisitedIds.has(transformId))
+      .map((child) => toNode(child, top, nextVisitedIds));
     const flags: SceneTreeFlag[] = [];
     const isRoot = object.parentId === ROOT_PARENT_ID;
-    if (object.childIds.length === 0 && !mesh && object.scripts.length === 0) flags.push(SceneTreeFlag.EmptyAnchor);
+    if (object.childIds.length === 0 && !mesh && object.components.length === 0) flags.push(SceneTreeFlag.EmptyAnchor);
     if (children.length < object.childIds.length) flags.push(SceneTreeFlag.LostChildren);
     if (!isRoot && !idObjectMap.has(object.parentId)) flags.push(SceneTreeFlag.LostFather);
     if (

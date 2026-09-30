@@ -34,7 +34,7 @@ export const treeCommand: SubCommandsDef[string] = defineCommand({
   },
   meta: {
     description:
-      "Print a component's scene hierarchy from its layout dumps: each object's block, place, turn, scale and world scale, what it draws, its scripts and children, flagging empty anchors, lost fathers and children, roots at the origin and meshes under several roots",
+      "Print a component's scene hierarchy from its layout dumps: each object's block, place, turn, scale and world scale, what it draws, its named components and children, flagging empty anchors, lost fathers and children, roots at the origin and meshes under several roots",
     name: "tree",
   },
   run: async ({ args }) => {

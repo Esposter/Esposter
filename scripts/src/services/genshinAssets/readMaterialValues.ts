@@ -16,7 +16,17 @@ export const readMaterialValues = ({ m_Name, m_SavedProperties, m_Shader }: Expo
       ([slot, { m_Offset, m_Scale, m_Texture }]): [string, MaterialValues["textures"][string]][] =>
         m_Texture.IsNull
           ? []
-          : [[slot, { offset: [m_Offset.X, m_Offset.Y], pathId: m_Texture.m_PathID, scale: [m_Scale.X, m_Scale.Y] }]],
+          : [
+              [
+                slot,
+                {
+                  fileIndex: m_Texture.m_FileID,
+                  offset: [m_Offset.X, m_Offset.Y],
+                  pathId: m_Texture.m_PathID,
+                  scale: [m_Scale.X, m_Scale.Y],
+                },
+              ],
+            ],
     ),
   ),
 });

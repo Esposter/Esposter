@@ -17,7 +17,7 @@ flowchart TD
   K -->|"how it is shaded"| S["Shader programs and their constant layouts: shaders"]
   K -->|"an interface's place"| R["RectTransform anchors: the raw tail"]
   K -->|"a motion"| C["AnimationClip curves: CRC32 bindings"]
-  K -->|"a script's setting"| F["Fieldless: measured off the captures"]
+  K -->|"a script's setting"| F["A script's raw bytes: behaviours, else measured"]
 ```
 
 ## Formats
@@ -38,7 +38,7 @@ flowchart TD
 ### Placements and renderers
 
 - **A Transform's dump is its local position, rotation and scale with its father and children by path ID**; its GameObject is found through the GameObject's first component. How placements compose, and what the dumps lose, is on the [derived assets](/docs/genshin/derived-assets) page.
-- **A MeshRenderer names its materials by path ID**, references into other files with no name, one a submesh; an OBJ export writes each submesh as a group suffixed with its index.
+- **A MeshRenderer names its materials by file index and path ID**, references into other files with no name, one a submesh, resolved through the CAB map; an OBJ export writes each submesh as a group suffixed with its index.
 - **A root's own parent can sit in a block not read.** Such a root is dumped at the origin though the game places it elsewhere, as the login's walkway is: its true place is solved from something it must meet (the door it ends at), never assumed.
 
 ### Interface
@@ -55,7 +55,8 @@ flowchart TD
 
 ### Scripts
 
-- **A MonoBehaviour exports without its fields**, since the blocks carry no type data: the login scene's "EnviroSky", "LoginSceneEnviro", "MonoLoginScene" and its post-processing profile among them. What they hold is measured off the captures, over what the other data gives exactly.
+- **A MonoBehaviour's JSON export has no fields**, since the blocks carry no type data: the login scene's "EnviroSky", "LoginSceneEnviro", "MonoLoginScene" and its post-processing profile among them. Its raw export keeps them, serialized in declaration order and aligned to four bytes, after a header of its game object's pointer, its enabled flag, its script's pointer and its name (`scanSerializedFields`).
+- **A field is read by its shape**: a pointer is a file index and a 64-bit path ID that the layout or the asset index holds in the file it resolves to; a curve is a count, keyframes of seven words (time, value, two slopes, a weighted mode, two weights) and three wrap words; a gradient is eight colours, eight colour and eight alpha times as sixteen-bit shares, a mode and the counts in use; an array is a count and that many records of one of those shapes; a colour is four floats in a colour's range; anything else is a scalar. A reading is a candidate until a scene's use of it is checked on the captures, and a test on its offset then holds it. What no shape names is measured off the captures, over what the other data gives exactly.
 
 ## References beside each component
 
@@ -76,7 +77,7 @@ flowchart LR
 
 The things that each cost a search to find, to reach for first:
 
-- **Find a scene's parts by what its renderers draw**, not by name, then add the exact names to its component's pattern ([derived assets](/docs/genshin/derived-assets), "Finding what a scene draws").
+- **Find a scene's parts from its roots**, never by name: `extract` follows every pointer they reach by file and path ID, and a name pattern holds only what no pointer reaches ([derived assets](/docs/genshin/derived-assets), "Following a scene's pointers").
 - **Find a screen's interface by its buttons' names**: GameObjects are not in the asset index, so a block is found through an indexed asset beside them (a clip such as `Ani_LoginMainPage_*`), then its RectTransforms and GameObjects are dumped.
 - **Look for an exact source before measuring**: a shader's program over a guessed model, a clip's curve over a timed recording, a RectTransform's anchor over a measured position. Measure only what is fieldless.
 - **Match a camera on the towers' sides, never on all edges**: a reference's clouds are most of its edges ([parity](/docs/genshin/parity), `solve-camera`).
@@ -93,3 +94,7 @@ The things that each cost a search to find, to reach for first:
 | `scripts/src/services/genshinAssets/readMaterialValues.ts`        | A material's values, textures and shader                  |
 | `scripts/src/services/genshinAssets/readSceneLayout.ts`           | Transforms, meshes and the materials each renderer draws  |
 | `scripts/src/services/genshinAssets/writeComponentInventory.ts`   | Everything a component's export holds, as a report        |
+
+## Sources
+
+- [Script serialization](https://docs.unity3d.com/Manual/script-serialization.html), Unity Manual: which fields are serialized and in what order, which the scanner's shapes rest on.
