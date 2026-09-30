@@ -18,13 +18,13 @@ import { join } from "node:path";
 // (apps/web/content/docs/proposals/genshin/scene-derivation.md)
 export const writeWitnessLayout = async (component: DerivedAssetComponent): Promise<string> => {
   const directory = getComponentDirectory(component);
-  const hasFile = (type: string, name: string, extension: string): boolean =>
+  const checkHasFile = (type: string, name: string, extension: string): boolean =>
     existsSync(join(directory.assets, type, `${name}.${extension}`));
   const [placements, materials] = await Promise.all([
     readComponentPlacements(component),
     readComponentMaterials(component),
   ]);
-  const drawn = selectFinestLevels(placements, (mesh) => hasFile("Mesh", mesh, "obj"));
+  const drawn = selectFinestLevels(placements, (mesh) => checkHasFile("Mesh", mesh, "obj"));
   const referencedIds = new Set([
     ...drawn.flatMap(({ materials: drawnMaterials }) => drawnMaterials),
     ...materials.flatMap(({ textures }) => Object.values(textures).map(({ pathId }) => pathId)),
@@ -42,7 +42,9 @@ export const writeWitnessLayout = async (component: DerivedAssetComponent): Prom
           textures: Object.fromEntries(
             Object.entries(textures).flatMap(([slot, { offset, pathId, scale }]) => {
               const textureName = pathIdNameMap.get(pathId) ?? "";
-              return hasFile("Texture2D", textureName, "png") ? [[slot, { name: textureName, offset, scale }]] : [];
+              return checkHasFile("Texture2D", textureName, "png")
+                ? [[slot, { name: textureName, offset, scale }]]
+                : [];
             }),
           ),
         },

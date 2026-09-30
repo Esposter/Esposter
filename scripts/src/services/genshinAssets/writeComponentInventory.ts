@@ -32,8 +32,8 @@ export const writeComponentInventory = async (component: DerivedAssetComponent):
   const indexed = await readIndexedAssets(({ pathId }) => referencedIds.has(pathId));
   const pathIdAssetMap = new Map(indexed.map((asset) => [asset.pathId, asset]));
   const lines = [`# ${component} inventory`, "", "## Materials", ""];
-  for (const { colors, floats, name, shaderPathId, textures } of materials.toSorted((a, b) =>
-    a.name.localeCompare(b.name),
+  for (const { colors, floats, name, shaderPathId, textures } of materials.toSorted((firstMaterial, secondMaterial) =>
+    firstMaterial.name.localeCompare(secondMaterial.name),
   )) {
     const shader = pathIdAssetMap.get(shaderPathId);
     lines.push(`### ${name}`, "", `- Shader: \`${shaderPathId}\` in \`${shader?.block ?? "an unindexed block"}\``);

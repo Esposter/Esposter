@@ -1,8 +1,8 @@
 import type { SceneLayout } from "genshin-engine";
 import type { Material, Texture } from "three";
 
-import { createWitnessMaterial } from "#parity/witness/createWitnessMaterial";
 import { SUBMESH_INDEX_REGEX } from "#parity/witness/constants";
+import { createWitnessMaterial } from "#parity/witness/createWitnessMaterial";
 import { WitnessProperty } from "#parity/witness/WitnessProperty";
 import { Group, Mesh, MeshStandardMaterial, NoColorSpace, SRGBColorSpace, TextureLoader } from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";

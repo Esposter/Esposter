@@ -1,8 +1,8 @@
 import type { AssetPlacement } from "#src/models/genshinAssets/AssetPlacement";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 
-import { DerivedAssetComponentMap } from "#src/services/genshinAssets/DerivedAssetComponentMap";
 import { composeAssetPlacements } from "#src/services/genshinAssets/composeAssetPlacements";
+import { DerivedAssetComponentMap } from "#src/services/genshinAssets/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/getComponentDirectory";
 import { readSceneLayout } from "#src/services/genshinAssets/readSceneLayout";
 

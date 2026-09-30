@@ -33,10 +33,10 @@ import {
   LOGIN_SHADOW_NORMAL_BIAS,
 } from "#src/services/login/scene/constants";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
-import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { createLoginSilhouettesGeometry } from "#src/services/login/silhouette/createLoginSilhouettesGeometry";
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
 import { createLoginWalkwayGeometry } from "#src/services/login/walkway/createLoginWalkwayGeometry";
+import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { useLoop, useTres } from "@tresjs/core";
 import { watchImmediate } from "@vueuse/core";
 import {
