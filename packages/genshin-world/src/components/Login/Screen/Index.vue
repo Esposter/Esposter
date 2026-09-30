@@ -18,7 +18,7 @@ import {
 import { checkIsNestedInteraction } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
 import { useRafFn, useTimeoutFn, watchImmediate } from "@vueuse/core";
-import { createGenshinRenderer } from "genshin-engine";
+import { createGenshinRenderer, GENSHIN_TONE_MAPPING } from "genshin-engine";
 import { GameScreen } from "genshin-ui";
 import { PCFShadowMap } from "three";
 import { unref } from "vue";
@@ -93,6 +93,7 @@ const onClick = (event: MouseEvent): void => {
   <GameScreen class="login-screen" @click="(event: MouseEvent) => onClick(event)">
     <TresCanvas
       :renderer="({ canvas }: TresRendererSetupContext) => createGenshinRenderer(unref(canvas))"
+      :tone-mapping="GENSHIN_TONE_MAPPING"
       shadows
       :shadow-map-type="PCFShadowMap"
     >

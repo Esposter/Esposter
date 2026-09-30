@@ -4,7 +4,7 @@ import type { TresRendererSetupContext } from "@tresjs/core";
 import { GENSHIN_REGION_DATA_BASE_URL } from "#shared/services/genshin/constants";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
-import { createGenshinRenderer, QualityTier, QualityTierSettingsMap } from "genshin-engine";
+import { createGenshinRenderer, GENSHIN_TONE_MAPPING, QualityTier, QualityTierSettingsMap } from "genshin-engine";
 import { GenshinWorld } from "genshin-world";
 import TerrainTileWorker from "genshin-world/terrainTileWorker?worker";
 import { PCFShadowMap } from "three";
@@ -30,6 +30,7 @@ onUnmounted(() => {
     <TresCanvas
       :dpr="[1, maxPixelRatio]"
       :renderer="({ canvas }: TresRendererSetupContext) => createGenshinRenderer(unref(canvas))"
+      :tone-mapping="GENSHIN_TONE_MAPPING"
       shadows
       :shadow-map-type="PCFShadowMap"
       @error="isWorldReady = true"
