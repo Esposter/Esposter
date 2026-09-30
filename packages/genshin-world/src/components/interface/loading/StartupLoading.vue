@@ -18,7 +18,7 @@ const emit = defineEmits<{ finish: [] }>();
 const litInset = computed(() => `inset(0 ${(1 - Math.min(Math.max(progress, 0), 1)) * 100}% 0 0)`);
 const isComplete = computed(() => progress >= 1);
 const { start } = useTimeoutFn(() => emit("finish"), MARKS_FADE_MS + WHITE_HOLD_MS, { immediate: false });
-whenever(isComplete, start, { once: true });
+whenever(isComplete, start, { immediate: true, once: true });
 </script>
 
 <template>
