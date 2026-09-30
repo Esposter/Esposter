@@ -141,10 +141,16 @@ export const reference: ComponentReference = {
         "Set as the component's spawns, the tree shows the login as it draws: LoginScene_Build_All's towers, bridges and pillars under SceneBeginNode (237, -180, -533 in SceneObj's units, a quarter turn about y), the walkway's 23 pieces under BridgeBeginNode at SceneObj's origin, and the door prefab under DoorNode (-262, 341, 700), all at SceneObj's tenth. Every walkway piece carries a MonoBlockController, a script of its own, so the walkway's blocks are moved at run time",
       search: "genshin:assets tree login --root SceneObj with the three spawns applied",
     },
+    {
+      found:
+        "The door's dais over the walkway at its foot, left to right along that row: 852, 861, 1058 and 1069 pixels, a cross-ratio of 1.0023, which the stage's fitted data holds (1.0000). Fitted over the spawned arrangement it reads -171: the door's anchor stands 70 metres out and 34 up from the walkway, which spans 16 metres at its anchor, so in the static layout the two never meet and the flight's arrangement is a run-time one. The re-fit was not committed. Bridges and the door fit their exports to the centimetre; the towers' fitted feet sit 6.5 metres from their objects' origins on average",
+      search: "genshin:assets arrangement login, before and after a fit over the spawned arrangement",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
-    "What each spawn record's integer and float are (3 and 200, 3 and 16, 2 and 300), and so whether the towers and the walkway are laid more than once along the flight",
+    "Where the door stands against the walkway at the flight's end: the static layout never meets them, and MonoLoginScene's record (the walkway, 3, 16) reads as three copies of the 16-metre walkway laid end to end; pose from correspondences on login-door-recording, one solve on the door's landmarks and one on the walkway's, gives the offset between them",
+    "What each spawn record's integer and float are (3 and 200, 3 and 16, 2 and 300)",
     "What MonoBlockController does to each walkway piece: its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$)",
     "The day sky's pose, by the same perspective reading",
   ],

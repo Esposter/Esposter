@@ -50,6 +50,9 @@ export const WALKWAY_OUTLINE_TOLERANCE = 0.1;
 // A bridge's or a pillar's silhouette is traced on a half-metre grid and kept within a quarter metre of it
 export const SILHOUETTE_CELL_SIZE = 0.5;
 export const SILHOUETTE_TOLERANCE = 0.25;
+// How far a ratio's cross-ratio in the fitted data may stray from its reference's: a pixel off at each end of widths
+// About two hundred pixels across moves it by about a hundredth
+export const ARRANGEMENT_CROSS_RATIO_TOLERANCE = 0.01;
 // The path ID a root's parent is written as
 export const ROOT_PARENT_ID = "0";
 // A cloud atlas holds its painted clouds in two columns of four rows, each traced on a grid of four texels and kept

@@ -22,7 +22,7 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | A script's settings                     | `behaviours`: raw bytes scanned for shapes            |                           |
 | What a script spawns, and where         | `behaviours`, set as `spawns` at their anchors        |                           |
 | A spawned prefab's place and scale      | `composeWorldMatrices`, through the anchor            |                           |
-| Whether the arrangement is right        | a width ratio measured by hand                        | The arrangement check     |
+| Whether the arrangement is right        | `genshin:assets arrangement`: cross-ratios, drift     |                           |
 | The camera's pose                       | `solve-camera`: a grid and a simplex on line distance | Pose from correspondences |
 | The camera's path over a flight         | none: two poses and a straight line between           | The matchmove             |
 | A render that settles in one frame      | none: eight frames for the anti-aliasing's history    | The deterministic witness |

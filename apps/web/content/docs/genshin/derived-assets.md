@@ -58,12 +58,14 @@ A new component is its roots in `DerivedAssetComponentMap` and one fit in `Deriv
 
 From `scripts/`, as `pnpm genshin:assets <command> <component>`, each with its own `--help`:
 
-| Command                                    | What it does                                                                                                                                               |
-| :----------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `extract`                                  | The closure of the component's roots, exported by file and path ID; prints what it reached and every pointer it could not resolve                          |
-| `behaviours [--script <pattern>]`          | Every MonoBehaviour of the component's layout blocks exported raw, its fields read by their shapes, each pointer named by what it points at                |
-| `tree [--root <name>] [--block] [--depth]` | The hierarchy the layout dumps hold, each object's block, place, scale in the world, drawing, scripts and children, flagging what its arrangement turns on |
+| Command                                    | What it does                                                                                                                                                                        |
+| :----------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `extract`                                  | The closure of the component's roots, exported by file and path ID; prints what it reached and every pointer it could not resolve                                                   |
+| `arrangement`                              | Each ratio a reference shows between parts that meet, its cross-ratio measured against the fitted data's, and each fitted family's distance from the exports' objects it stands for |
+| `behaviours [--script <pattern>]`          | Every MonoBehaviour of the component's layout blocks exported raw, its fields read by their shapes, each pointer named by what it points at                                         |
+| `tree [--root <name>] [--block] [--depth]` | The hierarchy the layout dumps hold, each object's block, place, scale in the world, drawing, named components and children, flagging what its arrangement turns on                 |
 
+- **Check the arrangement before any pose.** Two widths measured where their parts meet (the door's dais over the walkway at its foot) mark four ends on one line, and a projection keeps their cross-ratio, so `arrangement` compares it with the fitted data's at no pose; two centred widths in ratio r give (1 + r)² / 4r, so the walkway 2.5 times too wide read 1.23 against the recording's 1.00. Its family diff shows a fit drifting from the exports as metres, which is how data fitted on another arrangement shows.
 - **Read the tree before the arrangement.** `tree` flags an empty anchor (no children, nothing drawn, no script: where a script spawns a prefab), a father or children no dump holds, a root at the origin (a prefab's root), and a mesh laid out under several tops (only some of those arrangements are the scene's). The login's lost-block theory survived several sessions of reading the dumps by hand; `tree login --root SceneObj` shows its three empty anchors in one line each.
 
 ### Following a scene's pointers

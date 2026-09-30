@@ -1,6 +1,6 @@
 ---
 title: Scene toolbox
-description: Proposal — the tools that make each unknown of a 3D scene answerable on its own, so a scene is solved rather than searched and converges in a pass or two the way the interface does. The arrangement is checked by ratios before any pose, the camera is solved from correspondences and tracked across a recording, the witness render is made deterministic and writes a G-buffer, and the grade, fog and light are fitted by regression over it. Superseded searches are deleted.
+description: Proposal — the tools that make each unknown of a 3D scene answerable on its own, so a scene is solved rather than searched and converges in a pass or two the way the interface does. The camera is solved from correspondences and tracked across a recording, the witness render is made deterministic and writes a G-buffer, and the grade, fog and light are fitted by regression over it. Superseded searches are deleted.
 model: claude-opus-5-5
 ---
 
@@ -41,11 +41,7 @@ flowchart TD
 
 ## The tools
 
-### 1. The arrangement
-
-`genshin:assets arrangement <component>` checks the arrangement with no pixels. Each proportion a reference shows between two parts standing together, measured along one direction (the door's width over the walkway's at its foot), is declared in a ratio map beside the fitted data, citing its reference, and the command prints each against the placements. A unit test holds the same map, so a change of arrangement that breaks one fails before any render. It also diffs the scene's own placements against the witness layout's, family by family, so a fit that drifts from the exports shows as a number. What holds from any pose is the cross-ratio of the four ends two widths mark on the one line where their parts meet (the door's two edges and the walkway's at its foot), since a projection keeps a line's cross-ratios; the plain ratio of the two widths holds only where that line faces the camera square, since a receding line sets its ends at different depths. So each entry declares its four ends and is checked by their cross-ratio. A width measured away from the contact, like parts apart such as a tower and the next, shares no line with the other and is compared once `pose` has solved it. The walkway that stood 2.5 times too wide beside the door would have failed its ratio at once.
-
-### 2. The camera
+### 1. The camera
 
 **Pose from correspondences.** `genshin:parity pose <reference> --witness <component>` solves the camera from points whose places are known. A component names its landmarks in three dimensions: a part's bounding-box corners, a named vertex, a door's top and foot. The reference's matching pixels are given roughly, and each one snaps to the strongest corner within a small radius of it. With six or more points, a direct linear transform gives the projection in closed form, including the focal length. With fewer, a perspective-n-point solve at a focal length read from two widths does. A Gauss–Newton refinement then minimises the reprojection error, which is printed per point and in total, with an image of each landmark's projection over the reference. It replaces the perspective reading done by hand for the login's two poses, and `solve-camera`'s grid.
 
@@ -55,7 +51,7 @@ flowchart TD
 
 `solve-camera`'s grid, its simplex over the line distance, and the line scorer (`createLineDistanceScorer`, `readVerticalLines`) are deleted once `pose` and the refinement answer every reference they served.
 
-### 3. The instrumented render
+### 2. The instrumented render
 
 **The deterministic witness.** While a tool drives the page, the witness holds the scene's clock, turns off the temporal anti-aliasing's jitter, and settles each view in one frame rather than eight. A shot is read back from the renderer's own target instead of screenshotting the page, so a pose costs one render.
 
@@ -63,13 +59,13 @@ flowchart TD
 
 **The overlay.** `genshin:parity overlay <reference> --witness <component>` draws the witness's part boundaries over the reference, coloured by family and labelled, with a map of how far each reference edge sits from the nearest boundary. Misregistration shows per part in one image, where the side-by-side comparison shows only that two images differ.
 
-### 4. The scores
+### 3. The scores
 
 **Scores by layer.** `scoreLayers` scores shape, tone and detail over each layer's mask from the identifier target, and `compare --witness` and `attribute` print a row per layer beside the frame's, into their committed reports. A change is then judged where it lands.
 
 **The perceptual score.** An implementation of FLIP's standard-dynamic-range metric in TypeScript, tested against the values the reference implementation publishes for its example images, is the approval number the method ends on.
 
-### 5. Calibration by regression
+### 4. Calibration by regression
 
 `genshin:parity calibrate <reference> --witness <component>` fits each frame-wide term by least squares over the pixels its mask selects, in the order light meets the eye, holding each fitted term for the next:
 
@@ -79,21 +75,17 @@ flowchart TD
 
 Each term prints its values and its residual, and a scene writes them as constants citing the reference they were fitted on. This replaces measuring light over a hand-picked patch and searching a strength until the frame's mean drops.
 
-### 6. Shader reading
+### 5. Shader reading
 
 The `shaders` step already disassembles each program. It also writes each program as HLSL beside its assembly, through 3Dmigoto's command-line decompiler, fetched as a pinned release checked by SHA-256 the way FFmpeg is, with the constant names `annotateProgramConstants` recovers substituted in. The atmosphere, the cloud layer, the cloud particles and the uber pass are then ported to TSL from readable code instead of from assembly. If no pinned release of the decompiler is published, it is built from its source into the same cache, and failing that the annotated assembly stays the source.
 
-### 7. The loss table
+### 6. The loss table
 
 `attribute` keeps its ladder of swaps, each family handed back to the scene's own kit in turn, and scores it per layer from the identifier target. Its table is committed only from a pose `pose` has solved within its reprojection gate.
 
 ## Scope
 
 ```text
-scripts/src/services/genshinAssets/
-  scanSerializedFields.ts       ← pointers, colours, curves, arrays and scalars in a script's raw bytes
-  checkArrangement.ts           ← ratios and the placement diff
-  commands/arrangementCommand.ts
 scripts/src/services/genshinParity/
   solveCameraPose.ts            ← DLT and PnP from correspondences, then Gauss–Newton
   refineCameraPose.ts           ← the chamfer over the identifier edges

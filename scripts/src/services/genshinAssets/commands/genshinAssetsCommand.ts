@@ -1,5 +1,6 @@
 import type { CommandDef } from "citty";
 
+import { arrangementCommand } from "#src/services/genshinAssets/commands/arrangementCommand";
 import { behavioursCommand } from "#src/services/genshinAssets/commands/behavioursCommand";
 import { clipsCommand } from "#src/services/genshinAssets/commands/clipsCommand";
 import { extractCommand } from "#src/services/genshinAssets/commands/extractCommand";
@@ -20,6 +21,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     extract: extractCommand,
     tree: treeCommand,
     behaviours: behavioursCommand,
+    arrangement: arrangementCommand,
     shaders: shadersCommand,
     inventory: inventoryCommand,
     interface: interfaceCommand,
