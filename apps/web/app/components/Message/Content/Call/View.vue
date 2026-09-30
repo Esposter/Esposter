@@ -25,6 +25,7 @@ const callView = useTemplateRef("callView");
       <MessageContentCallInviteCard />
       <MessageContentCallJoinNotice />
     </template>
+    <MessageContentCallAudioPlaybackNotice mx-3 mb-2 self-center />
     <MessageContentCallControlBar />
   </div>
 </template>

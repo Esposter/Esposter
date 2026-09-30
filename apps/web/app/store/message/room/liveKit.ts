@@ -56,6 +56,9 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   const remoteAudioElements = new Map<string, { element: HTMLMediaElement; identity: string }>();
   const connectionQuality = ref(ConnectionQuality.Unknown);
   const connectionState = ref(ConnectionState.Disconnected);
+  // The browser refused to play the call's sound without a gesture of the reader's own: it stays silent until they
+  // Press the notice's button, whose click is the gesture startAudio needs
+  const isAudioPlaybackBlocked = ref(false);
   const clearRemoteAudio = () => {
     for (const { element } of remoteAudioElements.values()) element.remove();
     remoteAudioElements.clear();
@@ -197,10 +200,13 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
       await handler?.();
     }).match(noop, console.error),
   );
-  const onAudioPlaybackStatusChanged = () => {
-    if (activeRoom && !activeRoom.canPlaybackAudio)
-      console.warn("Audio autoplay blocked — browser requires user interaction to start audio.");
-  };
+  // LiveKit unmutes every remote audio element as it starts them, so a reader who is deafened is muted again after
+  const startAudio = () =>
+    getResultAsync(async () => {
+      if (!activeRoom) return;
+      await activeRoom.startAudio();
+      setRemoteAudioMuted(mediaStore.isDeafened);
+    }).match(noop, console.error);
   const setCamera = async (isCameraEnabled: boolean) => {
     if (!activeRoom) return;
     if (!isCameraEnabled) {
@@ -337,8 +343,8 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     room.on(RoomEvent.Disconnected, () => {
       onDisconnected();
     });
-    room.on(RoomEvent.AudioPlaybackStatusChanged, () => {
-      onAudioPlaybackStatusChanged();
+    room.on(RoomEvent.AudioPlaybackStatusChanged, (isPlaying) => {
+      isAudioPlaybackBlocked.value = !isPlaying;
     });
     await room.connect(liveKitUrl, liveKitToken);
     connectionQuality.value = room.localParticipant.connectionQuality;
@@ -359,6 +365,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     virtualBackgroundProcessor = undefined;
     connectionQuality.value = ConnectionQuality.Unknown;
     connectionState.value = ConnectionState.Disconnected;
+    isAudioPlaybackBlocked.value = false;
     clearRemoteAudio();
   };
   watch(
@@ -395,6 +402,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     connectionQuality,
     connectionState,
     disconnect,
+    isAudioPlaybackBlocked,
     setActiveDevice,
     setCamera,
     setMicrophone,
@@ -402,5 +410,6 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     setRemoteAudioMuted,
     setScreenShare,
     setVirtualBackground,
+    startAudio,
   };
 });

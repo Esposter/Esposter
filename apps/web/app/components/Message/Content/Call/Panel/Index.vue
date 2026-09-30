@@ -9,7 +9,10 @@ const { isCallViewOpen, isInCall } = storeToRefs(callStore);
 <!-- The call view opens over the room's content in place, as a voice channel's does, rather than as a modal: a call is
      somewhere the reader is, not something that interrupts them, so the dock and the room list stay beside it -->
 <template>
-  <MessageContentCallPanelBar v-if="isInCall" />
+  <template v-if="isInCall">
+    <MessageContentCallPanelBar />
+    <MessageContentCallAudioPlaybackNotice v-if="!isCallViewOpen" mx-3 my-2 />
+  </template>
   <Transition name="call-view">
     <div v-if="isCallViewOpen" inset-0 absolute z-1>
       <MessageContentCallView>

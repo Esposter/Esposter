@@ -7,7 +7,7 @@ description: LiveKit-based audio/video — call sessions, the membership boundar
 
 Discord-style persistent per-room drop-in audio/video plus standalone share-link calls (like Google Meet). Room members join/leave room calls freely; `/calls` starts a roomless call joinable by anyone with the link. Media runs through the **LiveKit SFU** — the server generates access tokens and keeps a participant map for observers; LiveKit handles all WebRTC signaling, track publication, simulcast, and bandwidth estimation.
 
-Sub-pages: [call view UI](/docs/esbabbler/calls/call-view) · [screenshare](/docs/esbabbler/calls/screenshare) · [picture-in-picture](/docs/esbabbler/calls/picture-in-picture) · [per-user volume](/docs/esbabbler/calls/per-user-volume) · [virtual backgrounds](/docs/esbabbler/calls/virtual-backgrounds). Voice preferences applied to calls: [voice & video settings](/docs/esbabbler/voice-video).
+Sub-pages: [call view UI](/docs/esbabbler/calls/call-view) · [screenshare](/docs/esbabbler/calls/screenshare) · [picture-in-picture](/docs/esbabbler/calls/picture-in-picture) · [per-user volume](/docs/esbabbler/calls/per-user-volume) · [virtual backgrounds](/docs/esbabbler/calls/virtual-backgrounds) · [blocked call audio](/docs/esbabbler/calls/blocked-audio). Voice preferences applied to calls: [voice & video settings](/docs/esbabbler/voice-video).
 
 ## The session model
 
@@ -135,7 +135,7 @@ Tokens grant `canPublishSources: [Microphone, Camera, ScreenShare, ScreenShareAu
 | `call/participant.ts` | `callSessionParticipantsMap` (keyed by session id), `speakingIds`, join notice                                                                            |
 | `call/media.ts`       | deafen, force-mute, camera, screenshare + pin state, virtual background, `isPoppedOut`, streams, [per-user volume](/docs/esbabbler/calls/per-user-volume) |
 | `call/knocker.ts`     | `knockingCallSessionId`, pre-join options, knocker queue                                                                                                  |
-| `liveKit.ts`          | the LiveKit `Room` media bridge: connect, track events, device switching, mic processor                                                                   |
+| `liveKit.ts`          | the LiveKit `Room` media bridge: connect, track events, device switching, mic processor, [blocked audio](/docs/esbabbler/calls/blocked-audio)             |
 
 DM calls work identically — call procedures accept `RoomType.DirectMessage`; membership via `usersToRooms` gates access. The first joiner posts the `MessageType.Call` "started a call" system message, and call end writes the call-duration variant.
 
