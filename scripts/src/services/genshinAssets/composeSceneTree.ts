@@ -16,22 +16,23 @@ export const composeSceneTree = (
   objects: readonly SceneObject[],
   gameObjectDrawingMap: ReadonlyMap<string, SceneDrawing>,
 ): SceneTreeNode[] => {
-  const idObjectMap = new Map(objects.map((object) => [object.transformId, object]));
+  const keyObjectMap = new Map(objects.map((object) => [toObjectKey(object.file, object.transformId), object]));
   const childrenMap = groupSceneChildren(objects);
-  const idWorldMatrixMap = composeWorldMatrices(objects);
+  const keyWorldMatrixMap = composeWorldMatrices(objects);
   const meshTopsMap = new Map<string, Set<string>>();
-  const toNode = (object: SceneObject, top: SceneObject, visitedIds: ReadonlySet<string>): SceneTreeNode => {
+  const toNode = (object: SceneObject, top: SceneObject, visitedKeys: ReadonlySet<string>): SceneTreeNode => {
+    const key = toObjectKey(object.file, object.transformId);
     const mesh = gameObjectDrawingMap.get(toObjectKey(object.file, object.gameObjectId))?.mesh ?? "";
-    if (mesh) meshTopsMap.set(mesh, (meshTopsMap.get(mesh) ?? new Set()).add(top.transformId));
-    const nextVisitedIds = new Set([...visitedIds, object.transformId]);
-    const children = (childrenMap.get(toObjectKey(object.file, object.transformId)) ?? [])
-      .filter(({ transformId }) => !nextVisitedIds.has(transformId))
-      .map((child) => toNode(child, top, nextVisitedIds));
+    if (mesh) meshTopsMap.set(mesh, (meshTopsMap.get(mesh) ?? new Set()).add(toObjectKey(top.file, top.transformId)));
+    const nextVisitedKeys = new Set([...visitedKeys, key]);
+    const children = (childrenMap.get(key) ?? [])
+      .filter(({ file, transformId }) => !nextVisitedKeys.has(toObjectKey(file, transformId)))
+      .map((child) => toNode(child, top, nextVisitedKeys));
     const flags: SceneTreeFlag[] = [];
     const isRoot = object.parentId === ROOT_PARENT_ID;
     if (object.childIds.length === 0 && !mesh && object.components.length === 0) flags.push(SceneTreeFlag.EmptyAnchor);
     if (children.length < object.childIds.length) flags.push(SceneTreeFlag.LostChildren);
-    if (!isRoot && !idObjectMap.has(object.parentId)) flags.push(SceneTreeFlag.LostFather);
+    if (!isRoot && !keyObjectMap.has(toObjectKey(object.file, object.parentId))) flags.push(SceneTreeFlag.LostFather);
     if (
       isRoot &&
       object.position.every((value) => value === 0) &&
@@ -39,11 +40,11 @@ export const composeSceneTree = (
     )
       flags.push(SceneTreeFlag.RootAtOrigin);
     const worldScale = new Vector3();
-    idWorldMatrixMap.get(object.transformId)?.decompose(new Vector3(), new Quaternion(), worldScale);
+    keyWorldMatrixMap.get(key)?.decompose(new Vector3(), new Quaternion(), worldScale);
     return { children, flags, mesh, object, worldScale: worldScale.toArray() };
   };
   const tops = objects
-    .filter(({ parentId }) => parentId === ROOT_PARENT_ID || !idObjectMap.has(parentId))
+    .filter(({ file, parentId }) => parentId === ROOT_PARENT_ID || !keyObjectMap.has(toObjectKey(file, parentId)))
     .map((top) => toNode(top, top, new Set()));
   const flagSharedMeshes = (node: SceneTreeNode): void => {
     if ((meshTopsMap.get(node.mesh)?.size ?? 0) > 1) node.flags.push(SceneTreeFlag.SharedMesh);
