@@ -83,18 +83,15 @@ The login scene is the first scene run through this method, and its inventory al
 
 ## Scope
 
-Today a scene is fitted into our kits by `genshin:assets fit` and scored over the whole frame by `genshin:parity compare`. This proposal adds:
+The first steps are built: `genshin:assets shaders`, `inventory` and `witness` ([derived assets](/docs/genshin/derived-assets)), the witness render on the parity page, and `genshin:parity compare --witness` and `solve-camera` ([parity](/docs/genshin/parity)). This proposal still adds the scores by layer, the detail and perceptual scores, and the loss table:
 
 ```text
-scripts/src/services/genshinAssets/
-  commands/inventoryCommand.ts   ← genshin:assets inventory <component>: every renderer, material, shader and texture channel, each piece's kind, and which fit reads it
-  readMaterialValues.ts          ← a material's values and colours, as the fits read them
 scripts/src/services/genshinParity/
   scoreDetail.ts                 ← the difference per band of spatial frequency over a mask
   scoreLayers.ts                 ← shape, tone and detail over each layer's mask
   writeAttribution.ts            ← the loss table, committed beside the scores
-packages/genshin-world/parity/
-  witness/                       ← the witness page: the exports through our engine, their identifiers, and the swaps; development only, never bundled
+packages/genshin-world/parity/witness/
+  swapWitnessParts.ts            ← each stand-in of ours swapped in for its exported part, one family at a time
 ```
 
 The toon ramp, the outlines and the kits stay until the loss table says what replaces them.

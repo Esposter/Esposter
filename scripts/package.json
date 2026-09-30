@@ -77,6 +77,7 @@
     "@types/three": "catalog:",
     "@typesafe-ai/sdk": "catalog:",
     "@wasm-audio-decoders/ogg-vorbis": "catalog:",
+    "genshin-engine": "workspace:*",
     "genshin-persona": "workspace:*",
     "imagetracerjs": "catalog:",
     "playwright": "catalog:",

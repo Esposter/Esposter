@@ -1,6 +1,9 @@
 // Where one of a scene's objects stands in the world, in the game's own left-handed axes (y up, z forward): its
 // Position, its rotation as a quaternion, and its scale, composed through every parent above it
 export interface AssetPlacement {
+  // The materials its renderer draws the mesh with, one a submesh, by path ID: they are references into other files,
+  // So the asset index names them
+  materials: string[];
   // The mesh its filter draws, or empty for an object that draws none
   mesh: string;
   name: string;

@@ -2493,6 +2493,9 @@ importers:
       '@wasm-audio-decoders/ogg-vorbis':
         specifier: 'catalog:'
         version: 0.1.20
+      genshin-engine:
+        specifier: workspace:*
+        version: link:../packages/genshin-engine
       genshin-persona:
         specifier: workspace:*
         version: link:../packages/genshin-persona

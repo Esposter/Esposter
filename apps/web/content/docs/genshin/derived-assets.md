@@ -34,13 +34,20 @@ flowchart TD
 flowchart LR
   B[The game's blocks] -->|"map, once a patch"| M["maps: every asset's name, type, block and path ID"]
   M -->|"extract component: AnimeStudio"| E["extracted/component: meshes, textures, materials, the blocks' layout"]
+  M -->|"shaders component: AnimeStudio"| S["extracted/component/shaders: each shader's programs, disassembled"]
+  E --> I["inventory component: inventory.md"]
+  S --> I
+  E -->|"witness component"| W["witness.json: the exports laid out for the witness render"]
   E -->|"fit component: no game files"| D["genshin-world/src/data/component: our kits' parameters"]
   D --> K[The scene builds them with the engine's kits]
 ```
 
 1. **`map`** indexes every block into the asset map, about a gigabyte of JSON, and streams it into `index.tsv`, which a search reads in seconds. AnimeStudio writes the CAB map it needs into its own folder.
-2. **`extract <component>`** finds the blocks holding the component's assets by the name pattern `DerivedAssetComponentMap` gives it, exports them block by block, and dumps each block's Transform, GameObject and MeshFilter as JSON. It is the only step that reads the game.
-3. **`fit <component>`** composes every object's world placement from the layout dumps, keeps the arrangements under the component's roots (`readComponentPlacements`), fits our kits' parameters to the meshes and textures, and writes them as the world package's data, the only output that enters the repository. A change of fit or selection reruns it alone.
+2. **`extract <component>`** finds the blocks holding the component's assets by the name pattern `DerivedAssetComponentMap` gives it, exports them block by block, and dumps each block's Transform, GameObject, MeshFilter and MeshRenderer as JSON.
+3. **`shaders <component>`** exports every shader in the blocks holding the shaders its materials name, raw, since a shader is exported nameless and its block also holds the sky's and the post-processing's. The game keeps each compiled variant as a plain DXBC container, so `readDxbcPrograms` carves them out by their own stated sizes and Windows' own `d3dcompiler_47` disassembles each into its assembly (`disassembleDxbcDirectory`), beside the property names the shader declares, which tell a nameless shader apart. Each variant is also compiled for DirectX 12 as DXIL, which that disassembler cannot read; its DirectX 11 twin says the same. A shader AnimeStudio cannot parse, which includes the login stone's, is left out. This and `extract` are the only steps that read the game.
+4. **`inventory <component>`** writes `inventory.md` beside the exports: each material's shader, texture slots and values, each texture's size and what each channel spans, each mesh's vertices and the materials its renderers draw it with, and each shader's program count and properties. A scene's derivation starts from it ([scene derivation](/docs/proposals/genshin/scene-derivation)).
+5. **`witness <component>`** lays the exports out as the witness render draws them (`writeWitnessLayout`): the component's placements at each part's finest level, in three's axes, with every material each submesh draws with, as a `SceneLayout`.
+6. **`fit <component>`** composes every object's world placement from the layout dumps, keeps the arrangements under the component's roots (`readComponentPlacements`), fits our kits' parameters to the meshes and textures, and writes them as the world package's data, the only output that enters the repository. A change of fit or selection reruns it alone.
 
 A new component is one name pattern in `DerivedAssetComponentMap` and one fit in `DerivedAssetFitMap`; everything else is shared.
 
@@ -62,7 +69,8 @@ The login sky was found this way: `Clouds`, `Atmosphere` and the three cloud emi
 
 - **Axes.** Unity is left-handed, and an OBJ export has its x negated back to Unity's mesh space, so a fit reads meshes and placements in the game's own axes throughout, then converts what it writes to three.js as `(x, y, -z)` (`toRightHanded`), a rotation as `(-x, -y, z, w)` (`toRightHandedRotation`).
 - **Placements.** A path ID is 64-bit, so the layout is parsed with a `JSON.parse` reviver reading each number's source text. A root's parent is `0`. A GameObject is dumped under its name, so of the objects sharing one (each level of detail under its group) only the last survives; the layout is read from the Transforms, each dumped under a number of its own, and a Transform whose GameObject was lost takes its ID from a child whose own is known (`toSceneObjects`). A level-of-detail group whose own GameObject and every level's were lost is given the levels of its part that name one father: two groups of one part hold the same levels, so either pairing places the same parts. An object whose parent sits in a block not read is dropped, never set down at the origin.
-- **One set of meshes, several arrangements.** Blocks lay one set of meshes out several times, each under its own root, so a component names the roots it is (`fitLoginScene`'s `LOGIN_ROOTS`). The login screen is `CharacterSelectSceneNew`'s stage (its towers, bridges, pillars and door at 0.4 scale, the door capture's size) and the walkway, a root of its own; the root `LoginScene_Build_All`, its `CG_opening01` groups and the full-scale door are the opening cinematic's. Only from the walkway's far end, looking down it along −z, do the stage's towers stand where the captures show them.
+- **One set of meshes, several arrangements.** Blocks lay one set of meshes out several times, each under its own root, so a component names the roots it is (`DerivedAssetComponentMap`'s `roots`). The login screen is `CharacterSelectSceneNew`'s stage (its towers, bridges, pillars and door at 0.4 scale, the door capture's size) and the walkway, a root of its own; the root `LoginScene_Build_All`, its `CG_opening01` groups and the full-scale door are the opening cinematic's. Only from the walkway's far end, looking down it along −z, do the stage's towers stand where the captures show them.
+- **Renderers name their materials by path ID.** A MeshRenderer's materials are references into other files, with no name, so the index's path ID column names them. A mesh draws one material a submesh, and an OBJ export writes each submesh as a group named after the mesh with its index appended. A renderer carries no lightmap fields.
 - **What a dump cannot hold.** A MonoBehaviour and a particle system export without their fields, since the blocks carry no type data. The camera's path, the door's appearance, the cloud emitters' spread and every light's strength and colour live in scripts, so they are measured from the captures, and expressed over what the blocks do give: the camera's height as a share of the walkway's width, the lights' strengths over the stone's fitted albedo, the cloud bands over the cloud layer's height.
 - **Packed textures.** A texture's channels are rarely colours: read what each holds before fitting it. The sky gradient's are three falloff curves over the sky's height, not the hour's colours, which are the sky profile's. A cloud atlas holds two columns of four painted clouds, alpha their silhouette and red the light the painter put on them. A diffuse texture is the part's albedo, which the light warms and cools.
 
@@ -109,6 +117,9 @@ A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit fille
 | `scripts/src/services/genshinAssets/DerivedAssetFitMap.ts`       | Each component's fit                                  |
 | `scripts/src/services/genshinAssets/fitLoginScene.ts`            | The login screen's roots and every fit it writes      |
 | `scripts/src/services/genshinAssets/traceCoveredGrid.ts`         | The loops round a grid's covered cells                |
+| `scripts/src/services/genshinAssets/extractComponentShaders.ts`  | Each shader's programs carved out and disassembled    |
+| `scripts/src/services/genshinAssets/writeComponentInventory.ts`  | The inventory report of everything an export holds    |
+| `scripts/src/services/genshinAssets/writeWitnessLayout.ts`       | The exports laid out for the witness render           |
 | `packages/genshin-world/src/data`                                | The fitted parameters the scenes read                 |
 | `packages/genshin-engine/src/kits/architecture`                  | The kits the fitted shapes drive                      |
 | `packages/genshin-engine/src/atmosphere/placeCloudBand.ts`       | A band of painted clouds scattered round a centre     |

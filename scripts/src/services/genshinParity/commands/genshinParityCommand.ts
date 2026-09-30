@@ -9,6 +9,7 @@ import { measureCommand } from "#src/services/genshinParity/commands/measureComm
 import { polarCommand } from "#src/services/genshinParity/commands/polarCommand";
 import { recordCommand } from "#src/services/genshinParity/commands/recordCommand";
 import { shootCommand } from "#src/services/genshinParity/commands/shootCommand";
+import { solveCameraCommand } from "#src/services/genshinParity/commands/solveCameraCommand";
 import { stillCommand } from "#src/services/genshinParity/commands/stillCommand";
 import { traceCommand } from "#src/services/genshinParity/commands/traceCommand";
 import { zoomCommand } from "#src/services/genshinParity/commands/zoomCommand";
@@ -21,6 +22,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     fetch: fetchCommand,
     compare: compareCommand,
     shoot: shootCommand,
+    "solve-camera": solveCameraCommand,
     frames: framesCommand,
     measure: measureCommand,
     luma: lumaCommand,

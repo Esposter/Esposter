@@ -3,8 +3,10 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAss
 import { EXTRACTED_DIRECTORY } from "#src/services/genshinAssets/constants";
 import { join } from "node:path";
 
-// Where one component's exports go: its assets and its blocks' layout dumps
-export const getComponentDirectory = (component: DerivedAssetComponent): Record<"assets" | "layout", string> => {
+// Where one component's exports go: its assets, its blocks' layout dumps, and its shaders' disassembled programs
+export const getComponentDirectory = (
+  component: DerivedAssetComponent,
+): Record<"assets" | "layout" | "root" | "shaders", string> => {
   const root = join(EXTRACTED_DIRECTORY, component);
-  return { assets: join(root, "assets"), layout: join(root, "layout") };
+  return { assets: join(root, "assets"), layout: join(root, "layout"), root, shaders: join(root, "shaders") };
 };

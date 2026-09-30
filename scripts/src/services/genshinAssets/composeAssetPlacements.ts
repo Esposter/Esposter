@@ -9,7 +9,7 @@ import { Matrix4, Quaternion, Vector3 } from "three";
 // Compose, so it is left out rather than set down at the world's origin
 export const composeAssetPlacements = (
   objects: readonly SceneObject[],
-  nameMeshMap: ReadonlyMap<string, string>,
+  nameDrawingMap: ReadonlyMap<string, Pick<AssetPlacement, "materials" | "mesh">>,
 ): AssetPlacement[] => {
   const idObjectMap = new Map(objects.map((object) => [object.transformId, object]));
   const idWorldMatrixMap = new Map<string, Matrix4>();
@@ -39,7 +39,8 @@ export const composeAssetPlacements = (
     getWorldMatrix(object).decompose(position, rotation, scale);
     return [
       {
-        mesh: nameMeshMap.get(object.name) ?? "",
+        materials: nameDrawingMap.get(object.name)?.materials ?? [],
+        mesh: nameDrawingMap.get(object.name)?.mesh ?? "",
         name: object.name,
         position: position.toArray(),
         root: root.name,

@@ -23,10 +23,11 @@ describe(composeAssetPlacements, () => {
         },
         { ...identity, name: "a", parentId: "1", position: [1, 0, 0], transformId: "2" },
       ],
-      new Map([["a", "a"]]),
+      new Map([["a", { materials: ["b"], mesh: "a" }]]),
     );
 
     expect(child?.mesh).toBe("a");
+    expect(child?.materials).toStrictEqual(["b"]);
     expect(child?.position[0]).toBeCloseTo(10);
     expect(child?.position[2]).toBeCloseTo(-2);
     expect(child?.scale[0]).toBeCloseTo(2);
