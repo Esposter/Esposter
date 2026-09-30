@@ -126,10 +126,15 @@ export const reference: ComponentReference = {
       search:
         "solve-camera login-door by vertical and horizontal lines: y -4 to 10 by 2, z 45 to 105 by 15, pitch -3 to 6 by 3, fov 42.76 and 55 (320 poses)",
     },
+    {
+      found:
+        "SceneObj is in 00/11790361.blk at a tenth of LoginScene's scale, and its five children are in the same file: Atmosphere, ModelCamera, and SceneBeginNode, BridgeBeginNode and DoorNode, empty anchors with no children and no renderer, SceneBeginNode turned a quarter about y. No block is missing: the login's towers are a prefab MonoLoginScene spawns into SceneBeginNode at run time, and the walkway and the door into their own nodes",
+      search: "SceneObj's children in the login block's Transform and GameObject dumps, by their path IDs",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
-    "The towers round the walkway: the character select's stage is not the login's arrangement, which hangs under LoginScene's SceneObj in a block not read",
+    "Which prefab MonoLoginScene spawns into SceneBeginNode, BridgeBeginNode and DoorNode, from the pointers in its raw serialized bytes, and so the towers' arrangement round the walkway",
     "The day sky's pose, by the same perspective reading",
   ],
   sources: {
