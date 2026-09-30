@@ -30,6 +30,7 @@ import {
   LOGIN_STONE_COLOR,
 } from "#src/services/login/scene/constants";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
+import { createLoginSilhouettesGeometry } from "#src/services/login/silhouette/createLoginSilhouettesGeometry";
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
 import { createLoginWalkwayGeometry } from "#src/services/login/walkway/createLoginWalkwayGeometry";
 import { useLoop, useTres } from "@tresjs/core";
@@ -141,6 +142,7 @@ doorMaterial.emissiveNode = createRimNode(lightUniforms).add(
   ),
 );
 const towersGeometry = createLoginTowersGeometry();
+const silhouettesGeometry = createLoginSilhouettesGeometry();
 const walkwayGeometry = createLoginWalkwayGeometry();
 const { frame: doorFrameGeometry, panel: doorPanelGeometry } = createLoginDoorGeometry();
 // The cloud sea as billows of the clouds' own two colours, lit tops over shaded hollows, which the fog then pales
@@ -176,6 +178,7 @@ onUnmounted(() => {
   cloudSeaMaterial.dispose();
   walkwayGeometry.dispose();
   towersGeometry.dispose();
+  silhouettesGeometry.dispose();
   doorFrameGeometry.dispose();
   doorPanelGeometry.dispose();
   light.dispose();
@@ -198,6 +201,7 @@ onUnmounted(() => {
   <primitive :object="godraysLight.target" />
   <TresMesh :geometry="walkwayGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
   <TresMesh :geometry="towersGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
+  <TresMesh :geometry="silhouettesGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
   <!-- The door faces the camera coming down the walkway, along -z -->
   <TresGroup :position="LOGIN_DOOR_POSITION" :rotation="[0, Math.PI, 0]">
     <TresMesh :geometry="doorFrameGeometry" cast-shadow receive-shadow :material="stoneMaterial" />

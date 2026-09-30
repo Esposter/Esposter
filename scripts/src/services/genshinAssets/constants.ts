@@ -36,3 +36,6 @@ export const FITTED_DECIMALS = 2;
 // A walkway's outline is traced on a quarter-metre grid and kept within ten centimetres of it
 export const WALKWAY_CELL_SIZE = 0.25;
 export const WALKWAY_OUTLINE_TOLERANCE = 0.1;
+// A bridge's or a pillar's silhouette is traced on a half-metre grid and kept within a quarter metre of it
+export const SILHOUETTE_CELL_SIZE = 0.5;
+export const SILHOUETTE_TOLERANCE = 0.25;

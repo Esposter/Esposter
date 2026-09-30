@@ -52,31 +52,33 @@ A new component is one name pattern in `DerivedAssetComponentMap` and one fit in
 
 ### The fits
 
-| Fit                              | Reads                                         | Writes                                                                                       |
-| :------------------------------- | :-------------------------------------------- | :------------------------------------------------------------------------------------------- |
-| Lathe, `fitLatheProfile`         | A round mesh's vertices                       | Its axis, its foot, and a section per two-metre band of its outer radius, merged within 3%   |
-| Footprint, `fitFootprintOutline` | The triangles of every piece, seen from above | The outline they cover, traced on a quarter-metre grid and simplified within ten centimetres |
-| Bounds, `fitLoginDoor`           | One placed mesh                               | Its foot and its size, which the kit's measured shares divide                                |
+| Fit                              | Reads                                                     | Writes                                                                                                                                                                                             |
+| :------------------------------- | :-------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lathe, `fitLatheProfile`         | A round mesh's vertices                                   | Its axis, its foot, and a section per two-metre band of its outer radius, merged within 3%                                                                                                         |
+| Footprint, `fitFootprintOutline` | The triangles of every piece, seen from above             | The outline they cover, traced on a quarter-metre grid and simplified within ten centimetres                                                                                                       |
+| Silhouette, `fitSilhouette`      | A slab's triangles on its broad face (a bridge, a pillar) | Every loop round what they cover, holes (its arches) clockwise, traced on a half-metre grid and simplified within a quarter metre; `createSilhouetteGeometry` extrudes it through the slab's depth |
+| Bounds, `fitLoginDoor`           | One placed mesh                                           | Its foot and its size, which the kit's measured shares divide                                                                                                                                      |
 
 Every number is kept to the centimetre (`roundFitted`).
 
 ## Inventory
 
-| Component                         | Source                                             | Status                                                          |
-| :-------------------------------- | :------------------------------------------------- | :-------------------------------------------------------------- |
-| `Splash/Publisher`                | Commons' vector logo, the recording's ring         | Compared, approved                                              |
-| `Splash/Title`                    | The English phone video's logo                     | Compared, approved                                              |
-| `Splash/HealthNotice`             | The English client's notice                        | Compared, approved                                              |
-| `Loading/Startup`                 | The wiki's capture, the element marks' vectors     | Compared, approved                                              |
-| `Login/Interface`                 | The English recording's frames                     | Compared over its frames at each stage, approved                |
-| `genshin-ui` pieces               | The English and the 1440 high recordings           | Measured, approved in their own suite                           |
-| `Login/Scene` camera              | The walkway's edges in the four skies              | Derived                                                         |
-| `Login/Scene` towers              | `LoginScene_Build*` meshes and placements          | Fitted as lathes, placed where the game stands them             |
-| `Login/Scene` walkway             | `LoginScene_Bridge01_*` meshes                     | Fitted as a footprint and its two heights                       |
-| `Login/Scene` door                | `LoginScene_Door01_Vo`                             | Placed and sized by its mesh; the outline's shares measured     |
-| `Login/Scene` bridges and pillars | `LoginScene_Bridge02`–`04`, `Pillar03`, `Broken_*` | Exported; to be fitted                                          |
-| `Login/Scene` clouds              | The captures                                       | A noise field; cloud banks and the cloud sea's billows to build |
-| `Login/Scene` sky and haze        | The four skies' pixels                             | Sampled; to be fitted by tone                                   |
+| Component                         | Source                                         | Status                                                              |
+| :-------------------------------- | :--------------------------------------------- | :------------------------------------------------------------------ |
+| `Splash/Publisher`                | Commons' vector logo, the recording's ring     | Compared, approved                                                  |
+| `Splash/Title`                    | The English phone video's logo                 | Compared, approved                                                  |
+| `Splash/HealthNotice`             | The English client's notice                    | Compared, approved                                                  |
+| `Loading/Startup`                 | The wiki's capture, the element marks' vectors | Compared, approved                                                  |
+| `Login/Interface`                 | The English recording's frames                 | Compared over its frames at each stage, approved                    |
+| `genshin-ui` pieces               | The English and the 1440 high recordings       | Measured, approved in their own suite                               |
+| `Login/Scene` camera              | The walkway's edges in the four skies          | Derived                                                             |
+| `Login/Scene` towers              | `LoginScene_Build*` meshes and placements      | Fitted as lathes, placed where the game stands them                 |
+| `Login/Scene` walkway             | `LoginScene_Bridge01_*` meshes                 | Fitted as a footprint and its two heights                           |
+| `Login/Scene` door                | `LoginScene_Door01_Vo`                         | Placed and sized by its mesh; the outline's shares measured         |
+| `Login/Scene` bridges and pillars | `LoginScene_Bridge02`–`04`, `Pillar03` meshes  | Fitted as silhouettes, placed and turned where the game stands them |
+| `Login/Scene` broken pieces       | `LoginScene_Broken_*` meshes                   | Exported; no placement in the blocks read                           |
+| `Login/Scene` clouds              | The captures                                   | A noise field; cloud banks and the cloud sea's billows to build     |
+| `Login/Scene` sky and haze        | The four skies' pixels                         | Sampled; to be fitted by tone                                       |
 
 ## Key files
 
