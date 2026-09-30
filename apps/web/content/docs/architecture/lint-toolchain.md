@@ -99,6 +99,7 @@ What stays in ESLint, and why:
 | `oxlint.config.ts`                                                  | Single source of truth: categories (list `correctness` explicitly), per-rule overrides, `typeAware`         |
 | `packages/configuration/eslint/oxlint.js`                           | Builds the ESLint disable config from `oxlint.config.ts`                                                    |
 | `packages/configuration/eslint/index.typescript.js`, `index.vue.js` | Append the oxlint disables last so they win                                                                 |
+| `packages/configuration/eslint/index.vueScopedStyles.js`            | The Vue config for a package styled by scoped CSS alone, every UnoCSS rule off                              |
 | `packages/configuration/eslint/typescriptRules.js`                  | ESLint-only rules oxlint cannot express — just `no-restricted-syntax` (plus the parked `naming-convention`) |
 
 ## Notes
