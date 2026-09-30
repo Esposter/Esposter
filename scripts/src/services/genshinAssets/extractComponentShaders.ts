@@ -8,6 +8,7 @@ import { readDxbcPrograms } from "#src/services/genshinAssets/readDxbcPrograms";
 import { readIndexedAssets } from "#src/services/genshinAssets/readIndexedAssets";
 import { readShaderPropertyNames } from "#src/services/genshinAssets/readShaderPropertyNames";
 import { runAnimeStudio } from "#src/services/genshinAssets/runAnimeStudio";
+import { existsSync } from "node:fs";
 import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 
@@ -17,7 +18,7 @@ const SUMMARY_PROPERTY_COUNT = 4;
 // Since a shader is exported nameless and its block holds the post-processing and sky shaders beside it. Each is
 // Exported raw, its compiled programs carved out and disassembled into a folder of its own with its property names,
 // And the one line per shader returned says what it is and how many of its programs Windows' disassembler read. A
-// Shader AnimeStudio cannot read is left out of its export
+// Shader AnimeStudio cannot read is left out of its export, and a block none of whose shaders it reads exports no folder
 export const extractComponentShaders = async (component: DerivedAssetComponent): Promise<string[]> => {
   const materials = await readComponentMaterials(component);
   const shaderPathIds = new Set(materials.map(({ shaderPathId }) => shaderPathId));
@@ -31,6 +32,10 @@ export const extractComponentShaders = async (component: DerivedAssetComponent):
     const rawDirectory = join(directory, "raw", blockName);
     runAnimeStudio([join(GAME_BLOCKS_DIRECTORY, block), rawDirectory, "--types", "Shader", "--export_type", "Raw"]);
     const shaderDirectory = join(rawDirectory, "Shader");
+    if (!existsSync(shaderDirectory)) {
+      summary.push(`${blockName}: no shader AnimeStudio could read`);
+      continue;
+    }
     // oxlint-disable-next-line no-await-in-loop -- a block's shaders are read once AnimeStudio has exported them
     for (const file of await readdir(shaderDirectory)) {
       // oxlint-disable-next-line no-await-in-loop -- one shader's export, up to hundreds of megabytes, is read at a time
