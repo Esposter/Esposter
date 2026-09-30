@@ -89,8 +89,9 @@ interface Props {
 const { flight, isDoorLit, timeOfDay } = defineProps<Props>();
 const emit = defineEmits<{ ready: [] }>();
 // The frames drawn before the scene is said to be ready: WebGPU compiles each pipeline on first use, so the first few
-// Frames can come out before every material has
+// Frames can come out before every material has. A scene mounted at the door is ready only once the door has risen
 const READY_FRAME_COUNT = 10;
+const [doorRiseMs = 0] = LOGIN_DOOR_RISE_KEYFRAMES.at(-1) ?? [];
 // The cloud sea's billows, as the noise's scale on the ground plane and where its lit tops start
 const CLOUD_SEA_SCALE = 0.012;
 const CLOUD_SEA_EDGE_START = 0.05;
@@ -181,6 +182,7 @@ const loginClouds = createLoginClouds(skyUniforms);
 const gradeLutTexture = createGradeLutTexture(LOGIN_GRADE_OPTIONS);
 usePostPipeline(QualityTier.High, { fogUniforms, godraysLight, gradeLutTexture, postUniforms });
 let renderedFrameCount = 0;
+let isReadyEmitted = false;
 // How long the door has been lit, which the rush toward it follows, and how long it has been rising into place
 const rushMs = shallowRef(0);
 const riseMs = shallowRef(0);
@@ -214,7 +216,9 @@ onRender(({ delta }) => {
   rushMs.value = isDoorLit ? rushMs.value + delta * 1000 : 0;
   riseMs.value = flight >= 1 ? riseMs.value + delta * 1000 : 0;
   renderedFrameCount++;
-  if (renderedFrameCount === READY_FRAME_COUNT) emit("ready");
+  if (isReadyEmitted || renderedFrameCount < READY_FRAME_COUNT || (flight >= 1 && riseMs.value < doorRiseMs)) return;
+  isReadyEmitted = true;
+  emit("ready");
 });
 
 onUnmounted(() => {

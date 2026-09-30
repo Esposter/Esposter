@@ -35,6 +35,21 @@ export const reference: ComponentReference = {
       search: "Why the footer rose on a narrow window",
     },
     {
+      found:
+        "Bottom also holds LoadingDesc, the 58 unit loading row at its top; the prompt is BtnPressStart, a MonoUIContainer whose prefab loads at run time, so its band is measured: 38 units over the foot",
+      search: "Where the loading row and the click-to-begin prompt sit in the tree",
+    },
+    {
+      found:
+        "The build string's rect stretches across the account row with its pivot at the middle; placing it from the pivot's point on its whole length slid it half the row left, off the screen, and the backdrop compare drew the recording's own string over the gap",
+      search: "Why the build string disappeared",
+    },
+    {
+      found:
+        "The bar is full by 8 s, folds over 9 to 9.5 s with its words, and the flight runs on bare until the door rises at 11.75 s; the bar opened at 2.5 s and filled as the recording's own load went, so its pace is loading's, not a floor",
+      search: "The recording's loading end at 4 frames a second (8 s to 13 s)",
+    },
+    {
       found: "m_Alpha, m_IsActive, m_Color.a, m_AnchoredPosition.x, m_SizeDelta.x and m_SizeDelta.y, by CRC32",
       search: "The properties the page's clips animate",
     },
@@ -43,6 +58,8 @@ export const reference: ComponentReference = {
     "The canvas's match between width and height on a window narrower than 16:9: the scaler is a script",
     "The layout groups' spacing, measured on the recordings",
     "Each button's hover and pressed states, from the recordings and the page's sprites",
+    "The fitted clips played (LoginInterfaceClipMap through playInterfaceClip): WhiteCurtain and FadeIn on arriving, StartFadeIn and StartFadeOut on the title, FadeOut on entering, each piece named by a data-clip-target of its game path",
+    "Every screen laid out from its fitted RectTransform tree (the interface layout proposal) in place of LoginInterfaceRectMap",
   ],
   sources: {
     bottom: {

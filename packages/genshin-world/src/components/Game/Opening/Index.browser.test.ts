@@ -1,6 +1,11 @@
 import GameOpening from "#src/components/Game/Opening/Index.vue";
 import { MARKS_FADE_MS, WHITE_HOLD_MS } from "#src/services/loading/constants";
-import { LOGIN_FLIGHT_MS, LOGIN_STATUS_STEPS, LOGIN_TITLE_START_MS } from "#src/services/login/constants";
+import {
+  LOGIN_DOOR_AFTER_LOAD_MS,
+  LOGIN_PROGRESS_FILL_MS,
+  LOGIN_STATUS_STEPS,
+  LOGIN_TITLE_START_MS,
+} from "#src/services/login/constants";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
@@ -65,7 +70,9 @@ describe("gameOpening", () => {
       loginScreen?.click();
       await nextTick();
       const lastStep = LOGIN_STATUS_STEPS.at(-1);
-      await vi.advanceTimersByTimeAsync((lastStep?.ms ?? 0) + LOGIN_FLIGHT_MS + flightFrameMs);
+      await vi.advanceTimersByTimeAsync(
+        (lastStep?.ms ?? 0) + LOGIN_PROGRESS_FILL_MS + LOGIN_DOOR_AFTER_LOAD_MS + flightFrameMs,
+      );
 
       expect(container.querySelector(".login-interface .prompt")).not.toBeNull();
 
