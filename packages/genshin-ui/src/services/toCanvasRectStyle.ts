@@ -1,7 +1,8 @@
 import type { CanvasRect } from "#src/models/CanvasRect";
 
 // One axis of a RectTransform as CSS along it: the offset of its start from its parent's start (the left, or the
-// Foot, since Unity's y runs up) and its length, each a share of the parent's span and a length in canvas units
+// Foot, since Unity's y runs up) and its length, each a share of the parent's span and a length in canvas units. The
+// Position is the pivot's from the point between the anchors that the pivot marks, as Unity measures it
 const toAxis = (
   anchorMin: number,
   anchorMax: number,
@@ -12,7 +13,8 @@ const toAxis = (
   start: string,
 ): [string, string] => {
   const length = `calc(${anchorMax - anchorMin} * ${span} + ${size} * var(--canvas-unit))`;
-  const offset = `calc(${start} + ${anchorMin} * ${span} + ${position} * var(--canvas-unit) - ${pivot} * ${length})`;
+  const anchor = anchorMin + pivot * (anchorMax - anchorMin);
+  const offset = `calc(${start} + ${anchor} * ${span} + ${position} * var(--canvas-unit) - ${pivot} * ${length})`;
   return [offset, length];
 };
 // A RectTransform as the CSS that places it absolutely in its parent's box, as the game lays it out. A piece laid on
