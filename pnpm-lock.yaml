@@ -1297,6 +1297,9 @@ importers:
       js-beautify:
         specifier: 'catalog:'
         version: 2.0.3
+      keyframe-store:
+        specifier: workspace:*
+        version: link:../../packages/keyframe-store
       livekit-client:
         specifier: 'catalog:'
         version: 2.22.3(@types/dom-mediacapture-record@1.0.22)
@@ -1505,6 +1508,9 @@ importers:
       azure-mock:
         specifier: workspace:*
         version: link:../../packages/azure-mock
+      citty:
+        specifier: 'catalog:'
+        version: 0.2.2
       crossws:
         specifier: ^0.4.12
         version: 0.4.12(srvx@0.11.22)
@@ -1523,9 +1529,6 @@ importers:
       happy-dom:
         specifier: 'catalog:'
         version: 20.14.5
-      keyframe-store:
-        specifier: workspace:*
-        version: link:../../packages/keyframe-store
       msw:
         specifier: 'catalog:'
         version: 3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
@@ -1599,6 +1602,9 @@ importers:
       '@types/ws':
         specifier: 'catalog:'
         version: 8.18.1
+      citty:
+        specifier: 'catalog:'
+        version: 0.2.2
       publint:
         specifier: 'catalog:'
         version: 0.3.24
@@ -1950,6 +1956,9 @@ importers:
       '@wasm-audio-decoders/ogg-vorbis':
         specifier: ^0.1.20
         version: 0.1.20
+      citty:
+        specifier: ^0.2.2
+        version: 0.2.2
       genshin-db:
         specifier: ^5.2.14
         version: 5.2.14
@@ -2397,6 +2406,10 @@ importers:
         version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
   scripts:
+    dependencies:
+      citty:
+        specifier: 'catalog:'
+        version: 0.2.2
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*

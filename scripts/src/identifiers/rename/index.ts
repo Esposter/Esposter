@@ -4,27 +4,35 @@ import { renameSource } from "#src/services/identifiers/rename/renameSource";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { defineCommand, runMain } from "citty";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-// Renames every name a rename map holds across the repository's sources, printing each file it rewrote. The map is
-// Data written before the run (`RenameMap`), read relative to where the command runs so it can live in a scratchpad;
-// The typecheck that follows finds what no map can see
-const renameMapPath = process.argv[2];
-if (!renameMapPath)
-  throw new InvalidOperationError(Operation.Read, "ai:identifiers:rename", "pass the path of a rename map");
+await runMain(
+  defineCommand({
+    args: {
+      // Read relative to where the command runs, so the map can live in a scratchpad
+      renameMap: { description: "The path of a rename map (RenameMap)", required: true, type: "positional" },
+    },
+    meta: {
+      // The typecheck that follows finds what no map can see
+      description: "Rename every name a rename map holds across the repository's sources, printing each file rewritten",
+      name: "ai:identifiers:rename",
+    },
+    run: ({ args }) => {
+      const renameMap = parseMachineJson<RenameMap>(
+        readFileSync(resolve(process.env.INIT_CWD ?? process.cwd(), args.renameMap), "utf8"),
+      );
+      for (const path of readSweepFilePaths("*.ts", "*.mts", "*.vue")) {
+        const absolutePath = resolve(REPOSITORY_ROOT, path);
+        const text = readFileSync(absolutePath, "utf8");
+        const isSource = renameMap.sources.some((source) => path.startsWith(`${source}/`));
+        const renamedText = renameSource(path, text, renameMap, isSource);
+        if (renamedText === text) continue;
 
-const renameMap = parseMachineJson<RenameMap>(
-  readFileSync(resolve(process.env.INIT_CWD ?? process.cwd(), renameMapPath), "utf8"),
+        writeFileSync(absolutePath, renamedText);
+        console.info(path);
+      }
+    },
+  }),
 );
-for (const path of readSweepFilePaths("*.ts", "*.mts", "*.vue")) {
-  const absolutePath = resolve(REPOSITORY_ROOT, path);
-  const text = readFileSync(absolutePath, "utf8");
-  const isSource = renameMap.sources.some((source) => path.startsWith(`${source}/`));
-  const renamedText = renameSource(path, text, renameMap, isSource);
-  if (renamedText === text) continue;
-
-  writeFileSync(absolutePath, renamedText);
-  console.info(path);
-}

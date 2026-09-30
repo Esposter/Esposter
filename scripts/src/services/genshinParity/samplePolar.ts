@@ -1,3 +1,4 @@
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import sharp from "sharp";
 
 // Alpha under which a pixel is paper rather than the mark's ink, so a cell's colour is its ink's alone
@@ -10,6 +11,9 @@ const toHex = (channels: number[]): string =>
 // So drawing the bands blended into each other carries no paper into the strokes. One band a line: its middle radius
 // As a share of the image's half width, then its colours
 export const samplePolar = async (path: string, bands: number, angles: number): Promise<void> => {
+  // A count that is not a whole number past zero sizes no cell, and the rows would print with no colours at all
+  if (![bands, angles].every((count) => Number.isSafeInteger(count) && count > 0))
+    throw new InvalidOperationError(Operation.Read, samplePolar.name, "bands and angles must be positive integers");
   const { data, info } = await sharp(path).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   const { channels, height, width } = info;
   const centreX = width / 2;

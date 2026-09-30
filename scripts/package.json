@@ -61,6 +61,9 @@
     "typecheck": "tsc",
     "update:node": "node src/updateNode/index.ts"
   },
+  "dependencies": {
+    "citty": "catalog:"
+  },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@esposter/shared": "workspace:*",

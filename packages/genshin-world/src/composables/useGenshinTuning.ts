@@ -51,7 +51,7 @@ export const useGenshinTuning = ({
     if (!isActive || !isWebGPURenderer(renderer)) return;
     const inspector = new Inspector();
     renderer.inspector = inspector;
-    const parameters = inspector.createParameters("Look");
+    const parameters = inspector.createParameters("Look").close();
 
     const skyFolder = parameters.addFolder("Sky");
     skyFolder.add(gameClock, "minutes", 0, MINUTES_PER_DAY, 1).name("minutes into the day").listen();

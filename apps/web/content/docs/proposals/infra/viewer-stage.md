@@ -79,7 +79,7 @@ packages/genshin-persona/
 | :----------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
 | `packages/genshin-persona/scripts/voice.ts`                  | The resident synthesizer: the per-line loop the viewer sink joins, and the supersede signal |
 | `packages/genshin-persona/src/services/createAudioPlayer.ts` | The stock player, which stays the fallback; the interface the viewer sink implements        |
-| `packages/genshin-persona/scripts/genshin.ts`                | The verbs; `viewer` is added here and `teardown` extended                                   |
+| `packages/genshin-persona/src/services/cli/commands/`        | The verbs; `viewer` is added here and `teardown` extended                                   |
 | `packages/genshin-persona/hooks/hooks.json`                  | The plugin's hooks; the notification and stop hooks are registered here                     |
 | `packages/genshin-persona/src/services/constants.ts`         | The state directory's paths; the viewer's file is one more                                  |
 

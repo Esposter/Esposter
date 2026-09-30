@@ -43,7 +43,7 @@ flowchart TD
 | `apps/web/app/components/AgentConsole/Panel/AddConnection.vue` | Connect this computer, and a machine's address and code                   |
 | `apps/web/app/components/AgentConsole/Panel/NewSession.vue`    | The host a new session starts on, asked when more than one is reached     |
 | `apps/web/app/services/agentConsole/toHostAddress.ts`          | A typed address as the socket it is reached at                            |
-| `packages/agent-console-server/src/cli.ts`                     | The code printed on its own, for a page on another computer               |
+| `packages/agent-console-server/src/services/cli/serveHost.ts`  | The code printed on its own, for a page on another computer               |
 
 ## Sources
 

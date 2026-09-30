@@ -8,4 +8,5 @@ const VITEST_SUBCOMMAND_INDEX = 2;
 // Every `*.bench.md` it passes plus an hour-long timeout. `undefined` leaves Vitest's own default list in place.
 // Referenced as a path string rather than an import: configuration builds before shared-node.
 export const getBenchmarkReporters = (): string[] | undefined =>
+  // oxlint-disable-next-line no-restricted-properties -- Vitest parses its own command line; this reads its subcommand
   process.argv[VITEST_SUBCOMMAND_INDEX] === "bench" ? ["default", "@esposter/shared-node/reporter"] : undefined;

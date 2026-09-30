@@ -44,7 +44,7 @@ Everything typed or read is DOM, because text drawn into a canvas cannot be sele
 
 Its tabs are the conversation, the sessions, the timeline, the changes and the usage. Each surface in and around the console:
 
-- **Opening.** The game's opening plays over the page as it loads: the publisher's logo, the game's title and the health notice, each fading in, holding and fading out on white to the game's measured timings, with the white between them held as the game holds it. The page loads behind it, and the loading screen follows once it ends.
+- **Opening.** The game's opening plays over the page as it loads: the publisher's logo, the game's title and the health notice, each fading in, holding and fading out on white to the game's measured timings, with the white between them held as the game holds it. The page loads behind it, and the loading screen follows once it ends. The whole sequence is one component of the world package, which hands one screen to the next on the screens' own timings, so the page mounts it once, gives it how far loading has gone and hears when it is done.
 - **Loading.** The game's own startup screen covers the page, matched to it on the [parity](/docs/genshin/parity) loop: the seven element marks in a row on white, pale until loading reaches them, then darkened by a wipe from the left. It shows no words, as the game's shows none, so the step under way is announced to a screen reader alone. The steps are starting the page, loading the world's code, drawing its first frame, and reaching the paired host, which a page with no host counts as done. The wipe moves a step at a time, since a lazily loaded chunk reports no progress of its own. It goes once all four are done, a world that cannot start counting as done so the console is never held behind it. It does not come back, so pairing again later shows its own connecting line instead. Behind it, the bar renders on the client alone, since what it shows comes from local storage and the socket, and it is inert until the loading screen goes. The console and the pause menu are not mounted until then, so no key opens either early.
 - **Pairing.** Until a host is paired, the console holds only a pairing panel in place of its tabs, asking for the host's URL. It says when it is still looking for a host on this machine's loopback port, when it has found one, and when none answered, with a button to look again. Once a URL is paired, a line says the page is connecting, and it turns into a warning if the host does not answer. Retries leave that warning in place instead of flicking back to connecting on every attempt.
 - **Conversation.** The first tab, holding the conversation, the permission requests and the composer.
@@ -74,19 +74,20 @@ The page is open all day beside an editor, so the overlay adds nothing per frame
 
 ## Key files
 
-| File                                                                        | Role                                                                                |
-| :-------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
-| `apps/web/app/layouts/immersive.vue`                                        | The full-screen layout; `App.vue` drops the dock and loading bar for it             |
-| `apps/web/app/components/AgentConsole/Index.vue`                            | The world at full size with the overlays, its Genshin theme scope, its type         |
-| `apps/web/app/components/AgentConsole/Sheet.vue`                            | The console: a sheet of tabs docked above the bar, which a permission request opens |
-| `apps/web/app/components/AgentConsole/PauseMenu.vue`                        | Back to the world, the sessions, unpair, and leave to the app                       |
-| `apps/web/app/components/AgentConsole/Panel/Hud.vue`                        | The bar under the world: the session, the host, the console, pause and home         |
-| `apps/web/app/components/AgentConsole/ChatLines.vue`                        | The latest replies' opening words over the world, fading                            |
-| `apps/web/app/components/AgentConsole/Panel/Loading.vue`                    | The loading screen: the game's startup screen, and the step under way announced     |
-| `packages/genshin-world/src/components/interface/splash/SplashSequence.vue` | The opening: the logos and the health notice, one after another on white            |
-| `apps/web/app/composables/agentConsole/useAgentConsoleCommands.ts`          | The page's keys, bound only while nothing is open over the world                    |
-| `apps/web/app/store/agentConsole/panel.ts`                                  | Whether the console and the pause menu are open, and the console's tab              |
-| `apps/web/app/services/agentConsole/foldAgentEvents.ts`                     | The incremental fold every panel reads                                              |
+| File                                                                        | Role                                                                                           |
+| :-------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
+| `apps/web/app/layouts/immersive.vue`                                        | The full-screen layout; `App.vue` drops the dock and loading bar for it                        |
+| `apps/web/app/components/AgentConsole/Index.vue`                            | The world at full size with the overlays, its Genshin theme scope, its type                    |
+| `apps/web/app/components/AgentConsole/Sheet.vue`                            | The console: a sheet of tabs docked above the bar, which a permission request opens            |
+| `apps/web/app/components/AgentConsole/PauseMenu.vue`                        | Back to the world, the sessions, unpair, and leave to the app                                  |
+| `apps/web/app/components/AgentConsole/Panel/Hud.vue`                        | The bar under the world: the session, the host, the console, pause and home                    |
+| `apps/web/app/components/AgentConsole/ChatLines.vue`                        | The latest replies' opening words over the world, fading                                       |
+| `apps/web/app/components/AgentConsole/Panel/Opening.vue`                    | The opening wired to the page: its loading steps as progress, and the step under way announced |
+| `packages/genshin-world/src/components/interface/opening/GameOpening.vue`   | The game's opening as one sequence: the splashes, then the startup screen                      |
+| `packages/genshin-world/src/components/interface/splash/SplashSequence.vue` | The opening: the logos and the health notice, one after another on white                       |
+| `apps/web/app/composables/agentConsole/useAgentConsoleCommands.ts`          | The page's keys, bound only while nothing is open over the world                               |
+| `apps/web/app/store/agentConsole/panel.ts`                                  | Whether the console and the pause menu are open, and the console's tab                         |
+| `apps/web/app/services/agentConsole/foldAgentEvents.ts`                     | The incremental fold every panel reads                                                         |
 
 ## Notes
 

@@ -1,4 +1,4 @@
-import type { CommandDef } from "citty";
+import type { SubCommandsDef } from "citty";
 
 import { CommandType } from "#src/models/virrun/CommandType";
 import { cacheCleanCommand } from "#src/services/cli/commands/cacheCleanCommand";
@@ -6,7 +6,7 @@ import { cacheLsCommand } from "#src/services/cli/commands/cacheLsCommand";
 import { defineCommand } from "citty";
 
 // No own run, so an argless `virrun cache` prints citty's generated usage.
-export const cacheCommand: CommandDef = defineCommand({
+export const cacheCommand: SubCommandsDef[string] = defineCommand({
   meta: { description: "Inspect or clear virrun's dependency store and warm snapshots.", name: CommandType.Cache },
   subCommands: { [CommandType.Clean]: cacheCleanCommand, [CommandType.Ls]: cacheLsCommand },
 });

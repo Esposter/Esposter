@@ -1,54 +1,33 @@
-import type { InitArgs } from "#src/models/cli/InitArgs";
-import type { ArgsDef, CommandDef } from "citty";
+import type { SubCommandsDef } from "citty";
 
-import { Color } from "#src/models/cli/Color";
-import { BackendType, BackendTypes } from "#src/models/virrun/BackendType";
+import { BackendType } from "#src/models/virrun/BackendType";
 import { CommandType } from "#src/models/virrun/CommandType";
-import { Environments } from "#src/models/virrun/Environment";
-import { colorize } from "#src/services/cli/color/colorize";
-import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
-import { buildVirrunConfigurationContent } from "#src/services/configuration/buildVirrunConfigurationContent";
-import { VIRRUN_CONFIGURATION_FILENAME } from "#src/services/exec/util/constants";
+import { Environment } from "#src/models/virrun/Environment";
+import { writeInitConfiguration } from "#src/services/cli/init/writeInitConfiguration";
 import { defineCommand } from "citty";
-import { existsSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
 
-// InitArgs keeps `options` a mutable `BackendType[]` (citty's EnumArgDef rejects a readonly array, so the values
-// Arrays are spread) and pins `type: "enum"` so citty infers `args.backend` as BackendType, not a widened string.
-const initArgs: InitArgs = {
-  backend: {
-    default: BackendType.Os,
-    description: "Backend a sandboxed command runs through.",
-    options: [...BackendTypes],
-    type: "enum",
+export const initCommand: SubCommandsDef[string] = defineCommand({
+  args: {
+    backend: {
+      default: BackendType.Os,
+      description: "Backend a sandboxed command runs through.",
+      options: Object.values(BackendType),
+      type: "enum",
+    },
+    // No `default`: an omitted `--environment` stays undefined (no preset), the same "absence is none" the config uses.
+    environment: {
+      description: "Framework whose generated artifacts the sandbox regenerates (e.g. nuxt → .nuxt); omit for none.",
+      options: Object.values(Environment),
+      required: false,
+      type: "enum",
+    },
+    force: { default: false, description: "Overwrite an existing virrun.config.json.", type: "boolean" },
   },
-  environment: {
-    description: "Framework whose generated artifacts the sandbox regenerates (e.g. nuxt → .nuxt); omit for none.",
-    options: [...Environments],
-    required: false,
-    type: "enum",
-  },
-  force: { default: false, description: "Overwrite an existing virrun.config.json.", type: "boolean" },
-} satisfies ArgsDef;
-// Refuses to clobber an existing config unless `--force`, so a re-run never silently rewrites a committed choice.
-export const initCommand: CommandDef<InitArgs> = defineCommand({
-  args: initArgs,
   meta: {
     description: "Write a virrun.config.json selecting which backend sandboxed commands use.",
     name: CommandType.Init,
   },
   run: ({ args }) => {
-    const path = join(process.cwd(), VIRRUN_CONFIGURATION_FILENAME);
-    if (existsSync(path) && !args.force) {
-      process.stderr.write(
-        `${formatVirrunLine(`${colorize(VIRRUN_CONFIGURATION_FILENAME, Color.Blue)} already exists (use ${colorize("--force", Color.Yellow)} to overwrite)`)}\n`,
-      );
-      process.exitCode = 1;
-      return;
-    }
-    writeFileSync(path, buildVirrunConfigurationContent(args.backend, args.environment));
-    process.stderr.write(
-      `${formatVirrunLine(`wrote ${colorize(path, Color.Blue)} (backend=${colorize(args.backend, Color.Blue)}, environment=${colorize(args.environment ?? "none", Color.Blue)})`)}\n`,
-    );
+    writeInitConfiguration(args.backend, args.environment, args.force);
   },
 });

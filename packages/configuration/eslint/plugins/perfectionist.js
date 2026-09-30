@@ -20,6 +20,17 @@ export default defineConfig({
         partitionByComment: true,
       },
     ],
+    // A citty command reads its positional arguments in the order they are declared, so the objects inside a
+    // `defineCommand` call, and an arguments object shared between commands (named `…Args`), keep the order written
+    "perfectionist/sort-objects": [
+      "error",
+      {
+        type: "unsorted",
+        useConfigurationIf: { callingFunctionNamePattern: { pattern: "^defineCommand$", scope: "deep" } },
+      },
+      { type: "unsorted", useConfigurationIf: { declarationMatchesPattern: "Args$" } },
+      configuration.rules["perfectionist/sort-objects"][1],
+    ],
     "perfectionist/sort-vue-attributes": "off",
   },
 });

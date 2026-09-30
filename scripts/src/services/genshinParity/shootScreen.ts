@@ -14,6 +14,7 @@ export const shootScreen = async (
   height: number,
   timesMs: number[],
   motion: ParityMotion = ParityMotion.Props,
+  props?: Record<string, unknown>,
 ): Promise<string[]> => {
   await mkdir(SHOTS_DIRECTORY, { recursive: true });
   const browser = await chromium.launch({ channel: "msedge" });
@@ -26,7 +27,8 @@ export const shootScreen = async (
       });
       // A still is the fixture's first state; shooting at times asks the page to hold the motion it names
       const motionQuery = timesMs.length > 0 ? `&motion=${motion}` : "";
-      await page.goto(`${PARITY_PAGE_URL}${screen}${motionQuery}`, { waitUntil: "networkidle" });
+      const propsQuery = props ? `&props=${encodeURIComponent(JSON.stringify(props))}` : "";
+      await page.goto(`${PARITY_PAGE_URL}${screen}${motionQuery}${propsQuery}`, { waitUntil: "networkidle" });
       const readyScreen = await page.locator("[data-parity-ready]").getAttribute("data-parity-ready");
       // An unknown name draws the list of screens, which would otherwise be shot and scored as the screen
       if (readyScreen !== screen)

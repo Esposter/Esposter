@@ -46,7 +46,8 @@ flowchart TD
 | `packages/agent-console-server/tsdown.sea.config.ts`                                       | The host bundled into one file with every dependency                         |
 | `packages/agent-console-server/scripts/copyClaudeCodeExecutable.ts`                        | The SDK's Windows Claude Code binary, placed for the executable to embed     |
 | `packages/agent-console-server/scripts/writeSeaConfig.ts`                                  | The executable Node's `--build-sea` makes, with every placed file an asset   |
-| `packages/agent-console-server/src/cli.ts`                                                 | Installs a download, takes a scheme link and `uninstall`, and serves         |
+| `packages/agent-console-server/src/services/cli/installDownloadedHost.ts`                  | Installs a download before it serves                                         |
+| `packages/agent-console-server/src/services/cli/commands/agentConsoleServerCommand.ts`     | Takes a scheme link, and the commands `uninstall` among them                 |
 | `packages/agent-console-server/src/services/installer/installHost.ts`                      | The copy, the Claude Code binary written out, and the scheme in the registry |
 | `packages/agent-console-server/src/services/installer/checkIsSchemeLaunchTampered.ts`      | A link launch carrying more than the link, refused                           |
 | `packages/agent-console-server/src/services/installer/getSchemeLaunch.ts`                  | What an `esposter-host://` link asked for                                    |

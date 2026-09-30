@@ -12,6 +12,7 @@ const SESSION_COMMAND_ENVIRONMENT_VARIABLE_PREFIX = `${SITE_NAME.toUpperCase()}_
 // Paths reach cmd the same way and are read back quoted, so no command line is built from a path
 export const launchSessionWindow = ({ port, secret }: SessionWindowLaunch): void => {
   // The executable itself, or node running this package's bin while developing
+  // oxlint-disable-next-line no-restricted-properties -- node puts the running script first in argv, which is the host
   const hostCommand = isSea() ? [process.execPath] : [process.execPath, process.argv[1] ?? ""];
   const quotedHostCommand = hostCommand
     .map((_, index) => `"%${SESSION_COMMAND_ENVIRONMENT_VARIABLE_PREFIX}${index}%"`)

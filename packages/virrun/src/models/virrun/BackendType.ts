@@ -15,5 +15,3 @@ export enum BackendType {
   // Trades isolation for speed, so Auto does not select it yet.
   Vfs = "vfs",
 }
-
-export const BackendTypes: readonly BackendType[] = Object.values(BackendType);
