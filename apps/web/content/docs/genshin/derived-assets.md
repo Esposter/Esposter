@@ -47,7 +47,7 @@ A new component is one name pattern in `DerivedAssetComponentMap` and one fit in
 ### What the exports hold
 
 - **Axes.** Unity is left-handed, and an OBJ export has its x negated back to Unity's mesh space, so a fit reads meshes and placements in the game's own axes throughout, then converts what it writes to three.js as `(x, y, -z)` (`toRightHanded`).
-- **Placements.** A path ID is 64-bit, so the layout is parsed with a `JSON.parse` reviver reading each number's source text. A root's parent is `0`. An object whose parent sits in a block not read is dropped, never set down at the origin: those are a prefab's levels of detail, placed by an instance elsewhere.
+- **Placements.** A path ID is 64-bit, so the layout is parsed with a `JSON.parse` reviver reading each number's source text. A root's parent is `0`. A GameObject is dumped under its name, so of the objects sharing one (each level of detail under its group) only the last survives; the layout is read from the Transforms, each dumped under a number of its own, and a Transform whose GameObject was lost takes its ID from a child whose own is known (`toSceneObjects`). An object whose parent sits in a block not read is dropped, never set down at the origin: those are a prefab's levels of detail, placed by an instance elsewhere.
 - **What a dump cannot hold.** A MonoBehaviour exports without its fields, since the blocks carry no type data. The login camera's path and the scene's weather live in scripts, so they are measured from the captures instead: the camera from where the walkway's edges meet the frame in the four skies, scaled by the walkway's fitted width.
 
 ### The fits
