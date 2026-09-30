@@ -113,9 +113,9 @@ A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit fille
 | File                                                             | Role                                                  |
 | :--------------------------------------------------------------- | :---------------------------------------------------- |
 | `scripts/src/services/genshinAssets/constants.ts`                | Where the exports are kept, and every fit's tolerance |
-| `scripts/src/services/genshinAssets/DerivedAssetComponentMap.ts` | Each component's assets by name                       |
+| `scripts/src/services/genshinAssets/DerivedAssetComponentMap.ts` | Each component's assets by name, and the roots it is  |
 | `scripts/src/services/genshinAssets/DerivedAssetFitMap.ts`       | Each component's fit                                  |
-| `scripts/src/services/genshinAssets/fitLoginScene.ts`            | The login screen's roots and every fit it writes      |
+| `scripts/src/services/genshinAssets/fitLoginScene.ts`            | Every fit the login screen writes                     |
 | `scripts/src/services/genshinAssets/traceCoveredGrid.ts`         | The loops round a grid's covered cells                |
 | `scripts/src/services/genshinAssets/extractComponentShaders.ts`  | Each shader's programs carved out and disassembled    |
 | `scripts/src/services/genshinAssets/writeComponentInventory.ts`  | The inventory report of everything an export holds    |

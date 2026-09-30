@@ -98,17 +98,16 @@ The toon ramp, the outlines and the kits stay until the loss table says what rep
 
 ## Key files
 
-| File                                                                  | Role after the change                                                         |
-| :-------------------------------------------------------------------- | :---------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/DerivedAssetComponentMap.ts`      | Each component's name patterns, grown to its shader, lightmaps, probes, grade |
-| `scripts/src/services/genshinAssets/fitLoginScene.ts`                 | The login screen's fits, each printing the error it leaves on screen          |
-| `scripts/src/services/genshinAssets/fitAlbedo.ts`                     | Replaced by a fitted stone material once the loss table ranks it              |
-| `scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts` | Gains the inventory command                                                   |
-| `scripts/src/services/genshinParity/compareScreen.ts`                 | Scores each layer, and the detail and perceptual scores                       |
-| `scripts/src/services/genshinParity/writeParityScores.ts`             | Writes each layer's row beside the frame's                                    |
-| `packages/genshin-world/parity/screens.ts`                            | The page the witness render is mounted beside                                 |
-| `packages/genshin-world/src/components/Login/Scene/Index.vue`         | The first scene run through the method                                        |
-| `packages/genshin-engine/src/nodes/createToonMaterial.ts`             | The environment material the witness render judges                            |
+| File                                                             | Role after the change                                                         |
+| :--------------------------------------------------------------- | :---------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/DerivedAssetComponentMap.ts` | Each component's name patterns, grown to its shader, lightmaps, probes, grade |
+| `scripts/src/services/genshinAssets/fitLoginScene.ts`            | The login screen's fits, each printing the error it leaves on screen          |
+| `scripts/src/services/genshinAssets/fitAlbedo.ts`                | Replaced by a fitted stone material once the loss table ranks it              |
+| `scripts/src/services/genshinParity/compareScreen.ts`            | Scores each layer, and the detail and perceptual scores                       |
+| `scripts/src/services/genshinParity/writeParityScores.ts`        | Writes each layer's row beside the frame's                                    |
+| `packages/genshin-world/parity/screens.ts`                       | The page the witness render is mounted beside                                 |
+| `packages/genshin-world/src/components/Login/Scene/Index.vue`    | The first scene run through the method                                        |
+| `packages/genshin-engine/src/nodes/createToonMaterial.ts`        | The environment material the witness render judges                            |
 
 ## Notes
 
