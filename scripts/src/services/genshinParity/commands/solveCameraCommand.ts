@@ -32,7 +32,11 @@ export const solveCameraCommand: SubCommandsDef[string] = defineCommand({
       description: `Axes to search on a grid, each axis:from:to:step, comma separated; axes ${CAMERA_POSE_AXES.join(", ")}`,
       type: "string",
     },
-    reference: { description: "A reference's id in ParityReferenceMap", required: true, type: "positional" },
+    references: {
+      description: "The ids in ParityReferenceMap of the references to match, comma separated, which share one pose",
+      required: true,
+      type: "positional",
+    },
     start: {
       description: `The pose to start from, as ${CAMERA_POSE_AXES.join(",")} (metres, then degrees)`,
       required: true,
@@ -41,20 +45,20 @@ export const solveCameraCommand: SubCommandsDef[string] = defineCommand({
     witness: { description: "The component whose exports the scene draws", required: true, type: "string" },
   },
   meta: {
-    description: "Find the camera pose from which a witness render's edges sit nearest a reference's",
+    description: "Find the camera pose from which a witness render's towers' sides sit nearest the references'",
     name: "solve-camera",
   },
   run: async ({ args }) => {
     const ranges = Object.fromEntries((args.ranges ? args.ranges.split(",") : []).map((range) => parseRange(range)));
     const { distance, pose } = await solveWitnessCamera(
-      args.reference,
+      args.references.split(","),
       parseDerivedAssetComponent(args.witness),
       args.start.split(",").map(Number),
       ranges,
       Number(args.iterations),
     );
     console.log(
-      `edge distance ${distance.toFixed(2)} px at ${CAMERA_POSE_AXES.map((axis, index) => `${axis} ${pose[index]?.toFixed(2)}`).join(", ")}`,
+      `line distance ${distance.toFixed(2)} px at ${CAMERA_POSE_AXES.map((axis, index) => `${axis} ${pose[index]?.toFixed(2)}`).join(", ")}`,
     );
   },
 });

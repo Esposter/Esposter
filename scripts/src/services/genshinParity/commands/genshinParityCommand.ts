@@ -1,5 +1,6 @@
 import type { CommandDef } from "citty";
 
+import { attributeCommand } from "#src/services/genshinParity/commands/attributeCommand";
 import { compareCommand } from "#src/services/genshinParity/commands/compareCommand";
 import { fetchCommand } from "#src/services/genshinParity/commands/fetchCommand";
 import { framesCommand } from "#src/services/genshinParity/commands/framesCommand";
@@ -21,6 +22,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
   subCommands: {
     fetch: fetchCommand,
     compare: compareCommand,
+    attribute: attributeCommand,
     shoot: shootCommand,
     "solve-camera": solveCameraCommand,
     frames: framesCommand,

@@ -4,6 +4,7 @@ import type { Material, Texture } from "three";
 import { SUBMESH_INDEX_REGEX } from "#parity/witness/constants";
 import { createWitnessMaterial } from "#parity/witness/createWitnessMaterial";
 import { WitnessProperty } from "#parity/witness/WitnessProperty";
+import { WitnessShading } from "#parity/witness/WitnessShading";
 import { Group, Mesh, MeshStandardMaterial, NoColorSpace, SRGBColorSpace, TextureLoader } from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 
@@ -11,9 +12,14 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 const COLOR_SLOTS = new Set<string>([WitnessProperty.MainTexture]);
 // The witness render's parts: the component's exports laid out as `genshin:assets witness` wrote them, each mesh
 // Turned from the export's axes into three's (the export negates x, three negates z, together half a turn about y) and
-// Drawn at every placement with the material each of its submeshes names. The meshes and textures are served beside
-// The layout, by their export folders
-export const loadWitness = async (layoutUrl: string): Promise<Group> => {
+// Drawn at every placement with the material each of its submeshes names, in a group per family of the scene's parts
+// Its mesh's name falls in (named by the family, or empty for a mesh no family names). Each drawn mesh keeps its
+// Material under every shading in its `userData`, for the view to switch between. The meshes and textures are served
+// Beside the layout, by their export folders
+export const loadWitness = async (
+  layoutUrl: string,
+  familyMeshRegexMap: Readonly<Record<string, RegExp>> = {},
+): Promise<Group> => {
   const getUrl = (path: string): string => new URL(path, new URL(layoutUrl, window.location.href)).href;
   const response = await fetch(layoutUrl);
   const layout = (await response.json()) as SceneLayout;
@@ -32,8 +38,16 @@ export const loadWitness = async (layoutUrl: string): Promise<Group> => {
     ),
   ]);
   const nameTextureMap = new Map<string, Texture>(textures);
-  const nameMaterialMap = new Map<string, Material>(
-    Object.entries(layout.materials).map(([name, material]) => [name, createWitnessMaterial(material, nameTextureMap)]),
+  const shadingNameMaterialMap = new Map(
+    Object.values(WitnessShading).map((shading) => [
+      shading,
+      new Map<string, Material>(
+        Object.entries(layout.materials).map(([name, material]) => [
+          name,
+          createWitnessMaterial(material, nameTextureMap, shading),
+        ]),
+      ),
+    ]),
   );
   const fallbackMaterial = new MeshStandardMaterial();
   const nameSubmeshesMap = new Map(
@@ -44,19 +58,35 @@ export const loadWitness = async (layoutUrl: string): Promise<Group> => {
     }),
   );
   const witness = new Group();
+  const getFamilyGroup = (family: string): Group => {
+    const familyGroup = witness.getObjectByName(family);
+    if (familyGroup instanceof Group) return familyGroup;
+    const group = new Group();
+    group.name = family;
+    witness.add(group);
+    return group;
+  };
   for (const { materials, mesh, position, rotation, scale } of layout.placements) {
     const part = new Group();
     for (const submesh of nameSubmeshesMap.get(mesh) ?? []) {
-      const index = Number(SUBMESH_INDEX_REGEX.exec(submesh.name)?.groups?.index ?? 0);
-      const drawn = new Mesh(submesh.geometry, nameMaterialMap.get(materials[index] ?? "") ?? fallbackMaterial);
+      const material = materials[Number(SUBMESH_INDEX_REGEX.exec(submesh.name)?.groups?.index ?? 0)] ?? "";
+      const shadingMaterialMap = Object.fromEntries(
+        [...shadingNameMaterialMap].map(([shading, nameMaterialMap]) => [
+          shading,
+          nameMaterialMap.get(material) ?? fallbackMaterial,
+        ]),
+      );
+      const drawn = new Mesh(submesh.geometry, shadingMaterialMap[WitnessShading.Exported]);
       drawn.castShadow = true;
       drawn.receiveShadow = true;
+      drawn.userData = { shadingMaterialMap };
       part.add(drawn);
     }
     part.position.set(...position);
     part.quaternion.set(...rotation);
     part.scale.set(...scale);
-    witness.add(part);
+    const family = Object.entries(familyMeshRegexMap).find(([, regex]) => regex.test(mesh))?.[0] ?? "";
+    getFamilyGroup(family).add(part);
   }
   return witness;
 };
