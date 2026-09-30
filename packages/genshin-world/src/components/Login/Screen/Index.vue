@@ -8,8 +8,9 @@ import { LoginStage } from "#src/models/login/LoginStage";
 import { LoginStatusStep } from "#src/models/login/LoginStatusStep";
 import {
   LOGIN_ARRIVE_FADE_MS,
+  LOGIN_DOOR_AFTER_LOAD_MS,
   LOGIN_FLASH_MS,
-  LOGIN_FLIGHT_MS,
+  LOGIN_FLIGHT_LOADING_SHARE,
   LOGIN_PROGRESS_FILL_MS,
   LOGIN_SPINNER_START_MS,
   LOGIN_STATUS_STEPS,
@@ -28,7 +29,8 @@ interface Props {
   // The scene alone, as the wiki's clean captures of it show it, for a reference to be scored against
   isInterfaceHidden?: true;
   playerName?: string;
-  // How far loading has gone, from 0 to 1, which the bar shown and the camera's flight never run ahead of
+  // How far loading has gone, from 0 to 1, which the bar shows and the camera's flight follows, ending a fixed time after
+  // It is done
   progress: number;
   timeOfDay: LoginTimeOfDay;
 }
@@ -63,11 +65,23 @@ const { start: hideWelcome } = useTimeoutFn(() => (isWelcomeShown.value = false)
 const statusTimeouts = LOGIN_STATUS_STEPS.map(({ ms, step }) =>
   useTimeoutFn(() => (statusStep.value = step), ms, { immediate: false }),
 );
+// The last stretch's pace, a share of the path a millisecond, which bounds the flight while loading too
+const LAST_STRETCH_PACE = (1 - LOGIN_FLIGHT_LOADING_SHARE) / LOGIN_DOOR_AFTER_LOAD_MS;
+// How long since loading was done, and how far the flight had gone then
+let loadedMs = 0;
+let loadedFlight = 0;
 const { pause: pauseFlight, resume: flyOn } = useRafFn(
   ({ delta }) => {
     if (statusStep.value === LoginStatusStep.LoadingData)
       shownProgress.value = Math.min(shownProgress.value + delta / LOGIN_PROGRESS_FILL_MS, Math.min(progress, 1));
-    flight.value = Math.min(flight.value + delta / LOGIN_FLIGHT_MS, Math.max(flight.value, shownProgress.value));
+    if (shownProgress.value < 1) {
+      const reach = shownProgress.value * LOGIN_FLIGHT_LOADING_SHARE;
+      flight.value = Math.min(flight.value + delta * LAST_STRETCH_PACE, Math.max(flight.value, reach));
+    } else {
+      if (loadedMs === 0) loadedFlight = flight.value;
+      loadedMs += delta;
+      flight.value = loadedFlight + (1 - loadedFlight) * Math.min(loadedMs / LOGIN_DOOR_AFTER_LOAD_MS, 1);
+    }
     if (flight.value < 1) return;
     pauseFlight();
     stage.value = LoginStage.Door;

@@ -25,10 +25,13 @@ export const LOGIN_SPINNER_START_MS = 1300;
 export const LOGIN_TITLE_START_MS = 2000;
 export const LOGIN_WELCOME_HOLD_MS = 1900;
 export const LOGIN_WELCOME_FADE_MS = 200;
-// The camera's flight from the title to the door, at its fastest: it flies no further than loading has gone, so a
-// Slow load draws it out (17 s in the 1440 high recording) while a fast one takes this long (the English recording's,
-// Less the two seconds it stalls for)
-export const LOGIN_FLIGHT_MS = 8900;
+// The camera's flight from the title to the door follows loading, then ends a fixed time after it: in the English
+// Recording the bar is full at 8.4 s and the door rises at 11.75, about 3 s later, however long the load before it took.
+// While loading, the camera flies the share of the path the recording's does before its bar is full (6.4 of its 9.75 s
+// From the click, at an even pace), no faster than the last stretch's pace, so a load that ends at once glides rather
+// Than jumps; once loading is done it flies whatever is left in the 3 s
+export const LOGIN_DOOR_AFTER_LOAD_MS = 3000;
+export const LOGIN_FLIGHT_LOADING_SHARE = 0.65;
 // The bar's fill at its fastest, from empty to full: the share shown runs toward loading's own at no more than this
 // Pace, so a load that finishes at once still sweeps the bar rather than jumping, and one slower is followed as it goes
 export const LOGIN_PROGRESS_FILL_MS = 100;
