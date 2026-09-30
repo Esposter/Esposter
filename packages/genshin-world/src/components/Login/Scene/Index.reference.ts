@@ -1,6 +1,6 @@
-import type { ComponentReference } from "genshin-ui";
+import type { ComponentReference } from "genshin-interface";
 
-import { GameSourceKind } from "genshin-ui";
+import { GameSourceKind } from "genshin-interface";
 
 // The login scene's sources in the game's data, what every search over them found, and what is still open. Poses are
 // In three's axes (metres) with the heading, pitch and field of view in degrees; distances in pixels at 480 wide

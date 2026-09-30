@@ -22,7 +22,7 @@ This file is an **index and a process**, never a reference. Anything explaining 
 | `packages/db-schema`            | `@esposter/db-schema`     | **Source of truth** for DB: Drizzle ORM schemas, migrations                                                    |
 | `packages/follow-ups`           | `@esposter/follow-ups`    | Claude Code plugin — a session's unfinished follow-ups written into a TodoList and drained until none is left  |
 | `packages/genshin-engine`       | `genshin-engine`          | Anime-style open-world engine for three.js WebGPU — toon materials, outlines, post-processing and world kits   |
-| `packages/genshin-ui`           | `genshin-ui`              | Genshin's 2D interface — the screen root, its units and pointer, and the pieces the game's screens share       |
+| `packages/genshin-interface`    | `genshin-interface`       | Genshin's 2D interface — the screen root, its units and pointer, and the pieces the game's screens share       |
 | `packages/genshin-world`        | `genshin-world`           | Genshin's world on the engine — the region catalogue, each region's data and the TresJS components building it |
 | `packages/genshin-persona`      | `genshin-persona`         | Claude Code plugin — a Genshin character picked by birthday, replies spoken in its own cloned voice            |
 | `packages/keyframe-store`       | `keyframe-store`          | Content-addressed version store — zstd keyframes and deltas over any backend                                   |

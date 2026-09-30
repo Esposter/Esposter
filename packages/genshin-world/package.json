@@ -85,7 +85,7 @@
     "@tresjs/core": "catalog:",
     "@vueuse/core": "catalog:",
     "genshin-engine": "workspace:*",
-    "genshin-ui": "workspace:*",
+    "genshin-interface": "workspace:*",
     "three": "catalog:",
     "vue": "catalog:",
     "zod": "catalog:"

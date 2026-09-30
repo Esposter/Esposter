@@ -62,7 +62,7 @@ flowchart TD
 | File                                                                              | Role                                                                    |
 | :-------------------------------------------------------------------------------- | :---------------------------------------------------------------------- |
 | `packages/genshin-world/src/components/Login/Screen/Index.vue`                    | The stages, the flight, and the fades out of and into white             |
-| `packages/genshin-world/src/components/Login/Interface/Index.vue`                 | Each stage's interface, from `genshin-ui`'s pieces                      |
+| `packages/genshin-world/src/components/Login/Interface/Index.vue`                 | Each stage's interface, from `genshin-interface`'s pieces               |
 | `packages/genshin-world/src/components/Login/Scene/Index.vue`                     | The camera, the fitted parts, the clouds, the sky and the shadows       |
 | `packages/genshin-world/src/services/login/constants.ts`                          | The words and the timings                                               |
 | `packages/genshin-world/src/services/login/scene/constants.ts`                    | The camera, the flight, the haze, the light and the shadows             |

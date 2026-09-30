@@ -21,7 +21,7 @@ import { checkIsNestedInteraction } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
 import { useRafFn, useTimeoutFn, watchImmediate } from "@vueuse/core";
 import { createGenshinRenderer, GENSHIN_TONE_MAPPING } from "genshin-engine";
-import { GameScreen } from "genshin-ui";
+import { GameScreen } from "genshin-interface";
 import { PCFShadowMap } from "three";
 import { unref } from "vue";
 

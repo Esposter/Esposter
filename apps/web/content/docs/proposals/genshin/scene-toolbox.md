@@ -149,7 +149,7 @@ Deleted as each is superseded: `solveWitnessCamera.ts` with its command, `create
 | `packages/genshin-world/parity/witness/setWitnessView.ts`        | One settled frame under a held clock, read back from the renderer         |
 | `packages/genshin-world/parity/witness/loadWitness.ts`           | Tags every drawn part with its identifier                                 |
 | `packages/genshin-engine/src/post/createPostPipeline.ts`         | The anti-aliasing's jitter held while the witness is driven               |
-| `packages/genshin-ui/src/services/toCanvasRectStyle.ts`          | Reads RectTransform layout through the transform module                   |
+| `packages/genshin-interface/src/services/toCanvasRectStyle.ts`   | Reads RectTransform layout through the transform module                   |
 
 ## Notes
 

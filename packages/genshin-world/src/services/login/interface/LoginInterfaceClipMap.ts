@@ -1,8 +1,8 @@
-import type { InterfaceClip } from "genshin-ui";
+import type { InterfaceClip } from "genshin-interface";
 
 import interfaceClips from "#src/data/login/interfaceClips.json";
 import { LoginInterfaceClip } from "#src/models/login/LoginInterfaceClip";
-import { readInterfaceClip } from "genshin-ui";
+import { readInterfaceClip } from "genshin-interface";
 
 const nameClipMap: Record<string, Parameters<typeof readInterfaceClip>[0] | undefined> = interfaceClips;
 const readClip = (name: LoginInterfaceClip): InterfaceClip =>

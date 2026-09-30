@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { LoginStatusStep } from "#src/models/login/LoginStatusStep";
 import { LoginStatusStepTextMap } from "#src/services/login/LoginStatusStepTextMap";
-import { ORNAMENT_MIDDLE_PATH, ProgressBar } from "genshin-ui";
+import { ORNAMENT_MIDDLE_PATH, ProgressBar } from "genshin-interface";
 
 interface Props {
   // How far loading has gone, from 0 to 1

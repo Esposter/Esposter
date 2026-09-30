@@ -34,9 +34,9 @@ flowchart LR
 ```text
 scripts/src/services/genshinAssets/
   fitInterfaceRects.ts           ← the screen's tree as rects keyed by path, layout groups flagged
-packages/genshin-ui/src/components/GameRect/
+packages/genshin-interface/src/components/GameRect/
   Index.vue                      ← a node placed by its rect inside its parent's
-packages/genshin-ui/src/services/
+packages/genshin-interface/src/services/
   toCanvasRectStyle.ts           ← unchanged: Unity's semantics, tested on stretched and point anchors
 ```
 
@@ -46,7 +46,7 @@ The login interface moves first, replacing `LoginInterfaceRectMap` and every mid
 
 | File                                                                           | Role after the change                                    |
 | :----------------------------------------------------------------------------- | :------------------------------------------------------- |
-| `packages/genshin-ui/src/services/toCanvasRectStyle.ts`                        | Unity's RectTransform as CSS, the one layout computation |
+| `packages/genshin-interface/src/services/toCanvasRectStyle.ts`                 | Unity's RectTransform as CSS, the one layout computation |
 | `packages/genshin-world/src/services/login/interface/LoginInterfaceRectMap.ts` | Replaced by the fitted tree                              |
 | `packages/genshin-world/src/components/Login/Interface/Index.vue`              | The first screen laid out as the game's tree             |
 | `scripts/src/services/genshinAssets/extractComponentInterface.ts`              | The tree's export the fit reads                          |

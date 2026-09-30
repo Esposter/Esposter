@@ -1,7 +1,7 @@
 import "@fontsource/signika/600.css";
 import { screens } from "#parity/screens";
 import { capitalize } from "@esposter/shared";
-import { FIXTURE_VARIANT_SEPARATOR } from "genshin-ui";
+import { FIXTURE_VARIANT_SEPARATOR } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { HEALTH_NOTICE_PARAGRAPHS, HEALTH_NOTICE_TITLE } from "#src/services/splash/constants";
-import { GameScreen, OrnamentDivider } from "genshin-ui";
+import { GameScreen, OrnamentDivider } from "genshin-interface";
 </script>
 
 <template>

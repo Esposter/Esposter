@@ -1,4 +1,4 @@
-import type { CanvasRect } from "genshin-ui";
+import type { CanvasRect } from "genshin-interface";
 
 import { LoginInterfaceRect } from "#src/models/login/LoginInterfaceRect";
 

@@ -102,7 +102,7 @@ A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit fille
 | `Splash/HealthNotice`             | The English client's notice                               | Compared, approved                                                  |
 | `Loading/Startup`                 | The wiki's capture, the element marks' vectors            | Compared, approved                                                  |
 | `Login/Interface`                 | The English recording's frames                            | Compared over its frames at each stage, approved                    |
-| `genshin-ui` pieces               | The English and the 1440 high recordings                  | Measured, approved in their own suite                               |
+| `genshin-interface` pieces        | The English and the 1440 high recordings                  | Measured, approved in their own suite                               |
 | `Login/Scene` camera              | The walkway's edges in the four skies                     | Derived, flying along −z from the walkway's far end                 |
 | `Login/Scene` towers              | The stage's `LoginScene_Build*` meshes and placements     | Fitted as lathes, placed where the game stands them                 |
 | `Login/Scene` walkway             | `LoginScene_Bridge01_*` meshes                            | Fitted as a footprint and its two heights                           |

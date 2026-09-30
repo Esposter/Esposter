@@ -5,7 +5,7 @@ description: The /agent-console page, which works Claude Code sessions from the 
 
 # Agent console
 
-**Hidden from the game for now.** `/genshin` is the game alone, its opening and then its world, so it is faithful to the game with nothing of the console over it. The console's page code stays, unmounted, until it is rebuilt in the game's own style from `genshin-ui`; until then the link a host prints opens the game and pairs nothing.
+**Hidden from the game for now.** `/genshin` is the game alone, its opening and then its world, so it is faithful to the game with nothing of the console over it. The console's page code stays, unmounted, until it is rebuilt in the game's own style from `genshin-interface`; until then the link a host prints opens the game and pairs nothing.
 
 The agent console is one page of the app, shown as Genshin at `/genshin`, that works the Claude Code sessions on a machine instead of the terminal: the conversation, every tool call and its result, the diffs, the permission prompts, the model, mode, context, cost and usage, subagents and the todo list, across every session on the host. It works the same sessions the terminal does. A session started here resumes with `claude --resume <id>`, and one started in a terminal resumes here. Nothing is lost moving between them, because both read and write the same transcripts.
 

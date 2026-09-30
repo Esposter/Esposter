@@ -24,7 +24,7 @@ import {
   ServerBar,
   ToastNotice,
   toCanvasRectStyle,
-} from "genshin-ui";
+} from "genshin-interface";
 
 interface Props {
   isSpinnerShown?: boolean;

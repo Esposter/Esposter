@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { TITLE_LOGO_PATH } from "#src/services/splash/TitleLogoPath";
-import { GameScreen } from "genshin-ui";
+import { GameScreen } from "genshin-interface";
 </script>
 
 <template>

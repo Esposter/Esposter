@@ -6,7 +6,7 @@ import {
   PUBLISHER_RING_PATH,
 } from "#src/services/splash/PublisherLogoPath";
 import { PUBLISHER_RING_BANDS } from "#src/services/splash/PublisherRingBands";
-import { GameScreen } from "genshin-ui";
+import { GameScreen } from "genshin-interface";
 
 // The logo's box is its SVG's, 1163 by 204, placed so its letters sit where the game's recording shows them (0.7633
 // Game units to one of the logo's); the ring's colours are its field's, sampled by angle and by radius and drawn through

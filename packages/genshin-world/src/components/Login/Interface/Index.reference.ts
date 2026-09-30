@@ -1,6 +1,6 @@
-import type { ComponentReference } from "genshin-ui";
+import type { ComponentReference } from "genshin-interface";
 
-import { GameSourceKind } from "genshin-ui";
+import { GameSourceKind } from "genshin-interface";
 
 // The login interface's sources in the game's data, what every search over them found, and what is still open. Its
 // Layout is the RectTransforms under `LoginMainPage` in units of the canvas's 1600 by 900 reference

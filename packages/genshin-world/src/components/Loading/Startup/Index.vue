@@ -3,7 +3,7 @@ import { ElementTypes } from "#src/models/loading/ElementType";
 import { MARKS_FADE_MS, WHITE_HOLD_MS } from "#src/services/loading/constants";
 import { ElementMarkPathMap } from "#src/services/loading/ElementMarkPathMap";
 import { useTimeoutFn, whenever } from "@vueuse/core";
-import { GameScreen } from "genshin-ui";
+import { GameScreen } from "genshin-interface";
 
 interface Props {
   // How far loading has gone, from 0 to 1
