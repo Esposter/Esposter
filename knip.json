@@ -1,7 +1,7 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "exclude": ["types"],
-  "ignoreBinaries": ["pwsh", "reg", "tsdown"],
+  "ignoreBinaries": ["pwsh", "reg", "tasklist", "tsdown"],
   "ignoreExportsUsedInFile": true,
   "workspaces": {
     ".": { "entry": ["virrun.config.ts"], "ignoreDependencies": ["@esposter/shared-node", "@lerna-lite/publish"] },

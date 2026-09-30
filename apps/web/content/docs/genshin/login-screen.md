@@ -26,11 +26,11 @@ flowchart LR
 
 ## The scene
 
-Every part's shape, place and stone is fitted from the game's own assets ([derived assets](/docs/genshin/derived-assets)), and what the blocks cannot hold is measured from the captures over what they can:
+Every part's shape, place and stone is fitted from the game's own assets ([derived assets](/docs/genshin/derived-assets)), and whatever the blocks cannot hold is read off the captures and expressed over what they can:
 
 ```mermaid
 flowchart TD
-  DATA["genshin-world/src/data/login: towers, walkway, door, bridges and pillars, clouds, stone, horizon band"] --> SCENE[Login/Scene builds them with the engine's kits]
+  DATA["Every fitted part, in genshin-world/src/data/login"] --> SCENE[Login/Scene builds them with the engine's kits]
   REF[The four skies, the door capture, the flight's frames] --> CAM["Camera: its height a share of the walkway's width, flying along −z"]
   REF --> BANDS[Each cloud band's heights and spread]
   REF --> LIGHT["Each time of day's colours, and its lights' strengths over the fitted stone"]
@@ -40,7 +40,7 @@ flowchart TD
   SCENE --> SCORE{compare: shape and tone per time of day}
 ```
 
-- **The login screen is one arrangement of its meshes.** The blocks lay the towers out more than once; the login screen is the character select's stage, its towers and its door at 0.4 scale, with the walkway, and only from the walkway's far end, looking down it along −z, do the stage's towers stand beside it where the captures show them.
+- **The login screen is one arrangement of its meshes.** The blocks lay the towers out more than once; the login screen is the character select's stage, its towers and its door at 0.4 scale, with the walkway, and the captures show the stage's towers beside it only as seen from the walkway's far end, down it along −z.
 - **Each part is built from its fit.** Each tower profile is a lathe of its fitted sections, built once per placement at its scale and merged into one geometry. The walkway is its fitted outline, wings and all, extruded from its underside to its surface.
 - **The camera is derived from the walkway.** The references share one pose. The walkway's two edges meet 0.503 across and 0.571 down the frame, so the camera looks straight down it pitched 3.37 degrees down, and the walkway's fitted width fills 0.42 of the frame's foot, which puts the eye 0.76 of that width over its surface at the game's 45-degree vertical field of view. The flight ends 3.93 camera heights short of the door.
 - **The door stands once the flight reaches it.** The title's frames show the walkway running on with no door on it, so the scene draws the door only at the flight's end. It lights from its middle: a bright line down its panel over a glow across the whole of it, raised over the door's light time.

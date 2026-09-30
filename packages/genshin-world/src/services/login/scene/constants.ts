@@ -41,7 +41,6 @@ export const LOGIN_GRADE_OPTIONS: GradeOptions = {
 // The haze the cloud sea gives off, thickest under the walkway and thinning up past it, so what stands in it pales
 // Downward and the far towers pale into the haze's colour: dense enough 20 metres under the walkway that the towers'
 // Feet are white, and thin enough at the eye that a tower half a kilometre out is still half seen
-export const LOGIN_FOG_BASE_HEIGHT = LOGIN_CLOUD_SEA_HEIGHT;
 export const LOGIN_FOG_DENSITY = 0.004;
 export const LOGIN_FOG_HEIGHT_FALLOFF = 0.03;
 export const LOGIN_FOG_START_DISTANCE = 40;

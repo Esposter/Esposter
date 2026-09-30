@@ -85,11 +85,11 @@ flowchart TD
 
 ## Key files
 
-| File                                                     | Role after the change                                        |
-| :------------------------------------------------------- | :----------------------------------------------------------- |
-| `apps/web/package.json`                                  | Depends on the engine package                                |
-| `packages/genshin-engine/src/index.ts`                   | The package's entry, which the app imports every module from |
-| `packages/genshin-world/src/components/GenshinWorld.vue` | The world the app mounts inside its canvas                   |
+| File                                                           | Role after the change                                        |
+| :------------------------------------------------------------- | :----------------------------------------------------------- |
+| `apps/web/package.json`                                        | Depends on the engine package                                |
+| `packages/genshin-engine/src/index.ts`                         | The package's entry, which the app imports every module from |
+| `packages/genshin-world/src/components/GenshinWorld/Index.vue` | The world the app mounts inside its canvas                   |
 
 New files:
 

@@ -18,7 +18,6 @@ import {
   LOGIN_CLOUD_SEA_HEIGHT,
   LOGIN_CLOUD_SEA_SIZE,
   LOGIN_FLIGHT_DISTANCE,
-  LOGIN_FOG_BASE_HEIGHT,
   LOGIN_FOG_DENSITY,
   LOGIN_FOG_HEIGHT_FALLOFF,
   LOGIN_FOG_START_DISTANCE,
@@ -107,7 +106,7 @@ light.shadow.normalBias = LOGIN_SHADOW_NORMAL_BIAS;
 const godraysLight = createGodraysLight(1024, 160);
 const hemisphere = new HemisphereLight();
 const fogUniforms = createFogUniforms();
-fogUniforms.baseHeight.value = LOGIN_FOG_BASE_HEIGHT;
+fogUniforms.baseHeight.value = LOGIN_CLOUD_SEA_HEIGHT;
 fogUniforms.density.value = LOGIN_FOG_DENSITY;
 fogUniforms.heightFalloff.value = LOGIN_FOG_HEIGHT_FALLOFF;
 fogUniforms.startDistance.value = LOGIN_FOG_START_DISTANCE;

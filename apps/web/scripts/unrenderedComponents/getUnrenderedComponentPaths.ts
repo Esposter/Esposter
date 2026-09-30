@@ -6,6 +6,9 @@ import { relative, resolve } from "node:path";
 
 // Nuxt Content renders these from markdown by element name, which no template or import names
 const CONTENT_COMPONENTS_DIRECTORY = `${COMPONENTS_DIRECTORY}/content/`;
+// The agent console, kept unmounted while it is hidden from the game until its rebuild in the game's style mounts it
+// Again (the agent console's docs page)
+const HIDDEN_COMPONENT_PATHS = new Set([`${COMPONENTS_DIRECTORY}/AgentConsole/Index.vue`]);
 // Every component nothing renders: no template names its tag by the auto-import name the flow map resolves, lazy or
 // Not, and no source imports its file. A test holds the list empty, so a component whose last consumer went is
 // Deleted with it rather than left for knip, which sees an auto-imported component as used by being a component
@@ -20,7 +23,7 @@ export const getUnrenderedComponentPaths = () => {
     .values()
     .filter((path) => !renderedPaths.has(path))
     .map((path) => relative(WEB_DIRECTORY, path).replaceAll("\\", "/"))
-    .filter((path) => !path.startsWith(CONTENT_COMPONENTS_DIRECTORY))
+    .filter((path) => !path.startsWith(CONTENT_COMPONENTS_DIRECTORY) && !HIDDEN_COMPONENT_PATHS.has(path))
     .toArray()
     .toSorted();
 };

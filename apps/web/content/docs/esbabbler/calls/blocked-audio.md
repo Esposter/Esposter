@@ -38,7 +38,7 @@ flowchart TD
 | File                                                                     | Role                                                           |
 | :----------------------------------------------------------------------- | :------------------------------------------------------------- |
 | `apps/web/app/store/message/room/liveKit.ts`                             | `isAudioPlaybackBlocked`, `startAudio` and the deafen re-apply |
-| `apps/web/app/components/Message/Content/Call/AudioPlaybackNotice.vue`   | the warning and its Play sound button                          |
+| `apps/web/app/components/Message/Content/Call/Audio/PlaybackNotice.vue`  | the warning and its Play sound button                          |
 | `apps/web/app/components/Message/Content/Call/View.vue`                  | places it above the call view's controls                       |
 | `apps/web/app/components/Message/Content/Call/PictureInPicture/View.vue` | places it above the PiP window's controls                      |
 | `apps/web/app/components/Message/Content/Call/Panel/Index.vue`           | places it under the room's call strip while the view is closed |
