@@ -7,6 +7,9 @@ interface Fixture {
   // Props applied after the first frame, so a transition they start plays and can be shot at a known time
   motionProps?: Record<string, unknown>;
   props: Record<string, unknown>;
+  // The event a screen emits once it has drawn, for one that draws later than it mounts (a 3D scene compiling its
+  // Pipelines), which the page and the suite wait on before a shot
+  readyEvent?: string;
 }
 
 // Every interface screen that has a fixture, found by file name at any depth, so a screen is on the parity page and in
@@ -17,11 +20,11 @@ const fixtures = import.meta.glob<Fixture>("/src/components/interface/**/*.fixtu
 const INTERFACE_PREFIX = "/src/components/interface/";
 
 export const screens: (Fixture & { directory: string; load: () => Promise<Component>; name: string })[] =
-  Object.entries(fixtures).flatMap(([path, { isMotionOnly, motionProps, props }]) => {
+  Object.entries(fixtures).flatMap(([path, { isMotionOnly, motionProps, props, readyEvent }]) => {
     const load = components[path.replace(/\.fixture\.ts$/u, ".vue")];
     const relativePath = path.slice(INTERFACE_PREFIX.length, -".fixture.ts".length);
     const separatorIndex = relativePath.lastIndexOf("/");
     const directory = relativePath.slice(0, separatorIndex);
     const name = relativePath.slice(separatorIndex + 1);
-    return load ? [{ directory, isMotionOnly, load, motionProps, name, props }] : [];
+    return load ? [{ directory, isMotionOnly, load, motionProps, name, props, readyEvent }] : [];
   });

@@ -24,9 +24,15 @@ if (screen && root) {
     ...screen.props,
     ...(referenceProps ? jsonDateParse<Record<string, unknown>>(referenceProps) : {}),
   });
-  createApp({ render: () => h(component, props) }).mount(root);
+  const { promise: ready, resolve: resolveReady } = Promise.withResolvers<void>();
+  const readyProps = screen.readyEvent
+    ? { [`on${screen.readyEvent.charAt(0).toUpperCase()}${screen.readyEvent.slice(1)}`]: resolveReady }
+    : {};
+  if (!screen.readyEvent) resolveReady();
+  createApp({ render: () => h(component, { ...props, ...readyProps }) }).mount(root);
   if (motion === "entry") holdAnimations();
   await window.document.fonts.ready;
+  await ready;
   if (motion === "props" && screen.motionProps) {
     await Promise.all(window.document.getAnimations().map(({ finished }) => finished));
     // A style flush now records the entry's end as the state the motion transitions from; without one the browser folds

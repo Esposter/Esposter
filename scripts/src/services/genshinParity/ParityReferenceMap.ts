@@ -8,11 +8,28 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "health-notice": { capture: "health-notice-en.png", screen: "HealthNotice", seconds: 0 },
   "loading-region": { screen: "loading-region", wikiTitle: "File:Loading Screen Mondstadt.png" },
   "loading-startup": { screen: "StartupLoading", wikiTitle: "File:Loading Screen Startup.png" },
-  "login-dawn": { screen: "LoginScreen", wikiTitle: "File:Login Menu Dawn.png" },
-  "login-day": { screen: "LoginScreen", wikiTitle: "File:Login Menu Day.png" },
+  // The wiki's four skies are clean captures of the scene at one pose, early in the camera's flight, with no interface
+  "login-dawn": {
+    props: { isInterfaceHidden: true, timeOfDay: "Dawn" },
+    screen: "LoginScreen",
+    wikiTitle: "File:Login Menu Dawn.png",
+  },
+  "login-day": {
+    props: { isInterfaceHidden: true, timeOfDay: "Day" },
+    screen: "LoginScreen",
+    wikiTitle: "File:Login Menu Day.png",
+  },
   "login-door": { screen: "LoginScreen", wikiTitle: "File:Login Menu Door and Platform.png" },
-  "login-dusk": { screen: "LoginScreen", wikiTitle: "File:Login Menu Dusk.png" },
-  "login-night": { screen: "LoginScreen", wikiTitle: "File:Login Menu Night.png" },
+  "login-dusk": {
+    props: { isInterfaceHidden: true, timeOfDay: "Dusk" },
+    screen: "LoginScreen",
+    wikiTitle: "File:Login Menu Dusk.png",
+  },
+  "login-night": {
+    props: { isInterfaceHidden: true, timeOfDay: "Night" },
+    screen: "LoginScreen",
+    wikiTitle: "File:Login Menu Night.png",
+  },
   "paimon-menu": { screen: "pause-menu", wikiTitle: "File:Paimon Menu Version 1.3.png" },
   "paimon-menu-grid": { screen: "pause-menu", wikiTitle: "File:Paimon Menu Version 3.2.png" },
   "publisher-splash": { capture: "session-2.mp4", screen: "PublisherSplash", seconds: 1 },

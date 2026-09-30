@@ -27,9 +27,9 @@ describe("gameOpening", () => {
   });
 
   // The game's opening end to end with the page already loaded, the order a console that loads quickly sees it in:
-  // Each splash hands on to the next, the startup screen's marks are shown rather than skipped, and the opening
-  // Finishes once they have faded and the white has held
-  test("plays the splashes, shows the startup marks, then finishes", async () => {
+  // Each splash hands on to the next, the login screen waits for a click and fades into white, the startup screen's
+  // Marks are shown rather than skipped, and the opening finishes once they have faded and the white has held
+  test("plays the splashes, waits at the login screen, shows the startup marks, then finishes", async () => {
     expect.hasAssertions();
 
     vi.useFakeTimers({ toFake: ["setTimeout"] });
@@ -41,6 +41,13 @@ describe("gameOpening", () => {
       // oxlint-disable-next-line no-await-in-loop -- each splash mounts only once the one before it has played
       await playAnimations();
     }
+    const loginScreen = container.querySelector<HTMLElement>(".login-screen");
+
+    expect(loginScreen).not.toBeNull();
+
+    loginScreen?.click();
+    await nextTick();
+    await playAnimations();
     const marks = container.querySelector(".startup-loading .marks");
 
     expect(marks?.classList.contains("complete")).toBe(false);
