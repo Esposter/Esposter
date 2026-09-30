@@ -38,6 +38,7 @@ flowchart LR
   E --> I["inventory component: inventory.md"]
   S --> I
   E -->|"witness component"| W["witness.json: the exports laid out for the witness render"]
+  M -->|"interface component: AnimeStudio"| U["interface.json: the screen's RectTransform tree"]
   E -->|"fit component: no game files"| D["genshin-world/src/data/component: our kits' parameters"]
   D --> K[The scene builds them with the engine's kits]
 ```
@@ -46,8 +47,9 @@ flowchart LR
 2. **`extract <component>`** finds the blocks holding the component's assets by the name pattern `DerivedAssetComponentMap` gives it, exports them block by block, and dumps each block's Transform, GameObject, MeshFilter and MeshRenderer as JSON.
 3. **`shaders <component>`** exports every shader in the blocks holding the shaders its materials name, raw, since a shader is exported nameless and its block also holds the sky's and the post-processing's. The game keeps each compiled variant as a plain DXBC container, so `readDxbcPrograms` carves them out by their own stated sizes and Windows' own `d3dcompiler_47` disassembles each into its assembly (`disassembleDxbcDirectory`), beside the property names the shader declares, which tell a nameless shader apart. Each variant is also compiled for DirectX 12 as DXIL, which that disassembler cannot read; its DirectX 11 twin says the same. A shader AnimeStudio cannot parse, which includes the login stone's, is left out. This and `extract` are the only steps that read the game.
 4. **`inventory <component>`** writes `inventory.md` beside the exports: each material's shader, texture slots and values, each texture's size and what each channel spans, each mesh's vertices and the materials its renderers draw it with, and each shader's program count and properties. A scene's derivation starts from it ([scene derivation](/docs/proposals/genshin/scene-derivation)).
-5. **`witness <component>`** lays the exports out as the witness render draws them (`writeWitnessLayout`): the component's placements at each part's finest level, in three's axes, with every material each submesh draws with, as a `SceneLayout`.
-6. **`fit <component>`** composes every object's world placement from the layout dumps, keeps the arrangements under the component's roots (`readComponentPlacements`), fits our kits' parameters to the meshes and textures, and writes them as the world package's data, the only output that enters the repository. A change of fit or selection reruns it alone.
+5. **`interface <component>`** lays a screen's interface out as the game does: the block holding it is found through an indexed asset beside it (`DerivedAssetComponentMap`'s `interface`, since GameObjects are not in the asset index), its RectTransforms are dumped as JSON for their tree and raw for their layout, and the tree under the interface's root, each piece's anchors, pivot, position, size and components, is written beside the exports and printed (`extractComponentInterface`). A screen places each piece from it ([interface library](/docs/genshin/interface-library)).
+6. **`witness <component>`** lays the exports out as the witness render draws them (`writeWitnessLayout`): the component's placements at each part's finest level, in three's axes, with every material each submesh draws with, as a `SceneLayout`.
+7. **`fit <component>`** composes every object's world placement from the layout dumps, keeps the arrangements under the component's roots (`readComponentPlacements`), fits our kits' parameters to the meshes and textures, and writes them as the world package's data, the only output that enters the repository. A change of fit or selection reruns it alone.
 
 A new component is one name pattern in `DerivedAssetComponentMap` and one fit in `DerivedAssetFitMap`; everything else is shared.
 
@@ -110,19 +112,20 @@ A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit fille
 
 ## Key files
 
-| File                                                             | Role                                                  |
-| :--------------------------------------------------------------- | :---------------------------------------------------- |
-| `scripts/src/services/genshinAssets/constants.ts`                | Where the exports are kept, and every fit's tolerance |
-| `scripts/src/services/genshinAssets/DerivedAssetComponentMap.ts` | Each component's assets by name, and the roots it is  |
-| `scripts/src/services/genshinAssets/DerivedAssetFitMap.ts`       | Each component's fit                                  |
-| `scripts/src/services/genshinAssets/fitLoginScene.ts`            | Every fit the login screen writes                     |
-| `scripts/src/services/genshinAssets/traceCoveredGrid.ts`         | The loops round a grid's covered cells                |
-| `scripts/src/services/genshinAssets/extractComponentShaders.ts`  | Each shader's programs carved out and disassembled    |
-| `scripts/src/services/genshinAssets/writeComponentInventory.ts`  | The inventory report of everything an export holds    |
-| `scripts/src/services/genshinAssets/writeWitnessLayout.ts`       | The exports laid out for the witness render           |
-| `packages/genshin-world/src/data`                                | The fitted parameters the scenes read                 |
-| `packages/genshin-engine/src/kits/architecture`                  | The kits the fitted shapes drive                      |
-| `packages/genshin-engine/src/atmosphere/placeCloudBand.ts`       | A band of painted clouds scattered round a centre     |
+| File                                                              | Role                                                  |
+| :---------------------------------------------------------------- | :---------------------------------------------------- |
+| `scripts/src/services/genshinAssets/constants.ts`                 | Where the exports are kept, and every fit's tolerance |
+| `scripts/src/services/genshinAssets/DerivedAssetComponentMap.ts`  | Each component's assets by name, and the roots it is  |
+| `scripts/src/services/genshinAssets/DerivedAssetFitMap.ts`        | Each component's fit                                  |
+| `scripts/src/services/genshinAssets/fitLoginScene.ts`             | Every fit the login screen writes                     |
+| `scripts/src/services/genshinAssets/traceCoveredGrid.ts`          | The loops round a grid's covered cells                |
+| `scripts/src/services/genshinAssets/extractComponentShaders.ts`   | Each shader's programs carved out and disassembled    |
+| `scripts/src/services/genshinAssets/writeComponentInventory.ts`   | The inventory report of everything an export holds    |
+| `scripts/src/services/genshinAssets/writeWitnessLayout.ts`        | The exports laid out for the witness render           |
+| `scripts/src/services/genshinAssets/extractComponentInterface.ts` | A screen's interface tree from its RectTransforms     |
+| `packages/genshin-world/src/data`                                 | The fitted parameters the scenes read                 |
+| `packages/genshin-engine/src/kits/architecture`                   | The kits the fitted shapes drive                      |
+| `packages/genshin-engine/src/atmosphere/placeCloudBand.ts`        | A band of painted clouds scattered round a centre     |
 
 ## Sources
 
