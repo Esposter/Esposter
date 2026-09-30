@@ -19,6 +19,12 @@
       "silhouette": "LoginScene_Bridge03"
     },
     {
+      "position": [117.3, -71.42, -78.64],
+      "rotation": [0, -0.9926, 0, 0.1217],
+      "scale": [0.4, 0.4, 0.4],
+      "silhouette": "LoginScene_Bridge02"
+    },
+    {
       "position": [267.81, -76.02, 52.01],
       "rotation": [0, -0.8946, 0, -0.4469],
       "scale": [0.4, 0.4, 0.4],
@@ -41,6 +47,12 @@
       "rotation": [0, -0.8033, 0, 0.5955],
       "scale": [1.2, 1.2, 1.2],
       "silhouette": "LoginScene_Bridge04"
+    },
+    {
+      "position": [-134.89, 9.74, -129.68],
+      "rotation": [0, -0.9405, 0, -0.3398],
+      "scale": [0.38, 0.38, 0.38],
+      "silhouette": "LoginScene_Bridge02"
     },
     {
       "position": [-1292.96, -244.3, 929.6],
@@ -71,6 +83,12 @@
       "rotation": [0, -0.9303, 0, -0.3667],
       "scale": [1, 1, 1],
       "silhouette": "LoginScene_Bridge03_02"
+    },
+    {
+      "position": [93.51, -71.42, -72.72],
+      "rotation": [0, -0.9926, 0, 0.1217],
+      "scale": [0.4, 0.4, 0.4],
+      "silhouette": "LoginScene_Pillar03_03"
     },
     {
       "position": [-357.57, -118.1, -473.66],
@@ -145,6 +163,12 @@
       "silhouette": "LoginScene_Bridge04"
     },
     {
+      "position": [-272.27, 1.74, -171.16],
+      "rotation": [0, -0.9749, 0, 0.2227],
+      "scale": [0.31, 0.31, 0.31],
+      "silhouette": "LoginScene_Bridge02_02"
+    },
+    {
       "position": [76.62, -33.7, -1592.68],
       "rotation": [0, -0.6125, 0, 0.7905],
       "scale": [1.08, 1.08, 1.08],
@@ -197,6 +221,12 @@
       "rotation": [0, -0.0331, 0, 0.9995],
       "scale": [1, 1, 1],
       "silhouette": "LoginScene_Bridge04"
+    },
+    {
+      "position": [70.63, -71.42, -67.02],
+      "rotation": [0, -0.9926, 0, 0.1217],
+      "scale": [0.4, 0.4, 0.4],
+      "silhouette": "LoginScene_Bridge02_02"
     },
     {
       "position": [1799.07, -174.1, -151.29],
@@ -325,6 +355,12 @@
       "silhouette": "LoginScene_Bridge02_02"
     },
     {
+      "position": [138.7, 72.9, 152.5],
+      "rotation": [0, -0.9366, 0, 0.3504],
+      "scale": [1, 1, 1],
+      "silhouette": "LoginScene_Bridge04_01"
+    },
+    {
       "position": [128.29, 2.7, -154.56],
       "rotation": [0, 0.5972, 0, 0.8021],
       "scale": [1, 1, 1],
@@ -332,6 +368,12 @@
     },
     {
       "position": [80, 2.7, 6.83],
+      "rotation": [0, 0.5972, 0, 0.8021],
+      "scale": [1, 1, 1],
+      "silhouette": "LoginScene_Bridge03"
+    },
+    {
+      "position": [-46.87, 2.7, 430.86],
       "rotation": [0, 0.5972, 0, 0.8021],
       "scale": [1, 1, 1],
       "silhouette": "LoginScene_Bridge03"

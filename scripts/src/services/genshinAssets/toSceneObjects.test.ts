@@ -24,6 +24,20 @@ describe(toSceneObjects, () => {
     expect(objects.map(({ transformId }) => transformId)).toStrictEqual(["group-transform", "child-transform"]);
   });
 
+  test("gives a group every game object of which was lost the levels of its part that name one father", () => {
+    expect.hasAssertions();
+
+    const objects = toSceneObjects(
+      [
+        createTransform("Tower_LodGroup (1)", "0", ["level-transform"]),
+        createTransform("Tower_Lod0", "group-transform"),
+      ],
+      new Map(),
+    );
+
+    expect(objects[0]?.transformId).toBe("group-transform");
+  });
+
   test("keeps a stand-in for a lost leaf, which still sits under its father", () => {
     expect.hasAssertions();
 

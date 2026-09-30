@@ -1,10 +1,9 @@
 import type { AssetPlacement } from "#src/models/genshinAssets/AssetPlacement";
 import type { SceneObject } from "#src/models/genshinAssets/SceneObject";
 
+import { ROOT_PARENT_ID } from "#src/services/genshinAssets/constants";
 import { Matrix4, Quaternion, Vector3 } from "three";
 
-// The path ID a root's parent is written as
-const ROOT_PARENT_ID = "0";
 // Every object's world placement, its local transform composed with each parent's up to its root. An object whose
 // Parent is outside the dump (a prefab's part, placed by an instance in a block not read) has no place of its own to
 // Compose, so it is left out rather than set down at the world's origin
@@ -23,10 +22,11 @@ export const composeAssetPlacements = (
     idWorldMatrixMap.set(transformId, world);
     return world;
   };
-  const checkIsPlaced = ({ parentId }: SceneObject): boolean => {
+  // An object is placed where its chain of parents reaches a root; a chain that loops back on itself reaches none
+  const checkIsPlaced = ({ parentId }: SceneObject, visitedIds: ReadonlySet<string> = new Set()): boolean => {
     if (parentId === ROOT_PARENT_ID) return true;
     const parent = idObjectMap.get(parentId);
-    return parent ? checkIsPlaced(parent) : false;
+    return parent && !visitedIds.has(parentId) ? checkIsPlaced(parent, new Set([...visitedIds, parentId])) : false;
   };
   return objects
     .filter((object) => checkIsPlaced(object))
