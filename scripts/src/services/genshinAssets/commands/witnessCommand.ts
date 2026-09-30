@@ -12,12 +12,13 @@ export const witnessCommand: SubCommandsDef[string] = defineCommand({
       required: true,
       type: "positional",
     },
+    roots: { description: "Roots to lay out in place of the component's own, comma separated", type: "string" },
   },
   meta: {
     description: "Lay a component's exports out as the witness render draws them, beside the exports",
     name: "witness",
   },
   run: async ({ args }) => {
-    console.log(await writeWitnessLayout(parseDerivedAssetComponent(args.component)));
+    console.log(await writeWitnessLayout(parseDerivedAssetComponent(args.component), args.roots?.split(",")));
   },
 });
