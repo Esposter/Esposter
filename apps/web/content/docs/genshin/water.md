@@ -51,7 +51,7 @@ flowchart TD
 | `packages/genshin-engine/src/nodes/createWaterMaterial.ts`          | The surface: depth colour, floor, foam, ripples, glints and reflection |
 | `packages/genshin-engine/src/nodes/createCausticsNode.ts`           | The shimmer on the ground under the water                              |
 | `packages/genshin-engine/src/water/updateUnderwaterFog.ts`          | The fog turned to the water's under the surface, and given back above  |
-| `packages/genshin-world/src/components/world/Water.vue`             | The surface kept under the camera, and the fog swapped each frame      |
+| `packages/genshin-world/src/components/World/Water/Index.vue`       | The surface kept under the camera, and the fog swapped each frame      |
 | `packages/genshin-world/src/services/windrise/constants.ts`         | Windrise's lake: its level, colours, depths and underwater fog         |
 | `packages/genshin-world/src/services/windrise/getWindriseHeight.ts` | The valley opening east onto the lake's bowl                           |
 

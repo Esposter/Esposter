@@ -92,7 +92,7 @@ In development, `useGenshinTuning` opens three's inspector with a **Look** panel
 | `packages/genshin-engine/src/post/createHeightFogNode.ts`        | The height fog integrated along each pixel's ray                                |
 | `packages/genshin-engine/src/post/computeGradeLut.ts`            | A region's grade as a cube of display colours                                   |
 | `packages/genshin-engine/src/renderer/QualityTierSettingsMap.ts` | What each tier spends, and what none drops                                      |
-| `packages/genshin-world/src/components/world/Windrise.vue`       | The Windrise scene: its lights, look, ground, water, grass and landmarks        |
+| `packages/genshin-world/src/components/World/Windrise/Index.vue` | The Windrise scene: its lights, look, ground, water, grass and landmarks        |
 | `packages/genshin-world/src/services/windrise/constants.ts`      | Windrise's ramp, sun, fog, shadow reach and grade                               |
 | `packages/genshin-world/src/composables/usePostPipeline.ts`      | The engine's chain in place of TresJS's render, rebuilt on a new camera or tier |
 | `packages/genshin-world/src/composables/useGenshinTuning.ts`     | Development's tuning panel over the look                                        |

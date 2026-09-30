@@ -21,5 +21,11 @@ export const shootCommand: SubCommandsDef[string] = defineCommand({
     name: "shoot",
   },
   run: ({ args }) =>
-    shootScreen(args.screen, Number(args.width), Number(args.height), args._.slice(3).map(Number), args.motion),
+    shootScreen({
+      height: Number(args.height),
+      motion: args.motion,
+      screen: args.screen,
+      timesMs: args._.slice(3).map(Number),
+      width: Number(args.width),
+    }),
 });

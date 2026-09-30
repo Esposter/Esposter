@@ -1,12 +1,14 @@
 /* eslint-disable no-restricted-syntax -- the parity page's entry runs only in a browser, never under server rendering */
 import "@fontsource/signika/600.css";
 import { screens } from "#parity/screens";
-import { jsonDateParse } from "@esposter/shared";
+import { capitalize, jsonDateParse } from "@esposter/shared";
 
 // One screen at a time, by `?screen=<Name>`, or the list of them. `&motion` asks for a motion held at its start for
 // The tool that shoots it to set each moment: `entry` holds the screen's own animations as it mounts, and `props` lets
 // Those finish, then applies the fixture's motion props and holds the transitions they start. `data-parity-ready`
-// Marks the page drawn, holding the screen's name, or nothing for the list, so a name with no fixture is told apart
+// Marks the page drawn, holding the screen's name, or nothing for the list, so a name with no fixture is told apart.
+// `&backdrop=<file>` draws that image under the screen, for an overlay shot over the frame it is judged against, and
+// `&variant=<name>` renders the fixture's variant of that name
 const holdAnimations = (): void => {
   // Reading the animations resolves the styles that start them, and a held one stays listed once it would have ended
   for (const animation of window.document.getAnimations()) animation.pause();
@@ -17,17 +19,24 @@ const motion = searchParameters.get("motion");
 const screen = screens.find((candidate) => candidate.name === name);
 const root = window.document.querySelector("#app");
 if (screen && root) {
-  const component = await screen.load();
+  const { component } = screen;
   // A reference judging the screen in another state than its fixture's hands its own props, as JSON, over the fixture's
   const referenceProps = searchParameters.get("props");
+  const variant = searchParameters.get("variant");
   const props = reactive({
     ...screen.props,
+    ...(variant ? screen.variants?.[variant] : {}),
     ...(referenceProps ? jsonDateParse<Record<string, unknown>>(referenceProps) : {}),
   });
+  const backdrop = searchParameters.get("backdrop");
+  // Drawn pixel for pixel, since it is scaled by the page's device ratio alone, so it matches its reference exactly
+  if (backdrop)
+    Object.assign(window.document.body.style, {
+      background: `url("${backdrop}") center / 100% 100% no-repeat`,
+      imageRendering: "pixelated",
+    });
   const { promise: ready, resolve: resolveReady } = Promise.withResolvers<void>();
-  const readyProps = screen.readyEvent
-    ? { [`on${screen.readyEvent.charAt(0).toUpperCase()}${screen.readyEvent.slice(1)}`]: resolveReady }
-    : {};
+  const readyProps = screen.readyEvent ? { [`on${capitalize(screen.readyEvent)}`]: resolveReady } : {};
   if (!screen.readyEvent) resolveReady();
   createApp({ render: () => h(component, { ...props, ...readyProps }) }).mount(root);
   if (motion === "entry") holdAnimations();

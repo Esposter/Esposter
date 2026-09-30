@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { checkIsNestedInteraction } from "@/util/dom/checkIsNestedInteraction";
+import { checkIsNestedInteraction } from "@esposter/shared";
 
 interface Props {
   isStreaming?: true;

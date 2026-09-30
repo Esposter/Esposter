@@ -4,7 +4,7 @@ import { runFfmpeg } from "#src/services/genshinParity/runFfmpeg";
 import { readWikiFile } from "genshin-persona/src/services/readWikiFile.ts";
 import { readWikiFileUrls } from "genshin-persona/src/services/readWikiFileUrls.ts";
 import { existsSync } from "node:fs";
-import { mkdir } from "node:fs/promises";
+import { mkdir, rm } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
 
@@ -25,7 +25,12 @@ export const fetchReferences = async (): Promise<void> => {
         const capturePath = join(CAPTURES_DIRECTORY, capture);
         if (!existsSync(capturePath)) return `${id}: no recording at ${capturePath}`;
         const filter = crop ? ["-vf", `crop=${crop.width}:${crop.height}:${crop.x}:${crop.y}`] : [];
-        await runFfmpeg(["-ss", String(seconds), "-i", capturePath, ...filter, "-frames:v", "1", path]);
+        // FFmpeg tags the frame with the recording's gamma and primaries, which a browser then colour-manages, so a
+        // Frame drawn as a backdrop would come out darker than its own file; rewritten untagged, it reads alike in both
+        const framePath = `${path}.frame.png`;
+        await runFfmpeg(["-ss", String(seconds), "-i", capturePath, ...filter, "-frames:v", "1", framePath]);
+        await sharp(framePath).png().toFile(path);
+        await rm(framePath);
         return path;
       }
       const url = urls.get(wikiTitle);

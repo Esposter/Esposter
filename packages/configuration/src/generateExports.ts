@@ -1,8 +1,9 @@
 import type { ExportsGeneration } from "#src/models/ExportsGeneration";
 
 import { NON_SOURCE_SUFFIXES } from "#src/constants";
+import { getComponentName } from "#src/getComponentName";
 import { existsSync, globSync, readFileSync, writeFileSync } from "node:fs";
-import { basename, join } from "node:path";
+import { join } from "node:path";
 import { parseSync } from "rolldown/utils";
 
 const SOURCE_DIRECTORY_NAME = "src";
@@ -27,14 +28,14 @@ const writeBarrel = (directory: string, specifiers: string[], toLine: (specifier
 const checkHasExport = (path: string): boolean =>
   parseSync(path, readFileSync(path, "utf8")).module.staticExports.length > 0;
 
-// Every component at any depth, named by its file, so a package can group its components into folders; two files of
-// One name are two exports of one name, which the build rejects rather than letting one shadow the other
+// Every component at any depth, named by its path as Nuxt names the app's (`getComponentName`); two of one name are two
+// Exports of one name, which the build rejects rather than letting one shadow the other
 const generateComponentBarrel = (sourceDirectory: string): void => {
   const directory = join(sourceDirectory, COMPONENTS_DIRECTORY);
   writeBarrel(
     directory,
     globSync("**/*.vue", { cwd: directory }).map((path) => path.replaceAll("\\", "/")),
-    (path) => `export { default as ${basename(path, ".vue")} } from "./${path}";`,
+    (path) => `export { default as ${getComponentName(path)} } from "./${path}";`,
   );
 };
 

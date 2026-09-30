@@ -1,0 +1,75 @@
+{
+  "name": "genshin-ui",
+  "version": "3.7.0",
+  "description": "Genshin Impact's interface as a fan recreation: the game's own screen units, face and pointer, and its buttons, dividers, bars and notices as presentational Vue components.",
+  "keywords": [
+    "component-library",
+    "game-ui",
+    "genshin-impact",
+    "interface",
+    "vue",
+    "vue3"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/genshin-ui#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts",
+    "#src/*.vue": "./src/*.vue"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json",
+    "./style.css": "./dist/style.css"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json",
+      "./style.css": "./dist/style.css"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest",
+    "test:visual": "vitest --config vitest.browser.config.ts",
+    "typecheck": "vue-tsc"
+  },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*",
+    "@fontsource/signika": "catalog:",
+    "@tsdown/css": "catalog:",
+    "@types/node": "catalog:",
+    "@vitest/browser-playwright": "catalog:",
+    "playwright": "catalog:",
+    "tsdown": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "vitest-browser-vue": "catalog:",
+    "vue-tsc": "catalog:"
+  },
+  "peerDependencies": {
+    "vue": "catalog:"
+  }
+}

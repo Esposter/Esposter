@@ -65,6 +65,7 @@
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
     "@types/sanitize-html": "catalog:",
+    "happy-dom": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",

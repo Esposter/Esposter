@@ -16,7 +16,7 @@ import {
   TOUCH_DRAG_DELAY_MS,
 } from "@/services/ui/constants";
 import { getNextGridCellPosition } from "@/services/ui/getNextGridCellPosition";
-import { checkIsNestedInteraction } from "@/util/dom/checkIsNestedInteraction";
+import { checkIsNestedInteraction } from "@esposter/shared";
 import { VueDraggable } from "vue-draggable-plus";
 
 interface Props {

@@ -1,4 +1,5 @@
 import { generateExports } from "#src/generateExports";
+import { getComponentName } from "#src/getComponentName";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -48,7 +49,7 @@ describe(generateExports, () => {
     expect(statSync(barrelPath).mtimeMs).toBe(0);
   });
 
-  test("exports every component at any depth by its file name", () => {
+  test("exports every component at any depth by its path's name", () => {
     expect.hasAssertions();
 
     mkdirSync(join(sourceDirectory, "components", TEST_FILENAME), { recursive: true });
@@ -56,7 +57,7 @@ describe(generateExports, () => {
     generateExports(packageDirectory, "vue");
 
     expect(readFileSync(join(sourceDirectory, "components", "index.ts"), "utf8")).toBe(
-      `export { default as B } from "./${TEST_FILENAME}/B.vue";
+      `export { default as ${getComponentName(`${TEST_FILENAME}/B.vue`)} } from "./${TEST_FILENAME}/B.vue";
 `,
     );
   });

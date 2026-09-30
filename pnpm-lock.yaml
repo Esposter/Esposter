@@ -1234,6 +1234,9 @@ importers:
       genshin-engine:
         specifier: workspace:*
         version: link:../../packages/genshin-engine
+      genshin-ui:
+        specifier: workspace:*
+        version: link:../../packages/genshin-ui
       genshin-world:
         specifier: workspace:*
         version: link:../../packages/genshin-world
@@ -1963,6 +1966,46 @@ importers:
         specifier: ^5.2.14
         version: 5.2.14
 
+  packages/genshin-ui:
+    dependencies:
+      vue:
+        specifier: 'catalog:'
+        version: 3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
+    devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
+      '@fontsource/signika':
+        specifier: 'catalog:'
+        version: 5.3.0
+      '@tsdown/css':
+        specifier: 'catalog:'
+        version: 0.23.0(jiti@2.7.0)(postcss@8.5.28)(sass-embedded@1.105.0)(sass@1.105.0)(tsdown@0.23.0)(tsx@4.23.15)(yaml@2.9.1)
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.3
+      '@vitest/browser-playwright':
+        specifier: 'catalog:'
+        version: 5.0.2(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(playwright@1.63.0)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.2)
+      playwright:
+        specifier: 'catalog:'
+        version: 1.63.0
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+      vite:
+        specifier: ^8.3.1
+        version: 8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/browser-playwright@5.0.2)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      vitest-browser-vue:
+        specifier: 'catalog:'
+        version: 3.1.0(@vue/compiler-dom@3.5.43)(@vue/server-renderer@3.5.43)(vitest@5.0.2)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+      vue-tsc:
+        specifier: 'catalog:'
+        version: 3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
+
   packages/genshin-world:
     dependencies:
       '@esposter/shared':
@@ -1980,6 +2023,9 @@ importers:
       genshin-engine:
         specifier: workspace:*
         version: link:../genshin-engine
+      genshin-ui:
+        specifier: workspace:*
+        version: link:../genshin-ui
       three:
         specifier: 'catalog:'
         version: 0.186.1
@@ -2116,6 +2162,9 @@ importers:
       '@types/sanitize-html':
         specifier: 'catalog:'
         version: 2.16.2
+      happy-dom:
+        specifier: 'catalog:'
+        version: 20.14.5
       publint:
         specifier: 'catalog:'
         version: 0.3.24

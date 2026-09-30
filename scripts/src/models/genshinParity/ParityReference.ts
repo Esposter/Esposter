@@ -9,6 +9,9 @@ export type ParityReference = ParityReferenceBase &
     | { capture?: never; crop?: never; seconds?: never; wikiTitle: string }
   );
 interface ParityReferenceBase {
+  // The reference is drawn behind the screen, for an overlay (an interface over a scene) judged over the very frame
+  // It was taken from, so only the overlay can differ
+  isBackdrop?: true;
   // The props the screen is shot with in place of its fixture's, where one screen is judged against several references
   // (a scene at each time of day)
   props?: Record<string, unknown>;

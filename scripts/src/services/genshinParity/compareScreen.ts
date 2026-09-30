@@ -27,7 +27,13 @@ export const compareScreen = async (referenceId: string): Promise<void> => {
   if (!existsSync(referencePath))
     throw new InvalidOperationError(Operation.Read, referenceId, `no reference at ${referencePath}`);
   const { height, width } = await sharp(referencePath).metadata();
-  const [shotPath = ""] = await shootScreen(reference.screen, width, height, [], undefined, reference.props);
+  const [shotPath = ""] = await shootScreen({
+    backdropPath: reference.isBackdrop ? referencePath : undefined,
+    height,
+    props: reference.props,
+    screen: reference.screen,
+    width,
+  });
   const region = reference.region ?? { height, width, x: 0, y: 0 };
   const extract = { height: region.height, left: region.x, top: region.y, width: region.width };
   const referenceRegion = await sharp(referencePath).removeAlpha().extract(extract).png().toBuffer();

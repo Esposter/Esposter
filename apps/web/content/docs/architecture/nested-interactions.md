@@ -50,7 +50,7 @@ flowchart TD
 
 | File                                                            | Role                                                          |
 | :-------------------------------------------------------------- | :------------------------------------------------------------ |
-| `apps/web/app/util/dom/checkIsNestedInteraction.ts`             | Whether a click belongs to something inside its container     |
+| `packages/shared/src/util/dom/checkIsNestedInteraction.ts`      | Whether a click belongs to something inside its container     |
 | `apps/web/app/services/ui/constants.ts`                         | The guard's selector, and the context menu's browser selector |
 | `apps/web/app/components/Ui/DataTable.vue`                      | A row that opens on a click, through the guard                |
 | `apps/web/app/composables/onClickExceptDrag.ts`                 | A click that was not a drag's end, through the guard          |

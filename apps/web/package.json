@@ -126,6 +126,7 @@
     "fast-deep-equal": "catalog:",
     "fflate": "catalog:",
     "genshin-engine": "workspace:*",
+    "genshin-ui": "workspace:*",
     "genshin-world": "workspace:*",
     "grapesjs": "catalog:",
     "grapesjs-blocks-basic": "catalog:",

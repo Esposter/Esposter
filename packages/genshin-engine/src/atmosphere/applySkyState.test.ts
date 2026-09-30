@@ -6,7 +6,7 @@ import { createSkyUniforms } from "#src/atmosphere/createSkyUniforms";
 import { createLightUniforms } from "#src/nodes/createLightUniforms";
 import { createFogUniforms } from "#src/post/createFogUniforms";
 import { createPostUniforms } from "#src/post/createPostUniforms";
-import { DirectionalLight, HemisphereLight } from "three";
+import { Color, DirectionalLight, HemisphereLight } from "three";
 import { describe, expect, test } from "vitest";
 
 const createSkyTargets = (): SkyTargets => ({
@@ -39,5 +39,20 @@ describe(applySkyState, () => {
     applySkyState(skyState, skyTargets);
 
     expect(shadow.needsUpdate).toBe(true);
+  });
+
+  test("hazes in the horizon's colour, or in the state's own fog colour where it sets one", () => {
+    expect.hasAssertions();
+
+    const skyState = createSkyState();
+    const skyTargets = createSkyTargets();
+    skyState.horizonColor.set(0xff0000);
+    applySkyState(skyState, skyTargets);
+
+    expect(skyTargets.fogUniforms.color.value.getHex()).toBe(0xff0000);
+
+    applySkyState({ ...skyState, fogColor: new Color(0x00ff00) }, skyTargets);
+
+    expect(skyTargets.fogUniforms.color.value.getHex()).toBe(0x00ff00);
   });
 });

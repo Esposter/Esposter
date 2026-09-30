@@ -1,129 +1,35 @@
-import type { LoginTower } from "#src/models/login/LoginTower";
-import type { GradeOptions, RampOptions, SkyState } from "genshin-engine";
+import { LoginStatusStep } from "#src/models/login/LoginStatusStep";
 
-import { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
-import { LoginTowerKind } from "#src/models/login/LoginTowerKind";
-import { Color, Vector3 } from "three";
-
-// The camera, matched to the four time-of-day references, which share one pose: the walkway's edges meet 0.524 across
-// And 0.546 down the frame, so it looks a touch right and up of the walkway's line, from eye height over its surface
-export const LOGIN_CAMERA_FOV = 45;
-export const LOGIN_CAMERA_POSITION: [number, number, number] = [0, 3.3, 0];
-export const LOGIN_CAMERA_TARGET: [number, number, number] = [3.53, 7.11, -99.87];
-// Where every tower's shaft ends, out of sight under the cloud sea
-export const LOGIN_TOWER_FLOOR = -60;
-// The cloud sea's top, below the walkway, and how far it reaches
-export const LOGIN_CLOUD_SEA_HEIGHT = -9;
-export const LOGIN_CLOUD_SEA_SIZE = 2400;
-// The walkway, from the camera's feet to the step it ends at, and the wings either side of it, in metres
-export const LOGIN_WALKWAY_WIDTH = 5.4;
-export const LOGIN_WALKWAY_LENGTH = 34;
-export const LOGIN_WALKWAY_DEPTH = 1.6;
-export const LOGIN_WALKWAY_START = 6;
-export const LOGIN_WING_WIDTH = 10;
-export const LOGIN_WING_LENGTH = 7;
-export const LOGIN_WING_CENTRE = -17;
-export const LOGIN_STEP_WIDTH = 7.2;
-export const LOGIN_STEP_HEIGHT = 1.16;
-export const LOGIN_STEP_LENGTH = 4;
-export const LOGIN_STONE_COLOR = 0xf3e9e0;
-export const LOGIN_GOLD_COLOR = 0xd6b25e;
-export const LOGIN_RIM_STRENGTH = 0.4;
-export const LOGIN_RAMP_OPTIONS: RampOptions = { resolution: 64, softness: 0.1, terminator: 0.5 };
-export const LOGIN_GRADE_OPTIONS: GradeOptions = {
-  contrast: 1,
-  highlightTint: [0, 0, 0],
-  saturation: 1.05,
-  shadowTint: [0, 0, 0.02],
-  size: 32,
-};
-// The haze the cloud sea gives off, thick enough that the far towers pale into the horizon's colour
-export const LOGIN_FOG_DENSITY = 0.006;
-export const LOGIN_FOG_HEIGHT_FALLOFF = 0.03;
-export const LOGIN_FOG_START_DISTANCE = 20;
-export const LOGIN_LIGHT_DISTANCE = 120;
-export const LOGIN_CLOUD_COVERAGE = 0.4;
-// Each tower's shaft diameter, its axis and its top, placed where its box stands in the references: the depth of each is
-// Chosen so its shaft is a believable width for its kind, and the flight past them is what tunes it
-export const LOGIN_TOWERS: LoginTower[] = [
-  { diameter: 6.48, kind: LoginTowerKind.Crowned, position: [-11.4, -39.8], top: 21.3 },
-  { diameter: 6.31, kind: LoginTowerKind.Ringed, position: [-12.4, -74.8], top: 23.4 },
-  { diameter: 7.5, kind: LoginTowerKind.Ringed, position: [15.4, -94], top: 18.8 },
-  { diameter: 7.51, kind: LoginTowerKind.Ringed, position: [15.1, -40.7], top: 24 },
-  { diameter: 4.6, kind: LoginTowerKind.Ringed, position: [41.3, -77.9], top: 22.6 },
-  { diameter: 6.1, kind: LoginTowerKind.Crowned, position: [43.2, -58], top: 16.9 },
-  { diameter: 6.97, kind: LoginTowerKind.Ringed, position: [64.7, -107], top: 24.8 },
-  { diameter: 1.04, kind: LoginTowerKind.Slender, position: [-17.8, -45.4], top: 11.1 },
-  { diameter: 6.36, kind: LoginTowerKind.Ringed, position: [-53.9, -121.2], top: 24.8 },
-  { diameter: 5.83, kind: LoginTowerKind.Crowned, position: [-57.6, -111.9], top: 11.6 },
-  { diameter: 3.45, kind: LoginTowerKind.Slender, position: [-77.1, -132.5], top: 14.7 },
-  { diameter: 5.01, kind: LoginTowerKind.Ringed, position: [-19, -170.5], top: 12.6 },
-  { diameter: 5.3, kind: LoginTowerKind.Ringed, position: [-9.1, -200.5], top: 5.9 },
-  { diameter: 4.51, kind: LoginTowerKind.Ringed, position: [16, -169.4], top: 11.2 },
-  { diameter: 5.01, kind: LoginTowerKind.Ringed, position: [31, -168.8], top: 11.2 },
-  { diameter: 4.42, kind: LoginTowerKind.Ringed, position: [40.6, -148.4], top: 12.7 },
+// The English client's words on its login screen, from a 1080 high recording of it (`yt-rBnfA4pXw6U`)
+export const LOGIN_TITLE_TEXT = "START GAME";
+export const LOGIN_BEGIN_TEXT = "CLICK TO BEGIN";
+export const LOGIN_USER_LABEL = "User";
+export const LOGIN_SERVER_NAME = "Asia";
+// The build string the game prints at the foot of its login screen, the one the 1440 high recording shows
+export const LOGIN_VERSION_TEXT = "OSRELWin7.1.0_R48379043_S48511369_D48533839";
+// The welcome card greets the player by the name their account shows, after these words
+export const LOGIN_WELCOME_TEXT = "Welcome,";
+// The status the foot shows as the game prepares, each from the moment given after the title's click; the game says
+// Them as fast as its checks run, so these are the English recording's own pace
+export const LOGIN_STATUS_STEPS: readonly { ms: number; step: LoginStatusStep }[] = [
+  { ms: 0, step: LoginStatusStep.PreparingDownload },
+  { ms: 450, step: LoginStatusStep.CheckingForUpdates },
+  { ms: 800, step: LoginStatusStep.LoadingGame },
+  { ms: 1400, step: LoginStatusStep.LoadingData },
 ];
-// Each time of day's sky and light, its colours read off its reference: the gradient's zenith and horizon, the clouds,
-// And where the light comes from, which is from the left in all four (low at dawn and dusk, and the moon's at night)
-export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
-  [LoginTimeOfDay.Dawn]: {
-    cloudLitColor: new Color(0xf2dfc8),
-    cloudShadeColor: new Color(0x8c91a7),
-    hemisphereGroundColor: new Color(0xf2dfc8),
-    hemisphereIntensity: 1.1,
-    hemisphereSkyColor: new Color(0x8c91a7),
-    horizonColor: new Color(0xf2c9a4),
-    lightColor: new Color(0xffd8a8),
-    lightDirection: new Vector3(-0.951, 0.08, -0.3).normalize(),
-    lightIntensity: 1.3,
-    moonDirection: new Vector3(0.951, -0.08, 0.3).normalize(),
-    starIntensity: 0,
-    sunDirection: new Vector3(-0.951, 0.08, -0.3).normalize(),
-    zenithColor: new Color(0x42608c),
-  },
-  [LoginTimeOfDay.Day]: {
-    cloudLitColor: new Color(0xffffff),
-    cloudShadeColor: new Color(0xb8cbe0),
-    hemisphereGroundColor: new Color(0xd4e4ef),
-    hemisphereIntensity: 1.3,
-    hemisphereSkyColor: new Color(0x9ec0e8),
-    horizonColor: new Color(0xb0c9e3),
-    lightColor: new Color(0xfff4e6),
-    lightDirection: new Vector3(-0.526, 0.789, -0.316).normalize(),
-    lightIntensity: 1.5,
-    moonDirection: new Vector3(0.526, -0.789, 0.316).normalize(),
-    starIntensity: 0,
-    sunDirection: new Vector3(-0.526, 0.789, -0.316).normalize(),
-    zenithColor: new Color(0x3b68a0),
-  },
-  [LoginTimeOfDay.Dusk]: {
-    cloudLitColor: new Color(0xfcdbad),
-    cloudShadeColor: new Color(0xa9708d),
-    hemisphereGroundColor: new Color(0xfcdbad),
-    hemisphereIntensity: 1.1,
-    hemisphereSkyColor: new Color(0xa9708d),
-    horizonColor: new Color(0xf2b08a),
-    lightColor: new Color(0xffc890),
-    lightDirection: new Vector3(-0.902, 0.251, -0.351).normalize(),
-    lightIntensity: 1.3,
-    moonDirection: new Vector3(0.902, -0.251, 0.351).normalize(),
-    starIntensity: 0,
-    sunDirection: new Vector3(-0.902, 0.251, -0.351).normalize(),
-    zenithColor: new Color(0x7e5485),
-  },
-  [LoginTimeOfDay.Night]: {
-    cloudLitColor: new Color(0x56b0f5),
-    cloudShadeColor: new Color(0x255abb),
-    hemisphereGroundColor: new Color(0x2d6fd0),
-    hemisphereIntensity: 1,
-    hemisphereSkyColor: new Color(0x2a4aa8),
-    horizonColor: new Color(0x1f51c6),
-    lightColor: new Color(0x9cc8ff),
-    lightDirection: new Vector3(-0.551, 0.451, -0.702).normalize(),
-    lightIntensity: 0.9,
-    moonDirection: new Vector3(-0.551, 0.451, -0.702).normalize(),
-    starIntensity: 1,
-    sunDirection: new Vector3(0.551, -0.451, 0.702).normalize(),
-    zenithColor: new Color(0x172161),
-  },
-};
+// Timings from the 1440 high recording at 10 frames and the English one at 60, each read as a curve over its region
+// (`luma`): the scene fades up out of white over 800 ms, the wait mark shows from 1.3 s to 2 s, and the title comes in
+// At once as it goes. The welcome card holds 1.9 s and fades over 200 ms
+export const LOGIN_ARRIVE_FADE_MS = 800;
+export const LOGIN_SPINNER_START_MS = 1300;
+export const LOGIN_TITLE_START_MS = 2000;
+export const LOGIN_WELCOME_HOLD_MS = 1900;
+export const LOGIN_WELCOME_FADE_MS = 200;
+// The camera's flight from the title to the door, at its fastest: it flies no further than loading has gone, so a
+// Slow load draws it out (17 s in the 1440 high recording) while a fast one takes this long (the English recording's,
+// Less the two seconds it stalls for)
+export const LOGIN_FLIGHT_MS = 8900;
+// A click on the door lights it over 400 ms while the screen whitens over 620, easing out, from the English
+// Recording at 60 frames
+export const LOGIN_DOOR_LIGHT_MS = 400;
+export const LOGIN_FLASH_MS = 620;

@@ -60,7 +60,7 @@ New files:
 
 ```text
 packages/genshin-engine/src/nodes/        ← rain and snow node graphs
-packages/genshin-world/src/components/world/Weather.vue
+packages/genshin-world/src/components/World/Weather/Index.vue
 ```
 
 ## Sources

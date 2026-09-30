@@ -4,7 +4,7 @@ import type { ToolCall } from "@/models/agentConsole/ToolCall";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { RESULT_PREVIEW_LINE_COUNT } from "@/services/agentConsole/constants";
 import { getDurationSeconds } from "@/services/agentConsole/getDurationSeconds";
-import { checkIsNestedInteraction } from "@/util/dom/checkIsNestedInteraction";
+import { checkIsNestedInteraction } from "@esposter/shared";
 
 interface Props {
   toolCall: ToolCall;

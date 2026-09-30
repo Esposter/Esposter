@@ -1,7 +1,8 @@
 import { ParityReferenceMap } from "#src/services/genshinParity/ParityReferenceMap";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { getComponentName } from "@esposter/configuration";
 import { readdirSync, readFileSync } from "node:fs";
-import { basename, join } from "node:path";
+import { basename, join, relative } from "node:path";
 import { describe, expect, test } from "vitest";
 
 /**
@@ -10,21 +11,23 @@ import { describe, expect, test } from "vitest";
  * its approved image locks in whatever it draws. Every screen the suite shoots is held to having a reference here.
  */
 describe("parityReferenceMap", () => {
-  const INTERFACE_DIRECTORY = join(REPOSITORY_ROOT, "packages/genshin-world/src/components/interface");
-  const FIXTURE_SUFFIX = ".fixture.ts";
+  const COMPONENTS_DIRECTORY = join(REPOSITORY_ROOT, "packages/genshin-world/src/components");
+  // Each screen is a folder holding its `Index.vue` and `Index.fixture.ts`, named by its path as the package's barrel
+  // Names it
+  const FIXTURE_FILE = "Index.fixture.ts";
   // A motion-only fixture is shot on the parity page but kept out of the suite
   const MOTION_ONLY_REGEX = /export const isMotionOnly = true/u;
 
   test("names a reference for every screen the visual suite shoots", () => {
     expect.hasAssertions();
 
-    const fixturePaths = readdirSync(INTERFACE_DIRECTORY, { recursive: true })
+    const fixturePaths = readdirSync(COMPONENTS_DIRECTORY, { recursive: true })
       .map(String)
-      .filter((path) => path.endsWith(FIXTURE_SUFFIX))
-      .map((path) => join(INTERFACE_DIRECTORY, path));
+      .filter((path) => basename(path) === FIXTURE_FILE)
+      .map((path) => join(COMPONENTS_DIRECTORY, path));
     const stillScreens = fixturePaths
       .filter((path) => !MOTION_ONLY_REGEX.test(readFileSync(path, "utf8")))
-      .map((path) => basename(path, FIXTURE_SUFFIX));
+      .map((path) => getComponentName(relative(COMPONENTS_DIRECTORY, path).replace(/\.fixture\.ts$/u, ".vue")));
     const referencedScreens = new Set(Object.values(ParityReferenceMap).map(({ screen }) => screen));
 
     expect(stillScreens.filter((screen) => !referencedScreens.has(screen))).toStrictEqual([]);

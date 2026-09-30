@@ -23,6 +23,8 @@ export const FFMPEG_ARCHIVE_SHA256 = "60f467265b1e312373dbcd92200c2618a74850f98d
 export const FFMPEG_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 // The world package's parity page (`pnpm -C packages/genshin-world parity`), which renders a screen without Nuxt
 export const PARITY_PAGE_URL = "http://localhost:3002/parity/?screen=";
+// The name a backdrop is served to the parity page under, which the page is told in its query
+export const PARITY_BACKDROP_FILE = "parity-backdrop.png";
 export const GAME_EXECUTABLE_PATH: string = String.raw`C:\Program Files\Genshin Impact\Genshin Impact game\GenshinImpact.exe`;
 export const GAME_EXECUTABLE_NAME = "GenshinImpact.exe";
 // The game lays its interface out for a 1080-pixel-high screen and scales it with the height, so a shot is taken at
