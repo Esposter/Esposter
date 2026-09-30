@@ -31,7 +31,7 @@ flowchart TD
 
 ## The recorded session
 
-The mapper is tested against one real session recorded through the SDK and checked in: a permission prompt, a file write, a Bash call, a subagent, and the persona plugin's hooks. Home-directory paths are rewritten to `/a` and the signatures on thinking blocks are cleared. The test maps it, checks every event against the wire schema, and writes the result into `__snapshots__/recordedSession.events.json` beside it. The app's store, component and visual tests replay that file through the same contract, so no test anywhere makes a live call.
+The mapper is tested against one real session recorded through the SDK and checked in: a permission prompt, a file write, a Bash call, a subagent, and the persona plugin's hooks. Home-directory paths are rewritten to `/a` and the signatures on thinking blocks are cleared. The test maps it, checks every event against the wire schema, and writes the result into `recordedSession.events.snapshot.json` beside it. The app's store, component and visual tests replay that file through the same contract, so no test anywhere makes a live call.
 
 ## Key files
 

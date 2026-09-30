@@ -8,7 +8,8 @@ const oxfmtConfiguration: OxfmtConfig = defineConfig({
     "*.tsx",
     "**/tilemap.json",
     "**/auto-imports.d.ts",
-    "**/__snapshots__",
+    // A file snapshot is written by its test verbatim, beside what it holds
+    "**/*.snapshot.*",
     "**/snapshot.json",
     "**/generated/**/*.json",
     "CHANGELOG*.md",

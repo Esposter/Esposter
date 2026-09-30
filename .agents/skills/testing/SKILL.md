@@ -54,6 +54,7 @@ Environment and running:
 
 - **`test` not `it`** — always `test(...)`.
 - **A test lives beside what it tests** — `Foo.ts` → `Foo.test.ts`, never folded into a nearby suite or moved to the module it scans (`references/test-placement.md`).
+- **A file snapshot lives beside what it holds, as `<name>.snapshot.<extension>`** — a component's rendered HTML beside the component, a parsed map beside the map — never in a `__snapshots__` folder. The suffix is what the formatter and the JSON lint skip, so the file stays as its test wrote it.
 - **`describe(functionRef, …)`**, flat — a string only when no reference exists, naming the file's export; `describe.each` over a matrix is not a group (`references/suite-titles.md`).
 - **Nothing but imports, pure helpers and hoisted mocks lives at module scope** — every constant is a `const` inside the `describe` (`references/module-scope.md`).
 - **`test.each` for a table of cases, never a loop around `test`** (`vitest/prefer-each`), titled with `%s` (`references/case-tables.md`).

@@ -3,14 +3,14 @@ import { configs } from "eslint-plugin-jsonc";
 import { defineConfig } from "eslint/config";
 
 // Generated JSON is not ours to lint: a drizzle migration snapshot is written and re-read by `db:gen`, the asset
-// Blobs are exports from the tools that drew them, and a vitest file snapshot is rewritten by `-u`. The entry buys
-// Time rather than green — the snapshots are most of the JSON in the repo, and the trees one package walks held
-// Its lint an order of magnitude above every other — and it keeps a future rule from reporting on a file nobody
-// Edits.
+// Blobs are exports from the tools that drew them, and a vitest file snapshot (`<name>.snapshot.json`, beside what it
+// Holds) is rewritten by `-u`. The entry buys time rather than green — the snapshots are most of the JSON in the
+// Repo, and the trees one package walks held its lint an order of magnitude above every other — and it keeps a
+// Future rule from reporting on a file nobody edits.
 const GENERATED_JSON_FILE_PATTERNS = [
   "**/server/db/migrations/**/*.json",
   "**/app/assets/**/*.json",
-  "**/__snapshots__/**/*.json",
+  "**/*.snapshot.json",
 ];
 // JSONC by contract rather than by extension, so a comment is legal in them however the suffix reads.
 // `recommended-with-json` bans comments outright; `recommended-with-jsonc` is that set without the ban.

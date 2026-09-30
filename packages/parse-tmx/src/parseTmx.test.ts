@@ -42,7 +42,7 @@ describe(parseTmx, () => {
         const file = await readFile(`${MAP_DIRECTORY}/${filename}`, "utf8");
         const tmxParsed = await parseTmx(file);
 
-        await expect(JSON.stringify(tmxParsed)).toMatchFileSnapshot(`${ROOT_DIRECTORY}/__snapshots__/${filename}.json`);
+        await expect(JSON.stringify(tmxParsed)).toMatchFileSnapshot(`${MAP_DIRECTORY}/${filename}.snapshot.json`);
       }),
     );
   });

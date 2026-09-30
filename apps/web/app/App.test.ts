@@ -1,9 +1,13 @@
 // @vitest-environment nuxt
 import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { dirname } from "node:path";
 import { describe, expect, test } from "vitest";
 
 describe("app", () => {
+  // The web app's root, which each component's glob key is a path from
+  const WEB_DIRECTORY = dirname(import.meta.dirname);
+
   test("snapshots", async () => {
     expect.hasAssertions();
 
@@ -23,7 +27,8 @@ describe("app", () => {
         const mountedComponent = await mountSuspended(component, { global: { stubs: { VisualGem: true } } });
         const filename = trimFileExtension(filepath);
 
-        await expect(mountedComponent.html()).toMatchFileSnapshot(`__snapshots__/${filename}.html`);
+        // Beside its component, as a test sits beside its code
+        await expect(mountedComponent.html()).toMatchFileSnapshot(`${WEB_DIRECTORY}${filename}.snapshot.html`);
       }),
     );
   });

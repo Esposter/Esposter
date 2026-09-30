@@ -12,6 +12,6 @@ expression is out of the rule's reach, so `app/templates.test.ts` checks those a
 joins the list rather than the prose.
 
 **Blocking a spelling is a render change, so it owes `pnpm test app/App.test.ts -u --run`.** The attribute
-survives into the rendered markup, and the committed HTML under `apps/web/app/__snapshots__/` is the only place
+survives into the rendered markup, and the committed HTML beside each component (`app/components/**/<Name>.snapshot.html`) is the only place
 that still holds the old one — no linter reads a snapshot, so the rewrite of the components passes every check
 and the suite goes red on a file the change never touched.

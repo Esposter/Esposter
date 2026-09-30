@@ -80,9 +80,7 @@ describe(createSdkMessageMapper, () => {
     ];
 
     expect(events.map((event) => agentEventSchema.parse(event))).toStrictEqual(events);
-    await expect(`${JSON.stringify(events, null, 2)}\n`).toMatchFileSnapshot(
-      "__snapshots__/recordedSession.events.json",
-    );
+    await expect(`${JSON.stringify(events, null, 2)}\n`).toMatchFileSnapshot("recordedSession.events.snapshot.json");
   });
 
   test("keeps a message the contract has no event for as a raw row", () => {
