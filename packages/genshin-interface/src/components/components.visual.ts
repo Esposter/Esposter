@@ -44,7 +44,7 @@ const holdAnimations = (): void => {
   }
 };
 
-describe("genshin-ui components", () => {
+describe("genshin-interface components", () => {
   test("every component but the screen root has a fixture", () => {
     expect.hasAssertions();
 

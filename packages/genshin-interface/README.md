@@ -1,4 +1,4 @@
-# genshin-ui
+# genshin-interface
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 [![NPM version][badge-npm-version]][url-npm]
@@ -23,15 +23,15 @@ It ships no image or font from the game: each glyph is a vector path traced from
 ## <a name="getting-started">🚀 Getting Started</a>
 
 ```bash
-pnpm i genshin-ui vue
+pnpm i genshin-interface vue
 ```
 
 Draw a screen inside `GameScreen`, lay it out in `calc(var(--unit) * n)`, and load the styles once:
 
 ```vue
 <script setup lang="ts">
-import { GameScreen, InterfaceIcon, RoundButton } from "genshin-ui";
-import "genshin-ui/style.css";
+import { GameScreen, InterfaceIcon, RoundButton } from "genshin-interface";
+import "genshin-interface/style.css";
 </script>
 
 <template>
@@ -43,7 +43,7 @@ import "genshin-ui/style.css";
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/genshin-ui.html) to level up. How the library is measured against the game is its [docs page](https://esposter.com/docs/genshin/interface-library).
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/genshin-interface.html) to level up. How the library is measured against the game is its [docs page](https://esposter.com/docs/genshin/interface-library).
 
 ## <a name="license">⚖️ License</a>
 
@@ -51,7 +51,7 @@ This project is licensed under the [Apache-2.0 license](https://github.com/Espos
 
 [badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/genshin-ui/latest?color=brightgreen
-[url-npm]: https://www.npmjs.com/package/genshin-ui/v/latest
-[badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/genshin-ui/latest?label=npm
-[badge-npm-downloads]: https://img.shields.io/npm/dm/genshin-ui.svg
+[badge-npm-version]: https://img.shields.io/npm/v/genshin-interface/latest?color=brightgreen
+[url-npm]: https://www.npmjs.com/package/genshin-interface/v/latest
+[badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/genshin-interface/latest?label=npm
+[badge-npm-downloads]: https://img.shields.io/npm/dm/genshin-interface.svg
