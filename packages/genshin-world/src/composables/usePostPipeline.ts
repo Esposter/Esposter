@@ -1,19 +1,22 @@
 import type { PostPipeline, PostPipelineOptions, QualityTier } from "genshin-engine";
 import type { MaybeRefOrGetter } from "vue";
 
+import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
 import { watchImmediate } from "@vueuse/core";
-import { createPostPipeline, QualityTierSettingsMap } from "genshin-engine";
+import { AntialiasingMode, createPostPipeline, QualityTierSettingsMap } from "genshin-engine";
 
 // The engine's post chain draws each frame in place of TresJS's plain render of the scene. The camera registers after
 // The canvas mounts, so the chain is built once the camera exists, and rebuilt only when the camera or the tier
 // Changes. Called from a component inside the canvas, whose context it reads. The chain is handed back so the tuning
-// Panel reaches its passes
+// Panel reaches its passes. Under the witness render the chain resolves edges without a temporal history, and hands the
+// Witness what it renders with
 export const usePostPipeline = (
   qualityTier: MaybeRefOrGetter<QualityTier>,
   postInputs: Pick<PostPipelineOptions, "fogUniforms" | "godraysLight" | "gradeLutTexture" | "postUniforms">,
 ) => {
   const { camera, renderer, scene } = useTres();
+  const witness = inject(SceneWitnessKey, null);
   const { render } = useLoop();
   const postPipeline = shallowRef<PostPipeline>();
 
@@ -24,11 +27,16 @@ export const usePostPipeline = (
         ? createPostPipeline({
             ...postInputs,
             camera: activeCamera,
-            qualityTierSettings: QualityTierSettingsMap[newQualityTier],
+            // The witness settles a view in one frame, which a temporal resolve's history and jitter cannot
+            qualityTierSettings: witness
+              ? { ...QualityTierSettingsMap[newQualityTier], antialiasingMode: AntialiasingMode.Smaa }
+              : QualityTierSettingsMap[newQualityTier],
             renderer,
             scene: scene.value,
           })
         : undefined;
+    if (witness && activeCamera && isWebGPURenderer(renderer))
+      witness.context.value = { camera: activeCamera, renderer, scene: scene.value };
   });
 
   render((notifySuccess) => {

@@ -1,7 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
-import { CAMERA_POSE_AXES, solveWitnessCamera } from "#src/services/genshinParity/solveWitnessCamera";
+import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
+import { solveWitnessCamera } from "#src/services/genshinParity/solveWitnessCamera";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 

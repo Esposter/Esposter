@@ -1,6 +1,6 @@
 ---
 title: Scene toolbox
-description: Proposal — the tools that make each unknown of a 3D scene answerable on its own, so a scene is solved rather than searched and converges in a pass or two the way the interface does. The camera is solved from correspondences and tracked across a recording, the witness render is made deterministic and writes a G-buffer, and the grade, fog and light are fitted by regression over it. Superseded searches are deleted.
+description: Proposal — the tools that make each unknown of a 3D scene answerable on its own, so a scene is solved rather than searched and converges in a pass or two the way the interface does. The camera is solved from correspondences and tracked across a recording, and the grade, fog and light are fitted by regression over the witness's G-buffer. Superseded searches are deleted.
 model: claude-opus-5-5
 ---
 
@@ -51,21 +51,13 @@ flowchart TD
 
 `solve-camera`'s grid, its simplex over the line distance, and the line scorer (`createLineDistanceScorer`, `readVerticalLines`) are deleted once `pose` and the refinement answer every reference they served.
 
-### 2. The instrumented render
-
-**The deterministic witness.** While a tool drives the page, the witness holds the scene's clock, turns off the temporal anti-aliasing's jitter, and settles each view in one frame rather than eight. A shot is read back from the renderer's own target instead of screenshotting the page, so a pose costs one render.
-
-**The witness G-buffer.** `genshin:parity gbuffer <reference> --witness <component>` renders, at the reference's pose, a second set of targets beside the colour: linear depth, the world normal, the unlit albedo, and a part identifier (the family, then the part within it). They are dumped as float buffers with a JSON header naming each part's identifier. Every later tool reads them: the identifier is the segmentation of the reference that each layer's score masks by, and depth, normal and albedo make the light, the fog and the grade linear problems.
-
-**The overlay.** `genshin:parity overlay <reference> --witness <component>` draws the witness's part boundaries over the reference, coloured by family and labelled, with a map of how far each reference edge sits from the nearest boundary. Misregistration shows per part in one image, where the side-by-side comparison shows only that two images differ.
-
-### 3. The scores
+### 2. The scores
 
 **Scores by layer.** `scoreLayers` scores shape, tone and detail over each layer's mask from the identifier target, and `compare --witness` and `attribute` print a row per layer beside the frame's, into their committed reports. A change is then judged where it lands.
 
 **The perceptual score.** An implementation of FLIP's standard-dynamic-range metric in TypeScript, tested against the values the reference implementation publishes for its example images, is the approval number the method ends on.
 
-### 4. Calibration by regression
+### 3. Calibration by regression
 
 `genshin:parity calibrate <reference> --witness <component>` fits each frame-wide term by least squares over the pixels its mask selects, in the order light meets the eye, holding each fitted term for the next:
 
@@ -75,11 +67,11 @@ flowchart TD
 
 Each term prints its values and its residual, and a scene writes them as constants citing the reference they were fitted on. This replaces measuring light over a hand-picked patch and searching a strength until the frame's mean drops.
 
-### 5. Shader reading
+### 4. Shader reading
 
 The `shaders` step already disassembles each program. It also writes each program as HLSL beside its assembly, through 3Dmigoto's command-line decompiler, fetched as a pinned release checked by SHA-256 the way FFmpeg is, with the constant names `annotateProgramConstants` recovers substituted in. The atmosphere, the cloud layer, the cloud particles and the uber pass are then ported to TSL from readable code instead of from assembly. If no pinned release of the decompiler is published, it is built from its source into the same cache, and failing that the annotated assembly stays the source.
 
-### 6. The loss table
+### 5. The loss table
 
 `attribute` keeps its ladder of swaps, each family handed back to the scene's own kit in turn, and scores it per layer from the identifier target. Its table is committed only from a pose `pose` has solved within its reprojection gate.
 
@@ -90,30 +82,23 @@ scripts/src/services/genshinParity/
   solveCameraPose.ts            ← DLT and PnP from correspondences, then Gauss–Newton
   refineCameraPose.ts           ← the chamfer over the identifier edges
   trackCamera.ts                ← the pose at every sampled frame
-  readWitnessGbuffer.ts         ← the targets, read back as float buffers
-  writeOverlay.ts               ← part boundaries over the reference
   scoreLayers.ts                ← shape, tone and detail per mask
   scoreFlip.ts                  ← FLIP, standard dynamic range
   calibrateScene.ts             ← light, fog and grade by least squares
-  commands/poseCommand.ts, trackCommand.ts, gbufferCommand.ts, overlayCommand.ts, calibrateCommand.ts
-packages/genshin-world/parity/witness/
-  renderWitnessTargets.ts       ← depth, normal, albedo and identifier in one settled frame
+  commands/poseCommand.ts, trackCommand.ts, calibrateCommand.ts
 ```
 
 Deleted as each is superseded: `solveWitnessCamera.ts` with its command, `createLineDistanceScorer.ts`, `readVerticalLines.ts` and `minimizeNelderMead.ts` if nothing else reads them, and `fitAlbedo.ts` once the stone's material is fitted.
 
 ## Key files
 
-| File                                                             | Role after the change                                             |
-| :--------------------------------------------------------------- | :---------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/DerivedAssetComponentMap.ts` | A component's landmarks beside its roots and spawns               |
-| `scripts/src/services/genshinAssets/extractComponentShaders.ts`  | Writes each program's HLSL beside its assembly                    |
-| `scripts/src/services/genshinParity/computeDistanceTransform.ts` | The chamfer the pose refinement minimises                         |
-| `scripts/src/services/genshinParity/attributeScene.ts`           | The loss table, per layer                                         |
-| `scripts/src/services/genshinParity/compareScreen.ts`            | Prints a row per layer and the perceptual score                   |
-| `packages/genshin-world/parity/witness/setWitnessView.ts`        | One settled frame under a held clock, read back from the renderer |
-| `packages/genshin-world/parity/witness/loadWitness.ts`           | Tags every drawn part with its identifier                         |
-| `packages/genshin-engine/src/post/createPostPipeline.ts`         | The anti-aliasing's jitter held while the witness is driven       |
+| File                                                             | Role after the change                               |
+| :--------------------------------------------------------------- | :-------------------------------------------------- |
+| `scripts/src/services/genshinAssets/DerivedAssetComponentMap.ts` | A component's landmarks beside its roots and spawns |
+| `scripts/src/services/genshinAssets/extractComponentShaders.ts`  | Writes each program's HLSL beside its assembly      |
+| `scripts/src/services/genshinParity/computeDistanceTransform.ts` | The chamfer the pose refinement minimises           |
+| `scripts/src/services/genshinParity/attributeScene.ts`           | The loss table, per layer                           |
+| `scripts/src/services/genshinParity/compareScreen.ts`            | Prints a row per layer and the perceptual score     |
 
 ## Notes
 

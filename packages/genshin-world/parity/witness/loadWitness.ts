@@ -13,7 +13,7 @@ const COLOR_SLOTS = new Set<string>([WitnessProperty.MainTexture]);
 // The witness render's parts: the component's exports laid out as `genshin:assets witness` wrote them, each mesh
 // Turned from the export's axes into three's (the export negates x, three negates z, together half a turn about y) and
 // Drawn at every placement with the material each of its submeshes names, in a group per family of the scene's parts
-// Its mesh's name falls in (named by the family, or empty for a mesh no family names). Each drawn mesh keeps its
+// Its mesh's name falls in (named by the family, or empty for a mesh no family names), each part named by its mesh. Each drawn mesh keeps its
 // Material under every shading in its `userData`, for the view to switch between. The meshes and textures are served
 // Beside the layout, by their export folders
 export const loadWitness = async (
@@ -69,6 +69,7 @@ export const loadWitness = async (
   };
   for (const { materials, mesh, position, rotation, scale } of layout.placements) {
     const part = new Group();
+    part.name = mesh;
     for (const submesh of nameSubmeshesMap.get(mesh) ?? []) {
       const material = materials[Number(SUBMESH_INDEX_REGEX.exec(submesh.name)?.groups?.index ?? 0)] ?? "";
       const shadingMaterialMap = Object.fromEntries(

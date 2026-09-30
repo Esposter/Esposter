@@ -4,9 +4,11 @@ import { attributeCommand } from "#src/services/genshinParity/commands/attribute
 import { compareCommand } from "#src/services/genshinParity/commands/compareCommand";
 import { fetchCommand } from "#src/services/genshinParity/commands/fetchCommand";
 import { framesCommand } from "#src/services/genshinParity/commands/framesCommand";
+import { gbufferCommand } from "#src/services/genshinParity/commands/gbufferCommand";
 import { launchCommand } from "#src/services/genshinParity/commands/launchCommand";
 import { lumaCommand } from "#src/services/genshinParity/commands/lumaCommand";
 import { measureCommand } from "#src/services/genshinParity/commands/measureCommand";
+import { overlayCommand } from "#src/services/genshinParity/commands/overlayCommand";
 import { polarCommand } from "#src/services/genshinParity/commands/polarCommand";
 import { recordCommand } from "#src/services/genshinParity/commands/recordCommand";
 import { shootCommand } from "#src/services/genshinParity/commands/shootCommand";
@@ -23,6 +25,8 @@ export const genshinParityCommand: CommandDef = defineCommand({
     fetch: fetchCommand,
     compare: compareCommand,
     attribute: attributeCommand,
+    gbuffer: gbufferCommand,
+    overlay: overlayCommand,
     shoot: shootCommand,
     "solve-camera": solveCameraCommand,
     frames: framesCommand,

@@ -206,7 +206,9 @@ const cameraZ = computed(() => {
   const share = Math.min(LOGIN_DOOR_RUSH_SHARE * (rushMs.value / LOGIN_DOOR_RUSH_MS) ** 2, LOGIN_DOOR_RUSH_LIMIT);
   return flownZ - share * (flownZ - LOGIN_DOOR_POSITION[2]);
 });
-onRender(({ delta }) => {
+onRender(({ delta: frameDelta }) => {
+  // A tool holding the witness's clock holds the scene's time too, so one view draws one frame
+  const delta = witness?.isClockHeld.value ? 0 : frameDelta;
   light.target.position.set(0, 0, cameraZ.value + LOGIN_SHADOW_EXTENT / 2);
   light.position
     .copy(light.target.position)

@@ -1,14 +1,10 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import type { Browser, Page } from "playwright";
 
-import { REFERENCES_DIRECTORY, STRUCTURE_WIDTH } from "#src/services/genshinParity/constants";
 import { createLineDistanceScorer } from "#src/services/genshinParity/createLineDistanceScorer";
 import { fetchReferences } from "#src/services/genshinParity/fetchReferences";
-import { openParityPage } from "#src/services/genshinParity/openParityPage";
-import { ParityReferenceMap } from "#src/services/genshinParity/ParityReferenceMap";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { join } from "node:path";
-import sharp from "sharp";
+import { openWitnessPage } from "#src/services/genshinParity/openWitnessPage";
+import { getResultAsync } from "@esposter/shared";
 
 // One reference's page for the witness tools: the parity page on the reference's screen in its own state (its props, a
 // Time of day), at the structure's width and the reference's aspect, drawing the component's exports; the reference at
@@ -31,21 +27,15 @@ export const openWitnessPages = async (
   await fetchReferences();
   const results = await Promise.allSettled(
     referenceIds.map(async (referenceId) => {
-      const reference = ParityReferenceMap[referenceId];
-      if (!reference) throw new InvalidOperationError(Operation.Read, referenceId, "not a reference");
-      const referencePath = join(REFERENCES_DIRECTORY, `${referenceId}.png`);
-      const { height: referenceHeight, width: referenceWidth } = await sharp(referencePath).metadata();
-      const height = Math.round((STRUCTURE_WIDTH / referenceWidth) * referenceHeight);
-      const image = await sharp(referencePath).resize(STRUCTURE_WIDTH, height).removeAlpha().png().toBuffer();
-      // The scorer before the browser, so nothing can fail once the browser is open
-      const scoreLines = await createLineDistanceScorer(image, height);
-      const { browser, page } = await openParityPage({
-        height,
-        props: reference.props,
-        screen: reference.screen,
-        width: STRUCTURE_WIDTH,
-        witness,
-      });
+      const { browser, height, image, page } = await openWitnessPage(referenceId, witness);
+      // A scorer that fails closes the browser just opened, since no caller receives it
+      const scoreLines = await getResultAsync(() => createLineDistanceScorer(image, height)).match(
+        (scorer) => scorer,
+        async (error) => {
+          await browser.close();
+          throw error;
+        },
+      );
       return { browser, height, image, page, referenceId, scoreLines };
     }),
   );

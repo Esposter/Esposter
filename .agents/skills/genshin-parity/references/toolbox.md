@@ -25,9 +25,9 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | Whether the arrangement is right        | `genshin:assets arrangement`: cross-ratios, drift     |                           |
 | The camera's pose                       | `solve-camera`: a grid and a simplex on line distance | Pose from correspondences |
 | The camera's path over a flight         | none: two poses and a straight line between           | The matchmove             |
-| A render that settles in one frame      | none: eight frames for the anti-aliasing's history    | The deterministic witness |
-| Depth, normal, albedo, part per pixel   | none                                                  | The witness G-buffer      |
-| Where each part lands on the reference  | `compare --witness`, side by side                     | The overlay               |
+| A render that settles in one frame      | the witness: SMAA, its clock held, one frame          |                           |
+| Depth, normal, albedo, part per pixel   | `genshin:parity gbuffer`                              |                           |
+| Where each part lands on the reference  | `genshin:parity overlay`: boundaries, edge distance   |                           |
 | Which layer a score's loss is in        | `attribute`, over the whole frame                     | Scores by layer           |
 | One approval number                     | shape and tone                                        | The perceptual score      |
 | The grade, the fog, the light           | none: measured over regions, or searched              | Calibration by regression |
