@@ -1,21 +1,22 @@
 import type { ChildProcess } from "node:child_process";
 import type { PackageJson } from "type-fest";
 
-import { defineNuxtModule } from "nuxt/kit";
+import { jsonDateParse } from "@esposter/shared";
 import { spawn, spawnSync } from "node:child_process";
 import { globSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
+import { defineNuxtModule } from "nuxt/kit";
 
 const CONFIGURATION_PACKAGE_NAME = "configuration";
 const WORKSPACE_PROTOCOL = "workspace:";
 
 const readPackageJson = (directory: string): PackageJson =>
-  JSON.parse(readFileSync(join(directory, "package.json"), "utf8")) as PackageJson;
+  jsonDateParse<PackageJson>(readFileSync(join(directory, "package.json"), "utf8"));
 // A sibling a package lists as a dependency or peer stays external in its `dist`, so the app loads that sibling's `dist`
 // Too; a devDependency is bundled from source, which the package's own watcher already follows
 const getRuntimeWorkspaceDependencies = (packageJson: PackageJson): string[] =>
-  Object.entries({ ...packageJson.dependencies, ...packageJson.peerDependencies })
+  Object.entries<string | undefined>({ ...packageJson.dependencies, ...packageJson.peerDependencies })
     .filter(([, version]) => version?.startsWith(WORKSPACE_PROTOCOL))
     .map(([name]) => name);
 // The app runs every workspace package from its `dist`, so under `nuxt dev` tsdown watches the source of each package
@@ -46,7 +47,7 @@ export default defineNuxtModule({
     const configurationDirectory = join(packagesDirectory, CONFIGURATION_PACKAGE_NAME);
     const tsdownPath = createRequire(join(configurationDirectory, "package.json")).resolve("tsdown/run");
     spawnSync(process.execPath, [tsdownPath], { cwd: configurationDirectory, stdio: "inherit" });
-    const watchers: ChildProcess[] = [...watchedPackageNames].map((packageName) =>
+    const watchers: ChildProcess[] = Array.from(watchedPackageNames, (packageName) =>
       spawn(process.execPath, [tsdownPath, "--watch"], { cwd: packageDirectoryMap.get(packageName), stdio: "inherit" }),
     );
     nuxt.hook("close", () => {
