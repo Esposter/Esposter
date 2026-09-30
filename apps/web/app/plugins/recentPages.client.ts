@@ -11,7 +11,8 @@ export default defineNuxtPlugin(() => {
   const pageMarkStore = usePageMarkStore();
   const { getPageMark } = pageMarkStore;
   const recentPageStore = useRecentPageStore();
-  const { updateRecentPage, visitPage } = recentPageStore;
+  const { forgetUnmatchedPages, updateRecentPage, visitPage } = recentPageStore;
+  forgetUnmatchedPages((path) => router.resolve(path).matched.length > 0);
   router.afterEach((to, _from, failure) => {
     // An aborted or redirected navigation never landed, and an address no page matches is the status page's, so
     // Neither is a visit

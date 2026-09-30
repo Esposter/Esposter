@@ -68,6 +68,19 @@ describe(useRecentPageStore, () => {
     ]);
   });
 
+  test("forgets a page no route matches any more", () => {
+    expect.hasAssertions();
+
+    const recentPageStore = useRecentPageStore();
+    const { rankedRecentPages } = storeToRefs(recentPageStore);
+    const { forgetUnmatchedPages, visitPage } = recentPageStore;
+    visitPage(path);
+    visitPage(`${path}1`);
+    forgetUnmatchedPages((visitedPath) => visitedPath === path);
+
+    expect(rankedRecentPages.value.map((recentPage) => recentPage.path)).toStrictEqual([path]);
+  });
+
   test("drops the lowest-ranked page once the list is full", () => {
     expect.hasAssertions();
 
