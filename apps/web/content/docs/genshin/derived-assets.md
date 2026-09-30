@@ -81,6 +81,7 @@ flowchart TD
 ```
 
 - **A path ID names an object only within its file.** The asset index repeats tens of thousands of path IDs across the game, so every object is held as its file and its path ID. A pointer with a file index of zero stays in its own file; any other is its file's external reference that many places down, less one, which the CAB map AnimeStudio builds with `map` lists in order (`parseCabMap`, `resolveObjectPointer`).
+- **The asset index names an object by its block, not its file.** A block and path ID the index names more than once, or that several files of one block resolve to, is reported unresolved rather than given one of them. So is a material sharing its name with another, since both export to one `Material/<name>.json` and its textures could resolve through the wrong file.
 - **The layout is dumped by source.** Grouped by type, a block's dumps are named by their objects' names, and each name keeps only its last object; grouped by the file each came from, the character select's block keeps about four times as many GameObjects, and every object's pointers resolve from its file.
 - **A name pattern is only for what no pointer reaches.** A particle system's renderer exports without the fields that point at its materials, so the login's cloud emitters' materials and atlases stay in its pattern, named exactly.
 
