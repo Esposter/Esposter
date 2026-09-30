@@ -33,6 +33,7 @@ import {
   LOGIN_SHADOW_NORMAL_BIAS,
 } from "#src/services/login/scene/constants";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
+import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { createLoginSilhouettesGeometry } from "#src/services/login/silhouette/createLoginSilhouettesGeometry";
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
 import { createLoginWalkwayGeometry } from "#src/services/login/walkway/createLoginWalkwayGeometry";
@@ -86,6 +87,8 @@ const CLOUD_SEA_EDGE_END = 0.35;
 const DOOR_SLIT_WIDTH = 0.16;
 const DOOR_SLIT_STRENGTH = 4;
 const DOOR_PANEL_STRENGTH = 0.6;
+// The witness render's parts, drawn in place of the fitted ones when the parity page provides them, alone when it asks
+const witness = inject(SceneWitnessKey, null);
 const { scene } = useTres();
 const { onRender } = useLoop();
 const rampTexture = createRampTexture(LOGIN_RAMP_OPTIONS);
@@ -171,6 +174,7 @@ onRender(({ delta }) => {
   light.position
     .copy(light.target.position)
     .addScaledVector(LoginSkyStateMap[timeOfDay].lightDirection, LOGIN_LIGHT_DISTANCE);
+  fogUniforms.density.value = witness?.isAlone.value ? 0 : LOGIN_FOG_DENSITY;
   doorGlow.value = isDoorLit ? Math.min(doorGlow.value + (delta * 1000) / LOGIN_DOOR_LIGHT_MS, 1) : 0;
   renderedFrameCount++;
   if (renderedFrameCount === READY_FRAME_COUNT) emit("ready");
@@ -205,19 +209,27 @@ onUnmounted(() => {
   <primitive :object="light" />
   <primitive :object="light.target" />
   <primitive :object="hemisphere" />
-  <primitive :object="loginClouds.group" />
+  <primitive v-if="!witness?.isAlone.value" :object="loginClouds.group" />
   <primitive :object="godraysLight" />
   <primitive :object="godraysLight.target" />
-  <TresMesh :geometry="walkwayGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
-  <TresMesh :geometry="towersGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
-  <TresMesh :geometry="silhouettesGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
+  <primitive v-if="witness" :object="witness.parts" />
+  <template v-else>
+    <TresMesh :geometry="walkwayGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
+    <TresMesh :geometry="towersGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
+    <TresMesh :geometry="silhouettesGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
+  </template>
   <!-- The door faces the camera coming down the walkway from +z, and stands only once the flight has brought the -->
   <!-- Camera to it: the title's frames show the walkway running on with no door on it -->
   <TresGroup v-if="flight >= 1" :position="LOGIN_DOOR_POSITION">
     <TresMesh :geometry="doorFrameGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
     <TresMesh :geometry="doorPanelGeometry" cast-shadow receive-shadow :material="doorMaterial" />
   </TresGroup>
-  <TresMesh :material="cloudSeaMaterial" :position="[0, LOGIN_CLOUD_SEA_HEIGHT, 0]" :rotation="[-Math.PI / 2, 0, 0]">
+  <TresMesh
+    v-if="!witness?.isAlone.value"
+    :material="cloudSeaMaterial"
+    :position="[0, LOGIN_CLOUD_SEA_HEIGHT, 0]"
+    :rotation="[-Math.PI / 2, 0, 0]"
+  >
     <TresPlaneGeometry :args="[LOGIN_CLOUD_SEA_SIZE, LOGIN_CLOUD_SEA_SIZE]" />
   </TresMesh>
 </template>

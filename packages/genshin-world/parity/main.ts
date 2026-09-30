@@ -1,6 +1,12 @@
 /* eslint-disable no-restricted-syntax -- the parity page's entry runs only in a browser, never under server rendering */
+import type { WitnessCameraPose } from "#parity/witness/setWitnessCamera";
+import type { SceneWitness } from "#src/models/scene/SceneWitness";
+
 import "@fontsource/signika/600.css";
 import { screens } from "#parity/screens";
+import { loadWitness } from "#parity/witness/loadWitness";
+import { setWitnessCamera } from "#parity/witness/setWitnessCamera";
+import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { capitalize, jsonDateParse } from "@esposter/shared";
 
 // One screen at a time, by `?screen=<Name>`, or the list of them. `&motion` asks for a motion held at its start for
@@ -8,7 +14,8 @@ import { capitalize, jsonDateParse } from "@esposter/shared";
 // Those finish, then applies the fixture's motion props and holds the transitions they start. `data-parity-ready`
 // Marks the page drawn, holding the screen's name, or nothing for the list, so a name with no fixture is told apart.
 // `&backdrop=<file>` draws that image under the screen, for an overlay shot over the frame it is judged against, and
-// `&variant=<name>` renders the fixture's variant of that name
+// `&variant=<name>` renders the fixture's variant of that name, and `&witness=<layout>` draws a scene's exports in place
+// Of its own parts, from the layout the shooting browser serves there
 const holdAnimations = (): void => {
   // Reading the animations resolves the styles that start them, and a held one stays listed once it would have ended
   for (const animation of window.document.getAnimations()) animation.pause();
@@ -38,7 +45,18 @@ if (screen && root) {
   const { promise: ready, resolve: resolveReady } = Promise.withResolvers<void>();
   const readyProps = screen.readyEvent ? { [`on${capitalize(screen.readyEvent)}`]: resolveReady } : {};
   if (!screen.readyEvent) resolveReady();
-  createApp({ render: () => h(component, { ...props, ...readyProps }) }).mount(root);
+  const witnessLayoutUrl = searchParameters.get("witness");
+  const witness: SceneWitness | null = witnessLayoutUrl
+    ? { isAlone: ref(false), parts: await loadWitness(witnessLayoutUrl) }
+    : null;
+  createApp({
+    setup: () => {
+      if (witness) provide(SceneWitnessKey, witness);
+      return () => h(component, { ...props, ...readyProps });
+    },
+  }).mount(root);
+  // The camera solve moves the witness's camera from the shooting browser, one pose a call
+  if (witness) Reflect.set(window, "setWitnessCamera", (pose: WitnessCameraPose) => setWitnessCamera(witness, pose));
   if (motion === "entry") holdAnimations();
   await window.document.fonts.ready;
   await ready;

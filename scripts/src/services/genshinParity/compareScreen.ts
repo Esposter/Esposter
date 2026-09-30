@@ -1,3 +1,4 @@
+import type { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import type { ParityScore } from "#src/models/genshinParity/ParityScore";
 
 import { COMPARISON_HEIGHT, COMPARISONS_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/constants";
@@ -15,8 +16,9 @@ const GRID_SIZE = 6;
 const toPercent = (sum: number, count: number): number => (sum / Math.max(count, 1) / 255) * 100;
 // The reference, ours and their difference side by side in one image, and how far apart they are: the mean over the
 // Compared region, then the same over a grid of cells, row by row, so where they differ is read without looking; the
-// Scores are handed back for the committed report
-export const compareScreen = async (referenceId: string): Promise<ParityScore> => {
+// Scores are handed back for the committed report. With a witness, the scene draws that component's exports in place
+// Of its own parts, and its image is kept apart from the scene's own
+export const compareScreen = async (referenceId: string, witness?: DerivedAssetComponent): Promise<ParityScore> => {
   const reference = ParityReferenceMap[referenceId];
   if (!reference)
     throw new InvalidOperationError(
@@ -36,6 +38,7 @@ export const compareScreen = async (referenceId: string): Promise<ParityScore> =
     props: reference.props,
     screen: reference.screen,
     width,
+    witness,
   });
   const region = reference.region ?? { height, width, x: 0, y: 0 };
   const extract = { height: region.height, left: region.x, top: region.y, width: region.width };
@@ -82,7 +85,7 @@ export const compareScreen = async (referenceId: string): Promise<ParityScore> =
     ),
   );
   await mkdir(COMPARISONS_DIRECTORY, { recursive: true });
-  const outputPath = join(COMPARISONS_DIRECTORY, `${referenceId}.png`);
+  const outputPath = join(COMPARISONS_DIRECTORY, `${referenceId}${witness ? ".witness" : ""}.png`);
   await sharp({ create: { background: "#000", channels: 3, height: COMPARISON_HEIGHT, width: panelWidth * 3 } })
     .composite(panels.map((input, index) => ({ input, left: index * panelWidth, top: 0 })))
     .png()

@@ -25,6 +25,10 @@ export const FFMPEG_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minut
 export const PARITY_PAGE_URL = "http://localhost:3002/parity/?screen=";
 // The name a backdrop is served to the parity page under, which the page is told in its query
 export const PARITY_BACKDROP_FILE = "parity-backdrop.png";
+// Where a witness's files are served to the page: its layout, which the page is told of, and its meshes and textures
+// Under the same folder by their export folders (`Mesh/<name>.obj`, `Texture2D/<name>.png`)
+export const WITNESS_PATH_PREFIX = "/witness-exports/";
+export const WITNESS_LAYOUT_PATH = "layout.json";
 export const GAME_EXECUTABLE_PATH: string = String.raw`C:\Program Files\Genshin Impact\Genshin Impact game\GenshinImpact.exe`;
 export const GAME_EXECUTABLE_NAME = "GenshinImpact.exe";
 // The game lays its interface out for a 1080-pixel-high screen and scales it with the height, so a shot is taken at
@@ -70,3 +74,5 @@ export const PARITY_SCORES_PATH: string = join(
   "genshinParity",
   "ParityReferenceMap.snapshot.md",
 );
+// A scene's structure is read at this width, small enough that its texture is gone and its shapes and light remain
+export const STRUCTURE_WIDTH = 480;
