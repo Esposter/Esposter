@@ -21,13 +21,15 @@ export interface WitnessPage {
   referenceId: string;
   scoreLines: (shot: Buffer) => Promise<number>;
 }
-// A witness page for every reference given, opened side by side; the caller closes their browsers
+// A witness page for every reference given, opened side by side; the caller closes their browsers. Every opening
+// Settles before anything is raised, so a failed one closes the browsers its siblings opened rather than leaving them
+// Running with no caller to close them
 export const openWitnessPages = async (
   referenceIds: readonly string[],
   witness: DerivedAssetComponent,
 ): Promise<WitnessPage[]> => {
   await fetchReferences();
-  return Promise.all(
+  const results = await Promise.allSettled(
     referenceIds.map(async (referenceId) => {
       const reference = ParityReferenceMap[referenceId];
       if (!reference) throw new InvalidOperationError(Operation.Read, referenceId, "not a reference");
@@ -35,11 +37,24 @@ export const openWitnessPages = async (
       const { height: referenceHeight, width: referenceWidth } = await sharp(referencePath).metadata();
       const height = Math.round((STRUCTURE_WIDTH / referenceWidth) * referenceHeight);
       const image = await sharp(referencePath).resize(STRUCTURE_WIDTH, height).removeAlpha().png().toBuffer();
-      const [scoreLines, { browser, page }] = await Promise.all([
-        createLineDistanceScorer(image, height),
-        openParityPage({ height, props: reference.props, screen: reference.screen, width: STRUCTURE_WIDTH, witness }),
-      ]);
+      // The scorer before the browser, so nothing can fail once the browser is open
+      const scoreLines = await createLineDistanceScorer(image, height);
+      const { browser, page } = await openParityPage({
+        height,
+        props: reference.props,
+        screen: reference.screen,
+        width: STRUCTURE_WIDTH,
+        witness,
+      });
       return { browser, height, image, page, referenceId, scoreLines };
     }),
   );
+  const pages: WitnessPage[] = [];
+  const reasons: unknown[] = [];
+  for (const result of results)
+    if (result.status === "rejected") reasons.push(result.reason);
+    else pages.push(result.value);
+  if (reasons.length === 0) return pages;
+  await Promise.allSettled(pages.map(({ browser }) => browser.close()));
+  throw reasons[0];
 };
