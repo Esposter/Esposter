@@ -18,7 +18,7 @@ const readNames = (directory: string): Promise<string[]> =>
 // Inventoried (apps/web/content/docs/proposals/genshin/scene-derivation.md)
 export const writeComponentInventory = async (component: DerivedAssetComponent): Promise<string> => {
   const directory = getComponentDirectory(component);
-  const [materials, { nameDrawingMap }] = await Promise.all([
+  const [materials, { gameObjectDrawingMap }] = await Promise.all([
     readComponentMaterials(component),
     readSceneLayout(directory.layout),
   ]);
@@ -27,7 +27,7 @@ export const writeComponentInventory = async (component: DerivedAssetComponent):
       shaderPathId,
       ...Object.values(textures).map(({ pathId }) => pathId),
     ]),
-    ...[...nameDrawingMap.values()].flatMap(({ materials: drawnMaterials }) => drawnMaterials),
+    ...[...gameObjectDrawingMap.values()].flatMap(({ materials: drawnMaterials }) => drawnMaterials),
   ]);
   const indexed = await readIndexedAssets(({ pathId }) => referencedIds.has(pathId));
   const pathIdAssetMap = new Map(indexed.map((asset) => [asset.pathId, asset]));
@@ -63,7 +63,7 @@ export const writeComponentInventory = async (component: DerivedAssetComponent):
     lines.push(`| ${basename(name, ".png")} | ${width}×${height} | ${spans.join(", ")} |`);
   }
   const meshMaterialsMap = new Map<string, Set<string>>();
-  for (const { materials: drawnMaterials, mesh } of nameDrawingMap.values())
+  for (const { materials: drawnMaterials, mesh } of gameObjectDrawingMap.values())
     for (const material of drawnMaterials.map((pathId) => pathIdAssetMap.get(pathId)?.name ?? pathId))
       meshMaterialsMap.set(mesh, (meshMaterialsMap.get(mesh) ?? new Set()).add(material));
   lines.push("", "## Meshes", "", "| Mesh | Vertices | Drawn with |", "| :-- | --: | :-- |");

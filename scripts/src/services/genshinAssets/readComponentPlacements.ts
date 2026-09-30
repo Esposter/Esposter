@@ -15,9 +15,9 @@ export const readComponentPlacements = async (
   component: DerivedAssetComponent,
   roots: readonly string[] = DerivedAssetComponentMap[component].roots,
 ): Promise<AssetPlacement[]> => {
-  const { nameDrawingMap, objects } = await readSceneLayout(getComponentDirectory(component).layout);
+  const { gameObjectDrawingMap, objects } = await readSceneLayout(getComponentDirectory(component).layout);
   const { rootParents = {} } = DerivedAssetComponentMap[component];
-  const placements = composeAssetPlacements(objects, nameDrawingMap).filter(({ root }) => roots.includes(root));
+  const placements = composeAssetPlacements(objects, gameObjectDrawingMap).filter(({ root }) => roots.includes(root));
   for (const placement of placements) {
     const parent = rootParents[placement.root];
     if (!parent) continue;

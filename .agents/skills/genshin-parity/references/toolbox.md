@@ -18,7 +18,7 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | Unknown                                 | Built                                                  | Proposed                   |
 | :-------------------------------------- | :----------------------------------------------------- | :------------------------- |
 | Which assets a scene draws              | `extract` by name pattern; renderers' path IDs by hand | Closure extraction         |
-| The scene's hierarchy, and what it lost | none: the layout dumps read by hand                    | The scene tree             |
+| The scene's hierarchy, and what it lost | `genshin:assets tree`: flags anchors, lost fathers     |                            |
 | A script's settings                     | none: measured off the captures                        | Raw behaviours             |
 | What a script spawns, and where         | none                                                   | Raw behaviours, spawns     |
 | A lost parent's place and scale         | `rootParents`, composed inline                         | The Unity transform module |

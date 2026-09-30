@@ -1,10 +1,10 @@
 import type { SceneObject } from "#src/models/genshinAssets/SceneObject";
 
 import { composeAssetPlacements } from "#src/services/genshinAssets/composeAssetPlacements";
+import { createSceneObject } from "#src/services/genshinAssets/createSceneObject.test";
 import { describe, expect, test } from "vitest";
 
 describe(composeAssetPlacements, () => {
-  const identity: Pick<SceneObject, "rotation" | "scale"> = { rotation: [0, 0, 0, 1], scale: [1, 1, 1] };
   // A quarter turn about y
   const quarterTurn: SceneObject["rotation"] = [0, Math.SQRT1_2, 0, Math.SQRT1_2];
 
@@ -13,17 +13,10 @@ describe(composeAssetPlacements, () => {
 
     const [, child] = composeAssetPlacements(
       [
-        {
-          name: "root",
-          parentId: "0",
-          position: [10, 0, 0],
-          rotation: quarterTurn,
-          scale: [2, 2, 2],
-          transformId: "1",
-        },
-        { ...identity, name: "a", parentId: "1", position: [1, 0, 0], transformId: "2" },
+        createSceneObject("1", "0", { position: [10, 0, 0], rotation: quarterTurn, scale: [2, 2, 2] }),
+        createSceneObject("2", "1", { position: [1, 0, 0] }),
       ],
-      new Map([["a", { materials: ["b"], mesh: "a" }]]),
+      new Map([["2", { materials: ["b"], mesh: "a" }]]),
     );
 
     expect(child?.mesh).toBe("a");
@@ -31,18 +24,14 @@ describe(composeAssetPlacements, () => {
     expect(child?.position[0]).toBeCloseTo(10);
     expect(child?.position[2]).toBeCloseTo(-2);
     expect(child?.scale[0]).toBeCloseTo(2);
-    expect(child?.root).toBe("root");
+    expect(child?.root).toBe("1");
   });
 
   test("leaves out an object whose parent the dump lacks, and every object under it", () => {
     expect.hasAssertions();
 
     const placements = composeAssetPlacements(
-      [
-        { ...identity, name: "", parentId: "0", position: [1, 2, 3], transformId: "1" },
-        { ...identity, name: "", parentId: "9", position: [0, 0, 0], transformId: "2" },
-        { ...identity, name: "", parentId: "2", position: [0, 0, 0], transformId: "3" },
-      ],
+      [createSceneObject("1", "0", { position: [1, 2, 3] }), createSceneObject("2", "9"), createSceneObject("3", "2")],
       new Map(),
     );
 

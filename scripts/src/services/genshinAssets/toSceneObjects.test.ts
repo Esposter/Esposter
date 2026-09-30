@@ -18,7 +18,7 @@ describe(toSceneObjects, () => {
 
     const objects = toSceneObjects(
       [createTransform("group", "0", ["child-transform"]), createTransform("child", "group-transform")],
-      new Map([["child", "child-transform"]]),
+      { block: "", gameObjectTransformIdMap: new Map([["child", "child-transform"]]) },
     );
 
     expect(objects.map(({ transformId }) => transformId)).toStrictEqual(["group-transform", "child-transform"]);
@@ -32,7 +32,7 @@ describe(toSceneObjects, () => {
         createTransform("Tower_LodGroup (1)", "0", ["level-transform"]),
         createTransform("Tower_Lod0", "group-transform"),
       ],
-      new Map(),
+      { block: "", gameObjectTransformIdMap: new Map() },
     );
 
     expect(objects[0]?.transformId).toBe("group-transform");
@@ -41,7 +41,10 @@ describe(toSceneObjects, () => {
   test("keeps a stand-in for a lost leaf, which still sits under its father", () => {
     expect.hasAssertions();
 
-    const [leaf] = toSceneObjects([createTransform("leaf", "group-transform")], new Map());
+    const [leaf] = toSceneObjects([createTransform("leaf", "group-transform")], {
+      block: "",
+      gameObjectTransformIdMap: new Map(),
+    });
 
     expect(leaf?.parentId).toBe("group-transform");
     expect(leaf?.transformId).toBe("gameObject:leaf");
