@@ -39,6 +39,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Derived assets](/docs/genshin/derived-assets)       | which reference each part is measured from, how it becomes ours, and each part's progress  |
 | [Interface library](/docs/genshin/interface-library) | `genshin-ui`: the game's screen root, units, pointer, and the pieces its screens share     |
 | [Login screen](/docs/genshin/login-screen)           | the opening's login: its stages, its flight, its scene and its door                        |
+| [Game data formats](/docs/genshin/game-data-formats) | how each kind of the game's data reads, and the shortcuts to reach for first               |
 
 What is still to build is the [Genshin proposal](/docs/proposals/genshin). Decided ideas: [deferred](/docs/genshin/deferred).
 

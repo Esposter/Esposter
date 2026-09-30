@@ -94,6 +94,12 @@ packages/genshin-world/parity/witness/
   swapWitnessParts.ts            ← each stand-in of ours swapped in for its exported part, one family at a time
 ```
 
+It also takes three checks that make each render cheaper and each failure plainer:
+
+- **The arrangement checked without pixels.** The scene's placements, family by family, compared against the witness layout's positions and scales before any render; the walkway dumped at the origin would have shown as a 107-metre offset at once.
+- **Deterministic shots.** During a camera solve or a loss table, the temporal anti-aliasing's jitter and the clock are held, so each pose settles in one frame instead of eight.
+- **The canvas read directly.** A shot is the canvas's own pixels rather than a screenshot of the page.
+
 The toon ramp, the outlines and the kits stay until the loss table says what replaces them.
 
 ## Key files

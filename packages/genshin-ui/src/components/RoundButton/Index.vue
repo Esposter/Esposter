@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { InterfaceIcon } from "#src/models/InterfaceIcon";
 import { SETTINGS_RING_CENTRE, SETTINGS_RING_RADIUS, SETTINGS_RING_WIDTH } from "#src/services/constants";
+import { InterfaceIconCentreMap } from "#src/services/InterfaceIconCentreMap";
 import { InterfaceIconPathMap } from "#src/services/InterfaceIconPathMap";
 
 interface Props {
@@ -14,8 +15,13 @@ const { icon, label } = defineProps<Props>();
 
 <template>
   <!-- The game's round button: a white disc 52 units across under a soft dark rim, its glyph in the game's near black -->
+  <!-- Centred on its ink, as the game centres each icon's sprite -->
   <button class="round-button" :aria-label="label" type="button">
-    <svg class="glyph" viewBox="0 0 48 48" aria-hidden="true">
+    <svg
+      class="glyph"
+      :viewBox="`${InterfaceIconCentreMap[icon][0] - 24} ${InterfaceIconCentreMap[icon][1] - 24} 48 48`"
+      aria-hidden="true"
+    >
       <path :d="InterfaceIconPathMap[icon]" fill-rule="evenodd" />
       <circle
         v-if="icon === InterfaceIcon.Settings"

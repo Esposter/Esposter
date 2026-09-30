@@ -3,6 +3,7 @@ import type { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
 
 import { usePostPipeline } from "#src/composables/usePostPipeline";
 import palette from "#src/data/login/palette.json";
+import { LoginPartFamily } from "#src/models/login/LoginPartFamily";
 import sky from "#src/data/login/sky.json";
 import { createLoginClouds } from "#src/services/login/cloud/createLoginClouds";
 import { LOGIN_DOOR_LIGHT_MS } from "#src/services/login/constants";
@@ -87,8 +88,10 @@ const CLOUD_SEA_EDGE_END = 0.35;
 const DOOR_SLIT_WIDTH = 0.16;
 const DOOR_SLIT_STRENGTH = 4;
 const DOOR_PANEL_STRENGTH = 0.6;
-// The witness render's parts, drawn in place of the fitted ones when the parity page provides them, alone when it asks
+// The witness render's parts, drawn in place of the fitted ones of each family it names when the parity page provides
+// Them, alone when it asks
 const witness = inject(SceneWitnessKey, null);
+const checkIsOwnFamilyDrawn = (family: LoginPartFamily): boolean => !witness?.families.value.includes(family);
 const { scene } = useTres();
 const { onRender } = useLoop();
 const rampTexture = createRampTexture(LOGIN_RAMP_OPTIONS);
@@ -213,14 +216,30 @@ onUnmounted(() => {
   <primitive :object="godraysLight" />
   <primitive :object="godraysLight.target" />
   <primitive v-if="witness" :object="witness.parts" />
-  <template v-else>
-    <TresMesh :geometry="walkwayGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
-    <TresMesh :geometry="towersGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
-    <TresMesh :geometry="silhouettesGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
-  </template>
+  <TresMesh
+    v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Walkway)"
+    :geometry="walkwayGeometry"
+    cast-shadow
+    receive-shadow
+    :material="stoneMaterial"
+  />
+  <TresMesh
+    v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Towers)"
+    :geometry="towersGeometry"
+    cast-shadow
+    receive-shadow
+    :material="stoneMaterial"
+  />
+  <TresMesh
+    v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Bridges)"
+    :geometry="silhouettesGeometry"
+    cast-shadow
+    receive-shadow
+    :material="stoneMaterial"
+  />
   <!-- The door faces the camera coming down the walkway from +z, and stands only once the flight has brought the -->
   <!-- Camera to it: the title's frames show the walkway running on with no door on it -->
-  <TresGroup v-if="flight >= 1" :position="LOGIN_DOOR_POSITION">
+  <TresGroup v-if="flight >= 1 && checkIsOwnFamilyDrawn(LoginPartFamily.Door)" :position="LOGIN_DOOR_POSITION">
     <TresMesh :geometry="doorFrameGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
     <TresMesh :geometry="doorPanelGeometry" cast-shadow receive-shadow :material="doorMaterial" />
   </TresGroup>

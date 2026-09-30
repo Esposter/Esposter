@@ -6,10 +6,14 @@ export const GAME_FONT_FAMILY = '"HYWenHei 85W", "HYWenHei-85W", Signika, ui-san
 // The game lays its interface out on a 1920 by 1080 screen scaled to fit the window's height or its width, whichever
 // Is less, so a unit is that screen's pixel in the window's own container
 export const GAME_UNIT = "min(100cqh / 1080, 100cqw / 1920)";
-// How far the corner buttons sit in from the screen's side: 96 units on a 16:9 screen, and 71 more on a wider one,
-// Measured on a 2560 by 1080 and a 3440 by 1440 recording alike, so the game widens its margin by a fixed step rather
-// Than by the screen's spare width
-export const GAME_EDGE_INSET = "calc(var(--unit) * 96 + min(var(--unit) * 71, (100cqw - var(--unit) * 1920) / 2))";
+// The game's interface canvas: its RectTransforms are laid out on a 1600 by 900 reference, scaled to fit the window's
+// Smaller axis as the screen is, so a canvas unit is 1.2 screen units at 1080 high (a piece 128 plus 32 canvas units
+// Up reads 192 pixels on the 1080 high recording)
+export const GAME_CANVAS_UNIT = "min(100cqh / 900, 100cqw / 1600)";
+// How far the canvas stands in from each side of a screen wider than 16:9: its spare width, up to 71 screen units, as
+// The corner buttons show on a 2560 by 1080 and a 3440 by 1440 recording alike, so the game widens its margin by a
+// Fixed step rather than by all the spare width. A piece anchored to a side rides on the canvas's side, not the screen's
+export const GAME_CANVAS_INSET = "min(var(--unit) * 71, (100cqw - var(--unit) * 1920) / 2)";
 // The game's pointer, a four pointed star with its point at the upper left: a white and a cream facet either side of
 // Its diagonal, and a gold star within it lit from its inner corner, traced from the wiki's render of its tutorial
 // On a 64 unit square with its point at the origin. It is 25 pixels across on a 1080 high screen, where the game

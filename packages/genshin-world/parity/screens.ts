@@ -14,6 +14,8 @@ interface Fixture {
   readyEvent?: string;
   // Other states the screen is approved in, each its props over `props` by a name its image is kept under
   variants?: Record<string, Record<string, unknown>>;
+  // For a scene, the game's meshes each family of its parts stands in for, which a witness render groups its exports by
+  witnessFamilies?: Record<string, RegExp>;
 }
 
 // Every component that has a fixture, found at any depth, so a screen is on the parity page and in the visual suite by
@@ -28,10 +30,10 @@ const exportedComponents = Object.entries(barrel);
 
 export const screens: (Fixture & { component: Component; directory: string; name: string })[] = Object.entries(
   fixtures,
-).flatMap(([path, { isMotionOnly, motionProps, props, readyEvent, variants }]) => {
+).flatMap(([path, { isMotionOnly, motionProps, props, readyEvent, variants, witnessFamilies }]) => {
   const component = components[path.replace(/\.fixture\.ts$/u, ".vue")];
   const name = exportedComponents.find(([, exported]) => exported === component)?.[0];
   if (!component || !name) return [];
   const directory = path.slice(COMPONENTS_PREFIX.length, -FIXTURE_FILE.length);
-  return [{ component, directory, isMotionOnly, motionProps, name, props, readyEvent, variants }];
+  return [{ component, directory, isMotionOnly, motionProps, name, props, readyEvent, variants, witnessFamilies }];
 });

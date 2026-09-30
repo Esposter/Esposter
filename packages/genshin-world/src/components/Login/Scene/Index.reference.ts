@@ -1,0 +1,194 @@
+import type { ComponentReference } from "genshin-ui";
+
+import { GameSourceKind } from "genshin-ui";
+
+// The login scene's sources in the game's data, what every search over them found, and what is still open. Poses are
+// In three's axes (metres) with the heading, pitch and field of view in degrees; distances in pixels at 480 wide
+export const reference: ComponentReference = {
+  findings: [
+    {
+      found: "Shape 0.318, the same as our kits': the camera, not the kits, is the first loss",
+      search:
+        "The exports drawn from the scene's derived pose (0, 15.2, 105, heading 0, pitch -3.37, fov 45) against login-day",
+    },
+    {
+      found:
+        "5.23 px at (-5.35, 2.83, 81.07), heading 140.7, pitch -2.0, fov 46.1: facing almost nothing. Rejected: the reference's clouds are most of its edges, and a flat frame's noise read as edges; the edge floor was added",
+      search:
+        "solve-camera login-day, edge distance, stage and walkway at the origin: x -8 to 8 by 4, y 2 to 14 by 4, z -60 to 140 by 20, heading 0 to 330 by 30 (2640 poses), then the simplex from the best three",
+    },
+    {
+      found:
+        "9.27 px at (3, 6, 100), heading 10, pitch -3, against 11.23 px at the derived pose: the walkway fills the frame's foot where the reference's is narrow. Rejected",
+      search:
+        "The same with the edge floor: x -6 to 6 by 3, y 2 to 14 by 4, z 20 to 160 by 20, heading -30 to 30 by 10 (1120 poses)",
+    },
+    {
+      found:
+        "Stage: cost 5.62 at (-0.17, 17.37, 207.69), heading -2.5, pitch 10.4, fov 60.9; Build_All: 9.13. Its render matched neither: too weak a signal on its own",
+      search:
+        "A landmark solve from six hand-read tower positions, widths and tops and the walkway's edges at the frame's foot, 400000 random poses then a local refinement, no rendering",
+    },
+    {
+      found:
+        "Build_All's towers are several hundred metres tall, spread far and cut off above the cloud sea; the stage's towers are the recording's kinds",
+      search:
+        "A contact sheet: both arrangements from each end of the walkway (z 75 and -75), 5 metres up, pitch 3, at eight headings",
+    },
+    {
+      found:
+        "7.74 px at (-4.56, 13.35, -0.87), heading 219.6, pitch 3.2, fov 45.4: into the tower forest with no walkway. Rejected: more towers always find a nearer line",
+      search:
+        "solve-camera login-dawn, login-dusk, login-night by the towers' long vertical lines, Build_All with the walkway: x -8 to 8 by 4, y 1 to 13 by 4, z -90 to 150 by 30, heading 0 to 340 by 20 (3240 poses)",
+    },
+    {
+      found: "14.22 px: the walkway lines up, the towers float cut off above the cloud sea and crowd the frame",
+      search: "Build_All from (0, 12.5, -110), heading 180, pitch 3",
+    },
+    {
+      found:
+        "8.71 px at (3.99, 8.98, 20.06), heading 5.0, pitch 3.0, fov 45.0: at the end of the range searched, with the towers on the wrong sides. Rejected",
+      search:
+        "The same three skies by lines over the stage, on the walkway facing the door: x -4 to 4 by 4, y 8 to 16 by 4, z 20 to 160 by 20, heading -20 to 20 by 5 (648 poses)",
+    },
+    {
+      found: "12.39 px: almost no towers that way; the forest lies toward -z",
+      search: "The stage from z -20 facing +z (heading 180)",
+    },
+    {
+      found:
+        "13.48 px but a gothic tower near the left and a column and arched bridge on the right, as the reference; the walkway still wrong. Its search (729 poses) was stopped once the walkway's place was found wrong",
+      search: "The stage's placements mirrored across its axis, from (-4, 9, 20), heading -5",
+    },
+    {
+      found:
+        "The door is under the stage at (0, -5, 32.3), 0.4 scale, 8 by 13.5 metres; the walkway's root is dumped at the origin spanning z -75 to 72, so the door stood mid-walkway: the walkway's own parent is in a block not read",
+      search: "The door's placement against the walkway's",
+    },
+    {
+      found:
+        "12.22 px, and the recording's composition: the walkway straight to the door on its dais, towers either side, arched bridges to the right",
+      search: "The walkway moved 107.3 metres along +z so its far end meets the door, from (0, 12, 170), heading 0",
+    },
+    {
+      found: "Dawn, dusk and night share one; the day sky is another",
+      search: "Which references share a pose, by their towers' lines",
+    },
+    {
+      found:
+        "None: Start and End hold a constant 50-metre lift, Ani_Login_Lift moves between them; the flight is the MonoLoginScene script's",
+      search: "A clip for the flight down the walkway",
+    },
+    {
+      found:
+        "Rows within noise of each other: a loss table priced at a pose that fits nothing means nothing, so it waits on the pose",
+      search: "genshin:parity attribute over dawn, dusk and night at (0, 5, 75), heading 0, pitch 3, Build_All witness",
+    },
+  ],
+  open: [
+    "The walkway's exact offset along the stage's axis, and the door's heading, solved on the door reference",
+    "The dawn, dusk and night pose with the walkway moved, on the towers' lines; then the day's",
+  ],
+  sources: {
+    atmosphereShader: {
+      block: "00/12903389.blk",
+      kind: GameSourceKind.Shader,
+      name: "Shader#0",
+      pathId: "-5017021742717319217",
+      role: "The sky dome: its gradient, top and bottom colours front and back of the sun, halos, stars and scattering",
+    },
+    cloudParticleShader: {
+      block: "00/12903389.blk",
+      kind: GameSourceKind.Shader,
+      name: "Shader#10",
+      pathId: "7325196393018652092",
+      role: "The three cloud emitters' particles: atlas, curl, age dissolve, light and dark colours, rim",
+    },
+    cloudLayerShader: {
+      block: "00/12903389.blk",
+      kind: GameSourceKind.Shader,
+      name: "Enviro_Cloud_Layer_Mat's shader",
+      pathId: "5100823853164162496",
+      role: "The cloud layer",
+    },
+    dawnDuskNightSkies: {
+      block: "login-dawn, login-dusk, login-night",
+      kind: GameSourceKind.Capture,
+      name: "File:Login Menu Dawn.png, File:Login Menu Dusk.png, File:Login Menu Night.png",
+      role: "The flight's first pose under three skies, which share it",
+    },
+    daySky: {
+      block: "login-day",
+      kind: GameSourceKind.Capture,
+      name: "File:Login Menu Day.png",
+      role: "The day sky, at a pose of its own",
+    },
+    door: {
+      block: "00/04803507.blk",
+      kind: GameSourceKind.Transform,
+      name: "LoginScene_Door01_Vo",
+      role: "The door, under the stage at 0.4 scale, 32 metres along its axis",
+    },
+    doorCapture: {
+      block: "login-door",
+      kind: GameSourceKind.Capture,
+      name: "File:Login Menu Door and Platform.png",
+      role: "The flight's last pose: the door on its dais filling most of the frame",
+    },
+    flight: {
+      block: "00/16000354.blk",
+      kind: GameSourceKind.MonoBehaviour,
+      name: "MonoLoginScene",
+      role: "The flight down the walkway: fieldless, so its path is solved from the captures",
+    },
+    gradingTables: {
+      block: "00/00035183.blk",
+      kind: GameSourceKind.Texture,
+      name: "Stages_*_LUT",
+      role: "The game's grading tables; which one the login uses is its fieldless post-processing profile's",
+    },
+    lift: {
+      block: "00/16000354.blk",
+      kind: GameSourceKind.AnimationClip,
+      name: "Ani_Login_Lift",
+      role: "One root lifted 50 metres over a second at the login's end, between the Start and End clips",
+    },
+    meshes: {
+      block: "00/02842276.blk",
+      kind: GameSourceKind.Mesh,
+      name: "LoginScene_*",
+      role: "The towers, bridges, pillars, walkway and door, and their Diffuse, Normal, SMBE and Height textures",
+    },
+    recording: {
+      block: "yt-rBnfA4pXw6U.mp4",
+      kind: GameSourceKind.Capture,
+      name: "GENSHIN IMPACT | CELESTIA DOOR | LOADING SCREEN",
+      role: "The whole flight at 1080 high, an older build: the walkway straight to the door, towers either side",
+    },
+    stage: {
+      block: "00/04803507.blk",
+      kind: GameSourceKind.Transform,
+      name: "CharacterSelectSceneNew",
+      role: "The login's arrangement of towers, bridges, pillars and door at 0.4 scale",
+    },
+    stoneShader: {
+      block: "00/12903389.blk",
+      kind: GameSourceKind.Shader,
+      name: "LoginScene_* materials' shader",
+      pathId: "-8796901447730824398",
+      role: "The stone: does not parse; its material's properties are a physically based set",
+    },
+    uberShader: {
+      block: "00/12903389.blk",
+      kind: GameSourceKind.Shader,
+      name: "Shader#82",
+      role: "The frame after the scene: bloom, grading, distortion, and the final pass through a 3D table",
+    },
+    walkway: {
+      block: "00/04803507.blk",
+      kind: GameSourceKind.Transform,
+      name: "LoginScene_Bridge01_Vo",
+      role: "The walkway, 20 metres wide, a root dumped at the origin: its place is solved from the door",
+    },
+  },
+};

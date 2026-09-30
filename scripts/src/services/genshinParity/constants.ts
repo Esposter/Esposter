@@ -21,8 +21,10 @@ export const FFMPEG_ARCHIVE_URL =
 export const FFMPEG_ARCHIVE_SHA256 = "60f467265b1e312373dbcd92200c2618a74850f98d3d078e94296bb3fa2047ba";
 // The archive is a hundred-odd megabytes, so its download is bounded by minutes rather than the usual seconds
 export const FFMPEG_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
-// The world package's parity page (`pnpm -C packages/genshin-world parity`), which renders a screen without Nuxt
-export const PARITY_PAGE_URL = "http://localhost:3002/parity/?screen=";
+// The world package's parity page (`pnpm -C packages/genshin-world parity`), which renders a screen without Nuxt, on
+// Its own port unless `GENSHIN_PARITY_PORT` names another: a second checkout's page, while a long solve holds the first
+// oxlint-disable-next-line typescript/no-inferrable-types -- isolated declarations need a template literal's type written
+export const PARITY_PAGE_URL: string = `http://localhost:${process.env.GENSHIN_PARITY_PORT ?? "3002"}/parity/?screen=`;
 // The name a backdrop is served to the parity page under, which the page is told in its query
 export const PARITY_BACKDROP_FILE = "parity-backdrop.png";
 // Where a witness's files are served to the page: its layout, which the page is told of, and its meshes and textures

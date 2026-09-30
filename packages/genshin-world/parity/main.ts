@@ -1,11 +1,11 @@
 /* eslint-disable no-restricted-syntax -- the parity page's entry runs only in a browser, never under server rendering */
-import type { WitnessCameraPose } from "#parity/witness/setWitnessCamera";
+import type { WitnessView } from "#parity/witness/setWitnessView";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 
 import "@fontsource/signika/600.css";
 import { screens } from "#parity/screens";
 import { loadWitness } from "#parity/witness/loadWitness";
-import { setWitnessCamera } from "#parity/witness/setWitnessCamera";
+import { setWitnessView } from "#parity/witness/setWitnessView";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { capitalize, jsonDateParse } from "@esposter/shared";
 
@@ -46,8 +46,13 @@ if (screen && root) {
   const readyProps = screen.readyEvent ? { [`on${capitalize(screen.readyEvent)}`]: resolveReady } : {};
   if (!screen.readyEvent) resolveReady();
   const witnessLayoutUrl = searchParameters.get("witness");
-  const witness: null | SceneWitness = witnessLayoutUrl
-    ? { isAlone: ref(false), parts: await loadWitness(witnessLayoutUrl) }
+  const witnessParts = witnessLayoutUrl ? await loadWitness(witnessLayoutUrl, screen.witnessFamilies) : null;
+  const witness: null | SceneWitness = witnessParts
+    ? {
+        families: ref(witnessParts.children.map(({ name: family }) => family)),
+        isAlone: ref(false),
+        parts: witnessParts,
+      }
     : null;
   createApp({
     setup: () => {
@@ -55,8 +60,12 @@ if (screen && root) {
       return () => h(component, { ...props, ...readyProps });
     },
   }).mount(root);
-  // The camera solve moves the witness's camera from the shooting browser, one pose a call
-  if (witness) Reflect.set(window, "setWitnessCamera", (pose: WitnessCameraPose) => setWitnessCamera(witness, pose));
+  // The camera solve and the loss table set the witness's view from the shooting browser, one view a call
+  if (witness) {
+    Reflect.set(window, "setWitnessView", (view: WitnessView) => setWitnessView(witness, view));
+    // The families the witness draws, which the loss table hands back to the scene one at a time
+    window.document.body.dataset.witnessFamilies = witness.families.value.join(",");
+  }
   if (motion === "entry") holdAnimations();
   await window.document.fonts.ready;
   await ready;

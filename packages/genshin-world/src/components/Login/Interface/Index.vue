@@ -12,6 +12,8 @@ import {
   LOGIN_WELCOME_FADE_MS,
   LOGIN_WELCOME_TEXT,
 } from "#src/services/login/constants";
+import { LoginInterfaceRect } from "#src/models/login/LoginInterfaceRect";
+import { LoginInterfaceRectMap } from "#src/services/login/interface/LoginInterfaceRectMap";
 import {
   GameScreen,
   InterfaceIcon,
@@ -20,6 +22,7 @@ import {
   PromptBand,
   RoundButton,
   ServerBar,
+  toCanvasRectStyle,
   ToastNotice,
 } from "genshin-ui";
 
@@ -61,27 +64,37 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
       <p class="title" role="heading" aria-level="1">{{ LOGIN_TITLE_TEXT }}</p>
       <OrnamentDivider class="divider" />
       <p class="subtitle">{{ LOGIN_BEGIN_TEXT }}</p>
-      <ServerBar class="server" :name="LOGIN_SERVER_NAME" />
-      <p class="user">
-        <span class="user-label">{{ LOGIN_USER_LABEL }}</span> <span class="user-name">{{ playerName }}</span>
-      </p>
+      <div class="server" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.ServerBar], true)">
+        <ServerBar :name="LOGIN_SERVER_NAME" />
+      </div>
     </template>
     <LoginStatus v-else-if="stage === LoginStage.Preparing" :progress :step="statusStep" />
     <PromptBand v-else-if="stage === LoginStage.Door" class="prompt">{{ LOGIN_BEGIN_TEXT }}</PromptBand>
-    <template v-if="isFooterShown">
-      <RoundButton class="power" :icon="InterfaceIcon.Power" label="Quit" />
-      <p class="version">{{ LOGIN_VERSION_TEXT }}</p>
-      <div class="corner">
-        <RoundButton v-for="icon of cornerIcons" :key="icon" :icon :label="icon" />
+    <!-- The foot, anchored to the screen's bottom as the game's is, so it stays there on any window -->
+    <div v-if="isFooterShown" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.Bottom], true)">
+      <div class="column" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.LeftButtons])">
+        <div class="slot"><RoundButton :icon="InterfaceIcon.Power" label="Quit" /></div>
       </div>
-    </template>
+      <div class="column" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.RightButtons])">
+        <div v-for="icon of cornerIcons" :key="icon" class="slot"><RoundButton :icon :label="icon" /></div>
+      </div>
+      <div :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.CurrentAccount])">
+        <p v-if="stage === LoginStage.Title" class="user">
+          <span class="user-label">{{ LOGIN_USER_LABEL }}</span> <span class="user-name">{{ playerName }}</span>
+        </p>
+        <div :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.Version])">
+          <p class="version">{{ LOGIN_VERSION_TEXT }}</p>
+        </div>
+      </div>
+    </div>
   </GameScreen>
 </template>
 
 <style scoped>
-/* Measured from the English client's login screen at 1080 high, each place from the screen's middle and the corners
-   From its sides by the game's edge inset; the corner buttons and the welcome card from the 1440 high recording of the
-   Current build. Only the buttons take a click, which they keep from the screen */
+/* Measured from the English client's login screen at 1080 high, each place from the screen's middle, but the foot and
+   The server bar, which the game's RectTransforms place (LoginInterfaceRectMap); the corner buttons' spacing and the
+   Welcome card from the 1440 high recording of the current build. Only the buttons take a click, which they keep from
+   The screen */
 .login-interface {
   color: #fff;
   pointer-events: none;
@@ -127,8 +140,7 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
 }
 
 .title,
-.subtitle,
-.user {
+.subtitle {
   left: 50%;
   translate: -50% -50%;
 }
@@ -158,16 +170,17 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
 }
 
 .server {
-  position: absolute;
-  top: calc(50% + var(--unit) * 349);
-  left: 50%;
-  translate: -50% 0;
+  display: grid;
+  place-items: center;
 }
 
+/* The account line's middle 60 units over the foot, in the account row */
 .user {
-  top: calc(50% + var(--unit) * 480);
+  bottom: calc(var(--unit) * 60);
+  left: 50%;
   font-size: calc(var(--unit) * 24);
   letter-spacing: 0.05em;
+  translate: -50% 50%;
 }
 
 .user-label {
@@ -185,33 +198,29 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
   left: calc(var(--unit) * 100);
 }
 
-.power {
-  position: absolute;
-  top: calc(50% + var(--unit) * 418);
-  left: calc(var(--edge-inset) - var(--unit) * 26);
+/* A button column the game's layout group stacks from its foot, each button in a slot 52 canvas units square, their
+   Middles 91.5 units apart on the 1440 high recording */
+.column {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: calc(var(--unit) * 91.5 - var(--canvas-unit) * 52);
+}
+
+.slot {
+  display: grid;
+  height: calc(var(--canvas-unit) * 52);
+  place-items: center;
   pointer-events: auto;
 }
 
+/* The build string's foot 20.5 units over the screen's, at its box's left */
 .version {
-  bottom: calc(50% - var(--unit) * 519.5);
-  left: calc(var(--edge-inset) - var(--unit) * 24);
+  bottom: calc(var(--unit) * 20.5);
+  left: 0;
   font-size: calc(var(--unit) * 22);
   text-shadow:
     0 0 calc(var(--unit) * 1.5) #1a0e0e,
     0 0 calc(var(--unit) * 1.5) #1a0e0e;
-}
-
-/* The corner's buttons stacked up from the foot, 91.5 units apart, their centres the edge inset in from the side */
-.corner {
-  position: absolute;
-  right: calc(var(--edge-inset) - var(--unit) * 26);
-  bottom: calc(50% - var(--unit) * 470);
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--unit) * 39.5);
-}
-
-.corner > * {
-  pointer-events: auto;
 }
 </style>
