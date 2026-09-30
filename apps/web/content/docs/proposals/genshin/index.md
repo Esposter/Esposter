@@ -44,6 +44,7 @@ flowchart TD
 | [Engine architecture](/docs/proposals/genshin/engine-architecture) | the engine as modules with one job each, and the order a frame runs in            |
 | [Reference board](/docs/proposals/genshin/reference-board)         | how a region is referenced, calibrated and compared so the recreation stays close |
 | [Scene derivation](/docs/proposals/genshin/scene-derivation)       | how a scene is re-derived from the game's own assets, each loss priced first      |
+| [Interface layout](/docs/proposals/genshin/interface-layout)       | every screen laid out from the game's own RectTransform tree, nothing by hand     |
 | [Terrain shapes](/docs/proposals/genshin/terrain-shapes)           | the continent's heights from authored shapes, and the ground painted by biome     |
 | [Flowing water](/docs/proposals/genshin/flowing-water)             | rivers along their courses, and waterfalls over cliff bands                       |
 | [Trees and scatter](/docs/proposals/genshin/trees-and-scatter)     | tree species and impostors, and flowers, bushes and rocks scattered by biome      |
