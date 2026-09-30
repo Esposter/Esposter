@@ -8,9 +8,11 @@ import { readSceneLayout } from "#src/services/genshinAssets/readSceneLayout";
 
 // Where every object of a component's blocks stands, composed from their layout dumps, kept to the arrangements hanging
 // From the roots its map names: one set of meshes is laid out several times across a scene's blocks, and only some of
-// Those arrangements are the component's
-export const readComponentPlacements = async (component: DerivedAssetComponent): Promise<AssetPlacement[]> => {
-  const { roots } = DerivedAssetComponentMap[component];
+// Those arrangements are the component's. Other roots can be named in their place, to try another arrangement
+export const readComponentPlacements = async (
+  component: DerivedAssetComponent,
+  roots: readonly string[] = DerivedAssetComponentMap[component].roots,
+): Promise<AssetPlacement[]> => {
   const { nameDrawingMap, objects } = await readSceneLayout(getComponentDirectory(component).layout);
   return composeAssetPlacements(objects, nameDrawingMap).filter(({ root }) => roots.includes(root));
 };

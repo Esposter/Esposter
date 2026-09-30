@@ -73,13 +73,13 @@ A representation is judged by the loss table, never by how close it looks in iso
 
 ## The first run: the login scene
 
-The login scene is the first scene run through this method, and its inventory already shows where the losses are:
+The login scene is the first scene run through this method. Its inventory and witness have already moved the order of work:
 
-- **Its stone materials' values are unread.** Every `LoginScene_*` material holds a specular colour, a metallic, a shininess, a rim glow colour, a screen-space occlusion strength and parallax settings. They are exact, and the first rung writes them.
-- **Its textures are reduced to one colour.** Each part's diffuse, normal and mask (the `SMBE` texture, whose channels the inventory reads first) and the ground's height map are exact information the fits reduce to a median.
-- **Its sky textures are half fitted.** The cloud atlases and the sky gradient are fitted; the clouds' normal map, their Voronoi and their wisps texture are exported and unread.
-- **Its shader, lightmaps, probes and grade are not yet exported.** The inventory looks for the shader asset each material names, the scene's lightmaps and reflection cubemap, and a grading table, and the extraction's name patterns grow to reach them.
-- **The shading model is decided by the witness render.** The exports drawn through a physically based material with the scene's own values, against the same exports through the toon ramp, show which of the two the reference is. The environment's material follows the answer, and the [rendering style](/docs/genshin/rendering-style) with it.
+- **The camera and the arrangement are the first loss.** The exports drawn from the scene's current pose score the same shape as our kits do, so no stand-in is priced until the pose is. The fitted arrangement, the character select's stage at 0.4 scale, stands no tower where the reference does; its blocks hold `Cam_CharSelect_*` clips, which makes it the character select's. `LoginScene_Build_All` at full scale matches the reference's towers, several hundred metres tall with their feet at the walkway's height, where the reference's cloud sea lies just under the walkway. The login's flight is not a clip: `Start` and `End` only hold a 50-metre lift, so the path is in a fieldless script and the pose is solved.
+- **The camera needs a cost clouds cannot fool.** The reference's clouds are most of its edges, and the witness drawn alone has none, so edge distance rewards the most cluttered pose. The next cost is the stone alone: the reference's stone told from its sky and cloud, or the towers' own features.
+- **The stone is a physically based material.** Its values are a specular colour, a metallic, a shininess, a rim glow and an occlusion strength, and its mask texture is smoothness in red and metal in green. Its diffuse is a near-neutral grey, so the reference's warm stone is its light. Its shader is one AnimeStudio cannot parse, so the witness draws it as a standard physically based material over those values.
+- **The tone curve is baked into a grading table.** The uber pass's last program samples a 3D table, in PQ space for an HDR display and gamma-encoded otherwise, which another pass bakes. The blocks hold the game's grading tables, but the login's profile does not say which it uses, so the frame is calibrated against the witness.
+- **The clouds' shader reads cleanly.** A cloud samples its atlas through a curl-noise offset, dissolves its alpha with its age, is coloured between a dark and a light colour by the atlas's red with a rim, and fades toward the sky. It reads the Enviro sky's own terms: top and bottom colours front and back of the sun, a horizon halo and a sun halo.
 
 ## Scope
 

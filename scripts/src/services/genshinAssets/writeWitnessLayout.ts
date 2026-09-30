@@ -14,14 +14,18 @@ import { join } from "node:path";
 
 // A component's arrangement as the exports lay it out, for the witness render: each part at its finest level, in
 // Three's axes, with every material it draws with and each material's values and textures, all named by the files the
-// Export holds. It is written beside the exports and never enters the repository
+// Export holds, under the component's roots or the ones given. It is written beside the exports and never enters the
+// Repository
 // (apps/web/content/docs/proposals/genshin/scene-derivation.md)
-export const writeWitnessLayout = async (component: DerivedAssetComponent): Promise<string> => {
+export const writeWitnessLayout = async (
+  component: DerivedAssetComponent,
+  roots?: readonly string[],
+): Promise<string> => {
   const directory = getComponentDirectory(component);
   const checkHasFile = (type: string, name: string, extension: string): boolean =>
     existsSync(join(directory.assets, type, `${name}.${extension}`));
   const [placements, materials] = await Promise.all([
-    readComponentPlacements(component),
+    readComponentPlacements(component, roots),
     readComponentMaterials(component),
   ]);
   const drawn = selectFinestLevels(placements, (mesh) => checkHasFile("Mesh", mesh, "obj"));

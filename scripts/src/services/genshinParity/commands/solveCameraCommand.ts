@@ -7,7 +7,8 @@ import { defineCommand } from "citty";
 
 const axes: readonly string[] = CAMERA_POSE_AXES;
 // A range as `axis:from:to:step`, every value from its start to its end by its step; a step that is not positive would
-// Never reach its end
+// Never reach its end. Each value is counted from the start rather than summed, since a step too small to move the sum
+// Would repeat one value forever
 const parseRange = (range: string): [string, number[]] => {
   const [axis = "", ...bounds] = range.split(":");
   const [from = 0, to = 0, step = 1] = bounds.map(Number);
@@ -17,9 +18,7 @@ const parseRange = (range: string): [string, number[]] => {
       range,
       `not axis:from:to:step with an axis of ${CAMERA_POSE_AXES.join(", ")}, from at most to and a positive step`,
     );
-  const values: number[] = [];
-  for (let value = from; value <= to + step / 2; value += step) values.push(value);
-  return [axis, values];
+  return [axis, Array.from({ length: Math.round((to - from) / step) + 1 }, (_, index) => from + index * step)];
 };
 
 export const solveCameraCommand: SubCommandsDef[string] = defineCommand({
