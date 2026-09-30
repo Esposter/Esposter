@@ -13,7 +13,7 @@ import { runAnimeStudio } from "#src/services/genshinAssets/runAnimeStudio";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
-import { readdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 
 // The rate a clip's curves are sampled at, the game's frame rate, which a Web Animations timeline plays as keyframes
@@ -30,7 +30,11 @@ export const extractComponentClips = async (
   const { root } = getComponentDirectory(component);
   const directory = join(root, "clips");
   await rm(directory, { force: true, recursive: true });
-  for (const block of await readAssetBlocks(clipPattern))
+  const blocks = await readAssetBlocks(clipPattern);
+  if (blocks.length === 0) throw new InvalidOperationError(Operation.Read, clipPattern, "in no indexed block");
+  // Made here, since AnimeStudio makes it only for a block holding a clip it exports
+  await mkdir(directory, { recursive: true });
+  for (const block of blocks)
     runAnimeStudio([
       join(GAME_BLOCKS_DIRECTORY, block),
       join(directory, basename(block, ".blk")),

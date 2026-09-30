@@ -25,7 +25,9 @@ export const readStreamedClipKeys = (words: readonly number[]): Map<number, Stre
         readFloat(index + 3),
         readFloat(index + 4),
       ];
-      curveKeysMap.set(curve, [...(curveKeysMap.get(curve) ?? []), { coefficients, time }]);
+      const keys = curveKeysMap.get(curve);
+      if (keys) keys.push({ coefficients, time });
+      else curveKeysMap.set(curve, [{ coefficients, time }]);
       index += FLOATS_PER_KEY;
     }
   }
