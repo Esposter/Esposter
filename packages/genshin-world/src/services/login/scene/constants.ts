@@ -3,29 +3,28 @@ import type { GradeOptions, RampOptions } from "genshin-engine";
 import walkway from "#src/data/login/walkway.json";
 import { LOGIN_DOOR_POSITION } from "#src/services/login/door/constants";
 
-// The camera, matched to the four time-of-day references, which share one pose: the walkway's edges meet 0.503 across
-// And 0.571 down the frame, so it looks straight down the walkway pitched 3.37 degrees down, and the walkway's fitted
-// Width fills 0.42 of the frame's foot, which puts the eye 0.76 of that width over its surface, at the game's 45 degree
-// Vertical field of view. The first wings' near edge meets the frame 0.807 down, 3.15 of that height ahead, so the
-// Camera starts beyond the walkway's far end, past the wings with the greatest z, and looks along -z toward the door:
-// From that end the character select's towers stand where the captures show them, beside the walkway
-// The walkway's own width, apart from its wings: the half width most of its outline's corners share
-const halfWidthCounts = Map.groupBy(walkway.outline, ([x = 0]) => Math.round(Math.abs(x) * 10) / 10);
-const [[walkwayHalfWidth] = [0]] = [...halfWidthCounts.entries()].toSorted(([, a], [, b]) => b.length - a.length);
-const WALKWAY_WIDTH = walkwayHalfWidth * 2;
-const EYE_SHARE = 0.76;
-const FIRST_WING_DISTANCE_SHARE = 3.15;
-const firstWingEdge = Math.max(...walkway.outline.filter(([x = 0]) => x > WALKWAY_WIDTH / 2 + 1).map(([, z = 0]) => z));
-export const LOGIN_CAMERA_FOV = 45;
-export const LOGIN_CAMERA_HEIGHT = walkway.top + WALKWAY_WIDTH * EYE_SHARE;
-export const LOGIN_CAMERA_PITCH = (-3.37 * Math.PI) / 180;
-export const LOGIN_CAMERA_START_Z = firstWingEdge + LOGIN_CAMERA_HEIGHT * FIRST_WING_DISTANCE_SHARE;
-// The flight ends where the door's foot meets the frame 0.722 down, as the English recording's last pose shows it:
-// 3.93 of the camera's height short of the door, flown along -z
-const DOOR_DISTANCE_SHARE = 3.93;
-export const LOGIN_FLIGHT_DISTANCE =
-  LOGIN_CAMERA_START_Z - (LOGIN_DOOR_POSITION[2] + LOGIN_CAMERA_HEIGHT * DOOR_DISTANCE_SHARE);
+// The flight down the walkway toward the door, read off the walkway in the captures by perspective alone
+// (Login/Scene/Index.reference.ts's findings): its crossbars' and the door's widths give each frame's focal length and
+// Distance, and the rows they stand at the eye's height. The eye holds 3.96 metres over the walkway's top, straight down
+// Its middle toward the door along +z (a heading of half a turn), flying from 72.1 metres short of the door at the
+// Dawn, dusk and night frames to 45.3 at the recording's last pose, pitching up from 5.6 to 6.9 degrees as its vertical
+// Field of view widens from 44.6 to 51.2
+const EYE_HEIGHT = 3.96;
+export const LOGIN_CAMERA_HEIGHT = walkway.top + EYE_HEIGHT;
+export const LOGIN_CAMERA_START_Z = LOGIN_DOOR_POSITION[2] - 72.1;
+export const LOGIN_CAMERA_END_Z = LOGIN_DOOR_POSITION[2] - 45.3;
+export const LOGIN_CAMERA_YAW = Math.PI;
+export const LOGIN_CAMERA_START_PITCH = (5.6 * Math.PI) / 180;
+export const LOGIN_CAMERA_END_PITCH = (6.9 * Math.PI) / 180;
+export const LOGIN_CAMERA_START_FOV = 44.6;
+export const LOGIN_CAMERA_END_FOV = 51.2;
 export const LOGIN_CAMERA_FAR = 8000;
+// The rush to the door on the click: the camera closes 41% of its distance to the door in its first 333 ms, gathering
+// Speed with the square of the time, as the door grows about 1.7 times in the recording's last third of a second
+// (Login/Scene/Index.reference.ts, source `recording`), and stops short of the door under the white
+export const LOGIN_DOOR_RUSH_SHARE = 0.41;
+export const LOGIN_DOOR_RUSH_MS = 333;
+export const LOGIN_DOOR_RUSH_LIMIT = 0.9;
 // The cloud sea's top, far under the walkway where the towers' feet vanish, and how far it reaches
 export const LOGIN_CLOUD_SEA_HEIGHT = -80;
 export const LOGIN_CLOUD_SEA_SIZE = 12_000;

@@ -1,6 +1,7 @@
 import { computeDistanceTransform } from "#src/services/genshinParity/computeDistanceTransform";
 import { STRUCTURE_WIDTH } from "#src/services/genshinParity/constants";
 import { readVerticalLines } from "#src/services/genshinParity/readVerticalLines";
+import sharp from "sharp";
 
 // A line farther than this from the other image's, in pixels at the structure's width, counts as missing and no more,
 // So one line the other image lacks cannot outweigh every line the two share
@@ -16,19 +17,39 @@ const readMeanDistance = (lines: Uint8Array, otherDistances: Float32Array): numb
   }
   return count === 0 ? LINE_DISTANCE_LIMIT : sum / count;
 };
-// How far a shot's long vertical lines sit from a reference's, as the mean over both directions of each line pixel's
-// Distance to the other image's nearest, in pixels at the structure's width. Clouds draw no long vertical lines, so a
-// Reference's sky does not score, and the distance falls smoothly as a scene's towers come into register. The
-// Reference's lines are read once, and each shot scored against them
+// A scorer of one orientation's lines: a horizontal line is a vertical one of the image turned a quarter turn, read at
+// The structure's width across what was its height
+const createOrientedScorer = async (
+  reference: Buffer,
+  height: number,
+  isHorizontal: boolean,
+): Promise<(shot: Buffer) => Promise<number>> => {
+  const turn = (image: Buffer): Promise<Buffer> =>
+    isHorizontal ? sharp(image).rotate(90).png().toBuffer() : Promise.resolve(image);
+  const lineHeight = isHorizontal ? Math.round((STRUCTURE_WIDTH * STRUCTURE_WIDTH) / height) : height;
+  const referenceLines = await readVerticalLines(await turn(reference), lineHeight);
+  const referenceDistances = computeDistanceTransform(referenceLines, STRUCTURE_WIDTH, lineHeight);
+  return async (shot) => {
+    const shotLines = await readVerticalLines(await turn(shot), lineHeight);
+    const shotDistances = computeDistanceTransform(shotLines, STRUCTURE_WIDTH, lineHeight);
+    return (readMeanDistance(referenceLines, shotDistances) + readMeanDistance(shotLines, referenceDistances)) / 2;
+  };
+};
+// How far a shot's long straight lines sit from a reference's, vertical and horizontal alike, as the mean over both
+// Directions of each line pixel's distance to the other image's nearest, in pixels at the structure's width. Clouds
+// Draw no long straight lines, so a reference's sky does not score. The vertical lines, the towers' sides, pin the
+// Heading and the place across; the horizontal ones, a door's top and foot or a bridge's deck, pin the height, which
+// No vertical line changes with. The reference's lines are read once, and each shot scored against them
 export const createLineDistanceScorer = async (
   reference: Buffer,
   height: number,
 ): Promise<(shot: Buffer) => Promise<number>> => {
-  const referenceLines = await readVerticalLines(reference, height);
-  const referenceDistances = computeDistanceTransform(referenceLines, STRUCTURE_WIDTH, height);
+  const [scoreVertical, scoreHorizontal] = await Promise.all([
+    createOrientedScorer(reference, height, false),
+    createOrientedScorer(reference, height, true),
+  ]);
   return async (shot) => {
-    const shotLines = await readVerticalLines(shot, height);
-    const shotDistances = computeDistanceTransform(shotLines, STRUCTURE_WIDTH, height);
-    return (readMeanDistance(referenceLines, shotDistances) + readMeanDistance(shotLines, referenceDistances)) / 2;
+    const [vertical, horizontal] = await Promise.all([scoreVertical(shot), scoreHorizontal(shot)]);
+    return (vertical + horizontal) / 2;
   };
 };

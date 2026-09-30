@@ -6,6 +6,7 @@ export interface ExportedAnimationClip {
   m_MuscleClip: { m_Clip: ClipData | { data: ClipData }; m_StartTime: number; m_StopTime: number };
   m_Name: string;
 }
+// A clip's curves, which the export nests one level deeper in some builds
 interface ClipData {
   m_ConstantClip: { data: number[] };
   m_DenseClip: {

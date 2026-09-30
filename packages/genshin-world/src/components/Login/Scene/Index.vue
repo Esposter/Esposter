@@ -7,18 +7,29 @@ import sky from "#src/data/login/sky.json";
 import { LoginPartFamily } from "#src/models/login/LoginPartFamily";
 import { createLoginClouds } from "#src/services/login/cloud/createLoginClouds";
 import { LOGIN_DOOR_LIGHT_MS } from "#src/services/login/constants";
-import { LOGIN_DOOR_GLOW_COLOR, LOGIN_DOOR_POSITION } from "#src/services/login/door/constants";
+import {
+  LOGIN_DOOR_GLOW_COLOR,
+  LOGIN_DOOR_POSITION,
+  LOGIN_DOOR_RISE_DEPTH,
+  LOGIN_DOOR_RISE_KEYFRAMES,
+} from "#src/services/login/door/constants";
 import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoorGeometry";
 import {
+  LOGIN_CAMERA_END_FOV,
+  LOGIN_CAMERA_END_PITCH,
+  LOGIN_CAMERA_END_Z,
   LOGIN_CAMERA_FAR,
-  LOGIN_CAMERA_FOV,
   LOGIN_CAMERA_HEIGHT,
-  LOGIN_CAMERA_PITCH,
+  LOGIN_CAMERA_START_FOV,
+  LOGIN_CAMERA_START_PITCH,
   LOGIN_CAMERA_START_Z,
+  LOGIN_CAMERA_YAW,
   LOGIN_CLOUD_COVERAGE,
   LOGIN_CLOUD_SEA_HEIGHT,
   LOGIN_CLOUD_SEA_SIZE,
-  LOGIN_FLIGHT_DISTANCE,
+  LOGIN_DOOR_RUSH_LIMIT,
+  LOGIN_DOOR_RUSH_MS,
+  LOGIN_DOOR_RUSH_SHARE,
   LOGIN_FOG_DENSITY,
   LOGIN_FOG_HEIGHT_FALLOFF,
   LOGIN_FOG_SCATTER_POWER,
@@ -170,15 +181,38 @@ const loginClouds = createLoginClouds(skyUniforms);
 const gradeLutTexture = createGradeLutTexture(LOGIN_GRADE_OPTIONS);
 usePostPipeline(QualityTier.High, { fogUniforms, godraysLight, gradeLutTexture, postUniforms });
 let renderedFrameCount = 0;
-// The camera flies along -z, three's own forward, from beyond the walkway's far end toward the door, pitched down
-const cameraZ = computed(() => LOGIN_CAMERA_START_Z - flight * LOGIN_FLIGHT_DISTANCE);
+// How long the door has been lit, which the rush toward it follows, and how long it has been rising into place
+const rushMs = shallowRef(0);
+const riseMs = shallowRef(0);
+const doorPosition = computed((): [number, number, number] => {
+  const nextIndex = LOGIN_DOOR_RISE_KEYFRAMES.findIndex(([timeMs]) => timeMs > riseMs.value);
+  const [endMs = 0, endShare = 1] = LOGIN_DOOR_RISE_KEYFRAMES[nextIndex] ?? [];
+  const [startMs = 0, startShare = 1] = LOGIN_DOOR_RISE_KEYFRAMES[nextIndex - 1] ?? [];
+  const share =
+    nextIndex === -1 ? 1 : startShare + ((endShare - startShare) * (riseMs.value - startMs)) / (endMs - startMs);
+  const [x, y, z] = LOGIN_DOOR_POSITION;
+  return [x, y - LOGIN_DOOR_RISE_DEPTH * (1 - share), z];
+});
+// The camera flies along +z from the flight's first pose to the door's, pitching up and widening its view as it goes,
+// And on the click rushes on toward the door
+const cameraPitch = computed(
+  () => LOGIN_CAMERA_START_PITCH + (LOGIN_CAMERA_END_PITCH - LOGIN_CAMERA_START_PITCH) * flight,
+);
+const cameraFov = computed(() => LOGIN_CAMERA_START_FOV + (LOGIN_CAMERA_END_FOV - LOGIN_CAMERA_START_FOV) * flight);
+const cameraZ = computed(() => {
+  const flownZ = LOGIN_CAMERA_START_Z + (LOGIN_CAMERA_END_Z - LOGIN_CAMERA_START_Z) * flight;
+  const share = Math.min(LOGIN_DOOR_RUSH_SHARE * (rushMs.value / LOGIN_DOOR_RUSH_MS) ** 2, LOGIN_DOOR_RUSH_LIMIT);
+  return flownZ - share * (flownZ - LOGIN_DOOR_POSITION[2]);
+});
 onRender(({ delta }) => {
-  light.target.position.set(0, 0, cameraZ.value - LOGIN_SHADOW_EXTENT / 2);
+  light.target.position.set(0, 0, cameraZ.value + LOGIN_SHADOW_EXTENT / 2);
   light.position
     .copy(light.target.position)
     .addScaledVector(LoginSkyStateMap[timeOfDay].lightDirection, LOGIN_LIGHT_DISTANCE);
   fogUniforms.density.value = witness?.isAlone.value ? 0 : LOGIN_FOG_DENSITY;
   doorGlow.value = isDoorLit ? Math.min(doorGlow.value + (delta * 1000) / LOGIN_DOOR_LIGHT_MS, 1) : 0;
+  rushMs.value = isDoorLit ? rushMs.value + delta * 1000 : 0;
+  riseMs.value = flight >= 1 ? riseMs.value + delta * 1000 : 0;
   renderedFrameCount++;
   if (renderedFrameCount === READY_FRAME_COUNT) emit("ready");
 });
@@ -205,9 +239,10 @@ onUnmounted(() => {
 <template>
   <TresPerspectiveCamera
     :far="LOGIN_CAMERA_FAR"
-    :fov="LOGIN_CAMERA_FOV"
+    :fov="cameraFov"
     :position="[0, LOGIN_CAMERA_HEIGHT, cameraZ]"
-    :rotation="[LOGIN_CAMERA_PITCH, 0, 0]"
+    :rotation="[cameraPitch, LOGIN_CAMERA_YAW, 0]"
+    rotation-order="YXZ"
   />
   <primitive :object="light" />
   <primitive :object="light.target" />
@@ -237,9 +272,13 @@ onUnmounted(() => {
     receive-shadow
     :material="stoneMaterial"
   />
-  <!-- The door faces the camera coming down the walkway from +z, and stands only once the flight has brought the -->
-  <!-- Camera to it: the title's frames show the walkway running on with no door on it -->
-  <TresGroup v-if="flight >= 1 && checkIsOwnFamilyDrawn(LoginPartFamily.Door)" :position="LOGIN_DOOR_POSITION">
+  <!-- The door turns to face the camera coming up the walkway from -z, and stands only once the flight has brought -->
+  <!-- The camera to it: the title's frames show the walkway running on with no door on it -->
+  <TresGroup
+    v-if="flight >= 1 && checkIsOwnFamilyDrawn(LoginPartFamily.Door)"
+    :position="doorPosition"
+    :rotation="[0, Math.PI, 0]"
+  >
     <TresMesh :geometry="doorFrameGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
     <TresMesh :geometry="doorPanelGeometry" cast-shadow receive-shadow :material="doorMaterial" />
   </TresGroup>

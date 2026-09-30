@@ -1,6 +1,9 @@
+import type { DecodedCurve } from "#src/models/genshinAssets/DecodedCurve";
+
 import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { fitAlbedo } from "#src/services/genshinAssets/fitAlbedo";
 import { fitHorizonBand } from "#src/services/genshinAssets/fitHorizonBand";
+import { fitInterfaceClips } from "#src/services/genshinAssets/fitInterfaceClips";
 import { fitLoginClouds } from "#src/services/genshinAssets/fitLoginClouds";
 import { fitLoginDoor } from "#src/services/genshinAssets/fitLoginDoor";
 import { fitLoginSilhouettes } from "#src/services/genshinAssets/fitLoginSilhouettes";
@@ -9,7 +12,8 @@ import { fitLoginWalkway } from "#src/services/genshinAssets/fitLoginWalkway";
 import { getComponentDirectory } from "#src/services/genshinAssets/getComponentDirectory";
 import { readComponentPlacements } from "#src/services/genshinAssets/readComponentPlacements";
 import { writeWorldData } from "#src/services/genshinAssets/writeWorldData";
-import { readdir } from "node:fs/promises";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // Every login part's diffuse texture, which its stone's one colour is fitted from
@@ -18,6 +22,10 @@ const LOGIN_DIFFUSE_REGEX = /^LoginScene_.+_Diffuse\.png$/u;
 export const fitLoginScene = async (): Promise<string> => {
   const directory = getComponentDirectory(DerivedAssetComponent.Login);
   const placements = await readComponentPlacements(DerivedAssetComponent.Login);
+  // The interface's clips as `genshin:assets clips` decoded them
+  const clips = parseMachineJson<{ curves: DecodedCurve[]; duration: number; name: string }[]>(
+    await readFile(join(directory.root, "clips", "clips.json"), "utf8"),
+  );
   const meshDirectory = join(directory.assets, "Mesh");
   const textureDirectory = join(directory.assets, "Texture2D");
   const diffusePaths = (await readdir(textureDirectory))
@@ -40,6 +48,7 @@ export const fitLoginScene = async (): Promise<string> => {
     writeWorldData("login/clouds.json", clouds),
     writeWorldData("login/sky.json", { horizonBand }),
     writeWorldData("login/palette.json", { stone }),
+    writeWorldData("login/interfaceClips.json", fitInterfaceClips(clips)),
   ]);
   return paths.join("\n");
 };

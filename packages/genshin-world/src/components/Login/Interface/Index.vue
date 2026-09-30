@@ -68,10 +68,11 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
         <ServerBar :name="LOGIN_SERVER_NAME" />
       </div>
     </template>
-    <LoginStatus v-else-if="stage === LoginStage.Preparing" :progress :step="statusStep" />
-    <PromptBand v-else-if="stage === LoginStage.Door" class="prompt">{{ LOGIN_BEGIN_TEXT }}</PromptBand>
-    <!-- The foot, anchored to the screen's bottom as the game's is, so it stays there on any window -->
+    <!-- The foot, anchored to the screen's bottom as the game's is, so everything in it stays there on any window: the -->
+    <!-- Loading row and the prompt, the account and the build string, and both button columns -->
     <div v-if="isFooterShown" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.Bottom], true)">
+      <LoginStatus v-if="stage === LoginStage.Preparing" :progress :step="statusStep" />
+      <PromptBand v-else-if="stage === LoginStage.Door" class="prompt">{{ LOGIN_BEGIN_TEXT }}</PromptBand>
       <div class="column" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.LeftButtons])">
         <div class="slot"><RoundButton :icon="InterfaceIcon.Power" label="Quit" /></div>
       </div>
@@ -191,10 +192,12 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
   color: #f9dc38;
 }
 
+/* The prompt's band 38 units over the screen's foot on the 1080 high recording, across the foot less 100 units a side:
+   its RectTransform is a prefab the page loads at run time (BtnPressStart), so its place is measured */
 .prompt {
   position: absolute;
-  top: calc(50% + var(--unit) * 458);
   right: calc(var(--unit) * 100);
+  bottom: calc(var(--unit) * 38);
   left: calc(var(--unit) * 100);
 }
 

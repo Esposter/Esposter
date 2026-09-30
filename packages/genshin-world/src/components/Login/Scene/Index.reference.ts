@@ -84,10 +84,53 @@ export const reference: ComponentReference = {
         "Rows within noise of each other: a loss table priced at a pose that fits nothing means nothing, so it waits on the pose",
       search: "genshin:parity attribute over dawn, dusk and night at (0, 5, 75), heading 0, pitch 3, Build_All witness",
     },
+    {
+      found:
+        "Ani_LogginScene_Door01_Liftting is the door assembling itself over 1.33 s at the flight's end, its pieces rising about 60 metres from below into place; Ani_Login_Lift raises its animator's root 50 metres over a second, easing in and overshooting to 52.5 before settling",
+      search: "genshin:assets clips login: what the scene's clips move",
+    },
+    {
+      found:
+        "The click lights the door from its middle while the camera pushes toward it, the door growing about 1.7 times in a third of a second and gathering speed, under the white",
+      search: "The recording's last second at 15 frames a second (13.6 s to 15.2 s)",
+    },
+    {
+      found:
+        "The walkway's top stood 0.33 metres up and the door's foot 5 metres down, so 5.3 of the door's 13.5 metres sank into the walkway and it read short: the walkway's lost parent took its height as well as its place, and the walkway moves 5.33 metres down to meet the door's foot",
+      search: "Why the door read short against the walkway",
+    },
+    {
+      found:
+        "The walkway 5.33 metres down and 112.3 along did not fix it: the door's width over the walkway's is 0.9 in the recording's last pose and 0.4 in ours, a ratio no camera changes, so the walkway was 2.5 times too large",
+      search: "Why the door still read short with the walkway at its foot",
+    },
+    {
+      found:
+        "LoginScene holds BridgeBeginNode, DoorNode, SceneBeginNode and ModelCamera at one scale, with LightShaft, MainLight, Moon, Sun, Clouds and Atmosphere: the login hangs the walkway and the door at one scale, so the walkway's lost parent is the door's, 0.4 scale 5 metres down, which brings its end to the door with no shift along its axis",
+      search: "The placements under the roots LoginScene, LoginCamera and Eff_SceneCamera_Cloud_Login",
+    },
+    {
+      found:
+        "Every door-stage solve scored the scene's own camera: the scene's bindings rewrite its camera on each frame the stage animates, so the pose set was lost before the shot; the witness now freezes the camera's matrix and refuses a pose the drawn matrix does not hold",
+      search: "Why two door renders at poses 90 metres apart came out identical",
+    },
+    {
+      found:
+        "Door end: 45.3 metres short of the door, 3.94 over the walkway, pitched 6.9 up, a 51.2 degree field of view; dawn: 72.1 short, 3.98 over, 5.6 up, 44.6. From the crossbars' and the door's pixel widths (focal length and distance) and the rows they stand at (eye height); the witness render at each lines the walkway, crossbars and door up on the capture",
+      search:
+        "The flight's first and last poses by perspective from the walkway's known widths, in place of the line-distance search",
+    },
+    {
+      found:
+        "12.67 to 12.75 px from heights 10 metres apart, and every one scored the scene's own camera: the line distance does not pin height and was never checked against a render",
+      search:
+        "solve-camera login-door by vertical and horizontal lines: y -4 to 10 by 2, z 45 to 105 by 15, pitch -3 to 6 by 3, fov 42.76 and 55 (320 poses)",
+    },
   ],
   open: [
-    "The walkway's exact offset along the stage's axis, and the door's heading, solved on the door reference",
-    "The dawn, dusk and night pose with the walkway moved, on the towers' lines; then the day's",
+    "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
+    "The towers round the walkway: the character select's stage is not the login's arrangement, which hangs under LoginScene's SceneObj in a block not read",
+    "The day sky's pose, by the same perspective reading",
   ],
   sources: {
     atmosphereShader: {
@@ -135,6 +178,18 @@ export const reference: ComponentReference = {
       name: "File:Login Menu Door and Platform.png",
       role: "The flight's last pose: the door on its dais filling most of the frame",
     },
+    doorRecording: {
+      block: "yt-rBnfA4pXw6U.mp4 at 14 s (login-door-recording)",
+      kind: GameSourceKind.Capture,
+      name: "The English recording's last pose of the current build",
+      role: "The flight's last pose at 16:9, with the door's and the walkway's widths the arrangement is checked by",
+    },
+    doorRise: {
+      block: "00/16000354.blk",
+      kind: GameSourceKind.AnimationClip,
+      name: "Ani_LogginScene_Door01_Liftting",
+      role: "The door assembling itself at the flight's end, its pieces rising into place over 1.33 s",
+    },
     flight: {
       block: "00/16000354.blk",
       kind: GameSourceKind.MonoBehaviour,
@@ -152,6 +207,12 @@ export const reference: ComponentReference = {
       kind: GameSourceKind.AnimationClip,
       name: "Ani_Login_Lift",
       role: "One root lifted 50 metres over a second at the login's end, between the Start and End clips",
+    },
+    loginScene: {
+      block: "00/11790361.blk",
+      kind: GameSourceKind.Transform,
+      name: "LoginScene",
+      role: "The login's own root: its walkway's and door's nodes at one scale, its camera, sun, moon and sky",
     },
     meshes: {
       block: "00/02842276.blk",
@@ -188,7 +249,7 @@ export const reference: ComponentReference = {
       block: "00/04803507.blk",
       kind: GameSourceKind.Transform,
       name: "LoginScene_Bridge01_Vo",
-      role: "The walkway, 20 metres wide, a root dumped at the origin: its place is solved from the door",
+      role: "The walkway, 20 metres wide at its own scale, a root dumped at the origin: it hangs at the door's 0.4 scale, 8 metres wide",
     },
   },
 };

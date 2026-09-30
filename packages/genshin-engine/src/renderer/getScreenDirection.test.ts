@@ -2,7 +2,7 @@ import { getScreenDirection } from "#src/renderer/getScreenDirection";
 import { describe, expect, test } from "vitest";
 
 describe(getScreenDirection, () => {
-  const camera = { aspect: 2, fov: 90, pitch: 0 };
+  const camera = { aspect: 2, fov: 90, pitch: 0, yaw: 0 };
 
   test("looks along the camera's forward at the screen's middle, and out to its edges' angles at its corners", () => {
     expect.hasAssertions();
@@ -22,6 +22,15 @@ describe(getScreenDirection, () => {
     const { y, z } = getScreenDirection({ ...camera, pitch: -Math.PI / 2 }, [0.5, 0.5]);
 
     expect(y).toBeCloseTo(-1);
+    expect(z).toBeCloseTo(0);
+  });
+
+  test("turns with the camera's heading, a quarter turn looking along -x", () => {
+    expect.hasAssertions();
+
+    const { x, z } = getScreenDirection({ ...camera, yaw: Math.PI / 2 }, [0.5, 0.5]);
+
+    expect(x).toBeCloseTo(-1);
     expect(z).toBeCloseTo(0);
   });
 });

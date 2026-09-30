@@ -14,27 +14,26 @@ describe(toCanvasRectStyle, () => {
     });
 
     expect(style).toStrictEqual({
-      bottom: "calc(0px + 0 * 100% + 54 * var(--canvas-unit) - 0 * calc(0 * 100% + 520 * var(--canvas-unit)))",
+      bottom: "calc(0px + 0 * 100% + 54 * var(--canvas-unit))",
       height: "calc(0 * 100% + 520 * var(--canvas-unit))",
-      left: "calc(0px + 1 * 100% + -54 * var(--canvas-unit) - 1 * calc(0 * 100% + 52 * var(--canvas-unit)))",
+      left: "calc(0px + 1 * 100% + -106 * var(--canvas-unit))",
       position: "absolute",
       width: "calc(0 * 100% + 52 * var(--canvas-unit))",
     });
   });
 
-  test("measures a stretched piece's position from the point between its anchors its pivot marks", () => {
+  test("places a piece stretched between its parent's sides by its size delta alone, whatever its pivot", () => {
     expect.hasAssertions();
 
-    const style = toCanvasRectStyle({
-      anchorMax: [1, 1],
+    const { left, width } = toCanvasRectStyle({
+      anchorMax: [1, 0],
       anchorMin: [0, 0],
-      pivot: [0.5, 0.5],
+      pivot: [0.5, 0],
       position: [0, 0],
-      size: [0, 0],
+      size: [-120, 40],
     });
 
-    expect(style.left).toBe(
-      "calc(0px + 0.5 * 100% + 0 * var(--canvas-unit) - 0.5 * calc(1 * 100% + 0 * var(--canvas-unit)))",
-    );
+    expect(left).toBe("calc(0px + 0 * 100% + 60 * var(--canvas-unit))");
+    expect(width).toBe("calc(1 * 100% + -120 * var(--canvas-unit))");
   });
 });

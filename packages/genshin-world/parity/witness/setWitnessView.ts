@@ -1,10 +1,13 @@
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 
 import { WitnessShading } from "#parity/witness/WitnessShading";
-import { Mesh, PerspectiveCamera } from "three";
+import { InvalidOperationError, Operation } from "@esposter/shared";
+import { Mesh, PerspectiveCamera, Vector3 } from "three";
 
 // The frames drawn after a view is set before it is read back, for the temporal anti-aliasing's history to settle on it
 const SETTLE_FRAME_COUNT = 8;
+// How far the drawn eye may stand from the pose set, in metres, before the view is refused
+const POSE_TOLERANCE = 1e-3;
 // A view of the witness render as the tools set it: a camera pose (the eye in three's axes, its heading about y and its
 // Pitch about x in radians, its vertical field of view in degrees), the families of parts the witness draws in place of
 // The scene's own (every family it has unless told), how it shades its exports, and whether the scene draws alone,
@@ -15,8 +18,10 @@ export interface WitnessView {
   isAlone?: boolean;
   shading?: WitnessShading;
 }
-// Sets the witness render's view and waits for the frames that draw it. The scene's own props never move its camera
-// While its flight holds, so the pose set here stands until the next
+// Sets the witness render's view and waits for the frames that draw it. The scene's own bindings move its camera on any
+// Frame its stage animates (the flight, the door's rush), so a pose set here freezes the camera's matrix, which those
+// Bindings then cannot reach, and is read back off the drawn matrix once the frames settle: a pose that did not hold
+// Throws rather than scoring the scene's own view
 export const setWitnessView = async (
   { families, isAlone, parts }: SceneWitness,
   { camera, families: viewFamilies, isAlone: isViewAlone = false, shading = WitnessShading.Exported }: WitnessView,
@@ -36,6 +41,8 @@ export const setWitnessView = async (
     sceneCamera.rotation.set(camera.pitch, camera.yaw, 0, "YXZ");
     sceneCamera.fov = camera.fov;
     sceneCamera.updateProjectionMatrix();
+    sceneCamera.updateMatrix();
+    sceneCamera.matrixAutoUpdate = false;
   }
   for (let frame = 0; frame < SETTLE_FRAME_COUNT; frame++)
     // oxlint-disable-next-line no-await-in-loop -- one frame is waited for after another
@@ -44,4 +51,8 @@ export const setWitnessView = async (
         resolve();
       });
     });
+  if (!camera || !(sceneCamera instanceof PerspectiveCamera)) return;
+  const drawnEye = new Vector3().setFromMatrixPosition(sceneCamera.matrixWorld);
+  if (drawnEye.distanceTo(new Vector3(...camera.position)) > POSE_TOLERANCE || sceneCamera.fov !== camera.fov)
+    throw new InvalidOperationError(Operation.Read, "witness view", "the scene moved its camera off the pose set");
 };

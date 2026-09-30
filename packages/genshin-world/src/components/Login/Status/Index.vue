@@ -33,8 +33,9 @@ const percentText = computed(() =>
 </template>
 
 <style scoped>
-/* Measured from the English client's login screen at 1080 high, each line's centre from the screen's middle: the words
-   422 units below it, the share 457 and the bar 480 */
+/* Measured from the English client's login screen at 1080 high, each line's middle over the screen's foot, in the
+   Foot the game's Bottom lays out: the words 118 units up, in the middle of its 58 unit loading row (LoadingDesc), the
+   Share 83 and the bar 60. Riding in the foot, they stay at the screen's bottom on any window */
 .login-status {
   position: absolute;
   inset: 0;
@@ -44,41 +45,41 @@ const percentText = computed(() =>
 }
 
 .text,
-.percent {
+.percent,
+.mark,
+.bar {
   position: absolute;
   left: 50%;
+  translate: -50% 50%;
+}
+
+.text,
+.percent {
   margin: 0;
   font-weight: 600;
   line-height: 1;
   text-shadow: 0 0 calc(var(--unit) * 3) rgb(0 0 0 / 0.35);
-  translate: -50% -50%;
   white-space: nowrap;
 }
 
 .text {
-  top: calc(50% + var(--unit) * 422);
+  bottom: calc(var(--unit) * 118);
   font-size: calc(var(--unit) * 30);
 }
 
 .percent {
-  top: calc(50% + var(--unit) * 457);
+  bottom: calc(var(--unit) * 83);
   font-size: calc(var(--unit) * 22);
 }
 
 .mark {
-  position: absolute;
-  top: calc(50% + var(--unit) * 480);
-  left: 50%;
+  bottom: calc(var(--unit) * 60);
   width: calc(var(--unit) * 36);
   height: calc(var(--unit) * 24);
   fill: #fff;
-  translate: -50% -50%;
 }
 
 .bar {
-  position: absolute;
-  top: calc(50% + var(--unit) * 480);
-  left: 50%;
-  translate: -50% -50%;
+  bottom: calc(var(--unit) * 60);
 }
 </style>

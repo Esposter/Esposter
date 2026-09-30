@@ -25,6 +25,15 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "LoginScreen",
     wikiTitle: "File:Login Menu Door and Platform.png",
   },
+  // The door from the flight's last pose on the current build's PC client at 16:9, the English recording's frame at the
+  // Door, scored over the scene above the prompt and clear of the corner buttons
+  "login-door-recording": {
+    capture: "yt-rBnfA4pXw6U.mp4",
+    props: { isInterfaceHidden: true, stage: "Door", timeOfDay: "Dusk" },
+    region: { height: 960, width: 1560, x: 180, y: 0 },
+    screen: "LoginScreen",
+    seconds: 14,
+  },
   "login-dusk": {
     props: { isInterfaceHidden: true, timeOfDay: "Dusk" },
     screen: "LoginScreen",

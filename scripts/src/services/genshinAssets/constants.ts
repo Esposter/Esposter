@@ -26,7 +26,13 @@ export const GAME_BLOCKS_DIRECTORY: string = join(
 // The asset types an export writes as files, and the types dumped as JSON to rebuild where each mesh stands and what
 // Materials it draws with
 export const EXPORTED_ASSET_TYPES = ["Mesh", "Texture2D", "Material"] as const;
-export const LAYOUT_ASSET_TYPES = ["Transform", "GameObject", "MeshFilter", "MeshRenderer"] as const;
+export const LAYOUT_ASSET_TYPES = [
+  "Transform",
+  "GameObject",
+  "MeshFilter",
+  "MeshRenderer",
+  "SkinnedMeshRenderer",
+] as const;
 // Where `fit` writes the parameters it fits, as data of the world package's own, which its scenes read
 export const WORLD_DATA_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world", "src", "data");
 // A tower is fitted in two metre bands, a band merged into the one below while its radius holds within 3% of it, and

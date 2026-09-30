@@ -28,6 +28,11 @@ export const writeWitnessLayout = async (
     readComponentPlacements(component, roots),
     readComponentMaterials(component),
   ]);
+  // A mesh a placement names by path ID (a skinned mesh in another file) is named through the asset index first
+  const meshPathIds = new Set(placements.map(({ mesh }) => mesh).filter((mesh) => /^-?\d+$/u.test(mesh)));
+  const meshAssets = await readIndexedAssets(({ pathId, type }) => type === "Mesh" && meshPathIds.has(pathId));
+  const pathIdMeshMap = new Map(meshAssets.map(({ name, pathId }) => [pathId, name]));
+  for (const placement of placements) placement.mesh = pathIdMeshMap.get(placement.mesh) ?? placement.mesh;
   const drawn = selectFinestLevels(placements, (mesh) => checkHasFile("Mesh", mesh, "obj"));
   const referencedIds = new Set([
     ...drawn.flatMap(({ materials: drawnMaterials }) => drawnMaterials),
