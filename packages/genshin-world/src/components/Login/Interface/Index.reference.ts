@@ -46,7 +46,7 @@ export const reference: ComponentReference = {
     },
     {
       found:
-        "The bar is full by 8 s, folds over 9 to 9.5 s with its words, and the flight runs on bare until the door rises at 11.75 s; the bar opened at 2.5 s, so it fills in about 5.5 s",
+        "The bar is full by 8 s, folds over 9 to 9.5 s with its words, and the flight runs on bare until the door rises at 11.75 s; the bar opened at 2.5 s and filled as the recording's own load went, so its pace is loading's, not a floor",
       search: "The recording's loading end at 4 frames a second (8 s to 13 s)",
     },
     {

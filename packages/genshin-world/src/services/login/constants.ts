@@ -29,10 +29,9 @@ export const LOGIN_WELCOME_FADE_MS = 200;
 // Slow load draws it out (17 s in the 1440 high recording) while a fast one takes this long (the English recording's,
 // Less the two seconds it stalls for)
 export const LOGIN_FLIGHT_MS = 8900;
-// The bar's fill at its fastest, from empty to full: the English recording's, from the bar opening 2.5 s in to its full
-// Width at 8 s. The share shown runs toward loading's own at no more than this pace, so a load that finishes at once
-// Still fills the bar evenly, and one slower than it is followed as it goes
-export const LOGIN_PROGRESS_FILL_MS = 5500;
+// The bar's fill at its fastest, from empty to full: the share shown runs toward loading's own at no more than this
+// Pace, so a load that finishes at once still sweeps the bar rather than jumping, and one slower is followed as it goes
+export const LOGIN_PROGRESS_FILL_MS = 100;
 // A click on the door lights it over 400 ms while the screen whitens over 620, easing out, from the English
 // Recording at 60 frames
 export const LOGIN_DOOR_LIGHT_MS = 400;
