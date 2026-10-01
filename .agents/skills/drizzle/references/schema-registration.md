@@ -2,7 +2,7 @@
 
 Read when adding a table, a `pgEnum`, a Postgres schema or a relation part, or when a migration fails on a missing type or schema.
 
-**Nothing is registered by hand.** `pnpm registry:gen` (from `packages/db-schema/`, and run first by both `pnpm build` and `pnpm db:gen`) walks `src/schema/**` and `src/relations/**` and writes the two registries drizzle reads, `src/generated/schema.ts` and `src/generated/relations.ts`, in the formatter's shape (`packages/db-schema/scripts/generateRegistry.ts`). A declaration is registered by existing: a table (`export const … = pgTable(`), an enum (`… = <schema>Schema.enum(`), a Postgres schema (`… = camelCase.schema(`) and a relation part (`… = defineRelationsPart(`). A generated file is never edited — a wrong entry is a wrong declaration or a wrong generator (`apps/web/content/docs/architecture/generated-artifacts.md`).
+**Nothing is registered by hand.** `pnpm registry:gen` (from `packages/db-schema/`, and run first by both `pnpm build` and `pnpm db:gen`) walks `src/schema/**` and `src/relations/**` and writes the two registries drizzle reads, `src/generated/schema.ts` and `src/generated/relations.ts`, unformatted like every generated file (`packages/db-schema/scripts/generateRegistry.ts`). A declaration is registered by existing: a table (`export const … = pgTable(`), an enum (`… = <schema>Schema.enum(`), a Postgres schema (`… = camelCase.schema(`) and a relation part (`… = defineRelationsPart(`). A generated file is never edited — a wrong entry is a wrong declaration or a wrong generator (`apps/web/content/docs/architecture/generated-artifacts.md`).
 
 What the registries feed:
 
