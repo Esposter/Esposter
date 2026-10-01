@@ -49,7 +49,7 @@ A consumer resolves a language once, loads its chunk once, and indexes the resul
 
 ### The /genshin page
 
-The page resolves the reader's language on the server from the request's `Accept-Language` and hands the resolved language and its chunk to the client in the payload (`useGameText`), so the page hydrates in the language it rendered in. Its screen-reader status, read while the opening plays, is the game's own "Loading..." and "Ready" in that language, marked with the language's tag.
+The page resolves the reader's language on the server from the request's `Accept-Language` and hands the resolved language and its chunk to the client in the payload (`useGameText`), so the page hydrates in the language it rendered in. It hands the chunk to the opening as its `gameText` prop, a required one on every screen of the opening that shows a word, so the health notice, the login title, the account label and the status lines read in that language, and a screen a host forgets to give it fails to compile rather than falling back to English. The opening's container carries the language's tag, and its screen-reader status, read while the opening plays, is the game's own "Loading..." and "Ready" in that language.
 
 ### The persona plugin
 
@@ -58,7 +58,9 @@ The plugin is installed alone by a stranger's frozen `npm ci`, and every release
 ## Notes
 
 - **The game's own words ship; nothing else of the game's does.** A string referenced here is text the game shows, carried as text, the way a recreation quotes the screen it recreates — no image, model, sound or file of the game's rides along with it, which [derived assets](/docs/genshin/derived-assets) keeps to.
-- **The opening's pre-login words are not in the text map.** The health notice and the login screen's status lines are shown before the game has loaded any data, from a store of the client's own that no text dump carries, so they stay the English client's words in `genshin-world` until that store is read ([pre-login text](/docs/proposals/genshin/pre-login-text)).
+- **One of the opening's words is not in the text map.** The welcome card's greeting lives in a store of the client's own that no text dump carries, so it stays the English client's word in `genshin-world` until that store is read ([pre-login text](/docs/proposals/genshin/pre-login-text)). The rest of the opening's words are in the text map although the client shows them before it loads its data, the door's prompt among them, written per platform with the PC's form kept.
+- **A word per gender is filled once, for one twin.** Some languages spell the Traveler with a word per gender (`{M#…}` and `{F#…}`); `fillLinePlaceholders` keeps one twin's, which the persona fills from the twin it speaks as and the login screen from `LOGIN_TRAVELER_GENDER`.
+- **The opening's English is the current build's.** The text map is the current client's, so the health notice reads its current wording rather than the older English recording's the notice's layout was measured against.
 - **A non-Latin language falls back past the game's face.** HYWenHei and Signika are the faces the [interface library](/docs/genshin/interface-library) sets text in, and neither covers Chinese, Japanese, Korean or Thai, which a browser then draws in a system face. The visual suites and parity scoring compare the English client only.
 - **The app's own interface is not translated.** What is the app's rather than the game's stays English, as the [internationalization](/docs/architecture/deferred/i18n) decision has it; this package translates only what the game itself says.
 

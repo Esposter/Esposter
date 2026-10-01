@@ -1,10 +1,10 @@
 import type { VoiceLine } from "#src/models/VoiceLine";
 
 import { CharacterLinesLoaderMap } from "#src/generated/CharacterLinesLoaderMap";
+import { TravelerGender } from "#src/generated/genshinText/models/TravelerGender";
+import { fillLinePlaceholders } from "#src/generated/genshinText/services/fillLinePlaceholders";
 import { getCanonicalLanguage } from "#src/generated/genshinText/services/getCanonicalLanguage";
-import { TravelerGender } from "#src/models/TravelerGender";
 import { DEFAULT_LANGUAGE, TravelerTwinMap } from "#src/services/constants";
-import { fillLinePlaceholders } from "#src/services/fillLinePlaceholders";
 import { getPlainLineText } from "#src/services/getPlainLineText";
 import { readGenshinDb } from "#src/services/readGenshinDb";
 

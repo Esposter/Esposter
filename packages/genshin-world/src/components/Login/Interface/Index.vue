@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import type { LoginStatusStep } from "#src/models/login/LoginStatusStep";
+import type { GameText } from "genshin-text";
 
 import LoginStatus from "#src/components/Login/Status/Index.vue";
 import { LoginInterfaceRect } from "#src/models/login/LoginInterfaceRect";
 import { LoginStage } from "#src/models/login/LoginStage";
 import {
-  LOGIN_BEGIN_TEXT,
   LOGIN_DOOR_BUTTONS_DELAY_MS,
   LOGIN_DOOR_PROMPT_DELAY_MS,
   LOGIN_DOOR_PROMPT_FADE_MS,
   LOGIN_SERVER_NAME,
-  LOGIN_TITLE_TEXT,
-  LOGIN_USER_LABEL,
   LOGIN_VERSION_TEXT,
   LOGIN_WELCOME_FADE_MS,
   LOGIN_WELCOME_TEXT,
@@ -28,8 +26,11 @@ import {
   ToastNotice,
   toCanvasRectStyle,
 } from "genshin-interface";
+import { GameTextKey } from "genshin-text";
 
 interface Props {
+  // The game's words in the reader's language
+  gameText: GameText;
   // Whether the door is still rising, which the door's prompt and corner buttons wait on, as the game's do
   isDoorWaiting?: true;
   isSpinnerShown?: boolean;
@@ -41,7 +42,8 @@ interface Props {
   statusStep: LoginStatusStep;
 }
 
-const { isDoorWaiting, isSpinnerShown, isWelcomeShown, playerName, progress, stage, statusStep } = defineProps<Props>();
+const { gameText, isDoorWaiting, isSpinnerShown, isWelcomeShown, playerName, progress, stage, statusStep } =
+  defineProps<Props>();
 // The login screen's interface over its scene, for the stage it is at: the title with the server and account under
 // It, the status as the game prepares, then the prompt at the door. The power button and the build string stay
 // Throughout; the corner buttons are the title's two and the door's four, as the game's current build shows them. A
@@ -66,9 +68,9 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
     </ToastNotice>
     <template v-if="stage === LoginStage.Title">
       <!-- A heading to a screen reader, drawn as a paragraph so no host's own heading styles reach it -->
-      <p class="title" role="heading" aria-level="1">{{ LOGIN_TITLE_TEXT }}</p>
+      <p class="title" role="heading" aria-level="1">{{ gameText[GameTextKey.LoginTitle] }}</p>
       <OrnamentDivider class="divider" />
-      <p class="subtitle">{{ LOGIN_BEGIN_TEXT }}</p>
+      <p class="subtitle">{{ gameText[GameTextKey.LoginBegin] }}</p>
       <div class="server" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.ServerBar], true)">
         <ServerBar :name="LOGIN_SERVER_NAME" />
       </div>
@@ -76,9 +78,9 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
     <!-- The foot, anchored to the screen's bottom as the game's is, so everything in it stays there on any window: the -->
     <!-- Loading row and the prompt, the account and the build string, and both button columns -->
     <div v-if="isFooterShown" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.Bottom], true)">
-      <LoginStatus v-if="stage === LoginStage.Preparing" :progress :step="statusStep" />
+      <LoginStatus v-if="stage === LoginStage.Preparing" :game-text :progress :step="statusStep" />
       <PromptBand v-else-if="stage === LoginStage.Door && !isDoorWaiting" class="prompt">{{
-        LOGIN_BEGIN_TEXT
+        gameText[GameTextKey.LoginBegin]
       }}</PromptBand>
       <div class="column" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.LeftButtons])">
         <div class="slot"><RoundButton :icon="InterfaceIcon.Power" label="Quit" /></div>
@@ -90,7 +92,9 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
       </div>
       <div :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.CurrentAccount])">
         <p v-if="stage === LoginStage.Title" class="user">
-          <span class="user-label">{{ LOGIN_USER_LABEL }}</span> <span class="user-name">{{ playerName }}</span>
+          <!-- The space after the label is its own, since the template drops one between two lines -->
+          <span class="user-label">{{ `${gameText[GameTextKey.LoginUserLabel]} ` }}</span>
+          <span class="user-name">{{ playerName }}</span>
         </p>
         <div :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.Version])">
           <p class="version">{{ LOGIN_VERSION_TEXT }}</p>

@@ -28,4 +28,12 @@ describe(solveCloudColors, () => {
     expect(solved.shade.map((value) => Number(value.toFixed(3)))).toStrictEqual(shade);
     expect(solved.lit.map((value) => Number(value.toFixed(3)))).toStrictEqual(lit);
   });
+
+  test("throws when either set has no cloud pixels", () => {
+    expect.hasAssertions();
+
+    expect(() => solveCloudColors([], [[1, 1, 1]])).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: solveCloudColors, no cloud pixels to match: 0 of ours, 1 of the reference's]`,
+    );
+  });
 });

@@ -11,6 +11,7 @@ const { isSystemDark, resolvedThemeMode, themeMode } = storeToRefs(themeModeStor
 // The root's design style, which the style tier's rule is keyed on. Here rather than in `App.vue`, because the status
 // Page renders in its place and needs the style as much
 useHead({ htmlAttrs: { "data-ui-style": uiStyle } });
+// oxlint-disable-next-line no-restricted-globals -- a theme scope's style holds for everything inside it
 provide(UI_STYLE_INJECTION_KEY, uiStyle);
 useSelectUiTheme(uiStyle, themeMode, resolvedThemeMode);
 const isPreferredDark = usePreferredDark();

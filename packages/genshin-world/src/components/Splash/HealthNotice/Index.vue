@@ -1,15 +1,26 @@
 <script setup lang="ts">
-import { HEALTH_NOTICE_PARAGRAPHS, HEALTH_NOTICE_TITLE } from "#src/services/splash/constants";
+import type { GameText } from "genshin-text";
+
 import { GameScreen, OrnamentDivider } from "genshin-interface";
+import { GameTextKey } from "genshin-text";
+
+interface Props {
+  // The game's words in the reader's language
+  gameText: GameText;
+}
+
+const { gameText } = defineProps<Props>();
+// The notice is one string in the game's text, its paragraphs a blank line apart
+const paragraphs = computed(() => gameText[GameTextKey.HealthNotice].split("\n\n"));
 </script>
 
 <template>
   <GameScreen class="health-notice">
     <div class="block" role="alert">
       <!-- A heading to a screen reader, drawn as a paragraph so no host's own heading styles reach it -->
-      <p class="title" role="heading" aria-level="2">{{ HEALTH_NOTICE_TITLE }}</p>
+      <p class="title" role="heading" aria-level="2">{{ gameText[GameTextKey.HealthNoticeTitle] }}</p>
       <OrnamentDivider class="divider" />
-      <p v-for="paragraph of HEALTH_NOTICE_PARAGRAPHS" :key="paragraph" class="paragraph">{{ paragraph }}</p>
+      <p v-for="paragraph of paragraphs" :key="paragraph" class="paragraph">{{ paragraph }}</p>
     </div>
   </GameScreen>
 </template>

@@ -1,4 +1,4 @@
-import { TravelerGender } from "#src/models/TravelerGender";
+import { TravelerGender } from "#src/generated/genshinText/models/TravelerGender";
 import { parseWikiTravelerLines } from "#src/services/parseWikiTravelerLines";
 import { describe, expect, test } from "vitest";
 

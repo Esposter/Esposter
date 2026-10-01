@@ -67,6 +67,12 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
                 name: "vue-router",
               },
               {
+                importNames: ["inject", "provide"],
+                message:
+                  "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
+                name: "vue",
+              },
+              {
                 message:
                   "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See /docs/architecture/ui-library.",
                 name: "@vuetify/v0",
@@ -161,6 +167,16 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
           },
           {
             message:
+              "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
+            name: "inject",
+          },
+          {
+            message:
+              "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
+            name: "provide",
+          },
+          {
+            message:
               "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
             name: "useRoute",
           },
@@ -216,6 +232,16 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
           },
           {
             message:
+              "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
+            name: "inject",
+          },
+          {
+            message:
+              "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
+            name: "provide",
+          },
+          {
+            message:
               "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
             name: "useRoute",
           },
@@ -247,6 +273,16 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       rules: {
         "no-restricted-globals": [
           "error",
+          {
+            message:
+              "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
+            name: "inject",
+          },
+          {
+            message:
+              "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
+            name: "provide",
+          },
           {
             message:
               "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
@@ -284,6 +320,12 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
                 message:
                   "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
                 name: "vue-router",
+              },
+              {
+                importNames: ["inject", "provide"],
+                message:
+                  "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
+                name: "vue",
               },
               {
                 message:
@@ -341,6 +383,12 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
                   "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
                 name: "vue-router",
               },
+              {
+                importNames: ["inject", "provide"],
+                message:
+                  "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
+                name: "vue",
+              },
             ],
           },
         ],
@@ -366,6 +414,12 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
                 message:
                   "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
                 name: "vue-router",
+              },
+              {
+                importNames: ["inject", "provide"],
+                message:
+                  "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
+                name: "vue",
               },
             ],
             patterns: [
@@ -485,6 +539,16 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       },
       {
         message:
+          "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
+        name: "inject",
+      },
+      {
+        message:
+          "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
+        name: "provide",
+      },
+      {
+        message:
           "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
         name: "useRoute",
       },
@@ -519,6 +583,12 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
             message:
               "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
             name: "vue-router",
+          },
+          {
+            importNames: ["inject", "provide"],
+            message:
+              "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
+            name: "vue",
           },
           {
             message:

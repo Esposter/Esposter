@@ -86,6 +86,7 @@
     "@vueuse/core": "catalog:",
     "genshin-engine": "workspace:*",
     "genshin-interface": "workspace:*",
+    "genshin-text": "workspace:*",
     "three": "catalog:",
     "vue": "catalog:",
     "zod": "catalog:"

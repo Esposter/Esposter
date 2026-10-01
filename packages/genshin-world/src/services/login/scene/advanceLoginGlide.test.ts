@@ -32,20 +32,21 @@ describe(advanceLoginGlide, () => {
     expect(settled.at(-1)?.speed).toBe(LOGIN_GLIDE_PREPARING_SPEED);
   });
 
-  test("comes to rest on a whole number of the walkway's copies, never slowing faster than its acceleration", () => {
+  test("keeps its pace until the door reaches the walkway's far end, then slows evenly to rest on a whole copy", () => {
     expect.hasAssertions();
 
     const start = 5;
     const glides = run({ scrolled: start, speed: LOGIN_GLIDE_PREPARING_SPEED }, LoginStage.Door, 20);
     const { scrolled = 0, speed } = glides.at(-1) ?? {};
-    const decelerations = glides
-      .slice(1)
-      .map((glide, index) => ((glides[index]?.speed ?? 0) - glide.speed) / deltaSeconds);
+    const doorLead = LOGIN_WALKWAY_SUNK_DISTANCE - LOGIN_DOOR_REST_DISTANCE;
+    const cruising = glides.filter((glide) => scrolled - glide.scrolled > doorLead);
 
     expect(speed).toBe(0);
     expect(scrolled % LOGIN_WALKWAY_ROW.length).toBe(0);
-    expect(Math.max(...decelerations)).toBeLessThan(LOGIN_GLIDE_ACCELERATION * 1.05);
+    // Never faster than the pace it had, and that pace held until the door rises
+    expect(Math.max(...glides.map((glide) => glide.speed))).toBe(LOGIN_GLIDE_PREPARING_SPEED);
+    expect(cruising.every((glide) => glide.speed === LOGIN_GLIDE_PREPARING_SPEED)).toBe(true);
     // The door first stands past the walkway's far end, so it rises there rather than over walkway already built
-    expect(scrolled - start).toBeGreaterThanOrEqual(LOGIN_WALKWAY_SUNK_DISTANCE - LOGIN_DOOR_REST_DISTANCE);
+    expect(scrolled - start).toBeGreaterThanOrEqual(doorLead);
   });
 });

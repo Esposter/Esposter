@@ -48,6 +48,7 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
 
 - **Props typed from a third-party component carry `// @TODO: https://github.com/vuejs/core/issues/11371`**, one per site (`references/props.md`).
 - **`defineProps` takes a locally declared `interface Props`**, never exported (`props-interface` plugin, `references/props.md`).
+- **No `provide`/`inject`** (`no-restricted-globals` for the auto-import, `no-restricted-imports` from `vue`) — an injected input is missing from the component's signature, a forgotten provider silently takes the default, and a test must mount the provider. Pass a prop down, or read a Pinia store for state the app shares. A library whose contract is a subtree's context — a theme scope, a renderer's parent container, JSON Forms' `dispatch` — disables the line with that reason.
 - **A local bound to a prop is named after it**, so the `:prop` shorthand works; a module-scope constant is not a local (`references/props.md`).
 - **Optional refs omit the initial value** — `ref<T>()`, never `ref<T | undefined>(undefined)`; both that and a string ref without its `""` are `no-restricted-syntax` errors.
 - **Template refs use `useTemplateRef`** with no generic and no `Ref` suffix (`template-ref/require-ref-name`), and a Three object the script moves is created there and mounted with `<primitive>` rather than reached through one (`references/template-refs.md`).

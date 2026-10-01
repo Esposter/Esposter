@@ -5,6 +5,7 @@ import { DEFAULT_UI_STYLE } from "@@/configuration/UiStyleMap";
 // Positional, so it is the library's one provide and inject rather than a store read: a region pinned to a style keeps
 // It for everything in it, and a component mounted on its own draws in the default
 export const useUiStyle = () =>
+  // oxlint-disable-next-line no-restricted-globals -- a theme scope's style holds for everything inside it
   inject(
     UI_STYLE_INJECTION_KEY,
     toRef(() => DEFAULT_UI_STYLE),

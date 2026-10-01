@@ -33,9 +33,8 @@ export const LOGIN_TOWERS_ROW_OFFSET: [number, number, number] = [-2.47, -5, -8.
 // The cloud sea's row, the sea of cloud effect's two copies 300 metres apart (MonoLoginScene's third record)
 export const LOGIN_CLOUD_SEA_ROW = { count: 2, length: 300 };
 // The glide, in metres a second off the English recording's paving at the camera's pose (genshin:parity glide): 3.03
-// While the title waits, steady to a few hundredths over its clean frames, about 3.7 once the game prepares, and
-// Slowing by 0.55 each second toward the door, the slope of its last three seconds, to a stop there, the walkway's
-// Copy the door stands on brought to rest where the camera's pose has it
+// While the title waits, steady to a few hundredths over its clean frames, about 3.7 once the game prepares, changing
+// Pace by 0.55 each second, the slope of the recording's last three seconds
 export const LOGIN_GLIDE_TITLE_SPEED = 3.03;
 export const LOGIN_GLIDE_PREPARING_SPEED = 3.7;
 export const LOGIN_GLIDE_ACCELERATION = 0.55;

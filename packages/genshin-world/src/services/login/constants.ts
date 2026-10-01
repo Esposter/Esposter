@@ -1,14 +1,15 @@
 import { LoginStatusStep } from "#src/models/login/LoginStatusStep";
+import { TravelerGender } from "genshin-text";
 
-// The English client's words on its login screen, from a 1080 high recording of it (`yt-rBnfA4pXw6U`)
-export const LOGIN_TITLE_TEXT = "START GAME";
-export const LOGIN_BEGIN_TEXT = "CLICK TO BEGIN";
-export const LOGIN_USER_LABEL = "User";
+// The English client's words on its login screen that no text map carries, from a 1080 high recording of it
+// (`yt-rBnfA4pXw6U`); the rest are the game text's
 export const LOGIN_SERVER_NAME = "Asia";
 // The build string the game prints at the foot of its login screen, the one the 1440 high recording shows
 export const LOGIN_VERSION_TEXT = "OSRELWin7.1.0_R48379043_S48511369_D48533839";
 // The welcome card greets the player by the name their account shows, after these words
 export const LOGIN_WELCOME_TEXT = "Welcome,";
+// Which twin a player who has not named themselves is called after, in a language with a word per gender
+export const LOGIN_TRAVELER_GENDER = TravelerGender.Female;
 // The status the foot shows as the game prepares, each from the moment given after the title's click; the game says
 // Them as fast as its checks run, so these are the English recording's own pace
 export const LOGIN_STATUS_STEPS: readonly { ms: number; step: LoginStatusStep }[] = [
@@ -29,8 +30,10 @@ export const LOGIN_WELCOME_FADE_MS = 200;
 // Recording the bar is full at 8.4 s and the door rises at 11.75, about 3 s later, however long the load before it took.
 // While loading, the camera flies the share of the path the recording's does before its bar is full (6.4 of its 9.75 s
 // From the click, at an even pace), no faster than the last stretch's pace, so a load that ends at once glides rather
-// Than jumps; once loading is done it flies whatever is left in the 3 s
-export const LOGIN_DOOR_AFTER_LOAD_MS = 3000;
+// Than jumps; once loading is done it flies whatever is left while the status row folds and fades, and the door is due.
+// The glide then carries the door's copy to the walkway's far end at its own pace, where the door rises, rising on
+// Average about as long after the bar fills as the recording's does
+export const LOGIN_DOOR_AFTER_LOAD_MS = 500;
 export const LOGIN_FLIGHT_LOADING_SHARE = 0.65;
 // The bar's fill at its fastest, from empty to full: the share shown runs toward loading's own at no more than this
 // Pace, so a load that finishes at once still sweeps the bar rather than jumping, and one slower is followed as it goes
