@@ -12,6 +12,12 @@ const DAWN_SUN_DIRECTION = getLoginScreenDirection([-0.05, 0.35]);
 const DAY_SUN_DIRECTION = new Vector3(-0.526, 0.789, -0.316).normalize();
 const DUSK_SUN_DIRECTION = getLoginScreenDirection([-0.05, 0.35]);
 const NIGHT_MOON_DIRECTION = getLoginScreenDirection([0.27, 0.11]);
+// Where the dusk's sunlight falls from, apart from where its glow shows: 60 degrees left of the walkway and 15 up, so
+// It lights the lantern tower's face toward the frame's left, leaves the door's face and the near towers' dark, and
+// Casts the dais's shadow aside rather than over the walkway, as the door recording shows. Its glow just past the
+// Frame's edge alone sets no direction a shading reads apart (genshin:parity light's grid fits within a hundredth),
+// So the direction is the one of 44, 60 and 80 degrees that scores best on the door recording and the dusk still
+const DUSK_LIGHT_DIRECTION = new Vector3(0.837, 0.259, 0.483);
 
 // Each time of day's sky and light, its colours read off its reference: the gradient's zenith and horizon, the haze
 // Over the cloud sea (the mean of its brightest two samples low in the frame), the clouds,
@@ -19,7 +25,9 @@ const NIGHT_MOON_DIRECTION = getLoginScreenDirection([0.27, 0.11]);
 // The light's and the sky's strengths are measured over the stone lit physically, as the game's lighting is its
 // Scripts' and never exported: each hour's scaled until its parts stand as bright as its references' (genshin:parity
 // Exposure, the median luminance over the parts' pixels), but the night's, whose few moonlit parts read brightest to
-// FLIP at their own strengths
+// FLIP at their own strengths, and the dusk's, whose sun and sky light are solved apart channel by channel on the door
+// Recording's near faces, facing up and turned from the sun (genshin:parity light, damped to its fixed point): the sky
+// Light a fifth of the exposure's and the sun twice, so a face turned from the sun stands dark as the recording's do
 export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
   [LoginTimeOfDay.Dawn]: {
     cloudLitColor: new Color(0xf2dfc8),
@@ -57,13 +65,13 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     cloudLitColor: new Color(0xfcdbad),
     cloudShadeColor: new Color(0xa9708d),
     fogColor: new Color(0xf0c4aa),
-    hemisphereGroundColor: new Color(0xa9708d),
-    hemisphereIntensity: 10.62,
-    hemisphereSkyColor: new Color(0xfcdbad),
+    hemisphereGroundColor: new Color(0xab6db4),
+    hemisphereIntensity: 2.08,
+    hemisphereSkyColor: new Color(0xffd8de),
     horizonColor: new Color(0xf2b08a),
-    lightColor: new Color(0xffc890),
-    lightDirection: DUSK_SUN_DIRECTION,
-    lightIntensity: 12.57,
+    lightColor: new Color(0xffecc7),
+    lightDirection: DUSK_LIGHT_DIRECTION,
+    lightIntensity: 26.19,
     moonDirection: DUSK_SUN_DIRECTION.clone().negate(),
     starIntensity: 0,
     sunDirection: DUSK_SUN_DIRECTION,
