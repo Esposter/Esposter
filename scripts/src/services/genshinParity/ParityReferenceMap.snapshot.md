@@ -20,3 +20,4 @@ committed.
 | `login-night` | `LoginScreen` | 15.20% | 0.288 | 11.96% | 0.5381 |
 | `publisher-splash` | `SplashPublisher` | 0.46% | 1.000 | 0.77% | 0.0471 |
 | `title-splash` | `SplashTitle` | 1.27% | 1.000 | 0.25% | 0.0465 |
+| `title-splash-mainland` | `SplashTitle` | 1.45% | 0.992 | 0.18% | 0.0383 |

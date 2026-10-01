@@ -102,4 +102,11 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "SplashTitle",
     seconds: 13,
   },
+  // Mainland China's splash, its 原神 logo with its licence under it, from a public recording of its launch at 1080p
+  "title-splash-mainland": {
+    capture: "bili-av532052219.mp4",
+    props: { language: "ChineseSimplified" },
+    screen: "SplashTitle",
+    seconds: 5,
+  },
 };

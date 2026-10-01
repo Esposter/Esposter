@@ -25,6 +25,8 @@ export enum GameTextKey {
   // The welcome card's greeting, the player's name in place of its `%s`
   LoginWelcome = "tips_enter_game",
   Ready = "ONLINE_DUNGEON_GUEST_IS_READY",
+  // The mainland client's publishing licence under its title logo: its approval, ISBN, publisher and copyright holder
+  TitleLicence = "3231160485",
   // The player's own title, a word per gender where the language has one
   Traveler = "UI_TEXT_QUEST_GUIDE_LABEL",
 }
