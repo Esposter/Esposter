@@ -183,9 +183,9 @@ export const reference: ComponentReference = {
     },
     {
       found:
-        "The door frame's camera, solved on the door and the walkway's wings alone, all within a dozen metres, traded the eye's height against its pitch and its distance against its field of view: it read 1.24 metres up, 10.68 short, 5.3 degrees and 51.2, near parts landing within a few pixels while every far tower and the colonnade stood too high, the colonnade some 50 pixels. With the thin pillar right of the door and two towers behind it, at the row's phase there, the ten landmarks solve to 0.98 metres over the walkway, 11.3 short of the door, 6.2 degrees up and 48.3, at 7.2 pixels root mean square, the corners' own error, and the laid-out row lands within a few pixels of the towers. At that pose the glide reads 3.45 metres a second on the title, about 4.3 once preparing, slowing by 0.66, and the walkway's settling rows stand 15 and 22 metres ahead",
+        "The bridges and pillars stand 5 metres under where the blocks lay them. At the door frame's pose, solved on the door and the walkway's wings, the colonnade behind the door stood some 50 pixels over the recording's, and the bridge whose deck crosses the glide's path, laid where the blocks lay it, stood its deck 2.3 metres over the eye, so the glide drove into it every loop where the game's passes over it however long the title idles. Lowered 5 metres, the colonnade lands on the recording's rows and that deck passes under the walkway. A camera solved on the towers behind the door as well (0.98 metres up, 11.3 short, 6.2 degrees, 48.3, at 7.2 pixels) traded its own height and pitch for the bridges' height and stood them higher still in the glide, so the door frame's pose stands",
       search:
-        "genshin:parity parts at the door frame, zoom --grid on the recording, pose login-door-recording with doorPillarTop, doorTowerTop and doorLeftTowerTop added, place --landmarks at the solved pose, then glide again at it",
+        "genshin:parity view --offsets on the bridges at 0, 5, 10, 14 and 18 metres beside login-door-recording, zoom --grid on the colonnade's rail, film over a whole minute of the title, and pose with doorPillarTop, doorTowerTop and doorLeftTowerTop added",
     },
     {
       found:
@@ -309,7 +309,7 @@ export const reference: ComponentReference = {
       kind: GameSourceKind.Shader,
       name: "LoginScene_* materials' shader",
       pathId: "-8796901447730824398",
-      role: "The stone: does not parse; its material's properties are a physically based set",
+      role: "The stone: does not parse; its material's properties are a physically based set, specular and rim-lit with no outline, fitted per family (fitLoginStone) into createStoneMaterial",
     },
     uberShader: {
       block: "00/12903389.blk",

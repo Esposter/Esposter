@@ -1,0 +1,34 @@
+{
+  "bridges": {
+    "albedo": "#989490",
+    "rimColor": [1, 0.89, 0],
+    "rimPower": 1.5,
+    "rimStrength": 0,
+    "smoothness": 0.26,
+    "specularColor": [0.92, 0.79, 0.65]
+  },
+  "door": {
+    "albedo": "#9f9b96",
+    "rimColor": [0.27, 0.54, 0.95],
+    "rimPower": 4.5,
+    "rimStrength": 1.1,
+    "smoothness": 0.19,
+    "specularColor": [0.87, 0.68, 0.47]
+  },
+  "towers": {
+    "albedo": "#9b9894",
+    "rimColor": [0.32, 0.55, 0.91],
+    "rimPower": 4.13,
+    "rimStrength": 0.73,
+    "smoothness": 0.33,
+    "specularColor": [0.87, 0.75, 0.62]
+  },
+  "walkway": {
+    "albedo": "#928e8b",
+    "rimColor": [1, 0.89, 0],
+    "rimPower": 1.5,
+    "rimStrength": 0,
+    "smoothness": 0.18,
+    "specularColor": [0.92, 0.79, 0.65]
+  }
+}

@@ -4,6 +4,7 @@ import { attributeCommand } from "#src/services/genshinParity/commands/attribute
 import { benchCommand } from "#src/services/genshinParity/commands/benchCommand";
 import { calibrateCommand } from "#src/services/genshinParity/commands/calibrateCommand";
 import { compareCommand } from "#src/services/genshinParity/commands/compareCommand";
+import { exposureCommand } from "#src/services/genshinParity/commands/exposureCommand";
 import { fetchCommand } from "#src/services/genshinParity/commands/fetchCommand";
 import { filmCommand } from "#src/services/genshinParity/commands/filmCommand";
 import { framesCommand } from "#src/services/genshinParity/commands/framesCommand";
@@ -37,6 +38,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     gbuffer: gbufferCommand,
     calibrate: calibrateCommand,
     sky: skyCommand,
+    exposure: exposureCommand,
     overlay: overlayCommand,
     pose: poseCommand,
     place: placeCommand,

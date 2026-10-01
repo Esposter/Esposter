@@ -4,23 +4,20 @@ import { DoubleSide, Mesh, MeshBasicMaterial, Raycaster, Vector3 } from "three";
 import { describe, expect, test } from "vitest";
 
 describe(createLoginHullsGeometry, () => {
-  // The one stretch of the camera's path the exports' own bridges stand across (genshin:assets clearance login): a
-  // Pier of LoginScene_Bridge04's 0.4 metres deep, which the game's glide passes once a loop too
-  const exportsPierced: [number, number] = [57.17, 57.55];
-  // Two of the hull's tenth-of-a-metre cells, which it errs solid by: a cell's rounding and the edge it covers
-  const tolerance = 0.2;
+  // The camera's eye and a metre either side of it, which the glide carries along +z past every bridge and pillar: a
+  // Bridge standing too high, or a hull fatter than the part it stands for, drives the camera into stone
+  const offsets = [-1, 0, 1];
 
-  // A hull fatter than the part it stands for, its arches or the space under its deck filled, would carry a bridge
-  // Through the camera wherever the game's leaves the way open
-  test("leaves the camera's path open wherever the exports do", () => {
+  test("leaves the camera's path open from end to end", () => {
     expect.hasAssertions();
 
     const mesh = new Mesh(createLoginHullsGeometry(), new MeshBasicMaterial({ side: DoubleSide }));
-    const depths = new Raycaster(new Vector3(0, LOGIN_CAMERA_HEIGHT, -1000), new Vector3(0, 0, 1), 0, 2000)
-      .intersectObject(mesh)
-      .map(({ point }) => point.z);
-    const [start, end] = exportsPierced;
+    const hits = offsets.flatMap((offset) =>
+      new Raycaster(new Vector3(offset, LOGIN_CAMERA_HEIGHT, -1000), new Vector3(0, 0, 1), 0, 2000).intersectObject(
+        mesh,
+      ),
+    );
 
-    expect(depths.filter((depth) => depth < start - tolerance || depth > end + tolerance)).toStrictEqual([]);
+    expect(hits).toStrictEqual([]);
   });
 });

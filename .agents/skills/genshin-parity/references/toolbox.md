@@ -41,6 +41,7 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | Where each part lands on the reference  | `genshin:parity overlay`: boundaries, edge distance                  |
 | Which layer a score's loss is in        | `scoreLayers`: `compare --witness`, `attribute`                      |
 | One approval number                     | FLIP (`scoreFlip`), in every `compare`                               |
+| A light's strength under its references | `genshin:parity exposure`: the parts' luminance, ours against theirs |
 | The grade, the fog, the light           | `genshin:parity calibrate`: least squares over masks                 |
 | What a shader computes                  | `shaders`: the annotated disassembly, and HLSL where it decompiles   |
 | Each stand-in's cost                    | `attribute`: FLIP loss per layer                                     |
