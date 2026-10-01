@@ -5,8 +5,13 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetCom
 import { readWorldData } from "#src/services/genshinAssets/readWorldData";
 
 type Point = [number, number, number];
-// How far along the walkway its outline is read at the door's foot, within one cell of its far end
-const WALKWAY_END_DEPTH = 0.5;
+// Where an outline's edges cross a depth, the x of each edge that spans it
+const readOutlineCrossings = (outline: readonly [number, number][], depth: number): number[] =>
+  outline.flatMap(([x, z], index) => {
+    const [nextX = x, nextZ = z] = outline[(index + 1) % outline.length] ?? [];
+    if ((z - depth) * (nextZ - depth) > 0 || z === nextZ) return [];
+    return [x + ((depth - z) / (nextZ - z)) * (nextX - x)];
+  });
 // Each component's arrangement: the ratios its references show between parts that meet, and its fitted families, each
 // Named by the exports' objects it stands for
 export const DerivedAssetArrangementMap: Record<
@@ -48,12 +53,9 @@ export const DerivedAssetArrangementMap: Record<
             readWorldData<{ outline: [number, number][] }>("login/walkway.json"),
           ]);
           const [doorX, , doorZ] = position;
-          const farZ = outline.reduce(
-            (nearest, [, z]) => (Math.abs(z - doorZ) < Math.abs(nearest - doorZ) ? z : nearest),
-            0,
-          );
-          const endXs = outline.filter(([, z]) => Math.abs(z - farZ) <= WALKWAY_END_DEPTH).map(([x]) => x);
-          return [doorX - size[0] / 2, Math.min(...endXs), Math.max(...endXs), doorX + size[0] / 2];
+          // The walkway's sides under the dais, straight across its depth
+          const sides = readOutlineCrossings(outline, doorZ);
+          return [doorX - size[0] / 2, Math.min(...sides), Math.max(...sides), doorX + size[0] / 2];
         },
         reference: "login-door-recording, the row of the door's foot",
       },

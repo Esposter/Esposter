@@ -23,10 +23,10 @@ export const LOGIN_DOOR = {
 };
 // The light the door opens with, from the English recording
 export const LOGIN_DOOR_GLOW_COLOR = 0x8fe8ff;
-// The door assembling itself as the door stage begins: its main piece rises 50 metres of its own space, 20 at the
-// Stage's 0.4 scale, from below into place, the share of the rise done at each time in milliseconds sampled from
+// The door assembling itself as the door stage begins: its main piece rises 50 metres of its own space, 5 at
+// SceneObj's tenth, from below into place, the share of the rise done at each time in milliseconds sampled from
 // Ani_LogginScene_Door01_Liftting (Login/Scene/Index.reference.ts, source `doorRise`), easing out and settled by 800
-export const LOGIN_DOOR_RISE_DEPTH = 20;
+export const LOGIN_DOOR_RISE_DEPTH = 5;
 export const LOGIN_DOOR_RISE_KEYFRAMES: [number, number][] = [
   [0, 0],
   [133, 0.253],
