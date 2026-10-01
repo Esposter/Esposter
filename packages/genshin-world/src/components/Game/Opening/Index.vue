@@ -14,11 +14,11 @@ interface Props {
 }
 
 const { playerName, progress } = defineProps<Props>();
-const emit = defineEmits<{ finish: [] }>();
+const emit = defineEmits<{ begin: []; finish: [] }>();
 // The game's opening as one sequence: its splashes on white, then the login screen under the sky of the player's
 // Hour, its title waiting for a click, its flight following loading and its door waiting for another, then the
 // Startup loading screen, whose white the world cuts in from. Each phase says when it is done, so the handoffs are
-// The screens' own timings rather than a host's
+// The screens' own timings rather than a host's, and `begin` tells the host the door has been opened
 const phase = ref(OpeningPhase.Splash);
 const timeOfDay = getLoginTimeOfDay(Temporal.Now.plainTimeISO());
 </script>
@@ -30,7 +30,10 @@ const timeOfDay = getLoginTimeOfDay(Temporal.Now.plainTimeISO());
     :player-name
     :progress
     :time-of-day
-    @begin="phase = OpeningPhase.Loading"
+    @begin="
+      phase = OpeningPhase.Loading;
+      emit('begin');
+    "
   />
   <LoadingStartup v-else :progress @finish="emit('finish')" />
 </template>

@@ -23,6 +23,7 @@ flowchart LR
 - **The flight follows loading, and ends 3 seconds after it.** The flight is the screen's own clock for the door, the share of the way to it flown. The share shown runs toward loading's own at no more than one full bar per tenth of a second, so a load that finishes at once still sweeps the bar rather than jumping. While loading, the flight goes the share of the way the English recording's does before its bar is full, about two thirds, no faster than its last stretch's pace, so a fast load glides. Once loading is done it flies whatever is left in 3 seconds, the recording's time from a full bar to the door rising, however long the load before it took. The bar folds into its diamond, the whole status row fades, and the last stretch runs bare before the door rises.
 - **A click is the screen's unless it lands on a button.** The screen asks `checkIsNestedInteraction` before it moves on, so a click on a corner button stays the button's.
 - **A host can pin a stage.** The stage is a `v-model`, so the parity page and a test hold one still, and the opening leaves it free.
+- **The opening says when the door is opened.** `GameOpening` emits `begin` as the screen hands on to the startup loading screen, so its host can act on the door rather than waiting for the world; for now the app's page uses it to hold the white for 3 seconds and play a rickroll in place of the world.
 
 ## The scene
 
