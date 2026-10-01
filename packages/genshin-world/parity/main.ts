@@ -5,6 +5,7 @@ import type { SceneWitness } from "#src/models/scene/SceneWitness";
 import "@fontsource/signika/600.css";
 import { screens } from "#parity/screens";
 import { loadWitness } from "#parity/witness/loadWitness";
+import { readWitnessPoints } from "#parity/witness/readWitnessPoints";
 import { renderWitnessTargets } from "#parity/witness/renderWitnessTargets";
 import { setWitnessView } from "#parity/witness/setWitnessView";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
@@ -68,6 +69,10 @@ if (screen && root) {
     Reflect.set(window, "setWitnessView", (view: WitnessView) => setWitnessView(witness, view));
     // Its G-buffer at the view last set, which the pose, the overlay, the layers' scores and calibration read
     Reflect.set(window, "renderWitnessTargets", () => renderWitnessTargets(witness));
+    // Its landmarks' places in the world, which a pose is solved from
+    Reflect.set(window, "readWitnessPoints", (landmarks: Parameters<typeof readWitnessPoints>[1]) =>
+      readWitnessPoints(witness, landmarks),
+    );
     // The families the witness draws, which the loss table hands back to the scene one at a time
     window.document.body.dataset.witnessFamilies = witness.families.value.join(",");
   }
