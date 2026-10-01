@@ -5,6 +5,7 @@ import type { SceneWitness } from "#src/models/scene/SceneWitness";
 
 import "@fontsource/signika/600.css";
 import { benchScene } from "#parity/benchScene";
+import { readSceneFog } from "#parity/readSceneFog";
 import { readSceneSky } from "#parity/readSceneSky";
 import { screens } from "#parity/screens";
 import { setSceneLights } from "#parity/setSceneLights";
@@ -75,6 +76,7 @@ if (screen && root) {
   Reflect.set(window, "setScreenProps", (screenProps: Record<string, unknown>) => Object.assign(props, screenProps));
   Reflect.set(window, "benchScene", (frameCount: number) => benchScene(sceneContext.value, frameCount));
   Reflect.set(window, "readSceneSky", () => readSceneSky(sceneContext.value));
+  Reflect.set(window, "readSceneFog", () => readSceneFog(sceneContext.value));
   Reflect.set(window, "setSceneLights", (shares: Parameters<typeof setSceneLights>[1]) =>
     setSceneLights(sceneContext.value, shares),
   );

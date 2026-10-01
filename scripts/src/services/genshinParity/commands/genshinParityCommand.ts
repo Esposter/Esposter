@@ -7,6 +7,7 @@ import { compareCommand } from "#src/services/genshinParity/commands/compareComm
 import { exposureCommand } from "#src/services/genshinParity/commands/exposureCommand";
 import { fetchCommand } from "#src/services/genshinParity/commands/fetchCommand";
 import { filmCommand } from "#src/services/genshinParity/commands/filmCommand";
+import { fogCommand } from "#src/services/genshinParity/commands/fogCommand";
 import { framesCommand } from "#src/services/genshinParity/commands/framesCommand";
 import { gbufferCommand } from "#src/services/genshinParity/commands/gbufferCommand";
 import { glideCommand } from "#src/services/genshinParity/commands/glideCommand";
@@ -42,6 +43,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     calibrate: calibrateCommand,
     sky: skyCommand,
     exposure: exposureCommand,
+    fog: fogCommand,
     haze: hazeCommand,
     light: lightCommand,
     overlay: overlayCommand,

@@ -44,6 +44,7 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | One approval number                     | FLIP (`scoreFlip`), in every `compare`                               |
 | Sun against ambient light               | `genshin:parity light`: up and shaded faces under each light alone   |
 | Fog against distance                    | `genshin:parity haze`: depth bands, ours with and without fog        |
+| The fog's density and colours           | `genshin:parity fog`: bins by depth and sun angle, solved            |
 | A light's strength under its references | `genshin:parity exposure`: the parts' luminance, ours against theirs |
 | The grade, the fog, the light           | `genshin:parity calibrate`: least squares over masks                 |
 | What a shader computes                  | `shaders`: the annotated disassembly, and HLSL where it decompiles   |

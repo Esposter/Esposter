@@ -6,6 +6,8 @@ import type { Color, Vector3 } from "three";
 export interface SkyState extends Omit<SkyKeyframe, "minutes"> {
   // The haze's own colour where a scene sets one apart from its horizon's, as a sea of cloud lit under it does
   fogColor?: Color;
+  // The haze's own density at its base where a scene sets one per hour, as a sea of cloud thickens through the day
+  fogDensity?: number;
   lightDirection: Vector3;
   moonDirection: Vector3;
   sunDirection: Vector3;

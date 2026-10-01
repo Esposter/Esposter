@@ -1,6 +1,7 @@
 import type { SkyState } from "genshin-engine";
 
 import { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
+import { LOGIN_DAY_FOG_DENSITY } from "#src/services/login/scene/constants";
 import { getLoginScreenDirection } from "#src/services/login/scene/getLoginScreenDirection";
 import { Color, Vector3 } from "three";
 
@@ -48,7 +49,8 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
   [LoginTimeOfDay.Day]: {
     cloudLitColor: new Color(0xffffff),
     cloudShadeColor: new Color(0xb8cbe0),
-    fogColor: new Color(0xceddee),
+    fogColor: new Color(0xcfdbf0),
+    fogDensity: LOGIN_DAY_FOG_DENSITY,
     hemisphereGroundColor: new Color(0x9ec0e8),
     hemisphereIntensity: 9.56,
     hemisphereSkyColor: new Color(0xd4e4ef),

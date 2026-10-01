@@ -297,7 +297,9 @@ onRender(({ delta: frameDelta }) => {
   light.position
     .copy(light.target.position)
     .addScaledVector(LoginSkyStateMap[timeOfDay].lightDirection, LOGIN_LIGHT_DISTANCE);
-  fogUniforms.density.value = witness?.isAlone.value ? 0 : LOGIN_FOG_DENSITY;
+  fogUniforms.density.value = witness?.isAlone.value
+    ? 0
+    : (LoginSkyStateMap[timeOfDay].fogDensity ?? LOGIN_FOG_DENSITY);
   doorGlow.value = isDoorLit ? Math.min(doorGlow.value + (delta * 1000) / LOGIN_DOOR_LIGHT_MS, 1) : 0;
   rushMs.value = isDoorLit ? rushMs.value + delta * 1000 : 0;
   isDoorRising.value = checkIsDoorDue() && (isDoorRising.value || doorAheadOfCamera <= LOGIN_WALKWAY_SUNK_DISTANCE);
