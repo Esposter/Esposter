@@ -12,5 +12,6 @@
   "LANGUAGE_WINDOWS_TITLENAME": "Genshin Impact",
   "ONLINE_DUNGEON_GUEST_IS_READY": "Ready",
   "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "Loading...",
-  "UI_TEXT_QUEST_GUIDE_LABEL": "Traveler"
+  "UI_TEXT_QUEST_GUIDE_LABEL": "Traveler",
+  "tips_enter_game": "Welcome, %s!"
 }

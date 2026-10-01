@@ -12,5 +12,6 @@
   "LANGUAGE_WINDOWS_TITLENAME": "Genshin Impact",
   "ONLINE_DUNGEON_GUEST_IS_READY": "Ya preparado",
   "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "Cargando...",
-  "UI_TEXT_QUEST_GUIDE_LABEL": "Viajer{F#a}{M#o}"
+  "UI_TEXT_QUEST_GUIDE_LABEL": "Viajer{F#a}{M#o}",
+  "tips_enter_game": "¡%s, bienvenido!"
 }

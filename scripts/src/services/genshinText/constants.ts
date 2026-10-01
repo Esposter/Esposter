@@ -1,7 +1,7 @@
-import { PARITY_DIRECTORY } from "#src/services/genshinParity/constants";
+import { GAME_EXECUTABLE_PATH, PARITY_DIRECTORY } from "#src/services/genshinParity/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { GameLanguage } from "genshin-text";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 // The game's text as the community dumps it per patch — `TextMap/` and `ExcelBinOutput/` as the AnimeGameData
 // Repository lays them out — kept outside the repository like every other reference and never shipped. Only the
@@ -51,3 +51,41 @@ export const PersonaCopiedModules: string[] = [
   "services/getCanonicalLanguage.ts",
   "services/getLanguageDisplayName.ts",
 ];
+// The account kit's own strings, which the game shows before it has loaded its text map (the welcome as the player
+// Signs in): a table per language in the kit's resource bundle beside the game, exported by AnimeStudio into the dump
+// The first time a write needs them, and read as references like the text map
+export const SDK_BUNDLE_PATH: string = join(
+  dirname(GAME_EXECUTABLE_PATH),
+  "GenshinImpact_Data",
+  "StreamingAssets",
+  "MiHoYoSDKRes",
+  "PC",
+  "mihoyo_sdk_res",
+);
+export const SDK_TEXT_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "Sdk");
+export const SDK_LANGUAGE_DIRECTORY: string = join(
+  SDK_TEXT_DIRECTORY,
+  "assets",
+  "plugins",
+  "mihoyosdk",
+  "resources",
+  "language",
+);
+// The file each language's account kit strings are in
+export const GameLanguageSdkFileMap: Record<GameLanguage, string> = {
+  [GameLanguage.ChineseSimplified]: "zh-cn",
+  [GameLanguage.ChineseTraditional]: "zh-tw",
+  [GameLanguage.English]: "en",
+  [GameLanguage.French]: "fr",
+  [GameLanguage.German]: "de",
+  [GameLanguage.Indonesian]: "id",
+  [GameLanguage.Italian]: "it",
+  [GameLanguage.Japanese]: "ja",
+  [GameLanguage.Korean]: "ko",
+  [GameLanguage.Portuguese]: "pt",
+  [GameLanguage.Russian]: "ru",
+  [GameLanguage.Spanish]: "es",
+  [GameLanguage.Thai]: "th",
+  [GameLanguage.Turkish]: "tr",
+  [GameLanguage.Vietnamese]: "vi",
+};

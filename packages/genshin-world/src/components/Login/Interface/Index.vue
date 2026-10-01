@@ -12,7 +12,6 @@ import {
   LOGIN_SERVER_NAME,
   LOGIN_VERSION_TEXT,
   LOGIN_WELCOME_FADE_MS,
-  LOGIN_WELCOME_TEXT,
 } from "#src/services/login/constants";
 import { LoginInterfaceRectMap } from "#src/services/login/interface/LoginInterfaceRectMap";
 import {
@@ -44,6 +43,8 @@ interface Props {
 
 const { gameText, isDoorWaiting, isSpinnerShown, isWelcomeShown, playerName, progress, stage, statusStep } =
   defineProps<Props>();
+// The account kit's greeting, which places the player's name where its language puts it
+const welcome = computed(() => gameText[GameTextKey.LoginWelcome].replace("%s", playerName));
 // The login screen's interface over its scene, for the stage it is at: the title with the server and account under
 // It, the status as the game prepares, then the prompt at the door. The power button and the build string stay
 // Throughout; the corner buttons are the title's two and the door's four, as the game's current build shows them. A
@@ -64,7 +65,7 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
       <template #mark>
         <span class="initial">{{ playerName.charAt(0).toUpperCase() }}</span>
       </template>
-      {{ LOGIN_WELCOME_TEXT }} {{ playerName }}
+      {{ welcome }}
     </ToastNotice>
     <template v-if="stage === LoginStage.Title">
       <!-- A heading to a screen reader, drawn as a paragraph so no host's own heading styles reach it -->

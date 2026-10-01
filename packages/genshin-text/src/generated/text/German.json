@@ -12,5 +12,6 @@
   "LANGUAGE_WINDOWS_TITLENAME": "Genshin Impact",
   "ONLINE_DUNGEON_GUEST_IS_READY": "Bereit",
   "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "Wird geladen ...",
-  "UI_TEXT_QUEST_GUIDE_LABEL": "{F#Reisende}{M#Reisender}"
+  "UI_TEXT_QUEST_GUIDE_LABEL": "{F#Reisende}{M#Reisender}",
+  "tips_enter_game": "Willkommen, %s"
 }

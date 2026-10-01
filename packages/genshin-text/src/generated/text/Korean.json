@@ -12,5 +12,6 @@
   "LANGUAGE_WINDOWS_TITLENAME": "원신",
   "ONLINE_DUNGEON_GUEST_IS_READY": "준비 완료",
   "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "로딩 중",
-  "UI_TEXT_QUEST_GUIDE_LABEL": "여행자"
+  "UI_TEXT_QUEST_GUIDE_LABEL": "여행자",
+  "tips_enter_game": "%s 님, 게임에 오신 걸 환영합니다"
 }

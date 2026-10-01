@@ -12,5 +12,6 @@
   "LANGUAGE_WINDOWS_TITLENAME": "Genshin Impact",
   "ONLINE_DUNGEON_GUEST_IS_READY": "Sudah Siap",
   "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "Memuat ....",
-  "UI_TEXT_QUEST_GUIDE_LABEL": "Pengembara"
+  "UI_TEXT_QUEST_GUIDE_LABEL": "Pengembara",
+  "tips_enter_game": "Selamat datang, %s!"
 }

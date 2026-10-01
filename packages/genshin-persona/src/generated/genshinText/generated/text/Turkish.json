@@ -12,5 +12,6 @@
   "LANGUAGE_WINDOWS_TITLENAME": "Genshin Impact",
   "ONLINE_DUNGEON_GUEST_IS_READY": "Hazır",
   "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "Yükleniyor...",
-  "UI_TEXT_QUEST_GUIDE_LABEL": "Gezgin"
+  "UI_TEXT_QUEST_GUIDE_LABEL": "Gezgin",
+  "tips_enter_game": "Hoş geldin %s!"
 }

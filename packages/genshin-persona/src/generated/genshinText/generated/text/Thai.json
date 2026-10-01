@@ -12,5 +12,6 @@
   "LANGUAGE_WINDOWS_TITLENAME": "Genshin Impact",
   "ONLINE_DUNGEON_GUEST_IS_READY": "พร้อมแล้ว",
   "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "กำลังโหลด",
-  "UI_TEXT_QUEST_GUIDE_LABEL": "นักเดินทาง"
+  "UI_TEXT_QUEST_GUIDE_LABEL": "นักเดินทาง",
+  "tips_enter_game": "ยินดีต้อนรับ %s"
 }

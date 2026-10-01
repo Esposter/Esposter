@@ -12,5 +12,6 @@
   "LANGUAGE_WINDOWS_TITLENAME": "Genshin Impact",
   "ONLINE_DUNGEON_GUEST_IS_READY": "Đã Chuẩn Bị",
   "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "Đang tải...",
-  "UI_TEXT_QUEST_GUIDE_LABEL": "Nhà Lữ Hành"
+  "UI_TEXT_QUEST_GUIDE_LABEL": "Nhà Lữ Hành",
+  "tips_enter_game": "Chào mừng %s"
 }
