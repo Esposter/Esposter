@@ -2,7 +2,7 @@ import type { WitnessGbuffer } from "#src/models/genshinParity/WitnessGbuffer";
 
 import { computeDistanceTransform } from "#src/services/genshinParity/computeDistanceTransform";
 import { FAMILY_COLORS, GBUFFER_DIRECTORY } from "#src/services/genshinParity/constants";
-import { findPartBoundaries } from "#src/services/genshinParity/findPartBoundaries";
+import { findFamilyBoundaries } from "#src/services/genshinParity/findFamilyBoundaries";
 import { readStructureEdges } from "#src/services/genshinParity/readStructureEdges";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
@@ -10,7 +10,7 @@ import sharp from "sharp";
 
 // A reference's edges this many pixels or more from any witness boundary are drawn at the distance map's reddest
 const FAR_EDGE_DISTANCE = 12;
-// The witness's part boundaries drawn over the reference, each in its family's colour, beside a map of the reference's
+// The witness's family boundaries drawn over the reference, each in its family's colour, beside a map of the reference's
 // Edges coloured by how far each sits from the nearest boundary (green on one, red far off), so a part that does not
 // Land shows where; and how far each family's boundaries sit from the reference's nearest edge, in pixels at the
 // Structure's width, their mean over each family's boundary pixels. Returns the image's path with those distances
@@ -19,7 +19,7 @@ export const writeOverlay = async (
   { gbuffer, image }: { gbuffer: WitnessGbuffer; image: Buffer },
 ): Promise<{ families: { distance: number; name: string; pixelCount: number }[]; path: string }> => {
   const { families: familyNames, height, width } = gbuffer;
-  const { familyIndices, mask } = findPartBoundaries(gbuffer);
+  const { familyIndices, mask } = findFamilyBoundaries(gbuffer);
   const referenceEdges = await readStructureEdges(image, height);
   const edgeDistances = computeDistanceTransform(referenceEdges, width, height);
   const boundaryDistances = computeDistanceTransform(mask, width, height);

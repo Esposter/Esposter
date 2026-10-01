@@ -16,4 +16,22 @@ describe(applySpawns, () => {
 
     expect(objects.map(({ parentId }) => parentId)).toStrictEqual(["0", "1"]);
   });
+
+  test("places a spawned root at the position its spawn measures", () => {
+    expect.hasAssertions();
+
+    const position: [number, number, number] = [1, 0, 0];
+    const [, prefab] = applySpawns(
+      [createSceneObject("1", "0", { block: "a" }), createSceneObject("2", "0", { block: "a" })],
+      [
+        {
+          anchor: { block: "a.blk", name: "", pathId: "1" },
+          position,
+          prefab: { block: "a.blk", name: "", pathId: "2" },
+        },
+      ],
+    );
+
+    expect(prefab?.position).toStrictEqual(position);
+  });
 });
