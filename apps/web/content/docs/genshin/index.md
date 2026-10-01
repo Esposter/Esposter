@@ -40,6 +40,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Interface library](/docs/genshin/interface-library) | `genshin-interface`: the game's screen root, units, pointer, and the pieces its screens share |
 | [Login screen](/docs/genshin/login-screen)           | the opening's login: its stages, its flight, its scene and its door                           |
 | [Game data formats](/docs/genshin/game-data-formats) | how each kind of the game's data reads, and the shortcuts to reach for first                  |
+| [Game text](/docs/genshin/game-text)                 | `genshin-text`: every language the game ships, and its strings by the game's own text id      |
 
 What is still to build is the [Genshin proposal](/docs/proposals/genshin). Decided ideas: [deferred](/docs/genshin/deferred).
 
@@ -52,6 +53,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin). Decid
 - The wind, and grass generated around the camera.
 - The world map's catalogue, and Mondstadt's landmarks loaded by reach.
 - The game's opening: its splashes, health notice, login screen with its flight to the door, and startup loading screen.
+- The game's own words in its fifteen languages, served to the page in the reader's and to the persona plugin.
 
 ## Key files
 

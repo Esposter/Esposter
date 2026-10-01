@@ -25,6 +25,7 @@
 | `formatting`              | 2026-09-27 · Opus 5.5 |       |
 | `genshin-engine`          | —                     |       |
 | `genshin-parity`          | —                     |       |
+| `genshin-text`            | —                     |       |
 | `git`                     | 2026-09-27 · Opus 5.5 |       |
 | `github-actions`          | 2026-09-27 · Opus 5.5 |       |
 | `grapesjs`                | 2026-09-27 · Opus 5.5 |       |

@@ -5,7 +5,7 @@ description: Where each of the recreation's shapes, colours and glyphs comes fro
 
 # Derived assets
 
-Nothing of the game's ships. Every shape, colour and glyph the recreation draws is ours, measured off the game and built by our own code, and the game's own files are references like any screenshot. This page is which reference each part is measured from, how a measurement becomes ours, and how far each component has come.
+Nothing the game draws ships. Every shape, colour and glyph the recreation draws is ours, measured off the game and built by our own code, and the game's own files are references like any screenshot. This page is which reference each part is measured from, how a measurement becomes ours, and how far each component has come. The game's words are the one thing of its own carried as they are, quoted as text the way the screen shows them ([game text](/docs/genshin/game-text)).
 
 ## Which source a part is measured from
 

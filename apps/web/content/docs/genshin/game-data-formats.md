@@ -58,6 +58,11 @@ flowchart TD
 - **A MonoBehaviour's JSON export has no fields**, since the blocks carry no type data: the login scene's "EnviroSky", "LoginSceneEnviro", "MonoLoginScene" and its post-processing profile among them. Its raw export keeps them, serialized in declaration order and aligned to four bytes, after a header of its game object's pointer, its enabled flag, its script's pointer and its name (`scanSerializedFields`).
 - **A field is read by its shape**: a pointer is a file index and a 64-bit path ID that the layout or the asset index holds in the file it resolves to; a curve is a count, keyframes of seven words (time, value, two slopes, a weighted mode, two weights) and three wrap words; a gradient is eight colours, eight colour and eight alpha times as sixteen-bit shares, a mode and the counts in use; an array is a count and that many records of one of those shapes; a colour is four floats in a colour's range; anything else is a scalar. A reading is a candidate until a scene's use of it is checked on the captures, and a test on its offset then holds it. What no shape names is measured off the captures, over what the other data gives exactly.
 
+### Text
+
+- **The client's text is hash-named "MiHoYoBinData"**, most of it in one block, in a binary layout the community decodes afresh each patch. So the repository reads the decoded dump the community publishes per patch — text maps from hash to string per language, and the tables naming which hash an interface string or a voice-over line is — rather than the blocks ([game text](/docs/genshin/game-text)).
+- **The opening's pre-login words are in neither.** The health notice and the login status lines are shown before the client loads its data, from a store the dump does not carry ([pre-login text](/docs/proposals/genshin/pre-login-text)).
+
 ## References beside each component
 
 Every component derived from the game's data, in `genshin-interface` or `genshin-world`, has an `Index.reference.ts` beside its `Index.vue`, as it has its fixture and its browser tests: a `ComponentReference` (`genshin-interface`'s model) of every piece of the game's data it is derived from, every search run over it with what it found, and what is still open. It is metadata only, the game's names, blocks, path IDs and what each is for, never a value, a vertex or a pixel.
