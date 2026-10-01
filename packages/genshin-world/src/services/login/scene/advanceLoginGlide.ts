@@ -2,16 +2,22 @@ import type { LoginGlide } from "#src/models/login/LoginGlide";
 
 import { LoginStage } from "#src/models/login/LoginStage";
 import {
+  LOGIN_DOOR_REST_DISTANCE,
   LOGIN_GLIDE_ACCELERATION,
   LOGIN_GLIDE_PREPARING_SPEED,
   LOGIN_GLIDE_TITLE_SPEED,
   LOGIN_WALKWAY_ROW,
 } from "#src/services/login/scene/constants";
+import { LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
+
+// How much farther than its rest the door stands when it is first due, so it rises at the walkway's far end as the
+// Last blocks settle, as the recording's does, rather than over walkway already built
+const DOOR_LEAD = LOGIN_WALKWAY_SUNK_DISTANCE - LOGIN_DOOR_REST_DISTANCE;
 
 // The glide a frame on: toward the title's speed while the title waits and the preparing speed once the game
 // Prepares, gathering or losing speed at the glide's acceleration; once the door is due it keeps on to the first copy
-// Of the walkway it can stop on at that rate, then slows to rest exactly there, so the door's copy stands where the
-// Camera's pose has it
+// Of the walkway that both stands the door past the walkway's far end and can be stopped on at that rate, then slows to
+// Rest exactly there, so the door's copy stands where the camera's pose has it
 export const advanceLoginGlide = (
   { scrolled, speed, stopAt }: LoginGlide,
   stage: LoginStage,
@@ -25,7 +31,9 @@ export const advanceLoginGlide = (
     return { scrolled: scrolled + speed * deltaSeconds, speed: speed + change };
   }
   const brakingDistance = speed ** 2 / (2 * LOGIN_GLIDE_ACCELERATION);
-  const stop = stopAt ?? Math.ceil((scrolled + brakingDistance) / LOGIN_WALKWAY_ROW.length) * LOGIN_WALKWAY_ROW.length;
+  const stop =
+    stopAt ??
+    Math.ceil((scrolled + Math.max(brakingDistance, DOOR_LEAD)) / LOGIN_WALKWAY_ROW.length) * LOGIN_WALKWAY_ROW.length;
   const remaining = stop - scrolled;
   if (remaining <= 0) return { scrolled: stop, speed: 0, stopAt: stop };
   // Short of its braking distance, less a frame's travel, it cruises; within it, it slows at the one rate that comes

@@ -7,7 +7,7 @@ import { fitHorizonBand } from "#src/services/genshinAssets/fitHorizonBand";
 import { fitInterfaceClips } from "#src/services/genshinAssets/fitInterfaceClips";
 import { fitLoginClouds } from "#src/services/genshinAssets/fitLoginClouds";
 import { fitLoginDoor } from "#src/services/genshinAssets/fitLoginDoor";
-import { fitLoginSilhouettes } from "#src/services/genshinAssets/fitLoginSilhouettes";
+import { fitLoginHulls } from "#src/services/genshinAssets/fitLoginHulls";
 import { fitLoginTowers } from "#src/services/genshinAssets/fitLoginTowers";
 import { fitLoginWalkway } from "#src/services/genshinAssets/fitLoginWalkway";
 import { getComponentDirectory } from "#src/services/genshinAssets/getComponentDirectory";
@@ -33,11 +33,11 @@ export const fitLoginScene = async (): Promise<string> => {
   const diffusePaths = (await readdir(textureDirectory))
     .filter((name) => LOGIN_DIFFUSE_REGEX.test(name))
     .map((name) => join(textureDirectory, name));
-  const [towers, walkway, door, silhouettes, clouds, horizonBand, stone] = await Promise.all([
+  const [towers, walkway, door, hulls, clouds, horizonBand, stone] = await Promise.all([
     fitLoginTowers(placements, meshDirectory),
     fitLoginWalkway(placements, meshDirectory),
     fitLoginDoor(placements, meshDirectory),
-    fitLoginSilhouettes(placements, meshDirectory),
+    fitLoginHulls(placements, meshDirectory),
     fitLoginClouds(textureDirectory),
     fitHorizonBand(join(textureDirectory, "Enviro_Sky_Gradient.png")),
     fitAlbedo(diffusePaths),
@@ -51,7 +51,7 @@ export const fitLoginScene = async (): Promise<string> => {
     writeWorldData("login/towers.json", towers),
     writeWorldData("login/walkway.json", walkway),
     writeWorldData("login/door.json", door),
-    writeWorldData("login/silhouettes.json", silhouettes),
+    writeWorldData("login/hulls.json", hulls),
     writeWorldData("login/clouds.json", clouds),
     writeWorldData("login/sky.json", { horizonBand }),
     writeWorldData("login/palette.json", { stone }),

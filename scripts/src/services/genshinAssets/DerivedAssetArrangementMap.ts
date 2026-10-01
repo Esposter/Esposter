@@ -32,7 +32,7 @@ export const DerivedAssetArrangementMap: Record<
         name: "bridges",
         nameRegex: /^LoginScene_(?:Bridge0[234]|Pillar03)(?:_\d+)?_Lod\d$/u,
         readPositions: async () =>
-          (await readWorldData<{ placements: { position: Point }[] }>("login/silhouettes.json")).placements.map(
+          (await readWorldData<{ placements: { position: Point }[] }>("login/hulls.json")).placements.map(
             ({ position }) => position,
           ),
       },

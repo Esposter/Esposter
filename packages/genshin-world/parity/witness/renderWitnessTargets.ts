@@ -1,3 +1,4 @@
+import type { SceneContext } from "#src/models/scene/SceneContext";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 import type { Node } from "three/webgpu";
 
@@ -31,6 +32,7 @@ const toBase64 = (values: Float32Array): string => {
 // Material, handed back once the targets are read
 export const renderWitnessTargets = async (
   witness: SceneWitness,
+  context: SceneContext | undefined,
   requestedTargets: readonly WitnessTarget[] = Object.values(WitnessTarget),
 ): Promise<{
   families: string[];
@@ -39,7 +41,6 @@ export const renderWitnessTargets = async (
   targets: Partial<Record<WitnessTarget, string>>;
   width: number;
 }> => {
-  const context = witness.context.value;
   if (!context) throw new InvalidOperationError(Operation.Read, "witness", "the scene has not rendered yet");
   const { camera, renderer, scene } = context;
   const { x: width, y: height } = renderer.getDrawingBufferSize(new Vector2());

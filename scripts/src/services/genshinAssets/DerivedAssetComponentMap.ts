@@ -24,6 +24,10 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
       {
         anchor: { block: "00/11790361.blk", name: "SceneBeginNode", pathId: "-6576348029719316063" },
         copies: { count: 3, step: [0, 0, -200] },
+        // The row stands 0.43 metres under its prefab's own place: its towers and bridges moved as one, the camera held,
+        // Land on login-door-recording's edges 0.445 lower and on login-door's 0.412 (genshin:parity place), the two's
+        // Other axes scattering either way. So placed, the camera's path clears every bridge, as the game's glide does
+        position: [0, -4.29, 0],
         prefab: { block: "00/16000354.blk", name: "LoginScene_Build_All", pathId: "-8673399039441092392" },
       },
       {
