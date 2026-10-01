@@ -1,40 +1,26 @@
-import { LOGIN_DOOR } from "#src/services/login/door/constants";
-import { BoxGeometry, BufferGeometry, ExtrudeGeometry, Path, Shape } from "three";
-import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import door from "#src/data/login/door.json";
+import { BufferGeometry, ExtrudeGeometry, ShapePath } from "three";
 
-const ARCH_SEGMENTS = 24;
-// The door's outline, straight sided under a round head of the given rise, centred on x and standing on zero
-const drawDoorOutline = <T extends Path>(outline: T, halfWidth: number, height: number, rise: number): T => {
-  const shoulder = height - rise;
-  outline.moveTo(-halfWidth, 0).lineTo(halfWidth, 0).lineTo(halfWidth, shoulder);
-  outline.absellipse(0, shoulder, halfWidth, rise, 0, Math.PI, false);
-  outline.lineTo(-halfWidth, 0);
-  return outline;
+// A part's face extruded from its back to its front: each of its loops a ring of the face, those running
+// Counterclockwise solid and those running clockwise the holes through them
+const extrudePart = ({
+  depth: [back = 0, front = 0],
+  loops,
+}: {
+  depth: number[];
+  loops: number[][][];
+}): BufferGeometry => {
+  const face = new ShapePath();
+  for (const [[firstX = 0, firstY = 0] = [], ...rest] of loops) {
+    face.moveTo(firstX, firstY);
+    for (const [x = 0, y = 0] of rest) face.lineTo(x, y);
+  }
+  return new ExtrudeGeometry(face.toShapes(true), { bevelEnabled: false, depth: front - back }).translate(0, 0, back);
 };
-// The door at the flight's end as its two parts, standing on its plinth on zero and facing +z: the stone frame, its
-// Outline less the panel's, and the panel recessed within it, which lights when the door opens
-export const createLoginDoorGeometry = (): { frame: BufferGeometry; panel: BufferGeometry } => {
-  const { archRise, border, depth, height, plinthHeight, recess, width } = LOGIN_DOOR;
-  const panelHalfWidth = width / 2 - border;
-  const panelHeight = height - border;
-  const panelRise = archRise - border / 2;
-  const frameOutline = drawDoorOutline(new Shape(), width / 2, height, archRise);
-  frameOutline.holes.push(drawDoorOutline(new Path(), panelHalfWidth, panelHeight, panelRise));
-  const parts = [
-    new ExtrudeGeometry(frameOutline, { bevelEnabled: false, curveSegments: ARCH_SEGMENTS, depth }).translate(
-      0,
-      plinthHeight,
-      -depth / 2,
-    ),
-    new BoxGeometry(width + border * 2, plinthHeight, depth + border * 2).translate(0, plinthHeight / 2, 0),
-  ];
-  const nonIndexedParts = parts.map((part) => (part.index ? part.toNonIndexed() : part));
-  const frame = mergeGeometries(nonIndexedParts) ?? new BufferGeometry();
-  for (const part of new Set([...parts, ...nonIndexedParts])) part.dispose();
-  const panel = new ExtrudeGeometry(drawDoorOutline(new Shape(), panelHalfWidth, panelHeight, panelRise), {
-    bevelEnabled: false,
-    curveSegments: ARCH_SEGMENTS,
-    depth: depth - recess,
-  }).translate(0, plinthHeight, -depth / 2);
-  return { frame, panel };
-};
+// The door at the flight's end as its two parts, standing on its foot on zero, each its face as the game's mesh draws
+// It seen from the front, extruded through its depth: the stone frame round its opening, and the panel recessed within
+// It, which lights when the door opens
+export const createLoginDoorGeometry = (): { frame: BufferGeometry; panel: BufferGeometry } => ({
+  frame: extrudePart(door.frame),
+  panel: extrudePart(door.panel),
+});

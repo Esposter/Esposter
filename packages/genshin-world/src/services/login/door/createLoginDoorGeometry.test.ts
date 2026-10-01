@@ -1,24 +1,22 @@
-import { LOGIN_DOOR } from "#src/services/login/door/constants";
+import door from "#src/data/login/door.json";
 import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoorGeometry";
-import { Box3 } from "three";
+import { Box3, DoubleSide, Mesh, MeshBasicMaterial, Raycaster, Vector3 } from "three";
 import { describe, expect, test } from "vitest";
 
 describe(createLoginDoorGeometry, () => {
-  const { depth, height, plinthHeight, recess, width } = LOGIN_DOOR;
-
-  test("stands the door on its plinth, its head at its height and its panel recessed behind its frame", () => {
+  test("stands the frame round an opening the panel fills, recessed behind the frame's face", () => {
     expect.hasAssertions();
 
     const { frame, panel } = createLoginDoorGeometry();
-    frame.computeBoundingBox();
+    const material = new MeshBasicMaterial({ side: DoubleSide });
+    const [, height = 0] = door.size;
+    // Straight through the door's middle, halfway up, from in front of it
+    const ray = new Raycaster(new Vector3(0, height / 2, 10), new Vector3(0, 0, -1));
     panel.computeBoundingBox();
-    const frameBox = frame.boundingBox ?? new Box3();
     const panelBox = panel.boundingBox ?? new Box3();
 
-    expect(frameBox.min.y).toBeCloseTo(0);
-    expect(frameBox.max.y).toBeCloseTo(plinthHeight + height);
-    expect(frameBox.max.x).toBeCloseTo(width / 2 + LOGIN_DOOR.border);
-    expect(panelBox.max.z).toBeCloseTo(depth / 2 - recess);
-    expect(panelBox.max.x).toBeLessThan(width / 2);
+    expect(ray.intersectObject(new Mesh(frame, material))).toStrictEqual([]);
+    expect(ray.intersectObject(new Mesh(panel, material))[0]?.point.z).toBeCloseTo(panelBox.max.z);
+    expect(panelBox.max.z).toBeLessThan(door.frame.depth[1] ?? 0);
   });
 });
