@@ -1,5 +1,4 @@
 import type { CloudSprite, SkyUniforms } from "genshin-engine";
-import type { InstancedBufferAttribute } from "three";
 
 import clouds from "#src/data/login/clouds.json";
 import walkway from "#src/data/login/walkway.json";
@@ -27,7 +26,7 @@ export const createLoginClouds = (
 ): { dispose: () => void; group: Group; scroll: (scrolled: number) => void } => {
   const group = new Group();
   const disposables: { dispose: () => void }[] = [];
-  let sea: undefined | { depths: number[]; positions: InstancedBufferAttribute };
+  let sea: undefined | { depths: number[]; places: [number, number, number][] };
   const seaLength = LOGIN_CLOUD_SEA_ROW.count * LOGIN_CLOUD_SEA_ROW.length;
   for (const [band, { aspect, sprites: fittedSprites }] of Object.entries(clouds)) {
     const sprites = fittedSprites.map(({ lit, outline }): CloudSprite => ({
@@ -35,7 +34,7 @@ export const createLoginClouds = (
       outline: toLoops(outline),
     }));
     const atlas = createCloudAtlasTexture(sprites, CLOUD_CELL_SIZE);
-    const { dispose, positions, sprite } = createCloudBandSprite(
+    const { dispose, places, sprite } = createCloudBandSprite(
       atlas,
       placeCloudBand(LoginCloudBandMap[band], sprites.length).filter(
         ({ position: [x, y], width }) =>
@@ -46,8 +45,7 @@ export const createLoginClouds = (
     );
     disposables.push(atlas, { dispose });
     group.add(sprite);
-    if (band === SEA_BAND)
-      sea = { depths: Array.from({ length: positions.count }, (_, index) => positions.getZ(index)), positions };
+    if (band === SEA_BAND) sea = { depths: places.map((place) => place[2]), places };
   }
   return {
     dispose: () => {
@@ -56,12 +54,9 @@ export const createLoginClouds = (
     group,
     scroll: (scrolled) => {
       if (!sea) return;
-      for (const [index, depth] of sea.depths.entries())
-        sea.positions.setZ(
-          index,
-          MathUtils.euclideanModulo(depth - scrolled + seaLength / 2, seaLength) - seaLength / 2,
-        );
-      sea.positions.needsUpdate = true;
+      for (const [index, place] of sea.places.entries())
+        place[2] =
+          MathUtils.euclideanModulo((sea.depths[index] ?? 0) - scrolled + seaLength / 2, seaLength) - seaLength / 2;
     },
   };
 };
