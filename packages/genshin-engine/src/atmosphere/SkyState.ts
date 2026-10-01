@@ -10,8 +10,8 @@ export interface SkyState extends Omit<SkyKeyframe, "minutes"> {
   // The haze's own density at its base where a scene sets one per hour, as a sea of cloud thickens through the day
   fogDensity?: number;
   lightDirection: Vector3;
+  moonDirection: Vector3;
   // The sky's own shape where a scene solves one per hour, the default's where not
   shape?: SkyShape;
-  moonDirection: Vector3;
   sunDirection: Vector3;
 }

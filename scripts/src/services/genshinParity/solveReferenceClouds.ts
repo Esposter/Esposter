@@ -26,7 +26,9 @@ const readLuminance = (color: Readonly<Vector>): number =>
   CHANNELS.reduce((sum: number, channel) => sum + LUMINANCE[channel] * color[channel], 0);
 type SetCloudColors = (colors?: { lit: Vector; shade: Vector }) => void;
 const setCloudColors = (page: Page, colors?: { lit: Vector; shade: Vector }): Promise<void> =>
-  page.evaluate((cloudColors) => (Reflect.get(window, "setSceneCloudColors") as SetCloudColors)(cloudColors), colors);
+  page.evaluate((cloudColors) => {
+    (Reflect.get(window, "setSceneCloudColors") as SetCloudColors)(cloudColors);
+  }, colors);
 // A reference's cloud colours solved over its sky above the horizon, where ours and the reference's clouds stand in
 // Different places: ours drawn with the clouds black, then their shaded colour white, then their lit colour white, so
 // Each pixel's sky behind and its shares of the two colours are read apart in the scene's own colour, and ours without

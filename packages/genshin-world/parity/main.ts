@@ -80,9 +80,9 @@ if (screen && root) {
   Reflect.set(window, "benchScene", (frameCount: number) => benchScene(sceneContext.value, frameCount));
   Reflect.set(window, "readSceneSky", () => readSceneSky(sceneContext.value));
   Reflect.set(window, "readSceneFog", () => readSceneFog(sceneContext.value));
-  Reflect.set(window, "setSceneCloudColors", (colors?: Parameters<typeof setSceneCloudColors>[1]) =>
-    setSceneCloudColors(sceneContext.value, colors),
-  );
+  Reflect.set(window, "setSceneCloudColors", (colors?: Parameters<typeof setSceneCloudColors>[1]) => {
+    setSceneCloudColors(sceneContext.value, colors);
+  });
   Reflect.set(window, "setSceneLights", (shares: Parameters<typeof setSceneLights>[1]) =>
     setSceneLights(sceneContext.value, shares),
   );

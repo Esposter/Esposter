@@ -8,6 +8,11 @@ const QUANTILES = Array.from({ length: 19 }, (_, index) => (index + 1) / 20);
 const QUANTILE_WINDOW = 0.025;
 const readLuminance = (color: Readonly<Vector>): number =>
   CHANNELS.reduce((sum: number, channel) => sum + LUMINANCE[channel] * color[channel], 0);
+const readWindow = <T>(values: readonly T[], quantile: number): T[] => {
+  const half = Math.max(Math.round(values.length * QUANTILE_WINDOW), 1);
+  const middle = Math.min(Math.floor(values.length * quantile), values.length - 1);
+  return values.slice(Math.max(middle - half, 0), middle + half + 1);
+};
 // The clouds' shaded and lit colours that best turn ours into the reference's, in the scene's own colour, where the two
 // Skies' clouds stand in different places: each of ours is the sky behind it plus its share of the shaded colour plus its
 // Share of the lit one (read by drawing them black and white in turn), so ours ordered by how lit they are and the
@@ -22,11 +27,6 @@ export const solveCloudColors = (
     readLuminance(lit) / Math.max(readLuminance(lit) + readLuminance(shade), Number.MIN_VALUE);
   const orderedOurs = ours.toSorted((first, second) => readLitness(first) - readLitness(second));
   const orderedReference = reference.toSorted((first, second) => readLuminance(first) - readLuminance(second));
-  const readWindow = <T>(values: readonly T[], quantile: number): T[] => {
-    const half = Math.max(Math.round(values.length * QUANTILE_WINDOW), 1);
-    const middle = Math.min(Math.floor(values.length * quantile), values.length - 1);
-    return values.slice(Math.max(middle - half, 0), middle + half + 1);
-  };
   const readMean = (vectors: readonly Readonly<Vector>[]): Vector =>
     CHANNELS.map((channel) => vectors.reduce((sum, vector) => sum + vector[channel], 0) / vectors.length) as Vector;
   const pairs = QUANTILES.map((quantile) => {
