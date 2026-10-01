@@ -13,7 +13,7 @@ const TravelerGenderInitialMap: Record<TravelerGender, string> = {
 // A line of the game data's as the game shows it to a player of this name and gender
 export const fillLinePlaceholders = (text: string, nickname: string, gender: TravelerGender): string =>
   text
-    .replaceAll(NICKNAME_PLACEHOLDER, nickname)
+    .replaceAll(NICKNAME_PLACEHOLDER, () => nickname)
     .replaceAll(GENDERED_WORD_REGEX, (_placeholder, initial: string, word: string) =>
       initial === TravelerGenderInitialMap[gender] ? word : "",
     );

@@ -1,5 +1,3 @@
-// How long the white the login's door fades into holds before the rickroll plays
-export const RICKROLL_DELAY = Temporal.Duration.from({ seconds: 3 });
 // How long YouTube has to answer the probe the page sends as it loads; the splashes alone outlast it, so the answer is in
 // Before anyone reaches the door
 export const RICKROLL_PROBE_TIMEOUT = Temporal.Duration.from({ seconds: 10 });

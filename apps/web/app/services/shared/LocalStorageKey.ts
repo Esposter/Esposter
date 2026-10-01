@@ -18,6 +18,8 @@ export const LocalStorageKey = {
   Drafts: "drafts",
   DungeonsStore: "dungeons-store",
   EmojiSkinTone: "emoji-skin-tone",
+  // Whether this browser has been rickrolled at the Genshin login's door, after which the door opens onto the world
+  GenshinRickrolled: "genshin-rickrolled",
   MessageCategoryCollapsed: (categoryId: string) => `message-category-${categoryId}-collapsed`,
   MessageDisplayMode: "message-display-mode",
   MessageLeftSideBarWidth: "message-left-side-bar-width",

@@ -11,4 +11,10 @@ describe(fillLinePlaceholders, () => {
 
     expect(fillLinePlaceholders("{NICKNAME}{M#a}{F#b}{F#c}{M#d}", " ", gender)).toBe(expected);
   });
+
+  test("fills a nickname holding a replacement pattern as it is", () => {
+    expect.hasAssertions();
+
+    expect(fillLinePlaceholders("{NICKNAME}", "A$&B", TravelerGender.Female)).toBe("A$&B");
+  });
 });

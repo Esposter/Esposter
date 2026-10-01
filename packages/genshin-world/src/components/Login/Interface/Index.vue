@@ -50,7 +50,7 @@ const { gameText, isDoorWaiting, isSpinnerShown, isWelcomeShown, language, playe
   defineProps<Props>();
 const client = computed(() => GameLanguageGameClientMap[language]);
 // The account kit's greeting, which places the player's name where its language puts it
-const welcome = computed(() => gameText[GameTextKey.LoginWelcome].replace("%s", playerName));
+const welcome = computed(() => gameText[GameTextKey.LoginWelcome].replace("%s", () => playerName));
 // The login screen's interface over its scene, for the stage it is at: the title with the server and account under
 // It, the status as the game prepares, then the prompt at the door. The power button and the build string stay
 // Throughout; the corner buttons are the title's two and the door's four, as the game's current build shows them. A
