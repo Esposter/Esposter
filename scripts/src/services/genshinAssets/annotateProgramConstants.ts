@@ -4,7 +4,9 @@ import type { ShaderConstant } from "#src/services/genshinAssets/readShaderConst
 const REGISTER_BYTES = 16;
 const COMPONENT_BYTES = 4;
 const COMPONENTS = "xyzw";
-const BUFFER_SIZE_REGEX = /dcl_constantbuffer CB0\[(?<size>\d+)\]/u;
+// The first constant buffer's size as an assembly declares it, or as decompiled HLSL does where the program carries no
+// Names of its own
+const BUFFER_SIZE_REGEX = /(?:dcl_constantbuffer CB0|float4 cb0)\[(?<size>\d+)\]/u;
 const REGISTER_REGEX = /cb0\[(?<register>\d+)\]/gu;
 // The registers a constant spans: its offset, over its rows (a matrix's four, a vector's one) and its array's length
 const readRegisters = ({ arrayLength, byteOffset, rows }: ShaderConstant): number[] => {
@@ -22,16 +24,16 @@ const checkIsDisjoint = (layout: readonly ShaderConstant[]): boolean => {
       constant.byteOffset >= (sorted[index - 1]?.byteOffset ?? 0) + (sorted[index - 1]?.columns ?? 0) * COMPONENT_BYTES,
   );
 };
-// A disassembled program headed by what its first constant buffer's registers hold, named from the layout of its
+// A disassembled or decompiled program headed by what its first constant buffer's registers hold, named from the layout of its
 // Shader's that fits it: one whose constants share no byte, that names every register the program reads and ends
 // Within the buffer it declares, preferring the one that names the most. Without one that fits, the program is left
 // As it is
 export const annotateProgramConstants = (assembly: string, layouts: readonly ShaderConstant[][]): string => {
   const size = Number(BUFFER_SIZE_REGEX.exec(assembly)?.groups?.size ?? 0);
   if (size === 0) return assembly;
-  const usedRegisters = new Set(
-    Array.from(assembly.matchAll(REGISTER_REGEX), (match) => Number(match.groups?.register)),
-  );
+  // The registers it reads, its buffer's own declaration aside, which HLSL writes in the same form as a read
+  const body = assembly.replace(BUFFER_SIZE_REGEX, "");
+  const usedRegisters = new Set(Array.from(body.matchAll(REGISTER_REGEX), (match) => Number(match.groups?.register)));
   let best: ShaderConstant[] | undefined;
   let bestCount = 0;
   for (const layout of layouts) {

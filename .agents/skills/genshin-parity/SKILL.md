@@ -33,7 +33,7 @@ The loop and why it is shaped this way are `apps/web/content/docs/genshin/parity
 
 ## Reference pages
 
-- `references/toolbox.md` — before any pass on a screen or scene, and whenever a loop stalls: which tool answers each unknown, and which are still proposed.
+- `references/toolbox.md` — before any pass on a screen or scene, and whenever a loop stalls: which tool answers each unknown.
 - `references/interface.md` — when laying out, styling, setting text on or comparing a 2D screen.
 - `references/glyphs.md` — when a mark, a logo or an element glyph is traced, found as a vector or filled.
 - `references/motion.md` — when recording the game, reading a timing off a recording, holding a screen's motion or testing what only a browser plays.

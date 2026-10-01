@@ -5,7 +5,10 @@ describe(annotateProgramConstants, () => {
   const assembly = "dcl_constantbuffer CB0[3], immediateIndexed\nmul r0.xyz, cb0[2].xyzx, cb0[0].wwww";
   const vector = { arrayLength: 0, columns: 3, rows: 1 };
 
-  test("names each register from the layout that covers every one the program reads", () => {
+  // The same program as Windows' disassembler writes it and as 3Dmigoto decompiles it with no names of its own
+  const hlsl = "cbuffer cb0 : register(b0)\n{\n  float4 cb0[3];\n}\no0.xyz = cb0[2].xyz * cb0[0].www;";
+
+  test.each([assembly, hlsl])("names each register of %s from the layout that covers every one it reads", (program) => {
     expect.hasAssertions();
 
     const layouts = [
@@ -17,7 +20,7 @@ describe(annotateProgramConstants, () => {
       ],
     ];
 
-    expect(annotateProgramConstants(assembly, layouts).split("\n").slice(0, 3)).toStrictEqual([
+    expect(annotateProgramConstants(program, layouts).split("\n").slice(0, 3)).toStrictEqual([
       "// cb0[0].xyz: _Tint",
       "// cb0[0].w: _Strength",
       "// cb0[2].xyz: _Direction",

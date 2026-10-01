@@ -37,6 +37,14 @@ export const LAYOUT_ASSET_TYPES = [
   "MeshRenderer",
   "SkinnedMeshRenderer",
 ] as const;
+// 3Dmigoto's command-line decompiler (github.com/bo3b/3Dmigoto), which writes a compiled DXBC program as HLSL: its last
+// Release to ship it on its own, pinned and checked as FFmpeg is, into the scripts package's cache
+export const DECOMPILER_ARCHIVE_URL =
+  "https://github.com/bo3b/3Dmigoto/releases/download/1.3.16/cmd_Decompiler-1.3.16.zip";
+export const DECOMPILER_ARCHIVE_SHA256 = "5e72e067dfcb15c36f106efa74d805055eec5314dc84b8fca8e65d835683a1b2";
+export const DECOMPILER_DIRECTORY: string = join(REPOSITORY_ROOT, "scripts", "node_modules", ".cache", "3dmigoto");
+// How many programs one run of the decompiler is handed, so their names stay well within Windows' command line
+export const DECOMPILER_BATCH_SIZE = 200;
 // Where `fit` writes the parameters it fits, as data of the world package's own, which its scenes read
 export const WORLD_DATA_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world", "src", "data");
 // A tower is fitted in two metre bands, a band merged into the one below while its radius holds within 3% of it, and
