@@ -127,8 +127,8 @@ const onClick = (event: MouseEvent): void => {
       />
     </TresCanvas>
     <LoginInterface
-      :is-door-waiting="stage === LoginStage.Door && !isDoorFormed ? true : undefined"
       v-if="!isInterfaceHidden"
+      :is-door-waiting="stage === LoginStage.Door && !isDoorFormed ? true : undefined"
       :is-spinner-shown
       :is-welcome-shown
       :player-name

@@ -15,9 +15,9 @@ import sharp from "sharp";
 // Login at its door), since the witness lays them out unscrolled
 export const viewScene = async ({
   camera: [x, y, z, yaw, pitch, fov],
-  height,
   familyOffsets,
   familyScales,
+  height,
   isAlone = false,
   props,
   screen,

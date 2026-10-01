@@ -1,6 +1,7 @@
 import type { WitnessGbuffer } from "#src/models/genshinParity/WitnessGbuffer";
-import { WitnessTargetName } from "#src/models/genshinParity/WitnessTargetName";
 import type { Page } from "playwright";
+
+import { WitnessTargetName } from "#src/models/genshinParity/WitnessTargetName";
 
 // The normal target is drawn encoded into 0 to 1, a colour output clipping what falls below 0, so it is let down to
 // -1 to 1 again, its fourth channel left as it is

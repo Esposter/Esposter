@@ -1,8 +1,7 @@
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
-
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import type { Object3D } from "three";
 
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { Box3, Vector3 } from "three";
 
 // Each landmark's place in the world as the witness draws it, in three's axes: a share of its part's bounding box

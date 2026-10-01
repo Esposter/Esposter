@@ -23,10 +23,10 @@ export interface SkyUniforms {
   // The horizon halo, its colour at its strength, and how far up the gradient it reaches
   haloColor: UniformNode<"color", Color>;
   haloHeight: UniformNode<"float", number>;
-  // How far up the sky the gradient carries the bottom colour, as a share of the way to the zenith
-  horizonBand: UniformNode<"float", number>;
   // The bottom colour away from the sun and toward it
   horizonBackColor: UniformNode<"color", Color>;
+  // How far up the sky the gradient carries the bottom colour, as a share of the way to the zenith
+  horizonBand: UniformNode<"float", number>;
   horizonColor: UniformNode<"color", Color>;
   lightColor: UniformNode<"color", Color>;
   moonDirection: UniformNode<"vec3", Vector3>;

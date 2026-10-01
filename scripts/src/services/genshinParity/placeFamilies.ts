@@ -3,9 +3,9 @@ import type { PageWitnessView } from "#src/services/genshinParity/setPageWitness
 
 import { computeDistanceTransform } from "#src/services/genshinParity/computeDistanceTransform";
 import { fetchReferences } from "#src/services/genshinParity/fetchReferences";
+import { findFamilyBoundaries } from "#src/services/genshinParity/findFamilyBoundaries";
 import { minimizeNelderMead } from "#src/services/genshinParity/minimizeNelderMead";
 import { openWitnessPage } from "#src/services/genshinParity/openWitnessPage";
-import { findFamilyBoundaries } from "#src/services/genshinParity/findFamilyBoundaries";
 import { readFamilyEdgeDistances } from "#src/services/genshinParity/readFamilyEdgeDistances";
 import { readWitnessPartTarget } from "#src/services/genshinParity/readWitnessPartTarget";
 import { setPageWitnessView } from "#src/services/genshinParity/setPageWitnessView";

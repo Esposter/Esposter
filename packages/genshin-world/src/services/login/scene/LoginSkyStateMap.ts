@@ -18,7 +18,7 @@ const NIGHT_MOON_DIRECTION = getLoginScreenDirection([0.27, 0.11]);
 // And the sun or the moon the light comes from.
 // The light's and the sky's strengths are measured over the stone lit physically, as the game's lighting is its
 // Scripts' and never exported: each hour's scaled until its parts stand as bright as its references' (genshin:parity
-// exposure, the median luminance over the parts' pixels), but the night's, whose few moonlit parts read brightest to
+// Exposure, the median luminance over the parts' pixels), but the night's, whose few moonlit parts read brightest to
 // FLIP at their own strengths
 export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
   [LoginTimeOfDay.Dawn]: {

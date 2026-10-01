@@ -1,12 +1,12 @@
 import type { GenshinContext } from "#src/models/GenshinContext";
 import type { StatusReport } from "#src/models/StatusReport";
 
+import { getLanguageDisplayName } from "#src/generated/genshinText/services/getLanguageDisplayName";
 import { checkIsMuted } from "#src/services/checkIsMuted";
 import { checkIsPluginHookEntry } from "#src/services/checkIsPluginHookEntry";
 import { checkIsPluginSpinner } from "#src/services/checkIsPluginSpinner";
 import { checkIsPluginStatusLine } from "#src/services/checkIsPluginStatusLine";
 import { checkIsRuntimeInstalled } from "#src/services/checkIsRuntimeInstalled";
-import { getLanguageDisplayName } from "#src/generated/genshinText/services/getLanguageDisplayName";
 import { readPin } from "#src/services/readPin";
 import { readReplyLanguage } from "#src/services/readReplyLanguage";
 import { readUserSettings } from "#src/services/readUserSettings";
