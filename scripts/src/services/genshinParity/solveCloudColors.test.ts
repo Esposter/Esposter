@@ -1,5 +1,4 @@
 import { solveCloudColors } from "#src/services/genshinParity/solveCloudColors";
-import { InvalidOperationError } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(solveCloudColors, () => {
@@ -33,6 +32,8 @@ describe(solveCloudColors, () => {
   test("throws when either set has no cloud pixels", () => {
     expect.hasAssertions();
 
-    expect(() => solveCloudColors([], [[1, 1, 1]])).toThrow(InvalidOperationError);
+    expect(() => solveCloudColors([], [[1, 1, 1]])).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: solveCloudColors, no cloud pixels to match: 0 of ours, 1 of the reference's]`,
+    );
   });
 });
