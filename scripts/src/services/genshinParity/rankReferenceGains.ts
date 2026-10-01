@@ -50,9 +50,7 @@ export const rankReferenceGains = async (
       ];
       // The reference's scored region, in the drawn frame's pixels
       const { region } = ParityReferenceMap[referenceId] ?? {};
-      const { width: referenceWidth = width } = await sharp(
-        join(REFERENCES_DIRECTORY, `${referenceId}.png`),
-      ).metadata();
+      const { width: referenceWidth } = await sharp(join(REFERENCES_DIRECTORY, `${referenceId}.png`)).metadata();
       const scale = width / referenceWidth;
       const checkIsScored = (pixel: number): boolean => {
         if (!region) return true;

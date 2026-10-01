@@ -99,10 +99,9 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
     const shot = await sharp(shotPath).resize(gbuffer.width, gbuffer.height, { fit: "fill" }).png().toBuffer();
     // The frame's FLIP is its pixels' mean, so a layer drawn exactly would take its share times its own FLIP off the
     // Frame's: its ceiling, which ranks the layers by the most work on each could recover, largest first
-    const layers = (await scoreLayers(image, shot, gbuffer)).map((layer) => ({
-      ...layer,
-      ceiling: layer.name === "frame" ? layer.flip : layer.coverage * layer.flip,
-    }));
+    const layers = (await scoreLayers(image, shot, gbuffer)).map((layer) =>
+      Object.assign(layer, { ceiling: layer.name === "frame" ? layer.flip : layer.coverage * layer.flip }),
+    );
     for (const { ceiling, coverage, detail, flip: layerFlip, name, shape, tone } of layers.toSorted(
       (first, second) => second.ceiling - first.ceiling,
     ))
