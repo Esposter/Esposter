@@ -34,6 +34,7 @@ const timeOfDay = getLoginTimeOfDay(Temporal.Now.plainTimeISO());
   <LoginScreen
     v-else-if="phase === OpeningPhase.Login"
     :game-text
+    :language
     :player-name
     :progress
     :time-of-day

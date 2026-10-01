@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
 import type { TresRendererSetupContext } from "@tresjs/core";
-import type { GameText } from "genshin-text";
+import type { GameLanguage, GameText } from "genshin-text";
 
 import LoginInterface from "#src/components/Login/Interface/Index.vue";
 import LoginScene from "#src/components/Login/Scene/Index.vue";
@@ -32,6 +32,8 @@ interface Props {
   gameText: GameText;
   // The scene alone, as the wiki's clean captures of it show it, for a reference to be scored against
   isInterfaceHidden?: true;
+  // The reader's language, whose client's interface the screen shows
+  language: GameLanguage;
   playerName?: string;
   // How far loading has gone, from 0 to 1, which the bar shows and the flight to the door follows, ending a fixed time after
   // It is done
@@ -39,7 +41,7 @@ interface Props {
   timeOfDay: LoginTimeOfDay;
 }
 
-const { gameText, isInterfaceHidden, playerName, progress, timeOfDay } = defineProps<Props>();
+const { gameText, isInterfaceHidden, language, playerName, progress, timeOfDay } = defineProps<Props>();
 // The name the screen welcomes the player by, the game's own word for the Traveler until they have chosen one
 const shownPlayerName = computed(
   () => playerName || fillLinePlaceholders(gameText[GameTextKey.Traveler], "", LOGIN_TRAVELER_GENDER),
@@ -131,6 +133,7 @@ const onClick = (event: MouseEvent): void => {
     <LoginInterface
       v-if="!isInterfaceHidden"
       :game-text
+      :language
       :is-door-waiting="stage === LoginStage.Door && !isDoorFormed ? true : undefined"
       :is-spinner-shown
       :player-name="shownPlayerName"

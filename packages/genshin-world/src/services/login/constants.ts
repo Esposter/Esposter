@@ -4,8 +4,6 @@ import { TravelerGender } from "genshin-text";
 // The server the English recording's account is on (`yt-rBnfA4pXw6U`, 1080 high): the game names its servers from the
 // List it is sent, so no text of its own carries the name
 export const LOGIN_SERVER_NAME = "Asia";
-// The build string the game prints at the foot of its login screen, the one the 1440 high recording shows
-export const LOGIN_VERSION_TEXT = "OSRELWin7.1.0_R48379043_S48511369_D48533839";
 // Which twin a player who has not named themselves is called after, in a language with a word per gender
 export const LOGIN_TRAVELER_GENDER = TravelerGender.Female;
 // The status the foot shows as the game prepares, each from the moment given after the title's click; the game says
