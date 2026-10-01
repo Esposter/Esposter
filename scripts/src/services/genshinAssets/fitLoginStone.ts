@@ -11,7 +11,7 @@ const BYTE = 255;
 // The texels a mask is reduced to before its median is taken
 const MASK_SAMPLE_SIZE = 64;
 // Each family of the login's parts by the materials it draws with, as the materials are named
-const FAMILY_MATERIAL_REGEX_MAP = {
+const FAMILY_MATERIAL_REGEX_MAP: Record<"bridges" | "door" | "towers" | "walkway", RegExp> = {
   bridges: /^LoginScene_(?:Bridge0[2-4]|Pillar|Broken)/u,
   door: /^LoginScene_Door/u,
   towers: /^LoginScene_Build/u,
@@ -20,7 +20,7 @@ const FAMILY_MATERIAL_REGEX_MAP = {
 const readMedian = (values: readonly number[]): number =>
   values.toSorted((first, second) => first - second)[Math.floor(values.length / 2)] ?? 0;
 const readMean = (vectors: readonly Vector[]): Vector =>
-  [0, 1, 2].map((channel) =>
+  ([0, 1, 2] as const).map((channel) =>
     roundFitted(vectors.reduce((sum, vector) => sum + vector[channel], 0) / Math.max(vectors.length, 1)),
   ) as Vector;
 // The stone each family of the login's parts is carved from, as its materials hold it (Login/Scene/Index.reference.ts,

@@ -18,15 +18,22 @@ type Vector = [number, number, number];
 // A handful of points through a fixed camera, so it settles in well under a second
 const PLACE_STEPS = [2, 2, 2, 2];
 const PLACE_ITERATIONS = 400;
+// The placement's axes in the order it is solved over: an offset in three's axes, then the turn
+export const PLACE_AXES = ["x", "y", "z", "turn"] as const;
 // Where a row of parts stands on a reference, from its landmarks alone, the camera held at the pose given: one offset in
 // Three's axes and one turn about the vertical through the world's origin, shared by every landmark named (a row the
 // Script moves as one), by least squares on their reprojection through that camera. No frame is drawn: the witness
 // Reads each landmark's place once, and the fit is arithmetic, so a row the edges cannot settle (a reference's clouds
-// And haze pulling its boundaries) is placed by what the reference shows of it
+// And haze pulling its boundaries) is placed by what the reference shows of it. Only the axes named move, the rest held
+// At none: a row the game scrolls along the flight moves along z alone
 export const placeFamiliesOnLandmarks = async (
   referenceId: string,
   witness: DerivedAssetComponent,
-  { landmarkNames, pose }: { landmarkNames: readonly string[]; pose: readonly number[] },
+  {
+    axes = PLACE_AXES,
+    landmarkNames,
+    pose,
+  }: { axes?: readonly (typeof PLACE_AXES)[number][]; landmarkNames: readonly string[]; pose: readonly number[] },
 ): Promise<{
   errors: Record<string, number>;
   laidOutErrors: Record<string, number>;
@@ -64,17 +71,24 @@ export const placeFamiliesOnLandmarks = async (
         pixel: [u, v],
       } = projectWitnessPoint(pose, placed, width, height);
       const [givenU = 0, givenV = 0] = pixels[index] ?? [];
-      return Math.hypot(u - givenU, v - givenV);
+      return definitions[index]?.isEdge ? Math.abs(u - givenU) : Math.hypot(u - givenU, v - givenV);
     });
   };
   const readRms = (values: readonly number[]): number =>
     Math.sqrt(readErrors(values).reduce((sum, error) => sum + error ** 2, 0) / Math.max(points.length, 1));
-  const { point } = await minimizeNelderMead(
-    (values) => Promise.resolve(readRms(values)),
-    [0, 0, 0, 0],
-    PLACE_STEPS,
+  const freeIndices = axes.map((axis) => PLACE_AXES.indexOf(axis));
+  const toPoint = (free: readonly number[]): number[] =>
+    PLACE_AXES.map((_, index) => {
+      const freeIndex = freeIndices.indexOf(index);
+      return freeIndex === -1 ? 0 : (free[freeIndex] ?? 0);
+    });
+  const { point: free } = await minimizeNelderMead(
+    (values) => Promise.resolve(readRms(toPoint(values))),
+    freeIndices.map(() => 0),
+    freeIndices.map((index) => PLACE_STEPS[index] ?? 1),
     PLACE_ITERATIONS,
   );
+  const point = toPoint(free);
   const [x = 0, y = 0, z = 0, turn = 0] = point;
   const errors = readErrors(point);
   const laidOutErrors = readErrors([0, 0, 0, 0]);

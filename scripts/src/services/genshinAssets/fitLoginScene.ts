@@ -2,14 +2,14 @@ import type { DecodedCurve } from "#src/models/genshinAssets/DecodedCurve";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/DerivedAssetComponentMap";
-import { fitLoginStone } from "#src/services/genshinAssets/fitLoginStone";
-import { fitSkyGradient } from "#src/services/genshinAssets/fitSkyGradient";
 import { fitInterfaceClips } from "#src/services/genshinAssets/fitInterfaceClips";
 import { fitLoginClouds } from "#src/services/genshinAssets/fitLoginClouds";
 import { fitLoginDoor } from "#src/services/genshinAssets/fitLoginDoor";
 import { fitLoginHulls } from "#src/services/genshinAssets/fitLoginHulls";
+import { fitLoginStone } from "#src/services/genshinAssets/fitLoginStone";
 import { fitLoginTowers } from "#src/services/genshinAssets/fitLoginTowers";
 import { fitLoginWalkway } from "#src/services/genshinAssets/fitLoginWalkway";
+import { fitSkyGradient } from "#src/services/genshinAssets/fitSkyGradient";
 import { getComponentDirectory } from "#src/services/genshinAssets/getComponentDirectory";
 import { readComponentMaterials } from "#src/services/genshinAssets/readComponentMaterials";
 import { readComponentPlacements } from "#src/services/genshinAssets/readComponentPlacements";

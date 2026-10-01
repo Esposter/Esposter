@@ -11,6 +11,7 @@ import { framesCommand } from "#src/services/genshinParity/commands/framesComman
 import { gbufferCommand } from "#src/services/genshinParity/commands/gbufferCommand";
 import { glideCommand } from "#src/services/genshinParity/commands/glideCommand";
 import { launchCommand } from "#src/services/genshinParity/commands/launchCommand";
+import { hazeCommand } from "#src/services/genshinParity/commands/hazeCommand";
 import { lightCommand } from "#src/services/genshinParity/commands/lightCommand";
 import { lumaCommand } from "#src/services/genshinParity/commands/lumaCommand";
 import { measureCommand } from "#src/services/genshinParity/commands/measureCommand";
@@ -40,6 +41,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     calibrate: calibrateCommand,
     sky: skyCommand,
     exposure: exposureCommand,
+    haze: hazeCommand,
     light: lightCommand,
     overlay: overlayCommand,
     pose: poseCommand,

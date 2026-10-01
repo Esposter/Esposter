@@ -25,17 +25,22 @@ const BELOW_FADE_START = 0.1;
 const BELOW_FADE_SCALE = 5;
 // How much of its lit colour a cloud gains with the sky's coverage
 const COVERAGE_LIGHT_SHARE = 0.4;
+// The painted edge's fade, from none at the first coverage to whole at the second, and the coverage under which a
+// Fragment is dropped rather than blended as nothing
+const EDGE_FADE_START = 0.15;
+const EDGE_FADE_END = 0.85;
+const DROPPED_COVERAGE = 0.01;
 // A band of clouds as one sprite drawn once for all of them, each cloud a camera-facing billboard of its painted cloud
 // In the atlas, cut off where it covers nothing, its foot at its place. Each is a draw of its own as a sprite apiece,
 // And a band runs to hundreds; drawn as one, they are blended in the order given, which three's own sort of the
 // Objects no longer sets, so before each draw they are laid out farthest along the camera's view first, as that sort
 // Would, and the nearer edges blend over the farther. Each is coloured as the game's cloud particles are
 // (Login/Scene/Index.reference.ts, source `cloudParticleShader`): its shaded colour mixed toward its lit one where its
-// Painted crown is, each blended from away from the sun to toward it by how far toward the sun the cloud stands, gaining
-// Light with the sky's coverage and brightening toward the sun, and fading out below the horizon. The game also gives a
-// Low cloud way to the sky's colour behind it unless the sky is thickly covered, by a coverage its environment sets at
-// Run time; ours stands in for its cloud layer's alone, so that waits on the game's own. Their places are handed back
-// In the order given, for a band that moves to rewrite in place
+// Painted crown is, each blended from away from the sun to toward it by how far toward the sun the cloud stands,
+// Gaining light with the sky's coverage and brightening toward the sun, fading out at its soft painted edge and below
+// The horizon. The game also gives a low cloud way to the sky's colour behind it unless the sky is thickly covered, by
+// A coverage its environment sets at run time; ours stands in for its cloud layer's alone, so that waits on the game's
+// Own. Their places are handed back in the order given, for a band that moves to rewrite in place
 export const createCloudBandSprite = (
   atlas: Texture,
   clouds: readonly { position: [number, number, number]; spriteIndex: number; width: number }[],
@@ -65,7 +70,7 @@ export const createCloudBandSprite = (
   const scales = new InstancedBufferAttribute(new Float32Array(clouds.length * 2), 2);
   const cells = new InstancedBufferAttribute(new Float32Array(clouds.length * 2), 2);
   const mask = texture(atlas, uv().add(instancedBufferAttribute(cells)).div(columns));
-  const place = instancedBufferAttribute(positions);
+  const place = instancedBufferAttribute<"vec3">(positions);
   const direction = place.sub(cameraPosition).normalize();
   const elevation = asin(clamp(direction.y, -1, 1)).mul(2 / Math.PI);
   const sunCosine = direction.dot(sunDirection);
@@ -79,8 +84,10 @@ export const createCloudBandSprite = (
   material.positionNode = place;
   material.scaleNode = instancedBufferAttribute(scales);
   material.colorNode = cloudColor;
-  material.opacityNode = mask.r.mul(smoothstep(0, 1, saturate(elevation.add(BELOW_FADE_START).mul(BELOW_FADE_SCALE))));
-  material.alphaTest = 0.5;
+  material.opacityNode = smoothstep(EDGE_FADE_START, EDGE_FADE_END, mask.r).mul(
+    smoothstep(0, 1, saturate(elevation.add(BELOW_FADE_START).mul(BELOW_FADE_SCALE))),
+  );
+  material.alphaTest = DROPPED_COVERAGE;
   const sprite = new Sprite(material);
   sprite.center.set(0.5, 0);
   sprite.count = clouds.length;

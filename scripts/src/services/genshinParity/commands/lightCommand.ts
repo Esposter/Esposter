@@ -19,11 +19,15 @@ export const lightCommand: SubCommandsDef[string] = defineCommand({
     name: "light",
   },
   run: async ({ args }) => {
-    const { ambientShare, litCount, shadeCount, sunShare } = await solveReferenceLight(
+    const { ambientShare, litCount, shadeCount, sun, sunShare } = await solveReferenceLight(
       args.reference,
       parseDerivedAssetComponent(args.witness),
     );
-    console.log(`sun times ${sunShare.toFixed(3)}, ambient times ${ambientShare.toFixed(3)}`);
+    const format = (share: number[]): string => share.map((value) => value.toFixed(3)).join(", ");
+    console.log(`sun times ${format(sunShare)}, ambient times ${format(ambientShare)}`);
     console.log(`over ${litCount} lit and ${shadeCount} shaded pixels of the parts`);
+    console.log(
+      `sun from heading ${sun.heading.toFixed(1)} and elevation ${sun.elevation.toFixed(1)}, toward ${sun.direction.map((value) => value.toFixed(3)).join(", ")}, residual ${sun.residual.toFixed(4)} against ${sun.gridResidual.toFixed(4)} over the grid`,
+    );
   },
 });

@@ -41,7 +41,8 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | Where each part lands on the reference  | `genshin:parity overlay`: boundaries, edge distance                  |
 | Which layer a score's loss is in        | `scoreLayers`: `compare --witness`, `attribute`                      |
 | One approval number                     | FLIP (`scoreFlip`), in every `compare`                               |
-| Sun against ambient light               | `genshin:parity light`: lit and shaded faces under each light alone  |
+| Sun against ambient light               | `genshin:parity light`: up and shaded faces under each light alone   |
+| Fog against distance                    | `genshin:parity haze`: depth bands, ours with and without fog        |
 | A light's strength under its references | `genshin:parity exposure`: the parts' luminance, ours against theirs |
 | The grade, the fog, the light           | `genshin:parity calibrate`: least squares over masks                 |
 | What a shader computes                  | `shaders`: the annotated disassembly, and HLSL where it decompiles   |

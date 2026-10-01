@@ -52,9 +52,10 @@ export const WORLD_DATA_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "g
 export const TOWER_BAND_HEIGHT = 2;
 export const TOWER_RADIUS_TOLERANCE = 0.03;
 export const FITTED_DECIMALS = 2;
-// A walkway's outline is traced on a quarter-metre grid and kept within ten centimetres of it
-export const WALKWAY_CELL_SIZE = 0.25;
-export const WALKWAY_OUTLINE_TOLERANCE = 0.1;
+// A walkway's outline is traced on a five-centimetre grid and kept within two centimetres of it, so pieces laid along
+// Its diagonal cracks meet with no gap to see their sides through
+export const WALKWAY_CELL_SIZE = 0.05;
+export const WALKWAY_OUTLINE_TOLERANCE = 0.02;
 // A bridge's or a pillar's hull is carved on a grid of a unit of its own mesh, a tenth of a metre as the scene scales it
 export const HULL_CELL_SIZE = 1;
 // How far a ratio's cross-ratio in the fitted data may stray from its reference's: a pixel off at each end of widths

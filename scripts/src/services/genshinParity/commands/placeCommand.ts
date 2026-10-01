@@ -3,31 +3,37 @@ import type { SubCommandsDef } from "citty";
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
 import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
 import { placeFamilies } from "#src/services/genshinParity/placeFamilies";
-import { placeFamiliesOnLandmarks } from "#src/services/genshinParity/placeFamiliesOnLandmarks";
+import { PLACE_AXES, placeFamiliesOnLandmarks } from "#src/services/genshinParity/placeFamiliesOnLandmarks";
 import { toPageCamera } from "#src/services/genshinParity/toPageCamera";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
-const AXES = ["x", "y", "z"] as const;
+const AXES: readonly string[] = ["x", "y", "z"];
+// A period's range parsed whole, an unknown axis or a step that never advances the phase rejected rather than read
+// As z or left to hang the scan
 const toScan = (scan: string): { axis: 0 | 1 | 2; from: number; step: number; to: number } => {
-  const [axis = "z", from = "0", to = "0", step = "1"] = scan.split(":");
-  const axisIndex = AXES.findIndex((name) => name === axis);
-  return {
-    axis: axisIndex === -1 ? 2 : (axisIndex as 0 | 1 | 2),
-    from: Number(from),
-    step: Number(step),
-    to: Number(to),
-  };
+  const [axis = "", ...range] = scan.split(":");
+  const axisIndex = AXES.indexOf(axis);
+  if (axisIndex === -1)
+    throw new InvalidOperationError(Operation.Read, "scan", `${axis} is not one of ${AXES.join(",")}`);
+  const [from = 0, to = 0, step = 0] = parseNumbers(range.join(","), "scan", 3);
+  if (step <= 0) throw new InvalidOperationError(Operation.Read, "scan", `${step} is not a positive step`);
+  return { axis: axisIndex as 0 | 1 | 2, from, step, to };
 };
 const toPoint = (point: string): [number, number, number] => {
-  const [x = 0, y = 0, z = 0] = point.split(",").map(Number);
+  const [x = 0, y = 0, z = 0] = parseNumbers(point, "start", 3);
   return [x, y, z];
 };
 export const placeCommand: SubCommandsDef[string] = defineCommand({
   args: {
     reference: { description: "A reference's id in ParityReferenceMap", required: true, type: "positional" },
     families: { description: "The families moved as one, comma-separated", type: "string" },
+    axes: {
+      default: PLACE_AXES.join(","),
+      description: `The axes a landmark placement moves, comma-separated, of ${PLACE_AXES.join(", ")}`,
+      type: "string",
+    },
     landmarks: {
       description:
         "Landmarks on the row instead of its edges, comma-separated, fitted through --pose with a turn as well",
@@ -67,7 +73,11 @@ export const placeCommand: SubCommandsDef[string] = defineCommand({
       const { errors, laidOutErrors, offset, rms, turn } = await placeFamiliesOnLandmarks(
         args.reference,
         parseDerivedAssetComponent(args.witness),
-        { landmarkNames: args.landmarks.split(","), pose: parseNumbers(args.pose, "pose", CAMERA_POSE_AXES.length) },
+        {
+          axes: args.axes.split(",") as (typeof PLACE_AXES)[number][],
+          landmarkNames: args.landmarks.split(","),
+          pose: parseNumbers(args.pose, "pose", CAMERA_POSE_AXES.length),
+        },
       );
       for (const [name, error] of Object.entries(errors))
         console.log(`${name}: ${(laidOutErrors[name] ?? 0).toFixed(2)} px laid out, ${error.toFixed(2)} px placed`);

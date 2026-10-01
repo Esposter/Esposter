@@ -9,11 +9,11 @@ export interface SkyKeyframe {
   // A cloud's shaded colour away from the sun, where a sky tells it from the colour toward it
   cloudShadeBackColor?: Color;
   cloudShadeColor: Color;
+  // The horizon halo at its strength, where a sky has one
+  haloColor?: Color;
   hemisphereGroundColor: Color;
   hemisphereIntensity: number;
   hemisphereSkyColor: Color;
-  // The horizon halo at its strength, where a sky has one
-  haloColor?: Color;
   // The bottom colour away from the sun, where a sky tells it from the colour toward it
   horizonBackColor?: Color;
   horizonColor: Color;

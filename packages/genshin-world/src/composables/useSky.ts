@@ -8,8 +8,8 @@ import {
   applySkyState,
   createSkyGradientTexture,
   createSkyNode,
-  DEFAULT_SKY_GRADIENT,
   createSkyState,
+  DEFAULT_SKY_GRADIENT,
   GAME_MINUTES_PER_SECOND,
   sampleSkyState,
 } from "genshin-engine";

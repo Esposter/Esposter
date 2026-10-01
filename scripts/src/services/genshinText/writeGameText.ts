@@ -38,7 +38,14 @@ export const writeGameText = (): string[] => {
     .characters("names", { matchCategories: true })
     .filter((name) => !genshinDb.voiceovers(name)?.friendLines.length)
     .toSorted()
-    .map((name) => ({ id: genshinDb.characters(name)?.id ?? 0, name }));
+    .flatMap((name) => {
+      const id = genshinDb.characters(name)?.id;
+      if (id === undefined) {
+        notes.push(`${name} has no id in the data package; its lines are skipped`);
+        return [];
+      }
+      return [{ id, name }];
+    });
   const textDirectory = join(GENSHIN_TEXT_GENERATED_DIRECTORY, "text");
   const copyTextDirectory = join(PERSONA_COPY_DIRECTORY, "generated", "text");
   for (const directory of [textDirectory, CHARACTER_LINES_DIRECTORY, PERSONA_COPY_DIRECTORY])

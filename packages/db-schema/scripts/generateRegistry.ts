@@ -1,4 +1,3 @@
-import { execSync } from "node:child_process";
 import { glob, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -58,5 +57,3 @@ await writeFile(
     .map((name) => `  ...${name},`)
     .join("\n")}\n};\n`,
 );
-// Emitted in the formatter's own shape, so `pnpm format` never rewrites a generated file
-execSync(`oxfmt "${schemaPath}" "${relationsPath}"`, { stdio: "inherit" });

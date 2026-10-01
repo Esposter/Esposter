@@ -189,6 +189,18 @@ export const reference: ComponentReference = {
     },
     {
       found:
+        "The towers stand 5 metres low with their bridges, and their row 2.47 metres toward -x and 8.94 nearer at the door. Pinned on the lantern tower's two silhouette edges at the recording's row 460 and the crowned column's top behind the door with the row's height held, no rigid move fitted, which read as each tower moving on its own; seen beside the recording, the lantern tower stood a ring too high, so its edges were pinned at the wrong height. Lowered with the bridges and moved on the edges alone, its window band, gold rings and edges land on the recording's, the crowned column within 20 pixels and the colonnade where it stood, and every hour's frame scores better. The frame's far-left tower is still another of the row's",
+      search:
+        "genshin:parity parts login-door-recording --family Towers, place --landmarks columnCrown,towerRightInner,towerRightOuter with --axes z, x,z and x,y,z through the door frame's pose, then view --offsets lowering the towers 5 metres beside the recording, and compare at every hour",
+    },
+    {
+      found:
+        "Every login stone material holds _ReceiveShadow 0, yet the references show the towers' shadows across the walkway, so the game shadows its stone otherwise. Drawn without the sun's shadow, the door frame's near faces solve to a sun near three times stronger and a sky light five times weaker (genshin:parity light, converged in four steps), but the door, day and night stills all score worse without the shadow, and with it back that light scores worse than the scene's; the sun's direction is not settled by the faces' shading either, every heading and elevation fitting the recording's near faces within a hundredth of the best",
+      search:
+        "genshin:assets material values for every LoginScene_ material, then genshin:parity light and haze login-door-recording with and without the light's shadow, and compare at every hour",
+    },
+    {
+      found:
         "The door rises at the walkway's far end as its last blocks settle, about 12 seconds in, nothing built past it, and the glide then brakes it to its pose",
       search: "genshin:parity frames yt-rBnfA4pXw6U at 2 a second over 0 to 15 seconds",
     },
@@ -200,6 +212,9 @@ export const reference: ComponentReference = {
     "The sky's own colours at each hour: the game's environment system sets its sky shader's _ES_ colours, top and bottom toward the sun and away, the halo, the sun's halo and the moon's glow, at run time from no asset the export holds, so they are measured; one frame's sky by least squares (genshin:parity sky) leaves its shape and its colours unsettled, the sun's direction itself measured and most of the sky under clouds and haze",
     "How the game brings the towers to the door's phase after a long idle: every recording found idles a few seconds, so the title's phase is read off its glide's length, not a rule of the script's",
     "What MonoBlockController does to each walkway piece: the rise is read by eye off the recording's far end; its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$) hold its own curve",
+    "Which of the towers' row stands at the door frame's left edge: the recording's is thin and dark with many rings, the exports' nearest there wide and arched",
+    "The night's, the dawn's and the day's light apart from their exposure: the night still shows the walkway's top moonlit and the towers' faces dark where ours draws them the other way, and dawn takes nothing from the dusk's solved light, but genshin:parity light reads faces only where a reference's pose is solved, which the stills' is not",
+    "The clouds over the door recording's towers, 13 to 25 degrees up: every band raised there scores the stills worse, whose camera is not the recording's",
     "Where the glide comes to rest: the recording's door frame was still slowing at 1.6 metres a second when the click came, so the rest stands a little nearer the door than its pose",
     "The day sky's pose, by the same perspective reading",
     "The wiki stills' pose: held to the glide's height, pitch and field of view, the dawn frame's near wings cannot be fitted at any depth (their 1582 pixels across put them 5.5 metres out at 51.2 degrees, their rows 6.7 at 1.24 metres and 5.29), so the stills stand lower, about a metre up, or pitched about 3 degrees; four corners on one plane leave the field of view free to run away, so the stills need landmarks at another depth. Scored at the glide's pose the four stills read 0.02 to 0.04 of FLIP worse than at the old perspective reading's (44.6 degrees, 5.6 up), while the door frames read better; both recordings glide at 51.2 (the English one's title paces steadily only there, and the user's current build agrees), so the stills' camera is theirs to solve, not the scene's",

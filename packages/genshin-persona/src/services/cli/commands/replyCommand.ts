@@ -1,10 +1,10 @@
 import type { SubCommandsDef } from "citty";
 
+import { getCanonicalLanguage } from "#src/generated/genshinText/services/getCanonicalLanguage";
+import { getLanguageDisplayName } from "#src/generated/genshinText/services/getLanguageDisplayName";
 import { GenshinVerb } from "#src/models/GenshinVerb";
 import { getStatusReport } from "#src/services/cli/getStatusReport";
 import { readGenshinContext } from "#src/services/cli/readGenshinContext";
-import { getCanonicalLanguage } from "#src/generated/genshinText/services/getCanonicalLanguage";
-import { getLanguageDisplayName } from "#src/generated/genshinText/services/getLanguageDisplayName";
 import { DEFAULT_LANGUAGE } from "#src/services/constants";
 import { readVoiceLanguage } from "#src/services/readVoiceLanguage";
 import { writeReplyLanguage } from "#src/services/writeReplyLanguage";

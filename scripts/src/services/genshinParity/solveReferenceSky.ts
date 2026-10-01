@@ -1,6 +1,7 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import type { SkyShape } from "#src/services/genshinParity/fitSky";
 
+import { readWorldData } from "#src/services/genshinAssets/readWorldData";
 import { PARITY_DIRECTORY } from "#src/services/genshinParity/constants";
 import { fetchReferences } from "#src/services/genshinParity/fetchReferences";
 import { fitSky, readSkyWeights, SKY_TERMS } from "#src/services/genshinParity/fitSky";
@@ -8,7 +9,6 @@ import { minimizeNelderMead } from "#src/services/genshinParity/minimizeNelderMe
 import { openWitnessPage } from "#src/services/genshinParity/openWitnessPage";
 import { readWitnessPartTarget } from "#src/services/genshinParity/readWitnessPartTarget";
 import { setPageWitnessView } from "#src/services/genshinParity/setPageWitnessView";
-import { readWorldData } from "#src/services/genshinAssets/readWorldData";
 import { withFinalizerAsync } from "@esposter/shared";
 import { toneMapNeutral, toSceneColor } from "genshin-engine";
 import { mkdir } from "node:fs/promises";
