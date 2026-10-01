@@ -18,14 +18,17 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
     namePattern:
       "^(Enviro_(Sky_Gradient|Clouds_(Middle_|Top_)?Particle_Atlas|Clouds_(Voronoi|Wispis|Normal)|Cloud_(Layer|Particle|Mid_Particle|Top_Particle)_Mat|Atmosphere_Layer_Mat)$|(Sky|Cloud)_LOD0$)",
     roots: [{ block: "00/11790361.blk", name: "LoginScene", pathId: "-1124867853248233309" }],
-    // What MonoLoginScene's raw bytes point at, each into the anchor it names before it (Login/Scene/Index.reference.ts)
+    // What MonoLoginScene's raw bytes point at, each into the anchor it names before it (Login/Scene/Index.reference.ts),
+    // The towers and the walkway with the count and length its record gives them, laid along ModelCamera's heading
     spawns: [
       {
         anchor: { block: "00/11790361.blk", name: "SceneBeginNode", pathId: "-6576348029719316063" },
+        copies: { count: 3, step: [0, 0, -200] },
         prefab: { block: "00/16000354.blk", name: "LoginScene_Build_All", pathId: "-8673399039441092392" },
       },
       {
         anchor: { block: "00/11790361.blk", name: "BridgeBeginNode", pathId: "811367706567901226" },
+        copies: { count: 3, step: [0, 0, -16] },
         prefab: { block: "00/16000354.blk", name: "LoginScene_Bridge01_Vo", pathId: "-64394072878925827" },
       },
       {

@@ -25,7 +25,7 @@ export const writeWitnessLayout = async (
   const checkHasFile = (type: string, name: string, extension: string): boolean =>
     existsSync(join(directory.assets, type, `${name}.${extension}`));
   const [placements, materials] = await Promise.all([
-    readComponentPlacements(component, roots),
+    readComponentPlacements(component, { isCopied: true, roots }),
     readComponentMaterials(component),
   ]);
   // A mesh a placement names by path ID (a skinned mesh in another file) is named through the asset index first

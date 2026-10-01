@@ -9,6 +9,12 @@ import { MeshBasicNodeMaterial, NodeMaterial } from "three/webgpu";
 
 // The layer the witness's parts are drawn on alone while its targets render, past every layer the scenes use
 const TARGET_LAYER = 31;
+// The material a target draws a part with, built once for the material the part wears (whose colour the albedo
+// Reads), the target and the part's identifier and family, and kept: a material built afresh each read is a pipeline
+// WebGPU compiles and keeps, so a tool reading hundreds of views would fill the page until it crashed
+const sourceTargetMaterialsMap = new WeakMap<object, Map<string, MeshBasicNodeMaterial>>();
+// The one target every read draws into, rebuilt only when the drawing buffer's size changes
+let renderTarget: RenderTarget | undefined;
 // A floating-point buffer as base64, the one form a page hands its caller bytes in
 const toBase64 = (values: Float32Array): string => {
   const bytes = new Uint8Array(values.buffer, values.byteOffset, values.byteLength);
@@ -20,15 +26,17 @@ const toBase64 = (values: Float32Array): string => {
 // The witness render's G-buffer at its current view, one floating-point target a quantity, each read back from the
 // Renderer as rows of four floats a pixel: the albedo its exported material draws unlit, the depth along the view in
 // Metres, the world normal, and the part (its identifier from one, the order the header lists it in) with its family's
-// Index, the families listed in that order. Only the witness's parts are drawn, over nothing, so a pixel no part covers is zero throughout. Every part
-// Keeps its own material, handed back once the targets are read
+// Index, the families listed in that order. Only the witness's parts are drawn, over nothing, so a pixel no part
+// Covers is zero throughout. Only the targets asked for are drawn, every one unless told. Every part keeps its own
+// Material, handed back once the targets are read
 export const renderWitnessTargets = async (
   witness: SceneWitness,
+  requestedTargets: readonly WitnessTarget[] = Object.values(WitnessTarget),
 ): Promise<{
   families: string[];
   height: number;
   parts: { family: string; id: number; mesh: string }[];
-  targets: Record<WitnessTarget, string>;
+  targets: Partial<Record<WitnessTarget, string>>;
   width: number;
 }> => {
   const context = witness.context.value;
@@ -47,10 +55,15 @@ export const renderWitnessTargets = async (
       });
     }
   }
-  const createTargetMaterial = (
+  const readTargetMaterial = (
     target: WitnessTarget,
     { familyIndex, id, mesh }: (typeof drawnMeshes)[number],
   ): MeshBasicNodeMaterial => {
+    const targetMaterials = sourceTargetMaterialsMap.get(mesh.material) ?? new Map<string, MeshBasicNodeMaterial>();
+    sourceTargetMaterialsMap.set(mesh.material, targetMaterials);
+    const key = `${target}/${id}/${familyIndex}`;
+    const cached = targetMaterials.get(key);
+    if (cached) return cached;
     const material = new MeshBasicNodeMaterial();
     material.toneMapped = false;
     const albedo = mesh.material instanceof NodeMaterial ? (mesh.material.colorNode as Node<"vec3"> | null) : null;
@@ -61,6 +74,7 @@ export const renderWitnessTargets = async (
       [WitnessTarget.Part]: vec4(float(id), float(familyIndex), 0, 1),
     };
     material.colorNode = targetNodeMap[target];
+    targetMaterials.set(key, material);
     return material;
   };
   const cameraLayers = new Layers();
@@ -69,8 +83,12 @@ export const renderWitnessTargets = async (
   const clearColor = renderer.getClearColor(new Color());
   const clearAlpha = renderer.getClearAlpha();
   const originalMaterials = drawnMeshes.map(({ mesh }) => mesh.material);
-  const renderTarget = new RenderTarget(width, height, { type: FloatType });
-  const targets = {} as Record<WitnessTarget, string>;
+  if (renderTarget?.width !== width || renderTarget.height !== height) {
+    renderTarget?.dispose();
+    renderTarget = new RenderTarget(width, height, { type: FloatType });
+  }
+  const drawnTarget = renderTarget;
+  const targets: Partial<Record<WitnessTarget, string>> = {};
   // A failed readback still hands the scene back as it was, so a later render or capture never draws the targets
   await withFinalizerAsync(
     async () => {
@@ -79,22 +97,21 @@ export const renderWitnessTargets = async (
       scene.background = null;
       scene.backgroundNode = null;
       renderer.setClearColor(0, 0);
-      for (const target of Object.values(WitnessTarget)) {
-        const targetMaterials = drawnMeshes.map((drawn) => createTargetMaterial(target, drawn));
+      for (const target of requestedTargets) {
+        const targetMaterials = drawnMeshes.map((drawn) => readTargetMaterial(target, drawn));
         // oxlint-disable-next-line no-await-in-loop -- one target is read back before the next is drawn into it
         targets[target] = await withFinalizerAsync(
           async () => {
             for (const [index, { mesh }] of drawnMeshes.entries())
               mesh.material = targetMaterials[index] ?? mesh.material;
-            renderer.setRenderTarget(renderTarget);
+            renderer.setRenderTarget(drawnTarget);
             renderer.render(scene, camera);
-            const pixels = await renderer.readRenderTargetPixelsAsync(renderTarget, 0, 0, width, height);
+            const pixels = await renderer.readRenderTargetPixelsAsync(drawnTarget, 0, 0, width, height);
             return toBase64(pixels as Float32Array);
           },
           () => {
             for (const [index, { mesh }] of drawnMeshes.entries())
               mesh.material = originalMaterials[index] ?? mesh.material;
-            for (const material of targetMaterials) material.dispose();
           },
         );
       }
@@ -106,7 +123,6 @@ export const renderWitnessTargets = async (
       scene.backgroundNode = backgroundNode;
       camera.layers.mask = cameraLayers.mask;
       for (const { mesh } of drawnMeshes) mesh.layers.disable(TARGET_LAYER);
-      renderTarget.dispose();
     },
   );
   return { families: witness.parts.children.map(({ name }) => name), height, parts, targets, width };

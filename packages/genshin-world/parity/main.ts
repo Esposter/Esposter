@@ -68,7 +68,9 @@ if (screen && root) {
   if (witness) {
     Reflect.set(window, "setWitnessView", (view: WitnessView) => setWitnessView(witness, view));
     // Its G-buffer at the view last set, which the pose, the overlay, the layers' scores and calibration read
-    Reflect.set(window, "renderWitnessTargets", () => renderWitnessTargets(witness));
+    Reflect.set(window, "renderWitnessTargets", (targets?: Parameters<typeof renderWitnessTargets>[1]) =>
+      renderWitnessTargets(witness, targets),
+    );
     // Its landmarks' places in the world, which a pose is solved from
     Reflect.set(window, "readWitnessPoints", (landmarks: Parameters<typeof readWitnessPoints>[1]) =>
       readWitnessPoints(witness, landmarks),

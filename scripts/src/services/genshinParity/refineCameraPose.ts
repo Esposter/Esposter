@@ -4,7 +4,7 @@ import { computeDistanceTransform } from "#src/services/genshinParity/computeDis
 import { findFamilyBoundaries } from "#src/services/genshinParity/findFamilyBoundaries";
 import { minimizeNelderMead } from "#src/services/genshinParity/minimizeNelderMead";
 import { readStructureEdges } from "#src/services/genshinParity/readStructureEdges";
-import { readWitnessGbuffer } from "#src/services/genshinParity/readWitnessGbuffer";
+import { readWitnessPartTarget } from "#src/services/genshinParity/readWitnessPartTarget";
 import { setPageWitnessView } from "#src/services/genshinParity/setPageWitnessView";
 import { toPageCamera } from "#src/services/genshinParity/toPageCamera";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -14,16 +14,18 @@ const REFINE_STEPS = [0.05, 0.05, 0.05, 0.2, 0.2, 0.2];
 // A pose refined from a solved one by a few steps of the simplex on the edges alone: the mean distance, in pixels at
 // The page's size, from the witness's family boundaries (of the families given, from its part target rather than its
 // Shading) to the reference's nearest edge, so the clouds, which draw no part, cannot pull it. It returns the pose and
-// Its distance before and after. The axes held stay at the pose's values, as they did through the solve
+// Its distance before and after. The axes held stay at the pose's values, as they did through the solve, and only
+// The boundaries from the row given down are priced, where what lies above it differs from the exports (a walkway
+// Still assembling at its far end)
 export const refineCameraPose = async (
   page: Page,
   image: Buffer,
   pose: readonly number[],
   families: readonly string[],
   iterationCount: number,
-  heldAxes: readonly number[] = [],
+  { heldAxes = [], topRow = 0 }: { heldAxes?: readonly number[]; topRow?: number } = {},
 ): Promise<{ after: number; before: number; pose: number[] }> => {
-  const { families: drawnFamilies, height, width } = await readWitnessGbuffer(page);
+  const { families: drawnFamilies, height, width } = await readWitnessPartTarget(page);
   if (families.length === 0) throw new InvalidOperationError(Operation.Read, "families", "none given to refine on");
   for (const family of families)
     if (!drawnFamilies.includes(family))
@@ -35,13 +37,14 @@ export const refineCameraPose = async (
   const edgeDistances = computeDistanceTransform(await readStructureEdges(image, height), width, height);
   const readDistance = async (candidate: readonly number[]): Promise<number> => {
     await setPageWitnessView(page, { camera: toPageCamera(candidate) });
-    const gbuffer = await readWitnessGbuffer(page);
+    const gbuffer = await readWitnessPartTarget(page);
     const { familyIndices, mask } = findFamilyBoundaries(gbuffer);
     const familyIndexSet = new Set(families.map((family) => gbuffer.families.indexOf(family)));
     let sum = 0;
     let count = 0;
+    const topPixel = Math.round(topRow) * gbuffer.width;
     for (const [pixel, isBoundary] of mask.entries())
-      if (isBoundary && familyIndexSet.has(familyIndices[pixel] ?? -1)) {
+      if (isBoundary && pixel >= topPixel && familyIndexSet.has(familyIndices[pixel] ?? -1)) {
         sum += edgeDistances[pixel] ?? 0;
         count++;
       }
