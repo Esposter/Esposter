@@ -3,7 +3,7 @@ import { createSceneObject } from "#src/services/genshinAssets/createSceneObject
 import { describe, expect, test } from "vitest";
 
 describe(copySpawns, () => {
-  test("lays a spawned prefab's subtree out as its row, centred on its own place, the step in its anchor's space", () => {
+  test("lays a spawned prefab's subtree out as its row ahead of its own place, the step in its anchor's space", () => {
     expect.hasAssertions();
 
     // An anchor at half scale, so a world step of 2 is 4 of the root's own position
@@ -24,11 +24,11 @@ describe(copySpawns, () => {
 
     expect(objects.map(({ parentId, position, transformId }) => [transformId, parentId, position[2]])).toStrictEqual([
       ["1", "0", 0],
-      ["2~0", "1", -4],
-      ["3~0", "2~0", 0],
       ["2", "1", 0],
       ["3", "2", 0],
-      ["2~2", "1", 4],
+      ["2~1", "1", 4],
+      ["3~1", "2~1", 0],
+      ["2~2", "1", 8],
       ["3~2", "2~2", 0],
     ]);
   });

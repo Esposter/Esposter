@@ -21,6 +21,10 @@ export const poseCommand: SubCommandsDef[string] = defineCommand({
       description: "Steps of the simplex on the families' edges after the solve (none unless told)",
       type: "string",
     },
+    "top-row": {
+      description: "Only the edges below this row of the reference, in its own pixels, refine the pose",
+      type: "string",
+    },
     start: {
       description: `A pose to solve from, needed under six landmarks, as ${CAMERA_POSE_AXES.join(",")} (metres, then degrees)`,
       type: "string",
@@ -51,6 +55,7 @@ export const poseCommand: SubCommandsDef[string] = defineCommand({
         landmarkNames: args.landmarks?.split(","),
         refineIterations: args.refine ? Number(args.refine) : 0,
         start: args.start?.split(",").map(Number),
+        topRow: Number(args["top-row"] ?? 0),
       },
     );
     for (const [name, error] of Object.entries(errors)) console.log(`${name}: ${error.toFixed(2)} px`);

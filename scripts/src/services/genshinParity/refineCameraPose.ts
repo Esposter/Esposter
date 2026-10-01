@@ -34,7 +34,8 @@ export const refineCameraPose = async (
         family,
         `not a family the witness draws: ${drawnFamilies.join(", ")}`,
       );
-  const topPixel = Math.round(topRow) * width;
+  // A row above a crop's top comes in negative, which fill would count from the end
+  const topPixel = Math.max(0, Math.ceil(topRow)) * width;
   // The reference's edges above the row are cleared too, so none of them is the nearest to a boundary below it
   const edges = (await readStructureEdges(image, height)).fill(0, 0, topPixel);
   const edgeDistances = computeDistanceTransform(edges, width, height);

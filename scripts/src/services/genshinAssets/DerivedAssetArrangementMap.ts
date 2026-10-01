@@ -48,13 +48,13 @@ export const DerivedAssetArrangementMap: Record<
       doorOverWalkway: {
         ends: [852, 861, 1058, 1069],
         readEnds: async () => {
-          const [{ position, size }, { outline }] = await Promise.all([
+          const [{ position, size }, { pieces }] = await Promise.all([
             readWorldData<{ position: Point; size: Point }>("login/door.json"),
-            readWorldData<{ outline: [number, number][] }>("login/walkway.json"),
+            readWorldData<{ pieces: { outline: [number, number][] }[] }>("login/walkway.json"),
           ]);
           const [doorX, , doorZ] = position;
-          // The walkway's sides under the dais, straight across its depth
-          const sides = readOutlineCrossings(outline, doorZ);
+          // The walkway's sides under the dais, the outermost of its pieces' straight across its depth
+          const sides = pieces.flatMap(({ outline }) => readOutlineCrossings(outline, doorZ));
           return [doorX - size[0] / 2, Math.min(...sides), Math.max(...sides), doorX + size[0] / 2];
         },
         reference: "login-door-recording, the row of the door's foot",

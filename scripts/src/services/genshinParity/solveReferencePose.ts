@@ -22,7 +22,8 @@ const MARKER_RADIUS = 6;
 // Reprojection error, printed per landmark; then, when asked, a few steps on the edges of the families given. The
 // Landmarks can be a subset of the reference's, to solve one part's pose apart from another's. An image of every
 // Landmark over the reference is written beside the references: the pixel given in blue, the corner it snapped to in
-// Green, and where the pose projects it in red
+// Green, and where the pose projects it in red. Given a top row, in the reference's pixels, the refinement prices only
+// The edges below it
 export const solveReferencePose = async (
   referenceId: string,
   witness: DerivedAssetComponent,
@@ -32,12 +33,14 @@ export const solveReferencePose = async (
     landmarkNames,
     refineIterations = 0,
     start,
+    topRow = 0,
   }: {
     families?: string[];
     heldAxes?: number[];
     landmarkNames?: string[];
     refineIterations?: number;
     start?: number[];
+    topRow?: number;
   },
 ): Promise<{
   errors: Record<string, number>;
@@ -61,7 +64,7 @@ export const solveReferencePose = async (
   const { data, info } = await sharp(referencePath).greyscale().raw().toBuffer({ resolveWithObject: true });
   const grey = Float32Array.from(data);
   const { height, width } = info;
-  const { browser, image, page } = await openWitnessPage(referenceId, witness);
+  const { browser, height: pageHeight, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
       const points = await page.evaluate(
@@ -95,6 +98,7 @@ export const solveReferencePose = async (
       if (refineIterations === 0) return { errors, imagePath, pose: solved.pose, rms: solved.rms };
       const { after, before, pose } = await refineCameraPose(page, image, solved.pose, families, refineIterations, {
         heldAxes,
+        topRow: (topRow * pageHeight) / height,
       });
       return { errors, imagePath, pose, refinement: { after, before }, rms: solved.rms };
     },

@@ -15,22 +15,23 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 
 ## A scene
 
-| Unknown                                 | Tool                                                               |
-| :-------------------------------------- | :----------------------------------------------------------------- |
-| Which assets a scene draws              | `extract`: the closure of its roots by file, path ID               |
-| The scene's hierarchy, and what it lost | `genshin:assets tree`: flags anchors, lost fathers                 |
-| A script's settings                     | `behaviours`: raw bytes scanned for shapes                         |
-| What a script spawns, and where         | `behaviours`, set as `spawns` at their anchors                     |
-| A spawned prefab's place and scale      | `composeWorldMatrices`, through the anchor                         |
-| A row a script scrolls                  | the spawn's `copies`, laid out by `copySpawns` for the witness     |
-| Whether the arrangement is right        | `genshin:assets arrangement`: cross-ratios, drift                  |
-| The camera's pose                       | `genshin:parity pose`: landmarks, refined on edges                 |
-| The camera's path over a flight         | `genshin:parity track`: the pose at each frame, `--top-row` clear  |
-| A render that settles in one frame      | the witness: SMAA, its clock held, one frame                       |
-| Depth, normal, albedo, part per pixel   | `genshin:parity gbuffer`                                           |
-| Where each part lands on the reference  | `genshin:parity overlay`: boundaries, edge distance                |
-| Which layer a score's loss is in        | `scoreLayers`: `compare --witness`, `attribute`                    |
-| One approval number                     | FLIP (`scoreFlip`), in every `compare`                             |
-| The grade, the fog, the light           | `genshin:parity calibrate`: least squares over masks               |
-| What a shader computes                  | `shaders`: the annotated disassembly, and HLSL where it decompiles |
-| Each stand-in's cost                    | `attribute`: FLIP loss per layer                                   |
+| Unknown                                 | Tool                                                                |
+| :-------------------------------------- | :------------------------------------------------------------------ |
+| Which assets a scene draws              | `extract`: the closure of its roots by file, path ID                |
+| The scene's hierarchy, and what it lost | `genshin:assets tree`: flags anchors, lost fathers                  |
+| A script's settings                     | `behaviours`: raw bytes scanned for shapes                          |
+| What a script spawns, and where         | `behaviours`, set as `spawns` at their anchors                      |
+| A spawned prefab's place and scale      | `composeWorldMatrices`, through the anchor                          |
+| A row a script scrolls                  | the spawn's `copies`, laid out by `copySpawns` for the witness      |
+| Whether the arrangement is right        | `genshin:assets arrangement`: cross-ratios, drift                   |
+| The camera's pose                       | `genshin:parity pose`: landmarks, refined on edges                  |
+| The camera's path over a flight         | `genshin:parity track`: the pose at each frame, `--top-row` clear   |
+| A world's pace past a still camera      | `genshin:parity glide`: the ground resampled into metres, per frame |
+| A render that settles in one frame      | the witness: SMAA, its clock held, one frame                        |
+| Depth, normal, albedo, part per pixel   | `genshin:parity gbuffer`                                            |
+| Where each part lands on the reference  | `genshin:parity overlay`: boundaries, edge distance                 |
+| Which layer a score's loss is in        | `scoreLayers`: `compare --witness`, `attribute`                     |
+| One approval number                     | FLIP (`scoreFlip`), in every `compare`                              |
+| The grade, the fog, the light           | `genshin:parity calibrate`: least squares over masks                |
+| What a shader computes                  | `shaders`: the annotated disassembly, and HLSL where it decompiles  |
+| Each stand-in's cost                    | `attribute`: FLIP loss per layer                                    |
