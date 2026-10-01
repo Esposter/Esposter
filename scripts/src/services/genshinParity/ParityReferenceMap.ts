@@ -8,6 +8,13 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "loading-startup": { screen: "LoadingStartup", wikiTitle: "File:Loading Screen Startup.png" },
   // The wiki's four skies are clean captures of the scene at one pose, early in the camera's flight, with no interface
   "login-dawn": {
+    // Read off the capture at its full size: the walkway's near wings at the top of their outer faces
+    landmarks: {
+      wingNearLeftBack: [1398, 1801],
+      wingNearLeftFront: [1255, 1857],
+      wingNearRightBack: [2695, 1801],
+      wingNearRightFront: [2837, 1860],
+    },
     props: { isInterfaceHidden: true, timeOfDay: "Dawn" },
     screen: "LoginScreen",
     wikiTitle: "File:Login Menu Dawn.png",
