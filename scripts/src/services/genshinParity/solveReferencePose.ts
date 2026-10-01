@@ -72,8 +72,15 @@ export const solveReferencePose = async (
           (Reflect.get(window, "readWitnessPoints") as (landmarks: unknown) => [number, number, number][])(landmarks),
         definitions,
       );
-      const snapped = seen.map(([, pixel]) => snapToCorner(grey, width, height, pixel, SNAP_RADIUS));
-      const correspondences = points.map((point, index) => ({ pixel: snapped[index] ?? [0, 0], point }));
+      // An edge stands on a silhouette, never at a corner, so it is read as given
+      const snapped = seen.map(([, pixel], index) =>
+        definitions[index]?.isEdge ? pixel : snapToCorner(grey, width, height, pixel, SNAP_RADIUS),
+      );
+      const correspondences = points.map((point, index) => ({
+        isEdge: definitions[index]?.isEdge,
+        pixel: snapped[index] ?? [0, 0],
+        point,
+      }));
       const solved = solveCameraPose(correspondences, width, height, start, heldAxes);
       const markers = seen.flatMap(([, given], index) => {
         const {

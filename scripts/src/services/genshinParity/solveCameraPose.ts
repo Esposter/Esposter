@@ -92,9 +92,11 @@ const readLinearPose = (correspondences: readonly { pixel: Pixel; point: Point }
 // The camera pose (along `CAMERA_POSE_AXES`) from which points whose places are known project onto the pixels they
 // Were seen at, with each point's reprojection error in pixels and their root mean square: from six or more, the direct
 // Linear transform gives the pose in closed form, and from fewer a start must be given; Levenberg-Marquardt then
-// Minimises the reprojection error from it over all six axes, the field of view among them, but for any held
+// Minimises the reprojection error from it over all six axes, the field of view among them, but for any held. An edge's
+// Correspondence, a point on a part's silhouette, is pinned across and free along the silhouette, so only its distance
+// Across counts
 export const solveCameraPose = (
-  correspondences: readonly { pixel: Pixel; point: Point }[],
+  correspondences: readonly { isEdge?: boolean; pixel: Pixel; point: Point }[],
   width: number,
   height: number,
   start?: readonly number[],
@@ -109,11 +111,11 @@ export const solveCameraPose = (
       `${correspondences.length} correspondences: ${DLT_POINT_COUNT} or more, or a start`,
     );
   const readResiduals = (pose: readonly number[]): number[] =>
-    correspondences.flatMap(({ pixel, point }) => {
+    correspondences.flatMap(({ isEdge, pixel, point }) => {
       const {
         pixel: [u, v],
       } = projectWitnessPoint(pose, point, width, height);
-      return [u - pixel[0], v - pixel[1]];
+      return [u - pixel[0], isEdge ? 0 : v - pixel[1]];
     });
   let pose = start ? [...start] : readLinearPose(correspondences, height);
   let residuals = readResiduals(pose);

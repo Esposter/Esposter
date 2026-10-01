@@ -26,6 +26,10 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
       near: [-15.8, -56.5, 36],
       share: [0, 0.72, 0.5],
     },
+    // The far wings' outer faces, standing where they settle while their tops may still be rising, so only their
+    // Distance across counts
+    wingFarLeftEdge: { isEdge: true, mesh: "LoginScene_Bridge01_19_Vo", share: [1, 1, 0.5] },
+    wingFarRightEdge: { isEdge: true, mesh: "LoginScene_Bridge01_20_Vo", share: [0, 1, 0.5] },
     wingLeftBack: { mesh: "LoginScene_Bridge01_19_Vo", share: [1, 1, 0.858] },
     wingLeftFront: { mesh: "LoginScene_Bridge01_19_Vo", share: [1, 1, 0.595] },
     wingNearLeftBack: { mesh: "LoginScene_Bridge01_06_Vo", share: [1, 1, 0.771] },
