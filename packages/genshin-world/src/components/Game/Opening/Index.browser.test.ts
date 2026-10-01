@@ -7,13 +7,7 @@ import {
   LOGIN_TITLE_START_MS,
 } from "#src/services/login/constants";
 import { LOGIN_DOOR_RISE_KEYFRAMES } from "#src/services/login/door/constants";
-import {
-  LOGIN_DOOR_REST_DISTANCE,
-  LOGIN_GLIDE_ACCELERATION,
-  LOGIN_GLIDE_PREPARING_SPEED,
-  LOGIN_WALKWAY_ROW,
-} from "#src/services/login/scene/constants";
-import { LOGIN_WALKWAY_REACH_SPEED, LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
+import { LOGIN_GLIDE_APPROACH_SECONDS } from "#src/services/login/scene/constants";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
@@ -43,17 +37,9 @@ describe("gameOpening", () => {
   const flightFrameMs = 100;
   // The flight draws its scene every frame of its length, which a headless browser renders slower than a screen
   const timeoutMs = 240_000;
-  // The longest from the door being due to the door standing formed, which its click waits on: the walkway's end
-  // Reaching out to the farthest the door's copy can stand (its braking distance from the preparing pace and a copy
-  // More, past its rest), then the door's rise. A door that waits on the glide instead misses the click
-  const doorArrivalMs =
-    ((LOGIN_GLIDE_PREPARING_SPEED ** 2 / (2 * LOGIN_GLIDE_ACCELERATION) +
-      LOGIN_WALKWAY_ROW.length +
-      LOGIN_DOOR_REST_DISTANCE -
-      LOGIN_WALKWAY_SUNK_DISTANCE) /
-      LOGIN_WALKWAY_REACH_SPEED) *
-      1000 +
-    (LOGIN_DOOR_RISE_KEYFRAMES.at(-1)?.[0] ?? 0);
+  // The longest from the door being due to the door standing formed, which its click waits on: the glide's approach,
+  // Within which the door begins to rise, then the door's rise
+  const doorArrivalMs = LOGIN_GLIDE_APPROACH_SECONDS * 1000 + (LOGIN_DOOR_RISE_KEYFRAMES.at(-1)?.[0] ?? 0);
 
   afterEach(() => {
     vi.useRealTimers();

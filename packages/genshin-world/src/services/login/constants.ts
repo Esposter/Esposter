@@ -30,8 +30,9 @@ export const LOGIN_WELCOME_FADE_MS = 200;
 // Recording the bar is full at 8.4 s and the door rises at 11.75, about 3 s later, however long the load before it took.
 // While loading, the camera flies the share of the path the recording's does before its bar is full (6.4 of its 9.75 s
 // From the click, at an even pace), no faster than the last stretch's pace, so a load that ends at once glides rather
-// Than jumps; once loading is done it flies whatever is left in the 3 s
-export const LOGIN_DOOR_AFTER_LOAD_MS = 3000;
+// Than jumps; once loading is done it flies whatever is left in half those 3 s, and the glide's approach to the door
+// (`LOGIN_GLIDE_APPROACH_SECONDS`) takes the other half
+export const LOGIN_DOOR_AFTER_LOAD_MS = 1500;
 export const LOGIN_FLIGHT_LOADING_SHARE = 0.65;
 // The bar's fill at its fastest, from empty to full: the share shown runs toward loading's own at no more than this
 // Pace, so a load that finishes at once still sweeps the bar rather than jumping, and one slower is followed as it goes
