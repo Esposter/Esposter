@@ -54,6 +54,8 @@ logs
 # Agent tree (`.claude` is a symlink alias to `.agents`, so it needs no entry of its own)
 scheduled_tasks.lock
 .agents/worktrees
+# A session's throwaway scripts, run under the scripts package for its imports and never committed
+scripts/src/scratch
 
 # OS
 .DS_Store
