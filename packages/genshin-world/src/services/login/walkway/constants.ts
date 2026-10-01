@@ -15,3 +15,7 @@ export const LOGIN_WALKWAY_RISE_OVERSHOOT = 0.45;
 export const LOGIN_PAVING_PIXELS_PER_METRE = 128;
 export const LOGIN_PAVING_LINE_WIDTH = 0.015;
 export const LOGIN_PAVING_LINE_SHADE = 0.4;
+// How fast the walkway's assembling end reaches out to the door once the door is due, so the door rises 3 seconds after
+// The bar fills as the recording's does, wherever the walkway's copies stand then: a copy's length in half a second.
+// Waiting for the glide instead added up to six seconds, braking from the preparing pace and a copy at speed before it
+export const LOGIN_WALKWAY_REACH_SPEED = 32;

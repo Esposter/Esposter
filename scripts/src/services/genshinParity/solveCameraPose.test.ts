@@ -32,4 +32,18 @@ describe(solveCameraPose, () => {
 
     expect(solved.rms).toBeLessThan(1e-3);
   });
+
+  test("prices an edge's distance across alone, wherever along its silhouette it was read", () => {
+    expect.hasAssertions();
+
+    // Each point read as an edge a long way down its silhouette, so only its distance across is right
+    const edges = correspondences.map(({ pixel: [u, v], point }) => ({
+      isEdge: true,
+      pixel: [u, v + 40] as const,
+      point,
+    }));
+    const solved = solveCameraPose([...correspondences.slice(0, 4), ...edges.slice(4)], 480, 270, pose);
+
+    expect(solved.rms).toBeLessThan(1e-3);
+  });
 });

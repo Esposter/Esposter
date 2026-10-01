@@ -16,7 +16,7 @@ A recreation converges in a pass or two when every unknown in it can be answered
 
 ## Rules
 
-- **Rank every term by its ceiling before choosing the next one**, the most of the score an exact answer would recover, measured by the domain's ranking command each pass, and work the largest over its cost first; a term an order of magnitude below the largest waits (`references/gain-first.md`).
+- **Rank every term by its ceiling before choosing the next one**, the most of the score an exact answer would recover, measured by the domain's ranking command each pass, and work the largest over its cost first; a term an order of magnitude below the largest waits, and a term of randomly placed content counts only its colours' share (`references/gain-first.md`).
 - **List the unknowns before building anything**, each with the kind of data that holds it: exact (the source holds it as a value), fieldless (the source holds it without its fields) or on screen only (`references/toolbox-audit.md`).
 - **Make each unknown separable.** Find the setup in which only that unknown can move the score: a backdrop under an interface, a mask over one layer, a ratio no camera changes, a render with the other unknowns held at their exact values.
 - **Answer each unknown with the most exact query there is**: the exact value read from the source, then a closed-form solve from known quantities, then a local refinement from that solve, and never a global search (`references/solve-not-search.md`).

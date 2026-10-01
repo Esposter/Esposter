@@ -3,6 +3,7 @@ import type { CommandDef } from "citty";
 import { attributeCommand } from "#src/services/genshinParity/commands/attributeCommand";
 import { benchCommand } from "#src/services/genshinParity/commands/benchCommand";
 import { calibrateCommand } from "#src/services/genshinParity/commands/calibrateCommand";
+import { cloudsCommand } from "#src/services/genshinParity/commands/cloudsCommand";
 import { compareCommand } from "#src/services/genshinParity/commands/compareCommand";
 import { exposureCommand } from "#src/services/genshinParity/commands/exposureCommand";
 import { fetchCommand } from "#src/services/genshinParity/commands/fetchCommand";
@@ -38,6 +39,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
   meta: { description: "Shoot, score, trace and record the game's screens against ours", name: "genshin:parity" },
   subCommands: {
     fetch: fetchCommand,
+    clouds: cloudsCommand,
     compare: compareCommand,
     attribute: attributeCommand,
     gbuffer: gbufferCommand,

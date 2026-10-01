@@ -1,3 +1,5 @@
+import type { SkyShape } from "genshin-engine";
+
 import { solveLinearSystem } from "#src/services/genshinParity/solveLinearSystem";
 
 type Vector = [number, number, number];
@@ -5,20 +7,16 @@ type Vector = [number, number, number];
 // Source `atmosphereShader`): the top and bottom colours away from the sun and toward it, the horizon halo, the sun's
 // Halo and the moon's glow
 export const SKY_TERMS = ["zenithBack", "zenith", "horizonBack", "horizon", "halo", "sunHalo", "moonGlow"] as const;
-// The shape of the game's sky, which the colours are solved under: how sharply the colours toward the sun give way to
-// Those away, how far up the bottom colour and the halo reach, how tight the sun's halo draws, and the moon's size
-export interface SkyShape {
-  frontBackBlend: number;
-  haloHeight: number;
-  horizonBand: number;
-  moonSize: number;
-  sunHaloSize: number;
-}
 const LEAST_DIVISOR = 1e-4;
 // A pixel further from the solved colour than this many times the median, a cloud or a tower's haze, is left out of the
 // Next solve, the sky's own pixels the most of them
 const TRIM_FACTOR = 2.5;
-const TRIM_PASSES = 3;
+// A pixel standing brighter than the sky solved by more than this many times the pixels' typical distance from it is a
+// Cloud or the haze lit across it, left out however many there are: clouds over half a dusk sky make the median
+// Distance a cloud's, so a trim even both ways keeps them all and the sky is solved as their mean
+const BRIGHT_TRIM_FACTOR = 0.5;
+const TRIM_PASSES = 8;
+const LUMINANCE = [0.2126, 0.7152, 0.0722] as const;
 const dot = (first: Vector, second: Vector): number =>
   first[0] * second[0] + first[1] * second[1] + first[2] * second[2];
 const smoothstep = (value: number): number => {
@@ -70,8 +68,8 @@ export const readSkyWeights = (
   ];
 };
 // The sky's colours at a shape, solved by least squares on each channel apart over the sky's pixels in scene colour,
-// Each kept at or above none, the pixels furthest off left out pass by pass, so the clouds and the haze across the sky
-// Do not pull it. The residual is the root mean square over the pixels kept
+// Each kept at or above none, the pixels standing brighter than it left out pass by pass, and the darkest far off it,
+// So the clouds and the haze lit across the sky do not pull it up to their mean. The residual is the root mean square over the pixels kept
 export const fitSky = (
   samples: readonly { color: Vector; weights: readonly number[] }[],
 ): { colors: Vector[]; kept: number; residual: number } => {
@@ -99,17 +97,25 @@ export const fitSky = (
       solved[2]?.[term] ?? 0,
     ]);
     colors = passColors;
-    const errors = samples.map(({ color, weights }) =>
-      Math.hypot(
-        ...([0, 1, 2] as const).map(
-          (channel) =>
-            color[channel] -
-            weights.reduce((sum, weight, term) => sum + weight * (passColors[term]?.[channel] ?? 0), 0),
-        ),
+    // Each pixel's luminance over the sky solved, a cloud's above it
+    const brightnesses = samples.map(({ color, weights }) =>
+      ([0, 1, 2] as const).reduce(
+        (sum: number, channel) =>
+          sum +
+          LUMINANCE[channel] *
+            (color[channel] -
+              weights.reduce((termSum, weight, term) => termSum + weight * (passColors[term]?.[channel] ?? 0), 0)),
+        0,
       ),
     );
-    const median = errors.toSorted((first, second) => first - second)[Math.floor(errors.length / 2)] ?? 0;
-    kept = samples.filter((_, index) => (errors[index] ?? 0) <= median * TRIM_FACTOR);
+    const spread =
+      brightnesses.map((brightness) => Math.abs(brightness)).toSorted((first, second) => first - second)[
+        Math.floor(brightnesses.length / 2)
+      ] ?? 0;
+    kept = samples.filter((_, index) => {
+      const brightness = brightnesses[index] ?? 0;
+      return brightness <= spread * BRIGHT_TRIM_FACTOR && brightness >= -spread * TRIM_FACTOR;
+    });
   }
   const residual = Math.sqrt(
     kept.reduce(

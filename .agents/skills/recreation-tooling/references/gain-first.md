@@ -6,6 +6,10 @@ Read when choosing what to work on next in a recreation, or before spending a pa
 
 A term's **ceiling** is how much the score would recover if that term were exact, everything else held as it is. Where the score is a mean over pixels (FLIP is), the ceiling of a layer is its share of the frame times its own error, and the layers' ceilings add up to the frame's score, so the split is exact rather than estimated. Inside a layer, the same split is taken over whatever separates its unknowns (depth bands for haze against light, a mask for clouds against the sky's gradient), and the witness's rows (`attribute`) split a layer's ceiling into what its stand-in costs and what the shared terms cost.
 
+## Random content has no ceiling
+
+A term made of content the source places at random (clouds a particle emitter scatters, foliage, crowds) cannot be recovered by a score that compares pixels, however large its ceiling: ours stands in other places than the reference's, and a perceptual score prices every misplaced edge, so more of it scores worse even where the reference holds more of it than ours. Its colours are solved by matching the two populations' spreads, and its amount and placement are judged by their statistics (cover by height, size), never by the frame's score; the ranking discounts it to its colour's share. The Genshin login's upper clouds held the largest ceiling on the door recording, and every denser band scored all six references worse, the recording too, while their colours solved by population scored it better.
+
 ## The order
 
 1. **Price every term before touching any.** The ranking is measured each pass, never remembered: what was largest moves once anything near it is fixed.
