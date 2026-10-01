@@ -7,6 +7,7 @@ import { readStructureEdges } from "#src/services/genshinParity/readStructureEdg
 import { readWitnessGbuffer } from "#src/services/genshinParity/readWitnessGbuffer";
 import { setPageWitnessView } from "#src/services/genshinParity/setPageWitnessView";
 import { toPageCamera } from "#src/services/genshinParity/toPageCamera";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The simplex's first steps along each axis, metres then degrees: a solved pose is within a few of these
 const REFINE_STEPS = [0.05, 0.05, 0.05, 0.2, 0.2, 0.2];
@@ -21,7 +22,15 @@ export const refineCameraPose = async (
   families: readonly string[],
   iterationCount: number,
 ): Promise<{ after: number; before: number; pose: number[] }> => {
-  const { height, width } = await readWitnessGbuffer(page);
+  const { families: drawnFamilies, height, width } = await readWitnessGbuffer(page);
+  if (families.length === 0) throw new InvalidOperationError(Operation.Read, "families", "none given to refine on");
+  for (const family of families)
+    if (!drawnFamilies.includes(family))
+      throw new InvalidOperationError(
+        Operation.Read,
+        family,
+        `not a family the witness draws: ${drawnFamilies.join(", ")}`,
+      );
   const edgeDistances = computeDistanceTransform(await readStructureEdges(image, height), width, height);
   const readDistance = async (candidate: readonly number[]): Promise<number> => {
     await setPageWitnessView(page, { camera: toPageCamera(candidate) });

@@ -2,6 +2,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAss
 
 import { annotateProgramConstants } from "#src/services/genshinAssets/annotateProgramConstants";
 import { GAME_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/constants";
+import { decompileDxbcDirectory } from "#src/services/genshinAssets/decompileDxbcDirectory";
 import { disassembleDxbcDirectory } from "#src/services/genshinAssets/disassembleDxbcDirectory";
 import { getComponentDirectory } from "#src/services/genshinAssets/getComponentDirectory";
 import { readComponentMaterials } from "#src/services/genshinAssets/readComponentMaterials";
@@ -10,6 +11,7 @@ import { readIndexedAssets } from "#src/services/genshinAssets/readIndexedAssets
 import { readShaderConstantLayouts } from "#src/services/genshinAssets/readShaderConstantLayouts";
 import { readShaderPropertyNames } from "#src/services/genshinAssets/readShaderPropertyNames";
 import { runAnimeStudio } from "#src/services/genshinAssets/runAnimeStudio";
+import { getResultAsync } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
@@ -18,7 +20,8 @@ import { basename, join } from "node:path";
 const SUMMARY_PROPERTY_COUNT = 4;
 // The shaders a component's materials draw with, as references to read: every shader in the blocks holding them,
 // Since a shader is exported nameless and its block holds the post-processing and sky shaders beside it. Each is
-// Exported raw, its compiled programs carved out and disassembled into a folder of its own with its property names,
+// Exported raw, its compiled programs carved out, disassembled and decompiled to HLSL into a folder of its own with its
+// Property names,
 // And the one line per shader returned says what it is and how many of its programs Windows' disassembler read. A
 // Shader AnimeStudio cannot read is left out of its export, and a block none of whose shaders it reads exports no folder
 export const extractComponentShaders = async (component: DerivedAssetComponent): Promise<string[]> => {
@@ -55,10 +58,22 @@ export const extractComponentShaders = async (component: DerivedAssetComponent):
         ),
       ]);
       const count = disassembleDxbcDirectory(programDirectory);
-      // Each program's assembly is headed by what its constant buffer's registers hold, from its shader's layouts
+      // And decompiled to HLSL beside it where the pinned decompiler can be had, the annotated assembly the source where
+      // It cannot
+      // oxlint-disable-next-line no-await-in-loop -- as above
+      const decompiledCount = await getResultAsync(() => decompileDxbcDirectory(programDirectory)).match(
+        (decompiled) => decompiled,
+        (error) => {
+          console.error(`${programDirectory}: no HLSL, the assembly stands: ${String(error)}`);
+          return 0;
+        },
+      );
+      // Each program's assembly and HLSL are headed by what its constant buffer's registers hold, from its shader's layouts
       const layouts = readShaderConstantLayouts(data);
       // oxlint-disable-next-line no-await-in-loop -- as above
-      const assemblyNames = (await readdir(programDirectory)).filter((name) => name.endsWith(".asm"));
+      const assemblyNames = (await readdir(programDirectory)).filter(
+        (name) => name.endsWith(".asm") || name.endsWith(".hlsl"),
+      );
       // oxlint-disable-next-line no-await-in-loop -- as above
       await Promise.all(
         assemblyNames.map(async (name) => {
@@ -66,12 +81,12 @@ export const extractComponentShaders = async (component: DerivedAssetComponent):
           await writeFile(path, annotateProgramConstants(await readFile(path, "utf8"), layouts));
         }),
       );
-      // oxlint-disable-next-line no-await-in-loop -- the programs are read as assembly from here on
+      // oxlint-disable-next-line no-await-in-loop -- the programs are read as assembly and HLSL from here on
       await Promise.all(
         programs.map((_, index) => rm(join(programDirectory, `${String(index).padStart(5, "0")}.dxbc`))),
       );
       summary.push(
-        `${blockName}/${basename(file, ".dat")}: ${count} of ${programs.length} programs disassembled, ${propertyNames.slice(0, SUMMARY_PROPERTY_COUNT).join(" ")}`,
+        `${blockName}/${basename(file, ".dat")}: ${count} of ${programs.length} programs disassembled, ${decompiledCount} decompiled, ${propertyNames.slice(0, SUMMARY_PROPERTY_COUNT).join(" ")}`,
       );
     }
   }

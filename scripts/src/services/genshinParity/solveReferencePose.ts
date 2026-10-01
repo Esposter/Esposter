@@ -46,9 +46,11 @@ export const solveReferencePose = async (
   refinement?: { after: number; before: number };
   rms: number;
 }> => {
-  const seen = Object.entries(ParityReferenceMap[referenceId]?.landmarks ?? {}).filter(
-    ([name]) => !landmarkNames || landmarkNames.includes(name),
-  );
+  const referenceLandmarks = ParityReferenceMap[referenceId]?.landmarks ?? {};
+  for (const name of landmarkNames ?? [])
+    if (!(name in referenceLandmarks))
+      throw new InvalidOperationError(Operation.Read, name, `not a landmark of ${referenceId}`);
+  const seen = Object.entries(referenceLandmarks).filter(([name]) => !landmarkNames || landmarkNames.includes(name));
   const definitions = seen.map(([name]) => {
     const landmark = DerivedAssetLandmarkMap[witness][name];
     if (!landmark) throw new InvalidOperationError(Operation.Read, name, `not a landmark of ${witness}`);
