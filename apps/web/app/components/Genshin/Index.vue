@@ -24,6 +24,8 @@ const { start: startRickroll } = useTimeoutFn(
 
 <template>
   <div v-if="isRickrollStarted" size-full bg-white>
+    <!-- YouTube's player refuses to play without the embedding page's origin, which nuxt-security's no-referrer -->
+    <!-- Policy withholds, and the page's cross-origin embedder policy blocks the frame unless it loads credentialless -->
     <iframe
       v-if="isRickrollShown"
       size-full
@@ -32,6 +34,7 @@ const { start: startRickroll } = useTimeoutFn(
       title="Never Gonna Give You Up"
       allow="autoplay; encrypted-media; fullscreen"
       credentialless
+      referrerpolicy="strict-origin-when-cross-origin"
     />
   </div>
   <div v-else size-full relative of-hidden>
