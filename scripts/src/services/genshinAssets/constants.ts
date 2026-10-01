@@ -55,9 +55,8 @@ export const FITTED_DECIMALS = 2;
 // A walkway's outline is traced on a quarter-metre grid and kept within ten centimetres of it
 export const WALKWAY_CELL_SIZE = 0.25;
 export const WALKWAY_OUTLINE_TOLERANCE = 0.1;
-// A bridge's or a pillar's silhouette is traced on a half-metre grid and kept within a quarter metre of it
-export const SILHOUETTE_CELL_SIZE = 0.5;
-export const SILHOUETTE_TOLERANCE = 0.25;
+// A bridge's or a pillar's hull is carved on a grid of a unit of its own mesh, a tenth of a metre as the scene scales it
+export const HULL_CELL_SIZE = 1;
 // How far a ratio's cross-ratio in the fitted data may stray from its reference's: a pixel off at each end of widths
 // About two hundred pixels across moves it by about a hundredth
 export const ARRANGEMENT_CROSS_RATIO_TOLERANCE = 0.01;

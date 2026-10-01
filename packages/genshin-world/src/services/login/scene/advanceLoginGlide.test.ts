@@ -3,11 +3,13 @@ import type { LoginGlide } from "#src/models/login/LoginGlide";
 import { LoginStage } from "#src/models/login/LoginStage";
 import { advanceLoginGlide } from "#src/services/login/scene/advanceLoginGlide";
 import {
+  LOGIN_DOOR_REST_DISTANCE,
   LOGIN_GLIDE_ACCELERATION,
   LOGIN_GLIDE_PREPARING_SPEED,
   LOGIN_GLIDE_TITLE_SPEED,
   LOGIN_WALKWAY_ROW,
 } from "#src/services/login/scene/constants";
+import { LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
 import { describe, expect, test } from "vitest";
 
 describe(advanceLoginGlide, () => {
@@ -33,7 +35,8 @@ describe(advanceLoginGlide, () => {
   test("comes to rest on a whole number of the walkway's copies, never slowing faster than its acceleration", () => {
     expect.hasAssertions();
 
-    const glides = run({ scrolled: 5, speed: LOGIN_GLIDE_PREPARING_SPEED }, LoginStage.Door, 20);
+    const start = 5;
+    const glides = run({ scrolled: start, speed: LOGIN_GLIDE_PREPARING_SPEED }, LoginStage.Door, 20);
     const { scrolled = 0, speed } = glides.at(-1) ?? {};
     const decelerations = glides
       .slice(1)
@@ -42,5 +45,7 @@ describe(advanceLoginGlide, () => {
     expect(speed).toBe(0);
     expect(scrolled % LOGIN_WALKWAY_ROW.length).toBe(0);
     expect(Math.max(...decelerations)).toBeLessThan(LOGIN_GLIDE_ACCELERATION * 1.05);
+    // The door first stands past the walkway's far end, so it rises there rather than over walkway already built
+    expect(scrolled - start).toBeGreaterThanOrEqual(LOGIN_WALKWAY_SUNK_DISTANCE - LOGIN_DOOR_REST_DISTANCE);
   });
 });

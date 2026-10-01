@@ -170,11 +170,29 @@ export const reference: ComponentReference = {
       search:
         "genshin:parity glide login-door-recording over 0 to 2.5 and 9 to 14.5 seconds, the eye 1.24 metres up, pitched 5.29 under 51.2, its held frames picking the spans that do not stall",
     },
+    {
+      found:
+        "The towers' row stands 0.43 metres under its prefab's own place: moved as one with the camera held, its towers and bridges land on login-door-recording's edges 0.445 lower and on login-door's 0.412, their other axes scattering either way. So placed, the glide's path at the eye clears every bridge and pillar of the exports, every arch and every space under a deck it crosses open; laid at the prefab's place, a pier of LoginScene_Bridge04's stood across it 57 metres ahead of the towers' home. Our bridges as one side's outline extruded through their depth filled the arches too, and the camera glided into solid stone; as visual hulls they leave them open",
+      search:
+        "genshin:parity place login-door-recording and login-door --families Towers,Bridges, then genshin:assets clearance login at the eye and above it, and genshin:parity view and film --witness at the stretch beside ours",
+    },
+    {
+      found:
+        "The towers do glide toward the camera with the walkway, a near tower growing about 1.8 times from 9 to 14 seconds, and the door frames of recordings idle for different times show them alike, as the witness lays them out unscrolled: the door comes to rest with the towers at their own places. The English recording's glide from the title to the door's rest is about 49 metres, so the title opens that far short of them; that phase alone takes the dawn's FLIP from 0.6889 to 0.6504 and the dusk's from 0.7154 to 0.6750",
+      search:
+        "genshin:parity frames of yt-rBnfA4pXw6U and yt-q2pwx24TOgA at their door frames, then compare of the four stills at both opening phases",
+    },
+    {
+      found:
+        "The door rises at the walkway's far end as its last blocks settle, about 12 seconds in, nothing built past it, and the glide then brakes it to its pose",
+      search: "genshin:parity frames yt-rBnfA4pXw6U at 2 a second over 0 to 15 seconds",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
     "How the script brings the door from its anchor to the walkway: the place is measured (the door spawn's position), the motion is not",
     "Whether the towers' row tiles at its 200 metres: their fitted field spans about 300 along the glide",
+    "How the game brings the towers home at the door after a long idle: every recording found idles a few seconds, so the title's phase is read off its glide's length, not a rule of the script's",
     "What MonoBlockController does to each walkway piece: the rise is read by eye off the recording's far end; its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$) hold its own curve",
     "Where the glide comes to rest: the recording's door frame was still slowing at 1.6 metres a second when the click came, so the rest stands a little nearer the door than its pose",
     "The day sky's pose, by the same perspective reading",

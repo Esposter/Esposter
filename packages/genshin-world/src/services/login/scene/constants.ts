@@ -10,8 +10,9 @@ import { LOGIN_DOOR_POSITION } from "#src/services/login/door/constants";
 // The door, pitched 5.3 degrees up under a vertical field of view of 51.2, which the glide's frames refine to as well
 // (Login/Scene/Index.reference.ts's findings)
 const EYE_HEIGHT = 1.24;
+export const LOGIN_DOOR_REST_DISTANCE = 10.68;
 export const LOGIN_CAMERA_HEIGHT = walkway.top + EYE_HEIGHT;
-export const LOGIN_CAMERA_Z = LOGIN_DOOR_POSITION[2] - 10.68;
+export const LOGIN_CAMERA_Z = LOGIN_DOOR_POSITION[2] - LOGIN_DOOR_REST_DISTANCE;
 export const LOGIN_CAMERA_YAW = Math.PI;
 export const LOGIN_CAMERA_PITCH = (5.29 * Math.PI) / 180;
 export const LOGIN_CAMERA_FOV = 51.2;
@@ -29,9 +30,17 @@ export const LOGIN_CLOUD_SEA_ROW = { count: 2, length: 300 };
 export const LOGIN_GLIDE_TITLE_SPEED = 3.03;
 export const LOGIN_GLIDE_PREPARING_SPEED = 3.7;
 export const LOGIN_GLIDE_ACCELERATION = 0.55;
-// The moment of the loop the title opens at, as metres scrolled: where the dawn frame's first solve stood the walkway,
-// 10.4 metres short of the middle of the copy ahead, the stills' own pose still open
-export const LOGIN_GLIDE_TITLE_SCROLLED = 8.67;
+// The moment of the loop the title opens at, as metres scrolled. Its walkway's phase is where the dawn frame's first
+// Solve stood the walkway, 10.4 metres short of the middle of the copy ahead, the stills' own pose still open; its
+// Towers' is such that the English recording's glide from the title to the door's rest, about 49 metres (2.4 seconds of
+// Title, the load's stall at the preparing pace, its measured 9 to 14 seconds and the braking after), comes to rest
+// With the towers at their own places, where both recordings' door frames, idle as long or not, show them
+const TITLE_WALKWAY_PHASE = 8.67;
+const RECORDED_GLIDE_TO_DOOR = 49;
+export const LOGIN_GLIDE_TITLE_SCROLLED =
+  TITLE_WALKWAY_PHASE +
+  LOGIN_WALKWAY_ROW.length *
+    Math.round((LOGIN_TOWERS_ROW.length - RECORDED_GLIDE_TO_DOOR - TITLE_WALKWAY_PHASE) / LOGIN_WALKWAY_ROW.length);
 // The rush to the door on the click: the camera closes 41% of its distance to the door in its first 333 ms, gathering
 // Speed with the square of the time, as the door grows about 1.7 times in the recording's last third of a second
 // (Login/Scene/Index.reference.ts, source `recording`), and stops short of the door under the white

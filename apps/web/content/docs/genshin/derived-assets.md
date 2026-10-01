@@ -62,6 +62,7 @@ From `scripts/`, as `pnpm genshin:assets <command> <component>`, each with its o
 | :----------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `extract`                                  | The closure of the component's roots, exported by file and path ID; prints what it reached and every pointer it could not resolve                                                   |
 | `arrangement`                              | Each ratio a reference shows between parts that meet, its cross-ratio measured against the fitted data's, and each fitted family's distance from the exports' objects it stands for |
+| `clearance <component> [--at x,y]`         | Each part of the exports a straight path along +z pierces, and the depths it enters and leaves at: where a camera gliding along it passes through the game's own parts              |
 | `behaviours [--script <pattern>]`          | Every MonoBehaviour of the component's layout blocks exported raw, its fields read by their shapes, each pointer named by what it points at                                         |
 | `tree [--root <name>] [--block] [--depth]` | The hierarchy the layout dumps hold, each object's block, place, scale in the world, drawing, named components and children, flagging what its arrangement turns on                 |
 
@@ -100,37 +101,38 @@ flowchart TD
 
 ### The fits
 
-| Fit                              | Reads                                                     | Writes                                                                                                                                                                                             |
-| :------------------------------- | :-------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Lathe, `fitLatheProfile`         | A round mesh's vertices                                   | Its axis, its foot, and a section per two-metre band of its outer radius, merged within 3%                                                                                                         |
-| Footprint, `fitFootprintOutline` | The triangles of every piece, seen from above             | The outline they cover, traced on a quarter-metre grid and simplified within ten centimetres                                                                                                       |
-| Silhouette, `fitSilhouette`      | A slab's triangles on its broad face (a bridge, a pillar) | Every loop round what they cover, holes (its arches) clockwise, traced on a half-metre grid and simplified within a quarter metre; `createSilhouetteGeometry` extrudes it through the slab's depth |
-| Bounds, `fitLoginDoor`           | One placed mesh                                           | Its foot and its size, which the kit's measured shares divide                                                                                                                                      |
-| Cloud sprites, `fitCloudSprites` | A cloud atlas's alpha and red                             | Each cell's outline and lit crown as loops in its unit square; `createCloudAtlasTexture` paints them into an atlas of our own at run time                                                          |
-| Horizon band, `fitHorizonBand`   | The sky gradient's red curve                              | The end of the smoothstep that falls as it does, by least squares: how far up the zenith's colour takes over                                                                                       |
-| Albedo, `fitAlbedo`              | Every part's diffuse texture                              | The median of each channel over all their texels, as one hex                                                                                                                                       |
+| Fit                              | Reads                                           | Writes                                                                                                                                                                                                                                                                      |
+| :------------------------------- | :---------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lathe, `fitLatheProfile`         | A round mesh's vertices                         | Its axis, its foot, and a section per two-metre band of its outer radius, merged within 3%                                                                                                                                                                                  |
+| Footprint, `fitFootprintOutline` | The triangles of every piece, seen from above   | The outline they cover, traced on a quarter-metre grid and simplified within ten centimetres                                                                                                                                                                                |
+| Silhouette, `fitSilhouette`      | Triangles in one plane (a cloud's painted cell) | Every loop round what they cover, holes clockwise, traced on a grid and simplified by Douglas-Peucker                                                                                                                                                                       |
+| Visual hull, `fitVisualHull`     | A mesh's triangles (a bridge, a pillar)         | Boxes solid only where its three axis views all cover, a tenth of a metre a cell, so an arch or the space under a deck stays open from every side; `createBoxesGeometry` builds them. One view extruded through the depth filled them, and the camera glided into the solid |
+| Bounds, `fitLoginDoor`           | One placed mesh                                 | Its foot and its size, which the kit's measured shares divide                                                                                                                                                                                                               |
+| Cloud sprites, `fitCloudSprites` | A cloud atlas's alpha and red                   | Each cell's outline and lit crown as loops in its unit square; `createCloudAtlasTexture` paints them into an atlas of our own at run time                                                                                                                                   |
+| Horizon band, `fitHorizonBand`   | The sky gradient's red curve                    | The end of the smoothstep that falls as it does, by least squares: how far up the zenith's colour takes over                                                                                                                                                                |
+| Albedo, `fitAlbedo`              | Every part's diffuse texture                    | The median of each channel over all their texels, as one hex                                                                                                                                                                                                                |
 
 A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit filled it (a mesh's triangles, a texture's thresholded channel), and a part drawn at several levels of detail is fitted from its finest by one `readLevelOfDetailParts`. Every number is kept to the centimetre (`roundFitted`).
 
 ## Inventory
 
-| Component                         | Source                                                    | Status                                                              |
-| :-------------------------------- | :-------------------------------------------------------- | :------------------------------------------------------------------ |
-| `Splash/Publisher`                | Commons' vector logo, the recording's ring                | Compared, approved                                                  |
-| `Splash/Title`                    | The English phone video's logo                            | Compared, approved                                                  |
-| `Splash/HealthNotice`             | The English client's notice                               | Compared, approved                                                  |
-| `Loading/Startup`                 | The wiki's capture, the element marks' vectors            | Compared, approved                                                  |
-| `Login/Interface`                 | The English recording's frames                            | Compared over its frames at each stage, approved                    |
-| `genshin-interface` pieces        | The English and the 1440 high recordings                  | Measured, approved in their own suite                               |
-| `Login/Scene` camera              | The walkway's edges in the four skies                     | Derived, flying along −z from the walkway's far end                 |
-| `Login/Scene` towers              | The stage's `LoginScene_Build*` meshes and placements     | Fitted as lathes, placed where the game stands them                 |
-| `Login/Scene` walkway             | `LoginScene_Bridge01_*` meshes                            | Fitted as a footprint and its two heights                           |
-| `Login/Scene` door                | The stage's `LoginScene_Door01_Vo`                        | Placed and sized by its mesh; stands once the flight reaches it     |
-| `Login/Scene` bridges and pillars | The stage's `LoginScene_Bridge02`–`04`, `Pillar03` meshes | Fitted as silhouettes, placed and turned where the game stands them |
-| `Login/Scene` stone               | Every `LoginScene_*_Diffuse`                              | Fitted as one albedo                                                |
-| `Login/Scene` clouds              | The three `Enviro_Clouds_*_Particle_Atlas` textures       | Fitted as sprites; each band's spread measured off the captures     |
-| `Login/Scene` sky and haze        | `Enviro_Sky_Gradient`, the four skies' pixels             | Horizon band fitted; colours and light strengths measured           |
-| `Login/Scene` broken pieces       | `LoginScene_Broken_*` meshes                              | Exported; no placement in the arrangements shown                    |
+| Component                         | Source                                                    | Status                                                               |
+| :-------------------------------- | :-------------------------------------------------------- | :------------------------------------------------------------------- |
+| `Splash/Publisher`                | Commons' vector logo, the recording's ring                | Compared, approved                                                   |
+| `Splash/Title`                    | The English phone video's logo                            | Compared, approved                                                   |
+| `Splash/HealthNotice`             | The English client's notice                               | Compared, approved                                                   |
+| `Loading/Startup`                 | The wiki's capture, the element marks' vectors            | Compared, approved                                                   |
+| `Login/Interface`                 | The English recording's frames                            | Compared over its frames at each stage, approved                     |
+| `genshin-interface` pieces        | The English and the 1440 high recordings                  | Measured, approved in their own suite                                |
+| `Login/Scene` camera              | The walkway's edges in the four skies                     | Derived, flying along −z from the walkway's far end                  |
+| `Login/Scene` towers              | The stage's `LoginScene_Build*` meshes and placements     | Fitted as lathes, placed where the game stands them                  |
+| `Login/Scene` walkway             | `LoginScene_Bridge01_*` meshes                            | Fitted as a footprint and its two heights                            |
+| `Login/Scene` door                | The stage's `LoginScene_Door01_Vo`                        | Placed and sized by its mesh; stands once the flight reaches it      |
+| `Login/Scene` bridges and pillars | The stage's `LoginScene_Bridge02`–`04`, `Pillar03` meshes | Fitted as visual hulls, placed and turned where the game stands them |
+| `Login/Scene` stone               | Every `LoginScene_*_Diffuse`                              | Fitted as one albedo                                                 |
+| `Login/Scene` clouds              | The three `Enviro_Clouds_*_Particle_Atlas` textures       | Fitted as sprites; each band's spread measured off the captures      |
+| `Login/Scene` sky and haze        | `Enviro_Sky_Gradient`, the four skies' pixels             | Horizon band fitted; colours and light strengths measured            |
+| `Login/Scene` broken pieces       | `LoginScene_Broken_*` meshes                              | Exported; no placement in the arrangements shown                     |
 
 ## Key files
 
