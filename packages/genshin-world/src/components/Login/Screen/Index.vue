@@ -106,7 +106,8 @@ watchImmediate(stage, (newStage) => {
 const onClick = (event: MouseEvent): void => {
   if (checkIsNestedInteraction(event)) return;
   else if (stage.value === LoginStage.Title) stage.value = LoginStage.Preparing;
-  else if (stage.value === LoginStage.Door) stage.value = LoginStage.Entering;
+  // The door opens only once it has risen into place, as its prompt says it can
+  else if (stage.value === LoginStage.Door && isDoorFormed.value) stage.value = LoginStage.Entering;
 };
 </script>
 
