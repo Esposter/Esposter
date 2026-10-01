@@ -38,8 +38,6 @@ export const LOGIN_CLOUD_SEA_ROW = { count: 2, length: 300 };
 export const LOGIN_GLIDE_TITLE_SPEED = 3.03;
 export const LOGIN_GLIDE_PREPARING_SPEED = 3.7;
 export const LOGIN_GLIDE_ACCELERATION = 0.55;
-// How long the glide takes from the door being due to resting at it, wherever the walkway's copies stand then
-export const LOGIN_GLIDE_APPROACH_SECONDS = 1.5;
 // Where the glide comes to rest at the door, as metres scrolled: nine of the walkway's copies, the towers' row 144
 // Metres along its loop, as both door references place it (genshin:parity place, their towers and bridges moved as one
 // With the camera held: 145.8 and 144.4 along, their other axes scattering either way). There the lantern tower stands
