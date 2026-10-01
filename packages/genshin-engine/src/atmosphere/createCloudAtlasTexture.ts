@@ -1,5 +1,6 @@
 import type { CloudSprite } from "#src/atmosphere/CloudSprite";
 
+import { addSmoothLoop } from "#src/materials/addSmoothLoop";
 import { CanvasTexture, LinearFilter, NoColorSpace } from "three";
 
 // How soft a cloud's edges are painted, its fill blurred by this share of a cell
@@ -27,18 +28,11 @@ export const createCloudAtlasTexture = (
         (column + x) * cellSize,
         (row + 1 - y) * cellSize,
       ];
-      for (const loop of loops) {
-        const points = loop.map((point) => toCanvas(point));
-        const readMidpoint = (index: number): [number, number] => {
-          const [startX = 0, startY = 0] = points[index % points.length] ?? [];
-          const [endX = 0, endY = 0] = points[(index + 1) % points.length] ?? [];
-          return [(startX + endX) / 2, (startY + endY) / 2];
-        };
-        if (points.length < 3) continue;
-        path.moveTo(...readMidpoint(points.length - 1));
-        for (const [index, [x, y]] of points.entries()) path.quadraticCurveTo(x, y, ...readMidpoint(index));
-        path.closePath();
-      }
+      for (const loop of loops)
+        addSmoothLoop(
+          path,
+          loop.map((point) => toCanvas(point)),
+        );
       context.fillStyle = style;
       // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
       context.fill(path, "evenodd");

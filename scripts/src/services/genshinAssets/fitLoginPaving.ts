@@ -1,13 +1,15 @@
 import type { AssetPlacement } from "#src/models/genshinAssets/AssetPlacement";
 
 import { findProfileMinima } from "#src/services/genshinAssets/findProfileMinima";
+import { blurWithinTags } from "#src/services/genshinAssets/blurWithinTags";
 import { rasterizeTopFaces } from "#src/services/genshinAssets/rasterizeTopFaces";
 import { readMaterialNames } from "#src/services/genshinAssets/readMaterialNames";
 import { readObjMesh } from "#src/services/genshinAssets/readObjMesh";
-import { roundFitted } from "#src/services/genshinAssets/roundFitted";
+import { readOtsuThreshold } from "#src/services/genshinAssets/readOtsuThreshold";
 import { toRightHanded } from "#src/services/genshinAssets/toRightHanded";
+import { toTexel } from "#src/services/genshinAssets/toTexel";
 import { toWorldVertices } from "#src/services/genshinAssets/toWorldVertices";
-import { traceCoveredGrid } from "#src/services/genshinAssets/traceCoveredGrid";
+import { traceCellLoops } from "#src/services/genshinAssets/traceCellLoops";
 import { join } from "node:path";
 import sharp from "sharp";
 
@@ -34,32 +36,11 @@ const LOOP_TOLERANCE_CELLS = 1;
 const JOINT_OPTIONS = { prominence: 6, radius: 6, sideRange: [8, 20] } as const;
 // The rows of a course read for its joints, clear of the lines between courses
 const COURSE_INSET_SHARE = 0.125;
-const BYTE = 255;
 type Loop = [number, number][];
-// The between-class variance's best threshold over a set of byte values
-const readOtsuThreshold = (values: readonly number[]): number => {
-  const histogram = Array.from({ length: BYTE + 1 }, () => 0);
-  for (const value of values) histogram[Math.round(value)] = (histogram[Math.round(value)] ?? 0) + 1;
-  const total = values.length;
-  const sum = histogram.reduce((partial, count, value) => partial + count * value, 0);
-  let [backgroundSum, backgroundCount, bestVariance, threshold] = [0, 0, 0, 0];
-  for (const [value, count] of histogram.entries()) {
-    backgroundCount += count;
-    const foregroundCount = total - backgroundCount;
-    if (backgroundCount === 0 || foregroundCount === 0) continue;
-    backgroundSum += count * value;
-    const variance =
-      backgroundCount *
-      foregroundCount *
-      (backgroundSum / backgroundCount - (sum - backgroundSum) / foregroundCount) ** 2;
-    if (variance > bestVariance) [bestVariance, threshold] = [variance, value];
-  }
-  return threshold;
-};
 // The walkway's paving as the lines its stone is set out by, each a loop in three's axes over one copy of the walkway
 // As `fitLoginWalkway` lays out its pieces, inside the plan's corner and size: every brick of its middle lane, and
-// Every pocket sunk into its side lanes' and its wings' stone. Each piece's faces that look up are drawn into a plan through their own texture coordinates
-// (`rasterizeTopFaces`), each cell reading its material's texture. A pocket is the stone darker than its material's
+// Every pocket sunk into its side lanes' and its wings' stone. Each piece's faces that look up are drawn into a plan
+// Through their own texture coordinates (`rasterizeTopFaces`), each cell reading its material's texture. A pocket is the stone darker than its material's
 // Threshold between its two tones, read past its speckle. A brick is the cells of one course of the brick texture
 // Between one joint and the next, the texture's own, so each brick is laid where the game's coordinates lay it
 export const fitLoginPaving = async (
@@ -120,15 +101,11 @@ export const fitLoginPaving = async (
     ),
   );
   // Each cell's texel in its material's texture, its coordinates tiled and its rows read from the top
-  const readTexel = (cell: number): [number, number] => {
-    const { info } = textures[tags[cell] ?? 0] ?? { info: { height: 1, width: 1 } };
-    const u = values[cell * 2] ?? 0;
-    const v = values[cell * 2 + 1] ?? 0;
-    return [
-      Math.min(Math.floor((u - Math.floor(u)) * info.width), info.width - 1),
-      Math.min(Math.floor((1 - (v - Math.floor(v))) * info.height), info.height - 1),
-    ];
-  };
+  const readTexel = (cell: number): [number, number] =>
+    toTexel(
+      [values[cell * 2] ?? 0, values[cell * 2 + 1] ?? 0],
+      (textures[tags[cell] ?? 0] ?? { info: { height: 1, width: 1 } }).info,
+    );
   const grey = new Float32Array(width * height);
   for (let cell = 0; cell < width * height; cell++) {
     const texture = textures[tags[cell] ?? -1];
@@ -136,46 +113,21 @@ export const fitLoginPaving = async (
     const [column, row] = readTexel(cell);
     grey[cell] = texture.data[(row * texture.info.width + column) * texture.info.channels] ?? 0;
   }
-  // Each cell's stone read over its neighbours of its own material
-  const readBlurred = (cell: number): number => {
-    const [column, row] = [cell % width, Math.floor(cell / width)];
-    let [sum, count] = [0, 0];
-    for (let rowOffset = -POCKET_BLUR_CELLS; rowOffset <= POCKET_BLUR_CELLS; rowOffset++)
-      for (let columnOffset = -POCKET_BLUR_CELLS; columnOffset <= POCKET_BLUR_CELLS; columnOffset++) {
-        const [neighbourColumn, neighbourRow] = [column + columnOffset, row + rowOffset];
-        const neighbour = neighbourRow * width + neighbourColumn;
-        if (neighbourColumn < 0 || neighbourRow < 0 || neighbourColumn >= width || neighbourRow >= height) continue;
-        if (tags[neighbour] !== tags[cell]) continue;
-        sum += grey[neighbour] ?? 0;
-        count++;
-      }
-    return sum / Math.max(count, 1);
-  };
-  // The loops round a set of cells, traced over the cells' own bounds, in metres
-  const traceCells = (cells: readonly number[]): Loop[] => {
-    const columns = cells.map((cell) => cell % width);
-    const rows = cells.map((cell) => Math.floor(cell / width));
-    const [firstColumn, firstRow] = [Math.min(...columns), Math.min(...rows)];
-    const boundsWidth = Math.max(...columns) - firstColumn + 1;
-    const boundsHeight = Math.max(...rows) - firstRow + 1;
-    const covered = new Uint8Array(boundsWidth * boundsHeight);
-    for (const [index, column] of columns.entries())
-      covered[((rows[index] ?? 0) - firstRow) * boundsWidth + column - firstColumn] = 1;
-    return traceCoveredGrid(covered, { height: boundsHeight, tolerance: LOOP_TOLERANCE_CELLS, width: boundsWidth })
-      .filter((loop) => Math.abs(readLoopArea(loop)) >= MIN_LOOP_CELLS)
-      .map((loop) =>
-        loop.map(([column, row]): [number, number] => [
-          roundFitted(PLAN_CORNER[0] + (firstColumn + column) * CELL_SIZE),
-          roundFitted(PLAN_CORNER[1] + (firstRow + row) * CELL_SIZE),
-        ]),
-      );
-  };
+  const traceCells = (cells: readonly number[]): Loop[] =>
+    traceCellLoops(cells, {
+      cellSize: CELL_SIZE,
+      corner: PLAN_CORNER,
+      minCells: MIN_LOOP_CELLS,
+      tolerance: LOOP_TOLERANCE_CELLS,
+      width,
+    });
+  // Each cell's stone read over its neighbours of its own material, past the speckle the texture paints it with
+  const blurred = blurWithinTags(grey, tags, { height, radius: POCKET_BLUR_CELLS, width });
   const pockets = materialNames.flatMap((material, tag) => {
     if (!POCKET_MATERIALS.has(material)) return [];
     const cells = Array.from({ length: width * height }, (_, cell) => cell).filter((cell) => tags[cell] === tag);
-    const blurred = new Map(cells.map((cell) => [cell, readBlurred(cell)]));
-    const threshold = readOtsuThreshold([...blurred.values()]);
-    return traceCells(cells.filter((cell) => (blurred.get(cell) ?? 0) < threshold));
+    const threshold = readOtsuThreshold(cells.map((cell) => blurred[cell] ?? 0));
+    return traceCells(cells.filter((cell) => (blurred[cell] ?? 0) < threshold));
   });
   const brickTag = materialNames.indexOf(BRICK_MATERIAL);
   const brickTexture = textures[brickTag];
@@ -226,8 +178,3 @@ export const fitLoginPaving = async (
   const bricks = [...labelCellsMap.values()].flatMap((cells) => traceCells(cells));
   return { bricks, corner: PLAN_CORNER, pockets, size: PLAN_SIZE };
 };
-const readLoopArea = (loop: readonly [number, number][]): number =>
-  loop.reduce((sum, [x, y], index) => {
-    const [nextX, nextY] = loop[(index + 1) % loop.length] ?? [x, y];
-    return sum + x * nextY - nextX * y;
-  }, 0) / 2;

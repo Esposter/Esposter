@@ -16,6 +16,7 @@ import {
   LOGIN_DOOR_RISE_KEYFRAMES,
 } from "#src/services/login/door/constants";
 import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoorGeometry";
+import { createLoginDoorRelief } from "#src/services/login/door/createLoginDoorRelief";
 import { createLoginHullsGeometry } from "#src/services/login/hull/createLoginHullsGeometry";
 import { advanceLoginGlide } from "#src/services/login/scene/advanceLoginGlide";
 import {
@@ -180,6 +181,10 @@ const doorMaterial = createStoneMaterial(
     ),
   ),
 );
+// The door's front painted with its panel's raised bands and its feet's gilding over its stone
+const doorAlbedo = color(stone.door.albedo).mul(createLoginDoorRelief());
+doorFrameMaterial.colorNode = doorAlbedo;
+doorMaterial.colorNode = doorAlbedo;
 const towersGeometry = createLoginTowersGeometry();
 const hullsGeometry = createLoginHullsGeometry();
 const walkwayPieces = createLoginWalkwayPieces();

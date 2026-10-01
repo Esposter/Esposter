@@ -34,7 +34,7 @@ export const fitLoginScene = async (): Promise<string> => {
     fitLoginTowers(placements, meshDirectory),
     fitLoginWalkway(placements, meshDirectory),
     fitLoginPaving(placements, meshDirectory, textureDirectory),
-    fitLoginDoor(placements, meshDirectory),
+    fitLoginDoor(placements, meshDirectory, textureDirectory),
     fitLoginHulls(placements, meshDirectory),
     fitLoginClouds(textureDirectory),
     fitSkyGradient(join(textureDirectory, "Enviro_Sky_Gradient.png")),
