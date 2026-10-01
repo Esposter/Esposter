@@ -1,4 +1,4 @@
-import { GameLanguage, GameLanguages } from "#src/models/GameLanguage";
+import { GameLanguages } from "#src/models/GameLanguage";
 import { checkIsGameLanguage } from "#src/services/checkIsGameLanguage";
 import { describe, expect, test } from "vitest";
 

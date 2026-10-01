@@ -1,4 +1,5 @@
 import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
+import { checkIsServer } from "@esposter/shared";
 import {
   ENGLISH_GAME_TEXT,
   GameLanguage,
@@ -16,7 +17,7 @@ export const useGameText = async () => {
     AsyncDataKey.GameText,
     async () => {
       const language = matchGameLanguage(
-        import.meta.server ? getAcceptLanguageTags(acceptLanguage) : navigator.languages,
+        checkIsServer() ? getAcceptLanguageTags(acceptLanguage) : window.navigator.languages,
       );
       return { language, text: await GameTextLoaderMap[language]() };
     },
