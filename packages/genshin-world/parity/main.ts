@@ -1,13 +1,16 @@
 /* eslint-disable no-restricted-syntax -- the parity page's entry runs only in a browser, never under server rendering */
 import type { WitnessView } from "#parity/witness/setWitnessView";
+import type { SceneContext } from "#src/models/scene/SceneContext";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 
 import "@fontsource/signika/600.css";
+import { benchScene } from "#parity/benchScene";
 import { screens } from "#parity/screens";
 import { loadWitness } from "#parity/witness/loadWitness";
 import { readWitnessPoints } from "#parity/witness/readWitnessPoints";
 import { renderWitnessTargets } from "#parity/witness/renderWitnessTargets";
 import { setWitnessView } from "#parity/witness/setWitnessView";
+import { SceneContextKey } from "#src/services/scene/SceneContextKey";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { capitalize, jsonDateParse } from "@esposter/shared";
 
@@ -17,7 +20,8 @@ import { capitalize, jsonDateParse } from "@esposter/shared";
 // Marks the page drawn, holding the screen's name, or nothing for the list, so a name with no fixture is told apart.
 // `&backdrop=<file>` draws that image under the screen, for an overlay shot over the frame it is judged against, and
 // `&variant=<name>` renders the fixture's variant of that name, and `&witness=<layout>` draws a scene's exports in place
-// Of its own parts, from the layout the shooting browser serves there
+// Of its own parts, from the layout the shooting browser serves there. A tool sets the screen's props as it runs, to
+// Play a motion at known moments, and benches a scene's frames
 const holdAnimations = (): void => {
   // Reading the animations resolves the styles that start them, and a held one stays listed once it would have ended
   for (const animation of window.document.getAnimations()) animation.pause();
@@ -51,25 +55,28 @@ if (screen && root) {
   const witnessParts = witnessLayoutUrl ? await loadWitness(witnessLayoutUrl, screen.witnessFamilies) : null;
   const witness: null | SceneWitness = witnessParts
     ? {
-        context: shallowRef(),
         families: ref(witnessParts.children.map(({ name: family }) => family)),
         isAlone: ref(false),
         isClockHeld: ref(false),
         parts: witnessParts,
       }
     : null;
+  const sceneContext = shallowRef<SceneContext>();
   createApp({
     setup: () => {
+      provide(SceneContextKey, sceneContext);
       if (witness) provide(SceneWitnessKey, witness);
       return () => h(component, { ...props, ...readyProps });
     },
   }).mount(root);
+  Reflect.set(window, "setScreenProps", (screenProps: Record<string, unknown>) => Object.assign(props, screenProps));
+  Reflect.set(window, "benchScene", (frameCount: number) => benchScene(sceneContext.value, frameCount));
   // The camera solve and the loss table set the witness's view from the shooting browser, one view a call
   if (witness) {
     Reflect.set(window, "setWitnessView", (view: WitnessView) => setWitnessView(witness, view));
     // Its G-buffer at the view last set, which the pose, the overlay, the layers' scores and calibration read
-    Reflect.set(window, "renderWitnessTargets", (targets?: Parameters<typeof renderWitnessTargets>[1]) =>
-      renderWitnessTargets(witness, targets),
+    Reflect.set(window, "renderWitnessTargets", (targets?: Parameters<typeof renderWitnessTargets>[2]) =>
+      renderWitnessTargets(witness, sceneContext.value, targets),
     );
     // Its landmarks' places in the world, which a pose is solved from
     Reflect.set(window, "readWitnessPoints", (landmarks: Parameters<typeof readWitnessPoints>[1]) =>

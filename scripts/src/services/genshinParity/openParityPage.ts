@@ -5,6 +5,7 @@ import { getComponentDirectory } from "#src/services/genshinAssets/getComponentD
 import {
   INTERFACE_HEIGHT,
   PARITY_BACKDROP_FILE,
+  PARITY_FRAME_MS,
   PARITY_PAGE_URL,
   WITNESS_LAYOUT_PATH,
   WITNESS_PATH_PREFIX,
@@ -20,13 +21,20 @@ import { chromium } from "playwright";
 export const openParityPage = async ({
   backdropPath,
   height,
+  isClockFaked,
+  isFrameRateUnlimited,
   motion,
   props,
   screen,
   width,
   witness,
 }: ParityPageOptions): Promise<{ browser: Browser; page: Page }> => {
-  const browser = await chromium.launch({ channel: "msedge" });
+  // Unlimited, a frame is drawn as soon as the last is, so a frame's time is what drawing it costs rather than the
+  // Display's refresh
+  const browser = await chromium.launch({
+    args: isFrameRateUnlimited ? ["--disable-gpu-vsync", "--disable-frame-rate-limit"] : [],
+    channel: "msedge",
+  });
   // A failure once the browser is open closes it, since no caller receives a browser to close
   return getResultAsync(async () => {
     const deviceScaleFactor = height / INTERFACE_HEIGHT;
@@ -48,9 +56,18 @@ export const openParityPage = async ({
         return route.fulfill({ path: path === WITNESS_LAYOUT_PATH ? join(root, "witness.json") : join(assets, path) });
       });
     }
+    // A faked clock runs only as far as the caller moves it, frame by frame, so a motion is shot at exact moments
+    if (isClockFaked) await page.clock.install({ time: 0 });
     await page.goto(`${PARITY_PAGE_URL}${screen}${motionQuery}${propsQuery}${backdropQuery}${witnessQuery}`, {
       waitUntil: "networkidle",
     });
+    let isReady = !isClockFaked;
+    while (!isReady) {
+      // oxlint-disable-next-line no-await-in-loop -- the page draws one frame after another until it is ready
+      await page.clock.runFor(PARITY_FRAME_MS);
+      // oxlint-disable-next-line no-await-in-loop -- read after the frame it drew
+      isReady = await page.evaluate(() => window.document.body.dataset.parityReady !== undefined);
+    }
     const readyScreen = await page.locator("[data-parity-ready]").getAttribute("data-parity-ready");
     // An unknown name draws the list of screens, which would otherwise be shot and scored as the screen
     if (readyScreen !== screen)

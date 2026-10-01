@@ -1,8 +1,8 @@
 import type { Page } from "playwright";
 
 import { computeDistanceTransform } from "#src/services/genshinParity/computeDistanceTransform";
-import { findFamilyBoundaries } from "#src/services/genshinParity/findFamilyBoundaries";
 import { minimizeNelderMead } from "#src/services/genshinParity/minimizeNelderMead";
+import { readFamilyEdgeDistance } from "#src/services/genshinParity/readFamilyEdgeDistance";
 import { readStructureEdges } from "#src/services/genshinParity/readStructureEdges";
 import { readWitnessPartTarget } from "#src/services/genshinParity/readWitnessPartTarget";
 import { setPageWitnessView } from "#src/services/genshinParity/setPageWitnessView";
@@ -41,17 +41,7 @@ export const refineCameraPose = async (
   const edgeDistances = computeDistanceTransform(edges, width, height);
   const readDistance = async (candidate: readonly number[]): Promise<number> => {
     await setPageWitnessView(page, { camera: toPageCamera(candidate) });
-    const gbuffer = await readWitnessPartTarget(page);
-    const { familyIndices, mask } = findFamilyBoundaries(gbuffer);
-    const familyIndexSet = new Set(families.map((family) => gbuffer.families.indexOf(family)));
-    let sum = 0;
-    let count = 0;
-    for (const [pixel, isBoundary] of mask.entries())
-      if (isBoundary && pixel >= topPixel && familyIndexSet.has(familyIndices[pixel] ?? -1)) {
-        sum += edgeDistances[pixel] ?? 0;
-        count++;
-      }
-    return count ? sum / count : Infinity;
+    return readFamilyEdgeDistance(page, { edgeDistances, families, topPixel });
   };
   const freeAxes = pose.flatMap((_, axis) => (heldAxes.includes(axis) ? [] : [axis]));
   const toPose = (free: readonly number[]): number[] =>

@@ -12,10 +12,12 @@ const POSE_TOLERANCE = 1e-3;
 // A view of the witness render as the tools set it: a camera pose (the eye in three's axes, its heading about y and its
 // Pitch about x in radians, its vertical field of view in degrees), the families of parts the witness draws in place of
 // The scene's own (every family it has unless told), how it shades its exports, and whether the scene draws alone,
-// Without its own fog, clouds and cloud sea
+// Without its own fog, clouds and cloud sea; and how far each family of its parts stands off its laid-out place, in
+// Metres in three's axes, for a family's place to be solved on its edges (every family at its own place unless told)
 export interface WitnessView {
   camera?: { fov: number; pitch: number; position: [number, number, number]; yaw: number };
   families?: string[];
+  familyOffsets?: Record<string, [number, number, number]>;
   isAlone?: boolean;
   shading?: WitnessShading;
 }
@@ -25,12 +27,21 @@ export interface WitnessView {
 // Throws rather than scoring the scene's own view
 export const setWitnessView = async (
   { families, isAlone, isClockHeld, parts }: SceneWitness,
-  { camera, families: viewFamilies, isAlone: isViewAlone = false, shading = WitnessShading.Exported }: WitnessView,
+  {
+    camera,
+    families: viewFamilies,
+    familyOffsets = {},
+    isAlone: isViewAlone = false,
+    shading = WitnessShading.Exported,
+  }: WitnessView,
 ): Promise<void> => {
   isClockHeld.value = true;
   isAlone.value = isViewAlone;
   families.value = viewFamilies ?? parts.children.map(({ name }) => name);
-  for (const group of parts.children) group.visible = families.value.includes(group.name);
+  for (const group of parts.children) {
+    group.visible = families.value.includes(group.name);
+    group.position.set(...(familyOffsets[group.name] ?? [0, 0, 0]));
+  }
   parts.traverse((object) => {
     const shadingMaterialMap = object.userData.shadingMaterialMap as
       | Record<WitnessShading, Mesh["material"]>

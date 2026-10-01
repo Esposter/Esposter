@@ -11,6 +11,9 @@ export const REFERENCES_DIRECTORY: string = join(PARITY_DIRECTORY, "references")
 export const FRAMES_DIRECTORY: string = join(PARITY_DIRECTORY, "frames");
 export const CAPTURES_DIRECTORY: string = join(PARITY_DIRECTORY, "captures");
 export const SHOTS_DIRECTORY: string = join(PARITY_DIRECTORY, "shots");
+export const FILMS_DIRECTORY: string = join(PARITY_DIRECTORY, "films");
+// A frame at 60 a second, the step a faked clock is moved by
+export const PARITY_FRAME_MS: number = 1000 / 60;
 export const COMPARISONS_DIRECTORY: string = join(PARITY_DIRECTORY, "comparisons");
 // Each reference's witness G-buffer, its targets as raw floats beside a header and a preview
 export const GBUFFER_DIRECTORY: string = join(PARITY_DIRECTORY, "gbuffer");

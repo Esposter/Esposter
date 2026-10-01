@@ -1,6 +1,7 @@
 import type { PostPipeline, PostPipelineOptions, QualityTier } from "genshin-engine";
 import type { MaybeRefOrGetter } from "vue";
 
+import { SceneContextKey } from "#src/services/scene/SceneContextKey";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
 import { watchImmediate } from "@vueuse/core";
@@ -9,14 +10,15 @@ import { AntialiasingMode, createPostPipeline, QualityTierSettingsMap } from "ge
 // The engine's post chain draws each frame in place of TresJS's plain render of the scene. The camera registers after
 // The canvas mounts, so the chain is built once the camera exists, and rebuilt only when the camera or the tier
 // Changes. Called from a component inside the canvas, whose context it reads. The chain is handed back so the tuning
-// Panel reaches its passes. Under the witness render the chain resolves edges without a temporal history, and hands the
-// Witness what it renders with
+// Panel reaches its passes. Under the witness render the chain resolves edges without a temporal history, and a host
+// That asks is handed what it renders with
 export const usePostPipeline = (
   qualityTier: MaybeRefOrGetter<QualityTier>,
   postInputs: Pick<PostPipelineOptions, "fogUniforms" | "godraysLight" | "gradeLutTexture" | "postUniforms">,
 ) => {
   const { camera, renderer, scene } = useTres();
   const witness = inject(SceneWitnessKey, null);
+  const sceneContext = inject(SceneContextKey, null);
   const { render } = useLoop();
   const postPipeline = shallowRef<PostPipeline>();
 
@@ -35,8 +37,8 @@ export const usePostPipeline = (
             scene: scene.value,
           })
         : undefined;
-    if (witness && activeCamera && isWebGPURenderer(renderer))
-      witness.context.value = { camera: activeCamera, renderer, scene: scene.value };
+    if (sceneContext && activeCamera && isWebGPURenderer(renderer))
+      sceneContext.value = { camera: activeCamera, renderer, scene: scene.value };
   });
 
   render((notifySuccess) => {

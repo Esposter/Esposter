@@ -27,6 +27,12 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | The camera's pose                       | `genshin:parity pose`: landmarks, refined on edges                  |
 | The camera's path over a flight         | `genshin:parity track`: the pose at each frame, `--top-row` clear   |
 | A world's pace past a still camera      | `genshin:parity glide`: the ground resampled into metres, per frame |
+| Our scene's motion at exact moments     | `genshin:parity film`: a faked clock, stages set at moments         |
+| A scene's frame cost, and what it is    | `genshin:parity bench`: frame time, draw calls, objects by kind     |
+| Where a row of parts stands, held cam   | `genshin:parity place`: one offset refined on its families' edges   |
+| Whether a stand-in blocks a path        | `genshin:assets clearance`, held by the hulls' test                 |
+| A stand-in seen where no reference is   | `genshin:parity view`: any camera, ours beside the exports          |
+| One region across frames, or ours       | `zoom --with`: the region of each image stacked                     |
 | A render that settles in one frame      | the witness: SMAA, its clock held, one frame                        |
 | Depth, normal, albedo, part per pixel   | `genshin:parity gbuffer`                                            |
 | Where each part lands on the reference  | `genshin:parity overlay`: boundaries, edge distance                 |
