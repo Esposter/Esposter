@@ -3,7 +3,7 @@ import type { ParityPageOptions } from "#src/models/genshinParity/ParityPageOpti
 import { FILMS_DIRECTORY, PARITY_FRAME_MS } from "#src/services/genshinParity/constants";
 import { openParityPage } from "#src/services/genshinParity/openParityPage";
 import { writeContactSheet } from "#src/services/genshinParity/writeContactSheet";
-import { withFinalizerAsync } from "@esposter/shared";
+import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { mkdir, rm } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -22,6 +22,9 @@ export const filmScreen = async ({
   propsAt?: Record<string, Record<string, unknown>>;
   stepMs: number;
 }): Promise<string[]> => {
+  // A step of none or of Infinity (an fps of 0) would never move the clock past a moment, and the film would never end
+  if (!Number.isFinite(stepMs) || stepMs <= 0)
+    throw new InvalidOperationError(Operation.Read, "fps", "not a positive number of stills a second");
   const directory = join(FILMS_DIRECTORY, options.screen);
   await rm(directory, { force: true, recursive: true });
   await mkdir(directory, { recursive: true });
