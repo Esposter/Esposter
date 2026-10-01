@@ -8,6 +8,12 @@ import { GenshinWorld } from "genshin-world";
 import TerrainTileWorker from "genshin-world/terrainTileWorker?worker";
 import { PCFShadowMap } from "three";
 
+interface Props {
+  // Whether something covers the world, which then keeps loading but draws no frames until it is shown
+  isPaused?: true;
+}
+
+const { isPaused } = defineProps<Props>();
 const emit = defineEmits<{ load: []; ready: [] }>();
 const qualityTier = QualityTier.High;
 const { maxPixelRatio } = QualityTierSettingsMap[qualityTier];
@@ -23,6 +29,7 @@ onMounted(() => {
     <TresCanvas
       :dpr="[1, maxPixelRatio]"
       :renderer="({ canvas }: TresRendererSetupContext) => createGenshinRenderer(unref(canvas))"
+      :render-mode="isPaused ? 'manual' : 'always'"
       :tone-mapping="GENSHIN_TONE_MAPPING"
       shadows
       :shadow-map-type="PCFShadowMap"
