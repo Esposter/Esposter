@@ -1,6 +1,7 @@
 import type { CommandDef } from "citty";
 
 import { attributeCommand } from "#src/services/genshinParity/commands/attributeCommand";
+import { calibrateCommand } from "#src/services/genshinParity/commands/calibrateCommand";
 import { compareCommand } from "#src/services/genshinParity/commands/compareCommand";
 import { fetchCommand } from "#src/services/genshinParity/commands/fetchCommand";
 import { framesCommand } from "#src/services/genshinParity/commands/framesCommand";
@@ -10,11 +11,12 @@ import { lumaCommand } from "#src/services/genshinParity/commands/lumaCommand";
 import { measureCommand } from "#src/services/genshinParity/commands/measureCommand";
 import { overlayCommand } from "#src/services/genshinParity/commands/overlayCommand";
 import { polarCommand } from "#src/services/genshinParity/commands/polarCommand";
+import { poseCommand } from "#src/services/genshinParity/commands/poseCommand";
 import { recordCommand } from "#src/services/genshinParity/commands/recordCommand";
 import { shootCommand } from "#src/services/genshinParity/commands/shootCommand";
-import { solveCameraCommand } from "#src/services/genshinParity/commands/solveCameraCommand";
 import { stillCommand } from "#src/services/genshinParity/commands/stillCommand";
 import { traceCommand } from "#src/services/genshinParity/commands/traceCommand";
+import { trackCommand } from "#src/services/genshinParity/commands/trackCommand";
 import { zoomCommand } from "#src/services/genshinParity/commands/zoomCommand";
 import { defineCommand } from "citty";
 
@@ -26,9 +28,11 @@ export const genshinParityCommand: CommandDef = defineCommand({
     compare: compareCommand,
     attribute: attributeCommand,
     gbuffer: gbufferCommand,
+    calibrate: calibrateCommand,
     overlay: overlayCommand,
+    pose: poseCommand,
+    track: trackCommand,
     shoot: shootCommand,
-    "solve-camera": solveCameraCommand,
     frames: framesCommand,
     measure: measureCommand,
     luma: lumaCommand,

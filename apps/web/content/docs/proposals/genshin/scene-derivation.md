@@ -97,7 +97,7 @@ The login scene is the first scene run through this method. What it has found so
 
 ## Scope
 
-The first steps are built: `genshin:assets shaders`, `inventory` and `witness` ([derived assets](/docs/genshin/derived-assets)), the witness render on the parity page, `genshin:parity compare --witness`, `attribute` with its committed loss table, and the detail score ([parity](/docs/genshin/parity)). The rest of the method's tools, each with the unknown it answers and what it supersedes, are the [scene toolbox](/docs/proposals/genshin/scene-toolbox). The toon ramp, the outlines and the kits stay until the loss table says what replaces them.
+Most of the method's tools are built: `genshin:assets tree`, the closure `extract`, `behaviours`, `spawns`, `arrangement`, `shaders`, `inventory` and `witness` ([derived assets](/docs/genshin/derived-assets)), and the deterministic witness with its G-buffer, `gbuffer`, `overlay`, `pose`, `track`, `compare --witness` with its layers and FLIP, and `attribute` with its committed loss table per layer ([parity](/docs/genshin/parity)). The rest, calibration by regression and shader reading, are the [scene toolbox](/docs/proposals/genshin/scene-toolbox). The toon ramp, the outlines and the kits stay until the loss table says what replaces them.
 
 ## Key files
 

@@ -1,9 +1,8 @@
-// One row of a scene's loss table: a view of the witness render, and its scores against the references, averaged over
-// Them: the line distance between the towers' sides in pixels, the shape, the tone and the detail
+import type { LayerScore } from "#src/models/genshinParity/LayerScore";
+
+// One row of a scene's loss table: a view of the witness render, and its scores against the references layer by layer,
+// The frame first, each averaged over the references that hold that layer
 export interface AttributionRow {
-  detail: number;
-  lineDistance: number;
+  layers: LayerScore[];
   name: string;
-  shape: number;
-  tone: number;
 }

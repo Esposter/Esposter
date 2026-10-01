@@ -94,3 +94,9 @@ export const FAMILY_COLORS: readonly [number, number, number][] = [
 // A camera pose as the witness tools take it: the eye's x, y and z in three's axes, its heading and pitch in degrees,
 // And its vertical field of view in degrees
 export const CAMERA_POSE_AXES = ["x", "y", "z", "yaw", "pitch", "fov"] as const;
+// FLIP's default viewing: 0.7 metres from a 0.7 metre wide screen of 3840 pixels, about 67 pixels a degree, which a
+// Frame scored at another width stands for by its share of that screen
+export const FLIP_SCREEN_WIDTH = 3840;
+export const FLIP_PIXELS_PER_DEGREE: number = 0.7 * (FLIP_SCREEN_WIDTH / 0.7) * (Math.PI / 180);
+// The layer of a scene's pixels no part covers: the sky, its clouds and whatever the scene draws past its parts
+export const SKY_LAYER = "sky";

@@ -19,13 +19,18 @@ const checkHasEdgeNear = (edges: Uint8Array, x: number, y: number, height: numbe
     }
   return false;
 };
-// The share of one mask's edges with an edge of the other within the tolerance
-const readMatchedShare = (edges: Uint8Array, otherEdges: Uint8Array, height: number): number => {
+// The share of one mask's edges with an edge of the other within the tolerance, over the pixels a layer covers
+const readMatchedShare = (
+  edges: Uint8Array,
+  otherEdges: Uint8Array,
+  height: number,
+  layer: Uint8Array | undefined,
+): number => {
   let count = 0;
   let matched = 0;
   for (let y = 0; y < height; y++)
     for (let x = 0; x < STRUCTURE_WIDTH; x++) {
-      if (!edges[y * STRUCTURE_WIDTH + x]) continue;
+      if (!edges[y * STRUCTURE_WIDTH + x] || (layer && !layer[y * STRUCTURE_WIDTH + x])) continue;
       count++;
       if (checkHasEdgeNear(otherEdges, x, y, height)) matched++;
     }
@@ -33,22 +38,27 @@ const readMatchedShare = (edges: Uint8Array, otherEdges: Uint8Array, height: num
 };
 // How alike two images are where a pixel mean cannot say, as for a scene rebuilt from shapes rather than copied: the
 // Shape is the edges they share, as an F-score of each one's edges found in the other, and the tone is the mean
-// Difference of their colour blurred past any texture, as a percentage
-export const scoreStructure = async (reference: Buffer, ours: Buffer): Promise<StructureScores> => {
+// Difference of their colour blurred past any texture, as a percentage. Given a layer, a mask at the structure's width,
+// Both are read over its pixels alone
+export const scoreStructure = async (reference: Buffer, ours: Buffer, layer?: Uint8Array): Promise<StructureScores> => {
   const { height: referenceHeight, width: referenceWidth } = await sharp(reference).metadata();
   const height = Math.round((STRUCTURE_WIDTH / referenceWidth) * referenceHeight);
   const [referenceEdges, ourEdges] = await Promise.all([
     readStructureEdges(reference, height),
     readStructureEdges(ours, height),
   ]);
-  const precision = readMatchedShare(ourEdges, referenceEdges, height);
-  const recall = readMatchedShare(referenceEdges, ourEdges, height);
+  const precision = readMatchedShare(ourEdges, referenceEdges, height, layer);
+  const recall = readMatchedShare(referenceEdges, ourEdges, height, layer);
   const edgeScore = precision + recall === 0 ? 0 : (2 * precision * recall) / (precision + recall);
   const readTone = (input: Buffer) =>
     sharp(input).resize(STRUCTURE_WIDTH, height, { fit: "fill" }).removeAlpha().blur(TONE_BLUR_SIGMA).raw().toBuffer();
   const [referenceTone, ourTone] = await Promise.all([readTone(reference), readTone(ours)]);
   let toneSum = 0;
-  for (let index = 0; index < referenceTone.length; index++)
+  let toneCount = 0;
+  for (let index = 0; index < referenceTone.length; index++) {
+    if (layer && !layer[Math.floor(index / 3)]) continue;
     toneSum += Math.abs((referenceTone[index] ?? 0) - (ourTone[index] ?? 0));
-  return { edgeScore, toneDifference: (toneSum / referenceTone.length / 255) * 100 };
+    toneCount++;
+  }
+  return { edgeScore, toneDifference: (toneSum / Math.max(toneCount, 1) / 255) * 100 };
 };

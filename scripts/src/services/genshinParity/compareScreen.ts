@@ -1,9 +1,17 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import type { ParityScore } from "#src/models/genshinParity/ParityScore";
 
-import { COMPARISON_HEIGHT, COMPARISONS_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/constants";
+import {
+  COMPARISON_HEIGHT,
+  COMPARISONS_DIRECTORY,
+  REFERENCES_DIRECTORY,
+  STRUCTURE_WIDTH,
+} from "#src/services/genshinParity/constants";
 import { fetchReferences } from "#src/services/genshinParity/fetchReferences";
 import { ParityReferenceMap } from "#src/services/genshinParity/ParityReferenceMap";
+import { readFlipErrorMap } from "#src/services/genshinParity/readFlipErrorMap";
+import { readReferenceGbuffer } from "#src/services/genshinParity/readReferenceGbuffer";
+import { scoreLayers } from "#src/services/genshinParity/scoreLayers";
 import { scoreStructure } from "#src/services/genshinParity/scoreStructure";
 import { shootScreen } from "#src/services/genshinParity/shootScreen";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -16,8 +24,9 @@ const GRID_SIZE = 6;
 const toPercent = (sum: number, count: number): number => (sum / Math.max(count, 1) / 255) * 100;
 // The reference, ours and their difference side by side in one image, and how far apart they are: the mean over the
 // Compared region, then the same over a grid of cells, row by row, so where they differ is read without looking; the
-// Scores are handed back for the committed report. With a witness, the scene draws that component's exports in place
-// Of its own parts, and its image is kept apart from the scene's own
+// Scores are handed back for the committed report, FLIP's perceptual error among them. With a witness, the scene draws
+// That component's exports in place of its own parts, its image is kept apart from the scene's own, and each layer the
+// Witness's part target gives is scored on its own
 export const compareScreen = async (referenceId: string, witness?: DerivedAssetComponent): Promise<ParityScore> => {
   const reference = ParityReferenceMap[referenceId];
   if (!reference)
@@ -78,6 +87,21 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
   console.log(
     `shape ${edgeScore.toFixed(3)} (edges shared, 1 is identical), tone ${toneDifference.toFixed(2)}% (blurred colour)`,
   );
+  const { mean: flip } = await readFlipErrorMap(
+    referenceRegion,
+    shotRegion,
+    STRUCTURE_WIDTH,
+    Math.round((STRUCTURE_WIDTH / region.width) * region.height),
+  );
+  console.log(`FLIP ${flip.toFixed(4)} (perceptual, 0 is identical)`);
+  if (witness) {
+    const { gbuffer, image } = await readReferenceGbuffer(referenceId, witness);
+    const shot = await sharp(shotPath).resize(gbuffer.width, gbuffer.height, { fit: "fill" }).png().toBuffer();
+    for (const { coverage, detail, flip: layerFlip, name, shape, tone } of await scoreLayers(image, shot, gbuffer))
+      console.log(
+        `${name}: ${(coverage * 100).toFixed(1)}% of the frame, shape ${shape.toFixed(3)}, tone ${tone.toFixed(2)}%, detail ${detail.toFixed(2)}%, FLIP ${layerFlip.toFixed(4)}`,
+      );
+  }
   const panelWidth = Math.round((region.width / region.height) * COMPARISON_HEIGHT);
   const panels = await Promise.all(
     [referenceRegion, shotRegion, difference].map((input) =>
@@ -91,5 +115,5 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
     .png()
     .toFile(outputPath);
   console.log(`reference | ours | difference: ${outputPath}`);
-  return { edgeScore, meanDifference, screen: reference.screen, toneDifference };
+  return { edgeScore, flip, meanDifference, screen: reference.screen, toneDifference };
 };

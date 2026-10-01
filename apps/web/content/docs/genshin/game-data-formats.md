@@ -80,7 +80,7 @@ The things that each cost a search to find, to reach for first:
 - **Find a scene's parts from its roots**, never by name: `extract` follows every pointer they reach by file and path ID, and a name pattern holds only what no pointer reaches ([derived assets](/docs/genshin/derived-assets), "Following a scene's pointers").
 - **Find a screen's interface by its buttons' names**: GameObjects are not in the asset index, so a block is found through an indexed asset beside them (a clip such as `Ani_LoginMainPage_*`), then its RectTransforms and GameObjects are dumped.
 - **Look for an exact source before measuring**: a shader's program over a guessed model, a clip's curve over a timed recording, a RectTransform's anchor over a measured position. Measure only what is fieldless.
-- **Match a camera on the towers' sides, never on all edges**: a reference's clouds are most of its edges ([parity](/docs/genshin/parity), `solve-camera`).
+- **Solve a camera from landmarks, then refine it on part boundaries, never on all edges**: a reference's clouds are most of its edges, and the part target draws none ([parity](/docs/genshin/parity), `pose`).
 - **Suspect an arrangement before a camera**: when no pose fits, a root dumped at the origin is the first cause.
 - **Keep a long solve's page apart**: a second checkout's parity page (`GENSHIN_PARITY_PORT`) takes edits while the first holds a solve.
 

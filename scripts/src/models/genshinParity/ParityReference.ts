@@ -12,6 +12,9 @@ interface ParityReferenceBase {
   // The reference is drawn behind the screen, for an overlay (an interface over a scene) judged over the very frame
   // It was taken from, so only the overlay can differ
   isBackdrop?: true;
+  // The pixels, in the reference's own, its component's landmarks are seen at, read by eye and snapped to the nearest
+  // Corner, which `pose` solves the camera from
+  landmarks?: Record<string, [number, number]>;
   // The props the screen is shot with in place of its fixture's, where one screen is judged against several references
   // (a scene at each time of day)
   props?: Record<string, unknown>;

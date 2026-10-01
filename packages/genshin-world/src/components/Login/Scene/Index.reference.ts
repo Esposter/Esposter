@@ -146,6 +146,12 @@ export const reference: ComponentReference = {
         "The door's dais over the walkway at its foot, left to right along that row: 852, 861, 1058 and 1069 pixels, a cross-ratio of 1.0023, which the stage's fitted data holds (1.0000). Fitted over the spawned arrangement it reads -171: the door's anchor stands 70 metres out and 34 up from the walkway, which spans 16 metres at its anchor, so in the static layout the two never meet and the flight's arrangement is a run-time one. The re-fit was not committed. Bridges and the door fit their exports to the centimetre; the towers' fitted feet sit 6.5 metres from their objects' origins on average",
       search: "genshin:assets arrangement login, before and after a fit over the spawned arrangement",
     },
+    {
+      found:
+        "The door alone: its dais's front feet (852, 777 and 1069, 777) and its arch's apex (959, 416), the field of view held at 51.2 from the widths, solve to 0.76 pixels root mean square, and five simplex steps on the door's part boundaries bring them from 0.66 to 0.25 pixels of the recording's edges at 480 wide: the eye at (-25.66, 36.71, -59.32), heading 3.16, pitch -2.04, 10.9 metres in front of the door and 2.6 above its foot. The walkway, the towers and the bridges draw no boundary from there, so in the static layout nothing else is in view of the door; track holds that pose across 13.5 to 14 seconds within a few centimetres",
+      search:
+        "genshin:parity pose login-door-recording --witness login --hold fov --refine 80 --families Door, then track",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",

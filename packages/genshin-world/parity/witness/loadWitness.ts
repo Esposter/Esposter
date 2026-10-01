@@ -13,7 +13,8 @@ const COLOR_SLOTS = new Set<string>([WitnessProperty.MainTexture]);
 // The witness render's parts: the component's exports laid out as `genshin:assets witness` wrote them, each mesh
 // Turned from the export's axes into three's (the export negates x, three negates z, together half a turn about y) and
 // Drawn at every placement with the material each of its submeshes names, in a group per family of the scene's parts
-// Its mesh's name falls in (named by the family, or empty for a mesh no family names), each part named by its mesh. Each drawn mesh keeps its
+// Its mesh's name falls in, each part named by its mesh; given families, a mesh none of them names is left out, and
+// Without them every mesh is drawn in one unnamed family. Each drawn mesh keeps its
 // Material under every shading in its `userData`, for the view to switch between. The meshes and textures are served
 // Beside the layout, by their export folders
 export const loadWitness = async (
@@ -67,7 +68,11 @@ export const loadWitness = async (
     witness.add(group);
     return group;
   };
+  const familyEntries = Object.entries(familyMeshRegexMap);
   for (const { materials, mesh, position, rotation, scale } of layout.placements) {
+    const family = familyEntries.find(([, regex]) => regex.test(mesh))?.[0];
+    // A mesh no family names (the sky's dome, an effect's cone) is drawn by the scene's own shaders, not priced here
+    if (familyEntries.length > 0 && family === undefined) continue;
     const part = new Group();
     part.name = mesh;
     for (const submesh of nameSubmeshesMap.get(mesh) ?? []) {
@@ -87,8 +92,7 @@ export const loadWitness = async (
     part.position.set(...position);
     part.quaternion.set(...rotation);
     part.scale.set(...scale);
-    const family = Object.entries(familyMeshRegexMap).find(([, regex]) => regex.test(mesh))?.[0] ?? "";
-    getFamilyGroup(family).add(part);
+    getFamilyGroup(family ?? "").add(part);
   }
   return witness;
 };

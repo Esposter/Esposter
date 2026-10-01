@@ -1,6 +1,6 @@
 ---
 title: Scene toolbox
-description: Proposal — the tools that make each unknown of a 3D scene answerable on its own, so a scene is solved rather than searched and converges in a pass or two the way the interface does. The camera is solved from correspondences and tracked across a recording, and the grade, fog and light are fitted by regression over the witness's G-buffer. Superseded searches are deleted.
+description: Proposal — the tools that make each unknown of a 3D scene answerable on its own, so a scene is solved rather than searched and converges in a pass or two the way the interface does. Each shader program is written as HLSL beside its assembly. Superseded searches are deleted.
 model: claude-opus-5-5
 ---
 
@@ -41,54 +41,18 @@ flowchart TD
 
 ## The tools
 
-### 1. The camera
-
-**Pose from correspondences.** `genshin:parity pose <reference> --witness <component>` solves the camera from points whose places are known. A component names its landmarks in three dimensions: a part's bounding-box corners, a named vertex, a door's top and foot. The reference's matching pixels are given roughly, and each one snaps to the strongest corner within a small radius of it. With six or more points, a direct linear transform gives the projection in closed form, including the focal length. With fewer, a perspective-n-point solve at a focal length read from two widths does. A Gauss–Newton refinement then minimises the reprojection error, which is printed per point and in total, with an image of each landmark's projection over the reference. It replaces the perspective reading done by hand for the login's two poses, and `solve-camera`'s grid.
-
-**Edge refinement.** From a solved pose, a few Gauss–Newton or simplex steps minimise the chamfer distance between the witness's silhouette edges, taken from its part identifiers rather than its shading, and the reference's edges, over the stone's layer alone, using the existing `computeDistanceTransform`. Clouds draw no silhouette in the identifier target, so they cannot pull the pose.
-
-**The matchmove.** `genshin:parity track <capture> <start> <seconds> [fps]` solves the pose at each sampled frame of a recording, each from the frame before by edge refinement, and writes the track: position, heading, pitch and field of view over time. The login's flight is a script's and has no clip, so its path is read this way and fitted by our own curve, in place of two poses and a straight line between them.
-
-`solve-camera`'s grid, its simplex over the line distance, and the line scorer (`createLineDistanceScorer`, `readVerticalLines`) are deleted once `pose` and the refinement answer every reference they served.
-
-### 2. The scores
-
-**Scores by layer.** `scoreLayers` scores shape, tone and detail over each layer's mask from the identifier target, and `compare --witness` and `attribute` print a row per layer beside the frame's, into their committed reports. A change is then judged where it lands.
-
-**The perceptual score.** An implementation of FLIP's standard-dynamic-range metric in TypeScript, tested against the values the reference implementation publishes for its example images, is the approval number the method ends on.
-
-### 3. Calibration by regression
-
-`genshin:parity calibrate <reference> --witness <component>` fits each frame-wide term by least squares over the pixels its mask selects, in the order light meets the eye, holding each fitted term for the next:
-
-- **Light.** Over the stone, a pixel's linear colour is its albedo times the sun's colour times its lit share plus the ambient light by its normal. Given the sun's direction, the sun's and the ambient's colours are linear in the pixels. The direction is the one outer solve, over two angles, seeded by what the scene's placements of `Sun`, `Moon` and `MainLight` give.
-- **Fog.** Over every masked pixel, the reference's colour is the lit colour blended toward the fog's colour by a factor of depth and height, so the fog's colour, density and height falloff follow from the pixels against the G-buffer's depth.
-- **Grade.** Over pixels whose linear colour the steps above predict, the display transform from linear to the reference's pixels is fitted, and each of the game's grading tables (`Stages_*_LUT`) is scored against it, which names the table the login's fieldless profile uses where its raw bytes do not.
-
-Each term prints its values and its residual, and a scene writes them as constants citing the reference they were fitted on. This replaces measuring light over a hand-picked patch and searching a strength until the frame's mean drops.
-
-### 4. Shader reading
+### 1. Shader reading
 
 The `shaders` step already disassembles each program. It also writes each program as HLSL beside its assembly, through 3Dmigoto's command-line decompiler, fetched as a pinned release checked by SHA-256 the way FFmpeg is, with the constant names `annotateProgramConstants` recovers substituted in. The atmosphere, the cloud layer, the cloud particles and the uber pass are then ported to TSL from readable code instead of from assembly. If no pinned release of the decompiler is published, it is built from its source into the same cache, and failing that the annotated assembly stays the source.
-
-### 5. The loss table
-
-`attribute` keeps its ladder of swaps, each family handed back to the scene's own kit in turn, and scores it per layer from the identifier target. Its table is committed only from a pose `pose` has solved within its reprojection gate.
 
 ## Scope
 
 ```text
-scripts/src/services/genshinParity/
-  solveCameraPose.ts            ← DLT and PnP from correspondences, then Gauss–Newton
-  refineCameraPose.ts           ← the chamfer over the identifier edges
-  trackCamera.ts                ← the pose at every sampled frame
-  scoreLayers.ts                ← shape, tone and detail per mask
-  scoreFlip.ts                  ← FLIP, standard dynamic range
-  calibrateScene.ts             ← light, fog and grade by least squares
-  commands/poseCommand.ts, trackCommand.ts, calibrateCommand.ts
+scripts/src/services/genshinAssets/
+  extractComponentShaders.ts    ← each program's HLSL beside its assembly
 ```
 
-Deleted as each is superseded: `solveWitnessCamera.ts` with its command, `createLineDistanceScorer.ts`, `readVerticalLines.ts` and `minimizeNelderMead.ts` if nothing else reads them, and `fitAlbedo.ts` once the stone's material is fitted.
+Deleted once superseded: `fitAlbedo.ts`, once the stone's material is fitted.
 
 ## Key files
 
@@ -97,8 +61,6 @@ Deleted as each is superseded: `solveWitnessCamera.ts` with its command, `create
 | `scripts/src/services/genshinAssets/DerivedAssetComponentMap.ts` | A component's landmarks beside its roots and spawns |
 | `scripts/src/services/genshinAssets/extractComponentShaders.ts`  | Writes each program's HLSL beside its assembly      |
 | `scripts/src/services/genshinParity/computeDistanceTransform.ts` | The chamfer the pose refinement minimises           |
-| `scripts/src/services/genshinParity/attributeScene.ts`           | The loss table, per layer                           |
-| `scripts/src/services/genshinParity/compareScreen.ts`            | Prints a row per layer and the perceptual score     |
 
 ## Notes
 
