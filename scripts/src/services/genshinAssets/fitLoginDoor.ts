@@ -114,12 +114,12 @@ export const fitLoginDoor = async (
         tolerance: RELIEF_TOLERANCE_CELLS,
         width,
       });
-    const isGilded = (cell: number): boolean => {
+    const checkIsGilded = (cell: number): boolean => {
       const [red = 0, , blue = 0] = colors[cell] ?? [];
       return red > blue * GILDING_RED_BLUE_RATIO;
     };
-    const gilded = drawn.filter((cell) => isGilded(cell));
-    const panel = drawn.filter((cell) => tags[cell] === 1 && !isGilded(cell));
+    const gilded = drawn.filter((cell) => checkIsGilded(cell));
+    const panel = drawn.filter((cell) => tags[cell] === 1 && !checkIsGilded(cell));
     const grey = Float32Array.from(colors, ([red, green, blue]) => (red + green + blue) / 3);
     const blurred = blurWithinTags(grey, tags, { height, radius: RELIEF_BLUR_CELLS, width });
     const threshold = readOtsuThreshold(panel.map((cell) => (blurred[cell] ?? 0) * BYTE));

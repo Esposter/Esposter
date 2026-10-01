@@ -4,6 +4,8 @@ import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDer
 import { solveReferenceFog } from "#src/services/genshinParity/solveReferenceFog";
 import { defineCommand } from "citty";
 
+const format = (share: number[]): string => share.map((value) => value.toFixed(3)).join(",");
+
 export const fogCommand: SubCommandsDef[string] = defineCommand({
   args: {
     light: {
@@ -27,7 +29,6 @@ export const fogCommand: SubCommandsDef[string] = defineCommand({
     const { count, solutions } = await solveReferenceFog(args.reference, parseDerivedAssetComponent(args.witness), {
       isLightSolved: args.light,
     });
-    const format = (share: number[]): string => share.map((value) => value.toFixed(3)).join(",");
     console.log(`${count} pixels of the parts past the fog's start`);
     for (const { color, density, direction, residual, scatterColor, shares } of solutions)
       console.log(

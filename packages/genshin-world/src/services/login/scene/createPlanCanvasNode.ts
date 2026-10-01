@@ -1,3 +1,4 @@
+import type { SceneAxis } from "#src/models/scene/SceneAxis";
 import type { Node } from "three/webgpu";
 
 import { CanvasTexture, LinearFilter, LinearMipmapLinearFilter, NoColorSpace } from "three";
@@ -17,9 +18,9 @@ export const createPlanCanvasNode = (
     pixelsPerMetre,
     size: [sizeFirst = 0, sizeSecond = 0],
   }: {
-    axes: readonly ["x" | "y" | "z", "x" | "y" | "z"];
+    axes: readonly [SceneAxis, SceneAxis];
     corner: readonly number[];
-    normalAxis: "x" | "y" | "z";
+    normalAxis: SceneAxis;
     pixelsPerMetre: number;
     size: readonly number[];
   },

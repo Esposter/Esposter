@@ -1,6 +1,7 @@
 import type { Node } from "three/webgpu";
 
 import door from "#src/data/login/door.json";
+import { SceneAxis } from "#src/models/scene/SceneAxis";
 import { LOGIN_DOOR_RELIEF_PIXELS_PER_METRE } from "#src/services/login/door/constants";
 import { createPlanCanvasNode } from "#src/services/login/scene/createPlanCanvasNode";
 import { addSmoothLoop } from "genshin-engine";
@@ -13,7 +14,13 @@ import { mix, vec3 } from "three/tsl";
 export const createLoginDoorRelief = (): Node<"vec3"> => {
   const { bands, corner, gilding, size } = door.relief;
   const { sample, weight } = createPlanCanvasNode(
-    { axes: ["x", "y"], corner, normalAxis: "z", pixelsPerMetre: LOGIN_DOOR_RELIEF_PIXELS_PER_METRE, size },
+    {
+      axes: [SceneAxis.X, SceneAxis.Y],
+      corner,
+      normalAxis: SceneAxis.Z,
+      pixelsPerMetre: LOGIN_DOOR_RELIEF_PIXELS_PER_METRE,
+      size,
+    },
     (context, toCanvas) => {
       context.fillStyle = "rgb(50% 50% 50%)";
       context.fillRect(0, 0, context.canvas.width, context.canvas.height);
@@ -26,6 +33,7 @@ export const createLoginDoorRelief = (): Node<"vec3"> => {
           );
         const [red = 1, green = 1, blue = 1] = shade.map((channel) => Math.min(channel / 2, 1) * 100);
         context.fillStyle = `rgb(${red}% ${green}% ${blue}%)`;
+        // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
         context.fill(path, "evenodd");
       }
     },

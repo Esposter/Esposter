@@ -1,6 +1,7 @@
 import type { Node } from "three/webgpu";
 
 import paving from "#src/data/login/paving.json";
+import { SceneAxis } from "#src/models/scene/SceneAxis";
 import { createPlanCanvasNode } from "#src/services/login/scene/createPlanCanvasNode";
 import {
   LOGIN_PAVING_LINE_SHADE,
@@ -17,9 +18,9 @@ import { float, mix } from "three/tsl";
 export const createLoginPavingShade = (): Node<"float"> => {
   const { sample, weight } = createPlanCanvasNode(
     {
-      axes: ["x", "z"],
+      axes: [SceneAxis.X, SceneAxis.Z],
       corner: paving.corner,
-      normalAxis: "y",
+      normalAxis: SceneAxis.Y,
       pixelsPerMetre: LOGIN_PAVING_PIXELS_PER_METRE,
       size: paving.size,
     },
