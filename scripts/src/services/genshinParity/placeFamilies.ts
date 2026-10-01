@@ -36,7 +36,7 @@ export const placeFamilies = async (
     // A period the families repeat along one axis (a row the script scrolls), read at every step of it first, the
     // Simplex starting from its best: the families' own edges at each phase, the only unknown left once the camera is
     // Solved on the parts that do not scroll
-    scan?: { axis: 0 | 1 | 2; length: number; step: number };
+    scan?: { axis: 0 | 1 | 2; from: number; step: number; to: number };
     // Where the refinement starts, a phase read off the parts the reference shows
     start?: [number, number, number];
     // The simplex's first step along each axis, in metres, about as far as the families may stand off
@@ -89,11 +89,12 @@ export const placeFamilies = async (
       const before = await readDistance([0, 0, 0]);
       let start: number[] = given;
       if (scan) {
-        let best = before;
-        for (let phase = scan.step; phase < scan.length; phase += scan.step) {
-          const candidate = [0, 0, 0].map((_, axis) => (axis === scan.axis ? phase : 0));
+        let best = await readDistance(start);
+        for (let phase = scan.from; phase <= scan.to; phase += scan.step) {
+          const candidate = start.map((value, axis) => (axis === scan.axis ? phase : value));
           // oxlint-disable-next-line no-await-in-loop -- one phase is drawn and priced after another
           const distance = await readDistance(candidate);
+          console.log(`${["x", "y", "z"][scan.axis]} ${phase.toFixed(2)}: ${distance.toFixed(3)} px`);
           if (distance < best) {
             best = distance;
             start = candidate;

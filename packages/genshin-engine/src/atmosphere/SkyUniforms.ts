@@ -9,8 +9,14 @@ export interface SkyUniforms {
   cloudCoverage: UniformNode<"float", number>;
   // How far the cloud layer has drifted, in its own units
   cloudDrift: UniformNode<"vec2", Vector2>;
+  // A cloud's lit and shaded colours toward the sun and away from it, how sharply the one gives way to the other, and
+  // How much brighter a cloud looks the further toward the sun it stands
+  cloudFrontBackBlend: UniformNode<"float", number>;
+  cloudLitBackColor: UniformNode<"color", Color>;
   cloudLitColor: UniformNode<"color", Color>;
+  cloudShadeBackColor: UniformNode<"color", Color>;
   cloudShadeColor: UniformNode<"color", Color>;
+  cloudSunBrighten: UniformNode<"float", number>;
   // How sharply the colours toward the sun give way to those away from it: 0 keeps the front alone, 1 blends across
   // The whole sky
   frontBackBlend: UniformNode<"float", number>;

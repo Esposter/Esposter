@@ -183,6 +183,12 @@ export const reference: ComponentReference = {
     },
     {
       found:
+        "The door frame's camera, solved on the door and the walkway's wings alone, all within a dozen metres, traded the eye's height against its pitch and its distance against its field of view: it read 1.24 metres up, 10.68 short, 5.3 degrees and 51.2, near parts landing within a few pixels while every far tower and the colonnade stood too high, the colonnade some 50 pixels. With the thin pillar right of the door and two towers behind it, at the row's phase there, the ten landmarks solve to 0.98 metres over the walkway, 11.3 short of the door, 6.2 degrees up and 48.3, at 7.2 pixels root mean square, the corners' own error, and the laid-out row lands within a few pixels of the towers. At that pose the glide reads 3.45 metres a second on the title, about 4.3 once preparing, slowing by 0.66, and the walkway's settling rows stand 15 and 22 metres ahead",
+      search:
+        "genshin:parity parts at the door frame, zoom --grid on the recording, pose login-door-recording with doorPillarTop, doorTowerTop and doorLeftTowerTop added, place --landmarks at the solved pose, then glide again at it",
+    },
+    {
+      found:
         "The door rises at the walkway's far end as its last blocks settle, about 12 seconds in, nothing built past it, and the glide then brakes it to its pose",
       search: "genshin:parity frames yt-rBnfA4pXw6U at 2 a second over 0 to 15 seconds",
     },

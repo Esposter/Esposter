@@ -4,22 +4,54 @@ import type { Texture } from "three";
 import { getCloudAtlasColumns } from "#src/atmosphere/createCloudAtlasTexture";
 import { orderByViewDepth } from "#src/atmosphere/orderByViewDepth";
 import { InstancedBufferAttribute, Matrix4, Sprite } from "three";
-import { instancedBufferAttribute, mix, texture, uv } from "three/tsl";
+import {
+  asin,
+  cameraPosition,
+  clamp,
+  float,
+  instancedBufferAttribute,
+  max,
+  mix,
+  pow,
+  saturate,
+  smoothstep,
+  texture,
+  uv,
+} from "three/tsl";
 import { SpriteNodeMaterial } from "three/webgpu";
 
+// Where a cloud fades out below the horizon, from a tenth of a right angle under it to none a fifth further down
+const BELOW_FADE_START = 0.1;
+const BELOW_FADE_SCALE = 5;
+// How much of its lit colour a cloud gains with the sky's coverage
+const COVERAGE_LIGHT_SHARE = 0.4;
 // A band of clouds as one sprite drawn once for all of them, each cloud a camera-facing billboard of its painted cloud
-// In the atlas: shaded where its outline covers, lit where its crown does, in the sky's own cloud colours, and cut off
-// Where it covers nothing, its foot at its place. Each is a draw of its own as a sprite apiece, and a band runs to
-// Hundreds; drawn as one, they are blended in the order given, which three's own sort of the objects no longer sets, so
-// Before each draw they are laid out farthest along the camera's view first, as that sort would, and the nearer edges
-// Blend over the farther. The fog pales them with distance as it pales the rest of the scene. Their places are handed
-// Back in the order given, for a band that moves to rewrite in place
+// In the atlas, cut off where it covers nothing, its foot at its place. Each is a draw of its own as a sprite apiece,
+// And a band runs to hundreds; drawn as one, they are blended in the order given, which three's own sort of the
+// Objects no longer sets, so before each draw they are laid out farthest along the camera's view first, as that sort
+// Would, and the nearer edges blend over the farther. Each is coloured as the game's cloud particles are
+// (Login/Scene/Index.reference.ts, source `cloudParticleShader`): its shaded colour mixed toward its lit one where its
+// Painted crown is, each blended from away from the sun to toward it by how far toward the sun the cloud stands, gaining
+// Light with the sky's coverage and brightening toward the sun, and fading out below the horizon. The game also gives a
+// Low cloud way to the sky's colour behind it unless the sky is thickly covered, by a coverage its environment sets at
+// Run time; ours stands in for its cloud layer's alone, so that waits on the game's own. Their places are handed back
+// In the order given, for a band that moves to rewrite in place
 export const createCloudBandSprite = (
   atlas: Texture,
   clouds: readonly { position: [number, number, number]; spriteIndex: number; width: number }[],
   { aspect, spriteCount }: { aspect: number; spriteCount: number },
-  { cloudLitColor, cloudShadeColor }: Pick<SkyUniforms, "cloudLitColor" | "cloudShadeColor">,
+  skyUniforms: SkyUniforms,
 ): { dispose: () => void; places: [number, number, number][]; sprite: Sprite } => {
+  const {
+    cloudCoverage,
+    cloudFrontBackBlend,
+    cloudLitBackColor,
+    cloudLitColor,
+    cloudShadeBackColor,
+    cloudShadeColor,
+    cloudSunBrighten,
+    sunDirection,
+  } = skyUniforms;
   const columns = getCloudAtlasColumns(spriteCount);
   const places = clouds.map(({ position }): [number, number, number] => [...position]);
   // A cloud's cell is `aspect` times as wide as it is tall
@@ -33,11 +65,21 @@ export const createCloudBandSprite = (
   const scales = new InstancedBufferAttribute(new Float32Array(clouds.length * 2), 2);
   const cells = new InstancedBufferAttribute(new Float32Array(clouds.length * 2), 2);
   const mask = texture(atlas, uv().add(instancedBufferAttribute(cells)).div(columns));
+  const place = instancedBufferAttribute(positions);
+  const direction = place.sub(cameraPosition).normalize();
+  const elevation = asin(clamp(direction.y, -1, 1)).mul(2 / Math.PI);
+  const sunCosine = direction.dot(sunDirection);
+  const toward = pow(max(sunCosine.mul(cloudFrontBackBlend).add(float(1).sub(cloudFrontBackBlend)), 0), 3);
+  const lit = mix(cloudLitBackColor, cloudLitColor, toward);
+  const shade = mix(cloudShadeBackColor, cloudShadeColor, toward);
+  const cloudColor = mix(shade, lit, mask.g)
+    .add(lit.mul(cloudCoverage.mul(COVERAGE_LIGHT_SHARE)))
+    .mul(float(1).add(cloudSunBrighten.mul(sunCosine.mul(0.5).add(0.5))));
   const material = new SpriteNodeMaterial({ depthWrite: false, transparent: true });
-  material.positionNode = instancedBufferAttribute(positions);
+  material.positionNode = place;
   material.scaleNode = instancedBufferAttribute(scales);
-  material.colorNode = mix(cloudShadeColor, cloudLitColor, mask.g);
-  material.opacityNode = mask.r;
+  material.colorNode = cloudColor;
+  material.opacityNode = mask.r.mul(smoothstep(0, 1, saturate(elevation.add(BELOW_FADE_START).mul(BELOW_FADE_SCALE))));
   material.alphaTest = 0.5;
   const sprite = new Sprite(material);
   sprite.center.set(0.5, 0);

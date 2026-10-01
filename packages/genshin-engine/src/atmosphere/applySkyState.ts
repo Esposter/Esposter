@@ -35,6 +35,8 @@ export const applySkyState = (
   postUniforms.godraysColor.value.copy(lightColor);
   skyUniforms.cloudLitColor.value.copy(toSceneColor(skyState.cloudLitColor));
   skyUniforms.cloudShadeColor.value.copy(toSceneColor(skyState.cloudShadeColor));
+  skyUniforms.cloudLitBackColor.value.copy(toSceneColor(skyState.cloudLitBackColor ?? skyState.cloudLitColor));
+  skyUniforms.cloudShadeBackColor.value.copy(toSceneColor(skyState.cloudShadeBackColor ?? skyState.cloudShadeColor));
   skyUniforms.horizonColor.value.copy(toSceneColor(horizonColor));
   skyUniforms.horizonBackColor.value.copy(toSceneColor(skyState.horizonBackColor ?? horizonColor));
   skyUniforms.zenithBackColor.value.copy(toSceneColor(skyState.zenithBackColor ?? skyState.zenithColor));

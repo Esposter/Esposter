@@ -22,7 +22,7 @@ const toLoops = (loops: number[][][]): [number, number][][] =>
 // None stands where the walkway glides, which would carry it through the camera: each either clears the walkway to its
 // Side or stays under it
 export const createLoginClouds = (
-  skyUniforms: Pick<SkyUniforms, "cloudLitColor" | "cloudShadeColor">,
+  skyUniforms: SkyUniforms,
 ): { dispose: () => void; group: Group; scroll: (scrolled: number) => void } => {
   const group = new Group();
   const disposables: { dispose: () => void }[] = [];

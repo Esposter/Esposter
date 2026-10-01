@@ -3,7 +3,11 @@ import type { Color } from "three";
 // How the sky and the light it casts look at one minute of the day. The sky blends between neighbouring keyframes,
 // So a day is a handful of them in order: night, dawn, noon, dusk
 export interface SkyKeyframe {
+  // A cloud's lit colour away from the sun, where a sky tells it from the colour toward it
+  cloudLitBackColor?: Color;
   cloudLitColor: Color;
+  // A cloud's shaded colour away from the sun, where a sky tells it from the colour toward it
+  cloudShadeBackColor?: Color;
   cloudShadeColor: Color;
   hemisphereGroundColor: Color;
   hemisphereIntensity: number;

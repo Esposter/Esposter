@@ -6,8 +6,12 @@ import { uniform } from "three/tsl";
 export const createSkyUniforms = (): SkyUniforms => ({
   cloudCoverage: uniform(0),
   cloudDrift: uniform(new Vector2()),
+  cloudFrontBackBlend: uniform(1),
+  cloudLitBackColor: uniform(new Color()),
   cloudLitColor: uniform(new Color()),
+  cloudShadeBackColor: uniform(new Color()),
   cloudShadeColor: uniform(new Color()),
+  cloudSunBrighten: uniform(0),
   frontBackBlend: uniform(1),
   haloColor: uniform(new Color(0, 0, 0)),
   haloHeight: uniform(1),
