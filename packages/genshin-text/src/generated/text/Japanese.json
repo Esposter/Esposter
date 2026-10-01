@@ -6,8 +6,11 @@
   "1285204118": "更新チェック中…",
   "1737243758": "警告：ゲーム開始前にお読みください",
   "2272745789": "ユーザー",
+  "3535917252": "クリックして進む",
   "3574932777": "ゲーム開始",
   "INFORMATION_AVATAR_BIRTHDAY": "誕生日",
+  "LANGUAGE_WINDOWS_TITLENAME": "原神",
   "ONLINE_DUNGEON_GUEST_IS_READY": "準備完了",
-  "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "ローディング中"
+  "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "ローディング中",
+  "UI_TEXT_QUEST_GUIDE_LABEL": "旅人"
 }

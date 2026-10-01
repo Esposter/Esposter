@@ -24,7 +24,7 @@ flowchart LR
 - **A click is the screen's unless it lands on a button.** The screen asks `checkIsNestedInteraction` before it moves on, so a click on a corner button stays the button's.
 - **A host can pin a stage.** The stage is a `v-model`, so the parity page and a test hold one still, and the opening leaves it free.
 - **The opening says when the door is opened.** `GameOpening` emits `begin` as the screen hands on to the startup loading screen, so its host can act on the door rather than waiting for the world; for now the app's page uses it to hold the white for 3 seconds and play a rickroll in place of the world.
-- **The words are the reader's language's.** The title, the account label and the status lines are the game's own text in the language the host resolved, handed down as the `gameText` prop ([game text](/docs/genshin/game-text)); the door's prompt and the welcome stay the English client's until [pre-login text](/docs/proposals/genshin/pre-login-text) ships.
+- **The words are the reader's language's.** The title, the account label, the status lines, the door's prompt and the name a player who has not chosen one goes by are the game's own text in the language the host resolved, handed down as the `gameText` prop ([game text](/docs/genshin/game-text)); the welcome's greeting stays the English client's until [pre-login text](/docs/proposals/genshin/pre-login-text) ships.
 
 ## The scene
 

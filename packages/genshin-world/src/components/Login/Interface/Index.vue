@@ -6,7 +6,6 @@ import LoginStatus from "#src/components/Login/Status/Index.vue";
 import { LoginInterfaceRect } from "#src/models/login/LoginInterfaceRect";
 import { LoginStage } from "#src/models/login/LoginStage";
 import {
-  LOGIN_BEGIN_TEXT,
   LOGIN_DOOR_BUTTONS_DELAY_MS,
   LOGIN_DOOR_PROMPT_DELAY_MS,
   LOGIN_DOOR_PROMPT_FADE_MS,
@@ -71,7 +70,7 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
       <!-- A heading to a screen reader, drawn as a paragraph so no host's own heading styles reach it -->
       <p class="title" role="heading" aria-level="1">{{ gameText[GameTextKey.LoginTitle] }}</p>
       <OrnamentDivider class="divider" />
-      <p class="subtitle">{{ LOGIN_BEGIN_TEXT }}</p>
+      <p class="subtitle">{{ gameText[GameTextKey.LoginBegin] }}</p>
       <div class="server" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.ServerBar], true)">
         <ServerBar :name="LOGIN_SERVER_NAME" />
       </div>
@@ -81,7 +80,7 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
     <div v-if="isFooterShown" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.Bottom], true)">
       <LoginStatus v-if="stage === LoginStage.Preparing" :game-text :progress :step="statusStep" />
       <PromptBand v-else-if="stage === LoginStage.Door && !isDoorWaiting" class="prompt">{{
-        LOGIN_BEGIN_TEXT
+        gameText[GameTextKey.LoginBegin]
       }}</PromptBand>
       <div class="column" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.LeftButtons])">
         <div class="slot"><RoundButton :icon="InterfaceIcon.Power" label="Quit" /></div>

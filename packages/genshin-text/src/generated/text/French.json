@@ -6,8 +6,11 @@
   "1285204118": "Vérification des mises à jour...",
   "1737243758": "À LIRE AVANT TOUTE UTILISATION DU JEU",
   "2272745789": "Utilisateur",
+  "3535917252": "Cliquez pour lancer le jeu",
   "3574932777": "Démarrer le jeu",
   "INFORMATION_AVATAR_BIRTHDAY": "Anniversaire",
+  "LANGUAGE_WINDOWS_TITLENAME": "Genshin Impact",
   "ONLINE_DUNGEON_GUEST_IS_READY": "Déjà prêt",
-  "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "Chargement..."
+  "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "Chargement...",
+  "UI_TEXT_QUEST_GUIDE_LABEL": "{M#Voyageur}{F#Voyageuse}"
 }

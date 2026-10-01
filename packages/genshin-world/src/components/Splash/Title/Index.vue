@@ -1,10 +1,20 @@
 <script setup lang="ts">
+import type { GameText } from "genshin-text";
+
 import { TITLE_LOGO_PATH } from "#src/services/splash/TitleLogoPath";
 import { GameScreen } from "genshin-interface";
+import { GameTextKey } from "genshin-text";
+
+interface Props {
+  // The game's words in the reader's language
+  gameText: GameText;
+}
+
+const { gameText } = defineProps<Props>();
 </script>
 
 <template>
-  <GameScreen class="title-splash" role="img" aria-label="Genshin Impact">
+  <GameScreen class="title-splash" role="img" :aria-label="gameText[GameTextKey.GameTitle]">
     <svg class="logo" viewBox="0 0 3840 1453" aria-hidden="true"><path :d="TITLE_LOGO_PATH" /></svg>
   </GameScreen>
 </template>

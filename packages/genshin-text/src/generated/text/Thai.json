@@ -6,8 +6,11 @@
   "1285204118": "กำลังตรวจข้อมูลอัปเดต...",
   "1737243758": "คำเตือน: สิ่งที่ควรทราบก่อนเล่นเกม",
   "2272745789": "ชื่อผู้ใช้",
+  "3535917252": "คลิกเพื่อเริ่ม",
   "3574932777": "เริ่มเกม",
   "INFORMATION_AVATAR_BIRTHDAY": "วันเกิด",
+  "LANGUAGE_WINDOWS_TITLENAME": "Genshin Impact",
   "ONLINE_DUNGEON_GUEST_IS_READY": "พร้อมแล้ว",
-  "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "กำลังโหลด"
+  "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "กำลังโหลด",
+  "UI_TEXT_QUEST_GUIDE_LABEL": "นักเดินทาง"
 }

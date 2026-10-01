@@ -16,6 +16,7 @@ import {
   LOGIN_SPINNER_START_MS,
   LOGIN_STATUS_STEPS,
   LOGIN_TITLE_START_MS,
+  LOGIN_TRAVELER_GENDER,
   LOGIN_WELCOME_HOLD_MS,
 } from "#src/services/login/constants";
 import { checkIsNestedInteraction } from "@esposter/shared";
@@ -23,6 +24,7 @@ import { TresCanvas } from "@tresjs/core";
 import { useRafFn, useTimeoutFn, watchImmediate } from "@vueuse/core";
 import { createGenshinRenderer, GENSHIN_TONE_MAPPING } from "genshin-engine";
 import { GameScreen } from "genshin-interface";
+import { fillLinePlaceholders, GameTextKey } from "genshin-text";
 import { PCFShadowMap } from "three";
 import { unref } from "vue";
 
@@ -38,7 +40,11 @@ interface Props {
   timeOfDay: LoginTimeOfDay;
 }
 
-const { gameText, isInterfaceHidden, playerName = "Traveler", progress, timeOfDay } = defineProps<Props>();
+const { gameText, isInterfaceHidden, playerName, progress, timeOfDay } = defineProps<Props>();
+// The name the screen welcomes the player by, the game's own word for the Traveler until they have chosen one
+const shownPlayerName = computed(
+  () => playerName || fillLinePlaceholders(gameText[GameTextKey.Traveler], "", LOGIN_TRAVELER_GENDER),
+);
 const emit = defineEmits<{ begin: []; ready: [] }>();
 // The game's login screen: the scene fades up out of white, a click on its title quickens the glide down the
 // Walkway as the game prepares, and a click on the door it arrives at lights it as the screen whitens, when `begin`
@@ -136,7 +142,7 @@ const onClick = (event: MouseEvent): void => {
       :is-door-waiting="stage === LoginStage.Door && !isDoorFormed ? true : undefined"
       :is-spinner-shown
       :is-welcome-shown
-      :player-name
+      :player-name="shownPlayerName"
       :progress="shownProgress"
       :stage
       :status-step

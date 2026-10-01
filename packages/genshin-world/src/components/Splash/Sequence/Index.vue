@@ -20,7 +20,7 @@ const emit = defineEmits<{ finish: [] }>();
 // Says the last white has held and the login screen may fade up out of it
 const splashes: { component: Component; props?: Record<string, unknown>; timing: SplashTiming }[] = [
   { component: SplashPublisher, timing: PUBLISHER_SPLASH_TIMING },
-  { component: SplashTitle, timing: TITLE_SPLASH_TIMING },
+  { component: SplashTitle, props: { gameText }, timing: TITLE_SPLASH_TIMING },
   { component: SplashHealthNotice, props: { gameText }, timing: HEALTH_NOTICE_TIMING },
 ];
 const splashIndex = ref(0);

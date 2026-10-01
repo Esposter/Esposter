@@ -6,8 +6,11 @@
   "1285204118": "Проверка обновлений...",
   "1737243758": "ВАЖНО: ВНИМАТЕЛЬНО ПРОЧТИТЕ ПЕРЕД ИГРОЙ",
   "2272745789": "Пользователь",
+  "3535917252": "НАЧАТЬ ПУТЕШЕСТВИЕ",
   "3574932777": "GENSHIN IMPACT",
   "INFORMATION_AVATAR_BIRTHDAY": "День рождения",
+  "LANGUAGE_WINDOWS_TITLENAME": "Genshin Impact",
   "ONLINE_DUNGEON_GUEST_IS_READY": "Готов",
-  "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "Загрузка..."
+  "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "Загрузка...",
+  "UI_TEXT_QUEST_GUIDE_LABEL": "{M#Путешественник}{F#Путешественница}"
 }

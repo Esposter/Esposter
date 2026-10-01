@@ -3,7 +3,7 @@ import type { TravelerTwin } from "#src/models/TravelerTwin";
 import type { VoiceDeviceRung } from "#src/models/VoiceDeviceRung";
 
 import { GameLanguage } from "#src/generated/genshinText/models/GameLanguage";
-import { TravelerGender } from "#src/models/TravelerGender";
+import { TravelerGender } from "#src/generated/genshinText/models/TravelerGender";
 import { VoiceLanguage } from "#src/models/VoiceLanguage";
 import { homedir } from "node:os";
 import { join } from "node:path";

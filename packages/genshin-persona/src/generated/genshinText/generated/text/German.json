@@ -6,8 +6,11 @@
   "1285204118": "Aktualisierungen werden gesucht ...",
   "1737243758": "Warnung: Vor dem Spielen unbedingt lesen!",
   "2272745789": "Nutzer",
+  "3535917252": "Zum Start klicken",
   "3574932777": "Spiel starten",
   "INFORMATION_AVATAR_BIRTHDAY": "Geburtstag",
+  "LANGUAGE_WINDOWS_TITLENAME": "Genshin Impact",
   "ONLINE_DUNGEON_GUEST_IS_READY": "Bereit",
-  "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "Wird geladen ..."
+  "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "Wird geladen ...",
+  "UI_TEXT_QUEST_GUIDE_LABEL": "{F#Reisende}{M#Reisender}"
 }
