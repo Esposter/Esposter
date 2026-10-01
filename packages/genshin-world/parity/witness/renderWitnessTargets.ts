@@ -2,7 +2,7 @@ import type { SceneWitness } from "#src/models/scene/SceneWitness";
 import type { Node } from "three/webgpu";
 
 import { WitnessTarget } from "#parity/witness/WitnessTarget";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { Color, FloatType, Layers, Mesh, RenderTarget, Vector2 } from "three";
 import { float, normalWorld, positionView, vec3, vec4 } from "three/tsl";
 import { MeshBasicNodeMaterial, NodeMaterial } from "three/webgpu";
@@ -70,31 +70,44 @@ export const renderWitnessTargets = async (
   const clearAlpha = renderer.getClearAlpha();
   const originalMaterials = drawnMeshes.map(({ mesh }) => mesh.material);
   const renderTarget = new RenderTarget(width, height, { type: FloatType });
-  camera.layers.set(TARGET_LAYER);
-  for (const { mesh } of drawnMeshes) mesh.layers.enable(TARGET_LAYER);
-  scene.background = null;
-  scene.backgroundNode = null;
-  renderer.setClearColor(0, 0);
   const targets = {} as Record<WitnessTarget, string>;
-  for (const target of Object.values(WitnessTarget)) {
-    const targetMaterials = drawnMeshes.map((drawn) => createTargetMaterial(target, drawn));
-    for (const [index, { mesh }] of drawnMeshes.entries()) mesh.material = targetMaterials[index] ?? mesh.material;
-    renderer.setRenderTarget(renderTarget);
-    renderer.render(scene, camera);
-    // oxlint-disable-next-line no-await-in-loop -- one target is read back before the next is drawn into it
-    const pixels = (await renderer.readRenderTargetPixelsAsync(renderTarget, 0, 0, width, height)) as Float32Array;
-    targets[target] = toBase64(pixels);
-    for (const material of targetMaterials) material.dispose();
-  }
-  renderer.setRenderTarget(null);
-  renderer.setClearColor(clearColor, clearAlpha);
-  scene.background = background;
-  scene.backgroundNode = backgroundNode;
-  camera.layers.mask = cameraLayers.mask;
-  for (const [index, { mesh }] of drawnMeshes.entries()) {
-    mesh.layers.disable(TARGET_LAYER);
-    mesh.material = originalMaterials[index] ?? mesh.material;
-  }
-  renderTarget.dispose();
+  // A failed readback still hands the scene back as it was, so a later render or capture never draws the targets
+  await withFinalizerAsync(
+    async () => {
+      camera.layers.set(TARGET_LAYER);
+      for (const { mesh } of drawnMeshes) mesh.layers.enable(TARGET_LAYER);
+      scene.background = null;
+      scene.backgroundNode = null;
+      renderer.setClearColor(0, 0);
+      for (const target of Object.values(WitnessTarget)) {
+        const targetMaterials = drawnMeshes.map((drawn) => createTargetMaterial(target, drawn));
+        // oxlint-disable-next-line no-await-in-loop -- one target is read back before the next is drawn into it
+        targets[target] = await withFinalizerAsync(
+          async () => {
+            for (const [index, { mesh }] of drawnMeshes.entries())
+              mesh.material = targetMaterials[index] ?? mesh.material;
+            renderer.setRenderTarget(renderTarget);
+            renderer.render(scene, camera);
+            const pixels = await renderer.readRenderTargetPixelsAsync(renderTarget, 0, 0, width, height);
+            return toBase64(pixels as Float32Array);
+          },
+          () => {
+            for (const [index, { mesh }] of drawnMeshes.entries())
+              mesh.material = originalMaterials[index] ?? mesh.material;
+            for (const material of targetMaterials) material.dispose();
+          },
+        );
+      }
+    },
+    () => {
+      renderer.setRenderTarget(null);
+      renderer.setClearColor(clearColor, clearAlpha);
+      scene.background = background;
+      scene.backgroundNode = backgroundNode;
+      camera.layers.mask = cameraLayers.mask;
+      for (const { mesh } of drawnMeshes) mesh.layers.disable(TARGET_LAYER);
+      renderTarget.dispose();
+    },
+  );
   return { families: witness.parts.children.map(({ name }) => name), height, parts, targets, width };
 };
