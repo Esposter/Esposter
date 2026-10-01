@@ -31,4 +31,31 @@ describe(fitFootprintOutline, () => {
       [0, 0],
     ]);
   });
+
+  test("keeps a slab's own ends between the grid's rows", () => {
+    expect.hasAssertions();
+
+    const outline = fitFootprintOutline(
+      [
+        [
+          [0, 0.5],
+          [4, 0.5],
+          [4, 1.5],
+        ],
+        [
+          [0, 0.5],
+          [4, 1.5],
+          [0, 1.5],
+        ],
+      ],
+      { cellSize, tolerance },
+    );
+
+    expect(outline).toStrictEqual([
+      [4, 0.5],
+      [4, 1.5],
+      [0, 1.5],
+      [0, 0.5],
+    ]);
+  });
 });
