@@ -41,6 +41,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Login screen](/docs/genshin/login-screen)           | the opening's login: its stages, its flight, its scene and its door                           |
 | [Game data formats](/docs/genshin/game-data-formats) | how each kind of the game's data reads, and the shortcuts to reach for first                  |
 | [Game text](/docs/genshin/game-text)                 | `genshin-text`: every language the game ships, and its strings by the game's own text id      |
+| [Rickroll](/docs/genshin/rickroll)                   | what the login door opens onto for now: white, then YouTube or Bilibili by reachability       |
 
 What is still to build is the [Genshin proposal](/docs/proposals/genshin). Decided ideas: [deferred](/docs/genshin/deferred).
 

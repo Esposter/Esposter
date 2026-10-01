@@ -16,9 +16,11 @@ How it works, from the dump to a lookup, is `apps/web/content/docs/genshin/game-
 
 ## Rules
 
-- **A word the game says is `gameText[GameTextKey.X]`, never a literal.** The opening's pre-login strings are the one exception, since no dump carries them, until `apps/web/content/docs/proposals/genshin/pre-login-text.md` ships.
+- **A word the game says is `gameText[GameTextKey.X]`, never a literal** — search the text map with `find` before deciding the game does not say it: most of what the opening shows before the client loads is there. The door's prompt and the welcome are the one exception, since no dump carries them, until `apps/web/content/docs/proposals/genshin/pre-login-text.md` ships.
+- **A screen that shows a word takes `gameText` as a required prop** from the host that resolved the language, never by injection and never with English as a default, so a host that forgets it fails to compile; a fixture passes `ENGLISH_GAME_TEXT`.
 - **A key's value is the game's own id** — the manual text map's name for an interface string, else the raw hash — found with `pnpm -C scripts genshin:text find "<pattern>"` and written with `pnpm -C scripts genshin:text write`; a key is one line in `packages/genshin-text/src/models/GameTextKey.ts` and nothing else lists it.
 - **`src/generated/` is the writer's alone, in both packages.** Its output is never formatted (`oxfmt.config.ts` ignores `**/generated/**`), and `scripts/src/services/genshinText/getPersonaModuleSource.test.ts` fails the day the persona's copy and its source disagree, so a change to a copied module is followed by a `write`.
 - **A module the persona copies imports only from its own package**, since the copy re-aims `#src/` and the plugin's install carries nothing else; `matchGameLanguage` stays out of `PersonaCopiedModules` for that reason (`scripts/src/services/genshinText/constants.ts`).
 - **A reader's language comes from `matchGameLanguage`, and a language's tag from `GameLanguageTagMap`** — never a locale table of a consumer's own.
+- **A language is never a location.** Nothing but text is chosen by the reader's language: whether a third party works for them is asked of their network (`apps/web/content/docs/architecture/third-party-reachability.md`).
 - **A persona string the game already says comes from the game text**, and a localization module holds only phrasing the game never says.

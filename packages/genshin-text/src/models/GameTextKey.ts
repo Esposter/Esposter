@@ -5,7 +5,18 @@
 export enum GameTextKey {
   // The label over a character's birthday on their profile
   Birthday = "INFORMATION_AVATAR_BIRTHDAY",
+  // The health notice's paragraphs, a blank line between them
+  HealthNotice = "684850635",
+  HealthNoticeTitle = "1737243758",
   Loading = "UI_BEYOND_RECOMMEND_EMPTY_LOADING",
+  // The login screen's status lines under its progress bar, in the order it shows them
+  LoginCheckingForUpdates = "1285204118",
+  LoginLoadingData = "1128933734",
+  LoginLoadingGame = "1102014722",
+  LoginPreparingDownload = "796445964",
+  // The login screen's title and the label before the account's name
+  LoginTitle = "3574932777",
+  LoginUserLabel = "2272745789",
   Ready = "ONLINE_DUNGEON_GUEST_IS_READY",
 }
 

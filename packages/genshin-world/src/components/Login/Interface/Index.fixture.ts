@@ -1,9 +1,11 @@
 import { LoginStage } from "#src/models/login/LoginStage";
 import { LoginStatusStep } from "#src/models/login/LoginStatusStep";
+import { ENGLISH_GAME_TEXT } from "genshin-text";
 
 // The interface alone over nothing, its title's stage with the welcome card up, and each later stage it is approved in.
 // A reference shoots it over the English recording's own frame, so only the interface can differ
 export const props = {
+  gameText: ENGLISH_GAME_TEXT,
   isWelcomeShown: true,
   playerName: "Traveler",
   progress: 0,

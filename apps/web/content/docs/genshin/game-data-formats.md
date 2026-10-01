@@ -61,7 +61,7 @@ flowchart TD
 ### Text
 
 - **The client's text is hash-named "MiHoYoBinData"**, most of it in one block, in a binary layout the community decodes afresh each patch. So the repository reads the decoded dump the community publishes per patch — text maps from hash to string per language, and the tables naming which hash an interface string or a voice-over line is — rather than the blocks ([game text](/docs/genshin/game-text)).
-- **The opening's pre-login words are in neither.** The health notice and the login status lines are shown before the client loads its data, from a store the dump does not carry ([pre-login text](/docs/proposals/genshin/pre-login-text)).
+- **Two of the opening's words are in neither.** The door's prompt and the welcome card's greeting come from a store the dump does not carry ([pre-login text](/docs/proposals/genshin/pre-login-text)); the rest of what the opening says, the health notice and the login status lines among it, is in the text map.
 
 ## References beside each component
 

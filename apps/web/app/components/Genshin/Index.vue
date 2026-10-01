@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { GameLanguage, GameLanguageTagMap, GameTextKey } from "genshin-text";
+import {
+  RICKROLL_BILIBILI_URL,
+  RICKROLL_DELAY,
+  RICKROLL_YOUTUBE_PROBE_URL,
+  RICKROLL_YOUTUBE_URL,
+} from "@/services/genshin/constants";
+import { checkIsReachable } from "@/util/network/checkIsReachable";
+import { promiseTimeout } from "@vueuse/core";
+import { GameLanguageTagMap, GameTextKey } from "genshin-text";
 import { GameOpening } from "genshin-world";
 
 // The game as it plays: its opening at once, over the world loading behind it, the login screen's flight following
@@ -10,29 +18,28 @@ const isWorldReady = ref(false);
 const progress = computed(() => (Number(isWorldLoaded.value) + Number(isWorldReady.value)) / 2);
 const isOpeningShown = ref(true);
 const gameText = await useGameText();
-// For now the door opens onto a rickroll: the white the door fades into holds a while, then the video plays
+// For now the door opens onto a rickroll: the white the door fades into holds a while, then the video plays. Whether
+// YouTube plays is asked of the reader's own network during that white rather than guessed from their language or
+// Location, so a network that blocks it, in mainland China or anywhere else, gets Bilibili's upload instead
 const isRickrollStarted = ref(false);
-const isRickrollShown = ref(false);
-const { start: startRickroll } = useTimeoutFn(
-  () => {
-    isRickrollShown.value = true;
-  },
-  Temporal.Duration.from({ seconds: 3 }).total("milliseconds"),
-  { immediate: false },
-);
+const rickrollUrl = ref("");
+const startRickroll = async () => {
+  isRickrollStarted.value = true;
+  const [isYouTubeReachable] = await Promise.all([
+    checkIsReachable(RICKROLL_YOUTUBE_PROBE_URL, RICKROLL_DELAY),
+    promiseTimeout(RICKROLL_DELAY.total("milliseconds")),
+  ]);
+  rickrollUrl.value = isYouTubeReachable ? RICKROLL_YOUTUBE_URL : RICKROLL_BILIBILI_URL;
+};
 </script>
 
 <template>
   <div v-if="isRickrollStarted" bg-white size-full>
-    <!-- YouTube is blocked in mainland China, so a reader in Simplified Chinese gets Bilibili's upload. YouTube's -->
-    <!-- Player refuses to play without the embedding page's origin, which nuxt-security's no-referrer policy withholds -->
+    <!-- Either player refuses to play without the embedding page's origin, which nuxt-security's no-referrer policy -->
+    <!-- Withholds -->
     <iframe
-      v-if="isRickrollShown"
-      :src="
-        gameText.language === GameLanguage.ChineseSimplified
-          ? 'https://player.bilibili.com/player.html?bvid=BV1UT42167xb&autoplay=1&danmaku=0&high_quality=1'
-          : 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1'
-      "
+      v-if="rickrollUrl"
+      :src="rickrollUrl"
       title="Never Gonna Give You Up"
       allow="autoplay; encrypted-media"
       b-none
@@ -44,17 +51,10 @@ const { start: startRickroll } = useTimeoutFn(
     <ClientOnly>
       <LazyGenshinWorld @load="isWorldLoaded = true" @ready="isWorldReady = true" />
     </ClientOnly>
-    <div v-if="isOpeningShown" inset-0 absolute z-1>
-      <GameOpening
-        :progress
-        @begin="
-          isRickrollStarted = true;
-          startRickroll();
-        "
-        @finish="isOpeningShown = false"
-      />
-      <!-- The opening shows no words, so what is loading is announced to a screen reader alone, in the game's own -->
-      <p role="status" :lang="GameLanguageTagMap[gameText.language]" sr-only>
+    <div v-if="isOpeningShown" :lang="GameLanguageTagMap[gameText.language]" inset-0 absolute z-1>
+      <GameOpening :game-text="gameText.text" :progress @begin="startRickroll()" @finish="isOpeningShown = false" />
+      <!-- The world's loading is shown by no words of the opening's, so it is announced to a screen reader alone -->
+      <p role="status" sr-only>
         {{ gameText.text[isWorldReady ? GameTextKey.Ready : GameTextKey.Loading] }}
       </p>
     </div>

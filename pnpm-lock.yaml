@@ -2054,6 +2054,9 @@ importers:
       genshin-interface:
         specifier: workspace:*
         version: link:../genshin-interface
+      genshin-text:
+        specifier: workspace:*
+        version: link:../genshin-text
       three:
         specifier: 'catalog:'
         version: 0.186.1

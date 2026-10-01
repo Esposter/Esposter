@@ -1,9 +1,8 @@
 import { LoginStatusStep } from "#src/models/login/LoginStatusStep";
 
-// The English client's words on its login screen, from a 1080 high recording of it (`yt-rBnfA4pXw6U`)
-export const LOGIN_TITLE_TEXT = "START GAME";
+// The English client's words on its login screen that no text map carries, from a 1080 high recording of it
+// (`yt-rBnfA4pXw6U`); the rest are the game text's
 export const LOGIN_BEGIN_TEXT = "CLICK TO BEGIN";
-export const LOGIN_USER_LABEL = "User";
 export const LOGIN_SERVER_NAME = "Asia";
 // The build string the game prints at the foot of its login screen, the one the 1440 high recording shows
 export const LOGIN_VERSION_TEXT = "OSRELWin7.1.0_R48379043_S48511369_D48533839";

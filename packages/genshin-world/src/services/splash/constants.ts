@@ -29,10 +29,3 @@ export const HEALTH_NOTICE_TIMING: SplashTiming = {
   holdMs: 3350,
   whiteAfterMs: 267,
 };
-// The English client's notice, word for word; its double dash is two non-breaking hyphens, since the game never breaks
-// A line between them
-export const HEALTH_NOTICE_TITLE = "WARNING: READ BEFORE PLAYING";
-export const HEALTH_NOTICE_PARAGRAPHS: readonly string[] = [
-  "A very small percentage of individuals may experience epileptic seizures when exposed to certain visual images, including certain light patterns of flashing lights in video games. Playing video games may induce an epileptic seizure in these individuals. Certain conditions may induce previously undetected epileptic symptoms even in persons who have no prior history of seizures or epilepsy. If you, or anyone in your family, have any history of prior seizures or epilepsy, consult your physician prior to playing. If you experience any of the following symptoms while playing a video game ‑‑ eye soreness, altered vision, migraine, muscle twitching, convulsion, blackout, loss of awareness or disorientation, IMMEDIATELY stop playing and consult your physician before resuming play.",
-  "In addition to the above symptoms, if you have a headache, dizziness, nausea, similar symptoms of motion sickness, or if you feel a discomfort or pain in any body part whilst playing, IMMEDIATELY stop playing. If the condition persists, seek medical attention.",
-];

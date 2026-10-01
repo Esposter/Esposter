@@ -1,15 +1,19 @@
 <script setup lang="ts">
+import type { GameText } from "genshin-text";
+
 import { LoginStatusStep } from "#src/models/login/LoginStatusStep";
-import { LoginStatusStepTextMap } from "#src/services/login/LoginStatusStepTextMap";
+import { LoginStatusStepGameTextKeyMap } from "#src/services/login/LoginStatusStepGameTextKeyMap";
 import { ORNAMENT_MIDDLE_PATH, ProgressBar } from "genshin-interface";
 
 interface Props {
+  // The game's words in the reader's language
+  gameText: GameText;
   // How far loading has gone, from 0 to 1
   progress: number;
   step: LoginStatusStep;
 }
 
-const { progress, step } = defineProps<Props>();
+const { gameText, progress, step } = defineProps<Props>();
 // The game's status at the foot of its login screen as it prepares: a line of text, then from loading on its share
 // Done to two places, over the ornament's double diamond while the game loads and over the progress bar while data
 // Does. Once loading is done the words go, the bar folds into its diamond under the full share, and then the whole row
@@ -22,7 +26,7 @@ const percentText = computed(() =>
 
 <template>
   <div :class="['login-status', { done: isDone }]" role="status">
-    <p class="text">{{ isDone ? "" : LoginStatusStepTextMap[step] }}</p>
+    <p class="text">{{ isDone ? "" : gameText[LoginStatusStepGameTextKeyMap[step]] }}</p>
     <template v-if="step === LoginStatusStep.LoadingGame || step === LoginStatusStep.LoadingData">
       <p class="percent">{{ percentText }}</p>
       <svg v-if="step === LoginStatusStep.LoadingGame" class="mark" viewBox="0 0 480 320" aria-hidden="true">

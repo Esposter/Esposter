@@ -14,6 +14,7 @@ import {
   LOGIN_WALKWAY_ROW,
 } from "#src/services/login/scene/constants";
 import { LOGIN_WALKWAY_REACH_SPEED, LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
+import { ENGLISH_GAME_TEXT } from "genshin-text";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
@@ -70,7 +71,9 @@ describe("gameOpening", () => {
       const requestRealFrame = window.requestAnimationFrame.bind(window);
       vi.useFakeTimers({ toFake: ["setTimeout", "requestAnimationFrame", "cancelAnimationFrame"] });
       const onFinish = vi.fn<() => void>();
-      const { container } = await render(GameOpening, { props: { onFinish, progress: 1 } });
+      const { container } = await render(GameOpening, {
+        props: { gameText: ENGLISH_GAME_TEXT, onFinish, progress: 1 },
+      });
       await nextTick();
       for (let splash = 0; splash < splashCount; splash++) {
         expect(container.querySelector(".splash-sequence")).not.toBeNull();
