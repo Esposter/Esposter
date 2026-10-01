@@ -21,6 +21,14 @@ const toScan = (scan: string): { axis: 0 | 1 | 2; from: number; step: number; to
   if (step <= 0) throw new InvalidOperationError(Operation.Read, "scan", `${step} is not a positive step`);
   return { axis: axisIndex as 0 | 1 | 2, from, step, to };
 };
+// An unknown axis rejected rather than left as a free dimension the placement never reads
+const toAxes = (axes: string): (typeof PLACE_AXES)[number][] =>
+  axes.split(",").map((axis) => {
+    const placeAxis = PLACE_AXES.find((knownAxis) => knownAxis === axis);
+    if (!placeAxis)
+      throw new InvalidOperationError(Operation.Read, "axes", `${axis} is not one of ${PLACE_AXES.join(",")}`);
+    return placeAxis;
+  });
 const toPoint = (point: string): [number, number, number] => {
   const [x = 0, y = 0, z = 0] = parseNumbers(point, "start", 3);
   return [x, y, z];
@@ -74,7 +82,7 @@ export const placeCommand: SubCommandsDef[string] = defineCommand({
         args.reference,
         parseDerivedAssetComponent(args.witness),
         {
-          axes: args.axes.split(",") as (typeof PLACE_AXES)[number][],
+          axes: toAxes(args.axes),
           landmarkNames: args.landmarks.split(","),
           pose: parseNumbers(args.pose, "pose", CAMERA_POSE_AXES.length),
         },

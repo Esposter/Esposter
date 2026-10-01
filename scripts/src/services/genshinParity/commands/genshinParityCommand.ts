@@ -7,6 +7,7 @@ import { compareCommand } from "#src/services/genshinParity/commands/compareComm
 import { exposureCommand } from "#src/services/genshinParity/commands/exposureCommand";
 import { fetchCommand } from "#src/services/genshinParity/commands/fetchCommand";
 import { filmCommand } from "#src/services/genshinParity/commands/filmCommand";
+import { fogCommand } from "#src/services/genshinParity/commands/fogCommand";
 import { framesCommand } from "#src/services/genshinParity/commands/framesCommand";
 import { gbufferCommand } from "#src/services/genshinParity/commands/gbufferCommand";
 import { glideCommand } from "#src/services/genshinParity/commands/glideCommand";
@@ -18,6 +19,7 @@ import { measureCommand } from "#src/services/genshinParity/commands/measureComm
 import { overlayCommand } from "#src/services/genshinParity/commands/overlayCommand";
 import { partsCommand } from "#src/services/genshinParity/commands/partsCommand";
 import { placeCommand } from "#src/services/genshinParity/commands/placeCommand";
+import { planCommand } from "#src/services/genshinParity/commands/planCommand";
 import { polarCommand } from "#src/services/genshinParity/commands/polarCommand";
 import { poseCommand } from "#src/services/genshinParity/commands/poseCommand";
 import { recordCommand } from "#src/services/genshinParity/commands/recordCommand";
@@ -41,11 +43,13 @@ export const genshinParityCommand: CommandDef = defineCommand({
     calibrate: calibrateCommand,
     sky: skyCommand,
     exposure: exposureCommand,
+    fog: fogCommand,
     haze: hazeCommand,
     light: lightCommand,
     overlay: overlayCommand,
     pose: poseCommand,
     place: placeCommand,
+    plan: planCommand,
     parts: partsCommand,
     track: trackCommand,
     glide: glideCommand,

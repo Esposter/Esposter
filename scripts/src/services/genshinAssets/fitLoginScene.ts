@@ -6,6 +6,7 @@ import { fitInterfaceClips } from "#src/services/genshinAssets/fitInterfaceClips
 import { fitLoginClouds } from "#src/services/genshinAssets/fitLoginClouds";
 import { fitLoginDoor } from "#src/services/genshinAssets/fitLoginDoor";
 import { fitLoginHulls } from "#src/services/genshinAssets/fitLoginHulls";
+import { fitLoginPaving } from "#src/services/genshinAssets/fitLoginPaving";
 import { fitLoginStone } from "#src/services/genshinAssets/fitLoginStone";
 import { fitLoginTowers } from "#src/services/genshinAssets/fitLoginTowers";
 import { fitLoginWalkway } from "#src/services/genshinAssets/fitLoginWalkway";
@@ -29,10 +30,11 @@ export const fitLoginScene = async (): Promise<string> => {
   );
   const meshDirectory = join(directory.assets, "Mesh");
   const textureDirectory = join(directory.assets, "Texture2D");
-  const [towers, walkway, door, hulls, clouds, skyGradient, stone] = await Promise.all([
+  const [towers, walkway, paving, door, hulls, clouds, skyGradient, stone] = await Promise.all([
     fitLoginTowers(placements, meshDirectory),
     fitLoginWalkway(placements, meshDirectory),
-    fitLoginDoor(placements, meshDirectory),
+    fitLoginPaving(placements, meshDirectory, textureDirectory),
+    fitLoginDoor(placements, meshDirectory, textureDirectory),
     fitLoginHulls(placements, meshDirectory),
     fitLoginClouds(textureDirectory),
     fitSkyGradient(join(textureDirectory, "Enviro_Sky_Gradient.png")),
@@ -46,6 +48,7 @@ export const fitLoginScene = async (): Promise<string> => {
   const paths = await Promise.all([
     writeWorldData("login/towers.json", towers),
     writeWorldData("login/walkway.json", walkway),
+    writeWorldData("login/paving.json", paving),
     writeWorldData("login/door.json", door),
     writeWorldData("login/hulls.json", hulls),
     writeWorldData("login/clouds.json", clouds),

@@ -201,6 +201,18 @@ export const reference: ComponentReference = {
     },
     {
       found:
+        "The witness smeared every texture whose coordinates run past 0 and 1 into streaks, the walkway's bricks among them, since three clamps a texture's edges where Unity tiles it; tiled, the witness's walkway shows the recording's bricks. A plan of the walkway's tops drawn through their own coordinates, on the CPU and by the witness from straight above alike, lays out its paving in metres: a middle lane of bricks 0.25 metres a course between two light strips, side lanes and wings set with pockets, and a curb, which the recording shows as dark joints and rims. Traced and drawn as lines the paving scores within a thousandth of the bare stone at every hour, as the door's traced relief does, the phone's door frame a little better: the lines are the game's own, kept for the eye",
+      search:
+        "genshin:parity plan login-door-recording --family Walkway at 50 and 150 pixels a metre, genshin:assets fit login with fitLoginPaving and fitLoginDoor's relief, then compare at every hour",
+    },
+    {
+      found:
+        "Each tower section shaded by the colour its mesh paints its sides there, as a share of every tower's mean, scores the phone's door frame 0.008 worse and the day and dusk worse too: the gilding reads as bright orange bands where the game's gold is a metal, dark under the diffuse light and bright only in its highlight. The door casts no shadow: at dusk the sun stands low behind it and laid its shadow down the walkway to the camera, where the recording's walkway is lit, and without it the phone's door frame and the dusk score better. A tower's shadow still lies over the wings in front of the door where the recording's are lit, yet the towers drawn without shadows score the door frames and the dusk worse, so it is the dusk sun's direction or that tower's place that is off, not its shadow",
+      search:
+        "genshin:assets fit login with fitSectionShades on the towers, then compare at every hour; compare with the door and then the towers casting no shadow",
+    },
+    {
+      found:
         "The door rises at the walkway's far end as its last blocks settle, about 12 seconds in, nothing built past it, and the glide then brakes it to its pose",
       search: "genshin:parity frames yt-rBnfA4pXw6U at 2 a second over 0 to 15 seconds",
     },
@@ -215,9 +227,12 @@ export const reference: ComponentReference = {
     "Which of the towers' row stands at the door frame's left edge: the recording's is thin and dark with many rings, the exports' nearest there wide and arched",
     "The night's, the dawn's and the day's light apart from their exposure: the night still shows the walkway's top moonlit and the towers' faces dark where ours draws them the other way, and dawn takes nothing from the dusk's solved light, but genshin:parity light reads faces only where a reference's pose is solved, which the stills' is not",
     "The clouds over the door recording's towers, 13 to 25 degrees up: every band raised there scores the stills worse, whose camera is not the recording's",
+    "The dusk sun's direction against its shadows: a tower's shadow falls over the wings in front of the door where the recording's are lit, and the faces' shading cannot settle the direction, so the shadows' own edges are the measure left",
+    "The towers' gilding and windows: their colour per section scores worse painted as diffuse stone, the game's gold being a metal",
+    "The dusk's light and haze together: genshin:parity fog --light on the door recording solves a sun 2.5 times as strong, a sky light a third as strong and a haze dense, dark away from the sun and bright toward it, which scores the recording 0.03 better and the dusk still 0.05 worse; drawn, both frames turn to a flat orange wall with the towers' silhouettes, where the references keep their towers lit and edged, so the bins' medians by depth, angle and facing still reward a haze that washes our towers to the frame's mean, our towers lacking the lit structure the references' carry",
     "Where the glide comes to rest: the recording's door frame was still slowing at 1.6 metres a second when the click came, so the rest stands a little nearer the door than its pose",
     "The day sky's pose, by the same perspective reading",
-    "The wiki stills' pose: held to the glide's height, pitch and field of view, the dawn frame's near wings cannot be fitted at any depth (their 1582 pixels across put them 5.5 metres out at 51.2 degrees, their rows 6.7 at 1.24 metres and 5.29), so the stills stand lower, about a metre up, or pitched about 3 degrees; four corners on one plane leave the field of view free to run away, so the stills need landmarks at another depth. Scored at the glide's pose the four stills read 0.02 to 0.04 of FLIP worse than at the old perspective reading's (44.6 degrees, 5.6 up), while the door frames read better; both recordings glide at 51.2 (the English one's title paces steadily only there, and the user's current build agrees), so the stills' camera is theirs to solve, not the scene's",
+    "The wiki stills' pose: held to the glide's height, pitch and field of view, the dawn frame's near wings cannot be fitted at any depth (their 1582 pixels across put them 5.5 metres out at 51.2 degrees, their rows 6.7 at 1.24 metres and 5.29), so the stills stand lower, about a metre up, or pitched about 3 degrees; four corners on one plane leave the field of view free to run away, so the stills need landmarks at another depth. Freed, the dawn frame's four wing corners fit at 0.94 pixels with a field of view of 61.9 and 0.72 metres up, against 13 held at 51.2, but the same four corners on the door recording fit 48.3 with its heading 5 degrees off, and the walkway's edges below its far end fit 51.2 and 61 alike, so only the towers, whose row's phase the stills leave unknown, can settle it. Scored at the glide's pose the four stills read 0.02 to 0.04 of FLIP worse than at the old perspective reading's (44.6 degrees, 5.6 up), while the door frames read better; both recordings glide at 51.2 (the English one's title paces steadily only there, and the user's current build agrees), so the stills' camera is theirs to solve, not the scene's",
   ],
   sources: {
     atmosphereShader: {

@@ -16,6 +16,7 @@ import {
   LOGIN_DOOR_RISE_KEYFRAMES,
 } from "#src/services/login/door/constants";
 import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoorGeometry";
+import { createLoginDoorRelief } from "#src/services/login/door/createLoginDoorRelief";
 import { createLoginHullsGeometry } from "#src/services/login/hull/createLoginHullsGeometry";
 import { advanceLoginGlide } from "#src/services/login/scene/advanceLoginGlide";
 import {
@@ -53,6 +54,7 @@ import {
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
 import { LOGIN_WALKWAY_RISE_DEPTH, LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
+import { createLoginPavingShade } from "#src/services/login/walkway/createLoginPavingShade";
 import { createLoginWalkwayPieces } from "#src/services/login/walkway/createLoginWalkwayPieces";
 import { readLoginWalkwaySink } from "#src/services/login/walkway/readLoginWalkwaySink";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
@@ -166,6 +168,8 @@ watchImmediate(
 const towersMaterial = createStoneMaterial(stone.towers);
 const bridgesMaterial = createStoneMaterial(stone.bridges);
 const walkwayMaterial = createStoneMaterial(stone.walkway);
+// The walkway's stone darkened along its paving's lines
+walkwayMaterial.colorNode = color(stone.walkway.albedo).mul(createLoginPavingShade());
 const doorFrameMaterial = createStoneMaterial(stone.door);
 // The door lights from a line down its middle outward, over the panel's own glow, as the game opens it
 const doorGlow = uniform(0);
@@ -177,6 +181,10 @@ const doorMaterial = createStoneMaterial(
     ),
   ),
 );
+// The door's front painted with its panel's raised bands and its feet's gilding over its stone
+const doorAlbedo = createLoginDoorRelief().mul(color(stone.door.albedo));
+doorFrameMaterial.colorNode = doorAlbedo;
+doorMaterial.colorNode = doorAlbedo;
 const towersGeometry = createLoginTowersGeometry();
 const hullsGeometry = createLoginHullsGeometry();
 const walkwayPieces = createLoginWalkwayPieces();
@@ -289,7 +297,9 @@ onRender(({ delta: frameDelta }) => {
   light.position
     .copy(light.target.position)
     .addScaledVector(LoginSkyStateMap[timeOfDay].lightDirection, LOGIN_LIGHT_DISTANCE);
-  fogUniforms.density.value = witness?.isAlone.value ? 0 : LOGIN_FOG_DENSITY;
+  fogUniforms.density.value = witness?.isAlone.value
+    ? 0
+    : (LoginSkyStateMap[timeOfDay].fogDensity ?? LOGIN_FOG_DENSITY);
   doorGlow.value = isDoorLit ? Math.min(doorGlow.value + (delta * 1000) / LOGIN_DOOR_LIGHT_MS, 1) : 0;
   rushMs.value = isDoorLit ? rushMs.value + delta * 1000 : 0;
   isDoorRising.value = checkIsDoorDue() && (isDoorRising.value || doorAheadOfCamera <= LOGIN_WALKWAY_SUNK_DISTANCE);
@@ -370,8 +380,8 @@ onUnmounted(() => {
     :position="doorPosition"
     :rotation="[0, Math.PI, 0]"
   >
-    <TresMesh :geometry="doorFrameGeometry" cast-shadow receive-shadow :material="doorFrameMaterial" />
-    <TresMesh :geometry="doorPanelGeometry" cast-shadow receive-shadow :material="doorMaterial" />
+    <TresMesh :geometry="doorFrameGeometry" receive-shadow :material="doorFrameMaterial" />
+    <TresMesh :geometry="doorPanelGeometry" receive-shadow :material="doorMaterial" />
   </TresGroup>
   <TresMesh
     v-if="!witness?.isAlone.value"

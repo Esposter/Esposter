@@ -18,3 +18,5 @@ export const LOGIN_DOOR_RISE_KEYFRAMES: [number, number][] = [
   [667, 0.974],
   [800, 1],
 ];
+// The door's front relief drawn into its texture at so many pixels a metre, a pixel half a centimetre, as it was traced
+export const LOGIN_DOOR_RELIEF_PIXELS_PER_METRE = 200;

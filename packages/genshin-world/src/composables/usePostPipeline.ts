@@ -40,7 +40,7 @@ export const usePostPipeline = (
           })
         : undefined;
     if (sceneContext && activeCamera && isWebGPURenderer(renderer))
-      sceneContext.value = { camera: activeCamera, renderer, scene: scene.value, sky };
+      sceneContext.value = { camera: activeCamera, fog: postInputs.fogUniforms, renderer, scene: scene.value, sky };
   });
 
   render((notifySuccess) => {

@@ -38,11 +38,13 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | One region across frames, or ours       | `zoom --with`: the region of each image stacked                      |
 | A render that settles in one frame      | the witness: SMAA, its clock held, one frame                         |
 | Depth, normal, albedo, part per pixel   | `genshin:parity gbuffer`                                             |
+| A family's surface laid out in metres   | `genshin:parity plan`: its unlit albedo from straight above          |
 | Where each part lands on the reference  | `genshin:parity overlay`: boundaries, edge distance                  |
 | Which layer a score's loss is in        | `scoreLayers`: `compare --witness`, `attribute`                      |
 | One approval number                     | FLIP (`scoreFlip`), in every `compare`                               |
 | Sun against ambient light               | `genshin:parity light`: up and shaded faces under each light alone   |
 | Fog against distance                    | `genshin:parity haze`: depth bands, ours with and without fog        |
+| The fog's density and colours           | `genshin:parity fog`: bins by depth and sun angle, solved            |
 | A light's strength under its references | `genshin:parity exposure`: the parts' luminance, ours against theirs |
 | The grade, the fog, the light           | `genshin:parity calibrate`: least squares over masks                 |
 | What a shader computes                  | `shaders`: the annotated disassembly, and HLSL where it decompiles   |
