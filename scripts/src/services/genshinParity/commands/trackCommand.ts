@@ -3,6 +3,7 @@ import type { SubCommandsDef } from "citty";
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
 import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
 import { trackCamera } from "#src/services/genshinParity/trackCamera";
+import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { defineCommand } from "citty";
 
 export const trackCommand: SubCommandsDef[string] = defineCommand({
@@ -43,7 +44,7 @@ export const trackCommand: SubCommandsDef[string] = defineCommand({
       families: args.families.split(","),
       framesPerSecond: Number(args.fps),
       iterationCount: Number(args.iterations),
-      start: args.start.split(",").map(Number),
+      start: parseNumbers(args.start, "start", CAMERA_POSE_AXES.length),
       startSeconds: Number(args.time),
       topRow: Number(args["top-row"] ?? 0),
     });

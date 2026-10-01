@@ -1,10 +1,11 @@
 import type { SubCommandsDef } from "citty";
 
 import { measureGlide } from "#src/services/genshinParity/measureGlide";
+import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { defineCommand } from "citty";
 
-const toPair = (value: string): [number, number] => {
-  const [first = 0, second = 0] = value.split(",").map(Number);
+const toPair = (value: string, name: string): [number, number] => {
+  const [first = 0, second = 0] = parseNumbers(value, name, 2);
   return [first, second];
 };
 
@@ -36,8 +37,8 @@ export const glideCommand: SubCommandsDef[string] = defineCommand({
   },
   run: async ({ args }) => {
     const windows = await measureGlide(args.reference, {
-      band: toPair(args.band),
-      column: toPair(args.column),
+      band: toPair(args.band, "band"),
+      column: toPair(args.column, "column"),
       durationSeconds: Number(args.seconds),
       eyeHeight: Number(args["eye-height"]),
       fov: Number(args.fov),

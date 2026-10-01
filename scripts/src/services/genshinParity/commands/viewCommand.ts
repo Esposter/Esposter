@@ -1,7 +1,9 @@
 import type { SubCommandsDef } from "citty";
 
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
 import { viewScene } from "#src/services/genshinParity/viewScene";
+import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { jsonDateParse } from "@esposter/shared";
 import { defineCommand } from "citty";
 
@@ -24,7 +26,11 @@ export const viewCommand: SubCommandsDef[string] = defineCommand({
   },
   meta: { description: "A scene from any camera, our parts beside the exports they stand for", name: "view" },
   run: async ({ args }) => {
-    const [x = 0, y = 0, z = 0, yaw = 0, pitch = 0, fov = 50] = args.camera.split(",").map(Number);
+    const [x = 0, y = 0, z = 0, yaw = 0, pitch = 0, fov = 50] = parseNumbers(
+      args.camera,
+      "camera",
+      CAMERA_POSE_AXES.length,
+    );
     await viewScene({
       camera: [x, y, z, yaw, pitch, fov],
       height: Number(args.height),

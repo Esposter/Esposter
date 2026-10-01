@@ -4,6 +4,7 @@ import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDer
 import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
 import { placeFamilies } from "#src/services/genshinParity/placeFamilies";
 import { toPageCamera } from "#src/services/genshinParity/toPageCamera";
+import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { defineCommand } from "citty";
 
 export const placeCommand: SubCommandsDef[string] = defineCommand({
@@ -29,7 +30,7 @@ export const placeCommand: SubCommandsDef[string] = defineCommand({
   },
   run: async ({ args }) => {
     const { after, before, offset } = await placeFamilies(args.reference, parseDerivedAssetComponent(args.witness), {
-      camera: args.pose ? toPageCamera(args.pose.split(",").map(Number)) : undefined,
+      camera: args.pose ? toPageCamera(parseNumbers(args.pose, "pose", CAMERA_POSE_AXES.length)) : undefined,
       families: args.families.split(","),
       iterationCount: Number(args.iterations),
       topRow: Number(args["top-row"]),

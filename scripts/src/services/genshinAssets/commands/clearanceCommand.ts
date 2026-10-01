@@ -3,6 +3,7 @@ import type { SubCommandsDef } from "citty";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
 import { readPathClearance } from "#src/services/genshinAssets/readPathClearance";
+import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { defineCommand } from "citty";
 
 export const clearanceCommand: SubCommandsDef[string] = defineCommand({
@@ -20,7 +21,7 @@ export const clearanceCommand: SubCommandsDef[string] = defineCommand({
     name: "clearance",
   },
   run: async ({ args }) => {
-    const [x = 0, y = 0] = args.at.split(",").map(Number);
+    const [x = 0, y = 0] = parseNumbers(args.at, "at", 2);
     const pierced = await readPathClearance(parseDerivedAssetComponent(args.component), [x, y]);
     for (const { depths, mesh, position } of pierced)
       console.log(`${mesh} at ${position.map((value) => value.toFixed(1)).join(",")}: z ${depths.join(", ")}`);

@@ -3,6 +3,7 @@ import type { SubCommandsDef } from "citty";
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
 import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
 import { solveReferencePose } from "#src/services/genshinParity/solveReferencePose";
+import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
@@ -54,7 +55,7 @@ export const poseCommand: SubCommandsDef[string] = defineCommand({
         }),
         landmarkNames: args.landmarks?.split(","),
         refineIterations: args.refine ? Number(args.refine) : 0,
-        start: args.start?.split(",").map(Number),
+        start: args.start ? parseNumbers(args.start, "start", CAMERA_POSE_AXES.length) : undefined,
         topRow: Number(args["top-row"] ?? 0),
       },
     );
