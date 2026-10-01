@@ -1,0 +1,32 @@
+import type { Page } from "playwright";
+
+import { computeDistanceTransform } from "#src/services/genshinParity/computeDistanceTransform";
+import { readStructureEdges } from "#src/services/genshinParity/readStructureEdges";
+import { readWitnessPartTarget } from "#src/services/genshinParity/readWitnessPartTarget";
+import { InvalidOperationError, Operation } from "@esposter/shared";
+
+// What readFamilyEdgeDistance prices the families given on: each pixel's distance to the reference's nearest edge, its
+// Edges read at the witness's drawing buffer's size (which the page's whole-pixel viewport can leave a pixel off the
+// Structure's width) so a pixel's index is the same in both, and the first pixel of the row given, above which no edge
+// Is priced. Each family must be one the witness draws, which would otherwise price no boundary at all
+export const readFamilyEdgeDistances = async (
+  page: Page,
+  image: Buffer,
+  families: readonly string[],
+  topRow: number,
+): Promise<{ edgeDistances: Float32Array; topPixel: number }> => {
+  const { families: drawnFamilies, height, width } = await readWitnessPartTarget(page);
+  if (families.length === 0) throw new InvalidOperationError(Operation.Read, "families", "none given to price");
+  for (const family of families)
+    if (!drawnFamilies.includes(family))
+      throw new InvalidOperationError(
+        Operation.Read,
+        family,
+        `not a family the witness draws: ${drawnFamilies.join(", ")}`,
+      );
+  // A row above a crop's top comes in negative, which fill would count from the end
+  const topPixel = Math.max(0, Math.ceil(topRow)) * width;
+  // The reference's edges above the row are cleared too, so none of them is the nearest to a boundary below it
+  const edges = (await readStructureEdges(image, height, width)).fill(0, 0, topPixel);
+  return { edgeDistances: computeDistanceTransform(edges, width, height), topPixel };
+};

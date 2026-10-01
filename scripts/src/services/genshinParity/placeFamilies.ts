@@ -1,13 +1,11 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import type { PageWitnessView } from "#src/services/genshinParity/setPageWitnessView";
 
-import { computeDistanceTransform } from "#src/services/genshinParity/computeDistanceTransform";
-import { STRUCTURE_WIDTH } from "#src/services/genshinParity/constants";
 import { fetchReferences } from "#src/services/genshinParity/fetchReferences";
 import { minimizeNelderMead } from "#src/services/genshinParity/minimizeNelderMead";
 import { openWitnessPage } from "#src/services/genshinParity/openWitnessPage";
 import { readFamilyEdgeDistance } from "#src/services/genshinParity/readFamilyEdgeDistance";
-import { readStructureEdges } from "#src/services/genshinParity/readStructureEdges";
+import { readFamilyEdgeDistances } from "#src/services/genshinParity/readFamilyEdgeDistances";
 import { setPageWitnessView } from "#src/services/genshinParity/setPageWitnessView";
 import { withFinalizerAsync } from "@esposter/shared";
 
@@ -29,12 +27,10 @@ export const placeFamilies = async (
   }: { camera?: PageWitnessView["camera"]; families: readonly string[]; iterationCount: number; topRow?: number },
 ): Promise<{ after: number; before: number; offset: [number, number, number] }> => {
   await fetchReferences();
-  const { browser, height, image, page } = await openWitnessPage(referenceId, witness);
+  const { browser, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
-      const topPixel = Math.round(topRow) * STRUCTURE_WIDTH;
-      const edges = (await readStructureEdges(image, height)).fill(0, 0, topPixel);
-      const edgeDistances = computeDistanceTransform(edges, STRUCTURE_WIDTH, height);
+      const { edgeDistances, topPixel } = await readFamilyEdgeDistances(page, image, families, topRow);
       const readDistance = async ([x = 0, y = 0, z = 0]: readonly number[]): Promise<number> => {
         const offset: [number, number, number] = [x, y, z];
         await setPageWitnessView(page, {
