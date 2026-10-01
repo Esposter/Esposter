@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GameLanguageTagMap, GameTextKey } from "genshin-text";
+import { GameLanguage, GameLanguageTagMap, GameTextKey } from "genshin-text";
 import { GameOpening } from "genshin-world";
 
 // The game as it plays: its opening at once, over the world loading behind it, the login screen's flight following
@@ -24,11 +24,15 @@ const { start: startRickroll } = useTimeoutFn(
 
 <template>
   <div v-if="isRickrollStarted" bg-white size-full>
-    <!-- YouTube's player refuses to play without the embedding page's origin, which nuxt-security's no-referrer -->
-    <!-- Policy withholds -->
+    <!-- YouTube is blocked in mainland China, so a reader in Simplified Chinese gets Bilibili's upload. YouTube's -->
+    <!-- Player refuses to play without the embedding page's origin, which nuxt-security's no-referrer policy withholds -->
     <iframe
       v-if="isRickrollShown"
-      src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1"
+      :src="
+        gameText.language === GameLanguage.ChineseSimplified
+          ? 'https://player.bilibili.com/player.html?bvid=BV1UT42167xb&autoplay=1&danmaku=0&high_quality=1'
+          : 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1'
+      "
       title="Never Gonna Give You Up"
       allow="autoplay; encrypted-media"
       b-none
