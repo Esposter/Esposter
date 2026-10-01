@@ -17,6 +17,16 @@ describe(checkIsReachable, () => {
     await expect(checkIsReachable(url, timeout)).resolves.toBe(true);
   });
 
+  test("asks the network rather than the http cache", async () => {
+    expect.hasAssertions();
+
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(new Response());
+    vi.stubGlobal("fetch", fetchMock);
+    await checkIsReachable(url, timeout);
+
+    expect(fetchMock).toHaveBeenCalledWith(url, expect.objectContaining({ cache: "no-store" }));
+  });
+
   test("false when the network fails the request", async () => {
     expect.hasAssertions();
 
