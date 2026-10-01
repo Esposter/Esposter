@@ -93,11 +93,11 @@ const emit = defineEmits<{ ready: [] }>();
 const READY_FRAME_COUNT = 10;
 const [doorRiseMs = 0] = LOGIN_DOOR_RISE_KEYFRAMES.at(-1) ?? [];
 // The cloud sea's billows, as the noise's scale on the ground plane and where its lit tops start
-const CLOUD_SEA_SCALE = 0.012;
+const CLOUD_SEA_SCALE = 0.048;
 const CLOUD_SEA_EDGE_START = 0.05;
 const CLOUD_SEA_EDGE_END = 0.35;
 // The door's light: a line down its middle this many metres to its half width, over a glow across the whole panel
-const DOOR_SLIT_WIDTH = 0.16;
+const DOOR_SLIT_WIDTH = 0.04;
 const DOOR_SLIT_STRENGTH = 4;
 const DOOR_PANEL_STRENGTH = 0.6;
 // The witness render's parts, drawn in place of the fitted ones of each family it names when the parity page provides
@@ -123,7 +123,7 @@ Object.assign(light.shadow.camera, {
 });
 light.shadow.bias = LOGIN_SHADOW_BIAS;
 light.shadow.normalBias = LOGIN_SHADOW_NORMAL_BIAS;
-const godraysLight = createGodraysLight(1024, 160);
+const godraysLight = createGodraysLight(1024, 40);
 const hemisphere = new HemisphereLight();
 const fogUniforms = createFogUniforms();
 fogUniforms.baseHeight.value = LOGIN_CLOUD_SEA_HEIGHT;

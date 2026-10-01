@@ -30,11 +30,11 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
       },
       {
         anchor: { block: "00/11790361.blk", name: "DoorNode", pathId: "-6725424664267825220" },
-        // At the flight's end the door stands on the walkway's top, centred on it, 5.6 metres along it from its origin
-        // Toward its far end: the distance from the door's pose and the walkway's on one frame of login-door-recording,
-        // The door's turn held to the walkway's; the two solves scatter the foot by a few centimetres either side of
-        // The top and the axis, so it stands on both
-        position: [262, -340.68, -643.74],
+        // At the flight's end the door stands on the walkway's top, centred on it, at its far end along +z: 3.1 metres
+        // Beyond its wings' near faces, from the door's pose and the walkway's on one frame of login-door-recording,
+        // The door's turn held to the walkway's and the camera's heading ModelCamera's. The two solves scatter the
+        // Foot by a few centimetres either side of the top and the axis, so it stands on both
+        position: [262, -340.68, -776.1],
         prefab: { block: "00/11790361.blk", name: "LoginScene_Door01_Vo", pathId: "3964741434016489810" },
       },
     ],
