@@ -63,7 +63,9 @@ export const measureGlide = async (
   // Each frame's column, its rows' mean brightness across the column's width
   const columns = await Promise.all(
     filenames
-      .toSorted((firstFilename, secondFilename) => firstFilename.localeCompare(secondFilename))
+      .toSorted((firstFilename, secondFilename) =>
+        firstFilename.localeCompare(secondFilename, undefined, { numeric: true }),
+      )
       .map(async (filename) => {
         const { data, info } = await sharp(join(directory, filename))
           .greyscale()
