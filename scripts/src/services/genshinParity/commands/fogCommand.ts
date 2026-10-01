@@ -6,6 +6,11 @@ import { defineCommand } from "citty";
 
 export const fogCommand: SubCommandsDef[string] = defineCommand({
   args: {
+    light: {
+      description:
+        "Solve each light's share of its strength per channel with the haze, from ours under the sun alone and the sky alone",
+      type: "boolean",
+    },
     reference: { description: "A reference's id in ParityReferenceMap", required: true, type: "positional" },
     witness: {
       description: "The component whose exports mark the parts and their depths",
@@ -15,15 +20,18 @@ export const fogCommand: SubCommandsDef[string] = defineCommand({
   },
   meta: {
     description:
-      "The haze's density and its own and sunward colours solved over the parts' pixels, toward the fog's own direction and the sky's sun, each with its residual",
+      "The haze's density and its own and sunward colours solved over the parts' pixels, and with --light each light's share, toward the fog's own direction and the sky's sun, each with its residual",
     name: "fog",
   },
   run: async ({ args }) => {
-    const { count, solutions } = await solveReferenceFog(args.reference, parseDerivedAssetComponent(args.witness));
+    const { count, solutions } = await solveReferenceFog(args.reference, parseDerivedAssetComponent(args.witness), {
+      isLightSolved: args.light,
+    });
+    const format = (share: number[]): string => share.map((value) => value.toFixed(3)).join(",");
     console.log(`${count} pixels of the parts past the fog's start`);
-    for (const { color, density, direction, residual, scatterColor } of solutions)
+    for (const { color, density, direction, residual, scatterColor, shares } of solutions)
       console.log(
-        `toward ${direction}: density ${density.toFixed(4)}, colour ${color}, sunward ${scatterColor}, residual ${residual.toFixed(4)}`,
+        `toward ${direction}: density ${density.toFixed(4)}, colour ${color}, sunward ${scatterColor}${shares.length > 0 ? `, sun ${format(shares[0] ?? [])}, sky ${format(shares[1] ?? [])}` : ""}, residual ${residual.toFixed(4)}`,
       );
   },
 });
