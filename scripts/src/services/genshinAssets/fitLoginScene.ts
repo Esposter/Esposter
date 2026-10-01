@@ -1,6 +1,7 @@
 import type { DecodedCurve } from "#src/models/genshinAssets/DecodedCurve";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
+import { DerivedAssetComponentMap } from "#src/services/genshinAssets/DerivedAssetComponentMap";
 import { fitAlbedo } from "#src/services/genshinAssets/fitAlbedo";
 import { fitHorizonBand } from "#src/services/genshinAssets/fitHorizonBand";
 import { fitInterfaceClips } from "#src/services/genshinAssets/fitInterfaceClips";
@@ -18,7 +19,8 @@ import { join } from "node:path";
 
 // Every login part's diffuse texture, which its stone's one colour is fitted from
 const LOGIN_DIFFUSE_REGEX = /^LoginScene_.+_Diffuse\.png$/u;
-// The login scene's parts fitted as our own kits' parameters, each written as a data file of the world package's
+// The login scene's parts fitted as our own kits' parameters, each written as a data file of the world package's,
+// With the rows its script scrolls them in: each copied spawn's count and the length of its step, by its prefab
 export const fitLoginScene = async (): Promise<string> => {
   const directory = getComponentDirectory(DerivedAssetComponent.Login);
   const placements = await readComponentPlacements(DerivedAssetComponent.Login);
@@ -40,6 +42,11 @@ export const fitLoginScene = async (): Promise<string> => {
     fitHorizonBand(join(textureDirectory, "Enviro_Sky_Gradient.png")),
     fitAlbedo(diffusePaths),
   ]);
+  const scroll = Object.fromEntries(
+    (DerivedAssetComponentMap[DerivedAssetComponent.Login].spawns ?? []).flatMap(({ copies, prefab }) =>
+      copies ? [[prefab.name, { count: copies.count, length: Math.hypot(...copies.step) }]] : [],
+    ),
+  );
   const paths = await Promise.all([
     writeWorldData("login/towers.json", towers),
     writeWorldData("login/walkway.json", walkway),
@@ -48,6 +55,7 @@ export const fitLoginScene = async (): Promise<string> => {
     writeWorldData("login/clouds.json", clouds),
     writeWorldData("login/sky.json", { horizonBand }),
     writeWorldData("login/palette.json", { stone }),
+    writeWorldData("login/scroll.json", scroll),
     writeWorldData("login/interfaceClips.json", fitInterfaceClips(clips)),
   ]);
   return paths.join("\n");

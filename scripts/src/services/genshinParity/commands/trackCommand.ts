@@ -21,6 +21,10 @@ export const trackCommand: SubCommandsDef[string] = defineCommand({
     },
     fps: { default: "4", description: "Frames sampled a second", type: "string" },
     iterations: { default: "30", description: "Steps of the simplex a frame", type: "string" },
+    "top-row": {
+      description: "Only the edges below this row of the capture, in its own pixels, are priced",
+      type: "string",
+    },
     start: {
       description: `The pose at the first frame, as ${CAMERA_POSE_AXES.join(",")} (metres, then degrees)`,
       required: true,
@@ -41,6 +45,7 @@ export const trackCommand: SubCommandsDef[string] = defineCommand({
       iterationCount: Number(args.iterations),
       start: args.start.split(",").map(Number),
       startSeconds: Number(args.time),
+      topRow: Number(args["top-row"] ?? 0),
     });
     for (const { distance, pose, seconds } of track)
       console.log(

@@ -14,7 +14,8 @@ import sharp from "sharp";
 // The camera's path across a recording, the matchmove: its reference's capture sampled at the rate given from a
 // Start, and the pose at each frame refined on the edges of the families given from the frame before's, the first from
 // The pose given, on the reference's own witness page. The track (each frame's time, pose and edge distance) is written
-// Beside the references and returned
+// Beside the references and returned. Given a top row, in the capture's own pixels, only the edges below it are
+// Priced
 export const trackCamera = async (
   referenceId: string,
   witness: DerivedAssetComponent,
@@ -25,6 +26,7 @@ export const trackCamera = async (
     iterationCount,
     start,
     startSeconds,
+    topRow = 0,
   }: {
     durationSeconds: number;
     families: string[];
@@ -32,6 +34,7 @@ export const trackCamera = async (
     iterationCount: number;
     start: number[];
     startSeconds: number;
+    topRow?: number;
   },
 ): Promise<{ path: string; track: { distance: number; pose: number[]; seconds: number }[] }> => {
   const reference = ParityReferenceMap[referenceId];
@@ -56,13 +59,17 @@ export const trackCamera = async (
         const { crop } = reference;
         // oxlint-disable-next-line no-await-in-loop -- each frame is read when its turn comes
         const frame = sharp(await readFile(framePath));
+        // oxlint-disable-next-line no-await-in-loop -- as above
+        const { height: frameHeight } = await frame.metadata();
         const cropped = crop
           ? frame.extract({ height: crop.height, left: crop.x, top: crop.y, width: crop.width })
           : frame;
         // oxlint-disable-next-line no-await-in-loop -- each frame is solved from the pose before it
         const image = await cropped.resize({ height }).removeAlpha().png().toBuffer();
         // oxlint-disable-next-line no-await-in-loop -- as above
-        const { after, pose } = await refineCameraPose(page, image, previous, families, iterationCount);
+        const { after, pose } = await refineCameraPose(page, image, previous, families, iterationCount, {
+          topRow: ((topRow - (crop?.y ?? 0)) * height) / (crop?.height ?? frameHeight),
+        });
         poses.push({ distance: after, pose, seconds: startSeconds + index / framesPerSecond });
         previous = pose;
       }
