@@ -13,7 +13,7 @@ const SPECK_SHARE = 0.0002;
 // A glyph in a region of an image as one filled path, so a mark is derived from the game's own shape rather than
 // Guessed: the region is split into ink and paper halfway between its faintest and strongest ink (a pale mark on a
 // Pale ground splits as well as a dark one), traced into curves, and the ink's paths kept. The SVG is written beside
-// The references, with the region and the trace side by side to check it against
+// The references, with the region and the trace side by side to check it against, and its path returned
 export const traceImage = async (
   source: string,
   x: number,
@@ -25,7 +25,7 @@ export const traceImage = async (
   // Outline, lower for a mark the game draws flat over one printed with lighter detail (a logo's sparkles), so that
   // Detail stays ink rather than notching the edge it touches
   inkShare: number,
-): Promise<void> => {
+): Promise<string> => {
   const path = await resolveSource(source);
   const region = sharp(path).flatten({ background: "#fff" }).extract({ height, left: x, top: y, width });
   // Traced at the source's full resolution, never reduced; a small mark is smoothly enlarged first, so its antialiased
@@ -94,4 +94,5 @@ export const traceImage = async (
     .toFile(checkPath);
   console.log(`${inkPaths.length} paths, ${svg.length} bytes: ${svgPath}`);
   console.log(`region | trace: ${checkPath}`);
+  return inkPaths.join(" ");
 };
