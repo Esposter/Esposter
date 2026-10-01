@@ -67,8 +67,8 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     zenithColor: new Color(0x3b68a0),
   },
   [LoginTimeOfDay.Dusk]: {
-    cloudLitColor: new Color(0xfcdbad),
-    cloudShadeColor: new Color(0xa9708d),
+    cloudLitColor: new Color(0xfdedc4),
+    cloudShadeColor: new Color(0xeb8596),
     fogColor: new Color(0xf0c4aa),
     hemisphereGroundColor: new Color(0xab6db4),
     hemisphereIntensity: 2.08,

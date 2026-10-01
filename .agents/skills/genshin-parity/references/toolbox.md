@@ -44,6 +44,7 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | Which layer a score's loss is in        | `scoreLayers`: `compare --witness`, `attribute`                      |
 | One approval number                     | FLIP (`scoreFlip`), in every `compare`                               |
 | Sun against ambient light               | `genshin:parity light`: up and shaded faces under each light alone   |
+| The clouds' lit and shaded colours      | `genshin:parity clouds`: ours and theirs matched by colour spread    |
 | Fog against distance                    | `genshin:parity haze`: depth bands, ours with and without fog        |
 | The fog's density and colours           | `genshin:parity fog`: bins by depth and sun angle, solved            |
 | A light's strength under its references | `genshin:parity exposure`: the parts' luminance, ours against theirs |

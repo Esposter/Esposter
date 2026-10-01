@@ -1,6 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 
-import { REFERENCES_DIRECTORY, SKY_LAYER } from "#src/services/genshinParity/constants";
+import { CLOUD_BRIGHTNESS_RATIO, REFERENCES_DIRECTORY, SKY_LAYER } from "#src/services/genshinParity/constants";
 import { fetchReferences } from "#src/services/genshinParity/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/openWitnessPage";
 import { ParityReferenceMap } from "#src/services/genshinParity/ParityReferenceMap";
@@ -18,9 +18,8 @@ const DEPTH_BANDS: [string, number][] = [
   ["far", Infinity],
 ];
 // The sky's rows split into this many bands from the frame's top down, the zenith apart from the horizon's glow, and each
-// Band's pixels into the clouds the reference shows over ours, where it stands this many times as bright, and the rest
+// Band's pixels into the clouds the reference shows over ours and the rest
 const SKY_BAND_COUNT = 3;
-const CLOUD_BRIGHTNESS_RATIO = 1.4;
 // A part's face is lit where its cosine to the light passes this, turned away under its negative, and edge-on between
 const FACING_COSINE = 0.3;
 const BYTE = 255;
@@ -31,7 +30,8 @@ type SetLights = (shares: { ambientShare?: number; sunShare?: number }) => { dir
 // Recover: the frame's FLIP is its pixels' mean, so a term's ceiling is its pixels' error summed over the frame's
 // Pixels. Each family of parts the witness draws splits into its stand-in, the error ours carries over the game's own
 // Exports on that family's pixels, and the shared terms the exports carry too (the light, the haze, the grade), split
-// By depth and by how the faces turn to the light; the sky splits by its rows and into the clouds the reference shows
+// By depth and by how the faces turn to the light, over the parts' interiors; the silhouettes are their own terms, the
+// Exports' placement and the camera's pose, and the stand-ins' outlines over theirs; the sky splits by its rows and into the clouds the reference shows
 // Over ours and the rest. One page draws the witness's layers and two shots, ours and the exports', and
 // The error is mapped once over each, inside the reference's scored region
 export const rankReferenceGains = async (
@@ -95,11 +95,28 @@ export const rankReferenceGains = async (
       };
       let scoredCount = 0;
       let frameError = 0;
+      // A pixel on a silhouette, the sky's or a part's, where a part or a pose a pixel off reads what stands beside it:
+      // Its error is the exports' placement and the camera's pose, whatever the light
+      const checkIsSilhouette = (pixel: number): boolean => {
+        const [column, row] = [pixel % width, Math.floor(pixel / width)];
+        for (let rowOffset = -1; rowOffset <= 1; rowOffset++)
+          for (let columnOffset = -1; columnOffset <= 1; columnOffset++) {
+            const [neighbourColumn, neighbourRow] = [column + columnOffset, row + rowOffset];
+            if (neighbourColumn < 0 || neighbourRow < 0 || neighbourColumn >= width || neighbourRow >= height) continue;
+            if (part[(neighbourRow * width + neighbourColumn) * 4] !== part[pixel * 4]) return true;
+          }
+        return false;
+      };
       for (let pixel = 0; pixel < width * height; pixel++) {
         if (!checkIsScored(pixel)) continue;
         scoredCount++;
         const ourError = ourErrors[pixel] ?? 0;
         frameError += ourError;
+        if (checkIsSilhouette(pixel)) {
+          add("silhouettes: placement and pose", witnessErrors[pixel] ?? 0);
+          add("silhouettes: stand-ins", ourError - (witnessErrors[pixel] ?? 0));
+          continue;
+        }
         if (part[pixel * 4] === 0) {
           const band = Math.min(Math.floor((Math.floor(pixel / width) / height) * SKY_BAND_COUNT), SKY_BAND_COUNT - 1);
           const isCloud = (referenceLuminances[pixel] ?? 0) > (ourLuminances[pixel] ?? 0) * CLOUD_BRIGHTNESS_RATIO;
