@@ -1,10 +1,9 @@
 import type { Character } from "#src/models/Character";
 
+import { getCanonicalLanguage } from "#src/generated/genshinText/services/getCanonicalLanguage";
 import { DEFAULT_LANGUAGE } from "#src/services/constants";
-import { getCanonicalLanguage } from "#src/services/getCanonicalLanguage";
 import { readGenshinDb } from "#src/services/readGenshinDb";
 import { readGenshinDbVersion } from "#src/services/readGenshinDbVersion";
-import { readLanguageNames } from "#src/services/readLanguageNames";
 import { readRosterCache } from "#src/services/readRosterCache";
 import { writeRosterCache } from "#src/services/writeRosterCache";
 
@@ -27,13 +26,13 @@ export const readRoster = (language: string): Character[] => {
   const characters = genshindb.characters("names", { matchCategories: true, verboseCategories: true });
   // A language the package does not answer in leaves the English records standing in for their own display, which
   // Is what a hand-edited state file gets rather than an empty roster
-  const resultLanguage = getCanonicalLanguage(readLanguageNames(), language);
+  const resultLanguage = getCanonicalLanguage(language);
   const localizedCharacters =
     resultLanguage && language !== DEFAULT_LANGUAGE
       ? genshindb.characters("names", {
           matchCategories: true,
           queryLanguages: [genshindb.Language.English],
-          resultLanguage,
+          resultLanguage: genshindb.Language[resultLanguage],
           verboseCategories: true,
         })
       : characters;

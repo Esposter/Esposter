@@ -1,8 +1,8 @@
 import type { ReplyPiece } from "#src/models/ReplyPiece";
 import type { TravelerTwin } from "#src/models/TravelerTwin";
 import type { VoiceDeviceRung } from "#src/models/VoiceDeviceRung";
-import type { WikiVoiceOversPage } from "#src/models/WikiVoiceOversPage";
 
+import { GameLanguage } from "#src/generated/genshinText/models/GameLanguage";
 import { TravelerGender } from "#src/models/TravelerGender";
 import { VoiceLanguage } from "#src/models/VoiceLanguage";
 import { homedir } from "node:os";
@@ -45,11 +45,11 @@ export const RUNTIME_SOURCE_DIRECTORY: string = join(PLUGIN_DIRECTORY, "runtime"
 // The two user settings that name a script point at a launcher in the state directory, re-aimed at the running
 // Install on every session start, since an install lands under a directory named after its version
 export const STATUS_LAUNCHER_PATH: string = join(STATE_DIRECTORY, "status.mjs");
-export const STATUS_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "status.ts");
+export const STATUS_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "status.mjs");
 export const SPEAK_LAUNCHER_PATH: string = join(STATE_DIRECTORY, "speak.mjs");
-export const SPEAK_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "speak.ts");
-export const VOICE_SERVER_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "voice.ts");
-export const SPINNER_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "spinner.ts");
+export const SPEAK_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "speak.mjs");
+export const VOICE_SERVER_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "voice.mjs");
+export const SPINNER_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "spinner.mjs");
 // A named pipe on Windows, a socket file elsewhere: one address per machine and no port to collide on
 export const VOICE_SOCKET_PATH: string =
   process.platform === "win32" ? String.raw`\\.\pipe\genshin-persona-voice` : join(STATE_DIRECTORY, "voice.sock");
@@ -120,27 +120,8 @@ export const BIRTHDAY_DATE_FORMAT: Intl.DateTimeFormatOptions = { day: "numeric"
 // The lore pick's request is an English instruction whatever the interface language is
 export const LORE_MOMENT_LOCALE = "en-AU";
 // What the data package answers in unasked, and what our own words are written in
-export const DEFAULT_LANGUAGE = "English";
-// The BCP-47 tag per language the data package names, which it does not carry and `Intl.DisplayNames` needs; a
-// Language missing here is named by the package's own English word for it, which is also what a person types
-export const LanguageLocaleMap: Record<string, string> = {
-  ChineseSimplified: "zh-Hans",
-  ChineseTraditional: "zh-Hant",
-  English: "en",
-  French: "fr",
-  German: "de",
-  Indonesian: "id",
-  Italian: "it",
-  Japanese: "ja",
-  Korean: "ko",
-  Portuguese: "pt",
-  Russian: "ru",
-  Spanish: "es",
-  Thai: "th",
-  Turkish: "tr",
-  Vietnamese: "vi",
-};
-// The source of a character's lines before the game-data package carries them, and of the clip a voice is cloned from
+export const DEFAULT_LANGUAGE: GameLanguage = GameLanguage.English;
+// The source of the clip a voice is cloned from, and of the stems every dub files a character's clips under
 const WIKI_ORIGIN = "https://genshin-impact.fandom.com";
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template would otherwise infer
 export const WIKI_VOICE_OVERS_URL: string = `${WIKI_ORIGIN}/api.php?action=parse&prop=wikitext&format=json&page=`;
@@ -149,18 +130,6 @@ export const WIKI_VOICE_OVERS_URL: string = `${WIKI_ORIGIN}/api.php?action=parse
 export const WIKI_IMAGE_INFO_URL: string = `${WIKI_ORIGIN}/api.php?action=query&prop=imageinfo&iiprop=url&format=json&titles=`;
 // oxlint-disable-next-line naming/no-site-name-literal -- the plugin ships on its own, without `@esposter/shared` to read `SITE_NAME` from
 export const WIKI_USER_AGENT = "esposter-genshin-persona (card authoring)";
-// The character's own voice-over page, which every other language's is a subpage of
-export const WIKI_ENGLISH_VOICE_OVERS_PAGE: WikiVoiceOversPage = { fieldSuffix: "", subpage: "" };
-// The wiki transcribes the four dubs' lines, each on its own subpage of the character's English page; the Chinese
-// Page holds both scripts, keyed by a suffix on every title and text field. The other languages have no page, so a
-// Character the data package has no lines for yet in one of them shows their description
-export const WikiVoiceOversPageMap: Record<string, WikiVoiceOversPage> = {
-  ChineseSimplified: { fieldSuffix: "_s", subpage: "/Chinese" },
-  ChineseTraditional: { fieldSuffix: "_t", subpage: "/Chinese" },
-  [DEFAULT_LANGUAGE]: WIKI_ENGLISH_VOICE_OVERS_PAGE,
-  Japanese: { fieldSuffix: "", subpage: "/Japanese" },
-  Korean: { fieldSuffix: "", subpage: "/Korean" },
-};
 // The twins have no page of their own: every line is a dialogue with Paimon on the Traveler's story pages, filed
 // Under a file per twin, with a gendered word choice in the text
 export const TravelerTwinMap: Record<string, TravelerTwin> = {
@@ -179,11 +148,11 @@ export const WIKI_FILE_REQUEST_HEADERS: Record<string, string> = {
 export const WIKI_VOICE_FILE_PREFIX = "VO_";
 export const WIKI_VOICE_FILE_EXTENSION = ".ogg";
 // The one thing the interface language says about the voice: whether a dub of it exists at all. Four of the fifteen
-export const VoiceLanguageNameMap: Record<VoiceLanguage, string> = {
-  [VoiceLanguage.Chinese]: "ChineseSimplified",
-  [VoiceLanguage.English]: DEFAULT_LANGUAGE,
-  [VoiceLanguage.Japanese]: "Japanese",
-  [VoiceLanguage.Korean]: "Korean",
+export const VoiceLanguageNameMap: Record<VoiceLanguage, GameLanguage> = {
+  [VoiceLanguage.Chinese]: GameLanguage.ChineseSimplified,
+  [VoiceLanguage.English]: GameLanguage.English,
+  [VoiceLanguage.Japanese]: GameLanguage.Japanese,
+  [VoiceLanguage.Korean]: GameLanguage.Korean,
 };
 export const LanguageDubPrefixMap: Record<VoiceLanguage, string> = {
   [VoiceLanguage.Chinese]: "ZH_",

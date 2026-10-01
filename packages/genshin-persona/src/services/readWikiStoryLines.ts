@@ -1,5 +1,4 @@
 import type { WikiStoryLine } from "#src/models/WikiStoryLine";
-import type { WikiVoiceOversPage } from "#src/models/WikiVoiceOversPage";
 
 import { TravelerTwinMap } from "#src/services/constants";
 import { parseWikiStoryLines } from "#src/services/parseWikiStoryLines";
@@ -11,17 +10,14 @@ const VOICE_OVERS_SUBPAGE = "/Voice-Overs";
 const TRAVELER_PAGE = "Traveler";
 // The Traveler's index lists its story pages as one relative link per region
 const STORY_PAGE_LINK_REGEX = /^\* \[\[\/(?<page>[^\]|]+)/gmu;
-// The community wiki's voice-over page for one character in one language, parsed on request; a player twin's
-// Lines are read off the Traveler's English story pages `TravelerTwinMap` describes, as the twin's half of each
-// Dialogue, since no other language ever asks for them
-export const readWikiStoryLines = async (
-  name: string,
-  { fieldSuffix, subpage }: WikiVoiceOversPage,
-): Promise<WikiStoryLine[]> => {
+// The community wiki's English voice-over page for one character, parsed on request, for the stems its clips are
+// Filed under in every dub; a player twin's lines are read off the Traveler's story pages `TravelerTwinMap`
+// Describes, as the twin's half of each dialogue
+export const readWikiStoryLines = async (name: string): Promise<WikiStoryLine[]> => {
   const twin = TravelerTwinMap[name];
   if (!twin) {
-    const wikitext = await readWikiPageText(`${name}${VOICE_OVERS_SUBPAGE}${subpage}`);
-    return parseWikiStoryLines(wikitext, fieldSuffix);
+    const wikitext = await readWikiPageText(`${name}${VOICE_OVERS_SUBPAGE}`);
+    return parseWikiStoryLines(wikitext);
   }
 
   const travelerPage = `${TRAVELER_PAGE}${VOICE_OVERS_SUBPAGE}`;

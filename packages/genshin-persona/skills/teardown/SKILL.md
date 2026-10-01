@@ -7,7 +7,7 @@ disable-model-invocation: true
 # Teardown
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" teardown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" teardown
 ```
 
 Relay its lines as written.

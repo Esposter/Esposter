@@ -71,7 +71,7 @@ const english: ResolvedLocalization = {
       "Status line, spinner and speak hook removed from user settings; all three go at the next session. The voice's runtime, weights, references and dub are removed; the pick records, the pin and the languages stay.",
     unmuted: "Spoken replies unmuted.",
     upcomingBirthdays: (list) => `Birthdays this week: ${list}.`,
-    usage: (verbs) => `Usage: genshin.ts <${verbs}> [name]`,
+    usage: (verbs) => `Usage: genshin.mjs <${verbs}> [name]`,
     usingInSession: "Speaking as this character from this reply, in this session alone.",
     voiceLanguageAvailable: (dub) => `A ${dub} dub exists; install it with the voice verb to hear replies read in it.`,
     voiceLanguageMustBeOneOf: (dubs) => `The dub must be one of ${dubs}.`,

@@ -12,9 +12,9 @@ A character with no card is fully usable: the session-start hook prints the name
 Newest first, so the queue starts with whoever a player has heard most recently:
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" uncarded       # no card at all
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" unverbed       # a card with no verbs
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" untranslated   # no gerunds or greeting in the interface language
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" uncarded       # no card at all
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" unverbed       # a card with no verbs
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" untranslated   # no gerunds or greeting in the interface language
 ```
 
 The third queue is a language's rather than a card's, and it is empty under English, where the gerunds and the greeting are read off the cards themselves. Under any other language they live in one module per language at `src/localizations/<language>.ts`, named the way a card is named for its character: a `characters` map keyed by the character's English name, each entry the person's half of that card — `verbs` and `greeting`, either present once written — beside that language's base Teyvat verbs. A character with no verbs in a module that exists shows the base verbs alone rather than the card's English ones behind localized ones; a language with no module at all inherits English base verbs, so the cards' gerunds show there too. A character with no greeting is greeted in the card's own words, since one line in another script is a queue item where a spinner mixing two is broken. Either way the queue draining is what fills a spinner and a welcome out and never what stops them working.
@@ -83,7 +83,7 @@ The full reasoning — how a reference is chosen and what its likeness number is
 A line is drawn from the character's own in-game lines and story, and one command prints them — the description, then every line the game-data dependency carries, and when it carries none yet, the same lines read off the community wiki's voice-over page for the interface language, which the wiki keeps for the four dubs:
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" lines <name>
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" lines <name>
 ```
 
 A card is described **in our words** — never a quoted line, never a catchphrase copied verbatim, never a lyric, and never a line reworded closely enough to be recognised. The repository holds no text, image or audio lifted from the game, and a card is the one place that rule is tested by hand. An invented mannerism is not a habit: if the character's lines do not show it, it does not go in, however well it would read.

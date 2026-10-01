@@ -27,6 +27,14 @@ is a startup crash rather than a type error; `scripts/src/workspace/packageScrip
 each `graph:gen`/`outdated:dependencies`/`ai:*` name there is a bare `pnpm -C scripts <name>` delegation to the package
 that does.
 
+**The same holds where no package script runs the file.** A published plugin's hook and command lines are
+`node <path>` strings the tool runs, and `--import` cannot carry the path: on Windows `${CLAUDE_PLUGIN_ROOT}` is a
+drive path, which `--import` reads as a URL scheme. So each entry is a two-line `.mjs` beside its `.ts` — `import
+"tsx/esm"` then `await import("#scripts/<name>")` — and every hook, command, launcher and spawn names the `.mjs`;
+`tsx` is then a dependency, not a devDependency, since the plugin's own install has to carry it
+(`packages/genshin-persona/scripts/*.mjs`). Node 26 removed `--experimental-transform-types`, so there is no
+native route left for an `enum`.
+
 The `db:*` scripts call the `drizzle-kit` bin, which loads `drizzle.config.ts` and the schema itself — there is no
 loader to choose.
 

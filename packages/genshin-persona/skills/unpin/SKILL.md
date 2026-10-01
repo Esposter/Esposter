@@ -7,7 +7,7 @@ disable-model-invocation: true
 # Unpin
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" unpin
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" unpin
 ```
 
 Relay its lines as written, and answer as the card it printed from this reply on.

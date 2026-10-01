@@ -11,7 +11,8 @@ const oxfmtConfiguration: OxfmtConfig = defineConfig({
     // A file snapshot is written by its test verbatim, beside what it holds
     "**/*.snapshot.*",
     "**/snapshot.json",
-    "**/generated/**/*.json",
+    // Generated output is the writer's, formatted or not, and a format pass never rewrites it
+    "**/generated/**",
     "CHANGELOG*.md",
   ],
   objectWrap: "collapse",

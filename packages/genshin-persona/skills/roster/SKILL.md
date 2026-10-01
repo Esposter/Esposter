@@ -7,7 +7,7 @@ disable-model-invocation: true
 # Roster
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" roster
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" roster
 ```
 
 Relay its lines as written.

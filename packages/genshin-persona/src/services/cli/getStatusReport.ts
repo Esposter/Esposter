@@ -6,7 +6,7 @@ import { checkIsPluginHookEntry } from "#src/services/checkIsPluginHookEntry";
 import { checkIsPluginSpinner } from "#src/services/checkIsPluginSpinner";
 import { checkIsPluginStatusLine } from "#src/services/checkIsPluginStatusLine";
 import { checkIsRuntimeInstalled } from "#src/services/checkIsRuntimeInstalled";
-import { getLanguageDisplayName } from "#src/services/getLanguageDisplayName";
+import { getLanguageDisplayName } from "#src/generated/genshinText/services/getLanguageDisplayName";
 import { readPin } from "#src/services/readPin";
 import { readReplyLanguage } from "#src/services/readReplyLanguage";
 import { readUserSettings } from "#src/services/readUserSettings";

@@ -9,7 +9,7 @@ user-invocable: false
 The plugin picks a character at every session start — by lore through a typed decision when a TypeSafe key is configured, by the nearest birthday otherwise; the verbs below are how the user reads and overrides that. Each verb is its own slash command, `/genshin-persona:<verb>`, for the user to type; this skill is how a request put in words reaches one. Every verb runs the plugin's script and relays its output — the roster is game data the script reads, and nothing about it is known without running it.
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" <verb> [name]
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" <verb> [name]
 ```
 
 | Asked for                                                              | Verb                |

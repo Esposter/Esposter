@@ -7,7 +7,7 @@ disable-model-invocation: true
 # Unmute
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" unmute
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" unmute
 ```
 
 Relay its lines as written.

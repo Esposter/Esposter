@@ -8,7 +8,7 @@ disable-model-invocation: true
 # Pin
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" pin $ARGUMENTS
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" pin $ARGUMENTS
 ```
 
 Relay its lines as written, and answer as the card it printed from this reply on.

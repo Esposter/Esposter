@@ -6,11 +6,7 @@ import type { VoiceLanguage } from "genshin-persona/src/models/VoiceLanguage.ts"
 import { MAX_WIKI_TITLES_PER_QUERY, MIN_CLIP_SECONDS, MODEL_SAMPLE_RATE } from "#src/services/voiceMatch/constants";
 import { getClipProfile } from "#src/services/voiceMatch/getClipProfile";
 import { chunk } from "@esposter/shared";
-import {
-  MAX_REFERENCE_SECONDS,
-  VOICE_SAMPLE_RATE,
-  WIKI_ENGLISH_VOICE_OVERS_PAGE,
-} from "genshin-persona/src/services/constants.ts";
+import { MAX_REFERENCE_SECONDS, VOICE_SAMPLE_RATE } from "genshin-persona/src/services/constants.ts";
 import { cutReferenceClip } from "genshin-persona/src/services/cutReferenceClip.ts";
 import { getWikiFileTitle } from "genshin-persona/src/services/getWikiFileTitle.ts";
 import { readWikiFile } from "genshin-persona/src/services/readWikiFile.ts";
@@ -28,7 +24,7 @@ export const readReferenceCandidates = async (
   embed: SpeakerEmbedder,
 ): Promise<ReferenceCandidate[]> => {
   // A stem is the same in every dub, so the English page names the clips whichever language is fetched
-  const lines = await readWikiStoryLines(name, WIKI_ENGLISH_VOICE_OVERS_PAGE);
+  const lines = await readWikiStoryLines(name);
   // The title batches and the downloads are independent requests, so each set overlaps
   const urlPages = await Promise.all(
     chunk(lines, MAX_WIKI_TITLES_PER_QUERY).map((batch) =>

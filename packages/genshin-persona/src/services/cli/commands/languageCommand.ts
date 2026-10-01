@@ -1,14 +1,14 @@
 import type { SubCommandsDef } from "citty";
 
+import { GameLanguages } from "#src/generated/genshinText/models/GameLanguage";
+import { getCanonicalLanguage } from "#src/generated/genshinText/services/getCanonicalLanguage";
+import { getLanguageDisplayName } from "#src/generated/genshinText/services/getLanguageDisplayName";
 import { GenshinVerb } from "#src/models/GenshinVerb";
 import { getStatusReport } from "#src/services/cli/getStatusReport";
 import { printCard } from "#src/services/cli/printCard";
 import { readGenshinContext } from "#src/services/cli/readGenshinContext";
 import { DEFAULT_LANGUAGE, VoiceLanguageNameMap } from "#src/services/constants";
 import { findCharacterByName } from "#src/services/findCharacterByName";
-import { getCanonicalLanguage } from "#src/services/getCanonicalLanguage";
-import { getLanguageDisplayName } from "#src/services/getLanguageDisplayName";
-import { readLanguageNames } from "#src/services/readLanguageNames";
 import { readLocalization } from "#src/services/readLocalization";
 import { readPersonaCard } from "#src/services/readPersonaCard";
 import { readPin } from "#src/services/readPin";
@@ -27,10 +27,9 @@ export const languageCommand: SubCommandsDef[string] = defineCommand({
     const context = await readGenshinContext();
     const { listFormat, sessionId, strings, today } = context;
     const name = args._.join(" ");
-    const languageNames = readLanguageNames();
     // Each language is offered in its own words beside the word a person types for it, and either resolves
     const offered = listFormat.format(
-      languageNames.map((languageName) => {
+      GameLanguages.map((languageName) => {
         const ownName = getLanguageDisplayName(languageName, languageName);
         return ownName === languageName ? languageName : `${languageName} (${ownName})`;
       }),
@@ -41,7 +40,7 @@ export const languageCommand: SubCommandsDef[string] = defineCommand({
       return;
     }
 
-    const canonicalLanguage = getCanonicalLanguage(languageNames, name);
+    const canonicalLanguage = getCanonicalLanguage(name);
     if (!canonicalLanguage) {
       console.error(strings.languageMustBeOneOf(offered));
       process.exitCode = 1;

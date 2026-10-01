@@ -7,7 +7,7 @@ disable-model-invocation: true
 # Mute
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" mute
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" mute
 ```
 
 Relay its lines as written.
