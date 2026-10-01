@@ -53,6 +53,7 @@ import {
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
 import { LOGIN_WALKWAY_RISE_DEPTH, LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
+import { createLoginPavingShade } from "#src/services/login/walkway/createLoginPavingShade";
 import { createLoginWalkwayPieces } from "#src/services/login/walkway/createLoginWalkwayPieces";
 import { readLoginWalkwaySink } from "#src/services/login/walkway/readLoginWalkwaySink";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
@@ -166,6 +167,8 @@ watchImmediate(
 const towersMaterial = createStoneMaterial(stone.towers);
 const bridgesMaterial = createStoneMaterial(stone.bridges);
 const walkwayMaterial = createStoneMaterial(stone.walkway);
+// The walkway's stone darkened along its paving's lines
+walkwayMaterial.colorNode = color(stone.walkway.albedo).mul(createLoginPavingShade());
 const doorFrameMaterial = createStoneMaterial(stone.door);
 // The door lights from a line down its middle outward, over the panel's own glow, as the game opens it
 const doorGlow = uniform(0);
@@ -370,8 +373,8 @@ onUnmounted(() => {
     :position="doorPosition"
     :rotation="[0, Math.PI, 0]"
   >
-    <TresMesh :geometry="doorFrameGeometry" cast-shadow receive-shadow :material="doorFrameMaterial" />
-    <TresMesh :geometry="doorPanelGeometry" cast-shadow receive-shadow :material="doorMaterial" />
+    <TresMesh :geometry="doorFrameGeometry" receive-shadow :material="doorFrameMaterial" />
+    <TresMesh :geometry="doorPanelGeometry" receive-shadow :material="doorMaterial" />
   </TresGroup>
   <TresMesh
     v-if="!witness?.isAlone.value"

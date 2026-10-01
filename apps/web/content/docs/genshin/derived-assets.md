@@ -127,6 +127,7 @@ A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit fille
 | `Login/Scene` camera              | The walkway's edges in the four skies                     | Derived, flying along −z from the walkway's far end                  |
 | `Login/Scene` towers              | The stage's `LoginScene_Build*` meshes and placements     | Fitted as lathes, placed where the game stands them                  |
 | `Login/Scene` walkway             | `LoginScene_Bridge01_*` meshes                            | Fitted as a footprint and its two heights                            |
+| `Login/Scene` paving              | The walkway's tops and their four materials' textures     | Traced as each brick's and each pocket's loop over one copy          |
 | `Login/Scene` door                | The stage's `LoginScene_Door01_Vo`                        | Placed and sized by its mesh; stands once the flight reaches it      |
 | `Login/Scene` bridges and pillars | The stage's `LoginScene_Bridge02`–`04`, `Pillar03` meshes | Fitted as visual hulls, placed and turned where the game stands them |
 | `Login/Scene` stone               | Each family's `LoginScene_*` materials and textures       | Fitted as a physically lit stone per family                          |
