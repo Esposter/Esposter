@@ -82,7 +82,7 @@ export const fitLoginPaving = async (
             {
               corners: [a, b, c],
               tag: materialNames.indexOf(material),
-              values: (faceUvs[index] ?? []).map((uv) => uvs[uv] ?? [0, 0]),
+              values: (faceUvs[index] ?? []).map((uv): [number, number] => uvs[uv] ?? [0, 0]),
             },
           ];
         });

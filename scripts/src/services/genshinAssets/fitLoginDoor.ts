@@ -104,7 +104,7 @@ export const fitLoginDoor = async (
       ) as Vector;
     const readShade = (cells: readonly number[], around: readonly number[]): Vector => {
       const [mean, aroundMean] = [readMean(cells), readMean(around)];
-      return [0, 1, 2].map((channel) => roundFitted(mean[channel] / (aroundMean[channel] || 1))) as Vector;
+      return ([0, 1, 2] as const).map((channel) => roundFitted(mean[channel] / (aroundMean[channel] || 1))) as Vector;
     };
     const traceCells = (cells: readonly number[]): [number, number][][] =>
       traceCellLoops(cells, {

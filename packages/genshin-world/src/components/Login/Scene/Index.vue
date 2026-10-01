@@ -182,7 +182,7 @@ const doorMaterial = createStoneMaterial(
   ),
 );
 // The door's front painted with its panel's raised bands and its feet's gilding over its stone
-const doorAlbedo = color(stone.door.albedo).mul(createLoginDoorRelief());
+const doorAlbedo = createLoginDoorRelief().mul(color(stone.door.albedo));
 doorFrameMaterial.colorNode = doorAlbedo;
 doorMaterial.colorNode = doorAlbedo;
 const towersGeometry = createLoginTowersGeometry();
