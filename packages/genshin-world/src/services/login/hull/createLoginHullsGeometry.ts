@@ -1,12 +1,11 @@
 import hulls from "#src/data/login/hulls.json";
-import { LOGIN_BRIDGES_DROP } from "#src/services/login/scene/constants";
 import { createBoxesGeometry } from "genshin-engine";
 import { BufferGeometry, Matrix4, Quaternion, Vector3 } from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
 // Every bridge and pillar of the login scene as one geometry: each part's hull the fit wrote, built once from its
-// Boxes, then placed as each instance of it stands, turned and scaled, all of them dropped to where the door frame's
-// Colonnade stands
+// Boxes, then placed as each instance of it stands, turned and scaled, where the blocks lay it; the towers' row
+// Stands it off that by its offset
 export const createLoginHullsGeometry = (): BufferGeometry => {
   const hullGeometryMap = new Map<string, BufferGeometry>(
     Object.entries(hulls.hulls).map(([name, boxes]) => [name, createBoxesGeometry(boxes)]),
@@ -18,7 +17,7 @@ export const createLoginHullsGeometry = (): BufferGeometry => {
     matrix.compose(new Vector3(...position), new Quaternion(...rotation), new Vector3(...scale));
     return [hullGeometry.clone().applyMatrix4(matrix)];
   });
-  const hullsGeometry = (mergeGeometries(parts) ?? new BufferGeometry()).translate(0, -LOGIN_BRIDGES_DROP, 0);
+  const hullsGeometry = mergeGeometries(parts) ?? new BufferGeometry();
   for (const geometry of [...parts, ...hullGeometryMap.values()]) geometry.dispose();
   return hullsGeometry;
 };

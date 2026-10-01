@@ -19,7 +19,6 @@ import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoo
 import { createLoginHullsGeometry } from "#src/services/login/hull/createLoginHullsGeometry";
 import { advanceLoginGlide } from "#src/services/login/scene/advanceLoginGlide";
 import {
-  LOGIN_BRIDGES_DROP,
   LOGIN_CAMERA_FAR,
   LOGIN_CAMERA_FOV,
   LOGIN_CAMERA_HEIGHT,
@@ -48,6 +47,7 @@ import {
   LOGIN_SHADOW_MAP_SIZE,
   LOGIN_SHADOW_NORMAL_BIAS,
   LOGIN_TOWERS_ROW,
+  LOGIN_TOWERS_ROW_OFFSET,
   LOGIN_WALKWAY_ROW,
 } from "#src/services/login/scene/constants";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
@@ -260,14 +260,13 @@ onRender(({ delta: frameDelta }) => {
   const delta = witness?.isClockHeld.value ? 0 : frameDelta;
   glide = advanceLoginGlide(glide, stage, delta);
   const { scrolled, stopAt = scrolled } = glide;
-  towers.position.z = -(scrolled % LOGIN_TOWERS_ROW.length);
-  // The witness's towers and bridges ride the row with ours, the bridges dropped as ours are, off by whatever offset a
-  // Tool sets them
+  const [rowX, rowY, rowZ] = LOGIN_TOWERS_ROW_OFFSET;
+  towers.position.set(rowX, rowY, rowZ - (scrolled % LOGIN_TOWERS_ROW.length));
+  // The witness's towers and bridges ride the row with ours, off by whatever offset a tool sets them
   for (const group of witness?.parts.children ?? [])
     if (group.name === LoginPartFamily.Towers || group.name === LoginPartFamily.Bridges) {
       const [x = 0, y = 0, z = 0] = (group.userData.offset as [number, number, number] | undefined) ?? [];
-      const drop = group.name === LoginPartFamily.Bridges ? LOGIN_BRIDGES_DROP : 0;
-      group.position.set(x, y - drop, z + towers.position.z);
+      group.position.set(x, y, z).add(towers.position);
     }
   doorAhead.value = stopAt - scrolled;
   walkway.position.z = -(scrolled % LOGIN_WALKWAY_ROW.length);

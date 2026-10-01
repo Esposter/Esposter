@@ -21,11 +21,15 @@ export const LOGIN_CAMERA_FAR = 2000;
 // Walkway's copies, its own length apart, and the towers' with their bridges and pillars
 export const LOGIN_WALKWAY_ROW = scroll.LoginScene_Bridge01_Vo;
 export const LOGIN_TOWERS_ROW = scroll.LoginScene_Build_All;
-// How far the bridges and pillars stand under the place the blocks lay them at, the camera held at the door frame's
-// Pose: lowered 5 metres, the colonnade behind the door lands on login-door-recording's rows (genshin:parity view
-// --offsets at 0, 5, 10 and 14), and the deck of the bridge that crosses the glide's path passes under the walkway, as
-// The game's glide passes over it however long the title idles; laid where the blocks lay it, the glide drove into it
-export const LOGIN_BRIDGES_DROP = 5;
+// Where the towers' row, its bridges and pillars with it, stands off the place the blocks lay it, the camera held at
+// The door frame's pose: lowered 5 metres, the colonnade behind the door lands on login-door-recording's rows
+// (genshin:parity view --offsets at 0, 5, 10 and 14) and the lantern tower's window band and gold rings on its own,
+// And the deck of the bridge that crosses the glide's path passes under the walkway, as the game's glide passes over
+// It however long the title idles; 2.47 metres toward -x and 8.94 nearer, the lantern tower's two edges land on the
+// Recording's (genshin:parity place --landmarks towerRightInner,towerRightOuter --axes x,z), the crowned column behind
+// The door within 20 pixels and the colonnade where it stood. Laid where the blocks lay it, the glide drove into the
+// Bridge, and the lantern tower stood a ring too high and a third too narrow
+export const LOGIN_TOWERS_ROW_OFFSET: [number, number, number] = [-2.47, -5, -8.94];
 // The cloud sea's row, the sea of cloud effect's two copies 300 metres apart (MonoLoginScene's third record)
 export const LOGIN_CLOUD_SEA_ROW = { count: 2, length: 300 };
 // The glide, in metres a second off the English recording's paving at the camera's pose (genshin:parity glide): 3.03

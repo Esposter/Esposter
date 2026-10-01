@@ -189,9 +189,9 @@ export const reference: ComponentReference = {
     },
     {
       found:
-        "The towers do not stand where one offset of their row puts them at the door. Pinned on the lantern tower's two silhouette edges at the recording's row 460 and the crowned column's top behind the door, no rigid move of the row fits: the column stands within 30 pixels as laid out, while the lantern tower stands about 2.5 metres further out and 9 nearer than the exports lay it, and the giant tower at the frame's left stands about half as wide as the exports' nearest, so each block of the towers moves on its own, as the walkway's pieces do",
+        "The towers stand 5 metres low with their bridges, and their row 2.47 metres toward -x and 8.94 nearer at the door. Pinned on the lantern tower's two silhouette edges at the recording's row 460 and the crowned column's top behind the door with the row's height held, no rigid move fitted, which read as each tower moving on its own; seen beside the recording, the lantern tower stood a ring too high, so its edges were pinned at the wrong height. Lowered with the bridges and moved on the edges alone, its window band, gold rings and edges land on the recording's, the crowned column within 20 pixels and the colonnade where it stood, and every hour's frame scores better. The frame's far-left tower is still another of the row's",
       search:
-        "genshin:parity parts login-door-recording --family Towers, then place --landmarks columnCrown,towerRightInner,towerRightOuter with --axes z, x,z and x,y,z through the door frame's pose",
+        "genshin:parity parts login-door-recording --family Towers, place --landmarks columnCrown,towerRightInner,towerRightOuter with --axes z, x,z and x,y,z through the door frame's pose, then view --offsets lowering the towers 5 metres beside the recording, and compare at every hour",
     },
     {
       found:
@@ -212,7 +212,7 @@ export const reference: ComponentReference = {
     "The sky's own colours at each hour: the game's environment system sets its sky shader's _ES_ colours, top and bottom toward the sun and away, the halo, the sun's halo and the moon's glow, at run time from no asset the export holds, so they are measured; one frame's sky by least squares (genshin:parity sky) leaves its shape and its colours unsettled, the sun's direction itself measured and most of the sky under clouds and haze",
     "How the game brings the towers to the door's phase after a long idle: every recording found idles a few seconds, so the title's phase is read off its glide's length, not a rule of the script's",
     "What MonoBlockController does to each walkway piece: the rise is read by eye off the recording's far end; its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$) hold its own curve",
-    "Where each tower block stands at the door: the lantern tower and the frame's left tower stand off the row's laid-out places by metres, so they are placed one at a time from their silhouette edges, which needs instances of the towers' row placed apart from it",
+    "Which of the towers' row stands at the door frame's left edge: the recording's is thin and dark with many rings, the exports' nearest there wide and arched",
     "Where the game's sun stands at the door frame's dusk and what its stone takes from the sky: shading alone leaves the direction free, so it waits on the sun's own glow placed in a frame where it shows",
     "Where the glide comes to rest: the recording's door frame was still slowing at 1.6 metres a second when the click came, so the rest stands a little nearer the door than its pose",
     "The day sky's pose, by the same perspective reading",
