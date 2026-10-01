@@ -167,10 +167,10 @@ const towersMaterial = createStoneMaterial(stone.towers);
 const bridgesMaterial = createStoneMaterial(stone.bridges);
 const walkwayMaterial = createStoneMaterial(stone.walkway);
 const doorFrameMaterial = createStoneMaterial(stone.door);
-const doorMaterial = createStoneMaterial(stone.door);
 // The door lights from a line down its middle outward, over the panel's own glow, as the game opens it
 const doorGlow = uniform(0);
-doorMaterial.emissiveNode = doorMaterial.emissiveNode.add(
+const doorMaterial = createStoneMaterial(
+  stone.door,
   color(LOGIN_DOOR_GLOW_COLOR).mul(
     doorGlow.mul(
       exp(abs(positionLocal.x).div(DOOR_SLIT_WIDTH).negate()).mul(DOOR_SLIT_STRENGTH).add(DOOR_PANEL_STRENGTH),
