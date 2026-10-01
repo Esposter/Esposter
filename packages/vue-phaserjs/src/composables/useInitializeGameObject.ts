@@ -37,6 +37,7 @@ export const useInitializeGameObject = <
   // Use provide/inject so the context is scoped to the current rendering tree, not every component;
   // This works because phaser containers only hold gameObjects one level deep.
   // The default is passed explicitly because a gameObject outside any container is the normal case.
+  // oxlint-disable-next-line no-restricted-globals -- a Container's game objects are the subtree it renders
   const parentContainer = inject(InjectionKeyMap.ParentContainer, undefined);
   const sceneKey = useInjectSceneKey();
   const lifecycleHook = getInitializeGameObjectLifecycleHook(sceneKey);

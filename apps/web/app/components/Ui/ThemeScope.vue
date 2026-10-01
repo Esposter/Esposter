@@ -16,6 +16,7 @@ defineSlots<{ default: () => VNode }>();
 const { theme, uiStyle } = defineProps<Props>();
 const nearestUiStyle = useUiStyle();
 const scopeUiStyle = computed(() => uiStyle ?? nearestUiStyle.value);
+// oxlint-disable-next-line no-restricted-globals -- a theme scope's style holds for everything inside it
 provide(UI_STYLE_INJECTION_KEY, scopeUiStyle);
 </script>
 

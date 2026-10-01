@@ -33,6 +33,7 @@ useInitializeGameObject(
   ContainerSetterMap,
 );
 
+// oxlint-disable-next-line no-restricted-globals -- a Container's game objects are the subtree it renders
 provide(InjectionKeyMap.ParentContainer, container);
 </script>
 

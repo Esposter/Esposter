@@ -115,6 +115,7 @@ const DOOR_SLIT_STRENGTH = 4;
 const DOOR_PANEL_STRENGTH = 0.6;
 // The witness render's parts, drawn in place of the fitted ones of each family it names when the parity page provides
 // Them, alone when it asks
+// oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see
 const witness = inject(SceneWitnessKey, null);
 const checkIsOwnFamilyDrawn = (family: LoginPartFamily): boolean => !witness?.families.value.includes(family);
 const { scene } = useTres();

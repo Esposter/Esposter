@@ -58,8 +58,10 @@ watch(config, (newConfig) => {
   jsonforms.config = configReducer(undefined, Actions.setConfig(newConfig));
 });
 
+/* oxlint-disable no-restricted-globals -- JSON Forms' renderers read `jsonforms` and `dispatch` by injection */
 provide("jsonforms", jsonforms);
 provide("dispatch", dispatch);
+/* oxlint-enable no-restricted-globals */
 </script>
 
 <template>
