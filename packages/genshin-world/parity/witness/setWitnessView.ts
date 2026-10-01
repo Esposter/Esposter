@@ -18,6 +18,8 @@ export interface WitnessView {
   camera?: { fov: number; pitch: number; position: [number, number, number]; yaw: number };
   families?: string[];
   familyOffsets?: Record<string, [number, number, number]>;
+  // How many times each family's parts are scaled about their own places, each at once
+  familyScales?: Record<string, number>;
   isAlone?: boolean;
   shading?: WitnessShading;
 }
@@ -31,6 +33,7 @@ export const setWitnessView = async (
     camera,
     families: viewFamilies,
     familyOffsets = {},
+    familyScales = {},
     isAlone: isViewAlone = false,
     shading = WitnessShading.Exported,
   }: WitnessView,
@@ -40,7 +43,13 @@ export const setWitnessView = async (
   families.value = viewFamilies ?? parts.children.map(({ name }) => name);
   for (const group of parts.children) {
     group.visible = families.value.includes(group.name);
-    group.position.set(...(familyOffsets[group.name] ?? [0, 0, 0]));
+    // Kept for the scene, which stands a row it scrolls where its own stands, off by this
+    group.userData.offset = familyOffsets[group.name] ?? [0, 0, 0];
+    group.position.set(...(group.userData.offset as [number, number, number]));
+    for (const part of group.children) {
+      part.userData.laidScale ??= part.scale.clone();
+      part.scale.copy(part.userData.laidScale).multiplyScalar(familyScales[group.name] ?? 1);
+    }
   }
   parts.traverse((object) => {
     const shadingMaterialMap = object.userData.shadingMaterialMap as

@@ -1,21 +1,23 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import type { PageWitnessView } from "#src/services/genshinParity/setPageWitnessView";
 
+import { computeDistanceTransform } from "#src/services/genshinParity/computeDistanceTransform";
 import { fetchReferences } from "#src/services/genshinParity/fetchReferences";
 import { minimizeNelderMead } from "#src/services/genshinParity/minimizeNelderMead";
 import { openWitnessPage } from "#src/services/genshinParity/openWitnessPage";
-import { readFamilyEdgeDistance } from "#src/services/genshinParity/readFamilyEdgeDistance";
+import { findFamilyBoundaries } from "#src/services/genshinParity/findFamilyBoundaries";
 import { readFamilyEdgeDistances } from "#src/services/genshinParity/readFamilyEdgeDistances";
+import { readWitnessPartTarget } from "#src/services/genshinParity/readWitnessPartTarget";
 import { setPageWitnessView } from "#src/services/genshinParity/setPageWitnessView";
 import { withFinalizerAsync } from "@esposter/shared";
 
-// The simplex's first step along each axis, in metres: an arrangement off by a lost anchor's height is off by a few
-const PLACE_STEP = 0.5;
 // Where a group of families stands on a reference, with the camera held at the reference's own view or the pose given:
 // One offset in three's axes shared by every family named (a row the script moves as one), refined by the simplex on
-// Those families' edges alone, from their laid-out places, so an arrangement's lost height or depth is read off the
-// Reference rather than guessed. The rest of the exports stay where they are laid out, and the camera, solved on
-// Them, stays put; only the boundaries from the row given down are priced
+// Those families' edges both ways, from their laid-out places, so an arrangement's lost height or depth is read off
+// The reference rather than guessed: the families' boundaries' mean distance to the reference's edges, and the
+// Reference's edges' to the boundaries, those edges taken where the other families (solved already) do not stand.
+// One way alone rewards drawing less, a phase that carries every near part away scoring best. The rest of the exports
+// Stay where they are laid out, and the camera, solved on them, stays put; only from the row given down is priced
 export const placeFamilies = async (
   referenceId: string,
   witness: DerivedAssetComponent,
@@ -23,27 +25,85 @@ export const placeFamilies = async (
     camera,
     families,
     iterationCount,
+    scan,
+    start: given = [0, 0, 0],
+    step,
     topRow = 0,
-  }: { camera?: PageWitnessView["camera"]; families: readonly string[]; iterationCount: number; topRow?: number },
+  }: {
+    camera?: PageWitnessView["camera"];
+    families: readonly string[];
+    iterationCount: number;
+    // A period the families repeat along one axis (a row the script scrolls), read at every step of it first, the
+    // Simplex starting from its best: the families' own edges at each phase, the only unknown left once the camera is
+    // Solved on the parts that do not scroll
+    scan?: { axis: 0 | 1 | 2; length: number; step: number };
+    // Where the refinement starts, a phase read off the parts the reference shows
+    start?: [number, number, number];
+    // The simplex's first step along each axis, in metres, about as far as the families may stand off
+    step: number;
+    topRow?: number;
+  },
 ): Promise<{ after: number; before: number; offset: [number, number, number] }> => {
   await fetchReferences();
   const { browser, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
-      const { edgeDistances, topPixel } = await readFamilyEdgeDistances(page, image, families, topRow);
+      const { edgeDistances, edges, height, topPixel, width } = await readFamilyEdgeDistances(
+        page,
+        image,
+        families,
+        topRow,
+      );
+      // The reference's edges where none of the other families stands, which the families placed must account for
+      await setPageWitnessView(page, { camera });
+      const laidOut = await readWitnessPartTarget(page);
+      const familyIndexSet = new Set(families.map((family) => laidOut.families.indexOf(family)));
+      const freeEdges = edges.map((edge, pixel) => {
+        const isOtherFamily = laidOut.part[pixel * 4] && !familyIndexSet.has(laidOut.part[pixel * 4 + 1] ?? -1);
+        return edge && !isOtherFamily ? 1 : 0;
+      });
       const readDistance = async ([x = 0, y = 0, z = 0]: readonly number[]): Promise<number> => {
         const offset: [number, number, number] = [x, y, z];
         await setPageWitnessView(page, {
           camera,
           familyOffsets: Object.fromEntries(families.map((family) => [family, offset])),
         });
-        return readFamilyEdgeDistance(page, { edgeDistances, families, topPixel });
+        const gbuffer = await readWitnessPartTarget(page);
+        const { familyIndices, mask } = findFamilyBoundaries(gbuffer);
+        const boundaries = mask.map((isBoundary, pixel) =>
+          isBoundary && pixel >= topPixel && familyIndexSet.has(familyIndices[pixel] ?? -1) ? 1 : 0,
+        );
+        const boundaryDistances = computeDistanceTransform(boundaries, width, height);
+        const readMean = (from: Uint8Array, distances: Float32Array): number => {
+          let sum = 0;
+          let count = 0;
+          for (const [pixel, isSet] of from.entries())
+            if (isSet) {
+              sum += distances[pixel] ?? 0;
+              count++;
+            }
+          return count ? sum / count : Infinity;
+        };
+        return (readMean(boundaries, edgeDistances) + readMean(freeEdges, boundaryDistances)) / 2;
       };
       const before = await readDistance([0, 0, 0]);
+      let start: number[] = given;
+      if (scan) {
+        let best = before;
+        for (let phase = scan.step; phase < scan.length; phase += scan.step) {
+          const candidate = [0, 0, 0].map((_, axis) => (axis === scan.axis ? phase : 0));
+          // oxlint-disable-next-line no-await-in-loop -- one phase is drawn and priced after another
+          const distance = await readDistance(candidate);
+          if (distance < best) {
+            best = distance;
+            start = candidate;
+          }
+        }
+      }
       const {
         cost,
         point: [x = 0, y = 0, z = 0],
-      } = await minimizeNelderMead(readDistance, [0, 0, 0], [PLACE_STEP, PLACE_STEP, PLACE_STEP], iterationCount);
+      } = await minimizeNelderMead(readDistance, start, [step, step, step], iterationCount);
       return { after: cost, before, offset: [x, y, z] };
     },
     () => browser.close(),

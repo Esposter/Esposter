@@ -14,7 +14,7 @@ export const readFamilyEdgeDistances = async (
   image: Buffer,
   families: readonly string[],
   topRow: number,
-): Promise<{ edgeDistances: Float32Array; topPixel: number }> => {
+): Promise<{ edgeDistances: Float32Array; edges: Uint8Array; height: number; topPixel: number; width: number }> => {
   const { families: drawnFamilies, height, width } = await readWitnessPartTarget(page);
   if (families.length === 0) throw new InvalidOperationError(Operation.Read, "families", "none given to price");
   for (const family of families)
@@ -28,5 +28,5 @@ export const readFamilyEdgeDistances = async (
   const topPixel = Math.max(0, Math.ceil(topRow)) * width;
   // The reference's edges above the row are cleared too, so none of them is the nearest to a boundary below it
   const edges = (await readStructureEdges(image, height, width)).fill(0, 0, topPixel);
-  return { edgeDistances: computeDistanceTransform(edges, width, height), topPixel };
+  return { edgeDistances: computeDistanceTransform(edges, width, height), edges, height, topPixel, width };
 };

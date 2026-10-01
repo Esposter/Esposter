@@ -17,6 +17,9 @@ export const viewCommand: SubCommandsDef[string] = defineCommand({
       type: "string",
     },
     witness: { description: "The component whose exports stand beside our parts", required: true, type: "string" },
+    alone: { description: "Draw without the fog, clouds and cloud sea", type: "boolean" },
+    offsets: { description: 'Families moved off their places, as JSON: {"Towers":[0,0,-155]}', type: "string" },
+    scales: { description: 'Families\' parts scaled about their own places, as JSON: {"Towers":2}', type: "string" },
     height: { default: "540", description: "Height to draw it at, in pixels", type: "string" },
     props: {
       description: "Props over the fixture's, as JSON: a state whose rows stand at their own places",
@@ -34,6 +37,9 @@ export const viewCommand: SubCommandsDef[string] = defineCommand({
     await viewScene({
       camera: [x, y, z, yaw, pitch, fov],
       height: Number(args.height),
+      familyOffsets: args.offsets ? jsonDateParse<Record<string, [number, number, number]>>(args.offsets) : undefined,
+      familyScales: args.scales ? jsonDateParse<Record<string, number>>(args.scales) : undefined,
+      isAlone: args.alone,
       props: args.props ? jsonDateParse<Record<string, unknown>>(args.props) : {},
       screen: args.screen,
       width: Number(args.width),

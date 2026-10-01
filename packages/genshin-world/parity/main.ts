@@ -7,6 +7,7 @@ import "@fontsource/signika/600.css";
 import { benchScene } from "#parity/benchScene";
 import { screens } from "#parity/screens";
 import { loadWitness } from "#parity/witness/loadWitness";
+import { readWitnessParts } from "#parity/witness/readWitnessParts";
 import { readWitnessPoints } from "#parity/witness/readWitnessPoints";
 import { renderWitnessTargets } from "#parity/witness/renderWitnessTargets";
 import { setWitnessView } from "#parity/witness/setWitnessView";
@@ -78,6 +79,8 @@ if (screen && root) {
     Reflect.set(window, "renderWitnessTargets", (targets?: Parameters<typeof renderWitnessTargets>[2]) =>
       renderWitnessTargets(witness, sceneContext.value, targets),
     );
+    // Each part of a family with where it lands on the screen, which a reference's landmarks are matched to
+    Reflect.set(window, "readWitnessParts", (family: string) => readWitnessParts(witness, sceneContext.value, family));
     // Its landmarks' places in the world, which a pose is solved from
     Reflect.set(window, "readWitnessPoints", (landmarks: Parameters<typeof readWitnessPoints>[1]) =>
       readWitnessPoints(witness, landmarks),

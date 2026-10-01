@@ -13,6 +13,10 @@ export const filmCommand: SubCommandsDef[string] = defineCommand({
       description: 'Props set at moments, as JSON by milliseconds: {"2000":{"stage":"Preparing"}}',
       type: "string",
     },
+    beside: {
+      description: "A recording to lay each still over, at the same moments, as source@second",
+      type: "string",
+    },
     fps: { default: "2", description: "Stills a second, as `frames` samples a recording", type: "string" },
     height: { default: "540", description: "Height to draw it at, in pixels", type: "string" },
     props: { description: "Props over the fixture's from the start, as JSON", type: "string" },
@@ -24,7 +28,9 @@ export const filmCommand: SubCommandsDef[string] = defineCommand({
     name: "film",
   },
   run: async ({ args }) => {
+    const [besideSource = "", besideStart = "0"] = args.beside?.split("@") ?? [];
     await filmScreen({
+      beside: args.beside ? { source: besideSource, startSeconds: Number(besideStart) } : undefined,
       durationMs: Number(args.seconds) * 1000,
       height: Number(args.height),
       props: args.props ? jsonDateParse<Record<string, unknown>>(args.props) : undefined,
