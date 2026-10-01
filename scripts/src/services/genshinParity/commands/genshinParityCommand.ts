@@ -18,6 +18,7 @@ import { measureCommand } from "#src/services/genshinParity/commands/measureComm
 import { overlayCommand } from "#src/services/genshinParity/commands/overlayCommand";
 import { partsCommand } from "#src/services/genshinParity/commands/partsCommand";
 import { placeCommand } from "#src/services/genshinParity/commands/placeCommand";
+import { planCommand } from "#src/services/genshinParity/commands/planCommand";
 import { polarCommand } from "#src/services/genshinParity/commands/polarCommand";
 import { poseCommand } from "#src/services/genshinParity/commands/poseCommand";
 import { recordCommand } from "#src/services/genshinParity/commands/recordCommand";
@@ -46,6 +47,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     overlay: overlayCommand,
     pose: poseCommand,
     place: placeCommand,
+    plan: planCommand,
     parts: partsCommand,
     track: trackCommand,
     glide: glideCommand,
