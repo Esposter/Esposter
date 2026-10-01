@@ -1,4 +1,5 @@
 import { solveLinearSystem } from "#src/services/genshinParity/solveLinearSystem";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
 type Vector = [number, number, number];
 const CHANNELS = [0, 1, 2] as const;
@@ -23,6 +24,12 @@ export const solveCloudColors = (
   ours: readonly { base: Vector; lit: Vector; shade: Vector }[],
   reference: readonly Vector[],
 ): { lit: Vector; residual: number; shade: Vector } => {
+  if (ours.length === 0 || reference.length === 0)
+    throw new InvalidOperationError(
+      Operation.Read,
+      solveCloudColors.name,
+      `no cloud pixels to match: ${ours.length} of ours, ${reference.length} of the reference's`,
+    );
   const readLitness = ({ lit, shade }: (typeof ours)[number]): number =>
     readLuminance(lit) / Math.max(readLuminance(lit) + readLuminance(shade), Number.MIN_VALUE);
   const orderedOurs = ours.toSorted((first, second) => readLitness(first) - readLitness(second));

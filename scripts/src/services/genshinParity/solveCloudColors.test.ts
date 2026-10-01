@@ -1,4 +1,5 @@
 import { solveCloudColors } from "#src/services/genshinParity/solveCloudColors";
+import { InvalidOperationError } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(solveCloudColors, () => {
@@ -27,5 +28,11 @@ describe(solveCloudColors, () => {
 
     expect(solved.shade.map((value) => Number(value.toFixed(3)))).toStrictEqual(shade);
     expect(solved.lit.map((value) => Number(value.toFixed(3)))).toStrictEqual(lit);
+  });
+
+  test("throws when either set has no cloud pixels", () => {
+    expect.hasAssertions();
+
+    expect(() => solveCloudColors([], [[1, 1, 1]])).toThrow(InvalidOperationError);
   });
 });
