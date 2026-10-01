@@ -3,6 +3,7 @@ import type { SubCommandsDef } from "citty";
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
 import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
 import { solveReferencePose } from "#src/services/genshinParity/solveReferencePose";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
 const axes: readonly string[] = CAMERA_POSE_AXES;
@@ -41,7 +42,12 @@ export const poseCommand: SubCommandsDef[string] = defineCommand({
       parseDerivedAssetComponent(args.witness),
       {
         families: args.families?.split(","),
-        heldAxes: args.hold?.split(",").map((axis) => axes.indexOf(axis)),
+        heldAxes: args.hold?.split(",").map((axis) => {
+          const index = axes.indexOf(axis);
+          if (index === -1)
+            throw new InvalidOperationError(Operation.Read, axis, `not an axis: ${CAMERA_POSE_AXES.join(", ")}`);
+          return index;
+        }),
         landmarkNames: args.landmarks?.split(","),
         refineIterations: args.refine ? Number(args.refine) : 0,
         start: args.start?.split(",").map(Number),
