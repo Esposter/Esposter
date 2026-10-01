@@ -11,10 +11,12 @@ A recreation converges in a pass or two when every unknown in it can be answered
 
 - **Another pass on a stalled unknown**, a tweak, a wider search range, a better starting guess or the user's eye as the fix. A loop that has not converged in two passes lacks a query, and a third pass spends what the tool would have cost without building it (`references/solve-not-search.md`).
 - **A search over a whole-frame score as the way an unknown is found.** Its minimum absorbs every other unknown's error (a wrong scale into a wrong pose, a missing texture into a brighter light), so a good score from it is evidence of nothing (`references/solve-not-search.md`).
+- **Working a term whose ceiling is small next to the largest**, a detail because it is cheap, visible or nearest to hand. The dominant terms re-price it the moment they move, so it is paid for twice, as the login's paving and door relief were while the sky and the light held nine tenths of the frame (`references/gain-first.md`).
 - **Deferring a tool until "the scene is closer".** A tool is built when its unknown is first met; a recreation that waits for closeness before building its instruments never gets close.
 
 ## Rules
 
+- **Rank every term by its ceiling before choosing the next one**, the most of the score an exact answer would recover, measured by the domain's ranking command each pass, and work the largest over its cost first; a term an order of magnitude below the largest waits (`references/gain-first.md`).
 - **List the unknowns before building anything**, each with the kind of data that holds it: exact (the source holds it as a value), fieldless (the source holds it without its fields) or on screen only (`references/toolbox-audit.md`).
 - **Make each unknown separable.** Find the setup in which only that unknown can move the score: a backdrop under an interface, a mask over one layer, a ratio no camera changes, a render with the other unknowns held at their exact values.
 - **Answer each unknown with the most exact query there is**: the exact value read from the source, then a closed-form solve from known quantities, then a local refinement from that solve, and never a global search (`references/solve-not-search.md`).
@@ -26,5 +28,6 @@ A recreation converges in a pass or two when every unknown in it can be answered
 
 ## Reference pages
 
+- `references/gain-first.md` — when choosing what to work on next, or before spending a pass on a detail: each term's ceiling and the order it sets.
 - `references/toolbox-audit.md` — when starting a recreation of a new kind, or when a loop has stalled: listing the unknowns, auditing the tools against them, and naming the gap.
 - `references/solve-not-search.md` — when choosing how an unknown is answered, or when a search is about to be run: the ladder from exact data to refinement, and why a search at the top is never the tool.

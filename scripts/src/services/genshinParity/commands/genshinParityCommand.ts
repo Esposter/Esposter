@@ -22,6 +22,7 @@ import { placeCommand } from "#src/services/genshinParity/commands/placeCommand"
 import { planCommand } from "#src/services/genshinParity/commands/planCommand";
 import { polarCommand } from "#src/services/genshinParity/commands/polarCommand";
 import { poseCommand } from "#src/services/genshinParity/commands/poseCommand";
+import { rankCommand } from "#src/services/genshinParity/commands/rankCommand";
 import { recordCommand } from "#src/services/genshinParity/commands/recordCommand";
 import { shootCommand } from "#src/services/genshinParity/commands/shootCommand";
 import { skyCommand } from "#src/services/genshinParity/commands/skyCommand";
@@ -65,6 +66,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     trace: traceCommand,
     launch: launchCommand,
     still: stillCommand,
+    rank: rankCommand,
     record: recordCommand,
   },
 });
