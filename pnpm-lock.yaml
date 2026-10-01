@@ -333,8 +333,8 @@ catalogs:
       specifier: ^6.15.0
       version: 6.15.0
     '@pulumi/pulumi':
-      specifier: ^3.266.0
-      version: 3.266.0
+      specifier: ^3.267.0
+      version: 3.267.0
     '@takumi-rs/core':
       specifier: ^2.14.0
       version: 2.14.0
@@ -1019,7 +1019,7 @@ importers:
         version: 6.15.0(supports-color@10.2.2)
       '@pulumi/pulumi':
         specifier: 'catalog:'
-        version: 3.266.0(supports-color@10.2.2)
+        version: 3.267.0(supports-color@10.2.2)
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*
@@ -6730,8 +6730,8 @@ packages:
   '@pulumi/github@6.15.0':
     resolution: {integrity: sha512-U8ZxPQQcOrcTn8y8EZsWmXzMtbw0JnwWCVGmqxBZ/i2SpUlEGMYT9B+EFC/qTALZXkDf7cMiq6fZ3Gy1G23nyQ==}
 
-  '@pulumi/pulumi@3.266.0':
-    resolution: {integrity: sha512-aM1TzVKR0XkqcvEVT4ewZY6m6c/UHyj0JLy9OuTLzGjLl+OBzrFfS0XM3kEW1RGDG9aEboyTyVrk8Tzs4OLmPA==}
+  '@pulumi/pulumi@3.267.0':
+    resolution: {integrity: sha512-dd/K3sxqNKqiYAvcg14TtEL7ZYqSyphMQMuqDeZvooX7jIKaa0t6QeNBnu6KeyH4bqKqNzmta07a/tgmUkw8/w==}
     engines: {node: '>=22'}
     peerDependencies:
       ts-node: '>= 7.0.1 < 12'
@@ -21092,19 +21092,19 @@ snapshots:
 
   '@pulumi/azure-native@3.28.0(supports-color@10.2.2)':
     dependencies:
-      '@pulumi/pulumi': 3.266.0(supports-color@10.2.2)
+      '@pulumi/pulumi': 3.267.0(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
       - ts-node
 
   '@pulumi/github@6.15.0(supports-color@10.2.2)':
     dependencies:
-      '@pulumi/pulumi': 3.266.0(supports-color@10.2.2)
+      '@pulumi/pulumi': 3.267.0(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
       - ts-node
 
-  '@pulumi/pulumi@3.266.0(supports-color@10.2.2)':
+  '@pulumi/pulumi@3.267.0(supports-color@10.2.2)':
     dependencies:
       '@grpc/grpc-js': 1.14.5
       '@logdna/tail-file': 2.2.0
