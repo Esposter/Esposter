@@ -2,6 +2,7 @@
 import {
   RICKROLL_BILIBILI_URL,
   RICKROLL_DELAY,
+  RICKROLL_PROBE_TIMEOUT,
   RICKROLL_YOUTUBE_PROBE_URL,
   RICKROLL_YOUTUBE_URL,
 } from "@/services/genshin/constants";
@@ -19,17 +20,19 @@ const progress = computed(() => (Number(isWorldLoaded.value) + Number(isWorldRea
 const isOpeningShown = ref(true);
 const gameText = await useGameText();
 // For now the door opens onto a rickroll: the white the door fades into holds a while, then the video plays. Whether
-// YouTube plays is asked of the reader's own network during that white rather than guessed from their language or
-// Location, so a network that blocks it, in mainland China or anywhere else, gets Bilibili's upload instead
+// YouTube plays is asked of the reader's own network as the page loads rather than guessed from their language or
+// Location, so the answer is in long before the door and every reader's player starts as the white ends; a network
+// That blocks YouTube, in mainland China or anywhere else, gets Bilibili's upload, as does one that has not answered
+const isYouTubeReachable = ref(false);
 const isRickrollStarted = ref(false);
 const rickrollUrl = ref("");
+onMounted(async () => {
+  isYouTubeReachable.value = await checkIsReachable(RICKROLL_YOUTUBE_PROBE_URL, RICKROLL_PROBE_TIMEOUT);
+});
 const startRickroll = async () => {
   isRickrollStarted.value = true;
-  const [isYouTubeReachable] = await Promise.all([
-    checkIsReachable(RICKROLL_YOUTUBE_PROBE_URL, RICKROLL_DELAY),
-    promiseTimeout(RICKROLL_DELAY.total("milliseconds")),
-  ]);
-  rickrollUrl.value = isYouTubeReachable ? RICKROLL_YOUTUBE_URL : RICKROLL_BILIBILI_URL;
+  await promiseTimeout(RICKROLL_DELAY.total("milliseconds"));
+  rickrollUrl.value = isYouTubeReachable.value ? RICKROLL_YOUTUBE_URL : RICKROLL_BILIBILI_URL;
 };
 </script>
 

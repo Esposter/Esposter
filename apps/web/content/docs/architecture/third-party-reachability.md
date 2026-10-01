@@ -18,7 +18,7 @@ flowchart LR
 
 - **The probe is a real request to the host the embed loads from.** `checkIsReachable` sends a `no-cors` request, which any origin answers without a CORS header, so its response is never read: any HTTP answer, a 404 included, means the network reaches the host. A blocked host fails the request outright, or swallows it until `AbortSignal.timeout` aborts it.
 - **Anything short of an answer is a no.** A failure, a timeout and a request an ad blocker refuses all pick the alternative, so the probe fails toward the choice that plays rather than toward a broken frame.
-- **The wait is hidden behind something the page already does.** The probe runs while the page shows what it was showing anyway, and the choice lands when both finish, so a reader on an open network waits no longer than the page would have.
+- **The probe never stands between a reader and the content.** It starts as early as the page can send it, so its answer is in before the choice is made, and the choice reads whatever answer is in at that moment — a probe still out is a no. No reader waits for it, on an open network or a blocked one, and no order of preference by region is needed, since that only matters when somebody waits on the first guess.
 
 ## Why not the reader's language or location
 
