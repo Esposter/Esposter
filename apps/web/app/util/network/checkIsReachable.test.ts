@@ -24,7 +24,7 @@ describe(checkIsReachable, () => {
     vi.stubGlobal("fetch", fetchMock);
     await checkIsReachable(url, timeout);
 
-    expect(fetchMock).toHaveBeenCalledWith(url, expect.objectContaining({ cache: "no-store" }));
+    expect(fetchMock.mock.calls[0]?.[1]?.cache).toBe("no-store");
   });
 
   test("false when the network fails the request", async () => {
