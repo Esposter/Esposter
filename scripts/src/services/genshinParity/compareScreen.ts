@@ -97,9 +97,17 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
   if (witness) {
     const { gbuffer, image } = await readReferenceGbuffer(referenceId, witness);
     const shot = await sharp(shotPath).resize(gbuffer.width, gbuffer.height, { fit: "fill" }).png().toBuffer();
-    for (const { coverage, detail, flip: layerFlip, name, shape, tone } of await scoreLayers(image, shot, gbuffer))
+    // The frame's FLIP is its pixels' mean, so a layer drawn exactly would take its share times its own FLIP off the
+    // Frame's: its ceiling, which ranks the layers by the most work on each could recover, largest first
+    const layers = (await scoreLayers(image, shot, gbuffer)).map((layer) => ({
+      ...layer,
+      ceiling: layer.name === "frame" ? layer.flip : layer.coverage * layer.flip,
+    }));
+    for (const { ceiling, coverage, detail, flip: layerFlip, name, shape, tone } of layers.toSorted(
+      (first, second) => second.ceiling - first.ceiling,
+    ))
       console.log(
-        `${name}: ${(coverage * 100).toFixed(1)}% of the frame, shape ${shape.toFixed(3)}, tone ${tone.toFixed(2)}%, detail ${detail.toFixed(2)}%, FLIP ${layerFlip.toFixed(4)}`,
+        `${name}: ${(coverage * 100).toFixed(1)}% of the frame, shape ${shape.toFixed(3)}, tone ${tone.toFixed(2)}%, detail ${detail.toFixed(2)}%, FLIP ${layerFlip.toFixed(4)}, ceiling ${ceiling.toFixed(4)}`,
       );
   }
   const panelWidth = Math.round((region.width / region.height) * COMPARISON_HEIGHT);
