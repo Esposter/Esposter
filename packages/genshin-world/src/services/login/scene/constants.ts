@@ -30,17 +30,22 @@ export const LOGIN_CLOUD_SEA_ROW = { count: 2, length: 300 };
 export const LOGIN_GLIDE_TITLE_SPEED = 3.03;
 export const LOGIN_GLIDE_PREPARING_SPEED = 3.7;
 export const LOGIN_GLIDE_ACCELERATION = 0.55;
+// Where the glide comes to rest at the door, as metres scrolled: nine of the walkway's copies, the towers' row 144
+// Metres along its loop, as both door references place it (genshin:parity place, their towers and bridges moved as one
+// With the camera held: 145.8 and 144.4 along, their other axes scattering either way). There the lantern tower stands
+// Close to the door's right and the colonnade low behind it, as every recording's door frame shows them
+export const LOGIN_GLIDE_DOOR_SCROLLED = 144;
 // The moment of the loop the title opens at, as metres scrolled. Its walkway's phase is where the dawn frame's first
 // Solve stood the walkway, 10.4 metres short of the middle of the copy ahead, the stills' own pose still open; its
-// Towers' is such that the English recording's glide from the title to the door's rest, about 49 metres (2.4 seconds of
-// Title, the load's stall at the preparing pace, its measured 9 to 14 seconds and the braking after), comes to rest
-// With the towers at their own places, where both recordings' door frames, idle as long or not, show them
+// Towers' is the English recording's glide from the title to the door's rest short of the door's, about 49 metres (2.4
+// Seconds of title, the load's stall at the preparing pace, its measured 9 to 14 seconds and the braking after), since
+// Recordings idle as long or not show the same door frame
 const TITLE_WALKWAY_PHASE = 8.67;
 const RECORDED_GLIDE_TO_DOOR = 49;
 export const LOGIN_GLIDE_TITLE_SCROLLED =
   TITLE_WALKWAY_PHASE +
   LOGIN_WALKWAY_ROW.length *
-    Math.round((LOGIN_TOWERS_ROW.length - RECORDED_GLIDE_TO_DOOR - TITLE_WALKWAY_PHASE) / LOGIN_WALKWAY_ROW.length);
+    Math.round((LOGIN_GLIDE_DOOR_SCROLLED - RECORDED_GLIDE_TO_DOOR - TITLE_WALKWAY_PHASE) / LOGIN_WALKWAY_ROW.length);
 // The rush to the door on the click: the camera closes 41% of its distance to the door in its first 333 ms, gathering
 // Speed with the square of the time, as the door grows about 1.7 times in the recording's last third of a second
 // (Login/Scene/Index.reference.ts, source `recording`), and stops short of the door under the white

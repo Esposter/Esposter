@@ -36,6 +36,7 @@ import {
   LOGIN_FOG_SCATTER_POWER,
   LOGIN_FOG_SCATTER_STRENGTH,
   LOGIN_FOG_START_DISTANCE,
+  LOGIN_GLIDE_DOOR_SCROLLED,
   LOGIN_GLIDE_TITLE_SCROLLED,
   LOGIN_GLIDE_TITLE_SPEED,
   LOGIN_GRADE_OPTIONS,
@@ -51,7 +52,7 @@ import {
 } from "#src/services/login/scene/constants";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
-import { LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
+import { LOGIN_WALKWAY_RISE_DEPTH, LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
 import { createLoginWalkwayPieces } from "#src/services/login/walkway/createLoginWalkwayPieces";
 import { readLoginWalkwaySink } from "#src/services/login/walkway/readLoginWalkwaySink";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
@@ -230,7 +231,7 @@ const isDoorRising = shallowRef(false);
 // Pose, from the moment of the loop the title opens at; a scene mounted at the door starts at rest there. The glide is
 // Kept off Vue's reactivity, and only the numbers the template places by, which stand still when it does, are refs
 let glide: LoginGlide = checkIsDoorDue()
-  ? { scrolled: 0, speed: 0, stopAt: 0 }
+  ? { scrolled: LOGIN_GLIDE_DOOR_SCROLLED, speed: 0, stopAt: LOGIN_GLIDE_DOOR_SCROLLED }
   : { scrolled: LOGIN_GLIDE_TITLE_SCROLLED, speed: LOGIN_GLIDE_TITLE_SPEED };
 // The towers' row, scrolled with the glide each frame off Vue's reactivity, which would otherwise draw the template anew
 const towers = new Group();
@@ -256,6 +257,12 @@ onRender(({ delta: frameDelta }) => {
   glide = advanceLoginGlide(glide, stage, delta);
   const { scrolled, stopAt = scrolled } = glide;
   towers.position.z = -(scrolled % LOGIN_TOWERS_ROW.length);
+  // The witness's towers and bridges ride the row with ours, off by whatever offset a tool sets them
+  for (const group of witness?.parts.children ?? [])
+    if (group.name === LoginPartFamily.Towers || group.name === LoginPartFamily.Bridges) {
+      const [x = 0, y = 0, z = 0] = (group.userData.offset as [number, number, number] | undefined) ?? [];
+      group.position.set(x, y, z + towers.position.z);
+    }
   doorAhead.value = stopAt - scrolled;
   walkway.position.z = -(scrolled % LOGIN_WALKWAY_ROW.length);
   // Once the door is due the walkway ends at it, and nothing past it is built
@@ -263,8 +270,13 @@ onRender(({ delta: frameDelta }) => {
   for (const { copy, depth, instanceId, seed } of walkwayInstances) {
     const z = copy * LOGIN_WALKWAY_ROW.length;
     const ahead = walkway.position.z + z + depth - cameraZ.value;
-    walkway.setVisibleAt(instanceId, !checkIsDoorDue() || ahead < doorAheadOfCamera);
-    walkway.setMatrixAt(instanceId, walkwayMatrix.makeTranslation(0, -readLoginWalkwaySink(ahead, seed), z));
+    const sink = readLoginWalkwaySink(ahead, seed);
+    // A piece stands only once it has begun to rise, so neither it nor its shadow shows before its turn
+    walkway.setVisibleAt(
+      instanceId,
+      sink < LOGIN_WALKWAY_RISE_DEPTH && (!checkIsDoorDue() || ahead < doorAheadOfCamera),
+    );
+    walkway.setMatrixAt(instanceId, walkwayMatrix.makeTranslation(0, -sink, z));
   }
   cloudSeaScrolled.value = scrolled;
   loginClouds.scroll(scrolled);
