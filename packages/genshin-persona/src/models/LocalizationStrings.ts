@@ -5,7 +5,7 @@ import type { StatusReport } from "#src/models/StatusReport";
 // Parsed at runtime. A language's module fills in what it has translated and inherits the rest from English, so a
 // Half-translated language is a legal state rather than a missing key
 export interface LocalizationStrings {
-  birthdayNote: (date: string, distance: string) => string;
+  birthdayNote: (label: string, date: string, distance: string) => string;
   interfaceLanguageSet: (language: string) => string;
   languageMustBeOneOf: (languages: string) => string;
   lorePicked: string;

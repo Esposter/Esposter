@@ -1,12 +1,15 @@
 import type { ResolvedLocalization } from "#src/models/ResolvedLocalization";
 
+import { ENGLISH_GAME_TEXT } from "#src/generated/genshinText/generated/GameTextLoaderMap";
+
 // The language the plugin is written in, and the one every other inherits what it has not translated from. Its
 // Base verbs are the Teyvat gerunds every spinner shows ahead of a character's own
 const english: ResolvedLocalization = {
   characters: {},
+  gameText: ENGLISH_GAME_TEXT,
   locale: "en-AU",
   strings: {
-    birthdayNote: (date, distance) => `[Birthday: ${date}, ${distance}]`,
+    birthdayNote: (label, date, distance) => `[${label}: ${date}, ${distance}]`,
     interfaceLanguageSet: (language) =>
       `Everything the plugin writes is in ${language} from this reply; the spinner follows at the next session.`,
     languageMustBeOneOf: (languages) => `The language must be one of ${languages}.`,

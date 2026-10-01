@@ -283,7 +283,7 @@ const japanese: Localization = {
   },
   locale: "ja-JP",
   strings: {
-    birthdayNote: (date, distance) => `[誕生日：${date}、${distance}]`,
+    birthdayNote: (label, date, distance) => `[${label}：${date}、${distance}]`,
     interfaceLanguageSet: (language) =>
       `この返信からプラグインの表示はすべて${language}になります。スピナーは次のセッションから変わります。`,
     languageMustBeOneOf: (languages) => `言語は次のいずれかを指定してください：${languages}。`,

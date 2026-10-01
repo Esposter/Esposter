@@ -1,5 +1,6 @@
 import type { ResolvedLocalization } from "#src/models/ResolvedLocalization";
 
+import { GameTextKey } from "#src/generated/genshinText/models/GameTextKey";
 import { BIRTHDAY_DATE_FORMAT } from "#src/services/constants";
 import { getDaysUntil } from "#src/services/getDaysUntil";
 import { parseBirthday } from "#src/services/parseBirthday";
@@ -8,12 +9,12 @@ import { parseBirthday } from "#src/services/parseBirthday";
 // May ask about, and the distance that says why this character was picked. It is the plugin speaking rather than
 // The character, so it is in the interface language rather than performed in the reply language — and the date
 // And the distance are the runtime's words in it, since `Intl` already says "tomorrow" and "2 days ago" in every
-// Language, with the plural forms a hand-written template gets wrong. The nearer side of the year wins, and a tie
-// Reads as ahead
+// Language, with the plural forms a hand-written template gets wrong, and the label is the game's own word for a
+// Birthday on a character's profile. The nearer side of the year wins, and a tie reads as ahead
 export const getBirthdayNote = (
   birthday: string,
   today: Temporal.PlainDate,
-  { locale, strings }: ResolvedLocalization,
+  { gameText, locale, strings }: ResolvedLocalization,
 ): string => {
   const birthdayDate = parseBirthday(birthday);
   if (!birthdayDate) return "";
@@ -25,5 +26,5 @@ export const getBirthdayNote = (
     "day",
   );
   const formattedDate = birthdayDate.toLocaleString(locale, BIRTHDAY_DATE_FORMAT);
-  return strings.birthdayNote(formattedDate, distance);
+  return strings.birthdayNote(gameText[GameTextKey.Birthday], formattedDate, distance);
 };
