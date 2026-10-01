@@ -29,7 +29,7 @@ interface Props {
   // The scene alone, as the wiki's clean captures of it show it, for a reference to be scored against
   isInterfaceHidden?: true;
   playerName?: string;
-  // How far loading has gone, from 0 to 1, which the bar shows and the camera's flight follows, ending a fixed time after
+  // How far loading has gone, from 0 to 1, which the bar shows and the flight to the door follows, ending a fixed time after
   // It is done
   progress: number;
   timeOfDay: LoginTimeOfDay;
@@ -37,7 +37,7 @@ interface Props {
 
 const { isInterfaceHidden, playerName = "Traveler", progress, timeOfDay } = defineProps<Props>();
 const emit = defineEmits<{ begin: []; ready: [] }>();
-// The game's login screen: the scene fades up out of white, a click on its title sets the camera flying down the
+// The game's login screen: the scene fades up out of white, a click on its title quickens the glide down the
 // Walkway as the game prepares, and a click on the door it arrives at lights it as the screen whitens, when `begin`
 // Says the white is up. A host pins a stage with `v-model:stage` to show it held, as the parity page does
 const stage = defineModel<LoginStage>("stage", { default: LoginStage.Arriving });
@@ -46,7 +46,8 @@ const isWelcomeShown = ref(false);
 const statusStep = ref(LoginStatusStep.PreparingDownload);
 // The share of loading shown, which runs toward loading's own no faster than the bar's fill
 const shownProgress = ref(0);
-// The share of the flight flown, from the title's pose at 0 to the door's at 1
+// The share of the way to the door flown, from the title at 0 to the door at 1: the screen's clock for when the door is
+// Due, while the scene glides at its own pace and comes to rest at the door once it is
 const flight = ref(stage.value === LoginStage.Door || stage.value === LoginStage.Entering ? 1 : 0);
 const { start: showSpinner } = useTimeoutFn(() => (isSpinnerShown.value = true), LOGIN_SPINNER_START_MS, {
   immediate: false,
@@ -115,7 +116,7 @@ const onClick = (event: MouseEvent): void => {
       shadows
       :shadow-map-type="PCFShadowMap"
     >
-      <LoginScene :flight :is-door-lit="stage === LoginStage.Entering" :time-of-day @ready="emit('ready')" />
+      <LoginScene :is-door-lit="stage === LoginStage.Entering" :stage :time-of-day @ready="emit('ready')" />
     </TresCanvas>
     <LoginInterface
       v-if="!isInterfaceHidden"

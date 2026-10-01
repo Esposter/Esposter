@@ -1,6 +1,6 @@
 ---
 title: Login screen
-description: The game's login screen in the opening, between the health notice and the startup loading screen. It fades up out of white on a walkway among towers over a cloud sea, under the sky of the player's hour. A click on its title sets the camera flying to a door as the game loads, and a click on the door lights it as the screen whitens. The scene is built by the engine's kits from parameters fitted to the game's own assets, its camera read off the walkway's known widths by perspective. The interface is compared over the English recording's own frames.
+description: The game's login screen in the opening, between the health notice and the startup loading screen. It fades up out of white on a walkway among towers over a cloud sea, under the sky of the player's hour. The world glides toward the camera the whole while, the walkway assembling itself ahead; a click on its title quickens it as the game loads, it comes to rest at a door, and a click on the door lights it as the screen whitens. The scene is built by the engine's kits from parameters fitted to the game's own assets, its camera solved on the game's own exports. The interface is compared over the English recording's own frames.
 ---
 
 # Login screen
@@ -13,14 +13,14 @@ The game opens on its login screen once the health notice has faded. The console
 flowchart LR
   N[Health notice's white] --> A[Arriving: the scene fades up over 800 ms, the wait mark from 1.3 to 2 s]
   A --> T[Title: START GAME, the server and the account, the welcome card for 1.9 s]
-  T -->|a click| P[Preparing: the status steps, then the load's share and bar, the camera flying]
-  P -->|"flight flown and loading done"| D[Door: CLICK TO BEGIN and the four corner buttons]
+  T -->|a click| P[Preparing: the status steps, then the load's share and bar, the glide quickening]
+  P -->|"flight flown and loading done"| D[Door: the glide comes to rest, CLICK TO BEGIN and the four corner buttons]
   D -->|a click| E[Entering: the door lights, the camera rushes to it, the screen whitens]
   E --> S[Startup loading screen]
 ```
 
 - **The stages are the game's current build's.** The user's own recording of the Japanese client times them and shows which corner buttons each stage has (the title's notices and exit, the door's settings, repair, notices and exit). A 1080 high English recording of an older build gives the words and every size. The status says "Preparing to download resources", "Checking for updates...", "Loading game..." over the ornament's double diamond, then "Preparing to load data" over the progress bar, which folds into its diamond at 100%.
-- **The flight follows loading, and ends 3 seconds after it.** The share shown runs toward loading's own at no more than one full bar per tenth of a second, so a load that finishes at once still sweeps the bar rather than jumping. While loading, the camera flies the share of the path the English recording's does before its bar is full, about two thirds, no faster than its last stretch's pace, so a fast load glides. Once loading is done it flies whatever is left in 3 seconds, the recording's time from a full bar to the door rising, however long the load before it took. The bar folds into its diamond, the whole status row fades, and the last stretch runs bare before the door rises.
+- **The flight follows loading, and ends 3 seconds after it.** The flight is the screen's own clock for the door, the share of the way to it flown. The share shown runs toward loading's own at no more than one full bar per tenth of a second, so a load that finishes at once still sweeps the bar rather than jumping. While loading, the flight goes the share of the way the English recording's does before its bar is full, about two thirds, no faster than its last stretch's pace, so a fast load glides. Once loading is done it flies whatever is left in 3 seconds, the recording's time from a full bar to the door rising, however long the load before it took. The bar folds into its diamond, the whole status row fades, and the last stretch runs bare before the door rises.
 - **A click is the screen's unless it lands on a button.** The screen asks `checkIsNestedInteraction` before it moves on, so a click on a corner button stays the button's.
 - **A host can pin a stage.** The stage is a `v-model`, so the parity page and a test hold one still, and the opening leaves it free.
 
@@ -31,7 +31,7 @@ Every part's shape, place and stone is fitted from the game's own assets ([deriv
 ```mermaid
 flowchart TD
   DATA["Every fitted part, in genshin-world/src/data/login"] --> SCENE[Login/Scene builds them with the engine's kits]
-  REF[The four skies, the door capture, the flight's frames] --> CAM["Camera: read off the walkway by perspective, flying along +z"]
+  REF[The four skies, the door capture, the flight's frames] --> CAM["Camera: solved on the witness, one pose; the glide's pace off the paving"]
   REF --> BANDS[Each cloud band's heights and spread]
   REF --> LIGHT["Each time of day's colours, and its lights' strengths over the fitted stone"]
   CAM --> SCENE
@@ -41,37 +41,41 @@ flowchart TD
 ```
 
 - **The login screen is one arrangement of its meshes.** The blocks lay the towers out more than once; the login screen is its own `LoginScene`, the towers, walkway and door its `MonoLoginScene` spawns into the anchors under `SceneObj`, at its tenth, which is the scene's unit ([derived assets](/docs/genshin/derived-assets)). In the static layout the door's anchor stands far from the walkway; at the flight's end the door stands on the walkway's far end, centred and on its top, as one frame's two poses place it. The arrangement's unit test holds the cross-ratio of the dais over the walkway along the door's foot, which no camera changes.
-- **Each part is built from its fit.** Each tower profile is a lathe of its fitted sections, built once per placement at its scale and merged into one geometry. The walkway is its fitted outline, wings and all, extruded from its underside to its surface.
-- **The camera is solved on the witness.** The eye flies straight down the walkway's middle toward the door along +z, as ModelCamera turns. Its last pose is solved on the English recording's last frame, on the walkway's and the door's silhouettes: 1.24 metres over the walkway's top and 10.68 short of the door, pitched 5.3 degrees up under a vertical field of view of 51.2 ([parity](/docs/genshin/parity)). Its first, at the dawn, dusk and night frames, is still read by perspective off the crossbars' and the door's widths: 18 metres short of the door, pitched 5.6 up under 44.6.
-- **The door assembles itself once the flight reaches it.** The title's frames show the walkway running on with no door on it. At the flight's end the door rises into place from 5 metres below, easing out and settled by 800 ms, sampled from the game's `Ani_LogginScene_Door01_Liftting`. It lights from its middle: a bright line down its panel over a glow across the whole of it, raised over the door's light time.
+- **Each part is built from its fit.** Each tower profile is a lathe of its fitted sections, built once per placement at its scale and merged into one geometry. The walkway is its 23 pieces, each its fitted outline extruded from the walkway's underside to its own top, each a mesh of its own so it can rise on its own.
+- **The camera holds one pose, and the world glides toward it.** The eye looks straight down the walkway's middle along +z, as ModelCamera turns, at the pose solved on the English recording's door frame, on the walkway's and the door's silhouettes: 1.24 metres over the walkway's top and 10.68 short of the door, pitched 5.3 degrees up under a vertical field of view of 51.2 ([parity](/docs/genshin/parity)). The glide's frames refine to the same height, pitch and field of view from every start along the walkway, so it never moves; what moves is `MonoLoginScene`'s rows, each laid out ahead of its own place and wrapped by its length (`login/scroll.json`): the walkway's three copies 16 metres apart, its own length, the towers' with their bridges three 200 apart, and the cloud sea's billows and low clouds by its two 300 apart.
+- **The glide's pace is read off the paving.** At the camera's pose every row of the ground is a distance, so the paving's column resampled into metres and correlated frame to frame is the distance the world moves (`genshin:parity glide`, off the English recording's frames that do not stall): 3.03 metres a second while the title waits, steady to a few hundredths, about 3.7 once the game prepares, gathering or losing speed at 0.55 metres a second each second, the slope of its last three seconds toward the door. At the door it keeps on to the first copy it can stop on at that rate, then slows to rest exactly there, so the door's copy stands where the pose has it (`advanceLoginGlide`). The title opens where the dawn frame's first solve stood the walkway, 10.4 metres short of the middle of the copy ahead; the wiki's stills stand lower than the glide's pose, so their own is still open.
+- **The walkway assembles itself ahead.** The recording's walkway ends a fixed distance ahead however far the world has moved, its far blocks stacked at several heights as they rise into place, as every piece's `MonoBlockController` moves it. Each piece stands in place until 13.5 metres ahead and is sunk 3 metres by 17.5, easing between, its span staggered by up to 2 metres of its neighbours', the rows where the recording's walkway settles and ends, read by eye.
+- **The door assembles itself once it is due.** The title's frames show the walkway running on with no door on it. Once the door is due it rides on the walkway's copy the glide comes to rest on, and rises into place from 5 metres below, easing out and settled by 800 ms, sampled from the game's `Ani_LogginScene_Door01_Liftting`. It lights from its middle: a bright line down its panel over a glow across the whole of it, raised over the door's light time.
 - **The click rushes the camera to the door.** While the door lights and the screen whitens, the camera closes 41% of its distance to the door in the first third of a second, gathering speed with the square of the time, as the recording's door grows about 1.7 times, and stops short of it under the white.
 - **The clouds are the game's painted clouds.** Each of the sky's three emitters, the cloud sea's billows and the middle and top cumulus, is a band of its own atlas's clouds, traced as shapes and drawn as billboards in the sky's cloud colours, so the hour recolours them without repainting. The sky itself draws no cloud layer of its own.
 - **Each sky's light comes from its sun or its moon, placed where its reference shows it.** A screen point measured off the reference (the dawn's and the dusk's suns just past the left edge a little over the horizon, the night's moon behind the lantern tower) becomes a direction through the login camera (`getScreenDirection`), and the light, the sun and the moon all take it, the other body opposite; the day's sun is off its frame, so its direction is measured from the faces it lights. The hemisphere's sky colour is the bright cloud colour and its ground the shade, so a face turned up is lit by the sky as the references show under a low sun, and the haze scatters the light toward the sun.
 - **Colours are measured on the screen and inverted into the scene.** The sky's, the haze's and the clouds' colours are display colours read off the references, written through the tone mapping's inverse (`toSceneColor`); the lights' strengths are measured over the stone's fitted albedo, by `compare`.
 - **The haze is the cloud sea's.** The haze rises off the cloud sea far under the walkway and thins up past it. It is dense enough 20 metres under the walkway that the towers' feet are white, as the references show, and thin enough at the eye that a tower half a kilometre out is still half seen.
-- **The light casts shadows and draws no god rays.** The moon's and the sun's shadows fall across the walkway from a shadow camera that follows the flight ahead of it. The god rays lit the whole sky in the light's colour, so the login's sky states turn them off.
+- **The light casts shadows and draws no god rays.** The moon's and the sun's shadows fall across the walkway from a shadow camera over the walkway ahead of the camera. The god rays lit the whole sky in the light's colour, so the login's sky states turn them off.
 
 ## Tests
 
 - `Game/Opening/Index.browser.test.ts` plays the whole opening with timers and frames faked, through the login's title, flight and door, and checks every handoff and the finish.
-- The walkway and the door have unit tests of their measures: the walkway spans its fitted outline from its underside to its surface and stands nowhere past its widest, and the door stands on its plinth with its panel recessed. Each fit that builds the data has its own test in `scripts/src/services/genshinAssets`.
+- The walkway and the door have unit tests of their measures: the walkway's pieces span its underside to its surface, each about its own middle, and stand nowhere past its widest, and the door stands on its plinth with its panel recessed. `advanceLoginGlide`'s test holds the glide's pace changes to its acceleration and its rest to a whole number of the walkway's copies. Each fit that builds the data has its own test in `scripts/src/services/genshinAssets`.
 - `Login/Interface` is shot in each stage as fixture variants and held to its approved images; its references are the English recording's frames, over which it is compared.
 
 ## Key files
 
-| File                                                                              | Role                                                                    |
-| :-------------------------------------------------------------------------------- | :---------------------------------------------------------------------- |
-| `packages/genshin-world/src/components/Login/Screen/Index.vue`                    | The stages, the flight, and the fades out of and into white             |
-| `packages/genshin-world/src/components/Login/Interface/Index.vue`                 | Each stage's interface, from `genshin-interface`'s pieces               |
-| `packages/genshin-world/src/components/Login/Scene/Index.vue`                     | The camera, the fitted parts, the clouds, the sky and the shadows       |
-| `packages/genshin-world/src/services/login/constants.ts`                          | The words and the timings                                               |
-| `packages/genshin-world/src/services/login/scene/constants.ts`                    | The camera, the flight, the haze, the light and the shadows             |
-| `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`             | Each time of day's colours and light strengths                          |
-| `packages/genshin-world/src/services/login/cloud/LoginCloudBandMap.ts`            | Each cloud band's heights, spread and widths                            |
-| `packages/genshin-world/src/services/login/tower/createLoginTowersGeometry.ts`    | Every fitted tower, built as a lathe and stood where the game stands it |
-| `packages/genshin-world/src/services/login/walkway/createLoginWalkwayGeometry.ts` | The walkway, its fitted outline extruded between its two heights        |
-| `packages/genshin-world/src/services/login/door/createLoginDoorGeometry.ts`       | The door's frame and its panel, from its fitted size                    |
-| `packages/genshin-world/src/data/login`                                           | Every fitted part                                                       |
+| File                                                                            | Role                                                                    |
+| :------------------------------------------------------------------------------ | :---------------------------------------------------------------------- |
+| `packages/genshin-world/src/components/Login/Screen/Index.vue`                  | The stages, the flight, and the fades out of and into white             |
+| `packages/genshin-world/src/components/Login/Interface/Index.vue`               | Each stage's interface, from `genshin-interface`'s pieces               |
+| `packages/genshin-world/src/components/Login/Scene/Index.vue`                   | The camera, the glide, the fitted parts, the clouds, the sky, shadows   |
+| `packages/genshin-world/src/services/login/constants.ts`                        | The words and the timings                                               |
+| `packages/genshin-world/src/services/login/scene/constants.ts`                  | The camera, the glide and its rows, the haze, the light and the shadows |
+| `packages/genshin-world/src/services/login/scene/advanceLoginGlide.ts`          | The glide a frame on, and its rest at the door                          |
+| `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`           | Each time of day's colours and light strengths                          |
+| `packages/genshin-world/src/services/login/cloud/LoginCloudBandMap.ts`          | Each cloud band's heights, spread and widths                            |
+| `packages/genshin-world/src/services/login/tower/createLoginTowersGeometry.ts`  | Every fitted tower, built as a lathe and stood where the game stands it |
+| `packages/genshin-world/src/services/login/walkway/createLoginWalkwayPieces.ts` | The walkway's pieces, each its fitted outline extruded to its own top   |
+| `packages/genshin-world/src/services/login/walkway/readLoginWalkwaySink.ts`     | How far under its place a piece stands as the walkway assembles         |
+| `packages/genshin-world/src/services/login/door/createLoginDoorGeometry.ts`     | The door's frame and its panel, from its fitted size                    |
+| `packages/genshin-world/src/data/login`                                         | Every fitted part                                                       |
 
 ## Sources
 

@@ -1,24 +1,37 @@
 import type { GradeOptions, RampOptions } from "genshin-engine";
 
+import scroll from "#src/data/login/scroll.json";
 import walkway from "#src/data/login/walkway.json";
 import { LOGIN_DOOR_POSITION } from "#src/services/login/door/constants";
 
-// The flight down the walkway toward the door, straight down its middle along +z (a heading of half a turn, as
-// ModelCamera turns), in the scene's own units, SceneObj's tenth. Its last pose is the one login-door-recording solves
-// To on the walkway's and the door's silhouettes (Login/Scene/Index.reference.ts's findings): the eye 1.24 metres over
-// The walkway's top and 10.68 short of the door, pitched 5.3 degrees up under a vertical field of view of 51.2. Its
-// First, at the dawn, dusk and night frames, is still the one read by perspective from the crossbars' and the door's
-// Widths at the stage's scale, a quarter of it here: 18 metres short of the door, pitched 5.6 up under 44.6
+// The camera holds one pose while the world glides toward it, straight down the walkway's middle along +z (a heading
+// Of half a turn, as ModelCamera turns), in the scene's own units, SceneObj's tenth: the pose login-door-recording
+// Solves to on the walkway's and the door's silhouettes, the eye 1.24 metres over the walkway's top and 10.68 short of
+// The door, pitched 5.3 degrees up under a vertical field of view of 51.2, which the glide's frames refine to as well
+// (Login/Scene/Index.reference.ts's findings)
 const EYE_HEIGHT = 1.24;
 export const LOGIN_CAMERA_HEIGHT = walkway.top + EYE_HEIGHT;
-export const LOGIN_CAMERA_START_Z = LOGIN_DOOR_POSITION[2] - 18;
-export const LOGIN_CAMERA_END_Z = LOGIN_DOOR_POSITION[2] - 10.68;
+export const LOGIN_CAMERA_Z = LOGIN_DOOR_POSITION[2] - 10.68;
 export const LOGIN_CAMERA_YAW = Math.PI;
-export const LOGIN_CAMERA_START_PITCH = (5.6 * Math.PI) / 180;
-export const LOGIN_CAMERA_END_PITCH = (5.29 * Math.PI) / 180;
-export const LOGIN_CAMERA_START_FOV = 44.6;
-export const LOGIN_CAMERA_END_FOV = 51.2;
+export const LOGIN_CAMERA_PITCH = (5.29 * Math.PI) / 180;
+export const LOGIN_CAMERA_FOV = 51.2;
 export const LOGIN_CAMERA_FAR = 2000;
+// The rows MonoLoginScene scrolls past the camera, each laid ahead of its own place and wrapped by its length: the
+// Walkway's copies, its own length apart, and the towers' with their bridges and pillars
+export const LOGIN_WALKWAY_ROW = scroll.LoginScene_Bridge01_Vo;
+export const LOGIN_TOWERS_ROW = scroll.LoginScene_Build_All;
+// The cloud sea's row, the sea of cloud effect's two copies 300 metres apart (MonoLoginScene's third record)
+export const LOGIN_CLOUD_SEA_ROW = { count: 2, length: 300 };
+// The glide, in metres a second off the English recording's paving at the camera's pose (genshin:parity glide): 3.03
+// While the title waits, steady to a few hundredths over its clean frames, about 3.7 once the game prepares, and
+// Slowing by 0.55 each second toward the door, the slope of its last three seconds, to a stop there, the walkway's
+// Copy the door stands on brought to rest where the camera's pose has it
+export const LOGIN_GLIDE_TITLE_SPEED = 3.03;
+export const LOGIN_GLIDE_PREPARING_SPEED = 3.7;
+export const LOGIN_GLIDE_ACCELERATION = 0.55;
+// The moment of the loop the title opens at, as metres scrolled: where the dawn frame's first solve stood the walkway,
+// 10.4 metres short of the middle of the copy ahead, the stills' own pose still open
+export const LOGIN_GLIDE_TITLE_SCROLLED = 8.67;
 // The rush to the door on the click: the camera closes 41% of its distance to the door in its first 333 ms, gathering
 // Speed with the square of the time, as the door grows about 1.7 times in the recording's last third of a second
 // (Login/Scene/Index.reference.ts, source `recording`), and stops short of the door under the white

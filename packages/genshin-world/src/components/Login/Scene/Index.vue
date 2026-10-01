@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import type { LoginGlide } from "#src/models/login/LoginGlide";
 import type { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
 
 import { usePostPipeline } from "#src/composables/usePostPipeline";
 import palette from "#src/data/login/palette.json";
 import sky from "#src/data/login/sky.json";
 import { LoginPartFamily } from "#src/models/login/LoginPartFamily";
+import { LoginStage } from "#src/models/login/LoginStage";
 import { createLoginClouds } from "#src/services/login/cloud/createLoginClouds";
 import { LOGIN_DOOR_LIGHT_MS } from "#src/services/login/constants";
 import {
@@ -14,16 +16,14 @@ import {
   LOGIN_DOOR_RISE_KEYFRAMES,
 } from "#src/services/login/door/constants";
 import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoorGeometry";
+import { advanceLoginGlide } from "#src/services/login/scene/advanceLoginGlide";
 import {
-  LOGIN_CAMERA_END_FOV,
-  LOGIN_CAMERA_END_PITCH,
-  LOGIN_CAMERA_END_Z,
   LOGIN_CAMERA_FAR,
+  LOGIN_CAMERA_FOV,
   LOGIN_CAMERA_HEIGHT,
-  LOGIN_CAMERA_START_FOV,
-  LOGIN_CAMERA_START_PITCH,
-  LOGIN_CAMERA_START_Z,
+  LOGIN_CAMERA_PITCH,
   LOGIN_CAMERA_YAW,
+  LOGIN_CAMERA_Z,
   LOGIN_CLOUD_COVERAGE,
   LOGIN_CLOUD_SEA_HEIGHT,
   LOGIN_CLOUD_SEA_SIZE,
@@ -35,6 +35,8 @@ import {
   LOGIN_FOG_SCATTER_POWER,
   LOGIN_FOG_SCATTER_STRENGTH,
   LOGIN_FOG_START_DISTANCE,
+  LOGIN_GLIDE_TITLE_SCROLLED,
+  LOGIN_GLIDE_TITLE_SPEED,
   LOGIN_GRADE_OPTIONS,
   LOGIN_LIGHT_DISTANCE,
   LOGIN_RAMP_OPTIONS,
@@ -43,11 +45,14 @@ import {
   LOGIN_SHADOW_EXTENT,
   LOGIN_SHADOW_MAP_SIZE,
   LOGIN_SHADOW_NORMAL_BIAS,
+  LOGIN_TOWERS_ROW,
+  LOGIN_WALKWAY_ROW,
 } from "#src/services/login/scene/constants";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
 import { createLoginSilhouettesGeometry } from "#src/services/login/silhouette/createLoginSilhouettesGeometry";
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
-import { createLoginWalkwayGeometry } from "#src/services/login/walkway/createLoginWalkwayGeometry";
+import { createLoginWalkwayPieces } from "#src/services/login/walkway/createLoginWalkwayPieces";
+import { readLoginWalkwaySink } from "#src/services/login/walkway/readLoginWalkwaySink";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { useLoop, useTres } from "@tresjs/core";
 import { watchImmediate } from "@vueuse/core";
@@ -65,7 +70,7 @@ import {
   createToonMaterial,
   QualityTier,
 } from "genshin-engine";
-import { DirectionalLight, HemisphereLight } from "three";
+import { DirectionalLight, Group, HemisphereLight, Mesh } from "three";
 import {
   abs,
   color,
@@ -76,17 +81,18 @@ import {
   positionWorld,
   smoothstep,
   uniform,
+  vec2,
 } from "three/tsl";
 import { MeshBasicNodeMaterial } from "three/webgpu";
 
 interface Props {
-  // The share of the camera's flight flown, from the title's pose at 0 to the door's at 1
-  flight: number;
   isDoorLit: boolean;
+  // The login screen's stage, which sets the glide's pace and, from the door's, brings it to rest at the door
+  stage: LoginStage;
   timeOfDay: LoginTimeOfDay;
 }
 
-const { flight, isDoorLit, timeOfDay } = defineProps<Props>();
+const { isDoorLit, stage, timeOfDay } = defineProps<Props>();
 const emit = defineEmits<{ ready: [] }>();
 // The frames drawn before the scene is said to be ready: WebGPU compiles each pipeline on first use, so the first few
 // Frames can come out before every material has. A scene mounted at the door is ready only once the door has risen
@@ -168,15 +174,33 @@ doorMaterial.emissiveNode = createRimNode(lightUniforms).add(
 );
 const towersGeometry = createLoginTowersGeometry();
 const silhouettesGeometry = createLoginSilhouettesGeometry();
-const walkwayGeometry = createLoginWalkwayGeometry();
+const walkwayPieces = createLoginWalkwayPieces();
+// The walkway's row, every piece of every copy a mesh of its own, so each rises into place on its own and the toon
+// Outline, which reads a mesh's own vertices, follows it
+const walkway = new Group();
+const walkwayMeshes = Array.from({ length: LOGIN_WALKWAY_ROW.count }, (_, copy) =>
+  walkwayPieces.map(({ depth, geometry, seed }) => {
+    const mesh = new Mesh(geometry, stoneMaterial);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    walkway.add(mesh);
+    return { copy, depth, mesh, seed };
+  }),
+).flat();
 const { frame: doorFrameGeometry, panel: doorPanelGeometry } = createLoginDoorGeometry();
+// The metres the cloud sea's billows have scrolled toward the camera
+const cloudSeaScrolled = uniform(0);
 // The cloud sea as billows of the clouds' own two colours, lit tops over shaded hollows, which the fog then pales
 // Into the horizon as they recede
 const cloudSeaMaterial = new MeshBasicNodeMaterial();
 cloudSeaMaterial.colorNode = mix(
   skyUniforms.cloudShadeColor,
   skyUniforms.cloudLitColor,
-  smoothstep(CLOUD_SEA_EDGE_START, CLOUD_SEA_EDGE_END, mx_fractal_noise_float(positionWorld.xz.mul(CLOUD_SEA_SCALE))),
+  smoothstep(
+    CLOUD_SEA_EDGE_START,
+    CLOUD_SEA_EDGE_END,
+    mx_fractal_noise_float(positionWorld.xz.add(vec2(0, cloudSeaScrolled)).mul(CLOUD_SEA_SCALE)),
+  ),
 );
 const loginClouds = createLoginClouds(skyUniforms);
 const gradeLutTexture = createGradeLutTexture(LOGIN_GRADE_OPTIONS);
@@ -186,6 +210,16 @@ let isReadyEmitted = false;
 // How long the door has been lit, which the rush toward it follows, and how long it has been rising into place
 const rushMs = shallowRef(0);
 const riseMs = shallowRef(0);
+const checkIsDoorDue = (): boolean => stage === LoginStage.Door || stage === LoginStage.Entering;
+// The world glides toward the camera at the stage's pace and wraps each row by its length, the camera holding its one
+// Pose, from the moment of the loop the title opens at; a scene mounted at the door starts at rest there. The glide is
+// Kept off Vue's reactivity, and only the numbers the template places by, which stand still when it does, are refs
+let glide: LoginGlide = checkIsDoorDue()
+  ? { scrolled: 0, speed: 0, stopAt: 0 }
+  : { scrolled: LOGIN_GLIDE_TITLE_SCROLLED, speed: LOGIN_GLIDE_TITLE_SPEED };
+const towersOffset = shallowRef(-(glide.scrolled % LOGIN_TOWERS_ROW.length));
+// How far past its place of rest the door is, riding on the walkway's copy it comes to rest on
+const doorAhead = shallowRef(0);
 const doorPosition = computed((): [number, number, number] => {
   const nextIndex = LOGIN_DOOR_RISE_KEYFRAMES.findIndex(([timeMs]) => timeMs > riseMs.value);
   const [endMs = 0, endShare = 1] = LOGIN_DOOR_RISE_KEYFRAMES[nextIndex] ?? [];
@@ -193,22 +227,27 @@ const doorPosition = computed((): [number, number, number] => {
   const share =
     nextIndex === -1 ? 1 : startShare + ((endShare - startShare) * (riseMs.value - startMs)) / (endMs - startMs);
   const [x, y, z] = LOGIN_DOOR_POSITION;
-  return [x, y - LOGIN_DOOR_RISE_DEPTH * (1 - share), z];
+  return [x, y - LOGIN_DOOR_RISE_DEPTH * (1 - share), z + doorAhead.value];
 });
-// The camera flies along +z from the flight's first pose to the door's, pitching up and widening its view as it goes,
-// And on the click rushes on toward the door
-const cameraPitch = computed(
-  () => LOGIN_CAMERA_START_PITCH + (LOGIN_CAMERA_END_PITCH - LOGIN_CAMERA_START_PITCH) * flight,
-);
-const cameraFov = computed(() => LOGIN_CAMERA_START_FOV + (LOGIN_CAMERA_END_FOV - LOGIN_CAMERA_START_FOV) * flight);
+// The camera holds its pose, and on the click rushes on toward the door
 const cameraZ = computed(() => {
-  const flownZ = LOGIN_CAMERA_START_Z + (LOGIN_CAMERA_END_Z - LOGIN_CAMERA_START_Z) * flight;
   const share = Math.min(LOGIN_DOOR_RUSH_SHARE * (rushMs.value / LOGIN_DOOR_RUSH_MS) ** 2, LOGIN_DOOR_RUSH_LIMIT);
-  return flownZ - share * (flownZ - LOGIN_DOOR_POSITION[2]);
+  return LOGIN_CAMERA_Z - share * (LOGIN_CAMERA_Z - LOGIN_DOOR_POSITION[2]);
 });
 onRender(({ delta: frameDelta }) => {
   // A tool holding the witness's clock holds the scene's time too, so one view draws one frame
   const delta = witness?.isClockHeld.value ? 0 : frameDelta;
+  glide = advanceLoginGlide(glide, stage, delta);
+  const { scrolled, stopAt = scrolled } = glide;
+  towersOffset.value = -(scrolled % LOGIN_TOWERS_ROW.length);
+  doorAhead.value = stopAt - scrolled;
+  const walkwayOffset = -(scrolled % LOGIN_WALKWAY_ROW.length);
+  for (const { copy, depth, mesh, seed } of walkwayMeshes) {
+    const z = walkwayOffset + copy * LOGIN_WALKWAY_ROW.length;
+    mesh.position.set(0, -readLoginWalkwaySink(z + depth - cameraZ.value, seed), z);
+  }
+  cloudSeaScrolled.value = scrolled;
+  loginClouds.scroll(scrolled);
   light.target.position.set(0, 0, cameraZ.value + LOGIN_SHADOW_EXTENT / 2);
   light.position
     .copy(light.target.position)
@@ -216,9 +255,10 @@ onRender(({ delta: frameDelta }) => {
   fogUniforms.density.value = witness?.isAlone.value ? 0 : LOGIN_FOG_DENSITY;
   doorGlow.value = isDoorLit ? Math.min(doorGlow.value + (delta * 1000) / LOGIN_DOOR_LIGHT_MS, 1) : 0;
   rushMs.value = isDoorLit ? rushMs.value + delta * 1000 : 0;
-  riseMs.value = flight >= 1 ? riseMs.value + delta * 1000 : 0;
+  riseMs.value = checkIsDoorDue() ? riseMs.value + delta * 1000 : 0;
   renderedFrameCount++;
-  if (isReadyEmitted || renderedFrameCount < READY_FRAME_COUNT || (flight >= 1 && riseMs.value < doorRiseMs)) return;
+  if (isReadyEmitted || renderedFrameCount < READY_FRAME_COUNT || (checkIsDoorDue() && riseMs.value < doorRiseMs))
+    return;
   isReadyEmitted = true;
   emit("ready");
 });
@@ -231,7 +271,7 @@ onUnmounted(() => {
   doorMaterial.dispose();
   cloudSeaMaterial.dispose();
   loginClouds.dispose();
-  walkwayGeometry.dispose();
+  for (const { geometry } of walkwayPieces) geometry.dispose();
   towersGeometry.dispose();
   silhouettesGeometry.dispose();
   doorFrameGeometry.dispose();
@@ -245,9 +285,9 @@ onUnmounted(() => {
 <template>
   <TresPerspectiveCamera
     :far="LOGIN_CAMERA_FAR"
-    :fov="cameraFov"
+    :fov="LOGIN_CAMERA_FOV"
     :position="[0, LOGIN_CAMERA_HEIGHT, cameraZ]"
-    :rotation="[cameraPitch, LOGIN_CAMERA_YAW, 0]"
+    :rotation="[LOGIN_CAMERA_PITCH, LOGIN_CAMERA_YAW, 0]"
     rotation-order="YXZ"
   />
   <primitive :object="light" />
@@ -257,31 +297,32 @@ onUnmounted(() => {
   <primitive :object="godraysLight" />
   <primitive :object="godraysLight.target" />
   <primitive v-if="witness" :object="witness.parts" />
-  <TresMesh
-    v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Walkway)"
-    :geometry="walkwayGeometry"
-    cast-shadow
-    receive-shadow
-    :material="stoneMaterial"
-  />
-  <TresMesh
-    v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Towers)"
-    :geometry="towersGeometry"
-    cast-shadow
-    receive-shadow
-    :material="stoneMaterial"
-  />
-  <TresMesh
-    v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Bridges)"
-    :geometry="silhouettesGeometry"
-    cast-shadow
-    receive-shadow
-    :material="stoneMaterial"
-  />
-  <!-- The door turns to face the camera coming up the walkway from -z, and stands only once the flight has brought -->
-  <!-- The camera to it: the title's frames show the walkway running on with no door on it -->
+  <primitive v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Walkway)" :object="walkway" />
+  <!-- The towers' row, with their bridges and pillars, each copy its length ahead of the last -->
+  <TresGroup :position="[0, 0, towersOffset]">
+    <template v-for="copy in LOGIN_TOWERS_ROW.count" :key="copy">
+      <TresMesh
+        v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Towers)"
+        :geometry="towersGeometry"
+        cast-shadow
+        receive-shadow
+        :material="stoneMaterial"
+        :position="[0, 0, (copy - 1) * LOGIN_TOWERS_ROW.length]"
+      />
+      <TresMesh
+        v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Bridges)"
+        :geometry="silhouettesGeometry"
+        cast-shadow
+        receive-shadow
+        :material="stoneMaterial"
+        :position="[0, 0, (copy - 1) * LOGIN_TOWERS_ROW.length]"
+      />
+    </template>
+  </TresGroup>
+  <!-- The door turns to face the camera coming up the walkway from -z, and stands only once it is due, on the -->
+  <!-- Walkway's copy the glide comes to rest on: the title's frames show the walkway running on with no door on it -->
   <TresGroup
-    v-if="flight >= 1 && checkIsOwnFamilyDrawn(LoginPartFamily.Door)"
+    v-if="checkIsDoorDue() && checkIsOwnFamilyDrawn(LoginPartFamily.Door)"
     :position="doorPosition"
     :rotation="[0, Math.PI, 0]"
   >

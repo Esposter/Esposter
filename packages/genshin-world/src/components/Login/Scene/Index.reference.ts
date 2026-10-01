@@ -158,13 +158,27 @@ export const reference: ComponentReference = {
       search:
         "genshin:parity pose login-door-recording --witness login, the wings then the door with --hold pitch,fov, then both families together on their silhouettes",
     },
+    {
+      found:
+        "The idle title and the loading are one glide: the recording's wing pairs keep coming at the camera and passing out of frame while its walkway's far end holds the same rows (730 to 745 of 1080) for all 14 seconds, its far blocks stacked at several heights as they rise into place. The camera does not move: from every start along two wing periods, its frame at 0.6 seconds refines to the door frame's height, pitch and field of view (1.1 to 1.3 metres, 5.3 degrees, 51.0 to 51.4), so the spawn records are each row's copies and length, laid end to end and scrolled past it, the walkway's 16 its own length",
+      search:
+        "Slit scans of yt-rBnfA4pXw6U and yt-q2pwx24TOgA across the title and the door, then genshin:parity's refine on the walkway's edges below row 760 from z -21 to -5 over the copied witness",
+    },
+    {
+      found:
+        "At the camera's pose each ground row is a distance, so the paving's column 6.3 to 9.5 metres ahead resampled into metres and correlated frame to frame reads the glide: 3.03 metres a second, steady to 0.06 over the title's 2.4 seconds, about 3.7 once preparing (3.5 to 3.9 between 9.75 and 11), then slowing by 0.55 a second each second, a line through its last three seconds, 1.9 by 13.75 seconds, before the click rushes on at 14.4. At 44.6 degrees the same frames read anything from 1.1 to 4 metres a second, so the title shares the door's field of view. The recording stalls from 2.7 to 9 seconds as the game loads, the frames held then jumping, so only the spans around it are read",
+      search:
+        "genshin:parity glide login-door-recording over 0 to 2.5 and 9 to 14.5 seconds, the eye 1.24 metres up, pitched 5.29 under 51.2, its held frames picking the spans that do not stall",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
     "How the script brings the door from its anchor to the walkway: the place is measured (the door spawn's position), the motion is not",
-    "What each spawn record's integer and float are (3 and 200, 3 and 16, 2 and 300)",
-    "What MonoBlockController does to each walkway piece: its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$)",
+    "Whether the towers' row tiles at its 200 metres: their fitted field spans about 300 along the glide",
+    "What MonoBlockController does to each walkway piece: the rise is read by eye off the recording's far end; its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$) hold its own curve",
+    "Where the glide comes to rest: the recording's door frame was still slowing at 1.6 metres a second when the click came, so the rest stands a little nearer the door than its pose",
     "The day sky's pose, by the same perspective reading",
+    "The wiki stills' pose: held to the glide's height, pitch and field of view, the dawn frame's near wings cannot be fitted at any depth (their 1582 pixels across put them 5.5 metres out at 51.2 degrees, their rows 6.7 at 1.24 metres and 5.29), so the stills stand lower, about a metre up, or pitched about 3 degrees; four corners on one plane leave the field of view free to run away, so the stills need landmarks at another depth. Scored at the glide's pose the four stills read 0.02 to 0.04 of FLIP worse than at the old perspective reading's (44.6 degrees, 5.6 up), while the door frames read better; both recordings glide at 51.2 (the English one's title paces steadily only there, and the user's current build agrees), so the stills' camera is theirs to solve, not the scene's",
   ],
   sources: {
     atmosphereShader: {
