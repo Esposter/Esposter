@@ -53,7 +53,11 @@ import {
 } from "#src/services/login/scene/constants";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
-import { LOGIN_WALKWAY_RISE_DEPTH, LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
+import {
+  LOGIN_WALKWAY_REACH_SPEED,
+  LOGIN_WALKWAY_RISE_DEPTH,
+  LOGIN_WALKWAY_SUNK_DISTANCE,
+} from "#src/services/login/walkway/constants";
 import { createLoginPavingShade } from "#src/services/login/walkway/createLoginPavingShade";
 import { createLoginWalkwayPieces } from "#src/services/login/walkway/createLoginWalkwayPieces";
 import { readLoginWalkwaySink } from "#src/services/login/walkway/readLoginWalkwaySink";
@@ -239,6 +243,10 @@ const riseMs = shallowRef(0);
 const checkIsDoorDue = (): boolean => stage === LoginStage.Door || stage === LoginStage.Entering;
 // The door rises once it is due and has come within the walkway's far end, as its last blocks settle
 const isDoorRising = shallowRef(false);
+// How much farther than its own the walkway's assembling end reaches once the door is due: out to the door at the reach
+// Speed, wherever the door's copy stands, so the door rises at the walkway's end as soon as the end reaches it rather
+// Than once the glide has carried it within, and then held at the door as the glide carries it nearer
+let walkwayReach = 0;
 // The world glides toward the camera at the stage's pace and wraps each row by its length, the camera holding its one
 // Pose, from the moment of the loop the title opens at; a scene mounted at the door starts at rest there. The glide is
 // Kept off Vue's reactivity, and only the numbers the template places by, which stand still when it does, are refs
@@ -280,10 +288,12 @@ onRender(({ delta: frameDelta }) => {
   walkway.position.z = -(scrolled % LOGIN_WALKWAY_ROW.length);
   // Once the door is due the walkway ends at it, and nothing past it is built
   const doorAheadOfCamera = LOGIN_DOOR_POSITION[2] + doorAhead.value - cameraZ.value;
+  const reachTarget = checkIsDoorDue() ? Math.max(doorAheadOfCamera - LOGIN_WALKWAY_SUNK_DISTANCE, 0) : 0;
+  walkwayReach = Math.min(walkwayReach + LOGIN_WALKWAY_REACH_SPEED * delta, reachTarget);
   for (const { copy, depth, instanceId, seed } of walkwayInstances) {
     const z = copy * LOGIN_WALKWAY_ROW.length;
     const ahead = walkway.position.z + z + depth - cameraZ.value;
-    const sink = readLoginWalkwaySink(ahead, seed);
+    const sink = readLoginWalkwaySink(ahead - walkwayReach, seed);
     // A piece stands only once it has begun to rise, so neither it nor its shadow shows before its turn
     walkway.setVisibleAt(
       instanceId,
@@ -302,7 +312,8 @@ onRender(({ delta: frameDelta }) => {
     : (LoginSkyStateMap[timeOfDay].fogDensity ?? LOGIN_FOG_DENSITY);
   doorGlow.value = isDoorLit ? Math.min(doorGlow.value + (delta * 1000) / LOGIN_DOOR_LIGHT_MS, 1) : 0;
   rushMs.value = isDoorLit ? rushMs.value + delta * 1000 : 0;
-  isDoorRising.value = checkIsDoorDue() && (isDoorRising.value || doorAheadOfCamera <= LOGIN_WALKWAY_SUNK_DISTANCE);
+  isDoorRising.value =
+    checkIsDoorDue() && (isDoorRising.value || doorAheadOfCamera <= LOGIN_WALKWAY_SUNK_DISTANCE + walkwayReach);
   riseMs.value = isDoorRising.value ? riseMs.value + delta * 1000 : 0;
   // The door's own interface waits on the door, once it has risen into place
   if (!isDoorFormed && isDoorRising.value && riseMs.value >= doorRiseMs) {

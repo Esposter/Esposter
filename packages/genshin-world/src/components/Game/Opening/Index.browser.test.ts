@@ -8,10 +8,12 @@ import {
 } from "#src/services/login/constants";
 import { LOGIN_DOOR_RISE_KEYFRAMES } from "#src/services/login/door/constants";
 import {
+  LOGIN_DOOR_REST_DISTANCE,
   LOGIN_GLIDE_ACCELERATION,
   LOGIN_GLIDE_PREPARING_SPEED,
   LOGIN_WALKWAY_ROW,
 } from "#src/services/login/scene/constants";
+import { LOGIN_WALKWAY_REACH_SPEED, LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
@@ -40,11 +42,16 @@ describe("gameOpening", () => {
   const flightFrameMs = 100;
   // The flight draws its scene every frame of its length, which a headless browser renders slower than a screen
   const timeoutMs = 240_000;
-  // The longest the glide takes from the door being due to the door standing formed, which the door's prompt waits
-  // On: braking from the preparing pace, a walkway's copy more at speed before it, and the door's rise
+  // The longest from the door being due to the door standing formed, which its click waits on: the walkway's end
+  // Reaching out to the farthest the door's copy can stand (its braking distance from the preparing pace and a copy
+  // More, past its rest), then the door's rise. A door that waits on the glide instead misses the click
   const doorArrivalMs =
-    (LOGIN_GLIDE_PREPARING_SPEED / LOGIN_GLIDE_ACCELERATION) * 1000 +
-    (LOGIN_WALKWAY_ROW.length / LOGIN_GLIDE_PREPARING_SPEED) * 1000 +
+    ((LOGIN_GLIDE_PREPARING_SPEED ** 2 / (2 * LOGIN_GLIDE_ACCELERATION) +
+      LOGIN_WALKWAY_ROW.length +
+      LOGIN_DOOR_REST_DISTANCE -
+      LOGIN_WALKWAY_SUNK_DISTANCE) /
+      LOGIN_WALKWAY_REACH_SPEED) *
+      1000 +
     (LOGIN_DOOR_RISE_KEYFRAMES.at(-1)?.[0] ?? 0);
 
   afterEach(() => {
