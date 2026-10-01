@@ -19,6 +19,8 @@ export const writeVideoFrames = async (
   await runFfmpeg([...window, "-i", path, "-vf", `fps=${framesPerSecond}`, join(directory, "%04d.png")]);
   const filenames = await readdir(directory);
   return filenames
-    .toSorted((firstFilename, secondFilename) => firstFilename.localeCompare(secondFilename))
+    .toSorted((firstFilename, secondFilename) =>
+      firstFilename.localeCompare(secondFilename, undefined, { numeric: true }),
+    )
     .map((filename) => join(directory, filename));
 };
