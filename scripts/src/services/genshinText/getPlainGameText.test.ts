@@ -9,6 +9,7 @@ describe(getPlainGameText, () => {
     ["a{NON_BREAK_SPACE}b", "a b"],
     ["<color=#37FFFF>a:</color> b", "a: b"],
     ["<i>a</i>", "a"],
+    ["<<i>i>a", "a"],
     ["{LAYOUT_PC#a}{LAYOUT_MOBILE#b}{LAYOUT_PS#c}", "a"],
     ["a{RUBY#[D]b}", "a"],
   ])("%j reads %j", (text, expected) => {
