@@ -13,10 +13,10 @@ committed.
 | `login-day` | `LoginScreen` | 20.51% | 0.417 | 16.43% | 0.6193 |
 | `login-door` | `LoginScreen` | 17.17% | 0.360 | 15.64% | 0.5831 |
 | `login-door-recording` | `LoginScreen` | 21.61% | 0.315 | 17.31% | 0.6626 |
-| `login-dusk` | `LoginScreen` | 23.38% | 0.325 | 19.56% | 0.6739 |
+| `login-dusk` | `LoginScreen` | 24.30% | 0.325 | 20.44% | 0.6742 |
 | `login-interface-door` | `LoginInterface` | 0.63% | 0.986 | 0.43% | 0.0252 |
 | `login-interface-loading` | `LoginInterface` | 0.16% | 0.995 | 0.09% | 0.0061 |
 | `login-interface-title` | `LoginInterface` | 0.35% | 0.997 | 0.23% | 0.0155 |
-| `login-night` | `LoginScreen` | 16.06% | 0.270 | 13.29% | 0.5363 |
+| `login-night` | `LoginScreen` | 15.93% | 0.256 | 13.11% | 0.5265 |
 | `publisher-splash` | `SplashPublisher` | 0.46% | 1.000 | 0.77% | 0.0471 |
 | `title-splash` | `SplashTitle` | 1.30% | 1.000 | 0.28% | 0.0483 |

@@ -99,6 +99,7 @@ From `scripts/`, as `pnpm genshin:parity <command>`, each with its own `--help`;
 | `luma <x> <y> <w> <h> <image or folder>…`                                  | One region's darkness across images, or a folder's frames, as a curve                                                              |
 | `measure <image> <x,y>…`                                                   | The image's size and the colour under each point                                                                                   |
 | `zoom <image> <x> <y> <w> <h> [scale] [--with images]`                     | A region enlarged with hard edges, the same region of each other image stacked under it                                            |
+| `sky <reference> --witness <c>`                                            | The reference's sky as the game's sky shader draws it, its colours by least squares, its shape refined, beside the reference       |
 | `view <screen> --camera x,y,z,yaw,pitch,fov --witness <c>`                 | The scene from any camera, our parts beside the exports they stand for                                                             |
 | `place <reference> --families <f,…> --witness <c>`                         | Where a group of families stands on the reference, the camera held: one offset refined on their edges both ways, from `--start`    |
 | `parts <reference> --family <f> --witness <c>`                             | Each part of a family numbered where it lands, over the reference and the witness's render, for landmarks and phases               |

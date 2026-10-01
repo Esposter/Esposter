@@ -5,6 +5,7 @@ import type { SceneWitness } from "#src/models/scene/SceneWitness";
 
 import "@fontsource/signika/600.css";
 import { benchScene } from "#parity/benchScene";
+import { readSceneSky } from "#parity/readSceneSky";
 import { screens } from "#parity/screens";
 import { loadWitness } from "#parity/witness/loadWitness";
 import { readWitnessParts } from "#parity/witness/readWitnessParts";
@@ -72,6 +73,7 @@ if (screen && root) {
   }).mount(root);
   Reflect.set(window, "setScreenProps", (screenProps: Record<string, unknown>) => Object.assign(props, screenProps));
   Reflect.set(window, "benchScene", (frameCount: number) => benchScene(sceneContext.value, frameCount));
+  Reflect.set(window, "readSceneSky", () => readSceneSky(sceneContext.value));
   // The camera solve and the loss table set the witness's view from the shooting browser, one view a call
   if (witness) {
     Reflect.set(window, "setWitnessView", (view: WitnessView) => setWitnessView(witness, view));

@@ -1,4 +1,4 @@
-import type { PostPipeline, PostPipelineOptions, QualityTier } from "genshin-engine";
+import type { PostPipeline, PostPipelineOptions, QualityTier, SkyUniforms } from "genshin-engine";
 import type { MaybeRefOrGetter } from "vue";
 
 import { SceneContextKey } from "#src/services/scene/SceneContextKey";
@@ -15,6 +15,8 @@ import { AntialiasingMode, createPostPipeline, QualityTierSettingsMap } from "ge
 export const usePostPipeline = (
   qualityTier: MaybeRefOrGetter<QualityTier>,
   postInputs: Pick<PostPipelineOptions, "fogUniforms" | "godraysLight" | "gradeLutTexture" | "postUniforms">,
+  // The sky the scene draws, handed on with what it renders with
+  sky?: SkyUniforms,
 ) => {
   const { camera, renderer, scene } = useTres();
   const witness = inject(SceneWitnessKey, null);
@@ -38,7 +40,7 @@ export const usePostPipeline = (
           })
         : undefined;
     if (sceneContext && activeCamera && isWebGPURenderer(renderer))
-      sceneContext.value = { camera: activeCamera, renderer, scene: scene.value };
+      sceneContext.value = { camera: activeCamera, renderer, scene: scene.value, sky };
   });
 
   render((notifySuccess) => {

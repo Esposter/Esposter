@@ -67,6 +67,7 @@ import {
   createPostUniforms,
   createRampTexture,
   createRimNode,
+  createSkyGradientTexture,
   createSkyNode,
   createSkyUniforms,
   createToonMaterial,
@@ -143,7 +144,6 @@ fogUniforms.scatterStrength.value = LOGIN_FOG_SCATTER_STRENGTH;
 const postUniforms = createPostUniforms();
 const skyUniforms = createSkyUniforms();
 skyUniforms.cloudCoverage.value = LOGIN_CLOUD_COVERAGE;
-skyUniforms.horizonBand.value = sky.horizonBand;
 const skyTargets = {
   fogUniforms,
   godraysLight,
@@ -154,7 +154,9 @@ const skyTargets = {
   postUniforms,
   skyUniforms,
 };
-scene.value.backgroundNode = createSkyNode(skyUniforms);
+// The sky's gradient, the game's own fitted, which its bottom colour and horizon halo ride up the sky
+const skyGradient = createSkyGradientTexture(sky.gradient);
+scene.value.backgroundNode = createSkyNode(skyUniforms, skyGradient);
 watchImmediate(
   () => timeOfDay,
   (newTimeOfDay) => {
@@ -218,7 +220,7 @@ cloudSeaMaterial.colorNode = mix(
 );
 const loginClouds = createLoginClouds(skyUniforms);
 const gradeLutTexture = createGradeLutTexture(LOGIN_GRADE_OPTIONS);
-usePostPipeline(QualityTier.High, { fogUniforms, godraysLight, gradeLutTexture, postUniforms });
+usePostPipeline(QualityTier.High, { fogUniforms, godraysLight, gradeLutTexture, postUniforms }, skyUniforms);
 let renderedFrameCount = 0;
 let isReadyEmitted = false;
 // How long the door has been lit, which the rush toward it follows, and how long it has been rising into place
@@ -299,6 +301,7 @@ onRender(({ delta: frameDelta }) => {
 onUnmounted(() => {
   scene.value.backgroundNode = null;
   rampTexture.dispose();
+  skyGradient.dispose();
   gradeLutTexture.dispose();
   stoneMaterial.dispose();
   doorMaterial.dispose();

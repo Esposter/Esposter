@@ -191,6 +191,7 @@ export const reference: ComponentReference = {
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
     "How the script brings the door from its anchor to the walkway: the place is measured (the door spawn's position), the motion is not",
     "Whether the towers' row tiles at its 200 metres: their fitted field spans about 300 along the glide",
+    "The sky's own colours at each hour: the game's environment system sets its sky shader's _ES_ colours, top and bottom toward the sun and away, the halo, the sun's halo and the moon's glow, at run time from no asset the export holds, so they are measured; one frame's sky by least squares (genshin:parity sky) leaves its shape and its colours unsettled, the sun's direction itself measured and most of the sky under clouds and haze",
     "How the game brings the towers to the door's phase after a long idle: every recording found idles a few seconds, so the title's phase is read off its glide's length, not a rule of the script's",
     "What MonoBlockController does to each walkway piece: the rise is read by eye off the recording's far end; its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$) hold its own curve",
     "Where the glide comes to rest: the recording's door frame was still slowing at 1.6 metres a second when the click came, so the rest stands a little nearer the door than its pose",
@@ -203,7 +204,7 @@ export const reference: ComponentReference = {
       kind: GameSourceKind.Shader,
       name: "Shader#0",
       pathId: "-5017021742717319217",
-      role: "The sky dome: its gradient, top and bottom colours front and back of the sun, halos, stars and scattering",
+      role: "The sky dome: its gradient, top and bottom colours front and back of the sun, halos, stars and scattering, ported to createSkyNode from its decompiled vertex and pixel programs",
     },
     cloudLayerShader: {
       block: "00/12903389.blk",

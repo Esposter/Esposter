@@ -3,7 +3,7 @@ import type { DecodedCurve } from "#src/models/genshinAssets/DecodedCurve";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/DerivedAssetComponentMap";
 import { fitAlbedo } from "#src/services/genshinAssets/fitAlbedo";
-import { fitHorizonBand } from "#src/services/genshinAssets/fitHorizonBand";
+import { fitSkyGradient } from "#src/services/genshinAssets/fitSkyGradient";
 import { fitInterfaceClips } from "#src/services/genshinAssets/fitInterfaceClips";
 import { fitLoginClouds } from "#src/services/genshinAssets/fitLoginClouds";
 import { fitLoginDoor } from "#src/services/genshinAssets/fitLoginDoor";
@@ -33,13 +33,13 @@ export const fitLoginScene = async (): Promise<string> => {
   const diffusePaths = (await readdir(textureDirectory))
     .filter((name) => LOGIN_DIFFUSE_REGEX.test(name))
     .map((name) => join(textureDirectory, name));
-  const [towers, walkway, door, hulls, clouds, horizonBand, stone] = await Promise.all([
+  const [towers, walkway, door, hulls, clouds, skyGradient, stone] = await Promise.all([
     fitLoginTowers(placements, meshDirectory),
     fitLoginWalkway(placements, meshDirectory),
     fitLoginDoor(placements, meshDirectory),
     fitLoginHulls(placements, meshDirectory),
     fitLoginClouds(textureDirectory),
-    fitHorizonBand(join(textureDirectory, "Enviro_Sky_Gradient.png")),
+    fitSkyGradient(join(textureDirectory, "Enviro_Sky_Gradient.png")),
     fitAlbedo(diffusePaths),
   ]);
   const scroll = Object.fromEntries(
@@ -53,7 +53,7 @@ export const fitLoginScene = async (): Promise<string> => {
     writeWorldData("login/door.json", door),
     writeWorldData("login/hulls.json", hulls),
     writeWorldData("login/clouds.json", clouds),
-    writeWorldData("login/sky.json", { horizonBand }),
+    writeWorldData("login/sky.json", { gradient: skyGradient }),
     writeWorldData("login/palette.json", { stone }),
     writeWorldData("login/scroll.json", scroll),
     writeWorldData("login/interfaceClips.json", fitInterfaceClips(clips)),

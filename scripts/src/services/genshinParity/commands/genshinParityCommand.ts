@@ -19,6 +19,7 @@ import { polarCommand } from "#src/services/genshinParity/commands/polarCommand"
 import { poseCommand } from "#src/services/genshinParity/commands/poseCommand";
 import { recordCommand } from "#src/services/genshinParity/commands/recordCommand";
 import { shootCommand } from "#src/services/genshinParity/commands/shootCommand";
+import { skyCommand } from "#src/services/genshinParity/commands/skyCommand";
 import { stillCommand } from "#src/services/genshinParity/commands/stillCommand";
 import { traceCommand } from "#src/services/genshinParity/commands/traceCommand";
 import { trackCommand } from "#src/services/genshinParity/commands/trackCommand";
@@ -35,6 +36,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     attribute: attributeCommand,
     gbuffer: gbufferCommand,
     calibrate: calibrateCommand,
+    sky: skyCommand,
     overlay: overlayCommand,
     pose: poseCommand,
     place: placeCommand,
