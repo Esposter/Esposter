@@ -34,7 +34,10 @@ export const refineCameraPose = async (
         family,
         `not a family the witness draws: ${drawnFamilies.join(", ")}`,
       );
-  const edgeDistances = computeDistanceTransform(await readStructureEdges(image, height), width, height);
+  const topPixel = Math.round(topRow) * width;
+  // The reference's edges above the row are cleared too, so none of them is the nearest to a boundary below it
+  const edges = (await readStructureEdges(image, height)).fill(0, 0, topPixel);
+  const edgeDistances = computeDistanceTransform(edges, width, height);
   const readDistance = async (candidate: readonly number[]): Promise<number> => {
     await setPageWitnessView(page, { camera: toPageCamera(candidate) });
     const gbuffer = await readWitnessPartTarget(page);
@@ -42,7 +45,6 @@ export const refineCameraPose = async (
     const familyIndexSet = new Set(families.map((family) => gbuffer.families.indexOf(family)));
     let sum = 0;
     let count = 0;
-    const topPixel = Math.round(topRow) * gbuffer.width;
     for (const [pixel, isBoundary] of mask.entries())
       if (isBoundary && pixel >= topPixel && familyIndexSet.has(familyIndices[pixel] ?? -1)) {
         sum += edgeDistances[pixel] ?? 0;
