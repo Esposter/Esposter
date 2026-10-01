@@ -29,8 +29,17 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Door, scored over the scene above the prompt and clear of the corner buttons
   "login-door-recording": {
     capture: "yt-rBnfA4pXw6U.mp4",
-    // Read off the recording: the dais's front feet on the walkway's top and the arch's apex
-    landmarks: { doorApex: [959, 416], doorFootLeft: [852, 777], doorFootRight: [1069, 777] },
+    // Read off the recording: the dais's front feet on the walkway's top, the arch's apex, and the walkway's wings at
+    // The top of their outer faces
+    landmarks: {
+      doorApex: [959, 416],
+      doorFootLeft: [852, 777],
+      doorFootRight: [1069, 777],
+      wingLeftBack: [710, 803],
+      wingLeftFront: [689, 817],
+      wingRightBack: [1193, 803],
+      wingRightFront: [1229, 817],
+    },
     props: { isInterfaceHidden: true, stage: "Door", timeOfDay: "Dusk" },
     region: { height: 960, width: 1560, x: 180, y: 0 },
     screen: "LoginScreen",

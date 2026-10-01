@@ -93,7 +93,14 @@ export const solveReferencePose = async (
         .toFile(imagePath);
       const errors = Object.fromEntries(seen.map(([name], index) => [name, solved.errors[index] ?? 0]));
       if (refineIterations === 0) return { errors, imagePath, pose: solved.pose, rms: solved.rms };
-      const { after, before, pose } = await refineCameraPose(page, image, solved.pose, families, refineIterations);
+      const { after, before, pose } = await refineCameraPose(
+        page,
+        image,
+        solved.pose,
+        families,
+        refineIterations,
+        heldAxes,
+      );
       return { errors, imagePath, pose, refinement: { after, before }, rms: solved.rms };
     },
     () => browser.close(),

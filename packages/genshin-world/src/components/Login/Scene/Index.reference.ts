@@ -152,10 +152,16 @@ export const reference: ComponentReference = {
       search:
         "genshin:parity pose login-door-recording --witness login --hold fov --refine 80 --families Door, then track",
     },
+    {
+      found:
+        "The door's pitch was its three points' weak axis: the walkway's wings (the tops of their outer faces' ends) and its converging edges put the horizon near row 675, the camera 6 degrees up, and the door fits as well at that pitch (0.23 pixels of edge). With the door's heading and pitch held to the walkway's, the two poses place the door on the walkway's top, centred, 5.6 metres along it from its origin, 2.6 metres beyond the near wings' outer faces; set as the door spawn's position, one eye (-0.05, 1.12, 5.18), heading -0.15, pitch 6.04, field of view 51.2 lands both families' silhouettes at 0.82 pixels of the recording's edges at 480 wide, and the seven landmarks solved alone reach the same eye within 5 centimetres at 6.1 pixels root mean square at 1920, the hand-read corners' own error. Scored on part boundaries the walkway read 3 to 4 pixels: its 23 blocks meet along its painted cracks",
+      search:
+        "genshin:parity pose login-door-recording --witness login, the wings then the door with --hold pitch,fov, then both families together on their silhouettes",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
-    "Where the door stands against the walkway at the flight's end: the static layout never meets them, and MonoLoginScene's record (the walkway, 3, 16) reads as three copies of the 16-metre walkway laid end to end; pose from correspondences on login-door-recording, one solve on the door's landmarks and one on the walkway's, gives the offset between them",
+    "How the script brings the door from its anchor to the walkway: the place is measured (the door spawn's position), the motion is not",
     "What each spawn record's integer and float are (3 and 200, 3 and 16, 2 and 300)",
     "What MonoBlockController does to each walkway piece: its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$)",
     "The day sky's pose, by the same perspective reading",

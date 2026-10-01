@@ -18,7 +18,7 @@ export const overlayCommand: SubCommandsDef[string] = defineCommand({
   },
   meta: {
     description:
-      "Draw the witness's part boundaries over a reference, coloured by family, beside the reference's edges coloured by their distance from them, and print each family's distance from the reference's edges",
+      "Draw the witness's family boundaries over a reference, coloured by family, beside the reference's edges coloured by their distance from them, and print each family's distance from the reference's edges",
     name: "overlay",
   },
   run: async ({ args }) => {
