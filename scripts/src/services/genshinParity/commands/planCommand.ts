@@ -3,6 +3,8 @@ import type { SubCommandsDef } from "citty";
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
 import { PLANS_DIRECTORY } from "#src/services/genshinParity/constants";
 import { readWitnessPlan } from "#src/services/genshinParity/readWitnessPlan";
+import { parseNumbers } from "#src/services/shared/parseNumbers";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
@@ -30,13 +32,19 @@ export const planCommand: SubCommandsDef[string] = defineCommand({
     name: "plan",
   },
   run: async ({ args }) => {
-    const [leastX = 0, leastZ = 0] = args.least.split(",").map(Number);
-    const [sizeX = 0, sizeZ = 0] = args.size.split(",").map(Number);
+    const [leastX = 0, leastZ = 0] = parseNumbers(args.least, "least", 2);
+    const [sizeX = 0, sizeZ = 0] = parseNumbers(args.size, "size", 2);
+    const [pixelsPerMetre = 0] = parseNumbers(args.resolution, "resolution", 1);
+    // A side or a resolution of no length draws a page of no pixels
+    if (sizeX <= 0 || sizeZ <= 0)
+      throw new InvalidOperationError(Operation.Read, "size", `${args.size} is not positive`);
+    if (pixelsPerMetre <= 0)
+      throw new InvalidOperationError(Operation.Read, "resolution", `${args.resolution} is not positive`);
     const { albedo, height, size, width } = await readWitnessPlan(
       args.reference,
       parseDerivedAssetComponent(args.witness),
       args.family,
-      { least: [leastX, leastZ], pixelsPerMetre: Number(args.resolution), size: [sizeX, sizeZ] },
+      { least: [leastX, leastZ], pixelsPerMetre, size: [sizeX, sizeZ] },
     );
     const pixels = Buffer.alloc(width * height * 3);
     for (let pixel = 0; pixel < width * height; pixel++)
