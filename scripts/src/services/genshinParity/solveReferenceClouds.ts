@@ -16,6 +16,8 @@ type Vector = [number, number, number];
 const BYTE = 255;
 const CHANNELS = [0, 1, 2] as const;
 const LUMINANCE = [0.2126, 0.7152, 0.0722] as const;
+// Every this many pixels across and down is a sample: the clouds' colours change slowly, and both sets keep thousands
+const SAMPLE_STRIDE = 4;
 // A pixel of ours is a cloud where its shares of the clouds' two colours add to at least this, so the sky behind a
 // Cloud's soft edge does not stand for it
 const MIN_CLOUD_COVER = 0.3;
@@ -73,22 +75,28 @@ export const solveReferenceClouds = async (
       const world = new Matrix4().fromArray(sky.matrixWorld);
       const ours: { base: Vector; lit: Vector; shade: Vector }[] = [];
       const referenceClouds: Vector[] = [];
-      for (let pixel = 0; pixel < width * height; pixel++) {
-        if (part[pixel * 4]) continue;
-        const [column, row] = [pixel % width, Math.floor(pixel / width)];
-        const view = new Vector4(((column + 0.5) / width) * 2 - 1, 1 - ((row + 0.5) / height) * 2, 0.5, 1).applyMatrix4(
-          projectionInverse,
-        );
-        const direction = new Vector3(view.x / view.w, view.y / view.w, view.z / view.w).transformDirection(world);
-        if (direction.y <= 0) continue;
-        const base = toScene(baseShot, pixel);
-        const shade = CHANNELS.map((channel) => toScene(shadeShot, pixel)[channel] - base[channel]) as Vector;
-        const lit = CHANNELS.map((channel) => toScene(litShot, pixel)[channel] - base[channel]) as Vector;
-        if (readLuminance(shade) + readLuminance(lit) >= MIN_CLOUD_COVER) ours.push({ base, lit, shade });
-        const referenceColor = toScene(reference, pixel);
-        if (readLuminance(referenceColor) > readLuminance(toScene(clearShot, pixel)) * CLOUD_BRIGHTNESS_RATIO)
-          referenceClouds.push(referenceColor);
-      }
+      for (let row = 0; row < height; row += SAMPLE_STRIDE)
+        for (let column = 0; column < width; column += SAMPLE_STRIDE) {
+          const pixel = row * width + column;
+          if (part[pixel * 4]) continue;
+          const view = new Vector4(
+            ((column + 0.5) / width) * 2 - 1,
+            1 - ((row + 0.5) / height) * 2,
+            0.5,
+            1,
+          ).applyMatrix4(projectionInverse);
+          const direction = new Vector3(view.x / view.w, view.y / view.w, view.z / view.w).transformDirection(world);
+          if (direction.y <= 0) continue;
+          const base = toScene(baseShot, pixel);
+          const shadeColor = toScene(shadeShot, pixel);
+          const litColor = toScene(litShot, pixel);
+          const shade = CHANNELS.map((channel) => shadeColor[channel] - base[channel]) as Vector;
+          const lit = CHANNELS.map((channel) => litColor[channel] - base[channel]) as Vector;
+          if (readLuminance(shade) + readLuminance(lit) >= MIN_CLOUD_COVER) ours.push({ base, lit, shade });
+          const referenceColor = toScene(reference, pixel);
+          if (readLuminance(referenceColor) > readLuminance(toScene(clearShot, pixel)) * CLOUD_BRIGHTNESS_RATIO)
+            referenceClouds.push(referenceColor);
+        }
       const { lit, residual, shade } = solveCloudColors(ours, referenceClouds);
       return {
         lit: toDisplayHex(lit),
