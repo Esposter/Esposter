@@ -17,7 +17,6 @@ import {
   LOGIN_STATUS_STEPS,
   LOGIN_TITLE_START_MS,
   LOGIN_TRAVELER_GENDER,
-  LOGIN_WELCOME_HOLD_MS,
 } from "#src/services/login/constants";
 import { checkIsNestedInteraction } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
@@ -51,7 +50,6 @@ const emit = defineEmits<{ begin: []; ready: [] }>();
 // Says the white is up. A host pins a stage with `v-model:stage` to show it held, as the parity page does
 const stage = defineModel<LoginStage>("stage", { default: LoginStage.Arriving });
 const isSpinnerShown = ref(false);
-const isWelcomeShown = ref(false);
 // Whether the door has risen into place, which the door's own interface waits on
 const isDoorFormed = ref(false);
 const statusStep = ref(LoginStatusStep.PreparingDownload);
@@ -71,9 +69,6 @@ const { start: showTitle } = useTimeoutFn(
   LOGIN_TITLE_START_MS,
   { immediate: false },
 );
-const { start: hideWelcome } = useTimeoutFn(() => (isWelcomeShown.value = false), LOGIN_WELCOME_HOLD_MS, {
-  immediate: false,
-});
 const statusTimeouts = LOGIN_STATUS_STEPS.map(({ ms, step }) =>
   useTimeoutFn(() => (statusStep.value = step), ms, { immediate: false }),
 );
@@ -104,9 +99,6 @@ watchImmediate(stage, (newStage) => {
   if (newStage === LoginStage.Arriving) {
     showSpinner();
     showTitle();
-  } else if (newStage === LoginStage.Title) {
-    isWelcomeShown.value = true;
-    hideWelcome();
   } else if (newStage === LoginStage.Preparing) {
     for (const { start } of statusTimeouts) start();
     flyOn();
@@ -141,7 +133,6 @@ const onClick = (event: MouseEvent): void => {
       :game-text
       :is-door-waiting="stage === LoginStage.Door && !isDoorFormed ? true : undefined"
       :is-spinner-shown
-      :is-welcome-shown
       :player-name="shownPlayerName"
       :progress="shownProgress"
       :stage

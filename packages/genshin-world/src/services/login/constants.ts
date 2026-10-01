@@ -18,11 +18,11 @@ export const LOGIN_STATUS_STEPS: readonly { ms: number; step: LoginStatusStep }[
 ];
 // Timings from the 1440 high recording at 10 frames and the English one at 60, each read as a curve over its region
 // (`luma`): the scene fades up out of white over 800 ms, the wait mark shows from 1.3 s to 2 s, and the title comes in
-// At once as it goes. The welcome card holds 1.9 s and fades over 200 ms
+// At once as it goes. The welcome card, which the account kit drops in as the player signs in, holds 1.9 s and fades
+// Over 200 ms; the screen does not show it until it has an account to welcome
 export const LOGIN_ARRIVE_FADE_MS = 800;
 export const LOGIN_SPINNER_START_MS = 1300;
 export const LOGIN_TITLE_START_MS = 2000;
-export const LOGIN_WELCOME_HOLD_MS = 1900;
 export const LOGIN_WELCOME_FADE_MS = 200;
 // The camera's flight from the title to the door follows loading, then ends a fixed time after it: in the English
 // Recording the bar is full at 8.4 s and the door rises at 11.75, about 3 s later, however long the load before it took.

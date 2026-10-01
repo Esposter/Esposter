@@ -12,7 +12,7 @@ The game opens on its login screen once the health notice has faded. The console
 ```mermaid
 flowchart LR
   N[Health notice's white] --> A[Arriving: the scene fades up over 800 ms, the wait mark from 1.3 to 2 s]
-  A --> T[Title: START GAME, the server and the account, the welcome card for 1.9 s]
+  A --> T[Title: START GAME, the server and the account]
   T -->|a click| P[Preparing: the status steps, then the load's share and bar, the glide quickening]
   P -->|"flight flown and loading done"| D[Door: the glide comes to rest; once the door has formed, the four corner buttons, then CLICK TO BEGIN]
   D -->|a click| E[Entering: the door lights, the camera rushes to it, the screen whitens]
@@ -24,7 +24,7 @@ flowchart LR
 - **A click is the screen's unless it lands on a button.** The screen asks `checkIsNestedInteraction` before it moves on, so a click on a corner button stays the button's.
 - **A host can pin a stage.** The stage is a `v-model`, so the parity page and a test hold one still, and the opening leaves it free.
 - **The opening says when the door is opened.** `GameOpening` emits `begin` as the screen hands on to the startup loading screen, so its host can act on the door rather than waiting for the world; for now the app's page opens it onto a [rickroll](/docs/genshin/rickroll).
-- **The words are the reader's language's.** The title, the account label, the status lines, the door's prompt and the name a player who has not chosen one goes by are the game's own text in the language the host resolved, handed down as the `gameText` prop ([game text](/docs/genshin/game-text)), and the welcome card's greeting is the account kit's own, with the player's name where each language puts it.
+- **The words are the reader's language's.** The title, the account label, the status lines, the door's prompt and the name a player who has not chosen one goes by are the game's own text in the language the host resolved, handed down as the `gameText` prop ([game text](/docs/genshin/game-text)). The account kit's welcome card, which drops in as the game's player signs in, is not shown until the page has an account to welcome; its greeting is already the kit's own in every language, with the name where each language puts it.
 
 ## The scene
 
