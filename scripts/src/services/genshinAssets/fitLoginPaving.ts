@@ -1,7 +1,7 @@
 import type { AssetPlacement } from "#src/models/genshinAssets/AssetPlacement";
 
-import { findProfileMinima } from "#src/services/genshinAssets/findProfileMinima";
 import { blurWithinTags } from "#src/services/genshinAssets/blurWithinTags";
+import { findProfileMinima } from "#src/services/genshinAssets/findProfileMinima";
 import { rasterizeTopFaces } from "#src/services/genshinAssets/rasterizeTopFaces";
 import { readMaterialNames } from "#src/services/genshinAssets/readMaterialNames";
 import { readObjMesh } from "#src/services/genshinAssets/readObjMesh";
@@ -50,7 +50,7 @@ export const fitLoginPaving = async (
 ): Promise<{ bricks: Loop[]; corner: [number, number]; pockets: Loop[]; size: [number, number] }> => {
   const walkwayPlacements = placements.filter(({ mesh }) => WALKWAY_MESH_REGEX.test(mesh));
   const pathIdNameMap = await readMaterialNames(walkwayPlacements);
-  const materialNames = [...new Set([...pathIdNameMap.values()])];
+  const materialNames = [...new Set(pathIdNameMap.values())];
   const faces = (
     await Promise.all(
       walkwayPlacements.map(async (placement) => {

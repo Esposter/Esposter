@@ -35,6 +35,12 @@ const toDisplayHex = ([red, green, blue]: Vector): string =>
   `#${new Color(...toneMapNeutral([Math.max(red, 0), Math.max(green, 0), Math.max(blue, 0)])).getHexString()}`;
 const readMedian = (values: readonly number[]): number =>
   values.toSorted((first, second) => first - second)[Math.floor(values.length / 2)] ?? 0;
+interface Point {
+  facing: number;
+  lights: Vector[];
+  point: Vector;
+  reference: Vector;
+}
 interface SceneFog {
   baseHeight: number;
   density: number;
@@ -43,12 +49,6 @@ interface SceneFog {
   scatterPower: number;
   scatterStrength: number;
   startDistance: number;
-}
-interface Point {
-  facing: number;
-  lights: Vector[];
-  point: Vector;
-  reference: Vector;
 }
 const readPage = <T>(page: Page, name: string): Promise<T> =>
   page.evaluate((functionName) => (Reflect.get(window, functionName) as () => T)(), name);
@@ -150,13 +150,13 @@ export const solveReferenceFog = async (
             Math.max(ray.normalize().dot(new Vector3(...direction)), 0) ** fog.scatterPower * fog.scatterStrength,
             1,
           );
-          const facingClass = !isLightSolved
-            ? 0
-            : entry.facing > FACING_COSINE
+          const facingClass = isLightSolved
+            ? entry.facing > FACING_COSINE
               ? 2
               : entry.facing < -FACING_COSINE
                 ? 0
-                : 1;
+                : 1
+            : 0;
           const key =
             (band * SCATTER_BIN_COUNT + Math.min(Math.floor(scatter * SCATTER_BIN_COUNT), SCATTER_BIN_COUNT - 1)) * 3 +
             facingClass;
@@ -198,7 +198,7 @@ export const solveReferenceFog = async (
           })),
           { isLightSolved },
         );
-      const refine = (bins: ReturnType<typeof readBins>): { density: number } & ReturnType<typeof solveFogColors> => {
+      const refine = (bins: ReturnType<typeof readBins>): ReturnType<typeof solveFogColors> & { density: number } => {
         let [low, high] = DENSITY_RANGE.map((density) => Math.log(density)) as [number, number];
         for (let step = 0; step < GOLDEN_STEPS; step++) {
           const first = high - GOLDEN_SHARE * (high - low);
