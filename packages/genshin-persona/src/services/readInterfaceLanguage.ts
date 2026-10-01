@@ -1,12 +1,14 @@
-import { checkIsLanguageName } from "#src/services/checkIsLanguageName";
+import type { GameLanguage } from "#src/generated/genshinText/models/GameLanguage";
+
+import { checkIsGameLanguage } from "#src/generated/genshinText/services/checkIsGameLanguage";
 import { DEFAULT_LANGUAGE, INTERFACE_LANGUAGE_PATH } from "#src/services/constants";
 import { readStateFile } from "#src/services/readStateFile";
 
-// The language every word the plugin writes is in. Read on the session-start path, so what is in the file is
-// Checked for shape rather than against the data package, which no hook path loads: a name the package does not
-// Answer in falls back where it is used, and anything that is not a name at all — which the roster cache would
-// Otherwise take into a file path — is not read at all
-export const readInterfaceLanguage = (): string => {
+// The language every word the plugin writes is in. The game's fifteen are a list the plugin carries rather than
+// One it asks the data package for, so the state file is checked against it exactly on the session-start path, where
+// Nothing loads the package: anything else — which the roster cache would otherwise take into a file path — is not
+// Read at all
+export const readInterfaceLanguage = (): GameLanguage => {
   const language = readStateFile(INTERFACE_LANGUAGE_PATH);
-  return checkIsLanguageName(language) ? language : DEFAULT_LANGUAGE;
+  return checkIsGameLanguage(language) ? language : DEFAULT_LANGUAGE;
 };

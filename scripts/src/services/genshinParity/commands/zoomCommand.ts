@@ -9,6 +9,7 @@ export const zoomCommand: SubCommandsDef[string] = defineCommand({
     image: { description: "The image to read", required: true, type: "positional" },
     ...regionArgs,
     scale: { default: "8", description: "How many times to enlarge it", required: false, type: "positional" },
+    grid: { default: "0", description: "Lines every so many of the image's pixels, labelled", type: "string" },
     with: { description: "Other images whose same region is stacked under it, comma-separated", type: "string" },
   },
   meta: {
@@ -23,5 +24,6 @@ export const zoomCommand: SubCommandsDef[string] = defineCommand({
       Number(args.width),
       Number(args.height),
       Number(args.scale),
+      Number(args.grid),
     ),
 });

@@ -12,19 +12,16 @@ const FILE_FIELD = "file";
 const CHARACTER_REGEX = /\|character\s*=\s*(?<character>.*)/u;
 // The template's own placeholder, which every title and file name carry the character's name through
 const CHARACTER_PLACEHOLDER = "{character}";
-// The Traditional Chinese script spells the second person by the player's gender through a choice template, on
-// Nearly every line; the wiki shows the first form until told otherwise, and so does the spinner
-const WORD_CHOICE_REGEX = /\{\{MC\|m=(?<male>[^|}]*)\|f=[^}]*\}\}/gu;
-// Every story line the voice-over page lists, with the stem its clip is filed under: the source both the
-// Reference selection measures over and the plugin fetches a reference from, and the spinner's lines in a
-// Language the data package does not carry the character in yet
-export const parseWikiStoryLines = (wikitext: string, fieldSuffix: string): WikiStoryLine[] => {
+// Every story line the English voice-over page lists, with the stem its clip is filed under in every dub: the
+// Source both the reference selection measures over and the plugin fetches a reference from. The words a spinner
+// Shows are the game's own, never these
+export const parseWikiStoryLines = (wikitext: string): WikiStoryLine[] => {
   const template = sliceWikiTemplate(wikitext, STORY_TEMPLATE_START);
   const character = CHARACTER_REGEX.exec(template)?.groups?.character?.trim() ?? "";
-  return parseWikiTemplateLines(template, FILE_FIELD, fieldSuffix)
+  return parseWikiTemplateLines(template, FILE_FIELD)
     .map(({ file, text, title }) => ({
       stem: getWikiFileStem(file, CHARACTER_PLACEHOLDER, character),
-      text: getPlainLineText(text.replaceAll(WORD_CHOICE_REGEX, "$<male>")),
+      text: getPlainLineText(text),
       title: title.replaceAll(CHARACTER_PLACEHOLDER, character).trim(),
     }))
     .filter(({ stem, title }) => stem && title);

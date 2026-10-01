@@ -1,13 +1,10 @@
 import type { Page } from "playwright";
 
-import { computeDistanceTransform } from "#src/services/genshinParity/computeDistanceTransform";
 import { minimizeNelderMead } from "#src/services/genshinParity/minimizeNelderMead";
 import { readFamilyEdgeDistance } from "#src/services/genshinParity/readFamilyEdgeDistance";
-import { readStructureEdges } from "#src/services/genshinParity/readStructureEdges";
-import { readWitnessPartTarget } from "#src/services/genshinParity/readWitnessPartTarget";
+import { readFamilyEdgeDistances } from "#src/services/genshinParity/readFamilyEdgeDistances";
 import { setPageWitnessView } from "#src/services/genshinParity/setPageWitnessView";
 import { toPageCamera } from "#src/services/genshinParity/toPageCamera";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The simplex's first steps along each axis, metres then degrees: a solved pose is within a few of these
 const REFINE_STEPS = [0.05, 0.05, 0.05, 0.2, 0.2, 0.2];
@@ -25,20 +22,7 @@ export const refineCameraPose = async (
   iterationCount: number,
   { heldAxes = [], topRow = 0 }: { heldAxes?: readonly number[]; topRow?: number } = {},
 ): Promise<{ after: number; before: number; pose: number[] }> => {
-  const { families: drawnFamilies, height, width } = await readWitnessPartTarget(page);
-  if (families.length === 0) throw new InvalidOperationError(Operation.Read, "families", "none given to refine on");
-  for (const family of families)
-    if (!drawnFamilies.includes(family))
-      throw new InvalidOperationError(
-        Operation.Read,
-        family,
-        `not a family the witness draws: ${drawnFamilies.join(", ")}`,
-      );
-  // A row above a crop's top comes in negative, which fill would count from the end
-  const topPixel = Math.max(0, Math.ceil(topRow)) * width;
-  // The reference's edges above the row are cleared too, so none of them is the nearest to a boundary below it
-  const edges = (await readStructureEdges(image, height)).fill(0, 0, topPixel);
-  const edgeDistances = computeDistanceTransform(edges, width, height);
+  const { edgeDistances, topPixel } = await readFamilyEdgeDistances(page, image, families, topRow);
   const readDistance = async (candidate: readonly number[]): Promise<number> => {
     await setPageWitnessView(page, { camera: toPageCamera(candidate) });
     return readFamilyEdgeDistance(page, { edgeDistances, families, topPixel });

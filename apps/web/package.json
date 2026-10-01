@@ -127,6 +127,7 @@
     "fflate": "catalog:",
     "genshin-engine": "workspace:*",
     "genshin-interface": "workspace:*",
+    "genshin-text": "workspace:*",
     "genshin-world": "workspace:*",
     "grapesjs": "catalog:",
     "grapesjs-blocks-basic": "catalog:",

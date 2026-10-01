@@ -6,6 +6,9 @@ import { LoginInterfaceRect } from "#src/models/login/LoginInterfaceRect";
 import { LoginStage } from "#src/models/login/LoginStage";
 import {
   LOGIN_BEGIN_TEXT,
+  LOGIN_DOOR_BUTTONS_DELAY_MS,
+  LOGIN_DOOR_PROMPT_DELAY_MS,
+  LOGIN_DOOR_PROMPT_FADE_MS,
   LOGIN_SERVER_NAME,
   LOGIN_TITLE_TEXT,
   LOGIN_USER_LABEL,
@@ -27,6 +30,8 @@ import {
 } from "genshin-interface";
 
 interface Props {
+  // Whether the door is still rising, which the door's prompt and corner buttons wait on, as the game's do
+  isDoorWaiting?: true;
   isSpinnerShown?: boolean;
   isWelcomeShown?: boolean;
   playerName: string;
@@ -36,14 +41,14 @@ interface Props {
   statusStep: LoginStatusStep;
 }
 
-const { isSpinnerShown, isWelcomeShown, playerName, progress, stage, statusStep } = defineProps<Props>();
+const { isDoorWaiting, isSpinnerShown, isWelcomeShown, playerName, progress, stage, statusStep } = defineProps<Props>();
 // The login screen's interface over its scene, for the stage it is at: the title with the server and account under
 // It, the status as the game prepares, then the prompt at the door. The power button and the build string stay
 // Throughout; the corner buttons are the title's two and the door's four, as the game's current build shows them. A
 // Click on a button is the button's alone: the screen behind it asks whether it was before it begins
 const cornerIcons = computed(() => {
   if (stage === LoginStage.Title) return [InterfaceIcon.Notice, InterfaceIcon.Exit];
-  else if (stage === LoginStage.Door)
+  else if (stage === LoginStage.Door && !isDoorWaiting)
     return [InterfaceIcon.Settings, InterfaceIcon.Repair, InterfaceIcon.Notice, InterfaceIcon.Exit];
   return [];
 });
@@ -72,12 +77,16 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
     <!-- Loading row and the prompt, the account and the build string, and both button columns -->
     <div v-if="isFooterShown" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.Bottom], true)">
       <LoginStatus v-if="stage === LoginStage.Preparing" :progress :step="statusStep" />
-      <PromptBand v-else-if="stage === LoginStage.Door" class="prompt">{{ LOGIN_BEGIN_TEXT }}</PromptBand>
+      <PromptBand v-else-if="stage === LoginStage.Door && !isDoorWaiting" class="prompt">{{
+        LOGIN_BEGIN_TEXT
+      }}</PromptBand>
       <div class="column" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.LeftButtons])">
         <div class="slot"><RoundButton :icon="InterfaceIcon.Power" label="Quit" /></div>
       </div>
       <div class="column" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.RightButtons])">
-        <div v-for="icon of cornerIcons" :key="icon" class="slot"><RoundButton :icon :label="icon" /></div>
+        <div v-for="icon of cornerIcons" :key="icon" :class="['slot', { arriving: stage === LoginStage.Door }]">
+          <RoundButton :icon :label="icon" />
+        </div>
       </div>
       <div :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.CurrentAccount])">
         <p v-if="stage === LoginStage.Title" class="user">
@@ -199,6 +208,22 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
   right: calc(var(--unit) * 100);
   bottom: calc(var(--unit) * 38);
   left: calc(var(--unit) * 100);
+}
+
+/* Once the door has formed, its prompt fades in and its corner buttons appear, each after its delay in the recording */
+.prompt {
+  animation: door-arrive calc(v-bind(LOGIN_DOOR_PROMPT_FADE_MS) * 1ms) linear
+    calc(v-bind(LOGIN_DOOR_PROMPT_DELAY_MS) * 1ms) backwards;
+}
+
+.arriving {
+  animation: door-arrive 0s linear calc(v-bind(LOGIN_DOOR_BUTTONS_DELAY_MS) * 1ms) backwards;
+}
+
+@keyframes door-arrive {
+  from {
+    opacity: 0;
+  }
 }
 
 /* A button column the game's layout group stacks from its foot, each button in a slot 52 canvas units square, their

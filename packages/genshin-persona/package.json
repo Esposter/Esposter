@@ -34,7 +34,9 @@
   ],
   "type": "module",
   "imports": {
-    "#src/*": "./src/*.ts"
+    "#src/*": "./src/*.ts",
+    "#src/*.json": "./src/*.json",
+    "#scripts/*": "./scripts/*.ts"
   },
   "publishConfig": {
     "access": "public"
@@ -51,7 +53,8 @@
     "@typesafe-ai/sdk": "^0.6.0",
     "@wasm-audio-decoders/ogg-vorbis": "^0.1.20",
     "citty": "^0.2.2",
-    "genshin-db": "^5.2.14"
+    "genshin-db": "^5.2.14",
+    "tsx": "^4.23.15"
   },
   "engines": {
     "node": ">=26.10.0"

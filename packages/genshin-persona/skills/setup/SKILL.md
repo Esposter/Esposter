@@ -7,7 +7,7 @@ disable-model-invocation: true
 # Setup
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" setup
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" setup
 ```
 
 Relay its lines as written.

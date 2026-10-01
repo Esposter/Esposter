@@ -4,20 +4,24 @@ import { attributeCommand } from "#src/services/genshinParity/commands/attribute
 import { benchCommand } from "#src/services/genshinParity/commands/benchCommand";
 import { calibrateCommand } from "#src/services/genshinParity/commands/calibrateCommand";
 import { compareCommand } from "#src/services/genshinParity/commands/compareCommand";
+import { exposureCommand } from "#src/services/genshinParity/commands/exposureCommand";
 import { fetchCommand } from "#src/services/genshinParity/commands/fetchCommand";
 import { filmCommand } from "#src/services/genshinParity/commands/filmCommand";
 import { framesCommand } from "#src/services/genshinParity/commands/framesCommand";
 import { gbufferCommand } from "#src/services/genshinParity/commands/gbufferCommand";
 import { glideCommand } from "#src/services/genshinParity/commands/glideCommand";
 import { launchCommand } from "#src/services/genshinParity/commands/launchCommand";
+import { lightCommand } from "#src/services/genshinParity/commands/lightCommand";
 import { lumaCommand } from "#src/services/genshinParity/commands/lumaCommand";
 import { measureCommand } from "#src/services/genshinParity/commands/measureCommand";
 import { overlayCommand } from "#src/services/genshinParity/commands/overlayCommand";
+import { partsCommand } from "#src/services/genshinParity/commands/partsCommand";
 import { placeCommand } from "#src/services/genshinParity/commands/placeCommand";
 import { polarCommand } from "#src/services/genshinParity/commands/polarCommand";
 import { poseCommand } from "#src/services/genshinParity/commands/poseCommand";
 import { recordCommand } from "#src/services/genshinParity/commands/recordCommand";
 import { shootCommand } from "#src/services/genshinParity/commands/shootCommand";
+import { skyCommand } from "#src/services/genshinParity/commands/skyCommand";
 import { stillCommand } from "#src/services/genshinParity/commands/stillCommand";
 import { traceCommand } from "#src/services/genshinParity/commands/traceCommand";
 import { trackCommand } from "#src/services/genshinParity/commands/trackCommand";
@@ -34,9 +38,13 @@ export const genshinParityCommand: CommandDef = defineCommand({
     attribute: attributeCommand,
     gbuffer: gbufferCommand,
     calibrate: calibrateCommand,
+    sky: skyCommand,
+    exposure: exposureCommand,
+    light: lightCommand,
     overlay: overlayCommand,
     pose: poseCommand,
     place: placeCommand,
+    parts: partsCommand,
     track: trackCommand,
     glide: glideCommand,
     shoot: shootCommand,

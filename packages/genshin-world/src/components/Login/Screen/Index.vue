@@ -43,6 +43,8 @@ const emit = defineEmits<{ begin: []; ready: [] }>();
 const stage = defineModel<LoginStage>("stage", { default: LoginStage.Arriving });
 const isSpinnerShown = ref(false);
 const isWelcomeShown = ref(false);
+// Whether the door has risen into place, which the door's own interface waits on
+const isDoorFormed = ref(false);
 const statusStep = ref(LoginStatusStep.PreparingDownload);
 // The share of loading shown, which runs toward loading's own no faster than the bar's fill
 const shownProgress = ref(0);
@@ -116,9 +118,16 @@ const onClick = (event: MouseEvent): void => {
       shadows
       :shadow-map-type="PCFShadowMap"
     >
-      <LoginScene :is-door-lit="stage === LoginStage.Entering" :stage :time-of-day @ready="emit('ready')" />
+      <LoginScene
+        :is-door-lit="stage === LoginStage.Entering"
+        :stage
+        :time-of-day
+        @door-formed="isDoorFormed = true"
+        @ready="emit('ready')"
+      />
     </TresCanvas>
     <LoginInterface
+      :is-door-waiting="stage === LoginStage.Door && !isDoorFormed ? true : undefined"
       v-if="!isInterfaceHidden"
       :is-spinner-shown
       :is-welcome-shown

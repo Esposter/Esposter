@@ -16,13 +16,22 @@ import sharp from "sharp";
 export const viewScene = async ({
   camera: [x, y, z, yaw, pitch, fov],
   height,
+  familyOffsets,
+  familyScales,
+  isAlone = false,
   props,
   screen,
   width,
   witness,
 }: {
   camera: readonly [number, number, number, number, number, number];
+  // How far each family stands off its laid-out place, in metres in three's axes, to try a row's phase
+  familyOffsets?: Record<string, [number, number, number]>;
+  // How many times each family's parts are drawn about their own places, to try a part's scale against a reference
+  familyScales?: Record<string, number>;
   height: number;
+  // Whether the scene draws without its fog, clouds and cloud sea, for a layout read from far off
+  isAlone?: boolean;
   props: Record<string, unknown>;
   screen: string;
   width: number;
@@ -45,7 +54,7 @@ export const viewScene = async ({
       const shots: Buffer[] = [];
       for (const viewFamilies of [[], families]) {
         // oxlint-disable-next-line no-await-in-loop -- one view is drawn and shot before the next
-        await setPageWitnessView(page, { camera: pose, families: viewFamilies });
+        await setPageWitnessView(page, { camera: pose, families: viewFamilies, familyOffsets, familyScales, isAlone });
         // oxlint-disable-next-line no-await-in-loop -- the shot belongs to the view just set
         shots.push(await page.screenshot());
       }

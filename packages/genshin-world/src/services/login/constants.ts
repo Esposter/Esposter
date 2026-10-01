@@ -38,4 +38,9 @@ export const LOGIN_PROGRESS_FILL_MS = 100;
 // A click on the door lights it over 400 ms while the screen whitens over 620, easing out, from the English
 // Recording at 60 frames
 export const LOGIN_DOOR_LIGHT_MS = 400;
+// The door's interface after the door has formed, from the English recording at 10 frames a second: formed by 12.7 s,
+// The corner buttons at 13.0, and the prompt's band fading in from 13.7 to full by 14.0
+export const LOGIN_DOOR_BUTTONS_DELAY_MS = 300;
+export const LOGIN_DOOR_PROMPT_DELAY_MS = 1000;
+export const LOGIN_DOOR_PROMPT_FADE_MS = 300;
 export const LOGIN_FLASH_MS = 620;

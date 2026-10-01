@@ -1,7 +1,11 @@
 import type { WitnessGbuffer } from "#src/models/genshinParity/WitnessGbuffer";
-import type { WitnessTargetName } from "#src/models/genshinParity/WitnessTargetName";
+import { WitnessTargetName } from "#src/models/genshinParity/WitnessTargetName";
 import type { Page } from "playwright";
 
+// The normal target is drawn encoded into 0 to 1, a colour output clipping what falls below 0, so it is let down to
+// -1 to 1 again, its fourth channel left as it is
+const decodeTarget = (name: string, values: Float32Array): Float32Array =>
+  name === WitnessTargetName.Normal ? values.map((value, index) => (index % 4 === 3 ? value : value * 2 - 1)) : values;
 // The witness page's targets at the view last set, as its `renderWitnessTargets` reads them back from the renderer,
 // Drawing only the ones named, each handed over as base64 and read here as its floats
 export const readWitnessTargets = async (
@@ -36,7 +40,10 @@ export const readWitnessTargets = async (
         const bytes = Buffer.from(base64, "base64");
         return [
           name,
-          new Float32Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / Float32Array.BYTES_PER_ELEMENT),
+          decodeTarget(
+            name,
+            new Float32Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / Float32Array.BYTES_PER_ELEMENT),
+          ),
         ];
       }),
     ),

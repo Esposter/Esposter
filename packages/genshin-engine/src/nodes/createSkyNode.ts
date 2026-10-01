@@ -1,6 +1,8 @@
 import type { SkyUniforms } from "#src/atmosphere/SkyUniforms";
+import type { Texture } from "three";
 import type { Node } from "three/webgpu";
 
+import { createSkyColorNode } from "#src/nodes/createSkyColorNode";
 import {
   float,
   Fn,
@@ -10,15 +12,14 @@ import {
   mx_fractal_noise_float,
   normalWorldGeometry,
   pow,
+  saturate,
   smoothstep,
   vec3,
 } from "three/tsl";
 
-// The sun's and the moon's discs, as the cosine of their angular radius, and how far each's glow spreads
+// The sun's and the moon's discs, as the cosine of their angular radius: the game draws each as a body of its own
 const SUN_DISC_COSINE = Math.cos(0.035);
 const MOON_DISC_COSINE = Math.cos(0.05);
-const SUN_GLOW_POWER = 12;
-const HORIZON_GLOW_POWER = 3;
 // The sun's disc is brighter than white, so bloom lifts it
 const SUN_DISC_BRIGHTNESS = 6;
 // The cloud layer's scale on the sky, its lowest height before it fades into the horizon, and the width of the
@@ -29,35 +30,49 @@ const CLOUD_EDGE = 0.04;
 const CLOUD_SHADE_DEPTH = 0.18;
 const STAR_SCALE = 420;
 const STAR_THRESHOLD = 0.9975;
-// Genshin's painted sky as the scene's background, so it is drawn behind everything at no depth and the fog and god
-// Rays pass over it. A gradient from the horizon's colour to the zenith's, the sun's disc and glow, a glow along the
-// Horizon toward a low sun, the moon's disc, stars at night, and a cloud layer: noise projected onto a plane
-// Overhead and cut into cumulus with a hard edge and a stepped shade band, as the ground's ramp steps its light
-export const createSkyNode = ({
-  cloudCoverage,
-  cloudDrift,
-  cloudLitColor,
-  cloudShadeColor,
-  horizonBand,
-  horizonColor,
-  lightColor,
-  moonDirection,
-  starIntensity,
-  sunDirection,
-  zenithColor,
-}: SkyUniforms): Node<"vec3"> =>
-  Fn(() => {
+// The least a size is divided by, as the game's shader guards its own
+const LEAST_DIVISOR = 1e-4;
+// The moon's glow, its size a tenth of the moon's own, falling off as the sixth power
+const MOON_GLOW_SPREAD = 0.1;
+const MOON_GLOW_POWER = 6;
+// Genshin's sky as the scene's background, drawn behind everything at no depth so the fog and god rays pass over it,
+// As the game's own sky shader draws it (`createSkyColorNode`, Login/Scene/Index.reference.ts, source `atmosphereShader`): a ray's height
+// As the share of a right angle it looks up, its colour the top colour mixed toward the bottom by the gradient's red
+// At that height over the bottom colour's reach, each of the two blended from away from the sun to toward it by how
+// Far toward the sun the ray looks; the horizon halo by the gradient's green over its own reach, toward the sun and,
+// Once the sun is up, all round; the sun's halo as three widening lobes, tighter toward the zenith; and the moon's
+// Glow. Over it the sun's and moon's discs, stars at night, and a cloud layer: noise projected onto a plane overhead
+// And cut into cumulus with a hard edge and a stepped shade band, as the ground's ramp steps its light
+export const createSkyNode = (uniforms: SkyUniforms, gradient: Texture): Node<"vec3"> => {
+  const {
+    cloudCoverage,
+    cloudDrift,
+    cloudLitColor,
+    cloudShadeColor,
+    lightColor,
+    moonDirection,
+    moonGlowColor,
+    moonSize,
+    starIntensity,
+    sunDirection,
+  } = uniforms;
+  return Fn(() => {
     const direction = normalWorldGeometry.normalize();
     const height = direction.y;
-    const gradient = mix(horizonColor, zenithColor, smoothstep(0, horizonBand, height));
     const sunCosine = direction.dot(sunDirection);
+    const gradientColor = createSkyColorNode(uniforms, gradient, direction);
+    const moonCosine = saturate(direction.dot(moonDirection));
+    const moonGlow = pow(
+      max(
+        moonCosine
+          .sub(1)
+          .div(max(moonSize.mul(MOON_GLOW_SPREAD), LEAST_DIVISOR))
+          .add(1),
+        0,
+      ),
+      MOON_GLOW_POWER,
+    );
     const sunVisibility = smoothstep(-0.1, 0.05, sunDirection.y);
-    const sunGlow = pow(max(sunCosine, 0), SUN_GLOW_POWER).mul(sunVisibility);
-    // A low sun spreads its light along the horizon, as dawn and dusk do, and a high one keeps it to its glow
-    const horizonGlow = pow(max(sunCosine, 0), HORIZON_GLOW_POWER)
-      .mul(float(1).sub(smoothstep(0, 0.3, height.abs())))
-      .mul(float(1).sub(smoothstep(0, 0.5, sunDirection.y)))
-      .mul(sunVisibility);
     const sunDisc = smoothstep(SUN_DISC_COSINE - 0.0005, SUN_DISC_COSINE, sunCosine).mul(sunVisibility);
     const moonDisc = smoothstep(MOON_DISC_COSINE - 0.0005, MOON_DISC_COSINE, direction.dot(moonDirection)).mul(
       smoothstep(-0.05, 0.05, moonDirection.y),
@@ -78,11 +93,12 @@ export const createSkyNode = ({
       cloudThreshold.add(CLOUD_SHADE_DEPTH + CLOUD_EDGE),
       cloudNoise,
     );
-    const cloudColor = mix(cloudLitColor, cloudShadeColor, cloudShade).add(lightColor.mul(sunGlow.mul(0.6)));
-    const sky = gradient
-      .add(lightColor.mul(sunGlow.mul(0.35).add(horizonGlow.mul(0.45))))
+    const cloudColor = mix(cloudLitColor, cloudShadeColor, cloudShade);
+    const sky = gradientColor
+      .add(moonGlowColor.mul(moonGlow))
       .add(vec3(stars))
       .add(vec3(0.85, 0.88, 1).mul(moonDisc))
       .add(lightColor.mul(sunDisc.mul(SUN_DISC_BRIGHTNESS)));
     return mix(sky, cloudColor, cloudDensity);
   })();
+};

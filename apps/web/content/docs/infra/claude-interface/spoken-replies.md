@@ -82,8 +82,8 @@ The ladder's order and the serial reading are both measured: the language model 
 ## Setting it up
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" voice ja   # set up, or switch the dub
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" voice      # report what is installed
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" voice ja   # set up, or switch the dub
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" voice      # report what is installed
 ```
 
 The plugin ships code and cards. The engine's runtime is a few hundred megabytes of native binaries and the weights about half a gigabyte, and the plugin install runs a frozen `npm ci` under a one-minute ceiling — so none of it is a dependency of the plugin, and all of it is installed by the verb into the directory the plugin already owns for its state. Run with a dub, it first stops any synthesizer running and clears the rung on file, then does the following in order, each skipped when already done:

@@ -8,7 +8,7 @@ disable-model-invocation: true
 # Reply
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" reply $ARGUMENTS
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" reply $ARGUMENTS
 ```
 
 Relay its lines as written, and write every reply in that language from this one on.

@@ -7,7 +7,7 @@ disable-model-invocation: true
 # Today
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" today
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" today
 ```
 
 Relay its lines as written.

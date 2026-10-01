@@ -8,7 +8,7 @@ disable-model-invocation: true
 # Language
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" language $ARGUMENTS
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" language $ARGUMENTS
 ```
 
 Relay its lines as written. The card it prints is the session's card from this reply on.

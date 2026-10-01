@@ -7,6 +7,7 @@ export interface PageWitnessView {
   camera?: { fov: number; pitch: number; position: [number, number, number]; yaw: number };
   families?: string[];
   familyOffsets?: Record<string, [number, number, number]>;
+  familyScales?: Record<string, number>;
   isAlone?: boolean;
   shading?: string;
 }

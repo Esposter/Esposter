@@ -10,6 +10,8 @@ export const AsyncDataKey = {
   DocsNavigation: "docs-navigation",
   DocsPage: (path: string) => `docs-page${ID_SEPARATOR}${path}`,
   DocsSearchSections: "docs-search-sections",
+  // The game's own words in the reader's language, read once per render of the Genshin page
+  GameText: "game-text",
   ReadComments: (postId: PostInPost["id"]) =>
     `${Operation.Read}${ID_SEPARATOR}${DerivedDatabaseEntityType.Comment}${ID_SEPARATOR}${postId}`,
   ReadNotifications: `${Operation.Read}${ID_SEPARATOR}${DatabaseEntityType.Notification}`,

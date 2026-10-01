@@ -17,7 +17,7 @@ describe(parseWikiStoryLines, () => {
 |vo_02_01_tx = a
 }}`;
 
-    expect(parseWikiStoryLines(wikitext, "")).toStrictEqual([{ stem: "a a - b", text: "b — a", title: "a: b" }]);
+    expect(parseWikiStoryLines(wikitext)).toStrictEqual([{ stem: "a a - b", text: "b — a", title: "a: b" }]);
   });
 
   test("reads a page that leaves the dub to the template the same way", () => {
@@ -30,29 +30,12 @@ describe(parseWikiStoryLines, () => {
 |vo_01_01_tx = a
 }}`;
 
-    expect(parseWikiStoryLines(wikitext, "")).toStrictEqual([{ stem: "a b", text: "a", title: "b" }]);
-  });
-
-  test("reads one script of a page that carries two by the field suffix", () => {
-    expect.hasAssertions();
-
-    const wikitext = `{{VO/Story
-|character = a
-|vo_01_01_title_s = a
-|vo_01_01_title_t = b
-|vo_01_01_subtitle = a
-|vo_01_01_file = VO_{language}{character} b.ogg
-|vo_01_01_tx_s = a
-|vo_01_01_tx_t = {{MC|m=a|f=b}}c
-|vo_01_01_rm = a
-}}`;
-
-    expect(parseWikiStoryLines(wikitext, "_t")).toStrictEqual([{ stem: "a b", text: "ac", title: "b" }]);
+    expect(parseWikiStoryLines(wikitext)).toStrictEqual([{ stem: "a b", text: "a", title: "b" }]);
   });
 
   test("lists nothing for a page without the story template", () => {
     expect.hasAssertions();
 
-    expect(parseWikiStoryLines("", "")).toStrictEqual([]);
+    expect(parseWikiStoryLines("")).toStrictEqual([]);
   });
 });

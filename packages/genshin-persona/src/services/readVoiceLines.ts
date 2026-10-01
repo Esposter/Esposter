@@ -1,37 +1,37 @@
 import type { VoiceLine } from "#src/models/VoiceLine";
 
+import { CharacterLinesLoaderMap } from "#src/generated/CharacterLinesLoaderMap";
+import { getCanonicalLanguage } from "#src/generated/genshinText/services/getCanonicalLanguage";
 import { TravelerGender } from "#src/models/TravelerGender";
-import { DEFAULT_LANGUAGE, TravelerTwinMap, WikiVoiceOversPageMap } from "#src/services/constants";
+import { DEFAULT_LANGUAGE, TravelerTwinMap } from "#src/services/constants";
 import { fillLinePlaceholders } from "#src/services/fillLinePlaceholders";
-import { getCanonicalLanguage } from "#src/services/getCanonicalLanguage";
 import { getPlainLineText } from "#src/services/getPlainLineText";
 import { readGenshinDb } from "#src/services/readGenshinDb";
-import { readLanguageNames } from "#src/services/readLanguageNames";
-import { readWikiStoryLines } from "#src/services/readWikiStoryLines";
 
 // Every line the character speaks in the interface language, as a person reads it; `checkIsOwnVoiceLine` is the
-// Authoring command's cut. The game data's lines are filled in with the character's own name as the interface
-// Language spells it, the name the tips already run under, and a twin's own gender, else the male form as the
-// Wiki's word choices take. A character the data package has no lines for yet is read off the wiki's page for that
-// Language, which `WikiVoiceOversPageMap` says exists for the four dubs alone — so under any other language that
-// Character has none here and the spinner shows their description instead, one script in the spinner rather than
-// Two. A language the package does not name answers in English throughout
-export const readVoiceLines = (name: string, language: string): Promise<VoiceLine[]> => {
+// Authoring command's cut. The lines are the game data's, or — for a character the data package carries no lines
+// For yet — the game's own text, which `genshin:text write` reads for every language the game has and the persona
+// Carries generated, so the newest characters speak in all fifteen rather than waiting on a bump. Either way the
+// Nickname is filled with the character's own name as the interface language spells it, the name the tips already
+// Run under, and a word per gender takes a twin's own gender, else the male form. A character neither has lines for
+// Has none here and the spinner shows their description instead. A language the game does not name answers in
+// English throughout
+export const readVoiceLines = async (name: string, language: string): Promise<VoiceLine[]> => {
   const genshindb = readGenshinDb();
-  const resultLanguage = getCanonicalLanguage(readLanguageNames(), language);
-  const queryOptions = resultLanguage ? { queryLanguages: [genshindb.Language.English], resultLanguage } : {};
+  const resultLanguage = getCanonicalLanguage(language) ?? DEFAULT_LANGUAGE;
+  const queryOptions = {
+    queryLanguages: [genshindb.Language.English],
+    resultLanguage: genshindb.Language[resultLanguage],
+  };
   const friendLines = genshindb.voiceovers(name, queryOptions)?.friendLines ?? [];
-  if (friendLines.length > 0) {
-    const nickname = genshindb.characters(name, queryOptions)?.name ?? name;
-    const gender = TravelerTwinMap[name]?.gender ?? TravelerGender.Male;
-    return Promise.resolve(
-      friendLines.map(({ description, title }) => ({
-        text: getPlainLineText(fillLinePlaceholders(description, nickname, gender)),
-        title: title.trim(),
-      })),
-    );
-  }
-
-  const wikiPage = WikiVoiceOversPageMap[resultLanguage ?? DEFAULT_LANGUAGE];
-  return wikiPage ? readWikiStoryLines(name, wikiPage) : Promise.resolve([]);
+  const lines =
+    friendLines.length > 0
+      ? friendLines.map(({ description, title }) => ({ text: description, title }))
+      : ((await CharacterLinesLoaderMap[resultLanguage]())[name] ?? []);
+  const nickname = genshindb.characters(name, queryOptions)?.name ?? name;
+  const gender = TravelerTwinMap[name]?.gender ?? TravelerGender.Male;
+  return lines.map(({ text, title }) => ({
+    text: getPlainLineText(fillLinePlaceholders(text, nickname, gender)),
+    title: title.trim(),
+  }));
 };

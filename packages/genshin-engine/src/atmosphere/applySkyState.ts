@@ -2,12 +2,14 @@ import type { SkyState } from "#src/atmosphere/SkyState";
 import type { SkyTargets } from "#src/atmosphere/SkyTargets";
 
 import { toSceneColor } from "#src/post/toSceneColor";
-import { Vector3 } from "three";
+import { Color, Vector3 } from "three";
 
 // The god rays' map is redrawn once the light has turned this far, a little over the angle it turns in two real
 // Seconds, so a moving sun costs one shadow pass every other second rather than one a frame
 const GODRAYS_REDRAW_COSINE = Math.cos((0.6 * Math.PI) / 180);
 const godraysDirection = new Vector3();
+// A sky with no halo of its own draws none
+const BLACK = new Color(0, 0, 0);
 // The sky state written into everything it lights: the light and the materials take the light's direction and
 // Colour, the rim and the fog the horizon's, and the hemisphere its sky and ground. The colours the screen shows as
 // They are, the sky's, its clouds' and the fog's, are measured off the references, so each is written as the scene
@@ -33,7 +35,13 @@ export const applySkyState = (
   postUniforms.godraysColor.value.copy(lightColor);
   skyUniforms.cloudLitColor.value.copy(toSceneColor(skyState.cloudLitColor));
   skyUniforms.cloudShadeColor.value.copy(toSceneColor(skyState.cloudShadeColor));
+  skyUniforms.cloudLitBackColor.value.copy(toSceneColor(skyState.cloudLitBackColor ?? skyState.cloudLitColor));
+  skyUniforms.cloudShadeBackColor.value.copy(toSceneColor(skyState.cloudShadeBackColor ?? skyState.cloudShadeColor));
   skyUniforms.horizonColor.value.copy(toSceneColor(horizonColor));
+  skyUniforms.horizonBackColor.value.copy(toSceneColor(skyState.horizonBackColor ?? horizonColor));
+  skyUniforms.zenithBackColor.value.copy(toSceneColor(skyState.zenithBackColor ?? skyState.zenithColor));
+  skyUniforms.haloColor.value.copy(toSceneColor(skyState.haloColor ?? BLACK));
+  skyUniforms.sunHaloColor.value.copy(toSceneColor(skyState.sunHaloColor ?? BLACK));
   skyUniforms.lightColor.value.copy(lightColor);
   skyUniforms.moonDirection.value.copy(skyState.moonDirection);
   skyUniforms.starIntensity.value = skyState.starIntensity;

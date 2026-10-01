@@ -38,10 +38,11 @@ invariants all pick it up from there.
 ## A member that is also a Claude Code plugin
 
 `packages/genshin-persona` is the only-run shape with more constraints, every one forced by the tool that
-installs it: a remote install copies the plugin root and runs a frozen `npm ci --ignore-scripts` there, and node
-runs its scripts by stripping types (`apps/web/content/docs/infra/claude-interface/persona-plugin.md`).
+installs it: a remote install copies the plugin root and runs a frozen `npm ci --ignore-scripts` there, and every
+hook and command is a bare `node <path>` the tool runs (`apps/web/content/docs/infra/claude-interface/persona-plugin.md`).
 
-- **Every dependency is a plain semver range and there are no devDependencies.** npm reads neither `catalog:`
+- **Every dependency is a plain semver range and there are no devDependencies** — `tsx` included, which the
+  entries need at runtime. npm reads neither `catalog:`
   nor `workspace:`, so a manifest carrying one fails the remote install outright. Vitest, TypeScript and
   `@esposter/configuration` are found one directory walk up, in the root's `node_modules`, because the package's
   own holds only its runtime dependency. The npm lockfile beside the manifest is generated from a **clean copy
@@ -52,9 +53,10 @@ runs its scripts by stripping types (`apps/web/content/docs/infra/claude-interfa
   runtime manifest under the plugin that no workspace glob lists.
 - **The `#src/*` specifier drops its extension** (`#src/services/x`, never `#src/services/x.ts`): the manifest's
   map appends `.ts`, and node resolves the map literally.
-- **Erasable TypeScript only.** Stripping erases none of `enum`, `namespace` or `import =`, so none of the three
-  is written here: where the rest of the repo declares an enum, this package declares a frozen object with a
-  derived type. `Temporal` is the plugin's date layer, and the node major it arrived in is
+- **Its TypeScript is the repo's**: an `enum` where the rest of the repo declares one, never a frozen object bent
+  to suit node's stripper, because its entries run under `tsx` (the `package-scripts` skill,
+  `references/typescript-scripts.md`).
+  `Temporal` is the plugin's date layer, and the node major it arrived in is
   what the plugin's own `engines.node` states — the feature floor, not the root's `.node-version`; why the two differ is the
   docs page's (`apps/web/content/docs/infra/claude-interface/persona-plugin.md`).
 - It is excluded from `typedoc.config.js` like the configuration package: it has no barrel to document.

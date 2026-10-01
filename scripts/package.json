@@ -54,6 +54,7 @@
     "format:check": "oxfmt --check",
     "genshin:assets": "tsx src/genshinAssets/index.ts",
     "genshin:parity": "tsx src/genshinParity/index.ts",
+    "genshin:text": "tsx src/genshinText/index.ts",
     "graph:gen": "tsx src/dependencyGraph/index.ts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
@@ -63,7 +64,8 @@
     "update:node": "node src/updateNode/index.ts"
   },
   "dependencies": {
-    "citty": "catalog:"
+    "citty": "catalog:",
+    "genshin-text": "workspace:*"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",

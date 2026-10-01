@@ -5,6 +5,7 @@ import { attributeScene } from "#src/services/genshinParity/attributeScene";
 import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
 import { toPageCamera } from "#src/services/genshinParity/toPageCamera";
 import { writeAttribution } from "#src/services/genshinParity/writeAttribution";
+import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { defineCommand } from "citty";
 
 export const attributeCommand: SubCommandsDef[string] = defineCommand({
@@ -31,7 +32,7 @@ export const attributeCommand: SubCommandsDef[string] = defineCommand({
     const rows = await attributeScene(
       referenceIds,
       parseDerivedAssetComponent(args.witness),
-      args.pose ? toPageCamera(args.pose.split(",").map(Number)) : undefined,
+      args.pose ? toPageCamera(parseNumbers(args.pose, "pose", CAMERA_POSE_AXES.length)) : undefined,
     );
     for (const { layers, name } of rows)
       for (const { detail, flip, name: layer, shape, tone } of layers)

@@ -6,7 +6,9 @@ import { useLoop, useTres } from "@tresjs/core";
 import {
   advanceGameClock,
   applySkyState,
+  createSkyGradientTexture,
   createSkyNode,
+  DEFAULT_SKY_GRADIENT,
   createSkyState,
   GAME_MINUTES_PER_SECOND,
   sampleSkyState,
@@ -26,7 +28,9 @@ export const useSky = ({ skyKeyframes, skyTargets, startMinutes, tilt, windUnifo
     sampleSkyState(skyKeyframes, gameClock.minutes, tilt, skyState);
     applySkyState(skyState, skyTargets);
   };
-  scene.value.backgroundNode = createSkyNode(skyTargets.skyUniforms);
+  // A region's sky has no gradient of its own, so it falls from its horizon's colour to its zenith's in a smoothstep
+  const gradient = createSkyGradientTexture(DEFAULT_SKY_GRADIENT);
+  scene.value.backgroundNode = createSkyNode(skyTargets.skyUniforms, gradient);
   writeSky();
 
   onBeforeRender(({ delta }) => {
@@ -40,6 +44,7 @@ export const useSky = ({ skyKeyframes, skyTargets, startMinutes, tilt, windUnifo
 
   onUnmounted(() => {
     scene.value.backgroundNode = null;
+    gradient.dispose();
   });
 
   return gameClock;

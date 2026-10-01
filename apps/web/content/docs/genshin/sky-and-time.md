@@ -38,10 +38,12 @@ flowchart TD
 
 ### The painted sky
 
-The sky is the scene's background node (`createSkyNode`), drawn behind everything at no depth, so the fog and the god rays pass over it. It is painted rather than physical, since the game's skies are art-directed:
+The sky is the scene's background node (`createSkyNode`), drawn behind everything at no depth, so the fog and the god rays pass over it. It is painted rather than physical, since the game's skies are art-directed, and drawn as the game's own sky shader draws it, ported from its decompiled programs:
 
-- **A gradient** from the horizon's colour to the zenith's, over the lower part of the sky.
-- **The sun's disc and glow**, the disc brighter than white so bloom lifts it, and a glow along the horizon toward a low sun, which is what makes dawn and dusk spread their colour.
+- **Top and bottom colours, toward the sun and away from it.** A ray's height is the share of a right angle it looks up; the sky's gradient texture carries the bottom colour up to its reach and gives way to the top's, and each of the two blends from its colour away from the sun to its colour toward it, by how far toward the sun the ray looks, cubed. A sky that tells no back colour from its front, as a region's keyframes do, draws one gradient all round, and one with no gradient of its own falls in a smoothstep (`DEFAULT_SKY_GRADIENT`).
+- **A horizon halo** rides the gradient's other channel up to its own reach, toward the sun and, once the sun is up, all round.
+- **The sun's halo** as three lobes of one falloff, each ten times wider and fainter, tighter toward the zenith, and **the moon's glow**, the sixth power of its closeness.
+- **The sun's disc**, brighter than white so bloom lifts it: the game draws the sun and moon as bodies of their own.
 - **The moon's disc** opposite the sun, and **stars** scattered by cell noise, as bright as the keyframes' star strength.
 - **Stepped clouds.** Noise projected onto a plane overhead, so clouds shrink toward the horizon, is cut into cumulus with a hard edge and a stepped shade band, as the ground's ramp steps its light. Their lit and shade colours come from the keyframes, the sun's glow warms their edges, and they fade out near the horizon. The layer drifts downwind with the [wind](/docs/genshin/vegetation), and its coverage is the region's.
 

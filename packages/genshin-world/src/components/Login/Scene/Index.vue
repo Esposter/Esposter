@@ -3,7 +3,7 @@ import type { LoginGlide } from "#src/models/login/LoginGlide";
 import type { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
 
 import { usePostPipeline } from "#src/composables/usePostPipeline";
-import palette from "#src/data/login/palette.json";
+import stone from "#src/data/login/stone.json";
 import sky from "#src/data/login/sky.json";
 import { LoginPartFamily } from "#src/models/login/LoginPartFamily";
 import { LoginStage } from "#src/models/login/LoginStage";
@@ -19,6 +19,7 @@ import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoo
 import { createLoginHullsGeometry } from "#src/services/login/hull/createLoginHullsGeometry";
 import { advanceLoginGlide } from "#src/services/login/scene/advanceLoginGlide";
 import {
+  LOGIN_BRIDGES_DROP,
   LOGIN_CAMERA_FAR,
   LOGIN_CAMERA_FOV,
   LOGIN_CAMERA_HEIGHT,
@@ -36,11 +37,11 @@ import {
   LOGIN_FOG_SCATTER_POWER,
   LOGIN_FOG_SCATTER_STRENGTH,
   LOGIN_FOG_START_DISTANCE,
+  LOGIN_GLIDE_DOOR_SCROLLED,
   LOGIN_GLIDE_TITLE_SCROLLED,
   LOGIN_GLIDE_TITLE_SPEED,
   LOGIN_GRADE_OPTIONS,
   LOGIN_LIGHT_DISTANCE,
-  LOGIN_RAMP_OPTIONS,
   LOGIN_RIM_STRENGTH,
   LOGIN_SHADOW_BIAS,
   LOGIN_SHADOW_EXTENT,
@@ -51,7 +52,7 @@ import {
 } from "#src/services/login/scene/constants";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
-import { LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
+import { LOGIN_WALKWAY_RISE_DEPTH, LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
 import { createLoginWalkwayPieces } from "#src/services/login/walkway/createLoginWalkwayPieces";
 import { readLoginWalkwaySink } from "#src/services/login/walkway/readLoginWalkwaySink";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
@@ -64,11 +65,10 @@ import {
   createGradeLutTexture,
   createLightUniforms,
   createPostUniforms,
-  createRampTexture,
-  createRimNode,
+  createSkyGradientTexture,
   createSkyNode,
   createSkyUniforms,
-  createToonMaterial,
+  createStoneMaterial,
   QualityTier,
 } from "genshin-engine";
 import { BatchedMesh, DirectionalLight, Group, HemisphereLight, Matrix4 } from "three";
@@ -94,7 +94,7 @@ interface Props {
 }
 
 const { isDoorLit, stage, timeOfDay } = defineProps<Props>();
-const emit = defineEmits<{ ready: [] }>();
+const emit = defineEmits<{ doorFormed: []; ready: [] }>();
 // The frames drawn before the scene is said to be ready: WebGPU compiles each pipeline on first use, so the first few
 // Frames can come out before every material has. A scene mounted at the door is ready only once the door has risen
 const READY_FRAME_COUNT = 10;
@@ -113,7 +113,6 @@ const witness = inject(SceneWitnessKey, null);
 const checkIsOwnFamilyDrawn = (family: LoginPartFamily): boolean => !witness?.families.value.includes(family);
 const { scene } = useTres();
 const { onRender } = useLoop();
-const rampTexture = createRampTexture(LOGIN_RAMP_OPTIONS);
 const lightUniforms = createLightUniforms();
 lightUniforms.rimStrength.value = LOGIN_RIM_STRENGTH;
 const light = new DirectionalLight();
@@ -142,7 +141,6 @@ fogUniforms.scatterStrength.value = LOGIN_FOG_SCATTER_STRENGTH;
 const postUniforms = createPostUniforms();
 const skyUniforms = createSkyUniforms();
 skyUniforms.cloudCoverage.value = LOGIN_CLOUD_COVERAGE;
-skyUniforms.horizonBand.value = sky.horizonBand;
 const skyTargets = {
   fogUniforms,
   godraysLight,
@@ -153,7 +151,9 @@ const skyTargets = {
   postUniforms,
   skyUniforms,
 };
-scene.value.backgroundNode = createSkyNode(skyUniforms);
+// The sky's gradient, the game's own fitted, which its bottom colour and horizon halo ride up the sky
+const skyGradient = createSkyGradientTexture(sky.gradient);
+scene.value.backgroundNode = createSkyNode(skyUniforms, skyGradient);
 watchImmediate(
   () => timeOfDay,
   (newTimeOfDay) => {
@@ -161,12 +161,16 @@ watchImmediate(
     postUniforms.godraysColor.value.setScalar(0);
   },
 );
-// The stone every part is carved from, the door's panel with its frame, fitted from their diffuse textures
-const stoneMaterial = createToonMaterial({ color: palette.stone, lightUniforms, rampTexture });
-const doorMaterial = createToonMaterial({ color: palette.stone, lightUniforms, rampTexture });
+// The stone each family of parts is carved from, as its game materials hold it, lit physically as the game lights it
+// And drawn with no outline: the towers', the bridges', the walkway's, and the door's frame and its panel
+const towersMaterial = createStoneMaterial(stone.towers);
+const bridgesMaterial = createStoneMaterial(stone.bridges);
+const walkwayMaterial = createStoneMaterial(stone.walkway);
+const doorFrameMaterial = createStoneMaterial(stone.door);
+const doorMaterial = createStoneMaterial(stone.door);
 // The door lights from a line down its middle outward, over the panel's own glow, as the game opens it
 const doorGlow = uniform(0);
-doorMaterial.emissiveNode = createRimNode(lightUniforms).add(
+doorMaterial.emissiveNode = doorMaterial.emissiveNode.add(
   color(LOGIN_DOOR_GLOW_COLOR).mul(
     doorGlow.mul(
       exp(abs(positionLocal.x).div(DOOR_SLIT_WIDTH).negate()).mul(DOOR_SLIT_STRENGTH).add(DOOR_PANEL_STRENGTH),
@@ -183,7 +187,7 @@ const walkway = new BatchedMesh(
   LOGIN_WALKWAY_ROW.count * walkwayPieces.length,
   walkwayPieces.reduce((total, { geometry }) => total + geometry.getAttribute("position").count, 0),
   0,
-  stoneMaterial,
+  walkwayMaterial,
 );
 walkway.castShadow = true;
 walkway.receiveShadow = true;
@@ -217,9 +221,10 @@ cloudSeaMaterial.colorNode = mix(
 );
 const loginClouds = createLoginClouds(skyUniforms);
 const gradeLutTexture = createGradeLutTexture(LOGIN_GRADE_OPTIONS);
-usePostPipeline(QualityTier.High, { fogUniforms, godraysLight, gradeLutTexture, postUniforms });
+usePostPipeline(QualityTier.High, { fogUniforms, godraysLight, gradeLutTexture, postUniforms }, skyUniforms);
 let renderedFrameCount = 0;
 let isReadyEmitted = false;
+let isDoorFormed = false;
 // How long the door has been lit, which the rush toward it follows, and how long it has been rising into place
 const rushMs = shallowRef(0);
 const riseMs = shallowRef(0);
@@ -230,7 +235,7 @@ const isDoorRising = shallowRef(false);
 // Pose, from the moment of the loop the title opens at; a scene mounted at the door starts at rest there. The glide is
 // Kept off Vue's reactivity, and only the numbers the template places by, which stand still when it does, are refs
 let glide: LoginGlide = checkIsDoorDue()
-  ? { scrolled: 0, speed: 0, stopAt: 0 }
+  ? { scrolled: LOGIN_GLIDE_DOOR_SCROLLED, speed: 0, stopAt: LOGIN_GLIDE_DOOR_SCROLLED }
   : { scrolled: LOGIN_GLIDE_TITLE_SCROLLED, speed: LOGIN_GLIDE_TITLE_SPEED };
 // The towers' row, scrolled with the glide each frame off Vue's reactivity, which would otherwise draw the template anew
 const towers = new Group();
@@ -256,6 +261,14 @@ onRender(({ delta: frameDelta }) => {
   glide = advanceLoginGlide(glide, stage, delta);
   const { scrolled, stopAt = scrolled } = glide;
   towers.position.z = -(scrolled % LOGIN_TOWERS_ROW.length);
+  // The witness's towers and bridges ride the row with ours, the bridges dropped as ours are, off by whatever offset a
+  // Tool sets them
+  for (const group of witness?.parts.children ?? [])
+    if (group.name === LoginPartFamily.Towers || group.name === LoginPartFamily.Bridges) {
+      const [x = 0, y = 0, z = 0] = (group.userData.offset as [number, number, number] | undefined) ?? [];
+      const drop = group.name === LoginPartFamily.Bridges ? LOGIN_BRIDGES_DROP : 0;
+      group.position.set(x, y - drop, z + towers.position.z);
+    }
   doorAhead.value = stopAt - scrolled;
   walkway.position.z = -(scrolled % LOGIN_WALKWAY_ROW.length);
   // Once the door is due the walkway ends at it, and nothing past it is built
@@ -263,8 +276,13 @@ onRender(({ delta: frameDelta }) => {
   for (const { copy, depth, instanceId, seed } of walkwayInstances) {
     const z = copy * LOGIN_WALKWAY_ROW.length;
     const ahead = walkway.position.z + z + depth - cameraZ.value;
-    walkway.setVisibleAt(instanceId, !checkIsDoorDue() || ahead < doorAheadOfCamera);
-    walkway.setMatrixAt(instanceId, walkwayMatrix.makeTranslation(0, -readLoginWalkwaySink(ahead, seed), z));
+    const sink = readLoginWalkwaySink(ahead, seed);
+    // A piece stands only once it has begun to rise, so neither it nor its shadow shows before its turn
+    walkway.setVisibleAt(
+      instanceId,
+      sink < LOGIN_WALKWAY_RISE_DEPTH && (!checkIsDoorDue() || ahead < doorAheadOfCamera),
+    );
+    walkway.setMatrixAt(instanceId, walkwayMatrix.makeTranslation(0, -sink, z));
   }
   cloudSeaScrolled.value = scrolled;
   loginClouds.scroll(scrolled);
@@ -277,6 +295,11 @@ onRender(({ delta: frameDelta }) => {
   rushMs.value = isDoorLit ? rushMs.value + delta * 1000 : 0;
   isDoorRising.value = checkIsDoorDue() && (isDoorRising.value || doorAheadOfCamera <= LOGIN_WALKWAY_SUNK_DISTANCE);
   riseMs.value = isDoorRising.value ? riseMs.value + delta * 1000 : 0;
+  // The door's own interface waits on the door, once it has risen into place
+  if (!isDoorFormed && isDoorRising.value && riseMs.value >= doorRiseMs) {
+    isDoorFormed = true;
+    emit("doorFormed");
+  }
   renderedFrameCount++;
   if (isReadyEmitted || renderedFrameCount < READY_FRAME_COUNT || (checkIsDoorDue() && riseMs.value < doorRiseMs))
     return;
@@ -286,10 +309,10 @@ onRender(({ delta: frameDelta }) => {
 
 onUnmounted(() => {
   scene.value.backgroundNode = null;
-  rampTexture.dispose();
+  skyGradient.dispose();
   gradeLutTexture.dispose();
-  stoneMaterial.dispose();
-  doorMaterial.dispose();
+  for (const material of [towersMaterial, bridgesMaterial, walkwayMaterial, doorFrameMaterial, doorMaterial])
+    material.dispose();
   cloudSeaMaterial.dispose();
   loginClouds.dispose();
   for (const { geometry } of walkwayPieces) geometry.dispose();
@@ -328,7 +351,7 @@ onUnmounted(() => {
         :geometry="towersGeometry"
         cast-shadow
         receive-shadow
-        :material="stoneMaterial"
+        :material="towersMaterial"
         :position="[0, 0, (copy - 1) * LOGIN_TOWERS_ROW.length]"
       />
       <TresMesh
@@ -336,7 +359,7 @@ onUnmounted(() => {
         :geometry="hullsGeometry"
         cast-shadow
         receive-shadow
-        :material="stoneMaterial"
+        :material="bridgesMaterial"
         :position="[0, 0, (copy - 1) * LOGIN_TOWERS_ROW.length]"
       />
     </template>
@@ -348,7 +371,7 @@ onUnmounted(() => {
     :position="doorPosition"
     :rotation="[0, Math.PI, 0]"
   >
-    <TresMesh :geometry="doorFrameGeometry" cast-shadow receive-shadow :material="stoneMaterial" />
+    <TresMesh :geometry="doorFrameGeometry" cast-shadow receive-shadow :material="doorFrameMaterial" />
     <TresMesh :geometry="doorPanelGeometry" cast-shadow receive-shadow :material="doorMaterial" />
   </TresGroup>
   <TresMesh

@@ -7,7 +7,7 @@ disable-model-invocation: true
 # Status
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" status
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" status
 ```
 
 Relay its lines as written.

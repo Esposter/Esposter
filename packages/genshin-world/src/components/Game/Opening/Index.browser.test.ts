@@ -6,6 +6,12 @@ import {
   LOGIN_STATUS_STEPS,
   LOGIN_TITLE_START_MS,
 } from "#src/services/login/constants";
+import { LOGIN_DOOR_RISE_KEYFRAMES } from "#src/services/login/door/constants";
+import {
+  LOGIN_GLIDE_ACCELERATION,
+  LOGIN_GLIDE_PREPARING_SPEED,
+  LOGIN_WALKWAY_ROW,
+} from "#src/services/login/scene/constants";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
@@ -33,7 +39,13 @@ describe("gameOpening", () => {
   // The frames the flight's loop needs past its length to see it has arrived, at the fake clock's 16 ms a frame
   const flightFrameMs = 100;
   // The flight draws its scene every frame of its length, which a headless browser renders slower than a screen
-  const timeoutMs = 120_000;
+  const timeoutMs = 240_000;
+  // The longest the glide takes from the door being due to the door standing formed, which the door's prompt waits
+  // On: braking from the preparing pace, a walkway's copy more at speed before it, and the door's rise
+  const doorArrivalMs =
+    (LOGIN_GLIDE_PREPARING_SPEED / LOGIN_GLIDE_ACCELERATION) * 1000 +
+    (LOGIN_WALKWAY_ROW.length / LOGIN_GLIDE_PREPARING_SPEED) * 1000 +
+    (LOGIN_DOOR_RISE_KEYFRAMES.at(-1)?.[0] ?? 0);
 
   afterEach(() => {
     vi.useRealTimers();
@@ -71,7 +83,7 @@ describe("gameOpening", () => {
       await nextTick();
       const lastStep = LOGIN_STATUS_STEPS.at(-1);
       await vi.advanceTimersByTimeAsync(
-        (lastStep?.ms ?? 0) + LOGIN_PROGRESS_FILL_MS + LOGIN_DOOR_AFTER_LOAD_MS + flightFrameMs,
+        (lastStep?.ms ?? 0) + LOGIN_PROGRESS_FILL_MS + LOGIN_DOOR_AFTER_LOAD_MS + doorArrivalMs + flightFrameMs,
       );
 
       expect(container.querySelector(".login-interface .prompt")).not.toBeNull();

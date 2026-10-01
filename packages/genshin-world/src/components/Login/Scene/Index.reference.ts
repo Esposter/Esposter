@@ -172,15 +172,20 @@ export const reference: ComponentReference = {
     },
     {
       found:
-        "The towers' row stands 0.43 metres under its prefab's own place: moved as one with the camera held, its towers and bridges land on login-door-recording's edges 0.445 lower and on login-door's 0.412, their other axes scattering either way. So placed, the glide's path at the eye clears every bridge and pillar of the exports, every arch and every space under a deck it crosses open; laid at the prefab's place, a pier of LoginScene_Bridge04's stood across it 57 metres ahead of the towers' home. Our bridges as one side's outline extruded through their depth filled the arches too, and the camera glided into solid stone; as visual hulls they leave them open",
-      search:
-        "genshin:parity place login-door-recording and login-door --families Towers,Bridges, then genshin:assets clearance login at the eye and above it, and genshin:parity view and film --witness at the stretch beside ours",
+        "The glide's path at the eye passes through the exports' own bridges and pillars at one place a loop, a pier of LoginScene_Bridge04's 0.4 metres deep 57 metres ahead of the towers' home; every arch and every space under a deck it crosses is open. Our bridges as one side's outline extruded through their depth filled those, and the camera glided into solid stone; as visual hulls they leave them open. A local refinement of the row's height on edges alone read it 0.43 metres too high from the towers' home, which the row's true phase at the door (below) undid",
+      search: "genshin:assets clearance login, then genshin:parity view and film --witness at the stretch beside ours",
     },
     {
       found:
-        "The towers do glide toward the camera with the walkway, a near tower growing about 1.8 times from 9 to 14 seconds, and the door frames of recordings idle for different times show them alike, as the witness lays them out unscrolled: the door comes to rest with the towers at their own places. The English recording's glide from the title to the door's rest is about 49 metres, so the title opens that far short of them; that phase alone takes the dawn's FLIP from 0.6889 to 0.6504 and the dusk's from 0.7154 to 0.6750",
+        "The towers do glide toward the camera with the walkway, a near tower growing about 1.8 times from 9 to 14 seconds, and the door frames of recordings idle for different times show them alike: the door comes to rest with the towers' row 144 metres along its loop, nine of the walkway's copies, the 2.23-scale lantern tower close to the door's right and the colonnade low behind it. Moved as one with the camera held, from where the lantern tower's bearing puts it, the row lands on login-door-recording's edges 145.8 metres along and on login-door's 144.4, the other axes scattering either way; laid at home instead, the door frame shows thin far towers and a colonnade standing high. The English recording's glide from the title to the door's rest is about 49 metres, so the title opens that far short of it",
       search:
-        "genshin:parity frames of yt-rBnfA4pXw6U and yt-q2pwx24TOgA at their door frames, then compare of the four stills at both opening phases",
+        "genshin:parity parts login-door-recording and login-door --family Towers, view --offsets at the lantern tower's phase, then place --start=0,0,-150 on both",
+    },
+    {
+      found:
+        "The bridges and pillars stand 5 metres under where the blocks lay them. At the door frame's pose, solved on the door and the walkway's wings, the colonnade behind the door stood some 50 pixels over the recording's, and the bridge whose deck crosses the glide's path, laid where the blocks lay it, stood its deck 2.3 metres over the eye, so the glide drove into it every loop where the game's passes over it however long the title idles. Lowered 5 metres, the colonnade lands on the recording's rows and that deck passes under the walkway. A camera solved on the towers behind the door as well (0.98 metres up, 11.3 short, 6.2 degrees, 48.3, at 7.2 pixels) traded its own height and pitch for the bridges' height and stood them higher still in the glide, so the door frame's pose stands",
+      search:
+        "genshin:parity view --offsets on the bridges at 0, 5, 10, 14 and 18 metres beside login-door-recording, zoom --grid on the colonnade's rail, film over a whole minute of the title, and pose with doorPillarTop, doorTowerTop and doorLeftTowerTop added",
     },
     {
       found:
@@ -192,7 +197,8 @@ export const reference: ComponentReference = {
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
     "How the script brings the door from its anchor to the walkway: the place is measured (the door spawn's position), the motion is not",
     "Whether the towers' row tiles at its 200 metres: their fitted field spans about 300 along the glide",
-    "How the game brings the towers home at the door after a long idle: every recording found idles a few seconds, so the title's phase is read off its glide's length, not a rule of the script's",
+    "The sky's own colours at each hour: the game's environment system sets its sky shader's _ES_ colours, top and bottom toward the sun and away, the halo, the sun's halo and the moon's glow, at run time from no asset the export holds, so they are measured; one frame's sky by least squares (genshin:parity sky) leaves its shape and its colours unsettled, the sun's direction itself measured and most of the sky under clouds and haze",
+    "How the game brings the towers to the door's phase after a long idle: every recording found idles a few seconds, so the title's phase is read off its glide's length, not a rule of the script's",
     "What MonoBlockController does to each walkway piece: the rise is read by eye off the recording's far end; its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$) hold its own curve",
     "Where the glide comes to rest: the recording's door frame was still slowing at 1.6 metres a second when the click came, so the rest stands a little nearer the door than its pose",
     "The day sky's pose, by the same perspective reading",
@@ -204,7 +210,7 @@ export const reference: ComponentReference = {
       kind: GameSourceKind.Shader,
       name: "Shader#0",
       pathId: "-5017021742717319217",
-      role: "The sky dome: its gradient, top and bottom colours front and back of the sun, halos, stars and scattering",
+      role: "The sky dome: its gradient, top and bottom colours front and back of the sun, halos, stars and scattering, ported to createSkyNode from its decompiled vertex and pixel programs",
     },
     cloudLayerShader: {
       block: "00/12903389.blk",
@@ -303,7 +309,7 @@ export const reference: ComponentReference = {
       kind: GameSourceKind.Shader,
       name: "LoginScene_* materials' shader",
       pathId: "-8796901447730824398",
-      role: "The stone: does not parse; its material's properties are a physically based set",
+      role: "The stone: does not parse; its material's properties are a physically based set, specular and rim-lit with no outline, fitted per family (fitLoginStone) into createStoneMaterial",
     },
     uberShader: {
       block: "00/12903389.blk",

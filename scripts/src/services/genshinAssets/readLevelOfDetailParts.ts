@@ -1,9 +1,10 @@
 import type { AssetPlacement } from "#src/models/genshinAssets/AssetPlacement";
 
+import { selectFinestLevels } from "#src/services/genshinAssets/selectFinestLevels";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
-// Every placement drawing one level of detail of a part, a mesh named `<part>_Lod<level>` by the pattern's `part` and
+// Every placement drawing the level of detail of a part a render draws (each object's finest exported), a mesh named `<part>_Lod<level>` by the pattern's `part` and
 // `level` groups, tagged with its part, and each part's most detailed mesh the export holds: a scene places a part's
 // Levels together, and the finest of them is what its shape is fitted from
 export const readLevelOfDetailParts = (
@@ -11,7 +12,8 @@ export const readLevelOfDetailParts = (
   meshRegex: RegExp,
   meshDirectory: string,
 ): { meshPathMap: Map<string, string>; partPlacements: (AssetPlacement & { part: string })[] } => {
-  const partPlacements = placements.flatMap((placement) => {
+  const drawn = selectFinestLevels(placements, (mesh) => existsSync(join(meshDirectory, `${mesh}.obj`)));
+  const partPlacements = drawn.flatMap((placement) => {
     const part = meshRegex.exec(placement.mesh)?.groups?.part;
     return part ? [{ ...placement, part }] : [];
   });

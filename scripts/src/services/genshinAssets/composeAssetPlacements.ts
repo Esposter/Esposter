@@ -34,6 +34,7 @@ export const composeAssetPlacements = (
     const drawing = gameObjectDrawingMap.get(toObjectKey(object.file, object.gameObjectId));
     return [
       {
+        father: toObjectKey(object.parentFile, object.parentId),
         materials: drawing?.materials ?? [],
         mesh: drawing?.mesh ?? "",
         name: object.name,

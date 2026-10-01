@@ -26,7 +26,7 @@ const toBase64 = (values: Float32Array): string => {
 };
 // The witness render's G-buffer at its current view, one floating-point target a quantity, each read back from the
 // Renderer as rows of four floats a pixel: the albedo its exported material draws unlit, the depth along the view in
-// Metres, the world normal, and the part (its identifier from one, the order the header lists it in) with its family's
+// Metres, the world normal (encoded into 0 to 1, as `readWitnessTargets` decodes it), and the part (its identifier from one, the order the header lists it in) with its family's
 // Index, the families listed in that order. Only the witness's parts are drawn, over nothing, so a pixel no part
 // Covers is zero throughout. Only the targets asked for are drawn, every one unless told. Every part keeps its own
 // Material, handed back once the targets are read
@@ -71,7 +71,9 @@ export const renderWitnessTargets = async (
     const targetNodeMap: Record<WitnessTarget, Node<"vec4">> = {
       [WitnessTarget.Albedo]: vec4(albedo ?? vec3(1), 1),
       [WitnessTarget.Depth]: vec4(positionView.z.negate(), 0, 0, 1),
-      [WitnessTarget.Normal]: vec4(normalWorld, 1),
+      // Halved and lifted into 0 to 1, since the material's colour output clips what falls below 0, which took every
+      // Normal's negative components; read back, it is let down again
+      [WitnessTarget.Normal]: vec4(normalWorld.mul(0.5).add(0.5), 1),
       [WitnessTarget.Part]: vec4(float(id), float(familyIndex), 0, 1),
     };
     material.colorNode = targetNodeMap[target];

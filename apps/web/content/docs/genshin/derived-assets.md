@@ -5,7 +5,7 @@ description: Where each of the recreation's shapes, colours and glyphs comes fro
 
 # Derived assets
 
-Nothing of the game's ships. Every shape, colour and glyph the recreation draws is ours, measured off the game and built by our own code, and the game's own files are references like any screenshot. This page is which reference each part is measured from, how a measurement becomes ours, and how far each component has come.
+Nothing the game draws ships. Every shape, colour and glyph the recreation draws is ours, measured off the game and built by our own code, and the game's own files are references like any screenshot. This page is which reference each part is measured from, how a measurement becomes ours, and how far each component has come. The game's words are the one thing of its own carried as they are, quoted as text the way the screen shows them ([game text](/docs/genshin/game-text)).
 
 ## Which source a part is measured from
 
@@ -109,8 +109,8 @@ flowchart TD
 | Visual hull, `fitVisualHull`     | A mesh's triangles (a bridge, a pillar)         | Boxes solid only where its three axis views all cover, a tenth of a metre a cell, so an arch or the space under a deck stays open from every side; `createBoxesGeometry` builds them. One view extruded through the depth filled them, and the camera glided into the solid |
 | Bounds, `fitLoginDoor`           | One placed mesh                                 | Its foot and its size, which the kit's measured shares divide                                                                                                                                                                                                               |
 | Cloud sprites, `fitCloudSprites` | A cloud atlas's alpha and red                   | Each cell's outline and lit crown as loops in its unit square; `createCloudAtlasTexture` paints them into an atlas of our own at run time                                                                                                                                   |
-| Horizon band, `fitHorizonBand`   | The sky gradient's red curve                    | The end of the smoothstep that falls as it does, by least squares: how far up the zenith's colour takes over                                                                                                                                                                |
-| Albedo, `fitAlbedo`              | Every part's diffuse texture                    | The median of each channel over all their texels, as one hex                                                                                                                                                                                                                |
+| Sky gradient, `fitSkyGradient`   | The sky gradient's red and green                | Each as evenly spaced samples across its width, its two rows averaged as the sky shader reads it at their middle; `createSkyGradientTexture` draws them back into a texture at run time                                                                                     |
+| Stone, `fitLoginStone`           | Each family's materials and their textures      | The median albedo of their diffuse textures (`fitAlbedo`), the median smoothness of their masks' red, and their specular colour and rim glow, per family                                                                                                                    |
 
 A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit filled it (a mesh's triangles, a texture's thresholded channel), and a part drawn at several levels of detail is fitted from its finest by one `readLevelOfDetailParts`. Every number is kept to the centimetre (`roundFitted`).
 
@@ -129,9 +129,9 @@ A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit fille
 | `Login/Scene` walkway             | `LoginScene_Bridge01_*` meshes                            | Fitted as a footprint and its two heights                            |
 | `Login/Scene` door                | The stage's `LoginScene_Door01_Vo`                        | Placed and sized by its mesh; stands once the flight reaches it      |
 | `Login/Scene` bridges and pillars | The stage's `LoginScene_Bridge02`–`04`, `Pillar03` meshes | Fitted as visual hulls, placed and turned where the game stands them |
-| `Login/Scene` stone               | Every `LoginScene_*_Diffuse`                              | Fitted as one albedo                                                 |
+| `Login/Scene` stone               | Each family's `LoginScene_*` materials and textures       | Fitted as a physically lit stone per family                          |
 | `Login/Scene` clouds              | The three `Enviro_Clouds_*_Particle_Atlas` textures       | Fitted as sprites; each band's spread measured off the captures      |
-| `Login/Scene` sky and haze        | `Enviro_Sky_Gradient`, the four skies' pixels             | Horizon band fitted; colours and light strengths measured            |
+| `Login/Scene` sky and haze        | `Enviro_Sky_Gradient`, the four skies' pixels             | Gradient fitted; colours and light strengths measured                |
 | `Login/Scene` broken pieces       | `LoginScene_Broken_*` meshes                              | Exported; no placement in the arrangements shown                     |
 
 ## Key files

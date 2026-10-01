@@ -5,6 +5,7 @@ import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
 import { readReferenceGbuffer } from "#src/services/genshinParity/readReferenceGbuffer";
 import { toPageCamera } from "#src/services/genshinParity/toPageCamera";
 import { writeOverlay } from "#src/services/genshinParity/writeOverlay";
+import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { defineCommand } from "citty";
 
 export const overlayCommand: SubCommandsDef[string] = defineCommand({
@@ -25,7 +26,7 @@ export const overlayCommand: SubCommandsDef[string] = defineCommand({
     const { gbuffer, image } = await readReferenceGbuffer(
       args.reference,
       parseDerivedAssetComponent(args.witness),
-      args.pose ? toPageCamera(args.pose.split(",").map(Number)) : undefined,
+      args.pose ? toPageCamera(parseNumbers(args.pose, "pose", CAMERA_POSE_AXES.length)) : undefined,
     );
     const { families, path } = await writeOverlay(args.reference, { gbuffer, image });
     for (const { distance, name, pixelCount } of families)

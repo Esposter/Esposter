@@ -13,6 +13,7 @@ describe(composeAssetPlacements, () => {
     );
 
     expect(child).toStrictEqual({
+      father: toObjectKey("", "1"),
       materials: ["b"],
       mesh: "a",
       name: "2",

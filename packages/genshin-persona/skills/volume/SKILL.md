@@ -8,7 +8,7 @@ disable-model-invocation: true
 # Volume
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" volume $ARGUMENTS
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" volume $ARGUMENTS
 ```
 
 Relay its lines as written.

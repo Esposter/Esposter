@@ -5,6 +5,7 @@ import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
 import { readReferenceGbuffer } from "#src/services/genshinParity/readReferenceGbuffer";
 import { toPageCamera } from "#src/services/genshinParity/toPageCamera";
 import { writeWitnessGbuffer } from "#src/services/genshinParity/writeWitnessGbuffer";
+import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { defineCommand } from "citty";
 
 export const gbufferCommand: SubCommandsDef[string] = defineCommand({
@@ -25,7 +26,7 @@ export const gbufferCommand: SubCommandsDef[string] = defineCommand({
     const { gbuffer, shot } = await readReferenceGbuffer(
       args.reference,
       parseDerivedAssetComponent(args.witness),
-      args.pose ? toPageCamera(args.pose.split(",").map(Number)) : undefined,
+      args.pose ? toPageCamera(parseNumbers(args.pose, "pose", CAMERA_POSE_AXES.length)) : undefined,
     );
     const drawn = gbuffer.part.filter((_, index) => index % 4 === 0 && gbuffer.part[index] !== 0).length;
     console.log(

@@ -283,7 +283,7 @@ const japanese: Localization = {
   },
   locale: "ja-JP",
   strings: {
-    birthdayNote: (date, distance) => `[誕生日：${date}、${distance}]`,
+    birthdayNote: (label, date, distance) => `[${label}：${date}、${distance}]`,
     interfaceLanguageSet: (language) =>
       `この返信からプラグインの表示はすべて${language}になります。スピナーは次のセッションから変わります。`,
     languageMustBeOneOf: (languages) => `言語は次のいずれかを指定してください：${languages}。`,
@@ -346,7 +346,7 @@ const japanese: Localization = {
       "ステータスライン、スピナー、読み上げフックをユーザー設定から削除しました。いずれも次のセッションで消えます。音声のランタイム、重み、参照音声、吹き替え設定も削除しました。選択履歴、ピン留め、言語設定は残ります。",
     unmuted: "音声の読み上げを再開しました。",
     upcomingBirthdays: (list) => `今週の誕生日：${list}。`,
-    usage: (verbs) => `使い方：genshin.ts <${verbs}> [名前]`,
+    usage: (verbs) => `使い方：genshin.mjs <${verbs}> [名前]`,
     usingInSession: "このセッションに限り、この返信からこのキャラクターとして話します。",
     voiceLanguageAvailable: (dub) =>
       `この言語の吹き替え（${dub}）があります。voiceコマンドで導入すると返信がその声で読み上げられます。`,

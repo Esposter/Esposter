@@ -5,6 +5,7 @@ import { calibrateScene } from "#src/services/genshinParity/calibrateScene";
 import { CAMERA_POSE_AXES, GBUFFER_DIRECTORY } from "#src/services/genshinParity/constants";
 import { readReferenceGbuffer } from "#src/services/genshinParity/readReferenceGbuffer";
 import { toPageCamera } from "#src/services/genshinParity/toPageCamera";
+import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { defineCommand } from "citty";
 import { existsSync } from "node:fs";
 import { readdir, writeFile } from "node:fs/promises";
@@ -31,7 +32,7 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
     const { gbuffer, image } = await readReferenceGbuffer(
       args.reference,
       parseDerivedAssetComponent(args.witness),
-      args.pose ? toPageCamera(args.pose.split(",").map(Number)) : undefined,
+      args.pose ? toPageCamera(parseNumbers(args.pose, "pose", CAMERA_POSE_AXES.length)) : undefined,
     );
     const lutPaths =
       args.luts && existsSync(args.luts)
