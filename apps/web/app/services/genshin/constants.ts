@@ -5,6 +5,8 @@ export const RICKROLL_DELAY = Temporal.Duration.from({ seconds: 3 });
 export const RICKROLL_PROBE_TIMEOUT = Temporal.Duration.from({ seconds: 10 });
 export const RICKROLL_BILIBILI_URL =
   "https://player.bilibili.com/player.html?bvid=BV1UT42167xb&autoplay=1&danmaku=0&high_quality=1";
+export const RICKROLL_YOUTUBE_ORIGIN = "https://www.youtube-nocookie.com";
 // A small file on the embed's own host, so the probe answers for exactly the host the player loads from
-export const RICKROLL_YOUTUBE_PROBE_URL = "https://www.youtube-nocookie.com/favicon.ico";
-export const RICKROLL_YOUTUBE_URL = "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1";
+export const RICKROLL_YOUTUBE_PROBE_URL = `${RICKROLL_YOUTUBE_ORIGIN}/favicon.ico`;
+// Played on the page's command rather than on load, which the frame API takes
+export const RICKROLL_YOUTUBE_URL = `${RICKROLL_YOUTUBE_ORIGIN}/embed/dQw4w9WgXcQ?enablejsapi=1`;

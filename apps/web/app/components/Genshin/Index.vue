@@ -1,13 +1,6 @@
 <script setup lang="ts">
-import {
-  RICKROLL_BILIBILI_URL,
-  RICKROLL_DELAY,
-  RICKROLL_PROBE_TIMEOUT,
-  RICKROLL_YOUTUBE_PROBE_URL,
-  RICKROLL_YOUTUBE_URL,
-} from "@/services/genshin/constants";
+import { RICKROLL_PROBE_TIMEOUT, RICKROLL_YOUTUBE_PROBE_URL } from "@/services/genshin/constants";
 import { checkIsReachable } from "@/util/network/checkIsReachable";
-import { promiseTimeout } from "@vueuse/core";
 import { GameLanguageTagMap, GameTextKey } from "genshin-text";
 import { GameOpening } from "genshin-world";
 
@@ -25,37 +18,24 @@ const gameText = await useGameText();
 // That blocks YouTube, in mainland China or anywhere else, gets Bilibili's upload, as does one that has not answered
 const isYouTubeReachable = ref(false);
 const isRickrollStarted = ref(false);
-const rickrollUrl = ref("");
 onMounted(async () => {
   isYouTubeReachable.value = await checkIsReachable(RICKROLL_YOUTUBE_PROBE_URL, RICKROLL_PROBE_TIMEOUT);
 });
-const startRickroll = async () => {
-  isRickrollStarted.value = true;
-  await promiseTimeout(RICKROLL_DELAY.total("milliseconds"));
-  rickrollUrl.value = isYouTubeReachable.value ? RICKROLL_YOUTUBE_URL : RICKROLL_BILIBILI_URL;
-};
 </script>
 
 <template>
-  <div v-if="isRickrollStarted" bg-white size-full>
-    <!-- Either player refuses to play without the embedding page's origin, which nuxt-security's no-referrer policy -->
-    <!-- Withholds -->
-    <iframe
-      v-if="rickrollUrl"
-      :src="rickrollUrl"
-      title="Never Gonna Give You Up"
-      allow="autoplay; encrypted-media"
-      b-none
-      size-full
-      referrerpolicy="strict-origin-when-cross-origin"
-    />
-  </div>
+  <GenshinRickroll v-if="isRickrollStarted" :is-you-tube-reachable="isYouTubeReachable || undefined" />
   <div v-else size-full relative of-hidden>
     <ClientOnly>
       <LazyGenshinWorld @load="isWorldLoaded = true" @ready="isWorldReady = true" />
     </ClientOnly>
     <div v-if="isOpeningShown" :lang="GameLanguageTagMap[gameText.language]" inset-0 absolute z-1>
-      <GameOpening :game-text="gameText.text" :progress @begin="startRickroll()" @finish="isOpeningShown = false" />
+      <GameOpening
+        :game-text="gameText.text"
+        :progress
+        @begin="isRickrollStarted = true"
+        @finish="isOpeningShown = false"
+      />
       <!-- The world's loading is shown by no words of the opening's, so it is announced to a screen reader alone -->
       <p role="status" sr-only>
         {{ gameText.text[isWorldReady ? GameTextKey.Ready : GameTextKey.Loading] }}
