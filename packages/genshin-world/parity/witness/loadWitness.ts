@@ -5,7 +5,7 @@ import { SUBMESH_INDEX_REGEX } from "#parity/witness/constants";
 import { createWitnessMaterial } from "#parity/witness/createWitnessMaterial";
 import { WitnessProperty } from "#parity/witness/WitnessProperty";
 import { WitnessShading } from "#parity/witness/WitnessShading";
-import { Group, Mesh, MeshStandardMaterial, NoColorSpace, SRGBColorSpace, TextureLoader } from "three";
+import { Group, Mesh, MeshStandardMaterial, NoColorSpace, RepeatWrapping, SRGBColorSpace, TextureLoader } from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 
 // The slots whose textures are colours; every other slot holds data (a normal, a mask) and is read linearly
@@ -34,6 +34,10 @@ export const loadWitness = async (
       textureSlots.map(async ([slot, { name }]) => {
         const loaded = await textureLoader.loadAsync(getUrl(`Texture2D/${name}.png`));
         loaded.colorSpace = COLOR_SLOTS.has(slot) ? SRGBColorSpace : NoColorSpace;
+        // Tiled past its edges as Unity samples it, since a part's coordinates run past 0 and 1 where it repeats its
+        // Texture (the walkway's bricks), and clamped they smear its edge's texels into streaks
+        loaded.wrapS = RepeatWrapping;
+        loaded.wrapT = RepeatWrapping;
         return [name, loaded] as const;
       }),
     ),
