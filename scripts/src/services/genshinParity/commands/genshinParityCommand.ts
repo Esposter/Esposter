@@ -1,6 +1,7 @@
 import type { CommandDef } from "citty";
 
 import { attributeCommand } from "#src/services/genshinParity/commands/attributeCommand";
+import { calibrateCommand } from "#src/services/genshinParity/commands/calibrateCommand";
 import { compareCommand } from "#src/services/genshinParity/commands/compareCommand";
 import { fetchCommand } from "#src/services/genshinParity/commands/fetchCommand";
 import { framesCommand } from "#src/services/genshinParity/commands/framesCommand";
@@ -27,6 +28,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     compare: compareCommand,
     attribute: attributeCommand,
     gbuffer: gbufferCommand,
+    calibrate: calibrateCommand,
     overlay: overlayCommand,
     pose: poseCommand,
     track: trackCommand,

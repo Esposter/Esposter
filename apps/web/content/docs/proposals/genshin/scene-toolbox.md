@@ -1,6 +1,6 @@
 ---
 title: Scene toolbox
-description: Proposal — the tools that make each unknown of a 3D scene answerable on its own, so a scene is solved rather than searched and converges in a pass or two the way the interface does. The grade, fog and light are fitted by regression over the witness's G-buffer. Superseded searches are deleted.
+description: Proposal — the tools that make each unknown of a 3D scene answerable on its own, so a scene is solved rather than searched and converges in a pass or two the way the interface does. Each shader program is written as HLSL beside its assembly. Superseded searches are deleted.
 model: claude-opus-5-5
 ---
 
@@ -41,26 +41,15 @@ flowchart TD
 
 ## The tools
 
-### 1. Calibration by regression
-
-`genshin:parity calibrate <reference> --witness <component>` fits each frame-wide term by least squares over the pixels its mask selects, in the order light meets the eye, holding each fitted term for the next:
-
-- **Light.** Over the stone, a pixel's linear colour is its albedo times the sun's colour times its lit share plus the ambient light by its normal. Given the sun's direction, the sun's and the ambient's colours are linear in the pixels. The direction is the one outer solve, over two angles, seeded by what the scene's placements of `Sun`, `Moon` and `MainLight` give.
-- **Fog.** Over every masked pixel, the reference's colour is the lit colour blended toward the fog's colour by a factor of depth and height, so the fog's colour, density and height falloff follow from the pixels against the G-buffer's depth.
-- **Grade.** Over pixels whose linear colour the steps above predict, the display transform from linear to the reference's pixels is fitted, and each of the game's grading tables (`Stages_*_LUT`) is scored against it, which names the table the login's fieldless profile uses where its raw bytes do not.
-
-Each term prints its values and its residual, and a scene writes them as constants citing the reference they were fitted on. This replaces measuring light over a hand-picked patch and searching a strength until the frame's mean drops.
-
-### 2. Shader reading
+### 1. Shader reading
 
 The `shaders` step already disassembles each program. It also writes each program as HLSL beside its assembly, through 3Dmigoto's command-line decompiler, fetched as a pinned release checked by SHA-256 the way FFmpeg is, with the constant names `annotateProgramConstants` recovers substituted in. The atmosphere, the cloud layer, the cloud particles and the uber pass are then ported to TSL from readable code instead of from assembly. If no pinned release of the decompiler is published, it is built from its source into the same cache, and failing that the annotated assembly stays the source.
 
 ## Scope
 
 ```text
-scripts/src/services/genshinParity/
-  calibrateScene.ts             ← light, fog and grade by least squares
-  commands/calibrateCommand.ts
+scripts/src/services/genshinAssets/
+  extractComponentShaders.ts    ← each program's HLSL beside its assembly
 ```
 
 Deleted once superseded: `fitAlbedo.ts`, once the stone's material is fitted.
