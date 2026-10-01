@@ -4,6 +4,7 @@ import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDer
 import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
 import { labelWitnessParts } from "#src/services/genshinParity/labelWitnessParts";
 import { toPageCamera } from "#src/services/genshinParity/toPageCamera";
+import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { defineCommand } from "citty";
 
 export const partsCommand: SubCommandsDef[string] = defineCommand({
@@ -26,7 +27,7 @@ export const partsCommand: SubCommandsDef[string] = defineCommand({
       args.reference,
       parseDerivedAssetComponent(args.witness),
       args.family,
-      args.pose ? toPageCamera(args.pose.split(",").map(Number)) : undefined,
+      args.pose ? toPageCamera(parseNumbers(args.pose, "pose", CAMERA_POSE_AXES.length)) : undefined,
     );
     for (const [index, { mesh, pixel, position }] of parts.entries())
       console.log(

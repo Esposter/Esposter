@@ -10,18 +10,19 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
 const AXES = ["x", "y", "z"] as const;
+// A period's range parsed whole, an unknown axis or a step that never advances the phase rejected rather than read
+// As z or left to hang the scan
 const toScan = (scan: string): { axis: 0 | 1 | 2; from: number; step: number; to: number } => {
-  const [axis = "z", from = "0", to = "0", step = "1"] = scan.split(":");
+  const [axis = "", ...range] = scan.split(":");
   const axisIndex = AXES.findIndex((name) => name === axis);
-  return {
-    axis: axisIndex === -1 ? 2 : (axisIndex as 0 | 1 | 2),
-    from: Number(from),
-    step: Number(step),
-    to: Number(to),
-  };
+  if (axisIndex === -1)
+    throw new InvalidOperationError(Operation.Read, "scan", `${axis} is not one of ${AXES.join(",")}`);
+  const [from = 0, to = 0, step = 0] = parseNumbers(range.join(","), "scan", 3);
+  if (step <= 0) throw new InvalidOperationError(Operation.Read, "scan", `${step} is not a positive step`);
+  return { axis: axisIndex as 0 | 1 | 2, from, step, to };
 };
 const toPoint = (point: string): [number, number, number] => {
-  const [x = 0, y = 0, z = 0] = point.split(",").map(Number);
+  const [x = 0, y = 0, z = 0] = parseNumbers(point, "start", 3);
   return [x, y, z];
 };
 export const placeCommand: SubCommandsDef[string] = defineCommand({
