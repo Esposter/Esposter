@@ -32,6 +32,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "browser-execution",
       "singleton-dialogs",
       "third-party-document-adapters",
+      "third-party-reachability",
       "navigation",
       "search",
     ],

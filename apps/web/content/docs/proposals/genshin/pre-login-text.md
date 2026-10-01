@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Pre-login text
 
-Built on [game text](/docs/genshin/game-text), which already serves the game's own words in fifteen languages by the id the game files them under. The opening reads every other word from it, the health notice, the login title, the door's prompt, the account label and the status lines under the progress bar among them, since the text map carries them although the client shows them before it loads its data. One does not appear in any text map: the welcome card's "Welcome,". It lives in a store of the client's own that no community dump carries, so `genshin-world` keeps it as the English client's word.
+Built on [game text](/docs/genshin/game-text), which already serves the game's own words in fifteen languages by the id the game files them under. The opening reads every other word from it, the health notice, the login title, the door's prompt, the account label and the status lines under the progress bar among them, since the text map carries them even though they are on screen before the client has read its data. One does not appear in any text map: the welcome card's "Welcome,". No community dump carries the client-side store holding it, so `genshin-world` keeps it as the English client's word.
 
 ## How it would work
 
