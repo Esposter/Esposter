@@ -94,7 +94,7 @@ interface Props {
 }
 
 const { isDoorLit, stage, timeOfDay } = defineProps<Props>();
-const emit = defineEmits<{ ready: [] }>();
+const emit = defineEmits<{ doorFormed: []; ready: [] }>();
 // The frames drawn before the scene is said to be ready: WebGPU compiles each pipeline on first use, so the first few
 // Frames can come out before every material has. A scene mounted at the door is ready only once the door has risen
 const READY_FRAME_COUNT = 10;
@@ -224,6 +224,7 @@ const gradeLutTexture = createGradeLutTexture(LOGIN_GRADE_OPTIONS);
 usePostPipeline(QualityTier.High, { fogUniforms, godraysLight, gradeLutTexture, postUniforms }, skyUniforms);
 let renderedFrameCount = 0;
 let isReadyEmitted = false;
+let isDoorFormed = false;
 // How long the door has been lit, which the rush toward it follows, and how long it has been rising into place
 const rushMs = shallowRef(0);
 const riseMs = shallowRef(0);
@@ -294,6 +295,11 @@ onRender(({ delta: frameDelta }) => {
   rushMs.value = isDoorLit ? rushMs.value + delta * 1000 : 0;
   isDoorRising.value = checkIsDoorDue() && (isDoorRising.value || doorAheadOfCamera <= LOGIN_WALKWAY_SUNK_DISTANCE);
   riseMs.value = isDoorRising.value ? riseMs.value + delta * 1000 : 0;
+  // The door's own interface waits on the door, once it has risen into place
+  if (!isDoorFormed && isDoorRising.value && riseMs.value >= doorRiseMs) {
+    isDoorFormed = true;
+    emit("doorFormed");
+  }
   renderedFrameCount++;
   if (isReadyEmitted || renderedFrameCount < READY_FRAME_COUNT || (checkIsDoorDue() && riseMs.value < doorRiseMs))
     return;
