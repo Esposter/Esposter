@@ -1,41 +1,46 @@
 <script setup lang="ts">
-import {
-  RICKROLL_BILIBILI_URL,
-  RICKROLL_DELAY,
-  RICKROLL_YOUTUBE_ORIGIN,
-  RICKROLL_YOUTUBE_URL,
-} from "@/services/genshin/constants";
+import { RICKROLL_BILIBILI_URL, RICKROLL_YOUTUBE_ORIGIN, RICKROLL_YOUTUBE_URL } from "@/services/genshin/constants";
 
 interface Props {
+  // Whether the opening has finished, which the player waits on, mounted under the startup loading screen until then
+  isShown?: true;
   // Whether the reader's network answered YouTube as the page loaded
   isYouTubeReachable?: true;
 }
 
-const { isYouTubeReachable } = defineProps<Props>();
-// What the login's door opens onto for now: white, then Rick Astley. A browser lets a frame play with sound only for a
-// Few seconds after a click, so YouTube's player is mounted at once, hidden under the white, and is told to play the
-// Moment the white ends, already loaded; mounted only then, its load ran past that window and it played muted.
-// Bilibili's player takes no command, so it mounts as the white ends and plays itself
+const { isShown, isYouTubeReachable } = defineProps<Props>();
+const emit = defineEmits<{ load: []; ready: [] }>();
+// What the login's door opens onto for now: Rick Astley, loaded under the startup loading screen the way the world
+// Would be, whose marks follow it, and played as that screen's white gives way. YouTube's player loads hidden and is
+// Told to play through its frame API, so it starts at once, while the door's click is still fresh enough for the
+// Browser to let it play with sound. Bilibili's player takes no command, so it has nothing to load ahead and mounts as
+// It is shown, playing itself
 const player = useTemplateRef("player");
-const isShown = ref(false);
 const isYouTubeReady = ref(false);
 const sendYouTubeCommand = (data: object) => {
   player.value?.contentWindow?.postMessage(JSON.stringify(data), RICKROLL_YOUTUBE_ORIGIN);
 };
 const playYouTube = () => {
-  if (!isShown.value || !isYouTubeReady.value) return;
+  if (!isShown || !isYouTubeReady.value) return;
   sendYouTubeCommand({ args: [], event: "command", func: "playVideo" });
 };
 // Whatever the player sends once it has heard the page listening says its commands are taken
 useEventListener(window, "message", (event: MessageEvent) => {
   if (event.origin !== RICKROLL_YOUTUBE_ORIGIN || isYouTubeReady.value) return;
   isYouTubeReady.value = true;
+  emit("ready");
   playYouTube();
 });
-useTimeoutFn(() => {
-  isShown.value = true;
-  playYouTube();
-}, RICKROLL_DELAY.total("milliseconds"));
+watch(
+  () => isShown,
+  () => {
+    playYouTube();
+  },
+);
+onMounted(() => {
+  emit("load");
+  if (!isYouTubeReachable) emit("ready");
+});
 </script>
 
 <template>
