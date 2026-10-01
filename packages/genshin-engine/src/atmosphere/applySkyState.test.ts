@@ -1,6 +1,7 @@
 import type { SkyTargets } from "#src/atmosphere/SkyTargets";
 
 import { applySkyState } from "#src/atmosphere/applySkyState";
+import { DEFAULT_SKY_SHAPE } from "#src/atmosphere/constants";
 import { createSkyState } from "#src/atmosphere/createSkyState";
 import { createSkyUniforms } from "#src/atmosphere/createSkyUniforms";
 import { createLightUniforms } from "#src/nodes/createLightUniforms";
@@ -54,5 +55,19 @@ describe(applySkyState, () => {
     applySkyState({ ...skyState, fogColor: new Color(0x00ff00) }, skyTargets);
 
     expect(skyTargets.fogUniforms.color.value.getHex()).toBe(0x00ff00);
+  });
+
+  test("writes a state's own sky shape, and the default's back for a state with none", () => {
+    expect.hasAssertions();
+
+    const skyTargets = createSkyTargets();
+    const shape = { frontBackBlend: 0.5, haloHeight: 0.4, horizonBand: 0.9, moonSize: 2, sunHaloSize: 3 };
+    applySkyState({ ...createSkyState(), shape }, skyTargets);
+
+    expect(skyTargets.skyUniforms.horizonBand.value).toBe(shape.horizonBand);
+
+    applySkyState(createSkyState(), skyTargets);
+
+    expect(skyTargets.skyUniforms.horizonBand.value).toBe(DEFAULT_SKY_SHAPE.horizonBand);
   });
 });

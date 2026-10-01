@@ -20,6 +20,9 @@ const NIGHT_MOON_DIRECTION = getLoginScreenDirection([0.27, 0.11]);
 // So the direction is the one of 44, 60 and 80 degrees that scores best on the door recording and the dusk still
 const DUSK_LIGHT_DIRECTION = new Vector3(0.837, 0.259, 0.483);
 
+// The dusk's sky is solved as the game's sky shader draws it over the door recording's clear sky (genshin:parity sky,
+// The pixels standing brighter than the solved sky left out as its clouds), its colours with its own shape, which
+// Scores both the recording and the dusk still better than its colours read off the still by eye.
 // Each time of day's sky and light, its colours read off its reference: the gradient's zenith and horizon, the haze
 // Over the cloud sea (the mean of its brightest two samples low in the frame), the clouds,
 // And the sun or the moon the light comes from.
@@ -70,14 +73,19 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     hemisphereGroundColor: new Color(0xab6db4),
     hemisphereIntensity: 2.08,
     hemisphereSkyColor: new Color(0xffd8de),
-    horizonColor: new Color(0xf2b08a),
+    haloColor: new Color(0x8c0000),
+    horizonBackColor: new Color(0x393f63),
+    horizonColor: new Color(0xac6500),
     lightColor: new Color(0xffecc7),
     lightDirection: DUSK_LIGHT_DIRECTION,
     lightIntensity: 26.19,
     moonDirection: DUSK_SUN_DIRECTION.clone().negate(),
+    shape: { frontBackBlend: 1, haloHeight: 0.404, horizonBand: 0.872, moonSize: 1.255, sunHaloSize: 1 },
     starIntensity: 0,
     sunDirection: DUSK_SUN_DIRECTION,
-    zenithColor: new Color(0x7e5485),
+    sunHaloColor: new Color(0x5e1e48),
+    zenithBackColor: new Color(0x77598b),
+    zenithColor: new Color(0x16425b),
   },
   [LoginTimeOfDay.Night]: {
     cloudLitColor: new Color(0x56b0f5),

@@ -1,5 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import type { SkyShape } from "#src/services/genshinParity/fitSky";
+import type { SkyShape } from "genshin-engine";
 
 import { readWorldData } from "#src/services/genshinAssets/readWorldData";
 import { PARITY_DIRECTORY } from "#src/services/genshinParity/constants";

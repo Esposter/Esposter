@@ -1,6 +1,7 @@
 import type { SkyState } from "#src/atmosphere/SkyState";
 import type { SkyTargets } from "#src/atmosphere/SkyTargets";
 
+import { DEFAULT_SKY_SHAPE } from "#src/atmosphere/constants";
 import { toSceneColor } from "#src/post/toSceneColor";
 import { Color, Vector3 } from "three";
 
@@ -47,6 +48,12 @@ export const applySkyState = (
   skyUniforms.starIntensity.value = skyState.starIntensity;
   skyUniforms.sunDirection.value.copy(skyState.sunDirection);
   skyUniforms.zenithColor.value.copy(toSceneColor(skyState.zenithColor));
+  const { frontBackBlend, haloHeight, horizonBand, moonSize, sunHaloSize } = skyState.shape ?? DEFAULT_SKY_SHAPE;
+  skyUniforms.frontBackBlend.value = frontBackBlend;
+  skyUniforms.haloHeight.value = haloHeight;
+  skyUniforms.horizonBand.value = horizonBand;
+  skyUniforms.moonSize.value = moonSize;
+  skyUniforms.sunHaloSize.value = sunHaloSize;
   godraysDirection.subVectors(godraysLight.position, godraysLight.target.position).normalize();
   // A light still standing on its target has no direction, which fails the test, so the first call places it
   if (godraysDirection.dot(lightDirection) >= GODRAYS_REDRAW_COSINE) return;
