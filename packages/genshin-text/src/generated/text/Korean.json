@@ -6,11 +6,13 @@
   "1285204118": "업데이트 체크 중…",
   "1737243758": "경고: 게임 플레이 전 숙지하세요",
   "2272745789": "사용자",
+  "3231160485": "抵制不良游戏，拒绝盗版游戏，注意自我保护，谨防受骗上当，适度游戏益脑，沉迷游戏伤身，合理安排时间，享受健康生活。\n审批文号：国新出审[2020]1407号   ISBN 978-7-498-07852-0  出版单位：华东师范大学电子音像出版社有限公司\n著作权人：上海米哈游天命科技有限公司\n本公司积极履行《网络游戏行业防沉迷自律公约》",
   "3535917252": "PRESS TO START",
   "3574932777": "게임 시작",
   "INFORMATION_AVATAR_BIRTHDAY": "생일",
   "LANGUAGE_WINDOWS_TITLENAME": "원신",
   "ONLINE_DUNGEON_GUEST_IS_READY": "준비 완료",
   "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "로딩 중",
-  "UI_TEXT_QUEST_GUIDE_LABEL": "여행자"
+  "UI_TEXT_QUEST_GUIDE_LABEL": "여행자",
+  "tips_enter_game": "%s 님, 게임에 오신 걸 환영합니다"
 }

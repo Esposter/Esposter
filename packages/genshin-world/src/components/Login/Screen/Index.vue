@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
 import type { TresRendererSetupContext } from "@tresjs/core";
-import type { GameText } from "genshin-text";
+import type { GameLanguage, GameText } from "genshin-text";
 
 import LoginInterface from "#src/components/Login/Interface/Index.vue";
 import LoginScene from "#src/components/Login/Scene/Index.vue";
@@ -17,7 +17,6 @@ import {
   LOGIN_STATUS_STEPS,
   LOGIN_TITLE_START_MS,
   LOGIN_TRAVELER_GENDER,
-  LOGIN_WELCOME_HOLD_MS,
 } from "#src/services/login/constants";
 import { checkIsNestedInteraction } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
@@ -33,6 +32,8 @@ interface Props {
   gameText: GameText;
   // The scene alone, as the wiki's clean captures of it show it, for a reference to be scored against
   isInterfaceHidden?: true;
+  // The reader's language, whose client's interface the screen shows
+  language: GameLanguage;
   playerName?: string;
   // How far loading has gone, from 0 to 1, which the bar shows and the flight to the door follows, ending a fixed time after
   // It is done
@@ -40,7 +41,7 @@ interface Props {
   timeOfDay: LoginTimeOfDay;
 }
 
-const { gameText, isInterfaceHidden, playerName, progress, timeOfDay } = defineProps<Props>();
+const { gameText, isInterfaceHidden, language, playerName, progress, timeOfDay } = defineProps<Props>();
 // The name the screen welcomes the player by, the game's own word for the Traveler until they have chosen one
 const shownPlayerName = computed(
   () => playerName || fillLinePlaceholders(gameText[GameTextKey.Traveler], "", LOGIN_TRAVELER_GENDER),
@@ -51,7 +52,6 @@ const emit = defineEmits<{ begin: []; ready: [] }>();
 // Says the white is up. A host pins a stage with `v-model:stage` to show it held, as the parity page does
 const stage = defineModel<LoginStage>("stage", { default: LoginStage.Arriving });
 const isSpinnerShown = ref(false);
-const isWelcomeShown = ref(false);
 // Whether the door has risen into place, which the door's own interface waits on
 const isDoorFormed = ref(false);
 const statusStep = ref(LoginStatusStep.PreparingDownload);
@@ -71,9 +71,6 @@ const { start: showTitle } = useTimeoutFn(
   LOGIN_TITLE_START_MS,
   { immediate: false },
 );
-const { start: hideWelcome } = useTimeoutFn(() => (isWelcomeShown.value = false), LOGIN_WELCOME_HOLD_MS, {
-  immediate: false,
-});
 const statusTimeouts = LOGIN_STATUS_STEPS.map(({ ms, step }) =>
   useTimeoutFn(() => (statusStep.value = step), ms, { immediate: false }),
 );
@@ -104,9 +101,6 @@ watchImmediate(stage, (newStage) => {
   if (newStage === LoginStage.Arriving) {
     showSpinner();
     showTitle();
-  } else if (newStage === LoginStage.Title) {
-    isWelcomeShown.value = true;
-    hideWelcome();
   } else if (newStage === LoginStage.Preparing) {
     for (const { start } of statusTimeouts) start();
     flyOn();
@@ -139,9 +133,9 @@ const onClick = (event: MouseEvent): void => {
     <LoginInterface
       v-if="!isInterfaceHidden"
       :game-text
+      :language
       :is-door-waiting="stage === LoginStage.Door && !isDoorFormed ? true : undefined"
       :is-spinner-shown
-      :is-welcome-shown
       :player-name="shownPlayerName"
       :progress="shownProgress"
       :stage

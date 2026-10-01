@@ -11,6 +11,7 @@ import { fitLoginStone } from "#src/services/genshinAssets/fitLoginStone";
 import { fitLoginTowers } from "#src/services/genshinAssets/fitLoginTowers";
 import { fitLoginWalkway } from "#src/services/genshinAssets/fitLoginWalkway";
 import { fitSkyGradient } from "#src/services/genshinAssets/fitSkyGradient";
+import { fitTitleLogos } from "#src/services/genshinAssets/fitTitleLogos";
 import { getComponentDirectory } from "#src/services/genshinAssets/getComponentDirectory";
 import { readComponentMaterials } from "#src/services/genshinAssets/readComponentMaterials";
 import { readComponentPlacements } from "#src/services/genshinAssets/readComponentPlacements";
@@ -30,7 +31,7 @@ export const fitLoginScene = async (): Promise<string> => {
   );
   const meshDirectory = join(directory.assets, "Mesh");
   const textureDirectory = join(directory.assets, "Texture2D");
-  const [towers, walkway, paving, door, hulls, clouds, skyGradient, stone] = await Promise.all([
+  const [towers, walkway, paving, door, hulls, clouds, skyGradient, stone, titleLogos] = await Promise.all([
     fitLoginTowers(placements, meshDirectory),
     fitLoginWalkway(placements, meshDirectory),
     fitLoginPaving(placements, meshDirectory, textureDirectory),
@@ -39,6 +40,7 @@ export const fitLoginScene = async (): Promise<string> => {
     fitLoginClouds(textureDirectory),
     fitSkyGradient(join(textureDirectory, "Enviro_Sky_Gradient.png")),
     fitLoginStone(await readComponentMaterials(DerivedAssetComponent.Login), textureDirectory),
+    fitTitleLogos(directory.root),
   ]);
   const scroll = Object.fromEntries(
     (DerivedAssetComponentMap[DerivedAssetComponent.Login].spawns ?? []).flatMap(({ copies, prefab }) =>
@@ -56,6 +58,7 @@ export const fitLoginScene = async (): Promise<string> => {
     writeWorldData("login/stone.json", stone),
     writeWorldData("login/scroll.json", scroll),
     writeWorldData("login/interfaceClips.json", fitInterfaceClips(clips)),
+    writeWorldData("splash/titleLogos.json", titleLogos),
   ]);
   return paths.join("\n");
 };

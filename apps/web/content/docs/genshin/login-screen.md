@@ -12,7 +12,7 @@ The game opens on its login screen once the health notice has faded. The console
 ```mermaid
 flowchart LR
   N[Health notice's white] --> A[Arriving: the scene fades up over 800 ms, the wait mark from 1.3 to 2 s]
-  A --> T[Title: START GAME, the server and the account, the welcome card for 1.9 s]
+  A --> T[Title: START GAME, the server and the account]
   T -->|a click| P[Preparing: the status steps, then the load's share and bar, the glide quickening]
   P -->|"flight flown and loading done"| D[Door: the glide comes to rest; once the door has formed, the four corner buttons, then CLICK TO BEGIN]
   D -->|a click| E[Entering: the door lights, the camera rushes to it, the screen whitens]
@@ -21,10 +21,11 @@ flowchart LR
 
 - **The stages are the game's current build's.** The user's own recording of the Japanese client times them and shows which corner buttons each stage has (the title's notices and exit, the door's settings, repair, notices and exit). A 1080 high English recording of an older build gives the words and every size. The status says "Preparing to download resources", "Checking for updates...", "Loading game..." over the ornament's double diamond, then "Preparing to load data" over the progress bar, which folds into its diamond at 100%.
 - **The flight follows loading, and the door comes once it is done.** The flight is the screen's own clock for the door, the share of the way to it flown. The share shown runs toward loading's own at no more than one full bar per tenth of a second, so a load that finishes at once still sweeps the bar rather than jumping. While loading, the flight goes the share of the way the English recording's does before its bar is full, about two thirds, no faster than its last stretch's pace, so a fast load glides. Once loading is done it flies whatever is left in the half second the bar takes to fold into its diamond and the status row to fade, and the door is due, however long the load before it took. The glide then carries the door's copy to the walkway's far end at its own pace, so the door rises on average about as long after the bar fills as the recording's does, 3 seconds.
+- **Mainland China's client marks its own screen.** A Simplified Chinese reader, who plays mainland China's build, sees its CADPA age rating (12 and over) in the top right corner at every stage, and its build string under the CNREL prefix. The rating's box and colours are measured off a public recording of that client's launch, its age and notice traced from it (`ageRating.json`) and its CADPA set in a serif; the build string is the current build's, its revision numbers the global build's, since no source publishes the mainland's own.
 - **A click is the screen's unless it lands on a button.** The screen asks `checkIsNestedInteraction` before it moves on, so a click on a corner button stays the button's.
 - **A host can pin a stage.** The stage is a `v-model`, so the parity page and a test hold one still, and the opening leaves it free.
-- **The opening says when the door is opened.** `GameOpening` emits `begin` as the screen hands on to the startup loading screen, so its host can act on the door rather than waiting for the world; for now the app's page uses it to hold the white for 3 seconds and play a rickroll in place of the world.
-- **The words are the reader's language's.** The title, the account label, the status lines, the door's prompt and the name a player who has not chosen one goes by are the game's own text in the language the host resolved, handed down as the `gameText` prop ([game text](/docs/genshin/game-text)); the welcome's greeting stays the English client's until [pre-login text](/docs/proposals/genshin/pre-login-text) ships.
+- **The opening says when the door is opened.** `GameOpening` emits `begin` as the screen hands on to the startup loading screen, so its host can act on the door rather than waiting for the world; for now the app's page opens it onto a [rickroll](/docs/genshin/rickroll).
+- **The words are the reader's language's.** The title, the account label, the status lines, the door's prompt and the name a player who has not chosen one goes by are the game's own text in the language the host resolved, handed down as the `gameText` prop ([game text](/docs/genshin/game-text)). The account kit's welcome card, which drops in as the game's player signs in, is not shown until the page has an account to welcome; its greeting is already the kit's own in every language, with the name where each language puts it.
 
 ## The scene
 

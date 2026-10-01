@@ -1,20 +1,22 @@
 <script setup lang="ts">
 import type { LoginStatusStep } from "#src/models/login/LoginStatusStep";
-import type { GameText } from "genshin-text";
+import type { GameLanguage, GameText } from "genshin-text";
 
 import LoginStatus from "#src/components/Login/Status/Index.vue";
+import ageRating from "#src/data/login/ageRating.json";
 import { LoginInterfaceRect } from "#src/models/login/LoginInterfaceRect";
 import { LoginStage } from "#src/models/login/LoginStage";
+import { GameClient } from "#src/models/splash/GameClient";
 import {
   LOGIN_DOOR_BUTTONS_DELAY_MS,
   LOGIN_DOOR_PROMPT_DELAY_MS,
   LOGIN_DOOR_PROMPT_FADE_MS,
   LOGIN_SERVER_NAME,
-  LOGIN_VERSION_TEXT,
   LOGIN_WELCOME_FADE_MS,
-  LOGIN_WELCOME_TEXT,
 } from "#src/services/login/constants";
+import { GameClientVersionTextMap } from "#src/services/login/GameClientVersionTextMap";
 import { LoginInterfaceRectMap } from "#src/services/login/interface/LoginInterfaceRectMap";
+import { GameLanguageGameClientMap } from "#src/services/splash/GameLanguageGameClientMap";
 import {
   GameScreen,
   InterfaceIcon,
@@ -35,6 +37,8 @@ interface Props {
   isDoorWaiting?: true;
   isSpinnerShown?: boolean;
   isWelcomeShown?: boolean;
+  // The reader's language, whose client's build string and age rating the screen shows
+  language: GameLanguage;
   playerName: string;
   // How far loading has gone, from 0 to 1
   progress: number;
@@ -42,8 +46,11 @@ interface Props {
   statusStep: LoginStatusStep;
 }
 
-const { gameText, isDoorWaiting, isSpinnerShown, isWelcomeShown, playerName, progress, stage, statusStep } =
+const { gameText, isDoorWaiting, isSpinnerShown, isWelcomeShown, language, playerName, progress, stage, statusStep } =
   defineProps<Props>();
+const client = computed(() => GameLanguageGameClientMap[language]);
+// The account kit's greeting, which places the player's name where its language puts it
+const welcome = computed(() => gameText[GameTextKey.LoginWelcome].replace("%s", playerName));
 // The login screen's interface over its scene, for the stage it is at: the title with the server and account under
 // It, the status as the game prepares, then the prompt at the door. The power button and the build string stay
 // Throughout; the corner buttons are the title's two and the door's four, as the game's current build shows them. A
@@ -60,11 +67,19 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
 <template>
   <GameScreen class="login-interface">
     <LoadingSpinner v-if="isSpinnerShown" class="spinner" />
+    <!-- Mainland China's age rating (CADPA, 12 and over), which its client keeps in the corner of every login stage -->
+    <svg v-if="client === GameClient.Mainland" class="age-rating" viewBox="0 0 84 110" role="img" aria-label="12+">
+      <rect width="84" height="110" rx="6" fill="#fff" />
+      <rect x="7" y="8" width="70" height="78" rx="4" fill="#178ed0" />
+      <path :d="ageRating.age" transform="translate(9 10) scale(0.125)" fill="#fff" />
+      <text x="42" y="83" class="age-rating-name">CADPA</text>
+      <path :d="ageRating.notice" transform="translate(2 87) scale(0.125)" fill="#111" />
+    </svg>
     <ToastNotice :class="['welcome', { shown: isWelcomeShown }]">
       <template #mark>
         <span class="initial">{{ playerName.charAt(0).toUpperCase() }}</span>
       </template>
-      {{ LOGIN_WELCOME_TEXT }} {{ playerName }}
+      {{ welcome }}
     </ToastNotice>
     <template v-if="stage === LoginStage.Title">
       <!-- A heading to a screen reader, drawn as a paragraph so no host's own heading styles reach it -->
@@ -97,7 +112,9 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
           <span class="user-name">{{ playerName }}</span>
         </p>
         <div :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.Version])">
-          <p class="version">{{ LOGIN_VERSION_TEXT }}</p>
+          <p class="version">
+            {{ GameClientVersionTextMap[client] }}
+          </p>
         </div>
       </div>
     </div>
@@ -140,6 +157,26 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
   font-size: calc(var(--unit) * 32);
   font-weight: 600;
   line-height: 1;
+}
+
+/* Mainland China's age rating, measured off its launch recording (`bili-av532052219`, 1080 high): 84 by 110 units,
+   65 in from the screen's right and 52 down, a blue panel inset 7 and 8 over a white band naming it */
+.age-rating {
+  position: absolute;
+  top: calc(var(--unit) * 52);
+  right: calc(var(--unit) * 65);
+  width: calc(var(--unit) * 84);
+}
+
+/* Its age and notice are traced off the recording at eight times its size (`genshin:parity trace`); its CADPA is
+   Set in a serif, whose thin strokes are too few of the recording's pixels to trace */
+.age-rating-name {
+  fill: #fff;
+  font-family: serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-anchor: middle;
 }
 
 .title,

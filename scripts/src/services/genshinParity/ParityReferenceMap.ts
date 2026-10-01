@@ -80,6 +80,16 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "LoginInterface",
     seconds: 5,
   },
+  // Mainland China's interface over its launch recording's own frame at 1080 high, the door not yet formed, scored over its
+  // Age rating alone: the recording is of an older build, whose build string sits apart from the current one's
+  "login-interface-mainland-rating": {
+    capture: "bili-av532052219.mp4",
+    isBackdrop: true,
+    props: { isDoorWaiting: true, isWelcomeShown: false, language: "ChineseSimplified", stage: "Door" },
+    region: { height: 150, width: 150, x: 1740, y: 30 },
+    screen: "LoginInterface",
+    seconds: 12.5,
+  },
   "login-interface-title": {
     capture: "yt-rBnfA4pXw6U.mp4",
     isBackdrop: true,
@@ -101,5 +111,12 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     region: { height: 300, width: 800, x: 560, y: 250 },
     screen: "SplashTitle",
     seconds: 13,
+  },
+  // Mainland China's splash, its 原神 logo with its licence under it, from a public recording of its launch at 1080p
+  "title-splash-mainland": {
+    capture: "bili-av532052219.mp4",
+    props: { language: "ChineseSimplified" },
+    screen: "SplashTitle",
+    seconds: 5,
   },
 };

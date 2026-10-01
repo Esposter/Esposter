@@ -6,25 +6,44 @@ import type { Component } from "vue";
 import SplashHealthNotice from "#src/components/Splash/HealthNotice/Index.vue";
 import SplashPublisher from "#src/components/Splash/Publisher/Index.vue";
 import SplashTitle from "#src/components/Splash/Title/Index.vue";
-import { HEALTH_NOTICE_TIMING, PUBLISHER_SPLASH_TIMING, TITLE_SPLASH_TIMING } from "#src/services/splash/constants";
+import { GameClient } from "#src/models/splash/GameClient";
+import {
+  HEALTH_NOTICE_TIMING,
+  MAINLAND_HEALTH_NOTICE_TIMING,
+  MAINLAND_TITLE_SPLASH_TIMING,
+  PUBLISHER_SPLASH_TIMING,
+  TITLE_SPLASH_TIMING,
+} from "#src/services/splash/constants";
+import { GameLanguageGameClientMap } from "#src/services/splash/GameLanguageGameClientMap";
 
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
-  // The reader's language, whose client's title logo the opening shows
+  // The reader's language, whose client's splashes and title logo the opening shows
   language: GameLanguage;
 }
 
 const { gameText, language } = defineProps<Props>();
 const emit = defineEmits<{ finish: [] }>();
-// The game's opening on white, one splash after another: the publisher's logo, the game's, then the health notice,
-// Each fading in, holding and fading out as the game's does, with the white it leaves held before the next. `finish`
-// Says the last white has held and the login screen may fade up out of it
-const splashes: { component: Component; props?: Record<string, unknown>; timing: SplashTiming }[] = [
-  { component: SplashPublisher, timing: PUBLISHER_SPLASH_TIMING },
-  { component: SplashTitle, props: { gameText, language }, timing: TITLE_SPLASH_TIMING },
-  { component: SplashHealthNotice, props: { gameText }, timing: HEALTH_NOTICE_TIMING },
-];
+// The game's opening on white, one splash after another as the reader's client shows them: the publisher's logo, the
+// Game's, then the health notice in the global client, and the game's straight away in mainland China's. Each fades
+// In, holds and fades out as the game's does, with the white it leaves held before the next. `finish` says the last
+// White has held and the login screen may fade up out of it
+const GameClientSplashesMap: Record<
+  GameClient,
+  { component: Component; props?: Record<string, unknown>; timing: SplashTiming }[]
+> = {
+  [GameClient.Global]: [
+    { component: SplashPublisher, timing: PUBLISHER_SPLASH_TIMING },
+    { component: SplashTitle, props: { gameText, language }, timing: TITLE_SPLASH_TIMING },
+    { component: SplashHealthNotice, props: { gameText }, timing: HEALTH_NOTICE_TIMING },
+  ],
+  [GameClient.Mainland]: [
+    { component: SplashTitle, props: { gameText, language }, timing: MAINLAND_TITLE_SPLASH_TIMING },
+    { component: SplashHealthNotice, props: { gameText }, timing: MAINLAND_HEALTH_NOTICE_TIMING },
+  ],
+};
+const splashes = GameClientSplashesMap[GameLanguageGameClientMap[language]];
 const splashIndex = ref(0);
 const splash = computed(() => splashes[splashIndex.value]);
 const stage = useTemplateRef("stage");

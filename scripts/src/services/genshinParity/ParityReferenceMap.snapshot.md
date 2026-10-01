@@ -16,7 +16,9 @@ committed.
 | `login-dusk` | `LoginScreen` | 21.19% | 0.318 | 15.10% | 0.6371 |
 | `login-interface-door` | `LoginInterface` | 0.63% | 0.986 | 0.43% | 0.0252 |
 | `login-interface-loading` | `LoginInterface` | 0.16% | 0.995 | 0.09% | 0.0061 |
+| `login-interface-mainland-rating` | `LoginInterface` | 3.44% | 0.959 | 2.39% | 0.1444 |
 | `login-interface-title` | `LoginInterface` | 0.35% | 0.997 | 0.23% | 0.0155 |
 | `login-night` | `LoginScreen` | 15.20% | 0.288 | 11.96% | 0.5381 |
 | `publisher-splash` | `SplashPublisher` | 0.46% | 1.000 | 0.77% | 0.0471 |
 | `title-splash` | `SplashTitle` | 1.27% | 1.000 | 0.25% | 0.0465 |
+| `title-splash-mainland` | `SplashTitle` | 1.45% | 0.992 | 0.18% | 0.0383 |

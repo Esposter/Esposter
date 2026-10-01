@@ -26,7 +26,6 @@ flowchart LR
 
 - The publisher splash where a client shows a different publisher's logo.
 - The health notice and login screen's layout where a recording shows a difference.
-- Not the welcome's greeting, which [pre-login text](/docs/proposals/genshin/pre-login-text) owns.
 
 ## Key files
 

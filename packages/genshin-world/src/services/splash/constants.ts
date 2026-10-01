@@ -29,3 +29,22 @@ export const HEALTH_NOTICE_TIMING: SplashTiming = {
   holdMs: 3350,
   whiteAfterMs: 267,
 };
+// The mainland client's splashes, read as curves (`luma`) off a public recording of its launch (`bili-av532052219`):
+// No publisher's logo, its title fading up out of white with its licence following a beat behind, and its health
+// Notice straight after, the same notice the global client shows
+export const MAINLAND_TITLE_SPLASH_TIMING: SplashTiming = {
+  fadeInEasing: "ease-in-out",
+  fadeInMs: 800,
+  fadeOutEasing: "ease-in-out",
+  fadeOutMs: 400,
+  holdMs: 2000,
+  whiteAfterMs: 0,
+};
+export const MAINLAND_HEALTH_NOTICE_TIMING: SplashTiming = {
+  fadeInEasing: "ease-in-out",
+  fadeInMs: 700,
+  fadeOutEasing: "ease-out",
+  fadeOutMs: 800,
+  holdMs: 2700,
+  whiteAfterMs: 300,
+};

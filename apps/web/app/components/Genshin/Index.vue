@@ -5,7 +5,8 @@ import { GameLanguageTagMap, GameTextKey } from "genshin-text";
 import { GameOpening } from "genshin-world";
 
 // The game as it plays: its opening at once, over the world loading behind it, the login screen's flight following
-// That loading, and the world once the opening's white has held. The world's code arriving and its first frame are
+// That loading, and the world once the opening's white has held. The world draws no frames while the opening covers
+// It, so the two never render at once. The world's code arriving and its first frame are
 // The two steps loading can see, since neither the lazy chunk nor the scene reports any finer progress
 const isWorldLoaded = ref(false);
 const isWorldReady = ref(false);
@@ -27,7 +28,11 @@ onMounted(async () => {
   <GenshinRickroll v-if="isRickrollStarted" :is-you-tube-reachable="isYouTubeReachable || undefined" />
   <div v-else size-full relative of-hidden>
     <ClientOnly>
-      <LazyGenshinWorld @load="isWorldLoaded = true" @ready="isWorldReady = true" />
+      <LazyGenshinWorld
+        :is-paused="isOpeningShown || undefined"
+        @load="isWorldLoaded = true"
+        @ready="isWorldReady = true"
+      />
     </ClientOnly>
     <div v-if="isOpeningShown" :lang="GameLanguageTagMap[gameText.language]" inset-0 absolute z-1>
       <GameOpening
