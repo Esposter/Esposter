@@ -3,7 +3,7 @@ import type { SubCommandsDef } from "citty";
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
 import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
 import { placeFamilies } from "#src/services/genshinParity/placeFamilies";
-import { placeFamiliesOnLandmarks } from "#src/services/genshinParity/placeFamiliesOnLandmarks";
+import { PLACE_AXES, placeFamiliesOnLandmarks } from "#src/services/genshinParity/placeFamiliesOnLandmarks";
 import { toPageCamera } from "#src/services/genshinParity/toPageCamera";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -29,6 +29,11 @@ export const placeCommand: SubCommandsDef[string] = defineCommand({
   args: {
     reference: { description: "A reference's id in ParityReferenceMap", required: true, type: "positional" },
     families: { description: "The families moved as one, comma-separated", type: "string" },
+    axes: {
+      default: PLACE_AXES.join(","),
+      description: `The axes a landmark placement moves, comma-separated, of ${PLACE_AXES.join(", ")}`,
+      type: "string",
+    },
     landmarks: {
       description:
         "Landmarks on the row instead of its edges, comma-separated, fitted through --pose with a turn as well",
@@ -68,7 +73,11 @@ export const placeCommand: SubCommandsDef[string] = defineCommand({
       const { errors, laidOutErrors, offset, rms, turn } = await placeFamiliesOnLandmarks(
         args.reference,
         parseDerivedAssetComponent(args.witness),
-        { landmarkNames: args.landmarks.split(","), pose: parseNumbers(args.pose, "pose", CAMERA_POSE_AXES.length) },
+        {
+          axes: args.axes.split(",") as (typeof PLACE_AXES)[number][],
+          landmarkNames: args.landmarks.split(","),
+          pose: parseNumbers(args.pose, "pose", CAMERA_POSE_AXES.length),
+        },
       );
       for (const [name, error] of Object.entries(errors))
         console.log(`${name}: ${(laidOutErrors[name] ?? 0).toFixed(2)} px laid out, ${error.toFixed(2)} px placed`);

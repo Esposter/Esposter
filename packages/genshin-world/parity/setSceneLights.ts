@@ -16,7 +16,7 @@ export const setSceneLights = (
     if (object instanceof HemisphereLight) {
       object.userData.ownIntensity ??= object.intensity;
       object.intensity = (object.userData.ownIntensity as number) * ambientShare;
-    } else if (object instanceof DirectionalLight && object.castShadow) {
+    } else if (object instanceof DirectionalLight) {
       object.userData.ownIntensity ??= object.intensity;
       // The god rays' own light casts the sun's shadow for them and lights nothing, so it is neither scaled nor read
       if (object.userData.ownIntensity === 0) return;

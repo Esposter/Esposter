@@ -39,7 +39,10 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     // Read off the recording: the dais's front feet on the walkway's top, the arch's apex, and the walkway's wings at
     // The top of their outer faces
     landmarks: {
+      columnCrown: [1083, 296],
       doorApex: [959, 416],
+      towerRightInner: [1455, 460],
+      towerRightOuter: [1830, 460],
       doorFootLeft: [852, 777],
       doorFootRight: [1069, 777],
       wingLeftBack: [710, 803],

@@ -9,7 +9,30 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // End and the near pair before them, at the top of their outer faces' front and back ends, the camera looking along
   // +z as ModelCamera turns
   [DerivedAssetComponent.Login]: {
+    columnCrown: { mesh: "LoginScene_Build01_01_Lod0", near: [-5, -25.7, 60.2], share: [0.5, 1, 0.5] },
     doorApex: { mesh: "LoginScene_Door01_Vo", share: [0.5, 1, 0.5] },
+      isEdge: true,
+      mesh: "LoginScene_Build05_01_Lod0",
+      near: [23.8, -28.4, 29.6],
+      share: [0, 0.5, 0.5],
+    },
+      isEdge: true,
+      mesh: "LoginScene_Build05_01_Lod0",
+      near: [23.8, -28.4, 29.6],
+      share: [1, 0.5, 0.5],
+    },
+    towerRightInner: {
+      isEdge: true,
+      mesh: "LoginScene_Build04_01_Lod0",
+      near: [-15.8, -56.5, 36],
+      share: [1, 0.72, 0.5],
+    },
+    towerRightOuter: {
+      isEdge: true,
+      mesh: "LoginScene_Build04_01_Lod0",
+      near: [-15.8, -56.5, 36],
+      share: [0, 0.72, 0.5],
+    },
     doorFootLeft: { mesh: "LoginScene_Door01_Vo", share: [1, 0, 0] },
     doorFootRight: { mesh: "LoginScene_Door01_Vo", share: [0, 0, 0] },
     wingLeftBack: { mesh: "LoginScene_Bridge01_19_Vo", share: [1, 1, 0.858] },
