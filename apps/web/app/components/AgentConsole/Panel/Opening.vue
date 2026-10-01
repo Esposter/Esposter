@@ -21,7 +21,7 @@ const gameText = await useGameText();
 
 <template>
   <div :lang="GameLanguageTagMap[gameText.language]" inset-0 absolute z-1>
-    <GameOpening :game-text="gameText.text" :progress @finish="emit('finish')" />
+    <GameOpening :game-text="gameText.text" :language="gameText.language" :progress @finish="emit('finish')" />
     <p role="status" lang="en" sr-only>{{ currentStep ? `${currentStep.title}…` : "Ready" }}</p>
   </div>
 </template>

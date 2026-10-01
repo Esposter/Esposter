@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SplashTiming } from "#src/models/splash/SplashTiming";
-import type { GameText } from "genshin-text";
+import type { GameLanguage, GameText } from "genshin-text";
 import type { Component } from "vue";
 
 import SplashHealthNotice from "#src/components/Splash/HealthNotice/Index.vue";
@@ -11,16 +11,18 @@ import { HEALTH_NOTICE_TIMING, PUBLISHER_SPLASH_TIMING, TITLE_SPLASH_TIMING } fr
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
+  // The reader's language, whose client's title logo the opening shows
+  language: GameLanguage;
 }
 
-const { gameText } = defineProps<Props>();
+const { gameText, language } = defineProps<Props>();
 const emit = defineEmits<{ finish: [] }>();
 // The game's opening on white, one splash after another: the publisher's logo, the game's, then the health notice,
 // Each fading in, holding and fading out as the game's does, with the white it leaves held before the next. `finish`
 // Says the last white has held and the login screen may fade up out of it
 const splashes: { component: Component; props?: Record<string, unknown>; timing: SplashTiming }[] = [
   { component: SplashPublisher, timing: PUBLISHER_SPLASH_TIMING },
-  { component: SplashTitle, props: { gameText }, timing: TITLE_SPLASH_TIMING },
+  { component: SplashTitle, props: { gameText, language }, timing: TITLE_SPLASH_TIMING },
   { component: SplashHealthNotice, props: { gameText }, timing: HEALTH_NOTICE_TIMING },
 ];
 const splashIndex = ref(0);

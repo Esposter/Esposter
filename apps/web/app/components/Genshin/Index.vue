@@ -32,6 +32,7 @@ onMounted(async () => {
     <div v-if="isOpeningShown" :lang="GameLanguageTagMap[gameText.language]" inset-0 absolute z-1>
       <GameOpening
         :game-text="gameText.text"
+        :language="gameText.language"
         :progress
         @begin="isRickrollStarted = true"
         @finish="isOpeningShown = false"

@@ -1,3 +1,10 @@
-import { ENGLISH_GAME_TEXT } from "genshin-text";
+import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
-export const props = { gameText: ENGLISH_GAME_TEXT };
+// The English logo, and each of the four the game draws for a client language of its own
+export const props = { gameText: ENGLISH_GAME_TEXT, language: GameLanguage.English };
+export const variants = {
+  chineseSimplified: { language: GameLanguage.ChineseSimplified },
+  chineseTraditional: { language: GameLanguage.ChineseTraditional },
+  japanese: { language: GameLanguage.Japanese },
+  korean: { language: GameLanguage.Korean },
+};

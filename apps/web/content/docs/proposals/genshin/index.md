@@ -46,7 +46,7 @@ flowchart TD
 | [Scene derivation](/docs/proposals/genshin/scene-derivation)       | how a scene is re-derived from the game's own assets, each loss priced first      |
 | [Interface layout](/docs/proposals/genshin/interface-layout)       | every screen laid out from the game's own RectTransform tree, nothing by hand     |
 | [Pre-login text](/docs/proposals/genshin/pre-login-text)           | the login screen's welcome in every language the game ships                       |
-| [Localized opening](/docs/proposals/genshin/localized-opening)     | the title logo and layouts as each language's client shows them                   |
+| [Localized opening](/docs/proposals/genshin/localized-opening)     | the publisher's splash and layouts as each client language shows                  |
 | [Terrain shapes](/docs/proposals/genshin/terrain-shapes)           | the continent's heights from authored shapes, and the ground painted by biome     |
 | [Flowing water](/docs/proposals/genshin/flowing-water)             | rivers along their courses, and waterfalls over cliff bands                       |
 | [Trees and scatter](/docs/proposals/genshin/trees-and-scatter)     | tree species and impostors, and flowers, bushes and rocks scattered by biome      |

@@ -8,7 +8,7 @@ import {
 } from "#src/services/login/constants";
 import { LOGIN_DOOR_RISE_KEYFRAMES } from "#src/services/login/door/constants";
 import { LOGIN_GLIDE_TITLE_SPEED, LOGIN_WALKWAY_ROW } from "#src/services/login/scene/constants";
-import { ENGLISH_GAME_TEXT } from "genshin-text";
+import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
@@ -59,7 +59,7 @@ describe("gameOpening", () => {
       vi.useFakeTimers({ toFake: ["setTimeout", "requestAnimationFrame", "cancelAnimationFrame"] });
       const onFinish = vi.fn<() => void>();
       const { container } = await render(GameOpening, {
-        props: { gameText: ENGLISH_GAME_TEXT, onFinish, progress: 1 },
+        props: { gameText: ENGLISH_GAME_TEXT, language: GameLanguage.English, onFinish, progress: 1 },
       });
       await nextTick();
       for (let splash = 0; splash < splashCount; splash++) {

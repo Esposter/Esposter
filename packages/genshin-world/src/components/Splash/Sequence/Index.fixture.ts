@@ -1,4 +1,4 @@
-import { ENGLISH_GAME_TEXT } from "genshin-text";
+import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
 export const isMotionOnly = true;
-export const props = { gameText: ENGLISH_GAME_TEXT };
+export const props = { gameText: ENGLISH_GAME_TEXT, language: GameLanguage.English };
