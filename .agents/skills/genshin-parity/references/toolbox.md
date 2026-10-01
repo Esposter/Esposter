@@ -28,8 +28,8 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | A render that settles in one frame      | the witness: SMAA, its clock held, one frame         |                           |
 | Depth, normal, albedo, part per pixel   | `genshin:parity gbuffer`                             |                           |
 | Where each part lands on the reference  | `genshin:parity overlay`: boundaries, edge distance  |                           |
-| Which layer a score's loss is in        | `attribute`, over the whole frame                    | Scores by layer           |
-| One approval number                     | shape and tone                                       | The perceptual score      |
+| Which layer a score's loss is in        | `scoreLayers`: `compare --witness`, `attribute`      |                           |
+| One approval number                     | FLIP (`scoreFlip`), in every `compare`               |                           |
 | The grade, the fog, the light           | none: measured over regions, or searched             | Calibration by regression |
 | What a shader computes                  | `shaders`: the disassembly, constants annotated      | Shader reading            |
-| Each stand-in's cost                    | `attribute`: the loss table                          | Scores by layer           |
+| Each stand-in's cost                    | `attribute`: FLIP loss per layer                     |                           |

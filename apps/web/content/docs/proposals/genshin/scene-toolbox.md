@@ -41,13 +41,7 @@ flowchart TD
 
 ## The tools
 
-### 1. The scores
-
-**Scores by layer.** `scoreLayers` scores shape, tone and detail over each layer's mask from the identifier target, and `compare --witness` and `attribute` print a row per layer beside the frame's, into their committed reports. A change is then judged where it lands.
-
-**The perceptual score.** An implementation of FLIP's standard-dynamic-range metric in TypeScript, tested against the values the reference implementation publishes for its example images, is the approval number the method ends on.
-
-### 2. Calibration by regression
+### 1. Calibration by regression
 
 `genshin:parity calibrate <reference> --witness <component>` fits each frame-wide term by least squares over the pixels its mask selects, in the order light meets the eye, holding each fitted term for the next:
 
@@ -57,25 +51,19 @@ flowchart TD
 
 Each term prints its values and its residual, and a scene writes them as constants citing the reference they were fitted on. This replaces measuring light over a hand-picked patch and searching a strength until the frame's mean drops.
 
-### 3. Shader reading
+### 2. Shader reading
 
 The `shaders` step already disassembles each program. It also writes each program as HLSL beside its assembly, through 3Dmigoto's command-line decompiler, fetched as a pinned release checked by SHA-256 the way FFmpeg is, with the constant names `annotateProgramConstants` recovers substituted in. The atmosphere, the cloud layer, the cloud particles and the uber pass are then ported to TSL from readable code instead of from assembly. If no pinned release of the decompiler is published, it is built from its source into the same cache, and failing that the annotated assembly stays the source.
-
-### 4. The loss table
-
-`attribute` keeps its ladder of swaps, each family handed back to the scene's own kit in turn, and scores it per layer from the identifier target. Its table is committed only from a pose `pose` has solved within its reprojection gate.
 
 ## Scope
 
 ```text
 scripts/src/services/genshinParity/
-  scoreLayers.ts                ← shape, tone and detail per mask
-  scoreFlip.ts                  ← FLIP, standard dynamic range
   calibrateScene.ts             ← light, fog and grade by least squares
   commands/calibrateCommand.ts
 ```
 
-Deleted as each is superseded: `createLineDistanceScorer.ts` and `readVerticalLines.ts` once the loss table scores by layer, and `fitAlbedo.ts` once the stone's material is fitted.
+Deleted once superseded: `fitAlbedo.ts`, once the stone's material is fitted.
 
 ## Key files
 
@@ -84,8 +72,6 @@ Deleted as each is superseded: `createLineDistanceScorer.ts` and `readVerticalLi
 | `scripts/src/services/genshinAssets/DerivedAssetComponentMap.ts` | A component's landmarks beside its roots and spawns |
 | `scripts/src/services/genshinAssets/extractComponentShaders.ts`  | Writes each program's HLSL beside its assembly      |
 | `scripts/src/services/genshinParity/computeDistanceTransform.ts` | The chamfer the pose refinement minimises           |
-| `scripts/src/services/genshinParity/attributeScene.ts`           | The loss table, per layer                           |
-| `scripts/src/services/genshinParity/compareScreen.ts`            | Prints a row per layer and the perceptual score     |
 
 ## Notes
 

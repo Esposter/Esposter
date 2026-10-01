@@ -9,16 +9,17 @@ const HEADER = [
   "# Parity scores",
   "",
   "Every reference's last `pnpm -C scripts genshin:parity compare`, which rewrites its own row (`--all` rewrites them",
-  "all). The mean difference and the tone run from 0 (identical) up; the shape is the share of the reference's edges",
-  "the shot shares, 1 identical. Commit it with the change that moved it, as a bench's report is committed.",
+  "all). The mean difference, the tone and FLIP's perceptual error run from 0 (identical) up; the shape is the share of",
+  "the reference's edges the shot shares, 1 identical. Commit it with the change that moved it, as a bench's report is",
+  "committed.",
   "",
-  "| Reference | Screen | Mean difference | Shape | Tone |",
-  "| :-------- | :----- | --------------: | ----: | ---: |",
+  "| Reference | Screen | Mean difference | Shape | Tone | FLIP |",
+  "| :-------- | :----- | --------------: | ----: | ---: | ---: |",
 ];
 // A row of the report, keyed by its reference's id in the first cell
 const ROW_REGEX = /^\| `(?<referenceId>[^`]+)` \|/u;
-const toRow = (referenceId: string, { edgeScore, meanDifference, screen, toneDifference }: ParityScore): string =>
-  `| \`${referenceId}\` | \`${screen}\` | ${meanDifference.toFixed(2)}% | ${edgeScore.toFixed(3)} | ${toneDifference.toFixed(2)}% |`;
+const toRow = (referenceId: string, { edgeScore, flip, meanDifference, screen, toneDifference }: ParityScore): string =>
+  `| \`${referenceId}\` | \`${screen}\` | ${meanDifference.toFixed(2)}% | ${edgeScore.toFixed(3)} | ${toneDifference.toFixed(2)}% | ${flip.toFixed(4)} |`;
 // The committed report of every reference's scores, the given ones rewritten and the rest kept as they were last
 // Scored, in the map's order, a reference the map no longer names dropped
 export const writeParityScores = async (scores: Readonly<Record<string, ParityScore>>): Promise<void> => {
