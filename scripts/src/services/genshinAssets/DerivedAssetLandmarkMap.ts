@@ -7,20 +7,13 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetCom
 export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<string, Landmark>> = {
   // The door's dais at its two front feet, and its arch's apex, halfway through its depth; the walkway's two wings by the door's
   // End and the near pair before them, at the top of their outer faces' front and back ends, the camera looking along
-  // +z as ModelCamera turns
+  // +z as ModelCamera turns; the crowned column behind the door's right at its top, and the lantern tower's two
+  // Silhouette edges at the height the door frame's row 460 crosses it
   [DerivedAssetComponent.Login]: {
     columnCrown: { mesh: "LoginScene_Build01_01_Lod0", near: [-5, -25.7, 60.2], share: [0.5, 1, 0.5] },
     doorApex: { mesh: "LoginScene_Door01_Vo", share: [0.5, 1, 0.5] },
-      isEdge: true,
-      mesh: "LoginScene_Build05_01_Lod0",
-      near: [23.8, -28.4, 29.6],
-      share: [0, 0.5, 0.5],
-    },
-      isEdge: true,
-      mesh: "LoginScene_Build05_01_Lod0",
-      near: [23.8, -28.4, 29.6],
-      share: [1, 0.5, 0.5],
-    },
+    doorFootLeft: { mesh: "LoginScene_Door01_Vo", share: [1, 0, 0] },
+    doorFootRight: { mesh: "LoginScene_Door01_Vo", share: [0, 0, 0] },
     towerRightInner: {
       isEdge: true,
       mesh: "LoginScene_Build04_01_Lod0",
@@ -33,8 +26,6 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
       near: [-15.8, -56.5, 36],
       share: [0, 0.72, 0.5],
     },
-    doorFootLeft: { mesh: "LoginScene_Door01_Vo", share: [1, 0, 0] },
-    doorFootRight: { mesh: "LoginScene_Door01_Vo", share: [0, 0, 0] },
     wingLeftBack: { mesh: "LoginScene_Bridge01_19_Vo", share: [1, 1, 0.858] },
     wingLeftFront: { mesh: "LoginScene_Bridge01_19_Vo", share: [1, 1, 0.595] },
     wingNearLeftBack: { mesh: "LoginScene_Bridge01_06_Vo", share: [1, 1, 0.771] },

@@ -70,7 +70,8 @@ export const solveReferenceLight = async (
         if ((depth[pixel * 4] ?? 0) < DIRECTION_DEPTH && checkIsPartInterior(part, width, height, pixel))
           directionSamples.push({
             brightness: CHANNELS.reduce(
-              (sum, channel) => sum + toLinear((reference[pixel * 3 + channel] ?? 0) / BYTE) * LUMINANCE[channel],
+              (sum: number, channel) =>
+                sum + toLinear((reference[pixel * 3 + channel] ?? 0) / BYTE) * LUMINANCE[channel],
               0,
             ),
             normal: [normal[pixel * 4] ?? 0, normal[pixel * 4 + 1] ?? 0, normal[pixel * 4 + 2] ?? 0],
