@@ -4,5 +4,5 @@
   "forcePublish": true,
   "npmClient": "pnpm",
   "packages": ["apps/*", "packages/*", "scripts"],
-  "version": "3.8.1"
+  "version": "3.9.0"
 }

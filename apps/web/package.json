@@ -1,6 +1,6 @@
 {
   "name": "@esposter/web",
-  "version": "3.8.1",
+  "version": "3.9.0",
   "private": true,
   "description": "An approachable, performant and versatile javascript application powered by Vue.",
   "keywords": [

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.9.0](https://github.com/Esposter/Esposter/compare/v3.8.1...v3.9.0) (2026-10-01)
+
+### Bug Fixes
+
+* **db-schema:** the registry generator stops formatting what the formatter now ignores ([d20d401](https://github.com/Esposter/Esposter/commit/d20d401d49e816501550bc0d1e90b37ecb8e711f))
+
 ## [3.8.1](https://github.com/Esposter/Esposter/compare/v3.8.0...v3.8.1) (2026-09-30)
 
 **Note:** Version bump only for package @esposter/db-schema

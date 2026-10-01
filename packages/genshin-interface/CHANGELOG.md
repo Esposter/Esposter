@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.9.0](https://github.com/Esposter/Esposter/compare/v3.8.1...v3.9.0) (2026-10-01)
+
+### Bug Fixes
+
+* **ci:** re-snapshot the genshin bundle sizes and unshare a derived-assets sentence ([3739c9d](https://github.com/Esposter/Esposter/commit/3739c9d344cedaeeda2359cd226dff1f83ea2c38))
+
+### Features
+
+* **genshin-assets:** the Unity transform module, and spawns at their anchors ([10a8c54](https://github.com/Esposter/Esposter/commit/10a8c5414e0d3718c0afb013d304f6d5bb3c26e8))
+
 ## [3.8.1](https://github.com/Esposter/Esposter/compare/v3.8.0...v3.8.1) (2026-09-30)
 
 **Note:** Version bump only for package genshin-interface

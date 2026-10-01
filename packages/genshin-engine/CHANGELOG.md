@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.9.0](https://github.com/Esposter/Esposter/compare/v3.8.1...v3.9.0) (2026-10-01)
+
+### Bug Fixes
+
+* **genshin-engine:** lay a cloud band out by view depth before each draw, as three sorted its sprites apiece ([e9dddb2](https://github.com/Esposter/Esposter/commit/e9dddb28790d1e119dd6298979faf1dc7eb0f32a))
+* **genshin-engine:** paint clouds as smooth soft-edged puffs instead of stepped polygons ([dd8e073](https://github.com/Esposter/Esposter/commit/dd8e073ed7fe0369fdce6ec5f673014a7dad20b8))
+* **genshin-parity:** type the stone and sky fits' channels and the cloud band's places ([ad44afb](https://github.com/Esposter/Esposter/commit/ad44afb7c7daacade525cb3641daa7853bc39b27))
+* **genshin-world:** drop the login's bridges 5 m so the glide passes over them, and light its stone physically ([5af5380](https://github.com/Esposter/Esposter/commit/5af5380cdade5a8d37c78c6e87b90f22f8d33094))
+* **genshin-world:** glide the login under its bridges, not through them, the door rising at the walkway's end ([35e2db7](https://github.com/Esposter/Esposter/commit/35e2db72c788c0bedeb6d9f0b4848fbf858e17cb))
+* **genshin-world:** solve the login's camera on the towers behind the door, lowering every far part in its frame ([e669664](https://github.com/Esposter/Esposter/commit/e669664a17288884488e8341cb72f154f3489e8e))
+* **genshin-world:** solve the login's dusk sky over the recording's clear sky, its clouds left out ([51ef4a4](https://github.com/Esposter/Esposter/commit/51ef4a45a7ac472474edcae86a9ed8f48d569fb6))
+* **genshin-world:** type the login's stone from its fitted data and give the door its glow through the stone material ([0268397](https://github.com/Esposter/Esposter/commit/0268397d2a3276f0794b50bd2e4936b9f669be52))
+* main goes green — lint, knip, a skill citation, the dependency graph and genshin size snapshots ([023f459](https://github.com/Esposter/Esposter/commit/023f459c031d28cb5c6976d9268b55c942a4eaba))
+* repair main's red lint and coverage after the cloud-colours and login sky commits ([e334e23](https://github.com/Esposter/Esposter/commit/e334e2394a7ef5e399ec1bed83c2b56e582cf1e4))
+* repair main's red Lint and Coverage on the login door, paving and fog ([c7076c1](https://github.com/Esposter/Esposter/commit/c7076c1762b6fc5b3e992d185c9dc7fc32f530a0))
+
+### Features
+
+* **genshin-engine:** draw the sky as the game's sky shader does, ported from its decompiled programs ([daf47f9](https://github.com/Esposter/Esposter/commit/daf47f926b6f072e12ebaa04bd08b7d59c7a2a46))
+* **genshin-parity:** solve a reference's haze with `fog`, and haze the login's day seven times as thick ([7f07d16](https://github.com/Esposter/Esposter/commit/7f07d168e7dd5c165c3baa162a6c94378e1902a7))
+* **genshin-world:** paint the login's door with its panel's raised bands and its feet's gilding ([fc88e9e](https://github.com/Esposter/Esposter/commit/fc88e9e1e4e399cfe197a80877edd3d1ffe27142))
+
 ## [3.8.1](https://github.com/Esposter/Esposter/compare/v3.8.0...v3.8.1) (2026-09-30)
 
 **Note:** Version bump only for package genshin-engine

@@ -1,6 +1,6 @@
 {
   "name": "genshin-interface",
-  "version": "3.8.1",
+  "version": "3.9.0",
   "description": "Genshin Impact's interface as a fan recreation: the game's own screen units, face and pointer, and its buttons, dividers, bars and notices as presentational Vue components.",
   "keywords": [
     "component-library",

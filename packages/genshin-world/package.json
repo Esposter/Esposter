@@ -1,6 +1,6 @@
 {
   "name": "genshin-world",
-  "version": "3.8.1",
+  "version": "3.9.0",
   "description": "Genshin Impact's world as a fan recreation: the catalogue of regions and areas, each region's authored data, and the TresJS components that build it on genshin-engine.",
   "keywords": [
     "genshin-engine",

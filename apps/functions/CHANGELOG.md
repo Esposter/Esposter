@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.9.0](https://github.com/Esposter/Esposter/compare/v3.8.1...v3.9.0) (2026-10-01)
+
+### Bug Fixes
+
+* regenerate the dependency graph and the functions bundle size ([93c6ccf](https://github.com/Esposter/Esposter/commit/93c6ccf39a1a5b7867f26b3ab373ef8561e3194c))
+
 ## [3.8.1](https://github.com/Esposter/Esposter/compare/v3.8.0...v3.8.1) (2026-09-30)
 
 **Note:** Version bump only for package @esposter/functions
