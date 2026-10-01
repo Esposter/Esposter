@@ -55,7 +55,7 @@ export const solveSunDirection = (
       if (Number.isFinite(residual)) gridResiduals.push(residual);
       if (residual < best.residual) best = { elevation, heading, residual };
     }
-  for (let step = GRID_STEP / 2, refine = 0; refine < REFINE_COUNT; step /= 2, refine++)
+  for (let refine = 0, step = GRID_STEP / 2; refine < REFINE_COUNT; step /= 2, refine++)
     for (const [headingOffset, elevationOffset] of [
       [-step, 0],
       [step, 0],

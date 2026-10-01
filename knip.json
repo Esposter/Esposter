@@ -21,7 +21,16 @@
       "entry": ["parity/main.ts", "parity/*.visual.ts", "src/index.ts", "src/**/*.reference.ts", "src/workers/*.ts"],
       "ignore": ["**/auto-imports.d.ts"]
     },
-    "packages/genshin-persona": { "entry": ["scripts/**/*.ts", "src/personaCards/**/*.ts", "src/services/**/*.ts"] },
+    "packages/genshin-persona": {
+      "entry": [
+        "scripts/*.mjs",
+        "scripts/**/*.ts",
+        "src/localizations/*.ts",
+        "src/personaCards/**/*.ts",
+        "src/services/**/*.ts"
+      ],
+      "ignore": ["src/generated/**"]
+    },
     "packages/trpc-nuxt-module": { "entry": ["test/fixture/nuxt.config.ts"] },
     "scripts": { "entry": ["src/oxlint/**/*.ts"], "ignoreDependencies": ["@wasm-audio-decoders/ogg-vorbis"] }
   }

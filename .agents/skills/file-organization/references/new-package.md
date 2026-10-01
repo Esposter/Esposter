@@ -54,8 +54,8 @@ hook and command is a bare `node <path>` the tool runs (`apps/web/content/docs/i
 - **The `#src/*` specifier drops its extension** (`#src/services/x`, never `#src/services/x.ts`): the manifest's
   map appends `.ts`, and node resolves the map literally.
 - **Its TypeScript is the repo's**: an `enum` where the rest of the repo declares one, never a frozen object bent
-  to suit node's stripper, because its entries run under `tsx` (the `package-scripts` skill,
-  `references/typescript-scripts.md`).
+  to suit node's stripper, because its entries run under `tsx`
+  (the `package-scripts` skill, `references/typescript-scripts.md`).
   `Temporal` is the plugin's date layer, and the node major it arrived in is
   what the plugin's own `engines.node` states — the feature floor, not the root's `.node-version`; why the two differ is the
   docs page's (`apps/web/content/docs/infra/claude-interface/persona-plugin.md`).

@@ -29,6 +29,19 @@ const LEAST_SHAPE = 1e-3;
 const LEAST_SUN_HALO_SIZE = 1;
 const LEAST_MOON_SIZE = 0.1;
 // The blend between the colours toward the sun and away from it is a share, as the shader reads it
+const toShape = ([
+  frontBackBlend = 0,
+  haloHeight = 0,
+  horizonBand = 0,
+  moonSize = 0,
+  sunHaloSize = 0,
+]: readonly number[]): SkyShape => ({
+  frontBackBlend: Math.min(Math.max(frontBackBlend, 0), 1),
+  haloHeight: Math.max(haloHeight, LEAST_SHAPE),
+  horizonBand: Math.max(horizonBand, LEAST_SHAPE),
+  moonSize: Math.max(moonSize, LEAST_MOON_SIZE),
+  sunHaloSize: Math.max(sunHaloSize, LEAST_SUN_HALO_SIZE),
+});
 const SHAPE_STEPS = [0.3, 0.1, 0.15, 0.5, 2];
 const SHAPE_ITERATIONS = 80;
 const toLinear = (value: number): number => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
@@ -89,19 +102,6 @@ export const solveReferenceSky = async (
           pixels.push({ color: [scene.r, scene.g, scene.b], direction: direction.toArray(), pixel });
         }
       const { gradient } = await readWorldData<{ gradient: { green: number[]; red: number[] } }>(`${witness}/sky.json`);
-      const toShape = ([
-        frontBackBlend = 0,
-        haloHeight = 0,
-        horizonBand = 0,
-        moonSize = 0,
-        sunHaloSize = 0,
-      ]: readonly number[]): SkyShape => ({
-        frontBackBlend: Math.min(Math.max(frontBackBlend, 0), 1),
-        haloHeight: Math.max(haloHeight, LEAST_SHAPE),
-        horizonBand: Math.max(horizonBand, LEAST_SHAPE),
-        moonSize: Math.max(moonSize, LEAST_MOON_SIZE),
-        sunHaloSize: Math.max(sunHaloSize, LEAST_SUN_HALO_SIZE),
-      });
       const solveAt = (shape: SkyShape) =>
         fitSky(
           pixels.map(({ color, direction }) => ({ color, weights: readSkyWeights(direction, sky, gradient, shape) })),

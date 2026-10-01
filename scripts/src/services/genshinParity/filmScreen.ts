@@ -30,7 +30,7 @@ const pairWithRecording = async (
   return Promise.all(
     framePaths.map(async (framePath, index) => {
       const ours = sharp(framePath);
-      const { height = 0, width = 0 } = await ours.metadata();
+      const { height, width } = await ours.metadata();
       const recordingPath = recordingPaths[index];
       const recording = recordingPath ? await sharp(recordingPath).resize({ height, width }).toBuffer() : undefined;
       const pairPath = join(pairsDirectory, `${String(index + 1).padStart(4, "0")}.png`);

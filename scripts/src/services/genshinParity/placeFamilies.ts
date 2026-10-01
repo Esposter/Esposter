@@ -11,6 +11,16 @@ import { readWitnessPartTarget } from "#src/services/genshinParity/readWitnessPa
 import { setPageWitnessView } from "#src/services/genshinParity/setPageWitnessView";
 import { withFinalizerAsync } from "@esposter/shared";
 
+const readMean = (from: Uint8Array, distances: Float32Array): number => {
+  let sum = 0;
+  let count = 0;
+  for (const [pixel, isSet] of from.entries())
+    if (isSet) {
+      sum += distances[pixel] ?? 0;
+      count++;
+    }
+  return count ? sum / count : Infinity;
+};
 // Where a group of families stands on a reference, with the camera held at the reference's own view or the pose given:
 // One offset in three's axes shared by every family named (a row the script moves as one), refined by the simplex on
 // Those families' edges both ways, from their laid-out places, so an arrangement's lost height or depth is read off
@@ -74,16 +84,6 @@ export const placeFamilies = async (
           isBoundary && pixel >= topPixel && familyIndexSet.has(familyIndices[pixel] ?? -1) ? 1 : 0,
         );
         const boundaryDistances = computeDistanceTransform(boundaries, width, height);
-        const readMean = (from: Uint8Array, distances: Float32Array): number => {
-          let sum = 0;
-          let count = 0;
-          for (const [pixel, isSet] of from.entries())
-            if (isSet) {
-              sum += distances[pixel] ?? 0;
-              count++;
-            }
-          return count ? sum / count : Infinity;
-        };
         return (readMean(boundaries, edgeDistances) + readMean(freeEdges, boundaryDistances)) / 2;
       };
       const before = await readDistance([0, 0, 0]);

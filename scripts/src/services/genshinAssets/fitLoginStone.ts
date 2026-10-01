@@ -10,6 +10,8 @@ type Vector = [number, number, number];
 const BYTE = 255;
 // The texels a mask is reduced to before its median is taken
 const MASK_SAMPLE_SIZE = 64;
+// The material property a mask's smoothness is scaled by
+const GLOSS_MAP_SCALE_KEY = "_GlossMapScale";
 // Each family of the login's parts by the materials it draws with, as the materials are named
 const FAMILY_MATERIAL_REGEX_MAP: Record<"bridges" | "door" | "towers" | "walkway", RegExp> = {
   bridges: /^LoginScene_(?:Bridge0[2-4]|Pillar|Broken)/u,
@@ -57,7 +59,7 @@ export const fitLoginStone = async (
             .resize(MASK_SAMPLE_SIZE, MASK_SAMPLE_SIZE, { fit: "fill" })
             .raw()
             .toBuffer({ resolveWithObject: true });
-          const scale = floats._GlossMapScale ?? 1;
+          const scale = floats[GLOSS_MAP_SCALE_KEY] ?? 1;
           return Array.from(
             { length: info.width * info.height },
             (_, texel) => ((data[texel * info.channels] ?? 0) / BYTE) * scale,

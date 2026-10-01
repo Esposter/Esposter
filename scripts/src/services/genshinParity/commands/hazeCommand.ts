@@ -4,6 +4,8 @@ import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDer
 import { readReferenceHaze } from "#src/services/genshinParity/readReferenceHaze";
 import { defineCommand } from "citty";
 
+const format = (color: number[]): string => color.map((value) => value.toFixed(3)).join(",");
+
 export const hazeCommand: SubCommandsDef[string] = defineCommand({
   args: {
     reference: { description: "A reference's id in ParityReferenceMap", required: true, type: "positional" },
@@ -19,7 +21,6 @@ export const hazeCommand: SubCommandsDef[string] = defineCommand({
     name: "haze",
   },
   run: async ({ args }) => {
-    const format = (color: number[]): string => color.map((value) => value.toFixed(3)).join(",");
     for (const { clear, count, far, hazed, near, reference } of await readReferenceHaze(
       args.reference,
       parseDerivedAssetComponent(args.witness),

@@ -31,6 +31,8 @@ const CHANNELS = [0, 1, 2] as const;
 const LUMINANCE = [0.2126, 0.7152, 0.0722] as const;
 const readMedian = (values: readonly number[]): number =>
   values.toSorted((first, second) => first - second)[Math.floor(values.length / 2)] ?? 0;
+const readSet = (data: Buffer, pixels: readonly number[], channel: number): number =>
+  readMedian(pixels.map((pixel) => toLinear((data[pixel * 3 + channel] ?? 0) / BYTE)));
 type SetLights = (shares: { ambientShare?: number; sunShare?: number }) => { direction: Vector };
 const setLights = (page: Page, shares: { ambientShare?: number; sunShare?: number }): Promise<{ direction: Vector }> =>
   page.evaluate((lightShares) => (Reflect.get(window, "setSceneLights") as SetLights)(lightShares), shares);
@@ -101,8 +103,6 @@ export const solveReferenceLight = async (
         if (normalHeight > UP_NORMAL_HEIGHT) lit.push(pixel);
         else if (Math.abs(normalHeight) < UPRIGHT_NORMAL_HEIGHT && cosine < SHADE_COSINE) shade.push(pixel);
       }
-      const readSet = (data: Buffer, pixels: readonly number[], channel: number): number =>
-        readMedian(pixels.map((pixel) => toLinear((data[pixel * 3 + channel] ?? 0) / BYTE)));
       const shares = CHANNELS.map(
         (channel) =>
           solveLinearSystem(

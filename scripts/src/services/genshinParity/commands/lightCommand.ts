@@ -4,6 +4,8 @@ import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDer
 import { solveReferenceLight } from "#src/services/genshinParity/solveReferenceLight";
 import { defineCommand } from "citty";
 
+const format = (share: number[]): string => share.map((value) => value.toFixed(3)).join(", ");
+
 export const lightCommand: SubCommandsDef[string] = defineCommand({
   args: {
     reference: { description: "A reference's id in ParityReferenceMap", required: true, type: "positional" },
@@ -23,7 +25,6 @@ export const lightCommand: SubCommandsDef[string] = defineCommand({
       args.reference,
       parseDerivedAssetComponent(args.witness),
     );
-    const format = (share: number[]): string => share.map((value) => value.toFixed(3)).join(", ");
     console.log(`sun times ${format(sunShare)}, ambient times ${format(ambientShare)}`);
     console.log(`over ${litCount} lit and ${shadeCount} shaded pixels of the parts`);
     console.log(

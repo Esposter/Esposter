@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 
 // An OBJ's vertex positions, its triangles as indices into them, and the group each triangle is drawn in (a submesh,
-// one material each). AnimeStudio writes x negated, turning the game's left-handed axes into a right-handed file, so x
+// One material each). AnimeStudio writes x negated, turning the game's left-handed axes into a right-handed file, so x
 // Is negated back here and every vertex is in the game's own axes
 export const readObjMesh = async (
   path: string,

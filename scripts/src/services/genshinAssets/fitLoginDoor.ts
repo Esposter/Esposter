@@ -33,19 +33,19 @@ export const fitLoginDoor = async (
   const { faceGroups, faces, vertices } = await readObjMesh(join(meshDirectory, `${DOOR_MESH}.obj`));
   const [scale] = placement.scale;
   const scaled = vertices.map((vertex) => {
-    const [x = 0, y = 0, z = 0] = toRightHanded(vertex);
+    const [x, y, z] = toRightHanded(vertex);
     return [x * scale, y * scale, z * scale] satisfies [number, number, number];
   });
   const extent = (axis: 0 | 1 | 2): number =>
     Math.max(...scaled.map((vertex) => vertex[axis])) - Math.min(...scaled.map((vertex) => vertex[axis]));
   const foot = Math.min(...scaled.map(([, y]) => y));
+  const toFront = (index: number): [number, number] => {
+    const [x = 0, y = 0] = scaled[index] ?? [];
+    return [x, y - foot];
+  };
   const fitPart = (group: string): { depth: [number, number]; loops: [number, number][][] } => {
     const partFaces = faces.filter((_, index) => faceGroups[index] === group);
     const depths = partFaces.flatMap((face) => face.map((index) => scaled[index]?.[2] ?? 0));
-    const toFront = (index: number): [number, number] => {
-      const [x = 0, y = 0] = scaled[index] ?? [];
-      return [x, y - foot];
-    };
     const triangles = partFaces.map(([a, b, c]) => [toFront(a), toFront(b), toFront(c)] as const);
     return {
       depth: [roundFitted(Math.min(...depths)), roundFitted(Math.max(...depths))],

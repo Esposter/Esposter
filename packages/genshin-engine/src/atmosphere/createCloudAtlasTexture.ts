@@ -28,7 +28,7 @@ export const createCloudAtlasTexture = (
         (row + 1 - y) * cellSize,
       ];
       for (const loop of loops) {
-        const points = loop.map(toCanvas);
+        const points = loop.map((point) => toCanvas(point));
         const readMidpoint = (index: number): [number, number] => {
           const [startX = 0, startY = 0] = points[index % points.length] ?? [];
           const [endX = 0, endY = 0] = points[(index + 1) % points.length] ?? [];

@@ -41,10 +41,10 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     landmarks: {
       columnCrown: [1083, 296],
       doorApex: [959, 416],
-      towerRightInner: [1455, 460],
-      towerRightOuter: [1830, 460],
       doorFootLeft: [852, 777],
       doorFootRight: [1069, 777],
+      towerRightInner: [1455, 460],
+      towerRightOuter: [1830, 460],
       wingLeftBack: [710, 803],
       wingLeftFront: [689, 817],
       wingRightBack: [1193, 803],

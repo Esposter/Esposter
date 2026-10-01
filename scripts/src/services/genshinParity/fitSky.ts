@@ -79,10 +79,11 @@ export const fitSky = (
   let colors: Vector[] = SKY_TERMS.map((): Vector => [0, 0, 0]);
   for (let pass = 0; pass < TRIM_PASSES; pass++) {
     const termCount = SKY_TERMS.length;
+    const passKept = kept;
     const solved = ([0, 1, 2] as const).map((channel) => {
       const normal = Array.from({ length: termCount }, () => Array.from({ length: termCount }, () => 0));
       const right = Array.from({ length: termCount }, () => 0);
-      for (const { color, weights } of kept)
+      for (const { color, weights } of passKept)
         for (let row = 0; row < termCount; row++) {
           right[row] = (right[row] ?? 0) + (weights[row] ?? 0) * color[channel];
           for (let column = 0; column < termCount; column++)
@@ -92,16 +93,18 @@ export const fitSky = (
       for (let row = 0; row < termCount; row++) (normal[row] ?? [])[row] = (normal[row]?.[row] ?? 0) + 1e-6;
       return (solveLinearSystem(normal, right) ?? right.map(() => 0)).map((value) => Math.max(value, 0));
     });
-    colors = SKY_TERMS.map((_, term): Vector => [
+    const passColors = SKY_TERMS.map((_, term): Vector => [
       solved[0]?.[term] ?? 0,
       solved[1]?.[term] ?? 0,
       solved[2]?.[term] ?? 0,
     ]);
+    colors = passColors;
     const errors = samples.map(({ color, weights }) =>
       Math.hypot(
         ...([0, 1, 2] as const).map(
           (channel) =>
-            color[channel] - weights.reduce((sum, weight, term) => sum + weight * (colors[term]?.[channel] ?? 0), 0),
+            color[channel] -
+            weights.reduce((sum, weight, term) => sum + weight * (passColors[term]?.[channel] ?? 0), 0),
         ),
       ),
     );

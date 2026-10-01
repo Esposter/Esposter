@@ -1,5 +1,7 @@
+import type { BufferGeometry } from "three";
+
 import door from "#src/data/login/door.json";
-import { BufferGeometry, ExtrudeGeometry, ShapePath } from "three";
+import { ExtrudeGeometry, ShapePath } from "three";
 
 // A part's face extruded from its back to its front: each of its loops a ring of the face, a ring standing inside
 // Another a hole through it

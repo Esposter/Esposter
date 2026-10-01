@@ -36,7 +36,9 @@ export const labelWitnessParts = async (
           (familyName) => (Reflect.get(window, "readWitnessParts") as (family: string) => WitnessPart[])(familyName),
           family,
         )
-      ).map((part) => ({ ...part, pixel: [part.screen[0] * width, part.screen[1] * height] as [number, number] }));
+      ).map((part) =>
+        Object.assign(part, { pixel: [part.screen[0] * width, part.screen[1] * height] as [number, number] }),
+      );
       const shot = await sharp(await page.screenshot())
         .resize(width, height)
         .png()
