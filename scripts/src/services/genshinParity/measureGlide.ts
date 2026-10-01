@@ -4,7 +4,7 @@ import { ParityReferenceMap } from "#src/services/genshinParity/ParityReferenceM
 import { readGroundRow } from "#src/services/genshinParity/readGroundRow";
 import { runFfmpeg } from "#src/services/genshinParity/runFfmpeg";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdir, readFile } from "node:fs/promises";
+import { mkdir, readdir, rm } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
 
@@ -43,10 +43,11 @@ export const measureGlide = async (
   const reference = ParityReferenceMap[referenceId];
   if (!reference?.capture) throw new InvalidOperationError(Operation.Read, referenceId, "not a recording's frame");
   const capturePath = join(CAPTURES_DIRECTORY, reference.capture);
-  const directory = join(PARITY_DIRECTORY, "glide");
+  const directory = join(PARITY_DIRECTORY, "glide", `${referenceId}@${startSeconds}`);
+  await rm(directory, { force: true, recursive: true });
   await mkdir(directory, { recursive: true });
-  const columnPath = join(directory, `${referenceId}@${startSeconds}.raw`);
-  const { height } = await sharp(join(PARITY_DIRECTORY, "references", `${referenceId}.png`)).metadata();
+  // The column runs the capture's full height, read back off each decoded frame, since the reference's own frame may
+  // Be cropped from it or not fetched yet
   await runFfmpeg([
     "-ss",
     String(startSeconds),
@@ -55,21 +56,27 @@ export const measureGlide = async (
     "-i",
     capturePath,
     "-vf",
-    `fps=${framesPerSecond},crop=${columnWidth}:${height}:${left}:0,format=gray`,
-    "-f",
-    "rawvideo",
-    columnPath,
+    `fps=${framesPerSecond},crop=${columnWidth}:ih:${left}:0,format=gray`,
+    join(directory, "%04d.png"),
   ]);
-  const bytes = await readFile(columnPath);
-  const frameCount = Math.floor(bytes.length / (columnWidth * height));
+  const filenames = await readdir(directory);
   // Each frame's column, its rows' mean brightness across the column's width
-  const columns = Array.from({ length: frameCount }, (_, frame) =>
-    Float64Array.from({ length: height }, (_value, row) => {
-      let sum = 0;
-      for (let x = 0; x < columnWidth; x++) sum += bytes[(frame * height + row) * columnWidth + x] ?? 0;
-      return sum / columnWidth;
-    }),
+  const columns = await Promise.all(
+    filenames
+      .toSorted((firstFilename, secondFilename) => firstFilename.localeCompare(secondFilename))
+      .map(async (filename) => {
+        const { data, info } = await sharp(join(directory, filename))
+          .greyscale()
+          .raw()
+          .toBuffer({ resolveWithObject: true });
+        return Float64Array.from({ length: info.height }, (_value, row) => {
+          let sum = 0;
+          for (let x = 0; x < info.width; x++) sum += data[(row * info.width + x) * info.channels] ?? 0;
+          return sum / info.width;
+        });
+      }),
   );
+  const height = columns[0]?.length ?? 0;
   const readRow = (distance: number): number => readGroundRow(distance, { eyeHeight, fov, height, pitch });
   const shifts = columns
     .slice(1)
