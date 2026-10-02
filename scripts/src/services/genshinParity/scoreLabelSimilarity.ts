@@ -10,37 +10,33 @@ const SCALE_WEIGHTS = [0.0448, 0.2856, 0.3001, 0.2363, 0.1333];
 const WINDOW_SIGMA = 1.5;
 const LUMINANCE_CONSTANT = 0.01 ** 2;
 const CONTRAST_CONSTANT = 0.03 ** 2;
-// Half the size, each pixel the mean of the four it covers and its label the first of them
-const halve = (
-  first: Float32Array,
-  second: Float32Array,
-  labels: Int32Array,
-  width: number,
-  height: number,
-): { first: Float32Array; height: number; labels: Int32Array; second: Float32Array; width: number } => {
+// A label's share of each pixel and each image weighted by it, so a window reads only the label's own pixels and a
+// Neighbour's differences never score against it
+interface LabelPlanes {
+  coverage: Float32Array;
+  first: Float32Array;
+  height: number;
+  second: Float32Array;
+  width: number;
+}
+// Half the size, each pixel the mean of the four it covers
+const halve = (values: Float32Array, width: number, height: number): Float32Array => {
   const halfWidth = Math.floor(width / 2);
-  const halfHeight = Math.floor(height / 2);
-  const average = (values: Float32Array) =>
-    Float32Array.from({ length: halfWidth * halfHeight }, (_, index) => {
-      const x = (index % halfWidth) * 2;
-      const y = Math.floor(index / halfWidth) * 2;
-      return (
-        ((values[y * width + x] ?? 0) +
-          (values[y * width + x + 1] ?? 0) +
-          (values[(y + 1) * width + x] ?? 0) +
-          (values[(y + 1) * width + x + 1] ?? 0)) /
-        4
-      );
-    });
-  const halfLabels = Int32Array.from({ length: halfWidth * halfHeight }, (_, index) => {
+  return Float32Array.from({ length: halfWidth * Math.floor(height / 2) }, (_, index) => {
     const x = (index % halfWidth) * 2;
     const y = Math.floor(index / halfWidth) * 2;
-    return labels[y * width + x] ?? -1;
+    return (
+      ((values[y * width + x] ?? 0) +
+        (values[y * width + x + 1] ?? 0) +
+        (values[(y + 1) * width + x] ?? 0) +
+        (values[(y + 1) * width + x + 1] ?? 0)) /
+      4
+    );
   });
-  return { first: average(first), height: halfHeight, labels: halfLabels, second: average(second), width: halfWidth };
 };
 // Each label's similarity between two grey images in [0, 1] of one size, a label of -1 read by none; a label with no
-// Pixel left at a scale keeps the terms it had
+// Pixel left at a scale keeps the terms it had. A coarser scale carries each label's share of a pixel rather than one
+// Label per pixel, so a pixel two labels share reads for both
 export const scoreLabelSimilarity = (
   reference: Float32Array,
   shot: Float32Array,
@@ -48,55 +44,58 @@ export const scoreLabelSimilarity = (
   height: number,
   labels: Int32Array,
   labelCount: number,
-): number[] => {
-  const scores = Array.from({ length: labelCount }, () => 1);
-  let level = { first: reference, height, labels, second: shot, width };
-  for (const [scale, weight] of SCALE_WEIGHTS.entries()) {
-    const isCoarsest = scale === SCALE_WEIGHTS.length - 1;
-    const { first, height: levelHeight, labels: levelLabels, second, width: levelWidth } = level;
-    const firstMean = blurGrey(first, levelWidth, levelHeight, WINDOW_SIGMA);
-    const secondMean = blurGrey(second, levelWidth, levelHeight, WINDOW_SIGMA);
-    const firstSquare = blurGrey(
-      first.map((value) => value * value),
-      levelWidth,
-      levelHeight,
-      WINDOW_SIGMA,
-    );
-    const secondSquare = blurGrey(
-      second.map((value) => value * value),
-      levelWidth,
-      levelHeight,
-      WINDOW_SIGMA,
-    );
-    const product = blurGrey(
-      first.map((value, index) => value * (second[index] ?? 0)),
-      levelWidth,
-      levelHeight,
-      WINDOW_SIGMA,
-    );
-    const sums = new Float64Array(labelCount);
-    const counts = new Float64Array(labelCount);
-    for (const [index, label] of levelLabels.entries()) {
-      if (label < 0) continue;
-      const firstAverage = firstMean[index] ?? 0;
-      const secondAverage = secondMean[index] ?? 0;
-      const firstVariance = Math.max((firstSquare[index] ?? 0) - firstAverage ** 2, 0);
-      const secondVariance = Math.max((secondSquare[index] ?? 0) - secondAverage ** 2, 0);
-      const covariance = (product[index] ?? 0) - firstAverage * secondAverage;
-      let term = (2 * covariance + CONTRAST_CONSTANT) / (firstVariance + secondVariance + CONTRAST_CONSTANT);
-      if (isCoarsest)
-        term *=
-          (2 * firstAverage * secondAverage + LUMINANCE_CONSTANT) /
-          (firstAverage ** 2 + secondAverage ** 2 + LUMINANCE_CONSTANT);
-      sums[label] = (sums[label] ?? 0) + term;
-      counts[label] = (counts[label] ?? 0) + 1;
+): number[] =>
+  Array.from({ length: labelCount }, (_, label) => {
+    const labelCoverage = Float32Array.from(labels, (pixelLabel) => (pixelLabel === label ? 1 : 0));
+    let planes: LabelPlanes = {
+      coverage: labelCoverage,
+      first: reference.map((value, index) => value * (labelCoverage[index] ?? 0)),
+      height,
+      second: shot.map((value, index) => value * (labelCoverage[index] ?? 0)),
+      width,
+    };
+    let score = 1;
+    for (const [scale, weight] of SCALE_WEIGHTS.entries()) {
+      const isCoarsest = scale === SCALE_WEIGHTS.length - 1;
+      const { coverage, first, height: levelHeight, second, width: levelWidth } = planes;
+      const blurLevel = (values: Float32Array) => blurGrey(values, levelWidth, levelHeight, WINDOW_SIGMA);
+      // Over a label's coverage c, an image x weighted by it is x·c, so its square is (x·c)²/c and two images' product
+      // (x·c)(y·c)/c
+      const divide = (values: Float32Array) =>
+        values.map((value, index) => ((coverage[index] ?? 0) > 0 ? value / (coverage[index] ?? 1) : 0));
+      const coverageMean = blurLevel(coverage);
+      const firstMean = blurLevel(first);
+      const secondMean = blurLevel(second);
+      const firstSquare = blurLevel(divide(first.map((value) => value * value)));
+      const secondSquare = blurLevel(divide(second.map((value) => value * value)));
+      const product = blurLevel(divide(first.map((value, index) => value * (second[index] ?? 0))));
+      let sum = 0;
+      let count = 0;
+      for (const [index, share] of coverage.entries()) {
+        const windowCoverage = coverageMean[index] ?? 0;
+        if (share === 0 || windowCoverage === 0) continue;
+        const firstAverage = (firstMean[index] ?? 0) / windowCoverage;
+        const secondAverage = (secondMean[index] ?? 0) / windowCoverage;
+        const firstVariance = Math.max((firstSquare[index] ?? 0) / windowCoverage - firstAverage ** 2, 0);
+        const secondVariance = Math.max((secondSquare[index] ?? 0) / windowCoverage - secondAverage ** 2, 0);
+        const covariance = (product[index] ?? 0) / windowCoverage - firstAverage * secondAverage;
+        let term = (2 * covariance + CONTRAST_CONSTANT) / (firstVariance + secondVariance + CONTRAST_CONSTANT);
+        if (isCoarsest)
+          term *=
+            (2 * firstAverage * secondAverage + LUMINANCE_CONSTANT) /
+            (firstAverage ** 2 + secondAverage ** 2 + LUMINANCE_CONSTANT);
+        sum += term * share;
+        count += share;
+      }
+      if (count > 0) score *= Math.max(sum / count, 0) ** weight;
+      if (isCoarsest) break;
+      planes = {
+        coverage: halve(coverage, levelWidth, levelHeight),
+        first: halve(first, levelWidth, levelHeight),
+        height: Math.floor(levelHeight / 2),
+        second: halve(second, levelWidth, levelHeight),
+        width: Math.floor(levelWidth / 2),
+      };
     }
-    for (let label = 0; label < labelCount; label++) {
-      const count = counts[label] ?? 0;
-      if (count === 0) continue;
-      scores[label] = (scores[label] ?? 1) * Math.max((sums[label] ?? 0) / count, 0) ** weight;
-    }
-    if (!isCoarsest) level = halve(first, second, levelLabels, levelWidth, levelHeight);
-  }
-  return scores;
-};
+    return score;
+  });
