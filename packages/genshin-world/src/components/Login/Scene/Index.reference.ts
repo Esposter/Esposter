@@ -299,6 +299,24 @@ export const reference: ComponentReference = {
       search:
         "genshin:parity sky login-dawn-title over the clear sky the cloud mask leaves, its zenith colours applied, then compare",
     },
+    {
+      found:
+        "AnimeStudio's parser refuses the stone's shader (miHoYo/Scene/Login Base) and the cloud layer's, and drops what it refuses from a raw export as well; the type filter Shader:Export writes them unparsed, and every one of the block's shaders reads like any other. The stone's programs only write the G-buffer: its normal from the normal map (a normal shorter than _FillNormalGaps flattened), its albedo as _Color by the diffuse texture less 0.96 of it by the mask's metal, its specular colour as 0.04 graded to the albedo by that metal with the mask's smoothness beside it, and the emission graded into _RGColor at _RGStrength by one less the facing ratio raised to _RGPower; where that glow reaches _EmissionRange the pixel is written as shading model 13, its glow in place of its specular colour. _SpecColor, _Shininess and _GlossMapScale are not read",
+      search:
+        "AnimeStudio's log over the stone's block, then its export with every type filter suffix it offers, then the stone's programs decompiled",
+    },
+    {
+      found:
+        "The deferred passes are Hidden/Internal-DeferredShading and Hidden/DeferredReflections in 00/00612967.blk, named by every block's shaders exported unparsed. The sun's pass lights a pixel as its diffuse colour by the sun's colour through a ramp (_DeferredToonRampTex) read at a half plus half the facing to the sun by the shadow raised to a fifth, plus the sky's spherical harmonics on the normal by the diffuse colour graded toward white by the occlusion, plus a GGX highlight of roughness squared smoothness, capped at 12, by a Schlick term with no visibility term; the diffuse colour itself grades toward the reflection cube by smoothness on upward faces. The environment is lit on a ramp after all, in the deferred pass rather than the material, which the light solve's model lacks. The ramp is in no asset of the index, so it is set at run time",
+      search:
+        "Every shader of every block in the asset index exported unparsed and named by its own string; the deferred shading shader's programs disassembled and decompiled, its sun pass read",
+    },
+    {
+      found:
+        "The witness drawn with the stone's rim glow as its program grades it scores the frames level or a little worse (the phone's door frame 0.466 to 0.468, the recording's door frame 0.606 to 0.612, the dawn level): the glow's pixels are shading model 13, which the deferred pass lights apart, and the witness lights it as any other. The rim stays, being the program's; the witness's light is the deferred pass's to replace",
+      search:
+        "compare --witness login on login-door, login-door-recording and login-dawn-title, the witness with and without the rim",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
@@ -313,6 +331,8 @@ export const reference: ComponentReference = {
     "The dusk sky low on the frame's left: the recording's clear sky there is almost all cloud, so the sky solved over its clear pixels draws a dark red-brown band where the recording glows gold",
     "The towers' gilding and windows: their colour per section scores worse painted as diffuse stone, the game's gold being a metal",
     "The dusk's light and haze together: genshin:parity fog --light on the door recording solves a sun 2.5 times as strong, a sky light a third as strong and a haze dense, dark away from the sun and bright toward it, which scores the recording 0.03 better and the dusk still 0.05 worse; drawn, both frames turn to a flat orange wall with the towers' silhouettes, where the references keep their towers lit and edged, so the bins' medians by depth, angle and facing still reward a haze that washes our towers to the frame's mean, our towers lacking the lit structure the references' carry",
+    "The deferred pass's run-time inputs: the toon ramp, the sky's spherical harmonics, the sun's colour and direction, and the reflection cube, none of which an asset holds; with the pass's form exact, each is a linear unknown of the witness's G-buffer, solvable per hour from the references",
+    "How the deferred pass lights shading model 13, the rim glow's pixels, and what the post pass's haze adds after it",
     "Where the glide comes to rest: the recording's door frame was still slowing at 1.6 metres a second when the click came, so the rest stands a little nearer the door than its pose",
   ],
   sources: {
@@ -348,6 +368,12 @@ export const reference: ComponentReference = {
       kind: GameSourceKind.Capture,
       name: "Starting Celestia Door (Day), a 2022 PC recording idling on the title with no interface, its top and bottom 50 rows masked",
       role: "The day sky over the title, at the camera the door recording solves",
+    },
+    deferredShadingShader: {
+      block: "00/00612967.blk",
+      kind: GameSourceKind.Shader,
+      name: "Hidden/Internal-DeferredShading",
+      role: "The deferred lighting every stone's G-buffer is lit by: the sun through the toon ramp, the sky's spherical harmonics, the reflection cube and a GGX highlight, exported unparsed (Shader:Export)",
     },
     door: {
       block: "00/04803507.blk",
@@ -426,7 +452,7 @@ export const reference: ComponentReference = {
       kind: GameSourceKind.Shader,
       name: "LoginScene_* materials' shader",
       pathId: "-8796901447730824398",
-      role: "The stone: does not parse; its material's properties are a physically based set, specular and rim-lit with no outline, fitted per family (fitLoginStone) into createStoneMaterial",
+      role: "The stone, miHoYo/Scene/Login Base: AnimeStudio's parser refuses it, so its programs come from its unparsed raw export (Shader:Export); its material's properties are a physically based set, specular and rim-lit with no outline, fitted per family (fitLoginStone) into createStoneMaterial",
     },
     uberShader: {
       block: "00/12903389.blk",

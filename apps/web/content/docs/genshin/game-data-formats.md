@@ -24,10 +24,11 @@ flowchart TD
 
 ### Shaders
 
-- **Each variant's program is a plain DXBC container** inside the shader's raw export (`--types Shader --export_type Raw`), found by its magic and its own stated size (`readDxbcPrograms`). Windows' `d3dcompiler_47` disassembles it (`disassembleDxbcDirectory`). Every variant is also compiled for DirectX 12 as DXIL, which that disassembler cannot read; its DirectX 11 twin says the same.
-- **A shader is exported nameless**, as `Shader #<path ID>` in the asset map. The property names it declares lead its raw export and tell it apart (`readShaderPropertyNames`).
+- **Each variant's program is a plain DXBC container** inside the shader's raw export (`--types Shader:Export --export_type Raw`), found by its magic and its own stated size (`readDxbcPrograms`). Windows' `d3dcompiler_47` disassembles it (`disassembleDxbcDirectory`). Every variant is also compiled for DirectX 12 as DXIL, which that disassembler cannot read; its DirectX 11 twin says the same.
+- **A shader is exported nameless**, as `Shader #<path ID>` in the asset map. The property names it declares lead its raw export and tell it apart (`readShaderPropertyNames`), and its own name (`Hidden/Internal-DeferredShading`, `miHoYo/Scene/Login Base`) is a string of the same export, which names it without the parser.
 - **A constant buffer's layout is a run of records beside the programs.** A record is its name's length, its name padded to four bytes, then six 32-bit fields: an index, its rows, its columns, a flag, its array length, and last its byte offset. The offset comes last: read as the field before the name, it puts two parameters in one register. Every variant carries its own layout, listing only the parameters it reads, so a program is matched to the layout whose parameters share no byte, name every register it reads and end within the buffer it declares (`readShaderConstantLayouts`, `annotateProgramConstants`). A name's length is read from its own field, since a name ending on a four-byte boundary runs into the next field's bytes when one of them is a word character.
-- **Some shaders do not parse in AnimeStudio**, among them the login stone's. Their raw export is refused too, so their programs cannot be read; their material's property names still say what they compute.
+- **Some shaders do not parse in AnimeStudio**, among them the login stone's (`miHoYo/Scene/Login Base`) and the cloud layer's. A type filter with no suffix parses every object before exporting it, and drops one it refuses even from a raw export; the `:Export` suffix writes the objects' bytes unparsed, and their programs read like any other's.
+- **A scene's stone shader writes the G-buffer and lights nothing.** Its light is the deferred pass's, `Hidden/Internal-DeferredShading` in the block `DEFERRED_SHADING_BLOCK` names, which `shaders` reads beside every component's own; a material value is only right once the pass that reads its G-buffer channel is.
 
 ### Materials and textures
 
@@ -84,6 +85,7 @@ The things that each cost a search to find, to reach for first:
 
 - **Find a scene's parts from its roots**, never by name: `extract` follows every pointer they reach by file and path ID, and a name pattern holds only what no pointer reaches ([derived assets](/docs/genshin/derived-assets), "Following a scene's pointers").
 - **Find a screen's interface by its buttons' names**: GameObjects are not in the asset index, so a block is found through an indexed asset beside them (a clip such as `Ani_LoginMainPage_*`), then its RectTransforms and GameObjects are dumped.
+- **Export raw objects unparsed** (`<Type>:Export`, `ANIMESTUDIO_UNPARSED_SUFFIX`): a raw export needs none of the parser's fields, and the parser refuses objects the game reads, so an object missing from a raw export is a parse failure in AnimeStudio's log, never an object the block lacks.
 - **Look for an exact source before measuring**: a shader's program over a guessed model, a clip's curve over a timed recording, a RectTransform's anchor over a measured position. Measure only what is fieldless.
 - **Solve a camera from landmarks, then refine it on its families' silhouettes, never on all edges**: a reference's clouds are most of its edges, and the part target draws none ([parity](/docs/genshin/parity), `pose`).
 - **Suspect an arrangement before a camera**: when no pose fits, a root dumped at the origin is the first cause.
