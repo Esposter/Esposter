@@ -2,9 +2,8 @@ import type { ParityReference } from "#src/models/genshinParity/ParityReference"
 
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
-  // The English client's notice, a 597 by 335 screenshot of a 16:9 screen, sharpened, so its geometry is read from it
-  // And its ink's colour from the Japanese recording
-  "health-notice": { capture: "health-notice-en.png", screen: "SplashHealthNotice", seconds: 0 },
+  // The English PC client's notice, from the 2023 recording of its launch at 1080p, in the current build's wording
+  "health-notice": { capture: "yt-sQNqMfmfkZU.mp4", screen: "SplashHealthNotice", seconds: 8 },
   "loading-startup": { screen: "LoadingStartup", wikiTitle: "File:Loading Screen Startup.png" },
   // The title at dawn, day and night: frames of public recordings of the PC client idling on it with no interface, at
   // The camera the door recording solves, each at the moment of the glide's loop its towers and walkway stand at
@@ -17,7 +16,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Its recording masks the frame's top and bottom 50 rows black, so only the rows between are scored
   "login-day-title": {
     capture: "yt-7kK6HqVfASk.mp4",
-    props: { heldScrolled: 122, isInterfaceHidden: true, stage: "Title", timeOfDay: "Day" },
+    props: { heldScrolled: 118, isInterfaceHidden: true, stage: "Title", timeOfDay: "Day" },
     region: { height: 980, width: 1920, x: 0, y: 50 },
     screen: "LoginScreen",
     seconds: 8,
@@ -94,16 +93,10 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     seconds: 12,
   },
   "publisher-splash": { capture: "session-2.mp4", screen: "SplashPublisher", seconds: 1 },
-  // The English client's splash, from a public video of its phone build letterboxed in a 1080p frame; scored over the
-  // Logo, since the video's own watermark sits in a corner
-  "title-splash": {
-    capture: "yt-qqcExvp4C0I.mp4",
-    crop: { height: 864, width: 1920, x: 0, y: 108 },
-    region: { height: 300, width: 800, x: 560, y: 250 },
-    screen: "SplashTitle",
-    seconds: 13,
-  },
-  // Mainland China's splash, its 原神 logo with its licence under it, from a public recording of its launch at 1080p
+  // The English PC client's splash, from the 2023 recording of its launch at 1080p, held from 4.5 to 5.75 seconds
+  "title-splash": { capture: "yt-sQNqMfmfkZU.mp4", screen: "SplashTitle", seconds: 5 },
+  // Mainland China's splash, its 原神 logo with its licence under it, from a public recording of an older build's launch
+  // At 1080p, drawn on full white where the current PC client's white is a step under it
   "title-splash-mainland": {
     capture: "bili-av532052219.mp4",
     props: { language: "ChineseSimplified" },

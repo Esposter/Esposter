@@ -1,14 +1,12 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 
-import { CLOUD_BRIGHTNESS_RATIO, REFERENCES_DIRECTORY, SKY_LAYER } from "#src/services/genshinParity/constants";
+import { CLOUD_BRIGHTNESS_RATIO, SKY_LAYER } from "#src/services/genshinParity/constants";
 import { fetchReferences } from "#src/services/genshinParity/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/openWitnessPage";
-import { ParityReferenceMap } from "#src/services/genshinParity/ParityReferenceMap";
 import { readFlipErrorMap } from "#src/services/genshinParity/readFlipErrorMap";
 import { readWitnessGbuffer } from "#src/services/genshinParity/readWitnessGbuffer";
 import { setPageWitnessView } from "#src/services/genshinParity/setPageWitnessView";
 import { withFinalizerAsync } from "@esposter/shared";
-import { join } from "node:path";
 import sharp from "sharp";
 
 // The depths a part's pixels are split by, near, middle and far, where the light, then the haze, decides their colour
@@ -39,7 +37,7 @@ export const rankReferenceGains = async (
   witness: DerivedAssetComponent,
 ): Promise<{ frame: number; terms: { ceiling: number; name: string; share: number }[] }> => {
   await fetchReferences();
-  const { browser, height, image, page } = await openWitnessPage(referenceId, witness);
+  const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
       const familyList = (await page.evaluate(() => window.document.body.dataset.witnessFamilies)) ?? "";
@@ -72,20 +70,6 @@ export const rankReferenceGains = async (
         );
       };
       const [referenceLuminances, ourLuminances] = [await readLuminances(image), await readLuminances(ourShot)];
-      // The reference's scored region, in the drawn frame's pixels
-      const { region } = ParityReferenceMap[referenceId] ?? {};
-      const { width: referenceWidth } = await sharp(join(REFERENCES_DIRECTORY, `${referenceId}.png`)).metadata();
-      const scale = width / referenceWidth;
-      const checkIsScored = (pixel: number): boolean => {
-        if (!region) return true;
-        const [column, row] = [pixel % width, Math.floor(pixel / width)];
-        return (
-          column >= region.x * scale &&
-          column < (region.x + region.width) * scale &&
-          row >= region.y * scale &&
-          row < (region.y + region.height) * scale
-        );
-      };
       const termMap = new Map<string, { count: number; error: number }>();
       const add = (name: string, error: number): void => {
         const term = termMap.get(name) ?? { count: 0, error: 0 };
@@ -108,7 +92,7 @@ export const rankReferenceGains = async (
         return false;
       };
       for (let pixel = 0; pixel < width * height; pixel++) {
-        if (!checkIsScored(pixel)) continue;
+        if (!checkIsScored(pixel, width)) continue;
         scoredCount++;
         const ourError = ourErrors[pixel] ?? 0;
         frameError += ourError;

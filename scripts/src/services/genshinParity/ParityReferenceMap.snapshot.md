@@ -7,17 +7,17 @@ committed.
 
 | Reference | Screen | Mean difference | Shape | Tone | FLIP |
 | :-------- | :----- | --------------: | ----: | ---: | ---: |
-| `health-notice` | `SplashHealthNotice` | 6.50% | 0.972 | 1.15% | 0.2067 |
+| `health-notice` | `SplashHealthNotice` | 6.00% | 0.961 | 0.83% | 0.1853 |
 | `loading-startup` | `LoadingStartup` | 0.03% | 0.989 | 0.00% | 0.0013 |
-| `login-dawn-title` | `LoginScreen` | 14.89% | 0.421 | 11.85% | 0.5222 |
-| `login-day-title` | `LoginScreen` | 15.66% | 0.366 | 13.30% | 0.5155 |
-| `login-door` | `LoginScreen` | 10.82% | 0.265 | 9.98% | 0.4627 |
-| `login-door-recording` | `LoginScreen` | 17.36% | 0.388 | 12.36% | 0.5956 |
+| `login-dawn-title` | `LoginScreen` | 14.10% | 0.419 | 10.61% | 0.5160 |
+| `login-day-title` | `LoginScreen` | 13.15% | 0.380 | 10.10% | 0.4855 |
+| `login-door` | `LoginScreen` | 9.81% | 0.293 | 8.84% | 0.4509 |
+| `login-door-recording` | `LoginScreen` | 18.05% | 0.463 | 14.19% | 0.5848 |
 | `login-interface-door` | `LoginInterface` | 0.63% | 0.986 | 0.43% | 0.0252 |
 | `login-interface-loading` | `LoginInterface` | 0.16% | 0.995 | 0.09% | 0.0061 |
-| `login-interface-mainland-rating` | `LoginInterface` | 3.44% | 0.959 | 2.39% | 0.1444 |
+| `login-interface-mainland-rating` | `LoginInterface` | 2.11% | 0.959 | 1.12% | 0.1095 |
 | `login-interface-title` | `LoginInterface` | 0.35% | 0.997 | 0.23% | 0.0155 |
-| `login-night-title` | `LoginScreen` | 13.68% | 0.412 | 11.92% | 0.4921 |
-| `publisher-splash` | `SplashPublisher` | 0.46% | 1.000 | 0.77% | 0.0471 |
-| `title-splash` | `SplashTitle` | 1.27% | 1.000 | 0.25% | 0.0465 |
-| `title-splash-mainland` | `SplashTitle` | 1.45% | 0.992 | 0.18% | 0.0383 |
+| `login-night-title` | `LoginScreen` | 12.10% | 0.405 | 9.44% | 0.4600 |
+| `publisher-splash` | `SplashPublisher` | 0.07% | 1.000 | 0.01% | 0.0036 |
+| `title-splash` | `SplashTitle` | 0.21% | 1.000 | 0.01% | 0.0090 |
+| `title-splash-mainland` | `SplashTitle` | 1.80% | 0.992 | 0.81% | 0.0787 |

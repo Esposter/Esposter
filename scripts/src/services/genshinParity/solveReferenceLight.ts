@@ -57,7 +57,7 @@ export const solveReferenceLight = async (
   sunShare: Vector;
 }> => {
   await fetchReferences();
-  const { browser, height, image, page } = await openWitnessPage(referenceId, witness);
+  const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
       const { direction } = await setLights(page, {});
@@ -69,7 +69,11 @@ export const solveReferenceLight = async (
       const reference = await sharp(image).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
       const directionSamples: Parameters<typeof solveSunDirection>[0][number][] = [];
       for (let pixel = 0; pixel < width * height; pixel++)
-        if ((depth[pixel * 4] ?? 0) < DIRECTION_DEPTH && checkIsPartInterior(part, width, height, pixel))
+        if (
+          (depth[pixel * 4] ?? 0) < DIRECTION_DEPTH &&
+          checkIsPartInterior(part, width, height, pixel) &&
+          checkIsScored(pixel, width)
+        )
           directionSamples.push({
             brightness: CHANNELS.reduce(
               (sum: number, channel) =>
@@ -94,7 +98,12 @@ export const solveReferenceLight = async (
       const lit: number[] = [];
       const shade: number[] = [];
       for (let pixel = 0; pixel < width * height; pixel++) {
-        if ((depth[pixel * 4] ?? 0) > NEAR_DEPTH || !checkIsPartInterior(part, width, height, pixel)) continue;
+        if (
+          (depth[pixel * 4] ?? 0) > NEAR_DEPTH ||
+          !checkIsPartInterior(part, width, height, pixel) ||
+          !checkIsScored(pixel, width)
+        )
+          continue;
         const cosine =
           (normal[pixel * 4] ?? 0) * direction[0] +
           (normal[pixel * 4 + 1] ?? 0) * direction[1] +

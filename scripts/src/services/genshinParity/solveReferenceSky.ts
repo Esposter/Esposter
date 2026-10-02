@@ -58,7 +58,7 @@ export const solveReferenceSky = async (
   witness: DerivedAssetComponent,
 ): Promise<{ colors: Record<string, string>; imagePath: string; kept: number; residual: number; shape: SkyShape }> => {
   await fetchReferences();
-  const { browser, height, image, page } = await openWitnessPage(referenceId, witness);
+  const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
       await setPageWitnessView(page, {});
@@ -84,7 +84,7 @@ export const solveReferenceSky = async (
       for (let y = 0; y < height; y += SAMPLE_STRIDE)
         for (let x = 0; x < width; x += SAMPLE_STRIDE) {
           const pixel = y * width + x;
-          if (part[pixel * 4]) continue;
+          if (part[pixel * 4] || !checkIsScored(pixel, width)) continue;
           const view = new Vector4(((x + 0.5) / width) * 2 - 1, 1 - ((y + 0.5) / height) * 2, 0.5, 1).applyMatrix4(
             projectionInverse,
           );

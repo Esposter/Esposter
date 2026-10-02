@@ -32,7 +32,7 @@ const licenceLines = computed(() => gameText[GameTextKey.TitleLicence].split("\n
 
 <style scoped>
 .title-splash {
-  background: #fff;
+  background: var(--white);
 }
 
 /* The logos' shared canvas, placed so the English logo's ink sits where the English client's does: 590 units wide, 420

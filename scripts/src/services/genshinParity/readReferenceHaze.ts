@@ -28,7 +28,7 @@ export const readReferenceHaze = async (
   witness: DerivedAssetComponent,
 ): Promise<{ clear: Vector; count: number; far: number; hazed: Vector; near: number; reference: Vector }[]> => {
   await fetchReferences();
-  const { browser, height, image, page } = await openWitnessPage(referenceId, witness);
+  const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
       await setPageWitnessView(page, {});
@@ -52,7 +52,12 @@ export const readReferenceHaze = async (
         const pixels: number[] = [];
         for (let pixel = 0; pixel < width * height; pixel++) {
           const pixelDepth = depth[pixel * 4] ?? 0;
-          if (pixelDepth >= near && pixelDepth < far && checkIsPartInterior(part, width, height, pixel))
+          if (
+            pixelDepth >= near &&
+            pixelDepth < far &&
+            checkIsPartInterior(part, width, height, pixel) &&
+            checkIsScored(pixel, width)
+          )
             pixels.push(pixel);
         }
         if (pixels.length < MIN_BAND_COUNT) return [];

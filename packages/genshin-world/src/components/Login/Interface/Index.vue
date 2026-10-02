@@ -69,10 +69,10 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
     <LoadingSpinner v-if="isSpinnerShown" class="spinner" />
     <!-- Mainland China's age rating (CADPA, 12 and over), which its client keeps in the corner of every login stage -->
     <svg v-if="client === GameClient.Mainland" class="age-rating" viewBox="0 0 84 110" role="img" aria-label="12+">
-      <rect width="84" height="110" rx="6" fill="#fff" />
+      <rect class="age-rating-white" width="84" height="110" rx="6" />
       <rect x="7" y="8" width="70" height="78" rx="4" fill="#178ed0" />
-      <path :d="ageRating.age" transform="translate(9 10) scale(0.125)" fill="#fff" />
-      <text x="42" y="83" class="age-rating-name">CADPA</text>
+      <path class="age-rating-white" :d="ageRating.age" transform="translate(9 10) scale(0.125)" />
+      <text x="42" y="83" class="age-rating-white age-rating-name">CADPA</text>
       <path :d="ageRating.notice" transform="translate(2 87) scale(0.125)" fill="#111" />
     </svg>
     <ToastNotice :class="['welcome', { shown: isWelcomeShown }]">
@@ -168,10 +168,14 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
   width: calc(var(--unit) * 84);
 }
 
+/* Its white is the recording's, a pale blue rather than full white, wherever it stands on the badge */
+.age-rating-white {
+  fill: #dfeaf5;
+}
+
 /* Its age and notice are traced off the recording at eight times its size (`genshin:parity trace`); its CADPA is
    Set in a serif, whose thin strokes are too few of the recording's pixels to trace */
 .age-rating-name {
-  fill: #fff;
   font-family: serif;
   font-size: 14px;
   font-weight: 600;

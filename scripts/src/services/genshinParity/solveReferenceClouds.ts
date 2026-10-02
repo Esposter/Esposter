@@ -41,7 +41,7 @@ export const solveReferenceClouds = async (
   witness: DerivedAssetComponent,
 ): Promise<{ lit: string; ourCount: number; referenceCount: number; residual: number; shade: string }> => {
   await fetchReferences();
-  const { browser, height, image, page } = await openWitnessPage(referenceId, witness);
+  const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
       await setPageWitnessView(page, {});
@@ -78,7 +78,7 @@ export const solveReferenceClouds = async (
       for (let row = 0; row < height; row += SAMPLE_STRIDE)
         for (let column = 0; column < width; column += SAMPLE_STRIDE) {
           const pixel = row * width + column;
-          if (part[pixel * 4]) continue;
+          if (part[pixel * 4] || !checkIsScored(pixel, width)) continue;
           const view = new Vector4(
             ((column + 0.5) / width) * 2 - 1,
             1 - ((row + 0.5) / height) * 2,

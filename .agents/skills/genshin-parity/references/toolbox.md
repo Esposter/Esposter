@@ -29,7 +29,7 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | A world's pace past a still camera      | `genshin:parity glide`: the ground resampled into metres, per frame  |
 | Our scene's motion at exact moments     | `genshin:parity film`: a faked clock, stages set at moments          |
 | A scene's frame cost, and what it is    | `genshin:parity bench`: frame time, draw calls, objects by kind      |
-| A scrolled row's phase on a reference   | `parts` to match, `view --offsets` to try, `place --start` to refine |
+| A scrolled row's phase on a reference   | `view` held (`heldScrolled`) along the loop, `parts`, then `compare` |
 | A row or a camera on far landmarks      | `place --landmarks`, and `pose` with landmarks that pick an instance |
 | Where a row of parts stands, held cam   | `genshin:parity place`: one offset refined on edges both ways        |
 | A point read off an image               | `zoom --grid`: lines every so many pixels, labelled                  |
