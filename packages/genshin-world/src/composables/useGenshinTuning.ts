@@ -46,7 +46,8 @@ export const useGenshinTuning = ({
 
   onMounted(async () => {
     const pipeline = await until(postPipeline).toBeTruthy();
-    if (!isActive || !isWebGPURenderer(renderer)) return;
+    // A browser driven by automation gets no inspector, as `createGenshinRenderer` gives it none
+    if (!isActive || !isWebGPURenderer(renderer) || window.navigator.webdriver) return;
     const inspector = await attachInspector(renderer);
     if (!isActive) return;
     const parameters = inspector.createParameters("Look");
