@@ -1,7 +1,11 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 
 import { annotateProgramConstants } from "#src/services/genshinAssets/annotateProgramConstants";
-import { GAME_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/constants";
+import {
+  ANIMESTUDIO_UNPARSED_SUFFIX,
+  DEFERRED_SHADING_BLOCK,
+  GAME_BLOCKS_DIRECTORY,
+} from "#src/services/genshinAssets/constants";
 import { decompileDxbcDirectory } from "#src/services/genshinAssets/decompileDxbcDirectory";
 import { disassembleDxbcDirectory } from "#src/services/genshinAssets/disassembleDxbcDirectory";
 import { getComponentDirectory } from "#src/services/genshinAssets/getComponentDirectory";
@@ -19,23 +23,31 @@ import { basename, join } from "node:path";
 // How many of a shader's property names its summary line prints, enough to tell it apart
 const SUMMARY_PROPERTY_COUNT = 4;
 // The shaders a component's materials draw with, as references to read: every shader in the blocks holding them,
-// Since a shader is exported nameless and its block holds the post-processing and sky shaders beside it. Each is
+// Since a shader is exported nameless and its block holds the post-processing and sky shaders beside it, and the
+// Deferred passes' block, which lights what those shaders write into the G-buffer. Each is
 // Exported raw, its compiled programs carved out, disassembled and decompiled to HLSL into a folder of its own with its
-// Property names,
-// And the one line per shader returned says what it is and how many of its programs Windows' disassembler read. A
-// Shader AnimeStudio cannot read is left out of its export, and a block none of whose shaders it reads exports no folder
+// Property names, and the one line per shader returned says what it is and how many of its programs Windows'
+// Disassembler read. A raw export is written unparsed, since AnimeStudio's parser refuses some of the game's shaders,
+// The login stone's among them, and drops whatever it refuses even from a raw export
 export const extractComponentShaders = async (component: DerivedAssetComponent): Promise<string[]> => {
   const materials = await readComponentMaterials(component);
   const shaderPathIds = new Set(materials.map(({ shaderPathId }) => shaderPathId));
   const shaders = await readIndexedAssets(({ pathId, type }) => type === "Shader" && shaderPathIds.has(pathId));
-  const blocks = [...new Set(shaders.map(({ block }) => block))].toSorted();
+  const blocks = [...new Set([...shaders.map(({ block }) => block), DEFERRED_SHADING_BLOCK])].toSorted();
   const { shaders: directory } = getComponentDirectory(component);
   await rm(directory, { force: true, recursive: true });
   const summary: string[] = [];
   for (const block of blocks) {
     const blockName = basename(block, ".blk");
     const rawDirectory = join(directory, "raw", blockName);
-    runAnimeStudio([join(GAME_BLOCKS_DIRECTORY, block), rawDirectory, "--types", "Shader", "--export_type", "Raw"]);
+    runAnimeStudio([
+      join(GAME_BLOCKS_DIRECTORY, block),
+      rawDirectory,
+      "--types",
+      `Shader${ANIMESTUDIO_UNPARSED_SUFFIX}`,
+      "--export_type",
+      "Raw",
+    ]);
     const shaderDirectory = join(rawDirectory, "Shader");
     if (!existsSync(shaderDirectory)) {
       summary.push(`${blockName}: no shader AnimeStudio could read`);
