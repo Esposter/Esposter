@@ -281,6 +281,12 @@ export const reference: ComponentReference = {
       search:
         "rank's second table with the witness walkway sunk, then the paving's lines and pockets swept against the exports",
     },
+    {
+      found:
+        "Against the exports, the towers' traced facade at its full contrast scored under the bare stone (FLIP 0.258 against 0.249, similarity 0.688 against 0.693 over the four hours); its shades drawn a quarter as far from the stone score best by both, 0.248 and 0.694, and every hour's frame scores better or level. Without the gilding alone the towers scored 0.251 and 0.691: the bright gold is a part of the gap, the painted relief the rest",
+      search:
+        "The facade's every shade scaled toward the stone by a contrast share swept from none to all, and the gilding left out, in rank's second table at every hour",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
