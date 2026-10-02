@@ -17,7 +17,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Its recording masks the frame's top and bottom 50 rows black, so only the rows between are scored
   "login-day-title": {
     capture: "yt-7kK6HqVfASk.mp4",
-    props: { heldScrolled: 122, isInterfaceHidden: true, stage: "Title", timeOfDay: "Day" },
+    props: { heldScrolled: 118, isInterfaceHidden: true, stage: "Title", timeOfDay: "Day" },
     region: { height: 980, width: 1920, x: 0, y: 50 },
     screen: "LoginScreen",
     seconds: 8,

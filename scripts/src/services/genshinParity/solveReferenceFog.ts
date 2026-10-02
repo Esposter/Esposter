@@ -81,7 +81,7 @@ export const solveReferenceFog = async (
   }[];
 }> => {
   await fetchReferences();
-  const { browser, height, image, page } = await openWitnessPage(referenceId, witness);
+  const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
       const { direction: lightDirection } = await setLights(page, {});
@@ -119,7 +119,12 @@ export const solveReferenceFog = async (
       const points: Point[] = [];
       for (let pixel = 0; pixel < width * height; pixel++) {
         const pixelDepth = depth[pixel * 4] ?? 0;
-        if (pixelDepth <= fog.startDistance || !checkIsPartInterior(part, width, height, pixel)) continue;
+        if (
+          pixelDepth <= fog.startDistance ||
+          !checkIsPartInterior(part, width, height, pixel) ||
+          !checkIsScored(pixel, width)
+        )
+          continue;
         // The pixel's ray in the view, scaled to the depth along the view the witness wrote
         const [column, row] = [pixel % width, Math.floor(pixel / width)];
         const view = new Vector3(((column + 0.5) / width) * 2 - 1, 1 - ((row + 0.5) / height) * 2, 0.5).applyMatrix4(

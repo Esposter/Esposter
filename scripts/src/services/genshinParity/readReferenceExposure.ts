@@ -24,7 +24,7 @@ export const readReferenceExposure = async (
   witness: DerivedAssetComponent,
 ): Promise<{ ours: number; ratio: number; reference: number }> => {
   await fetchReferences();
-  const { browser, height, image, page } = await openWitnessPage(referenceId, witness);
+  const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
       await setPageWitnessView(page, {});
@@ -36,7 +36,9 @@ export const readReferenceExposure = async (
         .raw()
         .toBuffer();
       const reference = await sharp(image).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
-      const covered = Array.from({ length: width * height }, (_, pixel) => pixel).filter((pixel) => part[pixel * 4]);
+      const covered = Array.from({ length: width * height }, (_, pixel) => pixel).filter(
+        (pixel) => part[pixel * 4] && checkIsScored(pixel, width),
+      );
       const referenceLuminance = readMedian(covered.map((pixel) => readLuminance(reference, pixel)));
       const ourLuminance = readMedian(covered.map((pixel) => readLuminance(ours, pixel)));
       return {

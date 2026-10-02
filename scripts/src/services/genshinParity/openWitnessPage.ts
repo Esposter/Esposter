@@ -10,11 +10,19 @@ import sharp from "sharp";
 
 // One reference's page for the witness tools: the parity page on the reference's screen in its own state (its props, a
 // Time of day), at the structure's width and the reference's aspect, drawing the component's exports, beside the
-// Reference at that size. The caller fetches the references first and closes the browser
+// Reference at that size, and whether a pixel of a target that wide stands in the reference's scored region, so a tool
+// Reads nothing a recording masks or a corner button covers. The caller fetches the references first and closes the
+// Browser
 export const openWitnessPage = async (
   referenceId: string,
   witness: DerivedAssetComponent,
-): Promise<{ browser: Browser; height: number; image: Buffer; page: Page }> => {
+): Promise<{
+  browser: Browser;
+  checkIsScored: (pixel: number, width: number) => boolean;
+  height: number;
+  image: Buffer;
+  page: Page;
+}> => {
   const reference = ParityReferenceMap[referenceId];
   if (!reference) throw new InvalidOperationError(Operation.Read, referenceId, "not a reference");
   const referencePath = join(REFERENCES_DIRECTORY, `${referenceId}.png`);
@@ -28,5 +36,17 @@ export const openWitnessPage = async (
     width: STRUCTURE_WIDTH,
     witness,
   });
-  return { browser, height, image, page };
+  const { region } = reference;
+  const checkIsScored = (pixel: number, width: number): boolean => {
+    if (!region) return true;
+    const scale = width / referenceWidth;
+    const [column, row] = [pixel % width, Math.floor(pixel / width)];
+    return (
+      column >= region.x * scale &&
+      column < (region.x + region.width) * scale &&
+      row >= region.y * scale &&
+      row < (region.y + region.height) * scale
+    );
+  };
+  return { browser, checkIsScored, height, image, page };
 };
