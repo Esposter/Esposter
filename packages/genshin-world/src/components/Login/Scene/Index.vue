@@ -8,6 +8,7 @@ import stone from "#src/data/login/stone.json";
 import { LoginPartFamily } from "#src/models/login/LoginPartFamily";
 import { LoginStage } from "#src/models/login/LoginStage";
 import { createLoginClouds } from "#src/services/login/cloud/createLoginClouds";
+import { LoginCloudCoverMap } from "#src/services/login/cloud/LoginCloudCoverMap";
 import { LOGIN_DOOR_LIGHT_MS } from "#src/services/login/constants";
 import {
   LOGIN_DOOR_GLOW_COLOR,
@@ -161,11 +162,17 @@ const skyTargets = {
 // The sky's gradient, the game's own fitted, which its bottom colour and horizon halo ride up the sky
 const skyGradient = createSkyGradientTexture(sky.gradient);
 scene.value.backgroundNode = createSkyNode(skyUniforms, skyGradient);
+const loginClouds = createLoginClouds(skyUniforms);
 watchImmediate(
   () => timeOfDay,
   (newTimeOfDay) => {
     applySkyState(LoginSkyStateMap[newTimeOfDay], skyTargets);
     postUniforms.godraysColor.value.setScalar(0);
+    // Each hour's sky draws its own share of each band's clouds
+    for (const [band, cover] of Object.entries(LoginCloudCoverMap[newTimeOfDay])) {
+      const coverUniform = loginClouds.covers[band];
+      if (coverUniform) coverUniform.value = cover;
+    }
   },
 );
 // The stone each family of parts is carved from, as its game materials hold it, lit physically as the game lights it
@@ -239,7 +246,6 @@ cloudSeaMaterial.colorNode = mix(
     mx_fractal_noise_float(positionWorld.xz.add(vec2(0, cloudSeaScrolled)).mul(CLOUD_SEA_SCALE)),
   ),
 );
-const loginClouds = createLoginClouds(skyUniforms);
 const gradeLutTexture = createGradeLutTexture(LOGIN_GRADE_OPTIONS);
 usePostPipeline(QualityTier.High, { fogUniforms, godraysLight, gradeLutTexture, postUniforms }, skyUniforms);
 let renderedFrameCount = 0;

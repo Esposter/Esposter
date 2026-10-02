@@ -1,4 +1,5 @@
 import type { CloudSprite, SkyUniforms } from "genshin-engine";
+import type { UniformNode } from "three/webgpu";
 
 import clouds from "#src/data/login/clouds.json";
 import walkway from "#src/data/login/walkway.json";
@@ -20,11 +21,18 @@ const toLoops = (loops: number[][][]): [number, number][][] =>
 // Own and scattered as billboards, one sprite a band, lit and shaded in the sky's cloud colours at the hour. The sea's
 // Clouds scroll with the world, each wrapped round the camera within the sea's row, so as many stand ahead as behind;
 // None stands where the walkway glides, which would carry it through the camera: each either clears the walkway to its
-// Side or stays under it
+// Side or stays under it. Each band's sprite is named for its band and hands on its cover, the share of its clouds the
+// Hour draws, which a tool reads off the sprite
 export const createLoginClouds = (
   skyUniforms: SkyUniforms,
-): { dispose: () => void; group: Group; scroll: (scrolled: number) => void } => {
+): {
+  covers: Record<string, UniformNode<"float", number>>;
+  dispose: () => void;
+  group: Group;
+  scroll: (scrolled: number) => void;
+} => {
   const group = new Group();
+  const covers: Record<string, UniformNode<"float", number>> = {};
   const disposables: { dispose: () => void }[] = [];
   let sea: undefined | { depths: number[]; places: [number, number, number][] };
   const seaLength = LOGIN_CLOUD_SEA_ROW.count * LOGIN_CLOUD_SEA_ROW.length;
@@ -34,7 +42,7 @@ export const createLoginClouds = (
       outline: toLoops(outline),
     }));
     const atlas = createCloudAtlasTexture(sprites, CLOUD_CELL_SIZE);
-    const { dispose, places, sprite } = createCloudBandSprite(
+    const { cover, dispose, places, sprite } = createCloudBandSprite(
       atlas,
       placeCloudBand(LoginCloudBandMap[band], sprites.length).filter(
         ({ position: [x, y], width }) =>
@@ -44,10 +52,14 @@ export const createLoginClouds = (
       skyUniforms,
     );
     disposables.push(atlas, { dispose });
+    sprite.name = band;
+    sprite.userData.cover = cover;
+    covers[band] = cover;
     group.add(sprite);
     if (band === SEA_BAND) sea = { depths: places.map((place) => place[2]), places };
   }
   return {
+    covers,
     dispose: () => {
       for (const disposable of disposables) disposable.dispose();
     },

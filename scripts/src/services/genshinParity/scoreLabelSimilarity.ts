@@ -1,3 +1,5 @@
+import { blurGrey } from "#src/services/genshinParity/blurGrey";
+
 // Multi-scale structural similarity (Wang, Simoncelli and Bovik, 2003) over two grey images, read apart for each label
 // Of a map: at each of five scales, halving the size each time, a Gaussian window's means, variances and covariance
 // Give each pixel its contrast and structure term, the coarsest its luminance term too, each scale's terms averaged over
@@ -6,37 +8,8 @@
 // But imperfect reads closer than a bare one. 1 identical, 0 nothing alike
 const SCALE_WEIGHTS = [0.0448, 0.2856, 0.3001, 0.2363, 0.1333];
 const WINDOW_SIGMA = 1.5;
-const WINDOW_RADIUS = 5;
 const LUMINANCE_CONSTANT = 0.01 ** 2;
 const CONTRAST_CONSTANT = 0.03 ** 2;
-const WINDOW = Array.from({ length: WINDOW_RADIUS * 2 + 1 }, (_, index) =>
-  Math.exp(-((index - WINDOW_RADIUS) ** 2) / (2 * WINDOW_SIGMA ** 2)),
-);
-const WINDOW_SUM = WINDOW.reduce((sum, weight) => sum + weight, 0);
-// A separable Gaussian blur, its edges clamped
-const blur = (values: Float32Array, width: number, height: number): Float32Array => {
-  const rows = new Float32Array(values.length);
-  for (let y = 0; y < height; y++)
-    for (let x = 0; x < width; x++) {
-      let sum = 0;
-      for (const [index, weight] of WINDOW.entries()) {
-        const sampleX = Math.min(Math.max(x + index - WINDOW_RADIUS, 0), width - 1);
-        sum += weight * (values[y * width + sampleX] ?? 0);
-      }
-      rows[y * width + x] = sum / WINDOW_SUM;
-    }
-  const columns = new Float32Array(values.length);
-  for (let y = 0; y < height; y++)
-    for (let x = 0; x < width; x++) {
-      let sum = 0;
-      for (const [index, weight] of WINDOW.entries()) {
-        const sampleY = Math.min(Math.max(y + index - WINDOW_RADIUS, 0), height - 1);
-        sum += weight * (rows[sampleY * width + x] ?? 0);
-      }
-      columns[y * width + x] = sum / WINDOW_SUM;
-    }
-  return columns;
-};
 // Half the size, each pixel the mean of the four it covers and its label the first of them
 const halve = (
   first: Float32Array,
@@ -81,22 +54,25 @@ export const scoreLabelSimilarity = (
   for (const [scale, weight] of SCALE_WEIGHTS.entries()) {
     const isCoarsest = scale === SCALE_WEIGHTS.length - 1;
     const { first, height: levelHeight, labels: levelLabels, second, width: levelWidth } = level;
-    const firstMean = blur(first, levelWidth, levelHeight);
-    const secondMean = blur(second, levelWidth, levelHeight);
-    const firstSquare = blur(
+    const firstMean = blurGrey(first, levelWidth, levelHeight, WINDOW_SIGMA);
+    const secondMean = blurGrey(second, levelWidth, levelHeight, WINDOW_SIGMA);
+    const firstSquare = blurGrey(
       first.map((value) => value * value),
       levelWidth,
       levelHeight,
+      WINDOW_SIGMA,
     );
-    const secondSquare = blur(
+    const secondSquare = blurGrey(
       second.map((value) => value * value),
       levelWidth,
       levelHeight,
+      WINDOW_SIGMA,
     );
-    const product = blur(
+    const product = blurGrey(
       first.map((value, index) => value * (second[index] ?? 0)),
       levelWidth,
       levelHeight,
+      WINDOW_SIGMA,
     );
     const sums = new Float64Array(labelCount);
     const counts = new Float64Array(labelCount);
