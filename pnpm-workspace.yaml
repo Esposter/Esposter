@@ -79,7 +79,7 @@ catalog:
   "@nuxt/nitro-server": ^4.5.2
   "@nuxt/schema": ^4.5.2
   "@nuxt/scripts": ^1.3.11
-  "@nuxt/test-utils": ^4.3.2
+  "@nuxt/test-utils": ^4.3.3
   "@nuxtjs/seo": ^5.3.16
   "@oxlint/plugins": ^1.86.0
   "@panzoom/panzoom": ^4.6.2
