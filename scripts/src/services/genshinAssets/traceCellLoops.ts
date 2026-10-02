@@ -16,9 +16,12 @@ export const traceCellLoops = (
   if (cells.length === 0) return [];
   const columns = cells.map((cell) => cell % width);
   const rows = cells.map((cell) => Math.floor(cell / width));
-  const [firstColumn, firstRow] = [Math.min(...columns), Math.min(...rows)];
-  const boundsWidth = Math.max(...columns) - firstColumn + 1;
-  const boundsHeight = Math.max(...rows) - firstRow + 1;
+  // Reduced rather than spread, since a surface's cells run past the arguments a call can take
+  const readBound = (values: readonly number[], pick: (first: number, second: number) => number): number =>
+    values.reduce((bound, value) => pick(bound, value));
+  const [firstColumn, firstRow] = [readBound(columns, Math.min), readBound(rows, Math.min)];
+  const boundsWidth = readBound(columns, Math.max) - firstColumn + 1;
+  const boundsHeight = readBound(rows, Math.max) - firstRow + 1;
   const covered = new Uint8Array(boundsWidth * boundsHeight);
   for (const [index, column] of columns.entries())
     covered[((rows[index] ?? 0) - firstRow) * boundsWidth + column - firstColumn] = 1;

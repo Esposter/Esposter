@@ -8,6 +8,7 @@ import { fitLoginDoor } from "#src/services/genshinAssets/fitLoginDoor";
 import { fitLoginHulls } from "#src/services/genshinAssets/fitLoginHulls";
 import { fitLoginPaving } from "#src/services/genshinAssets/fitLoginPaving";
 import { fitLoginStone } from "#src/services/genshinAssets/fitLoginStone";
+import { fitLoginTowerFacades } from "#src/services/genshinAssets/fitLoginTowerFacades";
 import { fitLoginTowers } from "#src/services/genshinAssets/fitLoginTowers";
 import { fitLoginWalkway } from "#src/services/genshinAssets/fitLoginWalkway";
 import { fitSkyGradient } from "#src/services/genshinAssets/fitSkyGradient";
@@ -31,8 +32,9 @@ export const fitLoginScene = async (): Promise<string> => {
   );
   const meshDirectory = join(directory.assets, "Mesh");
   const textureDirectory = join(directory.assets, "Texture2D");
-  const [towers, walkway, paving, door, hulls, clouds, skyGradient, stone, titleLogos] = await Promise.all([
+  const [towers, facades, walkway, paving, door, hulls, clouds, skyGradient, stone, titleLogos] = await Promise.all([
     fitLoginTowers(placements, meshDirectory),
+    fitLoginTowerFacades(placements, meshDirectory, textureDirectory),
     fitLoginWalkway(placements, meshDirectory),
     fitLoginPaving(placements, meshDirectory, textureDirectory),
     fitLoginDoor(placements, meshDirectory, textureDirectory),
@@ -48,7 +50,7 @@ export const fitLoginScene = async (): Promise<string> => {
     ),
   );
   const paths = await Promise.all([
-    writeWorldData("login/towers.json", towers),
+    writeWorldData("login/towers.json", { ...towers, facades }),
     writeWorldData("login/walkway.json", walkway),
     writeWorldData("login/paving.json", paving),
     writeWorldData("login/door.json", door),
