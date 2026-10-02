@@ -151,7 +151,12 @@ export const fitLoginTowerFacades = async (
     const bandRows = Math.max(1, Math.round(TOWER_BAND_HEIGHT / TOWER_FACADE_CELL_SIZE));
     const toBand = (cell: number): number => Math.floor(Math.floor(cell / width) / bandRows);
     const bandRadii = new Map<number, number[]>();
-    for (const cell of drawn) bandRadii.set(toBand(cell), [...(bandRadii.get(toBand(cell)) ?? []), heights[cell] ?? 0]);
+    for (const cell of drawn) {
+      const band = toBand(cell);
+      const radii = bandRadii.get(band) ?? [];
+      radii.push(heights[cell] ?? 0);
+      bandRadii.set(band, radii);
+    }
     const wallRadii = new Map(
       Array.from(bandRadii, ([band, radii]) => [
         band,
