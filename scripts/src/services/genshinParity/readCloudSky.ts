@@ -1,7 +1,7 @@
 import type { Page } from "playwright";
 
-import { CLOUD_ELEVATION_BANDS } from "#src/services/genshinParity/constants";
 import { blurGrey } from "#src/services/genshinParity/blurGrey";
+import { CLOUD_ELEVATION_BANDS } from "#src/services/genshinParity/constants";
 import { fitClearSky } from "#src/services/genshinParity/fitClearSky";
 import { readWitnessPartTarget } from "#src/services/genshinParity/readWitnessPartTarget";
 import { setPageWitnessView } from "#src/services/genshinParity/setPageWitnessView";

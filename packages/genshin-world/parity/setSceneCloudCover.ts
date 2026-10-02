@@ -10,7 +10,7 @@ export const setSceneCloudCover = (context: SceneContext | undefined, covers?: R
   if (!context) throw new InvalidOperationError(Operation.Read, "scene", "the scene has not rendered yet");
   const bands: string[] = [];
   context.scene.traverse((object) => {
-    const cover = object.userData.cover as UniformNode<"float", number> | undefined;
+    const cover = object.userData.cover as undefined | UniformNode<"float", number>;
     if (!cover) return;
     object.userData.ownCover ??= cover.value;
     cover.value = covers?.[object.name] ?? (object.userData.ownCover as number);
