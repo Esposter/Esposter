@@ -17,6 +17,17 @@ const { isPaused } = defineProps<Props>();
 const emit = defineEmits<{ load: []; ready: [] }>();
 const qualityTier = QualityTier.High;
 const { maxPixelRatio } = QualityTierSettingsMap[qualityTier];
+const canvas = useTemplateRef("canvas");
+// @TODO: no upstream issue — TresJS draws only while it owes a frame, and always mode owes one only once it has drawn,
+// So a canvas switched from manual, having drawn the frame it was owed, never draws again. The uncovered world is owed
+// One while the canvas is still manual, before its props change
+watch(
+  () => isPaused,
+  (newIsPaused) => {
+    if (!newIsPaused) canvas.value?.context.renderer.advance();
+  },
+  { flush: "sync" },
+);
 // A world that cannot start, where neither WebGPU nor WebGL 2 is available, is ready all the same, so the opening
 // Still finishes
 onMounted(() => {
@@ -27,6 +38,7 @@ onMounted(() => {
 <template>
   <div class="world" size-full>
     <TresCanvas
+      ref="canvas"
       :dpr="[1, maxPixelRatio]"
       :renderer="({ canvas }: TresRendererSetupContext) => createGenshinRenderer(unref(canvas))"
       :render-mode="isPaused ? 'manual' : 'always'"
