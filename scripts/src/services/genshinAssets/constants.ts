@@ -52,7 +52,7 @@ export const WORLD_DATA_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "g
 export const TOWER_BAND_HEIGHT = 2;
 export const TOWER_RADIUS_TOLERANCE = 0.03;
 // A tower's mesh at one level of detail, the tower being its name without the level
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const TOWER_MESH_REGEX: RegExp = /^(?<part>LoginScene_Build\d+_\d+)_Lod(?<level>\d)$/u;
 // A tower's surface is unrolled on a grid of half a unit of its mesh, five centimetres as the scene scales it; a run of
 // Its height keeps one tone while each channel of its shade holds within this of the one below; a face standing a unit

@@ -23,12 +23,11 @@ const toTexture = (canvas: OffscreenCanvas): CanvasTexture<OffscreenCanvas> => {
 const toPercent = (share: number): string => `${Math.min(Math.max(share, 0), 1) * 100}%`;
 // The login towers' surfaces as `fitLoginTowerFacades` traced them, drawn once into two canvases the towers read where
 // Their geometry says each vertex stands (`createLoginTowersGeometry`): the shade over the towers' stone, each band's
-// Tone, its paint, its recesses and its gilding filled as its loops in its own shade, a recess darkened by the light
-// Its depth keeps out, at half since a canvas holds no
-// More than 1 a channel; and a mask white where the tower stands solid and black where it stands open. Each tower is
-// Drawn clipped to its tile and its gutters, its loops once more a whole turn either side so the gutters carry its
-// Surface on round its axis. The gilding is drawn as the stone's colour, not as metal: with no reflection of the sky to
-// Show it, a metal reads dark against the game's own exports at every hour
+// Tone, its paint, its recesses and its gilding filled as its loops in its own shade, a recess darkened by the light its
+// Depth keeps out, at half since a canvas holds no more than 1 a channel; and a mask white where the tower stands solid
+// And black where it stands open. Each tower is drawn clipped to its tile and its gutters, its loops once more a whole
+// Turn either side so the gutters carry its surface on round its axis. The gilding is drawn as the stone's colour, not
+// As metal: with no reflection of the sky to show it, a metal reads dark against the game's own exports at every hour
 export const createLoginTowerFacade = (
   atlas: LoginTowerAtlas,
 ): { dispose: () => void; shade: Node<"vec3">; solid: Node<"float"> } => {
