@@ -228,6 +228,12 @@ export const reference: ComponentReference = {
       search:
         "genshin:parity sky login-night-title, set as the night's back and front colours with its shape, then compare",
     },
+    {
+      found:
+        "On the title frames: the exposure scaled dawn and day down a quarter and night up threefold, scoring every hour better (night 0.492 to 0.460); a second step at night, nearer the median, scored worse. The day's haze from 0.04 to 0.195 moves its frame and the phone's door frame by under 0.01 either way, so the washed day is our towers' flat light, not the haze; the light's solve runs away on every hour (a sun 7700 times as blue at dawn), its lit and shaded faces read off stand-ins whose faces are not the game's",
+      search:
+        "genshin:parity exposure, light and fog on login-dawn-title, login-day-title and login-night-title, then compare at each step and at the day haze's densities",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
