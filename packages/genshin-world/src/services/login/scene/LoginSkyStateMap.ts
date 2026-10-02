@@ -35,7 +35,7 @@ const DUSK_LIGHT_DIRECTION = new Vector3(0.837, 0.259, 0.483);
 // Light a fifth of the exposure's and the sun twice, so a face turned from the sun stands dark as the recording's do
 export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
   [LoginTimeOfDay.Dawn]: {
-    cloudLitColor: new Color(0xf2dfc8),
+    cloudLitColor: new Color(0xf5efe8),
     cloudShadeColor: new Color(0x8c91a7),
     fogColor: new Color(0xe9d8c7),
     hemisphereGroundColor: new Color(0x8c91a7),

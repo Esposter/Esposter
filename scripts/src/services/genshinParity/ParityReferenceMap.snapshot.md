@@ -9,10 +9,10 @@ committed.
 | :-------- | :----- | --------------: | ----: | ---: | ---: |
 | `health-notice` | `SplashHealthNotice` | 6.50% | 0.972 | 1.15% | 0.2067 |
 | `loading-startup` | `LoadingStartup` | 0.03% | 0.989 | 0.00% | 0.0013 |
-| `login-dawn-title` | `LoginScreen` | 14.08% | 0.425 | 10.71% | 0.5173 |
-| `login-day-title` | `LoginScreen` | 13.15% | 0.380 | 10.10% | 0.4855 |
-| `login-door` | `LoginScreen` | 9.81% | 0.296 | 8.84% | 0.4509 |
-| `login-door-recording` | `LoginScreen` | 17.36% | 0.388 | 12.36% | 0.5956 |
+| `login-dawn-title` | `LoginScreen` | 14.10% | 0.419 | 10.61% | 0.5160 |
+| `login-day-title` | `LoginScreen` | 13.15% | 0.382 | 10.10% | 0.4855 |
+| `login-door` | `LoginScreen` | 9.81% | 0.296 | 8.83% | 0.4509 |
+| `login-door-recording` | `LoginScreen` | 18.05% | 0.463 | 14.19% | 0.5848 |
 | `login-interface-door` | `LoginInterface` | 0.63% | 0.986 | 0.43% | 0.0252 |
 | `login-interface-loading` | `LoginInterface` | 0.16% | 0.995 | 0.09% | 0.0061 |
 | `login-interface-mainland-rating` | `LoginInterface` | 3.44% | 0.959 | 2.39% | 0.1444 |
