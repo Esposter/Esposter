@@ -216,6 +216,12 @@ export const reference: ComponentReference = {
         "The door rises at the walkway's far end as its last blocks settle, about 12 seconds in, nothing built past it, and the glide then brakes it to its pose",
       search: "genshin:parity frames yt-rBnfA4pXw6U at 2 a second over 0 to 15 seconds",
     },
+    {
+      found:
+        "The wiki stills fit no centred camera, so they are replaced. Public recordings of the PC client idling on the title with no interface show the hours at the glide's camera: dawn (yt-sQNqMfmfkZU, 2023), day (yt-7kK6HqVfASk, 2022, its top and bottom 50 rows masked) and night (yt-PnqNza4qWzs, 2022) stand the walkway's far end on the door recording's rows, where the 2021 recordings stand it some 30 rows lower, another camera. Each frame is held at the glide's moment its towers stand at (heldScrolled): night 135 metres and dawn 132, where the lantern tower and the ringed tower frame the walkway as in the frame, peaking the shape score at 0.412 and 0.421; the day's score runs flat under its dense haze, so its 122 is read by eye off the exports at every 4 metres",
+      search:
+        "yt-dlp searches for the login at each hour, the far end's rows across builds, then genshin:parity view of ours beside the exports at every 4 metres of the loop and compare at every metre from 120 to 142 (the day's from 100), each frame held",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
@@ -225,16 +231,14 @@ export const reference: ComponentReference = {
     "How the game brings the towers to the door's phase after a long idle: every recording found idles a few seconds, so the title's phase is read off its glide's length, not a rule of the script's",
     "What MonoBlockController does to each walkway piece: the rise is read by eye off the recording's far end; its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$) hold its own curve",
     "Which of the towers' row stands at the door frame's left edge: the recording's is thin and dark with many rings, the exports' nearest there wide and arched",
-    "The night's, the dawn's and the day's light apart from their exposure: the night still shows the walkway's top moonlit and the towers' faces dark where ours draws them the other way, and dawn takes nothing from the dusk's solved light, but genshin:parity light reads faces only where a reference's pose is solved, which the stills' is not",
-    "The clouds over the door recording's towers, 13 to 25 degrees up: every band raised there scores the stills worse, whose camera is not the recording's",
+    "The night's, the dawn's and the day's light apart from their exposure: the night frame shows the walkway's top moonlit and the towers' faces dark, and dawn takes nothing from the dusk's solved light; their title frames now stand at the solved camera, so genshin:parity light can read their faces",
+    "The clouds over the door recording's towers, 13 to 25 degrees up: every band raised there scored the wiki stills worse, whose camera was not the recording's, so it waits on a score over the title frames",
     "The dusk sun's direction against its shadows: a tower's shadow falls over the wings in front of the door where the recording's are lit, and the faces' shading cannot settle the direction, so the shadows' own edges are the measure left",
     "The dusk sky low on the frame's left: the recording's clear sky there is almost all cloud, so the sky solved over its clear pixels draws a dark red-brown band where the recording glows gold",
     "The upper clouds' cover: the recording's sky holds about six times ours above the horizon, but a score comparing pixels prices every cloud standing elsewhere than its own, so the cover waits on a measure of its own, its spread by height",
     "The towers' gilding and windows: their colour per section scores worse painted as diffuse stone, the game's gold being a metal",
     "The dusk's light and haze together: genshin:parity fog --light on the door recording solves a sun 2.5 times as strong, a sky light a third as strong and a haze dense, dark away from the sun and bright toward it, which scores the recording 0.03 better and the dusk still 0.05 worse; drawn, both frames turn to a flat orange wall with the towers' silhouettes, where the references keep their towers lit and edged, so the bins' medians by depth, angle and facing still reward a haze that washes our towers to the frame's mean, our towers lacking the lit structure the references' carry",
     "Where the glide comes to rest: the recording's door frame was still slowing at 1.6 metres a second when the click came, so the rest stands a little nearer the door than its pose",
-    "The day sky's pose, by the same perspective reading",
-    "The wiki stills' pose: held to the glide's height, pitch and field of view, the dawn frame's near wings cannot be fitted at any depth (their 1582 pixels across put them 5.5 metres out at 51.2 degrees, their rows 6.7 at 1.24 metres and 5.29), so the stills stand lower, about a metre up, or pitched about 3 degrees; four corners on one plane leave the field of view free to run away, so the stills need landmarks at another depth. Freed, the dawn frame's four wing corners fit at 0.94 pixels with a field of view of 61.9 and 0.72 metres up, against 13 held at 51.2, but the same four corners on the door recording fit 48.3 with its heading 5 degrees off, and the walkway's edges below its far end fit 51.2 and 61 alike, so only the towers, whose row's phase the stills leave unknown, can settle it. The far wings' outer faces, read as edges at their distance across, put the near wings 6.6 metres out and the field of view near 44 to 48 degrees, against the 62 the near corners' spacing asks, and the towers' verticals lean as a pitch of a few degrees would, against the near corners' 7 to 12: no centred camera fits all three, so the stills are likely a crop of a larger frame, its middle off the image's, or an older build's camera. Frames of the current build at dawn, day and night from a public recording, at the camera the door recording solves, would replace them as the hours' references Scored at the glide's pose the four stills read 0.02 to 0.04 of FLIP worse than at the old perspective reading's (44.6 degrees, 5.6 up), while the door frames read better; both recordings glide at 51.2 (the English one's title paces steadily only there, and the user's current build agrees), so the stills' camera is theirs to solve, not the scene's",
   ],
   sources: {
     atmosphereShader: {
@@ -258,17 +262,17 @@ export const reference: ComponentReference = {
       pathId: "7325196393018652092",
       role: "The three cloud emitters' particles: atlas, curl, age dissolve, light and dark colours, rim",
     },
-    dawnDuskNightSkies: {
-      block: "login-dawn, login-dusk, login-night",
+    dawnTitle: {
+      block: "yt-sQNqMfmfkZU.mp4 at 18 s (login-dawn-title)",
       kind: GameSourceKind.Capture,
-      name: "File:Login Menu Dawn.png, File:Login Menu Dusk.png, File:Login Menu Night.png",
-      role: "The flight's first pose under three skies, which share it",
+      name: "Genshin Impact - Login Background. Morning. [noOST], a 2023 PC recording idling on the title with no interface",
+      role: "The dawn sky over the title, at the camera the door recording solves",
     },
-    daySky: {
-      block: "login-day",
+    dayTitle: {
+      block: "yt-7kK6HqVfASk.mp4 at 8 s (login-day-title)",
       kind: GameSourceKind.Capture,
-      name: "File:Login Menu Day.png",
-      role: "The day sky, at a pose of its own",
+      name: "Starting Celestia Door (Day), a 2022 PC recording idling on the title with no interface, its top and bottom 50 rows masked",
+      role: "The day sky over the title, at the camera the door recording solves",
     },
     door: {
       block: "00/04803507.blk",
@@ -323,6 +327,12 @@ export const reference: ComponentReference = {
       kind: GameSourceKind.Mesh,
       name: "LoginScene_*",
       role: "The towers, bridges, pillars, walkway and door, and their Diffuse, Normal, SMBE and Height textures",
+    },
+    nightTitle: {
+      block: "yt-PnqNza4qWzs.mp4 at 12 s (login-night-title)",
+      kind: GameSourceKind.Capture,
+      name: "Starting Celestia Door (Night), a 2022 PC recording idling on the title with no interface",
+      role: "The night sky over the title, at the camera the door recording solves",
     },
     recording: {
       block: "yt-rBnfA4pXw6U.mp4",

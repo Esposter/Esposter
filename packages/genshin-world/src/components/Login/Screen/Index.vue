@@ -30,7 +30,9 @@ import { unref } from "vue";
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
-  // The scene alone, as the wiki's clean captures of it show it, for a reference to be scored against
+  // The glide held still at this many metres scrolled, for a reference taken at one moment of the title's loop
+  heldScrolled?: number;
+  // The scene alone, as the recordings idling with no interface show it, for a reference to be scored against
   isInterfaceHidden?: true;
   // The reader's language, whose client's interface the screen shows
   language: GameLanguage;
@@ -41,7 +43,7 @@ interface Props {
   timeOfDay: LoginTimeOfDay;
 }
 
-const { gameText, isInterfaceHidden, language, playerName, progress, timeOfDay } = defineProps<Props>();
+const { gameText, heldScrolled, isInterfaceHidden, language, playerName, progress, timeOfDay } = defineProps<Props>();
 // The name the screen welcomes the player by, the game's own word for the Traveler until they have chosen one
 const shownPlayerName = computed(
   () => playerName || fillLinePlaceholders(gameText[GameTextKey.Traveler], "", LOGIN_TRAVELER_GENDER),
@@ -123,6 +125,7 @@ const onClick = (event: MouseEvent): void => {
       :shadow-map-type="PCFShadowMap"
     >
       <LoginScene
+        :held-scrolled
         :is-door-lit="stage === LoginStage.Entering"
         :stage
         :time-of-day

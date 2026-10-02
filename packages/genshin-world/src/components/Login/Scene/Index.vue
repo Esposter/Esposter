@@ -89,13 +89,15 @@ import {
 import { MeshBasicNodeMaterial } from "three/webgpu";
 
 interface Props {
+  // The glide held still at this many metres scrolled, for a reference taken at one moment of the title's loop
+  heldScrolled?: number;
   isDoorLit: boolean;
   // The login screen's stage, which sets the glide's pace and, from the door's, brings it to rest at the door
   stage: LoginStage;
   timeOfDay: LoginTimeOfDay;
 }
 
-const { isDoorLit, stage, timeOfDay } = defineProps<Props>();
+const { heldScrolled, isDoorLit, stage, timeOfDay } = defineProps<Props>();
 const emit = defineEmits<{ doorFormed: []; ready: [] }>();
 // The frames drawn before the scene is said to be ready: WebGPU compiles each pipeline on first use, so the first few
 // Frames can come out before every material has. A scene mounted at the door is ready only once the door has risen
@@ -242,10 +244,14 @@ const checkIsDoorDue = (): boolean => stage === LoginStage.Door || stage === Log
 const isDoorRising = shallowRef(false);
 // The world glides toward the camera at the stage's pace and wraps each row by its length, the camera holding its one
 // Pose, from the moment of the loop the title opens at; a scene mounted at the door starts at rest there. The glide is
-// Kept off Vue's reactivity, and only the numbers the template places by, which stand still when it does, are refs
-let glide: LoginGlide = checkIsDoorDue()
-  ? { scrolled: LOGIN_GLIDE_DOOR_SCROLLED, speed: 0, stopAt: LOGIN_GLIDE_DOOR_SCROLLED }
-  : { scrolled: LOGIN_GLIDE_TITLE_SCROLLED, speed: LOGIN_GLIDE_TITLE_SPEED };
+// Kept off Vue's reactivity, and only the numbers the template places by, which stand still when it does, are refs. A
+// Held glide stands where it is held and never moves
+const readStartGlide = (): LoginGlide => {
+  if (heldScrolled !== undefined) return { scrolled: heldScrolled, speed: 0 };
+  if (checkIsDoorDue()) return { scrolled: LOGIN_GLIDE_DOOR_SCROLLED, speed: 0, stopAt: LOGIN_GLIDE_DOOR_SCROLLED };
+  return { scrolled: LOGIN_GLIDE_TITLE_SCROLLED, speed: LOGIN_GLIDE_TITLE_SPEED };
+};
+let glide = readStartGlide();
 // The towers' row, scrolled with the glide each frame off Vue's reactivity, which would otherwise draw the template anew
 const towers = new Group();
 // How far past its place of rest the door is, riding on the walkway's copy it comes to rest on
@@ -267,7 +273,7 @@ const cameraZ = computed(() => {
 onRender(({ delta: frameDelta }) => {
   // A tool holding the witness's clock holds the scene's time too, so one view draws one frame
   const delta = witness?.isClockHeld.value ? 0 : frameDelta;
-  glide = advanceLoginGlide(glide, stage, delta);
+  if (heldScrolled === undefined) glide = advanceLoginGlide(glide, stage, delta);
   const { scrolled, stopAt = scrolled } = glide;
   const [rowX, rowY, rowZ] = LOGIN_TOWERS_ROW_OFFSET;
   towers.position.set(rowX, rowY, rowZ - (scrolled % LOGIN_TOWERS_ROW.length));
