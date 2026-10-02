@@ -5,7 +5,7 @@ description: Open work for Genshin's opening, biggest gap first — the login to
 
 # Roadmap
 
-Open work only, the biggest gap to the game first. What was decided against is in [deferred](/docs/genshin/deferred); read it before adding an item. Each item names the measure that says it is done: the login's stand-ins are judged against the game's own exports drawn beside them (`genshin:parity rank`'s second table), its clouds by their statistics (`genshin:parity clouds`), and everything else by `compare` against its reference, checked by eye ([parity](/docs/genshin/parity)).
+Open work only, the biggest gap to the game first. What was decided against is in [deferred](/docs/genshin/deferred); read it before adding an item. Each item names the measure that says it is done: the login's stand-ins are judged against the game's own exports drawn beside them (`genshin:parity rank`'s second table), the towers' carving by their structural similarity there as well as their FLIP, its clouds by their statistics (`genshin:parity clouds`), and everything else by `compare` against its reference, checked by eye ([parity](/docs/genshin/parity)).
 
 ## Next
 
@@ -15,7 +15,6 @@ Open work only, the biggest gap to the game first. What was decided against is i
   - [ ] Relief that tilts the light along a recess's edge: three's bump map over the atlas changed no frame, so the relief needs a height the bump map can differentiate, or a normal map of our own drawn from the loops.
   - [ ] The stone's grain: the exports' diffuse noise reads as a fine texture on every face, ours as flat paint. A procedural grain of our own, fitted to its scale and contrast.
   - [ ] Gilding as metal: drawn as metal it read dark at every hour, since nothing reflects the sky into it. It waits on an environment map of the login's sky.
-- [ ] **A stand-in measure that values aligned detail.** FLIP against the exports scores the traced surfaces a little worse on most frames, and the bare lathes better, since fine detail a few pixels off costs it twice, while a blurred difference scores the near towers better. A per-family structural score (blurred, or structural similarity) is the measure the carving above is judged by.
 - [ ] **The clouds' cover and kind.** Our clouds stand dimmer over the sky than the recordings' and cover less of it. The statistics' cloud mask still takes the sky's own gradient for cloud: a smooth fit of each sky's clear tail, rather than a percentile a band of rows at a time, settles it first.
   - [ ] Cover and brightness raised to the recordings' at each hour, by the statistics, not the frame's FLIP, which prices every cloud standing elsewhere than its own.
   - [ ] A cloud's inside: the recordings paint a lit crown grading into a pale shade, with cirrus wisps between; ours fill with two flat colours.

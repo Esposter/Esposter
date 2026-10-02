@@ -251,6 +251,12 @@ export const reference: ComponentReference = {
         "Our clouds were cut-outs with a dark rim, their crown's colour read where its blur and the outline's both thinned at the edge. Read as the crown's share of the cloud's own cover, the outline blurred to a fiftieth of a cell and the crown wider, edge sharpness falls toward the recordings' and FLIP moves under 0.002 at every hour. The statistics read our clouds dimmer over their sky than the recordings' and covering less of it; their cloud mask still takes the sky's own gradient for cloud",
       search: "genshin:parity clouds (measureClouds, readCloudStatistics) at every hour, before and after each blur",
     },
+    {
+      found:
+        "Against the exports, the towers' multi-scale structural similarity reads 0.70 on the phone's door frame, 0.60 at dawn, 0.70 by day and 0.71 at night; the walkway's 0.61, 0.45, 0.86 and 0.48, its far end standing at full height in the exports where ours assembles; the bridges' over 0.8 everywhere. Side by side, the near lantern tower's arched windows read dark in the exports and pale orange in ours, but every darker recess (0.8 to 0.6 a unit of depth in place of 0.9) scored the towers worse by both measures",
+      search:
+        "rank's second table with scoreLabelSimilarity at every hour, its stand-in sheet read by eye, then the recesses' occlusion swept",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
