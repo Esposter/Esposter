@@ -112,3 +112,13 @@ export const FLIP_PIXELS_PER_DEGREE: number = 0.7 * (FLIP_SCREEN_WIDTH / 0.7) * 
 export const SKY_LAYER = "sky";
 // A sky pixel the reference shows at least this many times as bright as our clear sky is one of its clouds
 export const CLOUD_BRIGHTNESS_RATIO = 1.4;
+// A recording's or a sound's pitch classes are read at 12 kHz, mono, in frames of 4096 samples a tenth of a second
+// Apart, over 60 Hz to 2.5 kHz, where a mix's notes carry their pitch; a frame quieter than a fiftieth of the loudest
+// Is left out of a match, and a match compares twenty seconds of a recording at a time
+export const CHROMA_SAMPLE_RATE = 12000;
+export const CHROMA_FRAME_LENGTH = 4096;
+export const CHROMA_HOP_LENGTH = 1200;
+export const CHROMA_MIN_FREQUENCY = 60;
+export const CHROMA_MAX_FREQUENCY = 2500;
+export const CHROMA_QUIET_SHARE = 0.02;
+export const CHROMA_MATCH_SECONDS = 20;
