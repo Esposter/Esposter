@@ -12,6 +12,6 @@ export const LOGIN_WALKWAY_RISE_DEPTH = 3;
 export const LOGIN_WALKWAY_RISE_OVERSHOOT = 0.45;
 // The walkway's paving drawn into its texture at so many pixels a metre, and a pocket's stone as a share of its lane's:
 // The exports' own plan of the walkway's tops reads its pockets at about 0.83 of its lane, but drawn beside the exports
-// at every hour's camera our pockets match them best, by their structural similarity, at a twentieth darker
+// At every hour's camera our pockets match them best, by their structural similarity, at a twentieth darker
 export const LOGIN_PAVING_PIXELS_PER_METRE = 128;
 export const LOGIN_PAVING_POCKET_SHADE = 0.95;
