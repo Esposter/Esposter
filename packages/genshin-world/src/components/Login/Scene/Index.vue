@@ -288,8 +288,8 @@ onRender(({ delta: frameDelta }) => {
   towers.position.set(rowX, rowY, rowZ - (scrolled % LOGIN_TOWERS_ROW.length));
   doorAhead.value = stopAt - scrolled;
   // The witness's parts ride the glide with ours, off by whatever offset a tool sets them: its towers and bridges the
-  // Row, its walkway the walkway's copies, and its door ours, standing only where ours does, so a frame of the title
-  // Compares no door against none
+  // Row, its walkway the walkway's copies, and its door ours as it rises, standing only where ours does, so a frame of
+  // The title compares no door against none
   for (const group of witness?.parts.children ?? []) {
     const [x = 0, y = 0, z = 0] = (group.userData.offset as [number, number, number] | undefined) ?? [];
     group.position.set(x, y, z);
@@ -297,6 +297,7 @@ onRender(({ delta: frameDelta }) => {
       group.position.add(towers.position);
     else if (group.name === LoginPartFamily.Walkway) group.position.z -= scrolled % LOGIN_WALKWAY_ROW.length;
     else if (group.name === LoginPartFamily.Door) {
+      group.position.y += doorPosition.value[1] - LOGIN_DOOR_POSITION[1];
       group.position.z += doorAhead.value;
       group.visible = isDoorRising.value && (witness?.families.value.includes(group.name) ?? false);
     }
