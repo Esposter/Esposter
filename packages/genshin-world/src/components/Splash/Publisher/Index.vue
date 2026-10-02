@@ -61,7 +61,7 @@ const ringBandStyles = PUBLISHER_RING_BANDS.map(({ colors, radius }, index) => {
 
 <style scoped>
 .publisher-splash {
-  background: #fff;
+  background: var(--white);
 }
 
 /* Centred on the screen as the game centres it, 74.53 units above the middle, so a window narrower than 16:9 keeps

@@ -159,7 +159,7 @@ const onClick = (event: MouseEvent): void => {
   position: absolute;
   inset: 0;
   animation: arrive calc(v-bind(LOGIN_ARRIVE_FADE_MS) * 1ms) linear forwards;
-  background: #fff;
+  background: var(--white);
   pointer-events: none;
 }
 
@@ -172,7 +172,7 @@ const onClick = (event: MouseEvent): void => {
 .flash {
   position: absolute;
   inset: 0;
-  background: #fff;
+  background: var(--white);
   opacity: 0;
   pointer-events: none;
 }

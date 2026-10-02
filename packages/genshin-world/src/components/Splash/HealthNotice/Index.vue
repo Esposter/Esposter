@@ -26,15 +26,15 @@ const paragraphs = computed(() => gameText[GameTextKey.HealthNotice].split("\n\n
 </template>
 
 <style scoped>
-/* Measured from the English client's notice and held against the Japanese one's at 60 frames: the divider spans the screen's
-   Width less 190 units a side and the text 20 units inside it, so a wider screen sets the notice in fewer lines. The
-   Sizes are the ones that score best against the English client's notice in Signika (heading 58 units, text 40.5), since
-   Its letters are proportioned apart from the game's own face. The text's grey is the Japanese recording's, which the English
-   Picture's text agrees with; the English heading is near black, darker than the Japanese one's */
+/* Measured from the English PC client's notice at 1080 and held against the Japanese one's at 60 frames: the divider
+   Spans the screen's width less 190 units a side and the text 20 units inside it, so a wider screen sets the notice in
+   Fewer lines. The sizes are the ones that score best against the English notice in Signika (heading 57.1 units, its
+   Lines 48 apart, text 40.5, whose line breaks a smaller size or a tighter spacing moves), since its letters are
+   Proportioned apart from the game's own face. The heading's and the text's greys are the English recording's */
 .health-notice {
   display: grid;
   place-items: center;
-  background: #fff;
+  background: var(--white);
 }
 
 .block {
@@ -47,8 +47,8 @@ const paragraphs = computed(() => gameText[GameTextKey.HealthNotice].split("\n\n
 
 .title {
   margin: 0;
-  color: #1d1d1d;
-  font-size: calc(var(--unit) * 58);
+  color: #353535;
+  font-size: calc(var(--unit) * 57.1);
   font-weight: 600;
   line-height: calc(var(--unit) * 60);
 }
@@ -61,14 +61,14 @@ const paragraphs = computed(() => gameText[GameTextKey.HealthNotice].split("\n\n
 .paragraph {
   max-width: calc(100cqw - var(--unit) * 420);
   margin: calc(var(--unit) * 12.5) 0 0;
-  color: #656565;
+  color: #696969;
   font-size: calc(var(--unit) * 40.5);
   font-weight: 600;
-  line-height: calc(var(--unit) * 48.36);
+  line-height: calc(var(--unit) * 48);
 }
 
 /* A blank line between paragraphs, as the notice sets them */
 .paragraph + .paragraph {
-  margin-top: calc(var(--unit) * 48.36);
+  margin-top: calc(var(--unit) * 48);
 }
 </style>

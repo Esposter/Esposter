@@ -15,6 +15,7 @@ import {
   TITLE_SPLASH_TIMING,
 } from "#src/services/splash/constants";
 import { GameLanguageGameClientMap } from "#src/services/splash/GameLanguageGameClientMap";
+import { GAME_WHITE } from "genshin-interface";
 
 interface Props {
   // The game's words in the reader's language
@@ -89,7 +90,7 @@ watch(
 .splash-sequence {
   position: absolute;
   inset: 0;
-  background: #fff;
+  background: v-bind(GAME_WHITE);
 }
 
 .stage {
