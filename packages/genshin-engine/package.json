@@ -66,6 +66,7 @@
     "@types/three": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:",
+    "vite": "catalog:",
     "vitest": "catalog:"
   },
   "peerDependencies": {

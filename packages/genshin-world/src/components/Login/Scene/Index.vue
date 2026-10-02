@@ -52,7 +52,10 @@ import {
   LOGIN_WALKWAY_ROW,
 } from "#src/services/login/scene/constants";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
+import { LOGIN_TOWER_RELIEF_SCALE } from "#src/services/login/tower/constants";
+import { createLoginTowerFacade } from "#src/services/login/tower/createLoginTowerFacade";
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
+import { readLoginTowerAtlas } from "#src/services/login/tower/readLoginTowerAtlas";
 import { LOGIN_WALKWAY_RISE_DEPTH, LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
 import { createLoginPavingShade } from "#src/services/login/walkway/createLoginPavingShade";
 import { createLoginWalkwayPieces } from "#src/services/login/walkway/createLoginWalkwayPieces";
@@ -76,8 +79,10 @@ import {
 import { BatchedMesh, DirectionalLight, Group, HemisphereLight, Matrix4 } from "three";
 import {
   abs,
+  bumpMap,
   color,
   exp,
+  float,
   mix,
   mx_fractal_noise_float,
   positionLocal,
@@ -169,6 +174,15 @@ watchImmediate(
 // The stone each family of parts is carved from, as its game materials hold it, lit physically as the game lights it
 // And drawn with no outline: the towers', the bridges', the walkway's, and the door's frame and its panel
 const towersMaterial = createStoneMaterial(stone.towers);
+// The towers' surfaces drawn over their lathes: each band's tone, its paint, its recesses, its gilding as metal, its
+// Relief tilting the light along their edges, and where a tower stands open its colonnade lets the sky through
+const towerAtlas = readLoginTowerAtlas();
+const towerFacade = createLoginTowerFacade(towerAtlas);
+towersMaterial.colorNode = towerFacade.shade.mul(color(stone.towers.albedo));
+towersMaterial.metalnessNode = towerFacade.metalness;
+towersMaterial.normalNode = bumpMap(towerFacade.relief, float(LOGIN_TOWER_RELIEF_SCALE));
+towersMaterial.opacityNode = towerFacade.solid;
+towersMaterial.alphaTest = 0.5;
 const bridgesMaterial = createStoneMaterial(stone.bridges);
 const walkwayMaterial = createStoneMaterial(stone.walkway);
 // The walkway's stone darkened along its paving's lines
@@ -188,7 +202,7 @@ const doorMaterial = createStoneMaterial(
 const doorAlbedo = createLoginDoorRelief().mul(color(stone.door.albedo));
 doorFrameMaterial.colorNode = doorAlbedo;
 doorMaterial.colorNode = doorAlbedo;
-const towersGeometry = createLoginTowersGeometry();
+const towersGeometry = createLoginTowersGeometry(towerAtlas);
 const hullsGeometry = createLoginHullsGeometry();
 const walkwayPieces = createLoginWalkwayPieces();
 // The walkway's row drawn as one batch, every piece of every copy an instance of its own, so each rises into place on

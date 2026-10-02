@@ -70,7 +70,7 @@ Each `QualityTier` sets what the frame spends (`QualityTierSettingsMap`): the sh
 
 ### The tuning panel
 
-In development, `useGenshinTuning` opens three's inspector with a **Look** panel over the ramp, the rim, the outline, the fog, the grade, the god rays and bloom. A slider writes the uniform, or regenerates the texture it drives, at once, so the look is tuned against reference screenshots rather than guessed. Nothing is saved: a value that looks right is copied into the region's constants. The inspector is imported only from that composable, so a production build never loads it.
+In a Vite development build, `createGenshinRenderer` puts three's inspector on every renderer it makes (`attachInspector`), so every scene, the login's walkway as much as the world, is profiled and walked without asking for it. A browser driven by automation, as the parity page's shots and the visual suite are, gets none, since the panel would cover and slow what it measures, and a production build drops the branch, so it never loads the inspector. On the world, `useGenshinTuning` adds a **Look** group to that inspector over the ramp, the rim, the outline, the fog, the grade, the god rays and bloom. A slider writes the uniform, or regenerates the texture it drives, at once, so the look is tuned against reference screenshots rather than guessed. Nothing is saved: a value that looks right is copied into the region's constants.
 
 ## What it costs to run
 
@@ -92,6 +92,7 @@ In development, `useGenshinTuning` opens three's inspector with a **Look** panel
 | `packages/genshin-engine/src/post/createPostPipeline.ts`         | The frame after the scene: outlines, god rays, fog, bloom, grade and AA         |
 | `packages/genshin-engine/src/post/createHeightFogNode.ts`        | The height fog integrated along each pixel's ray                                |
 | `packages/genshin-engine/src/renderer/constants.ts`              | The tone mapping every canvas passes                                            |
+| `packages/genshin-engine/src/renderer/attachInspector.ts`        | Three's inspector on a renderer, shared by whatever asks for it                 |
 | `packages/genshin-engine/src/post/toSceneColor.ts`               | A measured display colour as the scene colour the tone mapping shows as it      |
 | `packages/genshin-engine/src/post/computeGradeLut.ts`            | A region's grade as a cube of display colours                                   |
 | `packages/genshin-engine/src/renderer/QualityTierSettingsMap.ts` | What each tier spends, and what none drops                                      |

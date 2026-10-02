@@ -51,7 +51,22 @@ export const WORLD_DATA_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "g
 // Its numbers kept to the centimetre
 export const TOWER_BAND_HEIGHT = 2;
 export const TOWER_RADIUS_TOLERANCE = 0.03;
+// A tower's mesh at one level of detail, the tower being its name without the level
+export const TOWER_MESH_REGEX: RegExp = /^(?<part>LoginScene_Build\d+_\d+)_Lod(?<level>\d)$/u;
+// A tower's surface is unrolled on a grid of half a unit of its mesh, five centimetres as the scene scales it; a run of
+// Its height keeps one tone while each channel of its shade holds within this of the one below; a face standing a unit
+// In from the lathe's radius is a shallow recess (the fluting, a moulding's groove) and four units a deep one (a window,
+// An arch), and a loop round fewer than this many cells is dropped as a speck of its paint
+export const TOWER_FACADE_CELL_SIZE = 0.5;
+export const TOWER_FACADE_SHADE_TOLERANCE = 0.04;
+export const TOWER_FACADE_SHALLOW_RECESS = 1;
+export const TOWER_FACADE_DEEP_RECESS = 4;
+export const TOWER_FACADE_MIN_CELLS = 40;
+// Paint on a tower's face stands apart from its band where it is this share darker or lighter
+export const TOWER_FACADE_PAINT_CONTRAST = 0.12;
 export const FITTED_DECIMALS = 2;
+// A rotation's components are kept to the ten-thousandth, finer than a centimetre over the scene's farthest part
+export const ROTATION_DECIMALS = 10_000;
 // A walkway's outline is traced on a five-centimetre grid and kept within two centimetres of it, so pieces laid along
 // Its diagonal cracks meet with no gap to see their sides through
 export const WALKWAY_CELL_SIZE = 0.05;

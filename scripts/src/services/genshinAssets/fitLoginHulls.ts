@@ -1,6 +1,6 @@
 import type { AssetPlacement } from "#src/models/genshinAssets/AssetPlacement";
 
-import { HULL_CELL_SIZE } from "#src/services/genshinAssets/constants";
+import { HULL_CELL_SIZE, ROTATION_DECIMALS } from "#src/services/genshinAssets/constants";
 import { fitVisualHull } from "#src/services/genshinAssets/fitVisualHull";
 import { readLevelOfDetailParts } from "#src/services/genshinAssets/readLevelOfDetailParts";
 import { readObjMesh } from "#src/services/genshinAssets/readObjMesh";
@@ -8,8 +8,6 @@ import { roundFitted } from "#src/services/genshinAssets/roundFitted";
 import { toRightHanded } from "#src/services/genshinAssets/toRightHanded";
 import { toRightHandedRotation } from "#src/services/genshinAssets/toRightHandedRotation";
 
-// A rotation's components are kept to the ten-thousandth, finer than a centimetre over the scene's farthest part
-const ROTATION_DECIMALS = 10_000;
 // A bridge's or a pillar's mesh at one level of detail, the part being its name without the level
 const HULL_MESH_REGEX = /^(?<part>LoginScene_(?:Bridge0[234]|Pillar03)(?:_\d+)?)_Lod(?<level>\d)$/u;
 // The login scene's bridges and pillars as hulls: each part's visual hull from its most detailed mesh, boxes in three's

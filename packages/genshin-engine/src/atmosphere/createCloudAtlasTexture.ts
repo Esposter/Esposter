@@ -3,8 +3,10 @@ import type { CloudSprite } from "#src/atmosphere/CloudSprite";
 import { addSmoothLoop } from "#src/materials/addSmoothLoop";
 import { CanvasTexture, LinearFilter, NoColorSpace } from "three";
 
-// How soft a cloud's edges are painted, its fill blurred by this share of a cell
-const EDGE_BLUR_SHARE = 0.012;
+// How soft a cloud's edge is painted, its outline blurred by this share of a cell, and its lit crown, blurred wider so
+// Its light grades into its shade across it rather than stepping
+const EDGE_BLUR_SHARE = 0.02;
+const CROWN_BLUR_SHARE = 0.035;
 // Every cloud sprite in one square texture, a cell each in rows of `getCloudAtlasColumns` of them: its outline filled
 // Into the red channel and its lit crown into the green, so a material colours it with whatever the sky's clouds are
 // Lit and shaded by at the hour, and none is repainted as the hour turns. Each loop is drawn as a smooth curve through
@@ -20,8 +22,8 @@ export const createCloudAtlasTexture = (
   const context = canvas.getContext("2d");
   if (context) {
     context.globalCompositeOperation = "lighter";
-    context.filter = `blur(${cellSize * EDGE_BLUR_SHARE}px)`;
-    const fill = (loops: [number, number][][], column: number, row: number, style: string): void => {
+    const fill = (loops: [number, number][][], column: number, row: number, style: string, blurShare: number): void => {
+      context.filter = `blur(${cellSize * blurShare}px)`;
       const path = new Path2D();
       // The sprite's y runs up and the canvas's down, and a texture's first row is its top
       const toCanvas = ([x, y]: [number, number]): [number, number] => [
@@ -40,8 +42,8 @@ export const createCloudAtlasTexture = (
     for (const [index, { lit, outline }] of sprites.entries()) {
       const column = index % columns;
       const row = Math.floor(index / columns);
-      fill(outline, column, row, "#f00");
-      fill(lit, column, row, "#0f0");
+      fill(outline, column, row, "#f00", EDGE_BLUR_SHARE);
+      fill(lit, column, row, "#0f0", CROWN_BLUR_SHARE);
     }
   }
   const texture = new CanvasTexture(canvas);
