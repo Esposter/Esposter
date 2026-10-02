@@ -492,8 +492,8 @@ catalogs:
       specifier: ^6.0.0
       version: 6.0.0
     apexcharts:
-      specifier: ^7.7.0
-      version: 7.7.0
+      specifier: ^7.8.0
+      version: 7.8.0
     better-auth:
       specifier: ^1.7.7
       version: 1.7.7
@@ -1197,7 +1197,7 @@ importers:
         version: link:../../packages/agent-console-server
       apexcharts:
         specifier: 'catalog:'
-        version: 7.7.0
+        version: 7.8.0
       better-auth:
         specifier: 'catalog:'
         version: 1.7.7(@opentelemetry/api@1.9.1)(drizzle-kit@1.0.0-rc.4)(drizzle-orm@1.0.0-rc.4(@electric-sql/pglite@0.5.8)(@opentelemetry/api@1.9.1)(postgres@3.4.9)(valibot@1.5.0(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(zod@4.6.5))(vitest@5.0.3)(vue@3.5.43)
@@ -1419,7 +1419,7 @@ importers:
         version: 5.3.1(@vue/compiler-sfc@3.5.43)(esbuild@0.28.2)(pinia@4.0.3(@vue/devtools-api@8.2.1)(vue@3.5.43))(rolldown@1.2.12)(rollup@4.63.6)(vite@8.3.2(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.43)(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.5(@types/node@26.6.4))(svgo@4.1.0)(uglify-js@3.19.3))
       vue3-apexcharts:
         specifier: 'catalog:'
-        version: 1.11.1(apexcharts@7.7.0)(vue@3.5.43)
+        version: 1.11.1(apexcharts@7.8.0)(vue@3.5.43)
       web-push:
         specifier: 'catalog:'
         version: 3.6.7(supports-color@10.2.2)
@@ -8990,8 +8990,8 @@ packages:
   apex-commons@0.8.1:
     resolution: {integrity: sha512-F7fqJVh0smeTu1d86uuRSNNZvaM/l11GNQMbu6oAiSvuXp+K8KCufg0oZTy2VQBEEipRLAdFqkHnphlVpTG0Gw==}
 
-  apexcharts@7.7.0:
-    resolution: {integrity: sha512-lvXebAFAUnenxqJ4pSS5QBGuLxXVVQ8+D+AO7GgMeE8DczwYyEmz8UO8cCUmv9tY4yRTIiz7SUCdvoNvRIyF/g==}
+  apexcharts@7.8.0:
+    resolution: {integrity: sha512-UxzR7IDXs3HDaOoxTsdn7L2dw9TdYp347uiU7WvjKuzCQqODmO7l63rxMmLwtbYrZPd+0Vd7v5VINzJgPyqmIw==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
   archiver-utils@5.0.2:
@@ -23471,7 +23471,7 @@ snapshots:
 
   apex-commons@0.8.1: {}
 
-  apexcharts@7.7.0:
+  apexcharts@7.8.0:
     dependencies:
       apex-commons: 0.8.1
 
@@ -31766,9 +31766,9 @@ snapshots:
       '@vue/language-core': 3.3.11
       typescript: typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2
 
-  vue3-apexcharts@1.11.1(apexcharts@7.7.0)(vue@3.5.43):
+  vue3-apexcharts@1.11.1(apexcharts@7.8.0)(vue@3.5.43):
     dependencies:
-      apexcharts: 7.7.0
+      apexcharts: 7.8.0
       vue: 3.5.43
 
   vue@3.5.43:
