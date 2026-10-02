@@ -51,6 +51,7 @@ flowchart TD
 | [Trees and scatter](/docs/proposals/genshin/trees-and-scatter)     | tree species and impostors, and flowers, bushes and rocks scattered by biome      |
 | [Weather](/docs/proposals/genshin/weather)                         | rain, storms, snow, fog and sandstorms, set per area as the game sets them        |
 | [Exploring](/docs/proposals/genshin/exploring)                     | a free camera, waypoints to jump between, and the map overlay                     |
+| [Music](/docs/proposals/genshin/music)                             | the game's music re-derived from its sound banks and played by our synthesizer    |
 
 ### Phase two: the regions
 

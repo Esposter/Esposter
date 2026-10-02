@@ -1,6 +1,6 @@
 ---
 title: Roadmap
-description: Open work for Genshin's opening, biggest gap first — the login towers' carving and gold, the clouds' cover and kind, each hour's light through the game's deferred pass and its sky, where the parts stand, the door's and the walkway's surfaces, and the references and measures the rest waits on.
+description: Open work for Genshin's opening, biggest gap first — the login towers' carving and gold, the clouds' cover and kind, each hour's light through the game's deferred pass and its sky, where the parts stand, the door's and the walkway's surfaces, the login's music, and the references and measures the rest waits on.
 ---
 
 # Roadmap
@@ -22,6 +22,8 @@ Open work only, the biggest gap to the game first. What was decided against is i
 - [ ] **Each hour's sky, solved with its clouds.** A clear sky solved alone stands darker than the recordings' sky reads as a whole, which is mostly cloud, and scored the night worse. The cloud mask now fits each sky's clear sky under its clouds (`fitClearSky`), the clear pixels a solve of the sky reads.
 - [ ] **Where the parts stand.** The silhouettes' placement and pose is a large term on every frame. `place` on edges runs a row metres up, so the row's offset and each tower's place need a measure on the sky's outline against each part's instead.
 - [ ] **The door's surface at rest.** On the phone's door frame the door is the largest stand-in gap against its exports: its panel's relief is painted, at three fifths of its read contrast where painting scores best over both door frames together and this frame alone 0.005 worse, and the game's is carved and lit.
+
+- [ ] **The login's music.** The login is silent; its playlist is read from the game's sound banks and its two pieces are found ([music](/docs/proposals/genshin/music)). [pitch-transcription](/docs/proposals/refactors/pitch-transcription) first, then the fit, the player and the listening score, measured segment by segment against the game's decoded sound.
 
 ## Later
 
