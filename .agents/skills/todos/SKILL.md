@@ -47,3 +47,4 @@ Each row is a marker in the unfiled form, waiting for its issue to be filed: the
 - `apps/web/app/services/trpc/mswTrpc.test.ts` — nuxt/test-utils: "In the nuxt environment `fetch` and `Request` are happy-dom's while `Headers` stays Node's, so a library mixing the globals (msw 3) loses requests and headers"
 - `packages/trpc-nuxt-module/src/runtime/client/models/TRPCNuxtClient.test-d.ts` — arktype/arktype: "attest: instantiation counts fail under a tsgo-backed `typescript` — `@typescript/vfs` reports the probe file as existing, then finds no source file for it"
 - `apps/web/shared/types/nuxt.d.ts` — nuxt/nuxt: "The server project types neither `import.meta.env` for `shared/` code nor a module's Nitro runtime hooks"
+- `apps/web/app/components/Genshin/World.vue` — tresjs/tres: "A canvas switched from `renderMode: 'manual'` to `'always'` after drawing its owed frame never draws again — always mode owes a frame only once it has drawn"

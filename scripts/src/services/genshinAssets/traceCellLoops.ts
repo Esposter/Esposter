@@ -1,6 +1,9 @@
 import { roundFitted } from "#src/services/genshinAssets/roundFitted";
 import { traceCoveredGrid } from "#src/services/genshinAssets/traceCoveredGrid";
 
+// Reduced rather than spread, since a surface's cells run past the arguments a call can take
+const readBound = (values: readonly number[], pick: (first: number, second: number) => number): number =>
+  values.reduce((bound, value) => pick(bound, value));
 // The loops round a set of a grid's cells, traced over the cells' own bounds and kept where they enclose at least
 // `minCells`, in the grid's metres from its corner
 export const traceCellLoops = (
@@ -16,9 +19,6 @@ export const traceCellLoops = (
   if (cells.length === 0) return [];
   const columns = cells.map((cell) => cell % width);
   const rows = cells.map((cell) => Math.floor(cell / width));
-  // Reduced rather than spread, since a surface's cells run past the arguments a call can take
-  const readBound = (values: readonly number[], pick: (first: number, second: number) => number): number =>
-    values.reduce((bound, value) => pick(bound, value));
   const [firstColumn, firstRow] = [readBound(columns, Math.min), readBound(rows, Math.min)];
   const boundsWidth = readBound(columns, Math.max) - firstColumn + 1;
   const boundsHeight = readBound(rows, Math.max) - firstRow + 1;

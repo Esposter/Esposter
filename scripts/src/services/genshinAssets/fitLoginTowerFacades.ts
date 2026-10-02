@@ -57,8 +57,8 @@ const BYTE = 255;
 const METAL_THRESHOLD = 0.5;
 const GILDING_RED_BLUE_RATIO = 1.8;
 const toLinear = (value: number): number => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
-const readTexture = async (path: string): Promise<Texture | undefined> =>
-  existsSync(path) ? sharp(path).raw().toBuffer({ resolveWithObject: true }) : undefined;
+const readTexture = (path: string): Promise<Texture | undefined> =>
+  existsSync(path) ? sharp(path).raw().toBuffer({ resolveWithObject: true }) : Promise.resolve(undefined);
 const readTexel = ({ data, info }: Texture, uv: readonly [number, number], channel: number): number => {
   const [column, row] = toTexel(uv, info);
   return (data[(row * info.width + column) * info.channels + channel] ?? 0) / BYTE;
@@ -138,10 +138,9 @@ export const fitLoginTowerFacades = async (
       const tag = tags[cell] ?? -1;
       const textures = materialTextures[Number(/_(?<index>\d+)$/u.exec(groups[tag] ?? "")?.groups?.index ?? -1)];
       const uv: [number, number] = [values[cell * 2] ?? 0, values[cell * 2 + 1] ?? 0];
+      const diffuse = textures?.diffuse;
       colors.push(
-        textures?.diffuse
-          ? ([0, 1, 2].map((channel) => toLinear(readTexel(textures.diffuse!, uv, channel))) as Vector)
-          : [0, 0, 0],
+        diffuse ? ([0, 1, 2].map((channel) => toLinear(readTexel(diffuse, uv, channel))) as Vector) : [0, 0, 0],
       );
       metals.push(textures?.mask ? readTexel(textures.mask, uv, 1) : 0);
     }

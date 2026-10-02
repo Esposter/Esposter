@@ -1,6 +1,8 @@
 import { measureClouds } from "#src/services/genshinParity/measureClouds";
 import { describe, expect, test } from "vitest";
 
+const toClouds = (luminance: Float32Array): Uint8Array => Uint8Array.from(luminance, (value) => Number(value > 1.5));
+
 describe(measureClouds, () => {
   const size = 20;
   const sky = new Uint8Array(size * size).fill(1);
@@ -10,7 +12,6 @@ describe(measureClouds, () => {
       const column = pixel % size;
       return Math.min(Math.max((size / 2 + rampWidth / 2 - column) / Math.max(rampWidth, 1), 0), 1) + 1;
     });
-  const toClouds = (luminance: Float32Array): Uint8Array => Uint8Array.from(luminance, (value) => Number(value > 1.5));
 
   test("reads a cut-out's edge sharper than a soft one's, over the same cover", () => {
     expect.hasAssertions();

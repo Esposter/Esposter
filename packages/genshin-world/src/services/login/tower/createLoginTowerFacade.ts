@@ -15,6 +15,14 @@ import { attribute, texture } from "three/tsl";
 const WALL_RELIEF = 0.5;
 const RELIEF_PER_UNIT = 0.1;
 const MAX_ANISOTROPY = 8;
+const toTexture = (canvas: OffscreenCanvas): CanvasTexture<OffscreenCanvas> => {
+  const canvasTexture = new CanvasTexture(canvas);
+  canvasTexture.colorSpace = NoColorSpace;
+  canvasTexture.magFilter = LinearFilter;
+  canvasTexture.minFilter = LinearMipmapLinearFilter;
+  canvasTexture.anisotropy = MAX_ANISOTROPY;
+  return canvasTexture;
+};
 const toPercent = (share: number): string => `${Math.min(Math.max(share, 0), 1) * 100}%`;
 // The login towers' surfaces as `fitLoginTowerFacades` traced them, drawn once into two canvases the towers read where
 // Their geometry says each vertex stands (`createLoginTowersGeometry`): the shade over the towers' stone, each band's
@@ -77,14 +85,6 @@ export const createLoginTowerFacade = (
       maskContext.fill(toPath(holes), "evenodd");
     }
   }
-  const toTexture = (canvas: OffscreenCanvas): CanvasTexture<OffscreenCanvas> => {
-    const canvasTexture = new CanvasTexture(canvas);
-    canvasTexture.colorSpace = NoColorSpace;
-    canvasTexture.magFilter = LinearFilter;
-    canvasTexture.minFilter = LinearMipmapLinearFilter;
-    canvasTexture.anisotropy = MAX_ANISOTROPY;
-    return canvasTexture;
-  };
   const facadeUv = attribute<"vec2">(LOGIN_FACADE_ATTRIBUTE);
   const mask = texture(toTexture(maskCanvas), facadeUv);
   return {
