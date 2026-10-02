@@ -89,7 +89,7 @@ export const STRUCTURE_WIDTH = 480;
 export const CLOUDS_WIDTH = 960;
 // The heights over the horizon, in degrees, the sky's cover is read between band by band: the cloud sea's billows and the
 // Bank along the horizon low, the cumulus over the towers' crowns high
-export const CLOUD_ELEVATION_BANDS = [0, 3, 8, 15, 25, 90];
+export const CLOUD_ELEVATION_BANDS: number[] = [0, 3, 8, 15, 25, 90];
 // The colours a preview and an overlay draw each family of a scene's parts in, by its index, distinct on any ground
 export const FAMILY_COLORS: readonly [number, number, number][] = [
   [230, 25, 75],
