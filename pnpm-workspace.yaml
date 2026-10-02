@@ -70,7 +70,7 @@ catalog:
   "@lerna-lite/cli": ^5.6.2
   "@lerna-lite/publish": ^5.6.2
   "@livekit/track-processors": ^0.8.1
-  "@modelcontextprotocol/sdk": ^1.31.0
+  "@modelcontextprotocol/sdk": ^1.32.0
   "@nuxt/content": ^3.16.1
   "@nuxt/eslint": ^1.17.0
   "@nuxt/fonts": ^0.14.0
