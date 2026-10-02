@@ -341,6 +341,7 @@ onUnmounted(() => {
   scene.value.backgroundNode = null;
   skyGradient.dispose();
   gradeLutTexture.dispose();
+  towerFacade.dispose();
   for (const material of [towersMaterial, bridgesMaterial, walkwayMaterial, doorFrameMaterial, doorMaterial])
     material.dispose();
   cloudSeaMaterial.dispose();

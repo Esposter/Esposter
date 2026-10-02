@@ -3,6 +3,9 @@ export const LOGIN_TOWER_RADIAL_SEGMENTS = 24;
 // A tower's facade is drawn at two pixels a unit of its mesh, five centimetres as the scene scales it, so a window or a
 // Gold band spans several pixels where the login's camera sees it nearest
 export const LOGIN_TOWER_FACADE_PIXELS_PER_UNIT = 2;
+// The pixels each tower's tile in the atlas runs on past its either edge, its surface carried on round its axis, so a
+// Seam's filtering and the mipmaps' first levels read the tower's own facade rather than its neighbour's
+export const LOGIN_TOWER_FACADE_GUTTER = 16;
 // How far the facade's relief tilts the light across a recess's edge, as three's bump map scales it
 export const LOGIN_TOWER_RELIEF_SCALE = 12;
 // The geometry attribute each tower vertex reads its facade at, in the atlas's own coordinates
