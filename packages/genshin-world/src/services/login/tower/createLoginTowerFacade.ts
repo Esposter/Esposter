@@ -4,6 +4,7 @@ import type { Node } from "three/webgpu";
 import towers from "#src/data/login/towers.json";
 import {
   LOGIN_FACADE_ATTRIBUTE,
+  LOGIN_TOWER_FACADE_CONTRAST,
   LOGIN_TOWER_FACADE_GUTTER,
   LOGIN_TOWER_FACADE_PIXELS_PER_UNIT,
   LOGIN_TOWER_RECESS_OCCLUSION,
@@ -27,7 +28,9 @@ const toPercent = (share: number): string => `${Math.min(Math.max(share, 0), 1) 
 // Depth keeps out, at half since a canvas holds no more than 1 a channel; and a mask white where the tower stands solid
 // And black where it stands open. Each tower is drawn clipped to its tile and its gutters, its loops once more a whole
 // Turn either side so the gutters carry its surface on round its axis. The gilding is drawn as the stone's colour, not
-// As metal: with no reflection of the sky to show it, a metal reads dark against the game's own exports at every hour
+// As metal: with no reflection of the sky to show it, a metal reads dark against the game's own exports at every hour.
+// Every shade, a recess's with the light it keeps out, stands its contrast's share as far from the stone as traced,
+// Since the game shows its carving by the light across its relief rather than by its colour alone
 export const createLoginTowerFacade = (
   atlas: LoginTowerAtlas,
 ): { dispose: () => void; shade: Node<"vec3">; solid: Node<"float"> } => {
@@ -70,7 +73,7 @@ export const createLoginTowerFacade = (
       maskContext.save();
       maskContext.clip(clip);
       const toShadeStyle = (shade: readonly number[]): string => {
-        const [red = 1, green = 1, blue = 1] = shade;
+        const [red = 1, green = 1, blue = 1] = shade.map((channel) => 1 + LOGIN_TOWER_FACADE_CONTRAST * (channel - 1));
         return `rgb(${toPercent(red / 2)} ${toPercent(green / 2)} ${toPercent(blue / 2)})`;
       };
       for (const { from, shade, to } of bands) {

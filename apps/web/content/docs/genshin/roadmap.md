@@ -11,7 +11,7 @@ Open work only, the biggest gap to the game first. What was decided against is i
 
 - [ ] **The login towers' carving, as the game carves it.** The towers carry their traced surfaces ([login screen](/docs/genshin/login-screen)): each band's tone, the paint, the recesses, the gilding and the open colonnades. What a lathe still cannot show:
   - [ ] The lantern tower's crown stands as an open colonnade of columns and arches over an inner wall; ours is a solid drum painted with them.
-  - [ ] Relief that tilts the light along a recess's edge: three's bump map over the atlas changed no frame, so the relief needs a height the bump map can differentiate, or a normal map of our own drawn from the loops.
+  - [ ] Relief that tilts the light along a recess's edge: neither three's bump map over the atlas nor over a blurred height canvas of the layers' depths moved the towers against the exports, and the traced colours score best drawn a quarter as far from the stone, so the relief the game lights is its geometry's: carved geometry of our own, the crown's colonnade first.
   - [ ] The stone's grain: the exports' diffuse noise reads as a fine texture on every face, ours as flat paint. A procedural grain of our own, fitted to its scale and contrast.
   - [ ] Gilding as metal: drawn as metal it read dark at every hour, since nothing reflects the sky into it. It waits on an environment map of the login's sky.
 - [ ] **The clouds' kind.** The dawn's and the dusk's cover is solved on their frames (`genshin:parity cover`); the day's and the night's waits on their clouds' kind, since more of them scored those frames worse.
@@ -21,8 +21,7 @@ Open work only, the biggest gap to the game first. What was decided against is i
 - [ ] **Each hour's light, solved rather than stepped.** `genshin:parity light` runs away on the title frames (a sun many thousand times as blue at dawn): its least squares per channel has no haze in its model. Drawing the haze rather than modelling it does not settle it either: matching the faces' medians on whole rendered frames converged and scored four of five frames worse, the medians paying for the haze's own colour and depth. The haze by depth is the unknown under it; the day's and the dusk's exposure steps scored the phone's door frame worse until then.
 - [ ] **Each hour's sky, solved with its clouds.** A clear sky solved alone stands darker than the recordings' sky reads as a whole, which is mostly cloud, and scored the night worse. The cloud mask now fits each sky's clear sky under its clouds (`fitClearSky`), the clear pixels a solve of the sky reads.
 - [ ] **Where the parts stand.** The silhouettes' placement and pose is a large term on every frame. `place` on edges runs a row metres up, so the row's offset and each tower's place need a measure on the sky's outline against each part's instead.
-- [ ] **The door's surface at rest.** On the phone's door frame the door is the largest stand-in gap against its exports: its panel's relief is painted, the game's is carved and lit.
-- [ ] **The walkway's far end.** The exports' walkway runs on at full height where ours assembles itself, so its far blocks read as a gap against them; a witness that sinks its far pieces as ours do measures the rest.
+- [ ] **The door's surface at rest.** On the phone's door frame the door is the largest stand-in gap against its exports: its panel's relief is painted, at three fifths of its read contrast where painting scores best, and the game's is carved and lit.
 
 ## Later
 

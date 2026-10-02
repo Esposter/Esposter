@@ -18,6 +18,18 @@ describe(scoreLabelSimilarity, () => {
     expect(scoreLabelSimilarity(stripes, stripes, size, size, labels, 1)).toStrictEqual([1]);
   });
 
+  test("scores a label whose own pixels match as identical whatever its neighbour's differ by", () => {
+    expect.hasAssertions();
+
+    const stripes = drawStripes(0);
+    const halves = Int32Array.from({ length: size * size }, (_, index) => ((index % size) * 2 < size ? 0 : 1));
+    const neighbourChanged = stripes.map((value, index) => (halves[index] === 1 ? 1 - value : value));
+    const [own = 0, neighbour = 0] = scoreLabelSimilarity(stripes, neighbourChanged, size, size, halves, 2);
+
+    expect(own).toBeCloseTo(1);
+    expect(neighbour).toBeLessThan(own);
+  });
+
   test("scores detail a pixel off above no detail at all", () => {
     expect.hasAssertions();
 

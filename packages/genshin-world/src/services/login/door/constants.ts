@@ -20,3 +20,7 @@ export const LOGIN_DOOR_RISE_KEYFRAMES: [number, number][] = [
 ];
 // The door's front relief drawn into its texture at so many pixels a metre, a pixel half a centimetre, as it was traced
 export const LOGIN_DOOR_RELIEF_PIXELS_PER_METRE = 200;
+// How far the relief's colours stand from the stone, as a share of how far its texels' do: drawn beside the game's own
+// Exports on both door frames, the door scores best by FLIP and by structural similarity at three fifths, its panel's
+// Bands lit across their carving in the game where ours are painted
+export const LOGIN_DOOR_RELIEF_CONTRAST = 0.6;

@@ -60,6 +60,7 @@ import { LOGIN_WALKWAY_RISE_DEPTH, LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/serv
 import { createLoginPavingShade } from "#src/services/login/walkway/createLoginPavingShade";
 import { createLoginWalkwayPieces } from "#src/services/login/walkway/createLoginWalkwayPieces";
 import { readLoginWalkwaySink } from "#src/services/login/walkway/readLoginWalkwaySink";
+import { sinkLoginWitnessWalkway } from "#src/services/login/walkway/sinkLoginWitnessWalkway";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { useLoop, useTres } from "@tresjs/core";
 import { watchImmediate } from "@vueuse/core";
@@ -293,24 +294,29 @@ onRender(({ delta: frameDelta }) => {
   const [rowX, rowY, rowZ] = LOGIN_TOWERS_ROW_OFFSET;
   towers.position.set(rowX, rowY, rowZ - (scrolled % LOGIN_TOWERS_ROW.length));
   doorAhead.value = stopAt - scrolled;
+  // Once the door is due the walkway ends at it, and nothing past it is built
+  const doorAheadOfCamera = LOGIN_DOOR_POSITION[2] + doorAhead.value - cameraZ.value;
   // The witness's parts ride the glide with ours, off by whatever offset a tool sets them: its towers and bridges the
-  // Row, its walkway the walkway's copies, and its door ours as it rises, standing only where ours does, so a frame of
-  // The title compares no door against none
+  // Row, its walkway the walkway's copies, assembling as ours does, and its door ours as it rises, standing only where
+  // Ours does, so a frame of the title compares no door against none
   for (const group of witness?.parts.children ?? []) {
     const [x = 0, y = 0, z = 0] = (group.userData.offset as [number, number, number] | undefined) ?? [];
     group.position.set(x, y, z);
     if (group.name === LoginPartFamily.Towers || group.name === LoginPartFamily.Bridges)
       group.position.add(towers.position);
-    else if (group.name === LoginPartFamily.Walkway) group.position.z -= scrolled % LOGIN_WALKWAY_ROW.length;
-    else if (group.name === LoginPartFamily.Door) {
+    else if (group.name === LoginPartFamily.Walkway) {
+      group.position.z -= scrolled % LOGIN_WALKWAY_ROW.length;
+      sinkLoginWitnessWalkway(group, walkwayPieces, {
+        cameraZ: cameraZ.value,
+        doorAheadOfCamera: checkIsDoorDue() ? doorAheadOfCamera : undefined,
+      });
+    } else if (group.name === LoginPartFamily.Door) {
       group.position.y += doorPosition.value[1] - LOGIN_DOOR_POSITION[1];
       group.position.z += doorAhead.value;
       group.visible = isDoorRising.value && (witness?.families.value.includes(group.name) ?? false);
     }
   }
   walkway.position.z = -(scrolled % LOGIN_WALKWAY_ROW.length);
-  // Once the door is due the walkway ends at it, and nothing past it is built
-  const doorAheadOfCamera = LOGIN_DOOR_POSITION[2] + doorAhead.value - cameraZ.value;
   for (const { copy, depth, instanceId, seed } of walkwayInstances) {
     const z = copy * LOGIN_WALKWAY_ROW.length;
     const ahead = walkway.position.z + z + depth - cameraZ.value;

@@ -275,6 +275,30 @@ export const reference: ComponentReference = {
       search:
         "genshin:parity clouds at every hour with the clear-sky fit and the cover by elevation, the band counts and heights raised, then cover at every hour and compare",
     },
+    {
+      found:
+        "The exports' walkway now assembles as ours does in the stand-in table, each piece sunk by its middle's distance ahead with the seed of our piece standing where it does (sinkLoginWitnessWalkway), so its far end no longer stands built out to the horizon: the walkway's similarity rose from 0.48 to 0.56 at night. Side by side, our paving's dark lines were the rest of its gap: the exports' plan reads its pockets as stone about 0.83 of its lane with paler rims and no dark line, and every darkness of the brick joints and the pockets' rims drawn as lines scored the walkway worse. Filled pockets a twentieth darker than the lane and no lines take the walkway from 0.280 to 0.208 of FLIP and from 0.63 to 0.80 of similarity against the exports over the four hours, and every hour's frame but the day's, level, scores better",
+      search:
+        "rank's second table with the witness walkway sunk, then the paving's lines and pockets swept against the exports",
+    },
+    {
+      found:
+        "Against the exports, the towers' traced facade at its full contrast scored under the bare stone (FLIP 0.258 against 0.249, similarity 0.688 against 0.693 over the four hours); its shades drawn a quarter as far from the stone score best by both, 0.248 and 0.694, and every hour's frame scores better or level. Without the gilding alone the towers scored 0.251 and 0.691: the bright gold is a part of the gap, the painted relief the rest",
+      search:
+        "The facade's every shade scaled toward the stone by a contrast share swept from none to all, and the gilding left out, in rank's second table at every hour",
+    },
+    {
+      found:
+        "The towers' relief drawn as a height canvas of each layer's depth, blurred over two texels and lit through three's bump map, left the towers level against the exports at its own strength and worse at three times it: the relief the game lights is its geometry's, which a bump over a lathe does not stand in for. The door's painted relief at three fifths of its read contrast scores the door best against the exports on both door frames (FLIP 0.267 to 0.258, similarity 0.638 to 0.648), the recording's door frame a little better and the phone's 0.005 worse",
+      search:
+        "A bump map over a blurred height canvas of the facade's layers at strengths 0, 1 and 3, then the door relief's contrast swept from none to all, in rank's second table",
+    },
+    {
+      found:
+        "The dawn's sky solved over only the pixels the cloud mask reads clear (readCloudSky in place of the solve's own trim) reaches no pixel low over the horizon, all of it cloud and haze, so only its zenith colours are held; those alone scored the dawn worse (FLIP 0.501 to 0.506), and the solver keeps its own trim",
+      search:
+        "genshin:parity sky login-dawn-title over the clear sky the cloud mask leaves, its zenith colours applied, then compare",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
