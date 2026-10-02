@@ -24,18 +24,6 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
 
-type Vector = [number, number, number];
-interface Texture {
-  data: Buffer;
-  info: { channels: number; height: number; width: number };
-}
-interface FacadeLayer {
-  // How far in from its band's wall it stands, in its mesh's units, out where it is less than none, and nothing for paint
-  depth: number;
-  loops: [number, number][][];
-  metalness: number;
-  shade: Vector;
-}
 export interface TowerFacade {
   // The tone of each run of the tower's height, from its foot, as a share of the tower's own mean stone
   bands: { from: number; shade: Vector; to: number }[];
@@ -52,6 +40,18 @@ export interface TowerFacade {
   // Its surface's breadth round at its widest and its height, the loops' frame, in its mesh's own units
   size: [number, number];
 }
+interface FacadeLayer {
+  // How far in from its band's wall it stands, in its mesh's units, out where it is less than none, and nothing for paint
+  depth: number;
+  loops: [number, number][][];
+  metalness: number;
+  shade: Vector;
+}
+interface Texture {
+  data: Buffer;
+  info: { channels: number; height: number; width: number };
+}
+type Vector = [number, number, number];
 const BYTE = 255;
 // A texel's metal reads in its mask's green channel, and a gilded texel's red runs past its blue by this many times
 const METAL_THRESHOLD = 0.5;

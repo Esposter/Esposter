@@ -27,9 +27,11 @@ const BELOW_FADE_SCALE = 5;
 const COVERAGE_LIGHT_SHARE = 0.4;
 // The painted edge's fade, from none at the first coverage to whole at the second, and the coverage under which a
 // Fragment is dropped rather than blended as nothing
-const EDGE_FADE_START = 0.15;
-const EDGE_FADE_END = 0.85;
+const EDGE_FADE_START = 0;
+const EDGE_FADE_END = 1;
 const DROPPED_COVERAGE = 0.01;
+// The least cover a cloud's crown is read as a share of, so the outermost fade reads none of it
+const MIN_CROWN_COVER = 0.05;
 // A band of clouds as one sprite drawn once for all of them, each cloud a camera-facing billboard of its painted cloud
 // In the atlas, cut off where it covers nothing, its foot at its place. Each is a draw of its own as a sprite apiece,
 // And a band runs to hundreds; drawn as one, they are blended in the order given, which three's own sort of the
@@ -77,7 +79,10 @@ export const createCloudBandSprite = (
   const toward = pow(max(sunCosine.mul(cloudFrontBackBlend).add(float(1).sub(cloudFrontBackBlend)), 0), 3);
   const lit = mix(cloudLitBackColor, cloudLitColor, toward);
   const shade = mix(cloudShadeBackColor, cloudShadeColor, toward);
-  const cloudColor = mix(shade, lit, mask.g)
+  // The crown's share of the cloud's own cover, so a cloud's fading edge keeps the colour inside it rather than darkening
+  // To its shade where its crown's blur and its outline's both thin out
+  const crown = saturate(mask.g.div(max(mask.r, MIN_CROWN_COVER)));
+  const cloudColor = mix(shade, lit, crown)
     .add(lit.mul(cloudCoverage.mul(COVERAGE_LIGHT_SHARE)))
     .mul(float(1).add(cloudSunBrighten.mul(sunCosine.mul(0.5).add(0.5))));
   const material = new SpriteNodeMaterial({ depthWrite: false, transparent: true });
