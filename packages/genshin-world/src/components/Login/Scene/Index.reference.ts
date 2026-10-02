@@ -293,6 +293,12 @@ export const reference: ComponentReference = {
       search:
         "A bump map over a blurred height canvas of the facade's layers at strengths 0, 1 and 3, then the door relief's contrast swept from none to all, in rank's second table",
     },
+    {
+      found:
+        "The dawn's sky solved over only the pixels the cloud mask reads clear (readCloudSky in place of the solve's own trim) reaches no pixel low over the horizon, all of it cloud and haze, so only its zenith colours are held; those alone scored the dawn worse (FLIP 0.501 to 0.506), and the solver keeps its own trim",
+      search:
+        "genshin:parity sky login-dawn-title over the clear sky the cloud mask leaves, its zenith colours applied, then compare",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
