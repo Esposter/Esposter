@@ -1,5 +1,6 @@
 import type { SceneMaterial } from "genshin-engine";
 import type { Texture } from "three";
+import type { Node } from "three/webgpu";
 
 import { readTextureMean } from "#parity/witness/readTextureMean";
 import { WitnessProperty } from "#parity/witness/WitnessProperty";
@@ -36,7 +37,7 @@ export const createWitnessMaterial = (
   const normal = getTexture(WitnessProperty.NormalMap);
   if (normal && !isFlat) material.normalMap = normal;
   const mask = getTexture(WitnessProperty.DetailMask);
-  let emissionNode = vec3(0);
+  let emissionNode: Node<"vec3"> = vec3(0);
   if (mask) {
     const maskNode = texture(mask);
     material.roughnessNode = float(1).sub(maskNode.r.mul(floats[WitnessProperty.GlossMapScale] ?? 1));
