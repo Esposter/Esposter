@@ -44,6 +44,24 @@ export const LAYOUT_ASSET_TYPES = [
   "MeshRenderer",
   "SkinnedMeshRenderer",
 ] as const;
+// The installed game's Wwise audio packages: its sound banks in `Banks*.pck`, its music's sounds in `Music*.pck`
+export const GAME_AUDIO_DIRECTORY: string = join(
+  dirname(GAME_EXECUTABLE_PATH),
+  "GenshinImpact_Data",
+  "StreamingAssets",
+  "AudioAssets",
+);
+export const SOUND_BANK_PACKAGE_PATTERN = "Banks*.pck";
+export const MUSIC_PACKAGE_PATTERN = "Music*.pck";
+// What the game's music is decoded into, a reference like every other export: each sound as WAV by its id, and each
+// One's pitch classes, which a recording is matched against
+export const MUSIC_DIRECTORY: string = join(EXTRACTED_DIRECTORY, "music");
+// Vgmstream's command line (github.com/vgmstream/vgmstream), which decodes Wwise's own Vorbis, pinned and checked as
+// FFmpeg is, into the scripts package's cache
+export const VGMSTREAM_ARCHIVE_URL =
+  "https://github.com/vgmstream/vgmstream/releases/download/r2117/vgmstream-win64.zip";
+export const VGMSTREAM_ARCHIVE_SHA256 = "6c4a8a3813864fefed081bbd337dbc0ad93bf88e0b92f5db98d7ab258b22dc6c";
+export const VGMSTREAM_DIRECTORY: string = join(REPOSITORY_ROOT, "scripts", "node_modules", ".cache", "vgmstream");
 // 3Dmigoto's command-line decompiler (github.com/bo3b/3Dmigoto), which writes a compiled DXBC program as HLSL: its last
 // Release to ship it on its own, pinned and checked as FFmpeg is, into the scripts package's cache
 export const DECOMPILER_ARCHIVE_URL =

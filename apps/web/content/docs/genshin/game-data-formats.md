@@ -1,6 +1,6 @@
 ---
 title: Game data formats
-description: How each kind of the game's data reads once AnimeStudio has exported it, as decoded while deriving the login scene, and where a component records the data it is derived from. Shaders keep their compiled programs as plain DXBC with their constant layouts beside them; a UI element's anchors sit in its RectTransform's raw tail; an animation clip is streamed cubic segments bound by CRC32 hashes; a renderer names its materials by path ID; and a scene's scripts export without their fields. The shortcuts section is what to reach for first, so no session derives any of it again.
+description: How each kind of the game's data reads once AnimeStudio has exported it, as decoded while deriving the login scene, and how its Wwise audio reads from the installed packages, and where a component records the data it is derived from. Shaders keep their compiled programs as plain DXBC with their constant layouts beside them; a UI element's anchors sit in its RectTransform's raw tail; an animation clip is streamed cubic segments bound by CRC32 hashes; a renderer names its materials by path ID; and a scene's scripts export without their fields. The shortcuts section is what to reach for first, so no session derives any of it again.
 ---
 
 # Game data formats
@@ -91,6 +91,14 @@ The things that each cost a search to find, to reach for first:
 - **Suspect an arrangement before a camera**: when no pose fits, a root dumped at the origin is the first cause.
 - **Keep a long solve's page apart**: a second checkout's parity page (`GENSHIN_PARITY_PORT`) takes edits while the first holds a solve.
 
+### Audio
+
+- **The audio is Audiokinetic Wwise's, in packages.** `AudioAssets` holds Wwise packages (`.pck`, an `AKPK` header stating its own size), each a table of sound banks and one of streamed sounds, every entry's offset counted in blocks of its own size (`parseAudioPackageHeader`). The `Banks` packages hold the banks, and the `Music` packages the music's sounds, named only by their ids.
+- **A bank's music is its hierarchy chunk's objects.** Of a bank's chunks (`BKHD`, `DIDX`, `DATA`, `HIRC`), the hierarchy is a count of objects, each a type byte, a size and an id (`readSoundBankMusicObjects`). A track lists its sources and the clip of each it plays, where it starts and what is trimmed from each end; a segment, its tracks, its length and its cues; a playlist, its segments and a tree of items saying the order, how each group plays and how often it loops (`parseMusicHierarchy`, bank version 134).
+- **A node's own properties vary in length**, with what is set on it, so a container's children are found as the first count followed by that many ids of the kind it holds, and a playlist's tree is read back from the end of its bytes, where it always sits.
+- **A sound is Wwise's own Vorbis**, which vgmstream decodes, pinned and checked as FFmpeg is (`resolveVgmstream`). Decoded, the music packages run to tens of gigabytes, so a sound is decoded only when a step reads it, and a match keeps only its pitch classes.
+- **Which sound a recording plays is measured**, since a sound has no name: `genshin:assets music` matches a recording's pitch classes against every sound's ([derived assets](/docs/genshin/derived-assets)). What plays it, and when, is then exact, from the hierarchy.
+
 ## Key files
 
 | File                                                              | Role                                                      |
@@ -101,6 +109,8 @@ The things that each cost a search to find, to reach for first:
 | `scripts/src/services/genshinAssets/readMaterialValues.ts`        | A material's values, textures and shader                  |
 | `scripts/src/services/genshinAssets/readSceneLayout.ts`           | Transforms, meshes and the materials each renderer draws  |
 | `scripts/src/services/genshinAssets/writeComponentInventory.ts`   | Everything a component's export holds, as a report        |
+| `scripts/src/services/genshinAssets/parseAudioPackageHeader.ts`   | A Wwise package's banks and sounds                        |
+| `scripts/src/services/genshinAssets/parseMusicHierarchy.ts`       | The banks' tracks, segments and playlists                 |
 
 ## Sources
 
