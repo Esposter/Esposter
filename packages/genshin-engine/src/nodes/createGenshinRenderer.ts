@@ -18,6 +18,9 @@ export const createGenshinRenderer = (canvas: HTMLCanvasElement): WebGPURenderer
   // A Vite development build hands every scene three's inspector, so none has to ask for it, and a production build
   // Drops the branch. A browser driven by automation is shooting or timing the scene, which the panel would cover
   // And slow, and a bundler with no `import.meta.env` leaves it off
-  if (import.meta.env?.DEV && !window.navigator.webdriver) attachInspector(renderer);
+  // eslint-disable-next-line no-restricted-syntax -- a package has no `#shared`, and this is its one read of the build mode
+  if (import.meta.env?.DEV && !window.navigator.webdriver)
+    // oxlint-disable-next-line typescript/no-floating-promises -- TresJS takes the renderer back synchronously, and a failed import reaches the console as an unhandled rejection
+    attachInspector(renderer);
   return renderer;
 };

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TresRendererSetupContext } from "@tresjs/core";
+import type { TresCanvasInstance, TresRendererSetupContext } from "@tresjs/core";
 
 import { GENSHIN_REGION_DATA_BASE_URL } from "#shared/services/genshin/constants";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
@@ -17,14 +17,14 @@ const { isPaused } = defineProps<Props>();
 const emit = defineEmits<{ load: []; ready: [] }>();
 const qualityTier = QualityTier.High;
 const { maxPixelRatio } = QualityTierSettingsMap[qualityTier];
-const canvas = useTemplateRef("canvas");
+const canvas = useTemplateRef<TresCanvasInstance>("canvas");
 // @TODO: no upstream issue — TresJS draws only while it owes a frame, and always mode owes one only once it has drawn,
 // So a canvas switched from manual, having drawn the frame it was owed, never draws again. The uncovered world is owed
 // One while the canvas is still manual, before its props change
 watch(
   () => isPaused,
   (newIsPaused) => {
-    if (!newIsPaused) canvas.value?.context.renderer.advance();
+    if (!newIsPaused) canvas.value?.context?.renderer.advance();
   },
   { flush: "sync" },
 );
