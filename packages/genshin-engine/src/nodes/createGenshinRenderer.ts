@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+import { attachInspector } from "#src/renderer/attachInspector";
 import { GENSHIN_TONE_MAPPING } from "#src/renderer/constants";
 import { WebGPURenderer } from "three/webgpu";
 
@@ -13,5 +15,9 @@ export const createGenshinRenderer = (canvas: HTMLCanvasElement): WebGPURenderer
     ...(isWindows ? {} : { powerPreference: "high-performance" }),
   });
   renderer.toneMapping = GENSHIN_TONE_MAPPING;
+  // A Vite development build hands every scene three's inspector, so none has to ask for it, and a production build
+  // Drops the branch. A browser driven by automation is shooting or timing the scene, which the panel would cover
+  // And slow, and a bundler with no `import.meta.env` leaves it off
+  if (import.meta.env?.DEV && !window.navigator.webdriver) attachInspector(renderer);
   return renderer;
 };
