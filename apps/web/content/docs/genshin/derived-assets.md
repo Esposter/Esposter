@@ -124,7 +124,7 @@ A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit fille
 | `Loading/Startup`                 | The wiki's capture, the element marks' vectors            | Compared, approved                                                   |
 | `Login/Interface`                 | The English recording's frames                            | Compared over its frames at each stage, approved                     |
 | `genshin-interface` pieces        | The English and the 1440 high recordings                  | Measured, approved in their own suite                                |
-| `Login/Scene` camera              | The walkway's edges in the four skies                     | Derived, flying along −z from the walkway's far end                  |
+| `Login/Scene` camera              | The door recording's walkway and door silhouettes         | Solved on the exports; held still while the world glides toward it   |
 | `Login/Scene` towers              | The stage's `LoginScene_Build*` meshes and placements     | Fitted as lathes, placed where the game stands them                  |
 | `Login/Scene` walkway             | `LoginScene_Bridge01_*` meshes                            | Fitted as a footprint and its two heights                            |
 | `Login/Scene` paving              | The walkway's tops and their four materials' textures     | Traced as each brick's and each pocket's loop over one copy          |
@@ -132,7 +132,7 @@ A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit fille
 | `Login/Scene` bridges and pillars | The stage's `LoginScene_Bridge02`–`04`, `Pillar03` meshes | Fitted as visual hulls, placed and turned where the game stands them |
 | `Login/Scene` stone               | Each family's `LoginScene_*` materials and textures       | Fitted as a physically lit stone per family                          |
 | `Login/Scene` clouds              | The three `Enviro_Clouds_*_Particle_Atlas` textures       | Fitted as sprites; each band's spread measured off the captures      |
-| `Login/Scene` sky and haze        | `Enviro_Sky_Gradient`, the four skies' pixels             | Gradient fitted; colours and light strengths measured                |
+| `Login/Scene` sky and haze        | `Enviro_Sky_Gradient`, each hour's reference's pixels     | Gradient fitted; colours and light strengths measured                |
 | `Login/Scene` broken pieces       | `LoginScene_Broken_*` meshes                              | Exported; no placement in the arrangements shown                     |
 
 ## Key files

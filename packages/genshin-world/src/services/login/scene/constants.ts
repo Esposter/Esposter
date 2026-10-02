@@ -43,8 +43,8 @@ export const LOGIN_GLIDE_ACCELERATION = 0.55;
 // With the camera held: 145.8 and 144.4 along, their other axes scattering either way). There the lantern tower stands
 // Close to the door's right and the colonnade low behind it, as every recording's door frame shows them
 export const LOGIN_GLIDE_DOOR_SCROLLED = 144;
-// The moment of the loop the title opens at, as metres scrolled. Its walkway's phase is where the dawn frame's first
-// Solve stood the walkway, 10.4 metres short of the middle of the copy ahead, the stills' own pose still open; its
+// The moment of the loop the title opens at, as metres scrolled. Its walkway's phase is where the wiki's dawn still's
+// First solve stood the walkway, 10.4 metres short of the middle of the copy ahead, a still of another camera; its
 // Towers' is the English recording's glide from the title to the door's rest short of the door's, about 49 metres (2.4
 // Seconds of title, the load's stall at the preparing pace, its measured 9 to 14 seconds and the braking after), since
 // Recordings idle as long or not show the same door frame

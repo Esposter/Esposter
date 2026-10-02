@@ -6,26 +6,21 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // And its ink's colour from the Japanese recording
   "health-notice": { capture: "health-notice-en.png", screen: "SplashHealthNotice", seconds: 0 },
   "loading-startup": { screen: "LoadingStartup", wikiTitle: "File:Loading Screen Startup.png" },
-  // The wiki's four skies are clean captures of the scene at one pose, early in the camera's flight, with no interface
-  "login-dawn": {
-    // Read off the capture at its full size: the walkway's near wings at the top of their outer faces, and the far
-    // Wings' outer faces, still rising there, at their distance across alone
-    landmarks: {
-      wingFarLeftEdge: [1698, 1650],
-      wingFarRightEdge: [2390, 1670],
-      wingNearLeftBack: [1398, 1801],
-      wingNearLeftFront: [1255, 1857],
-      wingNearRightBack: [2695, 1801],
-      wingNearRightFront: [2837, 1860],
-    },
-    props: { isInterfaceHidden: true, timeOfDay: "Dawn" },
+  // The title at dawn, day and night: frames of public recordings of the PC client idling on it with no interface, at
+  // The camera the door recording solves, each at the moment of the glide's loop its towers and walkway stand at
+  "login-dawn-title": {
+    capture: "yt-sQNqMfmfkZU.mp4",
+    props: { heldScrolled: 132, isInterfaceHidden: true, stage: "Title", timeOfDay: "Dawn" },
     screen: "LoginScreen",
-    wikiTitle: "File:Login Menu Dawn.png",
+    seconds: 18,
   },
-  "login-day": {
-    props: { isInterfaceHidden: true, timeOfDay: "Day" },
+  // Its recording masks the frame's top and bottom 50 rows black, so only the rows between are scored
+  "login-day-title": {
+    capture: "yt-7kK6HqVfASk.mp4",
+    props: { heldScrolled: 122, isInterfaceHidden: true, stage: "Title", timeOfDay: "Day" },
+    region: { height: 980, width: 1920, x: 0, y: 50 },
     screen: "LoginScreen",
-    wikiTitle: "File:Login Menu Day.png",
+    seconds: 8,
   },
   // The door from the flight's last pose, on the phone build at 4:3 under the day sky, scored over the door and its
   // Dais alone, since its interface and its narrower frame differ from the computer's
@@ -57,11 +52,6 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     region: { height: 960, width: 1560, x: 180, y: 0 },
     screen: "LoginScreen",
     seconds: 14,
-  },
-  "login-dusk": {
-    props: { isInterfaceHidden: true, timeOfDay: "Dusk" },
-    screen: "LoginScreen",
-    wikiTitle: "File:Login Menu Dusk.png",
   },
   // The login screen's interface over the English recording's own frames of it, at 1080 high: its title, its status as
   // Data loads, and its prompt at the door. The recording is of an older build, whose title shows a repair button and
@@ -97,10 +87,11 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "LoginInterface",
     seconds: 0.5,
   },
-  "login-night": {
-    props: { isInterfaceHidden: true, timeOfDay: "Night" },
+  "login-night-title": {
+    capture: "yt-PnqNza4qWzs.mp4",
+    props: { heldScrolled: 135, isInterfaceHidden: true, stage: "Title", timeOfDay: "Night" },
     screen: "LoginScreen",
-    wikiTitle: "File:Login Menu Night.png",
+    seconds: 12,
   },
   "publisher-splash": { capture: "session-2.mp4", screen: "SplashPublisher", seconds: 1 },
   // The English client's splash, from a public video of its phone build letterboxed in a 1080p frame; scored over the
