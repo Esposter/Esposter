@@ -52,7 +52,6 @@ import {
   LOGIN_WALKWAY_ROW,
 } from "#src/services/login/scene/constants";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
-import { LOGIN_TOWER_RELIEF_SCALE } from "#src/services/login/tower/constants";
 import { createLoginTowerFacade } from "#src/services/login/tower/createLoginTowerFacade";
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
 import { readLoginTowerAtlas } from "#src/services/login/tower/readLoginTowerAtlas";
@@ -79,10 +78,8 @@ import {
 import { BatchedMesh, DirectionalLight, Group, HemisphereLight, Matrix4 } from "three";
 import {
   abs,
-  bumpMap,
   color,
   exp,
-  float,
   mix,
   mx_fractal_noise_float,
   positionLocal,
@@ -174,13 +171,11 @@ watchImmediate(
 // The stone each family of parts is carved from, as its game materials hold it, lit physically as the game lights it
 // And drawn with no outline: the towers', the bridges', the walkway's, and the door's frame and its panel
 const towersMaterial = createStoneMaterial(stone.towers);
-// The towers' surfaces drawn over their lathes: each band's tone, its paint, its recesses, its gilding as metal, its
-// Relief tilting the light along their edges, and where a tower stands open its colonnade lets the sky through
+// The towers' surfaces drawn over their lathes: each band's tone, its paint, its recesses and its gilding, and where a
+// Tower stands open its colonnade lets the sky through
 const towerAtlas = readLoginTowerAtlas();
 const towerFacade = createLoginTowerFacade(towerAtlas);
 towersMaterial.colorNode = towerFacade.shade.mul(color(stone.towers.albedo));
-towersMaterial.metalnessNode = towerFacade.metalness;
-towersMaterial.normalNode = bumpMap(towerFacade.relief, float(LOGIN_TOWER_RELIEF_SCALE));
 towersMaterial.opacityNode = towerFacade.solid;
 towersMaterial.alphaTest = 0.5;
 const bridgesMaterial = createStoneMaterial(stone.bridges);
@@ -291,13 +286,21 @@ onRender(({ delta: frameDelta }) => {
   const { scrolled, stopAt = scrolled } = glide;
   const [rowX, rowY, rowZ] = LOGIN_TOWERS_ROW_OFFSET;
   towers.position.set(rowX, rowY, rowZ - (scrolled % LOGIN_TOWERS_ROW.length));
-  // The witness's towers and bridges ride the row with ours, off by whatever offset a tool sets them
-  for (const group of witness?.parts.children ?? [])
-    if (group.name === LoginPartFamily.Towers || group.name === LoginPartFamily.Bridges) {
-      const [x = 0, y = 0, z = 0] = (group.userData.offset as [number, number, number] | undefined) ?? [];
-      group.position.set(x, y, z).add(towers.position);
-    }
   doorAhead.value = stopAt - scrolled;
+  // The witness's parts ride the glide with ours, off by whatever offset a tool sets them: its towers and bridges the
+  // Row, its walkway the walkway's copies, and its door ours, standing only where ours does, so a frame of the title
+  // Compares no door against none
+  for (const group of witness?.parts.children ?? []) {
+    const [x = 0, y = 0, z = 0] = (group.userData.offset as [number, number, number] | undefined) ?? [];
+    group.position.set(x, y, z);
+    if (group.name === LoginPartFamily.Towers || group.name === LoginPartFamily.Bridges)
+      group.position.add(towers.position);
+    else if (group.name === LoginPartFamily.Walkway) group.position.z -= scrolled % LOGIN_WALKWAY_ROW.length;
+    else if (group.name === LoginPartFamily.Door) {
+      group.position.z += doorAhead.value;
+      group.visible = isDoorRising.value && (witness?.families.value.includes(group.name) ?? false);
+    }
+  }
   walkway.position.z = -(scrolled % LOGIN_WALKWAY_ROW.length);
   // Once the door is due the walkway ends at it, and nothing past it is built
   const doorAheadOfCamera = LOGIN_DOOR_POSITION[2] + doorAhead.value - cameraZ.value;
@@ -341,6 +344,7 @@ onUnmounted(() => {
   scene.value.backgroundNode = null;
   skyGradient.dispose();
   gradeLutTexture.dispose();
+  towerFacade.dispose();
   for (const material of [towersMaterial, bridgesMaterial, walkwayMaterial, doorFrameMaterial, doorMaterial])
     material.dispose();
   cloudSeaMaterial.dispose();

@@ -234,6 +234,23 @@ export const reference: ComponentReference = {
       search:
         "genshin:parity exposure, light and fog on login-dawn-title, login-day-title and login-night-title, then compare at each step and at the day haze's densities",
     },
+    {
+      found:
+        "Drawing the exports in place of every stand-in moves the title frames' FLIP by under 0.01 and the day's the wrong way, so every stand-in term of the frame's ranking read near nothing: a soft recording, light we miss and parts a few pixels off hide what a stand-in lacks. Scored against the exports at the same frame instead, the towers are the largest stand-in gap at every hour, a tenth of the frame's FLIP",
+      search:
+        "genshin:parity compare --witness login at every hour beside compare, then rank's second table (readStandInGains)",
+    },
+    {
+      found:
+        "Each tower unrolled round its axis and traced into band tones, paint, raised faces, recesses at two depths, gilding and openings, on lathes standing on the walls, now carries the game's gold bands, the lantern tower's windows and the fluting where the exports do, by eye. Against the exports it scores a little worse than the bare lathes on most frames (night 0.077 to 0.085) and the day's better (0.140 to 0.128); a blurred difference over the near towers falls from 19.0 to 17.7. The gilding as metal read darker still at every hour, with nothing reflecting the sky into it, and three's bump map over the atlas changed no frame, so both are dropped",
+      search:
+        "genshin:assets fit login with fitLoginTowerFacades, then rank's second table at every hour with the paint, the recesses, the metal and the bump each left out in turn, and the outer lathes put back",
+    },
+    {
+      found:
+        "Our clouds were cut-outs with a dark rim, their crown's colour read where its blur and the outline's both thinned at the edge. Read as the crown's share of the cloud's own cover, the outline blurred to a fiftieth of a cell and the crown wider, edge sharpness falls toward the recordings' and FLIP moves under 0.002 at every hour. The statistics read our clouds dimmer over their sky than the recordings' and covering less of it; their cloud mask still takes the sky's own gradient for cloud",
+      search: "genshin:parity clouds (measureClouds, readCloudStatistics) at every hour, before and after each blur",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",

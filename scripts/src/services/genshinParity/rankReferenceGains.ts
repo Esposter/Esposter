@@ -6,6 +6,7 @@ import { openWitnessPage } from "#src/services/genshinParity/openWitnessPage";
 import { readFlipErrorMap } from "#src/services/genshinParity/readFlipErrorMap";
 import { readWitnessGbuffer } from "#src/services/genshinParity/readWitnessGbuffer";
 import { setPageWitnessView } from "#src/services/genshinParity/setPageWitnessView";
+import { shootWitnessFamilies } from "#src/services/genshinParity/shootWitnessFamilies";
 import { withFinalizerAsync } from "@esposter/shared";
 import sharp from "sharp";
 
@@ -48,16 +49,11 @@ export const rankReferenceGains = async (
         undefined,
       );
       const { depth, families: layerFamilies, normal, part, width } = await readWitnessGbuffer(page);
-      const shoot = async (drawn: string[]): Promise<Buffer> => {
-        await setPageWitnessView(page, { families: drawn });
-        return sharp(await page.screenshot())
-          .resize(width, height, { fit: "fill" })
-          .png()
-          .toBuffer();
-      };
-      const ourShot = await shoot([]);
+      const size = { height, width };
+      const ourShot = await shootWitnessFamilies(page, [], size);
+      const exportsShot = await shootWitnessFamilies(page, families, size);
       const [{ errorMap: witnessErrors }, { errorMap: ourErrors }] = [
-        await readFlipErrorMap(image, await shoot(families), width, height),
+        await readFlipErrorMap(image, exportsShot, width, height),
         await readFlipErrorMap(image, ourShot, width, height),
       ];
       const readLuminances = async (shot: Buffer): Promise<Float32Array> => {

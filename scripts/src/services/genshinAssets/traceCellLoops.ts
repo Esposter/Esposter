@@ -1,7 +1,7 @@
 import { roundFitted } from "#src/services/genshinAssets/roundFitted";
 import { traceCoveredGrid } from "#src/services/genshinAssets/traceCoveredGrid";
 
-// Reduced rather than spread, since a surface's cells run past the arguments a call can take
+// A bound of many values, reduced rather than spread, since a surface's cells run past the arguments a call can take
 const readBound = (values: readonly number[], pick: (first: number, second: number) => number): number =>
   values.reduce((bound, value) => pick(bound, value));
 // The loops round a set of a grid's cells, traced over the cells' own bounds and kept where they enclose at least

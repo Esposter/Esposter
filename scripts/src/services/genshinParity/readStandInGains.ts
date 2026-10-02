@@ -5,8 +5,8 @@ import { openWitnessPage } from "#src/services/genshinParity/openWitnessPage";
 import { readFlipErrorMap } from "#src/services/genshinParity/readFlipErrorMap";
 import { readWitnessPartTarget } from "#src/services/genshinParity/readWitnessPartTarget";
 import { setPageWitnessView } from "#src/services/genshinParity/setPageWitnessView";
+import { shootWitnessFamilies } from "#src/services/genshinParity/shootWitnessFamilies";
 import { withFinalizerAsync } from "@esposter/shared";
-import sharp from "sharp";
 
 // Wide enough that a tower's windows, its gold bands and the door's relief span several pixels
 const STAND_IN_WIDTH = 960;
@@ -27,15 +27,10 @@ export const readStandInGains = async (
       const families = familyList.split(",").filter(Boolean);
       await setPageWitnessView(page, { families });
       const { families: layerFamilies, part, width } = await readWitnessPartTarget(page);
-      const shoot = async (drawn: string[]): Promise<Buffer> => {
-        await setPageWitnessView(page, { families: drawn });
-        return sharp(await page.screenshot())
-          .resize(width, height, { fit: "fill" })
-          .png()
-          .toBuffer();
-      };
-      const exportsShot = await shoot(families);
-      const { errorMap } = await readFlipErrorMap(exportsShot, await shoot([]), width, height);
+      const size = { height, width };
+      const exportsShot = await shootWitnessFamilies(page, families, size);
+      const ourShot = await shootWitnessFamilies(page, [], size);
+      const { errorMap } = await readFlipErrorMap(exportsShot, ourShot, width, height);
       const terms = new Map<string, { count: number; error: number }>();
       let scoredCount = 0;
       for (const [pixel, error] of errorMap.entries()) {

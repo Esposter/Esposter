@@ -44,7 +44,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Game text](/docs/genshin/game-text)                 | `genshin-text`: every language the game ships, and its strings by the game's own text id      |
 | [Rickroll](/docs/genshin/rickroll)                   | what the login door opens onto for now: white, then YouTube or Bilibili by reachability       |
 
-What is still to build is the [Genshin proposal](/docs/proposals/genshin). Decided ideas: [deferred](/docs/genshin/deferred).
+What is still to build is the [Genshin proposal](/docs/proposals/genshin), and the open work on what is built is the [roadmap](/docs/genshin/roadmap). Decided ideas: [deferred](/docs/genshin/deferred).
 
 ## Shipped
 
