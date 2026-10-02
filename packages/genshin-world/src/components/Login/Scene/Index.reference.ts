@@ -287,6 +287,12 @@ export const reference: ComponentReference = {
       search:
         "The facade's every shade scaled toward the stone by a contrast share swept from none to all, and the gilding left out, in rank's second table at every hour",
     },
+    {
+      found:
+        "The towers' relief drawn as a height canvas of each layer's depth, blurred over two texels and lit through three's bump map, left the towers level against the exports at its own strength and worse at three times it: the relief the game lights is its geometry's, which a bump over a lathe does not stand in for. The door's painted relief at three fifths of its read contrast scores the door best against the exports on both door frames (FLIP 0.267 to 0.258, similarity 0.638 to 0.648), the recording's door frame a little better and the phone's 0.005 worse",
+      search:
+        "A bump map over a blurred height canvas of the facade's layers at strengths 0, 1 and 3, then the door relief's contrast swept from none to all, in rank's second table",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
