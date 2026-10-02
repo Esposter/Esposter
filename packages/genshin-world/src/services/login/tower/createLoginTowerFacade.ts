@@ -11,10 +11,6 @@ import {
 import { CanvasTexture, LinearFilter, LinearMipmapLinearFilter, NoColorSpace } from "three";
 import { attribute, texture } from "three/tsl";
 
-// The relief each layer stands at in the facade's mask, the wall at half: what stands out from it above, a shallow
-// Recess and a deep one below
-const WALL_RELIEF = 0.5;
-const RELIEF_PER_UNIT = 0.1;
 const MAX_ANISOTROPY = 8;
 const toTexture = (canvas: OffscreenCanvas): CanvasTexture<OffscreenCanvas> => {
   const canvasTexture = new CanvasTexture(canvas);
@@ -29,18 +25,13 @@ const toPercent = (share: number): string => `${Math.min(Math.max(share, 0), 1) 
 // Their geometry says each vertex stands (`createLoginTowersGeometry`): the shade over the towers' stone, each band's
 // Tone, its paint, its recesses and its gilding filled as its loops in its own shade, a recess darkened by the light
 // Its depth keeps out, at half since a canvas holds no
-// More than 1 a channel; and a mask whose red is the metal, whose green is the relief a bump map tilts the light by,
-// And whose blue is where the tower stands solid rather than open. Each tower is drawn clipped to its tile and its
-// Gutters, its loops once more a whole turn either side so the gutters carry its surface on round its axis
+// More than 1 a channel; and a mask white where the tower stands solid and black where it stands open. Each tower is
+// Drawn clipped to its tile and its gutters, its loops once more a whole turn either side so the gutters carry its
+// Surface on round its axis. The gilding is drawn as the stone's colour, not as metal: with no reflection of the sky to
+// Show it, a metal reads dark against the game's own exports at every hour
 export const createLoginTowerFacade = (
   atlas: LoginTowerAtlas,
-): {
-  dispose: () => void;
-  metalness: Node<"float">;
-  relief: Node<"float">;
-  shade: Node<"vec3">;
-  solid: Node<"float">;
-} => {
+): { dispose: () => void; shade: Node<"vec3">; solid: Node<"float"> } => {
   const shadeCanvas = new OffscreenCanvas(atlas.width, atlas.height);
   const maskCanvas = new OffscreenCanvas(atlas.width, atlas.height);
   const shadeContext = shadeCanvas.getContext("2d");
@@ -48,7 +39,7 @@ export const createLoginTowerFacade = (
   if (shadeContext && maskContext) {
     shadeContext.fillStyle = "rgb(50% 50% 50%)";
     shadeContext.fillRect(0, 0, atlas.width, atlas.height);
-    maskContext.fillStyle = `rgb(0% ${toPercent(WALL_RELIEF)} 100%)`;
+    maskContext.fillStyle = "#fff";
     maskContext.fillRect(0, 0, atlas.width, atlas.height);
     for (const [tower, { bands, holes, layers, size }] of Object.entries(towers.facades)) {
       const tile = atlas.tiles[tower];
@@ -89,17 +80,14 @@ export const createLoginTowerFacade = (
         shadeContext.fillStyle = toShadeStyle(shade);
         shadeContext.fillRect(left, top, paddedWidth, foot - top);
       }
-      for (const { depth, loops, metalness, shade } of layers) {
+      for (const { depth, loops, shade } of layers) {
         const path = toPath(loops);
         const occlusion = depth > 0 ? LOGIN_TOWER_RECESS_OCCLUSION ** depth : 1;
         shadeContext.fillStyle = toShadeStyle(shade.map((channel) => channel * occlusion));
         // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
         shadeContext.fill(path, "evenodd");
-        maskContext.fillStyle = `rgb(${toPercent(metalness)} ${toPercent(WALL_RELIEF - depth * RELIEF_PER_UNIT)} 100%)`;
-        // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
-        maskContext.fill(path, "evenodd");
       }
-      maskContext.fillStyle = `rgb(0% ${toPercent(WALL_RELIEF)} 0%)`;
+      maskContext.fillStyle = "#000";
       // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
       maskContext.fill(toPath(holes), "evenodd");
       shadeContext.restore();
@@ -109,15 +97,12 @@ export const createLoginTowerFacade = (
   const facadeUv = attribute<"vec2">(LOGIN_FACADE_ATTRIBUTE);
   const maskTexture = toTexture(maskCanvas);
   const shadeTexture = toTexture(shadeCanvas);
-  const mask = texture(maskTexture, facadeUv);
   return {
     dispose: () => {
       maskTexture.dispose();
       shadeTexture.dispose();
     },
-    metalness: mask.r,
-    relief: mask.g,
     shade: texture(shadeTexture, facadeUv).rgb.mul(2),
-    solid: mask.b,
+    solid: texture(maskTexture, facadeUv).r,
   };
 };

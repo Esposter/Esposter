@@ -44,7 +44,6 @@ interface FacadeLayer {
   // How far in from its band's wall it stands, in its mesh's units, out where it is less than none, and nothing for paint
   depth: number;
   loops: [number, number][][];
-  metalness: number;
   shade: Vector;
 }
 interface Texture {
@@ -71,7 +70,7 @@ const toShade = (mean: Vector, base: Vector): Vector =>
   ([0, 1, 2] as const).map((channel) => roundFitted(mean[channel] / (base[channel] || 1))) as Vector;
 // Each login tower's surface as the game paints and carves it, read off its finest mesh unrolled round its own axis,
 // The way the scene's lathe stands it: each cell of the unrolled surface keeps the face standing farthest out over it,
-// Its material's diffuse colour and metal there, and how far in from the lathe's own radius it stands. What the lathe
+// Its material's diffuse colour and metal there, and how far in from its band's wall it stands. What the lathe
 // Cannot carve is drawn on it instead: the tone of each run of its height, its recesses (the fluting, the windows and
 // The arches) at two depths and its gilding, each traced as loops in its own shade, and where it stands open. Only the
 // Loops and the shades ship, never a texel of the game's
@@ -239,9 +238,6 @@ export const fitLoginTowerFacades = async (
     const toLayer = (layerCells: readonly number[], depth: number): FacadeLayer => ({
       depth,
       loops: trace(layerCells),
-      metalness: roundFitted(
-        layerCells.reduce((sum, cell) => sum + (metals[cell] ?? 0), 0) / Math.max(layerCells.length, 1),
-      ),
       shade: toShade(readMean(colors, layerCells), mean),
     });
     facades[tower] = {
