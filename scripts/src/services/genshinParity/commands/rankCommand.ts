@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
-import { readStandInGains } from "#src/services/genshinParity/readStandInGains";
 import { rankReferenceGains } from "#src/services/genshinParity/rankReferenceGains";
+import { readStandInGains } from "#src/services/genshinParity/readStandInGains";
 import { defineCommand } from "citty";
 
 export const rankCommand: SubCommandsDef[string] = defineCommand({
