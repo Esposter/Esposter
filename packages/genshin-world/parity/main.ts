@@ -9,6 +9,7 @@ import { readSceneFog } from "#parity/readSceneFog";
 import { readSceneSky } from "#parity/readSceneSky";
 import { screens } from "#parity/screens";
 import { setSceneCloudColors } from "#parity/setSceneCloudColors";
+import { setSceneCloudCover } from "#parity/setSceneCloudCover";
 import { setSceneLights } from "#parity/setSceneLights";
 import { loadWitness } from "#parity/witness/loadWitness";
 import { readWitnessParts } from "#parity/witness/readWitnessParts";
@@ -83,6 +84,9 @@ if (screen && root) {
   Reflect.set(window, "setSceneCloudColors", (colors?: Parameters<typeof setSceneCloudColors>[1]) => {
     setSceneCloudColors(sceneContext.value, colors);
   });
+  Reflect.set(window, "setSceneCloudCover", (covers?: Parameters<typeof setSceneCloudCover>[1]) =>
+    setSceneCloudCover(sceneContext.value, covers),
+  );
   Reflect.set(window, "setSceneLights", (shares: Parameters<typeof setSceneLights>[1]) =>
     setSceneLights(sceneContext.value, shares),
   );

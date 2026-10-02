@@ -251,6 +251,30 @@ export const reference: ComponentReference = {
         "Our clouds were cut-outs with a dark rim, their crown's colour read where its blur and the outline's both thinned at the edge. Read as the crown's share of the cloud's own cover, the outline blurred to a fiftieth of a cell and the crown wider, edge sharpness falls toward the recordings' and FLIP moves under 0.002 at every hour. The statistics read our clouds dimmer over their sky than the recordings' and covering less of it; their cloud mask still takes the sky's own gradient for cloud",
       search: "genshin:parity clouds (measureClouds, readCloudStatistics) at every hour, before and after each blur",
     },
+    {
+      found:
+        "Against the exports, the towers' multi-scale structural similarity reads 0.70 on the phone's door frame, 0.60 at dawn, 0.70 by day and 0.71 at night; the walkway's 0.61, 0.45, 0.86 and 0.48, its far end standing at full height in the exports where ours assembles; the bridges' over 0.8 everywhere. Side by side, the near lantern tower's arched windows read dark in the exports and pale orange in ours, but every darker recess (0.8 to 0.6 a unit of depth in place of 0.9) scored the towers worse by both measures",
+      search:
+        "rank's second table with scoreLabelSimilarity at every hour, its stand-in sheet read by eye, then the recesses' occlusion swept",
+    },
+    {
+      found:
+        "Each tower's walls read row by row, a moulding standing out all round lifting its band's wall, simplified within a quarter unit into sloped frustums and drawn with its turns under 50 degrees rounded by their normals: the towers' similarity fell from 0.678 to 0.669 over the four hours and their FLIP rose from 0.262 to 0.266, the near lantern tower's crown reading as stacked rings where the exports' carve capitals and arches. Reverted; read by row alone, a window band's median sank the lathe into its windows and lost them",
+      search:
+        "fitLoginTowerFacades with a per-row wall profile and createLatheStackGeometry with crease-angle normals, then rank's second table at every hour",
+    },
+    {
+      found:
+        "Drawing each guess as the frame draws, haze, clouds and tone mapping with it, over the exports, and matching the medians of the faces facing up, toward the sun and from it, the sun's strength and the sky light's colour converge in a few steps (the cost falling to between a half and a fifth) and never run away, yet scored the dusk, the day, the night and the wiki's door frame worse with our parts and with the exports, the night by 0.02; only the dawn's witness frame improved, by 0.005. Freed to colour the sky light from above and below apart, the dawn's sun doubled and its ground light turned deep blue, scoring its witness frame worse. The faces' medians pay for the haze's colour and depth, so the light waits on the haze, and the solver was deleted",
+      search:
+        "A Levenberg–Marquardt solve of the sun's share and the sky light's per-channel share on rendered frames at every hour, applied and compared with and without the witness",
+    },
+    {
+      found:
+        "The cloud mask now fits each sky's clear sky as a smooth cubic surface sunk under its clouds (fitClearSky) over the luminance blurred past a recording's grain, which the night's compression noise had speckled with cloud. By height over the horizon, the recordings' skies hold 90 to 100% cloud within 8 degrees at every hour, the dusk's about 90% at every height and the dawn's a fifth above 25 degrees; ours, the middle band at 60 and the top at 36, held a third to a half of that, and the top band, standing 105 metres up, left 8 to 25 degrees bare. Each band's share an hour draws is solved on that cover by the simplex (genshin:parity cover) over 240 middle and 240 top clouds, the top from 60 metres up, to within 0.07 to 0.13 of the sky's cover at dawn, dusk and night and 0.25 by day: the dawn's frame scores 0.005 better, and the dusk's sky reads clouded whole as the recording's does, while a score comparing pixels charges every cloud off the recording's place, its FLIP rising 0.03 as its blurred tone fell 1.6 points. At the day's and the night's solved cover their frames scored 0.03 to 0.05 worse and the day's solved cloud colours worse again: their clouds read grey and dark where the recordings' are white and pale, so they keep their former cover",
+      search:
+        "genshin:parity clouds at every hour with the clear-sky fit and the cover by elevation, the band counts and heights raised, then cover at every hour and compare",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
@@ -261,10 +285,8 @@ export const reference: ComponentReference = {
     "What MonoBlockController does to each walkway piece: the rise is read by eye off the recording's far end; its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$) hold its own curve",
     "Which of the towers' row stands at the door frame's left edge: the recording's is thin and dark with many rings, the exports' nearest there wide and arched",
     "The night's, the dawn's and the day's light apart from their exposure: the night frame shows the walkway's top moonlit and the towers' faces dark, and dawn takes nothing from the dusk's solved light; their title frames now stand at the solved camera, so genshin:parity light can read their faces",
-    "The clouds over the door recording's towers, 13 to 25 degrees up: every band raised there scored the wiki stills worse, whose camera was not the recording's, so it waits on a score over the title frames",
     "The dusk sun's direction against its shadows: a tower's shadow falls over the wings in front of the door where the recording's are lit, and the faces' shading cannot settle the direction, so the shadows' own edges are the measure left",
     "The dusk sky low on the frame's left: the recording's clear sky there is almost all cloud, so the sky solved over its clear pixels draws a dark red-brown band where the recording glows gold",
-    "The upper clouds' cover: the recording's sky holds about six times ours above the horizon, but a score comparing pixels prices every cloud standing elsewhere than its own, so the cover waits on a measure of its own, its spread by height",
     "The towers' gilding and windows: their colour per section scores worse painted as diffuse stone, the game's gold being a metal",
     "The dusk's light and haze together: genshin:parity fog --light on the door recording solves a sun 2.5 times as strong, a sky light a third as strong and a haze dense, dark away from the sun and bright toward it, which scores the recording 0.03 better and the dusk still 0.05 worse; drawn, both frames turn to a flat orange wall with the towers' silhouettes, where the references keep their towers lit and edged, so the bins' medians by depth, angle and facing still reward a haze that washes our towers to the frame's mean, our towers lacking the lit structure the references' carry",
     "Where the glide comes to rest: the recording's door frame was still slowing at 1.6 metres a second when the click came, so the rest stands a little nearer the door than its pose",

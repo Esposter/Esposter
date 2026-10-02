@@ -38,7 +38,7 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | One region across frames, or ours       | `zoom --with`: the region of each image stacked                      |
 | A render that settles in one frame      | the witness: SMAA, its clock held, one frame                         |
 | Which term to work on next              | `genshin:parity rank`: every term's ceiling, largest first           |
-| How far a stand-in falls short          | `rank`'s second table: ours against the exports, same frame          |
+| How far a stand-in falls short          | `rank`'s second table: FLIP and similarity against the exports       |
 | Depth, normal, albedo, part per pixel   | `genshin:parity gbuffer`                                             |
 | A family's surface laid out in metres   | `genshin:parity plan`: its unlit albedo from straight above          |
 | Where each part lands on the reference  | `genshin:parity overlay`: boundaries, edge distance                  |
@@ -46,6 +46,7 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | One approval number                     | FLIP (`scoreFlip`), in every `compare`                               |
 | Sun against ambient light               | `genshin:parity light`: up and shaded faces under each light alone   |
 | The clouds' lit and shaded colours      | `genshin:parity clouds`: ours and theirs matched by colour spread    |
+| How much of each cloud band an hour has | `genshin:parity cover`: each band's share on the cover by height     |
 | Fog against distance                    | `genshin:parity haze`: depth bands, ours with and without fog        |
 | The fog's density and colours           | `genshin:parity fog`: bins by depth and sun angle, solved            |
 | A light's strength under its references | `genshin:parity exposure`: the parts' luminance, ours against theirs |
