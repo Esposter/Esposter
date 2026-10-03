@@ -29,11 +29,7 @@ The five come from a public walkthrough of mods one person built for their own w
 
 ## The engine's constraints
 
-These are forced by the engine and hold for every mod in the repository. The `claude-mods` skill states them as rules.
-
-- **A hooks module imports only its own files, by relative path, plus `claude-code`.** The engine refuses a subpath import such as `#src/*` at validation, so a mod's tree is the one place the repository's alias rule cannot hold.
-- **A mod runs with no Node.** It reaches the machine through the engine's own nouns: running a command, reading and writing files, the store. The persona's game data and voice therefore stay in its node scripts, which its module runs as commands.
-- **The engine owns the API's declarations.** It writes them beside a mod it has loaded and nowhere else, and no package publishes them. A mod's wiring is checked by `claude plugin validate`, and its pure logic, which needs no engine, sits in plain modules a Vitest suite covers.
+The engine enforces a rule set of its own when it loads a mod: relative imports alone, one unmatched hook per event, `$` and every state reference kept in the file that uses them, no Node. Each rule, the shape it forces and the authoring loop are the [Claude Code mods](/docs/architecture/claude-mods) standard, so the persona's game data and voice stay in its node scripts, which its module runs as commands.
 
 ```mermaid
 flowchart LR
