@@ -58,7 +58,6 @@ export const reference: ComponentReference = {
     "The canvas's match between width and height on a window narrower than 16:9: the scaler is a script",
     "The layout groups' spacing, measured on the recordings",
     "Each button's hover and pressed states, from the recordings and the page's sprites",
-    "The fitted clips played (LoginInterfaceClipMap through playInterfaceClip): WhiteCurtain and FadeIn on arriving, StartFadeIn and StartFadeOut on the title, FadeOut on entering, each piece named by a data-clip-target of its game path",
     "Every screen laid out from its fitted RectTransform tree (the interface layout proposal) in place of LoginInterfaceRectMap",
   ],
   sources: {

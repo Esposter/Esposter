@@ -4,6 +4,8 @@ import type { GameLanguage, GameText } from "genshin-text";
 
 import LoginStatus from "#src/components/Login/Status/Index.vue";
 import ageRating from "#src/data/login/ageRating.json";
+import { LoginInterfaceClip } from "#src/models/login/LoginInterfaceClip";
+import { LoginInterfaceClipTarget } from "#src/models/login/LoginInterfaceClipTarget";
 import { LoginInterfaceRect } from "#src/models/login/LoginInterfaceRect";
 import { LoginStage } from "#src/models/login/LoginStage";
 import { GameClient } from "#src/models/splash/GameClient";
@@ -15,6 +17,7 @@ import {
   LOGIN_WELCOME_FADE_MS,
 } from "#src/services/login/constants";
 import { GameClientVersionTextMap } from "#src/services/login/GameClientVersionTextMap";
+import { LoginInterfaceClipMap } from "#src/services/login/interface/LoginInterfaceClipMap";
 import { LoginInterfaceRectMap } from "#src/services/login/interface/LoginInterfaceRectMap";
 import { GameLanguageGameClientMap } from "#src/services/splash/GameLanguageGameClientMap";
 import {
@@ -22,6 +25,7 @@ import {
   InterfaceIcon,
   LoadingSpinner,
   OrnamentDivider,
+  playInterfaceClip,
   PromptBand,
   RoundButton,
   ServerBar,
@@ -48,73 +52,138 @@ interface Props {
 
 const { gameText, isDoorWaiting, isSpinnerShown, isWelcomeShown, language, playerName, progress, stage, statusStep } =
   defineProps<Props>();
+// The white is up as the screen enters, the moment the screen hands on
+const emit = defineEmits<{ whiten: [] }>();
 const client = computed(() => GameLanguageGameClientMap[language]);
 // The account kit's greeting, which places the player's name where its language puts it
 const welcome = computed(() => gameText[GameTextKey.LoginWelcome].replace("%s", () => playerName));
+// The door's interface stays through the entering, fading with the foot as the page whitens
+const isAtDoor = computed(() => stage === LoginStage.Door || stage === LoginStage.Entering);
 // The login screen's interface over its scene, for the stage it is at: the title with the server and account under
 // It, the status as the game prepares, then the prompt at the door. The power button and the build string stay
 // Throughout; the corner buttons are the title's two and the door's four, as the game's current build shows them. A
 // Click on a button is the button's alone: the screen behind it asks whether it was before it begins
 const cornerIcons = computed(() => {
   if (stage === LoginStage.Title) return [InterfaceIcon.Notice, InterfaceIcon.Exit];
-  else if (stage === LoginStage.Door && !isDoorWaiting)
+  else if (isAtDoor.value && !isDoorWaiting)
     return [InterfaceIcon.Settings, InterfaceIcon.Repair, InterfaceIcon.Notice, InterfaceIcon.Exit];
   return [];
 });
-const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== LoginStage.Entering);
+const isFooterShown = computed(() => stage !== LoginStage.Arriving);
+// The page the game's clips play on, each piece they move named by its path under the game's page
+const page = useTemplateRef("page");
+// Whether the title is still fading out after its click, which keeps it drawn until the fade has run
+const isStartLeaving = ref(false);
+const isStartShown = computed(() => stage === LoginStage.Title || isStartLeaving.value);
+const playClip = (clip: LoginInterfaceClip): Animation[] =>
+  page.value ? playInterfaceClip(page.value, LoginInterfaceClipMap[clip]) : [];
+// Each stage's clips as the game plays them: the white curtain then the page fading in on arriving, the title fading in
+// At the title and out on its click, and the page fading into white on entering. A clip's tracks share its length, so
+// Any one of them ending is the clip's end
+const playStageClips = (newStage: LoginStage, oldStage?: LoginStage): void => {
+  if (oldStage === LoginStage.Title) {
+    const [startFadeOut] = playClip(LoginInterfaceClip.StartFadeOut);
+    if (startFadeOut) startFadeOut.addEventListener("finish", () => (isStartLeaving.value = false), { once: true });
+    else isStartLeaving.value = false;
+  }
+
+  if (newStage === LoginStage.Arriving) {
+    playClip(LoginInterfaceClip.WhiteCurtain);
+    playClip(LoginInterfaceClip.FadeIn);
+  } else if (newStage === LoginStage.Title) playClip(LoginInterfaceClip.StartFadeIn);
+  else if (newStage === LoginStage.Entering) {
+    const [fadeOut] = playClip(LoginInterfaceClip.FadeOut);
+    if (fadeOut) fadeOut.addEventListener("finish", () => emit("whiten"), { once: true });
+    else emit("whiten");
+  }
+};
+onMounted(() => playStageClips(stage));
+watch(
+  () => stage,
+  async (newStage, oldStage) => {
+    // The title is kept before the new stage's render would drop it, and the clips play once that render is drawn
+    if (oldStage === LoginStage.Title) isStartLeaving.value = true;
+    await nextTick();
+    playStageClips(newStage, oldStage);
+  },
+);
 </script>
 
 <template>
   <GameScreen class="login-interface">
-    <LoadingSpinner v-if="isSpinnerShown" class="spinner" />
-    <!-- Mainland China's age rating (CADPA, 12 and over), which its client keeps in the corner of every login stage -->
-    <svg v-if="client === GameClient.Mainland" class="age-rating" viewBox="0 0 84 110" role="img" aria-label="12+">
-      <rect class="age-rating-white" width="84" height="110" rx="6" />
-      <rect x="7" y="8" width="70" height="78" rx="4" fill="#178ed0" />
-      <path class="age-rating-white" :d="ageRating.age" transform="translate(9 10) scale(0.125)" />
-      <text x="42" y="83" class="age-rating-white age-rating-name">CADPA</text>
-      <path :d="ageRating.notice" transform="translate(2 87) scale(0.125)" fill="#111" />
-    </svg>
-    <ToastNotice :class="['welcome', { shown: isWelcomeShown }]">
-      <template #mark>
-        <span class="initial">{{ playerName.charAt(0).toUpperCase() }}</span>
-      </template>
-      {{ welcome }}
-    </ToastNotice>
-    <template v-if="stage === LoginStage.Title">
-      <!-- A heading to a screen reader, drawn as a paragraph so no host's own heading styles reach it -->
-      <p class="title" role="heading" aria-level="1">{{ gameText[GameTextKey.LoginTitle] }}</p>
-      <OrnamentDivider class="divider" />
-      <p class="subtitle">{{ gameText[GameTextKey.LoginBegin] }}</p>
-      <div class="server" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.ServerBar], true)">
-        <ServerBar :name="LOGIN_SERVER_NAME" />
-      </div>
-    </template>
-    <!-- The foot, anchored to the screen's bottom as the game's is, so everything in it stays there on any window: the -->
-    <!-- Loading row and the prompt, the account and the build string, and both button columns -->
-    <div v-if="isFooterShown" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.Bottom], true)">
-      <LoginStatus v-if="stage === LoginStage.Preparing" :game-text :progress :step="statusStep" />
-      <PromptBand v-else-if="stage === LoginStage.Door && !isDoorWaiting" class="prompt">{{
-        gameText[GameTextKey.LoginBegin]
-      }}</PromptBand>
-      <div class="column" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.LeftButtons])">
-        <div class="slot"><RoundButton :icon="InterfaceIcon.Power" label="Quit" /></div>
-      </div>
-      <div class="column" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.RightButtons])">
-        <div v-for="icon of cornerIcons" :key="icon" :class="['slot', { arriving: stage === LoginStage.Door }]">
-          <RoundButton :icon :label="icon" />
+    <div ref="page" class="page">
+      <!-- The white the page fades up out of as it arrives and into as it enters, which only the clips draw -->
+      <div class="white-screen" :data-clip-target="LoginInterfaceClipTarget.WhiteScreen" />
+      <LoadingSpinner v-if="isSpinnerShown" class="spinner" />
+      <div class="center" :data-clip-target="LoginInterfaceClipTarget.Center">
+        <!-- Mainland China's age rating (CADPA, 12 and over), which its client keeps in the corner of every login -->
+        <!-- Stage -->
+        <svg
+          v-if="client === GameClient.Mainland"
+          class="age-rating"
+          viewBox="0 0 84 110"
+          role="img"
+          aria-label="12+"
+          :data-clip-target="LoginInterfaceClipTarget.RatingBadge"
+        >
+          <rect class="age-rating-white" width="84" height="110" rx="6" />
+          <rect x="7" y="8" width="70" height="78" rx="4" fill="#178ed0" />
+          <path class="age-rating-white" :d="ageRating.age" transform="translate(9 10) scale(0.125)" />
+          <text x="42" y="83" class="age-rating-white age-rating-name">CADPA</text>
+          <path :d="ageRating.notice" transform="translate(2 87) scale(0.125)" fill="#111" />
+        </svg>
+        <!-- The title is the game's start button, and stays through its fade out after the click -->
+        <div v-if="isStartShown" class="start" :data-clip-target="LoginInterfaceClipTarget.Start">
+          <!-- A heading to a screen reader, drawn as a paragraph so no host's own heading styles reach it -->
+          <p class="title" role="heading" aria-level="1">{{ gameText[GameTextKey.LoginTitle] }}</p>
+          <OrnamentDivider class="divider" />
+          <p class="subtitle">{{ gameText[GameTextKey.LoginBegin] }}</p>
+        </div>
+        <div
+          v-if="stage === LoginStage.Title"
+          class="server"
+          :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.ServerBar], true)"
+          :data-clip-target="LoginInterfaceClipTarget.Server"
+        >
+          <ServerBar :name="LOGIN_SERVER_NAME" />
         </div>
       </div>
-      <div :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.CurrentAccount])">
-        <p v-if="stage === LoginStage.Title" class="user">
-          <!-- The space after the label is its own, since the template drops one between two lines -->
-          <span class="user-label">{{ `${gameText[GameTextKey.LoginUserLabel]} ` }}</span>
-          <span class="user-name">{{ playerName }}</span>
-        </p>
-        <div :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.Version])">
-          <p class="version">
-            {{ GameClientVersionTextMap[client] }}
+      <ToastNotice :class="['welcome', { shown: isWelcomeShown }]">
+        <template #mark>
+          <span class="initial">{{ playerName.charAt(0).toUpperCase() }}</span>
+        </template>
+        {{ welcome }}
+      </ToastNotice>
+      <!-- The foot, anchored to the screen's bottom as the game's is, so everything in it stays there on any window: -->
+      <!-- The loading row and the prompt, the account and the build string, and both button columns -->
+      <div
+        v-if="isFooterShown"
+        :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.Bottom], true)"
+        :data-clip-target="LoginInterfaceClipTarget.Bottom"
+      >
+        <LoginStatus v-if="stage === LoginStage.Preparing" :game-text :progress :step="statusStep" />
+        <PromptBand v-else-if="isAtDoor && !isDoorWaiting" class="prompt">{{
+          gameText[GameTextKey.LoginBegin]
+        }}</PromptBand>
+        <div class="column" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.LeftButtons])">
+          <div class="slot"><RoundButton :icon="InterfaceIcon.Power" label="Quit" /></div>
+        </div>
+        <div class="column" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.RightButtons])">
+          <div v-for="icon of cornerIcons" :key="icon" :class="['slot', { arriving: isAtDoor }]">
+            <RoundButton :icon :label="icon" />
+          </div>
+        </div>
+        <div :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.CurrentAccount])">
+          <p v-if="stage === LoginStage.Title" class="user">
+            <!-- The space after the label is its own, since the template drops one between two lines -->
+            <span class="user-label">{{ `${gameText[GameTextKey.LoginUserLabel]} ` }}</span>
+            <span class="user-name">{{ playerName }}</span>
           </p>
+          <div :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.Version])">
+            <p class="version">
+              {{ GameClientVersionTextMap[client] }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -129,6 +198,24 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
 .login-interface {
   color: #fff;
   pointer-events: none;
+}
+
+/* The page the clips play on and scale about its middle, and the groups they fade, each over the whole screen so
+   Every piece in them is placed as it is without them */
+.page,
+.center,
+.start {
+  position: absolute;
+  inset: 0;
+}
+
+/* Clear until a clip draws it; it overhangs the page by a twentieth, so the page's own scale, down to 0.96 as it fades
+   In, never uncovers the screen's edge */
+.white-screen {
+  position: absolute;
+  inset: -5%;
+  background: var(--white);
+  opacity: 0;
 }
 
 .spinner {
