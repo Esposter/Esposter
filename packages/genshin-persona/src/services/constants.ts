@@ -72,13 +72,16 @@ export const CHARACTER_LINE_PREFIX = "Character: ";
 // Everybody; absent at English
 export const REPLY_LANGUAGE_INSTRUCTION = (language: string): string =>
   `Write every reply in ${language}, the character's spoken lines included. This applies to prose only, and to nothing the output style already excludes from the character's voice: code, comments, commit messages, file contents, commands and error text stay as they are.`;
+export const ANSI_RESET = "\u001B[0m";
 // A "#rrggbb" triplet's channels: two hex digits each, 0 to 255
 export const HEX_RADIX = 16;
 export const HEX_CHANNEL_LENGTH = 2;
 export const MAX_COLOR_CHANNEL_VALUE = 255;
-// The surface a character's colour must read on: dusk's background, the agent console's, since a terminal is mostly
-// Dark
+// The surface a character's colour must read on, and the status line's badge a tonal fill over it mixing in this much
+// Of that colour: the design language's tonal button, over dusk's background, the agent console's, since a terminal
+// Is mostly dark
 export const NAMEPLATE_SURFACE = "#16161e";
+export const NAMEPLATE_TONAL_MIX_PERCENTAGE = 12;
 // The colour per element, as the game's interface paints the element's name: what a character with no row in
 // `CharacterColorMap` yet is drawn in, and an element missing here too (the player character's "None") leaves the
 // Mods in their own accent

@@ -102,23 +102,29 @@ Four more are the authoring queues of one more skill, `genshin-author` — scrip
 
 ### What it ships
 
-| Component                              | Role                                                                                                                                                                                           |
-| :------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `hooks/hooks.json`                     | A session-start hook that picks the character, greets you with its name, what the pick weighed and who is close, and prints its card as context, and the hooks module beside it.               |
-| `mod/`                                 | The hooks module: the spinner's verbs and the prompt hint's tips of this session's character, the spoken replies, and one slash command per verb.                                              |
-| `types/index.d.ts`                     | The state the hooks module publishes — the session's character and its colour — which other plugins draw by.                                                                                   |
-| `output-styles/in-character.md`        | The standing rules, forced on while the plugin is enabled: a blockquote line is the character's spoken line, the ask decides how much of a reply that is, and the rest is plain.               |
-| `skills/genshin/SKILL.md`              | The model's route from a request in words to one of the verbs; hidden from the menu.                                                                                                           |
-| `skills/genshin-author/SKILL.md`       | How a persona card and its spinner verbs are written, the command that prints a character's own lines to write from, and the two queues.                                                       |
-| `src/personaCards/`                    | Authored persona cards, one typed module per character, in our words: how the character speaks for the model, their spinner verbs for you, and the reference line only where an ear chose one. |
-| `src/generated/PersonaReferenceMap.ts` | The measured reference line and its likeness per character, one generated map written by the repository's reference selection and never by hand.                                               |
-| `runtime/`                             | The manifest and lockfile of the speech engine's runtime, which the `voice` verb installs into the state directory rather than the plugin carrying it.                                         |
-| `src/localizations/`                   | One authored module per language for the words the data package does not carry: the base Teyvat verbs, each character's spinner gerunds, and every line the verbs print.                       |
-| `scripts/`                             | The session-start hook, the commands' script, the character and spinner the hooks module reads, and the resident synthesizer, each an `.mjs` that registers `tsx` before its TypeScript.       |
+| Component                              | Role                                                                                                                                                                                                                                          |
+| :------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `hooks/hooks.json`                     | A session-start hook that picks the character, greets you with its name, what the pick weighed and who is close, and prints its card as context, and the hooks module beside it.                                                              |
+| `mod/`                                 | The hooks module: the spinner's verbs and the prompt hint's tips of this session's character, the spoken replies, and one slash command per verb.                                                                                             |
+| `types/index.d.ts`                     | The state the hooks module publishes — the session's character and its colour — which other plugins draw by.                                                                                                                                  |
+| `output-styles/in-character.md`        | The standing rules, forced on while the plugin is enabled: a blockquote line is the character's spoken line, the ask decides how much of a reply that is, and the rest is plain.                                                              |
+| `skills/genshin/SKILL.md`              | The model's route from a request in words to one of the verbs; hidden from the menu.                                                                                                                                                          |
+| `skills/genshin-author/SKILL.md`       | How a persona card and its spinner verbs are written, the command that prints a character's own lines to write from, and the two queues.                                                                                                      |
+| `src/personaCards/`                    | Authored persona cards, one typed module per character, in our words: how the character speaks for the model, their spinner verbs for you, and the reference line only where an ear chose one.                                                |
+| `src/generated/PersonaReferenceMap.ts` | The measured reference line and its likeness per character, one generated map written by the repository's reference selection and never by hand.                                                                                              |
+| `runtime/`                             | The manifest and lockfile of the speech engine's runtime, which the `voice` verb installs into the state directory rather than the plugin carrying it.                                                                                        |
+| `src/localizations/`                   | One authored module per language for the words the data package does not carry: the base Teyvat verbs, each character's spinner gerunds, and every line the verbs print.                                                                      |
+| `scripts/`                             | The session-start hook, the commands' script, the character and spinner the hooks module reads, the status line a person can name in their settings, and the resident synthesizer, each an `.mjs` that registers `tsx` before its TypeScript. |
 
 ### Spinner and prompt hint
 
-Nothing to set up: the hooks module turns the spinner's words into the session's character's verbs and the prompt hint into one of their lines under their name, a new one each turn, names the character among the labels at the right of the prompt's footer, and publishes the character's colour, which [`genshin-mods`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-mods) draws its band in. The plugin writes nothing into your settings, so your own status line stays yours. Each session draws its own character, and a switch shows at once. Why each is shaped as it is: the [persona plugin](https://esposter.com/docs/infra/claude-interface/persona-plugin) page.
+Nothing to set up: the hooks module turns the spinner's words into the session's character's verbs and the prompt hint into one of their lines under their name, a new one each turn, names the character among the labels at the right of the prompt's footer, and publishes the character's colour, which [`genshin-mods`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-mods) draws its band in. Each session draws its own character, and a switch shows at once. Why each is shaped as it is: the [persona plugin](https://esposter.com/docs/infra/claude-interface/persona-plugin) page.
+
+The plugin writes nothing into your settings, so your own status line stays yours. To have it show the character's nameplate, the name in their colour on a badge of that colour's tone, point it at the script the plugin ships:
+
+```json
+{ "statusLine": { "command": "node \"<plugin root>/scripts/statusLine.mjs\"", "type": "command" } }
+```
 
 ### Languages
 

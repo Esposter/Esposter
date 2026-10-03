@@ -1,4 +1,8 @@
 {
   "enabledPlugins": { "genshin-mods@esposter": true, "genshin-persona@esposter": true },
-  "extraKnownMarketplaces": { "esposter": { "autoUpdate": true, "source": { "path": ".", "source": "directory" } } }
+  "extraKnownMarketplaces": { "esposter": { "autoUpdate": true, "source": { "path": ".", "source": "directory" } } },
+  "statusLine": {
+    "command": "node \"$(git rev-parse --show-toplevel)/packages/genshin-persona/scripts/statusLine.mjs\"",
+    "type": "command"
+  }
 }
