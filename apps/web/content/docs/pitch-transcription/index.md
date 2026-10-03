@@ -45,7 +45,7 @@ flowchart TD
 
 ## Upstream
 
-Every issue and pull request on [basic-pitch-ts](https://github.com/spotify/basic-pitch-ts), read with its comments, is given a verdict from the [triage](/docs/architecture/dependency-admission) of the dependency admission page, which says what each verdict owes; a defect is proven by a named test beside the source it fixes.
+Every issue and pull request on [basic-pitch-ts](https://github.com/spotify/basic-pitch-ts), read with its comments and judged by the [dependency admission triage](/docs/architecture/dependency-admission). Where a row is a defect we fixed, its proof is the test the row names, beside the source it fixes.
 
 | Upstream                                  | Verdict            | Proof                                                                                                                                                        |
 | ----------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -87,6 +87,6 @@ Reading the source turned up defects nobody has filed, each reproduced against t
 ## Sources
 
 - [spotify/basic-pitch-ts](https://github.com/spotify/basic-pitch-ts) — the package absorbed, its tracker and its Apache-2.0 licence.
-- [spotify/basic-pitch](https://github.com/spotify/basic-pitch) — the model repository: `constants.py`, "note_creation.py", and its issue on real-time transcription.
+- [spotify/basic-pitch](https://github.com/spotify/basic-pitch) — the model repository: its constants and note creation modules, and its issue on real-time transcription.
 - [A Lightweight Instrument-Agnostic Model for Polyphonic Note Transcription and Multipitch Estimation](https://arxiv.org/abs/2203.09893), Bittner et al., ICASSP 2022 — the network and its three readings.
 - [`scipy.signal.argrelmax`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.argrelmax.html) — the edge clipping the onset peaks follow.
