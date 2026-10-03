@@ -22,7 +22,8 @@ const completedStepCount = computed(() => item.value?.steps?.filter(({ completed
 
 <!-- A todo's row: its title, in the heading weight since a list is scanned by it, struck through once it is completed,
      Then a line holding only what is set — when it was completed, or when it is due, in the error colour once that has
-     Passed and marked when it repeats, how many of its steps are done, and the repository a follow-up came from — and the notes drawn in full in the text colour, since they are what a todo is read for. A completed row
+     Passed and marked when it repeats, how many of its steps are done, and the repository a follow-up came from — and the notes in the text colour, since they are what a todo is read for,
+     Clamped to a few lines with an ellipsis so a long note cannot stretch its row; the dialog shows them whole. A completed row
      Mutes its title and notes alike -->
 <template>
   <span v-if="item" :class="{ 'text-muted': item.completedAt }" flex flex-col gap-1>
@@ -60,7 +61,7 @@ const completedStepCount = computed(() => item.value?.steps?.filter(({ completed
       </span>
     </span>
     <!-- eslint-disable-next-line vue/no-v-html -- the notes are the editor's sanitized HTML -->
-    <span v-if="hasNotes" class="notes rich-text-content" text-sm ws-normal v-html="item.notes" />
+    <span v-if="hasNotes" class="notes rich-text-content" text-sm ws-normal line-clamp-6 v-html="item.notes" />
   </span>
 </template>
 
