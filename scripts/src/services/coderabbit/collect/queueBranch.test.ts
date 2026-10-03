@@ -29,7 +29,7 @@ describe("queueBranch", () => {
     [
       "the retrigger's dispatch ref",
       "run-review-collector.yaml",
-      `        run: gh workflow run ReviewCollector.yaml --repo "$GITHUB_REPOSITORY" --ref ${QUEUE_BRANCH}`,
+      `        run: until gh workflow run ReviewCollector.yaml --repo "$GITHUB_REPOSITORY" --ref ${QUEUE_BRANCH}; do sleep 60; done`,
     ],
   ])("the runner spells %s as the constant", (_title, name, line) => {
     expect.hasAssertions();
