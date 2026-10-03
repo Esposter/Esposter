@@ -12,13 +12,13 @@ const readShippedModel = async (): Promise<GraphModel<io.IOHandlerSync>> => {
   // oxlint-disable-next-line no-restricted-properties -- the model's topology and weight manifest, which hold no dates
   return loadGraphModelSync([JSON.parse(modelJson), new Uint8Array(weights).buffer]);
 };
-// A tone at A4 whose frames the model's first window covers, though its samples run into a second window
-const tone = Float32Array.from(
-  { length: 36000 },
-  (_, index) => Math.sin((2 * Math.PI * 440 * index) / AUDIO_SAMPLE_RATE) / 2,
-);
-
 describe(readModel, () => {
+  // A tone at A4 whose frames the model's first window covers, though its samples run into a second window
+  const tone = Float32Array.from(
+    { length: 36000 },
+    (_, index) => Math.sin((2 * Math.PI * 440 * index) / AUDIO_SAMPLE_RATE) / 2,
+  );
+
   test("hears a tone's pitch", async () => {
     expect.hasAssertions();
 

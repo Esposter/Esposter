@@ -1,15 +1,15 @@
 import { createNotes } from "#src/services/createNotes";
 import { describe, expect, test } from "vitest";
 
-const frameCount = 40;
-const pitch = 39;
-const createReadings = (isHeld: (frame: number) => boolean, reading: number): number[][] =>
-  Array.from({ length: frameCount }, (_, frame) =>
-    Array.from({ length: 88 }, (_reading, index) => (index === pitch && isHeld(frame) ? reading : 0)),
-  );
-const frames = createReadings((frame) => frame >= 5 && frame < 25, 0.5);
-
 describe(createNotes, () => {
+  const frameCount = 40;
+  const pitch = 39;
+  const createReadings = (isHeld: (frame: number) => boolean, reading: number): number[][] =>
+    Array.from({ length: frameCount }, (_, frame) =>
+      Array.from({ length: 88 }, (_reading, index) => (index === pitch && isHeld(frame) ? reading : 0)),
+    );
+  const frames = createReadings((frame) => frame >= 5 && frame < 25, 0.5);
+
   test("starts a note at an onset peak and holds it while its frame reading lasts", () => {
     expect.hasAssertions();
 
