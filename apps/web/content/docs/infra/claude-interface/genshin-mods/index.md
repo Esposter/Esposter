@@ -30,7 +30,7 @@ Each mod is switched by its own command, `/waypoints`, `/resin`, `/veil`, `/comm
 
 - **One plugin, one module, one band.** The engine gives each plugin one band above the prompt and takes one unmatched hook per event, so the five mods register from one module, the session's events are hooked once for all of them, and the band composes a row from each mod's state.
 - **Themed by the session character.** Labels use the game's own word only where it already means the thing: resin for capacity that refills on a clock, a waypoint for where to go next, a commission for a task given out, a ward for protection. The accent is the colour the [persona plugin](/docs/infra/claude-interface/persona-plugin) publishes for the session's character, already readable on a dark terminal, and the game's interface gold where the persona is not installed.
-- **A mod stands alone.** Every mod works with the other four switched off, and none needs the persona except for its colour.
+- **A mod stands alone.** Every mod works with the other four switched off, and none needs the persona except for its colour. So the manifest names no plugin dependency: one would make installing the mods install the persona too, game data and output style with it, and the colour read already falls back to gold on its own.
 - **Nothing beyond the session's own account.** A mod that calls the model asks through a fork of the session — a request of its own that reads the session's prefix from the prompt cache, so it costs that cache read plus its own new input and reply, counted against the same plan as any turn. No mod adds a service or a key.
 
 ```mermaid
@@ -48,15 +48,15 @@ flowchart LR
 
 ## Key files
 
-| File                                                      | Role                                                                       |
-| :-------------------------------------------------------- | :------------------------------------------------------------------------- |
-| `packages/genshin-mods/src/register.ts`                   | The module the engine loads, calling each register file once               |
-| `packages/genshin-mods/src/services/registerLifecycle.ts` | The session's events for every mod, and the commands that switch them      |
-| `packages/genshin-mods/src/services/band/registerBand.ts` | The band, its rows and its buttons' actions, in the character's colour     |
-| `packages/genshin-mods/src/services/InitialState.ts`      | Every state value's initial, the switches' defaults among them             |
-| `packages/genshin-mods/src/services/ModDescriptionMap.ts` | Each mod's command and the line the menu shows                             |
-| `packages/genshin-mods/types/index.d.ts`                  | The state contract the engine validates every key against                  |
-| `packages/genshin-mods/.claude-plugin/plugin.json`        | The manifest, naming the contract and the persona it reads its accent from |
+| File                                                      | Role                                                                   |
+| :-------------------------------------------------------- | :--------------------------------------------------------------------- |
+| `packages/genshin-mods/src/register.ts`                   | The module the engine loads, calling each register file once           |
+| `packages/genshin-mods/src/services/registerLifecycle.ts` | The session's events for every mod, and the commands that switch them  |
+| `packages/genshin-mods/src/services/band/registerBand.ts` | The band, its rows and its buttons' actions, in the character's colour |
+| `packages/genshin-mods/src/services/InitialState.ts`      | Every state value's initial, the switches' defaults among them         |
+| `packages/genshin-mods/src/services/ModDescriptionMap.ts` | Each mod's command and the line the menu shows                         |
+| `packages/genshin-mods/types/index.d.ts`                  | The state contract the engine validates every key against              |
+| `packages/genshin-mods/.claude-plugin/plugin.json`        | The manifest, naming the state contract                                |
 
 ## Notes
 
