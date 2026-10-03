@@ -44,14 +44,10 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | Where each part lands on the reference  | `genshin:parity overlay`: boundaries, edge distance                  |
 | Which layer a score's loss is in        | `scoreLayers`: `compare --witness`, `attribute`                      |
 | One approval number                     | FLIP (`scoreFlip`), in every `compare`                               |
-| Sun against ambient light               | `genshin:parity light`: up and shaded faces under each light alone   |
 | The clouds' lit and shaded colours      | `genshin:parity clouds`: ours and theirs matched by colour spread    |
 | How much of each cloud band an hour has | `genshin:parity cover`: each band's share on the cover by height     |
-| Fog against distance                    | `genshin:parity haze`: depth bands, ours with and without fog        |
 | The fog's density and colours           | `genshin:parity fog`: bins by depth and sun angle, solved            |
-| A light's strength under its references | `genshin:parity exposure`: the parts' luminance, ours against theirs |
 | The grade, the fog, the light           | `genshin:parity calibrate`: least squares over masks                 |
 | What a shader computes                  | `shaders`: the annotated disassembly, and HLSL where it decompiles   |
 | Which music sound a recording plays     | `genshin:assets music`: pitch classes matched window by window       |
 | What plays a music sound, and when      | `parseMusicHierarchy`: the banks' tracks, segments and playlists     |
-| Each stand-in's cost                    | `attribute`: FLIP loss per layer                                     |
