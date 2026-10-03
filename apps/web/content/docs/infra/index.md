@@ -9,7 +9,7 @@ description: Azure infrastructure managed as Pulumi code — one prod stack cove
 
 - [Azure Pulumi layout](/docs/infra/azure-pulumi-layout) — how resources are laid out in Pulumi: one resource per file, ARM-aligned paths, provider split, naming convention.
 - [Branch namespaces](/docs/infra/branch-namespaces) — whose a branch is, read off its name alone, and the rulesets that make the name the rule.
-- [Claude interface](/docs/infra/claude-interface) — Claude Code given a personality, a voice and a working surface: a Genshin persona plugin picked by the calendar, replies spoken in each character's own cloned voice, the genshin mods drawn in its colours, and the agent console that works the terminal's sessions from a page of the app.
+- [Claude interface](/docs/infra/claude-interface) — Claude Code given a personality, a voice and a working surface: a Genshin persona plugin picked by the calendar, replies spoken in each character's own cloned voice, five mods in the persona's colours, and the agent console that works the terminal's sessions from a page of the app.
 - [Cost & Security Posture](/docs/infra/cost-and-security-posture) — the budget guard cycle and why each hardening step is deliberately deferred.
 - [Event Grid dead-letter](/docs/infra/eventgrid-dead-letter) — failed deliveries land in a blob container whose writes push-trigger an automatic, attempt-capped replay.
 - [Observability](/docs/infra/observability) — why App Insights and Log Analytics are deliberately not provisioned, and what the estate relies on instead.

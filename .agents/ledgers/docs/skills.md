@@ -7,6 +7,7 @@
 | `bench`                   | 2026-09-27 · Opus 5.5 |       |
 | `build`                   | 2026-09-27 · Opus 5.5 |       |
 | `building-proposals`      | 2026-09-27 · Opus 5.5 |       |
+| `claude-mods`             | —                     |       |
 | `claude-permissions`      | 2026-09-27 · Opus 5.5 |       |
 | `cli`                     | —                     |       |
 | `code-review`             | 2026-09-27 · Opus 5.5 |       |
