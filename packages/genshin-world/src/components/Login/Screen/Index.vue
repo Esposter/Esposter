@@ -4,6 +4,7 @@ import type { TresRendererSetupContext } from "@tresjs/core";
 import type { GameLanguage, GameText } from "genshin-text";
 
 import LoginInterface from "#src/components/Login/Interface/Index.vue";
+import LoginMusic from "#src/components/Login/Music/Index.vue";
 import LoginScene from "#src/components/Login/Scene/Index.vue";
 import { LoginStage } from "#src/models/login/LoginStage";
 import { LoginStatusStep } from "#src/models/login/LoginStatusStep";
@@ -32,7 +33,8 @@ interface Props {
   gameText: GameText;
   // The glide held still at this many metres scrolled, for a reference taken at one moment of the title's loop
   heldScrolled?: number;
-  // The scene alone, as the recordings idling with no interface show it, for a reference to be scored against
+  // The scene alone, as the recordings idling with no interface show it, for a reference to be scored against, and
+  // Silent
   isInterfaceHidden?: true;
   // The reader's language, whose client's interface the screen shows
   language: GameLanguage;
@@ -133,6 +135,7 @@ const onClick = (event: MouseEvent): void => {
         @ready="emit('ready')"
       />
     </TresCanvas>
+    <LoginMusic v-if="!isInterfaceHidden" />
     <LoginInterface
       v-if="!isInterfaceHidden"
       :game-text

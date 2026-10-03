@@ -7,6 +7,7 @@ import "@fontsource/signika/600.css";
 import { benchScene } from "#parity/benchScene";
 import { readSceneFog } from "#parity/readSceneFog";
 import { readSceneSky } from "#parity/readSceneSky";
+import { renderMusic } from "#parity/renderMusic";
 import { screens } from "#parity/screens";
 import { setSceneCloudColors } from "#parity/setSceneCloudColors";
 import { setSceneCloudCover } from "#parity/setSceneCloudCover";
@@ -27,7 +28,7 @@ import { capitalize, jsonDateParse } from "@esposter/shared";
 // `&backdrop=<file>` draws that image under the screen, for an overlay shot over the frame it is judged against, and
 // `&variant=<name>` renders the fixture's variant of that name, and `&witness=<layout>` draws a scene's exports in place
 // Of its own parts, from the layout the shooting browser serves there. A tool sets the screen's props as it runs, to
-// Play a motion at known moments, and benches a scene's frames
+// Play a motion at known moments, benches a scene's frames, and renders a segment of the login's music to score it
 const holdAnimations = (): void => {
   // Reading the animations resolves the styles that start them, and a held one stays listed once it would have ended
   for (const animation of window.document.getAnimations()) animation.pause();
@@ -81,6 +82,7 @@ if (screen && root) {
   Reflect.set(window, "benchScene", (frameCount: number) => benchScene(sceneContext.value, frameCount));
   Reflect.set(window, "readSceneSky", () => readSceneSky(sceneContext.value));
   Reflect.set(window, "readSceneFog", () => readSceneFog(sceneContext.value));
+  Reflect.set(window, "renderMusic", renderMusic);
   Reflect.set(window, "setSceneCloudColors", (colors?: Parameters<typeof setSceneCloudColors>[1]) => {
     setSceneCloudColors(sceneContext.value, colors);
   });
