@@ -125,8 +125,10 @@ jobs:
           DELAY_SECONDS: ${{ needs.collect.outputs.retriggerDelaySeconds }}
         run: sleep "$DELAY_SECONDS"
 
-      # The dispatch's ref only picks which copy of the caller's triggers runs — the caller pins this file
+      # The dispatch's ref only picks which copy of the caller's triggers runs — the caller pins this file. Asked
+      # until it lands, within the job's timeout: a retrigger an outage set is the one most likely to meet it still
+      # down, and a dispatch lost here is a pipeline idle until the next push
       - name: ♻️ Run the cycle again
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh workflow run ReviewCollector.yaml --repo "$GITHUB_REPOSITORY" --ref ai/queue
+        run: until gh workflow run ReviewCollector.yaml --repo "$GITHUB_REPOSITORY" --ref ai/queue; do sleep 60; done
