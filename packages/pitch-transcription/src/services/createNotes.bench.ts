@@ -2,8 +2,8 @@ import type { ModelReadings } from "#src/models/ModelReadings";
 
 import { ANNOTATIONS_FPS, ANNOTATIONS_SEMITONES } from "#src/constants";
 import { createNotes } from "#src/services/createNotes";
-import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { takeOne } from "@esposter/shared";
+import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { describe, test } from "vitest";
 
 // A minute of music and five: note creation runs over every frame, so its cost is read at two lengths
@@ -14,7 +14,7 @@ const createReadings = (minutes: number): Pick<ModelReadings, "frames" | "onsets
   const frameCount = Math.round(minutes * 60 * ANNOTATIONS_FPS);
   const frames = Array.from({ length: frameCount }, () => Array.from({ length: ANNOTATIONS_SEMITONES }, () => 0));
   const onsets = Array.from({ length: frameCount }, () => Array.from({ length: ANNOTATIONS_SEMITONES }, () => 0));
-  for (let start = 1, index = 0; start + 30 < frameCount; start += 17, index++) {
+  for (let index = 0, start = 1; start + 30 < frameCount; start += 17, index++) {
     const pitch = 24 + ((index * 7) % 48);
     const heldPitch = (pitch + 5) % ANNOTATIONS_SEMITONES;
     takeOne(onsets, start)[pitch] = 0.9;

@@ -19,6 +19,7 @@ describe("pitch-transcription", () => {
 
     expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 2.98 KB (3052 bytes)"`);
   });
+
   // Under Node with no bundler, which sees only the named exports a CommonJS dependency's own analysis finds; the test
   // Runner's interop would hide a missing one
   test("loads under plain Node", () => {
