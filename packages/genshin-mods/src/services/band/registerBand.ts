@@ -18,9 +18,9 @@ const isCommissionExpandedAtom = atom(
   InitialState.isCommissionExpanded,
 );
 const isHandingOffAtom = atom({ key: "isHandingOff", plugin: "genshin-mods" } as const, InitialState.isHandingOff);
-const lastResponseAtAtom = atom(
-  { key: "lastResponseAt", plugin: "genshin-mods" } as const,
-  InitialState.lastResponseAt,
+const lastCacheRequestAtAtom = atom(
+  { key: "lastCacheRequestAt", plugin: "genshin-mods" } as const,
+  InitialState.lastCacheRequestAt,
 );
 const nowAtom = atom({ key: "now", plugin: "genshin-mods" } as const, InitialState.now);
 const waypointsAtom = atom({ key: "waypoints", plugin: "genshin-mods" } as const, InitialState.waypoints);
@@ -33,17 +33,18 @@ const press = (action: () => Promise<unknown>) => () => {
 
 const StatusMarkMap = { completed: "✓", in_progress: "▸", pending: "·" } as const;
 
-// A fork re-sends the conversation's prefix, which renews the cache, and adds no row to the transcript
+// A fork re-sends the conversation's prefix, which renews the cache from the moment it is sent, and adds no row to the
+// Transcript
 const warmCache = async ($: EngineInterface) => {
+  const requestedAt = await $.clock.now();
   const answer = await $.model.fork({ prompt: WARM_QUESTION });
   if (!answer.isAnswered) {
     $.ui.toast(`The cache was not warmed: ${answer.reason}.`);
     return;
   }
 
-  const now = await $.clock.now();
-  await update($, lastResponseAtAtom, () => now);
-  await update($, nowAtom, () => now);
+  await update($, lastCacheRequestAtAtom, () => requestedAt);
+  await update($, nowAtom, () => requestedAt);
 };
 
 // The whole relay in one press: the clear waits for the handoff text, so a fork that fails clears nothing
@@ -67,10 +68,10 @@ const drawResinRow = async (
   enabledMods: EnabledMods,
   accent: string,
 ): Promise<RenderElement | undefined> => {
-  const lastResponseAt = await read($, lastResponseAtAtom);
-  if (lastResponseAt === 0 || !enabledMods.resin) return undefined;
+  const lastCacheRequestAt = await read($, lastCacheRequestAtAtom);
+  if (lastCacheRequestAt === 0 || !enabledMods.resin) return undefined;
 
-  const figures = getResinFigures(await $.session.usage(), lastResponseAt, await read($, nowAtom));
+  const figures = getResinFigures(await $.session.usage(), lastCacheRequestAt, await read($, nowAtom));
   const isHandingOff = await read($, isHandingOffAtom);
   const { Box, Button, Text } = $.ui.resolve(e);
   return Box({

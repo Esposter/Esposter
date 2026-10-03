@@ -17,9 +17,9 @@ const isCommissionExpandedAtom = atom(
   InitialState.isCommissionExpanded,
 );
 const lastPromptAtom = atom({ key: "lastPrompt", plugin: "genshin-mods" } as const, InitialState.lastPrompt);
-const lastResponseAtAtom = atom(
-  { key: "lastResponseAt", plugin: "genshin-mods" } as const,
-  InitialState.lastResponseAt,
+const lastCacheRequestAtAtom = atom(
+  { key: "lastCacheRequestAt", plugin: "genshin-mods" } as const,
+  InitialState.lastCacheRequestAt,
 );
 const nowAtom = atom({ key: "now", plugin: "genshin-mods" } as const, InitialState.now);
 const waypointsAtom = atom({ key: "waypoints", plugin: "genshin-mods" } as const, InitialState.waypoints);
@@ -27,24 +27,24 @@ const waypointsAtom = atom({ key: "waypoints", plugin: "genshin-mods" } as const
 // The events a plugin may hook once with no matcher, each hooked here for every mod, with the commands that switch
 // The mods. Neither variable is drawn: the expiry already warned about, so each warns once, and whether a turn is
 // Renewing the cache itself, when no warning is owed
-let warnedLastResponseAt = 0;
+let warnedLastCacheRequestAt = 0;
 let isTurnRunning = false;
 
 const tick = async ($: EngineInterface) => {
   const now = await $.clock.now();
   await update($, nowAtom, () => now);
-  const lastResponseAt = await read($, lastResponseAtAtom);
-  const remainingMs = getCacheRemainingMs(lastResponseAt, now);
-  const isWarningDue = lastResponseAt > 0 && remainingMs > 0 && remainingMs <= CACHE_WARNING_MS;
+  const lastCacheRequestAt = await read($, lastCacheRequestAtAtom);
+  const remainingMs = getCacheRemainingMs(lastCacheRequestAt, now);
+  const isWarningDue = lastCacheRequestAt > 0 && remainingMs > 0 && remainingMs <= CACHE_WARNING_MS;
   if (
     !isWarningDue ||
     isTurnRunning ||
-    warnedLastResponseAt === lastResponseAt ||
+    warnedLastCacheRequestAt === lastCacheRequestAt ||
     !(await read($, enabledModsAtom)).resin
   )
     return;
 
-  warnedLastResponseAt = lastResponseAt;
+  warnedLastCacheRequestAt = lastCacheRequestAt;
   $.ui.toast("The prompt cache goes cold in five minutes: warm it, compact or hand off from the band.");
 };
 
@@ -91,7 +91,7 @@ export const registerLifecycle = (on: On): void => {
   // Nothing the old one showed is kept
   on("session.end", async ($, e, next) => {
     if (e.reason === "clear" || e.reason === "resume") {
-      await update($, lastResponseAtAtom, () => InitialState.lastResponseAt);
+      await update($, lastCacheRequestAtAtom, () => InitialState.lastCacheRequestAt);
       await update($, waypointsAtom, () => InitialState.waypoints);
       await closeCommission($);
     }
@@ -114,8 +114,20 @@ export const registerLifecycle = (on: On): void => {
     return next(e);
   });
 
-  // A reply renews the cache; an answer of the main conversation asks for waypoints off the turn's own dispatch, so
-  // The fork never holds the turn's end or the next prompt behind it
+  // The cache's lifetime runs from the request that read or wrote it, so each of the main conversation's requests
+  // Restarts the countdown as it is sent, not as its reply ends
+  on("turn.step", async function* ($, e, next) {
+    if (e.agentId === undefined) {
+      const now = await $.clock.now();
+      await update($, lastCacheRequestAtAtom, () => now);
+      await update($, nowAtom, () => now);
+    }
+
+    return yield* next(e);
+  });
+
+  // An answer of the main conversation asks for waypoints off the turn's own dispatch, so the fork never holds the
+  // Turn's end or the next prompt behind it
   on("turn.complete", async ($, e, next) => {
     const result = await next(e);
     if (e.agentId !== undefined) return result;
@@ -123,7 +135,6 @@ export const registerLifecycle = (on: On): void => {
     isTurnRunning = false;
 
     const now = await $.clock.now();
-    await update($, lastResponseAtAtom, () => now);
     await update($, nowAtom, () => now);
     if (e.reason === "answer" && (await read($, enabledModsAtom)).waypoints)
       $.clock.after(0, () => {

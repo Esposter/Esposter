@@ -9,9 +9,9 @@ Part of [Genshin mods](/docs/infra/claude-interface/genshin-mods). In the game, 
 
 ## The row
 
-Shown once the session has had a reply, and gone again after a `/clear` or a resume:
+Shown once the session has sent a request, and gone again after a `/clear` or a resume:
 
-- **cache** — minutes until the prompt cache expires, counted from the last reply or warm, and how much context a cold cache would re-send at full price.
+- **cache** — minutes until the prompt cache expires, counted from when the last request or warm was sent rather than from its reply, since that is when the cache was read, and how much context a cold cache would re-send at full price.
 - **context** — tokens used against the window, as the engine reports them.
 - **5h** and **7d** — the limit windows' percentages, when the account reports them.
 - **cost** — what the session would have cost on API billing, the engine's own total.
@@ -32,7 +32,7 @@ A figure takes the warning colour past its threshold — the cache under ten min
 | :---------------------------------------------------------------- | :---------------------------------------------------------------------- |
 | `packages/genshin-mods/src/services/resin/getResinFigures.ts`     | Usage and the clock into the row's figures and warnings                 |
 | `packages/genshin-mods/src/services/resin/getCacheRemainingMs.ts` | The time left on the cache                                              |
-| `packages/genshin-mods/src/services/registerLifecycle.ts`         | The minute clock, the warning toast, the renewal on a reply             |
+| `packages/genshin-mods/src/services/registerLifecycle.ts`         | The minute clock, the warning toast, the renewal on each request        |
 | `packages/genshin-mods/src/services/band/registerBand.ts`         | The row and the warm, compact and handoff actions                       |
 | `packages/genshin-mods/src/services/constants.ts`                 | The cache's lifetime, the thresholds and the warm and handoff questions |
 
