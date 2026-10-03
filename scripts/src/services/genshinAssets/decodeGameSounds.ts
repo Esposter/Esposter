@@ -3,7 +3,7 @@ import { readGameAudioPackages } from "#src/services/genshinAssets/readGameAudio
 import { resolveVgmstream } from "#src/services/genshinAssets/resolveVgmstream";
 import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
-import { mkdir, open, rm, writeFile } from "node:fs/promises";
+import { mkdir, open, rename, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // Each of the music packages' sounds a filter keeps, decoded as WAV into a folder by its id and yielded one at a time,
@@ -28,7 +28,11 @@ export const decodeGameSounds = async function* (
         const soundPath = join(directory, `${id}.wem`);
         // oxlint-disable-next-line no-await-in-loop -- vgmstream decodes the sound once it is written
         await writeFile(soundPath, sound);
-        execFileSync(vgmstreamPath, ["-o", wavePath, soundPath], { stdio: "ignore" });
+        // Decoded beside the WAV and renamed onto it, so a decode cut short is never read as a whole sound
+        const partialPath = join(directory, `${id}.partial.wav`);
+        execFileSync(vgmstreamPath, ["-o", partialPath, soundPath], { stdio: "ignore" });
+        // oxlint-disable-next-line no-await-in-loop -- the WAV is whole once vgmstream exits
+        await rename(partialPath, wavePath);
         // oxlint-disable-next-line no-await-in-loop -- the encoded sound is dropped once its WAV is written
         await rm(soundPath);
       }
