@@ -10,16 +10,16 @@ const costFormat = new Intl.NumberFormat("en", { currency: "USD", style: "curren
 const minuteFormat = new Intl.NumberFormat("en", { style: "unit", unit: "minute", unitDisplay: "narrow" });
 const RateLimitLabelMap: Record<string, string> = { five_hour: "5h", seven_day: "7d" };
 
-// The row's figures in the order they are read: the cache only once a reply has started its clock, and each other
+// The row's figures in the order they are read: the cache only once a request has started its clock, and each other
 // Figure only once the engine has a reading, since a zero it never measured would read as a fact
 export const getResinFigures = (
   { context, cost, rateLimits }: Pick<SessionUsage, "context" | "cost" | "rateLimits">,
-  lastResponseAt: number,
+  lastCacheRequestAt: number,
   now: number,
 ): ResinFigure[] => {
   const figures: ResinFigure[] = [];
-  if (lastResponseAt > 0) {
-    const remainingMs = getCacheRemainingMs(lastResponseAt, now);
+  if (lastCacheRequestAt > 0) {
+    const remainingMs = getCacheRemainingMs(lastCacheRequestAt, now);
     const remainingMinutes = Math.ceil(Temporal.Duration.from({ milliseconds: remainingMs }).total("minutes"));
     const remaining = remainingMs > 0 ? minuteFormat.format(remainingMinutes) : "cold";
     const resend = context.tokens === undefined ? "" : ` · re-sends ${tokenFormat.format(context.tokens)}`;
