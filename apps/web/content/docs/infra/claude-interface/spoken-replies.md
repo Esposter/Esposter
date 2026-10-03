@@ -128,7 +128,7 @@ flowchart TD
     Spoke -- no --> Off
 ```
 
-`teardown` removes the runtime, the weights, the references, the dub, the rung, the log and the hook entry — stopping a running synthesizer first, since the weights it holds open cannot be deleted under it — and leaves the pick records and the pin, which are the persona's rather than the voice's.
+`teardown` removes the runtime, the weights, the references, the dub, the rung and the log — stopping a running synthesizer first, since the weights it holds open cannot be deleted under it — and leaves the pick records and the pin, which are the persona's rather than the voice's. With the dub gone the gate is shut, so spoken lines stay silent until `voice <dub>` sets them up again.
 
 ## Failure semantics
 

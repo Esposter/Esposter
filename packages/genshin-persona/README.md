@@ -89,7 +89,7 @@ A `<name>` is a character's, matched whole and ignoring case, in English or as t
 | `language` | `[language]`             | Sets the interface language — every word the plugin writes — and carries the reply language with it. With none, reports what is set and lists the languages on offer.                                                                |
 | `reply`    | `[language]`             | Sets the language replies are written in, on its own. With none, reports what is set and whether it was set or cascaded from the interface language.                                                                                 |
 | `status`   | —                        | Reports every setting at once and where each value came from. Changes nothing.                                                                                                                                                       |
-| `teardown` | —                        | Removes what `voice` installed: the runtime, the weights, the cached clips and the dub. The picks, the pin and the languages stay.                                                                                                   |
+| `teardown` | —                        | Removes what `voice` installed: the runtime, the weights, the cached clips and the dub. The picks, the pin and the languages stay; `voice` brings spoken lines back.                                                                 |
 
 Four more are the authoring queues of one more skill, `genshin-author` — script-only and on no menu:
 
@@ -152,7 +152,7 @@ A reply to an ask of the assistant opens with one blockquote line in the charact
 node "<plugin root>/scripts/genshin.mjs" volume 60     # or: /genshin-volume 60
 ```
 
-`teardown` removes the runtime, the weights, the cached clips and the dub.
+`teardown` removes the runtime, the weights, the cached clips and the dub, and spoken lines stay silent until `voice` sets them up again.
 
 ### Commands
 
