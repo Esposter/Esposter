@@ -22,7 +22,7 @@ A Claude Code plugin that gives every session a Genshin Impact character: a repl
 
 ## <a name="getting-started">🚀 Getting Started</a>
 
-This repository is a Claude Code plugin marketplace named `esposter`, and this package is its one plugin:
+This repository is a Claude Code plugin marketplace named `esposter`:
 
 ```bash
 claude plugin marketplace add Esposter/Esposter
