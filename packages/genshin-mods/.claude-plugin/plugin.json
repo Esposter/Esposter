@@ -8,5 +8,6 @@
   "repository": "https://github.com/Esposter/Esposter",
   "license": "Apache-2.0",
   "keywords": ["cache", "collision", "genshin", "handoff", "mods", "recording", "tasks"],
-  "types": "./types/index.d.ts"
+  "types": "./types/index.d.ts",
+  "dependencies": ["genshin-persona"]
 }

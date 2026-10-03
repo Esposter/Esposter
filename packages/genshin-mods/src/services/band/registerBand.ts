@@ -55,7 +55,15 @@ const handOff = async ($: EngineInterface) => {
   await update($, isHandingOffAtom, () => false);
 };
 
-const drawResinRow = async ($: EngineInterface, e: RenderInput<"AbovePrompt">): Promise<RenderElement | undefined> => {
+// The session character's colour, which the persona publishes, else the game's interface gold
+const readAccent = async ($: EngineInterface) =>
+  (await read($, { key: "character", plugin: "genshin-persona" } as const))?.color || ACCENT_COLOR;
+
+const drawResinRow = async (
+  $: EngineInterface,
+  e: RenderInput<"AbovePrompt">,
+  accent: string,
+): Promise<RenderElement | undefined> => {
   const lastResponseAt = await read($, lastResponseAtAtom);
   if (lastResponseAt === 0 || !(await read($, enabledModsAtom)).resin) return undefined;
 
@@ -64,7 +72,7 @@ const drawResinRow = async ($: EngineInterface, e: RenderInput<"AbovePrompt">): 
   const { Box, Button, Text } = $.ui.resolve(e);
   return Box({
     children: [
-      Text({ bold: true, children: "Resin  ", color: ACCENT_COLOR }),
+      Text({ bold: true, children: "Resin  ", color: accent }),
       ...figures.map(({ isWarning, label, text }) =>
         Text({ children: `${label} ${text}  `, color: isWarning ? "yellow" : undefined, dimColor: !isWarning }),
       ),
@@ -87,6 +95,7 @@ const drawResinRow = async ($: EngineInterface, e: RenderInput<"AbovePrompt">): 
 const drawCommissionRow = async (
   $: EngineInterface,
   e: RenderInput<"AbovePrompt">,
+  accent: string,
 ): Promise<RenderElement | undefined> => {
   const commission = await read($, commissionAtom);
   if (commission.tasks.length === 0 || !(await read($, enabledModsAtom)).commission) return undefined;
@@ -100,7 +109,7 @@ const drawCommissionRow = async (
     children: [
       Box({
         children: [
-          Text({ bold: true, children: "Commission  ", color: ACCENT_COLOR }),
+          Text({ bold: true, children: "Commission  ", color: accent }),
           Text({ children: `${getCommissionSummary(commission, await read($, nowAtom))}  `, wrap: "truncate-end" }),
           Button({
             hotkey: "g",
@@ -127,6 +136,7 @@ const drawCommissionRow = async (
 const drawWaypointsRow = async (
   $: EngineInterface,
   e: RenderInput<"AbovePrompt">,
+  accent: string,
 ): Promise<RenderElement | undefined> => {
   const waypoints = await read($, waypointsAtom);
   if (waypoints.length === 0 || e.props.isWorking || !(await read($, enabledModsAtom)).waypoints) return undefined;
@@ -134,7 +144,7 @@ const drawWaypointsRow = async (
   const { Box, Button, Text } = $.ui.resolve(e);
   return Box({
     children: [
-      Text({ bold: true, children: "Waypoints", color: ACCENT_COLOR }),
+      Text({ bold: true, children: "Waypoints", color: accent }),
       ...waypoints.map((waypoint, index) =>
         Button({
           hotkey: `${index + 1}`,
@@ -162,9 +172,11 @@ export const registerBand = (on: On): void => {
   on("ui.render", { component: "AbovePrompt" }, async ($, e, next) => {
     if (e.props.hasSurvey) return next(e);
 
-    const rows = (await Promise.all([drawResinRow($, e), drawCommissionRow($, e), drawWaypointsRow($, e)])).filter(
-      (row) => row !== undefined,
-    );
+    const accent = await readAccent($);
+
+    const rows = (
+      await Promise.all([drawResinRow($, e, accent), drawCommissionRow($, e, accent), drawWaypointsRow($, e, accent)])
+    ).filter((row) => row !== undefined);
     const isVeiled = (await read($, enabledModsAtom)).veil;
     if (rows.length === 0 && !isVeiled) return next(e);
 
