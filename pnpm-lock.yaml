@@ -2557,6 +2557,9 @@ importers:
       '@oxlint/plugins':
         specifier: 'catalog:'
         version: 1.86.0
+      '@tensorflow/tfjs':
+        specifier: 'catalog:'
+        version: 4.22.0(seedrandom@3.0.5)
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.4
@@ -2581,6 +2584,9 @@ importers:
       imagetracerjs:
         specifier: 'catalog:'
         version: 1.2.6
+      pitch-transcription:
+        specifier: workspace:*
+        version: link:../packages/pitch-transcription
       playwright:
         specifier: 'catalog:'
         version: 1.63.0
