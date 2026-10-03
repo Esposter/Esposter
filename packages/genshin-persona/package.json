@@ -32,7 +32,8 @@
     "mod",
     "src",
     "types",
-    "!src/**/*.test.ts"
+    "!**/*.test.ts",
+    "!.claude-plugin/types"
   ],
   "type": "module",
   "imports": {
