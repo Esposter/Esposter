@@ -119,6 +119,14 @@ export const register: Register = (on) => {
     return next({ ...e, props: { ...e.props, tail: `${label}: ${tip}` } });
   });
 
+  // The character named among the footer's mode labels, where a standing word about the session belongs: the status
+  // Line is a settings command no plugin can set, and a label added to `modes` leaves every other plugin's in place
+  on("ui.render", { component: "SessionMode" }, async ($, e, next) => {
+    const { displayName } = await read($, characterAtom);
+    if (!displayName) return next(e);
+    return next({ ...e, props: { ...e.props, modes: [...e.props.modes, displayName] } });
+  });
+
   // Every flushed piece of a reply, handed to the speak script as the settings hook handed it; a session with no
   // Voice set up, or muted, pays a file check and no node start
   on("classic.MessageDisplay", async ($, e, next) => {
