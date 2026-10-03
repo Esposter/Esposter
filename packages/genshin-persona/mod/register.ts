@@ -84,15 +84,23 @@ export const register: Register = (on) => {
         : { text };
     });
 
-  // The tip moves on each turn, and the character is read again until the start hook's record exists, since the
-  // Pick may land after the session start's first read
+  // A `/clear` or a resume carries on under another session id with no `session.start` for it, and the start hook
+  // Picks for that id, so the character is unsettled again until its record is read
+  on("session.end", async ($, e, next) => {
+    if (e.reason === "clear" || e.reason === "resume") await update($, isCharacterRecordedAtom, () => false);
+    return next(e);
+  });
+
+  // The character is read again at each turn's start until the start hook's record exists, since the pick may land
+  // After the session start's first read
+  on("turn.start", async ($, e, next) => {
+    if (!(await read($, isCharacterRecordedAtom))) refreshLater($);
+    return next(e);
+  });
+
   on("turn.complete", async ($, e, next) => {
     const result = await next(e);
-    if (e.agentId === undefined) {
-      await update($, tipIndexAtom, (index) => index + 1);
-      if (!(await read($, isCharacterRecordedAtom))) refreshLater($);
-    }
-
+    if (e.agentId === undefined) await update($, tipIndexAtom, (index) => index + 1);
     return result;
   });
 

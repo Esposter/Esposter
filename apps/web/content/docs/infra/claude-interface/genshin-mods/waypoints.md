@@ -16,7 +16,7 @@ The answer is parsed into steps — one per line, a list marker stripped, a blan
 ## How to use it
 
 - Press a step, or with the band focused its number, `1` to `3`, to send it as the next prompt, exactly as if it had been typed.
-- **Dismiss** clears the steps. Any prompt the person sends clears them too, and so does `/clear`.
+- **Dismiss** clears the steps. Any prompt the person sends clears them too, and so do `/clear` and a resume.
 - `/waypoints off` stops the suggestions, and `/waypoints on` brings them back.
 
 ## Key files

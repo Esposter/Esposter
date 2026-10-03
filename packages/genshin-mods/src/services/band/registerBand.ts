@@ -2,6 +2,8 @@ import type { EngineInterface, On, RenderElement, RenderInput } from "claude-cod
 
 import { atom, read, update } from "claude-code";
 
+import type { EnabledMods } from "../../../types";
+
 import { ACCENT_COLOR, HANDOFF_QUESTION, MAX_SHOWN_TASKS, WARM_QUESTION } from "../constants";
 import { InitialState } from "../InitialState";
 import { getResinFigures } from "../resin/getResinFigures";
@@ -68,10 +70,11 @@ const readAccent = async ($: EngineInterface) =>
 const drawResinRow = async (
   $: EngineInterface,
   e: RenderInput<"AbovePrompt">,
+  enabledMods: EnabledMods,
   accent: string,
 ): Promise<RenderElement | undefined> => {
   const lastResponseAt = await read($, lastResponseAtAtom);
-  if (lastResponseAt === 0 || !(await read($, enabledModsAtom)).resin) return undefined;
+  if (lastResponseAt === 0 || !enabledMods.resin) return undefined;
 
   const figures = getResinFigures(await $.session.usage(), lastResponseAt, await read($, nowAtom));
   const isHandingOff = await read($, isHandingOffAtom);
@@ -101,10 +104,11 @@ const drawResinRow = async (
 const drawCommissionRow = async (
   $: EngineInterface,
   e: RenderInput<"AbovePrompt">,
+  enabledMods: EnabledMods,
   accent: string,
 ): Promise<RenderElement | undefined> => {
   const commission = await read($, commissionAtom);
-  if (commission.tasks.length === 0 || !(await read($, enabledModsAtom)).commission) return undefined;
+  if (commission.tasks.length === 0 || !enabledMods.commission) return undefined;
 
   const isExpanded = await read($, isCommissionExpandedAtom);
   const shownTasks = isExpanded
@@ -142,10 +146,11 @@ const drawCommissionRow = async (
 const drawWaypointsRow = async (
   $: EngineInterface,
   e: RenderInput<"AbovePrompt">,
+  enabledMods: EnabledMods,
   accent: string,
 ): Promise<RenderElement | undefined> => {
   const waypoints = await read($, waypointsAtom);
-  if (waypoints.length === 0 || e.props.isWorking || !(await read($, enabledModsAtom)).waypoints) return undefined;
+  if (waypoints.length === 0 || e.props.isWorking || !enabledMods.waypoints) return undefined;
 
   const { Box, Button, Text } = $.ui.resolve(e);
   return Box({
@@ -178,16 +183,19 @@ export const registerBand = (on: On): void => {
   on("ui.render", { component: "AbovePrompt" }, async ($, e, next) => {
     if (e.props.hasSurvey) return next(e);
 
+    const enabledMods = await read($, enabledModsAtom);
     const accent = await readAccent($);
-
     const rows = (
-      await Promise.all([drawResinRow($, e, accent), drawCommissionRow($, e, accent), drawWaypointsRow($, e, accent)])
+      await Promise.all([
+        drawResinRow($, e, enabledMods, accent),
+        drawCommissionRow($, e, enabledMods, accent),
+        drawWaypointsRow($, e, enabledMods, accent),
+      ])
     ).filter((row) => row !== undefined);
-    const isVeiled = (await read($, enabledModsAtom)).veil;
-    if (rows.length === 0 && !isVeiled) return next(e);
+    if (rows.length === 0 && !enabledMods.veil) return next(e);
 
     const { Box, Text } = $.ui.resolve(e);
-    const marker = isVeiled
+    const marker = enabledMods.veil
       ? [Text({ bold: true, children: "● Veil on: values are hidden on screen", color: "red" })]
       : [];
     return Box({ children: [...marker, ...rows], flexDirection: "column" });

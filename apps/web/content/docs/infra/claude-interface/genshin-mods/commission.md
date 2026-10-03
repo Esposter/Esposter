@@ -11,7 +11,7 @@ Part of [Genshin mods](/docs/infra/claude-interface/genshin-mods). A long turn t
 
 A commission opens the first time the conversation creates a task, through the engine's task tools or its todo list, and its goal is the first line of the prompt that started that turn. From then on every task tool call is folded in once the tool has answered: a created task is added under the id its result gives, an update changes the fields it names, a deleted task goes, and a todo list replaces the list whole, its places as ids.
 
-The row reads `goal · 3 of 4 · 75% · 12m`, the clock counting whole minutes from the commission's opening, with the task in progress under it. When every task is done the row shows it finished, and the commission closes when the person sends the next prompt; a `/clear` closes it too.
+The row reads `goal · 3 of 4 · 75% · 12m`, the clock counting whole minutes from the commission's opening, with the task in progress under it. When every task is done the row shows it finished, and the commission closes when the person sends the next prompt; a `/clear` or a resume closes it too.
 
 ## How to use it
 
