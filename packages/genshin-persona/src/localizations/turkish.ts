@@ -482,8 +482,7 @@ const turkish: Localization = {
   locale: "tr-TR",
   strings: {
     birthdayNote: (label, date, distance) => `[${label}: ${date}, ${distance}]`,
-    interfaceLanguageSet: (language) =>
-      `Eklentinin yazdığı her şey bu yanıttan itibaren ${language}; bekleme göstergesi bir sonraki oturumda değişir.`,
+    interfaceLanguageSet: (language) => `Eklentinin yazdığı her şey bu yanıttan itibaren ${language}.`,
     languageMustBeOneOf: (languages) => `Dil şunlardan biri olmalı: ${languages}.`,
     lorePicked: "Hikâyeye göre seçildi; seviyenin eğilimi:",
     lorePickUnanswered: (reason) => `Hikâyeye göre seçim yanıt vermedi (${reason}); doğum gününe göre seçildi.`,
@@ -495,7 +494,7 @@ const turkish: Localization = {
     pinIgnored: (name) => `"${name}" sabitlemesi listedeki hiçbir karakteri göstermiyor ve yok sayılıyor.`,
     pinned: "Bir sonraki başlangıçtan itibaren her oturum için sabitlendi.",
     pinnedInSession:
-      "Bir sonraki başlangıçtan itibaren her oturum için, bu oturum için de bu yanıttan itibaren sabitlendi; bekleme göstergesi bir sonraki oturumda değişir.",
+      "Bir sonraki başlangıçtan itibaren her oturum için, bu oturum için de bu yanıttan itibaren sabitlendi.",
     pinRemoved: "Sabitleme kaldırıldı; bir sonraki oturumdan itibaren seçim yeniden karar verir.",
     pinRemovedInSession:
       "Sabitleme kaldırıldı; bir sonraki oturumdan itibaren seçim yeniden karar verir, bu oturum için de bu yanıttan itibaren.",
@@ -505,20 +504,12 @@ const turkish: Localization = {
     runtimeInstalled: "Çalışma ortamı kuruldu.",
     runtimeInstallFailed: "npm çalışma ortamını kuramadı; ses kapalı kalıyor.",
     runtimeInstalling: "Motorun çalışma ortamı durum dizinine kuruluyor...",
-    setupDone:
-      "Durum satırı ve bekleme göstergesi kullanıcı ayarlarına yazıldı; ikisi de bir sonraki oturumdan itibaren görünür.",
-    setupStatusLineKept:
-      "Bekleme göstergesi kullanıcı ayarlarına yazıldı, bir sonraki oturumdan itibaren görünür; mevcut durum satırı bizim değil ve olduğu gibi bırakıldı.",
-    spoke: (name, device) =>
-      `${name}, ${device} üzerindeki sentezleyiciyle konuştu; artık orada başlıyor. Her yanıtın sesli repliklerini okuyan kanca kullanıcı ayarlarına yazıldı ve bir sonraki oturumdan itibaren çalışır.`,
+    spoke: (name, device) => `${name}, ${device} üzerindeki sentezleyiciyle konuştu; artık orada başlıyor.`,
     status: ({
       displayName,
       interfaceLanguage,
       isFromSessionRecord,
       isMuted,
-      isPluginSpeakHook,
-      isPluginSpinner,
-      isPluginStatusLine,
       isReplyLanguageCascaded,
       isRuntimeInstalled,
       pinnedName,
@@ -537,15 +528,11 @@ const turkish: Localization = {
           ? `Ses: ${voiceLanguage} dublajı, çalışma ortamı ${isRuntimeInstalled ? "kurulu" : "kurulu değil"}, ${voiceDevice ? `${voiceDevice} üzerinde konuşuyor` : "henüz konuşmadı"}.`
           : "Ses: ayarlanmadı, hiçbir yanıt sesli okunmuyor.",
         `Yanıtlar ${isMuted ? "sessizde" : `açık, ses düzeyi ${volume}`}.`,
-        `Durum satırı ${isPluginStatusLine ? "bizim" : "bizim değil, olduğu gibi"}; bekleme göstergesi ${isPluginSpinner ? "bizim" : "bizim değil"}; ses kancası ${isPluginSpeakHook ? "bizim" : "yazılmadı"}.`,
-        isPluginSpinner
-          ? "Bu oturum başladıktan sonra değişen karakter ya da dil, bekleme göstergesinde bir sonrakinde görünür."
-          : "",
       ]
         .filter(Boolean)
         .join("\n"),
     teardownDone:
-      "Durum satırı, bekleme göstergesi ve ses kancası kullanıcı ayarlarından kaldırıldı; üçü de bir sonraki oturumda gider. Sesin çalışma ortamı, ağırlıkları, referansları ve dublajı silindi; seçim kayıtları, sabitleme ve diller kalıyor.",
+      "Sesin çalışma ortamı, ağırlıkları, referansları ve dublajı silindi; seçim kayıtları, sabitleme ve diller kalıyor.",
     unmuted: "Sesli yanıtlar yeniden açıldı.",
     upcomingBirthdays: (list) => `Bu haftanın doğum günleri: ${list}.`,
     usage: (verbs) => `Kullanım: genshin.mjs <${verbs}> [ad]`,

@@ -2,14 +2,14 @@ import { findCharacterByName } from "#src/services/findCharacterByName";
 import { readInterfaceLanguage } from "#src/services/readInterfaceLanguage";
 import { readPersonaCard } from "#src/services/readPersonaCard";
 import { readRoster } from "#src/services/readRoster";
+import { readSpinner } from "#src/services/readSpinner";
 import { registerQuietExit } from "#src/services/registerQuietExit";
-import { writeSessionSpinner } from "#src/services/writeSessionSpinner";
 import { defineCommand, runMain } from "citty";
 
-// Spawned detached by the session-start hook, which must not wait on it: this session's character's lines are read
-// And the spinner rewritten while the person reads the card, where `setup` opted the settings in. The character
-// Arrives as the English name, which is the identity, and the roster it is looked up in is the interface
-// Language's — so the label written is the name that language spells them by
+// The session's spinner for the hooks module, as JSON: its verbs and the character's lines under their name. Run off
+// The session start's own path, since the lines cost the data package or the wiki. The character arrives as the
+// English name, which is the identity, and the roster it is looked up in is the interface language's — so the label
+// Is the name that language spells them by
 registerQuietExit();
 await runMain(
   defineCommand({
@@ -21,11 +21,12 @@ await runMain(
         type: "positional",
       },
     },
-    meta: { description: "Rewrite the spinner under the session's character", name: "spinner" },
+    meta: { description: "Print the spinner for the session's character", name: "spinner" },
     run: async ({ args }) => {
       const language = readInterfaceLanguage();
       const character = args.name ? findCharacterByName(readRoster(language), args.name) : undefined;
-      if (character) await writeSessionSpinner(character, await readPersonaCard(character.name), language);
+      if (character)
+        console.log(JSON.stringify(await readSpinner(character, await readPersonaCard(character.name), language)));
     },
   }),
 );

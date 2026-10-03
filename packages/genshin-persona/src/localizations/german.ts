@@ -455,8 +455,7 @@ const german: Localization = {
   locale: "de-DE",
   strings: {
     birthdayNote: (label, date, distance) => `[${label}: ${date}, ${distance}]`,
-    interfaceLanguageSet: (language) =>
-      `Alles, was das Plugin schreibt, ist ab dieser Antwort auf ${language}; der Ladekreisel folgt in der nächsten Sitzung.`,
+    interfaceLanguageSet: (language) => `Alles, was das Plugin schreibt, ist ab dieser Antwort auf ${language}.`,
     languageMustBeOneOf: (languages) => `Die Sprache muss eine von diesen sein: ${languages}.`,
     lorePicked: "Nach Lore gewählt; die Neigung der Stufe:",
     lorePickUnanswered: (reason) =>
@@ -469,8 +468,7 @@ const german: Localization = {
       "Keine Sitzung, in der ein Charakter genutzt werden kann: Dies läuft innerhalb einer Claude-Code-Sitzung.",
     pinIgnored: (name) => `Die Anheftung „${name}“ nennt keinen Charakter im Aufgebot und wird ignoriert.`,
     pinned: "Für jede Sitzung ab dem nächsten Start angeheftet.",
-    pinnedInSession:
-      "Für jede Sitzung ab dem nächsten Start angeheftet, und für diese ab dieser Antwort; der Ladekreisel folgt in der nächsten Sitzung.",
+    pinnedInSession: "Für jede Sitzung ab dem nächsten Start angeheftet, und für diese ab dieser Antwort.",
     pinRemoved: "Anheftung entfernt; ab der nächsten Sitzung entscheidet wieder die Auswahl.",
     pinRemovedInSession:
       "Anheftung entfernt; ab der nächsten Sitzung entscheidet wieder die Auswahl, und für diese ab dieser Antwort.",
@@ -480,20 +478,12 @@ const german: Localization = {
     runtimeInstalled: "Laufzeitumgebung installiert.",
     runtimeInstallFailed: "npm konnte die Laufzeitumgebung nicht installieren; die Stimme bleibt aus.",
     runtimeInstalling: "Installiere die Laufzeitumgebung der Engine im Statusverzeichnis ...",
-    setupDone:
-      "Statuszeile und Ladekreisel in die Benutzereinstellungen geschrieben; beide erscheinen ab der nächsten Sitzung.",
-    setupStatusLineKept:
-      "Ladekreisel in die Benutzereinstellungen geschrieben, sichtbar ab der nächsten Sitzung; die vorhandene Statuszeile gehört nicht uns und bleibt unverändert.",
-    spoke: (name, device) =>
-      `${name} hat über den Synthesizer auf ${device} gesprochen, wo er ab jetzt startet. Der Hook, der die gesprochenen Zeilen jeder Antwort liest, steht in den Benutzereinstellungen und läuft ab der nächsten Sitzung.`,
+    spoke: (name, device) => `${name} hat über den Synthesizer auf ${device} gesprochen, wo er ab jetzt startet.`,
     status: ({
       displayName,
       interfaceLanguage,
       isFromSessionRecord,
       isMuted,
-      isPluginSpeakHook,
-      isPluginSpinner,
-      isPluginStatusLine,
       isReplyLanguageCascaded,
       isRuntimeInstalled,
       pinnedName,
@@ -512,15 +502,11 @@ const german: Localization = {
           ? `Stimme: ${voiceLanguage}-Synchronisation, Laufzeit ${isRuntimeInstalled ? "installiert" : "nicht installiert"}, ${voiceDevice ? `spricht auf ${voiceDevice}` : "hat noch nicht gesprochen"}.`
           : "Stimme: nicht eingerichtet, keine Antwort wird vorgelesen.",
         `Antworten ${isMuted ? "stumm" : `nicht stumm, Lautstärke ${volume}`}.`,
-        `Statuszeile ${isPluginStatusLine ? "unsere" : "nicht unsere, unverändert"}; Ladekreisel ${isPluginSpinner ? "unserer" : "nicht unserer"}; Sprech-Hook ${isPluginSpeakHook ? "unserer" : "nicht geschrieben"}.`,
-        isPluginSpinner
-          ? "Ein seit Beginn dieser Sitzung geänderter Charakter oder eine geänderte Sprache erscheint in der nächsten im Ladekreisel."
-          : "",
       ]
         .filter(Boolean)
         .join("\n"),
     teardownDone:
-      "Statuszeile, Ladekreisel und Sprech-Hook aus den Benutzereinstellungen entfernt; alle drei verschwinden in der nächsten Sitzung. Laufzeit, Gewichte, Referenzen und Synchronisation der Stimme sind gelöscht; die Auswahl-Einträge, die Anheftung und die Sprachen bleiben.",
+      "Laufzeit, Gewichte, Referenzen und Synchronisation der Stimme sind gelöscht; die Auswahl-Einträge, die Anheftung und die Sprachen bleiben.",
     unmuted: "Gesprochene Antworten wieder an.",
     upcomingBirthdays: (list) => `Geburtstage diese Woche: ${list}.`,
     usage: (verbs) => `Verwendung: genshin.mjs <${verbs}> [Name]`,

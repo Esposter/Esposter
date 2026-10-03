@@ -1,38 +1,38 @@
 ---
 name: genshin
-description: Apply when the user asks who the session's Genshin character is, wants the roster, wants a character for this session or pinned for every session, wants a pin removed, wants spoken replies muted, unmuted, louder or softer, wants the voice set up or its dub switched, wants the plugin's own text or its replies in another language, wants every setting reported, or wants the status line and spinner set up or removed. The persona plugin's controls — every answer comes from the plugin's own script, never from memory of the roster.
+description: Apply when the user asks who the session's Genshin character is, wants the roster, wants a character for this session or pinned for every session, wants a pin removed, wants spoken replies muted, unmuted, louder or softer, wants the voice set up or its dub switched, wants the plugin's own text or its replies in another language, wants every setting reported, or wants the voice removed. The persona plugin's controls — every answer comes from the plugin's own script, never from memory of the roster.
 user-invocable: false
 ---
 
 # Genshin persona
 
-The plugin picks a character at every session start — by lore through a typed decision when a TypeSafe key is configured, by the nearest birthday otherwise; the verbs below are how the user reads and overrides that. Each verb is its own slash command, `/genshin-persona:<verb>`, for the user to type; this skill is how a request put in words reaches one. Every verb runs the plugin's script and relays its output — the roster is game data the script reads, and nothing about it is known without running it.
+The plugin picks a character at every session start — by lore through a typed decision when a TypeSafe key is configured, by the nearest birthday otherwise; the verbs below are how the user reads and overrides that. Each verb is its own slash command, `/genshin-<verb>`, which the plugin's hooks module registers for the user to type; this skill is how a request put in words reaches one. Every verb runs the plugin's script and relays its output — the roster is game data the script reads, and nothing about it is known without running it.
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.mjs" <verb> [name]
 ```
 
-| Asked for                                                              | Verb                |
-| :--------------------------------------------------------------------- | :------------------ |
-| Who the character is, the card                                         | `today`             |
-| Every character there is                                               | `roster`            |
-| One character for this session alone                                   | `use <name>`        |
-| One character for every session                                        | `pin <name>`        |
-| The pick back                                                          | `unpin`             |
-| Replies silent, or speaking again                                      | `mute`, `unmute`    |
-| Replies louder or softer, by a number to 100                           | `volume <number>`   |
-| The voice set up, or read in another dub                               | `voice <dub>`       |
-| The status line and the spinner written into user settings, or removed | `setup`, `teardown` |
-| The plugin's own text in another language                              | `language <name>`   |
-| Replies in another language, on their own                              | `reply <name>`      |
-| Every setting at once, changed by nothing                              | `status`            |
+| Asked for                                           | Verb              |
+| :-------------------------------------------------- | :---------------- |
+| Who the character is, the card                      | `today`           |
+| Every character there is                            | `roster`          |
+| One character for this session alone                | `use <name>`      |
+| One character for every session                     | `pin <name>`      |
+| The pick back                                       | `unpin`           |
+| Replies silent, or speaking again                   | `mute`, `unmute`  |
+| Replies louder or softer, by a number to 100        | `volume <number>` |
+| The voice set up, or read in another dub            | `voice <dub>`     |
+| The voice's runtime, weights and references removed | `teardown`        |
+| The plugin's own text in another language           | `language <name>` |
+| Replies in another language, on their own           | `reply <name>`    |
+| Every setting at once, changed by nothing           | `status`          |
 
-Each verb's skill, `skills/<verb>/SKILL.md`, states what it does; the script's own lines say what it did and when that lands.
+Each command's menu line says what it does; the script's own lines say what it did and when that lands.
 
 The authoring verbs — `uncarded`, `unverbed`, `untranslated` and `lines <name>` — are the `genshin-author` skill's.
 
 `language` is the master toggle and carries the reply language with it, so a request for everything in one language is that one verb. `reply` is only for the person who wants them to disagree — labels in one language, prose in another — and either stays set once it is set on its own. The dub is neither: it says whose voice reads a reply, from a set of four, and costs an install, so `language` reports on it and never changes it.
 
-A card a verb prints is the session's card from the reply that relays it: `use`, `pin` and `unpin` switch the voice in the same reply, and only the spinner waits for the next session. A request for a character with no word on how long — "can you be Furina" — is `use`; `pin` is for a request that says every session.
+A card a verb prints is the session's card from the reply that relays it: `use`, `pin` and `unpin` switch the voice, the status line and the spinner in the same reply. A request for a character with no word on how long — "can you be Furina" — is `use`; `pin` is for a request that says every session.
 
 Answer in the character's voice as the output style asks, but relay the script's lines as written — a name, a title or a birthday is data, and a flourish added to one is an error waiting to be quoted back.

@@ -30,7 +30,6 @@ import { readVoiceDevice } from "#src/services/readVoiceDevice";
 import { readVoiceLanguage } from "#src/services/readVoiceLanguage";
 import { readVoiceRuntime } from "#src/services/readVoiceRuntime";
 import { sendVoiceRequest } from "#src/services/sendVoiceRequest";
-import { writeSpeakHook } from "#src/services/writeSpeakHook";
 import { writeVoiceLanguage } from "#src/services/writeVoiceLanguage";
 import { defineCommand } from "citty";
 
@@ -89,7 +88,6 @@ export const voiceCommand: SubCommandsDef[string] = defineCommand({
     const character = await getCurrentCharacter(context);
     if (!character) {
       writeVoiceLanguage(name);
-      writeSpeakHook();
       console.log(strings.voiceLanguageWritten(name));
       return;
     }
@@ -106,7 +104,6 @@ export const voiceCommand: SubCommandsDef[string] = defineCommand({
     }
 
     writeVoiceLanguage(name);
-    writeSpeakHook();
     await sendVoiceRequest(
       getSpeechRequest(VoiceRequestType.Speak, character.name, personaCard, name, [VOICE_PROOF_TEXT]),
     );

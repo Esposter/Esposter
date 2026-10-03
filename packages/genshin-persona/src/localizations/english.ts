@@ -10,8 +10,7 @@ const english: ResolvedLocalization = {
   locale: "en-AU",
   strings: {
     birthdayNote: (label, date, distance) => `[${label}: ${date}, ${distance}]`,
-    interfaceLanguageSet: (language) =>
-      `Everything the plugin writes is in ${language} from this reply; the spinner follows at the next session.`,
+    interfaceLanguageSet: (language) => `Everything the plugin writes is in ${language} from this reply.`,
     languageMustBeOneOf: (languages) => `The language must be one of ${languages}.`,
     lorePicked: "Picked by lore; the tier's leaning:",
     lorePickUnanswered: (reason) => `The lore pick did not answer (${reason}); picked by birthday instead.`,
@@ -22,8 +21,7 @@ const english: ResolvedLocalization = {
     noSession: "No session to use a character in: this runs from inside a Claude Code session.",
     pinIgnored: (name) => `The pin "${name}" names no character in the roster and is ignored.`,
     pinned: "Pinned for every session from the next start.",
-    pinnedInSession:
-      "Pinned for every session from the next start, and for this one from this reply; the spinner follows at the next session.",
+    pinnedInSession: "Pinned for every session from the next start, and for this one from this reply.",
     pinRemoved: "Pin removed; the pick decides again from the next session.",
     pinRemovedInSession: "Pin removed; the pick decides again from the next session, and for this one from this reply.",
     replyLanguageSet: (language) => `Replies are written in ${language} from the next reply.`,
@@ -32,19 +30,12 @@ const english: ResolvedLocalization = {
     runtimeInstalled: "Runtime installed.",
     runtimeInstallFailed: "npm could not install the runtime; the voice stays off.",
     runtimeInstalling: "Installing the engine's runtime into the state directory...",
-    setupDone: "Status line and spinner written to user settings; both show from the next session.",
-    setupStatusLineKept:
-      "Spinner written to user settings, shown from the next session; the status line already there is not ours and was left alone.",
-    spoke: (name, device) =>
-      `${name} spoke through the synthesizer on ${device}, where it starts from now. The hook that reads each reply's spoken lines is written to user settings and runs from the next session.`,
+    spoke: (name, device) => `${name} spoke through the synthesizer on ${device}, where it starts from now.`,
     status: ({
       displayName,
       interfaceLanguage,
       isFromSessionRecord,
       isMuted,
-      isPluginSpeakHook,
-      isPluginSpinner,
-      isPluginStatusLine,
       isReplyLanguageCascaded,
       isRuntimeInstalled,
       pinnedName,
@@ -63,15 +54,11 @@ const english: ResolvedLocalization = {
           ? `Voice: the ${voiceLanguage} dub, runtime ${isRuntimeInstalled ? "installed" : "not installed"}, ${voiceDevice ? `speaking on ${voiceDevice}` : "not yet spoken"}.`
           : "Voice: not set up, so no reply is read aloud.",
         `Replies ${isMuted ? "muted" : `unmuted at volume ${volume}`}.`,
-        `Status line ${isPluginStatusLine ? "ours" : "not ours, and left alone"}; spinner ${isPluginSpinner ? "ours" : "not ours"}; speak hook ${isPluginSpeakHook ? "ours" : "not written"}.`,
-        isPluginSpinner
-          ? "A character or language changed since this session started shows in the spinner at the next one."
-          : "",
       ]
         .filter(Boolean)
         .join("\n"),
     teardownDone:
-      "Status line, spinner and speak hook removed from user settings; all three go at the next session. The voice's runtime, weights, references and dub are removed; the pick records, the pin and the languages stay.",
+      "The voice's runtime, weights, references and dub are removed; the pick records, the pin and the languages stay.",
     unmuted: "Spoken replies unmuted.",
     upcomingBirthdays: (list) => `Birthdays this week: ${list}.`,
     usage: (verbs) => `Usage: genshin.mjs <${verbs}> [name]`,

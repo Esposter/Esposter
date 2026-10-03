@@ -42,28 +42,16 @@ const SCRIPTS_DIRECTORY = join(PLUGIN_DIRECTORY, "scripts");
 // Copied into the runtime directory before `npm ci`; the plugin's own manifest never names the package, since the
 // Install copies the plugin whole and runs a frozen install under a ceiling
 export const RUNTIME_SOURCE_DIRECTORY: string = join(PLUGIN_DIRECTORY, "runtime");
-// The two user settings that name a script point at a launcher in the state directory, re-aimed at the running
-// Install on every session start, since an install lands under a directory named after its version
-export const STATUS_LAUNCHER_PATH: string = join(STATE_DIRECTORY, "status.mjs");
-export const STATUS_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "status.mjs");
-export const SPEAK_LAUNCHER_PATH: string = join(STATE_DIRECTORY, "speak.mjs");
-export const SPEAK_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "speak.mjs");
 export const VOICE_SERVER_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "voice.mjs");
-export const SPINNER_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "spinner.mjs");
 // A named pipe on Windows, a socket file elsewhere: one address per machine and no port to collide on
 export const VOICE_SOCKET_PATH: string =
   process.platform === "win32" ? String.raw`\\.\pipe\genshin-persona-voice` : join(STATE_DIRECTORY, "voice.sock");
-export const USER_SETTINGS_PATH: string = join(homedir(), ".claude", "settings.json");
-// What marks a status line command and a tip id as this plugin's, whichever character wrote them
+// What names the plugin's own files outside its state directory
 export const PLUGIN_MARKER = "genshin-persona";
 // The WAV a sentence is played from carries the process, so two synthesizers on one machine never share a name.
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const PLAYER_FILE_PREFIX: string = `${PLUGIN_MARKER}-${process.pid}-`;
-// Between the marker and a tip id's own prefix
-export const TIP_ID_MARKER_SEPARATOR = ".";
-// Between a tip id's prefix and its index
-export const TIP_ID_SEPARATOR = "-";
-// The tool reads this many tips off the override and no more, and drops a tip longer than this
+// What the session holds of a character's lines for the prompt hint, each tip cut to the sentences that fit in this
 export const MAX_SPINNER_TIP_COUNT = 200;
 export const MAX_SPINNER_TIP_LENGTH = 500;
 export const PERSONA_CARDS_DIRECTORY: string = join(SOURCE_DIRECTORY, "personaCards");
@@ -84,15 +72,13 @@ export const CHARACTER_LINE_PREFIX = "Character: ";
 // Everybody; absent at English
 export const REPLY_LANGUAGE_INSTRUCTION = (language: string): string =>
   `Write every reply in ${language}, the character's spoken lines included. This applies to prose only, and to nothing the output style already excludes from the character's voice: code, comments, commit messages, file contents, commands and error text stay as they are.`;
-export const ANSI_RESET = "\u001B[0m";
 // A "#rrggbb" triplet's channels: two hex digits each, 0 to 255
 export const HEX_RADIX = 16;
 export const HEX_CHANNEL_LENGTH = 2;
 export const MAX_COLOR_CHANNEL_VALUE = 255;
-// The surface a nameplate's badge is a tonal fill over, and how much of the character's colour that fill mixes in: the
-// Design language's tonal button, over dusk's background, the agent console's, since a terminal is mostly dark
+// The surface a character's colour must read on: dusk's background, the agent console's, since a terminal is mostly
+// Dark
 export const NAMEPLATE_SURFACE = "#16161e";
-export const NAMEPLATE_TONAL_MIX_PERCENTAGE = 12;
 // The status line's colour per element, as the game's interface paints the element's name: what a character with no
 // Row in `CharacterColorMap` yet is drawn in, and an element missing here too (the player character's "None")
 // Leaves the nameplate in the terminal's own colour
