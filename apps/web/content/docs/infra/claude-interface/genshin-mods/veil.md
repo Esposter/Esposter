@@ -16,6 +16,15 @@ Part of [Genshin mods](/docs/infra/claude-interface/genshin-mods). Recording a s
 - **On screen:** every assistant message, user message and tool result is drawn through one function that replaces each match with a placeholder naming its kind. The stored transcript and what the model reads are untouched; only the drawing changes, and switching the veil redraws every row already on screen.
 - **In the model's replies:** a section of the session's system prompt asks the model to write placeholders for those kinds of values in what it says, so a value the patterns would miss is less likely to be written at all.
 
+```mermaid
+flowchart LR
+  Row[A message or tool result] --> Match[Each pattern's matches]
+  Match --> Placeholder[Replaced by its kind's placeholder]
+  Placeholder --> Screen[Drawn on screen]
+  Row --> Model[The model reads the real values]
+  Section[The system-prompt section] -.asks.-> Reply[The model's own replies]
+```
+
 | Kind       | Matches                                                                                  |
 | :--------- | :--------------------------------------------------------------------------------------- |
 | `[email]`  | Addresses                                                                                |

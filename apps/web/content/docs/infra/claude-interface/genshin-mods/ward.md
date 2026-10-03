@@ -11,6 +11,16 @@ Part of [Genshin mods](/docs/infra/claude-interface/genshin-mods). Several sessi
 
 Every successful edit, write or notebook edit is recorded in one file every session on the machine reads afresh, `~/.claude/genshin-mods/ward.json`: the file's path, the session that wrote it and when. Records past the window are dropped on each write, so the file holds the last half hour of edits and no more. Before any of those tools runs, the mod looks the path up, and a record from another session within the last thirty minutes opens the engine's own question dialog, naming the file and how long ago it changed.
 
+```mermaid
+flowchart TD
+  Edit[An edit, write or notebook edit] --> Lookup{A record from another session<br/>within thirty minutes}
+  Lookup -->|no| Run[The edit runs]
+  Lookup -->|yes| Ask[The question: file and how long ago]
+  Ask -->|Proceed| Run
+  Ask -->|Worktree, Cancel or Other| Refuse[The edit is refused with the answer's message]
+  Run --> Record[Recorded in ward.json,<br/>records past the window dropped]
+```
+
 ## How to use it
 
 Answer the question:

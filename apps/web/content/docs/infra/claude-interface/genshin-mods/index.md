@@ -31,7 +31,7 @@ Each mod is switched by its own command, `/waypoints`, `/resin`, `/veil`, `/comm
 - **One plugin, one module, one band.** The engine gives each plugin one band above the prompt and takes one unmatched hook per event, so the five mods register from one module, the session's events are hooked once for all of them, and the band composes a row from each mod's state.
 - **Themed by the session character.** Labels use the game's own word only where it already means the thing: resin for capacity that refills on a clock, a waypoint for where to go next, a commission for a task given out, a ward for protection. The accent is the colour the [persona plugin](/docs/infra/claude-interface/persona-plugin) publishes for the session's character, already readable on a dark terminal, and the game's interface gold where the persona is not installed.
 - **A mod stands alone.** Every mod works with the other four switched off, and none needs the persona except for its colour.
-- **Free.** A mod that calls the model asks through a fork of the session, which the API serves from the prompt cache the session already paid for. No mod adds a service.
+- **Nothing beyond the session's own account.** A mod that calls the model asks through a fork of the session — a request of its own that reads the session's prefix from the prompt cache, so it costs that cache read plus its own new input and reply, counted against the same plan as any turn. No mod adds a service or a key.
 
 ```mermaid
 flowchart LR
