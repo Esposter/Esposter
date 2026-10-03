@@ -49,5 +49,13 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | The fog's density and colours           | `genshin:parity fog`: bins by depth and sun angle, solved            |
 | The grade, the fog, the light           | `genshin:parity calibrate`: least squares over masks                 |
 | What a shader computes                  | `shaders`: the annotated disassembly, and HLSL where it decompiles   |
-| Which music sound a recording plays     | `genshin:assets music`: pitch classes matched window by window       |
-| What plays a music sound, and when      | `parseMusicHierarchy`: the banks' tracks, segments and playlists     |
+
+## Music
+
+| Unknown                             | Tool                                                                  |
+| :---------------------------------- | :-------------------------------------------------------------------- |
+| Which music sound a recording plays | `genshin:assets music`: pitch classes matched window by window        |
+| What plays a piece, and when        | `genshin:assets playlist`: its segments in order, its sources decoded |
+| A piece's notes                     | `readMusicSourceNotes`: pitch-transcription over a decoded source     |
+| Each voice's instrument and tuning  | `fitInstrument`: measured at its clear notes, in the fit's report     |
+| How close our music sounds          | `genshin:parity listen`: pitch agreement and each band's distance     |

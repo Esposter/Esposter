@@ -21,7 +21,7 @@ This file is an **index and a process**, never a reference. Anything explaining 
 | `packages/db-mock`              | `@esposter/db-mock`       | In-memory PGlite database factory for unit/integration tests                                                              |
 | `packages/db-schema`            | `@esposter/db-schema`     | **Source of truth** for DB: Drizzle ORM schemas, migrations                                                               |
 | `packages/follow-ups`           | `@esposter/follow-ups`    | Claude Code plugin — a session's unfinished follow-ups written into a TodoList and drained until none is left             |
-| `packages/genshin-engine`       | `genshin-engine`          | Anime-style open-world engine for three.js WebGPU — toon materials, outlines, post-processing and world kits              |
+| `packages/genshin-engine`       | `genshin-engine`          | Anime-style open-world engine for three.js WebGPU — toon materials, outlines, post-processing, world kits and music       |
 | `packages/genshin-interface`    | `genshin-interface`       | Genshin's 2D interface — the screen root, its units and pointer, and the pieces the game's screens share                  |
 | `packages/genshin-text`         | `genshin-text`            | The game's own words in its fifteen languages — language registry, locale matcher, strings by text id                     |
 | `packages/genshin-world`        | `genshin-world`           | Genshin's world on the engine — the region catalogue, each region's data and the TresJS components building it            |
