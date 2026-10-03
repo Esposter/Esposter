@@ -79,9 +79,9 @@ export const MAX_COLOR_CHANNEL_VALUE = 255;
 // The surface a character's colour must read on: dusk's background, the agent console's, since a terminal is mostly
 // Dark
 export const NAMEPLATE_SURFACE = "#16161e";
-// The status line's colour per element, as the game's interface paints the element's name: what a character with no
-// Row in `CharacterColorMap` yet is drawn in, and an element missing here too (the player character's "None")
-// Leaves the nameplate in the terminal's own colour
+// The colour per element, as the game's interface paints the element's name: what a character with no row in
+// `CharacterColorMap` yet is drawn in, and an element missing here too (the player character's "None") leaves the
+// Mods in their own accent
 export const ElementColorMap: Record<string, string> = {
   Anemo: "#33ccb3",
   Cryo: "#98c8e8",

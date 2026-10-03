@@ -10,7 +10,7 @@ A Claude Code plugin that gives every session a Genshin Impact character: a repl
 - **A character per session** — picked by the nearest birthday, or by lore through one typed decision when you give it a TypeSafe key; `use` and `pin` override the pick.
 - **A spoken channel, not a persona in the prose** — the character speaks in blockquote lines and nowhere else: one line opening an answer a reader will use, with everything else — the answer, the code, the commit message — a neutral assistant's, and the whole reply when the ask was the character's.
 - **Read aloud as it is written** — a hook hands each spoken line to a resident synthesizer the moment its line lands, and the line is read in the character's cloned voice while the reply is still streaming; the engine is warmed at the session start so the first reply pays no load.
-- **Localized** — the card, the spinner, the status line and every line the plugin prints in the language you set, and replies in the one you choose.
+- **Localized** — the card, the spinner, the prompt hint and every line the plugin prints in the language you set, and replies in the one you choose.
 
 ## Table of Contents
 
@@ -105,7 +105,7 @@ Four more are the authoring queues of one more skill, `genshin-author` — scrip
 | Component                              | Role                                                                                                                                                                                           |
 | :------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `hooks/hooks.json`                     | A session-start hook that picks the character, greets you with its name, what the pick weighed and who is close, and prints its card as context, and the hooks module beside it.               |
-| `mod/`                                 | The hooks module: the status line, the spinner's verbs and the prompt hint's tips of this session's character, the spoken replies, and one slash command per verb.                             |
+| `mod/`                                 | The hooks module: the spinner's verbs and the prompt hint's tips of this session's character, the spoken replies, and one slash command per verb.                                              |
 | `types/index.d.ts`                     | The state the hooks module publishes — the session's character and its colour — which other plugins draw by.                                                                                   |
 | `output-styles/in-character.md`        | The standing rules, forced on while the plugin is enabled: a blockquote line is the character's spoken line, the ask decides how much of a reply that is, and the rest is plain.               |
 | `skills/genshin/SKILL.md`              | The model's route from a request in words to one of the verbs; hidden from the menu.                                                                                                           |
@@ -116,9 +116,9 @@ Four more are the authoring queues of one more skill, `genshin-author` — scrip
 | `src/localizations/`                   | One authored module per language for the words the data package does not carry: the base Teyvat verbs, each character's spinner gerunds, and every line the verbs print.                       |
 | `scripts/`                             | The session-start hook, the commands' script, the character and spinner the hooks module reads, and the resident synthesizer, each an `.mjs` that registers `tsx` before its TypeScript.       |
 
-### Status line and spinner
+### Spinner and prompt hint
 
-Nothing to set up: the hooks module draws the status line, in the session's character's own colour, and turns the spinner's words into that character's verbs and the prompt hint into one of their lines, a new one each turn. Each session draws its own character, and a switch shows at once. Why each is shaped as it is: the [persona plugin](https://esposter.com/docs/infra/claude-interface/persona-plugin) page.
+Nothing to set up: the hooks module turns the spinner's words into the session's character's verbs and the prompt hint into one of their lines under their name, a new one each turn, and publishes the character's colour, which [`genshin-mods`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-mods) draws its band in. The plugin writes nothing into your settings, so your own status line stays yours. Each session draws its own character, and a switch shows at once. Why each is shaped as it is: the [persona plugin](https://esposter.com/docs/infra/claude-interface/persona-plugin) page.
 
 ### Languages
 

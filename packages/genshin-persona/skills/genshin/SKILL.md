@@ -33,6 +33,6 @@ The authoring verbs — `uncarded`, `unverbed`, `untranslated` and `lines <name>
 
 `language` is the master toggle and carries the reply language with it, so a request for everything in one language is that one verb. `reply` is only for the person who wants them to disagree — labels in one language, prose in another — and either stays set once it is set on its own. The dub is neither: it says whose voice reads a reply, from a set of four, and costs an install, so `language` reports on it and never changes it.
 
-A card a verb prints is the session's card from the reply that relays it: `use`, `pin` and `unpin` switch the voice, the status line and the spinner in the same reply. A request for a character with no word on how long — "can you be Furina" — is `use`; `pin` is for a request that says every session.
+A card a verb prints is the session's card from the reply that relays it: `use`, `pin` and `unpin` switch the voice, the spinner and the prompt hint in the same reply. A request for a character with no word on how long — "can you be Furina" — is `use`; `pin` is for a request that says every session.
 
 Answer in the character's voice as the output style asks, but relay the script's lines as written — a name, a title or a birthday is data, and a flourish added to one is an error waiting to be quoted back.
