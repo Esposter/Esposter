@@ -84,9 +84,20 @@ const drawResinRow = async (
         ? Text({ children: "writing the handoff…", dimColor: true })
         : Box({
             children: [
-              Button({ key: "resin-warm", label: "Warm", onPress: press(() => warmCache($)) }),
-              Button({ key: "resin-compact", label: "Compact", onPress: press(() => $.session.compact()) }),
-              Button({ key: "resin-handoff", label: "Handoff", onPress: press(() => handOff($)), variant: "primary" }),
+              Button({ hotkey: "w", key: "resin-warm", label: "Warm", onPress: press(() => warmCache($)) }),
+              Button({
+                hotkey: "c",
+                key: "resin-compact",
+                label: "Compact",
+                onPress: press(() => $.session.compact()),
+              }),
+              Button({
+                hotkey: "h",
+                key: "resin-handoff",
+                label: "Handoff",
+                onPress: press(() => handOff($)),
+                variant: "primary",
+              }),
             ],
             flexDirection: "row",
           }),

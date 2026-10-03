@@ -52,7 +52,7 @@ Each mod is switched by its own slash command; bare, it flips, and the choice is
 | `/commission [on \| off]` | Shows the goal meter while a turn works through a task list         |
 | `/ward [on \| off]`       | Asks before an edit to a file another session just changed          |
 
-With the band focused, `1` to `3` send a waypoint and `g` opens or closes the whole task list.
+With the band focused (a click or `ctrl+x tab`), `w`, `c` and `h` warm, compact and hand off, `1` to `3` send a waypoint and `g` opens or closes the whole task list.
 
 ### Commands
 
