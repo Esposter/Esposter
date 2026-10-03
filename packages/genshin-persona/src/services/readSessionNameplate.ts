@@ -11,7 +11,7 @@ import { readRosterCache } from "#src/services/readRosterCache";
 // Of a second to load: the session's record, else the pin, else the birthday pick standing in while the start hook is
 // Still recording, and whether it was the session's own record. A session that has no cache yet is the first on a
 // Machine, and its start hook is writing one
-export const readSessionNameplate = (sessionId: string): { isRecorded: boolean; nameplate: Nameplate } | undefined => {
+export const readSessionNameplate = (sessionId: string): undefined | { isRecorded: boolean; nameplate: Nameplate } => {
   const today = Temporal.Now.plainDateISO();
   const version = readGenshinDbVersion();
   const roster = readRosterCache(version, readInterfaceLanguage()) ?? [];
