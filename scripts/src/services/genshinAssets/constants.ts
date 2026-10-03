@@ -61,10 +61,15 @@ export const MUSIC_DIRECTORY: string = join(EXTRACTED_DIRECTORY, "music");
 // Fall in bins of their own, short enough that an attack is not smeared past the window's half
 export const MUSIC_FRAME_LENGTH = 2048;
 export const MUSIC_HOP_LENGTH = 256;
-// The overtones a voice's timbre is measured to, and the frequency past which none is read, where the game's mix holds
-// Little but its reverb and its codec's cut
-export const MUSIC_HARMONIC_COUNT = 8;
-export const MUSIC_MAX_FREQUENCY = 8000;
+// The overtones a voice's timbre is measured to, and the frequency past which nothing is read, short of the codec's cut
+// At the transcription's half rate
+export const MUSIC_HARMONIC_COUNT = 32;
+export const MUSIC_MAX_FREQUENCY = 10_000;
+// The frequency above which the game's sound is more noise than partials (its spectrum several times flatter than the
+// Octaves below), where a voice's noise is read
+export const MUSIC_NOISE_MIN_FREQUENCY = 5000;
+// The Gauss-Newton steps refining the voices' noise from its least-squares solve, which settles within a few
+export const MUSIC_NOISE_REFINE_STEPS = 20;
 // A harmonic is measured only where every other sounding note's harmonics stand at least this many semitones clear of
 // It, and the spectrum's bins at least this many
 export const MUSIC_CLEAR_SEMITONES = 0.5;

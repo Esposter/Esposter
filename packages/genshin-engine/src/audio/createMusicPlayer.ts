@@ -4,6 +4,7 @@ import type { Music } from "#src/audio/Music";
 import { collectMusicNotes } from "#src/audio/collectMusicNotes";
 import { MUSIC_LOOKAHEAD_SECONDS, MUSIC_SCHEDULE_INTERVAL_MS } from "#src/audio/constants";
 import { createInstrumentWave } from "#src/audio/createInstrumentWave";
+import { createNoiseBuffer } from "#src/audio/createNoiseBuffer";
 import { scheduleMusicNote } from "#src/audio/scheduleMusicNote";
 
 // A piece of music played live from the start of its playlist: every half second, the notes due within the next two
@@ -17,6 +18,7 @@ export const createMusicPlayer = (
 ): { start: () => void; stop: () => void } => {
   const output = new GainNode(context);
   const waves = new Map<Instrument, PeriodicWave>();
+  const noiseBuffer = createNoiseBuffer(context);
   let origin = 0;
   let scheduledUntil = 0;
   let timer: ReturnType<typeof setInterval> | undefined;
@@ -28,7 +30,7 @@ export const createMusicPlayer = (
         wave = createInstrumentWave(context, voice.instrument.harmonics);
         waves.set(voice.instrument, wave);
       }
-      scheduleMusicNote(context, output, wave, voice.instrument, note, origin + time);
+      scheduleMusicNote(context, output, wave, noiseBuffer, voice.instrument, note, origin + time);
     }
     scheduledUntil = until;
   };

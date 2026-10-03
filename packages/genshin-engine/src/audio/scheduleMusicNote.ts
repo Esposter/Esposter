@@ -4,14 +4,16 @@ import type { MusicNote } from "#src/audio/MusicNote";
 import { A4_FREQUENCY, A4_PITCH, RELEASE_TIME_CONSTANTS } from "#src/audio/constants";
 
 // One note played at a time on the audio clock: an oscillator over its instrument's waveform at the note's pitch as
-// The instrument tunes it, through a gain following the instrument's envelope. The envelope's value at the note's end
+// The instrument tunes it, and its instrument's noise from where the clock stands in the looped buffer, through a gain
+// Following the instrument's envelope. The envelope's value at the note's end
 // Is worked out rather than held by `cancelAndHoldAtTime`, which Firefox lacks, so the release starts from where the
 // Decay had reached
 export const scheduleMusicNote = (
   context: BaseAudioContext,
   destination: AudioNode,
   wave: PeriodicWave,
-  { attack, decay, level, release, sustain, tuning }: Instrument,
+  noiseBuffer: AudioBuffer,
+  { attack, decay, level, noise, release, sustain, tuning }: Instrument,
   { duration, pitch, velocity }: MusicNote,
   time: number,
 ): void => {
@@ -36,4 +38,10 @@ export const scheduleMusicNote = (
   });
   oscillator.start(time);
   oscillator.stop(end + release * RELEASE_TIME_CONSTANTS);
+  if (noise <= 0) return;
+  const noiseSource = new AudioBufferSourceNode(context, { buffer: noiseBuffer, loop: true });
+  const noiseGain = new GainNode(context, { gain: noise });
+  noiseSource.connect(noiseGain).connect(gain);
+  noiseSource.start(time, time % noiseBuffer.duration);
+  noiseSource.stop(end + release * RELEASE_TIME_CONSTANTS);
 };
