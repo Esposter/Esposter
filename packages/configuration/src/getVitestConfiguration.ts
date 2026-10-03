@@ -24,6 +24,7 @@ export const getVitestConfiguration = (
       conditions: [SOURCE_CONDITION, ...defaultServerConditions],
     },
     test: {
+      silent: "passed-only",
       // Transforming the module graph is the largest share of a run and is otherwise redone from scratch every
       // Time; persisting it to `node_modules/.vitest-cache` reuses it across reruns and separate processes, and
       // A reinstall drops the directory along with the dependencies it was keyed on.
