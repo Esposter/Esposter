@@ -1,7 +1,11 @@
 import type { NoteEventTime } from "#src/models/NoteEventTime";
 
 import { CONTOUR_BINS_PER_SEMITONE, MIDI_PITCH_BEND_SEMITONES, MIDI_PITCH_BEND_STEPS } from "#src/constants";
-import { Midi } from "@tonejs/midi";
+import tonejsMidi from "@tonejs/midi";
+
+// `@tonejs/midi` is a CommonJS bundle whose named exports Node cannot find, so it is read through its default export,
+// Which Node and every bundler give as the whole module
+const { Midi } = tonejsMidi;
 
 // Notes written as a MIDI file's bytes, one track, each note's amplitude its velocity. A note's bends are spread evenly
 // Over it, each its share of a MIDI bend's range: a bend in contour bins is a third of a semitone each, the range two
