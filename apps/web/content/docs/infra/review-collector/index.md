@@ -10,7 +10,7 @@ Work is committed faster than CodeRabbit reviews complete, and every step that t
 ## The parts
 
 1. [The collection cycle](/docs/infra/review-collector/collection-cycle) — the one pass every trigger runs, from what it reads off the remote to the single push it ends at. One script, `ai:coderabbit:collect`.
-2. [The drain](/docs/infra/review-collector/drain) — the first of the steps Claude runs: which findings of the merged release are open, what the session is handed and denied, and how a drain that fails is quarantined. The resolvers, the reshaper and the repairer are the same session pointed at other work.
+2. [The drain](/docs/infra/review-collector/drain) — the first of the steps Claude runs: which findings of the merged release are open, what the session is handed and denied, and how a drain that fails past its attempts holds every window. The resolvers, the reshaper and the repairer are the same session pointed at other work.
 3. [The runner](/docs/infra/review-collector/runner) — the workflow that fires the cycle, the credentials it holds, why it has no cron, and what a failed run leaves behind.
 4. [Two writers](/docs/infra/review-collector/two-writers) — the ref ownership that lets a session and the collector work one pull request without racing.
 5. [The express lane](/docs/infra/review-collector/express-lane) — the commits that never occupy a window, because they claim nothing in them needs review; they land on `main` unverified, and a red they leave is the repairer's.

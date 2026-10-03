@@ -7,7 +7,7 @@ import { DRAIN_LIMITED_MARKER } from "#src/services/coderabbit/collect/constants
 // Collector will pick the drain up again
 const RESET_REGEX = /until (?<instant>\S+)/u;
 // The limit the last run hit, if it has not lifted — otherwise every queue push would download Claude Code to
-// Be refused again, each refusal counting against the quarantine budget
+// Be refused again, each refusal counting against the attempt cap
 export const readDrainLimitResetMs = (comments: GitHubEntry[], viewerLogin: string): number | undefined => {
   const comment = comments.findLast((issueComment) => checkIsMarked(issueComment, viewerLogin, DRAIN_LIMITED_MARKER));
   const instant = comment && RESET_REGEX.exec(comment.body)?.groups?.instant;

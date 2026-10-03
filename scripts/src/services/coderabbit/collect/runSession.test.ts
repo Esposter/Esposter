@@ -74,7 +74,7 @@ describe(runSession, () => {
   });
 
   // The refusal states `success` in the frame it exits non-zero with, so the subtype is no evidence the session
-  // Ran — read as a closing message it never reaches the parser, and three pushes during one outage quarantine a
+  // Ran — read as a closing message it never reaches the parser, and three pushes during one outage hold a
   // Review nobody failed
   test("classifies a refusal wearing a successful subtype as a session limit", async () => {
     expect.hasAssertions();
@@ -89,7 +89,7 @@ describe(runSession, () => {
   });
 
   // Claude Code refusing to start writes a sentence rather than JSON, and that sentence is the only thing that
-  // States a deadline — so the collector waits it out instead of spending the quarantine budget on an outage
+  // States a deadline — so the collector waits it out instead of spending the attempt cap on an outage
   test("classifies a refusal to start as a session limit", async () => {
     expect.hasAssertions();
 

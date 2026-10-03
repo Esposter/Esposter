@@ -5,9 +5,12 @@ import { AttemptFailedError } from "#src/models/coderabbit/collect/AttemptFailed
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
+  ANSWERS_TRAILER,
   DRAIN_FAILED_MARKER,
+  DRAIN_HELD_MARKER,
   DRAIN_VERDICT_PREFIX,
-  QUARANTINED_MARKER,
+  DRAINS_TRAILER,
+  QUEUE_BRANCH,
   REJECTIONS_FILE,
   REVIEW_FIXES_BRANCH,
   SESSION_ATTEMPT_CAP,
@@ -17,9 +20,11 @@ import {
 import { getAttempts } from "#src/services/coderabbit/collect/getAttempts";
 import { getDrainPrompt } from "#src/services/coderabbit/collect/getDrainPrompt";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
+import { getUnansweredFindings } from "#src/services/coderabbit/collect/getUnansweredFindings";
 import { postComment } from "#src/services/coderabbit/collect/postComment";
 import { postDrainLimited } from "#src/services/coderabbit/collect/postDrainLimited";
 import { postDrainVerdicts } from "#src/services/coderabbit/collect/postDrainVerdicts";
+import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readFindingSeverities } from "#src/services/coderabbit/collect/readFindingSeverities";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
@@ -27,16 +32,16 @@ import { runInstall } from "#src/services/coderabbit/collect/runInstall";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
-import { withFinalizerAsync } from "@esposter/shared";
+import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 // Claude works on the fixes branch — ai/review-fixes while it still owes develop commits, develop's head
 // Otherwise — pushed only after a clean exit, so a drain that dies leaves no trace. Past the attempt cap the
-// Review is quarantined: its findings stay open for a person and the caller ports without them. Claude Code's
-// Own session limit is the one non-zero exit that is not this review's failure: its deadline goes into a marker
-// Comment every run reads until it lifts.
+// Review is held: every run fails red and nothing ports, since a window opened over findings no drain answered
+// Is a release merged with them unread. Claude Code's own limit is the one non-zero exit that is not this review's
+// Failure: its deadline goes into a marker comment every run reads until it lifts.
 export const drainFindings = async ({
   baseSha,
   collectorSha,
@@ -47,14 +52,6 @@ export const drainFindings = async ({
   ...drainInput
 }: DrainFindingsInput): Promise<DrainFindingsResult> => {
   const { pullRequest } = drainInput;
-  // The quarantine is the cap's own verdict, so it names the basis the count did: a collector that changed since
-  // Drains the review again rather than porting past it on a count the old code ran up
-  const quarantinedMarker = getMarker(QUARANTINED_MARKER, newestReviewId, [collectorSha]);
-  if (issueComments.some((comment) => checkIsMarked(comment, viewerLogin, quarantinedMarker))) {
-    console.info(`review ${newestReviewId} is quarantined — porting without its fixes`);
-    return { isStarted: true, reviewFixesSha };
-  }
-
   // Counted from the pull request's comments the caller already read, and recorded back to that pull request
   const { attempts, recordFailure } = getAttempts({
     collectorSha,
@@ -67,11 +64,19 @@ export const drainFindings = async ({
     viewerLogin,
   });
   if (attempts >= SESSION_ATTEMPT_CAP) {
-    postComment(
-      pullRequest,
-      `${quarantinedMarker}\nThe drain of review ${newestReviewId} failed ${attempts} times. Its findings stay open for a person, and the collector ports without them.`,
+    // The hold is the cap's own verdict, so it names the basis the count did: a collector that changed since drains
+    // The review again. Noted once per basis, where the person the red run sends looks
+    const heldMarker = getMarker(DRAIN_HELD_MARKER, newestReviewId, [collectorSha]);
+    if (!issueComments.some((comment) => checkIsMarked(comment, viewerLogin, heldMarker)))
+      postComment(
+        pullRequest,
+        `${heldMarker}\nThe drain of review ${newestReviewId} failed ${attempts} times. Nothing ports until its findings are answered — a commit on \`${QUEUE_BRANCH}\` carrying \`${ANSWERS_TRAILER}:\` or \`${DRAINS_TRAILER}:\`, a resolved thread, or a fix to the collector.`,
+      );
+    throw new InvalidOperationError(
+      Operation.Update,
+      "coderabbit",
+      `the drain of review ${newestReviewId} failed ${attempts} times — nothing ports ahead of its open findings until they are answered`,
     );
-    return { isStarted: true, reviewFixesSha };
   }
 
   runGit(["switch", "--force-create", REVIEW_FIXES_BRANCH, baseSha]);
@@ -108,22 +113,29 @@ export const drainFindings = async ({
         );
       }
 
-      postDrainVerdicts(promptInput);
-
+      const verdicts = postDrainVerdicts(promptInput);
       const headSha = readHeadSha();
-      if (headSha === baseSha) {
-        console.info("the drain produced no commit — every finding was rejected or already answered");
-        return { isStarted: true, reviewFixesSha };
+      const commits = headSha === baseSha ? [] : readAnsweredCommits([`${baseSha}..${headSha}`]);
+      // Pushed whether or not the drain answered everything: what it did fix is the next attempt's answered set
+      if (headSha === baseSha) console.info("the drain produced no commit");
+      else {
+        // An empty expected sha leases on the branch not existing, which is the first drain's case
+        runGit([
+          "push",
+          `--force-with-lease=refs/heads/${REVIEW_FIXES_BRANCH}:${reviewFixesSha ?? ""}`,
+          "origin",
+          `${headSha}:refs/heads/${REVIEW_FIXES_BRANCH}`,
+        ]);
+        console.info(`pushed ${REVIEW_FIXES_BRANCH} at ${headSha}`);
       }
-      // An empty expected sha leases on the branch not existing, which is the first drain's case
-      runGit([
-        "push",
-        `--force-with-lease=refs/heads/${REVIEW_FIXES_BRANCH}:${reviewFixesSha ?? ""}`,
-        "origin",
-        `${headSha}:refs/heads/${REVIEW_FIXES_BRANCH}`,
-      ]);
-      console.info(`pushed ${REVIEW_FIXES_BRANCH} at ${headSha}`);
-      return { isStarted: true, reviewFixesSha: headSha };
+
+      const unanswered = getUnansweredFindings({ ...verdicts, commits, ...drainInput });
+      if (unanswered.length > 0) {
+        const detail = `left ${unanswered.join(", ")} unanswered`;
+        recordFailure(`drain review ${newestReviewId}`, detail);
+        throw new AttemptFailedError(`the drain ${detail}`);
+      }
+      return { isStarted: true, reviewFixesSha: headSha === baseSha ? reviewFixesSha : headSha };
     },
     () => {
       rmSync(verdictDirectory, { force: true, recursive: true });
