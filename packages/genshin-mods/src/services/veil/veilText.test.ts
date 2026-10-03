@@ -13,6 +13,7 @@ describe(veilText, () => {
     ["sk-ant-0123456789abcdef", "[secret]"],
     ["ghp_0123456789abcdefABCD", "[secret]"],
     ["0123456789abcdef0123456789abcdef", "[secret]"],
+    ["password=hunter2!", "password=[secret]"],
   ])("veils %s", (text, placeholder) => {
     expect.hasAssertions();
 

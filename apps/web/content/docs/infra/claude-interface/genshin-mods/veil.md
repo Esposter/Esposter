@@ -25,12 +25,12 @@ flowchart LR
   Section[The system-prompt section] -.asks.-> Reply[The model's own replies]
 ```
 
-| Kind       | Matches                                                                                  |
-| :--------- | :--------------------------------------------------------------------------------------- |
-| `[email]`  | Addresses                                                                                |
-| `[amount]` | A currency symbol or code before or after a number                                       |
-| `[phone]`  | International or grouped phone numbers, never a plain integer, a version or a date       |
-| `[secret]` | Tokens with a known key prefix, and long runs mixing letters and digits that read as one |
+| Kind       | Matches                                                                                                                           |
+| :--------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| `[email]`  | Addresses                                                                                                                         |
+| `[amount]` | A currency symbol or code before or after a number                                                                                |
+| `[phone]`  | International or grouped phone numbers, never a plain integer, a version or a date                                                |
+| `[secret]` | Tokens with a known key prefix, long runs mixing letters and digits that read as one, and whatever follows a password's own label |
 
 A placeholder holds no digit, at sign or currency sign, so no pattern matches what another wrote and the order they run in changes nothing.
 
