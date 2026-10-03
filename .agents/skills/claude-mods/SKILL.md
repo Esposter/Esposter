@@ -24,7 +24,7 @@ Every rule below is explained, with the refusal it prevents and the shape it for
 - **Every function that takes `$` sits in the file of the hook that calls it**; logic without `$` is a pure module beside its test, and a button's action is a closure over `$`.
 - **Each file makes the atoms it uses, plugin and key as literals, every initial from the one `InitialState` constant**; a set of switches is one record, since a loop cannot name a key.
 - **The contract's keys are written inline in `interface PluginState { "<plugin>": { … } }`** in `types/index.d.ts`, the value types exported beside them.
-- **A registration's `.catch` handler is a module-level `const` of the same file.**
+- **A registration's `.catch` handler is a module-level `const` of the same file, its name bound nowhere else in it** — not even a parameter.
 - **No Node in a mod**: game data, audio, sockets and anything an npm package does run in the plugin's node scripts through `$.process.run`, the hook's input on stdin.
 - **Everything a drawing reads is `$.state`**; a module variable is lost on reload and holds only what nothing draws. A value kept past the session is written to `$.store` and read back at session start.
 - **One `AbovePrompt` hook per plugin**, drawing one row per mod with something to say.

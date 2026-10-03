@@ -66,14 +66,18 @@ const ward = async (
   return result;
 };
 
-// A dismissed question rejects; the edit is then stopped rather than made behind the person's back
-const deny = () => ({ deny: "The person dismissed the question about another session's recent edit to this file." });
+// Any failure lets the edit through, the question dismissed or the record unreadable alike: a guard that blocked on
+// Its own failure would block every edit after it, and Cancel is the person's way to stop one. `next` is replay-safe
+// Here, so an edit the hook had already made is not made twice
+const letEditThrough = <E, R>(_$: EngineInterface, e: E, next: (e: E) => R): R => next(e);
 
 export const registerWard = (on: On): void => {
   // eslint-disable-next-line no-restricted-syntax -- The engine's registration handler, run when the hook rejects, not a promise
-  on("tool.call", { tool: "Edit" }, ($, e, next) => ward($, e.file_path, () => next(e))).catch(deny);
+  on("tool.call", { tool: "Edit" }, ($, e, next) => ward($, e.file_path, () => next(e))).catch(letEditThrough);
   // eslint-disable-next-line no-restricted-syntax -- The engine's registration handler, run when the hook rejects, not a promise
-  on("tool.call", { tool: "Write" }, ($, e, next) => ward($, e.file_path, () => next(e))).catch(deny);
+  on("tool.call", { tool: "Write" }, ($, e, next) => ward($, e.file_path, () => next(e))).catch(letEditThrough);
   // eslint-disable-next-line no-restricted-syntax -- The engine's registration handler, run when the hook rejects, not a promise
-  on("tool.call", { tool: "NotebookEdit" }, ($, e, next) => ward($, e.notebook_path, () => next(e))).catch(deny);
+  on("tool.call", { tool: "NotebookEdit" }, ($, e, next) => ward($, e.notebook_path, () => next(e))).catch(
+    letEditThrough,
+  );
 };
