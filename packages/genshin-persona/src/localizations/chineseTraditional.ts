@@ -146,7 +146,7 @@ const chineseTraditional: Localization = {
   locale: "zh-TW",
   strings: {
     birthdayNote: (label, date, distance) => `[${label}：${date}，${distance}]`,
-    interfaceLanguageSet: (language) => `從這則回覆起，外掛寫下的一切都是${language}；讀取動畫在下次工作階段時跟上。`,
+    interfaceLanguageSet: (language) => `從這則回覆起，外掛寫下的一切都是${language}。`,
     languageMustBeOneOf: (languages) => `語言必須是以下之一：${languages}。`,
     lorePicked: "依劇情選出；該層級的傾向：",
     lorePickUnanswered: (reason) => `劇情選擇沒有回應（${reason}）；改為依生日選出。`,
@@ -156,8 +156,7 @@ const chineseTraditional: Localization = {
     noSession: "沒有可使用角色的工作階段：此指令在 Claude Code 工作階段內執行。",
     pinIgnored: (name) => `釘選的「${name}」不指向名單中的任何角色，已忽略。`,
     pinned: "已釘選，從下次啟動起對所有工作階段生效。",
-    pinnedInSession:
-      "已釘選，從下次啟動起對所有工作階段生效，本工作階段從這則回覆起生效；讀取動畫在下次工作階段時跟上。",
+    pinnedInSession: "已釘選，從下次啟動起對所有工作階段生效，本工作階段從這則回覆起生效。",
     pinRemoved: "已取消釘選；從下次工作階段起重新自動選擇。",
     pinRemovedInSession: "已取消釘選；從下次工作階段起重新自動選擇，本工作階段從這則回覆起生效。",
     replyLanguageSet: (language) => `從下一則回覆起以${language}書寫。`,
@@ -166,18 +165,12 @@ const chineseTraditional: Localization = {
     runtimeInstalled: "執行環境已安裝。",
     runtimeInstallFailed: "npm 無法安裝執行環境；語音維持關閉。",
     runtimeInstalling: "正在將引擎執行環境安裝到狀態目錄……",
-    setupDone: "狀態列和讀取動畫已寫入使用者設定；兩者都從下次工作階段起顯示。",
-    setupStatusLineKept: "讀取動畫已寫入使用者設定，從下次工作階段起顯示；現有的狀態列不屬於本外掛，維持不變。",
-    spoke: (name, device) =>
-      `${name}透過 ${device} 上的合成器說話了，此後將在那裡啟動。朗讀每則回覆台詞的鉤子已寫入使用者設定，從下次工作階段起執行。`,
+    spoke: (name, device) => `${name}透過 ${device} 上的合成器說話了，此後將在那裡啟動。`,
     status: ({
       displayName,
       interfaceLanguage,
       isFromSessionRecord,
       isMuted,
-      isPluginSpeakHook,
-      isPluginSpinner,
-      isPluginStatusLine,
       isReplyLanguageCascaded,
       isRuntimeInstalled,
       pinnedName,
@@ -196,13 +189,10 @@ const chineseTraditional: Localization = {
           ? `語音：${voiceLanguage}配音，執行環境${isRuntimeInstalled ? "已安裝" : "未安裝"}，${voiceDevice ? `在${voiceDevice}上發聲` : "尚未發聲"}。`
           : "語音：未設定，不會朗讀任何回覆。",
         `回覆${isMuted ? "已靜音" : `未靜音，音量${volume}`}。`,
-        `狀態列${isPluginStatusLine ? "屬於本外掛" : "不屬於本外掛，維持不變"}；讀取動畫${isPluginSpinner ? "屬於本外掛" : "不屬於本外掛"}；朗讀鉤子${isPluginSpeakHook ? "屬於本外掛" : "未寫入"}。`,
-        isPluginSpinner ? "本工作階段開始後變更的角色或語言，會在下次工作階段的讀取動畫中出現。" : "",
       ]
         .filter(Boolean)
         .join("\n"),
-    teardownDone:
-      "狀態列、讀取動畫和朗讀鉤子已從使用者設定中移除；三者都會在下次工作階段消失。語音的執行環境、權重、參考語音和配音已刪除；選擇紀錄、釘選設定和語言設定保留。",
+    teardownDone: "語音的執行環境、權重、參考語音和配音已刪除；選擇紀錄、釘選設定和語言設定保留。",
     unmuted: "語音回覆已取消靜音。",
     upcomingBirthdays: (list) => `本週生日：${list}。`,
     usage: (verbs) => `用法：genshin.mjs <${verbs}> [名字]`,

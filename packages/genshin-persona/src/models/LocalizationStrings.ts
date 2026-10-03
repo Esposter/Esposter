@@ -24,8 +24,6 @@ export interface LocalizationStrings {
   runtimeInstalled: string;
   runtimeInstallFailed: string;
   runtimeInstalling: string;
-  setupDone: string;
-  setupStatusLineKept: string;
   spoke: (name: string, device: string) => string;
   status: (report: StatusReport) => string;
   teardownDone: string;

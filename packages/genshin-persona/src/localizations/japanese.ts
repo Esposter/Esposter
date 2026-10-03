@@ -284,8 +284,7 @@ const japanese: Localization = {
   locale: "ja-JP",
   strings: {
     birthdayNote: (label, date, distance) => `[${label}：${date}、${distance}]`,
-    interfaceLanguageSet: (language) =>
-      `この返信からプラグインの表示はすべて${language}になります。スピナーは次のセッションから変わります。`,
+    interfaceLanguageSet: (language) => `この返信からプラグインの表示はすべて${language}になります。`,
     languageMustBeOneOf: (languages) => `言語は次のいずれかを指定してください：${languages}。`,
     lorePicked: "ロアで選出。判定の内訳：",
     lorePickUnanswered: (reason) => `ロア判定が応答しなかったため（${reason}）、誕生日で選出しました。`,
@@ -295,8 +294,7 @@ const japanese: Localization = {
     noSession: "キャラクターを切り替えるセッションがありません。これはClaude Codeのセッション内で実行します。",
     pinIgnored: (name) => `ピン留めされた「${name}」はロスターのどのキャラクターも指していないため無視されます。`,
     pinned: "次回以降のすべてのセッションでこのキャラクターに固定しました。",
-    pinnedInSession:
-      "次回以降のすべてのセッションと、このセッションではこの返信から固定しました。スピナーは次のセッションから変わります。",
+    pinnedInSession: "次回以降のすべてのセッションと、このセッションではこの返信から固定しました。",
     pinRemoved: "ピン留めを解除しました。次のセッションから再び自動で選ばれます。",
     pinRemovedInSession:
       "ピン留めを解除しました。次のセッションから再び自動で選ばれ、このセッションではこの返信から変わります。",
@@ -306,19 +304,12 @@ const japanese: Localization = {
     runtimeInstalled: "ランタイムはインストール済みです。",
     runtimeInstallFailed: "npmがランタイムをインストールできませんでした。音声は無効のままです。",
     runtimeInstalling: "音声エンジンのランタイムを状態ディレクトリにインストールしています...",
-    setupDone: "ステータスラインとスピナーをユーザー設定に書き込みました。どちらも次のセッションから表示されます。",
-    setupStatusLineKept:
-      "スピナーをユーザー設定に書き込みました。次のセッションから表示されます。既存のステータスラインは当プラグインのものではないため、そのままにしました。",
-    spoke: (name, device) =>
-      `${name}が${device}上のシンセサイザーで話しました。以降はここで動作します。各返信のセリフを読み上げるフックをユーザー設定に書き込みました。次のセッションから有効です。`,
+    spoke: (name, device) => `${name}が${device}上のシンセサイザーで話しました。以降はここで動作します。`,
     status: ({
       displayName,
       interfaceLanguage,
       isFromSessionRecord,
       isMuted,
-      isPluginSpeakHook,
-      isPluginSpinner,
-      isPluginStatusLine,
       isReplyLanguageCascaded,
       isRuntimeInstalled,
       pinnedName,
@@ -337,13 +328,11 @@ const japanese: Localization = {
           ? `音声：${voiceLanguage}の吹き替え、ランタイムは${isRuntimeInstalled ? "インストール済み" : "未インストール"}、${voiceDevice ? `${voiceDevice}で動作中` : "未実行"}。`
           : "音声：未設定のため、返信は読み上げられません。",
         isMuted ? "読み上げ：ミュート中。" : `読み上げ：音量${volume}。`,
-        `ステータスライン：${isPluginStatusLine ? "当プラグインのもの" : "他のものなのでそのまま"}。スピナー：${isPluginSpinner ? "当プラグインのもの" : "他のもの"}。読み上げフック：${isPluginSpeakHook ? "当プラグインのもの" : "未設定"}。`,
-        isPluginSpinner ? "このセッション開始後の変更は、次のセッションからスピナーに反映されます。" : "",
       ]
         .filter(Boolean)
         .join("\n"),
     teardownDone:
-      "ステータスライン、スピナー、読み上げフックをユーザー設定から削除しました。いずれも次のセッションで消えます。音声のランタイム、重み、参照音声、吹き替え設定も削除しました。選択履歴、ピン留め、言語設定は残ります。",
+      "音声のランタイム、重み、参照音声、吹き替え設定を削除しました。選択履歴、ピン留め、言語設定は残ります。",
     unmuted: "音声の読み上げを再開しました。",
     upcomingBirthdays: (list) => `今週の誕生日：${list}。`,
     usage: (verbs) => `使い方：genshin.mjs <${verbs}> [名前]`,

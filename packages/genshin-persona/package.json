@@ -29,14 +29,17 @@
     "runtime",
     "scripts",
     "skills",
+    "mod",
     "src",
+    "types",
     "!src/**/*.test.ts"
   ],
   "type": "module",
   "imports": {
     "#src/*": "./src/*.ts",
     "#src/*.json": "./src/*.json",
-    "#scripts/*": "./scripts/*.ts"
+    "#scripts/*": "./scripts/*.ts",
+    "#types": "./types/index.d.ts"
   },
   "publishConfig": {
     "access": "public"

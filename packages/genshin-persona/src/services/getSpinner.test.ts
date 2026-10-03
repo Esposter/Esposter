@@ -1,32 +1,22 @@
 import type { VoiceLine } from "#src/models/VoiceLine";
 
-import {
-  MAX_SPINNER_TIP_COUNT,
-  MAX_SPINNER_TIP_LENGTH,
-  PLUGIN_MARKER,
-  TIP_ID_MARKER_SEPARATOR,
-  TIP_ID_SEPARATOR,
-} from "#src/services/constants";
-import { getPersonaCardName } from "#src/services/getPersonaCardName";
+import { MAX_SPINNER_TIP_COUNT, MAX_SPINNER_TIP_LENGTH } from "#src/services/constants";
 import { getSpinner } from "#src/services/getSpinner";
 import { describe, expect, test } from "vitest";
 
 describe(getSpinner, () => {
-  // The tips are keyed by the English name and labelled with the display name, so the two differ here
-  const name = "Hu Tao";
   const displayName = "胡桃";
-  const character = { description: "description", displayName, name };
+  const character = { description: "description", displayName };
   const baseVerbs = ["baseVerb"];
   const verbs = ["verb"];
   const lines: VoiceLine[] = [{ text: "line", title: "title" }];
-  const tipId = `${PLUGIN_MARKER}${TIP_ID_MARKER_SEPARATOR}${getPersonaCardName(name)}${TIP_ID_SEPARATOR}1`;
 
   test("puts the base verbs ahead of the character's and their lines under their name", () => {
     expect.hasAssertions();
 
     expect(getSpinner(baseVerbs, character, verbs, lines)).toStrictEqual({
       label: displayName,
-      tips: [{ id: tipId, text: "line" }],
+      tips: ["line"],
       verbs: ["baseVerb", "verb"],
     });
   });
@@ -39,10 +29,10 @@ describe(getSpinner, () => {
       { text: "b".repeat(MAX_SPINNER_TIP_LENGTH + 1), title: "title" },
     ];
 
-    expect(getSpinner(baseVerbs, character, verbs, longLines).tips).toStrictEqual([{ id: tipId, text: "line." }]);
+    expect(getSpinner(baseVerbs, character, verbs, longLines).tips).toStrictEqual(["line."]);
   });
 
-  test("cuts the tips where the tool stops reading them", () => {
+  test("caps the tips the session holds", () => {
     expect.hasAssertions();
 
     const manyLines = Array.from({ length: MAX_SPINNER_TIP_COUNT + 1 }, (_, index) => ({
@@ -58,7 +48,7 @@ describe(getSpinner, () => {
 
     expect(getSpinner(baseVerbs, character, [], [])).toStrictEqual({
       label: displayName,
-      tips: [{ id: tipId, text: "description" }],
+      tips: ["description"],
       verbs: ["baseVerb"],
     });
   });

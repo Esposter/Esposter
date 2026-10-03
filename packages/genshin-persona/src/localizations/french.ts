@@ -458,8 +458,7 @@ const french: Localization = {
   locale: "fr-FR",
   strings: {
     birthdayNote: (label, date, distance) => `[${label} : ${date}, ${distance}]`,
-    interfaceLanguageSet: (language) =>
-      `Tout ce qu'écrit le plugin est en ${language} dès cette réponse ; la barre d'attente suit à la prochaine session.`,
+    interfaceLanguageSet: (language) => `Tout ce qu'écrit le plugin est en ${language} dès cette réponse.`,
     languageMustBeOneOf: (languages) => `La langue doit être l'une de : ${languages}.`,
     lorePicked: "Choisi par le lore ; la préférence du niveau :",
     lorePickUnanswered: (reason) =>
@@ -471,8 +470,7 @@ const french: Localization = {
     noSession: "Aucune session où utiliser un personnage : ceci s'exécute depuis une session Claude Code.",
     pinIgnored: (name) => `L'épingle « ${name} » ne désigne aucun personnage de la liste et est ignorée.`,
     pinned: "Épinglé pour toutes les sessions dès le prochain démarrage.",
-    pinnedInSession:
-      "Épinglé pour toutes les sessions dès le prochain démarrage, et pour celle-ci dès cette réponse ; la barre d'attente suit à la prochaine session.",
+    pinnedInSession: "Épinglé pour toutes les sessions dès le prochain démarrage, et pour celle-ci dès cette réponse.",
     pinRemoved: "Épingle retirée ; le choix décide à nouveau dès la prochaine session.",
     pinRemovedInSession:
       "Épingle retirée ; le choix décide à nouveau dès la prochaine session, et pour celle-ci dès cette réponse.",
@@ -482,20 +480,12 @@ const french: Localization = {
     runtimeInstalled: "Environnement installé.",
     runtimeInstallFailed: "npm n'a pas pu installer l'environnement ; la voix reste désactivée.",
     runtimeInstalling: "Installation de l'environnement du moteur dans le dossier d'état...",
-    setupDone:
-      "Ligne d'état et barre d'attente écrites dans les paramètres utilisateur ; les deux s'affichent dès la prochaine session.",
-    setupStatusLineKept:
-      "Barre d'attente écrite dans les paramètres utilisateur, affichée dès la prochaine session ; la ligne d'état existante n'est pas la nôtre et reste intacte.",
-    spoke: (name, device) =>
-      `${name} a parlé via le synthétiseur sur ${device}, où il démarre désormais. Le hook qui lit les répliques parlées de chaque réponse est écrit dans les paramètres utilisateur et s'exécute dès la prochaine session.`,
+    spoke: (name, device) => `${name} a parlé via le synthétiseur sur ${device}, où il démarre désormais.`,
     status: ({
       displayName,
       interfaceLanguage,
       isFromSessionRecord,
       isMuted,
-      isPluginSpeakHook,
-      isPluginSpinner,
-      isPluginStatusLine,
       isReplyLanguageCascaded,
       isRuntimeInstalled,
       pinnedName,
@@ -514,15 +504,11 @@ const french: Localization = {
           ? `Voix : doublage ${voiceLanguage}, environnement ${isRuntimeInstalled ? "installé" : "non installé"}, ${voiceDevice ? `parle sur ${voiceDevice}` : "n'a pas encore parlé"}.`
           : "Voix : non configurée, aucune réponse n'est lue à voix haute.",
         `Réponses ${isMuted ? "coupées" : `au volume ${volume}`}.`,
-        `Ligne d'état ${isPluginStatusLine ? "à nous" : "pas à nous, laissée intacte"} ; barre d'attente ${isPluginSpinner ? "à nous" : "pas à nous"} ; hook vocal ${isPluginSpeakHook ? "à nous" : "non écrit"}.`,
-        isPluginSpinner
-          ? "Un personnage ou une langue changés depuis le début de cette session apparaissent dans la barre d'attente à la prochaine."
-          : "",
       ]
         .filter(Boolean)
         .join("\n"),
     teardownDone:
-      "Ligne d'état, barre d'attente et hook vocal retirés des paramètres utilisateur ; les trois partent à la prochaine session. L'environnement, les poids, les références et le doublage de la voix sont supprimés ; les choix enregistrés, l'épingle et les langues restent.",
+      "L'environnement, les poids, les références et le doublage de la voix sont supprimés ; les choix enregistrés, l'épingle et les langues restent.",
     unmuted: "Réponses parlées réactivées.",
     upcomingBirthdays: (list) => `Anniversaires de la semaine : ${list}.`,
     usage: (verbs) => `Utilisation : genshin.mjs <${verbs}> [nom]`,

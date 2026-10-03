@@ -494,8 +494,7 @@ const vietnamese: Localization = {
   locale: "vi-VN",
   strings: {
     birthdayNote: (label, date, distance) => `[${label}: ${date}, ${distance}]`,
-    interfaceLanguageSet: (language) =>
-      `Mọi thứ plugin viết sẽ bằng ${language} từ phản hồi này; biểu tượng chờ đổi theo ở phiên sau.`,
+    interfaceLanguageSet: (language) => `Mọi thứ plugin viết sẽ bằng ${language} từ phản hồi này.`,
     languageMustBeOneOf: (languages) => `Ngôn ngữ phải là một trong: ${languages}.`,
     lorePicked: "Chọn theo cốt truyện; khuynh hướng của cấp:",
     lorePickUnanswered: (reason) => `Việc chọn theo cốt truyện không phản hồi (${reason}); đã chọn theo sinh nhật.`,
@@ -505,8 +504,7 @@ const vietnamese: Localization = {
     noSession: "Không có phiên nào để dùng nhân vật: lệnh này chạy bên trong một phiên Claude Code.",
     pinIgnored: (name) => `Ghim "${name}" không trỏ tới nhân vật nào trong danh sách nên bị bỏ qua.`,
     pinned: "Đã ghim cho mọi phiên từ lần khởi động tới.",
-    pinnedInSession:
-      "Đã ghim cho mọi phiên từ lần khởi động tới, và cho phiên này từ phản hồi này; biểu tượng chờ đổi theo ở phiên sau.",
+    pinnedInSession: "Đã ghim cho mọi phiên từ lần khởi động tới, và cho phiên này từ phản hồi này.",
     pinRemoved: "Đã gỡ ghim; việc chọn sẽ quyết định lại từ phiên sau.",
     pinRemovedInSession: "Đã gỡ ghim; việc chọn sẽ quyết định lại từ phiên sau, và cho phiên này từ phản hồi này.",
     replyLanguageSet: (language) => `Phản hồi sẽ được viết bằng ${language} từ phản hồi tiếp theo.`,
@@ -515,19 +513,12 @@ const vietnamese: Localization = {
     runtimeInstalled: "Đã cài môi trường chạy.",
     runtimeInstallFailed: "npm không cài được môi trường chạy; giọng đọc vẫn tắt.",
     runtimeInstalling: "Đang cài môi trường chạy của bộ máy vào thư mục trạng thái...",
-    setupDone: "Đã ghi dòng trạng thái và biểu tượng chờ vào cài đặt người dùng; cả hai hiện từ phiên sau.",
-    setupStatusLineKept:
-      "Đã ghi biểu tượng chờ vào cài đặt người dùng, hiện từ phiên sau; dòng trạng thái hiện có không phải của chúng tôi nên được giữ nguyên.",
-    spoke: (name, device) =>
-      `${name} đã nói qua bộ tổng hợp trên ${device}, nơi nó khởi chạy từ giờ. Hook đọc các câu thoại của mỗi phản hồi đã được ghi vào cài đặt người dùng và chạy từ phiên sau.`,
+    spoke: (name, device) => `${name} đã nói qua bộ tổng hợp trên ${device}, nơi nó khởi chạy từ giờ.`,
     status: ({
       displayName,
       interfaceLanguage,
       isFromSessionRecord,
       isMuted,
-      isPluginSpeakHook,
-      isPluginSpinner,
-      isPluginStatusLine,
       isReplyLanguageCascaded,
       isRuntimeInstalled,
       pinnedName,
@@ -546,15 +537,11 @@ const vietnamese: Localization = {
           ? `Giọng: lồng tiếng ${voiceLanguage}, môi trường chạy ${isRuntimeInstalled ? "đã cài" : "chưa cài"}, ${voiceDevice ? `đang nói trên ${voiceDevice}` : "chưa nói lần nào"}.`
           : "Giọng: chưa thiết lập, không phản hồi nào được đọc to.",
         `Phản hồi ${isMuted ? "đang tắt tiếng" : `đang bật tiếng, âm lượng ${volume}`}.`,
-        `Dòng trạng thái ${isPluginStatusLine ? "của chúng tôi" : "không phải của chúng tôi, giữ nguyên"}; biểu tượng chờ ${isPluginSpinner ? "của chúng tôi" : "không phải của chúng tôi"}; hook đọc ${isPluginSpeakHook ? "của chúng tôi" : "chưa ghi"}.`,
-        isPluginSpinner
-          ? "Nhân vật hoặc ngôn ngữ đổi sau khi phiên này bắt đầu sẽ hiện ở biểu tượng chờ vào phiên sau."
-          : "",
       ]
         .filter(Boolean)
         .join("\n"),
     teardownDone:
-      "Đã gỡ dòng trạng thái, biểu tượng chờ và hook đọc khỏi cài đặt người dùng; cả ba biến mất ở phiên sau. Môi trường chạy, trọng số, mẫu giọng và bản lồng tiếng đã bị xóa; lịch sử chọn, ghim và cài đặt ngôn ngữ vẫn giữ.",
+      "Môi trường chạy, trọng số, mẫu giọng và bản lồng tiếng đã bị xóa; lịch sử chọn, ghim và cài đặt ngôn ngữ vẫn giữ.",
     unmuted: "Đã bật lại phản hồi đọc to.",
     upcomingBirthdays: (list) => `Sinh nhật tuần này: ${list}.`,
     usage: (verbs) => `Cách dùng: genshin.mjs <${verbs}> [tên]`,

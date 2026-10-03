@@ -293,8 +293,7 @@ const korean: Localization = {
   locale: "ko-KR",
   strings: {
     birthdayNote: (label, date, distance) => `[${label}: ${date}, ${distance}]`,
-    interfaceLanguageSet: (language) =>
-      `이 응답부터 플러그인이 쓰는 모든 글은 ${language}입니다. 스피너는 다음 세션부터 바뀝니다.`,
+    interfaceLanguageSet: (language) => `이 응답부터 플러그인이 쓰는 모든 글은 ${language}입니다.`,
     languageMustBeOneOf: (languages) => `언어는 다음 중 하나여야 합니다: ${languages}.`,
     lorePicked: "설정에 따라 선택됨. 등급의 경향:",
     lorePickUnanswered: (reason) => `설정 기반 선택이 응답하지 않아(${reason}) 생일로 선택했습니다.`,
@@ -304,8 +303,7 @@ const korean: Localization = {
     noSession: "캐릭터를 사용할 세션이 없습니다. 이 명령은 Claude Code 세션 안에서 실행됩니다.",
     pinIgnored: (name) => `고정된 "${name}"은(는) 목록의 어떤 캐릭터도 가리키지 않아 무시됩니다.`,
     pinned: "다음 시작부터 모든 세션에 고정했습니다.",
-    pinnedInSession:
-      "다음 시작부터 모든 세션에, 이 세션에는 이 응답부터 고정했습니다. 스피너는 다음 세션부터 바뀝니다.",
+    pinnedInSession: "다음 시작부터 모든 세션에, 이 세션에는 이 응답부터 고정했습니다.",
     pinRemoved: "고정을 해제했습니다. 다음 세션부터 다시 자동으로 선택됩니다.",
     pinRemovedInSession: "고정을 해제했습니다. 다음 세션부터 다시 자동으로 선택되며, 이 세션은 이 응답부터 바뀝니다.",
     replyLanguageSet: (language) => `다음 응답부터 ${language}(으)로 씁니다.`,
@@ -314,19 +312,12 @@ const korean: Localization = {
     runtimeInstalled: "런타임이 설치되었습니다.",
     runtimeInstallFailed: "npm이 런타임을 설치하지 못했습니다. 음성은 꺼진 상태로 유지됩니다.",
     runtimeInstalling: "엔진 런타임을 상태 디렉터리에 설치하는 중...",
-    setupDone: "상태 표시줄과 스피너를 사용자 설정에 기록했습니다. 둘 다 다음 세션부터 표시됩니다.",
-    setupStatusLineKept:
-      "스피너를 사용자 설정에 기록했으며 다음 세션부터 표시됩니다. 기존 상태 표시줄은 이 플러그인의 것이 아니므로 그대로 두었습니다.",
-    spoke: (name, device) =>
-      `${name}이(가) ${device}의 합성기로 말했으며, 이제부터 여기서 시작합니다. 각 응답의 대사를 읽는 훅을 사용자 설정에 기록했고 다음 세션부터 실행됩니다.`,
+    spoke: (name, device) => `${name}이(가) ${device}의 합성기로 말했으며, 이제부터 여기서 시작합니다.`,
     status: ({
       displayName,
       interfaceLanguage,
       isFromSessionRecord,
       isMuted,
-      isPluginSpeakHook,
-      isPluginSpinner,
-      isPluginStatusLine,
       isReplyLanguageCascaded,
       isRuntimeInstalled,
       pinnedName,
@@ -345,13 +336,10 @@ const korean: Localization = {
           ? `음성: ${voiceLanguage} 더빙, 런타임 ${isRuntimeInstalled ? "설치됨" : "미설치"}, ${voiceDevice ? `${voiceDevice}에서 말하는 중` : "아직 말하지 않음"}.`
           : "음성: 설정되지 않아 응답을 읽지 않습니다.",
         `응답 ${isMuted ? "음소거됨" : `음소거 해제, 음량 ${volume}`}.`,
-        `상태 표시줄 ${isPluginStatusLine ? "이 플러그인 것" : "다른 것이라 그대로 둠"}, 스피너 ${isPluginSpinner ? "이 플러그인 것" : "다른 것"}, 음성 훅 ${isPluginSpeakHook ? "이 플러그인 것" : "미기록"}.`,
-        isPluginSpinner ? "이 세션 시작 후 바뀐 캐릭터나 언어는 다음 세션의 스피너에 반영됩니다." : "",
       ]
         .filter(Boolean)
         .join("\n"),
-    teardownDone:
-      "상태 표시줄, 스피너, 음성 훅을 사용자 설정에서 제거했습니다. 셋 다 다음 세션에서 사라집니다. 음성의 런타임, 가중치, 기준 음성, 더빙 설정을 삭제했고, 선택 기록, 고정, 언어 설정은 남아 있습니다.",
+    teardownDone: "음성의 런타임, 가중치, 기준 음성, 더빙 설정을 삭제했고, 선택 기록, 고정, 언어 설정은 남아 있습니다.",
     unmuted: "음성 응답 음소거를 해제했습니다.",
     upcomingBirthdays: (list) => `이번 주 생일: ${list}.`,
     usage: (verbs) => `사용법: genshin.mjs <${verbs}> [이름]`,

@@ -1,6 +1,6 @@
 import type { Character } from "#src/models/Character";
 import type { PersonaCard } from "#src/models/PersonaCard";
-import type { Spinner } from "#src/models/Spinner";
+import type { PersonaSpinner } from "#types";
 
 import english from "#src/localizations/english";
 import { getSpinner } from "#src/services/getSpinner";
@@ -19,7 +19,7 @@ export const readSpinner = async (
   character: Pick<Character, "description" | "displayName" | "name">,
   personaCard: PersonaCard | undefined,
   language: string,
-): Promise<Spinner> => {
+): Promise<PersonaSpinner> => {
   const localization = await readLocalization(language);
   const lines = await readVoiceLines(character.name, language);
   const verbs =

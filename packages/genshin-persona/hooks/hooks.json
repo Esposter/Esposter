@@ -1,5 +1,6 @@
 {
   "hooks": {
     "SessionStart": [{ "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/pick.mjs\"" }] }]
-  }
+  },
+  "modules": ["../mod/register.ts"]
 }

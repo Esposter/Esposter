@@ -5,7 +5,6 @@ export enum GenshinVerb {
   Pin = "pin",
   Reply = "reply",
   Roster = "roster",
-  Setup = "setup",
   Status = "status",
   Teardown = "teardown",
   Today = "today",

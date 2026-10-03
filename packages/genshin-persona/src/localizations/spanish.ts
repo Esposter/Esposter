@@ -485,8 +485,7 @@ const spanish: Localization = {
   locale: "es-ES",
   strings: {
     birthdayNote: (label, date, distance) => `[${label}: ${date}, ${distance}]`,
-    interfaceLanguageSet: (language) =>
-      `Todo lo que escribe el plugin está en ${language} desde esta respuesta; el indicador de carga cambia en la próxima sesión.`,
+    interfaceLanguageSet: (language) => `Todo lo que escribe el plugin está en ${language} desde esta respuesta.`,
     languageMustBeOneOf: (languages) => `El idioma debe ser uno de: ${languages}.`,
     lorePicked: "Elegido por el lore; la inclinación del nivel:",
     lorePickUnanswered: (reason) => `La elección por lore no respondió (${reason}); elegido por cumpleaños.`,
@@ -497,8 +496,7 @@ const spanish: Localization = {
     noSession: "No hay sesión donde usar un personaje: esto se ejecuta dentro de una sesión de Claude Code.",
     pinIgnored: (name) => `El anclaje «${name}» no nombra a ningún personaje de la lista y se ignora.`,
     pinned: "Anclado para todas las sesiones desde el próximo inicio.",
-    pinnedInSession:
-      "Anclado para todas las sesiones desde el próximo inicio, y para esta desde esta respuesta; el indicador de carga cambia en la próxima sesión.",
+    pinnedInSession: "Anclado para todas las sesiones desde el próximo inicio, y para esta desde esta respuesta.",
     pinRemoved: "Anclaje quitado; la elección decide de nuevo desde la próxima sesión.",
     pinRemovedInSession:
       "Anclaje quitado; la elección decide de nuevo desde la próxima sesión, y para esta desde esta respuesta.",
@@ -508,20 +506,12 @@ const spanish: Localization = {
     runtimeInstalled: "Entorno instalado.",
     runtimeInstallFailed: "npm no pudo instalar el entorno; la voz sigue desactivada.",
     runtimeInstalling: "Instalando el entorno del motor en el directorio de estado...",
-    setupDone:
-      "Línea de estado e indicador de carga escritos en la configuración de usuario; ambos aparecen desde la próxima sesión.",
-    setupStatusLineKept:
-      "Indicador de carga escrito en la configuración de usuario, visible desde la próxima sesión; la línea de estado existente no es nuestra y se deja intacta.",
-    spoke: (name, device) =>
-      `${name} habló mediante el sintetizador en ${device}, donde arranca a partir de ahora. El hook que lee las líneas habladas de cada respuesta está escrito en la configuración de usuario y se ejecuta desde la próxima sesión.`,
+    spoke: (name, device) => `${name} habló mediante el sintetizador en ${device}, donde arranca a partir de ahora.`,
     status: ({
       displayName,
       interfaceLanguage,
       isFromSessionRecord,
       isMuted,
-      isPluginSpeakHook,
-      isPluginSpinner,
-      isPluginStatusLine,
       isReplyLanguageCascaded,
       isRuntimeInstalled,
       pinnedName,
@@ -540,15 +530,11 @@ const spanish: Localization = {
           ? `Voz: doblaje ${voiceLanguage}, entorno ${isRuntimeInstalled ? "instalado" : "no instalado"}, ${voiceDevice ? `hablando en ${voiceDevice}` : "aún no ha hablado"}.`
           : "Voz: sin configurar, ninguna respuesta se lee en voz alta.",
         `Respuestas ${isMuted ? "silenciadas" : `con volumen ${volume}`}.`,
-        `Línea de estado ${isPluginStatusLine ? "nuestra" : "no nuestra, intacta"}; indicador de carga ${isPluginSpinner ? "nuestro" : "no nuestro"}; hook de voz ${isPluginSpeakHook ? "nuestro" : "sin escribir"}.`,
-        isPluginSpinner
-          ? "Un personaje o idioma cambiado desde que empezó esta sesión aparece en el indicador de carga en la próxima."
-          : "",
       ]
         .filter(Boolean)
         .join("\n"),
     teardownDone:
-      "Línea de estado, indicador de carga y hook de voz quitados de la configuración de usuario; los tres desaparecen en la próxima sesión. Se borran el entorno, los pesos, las referencias y el doblaje de la voz; los registros de elección, el anclaje y los idiomas se quedan.",
+      "Se borran el entorno, los pesos, las referencias y el doblaje de la voz; los registros de elección, el anclaje y los idiomas se quedan.",
     unmuted: "Respuestas habladas reactivadas.",
     upcomingBirthdays: (list) => `Cumpleaños de esta semana: ${list}.`,
     usage: (verbs) => `Uso: genshin.mjs <${verbs}> [nombre]`,

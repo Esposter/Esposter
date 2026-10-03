@@ -3,13 +3,9 @@ import type { StatusReport } from "#src/models/StatusReport";
 
 import { getLanguageDisplayName } from "#src/generated/genshinText/services/getLanguageDisplayName";
 import { checkIsMuted } from "#src/services/checkIsMuted";
-import { checkIsPluginHookEntry } from "#src/services/checkIsPluginHookEntry";
-import { checkIsPluginSpinner } from "#src/services/checkIsPluginSpinner";
-import { checkIsPluginStatusLine } from "#src/services/checkIsPluginStatusLine";
 import { checkIsRuntimeInstalled } from "#src/services/checkIsRuntimeInstalled";
 import { readPin } from "#src/services/readPin";
 import { readReplyLanguage } from "#src/services/readReplyLanguage";
-import { readUserSettings } from "#src/services/readUserSettings";
 import { readVoiceDevice } from "#src/services/readVoiceDevice";
 import { readVoiceLanguage } from "#src/services/readVoiceLanguage";
 import { readVolume } from "#src/services/readVolume";
@@ -26,15 +22,11 @@ export const getStatusReport = async ({
   const pin = readPin();
   const pick = sessionId ? await resolveSessionCharacter(roster, sessionId, today) : undefined;
   const replyLanguage = readReplyLanguage();
-  const settings = readUserSettings();
   return {
     displayName: pick?.character.displayName ?? pin?.displayName ?? "",
     interfaceLanguage: getLanguageDisplayName(language, language),
     isFromSessionRecord: Boolean(pick),
     isMuted: checkIsMuted(),
-    isPluginSpeakHook: settings.hooks?.MessageDisplay?.some((entry) => checkIsPluginHookEntry(entry)) ?? false,
-    isPluginSpinner: checkIsPluginSpinner(settings),
-    isPluginStatusLine: checkIsPluginStatusLine(settings.statusLine),
     isReplyLanguageCascaded: !replyLanguage,
     isRuntimeInstalled: checkIsRuntimeInstalled(),
     pinnedName: pin?.name ?? "",
