@@ -33,6 +33,7 @@ export const getVitestConfiguration = (
       // Detector rather than a hook bound, and this is the one setting that keeps a green suite green
       hookTimeout: Temporal.Duration.from({ minutes: 1 }).total("milliseconds"),
       ...(projectDirectory ? { name: getVitestProjectName(projectDirectory) } : {}),
+      silent: "passed-only",
       // Restores every vi.stubEnv before each test, so no file needs its own unstubAllEnvs teardown. The globals
       // Equivalent stays off: it would restore a beforeAll stubGlobal before the file's first test even runs.
       unstubEnvs: true,
