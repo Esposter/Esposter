@@ -41,7 +41,7 @@ export const splitVoicesByRegister = (pitches: number[], voiceCount: number): nu
     starts.push(voiceStarts);
   }
   const splits: number[] = [];
-  for (let voice = voiceCount, end = values.length; voice > 1; voice--) {
+  for (let end = values.length, voice = voiceCount; voice > 1; voice--) {
     end = starts[voice]?.[end] ?? 0;
     splits.unshift(values[end] ?? 0);
   }
