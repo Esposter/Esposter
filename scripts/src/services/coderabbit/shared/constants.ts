@@ -17,6 +17,7 @@ export const PROBE_COMMENT = "@coderabbitai review";
 export const CodeRabbitPlanFileCapMap: Record<CodeRabbitPlan, number> = {
   [CodeRabbitPlan.AdvancedTrial]: 300,
   [CodeRabbitPlan.OpenSource]: 100,
+  [CodeRabbitPlan.Essentials]: 150,
 };
 // The plan the repository is on — the one line a plan change or a trial's end edits. The collector runs from
 // `ai/queue`'s own checkout, so the edit takes effect on the first cycle after it is pushed there. The collector's
