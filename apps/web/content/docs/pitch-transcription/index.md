@@ -7,7 +7,7 @@ description: The notes in a recording — Spotify's Basic Pitch model on the cur
 
 `packages/pitch-transcription` (npm `pitch-transcription`) hears the notes played in a recording: each note's pitch, start, length, loudness and pitch bend. The hearing is Spotify's Basic Pitch, a small trained network that reads several notes at once on any instrument. The package ships the network's published weights unmodified, runs them on the consumer's own TensorFlow.js, and turns the network's readings into notes, bends and a MIDI file.
 
-It replaced `@spotify/basic-pitch`, which held its consumers to TensorFlow.js 3, and is absorbed through [dependency admission](/docs/architecture/dependency-admission): the engine (TensorFlow.js) and the data (the weights) are kept, and the layer between them is ours. Its first consumer is the [Genshin music](/docs/proposals/genshin/music) re-derivation.
+It replaced `@spotify/basic-pitch`, which held its consumers to TensorFlow.js 3, and is absorbed through [dependency admission](/docs/architecture/dependency-admission): the engine (TensorFlow.js) and the data (the weights) are kept, and the layer between them is ours. Its first consumer is the [Genshin music](/docs/genshin/music) re-derivation, whose fit transcribes the game's decoded sources with it.
 
 ## How a recording becomes notes
 

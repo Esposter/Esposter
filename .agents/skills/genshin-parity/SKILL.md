@@ -1,6 +1,6 @@
 ---
 name: genshin-parity
-description: Apply when building or changing a Genshin screen or scene (loading, login, menus, prompts, HUD, the world) to match the game, tracing a glyph, measuring a reference, extracting or fitting to the game's assets, matching an animation, or touching packages/genshin-world's or packages/genshin-interface's components, parity page or visual suites, or scripts/src/genshinParity. Esposter's image-driven loop — references outside the repo, a screen per component with a fixture, one command to shoot, score and diff it, a 3D scene re-derived by inventory, calibration and priced losses rather than tuned on its frame, and a visual suite holding every approved screen.
+description: Apply when building or changing a Genshin screen or scene (loading, login, menus, prompts, HUD, the world) to match the game, tracing a glyph, measuring a reference, extracting or fitting to the game's assets, matching an animation, recreating a piece of its music, or touching packages/genshin-world's or packages/genshin-interface's components, parity page or visual suites, or scripts/src/genshinParity. Esposter's image-driven loop — references outside the repo, a screen per component with a fixture, one command to shoot, score and diff it, a 3D scene re-derived by inventory, calibration and priced losses rather than tuned on its frame, and a visual suite holding every approved screen.
 ---
 
 # Genshin Parity
@@ -38,3 +38,4 @@ The loop and why it is shaped this way are `apps/web/content/docs/genshin/parity
 - `references/glyphs.md` — when a mark, a logo or an element glyph is traced, found as a vector or filled.
 - `references/motion.md` — when recording the game, reading a timing off a recording, holding a screen's motion or testing what only a browser plays.
 - `references/scene.md` — when deriving, arranging, fitting, lighting or posing a 3D scene, or running a witness solve.
+- `references/music.md` — when recreating a piece of the game's music, or changing its fit, its player or `listen`.
