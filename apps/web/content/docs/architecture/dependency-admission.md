@@ -67,6 +67,8 @@ The first adapter absorbed is [trpc-msw](/docs/trpc-msw), and it is the shape an
 
 The second is [trpc-nuxt-module](/docs/trpc-nuxt-module), the shape an absorption takes when the adapter is a framework integration. `trpc-nuxt` left the handler routes, the WebSocket bridge, the plugin and a `build.transpile` entry to every app that used it, because a library cannot register itself; the replacement is a Nuxt module that does, over tRPC's own fetch and WebSocket adapters, so the app keeps only the link chain that is genuinely its own. It also showed the audit's limit: an issue can be fixed upstream by a neighbour rather than the adapter — the middleware-read body hang no longer reproduces on the h3 the workspace installs — and the verdict says so rather than claiming a regression test that cannot fail on the code it replaces.
 
+The third is [pitch-transcription](/docs/pitch-transcription), the shape an absorption takes around a trained model. `@spotify/basic-pitch` held every consumer to an old TensorFlow.js major because it loaded and ran its network through its own copy; the replacement keeps the engine as a peer and the weights as shipped data, and takes back only the layer between them — the windows, the model call and the note creation — following the model repository wherever the port had drifted from it.
+
 ## The stop list
 
 Four kinds of package are never absorbed, whatever their size or call-site count. These exist so the initiative cannot talk itself into the expensive mistake later:

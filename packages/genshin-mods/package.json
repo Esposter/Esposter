@@ -1,0 +1,31 @@
+{
+  "name": "genshin-mods",
+  "version": "3.9.0",
+  "private": true,
+  "description": "A Claude Code plugin of five mods under one band above the prompt: the next steps, the cache and usage with a one-click handoff, recording mode, a goal's task list and a question before editing a file another session just changed.",
+  "keywords": [
+    "claude-code",
+    "claude-code-plugin",
+    "genshin",
+    "mods"
+  ],
+  "homepage": "https://esposter.com/docs/proposals/infra/claude-mods",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "type": "module",
+  "scripts": {
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest",
+    "validate": "claude plugin validate ."
+  }
+}

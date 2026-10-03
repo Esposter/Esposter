@@ -1,0 +1,81 @@
+{
+  "name": "pitch-transcription",
+  "version": "3.9.0",
+  "description": "The pitched notes in a recording — Spotify's Basic Pitch model on current TensorFlow.js, its readings turned into notes with pitch bends and written as MIDI.",
+  "keywords": [
+    "audio",
+    "basic-pitch",
+    "midi",
+    "music",
+    "pitch",
+    "polyphonic",
+    "tensorflow",
+    "transcription",
+    "typescript"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/pitch-transcription#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "files": [
+    "NOTICE",
+    "dist",
+    "model"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./notes": {
+      "source": "./src/notes.ts",
+      "default": "./dist/notes.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./notes": "./dist/notes.js",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@esposter/shared": "workspace:*",
+    "@tonejs/midi": "catalog:"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/core": "catalog:",
+    "@esposter/configuration": "workspace:*",
+    "@tensorflow/tfjs": "catalog:",
+    "@types/node": "catalog:",
+    "publint": "catalog:",
+    "tsdown": "catalog:",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@tensorflow/tfjs": "catalog:"
+  }
+}

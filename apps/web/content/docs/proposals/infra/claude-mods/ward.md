@@ -17,7 +17,7 @@ Every successful edit, write or notebook edit is recorded in a store the session
 - **Cancel:** the edit is refused with a message saying the person stopped it because another session changed the file.
 - **Anything typed under Other:** the edit is refused with the person's words, which the model reads as its instruction.
 
-A session's own records never ask, and records older than the window are pruned on each write, so the store stays as small as the last half hour of edits. A run with no one to ask, such as a headless one, proceeds, since a guard that blocks unattended work is worse than none.
+A session's own records never ask, and records older than the window are pruned on each write, so the store stays as small as the last half hour of edits. A run with no one to ask, such as a headless one, proceeds, since a guard that blocks unattended work is worse than none. Any failure of the guard itself lets the edit through too, a dismissed question or an unreadable record alike: a guard that blocked on its own failure would block every edit after it, and Cancel is the person's way to stop one.
 
 ## State and switching
 

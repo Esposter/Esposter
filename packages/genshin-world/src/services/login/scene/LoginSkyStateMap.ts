@@ -16,7 +16,7 @@ const NIGHT_MOON_DIRECTION = getLoginScreenDirection([0.27, 0.11]);
 // Where the dusk's sunlight falls from, apart from where its glow shows: 60 degrees left of the walkway and 15 up, so
 // It lights the lantern tower's face toward the frame's left, leaves the door's face and the near towers' dark, and
 // Casts the dais's shadow aside rather than over the walkway, as the door recording shows. Its glow just past the
-// Frame's edge alone sets no direction a shading reads apart (genshin:parity light's grid fits within a hundredth),
+// Frame's edge alone sets no direction a shading reads apart (a grid of its directions fits within a hundredth),
 // So the direction is the one of 44, 60 and 80 degrees that scores best on the door recording and the dusk still
 const DUSK_LIGHT_DIRECTION = new Vector3(0.837, 0.259, 0.483);
 
@@ -27,11 +27,11 @@ const DUSK_LIGHT_DIRECTION = new Vector3(0.837, 0.259, 0.483);
 // Over the cloud sea (the mean of its brightest two samples low in the frame), the clouds,
 // And the sun or the moon the light comes from.
 // The light's and the sky's strengths are measured over the stone lit physically, as the game's lighting is its
-// Scripts' and never exported: each hour's scaled until its parts stand as bright as its title frame's (genshin:parity
-// Exposure, the median luminance over the parts' pixels), but the night's, a third as bright as its frame's before,
+// Scripts' and never exported: each hour's scaled until its parts stand as bright as its title frame's (the median
+// Luminance over the parts' pixels), but the night's, a third as bright as its frame's before,
 // Which one step toward it scores best and a second, nearer the median, worse, and the dusk's, whose sun and sky light
 // Are solved apart channel by channel on the door
-// Recording's near faces, facing up and turned from the sun (genshin:parity light, damped to its fixed point): the sky
+// Recording's near faces, facing up and turned from the sun (damped to its fixed point): the sky
 // Light a fifth of the exposure's and the sun twice, so a face turned from the sun stands dark as the recording's do
 export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
   [LoginTimeOfDay.Dawn]: {

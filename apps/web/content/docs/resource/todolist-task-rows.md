@@ -1,6 +1,6 @@
 ---
 title: TodoList task rows
-description: The Items blade lists todos as task rows — the title, one metadata line holding only what is set, and the notes in full — opening the detail dialog, in place of a data table.
+description: The Items blade lists todos as task rows — the title, one metadata line holding only what is set, and the notes clamped to a few lines — opening the detail dialog, in place of a data table.
 ---
 
 # TodoList Task Rows
@@ -17,7 +17,7 @@ The first part of [TodoList to a todo product](/docs/resource#shipped-log), and 
 
 - **The row is one button.** The title and its metadata line are the row, and pressing it opens the detail dialog (`ResourceTodoListEditDialog`), as selecting a task opens its detail view in Microsoft To Do. The title is in the style's heading weight (`--ui-weight-heading`), since a list is scanned by its titles. The list is `UiList`'s, so the arrows, Home, End and typeahead walk the rows.
 - **The metadata line holds only what is set**: the due date through `NuxtTime`, in the error colour and read out as overdue once it has passed, or when a [completed](/docs/resource/todolist-completion) todo was done. A row with neither has no such line.
-- **The notes are drawn in full under it**, as the editor's rich text (`rich-text-content`), a size down in the text colour rather than muted, muted only once the todo is completed. This departs from Microsoft To Do, which hides a task's notes behind a mark until its detail view opens: the notes are what a todo is read for, and a list that makes the reader open each row to see them is worse than one that shows them. A link in the notes is drawn but not pressed from the row, which is one button — a click opens the todo, where the link works.
+- **The notes are drawn under it**, as the editor's rich text (`rich-text-content`), a size down in the text colour rather than muted, muted only once the todo is completed. This departs from Microsoft To Do, which hides a task's notes behind a mark until its detail view opens: the notes are what a todo is read for, and a list that makes the reader open each row to see them is worse than one that shows them. They are clamped to six lines with an ellipsis (`line-clamp-6`), since notes run far longer than a row should and the detail dialog shows them whole. The clamp is by rendered line rather than by character count: the notes are HTML, so a character cut could land inside a tag, and a note of many short paragraphs is just as tall as one long one. A link in the notes is drawn but not pressed from the row, which is one button — a click opens the todo, where the link works.
 - **The checkbox leads the row**, in `UiList`'s `leading` slot beside the row's button, so the row keeps no mark column of its own ([completion](/docs/resource/todolist-completion)).
 - **Search** keeps the rows whose title or notes text holds the query, the notes read as text through `node-html-parser` rather than as markup, so a search for `p` no longer matches every todo with a paragraph.
 - **Order is the `items` array's.** The table's sort header went with the table; ordering is [importance](/docs/resource/todolist-importance)'s sort and [manual order](/docs/resource/todolist-manual-order)'s job.

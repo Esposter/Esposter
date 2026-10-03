@@ -44,6 +44,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "nuxt-module-packages",
       "generated-artifacts",
       "agent-configuration",
+      "claude-mods",
       "engineering-loops",
       "server-testing",
       "test-harness-workarounds",

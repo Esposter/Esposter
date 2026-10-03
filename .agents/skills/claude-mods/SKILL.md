@@ -1,29 +1,36 @@
 ---
 name: claude-mods
-description: Apply when writing or reviewing a Claude Code mod — a plugin's hooks module (`hooks/hooks.json` naming `modules`), its state contract, or anything under packages/genshin-mods or packages/genshin-persona/mod. Esposter's conventions for function hooks — the engine's own constraints (relative imports, no Node, declarations it alone writes), pure logic split out for Vitest, one band per plugin composed from rows, drawn state in $.state, and theming read from the persona's contract.
+description: Apply when writing or reviewing a Claude Code mod — a plugin's hooks module (`hooks/hooks.json` naming `modules`), its state contract, or anything under packages/genshin-mods or packages/genshin-persona/mod. Esposter's conventions for function hooks — the rules the engine enforces at load (relative imports, one unmatched hook per event, `$` and atoms kept in the file that uses them, an inline state contract), the file shape they force, the lint seams with the engine's slots, and the authoring loop.
 ---
 
 # Claude Code mods
 
-What each mod in the repository does, and why, is its docs page (`apps/web/content/docs/proposals/infra/claude-mods/index.md` until each ships). The engine's own API is its declaration file, which the engine writes beside a mod it has loaded (`.claude-plugin/types/claude-code/index.d.ts`) and which the built-in `plugin-authoring` skill points to: grep it for the event or noun at hand rather than recalling it.
+Every rule below is explained, with the refusal it prevents and the shape it forces, on `apps/web/content/docs/architecture/claude-mods.md`; the authoring loop is its diagram. The engine's API is its declaration file, which the built-in `plugin-authoring` skill names: grep it for the event or noun at hand rather than recalling it.
 
 ## Settled — do not re-propose
 
-- **`#src/*` imports in a hooks module.** `claude plugin validate` refuses every specifier but a relative path to the plugin's own file and `claude-code`; the engine is the forcing agent, so the relative-import exception covers the mod trees and nothing else (`oxlint.config.ts`).
-- **Committing the engine's declarations, or a hand-written copy of them.** They are the engine's, written per version and declared early access; a copy is stale on the next update, and nothing publishes them as a package.
-- **`claude plugin test` suites for logic.** Its runner has no fs, network or process and its tests are not the repository's Vitest; logic a test earns lives in a plain module Vitest covers, and the hooks around it are checked by `claude plugin validate`.
+- **`#src/*` imports in a hooks module.** The engine refuses every specifier but a relative path to the plugin's own file and `claude-code`, so the relative-import exception covers the mod trees and nothing else (`oxlint.config.ts`).
+- **JSX, or a `.tsx` file, in a mod.** The element constructors are plain functions taking `children` as a prop, `.tsx` means a Tiled tileset here, and a JSX compiler setting would be the package's one tsconfig difference.
+- **Committing the engine's declarations, or a hand-written copy of them.** They are the engine's, per version and early access; nothing publishes them, so they are laid locally and gitignored.
+- **`claude plugin test` suites for logic.** Its runner has no fs, network or process and is not the repository's Vitest; logic lives in pure modules Vitest covers, and the wiring is what `claude plugin validate` checks.
 - **Writing a person's `settings.json` from a plugin.** A status line, a spinner word, a hint and a hook on any settings event are all reachable from a hooks module, and a write there outlives the plugin.
+- **A mod object (`{ onSessionStart, … }`) per mod, composed by the register file.** Its handlers take `$` across an import, which the engine refuses; one lifecycle file holds every unmatched event instead.
 
 ## Rules
 
-- **A hooks module imports only its own files by relative path, plus types from `claude-code`** — and may import a dependency-free file of its plugin's other trees the same way (the persona's verb enum), never one that imports through `#src/*`.
-- **A mod has no Node.** Game data, audio, sockets and anything an npm package does run in the plugin's own node scripts, reached through `$.process.run` with the hook's input on stdin.
-- **Logic a test earns is a pure function in its own file, beside its `*.test.ts`**, and the hook file is wiring: events in, state out, no branch worth testing.
-- **Everything a drawing reads is `$.state`**, declared in the plugin's one contract file (`types/index.d.ts`, named in `plugin.json`); a module variable is lost on every reload. A value kept past the session is written to `$.store` too and read back at `session.start`.
-- **One `AbovePrompt` hook per plugin**, drawing one row per mod with something to say; a second hook from the same plugin would compete for the one band.
-- **A mod that asks the model asks through `$.model.fork`**, which the API serves from the session's own prompt cache; `$.model.complete` re-sends a context of its own.
-- **A hook that can fail registers a `.catch`** that passes to `next(e)`, so a broken mod never blocks the engine's own behaviour; a question the person cannot answer (`$.ui.ask` in a headless run) proceeds.
-- **The accent is the session character's**, read from `genshin-persona`'s published state through its contract (`dependencies` in `plugin.json`), with the game's interface gold where the persona is absent.
-- **Labels speak the game's vocabulary only where the word already means the thing** (resin for spendable capacity, a waypoint for where to go next); a command and a button say what they do.
-- **Run `claude plugin validate <plugin>` after every change to a hooks module and whenever the engine updates**; its report of what the module hooks and calls is the check that the engine sees what was meant.
-- **Development loads the working tree with `claude --plugin-dir <plugin>` with the installed copy disabled** — two loads fire every hook twice.
+- **Relative imports only, to the plugin's own files, plus `claude-code`**; a dependency-free file of another of the plugin's trees (the persona's verb enum) is reachable the same way.
+- **An event with no matcher is hooked once per plugin**, in one `registerLifecycle` file for every mod; a mod's own file holds only matched hooks.
+- **A function that receives `on` returns nothing** — every `register<Name>(on)` is `void`.
+- **Every function that takes `$` sits in the file of the hook that calls it**; logic without `$` is a pure module beside its test, and a button's action is a closure over `$`.
+- **Each file makes the atoms it uses, plugin and key as literals, every initial from the one `InitialState` constant**; a set of switches is one record, since a loop cannot name a key.
+- **The contract's keys are written inline in `interface PluginState { "<plugin>": { … } }`** in `types/index.d.ts`, the value types exported beside them.
+- **A registration's `.catch` handler is a module-level `const` of the same file, its name bound nowhere else in it** — not even a parameter.
+- **No Node in a mod**: game data, audio, sockets and anything an npm package does run in the plugin's node scripts through `$.process.run`, the hook's input on stdin.
+- **Everything a drawing reads is `$.state`**; a module variable is lost on reload and holds only what nothing draws. A value kept past the session is written to `$.store` and read back at session start.
+- **One `AbovePrompt` hook per plugin**, drawing one row per mod with something to say.
+- **A mod that asks the model asks through `$.model.fork`**, served from the session's own prompt cache.
+- **A question nobody can answer proceeds**: `$.session.surfaces()` empty means a headless run, and a guard never blocks unattended work.
+- **The engine's slots meet the lint in fixed places** — a timer or a press floats its action through one local wrapper, a registration's `.catch`, `$.clock.every`, `JSON.parse` and an interpolated string constant each have one answer on the docs page, and a literal's order never carries meaning since perfectionist sorts it.
+- **The accent is the session character's**, read from `genshin-persona`'s published state through its contract, with the game's interface gold where the persona is absent; labels use the game's word only where it already means the thing.
+- **The loop is validate, typecheck with the declarations laid, lint, Vitest, then `claude --plugin-dir` with the installed copy disabled**; a refusal whose message is cut short is read by validating a minimal mod in the scratchpad that does only the questioned thing.
+- **A new rule the engine enforces is a row in the docs page's table in the change that answers it**, and a line here.

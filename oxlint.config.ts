@@ -438,6 +438,33 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
         ],
       },
     },
+    {
+      // A Claude Code hooks module imports only its own files by relative path, plus `claude-code`: the engine refuses a
+      // Subpath import at load, so the mod trees keep every other import restriction and lose the relative-specifier ban
+      files: ["packages/genshin-mods/**/*.ts", "packages/genshin-persona/mod/**/*.ts"],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            paths: [
+              {
+                importNames: ["randomUUID"],
+                message:
+                  "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
+                name: "node:crypto",
+              },
+            ],
+            patterns: [
+              {
+                group: ["#src/*", "@/**", "~/**"],
+                message:
+                  "A Claude Code hooks module imports its own files by relative path alone: the engine refuses any other specifier at load. See the claude-mods skill.",
+              },
+            ],
+          },
+        ],
+      },
+    },
   ],
   plugins: ["import", "oxc", "promise", "typescript", "unicorn", "vitest", "vue"],
   rules: {

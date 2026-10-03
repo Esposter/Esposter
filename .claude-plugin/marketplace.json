@@ -9,6 +9,11 @@
       "description": "Writes the follow-ups a session leaves unfinished into an Esposter TodoList, and drains them again one change at a time until none is left."
     },
     {
+      "name": "genshin-mods",
+      "source": "./packages/genshin-mods",
+      "description": "Five mods under one band above the prompt: the next steps one press each, the cache and usage with a one-click handoff, recording mode, a goal's task list and a question before editing a file another session just changed."
+    },
+    {
       "name": "genshin-persona",
       "source": "./packages/genshin-persona",
       "description": "Speaks as the Genshin Impact character whose birthday is nearest to today, and reads each reply aloud, a sentence at a time, in the character's own cloned voice."

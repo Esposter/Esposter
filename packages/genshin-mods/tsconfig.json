@@ -1,0 +1,4 @@
+{
+  "extends": "../configuration/tsconfig.node.json",
+  "include": ["*.ts", ".claude-plugin/types", "src/**/*.ts", "types"]
+}

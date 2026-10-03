@@ -6,16 +6,13 @@ import { calibrateCommand } from "#src/services/genshinParity/commands/calibrate
 import { cloudsCommand } from "#src/services/genshinParity/commands/cloudsCommand";
 import { compareCommand } from "#src/services/genshinParity/commands/compareCommand";
 import { coverCommand } from "#src/services/genshinParity/commands/coverCommand";
-import { exposureCommand } from "#src/services/genshinParity/commands/exposureCommand";
 import { fetchCommand } from "#src/services/genshinParity/commands/fetchCommand";
 import { filmCommand } from "#src/services/genshinParity/commands/filmCommand";
 import { fogCommand } from "#src/services/genshinParity/commands/fogCommand";
 import { framesCommand } from "#src/services/genshinParity/commands/framesCommand";
 import { gbufferCommand } from "#src/services/genshinParity/commands/gbufferCommand";
 import { glideCommand } from "#src/services/genshinParity/commands/glideCommand";
-import { hazeCommand } from "#src/services/genshinParity/commands/hazeCommand";
 import { launchCommand } from "#src/services/genshinParity/commands/launchCommand";
-import { lightCommand } from "#src/services/genshinParity/commands/lightCommand";
 import { lumaCommand } from "#src/services/genshinParity/commands/lumaCommand";
 import { measureCommand } from "#src/services/genshinParity/commands/measureCommand";
 import { overlayCommand } from "#src/services/genshinParity/commands/overlayCommand";
@@ -47,10 +44,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     gbuffer: gbufferCommand,
     calibrate: calibrateCommand,
     sky: skyCommand,
-    exposure: exposureCommand,
     fog: fogCommand,
-    haze: hazeCommand,
-    light: lightCommand,
     overlay: overlayCommand,
     pose: poseCommand,
     place: placeCommand,
