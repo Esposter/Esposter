@@ -13,6 +13,7 @@ import { framesCommand } from "#src/services/genshinParity/commands/framesComman
 import { gbufferCommand } from "#src/services/genshinParity/commands/gbufferCommand";
 import { glideCommand } from "#src/services/genshinParity/commands/glideCommand";
 import { launchCommand } from "#src/services/genshinParity/commands/launchCommand";
+import { listenCommand } from "#src/services/genshinParity/commands/listenCommand";
 import { lumaCommand } from "#src/services/genshinParity/commands/lumaCommand";
 import { measureCommand } from "#src/services/genshinParity/commands/measureCommand";
 import { overlayCommand } from "#src/services/genshinParity/commands/overlayCommand";
@@ -54,6 +55,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     glide: glideCommand,
     shoot: shootCommand,
     bench: benchCommand,
+    listen: listenCommand,
     film: filmCommand,
     view: viewCommand,
     frames: framesCommand,

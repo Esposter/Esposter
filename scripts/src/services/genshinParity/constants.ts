@@ -122,3 +122,17 @@ export const CHROMA_MIN_FREQUENCY = 60;
 export const CHROMA_MAX_FREQUENCY = 2500;
 export const CHROMA_QUIET_SHARE = 0.02;
 export const CHROMA_MATCH_SECONDS = 20;
+// Music is scored at 22.05 kHz, where its octave bands from 63 Hz to 8 kHz all fit, each band's level in decibels read
+// In the pitch classes' own frames, a level more than 60 dB under the game's loudest in that band read as that floor
+export const LISTEN_SAMPLE_RATE = 22050;
+export const LISTEN_BAND_CENTRES: number[] = [63, 125, 250, 500, 1000, 2000, 4000, 8000];
+export const LISTEN_FLOOR_DECIBELS = 60;
+// The committed report of each music segment's last `listen`
+export const PARITY_MUSIC_SCORES_PATH: string = join(
+  REPOSITORY_ROOT,
+  "scripts",
+  "src",
+  "services",
+  "genshinParity",
+  "ParityMusicScores.snapshot.md",
+);
