@@ -54,6 +54,7 @@
     "access": "public"
   },
   "scripts": {
+    "bench": "vitest bench --run",
     "build": "tsdown",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
@@ -69,6 +70,7 @@
   "devDependencies": {
     "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
+    "@esposter/shared-node": "workspace:*",
     "@tensorflow/tfjs": "catalog:",
     "@types/node": "catalog:",
     "publint": "catalog:",

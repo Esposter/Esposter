@@ -2189,6 +2189,9 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
+      '@esposter/shared-node':
+        specifier: workspace:*
+        version: link:../shared-node
       '@tensorflow/tfjs':
         specifier: 'catalog:'
         version: 4.22.0(seedrandom@3.0.5)

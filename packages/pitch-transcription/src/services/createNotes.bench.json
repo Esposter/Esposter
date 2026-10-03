@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/createNotes.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 104.71390000000001,
+              "name": "onsets",
+              "p99": 129.83257899999998,
+              "rme": 8.33289557412547,
+              "sampleCount": 10
+            },
+            {
+              "mean": 126.00268000000005,
+              "name": "melodia trick",
+              "p99": 153.03084300000012,
+              "rme": 9.048175799287154,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "createNotes > 1 minutes"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 540.0817299999999,
+              "name": "onsets",
+              "p99": 799.8796110000008,
+              "rme": 15.172108222131644,
+              "sampleCount": 10
+            },
+            {
+              "mean": 571.6165799999999,
+              "name": "melodia trick",
+              "p99": 748.9055129999988,
+              "rme": 11.73130089131821,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "createNotes > 5 minutes"
+        }
+      ]
+    }
+  ]
+}
