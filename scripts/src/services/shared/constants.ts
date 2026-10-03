@@ -50,6 +50,11 @@ export const FIELD_SEPARATOR = "\u001F";
 // Excerpt.
 // oxlint-disable-next-line no-control-regex, typescript/no-inferrable-types -- the escape is the sequence's opener; `isolatedDeclarations` demands the annotation
 export const ANSI_ESCAPE_REGEX: RegExp = /\u001B\[[\d;]*m/gu;
+// GitHub answering a server error rather than a verdict, in the exact wording each tool gives it — `gh` as `(HTTP 503)`
+// Or a line opening `HTTP 503:`, `git` over HTTPS as `The requested URL returned error: 503` — so a commit subject that
+// Merely mentions a status, quoted in a git error, is not one. The same request later is the whole remedy.
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
+export const GITHUB_OUTAGE_REGEX: RegExp = /\(HTTP 5\d{2}\)|^HTTP 5\d{2}:|The requested URL returned error: 5\d{2}\b/mu;
 // `pnpm run` names the executable it is in `npm_execpath` — the native binary, or the `pnpm.cjs` corepack ships
 // That node runs — so a script spawns that file with its args and never a shell: the `pnpm` on a Windows PATH is
 // A `.cmd` shim only a shell resolves, and an args array under `shell` is what Node deprecates (DEP0190). Bare

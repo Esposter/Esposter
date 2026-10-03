@@ -181,5 +181,8 @@ export const RETRIGGER_SLEEP_CAP_MS: number = Temporal.Duration.from({ hours: 1 
 // How soon a counted attempt that failed is retried (`AttemptFailedError`): no event may follow it for hours, and
 // A step failing for good should reach its cap and be routed around in minutes rather than on the next push
 export const ATTEMPT_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 1 }).total("seconds");
+// How soon a run GitHub failed with a server error is retried (`GITHUB_OUTAGE_REGEX`): an outage is minutes to
+// Hours, so a run a minute apart would spend a runner per minute learning it is still down
+export const OUTAGE_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 5 }).total("seconds");
 // The job output the runner's delayed retrigger reads — the only channel between two jobs of one workflow run
 export const RETRIGGER_DELAY_OUTPUT = "retriggerDelaySeconds";

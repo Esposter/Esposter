@@ -6,6 +6,7 @@ import {
   ATTEMPT_RETRY_DELAY_SECONDS,
   COLLECTOR_SOURCE_PATH,
   DRY_RUN_WORKTREE_PREFIX,
+  OUTAGE_RETRY_DELAY_SECONDS,
   RETRIGGER_DELAY_OUTPUT,
 } from "#src/services/coderabbit/collect/constants";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
@@ -13,7 +14,7 @@ import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { writeJobOutput } from "#src/services/coderabbit/collect/writeJobOutput";
 import { checkIsGitHubNumber } from "#src/services/shared/checkIsGitHubNumber";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { GITHUB_OUTAGE_REGEX, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { mkdtempSync } from "node:fs";
@@ -65,15 +66,19 @@ if (isDryRun) {
   });
 }
 
-// A counted attempt that failed ends the run idle and wakes the next one, rather than red: the retry is already
-// Owed and automatic, and red is kept for what only a person can restart (docs: infra/review-collector)
+// A counted attempt that failed, or GitHub answering a server error, ends the run idle and wakes the next one rather
+// Than red: the retry is owed and automatic, and red is kept for what only a person can restart (docs:
+// Infra/review-collector)
 const { kind, reason, retriggerDelaySeconds, targetSha } = await getResultAsync(() =>
   runCycle({ collectorSha, cwd, isDryRun, pullRequest }),
 ).match(
   (outcome) => outcome,
   (error): CycleOutcome => {
-    if (!(error instanceof AttemptFailedError)) throw error;
-    return { kind: CycleOutcomeKind.Idle, reason: error.message, retriggerDelaySeconds: ATTEMPT_RETRY_DELAY_SECONDS };
+    if (error instanceof AttemptFailedError)
+      return { kind: CycleOutcomeKind.Idle, reason: error.message, retriggerDelaySeconds: ATTEMPT_RETRY_DELAY_SECONDS };
+    else if (GITHUB_OUTAGE_REGEX.test(error.message))
+      return { kind: CycleOutcomeKind.Idle, reason: error.message, retriggerDelaySeconds: OUTAGE_RETRY_DELAY_SECONDS };
+    throw error;
   },
 );
 console.info(`${kind}: ${reason}${targetSha ? ` — ${targetSha}` : ""}`);
