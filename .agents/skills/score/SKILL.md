@@ -22,7 +22,7 @@ Nuxt's `compatibilityDate` opts into the framework behaviour as of a given date.
 ## Process
 
 1. Re-audit each area against the code as it exists today — versions, workflows, and CSP/security posture all go stale. Volatile counts (test files, routers, stores) do not need re-auditing, because they are written as magnitudes rather than readings ("Writing style" on this page). Re-check one only when its _magnitude_ has plausibly moved.
-2. Bump `compatibilityDate` to today, then run `pnpm typecheck` from `apps/web/`. The suite is CI's — a full local run is the `testing` skill's ban (`references/running-the-suite.md`) — so a behaviour the new date changes surfaces there, and is a finding for the review.
+2. Bump `compatibilityDate` to today. Typecheck and the suite are CI's (the `running-checks` skill), so a behaviour the new date changes surfaces there, and is a finding for the review.
 3. Rewrite `SCORE.md`: header line (date + compatibilityDate + overall), summary table, and the section bodies. Keep it terse — notes are one line each.
 4. Update the README badge number and color.
 5. Commit all three together so the badge never advertises a stale number.

@@ -23,7 +23,7 @@ The runnable form of the skill pass over the whole tree. What one skill's pass d
    - check it against the audit below;
    - verify every code claim against the tree — identifiers, paths, signatures and example code as they exist now, written in the newest APIs and the `error-handling` skill's result chains;
    - fix what the audit finds, code included when the claim is right and the code is wrong, in one commit per skill carrying `Ledger: docs/skills | `<skill>``; a clean skill's trailer rides the next commit, never an empty one.
-4. **Finish.** `pnpm ai:sweep:ledger-coverage` again and commit the ledger dates; run the `finishing` skill; then the checks in the background per the `running-checks` skill, with repairs committed behind the units; commit by pathspec, `git pull --rebase` over a clean tree and a plain push (the `review-queue` skill).
+4. **Finish.** `pnpm ai:sweep:ledger-coverage` again and commit the ledger dates; run the `finishing` skill; then the touched tests in the background per the `running-checks` skill; commit by pathspec, `git pull --rebase` over a clean tree and a plain push (the `review-queue` skill).
 5. **Report** a table of every skill — clean or fixed, with one line on what changed — and whether the run reached zero findings. A run that did not ends with the prompt for the next: this skill, rerun.
 
 ## The audit

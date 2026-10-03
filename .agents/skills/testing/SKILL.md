@@ -90,7 +90,7 @@ Every literal, id, date, path and fixture a test writes is that skill's: the can
 
 ## Running Tests
 
-- **Every check runs in the background, once at the end** — the `running-checks` skill.
+- **The touched tests are a session's one check, run in the background once at the end** — the rest are CI's (the `running-checks` skill).
 - **Never run the full suite locally** — `pnpm test <paths> --run` over what the change touched (`references/running-the-suite.md`).
 - **`-t "name"` is not a scope, and `-u` gets the narrowest path list** — read the snapshot diff before committing (`references/running-the-suite.md`).
 

@@ -71,7 +71,7 @@ A repair is then a cut of its own, alone: no claimed commit is picked on top of 
 
 ## What it does not do
 
-- **It does not repair `develop`.** A red on `develop` while a pull request is open is a window commit's, and the session that pushed it reads its own CI — that is the standing rule for a window ([port](/docs/infra/review-collector/collection-cycle)). Repairing it here would spend a review slot on a push no window measured; a red `develop` carries into `main` at the release, where it becomes this page's.
+- **It does not repair `develop`.** A red on `develop` while a pull request is open is a window commit's, and no session watches for it: sessions leave every check but their touched tests to CI. Repairing it here would spend a review slot on a push no window measured; a red `develop` carries into `main` at the release, where it becomes this page's.
 - **It does not wait for the trigger.** `workflow_run` fires from the default branch's copy of the triggers, which a release lags ([runner](/docs/infra/review-collector/runner)); every pass reads the verdict itself, so a queue push or a review lands the repair meanwhile.
 - **It does not run the checks to learn `main` is red.** That is a verify's cost — the whole suite — spent on every run for a fact CI already recorded. It runs them to learn whether the regenerators answered that red, which is a question nothing has recorded and only a red head ever asks.
 
