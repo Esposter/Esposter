@@ -46,7 +46,9 @@ describe(drainFindings, () => {
         pullRequest: 0,
         viewerLogin,
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot();
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the drain of review 0 failed 3 times — nothing ports ahead of its open findings until they are answered]`,
+    );
     expect(runSession).not.toHaveBeenCalled();
     expect(runGh).toHaveBeenCalledTimes(1);
   });
