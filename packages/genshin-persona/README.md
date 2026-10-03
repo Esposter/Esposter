@@ -44,15 +44,15 @@ claude plugin disable genshin-persona@esposter
 claude --plugin-dir packages/genshin-persona
 ```
 
-Nobody switches that on: `.agents/settings.json` declares `autoUpdate` on the marketplace it declares, and Claude Code leaves it off for every marketplace but Anthropic's own. A checkout therefore re-pins its own plugin to its own current commit on startup, and `/plugin`'s **Enable auto-update** reports the value as settings' rather than offering to change it. An update still moves a pin to a commit, so work that is not committed is not loaded, whatever the toggle says. Nothing below is repeated for an update: the state directory's launchers re-aim at the running copy at every session start, and the voice's runtime and weights are kept until the copy carries a newer lockfile or engine, which `voice` with no argument reports and `voice <dub>` run again picks up, installing only what changed.
+Nobody switches that on: `.agents/settings.json` declares `autoUpdate` on the marketplace it declares, and Claude Code leaves it off for every marketplace but Anthropic's own. A checkout therefore re-pins its own plugin to its own current commit on startup, and `/plugin`'s **Enable auto-update** reports the value as settings' rather than offering to change it. An update still moves a pin to a commit, so work that is not committed is not loaded, whatever the toggle says. Nothing below is repeated for an update: the plugin writes nothing into your settings, so every surface it draws comes from the running copy, and the voice's runtime and weights are kept until the copy carries a newer lockfile or engine, which `voice` with no argument reports and `voice <dub>` run again picks up, installing only what changed.
 
 Spoken lines stay silent until the `voice` verb has set the engine up, once, with the dub the reference lines are taken from — `en`, `ja`, `ko` or `zh`:
 
 ```bash
-node "<plugin root>/scripts/genshin.ts" voice ja     # or: /genshin-persona:voice ja
+node "<plugin root>/scripts/genshin.mjs" voice ja     # or: /genshin-voice ja
 ```
 
-It installs the engine's runtime and weights — about a gigabyte, once — into the plugin's own state directory under `~/.claude/genshin-persona`, ends by speaking one sentence as the session's character, and writes the hook that reads each reply's spoken lines into your user settings, which Claude Code reads once per process, so replies are read from the next session. Each character is read in a clone of their own voice, conditioned on one line of their performance fetched from the community wiki the first time they are picked; nothing lifted from the game ships with the plugin. How the engine runs, which device it settles on and why, and what it does when it cannot speak is the [spoken replies](https://esposter.com/docs/infra/claude-interface/spoken-replies) page.
+It installs the engine's runtime and weights — about a gigabyte, once — into the plugin's own state directory under `~/.claude/genshin-persona`, and ends by speaking one sentence as the session's character; replies are read aloud from the next reply on, by the plugin's own hooks module, with nothing written into your settings. Each character is read in a clone of their own voice, conditioned on one line of their performance fetched from the community wiki the first time they are picked; nothing lifted from the game ships with the plugin. How the engine runs, which device it settles on and why, and what it does when it cannot speak is the [spoken replies](https://esposter.com/docs/infra/claude-interface/spoken-replies) page.
 
 A [TypeSafe](https://typesafe.ai) API key, given as an option, turns the pick over to lore — one typed decision over the whole roster, weighing the date, the season's festivals and your moment — instead of the nearest birthday. The key is sensitive, and the variable the SDK itself reads, `TYPESAFE_API_KEY`, is honoured when the option is empty:
 
@@ -66,31 +66,30 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### Command reference
 
-Every command is a slash command in Claude Code and the same verb of the plugin's script from any shell; the script form is what a hook, a terminal or another tool runs, and the two never differ:
+Every command is a slash command in Claude Code, `/genshin-` and the verb, which the plugin's hooks module registers at session start, and the same verb of the plugin's script from any shell; the script form is what a hook, a terminal or another tool runs, and the two never differ:
 
 ```bash
-/genshin-persona:<verb> [argument]
-node "<plugin root>/scripts/genshin.ts" <verb> [argument]
+/genshin-<verb> [argument]
+node "<plugin root>/scripts/genshin.mjs" <verb> [argument]
 ```
 
 A `<name>` is a character's, matched whole and ignoring case, in English or as the interface language spells it. A `[language]` is one the `language` verb lists, typed in English or in its own words. A verb given a name the roster has no character by, or an argument outside its set, prints why and exits 1; a verb with no argument where one is optional reports instead of changing anything.
 
-| Verb       | Argument                 | What it does                                                                                                                                                                                                                                                                    |
-| :--------- | :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `today`    | —                        | Prints the card of this session's character; from a shell, of the pinned character, else of a fresh pick. A pin naming nobody in the roster is reported and ignored.                                                                                                            |
-| `roster`   | —                        | Every playable character, one line each: name, title, element, region, birthday and the patch that introduced them.                                                                                                                                                             |
-| `use`      | `<name>`                 | Speaks as one character for this session alone, from that reply on; other sessions and the next start are untouched. From a shell, where no session is running, exits 1.                                                                                                        |
-| `pin`      | `<name>`                 | Fixes one character for every session until unpinned, and for this session from that reply on.                                                                                                                                                                                  |
-| `unpin`    | —                        | Removes the pin; the pick decides again from the next session, and for this session from that reply on.                                                                                                                                                                         |
-| `voice`    | `[en \| ja \| ko \| zh]` | Sets up spoken lines in that dub — installing the engine's runtime and weights on the first run, about a gigabyte — ends by speaking one sentence, and writes the hook that reads each reply into user settings, on from the next session. With no dub, reports what is set up. |
-| `mute`     | —                        | Stops replies' spoken lines being read aloud. The pick and the card are unaffected.                                                                                                                                                                                             |
-| `unmute`   | —                        | Lets replies' spoken lines be read aloud again.                                                                                                                                                                                                                                 |
-| `volume`   | `<0–100>`                | Sets how loud replies are spoken, as a whole number, from the next reply on; `0` is silence the engine is not woken for.                                                                                                                                                        |
-| `language` | `[language]`             | Sets the interface language — every word the plugin writes — and carries the reply language with it. With none, reports what is set and lists the languages on offer.                                                                                                           |
-| `reply`    | `[language]`             | Sets the language replies are written in, on its own. With none, reports what is set and whether it was set or cascaded from the interface language.                                                                                                                            |
-| `status`   | —                        | Reports every setting at once and where each value came from. Changes nothing.                                                                                                                                                                                                  |
-| `setup`    | —                        | Writes the status line and the spinner into user settings, the spinner under this session's character.                                                                                                                                                                          |
-| `teardown` | —                        | Removes exactly what `setup` and `voice` wrote: the three settings, and the voice's runtime, weights, cached clips and dub.                                                                                                                                                     |
+| Verb       | Argument                 | What it does                                                                                                                                                                                                                         |
+| :--------- | :----------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `today`    | —                        | Prints the card of this session's character; from a shell, of the pinned character, else of a fresh pick. A pin naming nobody in the roster is reported and ignored.                                                                 |
+| `roster`   | —                        | Every playable character, one line each: name, title, element, region, birthday and the patch that introduced them.                                                                                                                  |
+| `use`      | `<name>`                 | Speaks as one character for this session alone, from that reply on; other sessions and the next start are untouched. From a shell, where no session is running, exits 1.                                                             |
+| `pin`      | `<name>`                 | Fixes one character for every session until unpinned, and for this session from that reply on.                                                                                                                                       |
+| `unpin`    | —                        | Removes the pin; the pick decides again from the next session, and for this session from that reply on.                                                                                                                              |
+| `voice`    | `[en \| ja \| ko \| zh]` | Sets up spoken lines in that dub — installing the engine's runtime and weights on the first run, about a gigabyte — and ends by speaking one sentence; replies are read from the next reply on. With no dub, reports what is set up. |
+| `mute`     | —                        | Stops replies' spoken lines being read aloud. The pick and the card are unaffected.                                                                                                                                                  |
+| `unmute`   | —                        | Lets replies' spoken lines be read aloud again.                                                                                                                                                                                      |
+| `volume`   | `<0–100>`                | Sets how loud replies are spoken, as a whole number, from the next reply on; `0` is silence the engine is not woken for.                                                                                                             |
+| `language` | `[language]`             | Sets the interface language — every word the plugin writes — and carries the reply language with it. With none, reports what is set and lists the languages on offer.                                                                |
+| `reply`    | `[language]`             | Sets the language replies are written in, on its own. With none, reports what is set and whether it was set or cascaded from the interface language.                                                                                 |
+| `status`   | —                        | Reports every setting at once and where each value came from. Changes nothing.                                                                                                                                                       |
+| `teardown` | —                        | Removes what `voice` installed: the runtime, the weights, the cached clips and the dub. The picks, the pin and the languages stay.                                                                                                   |
 
 Four more are the authoring queues of one more skill, `genshin-author` — script-only and on no menu:
 
@@ -103,38 +102,32 @@ Four more are the authoring queues of one more skill, `genshin-author` — scrip
 
 ### What it ships
 
-| Component                              | Role                                                                                                                                                                                                                          |
-| :------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `hooks/hooks.json`                     | A session-start hook that picks the character, greets you with its name, what the pick weighed and who is close, and prints its card as context. The hook that reads a reply's spoken lines is a user setting `voice` writes. |
-| `output-styles/in-character.md`        | The standing rules, forced on while the plugin is enabled: a blockquote line is the character's spoken line, the ask decides how much of a reply that is, and the rest is plain.                                              |
-| `skills/<verb>/SKILL.md`               | One slash command per verb, `/genshin-persona:<verb>` — the command reference above — yours to invoke.                                                                                                                        |
-| `skills/genshin/SKILL.md`              | The model's route from a request in words to one of those verbs; hidden from the menu.                                                                                                                                        |
-| `skills/genshin-author/SKILL.md`       | How a persona card and its spinner verbs are written, the command that prints a character's own lines to write from, and the two queues.                                                                                      |
-| `src/personaCards/`                    | Authored persona cards, one typed module per character, in our words: how the character speaks for the model, their spinner verbs for you, and the reference line only where an ear chose one.                                |
-| `src/generated/PersonaReferenceMap.ts` | The measured reference line and its likeness per character, one generated map written by the repository's reference selection and never by hand.                                                                              |
-| `runtime/`                             | The manifest and lockfile of the speech engine's runtime, which the `voice` verb installs into the state directory rather than the plugin carrying it.                                                                        |
-| `src/localizations/`                   | One authored module per language for the words the data package does not carry: the base Teyvat verbs, each character's spinner gerunds, and every line the verbs print.                                                      |
-| `scripts/`                             | The hook entrypoints, the commands' script, the status-line script, the spinner rewrite and the resident synthesizer, TypeScript run directly by node.                                                                        |
+| Component                              | Role                                                                                                                                                                                           |
+| :------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `hooks/hooks.json`                     | A session-start hook that picks the character, greets you with its name, what the pick weighed and who is close, and prints its card as context, and the hooks module beside it.               |
+| `mod/`                                 | The hooks module: the status line, the spinner's verbs and the prompt hint's tips of this session's character, the spoken replies, and one slash command per verb.                             |
+| `types/index.d.ts`                     | The state the hooks module publishes — the session's character and its colour — which other plugins draw by.                                                                                   |
+| `output-styles/in-character.md`        | The standing rules, forced on while the plugin is enabled: a blockquote line is the character's spoken line, the ask decides how much of a reply that is, and the rest is plain.               |
+| `skills/genshin/SKILL.md`              | The model's route from a request in words to one of the verbs; hidden from the menu.                                                                                                           |
+| `skills/genshin-author/SKILL.md`       | How a persona card and its spinner verbs are written, the command that prints a character's own lines to write from, and the two queues.                                                       |
+| `src/personaCards/`                    | Authored persona cards, one typed module per character, in our words: how the character speaks for the model, their spinner verbs for you, and the reference line only where an ear chose one. |
+| `src/generated/PersonaReferenceMap.ts` | The measured reference line and its likeness per character, one generated map written by the repository's reference selection and never by hand.                                               |
+| `runtime/`                             | The manifest and lockfile of the speech engine's runtime, which the `voice` verb installs into the state directory rather than the plugin carrying it.                                         |
+| `src/localizations/`                   | One authored module per language for the words the data package does not carry: the base Teyvat verbs, each character's spinner gerunds, and every line the verbs print.                       |
+| `scripts/`                             | The session-start hook, the commands' script, the character and spinner the hooks module reads, and the resident synthesizer, each an `.mjs` that registers `tsx` before its TypeScript.       |
 
 ### Status line and spinner
 
-A plugin cannot ship a status line, spinner verbs or spinner tips, so one command writes them into your user settings, and its twin removes them:
-
-```bash
-node "<plugin root>/scripts/genshin.ts" setup      # or: /genshin-persona:setup
-node "<plugin root>/scripts/genshin.ts" teardown
-```
-
-The status line prints the session's character in their own colour, on a badge of its tone, from the plugin's state files alone, and the spinner shows the character's own verbs and lines under their name. Both follow a plugin update on the next session, and the spinner follows a change of character on the next session too, since Claude Code reads its keys once per process. Why each is shaped as it is: the [persona plugin](https://esposter.com/docs/infra/claude-interface/persona-plugin) page.
+Nothing to set up: the hooks module draws the status line, in the session's character's own colour, and turns the spinner's words into that character's verbs and the prompt hint into one of their lines, a new one each turn. Each session draws its own character, and a switch shows at once. Why each is shaped as it is: the [persona plugin](https://esposter.com/docs/infra/claude-interface/persona-plugin) page.
 
 ### Languages
 
 Three settings, and they are not one axis: the **interface language** is every word the plugin writes and the master toggle, the **reply language** is what the model writes in and follows the interface language until set on its own, and the **dub** says whose voice reads a line and is neither, because it comes from a set of four and costs an install:
 
 ```bash
-node "<plugin root>/scripts/genshin.ts" language japanese   # or: /genshin-persona:language japanese
-node "<plugin root>/scripts/genshin.ts" reply english       # labels in one language, prose in another
-node "<plugin root>/scripts/genshin.ts" status              # every setting, and where each value came from
+node "<plugin root>/scripts/genshin.mjs" language japanese   # or: /genshin-language japanese
+node "<plugin root>/scripts/genshin.mjs" reply english       # labels in one language, prose in another
+node "<plugin root>/scripts/genshin.mjs" status              # every setting, and where each value came from
 ```
 
 The languages on offer are the data package's, so `language` with no argument lists them, each in its own words beside the word you type for it, and either resolves. What arrives localized for nothing and what is written by hand per language is the [persona plugin](https://esposter.com/docs/infra/claude-interface/persona-plugin) page's.
@@ -148,7 +141,7 @@ Every playable character comes from the game-data dependency — no generated ro
 `use <name>` makes this session speak as one character from that reply on; `pin <name>` fixes one for every session from the next start and this one at once; `unpin` hands both back to the pick:
 
 ```bash
-node "<plugin root>/scripts/genshin.ts" use furina      # or: /genshin-persona:use furina
+node "<plugin root>/scripts/genshin.mjs" use furina      # or: /genshin-use furina
 ```
 
 ### Spoken lines
@@ -156,10 +149,10 @@ node "<plugin root>/scripts/genshin.ts" use furina      # or: /genshin-persona:u
 A reply to an ask of the assistant opens with one blockquote line in the character's voice and may close with one; a reply to an ask of the character — a joke, a hello, an opinion, however much was pasted to form it — is such lines and nothing else, as many as the ask deserves, a list of them included. A hook hands each piece of the reply to a resident synthesizer as it lands, which reads the lines in the order they were written, in the character's cloned voice, while the reply is still being written. `mute` and `unmute` decide whether the hook asks it at all, and so does a `volume` of zero. `volume <number>` is a whole number from 0 to 100, applied as a gain, from the next reply on:
 
 ```bash
-node "<plugin root>/scripts/genshin.ts" volume 60     # or: /genshin-persona:volume 60
+node "<plugin root>/scripts/genshin.mjs" volume 60     # or: /genshin-volume 60
 ```
 
-`teardown` removes the runtime, the weights, the cached clips, the dub and the hook along with the status line and spinner settings.
+`teardown` removes the runtime, the weights, the cached clips and the dub.
 
 ### Commands
 
