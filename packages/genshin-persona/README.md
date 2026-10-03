@@ -118,7 +118,7 @@ Four more are the authoring queues of one more skill, `genshin-author` — scrip
 
 ### Spinner and prompt hint
 
-Nothing to set up: the hooks module turns the spinner's words into the session's character's verbs and the prompt hint into one of their lines under their name, a new one each turn, and publishes the character's colour, which [`genshin-mods`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-mods) draws its band in. The plugin writes nothing into your settings, so your own status line stays yours. Each session draws its own character, and a switch shows at once. Why each is shaped as it is: the [persona plugin](https://esposter.com/docs/infra/claude-interface/persona-plugin) page.
+Nothing to set up: the hooks module turns the spinner's words into the session's character's verbs and the prompt hint into one of their lines under their name, a new one each turn, names the character among the labels at the right of the prompt's footer, and publishes the character's colour, which [`genshin-mods`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-mods) draws its band in. The plugin writes nothing into your settings, so your own status line stays yours. Each session draws its own character, and a switch shows at once. Why each is shaped as it is: the [persona plugin](https://esposter.com/docs/infra/claude-interface/persona-plugin) page.
 
 ### Languages
 

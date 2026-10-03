@@ -29,7 +29,7 @@ Every rule below is explained, with the refusal it prevents and the shape it for
 - **Everything a drawing reads is `$.state`**; a module variable is lost on reload and holds only what nothing draws. A value kept past the session is written to `$.store` and read back at session start.
 - **One `AbovePrompt` hook per plugin**, drawing one row per mod with something to say.
 - **`session.start` fires once per process**: a `/clear` or a resume is a `session.end` with that reason and a new session id, so state belonging to the conversation is reset there.
-- **`$.ui.status` is a pinned notice drawn with a warning mark, not the status line**: a standing display goes in the band, the spinner or the prompt hint, and the status line stays the person's own settings command.
+- **`$.ui.status` is a pinned notice drawn with a warning mark, not the status line**: a standing word goes among the footer's mode labels (`SessionMode`, added to `modes` so other plugins' stay), anything larger in the band, and the status line stays the person's own settings command.
 - **A mod that asks the model asks through `$.model.fork`**, served from the session's own prompt cache.
 - **A question nobody can answer proceeds**: `$.session.surfaces()` empty means a headless run, and a guard never blocks unattended work.
 - **The engine's slots meet the lint in fixed places** — a timer or a press floats its action through one local wrapper, a registration's `.catch`, `$.clock.every`, `JSON.parse` and an interpolated string constant each have one answer on the docs page, and a literal's order never carries meaning since perfectionist sorts it.
