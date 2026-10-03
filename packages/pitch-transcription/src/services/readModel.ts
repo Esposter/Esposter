@@ -13,7 +13,7 @@ import { dispose, slice, tidy } from "@tensorflow/tfjs";
 // Trimmed of their overlap and of anything past the recording's end, are handed to `onWindow` with the share of the
 // Recording read so far, and returned together. Each window's tensors are freed once read, and no window past the
 // Recording's last frame is run. The windows are freed however the read ends
-export const readModel = async (
+export const readModel = (
   model: Pick<GraphModel, "execute">,
   audio: AudioChannels | Float32Array,
   onWindow?: (readings: ModelReadings, progress: number) => void,
@@ -36,7 +36,7 @@ export const readModel = async (
           });
         });
         // Each window waits for the last so only one window's tensors are ever held
-        // eslint-disable-next-line no-await-in-loop
+        // oxlint-disable-next-line no-await-in-loop -- one window's tensors held at a time is the point
         const [frames = [], onsets = [], contours = []] = await Promise.all(outputs.map((output) => output.array()));
         dispose(outputs);
         readings.frames.push(...frames);

@@ -9,6 +9,7 @@ import { describe, expect, test, vi } from "vitest";
 
 const readShippedModel = async (): Promise<GraphModel<io.IOHandlerSync>> => {
   const [modelJson, weights] = await Promise.all([readFile(MODEL_URL, "utf8"), readFile(MODEL_WEIGHTS_URL)]);
+  // oxlint-disable-next-line no-restricted-properties -- the model's topology and weight manifest, which hold no dates
   return loadGraphModelSync([JSON.parse(modelJson), new Uint8Array(weights).buffer]);
 };
 // A tone at A4 whose frames the model's first window covers, though its samples run into a second window

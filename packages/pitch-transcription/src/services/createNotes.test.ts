@@ -5,7 +5,7 @@ const frameCount = 40;
 const pitch = 39;
 const createReadings = (isHeld: (frame: number) => boolean, reading: number): number[][] =>
   Array.from({ length: frameCount }, (_, frame) =>
-    Array.from({ length: 88 }, (_, index) => (index === pitch && isHeld(frame) ? reading : 0)),
+    Array.from({ length: 88 }, (_reading, index) => (index === pitch && isHeld(frame) ? reading : 0)),
   );
 const frames = createReadings((frame) => frame >= 5 && frame < 25, 0.5);
 
