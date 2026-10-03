@@ -19,6 +19,7 @@ The conventions a finding cites live in the domain skills, not here — restatin
 | a manifest, `tsdown.config.ts`, tsconfig                                          | `build`, `dependency-updates`, `dependency-absorption`                                                   |
 | a replaced dependency's adapter, or an upstream issue audit                       | `dependency-absorption`                                                                                  |
 | `.github/**`                                                                      | `github-actions`                                                                                         |
+| a hooks module, `packages/genshin-mods/**`, `packages/genshin-persona/mod/**`     | `claude-mods`                                                                                            |
 | `*.test.ts`, `*.test-d.ts`, `*.bench.ts`                                          | `testing`, `test-values`, `bench`                                                                        |
 | `apps/web/content/docs/**`                                                        | `docs`                                                                                                   |
 | `apps/web/content/docs/proposals/**`                                              | `docs`, `product-review`, `building-proposals`                                                           |
