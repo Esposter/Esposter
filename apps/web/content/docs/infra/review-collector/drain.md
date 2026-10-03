@@ -1,6 +1,6 @@
 ---
 title: Drain
-description: The one step of the collection cycle where Claude runs — which findings count as open, how each is fixed or rejected onto ai/review-fixes with no GitHub credential in hand, and how a drain that fails is quarantined rather than retried forever.
+description: The one step of the collection cycle where Claude runs — which findings count as open, how each is fixed or rejected onto ai/review-fixes with no GitHub credential in hand, and how a drain that fails past its attempts holds every window rather than releasing over its findings.
 ---
 
 # Drain
@@ -9,8 +9,8 @@ The drain answers every finding of the newest merged release's review, at every 
 
 ```mermaid
 flowchart TD
-  O[Open set: threads the bot spoke last on<br/>plus the newest body's own buckets] --> Q{Review quarantined<br/>or the attempt cap reached}
-  Q -->|yes| P[Port without fixes — a person reads them]
+  O[Open set: threads the bot spoke last on<br/>plus the newest body's own buckets] --> Q{Attempt cap reached}
+  Q -->|yes| P[Held notice, run fails red —<br/>nothing ports until a person answers]
   Q -->|no| L{Claude Code's own limit<br/>still ahead}
   L -->|yes| X[Exit — nothing ports ahead of open findings]
   L -->|no| B[Checkout ai/review-fixes<br/>install for that tree]
@@ -20,6 +20,8 @@ flowchart TD
   R -->|no| E{Exited clean<br/>with a clean tree}
   E -->|no| F[Failed-attempt marker, run fails]
   E -->|yes| V[Post the rejections] --> PU[Push ai/review-fixes with a lease]
+  PU --> U{Every finding fixed<br/>or rejected}
+  U -->|no| F
 ```
 
 ## What is open
@@ -40,22 +42,22 @@ For each finding it does what the `coderabbit` skill prescribes, in the order th
 
 Once Claude exits, the script — the only process with a credential — posts a reply on each rejected thread and one verdict comment for rejected body-only findings, right away since neither cites a sha. A line naming a thread that was not open is skipped, and an HTML comment inside a reason is stripped, because a reply goes out under the login every marker read keys its trust on. Each post is best-effort: a refusal would otherwise throw away a drain that succeeded, and a thread whose reply did not land keeps the bot as its last author, so the next run drains it again. Then it pushes `ai/review-fixes` with a lease on the sha it read. The accepted findings' replies are the cycle's, after the window lands on `develop`.
 
-**A zero exit says the session ended, never that it finished.** A drain that stopped mid-fix leaves the rest of a finding in the working tree, so a dirty tree is a failed attempt like a non-zero exit.
+**A zero exit says the session ended, never that it finished.** A drain that stopped mid-fix leaves the rest of a finding in the working tree, so a dirty tree is a failed attempt like a non-zero exit. So is a clean tree with a finding neither fixed under a trailer nor rejected: what it did fix is pushed first, so the retry is handed only the rest, but the run ports nothing — a window cut over the rest would open a release that merges with them unread.
 
 **The findings are put severest first.** A session is one-shot and may end mid-round, so the order it meets them in is the one thing about the prompt that survives a round that did not finish. Each open finding is scored in a single [typed decision](/docs/infra/typed-decisions) and the prompt is built in that order. Nothing is dropped and nothing acts on a score, so a wrong order costs the ordering alone, and with no tier configured the reviewer's own order stands.
 
 ## When it cannot
 
-**A finding the drain cannot close is quarantined, not retried forever.** Each failed drain of a review leaves a hidden marker in a pull request comment; past the attempt cap the collector posts that it has stopped and ports without fixes. The marker and the quarantine both name the collector's own source as their basis ([the runner's counts](/docs/infra/review-collector/runner)), so a collector fixed since drains the review again rather than porting past it on a count the old code ran up. The findings stay open for a person — the cost of the alternative is a pipeline stalled on one finding nobody sees. This is the [no manual recovery](/docs/architecture/no-manual-recovery) shape: land the failure durably, cap the attempts, quarantine visibly.
+**A drain that cannot close its findings holds the queue, not retried forever and never ported past.** Each failed drain of a review leaves a hidden marker in a pull request comment; past the attempt cap the collector posts a held notice once and every run fails red, porting nothing. Porting past it is the one thing it may not do: the window it cut would open the next release, that release merges the moment its own review completes, and the findings would ship unread with no drain left to read them — the newest merged release is the only review a drain looks at. The failed run is red, so someone sees it, and three things clear it: a commit on `ai/queue` answering the findings (`Answers:` / `Drains:`), the threads resolved, or a change to the collector, since every marker names the collector's own source as its basis ([the runner's counts](/docs/infra/review-collector/runner)) and a collector changed since drains the review again. This is the [no manual recovery](/docs/architecture/no-manual-recovery) shape: land the failure durably, cap the attempts, hold visibly.
 
-**A drain that never started is not a failed attempt.** Claude Code refusing to run because the account is out of session exits non-zero like a drain that tried, and counting it would spend the quarantine budget on an outage. The step reads the sentence Claude Code prints on its way out — off its own lines, never the model's narration, and never trusting the result frame, which states `success` for a refusal — and a limit writes a marker carrying the instant it lifts. Until then every cycle skips the drain and stops before the port. No job sleeps this one out: Claude's reset is a time of day, up to a day off, and the next `ai/queue` push wakes the cycle soon enough.
+**A drain that never started is not a failed attempt.** Claude Code refusing to run because the account hit a limit — the session one or the weekly one, the sentence names either — exits non-zero like a drain that tried, and counting it would spend the attempt cap on an outage. Read as failures, one weekly limit held three reviews in a row under the old porting rule, and their releases went out with the findings unread. The step reads the sentence Claude Code prints on its way out — off its own lines, never the model's narration, and never trusting the result frame, which states `success` for a refusal — and a limit writes a marker carrying the instant it lifts. Until then every cycle skips the drain and stops before the port. No job sleeps this one out: Claude's reset is a time of day, up to a day off, and the next `ai/queue` push wakes the cycle soon enough.
 
 ## Key files
 
 | File                                                               | Role                                                                               |
 | :----------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
 | `scripts/src/services/coderabbit/collect/runDrainStep.ts`          | the open set it reads, and what stops it — nothing open, dry run, the Claude limit |
-| `scripts/src/services/coderabbit/collect/drainFindings.ts`         | quarantine, the branch, the install, the session, the verdicts, the push           |
+| `scripts/src/services/coderabbit/collect/drainFindings.ts`         | the hold, the branch, the install, the session, the verdicts, the push             |
 | `scripts/src/services/coderabbit/collect/getDrainPrompt.ts`        | what Claude is told, in the order it is told                                       |
 | `scripts/src/services/coderabbit/collect/readFindingSeverities.ts` | the score each finding is ordered by                                               |
 | `scripts/src/services/coderabbit/collect/runSession.ts`            | the headless session, its scrubbed environment and its streamed log                |

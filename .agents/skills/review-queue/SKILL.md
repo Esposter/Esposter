@@ -37,7 +37,7 @@ Every ref has one writer, and the session's is `ai/queue` alone — its linear h
 
 ## Answering a finding in-session
 
-A fix the session makes itself is a commit carrying `Answers: <comment id>` (or `Drains: <review id>` for a body-only finding), so the collector neither re-fixes nor replies early (`references/answering-findings.md`). A red run naming a held commit or `ai/review-fixes` is the session's to repair (`references/held-commits.md`).
+A fix the session makes itself is a commit carrying `Answers: <comment id>` (or `Drains: <review id>` for a body-only finding), so the collector neither re-fixes nor replies early (`references/answering-findings.md`). A red run naming a held commit, `ai/review-fixes` or a held review is the session's to repair (`references/held-commits.md`).
 
 ## After a release merges
 
@@ -47,6 +47,6 @@ Nothing is owed by the session; a red `main` is the collector's repair, and a me
 
 - `references/pull-conflicts.md` — when `git pull --rebase` stops on a conflict.
 - `references/answering-findings.md` — when the session fixes a CodeRabbit finding itself.
-- `references/held-commits.md` — when a collector run fails red naming a held commit or `ai/review-fixes`.
+- `references/held-commits.md` — when a collector run fails red naming a held commit, `ai/review-fixes`, or a held review.
 - `references/after-a-release.md` — when a release has merged, `main` is red, or a merge got into the queue.
 - `references/running-by-hand.md` — when the collector's workflow is off and the cycle is run from a checkout.

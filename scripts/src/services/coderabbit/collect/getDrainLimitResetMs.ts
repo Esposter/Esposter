@@ -1,10 +1,11 @@
 import { DAY_MS, DRAIN_LIMIT_FALLBACK_MS } from "#src/services/coderabbit/collect/constants";
 
 // Claude Code refusing to start prints its own sentence and exits non-zero, which reads like a drain that tried
-// And failed — and counting it as an attempt would spend the quarantine budget on an outage. The phrase is
-// Pinned to the two openers the refusal prints and bounded to its own line: a drain asked to fix findings about
-// This very wording discusses "session limit" in ordinary prose, and "resets" appears any distance below it.
-const LIMIT_REGEX = /(?:you've hit your session limit|usage limit reached)\b[^\n]*\bresets?\b[^\n]*/iu;
+// And failed — and counting it as an attempt would spend the attempt cap on an outage. The phrase is pinned to
+// The openers the refusal prints — whichever limit it names, session or weekly — and bounded to its own line: a
+// Drain asked to fix findings about this very wording discusses "session limit" in ordinary prose, and "resets"
+// Appears any distance below it.
+const LIMIT_REGEX = /(?:you've hit your \w+ limit|usage limit reached)\b[^\n]*\bresets?\b[^\n]*/iu;
 // "You've hit your session limit · resets 3:10am (UTC)", or an hour alone. The zone is read rather than
 // Assumed: a runner is UTC, a developer's clone is not.
 const RESET_REGEX = /resets?(?: at)? (?<hour>\d{1,2})(?::(?<minute>\d{2}))?\s*(?<meridiem>am|pm) \(UTC\)/iu;

@@ -1,4 +1,5 @@
 import type { DrainPromptInput } from "#src/models/coderabbit/collect/DrainPromptInput";
+import type { DrainVerdicts } from "#src/models/coderabbit/collect/DrainVerdicts";
 
 import { getDrainsVerdictBody } from "#src/services/coderabbit/collect/getDrainsVerdictBody";
 import { postComment } from "#src/services/coderabbit/collect/postComment";
@@ -24,8 +25,12 @@ export const postDrainVerdicts = ({
   rejectionsPath,
   reviewId,
   verdictPath,
-}: Pick<DrainPromptInput, "openThreads" | "pullRequest" | "rejectionsPath" | "reviewId" | "verdictPath">): void => {
+}: Pick<
+  DrainPromptInput,
+  "openThreads" | "pullRequest" | "rejectionsPath" | "reviewId" | "verdictPath"
+>): DrainVerdicts => {
   const openIds = new Set(openThreads.map(({ commentId }) => commentId));
+  const rejectedIds: number[] = [];
   for (const line of readLines(rejectionsPath)) {
     const [rawCommentId = "", ...reason] = line.split(" ");
     const commentId = Number(rawCommentId);
@@ -38,10 +43,11 @@ export const postDrainVerdicts = ({
     const body = `Not a real issue, no change — ${stripHtmlComments(reason.join(" "))}`;
     console.info(`reply ${commentId}: ${body}`);
     getResult(() => postReply(pullRequest, commentId, body)).match(noop, console.error);
+    rejectedIds.push(commentId);
   }
 
   const verdicts = readLines(verdictPath);
-  if (verdicts.length === 0 || reviewId === undefined) return;
+  if (verdicts.length === 0 || reviewId === undefined) return { isBodyRejected: false, rejectedIds };
 
   const body = getDrainsVerdictBody(
     reviewId,
@@ -50,4 +56,5 @@ export const postDrainVerdicts = ({
   );
   console.info(`verdict comment for review ${reviewId}`);
   getResult(() => postComment(pullRequest, body)).match(noop, console.error);
+  return { isBodyRejected: true, rejectedIds };
 };

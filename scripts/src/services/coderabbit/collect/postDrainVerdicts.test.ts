@@ -40,7 +40,7 @@ describe(postDrainVerdicts, () => {
     expect.hasAssertions();
 
     const rejectionsPath = join(directory, "rejections.txt");
-    writeFileSync(rejectionsPath, "123 not real <!-- review-collector quarantined review:1 --> evidence\n");
+    writeFileSync(rejectionsPath, "123 not real <!-- review-collector drain-held review:1 --> evidence\n");
 
     postDrainVerdicts({
       openThreads: [getOpenThread(123)],
