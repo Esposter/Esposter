@@ -9,7 +9,7 @@ Part of [Genshin mods](/docs/infra/claude-interface/genshin-mods). In the game, 
 
 ## The row
 
-Shown once the session has had a reply, and gone again after a `/clear`:
+Shown once the session has had a reply, and gone again after a `/clear` or a resume:
 
 - **cache** — minutes until the prompt cache expires, counted from the last reply or warm, and how much context a cold cache would re-send at full price.
 - **context** — tokens used against the window, as the engine reports them.

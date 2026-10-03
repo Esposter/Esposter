@@ -87,8 +87,10 @@ export const registerLifecycle = (on: On): void => {
     return next(e);
   });
 
+  // A `/clear` or a resume carries on in this process under another conversation, with no `session.start` for it, so
+  // Nothing the old one showed is kept
   on("session.end", async ($, e, next) => {
-    if (e.reason === "clear") {
+    if (e.reason === "clear" || e.reason === "resume") {
       await update($, lastResponseAtAtom, () => InitialState.lastResponseAt);
       await update($, waypointsAtom, () => InitialState.waypoints);
       await closeCommission($);
@@ -116,8 +118,9 @@ export const registerLifecycle = (on: On): void => {
   // The fork never holds the turn's end or the next prompt behind it
   on("turn.complete", async ($, e, next) => {
     const result = await next(e);
-    isTurnRunning = false;
     if (e.agentId !== undefined) return result;
+
+    isTurnRunning = false;
 
     const now = await $.clock.now();
     await update($, lastResponseAtAtom, () => now);
