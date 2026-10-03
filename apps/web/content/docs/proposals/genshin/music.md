@@ -18,7 +18,7 @@ The login screen plays music, and ours is silent. This page re-derives that musi
 
 - **Nothing of the game's audio ships.** No sound, sample or recording of the game's enters the repository or a build, in any format. The structure, the notes and the instruments' parameters are written by our own fits, as the scene's kits are, and the browser synthesizes the sound. A transcription is a re-derivation in the same sense a traced logo is: our own data, measured from the reference.
 - **The structure is exact.** Segment lengths, trims, the rest between pieces and the playlist's order come from the sound banks, never from a recording. A recording measures only what the banks do not hold.
-- **The notes are measured.** The score is the game's own decoded audio transcribed by [pitch-transcription](/docs/proposals/refactors/pitch-transcription), our absorption of Basic Pitch. A recording is never transcribed when the game's sound is to hand, since a recording carries the interface's sounds and a codec's losses.
+- **The notes are measured.** The score is the game's own decoded audio transcribed by [pitch-transcription](/docs/pitch-transcription), our absorption of Basic Pitch. A recording is never transcribed when the game's sound is to hand, since a recording carries the interface's sounds and a codec's losses.
 - **Every instrument is fitted, never chosen.** A voice's harmonics, envelope and level are measured from the game's audio at its own notes: each harmonic's amplitude against the fundamental, the time to its peak, the level it settles to, how fast it settles, and how fast it fades after the note ends, each the median over the voice's notes. A value with no measurement behind it is not shipped, as on every screen.
 - **Voices by register first.** The first fit splits the notes into a low, a middle and a high voice at fixed pitches, matching the spectrogram's three layers, so each register gets one fitted timbre. Telling instruments apart within a register — a harp from a piano in the same octave — needs a separation of its own, and waits until the listening score says register is the largest loss.
 - **Our own synthesizer, in the engine.** Web Audio plays each note as an oscillator over its instrument's harmonics, through a gain that follows its envelope. A player schedules notes a couple of seconds ahead of the audio clock and loops the playlist. It is game-agnostic, so it belongs in `genshin-engine`; the login's score and instruments are the world's data.
@@ -46,11 +46,10 @@ flowchart TD
 
 ## Build order
 
-1. **pitch-transcription**, absorbed first ([its proposal](/docs/proposals/refactors/pitch-transcription)), since every later step reads its notes.
-2. **The fit.** A step of `genshin:assets fit` resolves the login's playlist from the banks, decodes its sources, transcribes them, splits the voices and fits their instruments, and writes the login's music data into the world package.
-3. **The player.** The engine's instrument, note and segment types and its player, with the login's music played from a component of the login screen that renders nothing.
-4. **The listening score.** `genshin:parity listen`, its committed report and its toolbox row.
-5. **The passes the score orders.** Reverb, the room the game's mix is heard in; instruments separated within a register; and the dynamics within a note the median envelope flattens. Each is taken only when the score ranks it the largest loss.
+1. **The fit.** A step of `genshin:assets fit` resolves the login's playlist from the banks, decodes its sources, transcribes them, splits the voices and fits their instruments, and writes the login's music data into the world package. It is `pitch-transcription`'s first consumer, so `scripts` takes the package and TensorFlow.js with it.
+2. **The player.** The engine's instrument, note and segment types and its player, with the login's music played from a component of the login screen that renders nothing.
+3. **The listening score.** `genshin:parity listen`, its committed report and its toolbox row.
+4. **The passes the score orders.** Reverb, the room the game's mix is heard in; instruments separated within a register; and the dynamics within a note the median envelope flattens. Each is taken only when the score ranks it the largest loss.
 
 ## What this does not propose
 

@@ -89,6 +89,7 @@ catalog:
   "@pulumi/github": ^6.15.0
   "@pulumi/pulumi": ^3.267.0
   "@takumi-rs/core": ^2.14.0
+  "@tensorflow/tfjs": ^4.22.0
   "@tiptap/core": ^3.31.4
   "@tiptap/extension-code-block-lowlight": ^3.31.4
   "@tiptap/extension-file-handler": ^3.31.4
@@ -100,6 +101,7 @@ catalog:
   "@tiptap/starter-kit": ^3.31.4
   "@tiptap/suggestion": ^3.31.4
   "@tiptap/vue-3": ^3.31.4
+  "@tonejs/midi": ^2.0.28
   "@tresjs/cientos": ^5.9.2
   "@tresjs/core": ^5.9.2
   "@tresjs/nuxt": ^5.7.2

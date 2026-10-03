@@ -8,34 +8,35 @@ This file is an **index and a process**, never a reference. Anything explaining 
 
 **Esposter** — a social platform monorepo, TypeScript in strict mode across a pnpm workspace. Nuxt + Vue on the front, tRPC and Nitro server routes behind it, Drizzle over PostgreSQL alongside Azure Table and Blob Storage, Azure Functions for async work, Pinia for state, UnoCSS attributify + the app's own UI library on Vuetify 0 for styling, Vitest for tests, oxlint + ESLint for lint, Pulumi for infrastructure. Versions live in the manifests; node in `.node-version`, pnpm in `packageManager`.
 
-| Package Path                    | npm name                  | Description                                                                                                    |
-| :------------------------------ | :------------------------ | :------------------------------------------------------------------------------------------------------------- |
-| `apps/functions`                | `@esposter/functions`     | Serverless backend (EventGrid, Service Bus, Timers)                                                            |
-| `apps/infra`                    | `@esposter/infra`         | Pulumi infrastructure code and migration tools for Azure                                                       |
-| `apps/web`                      | `@esposter/web`           | Main Nuxt web application (frontend, server routes, tRPC)                                                      |
-| `packages/agent-console-server` | `agent-console-server`    | Agent console host — Claude Code sessions through the Agent SDK over a token-gated loopback WebSocket          |
-| `packages/azure`                | `@esposter/azure`         | Azure wire conventions shared by the real clients and the mocks                                                |
-| `packages/azure-mock`           | `azure-mock`              | Mock Azure service classes for local dev and testing                                                           |
-| `packages/configuration`        | `@esposter/configuration` | Shared ESLint, TSConfig, and tsdown build configs                                                              |
-| `packages/db`                   | `@esposter/db`            | DB connection utilities (Drizzle ORM, Azure Table, Blob, WebPubSub)                                            |
-| `packages/db-mock`              | `@esposter/db-mock`       | In-memory PGlite database factory for unit/integration tests                                                   |
-| `packages/db-schema`            | `@esposter/db-schema`     | **Source of truth** for DB: Drizzle ORM schemas, migrations                                                    |
-| `packages/follow-ups`           | `@esposter/follow-ups`    | Claude Code plugin — a session's unfinished follow-ups written into a TodoList and drained until none is left  |
-| `packages/genshin-engine`       | `genshin-engine`          | Anime-style open-world engine for three.js WebGPU — toon materials, outlines, post-processing and world kits   |
-| `packages/genshin-interface`    | `genshin-interface`       | Genshin's 2D interface — the screen root, its units and pointer, and the pieces the game's screens share       |
-| `packages/genshin-text`         | `genshin-text`            | The game's own words in its fifteen languages — language registry, locale matcher, strings by text id          |
-| `packages/genshin-world`        | `genshin-world`           | Genshin's world on the engine — the region catalogue, each region's data and the TresJS components building it |
-| `packages/genshin-persona`      | `genshin-persona`         | Claude Code plugin — a Genshin character picked by birthday, replies spoken in its own cloned voice            |
-| `packages/keyframe-store`       | `keyframe-store`          | Content-addressed version store — zstd keyframes and deltas over any backend                                   |
-| `packages/parse-tmx`            | `parse-tmx`               | Parser for Tiled Map Editor `.tmx` files                                                                       |
-| `packages/shared`               | `@esposter/shared`        | Shared TypeScript types, utilities, and error classes                                                          |
-| `packages/shared-node`          | `@esposter/shared-node`   | Benchmark reporting/running for vitest bench (no barrel entrypoint)                                            |
-| `packages/trpc-msw`             | `trpc-msw`                | tRPC for Mock Service Worker — HTTP, batching, SSE and WebSockets answered by tRPC's own handlers              |
-| `packages/trpc-nuxt-module`     | `trpc-nuxt-module`        | tRPC for Nuxt — a Nuxt module for the router's HTTP and WebSocket handlers and composables over `useAsyncData` |
-| `packages/virrun`               | `virrun`                  | Ephemeral in-memory virtual runner — runs a repo's real toolchain isolated                                     |
-| `packages/vue-phaserjs`         | `vue-phaserjs`            | Phaser game engine integration for Vue                                                                         |
-| `packages/xml2js`               | `@esposter/xml2js`        | TypeScript rewrite of xml2js — XML ↔ JSON conversion                                                           |
-| `scripts`                       | `@esposter/scripts`       | The repo's own tooling: workspace graph, dependency report, sweeps, plugins                                    |
+| Package Path                    | npm name                  | Description                                                                                                         |
+| :------------------------------ | :------------------------ | :------------------------------------------------------------------------------------------------------------------ |
+| `apps/functions`                | `@esposter/functions`     | Serverless backend (EventGrid, Service Bus, Timers)                                                                 |
+| `apps/infra`                    | `@esposter/infra`         | Pulumi infrastructure code and migration tools for Azure                                                            |
+| `apps/web`                      | `@esposter/web`           | Main Nuxt web application (frontend, server routes, tRPC)                                                           |
+| `packages/agent-console-server` | `agent-console-server`    | Agent console host — Claude Code sessions through the Agent SDK over a token-gated loopback WebSocket               |
+| `packages/azure`                | `@esposter/azure`         | Azure wire conventions shared by the real clients and the mocks                                                     |
+| `packages/azure-mock`           | `azure-mock`              | Mock Azure service classes for local dev and testing                                                                |
+| `packages/configuration`        | `@esposter/configuration` | Shared ESLint, TSConfig, and tsdown build configs                                                                   |
+| `packages/db`                   | `@esposter/db`            | DB connection utilities (Drizzle ORM, Azure Table, Blob, WebPubSub)                                                 |
+| `packages/db-mock`              | `@esposter/db-mock`       | In-memory PGlite database factory for unit/integration tests                                                        |
+| `packages/db-schema`            | `@esposter/db-schema`     | **Source of truth** for DB: Drizzle ORM schemas, migrations                                                         |
+| `packages/follow-ups`           | `@esposter/follow-ups`    | Claude Code plugin — a session's unfinished follow-ups written into a TodoList and drained until none is left       |
+| `packages/genshin-engine`       | `genshin-engine`          | Anime-style open-world engine for three.js WebGPU — toon materials, outlines, post-processing and world kits        |
+| `packages/genshin-interface`    | `genshin-interface`       | Genshin's 2D interface — the screen root, its units and pointer, and the pieces the game's screens share            |
+| `packages/genshin-text`         | `genshin-text`            | The game's own words in its fifteen languages — language registry, locale matcher, strings by text id               |
+| `packages/genshin-world`        | `genshin-world`           | Genshin's world on the engine — the region catalogue, each region's data and the TresJS components building it      |
+| `packages/genshin-persona`      | `genshin-persona`         | Claude Code plugin — a Genshin character picked by birthday, replies spoken in its own cloned voice                 |
+| `packages/keyframe-store`       | `keyframe-store`          | Content-addressed version store — zstd keyframes and deltas over any backend                                        |
+| `packages/parse-tmx`            | `parse-tmx`               | Parser for Tiled Map Editor `.tmx` files                                                                            |
+| `packages/pitch-transcription`  | `pitch-transcription`     | The notes in a recording — Basic Pitch on the current TensorFlow.js, its readings turned into notes, bends and MIDI |
+| `packages/shared`               | `@esposter/shared`        | Shared TypeScript types, utilities, and error classes                                                               |
+| `packages/shared-node`          | `@esposter/shared-node`   | Benchmark reporting/running for vitest bench (no barrel entrypoint)                                                 |
+| `packages/trpc-msw`             | `trpc-msw`                | tRPC for Mock Service Worker — HTTP, batching, SSE and WebSockets answered by tRPC's own handlers                   |
+| `packages/trpc-nuxt-module`     | `trpc-nuxt-module`        | tRPC for Nuxt — a Nuxt module for the router's HTTP and WebSocket handlers and composables over `useAsyncData`      |
+| `packages/virrun`               | `virrun`                  | Ephemeral in-memory virtual runner — runs a repo's real toolchain isolated                                          |
+| `packages/vue-phaserjs`         | `vue-phaserjs`            | Phaser game engine integration for Vue                                                                              |
+| `packages/xml2js`               | `@esposter/xml2js`        | TypeScript rewrite of xml2js — XML ↔ JSON conversion                                                                |
+| `scripts`                       | `@esposter/scripts`       | The repo's own tooling: workspace graph, dependency report, sweeps, plugins                                         |
 
 ## Commands
 

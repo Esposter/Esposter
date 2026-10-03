@@ -27,6 +27,5 @@ A program too large for one area's roadmap indexes its own proposals:
 Repo-wide refactor plans have no area roadmap and live here directly:
 
 - [the Vite+ migration](/docs/proposals/refactors/vite-plus) — make `vp` the toolchain entry point and cached task runner, retire the hand-rolled caches and virrun, and leave Nuxt owning the app build.
-- [pitch-transcription](/docs/proposals/refactors/pitch-transcription) — absorb Spotify's Basic Pitch into a package of our own on the current TensorFlow.js, its model exported and its note creation usable alone.
 
 Sweeps are not proposals. A proposal designs behaviour that does not exist yet; a sweep carries a settled convention across code that already works and changes nothing about what it does. They are tracked as repo state in `.agents/ledgers/`, one ledger file per sweep — or one coverage folder, once a sweep outgrows a single file.
