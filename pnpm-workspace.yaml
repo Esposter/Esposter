@@ -204,7 +204,7 @@ catalog:
   mermaid: ^12.0.0
   mime-types: ^3.0.2
   minisearch: ^7.2.0
-  msw: ^3.0.1
+  msw: ^3.0.2
   neverthrow: ^8.2.0
   nitropack: ^2.13.4
   node-html-parser: ^9.0.4
