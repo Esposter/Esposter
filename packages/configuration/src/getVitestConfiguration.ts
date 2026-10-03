@@ -24,7 +24,6 @@ export const getVitestConfiguration = (
       conditions: [SOURCE_CONDITION, ...defaultServerConditions],
     },
     test: {
-      silent: "passed-only",
       // Transforming the module graph is the largest share of a run and is otherwise redone from scratch every
       // Time; persisting it to `node_modules/.vitest-cache` reuses it across reruns and separate processes, and
       // A reinstall drops the directory along with the dependencies it was keyed on.
@@ -34,6 +33,7 @@ export const getVitestConfiguration = (
       // Detector rather than a hook bound, and this is the one setting that keeps a green suite green
       hookTimeout: Temporal.Duration.from({ minutes: 1 }).total("milliseconds"),
       ...(projectDirectory ? { name: getVitestProjectName(projectDirectory) } : {}),
+      silent: "passed-only",
       // Restores every vi.stubEnv before each test, so no file needs its own unstubAllEnvs teardown. The globals
       // Equivalent stays off: it would restore a beforeAll stubGlobal before the file's first test even runs.
       unstubEnvs: true,
