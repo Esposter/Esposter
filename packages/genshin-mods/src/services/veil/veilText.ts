@@ -1,5 +1,7 @@
 // A placeholder holds no digit, at sign or currency sign, so no pattern matches what another wrote and the order they
-// Run in changes nothing
+// Run in changes nothing. A secret is a known key prefix; a long run mixing letters and digits, read from the run's
+// Start alone so a long run of neither is scanned once rather than again from every position in it; or whatever
+// Follows a password's own label, however short
 const VeilPatternMap = new Map<string, RegExp>([
   [
     "[amount]",
@@ -12,7 +14,7 @@ const VeilPatternMap = new Map<string, RegExp>([
   ],
   [
     "[secret]",
-    /\b(?:sk-[\w-]{16,}|gh[opsu]_\w{16,}|github_pat_\w{16,}|xox[abpr]-[\w-]{10,}|AKIA[0-9A-Z]{16}|eyJ[\w-]+\.[\w-]+\.[\w-]+)|(?=[\w+=-]*\d)(?=[\w+=-]*[A-Za-z])[\w+=-]{32,}/gu,
+    /\b(?:sk-[\w-]{16,}|gh[opsu]_\w{16,}|github_pat_\w{16,}|xox[abpr]-[\w-]{10,}|AKIA[0-9A-Z]{16}|eyJ[\w-]+\.[\w-]+\.[\w-]+)|(?<![\w+=-])(?=[\w+=-]*\d)(?=[\w+=-]*[A-Za-z])[\w+=-]{32,}|(?<=\b(?:[Pp]assword|PASSWORD|passwd|pwd)\s*[:=]\s*)(?:"[^"\n]*"|'[^'\n]*'|\S+)/gu,
   ],
 ]);
 
