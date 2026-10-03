@@ -12,7 +12,7 @@ export interface Character {
   // Other field here is display alone, so it is localized in place and needs no twin
   displayElement: string;
   displayName: string;
-  // The English element, which is the status line's colour key and never shown; `displayElement` is what is read
+  // The English element, which is the colour's fallback key and never shown; `displayElement` is what is read
   element: string;
   // The English name, which is the identity: the pin, the pick records, the reference clips, the card modules and
   // Every wiki lookup are keyed by it, so it is stable across a change of interface language

@@ -1,5 +1,5 @@
 import { CharacterColorMap } from "#src/services/CharacterColorMap";
-import { ElementColorMap, NAMEPLATE_PREFIX } from "#src/services/constants";
+import { ElementColorMap } from "#src/services/constants";
 import { getPersonaCharacter } from "#src/services/getPersonaCharacter";
 import { assert, describe, expect, test } from "vitest";
 
@@ -7,7 +7,6 @@ describe(getPersonaCharacter, () => {
   // The display name is what is drawn and the English name is only the identity, so they differ here
   const displayName = "displayName";
   const name = "name";
-  const line = `${NAMEPLATE_PREFIX}${displayName}`;
 
   test("takes the character's own colour ahead of the element's", () => {
     expect.hasAssertions();
@@ -19,7 +18,6 @@ describe(getPersonaCharacter, () => {
     expect(getPersonaCharacter({ displayName, element: "Anemo", name: characterName })).toStrictEqual({
       color,
       displayName,
-      line,
       name: characterName,
     });
   });

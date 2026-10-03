@@ -7,7 +7,7 @@ describe(findCharacterByName, () => {
   const roster = [character];
 
   // The English name is the identity every state file and the wiki are keyed by, and the display name is what the
-  // Status line and the card show — so it is the one a person copies and has to resolve too
+  // Prompt hint and the card show — so it is the one a person copies and has to resolve too
   test.each(["Hu Tao", "hu tao", "胡桃"])("%j resolves to the character", (name) => {
     expect.hasAssertions();
 

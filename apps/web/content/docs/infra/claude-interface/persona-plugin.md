@@ -118,7 +118,7 @@ The hook reads one package and one state directory under the user's Claude home:
 
 ## Switching inside a session
 
-The session's record is the one source every reader trusts — the start hook on a compact or resume, the status line, the speech hook — so changing a session's character is rewriting that record, and the tool makes the record reachable from inside the session: every Bash tool subprocess carries the session id in `CLAUDE_CODE_SESSION_ID`, the same id the hook input names. `use <name>` rewrites this session's record and leaves the pin as it stands; `pin <name>` writes the pin for every later session and rewrites this one's record too; `unpin` deletes the pin and gives this session a fresh pick. Each prints the card, and the card printed in the conversation is the one the model answers as from that reply on — the output style's standing rule. The command that ran the verb reads the character again behind its answer, so the status line, the spinner and the prompt hint show the switch at once, and the voice follows from its next line. A session that started before the pin keeps its own record, because its conversation started with that character.
+The session's record is the one source every reader trusts — the start hook on a compact or resume, the hooks module, the speech — so changing a session's character is rewriting that record, and the tool makes the record reachable from inside the session: every Bash tool subprocess carries the session id in `CLAUDE_CODE_SESSION_ID`, the same id the hook input names. `use <name>` rewrites this session's record and leaves the pin as it stands; `pin <name>` writes the pin for every later session and rewrites this one's record too; `unpin` deletes the pin and gives this session a fresh pick. Each prints the card, and the card printed in the conversation is the one the model answers as from that reply on — the output style's standing rule. The command that ran the verb reads the character again behind its answer, so the spinner, the prompt hint and the mods' accent show the switch at once, and the voice follows from its next line. A session that started before the pin keeps its own record, because its conversation started with that character.
 
 ```mermaid
 flowchart LR
@@ -126,7 +126,7 @@ flowchart LR
     Env["CLAUDE_CODE_SESSION_ID"]
     Record["This session's record<br/>in picks.tsv"]
     Reply["The card in the reply<br/>the model answers as it"]
-    Line["Status line, spinner and hint<br/>read again behind the answer"]
+    Line["Spinner, hint and accent<br/>read again behind the answer"]
     Speech["Speech hook<br/>next reply"]
     Restart["Compact, resume<br/>the start hook reads the record"]
 
@@ -182,7 +182,7 @@ flowchart LR
     Asked -- no --> Silent
 ```
 
-Personalisation goes wherever it costs the model nothing: the status line and the spoken voice are the person's alone, the greeting is shown to them in their own language out of the card the model is already holding, and the context budget stays at the card. The output style, forced on while the plugin is enabled with coding instructions kept, carries the standing rules: the character speaks in spoken lines and nowhere else — one blockquote line opening an answer a reader will use and at most a closing one, or the whole reply when the ask was the character's — and everything else is plain, code, commits, commands and error text included, with every fact a neutral reply would carry still carried. What those lines are for is the [spoken replies](/docs/infra/claude-interface/spoken-replies) page's. The published comparisons of persona prompts agree that a long character sheet degrades engineering output while a functional identity of a few lines does not.
+Personalisation goes wherever it costs the model nothing: the spinner, the hint and the spoken voice are the person's alone, the greeting is shown to them in their own language out of the card the model is already holding, and the context budget stays at the card. The output style, forced on while the plugin is enabled with coding instructions kept, carries the standing rules: the character speaks in spoken lines and nowhere else — one blockquote line opening an answer a reader will use and at most a closing one, or the whole reply when the ask was the character's — and everything else is plain, code, commits, commands and error text included, with every fact a neutral reply would carry still carried. What those lines are for is the [spoken replies](/docs/infra/claude-interface/spoken-replies) page's. The published comparisons of persona prompts agree that a long character sheet degrades engineering output while a functional identity of a few lines does not.
 
 The plugin's authoring skill keeps the hand-written half honest: the card shape and its ceiling, the sources a line may be drawn from (the character's own in-game lines and story, described in our words, never quoted), and the rule that a card describes how the character speaks and never what the assistant should do. Its commands are the loop: two queues list the characters with no card and the cards with no spinner verbs, newest first, and one prints a character's own lines to write from, off the game data or, before the data carries them, off the game's own text. Authoring is a queue drained when someone feels like it and never a gate on a patch, and a patch refills it on the same cadence as the dependency bump.
 
@@ -217,7 +217,7 @@ flowchart TD
     Language -->|cascades unless set| Reply
     Language -.->|reports, never installs| Dub
     Language --> Data{"Who already says it?"}
-    Data -- "name, title, element, region, description, the character's own lines" --> Free["Card headline, spinner tips, status line"]
+    Data -- "name, title, element, region, description, the character's own lines" --> Free["Card headline, spinner tips, the hint's label"]
     Data -- "the game's own words" --> Game["Generated game text<br/>the birthday label, and lines the data package lacks"]
     Game --> Free
     Data -- "our own words" --> Module{"A string or gerund in this language's module?"}
@@ -232,7 +232,7 @@ flowchart TD
 
 ### What the data package answers, and what is ours
 
-Passing the English name as the query language and the chosen one as the result language answers every field the card and the status line show — the name, the title, the element and region text, and the one-line description — and answers the character's own voice lines in the same call, at the same count as English. The spinner's tips are those lines, so the largest readable surface localizes for the cost of two options on a query that is already made. The roster is read twice rather than once: the English records are the identity, the localized records are what is read, and they are matched on the id the package gives rather than on the order it returns them in.
+Passing the English name as the query language and the chosen one as the result language answers every field the card and the prompt hint show — the name, the title, the element and region text, and the one-line description — and answers the character's own voice lines in the same call, at the same count as English. The spinner's tips are those lines, so the largest readable surface localizes for the cost of two options on a query that is already made. The roster is read twice rather than once: the English records are the identity, the localized records are what is read, and they are matched on the id the package gives rather than on the order it returns them in.
 
 What the game itself says is not ours to write either: the label over a birthday is the game's own word for it, read from the generated game text in the interface language, so the aside is right in every language without a module carrying it. What is ours is one authored module per language under `src/localizations/`, named for the language the way a card is named for its character: that language's base Teyvat verbs, the person's half of each card keyed by the character's English name, the locale the runtime formats against, and every line the verbs themselves print. Every one of the game's fifteen has a module, and one matrix test holds each to the roster, to English's count of base verbs, to no English pasted where its translation belongs and to every string filled. A language still inherits a string it lacks from English per string, so the state a new patch leaves — a character no module has gerunds or a greeting for yet — is legal rather than a missing key, and `untranslated` is that queue, the third beside `uncarded` and `unverbed`.
 
@@ -244,7 +244,7 @@ What the game itself says is not ours to write either: the label over a birthday
 
 ### Identity and display
 
-The English name is the identity: the pin, the pick records, the reference clips, the card modules and every wiki lookup are keyed by it, and it is stable across a change of language. Beside it rides the name that language spells the character by, which is what the status line draws and the card heads. The status line's colour is looked up by the **English** name and element for the same reason — a localized name or element text matches no key in either colour map, and the fallback is an uncoloured nameplate, so the failure would have been silent. A typed name resolves against either, because the localized one is what a person sees and therefore copies.
+The English name is the identity: the pin, the pick records, the reference clips, the card modules and every wiki lookup are keyed by it, and it is stable across a change of language. Beside it rides the name that language spells the character by, which is what the prompt hint draws and the card heads. The character's colour is looked up by the **English** name and element for the same reason — a localized name or element text matches no key in either colour map, and the fallback is the mods' own accent, so the failure would have been silent. A typed name resolves against either, because the localized one is what a person sees and therefore copies.
 
 A change of interface language rewrites the session's record, the pin and the spinner exactly as a change of character does, since all three carry the name being drawn. The roster cache is keyed by the data package's version **and** the language, so a change of either is a miss rather than a stale read. That name reaches a file path in the cache's own name, so the state file holding it is read only when it holds a bare run of letters, which every one of the package's names is; checking it against the package there is what costs the better part of a second, so a well-formed name it does not answer in falls back where it is used instead.
 
@@ -266,9 +266,9 @@ One of them changes nothing. Every setting is its own file in the state director
 
 The plugin's surfaces beside the card are drawn by the engine from a hooks module, `mod/register.ts`, a TypeScript module the engine runs in-process ([Claude Code mods](/docs/architecture/claude-mods)), so nothing is written into the person's settings and nothing outlives the plugin. The module has no Node, so everything that reads game data, state files or audio stays in the plugin's node scripts, which it runs as commands with the hook's input on stdin. It publishes the session's character as state — the name, the name the interface language spells, and a colour — which the [genshin mods](/docs/infra/claude-interface/genshin-mods) draw their accent in.
 
-The status line is the engine's own line for a plugin, pinned under the prompt: the status script reads the session's record, else the pin, else the birthday pick over the roster cache, and prints the character as JSON for the module. It reads the state files and never the game data, which costs the better part of a second to load, so the module reads it at session start, behind every verb and after every turn: the session-start hook may still be writing the record when the first read runs, and a lore pick records its answer after the birthday pick has stood in, so the line settles on the next turn at the latest. It never stands in another session's record: a `use` is that session's alone.
+The status script reads the session's record, else the pin, else the birthday pick over the roster cache, and prints the character as JSON for the module with whether it was the session's own record. It reads the state files and never the game data, which costs the better part of a second to load, so the module reads it at session start and behind every verb, and after each turn only while the record is missing: the session-start hook may still be writing it when the first read runs, and a lore pick records its answer after the birthday pick has stood in, so the character settles on the first turn and no turn after that starts a node process for it. It never stands in another session's record: a `use` is that session's alone.
 
-The engine draws a plugin's status line as plain text, so the character's colour reaches the screen as the band's accent rather than behind the name: the one colour the official art hangs on them — a hair, a coat, a signature accent — read off the card art into `CharacterColorMap`, so a Hu Tao day reads plum and a Nahida day mint at a glance, across the whole spectrum rather than the one band per element a roster this size would share out. Where the colour misses WCAG AA on dusk's background, the dark surface a terminal mostly is — the deep reds and blues, such as Hu Tao's plum — it is lightened in OKLab until it passes, keeping the hue and chroma so a red stays a red rather than washing out to pink. The game publishes no colour per character, so every row is a read of the art, and the element's colour stands in for a character with no row yet: a new patch is a dependency bump and a row here. The colour is a static module keyed by the English name, and the state files carry the element beside the name for the fallback, so neither costs a lookup.
+The character's colour reaches the screen as the [genshin mods](/docs/infra/claude-interface/genshin-mods)' accent: the one colour the official art hangs on them — a hair, a coat, a signature accent — read off the card art into `CharacterColorMap`, so a Hu Tao day reads plum and a Nahida day mint at a glance, across the whole spectrum rather than the one band per element a roster this size would share out. Where the colour misses WCAG AA on dusk's background, the dark surface a terminal mostly is — the deep reds and blues, such as Hu Tao's plum — it is lightened in OKLab until it passes, keeping the hue and chroma so a red stays a red rather than washing out to pink. The game publishes no colour per character, so every row is a read of the art, and the element's colour stands in for a character with no row yet: a new patch is a dependency bump and a row here. The colour is a static module keyed by the English name, and the state files carry the element beside the name for the fallback, so neither costs a lookup.
 
 The spinner is this session's own. The engine samples a word per turn and the module rewrites it to one of the character's verbs, the same word always mapping to the same verb, so two sessions speaking as different characters each show their own and a switch shows at once. The verbs have two layers of the same shape: the interface language's base Teyvat verbs, in its module under `src/localizations/`, and the character's own `verbs` — the card's under English and that module's otherwise — read by a person, never by the model, so the card's fifty-token ceiling is untouched. The tips are the character's own lines under their name as the interface language spells it, one at the dim end of the prompt hint and the next after each turn, off the game data or, before it carries them, the game's own text, each cut to the opening sentences that fit, since a twin's lines are dialogues. The game data spells the player through placeholders the game fills in as it shows a line — the nickname, which speaks every one of a twin's own turns, and a word per gender — so the nickname is the character's own name as the interface language spells it, and a gendered word takes a twin's own gender, else the male form, as the game's own English does when it has to pick one. A card holds no tip of its own, because a tip performed in our words from those same lines is a paraphrase shown beside its original, and a character with no lines anywhere yet shows the game's one-line description of them. The lines cost a load of the data package, and the session-start hook's stdout is the model's context, so the hook reads none of it: the module runs the spinner script off the session start's own path, and again only when the character or the language that spells them changed.
 
@@ -283,7 +283,6 @@ flowchart LR
     SpinnerScript["spinner script<br/>verbs and lines, on a change"]
     Records["State directory<br/>picks.tsv, pin, roster cache"]
     State["Session state<br/>the character, the spinner"]
-    Line["Status line<br/>the localized name"]
     Spinner["Spinner word, hint tip"]
     Mods["genshin mods<br/>the band's accent"]
     Display["MessageDisplay"]
@@ -292,12 +291,11 @@ flowchart LR
     Start --> Hook
     Start --> Module
     Hook -->|records the session's pick| Records
-    Module -->|at start, behind a verb, after a turn| Status
+    Module -->|at start, behind a verb, after a turn until recorded| Status
     Records --> Status
     Status --> State
     Status -->|a new character or language| SpinnerScript
     SpinnerScript --> State
-    State --> Line
     State --> Spinner
     State --> Mods
     Display --> Module
@@ -312,7 +310,7 @@ flowchart LR
 | `packages/genshin-persona/.claude-plugin/plugin.json`                  | The plugin manifest: discovery metadata and the user-configuration options                                                           |
 | `packages/genshin-persona/package.json`                                | Every dependency as a plain range; no devDependencies, so the npm lockfile stays honest                                              |
 | `packages/genshin-persona/hooks/hooks.json`                            | The session-start hook, and the hooks module beside it                                                                               |
-| `packages/genshin-persona/mod/register.ts`                             | The hooks module: the status line, the spinner word and hint tip, the spoken replies and one command per verb                        |
+| `packages/genshin-persona/mod/register.ts`                             | The hooks module: the spinner word and hint tip, the character published for the mods, the spoken replies and one command per verb   |
 | `packages/genshin-persona/mod/VerbDescriptionMap.ts`                   | Each verb's command and the line the menu shows, and the verbs that print a card                                                     |
 | `packages/genshin-persona/types/index.d.ts`                            | The state the module publishes, and the shapes the status and spinner scripts print                                                  |
 | `packages/genshin-persona/output-styles/in-character.md`               | The standing voice rules, forced on while the plugin is enabled: spoken lines, and everything else plain                             |
@@ -321,9 +319,9 @@ flowchart LR
 | `packages/genshin-persona/scripts/spinner.ts`                          | The spinner as JSON for the module, run off the start's path since the lines cost a load of the data package                         |
 | `packages/genshin-persona/scripts/genshin.ts`                          | The commands' script: the verbs' usage in the interface language                                                                     |
 | `packages/genshin-persona/src/services/cli/commands/genshinCommand.ts` | Every verb, one file each beside it: the language cascade, the status report, and the queues                                         |
-| `packages/genshin-persona/scripts/status.ts`                           | The session's character as JSON for the module: the state files and the roster cache read, never the game data                       |
+| `packages/genshin-persona/scripts/status.ts`                           | The session's character as JSON for the module, and whether it is the session's own record; never the game data                      |
 | `packages/genshin-persona/src/services/getSessionNameplate.ts`         | The session's record, else the pin, else the birthday pick; never another session's record                                           |
-| `packages/genshin-persona/src/services/getPersonaCharacter.ts`         | The character's colour, else the element's, made readable on a dark terminal, and the status line's text                             |
+| `packages/genshin-persona/src/services/getPersonaCharacter.ts`         | The character's colour, else the element's, made readable on a dark terminal                                                         |
 | `packages/genshin-persona/src/services/CharacterColorMap.ts`           | The one colour the official art hangs on each character, read off the card art                                                       |
 | `packages/genshin-persona/src/models/PersonaCard.ts`                   | The card's shape, split by reader: habits for the model, verbs and reference for the person; no lines                                |
 | `packages/genshin-persona/src/services/getSpinner.ts`                  | Both verb layers; one tip layer under one label — the character's lines, capped                                                      |

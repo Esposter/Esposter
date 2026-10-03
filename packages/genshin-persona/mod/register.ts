@@ -2,20 +2,21 @@ import type { EngineInterface, Register } from "claude-code";
 
 import { atom, read, update } from "claude-code";
 
-import type { PersonaCharacter, PersonaSpinner } from "../types";
+import type { PersonaSpinner, PersonaStatus } from "../types";
 
 import { hashString } from "../src/util/hashString";
 import { CardVerbs, VerbDescriptionMap } from "./VerbDescriptionMap";
 
-// The persona's surfaces drawn by the engine itself, so nothing is written into the person's settings: the status
-// Line, a spinner and a hint of this session's own character, the spoken replies and one command per verb. Every
-// Read of game data, state or audio is the plugin's node scripts, run as commands, since a hooks module has no Node
+// The persona's surfaces drawn by the engine itself, so nothing is written into the person's settings: a spinner and
+// A hint of this session's own character, its colour published for the mods, the spoken replies and one command per
+// Verb. Every read of game data, state or audio is the plugin's node scripts, run as commands, since a hooks module
+// Has no Node
 const characterAtom = atom({ key: "character", plugin: "genshin-persona" } as const, {
   color: "",
   displayName: "",
-  line: "",
   name: "",
 });
+const isCharacterRecordedAtom = atom({ key: "isCharacterRecorded", plugin: "genshin-persona" } as const, false);
 const spinnerAtom = atom({ key: "spinner", plugin: "genshin-persona" } as const, { label: "", tips: [], verbs: [] });
 const tipIndexAtom = atom({ key: "tipIndex", plugin: "genshin-persona" } as const, 0);
 // The spinner's lines cost the data package or the wiki on a first read, so its script gets the longest run allowed
@@ -35,8 +36,8 @@ const refresh = async ($: EngineInterface) => {
   });
   if (!status.stdout.trim()) return;
   // oxlint-disable-next-line no-restricted-properties -- The plugin's own script prints this shape, with no date in it, and a mod cannot import the shared reviver
-  const character = JSON.parse(status.stdout) as PersonaCharacter;
-  $.ui.status(character.line);
+  const { character, isRecorded } = JSON.parse(status.stdout) as PersonaStatus;
+  await update($, isCharacterRecordedAtom, () => isRecorded);
   const previous = await read($, characterAtom);
   await update($, characterAtom, () => character);
   if (previous.name === character.name && previous.displayName === character.displayName) return;
@@ -83,12 +84,13 @@ export const register: Register = (on) => {
         : { text };
     });
 
-  // The lore pick may record a character after the status line was first read, and the tip moves on each turn
+  // The tip moves on each turn, and the character is read again until the start hook's record exists, since the
+  // Pick may land after the session start's first read
   on("turn.complete", async ($, e, next) => {
     const result = await next(e);
     if (e.agentId === undefined) {
       await update($, tipIndexAtom, (index) => index + 1);
-      refreshLater($);
+      if (!(await read($, isCharacterRecordedAtom))) refreshLater($);
     }
 
     return result;
