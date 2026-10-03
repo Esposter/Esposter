@@ -34,7 +34,7 @@ at a glance is `get*` and everything longer is `compute*`.
 representation, so it reads as the return type and the single argument is the whole subject.
 
 `get*` answers a question _about_ a value and leaves it in the shape it arrived in, which is what separates the
-two: `getFilename(path)` picks a part out, `toForwardSlashes(path)` hands the same path back spelled differently.
+two: `getFilename(path)` picks a part out, `toRootAnchoredExclude(path)` hands the same path back spelled as an exclude pattern.
 A conversion that needs a second argument to say what to convert _with_ is `apply*` ("`set*` vs `apply*`", on this page), and one that walks a
 collection to produce something new is `compute*`.
 
