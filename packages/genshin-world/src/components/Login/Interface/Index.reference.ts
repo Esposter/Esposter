@@ -3,7 +3,8 @@ import type { ComponentReference } from "genshin-interface";
 import { GameSourceKind } from "genshin-interface";
 
 // The login interface's sources in the game's data, what every search over them found, and what is still open. Its
-// Layout is the RectTransforms under `LoginMainPage` in units of the canvas's 1600 by 900 reference
+// Layout is the RectTransforms under `LoginMainPage` in units of the canvas's 1600 by 900 reference, fitted into
+// `interfaceRects.json` by path
 export const reference: ComponentReference = {
   findings: [
     {
@@ -53,12 +54,16 @@ export const reference: ComponentReference = {
       found: "m_Alpha, m_IsActive, m_Color.a, m_AnchoredPosition.x, m_SizeDelta.x and m_SizeDelta.y, by CRC32",
       search: "The properties the page's clips animate",
     },
+    {
+      found:
+        "Its rect is a container the page loads the prompt's prefab into, under Center/SwitchServer, so the prompt fades with SwitchServer as the page enters; its own place is measured from that container's box",
+      search: "Where BtnPressStart's prompt sits once the page is laid out from its tree",
+    },
   ],
   open: [
     "The canvas's match between width and height on a window narrower than 16:9: the scaler is a script",
     "The layout groups' spacing, measured on the recordings",
     "Each button's hover and pressed states, from the recordings and the page's sprites",
-    "Every screen laid out from its fitted RectTransform tree (the interface layout proposal) in place of LoginInterfaceRectMap",
   ],
   sources: {
     bottom: {

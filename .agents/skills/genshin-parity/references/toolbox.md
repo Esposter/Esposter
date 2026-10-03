@@ -6,7 +6,7 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 
 | Unknown                       | Tool                                                    |
 | :---------------------------- | :------------------------------------------------------ |
-| A piece's place and anchoring | `genshin:assets interface`: the RectTransform tree      |
+| A piece's place and anchoring | `genshin:assets interface`, then `fit`'s rects by path  |
 | A piece's motion              | `genshin:assets clips`: the decoded clip curves         |
 | A mark's shape                | `trace`, or the vector on Commons                       |
 | A colour, a size, a place     | `measure`, `zoom`, `polar`                              |

@@ -14,7 +14,8 @@ import { page } from "vitest/browser";
 // `pnpm test:visual -u` approves what they draw now
 const components = import.meta.glob<Component>("./*/Index.vue", { eager: true, import: "default" });
 const fixtures = import.meta.glob<ComponentFixture>("./*/Index.fixture.ts", { eager: true });
-const ROOT_COMPONENT = "./GameScreen/Index.vue";
+// The screen root and the rect a piece is placed by draw nothing of their own, so they have no image to hold
+const LAYOUT_COMPONENTS = new Set(["./GameRect/Index.vue", "./GameScreen/Index.vue"]);
 const COMPONENT_FILE = "/Index.vue";
 const IMAGE_NAME = "Index";
 const STAGE_STYLE = { background: "#6b7280", display: "grid", placeItems: "center" };
@@ -45,10 +46,10 @@ const holdAnimations = (): void => {
 };
 
 describe("genshin-interface components", () => {
-  test("every component but the screen root has a fixture", () => {
+  test("every component but the layout ones has a fixture", () => {
     expect.hasAssertions();
 
-    const componentPaths = Object.keys(components).filter((path) => path !== ROOT_COMPONENT);
+    const componentPaths = Object.keys(components).filter((path) => !LAYOUT_COMPONENTS.has(path));
     const fixturePaths = new Set(Object.keys(fixtures).map((path) => path.replace(/\.fixture\.ts$/u, ".vue")));
 
     expect(componentPaths.filter((path) => !fixturePaths.has(path))).toStrictEqual([]);

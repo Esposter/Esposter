@@ -1,8 +1,10 @@
 import type { DecodedCurve } from "#src/models/genshinAssets/DecodedCurve";
+import type { InterfaceNode } from "#src/models/genshinAssets/InterfaceNode";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/DerivedAssetComponentMap";
 import { fitInterfaceClips } from "#src/services/genshinAssets/fitInterfaceClips";
+import { fitInterfaceRects } from "#src/services/genshinAssets/fitInterfaceRects";
 import { fitLoginClouds } from "#src/services/genshinAssets/fitLoginClouds";
 import { fitLoginDoor } from "#src/services/genshinAssets/fitLoginDoor";
 import { fitLoginHulls } from "#src/services/genshinAssets/fitLoginHulls";
@@ -23,14 +25,18 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // The login scene's parts fitted as our own kits' parameters, each written as a data file of the world package's,
-// With the rows its script scrolls them in: each copied spawn's count and the length of its step, by its prefab, and
-// Its music, whose fit's report leads the paths written
+// With its interface's rects and clips and the rows its script scrolls them in: each copied spawn's count and the
+// Length of its step, by its prefab, and its music, whose fit's report leads the paths written
 export const fitLoginScene = async (): Promise<string> => {
   const directory = getComponentDirectory(DerivedAssetComponent.Login);
   const placements = await readComponentPlacements(DerivedAssetComponent.Login);
   // The interface's clips as `genshin:assets clips` decoded them
   const clips = parseMachineJson<{ curves: DecodedCurve[]; duration: number; name: string }[]>(
     await readFile(join(directory.root, "clips", "clips.json"), "utf8"),
+  );
+  // The interface's tree as `genshin:assets interface` exported it
+  const interfaceTree = parseMachineJson<InterfaceNode>(
+    await readFile(join(directory.root, "interface", "interface.json"), "utf8"),
   );
   const meshDirectory = join(directory.assets, "Mesh");
   const textureDirectory = join(directory.assets, "Texture2D");
@@ -64,6 +70,7 @@ export const fitLoginScene = async (): Promise<string> => {
     writeWorldData("login/stone.json", stone),
     writeWorldData("login/scroll.json", scroll),
     writeWorldData("login/interfaceClips.json", fitInterfaceClips(clips)),
+    writeWorldData("login/interfaceRects.json", fitInterfaceRects(interfaceTree)),
     writeWorldData("splash/titleLogos.json", titleLogos),
     writeWorldData("login/music.json", music.music),
   ]);

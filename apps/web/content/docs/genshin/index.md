@@ -38,6 +38,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Parity](/docs/genshin/parity)                       | matching a screen to the game's: references, tracing, scoring, motion and the visual suite    |
 | [Derived assets](/docs/genshin/derived-assets)       | which reference each part is measured from, how it becomes ours, and each part's progress     |
 | [Interface library](/docs/genshin/interface-library) | `genshin-interface`: the game's screen root, units, pointer, and the pieces its screens share |
+| [Interface layout](/docs/genshin/interface-layout)   | every screen laid out from the game's own RectTransform tree, nothing by hand                 |
 | [Title splash](/docs/genshin/title-splash)           | the game's title logo as each language's client draws it                                      |
 | [Login screen](/docs/genshin/login-screen)           | the opening's login: its stages, its flight, its scene and its door                           |
 | [Music](/docs/genshin/music)                         | the game's music re-derived from its sound banks and played by the engine's synthesizer       |
