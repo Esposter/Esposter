@@ -1,6 +1,6 @@
 ---
 name: package-scripts
-description: Apply when running or recommending any pnpm script. Esposter's pnpm scripts — which script runs a check, a build, a bench or the release and from where; nuxt typecheck and the root lint as the only checks matching CI, a root check aggregating named leaves with run-s, the check suite once per chunk with tests scoped to the paths touched, and the pnpm traps (a --filter matching nothing exits 0, `pnpm <script> -- <args>` dropping the args, a workflow running the binary instead of the script) — plus the ai:* catalogue an agent runs.
+description: Apply when running or recommending any pnpm script. Esposter's pnpm scripts — which script runs a check, a build, a bench or the release and from where; nuxt typecheck and the root lint as the only checks matching CI, a root check aggregating named leaves with run-s, the touched tests as the one local check, scoped to the paths touched, and the pnpm traps (a --filter matching nothing exits 0, `pnpm <script> -- <args>` dropping the args, a workflow running the binary instead of the script) — plus the ai:* catalogue an agent runs.
 ---
 
 # Package Scripts
@@ -31,7 +31,7 @@ A script that records something to undo later carries one `@TODO:` string in a s
 
 ## Check Suite (after edits)
 
-Once per coherent chunk: `pnpm typecheck`, **root** `pnpm lint:fix`, and the tests of what the change touched as package-relative paths — never the whole suite (`references/check-suite.md`, the `running-checks` skill).
+Once after every edit going out: the tests of what the change touched, as package-relative paths — never the whole suite. Typecheck and lint are CI's (`references/check-suite.md`, the `running-checks` skill).
 
 ## Key Rules
 
@@ -45,7 +45,7 @@ Once per coherent chunk: `pnpm typecheck`, **root** `pnpm lint:fix`, and the tes
 ## Reference pages
 
 - `references/app-scripts.md` — when running a script from `apps/web`, or reaching for the binary under one.
-- `references/check-suite.md` — when a chunk's checks are owed: the scripts, the directory, the test paths.
+- `references/check-suite.md` — when a change's tests are owed: the directory and the test paths.
 - `references/root-scripts.md` — when choosing which root script runs a build, the suite, a bench, a dependency report or the release.
 - `references/ai-scripts.md` — when a sweep, a review or a skill needs the script that runs its scan.
 - `references/typescript-scripts.md` — when adding a `.ts` script, choosing its runner, or writing a check CI runs before an install.

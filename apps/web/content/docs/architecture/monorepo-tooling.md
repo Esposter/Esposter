@@ -178,7 +178,7 @@ Declare job permissions explicitly and narrowly:
 
 ## Local verification
 
-Run local formatting checks from the repo root with `pnpm format:check`; run local lint fixing from `apps/web` with `pnpm lint:fix`.
+Locally a change runs only the tests of what it touched; the pre-commit hook formats what is staged (`.githooks/pre-commit`), and the format check, typecheck, lint and the whole suite are CI's on every push. A red that reaches `main` is the collector's [repair](/docs/infra/review-collector/repair).
 
 Vitest runs on Windows because `apps/web/configuration/modules.ts` gives Nuxt a minimal module allowlist under `process.env.VITEST` (no UnoCSS/PWA/security/SEO); loading the full list there crashes the config load on the PWA module's virtual import. If a new test needs an excluded module, add it to the Vitest branch there.
 

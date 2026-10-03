@@ -6,10 +6,9 @@ Read when running `pnpm infra:preview` / `pnpm infra:up`, after a catalog bump t
 
 Run in order from `apps/infra/`, always before `infra:preview` or `infra:up`:
 
-1. `pnpm typecheck` — TypeScript type check.
-2. `pnpm lint:fix` — the package's ESLint pass, from the package folder rather than through `--filter`. It oxlints nothing, so the root `pnpm lint:fix` is still the gate before the change is committed (the `oxlint` skill, "Running lint").
-3. `pnpm infra:preview --suppress-outputs` — confirm scope before applying.
-4. `pnpm infra:up --yes --suppress-outputs` — apply only after the preview is confirmed.
+1. `pnpm typecheck` — TypeScript type check. An apply reaches live Azure before any CI run reads the change, so this is the one check a session runs ahead of CI (the `running-checks` skill).
+2. `pnpm infra:preview --suppress-outputs` — confirm scope before applying.
+3. `pnpm infra:up --yes --suppress-outputs` — apply only after the preview is confirmed.
 
 `infra:preview` and `infra:up` both run `pnpm build` themselves — never run `pnpm build` separately first.
 
