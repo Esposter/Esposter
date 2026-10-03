@@ -4,13 +4,11 @@ import { atom, read, update } from "claude-code";
 
 import type { EnabledMods } from "../../types";
 
-import { CACHE_WARNING_MS, CLOCK_TICK_MS, MAX_WAYPOINTS, NO_WAYPOINTS_ANSWER } from "./constants";
+import { CACHE_WARNING_MS, CLOCK_TICK_MS, WAYPOINTS_QUESTION } from "./constants";
 import { InitialState } from "./InitialState";
 import { ModDescriptionMap, ModNames } from "./ModDescriptionMap";
 import { getCacheRemainingMs } from "./resin/getCacheRemainingMs";
 import { parseWaypoints } from "./waypoints/parseWaypoints";
-
-const WAYPOINTS_QUESTION = `Leave the conversation as it is and answer one side question. List the next steps worth taking from here, at most ${MAX_WAYPOINTS}, most useful first: each one short imperative line the person could send you as their next prompt, with no numbering, no markup and nothing else. When the work is finished or waits on the person, answer ${NO_WAYPOINTS_ANSWER}.`;
 
 const commissionAtom = atom({ key: "commission", plugin: "genshin-mods" } as const, InitialState.commission);
 const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as const, InitialState.enabledMods);
