@@ -34,8 +34,8 @@ declare module "claude-code" {
       enabledMods: EnabledMods;
       isCommissionExpanded: boolean;
       isHandingOff: boolean;
-      lastPrompt: string;
       lastCacheRequestAt: number;
+      lastPrompt: string;
       now: number;
       waypoints: string[];
     };
