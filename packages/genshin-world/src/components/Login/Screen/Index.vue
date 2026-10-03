@@ -9,9 +9,7 @@ import LoginScene from "#src/components/Login/Scene/Index.vue";
 import { LoginStage } from "#src/models/login/LoginStage";
 import { LoginStatusStep } from "#src/models/login/LoginStatusStep";
 import {
-  LOGIN_ARRIVE_FADE_MS,
   LOGIN_DOOR_AFTER_LOAD_MS,
-  LOGIN_FLASH_MS,
   LOGIN_FLIGHT_LOADING_SHARE,
   LOGIN_PROGRESS_FILL_MS,
   LOGIN_SPINNER_START_MS,
@@ -53,7 +51,7 @@ const shownPlayerName = computed(
 const emit = defineEmits<{ begin: []; ready: [] }>();
 // The game's login screen: the scene fades up out of white, a click on its title quickens the glide down the
 // Walkway as the game prepares, and a click on the door it arrives at lights it as the screen whitens, when `begin`
-// Says the white is up. A host pins a stage with `v-model:stage` to show it held, as the parity page does
+// Says the white is up. Both whites are the interface's, played from the game's own clips. A host pins a stage with `v-model:stage` to show it held, as the parity page does
 const stage = defineModel<LoginStage>("stage", { default: LoginStage.Arriving });
 const isSpinnerShown = ref(false);
 // Whether the door has risen into place, which the door's own interface waits on
@@ -146,42 +144,13 @@ const onClick = (event: MouseEvent): void => {
       :progress="shownProgress"
       :stage
       :status-step
+      @whiten="emit('begin')"
     />
-    <div v-if="stage === LoginStage.Arriving" class="arrive" />
-    <div :class="['flash', { lit: stage === LoginStage.Entering }]" @transitionend="emit('begin')" />
   </GameScreen>
 </template>
 
 <style scoped>
 .login-screen {
   background: #000;
-}
-
-/* The white the screen fades up out of as it arrives */
-.arrive {
-  position: absolute;
-  inset: 0;
-  animation: arrive calc(v-bind(LOGIN_ARRIVE_FADE_MS) * 1ms) linear forwards;
-  background: var(--white);
-  pointer-events: none;
-}
-
-@keyframes arrive {
-  to {
-    opacity: 0;
-  }
-}
-
-.flash {
-  position: absolute;
-  inset: 0;
-  background: var(--white);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.lit {
-  opacity: 1;
-  transition: opacity calc(v-bind(LOGIN_FLASH_MS) * 1ms) ease-out;
 }
 </style>

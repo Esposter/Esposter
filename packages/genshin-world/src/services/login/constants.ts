@@ -15,10 +15,9 @@ export const LOGIN_STATUS_STEPS: readonly { ms: number; step: LoginStatusStep }[
   { ms: 1400, step: LoginStatusStep.LoadingData },
 ];
 // Timings from the 1440 high recording at 10 frames and the English one at 60, each read as a curve over its region
-// (`luma`): the scene fades up out of white over 800 ms, the wait mark shows from 1.3 s to 2 s, and the title comes in
-// At once as it goes. The welcome card, which the account kit drops in as the player signs in, holds 1.9 s and fades
-// Over 200 ms; the screen does not show it until it has an account to welcome
-export const LOGIN_ARRIVE_FADE_MS = 800;
+// (`luma`): the wait mark shows from 1.3 s to 2 s, and the title comes in as it goes; the white the scene fades up
+// Out of is the game's own clip (LoginInterfaceClipMap). The welcome card, which the account kit drops in as the
+// Player signs in, holds 1.9 s and fades over 200 ms; the screen does not show it until it has an account to welcome
 export const LOGIN_SPINNER_START_MS = 1300;
 export const LOGIN_TITLE_START_MS = 2000;
 export const LOGIN_WELCOME_FADE_MS = 200;
@@ -34,12 +33,11 @@ export const LOGIN_FLIGHT_LOADING_SHARE = 0.65;
 // The bar's fill at its fastest, from empty to full: the share shown runs toward loading's own at no more than this
 // Pace, so a load that finishes at once still sweeps the bar rather than jumping, and one slower is followed as it goes
 export const LOGIN_PROGRESS_FILL_MS = 100;
-// A click on the door lights it over 400 ms while the screen whitens over 620, easing out, from the English
-// Recording at 60 frames
+// A click on the door lights it over 400 ms, from the English recording at 60 frames, while the screen whitens as the
+// Game's own clip does
 export const LOGIN_DOOR_LIGHT_MS = 400;
 // The door's interface after the door has formed, from the English recording at 10 frames a second: formed by 12.7 s,
 // The corner buttons at 13.0, and the prompt's band fading in from 13.7 to full by 14.0
 export const LOGIN_DOOR_BUTTONS_DELAY_MS = 300;
 export const LOGIN_DOOR_PROMPT_DELAY_MS = 1000;
 export const LOGIN_DOOR_PROMPT_FADE_MS = 300;
-export const LOGIN_FLASH_MS = 620;
