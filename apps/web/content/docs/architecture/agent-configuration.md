@@ -103,17 +103,17 @@ root `docs/` folder this layout exists to avoid. Point the skill at `.agents/` i
 
 ## Key files
 
-| Path                                                    | Role                                                                                                                                     |
-| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `.agents`                                               | The agent tree — skills, workflows, ledgers, harness settings                                                                            |
-| `.agents/settings.json`                                 | Checked-in harness settings — the marketplace a checkout declares for itself, the plugin it enables, and the auto-update that re-pins it |
-| `scripts/src/services/sweeps/readVendoredSkillNames.ts` | Reads the lock file's skill names, which `readSweepFilePaths` and the skills ledger leave out                                            |
-| `skills-lock.json`                                      | The skills installer's record of the vendored skills, which every agent-tree scan leaves out                                             |
-| `.claude`                                               | Symlink alias to `.agents` so Claude Code resolves its own paths                                                                         |
-| `.claude-plugin/marketplace.json`                       | The repository as a Claude Code plugin marketplace — the one vendor path the tool fixes at root                                          |
-| `AGENTS.md`                                             | Repo instruction file — `CLAUDE.md` and `GEMINI.md` are symlinks to it                                                                   |
-| `packages/configuration/src/constants.ts`               | `AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY`                                                               |
-| `scripts/src/workspace/agentDirectories.test.ts`        | Pins both exclusions in the configs that cannot import the constants                                                                     |
-| `scripts/src/workspace/citations.test.ts`               | Fails on a cited repo path or skill name in the docs, the tree or a README that resolves nowhere                                         |
-| `scripts/src/workspace/skillDocs.test.ts`               | Fails on every `ai:sweep:skill-docs` finding but the budget                                                                              |
-| `scripts/src/workspace/staleNames.test.ts`              | Fails on a backticked code name in the same trees that neither the tree nor a dependency holds                                           |
+| Path                                                    | Role                                                                                                                                                                   |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.agents`                                               | The agent tree — skills, workflows, ledgers, harness settings                                                                                                          |
+| `.agents/settings.json`                                 | Checked-in harness settings — the marketplace a checkout declares for itself, the plugins it enables, the auto-update that re-pins them, and the persona's status line |
+| `scripts/src/services/sweeps/readVendoredSkillNames.ts` | Reads the lock file's skill names, which `readSweepFilePaths` and the skills ledger leave out                                                                          |
+| `skills-lock.json`                                      | The skills installer's record of the vendored skills, which every agent-tree scan leaves out                                                                           |
+| `.claude`                                               | Symlink alias to `.agents` so Claude Code resolves its own paths                                                                                                       |
+| `.claude-plugin/marketplace.json`                       | The repository as a Claude Code plugin marketplace — the one vendor path the tool fixes at root                                                                        |
+| `AGENTS.md`                                             | Repo instruction file — `CLAUDE.md` and `GEMINI.md` are symlinks to it                                                                                                 |
+| `packages/configuration/src/constants.ts`               | `AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY`                                                                                             |
+| `scripts/src/workspace/agentDirectories.test.ts`        | Pins both exclusions in the configs that cannot import the constants                                                                                                   |
+| `scripts/src/workspace/citations.test.ts`               | Fails on a cited repo path or skill name in the docs, the tree or a README that resolves nowhere                                                                       |
+| `scripts/src/workspace/skillDocs.test.ts`               | Fails on every `ai:sweep:skill-docs` finding but the budget                                                                                                            |
+| `scripts/src/workspace/staleNames.test.ts`              | Fails on a backticked code name in the same trees that neither the tree nor a dependency holds                                                                         |
