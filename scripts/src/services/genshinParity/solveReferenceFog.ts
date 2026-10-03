@@ -54,8 +54,8 @@ const readPage = <T>(page: Page, name: string): Promise<T> =>
 // Its height and the eye's (`readFogOpacity`), and the fog's own and sunward colours are then a linear solve over the
 // Pixels binned by depth and by angle to the sun, each bin's medians weighted by its pixels (`solveFogColors`); the
 // Density is refined from the bracket by golden section on that solve's residual. The sunward weight is read toward
-// The fog's own direction, the shading light's, and toward the sky's sun, each solved, so the two are told apart by
-// Their residuals; the fog's current density is solved beside them
+// The fog's own direction, solved at its current density and at the refined one, and toward the sky's sun at the
+// Refined one, so the two directions are told apart by their residuals
 export const solveReferenceFog = async (
   referenceId: string,
   witness: DerivedAssetComponent,
