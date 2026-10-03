@@ -24,7 +24,7 @@ claude plugin marketplace add Esposter/Esposter
 claude plugin install genshin-mods@esposter
 ```
 
-Each mod is switched by its own command, `/waypoints`, `/resin`, `/veil`, `/commission` or `/ward`: bare, it flips the mod; with `on` or `off`, it sets it. The setting is kept in the plugin's store, so it holds for every later session. Veil starts off and the other four start on. The band above the prompt draws one row per mod with something to say and steps aside for the engine's own surveys; it is focused with a click or `ctrl+x tab`, where a button's hotkey presses it.
+Each mod is switched by its own command, `/waypoints`, `/resin`, `/veil`, `/commission` or `/ward`: bare, it flips the mod; with `on` or `off`, it sets it. The setting is kept in the plugin's store, so it holds for every later session. Veil starts off and the other four start on. The band above the prompt draws one row per mod with something to say and steps aside for the engine's own surveys; it is focused with a click or `ctrl+x tab`, where every button has a key that presses it. A click lands only where the terminal reports clicks, the fullscreen interface in a terminal attached directly, so the keys are the path that always works.
 
 ## Decisions
 

@@ -20,6 +20,8 @@ A figure takes the warning colour past its threshold — the cache under ten min
 
 ## How to use it
 
+Each is a button, or with the band focused a key: `w`, `c` and `h`.
+
 - **Warm** renews the cache: a one-word side question through a fork of the session, which re-sends the conversation's prefix and adds no row to the transcript.
 - **Compact** runs the engine's own compaction.
 - **Handoff** is the whole relay in one press. A fork writes a handoff of the session — the goal, what is done, what is next, the files and decisions that matter, the open questions — then the mod clears the conversation and sends the handoff as the first prompt of the fresh one. The buttons give way to a note while it is written, and the clear waits for the handoff, so a fork that fails clears nothing and a toast says why. A clear or submit that fails after the fork is toasted the same way, and the buttons come back either way.
