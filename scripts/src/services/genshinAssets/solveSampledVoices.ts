@@ -16,6 +16,9 @@ import { readBandFloor } from "#src/services/genshinParity/readBandFloor";
 import { selectMusicSample } from "genshin-engine";
 import { AUDIO_SAMPLE_RATE } from "pitch-transcription";
 
+const readDot = (first: Float64Array, second: Float64Array): number =>
+  first.reduce((sum, value, index) => sum + value * (second[index] ?? 0), 0);
+
 // Every combination of one catalogued instrument per voice, from `[]` up
 const listCombinations = (counts: number[]): number[][] =>
   counts.reduce<number[][]>(
@@ -79,8 +82,6 @@ export const solveSampledVoices = async (
   const readShares = (energies: Float64Array): Float64Array =>
     energies.map((energy, index) => energy / (targets[index] ?? 1));
   const voiceSharesList = voiceEnergiesList.map((energiesList) => energiesList.map((energies) => readShares(energies)));
-  const readDot = (first: Float64Array, second: Float64Array): number =>
-    first.reduce((sum, value, index) => sum + value * (second[index] ?? 0), 0);
   // Every product the least squares reads, between any instrument of one voice and any of another, taken once
   const voiceProducts = voiceSharesList.map((rowSharesList) =>
     voiceSharesList.map((columnSharesList) =>
