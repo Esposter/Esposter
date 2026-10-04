@@ -11,6 +11,9 @@ import { resolveCwd } from "#src/services/exec/util/resolveCwd";
 //   - `isNetworkEnabled` re-adds only the network namespace (`--share-net`, valid only with `--unshare-all`).
 //   - `bindDirectories` bind-mounted writable AFTER the overlay (overmounting it) for host caches whose writes must
 //     Persist.
+//   - `--unsetenv XDG_RUNTIME_DIR` because the runtime directory sits under the read-only `/` while still passing a
+//     Tool's owner-only check, so pnpm puts its store operation locks there and dies with EROFS; unset, pnpm and the
+//     Rest fall back to the writable `/tmp` tmpfs.
 //
 // `overlayLayers` parametrizes the working-directory overlay (apps/web/content/docs/virrun/snapshot-and-fork.md):
 // `lowerDirectories` adds extra read-only lowers (a fork stacks the frozen snapshot upper here to shadow the source);
@@ -49,6 +52,8 @@ export const buildBwrapArgs = (
     "/proc",
     "--tmpfs",
     "/tmp",
+    "--unsetenv",
+    "XDG_RUNTIME_DIR",
     "--overlay-src",
     source,
     ...lowerDirectories.flatMap((lowerDirectory) => ["--overlay-src", lowerDirectory]),
