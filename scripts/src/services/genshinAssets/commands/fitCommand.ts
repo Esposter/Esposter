@@ -3,6 +3,7 @@ import type { SubCommandsDef } from "citty";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { DerivedAssetFitMap } from "#src/services/genshinAssets/DerivedAssetFitMap";
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { parseNames } from "#src/services/shared/parseNames";
 import { defineCommand } from "citty";
 
 export const fitCommand: SubCommandsDef[string] = defineCommand({
@@ -22,10 +23,7 @@ export const fitCommand: SubCommandsDef[string] = defineCommand({
     name: "fit",
   },
   run: async ({ args }) => {
-    const only = args.only
-      ?.split(",")
-      .map((name) => name.trim())
-      .filter(Boolean);
+    const only = args.only === undefined ? undefined : parseNames(args.only, "only");
     console.log(await DerivedAssetFitMap[parseDerivedAssetComponent(args.component)](only));
   },
 });
