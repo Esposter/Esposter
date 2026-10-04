@@ -21,6 +21,6 @@ Where work is placed and how it is shaped — a fact resolved once at the consum
 | `scripts/src` — the rest                                                       | 2026-09-27 · Opus 5.5  |       |
 | `packages/genshin-engine` — `terrain`, `streaming`, `vegetation`, `atmosphere` | 2026-10-04 · Fable 5.1 |       |
 | `packages/genshin-engine` — the rest                                           | 2026-10-04 · Fable 5.1 |       |
-| `packages/genshin-world`                                                       | —                      |       |
-| `packages/pitch-transcription`                                                 | —                      |       |
+| `packages/genshin-world`                                                       | 2026-10-04 · Fable 5.1 |       |
+| `packages/pitch-transcription`                                                 | 2026-10-04 · Fable 5.1 |       |
 | `scripts/src/services/genshinParity`, `scripts/src/services/genshinAssets`     | —                      |       |
