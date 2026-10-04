@@ -5,7 +5,7 @@ description: Apply when writing or reviewing a Claude Code mod — a plugin's ho
 
 # Claude Code mods
 
-Every rule below is explained, with the refusal it prevents and the shape it forces, on `apps/web/content/docs/architecture/claude-mods.md`; the authoring loop is its diagram. The engine's API is its declaration file, which the built-in `plugin-authoring` skill names: grep it for the event or noun at hand rather than recalling it.
+Every rule below is explained, with the refusal it prevents and the shape it forces, on `apps/web/content/docs/architecture/claude-mods.md`; the authoring loop is its diagram. The engine's API is its declaration file, which the built-in "plugin-authoring" skill names: grep it for the event or noun at hand rather than recalling it.
 
 ## Settled — do not re-propose
 
@@ -19,12 +19,12 @@ Every rule below is explained, with the refusal it prevents and the shape it for
 ## Rules
 
 - **Relative imports only, to the plugin's own files, plus `claude-code`**; a dependency-free file of another of the plugin's trees (the persona's verb enum) is reachable the same way.
-- **An event with no matcher is hooked once per plugin**, in one `registerLifecycle` file for every mod; a mod's own file holds only matched hooks.
+- **Each unmatched event has exactly one hook in the plugin**, in one `registerLifecycle` file shared by every mod; a mod's own file holds only matched hooks.
 - **A function that receives `on` returns nothing** — every `register<Name>(on)` is `void`.
-- **Every function that takes `$` sits in the file of the hook that calls it**; logic without `$` is a pure module beside its test, and a button's action is a closure over `$`.
-- **Each file makes the atoms it uses, plugin and key as literals, every initial from the one `InitialState` constant**; a set of switches is one record, since a loop cannot name a key.
+- **A function taking `$` is declared in its calling hook's file**; code that never touches `$` lives in a pure module beside its test, and a button's action is a closure over `$`.
+- **Each file makes the atoms it uses, plugin and key as literals, every initial taken from `InitialState`**; switches share one record, because a loop has no way to name a key.
 - **The contract's keys are written inline in `interface PluginState { "<plugin>": { … } }`** in `types/index.d.ts`, the value types exported beside them.
-- **A registration's `.catch` handler is a module-level `const` of the same file, its name bound nowhere else in it** — not even a parameter.
+- **A registration's `.catch` handler is a module-level `const` in that file, and no other binding there shares its name** — not even a parameter.
 - **No Node in a mod**: game data, audio, sockets and anything an npm package does run in the plugin's node scripts through `$.process.run`, the hook's input on stdin.
 - **Everything a drawing reads is `$.state`**; a module variable is lost on reload and holds only what nothing draws. A value kept past the session is written to `$.store` and read back at session start.
 - **One `AbovePrompt` hook per plugin**, drawing one row per mod with something to say.
@@ -32,5 +32,5 @@ Every rule below is explained, with the refusal it prevents and the shape it for
 - **A question nobody can answer proceeds**: `$.session.surfaces()` empty means a headless run, and a guard never blocks unattended work.
 - **The engine's slots meet the lint in fixed places** — a timer or a press floats its action through one local wrapper, a registration's `.catch`, `$.clock.every`, `JSON.parse` and an interpolated string constant each have one answer on the docs page, and a literal's order never carries meaning since perfectionist sorts it.
 - **The accent is the session character's**, read from `genshin-persona`'s published state through its contract, with the game's interface gold where the persona is absent; labels use the game's word only where it already means the thing.
-- **The loop is validate, typecheck with the declarations laid, lint, Vitest, then `claude --plugin-dir` with the installed copy disabled**; a refusal whose message is cut short is read by validating a minimal mod in the scratchpad that does only the questioned thing.
+- **The loop is validate, typecheck with the declarations laid, lint, Vitest, then `claude --plugin-dir` with the installed copy disabled**; a refusal whose message is cut short is read by validating, in the scratchpad, a minimal mod doing just the questioned thing.
 - **A new rule the engine enforces is a row in the docs page's table in the change that answers it**, and a line here.

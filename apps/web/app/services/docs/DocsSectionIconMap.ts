@@ -10,6 +10,7 @@ export const DocsSectionIconMap: Readonly<Record<string, string>> = {
   "fluid-simulator": "i-mdi:waves",
   genshin: "i-custom:genshin",
   infra: "i-mdi:cloud",
+  "pitch-transcription": "i-mdi:music-note",
   post: "i-mdi:note-text",
   proposals: "i-mdi:lightbulb",
   resource: "i-mdi:apps",

@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Claude Code mods
 
-Claude Code now loads **mods**: plugins whose hooks are a TypeScript module the engine runs in-process, rather than shell commands it spawns. A mod can draw a band above the prompt, a pane, the status line and the spinner, show toasts, register slash commands, ask the person a question, rewrite a tool call before it runs and read the session's usage. The [persona plugin](/docs/infra/claude-interface/persona-plugin) was built before any of that existed, and much of its code exists to get around its absence. This proposal adds a second plugin of five mods and moves the persona onto the same hooks.
+Claude Code now loads **mods**: plugins whose hooks run inside the engine's own process as a TypeScript module, rather than as shell commands it spawns. A mod can draw a band above the prompt, a pane, the status line and the spinner, show toasts, register slash commands, ask the person a question, rewrite a tool call before it runs and read the session's usage. The [persona plugin](/docs/infra/claude-interface/persona-plugin) was built before any of that existed, and much of its code exists to get around its absence. This proposal adds a second plugin of five mods and moves the persona onto the same hooks.
 
 ## Scope
 

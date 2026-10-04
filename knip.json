@@ -13,6 +13,7 @@
       "ignoreDependencies": ["@iconify-json/.+", "@takumi-rs/core", "@vueuse/router", "temporal-polyfill", "vue-tsc"]
     },
     "packages/follow-ups": { "entry": ["scripts/**/*.ts"] },
+    "packages/genshin-mods": { "entry": ["src/register.ts"], "ignoreDependencies": ["claude-code"] },
     "packages/genshin-interface": {
       "entry": ["src/index.ts", "src/**/*.reference.ts", "src/**/*.visual.ts"],
       "ignore": ["**/auto-imports.d.ts"]

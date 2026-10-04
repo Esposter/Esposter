@@ -96,6 +96,11 @@ describe("restrictedListCopies", () => {
         // `nuxt prepare` loads the configuration before any workspace library is built
         "apps/web/configuration/**": { added: ["pattern:@esposter/*"], lifted: [] },
         "apps/web/shared/**": { added: ["pattern:@/**"], lifted: [] },
+        // A Claude Code hooks module imports its own files by relative path alone, and runs no Vue
+        "packages/genshin-mods/**/*.ts": {
+          added: ["pattern:#src/*"],
+          lifted: ["path:vue-router:useRoute", "path:vue:inject:provide", ...VUETIFY_BANS],
+        },
       },
       readEntries: (rules) => {
         const setting = rules["no-restricted-imports"];

@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Persona function hooks
 
-Part of [Claude Code mods](/docs/proposals/infra/claude-mods). The [persona plugin](/docs/infra/claude-interface/persona-plugin) writes three of its surfaces into the person's user settings, because a plugin could not ship them, and its page names the condition for undoing that: the tool letting a plugin ship these keys, or choose a spinner per session. A hooks module does both, so this is that revisit.
+Part of [Claude Code mods](/docs/proposals/infra/claude-mods). The [persona plugin](/docs/infra/claude-interface/persona-plugin) writes three of its surfaces into the person's user settings, because a plugin could not ship them, and its page names the condition for undoing that: a plugin able to ship those keys itself, or to pick its own spinner for each session. A hooks module does both, so this is that revisit.
 
 ## What moves
 

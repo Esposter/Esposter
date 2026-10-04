@@ -1,10 +1,10 @@
 import { mixDownChannels } from "#src/services/mixDownChannels";
 import { describe, expect, test } from "vitest";
 
-const left = new Float32Array([1, 0]);
-const right = new Float32Array([0, 1]);
-
 describe(mixDownChannels, () => {
+  const left = new Float32Array([1, 0]);
+  const right = new Float32Array([0, 1]);
+
   test("#9 averages a stereo recording's channels", () => {
     expect.hasAssertions();
 

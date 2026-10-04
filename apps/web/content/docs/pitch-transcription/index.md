@@ -41,17 +41,17 @@ flowchart TD
 - **The model repository is the reference.** Where the TypeScript port and the Python model repository disagree, the package follows Python: a frequency range rounds to its nearest key, the first and last frames are never an onset peak (SciPy's `argrelmax` clips them), and a tie between readings goes to the earliest frame and lowest key (NumPy's `argmax`). The Gaussian weighting the bends stays symmetric about the note's own bin, where SciPy's periodic window centres it half a bin high.
 - **One sort for the melodia trick.** Energy is only ever zeroed, so the largest reading left is always the largest not yet claimed. The candidates are sorted once and walked, where the port rescanned every reading of the recording for each note.
 - **No inferred frame threshold.** The port infers the frame threshold from the frames' mean and deviation only when handed `null` against its own types; here the option is a number, defaulting to Basic Pitch's own.
-- **No `adjustNoteStart`.** It shifted every note's start by an offset, a one-line map, and returned the wrong field name besides; a caller maps its own notes.
+- **No "adjustNoteStart".** It shifted every note's start by an offset, a one-line map, and returned the wrong field name besides; a caller maps its own notes.
 
 ## Upstream
 
-Every issue and pull request on [basic-pitch-ts](https://github.com/spotify/basic-pitch-ts), read with its comments, with its verdict. The four verdicts and what each owes are the [triage](/docs/architecture/dependency-admission) on the dependency admission page; a defect's proof is the named test beside the source it fixes.
+Every issue and pull request on [basic-pitch-ts](https://github.com/spotify/basic-pitch-ts), read with its comments, is given a verdict from the [triage](/docs/architecture/dependency-admission) of the dependency admission page, which says what each verdict owes; a defect is proven by a named test beside the source it fixes.
 
 | Upstream                                  | Verdict            | Proof                                                                                                                                                        |
 | ----------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | #20, #21, #13 — update TensorFlow.js      | In scope — feature | Built on TensorFlow.js 4 from the catalog, a peer dependency Renovate moves; supersedes #13's bump within 3.x                                                |
 | #18 — the model is not exported           | In scope — feature | `MODEL_URL` and `MODEL_WEIGHTS_URL`, read by "hears a tone's pitch" in `readModel.test.ts`                                                                   |
-| #25 — export `generateFileData`           | In scope — feature | `writeMidi`, returning a `Uint8Array` a browser holds rather than Node's `Buffer`                                                                            |
+| #25 — export "generateFileData"           | In scope — feature | `writeMidi`, returning a `Uint8Array` a browser holds rather than Node's `Buffer`                                                                            |
 | #9 — stereo input refused                 | In scope — defect  | "#9 averages a stereo recording's channels" in `mixDownChannels.test.ts`                                                                                     |
 | #8 — shortest note default                | In scope — feature | `MIN_NOTE_LENGTH` is eleven frames, the length the Basic Pitch site uses                                                                                     |
 | #19 — the main thread held                | In scope — feature | `pitch-transcription/notes` imports without TensorFlow.js; running the network off the main thread is the consumer's, in a worker of its own                 |
@@ -71,7 +71,7 @@ Reading the source turned up defects nobody has filed, each reproduced against t
 | No tensor is ever disposed, so memory grows with length | "frees every tensor it makes" in `readModel.test.ts`                                          |
 | Windows past the recording's end still run              | "runs no window past the recording's last frame" in `readModel.test.ts`                       |
 | A frequency range zeroes the caller's own readings      | "leaves the readings it is handed unchanged under a frequency range" in `createNotes.test.ts` |
-| `adjustNoteStart` returns `pitch_midi` for `pitchMidi`  | Not carried — see Decisions                                                                   |
+| "adjustNoteStart" returns `pitch_midi` for `pitchMidi`  | Not carried — see Decisions                                                                   |
 
 ## Key files
 
@@ -87,6 +87,6 @@ Reading the source turned up defects nobody has filed, each reproduced against t
 ## Sources
 
 - [spotify/basic-pitch-ts](https://github.com/spotify/basic-pitch-ts) — the package absorbed, its tracker and its Apache-2.0 licence.
-- [spotify/basic-pitch](https://github.com/spotify/basic-pitch) — the model repository: `constants.py`, `note_creation.py`, and its issue on real-time transcription.
+- [spotify/basic-pitch](https://github.com/spotify/basic-pitch) — the model repository: `constants.py`, "note_creation.py", and its issue on real-time transcription.
 - [A Lightweight Instrument-Agnostic Model for Polyphonic Note Transcription and Multipitch Estimation](https://arxiv.org/abs/2203.09893), Bittner et al., ICASSP 2022 — the network and its three readings.
 - [`scipy.signal.argrelmax`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.argrelmax.html) — the edge clipping the onset peaks follow.

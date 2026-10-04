@@ -3,5 +3,3 @@ export enum TaskTool {
   TaskUpdate = "TaskUpdate",
   TodoWrite = "TodoWrite",
 }
-
-export const TaskTools: readonly TaskTool[] = Object.values(TaskTool);
