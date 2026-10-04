@@ -22,8 +22,8 @@ import { readSessionCwd } from "#src/services/drivers/claudeAgentSdk/readSession
 import { toSessionClosedEvents } from "#src/services/drivers/claudeAgentSdk/toSessionClosedEvents";
 import {
   SESSION_SECRET_BYTE_LENGTH,
-  SESSION_WINDOW_CONNECT_TIMEOUT,
-  SESSION_WINDOW_REJOIN_DURATION,
+  SESSION_WINDOW_CONNECT_TIMEOUT_MS,
+  SESSION_WINDOW_REJOIN_DURATION_MS,
   SESSION_WINDOWS_FILENAME,
 } from "#src/services/drivers/window/constants";
 import { readSessionWindows } from "#src/services/drivers/window/readSessionWindows";
@@ -71,7 +71,7 @@ export const createWindowDriver = (
   const rejoinTimeout = setTimeout(() => {
     rejoinSecretHashSet.clear();
     saveSessionWindows();
-  }, SESSION_WINDOW_REJOIN_DURATION);
+  }, SESSION_WINDOW_REJOIN_DURATION_MS);
 
   const getWindowSession = (sessionId: string) => {
     const windowSession = windowSessionMap.get(sessionId);
@@ -228,7 +228,7 @@ export const createWindowDriver = (
     const timeout = setTimeout(() => {
       pendingLaunchMap.delete(secret);
       connection.reject(new InvalidOperationError(Operation.Create, cwd, "the session's window did not start"));
-    }, SESSION_WINDOW_CONNECT_TIMEOUT);
+    }, SESSION_WINDOW_CONNECT_TIMEOUT_MS);
     pendingLaunchMap.set(secret, { connection, timeout });
     launchSessionWindow({ port, secret });
     const webSocket = await connection.promise;

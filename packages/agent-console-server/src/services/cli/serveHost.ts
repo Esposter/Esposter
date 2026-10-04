@@ -8,9 +8,9 @@ import {
   DEFAULT_HOSTNAME,
   PAIRING_CODE_PARAMETER,
   PAIRING_HASH_PARAMETER,
-  SCHEME_PAIRING_CODE_DURATION,
+  SCHEME_PAIRING_CODE_DURATION_MS,
 } from "#src/services/constants";
-import { PRINTED_PAIRING_CODE_DURATION, SECRET_BYTE_LENGTH } from "#src/services/device/constants";
+import { PRINTED_PAIRING_CODE_DURATION_MS, SECRET_BYTE_LENGTH } from "#src/services/device/constants";
 import { getStateDirectory } from "#src/services/device/getStateDirectory";
 import { readHostKey } from "#src/services/device/readHostKey";
 import { createClaudeAgentSdkDriver } from "#src/services/drivers/claudeAgentSdk/createClaudeAgentSdkDriver";
@@ -74,11 +74,11 @@ export const serveHost = async ({ hostname, origin, port, schemeLaunch }: ServeH
   // Which pairs one page, once, within minutes, so a link left in a scrollback or a history pairs nothing. The code is
   // Printed on its own too, for a page on another computer that reaches this machine at an address of its own
   if (schemeLaunch) {
-    if (schemeLaunch.code) server.addPairingCode(schemeLaunch.code, SCHEME_PAIRING_CODE_DURATION);
+    if (schemeLaunch.code) server.addPairingCode(schemeLaunch.code, SCHEME_PAIRING_CODE_DURATION_MS);
     process.stdout.write("The host is running. Keep this window open.\n\nTo stop, close this window.\n");
   } else {
     const code = randomBytes(SECRET_BYTE_LENGTH).toString("base64url");
-    server.addPairingCode(code, PRINTED_PAIRING_CODE_DURATION);
+    server.addPairingCode(code, PRINTED_PAIRING_CODE_DURATION_MS);
     const hostAddress = `ws://${reachableHostname}:${server.port}`;
     const pairingUrl = `${origin}${RoutePath.Genshin}#${new URLSearchParams({
       [PAIRING_CODE_PARAMETER]: code,

@@ -6,4 +6,4 @@ export const HOST_KEY_FILENAME = "host-key.pem";
 export const SECRET_BYTE_LENGTH = 32;
 // How long the code on a link the host prints pairs a page: long enough to open the link, short enough that a link
 // Left in a scrollback or a history pairs nothing
-export const PRINTED_PAIRING_CODE_DURATION: number = Temporal.Duration.from({ minutes: 10 }).total("milliseconds");
+export const PRINTED_PAIRING_CODE_DURATION_MS: number = Temporal.Duration.from({ minutes: 10 }).total("milliseconds");

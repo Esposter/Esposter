@@ -9,7 +9,7 @@ import { EphemeralAgentEventTypes } from "#src/models/event/EphemeralAgentEventT
 import { SessionState } from "#src/models/session/SessionState";
 import { ChildMessageType } from "#src/models/window/ChildMessageType";
 import { SessionWindowCloseCode } from "#src/models/window/SessionWindowCloseCode";
-import { SESSION_WINDOW_RECONNECT_DELAY } from "#src/services/drivers/window/constants";
+import { SESSION_WINDOW_RECONNECT_DELAY_MS } from "#src/services/drivers/window/constants";
 import { formatSessionLogLine } from "#src/services/drivers/window/formatSessionLogLine";
 import { handleCommand } from "#src/services/server/handleCommand";
 import { createTaskRegistry } from "#src/services/shared/createTaskRegistry";
@@ -118,7 +118,7 @@ export const serveSessionChild = async (
       writeLine("The host went away. This session keeps running, and comes back when the host is started again.");
     isRejoining = true;
     // oxlint-disable-next-line no-await-in-loop -- Reconnecting: an attempt is made only once the one before it has closed
-    await delay(SESSION_WINDOW_RECONNECT_DELAY);
+    await delay(SESSION_WINDOW_RECONNECT_DELAY_MS);
   }
   await driver.close();
   await taskRegistry.drain();
