@@ -7,4 +7,4 @@ Every word the game says, referenced by its text id and written by the generator
 | `packages/genshin-text`                                                                                  | 2026-10-04 · Fable 5.1 |       |
 | `scripts/src/services/genshinText`                                                                       | 2026-10-04 · Fable 5.1 |       |
 | the readers — `packages/genshin-world`, `packages/genshin-interface`, `apps/web/app/composables/genshin` | 2026-10-04 · Fable 5.1 |       |
-| `packages/genshin-persona/src/localizations`, `packages/genshin-persona/src/generated`                   | —                      |       |
+| `packages/genshin-persona/src/localizations`, `packages/genshin-persona/src/generated`                   | 2026-10-04 · Fable 5.1 |       |
