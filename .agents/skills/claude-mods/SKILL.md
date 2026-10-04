@@ -33,6 +33,6 @@ Every rule below is explained, with the refusal it prevents and the shape it for
 - **A mod that asks the model asks through `$.model.fork`**, served from the session's own prompt cache.
 - **A question nobody can answer proceeds**: `$.session.surfaces()` empty means a headless run, and a guard never blocks unattended work.
 - **The engine's slots meet the lint in fixed places** — a timer or a press floats its action through one local wrapper, a registration's `.catch`, `$.clock.every`, `JSON.parse` and an interpolated string constant each have one answer on the docs page, and a literal's order never carries meaning since perfectionist sorts it.
-- **The accent is the session character's**, read from `genshin-persona`'s published state through its contract, with the game's interface gold where the persona is absent; labels use the game's word only where it already means the thing.
+- **The accent is the session character's**, read from `genshin-persona`'s published state through the contract the persona owns, which the mods' `tsconfig.json` includes and never copies, with the game's interface gold where the persona is absent; labels use the game's word only where it already means the thing.
 - **The loop is validate, typecheck with the declarations laid, lint, Vitest, then `claude --plugin-dir` with the installed copy disabled**; a refusal cut short is read off a scratchpad mod that does nothing but the questioned thing, validated alone.
 - **A new rule the engine enforces is a row in the docs page's table in the change that answers it**, and a line here.
