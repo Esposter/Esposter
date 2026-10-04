@@ -7,6 +7,8 @@ const CONTEXT_MESSAGE =
   "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.";
 const POLLING_MESSAGE =
   "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.";
+const USE_ROUTER_PAGE_MESSAGE =
+  "A page reads its route through its own `useRoute()`, which the typed router narrows to the page's params, and navigates with `navigateTo`. See the routing skill.";
 const USE_ROUTE_MESSAGE =
   "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.";
 const VUETIFY_MESSAGE =
@@ -182,10 +184,19 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
         "no-restricted-globals": [
           "error",
           ...RESTRICTED_GLOBALS.filter((restrictedGlobal) => restrictedGlobal !== USE_ROUTE_GLOBAL),
+          { message: USE_ROUTER_PAGE_MESSAGE, name: "useRouter" },
+        ],
+        // `no-restricted-globals` sees only the auto-imported `useRouter`, so an explicit import is banned beside it
+        "no-restricted-imports": [
+          "error",
           {
-            message:
-              "A page reads its route through its own `useRoute()`, which the typed router narrows to the page's params, and navigates with `navigateTo`. See the routing skill.",
-            name: "useRouter",
+            paths: [
+              ...RESTRICTED_IMPORT_PATHS,
+              VUETIFY_IMPORT_PATH,
+              { importNames: ["useRouter"], message: USE_ROUTER_PAGE_MESSAGE, name: "#imports" },
+              { importNames: ["useRouter"], message: USE_ROUTER_PAGE_MESSAGE, name: "vue-router" },
+            ],
+            patterns: [VUETIFY_IMPORT_PATTERN],
           },
         ],
       },

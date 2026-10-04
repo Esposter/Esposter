@@ -81,7 +81,7 @@ else can express the ban at all.
 `no-restricted-properties` and `no-restricted-globals` in `oxlint.config.ts`; the sites that disable them spell the
 directive `oxlint-disable-next-line` with the reporting rule's name. `useRoute` also takes a
 `no-restricted-imports` entry, because `no-restricted-globals` sees the auto-imported form and not an explicit
-`vue-router` import.
+`vue-router` import — and the pages' `useRouter` ban takes one for `vue-router` and `#imports` for the same reason.
 
 What stays in ESLint, and why:
 
