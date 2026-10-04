@@ -12,10 +12,11 @@ export const refineVoicePowers = (
   floors: number[],
   frameCount: number,
 ): number[] => {
-  const readDistance = (candidate: number[]) =>
+  const computeDistance = (candidate: number[]): number =>
     computeMixBandDistance(voiceEnergies, candidate, targets, floors, frameCount);
-  let refined = powers.map((power) => Math.max(power, Math.max(...powers) / 1000));
-  let distance = readDistance(refined);
+  const floor = Math.max(...powers) / 1000;
+  let refined = powers.map((power) => Math.max(power, floor));
+  let distance = computeDistance(refined);
   for (let step = 1; step >= 2 ** -SAMPLED_VOICE_REFINE_STEPS; step /= 2) {
     let isMoved = true;
     while (isMoved) {
@@ -23,7 +24,7 @@ export const refineVoicePowers = (
       for (const voice of refined.keys())
         for (const direction of [1, -1]) {
           const candidate = refined.map((power, index) => (index === voice ? power * 2 ** (direction * step) : power));
-          const candidateDistance = readDistance(candidate);
+          const candidateDistance = computeDistance(candidate);
           if (candidateDistance >= distance) continue;
           refined = candidate;
           distance = candidateDistance;

@@ -67,3 +67,5 @@ export const PNPM_FILE: string = isPnpmScript ? process.execPath : pnpmExecPath;
 
 export const PNPM_ARGS: readonly string[] = isPnpmScript ? [pnpmExecPath] : [];
 export const BYTE = 255;
+// A pinned tool's archive runs to a hundred-odd megabytes, so its download is bounded by minutes rather than seconds
+export const PINNED_TOOL_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");

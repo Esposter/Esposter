@@ -1,5 +1,5 @@
+import type { LoginMusicSource } from "#src/models/genshinAssets/music/LoginMusicSource";
 import type { ComponentPlaylist } from "#src/models/genshinAssets/shared/ComponentPlaylist";
-import type { NoteEventTime } from "pitch-transcription/notes";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { fitMusicVoices } from "#src/services/genshinAssets/shared/fitMusicVoices";
@@ -14,15 +14,7 @@ import { AUDIO_SAMPLE_RATE } from "pitch-transcription";
 // Each source the login's music plays, segment by segment, as its decoded samples, its voices' notes, and the release
 // And tuning each voice's instrument was fitted to (`fitMusicVoices`), yielded one at a time so only one source's
 // Samples are held
-export const readLoginMusicSources = async function* (): AsyncGenerator<{
-  samples: Float32Array;
-  segmentId: number;
-  sourceId: number;
-  splits: number[];
-  voiceNotesList: NoteEventTime[][];
-  voiceReleases: number[];
-  voiceTunings: number[];
-}> {
+export const readLoginMusicSources = async function* (): AsyncGenerator<LoginMusicSource> {
   const { music: directory } = getComponentDirectory(DerivedAssetComponent.Login);
   const { segments } = parseMachineJson<ComponentPlaylist>(await readFile(join(directory, "playlist.json"), "utf8"));
   for (const { clips, id } of segments)

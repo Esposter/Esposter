@@ -115,10 +115,10 @@ export const solveSampledVoices = async (
       const gram = combination.map((row, voice) =>
         combination.map((column, other) => voiceProducts[voice]?.[other]?.[row]?.[column] ?? 0),
       );
-      const rhs = combination.map((index, voice) => voiceSums[voice]?.[index] ?? 0);
-      const powers = solveNonNegativeSystem(gram, rhs);
-      // At the exact solution of the powers' subset, the residual is the negated product of its powers with the rhs
-      const residual = -powers.reduce((sum, power, voice) => sum + power * (rhs[voice] ?? 0), 0);
+      const right = combination.map((index, voice) => voiceSums[voice]?.[index] ?? 0);
+      const powers = solveNonNegativeSystem(gram, right);
+      // At the exact solution of the powers' subset, the residual is the negated product of its powers with the right-hand side
+      const residual = -powers.reduce((sum, power, voice) => sum + power * (right[voice] ?? 0), 0);
       return { combination, powers, residual };
     })
     .toSorted((first, second) => first.residual - second.residual)

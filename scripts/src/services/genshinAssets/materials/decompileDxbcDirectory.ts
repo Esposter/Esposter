@@ -4,7 +4,7 @@ import {
   DECOMPILER_BATCH_SIZE,
   DECOMPILER_DIRECTORY,
 } from "#src/services/genshinAssets/shared/constants";
-import { FFMPEG_DOWNLOAD_TIMEOUT_MS } from "#src/services/genshinParity/shared/constants";
+import { PINNED_TOOL_DOWNLOAD_TIMEOUT_MS } from "#src/services/shared/constants";
 import { resolvePinnedTool } from "#src/services/shared/resolvePinnedTool";
 import { spawnSync } from "node:child_process";
 import { readdir } from "node:fs/promises";
@@ -17,7 +17,7 @@ export const decompileDxbcDirectory = async (directory: string): Promise<number>
     archiveSha256: DECOMPILER_ARCHIVE_SHA256,
     archiveUrl: DECOMPILER_ARCHIVE_URL,
     directory: DECOMPILER_DIRECTORY,
-    downloadTimeoutMs: FFMPEG_DOWNLOAD_TIMEOUT_MS,
+    downloadTimeoutMs: PINNED_TOOL_DOWNLOAD_TIMEOUT_MS,
     executablePattern: "cmd_Decompiler.exe",
   });
   const programs = (await readdir(directory)).filter((name) => name.endsWith(".dxbc"));
