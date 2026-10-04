@@ -99,6 +99,11 @@ export const reference: ComponentReference = {
     },
     {
       found:
+        "The cover solve chased a cost that moved: each guess split our own render's clouds from its sky anew. Read at the recording's own split, the dusk solves to bottom 0.54, middle 0.81 and top 0.88, which scores the door recording's FLIP 0.6089 to 0.6006, with a residual of 0.29: every band stays under the recording's cover, 8 to 15 degrees at 16% against 70%, since at that split our clouds stand too little over their sky to be read as cloud",
+      search: "genshin:parity cover login-door-recording with the split held at the reference's, then compare",
+    },
+    {
+      found:
         "The login sets the god rays' colour to black, and the pass mixes the frame toward its colour by the lit air along each ray, so it darkens the sky toward the sun by about a quarter where the solve's own model matches the scene's sky at the frame's middle, and every part behind lit air with it. Drawn in the sun's colour the frame washes pale (FLIP 0.647); with the pass out of the chain the frame stands brighter and scores 0.641 against 0.619 at the same sky, every hour's light having been measured under the darkening",
       search:
         "The scene's sky read at six points against readSkyWeights at the applied state, then compare login-door-recording with the god rays lit, and with the pass left out of createPostPipeline",

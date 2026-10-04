@@ -25,7 +25,8 @@ export const readCloudSky = async (
   page: Page,
   { checkIsScored, height }: { checkIsScored: (pixel: number, width: number) => boolean; height: number },
 ): Promise<{
-  readClouds: (luminance: Float32Array) => Uint8Array;
+  readClouds: (luminance: Float32Array, threshold?: number) => Uint8Array;
+  readCloudThreshold: (luminance: Float32Array) => number;
   readElevationCoverage: (clouds: Uint8Array) => number[];
   readLuminance: (input: Buffer) => Promise<Float32Array>;
   skyMask: Uint8Array;
@@ -51,23 +52,33 @@ export const readCloudSky = async (
     Number(!part[pixel * 4] && checkIsScored(pixel, width) && (elevations[pixel] ?? 0) > 0),
   );
   const logRatio = Math.log(CLOUD_RATIO);
+  // How far each pixel of the sky stands over its own clear sky, as the logarithm of their ratio
+  const readOvers = (luminance: Float32Array): Float32Array => {
+    const blurred = blurGrey(luminance, width, height, CLASSIFY_BLUR_SIGMA);
+    const clear = fitClearSky(blurred, skyMask, width, height, CLOUD_RATIO);
+    return Float32Array.from(blurred, (value, pixel) =>
+      skyMask[pixel] ? Math.max(Math.log(Math.max(value, Number.EPSILON)) - (clear[pixel] ?? 0), 0) : 0,
+    );
+  };
+  // The clear surface settles under a sky's own wisps and its glow toward the sun, which then stand past the ratio
+  // Over it, so the split is Otsu's between the sky's two populations wherever that lies past the ratio
+  const readThreshold = (overs: Float32Array): number => {
+    const greatest = overs.reduce((most, over) => Math.max(most, over), Number.EPSILON);
+    const skyOvers = Array.from(
+      overs.filter((_, pixel) => skyMask[pixel]),
+      (over) => (over / greatest) * BYTE,
+    );
+    return Math.max(logRatio, (readOtsuThreshold(skyOvers) / BYTE) * greatest);
+  };
   return {
-    readClouds: (luminance) => {
-      const blurred = blurGrey(luminance, width, height, CLASSIFY_BLUR_SIGMA);
-      const clear = fitClearSky(blurred, skyMask, width, height, CLOUD_RATIO);
-      const overs = Float32Array.from(blurred, (value, pixel) =>
-        skyMask[pixel] ? Math.max(Math.log(Math.max(value, Number.EPSILON)) - (clear[pixel] ?? 0), 0) : 0,
-      );
-      // The clear surface settles under a sky's own wisps and its glow toward the sun, which then stand past the ratio
-      // Over it, so the split is Otsu's between the sky's two populations wherever that lies past the ratio
-      const greatest = overs.reduce((most, over) => Math.max(most, over), Number.EPSILON);
-      const skyOvers = Array.from(
-        overs.filter((_, pixel) => skyMask[pixel]),
-        (over) => (over / greatest) * BYTE,
-      );
-      const threshold = Math.max(logRatio, (readOtsuThreshold(skyOvers) / BYTE) * greatest);
-      return Uint8Array.from(overs, (over, pixel) => Number((skyMask[pixel] ?? 0) === 1 && over > threshold));
+    // A sky's clouds by its own split, or by a split held from another sky: ours read at the reference's, so a guess
+    // That moves our clouds does not move what counts as one
+    readClouds: (luminance, threshold) => {
+      const overs = readOvers(luminance);
+      const split = threshold ?? readThreshold(overs);
+      return Uint8Array.from(overs, (over, pixel) => Number((skyMask[pixel] ?? 0) === 1 && over > split));
     },
+    readCloudThreshold: (luminance) => readThreshold(readOvers(luminance)),
     // The share of the sky each band of its height holds as cloud
     readElevationCoverage: (clouds) =>
       CLOUD_ELEVATION_BANDS.slice(1).map((top, band) => {
