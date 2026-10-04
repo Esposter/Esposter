@@ -10,6 +10,10 @@ A term's **ceiling** is how much the score would recover if that term were exact
 
 A term made of content the source places at random (clouds a particle emitter scatters, foliage, crowds) cannot be recovered by a score that compares pixels, however large its ceiling: ours stands in other places than the reference's, and a perceptual score prices every misplaced edge, so more of it scores worse even where the reference holds more of it than ours. Its colours are solved by matching the two populations' spreads, and its amount and placement are judged by their statistics (cover by height, size), never by the frame's score; the ranking discounts it to its colour's share.
 
+## A proxy prices nothing
+
+A term's ceiling is read off the score against the source, never off a measure against something in between: a part of ours against the source's own part drawn beside it, a sound against one instrument's recording. Such a measure is exact about how far the part stands from its source, and blind to whether the frame would show the difference, so it can improve pass after pass while the score stands still. It chooses between representations of a term the ranking already puts first; when the ranking prices that term near nothing, the term waits however wide the proxy's gap.
+
 ## The order
 
 1. **Price every term before touching any.** The ranking is measured each pass, never remembered: what was largest moves once anything near it is fixed.

@@ -24,16 +24,16 @@ const readGrey = async (input: Buffer, width: number, height: number): Promise<F
 // Wide enough that a tower's windows, its gold bands and the door's relief span several pixels
 const STAND_IN_WIDTH = 960;
 // Each family's stand-in against the game's own exports, both drawn by the one page at the reference's camera, moment,
-// Light and haze: FLIP between the two over the exports' pixels of the family. A recording is soft, its light is ours
-// To match and its parts never line up to the pixel, so a stand-in missing its windows, trims and carving scores
-// Within noise of the exports against it; drawn beside the exports, every pixel lines up and only the stand-in differs.
-// Each family's mean, its ceiling as a share of the frame's pixels the same way rank's are, and its structural
-// Similarity to the exports, which charges detail a few pixels off once where FLIP charges it twice. The two frames are
-// Written one over the other, the exports on top, for the eye
+// Light and haze: FLIP between the two over the exports' pixels of the family, where every pixel lines up and only the
+// Stand-in differs. It chooses between representations of a stand-in rank's own table already ranks and orders
+// Nothing: its gap is the stand-in's distance from its exports, not what the frame would recover, which under a light
+// Far from the game's is near nothing however wide the gap. Each family's mean, its gap as a share of the frame's
+// Pixels as rank's ceilings are, and its structural similarity to the exports, which charges detail a few pixels off
+// Once where FLIP charges it twice. The two frames are written one over the other, the exports on top, for the eye
 export const readStandInGains = async (
   referenceId: string,
   witness: DerivedAssetComponent,
-): Promise<{ ceiling: number; mean: number; name: string; share: number; similarity: number }[]> => {
+): Promise<{ gap: number; mean: number; name: string; share: number; similarity: number }[]> => {
   await fetchReferences();
   const { browser, checkIsScored, height, page } = await openWitnessPage(referenceId, witness, STAND_IN_WIDTH);
   return withFinalizerAsync(
@@ -77,12 +77,12 @@ export const readStandInGains = async (
         terms.set(name, term);
       }
       return Array.from(terms, ([name, { count, error, similarity }]) => ({
-        ceiling: error / Math.max(scoredCount, 1),
+        gap: error / Math.max(scoredCount, 1),
         mean: error / Math.max(count, 1),
         name,
         share: count / Math.max(scoredCount, 1),
         similarity,
-      })).toSorted((first, second) => second.ceiling - first.ceiling);
+      })).toSorted((first, second) => second.gap - first.gap);
     },
     () => browser.close(),
   );
