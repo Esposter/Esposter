@@ -79,14 +79,14 @@ export const measureGlide = async (
       }),
   );
   const height = columns[0]?.length ?? 0;
-  const readRow = (distance: number): number => computeGroundRow(distance, { eyeHeight, fov, height, pitch });
+  const getRow = (distance: number): number => computeGroundRow(distance, { eyeHeight, fov, height, pitch });
   const shifts = columns
     .slice(1)
     .map((later, index) =>
       measureGroundShift(columns[index] ?? later, later, {
         band,
+        getRow,
         largestShift: LARGEST_SHIFT,
-        readRow,
         step: GROUND_STEP,
       }),
     );

@@ -25,14 +25,14 @@ const toDirection = ([heading = 0, elevation = 0]: readonly number[]): Vector =>
   const altitude = (elevation * Math.PI) / 180;
   return [Math.cos(altitude) * Math.sin(azimuth), Math.sin(altitude), Math.cos(altitude) * Math.cos(azimuth)];
 };
-const readLitShare = (normal: Vector, direction: Vector): number =>
+const getLitShare = (normal: Vector, direction: Vector): number =>
   Math.max(0, normal[0] * direction[0] + normal[1] * direction[1] + normal[2] * direction[2]);
-const readTarget = (values: Float32Array, pixel: number): Vector => [
+const computeTarget = (values: Float32Array, pixel: number): Vector => [
   values[pixel * 4] ?? 0,
   values[pixel * 4 + 1] ?? 0,
   values[pixel * 4 + 2] ?? 0,
 ];
-const readRms = (residuals: readonly number[]): number =>
+const computeRms = (residuals: readonly number[]): number =>
   Math.sqrt(residuals.reduce((sum, value) => sum + value ** 2, 0) / Math.max(residuals.length, 1));
 // A scene's frame-wide terms fitted by least squares over the pixels the witness draws its parts on, in the order light
 // Meets the eye, each held for the next: the sun's colour and the ambient light's from the albedo and the normal, the
@@ -68,13 +68,13 @@ export const calibrateScene = async (
   const samples = pixels.map((pixel, index) => {
     const [red = 0, green = 0, blue = 0] = displayed[index] ?? [];
     return {
-      albedo: readTarget(albedo, pixel),
+      albedo: computeTarget(albedo, pixel),
       color: [toLinear(red), toLinear(green), toLinear(blue)] satisfies Vector,
       depth: depth[pixel * 4] ?? 0,
-      normal: readTarget(normal, pixel),
+      normal: computeTarget(normal, pixel),
     };
   });
-  const readDirectionResidual = (angles: readonly number[]): number => {
+  const computeDirectionResidual = (angles: readonly number[]): number => {
     const elevation = angles[1] ?? 0;
     return elevation < MIN_SUN_ELEVATION || elevation > MAX_SUN_ELEVATION
       ? Infinity
@@ -83,9 +83,10 @@ export const calibrateScene = async (
   let start: [number, number] = [0, DIRECTION_GRID_STEP];
   for (let heading = 0; heading < 360; heading += DIRECTION_GRID_STEP)
     for (let elevation = DIRECTION_GRID_STEP; elevation < 90; elevation += DIRECTION_GRID_STEP)
-      if (readDirectionResidual([heading, elevation]) < readDirectionResidual(start)) start = [heading, elevation];
+      if (computeDirectionResidual([heading, elevation]) < computeDirectionResidual(start))
+        start = [heading, elevation];
   const { point } = await minimizeNelderMead(
-    (angles) => Promise.resolve(readDirectionResidual(angles)),
+    (angles) => Promise.resolve(computeDirectionResidual(angles)),
     start,
     [DIRECTION_GRID_STEP / 3, DIRECTION_GRID_STEP / 3],
     DIRECTION_REFINE_ITERATIONS,
@@ -94,7 +95,7 @@ export const calibrateScene = async (
   const sunDirection = toDirection(direction);
   const light = { ...fitLight(samples, sunDirection), direction };
   const lit = samples.map(({ albedo: [red, green, blue], normal: facing }): Vector => {
-    const share = readLitShare(facing, sunDirection);
+    const share = getLitShare(facing, sunDirection);
     const [sunRed, sunGreen, sunBlue] = light.sun;
     const [ambientRed, ambientGreen, ambientBlue] = light.ambient;
     return [
@@ -131,8 +132,8 @@ export const calibrateScene = async (
         predicted.map((color, index) => ({ from: color[channel] ?? 0, to: displayed[index]?.[channel] ?? 0 })),
       ).knots,
   );
-  const readResidual = (grade: (value: number, channel: number) => number): number =>
-    readRms(
+  const computeResidual = (grade: (value: number, channel: number) => number): number =>
+    computeRms(
       predicted.flatMap((color, index) =>
         color.map((value, channel) => grade(value, channel) - (displayed[index]?.[channel] ?? 0)),
       ),
@@ -147,15 +148,15 @@ export const calibrateScene = async (
         const offset = (y * info.width + z * size + x) * 3;
         return [0, 1, 2].map((channel) => (table[offset + channel] ?? 0) / 255 - (displayed[index]?.[channel] ?? 0));
       });
-      return { path, residual: readRms(residuals) };
+      return { path, residual: computeRms(residuals) };
     }),
   );
   return {
     fog,
     grade: {
       knots,
-      plainResidual: readResidual((value) => value),
-      residual: readResidual((value, channel) => applyGradeCurve(knots[channel] ?? [], value)),
+      plainResidual: computeResidual((value) => value),
+      residual: computeResidual((value, channel) => applyGradeCurve(knots[channel] ?? [], value)),
     },
     isFogFitted,
     light,

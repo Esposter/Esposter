@@ -9,21 +9,21 @@ const FLOATS_PER_KEY = 5;
 
 export const parseStreamedClipKeys = (words: readonly number[]): Map<number, StreamedKey[]> => {
   const view = new DataView(Uint32Array.from(words).buffer);
-  const readFloat = (index: number): number => view.getFloat32(index * 4, true);
-  const readWord = (index: number): number => view.getUint32(index * 4, true);
+  const getFloat = (index: number): number => view.getFloat32(index * 4, true);
+  const getWord = (index: number): number => view.getUint32(index * 4, true);
   const curveKeysMap = new Map<number, StreamedKey[]>();
   let index = 0;
   while (index + 1 < words.length) {
-    const time = readFloat(index);
-    const keyCount = readWord(index + 1);
+    const time = getFloat(index);
+    const keyCount = getWord(index + 1);
     index += 2;
     for (let key = 0; key < keyCount && index + FLOATS_PER_KEY <= words.length; key++) {
-      const curve = readWord(index);
+      const curve = getWord(index);
       const coefficients: StreamedKey["coefficients"] = [
-        readFloat(index + 1),
-        readFloat(index + 2),
-        readFloat(index + 3),
-        readFloat(index + 4),
+        getFloat(index + 1),
+        getFloat(index + 2),
+        getFloat(index + 3),
+        getFloat(index + 4),
       ];
       const keys = curveKeysMap.get(curve);
       if (keys) keys.push({ coefficients, time });

@@ -39,7 +39,7 @@ export const fitVoiceNoises = (
   const medianShare = Math.sqrt(Math.LN2 * ((3 * frameLength) / 8));
   // The frames whose windows reach into a note, from the first that holds its start to the last that holds its ring
   // After its end, which its partials and its noise both carry through its release
-  const readNoteFrames = ({ durationSeconds, startTimeSeconds }: NoteEventTime): [number, number] => [
+  const computeNoteFrames = ({ durationSeconds, startTimeSeconds }: NoteEventTime): [number, number] => [
     Math.max(Math.floor((startTimeSeconds * sampleRate - frameLength) / hopLength) + 1, 0),
     Math.min(
       Math.floor(((startTimeSeconds + durationSeconds + MUSIC_RELEASE_SECONDS) * sampleRate) / hopLength),
@@ -50,7 +50,7 @@ export const fitVoiceNoises = (
   // Partials a fixed clearance misses
   const partialMasks = Array.from({ length: frameCount }, () => new Uint8Array(binCount));
   for (const note of voices.flat()) {
-    const [firstFrame, lastFrame] = readNoteFrames(note);
+    const [firstFrame, lastFrame] = computeNoteFrames(note);
     for (const [low, high] of computePartialBinRanges(note.pitchMidi, binWidth, binCount))
       for (let frame = firstFrame; frame <= lastFrame; frame++) partialMasks[frame]?.fill(1, low, high);
   }
@@ -58,7 +58,7 @@ export const fitVoiceNoises = (
     const powers = new Float64Array(frameCount);
     for (const note of notes) {
       const { pitchMidi } = note;
-      const [firstFrame, lastFrame] = readNoteFrames(note);
+      const [firstFrame, lastFrame] = computeNoteFrames(note);
       for (let frame = firstFrame; frame <= lastFrame; frame++)
         powers[frame] =
           (powers[frame] ?? 0) +
@@ -66,22 +66,22 @@ export const fitVoiceNoises = (
     }
     return powers;
   });
-  const readPower = (voice: number, frame: number): number => voicePowers[voice]?.[frame] ?? 0;
+  const getPower = (voice: number, frame: number): number => voicePowers[voice]?.[frame] ?? 0;
   // The normal equations over the active voices, each frame's row and target given, a frame without a target left out
   const solveNormal = (
     active: number[],
-    readRow: (index: number, frame: number) => number,
-    readTarget: (frame: number) => number | undefined,
+    getRow: (index: number, frame: number) => number,
+    computeTarget: (frame: number) => number | undefined,
   ): number[] | undefined => {
     const frames = Array.from({ length: frameCount }, (_, frame) => frame).filter(
-      (frame) => readTarget(frame) !== undefined,
+      (frame) => computeTarget(frame) !== undefined,
     );
     const rows = [...active.keys()];
     return solveLinearSystem(
       rows.map((row) =>
-        rows.map((column) => frames.reduce((sum, frame) => sum + readRow(row, frame) * readRow(column, frame), 0)),
+        rows.map((column) => frames.reduce((sum, frame) => sum + getRow(row, frame) * getRow(column, frame), 0)),
       ),
-      rows.map((row) => frames.reduce((sum, frame) => sum + readRow(row, frame) * (readTarget(frame) ?? 0), 0)),
+      rows.map((row) => frames.reduce((sum, frame) => sum + getRow(row, frame) * (computeTarget(frame) ?? 0), 0)),
     );
   };
   const soundingFrames = Array.from({ length: frameCount }, (_, frame) => frame).filter((frame) =>
@@ -106,14 +106,14 @@ export const fitVoiceNoises = (
     // A voice silent in every frame the band is read in says nothing of it
     let active = voices
       .map((_, index) => index)
-      .filter((voice) => noisePowers.some((power, frame) => power !== undefined && readPower(voice, frame) > 0));
+      .filter((voice) => noisePowers.some((power, frame) => power !== undefined && getPower(voice, frame) > 0));
     let shares: number[] = [];
     while (active.length > 0) {
       const solving = active;
       const solvingShares =
         solveNormal(
           solving,
-          (index, frame) => readPower(solving[index] ?? 0, frame),
+          (index, frame) => getPower(solving[index] ?? 0, frame),
           (frame) => noisePowers[frame],
         ) ?? solving.map(() => 0);
       shares = solvingShares;
@@ -123,14 +123,14 @@ export const fitVoiceNoises = (
     // Each share as its logarithm, which keeps it positive through the refinement
     const logShares = shares.map((share) => Math.log(share));
     const solved = active;
-    const readModel = (frame: number): number =>
-      solved.reduce((sum, voice, index) => sum + Math.exp(logShares[index] ?? 0) * readPower(voice, frame), 0);
+    const computeModel = (frame: number): number =>
+      solved.reduce((sum, voice, index) => sum + Math.exp(logShares[index] ?? 0) * getPower(voice, frame), 0);
     for (let step = 0; step < MUSIC_NOISE_REFINE_STEPS && solved.length > 0; step++) {
-      const models = Float64Array.from({ length: frameCount }, (_, frame) => readModel(frame));
+      const models = Float64Array.from({ length: frameCount }, (_, frame) => computeModel(frame));
       const delta = solveNormal(
         solved,
         (index, frame) =>
-          (Math.exp(logShares[index] ?? 0) * readPower(solved[index] ?? 0, frame)) / (models[frame] || 1),
+          (Math.exp(logShares[index] ?? 0) * getPower(solved[index] ?? 0, frame)) / (models[frame] || 1),
         (frame) => {
           const power = noisePowers[frame];
           return power === undefined || !models[frame] ? undefined : Math.log(power / (models[frame] ?? 1));

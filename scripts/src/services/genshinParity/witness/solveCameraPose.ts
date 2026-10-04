@@ -15,12 +15,12 @@ const JACOBIAN_STEPS = [1e-4, 1e-4, 1e-4, 1e-4, 1e-4, 1e-4];
 const CONVERGED_STEP = 1e-9;
 const INITIAL_DAMPING = 1e-3;
 const DAMPING_FACTOR = 10;
-const readCost = (residuals: readonly number[]): number => residuals.reduce((sum, value) => sum + value ** 2, 0);
+const computeCost = (residuals: readonly number[]): number => residuals.reduce((sum, value) => sum + value ** 2, 0);
 // The projection from six or more correspondences in closed form, as the pose it holds: the null vector of the direct
 // Linear transform's system over conditioned coordinates gives the three by four projection, whose left three columns'
 // Inverse times the fourth places the eye, whose third row faces the view, and whose second row's height over it is the
 // Focal length in pixels
-const readLinearPose = (correspondences: readonly { pixel: Pixel; point: Point }[], height: number): number[] => {
+const computeLinearPose = (correspondences: readonly { pixel: Pixel; point: Point }[], height: number): number[] => {
   const pointCentre = [0, 1, 2].map((axis) => computeMean(correspondences.map(({ point }) => point[axis] ?? 0)));
   const pixelCentre = [0, 1].map((axis) => computeMean(correspondences.map(({ pixel }) => pixel[axis] ?? 0)));
   const pointScale =
@@ -110,26 +110,26 @@ export const solveCameraPose = (
       "pose",
       `${correspondences.length} correspondences: ${DLT_POINT_COUNT} or more, or a start`,
     );
-  const readResiduals = (pose: readonly number[]): number[] =>
+  const computeResiduals = (pose: readonly number[]): number[] =>
     correspondences.flatMap(({ isEdge, pixel, point }) => {
       const {
         pixel: [u, v],
       } = projectWitnessPoint(pose, point, width, height);
       return [u - pixel[0], isEdge ? 0 : v - pixel[1]];
     });
-  let pose = start ? [...start] : readLinearPose(correspondences, height);
-  let residuals = readResiduals(pose);
+  let pose = start ? [...start] : computeLinearPose(correspondences, height);
+  let residuals = computeResiduals(pose);
   let damping = INITIAL_DAMPING;
   // One damped step from a pose: the Jacobian read by nudging each axis free to move, then the normal equations with
   // Their diagonal raised by the damping (a held axis's by one more, so it stays put)
-  const readStep = (
+  const computeStep = (
     from: readonly number[],
     fromResiduals: readonly number[],
     stepDamping: number,
   ): number[] | undefined => {
     const jacobian = JACOBIAN_STEPS.map((step, axis) => {
       if (heldAxes.includes(axis)) return fromResiduals.map(() => 0);
-      const nudged = readResiduals(from.map((value, index) => (index === axis ? value + step : value)));
+      const nudged = computeResiduals(from.map((value, index) => (index === axis ? value + step : value)));
       return nudged.map((value, row) => (value - (fromResiduals[row] ?? 0)) / step);
     });
     const gradient = jacobian.map((column) =>
@@ -147,11 +147,11 @@ export const solveCameraPose = (
     );
   };
   for (let iteration = 0; iteration < ITERATION_LIMIT; iteration++) {
-    const step = readStep(pose, residuals, damping);
+    const step = computeStep(pose, residuals, damping);
     if (!step) break;
     const candidate = pose.map((value, index) => value + (step[index] ?? 0));
-    const candidateResiduals = readResiduals(candidate);
-    if (readCost(candidateResiduals) < readCost(residuals)) {
+    const candidateResiduals = computeResiduals(candidate);
+    if (computeCost(candidateResiduals) < computeCost(residuals)) {
       pose = candidate;
       residuals = candidateResiduals;
       damping /= DAMPING_FACTOR;
@@ -161,5 +161,5 @@ export const solveCameraPose = (
   const errors = correspondences.map((_, index) =>
     Math.hypot(residuals[index * 2] ?? 0, residuals[index * 2 + 1] ?? 0),
   );
-  return { errors, pose, rms: Math.sqrt(readCost(residuals) / Math.max(correspondences.length, 1)) };
+  return { errors, pose, rms: Math.sqrt(computeCost(residuals) / Math.max(correspondences.length, 1)) };
 };

@@ -28,12 +28,12 @@ export const fitMusicVoices = (
       return voiceNotes.map((note) => [note, instrument] as const);
     }),
   );
-  const readPartialAmplitude = (note: NoteEventTime, harmonic: number): number => {
+  const getPartialAmplitude = (note: NoteEventTime, harmonic: number): number => {
     const instrument = noteInstrumentMap.get(note);
     return instrument ? note.amplitude * instrument.level * (instrument.harmonics[harmonic - 1] ?? 0) : Infinity;
   };
   const voiceFits = voiceNotesList.map((voiceNotes) =>
-    fitInstrument(spectrogram, voiceNotes, notes, readPartialAmplitude),
+    fitInstrument(spectrogram, voiceNotes, notes, getPartialAmplitude),
   );
   return { splits, voiceFits, voiceNotesList };
 };

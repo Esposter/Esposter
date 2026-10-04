@@ -50,12 +50,12 @@ const toHuntLab = (linear: Color): Color => {
   const [l, a, b] = xyzToLab(linearToXyz(linear));
   return [l, 0.01 * l * a, 0.01 * l * b];
 };
-const readHyab = ([l1, a1, b1]: Color, [l2, a2, b2]: Color): number => Math.abs(l1 - l2) + Math.hypot(a1 - a2, b1 - b2);
+const getHyab = ([l1, a1, b1]: Color, [l2, a2, b2]: Color): number => Math.abs(l1 - l2) + Math.hypot(a1 - a2, b1 - b2);
 // The farthest two colours can be, green from blue, compressed as every difference is
-const MAX_DISTANCE = readHyab(toHuntLab([0, 1, 0]), toHuntLab([0, 0, 1])) ** QC;
-const readGaussian = (x2: number, a: number, b: number): number =>
+const MAX_DISTANCE = getHyab(toHuntLab([0, 1, 0]), toHuntLab([0, 0, 1])) ** QC;
+const getGaussian = (x2: number, a: number, b: number): number =>
   a * Math.sqrt(Math.PI / b) * Math.exp((-Math.PI * Math.PI * x2) / b);
-const readGaussianSqrt = (x2: number, a: number, b: number): number =>
+const getGaussianSqrt = (x2: number, a: number, b: number): number =>
   Math.sqrt(a * Math.sqrt(Math.PI / b)) * Math.exp((-Math.PI * Math.PI * x2) / b);
 // The contrast sensitivity filters, separated: one for the achromatic and red-green channels, and the blue-yellow's sum
 // Of two Gaussians as two filters whose squares sum to it
@@ -66,11 +66,8 @@ const createSpatialFilters = (pixelsPerDegree: number): { cz: [number, number][]
   const cz: [number, number][] = [];
   for (let offset = -radius; offset <= radius; offset++) {
     const x2 = (offset / pixelsPerDegree) ** 2;
-    ycx.push([readGaussian(x2, GAUSSIAN_A1[0], GAUSSIAN_B1[0]), readGaussian(x2, GAUSSIAN_A1[1], GAUSSIAN_B1[1])]);
-    cz.push([
-      readGaussianSqrt(x2, GAUSSIAN_A1[2], GAUSSIAN_B1[2]),
-      readGaussianSqrt(x2, GAUSSIAN_A2[2], GAUSSIAN_B2[2]),
-    ]);
+    ycx.push([getGaussian(x2, GAUSSIAN_A1[0], GAUSSIAN_B1[0]), getGaussian(x2, GAUSSIAN_A1[1], GAUSSIAN_B1[1])]);
+    cz.push([getGaussianSqrt(x2, GAUSSIAN_A1[2], GAUSSIAN_B1[2]), getGaussianSqrt(x2, GAUSSIAN_A2[2], GAUSSIAN_B2[2])]);
   }
   const [sumY, sumCx] = ycx.reduce(([y, x], [wy, wx]) => [y + wy, x + wx], [0, 0]);
   const [sumCz1, sumCz2] = cz.reduce(([first, second], [w1, w2]) => [first + w1, second + w2], [0, 0]);
@@ -149,7 +146,7 @@ export const scoreFlip = (
     return filtered;
   };
   const [referenceAlongX, testAlongX] = [filterAlongX(referenceYcxcz), filterAlongX(testYcxcz)];
-  const readFilteredLab = (alongX: Float32Array, x: number, y: number): Color => {
+  const computeFilteredLab = (alongX: Float32Array, x: number, y: number): Color => {
     let sumY = 0;
     let sumCx = 0;
     let sumCz1 = 0;
@@ -170,7 +167,7 @@ export const scoreFlip = (
   const pcMax = PC * MAX_DISTANCE;
   for (let y = 0; y < height; y++)
     for (let x = 0; x < width; x++) {
-      const difference = readHyab(readFilteredLab(referenceAlongX, x, y), readFilteredLab(testAlongX, x, y)) ** QC;
+      const difference = getHyab(computeFilteredLab(referenceAlongX, x, y), computeFilteredLab(testAlongX, x, y)) ** QC;
       colorDifferences[y * width + x] =
         difference < pcMax
           ? (difference * PT) / pcMax
@@ -198,7 +195,7 @@ export const scoreFlip = (
     return filtered;
   };
   const [referenceFeatures, testFeatures] = [featuresAlongX(referenceYcxcz), featuresAlongX(testYcxcz)];
-  const readFeatures = (features: Float32Array, x: number, y: number): [number, number] => {
+  const computeFeatures = (features: Float32Array, x: number, y: number): [number, number] => {
     let dx = 0;
     let ddx = 0;
     let dy = 0;
@@ -217,8 +214,8 @@ export const scoreFlip = (
   let sum = 0;
   for (let y = 0; y < height; y++)
     for (let x = 0; x < width; x++) {
-      const [referenceEdge, referencePoint] = readFeatures(referenceFeatures, x, y);
-      const [testEdge, testPoint] = readFeatures(testFeatures, x, y);
+      const [referenceEdge, referencePoint] = computeFeatures(referenceFeatures, x, y);
+      const [testEdge, testPoint] = computeFeatures(testFeatures, x, y);
       const featureDifference =
         (Math.SQRT1_2 * Math.max(Math.abs(referenceEdge - testEdge), Math.abs(referencePoint - testPoint))) ** QF;
       const error = (colorDifferences[y * width + x] ?? 0) ** (1 - featureDifference);

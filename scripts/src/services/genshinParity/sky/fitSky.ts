@@ -21,7 +21,7 @@ const smoothstep = (value: number): number => {
 };
 const saturate = (value: number): number => Math.min(Math.max(value, 0), 1);
 // A curve of evenly spaced samples read linearly at a share from 0 to 1, clamped at its ends
-const readCurve = (samples: readonly number[], share: number): number => {
+const getCurve = (samples: readonly number[], share: number): number => {
   const position = saturate(share) * (samples.length - 1);
   const left = Math.floor(position);
   const right = Math.min(left + 1, samples.length - 1);
@@ -30,7 +30,7 @@ const readCurve = (samples: readonly number[], share: number): number => {
 // Each term's weight at a ray, as the game's sky shader sums them: the sky's colour from its gradient, blended from away
 // From the sun to toward it, the halo over its reach toward the sun and all round once the sun is up, the sun's halo
 // As three widening lobes and the moon's glow
-export const readSkyWeights = (
+export const computeSkyWeights = (
   direction: Vector,
   { moonDirection, sunDirection }: { moonDirection: Vector; sunDirection: Vector },
   gradient: { green: readonly number[]; red: readonly number[] },
@@ -40,8 +40,8 @@ export const readSkyWeights = (
   const elevation = Math.abs((Math.asin(Math.min(Math.max(height, -1), 1)) * 2) / Math.PI);
   const sunCosine = dot(direction, sunDirection);
   const toward = Math.max(sunCosine * frontBackBlend + 1 - frontBackBlend, 0) ** 3;
-  const bottomShare = readCurve(gradient.red, elevation / Math.max(horizonBand, LEAST_DIVISOR));
-  const haloShare = readCurve(gradient.green, elevation / Math.max(haloHeight, LEAST_DIVISOR));
+  const bottomShare = getCurve(gradient.red, elevation / Math.max(horizonBand, LEAST_DIVISOR));
+  const haloShare = getCurve(gradient.green, elevation / Math.max(haloHeight, LEAST_DIVISOR));
   const sunSide = saturate(sunCosine * 0.5 + 0.5);
   const towardSun = smoothstep(Math.max((sunSide - 0.3) / 0.7, 0));
   const sunUp = smoothstep(saturate((Math.abs(sunDirection[1]) - 0.2) / 0.3));

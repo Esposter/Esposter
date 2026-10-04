@@ -47,7 +47,7 @@ export const scoreSampledSolos = async (
         return region ? [{ pitchMidi, region }] : [];
       });
       voiceSolosList[voice]?.push({
-        ...reference.readSolo(rendered),
+        ...reference.computeSolo(rendered),
         name: instrument.name,
         onset: computeMedian(regions.map(({ region }) => regionOnsetMap.get(region) ?? 0)),
         shift: computeMedian(regions.map(({ pitchMidi, region }) => Math.abs(pitchMidi - region.keyCenter))),

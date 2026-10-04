@@ -62,7 +62,7 @@ export const placeFamiliesOnLandmarks = async (
     },
     () => browser.close(),
   );
-  const readErrors = ([x = 0, y = 0, z = 0, turnDegrees = 0]: readonly number[]): number[] => {
+  const computeErrors = ([x = 0, y = 0, z = 0, turnDegrees = 0]: readonly number[]): number[] => {
     const cosine = Math.cos((turnDegrees * Math.PI) / 180);
     const sine = Math.sin((turnDegrees * Math.PI) / 180);
     return points.map(([pointX, pointY, pointZ], index) => {
@@ -74,8 +74,8 @@ export const placeFamiliesOnLandmarks = async (
       return definitions[index]?.isEdge ? Math.abs(u - givenU) : Math.hypot(u - givenU, v - givenV);
     });
   };
-  const readRms = (values: readonly number[]): number =>
-    Math.sqrt(readErrors(values).reduce((sum, error) => sum + error ** 2, 0) / Math.max(points.length, 1));
+  const computeRms = (values: readonly number[]): number =>
+    Math.sqrt(computeErrors(values).reduce((sum, error) => sum + error ** 2, 0) / Math.max(points.length, 1));
   const freeIndices = axes.map((axis) => PLACE_AXES.indexOf(axis));
   const toPoint = (free: readonly number[]): number[] =>
     PLACE_AXES.map((_, index) => {
@@ -83,20 +83,20 @@ export const placeFamiliesOnLandmarks = async (
       return freeIndex === -1 ? 0 : (free[freeIndex] ?? 0);
     });
   const { point: free } = await minimizeNelderMead(
-    (values) => Promise.resolve(readRms(toPoint(values))),
+    (values) => Promise.resolve(computeRms(toPoint(values))),
     freeIndices.map(() => 0),
     freeIndices.map((index) => PLACE_STEPS[index] ?? 1),
     PLACE_ITERATIONS,
   );
   const point = toPoint(free);
   const [x = 0, y = 0, z = 0, turn = 0] = point;
-  const errors = readErrors(point);
-  const laidOutErrors = readErrors([0, 0, 0, 0]);
+  const errors = computeErrors(point);
+  const laidOutErrors = computeErrors([0, 0, 0, 0]);
   return {
     errors: Object.fromEntries(landmarkNames.map((name, index) => [name, errors[index] ?? 0])),
     laidOutErrors: Object.fromEntries(landmarkNames.map((name, index) => [name, laidOutErrors[index] ?? 0])),
     offset: [x, y, z],
-    rms: readRms(point),
+    rms: computeRms(point),
     turn,
   };
 };

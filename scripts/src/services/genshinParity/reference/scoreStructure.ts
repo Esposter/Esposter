@@ -20,7 +20,7 @@ const checkHasEdgeNear = (edges: Uint8Array, x: number, y: number, height: numbe
   return false;
 };
 // The share of one mask's edges with an edge of the other within the tolerance, over the pixels a layer covers
-const readMatchedShare = (
+const computeMatchedShare = (
   edges: Uint8Array,
   otherEdges: Uint8Array,
   height: number,
@@ -47,8 +47,8 @@ export const scoreStructure = async (reference: Buffer, ours: Buffer, layer?: Ui
     readStructureEdges(reference, height),
     readStructureEdges(ours, height),
   ]);
-  const precision = readMatchedShare(ourEdges, referenceEdges, height, layer);
-  const recall = readMatchedShare(referenceEdges, ourEdges, height, layer);
+  const precision = computeMatchedShare(ourEdges, referenceEdges, height, layer);
+  const recall = computeMatchedShare(referenceEdges, ourEdges, height, layer);
   const edgeScore = precision + recall === 0 ? 0 : (2 * precision * recall) / (precision + recall);
   const readTone = (input: Buffer) =>
     sharp(input).resize(STRUCTURE_WIDTH, height, { fit: "fill" }).removeAlpha().blur(TONE_BLUR_SIGMA).raw().toBuffer();

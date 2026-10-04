@@ -36,10 +36,10 @@ export const characterizeMusicBands = (
   const { loudness } = computeChroma(samples, sampleRate);
   const quiet = Math.max(...loudness) * CHROMA_QUIET_SHARE;
   const loudFrames = [...loudness.keys()].filter((frame) => frame < frameCount && (loudness[frame] ?? 0) >= quiet);
-  const readPower = (frame: number, bin: number): number => (magnitudes[frame * binCount + bin] ?? 0) ** 2;
+  const getPower = (frame: number, bin: number): number => (magnitudes[frame * binCount + bin] ?? 0) ** 2;
   const totals = Float64Array.from({ length: frameCount }, (_, frame) => {
     let total = 0;
-    for (let bin = 0; bin < binCount; bin++) total += readPower(frame, bin);
+    for (let bin = 0; bin < binCount; bin++) total += getPower(frame, bin);
     return total;
   });
   const checkIsAttack = (frame: number): boolean =>
@@ -60,7 +60,7 @@ export const characterizeMusicBands = (
     const [low, high] = computeBandBins(centre, sampleRate, frameLength, binCount);
     const bins = Array.from({ length: high - low + 1 }, (_, index) => low + index);
     const bandPowers = new Map(
-      loudFrames.map((frame) => [frame, sum(bins.map((bin) => readPower(frame, bin)))] as const),
+      loudFrames.map((frame) => [frame, sum(bins.map((bin) => getPower(frame, bin)))] as const),
     );
     const meanOf = (frames: number[]): number =>
       sum(frames.map((frame) => bandPowers.get(frame) ?? 0)) / Math.max(frames.length, 1);
@@ -68,7 +68,7 @@ export const characterizeMusicBands = (
     const partialTotal = sum(
       loudFrames.map((frame) => {
         const mask = partialMasks.get(frame);
-        return sum(bins.map((bin) => (mask?.[bin] ? readPower(frame, bin) : 0)));
+        return sum(bins.map((bin) => (mask?.[bin] ? getPower(frame, bin) : 0)));
       }),
     );
     return {

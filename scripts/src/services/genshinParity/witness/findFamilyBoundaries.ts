@@ -12,13 +12,13 @@ export const findFamilyBoundaries = ({
   const mask = new Uint8Array(width * height);
   const familyIndices = new Int16Array(width * height).fill(-1);
   // A pixel's family, minus one on the ground
-  const readFamily = (pixel: number): number => (part[pixel * 4] ? (part[pixel * 4 + 1] ?? -1) : -1);
+  const getFamily = (pixel: number): number => (part[pixel * 4] ? (part[pixel * 4 + 1] ?? -1) : -1);
   for (let y = 0; y < height; y++)
     for (let x = 0; x < width; x++) {
       const pixel = y * width + x;
-      const family = readFamily(pixel);
-      const right = x < width - 1 ? readFamily(pixel + 1) : family;
-      const below = y < height - 1 ? readFamily(pixel + width) : family;
+      const family = getFamily(pixel);
+      const right = x < width - 1 ? getFamily(pixel + 1) : family;
+      const below = y < height - 1 ? getFamily(pixel + width) : family;
       if (right === family && below === family) continue;
       mask[pixel] = 1;
       // An edge on the empty ground belongs to the family it bounds, its right or lower neighbour

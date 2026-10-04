@@ -26,7 +26,7 @@ const toDecibels = (share: number): number => 20 * Math.log10(share);
 // A voice's instrument fitted to the sound it was heard in, each value measured at the voice's own notes. A note's
 // Fundamental and each overtone are read where every other note sounding with it, of any voice, leaves them clear, so
 // A crowded passage gives up only the partials it covers. A partial of another note covers a reading only when
-// `readPartialAmplitude` expects it loud enough to move it, so a low note's quiet upper overtones, which crowd closer
+// `getPartialAmplitude` expects it loud enough to move it, so a low note's quiet upper overtones, which crowd closer
 // Than a semitone, do not cover everything above them. A note whose peak sits under the noise of the voice's
 // Loudest gives up everything. At the fundamental's peak: its amplitude over the note's velocity, its pitch against
 // Equal temperament, and each clear overtone over it. The attack is the time from the note's start to that peak, less
@@ -42,7 +42,7 @@ export const fitInstrument = (
   notes: NoteEventTime[],
   soundingNotes: NoteEventTime[],
   // The amplitude a sounding note's harmonic (1 for its fundamental) is expected at
-  readPartialAmplitude: (note: NoteEventTime, harmonic: number) => number,
+  getPartialAmplitude: (note: NoteEventTime, harmonic: number) => number,
 ): InstrumentFit => {
   const { frameCount, frameLength, hopLength, sampleRate } = spectrogram;
   const binWidth = sampleRate / frameLength;
@@ -72,7 +72,7 @@ export const fitInstrument = (
         Array.from({ length: MUSIC_HARMONIC_COUNT }, (_, index) => index + 1).every(
           (harmonic) =>
             Math.abs(harmonic * toFrequency(other.pitchMidi) - frequency) > clearance ||
-            readPartialAmplitude(other, harmonic) < MUSIC_COVER_SHARE * amplitude,
+            getPartialAmplitude(other, harmonic) < MUSIC_COVER_SHARE * amplitude,
         ),
     );
   };
@@ -185,7 +185,7 @@ export const fitInstrument = (
   const { constant: decay, level: sustain } = decayFit;
   // A window reads the mean of the amplitude it spans, weighted by its own shape, so a peak a fast decay follows reads
   // Low: the fitted envelope's own highest windowed mean is the share of the true peak every reading caught
-  const readEnvelope = (seconds: number): number =>
+  const getEnvelope = (seconds: number): number =>
     seconds < 0
       ? 0
       : seconds < attack
@@ -201,7 +201,7 @@ export const fitInstrument = (
     caughtShare = Math.max(
       caughtShare,
       window.reduce(
-        (sum, weight, index) => sum + weight * readEnvelope(centre + (index - frameLength / 2) / sampleRate),
+        (sum, weight, index) => sum + weight * getEnvelope(centre + (index - frameLength / 2) / sampleRate),
         0,
       ) / windowSum,
     );

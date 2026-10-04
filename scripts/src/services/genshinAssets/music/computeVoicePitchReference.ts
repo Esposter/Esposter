@@ -19,14 +19,14 @@ export const computeVoicePitchReference = (
   release: number,
   tuning: number,
   length: number,
-): { fundamentals: SampledSolo; readSolo: (rendered: Float32Array) => LaggedAgreement } => {
+): { computeSolo: (rendered: Float32Array) => LaggedAgreement; fundamentals: SampledSolo } => {
   const fundamentals = computeChroma(
     renderFundamentals(voiceNotes, release, tuning, AUDIO_SAMPLE_RATE, length),
     AUDIO_SAMPLE_RATE,
   );
   const noteChroma = computeNoteChroma(voiceNotes, fundamentals.loudness.length, AUDIO_SAMPLE_RATE);
   const frames = computeAudibleFrames(noteChroma.loudness);
-  const readSolo = (rendered: Float32Array) =>
+  const computeSolo = (rendered: Float32Array) =>
     computeLaggedAgreement(
       computeChroma(rendered, AUDIO_SAMPLE_RATE).classes,
       noteChroma.classes,
@@ -34,12 +34,12 @@ export const computeVoicePitchReference = (
       SAMPLED_VOICE_MAX_LAG,
     );
   return {
+    computeSolo,
     fundamentals: {
       ...computeLaggedAgreement(fundamentals.classes, noteChroma.classes, frames, SAMPLED_VOICE_MAX_LAG),
       name: "Fundamentals",
       onset: 0,
       shift: 0,
     },
-    readSolo,
   };
 };

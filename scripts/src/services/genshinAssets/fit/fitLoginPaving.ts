@@ -113,7 +113,7 @@ export const fitLoginPaving = async (
     ),
   );
   // Each cell's texel in its material's texture, its coordinates tiled and its rows read from the top
-  const readTexel = (cell: number): [number, number] =>
+  const getTexel = (cell: number): [number, number] =>
     toTexel(
       [values[cell * 2] ?? 0, values[cell * 2 + 1] ?? 0],
       (textures[tags[cell] ?? 0] ?? { info: { height: 1, width: 1 } }).info,
@@ -122,7 +122,7 @@ export const fitLoginPaving = async (
   for (let cell = 0; cell < width * height; cell++) {
     const texture = textures[tags[cell] ?? -1];
     if (!texture) continue;
-    const [column, row] = readTexel(cell);
+    const [column, row] = getTexel(cell);
     grey[cell] = texture.data[(row * texture.info.width + column) * texture.info.channels] ?? 0;
   }
   const traceCells = (cells: readonly number[]): Loop[] =>
@@ -164,13 +164,13 @@ export const fitLoginPaving = async (
   const topCells = Array.from({ length: width * height }, (_, cell) => cell).filter(
     (cell) => normals[tags[cell] ?? -1],
   );
-  const readTiltThreshold = (cells: readonly number[]): number =>
+  const computeTiltThreshold = (cells: readonly number[]): number =>
     (computeOtsuThreshold(cells.map((cell) => ((tilts[cell] ?? 0) / MAX_TILT) * BYTE)) / BYTE) * MAX_TILT;
-  const tiltThreshold = readTiltThreshold(topCells);
+  const tiltThreshold = computeTiltThreshold(topCells);
   const bevelCells = topCells.filter((cell) => (tilts[cell] ?? 0) > tiltThreshold);
   // The joints between the bricks tilt less than a pocket's rim, so they are split from the flat stone under the rims
-  const jointThreshold = readTiltThreshold(topCells.filter((cell) => (tilts[cell] ?? 0) <= tiltThreshold));
-  const readMedianTilt = (cells: readonly number[]): number =>
+  const jointThreshold = computeTiltThreshold(topCells.filter((cell) => (tilts[cell] ?? 0) <= tiltThreshold));
+  const computeMedianTilt = (cells: readonly number[]): number =>
     cells.map((cell) => tilts[cell] ?? 0).toSorted((first, second) => first - second)[Math.floor(cells.length / 2)] ??
     0;
   // A bevel is a pocket's rim where a pocket's edge lies within reach of it: both a pocket's cell and its lane's
@@ -196,9 +196,9 @@ export const fitLoginPaving = async (
     const normal = normals[tags[cell] ?? -1];
     const [right, left, down, up] = [cell + 1, cell - 1, cell + width, cell - width];
     if (!normal || [right, left, down, up].some((near) => tags[near] !== tags[cell])) continue;
-    const readU = (near: number): number => values[near * 2] ?? 0;
+    const getU = (near: number): number => values[near * 2] ?? 0;
     // The plan's direction the texture's first axis runs along, and the direction into the pocket
-    const tangent = [readU(right) - readU(left), readU(down) - readU(up)];
+    const tangent = [getU(right) - getU(left), getU(down) - getU(up)];
     const inward = [(blurred[left] ?? 0) - (blurred[right] ?? 0), (blurred[up] ?? 0) - (blurred[down] ?? 0)];
     const [column, row] = toTexel([values[cell * 2] ?? 0, values[cell * 2 + 1] ?? 0], normal.info);
     const x = ((normal.data[(row * normal.info.width + column) * normal.info.channels] ?? 0) / BYTE) * 2 - 1;
@@ -216,12 +216,12 @@ export const fitLoginPaving = async (
   return {
     bevel: {
       // Past none where the pockets are sunk
-      slope: roundFitted(Math.sign(lean) * readMedianTilt(rimCells)),
+      slope: roundFitted(Math.sign(lean) * computeMedianTilt(rimCells)),
       width: roundFitted((rimCells.length * CELL_SIZE ** 2) / Math.max(edgeLength, Number.EPSILON)),
     },
     corner: PLAN_CORNER,
     grooves: traceCells(grooveCells),
-    grooveSlope: roundFitted(readMedianTilt(grooveCells)),
+    grooveSlope: roundFitted(computeMedianTilt(grooveCells)),
     pockets,
     size: PLAN_SIZE,
   };

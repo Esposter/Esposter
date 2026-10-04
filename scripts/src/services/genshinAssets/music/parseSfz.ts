@@ -37,28 +37,28 @@ export const parseSfz = (text: string, directory: string): SampleRegion[] => {
     const sample = opcodes.get("sample");
     if (!sample || opcodes.get("trigger")?.startsWith("release") || (opcodes.get("seq_position") ?? "1") !== "1")
       return;
-    const readKey = (name: string, fallback: number) => {
+    const getKey = (name: string, fallback: number) => {
       const value = opcodes.get(name) ?? opcodes.get("key");
       return value === undefined ? fallback : parseKey(value);
     };
-    const readFadeMiddle = (fade: string, fallback: number) => {
+    const getFadeMiddle = (fade: string, fallback: number) => {
       const low = opcodes.get(`${fade}_lovel`);
       const high = opcodes.get(`${fade}_hivel`);
       return low === undefined || high === undefined ? fallback : Math.floor((Number(low) + Number(high)) / 2);
     };
-    const lowKey = readKey("lokey", 0);
-    const highKey = readKey("hikey", 127);
+    const lowKey = getKey("lokey", 0);
+    const highKey = getKey("hikey", 127);
     if (lowKey > highKey) return;
     regions.push({
       gain: Number(opcodes.get("volume") ?? 0),
       highKey,
       highVelocity: Math.min(
         Number(opcodes.get("hivel") ?? MIDI_VELOCITY_MAX),
-        readFadeMiddle("xfout", MIDI_VELOCITY_MAX),
+        getFadeMiddle("xfout", MIDI_VELOCITY_MAX),
       ),
-      keyCenter: readKey("pitch_keycenter", 60),
+      keyCenter: getKey("pitch_keycenter", 60),
       lowKey,
-      lowVelocity: Math.max(Number(opcodes.get("lovel") ?? 1), readFadeMiddle("xfin", 0) + 1),
+      lowVelocity: Math.max(Number(opcodes.get("lovel") ?? 1), getFadeMiddle("xfin", 0) + 1),
       offset: Number(opcodes.get("offset") ?? 0),
       path: posix.join(directory, `${opcodes.get("default_path") ?? ""}${sample}`.replaceAll("\\", "/")),
       tune: Number(opcodes.get("tune") ?? 0) + 100 * Number(opcodes.get("transpose") ?? 0),

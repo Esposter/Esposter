@@ -9,7 +9,7 @@ import sharp from "sharp";
 const DEPTH_PREVIEW_HALF = 100;
 const toByte = (value: number): number => Math.round(Math.min(Math.max(value, 0), 1) * 255);
 // A pixel's first three floats of a target as a colour, each through the given map to a share of full brightness
-const readColor = (
+const getColor = (
   values: Float32Array,
   pixel: number,
   toShare: (value: number) => number,
@@ -48,13 +48,13 @@ export const writeWitnessGbuffer = async (
       if (!part[pixel * 4]) return [0, 0, 0];
       return FAMILY_COLORS[(part[pixel * 4 + 1] ?? 0) % FAMILY_COLORS.length] ?? [255, 255, 255];
     }),
-    toImage((pixel) => readColor(normal, pixel, (value) => value * 0.5 + 0.5)),
+    toImage((pixel) => getColor(normal, pixel, (value) => value * 0.5 + 0.5)),
     toImage((pixel) => {
       const distance = depth[pixel * 4] ?? 0;
       const shade = toByte(distance > 0 ? DEPTH_PREVIEW_HALF / (DEPTH_PREVIEW_HALF + distance) : 0);
       return [shade, shade, shade];
     }),
-    toImage((pixel) => readColor(albedo, pixel, (value) => value)),
+    toImage((pixel) => getColor(albedo, pixel, (value) => value)),
   ]);
   const previewPath = join(directory, "preview.png");
   await sharp({ create: { background: "#000", channels: 3, height, width: width * panels.length } })

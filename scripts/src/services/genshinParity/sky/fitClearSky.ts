@@ -9,7 +9,7 @@ const DEGREE = 3;
 const OVER_WEIGHT = 0.1;
 const ITERATION_COUNT = 12;
 // The terms of a cubic in a pixel's place, each axis scaled to [-1, 1]
-const readTerms = (x: number, y: number): number[] => {
+const computeTerms = (x: number, y: number): number[] => {
   const terms: number[] = [];
   for (let yPower = 0; yPower <= DEGREE; yPower++)
     for (let xPower = 0; xPower + yPower <= DEGREE; xPower++) terms.push(x ** xPower * y ** yPower);
@@ -33,9 +33,9 @@ export const fitClearSky = (
     if (mask[pixel])
       pixels.push({
         logLuminance: Math.log(Math.max(luminance[pixel] ?? 0, Number.EPSILON)),
-        terms: readTerms(((pixel % width) / width) * 2 - 1, (Math.floor(pixel / width) / height) * 2 - 1),
+        terms: computeTerms(((pixel % width) / width) * 2 - 1, (Math.floor(pixel / width) / height) * 2 - 1),
       });
-  const termCount = readTerms(0, 0).length;
+  const termCount = computeTerms(0, 0).length;
   let coefficients = Array.from({ length: termCount }, () => 0);
   let weights = pixels.map(() => 1);
   for (let iteration = 0; iteration < ITERATION_COUNT; iteration++) {
@@ -60,7 +60,7 @@ export const fitClearSky = (
     });
   }
   return Float32Array.from({ length: width * height }, (_, pixel) =>
-    readTerms(((pixel % width) / width) * 2 - 1, (Math.floor(pixel / width) / height) * 2 - 1).reduce(
+    computeTerms(((pixel % width) / width) * 2 - 1, (Math.floor(pixel / width) / height) * 2 - 1).reduce(
       (sum, term, index) => sum + term * (coefficients[index] ?? 0),
       0,
     ),

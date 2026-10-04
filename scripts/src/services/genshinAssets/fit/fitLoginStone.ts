@@ -66,12 +66,12 @@ export const fitLoginStone = async (
           );
         }),
       );
-      const readColor = (key: string): Vector[] =>
+      const getColors = (key: string): Vector[] =>
         familyMaterials.flatMap(({ colors }) => {
           const color = colors[key];
           return color ? [[color[0], color[1], color[2]] satisfies Vector] : [];
         });
-      const readFloat = (key: string): number => {
+      const computeMeanFloat = (key: string): number => {
         const values = familyMaterials.flatMap(({ floats }) => (floats[key] === undefined ? [] : [floats[key]]));
         return roundFitted(values.reduce((sum, value) => sum + value, 0) / Math.max(values.length, 1));
       };
@@ -79,11 +79,11 @@ export const fitLoginStone = async (
         family,
         {
           albedo: await fitAlbedo(diffusePaths),
-          rimColor: computeMean(readColor("_RGColor")),
-          rimPower: readFloat("_RGPower"),
-          rimStrength: readFloat("_RGStrength"),
+          rimColor: computeMean(getColors("_RGColor")),
+          rimPower: computeMeanFloat("_RGPower"),
+          rimStrength: computeMeanFloat("_RGStrength"),
           smoothness: roundFitted(computeMedian(smoothnesses.flat())),
-          specularColor: computeMean(readColor("_SpecColor")),
+          specularColor: computeMean(getColors("_SpecColor")),
         },
       ] as const;
     }),

@@ -15,7 +15,7 @@ interface SceneBench {
   triangles: number;
 }
 // The share of the frames read off their sorted times
-const readQuantile = (sorted: readonly number[], share: number): number =>
+const getQuantile = (sorted: readonly number[], share: number): number =>
   sorted[Math.min(Math.floor(sorted.length * share), sorted.length - 1)] ?? 0;
 // A scene's cost on the parity page, warmed until its pipelines have compiled: its frame time's median, its slow
 // Tenth's and its slowest, against the main thread's busy time a frame, which tells a scene held up on the CPU from one
@@ -43,9 +43,9 @@ export const benchScreen = async ({
       );
       const taskMs = ((await readTaskSeconds()) - startTaskSeconds) * 1000;
       const sorted = bench.intervals.toSorted((first, second) => first - second);
-      const median = readQuantile(sorted, 0.5);
+      const median = getQuantile(sorted, 0.5);
       console.log(
-        `frame ${median.toFixed(1)} ms median (${(1000 / median).toFixed(0)} fps), ${readQuantile(sorted, 0.9).toFixed(1)} slowest tenth, ${(sorted.at(-1) ?? 0).toFixed(1)} slowest`,
+        `frame ${median.toFixed(1)} ms median (${(1000 / median).toFixed(0)} fps), ${getQuantile(sorted, 0.9).toFixed(1)} slowest tenth, ${(sorted.at(-1) ?? 0).toFixed(1)} slowest`,
       );
       console.log(`main thread ${(taskMs / frameCount).toFixed(1)} ms busy a frame`);
       console.log(

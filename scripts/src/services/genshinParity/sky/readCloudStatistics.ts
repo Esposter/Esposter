@@ -30,13 +30,13 @@ export const readCloudStatistics = async (
   const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness, CLOUDS_WIDTH);
   return withFinalizerAsync(
     async () => {
-      const { readClouds, readElevationCoverage, readLuminance, skyMask, width } = await readCloudSky(page, {
+      const { getLuminance, readClouds, readElevationCoverage, skyMask, width } = await readCloudSky(page, {
         checkIsScored,
         height,
       });
       await setPageWitnessView(page, { families: [] });
       const ourShot = await page.screenshot();
-      const [ourLuminance, referenceLuminance] = await Promise.all([readLuminance(ourShot), readLuminance(image)]);
+      const [ourLuminance, referenceLuminance] = await Promise.all([getLuminance(ourShot), getLuminance(image)]);
       const [ourClouds, referenceClouds] = [readClouds(ourLuminance), readClouds(referenceLuminance)];
       // A cloud white, the clear sky grey, and the rest black
       const toMask = (clouds: Uint8Array): Promise<Buffer> =>

@@ -22,7 +22,7 @@ const HEIGHT_SPAN_SHARE = 0.5;
 const LOG_SPAN_STEP = 0.4;
 const HEIGHT_ITERATION_COUNT = 60;
 const toShare = (logit: number): number => 1 / (1 + Math.exp(-logit));
-const readSquaredResidual = (ours: readonly number[], reference: readonly number[]): number =>
+const computeSquaredResidual = (ours: readonly number[], reference: readonly number[]): number =>
   ours.reduce((sum, value, index) => sum + (value - (reference[index] ?? 0)) ** 2, 0);
 // The share of each band's clouds the scene should draw at each reference's hour, by the sky's cover band by band of
 // Its height over the horizon: our sky drawn at each guess and its clouds read as the reference's are (`readCloudSky`),
@@ -65,12 +65,12 @@ export const solveReferenceCloudCover = async (
         );
         browsers.push(browser);
         // oxlint-disable-next-line no-await-in-loop -- read on the page just opened
-        const { readClouds, readCloudThreshold, readElevationCoverage, readLuminance } = await readCloudSky(page, {
+        const { getLuminance, readClouds, readCloudThreshold, readElevationCoverage } = await readCloudSky(page, {
           checkIsScored,
           height,
         });
         // oxlint-disable-next-line no-await-in-loop -- read on the page just opened
-        const referenceLuminance = await readLuminance(image);
+        const referenceLuminance = await getLuminance(image);
         // Our clouds are read at the reference's split: split on our own render, each guess moved the split with its
         // Clouds, and the solve chased a cost that moved under it
         const threshold = readCloudThreshold(referenceLuminance);
@@ -85,7 +85,7 @@ export const solveReferenceCloudCover = async (
               [covers, heights] as const,
             );
             await setPageWitnessView(page, { families: [] });
-            return readElevationCoverage(readClouds(await readLuminance(await page.screenshot()), threshold));
+            return readElevationCoverage(readClouds(await getLuminance(await page.screenshot()), threshold));
           },
           reference: readElevationCoverage(readClouds(referenceLuminance, threshold)),
           referenceId,
@@ -114,7 +114,7 @@ export const solveReferenceCloudCover = async (
         await Promise.all(
           skies.map(async (sky, index) => {
             const { point } = await minimizeNelderMead(
-              async (guess) => readSquaredResidual(await sky.readOurs(toCovers(guess), heights), sky.reference),
+              async (guess) => computeSquaredResidual(await sky.readOurs(toCovers(guess), heights), sky.reference),
               logits[index] ?? [],
               bands.map(() => LOGIT_STEP),
               ITERATION_COUNT,
@@ -133,7 +133,7 @@ export const solveReferenceCloudCover = async (
               skies.map((sky, index) => sky.readOurs(toCovers(logits[index] ?? []), toHeights(guess))),
             );
             return ours.reduce(
-              (sum, coverage, index) => sum + readSquaredResidual(coverage, skies[index]?.reference ?? []),
+              (sum, coverage, index) => sum + computeSquaredResidual(coverage, skies[index]?.reference ?? []),
               0,
             );
           },
@@ -163,12 +163,12 @@ export const solveReferenceCloudCover = async (
             ours,
             reference,
             referenceId,
-            residual: Math.sqrt(readSquaredResidual(ours, reference) / Math.max(reference.length, 1)),
+            residual: Math.sqrt(computeSquaredResidual(ours, reference) / Math.max(reference.length, 1)),
           };
         }),
       );
       const squaredResidual = references.reduce(
-        (sum, { ours, reference }) => sum + readSquaredResidual(ours, reference),
+        (sum, { ours, reference }) => sum + computeSquaredResidual(ours, reference),
         0,
       );
       const residualCount = references.reduce((sum, { reference }) => sum + reference.length, 0);

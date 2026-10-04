@@ -34,7 +34,7 @@ export const fitMusicExpression = (
     });
   };
   // Each band's mean distance with every window at its gain
-  const readBandDistance = (band: number, windowGains: number[]): number =>
+  const computeBandDistance = (band: number, windowGains: number[]): number =>
     computeMean(
       [...windowBandLevelsMap.entries()].flatMap(([window, windowBandLevelsList]) => {
         const bandLevels = windowBandLevelsList[band];
@@ -45,8 +45,8 @@ export const fitMusicExpression = (
   const windowGains = fitWindowGains(bands);
   const parityGainsList = [0, 1].map((parity) => fitWindowGains(bands.filter((band) => band % 2 === parity)));
   return {
-    distance: computeMean(bands.map((band) => readBandDistance(band, windowGains))),
-    heldOutDistance: computeMean(bands.map((band) => readBandDistance(band, parityGainsList[1 - (band % 2)] ?? []))),
+    distance: computeMean(bands.map((band) => computeBandDistance(band, windowGains))),
+    heldOutDistance: computeMean(bands.map((band) => computeBandDistance(band, parityGainsList[1 - (band % 2)] ?? []))),
     windowGains,
   };
 };

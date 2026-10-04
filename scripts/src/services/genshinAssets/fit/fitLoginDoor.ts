@@ -102,7 +102,7 @@ export const fitLoginDoor = async (
       [0, 1, 2].map(
         (channel) => cells.reduce((sum, cell) => sum + (colors[cell]?.[channel] ?? 0), 0) / Math.max(cells.length, 1),
       ) as Vector;
-    const readShade = (cells: readonly number[], around: readonly number[]): Vector => {
+    const computeShade = (cells: readonly number[], around: readonly number[]): Vector => {
       const [mean, aroundMean] = [computeMean(cells), computeMean(around)];
       return ([0, 1, 2] as const).map((channel) => roundFitted(mean[channel] / (aroundMean[channel] || 1))) as Vector;
     };
@@ -129,7 +129,7 @@ export const fitLoginDoor = async (
     return {
       bands: {
         loops: traceCells(bands),
-        shade: readShade(
+        shade: computeShade(
           bands,
           panel.filter((cell) => !bandSet.has(cell)),
         ),
@@ -137,7 +137,7 @@ export const fitLoginDoor = async (
       corner: [roundFitted(corner[0]), corner[1]],
       gilding: {
         loops: traceCells(gilded),
-        shade: readShade(
+        shade: computeShade(
           gilded,
           drawn.filter((cell) => tags[cell] === 0 && !gildedSet.has(cell)),
         ),

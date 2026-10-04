@@ -112,7 +112,7 @@ export const solveReferenceFog = async (
         points.push({ lit: toScene(litShot, pixel), point, reference: toScene(referenceShot, pixel) });
       }
       // Each direction's bins: their pixels, the medians of their lit and reference colours and their mean scatter
-      const readBins = (direction: Vector) => {
+      const computeBins = (direction: Vector) => {
         const binMap = new Map<number, { points: Point[]; scatters: number[] }>();
         for (const entry of points) {
           const ray = new Vector3(...entry.point).sub(new Vector3(...eye));
@@ -143,7 +143,7 @@ export const solveReferenceFog = async (
               ],
         );
       };
-      const solve = (density: number, bins: ReturnType<typeof readBins>): ReturnType<typeof solveFogColors> =>
+      const solve = (density: number, bins: ReturnType<typeof computeBins>): ReturnType<typeof solveFogColors> =>
         solveFogColors(
           bins.map(({ lit, points: binPoints, reference, scatter }) => ({
             lit,
@@ -155,7 +155,9 @@ export const solveReferenceFog = async (
             weight: binPoints.length,
           })),
         );
-      const refine = (bins: ReturnType<typeof readBins>): ReturnType<typeof solveFogColors> & { density: number } => {
+      const refine = (
+        bins: ReturnType<typeof computeBins>,
+      ): ReturnType<typeof solveFogColors> & { density: number } => {
         let [low, high] = DENSITY_RANGE.map((density) => Math.log(density)) as [number, number];
         for (let step = 0; step < GOLDEN_STEPS; step++) {
           const first = high - GOLDEN_SHARE * (high - low);
@@ -174,7 +176,7 @@ export const solveReferenceFog = async (
       return {
         count: points.length,
         solutions: directions.map(([name, direction, fixedDensity]) => {
-          const bins = readBins(direction);
+          const bins = computeBins(direction);
           const solved =
             fixedDensity === undefined ? refine(bins) : { density: fixedDensity, ...solve(fixedDensity, bins) };
           return {

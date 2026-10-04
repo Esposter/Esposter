@@ -24,7 +24,7 @@ const MIN_CLOUD_COVER = 0.3;
 const toLinear = (value: number): number => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
 const toDisplayHex = ([red, green, blue]: Vector): string =>
   `#${new Color(...toneMapNeutral([Math.max(red, 0), Math.max(green, 0), Math.max(blue, 0)])).getHexString()}`;
-const readLuminance = (color: Readonly<Vector>): number =>
+const getLuminance = (color: Readonly<Vector>): number =>
   CHANNELS.reduce((sum: number, channel) => sum + LUMINANCE[channel] * color[channel], 0);
 type SetCloudColors = (colors?: { lit: Vector; shade: Vector }) => void;
 const setCloudColors = (page: Page, colors?: { lit: Vector; shade: Vector }): Promise<void> =>
@@ -92,9 +92,9 @@ export const solveReferenceClouds = async (
           const litColor = toScene(litShot, pixel);
           const shade = CHANNELS.map((channel) => shadeColor[channel] - base[channel]) as Vector;
           const lit = CHANNELS.map((channel) => litColor[channel] - base[channel]) as Vector;
-          if (readLuminance(shade) + readLuminance(lit) >= MIN_CLOUD_COVER) ours.push({ base, lit, shade });
+          if (getLuminance(shade) + getLuminance(lit) >= MIN_CLOUD_COVER) ours.push({ base, lit, shade });
           const referenceColor = toScene(reference, pixel);
-          if (readLuminance(referenceColor) > readLuminance(toScene(clearShot, pixel)) * CLOUD_BRIGHTNESS_RATIO)
+          if (getLuminance(referenceColor) > getLuminance(toScene(clearShot, pixel)) * CLOUD_BRIGHTNESS_RATIO)
             referenceClouds.push(referenceColor);
         }
       const { lit, residual, shade } = solveCloudColors(ours, referenceClouds);

@@ -7,7 +7,7 @@ import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferen
 import { minimizeNelderMead } from "#src/services/genshinParity/shared/minimizeNelderMead";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
-import { fitSky, readSkyWeights, SKY_TERMS } from "#src/services/genshinParity/sky/fitSky";
+import { computeSkyWeights, fitSky, SKY_TERMS } from "#src/services/genshinParity/sky/fitSky";
 import { readCloudSky } from "#src/services/genshinParity/sky/readCloudSky";
 import { withFinalizerAsync } from "@esposter/shared";
 import { toneMapNeutral, toSceneColor } from "genshin-engine";
@@ -47,7 +47,7 @@ const SHAPE_STEPS = [0.3, 0.1, 0.15, 0.5, 2];
 const SHAPE_ITERATIONS = 80;
 const toLinear = (value: number): number => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
 // A pixel of raw sRGB bytes as the scene colour the tone mapping shows as it
-const readSceneColor = (buffer: Buffer, pixel: number): Vector => {
+const computeSceneColor = (buffer: Buffer, pixel: number): Vector => {
   const scene = toSceneColor(
     new Color(
       toLinear((buffer[pixel * 3] ?? 0) / 255),
@@ -82,8 +82,8 @@ export const solveReferenceSky = async (
   const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
-      const { readClouds, readLuminance, skyMask, width } = await readCloudSky(page, { checkIsScored, height });
-      const clouds = readClouds(await readLuminance(image));
+      const { getLuminance, readClouds, skyMask, width } = await readCloudSky(page, { checkIsScored, height });
+      const clouds = readClouds(await getLuminance(image));
       const sky = await page.evaluate(() =>
         (
           Reflect.get(window, "getSceneSky") as () => {
@@ -113,12 +113,15 @@ export const solveReferenceSky = async (
             .transformDirection(world)
             .normalize();
           if (direction.y < MIN_SKY_HEIGHT) continue;
-          pixels.push({ color: readSceneColor(data, pixel), direction: direction.toArray(), pixel });
+          pixels.push({ color: computeSceneColor(data, pixel), direction: direction.toArray(), pixel });
         }
       const { gradient } = await readWorldData<{ gradient: { green: number[]; red: number[] } }>(`${witness}/sky.json`);
       const solveAt = (shape: SkyShape) =>
         fitSky(
-          pixels.map(({ color, direction }) => ({ color, weights: readSkyWeights(direction, sky, gradient, shape) })),
+          pixels.map(({ color, direction }) => ({
+            color,
+            weights: computeSkyWeights(direction, sky, gradient, shape),
+          })),
         );
       const { point } = await minimizeNelderMead(
         (values) => Promise.resolve(solveAt(toShape(values)).residual),
@@ -131,7 +134,7 @@ export const solveReferenceSky = async (
       // The reference beside the solved sky over the pixels read, each a block of the sample's stride
       const modelled = Buffer.alloc(width * height * 3);
       for (const { direction, pixel } of pixels) {
-        const weights = readSkyWeights(direction, sky, gradient, shape);
+        const weights = computeSkyWeights(direction, sky, gradient, shape);
         const [red, green, blue] = toneMapNeutral(
           [0, 1, 2].map((channel) =>
             weights.reduce((sum, weight, term) => sum + weight * (colors[term]?.[channel] ?? 0), 0),
@@ -165,7 +168,7 @@ export const solveReferenceSky = async (
       const means: Record<"ours" | "reference", Vector> = { ours: [0, 0, 0], reference: [0, 0, 0] };
       let drawnError = 0;
       for (const { color, pixel } of pixels) {
-        const ours = readSceneColor(ourShot, pixel);
+        const ours = computeSceneColor(ourShot, pixel);
         for (const channel of [0, 1, 2] as const) {
           means.ours[channel] += ours[channel] / pixels.length;
           means.reference[channel] += color[channel] / pixels.length;

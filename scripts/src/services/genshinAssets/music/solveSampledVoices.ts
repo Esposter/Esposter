@@ -25,7 +25,7 @@ const listCombinations = (counts: number[]): number[][] =>
       combinations.flatMap((combination) => Array.from({ length: count }, (_, index) => [...combination, index])),
     [[]],
   );
-const readDot = (first: Float64Array, second: Float64Array): number =>
+const computeDot = (first: Float64Array, second: Float64Array): number =>
   first.reduce((sum, value, index) => sum + value * (second[index] ?? 0), 0);
 // Each voice's instrument and level, solved together against the game's sound by the listening score's own measures.
 // Every instrument plays each voice's notes alone at level 1, through the recordings they reach and with the release
@@ -50,12 +50,12 @@ export const solveSampledVoices = async (
   const onsets = voiceNotesList.flat().map(({ startTimeSeconds }) => startTimeSeconds);
   const gameBands = computeBandEnergies(game, AUDIO_SAMPLE_RATE);
   const floors = gameBands.map((energies) => computeBandFloor(energies));
-  const readFrameEnergies = (bands: Float64Array[]): Float64Array =>
+  const computeFrameEnergies = (bands: Float64Array[]): Float64Array =>
     Float64Array.from({ length: bands.length * frames.length }, (_, index) => {
       const band = Math.floor(index / frames.length);
       return bands[band]?.[frames[index % frames.length] ?? 0] ?? 0;
     });
-  const targets = readFrameEnergies(gameBands).map((energy, index) =>
+  const targets = computeFrameEnergies(gameBands).map((energy, index) =>
     Math.max(energy, floors[Math.floor(index / frames.length)] ?? 0),
   );
   const references = voiceNotesList.map((voiceNotes, voice) =>
@@ -81,11 +81,11 @@ export const solveSampledVoices = async (
         AUDIO_SAMPLE_RATE,
         game.length,
       );
-      const { agreement } = reference.readSolo(rendered);
+      const { agreement } = reference.computeSolo(rendered);
       const isCandidate = agreement >= reference.fundamentals.agreement;
       if (!isCandidate && agreement <= nearest.agreement) continue;
       const candidate = {
-        energies: readFrameEnergies(computeBandEnergies(rendered, AUDIO_SAMPLE_RATE)),
+        energies: computeFrameEnergies(computeBandEnergies(rendered, AUDIO_SAMPLE_RATE)),
         instrument,
         rendered,
       };
@@ -98,13 +98,13 @@ export const solveSampledVoices = async (
     return candidates.length > 0 || !nearest ? candidates : [nearest];
   });
 
-  const readShares = (energies: Float64Array): Float64Array =>
+  const computeShares = (energies: Float64Array): Float64Array =>
     energies.map((energy, index) => energy / (targets[index] ?? 1));
-  const voiceSharesList = voiceKeptList.map((candidates) => candidates.map(({ energies }) => readShares(energies)));
+  const voiceSharesList = voiceKeptList.map((candidates) => candidates.map(({ energies }) => computeShares(energies)));
   // Every product the least squares reads, between any candidate of one voice and any of another, taken once
   const voiceProducts = voiceSharesList.map((rowSharesList) =>
     voiceSharesList.map((columnSharesList) =>
-      rowSharesList.map((rowShares) => columnSharesList.map((columnShares) => readDot(rowShares, columnShares))),
+      rowSharesList.map((rowShares) => columnSharesList.map((columnShares) => computeDot(rowShares, columnShares))),
     ),
   );
   const voiceSums = voiceSharesList.map((sharesList) =>

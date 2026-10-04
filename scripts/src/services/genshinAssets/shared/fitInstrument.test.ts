@@ -27,17 +27,17 @@ describe(fitInstrument, () => {
   for (const { durationSeconds, pitchMidi, startTimeSeconds } of notes) {
     const frequency = A4_FREQUENCY * 2 ** ((pitchMidi + instrument.tuning - A4_PITCH) / 12);
     const peak = instrument.level * velocity;
-    const readEnvelope = (seconds: number): number =>
+    const getEnvelope = (seconds: number): number =>
       seconds < instrument.attack
         ? (peak * seconds) / instrument.attack
         : peak *
           (instrument.sustain + (1 - instrument.sustain) * Math.exp(-(seconds - instrument.attack) / instrument.decay));
-    const endLevel = readEnvelope(durationSeconds);
+    const endLevel = getEnvelope(durationSeconds);
     for (let index = 0; index < 2 * AUDIO_SAMPLE_RATE; index++) {
       const seconds = index / AUDIO_SAMPLE_RATE;
       const envelope =
         seconds < durationSeconds
-          ? readEnvelope(seconds)
+          ? getEnvelope(seconds)
           : endLevel * Math.exp(-(seconds - durationSeconds) / instrument.release);
       const wave = instrument.harmonics.reduce(
         (sum, amplitude, harmonic) => sum + amplitude * Math.sin(2 * Math.PI * (harmonic + 1) * frequency * seconds),

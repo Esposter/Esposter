@@ -11,12 +11,12 @@ import { LISTEN_ATTACK_RISE_DECIBELS } from "#src/services/genshinParity/shared/
 export const computeAttackShares = (bandLevelsList: BandLevels[], frames: number[]): AttackShares[] => {
   const followers = [...frames.keys()].filter((index) => index > 0 && frames[index] === (frames[index - 1] ?? 0) + 1);
   return bandLevelsList.map(({ floor, game, ours }) => {
-    const readShare = (levels: number[]): number =>
+    const computeShare = (levels: number[]): number =>
       followers.filter(
         (index) =>
           Math.max(levels[index] ?? floor, floor) - Math.max(levels[index - 1] ?? floor, floor) >=
           LISTEN_ATTACK_RISE_DECIBELS,
       ).length / Math.max(followers.length, 1);
-    return { game: readShare(game), ours: readShare(ours) };
+    return { game: computeShare(game), ours: computeShare(ours) };
   });
 };

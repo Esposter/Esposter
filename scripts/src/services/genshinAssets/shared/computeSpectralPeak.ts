@@ -11,11 +11,11 @@ export const computeSpectralPeak = (
 ): { frequency: number; magnitude: number } => {
   const binWidth = sampleRate / frameLength;
   const offset = frame * binCount;
-  const readMagnitude = (bin: number): number => (bin > 0 && bin < binCount ? (magnitudes[offset + bin] ?? 0) : 0);
+  const getMagnitude = (bin: number): number => (bin > 0 && bin < binCount ? (magnitudes[offset + bin] ?? 0) : 0);
   const nearest = Math.round(frequency / binWidth);
   let peak = nearest;
-  for (const bin of [nearest - 1, nearest + 1]) if (readMagnitude(bin) > readMagnitude(peak)) peak = bin;
-  const [below, at, above] = [peak - 1, peak, peak + 1].map((bin) => readMagnitude(bin));
+  for (const bin of [nearest - 1, nearest + 1]) if (getMagnitude(bin) > getMagnitude(peak)) peak = bin;
+  const [below, at, above] = [peak - 1, peak, peak + 1].map((bin) => getMagnitude(bin));
   // A silent bin has no log to fit a parabola through, so the bin is read as it is
   if (!below || !at || !above) return { frequency: peak * binWidth, magnitude: at ?? 0 };
   const [logBelow, logAt, logAbove] = [Math.log(below), Math.log(at), Math.log(above)];

@@ -7,9 +7,9 @@ const LUMINANCE = [0.2126, 0.7152, 0.0722] as const;
 // The quantiles the two sets of cloud pixels are paired at, and the share of each set read round each one
 const QUANTILES = Array.from({ length: 19 }, (_, index) => (index + 1) / 20);
 const QUANTILE_WINDOW = 0.025;
-const readLuminance = (color: Readonly<Vector>): number =>
+const getLuminance = (color: Readonly<Vector>): number =>
   CHANNELS.reduce((sum: number, channel) => sum + LUMINANCE[channel] * color[channel], 0);
-const readWindow = <T>(values: readonly T[], quantile: number): T[] => {
+const computeWindow = <T>(values: readonly T[], quantile: number): T[] => {
   const half = Math.max(Math.round(values.length * QUANTILE_WINDOW), 1);
   const middle = Math.min(Math.floor(values.length * quantile), values.length - 1);
   return values.slice(Math.max(middle - half, 0), middle + half + 1);
@@ -30,18 +30,18 @@ export const solveCloudColors = (
       solveCloudColors.name,
       `no cloud pixels to match: ${ours.length} of ours, ${reference.length} of the reference's`,
     );
-  const readLitness = ({ lit, shade }: (typeof ours)[number]): number =>
-    readLuminance(lit) / Math.max(readLuminance(lit) + readLuminance(shade), Number.MIN_VALUE);
-  const orderedOurs = ours.toSorted((first, second) => readLitness(first) - readLitness(second));
-  const orderedReference = reference.toSorted((first, second) => readLuminance(first) - readLuminance(second));
+  const getLitness = ({ lit, shade }: (typeof ours)[number]): number =>
+    getLuminance(lit) / Math.max(getLuminance(lit) + getLuminance(shade), Number.MIN_VALUE);
+  const orderedOurs = ours.toSorted((first, second) => getLitness(first) - getLitness(second));
+  const orderedReference = reference.toSorted((first, second) => getLuminance(first) - getLuminance(second));
   const computeMean = (vectors: readonly Readonly<Vector>[]): Vector =>
     CHANNELS.map((channel) => vectors.reduce((sum, vector) => sum + vector[channel], 0) / vectors.length) as Vector;
   const pairs = QUANTILES.map((quantile) => {
-    const window = readWindow(orderedOurs, quantile);
+    const window = computeWindow(orderedOurs, quantile);
     return {
       base: computeMean(window.map(({ base }) => base)),
       lit: computeMean(window.map(({ lit }) => lit)),
-      reference: computeMean(readWindow(orderedReference, quantile)),
+      reference: computeMean(computeWindow(orderedReference, quantile)),
       shade: computeMean(window.map(({ shade }) => shade)),
     };
   });
