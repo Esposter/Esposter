@@ -10,9 +10,9 @@ const SETTLE_FRAME_COUNT = 2;
 const POSE_TOLERANCE = 1e-3;
 // A view of the witness render as the tools set it: a camera pose (the eye in three's axes, its heading about y and its
 // Pitch about x in radians, its vertical field of view in degrees), the families of parts the witness draws in place of
-// The scene's own (every family it has unless told), and whether the scene draws alone,
-// Without its own fog, clouds and cloud sea; and how far each family of its parts stands off its laid-out place, in
-// Metres in three's axes, for a family's place to be solved on its edges (every family at its own place unless told)
+// The scene's own (every family it has unless told), and whether the scene draws alone, without its own fog, clouds
+// And cloud sea; and how far each family of its parts stands off its laid-out place, in metres in three's axes, for a
+// Family's place to be solved on its edges (every family at its own place unless told)
 export interface WitnessView {
   camera?: { fov: number; pitch: number; position: [number, number, number]; yaw: number };
   families?: string[];
@@ -21,10 +21,10 @@ export interface WitnessView {
   familyScales?: Record<string, number>;
   isAlone?: boolean;
 }
-// Sets the witness render's view, holding the scene's clock, and waits for the frame that draws it. The scene's own bindings move its camera on any
-// Frame its stage animates (the flight, the door's rush), so a pose set here freezes the camera's matrix, which those
-// Bindings then cannot reach, and is read back off the drawn matrix once the frames settle: a pose that did not hold
-// Throws rather than scoring the scene's own view
+// Sets the witness render's view, holding the scene's clock, and waits for the frame that draws it. The scene's own
+// Bindings move its camera on any frame its stage animates (the flight, the door's rush), so a pose set here freezes
+// The camera's matrix, which those bindings then cannot reach, and is read back off the drawn matrix once the frames
+// Settle: a pose that did not hold throws rather than scoring the scene's own view
 export const setWitnessView = async (
   { families, isAlone, isClockHeld, parts }: SceneWitness,
   { camera, families: viewFamilies, familyOffsets = {}, familyScales = {}, isAlone: isViewAlone = false }: WitnessView,

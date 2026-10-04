@@ -1,8 +1,9 @@
+import type { CloudPlacement } from "#src/atmosphere/CloudPlacement";
 import type { SkyUniforms } from "#src/atmosphere/SkyUniforms";
 import type { Texture } from "three";
 import type { UniformNode } from "three/webgpu";
 
-import { getCloudAtlasColumns } from "#src/atmosphere/createCloudAtlasTexture";
+import { getCloudAtlasColumns } from "#src/atmosphere/getCloudAtlasColumns";
 import { orderByViewDepth } from "#src/atmosphere/orderByViewDepth";
 import { InstancedBufferAttribute, Matrix4, Sprite } from "three";
 import {
@@ -39,9 +40,9 @@ const MIN_CROWN_COVER = 0.05;
 // In the atlas, cut off where it covers nothing, its foot at its place. Each is a draw of its own as a sprite apiece,
 // And a band runs to hundreds; drawn as one, they are blended in the order given, which three's own sort of the
 // Objects no longer sets, so before each draw they are laid out farthest along the camera's view first, as that sort
-// Would, and the nearer edges blend over the farther. Each is coloured as the game's cloud particles are
-// (Login/Scene/Index.reference.ts, source `cloudParticleShader`): its shaded colour mixed toward its lit one where its
-// Painted crown is, each blended from away from the sun to toward it by how far toward the sun the cloud stands,
+// Would, and the nearer edges blend over the farther; only a draw whose order moved rewrites more than their places.
+// Each is coloured as the game's cloud particles are (Login/Scene/Index.reference.ts, source `cloudParticleShader`):
+// Its shaded colour mixed toward its lit one where its painted crown is, each blended from away from the sun to toward it by how far toward the sun the cloud stands,
 // Gaining light with the sky's coverage and brightening toward the sun, fading out at its soft painted edge and below
 // The horizon. The game also gives a low cloud way to the sky's colour behind it unless the sky is thickly covered, by
 // A coverage its environment sets at run time; ours stands in for its cloud layer's alone, so that waits on the game's
@@ -50,7 +51,7 @@ const MIN_CROWN_COVER = 0.05;
 // So a sky with less cover draws the first of them and leaves the rest, spread as evenly, undrawn
 export const createCloudBandSprite = (
   atlas: Texture,
-  clouds: readonly { position: [number, number, number]; spriteIndex: number; width: number }[],
+  clouds: readonly CloudPlacement[],
   { aspect, spriteCount }: { aspect: number; spriteCount: number },
   skyUniforms: SkyUniforms,
 ): { cover: UniformNode<"float", number>; dispose: () => void; places: [number, number, number][]; sprite: Sprite } => {
@@ -106,18 +107,27 @@ export const createCloudBandSprite = (
   // The sprite stands at the origin while its clouds stand anywhere about it, so it is never culled as one point
   sprite.frustumCulled = false;
   const modelViewMatrix = new Matrix4();
-  sprite.onBeforeRender = (_renderer, _scene, camera) => {
-    modelViewMatrix.multiplyMatrices(camera.matrixWorldInverse, sprite.matrixWorld);
-    for (const [instance, cloud] of orderByViewDepth(places, modelViewMatrix).entries()) {
-      positions.set(places[cloud] ?? [], instance * 3);
+  const depths = new Float64Array(clouds.length);
+  const order = Uint32Array.from(clouds, (_cloud, index) => index);
+  const layOut = (): void => {
+    for (let instance = 0; instance < order.length; instance++) {
+      const cloud = order[instance] ?? 0;
       scales.set(cloudScales[cloud] ?? [], instance * 2);
       cells.set(cloudCells[cloud] ?? [], instance * 2);
       ranks.setX(instance, (cloud + 0.5) / clouds.length);
     }
-    positions.needsUpdate = true;
     scales.needsUpdate = true;
     cells.needsUpdate = true;
     ranks.needsUpdate = true;
+  };
+  layOut();
+  sprite.onBeforeRender = (_renderer, _scene, camera) => {
+    modelViewMatrix.multiplyMatrices(camera.matrixWorldInverse, sprite.matrixWorld);
+    const isReordered = orderByViewDepth(places, modelViewMatrix, depths, order);
+    for (let instance = 0; instance < order.length; instance++)
+      positions.set(places[order[instance] ?? 0] ?? [], instance * 3);
+    positions.needsUpdate = true;
+    if (isReordered) layOut();
   };
   return {
     cover,

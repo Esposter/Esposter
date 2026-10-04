@@ -8,9 +8,9 @@ import { GameOpening } from "genshin-world";
 // The game as it plays: its opening at once, and once its door is opened what it opens onto loading under the startup
 // Loading screen, whose marks follow it, shown once that screen's white gives way. That is the world, or a rickroll in
 // Its place the first time this browser opens the door; either is mounted only at the door, and the world draws no
-// Frames while the opening covers it. The world's code arriving and its renderer being ready are the two steps loading can see, since
-// Neither the lazy chunk nor the scene reports any finer progress; the rickroll's are its mounting and its player
-// Being ready
+// Frames while the opening covers it. The world's code arriving and its renderer being ready are the two steps
+// Loading can see, since neither the lazy chunk nor the scene reports any finer progress; the rickroll's are its
+// Mounting and its player being ready
 const isLoaded = ref(false);
 const isReady = ref(false);
 const progress = computed(() => (Number(isLoaded.value) + Number(isReady.value)) / 2);

@@ -1,5 +1,6 @@
 import type { CloudSprite } from "#src/atmosphere/CloudSprite";
 
+import { getCloudAtlasColumns } from "#src/atmosphere/getCloudAtlasColumns";
 import { addSmoothLoop } from "#src/materials/addSmoothLoop";
 import { CanvasTexture, LinearFilter, NoColorSpace } from "three";
 
@@ -7,12 +8,11 @@ import { CanvasTexture, LinearFilter, NoColorSpace } from "three";
 // Its light grades into its shade across it rather than stepping
 const EDGE_BLUR_SHARE = 0.02;
 const CROWN_BLUR_SHARE = 0.035;
-// Every cloud sprite in one square texture, a cell each in rows of `getCloudAtlasColumns` of them: its outline filled
-// Into the red channel and its lit crown into the green, so a material colours it with whatever the sky's clouds are
+// Every cloud sprite in one square texture, a cell each in as many rows as columns: its outline filled into the
+// Red channel and its lit crown into the green, so a material colours it with whatever the sky's clouds are
 // Lit and shaded by at the hour, and none is repainted as the hour turns. Each loop is drawn as a smooth curve through
 // Its edges' midpoints, each point bending it, and blurred, so a traced outline's corners round into puffs and its
 // Edge fades rather than stepping
-export const getCloudAtlasColumns = (spriteCount: number): number => Math.ceil(Math.sqrt(spriteCount));
 export const createCloudAtlasTexture = (
   sprites: readonly CloudSprite[],
   cellSize: number,

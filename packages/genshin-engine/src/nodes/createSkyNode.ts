@@ -2,6 +2,7 @@ import type { SkyUniforms } from "#src/atmosphere/SkyUniforms";
 import type { Texture } from "three";
 import type { Node } from "three/webgpu";
 
+import { LEAST_DIVISOR } from "#src/nodes/constants";
 import { createSkyColorNode } from "#src/nodes/createSkyColorNode";
 import {
   float,
@@ -30,19 +31,14 @@ const CLOUD_EDGE = 0.04;
 const CLOUD_SHADE_DEPTH = 0.18;
 const STAR_SCALE = 420;
 const STAR_THRESHOLD = 0.9975;
-// The least a size is divided by, as the game's shader guards its own
-const LEAST_DIVISOR = 1e-4;
 // The moon's glow, its size a tenth of the moon's own, falling off as the sixth power
 const MOON_GLOW_SPREAD = 0.1;
 const MOON_GLOW_POWER = 6;
 // Genshin's sky as the scene's background, drawn behind everything at no depth so the fog and god rays pass over it,
-// As the game's own sky shader draws it (`createSkyColorNode`, Login/Scene/Index.reference.ts, source `atmosphereShader`): a ray's height
-// As the share of a right angle it looks up, its colour the top colour mixed toward the bottom by the gradient's red
-// At that height over the bottom colour's reach, each of the two blended from away from the sun to toward it by how
-// Far toward the sun the ray looks; the horizon halo by the gradient's green over its own reach, toward the sun and,
-// Once the sun is up, all round; the sun's halo as three widening lobes, tighter toward the zenith; and the moon's
-// Glow. Over it the sun's and moon's discs, stars at night, and a cloud layer: noise projected onto a plane overhead
-// And cut into cumulus with a hard edge and a stepped shade band, as the ground's ramp steps its light
+// As the game's own sky shader draws it (Login/Scene/Index.reference.ts, source `atmosphereShader`): each ray takes
+// The sky's colour along it (`createSkyColorNode`) and the moon's glow. Over it the sun's and moon's discs, stars at
+// Night, and a cloud layer: noise projected onto a plane overhead and cut into cumulus with a hard edge and a stepped
+// Shade band, as the ground's ramp steps its light
 export const createSkyNode = (uniforms: SkyUniforms, gradient: Texture): Node<"vec3"> => {
   const {
     cloudCoverage,

@@ -1,5 +1,7 @@
-import { BoxGeometry, BufferGeometry } from "three";
-import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import type { BufferGeometry } from "three";
+
+import { mergeGeometryParts } from "#src/kits/mergeGeometryParts";
+import { BoxGeometry } from "three";
 
 // A shape as the boxes it is built of, each [minX, minY, minZ, maxX, maxY, maxZ], merged into one geometry: a fitted
 // Hull, solid where its boxes are and open between them
@@ -11,7 +13,5 @@ export const createBoxesGeometry = (boxes: readonly (readonly number[])[]): Buff
       (minZ + maxZ) / 2,
     ),
   );
-  const geometry = mergeGeometries(parts) ?? new BufferGeometry();
-  for (const part of parts) part.dispose();
-  return geometry;
+  return mergeGeometryParts(parts);
 };

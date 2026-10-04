@@ -17,7 +17,7 @@ Read when recreating a piece of the game's music, or when changing the fit, the 
 
 ## Rules
 
-- **Nothing of the game's audio ships**, in any format. The sources and the readings cached beside them stay in the references folder. What ships is the notes, the structure and each voice's fitted instrument.
+- **Nothing of the game's audio ships**, in any format. The sources and the readings cached beside them stay in the references folder. What ships is the notes, the structure, each voice's fitted instrument and each segment's fitted expression.
 - **The structure is exact, from the banks.** A segment's length, its clips' trims, the rests and the order come from the sound banks, never from a recording. A recording only finds which playlist it is.
 - **Notes come from the game's decoded source, never a recording.** A recording carries the interface's sounds and a codec's losses.
 - **An instrument is fitted, never chosen or tuned by ear.** A value a fit cannot measure is left out, as a harmonic with too few clear readings is, rather than filled in.

@@ -1,10 +1,10 @@
 import type { LoginTowerAtlas } from "#src/models/login/LoginTowerAtlas";
+import type { BufferGeometry } from "three";
 
 import towers from "#src/data/login/towers.json";
 import { LOGIN_FACADE_ATTRIBUTE, LOGIN_TOWER_RADIAL_SEGMENTS } from "#src/services/login/tower/constants";
-import { createLatheStackGeometry } from "genshin-engine";
-import { BufferAttribute, BufferGeometry, Matrix4, Quaternion, Vector3 } from "three";
-import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import { createLatheStackGeometry, mergeGeometryParts } from "genshin-engine";
+import { BufferAttribute, Matrix4, Quaternion, Vector3 } from "three";
 
 // Every tower of the login scene as one geometry: each tower's lathe the fit wrote, built of its sections, scaled,
 // Turned and stood where the scene stands each instance of it. Each vertex carries where it reads its tower's facade
@@ -35,7 +35,5 @@ export const createLoginTowersGeometry = (atlas: LoginTowerAtlas): BufferGeometr
       ),
     ];
   });
-  const towersGeometry = mergeGeometries(parts) ?? new BufferGeometry();
-  for (const part of parts) part.dispose();
-  return towersGeometry;
+  return mergeGeometryParts(parts);
 };

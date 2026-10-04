@@ -14,8 +14,7 @@ const BLACK = new Color(0, 0, 0);
 // The sky state written into everything it lights: the light and the materials take the light's direction and
 // Colour, the rim and the fog the horizon's, and the hemisphere its sky and ground. The colours the screen shows as
 // They are, the sky's, its clouds' and the fog's, are measured off the references, so each is written as the scene
-// Colour the tone mapping shows as it. Every write is to an existing
-// Value, so an hour passing rebuilds nothing
+// Colour the tone mapping shows as it. Every write is to an existing value, so an hour passing rebuilds nothing
 export const applySkyState = (
   skyState: SkyState,
   { fogUniforms, godraysLight, hemisphere, light, lightDistance, lightUniforms, postUniforms, skyUniforms }: SkyTargets,

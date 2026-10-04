@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/atmosphere/orderByViewDepth.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.005509999999998172,
+              "name": "settled",
+              "p99": 0.010057000000000472,
+              "rme": 27.387081789864602,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.08153999999999827,
+              "name": "turned",
+              "p99": 0.11365199999998708,
+              "rme": 14.162007794084861,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "orderByViewDepth > 256 clouds"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.01652999999999736,
+              "name": "settled",
+              "p99": 0.027397999999994625,
+              "rme": 19.448182334509546,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.8265400000000056,
+              "name": "turned",
+              "p99": 1.1734280000000052,
+              "rme": 14.36237248829617,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "orderByViewDepth > 1024 clouds"
+        }
+      ]
+    }
+  ]
+}

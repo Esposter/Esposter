@@ -66,9 +66,13 @@ export const createLoginClouds = (
     group,
     scroll: (scrolled) => {
       if (!sea) return;
-      for (const [index, place] of sea.places.entries())
+      // Called every frame, so by index: an iterator's entries would allocate a pair a cloud
+      for (let index = 0; index < sea.places.length; index++) {
+        const place = sea.places[index];
+        if (!place) continue;
         place[2] =
           MathUtils.euclideanModulo((sea.depths[index] ?? 0) - scrolled + seaLength / 2, seaLength) - seaLength / 2;
+      }
     },
   };
 };

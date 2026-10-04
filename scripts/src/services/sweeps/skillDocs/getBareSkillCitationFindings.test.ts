@@ -6,13 +6,16 @@ describe(getBareSkillCitationFindings, () => {
   const path = ".agents/skills/a/SKILL.md";
   const skillNames = new Set(["b"]);
 
-  test.each(["(`b`, `references/a.md`)", '(`b`, "a")'])("reports %s", (text) => {
-    expect.hasAssertions();
+  test.each(["(`b`, `references/a.md`)", '(`b`, "a")', "(`b`,  `references/a.md`)", "(`b` ,`references/a.md`)"])(
+    "reports %s",
+    (text) => {
+      expect.hasAssertions();
 
-    expect(getBareSkillCitationFindings([{ path, text }], skillNames)).toStrictEqual([
-      { detail: text, path, type: SkillDocsFindingType.BareSkillCitation },
-    ]);
-  });
+      expect(getBareSkillCitationFindings([{ path, text }], skillNames)).toStrictEqual([
+        { detail: text, path, type: SkillDocsFindingType.BareSkillCitation },
+      ]);
+    },
+  );
 
   test("reports nothing for the skill cited by name", () => {
     expect.hasAssertions();

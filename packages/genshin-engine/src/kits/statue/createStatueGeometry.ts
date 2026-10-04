@@ -1,5 +1,7 @@
-import { BufferGeometry, CylinderGeometry, LatheGeometry, Vector2 } from "three";
-import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import type { BufferGeometry } from "three";
+
+import { mergeGeometryParts } from "#src/kits/mergeGeometryParts";
+import { CylinderGeometry, LatheGeometry, Vector2 } from "three";
 
 const PLINTH_SIDES = 8;
 const FIGURE_SEGMENTS = 24;
@@ -25,9 +27,9 @@ export const createStatueGeometry = (): BufferGeometry => {
   const upperStep = new CylinderGeometry(2.6, 2.8, 0.6, PLINTH_SIDES).translate(0, 0.9, 0);
   const pedestal = new CylinderGeometry(1.8, 2.1, 2.2, PLINTH_SIDES).translate(0, 2.3, 0);
   const figure = new LatheGeometry(FIGURE_PROFILE, FIGURE_SEGMENTS).translate(0, 3.4, 0);
-  const parts = [lowerStep, upperStep, pedestal, figure].map((part) => part.toNonIndexed());
-  const statueGeometry = mergeGeometries(parts) ?? new BufferGeometry();
-  for (const part of [lowerStep, upperStep, pedestal, figure, ...parts]) part.dispose();
+  const indexedParts = [lowerStep, upperStep, pedestal, figure];
+  const statueGeometry = mergeGeometryParts(indexedParts.map((part) => part.toNonIndexed()));
+  for (const part of indexedParts) part.dispose();
   statueGeometry.computeVertexNormals();
   return statueGeometry;
 };

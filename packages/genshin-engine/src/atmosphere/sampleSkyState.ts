@@ -3,8 +3,8 @@ import type { SkyState } from "#src/atmosphere/SkyState";
 
 import { computeSunDirection } from "#src/atmosphere/computeSunDirection";
 import { MINUTES_PER_DAY } from "#src/clock/constants";
+import { MathUtils } from "three";
 
-const lerp = (from: number, to: number, amount: number): number => from + (to - from) * amount;
 // The sky at a minute of the day, blended linearly between the keyframes either side of it and wrapping through
 // Midnight from the last keyframe to the first. The keyframes are in order of their minutes. Written into the state
 // It is given, so a frame allocates nothing
@@ -26,12 +26,12 @@ export const sampleSkyState = (
   skyState.cloudLitColor.lerpColors(previous.cloudLitColor, next.cloudLitColor, amount);
   skyState.cloudShadeColor.lerpColors(previous.cloudShadeColor, next.cloudShadeColor, amount);
   skyState.hemisphereGroundColor.lerpColors(previous.hemisphereGroundColor, next.hemisphereGroundColor, amount);
-  skyState.hemisphereIntensity = lerp(previous.hemisphereIntensity, next.hemisphereIntensity, amount);
+  skyState.hemisphereIntensity = MathUtils.lerp(previous.hemisphereIntensity, next.hemisphereIntensity, amount);
   skyState.hemisphereSkyColor.lerpColors(previous.hemisphereSkyColor, next.hemisphereSkyColor, amount);
   skyState.horizonColor.lerpColors(previous.horizonColor, next.horizonColor, amount);
   skyState.lightColor.lerpColors(previous.lightColor, next.lightColor, amount);
-  skyState.lightIntensity = lerp(previous.lightIntensity, next.lightIntensity, amount);
-  skyState.starIntensity = lerp(previous.starIntensity, next.starIntensity, amount);
+  skyState.lightIntensity = MathUtils.lerp(previous.lightIntensity, next.lightIntensity, amount);
+  skyState.starIntensity = MathUtils.lerp(previous.starIntensity, next.starIntensity, amount);
   skyState.zenithColor.lerpColors(previous.zenithColor, next.zenithColor, amount);
   computeSunDirection(minutes, tilt, skyState.sunDirection);
   skyState.moonDirection.copy(skyState.sunDirection).negate();

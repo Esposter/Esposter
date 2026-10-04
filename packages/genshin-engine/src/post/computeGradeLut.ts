@@ -1,6 +1,7 @@
 import type { GradeOptions } from "#src/post/GradeOptions";
 
-const MAX_BYTE = 255;
+import { MAX_BYTE } from "#src/constants";
+
 const RED_LUMINANCE = 0.2126;
 const GREEN_LUMINANCE = 0.7152;
 const BLUE_LUMINANCE = 0.0722;
