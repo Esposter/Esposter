@@ -31,8 +31,16 @@ export const hooks: Pick<NuxtHooks, "listen" | "ready"> = {
     nuxt.hook("vite:serverCreated", (viteServer, { isServer }) => {
       const environment = viteServer.environments.nitro;
       if (!isServer || !nuxt.server || !environment || !checkIsNitroDevEnvironment(environment)) return;
-      nuxt.server.upgrade = (req: IncomingMessage, socket: Duplex, head: Buffer) =>
-        environment.devServer.upgrade?.({ node: { head, req, socket } });
+      // The CLI neither awaits nor catches the upgrade, and Nitro's rejects when its runner cannot proxy one — an
+      // Unhandled rejection that would end the dev process — so a failed one is logged and its socket closed here
+      nuxt.server.upgrade = async (req: IncomingMessage, socket: Duplex, head: Buffer) => {
+        const [outcome] = await Promise.allSettled([
+          Promise.try(() => environment.devServer.upgrade?.({ node: { head, req, socket } })),
+        ]);
+        if (outcome.status === "fulfilled") return;
+        console.error(outcome.reason);
+        socket.destroy();
+      };
     });
   },
 };
