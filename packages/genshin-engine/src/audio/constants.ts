@@ -12,3 +12,5 @@ export const MUSIC_NOISE_BAND_CENTRES: number[] = [63, 125, 250, 500, 1000, 2000
 // The MIDI pitch of A4 and its frequency, which every other pitch is tuned from in equal temperament
 export const A4_PITCH = 69;
 export const A4_FREQUENCY = 440;
+// The highest velocity MIDI and an SFZ mapping give a note
+export const MIDI_VELOCITY_MAX = 127;
