@@ -225,7 +225,7 @@ walkway.receiveShadow = true;
 walkway.frustumCulled = false;
 const walkwayInstances = walkwayPieces.flatMap(({ depth, geometry, seed }) => {
   const geometryId = walkway.addGeometry(geometry);
-  return Array.from({ length: LOGIN_WALKWAY_ROW.count }, (_, copy) => ({
+  return Array.from({ length: LOGIN_WALKWAY_ROW.count }, (_value, copy) => ({
     copy,
     depth,
     instanceId: walkway.addInstance(geometryId),

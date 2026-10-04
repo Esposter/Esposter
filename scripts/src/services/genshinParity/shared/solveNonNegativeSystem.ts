@@ -8,7 +8,7 @@ import { solveLinearSystem } from "#src/services/genshinParity/shared/solveLinea
 export const solveNonNegativeSystem = (gram: number[][], right: number[]): number[] => {
   let best = { residual: 0, solution: right.map(() => 0) };
   for (let subset = 1; subset < 2 ** right.length; subset++) {
-    const unknowns = right.flatMap((_, unknown) => ((subset >> unknown) & 1 ? [unknown] : []));
+    const unknowns = right.flatMap((_value, unknown) => ((subset >> unknown) & 1 ? [unknown] : []));
     const solved = solveLinearSystem(
       unknowns.map((row) => unknowns.map((column) => gram[row]?.[column] ?? 0)),
       unknowns.map((unknown) => right[unknown] ?? 0),
