@@ -153,7 +153,7 @@ A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit fille
 | `scripts/src/services/genshinAssets/fit/traceCoveredGrid.ts`                | The loops round a grid's covered cells                |
 | `scripts/src/services/genshinAssets/materials/extractComponentShaders.ts`   | Each shader's programs carved out and disassembled    |
 | `scripts/src/services/genshinAssets/materials/writeComponentInventory.ts`   | The inventory report of everything an export holds    |
-| `scripts/src/services/genshinAssets/writeWitnessLayout.ts`                  | The exports laid out for the witness render           |
+| `scripts/src/services/genshinAssets/scene/writeWitnessLayout.ts`            | The exports laid out for the witness render           |
 | `scripts/src/services/genshinAssets/music/extractComponentPlaylist.ts`      | A component's music playlist exported and decoded     |
 | `scripts/src/services/genshinAssets/interface/extractComponentInterface.ts` | A screen's interface tree from its RectTransforms     |
 | `packages/genshin-world/src/data`                                           | The fitted parameters the scenes read                 |

@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { measureGlide } from "#src/services/genshinParity/measureGlide";
+import { measureGlide } from "#src/services/genshinParity/witness/measureGlide";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { defineCommand } from "citty";
 

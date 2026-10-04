@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { CLOUD_ELEVATION_BANDS } from "#src/services/genshinParity/constants";
-import { solveReferenceCloudCover } from "#src/services/genshinParity/solveReferenceCloudCover";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { CLOUD_ELEVATION_BANDS } from "#src/services/genshinParity/shared/constants";
+import { solveReferenceCloudCover } from "#src/services/genshinParity/sky/solveReferenceCloudCover";
 import { parseNames } from "#src/services/shared/parseNames";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";

@@ -1,7 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { solveReferenceSky } from "#src/services/genshinParity/solveReferenceSky";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { solveReferenceSky } from "#src/services/genshinParity/sky/solveReferenceSky";
 import { defineCommand } from "citty";
 
 export const skyCommand: SubCommandsDef[string] = defineCommand({

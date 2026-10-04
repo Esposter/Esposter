@@ -1,9 +1,9 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { LISTEN_BAND_CENTRES, LOGIN_MUSIC_SCREEN } from "#src/services/genshinParity/constants";
-import { listenToMusic } from "#src/services/genshinParity/listenToMusic";
-import { writeParityMusicScores } from "#src/services/genshinParity/writeParityMusicScores";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { listenToMusic } from "#src/services/genshinParity/music/listenToMusic";
+import { writeParityMusicScores } from "#src/services/genshinParity/music/writeParityMusicScores";
+import { LISTEN_BAND_CENTRES, LOGIN_MUSIC_SCREEN } from "#src/services/genshinParity/shared/constants";
 import { defineCommand } from "citty";
 
 export const listenCommand: SubCommandsDef[string] = defineCommand({

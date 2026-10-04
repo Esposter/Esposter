@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { checkArrangement } from "#src/services/genshinAssets/checkArrangement";
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { checkArrangement } from "#src/services/genshinAssets/scene/checkArrangement";
+import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
 import { defineCommand } from "citty";
 
 export const arrangementCommand: SubCommandsDef[string] = defineCommand({

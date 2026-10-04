@@ -1,4 +1,4 @@
-import { GAME_EXECUTABLE_PATH, PARITY_DIRECTORY } from "#src/services/genshinParity/constants";
+import { GAME_EXECUTABLE_PATH, PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { GameLanguage } from "genshin-text";
 import { dirname, join } from "node:path";

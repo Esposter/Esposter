@@ -1,12 +1,16 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { computeChroma } from "#src/services/genshinParity/computeChroma";
-import { LISTEN_BAND_CENTRES, LISTEN_SAMPLE_RATE, LOGIN_MUSIC_SCREEN } from "#src/services/genshinParity/constants";
-import { readAttackShares } from "#src/services/genshinParity/readAttackShares";
-import { readAudibleFrames } from "#src/services/genshinParity/readAudibleFrames";
-import { readBandLevels } from "#src/services/genshinParity/readBandLevels";
-import { renderMusicSegments } from "#src/services/genshinParity/renderMusicSegments";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
+import { readAttackShares } from "#src/services/genshinParity/music/readAttackShares";
+import { readAudibleFrames } from "#src/services/genshinParity/music/readAudibleFrames";
+import { readBandLevels } from "#src/services/genshinParity/music/readBandLevels";
+import { renderMusicSegments } from "#src/services/genshinParity/music/renderMusicSegments";
+import {
+  LISTEN_BAND_CENTRES,
+  LISTEN_SAMPLE_RATE,
+  LOGIN_MUSIC_SCREEN,
+} from "#src/services/genshinParity/shared/constants";
 import { defineCommand } from "citty";
 
 const formatShare = (share: number): string => `${(100 * share).toFixed(1)}%`;

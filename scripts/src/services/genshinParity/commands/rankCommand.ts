@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
-import { rankReferenceGains } from "#src/services/genshinParity/rankReferenceGains";
-import { readStandInGains } from "#src/services/genshinParity/readStandInGains";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { rankReferenceGains } from "#src/services/genshinParity/witness/rankReferenceGains";
+import { readStandInGains } from "#src/services/genshinParity/witness/readStandInGains";
 import { defineCommand } from "citty";
 
 export const rankCommand: SubCommandsDef[string] = defineCommand({
@@ -11,7 +11,8 @@ export const rankCommand: SubCommandsDef[string] = defineCommand({
     witness: {
       description: "The component whose exports mark the layers and stand beside our parts",
       required: true,
-      type: "string",
+      options: Object.values(DerivedAssetComponent),
+      type: "enum",
     },
   },
   meta: {
@@ -20,11 +21,11 @@ export const rankCommand: SubCommandsDef[string] = defineCommand({
     name: "rank",
   },
   run: async ({ args }) => {
-    const { frame, terms } = await rankReferenceGains(args.reference, parseDerivedAssetComponent(args.witness));
+    const { frame, terms } = await rankReferenceGains(args.reference, args.witness);
     console.log(`frame FLIP ${frame.toFixed(4)}, each term's ceiling the most of it that term could recover:`);
     for (const { ceiling, name, share } of terms)
       console.log(`${ceiling.toFixed(4)}  ${name} (${(share * 100).toFixed(1)}% of the frame)`);
-    const standIns = await readStandInGains(args.reference, parseDerivedAssetComponent(args.witness));
+    const standIns = await readStandInGains(args.reference, args.witness);
     console.log(
       "each stand-in's gap from the game's own exports drawn beside it, which picks its representation once the table above ranks it and orders nothing:",
     );

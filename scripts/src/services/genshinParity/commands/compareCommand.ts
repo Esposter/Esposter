@@ -1,10 +1,10 @@
-import type { ParityScore } from "#src/models/genshinParity/ParityScore";
+import type { ParityScore } from "#src/models/genshinParity/reference/ParityScore";
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { compareScreen } from "#src/services/genshinParity/compareScreen";
-import { ParityReferenceMap } from "#src/services/genshinParity/ParityReferenceMap";
-import { writeParityScores } from "#src/services/genshinParity/writeParityScores";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { compareScreen } from "#src/services/genshinParity/reference/compareScreen";
+import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
+import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { defineCommand } from "citty";
 
 export const compareCommand: SubCommandsDef[string] = defineCommand({

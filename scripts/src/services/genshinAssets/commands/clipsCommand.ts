@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { extractComponentClips } from "#src/services/genshinAssets/extractComponentClips";
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { extractComponentClips } from "#src/services/genshinAssets/interface/extractComponentClips";
+import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
 import { defineCommand } from "citty";
 
 const format = (value: number): string => String(Math.round(value * 1000) / 1000);

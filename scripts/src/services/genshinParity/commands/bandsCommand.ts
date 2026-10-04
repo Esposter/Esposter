@@ -1,13 +1,13 @@
-import type { ComponentPlaylist } from "#src/models/genshinAssets/ComponentPlaylist";
+import type { ComponentPlaylist } from "#src/models/genshinAssets/shared/ComponentPlaylist";
 import type { SubCommandsDef } from "citty";
 import type { Music } from "genshin-engine";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { getComponentDirectory } from "#src/services/genshinAssets/getComponentDirectory";
-import { readWorldData } from "#src/services/genshinAssets/readWorldData";
-import { characterizeMusicBands } from "#src/services/genshinParity/characterizeMusicBands";
-import { LISTEN_BAND_CENTRES, LISTEN_SAMPLE_RATE } from "#src/services/genshinParity/constants";
-import { readGameMusicSegment } from "#src/services/genshinParity/readGameMusicSegment";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
+import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
+import { characterizeMusicBands } from "#src/services/genshinParity/music/characterizeMusicBands";
+import { readGameMusicSegment } from "#src/services/genshinParity/music/readGameMusicSegment";
+import { LISTEN_BAND_CENTRES, LISTEN_SAMPLE_RATE } from "#src/services/genshinParity/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { defineCommand } from "citty";
 import { readFile } from "node:fs/promises";

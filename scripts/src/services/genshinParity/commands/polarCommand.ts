@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { samplePolar } from "#src/services/genshinParity/samplePolar";
+import { samplePolar } from "#src/services/genshinParity/image/samplePolar";
 import { defineCommand } from "citty";
 
 export const polarCommand: SubCommandsDef[string] = defineCommand({

@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { extractComponentShaders } from "#src/services/genshinAssets/extractComponentShaders";
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { extractComponentShaders } from "#src/services/genshinAssets/materials/extractComponentShaders";
+import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
 import { defineCommand } from "citty";
 
 export const shadersCommand: SubCommandsDef[string] = defineCommand({

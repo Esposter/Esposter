@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
-import { writeComponentInventory } from "#src/services/genshinAssets/writeComponentInventory";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { writeComponentInventory } from "#src/services/genshinAssets/materials/writeComponentInventory";
+import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
 import { defineCommand } from "citty";
 
 export const inventoryCommand: SubCommandsDef[string] = defineCommand({

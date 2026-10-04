@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { sampleFrames } from "#src/services/genshinParity/sampleFrames";
+import { sampleFrames } from "#src/services/genshinParity/image/sampleFrames";
 import { defineCommand } from "citty";
 
 export const framesCommand: SubCommandsDef[string] = defineCommand({

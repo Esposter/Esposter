@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
-import { solveReferencePose } from "#src/services/genshinParity/solveReferencePose";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { CAMERA_POSE_AXES } from "#src/services/genshinParity/shared/constants";
+import { solveReferencePose } from "#src/services/genshinParity/witness/solveReferencePose";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";

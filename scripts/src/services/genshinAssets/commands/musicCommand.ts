@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { matchGameMusic } from "#src/services/genshinAssets/matchGameMusic";
-import { readGameMusicHierarchy } from "#src/services/genshinAssets/readGameMusicHierarchy";
-import { resolveMusicPlaylistSegments } from "#src/services/genshinAssets/resolveMusicPlaylistSegments";
+import { matchGameMusic } from "#src/services/genshinAssets/music/matchGameMusic";
+import { readGameMusicHierarchy } from "#src/services/genshinAssets/music/readGameMusicHierarchy";
+import { resolveMusicPlaylistSegments } from "#src/services/genshinAssets/music/resolveMusicPlaylistSegments";
 import { getResult } from "@esposter/shared";
 import { defineCommand } from "citty";
 

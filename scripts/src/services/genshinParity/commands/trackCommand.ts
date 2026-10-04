@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
-import { trackCamera } from "#src/services/genshinParity/trackCamera";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { CAMERA_POSE_AXES } from "#src/services/genshinParity/shared/constants";
+import { trackCamera } from "#src/services/genshinParity/witness/trackCamera";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { defineCommand } from "citty";
 

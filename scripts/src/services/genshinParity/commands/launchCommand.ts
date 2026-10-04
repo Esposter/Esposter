@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { launchGame } from "#src/services/genshinParity/launchGame";
+import { launchGame } from "#src/services/genshinParity/game/launchGame";
 import { defineCommand } from "citty";
 
 export const launchCommand: SubCommandsDef[string] = defineCommand({

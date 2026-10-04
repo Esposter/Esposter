@@ -130,12 +130,12 @@ The startup loading screen reached a mean difference of a few hundredths of a pe
 | File                                                                  | Role                                                                                                        |
 | :-------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------- |
 | `scripts/src/services/genshinParity/commands/genshinParityCommand.ts` | The commands, one file each beside it                                                                       |
-| `scripts/src/services/genshinParity/ParityReferenceMap.ts`            | Each reference, the wiki file it comes from and its screen                                                  |
-| `scripts/src/services/genshinParity/compareScreen.ts`                 | Shoot, score and lay reference, ours and difference side by side                                            |
+| `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`     | Each reference, the wiki file it comes from and its screen                                                  |
+| `scripts/src/services/genshinParity/reference/compareScreen.ts`       | Shoot, score and lay reference, ours and difference side by side                                            |
 | `scripts/src/services/genshinParity/music/scoreMusicSegment.ts`       | How close a render of music sounds to the game's                                                            |
-| `scripts/src/services/genshinParity/shootScreen.ts`                   | The parity page's screen in Edge, over a reference's own frame when it is a backdrop                        |
+| `scripts/src/services/genshinParity/shared/shootScreen.ts`            | The parity page's screen in Edge, over a reference's own frame when it is a backdrop                        |
 | `scripts/src/services/genshinParity/shared/traceImage.ts`             | A mark traced into one path at full resolution                                                              |
-| `scripts/src/services/genshinParity/solveCameraPose.ts`               | The camera pose from correspondences: the direct linear transform, then Levenberg–Marquardt                 |
+| `scripts/src/services/genshinParity/witness/solveCameraPose.ts`       | The camera pose from correspondences: the direct linear transform, then Levenberg–Marquardt                 |
 | `packages/genshin-world/parity/witness/loadWitness.ts`                | The exports laid out as the scene's parts, on the parity page                                               |
 | `packages/genshin-world/parity/screens.ts`                            | Every screen with a fixture, for the page and the suite                                                     |
 | `packages/genshin-world/parity/screens.visual.ts`                     | The visual suite                                                                                            |

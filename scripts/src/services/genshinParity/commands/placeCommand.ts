@@ -1,10 +1,10 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
-import { placeFamilies } from "#src/services/genshinParity/placeFamilies";
-import { PLACE_AXES, placeFamiliesOnLandmarks } from "#src/services/genshinParity/placeFamiliesOnLandmarks";
-import { toPageCamera } from "#src/services/genshinParity/toPageCamera";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { CAMERA_POSE_AXES } from "#src/services/genshinParity/shared/constants";
+import { placeFamilies } from "#src/services/genshinParity/witness/placeFamilies";
+import { PLACE_AXES, placeFamiliesOnLandmarks } from "#src/services/genshinParity/witness/placeFamiliesOnLandmarks";
+import { toPageCamera } from "#src/services/genshinParity/witness/toPageCamera";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";

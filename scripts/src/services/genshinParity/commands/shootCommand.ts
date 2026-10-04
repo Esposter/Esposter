@@ -1,7 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
-import { ParityMotion } from "#src/models/genshinParity/ParityMotion";
-import { shootScreen } from "#src/services/genshinParity/shootScreen";
+import { ParityMotion } from "#src/models/genshinParity/shared/ParityMotion";
+import { shootScreen } from "#src/services/genshinParity/shared/shootScreen";
 import { defineCommand } from "citty";
 
 export const shootCommand: SubCommandsDef[string] = defineCommand({

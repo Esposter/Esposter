@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { extractComponentPlaylist } from "#src/services/genshinAssets/extractComponentPlaylist";
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { extractComponentPlaylist } from "#src/services/genshinAssets/music/extractComponentPlaylist";
+import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
 import { defineCommand } from "citty";
 
 const formatSeconds = (milliseconds: number): string => `${(milliseconds / 1000).toFixed(3)} s`;

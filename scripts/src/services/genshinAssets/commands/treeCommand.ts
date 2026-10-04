@@ -1,11 +1,11 @@
-import type { SceneTreeNode } from "#src/models/genshinAssets/SceneTreeNode";
+import type { SceneTreeNode } from "#src/models/genshinAssets/scene/SceneTreeNode";
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { composeSceneTree } from "#src/services/genshinAssets/composeSceneTree";
-import { formatSceneTree } from "#src/services/genshinAssets/formatSceneTree";
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
-import { readComponentLayout } from "#src/services/genshinAssets/readComponentLayout";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { composeSceneTree } from "#src/services/genshinAssets/scene/composeSceneTree";
+import { formatSceneTree } from "#src/services/genshinAssets/scene/formatSceneTree";
+import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
+import { readComponentLayout } from "#src/services/genshinAssets/shared/readComponentLayout";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 

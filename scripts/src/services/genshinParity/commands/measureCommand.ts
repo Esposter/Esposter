@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { measureImage } from "#src/services/genshinParity/measureImage";
+import { measureImage } from "#src/services/genshinParity/image/measureImage";
 import { defineCommand } from "citty";
 
 export const measureCommand: SubCommandsDef[string] = defineCommand({

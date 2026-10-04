@@ -1,17 +1,17 @@
 import type { SubCommandsDef } from "citty";
 import type { Music } from "genshin-engine";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { readWorldData } from "#src/services/genshinAssets/readWorldData";
-import { roundMusic } from "#src/services/genshinAssets/roundMusic";
-import { writeWorldData } from "#src/services/genshinAssets/writeWorldData";
-import { computeChroma } from "#src/services/genshinParity/computeChroma";
-import { LISTEN_SAMPLE_RATE, LOGIN_MUSIC_SCREEN } from "#src/services/genshinParity/constants";
-import { fitMusicExpression } from "#src/services/genshinParity/fitMusicExpression";
-import { readAudibleFrames } from "#src/services/genshinParity/readAudibleFrames";
-import { readBandLevels } from "#src/services/genshinParity/readBandLevels";
-import { readFrameSeconds } from "#src/services/genshinParity/readFrameSeconds";
-import { renderMusicSegments } from "#src/services/genshinParity/renderMusicSegments";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
+import { roundMusic } from "#src/services/genshinAssets/shared/roundMusic";
+import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
+import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
+import { fitMusicExpression } from "#src/services/genshinParity/music/fitMusicExpression";
+import { readAudibleFrames } from "#src/services/genshinParity/music/readAudibleFrames";
+import { readBandLevels } from "#src/services/genshinParity/music/readBandLevels";
+import { readFrameSeconds } from "#src/services/genshinParity/music/readFrameSeconds";
+import { renderMusicSegments } from "#src/services/genshinParity/music/renderMusicSegments";
+import { LISTEN_SAMPLE_RATE, LOGIN_MUSIC_SCREEN } from "#src/services/genshinParity/shared/constants";
 import { defineCommand } from "citty";
 import { MUSIC_EXPRESSION_WINDOW_SECONDS } from "genshin-engine";
 

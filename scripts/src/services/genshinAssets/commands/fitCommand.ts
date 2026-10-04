@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { DerivedAssetFitMap } from "#src/services/genshinAssets/DerivedAssetFitMap";
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { DerivedAssetFitMap } from "#src/services/genshinAssets/fit/DerivedAssetFitMap";
+import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
 import { parseNames } from "#src/services/shared/parseNames";
 import { defineCommand } from "citty";
 

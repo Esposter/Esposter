@@ -1,9 +1,9 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { formatSerializedFields } from "#src/services/genshinAssets/formatSerializedFields";
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
-import { readComponentBehaviours } from "#src/services/genshinAssets/readComponentBehaviours";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { formatSerializedFields } from "#src/services/genshinAssets/scene/formatSerializedFields";
+import { readComponentBehaviours } from "#src/services/genshinAssets/scene/readComponentBehaviours";
+import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
 import { defineCommand } from "citty";
 
 export const behavioursCommand: SubCommandsDef[string] = defineCommand({
