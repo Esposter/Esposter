@@ -60,8 +60,9 @@ export const solveSampledVoices = async (
       if (!region || regionSamplesMap.has(region)) continue;
       // oxlint-disable-next-line no-await-in-loop -- one instrument's recordings are held at a time
       const samplePath = await fetchSampleFile(instrument.library, region.path);
+      // A region's offset is where its sound starts, so its recording is read from there
       // oxlint-disable-next-line no-await-in-loop -- as above
-      const regionSamples = await readAudioSamples(samplePath, AUDIO_SAMPLE_RATE);
+      const regionSamples = await readAudioSamples(samplePath, AUDIO_SAMPLE_RATE, region.offset);
       regionSamplesMap.set(region, regionSamples);
     }
     for (const [voice, voiceNotes] of voiceNotesList.entries()) {
