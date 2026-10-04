@@ -78,7 +78,6 @@ const receiveTile = (event: MessageEvent<TerrainTile>) => {
   emit("change");
 };
 for (const worker of workers) worker.addEventListener("message", receiveTile);
-const checkTileLoaded = (key: number) => tileStreamer.has(key);
 const wanted = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const draws = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const shown = createTerrainSelection(TILE_SELECTION_CAPACITY);
@@ -99,7 +98,7 @@ onBeforeRender(() => {
     .multiply(originMatrix);
   frustum.setFromProjectionMatrix(viewProjection, activeCamera.coordinateSystem);
   selectTerrainTiles(terrainOptions, eye, frustum, wanted);
-  resolveTerrainDraws(terrainOptions, wanted, checkTileLoaded, draws);
+  resolveTerrainDraws(terrainOptions, wanted, tileStreamer.has, draws);
   tileStreamer.update(wanted, draws);
   for (let drawIndex = 0; drawIndex < shown.count; drawIndex++) {
     const mesh = tileStreamer.get(shown.keys[drawIndex] ?? 0);

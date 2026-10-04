@@ -53,13 +53,12 @@ const stage = useTemplateRef("stage");
 const play = async (element: HTMLElement, timing: SplashTiming): Promise<void> => {
   const { fadeInEasing, fadeInMs, fadeOutEasing, fadeOutMs, holdMs, whiteAfterMs } = timing;
   const durationMs = fadeInMs + holdMs + fadeOutMs + whiteAfterMs;
-  const offsetAt = (ms: number): number => ms / durationMs;
   const animation = element.animate(
     [
       { easing: fadeInEasing, offset: 0, opacity: 0 },
-      { offset: offsetAt(fadeInMs), opacity: 1 },
-      { easing: fadeOutEasing, offset: offsetAt(fadeInMs + holdMs), opacity: 1 },
-      { offset: offsetAt(fadeInMs + holdMs + fadeOutMs), opacity: 0 },
+      { offset: fadeInMs / durationMs, opacity: 1 },
+      { easing: fadeOutEasing, offset: (fadeInMs + holdMs) / durationMs, opacity: 1 },
+      { offset: (fadeInMs + holdMs + fadeOutMs) / durationMs, opacity: 0 },
       { offset: 1, opacity: 0 },
     ],
     { duration: durationMs, fill: "forwards" },

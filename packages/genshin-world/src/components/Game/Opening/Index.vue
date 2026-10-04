@@ -24,8 +24,9 @@ const emit = defineEmits<{ begin: []; finish: [] }>();
 // The game's opening as one sequence: its splashes on white, then the login screen under the sky of the player's
 // Hour, its title waiting for a click, its flight and its door waiting for another, then the startup loading screen,
 // Which loads the world and whose white the world cuts in from. The login screen's bar is the game's own checks,
-// Which have nothing left to wait on once the page has loaded, so it sweeps at its fastest. Each phase says when it is done, so the handoffs are
-// The screens' own timings rather than a host's, and `begin` tells the host the door has been opened
+// Which have nothing left to wait on once the page has loaded, so it sweeps at its fastest. Each phase says when it is
+// Done, so the handoffs are the screens' own timings rather than a host's, and `begin` tells the host the door has been
+// Opened
 const phase = ref(OpeningPhase.Splash);
 const timeOfDay = getLoginTimeOfDay(Temporal.Now.plainTimeISO());
 </script>
