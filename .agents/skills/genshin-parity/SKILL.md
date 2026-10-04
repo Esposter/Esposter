@@ -28,6 +28,7 @@ The loop and why it is shaped this way are `apps/web/content/docs/genshin/parity
 - **Looking in the sampled render for a pitch loss every recording shares.** `genshin:parity solos` reads pianos, harps and plucked strings at or past pure tones' agreement in every voice of both pieces; the loss was the instruments chosen (`apps/web/content/docs/proposals/genshin/sampled-instruments.md`, "What the passes found").
 - **Carrying the game's swells in each note's velocity.** A velocity is fixed when its note starts, and a section swells under notes already sounding; each segment's expression carries it, as an orchestral mockup's expression controller does (`apps/web/content/docs/genshin/music.md`).
 - **A fixed equaliser over the shipped music.** Its band gains, fitted on one half of a piece, leave the other half about as far off as before, so what it gains in place is that stretch's frames rather than the music's balance (`apps/web/content/docs/genshin/music.md`).
+- **A reverb to close what the recorded instruments leave.** The best mixes' largest band gaps hold level from a note's start to half a second into it, so what they lack is spectrum, and a reverb only lengthens what a note already holds (`apps/web/content/docs/proposals/genshin/sampled-instruments.md`, "What the passes found").
 - **Keeping noise levels past `MUSIC_DECIMALS`.** It moves the listening score by hundredths of a decibel.
 
 ## Rules
