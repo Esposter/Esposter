@@ -1,4 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { TrackedPose } from "#src/models/genshinParity/witness/TrackedPose";
 
 import { CAPTURES_DIRECTORY, PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
@@ -36,7 +37,7 @@ export const trackCamera = async (
     startSeconds: number;
     topRow?: number;
   },
-): Promise<{ path: string; track: { distance: number; pose: number[]; seconds: number }[] }> => {
+): Promise<{ path: string; track: TrackedPose[] }> => {
   const reference = ParityReferenceMap[referenceId];
   if (!reference?.capture) throw new InvalidOperationError(Operation.Read, referenceId, "not a recording's frame");
   await fetchReferences();
@@ -53,7 +54,7 @@ export const trackCamera = async (
   const { browser, height, page } = await openWitnessPage(referenceId, witness);
   const track = await withFinalizerAsync(
     async () => {
-      const poses: { distance: number; pose: number[]; seconds: number }[] = [];
+      const poses: TrackedPose[] = [];
       let previous = start;
       for (const [index, framePath] of framePaths.entries()) {
         const { crop } = reference;

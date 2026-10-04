@@ -5,7 +5,7 @@ import { readWitnessPartTarget } from "#src/services/genshinParity/shared/readWi
 import { computeDistanceTransform } from "#src/services/genshinParity/witness/computeDistanceTransform";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// What readFamilyEdgeDistance prices the families given on: each pixel's distance to the reference's nearest edge, its
+// What a pose or a placement of the families given is priced on: each pixel's distance to the reference's nearest edge, its
 // Edges read at the witness's drawing buffer's size (which the page's whole-pixel viewport can leave a pixel off the
 // Structure's width) so a pixel's index is the same in both, and the first pixel of the row given, above which no edge
 // Is priced. Each family must be one the witness draws, which would otherwise price no boundary at all

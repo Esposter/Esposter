@@ -14,6 +14,7 @@ import { projectWitnessPoint } from "#src/services/genshinParity/witness/project
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { join } from "node:path";
 import sharp from "sharp";
+import { MathUtils } from "three";
 
 // The simplex's first steps, metres along each axis and degrees about the vertical, and how many it takes: the fit is
 // A handful of points through a fixed camera, so it settles in well under a second
@@ -62,8 +63,9 @@ export const placeFamiliesOnLandmarks = async (
     () => browser.close(),
   );
   const computeErrors = ([x = 0, y = 0, z = 0, turnDegrees = 0]: readonly number[]): number[] => {
-    const cosine = Math.cos((turnDegrees * Math.PI) / 180);
-    const sine = Math.sin((turnDegrees * Math.PI) / 180);
+    const turnRadians = MathUtils.degToRad(turnDegrees);
+    const cosine = Math.cos(turnRadians);
+    const sine = Math.sin(turnRadians);
     return points.map(([pointX, pointY, pointZ], index) => {
       const placed: Vector = [pointX * cosine + pointZ * sine + x, pointY + y, -pointX * sine + pointZ * cosine + z];
       const {

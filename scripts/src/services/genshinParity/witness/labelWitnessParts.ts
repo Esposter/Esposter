@@ -6,6 +6,7 @@ import { PARITY_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinPar
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
+import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
 import { withFinalizerAsync } from "@esposter/shared";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
@@ -51,7 +52,7 @@ export const labelWitnessParts = async (
       const directory = join(PARITY_DIRECTORY, "parts");
       await mkdir(directory, { recursive: true });
       const imagePath = join(directory, `${referenceId}.${family}.png`);
-      const [labelledReference, labelledShot] = await Promise.all(
+      const labelledPanels = await Promise.all(
         [await sharp(referencePath).png().toBuffer(), shot].map((input) =>
           sharp(input)
             .composite([{ input: svg }])
@@ -59,13 +60,7 @@ export const labelWitnessParts = async (
             .toBuffer(),
         ),
       );
-      await sharp({ create: { background: "#000", channels: 3, height, width: width * 2 } })
-        .composite([
-          { input: labelledReference, left: 0, top: 0 },
-          { input: labelledShot, left: width, top: 0 },
-        ])
-        .png()
-        .toFile(imagePath);
+      await writeSideBySide(labelledPanels, { height, width }, imagePath);
       return { imagePath, parts };
     },
     () => browser.close(),

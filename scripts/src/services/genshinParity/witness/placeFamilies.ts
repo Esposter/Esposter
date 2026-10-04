@@ -1,5 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { PageWitnessView } from "#src/models/genshinParity/shared/PageWitnessView";
+import type { Vector } from "#src/models/shared/Vector";
 
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { minimizeNelderMead } from "#src/services/genshinParity/shared/minimizeNelderMead";
@@ -7,20 +8,12 @@ import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessP
 import { readWitnessPartTarget } from "#src/services/genshinParity/shared/readWitnessPartTarget";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { computeDistanceTransform } from "#src/services/genshinParity/witness/computeDistanceTransform";
-import { findFamilyBoundaries } from "#src/services/genshinParity/witness/findFamilyBoundaries";
+import { computeMaskedMean } from "#src/services/genshinParity/witness/computeMaskedMean";
+import { PLACE_AXES } from "#src/services/genshinParity/witness/constants";
+import { readFamilyBoundaries } from "#src/services/genshinParity/witness/readFamilyBoundaries";
 import { readFamilyEdgeDistances } from "#src/services/genshinParity/witness/readFamilyEdgeDistances";
 import { withFinalizerAsync } from "@esposter/shared";
 
-const computeMean = (from: Uint8Array, distances: Float32Array): number => {
-  let sum = 0;
-  let count = 0;
-  for (const [pixel, isSet] of from.entries())
-    if (isSet) {
-      sum += distances[pixel] ?? 0;
-      count++;
-    }
-  return count ? sum / count : Infinity;
-};
 // Where a group of families stands on a reference, with the camera held at the reference's own view or the pose given:
 // One offset in three's axes shared by every family named (a row the script moves as one), refined by the simplex on
 // Those families' edges both ways, from their laid-out places, so an arrangement's lost height or depth is read off
@@ -48,12 +41,12 @@ export const placeFamilies = async (
     // Solved on the parts that do not scroll
     scan?: { axis: 0 | 1 | 2; from: number; step: number; to: number };
     // Where the refinement starts, a phase read off the parts the reference shows
-    start?: [number, number, number];
+    start?: Vector;
     // The simplex's first step along each axis, in metres, about as far as the families may stand off
     step: number;
     topRow?: number;
   },
-): Promise<{ after: number; before: number; offset: [number, number, number] }> => {
+): Promise<{ after: number; before: number; offset: Vector }> => {
   await fetchReferences();
   const { browser, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
@@ -73,18 +66,14 @@ export const placeFamilies = async (
         return edge && !isOtherFamily ? 1 : 0;
       });
       const readDistance = async ([x = 0, y = 0, z = 0]: readonly number[]): Promise<number> => {
-        const offset: [number, number, number] = [x, y, z];
+        const offset: Vector = [x, y, z];
         await setPageWitnessView(page, {
           camera,
           familyOffsets: Object.fromEntries(families.map((family) => [family, offset])),
         });
-        const gbuffer = await readWitnessPartTarget(page);
-        const { familyIndices, mask } = findFamilyBoundaries(gbuffer);
-        const boundaries = mask.map((isBoundary, pixel) =>
-          isBoundary && pixel >= topPixel && familyIndexSet.has(familyIndices[pixel] ?? -1) ? 1 : 0,
-        );
+        const boundaries = await readFamilyBoundaries(page, families, topPixel);
         const boundaryDistances = computeDistanceTransform(boundaries, width, height);
-        return (computeMean(boundaries, edgeDistances) + computeMean(freeEdges, boundaryDistances)) / 2;
+        return (computeMaskedMean(boundaries, edgeDistances) + computeMaskedMean(freeEdges, boundaryDistances)) / 2;
       };
       const before = await readDistance([0, 0, 0]);
       let start: number[] = given;
@@ -94,7 +83,7 @@ export const placeFamilies = async (
           const candidate = start.map((value, axis) => (axis === scan.axis ? phase : value));
           // oxlint-disable-next-line no-await-in-loop -- one phase is drawn and priced after another
           const distance = await readDistance(candidate);
-          console.log(`${["x", "y", "z"][scan.axis]} ${phase.toFixed(2)}: ${distance.toFixed(3)} px`);
+          console.log(`${PLACE_AXES[scan.axis]} ${phase.toFixed(2)}: ${distance.toFixed(3)} px`);
           if (distance < best) {
             best = distance;
             start = candidate;
@@ -104,7 +93,7 @@ export const placeFamilies = async (
       const {
         cost,
         point: [x = 0, y = 0, z = 0],
-      } = await minimizeNelderMead(readDistance, start, [step, step, step], iterationCount);
+      } = await minimizeNelderMead((point) => readDistance(point), start, [step, step, step], iterationCount);
       return { after: cost, before, offset: [x, y, z] };
     },
     () => browser.close(),

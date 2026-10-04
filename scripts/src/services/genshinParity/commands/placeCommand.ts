@@ -5,7 +5,7 @@ import { CAMERA_POSE_AXES } from "#src/services/genshinParity/shared/constants";
 import { PLACE_AXES } from "#src/services/genshinParity/witness/constants";
 import { placeFamilies } from "#src/services/genshinParity/witness/placeFamilies";
 import { placeFamiliesOnLandmarks } from "#src/services/genshinParity/witness/placeFamiliesOnLandmarks";
-import { toPageCamera } from "#src/services/genshinParity/witness/toPageCamera";
+import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";

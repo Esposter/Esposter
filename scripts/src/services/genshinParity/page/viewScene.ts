@@ -1,8 +1,12 @@
+import type { Vector } from "#src/models/shared/Vector";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
 import { SHOTS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
+import { readWitnessFamilies } from "#src/services/genshinParity/shared/readWitnessFamilies";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
+import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
+import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
 import { withFinalizerAsync } from "@esposter/shared";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
@@ -26,7 +30,7 @@ export const viewScene = async ({
 }: {
   camera: readonly [number, number, number, number, number, number];
   // How far each family stands off its laid-out place, in metres in three's axes, to try a row's phase
-  familyOffsets?: Record<string, [number, number, number]>;
+  familyOffsets?: Record<string, Vector>;
   // How many times each family's parts are drawn about their own places, to try a part's scale against a reference
   familyScales?: Record<string, number>;
   height: number;
@@ -42,15 +46,8 @@ export const viewScene = async ({
   const path = join(SHOTS_DIRECTORY, `${screen}.view@${[x, y, z, yaw, pitch, fov].join(",")}.png`);
   await withFinalizerAsync(
     async () => {
-      const families = ((await page.evaluate(() => window.document.body.dataset.witnessFamilies)) ?? "")
-        .split(",")
-        .filter(Boolean);
-      const pose = {
-        fov,
-        pitch: (pitch * Math.PI) / 180,
-        position: [x, y, z] as [number, number, number],
-        yaw: (yaw * Math.PI) / 180,
-      };
+      const families = await readWitnessFamilies(page);
+      const pose = toPageCamera([x, y, z, yaw, pitch, fov]);
       const shots: Buffer[] = [];
       for (const viewFamilies of [[], families]) {
         // oxlint-disable-next-line no-await-in-loop -- one view is drawn and shot before the next
@@ -61,13 +58,7 @@ export const viewScene = async ({
       const [ours, exported] = shots;
       if (!ours || !exported) return;
       const { height: shotHeight, width: shotWidth } = await sharp(ours).metadata();
-      await sharp({ create: { background: "#000", channels: 3, height: shotHeight, width: shotWidth * 2 } })
-        .composite([
-          { input: ours, left: 0, top: 0 },
-          { input: exported, left: shotWidth, top: 0 },
-        ])
-        .png()
-        .toFile(path);
+      await writeSideBySide([ours, exported], { height: shotHeight, width: shotWidth }, path);
     },
     () => browser.close(),
   );

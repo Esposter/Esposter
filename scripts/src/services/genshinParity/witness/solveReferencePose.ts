@@ -1,4 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { Vector } from "#src/models/shared/Vector";
 
 import { DerivedAssetLandmarkMap } from "#src/services/genshinAssets/witness/DerivedAssetLandmarkMap";
 import { PARITY_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
@@ -68,10 +69,7 @@ export const solveReferencePose = async (
   return withFinalizerAsync(
     async () => {
       const points = await page.evaluate(
-        (landmarks) =>
-          (Reflect.get(window, "computeWitnessPoints") as (landmarks: unknown) => [number, number, number][])(
-            landmarks,
-          ),
+        (landmarks) => (Reflect.get(window, "computeWitnessPoints") as (landmarks: unknown) => Vector[])(landmarks),
         definitions,
       );
       // An edge stands on a silhouette, never at a corner, so it is read as given

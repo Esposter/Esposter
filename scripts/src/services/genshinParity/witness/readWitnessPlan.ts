@@ -8,6 +8,7 @@ import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityRef
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
+import { MathUtils } from "three";
 
 // How high over the ground the plan's eye stands, so far that a part's height barely moves where it lands: a curb
 // 0.3 metres up lands 1.5 millimetres off its foot for every metre it stands off the eye's foot
@@ -53,7 +54,7 @@ export const readWitnessPlan = async (
     async () => {
       await setPageWitnessView(page, {
         camera: {
-          fov: (2 * Math.atan(drawnSize[1] / 2 / PLAN_EYE_HEIGHT) * 180) / Math.PI,
+          fov: MathUtils.radToDeg(2 * Math.atan(drawnSize[1] / 2 / PLAN_EYE_HEIGHT)),
           pitch: -Math.PI / 2,
           position: [leastX + drawnSize[0] / 2, PLAN_EYE_HEIGHT, leastZ + drawnSize[1] / 2],
           yaw: Math.PI,

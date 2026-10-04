@@ -1,4 +1,4 @@
-import { PerspectiveCamera, Vector3 } from "three";
+import { MathUtils, PerspectiveCamera, Vector3 } from "three";
 
 // A point in three's axes projected into an image of the size given from a pose along `CAMERA_POSE_AXES` (metres, then
 // Degrees), as the witness's camera draws it: three's own perspective camera, turned by its heading then its pitch, so
@@ -12,7 +12,7 @@ export const projectWitnessPoint = (
 ): { depth: number; pixel: [number, number] } => {
   const camera = new PerspectiveCamera(fov, width / height);
   camera.position.set(x, y, z);
-  camera.rotation.set((pitch * Math.PI) / 180, (yaw * Math.PI) / 180, 0, "YXZ");
+  camera.rotation.set(MathUtils.degToRad(pitch), MathUtils.degToRad(yaw), 0, "YXZ");
   camera.updateMatrixWorld();
   const projected = new Vector3(...point).project(camera);
   const depth = -new Vector3(...point).applyMatrix4(camera.matrixWorldInverse).z;

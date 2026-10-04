@@ -5,10 +5,12 @@ import type { StoneLightSample } from "#src/models/genshinParity/witness/StoneLi
 import type { Vector } from "#src/models/shared/Vector";
 import type { StoneLight } from "genshin-engine";
 import type { Page } from "playwright";
+import type { Except } from "type-fest";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
+import { readWitnessFamilies } from "#src/services/genshinParity/shared/readWitnessFamilies";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { checkIsPartInterior } from "#src/services/genshinParity/sky/checkIsPartInterior";
@@ -67,9 +69,8 @@ export const solveReferenceStoneLight = async (
       const { direction } = await page.evaluate(() => (Reflect.get(window, "setSceneLights") as SetLights)({}));
       // Solved against the exports as the scene draws them under its own light, the solve should hand that light back,
       // Which checks its model against the renderer before it is trusted on a reference
-      const familyList = (await page.evaluate(() => window.document.body.dataset.witnessFamilies)) ?? "";
       const source = isSelf
-        ? await shootWitnessFamilies(page, familyList.split(",").filter(Boolean), { height, width })
+        ? await shootWitnessFamilies(page, await readWitnessFamilies(page), { height, width })
         : image;
       await setPageWitnessView(page, {});
       const referenceShot = await sharp(source).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
@@ -78,7 +79,7 @@ export const solveReferenceStoneLight = async (
       const eye = new Vector3().setFromMatrixPosition(matrixWorld);
       const sun = new Vector3(...direction).normalize();
       const scatterDirection = new Vector3(...fog.scatterDirection).normalize();
-      const pixels: { point: Vector; sample: Omit<StoneLightSample, "opacity"> }[] = [];
+      const pixels: { point: Vector; sample: Except<StoneLightSample, "opacity"> }[] = [];
       for (let pixel = 0; pixel < width * height; pixel++) {
         if (!checkIsPartInterior(part, width, height, pixel) || !checkIsScored(pixel, width)) continue;
         // The pixel's ray in the view, scaled to the depth along the view the witness wrote

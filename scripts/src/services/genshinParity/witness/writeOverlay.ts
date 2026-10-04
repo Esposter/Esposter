@@ -1,9 +1,11 @@
 import type { WitnessGbuffer } from "#src/models/genshinParity/shared/WitnessGbuffer";
 
-import { FAMILY_COLORS, GBUFFER_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { GBUFFER_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { readStructureEdges } from "#src/services/genshinParity/shared/readStructureEdges";
+import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
 import { computeDistanceTransform } from "#src/services/genshinParity/witness/computeDistanceTransform";
 import { findFamilyBoundaries } from "#src/services/genshinParity/witness/findFamilyBoundaries";
+import { getFamilyColor } from "#src/services/genshinParity/witness/getFamilyColor";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -36,7 +38,7 @@ export const writeOverlay = async (
   for (let pixel = 0; pixel < width * height; pixel++) {
     const familyIndex = familyIndices[pixel] ?? -1;
     if (mask[pixel]) {
-      overlay.set(FAMILY_COLORS[Math.max(familyIndex, 0) % FAMILY_COLORS.length] ?? [255, 255, 255], pixel * 3);
+      overlay.set(getFamilyColor(Math.max(familyIndex, 0)), pixel * 3);
       const familySum = familySums[familyIndex];
       if (familySum) {
         familySum.count++;
@@ -58,10 +60,7 @@ export const writeOverlay = async (
         .toBuffer(),
     ),
   );
-  await sharp({ create: { background: "#000", channels: 3, height, width: width * 2 } })
-    .composite(panels.map((input, index) => ({ input, left: index * width, top: 0 })))
-    .png()
-    .toFile(path);
+  await writeSideBySide(panels, { height, width }, path);
   return {
     families: familyNames.map((name, index) => {
       const { count, sum } = familySums[index] ?? { count: 0, sum: 0 };

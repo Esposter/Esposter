@@ -6,6 +6,7 @@ import { solveLinearSystem } from "#src/services/genshinParity/shared/solveLinea
 import { findSmallestEigenvector } from "#src/services/genshinParity/witness/findSmallestEigenvector";
 import { projectWitnessPoint } from "#src/services/genshinParity/witness/projectWitnessPoint";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { MathUtils } from "three";
 
 // A direct linear transform needs this many points off one plane to fix the projection's eleven degrees of freedom
 const DLT_POINT_COUNT = 6;
@@ -88,9 +89,9 @@ const computeLinearPose = (
   const [forwardX = 0, forwardY = 0, forwardZ = 0] = forward;
   return [
     ...eye,
-    (Math.atan2(-forwardX, -forwardZ) * 180) / Math.PI,
-    (Math.asin(Math.max(-1, Math.min(1, forwardY))) * 180) / Math.PI,
-    (2 * Math.atan(height / 2 / focal) * 180) / Math.PI,
+    MathUtils.radToDeg(Math.atan2(-forwardX, -forwardZ)),
+    MathUtils.radToDeg(Math.asin(Math.max(-1, Math.min(1, forwardY)))),
+    MathUtils.radToDeg(2 * Math.atan(height / 2 / focal)),
   ];
 };
 // The camera pose (along `CAMERA_POSE_AXES`) from which points whose places are known project onto the pixels they

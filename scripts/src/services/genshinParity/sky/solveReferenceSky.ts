@@ -9,6 +9,7 @@ import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferen
 import { minimizeNelderMead } from "#src/services/genshinParity/shared/minimizeNelderMead";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
+import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
 import { computeSkyWeights } from "#src/services/genshinParity/sky/computeSkyWeights";
 import { SKY_TERMS } from "#src/services/genshinParity/sky/constants";
 import { fitSky } from "#src/services/genshinParity/sky/fitSky";
@@ -173,14 +174,7 @@ export const solveReferenceSky = async (
       const ourImage = await sharp(ourShot, { raw: { channels: 3, height, width } })
         .png()
         .toBuffer();
-      await sharp({ create: { background: "#000", channels: 3, height, width: width * 3 } })
-        .composite([
-          { input: reference, left: 0, top: 0 },
-          { input: modelledImage, left: width, top: 0 },
-          { input: ourImage, left: width * 2, top: 0 },
-        ])
-        .png()
-        .toFile(imagePath);
+      await writeSideBySide([reference, modelledImage, ourImage], { height, width }, imagePath);
       return {
         colors: Object.fromEntries(SKY_TERMS.map((term, index) => [term, toDisplayHex(colors[index] ?? [0, 0, 0])])),
         drawn: {

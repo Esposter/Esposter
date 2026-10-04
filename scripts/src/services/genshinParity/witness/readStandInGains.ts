@@ -3,12 +3,14 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import { COMPARISONS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
+import { readWitnessFamilies } from "#src/services/genshinParity/shared/readWitnessFamilies";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
 import { readWitnessPartTarget } from "#src/services/genshinParity/shared/readWitnessPartTarget";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { scoreLabelSimilarity } from "#src/services/genshinParity/witness/scoreLabelSimilarity";
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
-import { withFinalizerAsync } from "@esposter/shared";
+import { BYTE } from "#src/services/shared/constants";
+import { getOrCreate, withFinalizerAsync } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -19,7 +21,7 @@ const readGrey = async (input: Buffer, width: number, height: number): Promise<F
     .greyscale()
     .raw()
     .toBuffer({ resolveWithObject: true });
-  return Float32Array.from(data, (value) => value / 255);
+  return Float32Array.from(data, (value) => value / BYTE);
 };
 // Wide enough that a tower's windows, its gold bands and the door's relief span several pixels
 const STAND_IN_WIDTH = 960;
@@ -38,8 +40,7 @@ export const readStandInGains = async (
   const { browser, checkIsScored, height, page } = await openWitnessPage(referenceId, witness, STAND_IN_WIDTH);
   return withFinalizerAsync(
     async () => {
-      const familyList = (await page.evaluate(() => window.document.body.dataset.witnessFamilies)) ?? "";
-      const families = familyList.split(",").filter(Boolean);
+      const families = await readWitnessFamilies(page);
       await setPageWitnessView(page, { families });
       const { families: layerFamilies, part, width } = await readWitnessPartTarget(page);
       const size = { height, width };
@@ -63,7 +64,7 @@ export const readStandInGains = async (
         readGrey(ourShot, width, height),
       ]);
       const similarities = scoreLabelSimilarity(exportsGrey, ourGrey, width, height, labels, layerFamilies.length);
-      const terms = new Map<string, { count: number; error: number; similarity: number }>();
+      const nameTermMap = new Map<string, { count: number; error: number; similarity: number }>();
       let scoredCount = 0;
       for (const [pixel, error] of errorMap.entries()) {
         if (!checkIsScored(pixel, width)) continue;
@@ -71,12 +72,15 @@ export const readStandInGains = async (
         if (!part[pixel * 4]) continue;
         const family = part[pixel * 4 + 1] ?? 0;
         const name = layerFamilies[family] ?? "unnamed";
-        const term = terms.get(name) ?? { count: 0, error: 0, similarity: similarities[family] ?? 0 };
+        const term = getOrCreate(nameTermMap, name, () => ({
+          count: 0,
+          error: 0,
+          similarity: similarities[family] ?? 0,
+        }));
         term.count++;
         term.error += error;
-        terms.set(name, term);
       }
-      return Array.from(terms, ([name, { count, error, similarity }]) => ({
+      return Array.from(nameTermMap, ([name, { count, error, similarity }]) => ({
         gap: error / Math.max(scoredCount, 1),
         mean: error / Math.max(count, 1),
         name,

@@ -18,6 +18,12 @@ const RAMP_SMOOTHNESS = 0.05;
 // Whole, so a colour taken off every knot and put on the sky's constant term draws every pixel the same and no frame
 // Tells the two apart: the dark end held at none makes the ramp the sun's own light and leaves the sky the rest
 const RAMP_DARK_END_HOLD = 1000;
+// A bend of three neighbouring knots, their second difference, by each knot's offset from the middle one
+const BEND_STENCIL = [
+  [-1, 1],
+  [0, -2],
+  [1, 1],
+] as const;
 // Each knot's weight at a ramp coordinate, the coordinate read between its two nearest knots as a texture's linear
 // Filtering reads them
 const writeRampWeights = (coordinate: number, weights: number[]): void => {
@@ -70,10 +76,10 @@ export const solveStoneLight = (
       };
     });
     const gram = Array.from({ length: unknownCount }, () => Array.from({ length: unknownCount }, () => 0));
-    const rhs = Array.from({ length: unknownCount }, () => 0);
+    const right = Array.from({ length: unknownCount }, () => 0);
     for (const { row, target, weight } of rows)
       for (const [first, firstValue] of row.entries()) {
-        rhs[first] = (rhs[first] ?? 0) + weight * firstValue * target;
+        right[first] = (right[first] ?? 0) + weight * firstValue * target;
         const gramRow = gram[first] ?? [];
         for (const [second, secondValue] of row.entries())
           gramRow[second] = (gramRow[second] ?? 0) + weight * firstValue * secondValue;
@@ -83,20 +89,13 @@ export const solveStoneLight = (
     darkEndRow[0] = (darkEndRow[0] ?? 0) + RAMP_DARK_END_HOLD * total;
     // Each bend of three neighbouring knots, their second difference, held toward none
     for (let knot = 1; knot < STONE_RAMP_KNOT_COUNT - 1; knot++)
-      for (const [first, firstWeight] of [
-        [knot - 1, 1],
-        [knot, -2],
-        [knot + 1, 1],
-      ] as const)
-        for (const [second, secondWeight] of [
-          [knot - 1, 1],
-          [knot, -2],
-          [knot + 1, 1],
-        ] as const) {
-          const gramRow = gram[first] ?? [];
-          gramRow[second] = (gramRow[second] ?? 0) + RAMP_SMOOTHNESS * total * firstWeight * secondWeight;
+      for (const [firstOffset, firstWeight] of BEND_STENCIL)
+        for (const [secondOffset, secondWeight] of BEND_STENCIL) {
+          const gramRow = gram[knot + firstOffset] ?? [];
+          gramRow[knot + secondOffset] =
+            (gramRow[knot + secondOffset] ?? 0) + RAMP_SMOOTHNESS * total * firstWeight * secondWeight;
         }
-    const solution = solveLinearSystem(gram, rhs) ?? rhs.map(() => 0);
+    const solution = solveLinearSystem(gram, right) ?? right.map(() => 0);
     for (const [knot, knotColor] of ramp.entries()) knotColor[channel] = solution[knot] ?? 0;
     for (const [term, termColor] of harmonics.entries())
       termColor[channel] = solution[STONE_RAMP_KNOT_COUNT + term] ?? 0;
