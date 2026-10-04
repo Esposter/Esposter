@@ -1,5 +1,5 @@
 import type { StoneLightUniforms } from "#src/nodes/StoneLightUniforms";
-import type { LightingModelDirectInput, NodeBuilder } from "three/webgpu";
+import type { LightingModelDirectInput, LightingModelReflectedLight, Node, NodeBuilder } from "three/webgpu";
 
 import { STONE_RAMP_KNOT_COUNT, STONE_SHADOW_EXPONENT } from "#src/nodes/constants";
 import { createSunVisibilityNode } from "#src/nodes/createSunVisibilityNode";
@@ -19,16 +19,21 @@ export class StoneLightingModel extends LightingModel {
     this.stoneLight = stoneLight;
   }
 
+  // Three types the light's data and its builder's context loosely, so each is read as the node it is
   override direct({ lightColor, lightDirection, reflectedLight }: LightingModelDirectInput): void {
     const { ramp, sunRadiance } = this.stoneLight;
     const visibility = createSunVisibilityNode(lightColor, sunRadiance);
-    const coordinate = normalView.dot(lightDirection).mul(visibility.pow(STONE_SHADOW_EXPONENT)).mul(0.5).add(0.5);
+    const coordinate = normalView
+      .dot(lightDirection as Node<"vec3">)
+      .mul(visibility.pow(STONE_SHADOW_EXPONENT))
+      .mul(0.5)
+      .add(0.5);
     // Each knot's texel centre, so the ramp's ends are its first and last knots
     const rampU = coordinate
       .mul(STONE_RAMP_KNOT_COUNT - 1)
       .add(0.5)
       .div(STONE_RAMP_KNOT_COUNT);
-    reflectedLight.directDiffuse.addAssign(texture(ramp, vec2(rampU, 0.5)).rgb.mul(diffuseColor.rgb));
+    (reflectedLight.directDiffuse as Node<"vec3">).addAssign(texture(ramp, vec2(rampU, 0.5)).rgb.mul(diffuseColor.rgb));
   }
 
   override indirect(builder: NodeBuilder): void {
@@ -44,6 +49,7 @@ export class StoneLightingModel extends LightingModel {
       .add(harmonics.element(6).mul(x.mul(z)))
       .add(harmonics.element(7).mul(x.mul(x).sub(z.mul(z))))
       .add(harmonics.element(8).mul(y.mul(y).mul(3).sub(1)));
-    builder.context.reflectedLight.indirectDiffuse.addAssign(sky.mul(diffuseColor.rgb));
+    const { reflectedLight } = builder.context as { reflectedLight: LightingModelReflectedLight };
+    (reflectedLight.indirectDiffuse as Node<"vec3">).addAssign(sky.mul(diffuseColor.rgb));
   }
 }

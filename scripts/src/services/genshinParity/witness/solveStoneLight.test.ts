@@ -5,6 +5,9 @@ import { solveStoneLight } from "#src/services/genshinParity/witness/solveStoneL
 import { computeStoneHarmonics, STONE_HARMONIC_COUNT, STONE_RAMP_KNOT_COUNT } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
+const round = (colors: (readonly number[])[]): number[][] =>
+  colors.map((color) => color.map((value) => Number(value.toFixed(2)) + 0));
+
 describe(solveStoneLight, () => {
   // A straight ramp from none at its dark end, which the smoothness the solve holds its bends to leaves as it is
   const ramp = Array.from({ length: STONE_RAMP_KNOT_COUNT }, (_, knot) => [0.05 * knot, 0.04 * knot, 0.03 * knot]);
@@ -20,8 +23,6 @@ describe(solveStoneLight, () => {
     [-0.05, 0, 0.05],
   ];
   const haze = { color: [0.6, 0.5, 0.4] satisfies Vector, scatterColor: [1, 0.8, 0.5] satisfies Vector };
-  const round = (colors: (readonly number[])[]): number[][] =>
-    colors.map((color) => color.map((value) => Number(value.toFixed(2)) + 0));
   // Every ramp knot's coordinate under faces turned every way, each drawn as many times as a bin needs to be read
   const samples = Array.from({ length: STONE_RAMP_KNOT_COUNT * 6 }, (_, index): StoneLightSample[] => {
     const rampCoordinate = (index % STONE_RAMP_KNOT_COUNT) / (STONE_RAMP_KNOT_COUNT - 1);

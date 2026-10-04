@@ -52,8 +52,8 @@ import {
   LOGIN_TOWERS_ROW_OFFSET,
   LOGIN_WALKWAY_ROW,
 } from "#src/services/login/scene/constants";
-import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
+import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
 import { computeLoginTowerAtlas } from "#src/services/login/tower/computeLoginTowerAtlas";
 import { createLoginTowerFacade } from "#src/services/login/tower/createLoginTowerFacade";
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";

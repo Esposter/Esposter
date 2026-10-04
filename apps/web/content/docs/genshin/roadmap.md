@@ -5,7 +5,7 @@ description: Open work for Genshin's opening in the order rank prices it — eac
 
 # Roadmap
 
-Open work only, the biggest gap to the game first. What was decided against is in [deferred](/docs/genshin/deferred); read it before adding an item. The order is `genshin:parity rank`'s first table over the login's four frames, re-read each pass: each term's ceiling, the most of the frame's FLIP it could recover, and an item moves when its ceiling does. A stand-in's gap from the game's own exports (`rank`'s second table) picks its representation once the first table ranks it and orders nothing, since it can narrow pass after pass while the frame stands still. Each item names the measure that says it is done: the clouds by their statistics (`genshin:parity clouds`, `cover`), the music by `listen`, and everything else by `rank` and `compare` against its reference, checked by eye ([parity](/docs/genshin/parity)).
+Open work only, the biggest gap to the game first. What was decided against is in [deferred](/docs/genshin/deferred); read it before adding an item. The order is `genshin:parity rank`'s first table over the login's four frames, re-read each pass, and an item moves when its ceiling does. A stand-in's gap from the game's own exports, `rank`'s second table, never orders the work, since it can narrow pass after pass while the frame stands still ([parity](/docs/genshin/parity)). Each item names the measure that says it is done: the clouds by their statistics (`genshin:parity clouds`, `cover`), the music by `listen`, and everything else by `rank` and `compare` against its reference, checked by eye ([parity](/docs/genshin/parity)).
 
 ## Next
 

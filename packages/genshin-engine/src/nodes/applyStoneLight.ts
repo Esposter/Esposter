@@ -14,12 +14,13 @@ export const applyStoneLight = (
   light: DirectionalLight,
 ): void => {
   const { data } = rampTexture.image;
-  for (const [knot, [red = 0, green = 0, blue = 0]] of ramp.entries()) {
-    data[knot * 4] = red;
-    data[knot * 4 + 1] = green;
-    data[knot * 4 + 2] = blue;
-    data[knot * 4 + 3] = 1;
-  }
+  if (data)
+    for (const [knot, [red = 0, green = 0, blue = 0]] of ramp.entries()) {
+      data[knot * 4] = red;
+      data[knot * 4 + 1] = green;
+      data[knot * 4 + 2] = blue;
+      data[knot * 4 + 3] = 1;
+    }
   rampTexture.needsUpdate = true;
   for (const [term, [red = 0, green = 0, blue = 0]] of harmonics.entries()) {
     const value = harmonicsUniform.array[term];

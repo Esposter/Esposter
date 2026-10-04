@@ -31,10 +31,10 @@ export const getSceneFog = (
   } = context.fog;
   return {
     baseHeight: baseHeight.value,
-    color: color.value.toArray(),
+    color: [color.value.r, color.value.g, color.value.b],
     density: density.value,
     heightFalloff: heightFalloff.value,
-    scatterColor: scatterColor.value.toArray(),
+    scatterColor: [scatterColor.value.r, scatterColor.value.g, scatterColor.value.b],
     scatterDirection: scatterDirection.value.toArray(),
     scatterPower: scatterPower.value,
     scatterStrength: scatterStrength.value,
