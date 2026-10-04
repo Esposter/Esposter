@@ -144,21 +144,21 @@ A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit fille
 
 ## Key files
 
-| File                                                              | Role                                                  |
-| :---------------------------------------------------------------- | :---------------------------------------------------- |
-| `scripts/src/services/genshinAssets/constants.ts`                 | Where the exports are kept, and every fit's tolerance |
-| `scripts/src/services/genshinAssets/DerivedAssetComponentMap.ts`  | Each component's assets by name, and the roots it is  |
-| `scripts/src/services/genshinAssets/DerivedAssetFitMap.ts`        | Each component's fit                                  |
-| `scripts/src/services/genshinAssets/fitLoginScene.ts`             | Every fit the login screen writes                     |
-| `scripts/src/services/genshinAssets/traceCoveredGrid.ts`          | The loops round a grid's covered cells                |
-| `scripts/src/services/genshinAssets/extractComponentShaders.ts`   | Each shader's programs carved out and disassembled    |
-| `scripts/src/services/genshinAssets/writeComponentInventory.ts`   | The inventory report of everything an export holds    |
-| `scripts/src/services/genshinAssets/writeWitnessLayout.ts`        | The exports laid out for the witness render           |
-| `scripts/src/services/genshinAssets/extractComponentPlaylist.ts`  | A component's music playlist exported and decoded     |
-| `scripts/src/services/genshinAssets/extractComponentInterface.ts` | A screen's interface tree from its RectTransforms     |
-| `packages/genshin-world/src/data`                                 | The fitted parameters the scenes read                 |
-| `packages/genshin-engine/src/kits/architecture`                   | The kits the fitted shapes drive                      |
-| `packages/genshin-engine/src/atmosphere/placeCloudBand.ts`        | A band of painted clouds scattered round a centre     |
+| File                                                                        | Role                                                  |
+| :-------------------------------------------------------------------------- | :---------------------------------------------------- |
+| `scripts/src/services/genshinAssets/shared/constants.ts`                    | Where the exports are kept, and every fit's tolerance |
+| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts`     | Each component's assets by name, and the roots it is  |
+| `scripts/src/services/genshinAssets/fit/DerivedAssetFitMap.ts`              | Each component's fit                                  |
+| `scripts/src/services/genshinAssets/fit/fitLoginScene.ts`                   | Every fit the login screen writes                     |
+| `scripts/src/services/genshinAssets/fit/traceCoveredGrid.ts`                | The loops round a grid's covered cells                |
+| `scripts/src/services/genshinAssets/materials/extractComponentShaders.ts`   | Each shader's programs carved out and disassembled    |
+| `scripts/src/services/genshinAssets/materials/writeComponentInventory.ts`   | The inventory report of everything an export holds    |
+| `scripts/src/services/genshinAssets/writeWitnessLayout.ts`                  | The exports laid out for the witness render           |
+| `scripts/src/services/genshinAssets/music/extractComponentPlaylist.ts`      | A component's music playlist exported and decoded     |
+| `scripts/src/services/genshinAssets/interface/extractComponentInterface.ts` | A screen's interface tree from its RectTransforms     |
+| `packages/genshin-world/src/data`                                           | The fitted parameters the scenes read                 |
+| `packages/genshin-engine/src/kits/architecture`                             | The kits the fitted shapes drive                      |
+| `packages/genshin-engine/src/atmosphere/placeCloudBand.ts`                  | A band of painted clouds scattered round a centre     |
 
 ## Sources
 

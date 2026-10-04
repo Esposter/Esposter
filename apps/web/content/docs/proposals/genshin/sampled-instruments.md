@@ -86,20 +86,20 @@ packages/genshin-world/src/data/login/samples/
 
 ## Key files
 
-| File                                                                | Role after the change                                          |
-| :------------------------------------------------------------------ | :------------------------------------------------------------- |
-| `packages/genshin-engine/src/audio/scheduleMusicNote.ts`            | One note played from its recording at its pitch                |
-| `packages/genshin-engine/src/audio/Instrument.ts`                   | An instrument's recordings, release, level and tuning          |
-| `packages/genshin-engine/src/audio/selectMusicSample.ts`            | The recording a note plays, in the sampler and the solve alike |
-| `scripts/src/services/genshinAssets/solveSampledVoices.ts`          | Each voice's instrument and level, solved with pitch heard     |
-| `scripts/src/services/genshinParity/scoreShapedMusic.ts`            | A mix scored under an expression fitted to it                  |
-| `scripts/src/services/genshinAssets/parseSfz.ts`                    | A mapping's regions                                            |
-| `scripts/src/services/genshinAssets/readVoicePitchReference.ts`     | What a voice's render is scored against for pitch              |
-| `scripts/src/services/genshinParity/commands/solosCommand.ts`       | Every instrument alone through each voice, scored for pitch    |
-| `scripts/src/services/genshinAssets/fitMusicVoices.ts`              | The release and tuning each voice plays at                     |
-| `scripts/src/services/genshinAssets/fitLoginMusic.ts`               | The login's voices, each with its solved instrument            |
-| `scripts/src/services/genshinParity/commands/instrumentsCommand.ts` | The solve's report                                             |
-| `packages/genshin-world/src/data/login/music.json`                  | The login's notes and each voice's instrument                  |
+| File                                                                  | Role after the change                                          |
+| :-------------------------------------------------------------------- | :------------------------------------------------------------- |
+| `packages/genshin-engine/src/audio/scheduleMusicNote.ts`              | One note played from its recording at its pitch                |
+| `packages/genshin-engine/src/audio/Instrument.ts`                     | An instrument's recordings, release, level and tuning          |
+| `packages/genshin-engine/src/audio/selectMusicSample.ts`              | The recording a note plays, in the sampler and the solve alike |
+| `scripts/src/services/genshinAssets/music/solveSampledVoices.ts`      | Each voice's instrument and level, solved with pitch heard     |
+| `scripts/src/services/genshinParity/music/scoreShapedMusic.ts`        | A mix scored under an expression fitted to it                  |
+| `scripts/src/services/genshinAssets/music/parseSfz.ts`                | A mapping's regions                                            |
+| `scripts/src/services/genshinAssets/music/readVoicePitchReference.ts` | What a voice's render is scored against for pitch              |
+| `scripts/src/services/genshinParity/commands/solosCommand.ts`         | Every instrument alone through each voice, scored for pitch    |
+| `scripts/src/services/genshinAssets/shared/fitMusicVoices.ts`         | The release and tuning each voice plays at                     |
+| `scripts/src/services/genshinAssets/fit/fitLoginMusic.ts`             | The login's voices, each with its solved instrument            |
+| `scripts/src/services/genshinParity/commands/instrumentsCommand.ts`   | The solve's report                                             |
+| `packages/genshin-world/src/data/login/music.json`                    | The login's notes and each voice's instrument                  |
 
 ## Sources
 

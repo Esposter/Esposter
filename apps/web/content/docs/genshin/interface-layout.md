@@ -34,11 +34,11 @@ flowchart LR
 
 ## Key files
 
-| File                                                              | Role                                                          |
-| :---------------------------------------------------------------- | :------------------------------------------------------------ |
-| `scripts/src/services/genshinAssets/extractComponentInterface.ts` | The screen's RectTransform tree, exported from its block      |
-| `scripts/src/services/genshinAssets/fitInterfaceRects.ts`         | The tree as rects keyed by path, a group's children out       |
-| `packages/genshin-world/src/data/login/interfaceRects.json`       | The login page's fitted rects                                 |
-| `packages/genshin-interface/src/components/GameRect/Index.vue`    | A piece placed by its rect inside its parent's, or the canvas |
-| `packages/genshin-interface/src/services/toCanvasRectStyle.ts`    | Unity's RectTransform as CSS, the one layout computation      |
-| `packages/genshin-world/src/components/Login/Interface/Index.vue` | The login's interface, nested as the game's tree              |
+| File                                                                        | Role                                                          |
+| :-------------------------------------------------------------------------- | :------------------------------------------------------------ |
+| `scripts/src/services/genshinAssets/interface/extractComponentInterface.ts` | The screen's RectTransform tree, exported from its block      |
+| `scripts/src/services/genshinAssets/fit/fitInterfaceRects.ts`               | The tree as rects keyed by path, a group's children out       |
+| `packages/genshin-world/src/data/login/interfaceRects.json`                 | The login page's fitted rects                                 |
+| `packages/genshin-interface/src/components/GameRect/Index.vue`              | A piece placed by its rect inside its parent's, or the canvas |
+| `packages/genshin-interface/src/services/toCanvasRectStyle.ts`              | Unity's RectTransform as CSS, the one layout computation      |
+| `packages/genshin-world/src/components/Login/Interface/Index.vue`           | The login's interface, nested as the game's tree              |

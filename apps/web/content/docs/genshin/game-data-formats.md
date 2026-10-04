@@ -101,16 +101,16 @@ The things that each cost a search to find, to reach for first:
 
 ## Key files
 
-| File                                                              | Role                                                      |
-| :---------------------------------------------------------------- | :-------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/readDxbcPrograms.ts`          | A shader's compiled programs carved out of its raw export |
-| `scripts/src/services/genshinAssets/readShaderConstantLayouts.ts` | A shader's constant buffer layouts                        |
-| `scripts/src/services/genshinAssets/annotateProgramConstants.ts`  | A program headed by what its registers hold               |
-| `scripts/src/services/genshinAssets/readMaterialValues.ts`        | A material's values, textures and shader                  |
-| `scripts/src/services/genshinAssets/readSceneLayout.ts`           | Transforms, meshes and the materials each renderer draws  |
-| `scripts/src/services/genshinAssets/writeComponentInventory.ts`   | Everything a component's export holds, as a report        |
-| `scripts/src/services/genshinAssets/parseAudioPackageHeader.ts`   | A Wwise package's banks and sounds                        |
-| `scripts/src/services/genshinAssets/parseMusicHierarchy.ts`       | The banks' tracks, segments and playlists                 |
+| File                                                                       | Role                                                      |
+| :------------------------------------------------------------------------- | :-------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/readDxbcPrograms.ts`                   | A shader's compiled programs carved out of its raw export |
+| `scripts/src/services/genshinAssets/readShaderConstantLayouts.ts`          | A shader's constant buffer layouts                        |
+| `scripts/src/services/genshinAssets/materials/annotateProgramConstants.ts` | A program headed by what its registers hold               |
+| `scripts/src/services/genshinAssets/shared/readMaterialValues.ts`          | A material's values, textures and shader                  |
+| `scripts/src/services/genshinAssets/shared/readSceneLayout.ts`             | Transforms, meshes and the materials each renderer draws  |
+| `scripts/src/services/genshinAssets/materials/writeComponentInventory.ts`  | Everything a component's export holds, as a report        |
+| `scripts/src/services/genshinAssets/music/parseAudioPackageHeader.ts`      | A Wwise package's banks and sounds                        |
+| `scripts/src/services/genshinAssets/music/parseMusicHierarchy.ts`          | The banks' tracks, segments and playlists                 |
 
 ## Sources
 

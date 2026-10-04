@@ -101,16 +101,16 @@ The method's tools are built: `genshin:assets tree`, the closure `extract`, `beh
 
 ## Key files
 
-| File                                                             | Role after the change                                                       |
-| :--------------------------------------------------------------- | :-------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/DerivedAssetComponentMap.ts` | Each component's roots, spawns and landmarks, grown to its shader and grade |
-| `scripts/src/services/genshinAssets/fitLoginScene.ts`            | The login screen's fits, each printing the error it leaves on screen        |
-| `scripts/src/services/genshinAssets/fitAlbedo.ts`                | Replaced by a fitted stone material once the loss table ranks it            |
-| `scripts/src/services/genshinParity/compareScreen.ts`            | Scores each layer, and the detail and perceptual scores                     |
-| `scripts/src/services/genshinParity/rankReferenceGains.ts`       | The loss table: every term's ceiling, read only at a solved pose            |
-| `packages/genshin-world/parity/screens.ts`                       | The page the witness render is mounted beside                               |
-| `packages/genshin-world/src/components/Login/Scene/Index.vue`    | The first scene run through the method                                      |
-| `packages/genshin-engine/src/nodes/createToonMaterial.ts`        | The environment material the witness render judges                          |
+| File                                                                    | Role after the change                                                       |
+| :---------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts` | Each component's roots, spawns and landmarks, grown to its shader and grade |
+| `scripts/src/services/genshinAssets/fit/fitLoginScene.ts`               | The login screen's fits, each printing the error it leaves on screen        |
+| `scripts/src/services/genshinAssets/fitAlbedo.ts`                       | Replaced by a fitted stone material once the loss table ranks it            |
+| `scripts/src/services/genshinParity/compareScreen.ts`                   | Scores each layer, and the detail and perceptual scores                     |
+| `scripts/src/services/genshinParity/rankReferenceGains.ts`              | The loss table: every term's ceiling, read only at a solved pose            |
+| `packages/genshin-world/parity/screens.ts`                              | The page the witness render is mounted beside                               |
+| `packages/genshin-world/src/components/Login/Scene/Index.vue`           | The first scene run through the method                                      |
+| `packages/genshin-engine/src/nodes/createToonMaterial.ts`               | The environment material the witness render judges                          |
 
 ## Notes
 

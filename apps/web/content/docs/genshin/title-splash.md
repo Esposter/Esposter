@@ -31,4 +31,4 @@ flowchart LR
 | `packages/genshin-world/src/services/splash/GameLanguageTitleLogoMap.ts`  | The logo each language's client shows                                     |
 | `packages/genshin-world/src/services/splash/GameLanguageGameClientMap.ts` | The build each language's reader plays, global or mainland China's        |
 | `packages/genshin-world/src/services/splash/TitleLogoPathMap.ts`          | Each logo's traced path on the shared canvas                              |
-| `scripts/src/services/genshinAssets/fitTitleLogos.ts`                     | The logos exported from the game, traced and spliced, as the world's data |
+| `scripts/src/services/genshinAssets/fit/fitTitleLogos.ts`                 | The logos exported from the game, traced and spliced, as the world's data |

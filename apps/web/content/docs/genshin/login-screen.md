@@ -90,7 +90,7 @@ flowchart TD
 | `packages/genshin-world/src/services/login/cloud/LoginCloudCoverMap.ts`         | The share of each cloud band each hour draws                              |
 | `packages/genshin-world/src/services/login/tower/createLoginTowersGeometry.ts`  | Every fitted tower, built as a lathe and stood where the game stands it   |
 | `packages/genshin-world/src/services/login/tower/createLoginTowerFacade.ts`     | The towers' traced surfaces drawn into one atlas and read as their stone  |
-| `scripts/src/services/genshinAssets/fitLoginTowerFacades.ts`                    | Each tower unrolled round its axis and its surface traced as loops        |
+| `scripts/src/services/genshinAssets/fit/fitLoginTowerFacades.ts`                | Each tower unrolled round its axis and its surface traced as loops        |
 | `packages/genshin-world/src/services/login/hull/createLoginHullsGeometry.ts`    | Every bridge and pillar, its hull's boxes stood where the game stands it  |
 | `packages/genshin-world/src/services/login/walkway/createLoginPaving.ts`        | The walkway's pockets and grooves, drawn once as a shade and a relief     |
 | `packages/genshin-world/src/services/login/walkway/sinkLoginWitnessWalkway.ts`  | The exports' walkway pieces assembling as ours do, for the stand-in table |
