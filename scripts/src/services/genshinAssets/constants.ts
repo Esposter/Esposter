@@ -1,3 +1,6 @@
+import type { SampledInstrument } from "#src/models/genshinAssets/SampledInstrument";
+
+import { SampleLibrary } from "#src/models/genshinAssets/SampleLibrary";
 import { GAME_EXECUTABLE_PATH, PARITY_DIRECTORY } from "#src/services/genshinParity/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { homedir } from "node:os";
@@ -92,6 +95,63 @@ export const MUSIC_RELEASE_SECONDS = 1;
 export const MUSIC_NOISE_SHARE = 0.01;
 // A note's times are kept to the millisecond and its other values to the thousandth
 export const MUSIC_DECIMALS = 3;
+// Where the sample libraries' files are cached, each at its pinned commit: only the mappings and the samples a piece's
+// Notes play are fetched, not the libraries' gigabytes
+export const SAMPLES_DIRECTORY: string = join(REPOSITORY_ROOT, "scripts", "node_modules", ".cache", "samples");
+// The combinations of one instrument a voice whose least-squares powers are refined against the score's own distance,
+// And the halvings of a refinement's step, from doubling a voice's power down to about a twentieth of a decibel
+export const SAMPLED_VOICE_REFINED_COUNT = 64;
+export const SAMPLED_VOICE_REFINE_STEPS = 6;
+// The best combinations a fit's report prints
+export const SAMPLED_VOICE_REPORTED_COUNT = 8;
+// A recording runs to tens of megabytes, past the bound a script's ordinary request is given
+export const SAMPLE_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 2 }).total("milliseconds");
+// What a voice's instrument is chosen from: each library's sustained and plucked orchestral instruments and its pianos,
+// Harps and tuned percussion, past which an orchestral theme reaches for nothing
+export const SAMPLED_INSTRUMENTS: SampledInstrument[] = [
+  ...[
+    "BassoonSus",
+    "CelloEnsPizz",
+    "CelloEnsSpic",
+    "CelloEnsSusVib",
+    "ClarinetSus",
+    "ContrabassPizz",
+    "ContrabassSusVB",
+    "FHornSus",
+    "FluteSusNV",
+    "FluteSusVib",
+    "Glockenspiel",
+    "Harp",
+    "Marimba",
+    "OboeSusVib",
+    "SViolinVib",
+    "Timpani",
+    "TromboneSus",
+    "TrumpetSus",
+    "TubaSus",
+    "TubularBells",
+    "UprightPiano",
+    "VSUpright1",
+    "ViolaEnsPizz",
+    "ViolaEnsSusVib",
+    "ViolinEnsPizz",
+    "ViolinEnsSpic",
+    "ViolinEnsSusVib",
+    "Xylophone",
+  ].map((name) => ({ library: SampleLibrary.Vsco2, mapping: `${name}.sfz` })),
+  ...[
+    "Chordophones/Composite Chordophones/Concert Harp",
+    "Chordophones/Composite Chordophones/Folk Harp",
+    "Chordophones/Zithers/Dan Tranh - Normal",
+    "Chordophones/Zithers/Grand Piano, Kawai",
+    "Chordophones/Zithers/Grand Piano, Steinway B",
+    "Chordophones/Zithers/Upright Piano, Knight",
+    "Chordophones/Zithers/Upright Piano, Yamaha",
+    "Idiophones/Struck Idiophones/Glockenspiel",
+    "Idiophones/Struck Idiophones/Hand Chimes",
+    "Idiophones/Struck Idiophones/Vibraphone - Soft Mallets",
+  ].map((name) => ({ library: SampleLibrary.Vcsl, mapping: `${name}.sfz` })),
+];
 // Vgmstream's command line (github.com/vgmstream/vgmstream), which decodes Wwise's own Vorbis, pinned and checked as
 // FFmpeg is, into the scripts package's cache
 export const VGMSTREAM_ARCHIVE_URL =

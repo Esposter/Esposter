@@ -13,6 +13,7 @@ import { fogCommand } from "#src/services/genshinParity/commands/fogCommand";
 import { framesCommand } from "#src/services/genshinParity/commands/framesCommand";
 import { gbufferCommand } from "#src/services/genshinParity/commands/gbufferCommand";
 import { glideCommand } from "#src/services/genshinParity/commands/glideCommand";
+import { instrumentsCommand } from "#src/services/genshinParity/commands/instrumentsCommand";
 import { launchCommand } from "#src/services/genshinParity/commands/launchCommand";
 import { listenCommand } from "#src/services/genshinParity/commands/listenCommand";
 import { lumaCommand } from "#src/services/genshinParity/commands/lumaCommand";
@@ -57,6 +58,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     glide: glideCommand,
     shoot: shootCommand,
     bands: bandsCommand,
+    instruments: instrumentsCommand,
     bench: benchCommand,
     listen: listenCommand,
     noise: noiseCommand,
