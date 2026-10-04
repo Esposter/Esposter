@@ -10,14 +10,20 @@
   "packageRules": [
     { "automerge": true, "matchUpdateTypes": ["minor", "patch"] },
     {
-      "allowedVersions": "<2",
-      "description": "`h3` 2.x has no `H3` export where Nitro imports one, so the tree is held at 1.x; the catalog caret already blocks a re-resolve across the major, so this rule alone is the cap.",
-      "matchPackageNames": ["h3"]
-    },
-    {
-      "allowedVersions": "<66.10",
-      "description": "The minor after 66.9 rewrote `@unocss/inspector` onto `devframe`, which depends on `h3` 2.x — under the `h3` cap it resolves against a major with no `H3` export and `nuxt build` dies at the Nitro stage. `@unocss/vite` imports the inspector at the top of its entry, so no UnoCSS setting avoids it. The catalog tilde is the same cap for a re-resolve; both widen back together when `h3` 2.x becomes takeable.",
-      "matchPackageNames": ["unocss", "@unocss/nuxt", "@unocss/eslint-config"]
+      "description": "Nuxt 5 and the Nitro 3 it serves through ship their fixes as nightly packages, so `nuxt`, the three `@nuxt/*` packages a module builds against, and `nitro` are `npm:<name>-nightly@<tag>` aliases of a dist-tag: a lockfile refresh takes the newest nightly, and a nightly build is not a version Renovate can rank. Each name is matched beside its alias target. Replace the aliases with ranges and drop this rule once Nuxt 5 reaches `latest`.",
+      "enabled": false,
+      "matchPackageNames": [
+        "nuxt",
+        "nuxt-nightly",
+        "@nuxt/kit",
+        "@nuxt/kit-nightly",
+        "@nuxt/nitro-server",
+        "@nuxt/nitro-server-nightly",
+        "@nuxt/schema",
+        "@nuxt/schema-nightly",
+        "nitro",
+        "nitro-nightly"
+      ]
     },
     {
       "description": "`typescript` is aliased to `typescript-native-bridge` under `overrides:`, so a bump moves the bridge, the TypeScript behind it and `typescript-eslint` at once — a dedicated pass, never a routine update. A rule matches the resolved package name, so the alias target is named beside the alias.",

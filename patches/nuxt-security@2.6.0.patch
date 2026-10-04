@@ -1,0 +1,13 @@
+diff --git a/dist/module.mjs b/dist/module.mjs
+index 23a6ce2eb06c1d59d1b168c5db85e29251dcdab9..322f1fc85ea0c354fdbc18f454f1f3dc12b3b321 100644
+--- a/dist/module.mjs
++++ b/dist/module.mjs
+@@ -234,7 +234,7 @@ export {}
+           baseName: "nuxt-security",
+           dir: createResolver(nuxt.options.buildDir).resolve("./nuxt-security")
+         });
+-        const prerenderedHeaders = await nitro.storage.getItem("build:nuxt-security:headers.json") || {};
++        const prerenderedHeaders = typeof nitro.storage?.getItem === "function" ? await nitro.storage.getItem("build:nuxt-security:headers.json") || {} : {};
+         if (securityOptions.ssg && securityOptions.ssg.exportToPresets) {
+           const prerenderedHeadersRouteRules = Object.fromEntries(Object.entries(prerenderedHeaders).map(([route, headers]) => [route, { headers }]));
+           const n = useNitro();

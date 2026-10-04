@@ -35,6 +35,9 @@
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
   "type": "module",
+  "exports": {
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "ai:unocss:generate": "tsx --tsconfig tsconfig.root.json scripts/unocss/index.ts",
     "analyze": "nuxt analyze",
@@ -221,18 +224,20 @@
     "@vue/test-utils": "catalog:",
     "@vueuse/nuxt": "catalog:",
     "azure-mock": "workspace:*",
+    "chokidar": "catalog:",
     "citty": "catalog:",
-    "crossws": "catalog:",
     "dotenv": "catalog:",
     "fake-indexeddb": "catalog:",
     "fs-extra": "catalog:",
-    "h3": "catalog:",
     "happy-dom": "catalog:",
+    "lru-cache": "catalog:",
+    "mocked-exports": "catalog:",
     "msw": "catalog:",
     "neverthrow": "catalog:",
-    "nitropack": "catalog:",
+    "nitro": "catalog:",
     "nuxt": "catalog:",
     "nuxt-security": "catalog:",
+    "remark-emoji": "catalog:",
     "sass-embedded": "catalog:",
     "sql-highlight": "catalog:",
     "trpc-msw": "workspace:*",
