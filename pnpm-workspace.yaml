@@ -32,7 +32,7 @@ autoDedupe: true
 
 catalog:
   "@2toad/profanity": ^3.3.0
-  "@anthropic-ai/claude-agent-sdk": ^0.3.288
+  "@anthropic-ai/claude-agent-sdk": ^0.3.289
   "@arethetypeswrong/core": ^0.18.5
   "@azure/core-client": ^1.11.1
   "@azure/core-http-compat": ^2.5.0
@@ -208,13 +208,13 @@ catalog:
   lru-cache: ^11.5.3
   marked: ^18.0.14
   mathjs: ^15.2.0
-  mermaid: ^12.0.0
+  mermaid: ^12.1.0
   mime-types: ^3.0.2
   minisearch: ^7.2.0
   # @TODO: no upstream issue — `@nuxt/nitro-server` aliases `bufferutil` to the bare `mocked-exports/proxy`, its own
   # Dependency, which Nitro 3 resolves from the app rather than from Nuxt (nuxt/nuxt)
   mocked-exports: ^0.1.1
-  msw: ^3.0.1
+  msw: ^3.0.2
   neverthrow: ^8.2.0
   # @TODO: https://github.com/nitrojs/nitro/pull/4647 — back to a `^3` range once a Nitro release carries it: the
   # Beta registers its WebSocket upgrade listener on Vite's `httpServer`, which Nuxt's middleware-mode Vite does not have
@@ -230,7 +230,7 @@ catalog:
   oxlint: ^1.86.0
   oxlint-tsgolint: ^7.0.2003
   p-progress: ^1.0.0
-  pdfjs-dist: ^6.3.289
+  pdfjs-dist: ^6.4.299
   phaser: ^4.2.1
   phaser4-rex-plugins: ^4.2.0
   pinia: ^4.0.3
@@ -278,7 +278,9 @@ catalog:
   vue-eslint-parser: ^10.4.1
   vue-pdf-embed: ^2.1.6
   vue-router: ^5.3.1
-  vue-tsc: ^3.3.11
+  # @TODO: https://github.com/vuejs/language-tools/issues/6237 — back to a caret, with the Renovate rule that holds it
+  # dropped, once a release fixes it: 3.3.12 reports `Property 'value' does not exist` on imported refs used in templates
+  vue-tsc: 3.3.11
   vue3-apexcharts: ^1.11.1
   web-push: ^3.6.7
   worker-timers: ^8.0.34
@@ -300,8 +302,8 @@ overrides:
   # @TODO: https://github.com/nitrojs/nitro/pull/4647 — back to a `^3` range once a Nitro release carries it: the
   # Beta registers its WebSocket upgrade listener on Vite's `httpServer`, which Nuxt's middleware-mode Vite does not have
   nitro: npm:nitro-nightly@latest
-  pdfjs-dist: ^6.3.289
-  typescript: npm:typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2
+  pdfjs-dist: ^6.4.299
+  typescript: npm:typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2
   vite: ^8.3.2
 
 shellEmulator: true

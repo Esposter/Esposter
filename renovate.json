@@ -31,6 +31,11 @@
       "matchPackageNames": ["typescript", "typescript-native-bridge"]
     },
     {
+      "description": "`vue-tsc` 3.3.12 reports `Property 'value' does not exist` on an imported ref used inside a template function (https://github.com/vuejs/language-tools/issues/6237), so it is pinned exactly to 3.3.11. Drop this rule and restore the catalog caret once a release fixes the issue.",
+      "enabled": false,
+      "matchPackageNames": ["vue-tsc"]
+    },
+    {
       "automerge": false,
       "description": "The pair is pinned to one exact RC and moves as one, following the `rc` dist-tag: drizzle publishes a per-commit build (`1.0.0-rc.5-ab785fc`) under a tag per branch, and without the tag every one of those is a proposal. A release candidate can change what `db:gen` emits, so the grouped bump is read rather than merged on green. Drop `followTag` once 1.0.0 reaches `latest`.",
       "followTag": "rc",
