@@ -1,4 +1,6 @@
 export enum SkillDocsFindingType {
+  // A skill named bare in front of its page or heading, which reads as any backticked token
+  BareSkillCitation = "bare skill citation",
   // A SKILL.md past the size at which its topics should have separated
   Budget = "budget",
   // A page ending on a colon, the lead-in of an example or a list a split left on another page
