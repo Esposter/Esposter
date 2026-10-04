@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
 import { readReferenceGbuffer } from "#src/services/genshinParity/readReferenceGbuffer";
 import { toPageCamera } from "#src/services/genshinParity/toPageCamera";
@@ -15,7 +15,12 @@ export const gbufferCommand: SubCommandsDef[string] = defineCommand({
       type: "string",
     },
     reference: { description: "A reference's id in ParityReferenceMap", required: true, type: "positional" },
-    witness: { description: "The component whose exports the witness draws", required: true, type: "string" },
+    witness: {
+      description: "The component whose exports the witness draws",
+      required: true,
+      options: Object.values(DerivedAssetComponent),
+      type: "enum",
+    },
   },
   meta: {
     description:
@@ -25,7 +30,7 @@ export const gbufferCommand: SubCommandsDef[string] = defineCommand({
   run: async ({ args }) => {
     const { gbuffer, shot } = await readReferenceGbuffer(
       args.reference,
-      parseDerivedAssetComponent(args.witness),
+      args.witness,
       args.pose ? toPageCamera(parseNumbers(args.pose, "pose", CAMERA_POSE_AXES.length)) : undefined,
     );
     const drawn = gbuffer.part.filter((_, index) => index % 4 === 0 && gbuffer.part[index] !== 0).length;

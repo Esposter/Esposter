@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
 import { viewScene } from "#src/services/genshinParity/viewScene";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
@@ -16,7 +16,12 @@ export const viewCommand: SubCommandsDef[string] = defineCommand({
       required: true,
       type: "string",
     },
-    witness: { description: "The component whose exports stand beside our parts", required: true, type: "string" },
+    witness: {
+      description: "The component whose exports stand beside our parts",
+      required: true,
+      options: Object.values(DerivedAssetComponent),
+      type: "enum",
+    },
     alone: { description: "Draw without the fog, clouds and cloud sea", type: "boolean" },
     offsets: { description: 'Families moved off their places, as JSON: {"Towers":[0,0,-155]}', type: "string" },
     scales: { description: 'Families\' parts scaled about their own places, as JSON: {"Towers":2}', type: "string" },
@@ -43,7 +48,7 @@ export const viewCommand: SubCommandsDef[string] = defineCommand({
       props: args.props ? jsonDateParse<Record<string, unknown>>(args.props) : {},
       screen: args.screen,
       width: Number(args.width),
-      witness: parseDerivedAssetComponent(args.witness),
+      witness: args.witness,
     });
   },
 });

@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
 import { trackCamera } from "#src/services/genshinParity/trackCamera";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
@@ -31,7 +31,12 @@ export const trackCommand: SubCommandsDef[string] = defineCommand({
       required: true,
       type: "string",
     },
-    witness: { description: "The component whose exports the witness draws", required: true, type: "string" },
+    witness: {
+      description: "The component whose exports the witness draws",
+      required: true,
+      options: Object.values(DerivedAssetComponent),
+      type: "enum",
+    },
   },
   meta: {
     description:
@@ -39,7 +44,7 @@ export const trackCommand: SubCommandsDef[string] = defineCommand({
     name: "track",
   },
   run: async ({ args }) => {
-    const { path, track } = await trackCamera(args.reference, parseDerivedAssetComponent(args.witness), {
+    const { path, track } = await trackCamera(args.reference, args.witness, {
       durationSeconds: Number(args.seconds),
       families: args.families.split(","),
       framesPerSecond: Number(args.fps),

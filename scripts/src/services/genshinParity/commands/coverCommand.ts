@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { CLOUD_ELEVATION_BANDS } from "#src/services/genshinParity/constants";
 import { solveReferenceCloudCover } from "#src/services/genshinParity/solveReferenceCloudCover";
 import { parseNames } from "#src/services/shared/parseNames";
@@ -24,7 +24,12 @@ export const coverCommand: SubCommandsDef[string] = defineCommand({
       description: "How many times the heights and the shares are solved by turns",
       type: "string",
     },
-    witness: { description: "The component whose exports mark the sky's pixels", required: true, type: "string" },
+    witness: {
+      description: "The component whose exports mark the sky's pixels",
+      required: true,
+      options: Object.values(DerivedAssetComponent),
+      type: "enum",
+    },
   },
   meta: {
     description:
@@ -37,7 +42,7 @@ export const coverCommand: SubCommandsDef[string] = defineCommand({
       throw new InvalidOperationError(Operation.Read, "rounds", `${args.rounds} is not a count`);
     const { heights, references, residual } = await solveReferenceCloudCover(
       parseNames(args.reference, "reference"),
-      parseDerivedAssetComponent(args.witness),
+      args.witness,
       { isHeightSolved: args.heights, roundCount },
     );
     if (args.heights)
