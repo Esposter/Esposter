@@ -21,8 +21,8 @@ const NIGHT_MOON_DIRECTION = getLoginScreenDirection([0.27, 0.11]);
 const DUSK_LIGHT_DIRECTION = new Vector3(0.837, 0.259, 0.483);
 
 // The dusk's sky is solved as the game's sky shader draws it over the door recording's clear sky (genshin:parity sky,
-// Its clouds left out by the cloud mask), its colours with its own shape, which scores the recording better than the
-// Solve that read its clouds with its sky.
+// Its clouds left out by the cloud mask), its colours with its own shape, no colour under none: lavender away from the
+// Sun and rose toward it. Its bottom colour toward the sun stands under the recording's clouds, so no pixel holds it.
 // Each time of day's sky and light, its colours read off its reference: the gradient's zenith and horizon, the haze
 // Over the cloud sea (the mean of its brightest two samples low in the frame), the clouds,
 // And the sun or the moon the light comes from.
@@ -71,22 +71,22 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     cloudLitColor: new Color(0xfdedc4),
     cloudShadeColor: new Color(0xeb8596),
     fogColor: new Color(0xf0c4aa),
-    haloColor: new Color(0xecb1a2),
+    haloColor: new Color(0xeaf2ca),
     hemisphereGroundColor: new Color(0xab6db4),
     hemisphereIntensity: 2.08,
     hemisphereSkyColor: new Color(0xffd8de),
-    horizonBackColor: new Color(0xaf705a),
-    horizonColor: new Color(0xf3922c),
+    horizonBackColor: new Color(0xba766f),
+    horizonColor: new Color(0xa10000),
     lightColor: new Color(0xffecc7),
     lightDirection: DUSK_LIGHT_DIRECTION,
     lightIntensity: 26.19,
     moonDirection: DUSK_SUN_DIRECTION.clone().negate(),
-    shape: { frontBackBlend: 1, haloHeight: 0.382, horizonBand: 0.341, moonSize: 1.776, sunHaloSize: 1 },
+    shape: { frontBackBlend: 1, haloHeight: 0.406, horizonBand: 0.273, moonSize: 0.969, sunHaloSize: 5.241 },
     starIntensity: 0,
     sunDirection: DUSK_SUN_DIRECTION,
-    sunHaloColor: new Color(0x000062),
-    zenithBackColor: new Color(0xa4726b),
-    zenithColor: new Color(0xf19b39),
+    sunHaloColor: new Color(0x000000),
+    zenithBackColor: new Color(0x78597f),
+    zenithColor: new Color(0xc57a78),
   },
   [LoginTimeOfDay.Night]: {
     cloudLitColor: new Color(0x56b0f5),

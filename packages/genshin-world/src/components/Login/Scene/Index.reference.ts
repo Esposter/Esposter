@@ -87,6 +87,18 @@ export const reference: ComponentReference = {
     },
     {
       found:
+        "The salmon dusk was the solve's: it clamped a negative colour to none after a free least squares, leaving the terms that colour cancelled too red (residual 0.21 in scene colour). Solved with none negative over every clear pixel, the shape refined on the pixels within their spread, the residual is 0.039 and the sky lavender away from the sun (#78597f) and rose toward it (#c57a78), its halo a pale gold. The scene's own sky drawn with no cloud stands 0.133 off the recording's clear sky, from 0.143, its mean #98666f against #a86d7b, the right hue and darker; the frame's FLIP rises 0.007, the salmon having stood in for the gold clouds low toward the sun. The bottom colour toward the sun solves to a red with no green or blue: no clear pixel there holds it. Tried and dropped: the trim alone deciding the clear pixels (solves the darkest third, darker still), cloud pixels read at a small weight (a pink sky, residual 0.10), and the unseen terms tied to the seen ones (a dull mauve band, FLIP 0.6185)",
+      search:
+        "genshin:parity sky login-door-recording with solveNonNegativeSystem, its drawn line read at each state, then compare",
+    },
+    {
+      found:
+        "The login sets the god rays' colour to black, and the pass mixes the frame toward its colour by the lit air along each ray, so it darkens the sky toward the sun by about a quarter where the solve's own model matches the scene's sky at the frame's middle, and every part behind lit air with it. Drawn in the sun's colour the frame washes pale (FLIP 0.647); with the pass out of the chain the frame stands brighter and scores 0.641 against 0.619 at the same sky, every hour's light having been measured under the darkening",
+      search:
+        "The scene's sky read at six points against readSkyWeights at the applied state, then compare login-door-recording with the god rays lit, and with the pass left out of createPostPipeline",
+    },
+    {
+      found:
         "Rows within noise of each other: a loss table priced at a pose that fits nothing means nothing, and a recording is too soft to tell a stand-in from its export, so the tool was retired for genshin:parity rank",
       search: "genshin:parity attribute over dawn, dusk and night at (0, 5, 75), heading 0, pitch 3, Build_All witness",
     },
@@ -339,7 +351,8 @@ export const reference: ComponentReference = {
     "What MonoBlockController does to each walkway piece: the rise is read by eye off the recording's far end; its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$) hold its own curve",
     "Which of the towers' row stands at the door frame's left edge: the recording's is thin and dark with many rings, the exports' nearest there wide and arched",
     "The dusk sun's direction against its shadows: a tower's shadow falls over the wings in front of the door where the recording's are lit, and the faces' shading cannot settle the direction, so the shadows' own edges are the measure left",
-    "The dusk sky low on the frame's left: the recording's clear sky there is almost all cloud, so the sky solved over its clear pixels draws a dark red-brown band where the recording glows gold",
+    "The dusk sky low on the frame's left: the recording's clear sky there is almost all cloud, so the sky solved over its clear pixels draws a dusty rose band where the recording glows gold, and its bottom colour toward the sun is held by no pixel",
+    "The god rays' pass in the login's chain: its colour blanked to black darkens the frame through lit air, so it is to come out of the chain and every hour's light to be measured again without it",
     "The towers' gilding and windows: their colour per section scores worse painted as diffuse stone, the game's gold being a metal",
     "The deferred pass's run-time inputs: the toon ramp, the sky's spherical harmonics, the sun's colour and direction, and the reflection cube, none of which an asset holds; with the pass's form exact, each is a linear unknown of the witness's G-buffer, solvable per hour from the references",
     "How the deferred pass lights shading model 13, the rim glow's pixels, and what the post pass's haze adds after it",
