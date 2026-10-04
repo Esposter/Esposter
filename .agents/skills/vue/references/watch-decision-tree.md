@@ -81,9 +81,8 @@ onMounted(async () => {
 A blade sits inside `<Suspense>`, so it can go further and `await` the read at setup — the boundary's fallback renders the wait, replacing a local `isLoading` ref:
 
 ```ts
-const { currentRoute } = useRouter();
 // Keyed by id upstream, so it is read once
-const id = requireRouteParam(currentRoute.value.params, "id");
+const id = getRouteParam(currentRoute.value.params, "id");
 // Suspense shows its fallback until this resolves
 await refreshFoos(id);
 ```
