@@ -4,9 +4,9 @@
 
 | Unit                                                        | Swept                 | Notes |
 | ----------------------------------------------------------- | --------------------- | ----- |
-| `packages/shared` — the helpers themselves                  | 2026-09-25 · Opus 5.5 |       |
-| `apps/web/shared`, `packages/db-schema` — the Zod boundary  | 2026-09-25 · Opus 5.5 |       |
-| `apps/web/app/components`                                   | 2026-09-25 · Opus 5.5 |       |
-| `apps/web/app` — `composables`, `services`, `store`, `util` | 2026-09-25 · Opus 5.5 |       |
-| `apps/web/server`                                           | 2026-09-25 · Opus 5.5 |       |
-| `apps/functions`, the remaining `packages`                  | 2026-09-25 · Opus 5.5 |       |
+| `packages/shared` — the helpers themselves                  | 2026-10-05 · Opus 5.5 |       |
+| `apps/web/shared`, `packages/db-schema` — the Zod boundary  | 2026-10-05 · Opus 5.5 |       |
+| `apps/web/app/components`                                   | 2026-10-05 · Opus 5.5 |       |
+| `apps/web/app` — `composables`, `services`, `store`, `util` | 2026-10-05 · Opus 5.5 |       |
+| `apps/web/server`                                           | 2026-10-05 · Opus 5.5 |       |
+| `apps/functions`, the remaining `packages`                  | 2026-10-05 · Opus 5.5 |       |

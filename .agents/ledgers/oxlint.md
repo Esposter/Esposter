@@ -5,12 +5,12 @@ The lint configuration, the custom plugins, and every disable directive — spel
 | Unit                                                                     | Swept                 | Notes |
 | ------------------------------------------------------------------------ | --------------------- | ----- |
 | `oxlint.config.ts`                                                       | 2026-10-05 · Opus 5.5 |       |
-| `packages/configuration/eslint`                                          | 2026-09-25 · Opus 5.5 |       |
-| `scripts/src/oxlint`, `scripts/src/services/oxlint` — the custom plugins | 2026-09-25 · Opus 5.5 |       |
-| disable directives — `apps/web/app`                                      | 2026-09-25 · Opus 5.5 |       |
-| disable directives — `apps/web/server`, `shared`, `configuration`        | 2026-09-25 · Opus 5.5 |       |
-| disable directives — `packages`                                          | 2026-09-25 · Opus 5.5 |       |
-| disable directives — `scripts`, `apps/functions`, `apps/infra`           | 2026-09-25 · Opus 5.5 |       |
+| `packages/configuration/eslint`                                          | 2026-10-05 · Opus 5.5 |       |
+| `scripts/src/oxlint`, `scripts/src/services/oxlint` — the custom plugins | 2026-10-05 · Opus 5.5 |       |
+| disable directives — `apps/web/app`                                      | 2026-10-05 · Opus 5.5 |       |
+| disable directives — `apps/web/server`, `shared`, `configuration`        | 2026-10-05 · Opus 5.5 |       |
+| disable directives — `packages`                                          | 2026-10-05 · Opus 5.5 |       |
+| disable directives — `scripts`, `apps/functions`, `apps/infra`           | 2026-10-05 · Opus 5.5 |       |
 
 ## Find recipe
 
