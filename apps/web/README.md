@@ -79,6 +79,7 @@ All commands run from `apps/web/`:
 pnpm dev              # start dev server (http://localhost:3000)
 pnpm build            # production build
 pnpm preview          # preview production build locally
+pnpm start            # run the built server (.output), reading .env when present
 pnpm typecheck        # vue-tsc type check
 pnpm lint             # eslint (check only); oxlint runs once from the repo root
 pnpm lint:fix         # eslint --fix (always use this; never fix manually)
