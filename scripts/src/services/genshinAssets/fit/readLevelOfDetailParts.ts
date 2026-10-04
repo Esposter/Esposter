@@ -4,9 +4,10 @@ import { selectFinestLevels } from "#src/services/genshinAssets/shared/selectFin
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
-// Every placement drawing the level of detail of a part a render draws (each object's finest exported), a mesh named `<part>_Lod<level>` by the pattern's `part` and
-// `level` groups, tagged with its part, and each part's most detailed mesh the export holds: a scene places a part's
-// Levels together, and the finest of them is what its shape is fitted from
+// Every placement drawing the level of detail of a part a render draws (each object's finest exported), a mesh named
+// `<part>_Lod<level>` by the pattern's `part` and `level` groups, tagged with its part, and each part's most detailed
+// Mesh the export holds: a scene places a part's levels together, and the finest of them is what its shape is fitted
+// From
 export const readLevelOfDetailParts = (
   placements: readonly AssetPlacement[],
   meshRegex: RegExp,

@@ -2,10 +2,10 @@ import type { BandLevels } from "#src/models/genshinParity/music/BandLevels";
 
 // The gain in decibels that brings a band of ours nearest the game's by the score's own measure, the mean of each
 // Frame's gap read whole, with the distance left at it: an equaliser's band fitted exactly rather than searched. A
-// Frame's gap is level while ours lies under the floor, falls until ours meets the game's and rises past it, so the mean
-// Is a line between those turns and its least lies on one: the turns are swept in order, the mean carried along by its
-// Slope. With no floor in the way the gain is the median of the gaps, negated. Under the first turn every frame of ours
-// Lies under the floor, so the mean that starts the sweep is the one at that turn
+// Frame's gap is level while ours lies under the floor, falls until ours meets the game's and rises past it, so the
+// Mean is a line between those turns and its least lies on one: the turns are swept in order, the mean carried along by
+// Its slope. With no floor in the way the gain is the median of the gaps, negated. Under the first turn every frame of
+// Ours lies under the floor, so the mean that starts the sweep is the one at that turn
 export const fitBandGain = ({ floor, game, ours }: BandLevels): { distance: number; gain: number } => {
   let total = 0;
   const turns: [position: number, slopeChange: number][] = [];

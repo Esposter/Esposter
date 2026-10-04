@@ -104,8 +104,8 @@ export const solveCameraPose = (
   width: number,
   height: number,
   start?: readonly number[],
-  // The axes held at the start's values, by their index along `CAMERA_POSE_AXES`: the field of view read from two widths,
-  // Where too few points fix it
+  // The axes held at the start's values, by their index along `CAMERA_POSE_AXES`: the field of view read from two
+  // Widths, where too few points fix it
   heldAxes: readonly number[] = [],
 ): { errors: number[]; pose: number[]; rms: number } => {
   if (!start && correspondences.length < DLT_POINT_COUNT)

@@ -3,9 +3,9 @@ import type { SceneTreeNode } from "#src/models/genshinAssets/scene/SceneTreeNod
 import { formatNumbers } from "#src/services/genshinAssets/shared/formatNumbers";
 import { formatTree } from "#src/services/genshinAssets/shared/formatTree";
 
-// A scene's tree as text, one object a line indented by its depth: its name and block, its local position, its turn
-// And scale where they are not the identity's, its scale in the world, what it draws, its named components, how many children
-// It names (those the dumps lack flagged), and what its arrangement flags
+// A scene's tree as text, one object a line indented by its depth: its name and block, its local position, its turn and
+// Scale where they are not the identity's, its scale in the world, what it draws, its named components, how many
+// Children it names (those the dumps lack flagged), and what its arrangement flags
 export const formatSceneTree = (node: SceneTreeNode): string =>
   formatTree(node, ({ flags, mesh, object, worldScale }) => {
     const { block, childIds, components, name, position, rotation, scale } = object;

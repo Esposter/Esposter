@@ -16,9 +16,9 @@ const getCurve = (samples: readonly number[], share: number): number => {
   const right = Math.min(left + 1, samples.length - 1);
   return (samples[left] ?? 0) + ((samples[right] ?? 0) - (samples[left] ?? 0)) * (position - left);
 };
-// Each term's weight at a ray, as the game's sky shader sums them: the sky's colour from its gradient, blended from away
-// From the sun to toward it, the halo over its reach toward the sun and all round once the sun is up, the sun's halo
-// As three widening lobes and the moon's glow
+// Each term's weight at a ray, as the game's sky shader sums them: the sky's colour from its gradient, blended from
+// Away from the sun to toward it, the halo over its reach toward the sun and all round once the sun is up, the sun's
+// Halo as three widening lobes and the moon's glow
 export const computeSkyWeights = (
   direction: Vector,
   { moonDirection, sunDirection }: { moonDirection: Vector; sunDirection: Vector },

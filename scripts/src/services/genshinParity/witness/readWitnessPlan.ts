@@ -20,9 +20,9 @@ const gcd = (first: number, second: number): number => (second === 0 ? first : g
 // Drawn at so many pixels a metre: the unlit albedo its exported materials draw, its fourth channel 1 where a part is
 // Drawn, the columns running toward +x and the rows toward +z from the rectangle's least corner. The rectangle is
 // Lengthened toward +z to a whole multiple of the page's height, so the page's scale is whole and draws exactly the
-// Pixels asked, and widened toward +x to a whole multiple of the readback's row, and its size as drawn is handed back. The eye stands
-// High over the rectangle's middle looking straight down, its up toward +z, so its view's columns run toward -x and its
-// Rows, read back from the top, toward -z, and both are turned back
+// Pixels asked, and widened toward +x to a whole multiple of the readback's row, and its size as drawn is handed back.
+// The eye stands high over the rectangle's middle looking straight down, its up toward +z, so its view's columns run
+// Toward -x and its rows, read back from the top, toward -z, and both are turned back
 export const readWitnessPlan = async (
   referenceId: string,
   witness: DerivedAssetComponent,

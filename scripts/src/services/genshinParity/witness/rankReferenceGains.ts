@@ -19,8 +19,8 @@ const DEPTH_BANDS: [string, number][] = [
   ["middle", 80],
   ["far", Infinity],
 ];
-// The sky's rows split into this many bands from the frame's top down, the zenith apart from the horizon's glow, and each
-// Band's pixels into the clouds the reference shows over ours and the rest
+// The sky's rows split into this many bands from the frame's top down, the zenith apart from the horizon's glow, and
+// Each band's pixels into the clouds the reference shows over ours and the rest
 const SKY_BAND_COUNT = 3;
 // A part's face is lit where its cosine to the light passes this, turned away under its negative, and edge-on between
 const FACING_COSINE = 0.3;
@@ -29,9 +29,9 @@ const FACING_COSINE = 0.3;
 // Pixels. Each family of parts the witness draws splits into its stand-in, the error ours carries over the game's own
 // Exports on that family's pixels, and the shared terms the exports carry too (the light, the haze, the grade), split
 // By depth and by how the faces turn to the light, over the parts' interiors; the silhouettes are their own terms, the
-// Exports' placement and the camera's pose, and the stand-ins' outlines over theirs; the sky splits by its rows and into the clouds the reference shows
-// Over ours and the rest. One page draws the witness's layers and two shots, ours and the exports', and
-// The error is mapped once over each, inside the reference's scored region
+// Exports' placement and the camera's pose, and the stand-ins' outlines over theirs; the sky splits by its rows and
+// Into the clouds the reference shows over ours and the rest. One page draws the witness's layers and two shots, ours
+// And the exports', and the error is mapped once over each, inside the reference's scored region
 export const rankReferenceGains = async (
   referenceId: string,
   witness: DerivedAssetComponent,

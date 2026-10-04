@@ -4,8 +4,8 @@ import { solveLinearSystem } from "#src/services/genshinParity/shared/solveLinea
 // Toward its sun, smoothly, and a cubic holds both while no cloud's few hundred pixels fit into it
 const DEGREE = 3;
 // The share of the fit's error weighted where a pixel stands over it rather than under it, short of the cloud's ratio:
-// Clouds only ever stand over their sky, so a fit weighing them a tenth as much as the sky under it settles on the clear
-// Tail, and a pixel past the ratio, a cloud, is not weighed at all
+// Clouds only ever stand over their sky, so a fit weighing them a tenth as much as the sky under it settles on the
+// Clear tail, and a pixel past the ratio, a cloud, is not weighed at all
 const OVER_WEIGHT = 0.1;
 const ITERATION_COUNT = 12;
 // The terms of a cubic in a pixel's place, each axis scaled to [-1, 1]

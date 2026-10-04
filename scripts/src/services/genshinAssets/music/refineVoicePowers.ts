@@ -3,8 +3,8 @@ import { SAMPLED_VOICE_REFINE_STEPS } from "#src/services/genshinAssets/shared/c
 
 // Each voice's power refined against the score's own band distance from a least-squares start: a voice's power doubled
 // Or halved while that lowers the distance, the step halving each time no voice moves, down to
-// `SAMPLED_VOICE_REFINE_STEPS` halvings. A silenced voice starts from a thousandth of the loudest, where a step can move
-// It
+// `SAMPLED_VOICE_REFINE_STEPS` halvings. A silenced voice starts from a thousandth of the loudest, where a step can
+// Move it
 export const refineVoicePowers = (
   voiceEnergies: Float64Array[],
   powers: number[],

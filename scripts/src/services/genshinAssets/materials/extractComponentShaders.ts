@@ -70,8 +70,8 @@ export const extractComponentShaders = async (component: DerivedAssetComponent):
         ),
       ]);
       const count = disassembleDxbcDirectory(programDirectory);
-      // And decompiled to HLSL beside it where the pinned decompiler can be had, the annotated assembly the source where
-      // It cannot
+      // And decompiled to HLSL beside it where the pinned decompiler can be had, the annotated assembly the source
+      // Where it cannot
       // oxlint-disable-next-line no-await-in-loop -- as above
       const decompiledCount = await getResultAsync(() => decompileDxbcDirectory(programDirectory)).match(
         (decompiled) => decompiled,
@@ -80,7 +80,8 @@ export const extractComponentShaders = async (component: DerivedAssetComponent):
           return 0;
         },
       );
-      // Each program's assembly and HLSL are headed by what its constant buffer's registers hold, from its shader's layouts
+      // Each program's assembly and HLSL are headed by what its constant buffer's registers hold, from its shader's
+      // Layouts
       const layouts = parseShaderConstantLayouts(data);
       // oxlint-disable-next-line no-await-in-loop -- as above
       const assemblyNames = (await readdir(programDirectory)).filter(

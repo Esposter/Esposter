@@ -19,8 +19,8 @@ import sharp from "sharp";
 // A handful of points through a fixed camera, so it settles in well under a second
 const PLACE_STEPS = [2, 2, 2, 2];
 const PLACE_ITERATIONS = 400;
-// Where a row of parts stands on a reference, from its landmarks alone, the camera held at the pose given: one offset in
-// Three's axes and one turn about the vertical through the world's origin, shared by every landmark named (a row the
+// Where a row of parts stands on a reference, from its landmarks alone, the camera held at the pose given: one offset
+// In three's axes and one turn about the vertical through the world's origin, shared by every landmark named (a row the
 // Script moves as one), by least squares on their reprojection through that camera. No frame is drawn: the witness
 // Reads each landmark's place once, and the fit is arithmetic, so a row the edges cannot settle (a reference's clouds
 // And haze pulling its boundaries) is placed by what the reference shows of it. Only the axes named move, the rest held

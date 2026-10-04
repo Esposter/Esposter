@@ -26,9 +26,9 @@ const computeMean = (vectors: readonly Vector[]): Vector =>
     roundFitted(vectors.reduce((sum, vector) => sum + vector[channel], 0) / Math.max(vectors.length, 1)),
   ) as Vector;
 // The stone each family of the login's parts is carved from, as its materials hold it (Login/Scene/Index.reference.ts,
-// Source `stoneShader`, whose programs do not decompile, so its properties are read, not its code): the median colour of
-// Their diffuse textures, the median smoothness of their masks\' red channel at their gloss scale, the specular colour
-// They tint their highlights with, and the rim glow they light their edges with, its colour, power and strength
+// Source `stoneShader`, whose programs do not decompile, so its properties are read, not its code): the median colour
+// Of their diffuse textures, the median smoothness of their masks\' red channel at their gloss scale, the specular
+// Colour they tint their highlights with, and the rim glow they light their edges with, its colour, power and strength
 export const fitLoginStone = async (
   materials: readonly MaterialValues[],
   textureDirectory: string,

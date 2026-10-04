@@ -8,7 +8,8 @@ import { posix } from "node:path";
 // A group's over its master's and so on up
 const SCOPES = ["control", "global", "master", "group", "region"];
 const COMMENT_REGEX = /\/\*[\s\S]*?\*\/|\/\/.*$/gmu;
-// A header, or an opcode's name up to its `=`: a value runs to the next of either, since a sample's path may hold spaces
+// A header, or an opcode's name up to its `=`: a value runs to the next of either, since a sample's path may hold
+// Spaces
 const TOKEN_REGEX = /<(?<header>\w+)>|(?<opcode>\w+)=/gu;
 const NOTE_NAME_REGEX = /^(?<letter>[a-g])(?<accidental>[#b]?)(?<octave>-?\d+)$/iu;
 const NOTE_LETTER_SEMITONES: Record<string, number> = { a: 9, b: 11, c: 0, d: 2, e: 4, f: 5, g: 7 };

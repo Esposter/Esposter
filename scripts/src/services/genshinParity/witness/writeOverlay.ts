@@ -10,12 +10,12 @@ import sharp from "sharp";
 
 // A reference's edges this many pixels or more from any witness boundary are drawn at the distance map's reddest
 const FAR_EDGE_DISTANCE = 12;
-// The witness's family boundaries drawn over the reference, each in its family's colour, beside a map of the reference's
-// Edges coloured by how far each sits from the nearest boundary (green on one, red far off), so a part that does not
-// Land shows where; and how far each family's boundaries sit from the reference's nearest edge, in pixels at the
-// Structure's width, their mean over each family's boundary pixels. The reference is read at the G-buffer's size, which
-// The page's whole-pixel viewport can leave a pixel off the structure's width, so a pixel's index is the same in both.
-// Returns the image's path with those distances
+// The witness's family boundaries drawn over the reference, each in its family's colour, beside a map of the
+// Reference's edges coloured by how far each sits from the nearest boundary (green on one, red far off), so a part that
+// Does not land shows where; and how far each family's boundaries sit from the reference's nearest edge, in pixels at
+// The structure's width, their mean over each family's boundary pixels. The reference is read at the G-buffer's size,
+// Which the page's whole-pixel viewport can leave a pixel off the structure's width, so a pixel's index is the same in
+// Both. Returns the image's path with those distances
 export const writeOverlay = async (
   referenceId: string,
   { gbuffer, image }: { gbuffer: WitnessGbuffer; image: Buffer },

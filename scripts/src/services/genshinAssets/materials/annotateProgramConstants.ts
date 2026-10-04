@@ -26,10 +26,10 @@ const checkIsDisjoint = (layout: readonly ShaderConstant[]): boolean => {
     return !previous || constant.byteOffset >= computeEndByte(previous);
   });
 };
-// A disassembled or decompiled program headed by what its first constant buffer's registers hold, named from the layout of its
-// Shader's that fits it: one whose constants share no byte, that names every register the program reads and ends
-// Within the buffer it declares, preferring the one that names the most. Without one that fits, the program is left
-// As it is
+// A disassembled or decompiled program headed by what its first constant buffer's registers hold, named from the layout
+// Of its shader's that fits it: one whose constants share no byte, that names every register the program reads and ends
+// Within the buffer it declares, preferring the one that names the most. Without one that fits, the program is left as
+// It is
 export const annotateProgramConstants = (assembly: string, layouts: readonly ShaderConstant[][]): string => {
   const size = Number(BUFFER_SIZE_REGEX.exec(assembly)?.groups?.size ?? 0);
   if (size === 0) return assembly;

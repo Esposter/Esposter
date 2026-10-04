@@ -5,11 +5,12 @@ import sharp from "sharp";
 const INK_ALPHA = 32;
 const toHex = (channels: number[]): string =>
   `#${channels.map((channel) => Math.round(channel).toString(16).padStart(2, "0")).join("")}`;
-// A ring mark's colours, sampled about the image's centre in both dimensions: `bands` rings from the ink's inner edge to
-// Its outer, or to the circle the image's square holds where the ink runs on into its corners, each cut into `angles`
-// Cells clockwise from the top, and each cell the mean of the ink inside it, weighted by its alpha. A cell with no ink (a gap between the mark's strokes) takes its nearest inked neighbour along its angle,
-// So drawing the bands blended into each other carries no paper into the strokes. One band a line: its middle radius
-// As a share of the image's half width, then its colours
+// A ring mark's colours, sampled about the image's centre in both dimensions: `bands` rings from the ink's inner edge
+// To its outer, or to the circle the image's square holds where the ink runs on into its corners, each cut into
+// `angles` cells clockwise from the top, and each cell the mean of the ink inside it, weighted by its alpha. A cell
+// With no ink (a gap between the mark's strokes) takes its nearest inked neighbour along its angle, so drawing the
+// Bands blended into each other carries no paper into the strokes. One band a line: its middle radius as a share of the
+// Image's half width, then its colours
 export const samplePolar = async (path: string, bands: number, angles: number): Promise<void> => {
   // A count that is not a whole number past zero sizes no cell, and the rows would print with no colours at all
   if (![bands, angles].every((count) => Number.isSafeInteger(count) && count > 0))
