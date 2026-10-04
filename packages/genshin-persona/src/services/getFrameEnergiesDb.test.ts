@@ -3,15 +3,15 @@ import { getFrameEnergiesDb } from "#src/services/getFrameEnergiesDb";
 import { describe, expect, test } from "vitest";
 
 describe(getFrameEnergiesDb, () => {
-  const TONE_SECONDS = 0.5;
-  const toneSamples = TONE_SECONDS * VOICE_SAMPLE_RATE;
+  const toneSeconds = 0.5;
+  const toneSamples = toneSeconds * VOICE_SAMPLE_RATE;
   const tone = Float32Array.from({ length: toneSamples * 2 }, (_, index) => (index < toneSamples ? 1 : 0));
 
   test("reads one energy per hop, loud over the tone and floored over the silence after it", () => {
     expect.hasAssertions();
 
     const energiesDb = getFrameEnergiesDb({ sampleRate: VOICE_SAMPLE_RATE, samples: tone });
-    const silentFrames = energiesDb.slice(Math.ceil(TONE_SECONDS / HOP_SECONDS));
+    const silentFrames = energiesDb.slice(Math.ceil(toneSeconds / HOP_SECONDS));
 
     expect(energiesDb[0]).toBeCloseTo(0);
     expect(silentFrames.every((energyDb) => energyDb < 0)).toBe(true);

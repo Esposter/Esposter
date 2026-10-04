@@ -5,8 +5,8 @@ import { describe, expect, test } from "vitest";
 const getTone = (length: number) => Float32Array.from({ length }, (_, index) => Math.sin(index));
 
 describe(cutOpeningTurn, () => {
-  const TURN_SECONDS = 1;
-  const turnSamples = TURN_SECONDS * VOICE_SAMPLE_RATE;
+  const turnSeconds = 1;
+  const turnSamples = turnSeconds * VOICE_SAMPLE_RATE;
   // Twice the least pause, since a frame straddling a turn's edge is still loud
   const pauseSamples = 2 * MIN_TURN_PAUSE_SECONDS * VOICE_SAMPLE_RATE;
 

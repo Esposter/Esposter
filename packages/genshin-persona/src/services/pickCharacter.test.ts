@@ -1,11 +1,7 @@
 import { TEST_EPOCH_DATE } from "#src/services/constants.test";
-import { createCharacter } from "#src/services/createCharacter.test";
+import { createBirthdayCharacter } from "#src/services/createBirthdayCharacter.test";
 import { pickCharacter } from "#src/services/pickCharacter";
 import { describe, expect, test } from "vitest";
-
-// Named for the birthday, which is the one field the pick reads and the one the assertions tell them apart by
-const createBirthdayCharacter = (birthday: string) =>
-  createCharacter({ birthday, displayName: birthday, name: birthday });
 
 describe(pickCharacter, () => {
   const epoch = TEST_EPOCH_DATE;

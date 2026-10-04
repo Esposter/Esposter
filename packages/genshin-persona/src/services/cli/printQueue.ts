@@ -13,8 +13,9 @@ export const printQueue = async (
   for (const { character } of cardedRoster
     .filter((cardedCharacter) => checkIsQueued(cardedCharacter))
     .toSorted(
-      ({ character: a }, { character: b }) =>
-        b.version.localeCompare(a.version, undefined, { numeric: true }) || a.name.localeCompare(b.name),
+      ({ character: firstCharacter }, { character: secondCharacter }) =>
+        secondCharacter.version.localeCompare(firstCharacter.version, undefined, { numeric: true }) ||
+        firstCharacter.name.localeCompare(secondCharacter.name),
     ))
     console.log(getRosterLine(character));
 };
