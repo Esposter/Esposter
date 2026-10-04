@@ -11,7 +11,7 @@ describe(createSeededRandom, () => {
     const random = createSeededRandom(seed);
     const repeatedRandom = createSeededRandom(seed);
 
-    expect(Array.from({ length }, random)).toStrictEqual(Array.from({ length }, repeatedRandom));
+    expect(Array.from({ length }, () => random())).toStrictEqual(Array.from({ length }, () => repeatedRandom()));
   });
 
   test("draws a different stream for another seed", () => {
