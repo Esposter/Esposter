@@ -12,7 +12,7 @@ describe(getDistTag, () => {
     expect(getDistTag(specifier)).toBe(expected);
   });
 
-  test.each(["^0.0.0", "npm:a@^0.0.0"])("reads no dist-tag from the range %s", (specifier) => {
+  test.each(["^0.0.0", "npm:a@^0.0.0", "file:a"])("reads no dist-tag from %s", (specifier) => {
     expect.hasAssertions();
 
     expect(getDistTag(specifier)).toBe("");
