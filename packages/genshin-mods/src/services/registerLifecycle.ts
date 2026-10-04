@@ -4,7 +4,7 @@ import { atom, read, update } from "claude-code";
 
 import type { EnabledMods } from "../../types";
 
-import { CACHE_WARNING_MS, CLOCK_TICK_MS, WAYPOINTS_QUESTION } from "./constants";
+import { CACHE_WARNING_MS, CLOCK_TICK_MS, VEIL_SECTION_ID, VEIL_SYSTEM_SECTION, WAYPOINTS_QUESTION } from "./constants";
 import { InitialState } from "./InitialState";
 import { ModDescriptionMap, ModNames } from "./ModDescriptionMap";
 import { getCacheRemainingMs } from "./resin/getCacheRemainingMs";
@@ -107,6 +107,13 @@ export const registerLifecycle = (on: On): void => {
     const { tasks } = await read($, commissionAtom);
     if (tasks.length > 0 && tasks.every(({ status }) => status === "completed")) await closeCommission($);
     return next(e);
+  });
+
+  // While the veil is on, the model is told to write placeholders too, so a reply never holds a value to hide
+  on("prompt.compose", async ($, e, next) => {
+    const result = await next(e);
+    if (!(await read($, enabledModsAtom)).veil) return result;
+    return { sections: [...result.sections, { id: VEIL_SECTION_ID, scope: "session", text: VEIL_SYSTEM_SECTION }] };
   });
 
   on("turn.start", (_$, e, next) => {

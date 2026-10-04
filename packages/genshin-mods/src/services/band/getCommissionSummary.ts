@@ -1,7 +1,8 @@
 import type { Commission } from "../../../types";
 
+import { minuteFormat } from "../minuteFormat";
+
 const percentFormat = new Intl.NumberFormat("en", { style: "percent" });
-const minuteFormat = new Intl.NumberFormat("en", { style: "unit", unit: "minute", unitDisplay: "narrow" });
 
 // `goal · 3 of 4 · 75% · 12m`, the clock counting whole minutes from the commission's opening
 export const getCommissionSummary = ({ goal, openedAt, tasks }: Commission, now: number): string => {

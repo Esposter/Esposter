@@ -3,11 +3,11 @@ import type { SessionUsage } from "claude-code";
 import type { ResinFigure } from "../../models/ResinFigure";
 
 import { CACHE_LOW_MS, USAGE_WARNING_PERCENTAGE } from "../constants";
+import { minuteFormat } from "../minuteFormat";
 import { getCacheRemainingMs } from "./getCacheRemainingMs";
 
 const tokenFormat = new Intl.NumberFormat("en", { maximumFractionDigits: 1, notation: "compact" });
 const costFormat = new Intl.NumberFormat("en", { currency: "USD", style: "currency" });
-const minuteFormat = new Intl.NumberFormat("en", { style: "unit", unit: "minute", unitDisplay: "narrow" });
 const RateLimitLabelMap: Record<string, string> = { five_hour: "5h", seven_day: "7d" };
 
 // The row's figures in the order they are read: the cache only once a request has started its clock, and each other
