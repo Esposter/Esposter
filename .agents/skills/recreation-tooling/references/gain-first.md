@@ -4,7 +4,7 @@ Read when choosing what to work on next in a recreation, or before spending a pa
 
 ## The ceiling
 
-A term's **ceiling** is how much the score would recover if that term were exact, everything else held as it is. Where the score is a mean over pixels (FLIP is), the ceiling of a layer is its share of the frame times its own error, and the layers' ceilings add up to the frame's score, so the split is exact rather than estimated. Inside a layer, the same split is taken over whatever separates its unknowns (depth bands for haze against light, a mask for clouds against the sky's gradient), and the witness's rows (`attribute`) split a layer's ceiling into what its stand-in costs and what the shared terms cost.
+A term's **ceiling** is how much the score would recover if that term were exact, everything else held as it is. Where the score is a mean over pixels (FLIP is), the ceiling of a layer is its share of the frame times its own error, and the layers' ceilings add up to the frame's score, so the split is exact rather than estimated. Inside a layer, the same split is taken over whatever separates its unknowns (depth bands for haze against light, a mask for clouds against the sky's gradient), and a ranking against the source's own parts drawn in place of ours (Genshin's `rank`) splits a layer's ceiling into what its stand-in costs and what the shared terms cost.
 
 ## Random content has no ceiling
 
