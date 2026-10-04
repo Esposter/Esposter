@@ -18,7 +18,7 @@ export const readRegistryOutdatedDependencies = async (
   // Keyed by the entry object itself, because a package name is not an identity: two manifests declaring the
   // Same engine under different constraints are two entries, and so is a package that is both a config
   // Dependency and an engine. Keyed by name, the last result written wins and is then emitted once per entry
-  // That shares the name — a duplicated row carrying another entry's specifier. The ordering loop below walks
+  // That shares the name — a duplicated row carrying another entry's version. The ordering loop below walks
   // The very array the workers took their entries from, so identity is exact and needs no composite key.
   const outdatedDependencyMap = new Map<DependencyEntry, OutdatedDependency>();
   const errors: RegistryCheckError[] = [];
@@ -47,7 +47,6 @@ export const readRegistryOutdatedDependencies = async (
               dependents: [entryDependent ?? dependent],
               latest,
               packageName,
-              specifier,
             });
         },
         (error) => {

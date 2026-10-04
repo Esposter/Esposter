@@ -4,5 +4,4 @@ export interface OutdatedDependency {
   dependents: string[];
   latest: string;
   packageName: string;
-  specifier: string;
 }

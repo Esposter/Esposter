@@ -10,7 +10,6 @@ describe(omitDependents, () => {
     dependents: [],
     latest: "",
     packageName: "",
-    specifier: "",
   };
 
   test("drops the omitted dependents and the row they were all of", () => {

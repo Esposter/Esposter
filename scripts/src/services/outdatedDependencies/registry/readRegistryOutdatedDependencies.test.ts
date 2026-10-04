@@ -10,7 +10,7 @@ vi.mock(import("#src/services/shared/readLatestVersion"), () => ({
 }));
 
 describe(readRegistryOutdatedDependencies, () => {
-  test("reports every entry sharing a package name under its own specifier", async () => {
+  test("reports every entry sharing a package name under its own version", async () => {
     expect.hasAssertions();
 
     const entries: DependencyEntry[] = [
@@ -22,22 +22,8 @@ describe(readRegistryOutdatedDependencies, () => {
     const { outdatedDependencies } = await readRegistryOutdatedDependencies(entries);
 
     expect(outdatedDependencies).toStrictEqual([
-      {
-        current: "0.1.0",
-        dependencyType: "engine",
-        dependents: ["engines"],
-        latest: "0.1.1",
-        packageName: "a",
-        specifier: "^0.1.0",
-      },
-      {
-        current: "0.0.0",
-        dependencyType: "engine",
-        dependents: ["engines"],
-        latest: "0.1.1",
-        packageName: "a",
-        specifier: "^0.0.0",
-      },
+      { current: "0.1.0", dependencyType: "engine", dependents: ["engines"], latest: "0.1.1", packageName: "a" },
+      { current: "0.0.0", dependencyType: "engine", dependents: ["engines"], latest: "0.1.1", packageName: "a" },
     ]);
   });
 
@@ -53,14 +39,7 @@ describe(readRegistryOutdatedDependencies, () => {
 
     expect(readLatestVersion).toHaveBeenCalledWith("a", "rc");
     expect(outdatedDependencies).toStrictEqual([
-      {
-        current: "1.0.0-rc.0",
-        dependencyType: "rc",
-        dependents: ["catalog"],
-        latest: "1.0.0-rc.1",
-        packageName: "a",
-        specifier: "1.0.0-rc.0",
-      },
+      { current: "1.0.0-rc.0", dependencyType: "rc", dependents: ["catalog"], latest: "1.0.0-rc.1", packageName: "a" },
     ]);
   });
 
@@ -76,14 +55,7 @@ describe(readRegistryOutdatedDependencies, () => {
 
     expect(readLatestVersion).toHaveBeenCalledWith("b", "a");
     expect(outdatedDependencies).toStrictEqual([
-      {
-        current: "0.0.0",
-        dependencyType: "a",
-        dependents: ["catalog"],
-        latest: "0.0.1",
-        packageName: "a",
-        specifier: "npm:b@a",
-      },
+      { current: "0.0.0", dependencyType: "a", dependents: ["catalog"], latest: "0.0.1", packageName: "a" },
     ]);
   });
 
@@ -98,14 +70,7 @@ describe(readRegistryOutdatedDependencies, () => {
     const { outdatedDependencies } = await readRegistryOutdatedDependencies(entries);
 
     expect(outdatedDependencies).toStrictEqual([
-      {
-        current: "0.0.0",
-        dependencyType: "npm",
-        dependents: ["dependent"],
-        latest: "0.0.1",
-        packageName: "a",
-        specifier: "^0.0.0",
-      },
+      { current: "0.0.0", dependencyType: "npm", dependents: ["dependent"], latest: "0.0.1", packageName: "a" },
     ]);
   });
 });
