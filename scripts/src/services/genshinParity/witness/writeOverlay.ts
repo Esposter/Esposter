@@ -13,17 +13,23 @@ const FAR_EDGE_DISTANCE = 12;
 // The witness's family boundaries drawn over the reference, each in its family's colour, beside a map of the reference's
 // Edges coloured by how far each sits from the nearest boundary (green on one, red far off), so a part that does not
 // Land shows where; and how far each family's boundaries sit from the reference's nearest edge, in pixels at the
-// Structure's width, their mean over each family's boundary pixels. Returns the image's path with those distances
+// Structure's width, their mean over each family's boundary pixels. The reference is read at the G-buffer's size, which
+// The page's whole-pixel viewport can leave a pixel off the structure's width, so a pixel's index is the same in both.
+// Returns the image's path with those distances
 export const writeOverlay = async (
   referenceId: string,
   { gbuffer, image }: { gbuffer: WitnessGbuffer; image: Buffer },
 ): Promise<{ families: { distance: number; name: string; pixelCount: number }[]; path: string }> => {
   const { families: familyNames, height, width } = gbuffer;
   const { familyIndices, mask } = findFamilyBoundaries(gbuffer);
-  const referenceEdges = await readStructureEdges(image, height);
+  const referenceEdges = await readStructureEdges(image, height, width);
   const edgeDistances = computeDistanceTransform(referenceEdges, width, height);
   const boundaryDistances = computeDistanceTransform(mask, width, height);
-  const { data } = await sharp(image).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const { data } = await sharp(image)
+    .resize(width, height, { fit: "fill" })
+    .removeAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
   const overlay = Buffer.from(data);
   const edgeMap = Buffer.alloc(width * height * 3);
   const familySums = familyNames.map(() => ({ count: 0, sum: 0 }));
