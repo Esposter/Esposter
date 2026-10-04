@@ -48,8 +48,8 @@ export const writeWitnessGbuffer = async (
   const panels = await Promise.all([
     sharp(shot).resize(width, height).removeAlpha().png().toBuffer(),
     toImage((pixel) => {
-      if (!part[pixel * 4]) return [0, 0, 0];
-      return getFamilyColor(part[pixel * 4 + 1] ?? 0);
+      if (part[pixel * 4]) return getFamilyColor(part[pixel * 4 + 1] ?? 0);
+      else return [0, 0, 0];
     }),
     toImage((pixel) => getColor(normal, pixel, (value) => value * 0.5 + 0.5)),
     toImage((pixel) => {

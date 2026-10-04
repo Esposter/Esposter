@@ -13,7 +13,7 @@ const toProperty = ({ component, property }: DecodedCurve): string => {
   if (property === "scale" && component === "x") return "scale";
   if (property === "m_AnchoredPosition.x") return "x";
   if (property === "m_AnchoredPosition.y") return "y";
-  return "";
+  else return "";
 };
 // The interface clips a screen plays, from the component's decoded clips: each clip's span in milliseconds and a track
 // For each curve that sets an interface piece its tree names (a path, not a hash) in a property the screen draws,

@@ -13,8 +13,8 @@ const setupContainerClient = () => {
     getBlockBlobClient: (name: string) => ({
       downloadToBuffer: () => {
         const blob = blobs.get(name);
-        if (!blob) return Promise.reject(new RestError(" ", { statusCode: 404 }));
-        return Promise.resolve(blob.body);
+        if (blob) return Promise.resolve(blob.body);
+        else return Promise.reject(new RestError(" ", { statusCode: 404 }));
       },
       upload: (body: Buffer, _contentLength: number, options?: BlockBlobUploadOptions) => {
         blobs.set(name, { body, options });

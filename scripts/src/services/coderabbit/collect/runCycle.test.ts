@@ -208,7 +208,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     runGh.mockImplementation((args) => {
       if (args[0] !== "run" || args[1] !== "list") return answerRest?.(args) ?? "";
       else if (args.includes(reviewedSha)) return JSON.stringify([redRun]);
-      return JSON.stringify([{ ...redRun, conclusion: "", status: "in_progress" }]);
+      else return JSON.stringify([{ ...redRun, conclusion: "", status: "in_progress" }]);
     });
     answerRegenerated(() => greenSpawn);
     await runCycle({ ...baseInput, cwd: getCwd() });

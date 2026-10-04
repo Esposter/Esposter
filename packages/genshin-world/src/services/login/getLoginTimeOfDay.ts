@@ -12,5 +12,5 @@ export const getLoginTimeOfDay = ({ hour, minute }: Temporal.PlainTime): LoginTi
   if (minutes >= NIGHT_START_MINUTES || minutes < DAWN_START_MINUTES) return LoginTimeOfDay.Night;
   else if (minutes < DAY_START_MINUTES) return LoginTimeOfDay.Dawn;
   else if (minutes < DUSK_START_MINUTES) return LoginTimeOfDay.Day;
-  return LoginTimeOfDay.Dusk;
+  else return LoginTimeOfDay.Dusk;
 };

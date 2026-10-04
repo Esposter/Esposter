@@ -13,8 +13,9 @@ const checkIsFakingBatchTimer = (options: ESTree.Expression | ESTree.SpreadEleme
     (property): property is ESTree.ObjectProperty =>
       property.type === "Property" && property.key.type === "Identifier" && property.key.name === "toFake",
   );
-  if (toFake?.value.type !== "ArrayExpression") return true;
-  return toFake.value.elements.some((element) => element?.type === "Literal" && element.value === FAKED_TIMER);
+  if (toFake?.value.type === "ArrayExpression")
+    return toFake.value.elements.some((element) => element?.type === "Literal" && element.value === FAKED_TIMER);
+  else return true;
 };
 
 export const noFakedBatchTimer: Rule = defineRule({

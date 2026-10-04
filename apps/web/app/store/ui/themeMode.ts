@@ -14,8 +14,8 @@ export const useThemeModeStore = defineStore("ui/themeMode", () => {
   });
   const isSystemDark = ref(false);
   const resolvedThemeMode = computed<ResolvedThemeMode>(() => {
-    if (themeMode.value !== ThemeMode.System) return themeMode.value;
-    return isSystemDark.value ? ThemeMode.Dark : ThemeMode.Light;
+    if (themeMode.value === ThemeMode.System) return isSystemDark.value ? ThemeMode.Dark : ThemeMode.Light;
+    else return themeMode.value;
   });
   // Whether the reader's theme is a dark one, for a third-party widget that takes the mode as a flag
   const isDark = computed(() => resolvedThemeMode.value === ThemeMode.Dark);

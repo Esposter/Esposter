@@ -56,7 +56,7 @@ export const fitClearSky = (
     weights = pixels.map(({ logLuminance, terms }) => {
       const over = logLuminance - terms.reduce((sum, term, index) => sum + term * (solved[index] ?? 0), 0);
       if (over > logRatio) return 0;
-      return over > 0 ? OVER_WEIGHT : 1;
+      else return over > 0 ? OVER_WEIGHT : 1;
     });
   }
   return Float32Array.from({ length: width * height }, (_, pixel) =>

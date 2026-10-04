@@ -10,7 +10,7 @@ const computeOutlineCrossings = (outline: readonly [number, number][], depth: nu
   outline.flatMap(([x, z], index) => {
     const [nextX = x, nextZ = z] = outline[(index + 1) % outline.length] ?? [];
     if ((z - depth) * (nextZ - depth) > 0 || z === nextZ) return [];
-    return [x + ((depth - z) / (nextZ - z)) * (nextX - x)];
+    else return [x + ((depth - z) / (nextZ - z)) * (nextX - x)];
   });
 // Each component's arrangement: the ratios its references show between parts that meet, and its fitted families, each
 // Named by the exports' objects it stands for

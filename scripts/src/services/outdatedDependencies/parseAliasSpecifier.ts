@@ -7,6 +7,6 @@ const DEFAULT_ALIAS_RANGE = "latest";
 export const parseAliasSpecifier = (specifier: string): AliasSpecifier | undefined => {
   const groups = ALIAS_SPECIFIER_REGEX.exec(specifier)?.groups;
   const packageName = groups?.packageName;
-  if (!packageName) return undefined;
-  return { packageName, range: groups.range ?? DEFAULT_ALIAS_RANGE };
+  if (packageName) return { packageName, range: groups.range ?? DEFAULT_ALIAS_RANGE };
+  else return undefined;
 };
