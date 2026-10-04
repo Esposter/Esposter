@@ -10,6 +10,8 @@ A build reads the package's own `tsconfig.json` — tsdown's default — so the 
 
 `isolatedDeclarations` is off in the packages that cannot satisfy it — a Drizzle table type cannot be written out by hand — and in any package that **vendors one of those from source**, because the transform runs over the whole module graph rather than per package. That is a tsconfig property; no declaration-generator option waives it for one build.
 
+Under the tsgo-backed `typescript` fork, an export whose type `isolatedDeclarations` cannot infer does not always report `TS9007`. When the uninferable expression reads a member off a call — `parse(value)?.name ?? value` as an unannotated return — the declaration pass panics with `Unhandled case in Node.Text: *ast.CallExpression` and names no file. The fix is the annotation the rule asked for. Declaration diagnostics run only once a program has no semantic errors, so an earlier type error hides the panic until it is fixed.
+
 These are `**/*.json` under a strict `json/json` ESLint language — **no comments**. Rationale goes in the docs page, not the file.
 
 ## The bootstrap package

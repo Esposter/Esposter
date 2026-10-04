@@ -7,4 +7,5 @@ import { parseAliasSpecifier } from "#src/services/outdatedDependencies/parseAli
 export const getRegistryPackageName = ({
   packageName,
   specifier,
-}: Pick<DependencyEntry, "packageName" | "specifier">) => parseAliasSpecifier(specifier)?.packageName ?? packageName;
+}: Pick<DependencyEntry, "packageName" | "specifier">): string =>
+  parseAliasSpecifier(specifier)?.packageName ?? packageName;
