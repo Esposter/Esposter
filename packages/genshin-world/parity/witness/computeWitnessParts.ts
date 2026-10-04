@@ -22,12 +22,13 @@ export const computeWitnessParts = (
     const { max, min } = new Box3().setFromObject(part);
     const projected = new Vector3((min.x + max.x) / 2, max.y, (min.z + max.z) / 2).project(camera);
     if (projected.z > 1 || projected.z < -1) return [];
-    return [
-      {
-        mesh: part.name,
-        position: part.getWorldPosition(new Vector3()).toArray(),
-        screen: [(projected.x + 1) / 2, (1 - projected.y) / 2] as [number, number],
-      },
-    ];
+    else
+      return [
+        {
+          mesh: part.name,
+          position: part.getWorldPosition(new Vector3()).toArray(),
+          screen: [(projected.x + 1) / 2, (1 - projected.y) / 2] as [number, number],
+        },
+      ];
   });
 };

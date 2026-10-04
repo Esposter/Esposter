@@ -9,5 +9,5 @@ export const getBoundFunctionName = (node: ESTree.Node): string | undefined => {
     return parent.id.name;
   else if (parent?.type === "AssignmentExpression" && parent.right === node && parent.left.type === "Identifier")
     return parent.left.name;
-  return undefined;
+  else return undefined;
 };

@@ -67,7 +67,7 @@ const cornerIcons = computed(() => {
   if (stage === LoginStage.Title) return [InterfaceIcon.Notice, InterfaceIcon.Exit];
   else if (isAtDoor.value && !isDoorWaiting)
     return [InterfaceIcon.Settings, InterfaceIcon.Repair, InterfaceIcon.Notice, InterfaceIcon.Exit];
-  return [];
+  else return [];
 });
 const isFooterShown = computed(() => stage !== LoginStage.Arriving);
 // The page the game's clips play on, each piece they move named by its path under the game's page

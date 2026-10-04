@@ -51,7 +51,8 @@ export const PLUGIN_MARKER = "genshin-persona";
 // The WAV a sentence is played from carries the process, so two synthesizers on one machine never share a name.
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const PLAYER_FILE_PREFIX: string = `${PLUGIN_MARKER}-${process.pid}-`;
-// What the session holds of a character's lines for the prompt hint, each tip cut to the sentences that fit in this
+// How many of a character's lines the session holds for the prompt hint, and the length each tip is cut to, at the
+// Last sentence that fits
 export const MAX_SPINNER_TIP_COUNT = 200;
 export const MAX_SPINNER_TIP_LENGTH = 500;
 export const PERSONA_CARDS_DIRECTORY: string = join(SOURCE_DIRECTORY, "personaCards");
