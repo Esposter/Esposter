@@ -4,7 +4,7 @@ Read when choosing between two spellings of the same utility — an abbreviation
 
 ## Slashes / fractions → valued attributify (never bare, never `class`)
 
-A utility containing `/` (`top-1/2`, `translate-y-1/2`) **cannot** be a bare attribute — the SFC parser reads the `/` as a tag terminator and fails with `Opening tag "div" not terminated` — and must not be dumped into `class="..."` to dodge that. Use the **valued** form with the minus inside the quotes: `<div top="1/2" translate-y="-1/2" translate-x="-1/2" />`, the valued analogue of the bare-scale negative rule (`top--1`) below.
+A utility containing `/` (`top-1/2`, `translate-y-1/2`) **cannot** be a bare attribute — the SFC parser reads the `/` as a tag terminator and fails with `Opening tag "div" not terminated` — and must not be dumped into `class="..."` to dodge that. Use the **valued** form with the minus inside the quotes: `<div top="1/2" translate-y="-1/2" translate-x="-1/2" />`, the valued analogue of the bare-scale negative rule (`top--1`) under "Abbreviated Utilities" on this page.
 
 ## Abbreviated Utilities
 
