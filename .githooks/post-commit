@@ -1,15 +1,17 @@
 #!/bin/sh
 # A commit by pathspec runs pre-commit against a temporary index, so the formatting the hook stages reaches the commit
 # but not the real index, which git wrote before the hook ran: each file the hook formatted is left staged as its
-# unformatted copy, undoing the format. A committed file the index holds apart from HEAD while the working tree matches
-# HEAD is that copy, and its entry is reset to HEAD's; a file another session has staged since differs from HEAD in the
-# working tree too, and is left as it is
+# unformatted copy, undoing the format. A committed file whose index entry is still the one pre-commit recorded before
+# formatting is that copy, and its entry is reset to HEAD's; any other entry is another session's, and is left staged
 set -e
 unset GIT_INDEX_FILE
 export GIT_LITERAL_PATHSPECS=1
+ENTRIES_FILE=$(git rev-parse --git-path "pre-commit-entries-$PPID")
 COMMITTED_FILE=$(mktemp)
-trap 'rm -f "$COMMITTED_FILE"' EXIT
+trap 'rm -f "$COMMITTED_FILE" "$ENTRIES_FILE"' EXIT
+[ -s "$ENTRIES_FILE" ] || exit 0
 git diff-tree --no-commit-id --name-only -r -z --root HEAD > "$COMMITTED_FILE"
 [ -s "$COMMITTED_FILE" ] || exit 0
+export ENTRIES_FILE
 xargs -0 git diff --cached --name-only -z HEAD -- < "$COMMITTED_FILE" |
-  xargs -0 sh -c 'for path; do if git diff --quiet HEAD -- "$path"; then git reset -q -- "$path"; fi; done' sh
+  xargs -0 sh -c 'for path; do if git ls-files -s -- "$path" | grep -qxF -f - "$ENTRIES_FILE"; then git reset -q -- "$path"; fi; done' sh
