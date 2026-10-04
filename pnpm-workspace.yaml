@@ -214,7 +214,7 @@ catalog:
   # @TODO: no upstream issue — `@nuxt/nitro-server` aliases `bufferutil` to the bare `mocked-exports/proxy`, its own
   # Dependency, which Nitro 3 resolves from the app rather than from Nuxt (nuxt/nuxt)
   mocked-exports: ^0.1.1
-  msw: ^3.0.1
+  msw: ^3.0.2
   neverthrow: ^8.2.0
   # @TODO: https://github.com/nitrojs/nitro/pull/4647 — back to a `^3` range once a Nitro release carries it: the
   # Beta registers its WebSocket upgrade listener on Vite's `httpServer`, which Nuxt's middleware-mode Vite does not have
