@@ -1,12 +1,8 @@
 import english from "#src/localizations/english";
 import { TEST_EPOCH_DATE } from "#src/services/constants.test";
-import { createCharacter } from "#src/services/createCharacter.test";
+import { createBirthdayCharacter } from "#src/services/createBirthdayCharacter.test";
 import { formatUpcomingBirthdays } from "#src/services/formatUpcomingBirthdays";
 import { describe, expect, test } from "vitest";
-
-// Named for the birthday, which is the one field the line reads and the one the assertions tell them apart by
-const createBirthdayCharacter = (birthday: string) =>
-  createCharacter({ birthday, displayName: birthday, name: birthday });
 
 describe(formatUpcomingBirthdays, () => {
   const epoch = TEST_EPOCH_DATE;
