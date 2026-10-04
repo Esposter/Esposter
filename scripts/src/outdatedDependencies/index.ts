@@ -68,12 +68,9 @@ const renovateRules = getRenovateRules(renovateJson);
 // `pnpm outdated` compares against `latest`, which is neither what Renovate proposes for a package a rule follows
 // A dist-tag for nor what a specifier naming a dist-tag installs — a nightly line's `5x` is ahead of the stable
 // `latest` and would never be reported — so those catalog entries are asked of the registry under their tag
-// Instead, the dist-tag ones being those a resolution was applied to. pnpm reports an alias under its target's
-// Name, so that is the name skipped.
-const followedTagEntries = [
-  ...getFollowedTagEntries(catalogEntries, renovateRules),
-  ...applyDistTags(catalogEntries, lockCatalogVersions).filter(({ resolved }) => Boolean(resolved)),
-];
+// Instead, each once. pnpm reports an alias under its target's name, so that is the name skipped.
+const distTagCatalogEntries = applyDistTags(catalogEntries, lockCatalogVersions);
+const followedTagEntries = getFollowedTagEntries(distTagCatalogEntries, renovateRules);
 const followedPackages = new Set(followedTagEntries.map((entry) => getRegistryPackageName(entry)));
 const [regularChecks, registryChecks] = await Promise.all([
   getRegularOutdatedDependencies(REPOSITORY_ROOT),

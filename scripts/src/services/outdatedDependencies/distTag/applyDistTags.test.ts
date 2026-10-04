@@ -22,9 +22,9 @@ describe(applyDistTags, () => {
     expect(applyDistTags([rangeEntry], resolvedVersions)).toStrictEqual([rangeEntry]);
   });
 
-  test("leaves an entry the lockfile resolved nothing for as it is", () => {
+  test("leaves out a dist-tag entry the lockfile resolved nothing for", () => {
     expect.hasAssertions();
 
-    expect(applyDistTags([entry], new Map())).toStrictEqual([entry]);
+    expect(applyDistTags([entry], new Map())).toStrictEqual([]);
   });
 });
