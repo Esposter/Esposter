@@ -4,9 +4,9 @@ The call row and its in-memory participant maps, the id through `createId`, stan
 
 | Unit                                                                                                                                 | Swept                 | Notes |
 | ------------------------------------------------------------------------------------------------------------------------------------ | --------------------- | ----- |
-| `app/store/message/room/call`, `app/store/message/room/liveKit.ts`                                                                   | 2026-09-25 · Opus 5.5 |       |
-| `app/composables/message/room/call`                                                                                                  | 2026-09-25 · Opus 5.5 |       |
-| `app/services/message/room/call`, `app/services/message/room/liveKit`                                                                | 2026-09-25 · Opus 5.5 |       |
+| `app/store/message/room/call`, `app/store/message/room/liveKit.ts`                                                                   | 2026-10-05 · Opus 5.5 |       |
+| `app/composables/message/room/call`                                                                                                  | 2026-10-05 · Opus 5.5 |       |
+| `app/services/message/room/call`, `app/services/message/room/liveKit`                                                                | 2026-10-05 · Opus 5.5 |       |
 | `Message/Content/Call` — the roots, `Control`, `Panel`, `PreJoin`, `JoinNotice`                                                      | 2026-09-25 · Opus 5.5 |       |
 | `Message/Content/Call` — `Participant`, `PictureInPicture`, `ScreenShare`, `Video`, `Audio`, `Camera`, `Device`, `VirtualBackground` | 2026-09-25 · Opus 5.5 |       |
 | `server/services/message/call`                                                                                                       | 2026-09-25 · Opus 5.5 |       |

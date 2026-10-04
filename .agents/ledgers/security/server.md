@@ -2,7 +2,7 @@
 
 | Unit                                                                                                                                                  | Swept                 | Notes |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | ----- |
-| `server/trpc/routers/message`                                                                                                                         | 2026-09-27 · Opus 5.5 |       |
+| `server/trpc/routers/message`                                                                                                                         | 2026-10-05 · Opus 5.5 |       |
 | `server/trpc/routers/room`                                                                                                                            | 2026-09-27 · Opus 5.5 |       |
 | `server/trpc/routers` — `call`                                                                                                                        | 2026-09-27 · Opus 5.5 |       |
 | `server/trpc/routers` — `resource`, `user`, `role`                                                                                                    | 2026-09-27 · Opus 5.5 |       |
@@ -17,10 +17,10 @@
 | `server/services/resource` — the roots                                                                                                                | 2026-09-27 · Opus 5.5 |       |
 | `server/services/resource` — `snapshot`, `todoList`, `events`                                                                                         | 2026-09-27 · Opus 5.5 |       |
 | `server/services/room`, `blueprint`                                                                                                                   | 2026-09-27 · Opus 5.5 |       |
-| `server/services/pagination`, `survey`                                                                                                                | 2026-09-27 · Opus 5.5 |       |
+| `server/services/pagination`, `survey`                                                                                                                | 2026-10-05 · Opus 5.5 |       |
 | `server/services/auth`, `rateLimiter`, `livekit`                                                                                                      | 2026-09-27 · Opus 5.5 |       |
 | `server/services/dataset`, `storage`, `azure`                                                                                                         | 2026-09-27 · Opus 5.5 |       |
-| `server/services/program`, `post`, `achievement`                                                                                                      | 2026-09-27 · Opus 5.5 |       |
-| `server/services/friend`, `db`, `blobState`                                                                                                           | 2026-09-27 · Opus 5.5 |       |
-| `server/services/user`, `role`, `request`, `notification`                                                                                             | 2026-09-27 · Opus 5.5 |       |
+| `server/services/program`, `post`, `achievement`                                                                                                      | 2026-10-05 · Opus 5.5 |       |
+| `server/services/friend`, `db`, `blobState`                                                                                                           | 2026-10-05 · Opus 5.5 |       |
+| `server/services/user`, `role`, `request`, `notification`                                                                                             | 2026-10-05 · Opus 5.5 |       |
 | `server/services/events`, `emailEditor`, `dashboard`, `app`                                                                                           | 2026-09-27 · Opus 5.5 |       |

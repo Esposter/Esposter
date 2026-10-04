@@ -9,4 +9,4 @@ Esbabbler — the room, its message list, and everything only they read. The ser
 | `services/message`                                                                           | 2026-09-25 · Opus 5.5 |                                   |
 | `composables/message`                                                                        | 2026-09-27 · Opus 5.5 |                                   |
 | `components/Message`                                                                         | 2026-09-27 · Opus 5.5 | splits at `Model/` on contact     |
-| `services/{room,user}`, `composables/user`, `store/user`, `components/{User,RichTextEditor}` | 2026-09-25 · Opus 5.5 |                                   |
+| `services/{room,user}`, `composables/user`, `store/user`, `components/{User,RichTextEditor}` | 2026-10-05 · Opus 5.5 |                                   |

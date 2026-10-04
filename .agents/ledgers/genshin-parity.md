@@ -11,7 +11,7 @@ Each screen, scene and piece of music held to its reference, and the tools that 
 | `packages/genshin-world/parity`                                                                                                                                     | 2026-10-04 · Fable 5.1 |       |
 | `scripts/src/services/genshinParity/commands`                                                                                                                       | 2026-10-05 · Opus 5.5  |       |
 | `scripts/src/services/genshinParity/shared`, `scripts/src/models/genshinParity/shared`                                                                              | 2026-10-05 · Opus 5.5  |       |
-| `scripts/src/services/genshinParity/witness`                                                                                                                        | —                      |       |
+| `scripts/src/services/genshinParity/witness`                                                                                                                        | 2026-10-05 · Opus 5.5  |       |
 | `scripts/src/services/genshinParity/music`, `scripts/src/models/genshinParity/music`                                                                                | 2026-10-05 · Opus 5.5  |       |
 | `scripts/src/services/genshinParity/sky`, `scripts/src/models/genshinParity/sky`                                                                                    | 2026-10-05 · Opus 5.5  |       |
 | `scripts/src/services/genshinParity` — `reference`, `image`, `page`, `game`; `scripts/src/models/genshinParity/reference`                                           | 2026-10-05 · Opus 5.5  |       |

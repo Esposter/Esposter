@@ -4,12 +4,12 @@ Everything a product mounts inside rather than owns: the chrome, the routes, and
 
 | Unit                                                                                                             | Swept                 | Notes                                                             |
 | ---------------------------------------------------------------------------------------------------------------- | --------------------- | ----------------------------------------------------------------- |
-| `App/`, `Nuxt/`, `Fragment.vue`, `layouts/`, `App.vue`                                                           | 2026-09-25 · Opus 5.5 |                                                                   |
+| `App/`, `Nuxt/`, `Fragment.vue`, `layouts/`, `App.vue`                                                           | 2026-10-05 · Opus 5.5 |                                                                   |
 | `pages/` + `middleware/` + `plugins/`                                                                            | 2026-09-25 · Opus 5.5 | only the pages no other row names — a feature row carries its own |
 | `app/store` and `app/composables` root files                                                                     | 2026-09-25 · Opus 5.5 |                                                                   |
-| `app/util`, `app/types`                                                                                          | 2026-09-25 · Opus 5.5 |                                                                   |
+| `app/util`, `app/types`                                                                                          | 2026-10-05 · Opus 5.5 |                                                                   |
 | `app/models` less `dungeons`, `message`, `resource` and `resolvers`                                              | 2026-09-25 · Opus 5.5 |                                                                   |
-| `app/models/resolvers`                                                                                           | 2026-09-25 · Opus 5.5 | the dungeons input and dashboard visual resolvers both sit here   |
+| `app/models/resolvers`                                                                                           | 2026-10-05 · Opus 5.5 | the dungeons input and dashboard visual resolvers both sit here   |
 | `services/{app,auth,route,router,trpc,notification,google}` + `composables/{data,shared}`                        | 2026-09-25 · Opus 5.5 |                                                                   |
 | `services/{styled,entity,zod,ajv,jsonSchema,shared,azure,cache,file}` + `util/date` + the matching `composables` | 2026-09-25 · Opus 5.5 |                                                                   |
 | `Ui/`                                                                                                            | 2026-09-25 · Opus 5.5 |                                                                   |
