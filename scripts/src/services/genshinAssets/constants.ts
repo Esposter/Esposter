@@ -79,6 +79,9 @@ export const MUSIC_NOISE_REFINE_STEPS = 20;
 // It, and the spectrum's bins at least this many
 export const MUSIC_CLEAR_SEMITONES = 0.5;
 export const MUSIC_CLEAR_BINS = 2;
+// Another note's partial in that span covers a reading only when it is expected at least this share of the reading's
+// Amplitude: a smaller one moves the reading by under a decibel, inside every band's distance the listening score charges
+export const MUSIC_COVER_SHARE = 0.1;
 // A value of an instrument is fitted only from at least this many measurements; a harmonic with fewer is left silent
 export const MUSIC_MIN_MEASUREMENTS = 5;
 // The registers a piece's notes are split into, each played by one fitted instrument

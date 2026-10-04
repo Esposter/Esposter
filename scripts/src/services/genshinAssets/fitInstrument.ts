@@ -5,6 +5,7 @@ import type { NoteEventTime } from "pitch-transcription/notes";
 import {
   MUSIC_CLEAR_BINS,
   MUSIC_CLEAR_SEMITONES,
+  MUSIC_COVER_SHARE,
   MUSIC_HARMONIC_COUNT,
   MUSIC_MAX_FREQUENCY,
   MUSIC_MIN_MEASUREMENTS,
@@ -21,7 +22,9 @@ const DECAY_STEPS = 120;
 const MAX_DECAY_SECONDS = 30;
 // A voice's instrument fitted to the sound it was heard in, each value measured at the voice's own notes. A note's
 // Fundamental and each overtone are read where every other note sounding with it, of any voice, leaves them clear, so
-// A crowded passage gives up only the partials it covers, and a note whose peak sits under the noise of the voice's
+// A crowded passage gives up only the partials it covers. A partial of another note covers a reading only when
+// `readPartialAmplitude` expects it loud enough to move it, so a low note's quiet upper overtones, which crowd closer
+// Than a semitone, do not cover everything above them. A note whose peak sits under the noise of the voice's
 // Loudest gives up everything. At the fundamental's peak: its amplitude over the note's velocity, its pitch against
 // Equal temperament, and each clear overtone over it. The attack is the time from the note's start to that peak, less
 // The half window that delays any peak a window reads. The fundamental from its peak to the note's end, as a share of
@@ -35,6 +38,8 @@ export const fitInstrument = (
   spectrogram: Spectrogram,
   notes: NoteEventTime[],
   soundingNotes: NoteEventTime[],
+  // The amplitude a sounding note's harmonic (1 for its fundamental) is expected at
+  readPartialAmplitude: (note: NoteEventTime, harmonic: number) => number,
 ): InstrumentFit => {
   const { frameCount, frameLength, hopLength, sampleRate } = spectrogram;
   const binWidth = sampleRate / frameLength;
@@ -45,16 +50,27 @@ export const fitInstrument = (
     Math.min(Math.max(Math.round((seconds - halfWindowSeconds) / frameSeconds), 0), frameCount - 1);
   const toSeconds = (frame: number): number => frame * frameSeconds + halfWindowSeconds;
   const toFrequency = (pitch: number): number => A4_FREQUENCY * 2 ** ((pitch - A4_PITCH) / 12);
-  // Whether a frequency stands clear of every harmonic of every note but one sounding between two times
-  const checkIsClear = (frequency: number, note: NoteEventTime, from: number, to: number): boolean => {
+  // A spectral peak's magnitude as the amplitude of the sinusoid it reads
+  const toAmplitude = (magnitude: number): number => (4 * magnitude) / frameLength;
+  // Whether a reading of an amplitude at a frequency stands clear of every harmonic loud enough to move it of every
+  // Note but one sounding between two times
+  const checkIsClear = (
+    frequency: number,
+    amplitude: number,
+    note: NoteEventTime,
+    from: number,
+    to: number,
+  ): boolean => {
     const clearance = Math.max(frequency * (2 ** (MUSIC_CLEAR_SEMITONES / 12) - 1), MUSIC_CLEAR_BINS * binWidth);
     return soundingNotes.every(
       (other) =>
         other === note ||
         other.startTimeSeconds >= to ||
         other.startTimeSeconds + other.durationSeconds <= from ||
-        Array.from({ length: MUSIC_HARMONIC_COUNT }, (_, index) => (index + 1) * toFrequency(other.pitchMidi)).every(
-          (harmonic) => Math.abs(harmonic - frequency) > clearance,
+        Array.from({ length: MUSIC_HARMONIC_COUNT }, (_, index) => index + 1).every(
+          (harmonic) =>
+            Math.abs(harmonic * toFrequency(other.pitchMidi) - frequency) > clearance ||
+            readPartialAmplitude(other, harmonic) < MUSIC_COVER_SHARE * amplitude,
         ),
     );
   };
@@ -62,7 +78,6 @@ export const fitInstrument = (
   const peaks = notes.flatMap((note) => {
     const fundamental = toFrequency(note.pitchMidi);
     const endSeconds = note.startTimeSeconds + note.durationSeconds;
-    if (!checkIsClear(fundamental, note, note.startTimeSeconds, endSeconds)) return [];
     const startFrame = toFrame(note.startTimeSeconds);
     const endFrame = toFrame(endSeconds);
     let peakFrame = startFrame;
@@ -73,6 +88,7 @@ export const fitInstrument = (
       peakFrame = frame;
       peak = reading;
     }
+    if (!checkIsClear(fundamental, toAmplitude(peak.magnitude), note, note.startTimeSeconds, endSeconds)) return [];
     return [{ endFrame, endSeconds, fundamental, note, peak, peakFrame }];
   });
   const loudest = Math.max(0, ...peaks.map(({ peak }) => peak.magnitude));
@@ -89,15 +105,14 @@ export const fitInstrument = (
   const releaseFits: { constant: number; residual: number }[] = [];
   for (const { endFrame, endSeconds, fundamental, note, peak, peakFrame } of heard) {
     attacks.push(Math.max(toSeconds(peakFrame) - note.startTimeSeconds - halfWindowSeconds, 0));
-    levels.push((4 * peak.magnitude) / frameLength / note.amplitude);
+    levels.push(toAmplitude(peak.magnitude) / note.amplitude);
     tunings.push(12 * Math.log2(peak.frequency / fundamental));
     for (let harmonic = 2; harmonic <= MUSIC_HARMONIC_COUNT; harmonic++) {
       const frequency = harmonic * peak.frequency;
-      if (frequency > MUSIC_MAX_FREQUENCY || !checkIsClear(frequency, note, note.startTimeSeconds, endSeconds))
-        continue;
-      harmonicShares[harmonic - 1]?.push(
-        readSpectralPeak(spectrogram, peakFrame, frequency).magnitude / peak.magnitude,
-      );
+      if (frequency > MUSIC_MAX_FREQUENCY) break;
+      const { magnitude } = readSpectralPeak(spectrogram, peakFrame, frequency);
+      if (!checkIsClear(frequency, toAmplitude(magnitude), note, note.startTimeSeconds, endSeconds)) continue;
+      harmonicShares[harmonic - 1]?.push(magnitude / peak.magnitude);
     }
 
     const decaySamples: [number, number][] = [];
@@ -132,9 +147,12 @@ export const fitInstrument = (
       });
     }
 
-    if (!checkIsClear(fundamental, note, endSeconds, endSeconds + MUSIC_RELEASE_SECONDS)) continue;
     const endLevel = readSpectralPeak(spectrogram, endFrame, peak.frequency).magnitude;
-    if (endLevel < MUSIC_NOISE_SHARE * peak.magnitude) continue;
+    if (
+      endLevel < MUSIC_NOISE_SHARE * peak.magnitude ||
+      !checkIsClear(fundamental, toAmplitude(endLevel), note, endSeconds, endSeconds + MUSIC_RELEASE_SECONDS)
+    )
+      continue;
     const releaseSamples: [number, number][] = [];
     const lastFrame = toFrame(endSeconds + MUSIC_RELEASE_SECONDS);
     for (let frame = endFrame + 1; frame <= lastFrame; frame++) {

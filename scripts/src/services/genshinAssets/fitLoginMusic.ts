@@ -1,5 +1,6 @@
 import type { ComponentPlaylist } from "#src/models/genshinAssets/ComponentPlaylist";
 import type { Instrument, Music, MusicSegment } from "genshin-engine";
+import type { NoteEventTime } from "pitch-transcription/notes";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { computeSpectrogram } from "#src/services/genshinAssets/computeSpectrogram";
@@ -42,7 +43,8 @@ const roundInstrument = ({
   tuning: roundMusic(tuning),
 });
 // The login's music as our own: its playlist as `playlist` exported it, each segment's sources transcribed, their notes
-// Split by register into voices, and each voice's instrument fitted to the source it was heard in, the voices' noise
+// Split by register into voices, and each voice's instrument fitted to the source it was heard in, twice so the second
+// Fit knows which other notes' partials are loud enough to cover a reading, the voices' noise
 // Solved together since no note sounds alone. A clip's notes move
 // Into its segment's time, where its source starts at `playAt`, and only what its trims leave plays. Each voice's fit
 // Is reported with its measurements and residuals
@@ -77,11 +79,24 @@ export const fitLoginMusic = async (): Promise<{ music: Music; report: string[] 
       const noiseSpectrogram = computeSpectrogram(samples, AUDIO_SAMPLE_RATE, CHROMA_FRAME_LENGTH, CHROMA_HOP_LENGTH);
       const { flatnesses, levels: noises } = fitVoiceNoises(noiseSpectrogram, voiceNotesList);
       report.push(`  flatness by band ${flatnesses.map((flatness) => flatness.toFixed(3)).join(", ")}`);
+      // A first fit counts every partial of every other note as covering what it overlaps, since nothing yet says how
+      // Loud any is; the second counts only those its voice's first fit expects loud enough to move a reading
+      const noteInstrumentMap = new Map(
+        voiceNotesList.flatMap((voiceNotes) => {
+          const { instrument } = fitInstrument(spectrogram, voiceNotes, notes, () => Infinity);
+          return voiceNotes.map((note) => [note, instrument] as const);
+        }),
+      );
+      const readPartialAmplitude = (note: NoteEventTime, harmonic: number): number => {
+        const instrument = noteInstrumentMap.get(note);
+        return instrument ? note.amplitude * instrument.level * (instrument.harmonics[harmonic - 1] ?? 0) : Infinity;
+      };
       for (const [voice, voiceNotes] of voiceNotesList.entries()) {
         const { decayResidual, harmonicCounts, instrument, noteCount, releaseCount, releaseResidual } = fitInstrument(
           spectrogram,
           voiceNotes,
           notes,
+          readPartialAmplitude,
         );
         const noiseBands = noises[voice] ?? [];
         report.push(

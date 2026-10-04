@@ -9,7 +9,7 @@ describe("genshin-world", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 1312.23 KB (1343728 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 1312.20 KB (1343691 bytes)"`);
   });
 
   test("types size", () => {
