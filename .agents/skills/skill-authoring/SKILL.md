@@ -12,6 +12,7 @@ How to write and maintain a `.agents/skills/*/SKILL.md`. Which skill owns what i
 - **Shaving prose to make a page smaller.** Separate the topics instead (`references/splitting-a-skill.md`) — a rule's reasoning, its example and a settled entry's argument are never cut to save bytes; they move with their topic.
 - **Waiting for the size ceiling before splitting.** Modularity comes first: a topic with a narrower trigger than its skill's domain is its own `references/` page the moment it is recognised, however small either page ends up. The session that notices one runs the split in the same change and reports nothing — a mixed page is a to-do with one known fix, never a finding.
 - **A size target, or a second size number beside the ceiling** — a warn threshold, a split-now line, a percentage, a line count. A page is as long as its one topic takes; the sweep's `budget` warning is a backstop for a split that was missed, never the trigger for one.
+- **A contents list on a reference page past some line count.** It is a second size number, and it treats the symptom: a page long enough to need an index of itself holds more than one topic, and the split gives each its own `Read when …` opening and its own index line in `SKILL.md`, which is the contents list a reader actually meets (`references/splitting-a-skill.md`).
 - **Moving an over-budget section to a `references/` page here when it is another skill's subject.** It becomes two shallow copies of one topic; it moves to the skill that owns it (`references/splitting-a-skill.md`).
 - **Recording a one-off as context worth preserving** — the file it went wrong in, the fix that was applied. The commit already holds it with more detail and a date, and a one-off in a skill reads as a standing rule (`references/what-belongs.md`).
 - **Restating a rule an enforcer already checks**, for completeness. It fails the build on violation, so the prose only rots when the rule changes (`references/enforced-rules.md`).
@@ -36,7 +37,9 @@ How to write and maintain a `.agents/skills/*/SKILL.md`. Which skill owns what i
 - **Nothing a script derives is written by hand** — a roster, a count, a date, a citation's path after a move (`references/derived-surfaces.md`).
 - **A rejected direction goes in `## Settled — do not re-propose`, the first section of `SKILL.md`** — never a reworded heading or a list on a reference page, which `pnpm ai:sweep:skill-docs` reports (`references/settled-lists.md`).
 - **An exception names the forcing agent outside our control**, or it is not one (`references/exceptions.md`).
+- **A line prescribes as tightly as its subject is fragile**: a goal and its bar for judged work, a shape where one is wanted, a script where a wrong move is expensive, and nothing at all where nothing breaks if the reader does it differently (`references/degrees-of-freedom.md`).
 - **A recipe with control flow is a script** under `scripts/src/<domain>/<verb>/` with a test and an `ai:` name, never a fence (`references/embedded-recipes.md`).
+- **A skill a plugin ships names what its commands need installed**, beside the command: it runs on a machine this repo never set up, where a repo skill runs on the workspace's own scripts.
 - **Only an ordered cycle with a gate earns a diagram** (`references/diagrams.md`).
 - **A commit that reads a whole skill — `SKILL.md` and every page — against these rules carries `Ledger: docs/skills | `<skill>``**; a change to these rules carries `Reopens: docs/skills`, so every skill an older rule set or an older model read is open again (`references/skill-coverage.md`).
 - **Tight, not fluffy**: a why only where it is non-obvious and load-bearing, a worked example only where the prose is ambiguous without it, and no example values that will rot.
@@ -54,6 +57,7 @@ How to write and maintain a `.agents/skills/*/SKILL.md`. Which skill owns what i
 - `references/derived-surfaces.md` — before writing any table, list, roster or date by hand.
 - `references/settled-lists.md` — when recording a rejected direction.
 - `references/exceptions.md` — when writing an exception, or reading one that cannot name its source.
+- `references/degrees-of-freedom.md` — when writing a step, or reading one that prescribes how rather than what.
 - `references/embedded-recipes.md` — when embedding a command, or moving one out of a fence.
 - `references/diagrams.md` — when considering a `mermaid` block in a skill.
 - `references/what-belongs.md` — when deciding whether a fact, a one-off or a history belongs in a skill at all.
