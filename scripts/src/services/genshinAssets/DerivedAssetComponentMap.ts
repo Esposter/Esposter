@@ -10,11 +10,13 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetCom
 // Emitter's renderer exports without the fields that point at them), their particle atlases and density maps, and the
 // Sky gradient every one of them is coloured by. Its interface is `LoginMainPage`, in the block beside its
 // `Ani_LoginMainPage_Waiting` clips, and its clips are the page's, the progress bar's, the lift at its end and the
-// Door's; `Start` and `End`, a name the whole game reuses, are left to its reference
+// Door's; `Start` and `End`, a name the whole game reuses, are left to its reference. Its music is the playlist
+// `genshin:assets music` found over a recording of its title: two pieces with a rest after each, looping forever
 export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAssetComponentOptions> = {
   [DerivedAssetComponent.Login]: {
     clipPattern: "^(Ani_LoginMainPage_|Ani_LoginProgressBar_|Ani_Login_Lift$|Ani_LogginScene_Door01_)",
     interface: { anchorPattern: "^Ani_LoginMainPage_Waiting", root: "LoginMainPage" },
+    musicPlaylistId: 792932714,
     namePattern:
       "^(Enviro_(Sky_Gradient|Clouds_(Middle_|Top_)?Particle_Atlas|Clouds_(Voronoi|Wispis|Normal)|Cloud_(Layer|Particle|Mid_Particle|Top_Particle)_Mat|Atmosphere_Layer_Mat)$|(Sky|Cloud)_LOD0$)",
     roots: [{ block: "00/11790361.blk", name: "LoginScene", pathId: "-1124867853248233309" }],

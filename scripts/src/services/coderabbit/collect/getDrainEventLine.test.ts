@@ -85,7 +85,7 @@ describe(getDrainEventLine, () => {
 
   // The shape the refusal to start actually takes: `success`, one turn, no cost, and the limit's own sentence in
   // `result`. Read as the model's closing message it never reaches the limit parser, and the outage is counted
-  // Against the review's quarantine budget instead
+  // Against the review's attempt cap instead
   test("prints a refusal wearing a successful subtype as Claude Code's own", () => {
     expect.hasAssertions();
 

@@ -1,0 +1,228 @@
+{
+  "GrpLogin": { "anchorMax": [1, 1], "anchorMin": [0, 0], "pivot": [0.5, 0.5], "position": [0, 0], "size": [0, 0] },
+  "GrpLogin/BgBtn": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpLogin/BgBtn/ImgWhiteScreen  ": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "scale": [1.1, 1.1],
+    "size": [0, 0]
+  },
+  "GrpLogin/BgBtn/ImgPauseScreen": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpLogin/BgBtn/ImgDark": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "scale": [1.1, 1],
+    "size": [0, 0]
+  },
+  "GrpLogin/Center": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpLogin/Center/SwitchServer": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpLogin/Center/SwitchServer/BtnPressStart": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [-256, -256]
+  },
+  "GrpLogin/Center/SwitchServer/BtnSwitchServer": {
+    "anchorMax": [0.5, 0],
+    "anchorMin": [0.5, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 128],
+    "size": [380, 64]
+  },
+  "GrpLogin/Center/SwitchServer/BtnSwitchServer/Mark": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [4, 4]
+  },
+  "GrpLogin/Center/SwitchServer/BtnSwitchServer/ImgSelected": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [18, 18]
+  },
+  "GrpLogin/Center/SwitchServer/BtnSwitchServer/State": {
+    "anchorMax": [0, 0.5],
+    "anchorMin": [0, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [36, 0],
+    "size": [32, 32]
+  },
+  "GrpLogin/Center/SwitchServer/BtnSwitchServer/State/ImgOutline_State": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpLogin/Center/SwitchServer/BtnSwitchServer/State/ImgOutline_State/ImgFrame_State": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [-8, -8]
+  },
+  "GrpLogin/Center/SwitchServer/BtnSwitchServer/State/ImgOutline_State/ImgCheck_State": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [16, 16]
+  },
+  "GrpLogin/Center/SwitchServer/BtnSwitchServer/State/SwitchServerKey_PS4": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [6, 6]
+  },
+  "GrpLogin/Center/BtnStart": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpLogin/Center/TxtTip": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0.5, 1],
+    "position": [0, 0],
+    "size": [-128, 32]
+  },
+  "GrpLogin/Center/BtnCADPA": {
+    "anchorMax": [1, 1],
+    "anchorMin": [1, 1],
+    "pivot": [1, 1],
+    "position": [-40, -40],
+    "size": [80, 80]
+  },
+  "GrpLogin/Bottom": {
+    "anchorMax": [1, 0],
+    "anchorMin": [0, 0],
+    "pivot": [0, 0],
+    "position": [0, 0],
+    "size": [0, 128]
+  },
+  "GrpLogin/Bottom/LoadingDesc": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0.5, 1],
+    "position": [0, 0],
+    "size": [0, 58]
+  },
+  "GrpLogin/Bottom/CurrentAccount": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0, 0.5],
+    "position": [0, -29],
+    "size": [0, -58]
+  },
+  "GrpLogin/Bottom/CurrentAccount/TxtVersion": {
+    "anchorMax": [1, 0],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0],
+    "position": [0, 0],
+    "size": [-120, 40]
+  },
+  "GrpLogin/Bottom/RightButtons": {
+    "anchorMax": [1, 0],
+    "anchorMin": [1, 0],
+    "pivot": [1, 0],
+    "position": [-54, 54],
+    "size": [52, 520]
+  },
+  "GrpLogin/Bottom/LeftButtons": {
+    "anchorMax": [0, 0],
+    "anchorMin": [0, 0],
+    "pivot": [0, 0],
+    "position": [54, 54],
+    "size": [52, 520]
+  },
+  "GrpLogin/Bottom/WaitingForCompilation": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 128],
+    "scale": [0.5, 0.5],
+    "size": [128, 128]
+  },
+  "GrpLogin/Bottom/WaitingForCompilation/CompilingAnim": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "scale": [1.5, 1.5],
+    "size": [0, 0]
+  },
+  "GrpLogin/Bottom/WaitingForCompilation/CompilingAnim/Mask_Light": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [128, 128]
+  },
+  "GrpLogin/Bottom/WaitingForCompilation/DownloadAnim": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "scale": [3, 3],
+    "size": [0, 0]
+  },
+  "GrpLogin/Bottom/WaitingForCompilation/DownloadAnim/IconDownload": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, -8],
+    "size": [18, 8]
+  },
+  "GrpLogin/Bottom/WaitingForCompilation/ImgLight": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "scale": [1.5, 1.5],
+    "size": [-48, -48]
+  },
+  "MiHoYoLogin": { "anchorMax": [1, 1], "anchorMin": [0, 0], "pivot": [0.5, 0.5], "position": [0, 0], "size": [0, 0] },
+  "SelectLoginMode": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "SelectServer": { "anchorMax": [1, 1], "anchorMin": [0, 0], "pivot": [0.5, 0.5], "position": [0, 0], "size": [0, 0] }
+}

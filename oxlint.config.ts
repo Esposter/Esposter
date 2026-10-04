@@ -453,6 +453,18 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
                   "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
                 name: "node:crypto",
               },
+              {
+                importNames: ["useRoute"],
+                message:
+                  "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
+                name: "vue-router",
+              },
+              {
+                importNames: ["inject", "provide"],
+                message:
+                  "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
+                name: "vue",
+              },
             ],
             patterns: [
               {

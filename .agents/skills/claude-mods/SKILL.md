@@ -5,7 +5,7 @@ description: Apply when writing or reviewing a Claude Code mod — a plugin's ho
 
 # Claude Code mods
 
-Every rule below is explained, with the refusal it prevents and the shape it forces, on `apps/web/content/docs/architecture/claude-mods.md`; the authoring loop is its diagram. The engine's API is its declaration file, which the built-in "plugin-authoring" skill names: grep it for the event or noun at hand rather than recalling it.
+Every rule below is explained, with the refusal it prevents and the shape it forces, on `apps/web/content/docs/architecture/claude-mods.md`; the authoring loop is its diagram. The engine's API is its declaration file, which Claude Code's built-in plugin-authoring skill names: grep it for the event or noun at hand rather than recalling it.
 
 ## Settled — do not re-propose
 
@@ -19,18 +19,20 @@ Every rule below is explained, with the refusal it prevents and the shape it for
 ## Rules
 
 - **Relative imports only, to the plugin's own files, plus `claude-code`**; a dependency-free file of another of the plugin's trees (the persona's verb enum) is reachable the same way.
-- **Each unmatched event has exactly one hook in the plugin**, in one `registerLifecycle` file shared by every mod; a mod's own file holds only matched hooks.
+- **A matcherless event takes one hook per plugin**, in one `registerLifecycle` file shared by every mod; a mod's own file keeps only its matched hooks.
 - **A function that receives `on` returns nothing** — every `register<Name>(on)` is `void`.
-- **A function taking `$` is declared in its calling hook's file**; code that never touches `$` lives in a pure module beside its test, and a button's action is a closure over `$`.
-- **Each file makes the atoms it uses, plugin and key as literals, every initial taken from `InitialState`**; switches share one record, because a loop has no way to name a key.
+- **Every function that takes `$` sits in the file of the hook that calls it**; code free of `$` goes in a pure module with its test, and a button's action closes over `$`.
+- **Each file makes the atoms it uses, plugin and key as literals, every initial from the one `InitialState` constant**; toggles share one record, as a loop cannot name a key.
 - **The contract's keys are written inline in `interface PluginState { "<plugin>": { … } }`** in `types/index.d.ts`, the value types exported beside them.
-- **A registration's `.catch` handler is a module-level `const` in that file, and no other binding there shares its name** — not even a parameter.
+- **A registration's `.catch` handler is a module-level `const` in that file, whose name no other binding there shares** — not even a parameter.
 - **No Node in a mod**: game data, audio, sockets and anything an npm package does run in the plugin's node scripts through `$.process.run`, the hook's input on stdin.
 - **Everything a drawing reads is `$.state`**; a module variable is lost on reload and holds only what nothing draws. A value kept past the session is written to `$.store` and read back at session start.
 - **One `AbovePrompt` hook per plugin**, drawing one row per mod with something to say.
+- **`session.start` fires once per process**: a `/clear` or a resume is a `session.end` with that reason and a new session id, so state belonging to the conversation is reset there.
+- **`$.ui.status` is a pinned notice drawn with a warning mark, not the status line**: a word that stays on screen joins the footer's mode labels (`SessionMode`, added to `modes` so other plugins' stay), anything larger goes in the band, and the status line remains the person's own settings command.
 - **A mod that asks the model asks through `$.model.fork`**, served from the session's own prompt cache.
 - **A question nobody can answer proceeds**: `$.session.surfaces()` empty means a headless run, and a guard never blocks unattended work.
 - **The engine's slots meet the lint in fixed places** — a timer or a press floats its action through one local wrapper, a registration's `.catch`, `$.clock.every`, `JSON.parse` and an interpolated string constant each have one answer on the docs page, and a literal's order never carries meaning since perfectionist sorts it.
 - **The accent is the session character's**, read from `genshin-persona`'s published state through its contract, with the game's interface gold where the persona is absent; labels use the game's word only where it already means the thing.
-- **The loop is validate, typecheck with the declarations laid, lint, Vitest, then `claude --plugin-dir` with the installed copy disabled**; a refusal whose message is cut short is read by validating, in the scratchpad, a minimal mod doing just the questioned thing.
+- **The loop is validate, typecheck with the declarations laid, lint, Vitest, then `claude --plugin-dir` with the installed copy disabled**; a refusal cut short is read off a scratchpad mod that does nothing but the questioned thing, validated alone.
 - **A new rule the engine enforces is a row in the docs page's table in the change that answers it**, and a line here.

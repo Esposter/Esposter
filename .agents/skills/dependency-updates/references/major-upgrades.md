@@ -41,10 +41,10 @@ A breaking-change audit that ends at "nothing breaks" has read half the release.
 
 ## 4. Verify what the major actually reaches
 
-Beyond `references/bump-follow-through.md` — which is the same list for a patch — a major reaches further, so the check suite is run against what it touched rather than the one package that names it:
+Beyond `references/bump-follow-through.md` — which is the same list for a patch — a major reaches further than the one package that names it:
 
 - A dependency of `packages/configuration` (tsdown, a Vite plugin) is in **every** package's build, so its major is verified by building, not by typechecking.
-- A Nuxt-module major (`@vueuse/nuxt`) changes the auto-import manifest, so the typecheck over `apps/web` is the audit's last step — a removed export that the grep in step 2 missed fails here and nowhere else.
+- A Nuxt-module major (`@vueuse/nuxt`) changes the auto-import manifest, so CI's typecheck over `apps/web` is the one check that catches a removed export the grep in step 2 missed — which makes that grep the local half of the audit, run in full.
 - A major that moves bytes into a `dist/` moves the bundle snapshots, and the config snapshot (`apps/web/uno.config.test.ts`) is read before they are regenerated — `references/bump-follow-through.md` owns both.
 
 ## 5. One commit per pass

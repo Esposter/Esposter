@@ -56,6 +56,29 @@ export const MUSIC_PACKAGE_PATTERN = "Music*.pck";
 // What the game's music is decoded into, a reference like every other export: each sound as WAV by its id, and each
 // One's pitch classes, which a recording is matched against
 export const MUSIC_DIRECTORY: string = join(EXTRACTED_DIRECTORY, "music");
+// A music fit reads its source's spectrum in Hann windows of this many samples at the transcription's rate, a hop of
+// The transcription's own apart, so a note's frames line up with the model's: long enough that a low note's harmonics
+// Fall in bins of their own, short enough that an attack is not smeared past the window's half
+export const MUSIC_FRAME_LENGTH = 2048;
+export const MUSIC_HOP_LENGTH = 256;
+// The overtones a voice's timbre is measured to, and the frequency past which none is read, where the game's mix holds
+// Little but its reverb and its codec's cut
+export const MUSIC_HARMONIC_COUNT = 8;
+export const MUSIC_MAX_FREQUENCY = 8000;
+// A harmonic is measured only where every other sounding note's harmonics stand at least this many semitones clear of
+// It, and the spectrum's bins at least this many
+export const MUSIC_CLEAR_SEMITONES = 0.5;
+export const MUSIC_CLEAR_BINS = 2;
+// A value of an instrument is fitted only from at least this many measurements; a harmonic with fewer is left silent
+export const MUSIC_MIN_MEASUREMENTS = 5;
+// The registers a piece's notes are split into, each played by one fitted instrument
+export const MUSIC_VOICE_COUNT = 3;
+// How long after a note's end its fade is read, and the share of a level under which a reading is noise: a fade against
+// The note's level, a note's peak against the voice's loudest, an overtone against its fundamental
+export const MUSIC_RELEASE_SECONDS = 1;
+export const MUSIC_NOISE_SHARE = 0.01;
+// A note's times are kept to the millisecond and its other values to the thousandth
+export const MUSIC_DECIMALS = 3;
 // Vgmstream's command line (github.com/vgmstream/vgmstream), which decodes Wwise's own Vorbis, pinned and checked as
 // FFmpeg is, into the scripts package's cache
 export const VGMSTREAM_ARCHIVE_URL =

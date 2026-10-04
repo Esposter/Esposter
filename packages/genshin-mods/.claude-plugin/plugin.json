@@ -4,7 +4,7 @@
   "displayName": "Genshin Mods",
   "description": "Five Claude Code mods under one band above the prompt: waypoints (the next steps, one press each), resin (cache, context, limits and cost, with warm, compact and a one-click handoff), veil (recording mode), commission (a goal's task list and clock) and ward (a question before editing a file another session just changed).",
   "author": { "name": "Esposter", "url": "https://github.com/Esposter" },
-  "homepage": "https://esposter.com/docs/proposals/infra/claude-mods",
+  "homepage": "https://esposter.com/docs/infra/claude-interface/genshin-mods",
   "repository": "https://github.com/Esposter/Esposter",
   "license": "Apache-2.0",
   "keywords": ["cache", "collision", "genshin", "handoff", "mods", "recording", "tasks"],

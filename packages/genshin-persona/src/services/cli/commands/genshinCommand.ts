@@ -7,7 +7,6 @@ import { muteCommand } from "#src/services/cli/commands/muteCommand";
 import { pinCommand } from "#src/services/cli/commands/pinCommand";
 import { replyCommand } from "#src/services/cli/commands/replyCommand";
 import { rosterCommand } from "#src/services/cli/commands/rosterCommand";
-import { setupCommand } from "#src/services/cli/commands/setupCommand";
 import { statusCommand } from "#src/services/cli/commands/statusCommand";
 import { teardownCommand } from "#src/services/cli/commands/teardownCommand";
 import { todayCommand } from "#src/services/cli/commands/todayCommand";
@@ -32,7 +31,6 @@ export const genshinCommand: CommandDef = defineCommand({
     [GenshinVerb.Pin]: pinCommand,
     [GenshinVerb.Reply]: replyCommand,
     [GenshinVerb.Roster]: rosterCommand,
-    [GenshinVerb.Setup]: setupCommand,
     [GenshinVerb.Status]: statusCommand,
     [GenshinVerb.Teardown]: teardownCommand,
     [GenshinVerb.Today]: todayCommand,

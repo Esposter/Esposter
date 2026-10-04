@@ -7,8 +7,8 @@ export const InitialState: PluginState["genshin-mods"] = {
   enabledMods: { commission: true, resin: true, veil: false, ward: true, waypoints: true },
   isCommissionExpanded: false,
   isHandingOff: false,
+  lastCacheRequestAt: 0,
   lastPrompt: "",
-  lastResponseAt: 0,
   now: 0,
   waypoints: [],
 };

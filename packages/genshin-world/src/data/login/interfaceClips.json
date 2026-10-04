@@ -52,6 +52,14 @@
         ],
         "property": "opacity",
         "target": "Bottom/WaitingForCompilation/DownloadAnim/IconDownload"
+      },
+      {
+        "keyframes": [
+          [0, 0],
+          [1, 0]
+        ],
+        "property": "opacity",
+        "target": "Bottom/WaitingForCompilation/CompilingAnim"
       }
     ]
   },
@@ -72,10 +80,38 @@
         ],
         "property": "opacity",
         "target": "Bottom/WaitingForCompilation/CompilingAnim"
+      },
+      {
+        "keyframes": [
+          [0, 0],
+          [1, 0]
+        ],
+        "property": "opacity",
+        "target": "Bottom/WaitingForCompilation/DownloadAnim"
       }
     ]
   },
-  "Ani_LoginMainPage_Waiting_F": { "durationMs": 0, "tracks": [] },
+  "Ani_LoginMainPage_Waiting_F": {
+    "durationMs": 0,
+    "tracks": [
+      {
+        "keyframes": [
+          [0, 0],
+          [1, 0]
+        ],
+        "property": "opacity",
+        "target": "BgBtn/ImgDark"
+      },
+      {
+        "keyframes": [
+          [0, 0],
+          [1, 0]
+        ],
+        "property": "opacity",
+        "target": "Bottom/WaitingForCompilation"
+      }
+    ]
+  },
   "Ani_LoginMainPage_Waiting_T": {
     "durationMs": 333,
     "tracks": [
@@ -368,7 +404,43 @@
       }
     ]
   },
-  "Ani_LoginMainPage_WhiteCurtain": { "durationMs": 0, "tracks": [] },
+  "Ani_LoginMainPage_WhiteCurtain": {
+    "durationMs": 0,
+    "tracks": [
+      {
+        "keyframes": [
+          [0, 1],
+          [1, 1]
+        ],
+        "property": "opacity",
+        "target": "BgBtn/ImgWhiteScreen  "
+      },
+      {
+        "keyframes": [
+          [0, 0],
+          [1, 0]
+        ],
+        "property": "opacity",
+        "target": "Center"
+      },
+      {
+        "keyframes": [
+          [0, 0],
+          [1, 0]
+        ],
+        "property": "opacity",
+        "target": "Bottom"
+      },
+      {
+        "keyframes": [
+          [0, 0],
+          [1, 0]
+        ],
+        "property": "opacity",
+        "target": "Center/BtnCADPA"
+      }
+    ]
+  },
   "Ani_LoginProgressBar_FadeIn": {
     "durationMs": 1000,
     "tracks": [

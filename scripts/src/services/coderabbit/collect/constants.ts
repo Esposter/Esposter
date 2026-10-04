@@ -99,24 +99,25 @@ export const REPAIR_REGENERATE_COMMANDS: string[][] = [
 export const ANSWERED_COMMIT_FORMAT = "%H%x1F%s%x1F%B%x1E";
 
 export const COMMIT_BODY_FORMAT = "%H%x1F%B%x1E";
-// How many times one unit of work's session may fail against one basis before it is a person's: a review is
-// Quarantined and its findings stay open, a commit is left for the port to hold on, a red head is left red. The
-// Collector ports without them rather than stalling every window behind one thing nobody sees. The basis is what
-// Every attempt's marker names (`getMarker`): a count that outlived the collector code that failed it would leave
-// The work waiting on a person to reset a number.
+// How many times one unit of work's session may fail against one basis before it is a person's: a review is held
+// And every run fails red until its findings are answered, a commit is left for the port to hold on, a red head is
+// Left red. Nothing ports past a held review, since the window would be a release merged over findings no drain
+// Answered. The basis is what every attempt's marker names (`getMarker`): a count that outlived the collector code
+// That failed it would leave the work waiting on a person to reset a number.
 export const SESSION_ATTEMPT_CAP = 3;
 // The tree the collector's own source lives in, whose hash at the run's start is the basis every attempt count
 // Names — a change to any of it is a fresh turn for whatever failed under the old
 export const COLLECTOR_SOURCE_PATH = "scripts";
 // Hidden markers in pull request comments — the collector's durable memory for what a commit cannot carry
 export const DRAIN_FAILED_MARKER = "review-collector drain-failed";
-// Claude Code's own limit, which is not this review's problem and not counted against the quarantine budget. The
+// Claude Code's own limit, which is not this review's problem and not counted against the attempt cap. The
 // Marker carries the instant it lifts, because nothing announces that.
 export const DRAIN_LIMITED_MARKER = "review-collector drain-limited";
 
-export const DRAINS_MARKER = "review-collector drains";
+// A review whose drain failed past the attempt cap, noted once per basis on its pull request
+export const DRAIN_HELD_MARKER = "review-collector drain-held";
 
-export const QUARANTINED_MARKER = "review-collector quarantined";
+export const DRAINS_MARKER = "review-collector drains";
 // A queue commit whose conflict with the tree the fixes built the sync could not resolve, counted against the
 // Same cap in a comment on the commit itself, since the sync runs with no release open to hold a count: past it
 // The commit is a person's, and the port holds on it
@@ -180,5 +181,8 @@ export const RETRIGGER_SLEEP_CAP_MS: number = Temporal.Duration.from({ hours: 1 
 // How soon a counted attempt that failed is retried (`AttemptFailedError`): no event may follow it for hours, and
 // A step failing for good should reach its cap and be routed around in minutes rather than on the next push
 export const ATTEMPT_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 1 }).total("seconds");
+// How soon a run GitHub failed with a server error is retried (`GITHUB_OUTAGE_REGEX`): an outage is minutes to
+// Hours, so a run a minute apart would spend a runner per minute learning it is still down
+export const OUTAGE_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 5 }).total("seconds");
 // The job output the runner's delayed retrigger reads — the only channel between two jobs of one workflow run
 export const RETRIGGER_DELAY_OUTPUT = "retriggerDelaySeconds";

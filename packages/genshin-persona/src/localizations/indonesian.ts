@@ -461,8 +461,7 @@ const indonesian: Localization = {
   locale: "id-ID",
   strings: {
     birthdayNote: (label, date, distance) => `[${label}: ${date}, ${distance}]`,
-    interfaceLanguageSet: (language) =>
-      `Semua yang ditulis plugin kini dalam ${language} mulai balasan ini; indikator tunggu menyusul di sesi berikutnya.`,
+    interfaceLanguageSet: (language) => `Semua yang ditulis plugin kini dalam ${language} mulai balasan ini.`,
     languageMustBeOneOf: (languages) => `Bahasa harus salah satu dari: ${languages}.`,
     lorePicked: "Dipilih berdasarkan lore; kecenderungan tingkatnya:",
     lorePickUnanswered: (reason) =>
@@ -474,8 +473,7 @@ const indonesian: Localization = {
     noSession: "Tidak ada sesi untuk memakai karakter: ini dijalankan dari dalam sesi Claude Code.",
     pinIgnored: (name) => `Sematan "${name}" tidak menunjuk karakter mana pun dalam daftar dan diabaikan.`,
     pinned: "Disematkan untuk setiap sesi mulai berikutnya.",
-    pinnedInSession:
-      "Disematkan untuk setiap sesi mulai berikutnya, dan untuk sesi ini mulai balasan ini; indikator tunggu menyusul di sesi berikutnya.",
+    pinnedInSession: "Disematkan untuk setiap sesi mulai berikutnya, dan untuk sesi ini mulai balasan ini.",
     pinRemoved: "Sematan dilepas; pemilihan kembali menentukan mulai sesi berikutnya.",
     pinRemovedInSession:
       "Sematan dilepas; pemilihan kembali menentukan mulai sesi berikutnya, dan untuk sesi ini mulai balasan ini.",
@@ -485,20 +483,12 @@ const indonesian: Localization = {
     runtimeInstalled: "Runtime terpasang.",
     runtimeInstallFailed: "npm gagal memasang runtime; suara tetap mati.",
     runtimeInstalling: "Memasang runtime mesin ke direktori status...",
-    setupDone:
-      "Baris status dan indikator tunggu ditulis ke pengaturan pengguna; keduanya muncul mulai sesi berikutnya.",
-    setupStatusLineKept:
-      "Indikator tunggu ditulis ke pengaturan pengguna, muncul mulai sesi berikutnya; baris status yang ada bukan milik kami dan dibiarkan.",
-    spoke: (name, device) =>
-      `${name} berbicara lewat synthesizer di ${device}, tempatnya mulai berjalan sekarang. Hook yang membacakan dialog tiap balasan sudah ditulis ke pengaturan pengguna dan berjalan mulai sesi berikutnya.`,
+    spoke: (name, device) => `${name} berbicara lewat synthesizer di ${device}, tempatnya mulai berjalan sekarang.`,
     status: ({
       displayName,
       interfaceLanguage,
       isFromSessionRecord,
       isMuted,
-      isPluginSpeakHook,
-      isPluginSpinner,
-      isPluginStatusLine,
       isReplyLanguageCascaded,
       isRuntimeInstalled,
       pinnedName,
@@ -517,15 +507,11 @@ const indonesian: Localization = {
           ? `Suara: dub ${voiceLanguage}, runtime ${isRuntimeInstalled ? "terpasang" : "belum terpasang"}, ${voiceDevice ? `berbicara di ${voiceDevice}` : "belum pernah berbicara"}.`
           : "Suara: belum diatur, tidak ada balasan yang dibacakan.",
         `Balasan ${isMuted ? "dibisukan" : `tidak dibisukan, volume ${volume}`}.`,
-        `Baris status ${isPluginStatusLine ? "milik kami" : "bukan milik kami, dibiarkan"}; indikator tunggu ${isPluginSpinner ? "milik kami" : "bukan milik kami"}; hook suara ${isPluginSpeakHook ? "milik kami" : "belum ditulis"}.`,
-        isPluginSpinner
-          ? "Karakter atau bahasa yang diubah sejak sesi ini dimulai akan muncul di indikator tunggu pada sesi berikutnya."
-          : "",
       ]
         .filter(Boolean)
         .join("\n"),
     teardownDone:
-      "Baris status, indikator tunggu, dan hook suara dihapus dari pengaturan pengguna; ketiganya hilang di sesi berikutnya. Runtime, bobot, referensi, dan dub suara dihapus; catatan pilihan, sematan, dan pengaturan bahasa tetap ada.",
+      "Runtime, bobot, referensi, dan dub suara dihapus; catatan pilihan, sematan, dan pengaturan bahasa tetap ada.",
     unmuted: "Balasan lisan diaktifkan kembali.",
     upcomingBirthdays: (list) => `Ulang tahun minggu ini: ${list}.`,
     usage: (verbs) => `Penggunaan: genshin.mjs <${verbs}> [nama]`,

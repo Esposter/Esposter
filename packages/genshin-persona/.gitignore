@@ -1,0 +1,2 @@
+# The engine's API declarations, laid beside the mod each time it loads one from this folder
+.claude-plugin/types

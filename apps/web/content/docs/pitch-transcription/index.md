@@ -7,7 +7,7 @@ description: The notes in a recording — Spotify's Basic Pitch model on the cur
 
 `packages/pitch-transcription` (npm `pitch-transcription`) hears the notes played in a recording: each note's pitch, start, length, loudness and pitch bend. The hearing is Spotify's Basic Pitch, a small trained network that reads several notes at once on any instrument. The package ships the network's published weights unmodified, runs them on the consumer's own TensorFlow.js, and turns the network's readings into notes, bends and a MIDI file.
 
-It replaced `@spotify/basic-pitch`, which held its consumers to TensorFlow.js 3, and is absorbed through [dependency admission](/docs/architecture/dependency-admission): the engine (TensorFlow.js) and the data (the weights) are kept, and the layer between them is ours. Its first consumer is the [Genshin music](/docs/proposals/genshin/music) re-derivation.
+It replaced `@spotify/basic-pitch`, which held its consumers to TensorFlow.js 3, and is absorbed through [dependency admission](/docs/architecture/dependency-admission): the engine (TensorFlow.js) and the data (the weights) are kept, and the layer between them is ours. Its first consumer is the [Genshin music](/docs/genshin/music) re-derivation, whose fit transcribes the game's decoded sources with it.
 
 ## How a recording becomes notes
 
@@ -39,13 +39,13 @@ flowchart TD
 ## Decisions
 
 - **The model repository is the reference.** Where the TypeScript port and the Python model repository disagree, the package follows Python: a frequency range rounds to its nearest key, the first and last frames are never an onset peak (SciPy's `argrelmax` clips them), and a tie between readings goes to the earliest frame and lowest key (NumPy's `argmax`). The Gaussian weighting the bends stays symmetric about the note's own bin, where SciPy's periodic window centres it half a bin high.
-- **One sort for the melodia trick.** Energy is only ever zeroed, so the largest reading left is always the largest not yet claimed. The candidates are sorted once and walked, where the port rescanned every reading of the recording for each note.
+- **One sort for the melodia trick.** Energy is only ever zeroed, so the largest reading left is always the largest not yet claimed. The candidates are sorted once and walked, where the port rescanned every reading of the recording for each note. `createNotes.bench.md` prices the trick against the onset pass alone over one and five minutes of music. It adds a small share at both lengths, and the cost grows with the length rather than with its square.
 - **No inferred frame threshold.** The port infers the frame threshold from the frames' mean and deviation only when handed `null` against its own types; here the option is a number, defaulting to Basic Pitch's own.
 - **No "adjustNoteStart".** It shifted every note's start by an offset, a one-line map, and returned the wrong field name besides; a caller maps its own notes.
 
 ## Upstream
 
-Every issue and pull request on [basic-pitch-ts](https://github.com/spotify/basic-pitch-ts), read with its comments, is given a verdict from the [triage](/docs/architecture/dependency-admission) of the dependency admission page, which says what each verdict owes; a defect is proven by a named test beside the source it fixes.
+Every issue and pull request on [basic-pitch-ts](https://github.com/spotify/basic-pitch-ts), read with its comments and judged by the [dependency admission triage](/docs/architecture/dependency-admission). Where a row is a defect we fixed, its proof is the test the row names, beside the source it fixes.
 
 | Upstream                                  | Verdict            | Proof                                                                                                                                                        |
 | ----------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -87,6 +87,6 @@ Reading the source turned up defects nobody has filed, each reproduced against t
 ## Sources
 
 - [spotify/basic-pitch-ts](https://github.com/spotify/basic-pitch-ts) — the package absorbed, its tracker and its Apache-2.0 licence.
-- [spotify/basic-pitch](https://github.com/spotify/basic-pitch) — the model repository: `constants.py`, "note_creation.py", and its issue on real-time transcription.
+- [spotify/basic-pitch](https://github.com/spotify/basic-pitch) — the model repository: its constants and note creation modules, and its issue on real-time transcription.
 - [A Lightweight Instrument-Agnostic Model for Polyphonic Note Transcription and Multipitch Estimation](https://arxiv.org/abs/2203.09893), Bittner et al., ICASSP 2022 — the network and its three readings.
 - [`scipy.signal.argrelmax`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.argrelmax.html) — the edge clipping the onset peaks follow.

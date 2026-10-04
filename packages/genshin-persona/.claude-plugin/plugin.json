@@ -8,6 +8,7 @@
   "repository": "https://github.com/Esposter/Esposter",
   "license": "Apache-2.0",
   "keywords": ["genshin", "genshin-impact", "output-style", "persona", "text-to-speech", "voice-cloning"],
+  "types": "./types/index.d.ts",
   "userConfig": {
     "typesafe_key": {
       "type": "string",

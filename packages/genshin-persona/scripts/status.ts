@@ -1,21 +1,18 @@
-import { formatNameplate } from "#src/services/formatNameplate";
-import { getSessionNameplate } from "#src/services/getSessionNameplate";
+import type { PersonaStatus } from "#types";
+
+import { getPersonaCharacter } from "#src/services/getPersonaCharacter";
 import { parseHookInput } from "#src/services/parseHookInput";
-import { readGenshinDbVersion } from "#src/services/readGenshinDbVersion";
-import { readInterfaceLanguage } from "#src/services/readInterfaceLanguage";
-import { readPickRecords } from "#src/services/readPickRecords";
-import { readPin } from "#src/services/readPin";
-import { readRosterCache } from "#src/services/readRosterCache";
+import { readSessionNameplate } from "#src/services/readSessionNameplate";
 import { readStdin } from "#src/services/readStdin";
 import { registerQuietExit } from "#src/services/registerQuietExit";
 
-// The status line redraws often, so this reads the state files and the roster cache, never the game data: a
-// Session that has no cache yet is the first on a machine, and its start hook is writing one
+// The session's character for the hooks module, as JSON: run at session start, after every verb and after each turn
+// Until the session's own record exists
 registerQuietExit();
-const today = Temporal.Now.plainDateISO();
 const input = await readStdin();
 const { session_id: sessionId = "" } = parseHookInput(input);
-const version = readGenshinDbVersion();
-const roster = readRosterCache(version, readInterfaceLanguage()) ?? [];
-const nameplate = getSessionNameplate(readPickRecords(), readPin(), roster, sessionId, today);
-if (nameplate) console.log(formatNameplate(nameplate));
+const sessionNameplate = readSessionNameplate(sessionId);
+if (sessionNameplate) {
+  const { isRecorded, nameplate } = sessionNameplate;
+  console.log(JSON.stringify({ character: getPersonaCharacter(nameplate), isRecorded } satisfies PersonaStatus));
+}

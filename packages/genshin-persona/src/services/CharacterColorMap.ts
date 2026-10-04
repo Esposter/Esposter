@@ -1,7 +1,6 @@
-// The status line's colour per character, keyed by the English name: the one colour the official art hangs on
-// Them — a hair, a coat, a signature accent — read off the card art. The nameplate draws it on a tonal badge of
-// Itself and lightens it only as far as that badge needs, so a row is the art's colour whatever its lightness. The
-// Element's colour stands in for a character with no row yet, so a new patch is a dependency bump and a row here
+// The colour per character, keyed by the English name: the one colour the official art hangs on them — a hair, a
+// Coat, a signature accent — read off the card art, and lightened only as far as a dark terminal needs, so a row is
+// The art's colour whatever its lightness. The element's colour stands in for a character with no row yet, so a new patch is a dependency bump and a row here
 // Rather than a plain nameplate. The game publishes no colour per character; these are reads of the art, so the
 // Spread is the whole spectrum rather than seven bands
 export const CharacterColorMap: Record<string, string> = {

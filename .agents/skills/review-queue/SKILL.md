@@ -12,7 +12,7 @@ The session works on **one permanent branch, `ai/queue`**, and pushes it after e
 - **Per-chunk feature branches.** Nothing gates entry to `develop` but the collector, so a branch per chunk only adds a merge that buys nothing; the queue is linear history, and a window is cut at commit boundaries.
 - **Pushing `develop` by hand**, rate-limited or not. `develop` has one writer, the collector, and a hand push races its compare-and-swap and spends a review slot on a range nothing measured against the cap.
 - **Measuring or cutting a window in the session** — reading the last reviewed sha, counting files since it, pushing a prefix by sha. The collector measures the cut on the tree it is about to push, one cherry-pick at a time; a commit that would have been "the last one under the cap" is just a commit.
-- **Holding a finished chunk until `format`/`typecheck`/`lint`/tests come back.** A queue push spends nothing, and a repair found afterwards is one more commit behind the unit. Push the unit, run the checks in the background, commit the repairs.
+- **Holding a finished chunk until its tests or CI come back.** A queue push spends nothing, and a repair found afterwards is one more commit behind the unit. Push the unit, run the touched tests in the background, commit what they call for; the rest is CI's (the `running-checks` skill).
 - **Excluding files to bring a window under the cap.** The collector holds the overflow for the next window; an exclusion hides the work from the only review it will ever get.
 - **Opening the release pull request by hand.** The collector opens it on the same pass that pushes the window, over the range it just measured; a session that opens one races that push, so the first review reads a range nothing cut to the cap.
 - **Merging `main` or `develop` into `ai/queue`.** A merge is never linearised away — a rebase onto `origin/develop` is a no-op once `origin/develop` is an ancestor — and it blinds the porter: `git cherry` matches patch ids against the commits upstream has and the queue lacks, which a queue containing upstream leaves empty, so every already-ported commit reads as owed and the first one conflicts. The queue catches up by `git pull --rebase` only.
@@ -28,7 +28,7 @@ Every ref has one writer, and the session's is `ai/queue` alone — its linear h
 
 ## The loop
 
-1. **Commit a unit on `ai/queue`, by pathspec, unless a rebase is in progress.** The base is stale by design (step 2 catches it up), so a commit never waits for a pull. Run the finishing checks in the background and commit their repairs as their own commit behind the unit — the collector cuts at commit boundaries, so every cut must be green on its own. A rebase another session left open (`git status` says so) is theirs to finish: nothing is committed into it.
+1. **Commit a unit on `ai/queue`, by pathspec, unless a rebase is in progress.** The base is stale by design (step 2 catches it up), so a commit never waits for a pull. Run the touched tests in the background and commit what they call for as its own commit behind the unit — the collector cuts at commit boundaries, so every cut must be green on its own. A rebase another session left open (`git status` says so) is theirs to finish: nothing is committed into it.
 2. **Push with `pnpm ai:queue:push`, which catches the branch up first.** The collector rewrites `origin/ai/queue` behind every window it ports — the ported commits gone, the rest re-parented onto the fixes — so the local branch is stale the moment a window goes out. The script replays from the fork point, as `git pull --rebase` does, so only what the sessions committed since the old remote head is replayed and a rewritten commit never is. A rebase refuses a tree with unstaged changes, and in a shared checkout those are another session's work mid-edit — never stashed, never auto-stashed, never committed on their behalf — so over a dirty tree the script replays in a throwaway detached worktree, which needs no install because a rebase reads nothing but git, and pushes the replayed commit from the checkout. With nothing to replay it pushes at once. Only a replay that conflicts makes the push wait: the script aborts it and moves nothing, and the conflict is settled by `git pull --rebase` once `git status` is clean, one commit at a time — skip a commit the collector already ported, merge both sides otherwise (`references/pull-conflicts.md`). After a worktree push the local branch is behind the remote, and the next replay skips what the remote already carries.
 3. **The push is plain.** A push refused as non-fast-forward is the collector's rewrite landing since the replay: run the script again. **Never a bare `--force-with-lease`** — its lease is whatever the last fetch brought, so a local branch built on the rewrite's predecessor overwrites the rewrite with nothing reporting it; the only lease the session may push with names a sha it read and rebuilt on itself. A queue push spends nothing, so the standing rule that a push is asked for every time is `develop`'s — which the session never pushes.
 4. **Keep working.** The collector fires on the push and does the rest; its replies name the pushed sha.
@@ -37,7 +37,7 @@ Every ref has one writer, and the session's is `ai/queue` alone — its linear h
 
 ## Answering a finding in-session
 
-A fix the session makes itself is a commit carrying `Answers: <comment id>` (or `Drains: <review id>` for a body-only finding), so the collector neither re-fixes nor replies early (`references/answering-findings.md`). A red run naming a held commit or `ai/review-fixes` is the session's to repair (`references/held-commits.md`).
+A fix the session makes itself is a commit carrying `Answers: <comment id>` (or `Drains: <review id>` for a body-only finding), so the collector neither re-fixes nor replies early (`references/answering-findings.md`). A red run naming a held commit, `ai/review-fixes` or a held review is the session's to repair (`references/held-commits.md`).
 
 ## After a release merges
 
@@ -47,6 +47,6 @@ Nothing is owed by the session; a red `main` is the collector's repair, and a me
 
 - `references/pull-conflicts.md` — when `git pull --rebase` stops on a conflict.
 - `references/answering-findings.md` — when the session fixes a CodeRabbit finding itself.
-- `references/held-commits.md` — when a collector run fails red naming a held commit or `ai/review-fixes`.
+- `references/held-commits.md` — when a collector run fails red naming a held commit, `ai/review-fixes`, or a held review.
 - `references/after-a-release.md` — when a release has merged, `main` is red, or a merge got into the queue.
 - `references/running-by-hand.md` — when the collector's workflow is off and the cycle is run from a checkout.

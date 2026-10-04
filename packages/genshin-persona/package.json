@@ -29,14 +29,18 @@
     "runtime",
     "scripts",
     "skills",
+    "mod",
     "src",
-    "!src/**/*.test.ts"
+    "types",
+    "!**/*.test.ts",
+    "!.claude-plugin/types"
   ],
   "type": "module",
   "imports": {
     "#src/*": "./src/*.ts",
     "#src/*.json": "./src/*.json",
-    "#scripts/*": "./scripts/*.ts"
+    "#scripts/*": "./scripts/*.ts",
+    "#types": "./types/index.d.ts"
   },
   "publishConfig": {
     "access": "public"

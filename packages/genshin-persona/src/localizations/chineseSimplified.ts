@@ -146,7 +146,7 @@ const chineseSimplified: Localization = {
   locale: "zh-CN",
   strings: {
     birthdayNote: (label, date, distance) => `[${label}：${date}，${distance}]`,
-    interfaceLanguageSet: (language) => `从这条回复起，插件写下的一切都是${language}；加载动画在下次会话时跟上。`,
+    interfaceLanguageSet: (language) => `从这条回复起，插件写下的一切都是${language}。`,
     languageMustBeOneOf: (languages) => `语言必须是以下之一：${languages}。`,
     lorePicked: "按剧情选出；该层级的倾向：",
     lorePickUnanswered: (reason) => `剧情选择没有回应（${reason}）；改为按生日选出。`,
@@ -156,7 +156,7 @@ const chineseSimplified: Localization = {
     noSession: "没有可用角色的会话：此命令在 Claude Code 会话内运行。",
     pinIgnored: (name) => `固定的“${name}”不指向名单中的任何角色，已忽略。`,
     pinned: "已固定，从下次启动起对所有会话生效。",
-    pinnedInSession: "已固定，从下次启动起对所有会话生效，本会话从这条回复起生效；加载动画在下次会话时跟上。",
+    pinnedInSession: "已固定，从下次启动起对所有会话生效，本会话从这条回复起生效。",
     pinRemoved: "已取消固定；从下次会话起重新自动选择。",
     pinRemovedInSession: "已取消固定；从下次会话起重新自动选择，本会话从这条回复起生效。",
     replyLanguageSet: (language) => `从下一条回复起用${language}书写。`,
@@ -165,18 +165,12 @@ const chineseSimplified: Localization = {
     runtimeInstalled: "运行环境已安装。",
     runtimeInstallFailed: "npm 无法安装运行环境；语音保持关闭。",
     runtimeInstalling: "正在将引擎运行环境安装到状态目录……",
-    setupDone: "状态栏和加载动画已写入用户设置；两者都从下次会话起显示。",
-    setupStatusLineKept: "加载动画已写入用户设置，从下次会话起显示；现有的状态栏不属于本插件，保持不变。",
-    spoke: (name, device) =>
-      `${name}通过 ${device} 上的合成器说话了，此后将在那里启动。朗读每条回复台词的钩子已写入用户设置，从下次会话起运行。`,
+    spoke: (name, device) => `${name}通过 ${device} 上的合成器说话了，此后将在那里启动。`,
     status: ({
       displayName,
       interfaceLanguage,
       isFromSessionRecord,
       isMuted,
-      isPluginSpeakHook,
-      isPluginSpinner,
-      isPluginStatusLine,
       isReplyLanguageCascaded,
       isRuntimeInstalled,
       pinnedName,
@@ -195,13 +189,10 @@ const chineseSimplified: Localization = {
           ? `语音：${voiceLanguage}配音，运行环境${isRuntimeInstalled ? "已安装" : "未安装"}，${voiceDevice ? `在${voiceDevice}上发声` : "尚未发声"}。`
           : "语音：未设置，不会朗读任何回复。",
         `回复${isMuted ? "已静音" : `未静音，音量${volume}`}。`,
-        `状态栏${isPluginStatusLine ? "属于本插件" : "不属于本插件，保持不变"}；加载动画${isPluginSpinner ? "属于本插件" : "不属于本插件"}；朗读钩子${isPluginSpeakHook ? "属于本插件" : "未写入"}。`,
-        isPluginSpinner ? "本会话开始后更改的角色或语言，会在下次会话的加载动画中出现。" : "",
       ]
         .filter(Boolean)
         .join("\n"),
-    teardownDone:
-      "状态栏、加载动画和朗读钩子已从用户设置中移除；三者都会在下次会话消失。语音的运行环境、权重、参考语音和配音已删除；选择记录、固定设置和语言设置保留。",
+    teardownDone: "语音的运行环境、权重、参考语音和配音已删除；选择记录、固定设置和语言设置保留。",
     unmuted: "语音回复已取消静音。",
     upcomingBirthdays: (list) => `本周生日：${list}。`,
     usage: (verbs) => `用法：genshin.mjs <${verbs}> [名字]`,

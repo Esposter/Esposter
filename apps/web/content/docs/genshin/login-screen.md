@@ -11,17 +11,19 @@ The game opens on its login screen once the health notice has faded. The console
 
 ```mermaid
 flowchart LR
-  N[Health notice's white] --> A[Arriving: the scene fades up over 800 ms, the wait mark from 1.3 to 2 s]
-  A --> T[Title: START GAME, the server and the account]
+  N[Health notice's white] --> A[Arriving: the page fades in out of the white curtain, the wait mark from 1.3 to 2 s]
+  A --> T[Title: START GAME fading in, the server and the account]
   T -->|a click| P[Preparing: the status steps, then the load's share and bar, the glide quickening]
   P -->|"flight flown and loading done"| D[Door: the glide comes to rest; once the door has formed, the four corner buttons, then CLICK TO BEGIN]
-  D -->|a click| E[Entering: the door lights, the camera rushes to it, the screen whitens]
+  D -->|a click| E[Entering: the door lights, the camera rushes to it, the page fades into white]
   E --> S[Startup loading screen]
 ```
 
 - **The stages are the game's current build's.** The user's own recording of the Japanese client times them and shows which corner buttons each stage has (the title's notices and exit, the door's settings, repair, notices and exit). A 1080 high English recording of an older build gives the words and every size. The status says "Preparing to download resources", "Checking for updates...", "Loading game..." over the ornament's double diamond, then "Preparing to load data" over the progress bar, which folds into its diamond at 100%.
 - **The flight is the game's checks, and the door comes once they are done.** The flight is the screen's own clock for the door, the share of the way to it flown. The bar under it is the game's own checks before it loads the world, which on the page have nothing left to wait on, so the opening hands the screen a finished load: the share shown sweeps toward it at no more than one full bar per tenth of a second, the flight goes the share of the way the English recording's does before its bar is full, about two thirds, no faster than its last stretch's pace, and once the bar is full the flight flies whatever is left in the half second the bar takes to fold into its diamond and the status row to fade. The glide then carries the door's copy to the walkway's far end at its own pace, so the door rises on average about as long after the bar fills as the recording's does, 3 seconds. The world itself loads after the door, under the startup loading screen, whose marks follow it.
 - **Mainland China's client marks its own screen.** A Simplified Chinese reader, who plays mainland China's build, sees its CADPA age rating (12 and over) in the top right corner at every stage, and its build string under the CNREL prefix. The rating's box and colours are measured off a public recording of that client's launch, its age and notice traced from it (`ageRating.json`) and its CADPA set in a serif; the build string is the current build's, its revision numbers the global build's, since no source publishes the mainland's own.
+- **Its music plays from the start, looping as the game's does.** `LoginMusic` plays the game's login playlist, re-derived, while the screen shows ([music](/docs/genshin/music)). Before the page has had any gesture, it waits for the title's click. The scene alone, as a reference shows it with no interface, is silent.
+- **The interface moves on the game's own clips.** The login page's animation clips, decoded and fitted to keyframes (`interfaceClips.json`), play through `playInterfaceClip` as each stage begins: the white curtain and the page's fade in on arriving, the title's fade in, its fade out on the click, and the page's fade into white on entering, whose end is the `begin` below. Each piece a clip moves carries its path under the game's page as its `data-clip-target` (`LoginInterfaceClipTarget`), so the white the scene fades up out of and into is the interface's own, and a reference showing the scene alone has none.
 - **A click is the screen's unless it lands on a button.** The screen asks `checkIsNestedInteraction` before it moves on, so a click on a corner button stays the button's.
 - **A host can pin a stage.** The stage is a `v-model`, so the parity page and a test hold one still, and the opening leaves it free.
 - **The opening says when the door is opened.** `GameOpening` emits `begin` as the screen hands on to the startup loading screen, so its host can act on the door rather than waiting for the world; for now the app's page opens it onto a [rickroll](/docs/genshin/rickroll).
@@ -74,9 +76,11 @@ flowchart TD
 
 | File                                                                            | Role                                                                      |
 | :------------------------------------------------------------------------------ | :------------------------------------------------------------------------ |
-| `packages/genshin-world/src/components/Login/Screen/Index.vue`                  | The stages, the flight, and the fades out of and into white               |
-| `packages/genshin-world/src/components/Login/Interface/Index.vue`               | Each stage's interface, from `genshin-interface`'s pieces                 |
+| `packages/genshin-world/src/components/Login/Screen/Index.vue`                  | The stages and the flight                                                 |
+| `packages/genshin-world/src/components/Login/Interface/Index.vue`               | Each stage's interface, from `genshin-interface`'s pieces, and its clips  |
+| `packages/genshin-world/src/services/login/interface/LoginInterfaceClipMap.ts`  | The login page's fitted clips, by the name the game plays each by         |
 | `packages/genshin-world/src/components/Login/Scene/Index.vue`                   | The camera, the glide, the fitted parts, the clouds, the sky, shadows     |
+| `packages/genshin-world/src/components/Login/Music/Index.vue`                   | The login's music, played while the screen shows                          |
 | `packages/genshin-world/src/services/login/constants.ts`                        | The words and the timings                                                 |
 | `packages/genshin-world/src/services/login/scene/constants.ts`                  | The camera, the glide and its rows, the haze, the light and the shadows   |
 | `packages/genshin-world/src/services/login/scene/advanceLoginGlide.ts`          | The glide a frame on, and its rest at the door                            |

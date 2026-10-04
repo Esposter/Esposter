@@ -4,7 +4,9 @@ import type { GameLanguage, GameText } from "genshin-text";
 
 import LoginStatus from "#src/components/Login/Status/Index.vue";
 import ageRating from "#src/data/login/ageRating.json";
-import { LoginInterfaceRect } from "#src/models/login/LoginInterfaceRect";
+import interfaceRects from "#src/data/login/interfaceRects.json";
+import { LoginInterfaceClip } from "#src/models/login/LoginInterfaceClip";
+import { LoginInterfaceClipTarget } from "#src/models/login/LoginInterfaceClipTarget";
 import { LoginStage } from "#src/models/login/LoginStage";
 import { GameClient } from "#src/models/splash/GameClient";
 import {
@@ -15,18 +17,19 @@ import {
   LOGIN_WELCOME_FADE_MS,
 } from "#src/services/login/constants";
 import { GameClientVersionTextMap } from "#src/services/login/GameClientVersionTextMap";
-import { LoginInterfaceRectMap } from "#src/services/login/interface/LoginInterfaceRectMap";
+import { LoginInterfaceClipMap } from "#src/services/login/interface/LoginInterfaceClipMap";
 import { GameLanguageGameClientMap } from "#src/services/splash/GameLanguageGameClientMap";
 import {
+  GameRect,
   GameScreen,
   InterfaceIcon,
   LoadingSpinner,
   OrnamentDivider,
+  playInterfaceClip,
   PromptBand,
   RoundButton,
   ServerBar,
   ToastNotice,
-  toCanvasRectStyle,
 } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
@@ -48,87 +51,188 @@ interface Props {
 
 const { gameText, isDoorWaiting, isSpinnerShown, isWelcomeShown, language, playerName, progress, stage, statusStep } =
   defineProps<Props>();
+// The white is up as the screen enters, the moment the screen hands on
+const emit = defineEmits<{ whiten: [] }>();
 const client = computed(() => GameLanguageGameClientMap[language]);
 // The account kit's greeting, which places the player's name where its language puts it
 const welcome = computed(() => gameText[GameTextKey.LoginWelcome].replace("%s", () => playerName));
+// The door's interface stays through the entering, fading with its parent as the page whitens
+const isAtDoor = computed(() => stage === LoginStage.Door || stage === LoginStage.Entering);
 // The login screen's interface over its scene, for the stage it is at: the title with the server and account under
 // It, the status as the game prepares, then the prompt at the door. The power button and the build string stay
 // Throughout; the corner buttons are the title's two and the door's four, as the game's current build shows them. A
 // Click on a button is the button's alone: the screen behind it asks whether it was before it begins
 const cornerIcons = computed(() => {
   if (stage === LoginStage.Title) return [InterfaceIcon.Notice, InterfaceIcon.Exit];
-  else if (stage === LoginStage.Door && !isDoorWaiting)
+  else if (isAtDoor.value && !isDoorWaiting)
     return [InterfaceIcon.Settings, InterfaceIcon.Repair, InterfaceIcon.Notice, InterfaceIcon.Exit];
   return [];
 });
-const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== LoginStage.Entering);
+const isFooterShown = computed(() => stage !== LoginStage.Arriving);
+// The page the game's clips play on, each piece they move named by its path under the game's page
+const page = useTemplateRef("page");
+// Whether the title is still fading out after its click, which keeps it drawn until the fade has run
+const isStartLeaving = ref(false);
+const isStartShown = computed(() => stage === LoginStage.Title || isStartLeaving.value);
+const playClip = (clip: LoginInterfaceClip): Animation[] =>
+  page.value ? playInterfaceClip(page.value, LoginInterfaceClipMap[clip]) : [];
+// Each stage's clips as the game plays them: the white curtain then the page fading in on arriving, the title fading in
+// At the title and out on its click, and the page fading into white on entering. A clip's tracks share its length, so
+// Any one of them ending is the clip's end
+const playStageClips = (newStage: LoginStage, oldStage?: LoginStage): void => {
+  if (oldStage === LoginStage.Title) {
+    const [startFadeOut] = playClip(LoginInterfaceClip.StartFadeOut);
+    if (startFadeOut) startFadeOut.addEventListener("finish", () => (isStartLeaving.value = false), { once: true });
+    else isStartLeaving.value = false;
+  }
+
+  if (newStage === LoginStage.Arriving) {
+    playClip(LoginInterfaceClip.WhiteCurtain);
+    playClip(LoginInterfaceClip.FadeIn);
+  } else if (newStage === LoginStage.Title) playClip(LoginInterfaceClip.StartFadeIn);
+  else if (newStage === LoginStage.Entering) {
+    const [fadeOut] = playClip(LoginInterfaceClip.FadeOut);
+    if (fadeOut) fadeOut.addEventListener("finish", () => emit("whiten"), { once: true });
+    else emit("whiten");
+  }
+};
+onMounted(() => playStageClips(stage));
+watch(
+  () => stage,
+  async (newStage, oldStage) => {
+    // The title is kept before the new stage's render would drop it, and the clips play once that render is drawn
+    if (oldStage === LoginStage.Title) isStartLeaving.value = true;
+    await nextTick();
+    playStageClips(newStage, oldStage);
+  },
+);
 </script>
 
 <template>
   <GameScreen class="login-interface">
-    <LoadingSpinner v-if="isSpinnerShown" class="spinner" />
-    <!-- Mainland China's age rating (CADPA, 12 and over), which its client keeps in the corner of every login stage -->
-    <svg v-if="client === GameClient.Mainland" class="age-rating" viewBox="0 0 84 110" role="img" aria-label="12+">
-      <rect class="age-rating-white" width="84" height="110" rx="6" />
-      <rect x="7" y="8" width="70" height="78" rx="4" fill="#178ed0" />
-      <path class="age-rating-white" :d="ageRating.age" transform="translate(9 10) scale(0.125)" />
-      <text x="42" y="83" class="age-rating-white age-rating-name">CADPA</text>
-      <path :d="ageRating.notice" transform="translate(2 87) scale(0.125)" fill="#111" />
-    </svg>
-    <ToastNotice :class="['welcome', { shown: isWelcomeShown }]">
-      <template #mark>
-        <span class="initial">{{ playerName.charAt(0).toUpperCase() }}</span>
-      </template>
-      {{ welcome }}
-    </ToastNotice>
-    <template v-if="stage === LoginStage.Title">
-      <!-- A heading to a screen reader, drawn as a paragraph so no host's own heading styles reach it -->
-      <p class="title" role="heading" aria-level="1">{{ gameText[GameTextKey.LoginTitle] }}</p>
-      <OrnamentDivider class="divider" />
-      <p class="subtitle">{{ gameText[GameTextKey.LoginBegin] }}</p>
-      <div class="server" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.ServerBar], true)">
-        <ServerBar :name="LOGIN_SERVER_NAME" />
+    <!-- The page as the game's tree under `LoginMainPage` nests it: each piece a `GameRect` placed by its -->
+    <!-- RectTransform inside its game parent's, and what the tree cannot hold measured inside the piece holding it -->
+    <GameRect :rect="interfaceRects.GrpLogin">
+      <!-- The root the clips play on, the empty path, over GrpLogin's whole box -->
+      <div ref="page" class="page">
+        <GameRect :rect="interfaceRects['GrpLogin/BgBtn']">
+          <!-- The white the page fades up out of as it arrives and into as it enters, which only the clips draw; its -->
+          <!-- Scale overhangs the page, so the page's own, down to 0.96 as it fades in, never uncovers the screen's -->
+          <!-- Edge -->
+          <GameRect
+            class="white-screen"
+            :rect="interfaceRects['GrpLogin/BgBtn/ImgWhiteScreen  ']"
+            :data-clip-target="LoginInterfaceClipTarget.WhiteScreen"
+          />
+        </GameRect>
+        <LoadingSpinner v-if="isSpinnerShown" class="spinner" />
+        <GameRect :rect="interfaceRects['GrpLogin/Center']" :data-clip-target="LoginInterfaceClipTarget.Center">
+          <GameRect
+            :rect="interfaceRects['GrpLogin/Center/SwitchServer']"
+            :data-clip-target="LoginInterfaceClipTarget.Server"
+          >
+            <!-- The door's prompt, a prefab the page loads at run time into this container -->
+            <GameRect
+              v-if="isAtDoor && !isDoorWaiting"
+              :rect="interfaceRects['GrpLogin/Center/SwitchServer/BtnPressStart']"
+            >
+              <PromptBand class="prompt">{{ gameText[GameTextKey.LoginBegin] }}</PromptBand>
+            </GameRect>
+            <GameRect
+              v-if="stage === LoginStage.Title"
+              class="server"
+              :rect="interfaceRects['GrpLogin/Center/SwitchServer/BtnSwitchServer']"
+            >
+              <ServerBar :name="LOGIN_SERVER_NAME" />
+            </GameRect>
+          </GameRect>
+          <!-- The title is the game's start button, and stays through its fade out after the click -->
+          <GameRect
+            v-if="isStartShown"
+            :rect="interfaceRects['GrpLogin/Center/BtnStart']"
+            :data-clip-target="LoginInterfaceClipTarget.Start"
+          >
+            <!-- A heading to a screen reader, drawn as a paragraph so no host's own heading styles reach it -->
+            <p class="title" role="heading" aria-level="1">{{ gameText[GameTextKey.LoginTitle] }}</p>
+            <OrnamentDivider class="divider" />
+            <p class="subtitle">{{ gameText[GameTextKey.LoginBegin] }}</p>
+          </GameRect>
+          <!-- Mainland China's age rating (CADPA, 12 and over), which its client keeps in the corner of every login -->
+          <!-- Stage -->
+          <GameRect
+            v-if="client === GameClient.Mainland"
+            :rect="interfaceRects['GrpLogin/Center/BtnCADPA']"
+            :data-clip-target="LoginInterfaceClipTarget.RatingBadge"
+          >
+            <svg class="age-rating" viewBox="0 0 84 110" role="img" aria-label="12+">
+              <rect class="age-rating-white" width="84" height="110" rx="6" />
+              <rect x="7" y="8" width="70" height="78" rx="4" fill="#178ed0" />
+              <path class="age-rating-white" :d="ageRating.age" transform="translate(9 10) scale(0.125)" />
+              <text x="42" y="83" class="age-rating-white age-rating-name">CADPA</text>
+              <path :d="ageRating.notice" transform="translate(2 87) scale(0.125)" fill="#111" />
+            </svg>
+          </GameRect>
+        </GameRect>
+        <ToastNotice :class="['welcome', { shown: isWelcomeShown }]">
+          <template #mark>
+            <span class="initial">{{ playerName.charAt(0).toUpperCase() }}</span>
+          </template>
+          {{ welcome }}
+        </ToastNotice>
+        <!-- The foot, anchored to the screen's bottom as the game's is, so everything in it stays there on any window: -->
+        <!-- The loading row, the account and the build string, and both button columns -->
+        <GameRect
+          v-if="isFooterShown"
+          :rect="interfaceRects['GrpLogin/Bottom']"
+          :data-clip-target="LoginInterfaceClipTarget.Bottom"
+        >
+          <LoginStatus v-if="stage === LoginStage.Preparing" :game-text :progress :step="statusStep" />
+          <GameRect :rect="interfaceRects['GrpLogin/Bottom/CurrentAccount']">
+            <p v-if="stage === LoginStage.Title" class="user">
+              <!-- The space after the label is its own, since the template drops one between two lines -->
+              <span class="user-label">{{ `${gameText[GameTextKey.LoginUserLabel]} ` }}</span>
+              <span class="user-name">{{ playerName }}</span>
+            </p>
+            <GameRect :rect="interfaceRects['GrpLogin/Bottom/CurrentAccount/TxtVersion']">
+              <p class="version">
+                {{ GameClientVersionTextMap[client] }}
+              </p>
+            </GameRect>
+          </GameRect>
+          <GameRect class="column" :rect="interfaceRects['GrpLogin/Bottom/RightButtons']">
+            <div v-for="icon of cornerIcons" :key="icon" :class="['slot', { arriving: isAtDoor }]">
+              <RoundButton :icon :label="icon" />
+            </div>
+          </GameRect>
+          <GameRect class="column" :rect="interfaceRects['GrpLogin/Bottom/LeftButtons']">
+            <div class="slot"><RoundButton :icon="InterfaceIcon.Power" label="Quit" /></div>
+          </GameRect>
+        </GameRect>
       </div>
-    </template>
-    <!-- The foot, anchored to the screen's bottom as the game's is, so everything in it stays there on any window: the -->
-    <!-- Loading row and the prompt, the account and the build string, and both button columns -->
-    <div v-if="isFooterShown" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.Bottom], true)">
-      <LoginStatus v-if="stage === LoginStage.Preparing" :game-text :progress :step="statusStep" />
-      <PromptBand v-else-if="stage === LoginStage.Door && !isDoorWaiting" class="prompt">{{
-        gameText[GameTextKey.LoginBegin]
-      }}</PromptBand>
-      <div class="column" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.LeftButtons])">
-        <div class="slot"><RoundButton :icon="InterfaceIcon.Power" label="Quit" /></div>
-      </div>
-      <div class="column" :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.RightButtons])">
-        <div v-for="icon of cornerIcons" :key="icon" :class="['slot', { arriving: stage === LoginStage.Door }]">
-          <RoundButton :icon :label="icon" />
-        </div>
-      </div>
-      <div :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.CurrentAccount])">
-        <p v-if="stage === LoginStage.Title" class="user">
-          <!-- The space after the label is its own, since the template drops one between two lines -->
-          <span class="user-label">{{ `${gameText[GameTextKey.LoginUserLabel]} ` }}</span>
-          <span class="user-name">{{ playerName }}</span>
-        </p>
-        <div :style="toCanvasRectStyle(LoginInterfaceRectMap[LoginInterfaceRect.Version])">
-          <p class="version">
-            {{ GameClientVersionTextMap[client] }}
-          </p>
-        </div>
-      </div>
-    </div>
+    </GameRect>
   </GameScreen>
 </template>
 
 <style scoped>
-/* Measured from the English client's login screen at 1080 high, each place from the screen's middle, but the foot and
-   The server bar, which the game's RectTransforms place (LoginInterfaceRectMap); the corner buttons' spacing and the
-   Welcome card from the 1440 high recording of the current build. Only the buttons take a click, which they keep from
-   The screen */
+/* Each piece placed by the game's RectTransform inside its parent's (`GameRect`), and what the tree cannot hold
+   Measured from the English client's login screen at 1080 high: a line of text's place in its rect, a prefab loaded at
+   Run time from the rect it loads into, and the corner buttons' spacing and the welcome card from the 1440 high
+   Recording of the current build. Only the buttons take a click, which they keep from the screen */
 .login-interface {
   color: #fff;
   pointer-events: none;
+}
+
+/* The page the clips play on and scale about its middle */
+.page {
+  position: absolute;
+  inset: 0;
+}
+
+/* Clear until a clip draws it */
+.white-screen {
+  background: var(--white);
+  opacity: 0;
 }
 
 .spinner {
@@ -160,11 +264,12 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
 }
 
 /* Mainland China's age rating, measured off its launch recording (`bili-av532052219`, 1080 high): 84 by 110 units,
-   65 in from the screen's right and 52 down, a blue panel inset 7 and 8 over a white band naming it */
+   65 in from the screen's right and 52 down, a blue panel inset 7 and 8 over a white band naming it. Its button's
+   Layout adaptor sizes it at run time, so the badge is placed from the corner its rect stands 40 canvas units in from */
 .age-rating {
   position: absolute;
-  top: calc(var(--unit) * 52);
-  right: calc(var(--unit) * 65);
+  top: calc(var(--unit) * 52 - var(--canvas-unit) * 40);
+  right: calc(var(--unit) * 65 - var(--canvas-unit) * 40);
   width: calc(var(--unit) * 84);
 }
 
@@ -246,13 +351,14 @@ const isFooterShown = computed(() => stage !== LoginStage.Arriving && stage !== 
   color: #f9dc38;
 }
 
-/* The prompt's band 38 units over the screen's foot on the 1080 high recording, across the foot less 100 units a side:
-   its RectTransform is a prefab the page loads at run time (BtnPressStart), so its place is measured */
+/* The prompt's band 38 units over the screen's foot on the 1080 high recording, across the screen less 100 units a
+   Side: it is a prefab the page loads at run time into BtnPressStart, whose box stands 128 canvas units in from each
+   Side of the canvas, so its place is measured from that box */
 .prompt {
   position: absolute;
-  right: calc(var(--unit) * 100);
-  bottom: calc(var(--unit) * 38);
-  left: calc(var(--unit) * 100);
+  right: calc(var(--unit) * 100 - var(--canvas-unit) * 128);
+  bottom: calc(var(--unit) * 38 - var(--canvas-unit) * 128);
+  left: calc(var(--unit) * 100 - var(--canvas-unit) * 128);
 }
 
 /* Once the door has formed, its prompt fades in and its corner buttons appear, each after its delay in the recording */

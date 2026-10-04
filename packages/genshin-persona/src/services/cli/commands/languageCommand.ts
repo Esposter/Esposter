@@ -10,7 +10,6 @@ import { readGenshinContext } from "#src/services/cli/readGenshinContext";
 import { DEFAULT_LANGUAGE, VoiceLanguageNameMap } from "#src/services/constants";
 import { findCharacterByName } from "#src/services/findCharacterByName";
 import { readLocalization } from "#src/services/readLocalization";
-import { readPersonaCard } from "#src/services/readPersonaCard";
 import { readPin } from "#src/services/readPin";
 import { readRoster } from "#src/services/readRoster";
 import { readVoiceLanguage } from "#src/services/readVoiceLanguage";
@@ -18,7 +17,6 @@ import { recordSessionCharacter } from "#src/services/recordSessionCharacter";
 import { resolveSessionCharacter } from "#src/services/resolveSessionCharacter";
 import { writeInterfaceLanguage } from "#src/services/writeInterfaceLanguage";
 import { writePin } from "#src/services/writePin";
-import { writeSessionSpinner } from "#src/services/writeSessionSpinner";
 import { defineCommand } from "citty";
 
 export const languageCommand: SubCommandsDef[string] = defineCommand({
@@ -49,15 +47,12 @@ export const languageCommand: SubCommandsDef[string] = defineCommand({
 
     writeInterfaceLanguage(canonicalLanguage);
     // Everything downstream reads the language afresh: the roster in it, which builds that language's cache, the
-    // Words that are ours in it, and the session's record and spinner, whose name is drawn from it
+    // Words that are ours in it, and the session's record, whose name is drawn from it
     const localizedRoster = readRoster(canonicalLanguage);
     const { strings: localizedStrings } = await readLocalization(canonicalLanguage);
     const pick = await resolveSessionCharacter(localizedRoster, sessionId, today);
     const character = pick?.character;
-    if (character && sessionId) {
-      recordSessionCharacter(character, sessionId, today.toString());
-      await writeSessionSpinner(character, await readPersonaCard(character.name), canonicalLanguage);
-    }
+    if (character && sessionId) recordSessionCharacter(character, sessionId, today.toString());
 
     const pin = readPin();
     const pinnedCharacter = findCharacterByName(localizedRoster, pin?.name ?? "");

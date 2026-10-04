@@ -1,57 +1,57 @@
 ---
 name: running-checks
-description: Apply when about to run pnpm typecheck, lint, lint:fix, test, format, build, coverage or bench in any package, when deciding when in a task to run one, and whenever you find yourself waiting on a check's output. Esposter's rules for when a check runs and how the session waits on it — every check in the background while the session keeps editing, never a foreground poll of one, one pass after every edit going out, and the verdict read from the exit line in its log.
+description: Apply when about to run pnpm typecheck, lint, lint:fix, test, format, build, coverage or bench in any package, when deciding which checks a change owes before its push, and whenever you find yourself waiting on a check's output. Esposter's split between the session and CI — the session runs only the tests of what it touched, in the background, once after every edit going out, and CI runs typecheck, lint, format and the whole suite on the push, its red answered by the collector's repair.
 ---
 
 # Running Checks
 
-**Every check is a background task, and the session keeps working while it runs.** This skill exists because the
-rule is broken by default: a check looks like a step to wait on, and the tell is a turn that ran a three-minute
-typecheck, waited, ran a three-minute lint, waited, and produced no edits in between. The command and its
-directory are the `package-scripts` skill's; this page is only _when_ a check runs and _how_ the session waits.
+**CI runs the checks; a session runs only the tests of what it touched.** Every push to `ai/queue` runs typecheck,
+lint, format and the whole suite, and a red that reaches `main` is the collector's repair — its regenerators
+first, then a session (`apps/web/content/docs/infra/review-collector/repair.md`). The pre-commit hook formats what
+is staged (`.githooks/pre-commit`). The command and its directory are the `package-scripts` skill's; this page is
+which checks a session runs and how it waits on them.
 
-## Every check goes out with `run_in_background: true`
+## Settled — do not re-propose
 
-Every check is minutes long — the `apps/web` typecheck and the root oxlint pass each take several, a Nuxt suite
-about one — and none of them needs supervision. So each one is a `Bash` call with `run_in_background: true`, redirecting its
-output to a log file and appending its own exit code (`echo "exit $?" >> log`), and the session moves to the next
-piece of work: the next unit's edits, the commit message, the docs sweep, the ledger row. The harness delivers a
-completion notification; read the log then.
+- **Typecheck and lint before a push.** CI runs both on every push at no session cost, while locally each took
+  minutes per change and the root type-aware lint outgrew WSL's memory on this repository. Nothing waits on them
+  either way: the push already went out beside them, so a local run only moved the finding earlier by the length of
+  a CI run, at the session's price.
+- **Dropping the touched tests with them.** Their cost scales with the change rather than the repository, and they
+  catch what neither a typecheck nor a lint can — the behaviour the change was for.
 
-**This holds for a one-package, one-suite, "quick" check too.** A scripts typecheck is seconds, and running it in the
-foreground still costs the turn; the habit that survives is the one applied without weighing it. The only checks
-that run in the foreground are `pnpm format` (seconds, and every later step reads its output) and a `git` command.
+## The tests of what the change touched, in the background
 
-**A check that writes owns the tree while it runs.** `pnpm format` and `lint:fix` read each file and write the fixed copy back, so an edit landing between the two is silently overwritten by the stale copy — and the root `lint:fix` holds files for minutes. While one runs, the session edits nothing it covers: it drafts the commit message, reads, or works in the scratchpad, and resumes editing once the run's log has its exit line. Typecheck and the tests only read, so they leave the tree free.
+The tests are one `Bash` call with `run_in_background: true`, redirecting their output to a log file and appending
+their own exit code (`echo "exit $?" >> log`), and the session moves to the next piece of work: the commit message,
+the docs sweep, the ledger row. The harness delivers a completion notification; read the log then. **This holds for
+a one-file, "quick" suite too** — the habit that survives is the one applied without weighing it.
 
-**Fire the independent ones in one block** so they run concurrently: typecheck, lint and the touched suites do not
-feed each other, so they go out as separate background calls in a single response. A check whose result changes
-the next one — a `lint:fix`, then the same lint again — is the one case where the second waits on the first.
+Which paths, and from which directory, are the `package-scripts` skill's `references/check-suite.md`: the suites
+of the files touched, a bundle's size snapshot after a fresh `pnpm build`, and the docs suite for a docs edit.
 
 ## Never poll a backgrounded check
 
 A foreground poll of a backgrounded check is a foreground check: `for i in $(seq 1 40); do grep -q done log && break;
-sleep 10; done` spends the turn the flag was meant to save, and the session made no edits while it ran. A
-backgrounded check announces its own completion. The wait on a condition in the `context-efficiency` skill ("Wait on a condition, never a sleep") is for an
-**external** process the harness cannot see finish — a dev server, a deploy — never for a check.
+sleep 10; done` spends the turn the flag was meant to save. A backgrounded check announces its own completion. The
+wait on a condition in the `context-efficiency` skill ("Wait on a condition, never a sleep") is for an **external**
+process the harness cannot see finish — a dev server, a deploy — never for a check.
 
-**Blocking is correct only when the sole remaining step is commit, merge or push.** That is rare by construction:
-the checks are the last step, so there is almost always work ahead of them that does not depend on their result.
-When it genuinely is the last step, end the turn with a one-line status and let the notification re-enter.
+**Blocking is correct only when the sole remaining step is commit, merge or push.** When it genuinely is the last
+step, end the turn with a one-line status and let the notification re-enter.
 
-## One verification pass, after every edit going out
+## One run, after every edit going out
 
-Batch format → typecheck → lint:fix → tests until **all** edits are done. Each pass re-pays a fixed startup cost, so
-per-chunk checking multiplies it for no extra signal — nothing is learned at chunk 3 that chunk 7 won't also reveal.
+The tests run once, after **all** edits going out together — not per sub-task, not per unit. Each run re-pays a
+fixed startup cost, and nothing is learned at chunk 3 that chunk 7 won't also reveal. Commit per coherent chunk
+regardless: commits are cheap and protect against other sessions' resets, checks are not. The run follows the
+review's quality lane, since cleanup edits code (`AGENTS.md`, "Finishing a change").
 
-**"All edits" means everything going out together, not the sub-task in front of you.** A session covering several
-units, several files or several ledgers checks once across the lot — a unit finished at noon and a unit finished at
-three are one pass. Sub-task boundaries feel like natural checkpoints and are the commonest way this rule gets
-misread: the tell is a check whose diff is one file, or a formatter run after a single-line edit. Commit per
-coherent chunk regardless — commits are cheap and protect against other sessions' resets, checks are not.
+## A check CI owns, run locally
 
-The pass runs **after** the review's quality lane, not before — cleanup edits code, so checking first pays the
-startup cost twice (`AGENTS.md`, "Finishing a change").
+Only to answer a red: a session asked to fix a failed CI job, or the repair's own session, runs that one check as
+CI runs it, to reproduce the red and prove the fix. A check that writes — `lint:fix`, `pnpm format` — owns the files
+it covers until its exit line, so nothing is edited under it meanwhile.
 
 ## Reading the result
 

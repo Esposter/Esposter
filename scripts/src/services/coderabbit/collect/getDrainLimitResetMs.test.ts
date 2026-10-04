@@ -21,6 +21,16 @@ describe(getDrainLimitResetMs, () => {
     );
   });
 
+  // The weekly refusal is the same sentence under another name; read as a failed drain, one outage spent the cap
+  // On three reviews in a row and their releases went out with the findings unread
+  test("reads the weekly limit as a limit", () => {
+    expect.hasAssertions();
+
+    expect(getDrainLimitResetMs("You've hit your weekly limit · resets 11pm (UTC)", nowMs)).toBe(
+      Temporal.Duration.from({ hours: 23 }).total("milliseconds"),
+    );
+  });
+
   test("reads a stated afternoon hour as the hour it is", () => {
     expect.hasAssertions();
 

@@ -44,14 +44,12 @@ flowchart TD
 | [Engine architecture](/docs/proposals/genshin/engine-architecture) | the engine as modules with one job each, and the order a frame runs in            |
 | [Reference board](/docs/proposals/genshin/reference-board)         | how a region is referenced, calibrated and compared so the recreation stays close |
 | [Scene derivation](/docs/proposals/genshin/scene-derivation)       | how a scene is re-derived from the game's own assets, each loss priced first      |
-| [Interface layout](/docs/proposals/genshin/interface-layout)       | every screen laid out from the game's own RectTransform tree, nothing by hand     |
 | [Localized opening](/docs/proposals/genshin/localized-opening)     | the publisher's splash and layouts as each client language shows                  |
 | [Terrain shapes](/docs/proposals/genshin/terrain-shapes)           | the continent's heights from authored shapes, and the ground painted by biome     |
 | [Flowing water](/docs/proposals/genshin/flowing-water)             | rivers along their courses, and waterfalls over cliff bands                       |
 | [Trees and scatter](/docs/proposals/genshin/trees-and-scatter)     | tree species and impostors, and flowers, bushes and rocks scattered by biome      |
 | [Weather](/docs/proposals/genshin/weather)                         | rain, storms, snow, fog and sandstorms, set per area as the game sets them        |
 | [Exploring](/docs/proposals/genshin/exploring)                     | a free camera, waypoints to jump between, and the map overlay                     |
-| [Music](/docs/proposals/genshin/music)                             | the game's music re-derived from its sound banks and played by our synthesizer    |
 
 ### Phase two: the regions
 

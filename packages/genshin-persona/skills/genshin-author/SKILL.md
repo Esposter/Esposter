@@ -5,7 +5,7 @@ description: Apply when writing, reviewing or listing the persona cards under sr
 
 # Authoring a persona card
 
-A character with no card is fully usable: the session-start hook prints the name, title, element, region, the game's one-line description and the bracketed birthday note from the game data alone, and the spinner shows every line of theirs. A card adds what data cannot — how the character talks, and the verbs the spinner shows — and it is authored when someone feels like it, never as a gate on a new patch. A patch brings new characters, so the queue below refills on the same cadence as the dependency bump.
+A character with no card is fully usable: the session-start hook prints the name, title, element, region, the game's one-line description and the bracketed birthday note from the game data alone, and the prompt hint shows every line of theirs. A card adds what data cannot — how the character talks, and the verbs the spinner shows — and it is authored when someone feels like it, never as a gate on a new patch. A patch brings new characters, so the queue below refills on the same cadence as the dependency bump.
 
 ## The queue
 
@@ -73,7 +73,7 @@ The full reasoning — how a reference is chosen and what its likeness number is
 
 ## The spinner verbs
 
-**`verbs` are the person's and never reach the model**: the hook writes them to the spinner. They cost no tokens, so their ceiling is taste rather than budget. A card carries no tips: the spinner's tips are the character's own lines, every one, read off the game data at runtime, and a tip performed in our words from them is a paraphrase shown beside its original.
+**`verbs` are the person's and never reach the model**: the hooks module draws them in the spinner. They cost no tokens, so their ceiling is taste rather than budget. A card carries no tips: the tips the prompt hint shows are the character's own lines, every one, read off the game data at runtime, and a tip performed in our words from them is a paraphrase shown beside its original.
 
 - **Verbs** are two to four gerunds in the character's occupation, cased like the built-in ones (`["Duelling", "Judging", "Patrolling"]`). A verb can be hyphenated ("Beetle-fighting") but never a phrase. They are shown behind the base list below, so a card lists what only this character would be doing.
 - **The base verbs** are the `verbs` of the interface language's module under `src/localizations/`: the Teyvat gerunds every character shows before their own. There is no base tip: a character with no lines anywhere yet shows the game's one-line description of them, which is still theirs, under their name.

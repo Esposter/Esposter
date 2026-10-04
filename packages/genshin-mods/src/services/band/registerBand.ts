@@ -2,6 +2,8 @@ import type { EngineInterface, On, RenderElement, RenderInput } from "claude-cod
 
 import { atom, read, update } from "claude-code";
 
+import type { EnabledMods } from "../../../types";
+
 import { ACCENT_COLOR, HANDOFF_QUESTION, MAX_SHOWN_TASKS, WARM_QUESTION } from "../constants";
 import { InitialState } from "../InitialState";
 import { getResinFigures } from "../resin/getResinFigures";
@@ -16,9 +18,9 @@ const isCommissionExpandedAtom = atom(
   InitialState.isCommissionExpanded,
 );
 const isHandingOffAtom = atom({ key: "isHandingOff", plugin: "genshin-mods" } as const, InitialState.isHandingOff);
-const lastResponseAtAtom = atom(
-  { key: "lastResponseAt", plugin: "genshin-mods" } as const,
-  InitialState.lastResponseAt,
+const lastCacheRequestAtAtom = atom(
+  { key: "lastCacheRequestAt", plugin: "genshin-mods" } as const,
+  InitialState.lastCacheRequestAt,
 );
 const nowAtom = atom({ key: "now", plugin: "genshin-mods" } as const, InitialState.now);
 const waypointsAtom = atom({ key: "waypoints", plugin: "genshin-mods" } as const, InitialState.waypoints);
@@ -31,40 +33,56 @@ const press = (action: () => Promise<unknown>) => () => {
 
 const StatusMarkMap = { completed: "✓", in_progress: "▸", pending: "·" } as const;
 
-// A fork re-sends the conversation's prefix, which renews the cache, and adds no row to the transcript
+// A fork re-sends the conversation's prefix, which renews the cache from the moment it is sent, and adds no row to the
+// Transcript
 const warmCache = async ($: EngineInterface) => {
+  const requestedAt = await $.clock.now();
   const answer = await $.model.fork({ prompt: WARM_QUESTION });
   if (!answer.isAnswered) {
     $.ui.toast(`The cache was not warmed: ${answer.reason}.`);
     return;
   }
 
-  const now = await $.clock.now();
-  await update($, lastResponseAtAtom, () => now);
-  await update($, nowAtom, () => now);
+  await update($, lastCacheRequestAtAtom, () => requestedAt);
+  await update($, nowAtom, () => requestedAt);
 };
 
 // The whole relay in one press: the clear waits for the handoff text, so a fork that fails clears nothing
-const handOff = async ($: EngineInterface) => {
-  await update($, isHandingOffAtom, () => true);
+const relay = async ($: EngineInterface) => {
   const answer = await $.model.fork({ prompt: HANDOFF_QUESTION });
   if (answer.isAnswered && answer.text.trim()) {
     await $.command.run({ command: "clear" });
     await $.prompt.submit({ text: answer.text });
   } else $.ui.toast(`The handoff was not written: ${answer.isAnswered ? "it came back empty" : answer.reason}.`);
-  await update($, isHandingOffAtom, () => false);
 };
 
-const drawResinRow = async ($: EngineInterface, e: RenderInput<"AbovePrompt">): Promise<RenderElement | undefined> => {
-  const lastResponseAt = await read($, lastResponseAtAtom);
-  if (lastResponseAt === 0 || !(await read($, enabledModsAtom)).resin) return undefined;
+// The relay is settled rather than awaited, so a clear or submit that rejects still brings the buttons back
+const handOff = async ($: EngineInterface) => {
+  await update($, isHandingOffAtom, () => true);
+  const [outcome] = await Promise.allSettled([relay($)]);
+  await update($, isHandingOffAtom, () => false);
+  if (outcome.status === "rejected") $.ui.toast(`The handoff failed: ${String(outcome.reason)}.`);
+};
 
-  const figures = getResinFigures(await $.session.usage(), lastResponseAt, await read($, nowAtom));
+// The session character's colour, which the persona publishes, else the game's interface gold
+const readAccent = async ($: EngineInterface) =>
+  (await read($, { key: "character", plugin: "genshin-persona" } as const))?.color || ACCENT_COLOR;
+
+const drawResinRow = async (
+  $: EngineInterface,
+  e: RenderInput<"AbovePrompt">,
+  enabledMods: EnabledMods,
+  accent: string,
+): Promise<RenderElement | undefined> => {
+  const lastCacheRequestAt = await read($, lastCacheRequestAtAtom);
+  if (lastCacheRequestAt === 0 || !enabledMods.resin) return undefined;
+
+  const figures = getResinFigures(await $.session.usage(), lastCacheRequestAt, await read($, nowAtom));
   const isHandingOff = await read($, isHandingOffAtom);
   const { Box, Button, Text } = $.ui.resolve(e);
   return Box({
     children: [
-      Text({ bold: true, children: "Resin  ", color: ACCENT_COLOR }),
+      Text({ bold: true, children: "Resin  ", color: accent }),
       ...figures.map(({ isWarning, label, text }) =>
         Text({ children: `${label} ${text}  `, color: isWarning ? "yellow" : undefined, dimColor: !isWarning }),
       ),
@@ -72,9 +90,20 @@ const drawResinRow = async ($: EngineInterface, e: RenderInput<"AbovePrompt">): 
         ? Text({ children: "writing the handoff…", dimColor: true })
         : Box({
             children: [
-              Button({ key: "resin-warm", label: "Warm", onPress: press(() => warmCache($)) }),
-              Button({ key: "resin-compact", label: "Compact", onPress: press(() => $.session.compact()) }),
-              Button({ key: "resin-handoff", label: "Handoff", onPress: press(() => handOff($)), variant: "primary" }),
+              Button({ hotkey: "w", key: "resin-warm", label: "Warm", onPress: press(() => warmCache($)) }),
+              Button({
+                hotkey: "c",
+                key: "resin-compact",
+                label: "Compact",
+                onPress: press(() => $.session.compact()),
+              }),
+              Button({
+                hotkey: "h",
+                key: "resin-handoff",
+                label: "Handoff",
+                onPress: press(() => handOff($)),
+                variant: "primary",
+              }),
             ],
             flexDirection: "row",
           }),
@@ -87,9 +116,11 @@ const drawResinRow = async ($: EngineInterface, e: RenderInput<"AbovePrompt">): 
 const drawCommissionRow = async (
   $: EngineInterface,
   e: RenderInput<"AbovePrompt">,
+  enabledMods: EnabledMods,
+  accent: string,
 ): Promise<RenderElement | undefined> => {
   const commission = await read($, commissionAtom);
-  if (commission.tasks.length === 0 || !(await read($, enabledModsAtom)).commission) return undefined;
+  if (commission.tasks.length === 0 || !enabledMods.commission) return undefined;
 
   const isExpanded = await read($, isCommissionExpandedAtom);
   const shownTasks = isExpanded
@@ -100,7 +131,7 @@ const drawCommissionRow = async (
     children: [
       Box({
         children: [
-          Text({ bold: true, children: "Commission  ", color: ACCENT_COLOR }),
+          Text({ bold: true, children: "Commission  ", color: accent }),
           Text({ children: `${getCommissionSummary(commission, await read($, nowAtom))}  `, wrap: "truncate-end" }),
           Button({
             hotkey: "g",
@@ -127,14 +158,16 @@ const drawCommissionRow = async (
 const drawWaypointsRow = async (
   $: EngineInterface,
   e: RenderInput<"AbovePrompt">,
+  enabledMods: EnabledMods,
+  accent: string,
 ): Promise<RenderElement | undefined> => {
   const waypoints = await read($, waypointsAtom);
-  if (waypoints.length === 0 || e.props.isWorking || !(await read($, enabledModsAtom)).waypoints) return undefined;
+  if (waypoints.length === 0 || e.props.isWorking || !enabledMods.waypoints) return undefined;
 
   const { Box, Button, Text } = $.ui.resolve(e);
   return Box({
     children: [
-      Text({ bold: true, children: "Waypoints", color: ACCENT_COLOR }),
+      Text({ bold: true, children: "Waypoints", color: accent }),
       ...waypoints.map((waypoint, index) =>
         Button({
           hotkey: `${index + 1}`,
@@ -162,14 +195,19 @@ export const registerBand = (on: On): void => {
   on("ui.render", { component: "AbovePrompt" }, async ($, e, next) => {
     if (e.props.hasSurvey) return next(e);
 
-    const rows = (await Promise.all([drawResinRow($, e), drawCommissionRow($, e), drawWaypointsRow($, e)])).filter(
-      (row) => row !== undefined,
-    );
-    const isVeiled = (await read($, enabledModsAtom)).veil;
-    if (rows.length === 0 && !isVeiled) return next(e);
+    const enabledMods = await read($, enabledModsAtom);
+    const accent = await readAccent($);
+    const rows = (
+      await Promise.all([
+        drawResinRow($, e, enabledMods, accent),
+        drawCommissionRow($, e, enabledMods, accent),
+        drawWaypointsRow($, e, enabledMods, accent),
+      ])
+    ).filter((row) => row !== undefined);
+    if (rows.length === 0 && !enabledMods.veil) return next(e);
 
     const { Box, Text } = $.ui.resolve(e);
-    const marker = isVeiled
+    const marker = enabledMods.veil
       ? [Text({ bold: true, children: "● Veil on: values are hidden on screen", color: "red" })]
       : [];
     return Box({ children: [...marker, ...rows], flexDirection: "column" });
