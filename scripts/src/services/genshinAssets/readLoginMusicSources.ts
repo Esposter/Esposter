@@ -25,7 +25,7 @@ export const readLoginMusicSources = async function* (): AsyncGenerator<{
 }> {
   const { music: directory } = getComponentDirectory(DerivedAssetComponent.Login);
   const { segments } = parseMachineJson<ComponentPlaylist>(await readFile(join(directory, "playlist.json"), "utf8"));
-  for (const { id, clips } of segments)
+  for (const { clips, id } of segments)
     for (const { sourceId } of clips) {
       const wavePath = join(directory, `${sourceId}.wav`);
       // oxlint-disable-next-line no-await-in-loop -- one source's samples are held at a time

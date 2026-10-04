@@ -1,5 +1,5 @@
-import type { LaggedAgreement } from "#src/models/genshinParity/LaggedAgreement";
 import type { SampledSolo } from "#src/models/genshinAssets/SampledSolo";
+import type { LaggedAgreement } from "#src/models/genshinParity/LaggedAgreement";
 import type { NoteEventTime } from "pitch-transcription/notes";
 
 import { SAMPLED_VOICE_MAX_LAG } from "#src/services/genshinAssets/constants";
