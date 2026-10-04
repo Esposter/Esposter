@@ -2602,6 +2602,9 @@ importers:
       tsx:
         specifier: 'catalog:'
         version: 4.23.15
+      type-fest:
+        specifier: 'catalog:'
+        version: 5.10.0
       typescript:
         specifier: npm:typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2
         version: typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2

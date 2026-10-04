@@ -30,7 +30,9 @@ export const fitInterfaceRects = (root: InterfaceNode): Record<string, FittedInt
         size: roundPair(sizeDelta),
       },
     ],
-    ...(components.some((component) => component.endsWith("LayoutGroup")) ? [] : children.flatMap(toEntries)),
+    ...(components.some((component) => component.endsWith("LayoutGroup"))
+      ? []
+      : children.flatMap((child) => toEntries(child))),
   ];
   return Object.fromEntries(root.children.flatMap(toEntries));
 };

@@ -35,9 +35,9 @@ const roundInstrument = ({
 }: Instrument): Instrument => ({
   attack: roundMusic(attack),
   decay: roundMusic(decay),
-  harmonics: harmonics.map(roundMusic),
+  harmonics: harmonics.map((harmonic) => roundMusic(harmonic)),
   level: roundMusic(level),
-  noiseBands: noiseBands.map(roundMusic),
+  noiseBands: noiseBands.map((noiseBand) => roundMusic(noiseBand)),
   release: roundMusic(release),
   sustain: roundMusic(sustain),
   tuning: roundMusic(tuning),

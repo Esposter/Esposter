@@ -84,7 +84,7 @@ export default defineNuxtModule({
     // A watcher generates its package's barrel once, as it starts, so a module added later would be missing from the
     // Barrel and one removed would still be listed: a change to the package's file list restarts the watcher, which
     // Regenerates it. An editor that saves by renaming over the file leaves the list as it was, so it restarts nothing
-    const sourceWatchers = Array.from(watchedPackageNames).flatMap((packageName) => {
+    const sourceWatchers = [...watchedPackageNames].flatMap((packageName) => {
       const packageDirectory = packageDirectoryMap.get(packageName);
       if (!packageDirectory) return [];
       let sourceFileList = readSourceFileList(packageDirectory);

@@ -78,7 +78,9 @@ export const fitVoiceNoises = (
     );
     return solveLinearSystem(
       active.map((_, row) =>
-        active.map((_, column) => frames.reduce((sum, frame) => sum + readRow(row, frame) * readRow(column, frame), 0)),
+        active.map((_value, column) =>
+          frames.reduce((sum, frame) => sum + readRow(row, frame) * readRow(column, frame), 0),
+        ),
       ),
       active.map((_, row) => frames.reduce((sum, frame) => sum + readRow(row, frame) * (readTarget(frame) ?? 0), 0)),
     );
@@ -109,14 +111,15 @@ export const fitVoiceNoises = (
     let shares: number[] = [];
     while (active.length > 0) {
       const solving = active;
-      shares =
+      const solution =
         solveNormal(
           solving,
           (index, frame) => readPower(solving[index] ?? 0, frame),
           (frame) => noisePowers[frame],
         ) ?? solving.map(() => 0);
-      if (shares.every((share) => share > 0)) break;
-      active = solving.filter((_, index) => (shares[index] ?? 0) > 0);
+      shares = solution;
+      if (solution.every((share) => share > 0)) break;
+      active = solving.filter((_, index) => (solution[index] ?? 0) > 0);
     }
     // Each share as its logarithm, which keeps it positive through the refinement
     const logShares = shares.map((share) => Math.log(share));

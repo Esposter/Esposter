@@ -1,9 +1,20 @@
 import { PNPM_ARGS, PNPM_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { NON_SOURCE_SUFFIXES } from "@esposter/configuration";
 import { execFileSync } from "node:child_process";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
+
+// `pnpm pack` reads the same `files` the release's `npm-packlist` does, and is the packer the repo already runs
+const readPackedPaths = (packageDirectory: string): string[] => {
+  const output = execFileSync(PNPM_FILE, [...PNPM_ARGS, "pack", "--dry-run", "--json"], {
+    cwd: join(REPOSITORY_ROOT, packageDirectory),
+    encoding: "utf8",
+  });
+  const { files } = parseMachineJson<{ files: { path: string }[] }>(output);
+  return files.map(({ path }) => path);
+};
 
 /**
  * A package's `files` is the one statement of what a stranger downloads, and nothing reads it until a release: every
@@ -14,15 +25,6 @@ import { describe, expect, test } from "vitest";
  */
 describe("publishedFiles", () => {
   const publishedPackages = readWorkspacePackages(REPOSITORY_ROOT).filter(({ manifest }) => !manifest.private);
-  // `pnpm pack` reads the same `files` the release's `npm-packlist` does, and is the packer the repo already runs
-  const readPackedPaths = (packageDirectory: string): string[] => {
-    const output = execFileSync(PNPM_FILE, [...PNPM_ARGS, "pack", "--dry-run", "--json"], {
-      cwd: join(REPOSITORY_ROOT, packageDirectory),
-      encoding: "utf8",
-    });
-    const { files } = JSON.parse(output) as { files: { path: string }[] };
-    return files.map(({ path }) => path);
-  };
 
   test("pack no test, benchmark or fixture", () => {
     expect.hasAssertions();

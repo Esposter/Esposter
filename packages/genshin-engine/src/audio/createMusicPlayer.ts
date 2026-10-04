@@ -17,7 +17,7 @@ export const createMusicPlayer = (
   destination: AudioNode = context.destination,
 ): { start: () => void; stop: () => void } => {
   const output = new GainNode(context);
-  const sounds = new Map<Instrument, { noiseBuffer: AudioBuffer | undefined; wave: PeriodicWave }>();
+  const sounds = new Map<Instrument, { noiseBuffer?: AudioBuffer; wave: PeriodicWave }>();
   let origin = 0;
   let scheduledUntil = 0;
   let timer: ReturnType<typeof setInterval> | undefined;

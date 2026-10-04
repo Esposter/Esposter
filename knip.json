@@ -24,13 +24,15 @@
     },
     "packages/genshin-persona": {
       "entry": [
+        "mod/register.ts",
         "scripts/*.mjs",
         "scripts/**/*.ts",
         "src/localizations/*.ts",
         "src/personaCards/**/*.ts",
         "src/services/**/*.ts"
       ],
-      "ignore": ["src/generated/**"]
+      "ignore": ["src/generated/**"],
+      "ignoreDependencies": ["claude-code"]
     },
     "packages/trpc-nuxt-module": { "entry": ["test/fixture/nuxt.config.ts"] },
     "scripts": { "entry": ["src/oxlint/**/*.ts"], "ignoreDependencies": ["@wasm-audio-decoders/ogg-vorbis"] }

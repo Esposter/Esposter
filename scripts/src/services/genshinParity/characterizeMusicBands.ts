@@ -37,9 +37,9 @@ export const characterizeMusicBands = (
   const loudFrames = [...loudness.keys()].filter((frame) => frame < frameCount && (loudness[frame] ?? 0) >= quiet);
   const readPower = (frame: number, bin: number): number => (magnitudes[frame * binCount + bin] ?? 0) ** 2;
   const totals = Float64Array.from({ length: frameCount }, (_, frame) =>
-    sum(Array.from({ length: binCount }, (_, bin) => readPower(frame, bin))),
+    sum(Array.from({ length: binCount }, (_value, bin) => readPower(frame, bin))),
   );
-  const isAttack = (frame: number): boolean =>
+  const checkAttack = (frame: number): boolean =>
     (totals[frame] ?? 0) > BANDS_ONSET_RISE * (totals[frame - 1] ?? Infinity);
   // Each loud frame's bins a partial holds of a note sounding at its centre
   const partialMasks = new Map(
@@ -70,7 +70,11 @@ export const characterizeMusicBands = (
     );
     return {
       attackWeight:
-        10 * Math.log10(meanOf(loudFrames.filter(isAttack)) / meanOf(loudFrames.filter((frame) => !isAttack(frame)))),
+        10 *
+        Math.log10(
+          meanOf(loudFrames.filter((frame) => checkAttack(frame))) /
+            meanOf(loudFrames.filter((frame) => !checkAttack(frame))),
+        ),
       flatness: readMedianFlatness(spectrogram, loudFrames, [low, high]),
       partialShare: bandTotal > 0 ? partialTotal / bandTotal : 0,
       share: 10 * Math.log10(bandTotal / loudTotal),

@@ -27,7 +27,7 @@ export const bandsCommand: SubCommandsDef[string] = defineCommand({
       if (segment.clips.length === 0) continue;
       // oxlint-disable-next-line no-await-in-loop -- one segment's sound is held at a time
       const game = await readGameMusicSegment(directory, segment, LISTEN_SAMPLE_RATE);
-      const notes = music.segments[index]?.voices.flatMap(({ notes }) => notes) ?? [];
+      const notes = music.segments[index]?.voices.flatMap((voice) => voice.notes) ?? [];
       console.log(`segment ${segment.id}: band, share of the sound, flatness, weight at attacks, share on partials`);
       for (const [band, { attackWeight, flatness, partialShare, share }] of characterizeMusicBands(
         game,

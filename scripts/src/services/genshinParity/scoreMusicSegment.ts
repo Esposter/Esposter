@@ -11,6 +11,7 @@ import {
 } from "#src/services/genshinParity/constants";
 import { readBandBins } from "#src/services/genshinParity/readBandBins";
 
+const mean = (values: number[]): number => values.reduce((sum, value) => sum + value, 0) / Math.max(values.length, 1);
 // Each octave band's energy frame by frame, between the half octaves either side of its centre, in the pitch classes'
 // Own frames
 const readBandEnergies = (samples: Float32Array, sampleRate: number): Float64Array[] => {
@@ -57,7 +58,6 @@ export const scoreMusicSegment = (ours: Float32Array, game: Float32Array, sample
       (frame) => 10 * Math.log10(Math.max(ourEnergies[frame] ?? 0, floor) / Math.max(gameEnergies[frame] ?? 0, floor)),
     );
   });
-  const mean = (values: number[]): number => values.reduce((sum, value) => sum + value, 0) / Math.max(values.length, 1);
   const bandDistances = bandGaps.map((gaps) => mean(gaps.map((gap) => Math.abs(gap))));
   return {
     bandBiases: bandGaps.map((gaps) => mean(gaps)),

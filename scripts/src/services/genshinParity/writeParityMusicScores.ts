@@ -17,7 +17,7 @@ export const writeParityMusicScores = (screen: string, scores: { id: number; sco
       "the game's, under 0 where ours is the quieter. Commit it with the change that moved it, as a bench's report is",
       "committed.",
       "",
-      `| Screen | Segment | Pitch agreement | Distance | ${LISTEN_BAND_CENTRES.map(formatBand).join(" | ")} |`,
+      `| Screen | Segment | Pitch agreement | Distance | ${LISTEN_BAND_CENTRES.map((centre) => formatBand(centre)).join(" | ")} |`,
       `| :----- | :------ | --------------: | -------: | ${LISTEN_BAND_CENTRES.map(() => "---:").join(" | ")} |`,
       ...scores.map(
         ({ id, score: { bandDistances, distance, pitchAgreement } }) =>

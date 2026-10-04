@@ -20,6 +20,7 @@ import { A4_FREQUENCY, A4_PITCH } from "genshin-engine";
 // The decay's time constants tried, in seconds, evenly on a log scale from a frame to half a minute
 const DECAY_STEPS = 120;
 const MAX_DECAY_SECONDS = 30;
+const toFrequency = (pitch: number): number => A4_FREQUENCY * 2 ** ((pitch - A4_PITCH) / 12);
 // A voice's instrument fitted to the sound it was heard in, each value measured at the voice's own notes. A note's
 // Fundamental and each overtone are read where every other note sounding with it, of any voice, leaves them clear, so
 // A crowded passage gives up only the partials it covers. A partial of another note covers a reading only when
@@ -49,7 +50,6 @@ export const fitInstrument = (
   const toFrame = (seconds: number): number =>
     Math.min(Math.max(Math.round((seconds - halfWindowSeconds) / frameSeconds), 0), frameCount - 1);
   const toSeconds = (frame: number): number => frame * frameSeconds + halfWindowSeconds;
-  const toFrequency = (pitch: number): number => A4_FREQUENCY * 2 ** ((pitch - A4_PITCH) / 12);
   // A spectral peak's magnitude as the amplitude of the sinusoid it reads
   const toAmplitude = (magnitude: number): number => (4 * magnitude) / frameLength;
   // Whether a reading of an amplitude at a frequency stands clear of every harmonic loud enough to move it of every

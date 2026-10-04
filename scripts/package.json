@@ -89,6 +89,7 @@
     "sharp": "catalog:",
     "three": "catalog:",
     "tsx": "catalog:",
+    "type-fest": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

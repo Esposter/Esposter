@@ -20,7 +20,7 @@ describe("constants", () => {
       isOutage: false,
       message: "fatal: unable to access 'https://github.com/': The requested URL returned error: 403",
     },
-  ])("GITHUB_OUTAGE_REGEX reads $message as an outage: $isOutage", ({ isOutage, message }) => {
+  ])("reads $message as a GitHub outage: $isOutage", ({ isOutage, message }) => {
     expect.hasAssertions();
 
     expect(GITHUB_OUTAGE_REGEX.test(message)).toBe(isOutage);

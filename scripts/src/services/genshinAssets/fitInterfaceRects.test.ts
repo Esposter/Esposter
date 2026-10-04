@@ -3,20 +3,20 @@ import type { InterfaceNode } from "#src/models/genshinAssets/InterfaceNode";
 import { fitInterfaceRects } from "#src/services/genshinAssets/fitInterfaceRects";
 import { describe, expect, test } from "vitest";
 
-describe(fitInterfaceRects, () => {
-  const createNode = (path: string, children: InterfaceNode[] = [], components: string[] = []): InterfaceNode => ({
-    anchoredPosition: [0, 1],
-    anchorMax: [1, 0],
-    anchorMin: [0, 0],
-    children,
-    components,
-    name: path.slice(path.lastIndexOf("/") + 1),
-    path,
-    pivot: [0, 0],
-    scale: [1, 1],
-    sizeDelta: [0, 1],
-  });
+const createNode = (path: string, children: InterfaceNode[] = [], components: string[] = []): InterfaceNode => ({
+  anchoredPosition: [0, 1],
+  anchorMax: [1, 0],
+  anchorMin: [0, 0],
+  children,
+  components,
+  name: path.slice(path.lastIndexOf("/") + 1),
+  path,
+  pivot: [0, 0],
+  scale: [1, 1],
+  sizeDelta: [0, 1],
+});
 
+describe(fitInterfaceRects, () => {
   test("keys each piece by its path under the root and leaves out the root and a layout group's children", () => {
     expect.hasAssertions();
 
