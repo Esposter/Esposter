@@ -133,7 +133,7 @@ A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit fille
 | `Login/Scene` camera              | The door recording's walkway and door silhouettes         | Solved on the exports; held still while the world glides toward it     |
 | `Login/Scene` towers              | The stage's `LoginScene_Build*` meshes, textures, places  | Lathes on their walls; their surfaces traced as loops, turned in place |
 | `Login/Scene` walkway             | `LoginScene_Bridge01_*` meshes                            | Fitted as a footprint and its two heights                              |
-| `Login/Scene` paving              | The walkway's tops and their four materials' textures     | Traced as each pocket's loop over one copy                             |
+| `Login/Scene` paving              | The walkway's tops, their materials' textures and normals | Each pocket's and groove's loop over one copy; the rims' slope, width  |
 | `Login/Scene` door                | The stage's `LoginScene_Door01_Vo` and its texture        | Its faces traced, its relief traced as loops; placed by its mesh       |
 | `Login/Scene` bridges and pillars | The stage's `LoginScene_Bridge02`–`04`, `Pillar03` meshes | Fitted as visual hulls, placed and turned where the game stands them   |
 | `Login/Scene` stone               | Each family's `LoginScene_*` materials and textures       | Fitted as a physically lit stone per family                            |

@@ -57,7 +57,7 @@ import { createLoginTowerFacade } from "#src/services/login/tower/createLoginTow
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
 import { readLoginTowerAtlas } from "#src/services/login/tower/readLoginTowerAtlas";
 import { LOGIN_WALKWAY_RISE_DEPTH, LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
-import { createLoginPavingShade } from "#src/services/login/walkway/createLoginPavingShade";
+import { createLoginPaving } from "#src/services/login/walkway/createLoginPaving";
 import { createLoginWalkwayPieces } from "#src/services/login/walkway/createLoginWalkwayPieces";
 import { readLoginWalkwaySink } from "#src/services/login/walkway/readLoginWalkwaySink";
 import { sinkLoginWitnessWalkway } from "#src/services/login/walkway/sinkLoginWitnessWalkway";
@@ -188,8 +188,10 @@ towersMaterial.opacityNode = towerFacade.solid;
 towersMaterial.alphaTest = 0.5;
 const bridgesMaterial = createStoneMaterial(stone.bridges);
 const walkwayMaterial = createStoneMaterial(stone.walkway);
-// The walkway's stone darkened along its paving's lines
-walkwayMaterial.colorNode = color(stone.walkway.albedo).mul(createLoginPavingShade());
+// The walkway's tops carved with its paving: its pockets' stone a step darker and their rims tilted to the light
+const paving = createLoginPaving();
+walkwayMaterial.colorNode = color(stone.walkway.albedo).mul(paving.shade);
+walkwayMaterial.normalNode = paving.normalNode;
 const doorFrameMaterial = createStoneMaterial(stone.door);
 // The door lights from a line down its middle outward, over the panel's own glow, as the game opens it
 const doorGlow = uniform(0);

@@ -93,6 +93,12 @@ export const reference: ComponentReference = {
     },
     {
       found:
+        "The recording's dark carving on the walkway is relief, not paint: at the recording's full size its strokes are thin lines down one side of each raised band and along each brick, the side turned from the sun, and the stone's mask holds no metal. Its normal map read over the paving's plan carves each pocket's rim as a bevel of median slope 1.5 about a centimetre wide, leaning into the pocket, so the pockets are sunk, and each joint between two bricks as a shallower groove of slope 0.59, split from the flat stone by Otsu's threshold under the rims'. Drawn as relief on the walkway's tops from the pockets' and the grooves' loops, lit by the scene's own lights, the door recording's shared edges rise from 0.411 to 0.438 and its FLIP falls from 0.6095 to 0.6089, the dawn's, the day's and the phone's door frames level and the night's 0.003 worse; against the exports the walkway's similarity falls from 0.65 to 0.56, our rims wider and darker than theirs at the ranking's size and the exports' middle lane a paler stone than ours",
+      search:
+        "zoom on the recording's paving at full size, the walkway's mask and normal textures read channel by channel, fitLoginPaving's tilt plan, then compare and rank login-door-recording",
+    },
+    {
+      found:
         "The login sets the god rays' colour to black, and the pass mixes the frame toward its colour by the lit air along each ray, so it darkens the sky toward the sun by about a quarter where the solve's own model matches the scene's sky at the frame's middle, and every part behind lit air with it. Drawn in the sun's colour the frame washes pale (FLIP 0.647); with the pass out of the chain the frame stands brighter and scores 0.641 against 0.619 at the same sky, every hour's light having been measured under the darkening",
       search:
         "The scene's sky read at six points against readSkyWeights at the applied state, then compare login-door-recording with the god rays lit, and with the pass left out of createPostPipeline",
