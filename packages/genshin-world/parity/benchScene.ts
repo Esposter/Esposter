@@ -23,7 +23,9 @@ export const benchScene = async (
   const { info } = context.renderer;
   const intervals: number[] = [];
   let lastTime = await new Promise<number>((resolve) => {
-    window.requestAnimationFrame(resolve);
+    window.requestAnimationFrame((time) => {
+      resolve(time);
+    });
   });
   // The renderer resets its counts each frame from a loop of its own, which runs in no set order with TresJS's that
   // Draws, so they are left to run on over every frame and shared out among them
@@ -32,7 +34,9 @@ export const benchScene = async (
   for (let frame = 0; frame < frameCount; frame++) {
     // oxlint-disable-next-line no-await-in-loop -- one frame is timed after another
     const time = await new Promise<number>((resolve) => {
-      window.requestAnimationFrame(resolve);
+      window.requestAnimationFrame((time) => {
+        resolve(time);
+      });
     });
     intervals.push(time - lastTime);
     lastTime = time;

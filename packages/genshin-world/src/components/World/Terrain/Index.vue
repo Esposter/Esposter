@@ -46,7 +46,7 @@ const terrainMaterial = createTerrainMaterial(terrainOptions, { lightUniforms, r
 const index = new BufferAttribute(computeTerrainIndices(cellsPerSide), 1);
 // Every held tile is a mesh in this group, shown only while it is drawn, so a tile coming back into view costs a flag
 const tileGroup = new Group();
-const workers = Array.from({ length: TERRAIN_WORKER_COUNT }, createTerrainWorker);
+const workers = Array.from({ length: TERRAIN_WORKER_COUNT }, () => createTerrainWorker());
 let requestCount = 0;
 const tileStreamer = createTileStreamer<Mesh>({
   disposeTile: (mesh) => {
@@ -77,7 +77,12 @@ const receiveTile = (event: MessageEvent<TerrainTile>) => {
   tileStreamer.receive(key, mesh);
   emit("change");
 };
-for (const worker of workers) worker.addEventListener("message", receiveTile);
+for (const worker of workers)
+  worker.addEventListener("message", (event) => {
+    receiveTile(event);
+  });
+// Built once, since the draws are resolved every frame
+const checkTileLoaded = (key: number): boolean => tileStreamer.has(key);
 const wanted = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const draws = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const shown = createTerrainSelection(TILE_SELECTION_CAPACITY);
@@ -98,7 +103,7 @@ onBeforeRender(() => {
     .multiply(originMatrix);
   frustum.setFromProjectionMatrix(viewProjection, activeCamera.coordinateSystem);
   selectTerrainTiles(terrainOptions, eye, frustum, wanted);
-  resolveTerrainDraws(terrainOptions, wanted, tileStreamer.has, draws);
+  resolveTerrainDraws(terrainOptions, wanted, checkTileLoaded, draws);
   tileStreamer.update(wanted, draws);
   for (let drawIndex = 0; drawIndex < shown.count; drawIndex++) {
     const mesh = tileStreamer.get(shown.keys[drawIndex] ?? 0);

@@ -35,7 +35,9 @@ describe(createTRPCWebSocketHandler, () => {
 
   beforeAll(async () => {
     await new Promise<void>((resolve) => {
-      server.listen(0, resolve);
+      server.listen(0, () => {
+        resolve();
+      });
     });
     url = `ws://localhost:${(server.address() as AddressInfo).port}/`;
   });

@@ -21,12 +21,12 @@ splits at `services/exec`'s subdirectories.
 | `keyframe-store`                                                                                    | 2026-09-27 · Opus 5.5  |                                                        |
 | `agent-console-server`                                                                              | 2026-09-27 · Opus 5.5  |                                                        |
 | `genshin-persona`                                                                                   | 2026-10-04 · Fable 5.1 | its mocks are hoisted factories, typed off the source  |
-| `genshin-engine`                                                                                    | —                      |                                                        |
-| `genshin-world`                                                                                     | —                      |                                                        |
-| `genshin-interface`                                                                                 | —                      |                                                        |
-| `genshin-text`                                                                                      | —                      |                                                        |
+| `genshin-engine`                                                                                    | 2026-10-05 · Opus 5.5  |                                                        |
+| `genshin-world`                                                                                     | 2026-10-05 · Opus 5.5  |                                                        |
+| `genshin-interface`                                                                                 | 2026-10-05 · Opus 5.5  |                                                        |
+| `genshin-text`                                                                                      | 2026-10-05 · Opus 5.5  |                                                        |
 | `genshin-mods`                                                                                      | 2026-10-04 · Fable 5.1 |                                                        |
-| `pitch-transcription`                                                                               | —                      |                                                        |
-| `trpc-msw`                                                                                          | —                      |                                                        |
-| `trpc-nuxt-module`                                                                                  | —                      |                                                        |
+| `pitch-transcription`                                                                               | 2026-10-05 · Opus 5.5  |                                                        |
+| `trpc-msw`                                                                                          | 2026-10-05 · Opus 5.5  |                                                        |
+| `trpc-nuxt-module`                                                                                  | 2026-10-05 · Opus 5.5  |                                                        |
 | `follow-ups`                                                                                        | 2026-10-04 · Fable 5.1 |                                                        |

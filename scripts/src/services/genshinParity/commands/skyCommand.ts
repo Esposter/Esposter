@@ -1,13 +1,18 @@
 import type { SubCommandsDef } from "citty";
 
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { solveReferenceSky } from "#src/services/genshinParity/solveReferenceSky";
 import { defineCommand } from "citty";
 
 export const skyCommand: SubCommandsDef[string] = defineCommand({
   args: {
     reference: { description: "A reference's id in ParityReferenceMap", required: true, type: "positional" },
-    witness: { description: "The component whose exports the witness draws", required: true, type: "string" },
+    witness: {
+      description: "The component whose exports the witness draws",
+      required: true,
+      options: Object.values(DerivedAssetComponent),
+      type: "enum",
+    },
   },
   meta: {
     description:
@@ -15,10 +20,7 @@ export const skyCommand: SubCommandsDef[string] = defineCommand({
     name: "sky",
   },
   run: async ({ args }) => {
-    const { colors, drawn, imagePath, kept, residual, shape } = await solveReferenceSky(
-      args.reference,
-      parseDerivedAssetComponent(args.witness),
-    );
+    const { colors, drawn, imagePath, kept, residual, shape } = await solveReferenceSky(args.reference, args.witness);
     for (const [term, color] of Object.entries(colors)) console.log(`${term}: ${color}`);
     console.log(
       Object.entries(shape)

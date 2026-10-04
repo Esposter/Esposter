@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { PLANS_DIRECTORY } from "#src/services/genshinParity/constants";
 import { readWitnessPlan } from "#src/services/genshinParity/readWitnessPlan";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
@@ -24,7 +24,12 @@ export const planCommand: SubCommandsDef[string] = defineCommand({
     },
     resolution: { default: "100", description: "Pixels a metre", type: "string" },
     size: { description: "The rectangle's size, as x,z in metres", required: true, type: "string" },
-    witness: { description: "The component whose exports the witness draws", required: true, type: "string" },
+    witness: {
+      description: "The component whose exports the witness draws",
+      required: true,
+      options: Object.values(DerivedAssetComponent),
+      type: "enum",
+    },
   },
   meta: {
     description:
@@ -40,12 +45,11 @@ export const planCommand: SubCommandsDef[string] = defineCommand({
       throw new InvalidOperationError(Operation.Read, "size", `${args.size} is not positive`);
     if (pixelsPerMetre <= 0)
       throw new InvalidOperationError(Operation.Read, "resolution", `${args.resolution} is not positive`);
-    const { albedo, height, size, width } = await readWitnessPlan(
-      args.reference,
-      parseDerivedAssetComponent(args.witness),
-      args.family,
-      { least: [leastX, leastZ], pixelsPerMetre, size: [sizeX, sizeZ] },
-    );
+    const { albedo, height, size, width } = await readWitnessPlan(args.reference, args.witness, args.family, {
+      least: [leastX, leastZ],
+      pixelsPerMetre,
+      size: [sizeX, sizeZ],
+    });
     const pixels = Buffer.alloc(width * height * 3);
     for (let pixel = 0; pixel < width * height; pixel++)
       for (let channel = 0; channel < 3; channel++)

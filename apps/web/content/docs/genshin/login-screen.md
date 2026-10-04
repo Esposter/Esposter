@@ -97,7 +97,7 @@ flowchart TD
 | `packages/genshin-world/src/services/login/door/createLoginDoorRelief.ts`       | The door's front relief, its panel's bands and its feet's gilding         |
 | `packages/genshin-world/src/services/login/scene/createPlanCanvasNode.ts`       | A part's plan drawn once into a canvas and read where its geometry stands |
 | `packages/genshin-world/src/services/login/walkway/createLoginWalkwayPieces.ts` | The walkway's pieces, each its fitted outline extruded to its own top     |
-| `packages/genshin-world/src/services/login/walkway/readLoginWalkwaySink.ts`     | How far under its place a piece stands as the walkway assembles           |
+| `packages/genshin-world/src/services/login/walkway/getLoginWalkwaySink.ts`      | How far under its place a piece stands as the walkway assembles           |
 | `packages/genshin-world/src/services/login/door/createLoginDoorGeometry.ts`     | The door's frame and its panel, each its fitted face extruded             |
 | `packages/genshin-world/src/data/login`                                         | Every fitted part                                                         |
 

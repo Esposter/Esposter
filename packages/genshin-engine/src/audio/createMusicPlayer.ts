@@ -63,7 +63,9 @@ export const createMusicPlayer = (
       segmentOutputs = new Map();
       scheduledUntil = 0;
       schedule();
-      timer = setInterval(schedule, MUSIC_SCHEDULE_INTERVAL_MS);
+      timer = setInterval(() => {
+        schedule();
+      }, MUSIC_SCHEDULE_INTERVAL_MS);
     },
     stop: () => {
       clearInterval(timer);

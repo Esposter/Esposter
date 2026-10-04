@@ -16,6 +16,10 @@ const exitQuietly = (reason: unknown) => {
 };
 
 export const registerQuietExit = (): void => {
-  process.on("uncaughtException", exitQuietly);
-  process.on("unhandledRejection", exitQuietly);
+  process.on("uncaughtException", (error) => {
+    exitQuietly(error);
+  });
+  process.on("unhandledRejection", (reason) => {
+    exitQuietly(reason);
+  });
 };

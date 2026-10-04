@@ -50,10 +50,10 @@
 | `.github` — workflows, composite actions                                                                       | 2026-09-25 · Opus 5.5 | the densest rationale prose outside `apps/web`; `github-actions` for what a step's comment may keep |
 | `packages/genshin-persona`                                                                                     | 2026-09-25 · Opus 5.5 | the data package's load cost, stated once at `readGenshinDb`                                        |
 | `packages/agent-console-server`                                                                                | 2026-09-25 · Opus 5.5 |                                                                                                     |
-| `packages/genshin-engine`                                                                                      | —                     |                                                                                                     |
-| `packages/genshin-world`, `packages/genshin-interface`, `packages/genshin-text`                                | —                     |                                                                                                     |
-| `packages/genshin-mods`, `packages/follow-ups`                                                                 | —                     |                                                                                                     |
-| `packages/pitch-transcription`, `packages/trpc-msw`, `packages/trpc-nuxt-module`                               | —                     |                                                                                                     |
+| `packages/genshin-engine`                                                                                      | 2026-10-05 · Opus 5.5 |                                                                                                     |
+| `packages/genshin-world`, `packages/genshin-interface`, `packages/genshin-text`                                | 2026-10-05 · Opus 5.5 |                                                                                                     |
+| `packages/genshin-mods`, `packages/follow-ups`                                                                 | 2026-10-05 · Opus 5.5 |                                                                                                     |
+| `packages/pitch-transcription`, `packages/trpc-msw`, `packages/trpc-nuxt-module`                               | 2026-10-05 · Opus 5.5 |                                                                                                     |
 | `scripts/src/services/genshinParity`, `scripts/src/services/genshinAssets`, `scripts/src/services/genshinText` | —                     |                                                                                                     |
 
 Greps, per unit:

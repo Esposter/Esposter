@@ -13,6 +13,15 @@ describe(toSceneColor, () => {
     expect(b).toBeCloseTo(0.54);
   });
 
+  test("writes into the colour given, which may be the measured colour itself", () => {
+    expect.hasAssertions();
+
+    const color = new Color(0.3, 0.4, 0.5);
+
+    expect(toSceneColor(color, color)).toBe(color);
+    expect(color.r).toBeCloseTo(0.34);
+  });
+
   test("lifts a bright colour past what the compression holds back", () => {
     expect.hasAssertions();
 

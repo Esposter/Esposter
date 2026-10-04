@@ -7,11 +7,11 @@ import { GameLanguage } from "genshin-text";
 // What a key is usually after
 export const findGameText = (pattern: string): string[] => {
   const regex = new RegExp(pattern, "u");
-  const manualIdsByHash = Map.groupBy(readManualTextMap(), ([, hash]) => hash);
+  const hashManualEntriesMap = Map.groupBy(readManualTextMap(), ([, hash]) => hash);
   const matches = [...readTextMap(GameLanguage.English)]
     .filter(([, text]) => regex.test(text))
     .map(([hash, text]) => {
-      const ids = (manualIdsByHash.get(hash) ?? []).map(([id]) => id);
+      const ids = (hashManualEntriesMap.get(hash) ?? []).map(([id]) => id);
       return { id: ids.join(", ") || hash, isNamed: ids.length > 0, text };
     });
   return matches

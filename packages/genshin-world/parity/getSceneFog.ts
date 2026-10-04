@@ -4,7 +4,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // What a scene's haze is drawn with, its uniforms' values as the scene sets them, so a tool solving its colours and its
 // Density reads the rest as the scene holds them
-export const readSceneFog = (
+export const getSceneFog = (
   context: SceneContext | undefined,
 ): {
   baseHeight: number;

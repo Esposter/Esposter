@@ -4,11 +4,10 @@ import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
 import { readPackageScripts } from "#src/services/cli/run/readPackageScripts";
 import { takeOne } from "@esposter/shared";
 
-// The sandbox prints `bwrap: execvp <cmd>: No such file or directory` and node's ENOENT surfaces as
-// `spawn <cmd> ENOENT`
-// When the intended executable is missing from PATH — both are the same user error: a package script (or a typo)
-// Was passed where virrun expects a real executable, so the sandbox-setup message misleads. When the missing token
-// Is a package.json script in `cwd`, point at the `virrun -- pnpm <script>` form that actually resolves.
+// The sandbox prints `bwrap: execvp <cmd>: No such file or directory` and node's ENOENT surfaces as `spawn <cmd>
+// ENOENT` when the intended executable is missing from PATH — both are the same user error: a package script (or a
+// Typo) was passed where virrun expects a real executable, so the sandbox-setup message misleads. When the missing
+// Token is a package.json script in `cwd`, point at the `virrun -- pnpm <script>` form that actually resolves.
 const COMMAND_NOT_FOUND_REGEX =
   /(?:execvp (?<execvpCommand>\S+): No such file or directory|spawn (?<spawnCommand>\S+) ENOENT)/u;
 export const getCommandNotFoundHint = (

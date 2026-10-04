@@ -27,7 +27,13 @@ const litInset = computed(() => `inset(0 ${(1 - Math.min(Math.max(progress, 0), 
 const isFadedIn = ref(false);
 const isComplete = computed(() => isFadedIn.value && progress >= 1);
 const { start } = useTimeoutFn(() => emit("finish"), MARKS_FADE_MS + WHITE_HOLD_MS, { immediate: false });
-whenever(isComplete, start, { immediate: true, once: true });
+whenever(
+  isComplete,
+  () => {
+    start();
+  },
+  { immediate: true, once: true },
+);
 </script>
 
 <template>

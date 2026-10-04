@@ -67,8 +67,12 @@ export const useGenshinTuning = ({
     windFolder.add(windUniforms.gustSpeed, "value", 0, 30, 0.1).name("gust speed");
 
     const rampFolder = parameters.addFolder("Ramp");
-    rampFolder.add(ramp, "terminator", 0, 1, 0.01).onChange(writeRamp);
-    rampFolder.add(ramp, "softness", 0.01, 0.5, 0.01).onChange(writeRamp);
+    rampFolder.add(ramp, "terminator", 0, 1, 0.01).onChange(() => {
+      writeRamp();
+    });
+    rampFolder.add(ramp, "softness", 0.01, 0.5, 0.01).onChange(() => {
+      writeRamp();
+    });
 
     const rimFolder = parameters.addFolder("Rim");
     rimFolder.add(lightUniforms.rimStrength, "value", 0, 2, 0.01).name("strength");
@@ -98,17 +102,25 @@ export const useGenshinTuning = ({
 
     const gradeFolder = parameters.addFolder("Grade");
     gradeFolder.add(postUniforms.gradeIntensity, "value", 0, 1, 0.01).name("intensity");
-    gradeFolder.add(grade, "contrast", 0.5, 1.5, 0.01).onChange(writeGrade);
-    gradeFolder.add(grade, "saturation", 0, 2, 0.01).onChange(writeGrade);
+    gradeFolder.add(grade, "contrast", 0.5, 1.5, 0.01).onChange(() => {
+      writeGrade();
+    });
+    gradeFolder.add(grade, "saturation", 0, 2, 0.01).onChange(() => {
+      writeGrade();
+    });
     for (const { key, name } of TINT_CHANNELS) {
       gradeFolder
         .add(grade.shadowTint, key, -TINT_RANGE, TINT_RANGE, 0.001)
         .name(`shadow ${name}`)
-        .onChange(writeGrade);
+        .onChange(() => {
+          writeGrade();
+        });
       gradeFolder
         .add(grade.highlightTint, key, -TINT_RANGE, TINT_RANGE, 0.001)
         .name(`highlight ${name}`)
-        .onChange(writeGrade);
+        .onChange(() => {
+          writeGrade();
+        });
     }
 
     const { bloomNode, godraysNode } = pipeline;

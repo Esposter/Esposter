@@ -29,7 +29,11 @@ export const measureRoster = async (language: VoiceLanguage, names: string[], is
   const embed = await createSpeakerEmbedder();
   const decoder = await createClipDecoder();
   const runtime = readVoiceRuntime(import.meta.url);
-  const synthesizer = await createVoiceSynthesizer(runtime, MODELS_DIRECTORY, { onFallback: console.info });
+  const synthesizer = await createVoiceSynthesizer(runtime, MODELS_DIRECTORY, {
+    onFallback: (message) => {
+      console.info(message);
+    },
+  });
   console.info(`engine on ${synthesizer.device}`);
   const roster = names.length > 0 ? wholeRoster.filter(({ name }) => names.includes(name)) : wholeRoster;
   const references = new Map<string, PersonaReference>(names.length > 0 ? Object.entries(PersonaReferenceMap) : []);

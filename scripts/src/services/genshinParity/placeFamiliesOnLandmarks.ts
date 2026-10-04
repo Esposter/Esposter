@@ -56,7 +56,7 @@ export const placeFamiliesOnLandmarks = async (
     async () => {
       await setPageWitnessView(page, {});
       return page.evaluate(
-        (landmarks) => (Reflect.get(window, "readWitnessPoints") as (landmarks: unknown) => Vector[])(landmarks),
+        (landmarks) => (Reflect.get(window, "computeWitnessPoints") as (landmarks: unknown) => Vector[])(landmarks),
         definitions,
       );
     },

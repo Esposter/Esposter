@@ -33,7 +33,7 @@ export const labelWitnessParts = async (
       await setPageWitnessView(page, { camera });
       const parts = (
         await page.evaluate(
-          (familyName) => (Reflect.get(window, "readWitnessParts") as (family: string) => WitnessPart[])(familyName),
+          (familyName) => (Reflect.get(window, "computeWitnessParts") as (family: string) => WitnessPart[])(familyName),
           family,
         )
       ).map((part) =>

@@ -24,12 +24,13 @@ export const rankCommand: SubCommandsDef[string] = defineCommand({
     console.log(`frame FLIP ${frame.toFixed(4)}, each term's ceiling the most of it that term could recover:`);
     for (const { ceiling, name, share } of terms)
       console.log(`${ceiling.toFixed(4)}  ${name} (${(share * 100).toFixed(1)}% of the frame)`);
-    // A recording hides what a stand-in lacks, so each is ranked again against the game's own exports drawn beside it
     const standIns = await readStandInGains(args.reference, parseDerivedAssetComponent(args.witness));
-    console.log("each stand-in against the game's own exports at the same camera, moment and light, ceiling first:");
-    for (const { ceiling, mean, name, share, similarity } of standIns)
+    console.log(
+      "each stand-in's gap from the game's own exports drawn beside it, which picks its representation once the table above ranks it and orders nothing:",
+    );
+    for (const { gap, mean, name, share, similarity } of standIns)
       console.log(
-        `${ceiling.toFixed(4)}  ${name}: FLIP ${mean.toFixed(4)}, similarity ${similarity.toFixed(4)} over ${(share * 100).toFixed(1)}% of the frame`,
+        `${gap.toFixed(4)}  ${name}: FLIP ${mean.toFixed(4)}, similarity ${similarity.toFixed(4)} over ${(share * 100).toFixed(1)}% of the frame`,
       );
   },
 });

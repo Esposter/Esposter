@@ -1,7 +1,7 @@
 import type { ParityScore } from "#src/models/genshinParity/ParityScore";
 import type { SubCommandsDef } from "citty";
 
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { compareScreen } from "#src/services/genshinParity/compareScreen";
 import { ParityReferenceMap } from "#src/services/genshinParity/ParityReferenceMap";
 import { writeParityScores } from "#src/services/genshinParity/writeParityScores";
@@ -13,7 +13,8 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
     reference: { description: "A reference's id in ParityReferenceMap", required: false, type: "positional" },
     witness: {
       description: "A component whose exports the scene draws in place of its own parts; scored apart from the report",
-      type: "string",
+      options: Object.values(DerivedAssetComponent),
+      type: "enum",
     },
   },
   meta: {
@@ -28,10 +29,7 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
     for (const referenceId of referenceIds) {
       if (args.all) console.log(`== ${referenceId}`);
       // oxlint-disable-next-line no-await-in-loop -- the parity page shoots one screen at a time
-      scores[referenceId] = await compareScreen(
-        referenceId,
-        args.witness ? parseDerivedAssetComponent(args.witness) : undefined,
-      );
+      scores[referenceId] = await compareScreen(referenceId, args.witness);
     }
     // A witness's scores price the exports, not the scene, so the committed report keeps the scene's own
     if (!args.witness) await writeParityScores(scores);

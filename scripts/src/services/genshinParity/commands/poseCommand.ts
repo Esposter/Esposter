@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
 import { solveReferencePose } from "#src/services/genshinParity/solveReferencePose";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
@@ -33,7 +33,8 @@ export const poseCommand: SubCommandsDef[string] = defineCommand({
     witness: {
       description: "The component whose landmarks and exports the witness draws",
       required: true,
-      type: "string",
+      options: Object.values(DerivedAssetComponent),
+      type: "enum",
     },
   },
   meta: {
@@ -42,23 +43,19 @@ export const poseCommand: SubCommandsDef[string] = defineCommand({
     name: "pose",
   },
   run: async ({ args }) => {
-    const { errors, imagePath, pose, refinement, rms } = await solveReferencePose(
-      args.reference,
-      parseDerivedAssetComponent(args.witness),
-      {
-        families: args.families?.split(","),
-        heldAxes: args.hold?.split(",").map((axis) => {
-          const index = axes.indexOf(axis);
-          if (index === -1)
-            throw new InvalidOperationError(Operation.Read, axis, `not an axis: ${CAMERA_POSE_AXES.join(", ")}`);
-          return index;
-        }),
-        landmarkNames: args.landmarks?.split(","),
-        refineIterations: args.refine ? Number(args.refine) : 0,
-        start: args.start ? parseNumbers(args.start, "start", CAMERA_POSE_AXES.length) : undefined,
-        topRow: Number(args["top-row"] ?? 0),
-      },
-    );
+    const { errors, imagePath, pose, refinement, rms } = await solveReferencePose(args.reference, args.witness, {
+      families: args.families?.split(","),
+      heldAxes: args.hold?.split(",").map((axis) => {
+        const index = axes.indexOf(axis);
+        if (index === -1)
+          throw new InvalidOperationError(Operation.Read, axis, `not an axis: ${CAMERA_POSE_AXES.join(", ")}`);
+        return index;
+      }),
+      landmarkNames: args.landmarks?.split(","),
+      refineIterations: args.refine ? Number(args.refine) : 0,
+      start: args.start ? parseNumbers(args.start, "start", CAMERA_POSE_AXES.length) : undefined,
+      topRow: Number(args["top-row"] ?? 0),
+    });
     for (const [name, error] of Object.entries(errors)) console.log(`${name}: ${error.toFixed(2)} px`);
     console.log(`reprojection ${rms.toFixed(2)} px root mean square`);
     if (refinement)

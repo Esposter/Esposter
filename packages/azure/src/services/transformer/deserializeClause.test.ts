@@ -56,6 +56,14 @@ describe(deserializeClause, () => {
     ).toStrictEqual({ key: CompositeKeyPropertyNames.partitionKey, not: false, operator: BinaryOperator.Eq, value });
   });
 
+  test("reads an operator written in upper case as the operator it names", () => {
+    expect.hasAssertions();
+
+    expect(
+      deserializeClause(`${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.Eq.toUpperCase()} 0`),
+    ).toStrictEqual({ key: CompositeKeyPropertyNames.partitionKey, not: false, operator: BinaryOperator.Eq, value: 0 });
+  });
+
   test("deserializes numeric literal", () => {
     expect.hasAssertions();
 

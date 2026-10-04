@@ -5,17 +5,17 @@ import type { SceneWitness } from "#src/models/scene/SceneWitness";
 
 import "@fontsource/signika/600.css";
 import { benchScene } from "#parity/benchScene";
-import { readSceneFog } from "#parity/readSceneFog";
-import { readSceneSky } from "#parity/readSceneSky";
+import { getSceneFog } from "#parity/getSceneFog";
+import { getSceneSky } from "#parity/getSceneSky";
 import { renderMusic } from "#parity/renderMusic";
 import { screens } from "#parity/screens";
 import { setSceneCloudColors } from "#parity/setSceneCloudColors";
 import { setSceneCloudCover } from "#parity/setSceneCloudCover";
 import { setSceneCloudHeights } from "#parity/setSceneCloudHeights";
 import { setSceneLights } from "#parity/setSceneLights";
+import { computeWitnessParts } from "#parity/witness/computeWitnessParts";
+import { computeWitnessPoints } from "#parity/witness/computeWitnessPoints";
 import { loadWitness } from "#parity/witness/loadWitness";
-import { readWitnessParts } from "#parity/witness/readWitnessParts";
-import { readWitnessPoints } from "#parity/witness/readWitnessPoints";
 import { renderWitnessTargets } from "#parity/witness/renderWitnessTargets";
 import { setWitnessView } from "#parity/witness/setWitnessView";
 import { SceneContextKey } from "#src/services/scene/SceneContextKey";
@@ -81,8 +81,8 @@ if (screen && root) {
   }).mount(root);
   Reflect.set(window, "setScreenProps", (screenProps: Record<string, unknown>) => Object.assign(props, screenProps));
   Reflect.set(window, "benchScene", (frameCount: number) => benchScene(sceneContext.value, frameCount));
-  Reflect.set(window, "readSceneSky", () => readSceneSky(sceneContext.value));
-  Reflect.set(window, "readSceneFog", () => readSceneFog(sceneContext.value));
+  Reflect.set(window, "getSceneSky", () => getSceneSky(sceneContext.value));
+  Reflect.set(window, "getSceneFog", () => getSceneFog(sceneContext.value));
   Reflect.set(window, "renderMusic", renderMusic);
   Reflect.set(window, "setSceneCloudColors", (colors?: Parameters<typeof setSceneCloudColors>[1]) => {
     setSceneCloudColors(sceneContext.value, colors);
@@ -104,10 +104,12 @@ if (screen && root) {
       renderWitnessTargets(witness, sceneContext.value, targets),
     );
     // Each part of a family with where it lands on the screen, which a reference's landmarks are matched to
-    Reflect.set(window, "readWitnessParts", (family: string) => readWitnessParts(witness, sceneContext.value, family));
+    Reflect.set(window, "computeWitnessParts", (family: string) =>
+      computeWitnessParts(witness, sceneContext.value, family),
+    );
     // Its landmarks' places in the world, which a pose is solved from
-    Reflect.set(window, "readWitnessPoints", (landmarks: Parameters<typeof readWitnessPoints>[1]) =>
-      readWitnessPoints(witness, landmarks),
+    Reflect.set(window, "computeWitnessPoints", (landmarks: Parameters<typeof computeWitnessPoints>[1]) =>
+      computeWitnessPoints(witness, landmarks),
     );
     // The families the witness draws, which the ranking hands back to the scene
     window.document.body.dataset.witnessFamilies = witness.families.value.join(",");

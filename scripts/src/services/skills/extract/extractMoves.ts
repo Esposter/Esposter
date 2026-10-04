@@ -3,7 +3,8 @@ import type { ExtractSpec } from "#src/models/skills/extract/ExtractSpec";
 import { ExtractMoveType } from "#src/models/skills/extract/ExtractMoveType";
 import { getHeadingLevels } from "#src/services/skills/extract/getHeadingLevels";
 import { getMarkdownBlockRange } from "#src/services/skills/extract/getMarkdownBlockRange";
-import { collapseBlankLinesAt, toText } from "#src/services/skills/extract/indexPages";
+import { toText } from "#src/services/skills/extract/toText";
+import { collapseBlankLinesAt } from "#src/services/skills/extract/collapseBlankLinesAt";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
 const READ_OPENING = "Read ";

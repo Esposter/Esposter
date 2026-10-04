@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
 import { labelWitnessParts } from "#src/services/genshinParity/labelWitnessParts";
 import { toPageCamera } from "#src/services/genshinParity/toPageCamera";
@@ -11,7 +11,12 @@ export const partsCommand: SubCommandsDef[string] = defineCommand({
   args: {
     reference: { description: "A reference's id in ParityReferenceMap", required: true, type: "positional" },
     family: { description: "The family whose parts to number", required: true, type: "string" },
-    witness: { description: "The component whose exports the witness draws", required: true, type: "string" },
+    witness: {
+      description: "The component whose exports the witness draws",
+      required: true,
+      options: Object.values(DerivedAssetComponent),
+      type: "enum",
+    },
     pose: {
       description: `A pose in place of the reference's, as ${CAMERA_POSE_AXES.join(",")} (metres, then degrees)`,
       type: "string",
@@ -25,7 +30,7 @@ export const partsCommand: SubCommandsDef[string] = defineCommand({
   run: async ({ args }) => {
     const { imagePath, parts } = await labelWitnessParts(
       args.reference,
-      parseDerivedAssetComponent(args.witness),
+      args.witness,
       args.family,
       args.pose ? toPageCamera(parseNumbers(args.pose, "pose", CAMERA_POSE_AXES.length)) : undefined,
     );

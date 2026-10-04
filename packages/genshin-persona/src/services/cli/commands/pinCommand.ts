@@ -1,9 +1,9 @@
 import type { SubCommandsDef } from "citty";
 
 import { GenshinVerb } from "#src/models/GenshinVerb";
+import { findNamedCharacter } from "#src/services/cli/findNamedCharacter";
 import { printCard } from "#src/services/cli/printCard";
 import { readGenshinContext } from "#src/services/cli/readGenshinContext";
-import { readNamedCharacter } from "#src/services/cli/readNamedCharacter";
 import { switchSessionCharacter } from "#src/services/cli/switchSessionCharacter";
 import { writePin } from "#src/services/writePin";
 import { defineCommand } from "citty";
@@ -14,7 +14,7 @@ export const pinCommand: SubCommandsDef[string] = defineCommand({
     const context = await readGenshinContext();
     const { sessionId, strings } = context;
     const name = args._.join(" ");
-    const pinnedCharacter = readNamedCharacter(context, name);
+    const pinnedCharacter = findNamedCharacter(context, name);
     if (!pinnedCharacter) return;
 
     writePin(pinnedCharacter);

@@ -4,7 +4,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // What a sky's colours are solved under, as the scene draws it: its camera's world matrix and inverse projection, so
 // Each pixel is a ray, and the sun's and the moon's directions its sky is drawn with
-export const readSceneSky = (
+export const getSceneSky = (
   context: SceneContext | undefined,
 ): {
   matrixWorld: number[];

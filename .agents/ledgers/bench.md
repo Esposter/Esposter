@@ -27,8 +27,8 @@ the two ways a bench quietly stops measuring what it names.
 | `packages/keyframe-store`                                   | 2026-09-25 · Opus 5.5 | one `test.for` per document size; every write task copies the seeded backend      |
 | `packages/virrun`                                           | 2026-09-25 · Opus 5.5 | two of the three are switched off — read the gate before judging the bench        |
 | `scripts`                                                   | 2026-09-25 · Opus 5.5 | `buildPackages` is switched off and deletes each `dist`, so it also skips on `CI` |
-| `packages/genshin-engine`                                   | —                     |                                                                                   |
-| `packages/pitch-transcription`, `packages/trpc-nuxt-module` | —                     |                                                                                   |
+| `packages/genshin-engine`                                   | 2026-10-05 · Opus 5.5 |                                                                                   |
+| `packages/pitch-transcription`, `packages/trpc-nuxt-module` | 2026-10-05 · Opus 5.5 |                                                                                   |
 
 ## Find recipe
 

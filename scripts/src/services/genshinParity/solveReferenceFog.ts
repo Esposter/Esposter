@@ -74,9 +74,9 @@ export const solveReferenceFog = async (
       } = await readWitnessTargets(page, [WitnessTargetName.Depth, WitnessTargetName.Part]);
       const sky = await readPage<{ matrixWorld: number[]; projectionMatrixInverse: number[]; sunDirection: Vector }>(
         page,
-        "readSceneSky",
+        "getSceneSky",
       );
-      const fog = await readPage<SceneFog>(page, "readSceneFog");
+      const fog = await readPage<SceneFog>(page, "getSceneFog");
       await setPageWitnessView(page, { isAlone: true });
       const litShot = await sharp(await page.screenshot())
         .resize(width, height, { fit: "fill" })

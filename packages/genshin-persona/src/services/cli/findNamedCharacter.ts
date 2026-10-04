@@ -5,7 +5,7 @@ import { findCharacterByName } from "#src/services/findCharacterByName";
 
 // The character a verb names by its argument, or nothing once the argument names none — which every such verb answers
 // The same way, so the refusal and its exit code are said here rather than at each
-export const readNamedCharacter = ({ roster, strings }: GenshinContext, name: string): Character | undefined => {
+export const findNamedCharacter = ({ roster, strings }: GenshinContext, name: string): Character | undefined => {
   const character = findCharacterByName(roster, name);
   if (!character) {
     console.error(strings.noCharacterNamed(name));

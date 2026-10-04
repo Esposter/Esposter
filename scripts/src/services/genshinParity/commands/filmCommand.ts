@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { filmScreen } from "#src/services/genshinParity/filmScreen";
 import { jsonDateParse } from "@esposter/shared";
 import { defineCommand } from "citty";
@@ -21,7 +21,11 @@ export const filmCommand: SubCommandsDef[string] = defineCommand({
     height: { default: "540", description: "Height to draw it at, in pixels", type: "string" },
     props: { description: "Props over the fixture's from the start, as JSON", type: "string" },
     width: { default: "960", description: "Width to draw it at, in pixels", type: "string" },
-    witness: { description: "A component whose exports are drawn in place of the scene's own parts", type: "string" },
+    witness: {
+      description: "A component whose exports are drawn in place of the scene's own parts",
+      options: Object.values(DerivedAssetComponent),
+      type: "enum",
+    },
   },
   meta: {
     description: "A screen's motion on a faked clock, as stills at exact moments and a contact sheet",
@@ -38,7 +42,7 @@ export const filmCommand: SubCommandsDef[string] = defineCommand({
       screen: args.screen,
       stepMs: 1000 / Number(args.fps),
       width: Number(args.width),
-      witness: args.witness ? parseDerivedAssetComponent(args.witness) : undefined,
+      witness: args.witness,
     });
   },
 });

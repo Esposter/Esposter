@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
 import { placeFamilies } from "#src/services/genshinParity/placeFamilies";
 import { PLACE_AXES, placeFamiliesOnLandmarks } from "#src/services/genshinParity/placeFamiliesOnLandmarks";
@@ -47,7 +47,12 @@ export const placeCommand: SubCommandsDef[string] = defineCommand({
         "Landmarks on the row instead of its edges, comma-separated, fitted through --pose with a turn as well",
       type: "string",
     },
-    witness: { description: "The component whose exports the witness draws", required: true, type: "string" },
+    witness: {
+      description: "The component whose exports the witness draws",
+      required: true,
+      options: Object.values(DerivedAssetComponent),
+      type: "enum",
+    },
     iterations: { default: "60", description: "The simplex's steps", type: "string" },
     scan: {
       description:
@@ -80,7 +85,7 @@ export const placeCommand: SubCommandsDef[string] = defineCommand({
       if (!args.pose) throw new InvalidOperationError(Operation.Read, "pose", "a landmark placement needs the camera");
       const { errors, laidOutErrors, offset, rms, turn } = await placeFamiliesOnLandmarks(
         args.reference,
-        parseDerivedAssetComponent(args.witness),
+        args.witness,
         {
           axes: toAxes(args.axes),
           landmarkNames: args.landmarks.split(","),
@@ -96,7 +101,7 @@ export const placeCommand: SubCommandsDef[string] = defineCommand({
       return;
     }
     if (!args.families) throw new InvalidOperationError(Operation.Read, "families", "none given to place on edges");
-    const { after, before, offset } = await placeFamilies(args.reference, parseDerivedAssetComponent(args.witness), {
+    const { after, before, offset } = await placeFamilies(args.reference, args.witness, {
       camera: args.pose ? toPageCamera(parseNumbers(args.pose, "pose", CAMERA_POSE_AXES.length)) : undefined,
       families: args.families.split(","),
       iterationCount: Number(args.iterations),
