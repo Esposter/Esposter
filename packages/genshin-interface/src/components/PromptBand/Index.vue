@@ -1,7 +1,7 @@
 <template>
-  <!-- The band a prompt is set in across the foot of a screen: a navy glass strip 44 units high, fading in over its -->
-  <!-- Ends, its words centred in a light grey. Its glass and fade are solved from the scene the English recording -->
-  <!-- Shows through it at the door -->
+  <!-- The band a prompt is set in across the foot of a screen: a navy glass strip 44 units high, fading in over its
+       Ends, its words centred in a light grey. Its glass and fade are solved from the scene the English recording
+       Shows through it at the door -->
   <div class="prompt-band">
     <p class="text"><slot /></p>
   </div>

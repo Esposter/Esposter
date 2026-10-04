@@ -10,8 +10,8 @@ const { name } = defineProps<Props>();
 </script>
 
 <template>
-  <!-- The bar naming the chosen server, 456 by 75 units: a dark glass slab with a faint rim, the ticked diamond at its -->
-  <!-- Left and the server's name at its middle, measured from the English client's login screen at 1080 high -->
+  <!-- The bar naming the chosen server, 456 by 75 units: a dark glass slab with a faint rim, the ticked diamond at its
+       Left and the server's name at its middle, measured from the English client's login screen at 1080 high -->
   <div class="server-bar">
     <svg class="mark" viewBox="0 0 46 46" aria-hidden="true">
       <path class="diamond" :d="SERVER_MARK_DIAMOND_PATH" />

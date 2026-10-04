@@ -27,8 +27,8 @@ const moveFocus = (event: KeyboardEvent) => {
 </script>
 
 <template>
-  <!-- What leaves the world or the host, opened by Escape and by the bar's pause mark alike, so a touch reaches the -->
-  <!-- Same list the keys do. It is on cream, as the game's own menu is over its world -->
+  <!-- What leaves the world or the host, opened by Escape and by the bar's pause mark alike, so a touch reaches the
+       Same list the keys do. It is on cream, as the game's own menu is over its world -->
   <UiThemeScope :theme="ThemeMode.Light">
     <UiDialog
       v-model="isPauseMenuOpen"

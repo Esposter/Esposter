@@ -14,8 +14,8 @@ const { icon, label } = defineProps<Props>();
 </script>
 
 <template>
-  <!-- The game's round button: a white disc 52 units across under a soft dark rim, its glyph in the game's near black -->
-  <!-- Centred on its ink, as the game centres each icon's sprite -->
+  <!-- The game's round button: a white disc 52 units across under a soft dark rim, its glyph in the game's near black
+       Centred on its ink, as the game centres each icon's sprite -->
   <button class="round-button" :aria-label="label" type="button">
     <svg
       class="glyph"

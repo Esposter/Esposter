@@ -8,8 +8,8 @@ const { label } = defineProps<Props>();
 </script>
 
 <template>
-  <!-- The game's wait mark: a dark glass square 120 units across with rounded corners, and in it a white ring 40 units -->
-  <!-- Across that fades out from its round head round to its tail, turning. Measured from a 1440 high recording -->
+  <!-- The game's wait mark: a dark glass square 120 units across with rounded corners, and in it a white ring 40 units
+       Across that fades out from its round head round to its tail, turning. Measured from a 1440 high recording -->
   <div class="loading-spinner" role="status" :aria-label="label"><span class="ring" /></div>
 </template>
 

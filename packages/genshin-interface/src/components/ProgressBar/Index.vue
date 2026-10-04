@@ -10,10 +10,10 @@ const { isFolded, progress } = defineProps<Props>();
 </script>
 
 <template>
-  <!-- The game's progress bar, 394 units from diamond to diamond: a dark track 10 units high with pointed ends between -->
-  <!-- Two small white diamonds, filled white from its left, measured from the English client's login screen. It opens -->
-  <!-- Out of its middle over 250 ms as it mounts and folds back into it, so its diamonds meet as one: the English -->
-  <!-- Recording's login screen at 60 frames -->
+  <!-- The game's progress bar, 394 units from diamond to diamond: a dark track 10 units high with pointed ends between
+       Two small white diamonds, filled white from its left, measured from the English client's login screen. It opens
+       Out of its middle over 250 ms as it mounts and folds back into it, so its diamonds meet as one: the English
+       Recording's login screen at 60 frames -->
   <div
     :class="['progress-bar', { folded: isFolded }]"
     role="progressbar"
