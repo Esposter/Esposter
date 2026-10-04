@@ -1,13 +1,9 @@
 import type { Card } from "#src/models/Card";
 import type { SessionStartOutput } from "#src/models/SessionStartOutput";
 
-import {
-  CHARACTER_LINE_PREFIX,
-  DEFAULT_LANGUAGE,
-  NAMEPLATE_PREFIX,
-  REPLY_LANGUAGE_INSTRUCTION,
-} from "#src/services/constants";
+import { CHARACTER_LINE_PREFIX, DEFAULT_LANGUAGE, NAMEPLATE_PREFIX } from "#src/services/constants";
 import { formatCard } from "#src/services/formatCard";
+import { getReplyLanguageInstruction } from "#src/services/getReplyLanguageInstruction";
 
 // The whole card is context for the model; the person sees the nameplate, the note, the plugin's remarks and the
 // Greeting in their own language when the card has one, so the welcome is in voice and costs no tokens twice. The
@@ -24,7 +20,7 @@ export const getSessionStartOutput = (
   interfaceLanguage: string,
 ): string => {
   const isEnglishThroughout = replyLanguage === DEFAULT_LANGUAGE && interfaceLanguage === DEFAULT_LANGUAGE;
-  const instruction = isEnglishThroughout ? "" : REPLY_LANGUAGE_INSTRUCTION(replyLanguage);
+  const instruction = isEnglishThroughout ? "" : getReplyLanguageInstruction(replyLanguage);
   const output: SessionStartOutput = {
     hookSpecificOutput: {
       additionalContext: [formatCard(card), instruction, `${CHARACTER_LINE_PREFIX}${card.name}`]

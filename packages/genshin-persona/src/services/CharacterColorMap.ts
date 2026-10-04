@@ -1,8 +1,8 @@
 // The colour per character, keyed by the English name: the one colour the official art hangs on them — a hair, a
 // Coat, a signature accent — read off the card art, and lightened only as far as a dark terminal needs, so a row is
-// The art's colour whatever its lightness. The element's colour stands in for a character with no row yet, so a new patch is a dependency bump and a row here
-// Rather than a plain nameplate. The game publishes no colour per character; these are reads of the art, so the
-// Spread is the whole spectrum rather than seven bands
+// The art's colour whatever its lightness. The element's colour stands in for a character with no row yet, so a new
+// Patch is a dependency bump and a row here rather than a plain nameplate. The game publishes no colour per
+// Character; these are reads of the art, so the spread is the whole spectrum rather than seven bands
 export const CharacterColorMap: Record<string, string> = {
   Aether: "#e8c874",
   Aino: "#b8d24a",

@@ -1,7 +1,7 @@
 import type { Character } from "#src/models/Character";
 import type { LorePick } from "#src/models/LorePick";
 
-import { LORE_PICK_TIMEOUT_MS, LORE_PICK_UNKNOWN_NAME } from "#src/services/constants";
+import { LORE_PICK_TIMEOUT_MS } from "#src/services/constants";
 import { drawLoreChoice } from "#src/services/drawLoreChoice";
 import { findCharacterByName } from "#src/services/findCharacterByName";
 import { getLorePickRequest } from "#src/services/getLorePickRequest";
@@ -13,7 +13,8 @@ import { TypeSafeClient } from "@typesafe-ai/sdk";
 // Tier has the birthday pick to fall back on, and a settled promise is how a rejection is read without a try. The
 // Reason rides back with the fallback, because a hook's stderr reaches nobody and the welcome does. The choice is a
 // Preference, so it is drawn from the tier's odds (`drawLoreChoice`) and the answer carries the drawn name as its
-// Choice: a confidence floor guards an action, and nothing here acts
+// Choice: a confidence floor guards an action, and nothing here acts. A name the roster does not hold is the one
+// Failure the code finds, and its reason is in the tier's own English, beside the errors its SDK throws
 export const pickCharacterByLore = async (
   roster: Character[],
   today: Temporal.PlainDate,
@@ -31,5 +32,5 @@ export const pickCharacterByLore = async (
   const character = findCharacterByName(roster, choice);
   return character
     ? { character, response: { ...answers.character, choice } }
-    : { failure: LORE_PICK_UNKNOWN_NAME(choice) };
+    : { failure: `answered ${choice}, whom the roster does not hold` };
 };

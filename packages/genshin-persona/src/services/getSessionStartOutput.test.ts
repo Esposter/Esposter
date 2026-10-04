@@ -6,8 +6,8 @@ import {
   CONTEXT_HEADLINE_PREFIX,
   DEFAULT_LANGUAGE,
   NAMEPLATE_PREFIX,
-  REPLY_LANGUAGE_INSTRUCTION,
 } from "#src/services/constants";
+import { getReplyLanguageInstruction } from "#src/services/getReplyLanguageInstruction";
 import { getSessionStartOutput } from "#src/services/getSessionStartOutput";
 import { parseJsonObject } from "#src/services/parseJsonObject";
 import { describe, expect, test } from "vitest";
@@ -96,7 +96,7 @@ ${greeting}`,
     const { hookSpecificOutput } = parseJsonObject(getSessionStartOutput(card, [], replyLanguage, interfaceLanguage));
 
     expect(hookSpecificOutput).toStrictEqual({
-      additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${REPLY_LANGUAGE_INSTRUCTION(replyLanguage)}\n${characterLine}`,
+      additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${getReplyLanguageInstruction(replyLanguage)}\n${characterLine}`,
       hookEventName: "SessionStart",
     });
   });

@@ -15,15 +15,15 @@ const EMPHASIS_REGEX = /[*_~]{1,3}/gu;
 // Purpose: the tool flushes a reply at line breaks, so a spoken line arrives whole in one piece
 export const getSpokenLines = (markdown: string): string[] =>
   markdown
-    .replace(FENCED_CODE_REGEX, "")
+    .replaceAll(FENCED_CODE_REGEX, "")
     .split("\n")
     .map((line) =>
       collapseWhitespace(
         (SPOKEN_LINE_REGEX.exec(line)?.groups?.line ?? "")
           .replace(LIST_MARKER_REGEX, "")
-          .replace(INLINE_CODE_REGEX, "$<code>")
-          .replace(LINK_REGEX, "$<text>")
-          .replace(EMPHASIS_REGEX, ""),
+          .replaceAll(INLINE_CODE_REGEX, "$<code>")
+          .replaceAll(LINK_REGEX, "$<text>")
+          .replaceAll(EMPHASIS_REGEX, ""),
       ),
     )
     .filter((line) => checkIsReadable(line));

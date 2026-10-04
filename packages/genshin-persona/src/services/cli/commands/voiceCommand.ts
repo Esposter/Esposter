@@ -38,8 +38,8 @@ export const voiceCommand: SubCommandsDef[string] = defineCommand({
   run: async ({ args }) => {
     const context = await readGenshinContext();
     const { listFormat, strings } = context;
-    const name = args._.join(" ");
-    if (!name) {
+    const dub = args._.join(" ");
+    if (!dub) {
       const voiceLanguage = readVoiceLanguage();
       console.log(
         voiceLanguage
@@ -49,7 +49,7 @@ export const voiceCommand: SubCommandsDef[string] = defineCommand({
       return;
     }
 
-    if (!checkIsVoiceLanguage(name)) {
+    if (!checkIsVoiceLanguage(dub)) {
       console.error(strings.voiceLanguageMustBeOneOf(listFormat.format(Object.keys(VoiceLanguageNameMap))));
       process.exitCode = 1;
       return;
@@ -87,15 +87,15 @@ export const voiceCommand: SubCommandsDef[string] = defineCommand({
     // Voice — a setup that failed after it leaves the replies silent rather than broken in the hooks' silence
     const character = await getCurrentCharacter(context);
     if (!character) {
-      writeVoiceLanguage(name);
-      console.log(strings.voiceLanguageWritten(name));
+      writeVoiceLanguage(dub);
+      console.log(strings.voiceLanguageWritten(dub));
       return;
     }
 
     const personaCard = await readPersonaCard(character.name);
     if (!readCharacterReference(character.name, personaCard)) console.log(strings.noReference(character.displayName));
 
-    const warmed = await sendVoiceRequest(getWarmRequest(character.name, personaCard, name));
+    const warmed = await sendVoiceRequest(getWarmRequest(character.name, personaCard, dub));
     const [status, device] = warmed.split(VOICE_STATUS_SEPARATOR);
     if (status !== VoiceStatus.Ok) {
       console.error(strings.warmRequestUnanswered(status || "unreachable", VOICE_LOG_PATH));
@@ -103,9 +103,9 @@ export const voiceCommand: SubCommandsDef[string] = defineCommand({
       return;
     }
 
-    writeVoiceLanguage(name);
+    writeVoiceLanguage(dub);
     await sendVoiceRequest(
-      getSpeechRequest(VoiceRequestType.Speak, character.name, personaCard, name, [VOICE_PROOF_TEXT]),
+      getSpeechRequest(VoiceRequestType.Speak, character.name, personaCard, dub, [VOICE_PROOF_TEXT]),
     );
     console.log(strings.spoke(character.displayName, device ?? ""));
   },

@@ -11,14 +11,14 @@ export const volumeCommand: SubCommandsDef[string] = defineCommand({
   meta: { name: GenshinVerb.Volume },
   run: async ({ args }) => {
     const { strings } = await readGenshinContext();
-    const name = args._.join(" ");
-    if (!checkIsVolume(name)) {
+    const volume = args._.join(" ");
+    if (!checkIsVolume(volume)) {
       console.error(strings.volumeMustBeWholeNumber(MAX_VOLUME));
       process.exitCode = 1;
       return;
     }
 
-    writeVolume(name);
-    console.log(strings.volumeSet(name));
+    writeVolume(volume);
+    console.log(strings.volumeSet(volume));
   },
 });

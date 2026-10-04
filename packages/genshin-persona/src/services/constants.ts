@@ -68,10 +68,6 @@ export const NAMEPLATE_PREFIX = "✦ ";
 // The line naming the character for a program rather than a person: the agent console's Genshin theme finds it in the
 // Session-start hook's context, spelled the same on both sides, so neither parses the headline's prose
 export const CHARACTER_LINE_PREFIX = "Character: ";
-// In the session's context beside the card rather than in the output style, which is one shipped file the same for
-// Everybody; absent at English
-export const REPLY_LANGUAGE_INSTRUCTION = (language: string): string =>
-  `Write every reply in ${language}, the character's spoken lines included. This applies to prose only, and to nothing the output style already excludes from the character's voice: code, comments, commit messages, file contents, commands and error text stay as they are.`;
 export const ANSI_RESET = "\u001B[0m";
 // A "#rrggbb" triplet's channels: two hex digits each, 0 to 255
 export const HEX_RADIX = 16;
@@ -137,6 +133,7 @@ export const WIKI_FILE_REQUEST_HEADERS: Record<string, string> = {
 export const WIKI_VOICE_FILE_PREFIX = "VO_";
 export const WIKI_VOICE_FILE_EXTENSION = ".ogg";
 // The one thing the interface language says about the voice: whether a dub of it exists at all. Four of the fifteen
+// Have one
 export const VoiceLanguageNameMap: Record<VoiceLanguage, GameLanguage> = {
   [VoiceLanguage.Chinese]: GameLanguage.ChineseSimplified,
   [VoiceLanguage.English]: GameLanguage.English,
@@ -229,8 +226,6 @@ export const TYPESAFE_KEY_FALLBACK_ENVIRONMENT_VARIABLE = "TYPESAFE_API_KEY";
 export const LORE_PICK_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 8 }).total("milliseconds");
 export const LORE_PICK_INSTRUCTIONS =
   "Which character should keep the person company in today's session? Each option is described by how that character talks and carries themselves. Weigh what the date means in the game: a birthday today or within a few days, a festival or event of a region in this season, a release or story anniversary, the patch that is live. Weigh the person's moment too: the weekday, the hour and the place. Every character is a fair pick; the choice is a preference, not a rule.";
-// A reason in the tier's own English, beside the errors its SDK throws, for the one failure the code finds
-export const LORE_PICK_UNKNOWN_NAME = (name: string): string => `answered ${name}, whom the roster does not hold`;
 // The welcome's bar chart of the tier's answer: the choice and the nearest runners-up, one row each, the bar scaled to
 // The longest of them
 export const LORE_CHART_ROWS = 4;

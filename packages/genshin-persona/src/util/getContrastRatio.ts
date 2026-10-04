@@ -10,8 +10,7 @@ const getRelativeLuminance = (hexColor: string): number =>
 // The WCAG 2 contrast ratio of two "#rrggbb" triplets, from 1 for the same colour to 21 for black on white, the same
 // Whichever order they come in
 export const getContrastRatio = (hexColor: string, otherHexColor: string): number => {
-  const [darker, lighter] = [getRelativeLuminance(hexColor), getRelativeLuminance(otherHexColor)].toSorted(
-    (luminance, otherLuminance) => luminance - otherLuminance,
-  );
-  return ((lighter ?? 0) + FLARE) / ((darker ?? 0) + FLARE);
+  const luminance = getRelativeLuminance(hexColor);
+  const otherLuminance = getRelativeLuminance(otherHexColor);
+  return (Math.max(luminance, otherLuminance) + FLARE) / (Math.min(luminance, otherLuminance) + FLARE);
 };

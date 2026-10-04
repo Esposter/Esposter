@@ -18,7 +18,7 @@ export const formatLoreChart = (
   const runnersUp = Object.keys(probabilities)
     .filter((name) => name !== choice)
     .map((name): [string, number] => [name, probabilities[name] ?? 0])
-    .toSorted(([, a], [, b]) => b - a);
+    .toSorted(([, firstProbability], [, secondProbability]) => secondProbability - firstProbability);
   const chosenRow: [string, number] = [choice, probabilities[choice] ?? 0];
   const rows = [chosenRow, ...runnersUp].slice(0, LORE_CHART_ROWS);
   const scale = LORE_CHART_WIDTH / Math.max(...rows.map(([, probability]) => probability));
