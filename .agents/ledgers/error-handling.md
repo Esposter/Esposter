@@ -45,9 +45,9 @@
 | `packages/configuration`                                                                                       | 2026-09-25 · Opus 5.5  | builds before `@esposter/shared`, so its throws are bare `Error`s by necessity        |
 | `packages/genshin-persona`                                                                                     | 2026-10-04 · Fable 5.1 | no `@esposter/shared` to import: the process boundary terminates, and records first   |
 | `packages/agent-console-server`                                                                                | 2026-09-25 · Opus 5.5  |                                                                                       |
-| `packages/genshin-engine`, `packages/genshin-world`                                                            | —                      |                                                                                       |
-| `packages/genshin-text`, `packages/genshin-mods`, `packages/follow-ups`                                        | —                      |                                                                                       |
-| `packages/pitch-transcription`, `packages/trpc-msw`, `packages/trpc-nuxt-module`                               | —                      |                                                                                       |
+| `packages/genshin-engine`, `packages/genshin-world`                                                            | 2026-10-05 · Opus 5.5  |                                                                                       |
+| `packages/genshin-text`, `packages/genshin-mods`, `packages/follow-ups`                                        | 2026-10-05 · Opus 5.5  |                                                                                       |
+| `packages/pitch-transcription`, `packages/trpc-msw`, `packages/trpc-nuxt-module`                               | 2026-10-05 · Opus 5.5  |                                                                                       |
 | `scripts/src/services/genshinParity`, `scripts/src/services/genshinAssets`, `scripts/src/services/genshinText` | —                      |                                                                                       |
 
 The mechanical half — no `try`/`catch`, no `.isOk`/`.isErr`, no bare `new Error` outside the sites the
