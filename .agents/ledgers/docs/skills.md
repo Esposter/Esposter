@@ -1,74 +1,74 @@
 # Docs — skills
 
-| Unit                      | Swept                 | Notes |
-| ------------------------- | --------------------- | ----- |
-| `azure-table`             | 2026-09-27 · Opus 5.5 |       |
-| `backfills`               | —                     |       |
-| `bench`                   | 2026-09-27 · Opus 5.5 |       |
-| `build`                   | 2026-09-27 · Opus 5.5 |       |
-| `building-proposals`      | 2026-09-27 · Opus 5.5 |       |
-| `claude-mods`             | —                     |       |
-| `claude-permissions`      | 2026-09-27 · Opus 5.5 |       |
-| `cli`                     | —                     |       |
-| `code-review`             | 2026-09-27 · Opus 5.5 |       |
-| `coderabbit`              | 2026-09-27 · Opus 5.5 |       |
-| `context-efficiency`      | 2026-09-27 · Opus 5.5 |       |
-| `dependency-absorption`   | 2026-09-29 · Opus 5.5 |       |
-| `dependency-updates`      | 2026-09-27 · Opus 5.5 |       |
-| `docs`                    | 2026-09-27 · Opus 5.5 |       |
-| `drizzle`                 | 2026-09-27 · Opus 5.5 |       |
-| `error-handling`          | 2026-09-27 · Opus 5.5 |       |
-| `esbabbler`               | 2026-09-27 · Opus 5.5 |       |
-| `esbabbler-call`          | 2026-09-27 · Opus 5.5 |       |
-| `fallacies`               | 2026-09-27 · Opus 5.5 |       |
-| `file-organization`       | 2026-09-27 · Opus 5.5 |       |
-| `finishing`               | 2026-09-27 · Opus 5.5 |       |
-| `formatting`              | 2026-09-27 · Opus 5.5 |       |
-| `genshin-engine`          | —                     |       |
-| `genshin-parity`          | —                     |       |
-| `genshin-text`            | —                     |       |
-| `git`                     | 2026-09-27 · Opus 5.5 |       |
-| `github-actions`          | 2026-09-27 · Opus 5.5 |       |
-| `grapesjs`                | 2026-09-27 · Opus 5.5 |       |
-| `invariants`              | 2026-09-27 · Opus 5.5 |       |
-| `llm-delegation`          | 2026-09-27 · Opus 5.5 |       |
-| `model-delegation`        | 2026-09-27 · Opus 5.5 |       |
-| `naming`                  | 2026-09-27 · Opus 5.5 |       |
-| `over-engineering`        | 2026-09-27 · Opus 5.5 |       |
-| `oxlint`                  | 2026-09-27 · Opus 5.5 |       |
-| `package-scripts`         | 2026-09-27 · Opus 5.5 |       |
-| `pagination`              | 2026-09-27 · Opus 5.5 |       |
-| `pinia`                   | 2026-09-27 · Opus 5.5 |       |
-| `product-review`          | 2026-09-27 · Opus 5.5 |       |
-| `pulumi-infra`            | 2026-09-27 · Opus 5.5 |       |
-| `readme-standards`        | 2026-09-27 · Opus 5.5 |       |
-| `recreation-tooling`      | —                     |       |
-| `responsive`              | 2026-09-27 · Opus 5.5 |       |
-| `review-queue`            | 2026-09-27 · Opus 5.5 |       |
-| `routing`                 | 2026-09-27 · Opus 5.5 |       |
-| `run-app`                 | 2026-09-27 · Opus 5.5 |       |
-| `running-checks`          | 2026-09-27 · Opus 5.5 |       |
-| `runtime-efficiency`      | 2026-09-27 · Opus 5.5 |       |
-| `score`                   | 2026-09-27 · Opus 5.5 |       |
-| `security`                | 2026-09-27 · Opus 5.5 |       |
-| `skill-authoring`         | 2026-09-27 · Opus 5.5 |       |
-| `skill-sweep`             | 2026-09-27 · Opus 5.5 |       |
-| `slash-commands`          | 2026-09-27 · Opus 5.5 |       |
-| `string-utils`            | 2026-09-27 · Opus 5.5 |       |
-| `styling`                 | 2026-09-27 · Opus 5.5 |       |
-| `sweeps`                  | 2026-09-27 · Opus 5.5 |       |
-| `test-values`             | 2026-09-27 · Opus 5.5 |       |
-| `testing`                 | 2026-09-27 · Opus 5.5 |       |
-| `tiptap`                  | 2026-09-27 · Opus 5.5 |       |
-| `todos`                   | 2026-09-27 · Opus 5.5 |       |
-| `trpc`                    | 2026-09-27 · Opus 5.5 |       |
-| `typescript`              | 2026-09-27 · Opus 5.5 |       |
-| `ui-library`              | 2026-09-27 · Opus 5.5 |       |
-| `unocss`                  | 2026-09-27 · Opus 5.5 |       |
-| `ux`                      | 2026-09-27 · Opus 5.5 |       |
-| `vue`                     | 2026-09-27 · Opus 5.5 |       |
-| `vue-component-patterns`  | 2026-09-27 · Opus 5.5 |       |
-| `vue-composable-patterns` | 2026-09-27 · Opus 5.5 |       |
-| `vue-page-composition`    | 2026-09-27 · Opus 5.5 |       |
-| `vue-phaserjs`            | 2026-09-27 · Opus 5.5 |       |
-| `zod`                     | 2026-09-27 · Opus 5.5 |       |
+| Unit                      | Swept                  | Notes |
+| ------------------------- | ---------------------- | ----- |
+| `azure-table`             | 2026-10-04 · Fable 5.1 |       |
+| `backfills`               | 2026-10-04 · Fable 5.1 |       |
+| `bench`                   | 2026-10-04 · Fable 5.1 |       |
+| `build`                   | 2026-10-04 · Fable 5.1 |       |
+| `building-proposals`      | 2026-10-04 · Fable 5.1 |       |
+| `claude-mods`             | 2026-10-04 · Fable 5.1 |       |
+| `claude-permissions`      | 2026-10-04 · Fable 5.1 |       |
+| `cli`                     | 2026-10-04 · Fable 5.1 |       |
+| `code-review`             | 2026-10-04 · Fable 5.1 |       |
+| `coderabbit`              | 2026-10-04 · Fable 5.1 |       |
+| `context-efficiency`      | 2026-10-04 · Fable 5.1 |       |
+| `dependency-absorption`   | 2026-10-04 · Fable 5.1 |       |
+| `dependency-updates`      | 2026-10-04 · Fable 5.1 |       |
+| `docs`                    | 2026-10-04 · Fable 5.1 |       |
+| `drizzle`                 | 2026-10-04 · Fable 5.1 |       |
+| `error-handling`          | 2026-10-04 · Fable 5.1 |       |
+| `esbabbler`               | 2026-10-04 · Fable 5.1 |       |
+| `esbabbler-call`          | 2026-10-04 · Fable 5.1 |       |
+| `fallacies`               | 2026-10-04 · Fable 5.1 |       |
+| `file-organization`       | 2026-10-04 · Fable 5.1 |       |
+| `finishing`               | 2026-10-04 · Fable 5.1 |       |
+| `formatting`              | 2026-10-04 · Fable 5.1 |       |
+| `genshin-engine`          | 2026-10-04 · Fable 5.1 |       |
+| `genshin-parity`          | 2026-10-04 · Fable 5.1 |       |
+| `genshin-text`            | 2026-10-04 · Fable 5.1 |       |
+| `git`                     | 2026-10-04 · Fable 5.1 |       |
+| `github-actions`          | 2026-10-04 · Fable 5.1 |       |
+| `grapesjs`                | 2026-10-04 · Fable 5.1 |       |
+| `invariants`              | 2026-10-04 · Fable 5.1 |       |
+| `llm-delegation`          | 2026-10-04 · Fable 5.1 |       |
+| `model-delegation`        | 2026-10-04 · Fable 5.1 |       |
+| `naming`                  | 2026-10-04 · Fable 5.1 |       |
+| `over-engineering`        | 2026-10-04 · Fable 5.1 |       |
+| `oxlint`                  | 2026-10-04 · Fable 5.1 |       |
+| `package-scripts`         | 2026-10-04 · Fable 5.1 |       |
+| `pagination`              | 2026-10-04 · Fable 5.1 |       |
+| `pinia`                   | 2026-10-04 · Fable 5.1 |       |
+| `product-review`          | 2026-10-04 · Fable 5.1 |       |
+| `pulumi-infra`            | 2026-10-04 · Fable 5.1 |       |
+| `readme-standards`        | 2026-10-04 · Fable 5.1 |       |
+| `recreation-tooling`      | 2026-10-04 · Fable 5.1 |       |
+| `responsive`              | 2026-10-04 · Fable 5.1 |       |
+| `review-queue`            | 2026-10-04 · Fable 5.1 |       |
+| `routing`                 | 2026-10-04 · Fable 5.1 |       |
+| `run-app`                 | 2026-10-04 · Fable 5.1 |       |
+| `running-checks`          | 2026-10-04 · Fable 5.1 |       |
+| `runtime-efficiency`      | 2026-10-04 · Fable 5.1 |       |
+| `score`                   | 2026-10-04 · Fable 5.1 |       |
+| `security`                | 2026-10-04 · Fable 5.1 |       |
+| `skill-authoring`         | —                      |       |
+| `skill-sweep`             | 2026-10-04 · Fable 5.1 |       |
+| `slash-commands`          | 2026-10-04 · Fable 5.1 |       |
+| `string-utils`            | 2026-10-04 · Fable 5.1 |       |
+| `styling`                 | 2026-10-04 · Fable 5.1 |       |
+| `sweeps`                  | 2026-10-04 · Fable 5.1 |       |
+| `test-values`             | 2026-10-04 · Fable 5.1 |       |
+| `testing`                 | —                      |       |
+| `tiptap`                  | 2026-10-04 · Fable 5.1 |       |
+| `todos`                   | 2026-10-04 · Fable 5.1 |       |
+| `trpc`                    | 2026-10-04 · Fable 5.1 |       |
+| `typescript`              | 2026-10-04 · Fable 5.1 |       |
+| `ui-library`              | 2026-10-04 · Fable 5.1 |       |
+| `unocss`                  | 2026-10-04 · Fable 5.1 |       |
+| `ux`                      | 2026-10-04 · Fable 5.1 |       |
+| `vue`                     | 2026-10-04 · Fable 5.1 |       |
+| `vue-component-patterns`  | 2026-10-04 · Fable 5.1 |       |
+| `vue-composable-patterns` | 2026-10-04 · Fable 5.1 |       |
+| `vue-page-composition`    | 2026-10-04 · Fable 5.1 |       |
+| `vue-phaserjs`            | 2026-10-04 · Fable 5.1 |       |
+| `zod`                     | 2026-10-04 · Fable 5.1 |       |
