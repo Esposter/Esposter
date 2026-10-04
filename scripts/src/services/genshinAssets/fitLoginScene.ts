@@ -21,58 +21,79 @@ import { readComponentMaterials } from "#src/services/genshinAssets/readComponen
 import { readComponentPlacements } from "#src/services/genshinAssets/readComponentPlacements";
 import { writeWorldData } from "#src/services/genshinAssets/writeWorldData";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // The login scene's parts fitted as our own kits' parameters, each written as a data file of the world package's,
 // With its interface's rects and clips and the rows its script scrolls them in: each copied spawn's count and the
-// Length of its step, by its prefab, and its music, whose fit's report leads the paths written
-export const fitLoginScene = async (): Promise<string> => {
+// Length of its step, by its prefab, and its music, whose fit's report stands before its path. Named, only those
+// Fits run and only their files are written, so one fit's change is read without every other file rewritten
+export const fitLoginScene = async (only: readonly string[] = []): Promise<string> => {
   const directory = getComponentDirectory(DerivedAssetComponent.Login);
   const placements = await readComponentPlacements(DerivedAssetComponent.Login);
-  // The interface's clips as `genshin:assets clips` decoded them
-  const clips = parseMachineJson<{ curves: DecodedCurve[]; duration: number; name: string }[]>(
-    await readFile(join(directory.root, "clips", "clips.json"), "utf8"),
-  );
-  // The interface's tree as `genshin:assets interface` exported it
-  const interfaceTree = parseMachineJson<InterfaceNode>(
-    await readFile(join(directory.root, "interface", "interface.json"), "utf8"),
-  );
   const meshDirectory = join(directory.assets, "Mesh");
   const textureDirectory = join(directory.assets, "Texture2D");
-  const [towers, facades, walkway, paving, door, hulls, clouds, skyGradient, stone, titleLogos, music] =
-    await Promise.all([
-      fitLoginTowers(placements, meshDirectory),
-      fitLoginTowerFacades(placements, meshDirectory, textureDirectory),
-      fitLoginWalkway(placements, meshDirectory),
-      fitLoginPaving(placements, meshDirectory, textureDirectory),
-      fitLoginDoor(placements, meshDirectory, textureDirectory),
-      fitLoginHulls(placements, meshDirectory),
-      fitLoginClouds(textureDirectory),
-      fitSkyGradient(join(textureDirectory, "Enviro_Sky_Gradient.png")),
-      fitLoginStone(await readComponentMaterials(DerivedAssetComponent.Login), textureDirectory),
-      fitTitleLogos(directory.root),
-      fitLoginMusic(),
-    ]);
-  const scroll = Object.fromEntries(
-    (DerivedAssetComponentMap[DerivedAssetComponent.Login].spawns ?? []).flatMap(({ copies, prefab }) =>
-      copies ? [[prefab.name, { count: copies.count, length: Math.hypot(...copies.step) }]] : [],
-    ),
+  const fits: Record<string, () => Promise<string[]>> = {
+    clouds: async () => [await writeWorldData("login/clouds.json", await fitLoginClouds(textureDirectory))],
+    door: async () => [
+      await writeWorldData("login/door.json", await fitLoginDoor(placements, meshDirectory, textureDirectory)),
+    ],
+    hulls: async () => [await writeWorldData("login/hulls.json", await fitLoginHulls(placements, meshDirectory))],
+    // The interface's clips as `genshin:assets clips` decoded them
+    interfaceClips: async () => {
+      const clips = parseMachineJson<{ curves: DecodedCurve[]; duration: number; name: string }[]>(
+        await readFile(join(directory.root, "clips", "clips.json"), "utf8"),
+      );
+      return [await writeWorldData("login/interfaceClips.json", fitInterfaceClips(clips))];
+    },
+    // The interface's tree as `genshin:assets interface` exported it
+    interfaceRects: async () => {
+      const interfaceTree = parseMachineJson<InterfaceNode>(
+        await readFile(join(directory.root, "interface", "interface.json"), "utf8"),
+      );
+      return [await writeWorldData("login/interfaceRects.json", fitInterfaceRects(interfaceTree))];
+    },
+    music: async () => {
+      const { music, report } = await fitLoginMusic();
+      return [...report, await writeWorldData("login/music.json", music)];
+    },
+    paving: async () => [
+      await writeWorldData("login/paving.json", await fitLoginPaving(placements, meshDirectory, textureDirectory)),
+    ],
+    scroll: async () => {
+      const scroll = Object.fromEntries(
+        (DerivedAssetComponentMap[DerivedAssetComponent.Login].spawns ?? []).flatMap(({ copies, prefab }) =>
+          copies ? [[prefab.name, { count: copies.count, length: Math.hypot(...copies.step) }]] : [],
+        ),
+      );
+      return [await writeWorldData("login/scroll.json", scroll)];
+    },
+    sky: async () => {
+      const gradient = await fitSkyGradient(join(textureDirectory, "Enviro_Sky_Gradient.png"));
+      return [await writeWorldData("login/sky.json", { gradient })];
+    },
+    stone: async () => {
+      const materials = await readComponentMaterials(DerivedAssetComponent.Login);
+      return [await writeWorldData("login/stone.json", await fitLoginStone(materials, textureDirectory))];
+    },
+    titleLogos: async () => [await writeWorldData("splash/titleLogos.json", await fitTitleLogos(directory.root))],
+    towers: async () => {
+      const [towers, facades] = await Promise.all([
+        fitLoginTowers(placements, meshDirectory),
+        fitLoginTowerFacades(placements, meshDirectory, textureDirectory),
+      ]);
+      return [await writeWorldData("login/towers.json", { ...towers, facades })];
+    },
+    walkway: async () => [await writeWorldData("login/walkway.json", await fitLoginWalkway(placements, meshDirectory))],
+  };
+  const unknown = only.find((name) => !(name in fits));
+  if (unknown !== undefined)
+    throw new InvalidOperationError(Operation.Read, unknown, `not a fit: one of ${Object.keys(fits).join(", ")}`);
+  const lines = await Promise.all(
+    Object.entries(fits)
+      .filter(([name]) => only.length === 0 || only.includes(name))
+      .map(([, fit]) => fit()),
   );
-  const paths = await Promise.all([
-    writeWorldData("login/towers.json", { ...towers, facades }),
-    writeWorldData("login/walkway.json", walkway),
-    writeWorldData("login/paving.json", paving),
-    writeWorldData("login/door.json", door),
-    writeWorldData("login/hulls.json", hulls),
-    writeWorldData("login/clouds.json", clouds),
-    writeWorldData("login/sky.json", { gradient: skyGradient }),
-    writeWorldData("login/stone.json", stone),
-    writeWorldData("login/scroll.json", scroll),
-    writeWorldData("login/interfaceClips.json", fitInterfaceClips(clips)),
-    writeWorldData("login/interfaceRects.json", fitInterfaceRects(interfaceTree)),
-    writeWorldData("splash/titleLogos.json", titleLogos),
-    writeWorldData("login/music.json", music.music),
-  ]);
-  return [...music.report, ...paths].join("\n");
+  return lines.flat().join("\n");
 };

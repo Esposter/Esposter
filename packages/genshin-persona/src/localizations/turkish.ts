@@ -528,9 +528,7 @@ const turkish: Localization = {
           ? `Ses: ${voiceLanguage} dublajı, çalışma ortamı ${isRuntimeInstalled ? "kurulu" : "kurulu değil"}, ${voiceDevice ? `${voiceDevice} üzerinde konuşuyor` : "henüz konuşmadı"}.`
           : "Ses: ayarlanmadı, hiçbir yanıt sesli okunmuyor.",
         `Yanıtlar ${isMuted ? "sessizde" : `açık, ses düzeyi ${volume}`}.`,
-      ]
-        .filter(Boolean)
-        .join("\n"),
+      ].join("\n"),
     teardownDone:
       "Sesin çalışma ortamı, ağırlıkları, referansları ve dublajı silindi; seçim kayıtları, sabitleme ve diller kalıyor.",
     unmuted: "Sesli yanıtlar yeniden açıldı.",

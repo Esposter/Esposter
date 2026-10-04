@@ -57,7 +57,7 @@ import { createLoginTowerFacade } from "#src/services/login/tower/createLoginTow
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
 import { readLoginTowerAtlas } from "#src/services/login/tower/readLoginTowerAtlas";
 import { LOGIN_WALKWAY_RISE_DEPTH, LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
-import { createLoginPavingShade } from "#src/services/login/walkway/createLoginPavingShade";
+import { createLoginPaving } from "#src/services/login/walkway/createLoginPaving";
 import { createLoginWalkwayPieces } from "#src/services/login/walkway/createLoginWalkwayPieces";
 import { readLoginWalkwaySink } from "#src/services/login/walkway/readLoginWalkwaySink";
 import { sinkLoginWitnessWalkway } from "#src/services/login/walkway/sinkLoginWitnessWalkway";
@@ -188,8 +188,10 @@ towersMaterial.opacityNode = towerFacade.solid;
 towersMaterial.alphaTest = 0.5;
 const bridgesMaterial = createStoneMaterial(stone.bridges);
 const walkwayMaterial = createStoneMaterial(stone.walkway);
-// The walkway's stone darkened along its paving's lines
-walkwayMaterial.colorNode = color(stone.walkway.albedo).mul(createLoginPavingShade());
+// The walkway's tops carved with its paving: its pockets' stone a step darker and their rims tilted to the light
+const paving = createLoginPaving();
+walkwayMaterial.colorNode = color(stone.walkway.albedo).mul(paving.shade);
+walkwayMaterial.normalNode = paving.normalNode;
 const doorFrameMaterial = createStoneMaterial(stone.door);
 // The door lights from a line down its middle outward, over the panel's own glow, as the game opens it
 const doorGlow = uniform(0);
@@ -262,12 +264,13 @@ const isDoorRising = shallowRef(false);
 // Pose, from the moment of the loop the title opens at; a scene mounted at the door starts at rest there. The glide is
 // Kept off Vue's reactivity, and only the numbers the template places by, which stand still when it does, are refs. A
 // Held glide stands where it is held and never moves
-const readStartGlide = (): LoginGlide => {
+const getStartGlide = (): LoginGlide => {
   if (heldScrolled !== undefined) return { scrolled: heldScrolled, speed: 0 };
-  if (checkIsDoorDue()) return { scrolled: LOGIN_GLIDE_DOOR_SCROLLED, speed: 0, stopAt: LOGIN_GLIDE_DOOR_SCROLLED };
-  return { scrolled: LOGIN_GLIDE_TITLE_SCROLLED, speed: LOGIN_GLIDE_TITLE_SPEED };
+  else if (checkIsDoorDue())
+    return { scrolled: LOGIN_GLIDE_DOOR_SCROLLED, speed: 0, stopAt: LOGIN_GLIDE_DOOR_SCROLLED };
+  else return { scrolled: LOGIN_GLIDE_TITLE_SCROLLED, speed: LOGIN_GLIDE_TITLE_SPEED };
 };
-let glide = readStartGlide();
+let glide = getStartGlide();
 // The towers' row, scrolled with the glide each frame off Vue's reactivity, which would otherwise draw the template anew
 const towers = new Group();
 // How far past its place of rest the door is, riding on the walkway's copy it comes to rest on
@@ -291,6 +294,9 @@ onRender(({ delta: frameDelta }) => {
   const delta = witness?.isClockHeld.value ? 0 : frameDelta;
   if (heldScrolled === undefined) glide = advanceLoginGlide(glide, stage, delta);
   const { scrolled, stopAt = scrolled } = glide;
+  // Read once a frame, where every walkway piece would otherwise ask again
+  const isDoorDue = checkIsDoorDue();
+  const walkwayScrolled = scrolled % LOGIN_WALKWAY_ROW.length;
   const [rowX, rowY, rowZ] = LOGIN_TOWERS_ROW_OFFSET;
   towers.position.set(rowX, rowY, rowZ - (scrolled % LOGIN_TOWERS_ROW.length));
   doorAhead.value = stopAt - scrolled;
@@ -305,10 +311,10 @@ onRender(({ delta: frameDelta }) => {
     if (group.name === LoginPartFamily.Towers || group.name === LoginPartFamily.Bridges)
       group.position.add(towers.position);
     else if (group.name === LoginPartFamily.Walkway) {
-      group.position.z -= scrolled % LOGIN_WALKWAY_ROW.length;
+      group.position.z -= walkwayScrolled;
       sinkLoginWitnessWalkway(group, walkwayPieces, {
         cameraZ: cameraZ.value,
-        doorAheadOfCamera: checkIsDoorDue() ? doorAheadOfCamera : undefined,
+        doorAheadOfCamera: isDoorDue ? doorAheadOfCamera : undefined,
       });
     } else if (group.name === LoginPartFamily.Door) {
       group.position.y += doorPosition.value[1] - LOGIN_DOOR_POSITION[1];
@@ -316,16 +322,13 @@ onRender(({ delta: frameDelta }) => {
       group.visible = isDoorRising.value && (witness?.families.value.includes(group.name) ?? false);
     }
   }
-  walkway.position.z = -(scrolled % LOGIN_WALKWAY_ROW.length);
+  walkway.position.z = -walkwayScrolled;
   for (const { copy, depth, instanceId, seed } of walkwayInstances) {
     const z = copy * LOGIN_WALKWAY_ROW.length;
     const ahead = walkway.position.z + z + depth - cameraZ.value;
     const sink = readLoginWalkwaySink(ahead, seed);
     // A piece stands only once it has begun to rise, so neither it nor its shadow shows before its turn
-    walkway.setVisibleAt(
-      instanceId,
-      sink < LOGIN_WALKWAY_RISE_DEPTH && (!checkIsDoorDue() || ahead < doorAheadOfCamera),
-    );
+    walkway.setVisibleAt(instanceId, sink < LOGIN_WALKWAY_RISE_DEPTH && (!isDoorDue || ahead < doorAheadOfCamera));
     walkway.setMatrixAt(instanceId, walkwayMatrix.makeTranslation(0, -sink, z));
   }
   cloudSeaScrolled.value = scrolled;
@@ -339,7 +342,7 @@ onRender(({ delta: frameDelta }) => {
     : (LoginSkyStateMap[timeOfDay].fogDensity ?? LOGIN_FOG_DENSITY);
   doorGlow.value = isDoorLit ? Math.min(doorGlow.value + (delta * 1000) / LOGIN_DOOR_LIGHT_MS, 1) : 0;
   rushMs.value = isDoorLit ? rushMs.value + delta * 1000 : 0;
-  isDoorRising.value = checkIsDoorDue() && (isDoorRising.value || doorAheadOfCamera <= LOGIN_WALKWAY_SUNK_DISTANCE);
+  isDoorRising.value = isDoorDue && (isDoorRising.value || doorAheadOfCamera <= LOGIN_WALKWAY_SUNK_DISTANCE);
   riseMs.value = isDoorRising.value ? riseMs.value + delta * 1000 : 0;
   // The door's own interface waits on the door, once it has risen into place
   if (!isDoorFormed && isDoorRising.value && riseMs.value >= doorRiseMs) {
@@ -347,8 +350,7 @@ onRender(({ delta: frameDelta }) => {
     emit("doorFormed");
   }
   renderedFrameCount++;
-  if (isReadyEmitted || renderedFrameCount < READY_FRAME_COUNT || (checkIsDoorDue() && riseMs.value < doorRiseMs))
-    return;
+  if (isReadyEmitted || renderedFrameCount < READY_FRAME_COUNT || (isDoorDue && riseMs.value < doorRiseMs)) return;
   isReadyEmitted = true;
   emit("ready");
 });

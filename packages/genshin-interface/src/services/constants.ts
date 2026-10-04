@@ -13,10 +13,10 @@ export const GAME_CANVAS_UNIT = "min(100cqh / 900, 100cqw / 1600)";
 // How far the canvas stands in from each side of a screen wider than 16:9: its spare width, up to 71 screen units, as
 // The corner buttons show on a 2560 by 1080 and a 3440 by 1440 recording alike, so the game widens its margin by a
 // Fixed step rather than by all the spare width. A piece anchored to a side rides on the canvas's side, not the screen's
+export const GAME_CANVAS_INSET = "min(var(--unit) * 71, (100cqw - var(--unit) * 1920) / 2)";
 // The white the game's opening is drawn on, a step under full white: the PC client's screens read 253 on the user's own
 // Recording and on a 2023 one alike, where a phone's and an older build's read 255
 export const GAME_WHITE = "#fdfdfd";
-export const GAME_CANVAS_INSET = "min(var(--unit) * 71, (100cqw - var(--unit) * 1920) / 2)";
 // The game's pointer, a four pointed star with its point at the upper left: a white and a cream facet either side of
 // Its diagonal, and a gold star within it lit from its inner corner, traced from the wiki's render of its tutorial
 // On a 64 unit square with its point at the origin. It is 25 pixels across on a 1080 high screen, where the game

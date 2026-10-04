@@ -539,9 +539,7 @@ const italian: Localization = {
           ? `Voce: doppiaggio ${voiceLanguage}, ambiente ${isRuntimeInstalled ? "installato" : "non installato"}, ${voiceDevice ? `parla su ${voiceDevice}` : "non ha ancora parlato"}.`
           : "Voce: non configurata, nessuna risposta viene letta ad alta voce.",
         `Risposte ${isMuted ? "silenziate" : `al volume ${volume}`}.`,
-      ]
-        .filter(Boolean)
-        .join("\n"),
+      ].join("\n"),
     teardownDone:
       "Ambiente, pesi, riferimenti e doppiaggio della voce sono eliminati; le scelte registrate, il fissaggio e le lingue restano.",
     unmuted: "Risposte parlate riattivate.",

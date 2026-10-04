@@ -8,6 +8,7 @@ import { fitSky, readSkyWeights, SKY_TERMS } from "#src/services/genshinParity/f
 import { minimizeNelderMead } from "#src/services/genshinParity/minimizeNelderMead";
 import { openWitnessPage } from "#src/services/genshinParity/openWitnessPage";
 import { readCloudSky } from "#src/services/genshinParity/readCloudSky";
+import { setPageWitnessView } from "#src/services/genshinParity/setPageWitnessView";
 import { withFinalizerAsync } from "@esposter/shared";
 import { toneMapNeutral, toSceneColor } from "genshin-engine";
 import { mkdir } from "node:fs/promises";
@@ -15,6 +16,7 @@ import { join } from "node:path";
 import sharp from "sharp";
 import { Color, Matrix4, Vector3, Vector4 } from "three";
 
+type SetCloudCover = (covers?: Record<string, number>) => string[];
 type Vector = [number, number, number];
 // Every this many pixels across and down is a sample: the sky changes slowly, and a solve reads it many times
 const SAMPLE_STRIDE = 4;
@@ -44,19 +46,38 @@ const toShape = ([
 const SHAPE_STEPS = [0.3, 0.1, 0.15, 0.5, 2];
 const SHAPE_ITERATIONS = 80;
 const toLinear = (value: number): number => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
+// A pixel of raw sRGB bytes as the scene colour the tone mapping shows as it
+const readSceneColor = (buffer: Buffer, pixel: number): Vector => {
+  const scene = toSceneColor(
+    new Color(
+      toLinear((buffer[pixel * 3] ?? 0) / 255),
+      toLinear((buffer[pixel * 3 + 1] ?? 0) / 255),
+      toLinear((buffer[pixel * 3 + 2] ?? 0) / 255),
+    ),
+  );
+  return [scene.r, scene.g, scene.b];
+};
 // A solved scene colour as the display colour a sky state holds it as, which the scene inverts back on applying it
 const toDisplayHex = ([red, green, blue]: Vector): string =>
   `#${new Color(...toneMapNeutral([red, green, blue])).getHexString()}`;
 // A reference's sky solved as the game's sky shader draws it, the way `calibrate` solves the light: its pixels where
 // The witness draws no part, the ray looks up and no cloud stands (`readCloudSky`, the clear sky fitted under its
-// Clouds, so a sky more cloud than clear is not solved as their mean), each turned into its ray through the scene's own camera and into
-// Scene colour through the tone mapping's inverse, under the sun and moon the scene draws its sky with; the colours by
-// Least squares at each shape, the shape refined around them by the simplex. Prints the colours as the display colours
-// A sky state holds, and writes the reference beside the solved sky over the pixels read, to check
+// Clouds, so a sky more cloud than clear is not solved as their mean), each turned into its ray through the scene's
+// Own camera and into scene colour through the tone mapping's inverse, under the sun and moon the scene draws its sky
+// With; the colours by least squares at each shape, the shape refined around them by the simplex. Prints the colours
+// As the display colours a sky state holds, then how far the scene's own sky, drawn with no cloud, stands off the
+// Reference over the same pixels, and writes the reference, the solved sky and the scene's to check
 export const solveReferenceSky = async (
   referenceId: string,
   witness: DerivedAssetComponent,
-): Promise<{ colors: Record<string, string>; imagePath: string; kept: number; residual: number; shape: SkyShape }> => {
+): Promise<{
+  colors: Record<string, string>;
+  drawn: { ours: string; reference: string; residual: number };
+  imagePath: string;
+  kept: number;
+  residual: number;
+  shape: SkyShape;
+}> => {
   await fetchReferences();
   const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
@@ -92,14 +113,7 @@ export const solveReferenceSky = async (
             .transformDirection(world)
             .normalize();
           if (direction.y < MIN_SKY_HEIGHT) continue;
-          const scene = toSceneColor(
-            new Color(
-              toLinear((data[pixel * 3] ?? 0) / 255),
-              toLinear((data[pixel * 3 + 1] ?? 0) / 255),
-              toLinear((data[pixel * 3 + 2] ?? 0) / 255),
-            ),
-          );
-          pixels.push({ color: [scene.r, scene.g, scene.b], direction: direction.toArray(), pixel });
+          pixels.push({ color: readSceneColor(data, pixel), direction: direction.toArray(), pixel });
         }
       const { gradient } = await readWorldData<{ gradient: { green: number[]; red: number[] } }>(`${witness}/sky.json`);
       const solveAt = (shape: SkyShape) =>
@@ -134,6 +148,30 @@ export const solveReferenceSky = async (
             modelled[target + 2] = Math.round(Math.min(Math.max(b, 0), 1) * 255);
           }
       }
+      // The scene's own sky with no cloud drawn, over the same pixels: what the scene draws where the solve reads, so
+      // A sky solved well and drawn otherwise (a haze, a grade or a pass over it) shows as its own residual
+      const bands = await page.evaluate(() => (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)());
+      await page.evaluate(
+        (covers) => (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)(covers),
+        Object.fromEntries(bands.map((band) => [band, 0])),
+      );
+      await setPageWitnessView(page, { families: [] });
+      const ourShot = await sharp(await page.screenshot())
+        .resize(width, height, { fit: "fill" })
+        .removeAlpha()
+        .raw()
+        .toBuffer();
+      await page.evaluate(() => (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)());
+      const means: Record<"ours" | "reference", Vector> = { ours: [0, 0, 0], reference: [0, 0, 0] };
+      let drawnError = 0;
+      for (const { color, pixel } of pixels) {
+        const ours = readSceneColor(ourShot, pixel);
+        for (const channel of [0, 1, 2] as const) {
+          means.ours[channel] += ours[channel] / pixels.length;
+          means.reference[channel] += color[channel] / pixels.length;
+          drawnError += (ours[channel] - color[channel]) ** 2;
+        }
+      }
       const directory = join(PARITY_DIRECTORY, "sky");
       await mkdir(directory, { recursive: true });
       const imagePath = join(directory, `${referenceId}.png`);
@@ -141,15 +179,24 @@ export const solveReferenceSky = async (
       const modelledImage = await sharp(modelled, { raw: { channels: 3, height, width } })
         .png()
         .toBuffer();
-      await sharp({ create: { background: "#000", channels: 3, height, width: width * 2 } })
+      const ourImage = await sharp(ourShot, { raw: { channels: 3, height, width } })
+        .png()
+        .toBuffer();
+      await sharp({ create: { background: "#000", channels: 3, height, width: width * 3 } })
         .composite([
           { input: reference, left: 0, top: 0 },
           { input: modelledImage, left: width, top: 0 },
+          { input: ourImage, left: width * 2, top: 0 },
         ])
         .png()
         .toFile(imagePath);
       return {
         colors: Object.fromEntries(SKY_TERMS.map((term, index) => [term, toDisplayHex(colors[index] ?? [0, 0, 0])])),
+        drawn: {
+          ours: toDisplayHex(means.ours),
+          reference: toDisplayHex(means.reference),
+          residual: Math.sqrt(drawnError / Math.max(pixels.length * 3, 1)),
+        },
         imagePath,
         kept: kept / Math.max(pixels.length, 1),
         residual,

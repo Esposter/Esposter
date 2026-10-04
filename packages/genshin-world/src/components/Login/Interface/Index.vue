@@ -18,6 +18,7 @@ import {
 } from "#src/services/login/constants";
 import { GameClientVersionTextMap } from "#src/services/login/GameClientVersionTextMap";
 import { LoginInterfaceClipMap } from "#src/services/login/interface/LoginInterfaceClipMap";
+import { InterfaceIconGameTextKeyMap } from "#src/services/login/InterfaceIconGameTextKeyMap";
 import { GameLanguageGameClientMap } from "#src/services/splash/GameLanguageGameClientMap";
 import {
   GameRect,
@@ -125,7 +126,7 @@ watch(
             :data-clip-target="LoginInterfaceClipTarget.WhiteScreen"
           />
         </GameRect>
-        <LoadingSpinner v-if="isSpinnerShown" class="spinner" />
+        <LoadingSpinner v-if="isSpinnerShown" class="spinner" :label="gameText[GameTextKey.Loading]" />
         <GameRect :rect="interfaceRects['GrpLogin/Center']" :data-clip-target="LoginInterfaceClipTarget.Center">
           <GameRect
             :rect="interfaceRects['GrpLogin/Center/SwitchServer']"
@@ -201,11 +202,16 @@ watch(
           </GameRect>
           <GameRect class="column" :rect="interfaceRects['GrpLogin/Bottom/RightButtons']">
             <div v-for="icon of cornerIcons" :key="icon" :class="['slot', { arriving: isAtDoor }]">
-              <RoundButton :icon :label="icon" />
+              <RoundButton :icon :label="gameText[InterfaceIconGameTextKeyMap[icon]]" />
             </div>
           </GameRect>
           <GameRect class="column" :rect="interfaceRects['GrpLogin/Bottom/LeftButtons']">
-            <div class="slot"><RoundButton :icon="InterfaceIcon.Power" label="Quit" /></div>
+            <div class="slot">
+              <RoundButton
+                :icon="InterfaceIcon.Power"
+                :label="gameText[InterfaceIconGameTextKeyMap[InterfaceIcon.Power]]"
+              />
+            </div>
           </GameRect>
         </GameRect>
       </div>

@@ -37,8 +37,8 @@ interface Props {
   // The reader's language, whose client's interface the screen shows
   language: GameLanguage;
   playerName?: string;
-  // How far loading has gone, from 0 to 1, which the bar shows and the flight to the door follows, ending a fixed time after
-  // It is done
+  // How far loading has gone, from 0 to 1, which the bar shows and the flight to the door follows, ending a fixed time
+  // After it is done
   progress: number;
   timeOfDay: LoginTimeOfDay;
 }
@@ -51,7 +51,8 @@ const shownPlayerName = computed(
 const emit = defineEmits<{ begin: []; ready: [] }>();
 // The game's login screen: the scene fades up out of white, a click on its title quickens the glide down the
 // Walkway as the game prepares, and a click on the door it arrives at lights it as the screen whitens, when `begin`
-// Says the white is up. Both whites are the interface's, played from the game's own clips. A host pins a stage with `v-model:stage` to show it held, as the parity page does
+// Says the white is up. Both whites are the interface's, played from the game's own clips. A host pins a stage with
+// `v-model:stage` to show it held, as the parity page does
 const stage = defineModel<LoginStage>("stage", { default: LoginStage.Arriving });
 const isSpinnerShown = ref(false);
 // Whether the door has risen into place, which the door's own interface waits on

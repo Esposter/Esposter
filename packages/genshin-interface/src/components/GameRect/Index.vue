@@ -2,7 +2,7 @@
 import type { FittedInterfaceRect } from "#src/models/FittedInterfaceRect";
 
 import { GameRectKey } from "#src/services/GameRectKey";
-import { readCanvasRect } from "#src/services/readCanvasRect";
+import { toCanvasRect } from "#src/services/toCanvasRect";
 import { toCanvasRectStyle } from "#src/services/toCanvasRectStyle";
 
 interface Props {
@@ -18,10 +18,7 @@ const { rect } = defineProps<Props>();
 const isOnCanvas = !inject(GameRectKey, false);
 // oxlint-disable-next-line no-restricted-globals -- every piece under this one is placed inside it
 provide(GameRectKey, true);
-const style = computed(() => ({
-  ...toCanvasRectStyle(readCanvasRect(rect), isOnCanvas),
-  scale: rect.scale?.join(" "),
-}));
+const style = computed(() => ({ ...toCanvasRectStyle(toCanvasRect(rect), isOnCanvas), scale: rect.scale?.join(" ") }));
 </script>
 
 <template>

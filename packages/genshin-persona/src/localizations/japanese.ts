@@ -328,9 +328,7 @@ const japanese: Localization = {
           ? `音声：${voiceLanguage}の吹き替え、ランタイムは${isRuntimeInstalled ? "インストール済み" : "未インストール"}、${voiceDevice ? `${voiceDevice}で動作中` : "未実行"}。`
           : "音声：未設定のため、返信は読み上げられません。",
         isMuted ? "読み上げ：ミュート中。" : `読み上げ：音量${volume}。`,
-      ]
-        .filter(Boolean)
-        .join("\n"),
+      ].join("\n"),
     teardownDone:
       "音声のランタイム、重み、参照音声、吹き替え設定を削除しました。選択履歴、ピン留め、言語設定は残ります。",
     unmuted: "音声の読み上げを再開しました。",

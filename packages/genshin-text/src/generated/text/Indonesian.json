@@ -1,6 +1,8 @@
 {
+  "496124396": "Logout",
   "684850635": "Sebagian kecil orang dapat mengalami kejang-kejang saat melihat beberapa jenis gambar visual tertentu, termasuk cahaya atau grafik di dalam video game. Saat bermain video game, orang-orang ini dapat mengalami gejala epilepsi. Orang yang sebelumnya tidak pernah mengalami gejala epilepsi juga memiliki kemungkinan mengalami gejala serupa saat bermain video game. Jika kamu atau anggota keluargamu memiliki riwayat epilepsi, mohon konsultasikan dengan ahli kesehatan sebelum bermain game. Jika kamu mengalami gejala-gejala berikut saat bermain game, seperti nyeri mata, gangguan penglihatan, migrain, kejang-kejang atau gangguan kesadaran (seperti koma), mohon segera berhenti bermain dan konsultasikan dengan ahli kesehatan sebelum melanjutkan permainan.\n\nSelain gejala di atas, jika kamu mengalami sakit kepala, pusing, mual, gejala yang menyerupai mabuk dalam perjalanan, atau jika kamu merasa tidak nyaman atau sakit di bagian tubuh mana pun saat bermain, segera berhenti memainkan game. Jika kondisi tersebut tidak juga kunjung berhenti, carilah pertolongan medis.",
   "796445964": "Bersiap mengunduh data ....",
+  "857403427": "Perbaikan",
   "1102014722": "Memuat game...",
   "1128933734": "Bersiap memuat data",
   "1285204118": "Memeriksa update...",
@@ -13,6 +15,9 @@
   "LANGUAGE_WINDOWS_TITLENAME": "Genshin Impact",
   "ONLINE_DUNGEON_GUEST_IS_READY": "Sudah Siap",
   "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "Memuat ....",
+  "UI_STC_GAMEENTRYPAGE_BULLETIN": "Pengumuman",
+  "UI_STC_GAMEENTRYPAGE_EXIT_TIPS": "Keluar",
+  "UI_STC_GAMEENTRYPAGE_OPTION": "Pengaturan",
   "UI_TEXT_QUEST_GUIDE_LABEL": "Pengembara",
   "tips_enter_game": "Selamat datang, %s!"
 }

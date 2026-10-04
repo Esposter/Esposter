@@ -40,7 +40,8 @@ A placeholder holds no digit, at sign or currency sign, so no pattern matches wh
 | :-------------------------------------------------------- | :--------------------------------------------------------- |
 | `packages/genshin-mods/src/services/veil/veilText.ts`     | The patterns and their placeholders                        |
 | `packages/genshin-mods/src/services/veil/veilValue.ts`    | Every string inside a tool's output veiled, its shape kept |
-| `packages/genshin-mods/src/services/veil/registerVeil.ts` | The render rewrites and the system-prompt section          |
+| `packages/genshin-mods/src/services/veil/registerVeil.ts` | The render rewrites                                        |
+| `packages/genshin-mods/src/services/registerLifecycle.ts` | The system-prompt section, an unmatched hook               |
 | `packages/genshin-mods/src/services/constants.ts`         | The section's words                                        |
 
 ## Notes

@@ -12,12 +12,17 @@ export const fitCommand: SubCommandsDef[string] = defineCommand({
       required: true,
       type: "positional",
     },
+    only: {
+      description: "The fits to run alone, comma-separated, each named for the data file it writes (paving, towers)",
+      type: "string",
+    },
   },
   meta: {
     description: "Fit our own parameters to a component's exports and write them as the world's data",
     name: "fit",
   },
   run: async ({ args }) => {
-    console.log(await DerivedAssetFitMap[parseDerivedAssetComponent(args.component)]());
+    const only = args.only?.split(",").filter(Boolean);
+    console.log(await DerivedAssetFitMap[parseDerivedAssetComponent(args.component)](only));
   },
 });

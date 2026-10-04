@@ -9,7 +9,7 @@ import { findOnsetPeaks } from "#src/services/findOnsetPeaks";
 import { inferOnsets } from "#src/services/inferOnsets";
 import { takeOne } from "@esposter/shared";
 
-const readMeanReading = (frames: number[][], start: number, end: number, pitch: number): number => {
+const getMeanReading = (frames: number[][], start: number, end: number, pitch: number): number => {
   let sum = 0;
   for (let frame = start; frame < end; frame++) sum += takeOne(takeOne(frames, frame), pitch);
   return sum / (end - start);
@@ -50,7 +50,7 @@ export const createNotes = (
     if (end - startFrame <= minNoteLength) continue;
     for (let frame = startFrame; frame < end; frame++) clearPitch(energy, frame, pitch);
     notes.push({
-      amplitude: readMeanReading(constrainedFrames, startFrame, end, pitch),
+      amplitude: getMeanReading(constrainedFrames, startFrame, end, pitch),
       durationFrames: end - startFrame,
       pitchMidi: pitch + MIDI_OFFSET,
       startFrame,
@@ -63,8 +63,10 @@ export const createNotes = (
   // The lowest pitch, as NumPy's `argmax` breaks it
   const candidates: [number, number, number][] = [];
   for (const [frame, row] of energy.entries())
-    for (const [pitch, reading] of row.entries())
+    for (let pitch = 0; pitch < row.length; pitch++) {
+      const reading = takeOne(row, pitch);
       if (reading > frameThreshold) candidates.push([reading, frame, pitch]);
+    }
   candidates.sort(
     ([firstReading, firstFrame, firstPitch], [secondReading, secondFrame, secondPitch]) =>
       secondReading - firstReading || firstFrame - secondFrame || firstPitch - secondPitch,
@@ -90,7 +92,7 @@ export const createNotes = (
     const start = frame + 1 + quietFrames;
     if (end - start <= minNoteLength) continue;
     notes.push({
-      amplitude: readMeanReading(constrainedFrames, start, end, pitch),
+      amplitude: getMeanReading(constrainedFrames, start, end, pitch),
       durationFrames: end - start,
       pitchMidi: pitch + MIDI_OFFSET,
       startFrame: start,

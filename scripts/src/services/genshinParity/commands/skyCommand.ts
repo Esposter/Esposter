@@ -15,7 +15,7 @@ export const skyCommand: SubCommandsDef[string] = defineCommand({
     name: "sky",
   },
   run: async ({ args }) => {
-    const { colors, imagePath, kept, residual, shape } = await solveReferenceSky(
+    const { colors, drawn, imagePath, kept, residual, shape } = await solveReferenceSky(
       args.reference,
       parseDerivedAssetComponent(args.witness),
     );
@@ -25,7 +25,12 @@ export const skyCommand: SubCommandsDef[string] = defineCommand({
         .map(([key, value]) => `${key} ${value.toFixed(3)}`)
         .join(", "),
     );
-    console.log(`residual ${residual.toFixed(4)} in scene colour over ${(kept * 100).toFixed(0)}% of the sky read`);
+    console.log(
+      `residual ${residual.toFixed(4)} in scene colour over the ${(kept * 100).toFixed(0)}% of the clear sky within its spread`,
+    );
+    console.log(
+      `drawn: the scene's own sky without clouds stands ${drawn.residual.toFixed(4)} off the reference over the pixels read, its mean ${drawn.ours} against ${drawn.reference}`,
+    );
     console.log(imagePath);
   },
 });

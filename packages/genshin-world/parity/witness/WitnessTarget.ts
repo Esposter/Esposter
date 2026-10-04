@@ -6,3 +6,5 @@ export enum WitnessTarget {
   Normal = "normal",
   Part = "part",
 }
+
+export const WitnessTargets: readonly WitnessTarget[] = Object.values(WitnessTarget);

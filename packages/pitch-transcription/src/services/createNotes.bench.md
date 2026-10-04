@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-03T12:49:46.492Z
-- Commit: 505e71ce05
+- Date: 2026-10-04T09:23:48.458Z
+- Commit: f33eb45fa4
 - Node: v26.10.0
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -20,12 +20,12 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task          | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
 | ------------- | ------- | --------- | ------ | -------- | ------- |
-| onsets        | 1.00×   | 104.7139  | ±8.33% | 129.8326 | 10      |
-| melodia trick | 0.83×   | 126.0027  | ±9.05% | 153.0308 | 10      |
+| onsets        | 1.00×   | 73.4962   | ±6.72% | 83.2994  | 10      |
+| melodia trick | 1×      | 73.5361   | ±4.01% | 81.2947  | 10      |
 
 ## createNotes > 5 minutes
 
-| task          | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ------------- | ------- | --------- | ------- | -------- | ------- |
-| onsets        | 1.00×   | 540.0817  | ±15.17% | 799.8796 | 10      |
-| melodia trick | 0.94×   | 571.6166  | ±11.73% | 748.9055 | 10      |
+| task          | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| ------------- | ------- | --------- | ------ | -------- | ------- |
+| onsets        | 1.00×   | 364.1632  | ±3.27% | 389.4310 | 10      |
+| melodia trick | 0.9×    | 404.0531  | ±8.84% | 486.9991 | 10      |

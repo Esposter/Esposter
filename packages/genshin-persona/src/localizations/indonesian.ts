@@ -507,9 +507,7 @@ const indonesian: Localization = {
           ? `Suara: dub ${voiceLanguage}, runtime ${isRuntimeInstalled ? "terpasang" : "belum terpasang"}, ${voiceDevice ? `berbicara di ${voiceDevice}` : "belum pernah berbicara"}.`
           : "Suara: belum diatur, tidak ada balasan yang dibacakan.",
         `Balasan ${isMuted ? "dibisukan" : `tidak dibisukan, volume ${volume}`}.`,
-      ]
-        .filter(Boolean)
-        .join("\n"),
+      ].join("\n"),
     teardownDone:
       "Runtime, bobot, referensi, dan dub suara dihapus; catatan pilihan, sematan, dan pengaturan bahasa tetap ada.",
     unmuted: "Balasan lisan diaktifkan kembali.",

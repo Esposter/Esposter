@@ -45,7 +45,7 @@ export const GAME_EXECUTABLE_NAME = "GenshinImpact.exe";
 export const INTERFACE_HEIGHT = 1080;
 export const RECORD_FRAME_RATE = 60;
 // A session long enough for a handful of screens and their motion, and short enough to sample quickly
-export const RECORD_DEFAULT_SECONDS = 120;
+export const RECORD_DEFAULT_SECONDS: number = Temporal.Duration.from({ minutes: 2 }).total("seconds");
 // Encoded on the GPU (this machine's AMD card, through AMF) so the game keeps the CPU and its timing, at a constant
 // Quantiser low enough that edges and colours measure as the game drew them. The frames are converted to BT.709
 // Limited-range YUV and labelled so first: handed the window's BGRA, AMF converts to limited range itself but labels
@@ -121,7 +121,7 @@ export const CHROMA_HOP_LENGTH = 1200;
 export const CHROMA_MIN_FREQUENCY = 60;
 export const CHROMA_MAX_FREQUENCY = 2500;
 export const CHROMA_QUIET_SHARE = 0.02;
-export const CHROMA_MATCH_SECONDS = 20;
+export const CHROMA_MATCH_SECONDS: number = Temporal.Duration.from({ seconds: 20 }).total("seconds");
 // Music is scored at 22.05 kHz, where its octave bands from 63 Hz to 8 kHz all fit, each band's level in decibels read
 // In the pitch classes' own frames, a level more than 60 dB under the game's loudest in that band read as that floor
 export const LISTEN_SAMPLE_RATE = 22050;
@@ -139,6 +139,8 @@ export const DECAY_AGE_BOUNDS: number[] = [
   { milliseconds: 500 },
   { seconds: 1 },
 ].map((bound) => Temporal.Duration.from(bound).total("seconds"));
+// A band's level this far over the frame before is a jump `attacks` counts, a doubling of its amplitude within a frame
+export const LISTEN_ATTACK_RISE_DECIBELS = 6;
 // The committed report of each music segment's last `listen`
 export const PARITY_MUSIC_SCORES_PATH: string = join(
   REPOSITORY_ROOT,

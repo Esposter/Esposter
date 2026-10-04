@@ -336,9 +336,7 @@ const korean: Localization = {
           ? `음성: ${voiceLanguage} 더빙, 런타임 ${isRuntimeInstalled ? "설치됨" : "미설치"}, ${voiceDevice ? `${voiceDevice}에서 말하는 중` : "아직 말하지 않음"}.`
           : "음성: 설정되지 않아 응답을 읽지 않습니다.",
         `응답 ${isMuted ? "음소거됨" : `음소거 해제, 음량 ${volume}`}.`,
-      ]
-        .filter(Boolean)
-        .join("\n"),
+      ].join("\n"),
     teardownDone: "음성의 런타임, 가중치, 기준 음성, 더빙 설정을 삭제했고, 선택 기록, 고정, 언어 설정은 남아 있습니다.",
     unmuted: "음성 응답 음소거를 해제했습니다.",
     upcomingBirthdays: (list) => `이번 주 생일: ${list}.`,

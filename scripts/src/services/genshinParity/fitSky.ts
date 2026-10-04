@@ -1,6 +1,6 @@
 import type { SkyShape } from "genshin-engine";
 
-import { solveLinearSystem } from "#src/services/genshinParity/solveLinearSystem";
+import { solveNonNegativeSystem } from "#src/services/genshinParity/solveNonNegativeSystem";
 
 type Vector = [number, number, number];
 // The terms of the game's sky a pixel's colour is a sum of, each a colour the fit solves (Login/Scene/Index.reference.ts,
@@ -8,14 +8,10 @@ type Vector = [number, number, number];
 // Halo and the moon's glow
 export const SKY_TERMS = ["zenithBack", "zenith", "horizonBack", "horizon", "halo", "sunHalo", "moonGlow"] as const;
 const LEAST_DIVISOR = 1e-4;
-// A pixel further from the solved colour than this many times the median, a cloud or a tower's haze, is left out of the
-// Next solve, the sky's own pixels the most of them
-const TRIM_FACTOR = 2.5;
-// A pixel standing brighter than the sky solved by more than this many times the pixels' typical distance from it is a
-// Cloud or the haze lit across it, left out however many there are: clouds over half a dusk sky make the median
-// Distance a cloud's, so a trim even both ways keeps them all and the sky is solved as their mean
+// A pixel standing over the sky solved by more than this share of the pixels' typical distance from it, or under it by
+// More than this many times that distance, is left out of the residual
 const BRIGHT_TRIM_FACTOR = 0.5;
-const TRIM_PASSES = 8;
+const TRIM_FACTOR = 2.5;
 const LUMINANCE = [0.2126, 0.7152, 0.0722] as const;
 const dot = (first: Vector, second: Vector): number =>
   first[0] * second[0] + first[1] * second[1] + first[2] * second[2];
@@ -67,70 +63,55 @@ export const readSkyWeights = (
     moonGlow,
   ];
 };
-// The sky's colours at a shape, solved by least squares on each channel apart over the sky's pixels in scene colour,
-// Each kept at or above none, the pixels standing brighter than it left out pass by pass, and the darkest far off it,
-// So the clouds and the haze lit across the sky do not pull it up to their mean. The residual is the root mean square over the pixels kept
+// The sky's colours at a shape, solved by least squares on each channel apart over the sky's clear pixels in scene
+// Colour, none of them negative (`solveNonNegativeSystem`): a colour clamped after a free solve leaves the terms it
+// Cancelled too bright, which drew a lavender dusk salmon. The residual, which a shape is refined on, is the root mean
+// Square over the pixels kept, those standing within the pixels' typical distance of the sky solved: a clear sky's
+// Mask still holds haze lit across it, which read with the rest bends the shape to it
 export const fitSky = (
   samples: readonly { color: Vector; weights: readonly number[] }[],
 ): { colors: Vector[]; kept: number; residual: number } => {
-  let kept = samples;
-  let colors: Vector[] = SKY_TERMS.map((): Vector => [0, 0, 0]);
-  for (let pass = 0; pass < TRIM_PASSES; pass++) {
-    const termCount = SKY_TERMS.length;
-    const passKept = kept;
-    const solved = ([0, 1, 2] as const).map((channel) => {
-      const normal = Array.from({ length: termCount }, () => Array.from({ length: termCount }, () => 0));
-      const right = Array.from({ length: termCount }, () => 0);
-      for (const { color, weights } of passKept)
-        for (let row = 0; row < termCount; row++) {
-          right[row] = (right[row] ?? 0) + (weights[row] ?? 0) * color[channel];
-          for (let column = 0; column < termCount; column++)
-            (normal[row] ?? [])[column] = (normal[row]?.[column] ?? 0) + (weights[row] ?? 0) * (weights[column] ?? 0);
-        }
-      // A term no pixel weighs (no moon in a day sky) is held at none by a touch of damping
-      for (let row = 0; row < termCount; row++) (normal[row] ?? [])[row] = (normal[row]?.[row] ?? 0) + 1e-6;
-      return (solveLinearSystem(normal, right) ?? right.map(() => 0)).map((value) => Math.max(value, 0));
-    });
-    const passColors = SKY_TERMS.map((_, term): Vector => [
-      solved[0]?.[term] ?? 0,
-      solved[1]?.[term] ?? 0,
-      solved[2]?.[term] ?? 0,
-    ]);
-    colors = passColors;
-    // Each pixel's luminance over the sky solved, a cloud's above it
-    const brightnesses = samples.map(({ color, weights }) =>
-      ([0, 1, 2] as const).reduce(
-        (sum: number, channel) =>
-          sum +
-          LUMINANCE[channel] *
-            (color[channel] -
-              weights.reduce((termSum, weight, term) => termSum + weight * (passColors[term]?.[channel] ?? 0), 0)),
-        0,
-      ),
-    );
-    const spread =
-      brightnesses.map((brightness) => Math.abs(brightness)).toSorted((first, second) => first - second)[
-        Math.floor(brightnesses.length / 2)
-      ] ?? 0;
-    kept = samples.filter((_, index) => {
-      const brightness = brightnesses[index] ?? 0;
-      return brightness <= spread * BRIGHT_TRIM_FACTOR && brightness >= -spread * TRIM_FACTOR;
-    });
-  }
+  const termCount = SKY_TERMS.length;
+  const solved = ([0, 1, 2] as const).map((channel) => {
+    const normal = Array.from({ length: termCount }, () => Array.from({ length: termCount }, () => 0));
+    const right = Array.from({ length: termCount }, () => 0);
+    for (const { color, weights } of samples)
+      for (let row = 0; row < termCount; row++) {
+        right[row] = (right[row] ?? 0) + (weights[row] ?? 0) * color[channel];
+        const normalRow = normal[row] ?? [];
+        for (let column = 0; column < termCount; column++)
+          normalRow[column] = (normalRow[column] ?? 0) + (weights[row] ?? 0) * (weights[column] ?? 0);
+      }
+    // A term no pixel weighs (no moon in a day sky) is held at none by a touch of damping
+    for (let row = 0; row < termCount; row++) (normal[row] ?? [])[row] = (normal[row]?.[row] ?? 0) + 1e-6;
+    return solveNonNegativeSystem(normal, right);
+  });
+  const colors = SKY_TERMS.map((_, term): Vector => [
+    solved[0]?.[term] ?? 0,
+    solved[1]?.[term] ?? 0,
+    solved[2]?.[term] ?? 0,
+  ]);
+  const differences = samples.map(({ color, weights }) =>
+    ([0, 1, 2] as const).map(
+      (channel) =>
+        color[channel] - weights.reduce((sum, weight, term) => sum + weight * (colors[term]?.[channel] ?? 0), 0),
+    ),
+  );
+  // Each pixel's luminance over the sky solved, a lit haze's above it
+  const brightnesses = differences.map((difference) =>
+    difference.reduce((sum, value, channel) => sum + (LUMINANCE[channel] ?? 0) * value, 0),
+  );
+  const spread =
+    brightnesses.map((brightness) => Math.abs(brightness)).toSorted((first, second) => first - second)[
+      Math.floor(brightnesses.length / 2)
+    ] ?? 0;
+  const kept = differences.filter((_, index) => {
+    const brightness = brightnesses[index] ?? 0;
+    return brightness <= spread * BRIGHT_TRIM_FACTOR && brightness >= -spread * TRIM_FACTOR;
+  });
   const residual = Math.sqrt(
-    kept.reduce(
-      (sum, { color, weights }) =>
-        sum +
-        ([0, 1, 2] as const).reduce(
-          (channelSum: number, channel) =>
-            channelSum +
-            (color[channel] -
-              weights.reduce((termSum, weight, term) => termSum + weight * (colors[term]?.[channel] ?? 0), 0)) **
-              2,
-          0,
-        ),
-      0,
-    ) / Math.max(kept.length * 3, 1),
+    kept.reduce((sum, difference) => sum + difference.reduce((channelSum, value) => channelSum + value ** 2, 0), 0) /
+      Math.max(kept.length * 3, 1),
   );
   return { colors, kept: kept.length, residual };
 };

@@ -39,18 +39,17 @@ const ward = async (
   // A session nobody watches has nobody to ask, and a guard that blocks unattended work is worse than none
   if (collision && (await $.session.surfaces()).length > 0) {
     const minutes = -Math.round(Temporal.Duration.from({ milliseconds: now - collision.editedAt }).total("minutes"));
-    const answer = await $.ui.ask(
-      `Another session edited ${path} ${ageFormat.format(minutes, "minute")}. Edit it here too?`,
-      { header: "Ward", options: WardAnswers },
-    );
+    const age = ageFormat.format(minutes, "minute");
+    const answer = await $.ui.ask(`Another session edited ${path} ${age}. Edit it here too?`, {
+      header: "Ward",
+      options: WardAnswers,
+    });
     if (answer === WardAnswer.Worktree)
       return {
-        deny: `The person asked to move this work into a git worktree before editing ${path}: another session changed it ${ageFormat.format(minutes, "minute")}. Enter a worktree, then carry on there.`,
+        deny: `The person asked to move this work into a git worktree before editing ${path}: another session changed it ${age}. Enter a worktree, then carry on there.`,
       };
     else if (answer === WardAnswer.Cancel)
-      return {
-        deny: `The person stopped this edit: another session changed ${path} ${ageFormat.format(minutes, "minute")}.`,
-      };
+      return { deny: `The person stopped this edit: another session changed ${path} ${age}.` };
     else if (answer !== WardAnswer.Proceed) return { deny: `The person stopped this edit and said: ${answer}` };
   }
 

@@ -8,7 +8,6 @@ import { readInstrumentRecordings } from "#src/services/genshinAssets/readInstru
 import { readVoicePitchReference } from "#src/services/genshinAssets/readVoicePitchReference";
 import { refineVoicePowers } from "#src/services/genshinAssets/refineVoicePowers";
 import { renderSampledVoice } from "#src/services/genshinAssets/renderSampledVoice";
-import { solveVoicePowers } from "#src/services/genshinAssets/solveVoicePowers";
 import { computeChroma } from "#src/services/genshinParity/computeChroma";
 import { readAudibleFrames } from "#src/services/genshinParity/readAudibleFrames";
 import { readBandEnergies } from "#src/services/genshinParity/readBandEnergies";
@@ -16,6 +15,7 @@ import { readBandFloor } from "#src/services/genshinParity/readBandFloor";
 import { readFrameSeconds } from "#src/services/genshinParity/readFrameSeconds";
 import { readGapsByOnsetAge } from "#src/services/genshinParity/readGapsByOnsetAge";
 import { scoreShapedMusic } from "#src/services/genshinParity/scoreShapedMusic";
+import { solveNonNegativeSystem } from "#src/services/genshinParity/solveNonNegativeSystem";
 import { AUDIO_SAMPLE_RATE } from "pitch-transcription";
 
 // Every combination of one candidate per voice, from `[]` up
@@ -116,7 +116,7 @@ export const solveSampledVoices = async (
         combination.map((column, other) => voiceProducts[voice]?.[other]?.[row]?.[column] ?? 0),
       );
       const rhs = combination.map((index, voice) => voiceSums[voice]?.[index] ?? 0);
-      const powers = solveVoicePowers(gram, rhs);
+      const powers = solveNonNegativeSystem(gram, rhs);
       // At the exact solution of the powers' subset, the residual is the negated product of its powers with the rhs
       const residual = -powers.reduce((sum, power, voice) => sum + power * (rhs[voice] ?? 0), 0);
       return { combination, powers, residual };

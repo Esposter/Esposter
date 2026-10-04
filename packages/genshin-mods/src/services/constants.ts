@@ -15,5 +15,6 @@ export const WAYPOINTS_QUESTION: string = `Leave the conversation as it is and a
 export const WARM_QUESTION = "Answer with the one word OK.";
 export const HANDOFF_QUESTION =
   "Write a handoff of this session for a fresh conversation that will carry on the work with no other context. Write it as the prompt that conversation starts with: the goal, what is done, what is next in order, the files, commands and decisions that matter with their reasons, and any open question. Be complete but compact, plain markdown, nothing before or after it.";
+export const VEIL_SECTION_ID = "genshin-mods-veil";
 export const VEIL_SYSTEM_SECTION =
   "Recording mode is on: the screen is being recorded or shared. Never write an email address, a phone number, a money amount, an API key, a token or a password in a reply; write a placeholder such as [email], [phone], [amount] or [secret] instead, even when asked for the value. Tool calls still use the real values.";

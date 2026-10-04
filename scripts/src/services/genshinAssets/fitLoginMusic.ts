@@ -69,7 +69,7 @@ export const fitLoginMusic = async (): Promise<{ music: Music; report: string[] 
         const { decayResidual, harmonicCounts, instrument, noteCount, releaseCount, releaseResidual } = voiceFit;
         const noiseBands = noises[voice] ?? [];
         report.push(
-          `  voice ${voice}: ${voiceNotes.length} notes, ${noteCount} clear; harmonics ${instrument.harmonics.map((amplitude, index) => `${amplitude.toFixed(3)} (${harmonicCounts[index]})`).join(", ")}; attack ${instrument.attack.toFixed(3)} s, decay ${instrument.decay.toFixed(3)} s to ${instrument.sustain.toFixed(3)} (residual ${decayResidual.toFixed(3)}), release ${instrument.release.toFixed(3)} s from ${releaseCount} notes (residual ${releaseResidual.toFixed(3)}), level ${instrument.level.toFixed(4)}, noise by band ${noiseBands.map((level) => level.toFixed(4)).join(", ")}, tuning ${(instrument.tuning * 100).toFixed(1)} cents`,
+          `  voice ${voice}: ${voiceNotes.length} notes, ${noteCount} clear; harmonics ${instrument.harmonics.map((amplitude, index) => `${amplitude.toFixed(3)} (${harmonicCounts[index]})`).join(", ")}; attack ${instrument.attack.toFixed(3)} s, decay ${instrument.decay.toFixed(3)} s to ${instrument.sustain.toFixed(3)} (residual ${decayResidual.toFixed(1)} dB), release ${instrument.release.toFixed(3)} s from ${releaseCount} notes (residual ${releaseResidual.toFixed(3)}), level ${instrument.level.toFixed(4)}, noise by band ${noiseBands.map((level) => level.toFixed(4)).join(", ")}, tuning ${(instrument.tuning * 100).toFixed(1)} cents`,
         );
         voices.push({
           instrument: roundInstrument({ ...instrument, noiseBands }),

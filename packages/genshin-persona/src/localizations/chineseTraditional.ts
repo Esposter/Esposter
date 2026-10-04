@@ -189,9 +189,7 @@ const chineseTraditional: Localization = {
           ? `語音：${voiceLanguage}配音，執行環境${isRuntimeInstalled ? "已安裝" : "未安裝"}，${voiceDevice ? `在${voiceDevice}上發聲` : "尚未發聲"}。`
           : "語音：未設定，不會朗讀任何回覆。",
         `回覆${isMuted ? "已靜音" : `未靜音，音量${volume}`}。`,
-      ]
-        .filter(Boolean)
-        .join("\n"),
+      ].join("\n"),
     teardownDone: "語音的執行環境、權重、參考語音和配音已刪除；選擇紀錄、釘選設定和語言設定保留。",
     unmuted: "語音回覆已取消靜音。",
     upcomingBirthdays: (list) => `本週生日：${list}。`,
