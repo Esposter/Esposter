@@ -39,8 +39,8 @@ Every action has exactly one visible control — keep the largest hit target wit
 
 ## Settings Tab Permissions — Hide at the Tab Level
 
-A permission-gated settings tab is hidden by a tab-definition map (`FooPermissionMap` in `services/<domain>/settings/`) filtered through `hasPermission` in a `computed`; a tab never renders an insufficient-permissions message, and the map hides the tab without withholding anything (`references/action-items.md`, "Settings tabs hide at the tab level").
+A permission-gated settings tab is hidden by a tab-definition map (`SettingsPermissionMap` in `services/message/settings/`) filtered through the role store's `checkHasMyPermission` in a `computed`; a tab never renders an insufficient-permissions message, and the map hides the tab without withholding anything (`references/action-items.md`, "Settings tabs hide at the tab level").
 
 ## Singleton Dialogs — Store-Driven Target, Never Per-Item
 
-**Never mount a dialog (or any heavy overlay subtree) inside a list item.** A `v-for` over N items with an embedded dialog or menu creates N component trees that mount, hydrate and re-render as one — which is how a list page ends up with a seconds-long INP. One instance is mounted at list level and driven by a target ref in a per-service dialog store; the three-part wiring is in `references/singleton-dialogs.md`, and the rationale in `apps/web/content/docs/architecture/singleton-dialogs.md` (keep that page updated when this pattern evolves).
+**Never mount a dialog (or any heavy overlay subtree) inside a list item.** A `v-for` over N items with an embedded dialog or menu creates N component trees that mount, hydrate and re-render as one — which is how a list page ends up with a seconds-long INP. One instance is mounted at list level and driven by a target ref in a per-service dialog store; the three-part wiring is in `references/singleton-dialogs.md`, and the rationale in `apps/web/content/docs/architecture/singleton-dialogs.md`.
