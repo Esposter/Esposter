@@ -8,7 +8,7 @@ describe(measureClouds, () => {
   const sky = new Uint8Array(size * size).fill(1);
   // A cloud over the left half of the sky, its edge a step or a ramp four pixels wide
   const drawCloud = (rampWidth: number): Float32Array =>
-    Float32Array.from({ length: size * size }, (_, pixel) => {
+    Float32Array.from({ length: size * size }, (_value, pixel) => {
       const column = pixel % size;
       return Math.min(Math.max((size / 2 + rampWidth / 2 - column) / Math.max(rampWidth, 1), 0), 1) + 1;
     });

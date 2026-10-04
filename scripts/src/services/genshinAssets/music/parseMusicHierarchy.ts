@@ -33,7 +33,7 @@ export const parseMusicHierarchy = (objects: readonly MusicObject[]): MusicHiera
     for (let offset = 0; offset + 4 <= data.length; offset++) {
       const count = data.readUInt32LE(offset);
       if (count < 1 || count > MAX_CHILD_COUNT || offset + 4 + 4 * count > data.length) continue;
-      const ids = Array.from({ length: count }, (_, index) => data.readUInt32LE(offset + 4 + 4 * index));
+      const ids = Array.from({ length: count }, (_value, index) => data.readUInt32LE(offset + 4 + 4 * index));
       if (
         ids.every((id) => {
           const childType = idTypeMap.get(id);
@@ -49,7 +49,7 @@ export const parseMusicHierarchy = (objects: readonly MusicObject[]): MusicHiera
     if (type === MusicObjectType.Track) {
       const sourceCount = data.readUInt32LE(1);
       const clipOffset = 5 + sourceCount * SOURCE_LENGTH;
-      const clips: MusicClip[] = Array.from({ length: data.readUInt32LE(clipOffset) }, (_, index) => {
+      const clips: MusicClip[] = Array.from({ length: data.readUInt32LE(clipOffset) }, (_value, index) => {
         const offset = clipOffset + 4 + index * CLIP_LENGTH;
         return {
           beginTrim: data.readDoubleLE(offset + 20),
@@ -80,7 +80,7 @@ export const parseMusicHierarchy = (objects: readonly MusicObject[]): MusicHiera
         const offset = data.length - 4 - count * PLAYLIST_ITEM_LENGTH;
         if (offset < children.end) break;
         if (data.readUInt32LE(offset) !== count) continue;
-        const items: MusicPlaylistItem[] = Array.from({ length: count }, (_, index) => {
+        const items: MusicPlaylistItem[] = Array.from({ length: count }, (_value, index) => {
           const itemOffset = offset + 4 + index * PLAYLIST_ITEM_LENGTH;
           return {
             childCount: data.readUInt32LE(itemOffset + 8),

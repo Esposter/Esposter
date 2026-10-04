@@ -163,7 +163,7 @@ export const solveCameraPose = (
       if (Math.hypot(...step) < CONVERGED_STEP) break;
     } else damping *= DAMPING_FACTOR;
   }
-  const errors = correspondences.map((_, index) =>
+  const errors = correspondences.map((_value, index) =>
     Math.hypot(residuals[index * 2] ?? 0, residuals[index * 2 + 1] ?? 0),
   );
   return { errors, pose, rms: Math.sqrt(computeCost(residuals) / Math.max(correspondences.length, 1)) };

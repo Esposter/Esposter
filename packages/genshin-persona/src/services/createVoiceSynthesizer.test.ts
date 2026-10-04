@@ -27,7 +27,7 @@ describe(createVoiceSynthesizer, () => {
   };
   // A tenth of a second: a burst with a pause after it, which is speech, and a constant near-silence, which is not
   const length = VOICE_SAMPLE_RATE / 10;
-  const speech = Float32Array.from({ length }, (_, index) => (index < length / 2 ? 1 : 0));
+  const speech = Float32Array.from({ length }, (_value, index) => (index < length / 2 ? 1 : 0));
   const silence = Float32Array.from({ length }, () => 0.001);
   // The engine as each rung loads it: the rung's vocoder answers every generation with the same waveform, a rung
   // Given an error rejects every generation with it, and a rung with none rejects its load

@@ -15,7 +15,7 @@ export const launchSessionWindow = ({ port, secret }: SessionWindowLaunch): void
   // oxlint-disable-next-line no-restricted-properties -- node puts the running script first in argv, which is the host
   const hostCommand = isSea() ? [process.execPath] : [process.execPath, process.argv[1] ?? ""];
   const quotedHostCommand = hostCommand
-    .map((_, index) => `"%${SESSION_COMMAND_ENVIRONMENT_VARIABLE_PREFIX}${index}%"`)
+    .map((_value, index) => `"%${SESSION_COMMAND_ENVIRONMENT_VARIABLE_PREFIX}${index}%"`)
     .join(" ");
   spawn("cmd.exe", ["/d", "/s", "/c", `"start "" ${quotedHostCommand} ${SESSION_SUBCOMMAND} --port ${port}"`], {
     env: {

@@ -73,7 +73,7 @@ export const fitVoiceNoises = (
     getRow: (index: number, frame: number) => number,
     computeTarget: (frame: number) => number | undefined,
   ): number[] | undefined => {
-    const frames = Array.from({ length: frameCount }, (_, frame) => frame).filter(
+    const frames = Array.from({ length: frameCount }, (_value, frame) => frame).filter(
       (frame) => computeTarget(frame) !== undefined,
     );
     const rows = [...active.keys()];
@@ -84,7 +84,7 @@ export const fitVoiceNoises = (
       rows.map((row) => frames.reduce((sum, frame) => sum + getRow(row, frame) * (computeTarget(frame) ?? 0), 0)),
     );
   };
-  const soundingFrames = Array.from({ length: frameCount }, (_, frame) => frame).filter((frame) =>
+  const soundingFrames = Array.from({ length: frameCount }, (_value, frame) => frame).filter((frame) =>
     voicePowers.some((powers) => (powers[frame] ?? 0) > 0),
   );
   const bands = MUSIC_NOISE_BAND_CENTRES.map((centre) => {
@@ -95,7 +95,7 @@ export const fitVoiceNoises = (
     if (flatness < MUSIC_NOISE_MIN_FLATNESS) return { flatness, levels: voices.map(() => 0) };
     // The band's width over the half rate, the share of white noise's power it holds
     const bandShare = centre / Math.SQRT2 / (sampleRate / 2);
-    const noisePowers = Array.from({ length: frameCount }, (_, frame): number | undefined => {
+    const noisePowers = Array.from({ length: frameCount }, (_value, frame): number | undefined => {
       const offBins: number[] = [];
       for (let bin = low; bin <= high; bin++)
         if (!partialMasks[frame]?.[bin]) offBins.push(magnitudes[frame * binCount + bin] ?? 0);
@@ -105,7 +105,7 @@ export const fitVoiceNoises = (
     });
     // A voice silent in every frame the band is read in says nothing of it
     let active = voices
-      .map((_, index) => index)
+      .map((_value, index) => index)
       .filter((voice) => noisePowers.some((power, frame) => power !== undefined && getPower(voice, frame) > 0));
     let shares: number[] = [];
     while (active.length > 0) {
@@ -118,7 +118,7 @@ export const fitVoiceNoises = (
         ) ?? solving.map(() => 0);
       shares = solvingShares;
       if (solvingShares.every((share) => share > 0)) break;
-      active = solving.filter((_, index) => (solvingShares[index] ?? 0) > 0);
+      active = solving.filter((_value, index) => (solvingShares[index] ?? 0) > 0);
     }
     // Each share as its logarithm, which keeps it positive through the refinement
     const logShares = shares.map((share) => Math.log(share));
@@ -126,7 +126,7 @@ export const fitVoiceNoises = (
     const computeModel = (frame: number): number =>
       solved.reduce((sum, voice, index) => sum + Math.exp(logShares[index] ?? 0) * getPower(voice, frame), 0);
     for (let step = 0; step < MUSIC_NOISE_REFINE_STEPS && solved.length > 0; step++) {
-      const models = Float64Array.from({ length: frameCount }, (_, frame) => computeModel(frame));
+      const models = Float64Array.from({ length: frameCount }, (_value, frame) => computeModel(frame));
       const delta = solveNormal(
         solved,
         (index, frame) =>
@@ -141,7 +141,7 @@ export const fitVoiceNoises = (
     }
     return {
       flatness,
-      levels: voices.map((_, voice) => {
+      levels: voices.map((_value, voice) => {
         const index = solved.indexOf(voice);
         return index === -1 ? 0 : Math.exp((logShares[index] ?? 0) / 2);
       }),
@@ -149,6 +149,6 @@ export const fitVoiceNoises = (
   });
   return {
     flatnesses: bands.map(({ flatness }) => flatness),
-    levels: voices.map((_, voice) => bands.map(({ levels }) => levels[voice] ?? 0)),
+    levels: voices.map((_value, voice) => bands.map(({ levels }) => levels[voice] ?? 0)),
   };
 };

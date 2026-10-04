@@ -16,7 +16,7 @@ export const parseAudioPackageHeader = (header: Buffer): AudioPackage => {
   if (header.toString("latin1", 0, AUDIO_PACKAGE_MAGIC.length) !== AUDIO_PACKAGE_MAGIC)
     throw new InvalidOperationError(Operation.Read, "audio package", "has no AKPK magic");
   const readTable = (offset: number): AudioPackageEntry[] =>
-    Array.from({ length: header.readUInt32LE(offset) }, (_, index) => {
+    Array.from({ length: header.readUInt32LE(offset) }, (_value, index) => {
       const entryOffset = offset + 4 + index * ENTRY_LENGTH;
       return {
         id: header.readUInt32LE(entryOffset),

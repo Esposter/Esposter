@@ -2,7 +2,7 @@ import { MIN_TURN_PAUSE_SECONDS, VOICE_SAMPLE_RATE } from "#src/services/constan
 import { cutOpeningTurn } from "#src/services/cutOpeningTurn";
 import { describe, expect, test } from "vitest";
 
-const getTone = (length: number) => Float32Array.from({ length }, (_, index) => Math.sin(index));
+const getTone = (length: number) => Float32Array.from({ length }, (_value, index) => Math.sin(index));
 
 describe(cutOpeningTurn, () => {
   const turnSeconds = 1;

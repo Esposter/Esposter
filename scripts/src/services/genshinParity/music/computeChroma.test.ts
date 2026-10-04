@@ -7,7 +7,7 @@ describe(computeChroma, () => {
     expect.hasAssertions();
 
     const frequency = 440;
-    const tone = Float32Array.from({ length: CHROMA_FRAME_LENGTH }, (_, index) =>
+    const tone = Float32Array.from({ length: CHROMA_FRAME_LENGTH }, (_value, index) =>
       Math.sin((2 * Math.PI * frequency * index) / CHROMA_SAMPLE_RATE),
     );
     const tonal = computeChroma(tone, CHROMA_SAMPLE_RATE);

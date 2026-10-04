@@ -91,7 +91,7 @@ export const measureGlide = async (
       }),
     );
   const framesPerWindow = Math.round(windowSeconds * framesPerSecond);
-  return Array.from({ length: Math.floor(shifts.length / framesPerWindow) }, (_, window) => {
+  return Array.from({ length: Math.floor(shifts.length / framesPerWindow) }, (_value, window) => {
     const windowShifts = shifts.slice(window * framesPerWindow, (window + 1) * framesPerWindow);
     return {
       heldCount: windowShifts.filter(({ shift }) => shift === 0).length,

@@ -23,7 +23,7 @@ export const computeGapsByOnsetAge = (
     return span === -1 ? DECAY_AGE_BOUNDS.length : span;
   });
   const bandGapsList = bandLevelsList.map((bandLevels) => computeBandGaps(bandLevels, 0));
-  return Array.from({ length: DECAY_AGE_BOUNDS.length + 1 }, (_, span) => {
+  return Array.from({ length: DECAY_AGE_BOUNDS.length + 1 }, (_value, span) => {
     const members = [...spans.keys()].filter((frame) => spans[frame] === span);
     return {
       bandGaps: bandGapsList.map((gaps) => computeMean(members.map((frame) => gaps[frame] ?? 0))),

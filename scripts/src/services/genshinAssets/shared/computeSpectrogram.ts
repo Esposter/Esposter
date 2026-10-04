@@ -14,7 +14,7 @@ export const computeSpectrogram = (
   const magnitudes = new Float32Array(frameCount * binCount);
   const window = Float64Array.from(
     { length: frameLength },
-    (_, index) => 0.5 - 0.5 * Math.cos((2 * Math.PI * index) / frameLength),
+    (_value, index) => 0.5 - 0.5 * Math.cos((2 * Math.PI * index) / frameLength),
   );
   const real = new Float64Array(frameLength);
   const imaginary = new Float64Array(frameLength);

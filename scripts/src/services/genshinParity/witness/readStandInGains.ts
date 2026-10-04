@@ -56,7 +56,7 @@ export const readStandInGains = async (
       await mkdir(COMPARISONS_DIRECTORY, { recursive: true });
       await writeFile(join(COMPARISONS_DIRECTORY, `${referenceId}.stand-in.png`), sheet);
       const { errorMap } = await readFlipErrorMap(exportsShot, ourShot, width, height);
-      const labels = Int32Array.from(errorMap, (_, pixel) =>
+      const labels = Int32Array.from(errorMap, (_value, pixel) =>
         checkIsScored(pixel, width) && part[pixel * 4] ? (part[pixel * 4 + 1] ?? 0) : -1,
       );
       const [exportsGrey, ourGrey] = await Promise.all([

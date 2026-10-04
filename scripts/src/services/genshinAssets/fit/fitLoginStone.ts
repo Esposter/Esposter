@@ -50,7 +50,7 @@ export const fitLoginStone = async (
           const scale = floats[GLOSS_MAP_SCALE_KEY] ?? 1;
           return Array.from(
             { length: info.width * info.height },
-            (_, texel) => ((data[texel * info.channels] ?? 0) / BYTE) * scale,
+            (_value, texel) => ((data[texel * info.channels] ?? 0) / BYTE) * scale,
           );
         }),
       );

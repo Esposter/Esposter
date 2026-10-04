@@ -5,7 +5,7 @@ import { describe, expect, test } from "vitest";
 // The camera by a later frame painted that far on
 const getRow = (distance: number): number => distance;
 const paint = (offset: number): number[] =>
-  Array.from({ length: 64 }, (_, row) => Math.sin((row + offset) * 0.3) + Math.sin((row + offset) * 0.17));
+  Array.from({ length: 64 }, (_value, row) => Math.sin((row + offset) * 0.3) + Math.sin((row + offset) * 0.17));
 describe(measureGroundShift, () => {
   const options = { band: [10, 40] as [number, number], getRow, largestShift: 6, step: 0.25 };
 

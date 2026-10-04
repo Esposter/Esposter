@@ -82,12 +82,14 @@ export const fitLoginDoor = async (
       .removeAlpha()
       .raw()
       .toBuffer({ resolveWithObject: true });
-    const colors = Array.from({ length: width * height }, (_, cell): Vector => {
+    const colors = Array.from({ length: width * height }, (_value, cell): Vector => {
       const [column, row] = toTexel([values[cell * 2] ?? 0, values[cell * 2 + 1] ?? 0], info);
       const texel = (row * info.width + column) * info.channels;
       return [0, 1, 2].map((channel) => toLinear((data[texel + channel] ?? 0) / BYTE)) as Vector;
     });
-    const drawn = Array.from({ length: width * height }, (_, cell) => cell).filter((cell) => (tags[cell] ?? -1) >= 0);
+    const drawn = Array.from({ length: width * height }, (_value, cell) => cell).filter(
+      (cell) => (tags[cell] ?? -1) >= 0,
+    );
     const computeMean = (cells: readonly number[]): Vector =>
       [0, 1, 2].map(
         (channel) => cells.reduce((sum, cell) => sum + (colors[cell]?.[channel] ?? 0), 0) / Math.max(cells.length, 1),
@@ -136,7 +138,7 @@ export const fitLoginDoor = async (
     };
   };
   const fitPart = (group: string): { depth: [number, number]; loops: [number, number][][] } => {
-    const partFaces = faces.filter((_, index) => faceGroups[index] === group);
+    const partFaces = faces.filter((_value, index) => faceGroups[index] === group);
     const depths = partFaces.flatMap((face) => face.map((index) => scaled[index]?.[2] ?? 0));
     const triangles = partFaces.map(([a, b, c]) => [toFront(a), toFront(b), toFront(c)] as const);
     return {

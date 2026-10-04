@@ -32,7 +32,7 @@ export const copySpawns = (objects: readonly SceneObject[], spawns: readonly Ass
     );
     const subtree = collectSubtree(root);
     const subtreeSet = new Set(subtree);
-    const rows = Array.from({ length: copies.count }, (_, index) => {
+    const rows = Array.from({ length: copies.count }, (_value, index) => {
       if (index === 0) return subtree;
       const toCopyId = (transformId: string): string => `${transformId}~${index}`;
       return subtree.map((object) =>

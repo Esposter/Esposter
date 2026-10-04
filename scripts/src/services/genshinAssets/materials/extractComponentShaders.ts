@@ -96,7 +96,7 @@ export const extractComponentShaders = async (component: DerivedAssetComponent):
       );
       // oxlint-disable-next-line no-await-in-loop -- the programs are read as assembly and HLSL from here on
       await Promise.all(
-        programs.map((_, index) => rm(join(programDirectory, `${String(index).padStart(5, "0")}.dxbc`))),
+        programs.map((_value, index) => rm(join(programDirectory, `${String(index).padStart(5, "0")}.dxbc`))),
       );
       summary.push(
         `${blockName}/${basename(file, ".dat")}: ${count} of ${programs.length} programs disassembled, ${decompiledCount} decompiled, ${propertyNames.slice(0, SUMMARY_PROPERTY_COUNT).join(" ")}`,

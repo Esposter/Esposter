@@ -28,7 +28,7 @@ export const solveFogColors = (
       isScatterSettled ? [opacity * (1 - scatter), opacity * scatter] : [opacity],
     );
     const targets = samples.map(({ lit, opacity, reference }) => reference[channel] - lit[channel] * (1 - opacity));
-    const indices = Array.from({ length: rows[0]?.length ?? 0 }, (_, index) => index);
+    const indices = Array.from({ length: rows[0]?.length ?? 0 }, (_value, index) => index);
     const normal = indices.map((row) =>
       indices.map((column) =>
         rows.reduce(

@@ -12,7 +12,7 @@ const REGISTER_REGEX = /cb0\[(?<register>\d+)\]/gu;
 const computeRegisters = ({ arrayLength, byteOffset, rows }: ShaderConstant): number[] => {
   const count = Math.max(rows, 1) * Math.max(arrayLength, 1);
   const first = Math.floor(byteOffset / REGISTER_BYTES);
-  return Array.from({ length: count }, (_, index) => first + index);
+  return Array.from({ length: count }, (_value, index) => first + index);
 };
 // The byte past a constant's last: its last register's columns, past every register before it
 const computeEndByte = (constant: ShaderConstant): number =>

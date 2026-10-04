@@ -140,7 +140,7 @@ describe("programRouter", () => {
   test("reports the audience rows past the read cap", async () => {
     expect.hasAssertions();
 
-    const audienceKeyValues = Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, (_, index) => String(index));
+    const audienceKeyValues = Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, (_value, index) => String(index));
     const { program } = await setupIdentifiedProgram(audienceKeyValues);
     const { audienceTruncation, participants } = await caller.generateProgramParticipants({ id: program.id });
 

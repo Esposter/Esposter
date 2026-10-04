@@ -37,7 +37,7 @@ export const fitCloudSprites = async (atlas: Buffer | string): Promise<CloudAtla
       loop.map(([x, y]): [number, number] => [roundFitted(x / width), roundFitted(y / height)]),
     );
   };
-  const sprites = Array.from({ length: CLOUD_ATLAS_COLUMNS * CLOUD_ATLAS_ROWS }, (_, index) => {
+  const sprites = Array.from({ length: CLOUD_ATLAS_COLUMNS * CLOUD_ATLAS_ROWS }, (_value, index) => {
     const column = index % CLOUD_ATLAS_COLUMNS;
     const row = Math.floor(index / CLOUD_ATLAS_COLUMNS);
     // The alpha channel's own threshold stands for the outline, which the red then narrows to the crown

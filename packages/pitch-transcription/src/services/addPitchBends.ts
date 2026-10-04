@@ -10,7 +10,7 @@ import {
 import { takeOne } from "@esposter/shared";
 
 // Weights the contour bins around a note's own, largest at its own bin and falling away as a Gaussian
-const weights = Array.from({ length: PITCH_BEND_TOLERANCE * 2 + 1 }, (_, offset) =>
+const weights = Array.from({ length: PITCH_BEND_TOLERANCE * 2 + 1 }, (_value, offset) =>
   Math.exp(-((offset - PITCH_BEND_TOLERANCE) ** 2) / (2 * PITCH_BEND_STANDARD_DEVIATION ** 2)),
 );
 // Each note with its pitch bend at every frame it spans: the contour bin within `PITCH_BEND_TOLERANCE` of its own whose

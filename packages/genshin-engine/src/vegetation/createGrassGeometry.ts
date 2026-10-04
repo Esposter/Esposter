@@ -12,7 +12,7 @@ export const createGrassGeometry = (segmentCount: number, bladeCount: number): I
   grassGeometry.setAttribute(
     "normal",
     new BufferAttribute(
-      Float32Array.from({ length: positions.length }, (_, index) => (index % 3 === 1 ? 1 : 0)),
+      Float32Array.from({ length: positions.length }, (_value, index) => (index % 3 === 1 ? 1 : 0)),
       3,
     ),
   );

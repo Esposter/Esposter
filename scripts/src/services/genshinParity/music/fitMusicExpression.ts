@@ -26,7 +26,7 @@ export const fitMusicExpression = (
         fitBroadbandGain(bands.flatMap((band) => windowBandLevelsList[band] ?? [])).gain,
       ]),
     );
-    return Array.from({ length: windowCount }, (_, window) => {
+    return Array.from({ length: windowCount }, (_value, window) => {
       const nearest = windows.reduce((best, other) =>
         Math.abs(other - window) < Math.abs(best - window) ? other : best,
       );

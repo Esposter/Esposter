@@ -14,7 +14,7 @@ describe(getLoginWalkwaySink, () => {
   test("rises from its depth past its place by the overshoot and settles back into it", () => {
     expect.hasAssertions();
 
-    const sinks = Array.from({ length: 401 }, (_, index) =>
+    const sinks = Array.from({ length: 401 }, (_value, index) =>
       getLoginWalkwaySink(
         LOGIN_WALKWAY_SUNK_DISTANCE - ((LOGIN_WALKWAY_SUNK_DISTANCE - LOGIN_WALKWAY_SETTLED_DISTANCE) * index) / 400,
         seed,

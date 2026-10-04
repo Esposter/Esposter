@@ -28,7 +28,7 @@ describe(getCard, () => {
   test.each([
     ["the card's own where the language has not written one", personaCard, greeting],
     ["nothing for a character with no card", undefined, ""],
-  ])("greets with %s", (_, card, expected) => {
+  ])("greets with %s", (_description, card, expected) => {
     expect.hasAssertions();
 
     expect(getCard(character, TEST_EPOCH_DATE, english, card).greeting).toBe(expected);

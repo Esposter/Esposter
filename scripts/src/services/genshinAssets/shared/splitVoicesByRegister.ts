@@ -25,7 +25,7 @@ export const splitVoicesByRegister = (pitches: number[], voiceCount: number): nu
   };
   // `costs[voices][end]`: the least spread of the first `end` values split into that many ranges, and where the last
   // Range starts in it
-  const costs = [Array.from({ length: values.length + 1 }, (_, end) => (end === 0 ? 0 : Infinity))];
+  const costs = [Array.from({ length: values.length + 1 }, (_value, end) => (end === 0 ? 0 : Infinity))];
   const starts: number[][] = [[]];
   for (let voice = 1; voice <= voiceCount; voice++) {
     const voiceCosts = Array.from({ length: values.length + 1 }, () => Infinity);

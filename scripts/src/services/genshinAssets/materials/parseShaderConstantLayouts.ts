@@ -28,7 +28,7 @@ export const parseShaderConstantLayouts = (data: Buffer): ShaderConstant[][] => 
     if (recordEnd > data.length) continue;
     const [, rows = 0, columns = 0, , arrayLength = 0, byteOffset = 0] = Array.from(
       { length: RECORD_FIELDS },
-      (_, index) => data.readInt32LE(fieldsStart + FIELD_BYTES * index),
+      (_value, index) => data.readInt32LE(fieldsStart + FIELD_BYTES * index),
     );
     const isRecord =
       byteOffset >= 0 &&

@@ -11,7 +11,7 @@ describe(solveCloudColors, () => {
     const lit: Vector = [1, 0.8, 0.6];
     // Each of ours lit by its crown's share, opaque over a sky that weighs nothing; the reference's the same shares
     // Drawn in the true colours, in another order
-    const shares = Array.from({ length: 400 }, (_, index) => (index % 100) / 99);
+    const shares = Array.from({ length: 400 }, (_value, index) => (index % 100) / 99);
     const ours = shares.map((share) => ({
       base: [0, 0, 0] as Vector,
       lit: [share, share, share] as Vector,

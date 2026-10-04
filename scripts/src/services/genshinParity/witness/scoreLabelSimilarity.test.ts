@@ -6,7 +6,7 @@ describe(scoreLabelSimilarity, () => {
   const labels = new Int32Array(size * size);
   // Vertical stripes a period apart, shifted by the pixels given, as a tower's fluting would stand
   const drawStripes = (shift: number): Float32Array =>
-    Float32Array.from({ length: size * size }, (_, index) =>
+    Float32Array.from({ length: size * size }, (_value, index) =>
       Math.floor(((index % size) + shift) / 4) % 2 ? 0.8 : 0.2,
     );
 
@@ -22,7 +22,7 @@ describe(scoreLabelSimilarity, () => {
     expect.hasAssertions();
 
     const stripes = drawStripes(0);
-    const halves = Int32Array.from({ length: size * size }, (_, index) => ((index % size) * 2 < size ? 0 : 1));
+    const halves = Int32Array.from({ length: size * size }, (_value, index) => ((index % size) * 2 < size ? 0 : 1));
     const neighbourChanged = stripes.map((value, index) => (halves[index] === 1 ? 1 - value : value));
     const [own = 0, neighbour = 0] = scoreLabelSimilarity(stripes, neighbourChanged, size, size, halves, 2);
 

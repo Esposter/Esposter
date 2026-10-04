@@ -330,6 +330,18 @@ describe("typescriptRules", () => {
         violations: 0,
       },
       {
+        filePath: "bareParameter.ts",
+        name: "bareParameter",
+        source: "export const a = [0].map((_, index) => index);",
+        violations: 1,
+      },
+      {
+        filePath: "namedParameter.ts",
+        name: "namedParameter",
+        source: "export const a = [0].map((_value, index) => index);",
+        violations: 0,
+      },
+      {
         filePath: "sameUnitDuration.ts",
         name: "sameUnitDuration",
         source: `export const a = Temporal.Duration.from({ milliseconds: 1 }).total("milliseconds");`,

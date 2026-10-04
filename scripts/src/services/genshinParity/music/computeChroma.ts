@@ -26,7 +26,7 @@ export const computeChroma = (
 ): Chroma => {
   const classes = new Float32Array(frameCount * 12);
   const loudness = new Float32Array(frameCount);
-  const binClasses = Int8Array.from({ length: binCount }, (_, bin) => {
+  const binClasses = Int8Array.from({ length: binCount }, (_value, bin) => {
     const frequency = (bin * sampleRate) / CHROMA_FRAME_LENGTH;
     if (bin === 0 || frequency < CHROMA_MIN_FREQUENCY || frequency > CHROMA_MAX_FREQUENCY) return -1;
     else return ((Math.round(69 + 12 * Math.log2(frequency / 440)) % 12) + 12) % 12;

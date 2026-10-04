@@ -29,8 +29,8 @@ const splitSubpaths = (path: string): string[] =>
     .filter(Boolean);
 const getBox = (subpath: string): { bottom: number; left: number; right: number; top: number } => {
   const numbers = Array.from(subpath.matchAll(NUMBER_REGEX), ([value]) => Number(value));
-  const xs = numbers.filter((_, index) => index % 2 === 0);
-  const ys = numbers.filter((_, index) => index % 2 === 1);
+  const xs = numbers.filter((_value, index) => index % 2 === 0);
+  const ys = numbers.filter((_value, index) => index % 2 === 1);
   return { bottom: Math.max(...ys), left: Math.min(...xs), right: Math.max(...xs), top: Math.min(...ys) };
 };
 const shiftSubpath = (subpath: string, x: number, y: number): string => {

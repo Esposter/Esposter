@@ -37,7 +37,7 @@ export const expressionCommand: SubCommandsDef[string] = defineCommand({
       );
       // Only the windows whose centre the segment reaches, so its last ramp never runs into the next segment
       const windowCount = Math.ceil(segment.duration / MUSIC_EXPRESSION_WINDOW_SECONDS - 0.5);
-      segment.expression = Array.from({ length: windowCount }, (_, window) =>
+      segment.expression = Array.from({ length: windowCount }, (_value, window) =>
         roundMusic((segment.expression[window] ?? 0) + (windowGains[window] ?? windowGains.at(-1) ?? 0)),
       );
       console.log(

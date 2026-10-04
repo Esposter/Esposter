@@ -5,7 +5,7 @@ import { describe, expect, test } from "vitest";
 describe(getFrameEnergiesDb, () => {
   const toneSeconds = 0.5;
   const toneSamples = toneSeconds * VOICE_SAMPLE_RATE;
-  const tone = Float32Array.from({ length: toneSamples * 2 }, (_, index) => (index < toneSamples ? 1 : 0));
+  const tone = Float32Array.from({ length: toneSamples * 2 }, (_value, index) => (index < toneSamples ? 1 : 0));
 
   test("reads one energy per hop, loud over the tone and floored over the silence after it", () => {
     expect.hasAssertions();

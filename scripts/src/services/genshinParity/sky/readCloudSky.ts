@@ -40,7 +40,7 @@ export const readCloudSky = async (
   const projectionInverse = new Matrix4().fromArray(sky.projectionMatrixInverse);
   const world = new Matrix4().fromArray(sky.matrixWorld);
   // Each pixel's height over the horizon in degrees
-  const elevations = Float32Array.from({ length: width * height }, (_, pixel) => {
+  const elevations = Float32Array.from({ length: width * height }, (_value, pixel) => {
     const [column, row] = [pixel % width, Math.floor(pixel / width)];
     const view = new Vector4(((column + 0.5) / width) * 2 - 1, 1 - ((row + 0.5) / height) * 2, 0.5, 1).applyMatrix4(
       projectionInverse,
@@ -48,7 +48,7 @@ export const readCloudSky = async (
     const direction = new Vector3(view.x / view.w, view.y / view.w, view.z / view.w).transformDirection(world);
     return (Math.asin(Math.min(Math.max(direction.y, -1), 1)) * 180) / Math.PI;
   });
-  const skyMask = Uint8Array.from({ length: width * height }, (_, pixel) =>
+  const skyMask = Uint8Array.from({ length: width * height }, (_value, pixel) =>
     Number(!part[pixel * 4] && checkIsScored(pixel, width) && (elevations[pixel] ?? 0) > 0),
   );
   const logRatio = Math.log(CLOUD_RATIO);
@@ -65,7 +65,7 @@ export const readCloudSky = async (
   const computeThreshold = (overs: Float32Array): number => {
     const greatest = overs.reduce((most, over) => Math.max(most, over), Number.EPSILON);
     const skyOvers = Array.from(
-      overs.filter((_, pixel) => skyMask[pixel]),
+      overs.filter((_value, pixel) => skyMask[pixel]),
       (over) => (over / greatest) * BYTE,
     );
     return Math.max(logRatio, (computeOtsuThreshold(skyOvers) / BYTE) * greatest);
@@ -94,7 +94,7 @@ export const readCloudSky = async (
       }),
     readLuminance: async (input) => {
       const data = await sharp(input).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
-      return Float32Array.from({ length: width * height }, (_, pixel) =>
+      return Float32Array.from({ length: width * height }, (_value, pixel) =>
         LUMINANCE.reduce((sum, weight, channel) => sum + weight * toLinear((data[pixel * 3 + channel] ?? 0) / BYTE), 0),
       );
     },

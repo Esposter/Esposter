@@ -20,7 +20,7 @@ export const measureGroundShift = (
     step,
   }: { band: [number, number]; getRow: (distance: number) => number; largestShift: number; step: number },
 ): { correlation: number; shift: number } => {
-  const distances = Array.from({ length: Math.floor((far - near) / step) + 1 }, (_, index) => near + index * step);
+  const distances = Array.from({ length: Math.floor((far - near) / step) + 1 }, (_value, index) => near + index * step);
   const reference = distances.map((distance) => sample(earlier, getRow(distance)));
   const referenceMean = computeMean(reference);
   const computeCorrelation = (shift: number): number => {

@@ -22,7 +22,7 @@ import { AUDIO_SAMPLE_RATE } from "pitch-transcription";
 const listCombinations = (counts: number[]): number[][] =>
   counts.reduce<number[][]>(
     (combinations, count) =>
-      combinations.flatMap((combination) => Array.from({ length: count }, (_, index) => [...combination, index])),
+      combinations.flatMap((combination) => Array.from({ length: count }, (_value, index) => [...combination, index])),
     [[]],
   );
 const computeDot = (first: Float64Array, second: Float64Array): number =>
@@ -51,7 +51,7 @@ export const solveSampledVoices = async (
   const gameBands = computeBandEnergies(game, AUDIO_SAMPLE_RATE);
   const floors = gameBands.map((energies) => computeBandFloor(energies));
   const computeFrameEnergies = (bands: Float64Array[]): Float64Array =>
-    Float64Array.from({ length: bands.length * frames.length }, (_, index) => {
+    Float64Array.from({ length: bands.length * frames.length }, (_value, index) => {
       const band = Math.floor(index / frames.length);
       return bands[band]?.[frames[index % frames.length] ?? 0] ?? 0;
     });

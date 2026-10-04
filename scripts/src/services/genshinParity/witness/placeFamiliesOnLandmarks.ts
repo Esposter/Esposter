@@ -79,7 +79,7 @@ export const placeFamiliesOnLandmarks = async (
     Math.sqrt(computeErrors(values).reduce((sum, error) => sum + error ** 2, 0) / Math.max(points.length, 1));
   const freeIndices = axes.map((axis) => PLACE_AXES.indexOf(axis));
   const toPoint = (free: readonly number[]): number[] =>
-    PLACE_AXES.map((_, index) => {
+    PLACE_AXES.map((_value, index) => {
       const freeIndex = freeIndices.indexOf(index);
       return freeIndex === -1 ? 0 : (free[freeIndex] ?? 0);
     });

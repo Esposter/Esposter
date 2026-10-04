@@ -6,7 +6,7 @@ import { getLuminance } from "#src/services/genshinParity/sky/getLuminance";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The quantiles the two sets of cloud pixels are paired at, and the share of each set read round each one
-const QUANTILES = Array.from({ length: 19 }, (_, index) => (index + 1) / 20);
+const QUANTILES = Array.from({ length: 19 }, (_value, index) => (index + 1) / 20);
 const QUANTILE_WINDOW = 0.025;
 const computeWindow = <T>(values: readonly T[], quantile: number): T[] => {
   const half = Math.max(Math.round(values.length * QUANTILE_WINDOW), 1);
