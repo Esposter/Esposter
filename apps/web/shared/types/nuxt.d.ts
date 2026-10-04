@@ -1,5 +1,6 @@
-// @TODO: no upstream issue — the two declarations Nuxt's server project lacks, `import.meta.env` for code under
-// `shared/` and the hook nuxt-security calls without declaring it on Nitro's, go once each package types its own
+// @TODO: no upstream issue — the two declarations Nuxt's server project lacks go once each package types its own:
+// `import.meta.env` for code under `shared/`, which Nitro 3's `ImportMeta` leaves out, and the hook nuxt-security
+// Calls but declares on Nitro 2's `nitropack` alone
 /// <reference types="nitro/types" />
 import type { NuxtSecurityRouteRules } from "nuxt-security";
 

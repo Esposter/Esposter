@@ -19,7 +19,7 @@ describe("nitro", () => {
     expect.hasAssertions();
 
     const router = useRouter();
-    const publicAssets = (nitro.publicAssets ?? []).filter((publicAsset) => publicAsset !== undefined);
+    const publicAssets = (nitro?.publicAssets ?? []).filter((publicAsset) => publicAsset !== undefined);
     const staticPaths = [
       ...getStaticPaths(join(import.meta.dirname, "..", "public"), ""),
       ...publicAssets.map(({ baseURL = "" }) => `/${baseURL}`),

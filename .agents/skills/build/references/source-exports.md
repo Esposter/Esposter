@@ -61,14 +61,13 @@ Node's own ESM loader cannot read that second shape, twice over: it resolves no 
 
 These places opt in, and they are the whole mechanism:
 
-| Where                                  | How                                       | Reaches                  |
-| :------------------------------------- | :---------------------------------------- | :----------------------- |
-| `tsconfig.base.json`                   | `customConditions: [SOURCE_CONDITION]`    | every package            |
-| `getVitestConfiguration`               | `resolve.conditions`                      | every test but the app's |
-| `apps/web/configuration/typescript.ts` | `customConditions` on each Nuxt tsconfig  | the app's types          |
-| `apps/web/configuration/nitro.ts`      | `customConditions` on the server tsconfig | the app's server types   |
+| Where                                  | How                                                                | Reaches                  |
+| :------------------------------------- | :----------------------------------------------------------------- | :----------------------- |
+| `tsconfig.base.json`                   | `customConditions: [SOURCE_CONDITION]`                             | every package            |
+| `getVitestConfiguration`               | `resolve.conditions`                                               | every test but the app's |
+| `apps/web/configuration/typescript.ts` | `customConditions` on `tsConfig`, which Nuxt carries into all four | the app's types          |
 
-`resolve.conditions` **replaces** Vite's defaults rather than adding to them, which is why `getVitestConfiguration` spreads `defaultServerConditions` back in — dropping `module` and `node` silently re-resolves half the dependency tree. The tsconfig and the app's two configuration files spell the condition as a literal — JSON cannot import `SOURCE_CONDITION`, and the app's configuration loads before `@esposter/configuration` is built — so a rename would leave every tool silently resolving `dist`; `packages/configuration/src/constants.test.ts` and `apps/web/configuration/typescript.test.ts` hold each copy to the constant.
+`resolve.conditions` **replaces** Vite's defaults rather than adding to them, which is why `getVitestConfiguration` spreads `defaultServerConditions` back in — dropping `module` and `node` silently re-resolves half the dependency tree. The tsconfig and the app's configuration spell the condition as a literal — JSON cannot import `SOURCE_CONDITION`, and the app's configuration loads before `@esposter/configuration` is built — so a rename would leave every tool silently resolving `dist`; `packages/configuration/src/constants.test.ts` and `apps/web/configuration/typescript.test.ts` hold each copy to the constant.
 
 **The app is split on purpose, and the split is the thing to know.** Its Nuxt tsconfigs and Nitro's carry the condition, so everything that reads types — `typecheck`, the editor, go-to-definition — resolves a sibling's source. **Everything that runs does not**: neither Nuxt's Vite build nor Nitro carries it, so `build` resolves every sibling's `dist` and the server bundle keeps externalizing them instead of pulling every package's TypeScript into one graph — and neither does the app's Vitest project, which hands only the `test` options of `getVitestConfiguration` to `defineVitestProject` and leaves its `resolve` to the Nuxt wiring, so its tests read `dist` too. That is the same trade, not an oversight: source would hand the app `vue-phaserjs`'s TypeScript, which is exactly what breaks below.
 

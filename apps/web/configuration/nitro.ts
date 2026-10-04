@@ -1,4 +1,4 @@
-import type { NitroConfig } from "nitro/types";
+import type { NuxtConfig } from "nuxt/schema";
 
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
@@ -6,13 +6,10 @@ import { dirname, join } from "node:path";
 import { GENSHIN_REGION_DATA_BASE_URL } from "../shared/services/genshin/constants.ts";
 import { TEMPORAL_POLYFILL_BASE_URL } from "./constants.ts";
 
-export const nitro: NitroConfig = {
+export const nitro: NuxtConfig["nitro"] = {
   // Railway's edge passes responses through uncompressed, so the build writes a brotli copy of each asset for the
   // Server to hand out. Every current engine decodes brotli, so no gzip copy is written
   compressPublicAssets: { brotli: true, gzip: false },
-  // @TODO: no upstream issue — @nuxt/content's node dump handler reads Nitro 2's build-time `build:` storage, so its
-  // Prerender answers 503 on Nitro 3; unprerendered, the handler serves the dump from the bundled copy instead
-  prerender: { ignore: ["/__nuxt_content/"] },
   // A package polyfill is served from its own install under `/polyfills/`, so its version is the lockfile's
   publicAssets: [
     // Each Genshin region's data is served from the world package's own copy, so a region is fetched and released
@@ -28,14 +25,4 @@ export const nitro: NitroConfig = {
       dir: dirname(createRequire(import.meta.url).resolve("temporal-polyfill")),
     },
   ],
-  typescript: {
-    tsConfig: {
-      compilerOptions: {
-        customConditions: ["source"],
-        // Nuxt sets it on the app and node projects but not the server's, so type-only imports keep one rule
-        // Everywhere
-        verbatimModuleSyntax: true,
-      },
-    },
-  },
 };
