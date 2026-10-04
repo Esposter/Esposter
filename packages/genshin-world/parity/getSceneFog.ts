@@ -8,20 +8,33 @@ export const getSceneFog = (
   context: SceneContext | undefined,
 ): {
   baseHeight: number;
+  color: [number, number, number];
   density: number;
   heightFalloff: number;
+  scatterColor: [number, number, number];
   scatterDirection: [number, number, number];
   scatterPower: number;
   scatterStrength: number;
   startDistance: number;
 } => {
   if (!context?.fog) throw new InvalidOperationError(Operation.Read, "scene", "no fog handed on, or not rendered yet");
-  const { baseHeight, density, heightFalloff, scatterDirection, scatterPower, scatterStrength, startDistance } =
-    context.fog;
+  const {
+    baseHeight,
+    color,
+    density,
+    heightFalloff,
+    scatterColor,
+    scatterDirection,
+    scatterPower,
+    scatterStrength,
+    startDistance,
+  } = context.fog;
   return {
     baseHeight: baseHeight.value,
+    color: color.value.toArray(),
     density: density.value,
     heightFalloff: heightFalloff.value,
+    scatterColor: scatterColor.value.toArray(),
     scatterDirection: scatterDirection.value.toArray(),
     scatterPower: scatterPower.value,
     scatterStrength: scatterStrength.value,

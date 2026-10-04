@@ -1,5 +1,3 @@
-import type { GradeOptions, RampOptions } from "genshin-engine";
-
 import scroll from "#src/data/login/scroll.json";
 import walkway from "#src/data/login/walkway.json";
 import { LOGIN_DOOR_POSITION } from "#src/services/login/door/constants";
@@ -64,14 +62,6 @@ export const LOGIN_DOOR_RUSH_LIMIT = 0.9;
 export const LOGIN_CLOUD_SEA_HEIGHT = -20;
 export const LOGIN_CLOUD_SEA_SIZE = 3000;
 export const LOGIN_RIM_STRENGTH = 0.4;
-export const LOGIN_RAMP_OPTIONS: RampOptions = { resolution: 64, softness: 0.1, terminator: 0.5 };
-export const LOGIN_GRADE_OPTIONS: GradeOptions = {
-  contrast: 1,
-  highlightTint: [0, 0, 0],
-  saturation: 1.05,
-  shadowTint: [0, 0, 0.02],
-  size: 32,
-};
 // The haze the cloud sea gives off, thickest under the walkway and thinning up past it, so what stands in it pales
 // Downward and the far towers pale into the haze's colour: dense enough 5 metres under the walkway that the towers'
 // Feet are white, and thin enough at the eye that a tower 125 metres out is still half seen

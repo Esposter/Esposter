@@ -18,7 +18,7 @@ const stepped: [number, number, number] = [0, 0, 0];
 // The scene colour the renderer's tone mapping shows as a colour measured off a reference, for a colour the screen
 // Shows as it is (the sky, its haze, an unlit cloud): fed in unmapped, a measured colour comes out paler and greyer by
 // The tone mapping's compression. Written into the colour given, which may be the measured colour itself
-export const toSceneColor = (displayColor: Color, sceneColor = new Color()): Color => {
+export const toSceneColor = (displayColor: Color, sceneColor: Color = new Color()): Color => {
   target[0] = input[0] = displayColor.r;
   target[1] = input[1] = displayColor.g;
   target[2] = input[2] = displayColor.b;

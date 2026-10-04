@@ -2,6 +2,7 @@
 export enum WitnessTargetName {
   Albedo = "albedo",
   Depth = "depth",
+  Emission = "emission",
   Normal = "normal",
   Part = "part",
   Shadow = "shadow",

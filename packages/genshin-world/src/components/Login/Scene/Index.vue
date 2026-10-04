@@ -5,6 +5,7 @@ import type { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
 import { usePostPipeline } from "#src/composables/usePostPipeline";
 import sky from "#src/data/login/sky.json";
 import stone from "#src/data/login/stone.json";
+import stoneLight from "#src/data/login/stoneLight.json";
 import { LoginPartFamily } from "#src/models/login/LoginPartFamily";
 import { LoginStage } from "#src/models/login/LoginStage";
 import { createLoginClouds } from "#src/services/login/cloud/createLoginClouds";
@@ -41,7 +42,6 @@ import {
   LOGIN_GLIDE_DOOR_SCROLLED,
   LOGIN_GLIDE_TITLE_SCROLLED,
   LOGIN_GLIDE_TITLE_SPEED,
-  LOGIN_GRADE_OPTIONS,
   LOGIN_LIGHT_DISTANCE,
   LOGIN_RIM_STRENGTH,
   LOGIN_SHADOW_BIAS,
@@ -52,6 +52,7 @@ import {
   LOGIN_TOWERS_ROW_OFFSET,
   LOGIN_WALKWAY_ROW,
 } from "#src/services/login/scene/constants";
+import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
 import { computeLoginTowerAtlas } from "#src/services/login/tower/computeLoginTowerAtlas";
 import { createLoginTowerFacade } from "#src/services/login/tower/createLoginTowerFacade";
@@ -66,9 +67,8 @@ import { useLoop, useTres } from "@tresjs/core";
 import { watchImmediate } from "@vueuse/core";
 import {
   applySkyState,
+  applyStoneLight,
   createFogUniforms,
-  createGodraysLight,
-  createGradeLutTexture,
   createLightUniforms,
   createPostUniforms,
   createSkyGradientTexture,
@@ -138,7 +138,6 @@ Object.assign(light.shadow.camera, {
 });
 light.shadow.bias = LOGIN_SHADOW_BIAS;
 light.shadow.normalBias = LOGIN_SHADOW_NORMAL_BIAS;
-const godraysLight = createGodraysLight(1024, 40);
 const hemisphere = new HemisphereLight();
 const fogUniforms = createFogUniforms();
 fogUniforms.baseHeight.value = LOGIN_CLOUD_SEA_HEIGHT;
@@ -152,7 +151,6 @@ const skyUniforms = createSkyUniforms();
 skyUniforms.cloudCoverage.value = LOGIN_CLOUD_COVERAGE;
 const skyTargets = {
   fogUniforms,
-  godraysLight,
   hemisphere,
   light,
   lightDistance: LOGIN_LIGHT_DISTANCE,
@@ -168,7 +166,7 @@ watchImmediate(
   () => timeOfDay,
   (newTimeOfDay) => {
     applySkyState(LoginSkyStateMap[newTimeOfDay], skyTargets);
-    postUniforms.godraysColor.value.setScalar(0);
+    applyStoneLight(stoneLight[newTimeOfDay], loginStoneLight, light);
     // Each hour's sky draws its own share of each band's clouds
     for (const [band, cover] of Object.entries(LoginCloudCoverMap[newTimeOfDay])) {
       const coverUniform = loginClouds.covers[band];
@@ -176,9 +174,9 @@ watchImmediate(
     }
   },
 );
-// The stone each family of parts is carved from, as its game materials hold it, lit physically as the game lights it
-// And drawn with no outline: the towers', the bridges', the walkway's, and the door's frame and its panel
-const towersMaterial = createStoneMaterial(stone.towers);
+// The stone each family of parts is carved from, as its game materials hold it, lit as the game's deferred pass lights
+// It and drawn with no outline: the towers', the bridges', the walkway's, and the door's frame and its panel
+const towersMaterial = createStoneMaterial(stone.towers, loginStoneLight);
 // The towers' surfaces drawn over their lathes: each band's tone, its paint, its recesses and its gilding, and where a
 // Tower stands open its colonnade lets the sky through
 const towerAtlas = computeLoginTowerAtlas();
@@ -186,17 +184,18 @@ const towerFacade = createLoginTowerFacade(towerAtlas);
 towersMaterial.colorNode = towerFacade.shade.mul(color(stone.towers.albedo));
 towersMaterial.opacityNode = towerFacade.solid;
 towersMaterial.alphaTest = 0.5;
-const bridgesMaterial = createStoneMaterial(stone.bridges);
-const walkwayMaterial = createStoneMaterial(stone.walkway);
+const bridgesMaterial = createStoneMaterial(stone.bridges, loginStoneLight);
+const walkwayMaterial = createStoneMaterial(stone.walkway, loginStoneLight);
 // The walkway's tops carved with its paving: its pockets' stone a step darker and their rims tilted to the light
 const paving = createLoginPaving();
 walkwayMaterial.colorNode = color(stone.walkway.albedo).mul(paving.shade);
 walkwayMaterial.normalNode = paving.normalNode;
-const doorFrameMaterial = createStoneMaterial(stone.door);
+const doorFrameMaterial = createStoneMaterial(stone.door, loginStoneLight);
 // The door lights from a line down its middle outward, over the panel's own glow, as the game opens it
 const doorGlow = uniform(0);
 const doorMaterial = createStoneMaterial(
   stone.door,
+  loginStoneLight,
   color(LOGIN_DOOR_GLOW_COLOR).mul(
     doorGlow.mul(
       exp(abs(positionLocal.x).div(DOOR_SLIT_WIDTH).negate()).mul(DOOR_SLIT_STRENGTH).add(DOOR_PANEL_STRENGTH),
@@ -249,8 +248,9 @@ cloudSeaMaterial.colorNode = mix(
     mx_fractal_noise_float(positionWorld.xz.add(vec2(0, cloudSeaScrolled)).mul(CLOUD_SEA_SCALE)),
   ),
 );
-const gradeLutTexture = createGradeLutTexture(LOGIN_GRADE_OPTIONS);
-usePostPipeline(QualityTier.High, { fogUniforms, godraysLight, gradeLutTexture, postUniforms }, skyUniforms);
+// No grade and no bloom: every colour of the login is measured off its references through the tone mapping alone, the
+// Sky's, the haze's and the stone's light, so the frame is drawn through that alone and each inverts exactly
+usePostPipeline(QualityTier.High, { fogUniforms, isBloomed: false, postUniforms }, skyUniforms);
 let renderedFrameCount = 0;
 let isReadyEmitted = false;
 let isDoorFormed = false;
@@ -358,7 +358,6 @@ onRender(({ delta: frameDelta }) => {
 onUnmounted(() => {
   scene.value.backgroundNode = null;
   skyGradient.dispose();
-  gradeLutTexture.dispose();
   towerFacade.dispose();
   for (const material of [towersMaterial, bridgesMaterial, walkwayMaterial, doorFrameMaterial, doorMaterial])
     material.dispose();
@@ -371,7 +370,6 @@ onUnmounted(() => {
   doorFrameGeometry.dispose();
   doorPanelGeometry.dispose();
   light.dispose();
-  godraysLight.dispose();
   hemisphere.dispose();
 });
 </script>
@@ -388,8 +386,6 @@ onUnmounted(() => {
   <primitive :object="light.target" />
   <primitive :object="hemisphere" />
   <primitive v-if="!witness?.isAlone.value" :object="loginClouds.group" />
-  <primitive :object="godraysLight" />
-  <primitive :object="godraysLight.target" />
   <primitive v-if="witness" :object="witness.parts" />
   <primitive v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Walkway)" :object="walkway" />
   <!-- The towers' row, with their bridges and pillars, each copy its length ahead of the last -->

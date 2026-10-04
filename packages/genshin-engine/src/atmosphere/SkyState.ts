@@ -20,6 +20,8 @@ export interface SkyState extends BaseSkyState {
   horizonBackColor?: Color;
   lightDirection: Vector3;
   moonDirection: Vector3;
+  // The glow round the moon at its strength, where a sky has one
+  moonGlowColor?: Color;
   // The sky's own shape where a scene solves one per hour, the default's where not
   shape?: SkyShape;
   sunDirection: Vector3;

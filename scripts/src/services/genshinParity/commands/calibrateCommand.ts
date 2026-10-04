@@ -1,64 +1,89 @@
 import type { SubCommandsDef } from "citty";
+import type { StoneLight } from "genshin-engine";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { CAMERA_POSE_AXES, GBUFFER_DIRECTORY } from "#src/services/genshinParity/shared/constants";
-import { readReferenceGbuffer } from "#src/services/genshinParity/shared/readReferenceGbuffer";
-import { calibrateScene } from "#src/services/genshinParity/witness/calibrateScene";
-import { toPageCamera } from "#src/services/genshinParity/witness/toPageCamera";
-import { parseNumbers } from "#src/services/shared/parseNumbers";
+import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
+import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
+import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
+import { solveReferenceStoneLight } from "#src/services/genshinParity/witness/solveReferenceStoneLight";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { existsSync } from "node:fs";
-import { readdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-const formatColor = (color: readonly number[]): string => color.map((value) => value.toFixed(3)).join(", ");
+// The world data file each hour's stone light is written into, keyed by the hour
+const STONE_LIGHT_PATH = "login/stoneLight.json";
+// The decimals a written light keeps, past which its colours move nothing the screen shows
+const LIGHT_DECIMALS = 4;
+const formatColor = (color: readonly number[]): string => color.map((value) => value.toFixed(3)).join(" ");
+const roundColors = (colors: readonly (readonly number[])[]): number[][] =>
+  colors.map((color) => color.map((value) => Number(value.toFixed(LIGHT_DECIMALS))));
 
 export const calibrateCommand: SubCommandsDef[string] = defineCommand({
   args: {
-    luts: { description: "A folder of grading tables (PNG strips) to score against the fitted frame", type: "string" },
-    pose: {
-      description: `A pose in place of the reference's, as ${CAMERA_POSE_AXES.join(",")} (metres, then degrees)`,
-      type: "string",
-    },
     reference: { description: "A reference's id in ParityReferenceMap", required: true, type: "positional" },
+    self: {
+      default: false,
+      description:
+        "Solve against the exports as the scene draws them under its own light rather than the reference, which should hand that light back if the solve models the renderer",
+      type: "boolean",
+    },
     witness: {
       description: "The component whose exports the witness draws",
-      required: true,
       options: Object.values(DerivedAssetComponent),
+      required: true,
       type: "enum",
+    },
+    write: {
+      default: false,
+      description: `Write the solved light into the world's ${STONE_LIGHT_PATH} under the reference's time of day`,
+      type: "boolean",
     },
   },
   meta: {
     description:
-      "Fit a reference's light, fog and grade by least squares over the witness's G-buffer, printing each term with its residual and scoring each grading table given",
+      "Solve a reference's stone light as the game's deferred pass casts it, its toon ramp and its sky's harmonics under the scene's haze, by least squares over the witness's G-buffer, printing the residual against the bins' spread",
     name: "calibrate",
   },
   run: async ({ args }) => {
-    const { gbuffer, image } = await readReferenceGbuffer(
+    const { count, deviation, light, residual } = await solveReferenceStoneLight(
       args.reference,
       args.witness,
-      args.pose ? toPageCamera(parseNumbers(args.pose, "pose", CAMERA_POSE_AXES.length)) : undefined,
+      args.self,
     );
-    const lutPaths =
-      args.luts && existsSync(args.luts)
-        ? (await readdir(args.luts)).filter((name) => name.endsWith(".png")).map((name) => join(args.luts ?? "", name))
+    console.log(`${count} pixels, residual ${residual.toFixed(4)} against the bins' spread ${deviation.toFixed(4)}`);
+    console.log("ramp, dark end to lit end:");
+    for (const knot of light.ramp) console.log(`  ${formatColor(knot)}`);
+    console.log("harmonics:");
+    for (const term of light.harmonics) console.log(`  ${formatColor(term)}`);
+    if (!args.self && !args.write) return;
+    const timeOfDay = ParityReferenceMap[args.reference]?.props?.timeOfDay;
+    if (typeof timeOfDay !== "string")
+      throw new InvalidOperationError(Operation.Read, STONE_LIGHT_PATH, `${args.reference} sets no time of day`);
+    const lights = existsSync(join(WORLD_DATA_DIRECTORY, STONE_LIGHT_PATH))
+      ? await readWorldData<Record<string, StoneLight>>(STONE_LIGHT_PATH)
+      : {};
+    if (args.self) {
+      const written = lights[timeOfDay];
+      // Every colour channel of the written light beside the one solved for it, knot by knot and term by term
+      const pairs = written
+        ? [
+            { set: written.ramp, solved: light.ramp },
+            { set: written.harmonics, solved: light.harmonics },
+          ].flatMap(({ set, solved }) =>
+            set.flatMap((colors, index) =>
+              colors.map((value, channel) => ({ solved: solved[index]?.[channel] ?? 0, value })),
+            ),
+          )
         : [];
-    const calibration = await calibrateScene(gbuffer, image, lutPaths);
-    const { fog, grade, isFogFitted, light, luts } = calibration;
-    console.log(
-      `light: sun ${formatColor(light.sun)}, ambient ${formatColor(light.ambient)}, from heading ${light.direction[0].toFixed(1)} and elevation ${light.direction[1].toFixed(1)}, residual ${light.residual.toFixed(4)}`,
-    );
-    console.log(
-      isFogFitted
-        ? `fog: ${formatColor(fog.color)}, density ${fog.density.toPrecision(3)} a metre, residual ${fog.residual.toFixed(4)}`
-        : "fog: held clear, the drawn depths too alike to fit it",
-    );
-    console.log(
-      `grade: residual ${(grade.residual * 255).toFixed(2)} of 255, against ${(grade.plainResidual * 255).toFixed(2)} through plain sRGB`,
-    );
-    for (const { path, residual } of luts.slice(0, 5)) console.log(`  ${path}: ${(residual * 255).toFixed(2)} of 255`);
-    const path = join(GBUFFER_DIRECTORY, args.reference, "calibration.json");
-    await writeFile(path, JSON.stringify(calibration, null, 2));
-    console.log(path);
+      const pairCount = Math.max(pairs.length, 1);
+      const scale = Math.sqrt(pairs.reduce((sum, { value }) => sum + value ** 2, 0) / pairCount);
+      const error = Math.sqrt(pairs.reduce((sum, { solved, value }) => sum + (solved - value) ** 2, 0) / pairCount);
+      console.log(`against the light written for ${timeOfDay}: ${error.toFixed(4)} off over its ${scale.toFixed(4)}`);
+      return;
+    }
+    lights[timeOfDay] = { harmonics: roundColors(light.harmonics), ramp: roundColors(light.ramp) };
+    console.log(await writeWorldData(STONE_LIGHT_PATH, lights));
   },
 });

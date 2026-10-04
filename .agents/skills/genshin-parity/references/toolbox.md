@@ -50,7 +50,8 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | The sky's colours and its shape         | `genshin:parity sky`: least squares over the clear sky, none negative |
 | Whether the scene draws the sky solved  | `sky`'s drawn line: ours with no cloud against the reference's clear  |
 | The fog's density and colours           | `genshin:parity fog`: bins by depth and sun angle, solved             |
-| The grade, the fog, the light           | `genshin:parity calibrate`: least squares over masks                  |
+| The stone's light at an hour            | `genshin:parity calibrate`: ramp and harmonics over the exports' bins |
+| Whether a light solve models the render | `calibrate --self`: our render solved, its light handed back          |
 | What a shader computes                  | `shaders`: the annotated disassembly, and HLSL where it decompiles    |
 
 ## Music

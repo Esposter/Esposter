@@ -374,6 +374,23 @@ export const reference: ComponentReference = {
         "The night's cover solved alone under its solved sky fits worse than what ships (residual 0.218 of the sky's cover), its bands unable to stand clouds low on the horizon without standing more high over it; and clouds there reads a shade of #34012d over 386 of our pixels against 1973 of the recording's, too few to trust",
       search: "genshin:parity cover login-night-title, then clouds login-night-title, under the night's solved sky",
     },
+    {
+      found:
+        "Over the parts' interior pixels the witness draws from the exports, the reference in scene colour against the exports' albedo, normal and depth: binned by depth, facing and how far a face turns up, the old sun and ambient leave 0.130 of the dawn's 0.164 spread and 0.192 of the door recording's 0.274, the deferred pass's ramp and sky harmonics 0.075 and 0.091. Pixel by pixel neither explains much (0.24 of 0.30 at dawn), so the exports' texels do not line up with the reference's and a light is read over bins",
+      search:
+        "A scratch solve of both light models over the dawn's and the door recording's witness pixels, per pixel and binned, under the scene's haze",
+    },
+    {
+      found:
+        "Solved against the exports as our own scene drew them under a light already written, the solve handed back a sky light 1.4 to 2 times too strong: the haze's blend weighs its own colour by one less its scatter, which the solve had not; the rim and glow the material adds after lighting had gone into the sky term; and the grade and bloom after the tone mapping bent every colour off what toSceneColor inverts. With each fixed, and the login drawn through the tone mapping alone, the read-back returns the light to within about a ninth, the rest the normal maps the G-buffer leaves out",
+      search: "genshin:parity calibrate login-night-title --self, after each fix",
+    },
+    {
+      found:
+        "The haze's colours solved with the light over the stone scored the dawn 0.4938 to 0.5087 and the night 0.4523 to 0.4575, helping only the dusk (0.5682 to 0.5656): the haze's colour is the cloud sea's too, and over the stone alone it took up the light's errors. The light is solved under the scene's haze held as it is. Every hour's light so solved, with the day's and the night's skies, scores the dawn 0.4950, the day 0.4447, the night 0.4498, the door recording 0.5698 and the phone's door frame 0.4782, against 0.4943, 0.4874, 0.4492, 0.5767 and 0.4529 before",
+      search:
+        "genshin:parity calibrate on each hour's frame with --write, the haze's solved colours applied and reverted hour by hour, then compare on every login frame",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
@@ -385,9 +402,9 @@ export const reference: ComponentReference = {
     "Which of the towers' row stands at the door frame's left edge: the recording's is thin and dark with many rings, the exports' nearest there wide and arched",
     "The dusk sun's direction against its shadows: a tower's shadow falls over the wings in front of the door where the recording's are lit, and the faces' shading cannot settle the direction, so the shadows' own edges are the measure left",
     "The dusk sky low on the frame's left: the recording's clear sky there is almost all cloud, so the sky solved over its clear pixels draws a dusty rose band where the recording glows gold, and its bottom colour toward the sun is held by no pixel",
-    "The god rays' pass in the login's chain: its colour blanked to black darkens the frame through lit air, so it is to come out of the chain and every hour's light to be measured again without it",
     "The towers' gilding and windows: their colour per section scores worse painted as diffuse stone, the game's gold being a metal",
-    "The deferred pass's run-time inputs: the toon ramp, the sky's spherical harmonics, the sun's colour and direction, and the reflection cube, none of which an asset holds; with the pass's form exact, each is a linear unknown of the witness's G-buffer, solvable per hour from the references",
+    "The sun's direction at the day and the dusk: with the ramp's dark end held at none, both hours' solved ramps fall toward the lit end, so the directions set by hand off the faces they light are wrong, and the direction is to be solved with the light under a ramp held to rise",
+    "The deferred pass's reflection cube and highlight, which no asset holds and the light's solve does not yet read",
     "How the deferred pass lights shading model 13, the rim glow's pixels, and what the post pass's haze adds after it",
     "Where the glide comes to rest: the recording's door frame was still slowing at 1.6 metres a second when the click came, so the rest stands a little nearer the door than its pose",
   ],

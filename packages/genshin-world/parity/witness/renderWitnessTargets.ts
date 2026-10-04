@@ -2,10 +2,12 @@ import type { SceneContext } from "#src/models/scene/SceneContext";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 import type { Node } from "three/webgpu";
 
+import { WitnessShadowMaterial } from "#parity/witness/WitnessShadowMaterial";
 import { WitnessTarget, WitnessTargets } from "#parity/witness/WitnessTarget";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
-import { Color, FloatType, Layers, Mesh, RenderTarget, Vector2 } from "three";
-import { float, normalWorld, positionView, vec3, vec4 } from "three/tsl";
+import { StoneNodeMaterial } from "genshin-engine";
+import { Color, DirectionalLight, FloatType, Layers, Light, Mesh, RenderTarget, Vector2 } from "three";
+import { float, normalWorld, positionView, uniform, vec3, vec4 } from "three/tsl";
 import { MeshBasicNodeMaterial, NodeMaterial } from "three/webgpu";
 
 // The layer the witness's parts are drawn on alone while its targets render, past every layer the scenes use
@@ -13,15 +15,19 @@ const TARGET_LAYER = 31;
 // The material a target draws a part with, built once for the material the part wears (whose colour the albedo
 // Reads), the target and the part's identifier and family, and kept: a material built afresh each read is a pipeline
 // WebGPU compiles and keeps, so a tool reading hundreds of views would fill the page until it crashed
-const sourceTargetMaterialsMap = new WeakMap<object, Map<string, MeshBasicNodeMaterial>>();
+const sourceTargetMaterialsMap = new WeakMap<object, Map<string, NodeMaterial>>();
+// The sun's colour at its strength, which the shadow target reads each pixel's shadowed light against, written from
+// The scene's shadow-casting light before each read
+const sunRadiance = uniform(new Color());
 // The one target every read draws into, rebuilt only when the drawing buffer's size changes
 let renderTarget: RenderTarget | undefined;
 // The witness render's G-buffer at its current view, one floating-point target a quantity, each read back from the
 // Renderer as rows of four floats a pixel: the albedo its exported material draws unlit, the depth along the view in
-// Metres, the world normal (encoded into 0 to 1, as `readWitnessTargets` decodes it), and the part (its identifier
-// From one, the order the header lists it in) with its family's index, the families listed in that order. Only the
-// Witness's parts are drawn, over nothing, so a pixel no part covers is zero throughout. Only the targets asked for
-// Are drawn, every one unless told, each handed back as base64, the one form a page hands its caller bytes in. Every
+// Metres, the light the material adds after lighting, the world normal (encoded into 0 to 1, as `readWitnessTargets`
+// Decodes it), the share of the sun reaching it through the scene's shadows, and the part (its identifier from one, the
+// Order the header lists it in) with its family's index, the families listed in that order. Only the witness's parts
+// Are drawn, over nothing, so a pixel no part covers is zero throughout. Only the targets asked for are drawn, every
+// One unless told, each handed back as base64, the one form a page hands its caller bytes in. Every
 // Part keeps its own material, handed back once the targets are read
 export const renderWitnessTargets = async (
   witness: SceneWitness,
@@ -52,18 +58,26 @@ export const renderWitnessTargets = async (
   const getTargetMaterial = (
     target: WitnessTarget,
     { familyIndex, id, mesh }: (typeof drawnMeshes)[number],
-  ): MeshBasicNodeMaterial => {
-    const targetMaterials = sourceTargetMaterialsMap.get(mesh.material) ?? new Map<string, MeshBasicNodeMaterial>();
+  ): NodeMaterial => {
+    const targetMaterials = sourceTargetMaterialsMap.get(mesh.material) ?? new Map<string, NodeMaterial>();
     sourceTargetMaterialsMap.set(mesh.material, targetMaterials);
     const key = `${target}/${id}/${familyIndex}`;
     const cached = targetMaterials.get(key);
     if (cached) return cached;
+    if (target === WitnessTarget.Shadow) {
+      const shadowMaterial = new WitnessShadowMaterial(sunRadiance);
+      targetMaterials.set(key, shadowMaterial);
+      return shadowMaterial;
+    }
     const material = new MeshBasicNodeMaterial();
     material.toneMapped = false;
     const albedo = mesh.material instanceof NodeMaterial ? (mesh.material.colorNode as Node<"vec3"> | null) : null;
-    const targetNodeMap: Record<WitnessTarget, Node<"vec4">> = {
+    const emission =
+      mesh.material instanceof StoneNodeMaterial ? (mesh.material.emissiveNode as Node<"vec3"> | null) : null;
+    const targetNodeMap: Record<Exclude<WitnessTarget, WitnessTarget.Shadow>, Node<"vec4">> = {
       [WitnessTarget.Albedo]: vec4(albedo ?? vec3(1), 1),
       [WitnessTarget.Depth]: vec4(positionView.z.negate(), 0, 0, 1),
+      [WitnessTarget.Emission]: vec4(emission ?? vec3(0), 1),
       // Halved and lifted into 0 to 1, since the material's colour output clips what falls below 0, which took every
       // Normal's negative components; read back, it is let down again
       [WitnessTarget.Normal]: vec4(normalWorld.mul(0.5).add(0.5), 1),
@@ -73,6 +87,14 @@ export const renderWitnessTargets = async (
     targetMaterials.set(key, material);
     return material;
   };
+  // The scene's lights light the shadow target, so they join its layer while the targets are drawn; the sun is the light
+  // That casts the scene's shadows
+  const lights: Light[] = [];
+  scene.traverse((object) => {
+    if (object instanceof Light) lights.push(object);
+  });
+  const sun = lights.find((light) => light instanceof DirectionalLight && light.castShadow);
+  if (sun) sunRadiance.value.copy(sun.color).multiplyScalar(sun.intensity);
   const cameraLayers = new Layers();
   cameraLayers.mask = camera.layers.mask;
   const { background, backgroundNode } = scene;
@@ -90,6 +112,7 @@ export const renderWitnessTargets = async (
     async () => {
       camera.layers.set(TARGET_LAYER);
       for (const { mesh } of drawnMeshes) mesh.layers.enable(TARGET_LAYER);
+      for (const light of lights) light.layers.enable(TARGET_LAYER);
       scene.background = null;
       scene.backgroundNode = null;
       renderer.setClearColor(0, 0);
@@ -119,6 +142,7 @@ export const renderWitnessTargets = async (
       scene.backgroundNode = backgroundNode;
       camera.layers.mask = cameraLayers.mask;
       for (const { mesh } of drawnMeshes) mesh.layers.disable(TARGET_LAYER);
+      for (const light of lights) light.layers.disable(TARGET_LAYER);
     },
   );
   return { families: witness.parts.children.map(({ name }) => name), height, parts, targets, width };

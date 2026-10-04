@@ -20,20 +20,13 @@ const NIGHT_MOON_DIRECTION = getLoginScreenDirection([0.27, 0.11]);
 // So the direction is the one of 44, 60 and 80 degrees that scores best on the door recording and the dusk still
 const DUSK_LIGHT_DIRECTION = new Vector3(0.837, 0.259, 0.483);
 
-// The dawn's and the dusk's skies are solved as the game's sky shader draws them over their frames' clear sky
-// (genshin:parity sky, their clouds left out by the cloud mask), their colours with their own shape, no colour under
-// None: the dawn's deep blue away from the sun and grey toward it, the dusk's lavender away and rose toward it. The
-// Dusk's bottom colour toward the sun stands under the recording's clouds, so no pixel holds it.
-// Each time of day's sky and light, its colours read off its reference: the gradient's zenith and horizon, the haze
-// Over the cloud sea (the mean of its brightest two samples low in the frame), the clouds,
-// And the sun or the moon the light comes from.
-// The light's and the sky's strengths are measured over the stone lit physically, as the game's lighting is its
-// Scripts' and never exported: each hour's scaled until its parts stand as bright as its title frame's (the median
-// Luminance over the parts' pixels), but the night's, a third as bright as its frame's before,
-// Which one step toward it scores best and a second, nearer the median, worse, and the dusk's, whose sun and sky light
-// Are solved apart channel by channel on the door
-// Recording's near faces, facing up and turned from the sun (damped to its fixed point): the sky
-// Light a fifth of the exposure's and the sun twice, so a face turned from the sun stands dark as the recording's do
+// Each hour's sky is solved as the game's sky shader draws it over its frame's clear sky (genshin:parity sky, its clouds
+// Left out by the cloud mask), its colours with its own shape, no colour under none: the dawn's deep blue away from the
+// Sun and grey toward it, the dusk's lavender away and rose toward it, the night's with the glow round its moon. The
+// Dusk's bottom colour toward the sun stands under the recording's clouds, so no pixel holds it. The haze over the
+// Cloud sea (the mean of its brightest two samples low in the frame) and the clouds are read off each reference too.
+// The stone's light is solved apart, as the game's deferred pass casts it (data/login/stoneLight.json), so the sun light
+// Here lends the stone only its direction and its shadow, and the hemisphere lights nothing of the login's
 export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
   [LoginTimeOfDay.Dawn]: {
     cloudLitColor: new Color(0xf5efe8),
@@ -61,17 +54,22 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     cloudShadeColor: new Color(0xb8cbe0),
     fogColor: new Color(0xcfdbf0),
     fogDensity: LOGIN_DAY_FOG_DENSITY,
+    haloColor: new Color(0xe0c18b),
     hemisphereGroundColor: new Color(0x9ec0e8),
     hemisphereIntensity: 7.27,
     hemisphereSkyColor: new Color(0xd4e4ef),
-    horizonColor: new Color(0xb0c9e3),
+    horizonBackColor: new Color(0x78b9e7),
+    horizonColor: new Color(0x000000),
     lightColor: new Color(0xfff4e6),
     lightDirection: DAY_SUN_DIRECTION,
     lightIntensity: 8.4,
     moonDirection: DAY_SUN_DIRECTION.clone().negate(),
+    shape: { frontBackBlend: 0.835, haloHeight: 0.574, horizonBand: 0.422, moonSize: 0.444, sunHaloSize: 1.241 },
     starIntensity: 0,
     sunDirection: DAY_SUN_DIRECTION,
-    zenithColor: new Color(0x3b68a0),
+    sunHaloColor: new Color(0x000000),
+    zenithBackColor: new Color(0x1d418c),
+    zenithColor: new Color(0xd9f3b1),
   },
   [LoginTimeOfDay.Dusk]: {
     cloudLitColor: new Color(0xfdedc4),
@@ -98,16 +96,22 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     cloudLitColor: new Color(0x56b0f5),
     cloudShadeColor: new Color(0x255abb),
     fogColor: new Color(0x5ab4f8),
+    haloColor: new Color(0x5d92f9),
     hemisphereGroundColor: new Color(0x2a4aa8),
     hemisphereIntensity: 8.96,
     hemisphereSkyColor: new Color(0x2d6fd0),
-    horizonColor: new Color(0x1f51c6),
+    horizonBackColor: new Color(0x192975),
+    horizonColor: new Color(0x000000),
     lightColor: new Color(0x9cc8ff),
     lightDirection: NIGHT_MOON_DIRECTION,
     lightIntensity: 8.13,
     moonDirection: NIGHT_MOON_DIRECTION,
+    moonGlowColor: new Color(0x053a90),
+    shape: { frontBackBlend: 0.846, haloHeight: 0.504, horizonBand: 0.519, moonSize: 0.398, sunHaloSize: 4.066 },
     starIntensity: 1,
     sunDirection: NIGHT_MOON_DIRECTION.clone().negate(),
-    zenithColor: new Color(0x172161),
+    sunHaloColor: new Color(0x000000),
+    zenithBackColor: new Color(0x161e57),
+    zenithColor: new Color(0x000000),
   },
 };
