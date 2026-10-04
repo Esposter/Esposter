@@ -5,7 +5,7 @@ import { createTRPCEventHandler } from "#src/runtime/server/createTRPCEventHandl
 import { createTRPCClient, httpBatchLink, httpLink } from "@trpc/client";
 import { initTRPC } from "@trpc/server";
 import { H3 } from "nitro/h3";
-import superjson from "superjson";
+import superjson, { serialize } from "superjson";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
@@ -43,7 +43,8 @@ describe(createTRPCEventHandler, () => {
       `${DEFAULT_ENDPOINT}/**`,
       createTRPCEventHandler({
         createContext,
-        responseMeta: ({ paths }) => (paths?.includes("stage") ? { headers: { "content-length": "1" } } : {}),
+        responseMeta: ({ info }) =>
+          info?.calls.some(({ path }) => path === "stage") ? { headers: { "content-length": "1" } } : {},
         router,
       }),
     )
@@ -115,7 +116,7 @@ describe(createTRPCEventHandler, () => {
     expect.hasAssertions();
 
     const response = await app.request(`${DEFAULT_ENDPOINT}/stage`, {
-      body: JSON.stringify(superjson.serialize(status)),
+      body: JSON.stringify(serialize(status)),
       headers: { "content-type": "application/json" },
       method: "POST",
     });
