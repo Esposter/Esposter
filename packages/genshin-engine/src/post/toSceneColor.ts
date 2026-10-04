@@ -16,9 +16,10 @@ export const toSceneColor = (displayColor: Color): Color => {
   const target: [number, number, number] = [displayColor.r, displayColor.g, displayColor.b];
   let input: [number, number, number] = [...target];
   for (let step = 0; step < INVERSE_STEP_COUNT; step++) {
-    const output = toneMapNeutral(input);
-    input = input.map((channel, index) => {
-      const nudged: [number, number, number] = [...input];
+    const current = input;
+    const output = toneMapNeutral(current);
+    input = current.map((channel, index) => {
+      const nudged: [number, number, number] = [...current];
       nudged[index] = channel + SLOPE_NUDGE;
       const slope = ((toneMapNeutral(nudged)[index] ?? 0) - (output[index] ?? 0)) / SLOPE_NUDGE;
       return Math.min(
