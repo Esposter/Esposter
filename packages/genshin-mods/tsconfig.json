@@ -1,4 +1,4 @@
 {
   "extends": "../configuration/tsconfig.node.json",
-  "include": ["*.ts", ".claude-plugin/types", "src/**/*.ts", "types"]
+  "include": ["*.ts", ".claude-plugin/types", "src/**/*.ts", "types", "../genshin-persona/types"]
 }
