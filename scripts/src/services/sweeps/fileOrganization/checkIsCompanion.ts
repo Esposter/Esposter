@@ -2,11 +2,11 @@ import { checkIsSameWord } from "#src/services/sweeps/fileOrganization/checkIsSa
 import { OPERATION_PREFIXES } from "#src/services/sweeps/fileOrganization/constants";
 import { getNameWords } from "#src/services/sweeps/fileOrganization/getNameWords";
 
-// Whether one export is a second spelling of another's concern rather than a second concern: it carries every
-// Word of the base (`serializableValueSchema` beside `SerializableValue`, `selectPostInPostSchema` beside `postsInPost`),
-// Or opens on the same two words (`SceneComponentEntries` beside `SceneComponentMap`, `BanInMessageWithUsers`
-// Beside `bansInMessageRelation`). A companion is what the skill's exceptions all look like once named — a
-// Schema beside its type, an enum beside its values array, a property-names twin, a composable's own shapes
+// Whether one export is a second spelling of another's concern rather than a second concern: it carries every word of
+// The base (`serializableValueSchema` beside `SerializableValue`, `selectPostInPostSchema` beside `postsInPost`), or
+// Opens on the same two words (`SceneComponentEntries` beside `SceneComponentMap`, `BanInMessageWithUsers` beside
+// `bansInMessageRelation`). A companion is what the skill's exceptions all look like once named — a schema beside its
+// Type, an enum beside its values array, a property-names twin, a composable's own shapes
 export const checkIsCompanion = (name: string, base: string): boolean => {
   const nameWords = getNameWords(name);
   const baseWords = getNameWords(base);

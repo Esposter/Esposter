@@ -11,7 +11,8 @@ export const noRouteLiteral: Rule = defineRule({
         if (typeof node.value === "string" && checkIsRouteSpelling(node.value))
           context.report({ message: MESSAGE, node });
       },
-      // Only the string's opening piece can spell a route: a later one (`${section}/calls`) is a segment of another path
+      // Only the string's opening piece can spell a route: a later one (`${section}/calls`) is a segment of
+      // Another path
       TemplateLiteral(node) {
         const [head] = node.quasis;
         if (head && checkIsRouteSpelling(head.value.cooked ?? "")) context.report({ message: MESSAGE, node: head });

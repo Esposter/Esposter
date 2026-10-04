@@ -58,7 +58,7 @@ export const probeOsBackendSupported = (): boolean | undefined => {
       // Fact about bwrap. So it answers `undefined` like a timeout: this run goes native, and the next re-probes
       // Rather than inheriting a cached false for the entry's whole window after WSL comes back.
       return getResult(() => execWsl(["--exec", "mktemp", "-d"], { timeout: WSL_PROBE_TIMEOUT_MS }).trim()).match(
-        probeWslSandbox,
+        (wslDirectory) => probeWslSandbox(wslDirectory),
         ({ message }) => {
           writeVirrunDebug(`os capability probe could not reach WSL — verdict not cached — ${message}`);
           return undefined;

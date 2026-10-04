@@ -27,8 +27,8 @@ onClickExceptDrag(
   <div ref="container">
     <DashboardVisualPreview :type />
     <!-- Clicking the tile opens its edit form, which nothing on screen says on its own — Power BI puts a visual's
-      Actions on the tile's own corner, so edit, duplicate and delete sit there here too. A press here never reaches the tile's
-      Drag tracking, and its click is the corner's own -->
+      Actions on the tile's own corner, so edit, duplicate and delete sit there here too. A press here never reaches
+      The tile's drag tracking, and its click is the corner's own -->
     <div data-nested-interaction="true" flex gap-1 right-1 top-1 absolute @mousedown.stop @mousemove.stop>
       <UiIconButton
         label="Edit visual"
