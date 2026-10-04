@@ -37,9 +37,9 @@ The session pushes **`ai/queue` after every commit**, plain, through `pnpm ai:qu
 
 Resolve `pnpm-workspace.yaml` first, keeping the higher version on every conflict — no `pnpm` runs while its markers stand — then delete `pnpm-lock.yaml` and `pnpm i`; never hand-resolve the lock, and never merge `main` or `develop` into `ai/queue` (`references/lockfile-merges.md`).
 
-## Verify Once Per Push
+## Verify Once Per Sitting
 
-The touched tests run **once, after all the edits going out together** (the `package-scripts` skill, `references/check-suite.md`), in the background, and the rest are CI's on the push (the `running-checks` skill). Commits stay per coherent chunk regardless, and a fix either one calls for is its own commit behind the unit — never folded into it, because the collector cuts windows at commit boundaries and every cut should be green on its own. A per-chunk run is re-invalidated by the next chunk going out with it; a queue push waits for nothing, since it starts no review.
+The touched tests run **once, after all the edits going out together** (the `package-scripts` skill, `references/check-suite.md`), in the background — once per sitting, however many commits and queue pushes carry it — and the rest are CI's on each push (the `running-checks` skill). Commits stay per coherent chunk regardless, and a fix either one calls for is its own commit behind the unit — never folded into it, because the collector cuts windows at commit boundaries and every cut should be green on its own. A per-chunk run is re-invalidated by the next chunk going out with it; a queue push waits for nothing, since it starts no review.
 
 ## Reference pages
 

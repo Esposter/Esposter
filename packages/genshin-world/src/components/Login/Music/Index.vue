@@ -4,8 +4,8 @@ import { useEventListener } from "@vueuse/core";
 import { createMusicPlayer } from "genshin-engine";
 
 // The login's music, rendering nothing: its playlist from the start, looping as the game's does, for as long as the
-// Screen shows. A browser holds sound until the page has had a click or a key, so on a page that has had neither the
-// Music waits for the first pointer or key press anywhere on the window, and starts there from its beginning
+// Screen shows. The browser's autoplay policy may start the context suspended, and then the music waits for the first
+// Pointer or key press anywhere on the window, and starts there from its beginning
 let close: (() => Promise<void>) | undefined;
 onMounted(() => {
   const context = new AudioContext();
