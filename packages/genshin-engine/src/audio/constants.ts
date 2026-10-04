@@ -1,6 +1,6 @@
 // The live player schedules this far ahead of the audio clock, every so often, so a late timer never leaves a gap
 export const MUSIC_LOOKAHEAD_SECONDS: number = Temporal.Duration.from({ seconds: 2 }).total("seconds");
-export const MUSIC_SCHEDULE_INTERVAL_MS = 500;
+export const MUSIC_SCHEDULE_INTERVAL_MS: number = Temporal.Duration.from({ milliseconds: 500 }).total("milliseconds");
 // A released note is stopped once it has faded for this many of its release's time constants, under a thousandth of
 // Its level
 export const RELEASE_TIME_CONSTANTS = 7;
