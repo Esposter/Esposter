@@ -14,15 +14,15 @@ definePageMeta({
   middleware: "auth",
   validate: checkIsUuidRouteId,
 });
-const { currentRoute } = useRouter();
+const route = useRoute();
 // Id is stable for this page instance (keyed by id), so a one-time read is safe; only blade changes without a remount
-const id = getRouteParam(currentRoute.value.params, "id");
+const { id } = route.params;
 const resourceStore = useResourceStore();
 const { resource } = storeToRefs(resourceStore);
 const { clearResource, readResource } = resourceStore;
 await readResource();
 if (!resource.value) throw createError({ statusCode: 404, statusMessage: "Resource not found" });
-const activeBlade = computed(() => getRouteParam(currentRoute.value.params, "blade") || ResourceBladeType.Overview);
+const activeBlade = computed(() => route.params.blade || ResourceBladeType.Overview);
 // Opening a resource is what Recent is a list of — the Recent route, Home's Recent tab and the palette
 // Scope's "Recently opened" group all read the rows this writes
 useRecordResourceAccess(resource);

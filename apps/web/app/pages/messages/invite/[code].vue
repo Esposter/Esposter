@@ -4,7 +4,6 @@ import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useRoomStore } from "@/store/message/room";
 import { getRouteParam } from "@/util/router/getRouteParam";
-import { requireRouteParam } from "@/util/router/requireRouteParam";
 import { DatabaseEntityType, selectInviteInMessageSchema } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
@@ -18,8 +17,8 @@ definePageMeta({
 });
 
 const { $trpc } = useNuxtApp();
-const { currentRoute } = useRouter();
-const code = requireRouteParam(currentRoute.value.params, "code");
+const route = useRoute();
+const { code } = route.params;
 const invite = await $trpc.room.readInvite.query(code);
 if (!invite)
   throw createError({ status: 404, statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.Invite, code) });

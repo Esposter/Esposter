@@ -6,7 +6,9 @@ import { getRouteParam } from "@/util/router/getRouteParam";
 
 definePageMeta({ validate: (route) => getRouteParam(route.params, "id").length > 0 });
 
-const { user, userId } = await useReadUserFromRoute();
+const route = useRoute();
+const userId = route.params.id;
+const user = await useReadUser(userId);
 const userAchievements = await useReadUserAchievements(userId);
 const { readMorePosts, readPosts } = useReadPosts(userId);
 const postStore = usePostStore();
