@@ -1,10 +1,10 @@
 import type { TreeGeometry } from "#src/kits/tree/TreeGeometry";
 import type { TreeOptions } from "#src/kits/tree/TreeOptions";
 
+import { mergeGeometryParts } from "#src/kits/mergeGeometryParts";
 import { computeLeafCards } from "#src/kits/tree/computeLeafCards";
 import { computeTreeSkeleton } from "#src/kits/tree/computeTreeSkeleton";
 import { BufferAttribute, BufferGeometry, CylinderGeometry, Quaternion, Vector3 } from "three";
-import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
 const BRANCH_RADIAL_SEGMENTS = 7;
 const UP = new Vector3(0, 1, 0);
@@ -22,8 +22,7 @@ export const createTreeGeometry = (treeOptions: TreeOptions): TreeGeometry => {
     segmentGeometry.translate((start.x + end.x) / 2, (start.y + end.y) / 2, (start.z + end.z) / 2);
     return segmentGeometry;
   });
-  const branchGeometry = mergeGeometries(segmentGeometries) ?? new BufferGeometry();
-  for (const segmentGeometry of segmentGeometries) segmentGeometry.dispose();
+  const branchGeometry = mergeGeometryParts(segmentGeometries);
 
   const { indices, normals, positions, uvs } = computeLeafCards(clusterCenters, treeOptions);
   const leafGeometry = new BufferGeometry();

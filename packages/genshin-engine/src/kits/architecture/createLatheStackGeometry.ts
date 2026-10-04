@@ -1,7 +1,9 @@
 import type { LatheStackOptions } from "#src/kits/architecture/LatheStackOptions";
 
-import { BufferGeometry, CylinderGeometry } from "three";
-import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import type { BufferGeometry } from "three";
+
+import { mergeGeometryParts } from "#src/kits/mergeGeometryParts";
+import { CylinderGeometry } from "three";
 
 // A column, a tower or a cornice as stacked sections, each a closed frustum standing on the one below, so where two
 // Radii differ the step between them is a ledge with a hard edge, as a moulding is. Merged into one geometry for one
@@ -21,8 +23,7 @@ export const createLatheStackGeometry = ({
     footHeight += height;
     return isFaceted ? part.toNonIndexed() : part;
   });
-  const stackGeometry = mergeGeometries(parts) ?? new BufferGeometry();
-  for (const part of parts) part.dispose();
+  const stackGeometry = mergeGeometryParts(parts);
   if (isFaceted) stackGeometry.computeVertexNormals();
   return stackGeometry;
 };

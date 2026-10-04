@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/kits/tree/computeLeafCards.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.1071700000000078,
+              "name": "8 cards a cluster",
+              "p99": 0.2871610000000033,
+              "rme": 47.552543530999166,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.3790099999999967,
+              "name": "32 cards a cluster",
+              "p99": 0.49249699999999874,
+              "rme": 15.687215273027954,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "computeLeafCards > 16 clusters"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.7625200000000063,
+              "name": "8 cards a cluster",
+              "p99": 4.645644999999997,
+              "rme": 141.7601547389528,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.8712000000000018,
+              "name": "32 cards a cluster",
+              "p99": 1.062211000000002,
+              "rme": 7.893890075179779,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "computeLeafCards > 64 clusters"
+        }
+      ]
+    }
+  ]
+}
