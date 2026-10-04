@@ -32,7 +32,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 - `Omit` → `Except` from `type-fest`, enforced by oxlint `typescript/no-restricted-types`. Import it from `type-fest` directly; it is **not** re-exported from `@esposter/shared`.
 - **No parameter properties** — never `constructor(private readonly foo: T)`. Declare fields explicitly and assign in the body.
 - **`private` → ECMAScript `#`** (`no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js`). Keep `readonly` when converting (`private readonly foo` → `readonly #foo`); `protected` stays, as `#` is inaccessible to subclasses.
-- `.forEach()` is **BANNED** — use `for...of` (`references/loops.md`); `unicorn/no-array-for-each` enforces it in script, `vue/no-restricted-syntax` in templates.
+- `.forEach()` is **banned** — use `for...of` (`references/loops.md`); `unicorn/no-array-for-each` enforces it in script, `vue/no-restricted-syntax` in templates.
 - `type` aliases for object shapes → `interface` (`consistent-type-definitions`).
 - **The newest platform API, always, and the form it replaces is banned** — every `unicorn/prefer-*` rule is on repo-wide for that reason, so a legacy form fails lint rather than review; one no rule decides is a finding, and a new replacement earns a `no-restricted-syntax` entry the first time it is re-found.
 - **Non-mutating array methods, enforced** — `sort()`, `reverse()` and `splice()` are lint errors; write `toSorted`/`toReversed`/`toSpliced` and assign the result back (`references/collections.md`).
@@ -80,6 +80,6 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 
 ## Absent Values
 
-- **`ref<string>()` is BANNED** (`no-restricted-syntax`) — app-owned strings are `string` with `""` as the empty sentinel, checked by truthiness, never `string | undefined`.
+- **`ref<string>()` is banned** (`no-restricted-syntax`) — app-owned strings are `string` with `""` as the empty sentinel, checked by truthiness, never `string | undefined`.
 - **An absent property is `field?: T`, never `field: T | undefined`**, and `null` only at an external boundary (`references/absent-values.md`).
 - Full sentinel propagation rules, boundary exceptions and the enum-`None` ban: `references/absent-values.md`.
