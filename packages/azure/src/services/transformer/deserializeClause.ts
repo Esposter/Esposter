@@ -19,7 +19,8 @@ export const deserializeClause = (
   return {
     key: deserializeKey(groups.key),
     not: Boolean(groups.not),
-    operator: groups.operator as BinaryOperator,
+    // The clause regex matches its operator in any case, and the enum holds it in lower case
+    operator: groups.operator.toLowerCase() as BinaryOperator,
     value: deserializeValue(groups.value),
   };
 };
