@@ -54,9 +54,7 @@ const english: ResolvedLocalization = {
           ? `Voice: the ${voiceLanguage} dub, runtime ${isRuntimeInstalled ? "installed" : "not installed"}, ${voiceDevice ? `speaking on ${voiceDevice}` : "not yet spoken"}.`
           : "Voice: not set up, so no reply is read aloud.",
         `Replies ${isMuted ? "muted" : `unmuted at volume ${volume}`}.`,
-      ]
-        .filter(Boolean)
-        .join("\n"),
+      ].join("\n"),
     teardownDone:
       "The voice's runtime, weights, references and dub are removed; the pick records, the pin and the languages stay.",
     unmuted: "Spoken replies unmuted.",

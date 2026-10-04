@@ -189,9 +189,7 @@ const chineseSimplified: Localization = {
           ? `语音：${voiceLanguage}配音，运行环境${isRuntimeInstalled ? "已安装" : "未安装"}，${voiceDevice ? `在${voiceDevice}上发声` : "尚未发声"}。`
           : "语音：未设置，不会朗读任何回复。",
         `回复${isMuted ? "已静音" : `未静音，音量${volume}`}。`,
-      ]
-        .filter(Boolean)
-        .join("\n"),
+      ].join("\n"),
     teardownDone: "语音的运行环境、权重、参考语音和配音已删除；选择记录、固定设置和语言设置保留。",
     unmuted: "语音回复已取消静音。",
     upcomingBirthdays: (list) => `本周生日：${list}。`,

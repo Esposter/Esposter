@@ -504,9 +504,7 @@ const french: Localization = {
           ? `Voix : doublage ${voiceLanguage}, environnement ${isRuntimeInstalled ? "installé" : "non installé"}, ${voiceDevice ? `parle sur ${voiceDevice}` : "n'a pas encore parlé"}.`
           : "Voix : non configurée, aucune réponse n'est lue à voix haute.",
         `Réponses ${isMuted ? "coupées" : `au volume ${volume}`}.`,
-      ]
-        .filter(Boolean)
-        .join("\n"),
+      ].join("\n"),
     teardownDone:
       "L'environnement, les poids, les références et le doublage de la voix sont supprimés ; les choix enregistrés, l'épingle et les langues restent.",
     unmuted: "Réponses parlées réactivées.",

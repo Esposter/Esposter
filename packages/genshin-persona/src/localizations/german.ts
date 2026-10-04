@@ -502,9 +502,7 @@ const german: Localization = {
           ? `Stimme: ${voiceLanguage}-Synchronisation, Laufzeit ${isRuntimeInstalled ? "installiert" : "nicht installiert"}, ${voiceDevice ? `spricht auf ${voiceDevice}` : "hat noch nicht gesprochen"}.`
           : "Stimme: nicht eingerichtet, keine Antwort wird vorgelesen.",
         `Antworten ${isMuted ? "stumm" : `nicht stumm, Lautstärke ${volume}`}.`,
-      ]
-        .filter(Boolean)
-        .join("\n"),
+      ].join("\n"),
     teardownDone:
       "Laufzeit, Gewichte, Referenzen und Synchronisation der Stimme sind gelöscht; die Auswahl-Einträge, die Anheftung und die Sprachen bleiben.",
     unmuted: "Gesprochene Antworten wieder an.",

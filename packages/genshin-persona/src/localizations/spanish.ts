@@ -530,9 +530,7 @@ const spanish: Localization = {
           ? `Voz: doblaje ${voiceLanguage}, entorno ${isRuntimeInstalled ? "instalado" : "no instalado"}, ${voiceDevice ? `hablando en ${voiceDevice}` : "aún no ha hablado"}.`
           : "Voz: sin configurar, ninguna respuesta se lee en voz alta.",
         `Respuestas ${isMuted ? "silenciadas" : `con volumen ${volume}`}.`,
-      ]
-        .filter(Boolean)
-        .join("\n"),
+      ].join("\n"),
     teardownDone:
       "Se borran el entorno, los pesos, las referencias y el doblaje de la voz; los registros de elección, el anclaje y los idiomas se quedan.",
     unmuted: "Respuestas habladas reactivadas.",

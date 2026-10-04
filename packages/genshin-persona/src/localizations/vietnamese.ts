@@ -537,9 +537,7 @@ const vietnamese: Localization = {
           ? `Giọng: lồng tiếng ${voiceLanguage}, môi trường chạy ${isRuntimeInstalled ? "đã cài" : "chưa cài"}, ${voiceDevice ? `đang nói trên ${voiceDevice}` : "chưa nói lần nào"}.`
           : "Giọng: chưa thiết lập, không phản hồi nào được đọc to.",
         `Phản hồi ${isMuted ? "đang tắt tiếng" : `đang bật tiếng, âm lượng ${volume}`}.`,
-      ]
-        .filter(Boolean)
-        .join("\n"),
+      ].join("\n"),
     teardownDone:
       "Môi trường chạy, trọng số, mẫu giọng và bản lồng tiếng đã bị xóa; lịch sử chọn, ghim và cài đặt ngôn ngữ vẫn giữ.",
     unmuted: "Đã bật lại phản hồi đọc to.",
