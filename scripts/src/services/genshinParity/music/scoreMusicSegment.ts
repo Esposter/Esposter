@@ -27,7 +27,7 @@ export const scoreMusicSegment = (ours: Float32Array, game: Float32Array, sample
   return {
     bandBiases: bandGaps.map((gaps) => computeMean(gaps)),
     bandDistances,
-    distance: bandDistances.reduce((sum, distance) => sum + distance, 0) / bandDistances.length,
+    distance: computeMean(bandDistances),
     pitchAgreement: computeChromaAgreement(ourChroma.classes, gameChroma.classes, loudFrames, 0),
   };
 };
