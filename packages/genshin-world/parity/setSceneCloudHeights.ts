@@ -6,10 +6,10 @@ import { MathUtils } from "three";
 // The heights each band's clouds stand between, by the band's name, or handed back to the scene's own when none are
 // Given: a tool reads the cover each placement draws, so each band's heights are solved against the references'. A band
 // Scatters its heights evenly between its own, so carrying each cloud's height linearly from those to the given stands
-// It where placing the band between the given would, every other draw of its scatter kept, save that the cloud sea keeps
-// The clouds its own heights kept clear of the walkway, each held under its ceiling so none the given heights raise
-// Stands in the walkway. The first call keeps the scene's own heights, and each band's own range is handed back by its
-// Name
+// It where placing the band between the given would, every other draw of its scatter kept, save that the cloud sea
+// Keeps the clouds its own heights kept clear of the walkway, each held under its ceiling so none the given heights
+// Raise stands in the walkway. The first call keeps the scene's own heights, and each band's own range is handed back
+// By its name
 export const setSceneCloudHeights = (
   context: SceneContext | undefined,
   heights?: Record<string, [number, number]>,

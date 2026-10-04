@@ -22,14 +22,14 @@ import { SceneContextKey } from "#src/services/scene/SceneContextKey";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { capitalize, jsonDateParse } from "@esposter/shared";
 
-// One screen at a time, by `?screen=<Name>`, or the list of them. `&motion` asks for a motion held at its start for
-// The tool that shoots it to set each moment: `entry` holds the screen's own animations as it mounts, and `props` lets
-// Those finish, then applies the fixture's motion props and holds the transitions they start. `data-parity-ready`
-// Marks the page drawn, holding the screen's name, or nothing for the list, so a name with no fixture is told apart.
+// One screen at a time, by `?screen=<Name>`, or the list of them. `&motion` asks for a motion held at its start for the
+// Tool that shoots it to set each moment: `entry` holds the screen's own animations as it mounts, and `props` lets
+// Those finish, then applies the fixture's motion props and holds the transitions they start. `data-parity-ready` marks
+// The page drawn, holding the screen's name, or nothing for the list, so a name with no fixture is told apart.
 // `&backdrop=<file>` draws that image under the screen, for an overlay shot over the frame it is judged against, and
-// `&variant=<name>` renders the fixture's variant of that name, and `&witness=<layout>` draws a scene's exports in place
-// Of its own parts, from the layout the shooting browser serves there. A tool sets the screen's props as it runs, to
-// Play a motion at known moments, benches a scene's frames, and renders a segment of the login's music to score it
+// `&variant=<name>` renders the fixture's variant of that name, and `&witness=<layout>` draws a scene's exports in
+// Place of its own parts, from the layout the shooting browser serves there. A tool sets the screen's props as it runs,
+// To play a motion at known moments, benches a scene's frames, and renders a segment of the login's music to score it
 const holdAnimations = (): void => {
   // Reading the animations resolves the styles that start them, and a held one stays listed once it would have ended
   for (const animation of window.document.getAnimations()) animation.pause();

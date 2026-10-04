@@ -3,10 +3,10 @@ import type { ModuleOptions } from "trpc-nuxt-module";
 
 import { TRPC_CLIENT_PATH, TRPC_WS_PATH } from "../app/services/trpc/constants.ts";
 
-// Registered by its source rather than its package name: `nuxt prepare` loads every module from the app's `postinstall`,
-// Before any workspace package is built, and a name resolves to the `dist` a fresh clone does not have yet. Its
-// Options are the router and context the generated handlers import, the endpoints they are registered at, and the
-// Keep-alive the WebSocket handler pings its connections with
+// Registered by its source rather than its package name: `nuxt prepare` loads every module from the app's
+// `postinstall`, before any workspace package is built, and a name resolves to the `dist` a fresh clone does not have
+// Yet. Its options are the router and context the generated handlers import, the endpoints they are registered at, and
+// The Keep-alive the WebSocket handler pings its connections with
 const trpcModule: [string, ModuleOptions] = [
   "../../packages/trpc-nuxt-module/src/module.ts",
   {

@@ -13,8 +13,8 @@ interface Props {
   min: number;
 }
 // The WAI-ARIA window splitter: a separator one stop in the tab order that says the pane's size and its range, dragged
-// By the pointer, stepped by the arrows and sent to either end by Home and End. A line on the pane's edge that takes the
-// Accent while it is pointed at, focused or dragged, over a wider strip that is easier to catch
+// By the pointer, stepped by the arrows and sent to either end by Home and End. A line on the pane's edge that takes
+// The accent while it is pointed at, focused or dragged, over a wider strip that is easier to catch
 const size = defineModel<number>({ required: true });
 const { isReversed, isVertical, label, max, min } = defineProps<Props>();
 // The pointer dragging, so a second touch on the handle neither restarts the drag nor moves or ends it

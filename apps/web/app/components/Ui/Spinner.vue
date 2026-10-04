@@ -19,7 +19,8 @@ useIntervalFn(() => {
 </template>
 
 <style scoped>
-/* Standard and Genshin turn a ring in the accent over the same element, its frames still there to read and never seen */
+/* Standard and Genshin turn a ring in the accent over the same element, its frames still there to read and never
+   seen */
 .spinner[data-ui-style="genshin"],
 .spinner[data-ui-style="standard"] {
   animation: turn calc(var(--ui-motion-unit) * 14) linear infinite;

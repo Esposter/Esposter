@@ -16,11 +16,11 @@ interface Props {
   shortcut?: string;
   title: string;
 }
-// What one row of a list shows, whichever list holds it: a mark, the title and its description, and at the end the row's
-// Shortcut. The mark's column is kept on a row without one, so every title in a list starts on one line. The row's own
-// Element, its role and its state are the list's, which lays these out as the `ui-item` row does. A mark no prop can
-// Name, such as a provider's own logo component, fills the mark's slot, and a title drawn in a colour of the row's own,
-// Such as a member's top role's, fills the title's
+// What one row of a list shows, whichever list holds it: a mark, the title and its description, and at the end the
+// Row's shortcut. The mark's column is kept on a row without one, so every title in a list starts on one line. The
+// Row's own element, its role and its state are the list's, which lays these out as the `ui-item` row does. A mark no
+// Prop can name, such as a provider's own logo component, fills the mark's slot, and a title drawn in a colour of the
+// Row's own, such as a member's top role's, fills the title's
 defineSlots<{ append?: () => VNode; mark?: () => VNode; title?: () => VNode }>();
 const { description, icon, image, isMarkless, meaning, shortcut, title } = defineProps<Props>();
 </script>

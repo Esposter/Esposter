@@ -25,19 +25,18 @@ export const STANDARD_TONAL_MIX_PERCENTAGE = 12;
 // The style a reader with no cookie gets
 export const DEFAULT_UI_STYLE = UiStyle.Standard;
 // Each design style's value for every style token. `uno.config.ts` writes a style's column as one rule on its
-// `data-ui-style` value, so the tokens are static CSS, and a value may read the palette's tokens and the step but
-// Never set a length the layout reads. Voxel draws with hard-edged shadows in the edge colour and never a radius or a
-// Blur: a frame is ringed one step out on each side, which leaves its corners notched, with a faint lit line along its
-// Top; a raised block is lit along its top and left and shaded along the others; a field is a tone off its surface,
-// Set into its surface. One pixel face and one weight, headings in the accent so hierarchy survives a reader who scales the text.
-// Standard draws in tones rather than lines, as Material 3 does at the app's density: a frame is a tone above the
-// Background with no edge, what floats is a tone further with a wide soft shadow and a faint ring, a field a filled tone
-// And a button a tonal one of the accent, each state a layer of the content's colour. A container rounds more than
+// `data-ui-style` value, so the tokens are static CSS, and a value may read the palette's tokens and the step but never
+// Set a length the layout reads. Voxel draws with hard-edged shadows in the edge colour and never a radius or a blur: a
+// Frame is ringed one step out on each side, which leaves its corners notched, with a faint lit line along its top; a
+// Raised block is lit along its top and left and shaded along the others; a field is a tone off its surface, set into
+// Its surface. One pixel face and one weight, headings in the accent so hierarchy survives a reader who scales the
+// Text. Standard draws in tones rather than lines, as Material 3 does at the app's density: a frame is a tone above the
+// Background with no edge, what floats is a tone further with a wide soft shadow and a faint ring, a field a filled
+// Tone and a button a tonal one of the accent, each state a layer of the content's colour. A container rounds more than
 // The controls inside it, a search field is a pill, and a sans face draws the interface with a mono for code, headings
-// In the text colour at a heavier weight.
-// Genshin draws as the game's menus do: capsule buttons and fields, rounded panels whose edge is a thin gold line set
-// Just inside it, soft shadows under what floats, a rounded humanist face with gold headings, and a loading row of
-// Gems that light one by one
+// In the text colour at a heavier weight. Genshin draws as the game's menus do: capsule buttons and fields, rounded
+// Panels whose edge is a thin gold line set just inside it, soft shadows under what floats, a rounded humanist face
+// With gold headings, and a loading row of gems that light one by one
 export const UiStyleMap = {
   [UiStyle.Genshin]: {
     [UiStyleToken.BlockOpacity]: "1",
@@ -81,7 +80,8 @@ export const UiStyleMap = {
     [UiStyleToken.WeightHeading]: "700",
   },
   [UiStyle.Standard]: {
-    // A bar's blocks are kept for the layout, and the row drawn as one rounded track instead, filled to the exact reading
+    // A bar's blocks are kept for the layout, and the row drawn as one rounded track instead, filled to the
+    // Exact reading
     [UiStyleToken.BlockOpacity]: "0",
     [UiStyleToken.BorderWidth]: "0.0625rem",
     [UiStyleToken.ContainerRadius]: "calc(var(--ui-step) * 2)",

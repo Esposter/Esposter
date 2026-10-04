@@ -3,8 +3,8 @@ import type { SceneContext } from "#src/models/scene/SceneContext";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { DirectionalLight, HemisphereLight, Vector3 } from "three";
 
-// The scene's sun or moon and its sky's ambient light, scaled from the strengths the scene set them at, each held at its
-// Own strength unless a share is given, and the direction the sun's light falls from: a tool reads what each light
+// The scene's sun or moon and its sky's ambient light, scaled from the strengths the scene set them at, each held at
+// Its own strength unless a share is given, and the direction the sun's light falls from: a tool reads what each light
 // Alone draws, so the two strengths are solved apart. The first call keeps each light's own strength to scale from
 export const setSceneLights = (
   context: SceneContext | undefined,

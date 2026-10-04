@@ -9,9 +9,9 @@ import { PUBLISHER_RING_BANDS } from "#src/services/splash/PublisherRingBands";
 import { GameScreen } from "genshin-interface";
 
 // The logo's box is its SVG's, 1163 by 204, placed so its letters sit where the game's recording shows them (0.7633
-// Game units to one of the logo's); the ring's colours are its field's, sampled by angle and by radius and drawn through
-// Its silhouette: each band a conic gradient round the ring, laid over the band inside it through a radial mask that
-// Ramps from the inner band's radius to its own, so the colour between two bands is their blend at every angle
+// Game units to one of the logo's); the ring's colours are its field's, sampled by angle and by radius and drawn
+// Through its silhouette: each band a conic gradient round the ring, laid over the band inside it through a radial mask
+// That ramps from the inner band's radius to its own, so the colour between two bands is their blend at every angle
 const LOGO_WIDTH = 1163;
 const LOGO_HEIGHT = 204;
 const ringMask = `url("data:image/svg+xml,${encodeURIComponent(

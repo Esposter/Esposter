@@ -78,11 +78,11 @@ const exportResolvedAssets = async (
   return { assets, unresolved };
 };
 // One component's closure out of the game's blocks: the layout of each of its roots' and spawned prefabs' blocks dumped
-// Per file, then every object its roots reach down their children, the meshes and materials those draw and the
-// Textures each material samples, each pointer resolved through its own file's external references and exported from
-// The block holding it by its exact name. Its meshes are OBJ, its textures PNG and its materials JSON, grouped by type. Assets no pointer
-// Reaches are exported by the component's name pattern. What was reached is returned as counts, with every pointer that
-// Could not be resolved
+// Per file, then every object its roots reach down their children, the meshes and materials those draw and the textures
+// Each material samples, each pointer resolved through its own file's external references and exported from the block
+// Holding it by its exact name. Its meshes are OBJ, its textures PNG and its materials JSON, grouped by type. Assets no
+// Pointer reaches are exported by the component's name pattern. What was reached is returned as counts, with every
+// Pointer that could not be resolved
 export const extractComponent = async (component: DerivedAssetComponent): Promise<string> => {
   const { namePattern, roots: componentRoots, spawns = [] } = DerivedAssetComponentMap[component];
   const roots = [...componentRoots, ...spawns.map(({ prefab }) => prefab)];

@@ -87,8 +87,8 @@ export const renderWitnessTargets = async (
     targetMaterials.set(key, material);
     return material;
   };
-  // The scene's lights light the shadow target, so they join its layer while the targets are drawn; the sun is the light
-  // That casts the scene's shadows
+  // The scene's lights light the shadow target, so they join its layer while the targets are drawn; the sun is the
+  // Light that casts the scene's shadows
   const lights: Light[] = [];
   scene.traverse((object) => {
     if (object instanceof Light) lights.push(object);

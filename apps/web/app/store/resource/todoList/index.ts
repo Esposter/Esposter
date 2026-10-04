@@ -83,8 +83,9 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     else if (todoList.value === writtenTodoList) updateItem(previousItem);
     return isSuccessful;
   };
-  // A todo added by its name alone, from the field above the list, at the foot of the list as the dialog's add is. A name
-  // Of only whitespace, or past the limit the dialog's name field holds, adds nothing, and a refused save takes the new todo back out
+  // A todo added by its name alone, from the field above the list, at the foot of the list as the dialog's add is. A
+  // Name of only whitespace, or past the limit the dialog's name field holds, adds nothing, and a refused save takes
+  // The new todo back out
   const addItem = async (name: string) => {
     const normalizedName = normalizeString(name);
     if (!normalizedName || normalizedName.length > ITEM_NAME_MAX_LENGTH) return false;
@@ -132,9 +133,9 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   };
   const toggleImportant = (id: TodoListItem["id"]) =>
     setItemValue(id, "isImportant", ({ isImportant }) => (isImportant ? undefined : true));
-  // Some todos put in a new order, by a drag or a key, each taking the next of the places they held; a refused save puts
-  // Them back in the order they had, over whatever the list holds by then — unless that is another device's content,
-  // Adopted mid-flight, whose order never held this one
+  // Some todos put in a new order, by a drag or a key, each taking the next of the places they held; a refused save
+  // Puts them back in the order they had, over whatever the list holds by then — unless that is another device's
+  // Content, adopted mid-flight, whose order never held this one
   const reorderItems = async (orderedIds: TodoListItem["id"][]) => {
     const previousIds = items.value.filter(({ id }) => orderedIds.includes(id)).map(({ id }) => id);
     const writtenTodoList = todoList.value;

@@ -4,9 +4,9 @@ import type { Object3D } from "three";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { Box3, Vector3 } from "three";
 
-// Each landmark's place in the world as the witness draws it, in three's axes: a share of its part's bounding box
-// Along each axis (0 its least corner, 1 its greatest), the part named by its mesh: the placement of it standing nearest
-// The point given, or the first drawn
+// Each landmark's place in the world as the witness draws it, in three's axes: a share of its part's bounding box along
+// Each axis (0 its least corner, 1 its greatest), the part named by its mesh: the placement of it standing nearest the
+// Point given, or the first drawn
 export const computeWitnessPoints = (
   { parts }: SceneWitness,
   landmarks: readonly { mesh: string; near?: [number, number, number]; share: [number, number, number] }[],

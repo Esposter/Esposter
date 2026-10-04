@@ -12,10 +12,10 @@ import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Build the window as a branch, one cherry-pick at a time, and measure after each from the tree that will be
-// Pushed. Every count is taken from `main`'s merge base, since the release's one review reads everything above it —
-// A window `develop` already carries unopened included. A commit alone over the cap never reaches here unheld — the sync reshapes it first — so a hold is the residual
-// Case: a reshaping or a resolution past its attempt cap.
+// Build the window as a branch, one cherry-pick at a time, and measure after each from the tree that will be pushed.
+// Every count is taken from `main`'s merge base, since the release's one review reads everything above it — a window
+// `develop` already carries unopened included. A commit alone over the cap never reaches here unheld — the sync
+// Reshapes it first — so a hold is the residual case: a reshaping or a resolution past its attempt cap.
 export const portWindow = ({ cwd, developSha, fixShas, mergeBaseSha, queueSha }: PortInput): PortResult => {
   runGit(["switch", "--detach", developSha], cwd);
 

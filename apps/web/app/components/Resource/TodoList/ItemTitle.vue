@@ -22,9 +22,9 @@ const completedStepCount = computed(() => item.value?.steps?.filter(({ completed
 
 <!-- A todo's row: its title, in the heading weight since a list is scanned by it, struck through once it is completed,
      Then a line holding only what is set — when it was completed, or when it is due, in the error colour once that has
-     Passed and marked when it repeats, how many of its steps are done, and the repository a follow-up came from — and the notes in the text colour, since they are what a todo is read for,
-     Clamped to a few lines with an ellipsis so a long note cannot stretch its row; the dialog shows them whole. A completed row
-     Mutes its title and notes alike -->
+     Passed and marked when it repeats, how many of its steps are done, and the repository a follow-up came from — and
+     The notes in the text colour, since they are what a todo is read for, clamped to a few lines with an ellipsis so a
+     Long note cannot stretch its row; the dialog shows them whole. A completed row mutes its title and notes alike -->
 <template>
   <span v-if="item" :class="{ 'text-muted': item.completedAt }" flex flex-col gap-1>
     <span class="name" :data-completed="Boolean(item.completedAt)" max-w-full truncate self-start>{{ item.name }}</span>

@@ -74,8 +74,8 @@ const generateParticipants = async () => {
         severity: NotificationSeverity.Success,
         title: `${participants.length} participants ready`,
       });
-      // A person past the audience read's cap goes unchecked by this run and may hold no link, and the owner is about to
-      // Send these links
+      // A person past the audience read's cap goes unchecked by this run and may hold no link, and the owner is about
+      // To send these links
       if (audienceTruncation && audienceTruncation.hiddenRows > 0) {
         const { hiddenRows, isCountCapped } = audienceTruncation;
         createNotification({

@@ -10,8 +10,8 @@ const swallowClick = (event: MouseEvent) => {
 };
 // Gives an element a context menu of the items its overflow button shows, so the two never disagree. The props go on
 // The element: a right-click opens the menu at the pointer, a long press on a touch screen at the finger, and the menu
-// Key or Shift+F10 at the element's corner. Holding Shift, or pressing in a field or on a link, leaves the browser's own
-// Menu
+// Key or Shift+F10 at the element's corner. Holding Shift, or pressing in a field or on a link, leaves the browser's
+// Own menu
 export const useContextMenu = () => {
   const contextMenuStore = useContextMenuStore();
   const { contextMenu } = storeToRefs(contextMenuStore);

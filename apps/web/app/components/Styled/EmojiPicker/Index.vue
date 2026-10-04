@@ -28,9 +28,9 @@ watch(isOpen, (newIsOpen) => {
 </script>
 
 <!-- One popover at every width, anchored to what it acts on: the panel sizes itself to the screen, so a phone needs no
-     sheet of its own. Every trigger ends a row near the foot of what it acts on — the composer's toolbar, a message's
-     hover bar, its reactions — so the panel opens above it toward the row's start, flipping below only where the top has
-     no room -->
+     Sheet of its own. Every trigger ends a row near the foot of what it acts on — the composer's toolbar, a message's
+     Hover bar, its reactions — so the panel opens above it toward the row's start, flipping below only where the top
+     Has no room -->
 <template>
   <UiPopover v-model:is-open="isOpen" :="$attrs" :label position-area="top span-left" :variant px-0>
     <template #trigger>

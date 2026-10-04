@@ -6,8 +6,8 @@ import { scheduleMusicExpression } from "#src/audio/scheduleMusicExpression";
 import { scheduleMusicNote } from "#src/audio/scheduleMusicNote";
 
 // One segment of a piece rendered offline as one channel, through the same notes and expression the live player
-// Schedules, for a score to compare against the sound it recreates. It runs to the segment's end, where the next segment
-// Would start
+// Schedules, for a score to compare against the sound it recreates. It runs to the segment's end, where the next
+// Segment would start
 export const renderMusicSegment = (music: Music, segmentIndex: number, sampleRate: number): Promise<AudioBuffer> => {
   const segment = music.segments[segmentIndex];
   const context = new OfflineAudioContext({

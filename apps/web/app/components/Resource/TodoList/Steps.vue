@@ -21,8 +21,8 @@ const addStep = () => {
 };
 </script>
 
-<!-- A todo's checklist, saved with the rest of the dialog: each step's box ticks only that step, its name edits where it
-     Stands, and the field at the foot adds on Enter, staying focused for the next, or on the button beside it -->
+<!-- A todo's checklist, saved with the rest of the dialog: each step's box ticks only that step, its name edits where
+     It stands, and the field at the foot adds on Enter, staying focused for the next, or on the button beside it -->
 <template>
   <div flex flex-col gap-2>
     <ul v-if="modelValue" list-none flex flex-col gap-1>

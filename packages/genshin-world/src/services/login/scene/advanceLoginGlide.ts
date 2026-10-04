@@ -13,10 +13,10 @@ import { LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constan
 // How much farther than its rest the door stands when the walkway's far end reaches it, which is where it rises
 const DOOR_LEAD = LOGIN_WALKWAY_SUNK_DISTANCE - LOGIN_DOOR_REST_DISTANCE;
 
-// The glide a frame on: toward the title's speed while the title waits and the preparing speed once the game
-// Prepares, gathering or losing speed at the glide's acceleration. Once the door is due it keeps its pace, never
-// Faster, until the first copy of the walkway at least the door's lead away has come within the walkway's far end,
-// Where the door rises, then slows evenly to rest on that copy, so the door's copy stands where the camera's pose has it
+// The glide a frame on: toward the title's speed while the title waits and the preparing speed once the game prepares,
+// Gathering or losing speed at the glide's acceleration. Once the door is due it keeps its pace, never faster, until
+// The first copy of the walkway at least the door's lead away has come within the walkway's far end, where the door
+// Rises, then slows evenly to rest on that copy, so the door's copy stands where the camera's pose has it
 export const advanceLoginGlide = (
   { scrolled, speed, stopAt }: LoginGlide,
   stage: LoginStage,

@@ -31,9 +31,9 @@ const sortItems = computed<Item[]>(() =>
 );
 </script>
 
-<!-- The field a visit starts with: Enter adds the todo it names and leaves the field empty and focused for the next, while
-     A due date and notes are set by opening the new row. Search folds into a button beside it, so the row above the list
-     Never holds two fields side by side -->
+<!-- The field a visit starts with: Enter adds the todo it names and leaves the field empty and focused for the next,
+     While a due date and notes are set by opening the new row. Search folds into a button beside it, so the row above
+     The list never holds two fields side by side -->
 <template>
   <div flex gap-2 items-center>
     <form

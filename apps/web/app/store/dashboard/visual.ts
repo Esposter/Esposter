@@ -63,8 +63,9 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     if (!isSuccessful && deletedVisual) createDashboardVisual(deletedVisual);
     return isSuccessful;
   };
-  // A copy of one visual — its type, chart and binding, never a publish snapshot — under the original at its size, saved
-  // Through the same write path and taken back out if the save is refused, as a refused delete puts its visual back
+  // A copy of one visual — its type, chart and binding, never a publish snapshot — under the original at its size,
+  // Saved through the same write path and taken back out if the save is refused, as a refused delete puts its
+  // Visual back
   const duplicateVisual = async (ids: { id: Visual["id"] }) => {
     const { createVisual: createDashboardVisual, deleteVisual: deleteDashboardVisual } = getDashboardOperationData();
     const visual = visuals.value.find(getEntityIdEqualComparator<Visual>(["id"], ids));

@@ -32,8 +32,8 @@ interface Props {
   // Rows with the same value here are drawn under one header that opens and closes them
   groupBy?: keyof T & string;
   // Its cells are walked as a spreadsheet's are, the WAI-ARIA grid: one stop in the tab order on the active cell, the
-  // Arrows, Home and End, Page Up and Page Down moving it, and Enter handing it to `onEditCell`. Any other chord is left
-  // To the commands the page registers, so a surface's own keys stay on top of the grid's
+  // Arrows, Home and End, Page Up and Page Down moving it, and Enter handing it to `onEditCell`. Any other chord is
+  // Left to the commands the page registers, so a surface's own keys stay on top of the grid's
   isCellNavigable?: true;
   // The first column stays at the start while the rest scroll under it, with a shade along its edge once they do, so
   // A row's name stays in view beside its far columns
@@ -418,7 +418,8 @@ const onGridKeydown = useGridKeyboard({
           </tr>
         </thead>
         <tbody v-if="isPending && pageItems.length === 0">
-          <!-- The rows' own shape under the real header: a box where a checkbox goes and a line of text in each column -->
+          <!-- The rows' own shape under the real header: a box where a checkbox goes and a line of text in
+               Each column -->
           <tr v-for="index of DATA_TABLE_SKELETON_ROW_COUNT" :key="index">
             <td v-if="isSelectable" class="cell selection" px-3>
               <UiSkeleton size-6 />
@@ -604,8 +605,8 @@ const onGridKeydown = useGridKeyboard({
     inset var(--ui-border-width) 0 0 0 var(--ui-divider);
 }
 
-/* Comfortable rows take two steps above and below their text, and compact ones half of it. A selection box is as tall as
-   a padded line already, so its cell takes none and never sets the row's height */
+/* Comfortable rows take two steps above and below their text, and compact ones half of it. A selection box is as tall
+   as a padded line already, so its cell takes none and never sets the row's height */
 .cell:not(.selection) {
   padding-block: calc(var(--ui-step) * 2);
 }

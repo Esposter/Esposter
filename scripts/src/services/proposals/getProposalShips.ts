@@ -4,8 +4,9 @@ import { PROPOSALS_DIRECTORY, REFACTORS_FOLDER } from "#src/services/proposals/c
 import { getGitRecords } from "#src/services/shared/getGitRecords";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 
-// A log printed as `%x1E%H%x1F%ct%x1F%cs%x1F` with `--name-only` under `--diff-filter=D`: each record's last field is the
-// Pages the commit deleted, and a page's area is the folder under the proposals root — never a root page or a refactor
+// A log printed as `%x1E%H%x1F%ct%x1F%cs%x1F` with `--name-only` under `--diff-filter=D`: each record's last field
+// Is the pages the commit deleted, and a page's area is the folder under the proposals root — never a root page or
+// A refactor
 export const getProposalShips = (log: string): ProposalShip[] =>
   getGitRecords(log).flatMap(([hash = "", timestamp = "", date = "", names = ""]) => {
     const areas = new Set(

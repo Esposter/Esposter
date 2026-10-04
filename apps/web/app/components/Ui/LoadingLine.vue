@@ -7,8 +7,8 @@ interface Props {
   value: number;
 }
 // A page's progress as one thin line along an edge, over the page rather than in its flow, so where it hangs is the
-// Caller's. What the fill is drawn with and the length it grows by are the style's: standard's and Genshin's one eased fill,
-// Voxel's a row of pixel blocks that grows a whole block at a time
+// Caller's. What the fill is drawn with and the length it grows by are the style's: standard's and Genshin's one eased
+// Fill, voxel's a row of pixel blocks that grows a whole block at a time
 const { label, value } = defineProps<Props>();
 </script>
 

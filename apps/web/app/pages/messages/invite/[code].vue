@@ -29,8 +29,8 @@ const { isJoinRoomPending } = storeToRefs(roomStore);
 const { joinRoom } = roomStore;
 </script>
 
-<!-- The invite is the page, so it stands in the middle of it rather than in a modal over nothing: who asks, where to, how
-     many are there, and the one thing to do -->
+<!-- The invite is the page, so it stands in the middle of it rather than in a modal over nothing: who asks, where to,
+     How many are there, and the one thing to do -->
 <template>
   <NuxtLayout>
     <Head>

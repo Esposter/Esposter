@@ -10,8 +10,8 @@ const { speakingIds } = storeToRefs(participantStore);
 const roomParticipantMap = useCallRoomParticipantMap();
 </script>
 
-<!-- The call the reader is in, as a strip over the room's messages: who is in it, then its controls. A narrow screen keeps
-     leaving and the call view, where every other control is -->
+<!-- The call the reader is in, as a strip over the room's messages: who is in it, then its controls. A narrow screen
+     Keeps leaving and the call view, where every other control is -->
 <template>
   <div px-3 py-1 flex gap-2 ui-bar items-center>
     <UiIcon :meaning="UiIconMeaning.Speaker" text-success />

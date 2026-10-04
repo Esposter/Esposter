@@ -1,6 +1,6 @@
-// The style tier: everything a design style decides about drawing, each written to the document as the
-// `--ui-<token>` custom property on the style's `data-ui-style` rule. Nothing here takes room in the layout, so a style
-// Can repaint and reshape anything and move nothing: the step, paddings, gaps and control heights stay in `globals.scss`
+// The style tier: everything a design style decides about drawing, each written to the document as the `--ui-<token>`
+// Custom property on the style's `data-ui-style` rule. Nothing here takes room in the layout, so a style can repaint
+// And reshape anything and move nothing: the step, paddings, gaps and control heights stay in `globals.scss`
 export const UiStyleToken = {
   BlockOpacity: "block-opacity",
   BorderWidth: "border-width",

@@ -34,7 +34,8 @@ const isParticipantTokenRequired = responseMode === SurveyResponseMode.Identifie
 const { [THEME_KEY]: theme, ...surveyModel } = parseSurveyModel(content.model);
 const model = new Model(surveyModel);
 // An author's html questions and completion pages render into this page, in the app's own origin, for anonymous
-// Respondents — unlike a webpage, which is sandboxed — so the markup passes the sanitizer every other rendered HTML does
+// Respondents — unlike a webpage, which is sandboxed — so the markup passes the sanitizer every other rendered
+// HTML does
 model.onProcessHtml.add((_survey, options) => {
   options.html = sanitizeHtml(options.html);
 });

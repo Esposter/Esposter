@@ -10,9 +10,10 @@ export const GAME_UNIT = "min(100cqh / 1080, 100cqw / 1920)";
 // Smaller axis as the screen is, so a canvas unit is 1.2 screen units at 1080 high (a piece 128 plus 32 canvas units
 // Up reads 192 pixels on the 1080 high recording)
 export const GAME_CANVAS_UNIT = "min(100cqh / 900, 100cqw / 1600)";
-// How far the canvas stands in from each side of a screen wider than 16:9: its spare width, up to 71 screen units, as
-// The corner buttons show on a 2560 by 1080 and a 3440 by 1440 recording alike, so the game widens its margin by a
-// Fixed step rather than by all the spare width. A piece anchored to a side rides on the canvas's side, not the screen's
+// How far the canvas stands in from each side of a screen wider than 16:9: its spare width, up to 71 screen units,
+// As the corner buttons show on a 2560 by 1080 and a 3440 by 1440 recording alike, so the game widens its margin
+// By a fixed step rather than by all the spare width. A piece anchored to a side rides on the canvas's side, not
+// The screen's
 export const GAME_CANVAS_INSET = "min(var(--unit) * 71, (100cqw - var(--unit) * 1920) / 2)";
 // The white the game's opening is drawn on, a step under full white: the PC client's screens read 253 on the user's own
 // Recording and on a 2023 one alike, where a phone's and an older build's read 255
