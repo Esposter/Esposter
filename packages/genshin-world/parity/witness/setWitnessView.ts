@@ -1,8 +1,7 @@
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 
-import { WitnessShading } from "#parity/witness/WitnessShading";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { Mesh, PerspectiveCamera, Vector3 } from "three";
+import { PerspectiveCamera, Vector3 } from "three";
 
 // The animation frames waited for after a view is set: the view is drawn in the frame between them, which settles it,
 // Since the witness resolves edges with no temporal history and its clock is held
@@ -11,7 +10,7 @@ const SETTLE_FRAME_COUNT = 2;
 const POSE_TOLERANCE = 1e-3;
 // A view of the witness render as the tools set it: a camera pose (the eye in three's axes, its heading about y and its
 // Pitch about x in radians, its vertical field of view in degrees), the families of parts the witness draws in place of
-// The scene's own (every family it has unless told), how it shades its exports, and whether the scene draws alone,
+// The scene's own (every family it has unless told), and whether the scene draws alone,
 // Without its own fog, clouds and cloud sea; and how far each family of its parts stands off its laid-out place, in
 // Metres in three's axes, for a family's place to be solved on its edges (every family at its own place unless told)
 export interface WitnessView {
@@ -21,7 +20,6 @@ export interface WitnessView {
   // How many times each family's parts are scaled about their own places, each at once
   familyScales?: Record<string, number>;
   isAlone?: boolean;
-  shading?: WitnessShading;
 }
 // Sets the witness render's view, holding the scene's clock, and waits for the frame that draws it. The scene's own bindings move its camera on any
 // Frame its stage animates (the flight, the door's rush), so a pose set here freezes the camera's matrix, which those
@@ -29,14 +27,7 @@ export interface WitnessView {
 // Throws rather than scoring the scene's own view
 export const setWitnessView = async (
   { families, isAlone, isClockHeld, parts }: SceneWitness,
-  {
-    camera,
-    families: viewFamilies,
-    familyOffsets = {},
-    familyScales = {},
-    isAlone: isViewAlone = false,
-    shading = WitnessShading.Exported,
-  }: WitnessView,
+  { camera, families: viewFamilies, familyOffsets = {}, familyScales = {}, isAlone: isViewAlone = false }: WitnessView,
 ): Promise<void> => {
   isClockHeld.value = true;
   isAlone.value = isViewAlone;
@@ -51,12 +42,6 @@ export const setWitnessView = async (
       part.scale.copy(part.userData.laidScale).multiplyScalar(familyScales[group.name] ?? 1);
     }
   }
-  parts.traverse((object) => {
-    const shadingMaterialMap = object.userData.shadingMaterialMap as
-      | Record<WitnessShading, Mesh["material"]>
-      | undefined;
-    if (object instanceof Mesh && shadingMaterialMap) object.material = shadingMaterialMap[shading];
-  });
   const sceneCamera = parts.parent?.children.find((child) => child instanceof PerspectiveCamera);
   if (camera && sceneCamera instanceof PerspectiveCamera) {
     sceneCamera.position.set(...camera.position);

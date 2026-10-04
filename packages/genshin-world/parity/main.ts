@@ -92,7 +92,7 @@ if (screen && root) {
   Reflect.set(window, "setSceneLights", (shares: Parameters<typeof setSceneLights>[1]) =>
     setSceneLights(sceneContext.value, shares),
   );
-  // The camera solve and the loss table set the witness's view from the shooting browser, one view a call
+  // The camera solve and the ranking set the witness's view from the shooting browser, one view a call
   if (witness) {
     Reflect.set(window, "setWitnessView", (view: WitnessView) => setWitnessView(witness, view));
     // Its G-buffer at the view last set, which the pose, the overlay, the layers' scores and calibration read
@@ -105,7 +105,7 @@ if (screen && root) {
     Reflect.set(window, "readWitnessPoints", (landmarks: Parameters<typeof readWitnessPoints>[1]) =>
       readWitnessPoints(witness, landmarks),
     );
-    // The families the witness draws, which the loss table hands back to the scene one at a time
+    // The families the witness draws, which the ranking hands back to the scene
     window.document.body.dataset.witnessFamilies = witness.families.value.join(",");
   }
   if (motion === "entry") holdAnimations();

@@ -4,7 +4,6 @@ import type { Material, Texture } from "three";
 import { SUBMESH_INDEX_REGEX } from "#parity/witness/constants";
 import { createWitnessMaterial } from "#parity/witness/createWitnessMaterial";
 import { WitnessProperty } from "#parity/witness/WitnessProperty";
-import { WitnessShading } from "#parity/witness/WitnessShading";
 import { Group, Mesh, MeshStandardMaterial, NoColorSpace, RepeatWrapping, SRGBColorSpace, TextureLoader } from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 
@@ -14,8 +13,7 @@ const COLOR_SLOTS = new Set<string>([WitnessProperty.MainTexture]);
 // Turned from the export's axes into three's (the export negates x, three negates z, together half a turn about y) and
 // Drawn at every placement with the material each of its submeshes names, in a group per family of the scene's parts
 // Its mesh's name falls in, each part named by its mesh; given families, a mesh none of them names is left out, and
-// Without them every mesh is drawn in one unnamed family. Each drawn mesh keeps its
-// Material under every shading in its `userData`, for the view to switch between. The meshes and textures are served
+// Without them every mesh is drawn in one unnamed family. The meshes and textures are served
 // Beside the layout, by their export folders
 export const loadWitness = async (
   layoutUrl: string,
@@ -43,16 +41,8 @@ export const loadWitness = async (
     ),
   ]);
   const nameTextureMap = new Map<string, Texture>(textures);
-  const shadingNameMaterialMap = new Map(
-    Object.values(WitnessShading).map((shading) => [
-      shading,
-      new Map<string, Material>(
-        Object.entries(layout.materials).map(([name, material]) => [
-          name,
-          createWitnessMaterial(material, nameTextureMap, shading),
-        ]),
-      ),
-    ]),
+  const nameMaterialMap = new Map<string, Material>(
+    Object.entries(layout.materials).map(([name, material]) => [name, createWitnessMaterial(material, nameTextureMap)]),
   );
   const fallbackMaterial = new MeshStandardMaterial();
   const nameSubmeshesMap = new Map(
@@ -81,16 +71,9 @@ export const loadWitness = async (
     part.name = mesh;
     for (const submesh of nameSubmeshesMap.get(mesh) ?? []) {
       const material = materials[Number(SUBMESH_INDEX_REGEX.exec(submesh.name)?.groups?.index ?? 0)] ?? "";
-      const shadingMaterialMap = Object.fromEntries(
-        Array.from(shadingNameMaterialMap, ([shading, nameMaterialMap]) => [
-          shading,
-          nameMaterialMap.get(material) ?? fallbackMaterial,
-        ]),
-      );
-      const drawn = new Mesh(submesh.geometry, shadingMaterialMap[WitnessShading.Exported]);
+      const drawn = new Mesh(submesh.geometry, nameMaterialMap.get(material) ?? fallbackMaterial);
       drawn.castShadow = true;
       drawn.receiveShadow = true;
-      drawn.userData = { shadingMaterialMap };
       part.add(drawn);
     }
     part.position.set(...position);
