@@ -13,7 +13,7 @@ Every paginated list is three layers — a store on `useCursorPaginationData` (p
 
 `<StyledWaypoint>` loads the next page, never a Load-more button with a flag of its own; its observer is never torn down, and a default slot replaces its loader entirely (`references/cursor-pagination.md`).
 
-## Search-as-you-type — hand-rolling BANNED
+## Search-as-you-type — never hand-rolled
 
 A server search goes through `useAutoSearch`, or `useCursorSearcher` for paginated results; data already loaded is searched with MiniSearch in a `computed`, never a hand-rolled index (`references/search-as-you-type.md`, `apps/web/content/docs/architecture/search.md`).
 
