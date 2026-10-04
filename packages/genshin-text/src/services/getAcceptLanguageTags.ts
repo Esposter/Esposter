@@ -11,5 +11,5 @@ export const getAcceptLanguageTags = (header: string): string[] =>
       return { quality: Number.isNaN(quality) ? 0 : quality, tag };
     })
     .filter(({ quality, tag }) => tag && quality > 0)
-    .toSorted((first, second) => second.quality - first.quality)
+    .toSorted((firstTag, secondTag) => secondTag.quality - firstTag.quality)
     .map(({ tag }) => tag);

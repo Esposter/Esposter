@@ -22,5 +22,5 @@ export const readMessagesByRowKeys = async (
   const messages = await getTopNEntitiesByType(messageClient, rowKeys.length, MessageTypeEntityMap, {
     filter: serializeClauses(clauses),
   });
-  return messages.toSorted((first, second) => first.rowKey.localeCompare(second.rowKey));
+  return messages.toSorted((firstMessage, secondMessage) => firstMessage.rowKey.localeCompare(secondMessage.rowKey));
 };

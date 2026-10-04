@@ -122,7 +122,7 @@ export const solveSampledVoices = async (
       const residual = -powers.reduce((sum, power, voice) => sum + power * (right[voice] ?? 0), 0);
       return { combination, powers, residual };
     })
-    .toSorted((first, second) => first.residual - second.residual)
+    .toSorted((firstCombination, secondCombination) => firstCombination.residual - secondCombination.residual)
     .slice(0, SAMPLED_VOICE_REFINED_COUNT);
 
   return ranked
@@ -148,5 +148,7 @@ export const solveSampledVoices = async (
         shaped,
       };
     })
-    .toSorted((first, second) => first.shaped.score.distance - second.shaped.score.distance);
+    .toSorted(
+      (firstSolution, secondSolution) => firstSolution.shaped.score.distance - secondSolution.shaped.score.distance,
+    );
 };

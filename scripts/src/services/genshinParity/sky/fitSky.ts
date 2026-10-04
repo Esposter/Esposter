@@ -47,7 +47,9 @@ export const fitSky = (
     difference.reduce((sum, value, channel) => sum + (LUMINANCE[channel] ?? 0) * value, 0),
   );
   const spread =
-    brightnesses.map((brightness) => Math.abs(brightness)).toSorted((first, second) => first - second)[
+    brightnesses
+      .map((brightness) => Math.abs(brightness))
+      .toSorted((firstBrightness, secondBrightness) => firstBrightness - secondBrightness)[
       Math.floor(brightnesses.length / 2)
     ] ?? 0;
   const kept = differences.filter((_value, index) => {

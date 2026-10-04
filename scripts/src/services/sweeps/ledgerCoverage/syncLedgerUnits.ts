@@ -23,7 +23,7 @@ export const syncLedgerUnits = (text: string, units: string[]): string => {
   const body = lines.slice(separatorIndex + 1, bodyEnd === -1 ? undefined : bodyEnd);
   const rows = new Map(body.map((line) => [(ROW_REGEX.exec(line)?.groups?.unitCell ?? "").trim(), line]));
   const synced = units
-    .toSorted((first, second) => (getSortKey(first) < getSortKey(second) ? -1 : 1))
+    .toSorted((firstUnit, secondUnit) => (getSortKey(firstUnit) < getSortKey(secondUnit) ? -1 : 1))
     .map((unit) => {
       const row = rows.get(unit);
       if (row) return row;

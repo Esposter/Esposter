@@ -32,7 +32,7 @@ export const benchScreen = async ({
         frameCount,
       );
       const taskMs = ((await readTaskSeconds()) - startTaskSeconds) * 1000;
-      const sorted = bench.intervals.toSorted((first, second) => first - second);
+      const sorted = bench.intervals.toSorted((firstInterval, secondInterval) => firstInterval - secondInterval);
       const median = getQuantile(sorted, 0.5);
       console.log(
         `frame ${median.toFixed(1)} ms median (${(1000 / median).toFixed(0)} fps), ${getQuantile(sorted, 0.9).toFixed(1)} slowest tenth, ${(sorted.at(-1) ?? 0).toFixed(1)} slowest`,

@@ -245,6 +245,12 @@ describe("typescriptRules", () => {
         violations: 2,
       },
       {
+        filePath: "bareOrdinalComparator.ts",
+        name: "bareOrdinalComparator",
+        source: "export const c = d.toSorted((first, second) => first - second);",
+        violations: 2,
+      },
+      {
         filePath: "namedComparator.ts",
         name: "namedComparator",
         source: "export const c = d.toSorted((firstD, secondD) => firstD - secondD);",

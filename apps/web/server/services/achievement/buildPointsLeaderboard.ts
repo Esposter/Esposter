@@ -14,10 +14,10 @@ export const buildPointsLeaderboard = (
   callerUserId?: string,
 ): PointsLeaderboard => {
   const sortedUserTotals = userTotals.toSorted(
-    (first, second) =>
-      second.points - first.points ||
-      second.unlockCount - first.unlockCount ||
-      first.user.name.localeCompare(second.user.name),
+    (firstUserTotal, secondUserTotal) =>
+      secondUserTotal.points - firstUserTotal.points ||
+      secondUserTotal.unlockCount - firstUserTotal.unlockCount ||
+      firstUserTotal.user.name.localeCompare(secondUserTotal.user.name),
   );
   const rankedEntries: PointsLeaderboardEntry[] = [];
   let previousPoints = Number.NaN;

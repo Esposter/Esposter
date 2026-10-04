@@ -86,7 +86,7 @@ export const readStandInGains = async (
         name,
         share: count / Math.max(scoredCount, 1),
         similarity,
-      })).toSorted((first, second) => second.gap - first.gap);
+      })).toSorted((firstTerm, secondTerm) => secondTerm.gap - firstTerm.gap);
     },
     () => browser.close(),
   );

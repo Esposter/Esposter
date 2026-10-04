@@ -14,7 +14,7 @@ export const computeGapsByOnsetAge = (
   frameTimes: number[],
   onsets: number[],
 ): OnsetAgeGaps[] => {
-  const sortedOnsets = onsets.toSorted((first, second) => first - second);
+  const sortedOnsets = onsets.toSorted((firstOnset, secondOnset) => firstOnset - secondOnset);
   let next = 0;
   const spans = frameTimes.map((time) => {
     while ((sortedOnsets[next] ?? Infinity) <= time) next++;

@@ -86,5 +86,5 @@ export const getDuplicateProse = (pages: CitingPage[]): DuplicateProseFinding[] 
       paths,
       words: (pageWords.get(paths[0]) ?? []).slice(start, ends[0] + SHINGLE_SIZE),
     }))
-    .toSorted((first, second) => second.words.length - first.words.length);
+    .toSorted((firstDuplicate, secondDuplicate) => secondDuplicate.words.length - firstDuplicate.words.length);
 };

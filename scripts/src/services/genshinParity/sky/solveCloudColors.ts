@@ -33,8 +33,11 @@ export const solveCloudColors = (
     );
   const getLitness = ({ lit, shade }: (typeof ours)[number]): number =>
     getLuminance(lit) / Math.max(getLuminance(lit) + getLuminance(shade), Number.MIN_VALUE);
-  const orderedOurs = ours.toSorted((first, second) => getLitness(first) - getLitness(second));
-  const orderedReference = reference.toSorted((first, second) => getLuminance(first) - getLuminance(second));
+  const orderedOurs = ours.toSorted((firstCloud, secondCloud) => getLitness(firstCloud) - getLitness(secondCloud));
+  const orderedReference = reference.toSorted(
+    (firstReferenceColor, secondReferenceColor) =>
+      getLuminance(firstReferenceColor) - getLuminance(secondReferenceColor),
+  );
   const pairs = QUANTILES.map((quantile) => {
     const window = computeWindow(orderedOurs, quantile);
     return {

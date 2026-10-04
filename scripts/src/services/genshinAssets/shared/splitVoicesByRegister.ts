@@ -5,7 +5,7 @@
 export const splitVoicesByRegister = (pitches: number[], voiceCount: number): number[] => {
   const pitchCountMap = new Map<number, number>();
   for (const pitch of pitches) pitchCountMap.set(pitch, (pitchCountMap.get(pitch) ?? 0) + 1);
-  const values = [...pitchCountMap.keys()].toSorted((first, second) => first - second);
+  const values = [...pitchCountMap.keys()].toSorted((firstPitch, secondPitch) => firstPitch - secondPitch);
   if (values.length <= voiceCount) return values.slice(1);
   // Each prefix's weight, weighted sum and weighted sum of squares, so any range's spread is read in constant time
   const weights = [0];

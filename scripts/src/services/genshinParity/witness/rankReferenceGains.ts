@@ -121,7 +121,7 @@ export const rankReferenceGains = async (
           ceiling: error / Math.max(scoredCount, 1),
           name,
           share: count / Math.max(scoredCount, 1),
-        })).toSorted((first, second) => second.ceiling - first.ceiling),
+        })).toSorted((firstTerm, secondTerm) => secondTerm.ceiling - firstTerm.ceiling),
       };
     },
     () => browser.close(),

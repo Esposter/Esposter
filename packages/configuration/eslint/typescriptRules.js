@@ -264,12 +264,13 @@ export default {
     },
     {
       // A sort's pair is named for what it compares, `first*`/`second*`, as every sort in the tree writes it; `a` and
-      // `b` say nothing about which side wins. Read off the callback handed to `sort`/`toSorted` alone, since the two
-      // Letters are also every fixture key and HTML tag a denylist would refuse with them
+      // `b`, or a bare `first` and `second`, say nothing about what is compared. Read off the callback handed to
+      // `sort`/`toSorted` alone, since the two letters are also every fixture key and HTML tag a denylist would refuse
+      // With them
       message:
-        "Name a comparator's pair for what it compares — `(firstRoom, secondRoom) =>` — never `(a, b)`. See the naming skill.",
+        "Name a comparator's pair for what it compares — `(firstRoom, secondRoom) =>` — never `(a, b)` or a bare `(first, second)`. See the naming skill.",
       selector:
-        "CallExpression[callee.property.name=/^(sort|toSorted)$/] > :function.arguments > Identifier.params[name=/^[ab]$/]",
+        "CallExpression[callee.property.name=/^(sort|toSorted)$/] > :function.arguments > Identifier.params[name=/^([ab]|first|second)$/]",
     },
     {
       // The `pgTable` wrapper builds through drizzle's `camelCase` casing, so a column's DB name is its property key
