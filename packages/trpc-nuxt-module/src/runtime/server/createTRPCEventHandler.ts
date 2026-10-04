@@ -6,6 +6,7 @@ import type { EventHandler } from "nitro/h3";
 import { DEFAULT_ENDPOINT } from "#src/runtime/constants";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { defineHandler } from "nitro/h3";
+
 // The statuses a `Response` may be constructed with that forbid a body, which its constructor throws on
 const NULL_BODY_STATUSES = new Set([204, 205, 304]);
 
