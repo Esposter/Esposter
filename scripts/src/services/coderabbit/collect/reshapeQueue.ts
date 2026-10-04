@@ -16,14 +16,15 @@ import { readFileCount } from "#src/services/coderabbit/collect/readFileCount";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readReshapeFailure } from "#src/services/coderabbit/collect/readReshapeFailure";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
+import { readWindowFileCount } from "#src/services/coderabbit/collect/readWindowFileCount";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 
-// The queue never holds on the cap: the first owed commit that alone changes more files than a window may carry
+// The queue never holds on the cap: the first owed commit that alone changes more files than a window has room for
 // Is repackaged here — by the drain's session, told what shape to leave and proved by the tree it left — into the
-// Parts that need no review, trailered for the express lane, and the parts that do, each under the cap. One
+// Parts that need no review, trailered for the express lane, and the parts that do, each within the room. One
 // Commit per run: the rewrite's push fires the next. Whether HEAD was rewritten is the answer; a failed attempt
 // Is counted on the commit and ends the run, and past the cap the commit is left as it is — the port holds on
 // It, and the held notice says so (docs: infra/review-collector/collection-cycle, "Sync").
@@ -31,21 +32,27 @@ export const reshapeQueue = async ({
   collectorSha,
   cwd,
   isDryRun,
+  mergeBaseSha,
   targetSha,
   viewerLogin,
 }: ReshapeInput): Promise<boolean> => {
   const owedShas = getNonEmptyLines(runGit(["rev-list", "--reverse", `${targetSha}..HEAD`], cwd));
-  // A commit claiming no review is the express lane's at any size, so the cap is not its measure: reshaping one
+  // A commit claiming no review is the express lane's at any size, so the room is not its measure: reshaping one
   // Would pay a session per run to repackage what no window will ever carry
   const claimedShas = readTrailedShas(owedShas, EXPRESS_TRAILER, cwd);
+  // The room is what the cap leaves beside the fixes and pending commits every window carries ahead of the queue:
+  // A commit that fits the cap alone but not beside them is held behind every window a review's findings lead, and
+  // The queue ships nothing but fixes. Fixes that fill the cap alone are the port's failure, not a shape to ask for
+  const roomFileCount = REVIEW_FILE_CAP - readWindowFileCount(mergeBaseSha, cwd, targetSha);
+  if (roomFileCount <= 0) return false;
   const sha = owedShas.find(
-    (owedSha) => !claimedShas.has(owedSha) && readFileCount(`${owedSha}^..${owedSha}`, cwd) > REVIEW_FILE_CAP,
+    (owedSha) => !claimedShas.has(owedSha) && readFileCount(`${owedSha}^..${owedSha}`, cwd) > roomFileCount,
   );
   if (sha === undefined) return false;
 
   const fileCount = readFileCount(`${sha}^..${sha}`, cwd);
   if (isDryRun) {
-    console.info(`would reshape ${sha} — ${fileCount} files alone against the cap of ${REVIEW_FILE_CAP}`);
+    console.info(`would reshape ${sha} — ${fileCount} files alone against a room of ${roomFileCount}`);
     return false;
   }
   const { attempts, recordFailure } = readCommitAttempts({
@@ -61,16 +68,16 @@ export const reshapeQueue = async ({
 
   const tipSha = readHeadSha(cwd);
   const restShas = owedShas.slice(owedShas.indexOf(sha) + 1);
-  console.info(`reshape: ${sha} changes ${fileCount} files alone against the cap of ${REVIEW_FILE_CAP}`);
+  console.info(`reshape: ${sha} changes ${fileCount} files alone against a room of ${roomFileCount}`);
   runGit(["switch", "--detach", `${sha}^`], cwd);
-  const prompt = getReshapePrompt({ fileCount, sha });
+  const prompt = getReshapePrompt({ fileCount, roomFileCount, sha });
   const { isEnded, isStarted } = await runSession({ cwd, model: SessionRoleModelMap[SessionRole.Reshape], prompt });
   if (!isStarted) {
     runGit(["switch", "--detach", tipSha], cwd);
     console.info("reshape: the session could not start — no attempt is counted");
     return false;
   }
-  const failure = isEnded ? readReshapeFailure(sha, cwd) : "exited non-zero";
+  const failure = isEnded ? readReshapeFailure(sha, roomFileCount, cwd) : "exited non-zero";
   // The final tree equals the original's, so what followed the commit applies as it did — a stop here is a
   // Reshaping that lied about its tree in a way the diff did not show, and counts the same. What followed may
   // Hold an empty copy a resolution left this run, which the same sequence rides through

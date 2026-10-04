@@ -5,6 +5,7 @@ import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import {
   DEVELOP_BRANCH,
   EXPRESS_TRAILER,
+  MAIN_BRANCH,
   QUEUE_BRANCH,
   RESHAPE_FAILED_MARKER,
   REVIEW_FIXES_BRANCH,
@@ -44,7 +45,14 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     setupFixtureRepository();
   const viewerLogin = "viewerLogin";
   const collectorSha = "collectorSha";
-  const baseInput = { collectorSha, isDryRun: false, viewerLogin };
+  // Every queue here is owed above `main`'s root, so that root is the merge base each window counts from
+  const readBaseInput = () => ({
+    collectorSha,
+    cwd: getCwd(),
+    isDryRun: false,
+    mergeBaseSha: readSha(`origin/${MAIN_BRANCH}`),
+    viewerLogin,
+  });
   // The attempts are read off the conflicting commit's own comments, one `gh` page of none unless a test says otherwise
   beforeEach(() => {
     runGh.mockReturnValue("[[]]");
@@ -82,7 +90,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const developSha = publish(DEVELOP_BRANCH, "HEAD");
     const queueSha = publish(QUEUE_BRANCH, commitFile(filePath, ""));
 
-    await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha })).resolves.toBe(queueSha);
+    await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).resolves.toBe(queueSha);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
   });
 
@@ -90,7 +98,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const { developSha, owedSha, queueSha } = setupDriftedPort();
-    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
+    const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
 
     assert.exists(syncedSha);
     expect(syncedSha).not.toBe(queueSha);
@@ -110,7 +118,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const owingFixesSha = publish(REVIEW_FIXES_BRANCH, commitFile(filePath, ""));
     switchTo(developSha);
     const queueSha = publish(QUEUE_BRANCH, commitFile(nestedPath, ""));
-    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, owingFixesSha, queueSha });
+    const syncedSha = await syncQueue({ ...readBaseInput(), developSha, owingFixesSha, queueSha });
 
     assert.exists(syncedSha);
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([nestedPath, filePath]);
@@ -136,7 +144,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     const carriedPath = `${nestedPath}.ts`;
     const { developSha, queueSha } = setupMovedQueue(carriedPath, "");
-    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
+    const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
 
     assert.exists(syncedSha);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
@@ -148,7 +156,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     const { developSha, movedSha, queueSha } = setupMovedQueue(filePath, queueContent);
 
-    await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha })).resolves.toBeUndefined();
+    await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).resolves.toBeUndefined();
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(movedSha);
     expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
   });
@@ -163,7 +171,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const rewrittenSha = publish(TEST_FILENAME, commitFile(`${nestedPath}.ts`, ""));
     installPreReceiveHook(`env -u GIT_QUARANTINE_PATH git update-ref refs/heads/${QUEUE_BRANCH} ${rewrittenSha}`);
 
-    await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha })).resolves.toBeUndefined();
+    await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).resolves.toBeUndefined();
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(rewrittenSha);
   });
 
@@ -208,7 +216,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       runGit(["-c", "core.editor=true", "commit", "--allow-empty"], getCwd());
       return Promise.resolve({ isEnded: true, isStarted: true });
     });
-    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
+    const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
 
     assert.exists(syncedSha);
     expect(runGit(["show", "--format=%b", "--no-patch", syncedSha], getCwd()).trim()).toBe(
@@ -243,7 +251,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       resolveConflict();
       return Promise.resolve({ isEnded: true, isStarted: true });
     });
-    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
+    const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
 
     assert.exists(syncedSha);
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([filePath, nestedPath]);
@@ -263,7 +271,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const queueSha = publish(QUEUE_BRANCH, commitFile(filePath, ""));
     switchTo(developSha);
     const movedDevelopSha = publish(DEVELOP_BRANCH, commitFile(nestedPath, ""));
-    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha: movedDevelopSha, queueSha });
+    const syncedSha = await syncQueue({ ...readBaseInput(), developSha: movedDevelopSha, queueSha });
 
     assert.exists(syncedSha);
     expect(readSubjects(`${movedDevelopSha}..${syncedSha}`)).toStrictEqual([filePath]);
@@ -275,9 +283,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     const { developSha, queueSha } = setupConflict();
 
-    await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, isDryRun: true, queueSha })).resolves.toBe(
-      queueSha,
-    );
+    await expect(syncQueue({ ...readBaseInput(), developSha, isDryRun: true, queueSha })).resolves.toBe(queueSha);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
     expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
     expect(runSession).not.toHaveBeenCalled();
@@ -292,7 +298,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       resolveConflict();
       return Promise.resolve({ isEnded: true, isStarted: true });
     });
-    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
+    const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
 
     assert.exists(syncedSha);
     expect(runSession).toHaveBeenCalledExactlyOnceWith({
@@ -332,9 +338,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       return Promise.resolve({ isEnded: true, isStarted: true });
     });
 
-    await expect(
-      syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the resolver left 6ca8469b467e76e23cc04181de825f8d94960a44 unresolved (attempt 1 of 3)]`,
     );
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
@@ -346,9 +350,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const { developSha, queueSha } = setupConflict();
     runSession.mockResolvedValue({ isEnded: true, isStarted: true });
 
-    await expect(
-      syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the resolver left 6ca8469b467e76e23cc04181de825f8d94960a44 unresolved (attempt 1 of 3)]`,
     );
     expect(runGh.mock.calls).toMatchInlineSnapshot(`
@@ -386,7 +388,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     }));
     runGh.mockReturnValue(JSON.stringify([commitComments]));
 
-    await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha })).resolves.toBe(queueSha);
+    await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).resolves.toBe(queueSha);
     expect(runGh.mock.calls).toMatchInlineSnapshot(`
       [
         [
@@ -424,7 +426,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       resolveConflict();
       return Promise.resolve({ isEnded: true, isStarted: true });
     });
-    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
+    const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
 
     assert.exists(syncedSha);
     expect(runSession).toHaveBeenCalledTimes(1);
@@ -461,19 +463,38 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       reshape(oversizedSha, REVIEW_FILE_CAP);
       return Promise.resolve({ isEnded: true, isStarted: true });
     });
-    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
+    const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
 
     assert.exists(syncedSha);
     expect(runSession).toHaveBeenCalledExactlyOnceWith({
       cwd: getCwd(),
       model: SessionRoleModelMap[SessionRole.Reshape],
-      prompt: getReshapePrompt({ fileCount: REVIEW_FILE_CAP + 1, sha: oversizedSha }),
+      prompt: getReshapePrompt({ fileCount: REVIEW_FILE_CAP + 1, roomFileCount: REVIEW_FILE_CAP, sha: oversizedSha }),
     });
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([filePath, "rule", "moves"]);
     const claimedSha = readSha(`${syncedSha}~2`);
     expect(readTrailedShas([claimedSha], EXPRESS_TRAILER, getCwd())).toStrictEqual(new Set([claimedSha]));
     expect(runGit(["diff", queueSha, syncedSha], getCwd())).toBe("");
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
+  });
+
+  // A review's fixes lead every window, so a commit that fits the cap alone but not beside them would be held behind
+  // Each one while the windows carried nothing but fixes
+  test("reshapes a commit that fits the cap alone but not beside the fixes leading the window", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, "HEAD");
+    const owingFixesSha = publish(REVIEW_FIXES_BRANCH, commitFile(filePath, ""));
+    const fittingSha = commitFiles(overflowPaths.slice(1), "");
+    const queueSha = publish(QUEUE_BRANCH, "HEAD");
+    runSession.mockResolvedValue({ isEnded: false, isStarted: false });
+
+    await expect(syncQueue({ ...readBaseInput(), developSha, owingFixesSha, queueSha })).resolves.toBe(queueSha);
+    expect(runSession).toHaveBeenCalledExactlyOnceWith({
+      cwd: getCwd(),
+      model: SessionRoleModelMap[SessionRole.Reshape],
+      prompt: getReshapePrompt({ fileCount: REVIEW_FILE_CAP, roomFileCount: REVIEW_FILE_CAP - 1, sha: fittingSha }),
+    });
   });
 
   // The copy a resolution left this run sits behind the reshaped commit, and rides the replay of what followed it
@@ -488,7 +509,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       reshape(oversizedSha, REVIEW_FILE_CAP);
       return Promise.resolve({ isEnded: true, isStarted: true });
     });
-    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
+    const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
 
     assert.exists(syncedSha);
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual(["absorbed", "rule", "moves"]);
@@ -506,11 +527,11 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
     const queueSha = publish(QUEUE_BRANCH, commitFile(filePath, ""));
 
-    await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha })).resolves.toBe(queueSha);
+    await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).resolves.toBe(queueSha);
     expect(runSession).not.toHaveBeenCalled();
   });
 
-  test("fails the run and counts the attempt when the reshaping leaves a reviewable part over the cap", async () => {
+  test("fails the run and counts the attempt when the reshaping leaves a reviewable part over the window's room", async () => {
     expect.hasAssertions();
 
     const { developSha, oversizedSha, queueSha } = setupOversized();
@@ -519,10 +540,8 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       return Promise.resolve({ isEnded: true, isStarted: true });
     });
 
-    await expect(
-      syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left ce6f08c0725709fb3c9a037483aca8a934306e15 over the cap without an Express trailer (attempt 1 of 3 on 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5)]`,
+    await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left ce6f08c0725709fb3c9a037483aca8a934306e15 over the window's room without an Express trailer (attempt 1 of 3 on 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5)]`,
     );
     expect(runGh.mock.calls).toMatchInlineSnapshot(`
       [
@@ -540,7 +559,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
             "repos/{owner}/{repo}/commits/53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5/comments",
             "-f",
             "body=<!-- review-collector reshape-failed commit:53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 against:collectorSha -->
-      Attempt 1 of 3 to reshape 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 failed — the session left ce6f08c0725709fb3c9a037483aca8a934306e15 over the cap without an Express trailer. See the collector run.",
+      Attempt 1 of 3 to reshape 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 failed — the session left ce6f08c0725709fb3c9a037483aca8a934306e15 over the window's room without an Express trailer. See the collector run.",
           ],
         ],
       ]
@@ -571,9 +590,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       return Promise.resolve({ isEnded: true, isStarted: true });
     });
 
-    await expect(
-      syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left a part naming the copies 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 was replayed from (attempt 1 of 3 on 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5)]`,
     );
     expect(runGh.mock.calls).toMatchInlineSnapshot(`
@@ -615,9 +632,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       return Promise.resolve({ isEnded: true, isStarted: true });
     });
 
-    await expect(
-      syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left an operation in progress (attempt 1 of 3 on 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5)]`,
     );
     expect(runGh.mock.calls).toMatchInlineSnapshot(`
@@ -660,7 +675,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       ]),
     );
 
-    await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha })).resolves.toBe(queueSha);
+    await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).resolves.toBe(queueSha);
     expect(runSession).not.toHaveBeenCalled();
   });
 
@@ -669,9 +684,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     const { developSha, queueSha } = setupOversized();
 
-    await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, isDryRun: true, queueSha })).resolves.toBe(
-      queueSha,
-    );
+    await expect(syncQueue({ ...readBaseInput(), developSha, isDryRun: true, queueSha })).resolves.toBe(queueSha);
     expect(runSession).not.toHaveBeenCalled();
   });
 });

@@ -48,7 +48,7 @@ const pushRewrite = (cwd: string, expectedSha: string, isDryRun: boolean): strin
 };
 // The queue follows what the collector pushed, rewritten by the collector itself: the commits it still owes are
 // Replayed in order onto the tree the next window is built on — the fixes branch while it owes develop commits,
-// Develop otherwise — the first commit alone over the cap is repackaged (`reshapeQueue`), and the result is
+// Develop otherwise — the first commit alone over the window's room is repackaged (`reshapeQueue`), and the result is
 // Pushed back under a lease on the sha that was read. A queue left on an old base carries commits written
 // Against files a drain has since repaired, and every one is a conflict the porter would hold on; here it is met
 // Once, by the drain's own session, and the working session's `git pull --rebase` afterwards replays only what
@@ -60,6 +60,7 @@ export const syncQueue = async ({
   cwd,
   developSha,
   isDryRun,
+  mergeBaseSha,
   owingFixesSha,
   queueSha,
   viewerLogin,
@@ -83,7 +84,7 @@ export const syncQueue = async ({
     if (replayOutcome !== ReplayOutcome.Replayed) return queueSha;
   }
 
-  const isReshaped = await reshapeQueue({ collectorSha, cwd, isDryRun, targetSha, viewerLogin });
+  const isReshaped = await reshapeQueue({ collectorSha, cwd, isDryRun, mergeBaseSha, targetSha, viewerLogin });
   if (isOnTarget && !isReshaped) return queueSha;
   else return pushRewrite(cwd, queueSha, isDryRun);
 };
