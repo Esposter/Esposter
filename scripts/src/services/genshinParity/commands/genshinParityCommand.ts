@@ -1,7 +1,7 @@
 import type { CommandDef } from "citty";
 
-import { bandsCommand } from "#src/services/genshinParity/commands/bandsCommand";
 import { attacksCommand } from "#src/services/genshinParity/commands/attacksCommand";
+import { bandsCommand } from "#src/services/genshinParity/commands/bandsCommand";
 import { benchCommand } from "#src/services/genshinParity/commands/benchCommand";
 import { calibrateCommand } from "#src/services/genshinParity/commands/calibrateCommand";
 import { cloudsCommand } from "#src/services/genshinParity/commands/cloudsCommand";
