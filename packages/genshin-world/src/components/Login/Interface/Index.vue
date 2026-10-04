@@ -359,16 +359,13 @@ watch(
 
 /* The prompt's band 38 units over the screen's foot on the 1080 high recording, across the screen less 100 units a
    Side: it is a prefab the page loads at run time into BtnPressStart, whose box stands 128 canvas units in from each
-   Side of the canvas, so its place is measured from that box */
+   Side of the canvas, so its place is measured from that box. Once the door has formed, the prompt fades in and the
+   Corner buttons appear, each after its delay in the recording */
 .prompt {
   position: absolute;
   right: calc(var(--unit) * 100 - var(--canvas-unit) * 128);
   bottom: calc(var(--unit) * 38 - var(--canvas-unit) * 128);
   left: calc(var(--unit) * 100 - var(--canvas-unit) * 128);
-}
-
-/* Once the door has formed, its prompt fades in and its corner buttons appear, each after its delay in the recording */
-.prompt {
   animation: door-arrive calc(v-bind(LOGIN_DOOR_PROMPT_FADE_MS) * 1ms) linear
     calc(v-bind(LOGIN_DOOR_PROMPT_DELAY_MS) * 1ms) backwards;
 }
