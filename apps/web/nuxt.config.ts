@@ -3,6 +3,7 @@ import { build } from "./configuration/build.ts";
 import { compatibilityDate } from "./configuration/compatibilityDate.ts";
 import { content } from "./configuration/content.ts";
 import { css } from "./configuration/css.ts";
+import { development } from "./configuration/development.ts";
 import { devtools } from "./configuration/devtools.ts";
 import { experimental } from "./configuration/experimental.ts";
 import { fonts } from "./configuration/fonts.ts";
@@ -24,6 +25,7 @@ import { typescript } from "./configuration/typescript.ts";
 import { vite } from "./configuration/vite.ts";
 
 export default defineNuxtConfig({
+  $development: development,
   app,
   build,
   compatibilityDate,
