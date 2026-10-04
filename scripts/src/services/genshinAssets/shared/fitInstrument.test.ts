@@ -71,8 +71,8 @@ describe(fitInstrument, () => {
   test("counts another note's partial as covering a reading only when it is loud enough to move it", () => {
     expect.hasAssertions();
 
-    // A note two octaves under the lower one, its fourth and sixth harmonics on the two fundamentals, held throughout but
-    // Silent
+    // A note two octaves under the lower one, its fourth and sixth harmonics on the two fundamentals, held throughout
+    // But silent
     const bass = { amplitude: velocity, durationSeconds: 14, pitchMidi: 33, startTimeSeconds: 0 };
 
     expect(() =>

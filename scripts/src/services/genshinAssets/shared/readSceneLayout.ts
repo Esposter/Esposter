@@ -6,6 +6,7 @@ import type { DumpedSkinnedMeshRenderer } from "#src/models/genshinAssets/shared
 import type { DumpedTransform } from "#src/models/genshinAssets/shared/DumpedTransform";
 import type { ObjectPointer } from "#src/models/genshinAssets/shared/ObjectPointer";
 import type { SceneDrawing } from "#src/models/genshinAssets/shared/SceneDrawing";
+import type { SceneLayout } from "#src/models/genshinAssets/shared/SceneLayout";
 import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
 
 import { LAYOUT_ASSET_TYPES } from "#src/services/genshinAssets/shared/constants";
@@ -33,16 +34,11 @@ const toPointers = (pointers: readonly DumpedPointer[]): ObjectPointer[] =>
 // A scene's objects from its blocks' JSON dumps, a folder per block holding a folder per type, and in it a folder per
 // File (its CAB) the objects were dumped from: every transform, its path ID from its game object where that survived
 // The dump (a game object's first component is its transform), and its game object's named components (a script, or an
-// Animator by its controller; the engine's others are dumped unnamed). Beside them, what each game object draws, keyed by its file and path ID, which a filter and a renderer (or a
-// Skinned renderer alone) name, and every game object and component the dumps hold by its file and path ID, named
-// As the game object and what the component is (its script, or its transform first)
-export const readSceneLayout = async (
-  layoutDirectory: string,
-): Promise<{
-  gameObjectDrawingMap: Map<string, SceneDrawing>;
-  objectNameMap: Map<string, string>;
-  objects: SceneObject[];
-}> => {
+// Animator by its controller; the engine's others are dumped unnamed). Beside them, what each game object draws, keyed
+// By its file and path ID, which a filter and a renderer (or a skinned renderer alone) name, and every game object and
+// Component the dumps hold by its file and path ID, named as the game object and what the component is (its script, or
+// Its transform first)
+export const readSceneLayout = async (layoutDirectory: string): Promise<SceneLayout> => {
   const objects: SceneObject[] = [];
   const objectNameMap = new Map<string, string>();
   const gameObjectDrawingMap = new Map<string, SceneDrawing>();

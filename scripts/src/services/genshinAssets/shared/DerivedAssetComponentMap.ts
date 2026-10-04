@@ -4,13 +4,13 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 
 // Each component's roots, which `extract` follows every pointer from, and the assets no pointer from them reaches by
 // The name the game gives them, which the asset index turns into the blocks holding them. The login screen's roots are
-// Its own scene, `LoginScene`, and the prefabs its `MonoLoginScene` spawns into the empty anchors under `SceneObj`:
-// The towers' `LoginScene_Build_All`, the walkway and the door. Its sky is its Enviro package's, named exactly since the sky's names recur across the
-// Game: the sky dome and the cloud layer's meshes, the cloud layer's and the three cloud emitters' materials (an
-// Emitter's renderer exports without the fields that point at them), their particle atlases and density maps, and the
-// Sky gradient every one of them is coloured by. Its interface is `LoginMainPage`, in the block beside its
-// `Ani_LoginMainPage_Waiting` clips, and its clips are the page's, the progress bar's, the lift at its end and the
-// Door's; `Start` and `End`, a name the whole game reuses, are left to its reference. Its music is the playlist
+// Its own scene, `LoginScene`, and the prefabs its `MonoLoginScene` spawns into the empty anchors under `SceneObj`: the
+// Towers' `LoginScene_Build_All`, the walkway and the door. Its sky is its Enviro package's, named exactly since the
+// Sky's names recur across the game: the sky dome and the cloud layer's meshes, the cloud layer's and the three cloud
+// Emitters' materials (an emitter's renderer exports without the fields that point at them), their particle atlases and
+// Density maps, and the sky gradient every one of them is coloured by. Its interface is `LoginMainPage`, in the block
+// Beside its `Ani_LoginMainPage_Waiting` clips, and its clips are the page's, the progress bar's, the lift at its end
+// And the door's; `Start` and `End`, a name the whole game reuses, are left to its reference. Its music is the playlist
 // `genshin:assets music` found over a recording of its title: two pieces with a rest after each, looping forever
 export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAssetComponentOptions> = {
   [DerivedAssetComponent.Login]: {
@@ -20,8 +20,9 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
     namePattern:
       "^(Enviro_(Sky_Gradient|Clouds_(Middle_|Top_)?Particle_Atlas|Clouds_(Voronoi|Wispis|Normal)|Cloud_(Layer|Particle|Mid_Particle|Top_Particle)_Mat|Atmosphere_Layer_Mat)$|(Sky|Cloud)_LOD0$)",
     roots: [{ block: "00/11790361.blk", name: "LoginScene", pathId: "-1124867853248233309" }],
-    // What MonoLoginScene's raw bytes point at, each into the anchor it names before it (Login/Scene/Index.reference.ts),
-    // The towers and the walkway with the count and length its record gives them, laid along ModelCamera's heading
+    // What MonoLoginScene's raw bytes point at, each into the anchor it names before it
+    // (Login/Scene/Index.reference.ts), the towers and the walkway with the count and length its record gives them,
+    // Laid along ModelCamera's heading
     spawns: [
       {
         anchor: { block: "00/11790361.blk", name: "SceneBeginNode", pathId: "-6576348029719316063" },

@@ -3,16 +3,16 @@
 // Found exactly by dynamic programming over the distinct pitches each weighted by its note count. A piece with fewer
 // Distinct pitches than registers splits between every one
 export const splitVoicesByRegister = (pitches: number[], voiceCount: number): number[] => {
-  const counts = new Map<number, number>();
-  for (const pitch of pitches) counts.set(pitch, (counts.get(pitch) ?? 0) + 1);
-  const values = [...counts.keys()].toSorted((first, second) => first - second);
+  const pitchCountMap = new Map<number, number>();
+  for (const pitch of pitches) pitchCountMap.set(pitch, (pitchCountMap.get(pitch) ?? 0) + 1);
+  const values = [...pitchCountMap.keys()].toSorted((first, second) => first - second);
   if (values.length <= voiceCount) return values.slice(1);
   // Each prefix's weight, weighted sum and weighted sum of squares, so any range's spread is read in constant time
   const weights = [0];
   const sums = [0];
   const squares = [0];
   for (const value of values) {
-    const count = counts.get(value) ?? 0;
+    const count = pitchCountMap.get(value) ?? 0;
     weights.push((weights.at(-1) ?? 0) + count);
     sums.push((sums.at(-1) ?? 0) + count * value);
     squares.push((squares.at(-1) ?? 0) + count * value ** 2);
