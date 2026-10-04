@@ -22,8 +22,8 @@ describe(createTRPCEventHandler, () => {
       event.res.status = 302;
       event.res.headers.set("location", baseUrl);
     }),
-    unmodified: t.procedure.query(({ ctx: { event } }) => {
-      event.res.status = 304;
+    stage: t.procedure.input(z.number()).mutation(({ ctx: { event }, input }) => {
+      event.res.status = input;
     }),
     wait: t.procedure.query(
       ({ signal }) =>
@@ -39,7 +39,14 @@ describe(createTRPCEventHandler, () => {
   });
   // A sub-app keeps the whole path, as Nitro does under an app base url, so the endpoint there carries the base
   const app = new H3()
-    .all(`${DEFAULT_ENDPOINT}/**`, createTRPCEventHandler({ createContext, router }))
+    .all(
+      `${DEFAULT_ENDPOINT}/**`,
+      createTRPCEventHandler({
+        createContext,
+        responseMeta: ({ paths }) => (paths?.includes("stage") ? { headers: { "content-length": "1" } } : {}),
+        router,
+      }),
+    )
     .mount(
       baseUrl,
       new H3().all(
@@ -104,12 +111,17 @@ describe(createTRPCEventHandler, () => {
     expect(response.headers.get("location")).toBe(baseUrl);
   });
 
-  test("answers a staged status that forbids a body without one", async () => {
+  test.each([204, 205, 304])("answers a staged %i without a body or its length", async (status) => {
     expect.hasAssertions();
 
-    const response = await fetch(`${origin}${DEFAULT_ENDPOINT}/unmodified`);
+    const response = await app.request(`${DEFAULT_ENDPOINT}/stage`, {
+      body: JSON.stringify(superjson.serialize(status)),
+      headers: { "content-type": "application/json" },
+      method: "POST",
+    });
 
-    expect(response.status).toBe(304);
+    expect(response.status).toBe(status);
+    expect(response.headers.get("content-length")).toBeNull();
     await expect(response.text()).resolves.toBe("");
   });
 });

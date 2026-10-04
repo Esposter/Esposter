@@ -30,7 +30,10 @@ export const createTRPCEventHandler = <TRouter extends AnyTRPCRouter>({
     // H3 merges the headers a procedure set through the event into the response, but not a status, so one a procedure
     // Answered with itself — a redirect — replaces tRPC's
     const { status } = event.res;
-    return status
-      ? new Response(NULL_BODY_STATUSES.has(status) ? null : response.body, { headers: response.headers, status })
-      : response;
+    if (!status) return response;
+    else if (!NULL_BODY_STATUSES.has(status)) return new Response(response.body, { headers: response.headers, status });
+    // A length tRPC's body was given through `responseMeta` describes the body dropped here
+    const headers = new Headers(response.headers);
+    headers.delete("content-length");
+    return new Response(null, { headers, status });
   });
