@@ -1,3 +1,4 @@
+import type { HullPlacement } from "#src/models/genshinAssets/fit/HullPlacement";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 
 import { fitVisualHull } from "#src/services/genshinAssets/fit/fitVisualHull";
@@ -7,6 +8,7 @@ import { HULL_CELL_SIZE, ROTATION_DECIMALS } from "#src/services/genshinAssets/s
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { toRightHandedRotation } from "#src/services/genshinAssets/shared/toRightHandedRotation";
+import { ID_SEPARATOR } from "@esposter/shared";
 
 // A bridge's or a pillar's mesh at one level of detail, the part being its name without the level
 const HULL_MESH_REGEX = /^(?<part>LoginScene_(?:Bridge0[234]|Pillar03)(?:_\d+)?)_Lod(?<level>\d)$/u;
@@ -16,10 +18,7 @@ const HULL_MESH_REGEX = /^(?<part>LoginScene_(?:Bridge0[234]|Pillar03)(?:_\d+)?)
 export const fitLoginHulls = async (
   placements: readonly AssetPlacement[],
   meshDirectory: string,
-): Promise<{
-  hulls: Record<string, number[][]>;
-  placements: { hull: string; position: [number, number, number]; rotation: number[]; scale: number[] }[];
-}> => {
+): Promise<{ hulls: Record<string, number[][]>; placements: HullPlacement[] }> => {
   const { meshPathMap, partPlacements } = readLevelOfDetailParts(placements, HULL_MESH_REGEX, meshDirectory);
   const hulls: Record<string, number[][]> = {};
   for (const [part, meshPath] of meshPathMap) {
@@ -30,14 +29,11 @@ export const fitLoginHulls = async (
       box.map((value) => roundFitted(value)),
     );
   }
-  const instances = new Map<
-    string,
-    { hull: string; position: [number, number, number]; rotation: number[]; scale: number[] }
-  >();
+  const keyInstanceMap = new Map<string, HullPlacement>();
   for (const { part, position, rotation, scale } of partPlacements) {
     if (!hulls[part]) continue;
     const [x = 0, y = 0, z = 0] = toRightHanded(position).map((value) => roundFitted(value));
-    instances.set(`${part}|${x},${y},${z}`, {
+    keyInstanceMap.set(`${part}${ID_SEPARATOR}${x},${y},${z}`, {
       hull: part,
       position: [x, y, z],
       rotation: toRightHandedRotation(rotation).map(
@@ -46,5 +42,5 @@ export const fitLoginHulls = async (
       scale: scale.map((value) => roundFitted(value)),
     });
   }
-  return { hulls, placements: [...instances.values()] };
+  return { hulls, placements: [...keyInstanceMap.values()] };
 };

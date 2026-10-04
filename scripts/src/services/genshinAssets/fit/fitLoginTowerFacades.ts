@@ -12,6 +12,7 @@ import { readMaterialNames } from "#src/services/genshinAssets/fit/readMaterialN
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { toTexel } from "#src/services/genshinAssets/fit/toTexel";
 import { traceCellLoops } from "#src/services/genshinAssets/fit/traceCellLoops";
+import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUpperMedian";
 import {
   GILDING_RED_BLUE_RATIO,
   TOWER_BAND_HEIGHT,
@@ -126,27 +127,21 @@ export const fitLoginTowerFacades = async (
     // Moulding stands out from
     const bandRows = Math.max(1, Math.round(TOWER_BAND_HEIGHT / TOWER_FACADE_CELL_SIZE));
     const toBand = (cell: number): number => Math.floor(Math.floor(cell / width) / bandRows);
-    const bandRadii = new Map<number, number[]>();
-    for (const cell of drawn) {
-      const band = toBand(cell);
-      const radii = bandRadii.get(band) ?? [];
-      radii.push(heights[cell] ?? 0);
-      bandRadii.set(band, radii);
-    }
-    const wallRadii = new Map(
-      Array.from(bandRadii, ([band, radii]) => [
+    const bandRadiiMap = Map.groupBy(drawn, (cell) => toBand(cell));
+    const bandWallRadiusMap = new Map(
+      Array.from(bandRadiiMap, ([band, bandCells]) => [
         band,
-        radii.toSorted((first, second) => first - second)[Math.floor(radii.length / 2)] ?? 0,
+        computeUpperMedian(bandCells.map((cell) => heights[cell] ?? 0)),
       ]),
     );
-    for (const cell of cells) depths.push((wallRadii.get(toBand(cell)) ?? 0) - (heights[cell] ?? 0));
+    for (const cell of cells) depths.push((bandWallRadiusMap.get(toBand(cell)) ?? 0) - (heights[cell] ?? 0));
     const bandCount = Math.ceil(height / bandRows);
     const toWallSections = (): LatheProfile["sections"] => {
       const sections: LatheProfile["sections"] = [];
       let radius = 0;
       for (let band = 0; band < bandCount; band++) {
         // A band the tower stands open all round keeps the wall below it
-        radius = wallRadii.get(band) || radius;
+        radius = bandWallRadiusMap.get(band) || radius;
         const bandHeight = (Math.min((band + 1) * bandRows, height) - band * bandRows) * TOWER_FACADE_CELL_SIZE;
         const last = sections.at(-1);
         if (last && Math.abs(radius - last.bottomRadius) <= TOWER_RADIUS_TOLERANCE * last.bottomRadius)

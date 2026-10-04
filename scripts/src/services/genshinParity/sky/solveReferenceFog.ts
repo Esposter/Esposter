@@ -5,6 +5,7 @@ import type { Vector } from "#src/models/shared/Vector";
 import type { Page } from "playwright";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
+import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUpperMedian";
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
@@ -29,8 +30,6 @@ const GOLDEN_SHARE = (Math.sqrt(5) - 1) / 2;
 const DEPTH_BANDS = [0, 10, 20, 40, 80, 160, 320, 640, 1280];
 const SCATTER_BIN_COUNT = 4;
 const MIN_BIN_COUNT = 100;
-const computeMedian = (values: readonly number[]): number =>
-  values.toSorted((first, second) => first - second)[Math.floor(values.length / 2)] ?? 0;
 const readPage = <T>(page: Page, name: string): Promise<T> =>
   page.evaluate((functionName) => (Reflect.get(window, functionName) as () => T)(), name);
 // A reference's haze solved over the parts the witness draws: each part's interior pixel past the fog's start, its
@@ -117,10 +116,12 @@ export const solveReferenceFog = async (
             ? []
             : [
                 {
-                  lit: CHANNELS.map((channel) => computeMedian(binPoints.map(({ lit }) => lit[channel]))) as Vector,
+                  lit: CHANNELS.map((channel) =>
+                    computeUpperMedian(binPoints.map(({ lit }) => lit[channel])),
+                  ) as Vector,
                   points: binPoints.map(({ point }) => point),
                   reference: CHANNELS.map((channel) =>
-                    computeMedian(binPoints.map(({ reference: color }) => color[channel])),
+                    computeUpperMedian(binPoints.map(({ reference: color }) => color[channel])),
                   ) as Vector,
                   scatter: scatters.reduce((sum, value) => sum + value, 0) / scatters.length,
                 },

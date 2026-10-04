@@ -1,3 +1,5 @@
+import type { DoorRelief } from "#src/models/genshinAssets/fit/DoorRelief";
+import type { LoginDoor } from "#src/models/genshinAssets/fit/LoginDoor";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { Vector } from "#src/models/shared/Vector";
 
@@ -44,18 +46,7 @@ export const fitLoginDoor = async (
   placements: readonly AssetPlacement[],
   meshDirectory: string,
   textureDirectory: string,
-): Promise<{
-  frame: { depth: [number, number]; loops: [number, number][][] };
-  panel: { depth: [number, number]; loops: [number, number][][] };
-  position: [number, number, number];
-  relief: {
-    bands: { loops: [number, number][][]; shade: Vector };
-    corner: [number, number];
-    gilding: { loops: [number, number][][]; shade: Vector };
-    size: [number, number];
-  };
-  size: [number, number, number];
-}> => {
+): Promise<LoginDoor> => {
   const placement = placements.find(({ name }) => name === DOOR_MESH);
   if (!placement) throw new InvalidOperationError(Operation.Read, DOOR_MESH, "not placed in the login scene");
   const { faceGroups, faces, faceUvs, uvs, vertices } = await readObjMesh(join(meshDirectory, `${DOOR_MESH}.obj`));
@@ -71,7 +62,7 @@ export const fitLoginDoor = async (
     const [x = 0, y = 0] = scaled[index] ?? [];
     return [x, y - foot];
   };
-  const fitRelief = async (): Promise<Awaited<ReturnType<typeof fitLoginDoor>>["relief"]> => {
+  const fitRelief = async (): Promise<DoorRelief> => {
     const corner: [number, number] = [Math.min(...scaled.map(([vertexX]) => vertexX)), 0];
     const width = Math.ceil(extent(0) / RELIEF_CELL_SIZE);
     const height = Math.ceil(extent(1) / RELIEF_CELL_SIZE);

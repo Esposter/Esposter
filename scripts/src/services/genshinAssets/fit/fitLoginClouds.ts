@@ -1,3 +1,5 @@
+import type { CloudAtlas } from "#src/models/genshinAssets/fit/CloudAtlas";
+
 import { fitCloudSprites } from "#src/services/genshinAssets/fit/fitCloudSprites";
 import { join } from "node:path";
 
@@ -10,14 +12,11 @@ const CLOUD_ATLAS_BAND_MAP = {
 } as const;
 export const fitLoginClouds = async (
   textureDirectory: string,
-): Promise<Record<keyof typeof CLOUD_ATLAS_BAND_MAP, Awaited<ReturnType<typeof fitCloudSprites>>>> => {
+): Promise<Record<keyof typeof CLOUD_ATLAS_BAND_MAP, CloudAtlas>> => {
   const entries = await Promise.all(
     Object.entries(CLOUD_ATLAS_BAND_MAP).map(
       async ([band, atlas]) => [band, await fitCloudSprites(join(textureDirectory, `${atlas}.png`))] as const,
     ),
   );
-  return Object.fromEntries(entries) as Record<
-    keyof typeof CLOUD_ATLAS_BAND_MAP,
-    Awaited<ReturnType<typeof fitCloudSprites>>
-  >;
+  return Object.fromEntries(entries) as Record<keyof typeof CLOUD_ATLAS_BAND_MAP, CloudAtlas>;
 };

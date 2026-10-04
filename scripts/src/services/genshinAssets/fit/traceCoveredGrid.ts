@@ -1,4 +1,6 @@
+import { computeLoopArea } from "#src/services/genshinAssets/fit/computeLoopArea";
 import { simplifyPath } from "#src/services/genshinAssets/fit/simplifyPath";
+import { getOrCreate } from "@esposter/shared";
 
 // Four sides of a cell, each as the neighbour across it and the side's two corners, in order round the cell
 // Counterclockwise, so a side walked from its first corner to its second has the cell on its left
@@ -44,7 +46,7 @@ export const traceCoveredGrid = (
   const checkIsCovered = (column: number, row: number): boolean =>
     column >= 0 && row >= 0 && column < width && row < height && covered[row * width + column] === 1;
   // Every side between a covered cell and an uncovered one, keyed by the corner it starts from
-  const cornerKey = (column: number, row: number): number => row * (width + 1) + column;
+  const toCornerKey = (column: number, row: number): number => row * (width + 1) + column;
   const startSideMap = new Map<number, [number, number][]>();
   for (let row = 0; row < height; row++)
     for (let column = 0; column < width; column++) {
@@ -52,8 +54,10 @@ export const traceCoveredGrid = (
       for (const { corners, neighbour } of CELL_SIDES) {
         if (checkIsCovered(column + neighbour[0], row + neighbour[1])) continue;
         const [[startX, startY], [endX, endY]] = corners;
-        const key = cornerKey(column + startX, row + startY);
-        startSideMap.set(key, [...(startSideMap.get(key) ?? []), [column + endX, row + endY]]);
+        getOrCreate(startSideMap, toCornerKey(column + startX, row + startY), () => []).push([
+          column + endX,
+          row + endY,
+        ]);
       }
     }
   const loops: [number, number][][] = [];
@@ -65,10 +69,10 @@ export const traceCoveredGrid = (
       const [firstEnd, ...remainingEnds] = startSideMap.get(startKey) ?? [];
       startSideMap.set(startKey, remainingEnds);
       let current = firstEnd;
-      while (current && cornerKey(...current) !== startKey) {
+      while (current && toCornerKey(...current) !== startKey) {
         loop.push(current);
         const [currentX, currentY] = current;
-        const currentKey = cornerKey(currentX, currentY);
+        const currentKey = toCornerKey(currentX, currentY);
         const outgoing = startSideMap.get(currentKey) ?? [];
         // Where two covered cells meet at a corner only, the loop turns left, keeping each cell's own ring apart
         const [directionX, directionY] = [currentX - previousX, currentY - previousY];
@@ -86,11 +90,7 @@ export const traceCoveredGrid = (
     }
 
   return loops.flatMap((loop) => {
-    const signedArea = loop.reduce((sum, [x, y], index) => {
-      const [nextX, nextY] = loop[(index + 1) % loop.length] ?? [x, y];
-      return sum + x * nextY - nextX * y;
-    }, 0);
-    if (Math.abs(signedArea) / 2 < MIN_LOOP_CELLS) return [];
+    if (computeLoopArea(loop) < MIN_LOOP_CELLS) return [];
     // A closed loop is simplified as two open halves, split at the corner farthest from its first
     const [originX, originY] = loop[0] ?? [0, 0];
     const farthestIndex = loop.reduce(
