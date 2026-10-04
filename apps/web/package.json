@@ -57,7 +57,7 @@
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
-    "start": "node .output/server/index.mjs",
+    "start": "node --env-file-if-exists=.env .output/server/index.mjs",
     "test": "vitest",
     "tiled:gen": "tsx --tsconfig tsconfig.root.json scripts/tiled/index.ts",
     "typecheck": "nuxt typecheck",
