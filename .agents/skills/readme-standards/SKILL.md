@@ -24,7 +24,7 @@ A published package carries all four badges, a private one the licence badge alo
 
 Every package carries a `README.md` at its own root. Whether it is published is `private` in its `package.json`, and its npm name is that manifest's `name` — both read from the source rather than from a list here, which would rot the first time a package is added. `AGENTS.md` carries the inventory with a description per package, the one thing the tree cannot answer.
 
-Two lists exist on purpose and are edited together: `AGENTS.md` pairs each path with its npm name for an agent resolving an import, and the root README's package table pairs each path with a repository link and a published mark for a reader arriving from npm or GitHub. Neither is the other's copy — but adding, removing or renaming a package changes both, and nothing checks that it did.
+Two lists exist on purpose and are edited together: `AGENTS.md` pairs each path with its npm name for an agent resolving an import, and the root README's package table pairs each path with a repository link and a published mark for a reader arriving from npm or GitHub. Neither is the other's copy — but adding, removing or renaming a package changes both, and `scripts/src/workspace/packageInventories.test.ts` fails on a workspace member either one leaves out.
 
 ## Content Rules
 

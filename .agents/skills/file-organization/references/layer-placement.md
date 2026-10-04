@@ -37,7 +37,7 @@ package spells it the same way so one layer has one name across the repo.
 
 Group related models/services/components under a feature subfolder (e.g. `feature/sub-feature/`).
 
-**Sole-consumer subfolder rule (CRITICAL).** A file lives in the subfolder of the **one feature that consumes it** —
+**Sole-consumer subfolder rule.** A file lives in the subfolder of the **one feature that consumes it** —
 which is what keeps a directory from accumulating twenty loose files from distinct sub-concerns. A `models/` folder
 mirroring a `services/` folder mirrors its feature subfolders too. Don't over-fragment the other way: a shared bucket
 stays whole even when large, and an already-feature-organised folder is not nested further.

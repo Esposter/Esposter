@@ -15,8 +15,9 @@ and a path or skill named only to say it does **not** exist is written as prose 
 as a citation the test would try to resolve.
 
 Cite another **skill** by name plus its page (``the `pinia` skill (`references/keyed-state-and-pagination.md`)``),
-never as a path into `.agents/skills/` and never as a bare name in parentheses, which the same test
-refuses because a name without the word `skill` after it is one it cannot tell from any other backticked token. A
+never as a path into `.agents/skills/` and never as a bare name in parentheses: a name without the word `skill`
+after it is one the test cannot tell from any other backticked token, so `pnpm ai:sweep:skill-docs` reports the
+form itself (`bare skill citation`). A
 citation by heading (``the `x` skill ("Heading")``) is resolved by the same test against the skill's headings and bold
 rules, but a page path survives a reword where a heading does not.
 

@@ -38,7 +38,7 @@ Every line here is a direction a reader reaches for on meeting the rules below. 
 - **A moved `dist` size snapshot is something newly bundled, never a `-u` to take** — and an export added to a bundled package moves `apps/functions`' and `apps/infra`'s snapshots too (`references/dist-size.md`).
 - **A package that is a Nuxt module builds its runtime unbundled beside a `src/module.ts` entry, and the app registers it by the path to that source**, never its package name, which `nuxt prepare` cannot load before the packages build (`references/nuxt-module-packages.md`).
 - **Presets live in `@esposter/configuration`, extended by path, and the base carries no framework assumption** (`references/tsconfig-presets.md`).
-- **Installs and the workspace graph are root `CLAUDE.md` and `apps/web/content/docs/architecture/monorepo-tooling.md`** — where `pnpm i` needs the network, ask for plain `pnpm i` rather than changing pnpm store settings.
+- **Installs and the workspace graph are `AGENTS.md` and `apps/web/content/docs/architecture/monorepo-tooling.md`** — where `pnpm i` needs the network, ask for plain `pnpm i` rather than changing pnpm store settings.
 
 ## Reference pages
 

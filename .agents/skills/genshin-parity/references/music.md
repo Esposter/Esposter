@@ -10,9 +10,10 @@ Read when recreating a piece of the game's music, or when changing the fit, the 
 4. **Fit it.** The component's fit calls its music fit and writes the data beside its other fits (`fitLoginMusic` and `login/music.json` are the pattern). Read the fit's report before the data. It gives:
    - each source's note count and its register splits;
    - each voice's clear-note count, harmonics, envelope and residuals, level, noise and tuning.
-5. **Play it.** A component that renders nothing creates an `AudioContext`, starts the engine's `createMusicPlayer` over the data, and resumes on the first pointer or key (`Login/Music`). Its fixture is `isMotionOnly`, which puts it on the parity page for scoring.
-6. **Score it.** `genshin:parity listen` renders each segment offline through that screen and scores it against the game's own decoded sound. Commit `ParityMusicScores.snapshot.md` with the change that moved it.
-7. **Hand it to the user's ear.** The session cannot hear. The numbers say what changed, and the user approves how it sounds.
+5. **Fit its expression.** With the parity page up, `genshin:parity expression` refits each segment's expression against our render of the fitted voices and writes it into the data. A fit of the instruments writes every segment's expression empty, so this follows each one.
+6. **Play it.** A component that renders nothing creates an `AudioContext`, starts the engine's `createMusicPlayer` over the data, and resumes on the first pointer or key (`Login/Music`). Its fixture is `isMotionOnly`, which puts it on the parity page for scoring.
+7. **Score it.** `genshin:parity listen` renders each segment offline through that screen and scores it against the game's own decoded sound. Commit `ParityMusicScores.snapshot.md` with the change that moved it.
+8. **Hand it to the user's ear.** The session cannot hear. The numbers say what changed, and the user approves how it sounds.
 
 ## Rules
 

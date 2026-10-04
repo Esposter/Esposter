@@ -20,7 +20,7 @@ Never call `sanitizeHtml`/`sanitizeTextHtml` here. Sanitization is declared at t
 
 ## `/me` — no new `MessageType`
 
-`/me [message]` does NOT introduce `MessageType.Me`. Wrap the argument in `*...*` and post as a regular `MessageType.Message`:
+`/me [message]` does not introduce `MessageType.Me`. Wrap the argument in `*...*` and post as a regular `MessageType.Message`:
 
 ```ts
 case SlashCommandType.Me:

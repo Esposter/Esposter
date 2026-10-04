@@ -35,7 +35,7 @@ The default trim in app code — reach for it over a bare `.trim()`:
 - Filter predicates: `.filter((line) => normalizeString(line) !== "")`
 - Zod schemas: "Zod Schema Alignment" on this page
 
-## When NOT to use `normalizeString`
+## When not to use `normalizeString`
 
 - **Never in Vue** — lint-enforced by `restrictedTrimSyntaxes.js`; the `vue` skill owns the why (`references/forms.md`).
 - **User-facing transformation actions** — e.g. `computeStringTransformation.ts` `Trim` case; keep `value.trim()`, it's implementing a named user operation.

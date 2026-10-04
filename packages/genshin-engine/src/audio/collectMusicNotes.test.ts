@@ -1,4 +1,4 @@
-import type { Music } from "#src/audio/Music";
+import type { ScheduledMusicSegment } from "#src/audio/ScheduledMusicSegment";
 
 import { collectMusicNotes } from "#src/audio/collectMusicNotes";
 import { describe, expect, test } from "vitest";
@@ -14,32 +14,32 @@ describe(collectMusicNotes, () => {
     sustain: 1,
     tuning: 0,
   };
-  const note = { duration: 1, pitch: 69, start: 1, velocity: 1 };
-  // A piece and a rest played twice a pass, as the login's playlist is: piece, rest, piece, rest
-  const music: Music = {
-    isLooping: true,
-    order: [0, 1, 0, 1],
-    segments: [
-      { duration: 2, voices: [{ instrument, notes: [note] }] },
-      { duration: 3, voices: [] },
-    ],
+  const scheduledSegment: ScheduledMusicSegment = {
+    segment: {
+      duration: 3,
+      expression: [],
+      voices: [
+        {
+          instrument,
+          notes: [
+            { duration: 1, pitch: 69, start: 0, velocity: 1 },
+            { duration: 1, pitch: 69, start: 2, velocity: 1 },
+          ],
+        },
+      ],
+    },
+    start: 1,
   };
 
-  test("plays a segment each time the order names it", () => {
+  test("plays each note at its segment's start plus its own", () => {
     expect.hasAssertions();
 
-    expect(collectMusicNotes(music, 0, 10).map(({ time }) => time)).toStrictEqual([1, 6]);
+    expect(collectMusicNotes(scheduledSegment, 0, 10).map(({ time }) => time)).toStrictEqual([1, 3]);
   });
 
-  test("runs on past a pass's end while the playlist loops", () => {
+  test("keeps only the notes that start within the range", () => {
     expect.hasAssertions();
 
-    expect(collectMusicNotes(music, 9, 12).map(({ time }) => time)).toStrictEqual([11]);
-  });
-
-  test("ends after one pass when the playlist does not loop", () => {
-    expect.hasAssertions();
-
-    expect(collectMusicNotes({ ...music, isLooping: false }, 9, 12)).toStrictEqual([]);
+    expect(collectMusicNotes(scheduledSegment, 2, 10).map(({ time }) => time)).toStrictEqual([3]);
   });
 });

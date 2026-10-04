@@ -42,7 +42,7 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | Depth, normal, albedo, part per pixel   | `genshin:parity gbuffer`                                             |
 | A family's surface laid out in metres   | `genshin:parity plan`: its unlit albedo from straight above          |
 | Where each part lands on the reference  | `genshin:parity overlay`: boundaries, edge distance                  |
-| Which layer a score's loss is in        | `scoreLayers`: `compare --witness`, `attribute`                      |
+| Which layer a score's loss is in        | `scoreLayers`: `compare --witness`                                   |
 | One approval number                     | FLIP (`scoreFlip`), in every `compare`                               |
 | The clouds' lit and shaded colours      | `genshin:parity clouds`: ours and theirs matched by colour spread    |
 | How much of each cloud band an hour has | `genshin:parity cover`: each band's share on the cover by height     |
@@ -59,8 +59,10 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | A piece's notes                                      | `readMusicSourceNotes`: pitch-transcription over a decoded source                                                        |
 | Each voice's instrument and tuning                   | `fitInstrument`: measured at its clear notes, in the fit's report                                                        |
 | Each voice's noise                                   | `fitVoiceNoises`: each noise-like band, solved over every frame                                                          |
-| Which recorded instrument and level plays each voice | `genshin:parity instruments`: pitch-keeping candidates, band-energy least squares, each mix scored whole                 |
+| Which recorded instrument and level plays each voice | `genshin:parity instruments`: pitch-keeping candidates, band-energy least squares, each mix scored under its expression  |
 | Whether a recorded instrument keeps a voice's pitch  | `genshin:parity solos`: each instrument alone against the notes' own pitch classes, beside pure tones, with its best lag |
 | What a band of the game's music holds                | `genshin:parity bands`: share, flatness, attack weight, on partials                                                      |
 | Whether our noise plays what it ships                | `genshin:parity noise`: the solve read back from our render and the game's                                               |
 | How close our music sounds                           | `genshin:parity listen`: pitch agreement, each band's gap and its sign                                                   |
+| Each segment's swells and fades                      | `genshin:parity expression`: one gain a window over every band, refitted against our render and written                  |
+| Whether ours rings longer than the game's            | `genshin:parity decay`: each band's signed gap by the time since the last note began                                     |

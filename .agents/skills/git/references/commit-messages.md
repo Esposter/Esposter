@@ -2,7 +2,7 @@
 
 Read when writing a commit message with a body, from the Bash tool or the PowerShell tool.
 
-The **Bash** tool is POSIX sh, NOT PowerShell. Never use PowerShell here-string syntax (`@'...'@`) in the Bash tool — it is taken literally and leaves stray `@` lines in the commit message. Pick the form matching the tool:
+The **Bash** tool is POSIX sh, not PowerShell. Never use PowerShell here-string syntax (`@'...'@`) in the Bash tool — it is taken literally and leaves stray `@` lines in the commit message. Pick the form matching the tool:
 
 - **Bash tool** → heredoc piped to `-F -`:
 

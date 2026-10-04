@@ -5,8 +5,6 @@ description: Apply when modifying apps/infra. Esposter's Pulumi infrastructure �
 
 # Pulumi Infrastructure
 
-Apply when modifying `apps/infra`.
-
 ## Settled — do not re-propose
 
 - **A secret in a stack file, encrypted or not.** `pulumi config set --secret` writes ciphertext into `Pulumi.prod.yaml`, which is tracked and public — the secret is then published to everybody and rests on one algorithm and one key for as long as the repository outlives them. Every secret this estate holds is in the `esposter-infra/prod` ESC environment the stack imports, and `apps/infra/docs/stacks.md` has the `pulumi env set` form that puts one there.

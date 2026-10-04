@@ -81,7 +81,7 @@ export const reference: ComponentReference = {
     },
     {
       found:
-        "Rows within noise of each other: a loss table priced at a pose that fits nothing means nothing, so it waits on the pose",
+        "Rows within noise of each other: a loss table priced at a pose that fits nothing means nothing, and a recording is too soft to tell a stand-in from its export, so the tool was retired for genshin:parity rank",
       search: "genshin:parity attribute over dawn, dusk and night at (0, 5, 75), heading 0, pitch 3, Build_All witness",
     },
     {

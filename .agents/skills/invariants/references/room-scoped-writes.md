@@ -12,6 +12,6 @@ anywhere: the write functions are reachable only through `getSlice(roomId)` / `g
 so naming the room is how you obtain a writer at all, and a response cannot be filed anywhere but its own slice.
 The convention itself is the `pinia` skill's (`references/keyed-state-and-pagination.md`).
 
-Note what the structural version also bought: a late response now lands in **its own** room's slice, so
-re-opening that room shows what was read rather than re-fetching it. The guard could only ever drop the write —
+Note what the structural version also bought: a late response now lands in **its own** room's slice rather
+than being thrown away. The guard could only ever drop the write —
 correct, but strictly less than correct-and-useful. A rung up the ladder usually pays twice.

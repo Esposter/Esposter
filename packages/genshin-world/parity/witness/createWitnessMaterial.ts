@@ -2,10 +2,7 @@ import type { SceneMaterial } from "genshin-engine";
 import type { Texture } from "three";
 import type { Node } from "three/webgpu";
 
-import { readTextureMean } from "#parity/witness/readTextureMean";
 import { WitnessProperty } from "#parity/witness/WitnessProperty";
-import { WitnessShading } from "#parity/witness/WitnessShading";
-import { Color } from "three";
 import { color, float, mix, normalView, positionViewDirection, texture, vec3 } from "three/tsl";
 import { MeshStandardNodeMaterial } from "three/webgpu";
 
@@ -14,13 +11,11 @@ import { MeshStandardNodeMaterial } from "three/webgpu";
 // Smoothness in red scaled by the gloss scale, metalness in green, and emission in alpha where the material turns it
 // On. The emission grades into the rim glow's colour at its strength by one less the facing ratio raised to its power,
 // As the program mixes them. Lighting is the game's deferred pass, which the engine's physically based lighting stands
-// In for. Flat, the material keeps its values and draws its diffuse texture's mean colour with no normal map
+// In for.
 export const createWitnessMaterial = (
   { colors, floats, textures }: SceneMaterial,
   nameTextureMap: ReadonlyMap<string, Texture>,
-  shading: WitnessShading,
 ): MeshStandardNodeMaterial => {
-  const isFlat = shading === WitnessShading.Flat;
   const material = new MeshStandardNodeMaterial();
   const getTexture = (slot: WitnessProperty): Texture | undefined => {
     const slotTexture = textures[slot];
@@ -29,13 +24,9 @@ export const createWitnessMaterial = (
   const [red = 1, green = 1, blue = 1] = colors[WitnessProperty.Color] ?? [];
   const diffuse = getTexture(WitnessProperty.MainTexture);
   const tint = color(red, green, blue);
-  if (diffuse)
-    material.colorNode = isFlat
-      ? color(readTextureMean(diffuse).multiply(new Color(red, green, blue)))
-      : texture(diffuse).rgb.mul(tint);
-  else material.colorNode = tint;
+  material.colorNode = diffuse ? texture(diffuse).rgb.mul(tint) : tint;
   const normal = getTexture(WitnessProperty.NormalMap);
-  if (normal && !isFlat) material.normalMap = normal;
+  if (normal) material.normalMap = normal;
   const mask = getTexture(WitnessProperty.DetailMask);
   let emissionNode: Node<"vec3"> = vec3(0);
   if (mask) {

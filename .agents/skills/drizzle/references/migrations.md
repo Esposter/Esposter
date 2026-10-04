@@ -12,7 +12,7 @@ From `packages/db-schema/`:
 
 ```sh
 pnpm db:gen   # generates snapshot.json + a first-cut migration.sql from the schema diff
-pnpm db:up    # upgrades snapshot metadata to a newer drizzle-kit format — NOT an apply command
+pnpm db:up    # upgrades snapshot metadata to a newer drizzle-kit format, never an apply command
 ```
 
 - `db:gen` reads `DATABASE_URL` only for config validation (the diff is schema-vs-snapshot, never the live DB) — inject it: `export DATABASE_URL="$(grep '^DATABASE_URL=' ../../apps/web/.env | cut -d= -f2-)"`.
@@ -48,7 +48,7 @@ Editing the generated **`migration.sql`** by hand is allowed and expected — bu
 
 **A backfill runs under the constraint the migration has not replaced yet.** drizzle-kit groups its statements by column, so a column whose CHECK is being relaxed gets its `UPDATE` while the outgoing one is still live — backfilling `NULL` to a `0` sentinel under `… IS NULL OR … >= 1` fails on the first row it was written for. Swap the constraints first, then backfill, then `SET DEFAULT` and `SET NOT NULL`: a CHECK is unknown rather than false on a `NULL`, so the incoming one admits the rows the backfill has yet to reach. Nothing here catches it — the diff is against the snapshot rather than data, and a database with no such row applies the wrong order green, which is every database a test starts from.
 
-**Destructive diffs → rewrite the SQL to preserve data.** drizzle-kit emits drop/recreate where a data-preserving statement exists; an enum-value rename should be `ALTER TYPE "public"."foo_type" RENAME VALUE 'Bar' TO 'Baz';`, not `DROP TYPE` + `CREATE TYPE`. A value-order-only change generates a text-cast recreate (`SET DATA TYPE text` → `DROP TYPE` → `CREATE TYPE` → cast back). Postgres derives an enum's `ORDER BY`, `MIN`/`MAX` and `<`/`>` from its declared value order, so a recreate that reorders values silently changes those results — it is **not** harmless by default. Leave the recreate as-is only after confirming the enum is compared for equality only (never ordered on) and has no default; otherwise rewrite the SQL to preserve the declared value order.
+**Destructive diffs → rewrite the SQL to preserve data.** drizzle-kit emits drop/recreate where a data-preserving statement exists; an enum-value rename should be `ALTER TYPE "resource"."fooType" RENAME VALUE 'Bar' TO 'Baz';`, not `DROP TYPE` + `CREATE TYPE`. A value-order-only change generates a text-cast recreate (`SET DATA TYPE text` → `DROP TYPE` → `CREATE TYPE` → cast back). Postgres derives an enum's `ORDER BY`, `MIN`/`MAX` and `<`/`>` from its declared value order, so a recreate that reorders values silently changes those results — it is **not** harmless by default. Leave the recreate as-is only after confirming the enum is compared for equality only (never ordered on) and has no default; otherwise rewrite the SQL to preserve the declared value order.
 
 ## A new reference over existing rows
 

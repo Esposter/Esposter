@@ -4,18 +4,18 @@ Read when adding a subscription procedure, or deciding whether the caller of a m
 
 ## Room-scoped subscriptions — `getRoomEventSubscription`
 
-The shared single-room subscription shape (member check + `roomIdSchema` input + forward `[data, device]` events matching the input room to everyone except the emitting device) is `getRoomEventSubscription(emitter, eventName, getRoomId)` in `server/trpc/procedure/room/`. A subscription whose body would only filter by room id and same-device MUST use it:
+The shared single-room subscription shape (member check + `roomIdSchema` input + forward `[data, device]` events matching the input room to everyone except the emitting device) is `getRoomEventSubscription(emitter, eventName, getRoomId)` in `server/trpc/procedure/room/`. A subscription whose body would only filter by room id and same-device must use it:
 
 ```ts
 onCreateFoo: getRoomEventSubscription(fooEventEmitter, "createFoo", ({ partitionKey }) => partitionKey),
 ```
 
 - Event map shape must be `[[Data, Device]]`; yield types stay exact per event via `TEventMap[TKey][0][0]` indexed access.
-- **Deliberately NOT abstracted**: multi-room (room/userToRoom), callSession, typing/moderation/achievement subscriptions — their bodies differ in destructure, device-id construction and yield, so a builder would need as many lambdas as the body has lines. Don't force them in.
+- **Deliberately not abstracted**: multi-room (room/userToRoom), callSession, typing/moderation/achievement subscriptions — their bodies differ in destructure, device-id construction and yield, so a builder would need as many lambdas as the body has lines. Don't force them in.
 
 ## Register the listener before the first `await`
 
-In subscription generators, `on(emitter, event, { signal })` from `node:events` MUST be assigned to a `const` **before** any `await`. The `for await (const x of on(...))` form is NOT equivalent when an `await` precedes it — `on()` only runs when the `for await` line is reached, so synchronously-emitting mutations can fire during that `await` and be missed.
+In subscription generators, `on(emitter, event, { signal })` from `node:events` must be assigned to a `const` **before** any `await`. The `for await (const x of on(...))` form is not equivalent when an `await` precedes it — `on()` only runs when the `for await` line is reached, so synchronously-emitting mutations can fire during that `await` and be missed.
 
 ```ts
 // CORRECT — listener registered synchronously before control is yielded
@@ -36,7 +36,7 @@ In tests, `Promise.all([iterator.next(), mutation()])` exposes this: the mutatio
 
 ## No redundant store update after a mutation the subscription already covers
 
-When a mutation emits to an event emitter and the subscription fires for **all** connected clients (including the caller — no `checkIsSameDevice` filter), the subscription's `onData` handler is the single source of truth. Do NOT also call the `store*` action after the mutation returns.
+When a mutation emits to an event emitter and the subscription fires for **all** connected clients (including the caller — no `checkIsSameDevice` filter), the subscription's `onData` handler is the single source of truth. Do not also call the `store*` action after the mutation returns.
 
 | Subscription filters caller? | After-mutation store call needed?           |
 | ---------------------------- | ------------------------------------------- |

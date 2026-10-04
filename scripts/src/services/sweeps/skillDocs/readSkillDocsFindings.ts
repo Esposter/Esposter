@@ -1,6 +1,7 @@
 import type { SkillDocsFinding } from "#src/models/sweeps/skillDocs/SkillDocsFinding";
 
 import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
+import { getBareSkillCitationFindings } from "#src/services/sweeps/skillDocs/getBareSkillCitationFindings";
 import { getBudgetFindings } from "#src/services/sweeps/skillDocs/getBudgetFindings";
 import { getDanglingLeadInFindings } from "#src/services/sweeps/skillDocs/getDanglingLeadInFindings";
 import { getDescriptionFindings } from "#src/services/sweeps/skillDocs/getDescriptionFindings";
@@ -20,11 +21,13 @@ export const readSkillDocsFindings = (): SkillDocsFinding[] => {
   const pages = readSkillDocsFiles(`${SKILLS_DIRECTORY}/*/references/*.md`);
   const files = [...skills, ...pages];
   const paths = new Set(files.map(({ path }) => path));
+  const skillNames = new Set(skills.map(({ path }) => getSkillName(path)));
   return [
+    ...getBareSkillCitationFindings(files, skillNames),
     ...getBudgetFindings(skills),
     ...getDanglingLeadInFindings(files),
     ...getDescriptionFindings(skills),
-    ...getSelfCitationFindings(pages, new Set(skills.map(({ path }) => getSkillName(path)))),
+    ...getSelfCitationFindings(pages, skillNames),
     ...getSettledOrderFindings(skills, pages),
     ...getTriggerlessFindings(pages),
     ...getUnindexedFindings(skills, pages),

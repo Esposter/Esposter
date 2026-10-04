@@ -3,7 +3,7 @@ name: styling
 description: Apply when writing or reviewing styles in .vue or .scss files, or laying out a page, panel, sidebar, or border. Esposter's UnoCSS Attributify styling — every static style an attribute with class kept for what cannot be one, theme tokens over bespoke values, rem never px, the parent owning spacing, no fixed dimension on a layout region, borders drawn once, state variants over &:hover blocks, and the style block as the exception.
 ---
 
-# Styling — UnoCSS Attributify Mode (MANDATORY)
+# Styling — UnoCSS Attributify Mode
 
 ## Settled — do not re-propose
 

@@ -3,11 +3,11 @@ import type { Instrument, Music, MusicSegment } from "genshin-engine";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { computeSpectrogram } from "#src/services/genshinAssets/computeSpectrogram";
-import { MUSIC_DECIMALS } from "#src/services/genshinAssets/constants";
 import { fitMusicVoices } from "#src/services/genshinAssets/fitMusicVoices";
 import { fitVoiceNoises } from "#src/services/genshinAssets/fitVoiceNoises";
 import { getComponentDirectory } from "#src/services/genshinAssets/getComponentDirectory";
 import { readMusicSourceNotes } from "#src/services/genshinAssets/readMusicSourceNotes";
+import { roundMusic } from "#src/services/genshinAssets/roundMusic";
 import { CHROMA_FRAME_LENGTH, CHROMA_HOP_LENGTH } from "#src/services/genshinParity/constants";
 import { readAudioSamples } from "#src/services/genshinParity/readAudioSamples";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
@@ -15,7 +15,6 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { AUDIO_SAMPLE_RATE } from "pitch-transcription";
 
-const roundMusic = (value: number): number => Number(value.toFixed(MUSIC_DECIMALS));
 const roundInstrument = ({
   attack,
   decay,
@@ -86,7 +85,8 @@ export const fitLoginMusic = async (): Promise<{ music: Music; report: string[] 
         });
       }
     }
-    musicSegments.push({ duration: roundMusic(duration / 1000), voices });
+    // A segment's expression is fitted afterwards, against our render of these voices (`genshin:parity expression`)
+    musicSegments.push({ duration: roundMusic(duration / 1000), expression: [], voices });
   }
   return { music: { isLooping, order, segments: musicSegments }, report };
 };

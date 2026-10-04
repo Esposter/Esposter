@@ -1,12 +1,13 @@
 import type { CommandDef } from "citty";
 
-import { attributeCommand } from "#src/services/genshinParity/commands/attributeCommand";
 import { bandsCommand } from "#src/services/genshinParity/commands/bandsCommand";
 import { benchCommand } from "#src/services/genshinParity/commands/benchCommand";
 import { calibrateCommand } from "#src/services/genshinParity/commands/calibrateCommand";
 import { cloudsCommand } from "#src/services/genshinParity/commands/cloudsCommand";
 import { compareCommand } from "#src/services/genshinParity/commands/compareCommand";
 import { coverCommand } from "#src/services/genshinParity/commands/coverCommand";
+import { decayCommand } from "#src/services/genshinParity/commands/decayCommand";
+import { expressionCommand } from "#src/services/genshinParity/commands/expressionCommand";
 import { fetchCommand } from "#src/services/genshinParity/commands/fetchCommand";
 import { filmCommand } from "#src/services/genshinParity/commands/filmCommand";
 import { fogCommand } from "#src/services/genshinParity/commands/fogCommand";
@@ -45,7 +46,6 @@ export const genshinParityCommand: CommandDef = defineCommand({
     clouds: cloudsCommand,
     cover: coverCommand,
     compare: compareCommand,
-    attribute: attributeCommand,
     gbuffer: gbufferCommand,
     calibrate: calibrateCommand,
     sky: skyCommand,
@@ -59,9 +59,11 @@ export const genshinParityCommand: CommandDef = defineCommand({
     glide: glideCommand,
     shoot: shootCommand,
     bands: bandsCommand,
+    decay: decayCommand,
     instruments: instrumentsCommand,
     solos: solosCommand,
     bench: benchCommand,
+    expression: expressionCommand,
     listen: listenCommand,
     noise: noiseCommand,
     film: filmCommand,

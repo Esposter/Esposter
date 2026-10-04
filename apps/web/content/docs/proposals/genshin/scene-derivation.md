@@ -67,7 +67,7 @@ flowchart TD
 
 The witness page loads a scene's exports from the references folder, draws them through the engine's own renderer at a reference's camera pose, and writes a part identifier, depth, normal and albedo beside the colour. Its layers come from the inventory: which object belongs to the sky, the clouds, the stone. Because the pose is the reference's, the identifier target is also a segmentation of the reference, which is where each layer's score gets its mask. While a tool drives it, the witness holds its clock and its anti-aliasing's jitter, so one render settles a view.
 
-Attribution is a ladder of swaps. Each rung replaces one exported piece with the stand-in the scene ships, the real mesh with our kit's, the real texture with our material, the real sky with our sky, and prints the loss of each layer's score against the rung before. The swaps run one at a time and in combination, because two stand-ins can hide each other's error. The table is committed beside the scene's scores, as a bench's report is, so the change that closes a loss shows it closing.
+Attribution is a ladder of swaps. Each rung replaces one exported piece with the stand-in the scene ships, the real mesh with our kit's, the real texture with our material, the real sky with our sky, and prints the loss of each layer's score against the rung before. The swaps run one at a time and in combination, because two stand-ins can hide each other's error. `rank` is that table: every term of a reference's error by the most of the frame's FLIP it could recover, then each stand-in scored against the export it stands for, in one frame of both. A first table of every swap scored layer by layer against the recording read its rows within noise of each other, since a recording is too soft to tell a stand-in from its export, and was retired for it.
 
 ### Choosing a representation
 
@@ -97,7 +97,7 @@ The login scene is the first scene run through this method. What it has found so
 
 ## Scope
 
-The method's tools are built: `genshin:assets tree`, the closure `extract`, `behaviours`, `spawns`, `arrangement`, `shaders` writing each program as annotated assembly and, where it decompiles, HLSL, `inventory` and `witness` ([derived assets](/docs/genshin/derived-assets)), and the deterministic witness with its G-buffer, `gbuffer`, `overlay`, `pose`, `track`, `compare --witness` with its layers and FLIP, `attribute` with its committed loss table per layer, and `calibrate` fitting the light, fog and grade by regression ([parity](/docs/genshin/parity)). The toon ramp, the outlines and the kits stay until the loss table says what replaces them.
+The method's tools are built: `genshin:assets tree`, the closure `extract`, `behaviours`, `spawns`, `arrangement`, `shaders` writing each program as annotated assembly and, where it decompiles, HLSL, `inventory` and `witness` ([derived assets](/docs/genshin/derived-assets)), and the deterministic witness with its G-buffer, `gbuffer`, `overlay`, `pose`, `track`, `compare --witness` with its layers and FLIP, `rank` with each term's ceiling and each stand-in's cost against the exports, and `calibrate` fitting the light, fog and grade by regression ([parity](/docs/genshin/parity)). The toon ramp, the outlines and the kits stay until the loss table says what replaces them.
 
 ## Key files
 
@@ -107,7 +107,7 @@ The method's tools are built: `genshin:assets tree`, the closure `extract`, `beh
 | `scripts/src/services/genshinAssets/fitLoginScene.ts`            | The login screen's fits, each printing the error it leaves on screen        |
 | `scripts/src/services/genshinAssets/fitAlbedo.ts`                | Replaced by a fitted stone material once the loss table ranks it            |
 | `scripts/src/services/genshinParity/compareScreen.ts`            | Scores each layer, and the detail and perceptual scores                     |
-| `scripts/src/services/genshinParity/attributeScene.ts`           | The loss table, per layer, committed only from a solved pose                |
+| `scripts/src/services/genshinParity/rankReferenceGains.ts`       | The loss table: every term's ceiling, read only at a solved pose            |
 | `packages/genshin-world/parity/screens.ts`                       | The page the witness render is mounted beside                               |
 | `packages/genshin-world/src/components/Login/Scene/Index.vue`    | The first scene run through the method                                      |
 | `packages/genshin-engine/src/nodes/createToonMaterial.ts`        | The environment material the witness render judges                          |

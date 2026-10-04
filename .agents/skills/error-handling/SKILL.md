@@ -30,7 +30,7 @@ description: Apply when handling errors or logging in components, composables, s
 - `references/no-shared-import.md` — when handling a rejection in code that cannot import `@esposter/shared`.
 - `references/unawaited-callbacks.md` — when writing a tick, a timer, a fire-and-forget hook or a gating promise executor.
 
-## try / catch and .then Are BANNED
+## try / catch and .then are banned
 
 `try` in any form and `.then`/`.catch`/`.finally` are `no-restricted-syntax` errors — `getResult`/`getResultAsync` and a chain, `withFinalizer`/`withFinalizerAsync` for cleanup; the two disable shapes and `Promise.try` are `references/ban-exceptions.md`.
 
@@ -54,7 +54,7 @@ import { getResult, getResultAsync, noop, withFinalizer, withFinalizerAsync } fr
 - **Each error class writes `this.name` as a literal**, never `new.target.name`, which the minifier mangles (`references/error-classes.md`).
 - **Wrap only what can actually fail** — a pure step is called bare (`references/wrapping.md`).
 - **Never leave a `Result` unterminated** — `.match`, `.unwrapOr` or `._unsafeUnwrap()`; no lint rule can see it, so it is a review catch and `pnpm ai:sweep:unterminated-results` a scan (`references/wrapping.md`).
-- `.isOk()` / `.isErr()` are BANNED (`no-restricted-syntax`) — branch with `.match(...)` instead so both branches are handled in one place. To rethrow/cleanup on failure, `throw` inside the err handler (works in sync and async handlers alike); to fall back, `.unwrapOr(fallback)`.
+- `.isOk()` / `.isErr()` are banned (`no-restricted-syntax`) — branch with `.match(...)` instead so both branches are handled in one place. To rethrow/cleanup on failure, `throw` inside the err handler (works in sync and async handlers alike); to fall back, `.unwrapOr(fallback)`.
 - **Never a silent swallow, and never `console.warn` as an err handler** — `.orTee(console.error)`, `context.error` in an Azure Function, `writeVirrunDebug` in virrun (`references/logging-sinks.md`).
 - **`.match(noop, noop)` is a silent swallow** — a best-effort err handler names what was lost (`no-restricted-syntax`, `references/logging-sinks.md`).
 - Never `void` a ResultAsync — always `await` (ResultAsync never rejects, so awaiting is safe).

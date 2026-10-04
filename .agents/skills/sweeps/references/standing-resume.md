@@ -66,7 +66,9 @@ find <scope directory> -maxdepth 1
 ```
 
 Anything the ledger does not name opens at `—` — a directory no resume would ever have reported, because nothing
-in it changed.
+in it changed. The coarsest form of that gap is held by a test: `scripts/src/workspace/ledgerMembers.test.ts` fails on a
+workspace member no row of the `quality` ledger names, since a package added after a ledger was written is the
+unnamed tree that arrives most often.
 
 That is also why `Scope` lives on the index row and never inside the ledger file: a resume reads the index to
 find which files to run against, so a scope stored past that point cannot be reached without opening the thing it

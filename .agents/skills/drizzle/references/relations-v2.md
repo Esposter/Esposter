@@ -52,7 +52,7 @@ where: { position: { gte: 0 } }   // other operators: gt, gte, lt, lte, ne, in, 
 where: (foos, { and, eq }) => and(eq(foos.id, input), eq(foos.barId, barId)),
 ```
 
-**Use `RAW:` ONLY for operators with no object equivalent** — currently `EXISTS` subqueries, `isNull` on a join condition (not a column filter), or raw SQL. When using `RAW:`, always guard against `undefined`:
+**Use `RAW:` only for operators with no object equivalent** — currently `EXISTS` subqueries, `isNull` on a join condition (not a column filter), or raw SQL. When using `RAW:`, always guard against `undefined`:
 
 ```ts
 where: {
