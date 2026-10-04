@@ -1,4 +1,5 @@
 import type { CloudBandOptions } from "#src/atmosphere/CloudBandOptions";
+import type { CloudPlacement } from "#src/atmosphere/CloudPlacement";
 
 import { createSeededRandom } from "#src/random/createSeededRandom";
 
@@ -8,7 +9,7 @@ import { createSeededRandom } from "#src/random/createSeededRandom";
 export const placeCloudBand = (
   { count, distanceRange: [near, far], heightRange: [low, high], seed, widthRange: [narrow, wide] }: CloudBandOptions,
   spriteCount: number,
-): { position: [number, number, number]; spriteIndex: number; width: number }[] => {
+): CloudPlacement[] => {
   const random = createSeededRandom(seed);
   return Array.from({ length: count }, () => {
     const angle = random() * Math.PI * 2;
