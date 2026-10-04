@@ -7,7 +7,7 @@ import { getFencedLines } from "#src/services/skills/extract/getFencedLines";
 // A skill named bare in front of its page or heading — (`foo`, `references/bar.md`) — reads as any backticked token,
 // So the page beside it resolves against the citing skill rather than the one meant. The form is the skill by name,
 // Then the page: (the `foo` skill, `references/bar.md`)
-const BARE_SKILL_CITATION_REGEX = /\(`(?<name>[\w-]+)`, (?:`references\/|")/gu;
+const BARE_SKILL_CITATION_REGEX = /\(`(?<name>[\w-]+)`[ \t]*,[ \t]*(?:`references\/|")/gu;
 
 export const getBareSkillCitationFindings = (files: SkillDocsFile[], skillNames: Set<string>): SkillDocsFinding[] =>
   files.flatMap(({ path, text }) => {
