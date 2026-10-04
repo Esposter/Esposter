@@ -34,8 +34,8 @@ export const benchScene = async (
   for (let frame = 0; frame < frameCount; frame++) {
     // oxlint-disable-next-line no-await-in-loop -- one frame is timed after another
     const time = await new Promise<number>((resolve) => {
-      window.requestAnimationFrame((time) => {
-        resolve(time);
+      window.requestAnimationFrame((frameTime) => {
+        resolve(frameTime);
       });
     });
     intervals.push(time - lastTime);
