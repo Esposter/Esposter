@@ -3,10 +3,10 @@ import { GameLanguageTagMap } from "#src/services/GameLanguageTagMap";
 import { getResult } from "@esposter/shared";
 
 const getMaximizedLocale = (tag: string): Intl.Locale | undefined =>
-  getResult(() => new Intl.Locale(tag).maximize()).match(
-    (locale) => locale,
-    () => undefined,
-  );
+  getResult(() => new Intl.Locale(tag).maximize()).unwrapOr(undefined);
+const GameLanguageLocales = GameLanguages.map(
+  (gameLanguage) => [gameLanguage, new Intl.Locale(GameLanguageTagMap[gameLanguage]).maximize()] as const,
+);
 // The game language nearest a reader's own preference list — a browser's `navigator.languages` or the tags of an
 // `Accept-Language` header, most preferred first. A tag matches on its language and, once both sides are maximized,
 // Its script, so `zh-TW` reads Traditional and `zh-CN` Simplified while `pt-BR` and `en-GB` take the one Portuguese
@@ -17,11 +17,11 @@ export const matchGameLanguage = (preferredTags: readonly string[]): GameLanguag
     const preferredLocale = getMaximizedLocale(preferredTag);
     if (!preferredLocale) continue;
 
-    const language = GameLanguages.find((gameLanguage) => {
-      const gameLocale = new Intl.Locale(GameLanguageTagMap[gameLanguage]).maximize();
-      return gameLocale.language === preferredLocale.language && gameLocale.script === preferredLocale.script;
-    });
-    if (language) return language;
+    const matchedLanguageLocale = GameLanguageLocales.find(
+      ([, gameLocale]) =>
+        gameLocale.language === preferredLocale.language && gameLocale.script === preferredLocale.script,
+    );
+    if (matchedLanguageLocale) return matchedLanguageLocale[0];
   }
 
   return GameLanguage.English;
