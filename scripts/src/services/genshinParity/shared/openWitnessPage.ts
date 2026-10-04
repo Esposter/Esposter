@@ -9,10 +9,10 @@ import { join } from "node:path";
 import sharp from "sharp";
 
 // One reference's page for the witness tools: the parity page on the reference's screen in its own state (its props, a
-// Time of day), at the structure's width unless another is given and the reference's aspect, drawing the component's exports, beside the
-// Reference at that size, and whether a pixel of a target that wide stands in the reference's scored region, so a tool
-// Reads nothing a recording masks or a corner button covers. The caller fetches the references first and closes the
-// Browser
+// Time of day), at the structure's width unless another is given and the reference's aspect, drawing the component's
+// Exports, beside the reference at that size, and whether a pixel of a target that wide stands in the reference's
+// Scored region, so a tool reads nothing a recording masks or a corner button covers. The caller fetches the
+// References first and closes the browser
 export const openWitnessPage = async (
   referenceId: string,
   witness: DerivedAssetComponent,
