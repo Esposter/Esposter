@@ -14,7 +14,7 @@ The same shape for the other two suite families. A resource-typed router suite (
 
 ## Subscription tests: builder once, wiring smoke per router
 
-`getRoomEventSubscription` behaviour (member check, room filter, same-device filter, data passthrough) is tested thoroughly ONCE in `server/trpc/procedure/room/getRoomEventSubscription.test.ts` through one representative subscription. Each router keeps only a **single** emit-wiring smoke test (one `getFirstEmit` happy path); do not add per-subscription filter/UNAUTHORIZED/other-room tests to router suites.
+`getRoomEventSubscription` behaviour (member check, room filter, same-device filter, data passthrough) is tested thoroughly once in `server/trpc/procedure/room/getRoomEventSubscription.test.ts` through one representative subscription. Each router keeps only a **single** emit-wiring smoke test (one `getFirstEmit` happy path); do not add per-subscription filter/UNAUTHORIZED/other-room tests to router suites.
 
 ## Caller types
 
