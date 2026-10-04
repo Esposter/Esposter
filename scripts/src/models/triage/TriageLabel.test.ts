@@ -26,7 +26,9 @@ describe("triageLabel", () => {
     const table = readFileSync(join(REPOSITORY_ROOT, TRIAGE_LABELS_PATH), "utf8");
     const tabledLabels = Array.from(table.matchAll(LABEL_ROW_REGEX), ({ groups }) => groups?.label ?? "");
 
-    expect(Object.values(TriageLabel).toSorted(compareStrings)).toStrictEqual(tabledLabels.toSorted(compareStrings));
+    expect(Object.values(TriageLabel).toSorted((first, second) => compareStrings(first, second))).toStrictEqual(
+      tabledLabels.toSorted((first, second) => compareStrings(first, second)),
+    );
   });
 
   test("names only labels the repository declares", () => {

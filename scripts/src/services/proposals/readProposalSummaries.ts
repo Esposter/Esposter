@@ -17,5 +17,5 @@ export const readProposalSummaries = (): ProposalSummary[] => {
   return paths
     .filter((path) => !path.endsWith("/index.md"))
     .map((path) => getProposalSummary(path, readFileSync(resolve(REPOSITORY_ROOT, path), "utf8"), openRoutes))
-    .toSorted(compareProposalSummaries);
+    .toSorted((firstSummary, secondSummary) => compareProposalSummaries(firstSummary, secondSummary));
 };

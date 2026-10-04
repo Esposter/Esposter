@@ -8,13 +8,7 @@ import { TypeSafeClient } from "@typesafe-ai/sdk";
 // Above it can still make. Built once — the client is a configuration holder, and a gate asked per finding would
 // Otherwise re-read the environment for each. Never built under Vitest: a machine that does hold a key would
 // Otherwise answer every gate's test from the network, which is a flake that also costs money.
-const client =
-  process.env.VITEST === undefined
-    ? getResult(() => new TypeSafeClient()).match(
-        (typeSafeClient) => typeSafeClient,
-        () => undefined,
-      )
-    : undefined;
+const client = process.env.VITEST === undefined ? getResult(() => new TypeSafeClient()).unwrapOr(undefined) : undefined;
 // One round trip per state, however many questions are asked of it: the state is sent once and each answer comes
 // Back under its own key, so a second call for a second question would be the same state paid for twice.
 // Nothing here throws or retries — the SDK retries its own transport, and what it cannot answer is answered a
@@ -34,6 +28,8 @@ export const readAnswers = async <const TQuestions extends Questions>(
       console.info(`jev answered ${Object.keys(questions).length} questions on ${usage.input_tokens} input tokens`);
       return answers;
     })
-    .orTee(console.error)
+    .orTee((error) => {
+      console.error(error);
+    })
     .unwrapOr(undefined);
 };

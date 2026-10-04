@@ -22,12 +22,10 @@ describe(compareProposalSummaries, () => {
     const signalled = { ...summary, path: "c", signals: [ProposalSignal.Server] };
     const larger = { ...summary, keyFileCount: 1, path: "b" };
 
-    expect([unsized, blocked, signalled, larger, summary].toSorted(compareProposalSummaries)).toStrictEqual([
-      summary,
-      larger,
-      signalled,
-      blocked,
-      unsized,
-    ]);
+    expect(
+      [unsized, blocked, signalled, larger, summary].toSorted((firstSummary, secondSummary) =>
+        compareProposalSummaries(firstSummary, secondSummary),
+      ),
+    ).toStrictEqual([summary, larger, signalled, blocked, unsized]);
   });
 });
