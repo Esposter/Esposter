@@ -21,3 +21,12 @@ splits at `services/exec`'s subdirectories.
 | `keyframe-store`                                                                                    | 2026-09-27 · Opus 5.5 |                                                  |
 | `agent-console-server`                                                                              | 2026-09-27 · Opus 5.5 |                                                  |
 | `genshin-persona`                                                                                   | 2026-09-25 · Opus 5.5 | keeps its own `TEST_EPOCH_DATE` — see the README |
+| `genshin-engine`                                                                                    | —                     |                                                  |
+| `genshin-world`                                                                                     | —                     |                                                  |
+| `genshin-interface`                                                                                 | —                     |                                                  |
+| `genshin-text`                                                                                      | —                     |                                                  |
+| `genshin-mods`                                                                                      | —                     |                                                  |
+| `pitch-transcription`                                                                               | —                     |                                                  |
+| `trpc-msw`                                                                                          | —                     |                                                  |
+| `trpc-nuxt-module`                                                                                  | —                     |                                                  |
+| `follow-ups`                                                                                        | —                     |                                                  |

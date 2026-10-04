@@ -3,29 +3,35 @@
 The repo's own scripts and the agent tree — code no product area claims, and the gap the eight product areas
 left when this ledger was written.
 
-| Unit                                                           | Swept                 | Notes                                                        |
-| -------------------------------------------------------------- | --------------------- | ------------------------------------------------------------ |
-| `scripts/src/services/coderabbit/collect`                      | 2026-09-27 · Opus 5.5 |                                                              |
-| `scripts/src/services/coderabbit` — `feedback`, `shared`       | 2026-09-27 · Opus 5.5 |                                                              |
-| `scripts/src/services/sweeps` — the scans                      | 2026-09-27 · Opus 5.5 |                                                              |
-| `scripts/src/services/sweeps` — `ledgerCoverage`, `skillDocs`  | 2026-09-27 · Opus 5.5 |                                                              |
-| `scripts/src/services/outdatedDependencies`                    | 2026-09-27 · Opus 5.5 |                                                              |
-| `scripts/src/services/oxlint`                                  | 2026-09-27 · Opus 5.5 |                                                              |
-| `scripts/src/services/citations`                               | 2026-09-27 · Opus 5.5 |                                                              |
-| `scripts/src/services/shared`, `dependencyGraph`, `updateNode` | 2026-09-27 · Opus 5.5 |                                                              |
-| `scripts/src/models`                                           | 2026-09-27 · Opus 5.5 |                                                              |
-| `scripts/src/workspace`                                        | 2026-09-27 · Opus 5.5 |                                                              |
-| `scripts/src` — the entrypoints                                | 2026-09-27 · Opus 5.5 |                                                              |
-| `scripts/src/outdatedDependencies`                             | 2026-09-27 · Opus 5.5 |                                                              |
-| `scripts/src/oxlint`                                           | 2026-09-27 · Opus 5.5 |                                                              |
-| `scripts/src/updateNode`                                       | 2026-09-27 · Opus 5.5 |                                                              |
-| the repository root — config and Markdown                      | 2026-09-25 · Opus 5.5 | the composite actions already carry what the workflows share |
-| `apps/web/configuration`                                       | 2026-09-27 · Opus 5.5 |                                                              |
-| the app's root config files                                    | 2026-09-25 · Opus 5.5 |                                                              |
-| `content/docs` — the two suites                                | 2026-09-27 · Opus 5.5 |                                                              |
-| `content/docs` — `resource`                                    | 2026-09-27 · Opus 5.5 |                                                              |
-| `content/docs` — `esbabbler`                                   | 2026-09-27 · Opus 5.5 |                                                              |
-| `content/docs` — `architecture`                                | 2026-09-27 · Opus 5.5 |                                                              |
-| `content/docs` — `virrun`                                      | 2026-09-27 · Opus 5.5 |                                                              |
-| `content/docs` — the product areas                             | 2026-09-27 · Opus 5.5 |                                                              |
-| `content/docs` — the rest                                      | 2026-09-27 · Opus 5.5 |                                                              |
+| Unit                                                                                                  | Swept                 | Notes                                                                                               |
+| ----------------------------------------------------------------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/coderabbit/collect`                                                             | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `scripts/src/services/coderabbit` — `feedback`, `shared`                                              | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `scripts/src/services/sweeps` — the scans                                                             | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `scripts/src/services/sweeps` — `ledgerCoverage`, `skillDocs`                                         | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `scripts/src/services/outdatedDependencies`                                                           | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `scripts/src/services/oxlint`                                                                         | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `scripts/src/services/citations`                                                                      | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `scripts/src/services/shared`, `dependencyGraph`, `updateNode`                                        | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `scripts/src/models`                                                                                  | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `scripts/src/workspace`                                                                               | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `scripts/src` — the entrypoints                                                                       | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `scripts/src/outdatedDependencies`                                                                    | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `scripts/src/oxlint`                                                                                  | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `scripts/src/updateNode`                                                                              | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| the repository root — config and Markdown                                                             | 2026-09-25 · Opus 5.5 | the composite actions already carry what the workflows share                                        |
+| `apps/web/configuration`                                                                              | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| the app's root config files                                                                           | 2026-09-25 · Opus 5.5 |                                                                                                     |
+| `content/docs` — the two suites                                                                       | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `content/docs` — `resource`                                                                           | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `content/docs` — `esbabbler`                                                                          | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `content/docs` — `architecture`                                                                       | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `content/docs` — `virrun`                                                                             | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `content/docs` — the product areas                                                                    | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `content/docs` — the rest                                                                             | 2026-09-27 · Opus 5.5 |                                                                                                     |
+| `scripts/src/services/genshinParity/commands`, `scripts/src/genshinParity`                            | —                     |                                                                                                     |
+| `scripts/src/services/genshinParity/*`                                                                | —                     | one flat folder past what a pass reads: split by the command each file serves before the first pass |
+| `scripts/src/services/genshinAssets/commands`, `scripts/src/genshinAssets`                            | —                     |                                                                                                     |
+| `scripts/src/services/genshinAssets/*`                                                                | —                     | one flat folder past what a pass reads: split by the command each file serves before the first pass |
+| `scripts/src/services/genshinText`, `scripts/src/genshinText`                                         | —                     |                                                                                                     |
+| `scripts/src/services` — `identifiers`, `jev`, `proposals`, `queue`, `skills`, `triage`, `voiceMatch` | —                     |                                                                                                     |

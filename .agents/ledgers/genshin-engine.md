@@ -1,0 +1,17 @@
+# Genshin engine
+
+The engine's generators, materials and frame, and the world package that builds the game's regions on it.
+
+| Unit                                                                                                                                                                                                                             | Swept | Notes |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | ----- |
+| `packages/genshin-engine/src/atmosphere`                                                                                                                                                                                         | —     |       |
+| `packages/genshin-engine/src/terrain`, `packages/genshin-engine/src/streaming`, `packages/genshin-engine/src/water`, `packages/genshin-engine/src/world`                                                                         | —     |       |
+| `packages/genshin-engine/src/audio`                                                                                                                                                                                              | —     |       |
+| `packages/genshin-engine/src/post`, `packages/genshin-engine/src/nodes`, `packages/genshin-engine/src/materials`, `packages/genshin-engine/src/renderer`                                                                         | —     |       |
+| `packages/genshin-engine/src/vegetation`, `packages/genshin-engine/src/kits`, `packages/genshin-engine/src/wind`                                                                                                                 | —     |       |
+| `packages/genshin-engine/*`, `packages/genshin-engine/src/*`, `packages/genshin-engine/src/clock`, `packages/genshin-engine/src/noise`, `packages/genshin-engine/src/random`, `packages/genshin-engine/src/scene`                | —     |       |
+| `packages/genshin-world/src/services/login`                                                                                                                                                                                      | —     |       |
+| `packages/genshin-world/src/components`, `packages/genshin-world/src/composables`                                                                                                                                                | —     |       |
+| `packages/genshin-world/*`, `packages/genshin-world/src/*`, `packages/genshin-world/src/models`, `packages/genshin-world/src/workers`, `packages/genshin-world/src/services` — `loading`, `scene`, `splash`, `windrise`, `world` | —     |       |
+| `packages/genshin-world/parity`                                                                                                                                                                                                  | —     |       |
+| `apps/web/app/components/Genshin`                                                                                                                                                                                                | —     |       |
