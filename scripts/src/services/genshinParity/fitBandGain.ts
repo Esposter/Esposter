@@ -15,12 +15,12 @@ export const fitBandGain = ({ floor, game, ours }: BandLevels): { distance: numb
     if (!Number.isFinite(level)) continue;
     turns.push([floor - level, -1], [target - level, 2]);
   }
-  turns.sort(([first], [second]) => first - second);
+  const sortedTurns = turns.toSorted(([first], [second]) => first - second);
   const frameCount = Math.max(ours.length, 1);
-  let [position] = turns[0] ?? [0];
+  let [position] = sortedTurns[0] ?? [0];
   let best = { distance: total / frameCount, gain: position };
   let slope = 0;
-  for (const [turn, slopeChange] of turns) {
+  for (const [turn, slopeChange] of sortedTurns) {
     total += slope * (turn - position);
     position = turn;
     if (total / frameCount < best.distance) best = { distance: total / frameCount, gain: turn };

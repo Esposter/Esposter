@@ -421,6 +421,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "unicorn/max-nested-calls": "off",
     "unicorn/no-array-reduce": "off",
     "unicorn/no-array-reverse": ["error", { allowExpressionStatement: false }],
+    "unicorn/no-array-sort": ["error", { allowExpressionStatement: false }],
     "unicorn/no-await-expression-member": "off",
     "unicorn/no-nested-ternary": "off",
     "unicorn/no-null": "off",
