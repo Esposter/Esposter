@@ -15,12 +15,12 @@ Two lenses have no counterpart in diff mode, because a diff supplies them for fr
 
 ## The finding kinds are not interchangeable
 
-| Kind          | Means                                           | Deliverable                                             |
-| ------------- | ----------------------------------------------- | ------------------------------------------------------- |
-| `correctness` | a defect in the code                            | a code fix + a test that fails against the pre-fix code |
-| `conformance` | the code and the record disagree                | fix whichever side is wrong — the evidence says which   |
-| `record-gap`  | the behaviour is deliberate but undocumented    | a docs page, per the `docs` skill                       |
-| `cleanup`     | a CLAUDE.md or skill convention the code breaks | as in diff mode                                         |
+| Kind          | Means                                              | Deliverable                                             |
+| ------------- | -------------------------------------------------- | ------------------------------------------------------- |
+| `correctness` | a defect in the code                               | a code fix + a test that fails against the pre-fix code |
+| `conformance` | the code and the record disagree                   | fix whichever side is wrong — the evidence says which   |
+| `record-gap`  | the behaviour is deliberate but undocumented       | a docs page, per the `docs` skill                       |
+| `cleanup`     | an `AGENTS.md` or skill convention the code breaks | as in diff mode                                         |
 
 Severity for `conformance` and `record-gap` is the cost of the wrong conclusion a reader would draw, which is usually minor — a critical `record-gap` should make you suspicious that it is really a `correctness` finding wearing the wrong label.
 
