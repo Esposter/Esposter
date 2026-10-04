@@ -182,6 +182,11 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
         "no-restricted-globals": [
           "error",
           ...RESTRICTED_GLOBALS.filter((restrictedGlobal) => restrictedGlobal !== USE_ROUTE_GLOBAL),
+          {
+            message:
+              "A page reads its route through its own `useRoute()`, which the typed router narrows to the page's params, and navigates with `navigateTo`. See the routing skill.",
+            name: "useRouter",
+          },
         ],
       },
     },

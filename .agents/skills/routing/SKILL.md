@@ -15,7 +15,7 @@ A link is `NuxtLink`, `NuxtInvisibleLink` or a library component's `:to`, never 
 
 ## Route Reads — a Page's Own `useRoute()`, `useRouter().currentRoute` Everywhere Else
 
-**A page reads its own segments through `useRoute()`** — the one place the call is allowed (the `apps/web/app/pages/**/*.vue` override of `no-restricted-globals`). The typed router narrows a page's no-argument `useRoute()` to that page's params, so `route.params.id` is a `string` with no helper and no cast:
+**A page reads its own segments through `useRoute()`** — the one place the call is allowed, and a page's only route read: the `apps/web/app/pages/**/*.vue` override of `no-restricted-globals` lifts the `useRoute` ban and bans `useRouter` there instead, since a page navigates with `navigateTo`. The typed router narrows a page's no-argument `useRoute()` to that page's params, so `route.params.id` is a `string` with no helper and no cast:
 
 ```ts
 const route = useRoute();
