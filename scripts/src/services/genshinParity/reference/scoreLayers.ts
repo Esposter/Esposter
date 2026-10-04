@@ -9,7 +9,7 @@ import sharp from "sharp";
 
 // A layer's mask at the G-buffer's size laid onto the structure's width its shape and detail are read at, which the
 // Page's whole-pixel viewport can leave a pixel off the G-buffer's
-const toStructureMask = async (mask: Uint8Array, width: number, height: number): Promise<Uint8Array> =>
+const toStructureMask = (mask: Uint8Array, width: number, height: number): Promise<Uint8Array> =>
   sharp(mask, { raw: { channels: 1, height, width } })
     .resize(STRUCTURE_WIDTH, height, { fit: "fill", kernel: "nearest" })
     .toColourspace("b-w")
