@@ -22,7 +22,10 @@ export const fitCommand: SubCommandsDef[string] = defineCommand({
     name: "fit",
   },
   run: async ({ args }) => {
-    const only = args.only?.split(",").filter(Boolean);
+    const only = args.only
+      ?.split(",")
+      .map((name) => name.trim())
+      .filter(Boolean);
     console.log(await DerivedAssetFitMap[parseDerivedAssetComponent(args.component)](only));
   },
 });

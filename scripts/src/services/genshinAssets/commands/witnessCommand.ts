@@ -19,6 +19,10 @@ export const witnessCommand: SubCommandsDef[string] = defineCommand({
     name: "witness",
   },
   run: async ({ args }) => {
-    console.log(await writeWitnessLayout(parseDerivedAssetComponent(args.component), args.roots?.split(",")));
+    const roots = args.roots
+      ?.split(",")
+      .map((root) => root.trim())
+      .filter(Boolean);
+    console.log(await writeWitnessLayout(parseDerivedAssetComponent(args.component), roots));
   },
 });
