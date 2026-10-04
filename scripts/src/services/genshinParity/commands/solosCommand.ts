@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { readLoginMusicSources } from "#src/services/genshinAssets/readLoginMusicSources";
-import { readSampleCatalogue } from "#src/services/genshinAssets/readSampleCatalogue";
-import { scoreSampledSolos } from "#src/services/genshinAssets/scoreSampledSolos";
+import { readLoginMusicSources } from "#src/services/genshinAssets/music/readLoginMusicSources";
+import { readSampleCatalogue } from "#src/services/genshinAssets/music/readSampleCatalogue";
+import { scoreSampledSolos } from "#src/services/genshinAssets/music/scoreSampledSolos";
 import { defineCommand } from "citty";
 
 export const solosCommand: SubCommandsDef[string] = defineCommand({

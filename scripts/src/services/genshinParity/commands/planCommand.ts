@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { PLANS_DIRECTORY } from "#src/services/genshinParity/constants";
-import { readWitnessPlan } from "#src/services/genshinParity/readWitnessPlan";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { PLANS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { readWitnessPlan } from "#src/services/genshinParity/witness/readWitnessPlan";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";

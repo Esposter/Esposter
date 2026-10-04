@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { benchScreen } from "#src/services/genshinParity/benchScreen";
+import { benchScreen } from "#src/services/genshinParity/page/benchScreen";
 import { jsonDateParse } from "@esposter/shared";
 import { defineCommand } from "citty";
 

@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
-import { readPathClearance } from "#src/services/genshinAssets/readPathClearance";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { readPathClearance } from "#src/services/genshinAssets/scene/readPathClearance";
+import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { defineCommand } from "citty";
 

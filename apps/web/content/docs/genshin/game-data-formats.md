@@ -24,15 +24,15 @@ flowchart TD
 
 ### Shaders
 
-- **Each variant's program is a plain DXBC container** inside the shader's raw export (`--types Shader:Export --export_type Raw`), found by its magic and its own stated size (`readDxbcPrograms`). Windows' `d3dcompiler_47` disassembles it (`disassembleDxbcDirectory`). Every variant is also compiled for DirectX 12 as DXIL, which that disassembler cannot read; its DirectX 11 twin says the same.
-- **A shader is exported nameless**, as `Shader #<path ID>` in the asset map. The property names it declares lead its raw export and tell it apart (`readShaderPropertyNames`), and its own name (`Hidden/Internal-DeferredShading`, `miHoYo/Scene/Login Base`) is a string of the same export, which names it without the parser.
-- **A constant buffer's layout is a run of records beside the programs.** A record is its name's length, its name padded to four bytes, then six 32-bit fields: an index, its rows, its columns, a flag, its array length, and last its byte offset. The offset comes last: read as the field before the name, it puts two parameters in one register. Every variant carries its own layout, listing only the parameters it reads, so a program is matched to the layout whose parameters share no byte, name every register it reads and end within the buffer it declares (`readShaderConstantLayouts`, `annotateProgramConstants`). A name's length is read from its own field, since a name ending on a four-byte boundary runs into the next field's bytes when one of them is a word character.
+- **Each variant's program is a plain DXBC container** inside the shader's raw export (`--types Shader:Export --export_type Raw`), found by its magic and its own stated size (`parseDxbcPrograms`). Windows' `d3dcompiler_47` disassembles it (`disassembleDxbcDirectory`). Every variant is also compiled for DirectX 12 as DXIL, which that disassembler cannot read; its DirectX 11 twin says the same.
+- **A shader is exported nameless**, as `Shader #<path ID>` in the asset map. The property names it declares lead its raw export and tell it apart (`parseShaderPropertyNames`), and its own name (`Hidden/Internal-DeferredShading`, `miHoYo/Scene/Login Base`) is a string of the same export, which names it without the parser.
+- **A constant buffer's layout is a run of records beside the programs.** A record is its name's length, its name padded to four bytes, then six 32-bit fields: an index, its rows, its columns, a flag, its array length, and last its byte offset. The offset comes last: read as the field before the name, it puts two parameters in one register. Every variant carries its own layout, listing only the parameters it reads, so a program is matched to the layout whose parameters share no byte, name every register it reads and end within the buffer it declares (`parseShaderConstantLayouts`, `annotateProgramConstants`). A name's length is read from its own field, since a name ending on a four-byte boundary runs into the next field's bytes when one of them is a word character.
 - **Some shaders do not parse in AnimeStudio**, among them the login stone's (`miHoYo/Scene/Login Base`) and the cloud layer's. A type filter with no suffix parses every object before exporting it, and drops one it refuses even from a raw export; the `:Export` suffix writes the objects' bytes unparsed, and their programs read like any other's.
 - **A scene's stone shader writes the G-buffer and lights nothing.** Its light is the deferred pass's, `Hidden/Internal-DeferredShading` in the block `DEFERRED_SHADING_BLOCK` names, which `shaders` reads beside every component's own; a material value is only right once the pass that reads its G-buffer channel is.
 
 ### Materials and textures
 
-- **A material's export is its shader's path ID, its texture slots by path ID and its floats and colours by name** (`readMaterialValues`). A texture slot's path ID names its texture through the asset index.
+- **A material's export is its shader's path ID, its texture slots by path ID and its floats and colours by name** (`toMaterialValues`). A texture slot's path ID names its texture through the asset index.
 - **The environment's mask texture is `SMBE`:** smoothness in red, metalness in green, blue empty, emission in alpha where the material enables it. The diffuse is albedo and nearly neutral, so a surface's warmth is its light.
 - **Grading tables are textures** (`Stages_*_LUT`), but which one a scene uses is set in its post-processing profile, which is fieldless.
 
@@ -94,23 +94,23 @@ The things that each cost a search to find, to reach for first:
 ### Audio
 
 - **The audio is Audiokinetic Wwise's, in packages.** `AudioAssets` holds Wwise packages (`.pck`, an `AKPK` header stating its own size), each a table of sound banks and one of streamed sounds, every entry's offset counted in blocks of its own size (`parseAudioPackageHeader`). The `Banks` packages hold the banks, and the `Music` packages the music's sounds, named only by their ids.
-- **A bank's music is its hierarchy chunk's objects.** Of a bank's chunks (`BKHD`, `DIDX`, `DATA`, `HIRC`), the hierarchy is a count of objects, each a type byte, a size and an id (`readSoundBankMusicObjects`). A track lists its sources and the clip of each it plays, where it starts and what is trimmed from each end; a segment, its tracks, its length and its cues; a playlist, its segments and a tree of items saying the order, how each group plays and how often it loops (`parseMusicHierarchy`, bank version 134).
+- **A bank's music is its hierarchy chunk's objects.** Of a bank's chunks (`BKHD`, `DIDX`, `DATA`, `HIRC`), the hierarchy is a count of objects, each a type byte, a size and an id (`parseSoundBankMusicObjects`). A track lists its sources and the clip of each it plays, where it starts and what is trimmed from each end; a segment, its tracks, its length and its cues; a playlist, its segments and a tree of items saying the order, how each group plays and how often it loops (`parseMusicHierarchy`, bank version 134).
 - **A node's own properties vary in length**, with what is set on it, so a container's children are found as the first count followed by that many ids of the kind it holds, and a playlist's tree is read back from the end of its bytes, where it always sits.
 - **A sound is Wwise's own Vorbis**, which vgmstream decodes, pinned and checked as FFmpeg is (`resolveVgmstream`). Decoded, the music packages run to tens of gigabytes, so a sound is decoded only when a step reads it, and a match keeps only its pitch classes.
 - **Which sound a recording plays is measured**, since a sound has no name: `genshin:assets music` matches a recording's pitch classes against every sound's ([derived assets](/docs/genshin/derived-assets)). What plays it, and when, is then exact, from the hierarchy.
 
 ## Key files
 
-| File                                                              | Role                                                      |
-| :---------------------------------------------------------------- | :-------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/readDxbcPrograms.ts`          | A shader's compiled programs carved out of its raw export |
-| `scripts/src/services/genshinAssets/readShaderConstantLayouts.ts` | A shader's constant buffer layouts                        |
-| `scripts/src/services/genshinAssets/annotateProgramConstants.ts`  | A program headed by what its registers hold               |
-| `scripts/src/services/genshinAssets/readMaterialValues.ts`        | A material's values, textures and shader                  |
-| `scripts/src/services/genshinAssets/readSceneLayout.ts`           | Transforms, meshes and the materials each renderer draws  |
-| `scripts/src/services/genshinAssets/writeComponentInventory.ts`   | Everything a component's export holds, as a report        |
-| `scripts/src/services/genshinAssets/parseAudioPackageHeader.ts`   | A Wwise package's banks and sounds                        |
-| `scripts/src/services/genshinAssets/parseMusicHierarchy.ts`       | The banks' tracks, segments and playlists                 |
+| File                                                                         | Role                                                      |
+| :--------------------------------------------------------------------------- | :-------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/materials/parseDxbcPrograms.ts`          | A shader's compiled programs carved out of its raw export |
+| `scripts/src/services/genshinAssets/materials/parseShaderConstantLayouts.ts` | A shader's constant buffer layouts                        |
+| `scripts/src/services/genshinAssets/materials/annotateProgramConstants.ts`   | A program headed by what its registers hold               |
+| `scripts/src/services/genshinAssets/shared/toMaterialValues.ts`              | A material's values, textures and shader                  |
+| `scripts/src/services/genshinAssets/shared/readSceneLayout.ts`               | Transforms, meshes and the materials each renderer draws  |
+| `scripts/src/services/genshinAssets/materials/writeComponentInventory.ts`    | Everything a component's export holds, as a report        |
+| `scripts/src/services/genshinAssets/music/parseAudioPackageHeader.ts`        | A Wwise package's banks and sounds                        |
+| `scripts/src/services/genshinAssets/music/parseMusicHierarchy.ts`            | The banks' tracks, segments and playlists                 |
 
 ## Sources
 

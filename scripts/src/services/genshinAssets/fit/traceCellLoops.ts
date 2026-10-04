@@ -2,7 +2,7 @@ import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { traceCoveredGrid } from "#src/services/genshinAssets/fit/traceCoveredGrid";
 
 // A bound of many values, reduced rather than spread, since a surface's cells run past the arguments a call can take
-const readBound = (values: readonly number[], pick: (first: number, second: number) => number): number =>
+const computeBound = (values: readonly number[], pick: (first: number, second: number) => number): number =>
   values.reduce((bound, value) => pick(bound, value));
 // The loops round a set of a grid's cells, traced over the cells' own bounds and kept where they enclose at least
 // `minCells`, in the grid's metres from its corner
@@ -19,9 +19,9 @@ export const traceCellLoops = (
   if (cells.length === 0) return [];
   const columns = cells.map((cell) => cell % width);
   const rows = cells.map((cell) => Math.floor(cell / width));
-  const [firstColumn, firstRow] = [readBound(columns, Math.min), readBound(rows, Math.min)];
-  const boundsWidth = readBound(columns, Math.max) - firstColumn + 1;
-  const boundsHeight = readBound(rows, Math.max) - firstRow + 1;
+  const [firstColumn, firstRow] = [computeBound(columns, Math.min), computeBound(rows, Math.min)];
+  const boundsWidth = computeBound(columns, Math.max) - firstColumn + 1;
+  const boundsHeight = computeBound(rows, Math.max) - firstRow + 1;
   const covered = new Uint8Array(boundsWidth * boundsHeight);
   for (const [index, column] of columns.entries())
     covered[((rows[index] ?? 0) - firstRow) * boundsWidth + column - firstColumn] = 1;

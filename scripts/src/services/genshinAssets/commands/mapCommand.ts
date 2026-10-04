@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { buildAssetMap } from "#src/services/genshinAssets/buildAssetMap";
+import { buildAssetMap } from "#src/services/genshinAssets/blocks/buildAssetMap";
 import { defineCommand } from "citty";
 
 export const mapCommand: SubCommandsDef[string] = defineCommand({

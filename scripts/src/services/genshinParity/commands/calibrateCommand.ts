@@ -1,10 +1,10 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { calibrateScene } from "#src/services/genshinParity/calibrateScene";
-import { CAMERA_POSE_AXES, GBUFFER_DIRECTORY } from "#src/services/genshinParity/constants";
-import { readReferenceGbuffer } from "#src/services/genshinParity/readReferenceGbuffer";
-import { toPageCamera } from "#src/services/genshinParity/toPageCamera";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { CAMERA_POSE_AXES, GBUFFER_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { readReferenceGbuffer } from "#src/services/genshinParity/shared/readReferenceGbuffer";
+import { calibrateScene } from "#src/services/genshinParity/witness/calibrateScene";
+import { toPageCamera } from "#src/services/genshinParity/witness/toPageCamera";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { defineCommand } from "citty";
 import { existsSync } from "node:fs";

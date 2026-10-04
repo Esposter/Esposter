@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { CAMERA_POSE_AXES } from "#src/services/genshinParity/constants";
-import { viewScene } from "#src/services/genshinParity/viewScene";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { viewScene } from "#src/services/genshinParity/page/viewScene";
+import { CAMERA_POSE_AXES } from "#src/services/genshinParity/shared/constants";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { jsonDateParse } from "@esposter/shared";
 import { defineCommand } from "citty";

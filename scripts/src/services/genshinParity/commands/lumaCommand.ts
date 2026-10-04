@@ -1,7 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
 import { regionArgs } from "#src/services/genshinParity/commands/regionArgs";
-import { measureLuma } from "#src/services/genshinParity/measureLuma";
+import { measureLuma } from "#src/services/genshinParity/image/measureLuma";
 import { defineCommand } from "citty";
 
 export const lumaCommand: SubCommandsDef[string] = defineCommand({

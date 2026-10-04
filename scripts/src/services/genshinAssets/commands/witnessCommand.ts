@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
-import { writeWitnessLayout } from "#src/services/genshinAssets/writeWitnessLayout";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { writeWitnessLayout } from "#src/services/genshinAssets/scene/writeWitnessLayout";
+import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
 import { parseNames } from "#src/services/shared/parseNames";
 import { defineCommand } from "citty";
 

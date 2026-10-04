@@ -4,7 +4,7 @@ import type { DumpedTransform } from "#src/models/genshinAssets/shared/DumpedTra
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
 
 import { composeInterfaceTree } from "#src/services/genshinAssets/interface/composeInterfaceTree";
-import { readRectTransformLayout } from "#src/services/genshinAssets/interface/readRectTransformLayout";
+import { parseRectTransformLayout } from "#src/services/genshinAssets/interface/parseRectTransformLayout";
 import { GAME_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
@@ -60,7 +60,7 @@ export const extractComponentInterface = async (component: DerivedAssetComponent
         childIds: m_Children.map(({ m_PathID }) => m_PathID),
         fatherId: m_Father.m_PathID,
         gameObjectId: m_GameObject.m_PathID,
-        layout: readRectTransformLayout(raw),
+        layout: parseRectTransformLayout(raw),
         name: m_GameObject.Name,
         scale: [m_LocalScale.X, m_LocalScale.Y],
       };

@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { extractComponent } from "#src/services/genshinAssets/extractComponent";
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { extractComponent } from "#src/services/genshinAssets/blocks/extractComponent";
+import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
 import { defineCommand } from "citty";
 
 export const extractCommand: SubCommandsDef[string] = defineCommand({

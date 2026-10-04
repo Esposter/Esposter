@@ -1,12 +1,16 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { computeChroma } from "#src/services/genshinParity/computeChroma";
-import { LISTEN_BAND_CENTRES, LISTEN_SAMPLE_RATE, LOGIN_MUSIC_SCREEN } from "#src/services/genshinParity/constants";
-import { readAttackShares } from "#src/services/genshinParity/readAttackShares";
-import { readAudibleFrames } from "#src/services/genshinParity/readAudibleFrames";
-import { readBandLevels } from "#src/services/genshinParity/readBandLevels";
-import { renderMusicSegments } from "#src/services/genshinParity/renderMusicSegments";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { computeAttackShares } from "#src/services/genshinParity/music/computeAttackShares";
+import { computeAudibleFrames } from "#src/services/genshinParity/music/computeAudibleFrames";
+import { computeBandLevels } from "#src/services/genshinParity/music/computeBandLevels";
+import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
+import { renderMusicSegments } from "#src/services/genshinParity/music/renderMusicSegments";
+import {
+  LISTEN_BAND_CENTRES,
+  LISTEN_SAMPLE_RATE,
+  LOGIN_MUSIC_SCREEN,
+} from "#src/services/genshinParity/shared/constants";
 import { defineCommand } from "citty";
 
 const formatShare = (share: number): string => `${(100 * share).toFixed(1)}%`;
@@ -19,8 +23,8 @@ export const attacksCommand: SubCommandsDef[string] = defineCommand({
   },
   run: async () => {
     for (const { game, id, ours } of await renderMusicSegments(DerivedAssetComponent.Login, LOGIN_MUSIC_SCREEN)) {
-      const frames = readAudibleFrames(computeChroma(game, LISTEN_SAMPLE_RATE).loudness);
-      const attackSharesList = readAttackShares(readBandLevels(ours, game, LISTEN_SAMPLE_RATE, frames), frames);
+      const frames = computeAudibleFrames(computeChroma(game, LISTEN_SAMPLE_RATE).loudness);
+      const attackSharesList = computeAttackShares(computeBandLevels(ours, game, LISTEN_SAMPLE_RATE, frames), frames);
       console.log(`segment ${id}: share of frames that jump, ours against the game's`);
       for (const [band, centre] of LISTEN_BAND_CENTRES.entries()) {
         const attackShares = attackSharesList[band];

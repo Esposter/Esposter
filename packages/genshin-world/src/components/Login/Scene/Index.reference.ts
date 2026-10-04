@@ -111,7 +111,7 @@ export const reference: ComponentReference = {
       found:
         "The login sets the god rays' colour to black, and the pass mixes the frame toward its colour by the lit air along each ray, so it darkens the sky toward the sun by about a quarter where the solve's own model matches the scene's sky at the frame's middle, and every part behind lit air with it. Drawn in the sun's colour the frame washes pale (FLIP 0.647); with the pass out of the chain the frame stands brighter and scores 0.641 against 0.619 at the same sky, every hour's light having been measured under the darkening",
       search:
-        "The scene's sky read at six points against readSkyWeights at the applied state, then compare login-door-recording with the god rays lit, and with the pass left out of createPostPipeline",
+        "The scene's sky read at six points against computeSkyWeights at the applied state, then compare login-door-recording with the god rays lit, and with the pass left out of createPostPipeline",
     },
     {
       found:
@@ -362,6 +362,17 @@ export const reference: ComponentReference = {
         "The bands' heights solved once for every hour, on the dawn's, the day's, the night's and the door recording's cover at once, each hour's shares solved again under them by turns: the cloud sea from 17.3 to 6.7 metres under the walkway, the middle cumulus from 23.6 under to 9.8 over and the top from 31.6 to 396.9 up, with a residual of 0.27 of the sky's cover over the four (night 0.09, dawn and dusk 0.29, day 0.35, our day's clouds reading clear at the recording's split under 8 degrees). With the dawn's and the dusk's solved shares the door recording's FLIP falls from 0.6006 to 0.5768 and its tone from 12.33% to 11.25%, the others within a thousandth; the day's and the night's solved shares scored their frames 0.010 and 0.017 worse and the wiki's door frame 0.022, so those two keep their former shares. The dusk still covers 8 to 15 degrees at 14% against the recording's 70%, so its colours wait on placement",
       search:
         "genshin:parity cover login-dawn-title,login-day-title,login-door-recording,login-night-title --witness login --heights, then compare --all with every hour's solved shares, then with the day's and the night's former shares",
+    },
+    {
+      found:
+        "Each hour's sky solved over its title frame's clear sky. The dawn's, residual 0.021 over its clear sky, draws 0.094 off its frame against 0.150 before and lowers its FLIP from 0.5012 to 0.4943, so it ships. The day's, residual 0.018, toward the sun a yellow green the frame barely shows, holds its own frame level and leaves the phone's door frame 0.4529 to 0.4628. The night's, residual 0.009 with a moon glow the sky state does not yet set, lowers the clear sky's ceilings and raises the frame from 0.4492 to 0.4627: our clouds' cover near the horizon is a fiftieth of the recording's, and the old brighter sky stood in for them. With the god rays' pass out of the chain every drawn sky but the day's lands nearer its solve (dawn 0.059, night 0.047), the pass mixing the sky toward its blanked colour by the lit air along each ray",
+      search:
+        "genshin:parity sky on login-dawn-title, login-day-title and login-night-title, each solve applied and compare run on every login frame, then sky's drawn line with the god rays' pass left out of createPostPipeline",
+    },
+    {
+      found:
+        "The night's cover solved alone under its solved sky fits worse than what ships (residual 0.218 of the sky's cover), its bands unable to stand clouds low on the horizon without standing more high over it; and clouds there reads a shade of #34012d over 386 of our pixels against 1973 of the recording's, too few to trust",
+      search: "genshin:parity cover login-night-title, then clouds login-night-title, under the night's solved sky",
     },
   ],
   open: [

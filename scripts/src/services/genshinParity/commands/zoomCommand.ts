@@ -1,7 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
 import { regionArgs } from "#src/services/genshinParity/commands/regionArgs";
-import { zoomImage } from "#src/services/genshinParity/zoomImage";
+import { zoomImage } from "#src/services/genshinParity/image/zoomImage";
 import { defineCommand } from "citty";
 
 export const zoomCommand: SubCommandsDef[string] = defineCommand({

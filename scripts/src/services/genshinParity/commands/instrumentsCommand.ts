@@ -1,11 +1,11 @@
 import type { SubCommandsDef } from "citty";
 
-import { SAMPLED_VOICE_REPORTED_COUNT } from "#src/services/genshinAssets/constants";
-import { readLoginMusicSources } from "#src/services/genshinAssets/readLoginMusicSources";
-import { readSampleCatalogue } from "#src/services/genshinAssets/readSampleCatalogue";
-import { solveSampledVoices } from "#src/services/genshinAssets/solveSampledVoices";
-import { LISTEN_BAND_CENTRES } from "#src/services/genshinParity/constants";
-import { formatOnsetAgeSpan } from "#src/services/genshinParity/formatOnsetAgeSpan";
+import { readLoginMusicSources } from "#src/services/genshinAssets/music/readLoginMusicSources";
+import { readSampleCatalogue } from "#src/services/genshinAssets/music/readSampleCatalogue";
+import { solveSampledVoices } from "#src/services/genshinAssets/music/solveSampledVoices";
+import { SAMPLED_VOICE_REPORTED_COUNT } from "#src/services/genshinAssets/shared/constants";
+import { formatOnsetAgeSpan } from "#src/services/genshinParity/music/formatOnsetAgeSpan";
+import { LISTEN_BAND_CENTRES } from "#src/services/genshinParity/shared/constants";
 import { defineCommand } from "citty";
 
 export const instrumentsCommand: SubCommandsDef[string] = defineCommand({

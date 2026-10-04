@@ -1,7 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
-import { captureGame } from "#src/services/genshinParity/captureGame";
-import { RECORD_DEFAULT_SECONDS } from "#src/services/genshinParity/constants";
+import { captureGame } from "#src/services/genshinParity/game/captureGame";
+import { RECORD_DEFAULT_SECONDS } from "#src/services/genshinParity/shared/constants";
 import { defineCommand } from "citty";
 
 export const recordCommand: SubCommandsDef[string] = defineCommand({

@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { captureGame } from "#src/services/genshinParity/captureGame";
+import { captureGame } from "#src/services/genshinParity/game/captureGame";
 import { defineCommand } from "citty";
 
 export const stillCommand: SubCommandsDef[string] = defineCommand({

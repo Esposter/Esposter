@@ -6,8 +6,8 @@ import { rasterizeTopFaces } from "#src/services/genshinAssets/fit/rasterizeTopF
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { toTexel } from "#src/services/genshinAssets/fit/toTexel";
 import { traceCellLoops } from "#src/services/genshinAssets/fit/traceCellLoops";
+import { computeOtsuThreshold } from "#src/services/genshinAssets/shared/computeOtsuThreshold";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
-import { readOtsuThreshold } from "#src/services/genshinAssets/shared/readOtsuThreshold";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { join } from "node:path";
@@ -98,12 +98,12 @@ export const fitLoginDoor = async (
       return [0, 1, 2].map((channel) => toLinear((data[texel + channel] ?? 0) / BYTE)) as Vector;
     });
     const drawn = Array.from({ length: width * height }, (_, cell) => cell).filter((cell) => (tags[cell] ?? -1) >= 0);
-    const readMean = (cells: readonly number[]): Vector =>
+    const computeMean = (cells: readonly number[]): Vector =>
       [0, 1, 2].map(
         (channel) => cells.reduce((sum, cell) => sum + (colors[cell]?.[channel] ?? 0), 0) / Math.max(cells.length, 1),
       ) as Vector;
-    const readShade = (cells: readonly number[], around: readonly number[]): Vector => {
-      const [mean, aroundMean] = [readMean(cells), readMean(around)];
+    const computeShade = (cells: readonly number[], around: readonly number[]): Vector => {
+      const [mean, aroundMean] = [computeMean(cells), computeMean(around)];
       return ([0, 1, 2] as const).map((channel) => roundFitted(mean[channel] / (aroundMean[channel] || 1))) as Vector;
     };
     const traceCells = (cells: readonly number[]): [number, number][][] =>
@@ -122,14 +122,14 @@ export const fitLoginDoor = async (
     const panel = drawn.filter((cell) => tags[cell] === 1 && !checkIsGilded(cell));
     const grey = Float32Array.from(colors, ([red, green, blue]) => (red + green + blue) / 3);
     const blurred = blurWithinTags(grey, tags, { height, radius: RELIEF_BLUR_CELLS, width });
-    const threshold = readOtsuThreshold(panel.map((cell) => (blurred[cell] ?? 0) * BYTE));
+    const threshold = computeOtsuThreshold(panel.map((cell) => (blurred[cell] ?? 0) * BYTE));
     const bands = panel.filter((cell) => (blurred[cell] ?? 0) * BYTE > threshold);
     const bandSet = new Set(bands);
     const gildedSet = new Set(gilded);
     return {
       bands: {
         loops: traceCells(bands),
-        shade: readShade(
+        shade: computeShade(
           bands,
           panel.filter((cell) => !bandSet.has(cell)),
         ),
@@ -137,7 +137,7 @@ export const fitLoginDoor = async (
       corner: [roundFitted(corner[0]), corner[1]],
       gilding: {
         loops: traceCells(gilded),
-        shade: readShade(
+        shade: computeShade(
           gilded,
           drawn.filter((cell) => tags[cell] === 0 && !gildedSet.has(cell)),
         ),

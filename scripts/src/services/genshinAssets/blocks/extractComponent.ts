@@ -17,11 +17,11 @@ import { getComponentDirectory } from "#src/services/genshinAssets/shared/getCom
 import { parseCabMap } from "#src/services/genshinAssets/shared/parseCabMap";
 import { readAssetBlocks } from "#src/services/genshinAssets/shared/readAssetBlocks";
 import { readIndexedAssets } from "#src/services/genshinAssets/shared/readIndexedAssets";
-import { readMaterialValues } from "#src/services/genshinAssets/shared/readMaterialValues";
 import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLayout";
 import { resolveObjectPointer } from "#src/services/genshinAssets/shared/resolveObjectPointer";
 import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
 import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
+import { toMaterialValues } from "#src/services/genshinAssets/shared/toMaterialValues";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { existsSync } from "node:fs";
@@ -113,7 +113,7 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
         if (!material || others.length > 0) return [];
         const path = join(materialDirectory, `${name}.json`);
         if (!existsSync(path)) return [];
-        const { textures: slots } = readMaterialValues(
+        const { textures: slots } = toMaterialValues(
           parseMachineJson<ExportedMaterial>(await readFile(path, "utf8"), reviveSourcePathId),
         );
         return Object.values(slots).flatMap((slot) => {

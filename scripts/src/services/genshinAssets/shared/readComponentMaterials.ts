@@ -3,8 +3,8 @@ import type { ExportedMaterial } from "#src/models/genshinAssets/shared/Exported
 import type { MaterialValues } from "#src/models/genshinAssets/shared/MaterialValues";
 
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
-import { readMaterialValues } from "#src/services/genshinAssets/shared/readMaterialValues";
 import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
+import { toMaterialValues } from "#src/services/genshinAssets/shared/toMaterialValues";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
@@ -17,7 +17,7 @@ export const readComponentMaterials = async (component: DerivedAssetComponent): 
   const names = await readdir(directory);
   return Promise.all(
     names.map(async (name) =>
-      readMaterialValues(
+      toMaterialValues(
         parseMachineJson<ExportedMaterial>(await readFile(join(directory, name), "utf8"), reviveSourcePathId),
       ),
     ),

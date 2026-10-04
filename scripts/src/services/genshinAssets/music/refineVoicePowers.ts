@@ -1,4 +1,4 @@
-import { readMixBandDistance } from "#src/services/genshinAssets/music/readMixBandDistance";
+import { computeMixBandDistance } from "#src/services/genshinAssets/music/computeMixBandDistance";
 import { SAMPLED_VOICE_REFINE_STEPS } from "#src/services/genshinAssets/shared/constants";
 
 // Each voice's power refined against the score's own band distance from a least-squares start: a voice's power doubled
@@ -13,7 +13,7 @@ export const refineVoicePowers = (
   frameCount: number,
 ): number[] => {
   const readDistance = (candidate: number[]) =>
-    readMixBandDistance(voiceEnergies, candidate, targets, floors, frameCount);
+    computeMixBandDistance(voiceEnergies, candidate, targets, floors, frameCount);
   let refined = powers.map((power) => Math.max(power, Math.max(...powers) / 1000));
   let distance = readDistance(refined);
   for (let step = 1; step >= 2 ** -SAMPLED_VOICE_REFINE_STEPS; step /= 2) {

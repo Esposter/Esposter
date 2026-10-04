@@ -1,17 +1,17 @@
 import type { SubCommandsDef } from "citty";
 import type { Music } from "genshin-engine";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { readWorldData } from "#src/services/genshinAssets/readWorldData";
-import { roundMusic } from "#src/services/genshinAssets/roundMusic";
-import { writeWorldData } from "#src/services/genshinAssets/writeWorldData";
-import { computeChroma } from "#src/services/genshinParity/computeChroma";
-import { LISTEN_SAMPLE_RATE, LOGIN_MUSIC_SCREEN } from "#src/services/genshinParity/constants";
-import { fitMusicExpression } from "#src/services/genshinParity/fitMusicExpression";
-import { readAudibleFrames } from "#src/services/genshinParity/readAudibleFrames";
-import { readBandLevels } from "#src/services/genshinParity/readBandLevels";
-import { readFrameSeconds } from "#src/services/genshinParity/readFrameSeconds";
-import { renderMusicSegments } from "#src/services/genshinParity/renderMusicSegments";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
+import { roundMusic } from "#src/services/genshinAssets/shared/roundMusic";
+import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
+import { computeAudibleFrames } from "#src/services/genshinParity/music/computeAudibleFrames";
+import { computeBandLevels } from "#src/services/genshinParity/music/computeBandLevels";
+import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
+import { fitMusicExpression } from "#src/services/genshinParity/music/fitMusicExpression";
+import { getFrameSeconds } from "#src/services/genshinParity/music/getFrameSeconds";
+import { renderMusicSegments } from "#src/services/genshinParity/music/renderMusicSegments";
+import { LISTEN_SAMPLE_RATE, LOGIN_MUSIC_SCREEN } from "#src/services/genshinParity/shared/constants";
 import { defineCommand } from "citty";
 import { MUSIC_EXPRESSION_WINDOW_SECONDS } from "genshin-engine";
 
@@ -29,10 +29,10 @@ export const expressionCommand: SubCommandsDef[string] = defineCommand({
     )) {
       const segment = music.segments[index];
       if (!segment) continue;
-      const frames = readAudibleFrames(computeChroma(game, LISTEN_SAMPLE_RATE).loudness);
+      const frames = computeAudibleFrames(computeChroma(game, LISTEN_SAMPLE_RATE).loudness);
       const { distance, heldOutDistance, windowGains } = fitMusicExpression(
-        readBandLevels(ours, game, LISTEN_SAMPLE_RATE, frames),
-        frames.map((frame) => readFrameSeconds(frame, LISTEN_SAMPLE_RATE)),
+        computeBandLevels(ours, game, LISTEN_SAMPLE_RATE, frames),
+        frames.map((frame) => getFrameSeconds(frame, LISTEN_SAMPLE_RATE)),
         MUSIC_EXPRESSION_WINDOW_SECONDS,
       );
       // Only the windows whose centre the segment reaches, so its last ramp never runs into the next segment

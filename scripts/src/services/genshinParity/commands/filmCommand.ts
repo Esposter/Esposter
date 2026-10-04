@@ -1,7 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { filmScreen } from "#src/services/genshinParity/filmScreen";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { filmScreen } from "#src/services/genshinParity/page/filmScreen";
 import { jsonDateParse } from "@esposter/shared";
 import { defineCommand } from "citty";
 

@@ -1,7 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
 import { regionArgs } from "#src/services/genshinParity/commands/regionArgs";
-import { traceImage } from "#src/services/genshinParity/traceImage";
+import { traceImage } from "#src/services/genshinParity/shared/traceImage";
 import { defineCommand } from "citty";
 
 export const traceCommand: SubCommandsDef[string] = defineCommand({

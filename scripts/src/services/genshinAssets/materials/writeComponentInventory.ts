@@ -70,8 +70,8 @@ export const writeComponentInventory = async (component: DerivedAssetComponent):
   const meshDirectory = join(directory.assets, "Mesh");
   for (const name of await readNames(meshDirectory)) {
     // oxlint-disable-next-line no-await-in-loop -- one mesh is read at a time
-    const obj = await readFile(join(meshDirectory, name), "utf8");
-    const vertexCount = obj.split("\n").filter((line) => line.startsWith("v ")).length;
+    const objText = await readFile(join(meshDirectory, name), "utf8");
+    const vertexCount = objText.split("\n").filter((line) => line.startsWith("v ")).length;
     const mesh = basename(name, ".obj");
     lines.push(`| ${mesh} | ${vertexCount} | ${[...(meshMaterialsMap.get(mesh) ?? [])].join(", ")} |`);
   }

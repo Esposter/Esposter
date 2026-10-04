@@ -1,7 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { solveReferenceFog } from "#src/services/genshinParity/solveReferenceFog";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { solveReferenceFog } from "#src/services/genshinParity/sky/solveReferenceFog";
 import { defineCommand } from "citty";
 
 export const fogCommand: SubCommandsDef[string] = defineCommand({

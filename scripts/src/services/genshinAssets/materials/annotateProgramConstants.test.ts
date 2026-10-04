@@ -32,4 +32,17 @@ describe(annotateProgramConstants, () => {
 
     expect(annotateProgramConstants(assembly, [[{ ...vector, byteOffset: 0, name: "_Tint" }]])).toBe(assembly);
   });
+
+  test("leaves a program whose only covering layout overlaps a matrix's later registers as it is", () => {
+    expect.hasAssertions();
+
+    const layouts = [
+      [
+        { arrayLength: 0, byteOffset: 0, columns: 4, name: "_Matrix", rows: 3 },
+        { ...vector, byteOffset: 16, name: "_Tint" },
+      ],
+    ];
+
+    expect(annotateProgramConstants(assembly, layouts)).toBe(assembly);
+  });
 });

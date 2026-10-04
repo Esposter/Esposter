@@ -6,7 +6,7 @@ import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData"
 
 type Point = [number, number, number];
 // Where an outline's edges cross a depth, the x of each edge that spans it
-const readOutlineCrossings = (outline: readonly [number, number][], depth: number): number[] =>
+const computeOutlineCrossings = (outline: readonly [number, number][], depth: number): number[] =>
   outline.flatMap(([x, z], index) => {
     const [nextX = x, nextZ = z] = outline[(index + 1) % outline.length] ?? [];
     if ((z - depth) * (nextZ - depth) > 0 || z === nextZ) return [];
@@ -54,7 +54,7 @@ export const DerivedAssetArrangementMap: Record<
           ]);
           const [doorX, , doorZ] = position;
           // The walkway's sides under the dais, the outermost of its pieces' straight across its depth
-          const sides = pieces.flatMap(({ outline }) => readOutlineCrossings(outline, doorZ));
+          const sides = pieces.flatMap(({ outline }) => computeOutlineCrossings(outline, doorZ));
           return [doorX - size[0] / 2, Math.min(...sides), Math.max(...sides), doorX + size[0] / 2];
         },
         reference: "login-door-recording, the row of the door's foot",

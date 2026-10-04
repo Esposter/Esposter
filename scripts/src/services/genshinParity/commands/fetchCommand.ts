@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { fetchReferences } from "#src/services/genshinParity/fetchReferences";
+import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { defineCommand } from "citty";
 
 export const fetchCommand: SubCommandsDef[string] = defineCommand({

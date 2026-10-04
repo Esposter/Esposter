@@ -58,11 +58,11 @@ const GILDING_RED_BLUE_RATIO = 1.8;
 const toLinear = (value: number): number => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
 const readTexture = (path: string): Promise<Texture | undefined> =>
   existsSync(path) ? sharp(path).raw().toBuffer({ resolveWithObject: true }) : Promise.resolve(undefined);
-const readTexel = ({ data, info }: Texture, uv: readonly [number, number], channel: number): number => {
+const getTexel = ({ data, info }: Texture, uv: readonly [number, number], channel: number): number => {
   const [column, row] = toTexel(uv, info);
   return (data[(row * info.width + column) * info.channels + channel] ?? 0) / BYTE;
 };
-const readMean = (colors: readonly Vector[], cells: readonly number[]): Vector =>
+const computeMean = (colors: readonly Vector[], cells: readonly number[]): Vector =>
   ([0, 1, 2] as const).map(
     (channel) => cells.reduce((sum, cell) => sum + (colors[cell]?.[channel] ?? 0), 0) / Math.max(cells.length, 1),
   ) as Vector;
@@ -139,9 +139,9 @@ export const fitLoginTowerFacades = async (
       const uv: [number, number] = [values[cell * 2] ?? 0, values[cell * 2 + 1] ?? 0];
       const diffuse = textures?.diffuse;
       colors.push(
-        diffuse ? ([0, 1, 2].map((channel) => toLinear(readTexel(diffuse, uv, channel))) as Vector) : [0, 0, 0],
+        diffuse ? ([0, 1, 2].map((channel) => toLinear(getTexel(diffuse, uv, channel))) as Vector) : [0, 0, 0],
       );
-      metals.push(textures?.mask ? readTexel(textures.mask, uv, 1) : 0);
+      metals.push(textures?.mask ? getTexel(textures.mask, uv, 1) : 0);
     }
     const cells = Array.from({ length: width * height }, (_, cell) => cell);
     const drawn = cells.filter((cell) => (tags[cell] ?? -1) >= 0);
@@ -195,14 +195,14 @@ export const fitLoginTowerFacades = async (
     );
     const raised = stone.filter((cell) => (depths[cell] ?? 0) <= -TOWER_FACADE_SHALLOW_RECESS);
     const face = stone.filter((cell) => Math.abs(depths[cell] ?? 0) < TOWER_FACADE_SHALLOW_RECESS);
-    const mean = readMean(colors, face);
+    const mean = computeMean(colors, face);
     const faceBandMap = Map.groupBy(face, (cell) => toBand(cell));
     // The face's tone run by run of its height, a band merged into the one below while its tone holds
     const bands: TowerFacade["bands"] = [];
     for (let band = 0; band < bandCount; band++) {
       const bandCells = faceBandMap.get(band);
       if (!bandCells) continue;
-      const shade = toShade(readMean(colors, bandCells), mean);
+      const shade = toShade(computeMean(colors, bandCells), mean);
       const from = roundFitted(band * bandRows * TOWER_FACADE_CELL_SIZE);
       const to = roundFitted(Math.min((band + 1) * bandRows, height) * TOWER_FACADE_CELL_SIZE);
       const last = bands.at(-1);
@@ -214,19 +214,19 @@ export const fitLoginTowerFacades = async (
       else bands.push({ from, shade, to });
     }
     // The paint on the face: a cell darker or lighter than its band's mean by the paint's contrast
-    const readLuminance = (cell: number): number => {
+    const getLuminance = (cell: number): number => {
       const [red = 0, green = 0, blue = 0] = colors[cell] ?? [];
       return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
     };
     const bandLuminanceMap = new Map(
       Array.from(faceBandMap, ([band, bandCells]) => [
         band,
-        bandCells.reduce((sum, cell) => sum + readLuminance(cell), 0) / bandCells.length,
+        bandCells.reduce((sum, cell) => sum + getLuminance(cell), 0) / bandCells.length,
       ]),
     );
-    const readContrast = (cell: number): number => readLuminance(cell) / (bandLuminanceMap.get(toBand(cell)) || 1) - 1;
-    const darkPaint = face.filter((cell) => readContrast(cell) < -TOWER_FACADE_PAINT_CONTRAST);
-    const lightPaint = face.filter((cell) => readContrast(cell) > TOWER_FACADE_PAINT_CONTRAST);
+    const getContrast = (cell: number): number => getLuminance(cell) / (bandLuminanceMap.get(toBand(cell)) || 1) - 1;
+    const darkPaint = face.filter((cell) => getContrast(cell) < -TOWER_FACADE_PAINT_CONTRAST);
+    const lightPaint = face.filter((cell) => getContrast(cell) > TOWER_FACADE_PAINT_CONTRAST);
     const trace = (layerCells: readonly number[]): [number, number][][] =>
       traceCellLoops(layerCells, {
         cellSize: TOWER_FACADE_CELL_SIZE,
@@ -238,7 +238,7 @@ export const fitLoginTowerFacades = async (
     const toLayer = (layerCells: readonly number[], depth: number): FacadeLayer => ({
       depth,
       loops: trace(layerCells),
-      shade: toShade(readMean(colors, layerCells), mean),
+      shade: toShade(computeMean(colors, layerCells), mean),
     });
     facades[tower] = {
       bands,

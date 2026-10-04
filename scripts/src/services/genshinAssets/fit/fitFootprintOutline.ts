@@ -20,7 +20,7 @@ export const fitFootprintOutline = (
     }
   // Each row's outermost edges by the z it is drawn at
   const rows = new Map<number, [number, number]>();
-  const readRow = (z: number, drawnZ: number): void => {
+  const traceRow = (z: number, drawnZ: number): void => {
     for (const triangle of triangles) {
       // Where the row's line crosses each edge of the triangle
       const crossings: number[] = [];
@@ -35,10 +35,10 @@ export const fitFootprintOutline = (
       rows.set(drawnZ, [Math.min(left, ...crossings), Math.max(right, ...crossings)]);
     }
   };
-  readRow(first + END_INSET, first);
+  traceRow(first + END_INSET, first);
   for (let row = Math.ceil(first / cellSize); row * cellSize < last; row++)
-    if (row * cellSize > first) readRow(row * cellSize, row * cellSize);
-  readRow(last - END_INSET, last);
+    if (row * cellSize > first) traceRow(row * cellSize, row * cellSize);
+  traceRow(last - END_INSET, last);
   const ordered = [...rows.entries()].toSorted(([a], [b]) => a - b);
   const outline: [number, number][] = [
     ...ordered.map(([z, [, right]]): [number, number] => [right, z]),

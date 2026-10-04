@@ -3,9 +3,9 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import { annotateProgramConstants } from "#src/services/genshinAssets/materials/annotateProgramConstants";
 import { decompileDxbcDirectory } from "#src/services/genshinAssets/materials/decompileDxbcDirectory";
 import { disassembleDxbcDirectory } from "#src/services/genshinAssets/materials/disassembleDxbcDirectory";
-import { readDxbcPrograms } from "#src/services/genshinAssets/materials/readDxbcPrograms";
-import { readShaderConstantLayouts } from "#src/services/genshinAssets/materials/readShaderConstantLayouts";
-import { readShaderPropertyNames } from "#src/services/genshinAssets/materials/readShaderPropertyNames";
+import { parseDxbcPrograms } from "#src/services/genshinAssets/materials/parseDxbcPrograms";
+import { parseShaderConstantLayouts } from "#src/services/genshinAssets/materials/parseShaderConstantLayouts";
+import { parseShaderPropertyNames } from "#src/services/genshinAssets/materials/parseShaderPropertyNames";
 import {
   ANIMESTUDIO_UNPARSED_SUFFIX,
   DEFERRED_SHADING_BLOCK,
@@ -60,8 +60,8 @@ export const extractComponentShaders = async (component: DerivedAssetComponent):
       const programDirectory = join(directory, blockName, basename(file, ".dat"));
       // oxlint-disable-next-line no-await-in-loop -- its programs are written into the folder it disassembles
       await mkdir(programDirectory, { recursive: true });
-      const propertyNames = readShaderPropertyNames(data);
-      const programs = readDxbcPrograms(data);
+      const propertyNames = parseShaderPropertyNames(data);
+      const programs = parseDxbcPrograms(data);
       // oxlint-disable-next-line no-await-in-loop -- as above
       await Promise.all([
         writeFile(join(programDirectory, "properties.txt"), propertyNames.join("\n")),
@@ -81,7 +81,7 @@ export const extractComponentShaders = async (component: DerivedAssetComponent):
         },
       );
       // Each program's assembly and HLSL are headed by what its constant buffer's registers hold, from its shader's layouts
-      const layouts = readShaderConstantLayouts(data);
+      const layouts = parseShaderConstantLayouts(data);
       // oxlint-disable-next-line no-await-in-loop -- as above
       const assemblyNames = (await readdir(programDirectory)).filter(
         (name) => name.endsWith(".asm") || name.endsWith(".hlsl"),

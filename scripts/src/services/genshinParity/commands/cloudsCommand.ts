@@ -1,9 +1,9 @@
 import type { SubCommandsDef } from "citty";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { CLOUD_ELEVATION_BANDS } from "#src/services/genshinParity/constants";
-import { readCloudStatistics } from "#src/services/genshinParity/readCloudStatistics";
-import { solveReferenceClouds } from "#src/services/genshinParity/solveReferenceClouds";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { CLOUD_ELEVATION_BANDS } from "#src/services/genshinParity/shared/constants";
+import { readCloudStatistics } from "#src/services/genshinParity/sky/readCloudStatistics";
+import { solveReferenceClouds } from "#src/services/genshinParity/sky/solveReferenceClouds";
 import { defineCommand } from "citty";
 
 export const cloudsCommand: SubCommandsDef[string] = defineCommand({
