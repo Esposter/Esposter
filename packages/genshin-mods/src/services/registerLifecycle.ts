@@ -112,8 +112,9 @@ export const registerLifecycle = (on: On): void => {
   // While the veil is on, the model is told to write placeholders too, so a reply never holds a value to hide
   on("prompt.compose", async ($, e, next) => {
     const result = await next(e);
-    if (!(await read($, enabledModsAtom)).veil) return result;
-    return { sections: [...result.sections, { id: VEIL_SECTION_ID, scope: "session", text: VEIL_SYSTEM_SECTION }] };
+    if ((await read($, enabledModsAtom)).veil)
+      return { sections: [...result.sections, { id: VEIL_SECTION_ID, scope: "session", text: VEIL_SYSTEM_SECTION }] };
+    else return result;
   });
 
   on("turn.start", (_$, e, next) => {

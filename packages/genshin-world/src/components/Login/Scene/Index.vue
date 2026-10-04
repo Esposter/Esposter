@@ -264,12 +264,13 @@ const isDoorRising = shallowRef(false);
 // Pose, from the moment of the loop the title opens at; a scene mounted at the door starts at rest there. The glide is
 // Kept off Vue's reactivity, and only the numbers the template places by, which stand still when it does, are refs. A
 // Held glide stands where it is held and never moves
-const readStartGlide = (): LoginGlide => {
+const getStartGlide = (): LoginGlide => {
   if (heldScrolled !== undefined) return { scrolled: heldScrolled, speed: 0 };
-  if (checkIsDoorDue()) return { scrolled: LOGIN_GLIDE_DOOR_SCROLLED, speed: 0, stopAt: LOGIN_GLIDE_DOOR_SCROLLED };
-  return { scrolled: LOGIN_GLIDE_TITLE_SCROLLED, speed: LOGIN_GLIDE_TITLE_SPEED };
+  else if (checkIsDoorDue())
+    return { scrolled: LOGIN_GLIDE_DOOR_SCROLLED, speed: 0, stopAt: LOGIN_GLIDE_DOOR_SCROLLED };
+  else return { scrolled: LOGIN_GLIDE_TITLE_SCROLLED, speed: LOGIN_GLIDE_TITLE_SPEED };
 };
-let glide = readStartGlide();
+let glide = getStartGlide();
 // The towers' row, scrolled with the glide each frame off Vue's reactivity, which would otherwise draw the template anew
 const towers = new Group();
 // How far past its place of rest the door is, riding on the walkway's copy it comes to rest on

@@ -1,12 +1,15 @@
 import type { InterfaceClip } from "#src/models/InterfaceClip";
+import type { InterfaceClipProperty } from "#src/models/InterfaceClipProperty";
 
-import { InterfaceClipProperty } from "#src/models/InterfaceClipProperty";
+import { InterfaceClipProperties } from "#src/models/InterfaceClipProperty";
 
-const PROPERTIES: readonly string[] = Object.values(InterfaceClipProperty);
-const checkIsProperty = (property: string): property is InterfaceClipProperty => PROPERTIES.includes(property);
+// Widened to strings, so a property a fit wrote can be looked up in it
+const interfaceClipPropertyNames: readonly string[] = InterfaceClipProperties;
+const checkIsProperty = (property: string): property is InterfaceClipProperty =>
+  interfaceClipPropertyNames.includes(property);
 // A clip as a fit writes it, its properties plain strings in the JSON, read as an interface clip: a track whose
 // Property is not one a screen draws is dropped rather than cast
-export const readInterfaceClip = ({
+export const toInterfaceClip = ({
   durationMs,
   tracks,
 }: {

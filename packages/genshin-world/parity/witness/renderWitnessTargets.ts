@@ -2,7 +2,7 @@ import type { SceneContext } from "#src/models/scene/SceneContext";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 import type { Node } from "three/webgpu";
 
-import { WitnessTarget } from "#parity/witness/WitnessTarget";
+import { WitnessTarget, WitnessTargets } from "#parity/witness/WitnessTarget";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { Color, FloatType, Layers, Mesh, RenderTarget, Vector2 } from "three";
 import { float, normalWorld, positionView, vec3, vec4 } from "three/tsl";
@@ -26,7 +26,7 @@ let renderTarget: RenderTarget | undefined;
 export const renderWitnessTargets = async (
   witness: SceneWitness,
   context: SceneContext | undefined,
-  requestedTargets: readonly WitnessTarget[] = Object.values(WitnessTarget),
+  requestedTargets: readonly WitnessTarget[] = WitnessTargets,
 ): Promise<{
   families: string[];
   height: number;

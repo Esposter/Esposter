@@ -6,3 +6,5 @@ export enum InterfaceClipProperty {
   X = "x",
   Y = "y",
 }
+
+export const InterfaceClipProperties: readonly InterfaceClipProperty[] = Object.values(InterfaceClipProperty);

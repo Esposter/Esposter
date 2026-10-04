@@ -2,7 +2,7 @@ import { findLargestReading } from "#src/services/findLargestReading";
 import { takeOne } from "@esposter/shared";
 
 // How far a pitch's frame reading rose over both of its last two frames, never under zero
-const readJump = (row: number[], previous: number[], beforePrevious: number[], pitch: number): number => {
+const getJump = (row: number[], previous: number[], beforePrevious: number[], pitch: number): number => {
   const reading = takeOne(row, pitch);
   return Math.max(0, Math.min(reading - takeOne(previous, pitch), reading - takeOne(beforePrevious, pitch)));
 };
@@ -18,7 +18,7 @@ export const inferOnsets = (onsets: number[][], frames: number[][]): number[][] 
     const previous = takeOne(frames, frame - 1);
     const beforePrevious = takeOne(frames, frame - 2);
     for (let pitch = 0; pitch < row.length; pitch++)
-      largestJump = Math.max(largestJump, readJump(row, previous, beforePrevious, pitch));
+      largestJump = Math.max(largestJump, getJump(row, previous, beforePrevious, pitch));
   }
   if (largestJump === 0) return onsets;
   const scale = findLargestReading(onsets) / largestJump;
@@ -26,6 +26,6 @@ export const inferOnsets = (onsets: number[][], frames: number[][]): number[][] 
     const row = takeOne(frames, frame);
     const previous = frame < 2 ? row : takeOne(frames, frame - 1);
     const beforePrevious = frame < 2 ? row : takeOne(frames, frame - 2);
-    return onsetRow.map((reading, pitch) => Math.max(reading, scale * readJump(row, previous, beforePrevious, pitch)));
+    return onsetRow.map((reading, pitch) => Math.max(reading, scale * getJump(row, previous, beforePrevious, pitch)));
   });
 };

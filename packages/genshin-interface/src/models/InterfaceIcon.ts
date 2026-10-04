@@ -6,3 +6,5 @@ export enum InterfaceIcon {
   Repair = "Repair",
   Settings = "Settings",
 }
+
+export const InterfaceIcons: readonly InterfaceIcon[] = Object.values(InterfaceIcon);
