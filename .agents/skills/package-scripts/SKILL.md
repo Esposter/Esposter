@@ -31,7 +31,7 @@ A script that records something to undo later carries one `@TODO:` string in a s
 
 ## Check Suite (after edits)
 
-Once after every edit going out: the tests of what the change touched, as package-relative paths — never the whole suite. Typecheck and lint are CI's (`references/check-suite.md`, the `running-checks` skill).
+Once, after all the edits going out together: the tests of what the change touched, as package-relative paths — never the whole suite. Typecheck and lint are CI's (`references/check-suite.md`, the `running-checks` skill).
 
 ## Key Rules
 

@@ -1,6 +1,6 @@
 ---
 name: running-checks
-description: Apply when about to run pnpm typecheck, lint, lint:fix, test, format, build, coverage or bench in any package, when deciding which checks a change owes before its push, and whenever you find yourself waiting on a check's output. Esposter's split between the session and CI — the session runs only the tests of what it touched, in the background, once after every edit going out, and CI runs typecheck, lint, format and the whole suite on the push, its red answered by the collector's repair.
+description: Apply when about to run pnpm typecheck, lint, lint:fix, test, format, build, coverage or bench in any package, when deciding which checks a change owes before its push, and whenever you find yourself waiting on a check's output. Esposter's split between the session and CI — the session runs only the tests of what it touched, in the background, once after all the edits going out together, and CI runs typecheck, lint, format and the whole suite on the push, its red answered by the collector's repair.
 ---
 
 # Running Checks
@@ -40,7 +40,7 @@ process the harness cannot see finish — a dev server, a deploy — never for a
 **Blocking is correct only when the sole remaining step is commit, merge or push.** When it genuinely is the last
 step, end the turn with a one-line status and let the notification re-enter.
 
-## One run, after every edit going out
+## One run, after all the edits going out
 
 The tests run once, after **all** edits going out together — not per sub-task, not per unit. Each run re-pays a
 fixed startup cost, and nothing is learned at chunk 3 that chunk 7 won't also reveal. Commit per coherent chunk
