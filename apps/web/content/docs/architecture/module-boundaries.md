@@ -39,7 +39,7 @@ An `overrides` entry in the root `oxlint.config.ts` scopes `no-restricted-import
 
 Two things about that entry are easy to get wrong. Oxlint's path globs do not cross `/`, so the pattern must be `@/**` and never `@/*`. And an `overrides` entry **replaces** a rule's options rather than merging with them, so the repo-wide `node:crypto` ban has to be restated inside the override or it silently stops applying to `shared/`.
 
-The server direction is deliberately not banned. A handful of `shared/` modules reach into `@@/server` for a router's inferred types or to register a test double, which costs nothing at runtime.
+The server direction is deliberately not banned. A handful of `shared/` modules reach into `#server` for a router's inferred types or to register a test double, which costs nothing at runtime.
 
 Nor does the rule reach `scripts/`. The Tiled and Phaser code generators import from `@/` for the tilemap property models they emit against — Node processes reading the browser tree, which never enters either runtime graph.
 

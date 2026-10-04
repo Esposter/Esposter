@@ -1,6 +1,6 @@
 import type { AzureContainer, Database, StorageLedgerEntryInStorage, UserInAuth } from "@esposter/db-schema";
 
-import { emitStorageUsage } from "@@/server/services/storage/emitStorageUsage";
+import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
 import { chargeStorageLedgerEntry } from "@esposter/db";
 
 export const chargeAndEmitStorageLedgerEntry = async (

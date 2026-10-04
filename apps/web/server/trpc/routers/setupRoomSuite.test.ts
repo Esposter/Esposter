@@ -1,12 +1,12 @@
-import type { Context } from "@@/server/trpc/context";
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { Context } from "#server/trpc/context";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/context.test";
-import { createRoomMember } from "@@/server/trpc/routers/createRoomMember.test";
-import { roleRouter } from "@@/server/trpc/routers/role";
-import { roomRouter } from "@@/server/trpc/routers/room";
+import { createCallerFactory } from "#server/trpc";
+import { createMockContext } from "#server/trpc/context.test";
+import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
+import { roleRouter } from "#server/trpc/routers/role";
+import { roomRouter } from "#server/trpc/routers/room";
 import { roomsInMessage } from "@esposter/db-schema";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe } from "vitest";

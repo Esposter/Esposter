@@ -5,9 +5,9 @@ import { createNumberColumn } from "#shared/models/resource/sheet/column/createN
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { getItemId } from "@/services/resource/sheet/getItemId";
 import { useResourceStore } from "@/store/resource";
 import { useOutlierStore } from "@/store/resource/sheet/outlier";

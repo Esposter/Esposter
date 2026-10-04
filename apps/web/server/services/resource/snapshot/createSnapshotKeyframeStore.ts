@@ -1,7 +1,7 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { KeyframeStore } from "keyframe-store";
 
-import { createSnapshotObjectStore } from "@@/server/services/resource/snapshot/createSnapshotObjectStore";
+import { createSnapshotObjectStore } from "#server/services/resource/snapshot/createSnapshotObjectStore";
 import { createKeyframeStore } from "keyframe-store";
 
 // The store over one resource's objects, as every path that writes, reads or collects a version opens it

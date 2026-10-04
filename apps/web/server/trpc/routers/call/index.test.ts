@@ -1,14 +1,14 @@
-import type { Context } from "@@/server/trpc/context";
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { Context } from "#server/trpc/context";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createCallSessionId } from "@@/server/services/message/call/createCallSessionId";
-import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
-import { createCallerFactory } from "@@/server/trpc";
-import { getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
-import { setCallParticipant } from "@@/server/trpc/routers/call/setCallParticipant.test";
-import { setupCallSuite } from "@@/server/trpc/routers/call/setupCallSuite.test";
-import { roomRouter } from "@@/server/trpc/routers/room";
+import { createCallSessionId } from "#server/services/message/call/createCallSessionId";
+import { callEventEmitter } from "#server/services/message/events/callEventEmitter";
+import { createCallerFactory } from "#server/trpc";
+import { getMockSession, mockSessionOnce, replayMockSession } from "#server/trpc/context.test";
+import { setCallParticipant } from "#server/trpc/routers/call/setCallParticipant.test";
+import { setupCallSuite } from "#server/trpc/routers/call/setupCallSuite.test";
+import { roomRouter } from "#server/trpc/routers/room";
 import { ForbiddenError } from "@esposter/shared";
 import { beforeAll, describe, expect, test, vi } from "vitest";
 

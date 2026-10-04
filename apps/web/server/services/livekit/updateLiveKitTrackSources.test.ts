@@ -1,8 +1,8 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import type { RoomServiceClient } from "livekit-server-sdk";
 
-import { SCREEN_SHARE_TRACK_SOURCES } from "@@/server/services/livekit/constants";
-import { updateLiveKitTrackSources } from "@@/server/services/livekit/updateLiveKitTrackSources";
+import { SCREEN_SHARE_TRACK_SOURCES } from "#server/services/livekit/constants";
+import { updateLiveKitTrackSources } from "#server/services/livekit/updateLiveKitTrackSources";
 import { ParticipantPermission, TrackSource } from "livekit-server-sdk";
 import { describe, expect, test, vi } from "vitest";
 
@@ -10,7 +10,7 @@ const { roomServiceClientMock } = vi.hoisted(() => ({
   roomServiceClientMock: {} as { current: Partial<RoomServiceClient> },
 }));
 
-vi.mock(import("@@/server/services/livekit/createLiveKitRoomServiceClient"), () => ({
+vi.mock(import("#server/services/livekit/createLiveKitRoomServiceClient"), () => ({
   createLiveKitRoomServiceClient: () => roomServiceClientMock.current as RoomServiceClient,
 }));
 

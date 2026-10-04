@@ -1,9 +1,9 @@
-import type { Transaction } from "@@/server/models/db/Transaction";
-import type { Context } from "@@/server/trpc/context";
+import type { Transaction } from "#server/models/db/Transaction";
+import type { Context } from "#server/trpc/context";
 import type { ResourceInResource, ResourceVersionInResource } from "@esposter/db-schema";
 
-import { createSnapshotKeyframeStore } from "@@/server/services/resource/snapshot/createSnapshotKeyframeStore";
-import { lockSnapshotObjects } from "@@/server/services/resource/snapshot/lockSnapshotObjects";
+import { createSnapshotKeyframeStore } from "#server/services/resource/snapshot/createSnapshotKeyframeStore";
+import { lockSnapshotObjects } from "#server/services/resource/snapshot/lockSnapshotObjects";
 import { resourceVersionsInResource } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 import { eq } from "drizzle-orm";

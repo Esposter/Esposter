@@ -2,7 +2,7 @@ import type { TodoListResource } from "#shared/models/resource/todoList/TodoList
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { ToData } from "@esposter/shared";
 
-import { useServiceBusSender } from "@@/server/composables/azure/serviceBus/useServiceBusSender";
+import { useServiceBusSender } from "#server/composables/azure/serviceBus/useServiceBusSender";
 import { enqueueTodoReminder } from "@esposter/db";
 import { AzureQueue } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";

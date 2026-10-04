@@ -1,10 +1,10 @@
-import type { Context } from "@@/server/trpc/context";
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { Context } from "#server/trpc/context";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
-import { pushSubscriptionRouter } from "@@/server/trpc/routers/pushSubscription";
+import { createCallerFactory } from "#server/trpc";
+import { createMockContext, getMockSession } from "#server/trpc/context.test";
+import { pushSubscriptionRouter } from "#server/trpc/routers/pushSubscription";
 import { pushSubscriptionsInNotification } from "@esposter/db-schema";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 

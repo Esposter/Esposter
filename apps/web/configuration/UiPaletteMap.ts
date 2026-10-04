@@ -1,8 +1,8 @@
-import type { ResolvedThemeMode } from "../app/models/ui/ResolvedThemeMode";
+import type { ResolvedThemeMode } from "../app/models/ui/ResolvedThemeMode.ts";
 
-import { ThemeMode } from "../app/models/ui/ThemeMode";
-import { UiStyle } from "../app/models/ui/UiStyle";
-import { UiToken } from "../app/models/ui/UiToken";
+import { ThemeMode } from "../app/models/ui/ThemeMode.ts";
+import { UiStyle } from "../app/models/ui/UiStyle.ts";
+import { UiToken } from "../app/models/ui/UiToken.ts";
 
 // The UI library's palette: one entry per token for each design style in each mode. The UnoCSS config reads it as well
 // As the app, and it loads before any alias resolves, so it lives beside it. Every palette uses the same

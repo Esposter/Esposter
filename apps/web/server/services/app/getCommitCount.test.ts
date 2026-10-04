@@ -1,4 +1,4 @@
-import { getCommitCount } from "@@/server/services/app/getCommitCount";
+import { getCommitCount } from "#server/services/app/getCommitCount";
 import { describe, expect, test, vi } from "vitest";
 
 describe(getCommitCount, () => {

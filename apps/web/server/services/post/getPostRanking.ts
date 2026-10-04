@@ -1,4 +1,4 @@
-import { POST_RANKING_AGE_PER_ORDER_OF_MAGNITUDE_MS, POST_RANKING_EPOCH_MS } from "@@/server/services/post/constants";
+import { POST_RANKING_AGE_PER_ORDER_OF_MAGNITUDE_MS, POST_RANKING_EPOCH_MS } from "#server/services/post/constants";
 
 // The sort key a post is stored with, so the feed orders on one indexed column rather than recomputing every
 // Post's score per read. Votes are log-scaled and signed so a controversial post sinks the way an unpopular one

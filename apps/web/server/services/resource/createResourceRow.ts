@@ -1,8 +1,8 @@
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
+import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { ResourceInResource, ResourceTags, ResourceType } from "@esposter/db-schema";
 
-import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
-import { requireMutation } from "@@/server/trpc/guards/requireMutation";
+import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
+import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { DatabaseEntityType, ResourceActivityType, resourcesInResource } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 

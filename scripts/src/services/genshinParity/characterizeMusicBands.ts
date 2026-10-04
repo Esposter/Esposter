@@ -36,10 +36,12 @@ export const characterizeMusicBands = (
   const quiet = Math.max(...loudness) * CHROMA_QUIET_SHARE;
   const loudFrames = [...loudness.keys()].filter((frame) => frame < frameCount && (loudness[frame] ?? 0) >= quiet);
   const readPower = (frame: number, bin: number): number => (magnitudes[frame * binCount + bin] ?? 0) ** 2;
-  const totals = Float64Array.from({ length: frameCount }, (_, frame) =>
-    sum(Array.from({ length: binCount }, (_value, bin) => readPower(frame, bin))),
-  );
-  const checkAttack = (frame: number): boolean =>
+  const totals = Float64Array.from({ length: frameCount }, (_, frame) => {
+    let total = 0;
+    for (let bin = 0; bin < binCount; bin++) total += readPower(frame, bin);
+    return total;
+  });
+  const checkIsAttack = (frame: number): boolean =>
     (totals[frame] ?? 0) > BANDS_ONSET_RISE * (totals[frame - 1] ?? Infinity);
   // Each loud frame's bins a partial holds of a note sounding at its centre
   const partialMasks = new Map(
@@ -72,8 +74,8 @@ export const characterizeMusicBands = (
       attackWeight:
         10 *
         Math.log10(
-          meanOf(loudFrames.filter((frame) => checkAttack(frame))) /
-            meanOf(loudFrames.filter((frame) => !checkAttack(frame))),
+          meanOf(loudFrames.filter((frame) => checkIsAttack(frame))) /
+            meanOf(loudFrames.filter((frame) => !checkIsAttack(frame))),
         ),
       flatness: readMedianFlatness(spectrogram, loudFrames, [low, high]),
       partialShare: bandTotal > 0 ? partialTotal / bandTotal : 0,

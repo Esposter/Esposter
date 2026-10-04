@@ -4,7 +4,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
 import { GeneralNodeType } from "#shared/models/flowchartEditor/node/GeneralNodeType";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { useResourceStore } from "@/store/resource";
@@ -33,7 +33,7 @@ describe(useFlowchartEditorStore, () => {
   let saveResourceContent: ReturnType<typeof vi.fn<() => ResourceInResource>>;
 
   beforeEach(async () => {
-    useRouter().currentRoute.value.params.id = resourceId;
+    Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     content = new FlowchartEditor({ nodes: [createNode()] });
     saveResourceContent = vi.fn<() => ResourceInResource>(() => createResource(1));
     trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));

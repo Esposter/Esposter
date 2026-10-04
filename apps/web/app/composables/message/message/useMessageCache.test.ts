@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { getMockSession } from "#server/trpc/context.test";
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
 import { goOffline } from "@/composables/shared/network.test";
@@ -10,7 +11,6 @@ import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { useDataStore } from "@/store/message/data";
-import { getMockSession } from "@@/server/trpc/context.test";
 import { StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

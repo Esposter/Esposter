@@ -1,6 +1,6 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
-import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
+import { callSessionParticipantMap } from "#server/services/message/call/callSessionParticipantMap";
 import { getOrCreate } from "@esposter/shared";
 
 // Returns the session's participant map, so a caller that needs it back does not re-read a map this just

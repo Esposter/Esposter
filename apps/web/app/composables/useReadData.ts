@@ -1,11 +1,9 @@
 import type { Promisable } from "type-fest";
 
-import { authClient } from "@/services/auth/authClient";
-
 export const useReadData = async (unauthedReader: () => Promisable<void>, authedReader: () => Promise<void>) => {
   // https://antfu.me/posts/async-with-composition-api
   const currentInstance = getCurrentInstance();
-  const { data: session } = await authClient.useSession(useFetch);
+  const { data: session } = await useAuthSession();
   const stop = watch(
     () => session.value,
     async (newSessionData) => {

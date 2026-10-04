@@ -1,12 +1,12 @@
 import type { PublicUser } from "@esposter/db-schema";
 
+import { getFriendshipId } from "#server/services/friend/getFriendshipId";
+import { router } from "#server/trpc";
+import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
+import { requireEntity } from "#server/trpc/guards/requireEntity";
+import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
-import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";
-import { router } from "@@/server/trpc";
-import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
-import { requireEntity } from "@@/server/trpc/guards/requireEntity";
-import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import {
   BlockInSocialRelations,
   blocksInSocial,

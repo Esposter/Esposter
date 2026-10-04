@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 
-import { executeAutomodAction } from "@@/server/services/message/moderation/executeAutomodAction";
-import { getRoomMembershipWhere } from "@@/server/services/room/getRoomMembershipWhere";
-import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
+import { executeAutomodAction } from "#server/services/message/moderation/executeAutomodAction";
+import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
+import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { roomsInMessage, usersToRoomsInMessage, WordFilterAction } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";

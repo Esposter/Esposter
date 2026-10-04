@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useRenameResource } from "@/composables/resource/list/useRenameResource";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test, vi } from "vitest";

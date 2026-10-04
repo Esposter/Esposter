@@ -1,4 +1,4 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 
 // A room runs its own call and one per thread, so a session is addressed by both — the empty root rowKey is
 // The room's own call

@@ -1,7 +1,7 @@
+import type { Context } from "#server/trpc/context";
 import type { RoomMemberAuthority } from "#shared/models/room/RoomMemberAuthority";
-import type { Context } from "@@/server/trpc/context";
 
-import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
+import { getTopRolePosition } from "#server/services/room/rbac/getTopRolePosition";
 
 export const getRoomMemberAuthority = async (
   db: Context["db"],

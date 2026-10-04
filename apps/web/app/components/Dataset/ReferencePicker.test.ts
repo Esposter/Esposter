@@ -2,10 +2,10 @@
 import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import DatasetReferencePicker from "@/components/Dataset/ReferencePicker.vue";
 import UiSelect from "@/components/Ui/Select/Index.vue";
 import { useSession } from "@/services/auth/authClient.test";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";

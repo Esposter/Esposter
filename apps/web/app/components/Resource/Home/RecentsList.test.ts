@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceHomeList from "@/components/Resource/Home/List.vue";
 import ResourceHomeRecentsList from "@/components/Resource/Home/RecentsList.vue";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRecentStore } from "@/store/resource/recent";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

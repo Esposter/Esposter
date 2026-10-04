@@ -1,9 +1,9 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { ObjectStore } from "keyframe-store";
 
-import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
-import { getSnapshotObjectBlobName } from "@@/server/services/resource/snapshot/getSnapshotObjectBlobName";
+import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
+import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
+import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/getSnapshotObjectBlobName";
 import { checkIsConflict, checkIsNotFound, checkIsPreconditionFailed } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";

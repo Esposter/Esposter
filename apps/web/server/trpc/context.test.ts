@@ -1,14 +1,11 @@
+import type { Context } from "#server/trpc/context";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
-import type { Context } from "@@/server/trpc/context";
 import type { Session, User } from "better-auth";
 
-import { authMocks, createMockSession, insertMockSession } from "@@/server/auth.test";
-import { getRequestHeaders } from "@@/server/services/request/getRequestHeaders";
+import { authMocks, createMockSession, insertMockSession } from "#server/auth.test";
 import { createMockDb as baseCreateMockDb } from "@esposter/db-mock";
 import { usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { IncomingMessage, ServerResponse } from "node:http";
-import { Socket } from "node:net";
 import { describe } from "vitest";
 
 // The identity every test reads to learn who it is acting as. One session for the whole run, unlike the ones a
@@ -73,16 +70,12 @@ export const getMockRevokeSession = () => authMocks.revokeSession;
 
 export const getMockRevokeOtherSessions = () => authMocks.revokeOtherSessions;
 
-export const createMockContext = async (): Promise<Context> => {
-  const request = new IncomingMessage(new Socket());
-  request.headers = { "x-forwarded-for": "::1" };
-  return {
-    db: await createMockDb(),
-    headers: getRequestHeaders(request),
-    req: request,
-    res: new ServerResponse(request),
-  };
-};
+export const createMockContext = async (): Promise<Context> => ({
+  db: await createMockDb(),
+  headers: new Headers(),
+  ipAddress: "::1",
+  responseHeaders: new Headers(),
+});
 
 const createMockDb = async () => {
   const db = await baseCreateMockDb();

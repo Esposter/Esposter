@@ -1,8 +1,8 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { MAX_VIEW_COUNT_ETAG_RETRIES } from "#server/services/resource/constants";
 import { getUtcDateString } from "#shared/util/date/getUtcDateString";
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { MAX_VIEW_COUNT_ETAG_RETRIES } from "@@/server/services/resource/constants";
 import { createEntity, getEntityWithEtag, updateEntity } from "@esposter/db";
 import { AzureTable, ResourceViewEntity } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";

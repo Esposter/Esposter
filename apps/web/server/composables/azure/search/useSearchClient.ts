@@ -1,6 +1,7 @@
 import type { SearchIndex, SearchIndexDocumentMap } from "@esposter/db-schema";
 
 import { AzureKeyCredential, SearchClient } from "@azure/search-documents";
+import { useRuntimeConfig } from "nuxt/server";
 
 export const useSearchClient = <TIndex extends SearchIndex>(
   index: TIndex,

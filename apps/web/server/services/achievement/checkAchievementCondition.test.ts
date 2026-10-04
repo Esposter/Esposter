@@ -1,6 +1,6 @@
+import { checkAchievementCondition } from "#server/services/achievement/checkAchievementCondition";
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
-import { checkAchievementCondition } from "@@/server/services/achievement/checkAchievementCondition";
 import { BinaryOperator } from "@esposter/azure";
 import { describe, expect, test } from "vitest";
 

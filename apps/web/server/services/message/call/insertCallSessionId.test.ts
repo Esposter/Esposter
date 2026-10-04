@@ -1,7 +1,7 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 
-import { UNIQUE_VIOLATION_ERROR_CODE } from "@@/server/services/db/constants";
-import { insertCallSessionId } from "@@/server/services/message/call/insertCallSessionId";
+import { UNIQUE_VIOLATION_ERROR_CODE } from "#server/services/db/constants";
+import { insertCallSessionId } from "#server/services/message/call/insertCallSessionId";
 import { describe, expect, test } from "vitest";
 
 // Only `returning` is reached, so the chain is stubbed rather than the whole client mocked

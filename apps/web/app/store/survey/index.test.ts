@@ -3,7 +3,7 @@ import type { SurveyResource } from "#shared/models/resource/survey/SurveyResour
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { useSurveyStore } from "@/store/survey";
@@ -29,7 +29,7 @@ describe(useSurveyStore, () => {
   let saveResourceContent: ReturnType<typeof vi.fn<(options: { input: { content: unknown } }) => ResourceInResource>>;
 
   beforeEach(async () => {
-    useRouter().currentRoute.value.params.id = resourceId;
+    Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     content = { model, settings: surveySettingsSchema.parse({}) };
     saveResourceContent = vi.fn<(options: { input: { content: unknown } }) => ResourceInResource>(() =>
       createResource(1),
@@ -87,7 +87,7 @@ describe(useSurveyStore, () => {
     const { loadContent, saveModel } = surveyStore;
     const { model: storedModel } = storeToRefs(surveyStore);
     const save = saveModel(newModel);
-    useRouter().currentRoute.value.params.id = otherResourceId;
+    Object.assign(useRouter().currentRoute.value.params, { id: otherResourceId });
     const resourceStore = useResourceStore();
     const { readResource } = resourceStore;
     await readResource();
@@ -160,7 +160,7 @@ describe(useSurveyStore, () => {
     const pendingLoad = loadContent();
     // A read issued in the same tick would share the held one's batch and settle with it
     await isReadReached;
-    useRouter().currentRoute.value.params.id = otherResourceId;
+    Object.assign(useRouter().currentRoute.value.params, { id: otherResourceId });
     const resourceStore = useResourceStore();
     const { readResource } = resourceStore;
     await readResource();

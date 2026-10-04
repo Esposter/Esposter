@@ -3,8 +3,8 @@ import type { ResourceListItem } from "#shared/models/resource/ResourceListItem"
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useReadResourcesPage } from "@/composables/resource/list/useReadResourcesPage";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { describe, expect, test, vi } from "vitest";
 
 const createOptions = (

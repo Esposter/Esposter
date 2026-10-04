@@ -1,6 +1,6 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { ResourceLiveContentMap } from "@@/server/services/resource/ResourceLiveContentMap";
+import { ResourceLiveContentMap } from "#server/services/resource/ResourceLiveContentMap";
 
 // Re-applies a type's live state over content that came out of a snapshot. Every reconstitution goes through
 // Here, so a new path cannot be the one that forgets, and a type with nothing live pays a map lookup

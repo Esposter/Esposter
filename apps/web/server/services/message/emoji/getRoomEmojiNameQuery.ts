@@ -1,4 +1,4 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 import type { RoomEmojiInMessage } from "@esposter/db-schema";
 
 import { roomEmojisInMessage } from "@esposter/db-schema";

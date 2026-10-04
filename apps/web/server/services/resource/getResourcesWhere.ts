@@ -1,11 +1,11 @@
+import type { Context } from "#server/trpc/context";
 import type { ResourceFilterInput } from "#shared/models/db/resource/ResourceFilterInput";
-import type { Context } from "@@/server/trpc/context";
 
-import { escapeLike } from "@@/server/services/db/escapeLike";
-import { SEARCH_SIMILARITY_THRESHOLD } from "@@/server/services/resource/constants";
-import { getFavoriteJoin } from "@@/server/services/resource/getFavoriteJoin";
-import { getLastAccessedJoin } from "@@/server/services/resource/getLastAccessedJoin";
-import { getSearchSimilarity } from "@@/server/services/resource/getSearchSimilarity";
+import { escapeLike } from "#server/services/db/escapeLike";
+import { SEARCH_SIMILARITY_THRESHOLD } from "#server/services/resource/constants";
+import { getFavoriteJoin } from "#server/services/resource/getFavoriteJoin";
+import { getLastAccessedJoin } from "#server/services/resource/getLastAccessedJoin";
+import { getSearchSimilarity } from "#server/services/resource/getSearchSimilarity";
 import {
   resourceAccessesInResource,
   resourceFavoritesInResource,

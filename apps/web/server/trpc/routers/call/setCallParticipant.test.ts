@@ -1,7 +1,7 @@
-import type { getMockSession } from "@@/server/trpc/context.test";
+import type { getMockSession } from "#server/trpc/context.test";
 
-import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
-import { createParticipant } from "@@/server/services/message/call/createParticipant";
+import { callSessionParticipantMap } from "#server/services/message/call/callSessionParticipantMap";
+import { createParticipant } from "#server/services/message/call/createParticipant";
 import { describe } from "vitest";
 
 // Joining a call is a websocket handshake no caller can drive, so a test that needs someone already in one puts

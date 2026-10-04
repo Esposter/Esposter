@@ -1,8 +1,8 @@
 import type { AzureContainer } from "@esposter/db-schema";
 
-import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { getSaveBlobName } from "@@/server/services/blobState/getSaveBlobName";
-import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
+import { getSaveBlobName } from "#server/services/blobState/getSaveBlobName";
+import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { readJsonBlob } from "@esposter/db";
 import { getResult, jsonDateParse } from "@esposter/shared";
 

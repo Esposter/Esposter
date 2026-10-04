@@ -1,4 +1,4 @@
-import { readMessageSearchDocuments } from "@@/server/services/message/readMessageSearchDocuments";
+import { readMessageSearchDocuments } from "#server/services/message/readMessageSearchDocuments";
 import { CompositeKeyPropertyNames, serializeKey } from "@esposter/azure";
 import { MessageType, SearchIndex, StandardMessageEntity } from "@esposter/db-schema";
 import { MockSearchClient, MockSearchDatabase } from "azure-mock";

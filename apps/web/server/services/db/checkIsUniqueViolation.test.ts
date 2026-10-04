@@ -1,5 +1,5 @@
-import { checkIsUniqueViolation } from "@@/server/services/db/checkIsUniqueViolation";
-import { UNIQUE_VIOLATION_ERROR_CODE } from "@@/server/services/db/constants";
+import { checkIsUniqueViolation } from "#server/services/db/checkIsUniqueViolation";
+import { UNIQUE_VIOLATION_ERROR_CODE } from "#server/services/db/constants";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsUniqueViolation, () => {

@@ -1,6 +1,6 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { getCallBackgroundPrefix } from "@@/server/services/message/call/getCallBackgroundPrefix";
+import { getCallBackgroundPrefix } from "#server/services/message/call/getCallBackgroundPrefix";
 
 // The one place a call background's blob name is spelled. The slot index *is* the name, so the number of
 // Backgrounds a user can hold is bounded by construction rather than by a count anything has to enforce, and

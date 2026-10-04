@@ -1,4 +1,4 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 
 import { getPermissions } from "@esposter/db";
 import { RoomPermission } from "@esposter/db-schema";

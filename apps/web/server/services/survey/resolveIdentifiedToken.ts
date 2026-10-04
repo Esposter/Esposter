@@ -1,8 +1,8 @@
-import type { SurveyResponseModeValidator } from "@@/server/models/survey/SurveyResponseModeValidator";
+import type { SurveyResponseModeValidator } from "#server/models/survey/SurveyResponseModeValidator";
 import type { Clause } from "@esposter/azure";
 
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { getInvalidParticipantTokenError } from "@@/server/services/survey/getInvalidParticipantTokenError";
+import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { getInvalidParticipantTokenError } from "#server/services/survey/getInvalidParticipantTokenError";
 import { BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
 import { getTopNEntities } from "@esposter/db";
 import { AzureTable, ProgramParticipantEntity, ResourceType } from "@esposter/db-schema";

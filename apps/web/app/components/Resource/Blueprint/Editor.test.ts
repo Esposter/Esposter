@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceBlueprintEditor from "@/components/Resource/Blueprint/Editor.vue";
 import { createEmptyBlueprint } from "@/services/resource/blueprint/createEmptyBlueprint";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
@@ -13,7 +13,7 @@ describe("resourceBlueprintEditor", () => {
   const resourceId = crypto.randomUUID();
 
   beforeEach(async () => {
-    useRouter().currentRoute.value.params.id = resourceId;
+    Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     trpcMsw.resource.readResource.query(() => ({
       ...createResourceListItem({ id: resourceId, type: ResourceType.Blueprint }),
       publication: null,

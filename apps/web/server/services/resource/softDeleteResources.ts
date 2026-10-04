@@ -1,4 +1,4 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 

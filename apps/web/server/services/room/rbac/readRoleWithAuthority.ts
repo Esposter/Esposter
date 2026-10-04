@@ -1,7 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 
-import { getRoomMemberAuthority } from "@@/server/services/room/rbac/getRoomMemberAuthority";
-import { requireEntity } from "@@/server/trpc/guards/requireEntity";
+import { getRoomMemberAuthority } from "#server/services/room/rbac/getRoomMemberAuthority";
+import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 // Every role mutation asks the same two questions — is this role the room's, and what may the actor do to it —

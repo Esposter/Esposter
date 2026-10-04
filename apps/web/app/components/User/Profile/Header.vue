@@ -2,7 +2,6 @@
 import type { PublicUser } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { authClient } from "@/services/auth/authClient";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
@@ -11,7 +10,7 @@ interface Props {
 }
 
 const { user, userId } = defineProps<Props>();
-const { data: session } = await authClient.useSession(useFetch);
+const { data: session } = await useAuthSession();
 // Looking at your own profile is the moment the avatar or the biography reads wrong, so the way to act on it is
 // Here rather than a trip to the settings page. The form itself lives there — this is the entry point beside it,
 // Which is where every reference profile puts one

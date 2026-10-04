@@ -1,12 +1,12 @@
 import type { GeneratedProgramParticipants } from "#shared/models/resource/program/GeneratedProgramParticipants";
 import type { ProgramStatus } from "#shared/models/resource/program/ProgramStatus";
 
+import { generateProgramParticipants } from "#server/services/program/generateProgramParticipants";
+import { readProgramStatusRows } from "#server/services/program/readProgramStatusRows";
+import { router } from "#server/trpc";
+import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
+import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
-import { generateProgramParticipants } from "@@/server/services/program/generateProgramParticipants";
-import { readProgramStatusRows } from "@@/server/services/program/readProgramStatusRows";
-import { router } from "@@/server/trpc";
-import { createResourceProcedures } from "@@/server/trpc/procedure/resource/createResourceProcedures";
-import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { ResourceType } from "@esposter/db-schema";
 
 export const programRouter = router({

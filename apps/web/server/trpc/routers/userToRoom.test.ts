@@ -1,15 +1,15 @@
-import type { Context } from "@@/server/trpc/context";
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { Context } from "#server/trpc/context";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { User } from "better-auth";
 
-import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { createMentionMessage } from "@@/server/trpc/routers/createMentionMessage.test";
-import { createRoomMember } from "@@/server/trpc/routers/createRoomMember.test";
-import { messageRouter } from "@@/server/trpc/routers/message";
-import { roomRouter } from "@@/server/trpc/routers/room";
-import { userToRoomRouter } from "@@/server/trpc/routers/userToRoom";
+import { createCallerFactory } from "#server/trpc";
+import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.test";
+import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
+import { messageRouter } from "#server/trpc/routers/message";
+import { roomRouter } from "#server/trpc/routers/room";
+import { userToRoomRouter } from "#server/trpc/routers/userToRoom";
 import { NotificationType, roomsInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";

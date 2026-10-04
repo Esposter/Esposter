@@ -1,11 +1,12 @@
-import { db } from "@@/server/db";
+import { db } from "#server/db";
 import { getSynchronizedFunction } from "@esposter/shared";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
+import { definePlugin } from "nitro";
 
 // A Nitro plugin is a synchronous slot the host neither awaits nor reports a rejection from, so the migration
 // Is fired through the tracked wrapper that owns that shape (/docs/architecture/async-operations)
 // @TODO: https://github.com/nitrojs/nitro/issues/915 — drop `getSynchronizedFunction` once Nitro awaits its plugins
-export default defineNitroPlugin(
+export default definePlugin(
   getSynchronizedFunction(async () => {
     if (import.meta.prerender) return;
 

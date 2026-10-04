@@ -75,6 +75,8 @@ catalog:
   "@nuxt/eslint": ^1.17.0
   "@nuxt/fonts": ^0.14.0
   "@nuxt/image": ^2.1.0
+  # @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — back to ranges, with the Renovate rule that holds the
+  # Aliases, once Nuxt 5 reaches `latest`: until then it ships only as nightly packages
   "@nuxt/kit": npm:@nuxt/kit-nightly@5x
   "@nuxt/nitro-server": npm:@nuxt/nitro-server-nightly@5x
   "@nuxt/schema": npm:@nuxt/schema-nightly@5x
@@ -220,6 +222,7 @@ catalog:
   node-html-parser: ^9.0.4
   node-pty: ^1.1.0
   npm-run-all2: ^9.0.3
+  # @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — back to a range once Nuxt 5 reaches `latest`
   nuxt: npm:nuxt-nightly@5x
   nuxt-security: ^2.6.0
   ohash: ^2.0.12

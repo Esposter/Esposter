@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useDataStore } from "@/store/message/data";
-import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { getRouteParam } from "@/util/router/getRouteParam";
 import { requireRouteParam } from "@/util/router/requireRouteParam";
 
 const { currentRoute } = useRouter();
@@ -10,7 +10,7 @@ const { items } = storeToRefs(dataStore);
 // Components with no `key` override, so Nuxt's default per-path key remounts this on either segment changing
 // And the mounted scroll runs again for the message the new path names
 const roomId = requireRouteParam(currentRoute.value.params, "id");
-const rowKey = getRouteParamString(currentRoute.value.params.rowKey);
+const rowKey = getRouteParam(currentRoute.value.params, "rowKey");
 
 if (rowKey) {
   const scrollToMessage = useScrollToMessage();

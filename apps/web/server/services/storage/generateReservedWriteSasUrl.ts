@@ -1,8 +1,8 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 import type { AzureContainer, UserInAuth } from "@esposter/db-schema";
 
-import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { reserveStorageBytes } from "@@/server/services/storage/reserveStorageBytes";
+import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
+import { reserveStorageBytes } from "#server/services/storage/reserveStorageBytes";
 import { generateWriteSasUrl } from "@esposter/db";
 
 // The upload chokepoint for a write target whose name the server fixes rather than mints per upload — a

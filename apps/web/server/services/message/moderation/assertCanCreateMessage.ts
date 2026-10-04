@@ -1,6 +1,6 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 
-import { rejectMessageCreation } from "@@/server/services/message/moderation/rejectMessageCreation";
+import { rejectMessageCreation } from "#server/services/message/moderation/rejectMessageCreation";
 import { getMessageCreationRejection } from "@esposter/db";
 
 // The tRPC face of the shared message-creation rules — the decision itself lives in `@esposter/db` so the

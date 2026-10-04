@@ -1,9 +1,9 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { getStagingContentBlobName } from "@@/server/services/resource/getStagingContentBlobName";
-import { emitStorageUsage } from "@@/server/services/storage/emitStorageUsage";
+import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
+import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
+import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
 import { deleteStorageBlobs } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";

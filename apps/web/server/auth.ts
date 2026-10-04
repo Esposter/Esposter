@@ -1,8 +1,8 @@
-import { db } from "@@/server/db";
-import { apiKeyPlugin } from "@@/server/services/auth/apiKeyPlugin";
-import { authModelOptions } from "@@/server/services/auth/authModelOptions";
-import { drizzleAdapterConfiguration } from "@@/server/services/auth/drizzleAdapterConfiguration";
-import { standardRateLimiter } from "@@/server/services/rateLimiter/standardRateLimiter";
+import { db } from "#server/db";
+import { apiKeyPlugin } from "#server/services/auth/apiKeyPlugin";
+import { authModelOptions } from "#server/services/auth/authModelOptions";
+import { drizzleAdapterConfiguration } from "#server/services/auth/drizzleAdapterConfiguration";
+import { standardRateLimiter } from "#server/services/rateLimiter/standardRateLimiter";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import { selectUserInAuthSchema } from "@esposter/db-schema";
 import { betterAuth } from "better-auth";

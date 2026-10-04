@@ -1,7 +1,7 @@
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
+import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { messageEventEmitter } from "#server/services/message/events/messageEventEmitter";
 import { createMessage } from "@esposter/db";
 import { AzureTable, MessageType } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";

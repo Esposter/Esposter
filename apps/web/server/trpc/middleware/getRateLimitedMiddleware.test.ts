@@ -1,22 +1,20 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 
-import { authMocks } from "@@/server/auth.test";
-import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
-import { getAgentSessionPayload } from "@@/server/services/auth/getAgentSessionPayload";
-import { RateLimiterMap } from "@@/server/services/rateLimiter/RateLimiterMap";
-import { createCallerFactory, publicProcedure, router } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockNoSessionOnce } from "@@/server/trpc/context.test";
-import { getRateLimitedMiddleware } from "@@/server/trpc/middleware/getRateLimitedMiddleware";
+import { authMocks } from "#server/auth.test";
+import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
+import { getAgentSessionPayload } from "#server/services/auth/getAgentSessionPayload";
+import { RateLimiterMap } from "#server/services/rateLimiter/RateLimiterMap";
+import { createCallerFactory, publicProcedure, router } from "#server/trpc";
+import { createMockContext, getMockSession, mockNoSessionOnce } from "#server/trpc/context.test";
+import { getRateLimitedMiddleware } from "#server/trpc/middleware/getRateLimitedMiddleware";
 import { noop } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-// The middleware only enforces in production, and the branch under test is the one taken when no address can be
-// Resolved — both are module-level facts, so they are stubbed rather than simulated.
+// The middleware only enforces in production, a module-level fact, so it is stubbed rather than simulated
 vi.mock(import("#shared/util/environment/constants"), async (importOriginal) => ({
   ...(await importOriginal()),
   IS_PRODUCTION: true,
 }));
-vi.mock(import("@@/server/services/request/getIpAddress"), () => ({ getIpAddress: () => undefined }));
 
 describe(getRateLimitedMiddleware, () => {
   const testRouter = router({
@@ -28,7 +26,8 @@ describe(getRateLimitedMiddleware, () => {
   let caller: ReturnType<typeof createTestCaller>;
 
   beforeAll(async () => {
-    mockContext = await createMockContext();
+    // The branch under test is the one taken when no address can be resolved
+    mockContext = { ...(await createMockContext()), ipAddress: "" };
     caller = createTestCaller(mockContext);
   });
 

@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { createSurveyInviteBlocks } from "@/services/grapesjs/createSurveyInviteBlocks";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

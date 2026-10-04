@@ -1,5 +1,5 @@
+import { scheduleTodoReminders } from "#server/services/resource/todoList/scheduleTodoReminders";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
-import { scheduleTodoReminders } from "@@/server/services/resource/todoList/scheduleTodoReminders";
 import { AzureQueue } from "@esposter/db-schema";
 import { MockServiceBusDatabase } from "azure-mock";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";

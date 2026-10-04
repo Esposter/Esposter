@@ -3,7 +3,6 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { authClient } from "@/services/auth/authClient";
 import { useRoomDialogStore } from "@/store/message/room/dialog";
 
 interface Props {
@@ -11,7 +10,7 @@ interface Props {
 }
 
 const { room } = defineProps<Props>();
-const { data: session } = await authClient.useSession(useFetch);
+const { data: session } = await useAuthSession();
 const roomDialogStore = useRoomDialogStore();
 const { inviteRoomId } = storeToRefs(roomDialogStore);
 const { hasMore, items, readMoreRoomInvites, readRoomInvites } = useReadRoomInvites(room.id);

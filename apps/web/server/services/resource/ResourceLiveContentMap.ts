@@ -1,7 +1,7 @@
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { reapplySurveyLiveContent } from "@@/server/services/survey/reapplySurveyLiveContent";
+import { reapplySurveyLiveContent } from "#server/services/survey/reapplySurveyLiveContent";
 import { ResourceType } from "@esposter/db-schema";
 
 // Which parts of a type's content are live state rather than snapshot state. A snapshot freezes content, but

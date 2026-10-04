@@ -1,7 +1,7 @@
 import type { TRPCError } from "@trpc/server";
 
-import { INVALID_PARTICIPANT_TOKEN_ERROR_REASON } from "@@/server/services/survey/constants";
-import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
+import { INVALID_PARTICIPANT_TOKEN_ERROR_REASON } from "#server/services/survey/constants";
+import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { AzureEntityType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 

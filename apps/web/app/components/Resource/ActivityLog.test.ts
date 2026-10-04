@@ -31,7 +31,7 @@ describe("resourceActivityLog", () => {
     // Set on the route after the mount, which lands on its own route, and through triggerRef since currentRoute is a
     // ShallowRef
     const router = useRouter();
-    router.currentRoute.value.params.id = resourceId;
+    Object.assign(router.currentRoute.value.params, { id: resourceId });
     triggerRef(router.currentRoute);
     const activityStore = useActivityStore();
     const { readItems } = activityStore;

@@ -1,13 +1,13 @@
-import type { SessionSummary } from "@@/server/models/session/SessionSummary";
+import type { SessionSummary } from "#server/models/session/SessionSummary";
 
+import { auth } from "#server/auth";
+import { closeDeviceConnections } from "#server/services/auth/closeDeviceConnections";
+import { getDeviceLabel } from "#server/services/auth/getDeviceLabel";
+import { readActiveSessions } from "#server/services/auth/readActiveSessions";
+import { router } from "#server/trpc";
+import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
+import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { deleteSessionInputSchema } from "#shared/models/db/session/DeleteSessionInput";
-import { auth } from "@@/server/auth";
-import { closeDeviceConnections } from "@@/server/services/auth/closeDeviceConnections";
-import { getDeviceLabel } from "@@/server/services/auth/getDeviceLabel";
-import { readActiveSessions } from "@@/server/services/auth/readActiveSessions";
-import { router } from "@@/server/trpc";
-import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
-import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const sessionRouter = router({

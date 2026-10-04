@@ -17,7 +17,7 @@ Read when choosing which root script runs a build, the suite, a bench, a depende
 | `pnpm release`               | The whole release, run locally (`SKILL.md`, Settled). Lerna versions EVERY workspace member (`lerna.json`'s `packages` repeats the pnpm globs, or it silently defaults to `packages/*`), while the gates in front of it stay `packages/*`-scoped and publish skips the private ones — `apps/web/content/docs/architecture/monorepo-tooling.md`.             |
 
 `pnpm lint:unused` is knip over the whole workspace — unused files, exports, enum members and dependencies, tuned in
-`knip.json` (components and tool-loaded configs are entries, exported types are the interface-first rule's and never
+`knip.config.ts` (components and tool-loaded configs are entries, exported types are the interface-first rule's and never
 reported), and part of `lint`. A dependency only reached through an auto-import or another package's source is
 listed in `ignoreDependencies`, never kept by an import that exists to satisfy it; a component nothing renders is
 not something knip can see, and `apps/web`'s unrendered-component test is.

@@ -1,10 +1,10 @@
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { emailRouter } from "#server/trpc/routers/email";
+import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
-import { emailRouter } from "@@/server/trpc/routers/email";
-import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import { DatabaseEntityType, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 import { beforeAll, describe, expect, test } from "vitest";

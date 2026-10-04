@@ -2,7 +2,7 @@ import type { TodoListResource } from "#shared/models/resource/todoList/TodoList
 
 import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useTodoListStore } from "@/store/resource/todoList";
-import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { getRouteParam } from "@/util/router/getRouteParam";
 
 // Saves from other devices stream in over onSaveResourceContent, so the item table and calendar
 // Stay live without any polling or manual refresh
@@ -13,7 +13,7 @@ export const useTodoListSubscribables = () => {
   const { storeSaveResourceContent } = todoListStore;
 
   useOnlineSubscribable(
-    () => getRouteParamString(currentRoute.value.params.id),
+    () => getRouteParam(currentRoute.value.params, "id"),
     (id) => {
       if (!id) return undefined;
 

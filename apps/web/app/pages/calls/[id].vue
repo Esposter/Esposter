@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { authClient } from "@/services/auth/authClient";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { getRouteParam } from "@/util/router/getRouteParam";
 import { requireRouteParam } from "@/util/router/requireRouteParam";
 import { DatabaseEntityType, selectCallSessionInMessageSchema } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
@@ -10,15 +10,14 @@ import { RoutePath } from "@esposter/shared";
 definePageMeta({
   middleware: "auth",
   validate: async (route) => {
-    const { id } = route.params;
-    if (typeof id !== "string") return false;
+    const id = getRouteParam(route.params, "id");
     const parsedId = await selectCallSessionInMessageSchema.shape.id.safeParseAsync(id);
     return parsedId.success;
   },
 });
 
 const { currentRoute } = useRouter();
-const { data: session } = await authClient.useSession(useFetch);
+const { data: session } = await useAuthSession();
 const callStore = useCallStore();
 const { activeCallSessionId } = storeToRefs(callStore);
 const knockerStore = useKnockerStore();

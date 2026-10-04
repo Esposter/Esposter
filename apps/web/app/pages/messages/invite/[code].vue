@@ -3,6 +3,7 @@ import { pluralize } from "#shared/util/text/pluralize";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useRoomStore } from "@/store/message/room";
+import { getRouteParam } from "@/util/router/getRouteParam";
 import { requireRouteParam } from "@/util/router/requireRouteParam";
 import { DatabaseEntityType, selectInviteInMessageSchema } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
@@ -10,7 +11,7 @@ import { RoutePath } from "@esposter/shared";
 definePageMeta({
   middleware: "auth",
   validate: async (route) => {
-    const code = route.params.code;
+    const code = getRouteParam(route.params, "code");
     const parsedCode = await selectInviteInMessageSchema.shape.id.safeParseAsync(code);
     return parsedCode.success;
   },

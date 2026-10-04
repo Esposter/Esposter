@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { authClient } from "@/services/auth/authClient";
 import { useAlertStore } from "@/store/alert";
 import { useClipboardStore } from "@/store/clipboard";
 
-const { data: session } = await authClient.useSession(useFetch);
+const { data: session } = await useAuthSession();
 const alertStore = useAlertStore();
 const { alerts } = storeToRefs(alertStore);
 const { dismissAlert } = alertStore;

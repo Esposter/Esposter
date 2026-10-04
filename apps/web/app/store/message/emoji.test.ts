@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 
+import { getMockSession } from "#server/trpc/context.test";
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { useSession } from "@/services/auth/authClient.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useEmojiStore } from "@/store/message/emoji";
-import { getMockSession } from "@@/server/trpc/context.test";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { MockContainerDatabase } from "azure-mock";

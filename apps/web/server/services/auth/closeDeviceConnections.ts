@@ -1,7 +1,7 @@
 import type { Device } from "#shared/models/auth/Device";
 
-import { useWebPubSubServiceClient } from "@@/server/composables/azure/webPubSub/useWebPubSubServiceClient";
-import { getDeviceId } from "@@/server/services/auth/getDeviceId";
+import { useWebPubSubServiceClient } from "#server/composables/azure/webPubSub/useWebPubSubServiceClient";
+import { getDeviceId } from "#server/services/auth/getDeviceId";
 import { AzureWebPubSubHub } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 

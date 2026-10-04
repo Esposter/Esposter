@@ -34,5 +34,5 @@ export const fitInterfaceRects = (root: InterfaceNode): Record<string, FittedInt
       ? []
       : children.flatMap((child) => toEntries(child))),
   ];
-  return Object.fromEntries(root.children.flatMap(toEntries));
+  return Object.fromEntries(root.children.flatMap((child) => toEntries(child)));
 };

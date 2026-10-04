@@ -1,7 +1,7 @@
-import type { DatasetProvider } from "@@/server/models/dataset/DatasetProvider";
+import type { DatasetProvider } from "#server/models/dataset/DatasetProvider";
 
-import { readSurveyResponseDatasetSource } from "@@/server/services/dataset/surveyResponses/readSurveyResponseDatasetSource";
-import { toSurveyResponseDatasetRow } from "@@/server/services/dataset/surveyResponses/toSurveyResponseDatasetRow";
+import { readSurveyResponseDatasetSource } from "#server/services/dataset/surveyResponses/readSurveyResponseDatasetSource";
+import { toSurveyResponseDatasetRow } from "#server/services/dataset/surveyResponses/toSurveyResponseDatasetRow";
 
 export const readSurveyResponsesDataset: DatasetProvider["read"] = async (_db, { id }) => {
   const { columns, surveyResponses, totalRows } = await readSurveyResponseDatasetSource(id);

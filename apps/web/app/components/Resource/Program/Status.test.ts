@@ -2,9 +2,9 @@
 import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramStatusRow";
 
 import { MimeType } from "#shared/models/file/MimeType";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceProgramStatus from "@/components/Resource/Program/Status.vue";
 import { downloadFile } from "@/services/app/downloadFile";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
@@ -26,7 +26,7 @@ describe("resourceProgramStatus", () => {
   const surveyId = crypto.randomUUID();
 
   beforeEach(async () => {
-    useRouter().currentRoute.value.params.id = resourceId;
+    Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     trpcMsw.resource.readResource.query(() => ({ ...resource, publication: null }));
     trpcMsw.program.readResourceContent.query(() => ({ emailId: "", keyColumn, surveyId }));
     // The page reads the row before any blade mounts, and a content load reads only the blob

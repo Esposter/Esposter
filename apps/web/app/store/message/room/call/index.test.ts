@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import { getMockSession } from "#server/trpc/context.test";
 import { useSession } from "@/services/auth/authClient.test";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
@@ -7,7 +8,6 @@ import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
-import { getMockSession } from "@@/server/trpc/context.test";
 import { AdminActionType } from "@esposter/db-schema";
 import { RoutePath, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";

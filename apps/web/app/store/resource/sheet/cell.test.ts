@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { useResourceStore } from "@/store/resource";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { describe, expect, test } from "vitest";

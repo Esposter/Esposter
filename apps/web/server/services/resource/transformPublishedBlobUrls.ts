@@ -1,8 +1,8 @@
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
+import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
-import { createSnapshotAssetsDirectoryName } from "@@/server/services/resource/snapshot/createSnapshotAssetsDirectoryName";
+import { cloneContentAssets } from "#server/services/resource/cloneContentAssets";
+import { createSnapshotAssetsDirectoryName } from "#server/services/resource/snapshot/createSnapshotAssetsDirectoryName";
 import { SnapshotChannel } from "@esposter/db-schema";
 
 // Published snapshots must survive the owner deleting/replacing working-copy assets, so the referenced

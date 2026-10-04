@@ -1,9 +1,9 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { CompositeKey } from "@esposter/azure";
 
+import { getCursorWhereAzureTable } from "#server/services/pagination/cursor/getCursorWhereAzureTable";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
-import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
 import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { describe, expect, test } from "vitest";
 

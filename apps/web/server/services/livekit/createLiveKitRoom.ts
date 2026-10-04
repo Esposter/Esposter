@@ -1,5 +1,5 @@
-import { LIVE_KIT_ROOM_EMPTY_TIMEOUT_SECONDS } from "@@/server/services/livekit/constants";
-import { createLiveKitRoomServiceClient } from "@@/server/services/livekit/createLiveKitRoomServiceClient";
+import { LIVE_KIT_ROOM_EMPTY_TIMEOUT_SECONDS } from "#server/services/livekit/constants";
+import { createLiveKitRoomServiceClient } from "#server/services/livekit/createLiveKitRoomServiceClient";
 import { getResultAsync, noop } from "@esposter/shared";
 
 export const createLiveKitRoom = async (callSessionId: string) => {

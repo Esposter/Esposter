@@ -1,10 +1,10 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 
-import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
-import { callStartTimeMap } from "@@/server/services/message/call/callStartTimeMap";
-import { deleteCallParticipant } from "@@/server/services/message/call/deleteCallParticipant";
-import { createSystemRoomMessage } from "@@/server/services/message/createSystemRoomMessage";
-import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
+import { callSessionParticipantMap } from "#server/services/message/call/callSessionParticipantMap";
+import { callStartTimeMap } from "#server/services/message/call/callStartTimeMap";
+import { deleteCallParticipant } from "#server/services/message/call/deleteCallParticipant";
+import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
+import { callEventEmitter } from "#server/services/message/events/callEventEmitter";
 import { MessageType } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 

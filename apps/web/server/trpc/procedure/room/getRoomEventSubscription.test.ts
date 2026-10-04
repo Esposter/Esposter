@@ -1,16 +1,16 @@
+import type { Context } from "#server/trpc/context";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { Device } from "#shared/models/auth/Device";
-import type { Context } from "@@/server/trpc/context";
-import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
-import { roleEventEmitter } from "@@/server/services/role/events/roleEventEmitter";
-import { createCallerFactory } from "@@/server/trpc";
-import { getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";
-import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
-import { messageRouter } from "@@/server/trpc/routers/message";
-import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
+import { messageEventEmitter } from "#server/services/message/events/messageEventEmitter";
+import { roleEventEmitter } from "#server/services/role/events/roleEventEmitter";
+import { createCallerFactory } from "#server/trpc";
+import { getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { getRoomEventSubscription } from "#server/trpc/procedure/room/getRoomEventSubscription";
+import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
+import { messageRouter } from "#server/trpc/routers/message";
+import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 const createDevice = (): Device => ({ sessionId: crypto.randomUUID(), userId: crypto.randomUUID() });

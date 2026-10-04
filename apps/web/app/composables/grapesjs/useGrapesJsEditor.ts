@@ -1,7 +1,6 @@
 import type { ResourceType } from "@esposter/db-schema";
 import type { Editor, EditorConfig, ProjectData } from "grapesjs";
 
-import { authClient } from "@/services/auth/authClient";
 import { GRAPES_JS_EDITOR_CONTAINER_ID } from "@/services/grapesjs/constants";
 import { readUploadFiles } from "@/services/grapesjs/readUploadFiles";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
@@ -37,7 +36,7 @@ export const useGrapesJsEditor = async (
   useAdoptResourceContent(type, async () => {
     await editor.value?.load(undefined, { clear: true });
   });
-  const { data: session } = await authClient.useSession(useFetch);
+  const { data: session } = await useAuthSession();
   const validateFile = useValidateFile();
   // The document stores branch between the authenticated document path and local storage,
   // So a single storage adapter suffices; re-initialize on session change to reload from the right source

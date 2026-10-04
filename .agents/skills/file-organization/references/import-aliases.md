@@ -5,7 +5,8 @@ Read when choosing an import specifier, when the alias ban fires on one, or when
 ## The app's aliases
 
 - `#shared/` — the app's shared directory (`apps/web/shared/`, **not** a `shared/` folder under `app/`); models, services, constants shared between client and server.
-- `@@/` — project root (`apps/web/`); `server/` and other root-level paths.
+- `#server/` — the app's server directory (`apps/web/server/`), the alias Nuxt maps in every app project — the app's, the server's and `shared/`'s. The server project maps no `@@/`, so a server path is always reached through `#server/`.
+- `@@/` — project root (`apps/web/`); root-level paths other than `server/`, such as `configuration/`.
 - `@/` — app source directory (`apps/web/app/`); `composables/`, `components/`, `store/`, `services/`, etc.
 - Never use `~~/` (old Nuxt alias) — replace with `@@/`.
 - Those are the **app's** aliases and Nuxt generates them. Everywhere else — every `packages/*` and the repo-root `scripts/` — a tree addresses its own source through the `#src/*` subpath imports its manifest declares, and oxlint bans `@/` there (the `build` skill, `references/source-exports.md`).

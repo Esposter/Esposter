@@ -1,11 +1,12 @@
 // @vitest-environment nuxt
+import { getRouteParam } from "@/util/router/getRouteParam";
 import { describe, expect, test } from "vitest";
 
 // Every room-scoped store keys its state by the room in the route, so its state only exists once one is current.
 // Set after mounting, which resets the route, and through triggerRef because currentRoute is a shallowRef.
 export const setCurrentRoomId = (roomId: string) => {
   const router = useRouter();
-  router.currentRoute.value.params.id = roomId;
+  Object.assign(router.currentRoute.value.params, { id: roomId });
   triggerRef(router.currentRoute);
 };
 
@@ -17,9 +18,9 @@ describe(setCurrentRoomId, () => {
 
     const roomId = crypto.randomUUID();
     const router = useRouter();
-    const currentRoomId = computed(() => router.currentRoute.value.params.id);
+    const currentRoomId = computed(() => getRouteParam(router.currentRoute.value.params, "id"));
 
-    expect(currentRoomId.value).toBeUndefined();
+    expect(currentRoomId.value).toBe("");
 
     setCurrentRoomId(roomId);
 

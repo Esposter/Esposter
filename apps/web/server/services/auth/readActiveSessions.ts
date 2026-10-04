@@ -1,4 +1,4 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 import type { UserInAuth } from "@esposter/db-schema";
 
 // Better-auth's own `listSessions` sits behind its freshness middleware, which rejects a session older than

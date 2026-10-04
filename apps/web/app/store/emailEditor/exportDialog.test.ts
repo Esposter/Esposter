@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import type { Dataset } from "#shared/models/dataset/Dataset";
 
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
 import { useResourceStore } from "@/store/resource";
 import { describe, expect, test } from "vitest";

@@ -6,7 +6,6 @@ import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getPageIcon } from "@/services/app/getPageIcon";
 import { getPageLabel } from "@/services/app/getPageLabel";
-import { authClient } from "@/services/auth/authClient";
 import { useBookmarkStore } from "@/store/bookmark";
 import { mergeProps } from "vue";
 
@@ -17,7 +16,7 @@ interface Props {
 const { page } = defineProps<Props>();
 const label = computed(() => getPageLabel(page.path, page.title));
 const icon = computed(() => getPageIcon(page));
-const { data: session } = await authClient.useSession(useFetch);
+const { data: session } = await useAuthSession();
 const bookmarkStore = useBookmarkStore();
 const { bookmarkPaths } = storeToRefs(bookmarkStore);
 const { toggleBookmark } = bookmarkStore;

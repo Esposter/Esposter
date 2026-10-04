@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { authClient } from "@/services/auth/authClient";
 
-const { data: session } = await authClient.useSession(useFetch);
+const { data: session } = await useAuthSession();
 const accountCommands = await useAccountCommands();
 </script>
 

@@ -1,5 +1,5 @@
+import { DrizzleLogger } from "#server/db/logger";
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
-import { DrizzleLogger } from "@@/server/db/logger";
 import { relations } from "@esposter/db-schema";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";

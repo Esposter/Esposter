@@ -1,7 +1,7 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 
-import { getMockSession } from "@@/server/trpc/context.test";
-import { createFriends } from "@@/server/trpc/routers/createFriends.test";
+import { getMockSession } from "#server/trpc/context.test";
+import { createFriends } from "#server/trpc/routers/createFriends.test";
 import { describe } from "vitest";
 
 // An accepted friendship between the session user and a fresh one — `createFriends` with both defaults, keyed

@@ -1,15 +1,15 @@
 import type { H3Event } from "nitro/h3";
-import type { AddressInfo } from "node:net";
 
 import { DEFAULT_ENDPOINT } from "#src/runtime/constants";
 import { createTRPCEventHandler } from "#src/runtime/server/createTRPCEventHandler";
 import { createTRPCClient, httpBatchLink, httpLink } from "@trpc/client";
 import { initTRPC } from "@trpc/server";
-import { H3, toNodeHandler } from "nitro/h3";
-import { createServer } from "node:http";
+import { H3 } from "nitro/h3";
 import superjson from "superjson";
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import { z } from "zod";
+
+const createContext = (event: H3Event) => ({ event });
 
 describe(createTRPCEventHandler, () => {
   const t = initTRPC.context<{ event: H3Event }>().create({ transformer: superjson });
@@ -34,7 +34,6 @@ describe(createTRPCEventHandler, () => {
     ),
     write: t.procedure.input(z.string()).mutation(({ input }) => input),
   });
-  const createContext = (event: H3Event) => ({ event });
   // A sub-app keeps the whole path, as Nitro does under an app base url, so the endpoint there carries the base
   const app = new H3()
     .all(`${DEFAULT_ENDPOINT}/**`, createTRPCEventHandler({ createContext, router }))
@@ -45,25 +44,15 @@ describe(createTRPCEventHandler, () => {
         createTRPCEventHandler({ createContext, endpoint: `${baseUrl}${DEFAULT_ENDPOINT}`, router }),
       ),
     );
-  const server = createServer(toNodeHandler(app));
-  let origin = "";
-
-  beforeAll(async () => {
-    await new Promise<void>((resolve) => {
-      server.listen(0, resolve);
-    });
-    origin = `http://localhost:${(server.address() as AddressInfo).port}`;
-  });
-
-  afterAll(() => {
-    server.close();
-  });
+  // The app answers in-process, so a client's abort reaches the handler as the request's own signal
+  const fetchInProcess = (input: Request | string | URL, init?: RequestInit) =>
+    Promise.resolve(app.request(input, init));
 
   test("answers a batch through the transformer in both directions", async () => {
     expect.hasAssertions();
 
     const client = createTRPCClient<typeof router>({
-      links: [httpBatchLink({ transformer: superjson, url: `${origin}${DEFAULT_ENDPOINT}` })],
+      links: [httpBatchLink({ fetch: fetchInProcess, transformer: superjson, url: DEFAULT_ENDPOINT })],
     });
 
     await expect(Promise.all([client.read.query(new Date(0)), client.write.mutate("")])).resolves.toStrictEqual([
@@ -76,7 +65,7 @@ describe(createTRPCEventHandler, () => {
     expect.hasAssertions();
 
     const client = createTRPCClient<typeof router>({
-      links: [httpLink({ transformer: superjson, url: `${origin}${baseUrl}${DEFAULT_ENDPOINT}` })],
+      links: [httpLink({ fetch: fetchInProcess, transformer: superjson, url: `${baseUrl}${DEFAULT_ENDPOINT}` })],
     });
 
     await expect(client.write.mutate("")).resolves.toBe("");
@@ -89,23 +78,23 @@ describe(createTRPCEventHandler, () => {
     abortedWait = Promise.withResolvers<void>();
     const abortController = new AbortController();
     const client = createTRPCClient<typeof router>({
-      links: [httpLink({ transformer: superjson, url: `${origin}${DEFAULT_ENDPOINT}` })],
+      links: [httpLink({ fetch: fetchInProcess, transformer: superjson, url: DEFAULT_ENDPOINT })],
     });
     const request = client.wait.query(undefined, { signal: abortController.signal });
     await startedWait.promise;
     abortController.abort();
 
-    await expect(request).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCClientError: This operation was aborted]`);
     await expect(abortedWait.promise).resolves.toBeUndefined();
+    // In-process there is no socket to drop, so the client reads the answer the procedure gave once it stopped
+    await expect(request).resolves.toBeUndefined();
   });
 
   test("#227 answers with the status a procedure staged on the event", async () => {
     expect.hasAssertions();
 
-    const response = await fetch(`${origin}${DEFAULT_ENDPOINT}/redirect`, {
+    const response = await app.request(`${DEFAULT_ENDPOINT}/redirect`, {
       headers: { "content-type": "application/json" },
       method: "POST",
-      redirect: "manual",
     });
 
     expect(response.status).toBe(302);

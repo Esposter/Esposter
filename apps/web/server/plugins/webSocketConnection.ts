@@ -1,10 +1,11 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 import type { TRPCWebSocketConnection } from "trpc-nuxt-module/runtime/server/models/TRPCWebSocketConnection";
 
-import { createCallerFactory } from "@@/server/trpc";
-import { userRouter } from "@@/server/trpc/routers/user";
+import { createCallerFactory } from "#server/trpc";
+import { userRouter } from "#server/trpc/routers/user";
 import { getResultAsync, noop } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { definePlugin } from "nitro";
 import { WEBSOCKET_CLOSE_HOOK, WEBSOCKET_OPEN_HOOK } from "trpc-nuxt-module/runtime/constants";
 
 const createCaller = createCallerFactory(userRouter);
@@ -20,7 +21,7 @@ const runAsConnection = async (
   });
 };
 
-export default defineNitroPlugin((nitroApp) => {
+export default definePlugin((nitroApp) => {
   nitroApp.hooks.hook(WEBSOCKET_OPEN_HOOK, (connection) => runAsConnection(connection, (caller) => caller.connect()));
   nitroApp.hooks.hook(WEBSOCKET_CLOSE_HOOK, (connection) =>
     runAsConnection(connection, (caller) => caller.disconnect()),

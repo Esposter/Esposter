@@ -1,10 +1,10 @@
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
-import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
+import { todoListRouter } from "#server/trpc/routers/todoList";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
-import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
-import { todoListRouter } from "@@/server/trpc/routers/todoList";
 import { ResourceType } from "@esposter/db-schema";
 import { jsonDateParse, NotFoundError } from "@esposter/shared";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";

@@ -1,9 +1,9 @@
-import type { ConditionalEntityUpdateOptions } from "@@/server/models/azure/table/ConditionalEntityUpdateOptions";
+import type { ConditionalEntityUpdateOptions } from "#server/models/azure/table/ConditionalEntityUpdateOptions";
 import type { AzureEntity, AzureUpdateEntity, CustomTableClient } from "@esposter/db-schema";
 import type { Class } from "type-fest";
 
-import { MAX_ENTITY_ETAG_RETRIES } from "@@/server/services/azure/table/constants";
-import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
+import { MAX_ENTITY_ETAG_RETRIES } from "#server/services/azure/table/constants";
+import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { getEntityWithEtag } from "@esposter/db";
 import { getResultAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";

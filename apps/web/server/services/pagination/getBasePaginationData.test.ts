@@ -1,4 +1,4 @@
-import { getBasePaginationData } from "@@/server/services/pagination/getBasePaginationData";
+import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
 import { describe, expect, test } from "vitest";
 
 describe(getBasePaginationData, () => {

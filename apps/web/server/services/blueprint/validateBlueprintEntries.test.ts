@@ -1,7 +1,7 @@
 import type { BlueprintEntry } from "#shared/models/resource/blueprint/BlueprintEntry";
 
+import { validateBlueprintEntries } from "#server/services/blueprint/validateBlueprintEntries";
 import { buildBlueprintEntryToken } from "#shared/services/resource/blueprint/buildBlueprintEntryToken";
-import { validateBlueprintEntries } from "@@/server/services/blueprint/validateBlueprintEntries";
 import { DatabaseEntityType, RESOURCE_NAME_MAX_LENGTH, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

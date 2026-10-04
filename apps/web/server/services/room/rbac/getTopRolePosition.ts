@@ -1,5 +1,5 @@
-import type { GetTopRolePosition } from "@@/server/models/room/rbac/GetTopRolePosition";
-import type { Context } from "@@/server/trpc/context";
+import type { GetTopRolePosition } from "#server/models/room/rbac/GetTopRolePosition";
+import type { Context } from "#server/trpc/context";
 
 import { roomRolesInMessage, usersToRoomRolesInMessage } from "@esposter/db-schema";
 import { and, eq, inArray, max } from "drizzle-orm";

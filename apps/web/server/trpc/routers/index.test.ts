@@ -1,7 +1,7 @@
 import type { AnyProcedure } from "@trpc/server";
 import type { JSONSchema } from "zod/v4/core";
 
-import { trpcRouter } from "@@/server/trpc/routers";
+import { trpcRouter } from "#server/trpc/routers";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 

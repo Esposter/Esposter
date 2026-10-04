@@ -1,7 +1,7 @@
-import type { Transaction } from "@@/server/models/db/Transaction";
-import type { Context } from "@@/server/trpc/context";
+import type { Transaction } from "#server/models/db/Transaction";
+import type { Context } from "#server/trpc/context";
 
-import { requireScheduledMessageJob } from "@@/server/services/message/scheduledMessageJob/requireScheduledMessageJob";
+import { requireScheduledMessageJob } from "#server/services/message/scheduledMessageJob/requireScheduledMessageJob";
 import { scheduledMessageJobsInMessage } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 

@@ -1,6 +1,6 @@
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
+import type { AuthedContext } from "#server/models/auth/AuthedContext";
 
-import { deleteCreatedResources } from "@@/server/services/resource/deleteCreatedResources";
+import { deleteCreatedResources } from "#server/services/resource/deleteCreatedResources";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Every path that creates resource rows before writing their content owes the same compensation: a failure

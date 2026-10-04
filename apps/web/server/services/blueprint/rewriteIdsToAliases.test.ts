@@ -1,5 +1,5 @@
+import { rewriteIdsToAliases } from "#server/services/blueprint/rewriteIdsToAliases";
 import { buildBlueprintEntryToken } from "#shared/services/resource/blueprint/buildBlueprintEntryToken";
-import { rewriteIdsToAliases } from "@@/server/services/blueprint/rewriteIdsToAliases";
 import { ResourceType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

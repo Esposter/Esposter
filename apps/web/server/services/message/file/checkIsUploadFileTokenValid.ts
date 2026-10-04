@@ -1,4 +1,4 @@
-import { createUploadFileToken } from "@@/server/services/message/file/createUploadFileToken";
+import { createUploadFileToken } from "#server/services/message/file/createUploadFileToken";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { timingSafeEqual } from "node:crypto";
 

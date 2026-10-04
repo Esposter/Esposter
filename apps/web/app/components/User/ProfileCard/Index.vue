@@ -17,7 +17,7 @@ interface Props {
 }
 
 const { section } = defineProps<Props>();
-const { data: session } = await authClient.useSession(useFetch);
+const { data: session } = await useAuthSession();
 const { updateUser } = authClient;
 const { executeMutation, isPending } = useMutation();
 const profileCardRows = computed(() => {

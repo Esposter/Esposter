@@ -1,8 +1,8 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 
-import { createMcpServer } from "@@/server/services/mcp/createMcpServer";
-import { publicProcedure, router } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/context.test";
+import { createMcpServer } from "#server/services/mcp/createMcpServer";
+import { publicProcedure, router } from "#server/trpc";
+import { createMockContext } from "#server/trpc/context.test";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { beforeAll, describe, expect, onTestFinished, test } from "vitest";

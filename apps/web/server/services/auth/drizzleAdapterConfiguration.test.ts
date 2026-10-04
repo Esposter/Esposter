@@ -1,6 +1,6 @@
-import { apiKeyPlugin } from "@@/server/services/auth/apiKeyPlugin";
-import { authModelOptions } from "@@/server/services/auth/authModelOptions";
-import { drizzleAdapterConfiguration } from "@@/server/services/auth/drizzleAdapterConfiguration";
+import { apiKeyPlugin } from "#server/services/auth/apiKeyPlugin";
+import { authModelOptions } from "#server/services/auth/authModelOptions";
+import { drizzleAdapterConfiguration } from "#server/services/auth/drizzleAdapterConfiguration";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import { createMockDb } from "@esposter/db-mock";
 import { accountsInAuth, sessionsInAuth, usersInAuth } from "@esposter/db-schema";

@@ -1,9 +1,9 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 import type { AzureContainer, FileEntity, FileSasEntity, UserInAuth } from "@esposter/db-schema";
 
-import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { getStorageBlobReservations } from "@@/server/services/storage/getStorageBlobReservations";
-import { reserveStorageBytes } from "@@/server/services/storage/reserveStorageBytes";
+import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
+import { getStorageBlobReservations } from "#server/services/storage/getStorageBlobReservations";
+import { reserveStorageBytes } from "#server/services/storage/reserveStorageBytes";
 import { generateUploadFileSasEntities } from "@esposter/db";
 
 // The upload chokepoint: every write target this app hands out is minted here, and the quota hold for it is

@@ -1,9 +1,9 @@
+import type { PublishableResourceProcedureOptions } from "#server/models/resource/PublishableResourceProcedureOptions";
 import type { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
-import type { PublishableResourceProcedureOptions } from "@@/server/models/resource/PublishableResourceProcedureOptions";
 import type { ToData } from "@esposter/shared";
 
-import { transformPublishedBlobUrls } from "@@/server/services/resource/transformPublishedBlobUrls";
-import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
+import { transformPublishedBlobUrls } from "#server/services/resource/transformPublishedBlobUrls";
+import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 

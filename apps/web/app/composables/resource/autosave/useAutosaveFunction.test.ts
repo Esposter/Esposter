@@ -39,7 +39,7 @@ describe(useAutosaveFunction, () => {
 
   beforeEach(() => {
     save = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
-    router.currentRoute.value.params.id = resourceId;
+    Object.assign(router.currentRoute.value.params, { id: resourceId });
   });
 
   afterEach(() => {
@@ -96,7 +96,7 @@ describe(useAutosaveFunction, () => {
     const { saveState } = storeToRefs(resourceStore);
     await mountAutosave();
     autosave();
-    router.currentRoute.value.params.id = otherResourceId;
+    Object.assign(router.currentRoute.value.params, { id: otherResourceId });
     await elapseDebounce();
 
     expect(saveState.value).toBe(ResourceSaveState.Saving);
@@ -110,7 +110,7 @@ describe(useAutosaveFunction, () => {
 
     await mountAutosave();
     autosave();
-    router.currentRoute.value.params.id = otherResourceId;
+    Object.assign(router.currentRoute.value.params, { id: otherResourceId });
     await elapseDebounce();
 
     expect(save).not.toHaveBeenCalled();

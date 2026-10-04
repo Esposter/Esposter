@@ -1,9 +1,9 @@
-import type { DatasetProvider } from "@@/server/models/dataset/DatasetProvider";
+import type { DatasetProvider } from "#server/models/dataset/DatasetProvider";
 
+import { readResourceContent } from "#server/services/resource/readResourceContent";
+import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { sheetResourceSchema } from "#shared/models/resource/sheet/SheetResource";
 import { dataSourceToDataset } from "#shared/services/resource/sheet/dataSourceToDataset";
-import { readResourceContent } from "@@/server/services/resource/readResourceContent";
-import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { DatabaseEntityType } from "@esposter/db-schema";
 

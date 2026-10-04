@@ -1,22 +1,20 @@
-import type { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
+import type { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
 
+import { readSession } from "#server/services/auth/readSession";
+import { checkIsRateLimitExceeded } from "#server/services/rateLimiter/checkIsRateLimitExceeded";
+import { RATE_LIMITER_BYPASS_LOG_MESSAGE } from "#server/services/rateLimiter/constants";
+import { RateLimiterMap } from "#server/services/rateLimiter/RateLimiterMap";
+import { middleware } from "#server/trpc";
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
-import { readSession } from "@@/server/services/auth/readSession";
-import { checkIsRateLimitExceeded } from "@@/server/services/rateLimiter/checkIsRateLimitExceeded";
-import { RATE_LIMITER_BYPASS_LOG_MESSAGE } from "@@/server/services/rateLimiter/constants";
-import { RateLimiterMap } from "@@/server/services/rateLimiter/RateLimiterMap";
-import { getIpAddress } from "@@/server/services/request/getIpAddress";
-import { middleware } from "@@/server/trpc";
 import { getResultAsync, ID_SEPARATOR } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 export const getRateLimitedMiddleware = (type: RateLimiterType) =>
   middleware(async ({ ctx, next, path }) => {
-    const getSessionPayload =
-      ctx.getSessionPayload ?? (await readSession(ctx.headers, "setHeader" in ctx.res ? ctx.res : undefined));
+    const getSessionPayload = ctx.getSessionPayload ?? (await readSession(ctx.headers, ctx.responseHeaders));
     if (!IS_PRODUCTION) return next({ ctx: { getSessionPayload } });
 
-    const ipAddress = getIpAddress(ctx.req);
+    const { ipAddress } = ctx;
     if (!getSessionPayload && !ipAddress) {
       console.warn(RATE_LIMITER_BYPASS_LOG_MESSAGE);
       return next({ ctx: { getSessionPayload } });
@@ -33,14 +31,12 @@ export const getRateLimitedMiddleware = (type: RateLimiterType) =>
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       },
     );
-    if ("setHeader" in ctx.res) {
-      ctx.res.setHeader(
-        "Retry-After",
-        Math.ceil(Temporal.Duration.from({ milliseconds: msBeforeNext }).total("seconds")),
-      );
-      ctx.res.setHeader("X-RateLimit-Limit", rateLimiter.points);
-      ctx.res.setHeader("X-RateLimit-Remaining", remainingPoints);
-      ctx.res.setHeader("X-RateLimit-Reset", new Date(Date.now() + msBeforeNext).toISOString());
+    if (ctx.responseHeaders) {
+      const retryAfterSeconds = Math.ceil(Temporal.Duration.from({ milliseconds: msBeforeNext }).total("seconds"));
+      ctx.responseHeaders.set("Retry-After", `${retryAfterSeconds}`);
+      ctx.responseHeaders.set("X-RateLimit-Limit", `${rateLimiter.points}`);
+      ctx.responseHeaders.set("X-RateLimit-Remaining", `${remainingPoints}`);
+      ctx.responseHeaders.set("X-RateLimit-Reset", new Date(Date.now() + msBeforeNext).toISOString());
     }
 
     return next({ ctx: { getSessionPayload } });

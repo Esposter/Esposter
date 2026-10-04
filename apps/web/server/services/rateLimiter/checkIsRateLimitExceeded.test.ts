@@ -1,4 +1,4 @@
-import { checkIsRateLimitExceeded } from "@@/server/services/rateLimiter/checkIsRateLimitExceeded";
+import { checkIsRateLimitExceeded } from "#server/services/rateLimiter/checkIsRateLimitExceeded";
 import { toAppError } from "@esposter/shared";
 import { RateLimiterRes } from "rate-limiter-flexible";
 import { describe, expect, test } from "vitest";

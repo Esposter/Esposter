@@ -24,9 +24,9 @@ const { currentRoute } = useRouter();
 
 Destructured, because a ref reached through `router.` does not auto-unwrap in a template while `currentRoute` does.
 
-- **A segment the page cannot exist without is read through `requireRouteParam(params, name)`**, never an `as string` cast: params are `string | string[] | undefined`, and a cast hands the empty case to a query that fails at the server instead of here. `getRouteParamString` stays for a genuinely optional segment.
+- **A segment is read by name — `getRouteParam(params, name)`, or `requireRouteParam(params, name)` for one the page cannot exist without** — never a property access or an `as string` cast. Params read without naming the route are the union of every page's, so a property access does not typecheck, and the name is checked against the route map instead. `requireRouteParam` throws where `getRouteParam` answers `""`, because a cast hands the empty case to a query that fails at the server instead of here. A query value goes through `getRouteParamString`.
 - **Guard before spending a request** (`checkIsUuidV4(id)`) where a read can race a navigation — it resolves the route after the user has left the page that named it, and the lint rule cannot see that.
-- Why the ban is total rather than "reactive reads only", the `definePageMeta` callbacks that are not a `useRoute()` call, the one component test that may `mockNuxtImport("useRoute")`, and why typed routes are off: `references/route-reads.md`.
+- Why the ban is total rather than "reactive reads only", the `definePageMeta` callbacks that are not a `useRoute()` call, the one component test that may `mockNuxtImport("useRoute")`, and why a page's typed `useRoute()` does not lift the ban: `references/route-reads.md`.
 
 ## Where Navigation State Lives — `references/navigation-state.md`
 
@@ -46,7 +46,7 @@ A file in `public/` or a Nitro `publicAssets` mount never sits at a path a page 
 
 ## Deep Dives
 
-- `references/route-reads.md` — when the `useRoute()` ban fires, a component test must drive the route, or typed routes look like the fix.
+- `references/route-reads.md` — when the `useRoute()` ban fires, a component test must drive the route, or a page's typed `useRoute()` looks like a reason to lift the ban.
 - `references/navigation-state.md` — when deciding where a filter, tab, trail or preference is kept, or writing into a history entry.
 - `references/route-synced-tabs.md` — when a tab or enum-valued selector should survive a refresh.
 - `references/nested-segments.md` — when one page component serves optional or nested segments.

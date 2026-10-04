@@ -46,7 +46,7 @@ const trpcNuxtModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions
     addServerHandler({ handler: EVENT_HANDLER_FILENAME, route: `${endpoint}/**` });
 
     if (webSocket) {
-      nuxt.options.nitro.experimental = { ...nuxt.options.nitro.experimental, websocket: true };
+      nuxt.options.nitro.features = { ...nuxt.options.nitro.features, websocket: true };
       addServerTemplate({
         filename: WEBSOCKET_HANDLER_FILENAME,
         getContents: () => getWebSocketHandlerTemplate(resolvedRouter, webSocket, resolvedCreateContext),

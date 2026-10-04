@@ -1,4 +1,4 @@
-import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
+import { withAsyncIterator } from "#server/trpc/routers/withAsyncIterator.test";
 import { assert, describe, expect, test } from "vitest";
 
 export const getFirstEmit = async <T>(

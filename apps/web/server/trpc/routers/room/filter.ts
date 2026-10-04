@@ -1,9 +1,9 @@
 import type { RoomFilterInMessage } from "@esposter/db-schema";
 
+import { router } from "#server/trpc";
+import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissionsProcedure";
 import { upsertRoomFilterInputSchema } from "#shared/models/db/room/UpsertRoomFilterInput";
-import { router } from "@@/server/trpc";
-import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import {
   DatabaseEntityType,
   roomFiltersInMessage,

@@ -1,5 +1,5 @@
+import { getSnapshotSummary } from "#server/services/resource/snapshot/getSnapshotSummary";
 import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
-import { getSnapshotSummary } from "@@/server/services/resource/snapshot/getSnapshotSummary";
 import { ResourceType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

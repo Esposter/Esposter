@@ -1,9 +1,9 @@
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { flowchartRouter } from "#server/trpc/routers/flowchart";
+import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
-import { flowchartRouter } from "@@/server/trpc/routers/flowchart";
-import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import { ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { beforeAll, describe, expect, test } from "vitest";

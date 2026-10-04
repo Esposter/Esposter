@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { authClient } from "@/services/auth/authClient";
 import { checkIsUuidRouteId } from "@/services/router/checkIsUuidRouteId";
 import { useCommentStore } from "@/store/post/comment";
 
 definePageMeta({ validate: checkIsUuidRouteId });
 
-const { data: session } = await authClient.useSession(useFetch);
+const { data: session } = await useAuthSession();
 const post = await useReadPostFromRoute();
 const commentStore = useCommentStore();
 const { currentPost } = storeToRefs(commentStore);

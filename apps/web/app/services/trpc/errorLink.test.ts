@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { Operation } from "@trpc/client";
 
 import { getSession } from "@/services/auth/authClient.test";

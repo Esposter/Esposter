@@ -1,16 +1,16 @@
+import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { GeneratedProgramParticipants } from "#shared/models/resource/program/GeneratedProgramParticipants";
 import type { ProgramParticipant } from "#shared/models/resource/program/ProgramParticipant";
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { readDataset } from "#server/services/dataset/readDataset";
+import { getDanglingProgramBindingError } from "#server/services/program/getDanglingProgramBindingError";
+import { getProgramParticipantId } from "#server/services/program/getProgramParticipantId";
+import { readProgramParticipantEntities } from "#server/services/program/readProgramParticipantEntities";
+import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { readDataset } from "@@/server/services/dataset/readDataset";
-import { getDanglingProgramBindingError } from "@@/server/services/program/getDanglingProgramBindingError";
-import { getProgramParticipantId } from "@@/server/services/program/getProgramParticipantId";
-import { readProgramParticipantEntities } from "@@/server/services/program/readProgramParticipantEntities";
-import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { AZURE_MAX_BATCH_SIZE } from "@esposter/azure";
 import { checkIsConflict, createEntity, getEntity, serializeEntity } from "@esposter/db";
 import { AzureTable, ProgramParticipantEntity } from "@esposter/db-schema";

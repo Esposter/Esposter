@@ -12,7 +12,7 @@ Pattern (<https://antfu.me/posts/async-with-composition-api> — see `useReadDat
 export const useFoo = async () => {
   // https://antfu.me/posts/async-with-composition-api
   const currentInstance = getCurrentInstance();
-  const { data: session } = await authClient.useSession(useFetch);
+  const { data: session } = await useAuthSession();
   const { stop, trigger } = watchTriggerable(session, () => {
     /* ... */
   });

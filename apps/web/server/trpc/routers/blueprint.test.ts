@@ -1,13 +1,13 @@
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { BlueprintResource } from "#shared/models/resource/blueprint/BlueprintResource";
-import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { createCallerFactory } from "#server/trpc";
+import { blueprintRouter } from "#server/trpc/routers/blueprint";
+import { programRouter } from "#server/trpc/routers/program";
+import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { buildBlueprintEntryToken } from "#shared/services/resource/blueprint/buildBlueprintEntryToken";
-import { createCallerFactory } from "@@/server/trpc";
-import { blueprintRouter } from "@@/server/trpc/routers/blueprint";
-import { programRouter } from "@@/server/trpc/routers/program";
-import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import { AzureQueue, DatabaseEntityType, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { MockServiceBusDatabase } from "azure-mock";

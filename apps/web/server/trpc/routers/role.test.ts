@@ -1,10 +1,10 @@
-import type { Context } from "@@/server/trpc/context";
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { Context } from "#server/trpc/context";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createMockUser, mockSessionOnce } from "@@/server/trpc/context.test";
-import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
-import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
+import { createMockUser, mockSessionOnce } from "#server/trpc/context.test";
+import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
+import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";

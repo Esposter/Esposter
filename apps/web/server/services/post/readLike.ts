@@ -1,4 +1,4 @@
-import type { Transaction } from "@@/server/models/db/Transaction";
+import type { Transaction } from "#server/models/db/Transaction";
 import type { LikeInPost, PostInPost, UserInAuth } from "@esposter/db-schema";
 
 export const readLike = (

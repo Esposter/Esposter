@@ -1,8 +1,8 @@
-import { assetRateLimiter } from "@@/server/services/rateLimiter/assetRateLimiter";
-import { createRateLimiter } from "@@/server/services/rateLimiter/createRateLimiter";
-import { slowRateLimiter } from "@@/server/services/rateLimiter/slowRateLimiter";
-import { standardRateLimiter } from "@@/server/services/rateLimiter/standardRateLimiter";
-import { webhookRateLimiter } from "@@/server/services/rateLimiter/webhookRateLimiter";
+import { assetRateLimiter } from "#server/services/rateLimiter/assetRateLimiter";
+import { createRateLimiter } from "#server/services/rateLimiter/createRateLimiter";
+import { slowRateLimiter } from "#server/services/rateLimiter/slowRateLimiter";
+import { standardRateLimiter } from "#server/services/rateLimiter/standardRateLimiter";
+import { webhookRateLimiter } from "#server/services/rateLimiter/webhookRateLimiter";
 import { describe, expect, test } from "vitest";
 
 describe(createRateLimiter, () => {

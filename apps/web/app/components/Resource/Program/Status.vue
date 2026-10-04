@@ -16,7 +16,7 @@ import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS } from "@/services/ui/constants";
 import { useNotificationStore } from "@/store/notification";
 import { useResourceStore } from "@/store/resource";
 import { useProgramStore } from "@/store/resource/program";
-import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { getRouteParam } from "@/util/router/getRouteParam";
 import { NotificationSeverity } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 
@@ -30,7 +30,7 @@ const { resource } = storeToRefs(resourceStore);
 const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;
 const { executeMutation: executeGenerateMutation, isPending: isGeneratePending } = useMutation();
-const id = computed(() => getRouteParamString(currentRoute.value.params.id));
+const id = computed(() => getRouteParam(currentRoute.value.params, "id"));
 const statusRows = ref<ProgramStatusRow[]>([]);
 // Set when the response scan hit its cap, which makes every count on this blade a floor rather than a total
 const isRespondedPartial = ref(false);

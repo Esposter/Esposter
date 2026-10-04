@@ -1,4 +1,4 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 import type { ResourceInResource, SurveyResponseEntity } from "@esposter/db-schema";
 
 // Returns the token to store on the response entity, or throws when the mode rejects the write.

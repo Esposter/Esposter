@@ -1,4 +1,4 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 import type { InviteInMessage } from "@esposter/db-schema";
 
 import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";

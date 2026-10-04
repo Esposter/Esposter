@@ -1,5 +1,5 @@
+import type { Context } from "#server/trpc/context";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
-import type { Context } from "@@/server/trpc/context";
 
 import { TRPCError } from "@trpc/server";
 

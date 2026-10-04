@@ -1,14 +1,15 @@
 import type { RuntimeConfig } from "nuxt/schema";
 
-import { getLiveKitCredentials } from "@@/server/services/livekit/getLiveKitCredentials";
+import { getLiveKitCredentials } from "#server/services/livekit/getLiveKitCredentials";
 import { describe, expect, test, vi } from "vitest";
 
-// The auto-imported `useRuntimeConfig` resolves to the nuxt app module rather than to a global, so the module is
-// What a test has to answer — the global the resolved import never reads would leave the real one throwing
 const { livekit } = vi.hoisted(() => ({ livekit: {} as { current: RuntimeConfig["livekit"] } }));
 
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- the server tsconfig maps no `#app/*`, so `import()` would not resolve
-vi.mock("#app/nuxt", () => ({ useRuntimeConfig: () => ({ livekit: livekit.current }) as RuntimeConfig }));
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the stubbed `useRuntimeConfig` returns a fraction of the config, which the typed `import()` form holds to the real return type
+vi.mock("nuxt/server", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  useRuntimeConfig: () => ({ livekit: livekit.current }),
+}));
 
 describe(getLiveKitCredentials, () => {
   const credentials = { apiKey: "apiKey", apiSecret: "apiSecret", url: "url" };

@@ -2,7 +2,6 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { authClient } from "@/services/auth/authClient";
 import { useCallStore } from "@/store/message/room/call";
 
 interface Props {
@@ -11,7 +10,7 @@ interface Props {
 }
 
 const { isSpeaking, participant } = defineProps<Props>();
-const { data: session } = await authClient.useSession(useFetch);
+const { data: session } = await useAuthSession();
 const callStore = useCallStore();
 const { isInCall } = storeToRefs(callStore);
 const { isForceMuteable, isKickableFromCall } = useCallParticipantActions();

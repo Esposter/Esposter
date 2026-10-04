@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
+import { getMockSession } from "#server/trpc/context.test";
 import { useMediaStore } from "@/store/message/room/call/media";
-import { getMockSession } from "@@/server/trpc/context.test";
 import { describe, expect, test } from "vitest";
 
 describe(useMediaStore, () => {

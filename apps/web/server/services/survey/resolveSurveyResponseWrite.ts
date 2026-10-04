@@ -1,11 +1,11 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 import type { ResourceInResource, SurveyResponseEntity } from "@esposter/db-schema";
 
-import { CLOSED_SURVEY_ERROR_REASON } from "@@/server/services/survey/constants";
-import { readSurveySettings } from "@@/server/services/survey/readSurveySettings";
-import { SurveyResponseModeValidatorMap } from "@@/server/services/survey/SurveyResponseModeValidatorMap";
-import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
-import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
+import { CLOSED_SURVEY_ERROR_REASON } from "#server/services/survey/constants";
+import { readSurveySettings } from "#server/services/survey/readSurveySettings";
+import { SurveyResponseModeValidatorMap } from "#server/services/survey/SurveyResponseModeValidatorMap";
+import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
+import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { AzureEntityType, DatabaseEntityType, ResourceType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 

@@ -1,5 +1,5 @@
+import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { resourceAccessesInResource, resourcesInResource, usersInAuth } from "@esposter/db-schema";
 import { asc, desc, getColumns } from "drizzle-orm";
 import { describe, expect, test } from "vitest";

@@ -1,6 +1,6 @@
 import type { TRPCError } from "@trpc/server";
 
-import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
+import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 

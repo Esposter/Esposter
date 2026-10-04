@@ -25,7 +25,7 @@ import { saveStagedResourceContent } from "@/services/resource/saveStagedResourc
 import { getSha256Hex } from "@/services/shared/getSha256Hex";
 import { getRequestBodyByteLength } from "@/services/trpc/getRequestBodyByteLength";
 import { useNotificationStore } from "@/store/notification";
-import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { getRouteParam } from "@/util/router/getRouteParam";
 import { NotificationSeverity } from "@esposter/db-schema";
 import { noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
 
@@ -121,7 +121,7 @@ export const useResourceStore = defineStore("resource", () => {
   const readResource = async () => {
     // Resolved per call rather than captured: the store outlives the page, so the loader always reads whichever
     // Resource the route names now
-    const id = getRouteParamString(currentRoute.value.params.id);
+    const id = getRouteParam(currentRoute.value.params, "id");
     // A route with no resource segment — a list view, or one this read raced a navigation to — names nothing to
     // Read, and the empty sentinel would reach the server as a uuid that fails validation
     if (!checkIsUuidV4(id)) return;
@@ -135,7 +135,7 @@ export const useResourceStore = defineStore("resource", () => {
         const { publication: newPublication, ...newResource } = await $trpc.resource.readResource.query({ id });
         // Reads for two resources are not one target, so a navigation away can let the earlier one land last —
         // Applied then, the page for the resource on screen would load, edit and save the one it left
-        if (getRouteParamString(currentRoute.value.params.id) !== id) return;
+        if (getRouteParam(currentRoute.value.params, "id") !== id) return;
 
         if (resource.value?.id !== id) opening = Symbol("opening");
         resource.value = newResource;

@@ -1,8 +1,8 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 
-import { removeLiveKitParticipant } from "@@/server/services/livekit/removeLiveKitParticipant";
-import { leaveCallAsParticipant } from "@@/server/services/message/call/leaveCallAsParticipant";
-import { readRoomCallParticipantMaps } from "@@/server/services/message/call/readRoomCallParticipantMaps";
+import { removeLiveKitParticipant } from "#server/services/livekit/removeLiveKitParticipant";
+import { leaveCallAsParticipant } from "#server/services/message/call/leaveCallAsParticipant";
+import { readRoomCallParticipantMaps } from "#server/services/message/call/readRoomCallParticipantMaps";
 
 // Takes a member out of every call in a room on the server's authority rather than their client's: a client that
 // Ignored the admin action would otherwise stay connected and publishing. Each connection leaves the way every

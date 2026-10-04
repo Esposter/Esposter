@@ -1,9 +1,9 @@
+import type { Context } from "#server/trpc/context";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
-import type { Context } from "@@/server/trpc/context";
 
-import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
-import { requireCallSession } from "@@/server/services/message/call/requireCallSession";
-import { getForbiddenError } from "@@/server/trpc/guards/getForbiddenError";
+import { callSessionParticipantMap } from "#server/services/message/call/callSessionParticipantMap";
+import { requireCallSession } from "#server/services/message/call/requireCallSession";
+import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
 
 // Only the creator, and only while they are themselves in the call, decides who gets in — for admitting and
 // Dismissing alike

@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";

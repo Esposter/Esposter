@@ -1,5 +1,5 @@
-import { UiStyle } from "../app/models/ui/UiStyle";
-import { UiStyleToken } from "../app/models/ui/UiStyleToken";
+import { UiStyle } from "../app/models/ui/UiStyle.ts";
+import { UiStyleToken } from "../app/models/ui/UiStyleToken.ts";
 
 const PIXEL_FACE = "VT323, monospace";
 const SANS_FACE = "Inter, ui-sans-serif, system-ui, sans-serif";

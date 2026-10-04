@@ -77,3 +77,20 @@ discriminant (`type: "ApiConnection"`), a numeric union, and a union passed as a
 `literal-union/no-string-literal-union` (`scripts/src/oxlint/literalUnion.ts`) enforces it repo-wide; a site that
 genuinely cannot be an enum carries a disable stating why, as `ExportsGeneration` does for tsdown's strip-only
 config loading.
+
+## The Nuxt configuration's imports are the one `as const` exception
+
+Nuxt loads `apps/web/nuxt.config.ts` with Node's own strip-only type stripping and falls back to jiti only when that
+fails, and jiti transforms every file of the configuration's graph on every load — every `nuxt prepare`, `dev`,
+`build` and Vitest start. An enum anywhere in that graph is what makes it fail (`TypeScript enum is not supported in
+strip-only mode`), so a file the configuration imports declares its closed set as an `as const` object with a type of
+the same name, and its call sites read exactly as an enum's:
+
+```ts
+export const ThemeMode = { Dark: "dark", Light: "light", System: "system" } as const;
+export type ThemeMode = (typeof ThemeMode)[keyof typeof ThemeMode];
+```
+
+The exception is that graph and nothing else. Everything a script runs under `tsx` or `node` keeps its enums, and a
+file that cannot load moves its entry to `tsx`. A `nuxt prepare` printing `NUXT_B5023` names the file that brought an
+enum, or an extensionless relative import, back into the graph.

@@ -1,4 +1,4 @@
-import { getLiveKitCredentials } from "@@/server/services/livekit/getLiveKitCredentials";
+import { getLiveKitCredentials } from "#server/services/livekit/getLiveKitCredentials";
 import { RoomServiceClient } from "livekit-server-sdk";
 
 export const createLiveKitRoomServiceClient = (): RoomServiceClient | undefined => {

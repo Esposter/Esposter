@@ -1,21 +1,20 @@
-import type { Context } from "@@/server/trpc/context";
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { Context } from "#server/trpc/context";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
-import type { RuntimeConfig } from "nuxt/schema";
 
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
-import { createCallParticipant } from "@@/server/services/message/call/createCallParticipant";
-import { createCallSessionId } from "@@/server/services/message/call/createCallSessionId";
-import { createParticipant } from "@@/server/services/message/call/createParticipant";
-import { createCallerFactory } from "@@/server/trpc";
-import { getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
-import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
-import { readRoomMembershipRows } from "@@/server/trpc/routers/readRoomMembershipRows.test";
-import { createDirectMessageWithFriend } from "@@/server/trpc/routers/room/createDirectMessageWithFriend.test";
-import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
+import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { callSessionParticipantMap } from "#server/services/message/call/callSessionParticipantMap";
+import { createCallParticipant } from "#server/services/message/call/createCallParticipant";
+import { createCallSessionId } from "#server/services/message/call/createCallSessionId";
+import { createParticipant } from "#server/services/message/call/createParticipant";
+import { createCallerFactory } from "#server/trpc";
+import { getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
+import { moderationRouter } from "#server/trpc/routers/message/moderation";
+import { readRoomMembershipRows } from "#server/trpc/routers/readRoomMembershipRows.test";
+import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
+import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import {
   AdminActionType,
   AzureTable,
@@ -27,11 +26,6 @@ import {
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-
-// A deployment without LiveKit, so an action that reaches the SFU answers from the participant map alone. The
-// Auto-imported `useRuntimeConfig` resolves to the nuxt app module, which a test has no instance of
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- the server tsconfig maps no `#app/*`, so `import()` would not resolve
-vi.mock("#app/nuxt", () => ({ useRuntimeConfig: () => ({}) as RuntimeConfig }));
 
 describe("moderationRouter", () => {
   const { createMember, getMockContext, getRoomCaller, getRoomId, setupMemberWithRole } = setupRoomSuite();

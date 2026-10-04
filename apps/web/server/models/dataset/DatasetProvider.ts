@@ -1,5 +1,5 @@
+import type { Context } from "#server/trpc/context";
 import type { Dataset } from "#shared/models/dataset/Dataset";
-import type { Context } from "@@/server/trpc/context";
 import type { ResourceInResource, ResourceType } from "@esposter/db-schema";
 
 export interface DatasetProvider {

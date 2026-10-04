@@ -1,4 +1,4 @@
-import { chunkBlobNamesByEventSize } from "@@/server/services/azure/eventGrid/chunkBlobNamesByEventSize";
+import { chunkBlobNamesByEventSize } from "#server/services/azure/eventGrid/chunkBlobNamesByEventSize";
 import { MAX_BLOB_DELETION_EVENT_BLOB_NAMES, MAX_BLOB_DELETION_EVENT_DATA_BYTES } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

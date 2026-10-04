@@ -5,7 +5,7 @@ import { ResourceOperationTitleMap } from "#shared/services/notification/Resourc
 import { CacheTag } from "@/models/cache/CacheTag";
 import { useCacheStore } from "@/store/cache";
 import { useNotificationStore } from "@/store/notification";
-import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { getRouteParam } from "@/util/router/getRouteParam";
 import { NotificationSeverity } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
 
@@ -85,7 +85,7 @@ export const useDeleteResources = (
           // Leave it — every later blade action hits requireOwnedResource with deletedAt isNull and throws,
           // So the user sits in an editor that error-toasts on every autosave. The blade's own delete already
           // Routes here, and a delete must not navigate from one entry point and not the other
-          if (ids.includes(getRouteParamString(router.currentRoute.value.params.id)))
+          if (ids.includes(getRouteParam(router.currentRoute.value.params, "id")))
             await navigateTo(RoutePath.ResourceExplorerAll);
         },
       },

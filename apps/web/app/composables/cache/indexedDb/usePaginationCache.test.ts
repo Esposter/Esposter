@@ -2,6 +2,7 @@
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 
+import { getMockSession } from "#server/trpc/context.test";
 import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
 import { useCursorPaginationCache } from "@/composables/cache/indexedDb/useCursorPaginationCache";
 import { useOffsetPaginationCache } from "@/composables/cache/indexedDb/useOffsetPaginationCache";
@@ -11,7 +12,6 @@ import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { useAlertStore } from "@/store/alert";
-import { getMockSession } from "@@/server/trpc/context.test";
 import { StandardMessageEntity } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

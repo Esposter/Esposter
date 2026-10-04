@@ -1,4 +1,3 @@
-import { authClient } from "@/services/auth/authClient";
 import { getIdsKey } from "@/services/message/subscribables/getIdsKey";
 import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useMemberStore } from "@/store/message/user/member";
@@ -6,7 +5,7 @@ import { useStatusStore } from "@/store/message/user/status";
 
 export const useUserSubscribables = async () => {
   const onlineSubscribableContext = getOnlineSubscribableContext();
-  const { data: session } = await authClient.useSession(useFetch);
+  const { data: session } = await useAuthSession();
   const { $trpc } = useNuxtApp();
   const memberStore = useMemberStore();
   const { members } = storeToRefs(memberStore);

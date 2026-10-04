@@ -1,14 +1,14 @@
-import type { Context } from "@@/server/trpc/context";
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { Context } from "#server/trpc/context";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { getDirectMessageParticipantKey } from "@@/server/services/room/directMessage/getDirectMessageParticipantKey";
-import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, createMockUser, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { createFriends } from "@@/server/trpc/routers/createFriends.test";
-import { roomRouter } from "@@/server/trpc/routers/room";
-import { createDirectMessageWithFriend } from "@@/server/trpc/routers/room/createDirectMessageWithFriend.test";
-import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
+import { getDirectMessageParticipantKey } from "#server/services/room/directMessage/getDirectMessageParticipantKey";
+import { createCallerFactory } from "#server/trpc";
+import { createMockContext, createMockUser, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { createFriends } from "#server/trpc/routers/createFriends.test";
+import { roomRouter } from "#server/trpc/routers/room";
+import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
+import { directMessageRouter } from "#server/trpc/routers/room/directMessage";
 import {
   DatabaseEntityType,
   DerivedDatabaseEntityType,

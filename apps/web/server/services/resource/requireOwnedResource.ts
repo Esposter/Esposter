@@ -1,4 +1,4 @@
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
+import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { ResourceInResource, ResourceType } from "@esposter/db-schema";
 
 import { TRPCError } from "@trpc/server";

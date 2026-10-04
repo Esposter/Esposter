@@ -1,5 +1,5 @@
-import { checkIsSameDevice } from "@@/server/services/auth/checkIsSameDevice";
-import { getMockSession } from "@@/server/trpc/context.test";
+import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
+import { getMockSession } from "#server/trpc/context.test";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsSameDevice, () => {

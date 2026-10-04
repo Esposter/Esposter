@@ -1,5 +1,5 @@
+import { getBlueprintEntryKeys } from "#server/services/blueprint/getBlueprintEntryKeys";
 import { MAX_BLUEPRINT_KEY_LENGTH } from "#shared/services/resource/blueprint/constants";
-import { getBlueprintEntryKeys } from "@@/server/services/blueprint/getBlueprintEntryKeys";
 import { RESOURCE_NAME_MAX_LENGTH } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

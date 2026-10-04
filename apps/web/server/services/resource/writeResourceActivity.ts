@@ -1,10 +1,10 @@
-import type { WriteResourceActivityInput } from "@@/server/models/resource/WriteResourceActivityInput";
+import type { WriteResourceActivityInput } from "#server/models/resource/WriteResourceActivityInput";
 import type { Clause } from "@esposter/azure";
 import type { ResourceActivityEntity as BaseResourceActivityEntity } from "@esposter/db-schema";
 
+import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "#server/services/resource/constants";
 import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
 import { BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
 import { createEntity, getTopNEntities } from "@esposter/db";
 import {
