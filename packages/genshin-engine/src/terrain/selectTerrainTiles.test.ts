@@ -32,7 +32,7 @@ describe(selectTerrainTiles, () => {
     expect({
       hasDuplicate: new Set(selectedKeys).size !== count,
       hasFinestUnderEye: selectedKeys.includes(getTerrainTileKey(0, 0, 0)),
-      levels: [...levels].toSorted((left, right) => left - right),
+      levels: [...levels].toSorted((firstLevel, secondLevel) => firstLevel - secondLevel),
     }).toStrictEqual({ hasDuplicate: false, hasFinestUnderEye: true, levels: [0, 1] });
   });
 
