@@ -16,20 +16,13 @@ const TARGET_LAYER = 31;
 const sourceTargetMaterialsMap = new WeakMap<object, Map<string, MeshBasicNodeMaterial>>();
 // The one target every read draws into, rebuilt only when the drawing buffer's size changes
 let renderTarget: RenderTarget | undefined;
-// A floating-point buffer as base64, the one form a page hands its caller bytes in
-const toBase64 = (values: Float32Array): string => {
-  const bytes = new Uint8Array(values.buffer, values.byteOffset, values.byteLength);
-  const chunks: string[] = [];
-  for (let start = 0; start < bytes.length; start += 0x8000)
-    chunks.push(String.fromCodePoint(...bytes.subarray(start, start + 0x8000)));
-  return window.btoa(chunks.join(""));
-};
 // The witness render's G-buffer at its current view, one floating-point target a quantity, each read back from the
 // Renderer as rows of four floats a pixel: the albedo its exported material draws unlit, the depth along the view in
-// Metres, the world normal (encoded into 0 to 1, as `readWitnessTargets` decodes it), and the part (its identifier from one, the order the header lists it in) with its family's
-// Index, the families listed in that order. Only the witness's parts are drawn, over nothing, so a pixel no part
-// Covers is zero throughout. Only the targets asked for are drawn, every one unless told. Every part keeps its own
-// Material, handed back once the targets are read
+// Metres, the world normal (encoded into 0 to 1, as `readWitnessTargets` decodes it), and the part (its identifier
+// From one, the order the header lists it in) with its family's index, the families listed in that order. Only the
+// Witness's parts are drawn, over nothing, so a pixel no part covers is zero throughout. Only the targets asked for
+// Are drawn, every one unless told, each handed back as base64, the one form a page hands its caller bytes in. Every
+// Part keeps its own material, handed back once the targets are read
 export const renderWitnessTargets = async (
   witness: SceneWitness,
   context: SceneContext | undefined,
@@ -110,7 +103,7 @@ export const renderWitnessTargets = async (
             renderer.setRenderTarget(drawnTarget);
             renderer.render(scene, camera);
             const pixels = await renderer.readRenderTargetPixelsAsync(drawnTarget, 0, 0, width, height);
-            return toBase64(pixels as Float32Array);
+            return new Uint8Array(pixels.buffer, pixels.byteOffset, pixels.byteLength).toBase64();
           },
           () => {
             for (const [index, { mesh }] of drawnMeshes.entries())

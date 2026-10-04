@@ -20,8 +20,7 @@ export const readWitnessParts = (
   camera.updateMatrixWorld();
   return familyGroup.children.flatMap((part) => {
     const { max, min } = new Box3().setFromObject(part);
-    const top = new Vector3((min.x + max.x) / 2, max.y, (min.z + max.z) / 2);
-    const projected = top.clone().project(camera);
+    const projected = new Vector3((min.x + max.x) / 2, max.y, (min.z + max.z) / 2).project(camera);
     if (projected.z > 1 || projected.z < -1) return [];
     return [
       {
