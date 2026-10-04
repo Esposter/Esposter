@@ -4,10 +4,10 @@ import {
   LOGIN_WALKWAY_SETTLED_DISTANCE,
   LOGIN_WALKWAY_SUNK_DISTANCE,
 } from "#src/services/login/walkway/constants";
-import { readLoginWalkwaySink } from "#src/services/login/walkway/readLoginWalkwaySink";
+import { getLoginWalkwaySink } from "#src/services/login/walkway/getLoginWalkwaySink";
 import { describe, expect, test } from "vitest";
 
-describe(readLoginWalkwaySink, () => {
+describe(getLoginWalkwaySink, () => {
   // A seed in the middle of the stagger, so the rise spans the sunk and settled distances exactly
   const seed = 0.5;
 
@@ -15,7 +15,7 @@ describe(readLoginWalkwaySink, () => {
     expect.hasAssertions();
 
     const sinks = Array.from({ length: 401 }, (_, index) =>
-      readLoginWalkwaySink(
+      getLoginWalkwaySink(
         LOGIN_WALKWAY_SUNK_DISTANCE - ((LOGIN_WALKWAY_SUNK_DISTANCE - LOGIN_WALKWAY_SETTLED_DISTANCE) * index) / 400,
         seed,
       ),

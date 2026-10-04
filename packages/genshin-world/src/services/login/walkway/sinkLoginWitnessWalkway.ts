@@ -2,7 +2,7 @@ import type { BufferGeometry, Object3D } from "three";
 
 import { LOGIN_WALKWAY_ROW } from "#src/services/login/scene/constants";
 import { LOGIN_WALKWAY_RISE_DEPTH } from "#src/services/login/walkway/constants";
-import { readLoginWalkwaySink } from "#src/services/login/walkway/readLoginWalkwaySink";
+import { getLoginWalkwaySink } from "#src/services/login/walkway/getLoginWalkwaySink";
 import { Box3, MathUtils, Vector3 } from "three";
 
 interface WitnessPiece {
@@ -48,7 +48,7 @@ export const sinkLoginWitnessWalkway = (
       part.userData.walkwayPiece = piece;
     }
     const ahead = groupPosition.z + piece.middle[1] - cameraZ;
-    const sink = readLoginWalkwaySink(ahead, piece.seed);
+    const sink = getLoginWalkwaySink(ahead, piece.seed);
     part.position.y = piece.laidY - sink;
     part.visible = sink < LOGIN_WALKWAY_RISE_DEPTH && (doorAheadOfCamera === undefined || ahead < doorAheadOfCamera);
   }

@@ -69,7 +69,9 @@ export const solveReferencePose = async (
     async () => {
       const points = await page.evaluate(
         (landmarks) =>
-          (Reflect.get(window, "readWitnessPoints") as (landmarks: unknown) => [number, number, number][])(landmarks),
+          (Reflect.get(window, "computeWitnessPoints") as (landmarks: unknown) => [number, number, number][])(
+            landmarks,
+          ),
         definitions,
       );
       // An edge stands on a silhouette, never at a corner, so it is read as given

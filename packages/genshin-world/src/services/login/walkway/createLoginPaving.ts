@@ -67,11 +67,11 @@ export const createLoginPaving = (): { normalNode: Node<"vec3">; shade: Node<"fl
       context.fillStyle = "#fff";
       // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
       context.fill(pockets);
-      const readFilled = (): Float32Array => {
+      const getFilledShares = (): Float32Array => {
         const { data } = context.getImageData(0, 0, width, height);
         return Float32Array.from({ length: width * height }, (_, pixel) => (data[pixel * 4] ?? 0) / MAX_BYTE);
       };
-      const pocketShares = readFilled();
+      const pocketShares = getFilledShares();
       // A groove falls its own slope's share of a rim's depth
       const grooveByte = Math.round(Math.min(paving.grooveSlope / paving.bevel.slope, 1) * MAX_BYTE);
       context.globalCompositeOperation = "lighten";
@@ -88,7 +88,7 @@ export const createLoginPaving = (): { normalNode: Node<"vec3">; shade: Node<"fl
       }
       // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
       context.fill(grooves, "evenodd");
-      const depths = readFilled();
+      const depths = getFilledShares();
       blurChannel(depths, width, height, BEVEL_PIXELS);
       const image = context.getImageData(0, 0, width, height);
       for (let pixel = 0; pixel < width * height; pixel++) {

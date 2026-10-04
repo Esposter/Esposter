@@ -53,13 +53,13 @@ import {
   LOGIN_WALKWAY_ROW,
 } from "#src/services/login/scene/constants";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
+import { computeLoginTowerAtlas } from "#src/services/login/tower/computeLoginTowerAtlas";
 import { createLoginTowerFacade } from "#src/services/login/tower/createLoginTowerFacade";
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
-import { readLoginTowerAtlas } from "#src/services/login/tower/readLoginTowerAtlas";
 import { LOGIN_WALKWAY_RISE_DEPTH, LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
 import { createLoginPaving } from "#src/services/login/walkway/createLoginPaving";
 import { createLoginWalkwayPieces } from "#src/services/login/walkway/createLoginWalkwayPieces";
-import { readLoginWalkwaySink } from "#src/services/login/walkway/readLoginWalkwaySink";
+import { getLoginWalkwaySink } from "#src/services/login/walkway/getLoginWalkwaySink";
 import { sinkLoginWitnessWalkway } from "#src/services/login/walkway/sinkLoginWitnessWalkway";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { useLoop, useTres } from "@tresjs/core";
@@ -181,7 +181,7 @@ watchImmediate(
 const towersMaterial = createStoneMaterial(stone.towers);
 // The towers' surfaces drawn over their lathes: each band's tone, its paint, its recesses and its gilding, and where a
 // Tower stands open its colonnade lets the sky through
-const towerAtlas = readLoginTowerAtlas();
+const towerAtlas = computeLoginTowerAtlas();
 const towerFacade = createLoginTowerFacade(towerAtlas);
 towersMaterial.colorNode = towerFacade.shade.mul(color(stone.towers.albedo));
 towersMaterial.opacityNode = towerFacade.solid;
@@ -326,7 +326,7 @@ onRender(({ delta: frameDelta }) => {
   for (const { copy, depth, instanceId, seed } of walkwayInstances) {
     const z = copy * LOGIN_WALKWAY_ROW.length;
     const ahead = walkway.position.z + z + depth - cameraZ.value;
-    const sink = readLoginWalkwaySink(ahead, seed);
+    const sink = getLoginWalkwaySink(ahead, seed);
     // A piece stands only once it has begun to rise, so neither it nor its shadow shows before its turn
     walkway.setVisibleAt(instanceId, sink < LOGIN_WALKWAY_RISE_DEPTH && (!isDoorDue || ahead < doorAheadOfCamera));
     walkway.setMatrixAt(instanceId, walkwayMatrix.makeTranslation(0, -sink, z));

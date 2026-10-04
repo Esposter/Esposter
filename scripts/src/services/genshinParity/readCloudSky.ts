@@ -35,7 +35,7 @@ export const readCloudSky = async (
   await setPageWitnessView(page, {});
   const { part, width } = await readWitnessPartTarget(page);
   const sky = await page.evaluate(() =>
-    (Reflect.get(window, "readSceneSky") as () => { matrixWorld: number[]; projectionMatrixInverse: number[] })(),
+    (Reflect.get(window, "getSceneSky") as () => { matrixWorld: number[]; projectionMatrixInverse: number[] })(),
   );
   const projectionInverse = new Matrix4().fromArray(sky.projectionMatrixInverse);
   const world = new Matrix4().fromArray(sky.matrixWorld);

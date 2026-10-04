@@ -1,7 +1,7 @@
 import { createLoginHullsGeometry } from "#src/services/login/hull/createLoginHullsGeometry";
 import { LOGIN_CAMERA_HEIGHT, LOGIN_TOWERS_ROW_OFFSET } from "#src/services/login/scene/constants";
+import { computeLoginTowerAtlas } from "#src/services/login/tower/computeLoginTowerAtlas";
 import { createLoginTowersGeometry } from "#src/services/login/tower/createLoginTowersGeometry";
-import { readLoginTowerAtlas } from "#src/services/login/tower/readLoginTowerAtlas";
 import { DoubleSide, Group, Mesh, MeshBasicMaterial, Raycaster, Vector3 } from "three";
 import { describe, expect, test } from "vitest";
 
@@ -17,7 +17,7 @@ describe(createLoginHullsGeometry, () => {
     const material = new MeshBasicMaterial({ side: DoubleSide });
     const row = new Group().add(
       new Mesh(createLoginHullsGeometry(), material),
-      new Mesh(createLoginTowersGeometry(readLoginTowerAtlas()), material),
+      new Mesh(createLoginTowersGeometry(computeLoginTowerAtlas()), material),
     );
     row.position.set(...LOGIN_TOWERS_ROW_OFFSET);
     row.updateMatrixWorld();

@@ -86,7 +86,7 @@ export const solveReferenceSky = async (
       const clouds = readClouds(await readLuminance(image));
       const sky = await page.evaluate(() =>
         (
-          Reflect.get(window, "readSceneSky") as () => {
+          Reflect.get(window, "getSceneSky") as () => {
             matrixWorld: number[];
             moonDirection: Vector;
             projectionMatrixInverse: number[];

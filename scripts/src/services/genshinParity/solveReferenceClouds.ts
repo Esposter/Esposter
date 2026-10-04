@@ -47,7 +47,7 @@ export const solveReferenceClouds = async (
       await setPageWitnessView(page, {});
       const { part, width } = await readWitnessPartTarget(page);
       const sky = await page.evaluate(() =>
-        (Reflect.get(window, "readSceneSky") as () => { matrixWorld: number[]; projectionMatrixInverse: number[] })(),
+        (Reflect.get(window, "getSceneSky") as () => { matrixWorld: number[]; projectionMatrixInverse: number[] })(),
       );
       const shoot = async (colors?: { lit: Vector; shade: Vector }, isAlone = false): Promise<Buffer> => {
         await setCloudColors(page, colors);

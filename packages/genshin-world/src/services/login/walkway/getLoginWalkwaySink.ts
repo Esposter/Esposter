@@ -23,7 +23,7 @@ const TENSION = solveTension(LOGIN_WALKWAY_RISE_OVERSHOOT / LOGIN_WALKWAY_RISE_D
 // Seed, the span shifted piece by piece by up to the stagger so the walkway's far end assembles block by block: all
 // The way down at the sunk distance, rising past its place by the overshoot and settling back by the settled one, a
 // Negative sink standing over its place
-export const readLoginWalkwaySink = (ahead: number, seed: number): number => {
+export const getLoginWalkwaySink = (ahead: number, seed: number): number => {
   const progress = MathUtils.clamp(
     (LOGIN_WALKWAY_SUNK_DISTANCE - ahead - (seed - 0.5) * LOGIN_WALKWAY_RISE_STAGGER) /
       (LOGIN_WALKWAY_SUNK_DISTANCE - LOGIN_WALKWAY_SETTLED_DISTANCE),

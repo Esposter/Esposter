@@ -7,7 +7,7 @@ import { Box3, Vector3 } from "three";
 // Each part a family of the witness draws, as the camera sees it: its mesh, where it stands in the world (three's
 // Axes), and where the middle of its bounding box's top lands on the screen, from 0 to 1 across and down, behind the
 // Camera left out. A reference's landmarks are matched to parts by these, one instance of a mesh standing many times
-export const readWitnessParts = (
+export const computeWitnessParts = (
   { parts }: SceneWitness,
   context: SceneContext | undefined,
   family: string,
