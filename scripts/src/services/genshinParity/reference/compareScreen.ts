@@ -14,6 +14,7 @@ import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityRef
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
 import { readReferenceGbuffer } from "#src/services/genshinParity/shared/readReferenceGbuffer";
 import { shootScreen } from "#src/services/genshinParity/shared/shootScreen";
+import { BYTE } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
@@ -21,7 +22,7 @@ import { join } from "node:path";
 import sharp from "sharp";
 
 const GRID_SIZE = 6;
-const toPercent = (sum: number, count: number): number => (sum / Math.max(count, 1) / 255) * 100;
+const toPercent = (sum: number, count: number): number => (sum / Math.max(count, 1) / BYTE) * 100;
 // The reference, ours and their difference side by side in one image, and how far apart they are: the mean over the
 // Compared region, then the same over a grid of cells, row by row, so where they differ is read without looking; the
 // Scores are handed back for the committed report, FLIP's perceptual error among them. With a witness, the scene draws

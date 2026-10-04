@@ -1,4 +1,5 @@
 import { CONTACT_SHEET_NAME } from "#src/services/genshinParity/shared/constants";
+import { BYTE } from "#src/services/shared/constants";
 import { readdir, stat } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -34,12 +35,12 @@ export const measureLuma = async (
         .raw()
         .toBuffer({ resolveWithObject: true });
       let sum = 0;
-      let darkest = 255;
+      let darkest = BYTE;
       for (const value of data) {
         sum += value;
         darkest = Math.min(darkest, value);
       }
-      return `${path.padEnd(28)} ${(255 - sum / data.length).toFixed(1).padStart(6)} ${String(darkest).padStart(4)}`;
+      return `${path.padEnd(28)} ${(BYTE - sum / data.length).toFixed(1).padStart(6)} ${String(darkest).padStart(4)}`;
     }),
   );
   console.log(`${"image".padEnd(28)} ${"dark".padStart(6)} ${"min".padStart(4)}`);
