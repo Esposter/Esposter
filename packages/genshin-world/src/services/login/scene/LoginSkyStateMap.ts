@@ -20,9 +20,10 @@ const NIGHT_MOON_DIRECTION = getLoginScreenDirection([0.27, 0.11]);
 // So the direction is the one of 44, 60 and 80 degrees that scores best on the door recording and the dusk still
 const DUSK_LIGHT_DIRECTION = new Vector3(0.837, 0.259, 0.483);
 
-// The dusk's sky is solved as the game's sky shader draws it over the door recording's clear sky (genshin:parity sky,
-// Its clouds left out by the cloud mask), its colours with its own shape, no colour under none: lavender away from the
-// Sun and rose toward it. Its bottom colour toward the sun stands under the recording's clouds, so no pixel holds it.
+// The dawn's and the dusk's skies are solved as the game's sky shader draws them over their frames' clear sky
+// (genshin:parity sky, their clouds left out by the cloud mask), their colours with their own shape, no colour under
+// None: the dawn's deep blue away from the sun and grey toward it, the dusk's lavender away and rose toward it. The
+// Dusk's bottom colour toward the sun stands under the recording's clouds, so no pixel holds it.
 // Each time of day's sky and light, its colours read off its reference: the gradient's zenith and horizon, the haze
 // Over the cloud sea (the mean of its brightest two samples low in the frame), the clouds,
 // And the sun or the moon the light comes from.
@@ -38,17 +39,22 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     cloudLitColor: new Color(0xf5efe8),
     cloudShadeColor: new Color(0x8c91a7),
     fogColor: new Color(0xe9d8c7),
+    haloColor: new Color(0xc9a575),
     hemisphereGroundColor: new Color(0x8c91a7),
     hemisphereIntensity: 8.34,
     hemisphereSkyColor: new Color(0xf2dfc8),
-    horizonColor: new Color(0xf2c9a4),
+    horizonBackColor: new Color(0xa99f9f),
+    horizonColor: new Color(0x867771),
     lightColor: new Color(0xffd8a8),
     lightDirection: DAWN_SUN_DIRECTION,
     lightIntensity: 9.87,
     moonDirection: DAWN_SUN_DIRECTION.clone().negate(),
+    shape: { frontBackBlend: 1, haloHeight: 0.391, horizonBand: 0.344, moonSize: 1.189, sunHaloSize: 2.444 },
     starIntensity: 0,
     sunDirection: DAWN_SUN_DIRECTION,
-    zenithColor: new Color(0x42608c),
+    sunHaloColor: new Color(0x00173d),
+    zenithBackColor: new Color(0x185089),
+    zenithColor: new Color(0x888b86),
   },
   [LoginTimeOfDay.Day]: {
     cloudLitColor: new Color(0xffffff),
