@@ -63,8 +63,10 @@ export const createNotes = (
   // The lowest pitch, as NumPy's `argmax` breaks it
   const candidates: [number, number, number][] = [];
   for (const [frame, row] of energy.entries())
-    for (const [pitch, reading] of row.entries())
+    for (let pitch = 0; pitch < row.length; pitch++) {
+      const reading = takeOne(row, pitch);
       if (reading > frameThreshold) candidates.push([reading, frame, pitch]);
+    }
   candidates.sort(
     ([firstReading, firstFrame, firstPitch], [secondReading, secondFrame, secondPitch]) =>
       secondReading - firstReading || firstFrame - secondFrame || firstPitch - secondPitch,

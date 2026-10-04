@@ -9,9 +9,11 @@ export const findOnsetPeaks = (onsets: number[][], threshold: number): [number, 
     const previous = takeOne(onsets, frame - 1);
     const row = takeOne(onsets, frame);
     const next = takeOne(onsets, frame + 1);
-    for (const [pitch, reading] of row.entries())
+    for (let pitch = 0; pitch < row.length; pitch++) {
+      const reading = takeOne(row, pitch);
       if (reading > threshold && reading > takeOne(previous, pitch) && reading > takeOne(next, pitch))
         peaks.push([frame, pitch]);
+    }
   }
   return peaks;
 };

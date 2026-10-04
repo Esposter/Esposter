@@ -30,13 +30,16 @@ describe(createNotes, () => {
     ]);
   });
 
-  test("leaves the readings it is handed unchanged under a frequency range", () => {
+  test.for([
+    ["under a frequency range", { maxFrequency: 100, minFrequency: 50 }],
+    ["with no range, which it reads uncopied", {}],
+  ] as const)("leaves the readings it is handed unchanged %s", ([, options]) => {
     expect.hasAssertions();
 
     const onsets = createReadings((frame) => frame === 5, 1);
     const expectedFrames = structuredClone(frames);
     const expectedOnsets = structuredClone(onsets);
-    createNotes({ frames, onsets }, { maxFrequency: 100, minFrequency: 50 });
+    createNotes({ frames, onsets }, options);
 
     expect({ frames, onsets }).toStrictEqual({ frames: expectedFrames, onsets: expectedOnsets });
   });
