@@ -61,7 +61,7 @@ export const readCloudSky = async (
       // The clear surface settles under a sky's own wisps and its glow toward the sun, which then stand past the ratio
       // Over it, so the split is Otsu's between the sky's two populations wherever that lies past the ratio
       const greatest = overs.reduce((most, over) => Math.max(most, over), Number.EPSILON);
-      const skyOvers = Array.from(overs.filter((_, pixel) => skyMask[pixel])).map((over) => (over / greatest) * BYTE);
+      const skyOvers = [...overs.filter((_, pixel) => skyMask[pixel])].map((over) => (over / greatest) * BYTE);
       const threshold = Math.max(logRatio, (readOtsuThreshold(skyOvers) / BYTE) * greatest);
       return Uint8Array.from(overs, (over, pixel) => Number((skyMask[pixel] ?? 0) === 1 && over > threshold));
     },
