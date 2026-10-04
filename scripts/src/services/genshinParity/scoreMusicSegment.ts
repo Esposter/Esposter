@@ -9,6 +9,7 @@ import {
   LISTEN_BAND_CENTRES,
   LISTEN_FLOOR_DECIBELS,
 } from "#src/services/genshinParity/constants";
+import { readBandBins } from "#src/services/genshinParity/readBandBins";
 
 // Each octave band's energy frame by frame, between the half octaves either side of its centre, in the pitch classes'
 // Own frames
@@ -19,10 +20,8 @@ const readBandEnergies = (samples: Float32Array, sampleRate: number): Float64Arr
     CHROMA_FRAME_LENGTH,
     CHROMA_HOP_LENGTH,
   );
-  const binWidth = sampleRate / CHROMA_FRAME_LENGTH;
   return LISTEN_BAND_CENTRES.map((centre) => {
-    const low = Math.ceil(centre / Math.SQRT2 / binWidth);
-    const high = Math.min(Math.floor((centre * Math.SQRT2) / binWidth), binCount - 1);
+    const [low, high] = readBandBins(centre, sampleRate, CHROMA_FRAME_LENGTH, binCount);
     return Float64Array.from({ length: frameCount }, (_, frame) => {
       let energy = 0;
       for (let bin = low; bin <= high; bin++) energy += (magnitudes[frame * binCount + bin] ?? 0) ** 2;

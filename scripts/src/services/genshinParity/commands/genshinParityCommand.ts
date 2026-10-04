@@ -1,6 +1,7 @@
 import type { CommandDef } from "citty";
 
 import { attributeCommand } from "#src/services/genshinParity/commands/attributeCommand";
+import { bandsCommand } from "#src/services/genshinParity/commands/bandsCommand";
 import { benchCommand } from "#src/services/genshinParity/commands/benchCommand";
 import { calibrateCommand } from "#src/services/genshinParity/commands/calibrateCommand";
 import { cloudsCommand } from "#src/services/genshinParity/commands/cloudsCommand";
@@ -54,6 +55,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     track: trackCommand,
     glide: glideCommand,
     shoot: shootCommand,
+    bands: bandsCommand,
     bench: benchCommand,
     listen: listenCommand,
     film: filmCommand,

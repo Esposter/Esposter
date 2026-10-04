@@ -1,6 +1,6 @@
 import type { Spectrogram } from "#src/models/genshinAssets/Spectrogram";
 
-import { transformFourier } from "#src/services/genshinParity/transformFourier";
+import { transformFourier } from "genshin-engine";
 
 // A signal's magnitude spectrum in Hann windows of `frameLength` samples, `hopLength` apart, from its first sample
 export const computeSpectrogram = (

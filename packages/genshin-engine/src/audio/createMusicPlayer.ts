@@ -17,20 +17,22 @@ export const createMusicPlayer = (
   destination: AudioNode = context.destination,
 ): { start: () => void; stop: () => void } => {
   const output = new GainNode(context);
-  const waves = new Map<Instrument, PeriodicWave>();
-  const noiseBuffer = createNoiseBuffer(context);
+  const sounds = new Map<Instrument, { noiseBuffer: AudioBuffer | undefined; wave: PeriodicWave }>();
   let origin = 0;
   let scheduledUntil = 0;
   let timer: ReturnType<typeof setInterval> | undefined;
   const schedule = (): void => {
     const until = context.currentTime - origin + MUSIC_LOOKAHEAD_SECONDS;
     for (const { note, time, voice } of collectMusicNotes(music, scheduledUntil, until)) {
-      let wave = waves.get(voice.instrument);
-      if (!wave) {
-        wave = createInstrumentWave(context, voice.instrument.harmonics);
-        waves.set(voice.instrument, wave);
+      let sound = sounds.get(voice.instrument);
+      if (!sound) {
+        sound = {
+          noiseBuffer: createNoiseBuffer(context, voice.instrument.noiseBands),
+          wave: createInstrumentWave(context, voice.instrument.harmonics),
+        };
+        sounds.set(voice.instrument, sound);
       }
-      scheduleMusicNote(context, output, wave, noiseBuffer, voice.instrument, note, origin + time);
+      scheduleMusicNote(context, output, sound.wave, sound.noiseBuffer, voice.instrument, note, origin + time);
     }
     scheduledUntil = until;
   };

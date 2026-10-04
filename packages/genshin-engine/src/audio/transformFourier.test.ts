@@ -1,4 +1,4 @@
-import { transformFourier } from "#src/services/genshinParity/transformFourier";
+import { transformFourier } from "#src/audio/transformFourier";
 import { describe, expect, test } from "vitest";
 
 describe(transformFourier, () => {

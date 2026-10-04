@@ -14,6 +14,7 @@ import { fitVoiceNoises } from "#src/services/genshinAssets/fitVoiceNoises";
 import { getComponentDirectory } from "#src/services/genshinAssets/getComponentDirectory";
 import { readMusicSourceNotes } from "#src/services/genshinAssets/readMusicSourceNotes";
 import { splitVoicesByRegister } from "#src/services/genshinAssets/splitVoicesByRegister";
+import { CHROMA_FRAME_LENGTH, CHROMA_HOP_LENGTH } from "#src/services/genshinParity/constants";
 import { readAudioSamples } from "#src/services/genshinParity/readAudioSamples";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFile } from "node:fs/promises";
@@ -26,7 +27,7 @@ const roundInstrument = ({
   decay,
   harmonics,
   level,
-  noise,
+  noiseBands,
   release,
   sustain,
   tuning,
@@ -35,7 +36,7 @@ const roundInstrument = ({
   decay: roundMusic(decay),
   harmonics: harmonics.map(roundMusic),
   level: roundMusic(level),
-  noise: roundMusic(noise),
+  noiseBands: noiseBands.map(roundMusic),
   release: roundMusic(release),
   sustain: roundMusic(sustain),
   tuning: roundMusic(tuning),
@@ -71,19 +72,23 @@ export const fitLoginMusic = async (): Promise<{ music: Music; report: string[] 
       const voiceNotesList = [-Infinity, ...splits].map((lowest, voice) =>
         notes.filter(({ pitchMidi }) => pitchMidi >= lowest && pitchMidi < (splits[voice] ?? Infinity)),
       );
-      const noises = fitVoiceNoises(spectrogram, voiceNotesList);
+      // The voices' noise is solved in the listening score's own frames, whose finer bins tell a tonal band from a noisy one
+      // As the score and `genshin:parity bands` do, and give the lowest band bins enough to read between its notes
+      const noiseSpectrogram = computeSpectrogram(samples, AUDIO_SAMPLE_RATE, CHROMA_FRAME_LENGTH, CHROMA_HOP_LENGTH);
+      const { flatnesses, levels: noises } = fitVoiceNoises(noiseSpectrogram, voiceNotesList);
+      report.push(`  flatness by band ${flatnesses.map((flatness) => flatness.toFixed(3)).join(", ")}`);
       for (const [voice, voiceNotes] of voiceNotesList.entries()) {
         const { decayResidual, harmonicCounts, instrument, noteCount, releaseCount, releaseResidual } = fitInstrument(
           spectrogram,
           voiceNotes,
           notes,
         );
-        const noise = noises[voice] ?? 0;
+        const noiseBands = noises[voice] ?? [];
         report.push(
-          `  voice ${voice}: ${voiceNotes.length} notes, ${noteCount} clear; harmonics ${instrument.harmonics.map((amplitude, index) => `${amplitude.toFixed(3)} (${harmonicCounts[index]})`).join(", ")}; attack ${instrument.attack.toFixed(3)} s, decay ${instrument.decay.toFixed(3)} s to ${instrument.sustain.toFixed(3)} (residual ${decayResidual.toFixed(3)}), release ${instrument.release.toFixed(3)} s from ${releaseCount} notes (residual ${releaseResidual.toFixed(3)}), level ${instrument.level.toFixed(4)}, noise ${noise.toFixed(4)}, tuning ${(instrument.tuning * 100).toFixed(1)} cents`,
+          `  voice ${voice}: ${voiceNotes.length} notes, ${noteCount} clear; harmonics ${instrument.harmonics.map((amplitude, index) => `${amplitude.toFixed(3)} (${harmonicCounts[index]})`).join(", ")}; attack ${instrument.attack.toFixed(3)} s, decay ${instrument.decay.toFixed(3)} s to ${instrument.sustain.toFixed(3)} (residual ${decayResidual.toFixed(3)}), release ${instrument.release.toFixed(3)} s from ${releaseCount} notes (residual ${releaseResidual.toFixed(3)}), level ${instrument.level.toFixed(4)}, noise by band ${noiseBands.map((level) => level.toFixed(4)).join(", ")}, tuning ${(instrument.tuning * 100).toFixed(1)} cents`,
         );
         voices.push({
-          instrument: roundInstrument({ ...instrument, noise }),
+          instrument: roundInstrument({ ...instrument, noiseBands }),
           notes: voiceNotes
             .filter(({ startTimeSeconds }) => startTimeSeconds >= clipStart && startTimeSeconds < clipEnd)
             .map(({ amplitude, durationSeconds, pitchMidi, startTimeSeconds }) => ({

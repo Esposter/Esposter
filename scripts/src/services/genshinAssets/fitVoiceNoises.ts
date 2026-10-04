@@ -2,100 +2,151 @@ import type { Spectrogram } from "#src/models/genshinAssets/Spectrogram";
 import type { NoteEventTime } from "pitch-transcription/notes";
 
 import {
-  MUSIC_MAX_FREQUENCY,
-  MUSIC_NOISE_MIN_FREQUENCY,
+  MUSIC_NOISE_MIN_BINS,
+  MUSIC_NOISE_MIN_FLATNESS,
   MUSIC_NOISE_REFINE_STEPS,
+  MUSIC_RELEASE_SECONDS,
 } from "#src/services/genshinAssets/constants";
 import { readMedian } from "#src/services/genshinAssets/readMedian";
+import { readMedianFlatness } from "#src/services/genshinAssets/readMedianFlatness";
+import { readPartialBinRanges } from "#src/services/genshinAssets/readPartialBinRanges";
 import { readSpectralPeak } from "#src/services/genshinAssets/readSpectralPeak";
+import { readBandBins } from "#src/services/genshinParity/readBandBins";
 import { solveLinearSystem } from "#src/services/genshinParity/solveLinearSystem";
-import { A4_FREQUENCY, A4_PITCH } from "genshin-engine";
+import { A4_FREQUENCY, A4_PITCH, MUSIC_NOISE_BAND_CENTRES } from "genshin-engine";
 
-// Each voice's noise, white noise's standard deviation over its notes' fundamental amplitude, solved over every frame
-// At once. Every note's noise covers every frequency and no note in a piece sounds alone, so no note's noise can be
-// Read on its own; instead a frame's noise power, from its median bin between `MUSIC_NOISE_MIN_FREQUENCY` and
-// `MUSIC_MAX_FREQUENCY` (which no partial among them moves), is the sum over the voices of each one's share times the
-// Power of its fundamentals sounding there, and the voices are told apart by how their mix moves from frame to frame.
-// The shares are solved by least squares, a voice given a negative share left silent and the rest solved again, then
-// Refined by Gauss-Newton on the logarithm of each frame's power, so a gap is charged in decibels as the listening score
-// Charges it and a loud attack does not outweigh the frames between. A Hann window's bin of noise is Rayleigh, its
-// Median √(ln 2 · Σw²) times the deviation, and a sinusoid's peak A N / 4
-export const fitVoiceNoises = (spectrogram: Spectrogram, voices: NoteEventTime[][]): number[] => {
+const toFrequency = (pitch: number): number => A4_FREQUENCY * 2 ** ((pitch - A4_PITCH) / 12);
+// Each voice's noise in each octave band of `MUSIC_NOISE_BAND_CENTRES`, the noise's standard deviation over its notes'
+// Fundamental amplitude, solved over every frame at once. Every note's noise covers every frequency and no note in a
+// Piece sounds alone, so no note's noise can be read on its own; instead a frame's noise in a band, from the median of
+// Its bins off every partial of every note sounding there (a frame with too few such bins says nothing of the band:
+// The lowest band, a few bins wide, is read between its notes),
+// Is the sum over the voices of each one's share times the power of its fundamentals sounding there, and the voices
+// Are told apart by how their mix moves from frame to frame. Each band's shares are solved by least squares, a voice
+// Given a negative share left silent and the rest solved again, then refined by Gauss-Newton on the logarithm of each
+// Frame's power, so a gap is charged in decibels as the listening score charges it and a loud attack does not
+// Outweigh the frames between. A Hann window's bin of white noise is Rayleigh, its median √(ln 2 · Σw²) times the
+// Deviation, a band's share of white noise its width over the half rate, and a sinusoid's peak A N / 4. Only a band
+// The game's sound is noise-like in, its median flatness at least `MUSIC_NOISE_MIN_FLATNESS`, is given noise; each
+// Band's flatness is handed back with the levels for the fit's report
+export const fitVoiceNoises = (
+  spectrogram: Spectrogram,
+  voices: NoteEventTime[][],
+): { flatnesses: number[]; levels: number[][] } => {
   const { binCount, frameCount, frameLength, hopLength, magnitudes, sampleRate } = spectrogram;
   const binWidth = sampleRate / frameLength;
-  const lowBin = Math.ceil(MUSIC_NOISE_MIN_FREQUENCY / binWidth);
-  const highBin = Math.min(Math.floor(MUSIC_MAX_FREQUENCY / binWidth), binCount - 1);
   // A Hann window's sum of squares is three eighths of its length
   const medianShare = Math.sqrt(Math.LN2 * ((3 * frameLength) / 8));
-  const noisePowers = Float64Array.from({ length: frameCount }, (_, frame) => {
-    const bins = Array.from(
-      { length: highBin - lowBin + 1 },
-      (_, index) => magnitudes[frame * binCount + lowBin + index] ?? 0,
-    );
-    return (readMedian(bins) / medianShare) ** 2;
-  });
-  const toFrame = (seconds: number): number =>
-    Math.min(Math.max(Math.round((seconds * sampleRate - frameLength / 2) / hopLength), 0), frameCount - 1);
+  // The frames whose windows reach into a note, from the first that holds its start to the last that holds its ring
+  // After its end, which its partials and its noise both carry through its release
+  const readNoteFrames = ({ durationSeconds, startTimeSeconds }: NoteEventTime): [number, number] => [
+    Math.max(Math.floor((startTimeSeconds * sampleRate - frameLength) / hopLength) + 1, 0),
+    Math.min(
+      Math.floor(((startTimeSeconds + durationSeconds + MUSIC_RELEASE_SECONDS) * sampleRate) / hopLength),
+      frameCount - 1,
+    ),
+  ];
+  // Each frame's bins a partial holds of a note its window reaches, of any voice; the median leaves out the few
+  // Partials a fixed clearance misses
+  const partialMasks = Array.from({ length: frameCount }, () => new Uint8Array(binCount));
+  for (const note of voices.flat()) {
+    const [firstFrame, lastFrame] = readNoteFrames(note);
+    for (const [low, high] of readPartialBinRanges(note.pitchMidi, binWidth, binCount))
+      for (let frame = firstFrame; frame <= lastFrame; frame++) partialMasks[frame]?.fill(1, low, high);
+  }
   const voicePowers = voices.map((notes) => {
     const powers = new Float64Array(frameCount);
-    for (const { durationSeconds, pitchMidi, startTimeSeconds } of notes) {
-      const frequency = A4_FREQUENCY * 2 ** ((pitchMidi - A4_PITCH) / 12);
-      for (let frame = toFrame(startTimeSeconds); frame <= toFrame(startTimeSeconds + durationSeconds); frame++)
+    for (const note of notes) {
+      const { pitchMidi } = note;
+      const [firstFrame, lastFrame] = readNoteFrames(note);
+      for (let frame = firstFrame; frame <= lastFrame; frame++)
         powers[frame] =
-          (powers[frame] ?? 0) + ((4 * readSpectralPeak(spectrogram, frame, frequency).magnitude) / frameLength) ** 2;
+          (powers[frame] ?? 0) +
+          ((4 * readSpectralPeak(spectrogram, frame, toFrequency(pitchMidi)).magnitude) / frameLength) ** 2;
     }
     return powers;
   });
-  // The normal equations over the active voices, each frame's row weighted and its target given
+  const readPower = (voice: number, frame: number): number => voicePowers[voice]?.[frame] ?? 0;
+  // The normal equations over the active voices, each frame's row and target given, a frame without a target left out
   const solveNormal = (
     active: number[],
-    readRow: (voice: number, frame: number) => number,
-    readTarget: (frame: number) => number,
-  ): number[] | undefined =>
-    solveLinearSystem(
-      active.map((row) =>
-        active.map((column) => {
-          let sum = 0;
-          for (let frame = 0; frame < frameCount; frame++) sum += readRow(row, frame) * readRow(column, frame);
-          return sum;
-        }),
+    readRow: (index: number, frame: number) => number,
+    readTarget: (frame: number) => number | undefined,
+  ): number[] | undefined => {
+    const frames = Array.from({ length: frameCount }, (_, frame) => frame).filter(
+      (frame) => readTarget(frame) !== undefined,
+    );
+    return solveLinearSystem(
+      active.map((_, row) =>
+        active.map((_, column) => frames.reduce((sum, frame) => sum + readRow(row, frame) * readRow(column, frame), 0)),
       ),
-      active.map((row) => {
-        let sum = 0;
-        for (let frame = 0; frame < frameCount; frame++) sum += readRow(row, frame) * readTarget(frame);
-        return sum;
+      active.map((_, row) => frames.reduce((sum, frame) => sum + readRow(row, frame) * (readTarget(frame) ?? 0), 0)),
+    );
+  };
+  const soundingFrames = Array.from({ length: frameCount }, (_, frame) => frame).filter((frame) =>
+    voicePowers.some((powers) => (powers[frame] ?? 0) > 0),
+  );
+  const bands = MUSIC_NOISE_BAND_CENTRES.map((centre) => {
+    const [low, high] = readBandBins(centre, sampleRate, frameLength, binCount);
+    const flatness = readMedianFlatness(spectrogram, soundingFrames, [low, high]);
+    // A band a few partials hold is tones, which what lies off ours is too (an untranscribed line, a partial's ring),
+    // And noise there would only blur the pitch
+    if (flatness < MUSIC_NOISE_MIN_FLATNESS) return { flatness, levels: voices.map(() => 0) };
+    // The band's width over the half rate, the share of white noise's power it holds
+    const bandShare = centre / Math.SQRT2 / (sampleRate / 2);
+    const noisePowers = Array.from({ length: frameCount }, (_, frame): number | undefined => {
+      const offBins: number[] = [];
+      for (let bin = low; bin <= high; bin++)
+        if (!partialMasks[frame]?.[bin]) offBins.push(magnitudes[frame * binCount + bin] ?? 0);
+      if (offBins.length < MUSIC_NOISE_MIN_BINS) return undefined;
+      const power = (readMedian(offBins) / medianShare) ** 2 * bandShare;
+      return power > 0 ? power : undefined;
+    });
+    // A voice silent in every frame the band is read in says nothing of it
+    let active = voices
+      .map((_, index) => index)
+      .filter((voice) => noisePowers.some((power, frame) => power !== undefined && readPower(voice, frame) > 0));
+    let shares: number[] = [];
+    while (active.length > 0) {
+      const solving = active;
+      shares =
+        solveNormal(
+          solving,
+          (index, frame) => readPower(solving[index] ?? 0, frame),
+          (frame) => noisePowers[frame],
+        ) ?? solving.map(() => 0);
+      if (shares.every((share) => share > 0)) break;
+      active = solving.filter((_, index) => (shares[index] ?? 0) > 0);
+    }
+    // Each share as its logarithm, which keeps it positive through the refinement
+    const logShares = shares.map((share) => Math.log(share));
+    const solved = active;
+    const readModel = (frame: number): number =>
+      solved.reduce((sum, voice, index) => sum + Math.exp(logShares[index] ?? 0) * readPower(voice, frame), 0);
+    for (let step = 0; step < MUSIC_NOISE_REFINE_STEPS && solved.length > 0; step++) {
+      const models = Float64Array.from({ length: frameCount }, (_, frame) => readModel(frame));
+      const delta = solveNormal(
+        solved,
+        (index, frame) =>
+          (Math.exp(logShares[index] ?? 0) * readPower(solved[index] ?? 0, frame)) / (models[frame] || 1),
+        (frame) => {
+          const power = noisePowers[frame];
+          return power === undefined || !models[frame] ? undefined : Math.log(power / (models[frame] ?? 1));
+        },
+      );
+      if (!delta) break;
+      for (const [index, change] of delta.entries()) logShares[index] = (logShares[index] ?? 0) + change;
+    }
+    return {
+      flatness,
+      levels: voices.map((_, voice) => {
+        const index = solved.indexOf(voice);
+        return index === -1 ? 0 : Math.exp((logShares[index] ?? 0) / 2);
       }),
-    );
-  const readPower = (voice: number, frame: number): number => voicePowers[voice]?.[frame] ?? 0;
-  let active = voices.map((_, index) => index);
-  let shares: number[] = [];
-  while (active.length > 0) {
-    shares = solveNormal(active, readPower, (frame) => noisePowers[frame] ?? 0) ?? active.map(() => 0);
-    if (shares.every((share) => share > 0)) break;
-    active = active.filter((_, index) => (shares[index] ?? 0) > 0);
-  }
-  // Each share as its logarithm, which keeps it positive through the refinement
-  const logShares = shares.map((share) => Math.log(share));
-  const readModel = (frame: number): number =>
-    active.reduce((sum, voice, index) => sum + Math.exp(logShares[index] ?? 0) * readPower(voice, frame), 0);
-  // Only a frame with both a note sounding and noise heard has a logarithm to fit
-  const isFitted = (frame: number): boolean => readModel(frame) > 0 && (noisePowers[frame] ?? 0) > 0;
-  for (let step = 0; step < MUSIC_NOISE_REFINE_STEPS && active.length > 0; step++) {
-    const models = Float64Array.from({ length: frameCount }, (_, frame) => readModel(frame));
-    const fitted = Uint8Array.from({ length: frameCount }, (_, frame) => (isFitted(frame) ? 1 : 0));
-    const delta = solveNormal(
-      active.map((_, index) => index),
-      (index, frame) =>
-        fitted[frame]
-          ? (Math.exp(logShares[index] ?? 0) * readPower(active[index] ?? 0, frame)) / (models[frame] ?? 1)
-          : 0,
-      (frame) => (fitted[frame] ? Math.log((noisePowers[frame] ?? 0) / (models[frame] ?? 1)) : 0),
-    );
-    if (!delta) break;
-    for (const [index, change] of delta.entries()) logShares[index] = (logShares[index] ?? 0) + change;
-  }
-  return voices.map((_, voice) => {
-    const index = active.indexOf(voice);
-    return index === -1 ? 0 : Math.exp((logShares[index] ?? 0) / 2);
+    };
   });
+  return {
+    flatnesses: bands.map(({ flatness }) => flatness),
+    levels: voices.map((_, voice) => bands.map(({ levels }) => levels[voice] ?? 0)),
+  };
 };

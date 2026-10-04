@@ -13,9 +13,9 @@ export const renderMusicSegment = (music: Music, segmentIndex: number, sampleRat
     numberOfChannels: 1,
     sampleRate,
   });
-  const noiseBuffer = createNoiseBuffer(context);
   for (const { instrument, notes } of segment?.voices ?? []) {
     const wave = createInstrumentWave(context, instrument.harmonics);
+    const noiseBuffer = createNoiseBuffer(context, instrument.noiseBands);
     for (const note of notes)
       scheduleMusicNote(context, context.destination, wave, noiseBuffer, instrument, note, note.start);
   }

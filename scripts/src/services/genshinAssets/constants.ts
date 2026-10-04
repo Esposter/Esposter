@@ -65,9 +65,14 @@ export const MUSIC_HOP_LENGTH = 256;
 // At the transcription's half rate
 export const MUSIC_HARMONIC_COUNT = 32;
 export const MUSIC_MAX_FREQUENCY = 10_000;
-// The frequency above which the game's sound is more noise than partials (its spectrum several times flatter than the
-// Octaves below), where a voice's noise is read
-export const MUSIC_NOISE_MIN_FREQUENCY = 5000;
+// A partial's leakage through a Hann window's sidelobes falls some fifty decibels under its peak by six bins out, as far
+// Under a note as a mix's noise sits, so a band's noise is read only that far from every partial, and from at least two
+// Such bins
+export const MUSIC_NOISE_CLEAR_BINS = 6;
+export const MUSIC_NOISE_MIN_BINS = 2;
+// A band is given noise only where the game's sound in it is noise-like: its tonal octaves read a median flatness under
+// About 0.06 and its noisy ones over about 0.09
+export const MUSIC_NOISE_MIN_FLATNESS = 0.07;
 // The Gauss-Newton steps refining the voices' noise from its least-squares solve, which settles within a few
 export const MUSIC_NOISE_REFINE_STEPS = 20;
 // A harmonic is measured only where every other sounding note's harmonics stand at least this many semitones clear of

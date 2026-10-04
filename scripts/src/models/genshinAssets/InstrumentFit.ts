@@ -6,7 +6,7 @@ import type { Instrument } from "genshin-engine";
 export interface InstrumentFit {
   decayResidual: number;
   harmonicCounts: number[];
-  instrument: Omit<Instrument, "noise">;
+  instrument: Omit<Instrument, "noiseBands">;
   noteCount: number;
   releaseCount: number;
   releaseResidual: number;
