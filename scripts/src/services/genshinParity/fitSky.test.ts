@@ -14,4 +14,13 @@ describe(fitSky, () => {
     expect(colors[0]?.map((value) => Number(value.toFixed(2)))).toStrictEqual(color);
     expect(Number(residual.toFixed(2))).toBe(0);
   });
+
+  test("leaves a lit haze out of the pixels its residual reads", () => {
+    expect.hasAssertions();
+
+    const clear = Array.from({ length: 9 }, () => ({ color: [0.2, 0.1, 0.3] as [number, number, number], weights }));
+    const { kept } = fitSky([...clear, { color: [0.9, 0.6, 0.5], weights }]);
+
+    expect(kept).toBe(clear.length);
+  });
 });
