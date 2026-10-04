@@ -230,7 +230,7 @@ catalog:
   oxlint: ^1.86.0
   oxlint-tsgolint: ^7.0.2003
   p-progress: ^1.0.0
-  pdfjs-dist: ^6.3.289
+  pdfjs-dist: ^6.4.299
   phaser: ^4.2.1
   phaser4-rex-plugins: ^4.2.0
   pinia: ^4.0.3
@@ -300,7 +300,7 @@ overrides:
   # @TODO: https://github.com/nitrojs/nitro/pull/4647 — back to a `^3` range once a Nitro release carries it: the
   # Beta registers its WebSocket upgrade listener on Vite's `httpServer`, which Nuxt's middleware-mode Vite does not have
   nitro: npm:nitro-nightly@latest
-  pdfjs-dist: ^6.3.289
+  pdfjs-dist: ^6.4.299
   typescript: npm:typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2
   vite: ^8.3.2
 
