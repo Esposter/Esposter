@@ -7,11 +7,12 @@ import {
   CHROMA_MAX_FREQUENCY,
   CHROMA_MIN_FREQUENCY,
 } from "#src/services/genshinParity/constants";
+import { normalizeChromaClasses } from "#src/services/genshinParity/normalizeChromaClasses";
 
 // A signal's pitch classes frame by frame: each Hann-windowed frame's spectrum folded onto the twelve semitones of
-// The equal-tempered scale about A440 between the lowest and highest frequency read, each frame's twelve weights less
-// Their mean and scaled to unit length, so a frame of no pitch reads as zeros and two frames compare by their dot
-// Product. A frame's loudness is kept beside its classes, so a quiet frame is left out of a comparison
+// The equal-tempered scale about A440 between the lowest and highest frequency read, normalised
+// (`normalizeChromaClasses`). A frame's loudness is kept beside its classes, so a quiet frame is left out of a
+// Comparison
 export const computeChroma = (samples: Float32Array, sampleRate: number): Chroma => {
   const { binCount, frameCount, magnitudes } = computeSpectrogram(
     samples,
@@ -34,11 +35,7 @@ export const computeChroma = (samples: Float32Array, sampleRate: number): Chroma
       classes[offset + pitchClass] = (classes[offset + pitchClass] ?? 0) + magnitude;
       loudness[frame] = (loudness[frame] ?? 0) + magnitude;
     }
-    const frameClasses = classes.subarray(offset, offset + 12);
-    const mean = frameClasses.reduce((sum, value) => sum + value, 0) / 12;
-    for (const [index, value] of frameClasses.entries()) frameClasses[index] = value - mean;
-    const norm = Math.hypot(...frameClasses) || 1;
-    for (const [index, value] of frameClasses.entries()) frameClasses[index] = value / norm;
   }
+  normalizeChromaClasses(classes);
   return { classes, loudness };
 };
