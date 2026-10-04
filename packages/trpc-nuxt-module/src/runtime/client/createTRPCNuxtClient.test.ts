@@ -63,7 +63,7 @@ describe(createTRPCNuxtClient, () => {
 
     const { error, mutate } = client.fail.useMutation();
 
-    await expect(mutate()).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
+    await expect(mutate()).rejects.toThrowErrorMatchingInlineSnapshot(`[HTTPError:  ]`);
     expect(error.value?.data?.code).toBe("BAD_REQUEST");
   });
 

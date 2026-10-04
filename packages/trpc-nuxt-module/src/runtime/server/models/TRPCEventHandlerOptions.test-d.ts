@@ -1,5 +1,5 @@
 import type { TRPCEventHandlerOptions } from "#src/runtime/server/models/TRPCEventHandlerOptions";
-import type { H3Event } from "h3";
+import type { H3Event } from "nitro/h3";
 
 import { initTRPC } from "@trpc/server";
 import { describe, expect, expectTypeOf, test } from "vitest";

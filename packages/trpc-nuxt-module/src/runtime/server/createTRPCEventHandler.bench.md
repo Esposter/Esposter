@@ -9,16 +9,16 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-09-29T04:09:13.681Z
-- Commit: 8a779d8bda
+- Date: 2026-10-04T00:48:22.784Z
+- Commit: eb4643e498
 - Node: v26.10.0
-- OS: win32 10.0.26200 (x64)
-- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
-- RAM: 38.8 GiB
+- OS: win32 10.0.19045 (x64)
+- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
+- RAM: 31.9 GiB
 
 ## createTRPCEventHandler > a mutation
 
 | task                                         | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------------------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| native — tRPC's fetch adapter                | 1.00×   | 0.2055    | ±17.93% | 0.3134   | 10      |
-| createTRPCEventHandler — through an h3 event | 0.75×   | 0.2743    | ±12.74% | 0.3594   | 10      |
+| createTRPCEventHandler — through an h3 event | 1.00×   | 0.1570    | ±15.51% | 0.2147   | 10      |
+| native — tRPC's fetch adapter                | 0.97×   | 0.1614    | ±9.94%  | 0.2118   | 10      |
