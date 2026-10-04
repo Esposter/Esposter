@@ -21,19 +21,13 @@ export default defineEventHandler(async (event) => {
   return getResultAsync(async () => {
     await webhookRateLimiter.consume(id);
     // This route is a thin proxy for the function that owns the webhook: it answers 404 for an unknown id or a
-    // Wrong token and 400 for an invalid payload, and a rejected response would collapse every one of those into
-    // The internal-error branch below, so the sender could not tell a bad credential from an Esposter outage
-    const { _data, status } = await $fetch.raw<unknown>(
-      `${runtimeConfig.public.azure.function.baseUrl}/api/webhooks/${id}/${token}`,
-      {
-        body,
-        headers: { "Content-Type": MimeType.Json, "x-functions-key": runtimeConfig.azure.function.key },
-        ignoreResponseError: true,
-        method: "POST",
-      },
-    );
-    event.res.status = status;
-    return _data;
+    // Wrong token and 400 for an invalid payload, and its response is returned as it came back so the sender
+    // Can tell a bad credential from an Esposter outage
+    return fetch(`${runtimeConfig.public.azure.function.baseUrl}/api/webhooks/${id}/${token}`, {
+      body,
+      headers: { "Content-Type": MimeType.Json, "x-functions-key": runtimeConfig.azure.function.key },
+      method: "POST",
+    });
   }).match(
     (data) => data,
     (error) => {
