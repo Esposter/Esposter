@@ -5,7 +5,6 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { ACCOUNT_COMMAND_GROUP, PAGES_COMMAND_GROUP } from "@/services/app/constants";
 import { SecondaryPageLinkItems } from "@/services/app/SecondaryPageLinkItems";
 import { UserSettingsPageLinkItem } from "@/services/app/UserSettingsPageLinkItem";
-import { authClient } from "@/services/auth/authClient";
 import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
 import { RoutePath } from "@esposter/shared";
 
@@ -13,7 +12,7 @@ import { RoutePath } from "@esposter/shared";
 // Settings, the pages outside the products, and signing in or out. Signed out, signing in leads. The theme mode and
 // The design style are the dock's menus of their own (`useThemeModeCommands`, `useUiStyleCommands`)
 export const useAccountCommands = async () => {
-  const { data: session } = await authClient.useSession(useFetch);
+  const { data: session } = await useAuthSession();
   return computed<UiCommand[]>(() => [
     ...(session.value
       ? [

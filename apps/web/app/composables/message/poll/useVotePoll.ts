@@ -1,7 +1,6 @@
 import type { PollMessageContent } from "#shared/models/message/poll/PollMessageContent";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
-import { authClient } from "@/services/auth/authClient";
 import { useDataStore } from "@/store/message/data";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
@@ -13,7 +12,7 @@ export const useVotePoll = async (
   const { $trpc } = useNuxtApp();
   // Single-flight per poll: a second vote while one is in flight is dropped rather than racing it
   const { checkIsPending, executeMutation } = useMutation();
-  const { data: session } = await authClient.useSession(useFetch);
+  const { data: session } = await useAuthSession();
   const dataStore = useDataStore();
   const { storeUpdateMessage } = dataStore;
   const userId = computed(() => session.value?.user.id);

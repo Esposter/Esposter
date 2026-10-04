@@ -2,9 +2,9 @@
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { useResourceStore } from "@/store/resource";
 import { useFilterStore } from "@/store/resource/sheet/filter";
 import { describe, expect, test } from "vitest";

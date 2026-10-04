@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
 
 interface Props {
@@ -10,7 +9,7 @@ interface Props {
 
 const isOpen = defineModel<boolean>({ default: false });
 const { room } = defineProps<Props>();
-const { data: session } = await authClient.useSession(useFetch);
+const { data: session } = await useAuthSession();
 const isCreator = computed(() => room.userId === session.value?.user.id);
 const roomStore = useRoomStore();
 const { deleteRoom, leaveRoom } = roomStore;

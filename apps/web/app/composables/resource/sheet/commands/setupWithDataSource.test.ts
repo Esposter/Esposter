@@ -3,7 +3,7 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useResourceStore } from "@/store/resource";
 import { useSheetStore } from "@/store/resource/sheet";
 import { describe } from "vitest";

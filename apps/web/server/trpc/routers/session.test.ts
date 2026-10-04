@@ -1,19 +1,19 @@
+import type { Context } from "#server/trpc/context";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { Device } from "#shared/models/auth/Device";
-import type { Context } from "@@/server/trpc/context";
-import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { Session } from "better-auth";
 
-import { createMockSession } from "@@/server/auth.test";
-import { createCallerFactory } from "@@/server/trpc";
+import { createMockSession } from "#server/auth.test";
+import { createCallerFactory } from "#server/trpc";
 import {
   createMockContext,
   getMockRevokeOtherSessions,
   getMockRevokeSession,
   getMockSession,
   replayMockSession,
-} from "@@/server/trpc/context.test";
-import { sessionRouter } from "@@/server/trpc/routers/session";
+} from "#server/trpc/context.test";
+import { sessionRouter } from "#server/trpc/routers/session";
 import { sessionsInAuth } from "@esposter/db-schema";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -21,7 +21,7 @@ const mocks = vi.hoisted(() => ({ closeDeviceConnections: vi.fn<(device: Device)
 
 // Closing a revoked session's live connections is the one part of a revoke that leaves the auth tables, so it is
 // Asserted as the intent it is rather than through a Web PubSub hub
-vi.mock(import("@@/server/services/auth/closeDeviceConnections"), () => ({
+vi.mock(import("#server/services/auth/closeDeviceConnections"), () => ({
   closeDeviceConnections: mocks.closeDeviceConnections,
 }));
 

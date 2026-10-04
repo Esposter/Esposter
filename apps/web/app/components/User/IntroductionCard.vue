@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { authClient } from "@/services/auth/authClient";
 import { SITE_NAME } from "@esposter/shared";
 
-const { data: session } = await authClient.useSession(useFetch);
+const { data: session } = await useAuthSession();
 </script>
 
 <template>

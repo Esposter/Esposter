@@ -1,16 +1,16 @@
-import type { Context } from "@@/server/trpc/context";
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { Context } from "#server/trpc/context";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { BlobDeletionEventGridData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
+import { getRoomEmojiBlobName } from "#server/services/message/emoji/getRoomEmojiBlobName";
+import { createCallerFactory } from "#server/trpc";
+import { mockSessionOnce } from "#server/trpc/context.test";
+import { roomEmojiRouter } from "#server/trpc/routers/room/emoji";
+import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { MimeType } from "#shared/models/file/MimeType";
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
-import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { getRoomEmojiBlobName } from "@@/server/services/message/emoji/getRoomEmojiBlobName";
-import { createCallerFactory } from "@@/server/trpc";
-import { mockSessionOnce } from "@@/server/trpc/context.test";
-import { roomEmojiRouter } from "@@/server/trpc/routers/room/emoji";
-import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
 import { AzureContainer, DatabaseEntityType, roomEmojisInMessage, RoomPermission } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockEventGridDatabase } from "azure-mock";

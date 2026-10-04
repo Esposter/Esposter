@@ -7,8 +7,8 @@ Read when a tRPC router or server route guards a nullable DB result, attaches a 
 Tested once in `server/trpc/guards/` and used everywhere: `requireEntity` turns a `findFirst` that may be `null` into a `TRPCError` `NOT_FOUND`, and `requireMutation` turns a `.returning()[0]` that may be `undefined` into a `BAD_REQUEST`.
 
 ```ts
-import { requireEntity } from "@@/server/trpc/guards/requireEntity";
-import { requireMutation } from "@@/server/trpc/guards/requireMutation";
+import { requireEntity } from "#server/trpc/guards/requireEntity";
+import { requireMutation } from "#server/trpc/guards/requireMutation";
 
 // findFirst → throws TRPCError NOT_FOUND if null
 const foo = await requireEntity(tx.query.foos.findFirst({ where: ... }), DatabaseEntityType.Foo, input.fooId);
@@ -27,8 +27,8 @@ const updatedFoo = requireMutation(
 The guards above cover a DB result that may be missing. When the router decides the rejection itself, reach for the constructors the guards are built on rather than assembling a `TRPCError` around an error message:
 
 ```ts
-import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
-import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
+import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
+import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 
 // BAD_REQUEST by default; pass a code only where the rejection genuinely is not one
 throw getInvalidOperationError(Operation.Update, DatabaseEntityType.Foo, input.fooId);

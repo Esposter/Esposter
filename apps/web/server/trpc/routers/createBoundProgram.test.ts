@@ -1,10 +1,10 @@
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { ProgramResource } from "#shared/models/resource/program/ProgramResource";
-import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { AUDIENCE_KEY_COLUMN, createAudienceSheet } from "#server/trpc/routers/createAudienceSheet.test";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
-import { AUDIENCE_KEY_COLUMN, createAudienceSheet } from "@@/server/trpc/routers/createAudienceSheet.test";
 import { describe } from "vitest";
 
 interface CreateBoundProgramOptions {

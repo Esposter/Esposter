@@ -1,6 +1,6 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 
-import { getRoomMembershipWhere } from "@@/server/services/room/getRoomMembershipWhere";
+import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { usersToRoomsInMessage } from "@esposter/db-schema";
 import { describe } from "vitest";
 

@@ -1,13 +1,13 @@
-import type { Context } from "@@/server/trpc/context";
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { Context } from "#server/trpc/context";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";
-import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
-import { createFriendship } from "@@/server/trpc/routers/createFriendship.test";
-import { friendRouter } from "@@/server/trpc/routers/friend";
-import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
+import { getFriendshipId } from "#server/services/friend/getFriendshipId";
+import { createCallerFactory } from "#server/trpc";
+import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "#server/trpc/context.test";
+import { createFriendship } from "#server/trpc/routers/createFriendship.test";
+import { friendRouter } from "#server/trpc/routers/friend";
+import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
 import {
   blocksInSocial,
   DatabaseEntityType,

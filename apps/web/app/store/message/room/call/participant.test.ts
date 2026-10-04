@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
+import { getMockSession } from "#server/trpc/context.test";
 import { useParticipantStore } from "@/store/message/room/call/participant";
-import { getMockSession } from "@@/server/trpc/context.test";
 import { describe, expect, test } from "vitest";
 
 // The session user as a participant row — the shape every write here addresses

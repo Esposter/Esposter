@@ -1,23 +1,23 @@
-import type { Context } from "@@/server/trpc/context";
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { Context } from "#server/trpc/context";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { BlobDeletionEventGridData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { MimeType } from "#shared/models/file/MimeType";
-import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
-import { getCallBackgroundBlobName } from "@@/server/services/message/call/getCallBackgroundBlobName";
-import { getCallBackgroundPrefix } from "@@/server/services/message/call/getCallBackgroundPrefix";
-import { createCallerFactory } from "@@/server/trpc";
+import { getCallBackgroundBlobName } from "#server/services/message/call/getCallBackgroundBlobName";
+import { getCallBackgroundPrefix } from "#server/services/message/call/getCallBackgroundPrefix";
+import { createCallerFactory } from "#server/trpc";
 import {
   consumeMockSessionOnce,
   createMockContext,
   getMockSession,
   mockNoSessionOnce,
   mockSessionOnce,
-} from "@@/server/trpc/context.test";
-import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
-import { userRouter } from "@@/server/trpc/routers/user";
-import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
+} from "#server/trpc/context.test";
+import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
+import { userRouter } from "#server/trpc/routers/user";
+import { withAsyncIterator } from "#server/trpc/routers/withAsyncIterator.test";
+import { MimeType } from "#shared/models/file/MimeType";
+import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
 import { AzureContainer, DatabaseEntityType, UserStatus, userStatusesInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import {

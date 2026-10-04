@@ -1,10 +1,10 @@
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { createCallerFactory } from "#server/trpc";
+import { createMockContext } from "#server/trpc/context.test";
+import { clickerRouter } from "#server/trpc/routers/clicker";
 import { ClickerSave } from "#shared/models/clicker/data/ClickerSave";
-import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/context.test";
-import { clickerRouter } from "@@/server/trpc/routers/clicker";
 import { AzureContainer } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";

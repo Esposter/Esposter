@@ -15,7 +15,7 @@ import { THEME_KEY } from "@/services/survey/constants";
 import { getSurveySummaryCards } from "@/services/survey/summary/getSurveySummaryCards";
 import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS } from "@/services/ui/constants";
 import { useSurveyResponseDialogStore } from "@/store/resource/surveyResponseDialog";
-import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { getRouteParam } from "@/util/router/getRouteParam";
 import { getResultAsync } from "@esposter/shared";
 import { Model } from "survey-core";
 
@@ -24,7 +24,7 @@ const { $trpc } = useNuxtApp();
 const surveyResponseDialogStore = useSurveyResponseDialogStore();
 const { deletingRowKey, detailRowKey } = storeToRefs(surveyResponseDialogStore);
 // The blade is keyed by resource id and suspended, so this instance only ever serves one survey
-const id = getRouteParamString(currentRoute.value.params.id);
+const id = getRouteParam(currentRoute.value.params, "id");
 const records = ref<SurveyResponseRecords>();
 const summaryCards = ref<SurveySummaryCard[]>([]);
 const error = ref("");

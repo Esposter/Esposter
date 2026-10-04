@@ -1,6 +1,5 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { authClient } from "@/services/auth/authClient";
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
@@ -12,7 +11,7 @@ export const useReadRooms = async () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const roleStore = useRoleStore();
   const { readMyPermissions, readRoles } = roleStore;
-  const { data: session } = await authClient.useSession(useFetch);
+  const { data: session } = await useAuthSession();
   const readMyUsersToRooms = useReadMyUsersToRooms();
   // A room row is not a room: the sidebar renders a nickname, the reader's own standing and the room's roles
   // Beside every name. Both paths that produce a page go through here rather than restating the fan-out, which

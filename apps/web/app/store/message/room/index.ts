@@ -10,6 +10,7 @@ import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomDialogStore } from "@/store/message/room/dialog";
+import { getRouteParam } from "@/util/router/getRouteParam";
 import { DatabaseEntityType, MessageType } from "@esposter/db-schema";
 import { Operation, RoutePath, takeOne } from "@esposter/shared";
 
@@ -27,8 +28,8 @@ export const useRoomStore = defineStore("message/room", () => {
   );
   const router = useRouter();
   const currentRoomId = computed(() => {
-    const roomId = router.currentRoute.value.params.id;
-    return typeof roomId === "string" && checkIsUuidV4(roomId) ? roomId : "";
+    const roomId = getRouteParam(router.currentRoute.value.params, "id");
+    return checkIsUuidV4(roomId) ? roomId : "";
   });
   const roomDialogStore = useRoomDialogStore();
   // Which room the room-scoped surfaces are reading for. The route decides it, except while room settings is open

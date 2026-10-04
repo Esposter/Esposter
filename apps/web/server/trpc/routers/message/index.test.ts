@@ -1,28 +1,28 @@
 // @vitest-environment nuxt
+import type { readMessages } from "#server/services/message/readMessages";
+import type { Context } from "#server/trpc/context";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { PollMessageContent } from "#shared/models/message/poll/PollMessageContent";
-import type { readMessages } from "@@/server/services/message/readMessages";
-import type { Context } from "@@/server/trpc/context";
-import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { BlobDeletionEventGridData, MessageEntity, MessageNotificationData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { MockInstance } from "vitest";
 
+import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { MessageCreationRejectionReasonMap } from "#server/services/message/moderation/MessageCreationRejectionReasonMap";
+import { createCallerFactory } from "#server/trpc";
+import { getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.test";
+import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
+import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
+import { messageRouter } from "#server/trpc/routers/message";
+import { readRoomMembershipRows } from "#server/trpc/routers/readRoomMembershipRows.test";
+import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
+import { withAsyncIterator } from "#server/trpc/routers/withAsyncIterator.test";
 import { MimeType } from "#shared/models/file/MimeType";
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { MessageCreationRejectionReasonMap } from "@@/server/services/message/moderation/MessageCreationRejectionReasonMap";
-import { createCallerFactory } from "@@/server/trpc";
-import { getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { createMentionMessage } from "@@/server/trpc/routers/createMentionMessage.test";
-import { createRoomMember } from "@@/server/trpc/routers/createRoomMember.test";
-import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
-import { messageRouter } from "@@/server/trpc/routers/message";
-import { readRoomMembershipRows } from "@@/server/trpc/routers/readRoomMembershipRows.test";
-import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
-import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { getBlobName, getThumbnailBlobName } from "@esposter/db";
 import {
   AppNotificationType,
@@ -48,7 +48,7 @@ import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } 
 
 const { readMessagesMock } = vi.hoisted(() => ({ readMessagesMock: vi.fn<typeof readMessages>() }));
 
-vi.mock(import("@@/server/services/message/readMessages"), async (importOriginal) => {
+vi.mock(import("#server/services/message/readMessages"), async (importOriginal) => {
   const original = await importOriginal();
   readMessagesMock.mockImplementation(original.readMessages);
   return { readMessages: readMessagesMock };

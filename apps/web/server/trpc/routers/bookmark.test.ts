@@ -1,11 +1,11 @@
-import type { Context } from "@@/server/trpc/context";
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { Context } from "#server/trpc/context";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { createCallerFactory } from "#server/trpc";
+import { createMockContext } from "#server/trpc/context.test";
+import { bookmarkRouter } from "#server/trpc/routers/bookmark";
 import { PageMarkType } from "#shared/models/app/PageMarkType";
-import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/context.test";
-import { bookmarkRouter } from "@@/server/trpc/routers/bookmark";
 import { bookmarksInApp, DatabaseEntityType, MAX_BOOKMARKS, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";

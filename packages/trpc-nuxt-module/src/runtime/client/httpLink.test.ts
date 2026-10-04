@@ -18,7 +18,9 @@ describe(httpLink, () => {
   test("#175 sends through the request event during server rendering", async () => {
     expect.hasAssertions();
 
-    const handler = vi.fn((event: H3Event) => fetchRequestHandler({ endpoint, req: event.req, router }));
+    const handler = vi.fn<(event: H3Event) => Promise<Response>>((event) =>
+      fetchRequestHandler({ endpoint, req: event.req, router }),
+    );
     const app = new H3().all("/**", handler);
     useRequestEvent.mockReturnValueOnce(new H3Event(new Request("http://localhost/"), undefined, app));
     const client = createTRPCClient<typeof router>({ links: [httpLink({ url: endpoint })] });

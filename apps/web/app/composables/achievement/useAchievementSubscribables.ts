@@ -1,4 +1,3 @@
-import { authClient } from "@/services/auth/authClient";
 import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useAchievementStore } from "@/store/achievement";
 import { checkIsServer } from "@esposter/shared";
@@ -10,7 +9,7 @@ export const useAchievementSubscribables = async () => {
   const { $trpc } = useNuxtApp();
   const achievementStore = useAchievementStore();
   const { updateAchievement } = achievementStore;
-  const { data: session } = await authClient.useSession(useFetch);
+  const { data: session } = await useAuthSession();
 
   useOnlineSubscribable(
     () => session.value?.user.id,

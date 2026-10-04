@@ -2,8 +2,8 @@
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { Router } from "vue-router";
 
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useDeleteResources } from "@/composables/resource/list/useDeleteResources";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { RoutePath } from "@esposter/shared";
@@ -33,7 +33,7 @@ describe(useDeleteResources, () => {
   test("leaves a blade whose resource the list deleted", async () => {
     expect.hasAssertions();
 
-    router.currentRoute.value.params.id = resource.id;
+    Object.assign(router.currentRoute.value.params, { id: resource.id });
     const push = vi.spyOn(router, "push").mockResolvedValue(undefined);
     await useDeleteResources(ref([resource]), ref(1), () => Promise.resolve())([resource]);
 
@@ -69,7 +69,7 @@ describe(useDeleteResources, () => {
   test("rolls a failed delete back without dropping rows a delete beside it removed", async () => {
     expect.hasAssertions();
 
-    router.currentRoute.value.params.id = "";
+    Object.assign(router.currentRoute.value.params, { id: "" });
     trpcMsw.resource.deleteResources.mutation(({ input }) => {
       if (input.ids.includes(resource.id)) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
@@ -90,7 +90,7 @@ describe(useDeleteResources, () => {
   test("takes the total from a re-read rather than nudging it", async () => {
     expect.hasAssertions();
 
-    router.currentRoute.value.params.id = "";
+    Object.assign(router.currentRoute.value.params, { id: "" });
     const items = ref([resource, otherResource]);
     const count = ref(2);
     // The rows on other pages are what makes the total more than this page's length
@@ -107,7 +107,7 @@ describe(useDeleteResources, () => {
   test("stays put when the deleted resources are not the open one", async () => {
     expect.hasAssertions();
 
-    router.currentRoute.value.params.id = resource.id;
+    Object.assign(router.currentRoute.value.params, { id: resource.id });
     const push = vi.spyOn(router, "push").mockResolvedValue(undefined);
     await useDeleteResources(ref([otherResource]), ref(1), () => Promise.resolve())([otherResource]);
 

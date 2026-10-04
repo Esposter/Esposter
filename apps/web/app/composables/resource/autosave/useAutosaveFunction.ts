@@ -2,7 +2,7 @@ import type { Promisable } from "type-fest";
 
 import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
 import { useResourceStore } from "@/store/resource";
-import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { getRouteParam } from "@/util/router/getRouteParam";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 // The one shared autosave cadence, bound to the resource that was open when the edit landed. Both halves
@@ -18,7 +18,7 @@ export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
   const { start } = useTimeoutFn(
     getSynchronizedFunction((scheduledResourceId: string) =>
       getResultAsync(async () => {
-        if (getRouteParamString(currentRoute.value.params.id) !== scheduledResourceId) return;
+        if (getRouteParam(currentRoute.value.params, "id") !== scheduledResourceId) return;
         await save();
       }).match(noop, console.error),
     ),
@@ -32,6 +32,6 @@ export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
     // One door every save goes through, so clearing it is its, and a save this refuses never reaches it — which
     // Is the point, since a refused save is an edit that was dropped rather than one that landed
     hasUnwrittenContent.value = true;
-    start(getRouteParamString(currentRoute.value.params.id));
+    start(getRouteParam(currentRoute.value.params, "id"));
   };
 };

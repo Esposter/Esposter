@@ -1561,9 +1561,6 @@ importers:
       msw:
         specifier: 'catalog:'
         version: 3.0.1(@types/node@26.6.4)(supports-color@10.2.2)(vite@8.3.2)
-      neverthrow:
-        specifier: 'catalog:'
-        version: 8.2.0
       nitro:
         specifier: npm:nitro-nightly@latest
         version: nitro-nightly@3.0.1-20261003-170721-136fb29d

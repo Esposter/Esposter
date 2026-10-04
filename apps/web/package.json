@@ -233,7 +233,6 @@
     "lru-cache": "catalog:",
     "mocked-exports": "catalog:",
     "msw": "catalog:",
-    "neverthrow": "catalog:",
     "nitro": "catalog:",
     "nuxt": "catalog:",
     "nuxt-security": "catalog:",

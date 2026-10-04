@@ -1,4 +1,4 @@
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { TRPCLink } from "@trpc/client";
 
 import { TRPCOfflineClientError } from "@/models/trpc/TRPCOfflineClientError";

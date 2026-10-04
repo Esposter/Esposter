@@ -13,7 +13,7 @@ const { tableClientMock } = vi.hoisted(() => ({
 }));
 
 // The composable is generic over the table, so the stub answers with the caller's entity type
-vi.mock(import("@@/server/composables/azure/table/useTableClient"), () => ({
+vi.mock(import("#server/composables/azure/table/useTableClient"), () => ({
   useTableClient: <TAzureTable extends AzureTable>() =>
     Promise.resolve(tableClientMock.current as unknown as CustomTableClient<AzureTableEntityMap[TAzureTable]>),
 }));

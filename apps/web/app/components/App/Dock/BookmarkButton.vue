@@ -2,12 +2,11 @@
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { RECENT_PAGE_EXCLUDED_PATHS } from "@/services/app/constants";
 import { getPageLabel } from "@/services/app/getPageLabel";
-import { authClient } from "@/services/auth/authClient";
 import { useBookmarkStore } from "@/store/bookmark";
 import { usePageMarkStore } from "@/store/pageMark";
 import { useRecentPageStore } from "@/store/recentPage";
 
-const { data: session } = await authClient.useSession(useFetch);
+const { data: session } = await useAuthSession();
 const { currentRoute } = useRouter();
 const bookmarkStore = useBookmarkStore();
 const { bookmarkPaths } = storeToRefs(bookmarkStore);

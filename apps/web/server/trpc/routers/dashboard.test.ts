@@ -1,16 +1,16 @@
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { createCallerFactory } from "#server/trpc";
+import { createSurvey } from "#server/trpc/routers/createSurvey.test";
+import { dashboardRouter } from "#server/trpc/routers/dashboard";
+import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
+import { surveyRouter } from "#server/trpc/routers/survey";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { createCallerFactory } from "@@/server/trpc";
-import { createSurvey } from "@@/server/trpc/routers/createSurvey.test";
-import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
-import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
-import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";

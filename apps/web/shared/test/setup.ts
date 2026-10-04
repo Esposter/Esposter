@@ -46,38 +46,42 @@ globalThis.sessionStorage ??= new MemoryStorage();
 // File's OWN direct import of the same composable. A setup file runs before the test module is imported, so
 // Registering once here covers both. The factories are lazy, so a test that touches no Azure client pays nothing.
 vi.mock(
-  import("@@/server/composables/azure/container/useContainerClient"),
-  () => import("@@/server/composables/azure/container/useContainerClient.test"),
+  import("#server/composables/azure/container/useContainerClient"),
+  () => import("#server/composables/azure/container/useContainerClient.test"),
 );
 
 vi.mock(
-  import("@@/server/composables/azure/eventGrid/useEventGridPublisherClient"),
-  () => import("@@/server/composables/azure/eventGrid/useEventGridPublisherClient.test"),
+  import("#server/composables/azure/eventGrid/useEventGridPublisherClient"),
+  () => import("#server/composables/azure/eventGrid/useEventGridPublisherClient.test"),
 );
 
 vi.mock(
-  import("@@/server/composables/azure/search/useSearchClient"),
-  () => import("@@/server/composables/azure/search/useSearchClient.test"),
+  import("#server/composables/azure/search/useSearchClient"),
+  () => import("#server/composables/azure/search/useSearchClient.test"),
 );
 
 vi.mock(
-  import("@@/server/composables/azure/serviceBus/useServiceBusSender"),
-  () => import("@@/server/composables/azure/serviceBus/useServiceBusSender.test"),
+  import("#server/composables/azure/serviceBus/useServiceBusSender"),
+  () => import("#server/composables/azure/serviceBus/useServiceBusSender.test"),
 );
 
 vi.mock(
-  import("@@/server/composables/azure/table/useTableClient"),
-  () => import("@@/server/composables/azure/table/useTableClient.test"),
+  import("#server/composables/azure/table/useTableClient"),
+  () => import("#server/composables/azure/table/useTableClient.test"),
 );
 // The better-auth session is one of them: registered beside the context helpers it reached a suite only when that
 // Module happened to load before the suite's router did.
-vi.mock(import("@@/server/auth"), () => import("@@/server/auth.test"));
+vi.mock(import("#server/auth"), () => import("#server/auth.test"));
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- the stubbed `useRuntimeConfig` returns a fraction of the config, which the typed `import()` form holds to the real return type
-vi.mock("nitropack/runtime", () => ({
+vi.mock("nuxt/server", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
   useRuntimeConfig: () => ({
-    // Nuxt 4.5's generated `#internal/nuxt/paths` reads `useRuntimeConfig().app.baseURL` at module scope
+    // Nuxt's generated `#internal/nuxt/paths` reads `useRuntimeConfig().app.baseURL` at module scope
     // (via `#build/fetch`'s eager `$fetch.create`), so the mock must carry the standard `app` defaults.
     app: { baseURL: "/", buildAssetsDir: "/_nuxt/", cdnURL: "" },
+    // A build without the secret, which Nuxt bakes as "" — what signs then is the env fallback the config sets.
+    // No `livekit` key is a deployment without LiveKit, so a call answers from the participant map alone
+    auth: { secret: "" },
     public: { appEnv: Environment.Development, azure: { container: { baseUrl: MOCK_BLOB_BASE_URL } } },
   }),
 }));

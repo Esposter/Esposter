@@ -1,11 +1,10 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { checkIsMessageAuthor } from "#shared/services/message/checkIsMessageAuthor";
-import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
 
 export const useIsCreator = async (message: MaybeRefOrGetter<MessageEntity | undefined>) => {
-  const { data: session } = await authClient.useSession(useFetch);
+  const { data: session } = await useAuthSession();
   const roomStore = useRoomStore();
   const { isCreator } = storeToRefs(roomStore);
   return computed(() => {

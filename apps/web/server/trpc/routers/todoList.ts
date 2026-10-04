@@ -1,5 +1,13 @@
-import type { FollowUp } from "@@/server/models/resource/todoList/FollowUp";
+import type { FollowUp } from "#server/models/resource/todoList/FollowUp";
 
+import { readResourceContent } from "#server/services/resource/readResourceContent";
+import { appendNotesParagraph } from "#server/services/resource/todoList/appendNotesParagraph";
+import { checkIsOpenFollowUp } from "#server/services/resource/todoList/checkIsOpenFollowUp";
+import { requireOpenFollowUp } from "#server/services/resource/todoList/requireOpenFollowUp";
+import { updateTodoListContent } from "#server/services/resource/todoList/updateTodoListContent";
+import { router } from "#server/trpc";
+import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
+import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { addFollowUpInputSchema } from "#shared/models/db/resource/todoList/AddFollowUpInput";
 import { completeFollowUpInputSchema } from "#shared/models/db/resource/todoList/CompleteFollowUpInput";
 import { handBackFollowUpInputSchema } from "#shared/models/db/resource/todoList/HandBackFollowUpInput";
@@ -7,14 +15,6 @@ import { readFollowUpsInputSchema } from "#shared/models/db/resource/todoList/Re
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { rollRecurringItem } from "#shared/services/resource/todoList/rollRecurringItem";
-import { readResourceContent } from "@@/server/services/resource/readResourceContent";
-import { appendNotesParagraph } from "@@/server/services/resource/todoList/appendNotesParagraph";
-import { checkIsOpenFollowUp } from "@@/server/services/resource/todoList/checkIsOpenFollowUp";
-import { requireOpenFollowUp } from "@@/server/services/resource/todoList/requireOpenFollowUp";
-import { updateTodoListContent } from "@@/server/services/resource/todoList/updateTodoListContent";
-import { router } from "@@/server/trpc";
-import { createResourceProcedures } from "@@/server/trpc/procedure/resource/createResourceProcedures";
-import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { ResourceType } from "@esposter/db-schema";
 
 // The follow-up procedures an agent reaches through the MCP endpoint (/docs/resource/todolist-agent-follow-ups). Each

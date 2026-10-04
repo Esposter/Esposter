@@ -1,11 +1,11 @@
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { trpcRouter } from "#server/trpc/routers";
+import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
+import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
-import { trpcRouter } from "@@/server/trpc/routers";
-import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
-import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import { StorageTier } from "@esposter/db-schema";
 import { beforeAll, describe, expect, test } from "vitest";
 

@@ -1,10 +1,10 @@
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { createCallerFactory } from "#server/trpc";
+import { createMockContext } from "#server/trpc/context.test";
+import { dungeonsRouter } from "#server/trpc/routers/dungeons";
 import { Dungeons } from "#shared/models/dungeons/data/Dungeons";
-import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/context.test";
-import { dungeonsRouter } from "@@/server/trpc/routers/dungeons";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 

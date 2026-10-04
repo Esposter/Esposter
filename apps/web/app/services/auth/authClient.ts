@@ -1,4 +1,4 @@
-import type { auth } from "@@/server/auth";
+import type { auth } from "#server/auth";
 
 import { apiKeyClient } from "@better-auth/api-key/client";
 import { inferAdditionalFields } from "better-auth/client/plugins";

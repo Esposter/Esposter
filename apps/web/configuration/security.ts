@@ -1,10 +1,10 @@
 import type { NuxtConfig } from "nuxt/schema";
 
-import { BASE_URL } from "../app/services/desmos/constants";
-import { MEDIAPIPE_TASKS_VISION_URL } from "../app/services/message/room/liveKit/constants";
-import { MAX_FILE_REQUEST_SIZE, MAX_REQUEST_SIZE } from "../shared/services/app/constants";
-import { ImageSourceWhitelist } from "../shared/services/app/ImageSourceWhitelist";
-import { CLOUDFLARE_BASE_URL, TUI_BASE_URL } from "../shared/services/grapesjs/constants";
+import { BASE_URL } from "../app/services/desmos/constants.ts";
+import { MEDIAPIPE_TASKS_VISION_URL } from "../app/services/message/room/liveKit/constants.ts";
+import { MAX_FILE_REQUEST_SIZE, MAX_REQUEST_SIZE } from "../shared/services/app/constants.ts";
+import { ImageSourceWhitelist } from "../shared/services/app/ImageSourceWhitelist.ts";
+import { CLOUDFLARE_BASE_URL, TUI_BASE_URL } from "../shared/services/grapesjs/constants.ts";
 
 export const security: NuxtConfig["security"] = {
   headers: {

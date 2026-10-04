@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { RECENT_PAGES_SHOWN_LIMIT } from "@/services/app/constants";
-import { authClient } from "@/services/auth/authClient";
 import { useBookmarkStore } from "@/store/bookmark";
 
-const { data: session } = await authClient.useSession(useFetch);
+const { data: session } = await useAuthSession();
 const bookmarkStore = useBookmarkStore();
 const { bookmarks } = storeToRefs(bookmarkStore);
 const { readBookmarks } = bookmarkStore;

@@ -11,11 +11,11 @@ import { readMedian } from "#src/services/genshinAssets/readMedian";
 import { readMedianFlatness } from "#src/services/genshinAssets/readMedianFlatness";
 import { readPartialBinRanges } from "#src/services/genshinAssets/readPartialBinRanges";
 import { readSpectralPeak } from "#src/services/genshinAssets/readSpectralPeak";
+import { toFrequency } from "#src/services/genshinAssets/toFrequency";
 import { readBandBins } from "#src/services/genshinParity/readBandBins";
 import { solveLinearSystem } from "#src/services/genshinParity/solveLinearSystem";
-import { A4_FREQUENCY, A4_PITCH, MUSIC_NOISE_BAND_CENTRES } from "genshin-engine";
+import { MUSIC_NOISE_BAND_CENTRES } from "genshin-engine";
 
-const toFrequency = (pitch: number): number => A4_FREQUENCY * 2 ** ((pitch - A4_PITCH) / 12);
 // Each voice's noise in each octave band of `MUSIC_NOISE_BAND_CENTRES`, the noise's standard deviation over its notes'
 // Fundamental amplitude, solved over every frame at once. Every note's noise covers every frequency and no note in a
 // Piece sounds alone, so no note's noise can be read on its own; instead a frame's noise in a band, from the median of
@@ -76,13 +76,12 @@ export const fitVoiceNoises = (
     const frames = Array.from({ length: frameCount }, (_, frame) => frame).filter(
       (frame) => readTarget(frame) !== undefined,
     );
+    const rows = [...active.keys()];
     return solveLinearSystem(
-      active.map((_, row) =>
-        active.map((_value, column) =>
-          frames.reduce((sum, frame) => sum + readRow(row, frame) * readRow(column, frame), 0),
-        ),
+      rows.map((row) =>
+        rows.map((column) => frames.reduce((sum, frame) => sum + readRow(row, frame) * readRow(column, frame), 0)),
       ),
-      active.map((_, row) => frames.reduce((sum, frame) => sum + readRow(row, frame) * (readTarget(frame) ?? 0), 0)),
+      rows.map((row) => frames.reduce((sum, frame) => sum + readRow(row, frame) * (readTarget(frame) ?? 0), 0)),
     );
   };
   const soundingFrames = Array.from({ length: frameCount }, (_, frame) => frame).filter((frame) =>
@@ -111,15 +110,15 @@ export const fitVoiceNoises = (
     let shares: number[] = [];
     while (active.length > 0) {
       const solving = active;
-      const solution =
+      const solvingShares =
         solveNormal(
           solving,
           (index, frame) => readPower(solving[index] ?? 0, frame),
           (frame) => noisePowers[frame],
         ) ?? solving.map(() => 0);
-      shares = solution;
-      if (solution.every((share) => share > 0)) break;
-      active = solving.filter((_, index) => (solution[index] ?? 0) > 0);
+      shares = solvingShares;
+      if (solvingShares.every((share) => share > 0)) break;
+      active = solving.filter((_, index) => (solvingShares[index] ?? 0) > 0);
     }
     // Each share as its logarithm, which keeps it positive through the refinement
     const logShares = shares.map((share) => Math.log(share));

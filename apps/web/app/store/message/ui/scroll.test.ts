@@ -24,8 +24,7 @@ describe(useScrollStore, () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
-    router.currentRoute.value.params.id = roomId;
-    delete router.currentRoute.value.params.rowKey;
+    Object.assign(router.currentRoute.value.params, { id: roomId, rowKey: "" });
   });
 
   afterEach(() => {
@@ -77,7 +76,7 @@ describe(useScrollStore, () => {
 
     const dataStore = useDataStore();
     dataStore.getHasMoreNewerRef(roomId).value = true;
-    router.currentRoute.value.params.rowKey = rowKey;
+    Object.assign(router.currentRoute.value.params, { rowKey });
     const scrollStore = useScrollStore();
     const { jumpToPresent } = scrollStore;
     await jumpToPresent();
@@ -90,7 +89,7 @@ describe(useScrollStore, () => {
   test("jumpToPresent scrolls rather than re-reads when the loaded window is the live tail", async () => {
     expect.hasAssertions();
 
-    router.currentRoute.value.params.rowKey = rowKey;
+    Object.assign(router.currentRoute.value.params, { rowKey });
     const scrollStore = useScrollStore();
     const { jumpToPresent } = scrollStore;
     await jumpToPresent();

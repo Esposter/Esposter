@@ -1,13 +1,13 @@
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
-import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
+import { sheetRouter } from "#server/trpc/routers/sheet";
 import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn";
 import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
-import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
-import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { beforeAll, describe, expect, test } from "vitest";

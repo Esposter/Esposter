@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { ResourceType } from "@esposter/db-schema";
 import { mockNuxtImport } from "@nuxt/test-utils/runtime";
 import { describe, expect, test, vi } from "vitest";
@@ -17,7 +17,7 @@ describe(useValidateResourceBlade, () => {
   test("404s a blade the loaded resource's type does not have", () => {
     expect.hasAssertions();
 
-    useRouter().currentRoute.value.params.id = resource.id;
+    Object.assign(useRouter().currentRoute.value.params, { id: resource.id });
     const scope = effectScope();
     scope.run(() => {
       useValidateResourceBlade(ref<ResourceInResource | undefined>(resource), ref(ResourceBladeSlug.Items));
@@ -33,7 +33,7 @@ describe(useValidateResourceBlade, () => {
   test("leaves a blade alone while the route names another resource", () => {
     expect.hasAssertions();
 
-    useRouter().currentRoute.value.params.id = crypto.randomUUID();
+    Object.assign(useRouter().currentRoute.value.params, { id: crypto.randomUUID() });
     const scope = effectScope();
     scope.run(() => {
       useValidateResourceBlade(ref<ResourceInResource | undefined>(resource), ref(ResourceBladeSlug.Items));

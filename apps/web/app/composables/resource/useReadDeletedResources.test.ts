@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
 
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useReadDeletedResources } from "@/composables/resource/useReadDeletedResources";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { describe, expect, test, vi } from "vitest";
 

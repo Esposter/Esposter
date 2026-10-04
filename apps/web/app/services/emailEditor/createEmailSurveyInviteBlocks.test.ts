@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { createEmailSurveyInviteBlocks } from "@/services/emailEditor/createEmailSurveyInviteBlocks";
 import { SURVEY_INVITE_BUTTON_COLOR } from "@/services/grapesjs/constants";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

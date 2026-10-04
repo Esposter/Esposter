@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
-import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { inferProcedureInput } from "@trpc/server";
 
 import { MimeType } from "#shared/models/file/MimeType";

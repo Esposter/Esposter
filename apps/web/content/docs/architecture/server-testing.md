@@ -89,7 +89,7 @@ const caller = createCallerFactory(userRouter)(mockContext);
 await caller.readStatuses([userId]);
 ```
 
-`createCallerFactory` (from `@@/server/trpc`) returns a factory that binds a `Context` to a router, producing a callable object that matches the router's procedure signatures.
+`createCallerFactory` (from `#server/trpc`) returns a factory that binds a `Context` to a router, producing a callable object that matches the router's procedure signatures.
 
 ## Test lifecycle
 

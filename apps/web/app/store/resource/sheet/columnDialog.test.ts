@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useResourceStore } from "@/store/resource";
 import { useColumnDialogStore } from "@/store/resource/sheet/columnDialog";
 import { describe, expect, test } from "vitest";

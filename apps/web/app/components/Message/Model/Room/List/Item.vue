@@ -5,7 +5,6 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { pluralize } from "#shared/util/text/pluralize";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { authClient } from "@/services/auth/authClient";
 import { getComposerTarget } from "@/services/message/composer/getComposerTarget";
 import { useInputStore } from "@/store/message/input";
 import { useRoomStore } from "@/store/message/room";
@@ -19,7 +18,7 @@ interface Props {
 }
 
 const { room } = defineProps<Props>();
-const { data: session } = await authClient.useSession(useFetch);
+const { data: session } = await useAuthSession();
 const roomName = useRoomName(() => room.id);
 const inputStore = useInputStore();
 const { drafts } = storeToRefs(inputStore);

@@ -59,7 +59,7 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
 
 ## Reading the auth session — `references/auth-session.md`
 
-Read it when anything needs the signed-in user. Two call forms, and the access shape follows the form: `await authClient.useSession(useFetch)` in async SSR-relevant context (`session.value?.user.id`), the bare `authClient.useSession()` wherever you can't `await` (`session.value.data?.user.id`).
+Read it when anything needs the signed-in user. Two call forms, and the access shape follows the form: `await useAuthSession()` in async SSR-relevant context (`session.value?.user.id`), the bare `authClient.useSession()` wherever you can't `await` (`session.value.data?.user.id`).
 
 ## When (not) to `watch` — `references/watch-decision-tree.md`
 

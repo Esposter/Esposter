@@ -2,14 +2,15 @@
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { Router } from "vue-router";
 
+import { getMockSession } from "#server/trpc/context.test";
 import { MimeType } from "#shared/models/file/MimeType";
 import { useSession } from "@/services/auth/authClient.test";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
-import { getMockSession } from "@@/server/trpc/context.test";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -46,7 +47,7 @@ describe(useDataStore, () => {
   };
 
   beforeEach(() => {
-    router.currentRoute.value.params.id = roomId;
+    Object.assign(router.currentRoute.value.params, { id: roomId });
     useSession.mockReturnValue(ref<MockSessionValue>({ data: undefined }));
   });
 
@@ -313,14 +314,12 @@ describe(useDataStore, () => {
     const { getHasMoreNewerRef, getNextCursorNewerRef } = dataStore;
     getHasMoreNewerRef(roomId).value = true;
     getNextCursorNewerRef(roomId).value = message;
-    // Replaced rather than mutated in place: the route is a shallow ref, so only a new value re-runs the
-    // Computed the room-keyed slices resolve their key through
-    router.currentRoute.value = { ...router.currentRoute.value, params: { id: otherRoomId } };
+    setCurrentRoomId(otherRoomId);
 
     expect(hasMoreNewer.value).toBe(false);
     expect(nextCursorNewer.value).toBe("");
 
-    router.currentRoute.value = { ...router.currentRoute.value, params: { id: roomId } };
+    setCurrentRoomId(roomId);
 
     expect(hasMoreNewer.value).toBe(true);
     expect(nextCursorNewer.value).toBe(message);

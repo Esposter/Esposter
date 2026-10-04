@@ -3,7 +3,6 @@ import type { Item } from "@/models/shared/Item";
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { authClient } from "@/services/auth/authClient";
 import { usePostDialogStore } from "@/store/post/dialog";
 import { RoutePath } from "@esposter/shared";
 
@@ -14,7 +13,7 @@ interface Props {
 }
 
 const { isPage, post } = defineProps<Props>();
-const { data: session } = await authClient.useSession(useFetch);
+const { data: session } = await useAuthSession();
 const postDialogStore = usePostDialogStore();
 const { deletingId } = storeToRefs(postDialogStore);
 const isCreator = computed(() => post.userId === session.value?.user.id);

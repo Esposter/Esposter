@@ -2,9 +2,9 @@
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useReadResources } from "@/composables/resource/useReadResources";
 import { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { afterEach, describe, expect, test, vi } from "vitest";
 

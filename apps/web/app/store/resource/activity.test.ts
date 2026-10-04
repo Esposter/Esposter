@@ -20,7 +20,7 @@ const createReader =
 // Through triggerRef because currentRoute is a shallowRef
 const openActivityBlade = (id: string) => {
   const router = useRouter();
-  router.currentRoute.value.params.id = id;
+  Object.assign(router.currentRoute.value.params, { id });
   triggerRef(router.currentRoute);
 };
 

@@ -1,9 +1,9 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 import type { User } from "better-auth";
 
-import { createCallerFactory } from "@@/server/trpc";
-import { mockSessionOnce } from "@@/server/trpc/context.test";
-import { roomRouter } from "@@/server/trpc/routers/room";
+import { createCallerFactory } from "#server/trpc";
+import { mockSessionOnce } from "#server/trpc/context.test";
+import { roomRouter } from "#server/trpc/routers/room";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { describe } from "vitest";
 

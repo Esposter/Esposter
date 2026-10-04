@@ -1,7 +1,7 @@
 import type { NuxtConfig } from "nuxt/schema";
 
-import { PWA_PUBLIC_FOLDER_PATH } from "../shared/services/app/constants";
-import { TEMPORAL_POLYFILL_BASE_URL } from "./constants";
+import { PWA_PUBLIC_FOLDER_PATH } from "../shared/services/app/constants.ts";
+import { TEMPORAL_POLYFILL_BASE_URL } from "./constants.ts";
 
 export const app: NuxtConfig["app"] = {
   head: {

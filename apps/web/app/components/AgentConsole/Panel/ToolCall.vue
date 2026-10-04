@@ -51,8 +51,8 @@ const resultPreview = computed(() => {
       <pre of-x-auto>{{ JSON.stringify(toolCall.toolUse.input, null, 2) }}</pre>
       <pre
         v-if="toolCall.result"
-        b-t-2
         b-border
+        b-t-2
         b-t-solid
         cursor-pointer
         ws-pre-wrap

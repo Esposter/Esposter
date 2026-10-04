@@ -6,7 +6,7 @@ import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { getRouteParam } from "@/util/router/getRouteParam";
 import { getReverseTickedTimestamp } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
@@ -26,7 +26,7 @@ export const useReadMessages = () => {
     const hasMoreNewer = getHasMoreNewerRef(roomId);
     const nextCursorNewer = getNextCursorNewerRef(roomId);
     return readItems(async () => {
-      const rowKey = getRouteParamString(currentRoute.value.params.rowKey);
+      const rowKey = getRouteParam(currentRoute.value.params, "rowKey");
       if (rowKey) {
         const messages = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
         if (messages.length > 0) {

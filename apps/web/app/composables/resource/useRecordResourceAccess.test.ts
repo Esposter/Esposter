@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { CacheTag } from "@/models/cache/CacheTag";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useCacheStore } from "@/store/cache";
 import { describe, expect, test } from "vitest";

@@ -1,5 +1,5 @@
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResource";
-import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { z } from "zod";

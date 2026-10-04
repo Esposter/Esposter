@@ -1,4 +1,3 @@
-import { authClient } from "@/services/auth/authClient";
 import { useStorageStore } from "@/store/storage";
 import { checkIsServer, getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
@@ -9,7 +8,7 @@ export const useStorageSubscribables = async () => {
   const { $trpc } = useNuxtApp();
   const storageStore = useStorageStore();
   const { refetchStorageUsage, storeUpdateStorageUsage } = storageStore;
-  const { data: session } = await authClient.useSession(useFetch);
+  const { data: session } = await useAuthSession();
 
   useOnlineSubscribable(
     () => session.value?.user.id,

@@ -4,7 +4,6 @@ import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { authClient } from "@/services/auth/authClient";
 import { getOptionIdVoteCountMap } from "@/services/message/poll/getOptionIdVoteCountMap";
 import { getVoteDescription } from "@/services/message/poll/getVoteDescription";
 import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
@@ -12,7 +11,7 @@ import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/share
 interface Props extends MessageComponentProps<StandardMessageEntity> {}
 
 const { active, creator, isPreview = false, message } = defineProps<Props>();
-const { data: session } = await authClient.useSession(useFetch);
+const { data: session } = await useAuthSession();
 const pollContent = computed(() => {
   const parsedMessage = jsonDateParse(message.message);
   const parsedPollContent = pollMessageContentSchema.safeParse(parsedMessage);

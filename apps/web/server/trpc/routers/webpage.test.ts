@@ -1,17 +1,17 @@
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { Context } from "@@/server/trpc/context";
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { AuthedContext } from "#server/models/auth/AuthedContext";
+import type { Context } from "#server/trpc/context";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { createSnapshotAssetsDirectoryName } from "#server/services/resource/snapshot/createSnapshotAssetsDirectoryName";
+import { mockSessionOnce, replayMockSession } from "#server/trpc/context.test";
+import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
+import { webpageRouter } from "#server/trpc/routers/webpage";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { createSnapshotAssetsDirectoryName } from "@@/server/services/resource/snapshot/createSnapshotAssetsDirectoryName";
-import { mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
-import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
-import { webpageRouter } from "@@/server/trpc/routers/webpage";
 import { AzureContainer, ResourceType, SnapshotChannel } from "@esposter/db-schema";
 import { ID_SEPARATOR, jsonDateParse } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -28,7 +28,7 @@ const { transformPublishedBlobUrlsMock } = vi.hoisted(() => ({
   transformPublishedBlobUrlsMock: vi.fn<TransformPublishedBlobUrls>(),
 }));
 
-vi.mock(import("@@/server/services/resource/transformPublishedBlobUrls"), async (importOriginal) => {
+vi.mock(import("#server/services/resource/transformPublishedBlobUrls"), async (importOriginal) => {
   const original = await importOriginal();
   transformPublishedBlobUrlsMock.mockImplementation(original.transformPublishedBlobUrls);
   // The real export is generic in its content and a `Mock` cannot carry a type parameter, so the module seam is

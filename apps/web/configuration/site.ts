@@ -1,6 +1,6 @@
 import type { NuxtConfig } from "nuxt/schema";
 
-import { SITE_DESCRIPTION, SITE_NAME } from "../shared/services/app/constants";
+import { SITE_DESCRIPTION, SITE_NAME } from "../shared/services/app/constants.ts";
 
 // The one hostname nuxt-site-config refuses as a site url, and the one BASE_URL always carries locally
 const LOCALHOST_HOSTNAME = "localhost";

@@ -1,5 +1,15 @@
 import type { Clause } from "@esposter/azure";
 
+import { useMessageEmojiMetadataClient } from "#server/composables/azure/table/useMessageEmojiMetadataClient";
+import { getDevice } from "#server/services/auth/getDevice";
+import { checkIsOnlyReactor } from "#server/services/message/emoji/checkIsOnlyReactor";
+import { getEmojiMetadataClauses } from "#server/services/message/emoji/getEmojiMetadataClauses";
+import { emojiEventEmitter } from "#server/services/message/events/emojiEventEmitter";
+import { router } from "#server/trpc";
+import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
+import { requireEntity } from "#server/trpc/guards/requireEntity";
+import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
+import { getRoomEventSubscription } from "#server/trpc/procedure/room/getRoomEventSubscription";
 import { createEmojiInputSchema } from "#shared/models/db/message/metadata/CreateEmojiInput";
 import { deleteEmojiInputSchema } from "#shared/models/db/message/metadata/DeleteEmojiInput";
 import {
@@ -10,16 +20,6 @@ import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/Updat
 import { readMetadataInputSchema } from "#shared/models/db/message/ReadMetadataInput";
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
 import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
-import { useMessageEmojiMetadataClient } from "@@/server/composables/azure/table/useMessageEmojiMetadataClient";
-import { getDevice } from "@@/server/services/auth/getDevice";
-import { checkIsOnlyReactor } from "@@/server/services/message/emoji/checkIsOnlyReactor";
-import { getEmojiMetadataClauses } from "@@/server/services/message/emoji/getEmojiMetadataClauses";
-import { emojiEventEmitter } from "@@/server/services/message/events/emojiEventEmitter";
-import { router } from "@@/server/trpc";
-import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
-import { requireEntity } from "@@/server/trpc/guards/requireEntity";
-import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
 import { createEntity, getEntity, getEntityWithEtag, getTopNEntities, updateEntity } from "@esposter/db";
 import { MessageMetadataType } from "@esposter/db-schema";

@@ -3,7 +3,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import type { Editor, ProjectData } from "grapesjs";
 
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
@@ -25,7 +25,7 @@ describe(useEmailEditorStore, () => {
   let saveResourceContent: ReturnType<typeof vi.fn<() => ResourceInResource>>;
 
   beforeEach(async () => {
-    useRouter().currentRoute.value.params.id = resourceId;
+    Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     content = new EmailEditor();
     savedContentIds = [];
     saveResourceContent = vi.fn<() => ResourceInResource>(() => createResource(1));

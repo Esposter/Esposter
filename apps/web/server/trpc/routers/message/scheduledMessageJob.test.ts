@@ -1,12 +1,12 @@
-import type { Context } from "@@/server/trpc/context";
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { Context } from "#server/trpc/context";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { MessageCreationRejectionReasonMap } from "@@/server/services/message/moderation/MessageCreationRejectionReasonMap";
-import { createCallerFactory } from "@@/server/trpc";
-import { mockSessionOnce } from "@@/server/trpc/context.test";
-import { scheduledMessageJobRouter } from "@@/server/trpc/routers/message/scheduledMessageJob";
-import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
+import { MessageCreationRejectionReasonMap } from "#server/services/message/moderation/MessageCreationRejectionReasonMap";
+import { createCallerFactory } from "#server/trpc";
+import { mockSessionOnce } from "#server/trpc/context.test";
+import { scheduledMessageJobRouter } from "#server/trpc/routers/message/scheduledMessageJob";
+import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import {
   AzureTable,
   MessageCreationRejectionType,
@@ -27,7 +27,7 @@ const { onAssertCanCreateMessage } = vi.hoisted(() => ({
   onAssertCanCreateMessage: {} as { current?: () => Promise<void> },
 }));
 
-vi.mock(import("@@/server/services/message/moderation/assertCanCreateMessage"), async (importOriginal) => {
+vi.mock(import("#server/services/message/moderation/assertCanCreateMessage"), async (importOriginal) => {
   const { assertCanCreateMessage } = await importOriginal();
   return {
     assertCanCreateMessage: async (...args: Parameters<typeof assertCanCreateMessage>) => {

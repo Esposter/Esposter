@@ -4,7 +4,7 @@ import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDashboardStore } from "@/store/dashboard";
 import { useVisualStore } from "@/store/dashboard/visual";
@@ -37,7 +37,7 @@ describe(useVisualStore, () => {
   let content: Dashboard;
 
   beforeEach(async () => {
-    useRouter().currentRoute.value.params.id = resourceId;
+    Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     content = new Dashboard({ visuals: [new Visual({ type: VisualType.Area })] });
     trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
     trpcMsw.dashboard.readResourceContent.query(() => content);
@@ -164,7 +164,7 @@ describe(useVisualStore, () => {
     const { deleteVisual } = visualStore;
     const { visuals } = storeToRefs(visualStore);
     const deletion = deleteVisual({ id: takeOne(visuals.value).id });
-    useRouter().currentRoute.value.params.id = otherResourceId;
+    Object.assign(useRouter().currentRoute.value.params, { id: otherResourceId });
     const resourceStore = useResourceStore();
     const { readResource } = resourceStore;
     await readResource();

@@ -15,9 +15,9 @@ import { gbufferCommand } from "#src/services/genshinParity/commands/gbufferComm
 import { glideCommand } from "#src/services/genshinParity/commands/glideCommand";
 import { launchCommand } from "#src/services/genshinParity/commands/launchCommand";
 import { listenCommand } from "#src/services/genshinParity/commands/listenCommand";
-import { noiseCommand } from "#src/services/genshinParity/commands/noiseCommand";
 import { lumaCommand } from "#src/services/genshinParity/commands/lumaCommand";
 import { measureCommand } from "#src/services/genshinParity/commands/measureCommand";
+import { noiseCommand } from "#src/services/genshinParity/commands/noiseCommand";
 import { overlayCommand } from "#src/services/genshinParity/commands/overlayCommand";
 import { partsCommand } from "#src/services/genshinParity/commands/partsCommand";
 import { placeCommand } from "#src/services/genshinParity/commands/placeCommand";

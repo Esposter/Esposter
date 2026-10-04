@@ -15,7 +15,7 @@ describe(requireRouteParam, () => {
   test("repeated param", () => {
     expect.hasAssertions();
 
-    expect(requireRouteParam({ id: [id, crypto.randomUUID()] }, "id")).toBe(id);
+    expect(requireRouteParam({ slug: [id, crypto.randomUUID()] }, "slug")).toBe(id);
   });
 
   // The two shapes a segment the page cannot exist without must never be allowed to reach a query as. The name

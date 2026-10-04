@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 
 import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceNoteEditor from "@/components/Resource/Note/Editor.vue";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -14,7 +14,7 @@ describe("resourceNoteEditor", () => {
   const resourceId = crypto.randomUUID();
 
   beforeEach(() => {
-    useRouter().currentRoute.value.params.id = resourceId;
+    Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     trpcMsw.resource.readResource.query(() => ({
       ...createResourceListItem({ id: resourceId, type: ResourceType.Note }),
       publication: null,

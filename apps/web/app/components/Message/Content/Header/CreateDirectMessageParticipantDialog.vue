@@ -2,7 +2,6 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
-import { authClient } from "@/services/auth/authClient";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 import { useFriendStore } from "@/store/message/user/friend";
 
@@ -13,7 +12,7 @@ interface Props {
 const isOpen = defineModel<boolean>({ default: false });
 const { roomId } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
-const { data: session } = await authClient.useSession(useFetch);
+const { data: session } = await useAuthSession();
 const directMessageStore = useDirectMessageStore();
 const { getDirectMessageParticipants, storeDirectMessageParticipants } = directMessageStore;
 const friendStore = useFriendStore();

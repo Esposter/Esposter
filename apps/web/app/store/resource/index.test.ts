@@ -12,8 +12,8 @@ import {
   MAX_RESOURCE_CONTENT_SIZE,
   STALE_CONTENT_VERSION_ERROR_MESSAGE,
 } from "#shared/services/resource/constants";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
 import { createDefaultSheetResource } from "@/services/resource/sheet/createDefaultSheetResource";
 import { getSha256Hex } from "@/services/shared/getSha256Hex";
@@ -37,7 +37,7 @@ const createResource = (id: string, type = ResourceType.Sheet) => createResource
 type ReadResourceResult = ReturnType<typeof createResource> & { publication: null };
 // The route is what the store loads from, so switching resources in a test is switching the route
 const setRouteId = (id: string) => {
-  useRouter().currentRoute.value.params.id = id;
+  Object.assign(useRouter().currentRoute.value.params, { id });
 };
 // A document over the request limit, so every save of it takes the delta or the staged path
 const createLargeSheetResource = (name: string) => {

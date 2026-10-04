@@ -4,7 +4,6 @@ import type { PublicUser } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { authClient } from "@/services/auth/authClient";
 import { useModerationNoteStore } from "@/store/message/moderation/note";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
@@ -21,7 +20,7 @@ interface Props {
 const { user } = defineProps<Props>();
 const emit = defineEmits<{ "open:dialog": [type: MemberDialogType] }>();
 const { $trpc } = useNuxtApp();
-const { data: session } = await authClient.useSession(useFetch);
+const { data: session } = await useAuthSession();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const roleStore = useRoleStore();
