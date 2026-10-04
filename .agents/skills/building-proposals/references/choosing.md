@@ -6,7 +6,7 @@ Read when asked what to build next or for the low-hanging fruit, when reading `p
 
 `pnpm ai:proposals:report` reads every open proposal and prints one line each, cheapest first:
 
-- **Files** — the rows of its Key files table, which lists the existing files the work touches (`docs`, `references/page-shapes.md`). A proposal with no table prints **unsized** and sorts last: nothing can be read off it, and a product-review pass owes it the table (`product-review`, `references/verifying-proposals.md`).
+- **Files** — the rows of its Key files table, which lists the existing files the work touches (the `docs` skill, `references/page-shapes.md`). A proposal with no table prints **unsized** and sorts last: nothing can be read off it, and a product-review pass owes it the table (the `product-review` skill, `references/verifying-proposals.md`).
 - **Signals** — the costs past the files themselves, each read off a Key files path: `server` (a procedure or server service), `schema` (a migration), `azure` (a Function or infrastructure deploy), `dependency` (a manifest, so a package argued through dependency admission).
 - **after** — the open proposals its lead paragraph links, which have to ship first. A folder's own index is its umbrella, never a blocker.
 
@@ -26,11 +26,11 @@ An `unsized` proposal is sized before it is chosen — its Key files table is wr
 
 ## A folder of sub-specs
 
-A proposal folder's `index.md` holds the build order; each sub-spec is one build, taken in that order, and a sub-spec that must wait says so in its lead so the report lists it `after` its prerequisite (`docs`, `references/page-shapes.md`). The folder ships one sub-spec at a time, each with its own as-built increment, and the index goes when the last sub-spec does.
+A proposal folder's `index.md` holds the build order; each sub-spec is one build, taken in that order, and a sub-spec that must wait says so in its lead so the report lists it `after` its prerequisite (the `docs` skill, `references/page-shapes.md`). The folder ships one sub-spec at a time, each with its own as-built increment, and the index goes when the last sub-spec does.
 
 ## Refactor plans
 
-A plan under `proposals/refactors/` is chosen and built like any proposal — the report lists it with the rest — and ships as a one-time change, which leaves a shipped-log line and no feature page (`docs`, `references/page-shapes.md`, "Lifecycle map"). A plan split into phases is built one phase at a time, in its own order.
+A plan under `proposals/refactors/` is chosen and built like any proposal — the report lists it with the rest — and ships as a one-time change, which leaves a shipped-log line and no feature page (the `docs` skill, `references/page-shapes.md`, "Lifecycle map"). A plan split into phases is built one phase at a time, in its own order.
 
 ## A ready-for-agent issue
 

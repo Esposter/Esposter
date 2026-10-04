@@ -12,7 +12,7 @@ the value that is fixed for the life of the process from the local that happens 
 reads as the latter at every use site.
 
 A constant holding a **lookup structure** — a map, record or set the code indexes into — is PascalCase named after
-its file instead (`file-organization`, `references/constant-maps.md`), because there the name stands for the table
+its file instead (the `file-organization` skill, `references/constant-maps.md`), because there the name stands for the table
 rather than for one value.
 
 **The file is what earns the PascalCase, not the data structure.** A `Set` sharing a `constants.ts` with its

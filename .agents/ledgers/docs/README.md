@@ -62,7 +62,7 @@ pnpm ai:sweep:skill-docs
 It lives in `scripts/src/sweeps/skillDocs/` rather than in this file, because it is a program: six checks over the
 whole tree, one of which has to decide when **not** to resolve a pointer. It was a `python3` heredoc, which on a
 Windows checkout prints a Microsoft Store notice and exits 0 — no findings, no error, indistinguishable from a
-clean tree (`sweeps`, `references/find-recipes.md`).
+clean tree (the `sweeps` skill, `references/find-recipes.md`).
 
 Every check but the budget also fails `pnpm test`, in `scripts/src/workspace/skillDocs.test.ts` — the budget stays
 a warning because a skill that has nothing narrow left to move is over by design (the `skill-authoring` skill). An `unresolved` hit is a

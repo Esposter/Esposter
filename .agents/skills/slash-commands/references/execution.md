@@ -23,10 +23,10 @@ Always use `SlashCommandType.X` enum values, never `"Me"`, `"Shrug"`, etc.
 
 ## Adding a command
 
-1. Add value to `SlashCommandType` enum.
-2. Add entry to `SlashCommandDefinitionMap` with `parameters: []` or required/optional params (`as const satisfies Record<SlashCommandType, SlashCommand>` forces this).
-3. Add `case SlashCommandType.X:` to the switch in `useExecuteSlashCommand.ts`:
-   - Posting a message: assign `message` and `break` — the shared tail parses + sends it
-   - Opening a dialog: flip the dialog store's state (`isOpen.value = true`, `open(ScheduledMessageJobType.X)`)
-   - Neither: do the work inline (e.g. `Topic` runs a room mutation and posts nothing)
-4. No new `MessageType` unless rendering is structurally different (e.g. Poll, Call).
+The enum value comes first, and typecheck then names what is missing: the `SlashCommandDefinitionMap` entry (`as const satisfies Record<SlashCommandType, SlashCommand>`) and the `case` in `useExecuteSlashCommand.ts`. What the case does is one of three:
+
+- **Posting a message** — assign `message` and `break`; the shared tail parses and sends it.
+- **Opening a dialog** — flip the dialog store's state (`isOpen.value = true`, `open(ScheduledMessageJobType.X)`).
+- **Neither** — do the work inline, as `Topic` runs a room mutation and posts nothing.
+
+A command takes a new `MessageType` only when its message renders structurally differently, as a poll or a call does.

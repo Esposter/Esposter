@@ -37,7 +37,7 @@ Edit only files the agent will not stage; a batch runs one agent per worktree ov
 
 A review is the thinking role, and it is the exception to this skill: the full convention — single entry point, the two lanes, the window, findings handling — lives in the `code-review` skill, which runs the whole review in the main session, because delegation is priced by files read and a review reads the window twice. Load it on any review request, and never the built-in `/review` command.
 
-**A delegated fix round carries that skill's closing checklist verbatim in its prompt** (`code-review`, `references/fixing-findings.md`). An agent handed only a findings list optimises for the finding: it makes each one's own test pass and stops, which is precisely how a round ships a worse defect than it closed — a guard exempted, a sibling site left behind, a mitigation asserted in a comment and never written. The checklist is what the prompt's done-definition is built from, alongside the usual grep audits.
+**A delegated fix round carries that skill's closing checklist verbatim in its prompt** (the `code-review` skill, `references/fixing-findings.md`). An agent handed only a findings list optimises for the finding: it makes each one's own test pass and stops, which is precisely how a round ships a worse defect than it closed — a guard exempted, a sibling site left behind, a mitigation asserted in a comment and never written. The checklist is what the prompt's done-definition is built from, alongside the usual grep audits.
 
 ## Design for agents
 

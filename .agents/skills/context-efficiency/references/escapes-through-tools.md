@@ -12,8 +12,4 @@ A tool parameter is decoded before it reaches the file, and a shell or an interp
 
 - **`\uXXXX`** in any tool parameter lands as the raw character. Double the backslash, or build it in-process (Python `chr(92) + "u001E"`). `sed` and `perl` eat the backslash too — `\u` is a perl case modifier. The enforcer `scripts/src/workspace/controlCharacters.test.ts` catches a raw control byte in any tracked file but a vendored skill's, which is its publisher's; run it rather than trusting your eyes.
 - **`\n` inside a patch script's string literal** becomes a real newline once the interpreter reads it, so a patched `write("…\n")` is split across two lines — a syntax error in the file.
-- **`\\` in a path** is lost on its way through a heredoc: `` `HKCU\\Software\\Classes\\${key}` `` landed as `` `HKCUSoftwareClasses\${key}` ``, which also escaped the interpolation, and only an unused-import lint caught it. Never spell a Windows path with backslash literals in source at all — build it with `path.win32.join(...)`, which needs no escape to survive anything.
-
-## Why it is not memory
-
-It recurs in every session that patches files from the shell, so it lives with the skill every session loads rather than in one reader's notes.
+- **`\\` in a path** is lost on its way through a heredoc, and the one in front of an interpolation escapes the interpolation instead. Never spell a Windows path with backslash literals in source at all — build it with `path.win32.join(...)`, which needs no escape to survive anything.

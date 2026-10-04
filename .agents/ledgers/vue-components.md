@@ -38,7 +38,7 @@ owning skill.
 | `Message` — the rest                                                                       | 2026-09-27 · Opus 5.5 |                                                                                                                                                                |
 | `Resource/Sheet`                                                                           | 2026-09-27 · Opus 5.5 |                                                                                                                                                                |
 | `Resource` — the rest                                                                      | 2026-09-27 · Opus 5.5 |                                                                                                                                                                |
-| `Styled` + `App`                                                                           | 2026-09-27 · Opus 5.5 | Primitives; produced the same-dependency-set carve-out (`vue`, `references/computed-extraction.md`)                                                            |
+| `Styled` + `App`                                                                           | 2026-09-27 · Opus 5.5 | Primitives; produced the same-dependency-set carve-out (the `vue` skill, `references/computed-extraction.md`)                                                  |
 | `Dungeons`                                                                                 | 2026-09-27 · Opus 5.5 | Grid-engine wrappers: shape is the engine's, same ground as the exclusion                                                                                      |
 | `Clicker`                                                                                  | 2026-09-27 · Opus 5.5 | Already config-array driven                                                                                                                                    |
 | `Post`                                                                                     | 2026-09-27 · Opus 5.5 |                                                                                                                                                                |
@@ -65,7 +65,7 @@ grep -rlE "\b(ref|computed|useTemplateRef)\(" --include=*.vue apps/web/app/pages
 ```
 
 The array-and-loop rule needs more than a pattern — a count per file, and the absence of a loop in the same
-file — so it is a script rather than a sixth line above (`sweeps`, `references/find-recipes.md`):
+file — so it is a script rather than a sixth line above (the `sweeps` skill, `references/find-recipes.md`):
 
 ```bash
 pnpm ai:sweep:repeated-list-items

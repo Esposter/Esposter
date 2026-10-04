@@ -14,7 +14,7 @@ The reference product is the one shipped product that already solved the domain,
 
 ## Where the pick is recorded
 
-Until something ships, the pick lives in the proposal's `## Sources`, one bullet per page read and the part taken from it (`docs`, `references/links-and-sources.md`). When the surface ships, the design sources table gains the area's row in the same change — that page lists only what a shipped surface took.
+Until something ships, the pick lives in the proposal's `## Sources`, one bullet per page read and the part taken from it (the `docs` skill, `references/links-and-sources.md`). When the surface ships, the design sources table gains the area's row in the same change — that page lists only what a shipped surface took.
 
 ## Reading it
 

@@ -9,7 +9,7 @@ description: Apply when choosing what to build next, asked for low-hanging fruit
 
 ## Settled — do not re-propose
 
-- **A size, effort or priority field on a proposal.** A proposal's frontmatter is fixed (`docs`, `references/page-frontmatter.md`), and a hand-kept estimate is stale the day the code moves under it. Cost is read off what the page already states by `pnpm ai:proposals:report`; priority is the area roadmap's order (`references/choosing.md`).
+- **A size, effort or priority field on a proposal.** A proposal's frontmatter is fixed (the `docs` skill, `references/page-frontmatter.md`), and a hand-kept estimate is stale the day the code moves under it. Cost is read off what the page already states by `pnpm ai:proposals:report`; priority is the area roadmap's order (`references/choosing.md`).
 - **A backlog or queue file of what to build next.** The proposals tree, the roadmaps and the report already are one; a second list is a copy that drifts.
 - **Building a proposal as written without re-verifying it first.** It was written against the code of its day, and a seam that has moved since is found before the build, not halfway through it (`references/building.md`).
 - **Departing from a spec silently.** A build that finds the spec wrong revises the proposal or the as-built page says what was built instead; a feature page that matches neither the code nor the spec it came from is the stale record the next review argues with (`references/building.md`).

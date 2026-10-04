@@ -8,7 +8,7 @@ A term's **ceiling** is how much the score would recover if that term were exact
 
 ## Random content has no ceiling
 
-A term made of content the source places at random (clouds a particle emitter scatters, foliage, crowds) cannot be recovered by a score that compares pixels, however large its ceiling: ours stands in other places than the reference's, and a perceptual score prices every misplaced edge, so more of it scores worse even where the reference holds more of it than ours. Its colours are solved by matching the two populations' spreads, and its amount and placement are judged by their statistics (cover by height, size), never by the frame's score; the ranking discounts it to its colour's share. The Genshin login's upper clouds held the largest ceiling on the door recording, and every denser band scored all six references worse, the recording too, while their colours solved by population scored it better.
+A term made of content the source places at random (clouds a particle emitter scatters, foliage, crowds) cannot be recovered by a score that compares pixels, however large its ceiling: ours stands in other places than the reference's, and a perceptual score prices every misplaced edge, so more of it scores worse even where the reference holds more of it than ours. Its colours are solved by matching the two populations' spreads, and its amount and placement are judged by their statistics (cover by height, size), never by the frame's score; the ranking discounts it to its colour's share.
 
 ## The order
 
@@ -19,7 +19,7 @@ A term made of content the source places at random (clouds a particle emitter sc
 
 ## Why
 
-A small term polished first is paid twice. The Genshin login spent passes on the walkway's paving and the door's relief, a twentieth of the frame between them, while the sky and the towers' light held nine tenths of what was left; each moved its score by under a thousandth, and both were priced again the moment the haze changed.
+A small term polished first is paid twice: it moves the score by almost nothing while the dominant terms stand, and it is priced again the moment one of them changes.
 
 ## In each domain
 
