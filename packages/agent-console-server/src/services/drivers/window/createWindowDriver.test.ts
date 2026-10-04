@@ -140,7 +140,9 @@ describe(createWindowDriver, () => {
 
     await driver.createSession(" ");
     const sessionsChange = new Promise<void>((resolve) => {
-      onSessionsChange.mockImplementation(resolve);
+      onSessionsChange.mockImplementation(() => {
+        resolve();
+      });
     });
     // The reader closing the window
     childAbortController.abort();
@@ -183,7 +185,9 @@ describe(createWindowDriver, () => {
 
     vi.useFakeTimers({ toFake: ["setTimeout"] });
     const { promise: launched, resolve } = Promise.withResolvers<SessionWindowLaunch>();
-    launchSessionWindow.mockImplementationOnce(resolve);
+    launchSessionWindow.mockImplementationOnce((sessionWindowLaunch) => {
+      resolve(sessionWindowLaunch);
+    });
     const opening = driver.createSession(" ");
     const expiredSessionWindowLaunch = await launched;
     vi.advanceTimersByTime(SESSION_WINDOW_CONNECT_TIMEOUT);
@@ -258,7 +262,9 @@ describe(createWindowDriver, () => {
     // A session opened in this host's own window first, which waits for the host to listen
     await driver.createSession(" ");
     const sessionsChange = new Promise<void>((resolve) => {
-      onSessionsChange.mockImplementation(resolve);
+      onSessionsChange.mockImplementation(() => {
+        resolve();
+      });
     });
     const rejoiningWebSocket = connect({ port: readSessionWindows(stateDirectory).port, secret });
     await once(rejoiningWebSocket, "open");

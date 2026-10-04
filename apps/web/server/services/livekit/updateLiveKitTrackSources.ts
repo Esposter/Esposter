@@ -3,7 +3,7 @@ import type { TrackSource } from "livekit-server-sdk";
 
 import { JOIN_TRACK_SOURCES } from "#server/services/livekit/constants";
 import { createLiveKitRoomServiceClient } from "#server/services/livekit/createLiveKitRoomServiceClient";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync, ID_SEPARATOR, noop } from "@esposter/shared";
 import { ParticipantPermission } from "livekit-server-sdk";
 
 // The update in flight for each connection, keyed by call and connection, so the next one starts from what it wrote
@@ -49,7 +49,7 @@ export const updateLiveKitTrackSources = async (
   await Promise.all(
     Array.from(participantMap, async ([id, { userId }]) => {
       if (userId !== targetUserId) return;
-      const key = `${callSessionId}/${id}`;
+      const key = `${callSessionId}${ID_SEPARATOR}${id}`;
       const previousUpdate = connectionUpdateMap.get(key);
       const currentUpdate = (async () => {
         await Promise.allSettled([previousUpdate]);

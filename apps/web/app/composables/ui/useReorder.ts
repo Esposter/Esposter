@@ -6,7 +6,7 @@ const getKeyedOrder = <T>(event: KeyboardEvent, values: T[], index: number) => {
   if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return undefined;
   else if (event.key === "ArrowUp") return getMovedItems(values, index, -1);
   else if (event.key === "ArrowDown") return getMovedItems(values, index, 1);
-  return undefined;
+  else return undefined;
 };
 
 // A reorderable list's keyboard half, since a drag is never the only way to do a thing: Alt+Up and Alt+Down move the

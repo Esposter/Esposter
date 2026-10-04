@@ -7,6 +7,7 @@ import { TodoListSort } from "@/models/resource/todoList/TodoListSort";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { TODO_COMPLETION_HOLD_MS } from "@/services/resource/constants";
 import { playTodoCompletionChime } from "@/services/resource/todoList/playTodoCompletionChime";
+import { sortCompletedTodoListItems } from "@/services/resource/todoList/sortCompletedTodoListItems";
 import { sortTodoListItems } from "@/services/resource/todoList/sortTodoListItems";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useResourceStore } from "@/store/resource";
@@ -54,14 +55,11 @@ const openListItems = computed(() => {
   const sortedItems = sortTodoListItems(openItems, sort.value);
   return sortedItems.map((item) => toListItem(item));
 });
-const completedListItems = computed(() =>
-  searchedItems.value
-    .filter(({ completedAt, id }) => completedAt && !holdingIds.value.has(id))
-    .toSorted(
-      (firstItem, secondItem) => (secondItem.completedAt?.getTime() ?? 0) - (firstItem.completedAt?.getTime() ?? 0),
-    )
-    .map((item) => toListItem(item)),
-);
+const completedListItems = computed(() => {
+  const completedItems = searchedItems.value.filter(({ completedAt, id }) => completedAt && !holdingIds.value.has(id));
+  const sortedItems = sortCompletedTodoListItems(completedItems);
+  return sortedItems.map((item) => toListItem(item));
+});
 const checkIsCompleted = (id: TodoListItem["id"]) => Boolean(items.value.find((item) => item.id === id)?.completedAt);
 const toggle = async (id: TodoListItem["id"]) => {
   const isCompleting = !checkIsCompleted(id);

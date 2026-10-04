@@ -242,9 +242,9 @@ export const directMessageRouter = router({
             inArray(usersToRoomsInMessage1.roomId, roomIds),
           ),
         );
-      const participantsMap = new Map<string, PublicUser[]>();
-      for (const { roomId, user } of rows) getOrCreate(participantsMap, roomId, () => []).push(user);
-      return Array.from(participantsMap, ([roomId, participants]) => ({ participants, roomId }));
+      const roomIdParticipantsMap = new Map<string, PublicUser[]>();
+      for (const { roomId, user } of rows) getOrCreate(roomIdParticipantsMap, roomId, () => []).push(user);
+      return Array.from(roomIdParticipantsMap, ([roomId, participants]) => ({ participants, roomId }));
     }),
   readDirectMessages: standardAuthedProcedure
     .input(readDirectMessagesInputSchema)

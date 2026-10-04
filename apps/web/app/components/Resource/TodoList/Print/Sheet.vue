@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
+import { sortCompletedTodoListItems } from "@/services/resource/todoList/sortCompletedTodoListItems";
 import { sortTodoListItems } from "@/services/resource/todoList/sortTodoListItems";
 import { useResourceStore } from "@/store/resource";
 import { useTodoListStore } from "@/store/resource/todoList";
@@ -19,13 +20,7 @@ const openItems = computed(() =>
     sort.value,
   ),
 );
-const completedItems = computed(() =>
-  items.value
-    .filter(({ completedAt }) => completedAt)
-    .toSorted(
-      (firstItem, secondItem) => (secondItem.completedAt?.getTime() ?? 0) - (firstItem.completedAt?.getTime() ?? 0),
-    ),
-);
+const completedItems = computed(() => sortCompletedTodoListItems(items.value.filter(({ completedAt }) => completedAt)));
 const sections = computed(() => [
   { title: "", todos: openItems.value },
   { title: "Completed", todos: completedItems.value },

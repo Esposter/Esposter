@@ -57,7 +57,9 @@ const readNonce = (socket: FakeWebSocket) =>
 const admit = async (socket: FakeWebSocket, privateKey: CryptoKey, port = DEFAULT_PORT) => {
   const nonce = readNonce(socket);
   const pendingSend = new Promise<string>((resolve) => {
-    socket.send.mockImplementation(resolve);
+    socket.send.mockImplementation((data) => {
+      resolve(data);
+    });
   });
   dispatchMessage(socket, {
     nonce: " ",
@@ -143,7 +145,9 @@ describe(useAgentConsoleConnectionStore, () => {
     const { socket } = connectPaired(publicKey);
     const nonce = readNonce(socket);
     const pendingClose = new Promise<void>((resolve) => {
-      socket.close.mockImplementation(resolve);
+      socket.close.mockImplementation(() => {
+        resolve();
+      });
     });
     dispatchMessage(socket, {
       nonce: " ",
@@ -165,7 +169,9 @@ describe(useAgentConsoleConnectionStore, () => {
     const { socket } = connectPaired(publicKey);
     const nonce = readNonce(socket);
     const pendingClose = new Promise<void>((resolve) => {
-      socket.close.mockImplementation(resolve);
+      socket.close.mockImplementation(() => {
+        resolve();
+      });
     });
     dispatchMessage(socket, {
       nonce: " ",
