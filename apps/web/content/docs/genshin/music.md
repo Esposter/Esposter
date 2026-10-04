@@ -65,30 +65,32 @@ The order, and the rules each step keeps, are the `genshin-parity` skill's `refe
 ## Not yet
 
 - **Each note's own noise.** Every note reads its instrument's noise buffer from where the clock stands in the loop, and every buffer's phases depend only on the band, so the notes sounding at once play one noise in step: their amplitudes add, where the noise solve adds their powers. `genshin:parity noise` shows it, reading our render's noise back two to four times what ships. Zeroing the first piece's lowest-band noise alone takes that band's bias from about seven decibels to about one, and the bass voice's level is not the excess. A start in the loop that each note's time and pitch scatter fixes it, and the start must land on a whole sample frame: on the parity page's browser a source started between two frames reads its loop between samples, and that interpolation halves the top band at the listening score's rate. Scattered on whole frames, the first piece's noise reads back within about a fifth of what ships, its distance improves and its lowest band's overfill halves. The second piece's noise reads back whole, yet its top two bands fall four to eight decibels short and pitch agreement drops by a few ten-thousandths, so the scatter waits. That points at the solve's median: it reads off-partial content that is not noise-like, such as sparse partials of the game's own, as too little ([roadmap](/docs/genshin/roadmap)).
-- **The sound itself.** Read against its ends, the distance is the gap, not the pitch: one fixed spectrum under one envelope per register sounds like an organ, not an orchestra in a hall. The notes are to be played from public-domain recordings of real instruments, each voice's chosen by a solve against what the fit measures ([sampled instruments](/docs/proposals/genshin/sampled-instruments)).
+- **The sound itself.** Read against its ends, the distance is the gap, not the pitch: one fixed spectrum under one envelope per register sounds like an organ, not an orchestra in a hall. The notes are to be played from public-domain recordings of real instruments ([sampled instruments](/docs/proposals/genshin/sampled-instruments)). `genshin:parity instruments` solves which recorded instrument and level each voice takes in the score's own octave bands. Its distance comes within a few tenths of a decibel of what `listen` then measures. Neither pass so far shipped: both lost pitch agreement in the first piece, and the band solve's choice in both pieces, so the solve is to hear pitch next.
 - **The passes the score orders.** The upper octaves' remaining distance has little bias, so it waits on what changes within a note: instruments told apart within a register, and the dynamics that the median envelope flattens. Each is taken when `listen` ranks it the largest loss.
 - **Sound effects.** The door's opening, the clicks and the wind are sounds rather than music, and each is a page of its own when its turn comes.
 
 ## Key files
 
-| File                                                               | Role                                                            |
-| :----------------------------------------------------------------- | :-------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/extractComponentPlaylist.ts`   | A component's playlist resolved from the banks, sources decoded |
-| `scripts/src/services/genshinAssets/fitLoginMusic.ts`              | The login's notes, voices and instruments                       |
-| `scripts/src/services/genshinAssets/readMusicSourceNotes.ts`       | A source's notes, its readings cached                           |
-| `scripts/src/services/genshinAssets/splitVoicesByRegister.ts`      | The registers' natural breaks                                   |
-| `scripts/src/services/genshinAssets/fitInstrument.ts`              | A voice's instrument measured at its clear notes                |
-| `scripts/src/services/genshinAssets/fitVoiceNoises.ts`             | Every voice's noise in each noise-like band, solved at once     |
-| `scripts/src/services/genshinParity/characterizeMusicBands.ts`     | What each band of the game's sound holds, for `bands`           |
-| `packages/genshin-engine/src/audio/createNoiseBuffer.ts`           | An instrument's noise, built band by band in the spectrum       |
-| `scripts/src/services/genshinAssets/readSpectralPeak.ts`           | A partial's frequency and height between two bins               |
-| `scripts/src/services/genshinParity/scoreMusicSegment.ts`          | Pitch agreement and each octave band's distance                 |
-| `scripts/src/services/genshinParity/renderMusicSegments.ts`        | Each segment rendered by its screen, beside the game's          |
-| `scripts/src/services/genshinParity/commands/noiseCommand.ts`      | The noise solve read back from our render and from the game's   |
-| `scripts/src/services/genshinParity/ParityMusicScores.snapshot.md` | The last `listen`, committed                                    |
-| `packages/genshin-engine/src/audio/createMusicPlayer.ts`           | The live player                                                 |
-| `packages/genshin-engine/src/audio/scheduleMusicNote.ts`           | One note's oscillator and envelope                              |
-| `packages/genshin-world/src/components/Login/Music/Index.vue`      | Where the login's music plays                                   |
+| File                                                                | Role                                                              |
+| :------------------------------------------------------------------ | :---------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/extractComponentPlaylist.ts`    | A component's playlist resolved from the banks, sources decoded   |
+| `scripts/src/services/genshinAssets/fitLoginMusic.ts`               | The login's notes, voices and instruments                         |
+| `scripts/src/services/genshinAssets/readMusicSourceNotes.ts`        | A source's notes, its readings cached                             |
+| `scripts/src/services/genshinAssets/splitVoicesByRegister.ts`       | The registers' natural breaks                                     |
+| `scripts/src/services/genshinAssets/fitMusicVoices.ts`              | A source's voices by register, each one's instrument fitted twice |
+| `scripts/src/services/genshinAssets/fitInstrument.ts`               | A voice's instrument measured at its clear notes                  |
+| `scripts/src/services/genshinAssets/fitVoiceNoises.ts`              | Every voice's noise in each noise-like band, solved at once       |
+| `scripts/src/services/genshinParity/characterizeMusicBands.ts`      | What each band of the game's sound holds, for `bands`             |
+| `packages/genshin-engine/src/audio/createNoiseBuffer.ts`            | An instrument's noise, built band by band in the spectrum         |
+| `scripts/src/services/genshinAssets/readSpectralPeak.ts`            | A partial's frequency and height between two bins                 |
+| `scripts/src/services/genshinParity/scoreMusicSegment.ts`           | Pitch agreement and each octave band's distance                   |
+| `scripts/src/services/genshinParity/renderMusicSegments.ts`         | Each segment rendered by its screen, beside the game's            |
+| `scripts/src/services/genshinParity/commands/noiseCommand.ts`       | The noise solve read back from our render and from the game's     |
+| `scripts/src/services/genshinParity/commands/instrumentsCommand.ts` | Each voice's recorded instrument and level, solved in the bands   |
+| `scripts/src/services/genshinParity/ParityMusicScores.snapshot.md`  | The last `listen`, committed                                      |
+| `packages/genshin-engine/src/audio/createMusicPlayer.ts`            | The live player                                                   |
+| `packages/genshin-engine/src/audio/scheduleMusicNote.ts`            | One note's oscillator and envelope                                |
+| `packages/genshin-world/src/components/Login/Music/Index.vue`       | Where the login's music plays                                     |
 
 ## Sources
 

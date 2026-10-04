@@ -52,13 +52,14 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 
 ## Music
 
-| Unknown                               | Tool                                                                       |
-| :------------------------------------ | :------------------------------------------------------------------------- |
-| Which music sound a recording plays   | `genshin:assets music`: pitch classes matched window by window             |
-| What plays a piece, and when          | `genshin:assets playlist`: its segments in order, its sources decoded      |
-| A piece's notes                       | `readMusicSourceNotes`: pitch-transcription over a decoded source          |
-| Each voice's instrument and tuning    | `fitInstrument`: measured at its clear notes, in the fit's report          |
-| Each voice's noise                    | `fitVoiceNoises`: each noise-like band, solved over every frame            |
-| What a band of the game's music holds | `genshin:parity bands`: share, flatness, attack weight, on partials        |
-| Whether our noise plays what it ships | `genshin:parity noise`: the solve read back from our render and the game's |
-| How close our music sounds            | `genshin:parity listen`: pitch agreement, each band's gap and its sign     |
+| Unknown                                              | Tool                                                                                                                            |
+| :--------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+| Which music sound a recording plays                  | `genshin:assets music`: pitch classes matched window by window                                                                  |
+| What plays a piece, and when                         | `genshin:assets playlist`: its segments in order, its sources decoded                                                           |
+| A piece's notes                                      | `readMusicSourceNotes`: pitch-transcription over a decoded source                                                               |
+| Each voice's instrument and tuning                   | `fitInstrument`: measured at its clear notes, in the fit's report                                                               |
+| Each voice's noise                                   | `fitVoiceNoises`: each noise-like band, solved over every frame                                                                 |
+| Which recorded instrument and level plays each voice | `genshin:parity instruments`: band-energy least squares over every combination, refined on the score's distance; blind to pitch |
+| What a band of the game's music holds                | `genshin:parity bands`: share, flatness, attack weight, on partials                                                             |
+| Whether our noise plays what it ships                | `genshin:parity noise`: the solve read back from our render and the game's                                                      |
+| How close our music sounds                           | `genshin:parity listen`: pitch agreement, each band's gap and its sign                                                          |
