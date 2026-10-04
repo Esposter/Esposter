@@ -44,7 +44,6 @@ export const getRegularOutdatedDependencies = async (root: string): Promise<Outd
           dependents: getOutdatedDependents(dependency.dependentPackages),
           latest: dependency.latest,
           packageName,
-          specifier: "",
         });
       }
 

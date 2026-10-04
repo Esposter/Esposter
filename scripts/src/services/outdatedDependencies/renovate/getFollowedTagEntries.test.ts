@@ -28,4 +28,12 @@ describe(getFollowedTagEntries, () => {
       { ...entry, followTag: "beta" },
     ]);
   });
+
+  test("keeps the tag an entry already carries over a rule's", () => {
+    expect.hasAssertions();
+
+    const distTagEntry = { ...entry, followTag: "a" };
+
+    expect(getFollowedTagEntries([distTagEntry], [followed])).toStrictEqual([distTagEntry]);
+  });
 });

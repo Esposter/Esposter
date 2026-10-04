@@ -11,20 +11,20 @@ For pages with **optional or nested route segments** sharing one page component 
 // pages/foos/[id]/[[bar]].vue
 import { checkIsUuidRouteId } from "@/services/router/checkIsUuidRouteId";
 import { getRouteParam } from "@/util/router/getRouteParam";
-import { requireRouteParam } from "@/util/router/requireRouteParam";
 
 definePageMeta({
   key: (route) => `foo-${getRouteParam(route.params, "id")}`,
   middleware: "auth",
   validate: checkIsUuidRouteId,
 });
-const { currentRoute } = useRouter();
-// Keyed/stable segment → read once (the page remounts on id change), through the throwing helper
-const id = requireRouteParam(currentRoute.value.params, "id");
+// The page's own route, narrowed to its params by the typed router
+const route = useRoute();
+// Keyed/stable segment → read once (the page remounts on id change)
+const { id } = route.params;
 const { foo, load } = useFoo(id);
 await load();
 // Only the CHANGING segment needs a computed — it updates without a remount once the page is reused
-const activeBar = computed(() => getRouteParam(currentRoute.value.params, "bar") || FooBarType.Default);
+const activeBar = computed(() => route.params.bar || FooBarType.Default);
 ```
 
 **Validate only what is knowable before load.** `validate` runs before setup, so it cannot see fetched data — it checks shape (a uuid, an enum `Set`). A segment whose valid values depend on **loaded** data must be guarded after the load instead. Because sibling-segment switches reuse the page instance, that guard is a `watchImmediate` (a one-shot setup check would not re-run on reuse), not a setup-time `if`:
@@ -44,5 +44,5 @@ watchImmediate([activeBar, foo], ([newActiveBar, newFoo]) => {
 **Rules:**
 
 - A list row's `@click="navigateTo(...)"` / a `<NuxtLink to>` are already SPA navigations — they do **not** cause (or fix) a remount refetch. The remount comes from the per-segment page key, so fix it at the page level.
-- The **keyed/stable** segment is read once through `requireRouteParam` — the page remounts when it changes, so a captured `const` stays correct. Only the **changing** segment needs a `computed`, since a captured `const` for it goes stale once the page is reused.
-- `takeOne` (`@esposter/shared`) is the `noUncheckedIndexedAccess` workaround for **array / first-element** access — not for `string | string[]` route params, which `requireRouteParam` / `getRouteParam` already normalize.
+- The **keyed/stable** segment is read once off the page's `useRoute()` — the page remounts when it changes, so a captured `const` stays correct. Only the **changing** segment needs a `computed`, since a captured `const` for it goes stale once the page is reused.
+- `takeOne` (`@esposter/shared`) is the `noUncheckedIndexedAccess` workaround for **array / first-element** access — not for `string | string[]` route params, which the typed route and `getRouteParam` already resolve.

@@ -1,6 +1,6 @@
 # Routing
 
-Declarative links, awaited or returned `navigateTo`, `useRouter().currentRoute` over the banned `useRoute()`, and where navigation state lives.
+Declarative links, awaited or returned `navigateTo`, a page's own typed `useRoute()` and `useRouter().currentRoute` everywhere else, and where navigation state lives.
 
 | Unit                                            | Swept                 | Notes |
 | ----------------------------------------------- | --------------------- | ----- |

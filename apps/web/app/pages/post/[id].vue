@@ -6,7 +6,12 @@ import { useCommentStore } from "@/store/post/comment";
 definePageMeta({ validate: checkIsUuidRouteId });
 
 const { data: session } = await useAuthSession();
-const post = await useReadPostFromRoute();
+const { $trpc } = useNuxtApp();
+const route = useRoute();
+// A comment is a post, so this returns one either way: opening a reply's own id renders it as the root of its
+// Thread with its replies beneath, which is what "continue this thread" is — the same page, one level of
+// Context instead of ten, and no route of its own
+const post = await $trpc.post.readPost.query(route.params.id);
 const commentStore = useCommentStore();
 const { currentPost } = storeToRefs(commentStore);
 currentPost.value = post;

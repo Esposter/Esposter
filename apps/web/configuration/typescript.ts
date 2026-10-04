@@ -1,15 +1,9 @@
 import type { NuxtConfig } from "nuxt/schema";
 
 // Nuxt generates four standalone tsconfigs and none of them extends `tsconfig.base.json`, so the workspace's
-// `source` condition has to be restated on each. Without it the app is the one consumer left resolving every
-// Sibling package through the `default` arm — its `dist` — which is what forces every private package to emit
-// Declarations nothing else reads. The server config is Nitro's and is extended in `configuration/nitro.ts`. The
-// Condition is spelled rather than imported as `SOURCE_CONDITION`: `nuxt prepare` loads this from `postinstall`,
-// Before `@esposter/configuration` is built, so `typescript.test.ts` holds the spellings to it instead.
-const compilerOptions = { customConditions: ["source"] };
-
-export const typescript: NuxtConfig["typescript"] = {
-  nodeTsConfig: { compilerOptions },
-  sharedTsConfig: { compilerOptions },
-  tsConfig: { compilerOptions },
-};
+// `source` condition is restated here, where Nuxt carries `tsConfig`'s compiler options into all four. Without it
+// The app is the one consumer left resolving every sibling package through the `default` arm — its `dist` — which
+// Is what forces every private package to emit declarations nothing else reads. The condition is spelled rather
+// Than imported as `SOURCE_CONDITION`: `nuxt prepare` loads this from `postinstall`, before
+// `@esposter/configuration` is built, so `typescript.test.ts` holds the spelling to it instead.
+export const typescript: NuxtConfig["typescript"] = { tsConfig: { compilerOptions: { customConditions: ["source"] } } };

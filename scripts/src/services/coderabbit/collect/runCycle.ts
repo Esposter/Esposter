@@ -150,6 +150,7 @@ export const runCycle = async ({
     cwd,
     developSha,
     isDryRun,
+    mergeBaseSha,
     owingFixesSha,
     queueSha,
     viewerLogin,

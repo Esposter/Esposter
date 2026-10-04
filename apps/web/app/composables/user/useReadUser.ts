@@ -1,16 +1,13 @@
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
-import { requireRouteParam } from "@/util/router/requireRouteParam";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 import { TRPCClientError } from "@trpc/client";
 
-export const useReadUserFromRoute = async () => {
+export const useReadUser = (userId: string) => {
   const { $trpc } = useNuxtApp();
-  const { currentRoute } = useRouter();
-  const userId = requireRouteParam(currentRoute.value.params, "id");
   // Only a genuine "user not found" becomes a 404 — transport/server failures propagate rather than being
   // Masked as an absent user
-  const user = await getResultAsync(() => $trpc.user.readUser.query(userId)).match(
+  return getResultAsync(() => $trpc.user.readUser.query(userId)).match(
     (newUser) => newUser,
     (error) => {
       if (error instanceof TRPCClientError && error.data?.code === "NOT_FOUND")
@@ -18,7 +15,4 @@ export const useReadUserFromRoute = async () => {
       throw error;
     },
   );
-  // The readUser query projects only the public profile columns (no id), so hand the route's userId
-  // Back to the callers that key achievements/posts by it
-  return { user, userId };
 };

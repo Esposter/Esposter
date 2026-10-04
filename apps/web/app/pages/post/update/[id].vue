@@ -7,7 +7,9 @@ import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth", validate: checkIsUuidRouteId });
 
-const post = await useReadPostFromRoute();
+const { $trpc } = useNuxtApp();
+const route = useRoute();
+const post = await $trpc.post.readPost.query(route.params.id);
 // This form edits a title, and a comment has none — reading one as a root is the thread page's business, not
 // This page's
 if (post.parentId)

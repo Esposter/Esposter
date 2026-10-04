@@ -1,5 +1,7 @@
 import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
+import { applyDistTags } from "#src/services/outdatedDependencies/distTag/applyDistTags";
 import { getMismatches } from "#src/services/outdatedDependencies/getMismatches";
+import { getRegistryPackageName } from "#src/services/outdatedDependencies/getRegistryPackageName";
 import { getLockCatalogVersions } from "#src/services/outdatedDependencies/lock/getLockCatalogVersions";
 import { getLockConfigDependencyVersions } from "#src/services/outdatedDependencies/lock/getLockConfigDependencyVersions";
 import { getEngineEntries } from "#src/services/outdatedDependencies/manifest/getEngineEntries";
@@ -47,14 +49,15 @@ const manifests = readManifestFiles(REPOSITORY_ROOT);
 const npmProjects = readNpmProjects(REPOSITORY_ROOT);
 const npmManifestPaths = new Set(npmProjects.map(({ manifestPath }) => manifestPath));
 const npmManifestNames = new Set(npmProjects.map(({ manifestName }) => manifestName));
-const npmEntries = npmProjects.flatMap(({ entries }) => entries);
 const engineEntries = getEngineEntries(manifests);
 const packageManagerEntries = getPackageManagerEntries(manifests);
 const manifestDependencies = getManifestDependencies(manifests);
 const uncatalogedManifestDependencies = getUncatalogedManifestDependencies(manifestDependencies, npmManifestPaths);
+const lockCatalogVersions = getLockCatalogVersions(lockYaml);
+const lockConfigDependencyVersions = getLockConfigDependencyVersions(lockYaml);
 const mismatches = [
-  ...getMismatches(catalogEntries, getLockCatalogVersions(lockYaml)),
-  ...getMismatches(configDependencyEntries, getLockConfigDependencyVersions(lockYaml)),
+  ...getMismatches(catalogEntries, lockCatalogVersions),
+  ...getMismatches(configDependencyEntries, lockConfigDependencyVersions),
   ...npmProjects.flatMap(({ entries, resolvedVersions }) => getMismatches(entries, resolvedVersions)),
 ];
 
@@ -62,18 +65,21 @@ printUncatalogedManifestDependencies(uncatalogedManifestDependencies, color);
 printMismatches(mismatches, color);
 
 const renovateRules = getRenovateRules(renovateJson);
-// `pnpm outdated` compares against `latest`, which is not what Renovate proposes for a package a rule follows a
-// Dist-tag for, so those catalog entries are asked of the registry under their tag instead.
-const followedTagEntries = getFollowedTagEntries(catalogEntries, renovateRules);
-const followedPackages = new Set(followedTagEntries.map(({ packageName }) => packageName));
+// `pnpm outdated` compares against `latest`, which is neither what Renovate proposes for a package a rule follows
+// A dist-tag for nor what a specifier naming a dist-tag installs — a nightly line's `5x` is ahead of the stable
+// `latest` and would never be reported — so those catalog entries are asked of the registry under their tag
+// Instead, each once. pnpm reports an alias under its target's name, so that is the name skipped.
+const distTagCatalogEntries = applyDistTags(catalogEntries, lockCatalogVersions);
+const followedTagEntries = getFollowedTagEntries(distTagCatalogEntries, renovateRules);
+const followedPackages = new Set(followedTagEntries.map((entry) => getRegistryPackageName(entry)));
 const [regularChecks, registryChecks] = await Promise.all([
   getRegularOutdatedDependencies(REPOSITORY_ROOT),
   readRegistryOutdatedDependencies([
-    ...configDependencyEntries,
+    ...applyDistTags(configDependencyEntries, lockConfigDependencyVersions),
     ...engineEntries,
     ...packageManagerEntries,
     ...followedTagEntries,
-    ...npmEntries,
+    ...npmProjects.flatMap(({ entries, resolvedVersions }) => applyDistTags(entries, resolvedVersions)),
   ]),
 ]);
 // A version Renovate would not propose is not a bump to take by hand either: the two readers share one policy.

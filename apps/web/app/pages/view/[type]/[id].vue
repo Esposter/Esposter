@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { ViewComponentMap } from "@/services/resource/ViewComponentMap";
-import { requireRouteParam } from "@/util/router/requireRouteParam";
 
-const { currentRoute } = useRouter();
-const type = requireRouteParam(currentRoute.value.params, "type");
-const id = requireRouteParam(currentRoute.value.params, "id");
+const route = useRoute();
+const { id, type } = route.params;
 // The route type is an arbitrary string, so it is matched against the registered publishable renderers
 const viewComponent = Object.entries(ViewComponentMap).find(([viewType]) => viewType === type)?.[1];
 if (!viewComponent) throw createError({ statusCode: 404, statusMessage: "Resource view not found" });

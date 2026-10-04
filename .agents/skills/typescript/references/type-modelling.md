@@ -73,7 +73,7 @@ return FooComputeMap[foo.type](foo as never, { find, resolve });
 
 ## Missing `NuxtConfig` module keys — augment `nuxt.d.ts`, never touch tsconfig
 
-When `NuxtConfig["x"]` errors in `apps/web/configuration/*.ts` because a Nuxt module's config key isn't picked up (the module relies on the generated `.nuxt/types/modules.d.ts` instead of shipping its own `nuxt/schema` augmentation), **NEVER edit `tsconfig.root.json` or any tsconfig `include`**. Add the key to the existing `declare module "nuxt/schema"` block in `apps/web/shared/types/nuxt.d.ts`, importing the module's exported `ModuleOptions`:
+Every `apps/web/configuration/*.ts` file types its export as `NuxtConfig["<key>"]` from `nuxt/schema` — `nitro` and `routeRules` included, never Nitro's own `NitroConfig`, which lacks Nuxt's route-rule extensions and its deprecations of the nested `nitro.prerender`, `nitro.routeRules` and `nitro.typescript.tsConfig` in favour of the top-level options; an environment override (`$development`, `$production`, `$test`) is not a `NuxtConfig` key but `defineNuxtConfig`'s wrapper's, so it types as `NuxtConfigInput["$development"]`. A module's key reaches `NuxtConfig` through the generated `.nuxt/types/modules.d.ts`, which the node project the configuration is checked in loads. When one still errors because the module is not picked up, **NEVER edit `tsconfig.root.json` or any tsconfig `include`**. Add a `declare module "nuxt/schema"` block to `apps/web/shared/types/nuxt.d.ts`, under an `@TODO` naming the module's issue (the `todos` skill), importing the module's exported `ModuleOptions`:
 
 ```ts
 import type { ModuleOptions as ContentModuleOptions } from "@nuxt/content";

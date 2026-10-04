@@ -3,7 +3,6 @@ import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntit
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { getRouteParam } from "@/util/router/getRouteParam";
-import { requireRouteParam } from "@/util/router/requireRouteParam";
 import { DatabaseEntityType, selectCallSessionInMessageSchema } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
@@ -16,13 +15,13 @@ definePageMeta({
   },
 });
 
-const { currentRoute } = useRouter();
+const route = useRoute();
 const { data: session } = await useAuthSession();
 const callStore = useCallStore();
 const { activeCallSessionId } = storeToRefs(callStore);
 const knockerStore = useKnockerStore();
 const { knockingCallSessionId } = storeToRefs(knockerStore);
-const id = requireRouteParam(currentRoute.value.params, "id");
+const { id } = route.params;
 const callSession = await useCallIdSubscribables(id);
 if (!callSession)
   throw createError({ status: 404, statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.CallSession, id) });

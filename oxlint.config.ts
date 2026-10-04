@@ -2,6 +2,87 @@ import type { OxlintConfig } from "oxlint";
 
 import { defineConfig } from "oxlint";
 
+const BROWSER_GLOBAL_MESSAGE = "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.";
+const CONTEXT_MESSAGE =
+  "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.";
+const POLLING_MESSAGE =
+  "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.";
+const USE_ROUTE_MESSAGE =
+  "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.";
+const VUETIFY_MESSAGE =
+  "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See /docs/architecture/ui-library.";
+// An override replaces a rule's options wholesale, so each scope's list is the root's entries with its own lifted or
+// Added by identity, and a ban added here reaches every scope that does not lift it
+const BROWSER_GLOBALS = [
+  "document",
+  "history",
+  "localStorage",
+  "location",
+  "matchMedia",
+  "navigator",
+  "screen",
+  "sessionStorage",
+].map((name) => ({ message: BROWSER_GLOBAL_MESSAGE, name }));
+const USE_ROUTE_GLOBAL = { message: USE_ROUTE_MESSAGE, name: "useRoute" };
+const USE_UI_STYLE_GLOBAL = {
+  message:
+    "Only the UI library reads the design style: a feature that differs by style asks the library to draw it. See /docs/architecture/design-language#design-styles.",
+  name: "useUiStyle",
+};
+const FETCH_GLOBAL = {
+  message:
+    "A script's request goes through `fetchOk` (`scripts/src/services/shared/fetchOk.ts`), or `fetchJson` for a JSON body, which bound it with a timeout and refuse a non-2xx answer — a bare `fetch` does neither.",
+  name: "fetch",
+};
+const RESTRICTED_GLOBALS = [
+  ...BROWSER_GLOBALS,
+  { message: CONTEXT_MESSAGE, name: "inject" },
+  { message: CONTEXT_MESSAGE, name: "provide" },
+  USE_ROUTE_GLOBAL,
+  { message: POLLING_MESSAGE, name: "waitFor" },
+  { message: POLLING_MESSAGE, name: "waitUntil" },
+  USE_UI_STYLE_GLOBAL,
+];
+// Banned in every tree; the Vuetify 0 bans hold everywhere but the UI library and the packages
+const RESTRICTED_IMPORT_PATHS = [
+  {
+    importNames: ["randomUUID"],
+    message:
+      "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
+    name: "node:crypto",
+  },
+  { importNames: ["useRoute"], message: USE_ROUTE_MESSAGE, name: "vue-router" },
+  { importNames: ["inject", "provide"], message: CONTEXT_MESSAGE, name: "vue" },
+];
+const VUETIFY_IMPORT_PATH = { message: VUETIFY_MESSAGE, name: "@vuetify/v0" };
+const VUETIFY_IMPORT_PATTERN = { group: ["@vuetify/v0/*"], message: VUETIFY_MESSAGE };
+const WORKSPACE_LIBRARY_IMPORT_PATTERN = {
+  allowTypeImports: true,
+  group: ["@esposter/*", "agent-console-server", "azure-mock", "keyframe-store", "parse-tmx", "virrun", "vue-phaserjs"],
+  message:
+    "The Nuxt configuration loads in `nuxt prepare`, the app's postinstall, before any workspace library is built — a runtime import of one fails every fresh install. Import the npm package the library wraps instead; types are fine.",
+};
+const SHARED_APP_IMPORT_PATTERN = {
+  group: ["@/**", "~/**"],
+  message:
+    "`shared/` is parsed by the server too, so it may not reach into the client-only app tree — see /docs/architecture/module-boundaries. Move the code to `shared/`, or give the client concern its own twin under `app/`.",
+};
+const PACKAGE_ALIAS_IMPORT_PATTERN = {
+  group: ["@/**", "~/**"],
+  message:
+    "A package addresses its own source through the `#src/*` subpath imports its manifest declares, never a tsconfig `paths` alias — a `paths` entry re-points into whichever package is compiling, so a sibling bundling this one from source resolves it to nothing. See /docs/architecture/build-pipeline. (`apps/web` is the only tree that keeps `@/` — those are Nuxt's own aliases.)",
+};
+const PACKAGE_RELATIVE_IMPORT_PATTERN = {
+  group: ["./*", "./**", "../*", "../**"],
+  message:
+    "A package addresses its own source through `#src/*`, never a relative specifier — a relative path breaks the moment the file moves, and `#src` is resolved from the importing file's own package.json so it survives being compiled by a sibling. See /docs/architecture/build-pipeline.",
+};
+const MOD_IMPORT_PATTERN = {
+  group: ["#src/*", "@/**", "~/**"],
+  message:
+    "A Claude Code hooks module imports its own files by relative path alone: the engine refuses any other specifier at load. See the claude-mods skill.",
+};
+
 const oxlintConfiguration: OxlintConfig = defineConfig({
   categories: {
     correctness: "error",
@@ -53,52 +134,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
         "no-restricted-imports": [
           "error",
           {
-            paths: [
-              {
-                importNames: ["randomUUID"],
-                message:
-                  "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
-                name: "node:crypto",
-              },
-              {
-                importNames: ["useRoute"],
-                message:
-                  "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
-                name: "vue-router",
-              },
-              {
-                importNames: ["inject", "provide"],
-                message:
-                  "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
-                name: "vue",
-              },
-              {
-                message:
-                  "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See /docs/architecture/ui-library.",
-                name: "@vuetify/v0",
-              },
-            ],
-            patterns: [
-              {
-                group: ["@vuetify/v0/*"],
-                message:
-                  "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See /docs/architecture/ui-library.",
-              },
-              {
-                allowTypeImports: true,
-                group: [
-                  "@esposter/*",
-                  "agent-console-server",
-                  "azure-mock",
-                  "keyframe-store",
-                  "parse-tmx",
-                  "virrun",
-                  "vue-phaserjs",
-                ],
-                message:
-                  "The Nuxt configuration loads in `nuxt prepare`, the app's postinstall, before any workspace library is built — a runtime import of one fails every fresh install. Import the npm package the library wraps instead; types are fine.",
-              },
-            ],
+            paths: [...RESTRICTED_IMPORT_PATHS, VUETIFY_IMPORT_PATH],
+            patterns: [VUETIFY_IMPORT_PATTERN, WORKSPACE_LIBRARY_IMPORT_PATTERN],
           },
         ],
       },
@@ -133,171 +170,39 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       rules: {
         "no-restricted-globals": [
           "error",
-          {
-            message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-            name: "document",
-          },
-          {
-            message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-            name: "history",
-          },
-          {
-            message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-            name: "localStorage",
-          },
-          {
-            message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-            name: "location",
-          },
-          {
-            message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-            name: "matchMedia",
-          },
-          {
-            message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-            name: "navigator",
-          },
-          {
-            message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-            name: "screen",
-          },
-          {
-            message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-            name: "sessionStorage",
-          },
+          ...RESTRICTED_GLOBALS.filter((restrictedGlobal) => restrictedGlobal !== USE_UI_STYLE_GLOBAL),
+        ],
+        "no-restricted-imports": ["error", { paths: RESTRICTED_IMPORT_PATHS }],
+      },
+    },
+    {
+      // A page's own `useRoute()` is pinned to the page reading it and narrowed to its own params by the typed router
+      files: ["apps/web/app/pages/**/*.vue"],
+      rules: {
+        "no-restricted-globals": [
+          "error",
+          ...RESTRICTED_GLOBALS.filter((restrictedGlobal) => restrictedGlobal !== USE_ROUTE_GLOBAL),
           {
             message:
-              "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
-            name: "inject",
-          },
-          {
-            message:
-              "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
-            name: "provide",
-          },
-          {
-            message:
-              "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
-            name: "useRoute",
-          },
-          {
-            message:
-              "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
-            name: "waitFor",
-          },
-          {
-            message:
-              "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
-            name: "waitUntil",
+              "A page reads its route through its own `useRoute()`, which the typed router narrows to the page's params, and navigates with `navigateTo`. See the routing skill.",
+            name: "useRouter",
           },
         ],
       },
     },
     {
       files: ["scripts/src/**/*.ts"],
-      rules: {
-        "no-restricted-globals": [
-          "error",
-          {
-            message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-            name: "document",
-          },
-          {
-            message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-            name: "history",
-          },
-          {
-            message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-            name: "localStorage",
-          },
-          {
-            message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-            name: "location",
-          },
-          {
-            message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-            name: "matchMedia",
-          },
-          {
-            message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-            name: "navigator",
-          },
-          {
-            message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-            name: "screen",
-          },
-          {
-            message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-            name: "sessionStorage",
-          },
-          {
-            message:
-              "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
-            name: "inject",
-          },
-          {
-            message:
-              "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
-            name: "provide",
-          },
-          {
-            message:
-              "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
-            name: "useRoute",
-          },
-          {
-            message:
-              "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
-            name: "waitFor",
-          },
-          {
-            message:
-              "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
-            name: "waitUntil",
-          },
-          {
-            message:
-              "Only the UI library reads the design style: a feature that differs by style asks the library to draw it. See /docs/architecture/design-language#design-styles.",
-            name: "useUiStyle",
-          },
-          {
-            message:
-              "A script's request goes through `fetchOk` (`scripts/src/services/shared/fetchOk.ts`), or `fetchJson` for a JSON body, which bound it with a timeout and refuse a non-2xx answer — a bare `fetch` does neither.",
-            name: "fetch",
-          },
-        ],
-      },
+      rules: { "no-restricted-globals": ["error", ...RESTRICTED_GLOBALS, FETCH_GLOBAL] },
     },
     {
       files: ["**/*.test.ts"],
       rules: {
         "no-restricted-globals": [
           "error",
-          {
-            message:
-              "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
-            name: "inject",
-          },
-          {
-            message:
-              "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
-            name: "provide",
-          },
-          {
-            message:
-              "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
-            name: "useRoute",
-          },
-          {
-            message:
-              "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
-            name: "waitFor",
-          },
-          {
-            message:
-              "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
-            name: "waitUntil",
-          },
+          ...RESTRICTED_GLOBALS.filter(
+            (restrictedGlobal) =>
+              !BROWSER_GLOBALS.includes(restrictedGlobal) && restrictedGlobal !== USE_UI_STYLE_GLOBAL,
+          ),
         ],
         "setup-scope/no-detached-mutation": "off",
       },
@@ -308,43 +213,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
         "no-restricted-imports": [
           "error",
           {
-            paths: [
-              {
-                importNames: ["randomUUID"],
-                message:
-                  "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
-                name: "node:crypto",
-              },
-              {
-                importNames: ["useRoute"],
-                message:
-                  "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
-                name: "vue-router",
-              },
-              {
-                importNames: ["inject", "provide"],
-                message:
-                  "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
-                name: "vue",
-              },
-              {
-                message:
-                  "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See /docs/architecture/ui-library.",
-                name: "@vuetify/v0",
-              },
-            ],
-            patterns: [
-              {
-                group: ["@vuetify/v0/*"],
-                message:
-                  "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See /docs/architecture/ui-library.",
-              },
-              {
-                group: ["@/**", "~/**"],
-                message:
-                  "`shared/` is parsed by the server too, so it may not reach into the client-only app tree — see /docs/architecture/module-boundaries. Move the code to `shared/`, or give the client concern its own twin under `app/`.",
-              },
-            ],
+            paths: [...RESTRICTED_IMPORT_PATHS, VUETIFY_IMPORT_PATH],
+            patterns: [VUETIFY_IMPORT_PATTERN, SHARED_APP_IMPORT_PATTERN],
           },
         ],
       },
@@ -359,82 +229,13 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       rules: { "error-alert/no-raw-error-alert": "off" },
     },
     {
-      files: [
-        "apps/web/app/components/Ui/**",
-        "apps/web/app/composables/ui/**",
-        "apps/web/app/models/ui/**",
-        "apps/web/app/plugins/ui.ts",
-        "apps/web/app/services/ui/**",
-      ],
-      rules: {
-        "no-restricted-imports": [
-          "error",
-          {
-            paths: [
-              {
-                importNames: ["randomUUID"],
-                message:
-                  "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
-                name: "node:crypto",
-              },
-              {
-                importNames: ["useRoute"],
-                message:
-                  "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
-                name: "vue-router",
-              },
-              {
-                importNames: ["inject", "provide"],
-                message:
-                  "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
-                name: "vue",
-              },
-            ],
-          },
-        ],
-      },
-    },
-    {
       // Every source file of a package or the scripts, not only its `src`: a harness beside it (a parity page, a root
       // Config) reaches its own files through a subpath import too, such as `#parity/*`
       files: ["apps/*/src/**", "packages/*/**/*.{ts,vue}", "scripts/**/*.ts"],
       rules: {
         "no-restricted-imports": [
           "error",
-          {
-            paths: [
-              {
-                importNames: ["randomUUID"],
-                message:
-                  "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
-                name: "node:crypto",
-              },
-              {
-                importNames: ["useRoute"],
-                message:
-                  "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
-                name: "vue-router",
-              },
-              {
-                importNames: ["inject", "provide"],
-                message:
-                  "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
-                name: "vue",
-              },
-            ],
-            patterns: [
-              {
-                group: ["@/**", "~/**"],
-                message:
-                  "A package addresses its own source through the `#src/*` subpath imports its manifest declares, never a tsconfig `paths` alias — a `paths` entry re-points into whichever package is compiling, so a sibling bundling this one from source resolves it to nothing. See /docs/architecture/build-pipeline. (`apps/web` is the only tree that keeps `@/` — those are Nuxt's own aliases.)",
-              },
-              {
-                group: ["./*", "./**", "../*", "../**"],
-                message:
-                  "A package addresses its own source through `#src/*`, never a relative specifier — a relative path breaks the moment the file moves, and `#src` is resolved from the importing file's own package.json so it survives being compiled by a sibling. See /docs/architecture/build-pipeline.",
-              },
-            ],
-          },
+          { paths: RESTRICTED_IMPORT_PATHS, patterns: [PACKAGE_ALIAS_IMPORT_PATTERN, PACKAGE_RELATIVE_IMPORT_PATTERN] },
         ],
       },
     },
@@ -442,40 +243,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       // A Claude Code hooks module imports only its own files by relative path, plus `claude-code`: the engine refuses a
       // Subpath import at load, so the mod trees keep every other import restriction and lose the relative-specifier ban
       files: ["packages/genshin-mods/**/*.ts", "packages/genshin-persona/mod/**/*.ts"],
-      rules: {
-        "no-restricted-imports": [
-          "error",
-          {
-            paths: [
-              {
-                importNames: ["randomUUID"],
-                message:
-                  "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
-                name: "node:crypto",
-              },
-              {
-                importNames: ["useRoute"],
-                message:
-                  "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
-                name: "vue-router",
-              },
-              {
-                importNames: ["inject", "provide"],
-                message:
-                  "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
-                name: "vue",
-              },
-            ],
-            patterns: [
-              {
-                group: ["#src/*", "@/**", "~/**"],
-                message:
-                  "A Claude Code hooks module imports its own files by relative path alone: the engine refuses any other specifier at load. See the claude-mods skill.",
-              },
-            ],
-          },
-        ],
-      },
+      rules: { "no-restricted-imports": ["error", { paths: RESTRICTED_IMPORT_PATHS, patterns: [MOD_IMPORT_PATTERN] }] },
     },
   ],
   plugins: ["import", "oxc", "promise", "typescript", "unicorn", "vitest", "vue"],
@@ -542,107 +310,10 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "no-nested-ternary": "off",
     "no-plusplus": "off",
     "no-redeclare": "off",
-    "no-restricted-globals": [
-      "error",
-      {
-        message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-        name: "document",
-      },
-      {
-        message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-        name: "history",
-      },
-      {
-        message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-        name: "localStorage",
-      },
-      {
-        message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-        name: "location",
-      },
-      {
-        message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-        name: "matchMedia",
-      },
-      {
-        message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-        name: "navigator",
-      },
-      {
-        message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-        name: "screen",
-      },
-      {
-        message: "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
-        name: "sessionStorage",
-      },
-      {
-        message:
-          "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
-        name: "inject",
-      },
-      {
-        message:
-          "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
-        name: "provide",
-      },
-      {
-        message:
-          "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
-        name: "useRoute",
-      },
-      {
-        message:
-          "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
-        name: "waitFor",
-      },
-      {
-        message:
-          "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
-        name: "waitUntil",
-      },
-      {
-        message:
-          "Only the UI library reads the design style: a feature that differs by style asks the library to draw it. See /docs/architecture/design-language#design-styles.",
-        name: "useUiStyle",
-      },
-    ],
+    "no-restricted-globals": ["error", ...RESTRICTED_GLOBALS],
     "no-restricted-imports": [
       "error",
-      {
-        paths: [
-          {
-            importNames: ["randomUUID"],
-            message:
-              "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
-            name: "node:crypto",
-          },
-          {
-            importNames: ["useRoute"],
-            message:
-              "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
-            name: "vue-router",
-          },
-          {
-            importNames: ["inject", "provide"],
-            message:
-              "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.",
-            name: "vue",
-          },
-          {
-            message:
-              "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See /docs/architecture/ui-library.",
-            name: "@vuetify/v0",
-          },
-        ],
-        patterns: [
-          {
-            group: ["@vuetify/v0/*"],
-            message:
-              "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See /docs/architecture/ui-library.",
-          },
-        ],
-      },
+      { paths: [...RESTRICTED_IMPORT_PATHS, VUETIFY_IMPORT_PATH], patterns: [VUETIFY_IMPORT_PATTERN] },
     ],
     "no-restricted-properties": [
       "error",
@@ -658,12 +329,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
         object: "expect",
         property: "objectContaining",
       },
-      {
-        message:
-          "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
-        object: "expect",
-        property: "poll",
-      },
+      { message: POLLING_MESSAGE, object: "expect", property: "poll" },
       {
         message:
           "Use `jsonDateParse` from `@esposter/shared` — plain `JSON.parse` leaves every Date as an ISO string. Disable this rule with a reason where blanket revival is wrong (see /docs/architecture/serialization.md).",
@@ -676,18 +342,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
         object: "process",
         property: "argv",
       },
-      {
-        message:
-          "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
-        object: "vi",
-        property: "waitFor",
-      },
-      {
-        message:
-          "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
-        object: "vi",
-        property: "waitUntil",
-      },
+      { message: POLLING_MESSAGE, object: "vi", property: "waitFor" },
+      { message: POLLING_MESSAGE, object: "vi", property: "waitUntil" },
     ],
     "no-ternary": "off",
     "no-undefined": "off",

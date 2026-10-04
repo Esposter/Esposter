@@ -19,6 +19,14 @@ describe(getMismatches, () => {
     expect(getMismatches(entries, new Map([["a", "0.0.0"]]))).toStrictEqual([]);
   });
 
+  test("skips an entry whose specifier is a dist-tag", () => {
+    expect.hasAssertions();
+
+    const distTagEntries = [{ group: DependencyGroup.Catalog, packageName: "a", specifier: "npm:a@a" }];
+
+    expect(getMismatches(distTagEntries, new Map([["a", "0.0.1"]]))).toStrictEqual([]);
+  });
+
   test("skips entries that have no resolved version", () => {
     expect.hasAssertions();
 

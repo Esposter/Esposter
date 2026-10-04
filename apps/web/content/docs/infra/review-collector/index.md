@@ -55,7 +55,7 @@ flowchart TD
   PR -->|yes, rate limited| AK[Ask again at the stated deadline]
   PR -->|yes, review complete| MG[Merge it — a fold pushed to main<br/>when main conflicts — exit]
   PR -->|no| DR[Drain the merged release's open findings<br/>into ai/review-fixes, reply on answered threads]
-  DR --> SY[Rewrite ai/queue onto the tree the window is built on<br/>Claude resolves a conflict, repackages a commit alone over the cap]
+  DR --> SY[Rewrite ai/queue onto the tree the window is built on<br/>Claude resolves a conflict, repackages a commit alone over the window's room]
   SY --> P{A fix, or anything the queue still owes}
   P -->|none| PK[Wait — nothing owed]
   P -->|first commit held alone, past its attempts| FL[Note it on the commit, fail —<br/>a person resolves or splits it]

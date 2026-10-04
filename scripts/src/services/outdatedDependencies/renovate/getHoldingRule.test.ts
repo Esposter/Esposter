@@ -11,7 +11,6 @@ describe(getHoldingRule, () => {
     dependents: [],
     latest: "2.0.0",
     packageName: "a",
-    specifier: "",
   };
   const capped: RenovateRule = { allowedVersions: "<2", matchPackageNames: ["a"] };
   const disabled: RenovateRule = { enabled: false, matchPackageNames: ["a"] };

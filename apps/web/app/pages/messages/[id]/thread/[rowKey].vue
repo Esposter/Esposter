@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { checkIsMessageRoute } from "@/services/router/checkIsMessageRoute";
-import { requireRouteParam } from "@/util/router/requireRouteParam";
 import { getSynchronizedFunction } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth", validate: checkIsMessageRoute });
 
-const { currentRoute } = useRouter();
+const route = useRoute();
 const openThread = useOpenThread();
-const roomId = requireRouteParam(currentRoute.value.params, "id");
-const rowKey = requireRouteParam(currentRoute.value.params, "rowKey");
+const { id: roomId, rowKey } = route.params;
 // The same room the message route renders, with the pane opened on the thread the url names — which is what
 // Makes a thread linkable at all: a popped-out thread window, and every link into one, land here.
 // On mounted rather than in setup: the layout is this page's own child, so its mount decides the drawer state
