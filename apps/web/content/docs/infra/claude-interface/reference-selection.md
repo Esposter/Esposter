@@ -8,9 +8,9 @@ description: One repo script that, for every roster character, fetches their sto
 A zero-shot clone is only as good as its reference, and a character has tens of lines to choose from — one-second interjections and minute-long stories, in registers from a whisper to a shout. Which one represents the voice is a measurement, and this is the tooling that makes it: one `scripts` command, with nothing outside npm.
 
 ```bash
-pnpm ai:voice-match [en | ja | ko | zh] [--write]          # measure the roster in one dub; --write generates the map
-pnpm ai:voice-match en Aether Lumine --write                # the characters named alone, written into the map
-pnpm ai:voice-match --check                                 # every character's reference, asked of the wiki in every dub
+pnpm ai:voice-match [--language en | ja | ko | zh] [--write] # measure the roster in one dub; --write generates the map
+pnpm ai:voice-match Aether Lumine --write                   # the characters named alone, written into the map
+pnpm ai:voice-match --check                                  # every character's reference, asked of the wiki in every dub
 ```
 
 It measures over the wiki's files because the wiki is where the plugin fetches a reference from, and a measurement over the same file the plugin will use is the only one that measures the right thing.

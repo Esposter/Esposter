@@ -7,27 +7,30 @@ import { constants } from "node:os";
 // oxlint-disable-next-line no-restricted-imports -- the repo-root manifest, which no `#` map can reach
 import packageJson from "../../../package.json" with { type: "json" };
 
-const property = "crossOS";
+const CROSS_OS_PROPERTY = "crossOS";
 
 await runMain(
   defineCommand({
     args: {
       script: {
-        description: `A script in the root manifest's \`${property}\` map`,
+        description: `A script in the root manifest's \`${CROSS_OS_PROPERTY}\` map`,
         required: true,
         type: "positional",
       },
     },
-    meta: { description: "Run a script written once per platform, for the platform running it", name: property },
+    meta: {
+      description: "Run a script written once per platform, for the platform running it",
+      name: CROSS_OS_PROPERTY,
+    },
     run: ({ args }) => {
       const { platform } = process;
-      const command = (packageJson[property] as Record<string, Partial<Record<string, string>>>)[args.script]?.[
-        platform
-      ];
+      const command = (packageJson[CROSS_OS_PROPERTY] as Record<string, Partial<Record<string, string>>>)[
+        args.script
+      ]?.[platform];
       if (!command)
         throw new InvalidOperationError(
           Operation.Read,
-          property,
+          CROSS_OS_PROPERTY,
           `script: "${args.script}" not found for the current platform: ${platform}`,
         );
       // With shell: true, pass a single command string (no args array) — Node deprecates (DEP0190) array
@@ -36,12 +39,12 @@ await runMain(
       // `rm -rf pnpm-lock.yaml` — while the root delegates here with `pnpm -C scripts`, whose cwd is this package.
       // So the root is resolved from this file rather than inherited, and the map is read from the manifest that
       // Declares it rather than from whichever one the caller happened to be standing in.
-      const proc = spawn([command, ...args._.slice(1)].join(" "), {
+      const childProcess = spawn([command, ...args._.slice(1)].join(" "), {
         cwd: REPOSITORY_ROOT,
         shell: true,
         stdio: "inherit",
       });
-      proc.on("exit", (code, signal) => {
+      childProcess.on("exit", (code, signal) => {
         // A child killed by a signal carries no exit code, and exiting with that absence is exiting 0 — a run nothing
         // Finished reported as a success, to CI as much as to the caller. 128 plus the signal number is what a shell
         // Reports for the same death, so wrapping a command in this one changes nothing about the status it answers

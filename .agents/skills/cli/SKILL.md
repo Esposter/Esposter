@@ -9,7 +9,7 @@ A command line here is a citty command: citty reads the arguments, renders `--he
 
 ## Settled — do not re-propose
 
-- **A hand-written usage string, `--help` flag or argument parser**, `node:util`'s `parseArgs` included. Each drifts from the arguments it describes, since nothing reads the string against the code, and `parseArgs` stops at parsing: no subcommands, no usage, no help. citty renders the usage from the same `args` the command parses.
+- **A hand-written usage string, `--help` flag or argument parser**, `node:util`'s `parseArgs` included. Each drifts from the arguments it describes, since nothing reads the string against the code, and `parseArgs` stops at parsing: no subcommands, no usage, no help. citty renders the usage from the same `args` the command parses, and `no-restricted-imports` refuses `node:util`'s `parseArgs`.
 - **An interface restating a command's arguments** beside the command. `defineCommand` infers the parsed arguments from the object written inline in it, so a second declaration only has to be kept in step by hand.
 - **A module-scope `const <name>Args = { … } as const` typed `CommandDef<typeof <name>Args>`.** Under `isolatedDeclarations` the constant then needs an explicit type of its own, which is the restated interface again.
 - **Exporting a command as `CommandDef`.** `CommandDef` without arguments is `CommandDef<ArgsDef>`, and a command with its own arguments is not assignable to it (its `run` takes narrower arguments); `CommandDef<any>` is `no-explicit-any`. The export is typed `SubCommandsDef[string]`, citty's own type for a subcommand.

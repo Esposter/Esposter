@@ -53,6 +53,12 @@ const RESTRICTED_IMPORT_PATHS = [
       "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
     name: "node:crypto",
   },
+  {
+    importNames: ["parseArgs"],
+    message:
+      "A command line is a citty command (the `cli` skill): `parseArgs` stops at parsing, with no usage, help or subcommands to go with it.",
+    name: "node:util",
+  },
   { importNames: ["useRoute"], message: USE_ROUTE_MESSAGE, name: "vue-router" },
   { importNames: ["inject", "provide"], message: CONTEXT_MESSAGE, name: "vue" },
 ];
