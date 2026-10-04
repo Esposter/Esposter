@@ -1,6 +1,6 @@
+import type { auth as realAuth } from "#server/auth";
+import type { Context } from "#server/trpc/context";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
-import type { auth as realAuth } from "@@/server/auth";
-import type { Context } from "@@/server/trpc/context";
 import type { Session, User } from "better-auth";
 
 import { sessionsInAuth } from "@esposter/db-schema";
@@ -66,7 +66,7 @@ export const authMocks = {
 };
 
 // The better-auth surface the server reads — the three methods are the whole of it, so the rest of the instance
-// Is uncalled. Registered over `@@/server/auth` by the vitest setup file, never by a `vi.mock` in a helper: a
+// Is uncalled. Registered over `#server/auth` by the vitest setup file, never by a `vi.mock` in a helper: a
 // Mock is hoisted only within the file that writes it, so one written beside the session helpers reached a suite
 // Only while that module loaded before the suite's router import loaded the real one
 export const auth = {

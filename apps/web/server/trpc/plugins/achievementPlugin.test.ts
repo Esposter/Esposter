@@ -1,12 +1,12 @@
-import type { Context } from "@@/server/trpc/context";
-import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { Context } from "#server/trpc/context";
+import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { createCallerFactory } from "#server/trpc";
+import { createMockContext } from "#server/trpc/context.test";
+import { trpcRouter } from "#server/trpc/routers";
 import { ClickerSave } from "#shared/models/clicker/data/ClickerSave";
 import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
-import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/context.test";
-import { trpcRouter } from "@@/server/trpc/routers";
 import { achievementsInAchievement, ClickerAchievementName } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";

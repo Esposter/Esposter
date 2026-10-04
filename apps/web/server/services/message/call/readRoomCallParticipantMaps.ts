@@ -1,7 +1,7 @@
+import type { Context } from "#server/trpc/context";
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-import type { Context } from "@@/server/trpc/context";
 
-import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
+import { callSessionParticipantMap } from "#server/services/message/call/callSessionParticipantMap";
 
 // Every call a room is running — its own and one per thread — with the live participants of each. A moderation
 // Action reaches all of them, since the call a member is in may be a thread's rather than the room's own

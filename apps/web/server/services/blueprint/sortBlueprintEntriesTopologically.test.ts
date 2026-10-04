@@ -1,6 +1,6 @@
 import type { BlueprintEntry } from "#shared/models/resource/blueprint/BlueprintEntry";
 
-import { sortBlueprintEntriesTopologically } from "@@/server/services/blueprint/sortBlueprintEntriesTopologically";
+import { sortBlueprintEntriesTopologically } from "#server/services/blueprint/sortBlueprintEntriesTopologically";
 import { DatabaseEntityType, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

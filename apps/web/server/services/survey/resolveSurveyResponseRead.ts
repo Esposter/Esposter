@@ -1,8 +1,8 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 import type { ResourceInResource, SurveyResponseEntity } from "@esposter/db-schema";
 
-import { readSurveySettings } from "@@/server/services/survey/readSurveySettings";
-import { SurveyResponseModeValidatorMap } from "@@/server/services/survey/SurveyResponseModeValidatorMap";
+import { readSurveySettings } from "#server/services/survey/readSurveySettings";
+import { SurveyResponseModeValidatorMap } from "#server/services/survey/SurveyResponseModeValidatorMap";
 
 // The read counterpart of resolveSurveyResponseWrite: a resume resolves the same identity a write would,
 // So an Identified response is only ever readable by its own token and a shared browser cannot reopen

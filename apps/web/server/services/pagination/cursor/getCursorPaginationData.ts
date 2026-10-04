@@ -3,8 +3,8 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { CompositeKey } from "@esposter/azure";
 import type { ItemMetadata } from "@esposter/shared";
 
-import { getNextCursor } from "@@/server/services/pagination/cursor/getNextCursor";
-import { getBasePaginationData } from "@@/server/services/pagination/getBasePaginationData";
+import { getNextCursor } from "#server/services/pagination/cursor/getNextCursor";
+import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
 
 export const getCursorPaginationData = <TItem extends CompositeKey | ItemMetadata>(
   items: TItem[],

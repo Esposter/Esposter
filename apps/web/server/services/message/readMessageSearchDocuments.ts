@@ -1,8 +1,8 @@
-import type { ReadMessageSearchDocumentsOptions } from "@@/server/models/message/ReadMessageSearchDocumentsOptions";
+import type { ReadMessageSearchDocumentsOptions } from "#server/models/message/ReadMessageSearchDocumentsOptions";
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { useSearchClient } from "@@/server/composables/azure/search/useSearchClient";
-import { deserializeMessageSearchDocument } from "@@/server/services/message/deserializeMessageSearchDocument";
+import { useSearchClient } from "#server/composables/azure/search/useSearchClient";
+import { deserializeMessageSearchDocument } from "#server/services/message/deserializeMessageSearchDocument";
 import { SearchIndex } from "@esposter/db-schema";
 
 // The one paged read of the message index: every caller wants the same page shape and the same total, so the

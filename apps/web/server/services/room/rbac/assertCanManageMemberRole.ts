@@ -1,9 +1,9 @@
+import type { Context } from "#server/trpc/context";
 import type { RoomMemberAuthority } from "#shared/models/room/RoomMemberAuthority";
-import type { Context } from "@@/server/trpc/context";
 
+import { getRoomMemberAuthority } from "#server/services/room/rbac/getRoomMemberAuthority";
 import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { checkIsMemberManageable } from "#shared/services/room/rbac/checkIsMemberManageable";
-import { getRoomMemberAuthority } from "@@/server/services/room/rbac/getRoomMemberAuthority";
 import { TRPCError } from "@trpc/server";
 
 // Granting and revoking are both two hierarchy checks, never one: the role has to be below the actor, and so

@@ -1,8 +1,8 @@
-import type { Meta } from "@@/server/models/trpc/Meta";
+import type { Meta } from "#server/models/trpc/Meta";
 import type { AnyProcedure, AnyRouter } from "@trpc/server";
 
-import { getMcpTools } from "@@/server/services/mcp/getMcpTools";
-import { trpcRouter } from "@@/server/trpc/routers";
+import { getMcpTools } from "#server/services/mcp/getMcpTools";
+import { trpcRouter } from "#server/trpc/routers";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 

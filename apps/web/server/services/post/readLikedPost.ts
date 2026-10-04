@@ -1,4 +1,4 @@
-import type { Transaction } from "@@/server/models/db/Transaction";
+import type { Transaction } from "#server/models/db/Transaction";
 import type { PostInPost } from "@esposter/db-schema";
 
 import { postsInPost } from "@esposter/db-schema";

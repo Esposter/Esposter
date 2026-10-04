@@ -1,5 +1,5 @@
+import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { checkIsUuidV4 } from "#shared/util/id/uuid/checkIsUuidV4";
-import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { Operation } from "@esposter/shared";
 
 // The read is what a malformed id invalidates, which is why every room procedure builder rejects with the same

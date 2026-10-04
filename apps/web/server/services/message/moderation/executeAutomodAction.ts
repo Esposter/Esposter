@@ -1,8 +1,8 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 import type { RoomFilterInMessage } from "@esposter/db-schema";
 
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { moderationEventEmitter } from "@@/server/services/message/events/moderationEventEmitter";
+import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { moderationEventEmitter } from "#server/services/message/events/moderationEventEmitter";
 import { executeAutomodAction as baseExecuteAutomodAction } from "@esposter/db";
 import { AzureTable } from "@esposter/db-schema";
 

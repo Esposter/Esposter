@@ -1,4 +1,4 @@
-import type { Transaction } from "@@/server/models/db/Transaction";
+import type { Transaction } from "#server/models/db/Transaction";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { sql } from "drizzle-orm";

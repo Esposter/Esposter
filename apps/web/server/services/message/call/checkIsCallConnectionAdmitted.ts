@@ -1,4 +1,4 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 
 // Whether a connection LiveKit reports may stay in its call. A token outlives the membership it was minted for, and
 // LiveKit lets a removed participant rejoin on it, so a room call asks the room's door again on every connection.

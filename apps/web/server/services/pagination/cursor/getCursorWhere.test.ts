@@ -2,9 +2,9 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { UserInAuth } from "@esposter/db-schema";
 import type { BinaryOperator as DrizzleBinaryOperator } from "drizzle-orm";
 
+import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
-import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { StorageTier, usersInAuth } from "@esposter/db-schema";
 import { and, eq, gt, gte, lt, lte, or } from "drizzle-orm";
 import { describe, expect, test } from "vitest";

@@ -1,8 +1,8 @@
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
+import type { AuthedContext } from "#server/models/auth/AuthedContext";
 
-import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUserStatus";
-import { userEventEmitter } from "@@/server/services/user/events/userEventEmitter";
-import { requireMutation } from "@@/server/trpc/guards/requireMutation";
+import { getDetectedUserStatus } from "#server/services/message/getDetectedUserStatus";
+import { userEventEmitter } from "#server/services/user/events/userEventEmitter";
+import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { DatabaseEntityType, userStatusesInMessage } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 

@@ -1,8 +1,8 @@
 import type { Clause } from "@esposter/azure";
 import type { ModerationNoteEntity, RoomInMessage, UserInAuth } from "@esposter/db-schema";
 
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { getLivePartitionClauses } from "@@/server/services/azure/table/getLivePartitionClauses";
+import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { getLivePartitionClauses } from "#server/services/azure/table/getLivePartitionClauses";
 import { BinaryOperator, serializeClauses } from "@esposter/azure";
 import { readEntitiesCount } from "@esposter/db";
 import { AzureTable, ModerationNoteEntityPropertyNames } from "@esposter/db-schema";

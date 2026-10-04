@@ -1,4 +1,4 @@
 import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
-import type { H3Event } from "h3";
+import type { RequestEvent } from "nuxt/server";
 
-export type ContextInput = CreateWSSContextFnOptions | H3Event;
+export type ContextInput = CreateWSSContextFnOptions | RequestEvent;

@@ -2,7 +2,7 @@ import type { ContainerClient } from "@azure/storage-blob";
 import type { ListBlobNamesOptions } from "@esposter/db";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { getRoomProfileImageBlobPrefixes } from "@@/server/services/room/getRoomProfileImageBlobPrefixes";
+import { getRoomProfileImageBlobPrefixes } from "#server/services/room/getRoomProfileImageBlobPrefixes";
 import { listBlobNames } from "@esposter/db";
 
 export const listRoomProfileImageBlobNames = async (

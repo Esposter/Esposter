@@ -1,6 +1,6 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
+import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { getContentBlobName, readJsonBlob } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
 

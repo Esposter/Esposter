@@ -1,6 +1,6 @@
 import type { BlueprintEntry } from "#shared/models/resource/blueprint/BlueprintEntry";
 
-import { getInvalidBlueprintError } from "@@/server/services/blueprint/getInvalidBlueprintError";
+import { getInvalidBlueprintError } from "#server/services/blueprint/getInvalidBlueprintError";
 
 // Orders entries dependencies-first so an entry's `{{entry:key}}` references already have created ids by the
 // Time it is created. The edges come from the validation walk that already read every content string, so

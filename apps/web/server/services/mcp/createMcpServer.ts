@@ -1,10 +1,10 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { AnyRouter } from "@trpc/server";
 
-import packageJson from "@@/package.json" with { type: "json" };
-import { getMcpTools } from "@@/server/services/mcp/getMcpTools";
+import { getMcpTools } from "#server/services/mcp/getMcpTools";
 import { getResultAsync, SITE_NAME } from "@esposter/shared";
+import packageJson from "@esposter/web/package.json" with { type: "json" };
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { CallToolRequestSchema, ErrorCode, ListToolsRequestSchema, McpError } from "@modelcontextprotocol/sdk/types.js";
 import { callTRPCProcedure } from "@trpc/server";

@@ -1,6 +1,6 @@
 import type { BlueprintEntry } from "#shared/models/resource/blueprint/BlueprintEntry";
 
-import { mapBlueprintEntryContentStrings } from "@@/server/services/blueprint/mapBlueprintEntryContentStrings";
+import { mapBlueprintEntryContentStrings } from "#server/services/blueprint/mapBlueprintEntryContentStrings";
 
 // The capture rewrite: replaces any string that is exactly a selected resource's id with that resource's
 // `{{entry:key}}` alias. Ids are UUIDs and cross-resource references are bare id strings, so a whole-string

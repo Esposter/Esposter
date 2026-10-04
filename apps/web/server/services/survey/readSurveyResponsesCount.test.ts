@@ -1,6 +1,6 @@
+import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { readSurveyResponsesCount } from "#server/services/survey/readSurveyResponsesCount";
 import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { readSurveyResponsesCount } from "@@/server/services/survey/readSurveyResponsesCount";
 import { createEntity } from "@esposter/db";
 import { AzureTable, SurveyResponseEntity } from "@esposter/db-schema";
 import { MockTableDatabase } from "azure-mock";

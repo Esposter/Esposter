@@ -1,6 +1,6 @@
-import type { SurveyResponseModeValidator } from "@@/server/models/survey/SurveyResponseModeValidator";
+import type { SurveyResponseModeValidator } from "#server/models/survey/SurveyResponseModeValidator";
 
-import { resolveIdentifiedToken } from "@@/server/services/survey/resolveIdentifiedToken";
+import { resolveIdentifiedToken } from "#server/services/survey/resolveIdentifiedToken";
 import { SurveyResponseMode } from "@esposter/db-schema";
 
 export const SurveyResponseModeValidatorMap: Record<SurveyResponseMode, SurveyResponseModeValidator> = {

@@ -1,5 +1,5 @@
-import { ownedBy } from "@@/server/services/db/ownedBy";
-import { activeScheduledMessageJobWhere } from "@@/server/services/message/scheduledMessageJob/activeScheduledMessageJobWhere";
+import { ownedBy } from "#server/services/db/ownedBy";
+import { activeScheduledMessageJobWhere } from "#server/services/message/scheduledMessageJob/activeScheduledMessageJobWhere";
 import { scheduledMessageJobsInMessage, ScheduledMessageJobType } from "@esposter/db-schema";
 import { and, sql } from "drizzle-orm";
 

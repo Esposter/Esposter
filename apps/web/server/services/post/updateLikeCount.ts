@@ -1,7 +1,7 @@
-import type { Transaction } from "@@/server/models/db/Transaction";
+import type { Transaction } from "#server/models/db/Transaction";
 import type { PostInPost } from "@esposter/db-schema";
 
-import { getPostRanking } from "@@/server/services/post/getPostRanking";
+import { getPostRanking } from "#server/services/post/getPostRanking";
 import { postsInPost } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 

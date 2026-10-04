@@ -1,6 +1,6 @@
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 
-import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
+import { useEventGridPublisherClient } from "#server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { AppNotificationType, publishNotification } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 

@@ -1,6 +1,6 @@
-import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
-import { middleware } from "@@/server/trpc";
-import { requireUuid } from "@@/server/trpc/guards/requireUuid";
+import { assertIsRoom } from "#server/services/room/assertIsRoom";
+import { middleware } from "#server/trpc";
+import { requireUuid } from "#server/trpc/guards/requireUuid";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 // The room id is the bare input or its `roomId`, and an input carrying neither is rejected rather than let

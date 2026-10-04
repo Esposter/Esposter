@@ -1,8 +1,8 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import type { TrackSource } from "livekit-server-sdk";
 
-import { JOIN_TRACK_SOURCES } from "@@/server/services/livekit/constants";
-import { createLiveKitRoomServiceClient } from "@@/server/services/livekit/createLiveKitRoomServiceClient";
+import { JOIN_TRACK_SOURCES } from "#server/services/livekit/constants";
+import { createLiveKitRoomServiceClient } from "#server/services/livekit/createLiveKitRoomServiceClient";
 import { getResultAsync, noop } from "@esposter/shared";
 import { ParticipantPermission } from "livekit-server-sdk";
 

@@ -1,13 +1,13 @@
-import type { Transaction } from "@@/server/models/db/Transaction";
-import type { Context } from "@@/server/trpc/context";
+import type { Transaction } from "#server/models/db/Transaction";
+import type { Context } from "#server/trpc/context";
 import type { ResourceInResource, ResourceVersionInResource } from "@esposter/db-schema";
 import type { WrittenVersion } from "keyframe-store";
 
-import { collectSnapshotObjects } from "@@/server/services/resource/snapshot/collectSnapshotObjects";
-import { createSnapshotKeyframeStore } from "@@/server/services/resource/snapshot/createSnapshotKeyframeStore";
-import { getSnapshotSummary } from "@@/server/services/resource/snapshot/getSnapshotSummary";
-import { lockSnapshotObjects } from "@@/server/services/resource/snapshot/lockSnapshotObjects";
-import { readSnapshotAnchor } from "@@/server/services/resource/snapshot/readSnapshotAnchor";
+import { collectSnapshotObjects } from "#server/services/resource/snapshot/collectSnapshotObjects";
+import { createSnapshotKeyframeStore } from "#server/services/resource/snapshot/createSnapshotKeyframeStore";
+import { getSnapshotSummary } from "#server/services/resource/snapshot/getSnapshotSummary";
+import { lockSnapshotObjects } from "#server/services/resource/snapshot/lockSnapshotObjects";
+import { readSnapshotAnchor } from "#server/services/resource/snapshot/readSnapshotAnchor";
 import { resourceVersionsInResource } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 

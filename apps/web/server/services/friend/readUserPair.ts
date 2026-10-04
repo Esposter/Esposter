@@ -1,6 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
-import { requireEntity } from "@@/server/trpc/guards/requireEntity";
+import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { DatabaseEntityType, PublicUserColumns } from "@esposter/db-schema";
 
 // Both users are read rather than rebuilt from the session: the session carries better-auth's own view of the user,

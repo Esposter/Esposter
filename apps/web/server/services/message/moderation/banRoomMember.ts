@@ -1,6 +1,6 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 
-import { getRoomMembershipWhere } from "@@/server/services/room/getRoomMembershipWhere";
+import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { bansInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
 
 // A ban revokes membership and records the ban in one commit — both the ban and the soft ban start here.

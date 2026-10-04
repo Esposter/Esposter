@@ -1,4 +1,4 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 import type { ThreadFollowInMessage } from "@esposter/db-schema";
 
 import { MAX_FOLLOWED_THREADS } from "@esposter/db-schema";

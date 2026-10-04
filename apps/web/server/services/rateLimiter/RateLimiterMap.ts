@@ -1,8 +1,8 @@
 import type { RateLimiterDrizzleNonAtomic } from "rate-limiter-flexible";
 
-import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
-import { slowRateLimiter } from "@@/server/services/rateLimiter/slowRateLimiter";
-import { standardRateLimiter } from "@@/server/services/rateLimiter/standardRateLimiter";
+import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
+import { slowRateLimiter } from "#server/services/rateLimiter/slowRateLimiter";
+import { standardRateLimiter } from "#server/services/rateLimiter/standardRateLimiter";
 
 export const RateLimiterMap = {
   [RateLimiterType.Slow]: slowRateLimiter,

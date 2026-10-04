@@ -1,7 +1,7 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 
+import { checkIsUniqueViolation } from "#server/services/db/checkIsUniqueViolation";
 import { createId } from "#shared/util/math/random/createId";
-import { checkIsUniqueViolation } from "@@/server/services/db/checkIsUniqueViolation";
 import { CALL_ID_LENGTH, callSessionsInMessage } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 

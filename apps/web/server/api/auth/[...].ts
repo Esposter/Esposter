@@ -1,3 +1,4 @@
-import { auth } from "@@/server/auth";
+import { auth } from "#server/auth";
+import { defineEventHandler } from "nuxt/server";
 
-export default defineEventHandler((event) => auth.handler(toWebRequest(event)));
+export default defineEventHandler((event) => auth.handler(event.req));

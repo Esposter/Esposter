@@ -1,4 +1,4 @@
-import { buildPointsLeaderboard } from "@@/server/services/achievement/buildPointsLeaderboard";
+import { buildPointsLeaderboard } from "#server/services/achievement/buildPointsLeaderboard";
 import { describe, expect, test } from "vitest";
 
 const createUserTotal = (userId: string, points: number, unlockCount = 1) => ({

@@ -1,7 +1,7 @@
 import type { TRPCError } from "@trpc/server";
 
-import { DANGLING_PROGRAM_BINDING_REASON } from "@@/server/services/program/constants";
-import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
+import { DANGLING_PROGRAM_BINDING_REASON } from "#server/services/program/constants";
+import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { AzureEntityType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 

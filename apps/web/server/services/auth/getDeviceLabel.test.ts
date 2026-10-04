@@ -1,4 +1,4 @@
-import { getDeviceLabel } from "@@/server/services/auth/getDeviceLabel";
+import { getDeviceLabel } from "#server/services/auth/getDeviceLabel";
 import { describe, expect, test } from "vitest";
 
 describe(getDeviceLabel, () => {

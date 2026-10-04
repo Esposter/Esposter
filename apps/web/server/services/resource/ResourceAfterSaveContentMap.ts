@@ -1,8 +1,8 @@
+import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { scheduleTodoReminders } from "@@/server/services/resource/todoList/scheduleTodoReminders";
+import { scheduleTodoReminders } from "#server/services/resource/todoList/scheduleTodoReminders";
 import { ResourceType } from "@esposter/db-schema";
 
 // The one registry of after-content-write hooks, receiving the prior content for diffing (undefined when the

@@ -1,7 +1,7 @@
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
+import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { ResourceAfterSaveContentMap } from "@@/server/services/resource/ResourceAfterSaveContentMap";
+import { ResourceAfterSaveContentMap } from "#server/services/resource/ResourceAfterSaveContentMap";
 import { getSynchronizedFunction } from "@esposter/shared";
 
 // Fires the resource type's registered after-save hook. Reached only through `saveResourceContent`, so a path

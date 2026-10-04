@@ -1,7 +1,7 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { z } from "zod";
 
-import { readSerializedResourceContent } from "@@/server/services/resource/readSerializedResourceContent";
+import { readSerializedResourceContent } from "#server/services/resource/readSerializedResourceContent";
 
 // Reads the working copy and parses it with the type's content schema. A retained version is not a blob but
 // An object, and `readSnapshotVersionContent` is what reconstructs one

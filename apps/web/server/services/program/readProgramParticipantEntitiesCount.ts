@@ -1,7 +1,7 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getPartitionKeyFilter } from "@esposter/azure";
 import { readEntitiesCount } from "@esposter/db";
 import { AzureTable } from "@esposter/db-schema";

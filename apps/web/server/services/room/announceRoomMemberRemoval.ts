@@ -1,9 +1,9 @@
-import type { RoomMemberRemovalAction } from "@@/server/models/room/RoomMemberRemovalAction";
-import type { Context } from "@@/server/trpc/context";
+import type { RoomMemberRemovalAction } from "#server/models/room/RoomMemberRemovalAction";
+import type { Context } from "#server/trpc/context";
 import type { UserToRoomInMessage } from "@esposter/db-schema";
 
-import { createSystemRoomMessage } from "@@/server/services/message/createSystemRoomMessage";
-import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
+import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
+import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // A removal a member did not choose is still a departure, so it owes the room exactly what a leave does: the

@@ -1,5 +1,5 @@
-import { getMockSession } from "@@/server/trpc/context.test";
-import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
+import { getMockSession } from "#server/trpc/context.test";
+import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { checkHasPermission } from "@esposter/db";
 import { RoomPermission } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";

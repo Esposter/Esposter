@@ -1,5 +1,5 @@
-import type { McpTool } from "@@/server/models/mcp/McpTool";
-import type { Meta } from "@@/server/models/trpc/Meta";
+import type { McpTool } from "#server/models/mcp/McpTool";
+import type { Meta } from "#server/models/trpc/Meta";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import type { AnyProcedure, AnyRouter } from "@trpc/server";
 

@@ -1,7 +1,7 @@
 import type { SetRequired } from "type-fest";
 
-import { db } from "@@/server/db";
-import { RATE_LIMITER_DURATION_SECONDS } from "@@/server/services/rateLimiter/constants";
+import { db } from "#server/db";
+import { RATE_LIMITER_DURATION_SECONDS } from "#server/services/rateLimiter/constants";
 import { rateLimiterFlexibleInApp } from "@esposter/db-schema";
 import { RateLimiterDrizzleNonAtomic } from "rate-limiter-flexible";
 

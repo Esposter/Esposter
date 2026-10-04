@@ -2,9 +2,9 @@ import type { ResourceType } from "@esposter/db-schema";
 import type { inferParser } from "@trpc/server/unstable-core-do-not-import";
 import type { z } from "zod";
 
-import { requireOwnedResource } from "@@/server/services/resource/requireOwnedResource";
-import { requireUuid } from "@@/server/trpc/guards/requireUuid";
-import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { requireOwnedResource } from "#server/services/resource/requireOwnedResource";
+import { requireUuid } from "#server/trpc/guards/requireUuid";
+import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const getOwnerProcedure = <T extends z.ZodType>(

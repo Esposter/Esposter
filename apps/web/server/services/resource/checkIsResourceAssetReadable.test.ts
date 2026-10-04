@@ -1,6 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
-import { checkIsResourceAssetReadable } from "@@/server/services/resource/checkIsResourceAssetReadable";
+import { checkIsResourceAssetReadable } from "#server/services/resource/checkIsResourceAssetReadable";
 import { describe, expect, test, vi } from "vitest";
 
 describe(checkIsResourceAssetReadable, () => {

@@ -1,7 +1,7 @@
 import type { AzureContainer, BlobDeletionEventGridData } from "@esposter/db-schema";
 
-import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
-import { chunkBlobNamesByEventSize } from "@@/server/services/azure/eventGrid/chunkBlobNamesByEventSize";
+import { useEventGridPublisherClient } from "#server/composables/azure/eventGrid/useEventGridPublisherClient";
+import { chunkBlobNamesByEventSize } from "#server/services/azure/eventGrid/chunkBlobNamesByEventSize";
 import { AzureFunction, createEventGridEvent } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 

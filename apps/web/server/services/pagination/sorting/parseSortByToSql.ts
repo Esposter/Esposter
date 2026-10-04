@@ -1,5 +1,5 @@
+import type { ParseSortByToSql } from "#server/models/pagination/sorting/ParseSortByToSql";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { ParseSortByToSql } from "@@/server/models/pagination/sorting/ParseSortByToSql";
 import type { Column, SQL } from "drizzle-orm";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";

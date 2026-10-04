@@ -1,4 +1,4 @@
-import type { CallBackgroundBlob } from "@@/server/models/message/call/CallBackgroundBlob";
+import type { CallBackgroundBlob } from "#server/models/message/call/CallBackgroundBlob";
 
 import { MAX_CALL_BACKGROUND_SIZE_BYTES } from "#shared/services/message/constants";
 

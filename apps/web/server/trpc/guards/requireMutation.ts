@@ -1,7 +1,7 @@
-import type { RequireMutationCode } from "@@/server/models/trpc/RequireMutationCode";
+import type { RequireMutationCode } from "#server/models/trpc/RequireMutationCode";
 import type { Operation } from "@esposter/shared";
 
-import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
+import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 
 export const requireMutation = <T>(
   result: T | undefined,

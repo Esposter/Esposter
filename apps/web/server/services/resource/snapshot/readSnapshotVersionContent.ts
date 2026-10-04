@@ -1,9 +1,9 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 import type { ResourceInResource, ResourceVersionInResource } from "@esposter/db-schema";
 
+import { createSnapshotKeyframeStore } from "#server/services/resource/snapshot/createSnapshotKeyframeStore";
 import { getSnapshotRetainedSince } from "#shared/services/resource/getSnapshotRetainedSince";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { createSnapshotKeyframeStore } from "@@/server/services/resource/snapshot/createSnapshotKeyframeStore";
 import { ObjectNotStoredError } from "keyframe-store";
 
 // Reconstructs one retained version and parses it with the type's content schema. The row is what says a

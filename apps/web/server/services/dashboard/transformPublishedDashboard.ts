@@ -1,10 +1,10 @@
+import type { PublishableResourceProcedureOptions } from "#server/models/resource/PublishableResourceProcedureOptions";
 import type { Dashboard } from "#shared/models/dashboard/data/Dashboard";
-import type { PublishableResourceProcedureOptions } from "@@/server/models/resource/PublishableResourceProcedureOptions";
 import type { ToData } from "@esposter/shared";
 
-import { projectDatasetToQuery } from "@@/server/services/dashboard/projectDatasetToQuery";
-import { readDataset } from "@@/server/services/dataset/readDataset";
-import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
+import { projectDatasetToQuery } from "#server/services/dashboard/projectDatasetToQuery";
+import { readDataset } from "#server/services/dataset/readDataset";
+import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { getResultAsync } from "@esposter/shared";
 
 // Bakes each bound visual's resolved dataset into the published content

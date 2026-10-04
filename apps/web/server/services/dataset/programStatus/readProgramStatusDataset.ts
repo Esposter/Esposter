@@ -1,10 +1,10 @@
-import type { DatasetProvider } from "@@/server/models/dataset/DatasetProvider";
+import type { DatasetProvider } from "#server/models/dataset/DatasetProvider";
 
+import { ProgramStatusDatasetColumnName } from "#server/models/dataset/programStatus/ProgramStatusDatasetColumnName";
+import { readProgramParticipantEntitiesCount } from "#server/services/program/readProgramParticipantEntitiesCount";
+import { readProgramStatusRows } from "#server/services/program/readProgramStatusRows";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { getUtcDateString } from "#shared/util/date/getUtcDateString";
-import { ProgramStatusDatasetColumnName } from "@@/server/models/dataset/programStatus/ProgramStatusDatasetColumnName";
-import { readProgramParticipantEntitiesCount } from "@@/server/services/program/readProgramParticipantEntitiesCount";
-import { readProgramStatusRows } from "@@/server/services/program/readProgramStatusRows";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 
 // A dataset flows into dashboards and a dashboard is publishable, so its snapshot is a public read.

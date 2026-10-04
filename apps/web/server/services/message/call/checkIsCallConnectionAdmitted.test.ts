@@ -1,10 +1,10 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 
-import { checkIsCallConnectionAdmitted } from "@@/server/services/message/call/checkIsCallConnectionAdmitted";
-import { createCallSessionId } from "@@/server/services/message/call/createCallSessionId";
-import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
-import { roomRouter } from "@@/server/trpc/routers/room";
+import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";
+import { createCallSessionId } from "#server/services/message/call/createCallSessionId";
+import { createCallerFactory } from "#server/trpc";
+import { createMockContext, getMockSession } from "#server/trpc/context.test";
+import { roomRouter } from "#server/trpc/routers/room";
 import { roomsInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 

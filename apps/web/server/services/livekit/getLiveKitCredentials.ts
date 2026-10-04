@@ -1,4 +1,6 @@
-import type { LiveKitCredentials } from "@@/server/models/livekit/LiveKitCredentials";
+import type { LiveKitCredentials } from "#server/models/livekit/LiveKitCredentials";
+
+import { useRuntimeConfig } from "nuxt/server";
 
 // LiveKit is optional — a deployment without it runs calls with no media server rather than failing them — so
 // Every entry point has to answer the same question first, and answering it in one place is what keeps the

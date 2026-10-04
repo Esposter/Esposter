@@ -1,7 +1,7 @@
 import type { AzureUpdateEntity, CustomTableClient } from "@esposter/db-schema";
 
-import { MAX_ENTITY_ETAG_RETRIES } from "@@/server/services/azure/table/constants";
-import { updateEntityConditionally } from "@@/server/services/azure/table/updateEntityConditionally";
+import { MAX_ENTITY_ETAG_RETRIES } from "#server/services/azure/table/constants";
+import { updateEntityConditionally } from "#server/services/azure/table/updateEntityConditionally";
 import { AzureEntityType, StandardMessageEntity } from "@esposter/db-schema";
 import { noop, NotFoundError } from "@esposter/shared";
 import { MockRestError } from "azure-mock";

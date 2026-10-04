@@ -1,8 +1,8 @@
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
+import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
+import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { deleteDirectory, deleteTablePartitionEntities } from "@esposter/db";
 import { AzureContainer, AzureTable, resourcesInResource } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";

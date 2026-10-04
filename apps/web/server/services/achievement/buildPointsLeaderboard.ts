@@ -1,6 +1,6 @@
+import type { UserPointsTotal } from "#server/models/achievement/UserPointsTotal";
 import type { PointsLeaderboard } from "#shared/models/achievement/PointsLeaderboard";
 import type { PointsLeaderboardEntry } from "#shared/models/achievement/PointsLeaderboardEntry";
-import type { UserPointsTotal } from "@@/server/models/achievement/UserPointsTotal";
 
 import { MAX_POINTS_LEADERBOARD_ENTRIES } from "#shared/services/achievement/constants";
 

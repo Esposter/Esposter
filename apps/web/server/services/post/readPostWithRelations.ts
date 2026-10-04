@@ -1,10 +1,10 @@
-import type { Transaction } from "@@/server/models/db/Transaction";
-import type { Context } from "@@/server/trpc/context";
+import type { Transaction } from "#server/models/db/Transaction";
+import type { Context } from "#server/trpc/context";
 import type { PostInPost, PostInPostWithRelations, UserInAuth } from "@esposter/db-schema";
 
-import { getPostWithViewerLike } from "@@/server/services/post/getPostWithViewerLike";
-import { getViewerPostRelations } from "@@/server/services/post/getViewerPostRelations";
-import { requireEntity } from "@@/server/trpc/guards/requireEntity";
+import { getPostWithViewerLike } from "#server/services/post/getPostWithViewerLike";
+import { getViewerPostRelations } from "#server/services/post/getViewerPostRelations";
+import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { PostInPostRelations } from "@esposter/db-schema";
 
 // The row a card renders: the author beside it, and the viewer's own like when there is a viewer to have one.

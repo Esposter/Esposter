@@ -1,5 +1,5 @@
-import type { Transaction } from "@@/server/models/db/Transaction";
-import type { Context } from "@@/server/trpc/context";
+import type { Transaction } from "#server/models/db/Transaction";
+import type { Context } from "#server/trpc/context";
 import type { ResourceInResource, SnapshotChannel } from "@esposter/db-schema";
 import type { VersionAnchor } from "keyframe-store";
 

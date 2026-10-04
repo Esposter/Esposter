@@ -1,6 +1,6 @@
+import type { SurveyModelElement } from "#server/models/dataset/surveyResponses/SurveyModelElement";
 import type { DatasetColumn } from "#shared/models/dataset/DatasetColumn";
 import type { DatasetColumnType } from "#shared/models/dataset/DatasetColumnType";
-import type { SurveyModelElement } from "@@/server/models/dataset/surveyResponses/SurveyModelElement";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 

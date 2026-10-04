@@ -1,9 +1,9 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { WrittenVersion } from "keyframe-store";
 
-import { getSnapshotObjectBlobName } from "@@/server/services/resource/snapshot/getSnapshotObjectBlobName";
-import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/chargeAndEmitStorageLedgerEntry";
+import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/getSnapshotObjectBlobName";
+import { chargeAndEmitStorageLedgerEntry } from "#server/services/storage/chargeAndEmitStorageLedgerEntry";
 import { AzureContainer } from "@esposter/db-schema";
 
 // A version is stored bytes the owner keeps, charged for exactly what its object cost rather than for a copy of

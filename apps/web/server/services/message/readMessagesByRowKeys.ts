@@ -1,7 +1,7 @@
 import type { MessageEntity, StandardMessageEntity } from "@esposter/db-schema";
 
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { getLivePartitionClauses } from "@@/server/services/azure/table/getLivePartitionClauses";
+import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { getLivePartitionClauses } from "#server/services/azure/table/getLivePartitionClauses";
 import { BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
 import { getTopNEntitiesByType } from "@esposter/db";
 import { AzureTable, MessageTypeEntityMap } from "@esposter/db-schema";

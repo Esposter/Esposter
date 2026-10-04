@@ -1,7 +1,7 @@
-import type { Meta } from "@@/server/models/trpc/Meta";
-import type { Context } from "@@/server/trpc/context";
+import type { Meta } from "#server/models/trpc/Meta";
+import type { Context } from "#server/trpc/context";
 
-import { rootConfig } from "@@/server/trpc/rootConfig";
+import { rootConfig } from "#server/trpc/rootConfig";
 import { initTRPC } from "@trpc/server";
 
 const t = initTRPC.context<Context>().meta<Meta>().create(rootConfig);

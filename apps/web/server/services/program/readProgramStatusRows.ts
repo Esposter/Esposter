@@ -1,11 +1,11 @@
-import type { ProgramStatusParticipantRow } from "@@/server/models/program/ProgramStatusParticipantRow";
-import type { Context } from "@@/server/trpc/context";
+import type { ProgramStatusParticipantRow } from "#server/models/program/ProgramStatusParticipantRow";
+import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { readProgramParticipantEntities } from "#server/services/program/readProgramParticipantEntities";
+import { readResourceContent } from "#server/services/resource/readResourceContent";
+import { readSurveyResponseEntities } from "#server/services/survey/readSurveyResponseEntities";
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
-import { readProgramParticipantEntities } from "@@/server/services/program/readProgramParticipantEntities";
-import { readResourceContent } from "@@/server/services/resource/readResourceContent";
-import { readSurveyResponseEntities } from "@@/server/services/survey/readSurveyResponseEntities";
 import { ResourceType } from "@esposter/db-schema";
 
 // The canonical participants × responses join, purpose-built rather than routed through a generic join engine.

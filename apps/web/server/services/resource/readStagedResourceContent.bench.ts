@@ -1,9 +1,9 @@
+import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
+import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
+import { readResourceContentDelta } from "#server/services/resource/readResourceContentDelta";
+import { readStagedResourceContent } from "#server/services/resource/readStagedResourceContent";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
-import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { getStagingContentBlobName } from "@@/server/services/resource/getStagingContentBlobName";
-import { readResourceContentDelta } from "@@/server/services/resource/readResourceContentDelta";
-import { readStagedResourceContent } from "@@/server/services/resource/readStagedResourceContent";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
 import { DEFAULT_COMPRESSION_LEVEL, getWindowLog } from "@esposter/shared";

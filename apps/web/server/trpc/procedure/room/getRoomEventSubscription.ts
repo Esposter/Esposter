@@ -1,9 +1,9 @@
 import type { Device } from "#shared/models/auth/Device";
 import type { EventEmitter } from "node:events";
 
-import { checkIsSameDevice } from "@@/server/services/auth/checkIsSameDevice";
-import { on } from "@@/server/services/events/on";
-import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
+import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
+import { on } from "#server/services/events/on";
+import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { roomIdSchema } from "@esposter/db-schema";
 
 // Forwards `[data, device?]` events matching the input room to everyone in it. The device is the client that

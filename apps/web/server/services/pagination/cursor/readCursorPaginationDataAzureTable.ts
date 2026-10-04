@@ -1,9 +1,9 @@
-import type { ReadCursorPaginationDataAzureTableOptions } from "@@/server/models/pagination/cursor/ReadCursorPaginationDataAzureTableOptions";
+import type { ReadCursorPaginationDataAzureTableOptions } from "#server/models/pagination/cursor/ReadCursorPaginationDataAzureTableOptions";
 import type { AzureEntity, CustomTableClient } from "@esposter/db-schema";
 import type { Class } from "type-fest";
 
-import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
-import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
+import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
+import { getCursorWhereAzureTable } from "#server/services/pagination/cursor/getCursorWhereAzureTable";
 import { serializeClauses } from "@esposter/azure";
 import { getTopNEntities } from "@esposter/db";
 

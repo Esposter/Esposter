@@ -1,5 +1,5 @@
-import { readMessagesByRowKeys } from "@@/server/services/message/readMessagesByRowKeys";
-import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
+import { readMessagesByRowKeys } from "#server/services/message/readMessagesByRowKeys";
+import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { AzureEntityType } from "@esposter/db-schema";
 
 // A thread call hangs off the message its thread is rooted at, and that rowKey is written onto every join and

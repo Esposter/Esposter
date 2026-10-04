@@ -1,6 +1,6 @@
-import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
-import { getMockSession } from "@@/server/trpc/context.test";
-import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
+import { getTopRolePosition } from "#server/services/room/rbac/getTopRolePosition";
+import { getMockSession } from "#server/trpc/context.test";
+import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { describe, expect, test } from "vitest";
 
 describe(getTopRolePosition, () => {

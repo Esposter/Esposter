@@ -1,10 +1,10 @@
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
+import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { UserAchievementInAchievementWithRelations } from "@esposter/db-schema";
 
+import { checkAchievementCondition } from "#server/services/achievement/checkAchievementCondition";
+import { achievementEventEmitter } from "#server/services/achievement/events/achievementEventEmitter";
+import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
-import { checkAchievementCondition } from "@@/server/services/achievement/checkAchievementCondition";
-import { achievementEventEmitter } from "@@/server/services/achievement/events/achievementEventEmitter";
-import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { achievementsInAchievement, DatabaseEntityType, userAchievementsInAchievement } from "@esposter/db-schema";
 import { getResultAsync, noop, Operation } from "@esposter/shared";
 import { initTRPC } from "@trpc/server";

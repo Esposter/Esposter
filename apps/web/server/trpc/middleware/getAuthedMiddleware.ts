@@ -1,6 +1,6 @@
-import type { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
+import type { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
 
-import { getRateLimitedMiddleware } from "@@/server/trpc/middleware/getRateLimitedMiddleware";
+import { getRateLimitedMiddleware } from "#server/trpc/middleware/getRateLimitedMiddleware";
 import { TRPCError } from "@trpc/server";
 
 export const getAuthedMiddleware = (rateLimiterType: RateLimiterType) =>

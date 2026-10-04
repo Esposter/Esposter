@@ -1,8 +1,8 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { getBasePaginationData } from "@@/server/services/pagination/getBasePaginationData";
-import { getSurveyResponsesFilter } from "@@/server/services/survey/getSurveyResponsesFilter";
+import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
+import { getSurveyResponsesFilter } from "#server/services/survey/getSurveyResponsesFilter";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { getTopNEntities } from "@esposter/db";
 import { AzureTable, SurveyResponseEntity } from "@esposter/db-schema";

@@ -1,8 +1,8 @@
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
+import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { ContainerClient } from "@azure/storage-blob";
 
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { deleteCreatedResources } from "@@/server/services/resource/deleteCreatedResources";
+import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { deleteCreatedResources } from "#server/services/resource/deleteCreatedResources";
 import { createEntity } from "@esposter/db";
 import {
   AzureContainer,
@@ -17,7 +17,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { containerClientMock } = vi.hoisted(() => ({ containerClientMock: {} as { current: ContainerClient } }));
 
-vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () => ({
+vi.mock(import("#server/composables/azure/container/useContainerClient"), () => ({
   useContainerClient: () => Promise.resolve(containerClientMock.current),
 }));
 

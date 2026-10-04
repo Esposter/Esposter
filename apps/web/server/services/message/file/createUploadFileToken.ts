@@ -1,6 +1,7 @@
 import { WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
 import { ID_SEPARATOR, NotInitializedError } from "@esposter/shared";
 import { createHmac } from "node:crypto";
+import { useRuntimeConfig } from "nuxt/server";
 
 // The composer's revert is the one blob delete that cannot be authorized from persisted state: the upload it
 // Reclaims is referenced by no message, so there is nothing to check ownership against. The grant is signed

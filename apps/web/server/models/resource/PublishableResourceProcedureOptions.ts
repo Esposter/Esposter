@@ -1,4 +1,4 @@
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
+import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 // The read half of the snapshot boundary is not here: which parts of a type's content are live rather than

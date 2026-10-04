@@ -1,4 +1,4 @@
-import { createRateLimiter } from "@@/server/services/rateLimiter/createRateLimiter";
+import { createRateLimiter } from "#server/services/rateLimiter/createRateLimiter";
 import { AzureContainer } from "@esposter/db-schema";
 
 // Asset requests are not API calls and cannot share their budget: one rendered page issues one request per

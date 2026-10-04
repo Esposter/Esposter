@@ -1,8 +1,8 @@
-import type { Transaction } from "@@/server/models/db/Transaction";
-import type { Context } from "@@/server/trpc/context";
+import type { Transaction } from "#server/models/db/Transaction";
+import type { Context } from "#server/trpc/context";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { getDirectMessageParticipantKey } from "@@/server/services/room/directMessage/getDirectMessageParticipantKey";
+import { getDirectMessageParticipantKey } from "#server/services/room/directMessage/getDirectMessageParticipantKey";
 import { roomsInMessage } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 

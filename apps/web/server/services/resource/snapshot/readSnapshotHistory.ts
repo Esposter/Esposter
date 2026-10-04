@@ -1,5 +1,5 @@
+import type { Context } from "#server/trpc/context";
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
-import type { Context } from "@@/server/trpc/context";
 import type { ResourceInResource, SnapshotChannel } from "@esposter/db-schema";
 
 import { getSnapshotRetainedSince } from "#shared/services/resource/getSnapshotRetainedSince";

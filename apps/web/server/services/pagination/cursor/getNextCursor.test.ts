@@ -1,8 +1,8 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { CompositeKey } from "@esposter/azure";
 
+import { getNextCursor } from "#server/services/pagination/cursor/getNextCursor";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { getNextCursor } from "@@/server/services/pagination/cursor/getNextCursor";
 import { CompositeKeyPropertyNames } from "@esposter/azure";
 import { describe, expect, test } from "vitest";
 

@@ -1,6 +1,6 @@
 import type { AzureContainer, BlobDeletionEventGridData } from "@esposter/db-schema";
 
-import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
+import { useEventGridPublisherClient } from "#server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { AzureFunction, createEventGridEvent } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 

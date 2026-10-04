@@ -1,7 +1,7 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 
+import { getTopRolePosition } from "#server/services/room/rbac/getTopRolePosition";
 import { checkIsMemberManageable } from "#shared/services/room/rbac/checkIsMemberManageable";
-import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
 import { TRPCError } from "@trpc/server";
 
 // Both sides are resolved against one read of the room, because ownership is what decides the comparison for

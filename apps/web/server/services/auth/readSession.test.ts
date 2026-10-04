@@ -1,7 +1,5 @@
-import { auth } from "@@/server/auth";
-import { readSession } from "@@/server/services/auth/readSession";
-import { IncomingMessage, ServerResponse } from "node:http";
-import { Socket } from "node:net";
+import { auth } from "#server/auth";
+import { readSession } from "#server/services/auth/readSession";
 import { describe, expect, test, vi } from "vitest";
 
 describe(readSession, () => {
@@ -10,10 +8,10 @@ describe(readSession, () => {
 
     const cookie = "cookie";
     vi.spyOn(Headers.prototype, "getSetCookie").mockReturnValueOnce([cookie]);
-    const response = new ServerResponse(new IncomingMessage(new Socket()));
-    await readSession(new Headers(), response);
+    const responseHeaders = new Headers();
+    await readSession(new Headers(), responseHeaders);
 
-    expect(response.getHeader("Set-Cookie")).toStrictEqual([cookie]);
+    expect(responseHeaders.get("Set-Cookie")).toBe(cookie);
   });
 
   test("leaves the extension alone with no response to carry its cookie", async () => {

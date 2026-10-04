@@ -1,4 +1,4 @@
-import type { StorageBlobReservation } from "@@/server/models/storage/StorageBlobReservation";
+import type { StorageBlobReservation } from "#server/models/storage/StorageBlobReservation";
 import type { FileEntity, FileSasEntity } from "@esposter/db-schema";
 
 import { getFileBlobNames } from "@esposter/db";

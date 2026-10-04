@@ -1,4 +1,4 @@
-import type { Context } from "@@/server/trpc/context";
+import type { Context } from "#server/trpc/context";
 import type { postsInPost, UserInAuth } from "@esposter/db-schema";
 
 import { blocksInSocial } from "@esposter/db-schema";

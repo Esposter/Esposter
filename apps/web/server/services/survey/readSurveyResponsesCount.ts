@@ -1,9 +1,9 @@
 import type { ReadSurveyResponsesCountResult } from "#shared/models/resource/survey/ReadSurveyResponsesCountResult";
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { getSurveyResponsesFilter } from "#server/services/survey/getSurveyResponsesFilter";
 import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { getSurveyResponsesFilter } from "@@/server/services/survey/getSurveyResponsesFilter";
 import { readEntitiesCount } from "@esposter/db";
 import { AzureTable } from "@esposter/db-schema";
 

@@ -1,7 +1,7 @@
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
+import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@esposter/db-schema";
 
-import { createResourceRow } from "@@/server/services/resource/createResourceRow";
+import { createResourceRow } from "#server/services/resource/createResourceRow";
 import { ResourceActivityType, ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -11,7 +11,7 @@ const { tableClientMock } = vi.hoisted(() => ({
 }));
 
 // The client is created per call, so a spy on one instance never sees the write — the composable is the only seam
-vi.mock(import("@@/server/composables/azure/table/useTableClient"), () => ({
+vi.mock(import("#server/composables/azure/table/useTableClient"), () => ({
   useTableClient: <TAzureTable extends AzureTable>() =>
     Promise.resolve(tableClientMock.current as unknown as CustomTableClient<AzureTableEntityMap[TAzureTable]>),
 }));

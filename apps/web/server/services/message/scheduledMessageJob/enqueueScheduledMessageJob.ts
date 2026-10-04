@@ -1,6 +1,6 @@
 import type { ScheduledMessageJobInMessage } from "@esposter/db-schema";
 
-import { useServiceBusSender } from "@@/server/composables/azure/serviceBus/useServiceBusSender";
+import { useServiceBusSender } from "#server/composables/azure/serviceBus/useServiceBusSender";
 import { enqueueScheduledMessageJob as baseEnqueueScheduledMessageJob } from "@esposter/db";
 import { AzureQueue } from "@esposter/db-schema";
 

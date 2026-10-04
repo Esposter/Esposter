@@ -1,15 +1,15 @@
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { Context } from "@@/server/trpc/context";
+import type { AuthedContext } from "#server/models/auth/AuthedContext";
+import type { Context } from "#server/trpc/context";
 import type { BlobDeletionEventGridData, ResourceInResource } from "@esposter/db-schema";
 
+import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
+import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/getSnapshotObjectBlobName";
+import { getSnapshotSummary } from "#server/services/resource/snapshot/getSnapshotSummary";
+import { readSnapshotHistory } from "#server/services/resource/snapshot/readSnapshotHistory";
+import { readSnapshotVersionContent } from "#server/services/resource/snapshot/readSnapshotVersionContent";
+import { takeResourceRevision } from "#server/services/resource/snapshot/takeResourceRevision";
+import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
-import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { getSnapshotObjectBlobName } from "@@/server/services/resource/snapshot/getSnapshotObjectBlobName";
-import { getSnapshotSummary } from "@@/server/services/resource/snapshot/getSnapshotSummary";
-import { readSnapshotHistory } from "@@/server/services/resource/snapshot/readSnapshotHistory";
-import { readSnapshotVersionContent } from "@@/server/services/resource/snapshot/readSnapshotVersionContent";
-import { takeResourceRevision } from "@@/server/services/resource/snapshot/takeResourceRevision";
-import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import {
   AzureContainer,

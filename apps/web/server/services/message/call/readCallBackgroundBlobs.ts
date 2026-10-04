@@ -1,9 +1,9 @@
-import type { CallBackgroundBlob } from "@@/server/models/message/call/CallBackgroundBlob";
+import type { CallBackgroundBlob } from "#server/models/message/call/CallBackgroundBlob";
 import type { ContainerClient } from "@azure/storage-blob";
 import type { UserInAuth } from "@esposter/db-schema";
 
+import { getCallBackgroundPrefix } from "#server/services/message/call/getCallBackgroundPrefix";
 import { MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
-import { getCallBackgroundPrefix } from "@@/server/services/message/call/getCallBackgroundPrefix";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 
 // The listing is the whole index. A slot's blob name holds its number, and the properties the listing already
