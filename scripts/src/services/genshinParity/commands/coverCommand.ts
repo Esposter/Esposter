@@ -3,6 +3,8 @@ import type { SubCommandsDef } from "citty";
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
 import { CLOUD_ELEVATION_BANDS } from "#src/services/genshinParity/constants";
 import { solveReferenceCloudCover } from "#src/services/genshinParity/solveReferenceCloudCover";
+import { parseNames } from "#src/services/shared/parseNames";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
 export const coverCommand: SubCommandsDef[string] = defineCommand({
@@ -30,10 +32,13 @@ export const coverCommand: SubCommandsDef[string] = defineCommand({
     name: "cover",
   },
   run: async ({ args }) => {
+    const roundCount = Number(args.rounds);
+    if (args.rounds.trim() === "" || !Number.isInteger(roundCount) || roundCount < 0)
+      throw new InvalidOperationError(Operation.Read, "rounds", `${args.rounds} is not a count`);
     const { heights, references, residual } = await solveReferenceCloudCover(
-      args.reference.split(",").filter(Boolean),
+      parseNames(args.reference, "reference"),
       parseDerivedAssetComponent(args.witness),
-      { isHeightSolved: args.heights, roundCount: Number(args.rounds) },
+      { isHeightSolved: args.heights, roundCount },
     );
     if (args.heights)
       console.log(

@@ -22,7 +22,8 @@ const toLoops = (loops: number[][][]): [number, number][][] =>
 // Clouds scroll with the world, each wrapped round the camera within the sea's row, so as many stand ahead as behind;
 // None stands where the walkway glides, which would carry it through the camera: each either clears the walkway to its
 // Side or stays under it. Each band's sprite is named for its band and hands on its cover, the share of its clouds the
-// Hour draws, and its clouds' places with the heights they were drawn between, which a tool reads off the sprite
+// Hour draws, and its clouds' places with the heights they were drawn between and the highest each may stand, which a
+// Tool reads off the sprite
 export const createLoginClouds = (
   skyUniforms: SkyUniforms,
 ): {
@@ -42,17 +43,24 @@ export const createLoginClouds = (
       outline: toLoops(outline),
     }));
     const atlas = createCloudAtlasTexture(sprites, CLOUD_CELL_SIZE);
+    // The highest each cloud may stand: under the walkway for a sea's cloud that does not clear it to its side
+    const placements = placeCloudBand(LoginCloudBandMap[band], sprites.length).map((placement) => ({
+      ceiling:
+        band !== SEA_BAND || Math.abs(placement.position[0]) - placement.width / 2 > WALKWAY_HALF_WIDTH
+          ? Infinity
+          : walkway.bottom - placement.width / aspect,
+      placement,
+    }));
+    const keptPlacements = placements.filter(({ ceiling, placement }) => placement.position[1] < ceiling);
     const { cover, dispose, places, sprite } = createCloudBandSprite(
       atlas,
-      placeCloudBand(LoginCloudBandMap[band], sprites.length).filter(
-        ({ position: [x, y], width }) =>
-          band !== SEA_BAND || Math.abs(x) - width / 2 > WALKWAY_HALF_WIDTH || y + width / aspect < walkway.bottom,
-      ),
+      keptPlacements.map(({ placement }) => placement),
       { aspect, spriteCount: sprites.length },
       skyUniforms,
     );
     disposables.push(atlas, { dispose });
     sprite.name = band;
+    sprite.userData.ceilings = keptPlacements.map(({ ceiling }) => ceiling);
     sprite.userData.cover = cover;
     sprite.userData.heightRange = LoginCloudBandMap[band].heightRange;
     sprite.userData.places = places;
