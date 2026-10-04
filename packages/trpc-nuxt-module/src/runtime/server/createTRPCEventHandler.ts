@@ -6,6 +6,8 @@ import type { EventHandler } from "nitro/h3";
 import { DEFAULT_ENDPOINT } from "#src/runtime/constants";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { defineHandler } from "nitro/h3";
+// The statuses a `Response` may be constructed with that forbid a body, which its constructor throws on
+const NULL_BODY_STATUSES = new Set([204, 205, 304]);
 
 export const createTRPCEventHandler = <TRouter extends AnyTRPCRouter>({
   createContext,
@@ -27,5 +29,7 @@ export const createTRPCEventHandler = <TRouter extends AnyTRPCRouter>({
     // H3 merges the headers a procedure set through the event into the response, but not a status, so one a procedure
     // Answered with itself — a redirect — replaces tRPC's
     const { status } = event.res;
-    return status ? new Response(response.body, { headers: response.headers, status }) : response;
+    return status
+      ? new Response(NULL_BODY_STATUSES.has(status) ? null : response.body, { headers: response.headers, status })
+      : response;
   });

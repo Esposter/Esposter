@@ -22,6 +22,9 @@ describe(createTRPCEventHandler, () => {
       event.res.status = 302;
       event.res.headers.set("location", baseUrl);
     }),
+    unmodified: t.procedure.query(({ ctx: { event } }) => {
+      event.res.status = 304;
+    }),
     wait: t.procedure.query(
       ({ signal }) =>
         new Promise<void>((resolve) => {
@@ -110,5 +113,14 @@ describe(createTRPCEventHandler, () => {
 
     expect(response.status).toBe(302);
     expect(response.headers.get("location")).toBe(baseUrl);
+  });
+
+  test("answers a staged status that forbids a body without one", async () => {
+    expect.hasAssertions();
+
+    const response = await fetch(`${origin}${DEFAULT_ENDPOINT}/unmodified`);
+
+    expect(response.status).toBe(304);
+    await expect(response.text()).resolves.toBe("");
   });
 });
