@@ -18,6 +18,10 @@ The loop and why it is shaped this way are `apps/web/content/docs/genshin/parity
 - **Decrypting the game's code metadata, or injecting anything into the running game**, to read a script's fields or capture its frames. What the exporter dumps is read as a reference: a shader asset, and a MonoBehaviour's raw serialized bytes, scanned without type data for the pointers and values whose shape names them.
 - **A `genshin-assets` package.** Nothing extracted is committed, so it would be empty; the extraction and the fitting transforms are tooling in `scripts`, and what they emit is data beside the component reading it. The packages stay three: `genshin-engine` (game-agnostic rendering), `genshin-interface` (the game's 2D interface, no three.js, so an interface-only page never loads it) and `genshin-world` (the game's content: its regions, scenes and screens).
 - **Tracing below full resolution.** A trace starts from the source's full resolution, never reduced, and enlarges a small mark before tracing it.
+- **Gating the music's noise on how much of a band lies on our partials.** No share tells the lowest band from 125 Hz, both above nine tenths on partials, so the gate that clears the lowest band's overfill takes 125 Hz's noise too and lowers pitch agreement; through the noise solve's own masks, which carry each note's ring, it shuts nearly every band. The overfill is the player's noise playing in step across notes (`apps/web/content/docs/genshin/music.md`, "Not yet").
+- **Masking a note's partials in the noise solve through its voice's whole release** rather than `MUSIC_RELEASE_SECONDS`. Too few readings are left and they decide the solve: the bass's 125 Hz noise rose several times over and pitch agreement fell.
+- **Subtracting a synthesis of our own tones before reading the noise.** A note's envelope spreads next to nothing past the partials' clearance, so the noise barely moves.
+- **Snapping the noise loop's start to a whole sample, or keeping noise levels past `MUSIC_DECIMALS`.** Neither moves the listening score by more than hundredths of a decibel.
 
 ## Rules
 

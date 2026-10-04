@@ -1,13 +1,10 @@
 import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
-import { LISTEN_BAND_CENTRES } from "#src/services/genshinParity/constants";
+import { LISTEN_BAND_CENTRES, LOGIN_MUSIC_SCREEN } from "#src/services/genshinParity/constants";
 import { listenToMusic } from "#src/services/genshinParity/listenToMusic";
 import { writeParityMusicScores } from "#src/services/genshinParity/writeParityMusicScores";
 import { defineCommand } from "citty";
-
-// The screen that plays the login's music, which the parity page renders it through
-const LOGIN_MUSIC_SCREEN = "LoginMusic";
 
 export const listenCommand: SubCommandsDef[string] = defineCommand({
   meta: {
