@@ -1,7 +1,7 @@
 import { computeNoiseSamples } from "#src/audio/computeNoiseSamples";
 import { describe, expect, test } from "vitest";
 
-const readDeviation = (samples: Float32Array): number =>
+const getDeviation = (samples: Float32Array): number =>
   Math.sqrt(samples.reduce((sum, sample) => sum + sample ** 2, 0) / samples.length);
 
 describe(computeNoiseSamples, () => {
@@ -10,8 +10,8 @@ describe(computeNoiseSamples, () => {
   test("sounds each band at the deviation its level gives, the powers of bands apart adding", () => {
     expect.hasAssertions();
 
-    const band = readDeviation(computeNoiseSamples([0, 0, 3], sampleRate));
-    const bands = readDeviation(computeNoiseSamples([4, 0, 3], sampleRate));
+    const band = getDeviation(computeNoiseSamples([0, 0, 3], sampleRate));
+    const bands = getDeviation(computeNoiseSamples([4, 0, 3], sampleRate));
 
     expect(band).toBeCloseTo(3);
     expect(bands).toBeCloseTo(5);
@@ -20,6 +20,6 @@ describe(computeNoiseSamples, () => {
   test("is silent with no band sounding", () => {
     expect.hasAssertions();
 
-    expect(readDeviation(computeNoiseSamples([0], sampleRate))).toBe(0);
+    expect(getDeviation(computeNoiseSamples([0], sampleRate))).toBe(0);
   });
 });
