@@ -44,8 +44,8 @@ export const useRecentPageStore = defineStore("recentPage", () => {
     recentPages.value = recentPages.value.with(index, { ...recentPage, mark, title });
   };
   // A page renamed or removed since its visit has no route left to open, so it leaves the list rather than link nowhere
-  const forgetUnmatchedPages = (isPathMatched: (path: string) => boolean) => {
-    const matchedPages = recentPages.value.filter(({ path }) => isPathMatched(path));
+  const forgetUnmatchedPages = (checkIsPathMatched: (path: string) => boolean) => {
+    const matchedPages = recentPages.value.filter(({ path }) => checkIsPathMatched(path));
     if (matchedPages.length === recentPages.value.length) return;
     recentPages.value = matchedPages;
   };

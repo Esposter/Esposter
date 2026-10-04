@@ -23,7 +23,7 @@ flowchart TB
 ```
 
 - **Touch on hit** — `replayTaskCache` bumps the entry's `meta.json` mtime with `utimesSync` so recency reflects use, not creation; a hot entry stays live however old. Best-effort — a failed touch only risks an earlier prune, i.e. one re-run. `resolveTaskCacheLocation` stays pure.
-- **Prune on record** — beside the existing `reapStaleTemps` call, `recordTaskCache` runs `pruneStaleTaskCacheEntries`, which reuses `sweepStaleEntries(tasksRoot, isStale)`. The predicate is "not a temp (the `.tmp.` prefix), and `meta.json` mtime older than the cutoff". A `meta.json` that can't be stat'd keeps its entry rather than evicting on a blind guess. Detached, best-effort, off the critical path — exactly like the snapshot prunes.
+- **Prune on record** — beside the existing `reapStaleTemps` call, `recordTaskCache` runs `pruneStaleTaskCacheEntries`, which reuses `sweepStaleEntries(tasksRoot, checkIsStale)`. The predicate is "not a temp (the `.tmp.` prefix), and `meta.json` mtime older than the cutoff". A `meta.json` that can't be stat'd keeps its entry rather than evicting on a blind guess. Detached, best-effort, off the critical path — exactly like the snapshot prunes.
 - **No lease needed** — a replay reads an entry in-process within milliseconds and the cutoff is days; unlike snapshot lowers (mounted for a run's whole duration), there is no long-lived reader to protect. A concurrent replay racing a prune loses at worst one hit and re-runs.
 - **`cache ls`** — reports the tasks entry count plus total payload size (`computeDirectoryByteSize` + `formatByteSize`), so the bound is observable at a glance.
 

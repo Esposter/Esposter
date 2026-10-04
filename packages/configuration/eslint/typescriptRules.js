@@ -100,11 +100,12 @@ export default {
     {
       // The other half of the same family: `is*`/`has*` is a stored boolean, so a function under that name
       // Reads as a value at every call site. The annotation is what makes it decidable without types — a
-      // Function whose declared return is `boolean` or a type predicate answers with one and is `check*`.
+      // Function whose declared return is `boolean` or a type predicate answers with one and is `check*`, and so
+      // Is a parameter typed as one: a callback handed in is called at every site that reads it.
       message:
         "Name a boolean-returning function `check*` — `is*`/`has*` is a stored boolean, never a call. See the naming skill.",
       selector:
-        "VariableDeclarator[id.name=/^(is|has)[A-Z]/][init.type=/^(Arrow)?FunctionExpression$/] > :matches(ArrowFunctionExpression, FunctionExpression) > TSTypeAnnotation.returnType > :matches(TSBooleanKeyword, TSTypePredicate)",
+        "VariableDeclarator[id.name=/^(is|has)[A-Z]/][init.type=/^(Arrow)?FunctionExpression$/] > :matches(ArrowFunctionExpression, FunctionExpression) > TSTypeAnnotation.returnType > :matches(TSBooleanKeyword, TSTypePredicate), Identifier[name=/^(is|has)[A-Z]/] > TSTypeAnnotation > TSFunctionType > TSTypeAnnotation.returnType > :matches(TSBooleanKeyword, TSTypePredicate)",
     },
     {
       // A where-fragment helper builds a clause, so it is a `get*`: the bare noun (`roomWhere = (id) => …`)
