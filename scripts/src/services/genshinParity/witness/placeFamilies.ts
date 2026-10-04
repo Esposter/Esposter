@@ -11,7 +11,7 @@ import { findFamilyBoundaries } from "#src/services/genshinParity/witness/findFa
 import { readFamilyEdgeDistances } from "#src/services/genshinParity/witness/readFamilyEdgeDistances";
 import { withFinalizerAsync } from "@esposter/shared";
 
-const readMean = (from: Uint8Array, distances: Float32Array): number => {
+const computeMean = (from: Uint8Array, distances: Float32Array): number => {
   let sum = 0;
   let count = 0;
   for (const [pixel, isSet] of from.entries())
@@ -84,7 +84,7 @@ export const placeFamilies = async (
           isBoundary && pixel >= topPixel && familyIndexSet.has(familyIndices[pixel] ?? -1) ? 1 : 0,
         );
         const boundaryDistances = computeDistanceTransform(boundaries, width, height);
-        return (readMean(boundaries, edgeDistances) + readMean(freeEdges, boundaryDistances)) / 2;
+        return (computeMean(boundaries, edgeDistances) + computeMean(freeEdges, boundaryDistances)) / 2;
       };
       const before = await readDistance([0, 0, 0]);
       let start: number[] = given;

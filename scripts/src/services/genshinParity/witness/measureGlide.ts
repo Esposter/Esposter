@@ -1,8 +1,8 @@
 import { CAPTURES_DIRECTORY, PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { runFfmpeg } from "#src/services/genshinParity/shared/runFfmpeg";
+import { computeGroundRow } from "#src/services/genshinParity/witness/computeGroundRow";
 import { measureGroundShift } from "#src/services/genshinParity/witness/measureGroundShift";
-import { readGroundRow } from "#src/services/genshinParity/witness/readGroundRow";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdir, readdir, rm } from "node:fs/promises";
 import { join } from "node:path";
@@ -79,7 +79,7 @@ export const measureGlide = async (
       }),
   );
   const height = columns[0]?.length ?? 0;
-  const readRow = (distance: number): number => readGroundRow(distance, { eyeHeight, fov, height, pitch });
+  const readRow = (distance: number): number => computeGroundRow(distance, { eyeHeight, fov, height, pitch });
   const shifts = columns
     .slice(1)
     .map((later, index) =>

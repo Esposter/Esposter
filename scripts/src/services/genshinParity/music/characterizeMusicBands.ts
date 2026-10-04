@@ -1,11 +1,12 @@
 import type { MusicBandCharacter } from "#src/models/genshinParity/music/MusicBandCharacter";
 import type { MusicNote } from "genshin-engine";
 
+import { computeMedianFlatness } from "#src/services/genshinAssets/shared/computeMedianFlatness";
+import { computePartialBinRanges } from "#src/services/genshinAssets/shared/computePartialBinRanges";
 import { computeSpectrogram } from "#src/services/genshinAssets/shared/computeSpectrogram";
-import { readMedianFlatness } from "#src/services/genshinAssets/shared/readMedianFlatness";
-import { readPartialBinRanges } from "#src/services/genshinAssets/shared/readPartialBinRanges";
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
-import { readFrameSeconds } from "#src/services/genshinParity/music/readFrameSeconds";
+import { getFrameSeconds } from "#src/services/genshinParity/music/getFrameSeconds";
+import { computeBandBins } from "#src/services/genshinParity/shared/computeBandBins";
 import {
   BANDS_ONSET_RISE,
   CHROMA_FRAME_LENGTH,
@@ -13,7 +14,6 @@ import {
   CHROMA_QUIET_SHARE,
   LISTEN_BAND_CENTRES,
 } from "#src/services/genshinParity/shared/constants";
-import { readBandBins } from "#src/services/genshinParity/shared/readBandBins";
 
 const sum = (values: Iterable<number>): number => {
   let total = 0;
@@ -47,17 +47,17 @@ export const characterizeMusicBands = (
   // Each loud frame's bins a partial holds of a note sounding at its centre
   const partialMasks = new Map(
     loudFrames.map((frame) => {
-      const seconds = readFrameSeconds(frame, sampleRate);
+      const seconds = getFrameSeconds(frame, sampleRate);
       const mask = new Uint8Array(binCount);
       for (const { duration, pitch, start } of notes)
         if (start <= seconds && start + duration > seconds)
-          for (const [low, high] of readPartialBinRanges(pitch, binWidth, binCount)) mask.fill(1, low, high);
+          for (const [low, high] of computePartialBinRanges(pitch, binWidth, binCount)) mask.fill(1, low, high);
       return [frame, mask];
     }),
   );
   const loudTotal = sum(loudFrames.map((frame) => totals[frame] ?? 0));
   return LISTEN_BAND_CENTRES.map((centre) => {
-    const [low, high] = readBandBins(centre, sampleRate, frameLength, binCount);
+    const [low, high] = computeBandBins(centre, sampleRate, frameLength, binCount);
     const bins = Array.from({ length: high - low + 1 }, (_, index) => low + index);
     const bandPowers = new Map(
       loudFrames.map((frame) => [frame, sum(bins.map((bin) => readPower(frame, bin)))] as const),
@@ -78,7 +78,7 @@ export const characterizeMusicBands = (
           meanOf(loudFrames.filter((frame) => checkIsAttack(frame))) /
             meanOf(loudFrames.filter((frame) => !checkIsAttack(frame))),
         ),
-      flatness: readMedianFlatness(spectrogram, loudFrames, [low, high]),
+      flatness: computeMedianFlatness(spectrogram, loudFrames, [low, high]),
       partialShare: bandTotal > 0 ? partialTotal / bandTotal : 0,
       share: 10 * Math.log10(bandTotal / loudTotal),
     };

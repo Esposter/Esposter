@@ -34,15 +34,15 @@ export const solveCloudColors = (
     readLuminance(lit) / Math.max(readLuminance(lit) + readLuminance(shade), Number.MIN_VALUE);
   const orderedOurs = ours.toSorted((first, second) => readLitness(first) - readLitness(second));
   const orderedReference = reference.toSorted((first, second) => readLuminance(first) - readLuminance(second));
-  const readMean = (vectors: readonly Readonly<Vector>[]): Vector =>
+  const computeMean = (vectors: readonly Readonly<Vector>[]): Vector =>
     CHANNELS.map((channel) => vectors.reduce((sum, vector) => sum + vector[channel], 0) / vectors.length) as Vector;
   const pairs = QUANTILES.map((quantile) => {
     const window = readWindow(orderedOurs, quantile);
     return {
-      base: readMean(window.map(({ base }) => base)),
-      lit: readMean(window.map(({ lit }) => lit)),
-      reference: readMean(readWindow(orderedReference, quantile)),
-      shade: readMean(window.map(({ shade }) => shade)),
+      base: computeMean(window.map(({ base }) => base)),
+      lit: computeMean(window.map(({ lit }) => lit)),
+      reference: computeMean(readWindow(orderedReference, quantile)),
+      shade: computeMean(window.map(({ shade }) => shade)),
     };
   });
   const solved = CHANNELS.map((channel) => {

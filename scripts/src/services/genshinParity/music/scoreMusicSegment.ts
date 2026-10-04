@@ -1,11 +1,11 @@
 import type { MusicScore } from "#src/models/genshinParity/music/MusicScore";
 
-import { readMean } from "#src/services/genshinAssets/shared/readMean";
+import { computeMean } from "#src/services/genshinAssets/shared/computeMean";
+import { computeAudibleFrames } from "#src/services/genshinParity/music/computeAudibleFrames";
+import { computeBandGaps } from "#src/services/genshinParity/music/computeBandGaps";
+import { computeBandLevels } from "#src/services/genshinParity/music/computeBandLevels";
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
-import { readAudibleFrames } from "#src/services/genshinParity/music/readAudibleFrames";
-import { readBandGaps } from "#src/services/genshinParity/music/readBandGaps";
-import { readBandLevels } from "#src/services/genshinParity/music/readBandLevels";
-import { readChromaAgreement } from "#src/services/genshinParity/music/readChromaAgreement";
+import { computeChromaAgreement } from "#src/services/genshinParity/music/computeChromaAgreement";
 
 // How close our render of a segment of music sounds to the game's, over the frames the game's sound is not quiet in.
 // Its pitch agreement is the mean dot product of the two's pitch classes, 1 when every frame names the same notes in
@@ -19,15 +19,15 @@ export const scoreMusicSegment = (ours: Float32Array, game: Float32Array, sample
   const gameSamples = game.subarray(0, length);
   const ourChroma = computeChroma(ourSamples, sampleRate);
   const gameChroma = computeChroma(gameSamples, sampleRate);
-  const loudFrames = readAudibleFrames(gameChroma.loudness);
-  const bandGaps = readBandLevels(ourSamples, gameSamples, sampleRate, loudFrames).map((levels) =>
-    readBandGaps(levels, 0),
+  const loudFrames = computeAudibleFrames(gameChroma.loudness);
+  const bandGaps = computeBandLevels(ourSamples, gameSamples, sampleRate, loudFrames).map((levels) =>
+    computeBandGaps(levels, 0),
   );
-  const bandDistances = bandGaps.map((gaps) => readMean(gaps.map((gap) => Math.abs(gap))));
+  const bandDistances = bandGaps.map((gaps) => computeMean(gaps.map((gap) => Math.abs(gap))));
   return {
-    bandBiases: bandGaps.map((gaps) => readMean(gaps)),
+    bandBiases: bandGaps.map((gaps) => computeMean(gaps)),
     bandDistances,
     distance: bandDistances.reduce((sum, distance) => sum + distance, 0) / bandDistances.length,
-    pitchAgreement: readChromaAgreement(ourChroma.classes, gameChroma.classes, loudFrames, 0),
+    pitchAgreement: computeChromaAgreement(ourChroma.classes, gameChroma.classes, loudFrames, 0),
   };
 };

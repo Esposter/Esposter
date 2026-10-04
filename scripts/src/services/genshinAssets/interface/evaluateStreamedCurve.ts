@@ -1,4 +1,4 @@
-import type { StreamedKey } from "#src/services/genshinAssets/interface/readStreamedClipKeys";
+import type { StreamedKey } from "#src/services/genshinAssets/interface/parseStreamedClipKeys";
 
 // A streamed curve's value at a time: its last key at or before the time, its cubic in the time since that key; before
 // Its first key, the first key's value

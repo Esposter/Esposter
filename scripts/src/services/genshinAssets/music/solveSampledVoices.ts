@@ -3,17 +3,17 @@ import type { SampledCandidate } from "#src/models/genshinAssets/music/SampledCa
 import type { SampledVoiceSolution } from "#src/models/genshinAssets/music/SampledVoiceSolution";
 import type { NoteEventTime } from "pitch-transcription/notes";
 
+import { computeVoicePitchReference } from "#src/services/genshinAssets/music/computeVoicePitchReference";
 import { readInstrumentRecordings } from "#src/services/genshinAssets/music/readInstrumentRecordings";
-import { readVoicePitchReference } from "#src/services/genshinAssets/music/readVoicePitchReference";
 import { refineVoicePowers } from "#src/services/genshinAssets/music/refineVoicePowers";
 import { renderSampledVoice } from "#src/services/genshinAssets/music/renderSampledVoice";
 import { SAMPLED_VOICE_REFINED_COUNT } from "#src/services/genshinAssets/shared/constants";
+import { computeAudibleFrames } from "#src/services/genshinParity/music/computeAudibleFrames";
+import { computeBandEnergies } from "#src/services/genshinParity/music/computeBandEnergies";
+import { computeBandFloor } from "#src/services/genshinParity/music/computeBandFloor";
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
-import { readAudibleFrames } from "#src/services/genshinParity/music/readAudibleFrames";
-import { readBandEnergies } from "#src/services/genshinParity/music/readBandEnergies";
-import { readBandFloor } from "#src/services/genshinParity/music/readBandFloor";
-import { readFrameSeconds } from "#src/services/genshinParity/music/readFrameSeconds";
-import { readGapsByOnsetAge } from "#src/services/genshinParity/music/readGapsByOnsetAge";
+import { computeGapsByOnsetAge } from "#src/services/genshinParity/music/computeGapsByOnsetAge";
+import { getFrameSeconds } from "#src/services/genshinParity/music/getFrameSeconds";
 import { scoreShapedMusic } from "#src/services/genshinParity/music/scoreShapedMusic";
 import { solveNonNegativeSystem } from "#src/services/genshinParity/shared/solveNonNegativeSystem";
 import { AUDIO_SAMPLE_RATE } from "pitch-transcription";
@@ -30,7 +30,7 @@ const readDot = (first: Float64Array, second: Float64Array): number =>
 // Each voice's instrument and level, solved together against the game's sound by the listening score's own measures.
 // Every instrument plays each voice's notes alone at level 1, through the recordings they reach and with the release
 // And tuning the game's voice was fitted to, and only one that keeps the voice's pitch as well as its notes as pure
-// Tones do (`readVoicePitchReference`) is a candidate for it, or the one nearest that where none does: pitch is what
+// Tones do (`computeVoicePitchReference`) is a candidate for it, or the one nearest that where none does: pitch is what
 // The bands cannot hear. The game's sound is then read as the candidates' band energies summed, frame by frame over the
 // Frames the score reads, each scaled by its power. For every combination of one candidate a voice, the powers come in
 // Closed form from least squares in each band's share of the game's energy, which weighs a quiet frame as a loud one as
@@ -45,11 +45,11 @@ export const solveSampledVoices = async (
   voiceTunings: number[],
   game: Float32Array,
 ): Promise<SampledVoiceSolution[]> => {
-  const frames = readAudibleFrames(computeChroma(game, AUDIO_SAMPLE_RATE).loudness);
-  const frameTimes = frames.map((frame) => readFrameSeconds(frame, AUDIO_SAMPLE_RATE));
+  const frames = computeAudibleFrames(computeChroma(game, AUDIO_SAMPLE_RATE).loudness);
+  const frameTimes = frames.map((frame) => getFrameSeconds(frame, AUDIO_SAMPLE_RATE));
   const onsets = voiceNotesList.flat().map(({ startTimeSeconds }) => startTimeSeconds);
-  const gameBands = readBandEnergies(game, AUDIO_SAMPLE_RATE);
-  const floors = gameBands.map((energies) => readBandFloor(energies));
+  const gameBands = computeBandEnergies(game, AUDIO_SAMPLE_RATE);
+  const floors = gameBands.map((energies) => computeBandFloor(energies));
   const readFrameEnergies = (bands: Float64Array[]): Float64Array =>
     Float64Array.from({ length: bands.length * frames.length }, (_, index) => {
       const band = Math.floor(index / frames.length);
@@ -59,7 +59,7 @@ export const solveSampledVoices = async (
     Math.max(energy, floors[Math.floor(index / frames.length)] ?? 0),
   );
   const references = voiceNotesList.map((voiceNotes, voice) =>
-    readVoicePitchReference(voiceNotes, voiceReleases[voice] ?? 0, voiceTunings[voice] ?? 0, game.length),
+    computeVoicePitchReference(voiceNotes, voiceReleases[voice] ?? 0, voiceTunings[voice] ?? 0, game.length),
   );
   const voiceCandidatesList: SampledCandidate[][] = voiceNotesList.map(() => []);
   const voiceNearestList: { agreement: number; candidate?: SampledCandidate }[] = voiceNotesList.map(() => ({
@@ -85,7 +85,7 @@ export const solveSampledVoices = async (
       const isCandidate = agreement >= reference.fundamentals.agreement;
       if (!isCandidate && agreement <= nearest.agreement) continue;
       const candidate = {
-        energies: readFrameEnergies(readBandEnergies(rendered, AUDIO_SAMPLE_RATE)),
+        energies: readFrameEnergies(computeBandEnergies(rendered, AUDIO_SAMPLE_RATE)),
         instrument,
         rendered,
       };
@@ -143,7 +143,7 @@ export const solveSampledVoices = async (
       return {
         instruments: candidates.map(({ instrument }) => instrument),
         levels,
-        onsetAgeGaps: readGapsByOnsetAge(shaped.bandLevelsList, frameTimes, onsets),
+        onsetAgeGaps: computeGapsByOnsetAge(shaped.bandLevelsList, frameTimes, onsets),
         shaped,
       };
     })

@@ -7,8 +7,8 @@ import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { toTexel } from "#src/services/genshinAssets/fit/toTexel";
 import { toWorldVertices } from "#src/services/genshinAssets/fit/toWorldVertices";
 import { traceCellLoops } from "#src/services/genshinAssets/fit/traceCellLoops";
+import { computeOtsuThreshold } from "#src/services/genshinAssets/shared/computeOtsuThreshold";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
-import { readOtsuThreshold } from "#src/services/genshinAssets/shared/readOtsuThreshold";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -139,7 +139,7 @@ export const fitLoginPaving = async (
   const pockets = materialNames.flatMap((material, tag) => {
     if (!POCKET_MATERIALS.has(material)) return [];
     const cells = Array.from({ length: width * height }, (_, cell) => cell).filter((cell) => tags[cell] === tag);
-    const threshold = readOtsuThreshold(cells.map((cell) => blurred[cell] ?? 0));
+    const threshold = computeOtsuThreshold(cells.map((cell) => blurred[cell] ?? 0));
     const pocketCells = cells.filter((cell) => (blurred[cell] ?? 0) < threshold);
     for (const cell of pocketCells) isPocket[cell] = 1;
     return traceCells(pocketCells);
@@ -165,7 +165,7 @@ export const fitLoginPaving = async (
     (cell) => normals[tags[cell] ?? -1],
   );
   const readTiltThreshold = (cells: readonly number[]): number =>
-    (readOtsuThreshold(cells.map((cell) => ((tilts[cell] ?? 0) / MAX_TILT) * BYTE)) / BYTE) * MAX_TILT;
+    (computeOtsuThreshold(cells.map((cell) => ((tilts[cell] ?? 0) / MAX_TILT) * BYTE)) / BYTE) * MAX_TILT;
   const tiltThreshold = readTiltThreshold(topCells);
   const bevelCells = topCells.filter((cell) => (tilts[cell] ?? 0) > tiltThreshold);
   // The joints between the bricks tilt less than a pocket's rim, so they are split from the flat stone under the rims

@@ -1,18 +1,18 @@
 import type { Spectrogram } from "#src/models/genshinAssets/shared/Spectrogram";
 import type { NoteEventTime } from "pitch-transcription/notes";
 
+import { computeMedian } from "#src/services/genshinAssets/shared/computeMedian";
+import { computeMedianFlatness } from "#src/services/genshinAssets/shared/computeMedianFlatness";
+import { computePartialBinRanges } from "#src/services/genshinAssets/shared/computePartialBinRanges";
+import { computeSpectralPeak } from "#src/services/genshinAssets/shared/computeSpectralPeak";
 import {
   MUSIC_NOISE_MIN_BINS,
   MUSIC_NOISE_MIN_FLATNESS,
   MUSIC_NOISE_REFINE_STEPS,
   MUSIC_RELEASE_SECONDS,
 } from "#src/services/genshinAssets/shared/constants";
-import { readMedian } from "#src/services/genshinAssets/shared/readMedian";
-import { readMedianFlatness } from "#src/services/genshinAssets/shared/readMedianFlatness";
-import { readPartialBinRanges } from "#src/services/genshinAssets/shared/readPartialBinRanges";
-import { readSpectralPeak } from "#src/services/genshinAssets/shared/readSpectralPeak";
 import { toFrequency } from "#src/services/genshinAssets/shared/toFrequency";
-import { readBandBins } from "#src/services/genshinParity/shared/readBandBins";
+import { computeBandBins } from "#src/services/genshinParity/shared/computeBandBins";
 import { solveLinearSystem } from "#src/services/genshinParity/shared/solveLinearSystem";
 import { MUSIC_NOISE_BAND_CENTRES } from "genshin-engine";
 
@@ -51,7 +51,7 @@ export const fitVoiceNoises = (
   const partialMasks = Array.from({ length: frameCount }, () => new Uint8Array(binCount));
   for (const note of voices.flat()) {
     const [firstFrame, lastFrame] = readNoteFrames(note);
-    for (const [low, high] of readPartialBinRanges(note.pitchMidi, binWidth, binCount))
+    for (const [low, high] of computePartialBinRanges(note.pitchMidi, binWidth, binCount))
       for (let frame = firstFrame; frame <= lastFrame; frame++) partialMasks[frame]?.fill(1, low, high);
   }
   const voicePowers = voices.map((notes) => {
@@ -62,7 +62,7 @@ export const fitVoiceNoises = (
       for (let frame = firstFrame; frame <= lastFrame; frame++)
         powers[frame] =
           (powers[frame] ?? 0) +
-          ((4 * readSpectralPeak(spectrogram, frame, toFrequency(pitchMidi)).magnitude) / frameLength) ** 2;
+          ((4 * computeSpectralPeak(spectrogram, frame, toFrequency(pitchMidi)).magnitude) / frameLength) ** 2;
     }
     return powers;
   });
@@ -88,8 +88,8 @@ export const fitVoiceNoises = (
     voicePowers.some((powers) => (powers[frame] ?? 0) > 0),
   );
   const bands = MUSIC_NOISE_BAND_CENTRES.map((centre) => {
-    const [low, high] = readBandBins(centre, sampleRate, frameLength, binCount);
-    const flatness = readMedianFlatness(spectrogram, soundingFrames, [low, high]);
+    const [low, high] = computeBandBins(centre, sampleRate, frameLength, binCount);
+    const flatness = computeMedianFlatness(spectrogram, soundingFrames, [low, high]);
     // A band a few partials hold is tones, which what lies off ours is too (an untranscribed line, a partial's ring),
     // And noise there would only blur the pitch
     if (flatness < MUSIC_NOISE_MIN_FLATNESS) return { flatness, levels: voices.map(() => 0) };
@@ -100,7 +100,7 @@ export const fitVoiceNoises = (
       for (let bin = low; bin <= high; bin++)
         if (!partialMasks[frame]?.[bin]) offBins.push(magnitudes[frame * binCount + bin] ?? 0);
       if (offBins.length < MUSIC_NOISE_MIN_BINS) return undefined;
-      const power = (readMedian(offBins) / medianShare) ** 2 * bandShare;
+      const power = (computeMedian(offBins) / medianShare) ** 2 * bandShare;
       return power > 0 ? power : undefined;
     });
     // A voice silent in every frame the band is read in says nothing of it

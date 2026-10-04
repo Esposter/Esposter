@@ -62,7 +62,7 @@ const readTexel = ({ data, info }: Texture, uv: readonly [number, number], chann
   const [column, row] = toTexel(uv, info);
   return (data[(row * info.width + column) * info.channels + channel] ?? 0) / BYTE;
 };
-const readMean = (colors: readonly Vector[], cells: readonly number[]): Vector =>
+const computeMean = (colors: readonly Vector[], cells: readonly number[]): Vector =>
   ([0, 1, 2] as const).map(
     (channel) => cells.reduce((sum, cell) => sum + (colors[cell]?.[channel] ?? 0), 0) / Math.max(cells.length, 1),
   ) as Vector;
@@ -195,14 +195,14 @@ export const fitLoginTowerFacades = async (
     );
     const raised = stone.filter((cell) => (depths[cell] ?? 0) <= -TOWER_FACADE_SHALLOW_RECESS);
     const face = stone.filter((cell) => Math.abs(depths[cell] ?? 0) < TOWER_FACADE_SHALLOW_RECESS);
-    const mean = readMean(colors, face);
+    const mean = computeMean(colors, face);
     const faceBandMap = Map.groupBy(face, (cell) => toBand(cell));
     // The face's tone run by run of its height, a band merged into the one below while its tone holds
     const bands: TowerFacade["bands"] = [];
     for (let band = 0; band < bandCount; band++) {
       const bandCells = faceBandMap.get(band);
       if (!bandCells) continue;
-      const shade = toShade(readMean(colors, bandCells), mean);
+      const shade = toShade(computeMean(colors, bandCells), mean);
       const from = roundFitted(band * bandRows * TOWER_FACADE_CELL_SIZE);
       const to = roundFitted(Math.min((band + 1) * bandRows, height) * TOWER_FACADE_CELL_SIZE);
       const last = bands.at(-1);
@@ -238,7 +238,7 @@ export const fitLoginTowerFacades = async (
     const toLayer = (layerCells: readonly number[], depth: number): FacadeLayer => ({
       depth,
       loops: trace(layerCells),
-      shade: toShade(readMean(colors, layerCells), mean),
+      shade: toShade(computeMean(colors, layerCells), mean),
     });
     facades[tower] = {
       bands,

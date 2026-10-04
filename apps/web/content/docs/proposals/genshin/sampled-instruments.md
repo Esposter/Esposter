@@ -35,7 +35,7 @@ The catalogue and the solve are tooling in the scripts package, run by `pnpm -C 
 
 - **The catalogue.** Each library is read at a pinned commit (`SampleLibraryCommitMap`), and only a mapping and the recordings a piece's notes reach are downloaded, into the scripts package's cache. `parseSfz` reads a mapping into the regions a note plays. Opcodes are inherited from `<control>`, `<global>`, `<master>` and `<group>` down to `<region>`, and a key may be a number or a note name. Release triggers, every round robin past the first, and a region whose key range is empty (a pedal noise a controller triggers) are skipped. A layer crossfaded in and out by velocity answers from the middle of its fade in to the middle of its fade out, since some instruments mark their layers only by their crossfades. A region's `volume` is carried as its gain, because each recording is normalised on its own. The amplitude envelope's opcodes are not read: the release comes from the game's voice. Velocity scales a note linearly rather than through the mapping's velocity curve.
 - **The engine's half.** `selectMusicSample` picks the recording a note plays, the same choice in the solve and the sampler. It takes the region whose keys hold the note's pitch or lie nearest it, then of those the one whose velocities hold or lie nearest its velocity on MIDI's scale.
-- **The pitch check.** `readVoicePitchReference` reads the pitch classes a voice's notes name with no instrument in them, frame by frame in the listening score's own frames (`readNoteChroma`), and the same notes rendered as pure tones at their fundamentals beside them. A render of the voice is scored by its pitch agreement with the notes, as it stands and at the lag within a fifth of a second that agrees best (`readLaggedAgreement`). An instrument that matches or passes the pure tones keeps the voice's pitch. `scoreSampledSolos` scores every catalogued instrument this way, with the median onset of the recordings it plays and how far each note is shifted from its recording.
+- **The pitch check.** `computeVoicePitchReference` reads the pitch classes a voice's notes name with no instrument in them, frame by frame in the listening score's own frames (`computeNoteChroma`), and the same notes rendered as pure tones at their fundamentals beside them. A render of the voice is scored by its pitch agreement with the notes, as it stands and at the lag within a fifth of a second that agrees best (`computeLaggedAgreement`). An instrument that matches or passes the pure tones keeps the voice's pitch. `scoreSampledSolos` scores every catalogued instrument this way, with the median onset of the recordings it plays and how far each note is shifted from its recording.
 - **The solve.** `solveSampledVoices` renders every catalogued instrument through each voice's notes at level 1, the way the sampler would play them (`renderSampledVoice`): with the voice's fitted release and tuning, each recording read at its shifted rate. Only an instrument that keeps the voice's pitch is a candidate for it, or the one nearest that where none does, since the bands cannot hear pitch. The solve then reads each octave band's energy over the frames the score reads. For every combination of one candidate a voice, the powers come in closed form from nonnegative least squares on each band's share of the game's energy (`solveNonNegativeSystem`), from products taken once per pair of voices. The best combinations are refined against the score's band distance (`refineVoicePowers`), and each level is the square root of its power. The shipped music plays under a fitted expression, so each mix is given its own first: `scoreShapedMusic` fits the mix's expression to the game's swells as `genshin:parity expression` fits the synthesizer's, then scores the mix under it whole by the listening score. The mixes are ranked by that distance, and the report gives each one's distance with its expression held out across bands, its pitch agreement, the best's band biases and its gaps by the time since a note began.
 
 ## What the passes found
@@ -86,20 +86,20 @@ packages/genshin-world/src/data/login/samples/
 
 ## Key files
 
-| File                                                                  | Role after the change                                          |
-| :-------------------------------------------------------------------- | :------------------------------------------------------------- |
-| `packages/genshin-engine/src/audio/scheduleMusicNote.ts`              | One note played from its recording at its pitch                |
-| `packages/genshin-engine/src/audio/Instrument.ts`                     | An instrument's recordings, release, level and tuning          |
-| `packages/genshin-engine/src/audio/selectMusicSample.ts`              | The recording a note plays, in the sampler and the solve alike |
-| `scripts/src/services/genshinAssets/music/solveSampledVoices.ts`      | Each voice's instrument and level, solved with pitch heard     |
-| `scripts/src/services/genshinParity/music/scoreShapedMusic.ts`        | A mix scored under an expression fitted to it                  |
-| `scripts/src/services/genshinAssets/music/parseSfz.ts`                | A mapping's regions                                            |
-| `scripts/src/services/genshinAssets/music/readVoicePitchReference.ts` | What a voice's render is scored against for pitch              |
-| `scripts/src/services/genshinParity/commands/solosCommand.ts`         | Every instrument alone through each voice, scored for pitch    |
-| `scripts/src/services/genshinAssets/shared/fitMusicVoices.ts`         | The release and tuning each voice plays at                     |
-| `scripts/src/services/genshinAssets/fit/fitLoginMusic.ts`             | The login's voices, each with its solved instrument            |
-| `scripts/src/services/genshinParity/commands/instrumentsCommand.ts`   | The solve's report                                             |
-| `packages/genshin-world/src/data/login/music.json`                    | The login's notes and each voice's instrument                  |
+| File                                                                     | Role after the change                                          |
+| :----------------------------------------------------------------------- | :------------------------------------------------------------- |
+| `packages/genshin-engine/src/audio/scheduleMusicNote.ts`                 | One note played from its recording at its pitch                |
+| `packages/genshin-engine/src/audio/Instrument.ts`                        | An instrument's recordings, release, level and tuning          |
+| `packages/genshin-engine/src/audio/selectMusicSample.ts`                 | The recording a note plays, in the sampler and the solve alike |
+| `scripts/src/services/genshinAssets/music/solveSampledVoices.ts`         | Each voice's instrument and level, solved with pitch heard     |
+| `scripts/src/services/genshinParity/music/scoreShapedMusic.ts`           | A mix scored under an expression fitted to it                  |
+| `scripts/src/services/genshinAssets/music/parseSfz.ts`                   | A mapping's regions                                            |
+| `scripts/src/services/genshinAssets/music/computeVoicePitchReference.ts` | What a voice's render is scored against for pitch              |
+| `scripts/src/services/genshinParity/commands/solosCommand.ts`            | Every instrument alone through each voice, scored for pitch    |
+| `scripts/src/services/genshinAssets/shared/fitMusicVoices.ts`            | The release and tuning each voice plays at                     |
+| `scripts/src/services/genshinAssets/fit/fitLoginMusic.ts`                | The login's voices, each with its solved instrument            |
+| `scripts/src/services/genshinParity/commands/instrumentsCommand.ts`      | The solve's report                                             |
+| `packages/genshin-world/src/data/login/music.json`                       | The login's notes and each voice's instrument                  |
 
 ## Sources
 

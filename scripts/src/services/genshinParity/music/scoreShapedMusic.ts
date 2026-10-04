@@ -1,9 +1,9 @@
 import type { ShapedMusicScore } from "#src/models/genshinParity/music/ShapedMusicScore";
 
 import { applyMusicExpression } from "#src/services/genshinParity/music/applyMusicExpression";
+import { computeBandLevels } from "#src/services/genshinParity/music/computeBandLevels";
 import { fitMusicExpression } from "#src/services/genshinParity/music/fitMusicExpression";
-import { readBandLevels } from "#src/services/genshinParity/music/readBandLevels";
-import { readFrameSeconds } from "#src/services/genshinParity/music/readFrameSeconds";
+import { getFrameSeconds } from "#src/services/genshinParity/music/getFrameSeconds";
 import { scoreMusicSegment } from "#src/services/genshinParity/music/scoreMusicSegment";
 import { MUSIC_EXPRESSION_WINDOW_SECONDS } from "genshin-engine";
 
@@ -15,15 +15,15 @@ export const scoreShapedMusic = (
   sampleRate: number,
   frames: number[],
 ): ShapedMusicScore => {
-  const frameTimes = frames.map((frame) => readFrameSeconds(frame, sampleRate));
+  const frameTimes = frames.map((frame) => getFrameSeconds(frame, sampleRate));
   const expression = fitMusicExpression(
-    readBandLevels(ours, game, sampleRate, frames),
+    computeBandLevels(ours, game, sampleRate, frames),
     frameTimes,
     MUSIC_EXPRESSION_WINDOW_SECONDS,
   );
   const shaped = applyMusicExpression(ours, sampleRate, expression.windowGains, MUSIC_EXPRESSION_WINDOW_SECONDS);
   return {
-    bandLevelsList: readBandLevels(shaped, game, sampleRate, frames),
+    bandLevelsList: computeBandLevels(shaped, game, sampleRate, frames),
     expression,
     score: scoreMusicSegment(shaped, game, sampleRate),
   };

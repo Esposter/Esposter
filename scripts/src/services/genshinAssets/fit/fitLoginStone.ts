@@ -19,9 +19,9 @@ const FAMILY_MATERIAL_REGEX_MAP: Record<"bridges" | "door" | "towers" | "walkway
   towers: /^LoginScene_Build/u,
   walkway: /^LoginScene_Bridge01/u,
 };
-const readMedian = (values: readonly number[]): number =>
+const computeMedian = (values: readonly number[]): number =>
   values.toSorted((first, second) => first - second)[Math.floor(values.length / 2)] ?? 0;
-const readMean = (vectors: readonly Vector[]): Vector =>
+const computeMean = (vectors: readonly Vector[]): Vector =>
   ([0, 1, 2] as const).map((channel) =>
     roundFitted(vectors.reduce((sum, vector) => sum + vector[channel], 0) / Math.max(vectors.length, 1)),
   ) as Vector;
@@ -79,11 +79,11 @@ export const fitLoginStone = async (
         family,
         {
           albedo: await fitAlbedo(diffusePaths),
-          rimColor: readMean(readColor("_RGColor")),
+          rimColor: computeMean(readColor("_RGColor")),
           rimPower: readFloat("_RGPower"),
           rimStrength: readFloat("_RGStrength"),
-          smoothness: roundFitted(readMedian(smoothnesses.flat())),
-          specularColor: readMean(readColor("_SpecColor")),
+          smoothness: roundFitted(computeMedian(smoothnesses.flat())),
+          specularColor: computeMean(readColor("_SpecColor")),
         },
       ] as const;
     }),

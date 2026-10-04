@@ -2,7 +2,7 @@ import type { ExportedAnimationClip } from "#src/models/genshinAssets/interface/
 import type { DecodedCurve } from "#src/models/genshinAssets/shared/DecodedCurve";
 
 import { evaluateStreamedCurve } from "#src/services/genshinAssets/interface/evaluateStreamedCurve";
-import { readStreamedClipKeys } from "#src/services/genshinAssets/interface/readStreamedClipKeys";
+import { parseStreamedClipKeys } from "#src/services/genshinAssets/interface/parseStreamedClipKeys";
 
 // A Transform's properties by the attribute its binding names them with, and the components each takes one curve for
 const TransformPropertyMap: Record<number, { components: string[]; property: string }> = {
@@ -24,7 +24,7 @@ export const decodeAnimationClip = (
   const duration = m_StopTime - m_StartTime;
   const sampleCount = Math.max(Math.round(duration * sampleRate), 0) + 1;
   const times = Array.from({ length: sampleCount }, (_, index) => m_StartTime + index / sampleRate);
-  const streamedKeys = readStreamedClipKeys(m_StreamedClip.data);
+  const streamedKeys = parseStreamedClipKeys(m_StreamedClip.data);
   const streamedCount = m_StreamedClip.curveCount;
   const denseCount = m_DenseClip.m_CurveCount;
   const sampleCurve = (index: number): number[] => {

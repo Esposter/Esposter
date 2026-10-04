@@ -3,12 +3,12 @@ import type { Music } from "genshin-engine";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
+import { computeAudibleFrames } from "#src/services/genshinParity/music/computeAudibleFrames";
+import { computeBandLevels } from "#src/services/genshinParity/music/computeBandLevels";
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
+import { computeGapsByOnsetAge } from "#src/services/genshinParity/music/computeGapsByOnsetAge";
 import { formatOnsetAgeSpan } from "#src/services/genshinParity/music/formatOnsetAgeSpan";
-import { readAudibleFrames } from "#src/services/genshinParity/music/readAudibleFrames";
-import { readBandLevels } from "#src/services/genshinParity/music/readBandLevels";
-import { readFrameSeconds } from "#src/services/genshinParity/music/readFrameSeconds";
-import { readGapsByOnsetAge } from "#src/services/genshinParity/music/readGapsByOnsetAge";
+import { getFrameSeconds } from "#src/services/genshinParity/music/getFrameSeconds";
 import { renderMusicSegments } from "#src/services/genshinParity/music/renderMusicSegments";
 import {
   LISTEN_BAND_CENTRES,
@@ -29,12 +29,12 @@ export const decayCommand: SubCommandsDef[string] = defineCommand({
       DerivedAssetComponent.Login,
       LOGIN_MUSIC_SCREEN,
     )) {
-      const frames = readAudibleFrames(computeChroma(game, LISTEN_SAMPLE_RATE).loudness);
-      const frameTimes = frames.map((frame) => readFrameSeconds(frame, LISTEN_SAMPLE_RATE));
+      const frames = computeAudibleFrames(computeChroma(game, LISTEN_SAMPLE_RATE).loudness);
+      const frameTimes = frames.map((frame) => getFrameSeconds(frame, LISTEN_SAMPLE_RATE));
       const onsets = music.segments[index]?.voices.flatMap(({ notes }) => notes.map(({ start }) => start)) ?? [];
       console.log(`segment ${id}: seconds since the last note began, share of frames, each band's mean gap in dB`);
-      for (const [span, { bandGaps, share }] of readGapsByOnsetAge(
-        readBandLevels(ours, game, LISTEN_SAMPLE_RATE, frames),
+      for (const [span, { bandGaps, share }] of computeGapsByOnsetAge(
+        computeBandLevels(ours, game, LISTEN_SAMPLE_RATE, frames),
         frameTimes,
         onsets,
       ).entries())

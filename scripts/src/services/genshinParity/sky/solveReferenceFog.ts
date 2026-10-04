@@ -7,7 +7,7 @@ import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessP
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { checkIsPartInterior } from "#src/services/genshinParity/sky/checkIsPartInterior";
-import { readFogOpacity } from "#src/services/genshinParity/sky/readFogOpacity";
+import { computeFogOpacity } from "#src/services/genshinParity/sky/computeFogOpacity";
 import { solveFogColors } from "#src/services/genshinParity/sky/solveFogColors";
 import { withFinalizerAsync } from "@esposter/shared";
 import { toneMapNeutral, toSceneColor } from "genshin-engine";
@@ -30,7 +30,7 @@ const MIN_BIN_COUNT = 100;
 const toLinear = (value: number): number => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
 const toDisplayHex = ([red, green, blue]: Vector): string =>
   `#${new Color(...toneMapNeutral([Math.max(red, 0), Math.max(green, 0), Math.max(blue, 0)])).getHexString()}`;
-const readMedian = (values: readonly number[]): number =>
+const computeMedian = (values: readonly number[]): number =>
   values.toSorted((first, second) => first - second)[Math.floor(values.length / 2)] ?? 0;
 interface Point {
   lit: Vector;
@@ -51,7 +51,7 @@ const readPage = <T>(page: Page, name: string): Promise<T> =>
 // A reference's haze solved over the parts the witness draws: each part's interior pixel past the fog's start, its
 // Reference colour and ours drawn without the fog both taken back through the tone mapping into the scene's own colour
 // (`toSceneColor`), so the fog's mix is linear in them. For a density, each pixel's opacity follows from its depth,
-// Its height and the eye's (`readFogOpacity`), and the fog's own and sunward colours are then a linear solve over the
+// Its height and the eye's (`computeFogOpacity`), and the fog's own and sunward colours are then a linear solve over the
 // Pixels binned by depth and by angle to the sun, each bin's medians weighted by its pixels (`solveFogColors`); the
 // Density is refined from the bracket by golden section on that solve's residual. The sunward weight is read toward
 // The fog's own direction, solved at its current density and at the refined one, and toward the sky's sun at the
@@ -133,10 +133,10 @@ export const solveReferenceFog = async (
             ? []
             : [
                 {
-                  lit: CHANNELS.map((channel) => readMedian(binPoints.map(({ lit }) => lit[channel]))) as Vector,
+                  lit: CHANNELS.map((channel) => computeMedian(binPoints.map(({ lit }) => lit[channel]))) as Vector,
                   points: binPoints.map(({ point }) => point),
                   reference: CHANNELS.map((channel) =>
-                    readMedian(binPoints.map(({ reference: color }) => color[channel])),
+                    computeMedian(binPoints.map(({ reference: color }) => color[channel])),
                   ) as Vector,
                   scatter: scatters.reduce((sum, value) => sum + value, 0) / scatters.length,
                 },
@@ -148,7 +148,7 @@ export const solveReferenceFog = async (
           bins.map(({ lit, points: binPoints, reference, scatter }) => ({
             lit,
             opacity:
-              binPoints.reduce((sum, point) => sum + readFogOpacity(eye, point, { ...fog, density }), 0) /
+              binPoints.reduce((sum, point) => sum + computeFogOpacity(eye, point, { ...fog, density }), 0) /
               binPoints.length,
             reference,
             scatter,

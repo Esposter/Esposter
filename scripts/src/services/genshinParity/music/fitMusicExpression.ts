@@ -1,9 +1,9 @@
 import type { BandLevels } from "#src/models/genshinParity/music/BandLevels";
 import type { MusicExpression } from "#src/models/genshinParity/music/MusicExpression";
 
-import { readMean } from "#src/services/genshinAssets/shared/readMean";
+import { computeMean } from "#src/services/genshinAssets/shared/computeMean";
+import { computeBandGaps } from "#src/services/genshinParity/music/computeBandGaps";
 import { fitBroadbandGain } from "#src/services/genshinParity/music/fitBroadbandGain";
-import { readBandGaps } from "#src/services/genshinParity/music/readBandGaps";
 import { splitBandLevelsByWindow } from "#src/services/genshinParity/music/splitBandLevelsByWindow";
 
 // A render's expression fitted to the game's, window by window: each window's one gain over every band
@@ -35,18 +35,18 @@ export const fitMusicExpression = (
   };
   // Each band's mean distance with every window at its gain
   const readBandDistance = (band: number, windowGains: number[]): number =>
-    readMean(
+    computeMean(
       [...windowBandLevelsMap.entries()].flatMap(([window, windowBandLevelsList]) => {
         const bandLevels = windowBandLevelsList[band];
-        return bandLevels ? readBandGaps(bandLevels, windowGains[window] ?? 0).map((gap) => Math.abs(gap)) : [];
+        return bandLevels ? computeBandGaps(bandLevels, windowGains[window] ?? 0).map((gap) => Math.abs(gap)) : [];
       }),
     );
   const bands = [...bandLevelsList.keys()];
   const windowGains = fitWindowGains(bands);
   const parityGainsList = [0, 1].map((parity) => fitWindowGains(bands.filter((band) => band % 2 === parity)));
   return {
-    distance: readMean(bands.map((band) => readBandDistance(band, windowGains))),
-    heldOutDistance: readMean(bands.map((band) => readBandDistance(band, parityGainsList[1 - (band % 2)] ?? []))),
+    distance: computeMean(bands.map((band) => readBandDistance(band, windowGains))),
+    heldOutDistance: computeMean(bands.map((band) => readBandDistance(band, parityGainsList[1 - (band % 2)] ?? []))),
     windowGains,
   };
 };

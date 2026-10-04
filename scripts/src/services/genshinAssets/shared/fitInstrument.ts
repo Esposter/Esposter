@@ -2,6 +2,8 @@ import type { InstrumentFit } from "#src/models/genshinAssets/shared/InstrumentF
 import type { Spectrogram } from "#src/models/genshinAssets/shared/Spectrogram";
 import type { NoteEventTime } from "pitch-transcription/notes";
 
+import { computeMedian } from "#src/services/genshinAssets/shared/computeMedian";
+import { computeSpectralPeak } from "#src/services/genshinAssets/shared/computeSpectralPeak";
 import {
   MUSIC_CLEAR_BINS,
   MUSIC_CLEAR_SEMITONES,
@@ -12,8 +14,6 @@ import {
   MUSIC_NOISE_SHARE,
   MUSIC_RELEASE_SECONDS,
 } from "#src/services/genshinAssets/shared/constants";
-import { readMedian } from "#src/services/genshinAssets/shared/readMedian";
-import { readSpectralPeak } from "#src/services/genshinAssets/shared/readSpectralPeak";
 import { toFrequency } from "#src/services/genshinAssets/shared/toFrequency";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -83,9 +83,9 @@ export const fitInstrument = (
     const startFrame = toFrame(note.startTimeSeconds);
     const endFrame = toFrame(endSeconds);
     let peakFrame = startFrame;
-    let peak = readSpectralPeak(spectrogram, startFrame, fundamental);
+    let peak = computeSpectralPeak(spectrogram, startFrame, fundamental);
     for (let frame = startFrame + 1; frame <= endFrame; frame++) {
-      const reading = readSpectralPeak(spectrogram, frame, fundamental);
+      const reading = computeSpectralPeak(spectrogram, frame, fundamental);
       if (reading.magnitude <= peak.magnitude) continue;
       peakFrame = frame;
       peak = reading;
@@ -113,17 +113,17 @@ export const fitInstrument = (
     for (let harmonic = 2; harmonic <= MUSIC_HARMONIC_COUNT; harmonic++) {
       const frequency = harmonic * peak.frequency;
       if (frequency > MUSIC_MAX_FREQUENCY) break;
-      const { magnitude } = readSpectralPeak(spectrogram, peakFrame, frequency);
+      const { magnitude } = computeSpectralPeak(spectrogram, peakFrame, frequency);
       if (!checkIsClear(frequency, toAmplitude(magnitude), note, note.startTimeSeconds, endSeconds)) continue;
       harmonicShares[harmonic - 1]?.push(magnitude / peak.magnitude);
     }
 
     for (let frame = peakFrame; frame <= endFrame; frame++)
       (decayShares[frame - peakFrame] ??= []).push(
-        readSpectralPeak(spectrogram, frame, peak.frequency).magnitude / peak.magnitude,
+        computeSpectralPeak(spectrogram, frame, peak.frequency).magnitude / peak.magnitude,
       );
 
-    const endLevel = readSpectralPeak(spectrogram, endFrame, peak.frequency).magnitude;
+    const endLevel = computeSpectralPeak(spectrogram, endFrame, peak.frequency).magnitude;
     if (
       endLevel < MUSIC_NOISE_SHARE * peak.magnitude ||
       !checkIsClear(fundamental, toAmplitude(endLevel), note, endSeconds, endSeconds + MUSIC_RELEASE_SECONDS)
@@ -132,7 +132,7 @@ export const fitInstrument = (
     const releaseSamples: [number, number][] = [];
     const lastFrame = toFrame(endSeconds + MUSIC_RELEASE_SECONDS);
     for (let frame = endFrame + 1; frame <= lastFrame; frame++) {
-      const { magnitude } = readSpectralPeak(spectrogram, frame, peak.frequency);
+      const { magnitude } = computeSpectralPeak(spectrogram, frame, peak.frequency);
       if (magnitude < MUSIC_NOISE_SHARE * peak.magnitude) break;
       releaseSamples.push([toSeconds(frame) - toSeconds(endFrame), magnitude / endLevel]);
     }
@@ -155,16 +155,16 @@ export const fitInstrument = (
 
   const harmonicCounts = harmonicShares.map((shares, index) => (index === 0 ? heard.length : shares.length));
   const harmonics = harmonicShares.map((shares, index) =>
-    index === 0 ? 1 : shares.length >= MUSIC_MIN_MEASUREMENTS ? readMedian(shares) : 0,
+    index === 0 ? 1 : shares.length >= MUSIC_MIN_MEASUREMENTS ? computeMedian(shares) : 0,
   );
   while (harmonics.length > 1 && (harmonics.at(-1) ?? 0) < MUSIC_NOISE_SHARE) harmonics.pop();
-  const attack = readMedian(attacks);
+  const attack = computeMedian(attacks);
   // The decay is fitted once, to the notes' median share at each frame past their peaks, wherever enough of them last
   // That long, and in decibels: a note's own few frames cannot tell a slow decay from a fast one onto a level, so a fit
   // A note read every voice as dying about twice as fast as its notes do, and a fit in amplitude is the first frames'
   const decayCurve = decayShares.flatMap((shares, offset) =>
     shares.length >= MUSIC_MIN_MEASUREMENTS
-      ? [[offset * frameSeconds, toDecibels(Math.max(readMedian(shares), MUSIC_NOISE_SHARE))] as const]
+      ? [[offset * frameSeconds, toDecibels(Math.max(computeMedian(shares), MUSIC_NOISE_SHARE))] as const]
       : [],
   );
   // Too short a curve fits nothing, and the note is held at its peak
@@ -212,13 +212,13 @@ export const fitInstrument = (
       attack,
       decay,
       harmonics,
-      level: readMedian(levels) / caughtShare,
-      release: releaseFits.length > 0 ? readMedian(releaseFits.map(({ constant }) => constant)) : frameSeconds,
+      level: computeMedian(levels) / caughtShare,
+      release: releaseFits.length > 0 ? computeMedian(releaseFits.map(({ constant }) => constant)) : frameSeconds,
       sustain,
-      tuning: readMedian(tunings),
+      tuning: computeMedian(tunings),
     },
     noteCount: heard.length,
     releaseCount: releaseFits.length,
-    releaseResidual: releaseFits.length > 0 ? readMedian(releaseFits.map(({ residual }) => residual)) : 0,
+    releaseResidual: releaseFits.length > 0 ? computeMedian(releaseFits.map(({ residual }) => residual)) : 0,
   };
 };

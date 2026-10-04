@@ -1,6 +1,6 @@
 import type { Page } from "playwright";
 
-import { readOtsuThreshold } from "#src/services/genshinAssets/shared/readOtsuThreshold";
+import { computeOtsuThreshold } from "#src/services/genshinAssets/shared/computeOtsuThreshold";
 import { blurGrey } from "#src/services/genshinParity/shared/blurGrey";
 import { CLOUD_ELEVATION_BANDS } from "#src/services/genshinParity/shared/constants";
 import { readWitnessPartTarget } from "#src/services/genshinParity/shared/readWitnessPartTarget";
@@ -68,7 +68,7 @@ export const readCloudSky = async (
       overs.filter((_, pixel) => skyMask[pixel]),
       (over) => (over / greatest) * BYTE,
     );
-    return Math.max(logRatio, (readOtsuThreshold(skyOvers) / BYTE) * greatest);
+    return Math.max(logRatio, (computeOtsuThreshold(skyOvers) / BYTE) * greatest);
   };
   return {
     // A sky's clouds by its own split, or by a split held from another sky: ours read at the reference's, so a guess

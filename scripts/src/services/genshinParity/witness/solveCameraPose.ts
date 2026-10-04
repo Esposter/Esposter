@@ -1,4 +1,4 @@
-import { readMean } from "#src/services/genshinAssets/shared/readMean";
+import { computeMean } from "#src/services/genshinAssets/shared/computeMean";
 import { solveLinearSystem } from "#src/services/genshinParity/shared/solveLinearSystem";
 import { findSmallestEigenvector } from "#src/services/genshinParity/witness/findSmallestEigenvector";
 import { projectWitnessPoint } from "#src/services/genshinParity/witness/projectWitnessPoint";
@@ -21,16 +21,16 @@ const readCost = (residuals: readonly number[]): number => residuals.reduce((sum
 // Inverse times the fourth places the eye, whose third row faces the view, and whose second row's height over it is the
 // Focal length in pixels
 const readLinearPose = (correspondences: readonly { pixel: Pixel; point: Point }[], height: number): number[] => {
-  const pointCentre = [0, 1, 2].map((axis) => readMean(correspondences.map(({ point }) => point[axis] ?? 0)));
-  const pixelCentre = [0, 1].map((axis) => readMean(correspondences.map(({ pixel }) => pixel[axis] ?? 0)));
+  const pointCentre = [0, 1, 2].map((axis) => computeMean(correspondences.map(({ point }) => point[axis] ?? 0)));
+  const pixelCentre = [0, 1].map((axis) => computeMean(correspondences.map(({ pixel }) => pixel[axis] ?? 0)));
   const pointScale =
     Math.sqrt(3) /
-    readMean(
+    computeMean(
       correspondences.map(({ point }) => Math.hypot(...point.map((value, axis) => value - (pointCentre[axis] ?? 0)))),
     );
   const pixelScale =
     Math.SQRT2 /
-    readMean(
+    computeMean(
       correspondences.map(({ pixel }) => Math.hypot(...pixel.map((value, axis) => value - (pixelCentre[axis] ?? 0)))),
     );
   const rows = correspondences.flatMap(({ pixel, point }) => {
