@@ -8,6 +8,7 @@ import { defineCommand } from "citty";
 export const coverCommand: SubCommandsDef[string] = defineCommand({
   args: {
     heights: {
+      default: false,
       description: "Also solve the heights each band's clouds stand between, one scene's for every reference given",
       type: "boolean",
     },

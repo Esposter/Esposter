@@ -99,7 +99,7 @@ export const solveReferenceCloudCover = async (
         Object.fromEntries(bands.map((band, index) => [band, toShare(logits[index] ?? 0)]));
       const toHeights = (point: readonly number[]): Record<string, [number, number]> =>
         Object.fromEntries(
-          bands.map((band, index) => {
+          bands.map((band, index): [string, [number, number]] => {
             const low = point[index * 2] ?? 0;
             return [band, [low, low + Math.exp(point[index * 2 + 1] ?? 0)]];
           }),
