@@ -1,6 +1,5 @@
 import type { CommandDef } from "citty";
 
-import { balanceCommand } from "#src/services/genshinParity/commands/balanceCommand";
 import { bandsCommand } from "#src/services/genshinParity/commands/bandsCommand";
 import { benchCommand } from "#src/services/genshinParity/commands/benchCommand";
 import { calibrateCommand } from "#src/services/genshinParity/commands/calibrateCommand";
@@ -60,7 +59,6 @@ export const genshinParityCommand: CommandDef = defineCommand({
     glide: glideCommand,
     shoot: shootCommand,
     bands: bandsCommand,
-    balance: balanceCommand,
     decay: decayCommand,
     instruments: instrumentsCommand,
     solos: solosCommand,
