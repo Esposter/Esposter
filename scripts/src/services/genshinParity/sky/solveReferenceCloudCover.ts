@@ -65,15 +65,15 @@ export const solveReferenceCloudCover = async (
         );
         browsers.push(browser);
         // oxlint-disable-next-line no-await-in-loop -- read on the page just opened
-        const { getLuminance, readClouds, readCloudThreshold, readElevationCoverage } = await readCloudSky(page, {
-          checkIsScored,
-          height,
-        });
+        const { computeClouds, computeCloudThreshold, computeElevationCoverage, readLuminance } = await readCloudSky(
+          page,
+          { checkIsScored, height },
+        );
         // oxlint-disable-next-line no-await-in-loop -- read on the page just opened
-        const referenceLuminance = await getLuminance(image);
+        const referenceLuminance = await readLuminance(image);
         // Our clouds are read at the reference's split: split on our own render, each guess moved the split with its
         // Clouds, and the solve chased a cost that moved under it
-        const threshold = readCloudThreshold(referenceLuminance);
+        const threshold = computeCloudThreshold(referenceLuminance);
         skies.push({
           page,
           readOurs: async (covers, heights) => {
@@ -85,9 +85,9 @@ export const solveReferenceCloudCover = async (
               [covers, heights] as const,
             );
             await setPageWitnessView(page, { families: [] });
-            return readElevationCoverage(readClouds(await getLuminance(await page.screenshot()), threshold));
+            return computeElevationCoverage(computeClouds(await readLuminance(await page.screenshot()), threshold));
           },
-          reference: readElevationCoverage(readClouds(referenceLuminance, threshold)),
+          reference: computeElevationCoverage(computeClouds(referenceLuminance, threshold)),
           referenceId,
         });
       }

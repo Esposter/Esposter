@@ -30,14 +30,14 @@ export const readCloudStatistics = async (
   const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness, CLOUDS_WIDTH);
   return withFinalizerAsync(
     async () => {
-      const { getLuminance, readClouds, readElevationCoverage, skyMask, width } = await readCloudSky(page, {
+      const { computeClouds, computeElevationCoverage, readLuminance, skyMask, width } = await readCloudSky(page, {
         checkIsScored,
         height,
       });
       await setPageWitnessView(page, { families: [] });
       const ourShot = await page.screenshot();
-      const [ourLuminance, referenceLuminance] = await Promise.all([getLuminance(ourShot), getLuminance(image)]);
-      const [ourClouds, referenceClouds] = [readClouds(ourLuminance), readClouds(referenceLuminance)];
+      const [ourLuminance, referenceLuminance] = await Promise.all([readLuminance(ourShot), readLuminance(image)]);
+      const [ourClouds, referenceClouds] = [computeClouds(ourLuminance), computeClouds(referenceLuminance)];
       // A cloud white, the clear sky grey, and the rest black
       const toMask = (clouds: Uint8Array): Promise<Buffer> =>
         sharp(Buffer.from(clouds.map((cloud, pixel) => (cloud ? BYTE : (skyMask[pixel] ?? 0) * CLEAR_SHADE))), {
@@ -62,8 +62,8 @@ export const readCloudStatistics = async (
       await writeFile(join(COMPARISONS_DIRECTORY, `${referenceId}.clouds.png`), sheet);
       return {
         elevationCoverage: {
-          ours: readElevationCoverage(ourClouds),
-          reference: readElevationCoverage(referenceClouds),
+          ours: computeElevationCoverage(ourClouds),
+          reference: computeElevationCoverage(referenceClouds),
         },
         ours: measureClouds(ourLuminance, { clouds: ourClouds, sky: skyMask }, width, height),
         reference: measureClouds(referenceLuminance, { clouds: referenceClouds, sky: skyMask }, width, height),

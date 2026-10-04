@@ -11,18 +11,16 @@ import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWi
 import { getLuminance } from "#src/services/genshinParity/sky/getLuminance";
 import { getPixelSceneColor } from "#src/services/genshinParity/sky/getPixelSceneColor";
 import { solveCloudColors } from "#src/services/genshinParity/sky/solveCloudColors";
+import { toDisplayHex } from "#src/services/genshinParity/sky/toDisplayHex";
 import { withFinalizerAsync } from "@esposter/shared";
-import { toneMapNeutral } from "genshin-engine";
 import sharp from "sharp";
-import { Color, Matrix4, Vector3, Vector4 } from "three";
+import { Matrix4, Vector3, Vector4 } from "three";
 
 // Every this many pixels across and down is a sample: the clouds' colours change slowly, and both sets keep thousands
 const SAMPLE_STRIDE = 4;
 // A pixel of ours is a cloud where its shares of the clouds' two colours add to at least this, so the sky behind a
 // Cloud's soft edge does not stand for it
 const MIN_CLOUD_COVER = 0.3;
-const toDisplayHex = ([red, green, blue]: Vector): string =>
-  `#${new Color(...toneMapNeutral([Math.max(red, 0), Math.max(green, 0), Math.max(blue, 0)])).getHexString()}`;
 const setCloudColors = (page: Page, colors?: { lit: Vector; shade: Vector }): Promise<void> =>
   page.evaluate((cloudColors) => {
     (Reflect.get(window, "setSceneCloudColors") as SetCloudColors)(cloudColors);

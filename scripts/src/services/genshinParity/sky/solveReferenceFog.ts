@@ -14,10 +14,10 @@ import { checkIsPartInterior } from "#src/services/genshinParity/sky/checkIsPart
 import { computeFogOpacity } from "#src/services/genshinParity/sky/computeFogOpacity";
 import { getPixelSceneColor } from "#src/services/genshinParity/sky/getPixelSceneColor";
 import { solveFogColors } from "#src/services/genshinParity/sky/solveFogColors";
-import { withFinalizerAsync } from "@esposter/shared";
-import { toneMapNeutral } from "genshin-engine";
+import { toDisplayHex } from "#src/services/genshinParity/sky/toDisplayHex";
+import { getOrCreate, withFinalizerAsync } from "@esposter/shared";
 import sharp from "sharp";
-import { Color, Matrix4, Vector3 } from "three";
+import { Matrix4, Vector3 } from "three";
 
 // The densities the refinement brackets, and how many golden-section steps narrow it, each a fixed share of the last
 const DENSITY_RANGE: [number, number] = [0.0001, 3];
@@ -29,8 +29,6 @@ const GOLDEN_SHARE = (Math.sqrt(5) - 1) / 2;
 const DEPTH_BANDS = [0, 10, 20, 40, 80, 160, 320, 640, 1280];
 const SCATTER_BIN_COUNT = 4;
 const MIN_BIN_COUNT = 100;
-const toDisplayHex = ([red, green, blue]: Vector): string =>
-  `#${new Color(...toneMapNeutral([Math.max(red, 0), Math.max(green, 0), Math.max(blue, 0)])).getHexString()}`;
 const computeMedian = (values: readonly number[]): number =>
   values.toSorted((first, second) => first - second)[Math.floor(values.length / 2)] ?? 0;
 const readPage = <T>(page: Page, name: string): Promise<T> =>
@@ -110,10 +108,9 @@ export const solveReferenceFog = async (
           );
           const key =
             band * SCATTER_BIN_COUNT + Math.min(Math.floor(scatter * SCATTER_BIN_COUNT), SCATTER_BIN_COUNT - 1);
-          const bin = binMap.get(key) ?? { points: [], scatters: [] };
+          const bin = getOrCreate(binMap, key, () => ({ points: [], scatters: [] }));
           bin.points.push(entry);
           bin.scatters.push(scatter);
-          binMap.set(key, bin);
         }
         return [...binMap.values()].flatMap(({ points: binPoints, scatters }) =>
           binPoints.length < MIN_BIN_COUNT

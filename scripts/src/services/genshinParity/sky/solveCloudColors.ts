@@ -13,14 +13,14 @@ const computeWindow = <T>(values: readonly T[], quantile: number): T[] => {
   const middle = Math.min(Math.floor(values.length * quantile), values.length - 1);
   return values.slice(Math.max(middle - half, 0), middle + half + 1);
 };
+const computeMean = (vectors: readonly Readonly<Vector>[]): Vector =>
+  CHANNELS.map((channel) => vectors.reduce((sum, vector) => sum + vector[channel], 0) / vectors.length) as Vector;
 // The clouds' shaded and lit colours that best turn ours into the reference's, in the scene's own colour, where the two
 // Skies' clouds stand in different places: each of ours is the sky behind it plus its share of the shaded colour plus its
 // Share of the lit one (read by drawing them black and white in turn), so ours ordered by how lit they are and the
 // Reference's by how bright they are are paired quantile by quantile, each the mean of the pixels round it, and each
 // Channel of the reference's is linear in the two colours, solved by least squares. The residual is the root mean
 // Square over the quantiles and channels
-const computeMean = (vectors: readonly Readonly<Vector>[]): Vector =>
-  CHANNELS.map((channel) => vectors.reduce((sum, vector) => sum + vector[channel], 0) / vectors.length) as Vector;
 export const solveCloudColors = (
   ours: readonly { base: Vector; lit: Vector; shade: Vector }[],
   reference: readonly Vector[],

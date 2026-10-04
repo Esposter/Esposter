@@ -12,10 +12,11 @@ import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWi
 import { computeSkyWeights } from "#src/services/genshinParity/sky/computeSkyWeights";
 import { SKY_TERMS } from "#src/services/genshinParity/sky/constants";
 import { fitSky } from "#src/services/genshinParity/sky/fitSky";
+import { getPixelSceneColor } from "#src/services/genshinParity/sky/getPixelSceneColor";
 import { readCloudSky } from "#src/services/genshinParity/sky/readCloudSky";
-import { toLinear } from "#src/services/shared/toLinear";
+import { toDisplayHex } from "#src/services/genshinParity/sky/toDisplayHex";
 import { withFinalizerAsync } from "@esposter/shared";
-import { toneMapNeutral, toSceneColor } from "genshin-engine";
+import { toneMapNeutral } from "genshin-engine";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -48,20 +49,6 @@ const toShape = ([
 });
 const SHAPE_STEPS = [0.3, 0.1, 0.15, 0.5, 2];
 const SHAPE_ITERATIONS = 80;
-// A pixel of raw sRGB bytes as the scene colour the tone mapping shows as it
-const computeSceneColor = (buffer: Buffer, pixel: number): Vector => {
-  const scene = toSceneColor(
-    new Color(
-      toLinear((buffer[pixel * 3] ?? 0) / 255),
-      toLinear((buffer[pixel * 3 + 1] ?? 0) / 255),
-      toLinear((buffer[pixel * 3 + 2] ?? 0) / 255),
-    ),
-  );
-  return [scene.r, scene.g, scene.b];
-};
-// A solved scene colour as the display colour a sky state holds it as, which the scene inverts back on applying it
-const toDisplayHex = ([red, green, blue]: Vector): string =>
-  `#${new Color(...toneMapNeutral([red, green, blue])).getHexString()}`;
 // A reference's sky solved as the game's sky shader draws it, the way `calibrate` solves the light: its pixels where
 // The witness draws no part, the ray looks up and no cloud stands (`readCloudSky`, the clear sky fitted under its
 // Clouds, so a sky more cloud than clear is not solved as their mean), each turned into its ray through the scene's
@@ -84,8 +71,8 @@ export const solveReferenceSky = async (
   const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
-      const { getLuminance, readClouds, skyMask, width } = await readCloudSky(page, { checkIsScored, height });
-      const clouds = readClouds(await getLuminance(image));
+      const { computeClouds, readLuminance, skyMask, width } = await readCloudSky(page, { checkIsScored, height });
+      const clouds = computeClouds(await readLuminance(image));
       const sky = await page.evaluate(() =>
         (
           Reflect.get(window, "getSceneSky") as () => {
@@ -115,7 +102,7 @@ export const solveReferenceSky = async (
             .transformDirection(world)
             .normalize();
           if (direction.y < MIN_SKY_HEIGHT) continue;
-          pixels.push({ color: computeSceneColor(data, pixel), direction: direction.toArray(), pixel });
+          pixels.push({ color: getPixelSceneColor(data, pixel), direction: direction.toArray(), pixel });
         }
       const { gradient } = await readWorldData<{ gradient: { green: number[]; red: number[] } }>(`${witness}/sky.json`);
       const solveAt = (shape: SkyShape) =>
@@ -142,12 +129,11 @@ export const solveReferenceSky = async (
             weights.reduce((sum, weight, term) => sum + weight * (colors[term]?.[channel] ?? 0), 0),
           ) as Vector,
         );
-        const display = new Color(red, green, blue);
+        const { b, g, r } = new Color(red, green, blue).convertLinearToSRGB();
         const [x, y] = [pixel % width, Math.floor(pixel / width)];
         for (let row = y; row < Math.min(y + SAMPLE_STRIDE, height); row++)
           for (let column = x; column < Math.min(x + SAMPLE_STRIDE, width); column++) {
             const target = (row * width + column) * 3;
-            const { b, g, r } = display.clone().convertLinearToSRGB();
             modelled[target] = Math.round(Math.min(Math.max(r, 0), 1) * 255);
             modelled[target + 1] = Math.round(Math.min(Math.max(g, 0), 1) * 255);
             modelled[target + 2] = Math.round(Math.min(Math.max(b, 0), 1) * 255);
@@ -170,7 +156,7 @@ export const solveReferenceSky = async (
       const means: Record<"ours" | "reference", Vector> = { ours: [0, 0, 0], reference: [0, 0, 0] };
       let drawnError = 0;
       for (const { color, pixel } of pixels) {
-        const ours = computeSceneColor(ourShot, pixel);
+        const ours = getPixelSceneColor(ourShot, pixel);
         for (const channel of [0, 1, 2] as const) {
           means.ours[channel] += ours[channel] / pixels.length;
           means.reference[channel] += color[channel] / pixels.length;
