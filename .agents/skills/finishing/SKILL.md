@@ -10,17 +10,17 @@ Working is not finished. This page answers one question: **what this change owes
 ## Settled — do not re-propose
 
 - **Gating the audit on the change being finished.** It is asked most often mid-change, as a reminder; a row the window cannot answer yet is `not yet`, and refusing the whole table over it would make the one moment it is most useful the one moment it does nothing.
-- **A third lane inside `code-review`.** The review lanes settle code by reading it; most rows here have no diff to read at all — an unwritten test, an unswept ledger row, a diagram nobody updated — and folding them in would give the review skill a second topic, which is a split rather than a lane (`skill-authoring`, `references/splitting-a-skill.md`).
-- **Restating a row's rule here.** Every row is a pointer by construction; the moment one explains its owner's rule there are two copies of it, and this is the page that goes stale first (`skill-authoring`, `references/one-owner-per-topic.md`).
+- **A third lane inside `code-review`.** The review lanes settle code by reading it; most rows here have no diff to read at all — an unwritten test, an unswept ledger row, a diagram nobody updated — and folding them in would give the review skill a second topic, which is a split rather than a lane (the `skill-authoring` skill, `references/splitting-a-skill.md`).
+- **Restating a row's rule here.** Every row is a pointer by construction; the moment one explains its owner's rule there are two copies of it, and this is the page that goes stale first (the `skill-authoring` skill, `references/one-owner-per-topic.md`).
 - **A row for the checks.** The touched tests are mechanical, run once after all the edits going out together, and the rest are CI's — all of it owned by `running-checks`, so an audit row for them would be a second place to forget them.
 
 ## When it runs
 
-The order of the ritual, and the commit and push that close it, are `CLAUDE.md`'s "Finishing a change". This is the audit inside its review, test and docs steps — the ones before the tests.
+The order of the ritual, and the commit and push that close it, are `AGENTS.md`'s "Finishing a change". This is the audit inside its review, test and docs steps — the ones before the tests.
 
 **It runs at any point, and it is a reminder before it is a gate.** Asked mid-change it reports what is owed so far and marks the rows the window cannot answer yet as `not yet` — never a refusal to run, and never a demand that the change be finished first. Asked at the end it is the same table with every row answered. Run it unprompted at the end of a change; run it on request whenever.
 
-**Scope the audit to the same window a review would take** (`code-review`, `references/diff-window.md`). A row is asked of that window, never of the repository.
+**Scope the audit to the same window a review would take** (the `code-review` skill, `references/diff-window.md`). A row is asked of that window, never of the repository.
 
 ## The audit
 
@@ -42,7 +42,7 @@ The order of the ritual, and the commit and push that close it, are `CLAUDE.md`'
 | **A decision the change made and left unwritten**                      | a larger part it knowingly left out, or an idea it declined, that the next pass would find as a gap  | `docs`, `building-proposals`                    |
 | **A finding the change did not fix**                                   | whether a review finding it declined or deferred has a home the next session will read               | `code-review`                                   |
 
-A behaviour change and a diagram have no name to grep and are missed for it: the stale sentence fails nothing and is found from the code instead (`CLAUDE.md`, "Finishing a change", the docs step), and a diagram's edge labels are read by no sweep (`docs`, `references/diagrams.md`). Both rows are only the reminder to run their owner's lookup.
+A behaviour change and a diagram have no name to grep and are missed for it: the stale sentence fails nothing and is found from the code instead (`AGENTS.md`, "Finishing a change", the docs step), and a diagram's edge labels are read by no sweep (the `docs` skill, `references/diagrams.md`). Both rows are only the reminder to run their owner's lookup.
 
 ## Report every row, including the empty ones
 
