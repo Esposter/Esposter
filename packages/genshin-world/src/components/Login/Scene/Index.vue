@@ -293,6 +293,9 @@ onRender(({ delta: frameDelta }) => {
   const delta = witness?.isClockHeld.value ? 0 : frameDelta;
   if (heldScrolled === undefined) glide = advanceLoginGlide(glide, stage, delta);
   const { scrolled, stopAt = scrolled } = glide;
+  // Read once a frame, where every walkway piece would otherwise ask again
+  const isDoorDue = checkIsDoorDue();
+  const walkwayScrolled = scrolled % LOGIN_WALKWAY_ROW.length;
   const [rowX, rowY, rowZ] = LOGIN_TOWERS_ROW_OFFSET;
   towers.position.set(rowX, rowY, rowZ - (scrolled % LOGIN_TOWERS_ROW.length));
   doorAhead.value = stopAt - scrolled;
@@ -307,10 +310,10 @@ onRender(({ delta: frameDelta }) => {
     if (group.name === LoginPartFamily.Towers || group.name === LoginPartFamily.Bridges)
       group.position.add(towers.position);
     else if (group.name === LoginPartFamily.Walkway) {
-      group.position.z -= scrolled % LOGIN_WALKWAY_ROW.length;
+      group.position.z -= walkwayScrolled;
       sinkLoginWitnessWalkway(group, walkwayPieces, {
         cameraZ: cameraZ.value,
-        doorAheadOfCamera: checkIsDoorDue() ? doorAheadOfCamera : undefined,
+        doorAheadOfCamera: isDoorDue ? doorAheadOfCamera : undefined,
       });
     } else if (group.name === LoginPartFamily.Door) {
       group.position.y += doorPosition.value[1] - LOGIN_DOOR_POSITION[1];
@@ -318,16 +321,13 @@ onRender(({ delta: frameDelta }) => {
       group.visible = isDoorRising.value && (witness?.families.value.includes(group.name) ?? false);
     }
   }
-  walkway.position.z = -(scrolled % LOGIN_WALKWAY_ROW.length);
+  walkway.position.z = -walkwayScrolled;
   for (const { copy, depth, instanceId, seed } of walkwayInstances) {
     const z = copy * LOGIN_WALKWAY_ROW.length;
     const ahead = walkway.position.z + z + depth - cameraZ.value;
     const sink = readLoginWalkwaySink(ahead, seed);
     // A piece stands only once it has begun to rise, so neither it nor its shadow shows before its turn
-    walkway.setVisibleAt(
-      instanceId,
-      sink < LOGIN_WALKWAY_RISE_DEPTH && (!checkIsDoorDue() || ahead < doorAheadOfCamera),
-    );
+    walkway.setVisibleAt(instanceId, sink < LOGIN_WALKWAY_RISE_DEPTH && (!isDoorDue || ahead < doorAheadOfCamera));
     walkway.setMatrixAt(instanceId, walkwayMatrix.makeTranslation(0, -sink, z));
   }
   cloudSeaScrolled.value = scrolled;
@@ -341,7 +341,7 @@ onRender(({ delta: frameDelta }) => {
     : (LoginSkyStateMap[timeOfDay].fogDensity ?? LOGIN_FOG_DENSITY);
   doorGlow.value = isDoorLit ? Math.min(doorGlow.value + (delta * 1000) / LOGIN_DOOR_LIGHT_MS, 1) : 0;
   rushMs.value = isDoorLit ? rushMs.value + delta * 1000 : 0;
-  isDoorRising.value = checkIsDoorDue() && (isDoorRising.value || doorAheadOfCamera <= LOGIN_WALKWAY_SUNK_DISTANCE);
+  isDoorRising.value = isDoorDue && (isDoorRising.value || doorAheadOfCamera <= LOGIN_WALKWAY_SUNK_DISTANCE);
   riseMs.value = isDoorRising.value ? riseMs.value + delta * 1000 : 0;
   // The door's own interface waits on the door, once it has risen into place
   if (!isDoorFormed && isDoorRising.value && riseMs.value >= doorRiseMs) {
@@ -349,8 +349,7 @@ onRender(({ delta: frameDelta }) => {
     emit("doorFormed");
   }
   renderedFrameCount++;
-  if (isReadyEmitted || renderedFrameCount < READY_FRAME_COUNT || (checkIsDoorDue() && riseMs.value < doorRiseMs))
-    return;
+  if (isReadyEmitted || renderedFrameCount < READY_FRAME_COUNT || (isDoorDue && riseMs.value < doorRiseMs)) return;
   isReadyEmitted = true;
   emit("ready");
 });
