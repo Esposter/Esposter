@@ -1,3 +1,4 @@
+import { readMean } from "#src/services/genshinAssets/readMean";
 import { findSmallestEigenvector } from "#src/services/genshinParity/findSmallestEigenvector";
 import { projectWitnessPoint } from "#src/services/genshinParity/projectWitnessPoint";
 import { solveLinearSystem } from "#src/services/genshinParity/solveLinearSystem";
@@ -14,23 +15,22 @@ const JACOBIAN_STEPS = [1e-4, 1e-4, 1e-4, 1e-4, 1e-4, 1e-4];
 const CONVERGED_STEP = 1e-9;
 const INITIAL_DAMPING = 1e-3;
 const DAMPING_FACTOR = 10;
-const mean = (values: readonly number[]): number => values.reduce((sum, value) => sum + value, 0) / values.length;
 const readCost = (residuals: readonly number[]): number => residuals.reduce((sum, value) => sum + value ** 2, 0);
 // The projection from six or more correspondences in closed form, as the pose it holds: the null vector of the direct
 // Linear transform's system over conditioned coordinates gives the three by four projection, whose left three columns'
 // Inverse times the fourth places the eye, whose third row faces the view, and whose second row's height over it is the
 // Focal length in pixels
 const readLinearPose = (correspondences: readonly { pixel: Pixel; point: Point }[], height: number): number[] => {
-  const pointCentre = [0, 1, 2].map((axis) => mean(correspondences.map(({ point }) => point[axis] ?? 0)));
-  const pixelCentre = [0, 1].map((axis) => mean(correspondences.map(({ pixel }) => pixel[axis] ?? 0)));
+  const pointCentre = [0, 1, 2].map((axis) => readMean(correspondences.map(({ point }) => point[axis] ?? 0)));
+  const pixelCentre = [0, 1].map((axis) => readMean(correspondences.map(({ pixel }) => pixel[axis] ?? 0)));
   const pointScale =
     Math.sqrt(3) /
-    mean(
+    readMean(
       correspondences.map(({ point }) => Math.hypot(...point.map((value, axis) => value - (pointCentre[axis] ?? 0)))),
     );
   const pixelScale =
     Math.SQRT2 /
-    mean(
+    readMean(
       correspondences.map(({ pixel }) => Math.hypot(...pixel.map((value, axis) => value - (pixelCentre[axis] ?? 0)))),
     );
   const rows = correspondences.flatMap(({ pixel, point }) => {

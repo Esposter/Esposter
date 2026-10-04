@@ -13,6 +13,7 @@ import {
   LISTEN_BAND_CENTRES,
 } from "#src/services/genshinParity/constants";
 import { readBandBins } from "#src/services/genshinParity/readBandBins";
+import { readFrameSeconds } from "#src/services/genshinParity/readFrameSeconds";
 
 const sum = (values: Iterable<number>): number => {
   let total = 0;
@@ -30,7 +31,7 @@ export const characterizeMusicBands = (
   notes: MusicNote[],
 ): MusicBandCharacter[] => {
   const spectrogram = computeSpectrogram(samples, sampleRate, CHROMA_FRAME_LENGTH, CHROMA_HOP_LENGTH);
-  const { binCount, frameCount, frameLength, hopLength, magnitudes } = spectrogram;
+  const { binCount, frameCount, frameLength, magnitudes } = spectrogram;
   const binWidth = sampleRate / frameLength;
   const { loudness } = computeChroma(samples, sampleRate);
   const quiet = Math.max(...loudness) * CHROMA_QUIET_SHARE;
@@ -46,7 +47,7 @@ export const characterizeMusicBands = (
   // Each loud frame's bins a partial holds of a note sounding at its centre
   const partialMasks = new Map(
     loudFrames.map((frame) => {
-      const seconds = (frame * hopLength + frameLength / 2) / sampleRate;
+      const seconds = readFrameSeconds(frame, sampleRate);
       const mask = new Uint8Array(binCount);
       for (const { duration, pitch, start } of notes)
         if (start <= seconds && start + duration > seconds)

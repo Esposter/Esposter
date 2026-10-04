@@ -131,6 +131,14 @@ export const LISTEN_FLOOR_DECIBELS = 60;
 export const LOGIN_MUSIC_SCREEN = "LoginMusic";
 // A frame whose whole power rises by half again over the last is a note's attack, where `bands` weighs a band's power
 export const BANDS_ONSET_RISE = 1.5;
+// The ages in seconds since the last note began that `decay` reads a band's gap between: the attack, its first
+// Decay, the note held, and the ring after it
+export const DECAY_AGE_BOUNDS: number[] = [
+  { milliseconds: 100 },
+  { milliseconds: 250 },
+  { milliseconds: 500 },
+  { seconds: 1 },
+].map((bound) => Temporal.Duration.from(bound).total("seconds"));
 // The committed report of each music segment's last `listen`
 export const PARITY_MUSIC_SCORES_PATH: string = join(
   REPOSITORY_ROOT,

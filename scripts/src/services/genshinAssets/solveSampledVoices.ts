@@ -13,7 +13,10 @@ import { computeChroma } from "#src/services/genshinParity/computeChroma";
 import { readAudibleFrames } from "#src/services/genshinParity/readAudibleFrames";
 import { readBandEnergies } from "#src/services/genshinParity/readBandEnergies";
 import { readBandFloor } from "#src/services/genshinParity/readBandFloor";
+import { readFrameSeconds } from "#src/services/genshinParity/readFrameSeconds";
+import { readGapsByOnsetAge } from "#src/services/genshinParity/readGapsByOnsetAge";
 import { scoreMusicSegment } from "#src/services/genshinParity/scoreMusicSegment";
+import { scoreShapedMusic } from "#src/services/genshinParity/scoreShapedMusic";
 import { AUDIO_SAMPLE_RATE } from "pitch-transcription";
 
 // Every combination of one candidate per voice, from `[]` up
@@ -33,7 +36,9 @@ const readDot = (first: Float64Array, second: Float64Array): number =>
 // Frames the score reads, each scaled by its power. For every combination of one candidate a voice, the powers come in
 // Closed form from least squares in each band's share of the game's energy, which weighs a quiet frame as a loud one as
 // The score's decibels do; the best combinations by that residual are refined against the score's band distance
-// (`refineVoicePowers`), and each one's mix is scored whole and ranked by its distance
+// (`refineVoicePowers`), and each one's mix is scored whole, as it stands and once its expression follows the game's
+// With a bus equaliser over it (`scoreShapedMusic`), with its gaps by the time since a note began. The mixes are
+// Ranked by the equaliser's distance held out across time, which an equaliser bent to one stretch's frames cannot win
 export const solveSampledVoices = async (
   catalogue: CataloguedInstrument[],
   voiceNotesList: NoteEventTime[][],
@@ -42,6 +47,8 @@ export const solveSampledVoices = async (
   game: Float32Array,
 ): Promise<SampledVoiceSolution[]> => {
   const frames = readAudibleFrames(computeChroma(game, AUDIO_SAMPLE_RATE).loudness);
+  const frameTimes = frames.map((frame) => readFrameSeconds(frame, AUDIO_SAMPLE_RATE));
+  const onsets = voiceNotesList.flat().map(({ startTimeSeconds }) => startTimeSeconds);
   const gameBands = readBandEnergies(game, AUDIO_SAMPLE_RATE);
   const floors = gameBands.map((energies) => readBandFloor(energies));
   const readFrameEnergies = (bands: Float64Array[]): Float64Array =>
@@ -133,8 +140,14 @@ export const solveSampledVoices = async (
       for (const [voice, { rendered }] of candidates.entries())
         for (const [index, sample] of rendered.entries())
           mix[index] = (mix[index] ?? 0) + (levels[voice] ?? 0) * sample;
-      const score = scoreMusicSegment(mix, game, AUDIO_SAMPLE_RATE);
-      return { instruments: candidates.map(({ instrument }) => instrument), levels, score };
+      const shaped = scoreShapedMusic(mix, game, AUDIO_SAMPLE_RATE, frames);
+      return {
+        instruments: candidates.map(({ instrument }) => instrument),
+        levels,
+        onsetAgeGaps: readGapsByOnsetAge(shaped.bandLevelsList, frameTimes, onsets),
+        score: scoreMusicSegment(mix, game, AUDIO_SAMPLE_RATE),
+        shaped,
+      };
     })
-    .toSorted((first, second) => first.score.distance - second.score.distance);
+    .toSorted((first, second) => first.shaped.equalizer.heldOutDistance - second.shaped.equalizer.heldOutDistance);
 };
