@@ -19,7 +19,7 @@ export const walkAssetClosure = (
   roots: readonly AssetRoot[],
   cabMap: ReadonlyMap<string, CabEntry>,
 ): { assets: ResolvedObject[]; objects: SceneObject[]; unresolved: string[] } => {
-  const childrenMap = groupSceneChildren(objects);
+  const parentKeyChildrenMap = groupSceneChildren(objects);
   const reached: SceneObject[] = [];
   const assetMap = new Map<string, ResolvedObject>();
   const unresolved: string[] = [];
@@ -34,7 +34,7 @@ export const walkAssetClosure = (
       if (resolved) assetMap.set(toObjectKey(resolved.file, resolved.pathId), resolved);
       else unresolved.push(`${object.name}: file ${pointer.fileIndex} of ${object.file}, path ID ${pointer.pathId}`);
     }
-    const children = childrenMap.get(toObjectKey(object.file, object.transformId)) ?? [];
+    const children = parentKeyChildrenMap.get(toObjectKey(object.file, object.transformId)) ?? [];
     if (children.length < object.childIds.length)
       unresolved.push(
         `${object.name}: ${object.childIds.length - children.length} of its children in ${object.file} not dumped`,

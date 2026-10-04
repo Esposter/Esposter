@@ -8,10 +8,9 @@ export type SerializedField = (
       colorKeys: { color: [number, number, number]; time: number }[];
       kind: SerializedFieldKind.Gradient;
     }
-  | { color: Color; kind: SerializedFieldKind.Color }
+  | { color: [number, number, number, number]; kind: SerializedFieldKind.Color }
   | { elements: SerializedField[]; kind: SerializedFieldKind.Array }
   | { keys: { inSlope: number; outSlope: number; time: number; value: number }[]; kind: SerializedFieldKind.Curve }
   | { kind: SerializedFieldKind.Float | SerializedFieldKind.Integer; value: number }
   | { kind: SerializedFieldKind.Pointer; pointer: ObjectPointer }
 ) & { offset: number };
-type Color = [number, number, number, number];

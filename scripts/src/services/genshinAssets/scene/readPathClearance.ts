@@ -1,3 +1,4 @@
+import type { PiercedPart } from "#src/models/genshinAssets/scene/PiercedPart";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { SceneLayout } from "genshin-engine";
 
@@ -19,12 +20,12 @@ const PATH_START = 100_000;
 export const readPathClearance = async (
   component: DerivedAssetComponent,
   [x, y]: readonly [number, number],
-): Promise<{ depths: number[]; mesh: string; position: [number, number, number] }[]> => {
+): Promise<PiercedPart[]> => {
   const directory = getComponentDirectory(component);
   const layout = jsonDateParse<SceneLayout>(await readFile(join(directory.root, "witness.json"), "utf8"));
   const ray = new Ray(new Vector3(x, y, -PATH_START), new Vector3(0, 0, 1));
   const hit = new Vector3();
-  const pierced: { depths: number[]; mesh: string; position: [number, number, number] }[] = [];
+  const pierced: PiercedPart[] = [];
   for (const { mesh, position, rotation, scale } of layout.placements) {
     const path = join(directory.assets, "Mesh", `${mesh}.obj`);
     if (!existsSync(path)) continue;

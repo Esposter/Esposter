@@ -1,7 +1,9 @@
 import type { StreamedKey } from "#src/models/genshinAssets/interface/StreamedKey";
 
-const FLOATS_PER_KEY = 5;
+import { getOrCreate } from "@esposter/shared";
 
+const FLOATS_PER_KEY = 5;
+// A streamed clip's keys by the curve each drives, read off its exported words (`StreamedKey`)
 export const parseStreamedClipKeys = (words: readonly number[]): Map<number, StreamedKey[]> => {
   const view = new DataView(Uint32Array.from(words).buffer);
   const getFloat = (index: number): number => view.getFloat32(index * 4, true);
@@ -20,9 +22,7 @@ export const parseStreamedClipKeys = (words: readonly number[]): Map<number, Str
         getFloat(index + 3),
         getFloat(index + 4),
       ];
-      const keys = curveKeysMap.get(curve);
-      if (keys) keys.push({ coefficients, time });
-      else curveKeysMap.set(curve, [{ coefficients, time }]);
+      getOrCreate(curveKeysMap, curve, () => []).push({ coefficients, time });
       index += FLOATS_PER_KEY;
     }
   }

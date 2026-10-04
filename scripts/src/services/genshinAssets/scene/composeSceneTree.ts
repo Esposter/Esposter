@@ -7,6 +7,7 @@ import { composeWorldMatrices } from "#src/services/genshinAssets/shared/compose
 import { ROOT_PARENT_ID } from "#src/services/genshinAssets/shared/constants";
 import { groupSceneChildren } from "#src/services/genshinAssets/shared/groupSceneChildren";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
+import { getOrCreate } from "@esposter/shared";
 import { Quaternion, Vector3 } from "three";
 
 // A scene's hierarchy as the dumps hold it, from every root and every object whose father no dump holds, each node
@@ -19,15 +20,15 @@ export const composeSceneTree = (
   const keyObjectMap = new Map(objects.map((object) => [toObjectKey(object.file, object.transformId), object]));
   const checkHasFather = ({ parentFile, parentId }: SceneObject): boolean =>
     keyObjectMap.has(toObjectKey(parentFile, parentId));
-  const childrenMap = groupSceneChildren(objects);
+  const parentKeyChildrenMap = groupSceneChildren(objects);
   const keyWorldMatrixMap = composeWorldMatrices(objects);
   const meshTopsMap = new Map<string, Set<string>>();
   const toNode = (object: SceneObject, top: SceneObject, visitedKeys: ReadonlySet<string>): SceneTreeNode => {
     const key = toObjectKey(object.file, object.transformId);
     const mesh = gameObjectDrawingMap.get(toObjectKey(object.file, object.gameObjectId))?.mesh ?? "";
-    if (mesh) meshTopsMap.set(mesh, (meshTopsMap.get(mesh) ?? new Set()).add(toObjectKey(top.file, top.transformId)));
+    if (mesh) getOrCreate(meshTopsMap, mesh, () => new Set()).add(toObjectKey(top.file, top.transformId));
     const nextVisitedKeys = new Set([...visitedKeys, key]);
-    const children = (childrenMap.get(key) ?? [])
+    const children = (parentKeyChildrenMap.get(key) ?? [])
       .filter(({ file, transformId }) => !nextVisitedKeys.has(toObjectKey(file, transformId)))
       .map((child) => toNode(child, top, nextVisitedKeys));
     const flags: SceneTreeFlag[] = [];

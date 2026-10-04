@@ -1,3 +1,4 @@
+import type { DecodedClip } from "#src/models/genshinAssets/shared/DecodedClip";
 import type { DecodedCurve } from "#src/models/genshinAssets/shared/DecodedCurve";
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
@@ -18,7 +19,7 @@ const toProperty = ({ component, property }: DecodedCurve): string => {
 // For each curve that sets an interface piece its tree names (a path, not a hash) in a property the screen draws,
 // Its keyframes simplified to where the curve bends, each an offset through the clip and a value
 export const fitInterfaceClips = (
-  clips: readonly { curves: DecodedCurve[]; duration: number; name: string }[],
+  clips: readonly DecodedClip[],
 ): Record<
   string,
   { durationMs: number; tracks: { keyframes: [number, number][]; property: string; target: string }[] }
