@@ -1,5 +1,4 @@
 import type { LatheStackOptions } from "#src/kits/architecture/LatheStackOptions";
-
 import type { BufferGeometry } from "three";
 
 import { mergeGeometryParts } from "#src/kits/mergeGeometryParts";
