@@ -7,28 +7,51 @@ import { defineCommand } from "citty";
 
 export const coverCommand: SubCommandsDef[string] = defineCommand({
   args: {
-    reference: { description: "A reference's id in ParityReferenceMap", required: true, type: "positional" },
+    heights: {
+      description: "Also solve the heights each band's clouds stand between, one scene's for every reference given",
+      type: "boolean",
+    },
+    reference: {
+      description: "References' ids in ParityReferenceMap, separated by commas",
+      required: true,
+      type: "positional",
+    },
+    rounds: {
+      default: "2",
+      description: "How many times the heights and the shares are solved by turns",
+      type: "string",
+    },
     witness: { description: "The component whose exports mark the sky's pixels", required: true, type: "string" },
   },
   meta: {
     description:
-      "The share of each cloud band the scene should draw at the reference's hour, solved on the sky's cover band by band of its height over the horizon",
+      "The share of each cloud band the scene should draw at each reference's hour, and with --heights the heights each band stands between, solved on the sky's cover band by band of its height over the horizon",
     name: "cover",
   },
   run: async ({ args }) => {
-    const { covers, ours, reference, residual } = await solveReferenceCloudCover(
-      args.reference,
+    const { heights, references, residual } = await solveReferenceCloudCover(
+      args.reference.split(",").filter(Boolean),
       parseDerivedAssetComponent(args.witness),
+      { isHeightSolved: args.heights, roundCount: Number(args.rounds) },
     );
-    console.log(
-      Object.entries(covers)
-        .map(([band, cover]) => `${band} ${cover.toFixed(2)}`)
-        .join(", "),
-    );
-    for (const [band, top] of CLOUD_ELEVATION_BANDS.slice(1).entries())
+    if (args.heights)
       console.log(
-        `${CLOUD_ELEVATION_BANDS[band]} to ${top} degrees: ${((ours[band] ?? 0) * 100).toFixed(1)}% against ${((reference[band] ?? 0) * 100).toFixed(1)}%`,
+        `heights: ${Object.entries(heights)
+          .map(([band, [low, high]]) => `${band} ${low.toFixed(1)} to ${high.toFixed(1)} m`)
+          .join(", ")}`,
       );
-    console.log(`residual ${residual.toFixed(3)} of the sky's cover`);
+    for (const { covers, ours, reference, referenceId, residual: referenceResidual } of references) {
+      console.log(
+        `${referenceId}: ${Object.entries(covers)
+          .map(([band, cover]) => `${band} ${cover.toFixed(2)}`)
+          .join(", ")}`,
+      );
+      for (const [band, top] of CLOUD_ELEVATION_BANDS.slice(1).entries())
+        console.log(
+          `  ${CLOUD_ELEVATION_BANDS[band]} to ${top} degrees: ${((ours[band] ?? 0) * 100).toFixed(1)}% against ${((reference[band] ?? 0) * 100).toFixed(1)}%`,
+        );
+      console.log(`  residual ${referenceResidual.toFixed(3)} of the sky's cover`);
+    }
+    console.log(`residual ${residual.toFixed(3)} of the sky's cover over every reference`);
   },
 });

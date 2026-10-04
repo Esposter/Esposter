@@ -3,6 +3,7 @@ import type { SubCommandsDef } from "citty";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/DerivedAssetComponent";
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/parseDerivedAssetComponent";
 import { writeWitnessLayout } from "#src/services/genshinAssets/writeWitnessLayout";
+import { parseNames } from "#src/services/shared/parseNames";
 import { defineCommand } from "citty";
 
 export const witnessCommand: SubCommandsDef[string] = defineCommand({
@@ -19,10 +20,7 @@ export const witnessCommand: SubCommandsDef[string] = defineCommand({
     name: "witness",
   },
   run: async ({ args }) => {
-    const roots = args.roots
-      ?.split(",")
-      .map((root) => root.trim())
-      .filter(Boolean);
+    const roots = args.roots === undefined ? undefined : parseNames(args.roots, "roots");
     console.log(await writeWitnessLayout(parseDerivedAssetComponent(args.component), roots));
   },
 });
