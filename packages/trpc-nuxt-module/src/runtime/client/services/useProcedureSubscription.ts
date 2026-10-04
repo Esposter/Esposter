@@ -73,7 +73,10 @@ export const useProcedureSubscription = (
       },
       { immediate: true },
     );
-  if (getCurrentScope()) onScopeDispose(unsubscribe);
+  if (getCurrentScope())
+    onScopeDispose(() => {
+      unsubscribe();
+    });
   return {
     data,
     error,
