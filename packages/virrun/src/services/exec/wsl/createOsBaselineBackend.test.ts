@@ -34,7 +34,9 @@ export const createOsBaselineBackend = (): ExecBackend => {
         child.stderr?.on("data", (chunk) => {
           stderr += chunk.toString();
         });
-        child.on("error", reject);
+        child.on("error", (error) => {
+          reject(error);
+        });
         child.on("close", (code, signal) => {
           resolve({ exitCode: toExitCode(code, signal), stderr, stdout });
         });

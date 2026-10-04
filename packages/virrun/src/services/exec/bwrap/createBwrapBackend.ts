@@ -55,7 +55,9 @@ export const createBwrapBackend = (
       child.stdio[3]?.on("data", (chunk) => {
         status += chunk.toString();
       });
-      child.on("error", reject);
+      child.on("error", (error) => {
+        reject(error);
+      });
       child.on("close", (closeCode, closeSignal) => {
         const bwrapStderr =
           bwrapCommand.statusSource === BwrapStatusSource.Stderr ? parseBwrapStderrStatus(stderr) : { status, stderr };

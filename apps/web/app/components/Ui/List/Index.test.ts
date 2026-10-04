@@ -5,6 +5,7 @@ import UiAvatar from "@/components/Ui/Avatar.vue";
 import UiList from "@/components/Ui/List/Index.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
+import { sleep } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { assert, describe, expect, test } from "vitest";
@@ -277,9 +278,7 @@ describe("uiList", () => {
 
       expect(component.get("[aria-live]").text()).toBe("");
 
-      await new Promise((resolve) => {
-        setTimeout(resolve, 0);
-      });
+      await sleep(0);
 
       expect(component.get("[aria-live]").text()).toBe("Moved to position 2 of 3");
 

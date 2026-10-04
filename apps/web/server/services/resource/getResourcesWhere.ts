@@ -12,7 +12,7 @@ import {
   resourcePublicationsInResource,
   resourcesInResource,
 } from "@esposter/db-schema";
-import { and, eq, exists, gte, ilike, inArray, isNull, lte, notExists, or, sql } from "drizzle-orm";
+import { and, eq, exists, gte, ilike, inArray, isNotNull, isNull, lte, notExists, or, sql } from "drizzle-orm";
 
 export const getResourcesWhere = (
   db: Context["db"],
@@ -41,7 +41,7 @@ export const getResourcesWhere = (
   return and(
     eq(resourcesInResource.userId, userId),
     // Soft-deleted resources live on for the Recycle bin window, so every normal read excludes them
-    isDeletedOnly ? sql`${resourcesInResource.deletedAt} IS NOT NULL` : isNull(resourcesInResource.deletedAt),
+    isDeletedOnly ? isNotNull(resourcesInResource.deletedAt) : isNull(resourcesInResource.deletedAt),
     // Substring keeps exact matches that trigram similarity would miss on very short queries
     searchQuery
       ? or(
