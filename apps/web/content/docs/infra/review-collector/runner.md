@@ -91,7 +91,7 @@ Claude Code runs headless with permission prompts bypassed — the runner is eph
 | :-------------- | :---------------------------------------------------------------------------------- | :--------------------------------- | :------------------------------------------------------------------------------------ |
 | drain           | a finding is open                                                                   | per review, then held              | a clean exit over a clean tree                                                        |
 | replay resolver | a queue commit conflicts with the tree the window is built on, outside the lockfile | per commit                         | the sequence run to its end over a clean tree                                         |
-| reshaper        | the first owed commit alone exceeds the window's room beside the fixes              | per commit                         | the same tree as the original, no part naming its copies, every untrailered part fits |
+| reshaper        | the first owed commit adds more files than the window's room beside the fixes       | per commit                         | the same tree as the original, no part naming its copies, every untrailered part fits |
 | fold resolver   | `main` conflicts with the window, or with a reviewed release, outside the lockfile  | per `main` head                    | the merge committed over a clean tree                                                 |
 | repairer        | CI red on `main`'s head                                                             | per streak — attempts plus repairs | a trailered commit over a clean tree, then every check green                          |
 

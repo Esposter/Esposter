@@ -16,13 +16,13 @@ import { readFileCount } from "#src/services/coderabbit/collect/readFileCount";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readReshapeFailure } from "#src/services/coderabbit/collect/readReshapeFailure";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
-import { readWindowFileCount } from "#src/services/coderabbit/collect/readWindowFileCount";
+import { readWindowFilePaths } from "#src/services/coderabbit/collect/readWindowFilePaths";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 
-// The queue never holds on the cap: the first owed commit that alone changes more files than a window has room for
+// The queue never holds on the cap: the first owed commit that adds more files than a window has room for
 // Is repackaged here — by the drain's session, told what shape to leave and proved by the tree it left — into the
 // Parts that need no review, trailered for the express lane, and the parts that do, each within the room. One
 // Commit per run: the rewrite's push fires the next. Whether HEAD was rewritten is the answer; a failed attempt
@@ -43,10 +43,17 @@ export const reshapeQueue = async ({
   // The room is what the cap leaves beside the fixes and pending commits every window carries ahead of the queue:
   // A commit that fits the cap alone but not beside them is held behind every window a review's findings lead, and
   // The queue ships nothing but fixes. Fixes that fill the cap alone are the port's failure, not a shape to ask for
-  const roomFileCount = REVIEW_FILE_CAP - readWindowFileCount(mergeBaseSha, cwd, targetSha);
+  const windowPaths = new Set(readWindowFilePaths(mergeBaseSha, cwd, targetSha));
+  const roomFileCount = REVIEW_FILE_CAP - windowPaths.size;
   if (roomFileCount <= 0) return false;
+  // A file the window already counts costs a commit nothing, so only the files it adds are measured against the
+  // Room: the port counts the resulting window's distinct files, and would take a commit this would reshape
   const sha = owedShas.find(
-    (owedSha) => !claimedShas.has(owedSha) && readFileCount(`${owedSha}^..${owedSha}`, cwd) > roomFileCount,
+    (owedSha) =>
+      !claimedShas.has(owedSha) &&
+      getNonEmptyLines(runGit(["diff", "--name-only", `${owedSha}^..${owedSha}`], cwd)).filter(
+        (path) => !windowPaths.has(path),
+      ).length > roomFileCount,
   );
   if (sha === undefined) return false;
 
