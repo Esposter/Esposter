@@ -55,9 +55,9 @@ Only to answer a red: a session whose push turned a typecheck or lint job red, a
 job, or the repair's own session, runs that one check as CI runs it, to reproduce the red and prove the fix. The
 failed job's log (`gh run view <id> --log-failed`) names the package whose typecheck failed, the root's own
 included, and the reproduction is `pnpm typecheck` from that package rather than the whole repository; a lint red is
-reproduced by `pnpm lint:fix` from the repo root, the one scope matching CI's (the `package-scripts` skill's
-`references/check-suite.md`). A check that writes — `lint:fix`, `pnpm format` — owns the files
-it covers until its exit line, so nothing is edited under it meanwhile.
+reproduced by `pnpm lint:fix` from the repo root, the one scope matching CI's
+(the `package-scripts` skill's `references/check-suite.md`). A check that writes — `lint:fix`, `pnpm format` — owns
+the files it covers until its exit line, so nothing is edited under it meanwhile.
 
 ## Reading the result
 
