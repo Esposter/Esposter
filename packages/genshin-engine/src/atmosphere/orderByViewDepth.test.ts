@@ -39,4 +39,21 @@ describe(orderByViewDepth, () => {
 
     expect({ isReordered, order }).toStrictEqual({ isReordered: false, order: Uint32Array.of(0, 1) });
   });
+
+  test("orders places at one depth by their index", () => {
+    expect.hasAssertions();
+
+    const order = Uint32Array.of(1, 0);
+    const isReordered = orderByViewDepth(
+      [
+        [0, 0, 9],
+        [0, 8, 9],
+      ],
+      modelViewMatrix,
+      new Float64Array(2),
+      order,
+    );
+
+    expect({ isReordered, order }).toStrictEqual({ isReordered: true, order: Uint32Array.of(0, 1) });
+  });
 });
