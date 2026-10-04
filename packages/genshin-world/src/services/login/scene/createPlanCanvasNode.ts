@@ -1,11 +1,9 @@
 import type { SceneAxis } from "#src/models/scene/SceneAxis";
 import type { Node } from "three/webgpu";
 
-import { CanvasTexture, LinearFilter, LinearMipmapLinearFilter, NoColorSpace } from "three";
+import { createShadeCanvasTexture } from "#src/services/login/scene/createShadeCanvasTexture";
 import { normalGeometry, positionGeometry, step, texture, vec2 } from "three/tsl";
 
-// The most a texture is sampled along a grazing line of sight, which the walkway's far paving is seen along
-const PLAN_ANISOTROPY = 8;
 // A rectangle of a part's own geometry drawn once into a canvas, its first axis across the canvas and its second up it,
 // And read back where each vertex of the part stands in it: the walkway's tops over x and z, the door's front over x
 // And y. A face turned away from the axis the plan looks along (`normalAxis`) reads none of it, so a plan drawn on a
@@ -34,14 +32,9 @@ export const createPlanCanvasNode = (
       (first - cornerFirst) * pixelsPerMetre,
       (cornerSecond + sizeSecond - second) * pixelsPerMetre,
     ]);
-  const planTexture = new CanvasTexture(canvas);
-  planTexture.colorSpace = NoColorSpace;
-  planTexture.magFilter = LinearFilter;
-  planTexture.minFilter = LinearMipmapLinearFilter;
-  planTexture.anisotropy = PLAN_ANISOTROPY;
   return {
     sample: texture(
-      planTexture,
+      createShadeCanvasTexture(canvas),
       vec2(
         positionGeometry[firstAxis].sub(cornerFirst).div(sizeFirst),
         positionGeometry[secondAxis].sub(cornerSecond).div(sizeSecond),

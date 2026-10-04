@@ -2,6 +2,8 @@ import type { LoginTowerAtlas } from "#src/models/login/LoginTowerAtlas";
 import type { Node } from "three/webgpu";
 
 import towers from "#src/data/login/towers.json";
+import { createShadeCanvasTexture } from "#src/services/login/scene/createShadeCanvasTexture";
+import { getHalfShadeStyle } from "#src/services/login/scene/getHalfShadeStyle";
 import {
   LOGIN_FACADE_ATTRIBUTE,
   LOGIN_TOWER_FACADE_CONTRAST,
@@ -9,23 +11,12 @@ import {
   LOGIN_TOWER_FACADE_PIXELS_PER_UNIT,
   LOGIN_TOWER_RECESS_OCCLUSION,
 } from "#src/services/login/tower/constants";
-import { CanvasTexture, LinearFilter, LinearMipmapLinearFilter, NoColorSpace } from "three";
 import { attribute, texture } from "three/tsl";
 
-const MAX_ANISOTROPY = 8;
-const toTexture = (canvas: OffscreenCanvas): CanvasTexture<OffscreenCanvas> => {
-  const canvasTexture = new CanvasTexture(canvas);
-  canvasTexture.colorSpace = NoColorSpace;
-  canvasTexture.magFilter = LinearFilter;
-  canvasTexture.minFilter = LinearMipmapLinearFilter;
-  canvasTexture.anisotropy = MAX_ANISOTROPY;
-  return canvasTexture;
-};
-const toPercent = (share: number): string => `${Math.min(Math.max(share, 0), 1) * 100}%`;
 // The login towers' surfaces as `fitLoginTowerFacades` traced them, drawn once into two canvases the towers read where
 // Their geometry says each vertex stands (`createLoginTowersGeometry`): the shade over the towers' stone, each band's
 // Tone, its paint, its recesses and its gilding filled as its loops in its own shade, a recess darkened by the light its
-// Depth keeps out, at half since a canvas holds no more than 1 a channel; and a mask white where the tower stands solid
+// Depth keeps out (`getHalfShadeStyle`); and a mask white where the tower stands solid
 // And black where it stands open. Each tower is drawn clipped to its tile and its gutters, its loops once more a whole
 // Turn either side so the gutters carry its surface on round its axis. The gilding is drawn as the stone's colour, not
 // As metal: with no reflection of the sky to show it, a metal reads dark against the game's own exports at every hour.
@@ -39,7 +30,7 @@ export const createLoginTowerFacade = (
   const shadeContext = shadeCanvas.getContext("2d");
   const maskContext = maskCanvas.getContext("2d");
   if (shadeContext && maskContext) {
-    shadeContext.fillStyle = "rgb(50% 50% 50%)";
+    shadeContext.fillStyle = getHalfShadeStyle([1, 1, 1], LOGIN_TOWER_FACADE_CONTRAST);
     shadeContext.fillRect(0, 0, atlas.width, atlas.height);
     maskContext.fillStyle = "#fff";
     maskContext.fillRect(0, 0, atlas.width, atlas.height);
@@ -72,20 +63,19 @@ export const createLoginTowerFacade = (
       shadeContext.clip(clip);
       maskContext.save();
       maskContext.clip(clip);
-      const toShadeStyle = (shade: readonly number[]): string => {
-        const [red = 1, green = 1, blue = 1] = shade.map((channel) => 1 + LOGIN_TOWER_FACADE_CONTRAST * (channel - 1));
-        return `rgb(${toPercent(red / 2)} ${toPercent(green / 2)} ${toPercent(blue / 2)})`;
-      };
       for (const { from, shade, to } of bands) {
         const [, top] = toCanvas([0, to]);
         const [, foot] = toCanvas([0, from]);
-        shadeContext.fillStyle = toShadeStyle(shade);
+        shadeContext.fillStyle = getHalfShadeStyle(shade, LOGIN_TOWER_FACADE_CONTRAST);
         shadeContext.fillRect(left, top, paddedWidth, foot - top);
       }
       for (const { depth, loops, shade } of layers) {
         const path = toPath(loops);
         const occlusion = depth > 0 ? LOGIN_TOWER_RECESS_OCCLUSION ** depth : 1;
-        shadeContext.fillStyle = toShadeStyle(shade.map((channel) => channel * occlusion));
+        shadeContext.fillStyle = getHalfShadeStyle(
+          shade.map((channel) => channel * occlusion),
+          LOGIN_TOWER_FACADE_CONTRAST,
+        );
         // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
         shadeContext.fill(path, "evenodd");
       }
@@ -97,8 +87,8 @@ export const createLoginTowerFacade = (
     }
   }
   const facadeUv = attribute<"vec2">(LOGIN_FACADE_ATTRIBUTE);
-  const maskTexture = toTexture(maskCanvas);
-  const shadeTexture = toTexture(shadeCanvas);
+  const maskTexture = createShadeCanvasTexture(maskCanvas);
+  const shadeTexture = createShadeCanvasTexture(shadeCanvas);
   return {
     dispose: () => {
       maskTexture.dispose();
