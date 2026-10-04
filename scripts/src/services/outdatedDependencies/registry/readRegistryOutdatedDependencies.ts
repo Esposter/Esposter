@@ -3,6 +3,7 @@ import type { OutdatedDependency } from "#src/models/outdatedDependencies/shared
 import type { OutdatedDependencyCheck } from "#src/models/outdatedDependencies/shared/OutdatedDependencyCheck";
 import type { RegistryCheckError } from "#src/models/outdatedDependencies/shared/RegistryCheckError";
 
+import { getRegistryPackageName } from "#src/services/outdatedDependencies/getRegistryPackageName";
 import { getSpecifierBase } from "#src/services/outdatedDependencies/getSpecifierBase";
 import { getVersionChangeLevel } from "#src/services/outdatedDependencies/getVersionChangeLevel";
 import { checkIsVersionOutdated } from "#src/services/outdatedDependencies/registry/checkIsVersionOutdated";
@@ -31,11 +32,12 @@ export const readRegistryOutdatedDependencies = async (
       if (!entry) return;
       nextIndex += 1;
 
-      const { dependent: entryDependent, followTag, group, packageName, specifier } = entry;
+      const { dependent: entryDependent, followTag, group, packageName, resolved, specifier } = entry;
+      const registryPackageName = getRegistryPackageName(entry);
       // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: each pool worker takes the next package only after its request settles
-      await getResultAsync(() => readLatestVersion(packageName, followTag)).match(
+      await getResultAsync(() => readLatestVersion(registryPackageName, followTag)).match(
         (latest) => {
-          const current = getSpecifierBase(specifier);
+          const current = resolved ?? getSpecifierBase(specifier);
           const { dependencyType, dependent } = GroupMetadataMap[group];
           if (checkIsVersionOutdated(current, latest))
             outdatedDependencyMap.set(entry, {

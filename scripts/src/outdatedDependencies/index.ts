@@ -1,5 +1,7 @@
 import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
+import { getDistTagEntries } from "#src/services/outdatedDependencies/distTag/getDistTagEntries";
 import { getMismatches } from "#src/services/outdatedDependencies/getMismatches";
+import { getRegistryPackageName } from "#src/services/outdatedDependencies/getRegistryPackageName";
 import { getLockCatalogVersions } from "#src/services/outdatedDependencies/lock/getLockCatalogVersions";
 import { getLockConfigDependencyVersions } from "#src/services/outdatedDependencies/lock/getLockConfigDependencyVersions";
 import { getEngineEntries } from "#src/services/outdatedDependencies/manifest/getEngineEntries";
@@ -52,8 +54,9 @@ const engineEntries = getEngineEntries(manifests);
 const packageManagerEntries = getPackageManagerEntries(manifests);
 const manifestDependencies = getManifestDependencies(manifests);
 const uncatalogedManifestDependencies = getUncatalogedManifestDependencies(manifestDependencies, npmManifestPaths);
+const lockCatalogVersions = getLockCatalogVersions(lockYaml);
 const mismatches = [
-  ...getMismatches(catalogEntries, getLockCatalogVersions(lockYaml)),
+  ...getMismatches(catalogEntries, lockCatalogVersions),
   ...getMismatches(configDependencyEntries, getLockConfigDependencyVersions(lockYaml)),
   ...npmProjects.flatMap(({ entries, resolvedVersions }) => getMismatches(entries, resolvedVersions)),
 ];
@@ -62,10 +65,14 @@ printUncatalogedManifestDependencies(uncatalogedManifestDependencies, color);
 printMismatches(mismatches, color);
 
 const renovateRules = getRenovateRules(renovateJson);
-// `pnpm outdated` compares against `latest`, which is not what Renovate proposes for a package a rule follows a
-// Dist-tag for, so those catalog entries are asked of the registry under their tag instead.
-const followedTagEntries = getFollowedTagEntries(catalogEntries, renovateRules);
-const followedPackages = new Set(followedTagEntries.map(({ packageName }) => packageName));
+// `pnpm outdated` compares against `latest`, which is neither what Renovate proposes for a package a rule follows
+// A dist-tag for nor what a specifier naming a dist-tag installs, so those catalog entries are asked of the
+// Registry under their tag instead. pnpm reports an alias under its target's name, so that is the name skipped.
+const followedTagEntries = [
+  ...getFollowedTagEntries(catalogEntries, renovateRules),
+  ...getDistTagEntries(catalogEntries, lockCatalogVersions),
+];
+const followedPackages = new Set(followedTagEntries.map((entry) => getRegistryPackageName(entry)));
 const [regularChecks, registryChecks] = await Promise.all([
   getRegularOutdatedDependencies(REPOSITORY_ROOT),
   readRegistryOutdatedDependencies([

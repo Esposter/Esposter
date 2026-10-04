@@ -64,6 +64,29 @@ describe(readRegistryOutdatedDependencies, () => {
     ]);
   });
 
+  test("asks the registry for an alias's target and reads the current version off its resolution", async () => {
+    expect.hasAssertions();
+
+    const entries: DependencyEntry[] = [
+      { followTag: "a", group: DependencyGroup.Catalog, packageName: "a", resolved: "0.0.0", specifier: "npm:b@a" },
+    ];
+    vi.mocked(readLatestVersion).mockResolvedValue("0.0.1");
+
+    const { outdatedDependencies } = await readRegistryOutdatedDependencies(entries);
+
+    expect(readLatestVersion).toHaveBeenCalledWith("b", "a");
+    expect(outdatedDependencies).toStrictEqual([
+      {
+        current: "0.0.0",
+        dependencyType: "a",
+        dependents: ["catalog"],
+        latest: "0.0.1",
+        packageName: "a",
+        specifier: "npm:b@a",
+      },
+    ]);
+  });
+
   test("attributes an entry to its own dependent over the group's label", async () => {
     expect.hasAssertions();
 
