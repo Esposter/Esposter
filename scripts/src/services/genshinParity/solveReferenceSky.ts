@@ -7,8 +7,7 @@ import { fetchReferences } from "#src/services/genshinParity/fetchReferences";
 import { fitSky, readSkyWeights, SKY_TERMS } from "#src/services/genshinParity/fitSky";
 import { minimizeNelderMead } from "#src/services/genshinParity/minimizeNelderMead";
 import { openWitnessPage } from "#src/services/genshinParity/openWitnessPage";
-import { readWitnessPartTarget } from "#src/services/genshinParity/readWitnessPartTarget";
-import { setPageWitnessView } from "#src/services/genshinParity/setPageWitnessView";
+import { readCloudSky } from "#src/services/genshinParity/readCloudSky";
 import { withFinalizerAsync } from "@esposter/shared";
 import { toneMapNeutral, toSceneColor } from "genshin-engine";
 import { mkdir } from "node:fs/promises";
@@ -49,7 +48,8 @@ const toLinear = (value: number): number => (value <= 0.04045 ? value / 12.92 : 
 const toDisplayHex = ([red, green, blue]: Vector): string =>
   `#${new Color(...toneMapNeutral([red, green, blue])).getHexString()}`;
 // A reference's sky solved as the game's sky shader draws it, the way `calibrate` solves the light: its pixels where
-// The witness draws no part and the ray looks up, each turned into its ray through the scene's own camera and into
+// The witness draws no part, the ray looks up and no cloud stands (`readCloudSky`, the clear sky fitted under its
+// Clouds, so a sky more cloud than clear is not solved as their mean), each turned into its ray through the scene's own camera and into
 // Scene colour through the tone mapping's inverse, under the sun and moon the scene draws its sky with; the colours by
 // Least squares at each shape, the shape refined around them by the simplex. Prints the colours as the display colours
 // A sky state holds, and writes the reference beside the solved sky over the pixels read, to check
@@ -61,8 +61,8 @@ export const solveReferenceSky = async (
   const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
-      await setPageWitnessView(page, {});
-      const { part, width } = await readWitnessPartTarget(page);
+      const { readClouds, readLuminance, skyMask, width } = await readCloudSky(page, { checkIsScored, height });
+      const clouds = readClouds(await readLuminance(image));
       const sky = await page.evaluate(() =>
         (
           Reflect.get(window, "readSceneSky") as () => {
@@ -84,7 +84,7 @@ export const solveReferenceSky = async (
       for (let y = 0; y < height; y += SAMPLE_STRIDE)
         for (let x = 0; x < width; x += SAMPLE_STRIDE) {
           const pixel = y * width + x;
-          if (part[pixel * 4] || !checkIsScored(pixel, width)) continue;
+          if (!skyMask[pixel] || clouds[pixel]) continue;
           const view = new Vector4(((x + 0.5) / width) * 2 - 1, 1 - ((y + 0.5) / height) * 2, 0.5, 1).applyMatrix4(
             projectionInverse,
           );

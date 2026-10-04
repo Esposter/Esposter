@@ -1,5 +1,6 @@
 import type { Page } from "playwright";
 
+import { readOtsuThreshold } from "#src/services/genshinAssets/readOtsuThreshold";
 import { blurGrey } from "#src/services/genshinParity/blurGrey";
 import { CLOUD_ELEVATION_BANDS } from "#src/services/genshinParity/constants";
 import { fitClearSky } from "#src/services/genshinParity/fitClearSky";
@@ -8,7 +9,7 @@ import { setPageWitnessView } from "#src/services/genshinParity/setPageWitnessVi
 import sharp from "sharp";
 import { Matrix4, Vector3, Vector4 } from "three";
 
-// A cloud stands this many times as bright as its own sky's clear sky there, read over the sky blurred by this many
+// A cloud stands at least this many times as bright as its own sky's clear sky there, read over the sky blurred by this many
 // Pixels, past a recording's grain: a dark sky's compression noise steps its luminance by more than the ratio a pixel
 // At a time, and read unblurred it speckles a night's clear sky with cloud
 const CLOUD_RATIO = 1.15;
@@ -18,7 +19,7 @@ const LUMINANCE = [0.2126, 0.7152, 0.0722] as const;
 const toLinear = (value: number): number => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
 // The sky of a witness page as the cloud tools read it: the sky above the horizon where no part stands, each pixel's
 // Height over the horizon, an image's linear luminance there, and its clouds, a pixel standing brighter than its own
-// Sky's clear sky by the cloud's ratio, the clear sky a smooth surface fitted under its clouds (`fitClearSky`), in the
+// Sky's clear sky by Otsu's split of the sky or the cloud's ratio, whichever is more, the clear sky a smooth surface fitted under its clouds (`fitClearSky`), in the
 // Reference as in ours, so neither sky's colour nor its gradient toward its sun decides what is a cloud
 export const readCloudSky = async (
   page: Page,
@@ -54,11 +55,15 @@ export const readCloudSky = async (
     readClouds: (luminance) => {
       const blurred = blurGrey(luminance, width, height, CLASSIFY_BLUR_SIGMA);
       const clear = fitClearSky(blurred, skyMask, width, height, CLOUD_RATIO);
-      return Uint8Array.from(blurred, (value, pixel) =>
-        Number(
-          (skyMask[pixel] ?? 0) === 1 && Math.log(Math.max(value, Number.EPSILON)) - (clear[pixel] ?? 0) > logRatio,
-        ),
+      const overs = Float32Array.from(blurred, (value, pixel) =>
+        skyMask[pixel] ? Math.max(Math.log(Math.max(value, Number.EPSILON)) - (clear[pixel] ?? 0), 0) : 0,
       );
+      // The clear surface settles under a sky's own wisps and its glow toward the sun, which then stand past the ratio
+      // Over it, so the split is Otsu's between the sky's two populations wherever that lies past the ratio
+      const greatest = overs.reduce((most, over) => Math.max(most, over), Number.EPSILON);
+      const skyOvers = Array.from(overs.filter((_, pixel) => skyMask[pixel])).map((over) => (over / greatest) * BYTE);
+      const threshold = Math.max(logRatio, (readOtsuThreshold(skyOvers) / BYTE) * greatest);
+      return Uint8Array.from(overs, (over, pixel) => Number((skyMask[pixel] ?? 0) === 1 && over > threshold));
     },
     // The share of the sky each band of its height holds as cloud
     readElevationCoverage: (clouds) =>
