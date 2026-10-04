@@ -1,13 +1,15 @@
 ---
 name: running-checks
-description: Apply when about to run pnpm typecheck, lint, lint:fix, test, format, build, coverage or bench in any package, when deciding which checks a change owes before its push, and whenever you find yourself waiting on a check's output. Esposter's split between the session and CI — the session runs only the tests of what it touched, in the background, once after all the edits going out together, and CI runs typecheck, lint, format and the whole suite on the push, its red answered by the collector's repair.
+description: Apply when about to run pnpm typecheck, lint, lint:fix, test, format, build, coverage or bench in any package, when deciding which checks a change owes before its push, and whenever you find yourself waiting on a check's output. Esposter's split between the session and CI — the session runs only the tests of what it touched, in the background, once after all the edits going out together, and CI runs typecheck, lint, format and the whole suite on the push, the session watching that run and fixing a red typecheck or lint itself.
 ---
 
 # Running Checks
 
 **CI runs the checks; a session runs only the tests of what it touched.** Every push to `ai/queue` runs typecheck,
-lint, format and the whole suite, and a red that reaches `main` is the collector's repair — its regenerators
-first, then a session (`apps/web/content/docs/infra/review-collector/repair.md`). The pre-commit hook formats what
+lint, format and the whole suite. The session watches its push's run in the background and fixes a red typecheck
+or lint job itself, in a commit behind the push (`AGENTS.md`, "Finishing a change", step 6); only a red that
+reaches `main` is the collector's repair — its regenerators first, then a session
+(`apps/web/content/docs/infra/review-collector/repair.md`). The pre-commit hook formats what
 is staged (`.githooks/pre-commit`). The command and its directory are the `package-scripts` skill's; this page is
 which checks a session runs and how it waits on them.
 
@@ -49,8 +51,10 @@ review's quality lane, since cleanup edits code (`AGENTS.md`, "Finishing a chang
 
 ## A check CI owns, run locally
 
-Only to answer a red: a session asked to fix a failed CI job, or the repair's own session, runs that one check as
-CI runs it, to reproduce the red and prove the fix. A check that writes — `lint:fix`, `pnpm format` — owns the files
+Only to answer a red: a session whose push turned a typecheck or lint job red, a session asked to fix a failed CI
+job, or the repair's own session, runs that one check as CI runs it, to reproduce the red and prove the fix. The
+failed job's log names the files (`gh run view <id> --log-failed`), so the reproduction runs over those rather than
+the whole repository. A check that writes — `lint:fix`, `pnpm format` — owns the files
 it covers until its exit line, so nothing is edited under it meanwhile.
 
 ## Reading the result

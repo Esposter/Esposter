@@ -29,6 +29,7 @@ import { rankCommand } from "#src/services/genshinParity/commands/rankCommand";
 import { recordCommand } from "#src/services/genshinParity/commands/recordCommand";
 import { shootCommand } from "#src/services/genshinParity/commands/shootCommand";
 import { skyCommand } from "#src/services/genshinParity/commands/skyCommand";
+import { solosCommand } from "#src/services/genshinParity/commands/solosCommand";
 import { stillCommand } from "#src/services/genshinParity/commands/stillCommand";
 import { traceCommand } from "#src/services/genshinParity/commands/traceCommand";
 import { trackCommand } from "#src/services/genshinParity/commands/trackCommand";
@@ -59,6 +60,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     shoot: shootCommand,
     bands: bandsCommand,
     instruments: instrumentsCommand,
+    solos: solosCommand,
     bench: benchCommand,
     listen: listenCommand,
     noise: noiseCommand,

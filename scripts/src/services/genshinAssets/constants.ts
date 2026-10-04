@@ -104,6 +104,10 @@ export const SAMPLED_VOICE_REFINED_COUNT = 64;
 export const SAMPLED_VOICE_REFINE_STEPS = 6;
 // The best combinations a fit's report prints
 export const SAMPLED_VOICE_REPORTED_COUNT = 8;
+// A recording's sound starts where it first reaches a tenth of its loudest, twenty decibels down
+export const SAMPLE_ONSET_SHARE = 0.1;
+// The most frames either way a solo render's pitch classes are read against its notes', about a fifth of a second
+export const SAMPLED_VOICE_MAX_LAG = 4;
 // A recording runs to tens of megabytes, past the bound a script's ordinary request is given
 export const SAMPLE_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 2 }).total("milliseconds");
 // What a voice's instrument is chosen from: each library's sustained and plucked orchestral instruments and its pianos,

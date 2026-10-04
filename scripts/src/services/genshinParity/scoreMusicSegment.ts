@@ -4,6 +4,7 @@ import { computeChroma } from "#src/services/genshinParity/computeChroma";
 import { readAudibleFrames } from "#src/services/genshinParity/readAudibleFrames";
 import { readBandEnergies } from "#src/services/genshinParity/readBandEnergies";
 import { readBandFloor } from "#src/services/genshinParity/readBandFloor";
+import { readChromaAgreement } from "#src/services/genshinParity/readChromaAgreement";
 
 const mean = (values: number[]): number => values.reduce((sum, value) => sum + value, 0) / Math.max(values.length, 1);
 // How close our render of a segment of music sounds to the game's, over the frames the game's sound is not quiet in.
@@ -19,11 +20,6 @@ export const scoreMusicSegment = (ours: Float32Array, game: Float32Array, sample
   const ourChroma = computeChroma(ourSamples, sampleRate);
   const gameChroma = computeChroma(gameSamples, sampleRate);
   const loudFrames = readAudibleFrames(gameChroma.loudness);
-  let agreement = 0;
-  for (const frame of loudFrames)
-    for (let pitchClass = 0; pitchClass < 12; pitchClass++)
-      agreement +=
-        (ourChroma.classes[frame * 12 + pitchClass] ?? 0) * (gameChroma.classes[frame * 12 + pitchClass] ?? 0);
   const ourBands = readBandEnergies(ourSamples, sampleRate);
   const gameBands = readBandEnergies(gameSamples, sampleRate);
   const bandGaps = gameBands.map((gameEnergies, band) => {
@@ -38,6 +34,6 @@ export const scoreMusicSegment = (ours: Float32Array, game: Float32Array, sample
     bandBiases: bandGaps.map((gaps) => mean(gaps)),
     bandDistances,
     distance: bandDistances.reduce((sum, distance) => sum + distance, 0) / bandDistances.length,
-    pitchAgreement: agreement / Math.max(loudFrames.length, 1),
+    pitchAgreement: readChromaAgreement(ourChroma.classes, gameChroma.classes, loudFrames, 0),
   };
 };
