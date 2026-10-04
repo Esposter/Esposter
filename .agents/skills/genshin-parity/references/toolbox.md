@@ -68,3 +68,4 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | How close our music sounds                           | `genshin:parity listen`: pitch agreement, each band's gap and its sign                                                   |
 | Each segment's swells and fades                      | `genshin:parity expression`: one gain a window over every band, refitted against our render and written                  |
 | Whether ours rings longer than the game's            | `genshin:parity decay`: each band's signed gap by the time since the last note began                                     |
+| Whether ours strikes notes the game holds            | `genshin:parity attacks`: each band's share of frames that jump, ours against the game's                                 |

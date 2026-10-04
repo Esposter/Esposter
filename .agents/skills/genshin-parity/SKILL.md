@@ -29,6 +29,9 @@ The loop and why it is shaped this way are `apps/web/content/docs/genshin/parity
 - **Carrying the game's swells in each note's velocity.** A velocity is fixed when its note starts, and a section swells under notes already sounding; each segment's expression carries it, as an orchestral mockup's expression controller does (`apps/web/content/docs/genshin/music.md`).
 - **A fixed equaliser over the shipped music.** Its band gains, fitted on one half of a piece, leave the other half about as far off as before, so what it gains in place is that stretch's frames rather than the music's balance (`apps/web/content/docs/genshin/music.md`).
 - **A reverb to close what the recorded instruments leave.** The best mixes' largest band gaps do not move with a note's age, so they are short of spectrum rather than ring, and a reverb only lengthens what a note already holds (`apps/web/content/docs/proposals/genshin/sampled-instruments.md`, "What the passes found").
+- **Joining a transcribed note to the one before it at its pitch** where the game's fundamental does not rise at its start. `attacks` reads no fewer jumps and both pieces lose pitch agreement, since a joined note then sits on its decay where the game's holds (`apps/web/content/docs/genshin/music.md`, "Not yet").
+- **Taking a note's level and decay at the frame the voice's median attack predicts**, not at the note's loudest frame. The first piece then barely decays, jumps far less often than the game's and loses pitch agreement (`apps/web/content/docs/genshin/music.md`, "Not yet").
+- **A decay per octave of overtones on the synthesizer.** The fit reads the second piece's overtones dying faster than their fundamentals, yet playing it moves neither score, for an oscillator an octave on every note (`apps/web/content/docs/genshin/music.md`, "Not yet").
 - **Keeping noise levels past `MUSIC_DECIMALS`.** It moves the listening score by hundredths of a decibel.
 
 ## Rules

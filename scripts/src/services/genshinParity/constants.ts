@@ -139,6 +139,8 @@ export const DECAY_AGE_BOUNDS: number[] = [
   { milliseconds: 500 },
   { seconds: 1 },
 ].map((bound) => Temporal.Duration.from(bound).total("seconds"));
+// A band's level this far over the frame before is a jump `attacks` counts, a doubling of its amplitude within a frame
+export const LISTEN_ATTACK_RISE_DECIBELS = 6;
 // The committed report of each music segment's last `listen`
 export const PARITY_MUSIC_SCORES_PATH: string = join(
   REPOSITORY_ROOT,
