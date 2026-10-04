@@ -29,7 +29,7 @@ Five minutes before the cache expires, a toast says so and names the three butto
 
 ## Failure
 
-A fork that fails leaves the conversation as it was. For Handoff that means the clear never happens, because clearing waits for the handoff text, so a failed handoff loses nothing. The toast reports the reason the engine gives. Figures the engine does not have yet (no reply, no limits reported) are left out of the row rather than shown as zero.
+A fork that fails leaves the conversation as it was. For Handoff that means the clear never happens, because clearing waits for the handoff text, so a failed handoff loses nothing. The toast reports the reason the engine gives. A clear or submit that fails after the fork is reported the same way, and the buttons come back either way. Figures the engine does not have yet (no reply, no limits reported) are left out of the row rather than shown as zero.
 
 ## State and switching
 

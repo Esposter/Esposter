@@ -45,14 +45,20 @@ const warmCache = async ($: EngineInterface) => {
 };
 
 // The whole relay in one press: the clear waits for the handoff text, so a fork that fails clears nothing
-const handOff = async ($: EngineInterface) => {
-  await update($, isHandingOffAtom, () => true);
+const relay = async ($: EngineInterface) => {
   const answer = await $.model.fork({ prompt: HANDOFF_QUESTION });
   if (answer.isAnswered && answer.text.trim()) {
     await $.command.run({ command: "clear" });
     await $.prompt.submit({ text: answer.text });
   } else $.ui.toast(`The handoff was not written: ${answer.isAnswered ? "it came back empty" : answer.reason}.`);
+};
+
+// The relay is settled rather than awaited, so a clear or submit that rejects still brings the buttons back
+const handOff = async ($: EngineInterface) => {
+  await update($, isHandingOffAtom, () => true);
+  const [outcome] = await Promise.allSettled([relay($)]);
   await update($, isHandingOffAtom, () => false);
+  if (outcome.status === "rejected") $.ui.toast(`The handoff failed: ${String(outcome.reason)}.`);
 };
 
 const drawResinRow = async ($: EngineInterface, e: RenderInput<"AbovePrompt">): Promise<RenderElement | undefined> => {
