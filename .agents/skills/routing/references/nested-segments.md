@@ -30,14 +30,21 @@ const activeBar = computed(() => route.params.bar || FooBarType.Default);
 **Validate only what is knowable before load.** `validate` runs before setup, so it cannot see fetched data — it checks shape (a uuid, an enum `Set`). A segment whose valid values depend on **loaded** data must be guarded after the load instead. Because sibling-segment switches reuse the page instance, that guard is a `watchImmediate` (a one-shot setup check would not re-run on reuse), not a setup-time `if`:
 
 ```ts
-// per-type bar slugs need the loaded foo's type, so validate can't cover them
-watchImmediate([activeBar, foo], ([newActiveBar, newFoo]) => {
-  if (!newFoo || newFoo.id !== getRouteParam(currentRoute.value.params, "id")) return;
+// composables/foo/useValidateFooBar.ts — per-type bar slugs need the loaded foo's type, so validate can't cover them
+export const useValidateFooBar = (foo: Ref<Foo | undefined>, activeBar: Ref<string>) => {
+  const { currentRoute } = useRouter();
+  watchImmediate([activeBar, foo], ([newActiveBar, newFoo]) => {
+    if (!newFoo || newFoo.id !== getRouteParam(currentRoute.value.params, "id")) return;
 
-  if (!isValidFooBar(newFoo.type, newActiveBar))
-    showError(createError({ statusCode: 404, statusMessage: "Foo bar not found" }));
-});
+    if (!isValidFooBar(newFoo.type, newActiveBar))
+      showError(createError({ statusCode: 404, statusMessage: "Foo bar not found" }));
+  });
+};
+// pages/foos/[id]/[[bar]].vue
+useValidateFooBar(foo, activeBar);
 ```
+
+The guard is a composable the page calls rather than code in the page, because it reads the live route: a page reads only its own `useRoute()` and may not call `useRouter()`.
 
 **Judge the segment only while the route still names the loaded entity.** A swap to another id keeps the page being left mounted until the next one's setup resolves, and `currentRoute` already carries the next id's segment — checked against the entity still loaded, a segment only the next one's type has 404s the page on its way out (`apps/web/app/composables/resource/useValidateResourceBlade.ts`).
 
