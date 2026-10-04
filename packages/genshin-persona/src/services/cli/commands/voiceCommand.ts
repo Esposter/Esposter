@@ -76,7 +76,9 @@ export const voiceCommand: SubCommandsDef[string] = defineCommand({
     else {
       const runtime = readVoiceRuntime(RUNTIME_MANIFEST_PATH);
       const synthesizer = await createVoiceSynthesizer(runtime, MODELS_DIRECTORY, {
-        onFallback: console.log,
+        onFallback: (message) => {
+          console.log(message);
+        },
         onProgress: createVoiceProgressPrinter(),
       });
       console.log(
