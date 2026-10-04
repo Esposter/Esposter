@@ -42,9 +42,9 @@ const MIN_CROWN_COVER = 0.05;
 // Objects no longer sets, so before each draw they are laid out farthest along the camera's view first, as that sort
 // Would, and the nearer edges blend over the farther; only a draw whose order moved rewrites more than their places.
 // Each is coloured as the game's cloud particles are (Login/Scene/Index.reference.ts, source `cloudParticleShader`):
-// Its shaded colour mixed toward its lit one where its painted crown is, each blended from away from the sun to toward it by how far toward the sun the cloud stands,
-// Gaining light with the sky's coverage and brightening toward the sun, fading out at its soft painted edge and below
-// The horizon. The game also gives a low cloud way to the sky's colour behind it unless the sky is thickly covered, by
+// Its shaded colour mixed toward its lit one where its painted crown is, each blended from away from the sun to toward
+// It by how far toward the sun the cloud stands, gaining light with the sky's coverage and brightening toward the sun,
+// Fading out at its soft painted edge and below the horizon. The game also gives a low cloud way to the sky's colour behind it unless the sky is thickly covered, by
 // A coverage its environment sets at run time; ours stands in for its cloud layer's alone, so that waits on the game's
 // Own. Their places are handed back in the order given, for a band that moves to rewrite in place, and the band's cover,
 // The share of its clouds drawn: each cloud is ranked by its place in the order given, which a band scatters at random,
