@@ -5,9 +5,9 @@ import { A4_FREQUENCY, A4_PITCH, RELEASE_TIME_CONSTANTS } from "#src/audio/const
 
 // One note played at a time on the audio clock: an oscillator over its instrument's waveform at the note's pitch as
 // The instrument tunes it, and its instrument's noise, where it has any, from where the clock stands in its looped
-// Buffer, through a gain following the instrument's envelope. The envelope's value at the note's end
-// Is worked out rather than held by `cancelAndHoldAtTime`, which Firefox lacks, so the release starts from where the
-// Decay had reached
+// Buffer, through a gain following the instrument's envelope. The envelope's value at the note's end is worked out
+// Rather than held by `cancelAndHoldAtTime`, which Firefox lacks, so the release starts from where the decay had
+// Reached
 export const scheduleMusicNote = (
   context: BaseAudioContext,
   destination: AudioNode,

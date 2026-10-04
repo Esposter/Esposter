@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/audio/transformFourier.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.2172499999999957,
+              "name": "every bin",
+              "p99": 0.31287099999998336,
+              "rme": 16.0730212736799,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.2774000000000001,
+              "name": "one bin",
+              "p99": 0.6020790000000042,
+              "rme": 36.139919592192435,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "transformFourier > 2^12 samples"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 4.8351,
+              "name": "every bin",
+              "p99": 5.249137999999993,
+              "rme": 2.8831265236365287,
+              "sampleCount": 10
+            },
+            {
+              "mean": 4.9003799999999895,
+              "name": "one bin",
+              "p99": 5.804045999999994,
+              "rme": 5.187969635037159,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "transformFourier > 2^16 samples"
+        }
+      ]
+    }
+  ]
+}
