@@ -26,6 +26,7 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 - **A bump owes what it moves beyond the version** — the `@TODO`s linking the package, the PGlite and UnoCSS snapshots, `inlinedDependencies` and the bundle sizes (`references/bump-follow-through.md`).
 - **A hold is a `packageRules` entry naming the packages exactly, its reason the `description`**, paired with the catalog range that stops the same bump for pnpm (`references/holding-a-dependency.md`).
 - **Every catalog entry has `^`, a prerelease included**, except the tilde or exact pin a hold pairs with its rule (`references/caret-rules.md`).
+- **A release shipped only under another package's name is an `npm:` alias onto its dist-tag**, moved by `pnpm refresh:lockfile` and back to a caret range when it reaches `latest` (`references/dist-tag-aliases.md`).
 - **An `overrides:` entry is a temporary force of a transitive dependency**, removed when upstream catches up (`references/overrides.md`).
 - **`oxlint-tsgolint` and the vitest pair update normally**, each with something a bump watches (`references/tracked-issues.md`).
 - **Which manifest lists a dependency, and what removing a library owes, are the `build` skill's** (`references/dependency-placement.md`).
@@ -40,6 +41,7 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 - `references/bump-follow-through.md` — when any bump lands, before committing it.
 - `references/holding-a-dependency.md` — when a bump has to be stopped, or a package is listed as held.
 - `references/caret-rules.md` — when adding, removing or questioning a catalog entry's `^`, `~` or exact pin.
+- `references/dist-tag-aliases.md` — when a release ships only as another package's nightly, or the outdated report labels a row with a tag.
 - `references/overrides.md` — when adding or removing an `overrides:` entry.
 - `references/tracked-issues.md` — when bumping `oxlint-tsgolint`, `vitest` or `@vitest/coverage-v8`.
 - `references/renovate.md` — when editing `renovate.json`, or checking why the bot proposed nothing for a dependency.

@@ -2,7 +2,7 @@
 
 Read when adding, removing or questioning a catalog entry's `^`, `~` or exact pin.
 
-Every catalog entry has `^` except where a `renovate.json` hold pairs a tilde or an exact pin with its rule (`references/holding-a-dependency.md`); `pnpm outdated:dependencies` lists the held packages. A package capped at a major **keeps** its caret — the rule caps it, not a missing `^`. A tilde is what a cap on a **minor** looks like in the catalog, and it never stands alone: the rule is what stops the bot, the tilde what stops a re-resolve.
+Every catalog entry has `^` except where a `renovate.json` hold pairs a tilde or an exact pin with its rule (`references/holding-a-dependency.md`), and an alias onto a dist-tag, which names no version at all (`references/dist-tag-aliases.md`); `pnpm outdated:dependencies` lists the held packages. A package capped at a major **keeps** its caret — the rule caps it, not a missing `^`. A tilde is what a cap on a **minor** looks like in the catalog, and it never stands alone: the rule is what stops the bot, the tilde what stops a re-resolve.
 
 Before adding a `^` to a caret-less entry, check whether a hold names it; if one does, leave it alone. If none does, the missing caret is likely an oversight — add it.
 
