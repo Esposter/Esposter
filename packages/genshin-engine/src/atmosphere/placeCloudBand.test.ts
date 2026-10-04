@@ -1,4 +1,5 @@
 import { placeCloudBand } from "#src/atmosphere/placeCloudBand";
+import { MathUtils } from "three";
 import { describe, expect, test } from "vitest";
 
 describe(placeCloudBand, () => {
@@ -27,5 +28,18 @@ describe(placeCloudBand, () => {
           spriteIndex < 8,
       ),
     ).toBe(true);
+  });
+
+  test("stands a band's clouds where carrying its heights linearly to another range stands them", () => {
+    expect.hasAssertions();
+
+    const heightRange: [number, number] = [3, 5];
+    const carried = placeCloudBand(options, 8).map(({ position: [, y] }) =>
+      MathUtils.mapLinear(y, 1, 2, ...heightRange),
+    );
+
+    expect(carried).toStrictEqual(
+      placeCloudBand({ ...options, heightRange }, 8).map(({ position: [, y] }) => expect.closeTo(y)),
+    );
   });
 });

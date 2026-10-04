@@ -22,7 +22,7 @@ const toLoops = (loops: number[][][]): [number, number][][] =>
 // Clouds scroll with the world, each wrapped round the camera within the sea's row, so as many stand ahead as behind;
 // None stands where the walkway glides, which would carry it through the camera: each either clears the walkway to its
 // Side or stays under it. Each band's sprite is named for its band and hands on its cover, the share of its clouds the
-// Hour draws, which a tool reads off the sprite
+// Hour draws, and its clouds' places with the heights they were drawn between, which a tool reads off the sprite
 export const createLoginClouds = (
   skyUniforms: SkyUniforms,
 ): {
@@ -54,6 +54,8 @@ export const createLoginClouds = (
     disposables.push(atlas, { dispose });
     sprite.name = band;
     sprite.userData.cover = cover;
+    sprite.userData.heightRange = LoginCloudBandMap[band].heightRange;
+    sprite.userData.places = places;
     covers[band] = cover;
     group.add(sprite);
     if (band === SEA_BAND) sea = { depths: places.map((place) => place[2]), places };

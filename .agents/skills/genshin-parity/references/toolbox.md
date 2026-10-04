@@ -46,6 +46,7 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | One approval number                     | FLIP (`scoreFlip`), in every `compare`                                |
 | The clouds' lit and shaded colours      | `genshin:parity clouds`: ours and theirs matched by colour spread     |
 | How much of each cloud band an hour has | `genshin:parity cover`: each band's share on the cover by height      |
+| The heights each cloud band stands at   | `cover --heights`: every hour's references at once, shares by turns   |
 | The sky's colours and its shape         | `genshin:parity sky`: least squares over the clear sky, none negative |
 | Whether the scene draws the sky solved  | `sky`'s drawn line: ours with no cloud against the reference's clear  |
 | The fog's density and colours           | `genshin:parity fog`: bins by depth and sun angle, solved             |
