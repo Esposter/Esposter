@@ -11,12 +11,12 @@ An action button is **not** a leaf — it owns logic. Extract each button (with 
 - **A menu and its items is one component** — the menu plus its `UiMenuItem` list are one coherent unit.
 - **Multi-step logic reused by 2+ buttons** goes into a `use*` composable. A composable is reuse, not single-use extraction — it doesn't violate the inline-handler rule.
 
-## Allowed grouping (do NOT split these)
+## Allowed grouping (do not split these)
 
 Keep together only when items are genuinely the same logic: buttons/items rendered via `v-for` over a config array (PascalCase, in `services/<domain>/`), or a coherent group driven by one config (a `UiTabs` from an `items` array, an icon-button toolbar from a `computed` array).
 
 **`v-for` does not exempt the item body.** Iterating is shared structure; per-item _logic_ is not. If each iterated item carries its own handler, store wiring, or multi-step logic, the item body becomes **its own component** rendered inside the `v-for` — the parent's loop stays pure layout. Only inline the item body when it is a plain prop spread with no own logic.
 
-## Do NOT over-extract
+## Do not over-extract
 
 Granularity must **simplify the problem** or enable **reuse** — what earns a move across a file boundary (a second caller, a loop, a cached evaluation, a type the inline form cannot carry) is the `over-engineering` skill's ("The goal"), and a relocation of any kind answers to it. The Vue-specific shape: a wrapper that only forwards props/attrs and needs `inheritAttrs: false` plumbing to make a click reach the inner element is inlined, and a component whose template is one element and whose entire script is a `defineEmits` that element re-emits is a rename of `<UiButton>` — inline it at its one call site and delete the file.

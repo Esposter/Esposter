@@ -48,11 +48,11 @@ For **external sync** (a parent can reset the model), add a second watch on the 
 
 - Always initialize the local type ref from the current model value, not a hardcoded default.
 - `if (newType === oldType) return;` in a watch callback is always redundant — Vue only fires when the value changes.
-- A writable computed is NOT the right tool here — it requires a backing `_ref` and still needs an external sync watch when a parent can reset the model.
+- A writable computed is not the right tool here — it requires a backing `_ref` and still needs an external sync watch when a parent can reset the model.
 
 ## Dialog data loading
 
-**Do NOT re-fetch on every dialog open.** Trust the Pinia store as source of truth — CRUD flows through tRPC subscriptions which keep the store current. Fetch once on mount; subsequent opens use cached store data.
+**Do not re-fetch on every dialog open.** Trust the Pinia store as source of truth — CRUD flows through tRPC subscriptions which keep the store current. Fetch once on mount; subsequent opens use cached store data.
 
 ```ts
 // fetch once on mount — never re-fetch on every dialog open

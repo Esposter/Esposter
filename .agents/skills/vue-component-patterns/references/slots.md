@@ -13,7 +13,7 @@ const slots = defineSlots<{ ... }>(); // assign only when the script reads `slot
 
 ## Conditional slot forwarding — the explicit slot name is load-bearing
 
-When a wrapper forwards an optional slot into a component that draws fallback content when the slot is absent (`UiItemContent` draws the item's own avatar or icon unless a `mark` slot is passed), a bare `<template v-if="$slots.x">` does NOT work: the compiler puts the `v-if` _inside_ an always-registered slot function, so the component sees the slot as present and its fallback never renders. `v-slot` + `v-if` on the same template compiles to `createSlots` with truly conditional registration:
+When a wrapper forwards an optional slot into a component that draws fallback content when the slot is absent (`UiItemContent` draws the item's own avatar or icon unless a `mark` slot is passed), a bare `<template v-if="$slots.x">` does not work: the compiler puts the `v-if` _inside_ an always-registered slot function, so the component sees the slot as present and its fallback never renders. `v-slot` + `v-if` on the same template compiles to `createSlots` with truly conditional registration:
 
 ```vue
 <!-- WRONG — slot always registered; the fallback mark is suppressed even with no slot content -->

@@ -2,7 +2,7 @@
 
 Read when a component populates a store ref so code outside its subtree can reach it — a bridged editor instance, a staged dialog payload. The rule itself is in `SKILL.md` (whatever a component bridges onto a store, its `onUnmounted` un-bridges); this page is why, and the keyed-route case that makes an unconditional teardown wrong.
 
-Some store refs are populated _by a component_ so code outside its subtree can reach them — a live third-party editor instance bridged for a command bar, a staged payload for a confirm dialog. The store is app-lifetime; that state is not. The component that populates such a ref MUST clear it in `onUnmounted` (back to `undefined`/`""`), or the value outlives its blade: a "current" editor that no longer exists silently satisfying guards, a staged dialog re-opening over a different resource with the previous one's data.
+Some store refs are populated _by a component_ so code outside its subtree can reach them — a live third-party editor instance bridged for a command bar, a staged payload for a confirm dialog. The store is app-lifetime; that state is not. The component that populates such a ref must clear it in `onUnmounted` (back to `undefined`/`""`), or the value outlives its blade: a "current" editor that no longer exists silently satisfying guards, a staged dialog re-opening over a different resource with the previous one's data.
 
 Symmetry rule: whatever a component bridges onto a store in setup/`watchImmediate`, its `onUnmounted` un-bridges.
 

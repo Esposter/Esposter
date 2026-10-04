@@ -8,7 +8,7 @@ wrong.
 ## Which pages owe one
 
 Any page describing a flow, lifecycle, or interaction between 3+ parts (components, procedures, storage,
-background workers) MUST carry a Mermaid diagram — `flowchart` for data/navigation flows, `stateDiagram-v2` for
+background workers) must carry a Mermaid diagram — `flowchart` for data/navigation flows, `stateDiagram-v2` for
 lifecycles, `sequenceDiagram` for request/event ordering. Prose says _why_; the diagram is the alignment artifact
 for _what talks to what_. Label edges with the procedure or event that drives them.
 
