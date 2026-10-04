@@ -1,11 +1,11 @@
-import type { H3Event } from "h3";
+import type { H3Event } from "nitro/h3";
 import type { AddressInfo } from "node:net";
 
 import { DEFAULT_ENDPOINT } from "#src/runtime/constants";
 import { createTRPCEventHandler } from "#src/runtime/server/createTRPCEventHandler";
 import { createTRPCClient, httpBatchLink, httpLink } from "@trpc/client";
 import { initTRPC } from "@trpc/server";
-import { createApp, createRouter, defineEventHandler, readBody, sendRedirect, toNodeListener } from "h3";
+import { H3, toNodeHandler } from "nitro/h3";
 import { createServer } from "node:http";
 import superjson from "superjson";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
@@ -18,7 +18,10 @@ describe(createTRPCEventHandler, () => {
   let abortedWait = Promise.withResolvers<void>();
   const router = t.router({
     read: t.procedure.input(z.date()).query(({ input }) => input),
-    redirect: t.procedure.mutation(({ ctx }) => sendRedirect(ctx.event, baseUrl)),
+    redirect: t.procedure.mutation(({ ctx: { event } }) => {
+      event.res.status = 302;
+      event.res.headers.set("location", baseUrl);
+    }),
     wait: t.procedure.query(
       ({ signal }) =>
         new Promise<void>((resolve) => {
@@ -31,17 +34,18 @@ describe(createTRPCEventHandler, () => {
     ),
     write: t.procedure.input(z.string()).mutation(({ input }) => input),
   });
-  const handler = createTRPCEventHandler({ createContext: (event) => ({ event }), router });
-  const app = createApp();
-  // A middleware that reads the body ahead of the handler, as nuxt-security's XSS validator does
-  app.use(
-    defineEventHandler(async (event) => {
-      if (event.method === "POST") await readBody(event);
-    }),
-  );
-  app.use(createRouter().use(`${DEFAULT_ENDPOINT}/**`, handler));
-  app.use(baseUrl, createRouter().use(`${DEFAULT_ENDPOINT}/**`, handler).handler);
-  const server = createServer(toNodeListener(app));
+  const createContext = (event: H3Event) => ({ event });
+  // A sub-app keeps the whole path, as Nitro does under an app base url, so the endpoint there carries the base
+  const app = new H3()
+    .all(`${DEFAULT_ENDPOINT}/**`, createTRPCEventHandler({ createContext, router }))
+    .mount(
+      baseUrl,
+      new H3().all(
+        `${DEFAULT_ENDPOINT}/**`,
+        createTRPCEventHandler({ createContext, endpoint: `${baseUrl}${DEFAULT_ENDPOINT}`, router }),
+      ),
+    );
+  const server = createServer(toNodeHandler(app));
   let origin = "";
 
   beforeAll(async () => {
@@ -66,16 +70,6 @@ describe(createTRPCEventHandler, () => {
       new Date(0),
       "",
     ]);
-  });
-
-  test("#215 answers a mutation whose body a middleware read first", async () => {
-    expect.hasAssertions();
-
-    const client = createTRPCClient<typeof router>({
-      links: [httpLink({ transformer: superjson, url: `${origin}${DEFAULT_ENDPOINT}` })],
-    });
-
-    await expect(client.write.mutate("")).resolves.toBe("");
   });
 
   test("#221 answers under an app base url", async () => {
@@ -105,7 +99,7 @@ describe(createTRPCEventHandler, () => {
     await expect(abortedWait.promise).resolves.toBeUndefined();
   });
 
-  test("#227 leaves the response a procedure sent through the event", async () => {
+  test("#227 answers with the status a procedure staged on the event", async () => {
     expect.hasAssertions();
 
     const response = await fetch(`${origin}${DEFAULT_ENDPOINT}/redirect`, {

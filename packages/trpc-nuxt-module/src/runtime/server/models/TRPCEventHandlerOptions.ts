@@ -1,7 +1,7 @@
 import type { AnyTRPCRouter, inferRouterContext } from "@trpc/server";
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import type { HTTPBaseHandlerOptions } from "@trpc/server/http";
-import type { H3Event } from "h3";
+import type { H3Event } from "nitro/h3";
 import type { Promisable } from "type-fest";
 
 // TRPC's own handler options, with a context factory handed the event, typed on h3's own `H3Event` so Nitro's

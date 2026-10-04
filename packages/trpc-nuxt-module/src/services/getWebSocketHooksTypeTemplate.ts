@@ -9,7 +9,7 @@ export const getWebSocketHooksTypeTemplate = ({ from, name }: ExportReference): 
   return [
     `import type { inferRouterContext } from "@trpc/server";`,
     `import type { TRPCWebSocketConnection } from "${MODULE_NAME}/runtime/server/models/TRPCWebSocketConnection";`,
-    `declare module "nitropack/types" {`,
+    `declare module "nitro/types" {`,
     `  interface NitroRuntimeHooks {`,
     `    ${JSON.stringify(WEBSOCKET_CLOSE_HOOK)}: (connection: ${connectionType}) => Promise<void> | void;`,
     `    ${JSON.stringify(WEBSOCKET_OPEN_HOOK)}: (connection: ${connectionType}) => Promise<void> | void;`,

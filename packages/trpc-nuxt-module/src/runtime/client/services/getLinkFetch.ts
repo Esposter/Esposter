@@ -1,16 +1,17 @@
 import type { TRPCFetch } from "@trpc/client";
 
 import { checkIsServer } from "@esposter/shared";
+import { fetchWithEvent } from "nitro/h3";
 import { useRequestEvent } from "nuxt/app";
 
-// During server rendering, the request event's `fetch`: Nitro answers it in-process, forwards the incoming request's
-// Headers and returns a real `Response`, headers included. In the browser, the global `fetch` against an absolute url,
-// Which is what a network interceptor sees. Read when the link is built, inside the app's context, since a link sends
-// Later — a batch after a tick — when that context is gone
+// During server rendering, a fetch through the request's own event: the app answers a path in-process, the incoming
+// Request's headers forwarded, and returns a real `Response`, headers included. In the browser, the global `fetch`
+// Against an absolute url, which is what a network interceptor sees. Read when the link is built, inside the app's
+// Context, since a link sends later — a batch after a tick — when that context is gone
 export const getLinkFetch = (): TRPCFetch => {
   if (checkIsServer()) {
     const event = useRequestEvent();
-    if (event) return event.fetch;
+    if (event) return (url, options) => fetchWithEvent(event, url, options);
   }
   return (input, init) => fetch(new URL(input, window.location.href), init);
 };

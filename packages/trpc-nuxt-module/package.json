@@ -245,7 +245,7 @@
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "crossws": "catalog:",
-    "h3": "catalog:",
+    "nitro": "catalog:",
     "nuxt": "catalog:",
     "vue": "catalog:"
   }

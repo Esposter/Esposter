@@ -30,15 +30,18 @@ const WEBSOCKET_HANDLER_FILENAME = `#${MODULE_NAME}/webSocketHandler.mjs`;
 
 const trpcNuxtModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>({
   defaults: { endpoint: DEFAULT_ENDPOINT },
-  meta: { compatibility: { nuxt: ">=4.0.0" }, configKey: "trpc", name: MODULE_NAME },
+  meta: { compatibility: { nuxt: ">=5.0.0-0" }, configKey: "trpc", name: MODULE_NAME },
   async setup({ createContext, endpoint, router, webSocket }, nuxt) {
     // Resolved here, through the app's aliases, since the generated handlers are bundled by Nitro, which knows none
     const resolvedRouter = { ...router, from: await resolvePath(router.from) };
     const resolvedCreateContext = createContext && { ...createContext, from: await resolvePath(createContext.from) };
 
+    // Nitro routes on the whole path, its base url included, and tRPC reads the procedure off whatever follows the
+    // Endpoint in it, so the handler's endpoint is the route's own
+    const routedEndpoint = `${nuxt.options.app.baseURL.replace(/\/$/u, "")}${endpoint}`;
     addServerTemplate({
       filename: EVENT_HANDLER_FILENAME,
-      getContents: () => getEventHandlerTemplate(resolvedRouter, endpoint, resolvedCreateContext),
+      getContents: () => getEventHandlerTemplate(resolvedRouter, routedEndpoint, resolvedCreateContext),
     });
     addServerHandler({ handler: EVENT_HANDLER_FILENAME, route: `${endpoint}/**` });
 

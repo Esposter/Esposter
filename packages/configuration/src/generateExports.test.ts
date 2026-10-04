@@ -32,7 +32,7 @@ describe(generateExports, () => {
     generateExports(packageDirectory, "typescript");
 
     expect(readFileSync(join(sourceDirectory, "index.ts"), "utf8")).toBe(
-      `export * from "./${TEST_FILENAME}/${TEST_FILENAME}";\n`,
+      `export * from "./${TEST_FILENAME}/${TEST_FILENAME}.ts";\n`,
     );
   });
 

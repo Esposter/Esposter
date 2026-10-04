@@ -48,8 +48,9 @@ const generateSourceBarrel = (sourceDirectory: string): void => {
         !path.endsWith(".d.ts") &&
         !NON_SOURCE_SUFFIXES.some((suffix) => path.endsWith(suffix)) &&
         checkHasExport(join(sourceDirectory, path)),
-    )
-    .map((path) => path.slice(0, -".ts".length));
+    );
+  // Each module keeps its `.ts` extension, which a bundler takes as it is and which node's own resolution — the one the
+  // App's configuration loads and typechecks under — requires of a relative import
   writeBarrel(sourceDirectory, specifiers, (specifier) => `export * from "./${specifier}";`);
 };
 // In order: the Vue answer writes the component barrel first, because the source barrel then lists it like any other

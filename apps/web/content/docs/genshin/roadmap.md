@@ -1,6 +1,6 @@
 ---
 title: Roadmap
-description: Open work for Genshin's opening, biggest gap first — the login towers' carving and gold, the clouds' cover and kind, each hour's light through the game's deferred pass and its sky, where the parts stand, the door's and the walkway's surfaces, the login's music's lowest band, and the references and measures the rest waits on.
+description: Open work for Genshin's opening, biggest gap first — the login towers' carving and gold, the clouds' cover and kind, each hour's light through the game's deferred pass and its sky, where the parts stand, the door's and the walkway's surfaces, the login's music's instruments, and the references and measures the rest waits on.
 ---
 
 # Roadmap
@@ -23,7 +23,7 @@ Open work only, the biggest gap to the game first. What was decided against is i
 - [ ] **Where the parts stand.** The silhouettes' placement and pose is a large term on every frame. `place` on edges runs a row metres up, so the row's offset and each tower's place need a measure on the sky's outline against each part's instead.
 - [ ] **The door's surface at rest.** On the phone's door frame the door is the largest stand-in gap against its exports: its panel's relief is painted, at three fifths of its read contrast where painting scores best over both door frames together and this frame alone 0.005 worse, and the game's is carved and lit.
 
-- [ ] **The login's music, by its score.** The login plays its music ([music](/docs/genshin/music)): its notes agree with the game's on most frames, and its octave bands sit about seven to eight decibels off, with little bias from 250 Hz to 2 kHz. The first piece's lowest band is overfilled by about seven decibels. `bands` reads that band flat but nearly all on our notes' partials, so the next pass separates its fitted noise from the bass voice's level, and `listen`'s signed bias keeps whichever moves it.
+- [ ] **The login's music, by its score.** The login plays its music ([music](/docs/genshin/music)): its notes agree with the game's on most frames, closer than the game a quarter second off itself, but its octave bands sit about seven to eight decibels off, as far as the game a second or two off itself: the right notes in the wrong sound. The first piece's lowest band is overfilled by about seven decibels by the noise, which every sounding note plays in step from one buffer. Each note's own start in the loop, on a whole sample frame, fixes the read-back (`genshin:parity noise`) but leaves the second piece's top bands short. The larger gap is the sound itself, so the next pass plays the notes from recordings of real instruments ([sampled instruments](/docs/proposals/genshin/sampled-instruments)), which retires the noise and its read-back with the synthesizer.
 
 ## Later
 
