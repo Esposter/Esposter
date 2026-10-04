@@ -42,7 +42,7 @@ describe(createVoiceSynthesizer, () => {
       ),
     }));
     const from_pretrained = vi.fn<(modelId: string, options: VoiceModelOptions) => Promise<VoiceModel>>(
-      (_, { device }) => {
+      (_modelId, { device }) => {
         const rungIndex = VOICE_DEVICE_LADDER.findIndex((rung) => rung.devices === device);
         const model = models[rungIndex];
         return waveformByRung[rungIndex] && model
@@ -58,7 +58,7 @@ describe(createVoiceSynthesizer, () => {
       Tensor: class {
         data: Float32Array;
         dims: number[];
-        constructor(_: "float32", data: Float32Array, dims: number[]) {
+        constructor(_type: "float32", data: Float32Array, dims: number[]) {
           this.data = data;
           this.dims = dims;
         }

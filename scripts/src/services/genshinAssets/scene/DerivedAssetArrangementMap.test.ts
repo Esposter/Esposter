@@ -8,11 +8,14 @@ describe("derivedAssetArrangementMap", () => {
     Object.entries(componentRatios),
   );
 
-  test.each(ratios)("%s holds in the fitted data as its reference measures it", async (_, { ends, readEnds }) => {
-    expect.hasAssertions();
+  test.each(ratios)(
+    "%s holds in the fitted data as its reference measures it",
+    async (_description, { ends, readEnds }) => {
+      expect.hasAssertions();
 
-    const fitted = computeCrossRatio(await readEnds());
+      const fitted = computeCrossRatio(await readEnds());
 
-    expect(Math.abs(fitted - computeCrossRatio(ends))).toBeLessThanOrEqual(ARRANGEMENT_CROSS_RATIO_TOLERANCE);
-  });
+      expect(Math.abs(fitted - computeCrossRatio(ends))).toBeLessThanOrEqual(ARRANGEMENT_CROSS_RATIO_TOLERANCE);
+    },
+  );
 });

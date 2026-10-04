@@ -185,8 +185,8 @@ describe(createWindowDriver, () => {
 
     vi.useFakeTimers({ toFake: ["setTimeout"] });
     const { promise: launched, resolve } = Promise.withResolvers<SessionWindowLaunch>();
-    launchSessionWindow.mockImplementationOnce((sessionWindowLaunch) => {
-      resolve(sessionWindowLaunch);
+    launchSessionWindow.mockImplementationOnce((newSessionWindowLaunch) => {
+      resolve(newSessionWindowLaunch);
     });
     const opening = driver.createSession(" ");
     const expiredSessionWindowLaunch = await launched;
