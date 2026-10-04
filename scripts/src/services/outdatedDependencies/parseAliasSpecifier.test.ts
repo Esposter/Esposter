@@ -5,6 +5,8 @@ describe(parseAliasSpecifier, () => {
   test.each([
     ["npm:a@^0.0.0", { packageName: "a", range: "^0.0.0" }],
     ["npm:@a/b@a", { packageName: "@a/b", range: "a" }],
+    ["npm:a", { packageName: "a", range: "latest" }],
+    ["npm:@a/b", { packageName: "@a/b", range: "latest" }],
   ])("reads the target and range of %s", (specifier, expected) => {
     expect.hasAssertions();
 
