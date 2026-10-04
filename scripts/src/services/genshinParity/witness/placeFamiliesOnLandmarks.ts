@@ -1,5 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { Landmark } from "#src/models/genshinAssets/witness/Landmark";
+import type { Vector } from "#src/models/shared/Vector";
 
 import { DerivedAssetLandmarkMap } from "#src/services/genshinAssets/witness/DerivedAssetLandmarkMap";
 import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
@@ -8,18 +9,16 @@ import { minimizeNelderMead } from "#src/services/genshinParity/shared/minimizeN
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
+import { PLACE_AXES } from "#src/services/genshinParity/witness/constants";
 import { projectWitnessPoint } from "#src/services/genshinParity/witness/projectWitnessPoint";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { join } from "node:path";
 import sharp from "sharp";
 
-type Vector = [number, number, number];
 // The simplex's first steps, metres along each axis and degrees about the vertical, and how many it takes: the fit is
 // A handful of points through a fixed camera, so it settles in well under a second
 const PLACE_STEPS = [2, 2, 2, 2];
 const PLACE_ITERATIONS = 400;
-// The placement's axes in the order it is solved over: an offset in three's axes, then the turn
-export const PLACE_AXES = ["x", "y", "z", "turn"] as const;
 // Where a row of parts stands on a reference, from its landmarks alone, the camera held at the pose given: one offset in
 // Three's axes and one turn about the vertical through the world's origin, shared by every landmark named (a row the
 // Script moves as one), by least squares on their reprojection through that camera. No frame is drawn: the witness

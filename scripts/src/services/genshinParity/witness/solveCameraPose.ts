@@ -1,11 +1,12 @@
+import type { Pixel } from "#src/models/genshinParity/witness/Pixel";
+import type { Vector } from "#src/models/shared/Vector";
+
 import { computeMean } from "#src/services/genshinAssets/shared/computeMean";
 import { solveLinearSystem } from "#src/services/genshinParity/shared/solveLinearSystem";
 import { findSmallestEigenvector } from "#src/services/genshinParity/witness/findSmallestEigenvector";
 import { projectWitnessPoint } from "#src/services/genshinParity/witness/projectWitnessPoint";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-type Pixel = readonly [number, number];
-type Point = readonly [number, number, number];
 // A direct linear transform needs this many points off one plane to fix the projection's eleven degrees of freedom
 const DLT_POINT_COUNT = 6;
 const ITERATION_LIMIT = 200;
@@ -20,7 +21,10 @@ const computeCost = (residuals: readonly number[]): number => residuals.reduce((
 // Linear transform's system over conditioned coordinates gives the three by four projection, whose left three columns'
 // Inverse times the fourth places the eye, whose third row faces the view, and whose second row's height over it is the
 // Focal length in pixels
-const computeLinearPose = (correspondences: readonly { pixel: Pixel; point: Point }[], height: number): number[] => {
+const computeLinearPose = (
+  correspondences: readonly { pixel: Pixel; point: Readonly<Vector> }[],
+  height: number,
+): number[] => {
   const pointCentre = [0, 1, 2].map((axis) => computeMean(correspondences.map(({ point }) => point[axis] ?? 0)));
   const pixelCentre = [0, 1].map((axis) => computeMean(correspondences.map(({ pixel }) => pixel[axis] ?? 0)));
   const pointScale =
@@ -96,7 +100,7 @@ const computeLinearPose = (correspondences: readonly { pixel: Pixel; point: Poin
 // Correspondence, a point on a part's silhouette, is pinned across and free along the silhouette, so only its distance
 // Across counts
 export const solveCameraPose = (
-  correspondences: readonly { isEdge?: boolean; pixel: Pixel; point: Point }[],
+  correspondences: readonly { isEdge?: boolean; pixel: Pixel; point: Readonly<Vector> }[],
   width: number,
   height: number,
   start?: readonly number[],

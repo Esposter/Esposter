@@ -66,3 +66,4 @@ const isPnpmScript = /\.[cm]?js$/u.test(pnpmExecPath);
 export const PNPM_FILE: string = isPnpmScript ? process.execPath : pnpmExecPath;
 
 export const PNPM_ARGS: readonly string[] = isPnpmScript ? [pnpmExecPath] : [];
+export const BYTE = 255;

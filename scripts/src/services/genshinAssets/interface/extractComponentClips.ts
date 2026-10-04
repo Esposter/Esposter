@@ -17,7 +17,7 @@ import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 
 // The rate a clip's curves are sampled at, the game's frame rate, which a Web Animations timeline plays as keyframes
-export const CLIP_SAMPLE_RATE = 60;
+const CLIP_SAMPLE_RATE = 60;
 // A component's animation clips, decoded: every clip whose name its map's pattern matches is exported as JSON from the
 // Blocks holding it, its curves decoded and sampled, and each binding named where its CRC32 resolves, a property
 // Against Unity's names and a path against the component's interface tree (written by `interface`, if it has run).

@@ -1,6 +1,7 @@
 import type { DumpedInterfaceRect } from "#src/models/genshinAssets/interface/DumpedInterfaceRect";
+import type { RectTransformDump } from "#src/models/genshinAssets/interface/RectTransformDump";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { DumpedTransform } from "#src/models/genshinAssets/shared/DumpedTransform";
+import type { DumpedGameObject } from "#src/models/genshinAssets/shared/DumpedGameObject";
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
 
 import { composeInterfaceTree } from "#src/services/genshinAssets/interface/composeInterfaceTree";
@@ -16,11 +17,6 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-interface GameObject {
-  m_Components: { m_PathID: string; Name: string }[];
-  m_Transform: { m_GameObject: { m_PathID: string } };
-}
-type RectTransformDump = Pick<DumpedTransform, "m_Children" | "m_Father" | "m_GameObject" | "m_LocalScale">;
 // A screen's interface as the game lays it out, from the RectTransforms of the block holding it: the block is found
 // Through an indexed asset beside the interface (GameObjects are not in the asset index), its RectTransforms dumped as
 // JSON for their tree and raw for their layout, which share their files' numbering, and its GameObjects for the
@@ -68,7 +64,7 @@ export const extractComponentInterface = async (component: DerivedAssetComponent
   );
   const gameObjects = await Promise.all(
     gameObjectNames.map(async (name) =>
-      parseMachineJson<GameObject>(await readFile(join(gameObjectDirectory, name), "utf8"), reviveSourcePathId),
+      parseMachineJson<DumpedGameObject>(await readFile(join(gameObjectDirectory, name), "utf8"), reviveSourcePathId),
     ),
   );
   const gameObjectTransformIdMap = new Map(

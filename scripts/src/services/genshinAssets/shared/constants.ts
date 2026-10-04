@@ -213,3 +213,7 @@ export const CLOUD_TRACE_TEXELS = 4;
 export const CLOUD_TRACE_TOLERANCE = 1;
 export const CLOUD_COVERAGE_THRESHOLD = 0.5;
 export const CLOUD_LIT_THRESHOLD = 0.5;
+// A gilded texel's red runs past its blue by this many times, where the stone's are about equal
+export const GILDING_RED_BLUE_RATIO = 1.8;
+// Every piece the walkway is laid from: its paving, its borders and its wings
+export const WALKWAY_MESH_REGEX: RegExp = /^LoginScene_Bridge01_\d+_Vo$/u;

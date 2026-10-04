@@ -1,4 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { SetCloudCover } from "#src/models/genshinParity/sky/SetCloudCover";
+import type { Vector } from "#src/models/shared/Vector";
 import type { SkyShape } from "genshin-engine";
 
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
@@ -7,8 +9,11 @@ import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferen
 import { minimizeNelderMead } from "#src/services/genshinParity/shared/minimizeNelderMead";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
-import { computeSkyWeights, fitSky, SKY_TERMS } from "#src/services/genshinParity/sky/fitSky";
+import { computeSkyWeights } from "#src/services/genshinParity/sky/computeSkyWeights";
+import { SKY_TERMS } from "#src/services/genshinParity/sky/constants";
+import { fitSky } from "#src/services/genshinParity/sky/fitSky";
 import { readCloudSky } from "#src/services/genshinParity/sky/readCloudSky";
+import { toLinear } from "#src/services/shared/toLinear";
 import { withFinalizerAsync } from "@esposter/shared";
 import { toneMapNeutral, toSceneColor } from "genshin-engine";
 import { mkdir } from "node:fs/promises";
@@ -16,8 +21,6 @@ import { join } from "node:path";
 import sharp from "sharp";
 import { Color, Matrix4, Vector3, Vector4 } from "three";
 
-type SetCloudCover = (covers?: Record<string, number>) => string[];
-type Vector = [number, number, number];
 // Every this many pixels across and down is a sample: the sky changes slowly, and a solve reads it many times
 const SAMPLE_STRIDE = 4;
 // The least a ray looks up to be read as sky, clear of the cloud sea and the haze over the horizon
@@ -45,7 +48,6 @@ const toShape = ([
 });
 const SHAPE_STEPS = [0.3, 0.1, 0.15, 0.5, 2];
 const SHAPE_ITERATIONS = 80;
-const toLinear = (value: number): number => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
 // A pixel of raw sRGB bytes as the scene colour the tone mapping shows as it
 const computeSceneColor = (buffer: Buffer, pixel: number): Vector => {
   const scene = toSceneColor(

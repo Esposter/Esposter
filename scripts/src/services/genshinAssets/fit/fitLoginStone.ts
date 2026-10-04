@@ -1,13 +1,13 @@
 import type { MaterialValues } from "#src/models/genshinAssets/shared/MaterialValues";
+import type { Vector } from "#src/models/shared/Vector";
 
 import { fitAlbedo } from "#src/services/genshinAssets/fit/fitAlbedo";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { BYTE } from "#src/services/shared/constants";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
 
-type Vector = [number, number, number];
-const BYTE = 255;
 // The texels a mask is reduced to before its median is taken
 const MASK_SAMPLE_SIZE = 64;
 // The material property a mask's smoothness is scaled by

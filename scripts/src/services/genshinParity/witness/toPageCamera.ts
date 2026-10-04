@@ -1,4 +1,4 @@
-import type { PageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
+import type { PageWitnessView } from "#src/models/genshinParity/shared/PageWitnessView";
 
 // A pose along `CAMERA_POSE_AXES` (metres, then degrees) as the parity page's witness camera takes it, in radians but
 // For its field of view

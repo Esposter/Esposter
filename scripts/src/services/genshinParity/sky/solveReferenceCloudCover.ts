@@ -1,4 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { SetCloudCover } from "#src/models/genshinParity/sky/SetCloudCover";
+import type { SetCloudHeights } from "#src/models/genshinParity/sky/SetCloudHeights";
 import type { Browser, Page } from "playwright";
 
 import { CLOUDS_WIDTH } from "#src/services/genshinParity/shared/constants";
@@ -9,8 +11,6 @@ import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWi
 import { readCloudSky } from "#src/services/genshinParity/sky/readCloudSky";
 import { withFinalizerAsync } from "@esposter/shared";
 
-type SetCloudCover = (covers?: Record<string, number>) => string[];
-type SetCloudHeights = (heights?: Record<string, [number, number]>) => Record<string, [number, number]>;
 // Each share starts at three in four, the simplex's first step in its logit as wide as from there to even odds and
 // Past: the cover steps by whole clouds, so a search with no gradient finds its way where a descent's Jacobian stalls
 const START_LOGIT = Math.log(3);

@@ -1,3 +1,5 @@
+import type { LabelPlanes } from "#src/models/genshinParity/witness/LabelPlanes";
+
 import { blurGrey } from "#src/services/genshinParity/shared/blurGrey";
 
 // Multi-scale structural similarity (Wang, Simoncelli and Bovik, 2003) over two grey images, read apart for each label
@@ -10,15 +12,6 @@ const SCALE_WEIGHTS = [0.0448, 0.2856, 0.3001, 0.2363, 0.1333];
 const WINDOW_SIGMA = 1.5;
 const LUMINANCE_CONSTANT = 0.01 ** 2;
 const CONTRAST_CONSTANT = 0.03 ** 2;
-// A label's share of each pixel and each image weighted by it, so a window reads only the label's own pixels and a
-// Neighbour's differences never score against it
-interface LabelPlanes {
-  coverage: Float32Array;
-  first: Float32Array;
-  height: number;
-  second: Float32Array;
-  width: number;
-}
 // Half the size, each pixel the mean of the four it covers
 const halve = (values: Float32Array, width: number, height: number): Float32Array => {
   const halfWidth = Math.floor(width / 2);

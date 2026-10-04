@@ -152,3 +152,5 @@ export const PARITY_MUSIC_SCORES_PATH: string = join(
   "shared",
   "ParityMusicScores.snapshot.md",
 );
+export const CHANNELS = [0, 1, 2] as const;
+export const LUMINANCE = [0.2126, 0.7152, 0.0722] as const;

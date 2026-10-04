@@ -7,12 +7,12 @@ import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessP
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { measureClouds } from "#src/services/genshinParity/sky/measureClouds";
 import { readCloudSky } from "#src/services/genshinParity/sky/readCloudSky";
+import { BYTE } from "#src/services/shared/constants";
 import { withFinalizerAsync } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
 
-const BYTE = 255;
 // A clear sky's pixel in the sheet's masks, between a cloud's white and the rest's black
 const CLEAR_SHADE = 96;
 // A reference's clouds and ours by their statistics (`measureClouds`) and their cover band by band of their height over

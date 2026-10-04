@@ -1,4 +1,4 @@
-import type { ShaderConstant } from "#src/services/genshinAssets/materials/parseShaderConstantLayouts";
+import type { ShaderConstant } from "#src/models/genshinAssets/materials/ShaderConstant";
 
 // A register of a constant buffer is 16 bytes, four components of four
 const REGISTER_BYTES = 16;

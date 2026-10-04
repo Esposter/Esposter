@@ -1,12 +1,15 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { SetLights } from "#src/models/genshinParity/witness/SetLights";
 
-import { CLOUD_BRIGHTNESS_RATIO, SKY_LAYER } from "#src/services/genshinParity/shared/constants";
+import { CLOUD_BRIGHTNESS_RATIO, LUMINANCE, SKY_LAYER } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
 import { readWitnessGbuffer } from "#src/services/genshinParity/shared/readWitnessGbuffer";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
+import { BYTE } from "#src/services/shared/constants";
+import { toLinear } from "#src/services/shared/toLinear";
 import { withFinalizerAsync } from "@esposter/shared";
 import sharp from "sharp";
 
@@ -21,10 +24,6 @@ const DEPTH_BANDS: [string, number][] = [
 const SKY_BAND_COUNT = 3;
 // A part's face is lit where its cosine to the light passes this, turned away under its negative, and edge-on between
 const FACING_COSINE = 0.3;
-const BYTE = 255;
-const toLinear = (value: number): number => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
-const LUMINANCE = [0.2126, 0.7152, 0.0722] as const;
-type SetLights = (shares: { ambientShare?: number; sunShare?: number }) => { direction: [number, number, number] };
 // Every term of a reference's error ranked by its ceiling, the most of the frame's FLIP that term drawn exactly would
 // Recover: the frame's FLIP is its pixels' mean, so a term's ceiling is its pixels' error summed over the frame's
 // Pixels. Each family of parts the witness draws splits into its stand-in, the error ours carries over the game's own

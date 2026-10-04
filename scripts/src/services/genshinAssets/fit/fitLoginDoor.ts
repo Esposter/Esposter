@@ -1,4 +1,5 @@
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
+import type { Vector } from "#src/models/shared/Vector";
 
 import { blurWithinTags } from "#src/services/genshinAssets/fit/blurWithinTags";
 import { fitSilhouette } from "#src/services/genshinAssets/fit/fitSilhouette";
@@ -7,8 +8,11 @@ import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { toTexel } from "#src/services/genshinAssets/fit/toTexel";
 import { traceCellLoops } from "#src/services/genshinAssets/fit/traceCellLoops";
 import { computeOtsuThreshold } from "#src/services/genshinAssets/shared/computeOtsuThreshold";
+import { GILDING_RED_BLUE_RATIO } from "#src/services/genshinAssets/shared/constants";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
+import { BYTE } from "#src/services/shared/constants";
+import { toLinear } from "#src/services/shared/toLinear";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -29,11 +33,6 @@ const RELIEF_CELL_SIZE = 0.005;
 const RELIEF_BLUR_CELLS = 1;
 const RELIEF_MIN_CELLS = 20;
 const RELIEF_TOLERANCE_CELLS = 1;
-// A gilded texel's red runs past its blue by this many times, where the stone's are about equal
-const GILDING_RED_BLUE_RATIO = 1.8;
-const BYTE = 255;
-const toLinear = (value: number): number => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
-type Vector = [number, number, number];
 // The door where the scene stands it, its size there, and its frame and panel each as its face seen from the front in
 // Three's axes, every loop round it (an outer ring counterclockwise, a hole clockwise) from the foot of its middle,
 // With the depths its front and back stand at: the frame's head and shoulders as the game's own, where a round head of

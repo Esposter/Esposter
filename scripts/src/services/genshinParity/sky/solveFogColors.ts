@@ -1,7 +1,8 @@
+import type { Vector } from "#src/models/shared/Vector";
+
+import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { solveLinearSystem } from "#src/services/genshinParity/shared/solveLinearSystem";
 
-type Vector = [number, number, number];
-const CHANNELS = [0, 1, 2] as const;
 // The sunward colour is settled only where the points looking toward the sun weigh at least this share of the rest
 const MIN_SCATTER_WEIGHT_SHARE = 0.001;
 // The fog's two colours that best turn each point's lit colour into the reference's, in the scene's own colour: a point

@@ -1,32 +1,28 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { SetCloudColors } from "#src/models/genshinParity/sky/SetCloudColors";
+import type { Vector } from "#src/models/shared/Vector";
 import type { Page } from "playwright";
 
-import { CLOUD_BRIGHTNESS_RATIO } from "#src/services/genshinParity/shared/constants";
+import { CHANNELS, CLOUD_BRIGHTNESS_RATIO } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { readWitnessPartTarget } from "#src/services/genshinParity/shared/readWitnessPartTarget";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
+import { getLuminance } from "#src/services/genshinParity/sky/getLuminance";
+import { getPixelSceneColor } from "#src/services/genshinParity/sky/getPixelSceneColor";
 import { solveCloudColors } from "#src/services/genshinParity/sky/solveCloudColors";
 import { withFinalizerAsync } from "@esposter/shared";
-import { toneMapNeutral, toSceneColor } from "genshin-engine";
+import { toneMapNeutral } from "genshin-engine";
 import sharp from "sharp";
 import { Color, Matrix4, Vector3, Vector4 } from "three";
 
-type Vector = [number, number, number];
-const BYTE = 255;
-const CHANNELS = [0, 1, 2] as const;
-const LUMINANCE = [0.2126, 0.7152, 0.0722] as const;
 // Every this many pixels across and down is a sample: the clouds' colours change slowly, and both sets keep thousands
 const SAMPLE_STRIDE = 4;
 // A pixel of ours is a cloud where its shares of the clouds' two colours add to at least this, so the sky behind a
 // Cloud's soft edge does not stand for it
 const MIN_CLOUD_COVER = 0.3;
-const toLinear = (value: number): number => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
 const toDisplayHex = ([red, green, blue]: Vector): string =>
   `#${new Color(...toneMapNeutral([Math.max(red, 0), Math.max(green, 0), Math.max(blue, 0)])).getHexString()}`;
-const getLuminance = (color: Readonly<Vector>): number =>
-  CHANNELS.reduce((sum: number, channel) => sum + LUMINANCE[channel] * color[channel], 0);
-type SetCloudColors = (colors?: { lit: Vector; shade: Vector }) => void;
 const setCloudColors = (page: Page, colors?: { lit: Vector; shade: Vector }): Promise<void> =>
   page.evaluate((cloudColors) => {
     (Reflect.get(window, "setSceneCloudColors") as SetCloudColors)(cloudColors);
@@ -67,10 +63,6 @@ export const solveReferenceClouds = async (
       await setCloudColors(page);
       await setPageWitnessView(page, {});
       const reference = await sharp(image).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
-      const toScene = (data: Buffer, pixel: number): Vector =>
-        toSceneColor(
-          new Color(...CHANNELS.map((channel) => toLinear((data[pixel * 3 + channel] ?? 0) / BYTE))),
-        ).toArray() as Vector;
       const projectionInverse = new Matrix4().fromArray(sky.projectionMatrixInverse);
       const world = new Matrix4().fromArray(sky.matrixWorld);
       const ours: { base: Vector; lit: Vector; shade: Vector }[] = [];
@@ -87,14 +79,17 @@ export const solveReferenceClouds = async (
           ).applyMatrix4(projectionInverse);
           const direction = new Vector3(view.x / view.w, view.y / view.w, view.z / view.w).transformDirection(world);
           if (direction.y <= 0) continue;
-          const base = toScene(baseShot, pixel);
-          const shadeColor = toScene(shadeShot, pixel);
-          const litColor = toScene(litShot, pixel);
+          const base = getPixelSceneColor(baseShot, pixel);
+          const shadeColor = getPixelSceneColor(shadeShot, pixel);
+          const litColor = getPixelSceneColor(litShot, pixel);
           const shade = CHANNELS.map((channel) => shadeColor[channel] - base[channel]) as Vector;
           const lit = CHANNELS.map((channel) => litColor[channel] - base[channel]) as Vector;
           if (getLuminance(shade) + getLuminance(lit) >= MIN_CLOUD_COVER) ours.push({ base, lit, shade });
-          const referenceColor = toScene(reference, pixel);
-          if (getLuminance(referenceColor) > getLuminance(toScene(clearShot, pixel)) * CLOUD_BRIGHTNESS_RATIO)
+          const referenceColor = getPixelSceneColor(reference, pixel);
+          if (
+            getLuminance(referenceColor) >
+            getLuminance(getPixelSceneColor(clearShot, pixel)) * CLOUD_BRIGHTNESS_RATIO
+          )
             referenceClouds.push(referenceColor);
         }
       const { lit, residual, shade } = solveCloudColors(ours, referenceClouds);

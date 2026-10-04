@@ -1,5 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { PageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
+import type { PageWitnessView } from "#src/models/genshinParity/shared/PageWitnessView";
+import type { WitnessPart } from "#src/models/genshinParity/witness/WitnessPart";
 
 import { PARITY_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
@@ -10,11 +11,6 @@ import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
 
-interface WitnessPart {
-  mesh: string;
-  position: [number, number, number];
-  screen: [number, number];
-}
 // Each part of a family the witness draws at a reference's view, numbered where the top of it lands, over the reference
 // And over the witness's own render side by side, so a part is matched to what the reference shows by eye and named as
 // A landmark by its mesh and where it stands. The list is printed with each part's pixel in the reference's own pixels

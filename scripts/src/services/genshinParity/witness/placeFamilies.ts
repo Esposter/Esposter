@@ -1,5 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { PageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
+import type { PageWitnessView } from "#src/models/genshinParity/shared/PageWitnessView";
 
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { minimizeNelderMead } from "#src/services/genshinParity/shared/minimizeNelderMead";

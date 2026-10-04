@@ -3,6 +3,7 @@ import type { SubCommandsDef } from "citty";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { PLANS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { readWitnessPlan } from "#src/services/genshinParity/witness/readWitnessPlan";
+import { BYTE } from "#src/services/shared/constants";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
@@ -10,7 +11,6 @@ import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
 
-const BYTE = 255;
 const toDisplay = (value: number): number => (value <= 0.0031308 ? value * 12.92 : 1.055 * value ** (1 / 2.4) - 0.055);
 
 export const planCommand: SubCommandsDef[string] = defineCommand({

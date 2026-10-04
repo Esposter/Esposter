@@ -3,13 +3,15 @@ import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlace
 import { fitFootprintOutline } from "#src/services/genshinAssets/fit/fitFootprintOutline";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { toWorldVertices } from "#src/services/genshinAssets/fit/toWorldVertices";
-import { WALKWAY_CELL_SIZE, WALKWAY_OUTLINE_TOLERANCE } from "#src/services/genshinAssets/shared/constants";
+import {
+  WALKWAY_CELL_SIZE,
+  WALKWAY_MESH_REGEX,
+  WALKWAY_OUTLINE_TOLERANCE,
+} from "#src/services/genshinAssets/shared/constants";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { join } from "node:path";
 
-// Every piece the walkway is laid from: its paving, its borders and its wings
-const WALKWAY_MESH_REGEX = /^LoginScene_Bridge01_\d+_Vo$/u;
 // The walkway as the slabs it is laid from, each piece's outline seen from above and its own top (a few sit a little
 // Under the rest), every piece rising into place on its own as the walkway assembles itself ahead of the camera; and
 // The surface's and underside's heights, the levels most of its vertices lie at at its top and its foot

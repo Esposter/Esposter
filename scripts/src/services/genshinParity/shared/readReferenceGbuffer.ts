@@ -1,6 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { PageWitnessView } from "#src/models/genshinParity/shared/PageWitnessView";
 import type { WitnessGbuffer } from "#src/models/genshinParity/shared/WitnessGbuffer";
-import type { PageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";

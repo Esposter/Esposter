@@ -1,4 +1,5 @@
-type Vector = [number, number, number];
+import type { Vector } from "#src/models/shared/Vector";
+
 const MIN_RAY_CLIMB = 0.000001;
 // How much of a point the scene's height fog hides from the eye, as `createHeightFogNode` integrates it: a haze whose
 // Density falls off exponentially with height above its base, along the ray past its start distance

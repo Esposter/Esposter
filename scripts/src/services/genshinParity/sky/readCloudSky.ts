@@ -2,10 +2,12 @@ import type { Page } from "playwright";
 
 import { computeOtsuThreshold } from "#src/services/genshinAssets/shared/computeOtsuThreshold";
 import { blurGrey } from "#src/services/genshinParity/shared/blurGrey";
-import { CLOUD_ELEVATION_BANDS } from "#src/services/genshinParity/shared/constants";
+import { CLOUD_ELEVATION_BANDS, LUMINANCE } from "#src/services/genshinParity/shared/constants";
 import { readWitnessPartTarget } from "#src/services/genshinParity/shared/readWitnessPartTarget";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { fitClearSky } from "#src/services/genshinParity/sky/fitClearSky";
+import { BYTE } from "#src/services/shared/constants";
+import { toLinear } from "#src/services/shared/toLinear";
 import sharp from "sharp";
 import { Matrix4, Vector3, Vector4 } from "three";
 
@@ -14,9 +16,6 @@ import { Matrix4, Vector3, Vector4 } from "three";
 // At a time, and read unblurred it speckles a night's clear sky with cloud
 const CLOUD_RATIO = 1.15;
 const CLASSIFY_BLUR_SIGMA = 2;
-const BYTE = 255;
-const LUMINANCE = [0.2126, 0.7152, 0.0722] as const;
-const toLinear = (value: number): number => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
 // The sky of a witness page as the cloud tools read it: the sky above the horizon where no part stands, each pixel's
 // Height over the horizon, an image's linear luminance there, and its clouds, a pixel standing brighter than its own
 // Sky's clear sky by Otsu's split of the sky or the cloud's ratio, whichever is more, the clear sky a smooth surface fitted under its clouds (`fitClearSky`), in the

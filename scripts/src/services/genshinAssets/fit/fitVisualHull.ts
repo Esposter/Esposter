@@ -1,6 +1,7 @@
+import type { PlanPoint } from "#src/models/genshinAssets/fit/PlanPoint";
+
 import { coverTriangles } from "#src/services/genshinAssets/fit/coverTriangles";
 
-type Point = readonly [number, number];
 // The three axis views a hull is carved from, each as the two axes its plane spans
 const VIEW_AXES = [
   [0, 1],
@@ -31,8 +32,8 @@ export const fitVisualHull = (
   const views = VIEW_AXES.map(([across, up]) => {
     const width = counts[across] ?? 0;
     const height = counts[up] ?? 0;
-    const corner: Point = [minimum[across] ?? 0, minimum[up] ?? 0];
-    const project = (index: number): Point => {
+    const corner: PlanPoint = [minimum[across] ?? 0, minimum[up] ?? 0];
+    const project = (index: number): PlanPoint => {
       const vertex = vertices[index];
       return [vertex?.[across] ?? 0, vertex?.[up] ?? 0];
     };
