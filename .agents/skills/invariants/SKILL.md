@@ -73,19 +73,7 @@ A convention about to be written into a skill is probed against oxlint first —
 
 ## Prime example — a room-scoped store's writes
 
-Room-scoped Pinia slices are keyed by the room on screen, so `items` and `members` read whichever room that is.
-That is what a rendering component wants and exactly what a **write** must never use: a response that lands after
-the reader opened another room would be filed under the room they are now looking at.
-
-A remembered version — an `if (checkIsFoo(roomId))` in every callback — ends up present in one store,
-absent in its neighbour, with nothing failing — which is the whole argument. The structural version has no check
-anywhere: the write functions are reachable only through `getSlice(roomId)` / `getRoomOperationData(roomId)`,
-so naming the room is how you obtain a writer at all, and a response cannot be filed anywhere but its own slice.
-The convention itself is the `pinia` skill's (`references/keyed-state-and-pagination.md`).
-
-Note what the structural version also bought: a late response now lands in **its own** room's slice, so
-re-opening that room shows what was read rather than re-fetching it. The guard could only ever drop the write —
-correct, but strictly less than correct-and-useful. A rung up the ladder usually pays twice.
+The worked case is a room-scoped store's writes: a guard in every callback ends up present in one store and absent in its neighbour, where a writer reachable only by naming its room cannot be misfiled at all (`references/room-scoped-writes.md`).
 
 ## Where this is not the answer
 
@@ -99,3 +87,4 @@ correct, but strictly less than correct-and-useful. A rung up the ladder usually
 - `references/scratch-checks.md` — when a session writes a throwaway check on its own work, or is about to keep one.
 - `references/retiring-an-enforcer.md` — when a change simplifies, deletes or restructures code, or an enforcer seems to guard something the tree no longer has.
 - `references/probing-for-an-enforcer.md` — before writing a convention into a skill: whether oxlint already decides it.
+- `references/room-scoped-writes.md` — when a guard is about to be written at every call site, or the ladder needs a worked case.
