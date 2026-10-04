@@ -4,7 +4,16 @@ import { collectMusicNotes } from "#src/audio/collectMusicNotes";
 import { describe, expect, test } from "vitest";
 
 describe(collectMusicNotes, () => {
-  const instrument = { attack: 0, decay: 1, harmonics: [1], level: 1, release: 1, sustain: 1, tuning: 0 };
+  const instrument = {
+    attack: 0,
+    decay: 1,
+    harmonics: [1],
+    level: 1,
+    noiseBands: [],
+    release: 1,
+    sustain: 1,
+    tuning: 0,
+  };
   const note = { duration: 1, pitch: 69, start: 1, velocity: 1 };
   // A piece and a rest played twice a pass, as the login's playlist is: piece, rest, piece, rest
   const music: Music = {

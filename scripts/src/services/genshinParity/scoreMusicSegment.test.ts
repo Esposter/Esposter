@@ -20,15 +20,16 @@ describe(scoreMusicSegment, () => {
     expect(distance).toBeCloseTo(0);
   });
 
-  test("charges a render twice as loud six decibels in every band", () => {
+  test("charges a render half as loud six decibels in every band, signed under 0", () => {
     expect.hasAssertions();
 
     const louder = chord.map((sample) => sample * 2);
-    const { bandDistances, pitchAgreement } = scoreMusicSegment(louder, chord, LISTEN_SAMPLE_RATE);
+    const { bandBiases, bandDistances, pitchAgreement } = scoreMusicSegment(chord, louder, LISTEN_SAMPLE_RATE);
 
     expect(pitchAgreement).toBeCloseTo(1);
     expect(bandDistances.map((distance) => Number(distance.toFixed(1)))).toStrictEqual(
       LISTEN_BAND_CENTRES.map(() => 6),
     );
+    expect(bandBiases.map((bias) => Number(bias.toFixed(1)))).toStrictEqual(LISTEN_BAND_CENTRES.map(() => -6));
   });
 });

@@ -127,6 +127,8 @@ export const CHROMA_MATCH_SECONDS = 20;
 export const LISTEN_SAMPLE_RATE = 22050;
 export const LISTEN_BAND_CENTRES: number[] = [63, 125, 250, 500, 1000, 2000, 4000, 8000];
 export const LISTEN_FLOOR_DECIBELS = 60;
+// A frame whose whole power rises by half again over the last is a note's attack, where `bands` weighs a band's power
+export const BANDS_ONSET_RISE = 1.5;
 // The committed report of each music segment's last `listen`
 export const PARITY_MUSIC_SCORES_PATH: string = join(
   REPOSITORY_ROOT,

@@ -13,14 +13,22 @@ export const writeParityMusicScores = (screen: string, scores: { id: number; sco
       "",
       "Each segment of the music's last `pnpm -C scripts genshin:parity listen`, our render against the game's own",
       "sound. Pitch agreement runs from 0 to 1 (identical); each band's distance is the mean gap between the two's",
-      "levels in decibels, 0 identical, and the distance their mean. Commit it with the change that moved it, as a",
-      "bench's report is committed.",
+      "levels in decibels, 0 identical, and the distance their mean; each band's bias is that gap signed, ours over",
+      "the game's, under 0 where ours is the quieter. Commit it with the change that moved it, as a bench's report is",
+      "committed.",
       "",
       `| Screen | Segment | Pitch agreement | Distance | ${LISTEN_BAND_CENTRES.map(formatBand).join(" | ")} |`,
       `| :----- | :------ | --------------: | -------: | ${LISTEN_BAND_CENTRES.map(() => "---:").join(" | ")} |`,
       ...scores.map(
         ({ id, score: { bandDistances, distance, pitchAgreement } }) =>
           `| \`${screen}\` | \`${id}\` | ${pitchAgreement.toFixed(3)} | ${distance.toFixed(1)} dB | ${bandDistances.map((bandDistance) => bandDistance.toFixed(1)).join(" | ")} |`,
+      ),
+      "",
+      `| Screen | Segment | ${LISTEN_BAND_CENTRES.map((centre) => `${formatBand(centre)} bias`).join(" | ")} |`,
+      `| :----- | :------ | ${LISTEN_BAND_CENTRES.map(() => "---:").join(" | ")} |`,
+      ...scores.map(
+        ({ id, score: { bandBiases } }) =>
+          `| \`${screen}\` | \`${id}\` | ${bandBiases.map((bias) => bias.toFixed(1)).join(" | ")} |`,
       ),
     ].join("\n")}\n`,
   );

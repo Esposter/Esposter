@@ -61,14 +61,27 @@ export const MUSIC_DIRECTORY: string = join(EXTRACTED_DIRECTORY, "music");
 // Fall in bins of their own, short enough that an attack is not smeared past the window's half
 export const MUSIC_FRAME_LENGTH = 2048;
 export const MUSIC_HOP_LENGTH = 256;
-// The overtones a voice's timbre is measured to, and the frequency past which none is read, where the game's mix holds
-// Little but its reverb and its codec's cut
-export const MUSIC_HARMONIC_COUNT = 8;
-export const MUSIC_MAX_FREQUENCY = 8000;
+// The overtones a voice's timbre is measured to, and the frequency past which nothing is read, short of the codec's cut
+// At the transcription's half rate
+export const MUSIC_HARMONIC_COUNT = 32;
+export const MUSIC_MAX_FREQUENCY = 10_000;
+// A partial's leakage through a Hann window's sidelobes falls some fifty decibels under its peak by six bins out, as far
+// Under a note as a mix's noise sits, so a band's noise is read only that far from every partial, and from at least two
+// Such bins
+export const MUSIC_NOISE_CLEAR_BINS = 6;
+export const MUSIC_NOISE_MIN_BINS = 2;
+// A band is given noise only where the game's sound in it is noise-like: its tonal octaves read a median flatness under
+// About 0.06 and its noisy ones over about 0.09
+export const MUSIC_NOISE_MIN_FLATNESS = 0.07;
+// The Gauss-Newton steps refining the voices' noise from its least-squares solve, which settles within a few
+export const MUSIC_NOISE_REFINE_STEPS = 20;
 // A harmonic is measured only where every other sounding note's harmonics stand at least this many semitones clear of
 // It, and the spectrum's bins at least this many
 export const MUSIC_CLEAR_SEMITONES = 0.5;
 export const MUSIC_CLEAR_BINS = 2;
+// Another note's partial in that span covers a reading only when it is expected at least this share of the reading's
+// Amplitude: a smaller one moves the reading by under a decibel, inside every band's distance the listening score charges
+export const MUSIC_COVER_SHARE = 0.1;
 // A value of an instrument is fitted only from at least this many measurements; a harmonic with fewer is left silent
 export const MUSIC_MIN_MEASUREMENTS = 5;
 // The registers a piece's notes are split into, each played by one fitted instrument
