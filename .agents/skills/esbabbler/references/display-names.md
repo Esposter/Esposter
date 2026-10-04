@@ -27,5 +27,5 @@ Nicknames are `text().notNull().default("")`. Empty string `""` is falsy — use
 
 ```ts
 // || (not ??) — empty-string nickname is falsy, so fall back to global name
-getUserToRoomMap(roomId)?.get(user.id)?.nickname || user.name;
+getNicknameMap(roomId)?.get(id) || name;
 ```
