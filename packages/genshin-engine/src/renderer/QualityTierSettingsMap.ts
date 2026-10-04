@@ -5,9 +5,9 @@ import { QualityTier } from "#src/renderer/QualityTier";
 
 // What each tier spends, cheapest cut first: grass blades, whose thinning the look survives best, the shadow maps,
 // Which cost every shadowed fragment, the god rays, a march per pixel at half resolution, the pixel ratio, which
-// Costs every fragment, and bloom, a chain of blurs. TRAA settles the thin
-// Outlines and leaf edges that SMAA leaves shimmering, for a velocity target and a frame of history. The ramp, the
-// Rim and the outlines are the style, so no tier drops them
+// Costs every fragment, and bloom, a chain of blurs. TRAA settles the thin outlines and leaf edges that SMAA leaves
+// Shimmering, for a velocity target and a frame of history. The ramp, the rim and the outlines are the style, so no
+// Tier drops them
 export const QualityTierSettingsMap: Readonly<Record<QualityTier, QualityTierSettings>> = {
   [QualityTier.High]: {
     antialiasingMode: AntialiasingMode.Traa,

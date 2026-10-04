@@ -2,10 +2,9 @@ import type { SkyUniforms } from "#src/atmosphere/SkyUniforms";
 import type { Texture } from "three";
 import type { Node } from "three/webgpu";
 
+import { LEAST_DIVISOR } from "#src/nodes/constants";
 import { abs, asin, clamp, float, max, min, mix, pow, saturate, smoothstep, texture, vec2 } from "three/tsl";
 
-// The least a height or a size is divided by, as the game's shader guards its own
-const LEAST_DIVISOR = 1e-4;
 // The share of the sun's side where the halo toward it takes over, the span it takes over across, and the sun's height
 // Where the halo shows all round the sky, a low sun keeping it toward itself
 const HALO_TOWARD_START = 0.3;
