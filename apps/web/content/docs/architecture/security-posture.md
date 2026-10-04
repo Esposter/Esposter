@@ -30,7 +30,7 @@ flowchart TD
 
 ### Content Security Policy
 
-`img-src` is not written in the security config at all — it is the shared `ImageSourceWhitelist`, so the one list of permitted image origins serves both the CSP and any other consumer that needs it. Under `nuxt dev` alone, `configuration/development.ts` appends `https://nuxt.com`, where Nuxt DevTools loads the logo on its button from; production never names it. `script-src` carries `'unsafe-eval'`, which Desmos requires to evaluate the expressions it is given; the separate `script-src-elem` and `style-src-elem` lists enumerate the third-party origins actually loaded (Desmos, GrapesJS, MediaPipe's track processors) with a comment naming the dependency behind each entry, so an entry whose dependency is removed is obvious. No font origin is listed: `@nuxt/fonts` fetches each family's stylesheet on the server, at build and in dev, and serves the files from the app's own `/_fonts`, so the browser never contacts the font host. `worker-src` allows `'self'` for the PDF viewer's worker and `blob:` for the one Desmos constructs at runtime.
+`img-src` is not written in the security config at all — it is the shared `ImageSourceWhitelist`, so the one list of permitted image origins serves both the CSP and any other consumer that needs it. Under `nuxt dev` alone, `configuration/development.ts` appends `https://nuxt.com`, where Nuxt DevTools loads the logo on its button from, and `https://unocss.dev`, where the UnoCSS inspector's tab loads its icon from; production names neither. `script-src` carries `'unsafe-eval'`, which Desmos requires to evaluate the expressions it is given; the separate `script-src-elem` and `style-src-elem` lists enumerate the third-party origins actually loaded (Desmos, GrapesJS, MediaPipe's track processors) with a comment naming the dependency behind each entry, so an entry whose dependency is removed is obvious. No font origin is listed: `@nuxt/fonts` fetches each family's stylesheet on the server, at build and in dev, and serves the files from the app's own `/_fonts`, so the browser never contacts the font host. `worker-src` allows `'self'` for the PDF viewer's worker and `blob:` for the one Desmos constructs at runtime.
 
 ### Embedder policy
 
@@ -65,14 +65,14 @@ The accepted cost is a privacy one, and it is accepted rather than unnoticed: a 
 
 Paths relative to `apps/web`.
 
-| File                                          | Role                                                               |
-| --------------------------------------------- | ------------------------------------------------------------------ |
-| `configuration/modules.ts`                    | registers `nuxt-security` in the production module list only       |
-| `configuration/security.ts`                   | CSP, permissions policy, request size limits, disabled features    |
-| `configuration/security.test.ts`              | the XSS validator measurement that keeps it off                    |
-| `configuration/development.ts`                | the dev-only `img-src` entry for Nuxt DevTools' logo               |
-| `server/plugins/security.ts`                  | per-route CSP override widening `img-src` under the messages route |
-| `configuration/routeRules.ts`                 | the embedder policy on built scripts, so a dedicated worker starts |
-| `configuration/experimental.ts`               | the entry import map off, so a chunk's name changes with its bytes |
-| `shared/services/app/ImageSourceWhitelist.ts` | the shared list of permitted image origins                         |
-| `shared/services/app/constants.ts`            | `MAX_REQUEST_SIZE` and `MAX_FILE_REQUEST_SIZE`                     |
+| File                                          | Role                                                                 |
+| --------------------------------------------- | -------------------------------------------------------------------- |
+| `configuration/modules.ts`                    | registers `nuxt-security` in the production module list only         |
+| `configuration/security.ts`                   | CSP, permissions policy, request size limits, disabled features      |
+| `configuration/security.test.ts`              | the XSS validator measurement that keeps it off                      |
+| `configuration/development.ts`                | the dev-only `img-src` entries for the DevTools button and tab icons |
+| `server/plugins/security.ts`                  | per-route CSP override widening `img-src` under the messages route   |
+| `configuration/routeRules.ts`                 | the embedder policy on built scripts, so a dedicated worker starts   |
+| `configuration/experimental.ts`               | the entry import map off, so a chunk's name changes with its bytes   |
+| `shared/services/app/ImageSourceWhitelist.ts` | the shared list of permitted image origins                           |
+| `shared/services/app/constants.ts`            | `MAX_REQUEST_SIZE` and `MAX_FILE_REQUEST_SIZE`                       |
