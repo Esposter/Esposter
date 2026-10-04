@@ -3,12 +3,12 @@ import type { InjectionKey, Ref } from "vue";
 
 // The terminal's spinner: a star that grows and shrinks back, a frame at a time
 export const SPINNER_FRAMES = ["·", "✢", "✳", "✶", "✻", "✽", "✻", "✶", "✳", "✢"];
-export const SPINNER_INTERVAL_MS = Temporal.Duration.from({ milliseconds: 120 }).total("milliseconds");
+export const SPINNER_INTERVAL_MS = 120;
 // How faint a disabled control is drawn, for a canvas that cannot read the opacity rule
 export const DISABLED_OPACITY = 0.38;
 // How long a dialog takes to leave, the four motion units of its closing transition, so a close that waits for it acts
 // Once the dialog is gone
-export const DIALOG_CLOSE_DURATION_MS = Temporal.Duration.from({ milliseconds: 200 }).total("milliseconds");
+export const DIALOG_CLOSE_DURATION_MS = 200;
 // How long a toast that closes itself stays, long enough to read one sentence
 export const TOAST_DURATION_MS = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
 // How many voxel blocks the loading bar is made of
@@ -26,7 +26,7 @@ export const DATA_TABLE_PAGE_KEY_ROW_COUNT = 10;
 // How many voxel blocks a meter is made of: a tenth of the whole each, so a reading is counted at a glance
 export const METER_BLOCK_COUNT = 10;
 // How long a pause in typing ends a typeahead search, so the next key starts a new one — the listbox pattern's figure
-export const TYPEAHEAD_RESET_MS = Temporal.Duration.from({ milliseconds: 500 }).total("milliseconds");
+export const TYPEAHEAD_RESET_MS = 500;
 // Where a popover opens against what it hangs off: below it and aligned to its start, flipped to the other side or
 // The other end where there is no room. Where no side has room for it — a wide panel off a narrow screen's bottom bar —
 // It takes the whole width below or above, which the browser shifts it along to stay on screen, so one always fits
@@ -39,15 +39,15 @@ export const SELECT_TRIGGER_TITLE_LIMIT = 3;
 export const TOOLTIP_POSITION_AREA = "var(--ui-tooltip-position-area, top)";
 // How long a finger rests on a touch screen before a drag starts under it, so a swipe that starts on a draggable row
 // Scrolls instead. Shorter than the long press, so a finger that holds still still opens the context menu
-export const TOUCH_DRAG_DELAY_MS = Temporal.Duration.from({ milliseconds: 200 }).total("milliseconds");
+export const TOUCH_DRAG_DELAY_MS = 200;
 // What a reorderable table's rows are dragged by, drawn by the call site in a column of its own, since a row's cells
 // Are its own to press and select across
 export const REORDER_HANDLE_CLASS = "reorder-handle";
 // How long the rest of a list takes to close the gap a dragged row leaves or open one where it lands, three
 // Motion units
-export const REORDER_ANIMATION_MS = Temporal.Duration.from({ milliseconds: 150 }).total("milliseconds");
+export const REORDER_ANIMATION_MS = 150;
 // How long a finger rests on a touch screen before the context menu opens under it, the platforms' own long press
-export const LONG_PRESS_MS = Temporal.Duration.from({ milliseconds: 500 }).total("milliseconds");
+export const LONG_PRESS_MS = 500;
 // How far a resting finger may drift, in CSS pixels, before the press counts as the start of a scroll instead
 export const LONG_PRESS_MOVE_TOLERANCE = 10;
 // Where the browser's own context menu is worth more than ours: in a field, with its spell-check and paste, and on a

@@ -127,7 +127,7 @@ export const OVERLAY_WRITE_BACK_TIMEOUT_MS: number = Temporal.Duration.from({ mi
 // Past five minutes, and a SIGTERM mid-`rm -rf` leaves a half-swept cache and no record of which roots survived. The
 // Bound exists to stop a wedged WSL service hanging an implicit background prune; a clean is explicit and
 // User-invoked, so it may block until it finishes and the user may Ctrl+C it.
-export const CACHE_CLEAN_TIMEOUT_MS: number = 0;
+export const CACHE_CLEAN_TIMEOUT_MS = 0;
 // How old a source-mirror entry carrying no `origin` marker must be before the reaper may reclaim it. The marker is
 // Written (atomically) as soon as the entry directory exists, so its absence means a sync died in that same instant — a
 // Corpse, not a live planner — and any window measured in a day is orders of magnitude beyond that gap. Without this
@@ -164,7 +164,7 @@ export const ACCEPTANCE_CACHE_DIRECTORY_NAME = "acceptance";
 // Only by `cache clean`). A group-killed bwrap tree unwinds in well under a second, so this is a hang guard for one
 // That does not — the clean proceeds regardless, back to the racy removal it would always have done. Seconds, not
 // Ms: the consumer is a Linux shell, not execFileSync, and the host-side bound around it is WSL_WORK_TIMEOUT_MS.
-export const WSL_REAP_WAIT_TIMEOUT_SECONDS: number = Temporal.Duration.from({ seconds: 30 }).total("seconds");
+export const WSL_REAP_WAIT_TIMEOUT_SECONDS = 30;
 // The wait's poll interval. A POSIX shell cannot `wait` on a process it did not fork, so the only way to watch a
 // Killed tree is to re-`pgrep` for it; fine-grained enough that a normal unwind costs no perceptible pause.
 export const WSL_REAP_WAIT_INTERVAL_SECONDS: number = 0.2;

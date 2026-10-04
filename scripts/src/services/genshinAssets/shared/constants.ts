@@ -92,7 +92,7 @@ export const MUSIC_MIN_MEASUREMENTS = 5;
 export const MUSIC_VOICE_COUNT = 3;
 // How long after a note's end its fade is read, and the share of a level under which a reading is noise: a fade against
 // The note's level, a note's peak against the voice's loudest, an overtone against its fundamental
-export const MUSIC_RELEASE_SECONDS: number = Temporal.Duration.from({ seconds: 1 }).total("seconds");
+export const MUSIC_RELEASE_SECONDS = 1;
 export const MUSIC_NOISE_SHARE = 0.01;
 // A note's times are kept to the millisecond and its other values to the thousandth
 export const MUSIC_DECIMALS = 3;

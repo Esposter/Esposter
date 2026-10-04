@@ -329,6 +329,18 @@ describe("typescriptRules", () => {
         source: "export const a = (isB: boolean) => isB;",
         violations: 0,
       },
+      {
+        filePath: "sameUnitDuration.ts",
+        name: "sameUnitDuration",
+        source: `export const a = Temporal.Duration.from({ milliseconds: 1 }).total("milliseconds");`,
+        violations: 1,
+      },
+      {
+        filePath: "convertedDuration.ts",
+        name: "convertedDuration",
+        source: `export const a = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");`,
+        violations: 0,
+      },
     ],
   });
 });

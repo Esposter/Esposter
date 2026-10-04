@@ -16,9 +16,9 @@ polyfilled as `apps/web/content/docs/architecture/polyfills.md` says — a head 
 worker's own first-line import.
 
 - **Every field must be a finite integer**, so a sub-second duration is written in the unit that makes it one:
-  `0.5` seconds is `{ milliseconds: 500 }`. A milliseconds-only duration totalled in milliseconds is the number
-  it was built from, so at that point the literal is written plainly — the wrapper would state nothing the value
-  does not.
+  `0.5` seconds is `{ milliseconds: 500 }`. A duration of one unit totalled in that same unit is the number it was
+  built from, so at that point the literal is written plainly — the wrapper would state nothing the value does not
+  (`no-restricted-syntax`).
 - **Years, weeks and months never reach `.total()`** — they are calendar units and throw without a `relativeTo`.
   A year budget is `{ days: 365 }`.
 - **A duration decomposed for display is `.round({ largestUnit: "day" })` first**, then read off the

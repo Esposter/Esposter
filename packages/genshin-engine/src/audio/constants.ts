@@ -1,6 +1,6 @@
 // The live player schedules this far ahead of the audio clock, every so often, so a late timer never leaves a gap
-export const MUSIC_LOOKAHEAD_SECONDS: number = Temporal.Duration.from({ seconds: 2 }).total("seconds");
-export const MUSIC_SCHEDULE_INTERVAL_MS: number = Temporal.Duration.from({ milliseconds: 500 }).total("milliseconds");
+export const MUSIC_LOOKAHEAD_SECONDS = 2;
+export const MUSIC_SCHEDULE_INTERVAL_MS = 500;
 // A released note is stopped once it has faded for this many of its release's time constants, under a thousandth of
 // Its level
 export const RELEASE_TIME_CONSTANTS = 7;
@@ -11,7 +11,7 @@ export const MUSIC_NOISE_LENGTH: number = 2 ** 16;
 export const MUSIC_NOISE_BAND_CENTRES: number[] = [63, 125, 250, 500, 1000, 2000, 4000, 8000];
 // The span in seconds each gain of a segment's expression stands for, given at its window's centre: long enough to
 // Hold several phrases' notes and short enough to follow a piece's sections as they swell and fall away
-export const MUSIC_EXPRESSION_WINDOW_SECONDS: number = Temporal.Duration.from({ seconds: 8 }).total("seconds");
+export const MUSIC_EXPRESSION_WINDOW_SECONDS = 8;
 // The MIDI pitch of A4 and its frequency, which every other pitch is tuned from in equal temperament
 export const A4_PITCH = 69;
 export const A4_FREQUENCY = 440;

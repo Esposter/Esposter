@@ -313,6 +313,14 @@ export default {
         "Compose a tsdown factory with `mergeConfig(getTsdownConfiguration…(), { … })`, never a spread — a spread drops every nested option the factory set. See the build skill.",
       selector: "SpreadElement > CallExpression[callee.name=/^getTsdownConfiguration/]",
     },
+    {
+      // A duration of one unit totalled in that same unit is the number it was built from, so the wrapper states
+      // Nothing the literal does not; a conversion between units is what `Temporal.Duration` is for
+      message:
+        'Write a duration totalled in the unit it is built from as its literal — `500`, never `Temporal.Duration.from({ milliseconds: 500 }).total("milliseconds")`. See the naming skill\'s numbers-and-time page.',
+      selector:
+        "CallExpression[callee.property.name='total'][callee.object.callee.object.object.name='Temporal'][callee.object.callee.object.property.name='Duration'][callee.object.arguments.0.properties.length=1]:matches([arguments.0.value='milliseconds'][callee.object.arguments.0.properties.0.key.name='milliseconds'], [arguments.0.value='seconds'][callee.object.arguments.0.properties.0.key.name='seconds'], [arguments.0.value='minutes'][callee.object.arguments.0.properties.0.key.name='minutes'], [arguments.0.value='hours'][callee.object.arguments.0.properties.0.key.name='hours'], [arguments.0.value='days'][callee.object.arguments.0.properties.0.key.name='days'])",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.

@@ -186,7 +186,7 @@ describe(foldAgentEvents, () => {
       type: AgentEventType.UserMessage,
     });
     const epoch = new Date(0);
-    const nextMillisecond = new Date(Temporal.Duration.from({ milliseconds: 1 }).total("milliseconds"));
+    const nextMillisecond = new Date(1);
     const laterSessionView = createSessionView();
     const earlierSessionView = createSessionView();
 
