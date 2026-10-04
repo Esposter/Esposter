@@ -1,6 +1,8 @@
 {
+  "496124396": "Abmelden",
   "684850635": "Bei einem sehr geringen Teil der Menschen, die visuellen Eindrücken ausgesetzt sind, kann es zu unerwarteten epileptischen Anfällen kommen. Zu diesen Sinneswahrnehmungen gehören Lichtblitze und Bilder, die in Videospielen auftauchen können. Beim Spielen von Videospielen können diese Menschen epileptische Anfälle bekommen. Selbst Menschen ohne entsprechende Krankengeschichte können beim Spielen von Videospielen epileptische Anfälle bekommen. Bei einer entsprechenden Krankengeschichte von dir oder deiner Familie solltest du vor dem Spielen unbedingt einen Arzt konsultieren. Treten während des Spielens Symptome wie Augenschmerzen, Probleme mit dem Sehvermögen, Migräne, Krämpfe, Beeinträchtigung der Wahrnehmung (wie Verlieren des Bewusstseins) u. a. auf, ist das Spielen sofort zu unterlassen. In diesem Fall solltest du vor dem erneuten Spielen deinen Arzt konsultieren.\nWenn du diese Symptome nicht hast, dafür aber Kopfschmerzen hast, dir schwindlig ist, schlecht ist oder du dich übergeben musst, oder auch, wenn dir Teile deines Körpers wehtun oder sich unangenehm anfühlen, solltest du das Spielen sofort beenden. Verschwinden diese Symptome nach dem Beenden des Spielens nicht, solltest du sofort einen Arzt konsultieren.",
   "796445964": "Herunterzuladende Daten werden vorbereitet",
+  "857403427": "Reparieren",
   "1102014722": "Spiel wird geladen ...",
   "1128933734": "Zu ladende Daten werden vorbereitet",
   "1285204118": "Aktualisierungen werden gesucht ...",
@@ -13,6 +15,9 @@
   "LANGUAGE_WINDOWS_TITLENAME": "Genshin Impact",
   "ONLINE_DUNGEON_GUEST_IS_READY": "Bereit",
   "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "Wird geladen ...",
+  "UI_STC_GAMEENTRYPAGE_BULLETIN": "Ankündigungen",
+  "UI_STC_GAMEENTRYPAGE_EXIT_TIPS": "Spiel beenden",
+  "UI_STC_GAMEENTRYPAGE_OPTION": "Einstellungen",
   "UI_TEXT_QUEST_GUIDE_LABEL": "{F#Reisende}{M#Reisender}",
   "tips_enter_game": "Willkommen, %s"
 }

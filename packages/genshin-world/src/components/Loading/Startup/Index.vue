@@ -1,16 +1,21 @@
 <script setup lang="ts">
+import type { GameText } from "genshin-text";
+
 import { ElementTypes } from "#src/models/loading/ElementType";
 import { MARKS_FADE_MS, WHITE_HOLD_MS } from "#src/services/loading/constants";
 import { ElementMarkPathMap } from "#src/services/loading/ElementMarkPathMap";
 import { useTimeoutFn, whenever } from "@vueuse/core";
 import { GameScreen } from "genshin-interface";
+import { GameTextKey } from "genshin-text";
 
 interface Props {
+  // The game's words in the reader's language
+  gameText: GameText;
   // How far loading has gone, from 0 to 1
   progress: number;
 }
 
-const { progress } = defineProps<Props>();
+const { gameText, progress } = defineProps<Props>();
 const emit = defineEmits<{ finish: [] }>();
 // The game's startup screen: the seven marks in a row on white, pale until loading reaches them, then darkened by a
 // Wipe from the left that jumps as loading does, with no easing. The lit row is the pale one again, clipped to what
@@ -29,7 +34,7 @@ whenever(isComplete, start, { immediate: true, once: true });
   <GameScreen
     class="startup-loading"
     role="progressbar"
-    aria-label="Loading"
+    :aria-label="gameText[GameTextKey.Loading]"
     aria-valuemin="0"
     aria-valuemax="100"
     :aria-valuenow="Math.round(progress * 100)"

@@ -45,5 +45,5 @@ const timeOfDay = getLoginTimeOfDay(Temporal.Now.plainTimeISO());
       emit('begin');
     "
   />
-  <LoadingStartup v-else :progress @finish="emit('finish')" />
+  <LoadingStartup v-else :game-text :progress @finish="emit('finish')" />
 </template>

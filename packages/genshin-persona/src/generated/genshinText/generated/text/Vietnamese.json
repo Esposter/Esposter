@@ -1,6 +1,8 @@
 {
+  "496124396": "Thoát Đăng Nhập",
   "684850635": "Có một số ít người bị động kinh đột ngột khi xem một số hình ảnh trực quan, bao gồm đèn flash hoặc đồ họa xuất hiện trong các trò chơi điện tử. Khi chơi trò chơi điện tử, những người này có thể có triệu chứng động kinh. Ngay cả những người không có tiền sử động kinh cũng có thể gặp các triệu chứng giống như động kinh khi chơi trò chơi điện tử. Nếu bạn hoặc gia đình bạn có tiền sử bệnh động kinh, vui lòng tham khảo ý kiến bác sĩ trước khi chơi trò chơi.\n\nNếu bạn gặp các triệu chứng dưới đây khi chơi trò chơi, bao gồm đau mắt, bất thường về thị giác, đau nửa đầu, chuột rút hoặc bất tỉnh (như hôn mê), vui lòng dừng trò chơi ngay lập tức và tham khảo ý kiến bác sĩ trước khi chơi lại trò chơi này.",
   "796445964": "Chuẩn bị tải tài nguyên",
+  "857403427": "Tu Sửa",
   "1102014722": "Đang tải trò chơi...",
   "1128933734": "Chuẩn bị tải dữ liệu",
   "1285204118": "Đang kiểm tra cập nhật...",
@@ -13,6 +15,9 @@
   "LANGUAGE_WINDOWS_TITLENAME": "Genshin Impact",
   "ONLINE_DUNGEON_GUEST_IS_READY": "Đã Chuẩn Bị",
   "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "Đang tải...",
+  "UI_STC_GAMEENTRYPAGE_BULLETIN": "Bản Tin",
+  "UI_STC_GAMEENTRYPAGE_EXIT_TIPS": "Thoát Trò Chơi",
+  "UI_STC_GAMEENTRYPAGE_OPTION": "Thiết Lập",
   "UI_TEXT_QUEST_GUIDE_LABEL": "Nhà Lữ Hành",
   "tips_enter_game": "Chào mừng %s"
 }

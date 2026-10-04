@@ -1,6 +1,8 @@
 {
+  "496124396": "Esci",
   "684850635": "Se esposta a determinate immagini visive e a certi schemi di luci lampeggianti, una percentuale ridotta di individui può sperimentare attacchi epilettici. Giocare ai videogiochi può provocare crisi epilettiche in questi individui. Determinate condizioni possono causare sintomi epilettici mai rilevati prima, anche in soggetti che non hanno mai sofferto di epilessia. Se tu o un membro della tua famiglia soffrite di epilessia o avete sperimentato attacchi epilettici in passato, consulta il medico prima di iniziare a giocare. Qualora riscontrassi dolore oculare, visione alterata, emicrania, contrazioni muscolari, convulsioni, svenimenti, perdita di conoscenza o disorientamento durante il gioco, SMETTI IMMEDIATAMENTE di giocare e consulta il medico prima di continuare.\n\nIn aggiunta ai disturbi sopracitati, SMETTI IMMEDIATAMENTE di giocare in presenza di mal di testa, vertigini, nausea, sintomi simili alla chinetosi, malessere o dolore in una qualsiasi parte del corpo durante il gioco. Se il disturbo persiste, rivolgiti a un medico.",
   "796445964": "Preparazione del download delle risorse...",
+  "857403427": "Riparazione",
   "1102014722": "Caricamento del gioco...",
   "1128933734": "Preparazione del caricamento dei dati...",
   "1285204118": "Controllo degli aggiornamenti...",
@@ -13,6 +15,9 @@
   "LANGUAGE_WINDOWS_TITLENAME": "Genshin Impact",
   "ONLINE_DUNGEON_GUEST_IS_READY": "Pronto",
   "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "Caricamento...",
+  "UI_STC_GAMEENTRYPAGE_BULLETIN": "Avvisi",
+  "UI_STC_GAMEENTRYPAGE_EXIT_TIPS": "Esci dal gioco",
+  "UI_STC_GAMEENTRYPAGE_OPTION": "Impostazioni",
   "UI_TEXT_QUEST_GUIDE_LABEL": "Viaggiat{M#ore}{F#rice}",
   "tips_enter_game": "Ti diamo il benvenuto, %s!"
 }

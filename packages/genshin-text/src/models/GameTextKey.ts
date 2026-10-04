@@ -1,8 +1,8 @@
 // Every string of the game's a consumer shows, by the game's own text id — the name its manual text map files the
 // String under, the raw text hash where it files none, or the account kit's own key for a string the game shows before
-// It has loaded its text map. The game already holds each in all fifteen languages,
-// So referencing a new one is a line here and a run of `pnpm -C scripts genshin:text write`, which reads this enum as
-// Its inventory; `genshin:text find` prints the id of any English text
+// It has loaded its text map. The game already holds each in all fifteen languages, so referencing a new one is a line
+// Here and a run of `pnpm -C scripts genshin:text write`, which reads this enum as its inventory; `genshin:text find`
+// Prints the id of any English text
 export enum GameTextKey {
   // The label over a character's birthday on their profile
   Birthday = "INFORMATION_AVATAR_BIRTHDAY",
@@ -18,7 +18,14 @@ export enum GameTextKey {
   LoginCheckingForUpdates = "1285204118",
   LoginLoadingData = "1128933734",
   LoginLoadingGame = "1102014722",
+  // What the login screen's round buttons do, which a screen reader says in place of their glyphs: the door's log
+  // Out, the notices, the quit at the foot's left, the client's repair and the settings
+  LoginLogOut = "496124396",
+  LoginNotices = "UI_STC_GAMEENTRYPAGE_BULLETIN",
   LoginPreparingDownload = "796445964",
+  LoginQuit = "UI_STC_GAMEENTRYPAGE_EXIT_TIPS",
+  LoginRepair = "857403427",
+  LoginSettings = "UI_STC_GAMEENTRYPAGE_OPTION",
   // The login screen's title and the label before the account's name
   LoginTitle = "3574932777",
   LoginUserLabel = "2272745789",

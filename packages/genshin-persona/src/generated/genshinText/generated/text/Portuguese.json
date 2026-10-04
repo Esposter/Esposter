@@ -1,6 +1,8 @@
 {
+  "496124396": "Sair",
   "684850635": "Uma porcentagem muito pequena de pessoas podem sofrer convulsões epilépticas quando exposta a certas imagens visuais, incluindo certos padrões de luz piscando em videogames. Jogar videogames pode induzir um ataque epilético nesses indivíduos. Certas condições podem induzir sintomas epilépticos previamente não detectados, mesmo em pessoas que não têm histórico de convulsões ou epilepsia anteriores. Se você ou alguém da sua família tiver histórico de convulsões ou epilepsia, consulte seu médico antes de jogar. Se você tiver qualquer um dos seguintes sintomas ao jogar videogames - dor ocular, visão alterada, enxaqueca, contração muscular, convulsão, desmaio, perda de consciência ou desorientação, pare IMEDIATAMENTE de jogar e consulte seu médico antes de continuar o jogo.\n\nAlém dos sintomas acima, durante o jogo, se você tiver dor de cabeça, tontura, náusea, sintomas semelhantes de enjoo ou se sentir desconforto ou dor em qualquer parte do corpo, pare IMEDIATAMENTE de jogar. Se as condições persistirem, procure atendimento médico.",
   "796445964": "Preparando para baixar recursos",
+  "857403427": "Reparar",
   "1102014722": "Carregando o jogo...",
   "1128933734": "Preparando para carregar dados",
   "1285204118": "Verificando atualizações...",
@@ -13,6 +15,9 @@
   "LANGUAGE_WINDOWS_TITLENAME": "Genshin Impact",
   "ONLINE_DUNGEON_GUEST_IS_READY": "Preparado",
   "UI_BEYOND_RECOMMEND_EMPTY_LOADING": "Carregando...",
+  "UI_STC_GAMEENTRYPAGE_BULLETIN": "Anúncio",
+  "UI_STC_GAMEENTRYPAGE_EXIT_TIPS": "Sair do Jogo",
+  "UI_STC_GAMEENTRYPAGE_OPTION": "Ajustes",
   "UI_TEXT_QUEST_GUIDE_LABEL": "Viajante",
   "tips_enter_game": "%s, seja bem-vindo(a)"
 }
