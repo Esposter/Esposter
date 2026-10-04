@@ -15,7 +15,7 @@ flowchart TD
   L["Two openly licensed libraries<br/>CC0 recordings, outside the repository"] -->|"their SFZ mappings, at pinned commits"| C["A catalogue of their instruments:<br/>each recording's keys, velocities and file"]
   F["Each voice as the fit measures it:<br/>its notes, release and tuning"] --> S{"Which instrument a voice,<br/>at which level?"}
   C --> S
-  S -->|"only instruments keeping the voice's pitch,<br/>every combination solved in the score's bands"| P["Each voice's instrument and level"]
+  S -->|"pitch-keeping instruments only,<br/>solved in the score's bands"| P["Each voice's instrument and level"]
   P --> T["genshin:parity listen<br/>both scores against the synthesizer's"]
   T -->|"pitch agreement lower, or distance no better"| X["Not shipped"]
   T -->|"better"| E["Only the recordings the notes reach,<br/>mono, trimmed, encoded"]
