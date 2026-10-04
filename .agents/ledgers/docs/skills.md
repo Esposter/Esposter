@@ -51,14 +51,14 @@
 | `runtime-efficiency`      | 2026-10-04 · Fable 5.1 |       |
 | `score`                   | 2026-10-04 · Fable 5.1 |       |
 | `security`                | 2026-10-04 · Fable 5.1 |       |
-| `skill-authoring`         | —                      |       |
+| `skill-authoring`         | 2026-10-04 · Fable 5.1 |       |
 | `skill-sweep`             | 2026-10-04 · Fable 5.1 |       |
 | `slash-commands`          | 2026-10-04 · Fable 5.1 |       |
 | `string-utils`            | 2026-10-04 · Fable 5.1 |       |
 | `styling`                 | 2026-10-04 · Fable 5.1 |       |
 | `sweeps`                  | 2026-10-04 · Fable 5.1 |       |
 | `test-values`             | 2026-10-04 · Fable 5.1 |       |
-| `testing`                 | —                      |       |
+| `testing`                 | 2026-10-04 · Fable 5.1 |       |
 | `tiptap`                  | 2026-10-04 · Fable 5.1 |       |
 | `todos`                   | 2026-10-04 · Fable 5.1 |       |
 | `trpc`                    | 2026-10-04 · Fable 5.1 |       |
