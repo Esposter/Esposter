@@ -3,7 +3,7 @@ import type { ModelReadings } from "pitch-transcription";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { loadGraphModelSync } from "@tensorflow/tfjs";
 import { existsSync } from "node:fs";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, rename, writeFile } from "node:fs/promises";
 import {
   ANNOTATIONS_SEMITONES,
   convertNotesToSeconds,
@@ -35,7 +35,10 @@ export const readMusicSourceNotes = async (
     const [modelJson, weights] = await Promise.all([readFile(MODEL_URL, "utf8"), readFile(MODEL_WEIGHTS_URL)]);
     const model = loadGraphModelSync([parseMachineJson(modelJson), new Uint8Array(weights).buffer]);
     readings = await readModel(model, samples);
-    await writeFile(readingsPath, Float32Array.from([...readings.frames.flat(), ...readings.onsets.flat()]));
+    // Written beside its name and renamed onto it, so a write cut short is never read as the whole source's readings
+    const partialPath = `${readingsPath}.partial`;
+    await writeFile(partialPath, Float32Array.from([...readings.frames.flat(), ...readings.onsets.flat()]));
+    await rename(partialPath, readingsPath);
   }
   return convertNotesToSeconds(createNotes(readings));
 };
