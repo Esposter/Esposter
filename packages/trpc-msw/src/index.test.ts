@@ -9,7 +9,7 @@ describe("trpc-msw", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 6.23 KB (6379 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 6.24 KB (6386 bytes)"`);
   });
 
   test("types size", () => {

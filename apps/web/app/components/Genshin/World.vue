@@ -2,8 +2,9 @@
 import type { TresCanvasInstance, TresRendererSetupContext } from "@tresjs/core";
 
 import { GENSHIN_REGION_DATA_BASE_URL } from "#shared/services/genshin/constants";
+import { GENSHIN_QUALITY_TIER } from "@/services/genshin/constants";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
-import { createGenshinRenderer, GENSHIN_TONE_MAPPING, QualityTier, QualityTierSettingsMap } from "genshin-engine";
+import { createGenshinRenderer, GENSHIN_TONE_MAPPING, QualityTierSettingsMap } from "genshin-engine";
 import { GenshinWorld } from "genshin-world";
 import TerrainTileWorker from "genshin-world/terrainTileWorker?worker";
 import { PCFShadowMap } from "three";
@@ -15,8 +16,7 @@ interface Props {
 
 const { isPaused } = defineProps<Props>();
 const emit = defineEmits<{ load: []; ready: [] }>();
-const qualityTier = QualityTier.High;
-const { maxPixelRatio } = QualityTierSettingsMap[qualityTier];
+const { maxPixelRatio } = QualityTierSettingsMap[GENSHIN_QUALITY_TIER];
 const canvas = useTemplateRef<TresCanvasInstance>("canvas");
 // @TODO: no upstream issue — TresJS draws only while it owes a frame, and always mode owes one only once it has drawn,
 // So a canvas switched from manual, having drawn the frame it was owed, never draws again. The uncovered world is owed
@@ -51,7 +51,7 @@ onMounted(() => {
       <GenshinWorld
         :create-terrain-worker="() => new TerrainTileWorker()"
         :is-tuning="IS_DEVELOPMENT"
-        :quality-tier
+        :quality-tier="GENSHIN_QUALITY_TIER"
         :region-data-base-url="GENSHIN_REGION_DATA_BASE_URL"
       />
     </TresCanvas>

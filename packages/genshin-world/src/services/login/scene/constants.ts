@@ -82,3 +82,10 @@ export const LOGIN_SHADOW_EXTENT = 50;
 export const LOGIN_SHADOW_BIAS = -0.0005;
 export const LOGIN_SHADOW_NORMAL_BIAS = 0.0125;
 export const LOGIN_CLOUD_COVERAGE = 0;
+// The frames drawn before the scene is said to be ready: WebGPU compiles each pipeline on first use, so the first few
+// Frames can come out before every material has. A scene mounted at the door is ready only once the door has risen
+export const LOGIN_SCENE_READY_FRAME_COUNT = 10;
+// The cloud sea's billows, as the noise's scale on the ground plane and where its lit tops start
+export const LOGIN_CLOUD_SEA_SCALE = 0.048;
+export const LOGIN_CLOUD_SEA_EDGE_START = 0.05;
+export const LOGIN_CLOUD_SEA_EDGE_END = 0.35;

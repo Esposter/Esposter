@@ -1,4 +1,4 @@
-import type { Node } from "three/webgpu";
+import type { LoginPaving } from "#src/models/login/LoginPaving";
 
 import paving from "#src/data/login/paving.json";
 import { SceneAxis } from "#src/models/scene/SceneAxis";
@@ -47,7 +47,7 @@ const blurChannel = (values: Float32Array, width: number, height: number, radius
 // Slopes across and along the walkway are the canvas's red and green about their middle, the pockets alone its blue.
 // The shade is a pocket's stone a step darker than its lane's; the normal tilts by the slopes on the tops alone, a
 // Rim falling its fitted slope's and width's depth
-export const createLoginPaving = (): { normalNode: Node<"vec3">; shade: Node<"float"> } => {
+export const createLoginPaving = (): LoginPaving => {
   const { sample, weight } = createPlanCanvasNode(
     {
       axes: [SceneAxis.X, SceneAxis.Z],

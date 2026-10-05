@@ -14,15 +14,15 @@ describe("tRPCMswRouterRecord type", () => {
     }),
     write: t.procedure.output(z.number()).mutation(() => 0),
   });
-  type Record = TRPCMswRouterRecord<{ id: string }, (typeof router)["_def"]["record"]>;
+  type RouterRecord = TRPCMswRouterRecord<{ id: string }, (typeof router)["_def"]["record"]>;
 
   test("#25 query", () => {
     expect.hasAssertions();
 
-    expectTypeOf<Parameters<Parameters<Record["nested"]["read"]["query"]>[0]>[0]["input"]>().toEqualTypeOf<{
+    expectTypeOf<Parameters<Parameters<RouterRecord["nested"]["read"]["query"]>[0]>[0]["input"]>().toEqualTypeOf<{
       id: string;
     }>();
-    expectTypeOf<ReturnType<Parameters<Record["nested"]["read"]["query"]>[0]>>().toEqualTypeOf<
+    expectTypeOf<ReturnType<Parameters<RouterRecord["nested"]["read"]["query"]>[0]>>().toEqualTypeOf<
       Date | PromiseLike<Date>
     >();
   });
@@ -30,22 +30,24 @@ describe("tRPCMswRouterRecord type", () => {
   test("#22 mutation with an output parser", () => {
     expect.hasAssertions();
 
-    expectTypeOf<ReturnType<Parameters<Record["write"]["mutation"]>[0]>>().toEqualTypeOf<
+    expectTypeOf<ReturnType<Parameters<RouterRecord["write"]["mutation"]>[0]>>().toEqualTypeOf<
       number | PromiseLike<number>
     >();
-    expectTypeOf<Record["write"]>().toEqualTypeOf<{ readonly mutation: Record["write"]["mutation"] }>();
+    expectTypeOf<RouterRecord["write"]>().toEqualTypeOf<{ readonly mutation: RouterRecord["write"]["mutation"] }>();
   });
 
   test("#2 context", () => {
     expect.hasAssertions();
 
-    expectTypeOf<Parameters<Parameters<Record["write"]["mutation"]>[0]>[0]["ctx"]>().toEqualTypeOf<{ id: string }>();
+    expectTypeOf<Parameters<Parameters<RouterRecord["write"]["mutation"]>[0]>[0]["ctx"]>().toEqualTypeOf<{
+      id: string;
+    }>();
   });
 
   test("subscription", () => {
     expect.hasAssertions();
 
-    expectTypeOf<ReturnType<Parameters<Record["subscribe"]["subscription"]>[0]>>().toExtend<
+    expectTypeOf<ReturnType<Parameters<RouterRecord["subscribe"]["subscription"]>[0]>>().toExtend<
       AsyncIterable<number> | PromiseLike<AsyncIterable<number>>
     >();
   });

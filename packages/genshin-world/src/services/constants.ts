@@ -23,3 +23,10 @@ export const CLOUD_DRIFT_PER_WIND = 0.012;
 // Reach is rechecked each time the camera has moved this far
 export const REGION_REACH = 1500;
 export const REGION_RECHECK_DISTANCE = 64;
+// How far the tuning panel moves a grade's tint each way, and a tint's channels by the tuple key it writes through
+export const TUNING_TINT_RANGE = 0.1;
+export const TUNING_TINT_CHANNELS = [
+  { key: "0", name: "red" },
+  { key: "1", name: "green" },
+  { key: "2", name: "blue" },
+] as const;

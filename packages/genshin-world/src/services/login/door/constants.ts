@@ -24,3 +24,7 @@ export const LOGIN_DOOR_RELIEF_PIXELS_PER_METRE = 200;
 // Exports, the door scores best over both door frames together by FLIP and structural similarity at three fifths,
 // The phone's alone 0.005 worse there, its panel's bands lit across their carving in the game where ours are painted
 export const LOGIN_DOOR_RELIEF_CONTRAST = 0.6;
+// The door's light: a line down its middle this many metres to its half width, over a glow across the whole panel
+export const LOGIN_DOOR_SLIT_WIDTH = 0.04;
+export const LOGIN_DOOR_SLIT_STRENGTH = 4;
+export const LOGIN_DOOR_PANEL_STRENGTH = 0.6;

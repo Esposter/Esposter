@@ -34,10 +34,10 @@ export const writeGameText = (): string[] => {
   const manualTextMap = readManualTextMap();
   const ids = GameTextKeys.toSorted();
   const englishSdkText = readSdkText(GameLanguage.English);
-  const hashes = new Map(
+  const idHashMap = new Map(
     ids.filter((id) => !englishSdkText.has(id)).map((id) => [id, getGameTextHash(id, manualTextMap)]),
   );
-  const fetters = readVoiceLineFetters();
+  const idFettersMap = readVoiceLineFetters();
   const genshinDb = readGenshinDb();
   const unvoicedCharacters = genshinDb
     .characters("names", { matchCategories: true })
@@ -73,7 +73,7 @@ export const writeGameText = (): string[] => {
           if (!text) notes.push(`${id} has no ${language} text; English stands in`);
           return [id, text ?? englishSdkText.get(id) ?? ""];
         }
-        const hash = hashes.get(id) ?? "";
+        const hash = idHashMap.get(id) ?? "";
         const text = textMap.get(hash);
         if (!text) notes.push(`${id} has no ${language} text; English stands in`);
         return [id, getPlainGameText(text ?? englishTextMap.get(hash) ?? "")];
@@ -86,7 +86,7 @@ export const writeGameText = (): string[] => {
     // Empty, which reads the same and costs nothing
     const characterLines: Record<string, VoiceLine[]> = Object.fromEntries(
       unvoicedCharacters
-        .map(({ id, name }) => [name, getVoiceLines(fetters.get(id) ?? [], textMap)] as const)
+        .map(({ id, name }) => [name, getVoiceLines(idFettersMap.get(id) ?? [], textMap)] as const)
         .filter(([, voiceLines]) => voiceLines.length > 0),
     );
     writeFileSync(join(CHARACTER_LINES_DIRECTORY, `${language}.json`), toJson(characterLines));

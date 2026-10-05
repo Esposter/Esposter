@@ -2,28 +2,26 @@
 import {
   PUBLISHER_LETTERS,
   PUBLISHER_LETTERS_ORIGIN,
+  PUBLISHER_LOGO_HEIGHT,
+  PUBLISHER_LOGO_WIDTH,
+  PUBLISHER_RING_BANDS,
   PUBLISHER_RING_BOX,
+  PUBLISHER_RING_OFFSET,
   PUBLISHER_RING_PATH,
-} from "#src/services/splash/PublisherLogoPath";
-import { PUBLISHER_RING_BANDS } from "#src/services/splash/PublisherRingBands";
+} from "#src/services/splash/constants";
 import { GameScreen } from "genshin-interface";
 
-// The logo's box is its SVG's, 1163 by 204, placed so its letters sit where the game's recording shows them (0.7633
-// Game units to one of the logo's); the ring's colours are its field's, sampled by angle and by radius and drawn
-// Through its silhouette: each band a conic gradient round the ring, laid over the band inside it through a radial mask
-// That ramps from the inner band's radius to its own, so the colour between two bands is their blend at every angle
-const LOGO_WIDTH = 1163;
-const LOGO_HEIGHT = 204;
+// The logo placed so its letters sit where the game's recording shows them (0.7633 game units to one of the logo's);
+// The ring's colours are its field's, sampled by angle and by radius and drawn through its silhouette: each band a
+// Conic gradient round the ring, laid over the band inside it through a radial mask that ramps from the inner band's
+// Radius to its own, so the colour between two bands is their blend at every angle
 const ringMask = `url("data:image/svg+xml,${encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><path d="${PUBLISHER_RING_PATH}"/></svg>`,
 )}")`;
-// The game draws its ring a little up and to the left of where the Commons logo places it: the shift that best
-// Registers the ring on the recording's, less the letters' own, in the logo's units
-const RING_OFFSET = { x: -1.97, y: -3.93 };
-const ringLeft = `${((PUBLISHER_RING_BOX.x + RING_OFFSET.x) / LOGO_WIDTH) * 100}%`;
-const ringTop = `${((PUBLISHER_RING_BOX.y + RING_OFFSET.y) / LOGO_HEIGHT) * 100}%`;
-const ringWidth = `${(PUBLISHER_RING_BOX.size / LOGO_WIDTH) * 100}%`;
-const ringHeight = `${(PUBLISHER_RING_BOX.size / LOGO_HEIGHT) * 100}%`;
+const ringLeft = `${((PUBLISHER_RING_BOX.x + PUBLISHER_RING_OFFSET.x) / PUBLISHER_LOGO_WIDTH) * 100}%`;
+const ringTop = `${((PUBLISHER_RING_BOX.y + PUBLISHER_RING_OFFSET.y) / PUBLISHER_LOGO_HEIGHT) * 100}%`;
+const ringWidth = `${(PUBLISHER_RING_BOX.size / PUBLISHER_LOGO_WIDTH) * 100}%`;
+const ringHeight = `${(PUBLISHER_RING_BOX.size / PUBLISHER_LOGO_HEIGHT) * 100}%`;
 const ringBandStyles = PUBLISHER_RING_BANDS.map(({ colors, radius }, index) => {
   const stops = [...colors, colors[0]].map((color, stop) => `${color} ${(stop * 360) / colors.length}deg`).join(", ");
   const innerBand = PUBLISHER_RING_BANDS[index - 1];
@@ -39,7 +37,7 @@ const ringBandStyles = PUBLISHER_RING_BANDS.map(({ colors, radius }, index) => {
 <template>
   <GameScreen class="publisher-splash" role="img" aria-label="HoYoverse">
     <div class="logo">
-      <svg class="letters" :viewBox="`0 0 ${LOGO_WIDTH} ${LOGO_HEIGHT}`" aria-hidden="true">
+      <svg class="letters" :viewBox="`0 0 ${PUBLISHER_LOGO_WIDTH} ${PUBLISHER_LOGO_HEIGHT}`" aria-hidden="true">
         <g :transform="`translate(${PUBLISHER_LETTERS_ORIGIN.x} ${PUBLISHER_LETTERS_ORIGIN.y})`">
           <path
             v-for="({ offsetX, path }, index) of PUBLISHER_LETTERS"

@@ -1,3 +1,4 @@
+import type { LoginClouds } from "#src/models/login/LoginClouds";
 import type { CloudSprite, SkyUniforms } from "genshin-engine";
 import type { UniformNode } from "three/webgpu";
 
@@ -24,14 +25,7 @@ const toLoops = (loops: number[][][]): [number, number][][] =>
 // Side or stays under it. Each band's sprite is named for its band and hands on its cover, the share of its clouds the
 // Hour draws, and its clouds' places with the heights they were drawn between and the highest each may stand, which a
 // Tool reads off the sprite
-export const createLoginClouds = (
-  skyUniforms: SkyUniforms,
-): {
-  covers: Record<string, UniformNode<"float", number>>;
-  dispose: () => void;
-  group: Group;
-  scroll: (scrolled: number) => void;
-} => {
+export const createLoginClouds = (skyUniforms: SkyUniforms): LoginClouds => {
   const group = new Group();
   const covers: Record<string, UniformNode<"float", number>> = {};
   const disposables: { dispose: () => void }[] = [];

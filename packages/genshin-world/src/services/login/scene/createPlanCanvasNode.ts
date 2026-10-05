@@ -1,5 +1,5 @@
-import type { SceneAxis } from "#src/models/scene/SceneAxis";
-import type { Node } from "three/webgpu";
+import type { PlanCanvasNode } from "#src/models/scene/PlanCanvasNode";
+import type { PlanCanvasOptions } from "#src/models/scene/PlanCanvasOptions";
 
 import { createShadeCanvasTexture } from "#src/services/login/scene/createShadeCanvasTexture";
 import { normalGeometry, positionGeometry, step, texture, vec2 } from "three/tsl";
@@ -15,15 +15,9 @@ export const createPlanCanvasNode = (
     normalAxis,
     pixelsPerMetre,
     size: [sizeFirst = 0, sizeSecond = 0],
-  }: {
-    axes: readonly [SceneAxis, SceneAxis];
-    corner: readonly number[];
-    normalAxis: SceneAxis;
-    pixelsPerMetre: number;
-    size: readonly number[];
-  },
+  }: PlanCanvasOptions,
   draw: (context: OffscreenCanvasRenderingContext2D, toCanvas: (point: readonly number[]) => [number, number]) => void,
-): { sample: Node<"vec4">; weight: Node<"float"> } => {
+): PlanCanvasNode => {
   const canvas = new OffscreenCanvas(Math.ceil(sizeFirst * pixelsPerMetre), Math.ceil(sizeSecond * pixelsPerMetre));
   const context = canvas.getContext("2d");
   // A texture's first row is its top, which the rectangle's far side along its second axis stands at

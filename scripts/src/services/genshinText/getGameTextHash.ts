@@ -7,6 +7,6 @@ export const getGameTextHash = (id: string, manualTextMap: Map<string, string>):
   if (HASH_REGEX.test(id)) return id;
 
   const hash = manualTextMap.get(id);
-  if (!hash) throw new InvalidOperationError(Operation.Read, id, "is no id the manual text map files");
-  return hash;
+  if (hash) return hash;
+  else throw new InvalidOperationError(Operation.Read, id, "is no id the manual text map files");
 };

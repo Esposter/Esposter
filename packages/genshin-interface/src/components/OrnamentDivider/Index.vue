@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ORNAMENT_END_PATH, ORNAMENT_MIDDLE_PATH } from "#src/services/OrnamentPath";
+import { ORNAMENT_END_PATH, ORNAMENT_MIDDLE_PATH } from "#src/services/constants";
 </script>
 
 <template>

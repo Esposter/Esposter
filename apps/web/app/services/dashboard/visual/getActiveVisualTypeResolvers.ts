@@ -9,7 +9,7 @@ import { SlopeResolver } from "@/models/resolvers/dashboard/visual/SlopeResolver
 import { TreemapResolver } from "@/models/resolvers/dashboard/visual/TreemapResolver";
 import { TypeResolver } from "@/models/resolvers/dashboard/visual/TypeResolver";
 
-const visualTypeResolvers: AVisualTypeResolver[] = [
+const VISUAL_TYPE_RESOLVERS: AVisualTypeResolver[] = [
   new TypeResolver(),
   new ColumnResolver(),
   new FunnelResolver(),
@@ -20,4 +20,4 @@ const visualTypeResolvers: AVisualTypeResolver[] = [
 ];
 
 export const getActiveVisualTypeResolvers = (type: VisualType) =>
-  visualTypeResolvers.filter((resolver) => resolver.checkIsActive(type));
+  VISUAL_TYPE_RESOLVERS.filter((resolver) => resolver.checkIsActive(type));

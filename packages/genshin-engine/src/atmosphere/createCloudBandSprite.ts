@@ -1,7 +1,8 @@
+import type { CloudBandSprite } from "#src/atmosphere/CloudBandSprite";
+import type { CloudBandSpriteOptions } from "#src/atmosphere/CloudBandSpriteOptions";
 import type { CloudPlacement } from "#src/atmosphere/CloudPlacement";
 import type { SkyUniforms } from "#src/atmosphere/SkyUniforms";
 import type { Texture } from "three";
-import type { UniformNode } from "three/webgpu";
 
 import { getCloudAtlasColumns } from "#src/atmosphere/getCloudAtlasColumns";
 import { orderByViewDepth } from "#src/atmosphere/orderByViewDepth";
@@ -53,9 +54,9 @@ const MIN_CROWN_COVER = 0.05;
 export const createCloudBandSprite = (
   atlas: Texture,
   clouds: readonly CloudPlacement[],
-  { aspect, spriteCount }: { aspect: number; spriteCount: number },
+  { aspect, spriteCount }: CloudBandSpriteOptions,
   skyUniforms: SkyUniforms,
-): { cover: UniformNode<"float", number>; dispose: () => void; places: [number, number, number][]; sprite: Sprite } => {
+): CloudBandSprite => {
   const {
     cloudCoverage,
     cloudFrontBackBlend,

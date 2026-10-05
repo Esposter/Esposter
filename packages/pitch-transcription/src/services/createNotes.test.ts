@@ -1,3 +1,4 @@
+import { ANNOTATIONS_SEMITONES } from "#src/constants";
 import { createNotes } from "#src/services/createNotes";
 import { describe, expect, test } from "vitest";
 
@@ -6,7 +7,9 @@ describe(createNotes, () => {
   const pitch = 39;
   const createReadings = (checkIsHeld: (frame: number) => boolean, reading: number): number[][] =>
     Array.from({ length: frameCount }, (_value, frame) =>
-      Array.from({ length: 88 }, (_reading, index) => (index === pitch && checkIsHeld(frame) ? reading : 0)),
+      Array.from({ length: ANNOTATIONS_SEMITONES }, (_reading, index) =>
+        index === pitch && checkIsHeld(frame) ? reading : 0,
+      ),
     );
   const frames = createReadings((frame) => frame >= 5 && frame < 25, 0.5);
 

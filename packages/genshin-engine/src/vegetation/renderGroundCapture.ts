@@ -5,7 +5,7 @@ import type { Renderer } from "three/webgpu";
 
 import { Color } from "three";
 
-const clearColor = new Color();
+const CLEAR_COLOR = new Color();
 const previousClearColor = new Color();
 // Redraws the capture centred on a world position: the camera stands above the highest ground at the scene's
 // Coordinates, which are the world's less the floating origin, and the scene is drawn through the capture's material
@@ -30,7 +30,7 @@ export const renderGroundCapture = (
   const previousBackgroundNode = scene.backgroundNode;
   scene.overrideMaterial = material;
   scene.backgroundNode = null;
-  renderer.setClearColor(clearColor, 0);
+  renderer.setClearColor(CLEAR_COLOR, 0);
   renderer.setRenderTarget(renderTarget);
   renderer.clear();
   renderer.render(scene, camera);

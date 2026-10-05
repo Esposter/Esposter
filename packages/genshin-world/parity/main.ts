@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax -- the parity page's entry runs only in a browser, never under server rendering */
-import type { WitnessView } from "#parity/witness/setWitnessView";
+import type { WitnessView } from "#parity/witness/WitnessView";
 import type { SceneContext } from "#src/models/scene/SceneContext";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 
@@ -60,15 +60,15 @@ if (screen && root) {
   const readyProps = screen.readyEvent ? { [`on${capitalize(screen.readyEvent)}`]: resolveReady } : {};
   if (!screen.readyEvent) resolveReady();
   const witnessLayoutUrl = searchParameters.get("witness");
-  const witnessParts = witnessLayoutUrl ? await loadWitness(witnessLayoutUrl, screen.witnessFamilies) : null;
-  const witness: null | SceneWitness = witnessParts
+  const witnessParts = witnessLayoutUrl ? await loadWitness(witnessLayoutUrl, screen.witnessFamilies) : undefined;
+  const witness: SceneWitness | undefined = witnessParts
     ? {
         families: ref(witnessParts.children.map(({ name: family }) => family)),
         isAlone: ref(false),
         isClockHeld: ref(false),
         parts: witnessParts,
       }
-    : null;
+    : undefined;
   const sceneContext = shallowRef<SceneContext>();
   createApp({
     setup: () => {

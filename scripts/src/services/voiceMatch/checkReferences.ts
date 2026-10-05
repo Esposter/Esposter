@@ -1,7 +1,7 @@
 import { readMissingReferences } from "#src/services/voiceMatch/readMissingReferences";
 import { DEFAULT_LANGUAGE } from "genshin-persona/src/services/constants.ts";
-import { readCardedRoster } from "genshin-persona/src/services/readCardedRoster.ts";
 import { getCharacterReference } from "genshin-persona/src/services/getCharacterReference.ts";
+import { readCardedRoster } from "genshin-persona/src/services/readCardedRoster.ts";
 import { readRoster } from "genshin-persona/src/services/readRoster.ts";
 
 // `--check` measures nothing: it asks the wiki whether the line each character is read from — the card's, else

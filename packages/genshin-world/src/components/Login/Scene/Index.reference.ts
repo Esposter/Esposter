@@ -391,6 +391,12 @@ export const reference: ComponentReference = {
       search:
         "genshin:parity calibrate on each hour's frame with --write, the haze's solved colours applied and reverted hour by hour, then compare on every login frame",
     },
+    {
+      found:
+        "Held to rise, solved as non-negative rises by an active set, the ramp leaves the dawn, the day, the night and the phone's door frame level and scores the door recording 0.5824 against 0.5698. Refined by Nelder–Mead from the hand-set directions, every one judged over the bins the scene's own direction sorts the pixels into, the day's sun moved about five degrees for 0.00005 of a 0.106 residual and the dusk's about one and a half for a hundredth of it: the sky's linear harmonics take up the ramp's facing term, so the faces cannot read the direction. With the haze's sunward glow turned with the light, the dusk's sank below the horizon for a sixth of its residual; the glow solved alone, the light held, points behind the camera, its glow over the stone wanted gone where the cloud sea's is measured. The glow turned toward the dusk's sun rather than its light, the light re-solved, scored the door recording 0.5821 against 0.5824. All reverted",
+      search:
+        "genshin:parity calibrate on the day title and the door recording with the ramp held to rise and the sun's direction refined, the haze's glow turned with it, held, and solved alone, then compare on every login frame",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
@@ -400,10 +406,10 @@ export const reference: ComponentReference = {
     "How the game brings the towers to the door's phase after a long idle: every recording found idles a few seconds, so the title's phase is read off its glide's length, not a rule of the script's",
     "What MonoBlockController does to each walkway piece: the rise is read by eye off the recording's far end; its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$) hold its own curve",
     "Which of the towers' row stands at the door frame's left edge: the recording's is thin and dark with many rings, the exports' nearest there wide and arched",
-    "The dusk sun's direction against its shadows: a tower's shadow falls over the wings in front of the door where the recording's are lit, and the faces' shading cannot settle the direction, so the shadows' own edges are the measure left",
+    "The dusk sun's direction against its shadows: a tower's shadow falls over the wings in front of the door where the recording's are lit, and the faces' shading cannot settle the direction, the light's binned residual flat round the hand-set one, so the shadows' own edges are the measure left",
     "The dusk sky low on the frame's left: the recording's clear sky there is almost all cloud, so the sky solved over its clear pixels draws a dusty rose band where the recording glows gold, and its bottom colour toward the sun is held by no pixel",
     "The towers' gilding and windows: their colour per section scores worse painted as diffuse stone, the game's gold being a metal",
-    "The sun's direction at the day and the dusk: with the ramp's dark end held at none, both hours' solved ramps fall toward the lit end, so the directions set by hand off the faces they light are wrong, and the direction is to be solved with the light under a ramp held to rise",
+    "What the day's and the dusk's falling ramps stand in for: not the sun's direction, and holding them to rise scores the dusk worse, so the highlight, the reflection and the normal maps the solve lacks first",
     "The deferred pass's reflection cube and highlight, which no asset holds and the light's solve does not yet read",
     "How the deferred pass lights shading model 13, the rim glow's pixels, and what the post pass's haze adds after it",
     "Where the glide comes to rest: the recording's door frame was still slowing at 1.6 metres a second when the click came, so the rest stands a little nearer the door than its pose",

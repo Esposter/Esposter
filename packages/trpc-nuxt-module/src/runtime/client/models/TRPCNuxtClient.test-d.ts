@@ -15,23 +15,23 @@ const router = t.router({
   write: t.procedure.input(z.string()).mutation(() => 0),
 });
 type Client = TRPCNuxtClient<typeof router>;
-const readQueryData = (client: Client) => client.nested.read.useQuery("").data.value;
-const readTransformedQueryData = (client: Client) =>
+const getQueryData = (client: Client) => client.nested.read.useQuery("").data.value;
+const getTransformedQueryData = (client: Client) =>
   client.nested.read.useQuery("", { default: () => "", transform: (data) => data.join("") }).data.value;
 const mutate = (client: Client) => client.write.useMutation().mutate("");
-const readSubscriptionData = (client: Client) => client.count.useSubscription(undefined).data.value;
+const getSubscriptionData = (client: Client) => client.count.useSubscription(undefined).data.value;
 
 describe("tRPCNuxtClient type", () => {
   test("#255 #233 types a query's data, undefined until it arrives", () => {
     expect.hasAssertions();
 
-    expectTypeOf<ReturnType<typeof readQueryData>>().toEqualTypeOf<number[] | undefined>();
+    expectTypeOf<ReturnType<typeof getQueryData>>().toEqualTypeOf<number[] | undefined>();
   });
 
   test("#92 #162 types a query's data by its transform and its default", () => {
     expect.hasAssertions();
 
-    expectTypeOf<ReturnType<typeof readTransformedQueryData>>().toEqualTypeOf<string>();
+    expectTypeOf<ReturnType<typeof getTransformedQueryData>>().toEqualTypeOf<string>();
   });
 
   test("#89 types a lazy query as a query", () => {
@@ -49,6 +49,6 @@ describe("tRPCNuxtClient type", () => {
   test("#210 types a subscription's data", () => {
     expect.hasAssertions();
 
-    expectTypeOf<ReturnType<typeof readSubscriptionData>>().toEqualTypeOf<number | undefined>();
+    expectTypeOf<ReturnType<typeof getSubscriptionData>>().toEqualTypeOf<number | undefined>();
   });
 });

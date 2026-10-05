@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import type { Splash } from "#src/models/splash/Splash";
 import type { SplashTiming } from "#src/models/splash/SplashTiming";
 import type { GameLanguage, GameText } from "genshin-text";
-import type { Component } from "vue";
 
 import SplashHealthNotice from "#src/components/Splash/HealthNotice/Index.vue";
 import SplashPublisher from "#src/components/Splash/Publisher/Index.vue";
@@ -30,10 +30,7 @@ const emit = defineEmits<{ finish: [] }>();
 // Game's, then the health notice in the global client, and the game's straight away in mainland China's. Each fades
 // In, holds and fades out as the game's does, with the white it leaves held before the next. `finish` says the last
 // White has held and the login screen may fade up out of it
-const GameClientSplashesMap: Record<
-  GameClient,
-  { component: Component; props?: Record<string, unknown>; timing: SplashTiming }[]
-> = {
+const clientSplashesMap: Record<GameClient, Splash[]> = {
   [GameClient.Global]: [
     { component: SplashPublisher, timing: PUBLISHER_SPLASH_TIMING },
     { component: SplashTitle, props: { gameText, language }, timing: TITLE_SPLASH_TIMING },
@@ -44,7 +41,7 @@ const GameClientSplashesMap: Record<
     { component: SplashHealthNotice, props: { gameText }, timing: MAINLAND_HEALTH_NOTICE_TIMING },
   ],
 };
-const splashes = GameClientSplashesMap[GameLanguageGameClientMap[language]];
+const splashes = clientSplashesMap[GameLanguageGameClientMap[language]];
 const splashIndex = ref(0);
 const splash = computed(() => splashes[splashIndex.value]);
 const stage = useTemplateRef("stage");

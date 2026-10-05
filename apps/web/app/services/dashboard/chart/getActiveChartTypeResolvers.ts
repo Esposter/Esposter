@@ -8,7 +8,7 @@ import { DistributedResolver } from "@/models/resolvers/dashboard/chart/Distribu
 import { DonutResolver } from "@/models/resolvers/dashboard/chart/DonutResolver";
 import { PyramidResolver } from "@/models/resolvers/dashboard/chart/PyramidResolver";
 
-const chartTypeResolvers: AChartTypeResolver<Chart["configuration"]>[] = [
+const CHART_TYPE_RESOLVERS: AChartTypeResolver<Chart["configuration"]>[] = [
   new ChartType3DResolver(),
   new BasicResolver(),
   new DistributedResolver(),
@@ -17,4 +17,4 @@ const chartTypeResolvers: AChartTypeResolver<Chart["configuration"]>[] = [
 ];
 
 export const getActiveChartTypeResolvers = (type: ChartType) =>
-  chartTypeResolvers.filter((resolver) => resolver.checkIsActive(type));
+  CHART_TYPE_RESOLVERS.filter((resolver) => resolver.checkIsActive(type));
