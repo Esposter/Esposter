@@ -1,5 +1,5 @@
-import type { Vector } from "#src/models/shared/Vector";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { Vector } from "#src/models/shared/Vector";
 
 import { SHOTS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";

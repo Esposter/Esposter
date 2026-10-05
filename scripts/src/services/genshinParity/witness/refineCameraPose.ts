@@ -2,10 +2,10 @@ import type { Page } from "playwright";
 
 import { minimizeNelderMead } from "#src/services/genshinParity/shared/minimizeNelderMead";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
+import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
 import { computeMaskedMean } from "#src/services/genshinParity/witness/computeMaskedMean";
 import { readFamilyBoundaries } from "#src/services/genshinParity/witness/readFamilyBoundaries";
 import { readFamilyEdgeDistances } from "#src/services/genshinParity/witness/readFamilyEdgeDistances";
-import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
 
 // The simplex's first steps along each axis, metres then degrees: a solved pose is within a few of these
 const REFINE_STEPS = [0.05, 0.05, 0.05, 0.2, 0.2, 0.2];

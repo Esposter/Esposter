@@ -3,8 +3,8 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import { COMPARISONS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
-import { readWitnessFamilies } from "#src/services/genshinParity/shared/readWitnessFamilies";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
+import { readWitnessFamilies } from "#src/services/genshinParity/shared/readWitnessFamilies";
 import { readWitnessPartTarget } from "#src/services/genshinParity/shared/readWitnessPartTarget";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { scoreLabelSimilarity } from "#src/services/genshinParity/witness/scoreLabelSimilarity";

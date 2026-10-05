@@ -38,7 +38,7 @@ export const writeWitnessGbuffer = async (
     ),
     writeFile(join(directory, "header.json"), JSON.stringify({ families, height, parts, width }, null, 2)),
   ]);
-  const toImage = (readPixel: (pixel: number) => [number, number, number]): Promise<Buffer> => {
+  const toImage = (readPixel: (pixel: number) => readonly [number, number, number]): Promise<Buffer> => {
     const pixels = Buffer.alloc(width * height * 3);
     for (let pixel = 0; pixel < width * height; pixel++) pixels.set(readPixel(pixel), pixel * 3);
     return sharp(pixels, { raw: { channels: 3, height, width } })
