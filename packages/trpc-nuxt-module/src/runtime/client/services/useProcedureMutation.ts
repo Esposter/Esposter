@@ -29,7 +29,7 @@ export const useProcedureMutation = (
       // `execute` settles either way and leaves a failure in the ref, so a caller awaiting the mutation would
       // Otherwise read a rejection as a success with no data
       if (asyncData.error.value) throw asyncData.error.value;
-      return asyncData.data.value;
+      else return asyncData.data.value;
     },
   });
 };
