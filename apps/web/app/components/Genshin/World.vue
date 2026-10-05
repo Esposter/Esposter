@@ -2,8 +2,8 @@
 import type { TresCanvasInstance, TresRendererSetupContext } from "@tresjs/core";
 
 import { GENSHIN_REGION_DATA_BASE_URL } from "#shared/services/genshin/constants";
-import { GENSHIN_QUALITY_TIER } from "@/services/genshin/constants";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
+import { GENSHIN_QUALITY_TIER } from "@/services/genshin/constants";
 import { createGenshinRenderer, GENSHIN_TONE_MAPPING, QualityTierSettingsMap } from "genshin-engine";
 import { GenshinWorld } from "genshin-world";
 import TerrainTileWorker from "genshin-world/terrainTileWorker?worker";
