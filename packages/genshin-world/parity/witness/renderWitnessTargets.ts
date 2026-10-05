@@ -7,7 +7,7 @@ import { WitnessTarget, WitnessTargets } from "#parity/witness/WitnessTarget";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { StoneNodeMaterial } from "genshin-engine";
 import { Color, DirectionalLight, FloatType, Layers, Light, Mesh, RenderTarget, Vector2 } from "three";
-import { float, normalWorld, positionView, uniform, vec3, vec4 } from "three/tsl";
+import { cameraViewMatrix, float, normalWorld, positionView, uniform, vec3, vec4 } from "three/tsl";
 import { MeshBasicNodeMaterial, NodeMaterial } from "three/webgpu";
 
 // The layer the witness's parts are drawn on alone while its targets render, past every layer the scenes use
@@ -23,9 +23,9 @@ const sunRadiance = uniform(new Color());
 let renderTarget: RenderTarget | undefined;
 // The witness render's G-buffer at its current view, one floating-point target a quantity, each read back from the
 // Renderer as rows of four floats a pixel: the albedo its exported material draws unlit, the depth along the view in
-// Metres, the light the material adds after lighting, the world normal (encoded into 0 to 1, as `readWitnessTargets`
-// Decodes it), the share of the sun reaching it through the scene's shadows, and the part (its identifier from one, the
-// Order the header lists it in) with its family's index, the families listed in that order. Only the witness's parts
+// Metres, the light the material adds after lighting, the world normal its normal map bends (encoded into 0 to 1, as
+// `readWitnessTargets` decodes it), the share of the sun reaching it through the scene's shadows, and the part (its
+// Identifier from one, the order the header lists it in) with its family's index, the families listed in that order. Only the witness's parts
 // Are drawn, over nothing, so a pixel no part covers is zero throughout. Only the targets asked for are drawn, every
 // One unless told, each handed back as base64, the one form a page hands its caller bytes in. Every
 // Part keeps its own material, handed back once the targets are read
@@ -72,6 +72,13 @@ export const renderWitnessTargets = async (
     const material = new MeshBasicNodeMaterial();
     material.toneMapped = false;
     const albedo = mesh.material instanceof NodeMaterial ? (mesh.material.colorNode as Node<"vec3"> | null) : null;
+    // The part's own normal map bends the normal the target writes, as the G-buffer the game lights holds it, taken
+    // From the view into the world as `normalWorld` takes the geometry's
+    const sourceNormal =
+      mesh.material instanceof NodeMaterial ? (mesh.material.normalNode as Node<"vec3"> | null) : null;
+    const worldNormal = sourceNormal
+      ? sourceNormal.transformNormalByInverseViewMatrix(cameraViewMatrix).normalize()
+      : normalWorld;
     const emission =
       mesh.material instanceof StoneNodeMaterial ? (mesh.material.emissiveNode as Node<"vec3"> | null) : null;
     const targetNodeMap: Record<Exclude<WitnessTarget, WitnessTarget.Shadow>, Node<"vec4">> = {
@@ -80,7 +87,7 @@ export const renderWitnessTargets = async (
       [WitnessTarget.Emission]: vec4(emission ?? vec3(0), 1),
       // Halved and lifted into 0 to 1, since the material's colour output clips what falls below 0, which took every
       // Normal's negative components; read back, it is let down again
-      [WitnessTarget.Normal]: vec4(normalWorld.mul(0.5).add(0.5), 1),
+      [WitnessTarget.Normal]: vec4(worldNormal.mul(0.5).add(0.5), 1),
       [WitnessTarget.Part]: vec4(float(id), float(familyIndex), 0, 1),
     };
     material.colorNode = targetNodeMap[target];

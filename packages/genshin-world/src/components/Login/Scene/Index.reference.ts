@@ -116,6 +116,18 @@ export const reference: ComponentReference = {
     },
     {
       found:
+        "Under the cover read exactly, the clouds' colours solved by spread (lit and shade) score the day 0.4397 against 0.4420 (#fbfcf4 and #b0dbf5) and the door recording 0.5369 against 0.5390 (#fcfcc4 and #ed9ea7), and the dawn 0.4516 against 0.4382 and the night 0.4476 against 0.4454, whose shades solve far darker. Every hour's clouds stand dimmer over their sky than the recordings' (the night's 2.4 times its brightness against 5.5, the day's 2.5 against 3.0) and softer edged",
+      search:
+        "genshin:parity clouds on every hour's frame, its statistics reading our clouds against our sky drawn with none, each hour's colours applied, then compare",
+    },
+    {
+      found:
+        "The witness's normal target wrote each mesh's own normal, the material's normal node never reaching a basic material's normal, so it is taken from the view into the world from the part's own node: the night's --self read-back moves from 0.061 to 0.056 off over a light of 0.50, its residual 0.013, so the model draws what the renderer draws and the rest is what the bins leave the ramp and the harmonics to trade. Every hour re-solved under it fits its bins closer (the dusk's 0.141 against 0.157) and scores the day level, the door recording 0.5361 against 0.5369 and the phone's door frame 0.4791 against 0.4811, the dawn 0.4414 against 0.4382 and the night level: the day's and the dusk's lights ship, the dawn's and the night's stay",
+      search:
+        "The witness's normal target checksummed with and without the part's normal node, calibrate --self on the night, then calibrate --write on every hour and compare on every login frame",
+    },
+    {
+      found:
         "With the cover at those shares the dusk's clouds solve by their colours' spread to lit #fdf4c9 and shade #ef91a3 (residual 0.10), our clouds 2.02 times their sky's brightness against the recording's 2.50; applied, the door recording's FLIP rises from 0.6006 to 0.6087 and its tone from 12.33% to 12.76%. The spread match is blind to place, and by height ours over-cover 0 to 3 degrees (68% against 35%) and 15 to 25 (44% against 17%) while under-covering 8 to 15 (46% against 70%), so brighter clouds pay most where ours stand and the recording's do not. Kept #fdedc4 and #eb8596: the clouds' place by height comes before their colour",
       search: "genshin:parity clouds login-door-recording after the cover change, its colours applied, then compare",
     },

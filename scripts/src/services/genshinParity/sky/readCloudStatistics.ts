@@ -1,5 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { CloudStatistics } from "#src/models/genshinParity/sky/CloudStatistics";
+import type { SetCloudCover } from "#src/models/genshinParity/sky/SetCloudCover";
 
 import { CLOUDS_WIDTH, COMPARISONS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
@@ -16,8 +17,9 @@ import sharp from "sharp";
 // A clear sky's pixel in the sheet's masks, between a cloud's white and the rest's black
 const CLEAR_SHADE = 96;
 // A reference's clouds and ours by their statistics (`measureClouds`) and their cover band by band of their height over
-// The horizon, over the sky above it where no part stands (`readCloudSky`). Each frame is written beside its clouds,
-// The reference's over ours, for the eye
+// The horizon, over the sky above it where no part stands (`readCloudSky`): the reference's clouds by its own split,
+// Ours where they move our sky from the same sky drawn with none. Each frame is written beside its clouds, the
+// Reference's over ours, for the eye
 export const readCloudStatistics = async (
   referenceId: string,
   witness: DerivedAssetComponent,
@@ -30,14 +32,31 @@ export const readCloudStatistics = async (
   const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness, CLOUDS_WIDTH);
   return withFinalizerAsync(
     async () => {
-      const { computeClouds, computeElevationCoverage, readLuminance, skyMask, width } = await readCloudSky(page, {
-        checkIsScored,
-        height,
+      const { computeClouds, computeDrawnClouds, computeElevationCoverage, readLuminance, skyMask, width } =
+        await readCloudSky(page, { checkIsScored, height });
+      const bandNames = await page.evaluate(() => (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)());
+      await page.evaluate(
+        (clearCovers) => {
+          (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)(clearCovers);
+        },
+        Object.fromEntries(bandNames.map((band) => [band, 0])),
+      );
+      await setPageWitnessView(page, { families: [] });
+      const clearShot = await page.screenshot();
+      await page.evaluate(() => {
+        (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)();
       });
       await setPageWitnessView(page, { families: [] });
       const ourShot = await page.screenshot();
-      const [ourLuminance, referenceLuminance] = await Promise.all([readLuminance(ourShot), readLuminance(image)]);
-      const [ourClouds, referenceClouds] = [computeClouds(ourLuminance), computeClouds(referenceLuminance)];
+      const [ourLuminance, clearLuminance, referenceLuminance] = await Promise.all([
+        readLuminance(ourShot),
+        readLuminance(clearShot),
+        readLuminance(image),
+      ]);
+      const [ourClouds, referenceClouds] = [
+        computeDrawnClouds(ourLuminance, clearLuminance),
+        computeClouds(referenceLuminance),
+      ];
       // A cloud white, the clear sky grey, and the rest black
       const toMask = (clouds: Uint8Array): Promise<Buffer> =>
         sharp(Buffer.from(clouds.map((cloud, pixel) => (cloud ? BYTE : (skyMask[pixel] ?? 0) * CLEAR_SHADE))), {
