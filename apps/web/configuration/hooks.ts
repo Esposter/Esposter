@@ -2,9 +2,9 @@ import type { IncomingMessage } from "node:http";
 import type { Duplex } from "node:stream";
 import type { NuxtHooks } from "nuxt/schema";
 
-import type { NitroDevEnvironment } from "./models/NitroDevEnvironment.ts";
-
 import { useNuxt } from "nuxt/kit";
+
+import type { NitroDevEnvironment } from "./models/NitroDevEnvironment.ts";
 
 const checkIsNitroDevEnvironment = (environment: object): environment is NitroDevEnvironment =>
   "devServer" in environment;
@@ -25,6 +25,7 @@ export const hooks: Pick<NuxtHooks, "listen" | "modules:before" | "ready"> = {
   // It. The suffix is stripped once, before any module's compatibility is checked
   "modules:before": () => {
     const nuxt = useNuxt();
+    // oxlint-disable-next-line no-underscore-dangle -- `_version` is Nuxt's own field, the one kit reads the version from
     nuxt._version = nuxt._version.replace(/-\d+-[\da-f]+$/u, "");
   },
   // @TODO: no upstream issue — under Nuxt 5's Nitro Vite environment the dev server Nuxt hands the CLI has no
