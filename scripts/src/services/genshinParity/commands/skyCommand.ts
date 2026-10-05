@@ -20,7 +20,10 @@ export const skyCommand: SubCommandsDef[string] = defineCommand({
     name: "sky",
   },
   run: async ({ args }) => {
-    const { colors, drawn, imagePath, kept, residual, shape } = await solveReferenceSky(args.reference, args.witness);
+    const { colors, drawn, fullResidual, imagePath, kept, residual, shape } = await solveReferenceSky(
+      args.reference,
+      args.witness,
+    );
     for (const [term, color] of Object.entries(colors)) console.log(`${term}: ${color}`);
     console.log(
       Object.entries(shape)
@@ -28,10 +31,10 @@ export const skyCommand: SubCommandsDef[string] = defineCommand({
         .join(", "),
     );
     console.log(
-      `residual ${residual.toFixed(4)} in scene colour over the ${(kept * 100).toFixed(0)}% of the clear sky within its spread`,
+      `residual ${residual.toFixed(4)} in scene colour over the ${(kept * 100).toFixed(0)}% of the clear sky within its spread, ${fullResidual.toFixed(4)} over all of it`,
     );
     console.log(
-      `drawn: the scene's own sky without clouds stands ${drawn.residual.toFixed(4)} off the reference over the pixels read, its mean ${drawn.ours} against ${drawn.reference}`,
+      `drawn: the scene's own sky without clouds stands ${drawn.residual.toFixed(4)} off the reference over the pixels read, its mean ${drawn.ours} against ${drawn.reference}, and ${drawn.modelResidual.toFixed(4)} off the solved sky, naught when the scene draws what the solve models`,
     );
     console.log(imagePath);
   },
