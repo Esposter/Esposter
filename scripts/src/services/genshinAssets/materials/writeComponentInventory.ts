@@ -4,6 +4,7 @@ import { getComponentDirectory } from "#src/services/genshinAssets/shared/getCom
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
 import { readIndexedAssets } from "#src/services/genshinAssets/shared/readIndexedAssets";
 import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLayout";
+import { getOrCreate } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
@@ -65,7 +66,7 @@ export const writeComponentInventory = async (component: DerivedAssetComponent):
   const meshMaterialsMap = new Map<string, Set<string>>();
   for (const { materials: drawnMaterials, mesh } of gameObjectDrawingMap.values())
     for (const material of drawnMaterials.map((pathId) => pathIdAssetMap.get(pathId)?.name ?? pathId))
-      meshMaterialsMap.set(mesh, (meshMaterialsMap.get(mesh) ?? new Set()).add(material));
+      getOrCreate(meshMaterialsMap, mesh, () => new Set()).add(material);
   lines.push("", "## Meshes", "", "| Mesh | Vertices | Drawn with |", "| :-- | --: | :-- |");
   const meshDirectory = join(directory.assets, "Mesh");
   for (const name of await readNames(meshDirectory)) {

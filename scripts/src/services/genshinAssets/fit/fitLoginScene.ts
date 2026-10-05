@@ -1,4 +1,4 @@
-import type { DecodedCurve } from "#src/models/genshinAssets/shared/DecodedCurve";
+import type { DecodedClip } from "#src/models/genshinAssets/shared/DecodedClip";
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
@@ -42,7 +42,7 @@ export const fitLoginScene = async (only: readonly string[] = []): Promise<strin
     hulls: async () => [await writeWorldData("login/hulls.json", await fitLoginHulls(placements, meshDirectory))],
     // The interface's clips as `genshin:assets clips` decoded them
     interfaceClips: async () => {
-      const clips = parseMachineJson<{ curves: DecodedCurve[]; duration: number; name: string }[]>(
+      const clips = parseMachineJson<DecodedClip[]>(
         await readFile(join(directory.root, "clips", "clips.json"), "utf8"),
       );
       return [await writeWorldData("login/interfaceClips.json", fitInterfaceClips(clips))];

@@ -1,3 +1,5 @@
+import type { CloudAtlas } from "#src/models/genshinAssets/fit/CloudAtlas";
+
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { traceCoveredGrid } from "#src/services/genshinAssets/fit/traceCoveredGrid";
 import {
@@ -8,15 +10,13 @@ import {
   CLOUD_TRACE_TEXELS,
   CLOUD_TRACE_TOLERANCE,
 } from "#src/services/genshinAssets/shared/constants";
+import { BYTE } from "#src/services/shared/constants";
 import sharp from "sharp";
 
-const BYTE = 255;
 // Every painted cloud of an atlas as the shapes it is drawn with: the loops round where it covers and round its lit
 // Crown, traced from each cell's alpha and red, in the cell's own unit square with y up, and the cell's width over its
 // Height. Only the shapes are kept, never a texel
-export const fitCloudSprites = async (
-  atlas: Buffer | string,
-): Promise<{ aspect: number; sprites: { lit: [number, number][][]; outline: [number, number][][] }[] }> => {
+export const fitCloudSprites = async (atlas: Buffer | string): Promise<CloudAtlas> => {
   const { data, info } = await sharp(atlas).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   const cellWidth = info.width / CLOUD_ATLAS_COLUMNS;
   const cellHeight = info.height / CLOUD_ATLAS_ROWS;

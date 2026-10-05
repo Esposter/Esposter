@@ -5,8 +5,8 @@ import { SessionStorageKey } from "@/services/shared/SessionStorageKey";
 import { useCommandStore } from "@/store/ui/command";
 
 // The console under the world and the tab it is on, the pause menu, the composer's draft, which outlives the tab that
-// Shows it, and whether the world has drawn its first frame. Whether the console is open, its tab and its draft are kept
-// Through a reload of the page
+// Shows it, and whether the world has drawn its first frame. Whether the console is open, its tab and its draft are
+// Kept through a reload of the page
 export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () => {
   const commandStore = useCommandStore();
   const isConsoleOpen = useSessionStorage(SessionStorageKey.IsAgentConsoleOpen, false);

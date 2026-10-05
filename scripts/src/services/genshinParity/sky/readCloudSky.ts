@@ -2,33 +2,33 @@ import type { Page } from "playwright";
 
 import { computeOtsuThreshold } from "#src/services/genshinAssets/shared/computeOtsuThreshold";
 import { blurGrey } from "#src/services/genshinParity/shared/blurGrey";
-import { CLOUD_ELEVATION_BANDS } from "#src/services/genshinParity/shared/constants";
+import { CLOUD_ELEVATION_BANDS, LUMINANCE } from "#src/services/genshinParity/shared/constants";
 import { readWitnessPartTarget } from "#src/services/genshinParity/shared/readWitnessPartTarget";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { fitClearSky } from "#src/services/genshinParity/sky/fitClearSky";
+import { BYTE } from "#src/services/shared/constants";
+import { toLinear } from "#src/services/shared/toLinear";
 import sharp from "sharp";
 import { Matrix4, Vector3, Vector4 } from "three";
 
-// A cloud stands at least this many times as bright as its own sky's clear sky there, read over the sky blurred by this many
-// Pixels, past a recording's grain: a dark sky's compression noise steps its luminance by more than the ratio a pixel
-// At a time, and read unblurred it speckles a night's clear sky with cloud
+// A cloud stands at least this many times as bright as its own sky's clear sky there, read over the sky blurred by
+// This many pixels, past a recording's grain: a dark sky's compression noise steps its luminance by more than the ratio
+// A pixel at a time, and read unblurred it speckles a night's clear sky with cloud
 const CLOUD_RATIO = 1.15;
 const CLASSIFY_BLUR_SIGMA = 2;
-const BYTE = 255;
-const LUMINANCE = [0.2126, 0.7152, 0.0722] as const;
-const toLinear = (value: number): number => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
 // The sky of a witness page as the cloud tools read it: the sky above the horizon where no part stands, each pixel's
 // Height over the horizon, an image's linear luminance there, and its clouds, a pixel standing brighter than its own
-// Sky's clear sky by Otsu's split of the sky or the cloud's ratio, whichever is more, the clear sky a smooth surface fitted under its clouds (`fitClearSky`), in the
-// Reference as in ours, so neither sky's colour nor its gradient toward its sun decides what is a cloud
+// Sky's clear sky by Otsu's split of the sky or the cloud's ratio, whichever is more, the clear sky a smooth surface
+// Fitted under its clouds (`fitClearSky`), in the reference as in ours, so neither sky's colour nor its gradient
+// Toward its sun decides what is a cloud
 export const readCloudSky = async (
   page: Page,
   { checkIsScored, height }: { checkIsScored: (pixel: number, width: number) => boolean; height: number },
 ): Promise<{
-  getLuminance: (input: Buffer) => Promise<Float32Array>;
-  readClouds: (luminance: Float32Array, threshold?: number) => Uint8Array;
-  readCloudThreshold: (luminance: Float32Array) => number;
-  readElevationCoverage: (clouds: Uint8Array) => number[];
+  computeClouds: (luminance: Float32Array, threshold?: number) => Uint8Array;
+  computeCloudThreshold: (luminance: Float32Array) => number;
+  computeElevationCoverage: (clouds: Uint8Array) => number[];
+  readLuminance: (input: Buffer) => Promise<Float32Array>;
   skyMask: Uint8Array;
   width: number;
 }> => {
@@ -71,22 +71,16 @@ export const readCloudSky = async (
     return Math.max(logRatio, (computeOtsuThreshold(skyOvers) / BYTE) * greatest);
   };
   return {
-    getLuminance: async (input) => {
-      const data = await sharp(input).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
-      return Float32Array.from({ length: width * height }, (_, pixel) =>
-        LUMINANCE.reduce((sum, weight, channel) => sum + weight * toLinear((data[pixel * 3 + channel] ?? 0) / BYTE), 0),
-      );
-    },
     // A sky's clouds by its own split, or by a split held from another sky: ours read at the reference's, so a guess
     // That moves our clouds does not move what counts as one
-    readClouds: (luminance, threshold) => {
+    computeClouds: (luminance, threshold) => {
       const overs = computeOvers(luminance);
       const split = threshold ?? computeThreshold(overs);
       return Uint8Array.from(overs, (over, pixel) => Number((skyMask[pixel] ?? 0) === 1 && over > split));
     },
-    readCloudThreshold: (luminance) => computeThreshold(computeOvers(luminance)),
+    computeCloudThreshold: (luminance) => computeThreshold(computeOvers(luminance)),
     // The share of the sky each band of its height holds as cloud
-    readElevationCoverage: (clouds) =>
+    computeElevationCoverage: (clouds) =>
       CLOUD_ELEVATION_BANDS.slice(1).map((top, band) => {
         const bottom = CLOUD_ELEVATION_BANDS[band] ?? 0;
         let skyCount = 0;
@@ -98,6 +92,12 @@ export const readCloudSky = async (
           }
         return cloudCount / Math.max(skyCount, 1);
       }),
+    readLuminance: async (input) => {
+      const data = await sharp(input).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
+      return Float32Array.from({ length: width * height }, (_, pixel) =>
+        LUMINANCE.reduce((sum, weight, channel) => sum + weight * toLinear((data[pixel * 3 + channel] ?? 0) / BYTE), 0),
+      );
+    },
     skyMask,
     width,
   };

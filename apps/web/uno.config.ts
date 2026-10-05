@@ -59,7 +59,8 @@ const uiSurfaceUtilities = {
       "background-color": "color-mix(in srgb, var(--ui-tint) 10%, var(--ui-field-background))",
       // The ring kept but unseen, since forced colours drop the tint and paint the outline in
       "outline-color": "transparent",
-      // A field the library wraps around an editable of its own, such as the rich text editor's, is focused while that is
+      // A field the library wraps around an editable of its own, such as the rich text editor's, is focused while
+      // That is
       [symbols.selector]: (selector: string) => `${selector}:is(:focus-visible, :has([contenteditable="true"]:focus))`,
     },
     FORCED_COLORS_EDGE,
@@ -173,9 +174,10 @@ export default defineConfig({
   // Applies, so a `.ts` file is read only when it opts in with `@unocss-include`
   content: { filesystem: ["**/*.{ts,vue}"] },
   outputToCssLayers: { cssLayerName: (layer) => (layer === "properties" ? null : `uno-${layer}`) },
-  // Each design style's tokens as one rule on its `data-ui-style` value, written here so they are static CSS rather than
-  // A stylesheet built at runtime. A theme scope carries the attribute as well as the root, because a token that reads
-  // A colour is resolved where it is declared: inherited from the root, a frame inside a dusk scope would keep dawn's edge
+  // Each design style's tokens as one rule on its `data-ui-style` value, written here so they are static CSS rather
+  // Than a stylesheet built at runtime. A theme scope carries the attribute as well as the root, because a token that
+  // Reads a colour is resolved where it is declared: inherited from the root, a frame inside a dusk scope would keep
+  // Dawn's edge
   preflights: Object.entries(UiStyleMap).map(([uiStyle, styleTokens]) => ({
     getCSS: () =>
       `[data-ui-style="${uiStyle}"]{${Object.entries(styleTokens)
@@ -227,9 +229,10 @@ export default defineConfig({
     // Something pressed, a button or a link that looks like one: raised, and filled by its variant or while pressed
     "ui-button": [
       // One control height, 8 steps, which a field and a select's trigger share, so a row of them lines up; an icon
-      // Button is square in it, and content taller than an icon, such as a name over a topic, keeps a step above and below.
-      // Three steps either side, so a tonal fill reads as a button rather than a highlighted word. Under a finger, where a
-      // Target is aimed less exactly, it is eleven steps square at the least, WCAG's enhanced target size
+      // Button is square in it, and content taller than an icon, such as a name over a topic, keeps a step above and
+      // Below. Three steps either side, so a tonal fill reads as a button rather than a highlighted word. Under a
+      // Finger, where a target is aimed less exactly, it is eleven steps square at the least, WCAG's enhanced
+      // Target size
       "px-3 py-1 min-h-8 min-w-8 inline-flex gap-2 items-center justify-center shrink-0 cursor-pointer ui-raised",
       "[@media(pointer:coarse)]:min-h-11 [@media(pointer:coarse)]:min-w-11",
       "hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)] active:[background-image:var(--ui-pressed-overlay)] disabled:cursor-default disabled:op-disabled",
@@ -237,11 +240,11 @@ export default defineConfig({
       "aria-pressed:bg-accent aria-pressed:text-background aria-checked:bg-accent aria-checked:text-background",
       "data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background",
       "data-[variant=Danger]:bg-error data-[variant=Danger]:text-background",
-      // A trigger that holds a value, drawn as the field it is — a select's — and the search field the palette's trigger
-      // Opens, in a search field's pill
+      // A trigger that holds a value, drawn as the field it is — a select's — and the search field the palette's
+      // Trigger opens, in a search field's pill
       "data-[variant=Field]:bg-[var(--ui-field-background)] data-[variant=Field]:shadow-none data-[variant=Field]:text-text data-[variant=Field]:focus-visible:outline-hidden data-[variant=Field]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-field-background))]",
-      // A field-toned toggle — a reaction — pressed takes a light tint of the info colour rather than the accent's fill,
-      // Which reads too heavy for a count many of them sit beside
+      // A field-toned toggle — a reaction — pressed takes a light tint of the info colour rather than the accent's
+      // Fill, which reads too heavy for a count many of them sit beside
       "data-[variant=Field]:aria-pressed:bg-[color-mix(in_srgb,var(--ui-info)_10%,var(--ui-field-background))] data-[variant=Field]:aria-pressed:text-text",
       "data-[variant=Search]:bg-[var(--ui-field-background)] data-[variant=Search]:shadow-none data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)] data-[variant=Search]:focus-visible:outline-hidden data-[variant=Search]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-field-background))]",
       // No surface of its own: clear on whatever it sits on, tinted in the accent while hovered. Over a picture, where
@@ -258,15 +261,15 @@ export default defineConfig({
     // A guide line down the start edge of what it holds — a navigation's nested list, a thread — as a divider
     "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-divider)]",
     // One row of a list, pressed: a row, tinted while it is hovered, and more while it is the highlighted, selected,
-    // Current or focused one. The tint marks a focused row, so it draws no ring as well. Under a finger it is eleven steps
-    // Tall at the least, as a button is
+    // Current or focused one. The tint marks a focused row, so it draws no ring as well. Under a finger it is eleven
+    // Steps tall at the least, as a button is
     "ui-item":
       "ui-row [@media(pointer:coarse)]:min-h-11 cursor-pointer focus-visible:outline-hidden hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=page]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=true]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
-    // One row of a list that goes nowhere — an activity entry, a session — laid out as every row is: a mark's column, the
-    // Title and whatever ends the row, on one line one control height tall
+    // One row of a list that goes nowhere — an activity entry, a session — laid out as every row is: a mark's column,
+    // The title and whatever ends the row, on one line one control height tall
     "ui-row": "px-2 py-1 text-left flex gap-2 w-full min-h-8 items-center rd-[var(--ui-control-radius)]",
-    // A row of tabs on a divider, and one tab in it, which draws the active indicator over its own stretch of the line in
-    // The accent while it is the selected tab or the current page's link, and is eleven steps tall under a finger
+    // A row of tabs on a divider, and one tab in it, which draws the active indicator over its own stretch of the line
+    // In the accent while it is the selected tab or the current page's link, and is eleven steps tall under a finger
     "ui-tab":
       "px-3 py-1 [@media(pointer:coarse)]:min-h-11 flex items-center text-muted text-nowrap cursor-pointer no-underline hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)]",
     "ui-tab-list": "flex of-x-auto ui-bar",
@@ -278,10 +281,9 @@ export default defineConfig({
       ...Object.fromEntries(UiTokens.map((uiToken) => [uiToken, `var(--ui-${uiToken})`])),
       "heading-color": "var(--ui-heading-color)",
     },
-    // Override preset-wind4's default sans stack, which lists OS-only fonts
-    // ("Segoe UI", "Helvetica Neue", Arial) with no downloadable web source.
-    // These warn at startup because nuxt-og-image scans this token to embed
-    // Fonts into OG images and cannot resolve them. Inter is the standard style's face, which @nuxt/fonts loads globally.
+    // Override preset-wind4's default sans stack, which lists OS-only fonts ("Segoe UI", "Helvetica Neue", Arial) with
+    // No downloadable web source. These warn at startup because nuxt-og-image scans this token to embed fonts into OG
+    // Images and cannot resolve them. Inter is the standard style's face, which @nuxt/fonts loads globally.
     font: {
       sans: 'Inter, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
     },

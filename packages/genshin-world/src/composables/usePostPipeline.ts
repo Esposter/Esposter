@@ -14,7 +14,10 @@ import { AntialiasingMode, createPostPipeline, QualityTierSettingsMap } from "ge
 // That asks is handed what it renders with
 export const usePostPipeline = (
   qualityTier: MaybeRefOrGetter<QualityTier>,
-  postInputs: Pick<PostPipelineOptions, "fogUniforms" | "godraysLight" | "gradeLutTexture" | "postUniforms">,
+  postInputs: Pick<
+    PostPipelineOptions,
+    "fogUniforms" | "godraysLight" | "gradeLutTexture" | "isBloomed" | "postUniforms"
+  >,
   // The sky the scene draws, handed on with what it renders with
   sky?: SkyUniforms,
 ) => {

@@ -1,5 +1,9 @@
+import type { FacadeLayer } from "#src/models/genshinAssets/fit/FacadeLayer";
 import type { LatheProfile } from "#src/models/genshinAssets/fit/LatheProfile";
+import type { Texture } from "#src/models/genshinAssets/fit/Texture";
+import type { TowerFacade } from "#src/models/genshinAssets/fit/TowerFacade";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
+import type { Vector } from "#src/models/shared/Vector";
 
 import { fitLatheProfile } from "#src/services/genshinAssets/fit/fitLatheProfile";
 import { rasterizeTopFaces } from "#src/services/genshinAssets/fit/rasterizeTopFaces";
@@ -8,7 +12,9 @@ import { readMaterialNames } from "#src/services/genshinAssets/fit/readMaterialN
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { toTexel } from "#src/services/genshinAssets/fit/toTexel";
 import { traceCellLoops } from "#src/services/genshinAssets/fit/traceCellLoops";
+import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUpperMedian";
 import {
+  GILDING_RED_BLUE_RATIO,
   TOWER_BAND_HEIGHT,
   TOWER_FACADE_CELL_SIZE,
   TOWER_FACADE_DEEP_RECESS,
@@ -20,42 +26,14 @@ import {
   TOWER_RADIUS_TOLERANCE,
 } from "#src/services/genshinAssets/shared/constants";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
+import { BYTE } from "#src/services/shared/constants";
+import { toLinear } from "#src/services/shared/toLinear";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
 
-export interface TowerFacade {
-  // The tone of each run of the tower's height, from its foot, as a share of the tower's own mean stone
-  bands: { from: number; shade: Vector; to: number }[];
-  // Where the tower is open, so the sky shows through between its columns
-  holes: [number, number][][];
-  // The paint on its face darker and lighter than its band, what stands out from its wall, its recesses shallow and
-  // Then deep, and its gilding, each
-  // As loops in its own shade over the band under it, drawn in that order
-  layers: FacadeLayer[];
-  // The lathe the scene builds it as: its walls' radius band by band, a band merged into the one below while its radius
-  // Holds within the tolerance, so its facade lies on the face it was read off rather than out on its columns' and
-  // Its cornices' tips
-  sections: LatheProfile["sections"];
-  // Its surface's breadth round at its widest and its height, the loops' frame, in its mesh's own units
-  size: [number, number];
-}
-interface FacadeLayer {
-  // How far in from its band's wall it stands, in its mesh's units, out where it is less than none, and nothing for paint
-  depth: number;
-  loops: [number, number][][];
-  shade: Vector;
-}
-interface Texture {
-  data: Buffer;
-  info: { channels: number; height: number; width: number };
-}
-type Vector = [number, number, number];
-const BYTE = 255;
-// A texel's metal reads in its mask's green channel, and a gilded texel's red runs past its blue by this many times
+// A texel's metal reads in its mask's green channel past this
 const METAL_THRESHOLD = 0.5;
-const GILDING_RED_BLUE_RATIO = 1.8;
-const toLinear = (value: number): number => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
 const readTexture = (path: string): Promise<Texture | undefined> =>
   existsSync(path) ? sharp(path).raw().toBuffer({ resolveWithObject: true }) : Promise.resolve(undefined);
 const getTexel = ({ data, info }: Texture, uv: readonly [number, number], channel: number): number => {
@@ -149,27 +127,21 @@ export const fitLoginTowerFacades = async (
     // Moulding stands out from
     const bandRows = Math.max(1, Math.round(TOWER_BAND_HEIGHT / TOWER_FACADE_CELL_SIZE));
     const toBand = (cell: number): number => Math.floor(Math.floor(cell / width) / bandRows);
-    const bandRadii = new Map<number, number[]>();
-    for (const cell of drawn) {
-      const band = toBand(cell);
-      const radii = bandRadii.get(band) ?? [];
-      radii.push(heights[cell] ?? 0);
-      bandRadii.set(band, radii);
-    }
-    const wallRadii = new Map(
-      Array.from(bandRadii, ([band, radii]) => [
+    const bandRadiiMap = Map.groupBy(drawn, (cell) => toBand(cell));
+    const bandWallRadiusMap = new Map(
+      Array.from(bandRadiiMap, ([band, bandCells]) => [
         band,
-        radii.toSorted((first, second) => first - second)[Math.floor(radii.length / 2)] ?? 0,
+        computeUpperMedian(bandCells.map((cell) => heights[cell] ?? 0)),
       ]),
     );
-    for (const cell of cells) depths.push((wallRadii.get(toBand(cell)) ?? 0) - (heights[cell] ?? 0));
+    for (const cell of cells) depths.push((bandWallRadiusMap.get(toBand(cell)) ?? 0) - (heights[cell] ?? 0));
     const bandCount = Math.ceil(height / bandRows);
     const toWallSections = (): LatheProfile["sections"] => {
       const sections: LatheProfile["sections"] = [];
       let radius = 0;
       for (let band = 0; band < bandCount; band++) {
         // A band the tower stands open all round keeps the wall below it
-        radius = wallRadii.get(band) || radius;
+        radius = bandWallRadiusMap.get(band) || radius;
         const bandHeight = (Math.min((band + 1) * bandRows, height) - band * bandRows) * TOWER_FACADE_CELL_SIZE;
         const last = sections.at(-1);
         if (last && Math.abs(radius - last.bottomRadius) <= TOWER_RADIUS_TOLERANCE * last.bottomRadius)

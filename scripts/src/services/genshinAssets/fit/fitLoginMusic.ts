@@ -37,8 +37,8 @@ const roundInstrument = ({
 // The login's music as our own: its playlist as `playlist` exported it, each segment's sources transcribed, their notes
 // Split by register into voices, each voice's instrument fitted to the source it was heard in (`fitMusicVoices`), and
 // The voices' noise solved together since no note sounds alone. A clip's notes move into its segment's time, where its
-// Source starts at `playAt`, and only what its trims leave plays. Each voice's fit is reported with its measurements and
-// Residuals
+// Source starts at `playAt`, and only what its trims leave plays. Each voice's fit is reported with its measurements
+// And residuals
 export const fitLoginMusic = async (): Promise<{ music: Music; report: string[] }> => {
   const { music: directory } = getComponentDirectory(DerivedAssetComponent.Login);
   const { isLooping, order, segments } = parseMachineJson<ComponentPlaylist>(
@@ -58,8 +58,9 @@ export const fitLoginMusic = async (): Promise<{ music: Music; report: string[] 
       report.push(`segment ${id}, source ${sourceId}: ${notes.length} notes, registers split at ${splits.join(", ")}`);
       const clipStart = beginTrim / 1000;
       const clipEnd = (sourceDuration + endTrim) / 1000;
-      // The voices' noise is solved in the listening score's own frames, whose finer bins tell a tonal band from a noisy one
-      // As the score and `genshin:parity bands` do, and give the lowest band bins enough to read between its notes
+      // The voices' noise is solved in the listening score's own frames, whose finer bins tell a tonal band from a
+      // Noisy one as the score and `genshin:parity bands` do, and give the lowest band bins enough to read between its
+      // Notes
       const noiseSpectrogram = computeSpectrogram(samples, AUDIO_SAMPLE_RATE, CHROMA_FRAME_LENGTH, CHROMA_HOP_LENGTH);
       const { flatnesses, levels: noises } = fitVoiceNoises(noiseSpectrogram, voiceNotesList);
       report.push(`  flatness by band ${flatnesses.map((flatness) => flatness.toFixed(3)).join(", ")}`);

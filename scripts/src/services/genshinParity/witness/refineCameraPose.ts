@@ -2,9 +2,10 @@ import type { Page } from "playwright";
 
 import { minimizeNelderMead } from "#src/services/genshinParity/shared/minimizeNelderMead";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
-import { readFamilyEdgeDistance } from "#src/services/genshinParity/witness/readFamilyEdgeDistance";
+import { computeMaskedMean } from "#src/services/genshinParity/witness/computeMaskedMean";
+import { readFamilyBoundaries } from "#src/services/genshinParity/witness/readFamilyBoundaries";
 import { readFamilyEdgeDistances } from "#src/services/genshinParity/witness/readFamilyEdgeDistances";
-import { toPageCamera } from "#src/services/genshinParity/witness/toPageCamera";
+import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
 
 // The simplex's first steps along each axis, metres then degrees: a solved pose is within a few of these
 const REFINE_STEPS = [0.05, 0.05, 0.05, 0.2, 0.2, 0.2];
@@ -25,7 +26,8 @@ export const refineCameraPose = async (
   const { edgeDistances, topPixel } = await readFamilyEdgeDistances(page, image, families, topRow);
   const readDistance = async (candidate: readonly number[]): Promise<number> => {
     await setPageWitnessView(page, { camera: toPageCamera(candidate) });
-    return readFamilyEdgeDistance(page, { edgeDistances, families, topPixel });
+    const boundaries = await readFamilyBoundaries(page, families, topPixel);
+    return computeMaskedMean(boundaries, edgeDistances);
   };
   const freeAxes = pose.flatMap((_, axis) => (heldAxes.includes(axis) ? [] : [axis]));
   const toPose = (free: readonly number[]): number[] =>

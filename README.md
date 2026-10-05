@@ -376,9 +376,9 @@ flowchart LR
 | [`packages/db-schema`](https://github.com/Esposter/Esposter/tree/main/packages/db-schema)                       | Drizzle ORM schemas and migrations (PostgreSQL source of truth)                                                                                         |     —     |
 | [`packages/follow-ups`](https://github.com/Esposter/Esposter/tree/main/packages/follow-ups)                     | Claude Code plugin — a session's unfinished follow-ups written into a TodoList and drained until none is left                                           |     —     |
 | [`packages/genshin-engine`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-engine)             | Anime-style open-world engine for three.js WebGPU — toon materials, outlines, post-processing, world kits and music                                     |     ✓     |
+| [`packages/genshin-interface`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-interface)       | Genshin's 2D interface — the screen root, its units and pointer, and the pieces the game's screens share                                                |     ✓     |
 | [`packages/genshin-mods`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-mods)                 | Claude Code plugin — five mods under one band: next steps, cache and usage with a one-click handoff, recording mode, a goal meter and a collision guard |     ✓     |
 | [`packages/genshin-persona`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-persona)           | Claude Code plugin — a Genshin character picked by birthday, replies spoken in its own cloned voice                                                     |     ✓     |
-| [`packages/genshin-interface`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-interface)       | Genshin's 2D interface — the screen root, its units and pointer, and the pieces the game's screens share                                                |     ✓     |
 | [`packages/genshin-text`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-text)                 | The game's own text in its fifteen languages — the language registry, a locale matcher, and the game's strings by text id                               |     ✓     |
 | [`packages/genshin-world`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-world)               | Genshin's world on the engine — the region catalogue, each region's data, the TresJS components and the interface screens                               |     ✓     |
 | [`packages/keyframe-store`](https://github.com/Esposter/Esposter/tree/main/packages/keyframe-store)             | Content-addressed version store — zstd keyframes and deltas over any backend                                                                            |     ✓     |
@@ -422,6 +422,6 @@ This project is licensed under the [Apache-2.0 license](https://github.com/Espos
 [url-ci]: https://github.com/Esposter/Esposter/actions/workflows/CI.yaml?query=event%3Apush+branch%3Amain
 [badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-score]: https://img.shields.io/badge/score-95%2F100-33c854
+[badge-score]: https://img.shields.io/badge/score-94%2F100-33c854
 [url-score]: https://github.com/Esposter/Esposter/blob/main/SCORE.md
 [url-npm]: https://www.npmjs.com/package/Esposter/v/latest

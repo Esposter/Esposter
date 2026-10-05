@@ -4,12 +4,13 @@ import type { CabEntry } from "#src/models/genshinAssets/shared/CabEntry";
 const LENGTH_CONTINUATION_BIT = 0x80;
 const LENGTH_VALUE_BITS = 0x7f;
 const LENGTH_BITS_PER_BYTE = 7;
-// AnimeStudio's CAB map read from its bytes, which it writes beside itself when it maps the blocks: every serialized file (a CAB) of the
-// Game's blocks by its name, with the block holding it and the CABs it depends on, in the order of its own table of
-// External references, so a pointer's file index N names its file's dependency N − 1. It is a .NET binary file: the
-// Blocks folder, a count, then per CAB its name, its block, its offset in the block and its dependencies, each string
-// Prefixed by its length in seven-bit groups. A CAB is named `CAB-` in the map and `cab-` among dependencies, so every
-// Name is keyed lowercase, and every block with forward slashes, as the asset index names it
+// AnimeStudio's CAB map read from its bytes, which it writes beside itself when it maps the blocks: every serialized
+// File (a CAB) of the game's blocks by its name, with the block holding it and the CABs it depends on, in the order of
+// Its own table of external references, so a pointer's file index N names its file's dependency N − 1. It is a .NET
+// Binary file: the blocks folder, a count, then per CAB its name, its block, its offset in the block and its
+// Dependencies, each string prefixed by its length in seven-bit groups. A CAB is named `CAB-` in the map and `cab-`
+// Among dependencies, so every name is keyed lowercase, and every block with forward slashes, as the asset index names
+// It
 export const parseCabMap = (bytes: Buffer): Map<string, CabEntry> => {
   let offset = 0;
   const readString = (): string => {

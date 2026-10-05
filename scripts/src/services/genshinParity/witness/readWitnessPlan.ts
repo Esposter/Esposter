@@ -8,6 +8,7 @@ import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityRef
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
+import { MathUtils } from "three";
 
 // How high over the ground the plan's eye stands, so far that a part's height barely moves where it lands: a curb
 // 0.3 metres up lands 1.5 millimetres off its foot for every metre it stands off the eye's foot
@@ -20,9 +21,9 @@ const gcd = (first: number, second: number): number => (second === 0 ? first : g
 // Drawn at so many pixels a metre: the unlit albedo its exported materials draw, its fourth channel 1 where a part is
 // Drawn, the columns running toward +x and the rows toward +z from the rectangle's least corner. The rectangle is
 // Lengthened toward +z to a whole multiple of the page's height, so the page's scale is whole and draws exactly the
-// Pixels asked, and widened toward +x to a whole multiple of the readback's row, and its size as drawn is handed back. The eye stands
-// High over the rectangle's middle looking straight down, its up toward +z, so its view's columns run toward -x and its
-// Rows, read back from the top, toward -z, and both are turned back
+// Pixels asked, and widened toward +x to a whole multiple of the readback's row, and its size as drawn is handed back.
+// The eye stands high over the rectangle's middle looking straight down, its up toward +z, so its view's columns run
+// Toward -x and its rows, read back from the top, toward -z, and both are turned back
 export const readWitnessPlan = async (
   referenceId: string,
   witness: DerivedAssetComponent,
@@ -53,7 +54,7 @@ export const readWitnessPlan = async (
     async () => {
       await setPageWitnessView(page, {
         camera: {
-          fov: (2 * Math.atan(drawnSize[1] / 2 / PLAN_EYE_HEIGHT) * 180) / Math.PI,
+          fov: MathUtils.radToDeg(2 * Math.atan(drawnSize[1] / 2 / PLAN_EYE_HEIGHT)),
           pitch: -Math.PI / 2,
           position: [leastX + drawnSize[0] / 2, PLAN_EYE_HEIGHT, leastZ + drawnSize[1] / 2],
           yaw: Math.PI,

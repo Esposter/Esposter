@@ -37,6 +37,18 @@ describe("docsSectionGroupsMap", () => {
     expect(missingPages).toStrictEqual([]);
   });
 
+  // A page listed twice draws twice in its section's sidebar, which a merge of two branches adding it does silently
+  test("lists every page of a section once", () => {
+    expect.hasAssertions();
+
+    const repeatedPages = Object.entries(DocsSectionGroupsMap).flatMap(([section, groups]) => {
+      const slugs = Object.values(groups).flat();
+      return slugs.filter((slug, index) => slugs.indexOf(slug) !== index).map((slug) => `${section} → ${slug}`);
+    });
+
+    expect(repeatedPages).toStrictEqual([]);
+  });
+
   test("every feature page of a mapped section is registered", () => {
     expect.hasAssertions();
 

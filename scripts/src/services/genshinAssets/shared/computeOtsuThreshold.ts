@@ -1,4 +1,5 @@
-const BYTE = 255;
+import { BYTE } from "#src/services/shared/constants";
+
 // The threshold splitting byte values into the two classes whose between-class variance is greatest (Otsu's): a value
 // At or under it falls in the darker class
 export const computeOtsuThreshold = (values: readonly number[]): number => {

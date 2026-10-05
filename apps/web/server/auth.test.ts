@@ -49,9 +49,9 @@ export const insertMockSession = async ({ session, user: sessionUser }: GetSessi
 };
 
 export const authMocks = {
-  // Async like the real thing, and awaited by its one caller, `readSession`, which is what lets every session a request is
-  // Handed be a row as well as an object — `pushSubscriptions.sessionId` references one. A fresh session per
-  // Call is deliberate: a suite driving two requests is driving two devices, and several rely on that
+  // Async like the real thing, and awaited by its one caller, `readSession`, which is what lets every session a request
+  // Is handed be a row as well as an object — `pushSubscriptions.sessionId` references one. A fresh session per call is
+  // Deliberate: a suite driving two requests is driving two devices, and several rely on that
   getSession: vi.fn<() => Promise<GetSessionPayload | null>>(async () => {
     const getSessionPayload = { session: createMockSession(user.id), user } as const satisfies GetSessionPayload;
     await insertMockSession(getSessionPayload);

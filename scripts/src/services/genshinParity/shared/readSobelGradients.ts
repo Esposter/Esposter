@@ -1,3 +1,5 @@
+import type { SobelGradients } from "#src/models/genshinParity/shared/SobelGradients";
+
 import { STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
 import sharp from "sharp";
 
@@ -7,7 +9,7 @@ export const readSobelGradients = async (
   input: Buffer,
   height: number,
   width: number = STRUCTURE_WIDTH,
-): Promise<Record<"magnitudes" | "xGradients" | "yGradients", Float32Array>> => {
+): Promise<SobelGradients> => {
   const { data } = await sharp(input)
     .resize(width, height, { fit: "fill" })
     .greyscale()
@@ -17,12 +19,24 @@ export const readSobelGradients = async (
   const xGradients = new Float32Array(data.length);
   const yGradients = new Float32Array(data.length);
   const magnitudes = new Float32Array(data.length);
+  const at = (index: number, offsetX: number, offsetY: number): number => data[index + offsetY * width + offsetX] ?? 0;
   for (let y = 1; y < height - 1; y++)
     for (let x = 1; x < width - 1; x++) {
-      const at = (dx: number, dy: number) => data[(y + dy) * width + x + dx] ?? 0;
       const index = y * width + x;
-      const xGradient = at(1, -1) + 2 * at(1, 0) + at(1, 1) - at(-1, -1) - 2 * at(-1, 0) - at(-1, 1);
-      const yGradient = at(-1, 1) + 2 * at(0, 1) + at(1, 1) - at(-1, -1) - 2 * at(0, -1) - at(1, -1);
+      const xGradient =
+        at(index, 1, -1) +
+        2 * at(index, 1, 0) +
+        at(index, 1, 1) -
+        at(index, -1, -1) -
+        2 * at(index, -1, 0) -
+        at(index, -1, 1);
+      const yGradient =
+        at(index, -1, 1) +
+        2 * at(index, 0, 1) +
+        at(index, 1, 1) -
+        at(index, -1, -1) -
+        2 * at(index, 0, -1) -
+        at(index, 1, -1);
       xGradients[index] = xGradient;
       yGradients[index] = yGradient;
       magnitudes[index] = Math.hypot(xGradient, yGradient);

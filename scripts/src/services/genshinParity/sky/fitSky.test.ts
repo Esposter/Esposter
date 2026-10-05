@@ -1,4 +1,5 @@
-import { fitSky, SKY_TERMS } from "#src/services/genshinParity/sky/fitSky";
+import { SKY_TERMS } from "#src/services/genshinParity/sky/constants";
+import { fitSky } from "#src/services/genshinParity/sky/fitSky";
 import { describe, expect, test } from "vitest";
 
 describe(fitSky, () => {

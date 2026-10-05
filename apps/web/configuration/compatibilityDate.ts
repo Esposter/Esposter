@@ -1,3 +1,3 @@
 import type { NuxtConfig } from "nuxt/schema";
 
-export const compatibilityDate: NuxtConfig["compatibilityDate"] = "2026-09-25";
+export const compatibilityDate: NuxtConfig["compatibilityDate"] = "2026-10-05";

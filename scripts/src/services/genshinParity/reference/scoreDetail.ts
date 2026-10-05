@@ -1,4 +1,5 @@
 import { STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
+import { BYTE } from "#src/services/shared/constants";
 import sharp from "sharp";
 
 // The detail read at twice the structure's width, where a stone's carving and its courses still show
@@ -41,5 +42,5 @@ export const scoreDetail = async (reference: Buffer, shot: Buffer, layer?: Uint8
     sum += Math.abs(energy - (shotEnergy[index] ?? 0));
     count++;
   }
-  return (sum / Math.max(count, 1) / 255) * 100;
+  return (sum / Math.max(count, 1) / BYTE) * 100;
 };

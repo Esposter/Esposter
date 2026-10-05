@@ -9,7 +9,7 @@ describe("@esposter/azure", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 8.17 KB (8366 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 8.18 KB (8380 bytes)"`);
   });
 
   test("types size", () => {

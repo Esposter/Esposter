@@ -1,20 +1,17 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { PageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
+import type { PageWitnessView } from "#src/models/genshinParity/shared/PageWitnessView";
+import type { WitnessPart } from "#src/models/genshinParity/witness/WitnessPart";
 
 import { PARITY_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
+import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
 import { withFinalizerAsync } from "@esposter/shared";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
 
-interface WitnessPart {
-  mesh: string;
-  position: [number, number, number];
-  screen: [number, number];
-}
 // Each part of a family the witness draws at a reference's view, numbered where the top of it lands, over the reference
 // And over the witness's own render side by side, so a part is matched to what the reference shows by eye and named as
 // A landmark by its mesh and where it stands. The list is printed with each part's pixel in the reference's own pixels
@@ -55,7 +52,7 @@ export const labelWitnessParts = async (
       const directory = join(PARITY_DIRECTORY, "parts");
       await mkdir(directory, { recursive: true });
       const imagePath = join(directory, `${referenceId}.${family}.png`);
-      const [labelledReference, labelledShot] = await Promise.all(
+      const labelledPanels = await Promise.all(
         [await sharp(referencePath).png().toBuffer(), shot].map((input) =>
           sharp(input)
             .composite([{ input: svg }])
@@ -63,13 +60,7 @@ export const labelWitnessParts = async (
             .toBuffer(),
         ),
       );
-      await sharp({ create: { background: "#000", channels: 3, height, width: width * 2 } })
-        .composite([
-          { input: labelledReference, left: 0, top: 0 },
-          { input: labelledShot, left: width, top: 0 },
-        ])
-        .png()
-        .toFile(imagePath);
+      await writeSideBySide(labelledPanels, { height, width }, imagePath);
       return { imagePath, parts };
     },
     () => browser.close(),

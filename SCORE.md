@@ -1,6 +1,6 @@
 # Esposter — Repository Score
 
-> Last reviewed: 2026-09-25 · Nuxt `compatibilityDate`: `2026-09-25` · Overall: **95 / 100**
+> Last reviewed: 2026-10-05 · Nuxt `compatibilityDate`: `2026-10-05` · Overall: **94 / 100**
 
 | Area                 | Score   | Notes                                                                         |
 | -------------------- | ------- | ----------------------------------------------------------------------------- |
@@ -9,12 +9,12 @@
 | Code Quality         | 10 / 10 | Guard clauses, `neverthrow` over `try`/`catch`, every `@TODO` tracked         |
 | Testing              | 10 / 10 | Several hundred test files; only Phaser store gaps remain                     |
 | Security             | 8 / 10  | CSP trade-offs documented; `xssValidator` pending upstream                    |
-| Dependencies         | 9 / 10  | One pre-release production dependency left (Drizzle RC)                       |
+| Dependencies         | 8 / 10  | Nuxt 5 and Nitro 3 nightlies and the Drizzle RC in production paths           |
 | Styling              | 9 / 10  | Attributify enforced; one UI library, one palette; no visual regression tests |
-| CI / CD              | 10 / 10 | Cached reusable build; SHA-pinned actions; least-privilege; Pulumi preview    |
+| CI / CD              | 10 / 10 | Cached reusable build; SHA-pinned actions; least-privilege; CodeQL on `main`  |
 | Bundle & Performance | 9 / 10  | Vite auto-splits; per-package size snapshots; app bundle ungated              |
 
-A TypeScript-strict monorepo with strong architectural discipline and comprehensive linting, deliberately delegating heavy lifting to well-maintained libraries (Vite, nuxt-security, Drizzle) over custom solutions. Primary remaining drag is the one pre-release production dependency left, the ORM.
+A TypeScript-strict monorepo with strong architectural discipline and comprehensive linting, deliberately delegating heavy lifting to well-maintained libraries (Vite, nuxt-security, Drizzle) over custom solutions. Primary remaining drag is the pre-release framework line the app runs on ahead of its release, beside the ORM's release candidate.
 
 ---
 
@@ -48,15 +48,17 @@ Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` with D
 - `unsafe-inline` — required by the component styles Nuxt inlines into the page and by Nuxt hydration
 - `xssValidator: false` — disabled pending tRPC-Nuxt #215
 
-## Dependencies — 9 / 10
+## Dependencies — 8 / 10
 
-Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents drift; every version lives in the catalog, so the lockfile is the only place a number is worth reading. Nuxt, Vue, Vuetify 0, Phaser, TypeScript, `rolldown` and `unplugin-dts` are all on stable lines. `h3` is held at v1 via a pnpm override, below its v2 line, and `typescript` is overridden to the tsgo-backed native bridge that `typecheck` runs.
+Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents drift; every version lives in the catalog, so the lockfile is the only place a number is worth reading. Vue, Vuetify 0, Phaser, TypeScript, Survey, `rolldown` and `unplugin-dts` are all on stable lines. `typescript` is overridden to the tsgo-backed native bridge that `typecheck` runs, and every hold on the Nuxt 5 line, a pnpm override or a patch of a module written for Nitro 2, is an `@TODO` naming the release that ends it.
 
-The Survey packages are on stable `3.x`, leaving one **pre-release package in production paths**:
+Three **pre-release packages sit in production paths**:
 
-| Package                       | Role                  | Why it's accepted                                                       |
-| ----------------------------- | --------------------- | ----------------------------------------------------------------------- |
-| `drizzle-orm` / `drizzle-kit` | Core ORM + migrations | v1 API is stable in practice and the schema/query migration is complete |
+| Package                       | Role                  | Why it's accepted                                                                                         |
+| ----------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------- |
+| `nuxt` (nightly, 5.x)         | Framework             | Nuxt 5 runs on Nitro 3 and h3 2, which the app moved to ahead of release rather than in one jump after it |
+| `nitro` (nightly)             | Server runtime        | Nuxt 5's own runtime; the release with the WebSocket upgrade fix it needs is not yet out                  |
+| `drizzle-orm` / `drizzle-kit` | Core ORM + migrations | v1 API is stable in practice and the schema/query migration is complete                                   |
 
 ## Styling — 9 / 10
 
@@ -66,7 +68,7 @@ UnoCSS `presetAttributify` + `presetWind4` project-wide: static styles as elemen
 
 ## CI / CD — 10 / 10
 
-The workflows are CI, Bench, Release (tags), Pulumi (infra preview on PRs), Delete Merged Branch, Claude warmup, the Review Collector as a trigger shell calling its own reusable runner, a reusable build, and one Azure Functions deployment whose branch picks the stack (develop → dev, main → prod).
+The workflows are CI, Bench, CodeQL (on `main` and weekly), Release (tags), Pulumi (infra preview on PRs), Delete Merged Branch, Claude warmup, the Review Collector as a trigger shell calling its own reusable runner, a reusable build, and one Azure Functions deployment whose branch picks the stack (develop → dev, main → prod).
 
 CI builds every non-app package once via the reusable `build-packages` workflow, which every package-consuming job (`build`, `coverage`, and the `check` matrix that fans out `lint` and `typecheck`) gates on. Its `actions/cache` entry is keyed by content hash and shared repo-wide, so a CI build gives Bench a cache hit for free, and vice versa — the common app-only commit skips the build entirely. Tests run through one root `vitest.config.ts` `projects` config, so coverage runs as a `--shard` matrix with `--reporter=blob`, feeding a dependent `coverage-merge` job that recombines the blobs into one artifact.
 

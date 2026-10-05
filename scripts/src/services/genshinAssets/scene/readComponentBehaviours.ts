@@ -1,4 +1,4 @@
-import type { SerializedField } from "#src/models/genshinAssets/scene/SerializedField";
+import type { ComponentBehaviour } from "#src/models/genshinAssets/scene/ComponentBehaviour";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ObjectPointer } from "#src/models/genshinAssets/shared/ObjectPointer";
 
@@ -24,15 +24,7 @@ const BEHAVIOUR_TYPE = "MonoBehaviour";
 export const readComponentBehaviours = async (
   component: DerivedAssetComponent,
   scriptPattern?: RegExp,
-): Promise<
-  {
-    block: string;
-    describePointer: (pointer: ObjectPointer) => string;
-    fields: SerializedField[];
-    file: string;
-    script: string;
-  }[]
-> => {
+): Promise<ComponentBehaviour[]> => {
   const directory = getComponentDirectory(component);
   const [cabMapBytes, { objectNameMap }] = await Promise.all([
     readFile(CAB_MAP_PATH),
@@ -58,7 +50,7 @@ export const readComponentBehaviours = async (
   const assetNameMap = new Map(
     indexed.map(({ block, name, pathId, type }) => [toObjectKey(block, pathId), `${type} ${name}`]),
   );
-  const behaviours = [];
+  const behaviours: ComponentBehaviour[] = [];
   for (const block of blocks) {
     const blockDirectory = join(directory.behaviours, basename(block, ".blk"), BEHAVIOUR_TYPE);
     if (!existsSync(blockDirectory)) continue;

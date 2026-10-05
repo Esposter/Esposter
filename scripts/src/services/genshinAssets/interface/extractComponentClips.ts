@@ -1,5 +1,5 @@
 import type { ExportedAnimationClip } from "#src/models/genshinAssets/interface/ExportedAnimationClip";
-import type { DecodedCurve } from "#src/models/genshinAssets/shared/DecodedCurve";
+import type { DecodedClip } from "#src/models/genshinAssets/shared/DecodedClip";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
 
@@ -17,14 +17,12 @@ import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 
 // The rate a clip's curves are sampled at, the game's frame rate, which a Web Animations timeline plays as keyframes
-export const CLIP_SAMPLE_RATE = 60;
+const CLIP_SAMPLE_RATE = 60;
 // A component's animation clips, decoded: every clip whose name its map's pattern matches is exported as JSON from the
 // Blocks holding it, its curves decoded and sampled, and each binding named where its CRC32 resolves, a property
 // Against Unity's names and a path against the component's interface tree (written by `interface`, if it has run).
 // The clips are written beside the exports
-export const extractComponentClips = async (
-  component: DerivedAssetComponent,
-): Promise<{ curves: DecodedCurve[]; duration: number; name: string }[]> => {
+export const extractComponentClips = async (component: DerivedAssetComponent): Promise<DecodedClip[]> => {
   const { clipPattern } = DerivedAssetComponentMap[component];
   if (!clipPattern) throw new InvalidOperationError(Operation.Read, component, "names no clips");
   const { root } = getComponentDirectory(component);
@@ -50,7 +48,7 @@ export const extractComponentClips = async (
     ? [parseMachineJson<InterfaceNode>(await readFile(interfacePath, "utf8"))]
     : [];
   const resolveName = createClipNameResolver(trees);
-  const clips: { curves: DecodedCurve[]; duration: number; name: string }[] = [];
+  const clips: DecodedClip[] = [];
   for (const block of await readdir(directory)) {
     const clipDirectory = join(directory, block, "AnimationClip");
     if (!existsSync(clipDirectory)) continue;

@@ -1,13 +1,15 @@
+import type { FittedStone } from "#src/models/genshinAssets/fit/FittedStone";
 import type { MaterialValues } from "#src/models/genshinAssets/shared/MaterialValues";
+import type { Vector } from "#src/models/shared/Vector";
 
 import { fitAlbedo } from "#src/services/genshinAssets/fit/fitAlbedo";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUpperMedian";
+import { BYTE } from "#src/services/shared/constants";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
 
-type Vector = [number, number, number];
-const BYTE = 255;
 // The texels a mask is reduced to before its median is taken
 const MASK_SAMPLE_SIZE = 64;
 // The material property a mask's smoothness is scaled by
@@ -19,32 +21,18 @@ const FAMILY_MATERIAL_REGEX_MAP: Record<"bridges" | "door" | "towers" | "walkway
   towers: /^LoginScene_Build/u,
   walkway: /^LoginScene_Bridge01/u,
 };
-const computeMedian = (values: readonly number[]): number =>
-  values.toSorted((first, second) => first - second)[Math.floor(values.length / 2)] ?? 0;
 const computeMean = (vectors: readonly Vector[]): Vector =>
   ([0, 1, 2] as const).map((channel) =>
     roundFitted(vectors.reduce((sum, vector) => sum + vector[channel], 0) / Math.max(vectors.length, 1)),
   ) as Vector;
 // The stone each family of the login's parts is carved from, as its materials hold it (Login/Scene/Index.reference.ts,
-// Source `stoneShader`, whose programs do not decompile, so its properties are read, not its code): the median colour of
-// Their diffuse textures, the median smoothness of their masks\' red channel at their gloss scale, the specular colour
-// They tint their highlights with, and the rim glow they light their edges with, its colour, power and strength
+// Source `stoneShader`, whose programs do not decompile, so its properties are read, not its code): the median colour
+// Of their diffuse textures, the median smoothness of their masks\' red channel at their gloss scale, the specular
+// Colour they tint their highlights with, and the rim glow they light their edges with, its colour, power and strength
 export const fitLoginStone = async (
   materials: readonly MaterialValues[],
   textureDirectory: string,
-): Promise<
-  Record<
-    keyof typeof FAMILY_MATERIAL_REGEX_MAP,
-    {
-      albedo: string;
-      rimColor: Vector;
-      rimPower: number;
-      rimStrength: number;
-      smoothness: number;
-      specularColor: Vector;
-    }
-  >
-> => {
+): Promise<Record<keyof typeof FAMILY_MATERIAL_REGEX_MAP, FittedStone>> => {
   const entries = await Promise.all(
     Object.entries(FAMILY_MATERIAL_REGEX_MAP).map(async ([family, regex]) => {
       const familyMaterials = materials.filter(({ name }) => regex.test(name));
@@ -82,11 +70,11 @@ export const fitLoginStone = async (
           rimColor: computeMean(getColors("_RGColor")),
           rimPower: computeMeanFloat("_RGPower"),
           rimStrength: computeMeanFloat("_RGStrength"),
-          smoothness: roundFitted(computeMedian(smoothnesses.flat())),
+          smoothness: roundFitted(computeUpperMedian(smoothnesses.flat())),
           specularColor: computeMean(getColors("_SpecColor")),
         },
       ] as const;
     }),
   );
-  return Object.fromEntries(entries) as Awaited<ReturnType<typeof fitLoginStone>>;
+  return Object.fromEntries(entries) as Record<keyof typeof FAMILY_MATERIAL_REGEX_MAP, FittedStone>;
 };

@@ -257,8 +257,9 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       },
     },
     {
-      // A Claude Code hooks module imports only its own files by relative path, plus `claude-code`: the engine refuses a
-      // Subpath import at load, so the mod trees keep every other import restriction and lose the relative-specifier ban
+      // A Claude Code hooks module imports only its own files by relative path, plus `claude-code`: the engine refuses
+      // A subpath import at load, so the mod trees keep every other import restriction and lose the
+      // Relative-specifier ban
       files: ["packages/genshin-mods/**/*.ts", "packages/genshin-persona/mod/**/*.ts"],
       rules: { "no-restricted-imports": ["error", { paths: RESTRICTED_IMPORT_PATHS, patterns: [MOD_IMPORT_PATTERN] }] },
     },

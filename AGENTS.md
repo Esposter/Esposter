@@ -23,10 +23,10 @@ This file is an **index and a process**, never a reference. Anything explaining 
 | `packages/follow-ups`           | `@esposter/follow-ups`    | Claude Code plugin — a session's unfinished follow-ups written into a TodoList and drained until none is left             |
 | `packages/genshin-engine`       | `genshin-engine`          | Anime-style open-world engine for three.js WebGPU — toon materials, outlines, post-processing, world kits and music       |
 | `packages/genshin-interface`    | `genshin-interface`       | Genshin's 2D interface — the screen root, its units and pointer, and the pieces the game's screens share                  |
-| `packages/genshin-text`         | `genshin-text`            | The game's own words in its fifteen languages — language registry, locale matcher, strings by text id                     |
-| `packages/genshin-world`        | `genshin-world`           | Genshin's world on the engine — the region catalogue, each region's data and the TresJS components building it            |
 | `packages/genshin-mods`         | `genshin-mods`            | Claude Code plugin — five mods under one band: next steps, cache and handoff, recording mode, goal meter, collision guard |
 | `packages/genshin-persona`      | `genshin-persona`         | Claude Code plugin — a Genshin character picked by birthday, replies spoken in its own cloned voice                       |
+| `packages/genshin-text`         | `genshin-text`            | The game's own words in its fifteen languages — language registry, locale matcher, strings by text id                     |
+| `packages/genshin-world`        | `genshin-world`           | Genshin's world on the engine — the region catalogue, each region's data and the TresJS components building it            |
 | `packages/keyframe-store`       | `keyframe-store`          | Content-addressed version store — zstd keyframes and deltas over any backend                                              |
 | `packages/parse-tmx`            | `parse-tmx`               | Parser for Tiled Map Editor `.tmx` files                                                                                  |
 | `packages/pitch-transcription`  | `pitch-transcription`     | The notes in a recording — Basic Pitch on the current TensorFlow.js, its readings turned into notes, bends and MIDI       |

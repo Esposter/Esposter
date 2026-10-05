@@ -10,7 +10,7 @@ import { createPostUniforms } from "#src/post/createPostUniforms";
 import { Color, DirectionalLight, HemisphereLight } from "three";
 import { describe, expect, test } from "vitest";
 
-const createSkyTargets = (): SkyTargets => ({
+const createSkyTargets = (): Required<SkyTargets> => ({
   fogUniforms: createFogUniforms(),
   godraysLight: new DirectionalLight(),
   hemisphere: new HemisphereLight(),

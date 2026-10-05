@@ -45,6 +45,7 @@ export const applySkyState = (
   toSceneColor(skyState.sunHaloColor ?? BLACK, skyUniforms.sunHaloColor.value);
   skyUniforms.lightColor.value.copy(lightColor);
   skyUniforms.moonDirection.value.copy(skyState.moonDirection);
+  toSceneColor(skyState.moonGlowColor ?? BLACK, skyUniforms.moonGlowColor.value);
   skyUniforms.starIntensity.value = skyState.starIntensity;
   skyUniforms.sunDirection.value.copy(skyState.sunDirection);
   toSceneColor(skyState.zenithColor, skyUniforms.zenithColor.value);
@@ -54,6 +55,7 @@ export const applySkyState = (
   skyUniforms.horizonBand.value = horizonBand;
   skyUniforms.moonSize.value = moonSize;
   skyUniforms.sunHaloSize.value = sunHaloSize;
+  if (!godraysLight) return;
   godraysDirection.subVectors(godraysLight.position, godraysLight.target.position).normalize();
   // A light still standing on its target has no direction, which fails the test, so the first call places it
   if (godraysDirection.dot(lightDirection) >= GODRAYS_REDRAW_COSINE) return;

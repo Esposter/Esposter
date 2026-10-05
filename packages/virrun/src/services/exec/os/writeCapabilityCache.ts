@@ -8,7 +8,7 @@ import { getResult } from "@esposter/shared";
 // Persist the probe's verdict so later `virrun -- <cmd>` processes skip the bwrap probe — best-effort and atomic,
 // See writeKeyedCache. Best-effort reaches the location too: on win32 it is asked of WSL (see readCapabilityCache).
 export const writeCapabilityCache = (cache: Pick<KeyedCache<boolean>, "key" | "value">): void => {
-  getResult(getCapabilityCachePath).match(
+  getResult(() => getCapabilityCachePath()).match(
     (file) => {
       writeKeyedCache(file, cache);
     },

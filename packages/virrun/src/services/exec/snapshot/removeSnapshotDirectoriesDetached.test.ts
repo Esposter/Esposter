@@ -27,7 +27,8 @@ const { cacheRootHolder, rmSync, spawn, writeFileSync } = vi.hoisted(() => ({
 }));
 
 // Only the spawn (the background teardown, through cross-spawn) is mocked; readWslPath maps a UNC via its regex without
-// A subprocess, and the local branch's removeSnapshotDirectory uses node:fs, so no other child_process export is exercised here.
+// A subprocess, and the local branch's removeSnapshotDirectory uses node:fs, so no other child_process export is
+// Exercised here.
 vi.mock(import("cross-spawn"), () => ({ default: spawn as unknown as typeof baseCrossSpawn }));
 // Node:fs stays real except for rmSync, which delegates to the real one until a case makes a single local removal
 // Throw — the only portable way to reach that arm, since what a doomed path raises (ENOTDIR/EPERM) differs per OS and

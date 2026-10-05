@@ -1,3 +1,4 @@
+import type { Loop } from "#src/models/genshinAssets/fit/Loop";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 
 import { blurWithinTags } from "#src/services/genshinAssets/fit/blurWithinTags";
@@ -8,12 +9,14 @@ import { toTexel } from "#src/services/genshinAssets/fit/toTexel";
 import { toWorldVertices } from "#src/services/genshinAssets/fit/toWorldVertices";
 import { traceCellLoops } from "#src/services/genshinAssets/fit/traceCellLoops";
 import { computeOtsuThreshold } from "#src/services/genshinAssets/shared/computeOtsuThreshold";
+import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUpperMedian";
+import { WALKWAY_MESH_REGEX } from "#src/services/genshinAssets/shared/constants";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
+import { BYTE } from "#src/services/shared/constants";
 import { join } from "node:path";
 import sharp from "sharp";
 
-const WALKWAY_MESH_REGEX = /^LoginScene_Bridge01_\d+_Vo$/u;
 // The materials whose stone is set with pockets, the side lanes' and the wings'
 const POCKET_MATERIALS = new Set(["LoginScene_Bridge01", "LoginScene_Bridge02"]);
 // The plan's cells, a centimetre each, over one copy of the walkway and its wings
@@ -36,8 +39,6 @@ const MAX_TILT = 2;
 // A bevel within this many cells of a pocket's edge is that pocket's rim; one further off is a groove of its own, a
 // Joint between two bricks or a lane's border
 const RIM_REACH_CELLS = 4;
-const BYTE = 255;
-type Loop = [number, number][];
 // The walkway's paving as the pockets its stone is set with, each a loop in three's axes over one copy of the walkway
 // As `fitLoginWalkway` lays out its pieces, inside the plan's corner and size: every pocket sunk into its side lanes'
 // And its wings' stone. Each piece's faces that look up are drawn into a plan through their own texture coordinates
@@ -171,8 +172,7 @@ export const fitLoginPaving = async (
   // The joints between the bricks tilt less than a pocket's rim, so they are split from the flat stone under the rims
   const jointThreshold = computeTiltThreshold(topCells.filter((cell) => (tilts[cell] ?? 0) <= tiltThreshold));
   const computeMedianTilt = (cells: readonly number[]): number =>
-    cells.map((cell) => tilts[cell] ?? 0).toSorted((first, second) => first - second)[Math.floor(cells.length / 2)] ??
-    0;
+    computeUpperMedian(cells.map((cell) => tilts[cell] ?? 0));
   // A bevel is a pocket's rim where a pocket's edge lies within reach of it: both a pocket's cell and its lane's
   const checkIsRim = (cell: number): boolean => {
     const [column, row] = [cell % width, Math.floor(cell / width)];

@@ -33,7 +33,7 @@ export const characterizeMusicBands = (
   const spectrogram = computeSpectrogram(samples, sampleRate, CHROMA_FRAME_LENGTH, CHROMA_HOP_LENGTH);
   const { binCount, frameCount, frameLength, magnitudes } = spectrogram;
   const binWidth = sampleRate / frameLength;
-  const { loudness } = computeChroma(samples, sampleRate);
+  const { loudness } = computeChroma(samples, sampleRate, spectrogram);
   const quiet = Math.max(...loudness) * CHROMA_QUIET_SHARE;
   const loudFrames = [...loudness.keys()].filter((frame) => frame < frameCount && (loudness[frame] ?? 0) >= quiet);
   const getPower = (frame: number, bin: number): number => (magnitudes[frame * binCount + bin] ?? 0) ** 2;

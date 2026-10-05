@@ -1,6 +1,12 @@
+import type { DumpedGameObject } from "#src/models/genshinAssets/shared/DumpedGameObject";
+import type { DumpedMeshFilter } from "#src/models/genshinAssets/shared/DumpedMeshFilter";
+import type { DumpedMeshRenderer } from "#src/models/genshinAssets/shared/DumpedMeshRenderer";
+import type { DumpedPointer } from "#src/models/genshinAssets/shared/DumpedPointer";
+import type { DumpedSkinnedMeshRenderer } from "#src/models/genshinAssets/shared/DumpedSkinnedMeshRenderer";
 import type { DumpedTransform } from "#src/models/genshinAssets/shared/DumpedTransform";
 import type { ObjectPointer } from "#src/models/genshinAssets/shared/ObjectPointer";
 import type { SceneDrawing } from "#src/models/genshinAssets/shared/SceneDrawing";
+import type { SceneLayout } from "#src/models/genshinAssets/shared/SceneLayout";
 import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
 
 import { LAYOUT_ASSET_TYPES } from "#src/services/genshinAssets/shared/constants";
@@ -12,30 +18,7 @@ import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-interface DumpedPointer {
-  IsNull?: boolean;
-  m_FileID: number;
-  m_PathID: string;
-  Name?: string;
-}
-interface GameObject {
-  m_Components: { m_PathID: string; Name: string }[];
-  m_Name: string;
-  m_Transform: { m_GameObject: { m_PathID: string } };
-}
 type LayoutAssetType = (typeof LAYOUT_ASSET_TYPES)[number];
-interface MeshFilter {
-  m_GameObject: { m_PathID: string };
-  m_Mesh: DumpedPointer;
-}
-interface MeshRenderer {
-  m_GameObject: { m_PathID: string };
-  m_Materials: DumpedPointer[];
-}
-// A skinned renderer draws its mesh itself, with no filter beside it: a part whose pieces a clip moves, such as a door
-interface SkinnedMeshRenderer extends MeshRenderer {
-  m_Mesh: DumpedPointer;
-}
 // Every dump of one type in one file of a block, which holds none of a type it has no object of
 const readAll = async <T>(directory: string): Promise<T[]> => {
   if (!existsSync(directory)) return [];
@@ -51,16 +34,11 @@ const toPointers = (pointers: readonly DumpedPointer[]): ObjectPointer[] =>
 // A scene's objects from its blocks' JSON dumps, a folder per block holding a folder per type, and in it a folder per
 // File (its CAB) the objects were dumped from: every transform, its path ID from its game object where that survived
 // The dump (a game object's first component is its transform), and its game object's named components (a script, or an
-// Animator by its controller; the engine's others are dumped unnamed). Beside them, what each game object draws, keyed by its file and path ID, which a filter and a renderer (or a
-// Skinned renderer alone) name, and every game object and component the dumps hold by its file and path ID, named
-// As the game object and what the component is (its script, or its transform first)
-export const readSceneLayout = async (
-  layoutDirectory: string,
-): Promise<{
-  gameObjectDrawingMap: Map<string, SceneDrawing>;
-  objectNameMap: Map<string, string>;
-  objects: SceneObject[];
-}> => {
+// Animator by its controller; the engine's others are dumped unnamed). Beside them, what each game object draws, keyed
+// By its file and path ID, which a filter and a renderer (or a skinned renderer alone) name, and every game object and
+// Component the dumps hold by its file and path ID, named as the game object and what the component is (its script, or
+// Its transform first)
+export const readSceneLayout = async (layoutDirectory: string): Promise<SceneLayout> => {
   const objects: SceneObject[] = [];
   const objectNameMap = new Map<string, string>();
   const gameObjectDrawingMap = new Map<string, SceneDrawing>();
@@ -76,11 +54,11 @@ export const readSceneLayout = async (
       const readType = <T>(type: LayoutAssetType): Promise<T[]> => readAll<T>(join(getTypeDirectory(type), file));
       // oxlint-disable-next-line no-await-in-loop -- one file's dump is read at a time, holding its thousands of files
       const [gameObjects, transforms, meshFilters, meshRenderers, skinnedMeshRenderers] = await Promise.all([
-        readType<GameObject>("GameObject"),
+        readType<DumpedGameObject>("GameObject"),
         readType<DumpedTransform>("Transform"),
-        readType<MeshFilter>("MeshFilter"),
-        readType<MeshRenderer>("MeshRenderer"),
-        readType<SkinnedMeshRenderer>("SkinnedMeshRenderer"),
+        readType<DumpedMeshFilter>("MeshFilter"),
+        readType<DumpedMeshRenderer>("MeshRenderer"),
+        readType<DumpedSkinnedMeshRenderer>("SkinnedMeshRenderer"),
       ]);
       const gameObjectMaterialsMap = new Map(
         meshRenderers.map(({ m_GameObject, m_Materials }) => [m_GameObject.m_PathID, toPointers(m_Materials)]),

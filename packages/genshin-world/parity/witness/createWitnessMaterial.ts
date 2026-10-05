@@ -3,20 +3,21 @@ import type { Texture } from "three";
 import type { Node } from "three/webgpu";
 
 import { WitnessProperty } from "#parity/witness/WitnessProperty";
-import { color, float, mix, normalView, positionViewDirection, texture, vec3 } from "three/tsl";
-import { MeshStandardNodeMaterial } from "three/webgpu";
+import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
+import { StoneNodeMaterial } from "genshin-engine";
+import { color, float, mix, normalMap, normalView, positionViewDirection, texture, vec3 } from "three/tsl";
 
 // One exported material drawn as the stone's shader writes it into the game's G-buffer (`miHoYo/Scene/Login Base`):
-// The diffuse texture tinted by its colour, its normal map, and its mask texture (`SMBE`, read by the inventory) as
-// Smoothness in red scaled by the gloss scale, metalness in green, and emission in alpha where the material turns it
-// On. The emission grades into the rim glow's colour at its strength by one less the facing ratio raised to its power,
-// As the program mixes them. Lighting is the game's deferred pass, which the engine's physically based lighting stands
-// In for.
+// The diffuse texture tinted by its colour, its normal map, and its mask texture (`SMBE`, read by the inventory) with
+// Emission in alpha where the material turns it on. The emission grades into the rim glow's colour at its strength by
+// One less the facing ratio raised to its power, as the program mixes them. It is lit as our stone is, by the game's
+// Deferred pass from the login's stone light, so a stand-in and its export differ only in what each draws; the mask's
+// Smoothness and metal wait on the pass's highlight
 export const createWitnessMaterial = (
   { colors, floats, textures }: SceneMaterial,
   nameTextureMap: ReadonlyMap<string, Texture>,
-): MeshStandardNodeMaterial => {
-  const material = new MeshStandardNodeMaterial();
+): StoneNodeMaterial => {
+  const material = new StoneNodeMaterial(loginStoneLight);
   const getTexture = (slot: WitnessProperty): Texture | undefined => {
     const slotTexture = textures[slot];
     return slotTexture ? nameTextureMap.get(slotTexture.name) : undefined;
@@ -26,13 +27,11 @@ export const createWitnessMaterial = (
   const tint = color(red, green, blue);
   material.colorNode = diffuse ? texture(diffuse).rgb.mul(tint) : tint;
   const normal = getTexture(WitnessProperty.NormalMap);
-  if (normal) material.normalMap = normal;
+  if (normal) material.normalNode = normalMap(texture(normal));
   const mask = getTexture(WitnessProperty.DetailMask);
   let emissionNode: Node<"vec3"> = vec3(0);
   if (mask) {
     const maskNode = texture(mask);
-    material.roughnessNode = float(1).sub(maskNode.r.mul(floats[WitnessProperty.GlossMapScale] ?? 1));
-    material.metalnessNode = maskNode.g;
     const [emissionRed = 0, emissionGreen = 0, emissionBlue = 0] = colors[WitnessProperty.EmissionColor] ?? [];
     if (floats[WitnessProperty.EmissionType])
       emissionNode = color(emissionRed, emissionGreen, emissionBlue)

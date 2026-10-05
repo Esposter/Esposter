@@ -330,8 +330,8 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     for (const { id } of connections.value) connectOne(id);
   };
 
-  // Asked for after a host was stopped: the attempt reads as connecting, and a host still not there reads as down and is
-  // Retried like any other
+  // Asked for after a host was stopped: the attempt reads as connecting, and a host still not there reads as down and
+  // Is retried like any other
   const reconnect = (connectionId: string) => {
     getStatusRef(connectionId).value = ConnectionStatus.Connecting;
     connectOne(connectionId);

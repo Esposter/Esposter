@@ -112,8 +112,8 @@ if (!checkIsServer() && (window as { __NUXT_VITEST_ENVIRONMENT__?: true }).__NUX
     }
     // One Pinia per environment — the app's own, emptied before every test. Every store action re-activates the Pinia
     // Its store belongs to, and the app calls actions on its own stores whenever it likes (a plugin's head-render or
-    // `afterEach` hook), so a suite holding a second Pinia of its own reads the app's from that moment on. `@pinia/nuxt`
-    // Types `$pinia` only for the app's own tsconfig, so `shared/` reads it as `unknown`
+    // `afterEach` hook), so a suite holding a second Pinia of its own reads the app's from that moment on.
+    // `@pinia/nuxt` types `$pinia` only for the app's own tsconfig, so `shared/` reads it as `unknown`
     const $pinia = useNuxtApp().$pinia as Pinia;
     // oxlint-disable-next-line no-underscore-dangle -- Pinia's store registry has no public accessor, and `$dispose` removes each entry
     for (const store of $pinia._s.values()) store.$dispose();

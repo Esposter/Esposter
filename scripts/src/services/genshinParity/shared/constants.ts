@@ -26,8 +26,6 @@ export const FFMPEG_DIRECTORY: string = join(REPOSITORY_ROOT, "scripts", "node_m
 export const FFMPEG_ARCHIVE_URL =
   "https://github.com/GyanD/codexffmpeg/releases/download/9.0.2/ffmpeg-9.0.2-essentials_build.zip";
 export const FFMPEG_ARCHIVE_SHA256 = "60f467265b1e312373dbcd92200c2618a74850f98d3d078e94296bb3fa2047ba";
-// The archive is a hundred-odd megabytes, so its download is bounded by minutes rather than the usual seconds
-export const FFMPEG_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 // The world package's parity page (`pnpm -C packages/genshin-world parity`), which renders a screen without Nuxt, on
 // Its own port unless `GENSHIN_PARITY_PORT` names another: a second checkout's page, while a long solve holds the first
 // oxlint-disable-next-line typescript/no-inferrable-types -- isolated declarations need a template literal's type written
@@ -88,8 +86,8 @@ export const PARITY_SCORES_PATH: string = join(
 export const STRUCTURE_WIDTH = 480;
 // The width the cloud tools read a sky at: wide enough that a cloud's painted edge spans several pixels
 export const CLOUDS_WIDTH = 960;
-// The heights over the horizon, in degrees, the sky's cover is read between band by band: the cloud sea's billows and the
-// Bank along the horizon low, the cumulus over the towers' crowns high
+// The heights over the horizon, in degrees, the sky's cover is read between band by band: the cloud sea's billows and
+// The bank along the horizon low, the cumulus over the towers' crowns high
 export const CLOUD_ELEVATION_BANDS: number[] = [0, 3, 8, 15, 25, 90];
 // The colours a preview and an overlay draw each family of a scene's parts in, by its index, distinct on any ground
 export const FAMILY_COLORS: readonly [number, number, number][] = [
@@ -152,3 +150,5 @@ export const PARITY_MUSIC_SCORES_PATH: string = join(
   "shared",
   "ParityMusicScores.snapshot.md",
 );
+export const CHANNELS = [0, 1, 2] as const;
+export const LUMINANCE = [0.2126, 0.7152, 0.0722] as const;

@@ -1,9 +1,8 @@
 import type { SerializedField } from "#src/models/genshinAssets/scene/SerializedField";
+import type { SerializedFieldReader } from "#src/models/genshinAssets/scene/SerializedFieldReader";
 import type { ObjectPointer } from "#src/models/genshinAssets/shared/ObjectPointer";
 
 import { SerializedFieldKind } from "#src/models/genshinAssets/scene/SerializedFieldKind";
-
-type Reader = (offset: number) => undefined | { end: number; field: SerializedField };
 
 const WORD = 4;
 const POINTER_BYTES = 12;
@@ -48,7 +47,7 @@ export const scanSerializedFields = (
   const readInt = (offset: number): number => bytes.readInt32LE(offset);
   const readFloat = (offset: number): number => bytes.readFloatLE(offset);
   const checkHasBytes = (offset: number, count: number): boolean => offset + count <= wordCount * WORD;
-  const readPointer: Reader = (offset) => {
+  const readPointer: SerializedFieldReader = (offset) => {
     if (!checkHasBytes(offset, POINTER_BYTES)) return undefined;
     const pointer = { fileIndex: readInt(offset), pathId: bytes.readBigInt64LE(offset + WORD).toString() };
     return pointer.pathId !== "0" && checkIsPointer(pointer)
@@ -57,7 +56,7 @@ export const scanSerializedFields = (
   };
   // A curve whose keyframes are the given number of words: time, value and two slopes, then in Unity's own layout a
   // Weighted mode and two weights, which this game's scripts leave out
-  const readCurveOf = (keyframeWords: number, offset: number): ReturnType<Reader> => {
+  const readCurveOf = (keyframeWords: number, offset: number): ReturnType<SerializedFieldReader> => {
     const count = readInt(offset);
     const end = offset + WORD + count * keyframeWords * WORD + 3 * WORD;
     if (count < 1 || count > MAX_COUNT || !checkHasBytes(offset, end - offset)) return undefined;
@@ -89,9 +88,9 @@ export const scanSerializedFields = (
       ? { end, field: { keys, kind: SerializedFieldKind.Curve, offset } }
       : undefined;
   };
-  const readCurve: Reader = (offset) =>
+  const readCurve: SerializedFieldReader = (offset) =>
     readCurveOf(WEIGHTED_KEYFRAME_WORDS, offset) ?? readCurveOf(KEYFRAME_WORDS, offset);
-  const readGradient: Reader = (offset) => {
+  const readGradient: SerializedFieldReader = (offset) => {
     if (!checkHasBytes(offset, GRADIENT_BYTES)) return undefined;
     const timesOffset = offset + GRADIENT_KEYS * 16;
     const alphaTimesOffset = timesOffset + GRADIENT_KEYS * 2;
@@ -134,7 +133,7 @@ export const scanSerializedFields = (
       },
     };
   };
-  const readColor: Reader = (offset) => {
+  const readColor: SerializedFieldReader = (offset) => {
     if (!checkHasBytes(offset, 4 * WORD)) return undefined;
     const [red = 0, green = 0, blue = 0, alpha = 0] = [0, 1, 2, 3].map((word) => readFloat(offset + word * WORD));
     // Four zeros say nothing a scalar does not
@@ -145,7 +144,7 @@ export const scanSerializedFields = (
       : undefined;
   };
   // An array of records of one shape: a count, then that many records every one of which that shape reads
-  const readArray: Reader = (offset) => {
+  const readArray: SerializedFieldReader = (offset) => {
     const count = readInt(offset);
     if (count < 1 || count > MAX_COUNT) return undefined;
     for (const readElement of [readPointer, readCurve, readGradient, readColor]) {
@@ -161,7 +160,7 @@ export const scanSerializedFields = (
     }
     return undefined;
   };
-  const readScalar: Reader = (offset) => {
+  const readScalar: SerializedFieldReader = (offset) => {
     const integer = readInt(offset);
     const float = readFloat(offset);
     const end = offset + WORD;

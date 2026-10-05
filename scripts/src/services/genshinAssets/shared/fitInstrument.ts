@@ -22,6 +22,8 @@ const DECAY_STEPS = 120;
 const MAX_DECAY_SECONDS = 30;
 // The levels a decay settles to that are tried, evenly from none of the peak to all of it
 const SUSTAIN_STEPS = 100;
+// Each harmonic a note sounds, from its fundamental as the first
+const HARMONICS = Array.from({ length: MUSIC_HARMONIC_COUNT }, (_, index) => index + 1);
 const toDecibels = (share: number): number => 20 * Math.log10(share);
 // A voice's instrument fitted to the sound it was heard in, each value measured at the voice's own notes. A note's
 // Fundamental and each overtone are read where every other note sounding with it, of any voice, leaves them clear, so
@@ -69,7 +71,7 @@ export const fitInstrument = (
         other === note ||
         other.startTimeSeconds >= to ||
         other.startTimeSeconds + other.durationSeconds <= from ||
-        Array.from({ length: MUSIC_HARMONIC_COUNT }, (_, index) => index + 1).every(
+        HARMONICS.every(
           (harmonic) =>
             Math.abs(harmonic * toFrequency(other.pitchMidi) - frequency) > clearance ||
             getPartialAmplitude(other, harmonic) < MUSIC_COVER_SHARE * amplitude,

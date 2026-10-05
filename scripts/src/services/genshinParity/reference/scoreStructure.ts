@@ -2,6 +2,7 @@ import type { StructureScores } from "#src/models/genshinParity/reference/Struct
 
 import { STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
 import { readStructureEdges } from "#src/services/genshinParity/shared/readStructureEdges";
+import { BYTE } from "#src/services/shared/constants";
 import sharp from "sharp";
 
 // The blur the tone is read through: the size of a pillar at the structure's width, so only light and colour are left
@@ -60,5 +61,5 @@ export const scoreStructure = async (reference: Buffer, ours: Buffer, layer?: Ui
     toneSum += Math.abs((referenceTone[index] ?? 0) - (ourTone[index] ?? 0));
     toneCount++;
   }
-  return { edgeScore, toneDifference: (toneSum / Math.max(toneCount, 1) / 255) * 100 };
+  return { edgeScore, toneDifference: (toneSum / Math.max(toneCount, 1) / BYTE) * 100 };
 };

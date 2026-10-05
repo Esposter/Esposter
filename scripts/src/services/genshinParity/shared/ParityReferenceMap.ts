@@ -69,8 +69,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "LoginInterface",
     seconds: 5,
   },
-  // Mainland China's interface over its launch recording's own frame at 1080 high, the door not yet formed, scored over its
-  // Age rating alone: the recording is of an older build, whose build string sits apart from the current one's
+  // Mainland China's interface over its launch recording's own frame at 1080 high, the door not yet formed, scored over
+  // Its age rating alone: the recording is of an older build, whose build string sits apart from the current one's
   "login-interface-mainland-rating": {
     capture: "bili-av532052219.mp4",
     isBackdrop: true,

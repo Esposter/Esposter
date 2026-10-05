@@ -1,10 +1,10 @@
 import type { ArrangementFamily } from "#src/models/genshinAssets/scene/ArrangementFamily";
 import type { ArrangementRatio } from "#src/models/genshinAssets/scene/ArrangementRatio";
+import type { Vector } from "#src/models/shared/Vector";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
 
-type Point = [number, number, number];
 // Where an outline's edges cross a depth, the x of each edge that spans it
 const computeOutlineCrossings = (outline: readonly [number, number][], depth: number): number[] =>
   outline.flatMap(([x, z], index) => {
@@ -24,7 +24,7 @@ export const DerivedAssetArrangementMap: Record<
         name: "towers",
         nameRegex: /^LoginScene_Build\d+_\d+_Lod\d$/u,
         readPositions: async () =>
-          (await readWorldData<{ placements: { position: Point }[] }>("login/towers.json")).placements.map(
+          (await readWorldData<{ placements: { position: Vector }[] }>("login/towers.json")).placements.map(
             ({ position }) => position,
           ),
       },
@@ -32,14 +32,14 @@ export const DerivedAssetArrangementMap: Record<
         name: "bridges",
         nameRegex: /^LoginScene_(?:Bridge0[234]|Pillar03)(?:_\d+)?_Lod\d$/u,
         readPositions: async () =>
-          (await readWorldData<{ placements: { position: Point }[] }>("login/hulls.json")).placements.map(
+          (await readWorldData<{ placements: { position: Vector }[] }>("login/hulls.json")).placements.map(
             ({ position }) => position,
           ),
       },
       {
         name: "door",
         nameRegex: /^LoginScene_Door01_Vo$/u,
-        readPositions: async () => [(await readWorldData<{ position: Point }>("login/door.json")).position],
+        readPositions: async () => [(await readWorldData<{ position: Vector }>("login/door.json")).position],
       },
     ],
     ratios: {
@@ -49,7 +49,7 @@ export const DerivedAssetArrangementMap: Record<
         ends: [852, 861, 1058, 1069],
         readEnds: async () => {
           const [{ position, size }, { pieces }] = await Promise.all([
-            readWorldData<{ position: Point; size: Point }>("login/door.json"),
+            readWorldData<{ position: Vector; size: Vector }>("login/door.json"),
             readWorldData<{ pieces: { outline: [number, number][] }[] }>("login/walkway.json"),
           ]);
           const [doorX, , doorZ] = position;

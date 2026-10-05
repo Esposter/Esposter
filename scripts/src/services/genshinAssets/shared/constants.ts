@@ -68,9 +68,9 @@ export const MUSIC_HOP_LENGTH = 256;
 // At the transcription's half rate
 export const MUSIC_HARMONIC_COUNT = 32;
 export const MUSIC_MAX_FREQUENCY = 10_000;
-// A partial's leakage through a Hann window's sidelobes falls some fifty decibels under its peak by six bins out, as far
-// Under a note as a mix's noise sits, so a band's noise is read only that far from every partial, and from at least two
-// Such bins
+// A partial's leakage through a Hann window's sidelobes falls some fifty decibels under its peak by six bins out, as
+// Far under a note as a mix's noise sits, so a band's noise is read only that far from every partial, and from at least
+// Two such bins
 export const MUSIC_NOISE_CLEAR_BINS = 6;
 export const MUSIC_NOISE_MIN_BINS = 2;
 // A band is given noise only where the game's sound in it is noise-like: its tonal octaves read a median flatness under
@@ -83,7 +83,8 @@ export const MUSIC_NOISE_REFINE_STEPS = 20;
 export const MUSIC_CLEAR_SEMITONES = 0.5;
 export const MUSIC_CLEAR_BINS = 2;
 // Another note's partial in that span covers a reading only when it is expected at least this share of the reading's
-// Amplitude: a smaller one moves the reading by under a decibel, inside every band's distance the listening score charges
+// Amplitude: a smaller one moves the reading by under a decibel, inside every band's distance the listening score
+// Charges
 export const MUSIC_COVER_SHARE = 0.1;
 // A value of an instrument is fitted only from at least this many measurements; a harmonic with fewer is left silent
 export const MUSIC_MIN_MEASUREMENTS = 5;
@@ -181,8 +182,8 @@ export const TOWER_RADIUS_TOLERANCE = 0.03;
 export const TOWER_MESH_REGEX: RegExp = /^(?<part>LoginScene_Build\d+_\d+)_Lod(?<level>\d)$/u;
 // A tower's surface is unrolled on a grid of half a unit of its mesh, five centimetres as the scene scales it; a run of
 // Its height keeps one tone while each channel of its shade holds within this of the one below; a face standing a unit
-// In from the lathe's radius is a shallow recess (the fluting, a moulding's groove) and four units a deep one (a window,
-// An arch), and a loop round fewer than this many cells is dropped as a speck of its paint
+// In from the lathe's radius is a shallow recess (the fluting, a moulding's groove) and four units a deep one (a
+// Window, an arch), and a loop round fewer than this many cells is dropped as a speck of its paint
 export const TOWER_FACADE_CELL_SIZE = 0.5;
 export const TOWER_FACADE_SHADE_TOLERANCE = 0.04;
 export const TOWER_FACADE_SHALLOW_RECESS = 1;
@@ -197,7 +198,8 @@ export const ROTATION_DECIMALS = 10_000;
 // Its diagonal cracks meet with no gap to see their sides through
 export const WALKWAY_CELL_SIZE = 0.05;
 export const WALKWAY_OUTLINE_TOLERANCE = 0.02;
-// A bridge's or a pillar's hull is carved on a grid of a unit of its own mesh, a tenth of a metre as the scene scales it
+// A bridge's or a pillar's hull is carved on a grid of a unit of its own mesh, a tenth of a metre as the scene scales
+// It
 export const HULL_CELL_SIZE = 1;
 // How far a ratio's cross-ratio in the fitted data may stray from its reference's: a pixel off at each end of widths
 // About two hundred pixels across moves it by about a hundredth
@@ -213,3 +215,8 @@ export const CLOUD_TRACE_TEXELS = 4;
 export const CLOUD_TRACE_TOLERANCE = 1;
 export const CLOUD_COVERAGE_THRESHOLD = 0.5;
 export const CLOUD_LIT_THRESHOLD = 0.5;
+// A gilded texel's red runs past its blue by this many times, where the stone's are about equal
+export const GILDING_RED_BLUE_RATIO = 1.8;
+// Every piece the walkway is laid from: its paving, its borders and its wings
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
+export const WALKWAY_MESH_REGEX: RegExp = /^LoginScene_Bridge01_\d+_Vo$/u;

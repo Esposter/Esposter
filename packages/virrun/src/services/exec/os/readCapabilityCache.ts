@@ -14,7 +14,7 @@ import { z } from "zod";
 // On win32 the location itself is asked of WSL, so a VM that will not start leaves no cache to read — that is one
 // More miss, never a failed run: the probe behind it answers `undefined` for the same VM and the run goes native.
 export const readCapabilityCache = (key: string): boolean | undefined =>
-  getResult(getCapabilityCachePath).match(
+  getResult(() => getCapabilityCachePath()).match(
     (file) => readKeyedCache(file, z.boolean(), key),
     ({ message }) => {
       writeVirrunDebug(`capability cache location unresolved, probing instead — ${message}`);

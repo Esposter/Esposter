@@ -1,22 +1,23 @@
+import type { Vector } from "#src/models/shared/Vector";
+
+import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { solveLinearSystem } from "#src/services/genshinParity/shared/solveLinearSystem";
+import { getLuminance } from "#src/services/genshinParity/sky/getLuminance";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-type Vector = [number, number, number];
-const CHANNELS = [0, 1, 2] as const;
-const LUMINANCE = [0.2126, 0.7152, 0.0722] as const;
 // The quantiles the two sets of cloud pixels are paired at, and the share of each set read round each one
 const QUANTILES = Array.from({ length: 19 }, (_, index) => (index + 1) / 20);
 const QUANTILE_WINDOW = 0.025;
-const getLuminance = (color: Readonly<Vector>): number =>
-  CHANNELS.reduce((sum: number, channel) => sum + LUMINANCE[channel] * color[channel], 0);
 const computeWindow = <T>(values: readonly T[], quantile: number): T[] => {
   const half = Math.max(Math.round(values.length * QUANTILE_WINDOW), 1);
   const middle = Math.min(Math.floor(values.length * quantile), values.length - 1);
   return values.slice(Math.max(middle - half, 0), middle + half + 1);
 };
+const computeMean = (vectors: readonly Readonly<Vector>[]): Vector =>
+  CHANNELS.map((channel) => vectors.reduce((sum, vector) => sum + vector[channel], 0) / vectors.length) as Vector;
 // The clouds' shaded and lit colours that best turn ours into the reference's, in the scene's own colour, where the two
-// Skies' clouds stand in different places: each of ours is the sky behind it plus its share of the shaded colour plus its
-// Share of the lit one (read by drawing them black and white in turn), so ours ordered by how lit they are and the
+// Skies' clouds stand in different places: each of ours is the sky behind it plus its share of the shaded colour plus
+// Its share of the lit one (read by drawing them black and white in turn), so ours ordered by how lit they are and the
 // Reference's by how bright they are are paired quantile by quantile, each the mean of the pixels round it, and each
 // Channel of the reference's is linear in the two colours, solved by least squares. The residual is the root mean
 // Square over the quantiles and channels
@@ -34,8 +35,6 @@ export const solveCloudColors = (
     getLuminance(lit) / Math.max(getLuminance(lit) + getLuminance(shade), Number.MIN_VALUE);
   const orderedOurs = ours.toSorted((first, second) => getLitness(first) - getLitness(second));
   const orderedReference = reference.toSorted((first, second) => getLuminance(first) - getLuminance(second));
-  const computeMean = (vectors: readonly Readonly<Vector>[]): Vector =>
-    CHANNELS.map((channel) => vectors.reduce((sum, vector) => sum + vector[channel], 0) / vectors.length) as Vector;
   const pairs = QUANTILES.map((quantile) => {
     const window = computeWindow(orderedOurs, quantile);
     return {

@@ -1,22 +1,25 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { FogSample } from "#src/models/genshinParity/sky/FogSample";
+import type { SceneFog } from "#src/models/genshinParity/sky/SceneFog";
+import type { Vector } from "#src/models/shared/Vector";
 import type { Page } from "playwright";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
+import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUpperMedian";
+import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { checkIsPartInterior } from "#src/services/genshinParity/sky/checkIsPartInterior";
 import { computeFogOpacity } from "#src/services/genshinParity/sky/computeFogOpacity";
+import { getPixelSceneColor } from "#src/services/genshinParity/sky/getPixelSceneColor";
 import { solveFogColors } from "#src/services/genshinParity/sky/solveFogColors";
-import { withFinalizerAsync } from "@esposter/shared";
-import { toneMapNeutral, toSceneColor } from "genshin-engine";
+import { toDisplayHex } from "#src/services/genshinParity/sky/toDisplayHex";
+import { getOrCreate, withFinalizerAsync } from "@esposter/shared";
 import sharp from "sharp";
-import { Color, Matrix4, Vector3 } from "three";
+import { Matrix4, Vector3 } from "three";
 
-type Vector = [number, number, number];
-const BYTE = 255;
-const CHANNELS = [0, 1, 2] as const;
 // The densities the refinement brackets, and how many golden-section steps narrow it, each a fixed share of the last
 const DENSITY_RANGE: [number, number] = [0.0001, 3];
 const GOLDEN_STEPS = 40;
@@ -27,35 +30,16 @@ const GOLDEN_SHARE = (Math.sqrt(5) - 1) / 2;
 const DEPTH_BANDS = [0, 10, 20, 40, 80, 160, 320, 640, 1280];
 const SCATTER_BIN_COUNT = 4;
 const MIN_BIN_COUNT = 100;
-const toLinear = (value: number): number => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
-const toDisplayHex = ([red, green, blue]: Vector): string =>
-  `#${new Color(...toneMapNeutral([Math.max(red, 0), Math.max(green, 0), Math.max(blue, 0)])).getHexString()}`;
-const computeMedian = (values: readonly number[]): number =>
-  values.toSorted((first, second) => first - second)[Math.floor(values.length / 2)] ?? 0;
-interface Point {
-  lit: Vector;
-  point: Vector;
-  reference: Vector;
-}
-interface SceneFog {
-  baseHeight: number;
-  density: number;
-  heightFalloff: number;
-  scatterDirection: Vector;
-  scatterPower: number;
-  scatterStrength: number;
-  startDistance: number;
-}
 const readPage = <T>(page: Page, name: string): Promise<T> =>
   page.evaluate((functionName) => (Reflect.get(window, functionName) as () => T)(), name);
 // A reference's haze solved over the parts the witness draws: each part's interior pixel past the fog's start, its
 // Reference colour and ours drawn without the fog both taken back through the tone mapping into the scene's own colour
-// (`toSceneColor`), so the fog's mix is linear in them. For a density, each pixel's opacity follows from its depth,
-// Its height and the eye's (`computeFogOpacity`), and the fog's own and sunward colours are then a linear solve over the
+// (`toSceneColor`), so the fog's mix is linear in them. For a density, each pixel's opacity follows from its depth, its
+// Height and the eye's (`computeFogOpacity`), and the fog's own and sunward colours are then a linear solve over the
 // Pixels binned by depth and by angle to the sun, each bin's medians weighted by its pixels (`solveFogColors`); the
-// Density is refined from the bracket by golden section on that solve's residual. The sunward weight is read toward
-// The fog's own direction, solved at its current density and at the refined one, and toward the sky's sun at the
-// Refined one, so the two directions are told apart by their residuals
+// Density is refined from the bracket by golden section on that solve's residual. The sunward weight is read toward the
+// Fog's own direction, solved at its current density and at the refined one, and toward the sky's sun at the refined
+// One, so the two directions are told apart by their residuals
 export const solveReferenceFog = async (
   referenceId: string,
   witness: DerivedAssetComponent,
@@ -87,11 +71,7 @@ export const solveReferenceFog = async (
       const matrixWorld = new Matrix4().fromArray(sky.matrixWorld);
       const projectionMatrixInverse = new Matrix4().fromArray(sky.projectionMatrixInverse);
       const eye = new Vector3().setFromMatrixPosition(matrixWorld).toArray();
-      const toScene = (data: Buffer, pixel: number): Vector =>
-        toSceneColor(
-          new Color(...CHANNELS.map((channel) => toLinear((data[pixel * 3 + channel] ?? 0) / BYTE))),
-        ).toArray() as Vector;
-      const points: Point[] = [];
+      const points: FogSample[] = [];
       for (let pixel = 0; pixel < width * height; pixel++) {
         const pixelDepth = depth[pixel * 4] ?? 0;
         if (
@@ -109,11 +89,15 @@ export const solveReferenceFog = async (
           .multiplyScalar(pixelDepth / -view.z)
           .applyMatrix4(matrixWorld)
           .toArray();
-        points.push({ lit: toScene(litShot, pixel), point, reference: toScene(referenceShot, pixel) });
+        points.push({
+          lit: getPixelSceneColor(litShot, pixel),
+          point,
+          reference: getPixelSceneColor(referenceShot, pixel),
+        });
       }
       // Each direction's bins: their pixels, the medians of their lit and reference colours and their mean scatter
       const computeBins = (direction: Vector) => {
-        const binMap = new Map<number, { points: Point[]; scatters: number[] }>();
+        const binMap = new Map<number, { points: FogSample[]; scatters: number[] }>();
         for (const entry of points) {
           const ray = new Vector3(...entry.point).sub(new Vector3(...eye));
           const band = DEPTH_BANDS.findIndex((far) => ray.length() < far);
@@ -123,20 +107,21 @@ export const solveReferenceFog = async (
           );
           const key =
             band * SCATTER_BIN_COUNT + Math.min(Math.floor(scatter * SCATTER_BIN_COUNT), SCATTER_BIN_COUNT - 1);
-          const bin = binMap.get(key) ?? { points: [], scatters: [] };
+          const bin = getOrCreate(binMap, key, () => ({ points: [], scatters: [] }));
           bin.points.push(entry);
           bin.scatters.push(scatter);
-          binMap.set(key, bin);
         }
         return [...binMap.values()].flatMap(({ points: binPoints, scatters }) =>
           binPoints.length < MIN_BIN_COUNT
             ? []
             : [
                 {
-                  lit: CHANNELS.map((channel) => computeMedian(binPoints.map(({ lit }) => lit[channel]))) as Vector,
+                  lit: CHANNELS.map((channel) =>
+                    computeUpperMedian(binPoints.map(({ lit }) => lit[channel])),
+                  ) as Vector,
                   points: binPoints.map(({ point }) => point),
                   reference: CHANNELS.map((channel) =>
-                    computeMedian(binPoints.map(({ reference: color }) => color[channel])),
+                    computeUpperMedian(binPoints.map(({ reference: color }) => color[channel])),
                   ) as Vector,
                   scatter: scatters.reduce((sum, value) => sum + value, 0) / scatters.length,
                 },

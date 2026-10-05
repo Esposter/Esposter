@@ -1,4 +1,4 @@
-import type { ShaderConstant } from "#src/services/genshinAssets/materials/parseShaderConstantLayouts";
+import type { ShaderConstant } from "#src/models/genshinAssets/materials/ShaderConstant";
 
 // A register of a constant buffer is 16 bytes, four components of four
 const REGISTER_BYTES = 16;
@@ -15,21 +15,21 @@ const computeRegisters = ({ arrayLength, byteOffset, rows }: ShaderConstant): nu
   return Array.from({ length: count }, (_, index) => first + index);
 };
 // The byte past a constant's last: its last register's columns, past every register before it
-const readEndByte = (constant: ShaderConstant): number =>
-  constant.byteOffset + (readRegisters(constant).length - 1) * REGISTER_BYTES + constant.columns * COMPONENT_BYTES;
+const computeEndByte = (constant: ShaderConstant): number =>
+  constant.byteOffset + (computeRegisters(constant).length - 1) * REGISTER_BYTES + constant.columns * COMPONENT_BYTES;
 // Whether no two of a layout's constants share a byte, as one program's layout never does: an overlap is two lists read
 // As one
 const checkIsDisjoint = (layout: readonly ShaderConstant[]): boolean => {
   const sorted = layout.toSorted((first, second) => first.byteOffset - second.byteOffset);
   return sorted.every((constant, index) => {
     const previous = sorted[index - 1];
-    return !previous || constant.byteOffset >= readEndByte(previous);
+    return !previous || constant.byteOffset >= computeEndByte(previous);
   });
 };
-// A disassembled or decompiled program headed by what its first constant buffer's registers hold, named from the layout of its
-// Shader's that fits it: one whose constants share no byte, that names every register the program reads and ends
-// Within the buffer it declares, preferring the one that names the most. Without one that fits, the program is left
-// As it is
+// A disassembled or decompiled program headed by what its first constant buffer's registers hold, named from the layout
+// Of its shader's that fits it: one whose constants share no byte, that names every register the program reads and ends
+// Within the buffer it declares, preferring the one that names the most. Without one that fits, the program is left as
+// It is
 export const annotateProgramConstants = (assembly: string, layouts: readonly ShaderConstant[][]): string => {
   const size = Number(BUFFER_SIZE_REGEX.exec(assembly)?.groups?.size ?? 0);
   if (size === 0) return assembly;

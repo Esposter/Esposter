@@ -1,3 +1,5 @@
+import { computeMean } from "#src/services/genshinAssets/shared/computeMean";
+
 // A column's brightness at a fractional row, between its two nearest rows
 const sample = (column: ArrayLike<number>, row: number): number => {
   const index = Math.floor(row);
@@ -20,10 +22,10 @@ export const measureGroundShift = (
 ): { correlation: number; shift: number } => {
   const distances = Array.from({ length: Math.floor((far - near) / step) + 1 }, (_, index) => near + index * step);
   const reference = distances.map((distance) => sample(earlier, getRow(distance)));
-  const referenceMean = reference.reduce((sum, value) => sum + value, 0) / reference.length;
+  const referenceMean = computeMean(reference);
   const computeCorrelation = (shift: number): number => {
     const moved = distances.map((distance) => sample(later, getRow(distance - shift)));
-    const movedMean = moved.reduce((sum, value) => sum + value, 0) / moved.length;
+    const movedMean = computeMean(moved);
     let product = 0;
     let referenceSquares = 0;
     let movedSquares = 0;

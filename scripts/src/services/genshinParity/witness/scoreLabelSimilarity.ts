@@ -1,24 +1,17 @@
+import type { LabelPlanes } from "#src/models/genshinParity/witness/LabelPlanes";
+
 import { blurGrey } from "#src/services/genshinParity/shared/blurGrey";
 
 // Multi-scale structural similarity (Wang, Simoncelli and Bovik, 2003) over two grey images, read apart for each label
 // Of a map: at each of five scales, halving the size each time, a Gaussian window's means, variances and covariance
-// Give each pixel its contrast and structure term, the coarsest its luminance term too, each scale's terms averaged over
-// A label's pixels and the scales weighted as the paper weights them. Detail a few pixels off scores at the coarser
-// Scales where FLIP charges it twice, and detail missing scores nothing at any, so a surface whose carving is aligned
-// But imperfect reads closer than a bare one. 1 identical, 0 nothing alike
+// Give each pixel its contrast and structure term, the coarsest its luminance term too, each scale's terms averaged
+// Over a label's pixels and the scales weighted as the paper weights them. Detail a few pixels off scores at the
+// Coarser scales where FLIP charges it twice, and detail missing scores nothing at any, so a surface whose carving is
+// Aligned but imperfect reads closer than a bare one. 1 identical, 0 nothing alike
 const SCALE_WEIGHTS = [0.0448, 0.2856, 0.3001, 0.2363, 0.1333];
 const WINDOW_SIGMA = 1.5;
 const LUMINANCE_CONSTANT = 0.01 ** 2;
 const CONTRAST_CONSTANT = 0.03 ** 2;
-// A label's share of each pixel and each image weighted by it, so a window reads only the label's own pixels and a
-// Neighbour's differences never score against it
-interface LabelPlanes {
-  coverage: Float32Array;
-  first: Float32Array;
-  height: number;
-  second: Float32Array;
-  width: number;
-}
 // Half the size, each pixel the mean of the four it covers
 const halve = (values: Float32Array, width: number, height: number): Float32Array => {
   const halfWidth = Math.floor(width / 2);

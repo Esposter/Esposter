@@ -11,8 +11,8 @@ const LOGIN_INTERFACE_BLOCK = join("00", "11790361.blk");
 const TRACE_SCALE = 4;
 const INK_SHARE = 0.5;
 // Each title logo by the sprite its client's interface shows and, under a Chinese, Japanese or Korean mark, its Latin
-// Line's region on the sprites' shared 1024 by 688 canvas, the ink's box with a margin of 4. Traced as part of the whole
-// Canvas, that line's i's dots fall under the share of it taken for a speck, so it is traced again on its own and
+// Line's region on the sprites' shared 1024 by 688 canvas, the ink's box with a margin of 4. Traced as part of the
+// Whole canvas, that line's i's dots fall under the share of it taken for a speck, so it is traced again on its own and
 // Spliced in
 const TITLE_LOGO_SPRITES: { latinRegion?: [number, number, number, number]; logo: string; sprite: string }[] = [
   { logo: "ChineseSimplified", sprite: "Logo_CHS_Pure" },

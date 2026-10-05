@@ -1,3 +1,4 @@
+import type { Spectrogram } from "#src/models/genshinAssets/shared/Spectrogram";
 import type { Chroma } from "#src/models/genshinParity/music/Chroma";
 
 import { computeSpectrogram } from "#src/services/genshinAssets/shared/computeSpectrogram";
@@ -12,14 +13,17 @@ import {
 // A signal's pitch classes frame by frame: each Hann-windowed frame's spectrum folded onto the twelve semitones of
 // The equal-tempered scale about A440 between the lowest and highest frequency read, normalised
 // (`normalizeChromaClasses`). A frame's loudness is kept beside its classes, so a quiet frame is left out of a
-// Comparison
-export const computeChroma = (samples: Float32Array, sampleRate: number): Chroma => {
-  const { binCount, frameCount, magnitudes } = computeSpectrogram(
+// Comparison. A caller already holding the signal's spectrogram in these frames passes it, so it is not taken twice
+export const computeChroma = (
+  samples: Float32Array,
+  sampleRate: number,
+  { binCount, frameCount, magnitudes }: Spectrogram = computeSpectrogram(
     samples,
     sampleRate,
     CHROMA_FRAME_LENGTH,
     CHROMA_HOP_LENGTH,
-  );
+  ),
+): Chroma => {
   const classes = new Float32Array(frameCount * 12);
   const loudness = new Float32Array(frameCount);
   const binClasses = Int8Array.from({ length: binCount }, (_, bin) => {

@@ -4,53 +4,54 @@
 // Luminance's edges and points (a Gaussian's first and second derivatives) compared beside it; and each pixel's error
 // The colour difference raised to one less the feature difference. The mean of the error map is the one number a scene
 // Is approved by, 0 identical and 1 as far apart as two images can be
-import { FLIP_PIXELS_PER_DEGREE } from "#src/services/genshinParity/shared/constants";
+import type { Vector } from "#src/models/shared/Vector";
 
-type Color = [number, number, number];
+import { FLIP_PIXELS_PER_DEGREE } from "#src/services/genshinParity/shared/constants";
+import { toLinear } from "#src/services/shared/toLinear";
 
 const QC = 0.7;
 const PC = 0.4;
 const PT = 0.95;
 const W = 0.082;
 const QF = 0.5;
-const ILLUMINANT: Color = [0.950428545, 1, 1.088900371];
-const GAUSSIAN_A1: Color = [1, 1, 34.1];
-const GAUSSIAN_B1: Color = [0.0047, 0.0053, 0.04];
-const GAUSSIAN_A2: Color = [0, 0, 13.5];
-const GAUSSIAN_B2: Color = [1e-5, 1e-5, 0.025];
+const ILLUMINANT: Vector = [0.950428545, 1, 1.088900371];
+const GAUSSIAN_A1: Vector = [1, 1, 34.1];
+const GAUSSIAN_B1: Vector = [0.0047, 0.0053, 0.04];
+const GAUSSIAN_A2: Vector = [0, 0, 13.5];
+const GAUSSIAN_B2: Vector = [1e-5, 1e-5, 0.025];
 
-const toLinear = (value: number): number => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
-const linearToXyz = ([r, g, b]: Color): Color => [
+const linearToXyz = ([r, g, b]: Vector): Vector => [
   (10_135_552 / 24_577_794) * r + (8_788_810 / 24_577_794) * g + (4_435_075 / 24_577_794) * b,
   (2_613_072 / 12_288_897) * r + (8_788_810 / 12_288_897) * g + (887_015 / 12_288_897) * b,
   (1_425_312 / 73_733_382) * r + (8_788_810 / 73_733_382) * g + (70_074_185 / 73_733_382) * b,
 ];
-const xyzToLinear = ([x, y, z]: Color): Color => [
+const xyzToLinear = ([x, y, z]: Vector): Vector => [
   3.241003275 * x - 1.537398934 * y - 0.498615861 * z,
   -0.969224334 * x + 1.875930071 * y + 0.041554224 * z,
   0.055639423 * x - 0.204011202 * y + 1.057148933 * z,
 ];
-const xyzToLab = ([x, y, z]: Color): Color => {
+const xyzToLab = ([x, y, z]: Vector): Vector => {
   const delta = 6 / 29;
   const cube = delta ** 3;
   const toF = (value: number): number => (value > cube ? Math.cbrt(value) : value / (3 * delta * delta) + 4 / 29);
   const [fx, fy, fz] = [toF(x / ILLUMINANT[0]), toF(y / ILLUMINANT[1]), toF(z / ILLUMINANT[2])];
   return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
 };
-const xyzToYcxcz = ([x, y, z]: Color): Color => {
+const xyzToYcxcz = ([x, y, z]: Vector): Vector => {
   const [nx, ny, nz] = [x / ILLUMINANT[0], y / ILLUMINANT[1], z / ILLUMINANT[2]];
   return [116 * ny - 16, 500 * (nx - ny), 200 * (ny - nz)];
 };
-const ycxczToXyz = ([luminance, cx, cz]: Color): Color => {
+const ycxczToXyz = ([luminance, cx, cz]: Vector): Vector => {
   const y = (luminance + 16) / 116;
   return [(y + cx / 500) * ILLUMINANT[0], y * ILLUMINANT[1], (y - cz / 200) * ILLUMINANT[2]];
 };
 const clamp = (value: number): number => Math.min(Math.max(value, 0), 1);
-const toHuntLab = (linear: Color): Color => {
+const toHuntLab = (linear: Vector): Vector => {
   const [l, a, b] = xyzToLab(linearToXyz(linear));
   return [l, 0.01 * l * a, 0.01 * l * b];
 };
-const getHyab = ([l1, a1, b1]: Color, [l2, a2, b2]: Color): number => Math.abs(l1 - l2) + Math.hypot(a1 - a2, b1 - b2);
+const getHyab = ([l1, a1, b1]: Vector, [l2, a2, b2]: Vector): number =>
+  Math.abs(l1 - l2) + Math.hypot(a1 - a2, b1 - b2);
 // The farthest two colours can be, green from blue, compressed as every difference is
 const MAX_DISTANCE = getHyab(toHuntLab([0, 1, 0]), toHuntLab([0, 0, 1])) ** QC;
 const getGaussian = (x2: number, a: number, b: number): number =>
@@ -75,10 +76,10 @@ const createSpatialFilters = (pixelsPerDegree: number): { cz: [number, number][]
   return { cz: cz.map(([w1, w2]) => [w1 * czNorm, w2 * czNorm]), ycx: ycx.map(([wy, wx]) => [wy / sumY, wx / sumCx]) };
 };
 // The edge and point filters: a Gaussian, its first and its second derivative, each normalised as FLIP normalises them
-const createFeatureFilter = (pixelsPerDegree: number): Color[] => {
+const createFeatureFilter = (pixelsPerDegree: number): Vector[] => {
   const deviation = 0.5 * W * pixelsPerDegree;
   const radius = Math.ceil(3 * deviation);
-  const weights: Color[] = [];
+  const weights: Vector[] = [];
   let gaussianSum = 0;
   let firstPositive = 0;
   let firstNegative = 0;
@@ -113,7 +114,7 @@ export const scoreFlip = (
   const toYcxcz = (image: Float32Array): Float32Array => {
     const converted = new Float32Array(pixelCount * 3);
     for (let pixel = 0; pixel < pixelCount; pixel++) {
-      const linear: Color = [0, 1, 2].map((channel) => toLinear(clamp(image[pixel * 3 + channel] ?? 0))) as Color;
+      const linear: Vector = [0, 1, 2].map((channel) => toLinear(clamp(image[pixel * 3 + channel] ?? 0))) as Vector;
       converted.set(xyzToYcxcz(linearToXyz(linear)), pixel * 3);
     }
     return converted;
@@ -146,7 +147,7 @@ export const scoreFlip = (
     return filtered;
   };
   const [referenceAlongX, testAlongX] = [filterAlongX(referenceYcxcz), filterAlongX(testYcxcz)];
-  const computeFilteredLab = (alongX: Float32Array, x: number, y: number): Color => {
+  const computeFilteredLab = (alongX: Float32Array, x: number, y: number): Vector => {
     let sumY = 0;
     let sumCx = 0;
     let sumCz1 = 0;
@@ -160,7 +161,7 @@ export const scoreFlip = (
       sumCz1 += w1 * (alongX[source + 2] ?? 0);
       sumCz2 += w2 * (alongX[source + 3] ?? 0);
     }
-    const linear = xyzToLinear(ycxczToXyz([sumY, sumCx, sumCz1 + sumCz2])).map((value) => clamp(value)) as Color;
+    const linear = xyzToLinear(ycxczToXyz([sumY, sumCx, sumCz1 + sumCz2])).map((value) => clamp(value)) as Vector;
     return toHuntLab(linear);
   };
   const colorDifferences = new Float32Array(pixelCount);

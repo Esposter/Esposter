@@ -1,7 +1,7 @@
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { BYTE } from "#src/services/shared/constants";
 import sharp from "sharp";
 
-const BYTE = 255;
 // How many samples each curve is kept as, evenly from the horizon to the band's end: the curves are smooth, so a
 // Linear reading between them stays within a byte of the texture's
 const SAMPLE_COUNT = 33;

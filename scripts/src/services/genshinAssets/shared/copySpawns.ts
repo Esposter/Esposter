@@ -3,17 +3,18 @@ import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
 
 import { composeWorldMatrices } from "#src/services/genshinAssets/shared/composeWorldMatrices";
 import { findRootObject } from "#src/services/genshinAssets/shared/findRootObject";
+import { groupSceneChildren } from "#src/services/genshinAssets/shared/groupSceneChildren";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { Matrix3, Vector3 } from "three";
 
 // A scene's objects with each spawned prefab that has copies laid out as its row: the prefab's whole subtree once a
 // Copy, each copy's root moved along the world step by its place in the row, the row running ahead from the prefab's
-// Own place, so the first copy keeps the prefab's own objects. A copy's objects are the prefab's under transform IDs of their own,
-// Still drawing what the prefab's draw. The step is turned into the anchor's own space, so it holds whatever the
-// Anchor's turn and scale
+// Own place, so the first copy keeps the prefab's own objects. A copy's objects are the prefab's under transform IDs of
+// Their own, still drawing what the prefab's draw. The step is turned into the anchor's own space, so it holds whatever
+// The anchor's turn and scale
 export const copySpawns = (objects: readonly SceneObject[], spawns: readonly AssetSpawn[]): SceneObject[] => {
   const keyWorldMatrixMap = composeWorldMatrices(objects);
-  const parentKeyChildrenMap = Map.groupBy(objects, ({ parentFile, parentId }) => toObjectKey(parentFile, parentId));
+  const parentKeyChildrenMap = groupSceneChildren(objects);
   const collectSubtree = (object: SceneObject): SceneObject[] => [
     object,
     ...(parentKeyChildrenMap.get(toObjectKey(object.file, object.transformId)) ?? []).flatMap((child) =>

@@ -1,4 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { SetCloudCover } from "#src/models/genshinParity/sky/SetCloudCover";
+import type { SetCloudHeights } from "#src/models/genshinParity/sky/SetCloudHeights";
 import type { Browser, Page } from "playwright";
 
 import { CLOUDS_WIDTH } from "#src/services/genshinParity/shared/constants";
@@ -9,8 +11,6 @@ import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWi
 import { readCloudSky } from "#src/services/genshinParity/sky/readCloudSky";
 import { withFinalizerAsync } from "@esposter/shared";
 
-type SetCloudCover = (covers?: Record<string, number>) => string[];
-type SetCloudHeights = (heights?: Record<string, [number, number]>) => Record<string, [number, number]>;
 // Each share starts at three in four, the simplex's first step in its logit as wide as from there to even odds and
 // Past: the cover steps by whole clouds, so a search with no gradient finds its way where a descent's Jacobian stalls
 const START_LOGIT = Math.log(3);
@@ -65,15 +65,15 @@ export const solveReferenceCloudCover = async (
         );
         browsers.push(browser);
         // oxlint-disable-next-line no-await-in-loop -- read on the page just opened
-        const { getLuminance, readClouds, readCloudThreshold, readElevationCoverage } = await readCloudSky(page, {
-          checkIsScored,
-          height,
-        });
+        const { computeClouds, computeCloudThreshold, computeElevationCoverage, readLuminance } = await readCloudSky(
+          page,
+          { checkIsScored, height },
+        );
         // oxlint-disable-next-line no-await-in-loop -- read on the page just opened
-        const referenceLuminance = await getLuminance(image);
+        const referenceLuminance = await readLuminance(image);
         // Our clouds are read at the reference's split: split on our own render, each guess moved the split with its
         // Clouds, and the solve chased a cost that moved under it
-        const threshold = readCloudThreshold(referenceLuminance);
+        const threshold = computeCloudThreshold(referenceLuminance);
         skies.push({
           page,
           readOurs: async (covers, heights) => {
@@ -85,9 +85,9 @@ export const solveReferenceCloudCover = async (
               [covers, heights] as const,
             );
             await setPageWitnessView(page, { families: [] });
-            return readElevationCoverage(readClouds(await getLuminance(await page.screenshot()), threshold));
+            return computeElevationCoverage(computeClouds(await readLuminance(await page.screenshot()), threshold));
           },
-          reference: readElevationCoverage(readClouds(referenceLuminance, threshold)),
+          reference: computeElevationCoverage(computeClouds(referenceLuminance, threshold)),
           referenceId,
         });
       }
