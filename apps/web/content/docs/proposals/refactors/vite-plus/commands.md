@@ -24,7 +24,7 @@ One script, and only half of it: `update:node`. It does two jobs. Its install ha
 Four more `vp` commands look like replacements and are not taken:
 
 - **`format` and `format:check`, against `vp fmt`.** It runs the Oxfmt that `vite-plus` pins, not the catalog's ([configuration](/docs/proposals/refactors/vite-plus/configuration)).
-- **The checks, against `vp check`.** Its formatting and linting are the pinned copies again, and its type-check is `tsgolint`'s, which reads no `.vue` file — the app's typecheck is `nuxt typecheck` over its templates. The checks run as their own CI jobs in any case, which the running-checks skill owns.
+- **The checks, against `vp check`.** Its formatting and linting are the pinned copies again, and its type-check does not cover the app's templates, which `nuxt typecheck` reads ([Nuxt compatibility](/docs/proposals/refactors/vite-plus/nuxt-compatibility)). The checks run as their own CI jobs in any case, which the running-checks skill owns.
 - **`prepare`, against `vp config`.** Ours is one `git config` line pointing Git at the committed hook directory; a hook dispatcher in its place is more machinery for the same result.
 - **`outdated:dependencies`, against `vp outdated`.** The script is a report the repository's own tooling builds over the catalog, not a wrapper around a package manager's command.
 
