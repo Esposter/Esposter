@@ -79,6 +79,8 @@ describe(solveStoneLight, () => {
         samples.filter((_sample, index) => index % 30 !== 0),
         haze,
       ),
-    ).toThrow("none of");
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: bins, none of 96 holds 30 pixels]`,
+    );
   });
 });

@@ -5,7 +5,6 @@ import type { Vector } from "#src/models/shared/Vector";
 import type { StoneLight } from "genshin-engine";
 import type { SceneFog } from "genshin-world/parity/models/SceneFog";
 import type { Page } from "playwright";
-import type { Except } from "type-fest";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { computePixelPoint } from "#src/services/genshinParity/shared/computePixelPoint";
@@ -100,7 +99,7 @@ export const solveReferenceStoneLight = async (
       const eye = new Vector3().setFromMatrixPosition(matrixWorld);
       const sun = new Vector3(...direction).normalize();
       const scatterDirection = new Vector3(...fog.scatterDirection).normalize();
-      const pixels: { point: Vector; sample: Except<StoneLightSample, "opacity"> }[] = [];
+      const pixels: { point: Vector; sample: StoneLightSample }[] = [];
       for (let pixel = 0; pixel < width * height; pixel++) {
         if (!checkIsPartInterior(part, width, height, pixel) || !checkIsScored(pixel, width)) continue;
         const pixelDepth = depth[pixel * 4] ?? 0;
@@ -127,20 +126,20 @@ export const solveReferenceStoneLight = async (
             color: getPixelSceneColor(referenceShot, pixel),
             emission: [emission[pixel * 4] ?? 0, emission[pixel * 4 + 1] ?? 0, emission[pixel * 4 + 2] ?? 0],
             harmonics,
+            opacity: 0,
             rampCoordinate,
             scatter,
           },
         });
       }
       const eyePoint = eye.toArray();
-      const solve = (haze: Pick<SceneFog, "density" | "heightFalloff">) =>
-        solveStoneLight(
-          pixels.map(({ point, sample }) => ({
-            ...sample,
-            opacity: computeFogOpacity(eyePoint, point, { ...fog, ...haze }),
-          })),
-          fog,
-        );
+      const samples = pixels.map(({ sample }) => sample);
+      // Each guess at the haze sets every sample's opacity anew before the light is solved under it
+      const solve = (haze: Pick<SceneFog, "density" | "heightFalloff">) => {
+        const hazeFog = { ...fog, ...haze };
+        for (const { point, sample } of pixels) sample.opacity = computeFogOpacity(eyePoint, point, hazeFog);
+        return solveStoneLight(samples, fog);
+      };
       const sceneHaze = { density: fog.density, heightFalloff: fog.heightFalloff };
       const sceneSolution = solve(sceneHaze);
       if (!isHazeSolved) return { haze: sceneHaze, sceneResidual: sceneSolution.residual, ...sceneSolution };
