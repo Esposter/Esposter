@@ -74,6 +74,10 @@ export const LOGIN_FOG_START_DISTANCE = 10;
 export const LOGIN_FOG_SCATTER_POWER = 2;
 export const LOGIN_FOG_SCATTER_STRENGTH = 1;
 export const LOGIN_LIGHT_DISTANCE = 125;
+// How far round each pixel in metres the screen-space occlusion reaches where an hour draws it, as the game's pass
+// Darkens its stone's creases and the feet of its towers: set at run time from no asset, so it is the radius of 4, 8
+// And 16 that scores the frames best, its light solved under it
+export const LOGIN_OCCLUSION_RADIUS = 8;
 // The light's shadow map: its size, the half width of the square it covers about the camera's view, and its biases
 export const LOGIN_SHADOW_MAP_SIZE = 2048;
 export const LOGIN_SHADOW_EXTENT = 50;

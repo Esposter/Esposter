@@ -1,6 +1,6 @@
 ---
 title: Rendering style
-description: Genshin's anime environment look on three's WebGPU renderer. Light falls on a painted ramp rather than a physical curve, shade is the sky's colour, a rim catches the lit edges, and outlines run around every object but the ground, thinning with distance. The sun casts through fading cascades. After the scene, god rays march through a shadow of their own, a height fog hazes the far and the low in the sky's colour, bloom lifts the brightest light, and a colour grade and temporal anti-aliasing finish the frame. Development has a tuning panel over all of it.
+description: Genshin's anime environment look on three's WebGPU renderer. Light falls on a painted ramp rather than a physical curve, shade is the sky's colour, a rim catches the lit edges, and outlines run around every object but the ground, thinning with distance. The sun casts through fading cascades. After the scene, screen-space occlusion darkens creases where a scene asks for it, god rays march through a shadow of their own, a height fog hazes the far and the low in the sky's colour, bloom lifts the brightest light, and a colour grade and temporal anti-aliasing finish the frame. Development has a tuning panel over all of it.
 ---
 
 # Rendering style
@@ -21,8 +21,11 @@ flowchart TD
   P --> O{Toon material, and outlined?}
   O -->|yes| OL[Outline: constant width near, thinning past the fade distance]
   O -->|no: the ground| P2[No outline]
-  OL --> G{God ray steps above zero?}
-  P2 --> G
+  OL --> AO{Occlusion radius, and on the tier?}
+  P2 --> AO
+  AO -->|yes| AOD[Darken by screen-space occlusion over the depth]
+  AO -->|no| G
+  AOD --> G{God ray steps above zero?}
   GL[God ray sun: one map over the view, redrawn only when told] --> G
   G -->|yes| GR[March, blur, blend in the sun's colour at the depth's edges]
   G -->|no| Z
@@ -57,6 +60,7 @@ flowchart TD
 
 ### After the scene
 
+- **Screen-space occlusion where a scene draws it.** A scene that hands `createPostPipeline` an occlusion radius has its frame darkened, before anything else, by three's ground-truth occlusion over the scene pass's depth (`createOcclusionNode`), its normals rebuilt from that depth, so a crease, a recess and the foot of a wall take less light, as the game's deferred pass darkens its own. The radius is the scene's, in metres, since nothing in the game's exports holds it, and a tier that turns occlusion off draws none.
 - **God rays march through a shadow of their own.** Three's `GodraysNode` reads one light's single shadow map, but the sun's shadow is split into cascades, each covering only a slice of the view. So `createGodraysLight` adds a second sun that lights nothing, whose one map spans the view. The ground and the landmarks stand still, so its map is drawn only when `shadow.needsUpdate` is set, which the sky does each time the light has turned half a degree. The rays are marched at half resolution, smoothed by a bilateral blur, and blended in the sun's colour by `depthAwareBlend`, which keeps them from bleeding over the edges of what stands in front.
 - **A height fog in the sky's colour.** `createHeightFogNode` integrates a haze whose density falls off exponentially with height along the ray from the eye to what each pixel shows, starting past a start distance. Low ground and the far world thicken toward the fog's colour, the peaks rise out of it, and a level ray, or any ray through fog with no falloff such as the water's, takes the limit the general form divides by zero to reach. It runs after the outline pass, so an outline fades with what it outlines, and it skips the sky, which is already the fog's colour. Its opacity is held under a most opacity (all by default), so a far shore a scene's haze leaves seen stays seen however deep it lies. Its colour, density, falloff, most opacity, base height and start distance are `FogUniforms`, whose colour the sky writes. Looking toward the sun, the haze takes on the light it scatters: its colour lifts toward the light's by the ray's closeness to the light's direction, raised to a power that gathers it round the sun, at a strength a scene sets (none by default), so a low sun bathes its side of the frame.
 - **Bloom lifts only the brightest light**: what is brighter than nearly white, which is the sun, glints and elemental light.
@@ -66,7 +70,7 @@ flowchart TD
 
 ### Quality steps down, never out
 
-Each `QualityTier` sets what the frame spends (`QualityTierSettingsMap`): the share of grass blades grown, the first cut, the shadow maps' size and the number of cascades, the god rays' march steps (none on the lowest tier), the pixel ratio, bloom, and TRAA or SMAA. The ramp, the rim and the outline stay at every tier, because they are the style. The tier is read when the scene mounts, since its cascades are built with the sun.
+Each `QualityTier` sets what the frame spends (`QualityTierSettingsMap`): the share of grass blades grown, the first cut, the shadow maps' size and the number of cascades, the god rays' march steps (none on the lowest tier), screen-space occlusion (the highest tier's alone), the pixel ratio, bloom, and TRAA or SMAA. The ramp, the rim and the outline stay at every tier, because they are the style. The tier is read when the scene mounts, since its cascades are built with the sun.
 
 ### The tuning panel
 
@@ -81,25 +85,26 @@ In a Vite development build, `createGenshinRenderer` puts three's inspector on e
 
 ## Key files
 
-| File                                                             | Role                                                                            |
-| :--------------------------------------------------------------- | :------------------------------------------------------------------------------ |
-| `packages/genshin-engine/src/nodes/createToonMaterial.ts`        | The environment material: ramp, rim, and whether it is outlined                 |
-| `packages/genshin-engine/src/models/nodes/ToonNodeMaterial.ts`   | The toon material with the emissive rim and the outline flag                    |
-| `packages/genshin-engine/src/nodes/createRimNode.ts`             | The rim: Fresnel on the lit side, tinted by the sky                             |
-| `packages/genshin-engine/src/materials/computeRampValues.ts`     | The ramp's bytes, from dark through a narrow step to lit                        |
-| `packages/genshin-engine/src/atmosphere/createSunLight.ts`       | The sun and its fading cascades                                                 |
-| `packages/genshin-engine/src/post/createGodraysLight.ts`         | The unlit sun whose one map the god rays march through                          |
-| `packages/genshin-engine/src/post/createPostPipeline.ts`         | The frame after the scene: outlines, god rays, fog, bloom, grade and AA         |
-| `packages/genshin-engine/src/post/createHeightFogNode.ts`        | The height fog integrated along each pixel's ray                                |
-| `packages/genshin-engine/src/renderer/constants.ts`              | The tone mapping every canvas passes                                            |
-| `packages/genshin-engine/src/renderer/attachInspector.ts`        | Three's inspector on a renderer, shared by whatever asks for it                 |
-| `packages/genshin-engine/src/post/toSceneColor.ts`               | A measured display colour as the scene colour the tone mapping shows as it      |
-| `packages/genshin-engine/src/post/computeGradeLut.ts`            | A region's grade as a cube of display colours                                   |
-| `packages/genshin-engine/src/renderer/QualityTierSettingsMap.ts` | What each tier spends, and what none drops                                      |
-| `packages/genshin-world/src/components/World/Windrise/Index.vue` | The Windrise scene: its lights, look, ground, water, grass and landmarks        |
-| `packages/genshin-world/src/services/windrise/constants.ts`      | Windrise's ramp, sun, fog, shadow reach and grade                               |
-| `packages/genshin-world/src/composables/usePostPipeline.ts`      | The engine's chain in place of TresJS's render, rebuilt on a new camera or tier |
-| `packages/genshin-world/src/composables/useGenshinTuning.ts`     | Development's tuning panel over the look                                        |
+| File                                                             | Role                                                                               |
+| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/nodes/createToonMaterial.ts`        | The environment material: ramp, rim, and whether it is outlined                    |
+| `packages/genshin-engine/src/models/nodes/ToonNodeMaterial.ts`   | The toon material with the emissive rim and the outline flag                       |
+| `packages/genshin-engine/src/nodes/createRimNode.ts`             | The rim: Fresnel on the lit side, tinted by the sky                                |
+| `packages/genshin-engine/src/materials/computeRampValues.ts`     | The ramp's bytes, from dark through a narrow step to lit                           |
+| `packages/genshin-engine/src/atmosphere/createSunLight.ts`       | The sun and its fading cascades                                                    |
+| `packages/genshin-engine/src/post/createGodraysLight.ts`         | The unlit sun whose one map the god rays march through                             |
+| `packages/genshin-engine/src/post/createPostPipeline.ts`         | The frame after the scene: outlines, occlusion, god rays, fog, bloom, grade and AA |
+| `packages/genshin-engine/src/post/createOcclusionNode.ts`        | The screen-space occlusion over the depth, the scene's and the witness's           |
+| `packages/genshin-engine/src/post/createHeightFogNode.ts`        | The height fog integrated along each pixel's ray                                   |
+| `packages/genshin-engine/src/renderer/constants.ts`              | The tone mapping every canvas passes                                               |
+| `packages/genshin-engine/src/renderer/attachInspector.ts`        | Three's inspector on a renderer, shared by whatever asks for it                    |
+| `packages/genshin-engine/src/post/toSceneColor.ts`               | A measured display colour as the scene colour the tone mapping shows as it         |
+| `packages/genshin-engine/src/post/computeGradeLut.ts`            | A region's grade as a cube of display colours                                      |
+| `packages/genshin-engine/src/renderer/QualityTierSettingsMap.ts` | What each tier spends, and what none drops                                         |
+| `packages/genshin-world/src/components/World/Windrise/Index.vue` | The Windrise scene: its lights, look, ground, water, grass and landmarks           |
+| `packages/genshin-world/src/services/windrise/constants.ts`      | Windrise's ramp, sun, fog, shadow reach and grade                                  |
+| `packages/genshin-world/src/composables/usePostPipeline.ts`      | The engine's chain in place of TresJS's render, rebuilt on a new camera or tier    |
+| `packages/genshin-world/src/composables/useGenshinTuning.ts`     | Development's tuning panel over the look                                           |
 
 ## Notes
 

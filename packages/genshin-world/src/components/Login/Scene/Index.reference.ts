@@ -510,6 +510,29 @@ export const reference: ComponentReference = {
       search:
         "A scratch term in solveStoneLight at falloffs of 0.02, 0.05 and 0.1, the haze held, by calibrate on the dawn title and the door recording; then heightFade on StoneLight, written by calibrate --write at every hour and compared on each hour's frames and compare --all",
     },
+    {
+      found:
+        "A light varying across the scene, the albedo by its sideways and its forward distance from the eye, solved with the light over bins split sideways as well: the dawn's residual 0.1292 to 0.1279 and the day's 0.1786 to 0.1753, a hundredth to two. Not built",
+      search:
+        "Scratch terms in solveStoneLight with the bins split by sideways distance, by calibrate on the dawn and the day titles",
+    },
+    {
+      found:
+        "The night's ramp runs under none in blue across its middle knots and its harmonics swing to minus two to four on the normals the camera never sees, so the night's far towers draw orange-brown. Held at none or above, every knot, the fade and the sky's light on 64 directions over the sphere, the night scores 0.3805 against 0.3674 and the dawn 0.3977 against 0.3856: the negative light is cancelling a haze too bright over the far stone, so it stays",
+      search:
+        "An active set over solveStoneLight's knots, fade and harmonics at 64 directions, by calibrate --write and compare on the night and the dawn",
+    },
+    {
+      found:
+        "The night's clouds stand 2.41 times their sky's brightness against the recording's 5.54, mostly at their shade colour; that shade raised halfway to the lit one stands them at 3.10 and scores the night 0.3735 against 0.3674, their spread falling from 0.85 to 0.52, since brighter clouds where the recording has none cost more than the ratio gains. Kept",
+      search: "genshin:parity clouds on the night title, the shade raised to #3d85d8, then clouds and compare",
+    },
+    {
+      found:
+        "Screen-space occlusion over the frame's depth, without the light solved under it, scores the night 0.3605 to 0.3609 at 4, 8 and 16 metres against 0.3674, the dawn and the door recording within a thousandth either way, and the day's title and the phone's door frame worse. Solved under it through the witness's occlusion target at 8 metres, the night scores 0.3649, the door recording 0.5141 against 0.5165, the day's title 0.4373 against 0.4369 and the dawn 0.3864 against 0.3856; at 4 metres the dawn 0.3877 and the day 0.4383. The phone's door frame drawn with none, under the day's light solved with it, scores 0.4667, and at a phone's tier 0.4685, against 0.4721. The day, the dusk and the night ship it at 8 metres and the phone's frame draws none; the dawn draws none",
+      search:
+        "GTAONode in createPostPipeline at 4, 8 and 16 metres with compare on every frame, then createOcclusionNode with the witness's occlusion target, calibrate --write at every hour and compare at 8 and 4 metres, then the phone's frame at the medium tier",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",

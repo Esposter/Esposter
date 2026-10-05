@@ -22,9 +22,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     seconds: 8,
   },
   // The door from the flight's last pose, on the phone build at 4:3 under the day sky, scored over the door and its
-  // Dais alone, since its interface and its narrower frame differ from the computer's
+  // Dais alone, since its interface and its narrower frame differ from the computer's, and drawn at a phone's tier
   "login-door": {
-    props: { isInterfaceHidden: true, stage: "Door", timeOfDay: "Day" },
+    props: { isInterfaceHidden: true, qualityTier: "Medium", stage: "Door", timeOfDay: "Day" },
     region: { height: 760, width: 700, x: 690, y: 440 },
     screen: "LoginScreen",
     wikiTitle: "File:Login Menu Door and Platform.png",

@@ -4,6 +4,7 @@ import type { Node } from "three/webgpu";
 
 import { AntialiasingMode } from "#src/models/renderer/AntialiasingMode";
 import { createHeightFogNode } from "#src/post/createHeightFogNode";
+import { createOcclusionNode } from "#src/post/createOcclusionNode";
 import { bilateralBlur } from "three/examples/jsm/tsl/display/BilateralBlurNode.js";
 import { bloom } from "three/examples/jsm/tsl/display/BloomNode.js";
 import { depthAwareBlend } from "three/examples/jsm/tsl/display/depthAwareBlend.js";
@@ -19,7 +20,8 @@ const BLOOM_RADIUS = 0.4;
 const BLOOM_THRESHOLD = 0.85;
 const MIN_VIEW_DISTANCE = 0.001;
 // The frame after the scene, in the order light meets the eye:
-// 1. One pass draws the scene with every toon material's outline, the outline thinning past its fade distance
+// 1. One pass draws the scene with every toon material's outline, the outline thinning past its fade distance, darkened
+//    By its screen-space occlusion where the scene draws it
 // 2. God rays are marched through the sun's shadow at half resolution, blurred, and blended in the sun's colour
 // 3. The height fog hazes what lies far or low, the outlines with it
 // 4. Bloom lifts only what is brighter than nearly white: the sun, glints and elemental light
@@ -32,8 +34,9 @@ export const createPostPipeline = ({
   godraysLight,
   gradeLutTexture,
   isBloomed = true,
+  occlusionRadius,
   postUniforms: { godraysColor, gradeIntensity, outlineColor, outlineFadeDistance, outlineThickness },
-  qualityTierSettings: { antialiasingMode, godraysStepCount, isBloomEnabled },
+  qualityTierSettings: { antialiasingMode, godraysStepCount, isBloomEnabled, isOcclusionEnabled },
   renderer,
   scene,
 }: PostPipelineOptions): PostPipeline => {
@@ -51,11 +54,16 @@ export const createPostPipeline = ({
   const postPipeline: PostPipeline = { renderPipeline };
   let litNode: Node<"vec4"> = sceneColor;
 
+  if (occlusionRadius && isOcclusionEnabled) {
+    const occlusionNode = createOcclusionNode(sceneDepth, camera, occlusionRadius);
+    litNode = vec4(sceneColor.rgb.mul(occlusionNode.getTextureNode().r), sceneColor.a);
+  }
+
   if (godraysLight && godraysStepCount > 0) {
     const godraysNode = godrays(sceneDepth, camera, godraysLight);
     godraysNode.raymarchSteps.value = godraysStepCount;
     const blurredGodrays = bilateralBlur(godraysNode.getTextureNode());
-    litNode = depthAwareBlend(sceneColor, blurredGodrays.getTextureNode(), sceneDepth, camera, {
+    litNode = depthAwareBlend(litNode, blurredGodrays.getTextureNode(), sceneDepth, camera, {
       blendColor: godraysColor,
     });
     postPipeline.godraysNode = godraysNode;

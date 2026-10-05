@@ -8,6 +8,7 @@ export interface QualityTierSettings {
   // The share of grass blades grown, the first thing a tier lowers
   grassDensity: number;
   isBloomEnabled: boolean;
+  isOcclusionEnabled: boolean;
   maxPixelRatio: number;
   shadowMapSize: number;
 }

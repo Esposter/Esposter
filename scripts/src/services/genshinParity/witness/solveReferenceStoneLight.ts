@@ -52,7 +52,7 @@ const readPage = <T>(page: Page, name: string): Promise<T> =>
 // A reference's stone light solved as the game's deferred pass casts it, over the parts the witness draws from the
 // Game's exports: each part's interior pixel, its reference colour taken back into scene colour (`toSceneColor`), the
 // Exports' albedo, their normal against the scene's sun and the sun's visibility there giving its ramp coordinate and
-// Its harmonics, and the scene's own haze giving its opacity and its colours. The light is a linear solve over the bins
+// Its harmonics, the scene's occlusion over their depth, and the scene's own haze giving its opacity and its colours. The light is a linear solve over the bins
 // (`solveStoneLight`) under the scene's own haze, or under the haze's density and height falloff refined with it by
 // The simplex on that solve's residual, its colours held as the cloud sea's: the bins split by height, the high stone
 // The haze leaves holds the light, the low stone it pales the haze's profile, and the far stone how much of it the
@@ -80,6 +80,7 @@ export const solveReferenceStoneLight = async (
           depth = new Float32Array(),
           emission = new Float32Array(),
           normal = new Float32Array(),
+          occlusion = new Float32Array(),
           part = new Float32Array(),
           shadow = new Float32Array(),
         },
@@ -89,6 +90,7 @@ export const solveReferenceStoneLight = async (
         WitnessTargetName.Depth,
         WitnessTargetName.Emission,
         WitnessTargetName.Normal,
+        WitnessTargetName.Occlusion,
         WitnessTargetName.Part,
         WitnessTargetName.Shadow,
       ]);
@@ -135,6 +137,7 @@ export const solveReferenceStoneLight = async (
             emission: [emission[pixel * 4] ?? 0, emission[pixel * 4 + 1] ?? 0, emission[pixel * 4 + 2] ?? 0],
             harmonics,
             height: point.y,
+            occlusion: occlusion[pixel * 4] ?? 1,
             opacity: 0,
             rampCoordinate,
             scatter,

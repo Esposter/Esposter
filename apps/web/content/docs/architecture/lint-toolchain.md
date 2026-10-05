@@ -28,7 +28,7 @@ flowchart LR
 
 ## What the type-aware pass costs
 
-Both linters report their rule timings on every run. The app's ESLint scripts set `TIMING=1`, and the root oxlint scripts pass `--debug=timings`, which prints a table at the end of the log naming each rule's time, its share and whether it is native, a JS plugin or type-aware. A slow or memory-hungry lint is therefore diagnosed from the log CI already has.
+Oxlint reports its rule timings on every run: the root oxlint scripts pass `--debug=timings`, which prints a table at the end of the log naming each rule's time, its share and whether it is native, a JS plugin or type-aware. ESLint reports its own only where `TIMING` is set — the app's ESLint scripts set `TIMING=1`, but the root and package ESLint scripts do not, so their timings take `TIMING=1` set by hand. A slow or memory-hungry oxlint pass or app ESLint pass is therefore diagnosed from the log CI already has.
 
 The type-aware share is billed unevenly. `oxlint-tsgolint` computes each type lazily and caches it, so the first rule that forces an expensive type is charged for all of it, and switching that rule off moves the charge to the next rule that asks. Reading the table, the top rule is a lead, not a verdict: the expensive files are found by timing oxlint per package and then per file, and the fix is scoped to them.
 

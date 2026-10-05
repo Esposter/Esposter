@@ -1,14 +1,15 @@
 import type { SceneContext } from "#src/models/scene/SceneContext";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
+import type { Camera, Scene } from "three";
 import type { Node } from "three/webgpu";
 
 import { WitnessShadowMaterial } from "#parity/models/witness/WitnessShadowMaterial";
 import { WitnessTarget, WitnessTargets } from "#parity/models/witness/WitnessTarget";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
-import { StoneNodeMaterial } from "genshin-engine";
+import { createOcclusionNode, StoneNodeMaterial } from "genshin-engine";
 import { Color, DirectionalLight, FloatType, Layers, Light, Mesh, RenderTarget, Vector2 } from "three";
-import { cameraViewMatrix, float, normalWorld, positionView, uniform, vec3, vec4 } from "three/tsl";
-import { MeshBasicNodeMaterial, NodeMaterial } from "three/webgpu";
+import { cameraViewMatrix, float, normalWorld, pass, positionView, uniform, vec3, vec4 } from "three/tsl";
+import { MeshBasicNodeMaterial, NodeMaterial, RenderPipeline } from "three/webgpu";
 
 // The layer the witness's parts are drawn on alone while its targets render, past every layer the scenes use
 const TARGET_LAYER = 31;
@@ -21,12 +22,17 @@ const sourceTargetMaterialsMap = new WeakMap<object, Map<string, NodeMaterial>>(
 const sunRadiance = uniform(new Color());
 // The one target every read draws into, rebuilt only when the drawing buffer's size changes
 let renderTarget: RenderTarget | undefined;
+// The pipeline the occlusion target is drawn through, the scene's own occlusion over the parts' depth, rebuilt only when
+// The scene, its camera or the occlusion's reach changes
+let occlusion: undefined | { camera: Camera; radius: number; renderPipeline: RenderPipeline; scene: Scene };
 // The witness render's G-buffer at its current view, one floating-point target a quantity, each read back from the
 // Renderer as rows of four floats a pixel: the albedo its exported material draws unlit, the depth along the view in
 // Metres, the light the material adds after lighting, the world normal its normal map bends (encoded into 0 to 1, as
-// `readWitnessTargets` decodes it), the share of the sun reaching it through the scene's shadows, and the part (its
-// Identifier from one, the order the header lists it in) with its family's index, the families listed in that order. Only the witness's parts
-// Are drawn, over nothing, so a pixel no part covers is zero throughout. Only the targets asked for are drawn, every
+// `readWitnessTargets` decodes it), the share of the sun reaching it through the scene's shadows, the share of light
+// The scene's occlusion leaves it over the parts' own depth (all of it where the scene draws none), and the part (its
+// Identifier from one, the order the header lists it in) with its family's index, the families listed in that order.
+// Only the witness's parts are drawn, over nothing, so a pixel no part covers is zero throughout but in the occlusion,
+// Which leaves it whole. Only the targets asked for are drawn, every
 // One unless told, each handed back as base64, the one form a page hands its caller bytes in. Every
 // Part keeps its own material, handed back once the targets are read
 export const renderWitnessTargets = async (
@@ -41,7 +47,7 @@ export const renderWitnessTargets = async (
   width: number;
 }> => {
   if (!context) throw new InvalidOperationError(Operation.Read, "witness", "the scene has not rendered yet");
-  const { camera, renderer, scene } = context;
+  const { camera, occlusionRadius, renderer, scene } = context;
   const { x: width, y: height } = renderer.getDrawingBufferSize(new Vector2());
   const parts: { family: string; id: number; mesh: string }[] = [];
   const drawnMeshes: { familyIndex: number; id: number; mesh: Mesh }[] = [];
@@ -88,6 +94,8 @@ export const renderWitnessTargets = async (
       // Halved and lifted into 0 to 1, since the material's colour output clips what falls below 0, which took every
       // Normal's negative components; read back, it is let down again
       [WitnessTarget.Normal]: vec4(worldNormal.mul(0.5).add(0.5), 1),
+      // Drawn only for its depth, which the occlusion's pass reads
+      [WitnessTarget.Occlusion]: vec4(1),
       [WitnessTarget.Part]: vec4(float(id), float(familyIndex), 0, 1),
     };
     material.colorNode = targetNodeMap[target];
@@ -113,6 +121,15 @@ export const renderWitnessTargets = async (
     renderTarget = new RenderTarget(width, height, { type: FloatType });
   }
   const drawnTarget = renderTarget;
+  if (occlusion?.scene !== scene || occlusion.camera !== camera || occlusion.radius !== occlusionRadius) {
+    occlusion?.renderPipeline.dispose();
+    const renderPipeline = new RenderPipeline(renderer);
+    renderPipeline.outputColorTransform = false;
+    const occlusionNode = createOcclusionNode(pass(scene, camera).getTextureNode("depth"), camera, occlusionRadius);
+    renderPipeline.outputNode = occlusionRadius > 0 ? vec4(vec3(occlusionNode.getTextureNode().r), 1) : vec4(1);
+    occlusion = { camera, radius: occlusionRadius, renderPipeline, scene };
+  }
+  const { renderPipeline: occlusionPipeline } = occlusion;
   const targets: Partial<Record<WitnessTarget, string>> = {};
   // A failed readback still hands the scene back as it was, so a later render or capture never draws the targets
   await withFinalizerAsync(
@@ -131,7 +148,8 @@ export const renderWitnessTargets = async (
             for (const [index, { mesh }] of drawnMeshes.entries())
               mesh.material = targetMaterials[index] ?? mesh.material;
             renderer.setRenderTarget(drawnTarget);
-            renderer.render(scene, camera);
+            if (target === WitnessTarget.Occlusion) occlusionPipeline.render();
+            else renderer.render(scene, camera);
             const pixels = await renderer.readRenderTargetPixelsAsync(drawnTarget, 0, 0, width, height);
             return new Uint8Array(pixels.buffer, pixels.byteOffset, pixels.byteLength).toBase64();
           },
