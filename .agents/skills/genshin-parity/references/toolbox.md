@@ -52,6 +52,7 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | The fog's density and colours           | `genshin:parity fog`: bins by depth and sun angle, solved             |
 | The stone's light at an hour            | `genshin:parity calibrate`: ramp and harmonics over the exports' bins |
 | Whether a light solve models the render | `calibrate --self`: our render solved, its light handed back          |
+| How the haze thins with height, an hour | `calibrate --haze`: its density and falloff refined with the light    |
 | What a shader computes                  | `shaders`: the annotated disassembly, and HLSL where it decompiles    |
 
 ## Music

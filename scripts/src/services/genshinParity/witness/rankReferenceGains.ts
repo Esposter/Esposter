@@ -2,17 +2,20 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { SetLights } from "#src/models/genshinParity/witness/SetLights";
 
 import { CLOUD_BRIGHTNESS_RATIO, LUMINANCE, SKY_LAYER } from "#src/services/genshinParity/shared/constants";
+import { computePixelPoint } from "#src/services/genshinParity/shared/computePixelPoint";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
 import { readWitnessFamilies } from "#src/services/genshinParity/shared/readWitnessFamilies";
 import { readWitnessGbuffer } from "#src/services/genshinParity/shared/readWitnessGbuffer";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
+import { readLightCeilings } from "#src/services/genshinParity/witness/readLightCeilings";
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
 import { BYTE } from "#src/services/shared/constants";
 import { toLinear } from "#src/services/shared/toLinear";
 import { getOrCreate, withFinalizerAsync } from "@esposter/shared";
 import sharp from "sharp";
+import { Matrix4 } from "three";
 
 // The depths a part's pixels are split by, near, middle and far, where the light, then the haze, decides their colour
 const DEPTH_BANDS: [string, number][] = [
@@ -39,7 +42,11 @@ const SIDE_RADIUS = 4;
 export const rankReferenceGains = async (
   referenceId: string,
   witness: DerivedAssetComponent,
-): Promise<{ frame: number; terms: { ceiling: number; name: string; share: number }[] }> => {
+): Promise<{
+  frame: number;
+  lightCeilings: Awaited<ReturnType<typeof readLightCeilings>>;
+  terms: { ceiling: number; name: string; share: number }[];
+}> => {
   await fetchReferences();
   const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
@@ -51,6 +58,16 @@ export const rankReferenceGains = async (
         undefined,
       );
       const { depth, families: layerFamilies, normal, part, width } = await readWitnessGbuffer(page);
+      const sky = await page.evaluate(() =>
+        (Reflect.get(window, "getSceneSky") as () => { matrixWorld: number[]; projectionMatrixInverse: number[] })(),
+      );
+      const matrices = {
+        matrixWorld: new Matrix4().fromArray(sky.matrixWorld),
+        projectionMatrixInverse: new Matrix4().fromArray(sky.projectionMatrixInverse),
+      };
+      const heights = Float32Array.from({ length: width * height }, (_value, pixel) =>
+        part[pixel * 4] ? computePixelPoint(pixel, { height, width }, depth[pixel * 4] ?? 0, matrices).y : 0,
+      );
       const size = { height, width };
       const ourShot = await shootWitnessFamilies(page, [], size);
       const exportsShot = await shootWitnessFamilies(page, families, size);
@@ -141,6 +158,14 @@ export const rankReferenceGains = async (
       }
       return {
         frame: frameError / Math.max(scoredCount, 1),
+        lightCeilings: await readLightCeilings({
+          checkIsScored,
+          direction,
+          exportsShot,
+          gbuffer: { depth, height, normal, part, width },
+          heights,
+          image,
+        }),
         terms: Array.from(nameTermMap, ([name, { count, error }]) => ({
           ceiling: error / Math.max(scoredCount, 1),
           name,

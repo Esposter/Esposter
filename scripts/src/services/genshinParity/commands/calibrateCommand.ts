@@ -23,6 +23,12 @@ const roundColors = (colors: readonly (readonly number[])[]): number[][] =>
 export const calibrateCommand: SubCommandsDef[string] = defineCommand({
   args: {
     reference: { description: "A reference's id in ParityReferenceMap", required: true, type: "positional" },
+    haze: {
+      default: false,
+      description:
+        "Refine the haze's density and height falloff with the light, its colours held, and print them beside the residual under the scene's own haze",
+      type: "boolean",
+    },
     self: {
       default: false,
       description:
@@ -47,12 +53,16 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
     name: "calibrate",
   },
   run: async ({ args }) => {
-    const { count, deviation, light, residual } = await solveReferenceStoneLight(
+    const { count, deviation, haze, light, residual, sceneResidual } = await solveReferenceStoneLight(
       args.reference,
       args.witness,
-      args.self,
+      { isHazeSolved: args.haze, isSelf: args.self },
     );
     console.log(`${count} pixels, residual ${residual.toFixed(4)} against the bins' spread ${deviation.toFixed(4)}`);
+    if (args.haze)
+      console.log(
+        `haze density ${haze.density.toFixed(5)}, height falloff ${haze.heightFalloff.toFixed(4)}, against a residual of ${sceneResidual.toFixed(4)} under the scene's own`,
+      );
     console.log("ramp, dark end to lit end:");
     for (const knot of light.ramp) console.log(`  ${formatColor(knot)}`);
     console.log("harmonics:");

@@ -62,15 +62,12 @@ export const LOGIN_DOOR_RUSH_LIMIT = 0.9;
 export const LOGIN_CLOUD_SEA_HEIGHT = -20;
 export const LOGIN_CLOUD_SEA_SIZE = 3000;
 export const LOGIN_RIM_STRENGTH = 0.4;
-// The haze the cloud sea gives off, thickest under the walkway and thinning up past it, so what stands in it pales
-// Downward and the far towers pale into the haze's colour: dense enough 5 metres under the walkway that the towers'
-// Feet are white, and thin enough at the eye that a tower 125 metres out is still half seen
-export const LOGIN_FOG_DENSITY = 0.016;
+// The haze the cloud sea gives off, at its density at the sea's top and how fast it thins with height, where an hour
+// Sets none of its own: the day's, its density solved with its colour on the phone's door frame over the parts' pixels
+// Banded by depth and angle (genshin:parity fog), its colour landing on the one read off the day still
+export const LOGIN_FOG_DENSITY = 0.114;
 export const LOGIN_FOG_HEIGHT_FALLOFF = 0.12;
 export const LOGIN_FOG_START_DISTANCE = 10;
-// The day's haze at its base, about seven times the rest's, solved with its colour on the phone's door frame over the
-// Parts' pixels banded by depth and angle (genshin:parity fog): its colour lands on the one read off the day still
-export const LOGIN_DAY_FOG_DENSITY = 0.114;
 // The haze's light scattered toward the sun, which bathes the sunward side of the dawn's and the dusk's frames: how
 // Narrowly it gathers round the sun and how strongly, measured off the references
 export const LOGIN_FOG_SCATTER_POWER = 2;

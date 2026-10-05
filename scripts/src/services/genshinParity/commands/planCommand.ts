@@ -5,13 +5,12 @@ import { PLANS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { readWitnessPlan } from "#src/services/genshinParity/witness/readWitnessPlan";
 import { BYTE } from "#src/services/shared/constants";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
+import { toSrgb } from "#src/services/shared/toSrgb";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
-
-const toDisplay = (value: number): number => (value <= 0.0031308 ? value * 12.92 : 1.055 * value ** (1 / 2.4) - 0.055);
 
 export const planCommand: SubCommandsDef[string] = defineCommand({
   args: {
@@ -53,7 +52,7 @@ export const planCommand: SubCommandsDef[string] = defineCommand({
     const pixels = Buffer.alloc(width * height * 3);
     for (let pixel = 0; pixel < width * height; pixel++)
       for (let channel = 0; channel < 3; channel++)
-        pixels[pixel * 3 + channel] = Math.round(toDisplay(Math.min(albedo[pixel * 4 + channel] ?? 0, 1)) * BYTE);
+        pixels[pixel * 3 + channel] = Math.round(toSrgb(Math.min(albedo[pixel * 4 + channel] ?? 0, 1)) * BYTE);
     await mkdir(PLANS_DIRECTORY, { recursive: true });
     const name = `${args.reference}.${args.family}`;
     const imagePath = join(PLANS_DIRECTORY, `${name}.png`);

@@ -451,6 +451,24 @@ export const reference: ComponentReference = {
       search:
         "A scratch mask of each reference's sky, a colour and contrast histogram learnt off our own layout, read per part against the witness's part target on the dawn title and the door recording",
     },
+    {
+      found:
+        "The exports' dawn frame corrected to the recording's own colour, channel by channel, over every part pixel of a bin and scored again: by rank's bins it falls 0.002, by depth in eight bands, facing in six and how far a face turns up in three 0.010, by each part and its facing 0.016, but the same bins split by twelve rows 0.062 and a smooth field over four pixels 0.127; the albedo's tone split nothing more and the columns 0.017. So no light over depth and facing, the reflection pass's probes, the clamp and the highlight among them, could buy over a hundredth there: the light rows' error varies with the row",
+      search:
+        "A scratch oracle over the exports' frame of login-dawn-title, each binning's per-channel gain applied and FLIP scored again, promoted as rank's third table (readLightCeilings)",
+    },
+    {
+      found:
+        "By depth and world height over the walls alone, the recordings' stone is bright below the walkway and dark above it at every hour, where ours stands level: at 20 to 40 metres out the dawn's 0.63 against our 0.40 under the walkway and 0.22 against 0.36 over it, the night's 0.35 against 0.19 and 0.04 against 0.17, the dusk's 0.43 against 0.32 and 0.16 against 0.31. The haze's falloff was set by hand and the fog solve binned by depth and angle alone, so the light solved over bins spanning heights stood too dark below and too bright above",
+      search:
+        "A scratch table of each frame's linear luminance and ours, by depth band and the world height the witness's depth gives, over the walls (a normal within 0.3 of level) at every hour",
+    },
+    {
+      found:
+        "calibrate's bins split by height, the haze's density and falloff refined by the simplex with the light, its colours held: the dawn solves to a density of 1.60 at the cloud sea's top falling 0.254 a metre (residual 0.120 against 0.160 under the scene's), the night to 3.40 and 0.297 (0.146 against 0.196), the dusk to 0.26 and 0.167 (0.152 against 0.168), the day to 0.081 and 0.079 from either start (0.169 against 0.171). Each written with its light, the dawn scores 0.3890 against 0.4382, the night 0.4003 against 0.4452 and the door recording 0.5255 against 0.5361; the day's scored its title 0.4402 and the phone's door frame 0.4867 against 0.4397 and 0.4791, and its light alone re-solved under its old haze 0.4418 and 0.4819, so the day keeps both. The dense haze drowns the cloud sea into one pale sheet where the recordings show its billows",
+      search:
+        "genshin:parity calibrate --haze on every hour's frame, each profile set in LoginSkyStateMap and its light written, then compare --all; the day's light re-solved alone under its old haze",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",

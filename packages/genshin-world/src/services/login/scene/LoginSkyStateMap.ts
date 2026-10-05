@@ -1,7 +1,6 @@
 import type { SkyState } from "genshin-engine";
 
 import { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
-import { LOGIN_DAY_FOG_DENSITY } from "#src/services/login/scene/constants";
 import { getLoginScreenDirection } from "#src/services/login/scene/getLoginScreenDirection";
 import { Color, Vector3 } from "three";
 
@@ -26,14 +25,19 @@ const DUSK_LIGHT_DIRECTION = new Vector3(0.837, 0.259, 0.483);
 // Moon. The dusk's bottom colour toward the sun stands under the recording's clouds, so no pixel holds it. The haze
 // Over the cloud sea (the mean of its brightest two samples low in the frame) is read off each reference too. The
 // Day's and the dusk's cloud colours are solved by their spread against the recordings' (genshin:parity clouds); the
-// Dawn's and the night's so solved score their frames worse, so theirs stay read off the references. The stone's light is solved apart, as the game's deferred pass casts it
-// (data/login/stoneLight.json), so the sun light here lends the stone only its direction and its shadow, and the
-// Hemisphere lights nothing of the login's
+// Dawn's and the night's so solved score their frames worse, so theirs stay read off the references. The stone's light
+// Is solved apart, as the game's deferred pass casts it (data/login/stoneLight.json), so the sun light here lends the
+// Stone only its direction and its shadow, and the hemisphere lights nothing of the login's. Each hour's haze, its
+// Density at the cloud sea's top and how fast it thins with height, is solved with that light on its frame
+// (genshin:parity calibrate --haze): the dawn's and the night's lie as a dense layer under the walkway, nearly gone ten
+// Metres up, the dusk's rises gently, and the day's so solved scored its frames worse, so it keeps the scene's own
 export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
   [LoginTimeOfDay.Dawn]: {
     cloudLitColor: new Color(0xf5efe8),
     cloudShadeColor: new Color(0x8c91a7),
     fogColor: new Color(0xe9d8c7),
+    fogDensity: 1.604,
+    fogHeightFalloff: 0.2536,
     haloColor: new Color(0xc9a575),
     hemisphereGroundColor: new Color(0x8c91a7),
     hemisphereIntensity: 8.34,
@@ -55,7 +59,6 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     cloudLitColor: new Color(0xfbfcf4),
     cloudShadeColor: new Color(0xb0dbf5),
     fogColor: new Color(0xcfdbf0),
-    fogDensity: LOGIN_DAY_FOG_DENSITY,
     haloColor: new Color(0xe0c18b),
     hemisphereGroundColor: new Color(0x9ec0e8),
     hemisphereIntensity: 7.27,
@@ -77,6 +80,8 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     cloudLitColor: new Color(0xfcfcc4),
     cloudShadeColor: new Color(0xed9ea7),
     fogColor: new Color(0xf0c4aa),
+    fogDensity: 0.2598,
+    fogHeightFalloff: 0.1674,
     haloColor: new Color(0xeaf2ca),
     hemisphereGroundColor: new Color(0xab6db4),
     hemisphereIntensity: 2.08,
@@ -98,6 +103,8 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     cloudLitColor: new Color(0x56b0f5),
     cloudShadeColor: new Color(0x255abb),
     fogColor: new Color(0x5ab4f8),
+    fogDensity: 3.404,
+    fogHeightFalloff: 0.2974,
     haloColor: new Color(0x5d92f9),
     hemisphereGroundColor: new Color(0x2a4aa8),
     hemisphereIntensity: 8.96,
