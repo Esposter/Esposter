@@ -3,6 +3,8 @@ import type { DecodedClip } from "#src/models/genshinAssets/shared/DecodedClip";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
 
+import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
+import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { createClipNameResolver } from "#src/services/genshinAssets/interface/createClipNameResolver";
 import { decodeAnimationClip } from "#src/services/genshinAssets/interface/decodeAnimationClip";
 import { GAME_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
@@ -37,11 +39,11 @@ export const extractComponentClips = async (component: DerivedAssetComponent): P
       join(GAME_BLOCKS_DIRECTORY, block),
       join(directory, basename(block, ".blk")),
       "--types",
-      "AnimationClip",
+      AssetType.AnimationClip,
       "--names",
       clipPattern,
       "--export_type",
-      "JSON",
+      AnimeStudioExportType.Json,
     ]);
   const interfacePath = join(root, "interface", "interface.json");
   const trees = existsSync(interfacePath)

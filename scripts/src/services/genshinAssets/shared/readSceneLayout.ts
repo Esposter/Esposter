@@ -9,6 +9,7 @@ import type { SceneDrawing } from "#src/models/genshinAssets/shared/SceneDrawing
 import type { SceneLayout } from "#src/models/genshinAssets/shared/SceneLayout";
 import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
 
+import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { LAYOUT_ASSET_TYPES } from "#src/services/genshinAssets/shared/constants";
 import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
@@ -18,7 +19,6 @@ import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-type LayoutAssetType = (typeof LAYOUT_ASSET_TYPES)[number];
 // Every dump of one type in one file of a block, which holds none of a type it has no object of
 const readAll = async <T>(directory: string): Promise<T[]> => {
   if (!existsSync(directory)) return [];
@@ -43,7 +43,7 @@ export const readSceneLayout = async (layoutDirectory: string): Promise<SceneLay
   const objectNameMap = new Map<string, string>();
   const gameObjectDrawingMap = new Map<string, SceneDrawing>();
   for (const block of await readdir(layoutDirectory)) {
-    const getTypeDirectory = (type: LayoutAssetType): string => join(layoutDirectory, block, type);
+    const getTypeDirectory = (type: AssetType): string => join(layoutDirectory, block, type);
     // oxlint-disable-next-line no-await-in-loop -- one block's files are listed at a time
     const fileLists = await Promise.all(
       LAYOUT_ASSET_TYPES.map((type) =>
@@ -51,14 +51,14 @@ export const readSceneLayout = async (layoutDirectory: string): Promise<SceneLay
       ),
     );
     for (const file of new Set(fileLists.flat())) {
-      const readType = <T>(type: LayoutAssetType): Promise<T[]> => readAll<T>(join(getTypeDirectory(type), file));
+      const readType = <T>(type: AssetType): Promise<T[]> => readAll<T>(join(getTypeDirectory(type), file));
       // oxlint-disable-next-line no-await-in-loop -- one file's dump is read at a time, holding its thousands of files
       const [gameObjects, transforms, meshFilters, meshRenderers, skinnedMeshRenderers] = await Promise.all([
-        readType<DumpedGameObject>("GameObject"),
-        readType<DumpedTransform>("Transform"),
-        readType<DumpedMeshFilter>("MeshFilter"),
-        readType<DumpedMeshRenderer>("MeshRenderer"),
-        readType<DumpedSkinnedMeshRenderer>("SkinnedMeshRenderer"),
+        readType<DumpedGameObject>(AssetType.GameObject),
+        readType<DumpedTransform>(AssetType.Transform),
+        readType<DumpedMeshFilter>(AssetType.MeshFilter),
+        readType<DumpedMeshRenderer>(AssetType.MeshRenderer),
+        readType<DumpedSkinnedMeshRenderer>(AssetType.SkinnedMeshRenderer),
       ]);
       const gameObjectMaterialsMap = new Map(
         meshRenderers.map(({ m_GameObject, m_Materials }) => [m_GameObject.m_PathID, toPointers(m_Materials)]),

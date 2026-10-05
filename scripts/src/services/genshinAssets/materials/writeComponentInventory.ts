@@ -1,5 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
+import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
 import { readIndexedAssets } from "#src/services/genshinAssets/shared/readIndexedAssets";
@@ -52,7 +53,7 @@ export const writeComponentInventory = async (component: DerivedAssetComponent):
     );
   }
   lines.push("## Textures", "", "| Texture | Size | Channels, min mean max |", "| :-- | :-- | :-- |");
-  const textureDirectory = join(directory.assets, "Texture2D");
+  const textureDirectory = join(directory.assets, AssetType.Texture2D);
   for (const name of await readNames(textureDirectory)) {
     const path = join(textureDirectory, name);
     // oxlint-disable-next-line no-await-in-loop -- one texture is decoded at a time
@@ -68,7 +69,7 @@ export const writeComponentInventory = async (component: DerivedAssetComponent):
     for (const material of drawnMaterials.map((pathId) => pathIdAssetMap.get(pathId)?.name ?? pathId))
       getOrCreate(meshMaterialsMap, mesh, () => new Set()).add(material);
   lines.push("", "## Meshes", "", "| Mesh | Vertices | Drawn with |", "| :-- | --: | :-- |");
-  const meshDirectory = join(directory.assets, "Mesh");
+  const meshDirectory = join(directory.assets, AssetType.Mesh);
   for (const name of await readNames(meshDirectory)) {
     // oxlint-disable-next-line no-await-in-loop -- one mesh is read at a time
     const objText = await readFile(join(meshDirectory, name), "utf8");

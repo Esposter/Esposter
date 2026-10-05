@@ -1,6 +1,7 @@
 import type { ExportedAnimationClip } from "#src/models/genshinAssets/interface/ExportedAnimationClip";
 import type { DecodedCurve } from "#src/models/genshinAssets/shared/DecodedCurve";
 
+import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { evaluateStreamedCurve } from "#src/services/genshinAssets/interface/evaluateStreamedCurve";
 import { parseStreamedClipKeys } from "#src/services/genshinAssets/interface/parseStreamedClipKeys";
 
@@ -44,7 +45,7 @@ export const decodeAnimationClip = (
   };
   const curves: DecodedCurve[] = [];
   for (const { attribute, path, typeID } of clip.m_ClipBindingConstant.genericBindings) {
-    const transformProperty = typeID === "Transform" ? TransformPropertyMap[attribute] : undefined;
+    const transformProperty = typeID === AssetType.Transform ? TransformPropertyMap[attribute] : undefined;
     const components = transformProperty?.components ?? [""];
     const property = transformProperty?.property ?? resolveName(attribute);
     for (const component of components)

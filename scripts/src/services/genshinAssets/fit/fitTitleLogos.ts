@@ -1,3 +1,5 @@
+import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
+import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { GAME_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
 import { traceImage } from "#src/services/genshinParity/shared/traceImage";
@@ -50,14 +52,14 @@ export const fitTitleLogos = async (directory: string): Promise<Record<string, s
     "--names",
     `^(${TITLE_LOGO_SPRITES.map(({ sprite }) => sprite).join("|")})$`,
     "--types",
-    "Texture2D",
+    AssetType.Texture2D,
     "--group_assets",
-    "ByType",
+    AnimeStudioGroupType.ByType,
   ]);
   const entries = await Promise.all(
     TITLE_LOGO_SPRITES.map(async ({ latinRegion, logo, sprite }) => {
       const flattenedPath = join(spriteDirectory, `${sprite}.png`);
-      const { height, width } = await sharp(join(spriteDirectory, "Texture2D", `${sprite}.png`))
+      const { height, width } = await sharp(join(spriteDirectory, AssetType.Texture2D, `${sprite}.png`))
         .flatten({ background: "#000" })
         .toFile(flattenedPath);
       const subpaths = splitSubpaths(await traceImage(flattenedPath, 0, 0, width, height, TRACE_SCALE, INK_SHARE));

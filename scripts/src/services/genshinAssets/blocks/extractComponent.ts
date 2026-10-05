@@ -4,6 +4,8 @@ import type { IndexedAsset } from "#src/models/genshinAssets/shared/IndexedAsset
 import type { ResolvedObject } from "#src/models/genshinAssets/shared/ResolvedObject";
 
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
+import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
+import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { walkAssetClosure } from "#src/services/genshinAssets/blocks/walkAssetClosure";
 import {
   CAB_MAP_PATH,
@@ -28,13 +30,13 @@ import { existsSync } from "node:fs";
 import { mkdir, readFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 
-const GROUP_BY_TYPE = ["--group_assets", "ByType"];
+const GROUP_BY_TYPE = ["--group_assets", AnimeStudioGroupType.ByType];
 // The resolved objects of the given types, named through the asset index by their block and path ID, each exported
 // From its block by its exact name. The index holds no file, so a block and path ID it names more than once, or that
 // Several files of the block resolve to, is as unresolved as one it does not name
 const exportResolvedAssets = async (
   resolvedObjects: readonly ResolvedObject[],
-  types: readonly string[],
+  types: readonly AssetType[],
   assetsDirectory: string,
 ): Promise<{ assets: (IndexedAsset & { file: string })[]; unresolved: string[] }> => {
   const keyObjectsMap = Map.groupBy(resolvedObjects, ({ block, pathId }) => toObjectKey(block, pathId));
@@ -95,12 +97,12 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
     await exportBlockBySource(rootBlock, LAYOUT_ASSET_TYPES, AnimeStudioExportType.Json, directory.layout);
   const { gameObjectDrawingMap, objects } = await readSceneLayout(directory.layout);
   const closure = walkAssetClosure(objects, gameObjectDrawingMap, roots, cabMap);
-  const drawn = await exportResolvedAssets(closure.assets, ["Mesh", "Material"], directory.assets);
-  const materialDirectory = join(directory.assets, "Material");
+  const drawn = await exportResolvedAssets(closure.assets, [AssetType.Mesh, AssetType.Material], directory.assets);
+  const materialDirectory = join(directory.assets, AssetType.Material);
   // A material is exported under its name, so of several sharing one, which the JSON holds and which file its texture
   // Pointers resolve through is unknown
   const nameMaterialsMap = Map.groupBy(
-    drawn.assets.filter(({ type }) => type === "Material"),
+    drawn.assets.filter(({ type }) => type === AssetType.Material),
     ({ name }) => name,
   );
   const sharedNames = [...nameMaterialsMap]
@@ -122,7 +124,7 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
       }),
     )
   ).flat();
-  const sampled = await exportResolvedAssets(textures, ["Texture2D"], directory.assets);
+  const sampled = await exportResolvedAssets(textures, [AssetType.Texture2D], directory.assets);
   if (namePattern)
     for (const block of await readAssetBlocks(namePattern))
       runAnimeStudio([

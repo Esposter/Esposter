@@ -2,6 +2,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { ExportedMaterial } from "#src/models/genshinAssets/shared/ExportedMaterial";
 import type { MaterialValues } from "#src/models/genshinAssets/shared/MaterialValues";
 
+import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
 import { toMaterialValues } from "#src/services/genshinAssets/shared/toMaterialValues";
@@ -12,7 +13,7 @@ import { join } from "node:path";
 
 // Every material a component's export holds, read as its values
 export const readComponentMaterials = async (component: DerivedAssetComponent): Promise<MaterialValues[]> => {
-  const directory = join(getComponentDirectory(component).assets, "Material");
+  const directory = join(getComponentDirectory(component).assets, AssetType.Material);
   if (!existsSync(directory)) return [];
   const names = await readdir(directory);
   return Promise.all(

@@ -25,8 +25,8 @@ const toShare = (logit: number): number => 1 / (1 + Math.exp(-logit));
 const computeSquaredResidual = (ours: readonly number[], reference: readonly number[]): number =>
   ours.reduce((sum, value, index) => sum + (value - (reference[index] ?? 0)) ** 2, 0);
 // The share of each band's clouds the scene should draw at each reference's hour, by the sky's cover band by band of
-// Its height over the horizon: our sky drawn at each guess and its clouds read as the reference's are (`readCloudSky`),
-// At the reference's own split between cloud and clear sky, the shares solved by the simplex in their logits so each
+// Its height over the horizon: our sky drawn at each guess and its clouds read where it draws them against the same sky
+// With none (`readCloudSky`), the reference's at its own split between cloud and clear sky, the shares solved by the simplex in their logits so each
 // Stays between none and all. A cloud standing elsewhere than the reference's costs nothing here, where a score
 // Comparing pixels charges it twice, so the cover is matched in kind rather than in place. The heights each band's
 // Clouds stand between are one scene's for every hour, so with `isHeightSolved` they are solved on every reference at
@@ -65,15 +65,26 @@ export const solveReferenceCloudCover = async (
         );
         browsers.push(browser);
         // oxlint-disable-next-line no-await-in-loop -- read on the page just opened
-        const { computeClouds, computeCloudThreshold, computeElevationCoverage, readLuminance } = await readCloudSky(
+        const { computeClouds, computeDrawnClouds, computeElevationCoverage, readLuminance } = await readCloudSky(
           page,
           { checkIsScored, height },
         );
         // oxlint-disable-next-line no-await-in-loop -- read on the page just opened
         const referenceLuminance = await readLuminance(image);
-        // Our clouds are read at the reference's split: split on our own render, each guess moved the split with its
-        // Clouds, and the solve chased a cost that moved under it
-        const threshold = computeCloudThreshold(referenceLuminance);
+        // Our sky drawn with no cloud, which each guess's clouds are read against (`computeDrawnClouds`)
+        // oxlint-disable-next-line no-await-in-loop -- read on the page just opened
+        const bandNames = await page.evaluate(() => (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)());
+        // oxlint-disable-next-line no-await-in-loop -- as above
+        await page.evaluate(
+          (clearCovers) => {
+            (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)(clearCovers);
+          },
+          Object.fromEntries(bandNames.map((band) => [band, 0])),
+        );
+        // oxlint-disable-next-line no-await-in-loop -- as above
+        await setPageWitnessView(page, { families: [] });
+        // oxlint-disable-next-line no-await-in-loop -- as above
+        const clearLuminance = await readLuminance(await page.screenshot());
         skies.push({
           page,
           readOurs: async (covers, heights) => {
@@ -85,9 +96,11 @@ export const solveReferenceCloudCover = async (
               [covers, heights] as const,
             );
             await setPageWitnessView(page, { families: [] });
-            return computeElevationCoverage(computeClouds(await readLuminance(await page.screenshot()), threshold));
+            return computeElevationCoverage(
+              computeDrawnClouds(await readLuminance(await page.screenshot()), clearLuminance),
+            );
           },
-          reference: computeElevationCoverage(computeClouds(referenceLuminance, threshold)),
+          reference: computeElevationCoverage(computeClouds(referenceLuminance)),
           referenceId,
         });
       }

@@ -25,8 +25,8 @@ export const readCloudSky = async (
   page: Page,
   { checkIsScored, height }: { checkIsScored: (pixel: number, width: number) => boolean; height: number },
 ): Promise<{
-  computeClouds: (luminance: Float32Array, threshold?: number) => Uint8Array;
-  computeCloudThreshold: (luminance: Float32Array) => number;
+  computeClouds: (luminance: Float32Array) => Uint8Array;
+  computeDrawnClouds: (luminance: Float32Array, clearLuminance: Float32Array) => Uint8Array;
   computeElevationCoverage: (clouds: Uint8Array) => number[];
   readLuminance: (input: Buffer) => Promise<Float32Array>;
   skyMask: Uint8Array;
@@ -71,14 +71,27 @@ export const readCloudSky = async (
     return Math.max(logRatio, (computeOtsuThreshold(skyOvers) / BYTE) * greatest);
   };
   return {
-    // A sky's clouds by its own split, or by a split held from another sky: ours read at the reference's, so a guess
-    // That moves our clouds does not move what counts as one
-    computeClouds: (luminance, threshold) => {
+    // A sky's clouds by its own split
+    computeClouds: (luminance) => {
       const overs = computeOvers(luminance);
-      const split = threshold ?? computeThreshold(overs);
+      const split = computeThreshold(overs);
       return Uint8Array.from(overs, (over, pixel) => Number((skyMask[pixel] ?? 0) === 1 && over > split));
     },
-    computeCloudThreshold: (luminance) => computeThreshold(computeOvers(luminance)),
+    // Our sky's clouds where it draws them: each pixel its clouds move past the cloud's ratio from the same sky drawn
+    // With none, brighter or darker, so a cloud is read by what the renderer draws whatever its colour. Read at the
+    // Reference's split instead, our clouds shaded near their sky's own colour counted as clear sky, and the cover
+    // Solved under that split drew the dawn's sky nearly full where its frame stands mostly clear
+    computeDrawnClouds: (luminance, clearLuminance) => {
+      const blurred = blurGrey(luminance, width, height, CLASSIFY_BLUR_SIGMA);
+      const clear = blurGrey(clearLuminance, width, height, CLASSIFY_BLUR_SIGMA);
+      return Uint8Array.from(blurred, (value, pixel) =>
+        Number(
+          (skyMask[pixel] ?? 0) === 1 &&
+            Math.abs(Math.log(Math.max(value, Number.EPSILON) / Math.max(clear[pixel] ?? 0, Number.EPSILON))) >
+              logRatio,
+        ),
+      );
+    },
     // The share of the sky each band of its height holds as cloud
     computeElevationCoverage: (clouds) =>
       CLOUD_ELEVATION_BANDS.slice(1).map((top, band) => {

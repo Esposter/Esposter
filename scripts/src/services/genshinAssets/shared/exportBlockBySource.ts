@@ -1,5 +1,7 @@
 import type { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 
+import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
+import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { GAME_BLOCKS_DIRECTORY, SOURCE_EXPORT_SUFFIX } from "#src/services/genshinAssets/shared/constants";
 import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
 import { existsSync } from "node:fs";
@@ -12,7 +14,7 @@ import { basename, join } from "node:path";
 // Run, since a file's objects are named by their own names and two types' objects share one
 export const exportBlockBySource = async (
   block: string,
-  types: readonly string[],
+  types: readonly AssetType[],
   exportType: AnimeStudioExportType,
   directory: string,
 ): Promise<void> => {
@@ -27,7 +29,7 @@ export const exportBlockBySource = async (
       "--export_type",
       exportType,
       "--group_assets",
-      "BySource",
+      AnimeStudioGroupType.BySource,
     ]);
     const sourceDirectory = join(typeDirectory, `${blockName}${SOURCE_EXPORT_SUFFIX}`);
     if (!existsSync(sourceDirectory)) continue;

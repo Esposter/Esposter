@@ -1,6 +1,7 @@
 import type { DecodedClip } from "#src/models/genshinAssets/shared/DecodedClip";
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
 
+import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { fitInterfaceClips } from "#src/services/genshinAssets/fit/fitInterfaceClips";
 import { fitInterfaceRects } from "#src/services/genshinAssets/fit/fitInterfaceRects";
@@ -32,8 +33,8 @@ import { join } from "node:path";
 export const fitLoginScene = async (only: readonly string[] = []): Promise<string> => {
   const directory = getComponentDirectory(DerivedAssetComponent.Login);
   const placements = await readComponentPlacements(DerivedAssetComponent.Login);
-  const meshDirectory = join(directory.assets, "Mesh");
-  const textureDirectory = join(directory.assets, "Texture2D");
+  const meshDirectory = join(directory.assets, AssetType.Mesh);
+  const textureDirectory = join(directory.assets, AssetType.Texture2D);
   const fits: Record<string, () => Promise<string[]>> = {
     clouds: async () => [await writeWorldData("login/clouds.json", await fitLoginClouds(textureDirectory))],
     door: async () => [

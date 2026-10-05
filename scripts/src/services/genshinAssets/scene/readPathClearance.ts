@@ -2,6 +2,7 @@ import type { PiercedPart } from "#src/models/genshinAssets/scene/PiercedPart";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { SceneLayout } from "genshin-engine";
 
+import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
@@ -27,7 +28,7 @@ export const readPathClearance = async (
   const hit = new Vector3();
   const pierced: PiercedPart[] = [];
   for (const { mesh, position, rotation, scale } of layout.placements) {
-    const path = join(directory.assets, "Mesh", `${mesh}.obj`);
+    const path = join(directory.assets, AssetType.Mesh, `${mesh}.obj`);
     if (!existsSync(path)) continue;
     // oxlint-disable-next-line no-await-in-loop -- one mesh is read at a time
     const { faces, vertices } = await readObjMesh(path);

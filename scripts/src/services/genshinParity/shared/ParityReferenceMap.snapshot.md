@@ -9,7 +9,7 @@ committed.
 | :-------- | :----- | --------------: | ----: | ---: | ---: |
 | `health-notice` | `SplashHealthNotice` | 6.00% | 0.961 | 0.83% | 0.1853 |
 | `loading-startup` | `LoadingStartup` | 0.03% | 0.989 | 0.00% | 0.0013 |
-| `login-dawn-title` | `LoginScreen` | 14.20% | 0.341 | 10.47% | 0.4950 |
+| `login-dawn-title` | `LoginScreen` | 12.48% | 0.374 | 9.04% | 0.4539 |
 | `login-day-title` | `LoginScreen` | 11.77% | 0.380 | 8.71% | 0.4447 |
 | `login-door` | `LoginScreen` | 12.56% | 0.308 | 10.43% | 0.4782 |
 | `login-door-recording` | `LoginScreen` | 15.41% | 0.424 | 10.05% | 0.5698 |

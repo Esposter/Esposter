@@ -1,5 +1,6 @@
 import type { SampledInstrument } from "#src/models/genshinAssets/shared/SampledInstrument";
 
+import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { SampleLibrary } from "#src/models/genshinAssets/shared/SampleLibrary";
 import { GAME_EXECUTABLE_PATH, PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
@@ -39,14 +40,14 @@ export const GAME_BLOCKS_DIRECTORY: string = join(
 );
 // The asset types an export writes as files, and the types dumped as JSON to rebuild where each mesh stands and what
 // Materials it draws with
-export const EXPORTED_ASSET_TYPES = ["Mesh", "Texture2D", "Material"] as const;
-export const LAYOUT_ASSET_TYPES = [
-  "Transform",
-  "GameObject",
-  "MeshFilter",
-  "MeshRenderer",
-  "SkinnedMeshRenderer",
-] as const;
+export const EXPORTED_ASSET_TYPES: readonly AssetType[] = [AssetType.Mesh, AssetType.Texture2D, AssetType.Material];
+export const LAYOUT_ASSET_TYPES: readonly AssetType[] = [
+  AssetType.Transform,
+  AssetType.GameObject,
+  AssetType.MeshFilter,
+  AssetType.MeshRenderer,
+  AssetType.SkinnedMeshRenderer,
+];
 // The installed game's Wwise audio packages: its sound banks in `Banks*.pck`, its music's sounds in `Music*.pck`
 export const GAME_AUDIO_DIRECTORY: string = join(
   dirname(GAME_EXECUTABLE_PATH),

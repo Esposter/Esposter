@@ -3,6 +3,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { ObjectPointer } from "#src/models/genshinAssets/shared/ObjectPointer";
 
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
+import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { scanSerializedFields } from "#src/services/genshinAssets/scene/scanSerializedFields";
 import { CAB_MAP_PATH } from "#src/services/genshinAssets/shared/constants";
 import { exportBlockBySource } from "#src/services/genshinAssets/shared/exportBlockBySource";
@@ -16,7 +17,6 @@ import { existsSync } from "node:fs";
 import { readdir, readFile, rm } from "node:fs/promises";
 import { basename, join } from "node:path";
 
-const BEHAVIOUR_TYPE = "MonoBehaviour";
 // Every MonoBehaviour of a component's layout blocks exported raw, per file, and scanned for the shapes its fields take
 // (`scanSerializedFields`), each pointer resolved through its file's external references and named by what the layout
 // Or the asset index holds there. A pointer only counts where one of them holds its target, so a float's bits are never
@@ -40,7 +40,7 @@ export const readComponentBehaviours = async (
   await rm(directory.behaviours, { force: true, recursive: true });
   for (const block of blocks)
     // oxlint-disable-next-line no-await-in-loop -- AnimeStudio reads one block at a time
-    await exportBlockBySource(block, [BEHAVIOUR_TYPE], AnimeStudioExportType.Raw, directory.behaviours);
+    await exportBlockBySource(block, [AssetType.MonoBehaviour], AnimeStudioExportType.Raw, directory.behaviours);
   const targetBlocks = new Set(
     [...layoutFiles].flatMap((file) =>
       [file, ...(cabMap.get(file)?.dependencies ?? [])].flatMap((target) => cabMap.get(target)?.block ?? []),
@@ -52,7 +52,7 @@ export const readComponentBehaviours = async (
   );
   const behaviours: ComponentBehaviour[] = [];
   for (const block of blocks) {
-    const blockDirectory = join(directory.behaviours, basename(block, ".blk"), BEHAVIOUR_TYPE);
+    const blockDirectory = join(directory.behaviours, basename(block, ".blk"), AssetType.MonoBehaviour);
     if (!existsSync(blockDirectory)) continue;
     // oxlint-disable-next-line no-await-in-loop -- one block's scripts are read at a time
     for (const file of await readdir(blockDirectory)) {
