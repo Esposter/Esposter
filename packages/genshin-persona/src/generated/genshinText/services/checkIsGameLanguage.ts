@@ -4,6 +4,6 @@ import type { GameLanguage } from "#src/generated/genshinText/models/GameLanguag
 import { GameLanguages } from "#src/generated/genshinText/models/GameLanguage";
 
 // Widened to strings, so a name read off a state file or typed by a person can be looked up in it
-const gameLanguageNames: readonly string[] = GameLanguages;
+const GAME_LANGUAGE_NAMES: readonly string[] = GameLanguages;
 
-export const checkIsGameLanguage = (name: string): name is GameLanguage => gameLanguageNames.includes(name);
+export const checkIsGameLanguage = (name: string): name is GameLanguage => GAME_LANGUAGE_NAMES.includes(name);

@@ -7,8 +7,9 @@ import { getPlainGameText } from "#src/services/genshinText/getPlainGameText";
 export const getVoiceLines = (fetters: FetterEntry[], textMap: Map<string, string>): VoiceLine[] =>
   fetters.flatMap(({ voiceFileTextTextMapHash, voiceTitleTextMapHash }) => {
     const text = textMap.get(String(voiceFileTextTextMapHash));
-    if (!text) return [];
-    return [
-      { text: getPlainGameText(text), title: getPlainGameText(textMap.get(String(voiceTitleTextMapHash)) ?? "") },
-    ];
+    if (text)
+      return [
+        { text: getPlainGameText(text), title: getPlainGameText(textMap.get(String(voiceTitleTextMapHash)) ?? "") },
+      ];
+    else return [];
   });

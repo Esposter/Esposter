@@ -4,7 +4,7 @@ import { getResult } from "@esposter/shared";
 
 const getMaximizedLocale = (tag: string): Intl.Locale | undefined =>
   getResult(() => new Intl.Locale(tag).maximize()).unwrapOr(undefined);
-const GameLanguageLocales = GameLanguages.map(
+const GAME_LANGUAGE_LOCALES = GameLanguages.map(
   (gameLanguage) => [gameLanguage, new Intl.Locale(GameLanguageTagMap[gameLanguage]).maximize()] as const,
 );
 // The game language nearest a reader's own preference list — a browser's `navigator.languages` or the tags of an
@@ -17,7 +17,7 @@ export const matchGameLanguage = (preferredTags: readonly string[]): GameLanguag
     const preferredLocale = getMaximizedLocale(preferredTag);
     if (!preferredLocale) continue;
 
-    const matchedLanguageLocale = GameLanguageLocales.find(
+    const matchedLanguageLocale = GAME_LANGUAGE_LOCALES.find(
       ([, gameLocale]) =>
         gameLocale.language === preferredLocale.language && gameLocale.script === preferredLocale.script,
     );
