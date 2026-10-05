@@ -58,14 +58,14 @@ A regenerated folder is the emptiest thing a reviewer can read: hundreds of file
 
 ## Key files
 
-| File                                                              | Role                                                                |
-| :---------------------------------------------------------------- | :------------------------------------------------------------------ |
-| `apps/web/scripts/tiled/index.ts`                                 | The map generator                                                   |
-| `apps/web/scripts/phaser/index.ts`                                | The asset generator                                                 |
-| `apps/web/scripts/flowMap/index.ts`                               | The flow map generator                                              |
-| `scripts/src/voiceMatch/index.ts`                                 | Rewrites the plugin's reference map whole                           |
-| `packages/db-schema/scripts/generateRegistry.ts`                  | Writes the database registries from the schema and relation folders |
-| `packages/genshin-persona/src/services/readPersonaModule.ts`      | Loads one character's card by path                                  |
-| `packages/genshin-persona/src/services/readCharacterReference.ts` | The authored reference over the generated one                       |
-| `oxfmt.config.ts`                                                 | The formatter's ignore list                                         |
-| `.coderabbit.yaml`                                                | The review's ignore list                                            |
+| File                                                             | Role                                                                |
+| :--------------------------------------------------------------- | :------------------------------------------------------------------ |
+| `apps/web/scripts/tiled/index.ts`                                | The map generator                                                   |
+| `apps/web/scripts/phaser/index.ts`                               | The asset generator                                                 |
+| `apps/web/scripts/flowMap/index.ts`                              | The flow map generator                                              |
+| `scripts/src/voiceMatch/index.ts`                                | Rewrites the plugin's reference map whole                           |
+| `packages/db-schema/scripts/generateRegistry.ts`                 | Writes the database registries from the schema and relation folders |
+| `packages/genshin-persona/src/services/readPersonaModule.ts`     | Loads one character's card by path                                  |
+| `packages/genshin-persona/src/services/getCharacterReference.ts` | The authored reference over the generated one                       |
+| `oxfmt.config.ts`                                                | The formatter's ignore list                                         |
+| `.coderabbit.yaml`                                               | The review's ignore list                                            |

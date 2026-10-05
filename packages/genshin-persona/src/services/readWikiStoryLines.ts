@@ -1,9 +1,9 @@
 import type { WikiStoryLine } from "#src/models/WikiStoryLine";
 
-import { TravelerTwinMap } from "#src/services/constants";
 import { parseWikiStoryLines } from "#src/services/parseWikiStoryLines";
 import { parseWikiTravelerLines } from "#src/services/parseWikiTravelerLines";
 import { readWikiPageText } from "#src/services/readWikiPageText";
+import { TravelerTwinMap } from "#src/services/TravelerTwinMap";
 
 const VOICE_OVERS_SUBPAGE = "/Voice-Overs";
 // The page the twins share, under the name the wiki gives the pair

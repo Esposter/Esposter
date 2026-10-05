@@ -31,8 +31,8 @@ describe(createVoiceSynthesizer, () => {
   const silence = Float32Array.from({ length }, () => 0.001);
   // The engine as each rung loads it: the rung's vocoder answers every generation with the same waveform, a rung
   // Given an error rejects every generation with it, and a rung with none rejects its load
-  const getRuntime = (waveformByRung: (Error | Float32Array | undefined)[]) => {
-    const models = waveformByRung.map((waveform): VoiceModel => ({
+  const getRuntime = (rungWaveforms: (Error | Float32Array | undefined)[]) => {
+    const models = rungWaveforms.map((waveform): VoiceModel => ({
       dispose: vi.fn<VoiceModel["dispose"]>(() => Promise.resolve([])),
       encode_speech: vi.fn<VoiceModel["encode_speech"]>(() => Promise.resolve(speaker)),
       generate: vi.fn<VoiceModel["generate"]>(() =>
@@ -45,7 +45,7 @@ describe(createVoiceSynthesizer, () => {
       (_modelId, { device }) => {
         const rungIndex = VOICE_DEVICE_LADDER.findIndex((rung) => rung.devices === device);
         const model = models[rungIndex];
-        return waveformByRung[rungIndex] && model
+        return rungWaveforms[rungIndex] && model
           ? Promise.resolve(model)
           : Promise.reject(new Error(`rung ${rungIndex}`));
       },

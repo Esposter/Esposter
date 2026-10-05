@@ -1,7 +1,7 @@
 import { readMissingReferences } from "#src/services/voiceMatch/readMissingReferences";
 import { DEFAULT_LANGUAGE } from "genshin-persona/src/services/constants.ts";
 import { readCardedRoster } from "genshin-persona/src/services/readCardedRoster.ts";
-import { readCharacterReference } from "genshin-persona/src/services/readCharacterReference.ts";
+import { getCharacterReference } from "genshin-persona/src/services/getCharacterReference.ts";
 import { readRoster } from "genshin-persona/src/services/readRoster.ts";
 
 // `--check` measures nothing: it asks the wiki whether the line each character is read from — the card's, else
@@ -12,7 +12,7 @@ export const checkReferences = async (): Promise<void> => {
   const stems = new Map(
     cardedRoster.map(({ character, personaCard }) => [
       character.name,
-      readCharacterReference(character.name, personaCard),
+      getCharacterReference(character.name, personaCard),
     ]),
   );
   const unreferenced = [...stems].filter(([, stem]) => !stem).map(([name]) => name);

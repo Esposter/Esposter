@@ -1,10 +1,7 @@
 import type { ReplyPiece } from "#src/models/ReplyPiece";
-import type { TravelerTwin } from "#src/models/TravelerTwin";
 import type { VoiceDeviceRung } from "#src/models/VoiceDeviceRung";
 
 import { GameLanguage } from "#src/generated/genshinText/models/GameLanguage";
-import { TravelerGender } from "#src/generated/genshinText/models/TravelerGender";
-import { VoiceLanguage } from "#src/models/VoiceLanguage";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
@@ -79,18 +76,6 @@ export const MAX_COLOR_CHANNEL_VALUE = 255;
 // Is mostly dark
 export const NAMEPLATE_SURFACE = "#16161e";
 export const NAMEPLATE_TONAL_MIX_PERCENTAGE = 12;
-// The colour per element, as the game's interface paints the element's name: what a character with no row in
-// `CharacterColorMap` yet is drawn in, and an element missing here too (the player character's "None") leaves the
-// Mods in their own accent
-export const ElementColorMap: Record<string, string> = {
-  Anemo: "#33ccb3",
-  Cryo: "#98c8e8",
-  Dendro: "#7bb42d",
-  Electro: "#d376f0",
-  Geo: "#cfa726",
-  Hydro: "#1c72fd",
-  Pyro: "#e2311d",
-};
 // Between the fields of a pick record and of the pin
 export const STATE_FIELD_SEPARATOR = "\t";
 export const PICK_RETENTION_DAYS = 7;
@@ -116,12 +101,6 @@ export const WIKI_VOICE_OVERS_URL: string = `${WIKI_ORIGIN}/api.php?action=parse
 export const WIKI_IMAGE_INFO_URL: string = `${WIKI_ORIGIN}/api.php?action=query&prop=imageinfo&iiprop=url&format=json&titles=`;
 // oxlint-disable-next-line naming/no-site-name-literal -- the plugin ships on its own, without `@esposter/shared` to read `SITE_NAME` from
 export const WIKI_USER_AGENT = "esposter-genshin-persona (card authoring)";
-// The twins have no page of their own: every line is a dialogue with Paimon on the Traveler's story pages, filed
-// Under a file per twin, with a gendered word choice in the text
-export const TravelerTwinMap: Record<string, TravelerTwin> = {
-  Aether: { gender: TravelerGender.Male, namePlaceholder: "{character1}" },
-  Lumine: { gender: TravelerGender.Female, namePlaceholder: "{character2}" },
-};
 // A host that takes the connection and never finishes would otherwise hold the hook a reply waits behind open
 export const WIKI_FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
 // The file host serves a clip only to a request naming the wiki as its referer, and its edge answers `fetch` with a
@@ -133,20 +112,6 @@ export const WIKI_FILE_REQUEST_HEADERS: Record<string, string> = {
 // A line's file is `VO_`, the dub's prefix, the character's name and the line's title; the English dub has no prefix
 export const WIKI_VOICE_FILE_PREFIX = "VO_";
 export const WIKI_VOICE_FILE_EXTENSION = ".ogg";
-// The one thing the interface language says about the voice: whether a dub of it exists at all. Four of the fifteen
-// Have one
-export const VoiceLanguageNameMap: Record<VoiceLanguage, GameLanguage> = {
-  [VoiceLanguage.Chinese]: GameLanguage.ChineseSimplified,
-  [VoiceLanguage.English]: GameLanguage.English,
-  [VoiceLanguage.Japanese]: GameLanguage.Japanese,
-  [VoiceLanguage.Korean]: GameLanguage.Korean,
-};
-export const LanguageDubPrefixMap: Record<VoiceLanguage, string> = {
-  [VoiceLanguage.Chinese]: "ZH_",
-  [VoiceLanguage.English]: "",
-  [VoiceLanguage.Japanese]: "JA_",
-  [VoiceLanguage.Korean]: "KO_",
-};
 // A whole number of this scale, applied as a gain; the top is the engine's own level
 export const MAX_VOLUME = 100;
 // The Nano export ships one variant per component, so the dtype map names what exists rather than what was chosen:

@@ -1,5 +1,5 @@
 import { CharacterColorMap } from "#src/services/CharacterColorMap";
-import { ElementColorMap } from "#src/services/constants";
+import { ElementColorMap } from "#src/services/ElementColorMap";
 import { getPersonaCharacter } from "#src/services/getPersonaCharacter";
 import { assert, describe, expect, test } from "vitest";
 

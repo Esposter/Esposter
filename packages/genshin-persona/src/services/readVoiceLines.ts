@@ -4,9 +4,10 @@ import { CharacterLinesLoaderMap } from "#src/generated/CharacterLinesLoaderMap"
 import { TravelerGender } from "#src/generated/genshinText/models/TravelerGender";
 import { fillLinePlaceholders } from "#src/generated/genshinText/services/fillLinePlaceholders";
 import { getCanonicalLanguage } from "#src/generated/genshinText/services/getCanonicalLanguage";
-import { DEFAULT_LANGUAGE, TravelerTwinMap } from "#src/services/constants";
+import { DEFAULT_LANGUAGE } from "#src/services/constants";
 import { getPlainLineText } from "#src/services/getPlainLineText";
 import { readGenshinDb } from "#src/services/readGenshinDb";
+import { TravelerTwinMap } from "#src/services/TravelerTwinMap";
 
 // Every line the character speaks in the interface language, as a person reads it; `checkIsOwnVoiceLine` is the
 // Authoring command's cut. The lines are the game data's, or — for a character the data package carries no lines

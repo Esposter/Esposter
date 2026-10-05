@@ -10,11 +10,11 @@ export const readWikiFileUrls = async (titles: string[]): Promise<Map<string, st
   const { query } = await readWikiJson<WikiImageInfoResponse>(
     `${WIKI_IMAGE_INFO_URL}${encodeURIComponent(titles.join("|"))}`,
   );
-  const askedTitles = new Map((query?.normalized ?? []).map(({ from = "", to = "" }) => [to, from]));
+  const normalizedAskedTitleMap = new Map((query?.normalized ?? []).map(({ from = "", to = "" }) => [to, from]));
   return new Map(
     Object.values(query?.pages ?? {}).flatMap(({ imageinfo, title = "" }) => {
       const url = imageinfo?.[0]?.url;
-      return url ? [[askedTitles.get(title) ?? title, url]] : [];
+      return url ? [[normalizedAskedTitleMap.get(title) ?? title, url]] : [];
     }),
   );
 };

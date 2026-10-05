@@ -4,7 +4,7 @@ import type { SpeechRequest } from "#src/models/SpeechRequest";
 import type { VoiceLanguage } from "#src/models/VoiceLanguage";
 
 import { TURNLESS_PIECE } from "#src/services/constants";
-import { readCharacterReference } from "#src/services/readCharacterReference";
+import { getCharacterReference } from "#src/services/getCharacterReference";
 import { readVolume } from "#src/services/readVolume";
 
 // What a hook sends to be spoken or warmed: the character the session speaks as, with the reference the card or
@@ -22,7 +22,7 @@ export const getSpeechRequest = (
   language,
   lines,
   name,
-  stem: readCharacterReference(name, personaCard),
+  stem: getCharacterReference(name, personaCard),
   type,
   volume: readVolume(),
 });
