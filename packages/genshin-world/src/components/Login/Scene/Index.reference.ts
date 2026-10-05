@@ -469,6 +469,12 @@ export const reference: ComponentReference = {
       search:
         "genshin:parity calibrate --haze on every hour's frame, each profile set in LoginSkyStateMap and its light written, then compare --all; the day's light re-solved alone under its old haze",
     },
+    {
+      found:
+        "The cloud sea drawn clear of the dense haze, its billows unpaled, scored the dawn 0.4360 against 0.3890 and the night 0.4378 against 0.4003: the haze's pale sheet stands nearer the recordings than our billows, so where the game's sea stands, not whether the haze covers it, is the unknown. Reverted",
+      search:
+        "The cloud sea's material writing no depth, so the haze pass leaves it, then compare on the dawn and the night",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
