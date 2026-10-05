@@ -242,6 +242,12 @@ describe("typescriptRules", () => {
         source: `export const PERCENT_FORMATTER = new Intl.NumberFormat("en", { style: "percent" });`,
         violations: 0,
       },
+      {
+        filePath: "intlStaticCall.ts",
+        name: "intlStaticCall",
+        source: `export const canonicalLocales = Intl.getCanonicalLocales("en");`,
+        violations: 0,
+      },
       { filePath: "regexSuffix.ts", name: "regexSuffix", source: "export const A_REGEX = /a/u;", violations: 0 },
       // A local inside a function is not a named constant
       {
