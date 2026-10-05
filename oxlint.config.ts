@@ -434,6 +434,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "typescript/prefer-readonly-parameter-types": "off",
     "typescript/promise-function-async": "off",
     "typescript/restrict-plus-operands": "off",
+    "typescript/strict-void-return": COSTLY_TYPE_AWARE_SEVERITY,
     "typescript/strict-boolean-expressions": "off",
     "typescript/switch-exhaustiveness-check": ["error", { considerDefaultExhaustiveForUnions: true }],
     "typescript/unbound-method": "off",
