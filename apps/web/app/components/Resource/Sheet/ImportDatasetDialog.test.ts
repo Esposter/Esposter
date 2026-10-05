@@ -21,7 +21,9 @@ describe("resourceSheetImportDatasetDialog", () => {
       onSurveysRead();
       return { hasMore: false, items: [{ ...survey, publication: null }] };
     });
+    const { promise: isDatasetRead, resolve: onDatasetRead } = Promise.withResolvers<void>();
     trpcMsw.dataset.readDataset.query(() => {
+      onDatasetRead();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const wrapper = await mountSuspended(ResourceSheetImportDatasetDialog, { props: { modelValue: false } });
@@ -34,6 +36,7 @@ describe("resourceSheetImportDatasetDialog", () => {
     const importButton = wrapper.findAll("button").find((button) => button.text() === "Import");
     assert.exists(importButton);
     await importButton.trigger("click");
+    await isDatasetRead;
     await flushPromises();
 
     expect(wrapper.emitted("update:modelValue")).toBeUndefined();

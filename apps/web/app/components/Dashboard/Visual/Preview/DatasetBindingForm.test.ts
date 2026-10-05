@@ -22,10 +22,14 @@ describe("dashboardVisualPreviewDatasetBindingForm", () => {
     expect.hasAssertions();
 
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
+    const { promise: isFirstReadReached, resolve: onFirstReadReached } = Promise.withResolvers<void>();
     const firstReference = { id: crypto.randomUUID(), type: DatasetProviderType.Sheet };
     const secondReference = { id: crypto.randomUUID(), type: DatasetProviderType.Sheet };
     trpcMsw.dataset.readDataset.query(async ({ input }) => {
-      if (input.id === firstReference.id) await readGate;
+      if (input.id === firstReference.id) {
+        onFirstReadReached();
+        await readGate;
+      }
       return { columns: [{ name: "", type: ColumnType.String }], rows: [] };
     });
     useSession.mockReturnValue(ref({ data: { user: { id: crypto.randomUUID() } } }));
@@ -36,6 +40,7 @@ describe("dashboardVisualPreviewDatasetBindingForm", () => {
     const picker = wrapper.findComponent(DatasetReferencePicker);
     picker.vm.$emit("update:modelValue", firstReference);
     picker.vm.$emit("update:modelValue", secondReference);
+    await isFirstReadReached;
     await flushPromises();
     releaseRead();
     await flushPromises();

@@ -20,10 +20,12 @@ describe("resourceActivityLog", () => {
 
     const resourceId = crypto.randomUUID();
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
+    const { promise: isReadReached, resolve: onReadReached } = Promise.withResolvers<void>();
     const data = Object.assign(new CursorPaginationData<ResourceActivityEntity>(), {
       items: [{ rowKey: crypto.randomUUID() } as ResourceActivityEntity],
     });
     trpcMsw.resource.readActivities.query(async () => {
+      onReadReached();
       await readGate;
       return data;
     });
@@ -36,6 +38,8 @@ describe("resourceActivityLog", () => {
     const activityStore = useActivityStore();
     const { readItems } = activityStore;
     await readItems(() => Promise.resolve(data));
+    // The mount's read leaves a batch later, so the claim is checked once it has actually reached the server
+    await isReadReached;
     await nextTick();
 
     expect(wrapper.findComponent(UiSkeleton).exists()).toBe(false);

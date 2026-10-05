@@ -18,7 +18,9 @@ describe("resourceSheetDialogs", () => {
   test("keeps the import preview open when its revision fails", async () => {
     expect.hasAssertions();
 
+    const { promise: isRevisionRejected, resolve: onRevisionRejected } = Promise.withResolvers<void>();
     trpcMsw.resource.saveResourceRevision.mutation(() => {
+      onRevisionRejected();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     setupWithDataSource();
@@ -33,6 +35,7 @@ describe("resourceSheetDialogs", () => {
     const importButton = wrapper.findAll("button").find((button) => button.text() === "Import");
     assert.exists(importButton);
     await importButton.trigger("click");
+    await isRevisionRejected;
     await flushPromises();
 
     expect(isPreviewOpen.value).toBe(true);
