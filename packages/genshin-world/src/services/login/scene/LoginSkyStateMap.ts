@@ -30,9 +30,10 @@ const DUSK_LIGHT_DIRECTION = new Vector3(0.837, 0.259, 0.483);
 // Stone only its direction and its shadow, and the hemisphere lights nothing of the login's. Each hour's haze, its
 // Density at the cloud sea's top and how fast it thins with height, is solved with that light on its frame
 // (genshin:parity calibrate --haze): the dawn's and the night's lie as a dense layer under the walkway, nearly gone ten
-// Metres up, the dusk's rises gently, and the day's so solved scored its frames worse, so it keeps the scene's own.
-// The night's and the dusk's hide no more than their most opacity, solved with the rest, since their far towers stand
-// Darker than a haze hiding all of them draws; the dawn's so solved scored its frame worse, so it hides all
+// Metres up, the dusk's rises gently, and the day's thins slowly from a light haze, its title scoring better and its
+// Phone door frame a little worse. The night's and the dusk's hide no more than their most opacity, solved with the
+// Rest, since their far towers stand darker than a haze hiding all of them draws; the dawn's and the day's so solved
+// Scored their frames worse, so they hide all
 export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
   [LoginTimeOfDay.Dawn]: {
     cloudLitColor: new Color(0xf5efe8),
@@ -61,6 +62,8 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     cloudLitColor: new Color(0xfbfcf4),
     cloudShadeColor: new Color(0xb0dbf5),
     fogColor: new Color(0xcfdbf0),
+    fogDensity: 0.2037,
+    fogHeightFalloff: 0.1247,
     haloColor: new Color(0xe0c18b),
     hemisphereGroundColor: new Color(0x9ec0e8),
     hemisphereIntensity: 7.27,
