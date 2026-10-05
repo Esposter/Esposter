@@ -4,8 +4,8 @@ import { AntialiasingMode } from "#src/models/renderer/AntialiasingMode";
 import { QualityTier } from "#src/models/renderer/QualityTier";
 
 // What each tier spends, cheapest cut first: grass blades, whose thinning the look survives best, the shadow maps,
-// Which cost every shadowed fragment, the god rays, a march per pixel at half resolution, the pixel ratio, which
-// Costs every fragment, and bloom, a chain of blurs. TRAA settles the thin outlines and leaf edges that SMAA leaves
+// Which cost every shadowed fragment, the god rays, a march per pixel at half resolution, the screen-space occlusion,
+// A march of its own per pixel, the pixel ratio, which costs every fragment, and bloom, a chain of blurs. TRAA settles the thin outlines and leaf edges that SMAA leaves
 // Shimmering, for a velocity target and a frame of history. The ramp, the rim and the outlines are the style, so no
 // Tier drops them
 export const QualityTierSettingsMap: Readonly<Record<QualityTier, QualityTierSettings>> = {
@@ -15,6 +15,7 @@ export const QualityTierSettingsMap: Readonly<Record<QualityTier, QualityTierSet
     godraysStepCount: 60,
     grassDensity: 1,
     isBloomEnabled: true,
+    isOcclusionEnabled: true,
     maxPixelRatio: 2,
     shadowMapSize: 2048,
   },
@@ -24,6 +25,7 @@ export const QualityTierSettingsMap: Readonly<Record<QualityTier, QualityTierSet
     godraysStepCount: 0,
     grassDensity: 0.3,
     isBloomEnabled: false,
+    isOcclusionEnabled: false,
     maxPixelRatio: 1,
     shadowMapSize: 1024,
   },
@@ -33,6 +35,7 @@ export const QualityTierSettingsMap: Readonly<Record<QualityTier, QualityTierSet
     godraysStepCount: 30,
     grassDensity: 0.6,
     isBloomEnabled: true,
+    isOcclusionEnabled: false,
     maxPixelRatio: 1.5,
     shadowMapSize: 1024,
   },

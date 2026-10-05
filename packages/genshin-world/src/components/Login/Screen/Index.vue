@@ -21,7 +21,7 @@ import {
 import { checkIsNestedInteraction } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
 import { useRafFn, useTimeoutFn, watchImmediate } from "@vueuse/core";
-import { createGenshinRenderer, GENSHIN_TONE_MAPPING } from "genshin-engine";
+import { createGenshinRenderer, GENSHIN_TONE_MAPPING, QualityTier } from "genshin-engine";
 import { GameScreen } from "genshin-interface";
 import { fillLinePlaceholders, GameTextKey } from "genshin-text";
 import { PCFShadowMap } from "three";
@@ -41,10 +41,21 @@ interface Props {
   // How far loading has gone, from 0 to 1, which the bar shows and the flight to the door follows, ending a fixed time
   // After it is done
   progress: number;
+  // The tier the scene draws at, the client's own: the phone's draws no screen-space occlusion where the computer's does
+  qualityTier?: QualityTier;
   timeOfDay: LoginTimeOfDay;
 }
 
-const { gameText, heldScrolled, isInterfaceHidden, language, playerName, progress, timeOfDay } = defineProps<Props>();
+const {
+  gameText,
+  heldScrolled,
+  isInterfaceHidden,
+  language,
+  playerName,
+  progress,
+  qualityTier = QualityTier.High,
+  timeOfDay,
+} = defineProps<Props>();
 // The name the screen welcomes the player by, the game's own word for the Traveler until they have chosen one
 const shownPlayerName = computed(
   () => playerName || fillLinePlaceholders(gameText[GameTextKey.Traveler], "", LOGIN_TRAVELER_GENDER),
@@ -127,6 +138,7 @@ const onClick = (event: MouseEvent): void => {
       <LoginScene
         :held-scrolled
         :is-door-lit="stage === LoginStage.Entering"
+        :quality-tier
         :stage
         :time-of-day
         @door-formed="isDoorFormed = true"

@@ -14,6 +14,8 @@ export interface PostPipelineOptions {
   gradeLutTexture?: Data3DTexture;
   // Whether the scene blooms where its tier allows, false where its colours are measured through the tone mapping alone
   isBloomed?: boolean;
+  // How far round each pixel in metres the scene's screen-space occlusion reaches, where a scene draws it
+  occlusionRadius?: number;
   postUniforms: PostUniforms;
   qualityTierSettings: QualityTierSettings;
   renderer: Renderer;

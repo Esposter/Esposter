@@ -44,6 +44,7 @@ describe(solveStoneLight, () => {
     computeStoneHarmonics(normal, terms);
     const albedo: Vector = [0.4 + 0.02 * (index % 7), 0.35 + 0.03 * (index % 4), 0.3];
     const height = ((index % 11) - 5) * 4;
+    const occlusion = 1 - (index % 5) / 10;
     const opacity = (index % 9) / 20;
     const scatter = (index % 4) / 4;
     const emission: Vector = [0.01 * (index % 3), 0, 0.02];
@@ -55,7 +56,9 @@ describe(solveStoneLight, () => {
       const sky = terms.reduce((sum, value, term) => sum + value * (harmonics[term]?.[channel] ?? 0), 0);
       const hazeColor = (1 - scatter) * haze.color[channel] + scatter * haze.scatterColor[channel];
       const fade = (heightFade[channel] ?? 0) * Math.exp(-height * STONE_HEIGHT_FALLOFF);
-      return (albedo[channel] * (sun + sky + fade) + emission[channel]) * (1 - opacity) + hazeColor * opacity;
+      return (
+        (albedo[channel] * (sun + sky + fade) + emission[channel]) * occlusion * (1 - opacity) + hazeColor * opacity
+      );
     }) as Vector;
     return Array.from({ length: 30 }, () => ({
       albedo,
@@ -64,13 +67,14 @@ describe(solveStoneLight, () => {
       emission,
       harmonics: terms,
       height,
+      occlusion,
       opacity,
       rampCoordinate,
       scatter,
     }));
   }).flat();
 
-  test("recovers the ramp, the harmonics and the light fading with height under a known haze", () => {
+  test("recovers the ramp, the harmonics and the light fading with height under a known occlusion and haze", () => {
     expect.hasAssertions();
 
     const { light, residual } = solveStoneLight(samples, haze);

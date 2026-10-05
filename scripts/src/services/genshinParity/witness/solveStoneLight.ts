@@ -37,7 +37,7 @@ const writeRampWeights = (coordinate: number, weights: number[]): void => {
 };
 // The stone's light under the scene's own haze, solved channel by channel by least squares over the bins' means: each
 // Pixel's scene colour is its albedo times the ramp at its coordinate, the harmonics at its normal and the light fading
-// With its height, with its glow, the part the haze lets through, plus the haze's own colour blended toward its sunward
+// With its height, with its glow, darkened by its occlusion, the part the haze lets through, plus the haze's own colour blended toward its sunward
 // One by its scatter, by its opacity, which is linear in the light. The haze's colours are the cloud sea's, measured
 // Where it shows them: solved here, they would take up the light's own errors over the stone and carry them onto the
 // Sea. Bins average the pixels whose texels do not line up with the reference's, so their shading is read rather than
@@ -76,11 +76,12 @@ export const solveStoneLight = (
         emission,
         harmonics: terms,
         height,
+        occlusion,
         opacity,
         rampCoordinate,
         scatter,
       } of binSamples) {
-        const through = albedo[channel] * (1 - opacity);
+        const through = albedo[channel] * occlusion * (1 - opacity);
         writeRampWeights(rampCoordinate, weights);
         for (const [knot, weight] of weights.entries()) row[knot] = (row[knot] ?? 0) + weight * through;
         for (const [term, value] of terms.entries())
@@ -89,7 +90,7 @@ export const solveStoneLight = (
         // The glow and the rim the material adds after lighting are known, as is the haze the scene draws over it, so
         // Both leave the colour the light explains
         const haze = opacity * ((1 - scatter) * hazeColor[channel] + scatter * hazeScatterColor[channel]);
-        target += color[channel] - emission[channel] * (1 - opacity) - haze;
+        target += color[channel] - emission[channel] * occlusion * (1 - opacity) - haze;
       }
       return {
         row: row.map((value) => value / binSamples.length),

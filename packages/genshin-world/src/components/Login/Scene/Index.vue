@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { LoginGlide } from "#src/models/login/LoginGlide";
 import type { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
+import type { QualityTier } from "genshin-engine";
 
 import { usePostPipeline } from "#src/composables/usePostPipeline";
 import sky from "#src/data/login/sky.json";
@@ -59,6 +60,7 @@ import {
   LOGIN_TOWERS_ROW_OFFSET,
   LOGIN_WALKWAY_ROW,
 } from "#src/services/login/scene/constants";
+import { LoginOcclusionRadiusMap } from "#src/services/login/scene/LoginOcclusionRadiusMap";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
 import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
 import { computeLoginTowerAtlas } from "#src/services/login/tower/computeLoginTowerAtlas";
@@ -82,7 +84,6 @@ import {
   createSkyNode,
   createSkyUniforms,
   createStoneMaterial,
-  QualityTier,
 } from "genshin-engine";
 import { BatchedMesh, DirectionalLight, Group, HemisphereLight, Matrix4 } from "three";
 import {
@@ -103,12 +104,13 @@ interface Props {
   // The glide held still at this many metres scrolled, for a reference taken at one moment of the title's loop
   heldScrolled?: number;
   isDoorLit: boolean;
+  qualityTier: QualityTier;
   // The login screen's stage, which sets the glide's pace and, from the door's, brings it to rest at the door
   stage: LoginStage;
   timeOfDay: LoginTimeOfDay;
 }
 
-const { heldScrolled, isDoorLit, stage, timeOfDay } = defineProps<Props>();
+const { heldScrolled, isDoorLit, qualityTier, stage, timeOfDay } = defineProps<Props>();
 const emit = defineEmits<{ doorFormed: []; ready: [] }>();
 const [doorRiseMs = 0] = LOGIN_DOOR_RISE_KEYFRAMES.at(-1) ?? [];
 // The witness render's parts, drawn in place of the fitted ones of each family it names when the parity page provides
@@ -248,7 +250,12 @@ cloudSeaMaterial.colorNode = mix(
 );
 // No grade and no bloom: every colour of the login is measured off its references through the tone mapping alone, the
 // Sky's, the haze's and the stone's light, so the frame is drawn through that alone and each inverts exactly
-usePostPipeline(QualityTier.High, { fogUniforms, isBloomed: false, postUniforms }, skyUniforms);
+usePostPipeline(
+  () => qualityTier,
+  { fogUniforms, isBloomed: false, postUniforms },
+  () => LoginOcclusionRadiusMap[timeOfDay],
+  skyUniforms,
+);
 let renderedFrameCount = 0;
 let isReadyEmitted = false;
 let isDoorFormed = false;
