@@ -75,10 +75,10 @@ export const runDrainStep = async ({
     reviewId: openBodyReviewId,
     viewerLogin,
   });
-  if (!drain.isStarted)
+  if (drain.isStarted) return { reviewFixesSha: drain.reviewFixesSha };
+  else
     return {
       outcome: { kind: CycleOutcomeKind.Idle, reason: "the drain could not start — the findings stay open" },
       reviewFixesSha,
     };
-  return { reviewFixesSha: drain.reviewFixesSha };
 };

@@ -58,11 +58,12 @@ export const readComponentBehaviours = async (
     for (const file of await readdir(blockDirectory)) {
       const nameTarget = (pointer: ObjectPointer): string | undefined => {
         const resolved = resolveObjectPointer(cabMap, file, pointer);
-        if (!resolved) return undefined;
-        return (
-          objectNameMap.get(toObjectKey(resolved.file, resolved.pathId)) ??
-          assetNameMap.get(toObjectKey(resolved.block, resolved.pathId))
-        );
+        if (resolved)
+          return (
+            objectNameMap.get(toObjectKey(resolved.file, resolved.pathId)) ??
+            assetNameMap.get(toObjectKey(resolved.block, resolved.pathId))
+          );
+        else return undefined;
       };
       const describePointer = (pointer: ObjectPointer): string => {
         const resolved = resolveObjectPointer(cabMap, file, pointer);

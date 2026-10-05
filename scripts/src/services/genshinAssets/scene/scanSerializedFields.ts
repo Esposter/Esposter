@@ -166,9 +166,10 @@ export const scanSerializedFields = (
     const end = offset + WORD;
     if (Math.abs(integer) <= MAX_INTEGER)
       return { end, field: { kind: SerializedFieldKind.Integer, offset, value: integer } };
-    return checkIsPlausible(float)
-      ? { end, field: { kind: SerializedFieldKind.Float, offset, value: float } }
-      : undefined;
+    else
+      return checkIsPlausible(float)
+        ? { end, field: { kind: SerializedFieldKind.Float, offset, value: float } }
+        : undefined;
   };
   const readers = [readPointer, readCurve, readArray, readGradient, readColor, readScalar];
   const fields: SerializedField[] = [];
