@@ -31,7 +31,7 @@ The prompt is the agent's whole world: the spec with its judgement calls resolve
 
 ## While the agent runs
 
-Edit only files the agent will not stage; a batch runs one agent per worktree over self-contained specs, merged into `ai/queue` in a stated order; and only the branches you created are yours to sweep (`references/running-agents.md`).
+Edit only files the agent will not stage; a batch runs one agent per worktree over self-contained specs, rebased onto `ai/queue` in a stated order; and only the branches you created are yours to sweep (`references/running-agents.md`).
 
 ## Code reviews
 
