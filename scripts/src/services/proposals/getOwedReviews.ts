@@ -16,5 +16,5 @@ export const getOwedReviews = (ships: ProposalShip[], passes: ProductReviewPass[
     const lastPass = getLatest(passes.filter(({ areas }) => areas.includes(area)));
     if (!lastShip || (lastPass && (lastPass.hash === lastShip.hash || lastPass.timestamp > lastShip.timestamp)))
       return [];
-    return [{ area, lastPassDate: lastPass?.date ?? "", lastShipDate: lastShip.date }];
+    else return [{ area, lastPassDate: lastPass?.date ?? "", lastShipDate: lastShip.date }];
   });

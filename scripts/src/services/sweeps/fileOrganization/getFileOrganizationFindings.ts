@@ -11,7 +11,6 @@ import {
   EXPORT_REGEX,
   LOCAL_TYPE_REGEX,
   MODEL_DIRECTORIES,
-  MODULE_CONSTANT_REGEX,
   SCHEMA_DIRECTORY,
   SCHEMA_SUFFIX,
   TYPE_KINDS,
@@ -21,7 +20,7 @@ import { basename, extname } from "node:path";
 const getNames = (text: string, regex: RegExp): string[] => [
   ...new Set(Array.from(text.matchAll(regex), (match) => String(match.groups?.name))),
 ];
-// The four shapes the file-organization skill states that a read of one file can decide, as candidates for the
+// The three shapes the file-organization skill states that a read of one file can decide, as candidates for the
 // Pass rather than findings in themselves — the skill's exceptions are a roster no scan can hold, so what is
 // Reported is what the pass then reads. A second export is a second concern only when it is not a companion of
 // The file's shortest one; a drizzle table file's `pgEnum` wrappers sit beside the table that reads them. An
@@ -29,8 +28,7 @@ const getNames = (text: string, regex: RegExp): string[] => [
 // Twin, schema and composable-options shapes the skill allows. A local type is reported unless it is the event
 // Or hook map the skill colocates, in a composable, or in an SFC, whose `Props` is the vue skill's; a suite's
 // Fixture shapes are the testing ledger's, and no suite reaches here — and a shape another file reads sits beside
-// The component that owns it, named after its one export. A screaming constant at module scope in an SFC or
-// Composable belongs in a `constants.ts`.
+// The component that owns it, named after its one export.
 export const getFileOrganizationFindings = (path: string, text: string): FileOrganizationFinding[] => {
   const isVue = path.endsWith(".vue");
   const isComposable = path.includes(COMPOSABLES_DIRECTORY);
@@ -73,12 +71,6 @@ export const getFileOrganizationFindings = (path: string, text: string): FileOrg
     );
     if (localTypeNames.length > 0 && !isComposable)
       findings.push({ names: localTypeNames, path, type: FileOrganizationFindingType.LocalType });
-  }
-
-  if ((isVue || isComposable) && !isConstantsFile) {
-    const constantNames = getNames(text, MODULE_CONSTANT_REGEX);
-    if (constantNames.length > 0)
-      findings.push({ names: constantNames, path, type: FileOrganizationFindingType.ModuleConstant });
   }
 
   return findings;

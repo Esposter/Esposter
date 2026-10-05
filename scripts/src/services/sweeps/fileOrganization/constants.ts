@@ -5,8 +5,6 @@ export const EXPORT_REGEX: RegExp =
 export const TYPE_KINDS: readonly string[] = ["interface", "type"];
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const LOCAL_TYPE_REGEX: RegExp = /^(?:interface|type) (?<name>\w+)/gmu;
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
-export const MODULE_CONSTANT_REGEX: RegExp = /^const (?<name>[A-Z][A-Z0-9_]+)(?::[^=]+)? =/gmu;
 // The multi-export files the skill sanctions by name: a constants file and its test and bench twins
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const CONSTANTS_FILE_REGEX: RegExp = /\/constants(?:\.test|\.bench)?\.ts$/u;

@@ -53,7 +53,7 @@ export const syncFixes = async ({
 
   const syncedSha = readHeadSha(cwd);
   if (
-    !pushBranch({
+    pushBranch({
       branch: REVIEW_FIXES_BRANCH,
       cwd,
       expectedSha: owingFixesSha,
@@ -62,6 +62,6 @@ export const syncFixes = async ({
       sha: syncedSha,
     })
   )
-    return { outcome: getMovedOutcome(REVIEW_FIXES_BRANCH), owingFixesSha };
-  return { owingFixesSha: syncedSha };
+    return { owingFixesSha: syncedSha };
+  else return { outcome: getMovedOutcome(REVIEW_FIXES_BRANCH), owingFixesSha };
 };

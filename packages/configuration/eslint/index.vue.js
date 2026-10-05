@@ -2,6 +2,7 @@ import ignores from "@esposter/configuration/eslint/ignores.js";
 import nuxtOverrides from "@esposter/configuration/eslint/overrides/nuxt.js";
 import oxlint from "@esposter/configuration/eslint/oxlint.js";
 import plugins from "@esposter/configuration/eslint/plugins/index.js";
+import restrictedConstantSyntaxes from "@esposter/configuration/eslint/restrictedConstantSyntaxes.js";
 import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDateSyntaxes.js";
 import restrictedModuleSyntaxes from "@esposter/configuration/eslint/restrictedModuleSyntaxes.js";
 import restrictedSourceSyntaxes from "@esposter/configuration/eslint/restrictedSourceSyntaxes.js";
@@ -30,6 +31,7 @@ export default withNuxt(plugins)
       "no-restricted-syntax": [
         "error",
         ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...restrictedConstantSyntaxes,
         ...restrictedSourceSyntaxes,
         ...restrictedDateSyntaxes,
         ...restrictedStoreSyntaxes,
@@ -46,6 +48,22 @@ export default withNuxt(plugins)
       "no-restricted-syntax": [
         "error",
         ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...restrictedModuleSyntaxes,
+        ...restrictedSourceSyntaxes,
+        ...restrictedWatchSyntaxes,
+      ],
+    },
+  })
+  // A composable holds no fixed value of its own, so its override is the `.ts` one plus that ban — a suite or a bench
+  // Under `composables/` keeps its fixtures, which the test override below still reaches.
+  .append({
+    files: ["**/composables/**/*.ts"],
+    ignores: ["**/*.bench.ts", "**/*.test-d.ts", "**/*.test.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...restrictedConstantSyntaxes,
         ...restrictedModuleSyntaxes,
         ...restrictedSourceSyntaxes,
         ...restrictedWatchSyntaxes,

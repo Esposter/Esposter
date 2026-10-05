@@ -98,15 +98,4 @@ describe(getFileOrganizationFindings, () => {
       ),
     ).toStrictEqual([]);
   });
-
-  test("reports a screaming constant at module scope in an SFC or composable", () => {
-    expect.hasAssertions();
-
-    const source = "const MAX: number = 0;\n";
-    const vuePath = "apps/web/app/components/A.vue";
-    expect(getFileOrganizationFindings(vuePath, source)).toStrictEqual([
-      { names: ["MAX"], path: vuePath, type: FileOrganizationFindingType.ModuleConstant },
-    ]);
-    expect(getFileOrganizationFindings(SERVICE_PATH, source)).toStrictEqual([]);
-  });
 });

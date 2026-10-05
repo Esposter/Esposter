@@ -1,13 +1,6 @@
-import type { IncomingMessage } from "node:http";
-import type { Duplex } from "node:stream";
 import type { NuxtHooks } from "nuxt/schema";
 
-// Nitro's Vite environment carries the dev server its own upgrade listener forwards to, which Vite's types do not know
-interface NitroDevEnvironment {
-  devServer: {
-    upgrade?: (context: { node: { head: Buffer; req: IncomingMessage; socket: Duplex } }) => Promise<void> | void;
-  };
-}
+import type { NitroDevEnvironment } from "./models/NitroDevEnvironment.ts";
 
 const checkIsNitroDevEnvironment = (environment: object): environment is NitroDevEnvironment =>
   "devServer" in environment;

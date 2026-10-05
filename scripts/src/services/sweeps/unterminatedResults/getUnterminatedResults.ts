@@ -40,12 +40,12 @@ const AFTER_LENGTH = 34;
 // There: `end` is one past the last token the name matched, so that token's index is where the source resumes.
 const checkIsCalled = (text: string, tokens: readonly CodeToken[], end: number): boolean => {
   const last = tokens[end - 1];
-  if (!last) return false;
-
-  return text
-    .slice(last[2] + 1)
-    .replace(TRIVIA_REGEX, "")
-    .startsWith("(");
+  if (last)
+    return text
+      .slice(last[2] + 1)
+      .replace(TRIVIA_REGEX, "")
+      .startsWith("(");
+  else return false;
 };
 // A `Result` nothing terminates fails silently, and no line-anchored grep can see it: the terminator sits after
 // The call's closing bracket, which is wherever its callback ends — and a fixed window around the call reports

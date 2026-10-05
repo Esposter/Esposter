@@ -12,9 +12,9 @@ export const releaseStorageLedgerEntries = (
   blobNames: string[],
 ): Promise<UserInAuth["id"][]> => {
   if (blobNames.length === 0) return Promise.resolve([]);
-
-  return releaseStorageLedgerEntriesByWhere(
-    db,
-    and(eq(storageLedgerInStorage.containerName, containerName), inArray(storageLedgerInStorage.blobName, blobNames)),
-  );
+  else
+    return releaseStorageLedgerEntriesByWhere(
+      db,
+      and(eq(storageLedgerInStorage.containerName, containerName), inArray(storageLedgerInStorage.blobName, blobNames)),
+    );
 };

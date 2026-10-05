@@ -10,7 +10,8 @@ import { z } from "zod";
 // Its next connect without the host being told
 export const readDevices = (stateDirectory: string): Device[] => {
   const devicesPath = join(stateDirectory, DEVICES_FILENAME);
-  if (!existsSync(devicesPath)) return [];
-  // oxlint-disable-next-line no-restricted-properties -- the device schema validates the file and coerces its dates, the pair /docs/architecture/serialization.md names
-  return z.array(deviceSchema).parse(JSON.parse(readFileSync(devicesPath, "utf8")));
+  if (existsSync(devicesPath))
+    // oxlint-disable-next-line no-restricted-properties -- the device schema validates the file and coerces its dates, the pair /docs/architecture/serialization.md names
+    return z.array(deviceSchema).parse(JSON.parse(readFileSync(devicesPath, "utf8")));
+  else return [];
 };

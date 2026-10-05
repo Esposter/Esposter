@@ -1,8 +1,8 @@
 # Merging `main` and the Lockfile
 
-Read when merging `main` into a branch, a worktree branch into `ai/queue`, or resolving a `pnpm-workspace.yaml` or `pnpm-lock.yaml` conflict.
+Read when merging `main` into a branch, rebasing a worktree branch onto `ai/queue`, or resolving a `pnpm-workspace.yaml` or `pnpm-lock.yaml` conflict.
 
-`main` takes commits `develop` never saw — a Renovate PR merged straight into it — and the collector folds them into the next window as a merge commit, resolving the lockfile the way below. The same procedure applies to any merge a session makes by hand (`main` into a spike branch, a worktree branch into `ai/queue`) — never `main` or `develop` into `ai/queue`, which catches up by rebase alone (`review-queue` skill). Never rebase a branch whose commits are already pushed and reviewed.
+`main` takes commits `develop` never saw — a Renovate PR merged straight into it — and the collector folds them into the next window as a merge commit, resolving the lockfile the way below. The same procedure applies to any merge a session makes by hand (`main` into a spike branch) and to a worktree branch rebased onto `ai/queue` — never a merge into `ai/queue`, which takes commits by rebase alone (`review-queue` skill). Never rebase a branch whose commits are already pushed and reviewed.
 
 `pnpm-workspace.yaml` is authored and usually auto-merges — read the merged catalog anyway, since a clean
 auto-merge proves only that the two sides touched different lines, never that the surviving version is the

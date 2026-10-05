@@ -58,14 +58,6 @@ its colocated test with it, and the alias import replaces the barrel one — and
 A clean pass prints nothing, and `scripts/src/workspace/sharedExportConsumers.test.ts` fails on anything it
 prints, so the rule is enforced rather than swept.
 
-## Next enforceable
-
-A screaming constant at module scope in an SFC or a composable. Two sittings have now written it — the two the
-last one moved beside their consumers, the eleven this one did — and it is decidable from one file's syntax with
-no list: a `const` whose name is `SCREAMING_SNAKE` at the top level of a `.vue` script or a `composables/**`
-file, `constants.ts` excepted. The next pass that writes it writes the oxlint plugin instead (`oxlint` skill,
-`references/custom-js-plugins.md`), and the scan's `module constant` check retires with it.
-
 ## Exclusions
 
 - Generated barrels (the generated `index.ts`) and `snapshot.json` — machine state.
@@ -73,5 +65,13 @@ file, `constants.ts` excepted. The next pass that writes it writes the oxlint pl
 - Two exports sharing module-private state through closure — a pending set, a cached promise, a code set, a
   dispatch map, the four names `initTRPC` hands out. One-export-per-file cannot reach them without making that
   state a module global, which trades a file boundary for a wider one.
+- A local type in a package's `src` that its own file alone reads (`createTileStreamer`'s `CachedTile`,
+  `toContentBlockParam`'s SDK-derived block): a `models/` file is a module, and the generated barrel publishes every
+  module, so extracting it would make a private shape public API. The same reason the `file-organization` skill
+  gives a module-private map (`references/constant-maps.md`).
+- A local type in a script outside its package's `imports` map (`packages/db-schema/scripts/`): it has no alias to
+  reach a models file through, and a relative import is the one shape the alias ban refuses.
+- A generator's emitted source (`get*Source`): the `export` lines the scan reads there are the text it writes into
+  a generated file, not exports of its own.
 - A table read as two entities keeps both select schemas in the table file (`posts` as comments): the second
   schema is derived from the same table, so it is the table's concern rather than a second one.

@@ -4,7 +4,6 @@ import { RECYCLE_BIN_RETENTION_MS } from "@esposter/db-schema";
 
 // How much of its time in the bin a resource has used, out of a hundred: full once it is only awaiting the next sweep
 export const getRetentionElapsedPercentage = (deletedAt: ResourceInResource["deletedAt"]): number => {
-  if (!deletedAt) return 0;
-
-  return Math.min(((Date.now() - deletedAt.getTime()) / RECYCLE_BIN_RETENTION_MS) * 100, 100);
+  if (deletedAt) return Math.min(((Date.now() - deletedAt.getTime()) / RECYCLE_BIN_RETENTION_MS) * 100, 100);
+  else return 0;
 };

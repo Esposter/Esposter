@@ -4,6 +4,8 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { DumpedGameObject } from "#src/models/genshinAssets/shared/DumpedGameObject";
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
 
+import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
+import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { composeInterfaceTree } from "#src/services/genshinAssets/interface/composeInterfaceTree";
 import { parseRectTransformLayout } from "#src/services/genshinAssets/interface/parseRectTransformLayout";
 import { GAME_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
@@ -33,14 +35,21 @@ export const extractComponentInterface = async (component: DerivedAssetComponent
     blockPath,
     join(directory, "json"),
     "--types",
-    "RectTransform",
-    "GameObject",
+    AssetType.RectTransform,
+    AssetType.GameObject,
     "--export_type",
-    "JSON",
+    AnimeStudioExportType.Json,
   ]);
-  runAnimeStudio([blockPath, join(directory, "raw"), "--types", "RectTransform", "--export_type", "Raw"]);
-  const rectDirectory = join(directory, "json", "RectTransform");
-  const gameObjectDirectory = join(directory, "json", "GameObject");
+  runAnimeStudio([
+    blockPath,
+    join(directory, "raw"),
+    "--types",
+    AssetType.RectTransform,
+    "--export_type",
+    AnimeStudioExportType.Raw,
+  ]);
+  const rectDirectory = join(directory, "json", AssetType.RectTransform);
+  const gameObjectDirectory = join(directory, "json", AssetType.GameObject);
   const [rectNames, gameObjectNames] = await Promise.all([readdir(rectDirectory), readdir(gameObjectDirectory)]);
   const rects = await Promise.all(
     rectNames.map(async (name): Promise<DumpedInterfaceRect> => {

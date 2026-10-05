@@ -1,5 +1,7 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
+import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
+import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { annotateProgramConstants } from "#src/services/genshinAssets/materials/annotateProgramConstants";
 import { decompileDxbcDirectory } from "#src/services/genshinAssets/materials/decompileDxbcDirectory";
 import { disassembleDxbcDirectory } from "#src/services/genshinAssets/materials/disassembleDxbcDirectory";
@@ -44,11 +46,11 @@ export const extractComponentShaders = async (component: DerivedAssetComponent):
       join(GAME_BLOCKS_DIRECTORY, block),
       rawDirectory,
       "--types",
-      `Shader${ANIMESTUDIO_UNPARSED_SUFFIX}`,
+      `${AssetType.Shader}${ANIMESTUDIO_UNPARSED_SUFFIX}`,
       "--export_type",
-      "Raw",
+      AnimeStudioExportType.Raw,
     ]);
-    const shaderDirectory = join(rawDirectory, "Shader");
+    const shaderDirectory = join(rawDirectory, AssetType.Shader);
     if (!existsSync(shaderDirectory)) {
       summary.push(`${blockName}: no shader AnimeStudio could read`);
       continue;
