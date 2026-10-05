@@ -1,7 +1,8 @@
 import type { SceneContext } from "#src/models/scene/SceneContext";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 import type { Camera, Scene } from "three";
-import type { Node } from "three/webgpu";
+import type GTAONode from "three/examples/jsm/tsl/display/GTAONode.js";
+import type { Node, PassNode } from "three/webgpu";
 
 import { WitnessShadowMaterial } from "#parity/models/witness/WitnessShadowMaterial";
 import { WitnessTarget, WitnessTargets } from "#parity/models/witness/WitnessTarget";
@@ -23,8 +24,18 @@ const sunRadiance = uniform(new Color());
 // The one target every read draws into, rebuilt only when the drawing buffer's size changes
 let renderTarget: RenderTarget | undefined;
 // The pipeline the occlusion target is drawn through, the scene's own occlusion over the parts' depth, rebuilt only when
-// The scene, its camera or the occlusion's reach changes
-let occlusion: undefined | { camera: Camera; radius: number; renderPipeline: RenderPipeline; scene: Scene };
+// The scene, its camera or the occlusion's reach changes. The pipeline, the depth pass and the occlusion each hold
+// Targets of their own, so a rebuild releases all three
+let occlusion:
+  | undefined
+  | {
+      camera: Camera;
+      occlusionNode: GTAONode;
+      radius: number;
+      renderPipeline: RenderPipeline;
+      scene: Scene;
+      scenePass: PassNode;
+    };
 // The witness render's G-buffer at its current view, one floating-point target a quantity, each read back from the
 // Renderer as rows of four floats a pixel: the albedo its exported material draws unlit, the depth along the view in
 // Metres, the light the material adds after lighting, the world normal its normal map bends (encoded into 0 to 1, as
@@ -123,11 +134,14 @@ export const renderWitnessTargets = async (
   const drawnTarget = renderTarget;
   if (occlusion?.scene !== scene || occlusion.camera !== camera || occlusion.radius !== occlusionRadius) {
     occlusion?.renderPipeline.dispose();
+    occlusion?.scenePass.dispose();
+    occlusion?.occlusionNode.dispose();
     const renderPipeline = new RenderPipeline(renderer);
     renderPipeline.outputColorTransform = false;
-    const occlusionNode = createOcclusionNode(pass(scene, camera).getTextureNode("depth"), camera, occlusionRadius);
+    const scenePass = pass(scene, camera);
+    const occlusionNode = createOcclusionNode(scenePass.getTextureNode("depth"), camera, occlusionRadius);
     renderPipeline.outputNode = occlusionRadius > 0 ? vec4(vec3(occlusionNode.getTextureNode().r), 1) : vec4(1);
-    occlusion = { camera, radius: occlusionRadius, renderPipeline, scene };
+    occlusion = { camera, occlusionNode, radius: occlusionRadius, renderPipeline, scene, scenePass };
   }
   const { renderPipeline: occlusionPipeline } = occlusion;
   const targets: Partial<Record<WitnessTarget, string>> = {};

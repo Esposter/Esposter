@@ -34,7 +34,7 @@ export const usePostPipeline = (
   watchImmediate(
     [() => camera.value, () => toValue(qualityTier), () => toValue(occlusionRadius)],
     ([activeCamera, newQualityTier, newOcclusionRadius]) => {
-      postPipeline.value?.renderPipeline.dispose();
+      postPipeline.value?.dispose();
       // The witness settles a view in one frame, which a temporal resolve's history and jitter cannot
       const qualityTierSettings = witness
         ? { ...QualityTierSettingsMap[newQualityTier], antialiasingMode: AntialiasingMode.Smaa }
@@ -71,7 +71,7 @@ export const usePostPipeline = (
   });
 
   onUnmounted(() => {
-    postPipeline.value?.renderPipeline.dispose();
+    postPipeline.value?.dispose();
   });
 
   return postPipeline;
