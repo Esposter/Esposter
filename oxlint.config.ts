@@ -261,7 +261,13 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       // A subpath import at load, so the mod trees keep every other import restriction and lose the
       // Relative-specifier ban
       files: ["packages/genshin-mods/**/*.ts", "packages/genshin-persona/mod/**/*.ts"],
-      rules: { "no-restricted-imports": ["error", { paths: RESTRICTED_IMPORT_PATHS, patterns: [MOD_IMPORT_PATTERN] }] },
+      rules: {
+        "no-restricted-imports": ["error", { paths: RESTRICTED_IMPORT_PATHS, patterns: [MOD_IMPORT_PATTERN] }],
+        // Asking whether an async hook fits the engine's `On` overloads costs tsgolint tens of seconds a file and tens of
+        // Gigabytes, the whole pass's peak, where tsc checks the program in a second. See /docs/architecture/lint-toolchain
+        "typescript/no-misused-promises": "off",
+        "typescript/strict-void-return": "off",
+      },
     },
   ],
   plugins: ["import", "oxc", "promise", "typescript", "unicorn", "vitest", "vue"],

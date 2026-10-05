@@ -1,11 +1,11 @@
 ---
 title: Lint toolchain
-description: Oxlint as the one repo-wide pass with ESLint behind it for what oxlint cannot parse, the config that keeps the two from double-linting, and the blocker table a bump is read against.
+description: Oxlint as the one repo-wide pass with ESLint behind it for what oxlint cannot parse, the config that keeps the two from double-linting, where the type-aware pass spends its time, and the blocker table a bump is read against.
 ---
 
 # Lint Toolchain
 
-Two linters, one direction: a rule moves from ESLint to oxlint whenever oxlint gains coverage, prioritized by what actually costs time in the ESLint pass. The move is gated on upstream — each rule still in ESLint waits on a trigger the table below names — so this page is the mechanism as it stands and the blocker table a bump is read against, never a schedule. Oxlint clears the whole repo in seconds; ESLint is the slower half by an order of magnitude, and its cost is concentrated in a handful of rules rather than spread across the set. Since the type-aware rules left (`neverthrow/must-use-result` dropped, `typescript-eslint` removed), the remaining pass is short enough to run on every change — `lint` is no longer near CI's critical path, which belongs to `build app`.
+Two linters, one direction: a rule moves from ESLint to oxlint whenever oxlint gains coverage, prioritized by what actually costs time in the ESLint pass. The move is gated on upstream — each rule still in ESLint waits on a trigger the table below names — so this page is the mechanism as it stands and the blocker table a bump is read against, never a schedule. Oxlint clears the whole repo in under a minute, nearly all of it the type-aware rules; ESLint is the slower half, and its cost is concentrated in a handful of rules rather than spread across the set. Since the type-aware rules left (`neverthrow/must-use-result` dropped, `typescript-eslint` removed), the remaining pass is short enough to run on every change — `lint` is no longer near CI's critical path, which belongs to `build app`.
 
 ## What works today
 
@@ -24,6 +24,24 @@ flowchart LR
   config -->|"categories + rules + typeAware"| oxlint
   config -->|"same file"| plugin
   plugin -->|"appends off for every covered rule"| eslint
+```
+
+## What the type-aware pass costs
+
+Both linters report their rule timings on every run. The app's ESLint scripts set `TIMING=1`, and the root oxlint scripts pass `--debug=timings`, which prints a table at the end of the log naming each rule's time, its share and whether it is native, a JS plugin or type-aware. A slow or memory-hungry lint is therefore diagnosed from the log CI already has.
+
+The type-aware share is billed unevenly. `oxlint-tsgolint` computes each type lazily and caches it, so the first rule that forces an expensive type is charged for all of it, and switching that rule off moves the charge to the next rule that asks. Reading the table, the top rule is a lead, not a verdict: the expensive files are found by timing oxlint per package and then per file, and the fix is scoped to them.
+
+The Claude Code mod trees (`packages/genshin-mods` and `packages/genshin-persona/mod`) are the standing case. Their hooks register through the engine's `On` type, a pair of generic overloads whose callback parameter is computed from a large union of event patterns. The engine writes those declarations, and the repo cannot reshape them. `tsc` checks the same program in about a second. But `strict-void-return` and `no-misused-promises` ask, for every async hook, whether it is assignable to a void-returning callback, and over those overloads that query cost tens of seconds per file and tens of gigabytes of memory. The whole repo's peak memory was this one package. An `overrides` entry in `oxlint.config.ts` turns those two rules off for the mod trees alone, so every other type-aware rule still runs there, and the mod trees lint in about a second.
+
+```mermaid
+flowchart LR
+  log["--debug=timings table"] --> top{"top rule's cost spread across the repo?"}
+  top -->|"no — a few files"| bisect["time oxlint per package, then per file"]
+  bisect --> tsc{"tsc fast on the same program?"}
+  tsc -->|"yes — the rule's queries"| override["overrides entry: the asking rules off in that scope"]
+  tsc -->|"no — the types themselves"| types["fix the types, or ignorePatterns for a tsgo hang"]
+  top -->|"yes"| repo["weigh the rule repo-wide"]
 ```
 
 ## What remains in ESLint and why
@@ -97,6 +115,7 @@ What stays in ESLint, and why:
 | File                                                                | Role                                                                                                        |
 | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `oxlint.config.ts`                                                  | Single source of truth: categories (list `correctness` explicitly), per-rule overrides, `typeAware`         |
+| `package.json`                                                      | The root oxlint scripts, each run with `--debug=timings`                                                    |
 | `packages/configuration/eslint/oxlint.js`                           | Builds the ESLint disable config from `oxlint.config.ts`                                                    |
 | `packages/configuration/eslint/index.typescript.js`, `index.vue.js` | Append the oxlint disables last so they win                                                                 |
 | `packages/configuration/eslint/index.vueScopedStyles.js`            | The Vue config for a package styled by scoped CSS alone, every UnoCSS rule off                              |

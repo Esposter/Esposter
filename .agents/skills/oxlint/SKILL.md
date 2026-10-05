@@ -16,6 +16,7 @@ description: Apply when fixing lint errors, editing oxlint.config.ts, configurin
 - `references/lint-configuration.md` — when editing `oxlint.config.ts` (a category, a rule entry, an `overrides` scope), probing a rule check-only, or deleting a manual ESLint disable.
 - `references/plugin-rules.md` — when a `vitest/` or `promise/` rule reports, a style pair fights, or a rule with a site or two is weighed.
 - `references/ignore-patterns.md` — when editing `ignorePatterns`, the oxlint step hangs, or a linter walks an agent worktree.
+- `references/type-aware-cost.md` — when the oxlint pass slows, its memory climbs, or one type-aware rule tops the timings table.
 - `references/import-rules.md` — when an import rule reports: a duplicate import, a comment in the import block, a module cycle.
 - `references/json-linting.md` — when changing how JSON is linted, adding a JSONC file, or one package's lint dwarfs the rest.
 - `references/stale-directives.md` — when hunting disable directives that suppress nothing.
