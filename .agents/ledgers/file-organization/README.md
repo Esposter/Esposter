@@ -73,5 +73,11 @@ prints, so the rule is enforced rather than swept.
   reach a models file through, and a relative import is the one shape the alias ban refuses.
 - A generator's emitted source (`get*Source`): the `export` lines the scan reads there are the text it writes into
   a generated file, not exports of its own.
+- A screen's `Index.fixture.ts`: its named exports (`props`, `variants`, `slot`, `isMotionOnly`) are the contract the
+  parity page and the visual suite read by name, so one fixture is one concern however many names it exports.
+- A map and the key list derived from it (`ModNames` as `Object.keys(ModDescriptionMap)`, `VoiceDeviceKinds`): the
+  list is the map read another way, and a file of its own would separate it from the only thing it can drift from.
+- A type derived from the function beside it (`server/trpc/context.ts`'s `Context`, built on `createContext`'s return type):
+  a models file would import the function back, so the type has no home that does not read the file it left.
 - A table read as two entities keeps both select schemas in the table file (`posts` as comments): the second
   schema is derived from the same table, so it is the table's concern rather than a second one.

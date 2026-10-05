@@ -5,7 +5,8 @@ import { atom, read, update } from "claude-code";
 import type { PersonaSpinner, PersonaStatus } from "../types";
 
 import { hashString } from "../src/util/hashString";
-import { CardVerbs, VerbDescriptionMap } from "./VerbDescriptionMap";
+import { CardVerbs } from "./CardVerbs";
+import { VerbDescriptionMap } from "./VerbDescriptionMap";
 
 // The persona's surfaces drawn by the engine itself, so nothing is written into the person's settings: a spinner and
 // A hint of this session's own character, its colour published for the mods, the spoken replies and one command per

@@ -9,4 +9,4 @@ export const ModDescriptionMap: Record<keyof EnabledMods, string> = {
   waypoints: "Suggest the next steps after each answer, one press each.",
 };
 
-export const ModNames: readonly (keyof EnabledMods)[] = ["commission", "resin", "veil", "ward", "waypoints"];
+export const ModNames = Object.keys(ModDescriptionMap) as (keyof EnabledMods)[];
