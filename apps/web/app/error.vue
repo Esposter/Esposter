@@ -2,22 +2,23 @@
 import type { NuxtError } from "#app";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { DEFAULT_ERROR_STATUS_CODE } from "@/services/app/constants";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
-  error: NuxtError;
+  // Only what the page reads: on the server it receives Nuxt's serialized error, a plain object without the class's
+  // Deprecated `statusCode` / `statusMessage` getters, so typing it as the class lets those reads typecheck and fail
+  error: Pick<NuxtError, "status" | "statusText">;
 }
 
 const { error } = defineProps<Props>();
 const { currentRoute } = useRouter();
-const isNotFound = computed(() => error.statusCode === 404);
+const isNotFound = computed(() => error.status === 404);
 const title = computed(() => (isNotFound.value ? "Page not found" : "Something went wrong"));
 // Nuxt replaces a server error's own message with a generic one in production, so this is safe to render as-is
 const description = computed(() =>
   isNotFound.value
     ? "Nothing lives at this address. It may have moved, or it was never here."
-    : error.statusMessage || "The page could not be loaded. Trying again often works.",
+    : error.statusText || "The page could not be loaded. Trying again often works.",
 );
 </script>
 
@@ -26,12 +27,7 @@ const description = computed(() =>
     Here and the way home is the page's own -->
   <NuxtTheme>
     <main text-text bg-background flex items-center justify-center min-h-dvh>
-      <AppStatusScene
-        :description
-        :is-missing-block="isNotFound || undefined"
-        :status-code="error.statusCode ?? DEFAULT_ERROR_STATUS_CODE"
-        :title
-      >
+      <AppStatusScene :description :is-missing-block="isNotFound || undefined" :status-code="error.status" :title>
         <UiButton
           v-if="!isNotFound"
           :variant="UiButtonVariant.Accent"

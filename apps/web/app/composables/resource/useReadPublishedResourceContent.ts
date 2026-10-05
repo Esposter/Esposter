@@ -25,8 +25,7 @@ export const useReadPublishedResourceContent = async <TContent>(
   const { data } = await useAsyncData(AsyncDataKey.ReadPublishedResourceContent(type, id, version), () =>
     version ? readVersion(version) : readLatest(),
   );
-  if (!data.value)
-    throw createError({ statusCode: 404, statusMessage: `${ResourceDefinitionMap[type].title} not found` });
+  if (!data.value) throw createError({ status: 404, statusText: `${ResourceDefinitionMap[type].title} not found` });
   // Every published view unfurls under the resource it just read, so the og title belongs with the read
   // Rather than restated by each view component
   useSeoMeta({ ogTitle: data.value.name, title: data.value.name });

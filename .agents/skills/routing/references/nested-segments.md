@@ -37,7 +37,7 @@ export const useValidateFooBar = (foo: Ref<Foo | undefined>, activeBar: Ref<stri
     if (!newFoo || newFoo.id !== getRouteParam(currentRoute.value.params, "id")) return;
 
     if (!isValidFooBar(newFoo.type, newActiveBar))
-      showError(createError({ statusCode: 404, statusMessage: "Foo bar not found" }));
+      showError(createError({ status: 404, statusText: "Foo bar not found" }));
   });
 };
 // pages/foos/[id]/[[bar]].vue

@@ -16,7 +16,7 @@ The inflation is not marginal, so a duration read off the full run says nothing 
 
 ## Runner settings
 
-`fsModuleCache` stays on: transforming the module graph is the largest share of a run and it persists to `node_modules/.vitest-cache` across reruns and processes.
+`fsModuleCache` stays on: transforming the module graph is the largest share of a run and it persists to `node_modules/.vitest-cache` across reruns and processes. Its key does not cover Nuxt's auto-import registry, so a transform cached while a module's imports were missing keeps failing after the fix (`defineStore is not defined` once `@pinia/nuxt` installs again): delete `node_modules/.vitest-cache` and rerun.
 
 **`isolate: false` does not go on, per project or globally** (`SKILL.md`, Settled). Vitest's own hint advertises it on every run and the whole-`packages` saving looks decisive. It is not: measured project by project, the packages that survive it come out level — the entire apparent gain belongs to `virrun` and `vue-phaserjs`, the two that **fail** under it, and fail for the reason isolation exists. virrun's suites read module-scope memo caches (`readWslPath`, the WSL environment and capability caches) that a reused worker carries between files, and `vue-phaserjs` boots one Phaser game per process. Buying the setting back would mean a reset hook per cache — custom scaffolding in exchange for nothing measurable. Re-propose it only with a per-project measurement showing a win.
 

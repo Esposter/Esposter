@@ -6,8 +6,7 @@ definePageMeta({ middleware: "auth" });
 
 const route = useRoute();
 const typeParam = route.params.type;
-if (!checkIsCreatableResourceType(typeParam))
-  throw createError({ statusCode: 404, statusMessage: "Unknown resource type" });
+if (!checkIsCreatableResourceType(typeParam)) throw createError({ status: 404, statusText: "Unknown resource type" });
 // The guard narrows `typeParam` for the rest of setup, but a template reads the declared type — so the narrowed
 // Value is bound through its own const rather than the parameter
 const type = typeParam;
