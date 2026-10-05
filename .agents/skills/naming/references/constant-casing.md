@@ -29,7 +29,9 @@ the `pulumi-infra` skill's `references/resource-references.md`).
 
 **It takes the scalar's casing, not the table's** — `FOO_PROPS`, `FOO_COMMANDS`, `FOO_SHORTCUTS`. PascalCase is earned by being a lookup with a file of its own to be named after; a bound
 configuration or an iterated list inside a `<script setup>` has neither, and left camelCase it reads as one more
-local among the refs around it.
+local among the refs around it. An `Intl` formatter, collator or segmenter made once for the module is one of these
+— `PERCENT_FORMATTER`, never `percentFormat` (`no-restricted-syntax`) — and one an SFC needs lives in its feature's
+`constants.ts` like any other.
 
 ## A scalar with one reader is inlined, not named
 

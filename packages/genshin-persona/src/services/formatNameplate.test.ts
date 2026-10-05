@@ -1,5 +1,6 @@
 import { CharacterColorMap } from "#src/services/CharacterColorMap";
-import { ANSI_RESET, ElementColorMap, NAMEPLATE_PREFIX } from "#src/services/constants";
+import { ANSI_RESET, NAMEPLATE_PREFIX } from "#src/services/constants";
+import { ElementColorMap } from "#src/services/ElementColorMap";
 import { formatNameplate } from "#src/services/formatNameplate";
 import { getAnsiBackgroundColor } from "#src/util/getAnsiBackgroundColor";
 import { getAnsiForegroundColor } from "#src/util/getAnsiForegroundColor";

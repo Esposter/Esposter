@@ -68,7 +68,7 @@ The number beside each stem is a validation, not a ranking: the cosine between t
 | :------------------------------------------------------------------ | :----------------------------------------------------------------- |
 | `packages/genshin-persona/src/generated/PersonaReferenceMap.ts`     | The measured stem and likeness per character, one generated map    |
 | `packages/genshin-persona/src/personaCards/*.ts`                    | The optional `reference` field, the ear's                          |
-| `packages/genshin-persona/src/services/readCharacterReference.ts`   | The card's stem over the generated one, "" for neither             |
+| `packages/genshin-persona/src/services/getCharacterReference.ts`    | The card's stem over the generated one, "" for neither             |
 | `packages/genshin-persona/src/services/getWikiFileTitle.ts`         | The file title from the stem and the dub                           |
 | `packages/genshin-persona/src/services/readWikiFileUrls.ts`         | The wiki's URL for each title, in one call                         |
 | `packages/genshin-persona/src/services/readWikiFile.ts`             | The clip off the file host, over the https module its edge answers |

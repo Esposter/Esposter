@@ -1,8 +1,8 @@
 import type { Commission } from "../../../types";
 
-import { minuteFormat } from "../minuteFormat";
+import { MINUTE_FORMATTER } from "../constants";
 
-const percentFormat = new Intl.NumberFormat("en", { style: "percent" });
+const PERCENT_FORMATTER = new Intl.NumberFormat("en", { style: "percent" });
 
 // `goal · 3 of 4 · 75% · 12m`, the clock counting whole minutes from the commission's opening
 export const getCommissionSummary = ({ goal, openedAt, tasks }: Commission, now: number): string => {
@@ -13,8 +13,8 @@ export const getCommissionSummary = ({ goal, openedAt, tasks }: Commission, now:
   return [
     goal,
     `${done} of ${tasks.length}`,
-    percentFormat.format(done / tasks.length),
-    minuteFormat.format(elapsedMinutes),
+    PERCENT_FORMATTER.format(done / tasks.length),
+    MINUTE_FORMATTER.format(elapsedMinutes),
   ]
     .filter(Boolean)
     .join(" · ");

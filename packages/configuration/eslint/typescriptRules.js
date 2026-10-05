@@ -263,6 +263,14 @@ export default {
         ":matches(Program, Program > ExportNamedDeclaration) > VariableDeclaration > VariableDeclarator[id.name!=/_REGEX$/]:matches([init.regex], [init.callee.name='RegExp'])",
     },
     {
+      // An `Intl` formatter, collator or segmenter made once for the module is a fixed object, so it takes the
+      // Scalar's casing as every shared one does (`PERCENT_FORMATTER`); camelCase reads as one more local at the call
+      message:
+        "Name a module-scope `Intl` instance in SCREAMING_SNAKE_CASE — `PERCENT_FORMATTER`, never `percentFormat`. See the naming skill's constant-casing page.",
+      selector:
+        ":matches(Program, Program > ExportNamedDeclaration) > VariableDeclaration > VariableDeclarator[id.name!=/^[A-Z][\dA-Z_]*$/][init.callee.object.name='Intl']",
+    },
+    {
       // A sort's pair is named for what it compares, `first*`/`second*`, as every sort in the tree writes it; `a` and
       // `b`, or a bare `first` and `second`, say nothing about what is compared. Read off the callback handed to
       // `sort`/`toSorted` alone, since the two letters are also every fixture key and HTML tag a denylist would refuse

@@ -16,20 +16,20 @@ import {
   VOICE_LOG_PATH,
   VOICE_PROOF_TEXT,
   VOICE_STATUS_SEPARATOR,
-  VoiceLanguageNameMap,
 } from "#src/services/constants";
 import { createVoiceProgressPrinter } from "#src/services/createVoiceProgressPrinter";
 import { createVoiceSynthesizer } from "#src/services/createVoiceSynthesizer";
 import { deleteVoiceDevice } from "#src/services/deleteVoiceDevice";
+import { getCharacterReference } from "#src/services/getCharacterReference";
 import { getSpeechRequest } from "#src/services/getSpeechRequest";
 import { getWarmRequest } from "#src/services/getWarmRequest";
 import { installVoiceRuntime } from "#src/services/installVoiceRuntime";
-import { readCharacterReference } from "#src/services/readCharacterReference";
 import { readPersonaCard } from "#src/services/readPersonaCard";
 import { readVoiceDevice } from "#src/services/readVoiceDevice";
 import { readVoiceLanguage } from "#src/services/readVoiceLanguage";
 import { readVoiceRuntime } from "#src/services/readVoiceRuntime";
 import { sendVoiceRequest } from "#src/services/sendVoiceRequest";
+import { VoiceLanguageNameMap } from "#src/services/VoiceLanguageNameMap";
 import { writeVoiceLanguage } from "#src/services/writeVoiceLanguage";
 import { defineCommand } from "citty";
 
@@ -95,7 +95,7 @@ export const voiceCommand: SubCommandsDef[string] = defineCommand({
     }
 
     const personaCard = await readPersonaCard(character.name);
-    if (!readCharacterReference(character.name, personaCard)) console.log(strings.noReference(character.displayName));
+    if (!getCharacterReference(character.name, personaCard)) console.log(strings.noReference(character.displayName));
 
     const warmed = await sendVoiceRequest(getWarmRequest(character.name, personaCard, dub));
     const [status, device] = warmed.split(VOICE_STATUS_SEPARATOR);

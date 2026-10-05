@@ -10,7 +10,7 @@ import { getCollidingRecord } from "./getCollidingRecord";
 import { getRecordsWithEdit } from "./getRecordsWithEdit";
 
 const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as const, InitialState.enabledMods);
-const ageFormat = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+const AGE_FORMATTER = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
 // One file every session on the machine reads afresh, beside the persona's state, so an edit made a moment ago in
 // Another session is always seen
@@ -39,7 +39,7 @@ const ward = async (
   // A session nobody watches has nobody to ask, and a guard that blocks unattended work is worse than none
   if (collision && (await $.session.surfaces()).length > 0) {
     const minutes = -Math.round(Temporal.Duration.from({ milliseconds: now - collision.editedAt }).total("minutes"));
-    const age = ageFormat.format(minutes, "minute");
+    const age = AGE_FORMATTER.format(minutes, "minute");
     const answer = await $.ui.ask(`Another session edited ${path} ${age}. Edit it here too?`, {
       header: "Ward",
       options: WardAnswers,

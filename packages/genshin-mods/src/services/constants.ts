@@ -8,6 +8,12 @@ export const CLOCK_TICK_MS: number = Temporal.Duration.from({ minutes: 1 }).tota
 export const USAGE_WARNING_PERCENTAGE = 80;
 export const MAX_WAYPOINTS = 3;
 export const MAX_SHOWN_TASKS = 8;
+// Whole minutes as the band writes them, `12m`
+export const MINUTE_FORMATTER: Intl.NumberFormat = new Intl.NumberFormat("en", {
+  style: "unit",
+  unit: "minute",
+  unitDisplay: "narrow",
+});
 export const WARD_WINDOW_MS: number = Temporal.Duration.from({ minutes: 30 }).total("milliseconds");
 export const NO_WAYPOINTS_ANSWER = "NONE";
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
