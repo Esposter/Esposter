@@ -1,5 +1,5 @@
 import type { LoginTowerAtlas } from "#src/models/login/LoginTowerAtlas";
-import type { Node } from "three/webgpu";
+import type { LoginTowerFacade } from "#src/models/login/LoginTowerFacade";
 
 import towers from "#src/data/login/towers.json";
 import { createShadeCanvasTexture } from "#src/services/login/scene/createShadeCanvasTexture";
@@ -22,9 +22,7 @@ import { attribute, texture } from "three/tsl";
 // Reflection of the sky to show it, a metal reads dark against the game's own exports at every hour. Every shade, a
 // Recess's with the light it keeps out, stands its contrast's share as far from the stone as traced, since the game
 // Shows its carving by the light across its relief rather than by its colour alone
-export const createLoginTowerFacade = (
-  atlas: LoginTowerAtlas,
-): { dispose: () => void; shade: Node<"vec3">; solid: Node<"float"> } => {
+export const createLoginTowerFacade = (atlas: LoginTowerAtlas): LoginTowerFacade => {
   const shadeCanvas = new OffscreenCanvas(atlas.width, atlas.height);
   const maskCanvas = new OffscreenCanvas(atlas.width, atlas.height);
   const shadeContext = shadeCanvas.getContext("2d");

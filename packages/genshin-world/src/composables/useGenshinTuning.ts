@@ -1,16 +1,10 @@
 import type { GenshinTuningOptions } from "#src/models/GenshinTuningOptions";
 
+import { TUNING_TINT_CHANNELS, TUNING_TINT_RANGE } from "#src/services/constants";
 import { isWebGPURenderer, useTres } from "@tresjs/core";
 import { until } from "@vueuse/core";
 import { attachInspector, computeGradeLut, computeRampValues, MINUTES_PER_DAY } from "genshin-engine";
 
-const TINT_RANGE = 0.1;
-// A tint's channels by the tuple key the panel writes through
-const TINT_CHANNELS = [
-  { key: "0", name: "red" },
-  { key: "1", name: "green" },
-  { key: "2", name: "blue" },
-] as const;
 // Development's tuning panel: a Look group on the renderer's inspector over the look's every uniform, so the hour,
 // Clouds, wind, ramp, rim, outline, fog, water, grade, god rays and bloom are set against reference screenshots rather
 // Than guessed. A slider writes the uniform or the texture it drives at once, and nothing is saved: a value that looks
@@ -108,15 +102,15 @@ export const useGenshinTuning = ({
     gradeFolder.add(grade, "saturation", 0, 2, 0.01).onChange(() => {
       writeGrade();
     });
-    for (const { key, name } of TINT_CHANNELS) {
+    for (const { key, name } of TUNING_TINT_CHANNELS) {
       gradeFolder
-        .add(grade.shadowTint, key, -TINT_RANGE, TINT_RANGE, 0.001)
+        .add(grade.shadowTint, key, -TUNING_TINT_RANGE, TUNING_TINT_RANGE, 0.001)
         .name(`shadow ${name}`)
         .onChange(() => {
           writeGrade();
         });
       gradeFolder
-        .add(grade.highlightTint, key, -TINT_RANGE, TINT_RANGE, 0.001)
+        .add(grade.highlightTint, key, -TUNING_TINT_RANGE, TUNING_TINT_RANGE, 0.001)
         .name(`highlight ${name}`)
         .onChange(() => {
           writeGrade();

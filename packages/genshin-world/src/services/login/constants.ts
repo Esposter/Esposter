@@ -41,3 +41,5 @@ export const LOGIN_DOOR_LIGHT_MS = 400;
 export const LOGIN_DOOR_BUTTONS_DELAY_MS = 300;
 export const LOGIN_DOOR_PROMPT_DELAY_MS = 1000;
 export const LOGIN_DOOR_PROMPT_FADE_MS = 300;
+// The last stretch's pace, a share of the path a millisecond, which bounds the flight while loading too
+export const LOGIN_LAST_STRETCH_PACE: number = (1 - LOGIN_FLIGHT_LOADING_SHARE) / LOGIN_DOOR_AFTER_LOAD_MS;

@@ -13,9 +13,12 @@ import { LoginCloudCoverMap } from "#src/services/login/cloud/LoginCloudCoverMap
 import { LOGIN_DOOR_LIGHT_MS } from "#src/services/login/constants";
 import {
   LOGIN_DOOR_GLOW_COLOR,
+  LOGIN_DOOR_PANEL_STRENGTH,
   LOGIN_DOOR_POSITION,
   LOGIN_DOOR_RISE_DEPTH,
   LOGIN_DOOR_RISE_KEYFRAMES,
+  LOGIN_DOOR_SLIT_STRENGTH,
+  LOGIN_DOOR_SLIT_WIDTH,
 } from "#src/services/login/door/constants";
 import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoorGeometry";
 import { createLoginDoorRelief } from "#src/services/login/door/createLoginDoorRelief";
@@ -29,7 +32,10 @@ import {
   LOGIN_CAMERA_YAW,
   LOGIN_CAMERA_Z,
   LOGIN_CLOUD_COVERAGE,
+  LOGIN_CLOUD_SEA_EDGE_END,
+  LOGIN_CLOUD_SEA_EDGE_START,
   LOGIN_CLOUD_SEA_HEIGHT,
+  LOGIN_CLOUD_SEA_SCALE,
   LOGIN_CLOUD_SEA_SIZE,
   LOGIN_DOOR_RUSH_LIMIT,
   LOGIN_DOOR_RUSH_MS,
@@ -44,6 +50,7 @@ import {
   LOGIN_GLIDE_TITLE_SPEED,
   LOGIN_LIGHT_DISTANCE,
   LOGIN_RIM_STRENGTH,
+  LOGIN_SCENE_READY_FRAME_COUNT,
   LOGIN_SHADOW_BIAS,
   LOGIN_SHADOW_EXTENT,
   LOGIN_SHADOW_MAP_SIZE,
@@ -103,18 +110,7 @@ interface Props {
 
 const { heldScrolled, isDoorLit, stage, timeOfDay } = defineProps<Props>();
 const emit = defineEmits<{ doorFormed: []; ready: [] }>();
-// The frames drawn before the scene is said to be ready: WebGPU compiles each pipeline on first use, so the first few
-// Frames can come out before every material has. A scene mounted at the door is ready only once the door has risen
-const READY_FRAME_COUNT = 10;
 const [doorRiseMs = 0] = LOGIN_DOOR_RISE_KEYFRAMES.at(-1) ?? [];
-// The cloud sea's billows, as the noise's scale on the ground plane and where its lit tops start
-const CLOUD_SEA_SCALE = 0.048;
-const CLOUD_SEA_EDGE_START = 0.05;
-const CLOUD_SEA_EDGE_END = 0.35;
-// The door's light: a line down its middle this many metres to its half width, over a glow across the whole panel
-const DOOR_SLIT_WIDTH = 0.04;
-const DOOR_SLIT_STRENGTH = 4;
-const DOOR_PANEL_STRENGTH = 0.6;
 // The witness render's parts, drawn in place of the fitted ones of each family it names when the parity page provides
 // Them, alone when it asks
 // oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see
@@ -198,7 +194,9 @@ const doorMaterial = createStoneMaterial(
   loginStoneLight,
   color(LOGIN_DOOR_GLOW_COLOR).mul(
     doorGlow.mul(
-      exp(abs(positionLocal.x).div(DOOR_SLIT_WIDTH).negate()).mul(DOOR_SLIT_STRENGTH).add(DOOR_PANEL_STRENGTH),
+      exp(abs(positionLocal.x).div(LOGIN_DOOR_SLIT_WIDTH).negate())
+        .mul(LOGIN_DOOR_SLIT_STRENGTH)
+        .add(LOGIN_DOOR_PANEL_STRENGTH),
     ),
   ),
 );
@@ -243,9 +241,9 @@ cloudSeaMaterial.colorNode = mix(
   skyUniforms.cloudShadeColor,
   skyUniforms.cloudLitColor,
   smoothstep(
-    CLOUD_SEA_EDGE_START,
-    CLOUD_SEA_EDGE_END,
-    mx_fractal_noise_float(positionWorld.xz.add(vec2(0, cloudSeaScrolled)).mul(CLOUD_SEA_SCALE)),
+    LOGIN_CLOUD_SEA_EDGE_START,
+    LOGIN_CLOUD_SEA_EDGE_END,
+    mx_fractal_noise_float(positionWorld.xz.add(vec2(0, cloudSeaScrolled)).mul(LOGIN_CLOUD_SEA_SCALE)),
   ),
 );
 // No grade and no bloom: every colour of the login is measured off its references through the tone mapping alone, the
@@ -351,7 +349,8 @@ onRender(({ delta: frameDelta }) => {
     emit("doorFormed");
   }
   renderedFrameCount++;
-  if (isReadyEmitted || renderedFrameCount < READY_FRAME_COUNT || (isDoorDue && riseMs.value < doorRiseMs)) return;
+  if (isReadyEmitted || renderedFrameCount < LOGIN_SCENE_READY_FRAME_COUNT || (isDoorDue && riseMs.value < doorRiseMs))
+    return;
   isReadyEmitted = true;
   emit("ready");
 });

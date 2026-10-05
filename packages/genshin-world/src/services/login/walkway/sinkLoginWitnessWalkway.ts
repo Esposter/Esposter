@@ -1,4 +1,5 @@
-import type { BufferGeometry, Object3D } from "three";
+import type { LoginWalkwayPiece } from "#src/models/login/LoginWalkwayPiece";
+import type { Object3D } from "three";
 
 import { LOGIN_WALKWAY_ROW } from "#src/services/login/scene/constants";
 import { LOGIN_WALKWAY_RISE_DEPTH } from "#src/services/login/walkway/constants";
@@ -20,7 +21,7 @@ const groupPosition = new Vector3();
 // Laid height and seed are read the first time it is sunk, before it has moved
 export const sinkLoginWitnessWalkway = (
   group: Object3D,
-  pieces: readonly { depth: number; geometry: BufferGeometry; seed: number }[],
+  pieces: readonly LoginWalkwayPiece[],
   { cameraZ, doorAheadOfCamera }: { cameraZ: number; doorAheadOfCamera?: number },
 ): void => {
   group.getWorldPosition(groupPosition);

@@ -1,3 +1,5 @@
+import type { LoginWalkwayPiece } from "#src/models/login/LoginWalkwayPiece";
+
 import walkway from "#src/data/login/walkway.json";
 import { ExtrudeGeometry, Shape } from "three";
 
@@ -6,7 +8,7 @@ const SEED_STEP = 0.618034;
 // The walkway as the pieces it is laid from, each its outline extruded from the walkway's underside up to its own top,
 // With the depth of its middle, which it rises into place by as one, and a share from 0 to 1 staggering its rise from
 // Its neighbours'
-export const createLoginWalkwayPieces = (): { depth: number; geometry: ExtrudeGeometry; seed: number }[] =>
+export const createLoginWalkwayPieces = (): LoginWalkwayPiece[] =>
   walkway.pieces.map(({ outline, top }, index) => {
     const [first, ...rest] = outline;
     // The plan is drawn on x and -z, so its extrusion rotated up stands along +y with z as the scene's own

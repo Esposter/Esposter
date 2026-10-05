@@ -1,3 +1,4 @@
+import type { LoginDoorGeometry } from "#src/models/login/LoginDoorGeometry";
 import type { BufferGeometry } from "three";
 
 import door from "#src/data/login/door.json";
@@ -22,7 +23,7 @@ const extrudePart = ({
 // The door at the flight's end as its two parts, standing on its foot on zero, each its face as the game's mesh draws
 // It seen from the front, extruded through its depth: the stone frame round its opening, and the panel recessed within
 // It, which lights when the door opens
-export const createLoginDoorGeometry = (): { frame: BufferGeometry; panel: BufferGeometry } => ({
+export const createLoginDoorGeometry = (): LoginDoorGeometry => ({
   frame: extrudePart(door.frame),
   panel: extrudePart(door.panel),
 });
