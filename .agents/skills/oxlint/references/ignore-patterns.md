@@ -8,7 +8,7 @@ Read when editing `oxlint.config.ts`'s `ignorePatterns`, when the oxlint step ha
 
 The CI symptom is not what it looks like: the Lint job has no `timeout-minutes` and the workflow sets `cancel-in-progress`, so it runs until the next push cancels it and reports `ELIFECYCLE exit 129` (SIGHUP) — **not** a heap error, which would be 134 with `heap out of memory`. typescript-eslint does not hang on the same file: it uses the mature `typescript` compiler via `projectService`, not tsgo.
 
-oxlint has no per-file type-aware toggle — `overrides` cannot set `options.typeAware` — so `ignorePatterns` is the only lever. Recheck whether a newer `oxlint-tsgolint` / tsgo fixes it before assuming the exclusion is still needed.
+oxlint has no per-file type-aware toggle — `overrides` cannot set `options.typeAware` — so for a hang, `ignorePatterns` is the only lever. A file that finishes but makes one rule expensive takes a per-rule override instead (`references/type-aware-cost.md`). Recheck whether a newer `oxlint-tsgolint` / tsgo fixes it before assuming the exclusion is still needed.
 
 ## `ignorePatterns` — `.agents/worktrees` is load-bearing
 
