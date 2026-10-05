@@ -60,7 +60,7 @@ export const setupMswTrpc = () => {
     server.events.on("request:start", onRequestStart);
     await Promise.all(pendingRequestIdEndMap.values().map(({ promise }) => promise));
     await new Promise((resolve) => {
-      setTimeout(resolve);
+      setTimeout(resolve, 0);
     });
     server.events.removeListener("request:start", onRequestStart);
     reset();
