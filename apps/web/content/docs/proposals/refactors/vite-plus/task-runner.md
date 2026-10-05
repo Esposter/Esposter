@@ -1,7 +1,7 @@
 ---
 title: Task runner
 description: Replace the two hand-rolled content-hash caches with `vp run --cache`, whose inputs are traced from what a command actually reads rather than enumerated ahead of it.
-model: claude-opus-5
+model: claude-opus-5-5
 ---
 
 # Task Runner
@@ -24,9 +24,9 @@ The two hand-rolled keys are computed _before_ the command runs, from a walk ove
 
 Every one of those is correct, was arrived at by paying a wrong rebuild, and is unverifiable. Nothing fails when a fourth case appears; the symptom is a build everyone assumed was cached.
 
-Vite+ computes validity from three things instead: the arguments, an explicitly fingerprinted set of environment variables, and **the input files the command read while it ran** — tracked automatically, along with missing-file probes and directory listings, with `input`/`output` declarations available only where tracing proves insufficient ([cache guide](https://viteplus.dev/guide/cache)). A missing-file probe being an input is the detail that shows the tracing is real rather than a glob in disguise: a build that resolved a config by trying six paths is invalidated when the fourth one starts existing.
+Vite+ computes validity from three things instead: the arguments, an explicitly fingerprinted set of environment variables, and **the input files the command read while it ran** — tracked automatically, along with missing-file probes and directory listings, with a task's `cache.input` and `cache.output` available only where tracing proves insufficient ([cache guide](https://viteplus.dev/guide/cache), [run config](https://viteplus.dev/config/run)). The tracer, `fspy`, follows the processes a task spawns rather than only the task itself — through a preloaded library on Unix, syscall interception on Linux and API hooking on Windows — which is what makes a worker-spawning build traceable at all ([vite-task](https://github.com/voidzero-dev/vite-task)). A missing-file probe being an input is the detail that shows the tracing is real rather than a glob in disguise: a build that resolved a config by trying six paths is invalidated when the fourth one starts existing.
 
-Applied here, the three subtractions stop being expressible, because there is no set to subtract from. A bench artifact is not an input because no build opens it — provably, not by policy.
+Applied here, the three subtractions stop being expressible, because there is no set to subtract from. A bench artifact is not an input because no build opens it — provably, not by policy. That matters doubly because the escape hatch is weaker than it looks: a negative `input` pattern is currently ignored for files the command discovered by listing a directory ([vite-task 504](https://github.com/voidzero-dev/vite-task/issues/504)), so porting the subtract-list into hand-written exclusions would not even subtract.
 
 ## The CI job shape after
 
@@ -54,7 +54,7 @@ The `build-packages` reusable workflow's concurrency group also survives on its 
 
 The workspace graph. `vp run` is monorepo-aware and dependency-scheduling, but the topological order it walks is the one pnpm resolves from the manifests, so every rule in [recursive script orchestration](/docs/architecture/monorepo-tooling) still holds — including the one that matters most, that `--parallel` is never used for `build` because it discards the order and a package would compile against a sibling's `dist` mid-write.
 
-The test run is also not a fan-out and does not become one. `test` and `coverage` go through a single root Vitest `projects` config so the suite shares one run, one coverage report and one `--shard` axis. Whether `vp test` forwards `--shard`, `--reporter=blob` and `--merge-reports` cleanly is an open question below; until it is answered, the suite keeps invoking Vitest directly, and only its _wrapper_ becomes a `vp` task.
+The test run is also not a fan-out and does not become one. `test` and `coverage` go through a single root Vitest `projects` config so the suite shares one run, one coverage report and one `--shard` axis. `vp test` would also swap the suite onto the Vitest that `vite-plus` bundles at a pinned version, and whether it forwards `--shard`, `--reporter=blob` and `--merge-reports` cleanly is unanswered ([Nuxt compatibility](/docs/proposals/refactors/vite-plus/nuxt-compatibility)). So the suite keeps invoking the catalog's Vitest directly, and only its _wrapper_ becomes a `vp` task.
 
 ## The measurement that decides phase one
 
@@ -66,10 +66,7 @@ This does not get adopted on the strength of the argument. The first change is a
 
 Files in the second set and not the first are the over-invalidation the migration is buying out — every one of them is a commit that pays a rebuild today for a file no build opens. Files in the first set and not the second are far more interesting, because each one is either a tracing artifact or a **genuine input the hand-rolled key is missing** — which would mean the current cache can already serve a stale build, and that is a defect to fix on its own timeline rather than a migration talking point.
 
-Two failure modes to probe in the same spike, because both would end the phase:
-
-- **Tracing through the sandbox.** Input tracing observes syscalls. Every build runs native, but the checks `vp` would cache next — `typecheck`, `test`, `lint` — run inside virrun's bubblewrap RAM overlay on a Windows host, and whether a traced input set survives an overlay mount — and whether the paths it records are host paths or sandbox paths — is unknown. On Linux the config resolves the native passthrough backend, so CI is the easy case and the dev loop is the hard one.
-- **Tracing a build that spawns workers.** tsdown and Nuxt both fan out to child processes. A tracer that only sees the parent's reads would produce a key that is confidently wrong, which is worse than the conservative key it replaces.
+The probes that run beside the diff — a worker fan-out, a Go binary, a missing-file probe — and the upstream issues behind each are in [phases](/docs/proposals/refactors/vite-plus/phases). One question is answered upstream rather than by the spike: a cache-enabled task cannot spawn any child inside a rootless bubblewrap sandbox ([vite-task 700](https://github.com/voidzero-dev/vite-task/issues/700)), so tracing and virrun's sandbox do not compose at all. CI is unaffected, because virrun resolves its native passthrough backend on Linux; the local loop waits on [virrun retirement](/docs/proposals/refactors/vite-plus/virrun-retirement).
 
 ## Early cutoff stays unowned
 
@@ -89,4 +86,5 @@ It is recorded here and not scheduled. It is independent of the migration in bot
 
 ## Sources
 
-- [Vite+ — cache guide](https://viteplus.dev/guide/cache) — inputs inferred from what a command reads, the traced key this page weighs against the hand-kept one.
+- [Vite+ — cache guide](https://viteplus.dev/guide/cache) and [run config](https://viteplus.dev/config/run) — inputs inferred from what a command reads, the traced key this page weighs against the hand-kept one, and the 1.0 `cache` settings.
+- [vite-task 504](https://github.com/voidzero-dev/vite-task/issues/504) and [700](https://github.com/voidzero-dev/vite-task/issues/700) — negative input patterns and the bubblewrap sandbox, the two limits this page plans around.
