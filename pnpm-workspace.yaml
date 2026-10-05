@@ -206,7 +206,7 @@ catalog:
   # @TODO: no upstream issue — nuxt-security mounts its rate limiter's `lruCache` storage even with `rateLimiter: false`,
   # And unstorage 2's driver loads `lru-cache` without declaring it, so the app installs it (Baroshem/nuxt-security)
   lru-cache: ^11.5.3
-  marked: ^18.0.14
+  marked: ^18.1.0
   mathjs: ^15.2.0
   mermaid: ^12.1.0
   mime-types: ^3.0.2
