@@ -42,7 +42,8 @@ const exportResolvedAssets = async (
   const keyObjectsMap = Map.groupBy(resolvedObjects, ({ block, pathId }) => toObjectKey(block, pathId));
   const keyIndexedMap = Map.groupBy(
     await readIndexedAssets(
-      ({ block, pathId, type }) => types.includes(type) && keyObjectsMap.has(toObjectKey(block, pathId)),
+      ({ block, pathId, type }) =>
+        types.some((assetType) => assetType === type) && keyObjectsMap.has(toObjectKey(block, pathId)),
     ),
     ({ block, pathId }) => toObjectKey(block, pathId),
   );

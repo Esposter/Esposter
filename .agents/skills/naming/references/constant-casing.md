@@ -31,8 +31,8 @@ the `pulumi-infra` skill's `references/resource-references.md`).
 configuration or an iterated list in a feature's `constants.ts` has neither, and left camelCase it reads as one more
 local at every call site that imports it. An `Intl` formatter, collator or segmenter made once for the module is one
 of these — `PERCENT_FORMATTER`, never `percentFormat` (`no-restricted-syntax`). Wherever such a value is read, it is
-declared in that `constants.ts`, never at the top of the component or composable reading it (the `file-organization`
-skill, `references/constants.md`).
+declared in that `constants.ts`, never at the top of the component or composable reading it
+(the `file-organization` skill, `references/constants.md`).
 
 ## A scalar with one reader is inlined, not named
 

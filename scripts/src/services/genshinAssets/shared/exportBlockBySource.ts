@@ -1,7 +1,7 @@
 import type { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
+import type { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 
 import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
-import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { GAME_BLOCKS_DIRECTORY, SOURCE_EXPORT_SUFFIX } from "#src/services/genshinAssets/shared/constants";
 import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
 import { existsSync } from "node:fs";
