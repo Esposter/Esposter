@@ -2,6 +2,7 @@
 export interface UnderwaterFogState {
   aboveDensity: number;
   aboveHeightFalloff: number;
+  aboveMaxOpacity: number;
   aboveStartDistance: number;
   isUnderwater: boolean;
 }

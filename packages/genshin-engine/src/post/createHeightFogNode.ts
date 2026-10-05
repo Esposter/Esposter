@@ -6,9 +6,9 @@ import { exp, float, Fn, getViewPosition, If, max, mix, pow, uniform, uv, vec4 }
 
 const MIN_RAY_CLIMB = 0.000001;
 // Fog as a haze whose density falls off exponentially with height, integrated along the ray from the eye to what the
-// Pixel shows, past a start distance: low ground and the far world thicken toward the sky's colour, and the peaks
-// Rise out of it. Applied after the scene pass, so the outlines fade with what they outline, and never to the sky,
-// Which already is the fog's colour
+// Pixel shows, past a start distance: low ground and the far world thicken toward the sky's colour, hidden no more
+// Than the most opacity, and the peaks rise out of it. Applied after the scene pass, so the outlines fade with what
+// They outline, and never to the sky, which already is the fog's colour
 export const createHeightFogNode = (
   colorNode: Node<"vec4">,
   depthNode: TextureNode,
@@ -18,6 +18,7 @@ export const createHeightFogNode = (
     color,
     density,
     heightFalloff,
+    maxOpacity,
     scatterColor,
     scatterDirection,
     scatterPower,
@@ -47,7 +48,7 @@ export const createHeightFogNode = (
       If(climb.abs().greaterThan(MIN_RAY_CLIMB), () => {
         opticalDepth.assign(densityAtStart.mul(float(1).sub(exp(fogLength.mul(climb).negate()))).div(climb));
       });
-      const opacity = float(1).sub(exp(opticalDepth.negate()));
+      const opacity = float(1).sub(exp(opticalDepth.negate())).mul(maxOpacity);
       // Looking toward the sun, the haze is lit by the light it scatters, gathered round the sun by the power
       const scatter = pow(max(ray.normalize().dot(scatterDirection), 0), scatterPower).mul(scatterStrength);
       output.assign(vec4(mix(output.rgb, mix(color, scatterColor, scatter.min(1)), opacity), output.a));

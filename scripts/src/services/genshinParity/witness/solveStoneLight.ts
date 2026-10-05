@@ -4,6 +4,7 @@ import type { StoneLight } from "genshin-engine";
 
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { solveLinearSystem } from "#src/services/genshinParity/shared/solveLinearSystem";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { STONE_HARMONIC_COUNT, STONE_RAMP_KNOT_COUNT } from "genshin-engine";
 
 // The least pixels a bin is read over, under which its mean is mostly one texel
@@ -40,13 +41,20 @@ const writeRampWeights = (coordinate: number, weights: number[]): void => {
 // Opacity, which is linear in the light. The haze's colours are the cloud sea's, measured where it shows them: solved
 // Here, they would take up the light's own errors over the stone and carry them onto the sea. Bins average the pixels
 // Whose texels do not line up with the reference's, so their shading is read rather than their texels. Returns the
-// Light and the residual over the bins beside their spread about their mean, the share the light leaves unexplained
+// Light, the pixels its bins kept, and the residual over the bins beside their spread about their mean, the share the
+// Light leaves unexplained. Bins too sparse to read are dropped, and with none left there is no light to solve
 export const solveStoneLight = (
   samples: readonly StoneLightSample[],
   { color: hazeColor, scatterColor: hazeScatterColor }: { color: Vector; scatterColor: Vector },
-): { deviation: number; light: StoneLight; residual: number } => {
+): { count: number; deviation: number; light: StoneLight; residual: number } => {
   const sampleBinMap = Map.groupBy(samples, ({ bin }) => bin);
   const bins = [...sampleBinMap.values()].filter((binSamples) => binSamples.length >= MIN_BIN_COUNT);
+  if (bins.length === 0)
+    throw new InvalidOperationError(
+      Operation.Read,
+      "bins",
+      `none of ${sampleBinMap.size} holds ${MIN_BIN_COUNT} pixels`,
+    );
   const total = bins.reduce((sum, binSamples) => sum + binSamples.length, 0);
   const unknownCount = STONE_RAMP_KNOT_COUNT + STONE_HARMONIC_COUNT;
   const weights = Array.from({ length: STONE_RAMP_KNOT_COUNT }, () => 0);
@@ -107,5 +115,10 @@ export const solveStoneLight = (
     }
   }
   const count = Math.max(total * CHANNELS.length, 1);
-  return { deviation: Math.sqrt(spread / count), light: { harmonics, ramp }, residual: Math.sqrt(squared / count) };
+  return {
+    count: total,
+    deviation: Math.sqrt(spread / count),
+    light: { harmonics, ramp },
+    residual: Math.sqrt(squared / count),
+  };
 };

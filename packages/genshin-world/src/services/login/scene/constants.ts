@@ -58,14 +58,15 @@ export const LOGIN_GLIDE_TITLE_SCROLLED =
 export const LOGIN_DOOR_RUSH_SHARE = 0.41;
 export const LOGIN_DOOR_RUSH_MS = 333;
 export const LOGIN_DOOR_RUSH_LIMIT = 0.9;
-// The cloud sea's top, far under the walkway where the towers' feet vanish, and how far it reaches
-export const LOGIN_CLOUD_SEA_HEIGHT = -20;
+// The cloud sea's top, where the game's own sea stands (Eff_SeaOfCloud_Login's middle emitter, Cloud_Back, at the
+// Login's CloudEffect anchor), and how far it reaches
+export const LOGIN_CLOUD_SEA_HEIGHT = -14;
 export const LOGIN_CLOUD_SEA_SIZE = 3000;
 export const LOGIN_RIM_STRENGTH = 0.4;
 // The haze the cloud sea gives off, at its density at the sea's top and how fast it thins with height, where an hour
 // Sets none of its own: the day's, its density solved with its colour on the phone's door frame over the parts' pixels
 // Banded by depth and angle (genshin:parity fog), its colour landing on the one read off the day still
-export const LOGIN_FOG_DENSITY = 0.114;
+export const LOGIN_FOG_DENSITY = 0.0555;
 export const LOGIN_FOG_HEIGHT_FALLOFF = 0.12;
 export const LOGIN_FOG_START_DISTANCE = 10;
 // The haze's light scattered toward the sun, which bathes the sunward side of the dawn's and the dusk's frames: how

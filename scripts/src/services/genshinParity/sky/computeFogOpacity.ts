@@ -2,7 +2,8 @@ import type { Vector } from "#src/models/shared/Vector";
 
 const MIN_RAY_CLIMB = 0.000001;
 // How much of a point the scene's height fog hides from the eye, as `createHeightFogNode` integrates it: a haze whose
-// Density falls off exponentially with height above its base, along the ray past its start distance
+// Density falls off exponentially with height above its base, along the ray past its start distance, hiding no more
+// Than its most opacity
 export const computeFogOpacity = (
   eye: Readonly<Vector>,
   point: Readonly<Vector>,
@@ -10,8 +11,9 @@ export const computeFogOpacity = (
     baseHeight,
     density,
     heightFalloff,
+    maxOpacity = 1,
     startDistance,
-  }: { baseHeight: number; density: number; heightFalloff: number; startDistance: number },
+  }: { baseHeight: number; density: number; heightFalloff: number; maxOpacity?: number; startDistance: number },
 ): number => {
   const ray: Vector = [point[0] - eye[0], point[1] - eye[1], point[2] - eye[2]];
   const rayLength = Math.hypot(...ray);
@@ -25,5 +27,5 @@ export const computeFogOpacity = (
     Math.abs(climb) > MIN_RAY_CLIMB
       ? (densityAtStart * (1 - Math.exp(-fogLength * climb))) / climb
       : densityAtStart * fogLength;
-  return 1 - Math.exp(-opticalDepth);
+  return (1 - Math.exp(-opticalDepth)) * maxOpacity;
 };

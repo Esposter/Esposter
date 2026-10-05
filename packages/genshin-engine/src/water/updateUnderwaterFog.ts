@@ -12,20 +12,23 @@ export const updateUnderwaterFog = (
     underwaterFogColor,
     underwaterFogDensity,
   }: Pick<WaterUniforms, "level" | "underwaterFogColor" | "underwaterFogDensity">,
-  { color, density, heightFalloff, startDistance }: FogUniforms,
+  { color, density, heightFalloff, maxOpacity, startDistance }: FogUniforms,
   underwaterFogState: UnderwaterFogState,
 ): void => {
   const isUnderwater = eyeHeight < level.value;
   if (isUnderwater && !underwaterFogState.isUnderwater) {
     underwaterFogState.aboveDensity = density.value;
     underwaterFogState.aboveHeightFalloff = heightFalloff.value;
+    underwaterFogState.aboveMaxOpacity = maxOpacity.value;
     underwaterFogState.aboveStartDistance = startDistance.value;
     density.value = underwaterFogDensity.value;
     heightFalloff.value = 0;
+    maxOpacity.value = 1;
     startDistance.value = 0;
   } else if (!isUnderwater && underwaterFogState.isUnderwater) {
     density.value = underwaterFogState.aboveDensity;
     heightFalloff.value = underwaterFogState.aboveHeightFalloff;
+    maxOpacity.value = underwaterFogState.aboveMaxOpacity;
     startDistance.value = underwaterFogState.aboveStartDistance;
   }
 

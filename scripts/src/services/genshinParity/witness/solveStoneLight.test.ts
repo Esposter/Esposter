@@ -70,4 +70,17 @@ describe(solveStoneLight, () => {
     expect(round(light.harmonics)).toStrictEqual(round(harmonics));
     expect(residual).toBeLessThan(1e-4);
   });
+
+  test("throws when no bin holds enough pixels to read", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      solveStoneLight(
+        samples.filter((_sample, index) => index % 30 !== 0),
+        haze,
+      ),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: bins, none of 96 holds 30 pixels]`,
+    );
+  });
 });

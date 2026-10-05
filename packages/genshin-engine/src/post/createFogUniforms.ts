@@ -9,6 +9,7 @@ export const createFogUniforms = (): FogUniforms => ({
   color: uniform(new Color()),
   density: uniform(0),
   heightFalloff: uniform(0),
+  maxOpacity: uniform(1),
   scatterColor: uniform(new Color()),
   scatterDirection: uniform(new Vector3(0, 1, 0)),
   scatterPower: uniform(1),

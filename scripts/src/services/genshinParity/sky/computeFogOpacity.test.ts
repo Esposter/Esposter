@@ -16,6 +16,12 @@ describe(computeFogOpacity, () => {
     expect(computeFogOpacity([0, 0, 0], [0, 0, 20], fog)).toBeCloseTo(1 - Math.exp(-1));
   });
 
+  test("hides no more than its most opacity", () => {
+    expect.hasAssertions();
+
+    expect(computeFogOpacity([0, 0, 0], [0, 0, 20], { ...fog, maxOpacity: 0.5 })).toBeCloseTo((1 - Math.exp(-1)) * 0.5);
+  });
+
   test("hides a ray climbing out of the haze less than a level one as long", () => {
     expect.hasAssertions();
 
