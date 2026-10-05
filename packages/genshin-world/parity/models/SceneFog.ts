@@ -4,6 +4,7 @@ export interface SceneFog {
   color: [number, number, number];
   density: number;
   heightFalloff: number;
+  maxOpacity: number;
   scatterColor: [number, number, number];
   scatterDirection: [number, number, number];
   scatterPower: number;

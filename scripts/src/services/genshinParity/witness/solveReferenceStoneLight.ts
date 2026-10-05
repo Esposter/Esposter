@@ -32,14 +32,21 @@ const DEPTH_BANDS = [0, 10, 20, 40, 80, 160, 320, 640, Infinity];
 const HEIGHT_BANDS = [-20, -10, -5, 0, 5, 10, 20, 40, Infinity];
 const RAMP_BIN_COUNT = 12;
 const UPWARD_BIN_COUNT = 4;
-// The haze's refinement: the simplex's steps over its density's and its falloff's logarithms, and how many it takes
-const HAZE_STEPS = [0.5, 0.5];
+// The haze's refinement: the simplex's steps over its density's and its falloff's logarithms and its most opacity's
+// Log-odds, and how many it takes
+const HAZE_STEPS = [0.5, 0.5, 1];
 const HAZE_ITERATION_COUNT = 60;
-// A haze from the logarithms of its density and its falloff, the simplex's coordinates, so neither falls under none
-const toHaze = ([density = 0, heightFalloff = 0]: readonly number[]): Pick<SceneFog, "density" | "heightFalloff"> => ({
+// A haze hiding all lies at infinite log-odds, so the simplex starts no nearer all than this
+const MAX_START_OPACITY = 0.98;
+type Haze = Pick<SceneFog, "density" | "heightFalloff" | "maxOpacity">;
+// A haze from the logarithms of its density and its falloff and its most opacity's log-odds, the simplex's
+// Coordinates, so neither of the first falls under none and the last stays between none and all
+const toHaze = ([density = 0, heightFalloff = 0, maxOpacity = 0]: readonly number[]): Haze => ({
   density: Math.exp(density),
   heightFalloff: Math.exp(heightFalloff),
+  maxOpacity: 1 / (1 + Math.exp(-maxOpacity)),
 });
+const toLogOdds = (share: number): number => Math.log(share / (1 - share));
 const readPage = <T>(page: Page, name: string): Promise<T> =>
   page.evaluate((functionName) => (Reflect.get(window, functionName) as () => T)(), name);
 // A reference's stone light solved as the game's deferred pass casts it, over the parts the witness draws from the
@@ -48,7 +55,8 @@ const readPage = <T>(page: Page, name: string): Promise<T> =>
 // Its harmonics, and the scene's own haze giving its opacity and its colours. The light is a linear solve over the bins
 // (`solveStoneLight`) under the scene's own haze, or under the haze's density and height falloff refined with it by
 // The simplex on that solve's residual, its colours held as the cloud sea's: the bins split by height, the high stone
-// The haze leaves holds the light, and the low stone it pales the haze's profile
+// The haze leaves holds the light, the low stone it pales the haze's profile, and the far stone how much of it the
+// Haze ever hides
 export const solveReferenceStoneLight = async (
   referenceId: string,
   witness: DerivedAssetComponent,
@@ -56,7 +64,7 @@ export const solveReferenceStoneLight = async (
 ): Promise<{
   count: number;
   deviation: number;
-  haze: Pick<SceneFog, "density" | "heightFalloff">;
+  haze: Haze;
   light: StoneLight;
   residual: number;
   sceneResidual: number;
@@ -135,17 +143,17 @@ export const solveReferenceStoneLight = async (
       const eyePoint = eye.toArray();
       const samples = pixels.map(({ sample }) => sample);
       // Each guess at the haze sets every sample's opacity anew before the light is solved under it
-      const solve = (haze: Pick<SceneFog, "density" | "heightFalloff">) => {
+      const solve = (haze: Haze) => {
         const hazeFog = { ...fog, ...haze };
         for (const { point, sample } of pixels) sample.opacity = computeFogOpacity(eyePoint, point, hazeFog);
         return solveStoneLight(samples, fog);
       };
-      const sceneHaze = { density: fog.density, heightFalloff: fog.heightFalloff };
+      const sceneHaze = { density: fog.density, heightFalloff: fog.heightFalloff, maxOpacity: fog.maxOpacity };
       const sceneSolution = solve(sceneHaze);
       if (!isHazeSolved) return { haze: sceneHaze, sceneResidual: sceneSolution.residual, ...sceneSolution };
       const { point } = await minimizeNelderMead(
         (logs) => Promise.resolve(solve(toHaze(logs)).residual),
-        [Math.log(fog.density), Math.log(fog.heightFalloff)],
+        [Math.log(fog.density), Math.log(fog.heightFalloff), toLogOdds(Math.min(fog.maxOpacity, MAX_START_OPACITY))],
         HAZE_STEPS,
         HAZE_ITERATION_COUNT,
       );

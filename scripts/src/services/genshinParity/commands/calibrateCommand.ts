@@ -26,7 +26,7 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
     haze: {
       default: false,
       description:
-        "Refine the haze's density and height falloff with the light, its colours held, and print them beside the residual under the scene's own haze",
+        "Refine the haze's density, height falloff and most opacity with the light, its colours held, and print them beside the residual under the scene's own haze",
       type: "boolean",
     },
     self: {
@@ -65,7 +65,7 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
     console.log(`${count} pixels, residual ${residual.toFixed(4)} against the bins' spread ${deviation.toFixed(4)}`);
     if (args.haze)
       console.log(
-        `haze density ${haze.density.toFixed(5)}, height falloff ${haze.heightFalloff.toFixed(4)}, against a residual of ${sceneResidual.toFixed(4)} under the scene's own`,
+        `haze density ${haze.density.toFixed(5)}, height falloff ${haze.heightFalloff.toFixed(4)}, most opacity ${haze.maxOpacity.toFixed(4)}, against a residual of ${sceneResidual.toFixed(4)} under the scene's own`,
       );
     console.log("ramp, dark end to lit end:");
     for (const knot of light.ramp) console.log(`  ${formatColor(knot)}`);

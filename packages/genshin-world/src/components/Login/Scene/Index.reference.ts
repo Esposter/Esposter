@@ -481,6 +481,24 @@ export const reference: ComponentReference = {
       search:
         "genshin:assets tree login --root LoginScene, then --root Eff_SeaOfCloud_Login, then the sea plane at Cloud_Back's height and compare on every login frame",
     },
+    {
+      found:
+        "Each height band's linear luminance over the parts, the recording's against the exports' as our scene draws them, by depth: beyond 80 metres ours stands too bright at every height and every hour, by a fifth at dawn, a quarter at dusk and up to two and a half times at night, and further off the deeper the stone lies, so the haze hides too much of the far stone; over the walkway, from 20 metres out, ours stands about an eighth too bright at every depth, a light that dims with height; under the walkway at 20 to 80 metres the two agree",
+      search:
+        "rank on the dawn title, the night title and the door recording, its height bands by depth (readLightCeilings)",
+    },
+    {
+      found:
+        "A light from the cloud sea, each pixel's albedo by a colour fading exponentially with its height over the sea, solved with the light and the haze over the dawn's bins: residual 0.1114 against 0.1203, with its falloff at 0.06 a metre, but only by emptying the haze to a density of 0.028, the light standing in for it, so the cloud sea's pale sheet, which the frames need, would go. Not built",
+      search:
+        "A scratch term in solveStoneLight, its falloff refined with the haze by calibrate --haze on the dawn title",
+    },
+    {
+      found:
+        "The haze held under a most opacity, refined with its density and falloff: the dawn solves to 0.67 (residual 0.1102 against 0.1203) and scores 0.3935 against 0.3888, its towers 0.1767 against 0.1756 and its sky 0.1448 against 0.1402 by layer, its cloud sea paling less; the night solves to 0.65, a density of 12.6 falling 0.46 a metre (0.1127 against 0.1455), and scores 0.3756 against 0.4003; the dusk to 0.77, 0.37 falling 0.21 (0.1480 against 0.1517), and scores 0.5197 against 0.5246; the day to 0.74, 5.46 falling 0.25 (0.1555 against 0.1708), and scores its title 0.4342 against 0.4396 but the phone's door frame 0.5026 against 0.4789. The night's and the dusk's ship with their lights; the dawn and the day keep theirs",
+      search:
+        "maxOpacity on FogUniforms and SceneFog, refined by calibrate --haze --write on every hour's frame, then compare on each hour's frames, compare --witness on the dawn by layer, and compare --all",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
