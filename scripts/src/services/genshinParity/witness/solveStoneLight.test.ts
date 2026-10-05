@@ -2,7 +2,12 @@ import type { StoneLightSample } from "#src/models/genshinParity/witness/StoneLi
 import type { Vector } from "#src/models/shared/Vector";
 
 import { solveStoneLight } from "#src/services/genshinParity/witness/solveStoneLight";
-import { computeStoneHarmonics, STONE_HARMONIC_COUNT, STONE_RAMP_KNOT_COUNT } from "genshin-engine";
+import {
+  computeStoneHarmonics,
+  STONE_HARMONIC_COUNT,
+  STONE_HEIGHT_FALLOFF,
+  STONE_RAMP_KNOT_COUNT,
+} from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const round = (colors: (readonly number[])[]): number[][] =>
@@ -22,6 +27,7 @@ describe(solveStoneLight, () => {
     [0.1, 0.05, 0],
     [-0.05, 0, 0.05],
   ];
+  const heightFade = [0.2, 0.15, 0.1];
   const haze = { color: [0.6, 0.5, 0.4] satisfies Vector, scatterColor: [1, 0.8, 0.5] satisfies Vector };
   // Every ramp knot's coordinate under faces turned every way, each drawn as many times as a bin needs to be read
   const samples = Array.from({ length: STONE_RAMP_KNOT_COUNT * 6 }, (_value, index): StoneLightSample[] => {
@@ -37,6 +43,7 @@ describe(solveStoneLight, () => {
     const terms = Array.from({ length: STONE_HARMONIC_COUNT }, () => 0);
     computeStoneHarmonics(normal, terms);
     const albedo: Vector = [0.4 + 0.02 * (index % 7), 0.35 + 0.03 * (index % 4), 0.3];
+    const height = ((index % 11) - 5) * 4;
     const opacity = (index % 9) / 20;
     const scatter = (index % 4) / 4;
     const emission: Vector = [0.01 * (index % 3), 0, 0.02];
@@ -47,7 +54,8 @@ describe(solveStoneLight, () => {
       const sun = (ramp[knot]?.[channel] ?? 0) * (1 - share) + (ramp[knot + 1]?.[channel] ?? 0) * share;
       const sky = terms.reduce((sum, value, term) => sum + value * (harmonics[term]?.[channel] ?? 0), 0);
       const hazeColor = (1 - scatter) * haze.color[channel] + scatter * haze.scatterColor[channel];
-      return (albedo[channel] * (sun + sky) + emission[channel]) * (1 - opacity) + hazeColor * opacity;
+      const fade = (heightFade[channel] ?? 0) * Math.exp(-height * STONE_HEIGHT_FALLOFF);
+      return (albedo[channel] * (sun + sky + fade) + emission[channel]) * (1 - opacity) + hazeColor * opacity;
     }) as Vector;
     return Array.from({ length: 30 }, () => ({
       albedo,
@@ -55,19 +63,21 @@ describe(solveStoneLight, () => {
       color,
       emission,
       harmonics: terms,
+      height,
       opacity,
       rampCoordinate,
       scatter,
     }));
   }).flat();
 
-  test("recovers the ramp and the harmonics under a known haze", () => {
+  test("recovers the ramp, the harmonics and the light fading with height under a known haze", () => {
     expect.hasAssertions();
 
     const { light, residual } = solveStoneLight(samples, haze);
 
     expect(round(light.ramp)).toStrictEqual(round(ramp));
     expect(round(light.harmonics)).toStrictEqual(round(harmonics));
+    expect(round([light.heightFade])).toStrictEqual(round([heightFade]));
     expect(residual).toBeLessThan(1e-4);
   });
 

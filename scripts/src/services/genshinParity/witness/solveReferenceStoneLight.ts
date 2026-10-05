@@ -134,6 +134,7 @@ export const solveReferenceStoneLight = async (
             color: getPixelSceneColor(referenceShot, pixel),
             emission: [emission[pixel * 4] ?? 0, emission[pixel * 4 + 1] ?? 0, emission[pixel * 4 + 2] ?? 0],
             harmonics,
+            height: point.y,
             opacity: 0,
             rampCoordinate,
             scatter,

@@ -7,3 +7,6 @@ export const STONE_SHADOW_EXPONENT = 0.2;
 export const STONE_RAMP_KNOT_COUNT = 16;
 // The terms of the second order spherical harmonics the sky's light on the stone is held in
 export const STONE_HARMONIC_COUNT = 9;
+// How fast the stone's light that fades with height dims, a share a metre up from the scene's ground, as the reflection
+// Pass's clustered probes stepping up the towers light them: over tens of metres, not as a glow off one surface
+export const STONE_HEIGHT_FALLOFF = 0.05;

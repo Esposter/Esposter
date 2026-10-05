@@ -504,6 +504,12 @@ export const reference: ComponentReference = {
         "Under the night's shipped haze held, a light by the albedo fading with height over the cloud sea leaves a residual of 0.1058 at a falloff of 0.02 a metre, 0.1064 at 0.05, 0.1099 at 0.1 and 0.1124 at 0.4, against 0.1127 without it: what is left with height is a gentle gradient over tens of metres, as clustered probes stepping up the towers would cast it, not a glow off the sea near its top",
       search: "A scratch term in solveStoneLight at fixed falloffs, the haze held, by calibrate on the night title",
     },
+    {
+      found:
+        "The same light at the dawn leaves a residual of 0.1172 at 0.02 a metre, 0.1171 at 0.05 and 0.1174 at 0.1 against 0.1203, and at the dusk 0.1451, 0.1447 and 0.1465 against 0.1480, so every hour reads best near 0.05. Built into the stone's light at that falloff (STONE_HEIGHT_FALLOFF), solved per hour with the ramp and the harmonics and written, it scores the dawn 0.3856 against 0.3889, the day's title 0.4369 against 0.4396 and the phone's door frame 0.4721 against 0.4788, the door recording 0.5165 against 0.5197 and the night 0.3674 against 0.3756. Its colour differs by hour, the dawn's and the day's near grey, the night's blue with its red below none and the dusk's red with its blue below none, so it carries more than the probes' light",
+      search:
+        "A scratch term in solveStoneLight at falloffs of 0.02, 0.05 and 0.1, the haze held, by calibrate on the dawn title and the door recording; then heightFade on StoneLight, written by calibrate --write at every hour and compared on each hour's frames and compare --all",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
