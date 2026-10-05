@@ -48,7 +48,7 @@ flowchart TD
 
 ## Procedures
 
-All in `server/trpc/routers/room/index.ts`:
+The invite router, `server/trpc/routers/invite.ts`, holds every procedure over the invite table; `joinRoom`, which consumes a link, is the room router's (`server/trpc/routers/room/index.ts`):
 
 | Procedure                                               | Auth                             | Purpose                                                                        |
 | :------------------------------------------------------ | :------------------------------- | :----------------------------------------------------------------------------- |
@@ -67,6 +67,7 @@ All in `server/trpc/routers/room/index.ts`:
 | `apps/web/shared/services/room/invite/InviteExpireAfterMinutesMap.ts` | Expiry options in minutes (single source)   |
 | `apps/web/shared/models/db/room/CreateInviteInput.ts`                 | Zod input — only the fixed option values    |
 | `apps/web/shared/services/room/invite/checkIsInviteUsable.ts`         | shared usability predicate, client included |
+| `apps/web/server/trpc/routers/invite.ts`                              | every procedure over the invite table       |
 | `apps/web/server/services/message/readMyInvite.ts`                    | own-invite read + lazy delete               |
 | `apps/web/app/store/message/room/invite.ts`                           | shared per-room invite map                  |
 | `apps/web/app/store/message/room/roomInvite.ts`                       | the panel's room-keyed list of every link   |

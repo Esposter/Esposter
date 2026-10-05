@@ -19,7 +19,7 @@ definePageMeta({
 const { $trpc } = useNuxtApp();
 const route = useRoute();
 const { code } = route.params;
-const invite = await $trpc.room.readInvite.query(code);
+const invite = await $trpc.invite.readInvite.query(code);
 if (!invite)
   throw createError({ status: 404, statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.Invite, code) });
 else if (invite.isMember) await navigateTo(RoutePath.Messages(invite.roomId));

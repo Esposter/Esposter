@@ -9,20 +9,18 @@ import { createCallerFactory } from "#server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
+import { inviteRouter } from "#server/trpc/routers/invite";
 import { roleRouter } from "#server/trpc/routers/role";
 import { roomRouter } from "#server/trpc/routers/room";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
-import { createId } from "#shared/util/math/random/createId";
 import { getPartitionKeyFilter } from "@esposter/azure";
 import {
   AzureContainer,
   AzureTable,
   DatabaseEntityType,
   friendsInSocial,
-  INVITE_ID_LENGTH,
-  invitesInMessage,
   MAX_BLOB_DELETION_EVENT_BLOB_NAMES,
   MessageType,
   PublicUserColumns,
@@ -39,18 +37,6 @@ import {
 } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-// The id generator is the seam a collision is injected at; it delegates to the real one by default, so every
-// Other test is unaffected
-const { createIdMock } = vi.hoisted(() => ({
-  createIdMock: vi.fn<typeof import("#shared/util/math/random/createId").createId>(),
-}));
-
-vi.mock(import("#shared/util/math/random/createId"), async (importOriginal) => {
-  const original = await importOriginal();
-  createIdMock.mockImplementation(original.createId);
-  return { createId: createIdMock };
-});
-
 // Uploaded through the client, so the mock dates the blob now
 const uploadPublicUserAssetBlob = (blobName: string) =>
   new MockBlockBlobClient("", AzureContainer.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
@@ -59,6 +45,7 @@ describe("roomRouter", () => {
   let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
+  let inviteCaller: DecorateRouterRecord<TRPCRouter["invite"]>;
   const roomId = crypto.randomUUID();
   const name = "name";
   const expireAfterMinutes = InviteExpireAfterMinutesMap["30 minutes"];
@@ -68,12 +55,13 @@ describe("roomRouter", () => {
   const getBlobName = (publicUrl: string) => publicUrl.slice(publicUserAssetsUrlPrefix.length);
   // A link that never lapses, which is what every test not about expiry or exhaustion joins through
   const createUnlimitedInvite = (inviteRoomId: string) =>
-    roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: inviteRoomId });
+    inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: inviteRoomId });
 
   beforeAll(async () => {
     mockContext = await createMockContext();
     roomCaller = createCallerFactory(roomRouter)(mockContext);
     roleCaller = createCallerFactory(roleRouter)(mockContext);
+    inviteCaller = createCallerFactory(inviteRouter)(mockContext);
   });
 
   beforeEach(() => {
@@ -510,142 +498,6 @@ describe("roomRouter", () => {
     expect(data).toBe(newRoom.id);
   });
 
-  test("reads invite", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await createUnlimitedInvite(newRoom.id);
-    const invite = await roomCaller.readInvite(newInvite.id);
-    const userId = getMockSession().user.id;
-
-    assert.exists(invite);
-
-    expect(invite.userId).toBe(userId);
-    expect(invite.roomId).toBe(newRoom.id);
-    expect(invite.id).toBe(newInvite.id);
-    expect(invite.isMember).toBe(true);
-  });
-
-  test("reads non-existent invite", async () => {
-    expect.hasAssertions();
-
-    const invite = await roomCaller.readInvite(createId(INVITE_ID_LENGTH));
-
-    expect(invite).toBeUndefined();
-  });
-
-  test("reads my invite", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await createUnlimitedInvite(newRoom.id);
-    const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
-
-    assert.exists(myInvite);
-
-    // The creator rides back with a created link because the management panel lists that column; a member reading
-    // Their own link already knows who minted it, so that half is the whole difference between the two rows
-    expect(newInvite).toStrictEqual({ ...myInvite, user: newInvite.user });
-    expect(newInvite.user.id).toBe(getMockSession().user.id);
-  });
-
-  test("reads my invite with no invite to be undefined", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
-
-    expect(myInvite).toBeUndefined();
-  });
-
-  test("reads my expired invite to be undefined", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    await roomCaller.createInvite({ expireAfterMinutes, maxUses: 0, roomId: newRoom.id });
-    vi.setSystemTime(Temporal.Duration.from({ minutes: expireAfterMinutes + 1 }).total("milliseconds"));
-    const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
-
-    expect(myInvite).toBeUndefined();
-  });
-
-  // The usability predicate runs over the page rather than in SQL, so a page can filter down to fewer rows than it
-  // Read — and the cursor has to name the oldest row read rather than the oldest usable one, or a batch of lapsed
-  // Links ends the walk in front of the usable ones behind them
-  test("keeps paging room invites past a page of lapsed links", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const { id: userId } = getMockSession().user;
-    const usableInviteId = createId(INVITE_ID_LENGTH);
-    const epoch = new Date(0);
-    const oneSecondIn = new Date(Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
-    const twoSecondsIn = new Date(Temporal.Duration.from({ seconds: 2 }).total("milliseconds"));
-    // Newest first, so the two lapsed links are the whole of a two-row page and the usable one sits behind them
-    await mockContext.db.insert(invitesInMessage).values([
-      { createdAt: twoSecondsIn, expiresAt: epoch, id: createId(INVITE_ID_LENGTH), roomId: newRoom.id, userId },
-      { createdAt: oneSecondIn, expiresAt: epoch, id: createId(INVITE_ID_LENGTH), roomId: newRoom.id, userId },
-      { createdAt: epoch, id: usableInviteId, roomId: newRoom.id, userId },
-    ]);
-    vi.setSystemTime(Temporal.Duration.from({ minutes: 1 }).total("milliseconds"));
-    const lapsedPage = await roomCaller.readRoomInvites({ limit: 2, roomId: newRoom.id });
-
-    assert(lapsedPage.nextCursor);
-
-    const usablePage = await roomCaller.readRoomInvites({
-      cursor: lapsedPage.nextCursor,
-      limit: 2,
-      roomId: newRoom.id,
-    });
-
-    expect(lapsedPage.items).toStrictEqual([]);
-    expect(lapsedPage.hasMore).toBe(true);
-    expect(usablePage.items.map(({ id }) => id)).toStrictEqual([usableInviteId]);
-  });
-
-  test("creating again replaces the previous invite", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const firstInvite = await createUnlimitedInvite(newRoom.id);
-    const secondInvite = await createUnlimitedInvite(newRoom.id);
-    const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
-
-    expect(secondInvite.id).not.toBe(firstInvite.id);
-    expect(secondInvite).toStrictEqual({ ...myInvite, user: secondInvite.user });
-  });
-
-  // The insert that finds the collision aborts the transaction it runs in, so a retry that is not its own
-  // Savepoint fails as "transaction aborted" and the create reports an id-allocation failure for a room whose
-  // Next id was free
-  test("re-rolls an invite id that collides with another member's link", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const member = await createRoomMember(mockContext, newRoom.id);
-    const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
-    assert(myInvite);
-    await mockSessionOnce(mockContext.db, member);
-    createIdMock.mockReturnValueOnce(myInvite.id);
-    const invite = await createUnlimitedInvite(newRoom.id);
-
-    expect(createIdMock).toHaveReturnedWith(myInvite.id);
-    expect(invite.id).not.toBe(myInvite.id);
-  });
-
-  test("creates invite with expiry and max uses", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes, maxUses, roomId: newRoom.id });
-
-    expect(newInvite.expiresAt).toStrictEqual(
-      new Date(Temporal.Duration.from({ minutes: expireAfterMinutes }).total("milliseconds")),
-    );
-    expect(newInvite.maxUses).toBe(maxUses);
-    expect(newInvite.uses).toBe(0);
-  });
-
   test("joins", async () => {
     expect.hasAssertions();
 
@@ -661,7 +513,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses, roomId: newRoom.id });
+    const newInvite = await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses, roomId: newRoom.id });
     await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInvite.id);
     // `maxUses` is 1, so the invite is now exhausted — read the row directly instead of readMyInvite
@@ -674,7 +526,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses, roomId: newRoom.id });
+    const newInvite = await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses, roomId: newRoom.id });
     await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInvite.id);
     await mockSessionOnce(mockContext.db);
@@ -688,7 +540,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes, maxUses: 0, roomId: newRoom.id });
+    const newInvite = await inviteCaller.createInvite({ expireAfterMinutes, maxUses: 0, roomId: newRoom.id });
     vi.setSystemTime(Temporal.Duration.from({ minutes: expireAfterMinutes + 1 }).total("milliseconds"));
     await mockSessionOnce(mockContext.db);
 
@@ -696,29 +548,7 @@ describe("roomRouter", () => {
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Invite, newInvite.id).message}]`,
     );
 
-    const invite = await roomCaller.readInvite(newInvite.id);
-
-    expect(invite).toBeUndefined();
-  });
-
-  test("revoking own invite makes the link unknown, and another member's is not revocable", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await createUnlimitedInvite(newRoom.id);
-    // The member who joined through the link holds no link of their own, so revoking that one matches no row
-    const { user: member } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(newInvite.id);
-    await mockSessionOnce(mockContext.db, member);
-
-    await expect(
-      roomCaller.revokeInvite({ id: newInvite.id, roomId: newRoom.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Invite, newInvite.id).message}]`,
-    );
-
-    await roomCaller.revokeInvite({ id: newInvite.id, roomId: newRoom.id });
-    const invite = await roomCaller.readInvite(newInvite.id);
+    const invite = await inviteCaller.readInvite(newInvite.id);
 
     expect(invite).toBeUndefined();
   });
@@ -728,7 +558,7 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     // One use, so the join that resumes proves the paused one rolled its own increment back
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 1, roomId: newRoom.id });
+    const newInvite = await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses: 1, roomId: newRoom.id });
     await roomCaller.updateRoom({ id: newRoom.id, isInvitePaused: true });
 
     await expect(createUnlimitedInvite(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -747,26 +577,6 @@ describe("roomRouter", () => {
     const joinedRoom = await roomCaller.joinRoom(newInvite.id);
 
     expect(joinedRoom.id).toBe(newRoom.id);
-  });
-
-  test("fails create invite with direct message room", async () => {
-    expect.hasAssertions();
-
-    const { directMessage } = await createDirectMessageWithFriend(mockContext);
-
-    await expect(createUnlimitedInvite(directMessage.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, directMessage.id).message}]`,
-    );
-  });
-
-  test("fails read invite token with direct message room", async () => {
-    expect.hasAssertions();
-
-    const { directMessage } = await createDirectMessageWithFriend(mockContext);
-
-    await expect(roomCaller.readMyInvite({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, directMessage.id).message}]`,
-    );
   });
 
   test("fails leave with direct message room", async () => {

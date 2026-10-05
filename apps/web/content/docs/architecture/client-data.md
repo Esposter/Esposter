@@ -23,7 +23,7 @@ Both share the same error stack (`getResultAsync` → `createAlert`) and the sam
 It is **not** for page-level loaders that must gate rendering or 404 on a missing resource — those keep the top-level `await` and `throw createError(...)` / navigate on failure (see the page-level bullet under [When not to use them](#when-not-to-use-them)).
 
 ```ts
-const { data, refresh } = useQuery(() => $trpc.room.readMyInvite.query({ roomId }), {
+const { data, refresh } = useQuery(() => $trpc.invite.readMyInvite.query({ roomId }), {
   onSuccess: (result) => {
     // rare: derive local state from the loaded result
   },
