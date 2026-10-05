@@ -16,7 +16,7 @@ Its reasoning holds in every particular:
 
 - The package build is a small fraction of the run and gates nothing, so per-package granularity returns little. **Still true**, and this proposal does not claim otherwise — the win is traced inputs, not granularity.
 - A third content-hash cache beside virrun's and the CI key would be a third notion of staleness, and three that disagree fail toward serving stale output. **Still true, and now the argument for the swap** ([task runner](/docs/proposals/refactors/vite-plus/task-runner)).
-- A local task cache is worth little in CI without remote caching. **Still true**, and Vite+ 1.0 still has no remote cache, so the CI value comes from the key being right rather than from the cache being shared.
+- A local task cache is worth little in CI without remote caching. **Still true of the layer it judged**: Vite+ 1.0 has no built-in remote cache, and the cross-run sharing CI does get comes from restoring and saving the cache directory with `actions/cache` ([task runner](/docs/proposals/refactors/vite-plus/task-runner)) — plumbing the current key already uses, so the CI value comes from the key being right rather than from the cache being shared.
 
 So the page is not wrong; its conclusion was correct against the tool set that existed when it was written, and one input changed. When the migration ships, that page is deleted and its surviving reasoning is inverted into the as-built page in the present tense — the standard for a tombstone is that the rule and the _why_ survive while the past tense and the dead identifier go. The sentence worth keeping is the one about competing notions of staleness, because it is what makes the new arrangement defensible rather than merely newer.
 

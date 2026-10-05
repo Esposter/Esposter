@@ -58,7 +58,7 @@ flowchart TD
 
 The gate is the whole proposal. Today that diamond does not exist in CI: the decision is made ahead of the run by a `git ls-tree` hash that cannot see what a command will actually open, and made again, differently, by virrun's own task cache. Moving the gate behind the command is what lets both of those disappear.
 
-`vp` does not replace `pnpm` — it drives it. The workspace, the catalog and the topological build order stay exactly where they are declared, which is why the [two product roots](/docs/architecture/monorepo-tooling) and every filter that addresses them survive the migration unedited: `vp run -r --filter ./packages/*` is the command this repo already writes with a different first word ([run guide](https://viteplus.dev/guide/run)).
+`vp` does not replace `pnpm` — it drives it. The workspace, the catalog and the topological build order stay exactly where they are declared, which is why the [two product roots](/docs/architecture/monorepo-tooling) and every filter that addresses them survive the migration unedited: `vp run -r --filter "./packages/*" build` is the command this repo already writes with a different first word ([run guide](https://viteplus.dev/guide/run)).
 
 ## What the migration is made of
 
