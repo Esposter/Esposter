@@ -21,7 +21,7 @@ export const useDocsPage = async () => {
       queryCollectionNavigation(ContentCollection.Docs, [DocsCollectionItemPropertyNames.description]),
     ),
   ]);
-  if (!page.value) throw createError({ fatal: true, statusCode: 404, statusMessage: "Page Not Found" });
+  if (!page.value) throw createError({ fatal: true, status: 404, statusText: "Page Not Found" });
   // Unwrap the single docs root group; drop the root index page @nuxt/content injects as its own child
   const sections = computed(() =>
     getSortedNavigationItems(

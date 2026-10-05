@@ -18,8 +18,6 @@ export const RECENT_PAGES_SHOWN_LIMIT = 5;
 export const RECENT_PAGES_STORED_LIMIT = 50;
 // Home is the logo and signing in is a step on the way somewhere, so neither is a place a reader comes back to
 export const RECENT_PAGE_EXCLUDED_PATHS: readonly string[] = [RoutePath.Index, RoutePath.Login];
-// The status an error carries when it names none, as `createError` itself defaults it
-export const DEFAULT_ERROR_STATUS_CODE = 500;
 // The voxel digits a status page draws its code in: each is this many blocks wide, and each column lands this long
 // After the one to its left
 export const VOXEL_DIGIT_WIDTH = 3;

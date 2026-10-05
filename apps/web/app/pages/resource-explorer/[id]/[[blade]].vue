@@ -21,7 +21,7 @@ const resourceStore = useResourceStore();
 const { resource } = storeToRefs(resourceStore);
 const { clearResource, readResource } = resourceStore;
 await readResource();
-if (!resource.value) throw createError({ statusCode: 404, statusMessage: "Resource not found" });
+if (!resource.value) throw createError({ status: 404, statusText: "Resource not found" });
 const activeBlade = computed(() => route.params.blade || ResourceBladeType.Overview);
 // Opening a resource is what Recent is a list of — the Recent route, Home's Recent tab and the palette
 // Scope's "Recently opened" group all read the rows this writes

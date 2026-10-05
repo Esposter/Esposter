@@ -5,7 +5,7 @@ const route = useRoute();
 const { id, type } = route.params;
 // The route type is an arbitrary string, so it is matched against the registered publishable renderers
 const viewComponent = Object.entries(ViewComponentMap).find(([viewType]) => viewType === type)?.[1];
-if (!viewComponent) throw createError({ statusCode: 404, statusMessage: "Resource view not found" });
+if (!viewComponent) throw createError({ status: 404, statusText: "Resource view not found" });
 // The renderer is what reads the resource, so it names the page after it (useReadPublishedResourceContent)
 </script>
 

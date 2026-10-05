@@ -14,6 +14,6 @@ export const useValidateResourceBlade = (resource: Ref<ResourceInResource | unde
     if (!newResource || newResource.id !== getRouteParam(currentRoute.value.params, "id")) return;
 
     if (!checkIsValidResourceBlade(newResource.type, newActiveBlade))
-      showError(createError({ statusCode: 404, statusMessage: "Resource blade not found" }));
+      showError(createError({ status: 404, statusText: "Resource blade not found" }));
   });
 };
