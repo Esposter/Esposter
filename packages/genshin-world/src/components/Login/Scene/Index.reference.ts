@@ -475,6 +475,12 @@ export const reference: ComponentReference = {
       search:
         "The cloud sea's material writing no depth, so the haze pass leaves it, then compare on the dawn and the night",
     },
+    {
+      found:
+        "Eff_SeaOfCloud_Login hangs at the origin's CloudEffect anchor 67.5 back, its three emitters empty anchors with particle systems: Cloud_Back 14 metres under the walkway and 27 further back, Cloud_Back02 and Cloud_Back03 1.7 under, some 215 to either side. Our sea moved from 20 metres under to Cloud_Back's 14, each hour's haze density rescaled so its profile stands as it was, scores the dawn 0.3888, the day 0.4396, the night 0.4003, the door recording 0.5246 and the phone's door frame 0.4789, level or better on every frame",
+      search:
+        "genshin:assets tree login --root LoginScene, then --root Eff_SeaOfCloud_Login, then the sea plane at Cloud_Back's height and compare on every login frame",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
