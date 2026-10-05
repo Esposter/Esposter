@@ -7,6 +7,7 @@ import type { Page } from "playwright";
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUpperMedian";
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
+import { computePixelPoint } from "#src/services/genshinParity/shared/computePixelPoint";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
@@ -80,15 +81,10 @@ export const solveReferenceFog = async (
           !checkIsScored(pixel, width)
         )
           continue;
-        // The pixel's ray in the view, scaled to the depth along the view the witness wrote
-        const [column, row] = [pixel % width, Math.floor(pixel / width)];
-        const view = new Vector3(((column + 0.5) / width) * 2 - 1, 1 - ((row + 0.5) / height) * 2, 0.5).applyMatrix4(
+        const point = computePixelPoint(pixel, { height, width }, pixelDepth, {
+          matrixWorld,
           projectionMatrixInverse,
-        );
-        const point = view
-          .multiplyScalar(pixelDepth / -view.z)
-          .applyMatrix4(matrixWorld)
-          .toArray();
+        }).toArray();
         points.push({
           lit: getPixelSceneColor(litShot, pixel),
           point,

@@ -2,17 +2,20 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { SetLights } from "#src/models/genshinParity/witness/SetLights";
 
 import { CLOUD_BRIGHTNESS_RATIO, LUMINANCE, SKY_LAYER } from "#src/services/genshinParity/shared/constants";
+import { computePixelPoint } from "#src/services/genshinParity/shared/computePixelPoint";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
 import { readWitnessFamilies } from "#src/services/genshinParity/shared/readWitnessFamilies";
 import { readWitnessGbuffer } from "#src/services/genshinParity/shared/readWitnessGbuffer";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
+import { readLightCeilings } from "#src/services/genshinParity/witness/readLightCeilings";
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
 import { BYTE } from "#src/services/shared/constants";
 import { toLinear } from "#src/services/shared/toLinear";
 import { getOrCreate, withFinalizerAsync } from "@esposter/shared";
 import sharp from "sharp";
+import { Matrix4 } from "three";
 
 // The depths a part's pixels are split by, near, middle and far, where the light, then the haze, decides their colour
 const DEPTH_BANDS: [string, number][] = [
@@ -25,18 +28,25 @@ const DEPTH_BANDS: [string, number][] = [
 const SKY_BAND_COUNT = 3;
 // A part's face is lit where its cosine to the light passes this, turned away under its negative, and edge-on between
 const FACING_COSINE = 0.3;
+// How far either side of a silhouette its sides' own error is read, in the structure's pixels
+const SIDE_RADIUS = 4;
 // Every term of a reference's error ranked by its ceiling, the most of the frame's FLIP that term drawn exactly would
 // Recover: the frame's FLIP is its pixels' mean, so a term's ceiling is its pixels' error summed over the frame's
 // Pixels. Each family of parts the witness draws splits into its stand-in, the error ours carries over the game's own
 // Exports on that family's pixels, and the shared terms the exports carry too (the light, the haze, the grade), split
 // By depth and by how the faces turn to the light, over the parts' interiors; the silhouettes are their own terms, the
-// Exports' placement and the camera's pose, and the stand-ins' outlines over theirs; the sky splits by its rows and
+// Error either side of one carries anyway, the exports' placement and the camera's pose as the excess over it, and the
+// Stand-ins' outlines over theirs; the sky splits by its rows and
 // Into the clouds the reference shows over ours and the rest. One page draws the witness's layers and two shots, ours
 // And the exports', and the error is mapped once over each, inside the reference's scored region
 export const rankReferenceGains = async (
   referenceId: string,
   witness: DerivedAssetComponent,
-): Promise<{ frame: number; terms: { ceiling: number; name: string; share: number }[] }> => {
+): Promise<{
+  frame: number;
+  lightCeilings: Awaited<ReturnType<typeof readLightCeilings>>;
+  terms: { ceiling: number; name: string; share: number }[];
+}> => {
   await fetchReferences();
   const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
@@ -48,6 +58,16 @@ export const rankReferenceGains = async (
         undefined,
       );
       const { depth, families: layerFamilies, normal, part, width } = await readWitnessGbuffer(page);
+      const sky = await page.evaluate(() =>
+        (Reflect.get(window, "getSceneSky") as () => { matrixWorld: number[]; projectionMatrixInverse: number[] })(),
+      );
+      const matrices = {
+        matrixWorld: new Matrix4().fromArray(sky.matrixWorld),
+        projectionMatrixInverse: new Matrix4().fromArray(sky.projectionMatrixInverse),
+      };
+      const heights = Float32Array.from({ length: width * height }, (_value, pixel) =>
+        part[pixel * 4] ? computePixelPoint(pixel, { height, width }, depth[pixel * 4] ?? 0, matrices).y : 0,
+      );
       const size = { height, width };
       const ourShot = await shootWitnessFamilies(page, [], size);
       const exportsShot = await shootWitnessFamilies(page, families, size);
@@ -85,14 +105,35 @@ export const rankReferenceGains = async (
           }
         return false;
       };
+      const silhouettes = Uint8Array.from({ length: width * height }, (_value, pixel) =>
+        checkIsSilhouette(pixel) ? 1 : 0,
+      );
+      // The error either side of a silhouette carries anyway, the mean of the exports' error over the scored pixels
+      // Off every silhouette within a few pixels: what a part placed exactly would still leave on its outline
+      const readSideError = (pixel: number): number => {
+        const [column, row] = [pixel % width, Math.floor(pixel / width)];
+        let [count, error] = [0, 0];
+        for (let rowOffset = -SIDE_RADIUS; rowOffset <= SIDE_RADIUS; rowOffset++)
+          for (let columnOffset = -SIDE_RADIUS; columnOffset <= SIDE_RADIUS; columnOffset++) {
+            const [neighbourColumn, neighbourRow] = [column + columnOffset, row + rowOffset];
+            if (neighbourColumn < 0 || neighbourRow < 0 || neighbourColumn >= width || neighbourRow >= height) continue;
+            const neighbour = neighbourRow * width + neighbourColumn;
+            if (silhouettes[neighbour] || !checkIsScored(neighbour, width)) continue;
+            count++;
+            error += witnessErrors[neighbour] ?? 0;
+          }
+        return count ? error / count : (witnessErrors[pixel] ?? 0);
+      };
       for (let pixel = 0; pixel < width * height; pixel++) {
         if (!checkIsScored(pixel, width)) continue;
         scoredCount++;
         const ourError = ourErrors[pixel] ?? 0;
         frameError += ourError;
-        if (checkIsSilhouette(pixel)) {
-          add("silhouettes: placement and pose", witnessErrors[pixel] ?? 0);
-          add("silhouettes: stand-ins", ourError - (witnessErrors[pixel] ?? 0));
+        if (silhouettes[pixel]) {
+          const [witnessError, sideError] = [witnessErrors[pixel] ?? 0, readSideError(pixel)];
+          add("silhouettes: placement and pose", witnessError - sideError);
+          add("silhouettes: either side's error", sideError);
+          add("silhouettes: stand-ins", ourError - witnessError);
           continue;
         }
         if (part[pixel * 4] === 0) {
@@ -117,6 +158,14 @@ export const rankReferenceGains = async (
       }
       return {
         frame: frameError / Math.max(scoredCount, 1),
+        lightCeilings: await readLightCeilings({
+          checkIsScored,
+          direction,
+          exportsShot,
+          gbuffer: { depth, height, normal, part, width },
+          heights,
+          image,
+        }),
         terms: Array.from(nameTermMap, ([name, { count, error }]) => ({
           ceiling: error / Math.max(scoredCount, 1),
           name,

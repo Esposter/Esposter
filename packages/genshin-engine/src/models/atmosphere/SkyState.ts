@@ -14,6 +14,8 @@ export interface SkyState extends BaseSkyState {
   fogColor?: Color;
   // The haze's own density at its base where a scene sets one per hour, as a sea of cloud thickens through the day
   fogDensity?: number;
+  // How fast the haze thins with height where a scene sets it per hour, as a sea of cloud's haze lies thick or rises
+  fogHeightFalloff?: number;
   // The horizon halo at its strength, where a sky has one
   haloColor?: Color;
   // The bottom colour away from the sun, where a sky tells it from the colour toward it
