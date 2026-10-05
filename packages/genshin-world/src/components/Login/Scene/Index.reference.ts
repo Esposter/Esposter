@@ -397,6 +397,18 @@ export const reference: ComponentReference = {
       search:
         "genshin:parity calibrate on the day title and the door recording with the ramp held to rise and the sun's direction refined, the haze's glow turned with it, held, and solved alone, then compare on every login frame",
     },
+    {
+      found:
+        "The sun's program is Shader#25's program 101 in the deferred block's export (login/shaders/00612967). It reads the shading model from the G-buffer's last target, smoothness from another, the specular colour from a third and the normal, albedo and occlusion, and lights a pixel as its albedo by the light's colour through a one-channel ramp at a half plus half its facing clamped at none, by the shadow raised to a fifth, plus the sky's harmonics (the second order's nine, floored at none) by the albedo graded toward white by the occlusion, plus min(12, D/π) by Schlick's F by the light's colour, the clamped facing and the shadow: D is GGX at a roughness of one less the smoothness, squared, and F grades the specular colour toward white by one less the light's dot with the half vector to the fifth, by twice one less the roughness squared. Shading model 13 takes 0.04 for its specular colour, the albedo's alpha for its smoothness, and adds the specular target's colour by twenty times the smoothness target squared as glow. The stone program writes 0.04 graded to the albedo by its mask's metal as the specular colour, so the stone's highlight is a dielectric's, about a tenth of the lit stone's colour at its peak; the fitted stone's smoothness is scaled by _GlossMapScale and its specular colour is _SpecColor, neither of which the program reads. The reflection pass (Shader#13) adds the light probes' clustered ambient and the reflection cube, both set at run time",
+      search:
+        "The deferred block's shaders listed by their properties (_TOON_ON names Shader#25, _ProbeClusterCubeDefault Shader#13), the sun's program found by its highlight's cap, and both read",
+    },
+    {
+      found:
+        "The ramp's facing clamped at none as the pass clamps it, the ramp held from its shadowed middle, every hour re-solved: the binned residual reads lower (dawn 0.067 against 0.085), but only because every turned-away pixel falls into one ramp bin and the bins' spread falls with it; the frames score the dawn 0.5149 against 0.4950, the night 0.4676 against 0.4498, the door recording 0.5761 against 0.5698, the day and the phone's door frame level. Under rank the dawn's middle towers turned away lose most (0.116 to 0.129): the unclamped ramp's lower half shapes turned-away faces by their facing, a curve the sky's second order harmonics cannot draw, standing in for light the model lacks, the reflection pass's probes first. --self leaves 0.012 of residual, so the model draws what the renderer draws. Reverted",
+      search:
+        "genshin:parity calibrate on every hour with the facing clamped, --write, then compare on every login frame, rank on the dawn title and calibrate --self",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
@@ -410,7 +422,7 @@ export const reference: ComponentReference = {
     "The dusk sky low on the frame's left: the recording's clear sky there is almost all cloud, so the sky solved over its clear pixels draws a dusty rose band where the recording glows gold, and its bottom colour toward the sun is held by no pixel",
     "The towers' gilding and windows: their colour per section scores worse painted as diffuse stone, the game's gold being a metal",
     "What the day's and the dusk's falling ramps stand in for: not the sun's direction, and holding them to rise scores the dusk worse, so the highlight, the reflection and the normal maps the solve lacks first",
-    "The deferred pass's reflection cube and highlight, which no asset holds and the light's solve does not yet read",
+    "The reflection pass's light probes and cube, set at run time, which the unclamped ramp's lower half stands in for on turned-away faces until they are modelled; the highlight, a dielectric's, waits behind them, and its stone smoothness is to be fitted without _GlossMapScale",
     "How the deferred pass lights shading model 13, the rim glow's pixels, and what the post pass's haze adds after it",
     "Where the glide comes to rest: the recording's door frame was still slowing at 1.6 metres a second when the click came, so the rest stands a little nearer the door than its pose",
   ],
