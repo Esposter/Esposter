@@ -11,6 +11,7 @@ import { createParticipant } from "#server/services/message/call/createParticipa
 import { createCallerFactory } from "#server/trpc";
 import { getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
+import { inviteRouter } from "#server/trpc/routers/invite";
 import { moderationRouter } from "#server/trpc/routers/message/moderation";
 import { readRoomMembershipRows } from "#server/trpc/routers/readRoomMembershipRows.test";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
@@ -32,6 +33,7 @@ describe("moderationRouter", () => {
   let mockContext: Context;
   let moderationCaller: DecorateRouterRecord<TRPCRouter["message"]["moderation"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
+  let inviteCaller: DecorateRouterRecord<TRPCRouter["invite"]>;
   let roomId: string;
   const durationMs = 1;
   const note = "note";
@@ -47,6 +49,7 @@ describe("moderationRouter", () => {
   beforeAll(() => {
     mockContext = getMockContext();
     moderationCaller = createCallerFactory(moderationRouter)(mockContext);
+    inviteCaller = createCallerFactory(inviteRouter)(mockContext);
     roomCaller = getRoomCaller();
   });
 
@@ -85,7 +88,7 @@ describe("moderationRouter", () => {
 
     const member = await createMember();
     await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.CreateBan });
-    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
+    const invite = await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
     await mockSessionOnce(mockContext.db, member);
 
     await expect(roomCaller.joinRoom(invite.id)).rejects.toThrowErrorMatchingInlineSnapshot(

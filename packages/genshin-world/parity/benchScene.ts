@@ -1,3 +1,4 @@
+import type { SceneBench } from "#parity/SceneBench";
 import type { SceneContext } from "#src/models/scene/SceneContext";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -6,19 +7,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Of the frame, the passes it renders, their draw calls and triangles, and what it keeps on the device, its pipelines,
 // Geometries and textures, which grow from one bench to the next when a scene leaks them; and the objects it draws by
 // Kind, each a draw call of its own in every pass it is drawn in
-export const benchScene = async (
-  context: SceneContext | undefined,
-  frameCount: number,
-): Promise<{
-  drawCalls: number;
-  frameCalls: number;
-  geometries: number;
-  intervals: number[];
-  kindCounts: Record<string, number>;
-  programs: number;
-  textures: number;
-  triangles: number;
-}> => {
+export const benchScene = async (context: SceneContext | undefined, frameCount: number): Promise<SceneBench> => {
   if (!context) throw new InvalidOperationError(Operation.Read, "scene", "the scene has not rendered yet");
   const { info } = context.renderer;
   const intervals: number[] = [];

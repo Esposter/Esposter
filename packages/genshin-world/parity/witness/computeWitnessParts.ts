@@ -1,3 +1,4 @@
+import type { WitnessPart } from "#parity/witness/WitnessPart";
 import type { SceneContext } from "#src/models/scene/SceneContext";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 
@@ -11,7 +12,7 @@ export const computeWitnessParts = (
   { parts }: SceneWitness,
   context: SceneContext | undefined,
   family: string,
-): { mesh: string; position: [number, number, number]; screen: [number, number] }[] => {
+): WitnessPart[] => {
   if (!context) throw new InvalidOperationError(Operation.Read, "witness", "the scene has not rendered yet");
   const { camera } = context;
   const familyGroup = parts.children.find(({ name }) => name === family);

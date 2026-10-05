@@ -1,6 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { PageWitnessView } from "#src/models/genshinParity/shared/PageWitnessView";
 import type { Vector } from "#src/models/shared/Vector";
+import type { WitnessView } from "genshin-world/parity/witness/WitnessView";
 
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { minimizeNelderMead } from "#src/services/genshinParity/shared/minimizeNelderMead";
@@ -33,7 +33,7 @@ export const placeFamilies = async (
     step,
     topRow = 0,
   }: {
-    camera?: PageWitnessView["camera"];
+    camera?: WitnessView["camera"];
     families: readonly string[];
     iterationCount: number;
     // A period the families repeat along one axis (a row the script scrolls), read at every step of it first, the

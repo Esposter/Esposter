@@ -1,5 +1,5 @@
-import type { SceneBench } from "#src/models/genshinParity/page/SceneBench";
 import type { ParityPageOptions } from "#src/models/genshinParity/shared/ParityPageOptions";
+import type { SceneBench } from "genshin-world/parity/SceneBench";
 
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
 import { withFinalizerAsync } from "@esposter/shared";

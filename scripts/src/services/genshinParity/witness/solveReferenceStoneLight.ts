@@ -1,9 +1,9 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { SceneFog } from "#src/models/genshinParity/sky/SceneFog";
 import type { SetLights } from "#src/models/genshinParity/witness/SetLights";
 import type { StoneLightSample } from "#src/models/genshinParity/witness/StoneLightSample";
 import type { Vector } from "#src/models/shared/Vector";
 import type { StoneLight } from "genshin-engine";
+import type { SceneFog } from "genshin-world/parity/SceneFog";
 import type { Page } from "playwright";
 import type { Except } from "type-fest";
 

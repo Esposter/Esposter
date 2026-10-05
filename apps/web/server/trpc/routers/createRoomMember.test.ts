@@ -3,6 +3,7 @@ import type { User } from "better-auth";
 
 import { createCallerFactory } from "#server/trpc";
 import { mockSessionOnce } from "#server/trpc/context.test";
+import { inviteRouter } from "#server/trpc/routers/invite";
 import { roomRouter } from "#server/trpc/routers/room";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { describe } from "vitest";
@@ -25,8 +26,9 @@ export const createRoomMember = (mockContext: Context, roomId: string, mockUser?
   isCreating = true;
   return withFinalizerAsync(
     async () => {
+      const inviteCaller = createCallerFactory(inviteRouter)(mockContext);
       const roomCaller = createCallerFactory(roomRouter)(mockContext);
-      const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
+      const invite = await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
       const { user } = await mockSessionOnce(mockContext.db, mockUser);
       await roomCaller.joinRoom(invite.id);
       return user;

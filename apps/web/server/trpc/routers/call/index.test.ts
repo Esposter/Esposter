@@ -8,6 +8,7 @@ import { createCallerFactory } from "#server/trpc";
 import { getMockSession, mockSessionOnce, replayMockSession } from "#server/trpc/context.test";
 import { setCallParticipant } from "#server/trpc/routers/call/setCallParticipant.test";
 import { setupCallSuite } from "#server/trpc/routers/call/setupCallSuite.test";
+import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { roomRouter } from "#server/trpc/routers/room";
 import { ForbiddenError } from "@esposter/shared";
 import { beforeAll, describe, expect, test, vi } from "vitest";
@@ -54,9 +55,7 @@ describe("callRouter", () => {
 
     const room = await roomCaller.createRoom({ name });
     const callSessionId = await createCallSessionId(mockContext.db, room.id, getMockSession().user.id);
-    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: room.id });
-    const { user } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(invite.id);
+    const user = await createRoomMember(mockContext, room.id);
     await mockSessionOnce(mockContext.db, user);
 
     await expect(callCaller.readCallParticipantMap({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(

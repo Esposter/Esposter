@@ -1,3 +1,5 @@
+import type { SceneLights } from "#parity/SceneLights";
+import type { SceneLightShares } from "#parity/SceneLightShares";
 import type { SceneContext } from "#src/models/scene/SceneContext";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -8,8 +10,8 @@ import { DirectionalLight, HemisphereLight, Vector3 } from "three";
 // Alone draws, so the two strengths are solved apart. The first call keeps each light's own strength to scale from
 export const setSceneLights = (
   context: SceneContext | undefined,
-  { ambientShare = 1, sunShare = 1 }: { ambientShare?: number; sunShare?: number },
-): { direction: [number, number, number] } => {
+  { ambientShare = 1, sunShare = 1 }: SceneLightShares,
+): SceneLights => {
   if (!context) throw new InvalidOperationError(Operation.Read, "scene", "the scene has not rendered yet");
   let direction: [number, number, number] = [0, 1, 0];
   context.scene.traverse((object) => {

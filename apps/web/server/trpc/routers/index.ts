@@ -13,6 +13,7 @@ import { emailRouter } from "#server/trpc/routers/email";
 import { flowchartRouter } from "#server/trpc/routers/flowchart";
 import { friendRouter } from "#server/trpc/routers/friend";
 import { friendRequestRouter } from "#server/trpc/routers/friendRequest";
+import { inviteRouter } from "#server/trpc/routers/invite";
 import { likeRouter } from "#server/trpc/routers/like";
 import { messageRouter } from "#server/trpc/routers/message";
 import { noteRouter } from "#server/trpc/routers/note";
@@ -50,6 +51,7 @@ const baseTrpcRouter = router({
   flowchart: flowchartRouter,
   friend: friendRouter,
   friendRequest: friendRequestRouter,
+  invite: inviteRouter,
   like: likeRouter,
   message: messageRouter,
   note: noteRouter,

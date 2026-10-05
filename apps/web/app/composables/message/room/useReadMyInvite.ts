@@ -10,7 +10,7 @@ export const useReadMyInvite = (roomId: RoomInMessage["id"], onSuccess?: (invite
   const inviteStore = useInviteStore();
   const { invites } = storeToRefs(inviteStore);
   const { seedInvite, setInvite } = inviteStore;
-  return useQuery(() => $trpc.room.readMyInvite.query({ roomId }), {
+  return useQuery(() => $trpc.invite.readMyInvite.query({ roomId }), {
     onSuccess: (invite) => {
       const storedInvite = invites.value.get(roomId);
       // A read that finds nothing beats a stored link that has since lapsed — the server deletes an expired or

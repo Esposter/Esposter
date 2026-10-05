@@ -80,6 +80,8 @@ The consequences get rediscovered as bugs if this is not read first:
 
 `publint` and `attw` still gate the published shape, because both read `publishConfig.exports`, where tsdown writes the `dist`-only map.
 
+**A shape only the workspace reads gets a source-only arm, never a copy.** When a sibling's tooling reads values a package's dev surface hands back (the scripts reading what `genshin-world`'s parity page answers), the package adds the arm through tsdown's `customExports`, skipped when `isPublish` is set, so the workspace map carries `"./parity/*": { "source": "./parity/*.ts" }` and the published one does not. The consumer imports types only, which the `source` condition resolves at typecheck and nothing loads at run time, and a twin of the shape written on the consumer's side is the copy that drifts.
+
 **A build that vendors a sibling vendors its source.** Rolldown reads `customConditions` from the tsconfig it is handed, so a self-contained bundle pulls its siblings' TypeScript rather than their `dist` — which is why `isolatedDeclarations` is off in any package vendoring one that cannot satisfy it, and why a `@/` inside a vendored package was never going to work.
 
 What follows is easy to get wrong:

@@ -8,8 +8,8 @@ export const useReadRoomInvites = (roomId: RoomInMessage["id"]) => {
   const roomInviteStore = useRoomInviteStore();
   const { getSliceOperationData } = roomInviteStore;
   const { hasMore, items, readItems, readMoreItems } = getSliceOperationData(roomId);
-  const readRoomInvites = () => readItems(() => $trpc.room.readRoomInvites.query({ roomId }));
+  const readRoomInvites = () => readItems(() => $trpc.invite.readRoomInvites.query({ roomId }));
   const readMoreRoomInvites = (onComplete: () => void) =>
-    readMoreItems((cursor) => $trpc.room.readRoomInvites.query({ cursor, roomId }), onComplete);
+    readMoreItems((cursor) => $trpc.invite.readRoomInvites.query({ cursor, roomId }), onComplete);
   return { hasMore, items, readMoreRoomInvites, readRoomInvites };
 };

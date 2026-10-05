@@ -1,6 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { PageWitnessView } from "#src/models/genshinParity/shared/PageWitnessView";
 import type { WitnessGbuffer } from "#src/models/genshinParity/shared/WitnessGbuffer";
+import type { WitnessView } from "genshin-world/parity/witness/WitnessView";
 
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
@@ -14,7 +14,7 @@ import { withFinalizerAsync } from "@esposter/shared";
 export const readReferenceGbuffer = async (
   referenceId: string,
   witness: DerivedAssetComponent,
-  camera?: PageWitnessView["camera"],
+  camera?: WitnessView["camera"],
 ): Promise<{ gbuffer: WitnessGbuffer; image: Buffer; shot: Buffer }> => {
   await fetchReferences();
   const { browser, image, page } = await openWitnessPage(referenceId, witness);

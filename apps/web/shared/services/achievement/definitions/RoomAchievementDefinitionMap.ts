@@ -10,7 +10,7 @@ export const RoomAchievementDefinitionMap = defineAchievementDefinitionMap(Achie
     description: "Create an invite link",
     icon: "i-mdi:link-plus",
     points: 10,
-    triggerPath: "room.createInvite",
+    triggerPath: "invite.createInvite",
   }),
   [RoomAchievementName.PartyHost]: defineAchievementDefinition({
     amount: 10,

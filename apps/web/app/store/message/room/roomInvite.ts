@@ -15,7 +15,7 @@ export const useRoomInviteStore = defineStore("message/room/roomInvite", () => {
 
   const revokeInvite = async (input: RevokeInviteInput) => {
     const { items } = getSlice(input.roomId);
-    await executeMutation(() => $trpc.room.revokeInvite.mutate(input), {
+    await executeMutation(() => $trpc.invite.revokeInvite.mutate(input), {
       applyOptimistic: () => {
         const revokedInvite = items.value.find(({ id }) => id === input.id);
         items.value = items.value.filter(({ id }) => id !== input.id);
