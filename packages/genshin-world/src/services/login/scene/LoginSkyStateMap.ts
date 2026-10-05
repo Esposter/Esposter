@@ -24,8 +24,9 @@ const DUSK_LIGHT_DIRECTION = new Vector3(0.837, 0.259, 0.483);
 // Clouds left out by the cloud mask), its colours with its own shape, no colour under none: the dawn's deep blue away
 // From the sun and grey toward it, the dusk's lavender away and rose toward it, the night's with the glow round its
 // Moon. The dusk's bottom colour toward the sun stands under the recording's clouds, so no pixel holds it. The haze
-// Over the cloud sea (the mean of its brightest two samples low in the frame) and the clouds are read off each
-// Reference too. The stone's light is solved apart, as the game's deferred pass casts it
+// Over the cloud sea (the mean of its brightest two samples low in the frame) is read off each reference too. The
+// Day's and the dusk's cloud colours are solved by their spread against the recordings' (genshin:parity clouds); the
+// Dawn's and the night's so solved score their frames worse, so theirs stay read off the references. The stone's light is solved apart, as the game's deferred pass casts it
 // (data/login/stoneLight.json), so the sun light here lends the stone only its direction and its shadow, and the
 // Hemisphere lights nothing of the login's
 export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
@@ -51,8 +52,8 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     zenithColor: new Color(0x888b86),
   },
   [LoginTimeOfDay.Day]: {
-    cloudLitColor: new Color(0xffffff),
-    cloudShadeColor: new Color(0xb8cbe0),
+    cloudLitColor: new Color(0xfbfcf4),
+    cloudShadeColor: new Color(0xb0dbf5),
     fogColor: new Color(0xcfdbf0),
     fogDensity: LOGIN_DAY_FOG_DENSITY,
     haloColor: new Color(0xe0c18b),
@@ -73,8 +74,8 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     zenithColor: new Color(0xd9f3b1),
   },
   [LoginTimeOfDay.Dusk]: {
-    cloudLitColor: new Color(0xfdedc4),
-    cloudShadeColor: new Color(0xeb8596),
+    cloudLitColor: new Color(0xfcfcc4),
+    cloudShadeColor: new Color(0xed9ea7),
     fogColor: new Color(0xf0c4aa),
     haloColor: new Color(0xeaf2ca),
     hemisphereGroundColor: new Color(0xab6db4),
