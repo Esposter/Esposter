@@ -76,7 +76,7 @@ prints, so the rule is enforced rather than swept.
 - A screen's `Index.fixture.ts`: its named exports (`props`, `variants`, `slot`, `isMotionOnly`) are the contract the
   parity page and the visual suite read by name, so one fixture is one concern however many names it exports.
 - A map and the key list derived from it (`ModNames` as `Object.keys(ModDescriptionMap)`, `VoiceDeviceKinds`): the
-  list is the map read another way, and a file of its own would separate it from the only thing it can drift from.
+  list is the map read another way, a concern of the map's rather than one of its own.
 - A type derived from the function beside it (`server/trpc/context.ts`'s `Context`, built on `createContext`'s return type):
   a models file would import the function back, so the type has no home that does not read the file it left.
 - A table read as two entities keeps both select schemas in the table file (`posts` as comments): the second
