@@ -65,5 +65,13 @@ prints, so the rule is enforced rather than swept.
 - Two exports sharing module-private state through closure — a pending set, a cached promise, a code set, a
   dispatch map, the four names `initTRPC` hands out. One-export-per-file cannot reach them without making that
   state a module global, which trades a file boundary for a wider one.
+- A local type in a package's `src` that its own file alone reads (`createTileStreamer`'s `CachedTile`,
+  `toContentBlockParam`'s SDK-derived block): a `models/` file is a module, and the generated barrel publishes every
+  module, so extracting it would make a private shape public API. The same reason the `file-organization` skill
+  gives a module-private map (`references/constant-maps.md`).
+- A local type in a script outside its package's `imports` map (`packages/db-schema/scripts/`): it has no alias to
+  reach a models file through, and a relative import is the one shape the alias ban refuses.
+- A generator's emitted source (`get*Source`): the `export` lines the scan reads there are the text it writes into
+  a generated file, not exports of its own.
 - A table read as two entities keeps both select schemas in the table file (`posts` as comments): the second
   schema is derived from the same table, so it is the table's concern rather than a second one.
