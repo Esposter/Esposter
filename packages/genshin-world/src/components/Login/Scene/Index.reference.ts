@@ -497,7 +497,7 @@ export const reference: ComponentReference = {
       found:
         "The haze held under a most opacity, refined with its density and falloff: the dawn solves to 0.67 (residual 0.1102 against 0.1203) and scores 0.3935 against 0.3888, its towers 0.1767 against 0.1756 and its sky 0.1448 against 0.1402 by layer, its cloud sea paling less; the night solves to 0.65, a density of 12.6 falling 0.46 a metre (0.1127 against 0.1455), and scores 0.3756 against 0.4003; the dusk to 0.77, 0.37 falling 0.21 (0.1480 against 0.1517), and scores 0.5197 against 0.5246; the day to 0.74, 5.46 falling 0.25 (0.1555 against 0.1708), and scores its title 0.4342 against 0.4396 but the phone's door frame 0.5026 against 0.4789. The night's and the dusk's ship with their lights; the dawn and the day keep theirs",
       search:
-        "maxOpacity on FogUniforms and SceneFog, refined by calibrate --haze --write on every hour's frame, then compare on each hour's frames, compare --witness on the dawn by layer, and compare --all",
+        "maxOpacity on FogUniforms and SceneFog, refined by calibrate --haze on every hour's frame, each profile set in LoginSkyStateMap and its light written by calibrate --write under it, then compare on each hour's frames, compare --witness on the dawn by layer, and compare --all",
     },
   ],
   open: [
