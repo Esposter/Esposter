@@ -9,8 +9,8 @@ import { LightingModel } from "three/webgpu";
 // The game's deferred pass as it lights the stone's G-buffer, with no highlight yet: the sun through the toon ramp,
 // Read at a half plus half the face's facing to it scaled by the sun's visibility there raised to a fifth
 // (`computeStoneRampCoordinate`), the sky's light as second order spherical harmonics over the world normal
-// (`computeStoneHarmonics`), and a light fading with height as the reflection pass's clustered probes cast it up the
-// Towers, each times the diffuse colour. The ramp holds the sun's colour, so the sun light lends only
+// (`computeStoneHarmonics`), and a fitted light fading with height standing in for the reflection pass's clustered
+// Probes up the towers, each times the diffuse colour. The ramp holds the sun's colour, so the sun light lends only
 // Its direction and its shadow, read as its shadowed colour against its own
 export class StoneLightingModel extends LightingModel {
   readonly stoneLight: StoneLightUniforms;
