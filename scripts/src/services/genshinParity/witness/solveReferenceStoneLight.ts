@@ -143,8 +143,7 @@ export const solveReferenceStoneLight = async (
         );
       const sceneHaze = { density: fog.density, heightFalloff: fog.heightFalloff };
       const sceneSolution = solve(sceneHaze);
-      if (!isHazeSolved)
-        return { count: pixels.length, haze: sceneHaze, sceneResidual: sceneSolution.residual, ...sceneSolution };
+      if (!isHazeSolved) return { haze: sceneHaze, sceneResidual: sceneSolution.residual, ...sceneSolution };
       const { point } = await minimizeNelderMead(
         (logs) => Promise.resolve(solve(toHaze(logs)).residual),
         [Math.log(fog.density), Math.log(fog.heightFalloff)],
@@ -152,7 +151,7 @@ export const solveReferenceStoneLight = async (
         HAZE_ITERATION_COUNT,
       );
       const haze = toHaze(point);
-      return { count: pixels.length, haze, sceneResidual: sceneSolution.residual, ...solve(haze) };
+      return { haze, sceneResidual: sceneSolution.residual, ...solve(haze) };
     },
     () => browser.close(),
   );
