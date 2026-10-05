@@ -1,4 +1,4 @@
-import type { LightUniforms } from "#src/nodes/LightUniforms";
+import type { LightUniforms } from "#src/models/nodes/LightUniforms";
 import type { ColorRepresentation, DataTexture } from "three";
 
 export interface ToonMaterialOptions {

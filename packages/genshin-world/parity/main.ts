@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax -- the parity page's entry runs only in a browser, never under server rendering */
-import type { WitnessView } from "#parity/witness/WitnessView";
+import type { WitnessView } from "#parity/models/witness/WitnessView";
 import type { SceneContext } from "#src/models/scene/SceneContext";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 

@@ -1,5 +1,5 @@
-import type { SunLight } from "#src/atmosphere/SunLight";
-import type { SunLightOptions } from "#src/atmosphere/SunLightOptions";
+import type { SunLight } from "#src/models/atmosphere/SunLight";
+import type { SunLightOptions } from "#src/models/atmosphere/SunLightOptions";
 
 import { DirectionalLight } from "three";
 import { CSMShadowNode } from "three/examples/jsm/csm/CSMShadowNode.js";

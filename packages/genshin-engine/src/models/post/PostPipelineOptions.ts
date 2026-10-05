@@ -1,6 +1,6 @@
-import type { FogUniforms } from "#src/post/FogUniforms";
-import type { PostUniforms } from "#src/post/PostUniforms";
-import type { QualityTierSettings } from "#src/renderer/QualityTierSettings";
+import type { FogUniforms } from "#src/models/post/FogUniforms";
+import type { PostUniforms } from "#src/models/post/PostUniforms";
+import type { QualityTierSettings } from "#src/models/renderer/QualityTierSettings";
 import type { Camera, Data3DTexture, DirectionalLight, Scene } from "three";
 import type { Renderer } from "three/webgpu";
 

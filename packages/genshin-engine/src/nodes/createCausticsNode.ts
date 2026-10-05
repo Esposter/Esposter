@@ -1,5 +1,5 @@
-import type { LightUniforms } from "#src/nodes/LightUniforms";
-import type { WaterUniforms } from "#src/water/WaterUniforms";
+import type { LightUniforms } from "#src/models/nodes/LightUniforms";
+import type { WaterUniforms } from "#src/models/water/WaterUniforms";
 import type { Node } from "three/webgpu";
 
 import { voronoi2d } from "three/examples/jsm/tsl/math/voronoiNoise.js";

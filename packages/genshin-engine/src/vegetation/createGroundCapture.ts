@@ -1,4 +1,4 @@
-import type { GroundCapture } from "#src/vegetation/GroundCapture";
+import type { GroundCapture } from "#src/models/vegetation/GroundCapture";
 
 import { TERRAIN_LAYER } from "#src/terrain/constants";
 import { HalfFloatType, LinearFilter, OrthographicCamera, Vector2 } from "three";

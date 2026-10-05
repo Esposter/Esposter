@@ -1,4 +1,4 @@
-import type { RampOptions } from "#src/materials/RampOptions";
+import type { RampOptions } from "#src/models/materials/RampOptions";
 
 import { MAX_BYTE } from "#src/constants";
 import { MathUtils } from "three";

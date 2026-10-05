@@ -1,4 +1,4 @@
-import type { GradeOptions } from "#src/post/GradeOptions";
+import type { GradeOptions } from "#src/models/post/GradeOptions";
 
 import { MAX_BYTE } from "#src/constants";
 

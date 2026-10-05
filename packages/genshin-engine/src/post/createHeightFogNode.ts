@@ -1,4 +1,4 @@
-import type { FogUniforms } from "#src/post/FogUniforms";
+import type { FogUniforms } from "#src/models/post/FogUniforms";
 import type { Camera } from "three";
 import type { Node, TextureNode } from "three/webgpu";
 

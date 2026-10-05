@@ -1,8 +1,8 @@
-import type { StoneLightUniforms } from "#src/nodes/StoneLightUniforms";
-import type { StoneMaterialOptions } from "#src/nodes/StoneMaterialOptions";
+import type { StoneLightUniforms } from "#src/models/nodes/StoneLightUniforms";
+import type { StoneMaterialOptions } from "#src/models/nodes/StoneMaterialOptions";
 import type { Node } from "three/webgpu";
 
-import { StoneNodeMaterial } from "#src/nodes/StoneNodeMaterial";
+import { StoneNodeMaterial } from "#src/models/nodes/StoneNodeMaterial";
 import { Color } from "three";
 import { color, float, normalView, positionViewDirection, vec3 } from "three/tsl";
 

@@ -1,7 +1,7 @@
-import type { ToonMaterialOptions } from "#src/nodes/ToonMaterialOptions";
+import type { ToonMaterialOptions } from "#src/models/nodes/ToonMaterialOptions";
 
+import { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
 import { createRimNode } from "#src/nodes/createRimNode";
-import { ToonNodeMaterial } from "#src/nodes/ToonNodeMaterial";
 
 // The environment's one material: three's toon lighting reading the world's ramp, so light steps from shade to lit
 // Across a narrow band and shade is whatever the ambient light is, plus the sky's rim on the lit silhouette

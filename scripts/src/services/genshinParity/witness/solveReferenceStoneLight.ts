@@ -3,7 +3,7 @@ import type { SetLights } from "#src/models/genshinParity/witness/SetLights";
 import type { StoneLightSample } from "#src/models/genshinParity/witness/StoneLightSample";
 import type { Vector } from "#src/models/shared/Vector";
 import type { StoneLight } from "genshin-engine";
-import type { SceneFog } from "genshin-world/parity/SceneFog";
+import type { SceneFog } from "genshin-world/parity/models/SceneFog";
 import type { Page } from "playwright";
 import type { Except } from "type-fest";
 

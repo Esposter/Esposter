@@ -2,6 +2,7 @@ import { readCitingPaths } from "#src/services/citations/readCitingPaths";
 import { getRenamePrefixes } from "#src/services/citations/sync/getRenamePrefixes";
 import { rewriteCitations } from "#src/services/citations/sync/rewriteCitations";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 import { defineCommand, runMain } from "citty";
 import { readFileSync, writeFileSync } from "node:fs";
@@ -21,7 +22,9 @@ await runMain(
     },
     meta: { description: "Rewrite every citation of a renamed path to its new one", name: "ai:citations:sync" },
     run: ({ args }) => {
-      const renames = getRenamePrefixes(runGit(["diff", "--name-status", "-M", args.base]));
+      const nameStatus = runGit(["diff", "--name-status", "-M", args.base]);
+      const trackedPaths = getNonEmptyLines(runGit(["ls-files"]));
+      const renames = getRenamePrefixes(nameStatus, trackedPaths);
       // Nothing to rewrite means no page to read: the pages are only opened once there is a rename to apply to them
       if (renames.length === 0) {
         console.info(`no renames since ${args.base}`);

@@ -1,4 +1,4 @@
-import type { GroundPoint } from "#src/world/GroundPoint";
+import type { GroundPoint } from "#src/models/world/GroundPoint";
 
 // How far a point on the ground is from an area's outline, zero inside it: the nearest of its edges' distances, and
 // Inside by the even-odd count of edges a ray east from the point crosses. An outline not yet drawn is infinitely far

@@ -1,4 +1,4 @@
-import type { TerrainOptions } from "#src/terrain/TerrainOptions";
+import type { TerrainOptions } from "#src/models/terrain/TerrainOptions";
 
 import { createTerrainSelection } from "#src/terrain/createTerrainSelection";
 import { selectTerrainTiles } from "#src/terrain/selectTerrainTiles";

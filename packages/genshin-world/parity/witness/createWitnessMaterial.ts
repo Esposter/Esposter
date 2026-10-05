@@ -2,7 +2,7 @@ import type { SceneMaterial } from "genshin-engine";
 import type { Texture } from "three";
 import type { Node } from "three/webgpu";
 
-import { WitnessProperty } from "#parity/witness/WitnessProperty";
+import { WitnessProperty } from "#parity/models/witness/WitnessProperty";
 import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
 import { StoneNodeMaterial } from "genshin-engine";
 import { color, float, mix, normalMap, normalView, positionViewDirection, texture, vec3 } from "three/tsl";

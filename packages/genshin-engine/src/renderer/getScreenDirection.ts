@@ -1,4 +1,4 @@
-import type { ScreenCamera } from "#src/renderer/ScreenCamera";
+import type { ScreenCamera } from "#src/models/renderer/ScreenCamera";
 
 import { MathUtils, Vector3 } from "three";
 

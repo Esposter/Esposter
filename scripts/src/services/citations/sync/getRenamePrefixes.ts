@@ -8,10 +8,18 @@ const RENAME_LINE_REGEX = /^R\d*\t(?<from>[^\t]+)\t(?<to>[^\t]+)$/u;
 // Directory it lives in. Stripping the path segments the two sides still share leaves the prefix that actually
 // Moved, which rewrites a citation of the file, of any directory above it that moved with it, and nothing else:
 // `a/b/c.ts → x/b/c.ts` is the prefix `a → x`, and `a/c.ts → a/d.ts` shares nothing so it is the whole path.
+// A directory moved with the file only when the tree no longer holds it: `a/b/c.ts → a/m/b/c.ts` beside a `b`
+// That kept other files stops at the file, or every citation under `a/b` would be sent into `a/m`.
 // Two unrelated renames can strip to the same prefix pointing at different places (`a/b/c.ts → x/b/c.ts` beside
 // `a/d/e.ts → y/d/e.ts` is `a → x` and `a → y`), and there is no answer for a citation of `a` itself — so an
 // Ambiguous prefix is dropped in favour of the file paths it was derived from, which each name one destination.
-export const getRenamePrefixes = (nameStatus: string): PathRename[] => {
+export const getRenamePrefixes = (nameStatus: string, trackedPaths: readonly string[]): PathRename[] => {
+  const directories = new Set(
+    trackedPaths.flatMap((trackedPath) => {
+      const segments = trackedPath.split("/");
+      return segments.slice(1).map((_segment, index) => segments.slice(0, index + 1).join("/"));
+    }),
+  );
   const prefixes = new Map<string, { destinations: Set<string>; paths: PathRename[] }>();
   for (const line of getNonEmptyLines(nameStatus)) {
     const groups = RENAME_LINE_REGEX.exec(line)?.groups;
@@ -20,7 +28,12 @@ export const getRenamePrefixes = (nameStatus: string): PathRename[] => {
     const path = { from: groups.from ?? "", to: groups.to ?? "" };
     const from = path.from.split("/");
     const to = path.to.split("/");
-    while (from.length > 1 && to.length > 1 && from.at(-1) === to.at(-1)) {
+    while (
+      from.length > 1 &&
+      to.length > 1 &&
+      from.at(-1) === to.at(-1) &&
+      !directories.has(from.slice(0, -1).join("/"))
+    ) {
       from.pop();
       to.pop();
     }

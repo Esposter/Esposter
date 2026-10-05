@@ -1,4 +1,4 @@
-import type { CloudSprite } from "#src/atmosphere/CloudSprite";
+import type { CloudSprite } from "#src/models/atmosphere/CloudSprite";
 
 import { getCloudAtlasColumns } from "#src/atmosphere/getCloudAtlasColumns";
 import { addSmoothLoop } from "#src/materials/addSmoothLoop";

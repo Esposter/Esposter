@@ -1,4 +1,4 @@
-import type { RampOptions } from "#src/materials/RampOptions";
+import type { RampOptions } from "#src/models/materials/RampOptions";
 
 import { computeRampValues } from "#src/materials/computeRampValues";
 import { DataTexture, LinearFilter, RedFormat } from "three";

@@ -1,5 +1,5 @@
-import type { SkyKeyframe } from "#src/atmosphere/SkyKeyframe";
-import type { SkyState } from "#src/atmosphere/SkyState";
+import type { SkyKeyframe } from "#src/models/atmosphere/SkyKeyframe";
+import type { SkyState } from "#src/models/atmosphere/SkyState";
 
 import { computeSunDirection } from "#src/atmosphere/computeSunDirection";
 import { MINUTES_PER_DAY } from "#src/clock/constants";

@@ -1,8 +1,8 @@
-import type { LightUniforms } from "#src/nodes/LightUniforms";
-import type { GrassRing } from "#src/vegetation/GrassRing";
-import type { GroundCapture } from "#src/vegetation/GroundCapture";
-import type { WaterUniforms } from "#src/water/WaterUniforms";
-import type { WindUniforms } from "#src/wind/WindUniforms";
+import type { LightUniforms } from "#src/models/nodes/LightUniforms";
+import type { GrassRing } from "#src/models/vegetation/GrassRing";
+import type { GroundCapture } from "#src/models/vegetation/GroundCapture";
+import type { WaterUniforms } from "#src/models/water/WaterUniforms";
+import type { WindUniforms } from "#src/models/wind/WindUniforms";
 import type { DataTexture, Vector2 } from "three";
 import type { UniformNode } from "three/webgpu";
 

@@ -1,4 +1,4 @@
-import type { SkyUniforms } from "#src/atmosphere/SkyUniforms";
+import type { SkyUniforms } from "#src/models/atmosphere/SkyUniforms";
 
 import { DEFAULT_SKY_SHAPE } from "#src/atmosphere/constants";
 import { Color, Vector2, Vector3 } from "three";

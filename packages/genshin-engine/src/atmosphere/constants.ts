@@ -1,5 +1,5 @@
-import type { SkyGradient } from "#src/atmosphere/SkyGradient";
-import type { SkyShape } from "#src/atmosphere/SkyShape";
+import type { SkyGradient } from "#src/models/atmosphere/SkyGradient";
+import type { SkyShape } from "#src/models/atmosphere/SkyShape";
 
 import { MathUtils } from "three";
 

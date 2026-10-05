@@ -1,4 +1,4 @@
-import type { SkyGradient } from "#src/atmosphere/SkyGradient";
+import type { SkyGradient } from "#src/models/atmosphere/SkyGradient";
 
 import { MAX_BYTE } from "#src/constants";
 import { ClampToEdgeWrapping, DataTexture, LinearFilter, RGBAFormat, UnsignedByteType } from "three";

@@ -1,4 +1,4 @@
-import type { AntialiasingMode } from "#src/renderer/AntialiasingMode";
+import type { AntialiasingMode } from "#src/models/renderer/AntialiasingMode";
 
 export interface QualityTierSettings {
   antialiasingMode: AntialiasingMode;

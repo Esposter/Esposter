@@ -18,5 +18,6 @@ Routers nested by domain. Root merger: `server/trpc/routers/index.ts`. The clien
 ## One router and one store per table
 
 - **One router + one Pinia store per DB table** — never bundle multiple tables into one router or store.
+- **Membership is the parent entity's** — joining, leaving and listing who belongs (`room.joinRoom`, `room.leaveRoom`, `room.readMembers`, `room.readMembersCount`) stay on the parent's router though they touch the join table, because they read and write the relation as the parent sees it and return the parent or the users. The join table's own router (`userToRoom`) holds the row's own fields — a nickname, a mention count, a member's notification settings.
 - **Naming derived from the table name, not semantics** — `foo_bars` → `fooBars` store ref and `readFooBars` procedure, never a semantic rename of the same rows (the table implies the state).
 - **A store reaching another imports it by path** — only `composables/**` is auto-imported — and the two reach each other one way only (the `pinia` skill, `references/consuming-a-store.md`).

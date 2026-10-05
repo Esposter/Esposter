@@ -1,4 +1,4 @@
-import type { UnderwaterFogState } from "#src/water/UnderwaterFogState";
+import type { UnderwaterFogState } from "#src/models/water/UnderwaterFogState";
 
 export const createUnderwaterFogState = (): UnderwaterFogState => ({
   aboveDensity: 0,

@@ -1,4 +1,4 @@
-import type { TerrainSelection } from "#src/terrain/TerrainSelection";
+import type { TerrainSelection } from "#src/models/terrain/TerrainSelection";
 
 export interface TileStreamer<TTile> {
   // Frees every tile held, and ignores any that arrive after

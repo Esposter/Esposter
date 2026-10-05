@@ -1,5 +1,5 @@
-import type { BaseSkyState } from "#src/atmosphere/BaseSkyState";
-import type { SkyShape } from "#src/atmosphere/SkyShape";
+import type { BaseSkyState } from "#src/models/atmosphere/BaseSkyState";
+import type { SkyShape } from "#src/models/atmosphere/SkyShape";
 import type { Color, Vector3 } from "three";
 
 // The sky at the clock's minute: its keyframes blended, and where the sun and moon stand. The light comes from

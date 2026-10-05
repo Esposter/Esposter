@@ -1,4 +1,4 @@
-import type { StoneLightUniforms } from "#src/nodes/StoneLightUniforms";
+import type { StoneLightUniforms } from "#src/models/nodes/StoneLightUniforms";
 import type { LightingModelDirectInput, LightingModelReflectedLight, Node, NodeBuilder } from "three/webgpu";
 
 import { STONE_RAMP_KNOT_COUNT, STONE_SHADOW_EXPONENT } from "#src/nodes/constants";

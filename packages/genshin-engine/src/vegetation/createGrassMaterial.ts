@@ -1,5 +1,5 @@
-import type { ToonNodeMaterial } from "#src/nodes/ToonNodeMaterial";
-import type { GrassOptions } from "#src/vegetation/GrassOptions";
+import type { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
+import type { GrassOptions } from "#src/models/vegetation/GrassOptions";
 
 import { createToonMaterial } from "#src/nodes/createToonMaterial";
 import { createWindNode } from "#src/nodes/createWindNode";

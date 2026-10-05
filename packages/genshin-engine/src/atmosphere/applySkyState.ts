@@ -1,5 +1,5 @@
-import type { SkyState } from "#src/atmosphere/SkyState";
-import type { SkyTargets } from "#src/atmosphere/SkyTargets";
+import type { SkyState } from "#src/models/atmosphere/SkyState";
+import type { SkyTargets } from "#src/models/atmosphere/SkyTargets";
 
 import { DEFAULT_SKY_SHAPE } from "#src/atmosphere/constants";
 import { toSceneColor } from "#src/post/toSceneColor";

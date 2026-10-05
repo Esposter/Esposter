@@ -1,5 +1,5 @@
-import type { SceneLights } from "#parity/SceneLights";
-import type { SceneLightShares } from "#parity/SceneLightShares";
+import type { SceneLights } from "#parity/models/SceneLights";
+import type { SceneLightShares } from "#parity/models/SceneLightShares";
 import type { SceneContext } from "#src/models/scene/SceneContext";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";

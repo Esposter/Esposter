@@ -1,6 +1,6 @@
-import type { SkyUniforms } from "#src/atmosphere/SkyUniforms";
-import type { LightUniforms } from "#src/nodes/LightUniforms";
-import type { WaterUniforms } from "#src/water/WaterUniforms";
+import type { SkyUniforms } from "#src/models/atmosphere/SkyUniforms";
+import type { LightUniforms } from "#src/models/nodes/LightUniforms";
+import type { WaterUniforms } from "#src/models/water/WaterUniforms";
 import type { Node } from "three/webgpu";
 
 import { DoubleSide } from "three";

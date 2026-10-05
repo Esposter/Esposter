@@ -1,4 +1,4 @@
-import type { GameClock } from "#src/clock/GameClock";
+import type { GameClock } from "#src/models/clock/GameClock";
 
 import { MINUTES_PER_DAY } from "#src/clock/constants";
 

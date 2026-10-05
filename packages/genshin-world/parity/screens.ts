@@ -1,4 +1,4 @@
-import type { ScreenFixture } from "#parity/ScreenFixture";
+import type { ScreenFixture } from "#parity/models/ScreenFixture";
 import type { Component } from "vue";
 
 import * as barrel from "#src/components/index";

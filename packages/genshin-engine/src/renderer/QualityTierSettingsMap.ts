@@ -1,7 +1,7 @@
-import type { QualityTierSettings } from "#src/renderer/QualityTierSettings";
+import type { QualityTierSettings } from "#src/models/renderer/QualityTierSettings";
 
-import { AntialiasingMode } from "#src/renderer/AntialiasingMode";
-import { QualityTier } from "#src/renderer/QualityTier";
+import { AntialiasingMode } from "#src/models/renderer/AntialiasingMode";
+import { QualityTier } from "#src/models/renderer/QualityTier";
 
 // What each tier spends, cheapest cut first: grass blades, whose thinning the look survives best, the shadow maps,
 // Which cost every shadowed fragment, the god rays, a march per pixel at half resolution, the pixel ratio, which

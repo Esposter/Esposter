@@ -1,7 +1,7 @@
-import type { SkyUniforms } from "#src/atmosphere/SkyUniforms";
-import type { LightUniforms } from "#src/nodes/LightUniforms";
-import type { FogUniforms } from "#src/post/FogUniforms";
-import type { PostUniforms } from "#src/post/PostUniforms";
+import type { SkyUniforms } from "#src/models/atmosphere/SkyUniforms";
+import type { LightUniforms } from "#src/models/nodes/LightUniforms";
+import type { FogUniforms } from "#src/models/post/FogUniforms";
+import type { PostUniforms } from "#src/models/post/PostUniforms";
 import type { DirectionalLight, HemisphereLight } from "three";
 
 // Everything the sky lights: the sun light and, where a scene draws god rays, the unlit sun they read, which both stand

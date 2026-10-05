@@ -1,5 +1,5 @@
-import type { CloudBandOptions } from "#src/atmosphere/CloudBandOptions";
-import type { CloudPlacement } from "#src/atmosphere/CloudPlacement";
+import type { CloudBandOptions } from "#src/models/atmosphere/CloudBandOptions";
+import type { CloudPlacement } from "#src/models/atmosphere/CloudPlacement";
 
 import { createSeededRandom } from "#src/random/createSeededRandom";
 

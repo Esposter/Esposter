@@ -1,7 +1,7 @@
-import type { StoneLightUniforms } from "#src/nodes/StoneLightUniforms";
+import type { StoneLightUniforms } from "#src/models/nodes/StoneLightUniforms";
 import type { Node } from "three/webgpu";
 
-import { StoneLightingModel } from "#src/nodes/StoneLightingModel";
+import { StoneLightingModel } from "#src/models/nodes/StoneLightingModel";
 import { NodeMaterial } from "three/webgpu";
 
 // A node material lit by the game's deferred pass over the stone (`StoneLightingModel`) from the scene's shared stone

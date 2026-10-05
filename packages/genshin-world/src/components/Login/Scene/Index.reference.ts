@@ -128,6 +128,12 @@ export const reference: ComponentReference = {
     },
     {
       found:
+        "The dusk's sky solves to a residual of 0.039 over the 68% of its clear sky it keeps but 0.103 over all of it, and the scene draws the solved sky 0.032 off itself: the gap is the third the fit trims as lit haze, the thin bright cloud and gold glow through the recording's upper sky, which no shape draws. Its sun refined with the shape lands at 0.86, 0.24, 0.46, beside the dusk's light, at 0.036 over the pixels kept and 0.104 over all of them, so the sun's place is not the gap. Removed",
+      search:
+        "genshin:parity sky login-door-recording with its residual over every pixel and the scene's sky against the solved one, then with the sun's direction refined with the shape",
+    },
+    {
+      found:
         "With the cover at those shares the dusk's clouds solve by their colours' spread to lit #fdf4c9 and shade #ef91a3 (residual 0.10), our clouds 2.02 times their sky's brightness against the recording's 2.50; applied, the door recording's FLIP rises from 0.6006 to 0.6087 and its tone from 12.33% to 12.76%. The spread match is blind to place, and by height ours over-cover 0 to 3 degrees (68% against 35%) and 15 to 25 (44% against 17%) while under-covering 8 to 15 (46% against 70%), so brighter clouds pay most where ours stand and the recording's do not. Kept #fdedc4 and #eb8596: the clouds' place by height comes before their colour",
       search: "genshin:parity clouds login-door-recording after the cover change, its colours applied, then compare",
     },

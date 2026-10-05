@@ -1,5 +1,5 @@
-import type { Instrument } from "#src/audio/Instrument";
-import type { MusicNote } from "#src/audio/MusicNote";
+import type { Instrument } from "#src/models/audio/Instrument";
+import type { MusicNote } from "#src/models/audio/MusicNote";
 
 import { A4_FREQUENCY, A4_PITCH, RELEASE_TIME_CONSTANTS } from "#src/audio/constants";
 

@@ -1,5 +1,5 @@
-import type { TerrainTile } from "#src/terrain/TerrainTile";
-import type { TerrainTileOptions } from "#src/terrain/TerrainTileOptions";
+import type { TerrainTile } from "#src/models/terrain/TerrainTile";
+import type { TerrainTileOptions } from "#src/models/terrain/TerrainTileOptions";
 
 import { getTerrainTileColumn } from "#src/terrain/getTerrainTileColumn";
 import { getTerrainTileLevel } from "#src/terrain/getTerrainTileLevel";

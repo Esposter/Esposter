@@ -62,7 +62,8 @@ export const solveReferenceSky = async (
   witness: DerivedAssetComponent,
 ): Promise<{
   colors: Record<string, string>;
-  drawn: { ours: string; reference: string; residual: number };
+  drawn: { modelResidual: number; ours: string; reference: string; residual: number };
+  fullResidual: number;
   imagePath: string;
   kept: number;
   residual: number;
@@ -120,16 +121,18 @@ export const solveReferenceSky = async (
         SHAPE_ITERATIONS,
       );
       const shape = toShape(point);
-      const { colors, kept, residual } = solveAt(shape);
-      // The reference beside the solved sky over the pixels read, each a block of the sample's stride
+      const { colors, fullResidual, kept, residual } = solveAt(shape);
+      // The reference beside the solved sky over the pixels read, each a block of the sample's stride, and each pixel's
+      // Solved scene colour, which the scene's own sky is held against
       const modelled = Buffer.alloc(width * height * 3);
+      const pixelModelMap = new Map<number, Vector>();
       for (const { direction, pixel } of pixels) {
         const weights = computeSkyWeights(direction, sky, gradient, shape);
-        const [red, green, blue] = toneMapNeutral(
-          [0, 1, 2].map((channel) =>
-            weights.reduce((sum, weight, term) => sum + weight * (colors[term]?.[channel] ?? 0), 0),
-          ) as Vector,
-        );
+        const modelColor = [0, 1, 2].map((channel) =>
+          weights.reduce((sum, weight, term) => sum + weight * (colors[term]?.[channel] ?? 0), 0),
+        ) as Vector;
+        pixelModelMap.set(pixel, modelColor);
+        const [red, green, blue] = toneMapNeutral(modelColor);
         const { b, g, r } = new Color(red, green, blue).convertLinearToSRGB();
         const [x, y] = [pixel % width, Math.floor(pixel / width)];
         for (let row = y; row < Math.min(y + SAMPLE_STRIDE, height); row++)
@@ -156,12 +159,17 @@ export const solveReferenceSky = async (
       await page.evaluate(() => (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)());
       const means: Record<"ours" | "reference", Vector> = { ours: [0, 0, 0], reference: [0, 0, 0] };
       let drawnError = 0;
+      // How far the scene draws its sky from the solved model at the same colours, which reads naught when the scene
+      // Draws the shader the solve models and the colours it holds are the ones just solved
+      let modelError = 0;
       for (const { color, pixel } of pixels) {
         const ours = getPixelSceneColor(ourShot, pixel);
+        const modelColor = pixelModelMap.get(pixel) ?? ours;
         for (const channel of [0, 1, 2] as const) {
           means.ours[channel] += ours[channel] / pixels.length;
           means.reference[channel] += color[channel] / pixels.length;
           drawnError += (ours[channel] - color[channel]) ** 2;
+          modelError += (ours[channel] - modelColor[channel]) ** 2;
         }
       }
       const directory = join(PARITY_DIRECTORY, "sky");
@@ -178,10 +186,12 @@ export const solveReferenceSky = async (
       return {
         colors: Object.fromEntries(SKY_TERMS.map((term, index) => [term, toDisplayHex(colors[index] ?? [0, 0, 0])])),
         drawn: {
+          modelResidual: Math.sqrt(modelError / Math.max(pixels.length * 3, 1)),
           ours: toDisplayHex(means.ours),
           reference: toDisplayHex(means.reference),
           residual: Math.sqrt(drawnError / Math.max(pixels.length * 3, 1)),
         },
+        fullResidual,
         imagePath,
         kept: kept / Math.max(pixels.length, 1),
         residual,

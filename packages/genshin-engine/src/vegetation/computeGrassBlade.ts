@@ -1,4 +1,4 @@
-import type { GrassBlade } from "#src/vegetation/GrassBlade";
+import type { GrassBlade } from "#src/models/vegetation/GrassBlade";
 
 // A blade as pairs of vertices up its length, each pair narrower than the one below, and one vertex at the tip, so
 // It bends smoothly along its segments and ends in a point. Wound counter-clockwise from the front; the material

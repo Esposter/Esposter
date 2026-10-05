@@ -20,11 +20,3 @@ export const VerbDescriptionMap: Partial<Record<GenshinVerb, string>> = {
     "Sets up spoken replies in the character's own cloned voice, or switches the dub (en, ja, ko or zh); given nothing, reports what is installed.",
   [GenshinVerb.Volume]: "Sets how loud replies are spoken, as a whole number from 0 to 100.",
 };
-
-// The verbs that print a card, which the model answers as from the reply that relays it
-export const CardVerbs: readonly GenshinVerb[] = [
-  GenshinVerb.Language,
-  GenshinVerb.Pin,
-  GenshinVerb.Unpin,
-  GenshinVerb.Use,
-];

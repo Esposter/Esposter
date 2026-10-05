@@ -1,4 +1,4 @@
-import type { WindUniforms } from "#src/wind/WindUniforms";
+import type { WindUniforms } from "#src/models/wind/WindUniforms";
 
 import { Vector2 } from "three";
 import { uniform } from "three/tsl";

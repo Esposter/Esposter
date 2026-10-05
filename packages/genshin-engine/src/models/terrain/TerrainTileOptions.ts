@@ -1,4 +1,4 @@
-import type { TerrainOptions } from "#src/terrain/TerrainOptions";
+import type { TerrainOptions } from "#src/models/terrain/TerrainOptions";
 
 export interface TerrainTileOptions extends Pick<TerrainOptions, "cellsPerSide" | "finestTileSize"> {
   // The ground's height at a point in world coordinates, in metres

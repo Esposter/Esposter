@@ -1,4 +1,4 @@
-import type { SkyUniforms } from "#src/atmosphere/SkyUniforms";
+import type { SkyUniforms } from "#src/models/atmosphere/SkyUniforms";
 import type { Texture } from "three";
 import type { Node } from "three/webgpu";
 

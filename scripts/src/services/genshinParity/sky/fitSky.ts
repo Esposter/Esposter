@@ -15,7 +15,7 @@ const TRIM_FACTOR = 2.5;
 // Mask still holds haze lit across it, which read with the rest bends the shape to it
 export const fitSky = (
   samples: readonly { color: Vector; weights: readonly number[] }[],
-): { colors: Vector[]; kept: number; residual: number } => {
+): { colors: Vector[]; fullResidual: number; kept: number; residual: number } => {
   const termCount = SKY_TERMS.length;
   const solved = ([0, 1, 2] as const).map((channel) => {
     const normal = Array.from({ length: termCount }, () => Array.from({ length: termCount }, () => 0));
@@ -60,5 +60,12 @@ export const fitSky = (
     kept.reduce((sum, difference) => sum + difference.reduce((channelSum, value) => channelSum + value ** 2, 0), 0) /
       Math.max(kept.length * 3, 1),
   );
-  return { colors, kept: kept.length, residual };
+  // Over every pixel, so a shape or a sun that only trims the pixels it misses does not read as a closer sky
+  const fullResidual = Math.sqrt(
+    differences.reduce(
+      (sum, difference) => sum + difference.reduce((channelSum, value) => channelSum + value ** 2, 0),
+      0,
+    ) / Math.max(differences.length * 3, 1),
+  );
+  return { colors, fullResidual, kept: kept.length, residual };
 };

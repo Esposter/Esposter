@@ -1,7 +1,7 @@
 import type { Color } from "three";
 import type { UniformNode } from "three/webgpu";
 
-import { WitnessShadowLightingModel } from "#parity/witness/WitnessShadowLightingModel";
+import { WitnessShadowLightingModel } from "#parity/models/witness/WitnessShadowLightingModel";
 import { NodeMaterial } from "three/webgpu";
 
 // The material the shadow target draws a part with: lit by the scene's lights, its light the sun's visibility alone

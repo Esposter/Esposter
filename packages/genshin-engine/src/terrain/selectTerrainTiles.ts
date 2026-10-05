@@ -1,5 +1,5 @@
-import type { TerrainOptions } from "#src/terrain/TerrainOptions";
-import type { TerrainSelection } from "#src/terrain/TerrainSelection";
+import type { TerrainOptions } from "#src/models/terrain/TerrainOptions";
+import type { TerrainSelection } from "#src/models/terrain/TerrainSelection";
 import type { Frustum, Vector3Like } from "three";
 
 import { getTerrainTileKey } from "#src/terrain/getTerrainTileKey";

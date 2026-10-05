@@ -1,4 +1,4 @@
-import type { GradeOptions } from "#src/post/GradeOptions";
+import type { GradeOptions } from "#src/models/post/GradeOptions";
 
 import { computeGradeLut } from "#src/post/computeGradeLut";
 import { Data3DTexture, LinearFilter } from "three";

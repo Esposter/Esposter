@@ -1,6 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { Vector } from "#src/models/shared/Vector";
-import type { WitnessView } from "genshin-world/parity/witness/WitnessView";
+import type { WitnessView } from "genshin-world/parity/models/witness/WitnessView";
 
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { minimizeNelderMead } from "#src/services/genshinParity/shared/minimizeNelderMead";

@@ -1,4 +1,4 @@
-import type { SkyTargets } from "#src/atmosphere/SkyTargets";
+import type { SkyTargets } from "#src/models/atmosphere/SkyTargets";
 
 import { applySkyState } from "#src/atmosphere/applySkyState";
 import { DEFAULT_SKY_SHAPE } from "#src/atmosphere/constants";
