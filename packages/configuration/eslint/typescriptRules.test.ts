@@ -243,6 +243,12 @@ describe("typescriptRules", () => {
         violations: 0,
       },
       {
+        filePath: "intlDigit.ts",
+        name: "intlDigit",
+        source: `export const BASE_10_FORMATTER = new Intl.NumberFormat("en");`,
+        violations: 0,
+      },
+      {
         filePath: "intlStaticCall.ts",
         name: "intlStaticCall",
         source: `export const canonicalLocales = Intl.getCanonicalLocales("en");`,

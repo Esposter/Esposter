@@ -269,7 +269,7 @@ export default {
       message:
         "Name a module-scope `Intl` instance in SCREAMING_SNAKE_CASE — `PERCENT_FORMATTER`, never `percentFormat`. See the naming skill's constant-casing page.",
       selector:
-        ":matches(Program, Program > ExportNamedDeclaration) > VariableDeclaration > VariableDeclarator[id.name!=/^[A-Z][\dA-Z_]*$/][init.type='NewExpression'][init.callee.object.name='Intl']",
+        ":matches(Program, Program > ExportNamedDeclaration) > VariableDeclaration > VariableDeclarator[id.name!=/^[A-Z][0-9A-Z_]*$/][init.type='NewExpression'][init.callee.object.name='Intl']",
     },
     {
       // A sort's pair is named for what it compares, `first*`/`second*`, as every sort in the tree writes it; `a` and
