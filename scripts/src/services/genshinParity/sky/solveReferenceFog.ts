@@ -6,8 +6,8 @@ import type { Page } from "playwright";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUpperMedian";
-import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { computePixelPoint } from "#src/services/genshinParity/shared/computePixelPoint";
+import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";

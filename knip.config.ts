@@ -53,7 +53,7 @@ const knipConfiguration: KnipConfig = {
       ignoreDependencies: ["claude-code"],
     },
     "packages/genshin-world": {
-      entry: ["parity/main.ts", "parity/*.visual.ts", "src/index.ts", "src/**/*.reference.ts", "src/workers/*.ts"],
+      entry: ["parity/*.visual.ts", "src/index.ts", "src/**/*.reference.ts", "src/workers/*.ts"],
       ignore: ["**/auto-imports.d.ts"],
     },
     "packages/trpc-nuxt-module": { entry: ["test/fixture/nuxt.config.ts"] },

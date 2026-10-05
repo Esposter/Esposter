@@ -15,6 +15,6 @@ describe("genshin-engine", () => {
   test("types size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 34.30 KB (35123 bytes)"`);
+    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 34.33 KB (35152 bytes)"`);
   });
 });

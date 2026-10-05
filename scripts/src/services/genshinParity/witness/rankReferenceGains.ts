@@ -1,8 +1,8 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { SetLights } from "#src/models/genshinParity/witness/SetLights";
 
-import { CLOUD_BRIGHTNESS_RATIO, LUMINANCE, SKY_LAYER } from "#src/services/genshinParity/shared/constants";
 import { computePixelPoint } from "#src/services/genshinParity/shared/computePixelPoint";
+import { CLOUD_BRIGHTNESS_RATIO, LUMINANCE, SKY_LAYER } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
