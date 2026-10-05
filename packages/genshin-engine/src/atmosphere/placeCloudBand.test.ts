@@ -1,14 +1,16 @@
+import type { CloudBandOptions } from "#src/atmosphere/CloudBandOptions";
+
 import { placeCloudBand } from "#src/atmosphere/placeCloudBand";
 import { MathUtils } from "three";
 import { describe, expect, test } from "vitest";
 
 describe(placeCloudBand, () => {
-  const options = {
+  const options: CloudBandOptions = {
     count: 64,
-    distanceRange: [10, 20] as [number, number],
-    heightRange: [1, 2] as [number, number],
+    distanceRange: [10, 20],
+    heightRange: [1, 2],
     seed: 0,
-    widthRange: [3, 4] as [number, number],
+    widthRange: [3, 4],
   };
 
   test("keeps every cloud within its band's distances, heights and widths", () => {
