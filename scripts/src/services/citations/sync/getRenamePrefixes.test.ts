@@ -5,21 +5,30 @@ describe(getRenamePrefixes, () => {
   test("reduces a moved file to the prefix that moved", () => {
     expect.hasAssertions();
 
-    expect(getRenamePrefixes("R100\ta/b/c.ts\ta/x/c.ts\n")).toStrictEqual([{ from: "a/b", to: "a/x" }]);
+    expect(getRenamePrefixes("R100\ta/b/c.ts\ta/x/c.ts\n", [])).toStrictEqual([{ from: "a/b", to: "a/x" }]);
   });
 
   test("keeps the whole path for a file renamed in place", () => {
     expect.hasAssertions();
 
-    expect(getRenamePrefixes("R090\ta/c.ts\ta/d.ts\n")).toStrictEqual([{ from: "a/c.ts", to: "a/d.ts" }]);
+    expect(getRenamePrefixes("R090\ta/c.ts\ta/d.ts\n", [])).toStrictEqual([{ from: "a/c.ts", to: "a/d.ts" }]);
   });
 
   // Every file of a moved directory reports the same prefix, and a citation is rewritten once
   test("dedupes the prefix a moved directory's files share", () => {
     expect.hasAssertions();
 
-    expect(getRenamePrefixes("R100\ta/b/c.ts\tx/b/c.ts\nR100\ta/b/d.ts\tx/b/d.ts\n")).toStrictEqual([
+    expect(getRenamePrefixes("R100\ta/b/c.ts\tx/b/c.ts\nR100\ta/b/d.ts\tx/b/d.ts\n", [])).toStrictEqual([
       { from: "a", to: "x" },
+    ]);
+  });
+
+  // A directory that kept other files did not move, so a citation of it or of a sibling keeps its path
+  test("stops the prefix at a directory the tree still holds", () => {
+    expect.hasAssertions();
+
+    expect(getRenamePrefixes("R100\ta/b/c.ts\ta/m/b/c.ts\n", ["a/b/d.ts", "a/m/b/c.ts"])).toStrictEqual([
+      { from: "a/b/c.ts", to: "a/m/b/c.ts" },
     ]);
   });
 
@@ -27,7 +36,7 @@ describe(getRenamePrefixes, () => {
   test("keeps the file paths of a prefix two renames send to different places", () => {
     expect.hasAssertions();
 
-    expect(getRenamePrefixes("R100\ta/b/c.ts\tx/b/c.ts\nR100\ta/d/e.ts\ty/d/e.ts\n")).toStrictEqual([
+    expect(getRenamePrefixes("R100\ta/b/c.ts\tx/b/c.ts\nR100\ta/d/e.ts\ty/d/e.ts\n", [])).toStrictEqual([
       { from: "a/b/c.ts", to: "x/b/c.ts" },
       { from: "a/d/e.ts", to: "y/d/e.ts" },
     ]);
@@ -36,6 +45,6 @@ describe(getRenamePrefixes, () => {
   test("ignores every status but a rename", () => {
     expect.hasAssertions();
 
-    expect(getRenamePrefixes("M\ta/c.ts\nA\ta/d.ts\nD\ta/e.ts\nC100\ta/f.ts\ta/g.ts\n")).toStrictEqual([]);
+    expect(getRenamePrefixes("M\ta/c.ts\nA\ta/d.ts\nD\ta/e.ts\nC100\ta/f.ts\ta/g.ts\n", [])).toStrictEqual([]);
   });
 });
