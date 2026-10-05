@@ -1,9 +1,9 @@
-import type { AgentEvent } from "#src/models/event/AgentEvent";
 import type { BaseChildMessage } from "#src/models/window/BaseChildMessage";
+import type { RejoiningSession } from "#src/models/window/RejoiningSession";
 
-import { agentEventSchema } from "#src/models/event/AgentEvent";
 import { createBaseChildMessageSchema } from "#src/models/window/BaseChildMessage";
 import { ChildMessageType } from "#src/models/window/ChildMessageType";
+import { rejoiningSessionSchema } from "#src/models/window/RejoiningSession";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -12,17 +12,6 @@ import { z } from "zod";
 export interface ChildRejoinMessage extends BaseChildMessage<ChildMessageType.Rejoin> {
   sessions: RejoiningSession[];
 }
-
-export interface RejoiningSession {
-  events: AgentEvent[];
-  sessionId: string;
-}
-
-const rejoiningSessionSchema: z.ZodObject<{ events: z.ZodArray<typeof agentEventSchema>; sessionId: z.ZodString }> =
-  z.object({
-    events: createUniqueArraySchema(agentEventSchema, "id"),
-    sessionId: z.string().min(1),
-  }) satisfies z.ZodType<RejoiningSession>;
 
 export const childRejoinMessageSchema: z.ZodObject<{
   sessions: z.ZodArray<typeof rejoiningSessionSchema>;
