@@ -533,6 +533,12 @@ export const reference: ComponentReference = {
       search:
         "GTAONode in createPostPipeline at 4, 8 and 16 metres with compare on every frame, then createOcclusionNode with the witness's occlusion target, calibrate --write at every hour and compare at 8 and 4 metres, then the phone's frame at the medium tier",
     },
+    {
+      found:
+        "The day's haze solved again under its occlusion, with the phone's door frame at a phone's tier: a density of 0.204 falling 0.125 a metre with no most opacity (residual 0.1677 against 0.1712). Written with its light, the day's title scores 0.4305 against 0.4373 and the phone's door frame 0.4698 against 0.4685, so it ships",
+      search:
+        "calibrate --haze on the day title, the haze set in LoginSkyStateMap, calibrate --write, then compare on both day frames",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",

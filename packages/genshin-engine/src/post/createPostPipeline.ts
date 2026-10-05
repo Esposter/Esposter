@@ -51,11 +51,20 @@ export const createPostPipeline = ({
   if (isTraa) scenePass.setMRT(mrt({ output, velocity }));
   const sceneColor = scenePass.getTextureNode("output");
   const sceneDepth = scenePass.getTextureNode("depth");
-  const postPipeline: PostPipeline = { renderPipeline };
+  // Every pass holding render targets of its own, each released with the pipeline
+  const passNodes: { dispose: () => void }[] = [scenePass];
+  const postPipeline: PostPipeline = {
+    dispose: () => {
+      renderPipeline.dispose();
+      for (const passNode of passNodes) passNode.dispose();
+    },
+    renderPipeline,
+  };
   let litNode: Node<"vec4"> = sceneColor;
 
   if (occlusionRadius && isOcclusionEnabled) {
     const occlusionNode = createOcclusionNode(sceneDepth, camera, occlusionRadius);
+    passNodes.push(occlusionNode);
     litNode = vec4(sceneColor.rgb.mul(occlusionNode.getTextureNode().r), sceneColor.a);
   }
 
@@ -63,6 +72,7 @@ export const createPostPipeline = ({
     const godraysNode = godrays(sceneDepth, camera, godraysLight);
     godraysNode.raymarchSteps.value = godraysStepCount;
     const blurredGodrays = bilateralBlur(godraysNode.getTextureNode());
+    passNodes.push(godraysNode, blurredGodrays);
     litNode = depthAwareBlend(litNode, blurredGodrays.getTextureNode(), sceneDepth, camera, {
       blendColor: godraysColor,
     });
@@ -74,17 +84,30 @@ export const createPostPipeline = ({
 
   if (isBloomed && isBloomEnabled) {
     const bloomNode = bloom(foggedNode, BLOOM_STRENGTH, BLOOM_RADIUS, BLOOM_THRESHOLD);
+    passNodes.push(bloomNode);
     bloomedNode = foggedNode.add(bloomNode);
     postPipeline.bloomNode = bloomNode;
   }
 
-  const resolvedNode = isTraa
-    ? traa(bloomedNode, sceneDepth, scenePass.getTextureNode("velocity"), camera)
-    : bloomedNode;
+  let resolvedNode: Node<"vec4"> = bloomedNode;
+
+  if (isTraa) {
+    const traaNode = traa(bloomedNode, sceneDepth, scenePass.getTextureNode("velocity"), camera);
+    passNodes.push(traaNode);
+    resolvedNode = traaNode;
+  }
+
   const displayNode = renderOutput(resolvedNode);
   const gradedNode = gradeLutTexture
     ? lut3D(displayNode, texture3D(gradeLutTexture), gradeLutTexture.image.width, gradeIntensity)
     : displayNode;
-  renderPipeline.outputNode = isTraa ? gradedNode : smaa(gradedNode);
+
+  if (isTraa) renderPipeline.outputNode = gradedNode;
+  else {
+    const smaaNode = smaa(gradedNode);
+    passNodes.push(smaaNode);
+    renderPipeline.outputNode = smaaNode;
+  }
+
   return postPipeline;
 };

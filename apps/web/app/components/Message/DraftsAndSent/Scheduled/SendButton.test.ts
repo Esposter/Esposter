@@ -26,9 +26,11 @@ describe("messageDraftsAndSentScheduledSendButton", () => {
   test("sends the job it is bound to", async () => {
     expect.hasAssertions();
 
-    trpcMsw.message.scheduledMessageJob.sendScheduledMessageNow.mutation(() =>
-      createMessageEntity({ roomId: room.id, type: MessageType.Message, userId }),
-    );
+    const { promise: isSent, resolve: onSent } = Promise.withResolvers<void>();
+    trpcMsw.message.scheduledMessageJob.sendScheduledMessageNow.mutation(() => {
+      onSent();
+      return createMessageEntity({ roomId: room.id, type: MessageType.Message, userId });
+    });
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
     const sentScheduledMessageJob = createJob(crypto.randomUUID());
@@ -40,6 +42,7 @@ describe("messageDraftsAndSentScheduledSendButton", () => {
       props: { scheduledMessageJob: sentScheduledMessageJob },
     });
     await component.get("button").trigger("click");
+    await isSent;
     await flushPromises();
 
     expect(items.value.map(({ id }) => id)).toStrictEqual([otherScheduledMessageJob.id]);

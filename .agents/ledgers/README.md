@@ -61,4 +61,5 @@ a different question each: `testing` asks whether the file is a well-formed suit
 literals are the least ones, `bench` whether the measurement is honest.
 
 A skill with no row here governs a session rather than a tree, or is a lens the quality lane already reads with
-(`sweeps` skill, `references/ledger-files.md`).
+(`sweeps` skill, `references/ledger-files.md`). The score review, and the Nuxt `compatibilityDate` that moves with
+it, is dated by `SCORE.md`'s own `Last reviewed` header rather than a row here (the `score` skill).

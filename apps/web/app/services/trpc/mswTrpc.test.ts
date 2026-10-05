@@ -6,7 +6,7 @@ import { initTRPC } from "@trpc/server";
 import { Headers as HappyDomHeaders } from "happy-dom";
 import { setupServer } from "msw/node";
 import { createTRPCMsw } from "trpc-msw";
-import { afterAll, afterEach, beforeAll, describe, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, vi } from "vitest";
 
 // Client-side tRPC calls are answered at the network, not by replacing the client: the real plugin, its links and
 // Its transformer all run, and the mock router answers with the real server's transformer and error formatter.
@@ -20,6 +20,15 @@ export const setupMswTrpc = () => {
   });
   const server = setupServer(...handlers);
   const nuxtFetch = globalThis.fetch;
+  // Each request msw has yet to answer, settled when it has
+  const pendingRequestIdEndMap = new Map<string, PromiseWithResolvers<void>>();
+  server.events.on("request:start", ({ requestId }) => {
+    pendingRequestIdEndMap.set(requestId, Promise.withResolvers<void>());
+  });
+  server.events.on("request:end", ({ requestId }) => {
+    pendingRequestIdEndMap.get(requestId)?.resolve();
+    pendingRequestIdEndMap.delete(requestId);
+  });
 
   beforeAll(() => {
     // @TODO: no upstream issue — the Nuxt test environment swaps in happy-dom's `fetch` and `Request` but leaves
@@ -39,9 +48,24 @@ export const setupMswTrpc = () => {
     server.listen({ onUnhandledFrame: "bypass" });
   });
 
-  afterEach(() => {
+  // A request sent after the test ended comes from a handler the test never awaited, and left alone it lands after msw
+  // Closes, where what it logs races the worker's teardown into an error pinned on whichever file was running. A request
+  // Already out when the test ended — one it held and released — is answered here while msw still listens, and one
+  // Timer boundary after that lets a batch the last answer scheduled dispatch before the check
+  afterEach(async () => {
+    const lateRequestUrls: string[] = [];
+    const onRequestStart = ({ request }: { request: Request }) => {
+      lateRequestUrls.push(request.url);
+    };
+    server.events.on("request:start", onRequestStart);
+    await Promise.all(pendingRequestIdEndMap.values().map(({ promise }) => promise));
+    await new Promise((resolve) => {
+      setTimeout(resolve, 0);
+    });
+    server.events.removeListener("request:start", onRequestStart);
     reset();
     server.resetHandlers();
+    expect(lateRequestUrls, "requests sent after the test ended").toStrictEqual([]);
   });
 
   afterAll(() => {

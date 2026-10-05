@@ -41,8 +41,6 @@ import {
   LOGIN_DOOR_RUSH_LIMIT,
   LOGIN_DOOR_RUSH_MS,
   LOGIN_DOOR_RUSH_SHARE,
-  LOGIN_FOG_DENSITY,
-  LOGIN_FOG_HEIGHT_FALLOFF,
   LOGIN_FOG_SCATTER_POWER,
   LOGIN_FOG_SCATTER_STRENGTH,
   LOGIN_FOG_START_DISTANCE,
@@ -139,8 +137,6 @@ light.shadow.normalBias = LOGIN_SHADOW_NORMAL_BIAS;
 const hemisphere = new HemisphereLight();
 const fogUniforms = createFogUniforms();
 fogUniforms.baseHeight.value = LOGIN_CLOUD_SEA_HEIGHT;
-fogUniforms.density.value = LOGIN_FOG_DENSITY;
-fogUniforms.heightFalloff.value = LOGIN_FOG_HEIGHT_FALLOFF;
 fogUniforms.startDistance.value = LOGIN_FOG_START_DISTANCE;
 fogUniforms.scatterPower.value = LOGIN_FOG_SCATTER_POWER;
 fogUniforms.scatterStrength.value = LOGIN_FOG_SCATTER_STRENGTH;
@@ -343,10 +339,8 @@ onRender(({ delta: frameDelta }) => {
   light.position
     .copy(light.target.position)
     .addScaledVector(LoginSkyStateMap[timeOfDay].lightDirection, LOGIN_LIGHT_DISTANCE);
-  fogUniforms.density.value = witness?.isAlone.value
-    ? 0
-    : (LoginSkyStateMap[timeOfDay].fogDensity ?? LOGIN_FOG_DENSITY);
-  fogUniforms.heightFalloff.value = LoginSkyStateMap[timeOfDay].fogHeightFalloff ?? LOGIN_FOG_HEIGHT_FALLOFF;
+  fogUniforms.density.value = witness?.isAlone.value ? 0 : (LoginSkyStateMap[timeOfDay].fogDensity ?? 0);
+  fogUniforms.heightFalloff.value = LoginSkyStateMap[timeOfDay].fogHeightFalloff ?? 0;
   fogUniforms.maxOpacity.value = LoginSkyStateMap[timeOfDay].fogMaxOpacity ?? 1;
   doorGlow.value = isDoorLit ? Math.min(doorGlow.value + (delta * 1000) / LOGIN_DOOR_LIGHT_MS, 1) : 0;
   rushMs.value = isDoorLit ? rushMs.value + delta * 1000 : 0;

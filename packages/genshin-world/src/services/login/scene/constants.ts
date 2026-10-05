@@ -63,11 +63,6 @@ export const LOGIN_DOOR_RUSH_LIMIT = 0.9;
 export const LOGIN_CLOUD_SEA_HEIGHT = -14;
 export const LOGIN_CLOUD_SEA_SIZE = 3000;
 export const LOGIN_RIM_STRENGTH = 0.4;
-// The haze the cloud sea gives off, at its density at the sea's top and how fast it thins with height, where an hour
-// Sets none of its own: the day's, its density solved with its colour on the phone's door frame over the parts' pixels
-// Banded by depth and angle (genshin:parity fog), its colour landing on the one read off the day still
-export const LOGIN_FOG_DENSITY = 0.0555;
-export const LOGIN_FOG_HEIGHT_FALLOFF = 0.12;
 export const LOGIN_FOG_START_DISTANCE = 10;
 // The haze's light scattered toward the sun, which bathes the sunward side of the dawn's and the dusk's frames: how
 // Narrowly it gathers round the sun and how strongly, measured off the references

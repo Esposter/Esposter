@@ -10,6 +10,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { flushPromises } from "@vue/test-utils";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/app/downloadFile"), () => ({ downloadFile: vi.fn<typeof downloadFile>() }));
@@ -73,13 +74,16 @@ describe("resourceProgramStatus", () => {
     const component = await mountSuspended(ResourceProgramStatus);
     const generateButton = component.findAll("button").find((button) => button.text() === "Generate participants");
     assert.exists(generateButton);
-    // The download follows the mutation's batched round trip, so it is awaited itself rather than a flush
-    const downloaded = Promise.withResolvers<void>();
-    vi.mocked(downloadFile).mockImplementationOnce(() => {
-      downloaded.resolve();
+    // The click's last call is the status re-read after the download, so the test holds until it lands — a test
+    // Ending at the download leaves that read in flight past msw's close, and its log races the worker's teardown
+    const { promise: isStatusReread, resolve: onStatusReread } = Promise.withResolvers<void>();
+    trpcMsw.program.readProgramStatus.query(() => {
+      onStatusReread();
+      return { isRespondedPartial: false, rows: [statusRow] };
     });
     await generateButton.trigger("click");
-    await downloaded.promise;
+    await isStatusReread;
+    await flushPromises();
 
     expect(downloadFile).toHaveBeenCalledExactlyOnceWith(
       `${resource.name}-participants.csv`,

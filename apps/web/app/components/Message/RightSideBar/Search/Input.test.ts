@@ -6,11 +6,10 @@ import MessageRightSideBarSearchInput from "@/components/Message/RightSideBar/Se
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useSearchMessageStore } from "@/store/message/search";
-import { useSearchHistoryStore } from "@/store/message/search/history";
 import { FilterType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 // A pending chip opens its picker, whose chunk and reads land after the environment is torn down, and no test here
 // Asserts on the picker. The cast is the one a stub cannot avoid: the real type is the picker's own instance type
@@ -32,6 +31,8 @@ describe("messageRightSideBarSearchInput", () => {
   const roomId = crypto.randomUUID();
   const query = "a";
   let searchMessages: ReturnType<typeof vi.fn<(input: z.input<typeof searchMessagesInputSchema>) => void>>;
+  // A fresh search writes its history entry after its results land, so a test reading the search awaits the entry
+  let isSearchHistoryCreated: Promise<void>;
 
   // The field as the user drives it: the mount first, because it resets the route and the store keys every field by the
   // Room in it, then the text typed into it
@@ -41,14 +42,26 @@ describe("messageRightSideBarSearchInput", () => {
       searchMessages(input);
       return { count: 0, data: { hasMore: false, items: [] } };
     });
+    const { promise, resolve: onSearchHistoryCreated } = Promise.withResolvers<void>();
+    isSearchHistoryCreated = promise;
+    trpcMsw.searchHistory.createSearchHistory.mutation(({ input }) => {
+      onSearchHistoryCreated();
+      return {
+        ...input,
+        createdAt: new Date(0),
+        deletedAt: null,
+        filters: input.filters ?? [],
+        id: crypto.randomUUID(),
+        updatedAt: new Date(0),
+        userId: crypto.randomUUID(),
+      };
+    });
     const component = await mountSuspended(MessageRightSideBarSearchInput);
     setCurrentRoomId(roomId);
     const searchMessageStore = useSearchMessageStore();
     const { searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
     searchQuery.value = "";
     selectedFilters.value = [];
-    const searchHistoryStore = useSearchHistoryStore();
-    vi.spyOn(searchHistoryStore, "createSearchHistory").mockResolvedValue();
     const input = component.get('input[aria-label="Search"]');
     await input.setValue(text);
     await flushPromises();
@@ -62,14 +75,12 @@ describe("messageRightSideBarSearchInput", () => {
     return searchMessageStore;
   };
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   test("sends the typed text as the query", async () => {
     expect.hasAssertions();
 
     await search(query);
+    await isSearchHistoryCreated;
+    await flushPromises();
 
     expect(searchMessages).toHaveBeenCalledExactlyOnceWith({ filters: [], offset: undefined, query, roomId });
   });
@@ -91,6 +102,8 @@ describe("messageRightSideBarSearchInput", () => {
 
     const colonQuery = `${query}:`;
     const { selectedFilters } = storeToRefs(await search(colonQuery));
+    await isSearchHistoryCreated;
+    await flushPromises();
 
     expect(selectedFilters.value).toStrictEqual([]);
     expect(searchMessages).toHaveBeenCalledExactlyOnceWith({
