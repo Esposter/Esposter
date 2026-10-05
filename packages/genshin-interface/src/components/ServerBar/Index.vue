@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SERVER_MARK_DIAMOND_PATH, SERVER_MARK_TICK_PATH } from "#src/services/ServerMarkPath";
+import { SERVER_MARK_DIAMOND_PATH, SERVER_MARK_TICK_PATH } from "#src/services/constants";
 
 interface Props {
   // The server the account plays on, as the game names it ("Asia", "Europe")
