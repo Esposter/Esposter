@@ -1,5 +1,5 @@
-import type { LeafCards } from "#src/kits/tree/LeafCards";
-import type { TreeOptions } from "#src/kits/tree/TreeOptions";
+import type { LeafCards } from "#src/models/kits/tree/LeafCards";
+import type { TreeOptions } from "#src/models/kits/tree/TreeOptions";
 import type { Vector3 } from "three";
 
 import { createSeededRandom } from "#src/random/createSeededRandom";

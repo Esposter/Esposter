@@ -1,7 +1,7 @@
-import type { CloudBandSprite } from "#src/atmosphere/CloudBandSprite";
-import type { CloudBandSpriteOptions } from "#src/atmosphere/CloudBandSpriteOptions";
-import type { CloudPlacement } from "#src/atmosphere/CloudPlacement";
-import type { SkyUniforms } from "#src/atmosphere/SkyUniforms";
+import type { CloudBandSprite } from "#src/models/atmosphere/CloudBandSprite";
+import type { CloudBandSpriteOptions } from "#src/models/atmosphere/CloudBandSpriteOptions";
+import type { CloudPlacement } from "#src/models/atmosphere/CloudPlacement";
+import type { SkyUniforms } from "#src/models/atmosphere/SkyUniforms";
 import type { Texture } from "three";
 
 import { getCloudAtlasColumns } from "#src/atmosphere/getCloudAtlasColumns";

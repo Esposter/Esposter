@@ -1,9 +1,9 @@
-import type { PostPipeline } from "#src/post/PostPipeline";
-import type { PostPipelineOptions } from "#src/post/PostPipelineOptions";
+import type { PostPipeline } from "#src/models/post/PostPipeline";
+import type { PostPipelineOptions } from "#src/models/post/PostPipelineOptions";
 import type { Node } from "three/webgpu";
 
+import { AntialiasingMode } from "#src/models/renderer/AntialiasingMode";
 import { createHeightFogNode } from "#src/post/createHeightFogNode";
-import { AntialiasingMode } from "#src/renderer/AntialiasingMode";
 import { bilateralBlur } from "three/examples/jsm/tsl/display/BilateralBlurNode.js";
 import { bloom } from "three/examples/jsm/tsl/display/BloomNode.js";
 import { depthAwareBlend } from "three/examples/jsm/tsl/display/depthAwareBlend.js";

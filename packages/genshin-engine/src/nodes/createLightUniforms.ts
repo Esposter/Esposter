@@ -1,4 +1,4 @@
-import type { LightUniforms } from "#src/nodes/LightUniforms";
+import type { LightUniforms } from "#src/models/nodes/LightUniforms";
 
 import { Color, Vector3 } from "three";
 import { uniform } from "three/tsl";

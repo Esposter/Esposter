@@ -1,4 +1,4 @@
-import type { WitnessView } from "genshin-world/parity/witness/WitnessView";
+import type { WitnessView } from "genshin-world/parity/models/witness/WitnessView";
 
 import { MathUtils } from "three";
 

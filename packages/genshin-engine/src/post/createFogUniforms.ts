@@ -1,4 +1,4 @@
-import type { FogUniforms } from "#src/post/FogUniforms";
+import type { FogUniforms } from "#src/models/post/FogUniforms";
 
 import { Color, Vector3 } from "three";
 import { uniform } from "three/tsl";

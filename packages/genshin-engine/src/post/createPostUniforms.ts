@@ -1,4 +1,4 @@
-import type { PostUniforms } from "#src/post/PostUniforms";
+import type { PostUniforms } from "#src/models/post/PostUniforms";
 
 import { Color } from "three";
 import { uniform } from "three/tsl";

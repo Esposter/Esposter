@@ -1,5 +1,5 @@
-import type { TreeGeometry } from "#src/kits/tree/TreeGeometry";
-import type { TreeOptions } from "#src/kits/tree/TreeOptions";
+import type { TreeGeometry } from "#src/models/kits/tree/TreeGeometry";
+import type { TreeOptions } from "#src/models/kits/tree/TreeOptions";
 
 import { mergeGeometryParts } from "#src/kits/mergeGeometryParts";
 import { computeLeafCards } from "#src/kits/tree/computeLeafCards";

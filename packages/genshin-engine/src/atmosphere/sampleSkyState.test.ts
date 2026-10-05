@@ -1,4 +1,4 @@
-import type { SkyKeyframe } from "#src/atmosphere/SkyKeyframe";
+import type { SkyKeyframe } from "#src/models/atmosphere/SkyKeyframe";
 
 import { createSkyState } from "#src/atmosphere/createSkyState";
 import { sampleSkyState } from "#src/atmosphere/sampleSkyState";

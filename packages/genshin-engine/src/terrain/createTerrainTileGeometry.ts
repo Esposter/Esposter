@@ -1,4 +1,4 @@
-import type { TerrainTile } from "#src/terrain/TerrainTile";
+import type { TerrainTile } from "#src/models/terrain/TerrainTile";
 
 import { BufferAttribute, BufferGeometry } from "three";
 

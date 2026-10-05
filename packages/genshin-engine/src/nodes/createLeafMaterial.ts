@@ -1,6 +1,6 @@
-import type { ToonMaterialOptions } from "#src/nodes/ToonMaterialOptions";
-import type { ToonNodeMaterial } from "#src/nodes/ToonNodeMaterial";
-import type { WindUniforms } from "#src/wind/WindUniforms";
+import type { ToonMaterialOptions } from "#src/models/nodes/ToonMaterialOptions";
+import type { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
+import type { WindUniforms } from "#src/models/wind/WindUniforms";
 
 import { createToonMaterial } from "#src/nodes/createToonMaterial";
 import { createWindNode } from "#src/nodes/createWindNode";

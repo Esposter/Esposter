@@ -1,4 +1,4 @@
-import type { LatheSection } from "#src/kits/architecture/LatheSection";
+import type { LatheSection } from "#src/models/kits/architecture/LatheSection";
 
 export interface LatheStackOptions {
   // Flat faces between the sides, as a cut stone shaft has, rather than a round one's smooth shading

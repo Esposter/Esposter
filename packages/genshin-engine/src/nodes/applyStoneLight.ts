@@ -1,5 +1,5 @@
-import type { StoneLight } from "#src/nodes/StoneLight";
-import type { StoneLightUniforms } from "#src/nodes/StoneLightUniforms";
+import type { StoneLight } from "#src/models/nodes/StoneLight";
+import type { StoneLightUniforms } from "#src/models/nodes/StoneLightUniforms";
 import type { DirectionalLight } from "three";
 
 import { Vector3 } from "three";

@@ -1,4 +1,4 @@
-import type { SkyState } from "#src/atmosphere/SkyState";
+import type { SkyState } from "#src/models/atmosphere/SkyState";
 
 import { Color, Vector3 } from "three";
 

@@ -1,4 +1,4 @@
-import type { LightUniforms } from "#src/nodes/LightUniforms";
+import type { LightUniforms } from "#src/models/nodes/LightUniforms";
 import type { Node } from "three/webgpu";
 
 import { cameraViewMatrix, float, normalView, positionViewDirection, vec4 } from "three/tsl";

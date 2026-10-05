@@ -1,6 +1,6 @@
-import type { Instrument } from "#src/audio/Instrument";
-import type { Music } from "#src/audio/Music";
-import type { MusicPlayer } from "#src/audio/MusicPlayer";
+import type { Instrument } from "#src/models/audio/Instrument";
+import type { Music } from "#src/models/audio/Music";
+import type { MusicPlayer } from "#src/models/audio/MusicPlayer";
 
 import { collectMusicNotes } from "#src/audio/collectMusicNotes";
 import { collectMusicSegments } from "#src/audio/collectMusicSegments";

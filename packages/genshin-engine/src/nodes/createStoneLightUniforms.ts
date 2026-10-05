@@ -1,4 +1,4 @@
-import type { StoneLightUniforms } from "#src/nodes/StoneLightUniforms";
+import type { StoneLightUniforms } from "#src/models/nodes/StoneLightUniforms";
 
 import { STONE_HARMONIC_COUNT, STONE_RAMP_KNOT_COUNT } from "#src/nodes/constants";
 import { ClampToEdgeWrapping, Color, DataTexture, FloatType, LinearFilter, RGBAFormat, Vector3 } from "three";

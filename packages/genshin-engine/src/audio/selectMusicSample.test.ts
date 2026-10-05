@@ -1,4 +1,4 @@
-import type { MusicSampleRange } from "#src/audio/MusicSampleRange";
+import type { MusicSampleRange } from "#src/models/audio/MusicSampleRange";
 
 import { selectMusicSample } from "#src/audio/selectMusicSample";
 import { describe, expect, test } from "vitest";

@@ -1,7 +1,7 @@
-import type { ToonMaterialOptions } from "#src/nodes/ToonMaterialOptions";
-import type { ToonNodeMaterial } from "#src/nodes/ToonNodeMaterial";
-import type { TerrainOptions } from "#src/terrain/TerrainOptions";
-import type { WaterUniforms } from "#src/water/WaterUniforms";
+import type { ToonMaterialOptions } from "#src/models/nodes/ToonMaterialOptions";
+import type { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
+import type { TerrainOptions } from "#src/models/terrain/TerrainOptions";
+import type { WaterUniforms } from "#src/models/water/WaterUniforms";
 
 import { createCausticsNode } from "#src/nodes/createCausticsNode";
 import { createRimNode } from "#src/nodes/createRimNode";

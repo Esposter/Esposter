@@ -1,4 +1,4 @@
-import type { Music } from "#src/audio/Music";
+import type { Music } from "#src/models/audio/Music";
 
 import { collectMusicSegments } from "#src/audio/collectMusicSegments";
 import { describe, expect, test } from "vitest";

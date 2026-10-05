@@ -1,6 +1,6 @@
-import type { FogUniforms } from "#src/post/FogUniforms";
-import type { UnderwaterFogState } from "#src/water/UnderwaterFogState";
-import type { WaterUniforms } from "#src/water/WaterUniforms";
+import type { FogUniforms } from "#src/models/post/FogUniforms";
+import type { UnderwaterFogState } from "#src/models/water/UnderwaterFogState";
+import type { WaterUniforms } from "#src/models/water/WaterUniforms";
 
 // Under the water the haze is the water's own: an even fog in its colour, thick from the eye outward. Diving saves
 // The fog above and surfacing gives it back, so whatever set it above, the sky or the tuning panel, keeps its values.

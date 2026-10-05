@@ -1,4 +1,4 @@
-import type { SceneFog } from "#parity/SceneFog";
+import type { SceneFog } from "#parity/models/SceneFog";
 import type { SceneContext } from "#src/models/scene/SceneContext";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";

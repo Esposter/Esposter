@@ -84,7 +84,7 @@ In a Vite development build, `createGenshinRenderer` puts three's inspector on e
 | File                                                             | Role                                                                            |
 | :--------------------------------------------------------------- | :------------------------------------------------------------------------------ |
 | `packages/genshin-engine/src/nodes/createToonMaterial.ts`        | The environment material: ramp, rim, and whether it is outlined                 |
-| `packages/genshin-engine/src/nodes/ToonNodeMaterial.ts`          | The toon material with the emissive rim and the outline flag                    |
+| `packages/genshin-engine/src/models/nodes/ToonNodeMaterial.ts`   | The toon material with the emissive rim and the outline flag                    |
 | `packages/genshin-engine/src/nodes/createRimNode.ts`             | The rim: Fresnel on the lit side, tinted by the sky                             |
 | `packages/genshin-engine/src/materials/computeRampValues.ts`     | The ramp's bytes, from dark through a narrow step to lit                        |
 | `packages/genshin-engine/src/atmosphere/createSunLight.ts`       | The sun and its fading cascades                                                 |

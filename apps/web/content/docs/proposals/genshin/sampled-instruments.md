@@ -89,7 +89,7 @@ packages/genshin-world/src/data/login/samples/
 | File                                                                     | Role after the change                                          |
 | :----------------------------------------------------------------------- | :------------------------------------------------------------- |
 | `packages/genshin-engine/src/audio/scheduleMusicNote.ts`                 | One note played from its recording at its pitch                |
-| `packages/genshin-engine/src/audio/Instrument.ts`                        | An instrument's recordings, release, level and tuning          |
+| `packages/genshin-engine/src/models/audio/Instrument.ts`                 | An instrument's recordings, release, level and tuning          |
 | `packages/genshin-engine/src/audio/selectMusicSample.ts`                 | The recording a note plays, in the sampler and the solve alike |
 | `scripts/src/services/genshinAssets/music/solveSampledVoices.ts`         | Each voice's instrument and level, solved with pitch heard     |
 | `scripts/src/services/genshinParity/music/scoreShapedMusic.ts`           | A mix scored under an expression fitted to it                  |

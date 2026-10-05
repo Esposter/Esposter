@@ -1,5 +1,5 @@
-import type { Music } from "#src/audio/Music";
-import type { ScheduledMusicSegment } from "#src/audio/ScheduledMusicSegment";
+import type { Music } from "#src/models/audio/Music";
+import type { ScheduledMusicSegment } from "#src/models/audio/ScheduledMusicSegment";
 
 // Every segment of a playlist that sounds within [from, to), in seconds from its first pass's start: its segments
 // Walked in their order, pass after pass while it loops, each at the end of the one before

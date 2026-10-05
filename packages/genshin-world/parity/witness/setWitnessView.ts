@@ -1,4 +1,4 @@
-import type { WitnessView } from "#parity/witness/WitnessView";
+import type { WitnessView } from "#parity/models/witness/WitnessView";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";

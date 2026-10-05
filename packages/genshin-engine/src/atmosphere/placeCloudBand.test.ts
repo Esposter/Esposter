@@ -1,4 +1,4 @@
-import type { CloudBandOptions } from "#src/atmosphere/CloudBandOptions";
+import type { CloudBandOptions } from "#src/models/atmosphere/CloudBandOptions";
 
 import { placeCloudBand } from "#src/atmosphere/placeCloudBand";
 import { MathUtils } from "three";

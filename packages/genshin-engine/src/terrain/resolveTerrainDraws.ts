@@ -1,5 +1,5 @@
-import type { TerrainOptions } from "#src/terrain/TerrainOptions";
-import type { TerrainSelection } from "#src/terrain/TerrainSelection";
+import type { TerrainOptions } from "#src/models/terrain/TerrainOptions";
+import type { TerrainSelection } from "#src/models/terrain/TerrainSelection";
 
 import { getParentTerrainTileKey } from "#src/terrain/getParentTerrainTileKey";
 import { getTerrainTileLevel } from "#src/terrain/getTerrainTileLevel";

@@ -1,4 +1,4 @@
-import type { SceneBench } from "#parity/SceneBench";
+import type { SceneBench } from "#parity/models/SceneBench";
 import type { SceneContext } from "#src/models/scene/SceneContext";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";

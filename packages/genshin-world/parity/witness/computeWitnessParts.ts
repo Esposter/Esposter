@@ -1,4 +1,4 @@
-import type { WitnessPart } from "#parity/witness/WitnessPart";
+import type { WitnessPart } from "#parity/models/witness/WitnessPart";
 import type { SceneContext } from "#src/models/scene/SceneContext";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 

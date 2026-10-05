@@ -1,6 +1,6 @@
-import type { TileStreamer } from "#src/streaming/TileStreamer";
-import type { TileStreamerOptions } from "#src/streaming/TileStreamerOptions";
-import type { TerrainSelection } from "#src/terrain/TerrainSelection";
+import type { TileStreamer } from "#src/models/streaming/TileStreamer";
+import type { TileStreamerOptions } from "#src/models/streaming/TileStreamerOptions";
+import type { TerrainSelection } from "#src/models/terrain/TerrainSelection";
 
 import { getTerrainTileLevel } from "#src/terrain/getTerrainTileLevel";
 

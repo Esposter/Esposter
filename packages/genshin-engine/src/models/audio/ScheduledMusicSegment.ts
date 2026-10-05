@@ -1,4 +1,4 @@
-import type { MusicSegment } from "#src/audio/MusicSegment";
+import type { MusicSegment } from "#src/models/audio/MusicSegment";
 
 // A segment at its start in the playlist, in seconds from the first pass's start
 export interface ScheduledMusicSegment {

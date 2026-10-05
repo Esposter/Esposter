@@ -2,8 +2,8 @@ import type { SceneContext } from "#src/models/scene/SceneContext";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 import type { Node } from "three/webgpu";
 
-import { WitnessShadowMaterial } from "#parity/witness/WitnessShadowMaterial";
-import { WitnessTarget, WitnessTargets } from "#parity/witness/WitnessTarget";
+import { WitnessShadowMaterial } from "#parity/models/witness/WitnessShadowMaterial";
+import { WitnessTarget, WitnessTargets } from "#parity/models/witness/WitnessTarget";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { StoneNodeMaterial } from "genshin-engine";
 import { Color, DirectionalLight, FloatType, Layers, Light, Mesh, RenderTarget, Vector2 } from "three";

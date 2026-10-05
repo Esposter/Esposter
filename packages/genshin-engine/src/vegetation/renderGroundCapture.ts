@@ -1,5 +1,5 @@
-import type { TerrainOptions } from "#src/terrain/TerrainOptions";
-import type { GroundCapture } from "#src/vegetation/GroundCapture";
+import type { TerrainOptions } from "#src/models/terrain/TerrainOptions";
+import type { GroundCapture } from "#src/models/vegetation/GroundCapture";
 import type { Scene, Vector3Like } from "three";
 import type { Renderer } from "three/webgpu";
 

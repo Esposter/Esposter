@@ -1,6 +1,6 @@
-import type { BranchSegment } from "#src/kits/tree/BranchSegment";
-import type { TreeOptions } from "#src/kits/tree/TreeOptions";
-import type { TreeSkeleton } from "#src/kits/tree/TreeSkeleton";
+import type { BranchSegment } from "#src/models/kits/tree/BranchSegment";
+import type { TreeOptions } from "#src/models/kits/tree/TreeOptions";
+import type { TreeSkeleton } from "#src/models/kits/tree/TreeSkeleton";
 
 import { createSeededRandom } from "#src/random/createSeededRandom";
 import { Vector3 } from "three";

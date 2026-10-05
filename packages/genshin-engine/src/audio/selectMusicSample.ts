@@ -1,4 +1,4 @@
-import type { MusicSampleRange } from "#src/audio/MusicSampleRange";
+import type { MusicSampleRange } from "#src/models/audio/MusicSampleRange";
 
 import { MIDI_VELOCITY_MAX } from "#src/audio/constants";
 

@@ -1,4 +1,4 @@
-import type { WaterUniforms } from "#src/water/WaterUniforms";
+import type { WaterUniforms } from "#src/models/water/WaterUniforms";
 
 import { Color } from "three";
 import { uniform } from "three/tsl";

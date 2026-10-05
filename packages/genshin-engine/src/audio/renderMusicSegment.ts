@@ -1,4 +1,4 @@
-import type { Music } from "#src/audio/Music";
+import type { Music } from "#src/models/audio/Music";
 
 import { createInstrumentWave } from "#src/audio/createInstrumentWave";
 import { createNoiseBuffer } from "#src/audio/createNoiseBuffer";

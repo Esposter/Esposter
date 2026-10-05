@@ -1,4 +1,4 @@
-import type { WindUniforms } from "#src/wind/WindUniforms";
+import type { WindUniforms } from "#src/models/wind/WindUniforms";
 import type { Node } from "three/webgpu";
 
 import { mx_noise_float, sin, smoothstep, time, vec3 } from "three/tsl";

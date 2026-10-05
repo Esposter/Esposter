@@ -1,4 +1,4 @@
-import type { MusicVoice } from "#src/audio/MusicVoice";
+import type { MusicVoice } from "#src/models/audio/MusicVoice";
 
 // A stretch of music played whole, its length in seconds and its voices, none for a rest, with its expression: the gain
 // In decibels over every voice at the centre of each `MUSIC_EXPRESSION_WINDOW_SECONDS` from its start, moving evenly in
