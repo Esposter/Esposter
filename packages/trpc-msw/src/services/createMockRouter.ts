@@ -30,8 +30,8 @@ export const createMockRouter = <TContext extends object>(
               path,
               procedure[type]((options: ProcedureResolverOptions<unknown, unknown>) => {
                 const registration = registrations.get(path);
-                if (registration?.type !== type) throw createNotFoundError();
-                return registration.resolver(toResolverOptions(options));
+                if (registration?.type === type) return registration.resolver(toResolverOptions(options));
+                else throw createNotFoundError();
               }),
             ];
           case "subscription":
