@@ -4,3 +4,5 @@ export const SURVEY_SUMMARY_ANSWER_LIMIT = 5;
 // The bars
 export const SURVEY_SUMMARY_BAR_HEIGHT = 40;
 export const SURVEY_SUMMARY_AXIS_HEIGHT = 40;
+// A summary figure to at most two decimals, an average or a quantile alike
+export const SURVEY_SUMMARY_NUMBER_FORMATTER = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });

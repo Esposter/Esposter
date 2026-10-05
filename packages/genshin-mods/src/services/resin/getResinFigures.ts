@@ -2,12 +2,11 @@ import type { SessionUsage } from "claude-code";
 
 import type { ResinFigure } from "../../models/ResinFigure";
 
-import { CACHE_LOW_MS, USAGE_WARNING_PERCENTAGE } from "../constants";
-import { minuteFormat } from "../minuteFormat";
+import { CACHE_LOW_MS, MINUTE_FORMATTER, USAGE_WARNING_PERCENTAGE } from "../constants";
 import { getCacheRemainingMs } from "./getCacheRemainingMs";
 
-const tokenFormat = new Intl.NumberFormat("en", { maximumFractionDigits: 1, notation: "compact" });
-const costFormat = new Intl.NumberFormat("en", { currency: "USD", style: "currency" });
+const TOKEN_FORMATTER = new Intl.NumberFormat("en", { maximumFractionDigits: 1, notation: "compact" });
+const USD_CURRENCY_FORMATTER = new Intl.NumberFormat("en", { currency: "USD", style: "currency" });
 const RateLimitLabelMap: Record<string, string> = { five_hour: "5h", seven_day: "7d" };
 
 // The row's figures in the order they are read: the cache only once a request has started its clock, and each other
@@ -21,8 +20,8 @@ export const getResinFigures = (
   if (lastCacheRequestAt > 0) {
     const remainingMs = getCacheRemainingMs(lastCacheRequestAt, now);
     const remainingMinutes = Math.ceil(Temporal.Duration.from({ milliseconds: remainingMs }).total("minutes"));
-    const remaining = remainingMs > 0 ? minuteFormat.format(remainingMinutes) : "cold";
-    const resend = context.tokens === undefined ? "" : ` · re-sends ${tokenFormat.format(context.tokens)}`;
+    const remaining = remainingMs > 0 ? MINUTE_FORMATTER.format(remainingMinutes) : "cold";
+    const resend = context.tokens === undefined ? "" : ` · re-sends ${TOKEN_FORMATTER.format(context.tokens)}`;
     figures.push({ isWarning: remainingMs < CACHE_LOW_MS, label: "cache", text: `${remaining}${resend}` });
   }
 
@@ -30,7 +29,7 @@ export const getResinFigures = (
     figures.push({
       isWarning: (context.percent ?? 0) >= USAGE_WARNING_PERCENTAGE,
       label: "context",
-      text: `${tokenFormat.format(context.tokens)}/${tokenFormat.format(context.window)}`,
+      text: `${TOKEN_FORMATTER.format(context.tokens)}/${TOKEN_FORMATTER.format(context.window)}`,
     });
 
   for (const { kind, percentUsed } of rateLimits)
@@ -40,6 +39,6 @@ export const getResinFigures = (
       text: `${Math.round(percentUsed)}%`,
     });
 
-  if (cost) figures.push({ isWarning: false, label: "cost", text: costFormat.format(cost.usd) });
+  if (cost) figures.push({ isWarning: false, label: "cost", text: USD_CURRENCY_FORMATTER.format(cost.usd) });
   return figures;
 };

@@ -230,6 +230,18 @@ describe("typescriptRules", () => {
         source: `const A_RE = new RegExp(\`\${b}\`, "u");\nexport const c = A_RE;`,
         violations: 1,
       },
+      {
+        filePath: "intlCamelCase.ts",
+        name: "intlCamelCase",
+        source: `export const percentFormat = new Intl.NumberFormat("en", { style: "percent" });`,
+        violations: 1,
+      },
+      {
+        filePath: "intlScreaming.ts",
+        name: "intlScreaming",
+        source: `export const PERCENT_FORMATTER = new Intl.NumberFormat("en", { style: "percent" });`,
+        violations: 0,
+      },
       { filePath: "regexSuffix.ts", name: "regexSuffix", source: "export const A_REGEX = /a/u;", violations: 0 },
       // A local inside a function is not a named constant
       {

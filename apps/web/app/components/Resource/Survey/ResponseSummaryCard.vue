@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import type { SurveySummaryCard } from "@/models/resource/survey/SurveySummaryCard";
 
+import { PERCENT_FORMATTER } from "#shared/services/intl/constants";
 import { pluralize } from "#shared/util/text/pluralize";
 import { SurveySummaryCardType } from "@/models/resource/survey/SurveySummaryCardType";
-import { SURVEY_SUMMARY_AXIS_HEIGHT, SURVEY_SUMMARY_BAR_HEIGHT } from "@/services/survey/summary/constants";
+import {
+  SURVEY_SUMMARY_AXIS_HEIGHT,
+  SURVEY_SUMMARY_BAR_HEIGHT,
+  SURVEY_SUMMARY_NUMBER_FORMATTER,
+} from "@/services/survey/summary/constants";
 
 interface Props {
   card: SurveySummaryCard;
@@ -11,7 +16,6 @@ interface Props {
 
 const { card } = defineProps<Props>();
 const emit = defineEmits<{ showIndividual: [] }>();
-const numberFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
 // A bar per choice, each labelled with its count and its share of the responses that answered
 const chart = computed(() => {
   if (card.type !== SurveySummaryCardType.Choice) return undefined;
@@ -24,7 +28,7 @@ const chart = computed(() => {
       },
       dataLabels: {
         formatter: (count: number) =>
-          `${count} (${numberFormat.format(answeredCount ? (count / answeredCount) * 100 : 0)}%)`,
+          `${count} (${PERCENT_FORMATTER.format(answeredCount ? count / answeredCount : 0)})`,
       },
       plotOptions: { bar: { horizontal: true } },
       xaxis: { categories: choices.map(({ label }) => label) },
@@ -39,7 +43,7 @@ const chart = computed(() => {
     <h3 ui-title>{{ card.title }}</h3>
     <p text-sm text-muted>{{ card.answeredCount }} {{ pluralize("response", card.answeredCount) }}</p>
     <template v-if="card.type === SurveySummaryCardType.Choice && chart">
-      <p v-if="card.average !== undefined">Average {{ numberFormat.format(card.average) }}</p>
+      <p v-if="card.average !== undefined">Average {{ SURVEY_SUMMARY_NUMBER_FORMATTER.format(card.average) }}</p>
       <StyledApexChart :options="chart.options" :series="chart.series" type="bar" />
     </template>
     <dl v-else-if="card.type === SurveySummaryCardType.Number" flex flex-wrap gap-6>
@@ -52,7 +56,7 @@ const chart = computed(() => {
         :key="term"
       >
         <dt text-sm text-muted>{{ term }}</dt>
-        <dd>{{ numberFormat.format(value) }}</dd>
+        <dd>{{ SURVEY_SUMMARY_NUMBER_FORMATTER.format(value) }}</dd>
       </div>
     </dl>
     <template v-else-if="card.type === SurveySummaryCardType.Text">
