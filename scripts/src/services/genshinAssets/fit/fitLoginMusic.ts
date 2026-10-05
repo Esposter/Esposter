@@ -82,7 +82,7 @@ export const fitLoginMusic = async (): Promise<{ music: Music; report: string[] 
               start: roundMusic(playAt / 1000 + startTimeSeconds),
               velocity: roundMusic(amplitude),
             }))
-            .toSorted((first, second) => first.start - second.start),
+            .toSorted((firstNote, secondNote) => firstNote.start - secondNote.start),
         });
       }
     }

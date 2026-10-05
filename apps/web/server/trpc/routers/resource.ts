@@ -296,7 +296,12 @@ export const resourceRouter = router({
       ]);
       // Newest first, and by time rather than by version: the two channels number independently, so an
       // Ordinal says nothing about where a row belongs once they share a list
-      return channelHistories.flat().toSorted((first, second) => second.takenAt.getTime() - first.takenAt.getTime());
+      return channelHistories
+        .flat()
+        .toSorted(
+          (firstChannelHistory, secondChannelHistory) =>
+            secondChannelHistory.takenAt.getTime() - firstChannelHistory.takenAt.getTime(),
+        );
     },
   ),
   // An upsert rather than an insert: the open that just happened is always the newest, so there is nothing to

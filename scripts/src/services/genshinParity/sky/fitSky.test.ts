@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 
 describe(fitSky, () => {
   // Every pixel weighed by the first term alone, so the sky is one colour
-  const weights = SKY_TERMS.map((_, term) => (term === 0 ? 1 : 0));
+  const weights = SKY_TERMS.map((_value, term) => (term === 0 ? 1 : 0));
 
   test("solves a sky of one colour with no residual", () => {
     expect.hasAssertions();

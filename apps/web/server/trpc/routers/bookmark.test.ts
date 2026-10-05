@@ -52,7 +52,9 @@ describe("bookmarkRouter", () => {
     expect.hasAssertions();
 
     await Promise.all(
-      Array.from({ length: MAX_BOOKMARKS }, (_, index) => caller.toggleBookmark({ path: `${path}${index}`, title })),
+      Array.from({ length: MAX_BOOKMARKS }, (_value, index) =>
+        caller.toggleBookmark({ path: `${path}${index}`, title }),
+      ),
     );
 
     await expect(caller.toggleBookmark({ path, title })).rejects.toThrowErrorMatchingInlineSnapshot(

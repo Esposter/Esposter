@@ -18,7 +18,7 @@ describe(readModel, () => {
   // A tone at A4 whose frames the model's first window covers, though its samples run into a second window
   const tone = Float32Array.from(
     { length: 36000 },
-    (_, index) => Math.sin((2 * Math.PI * 440 * index) / AUDIO_SAMPLE_RATE) / 2,
+    (_value, index) => Math.sin((2 * Math.PI * 440 * index) / AUDIO_SAMPLE_RATE) / 2,
   );
   // One read of the shipped model, which every test below observes a part of: a read takes a few seconds alone and
   // Several times that under coverage, so a read per test cannot fit the default test timeout

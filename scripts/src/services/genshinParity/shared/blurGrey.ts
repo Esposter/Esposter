@@ -1,7 +1,7 @@
 // A grey image blurred by a separable Gaussian of the sigma given, in pixels, out to three sigmas, its edges clamped
 export const blurGrey = (values: Float32Array, width: number, height: number, sigma: number): Float32Array => {
   const radius = Math.ceil(3 * sigma);
-  const window = Array.from({ length: radius * 2 + 1 }, (_, index) =>
+  const window = Array.from({ length: radius * 2 + 1 }, (_value, index) =>
     Math.exp(-((index - radius) ** 2) / (2 * sigma ** 2)),
   );
   const windowSum = window.reduce((sum, weight) => sum + weight, 0);

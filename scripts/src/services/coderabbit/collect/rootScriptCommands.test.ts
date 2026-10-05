@@ -41,7 +41,7 @@ describe("rootScriptCommands", () => {
         words.unshift("exec");
         return words;
       });
-    return [[name]];
+    else return [[name]];
   };
   const getExpandedSteps = (steps: (string | string[])[]): string[][] => {
     const { scripts = {} } = parseMachineJson<{ scripts?: Record<string, string> }>(

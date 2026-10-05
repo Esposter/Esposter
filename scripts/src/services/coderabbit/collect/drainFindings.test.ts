@@ -28,7 +28,7 @@ describe(drainFindings, () => {
     expect.hasAssertions();
 
     const failedMarker = getMarker(DRAIN_FAILED_MARKER, newestReviewId, [collectorSha]);
-    const issueComments = Array.from({ length: SESSION_ATTEMPT_CAP }, (_, id) => ({
+    const issueComments = Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
       body: failedMarker,
       id,
       updated_at: "",

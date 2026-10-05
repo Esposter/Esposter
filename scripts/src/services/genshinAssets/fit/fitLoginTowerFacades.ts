@@ -121,7 +121,7 @@ export const fitLoginTowerFacades = async (
       );
       metals.push(textures?.mask ? getTexel(textures.mask, uv, 1) : 0);
     }
-    const cells = Array.from({ length: width * height }, (_, cell) => cell);
+    const cells = Array.from({ length: width * height }, (_value, cell) => cell);
     const drawn = cells.filter((cell) => (tags[cell] ?? -1) >= 0);
     // Each band's wall stands at the median radius its faces stand at, which a recess sinks into and a column or a
     // Moulding stands out from

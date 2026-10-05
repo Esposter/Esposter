@@ -8,18 +8,18 @@ const toGroupKey = (father: string, part: string): string => `${father}|${part}`
 // One. A mesh with no levels is kept when it was exported
 export const selectFinestLevels = (
   placements: readonly AssetPlacement[],
-  hasMesh: (mesh: string) => boolean,
+  checkHasMesh: (mesh: string) => boolean,
 ): AssetPlacement[] => {
   const groupLevelMap = new Map<string, number>();
   for (const { father, mesh } of placements) {
     const groups = LEVEL_OF_DETAIL_REGEX.exec(mesh)?.groups;
-    if (!groups?.part || !hasMesh(mesh)) continue;
+    if (!groups?.part || !checkHasMesh(mesh)) continue;
     const key = toGroupKey(father, groups.part);
     const level = Number(groups.level);
     groupLevelMap.set(key, Math.min(level, groupLevelMap.get(key) ?? level));
   }
   return placements.filter(({ father, mesh }) => {
-    if (!hasMesh(mesh)) return false;
+    if (!checkHasMesh(mesh)) return false;
     const groups = LEVEL_OF_DETAIL_REGEX.exec(mesh)?.groups;
     return !groups?.part || groupLevelMap.get(toGroupKey(father, groups.part)) === Number(groups.level);
   });

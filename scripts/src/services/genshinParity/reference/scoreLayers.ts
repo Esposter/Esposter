@@ -25,12 +25,15 @@ export const scoreLayers = async (reference: Buffer, shot: Buffer, gbuffer: Witn
   const masks = [
     { mask: undefined, name: "frame" },
     ...families.map((name, familyIndex) => ({
-      mask: Uint8Array.from({ length: pixelCount }, (_, pixel) =>
+      mask: Uint8Array.from({ length: pixelCount }, (_value, pixel) =>
         Number(part[pixel * 4] !== 0 && part[pixel * 4 + 1] === familyIndex),
       ),
       name: name || "unnamed",
     })),
-    { mask: Uint8Array.from({ length: pixelCount }, (_, pixel) => Number(part[pixel * 4] === 0)), name: SKY_LAYER },
+    {
+      mask: Uint8Array.from({ length: pixelCount }, (_value, pixel) => Number(part[pixel * 4] === 0)),
+      name: SKY_LAYER,
+    },
   ].filter(({ mask }) => !mask || mask.includes(1));
   const { errorMap } = await readFlipErrorMap(reference, shot, width, height);
   return Promise.all(

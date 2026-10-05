@@ -7,7 +7,7 @@ describe(checkIsSpeech, () => {
   const length = VOICE_SAMPLE_RATE / 10;
   const getClip = (getSample: (index: number) => number) => ({
     sampleRate: VOICE_SAMPLE_RATE,
-    samples: Float32Array.from({ length }, (_, index) => getSample(index)),
+    samples: Float32Array.from({ length }, (_value, index) => getSample(index)),
   });
 
   test.each([

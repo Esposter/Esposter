@@ -5,7 +5,7 @@
 export const splitVoicesByRegister = (pitches: number[], voiceCount: number): number[] => {
   const pitchCountMap = new Map<number, number>();
   for (const pitch of pitches) pitchCountMap.set(pitch, (pitchCountMap.get(pitch) ?? 0) + 1);
-  const values = [...pitchCountMap.keys()].toSorted((first, second) => first - second);
+  const values = [...pitchCountMap.keys()].toSorted((firstPitch, secondPitch) => firstPitch - secondPitch);
   if (values.length <= voiceCount) return values.slice(1);
   // Each prefix's weight, weighted sum and weighted sum of squares, so any range's spread is read in constant time
   const weights = [0];
@@ -25,7 +25,7 @@ export const splitVoicesByRegister = (pitches: number[], voiceCount: number): nu
   };
   // `costs[voices][end]`: the least spread of the first `end` values split into that many ranges, and where the last
   // Range starts in it
-  const costs = [Array.from({ length: values.length + 1 }, (_, end) => (end === 0 ? 0 : Infinity))];
+  const costs = [Array.from({ length: values.length + 1 }, (_value, end) => (end === 0 ? 0 : Infinity))];
   const starts: number[][] = [[]];
   for (let voice = 1; voice <= voiceCount; voice++) {
     const voiceCosts = Array.from({ length: values.length + 1 }, () => Infinity);

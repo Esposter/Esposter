@@ -108,10 +108,10 @@ export const scanSerializedFields = (
     )
       return undefined;
     const readTimes = (start: number, count: number): number[] =>
-      Array.from({ length: count }, (_, index) => bytes.readUInt16LE(start + index * 2) / GRADIENT_TIME_SCALE);
+      Array.from({ length: count }, (_value, index) => bytes.readUInt16LE(start + index * 2) / GRADIENT_TIME_SCALE);
     const colorTimes = readTimes(timesOffset, colorKeyCount);
     const alphaTimes = readTimes(alphaTimesOffset, alphaKeyCount);
-    const colors = Array.from({ length: Math.max(colorKeyCount, alphaKeyCount) }, (_, index) =>
+    const colors = Array.from({ length: Math.max(colorKeyCount, alphaKeyCount) }, (_value, index) =>
       [0, 1, 2, 3].map((channel) => readFloat(offset + index * 16 + channel * WORD)),
     );
     if (

@@ -21,8 +21,8 @@ export const useNotificationStore = defineStore("notification", () => {
   // Sorted at display time rather than kept in order by every writer: the two halves arrive independently — a
   // Page appends, a local notification prepends — and only the rendered list has an opinion about their order
   const notifications = computed(() =>
-    [...localNotifications.value, ...deliveredNotifications.value].toSorted((first, second) =>
-      compareCreatedAt(second, first),
+    [...localNotifications.value, ...deliveredNotifications.value].toSorted((firstNotification, secondNotification) =>
+      compareCreatedAt(secondNotification, firstNotification),
     ),
   );
   const isPanelOpen = ref(false);

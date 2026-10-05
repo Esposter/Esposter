@@ -3,6 +3,7 @@ import type { SurveyResponseRecord } from "#shared/models/resource/survey/Survey
 import type { SurveySummaryCard } from "@/models/resource/survey/SurveySummaryCard";
 import type { Question } from "survey-core";
 
+import { getAverage } from "#shared/services/resource/sheet/column/getAverage";
 import { SurveySummaryCardType } from "@/models/resource/survey/SurveySummaryCardType";
 import { SURVEY_SUMMARY_ANSWER_LIMIT } from "@/services/survey/summary/constants";
 import {
@@ -13,7 +14,6 @@ import {
   QuestionTextModel,
 } from "survey-core";
 
-const getAverage = (values: number[]) => values.reduce((sum, value) => sum + value, 0) / values.length;
 // A question taking several choices is stored as its JSON array, and every other answer as the value itself
 const getAnsweredValues = (question: Question, value: ColumnValue): unknown[] => {
   if (question instanceof QuestionCheckboxModel && typeof value === "string") {

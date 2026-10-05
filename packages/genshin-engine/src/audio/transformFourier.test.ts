@@ -6,7 +6,7 @@ describe(transformFourier, () => {
     expect.hasAssertions();
 
     const length = 8;
-    const real = Float64Array.from({ length }, (_, index) => Math.cos((2 * Math.PI * index) / length));
+    const real = Float64Array.from({ length }, (_value, index) => Math.cos((2 * Math.PI * index) / length));
     const imaginary = new Float64Array(length);
     transformFourier(real, imaginary);
     const magnitudes = Array.from(real, (value, index) => Math.round(Math.hypot(value, imaginary[index] ?? 0)));

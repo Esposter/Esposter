@@ -31,7 +31,7 @@ export const fitSky = (
     for (let row = 0; row < termCount; row++) (normal[row] ?? [])[row] = (normal[row]?.[row] ?? 0) + 1e-6;
     return solveNonNegativeSystem(normal, right);
   });
-  const colors = SKY_TERMS.map((_, term): Vector => [
+  const colors = SKY_TERMS.map((_value, term): Vector => [
     solved[0]?.[term] ?? 0,
     solved[1]?.[term] ?? 0,
     solved[2]?.[term] ?? 0,
@@ -47,10 +47,12 @@ export const fitSky = (
     difference.reduce((sum, value, channel) => sum + (LUMINANCE[channel] ?? 0) * value, 0),
   );
   const spread =
-    brightnesses.map((brightness) => Math.abs(brightness)).toSorted((first, second) => first - second)[
+    brightnesses
+      .map((brightness) => Math.abs(brightness))
+      .toSorted((firstBrightness, secondBrightness) => firstBrightness - secondBrightness)[
       Math.floor(brightnesses.length / 2)
     ] ?? 0;
-  const kept = differences.filter((_, index) => {
+  const kept = differences.filter((_value, index) => {
     const brightness = brightnesses[index] ?? 0;
     return brightness <= spread * BRIGHT_TRIM_FACTOR && brightness >= -spread * TRIM_FACTOR;
   });

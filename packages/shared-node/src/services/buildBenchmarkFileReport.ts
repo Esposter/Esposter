@@ -20,7 +20,7 @@ export const buildBenchmarkFileReport = (filepath: string, testCases: Iterable<B
       const benchmarks: BenchmarkResult[] = [];
       // Fastest first, which is the order Vitest's own comparison table prints and the order `vs base` reads
       // Against — a rank rather than a registration position, so two runs of one group always diff line for line.
-      for (const task of tasks.toSorted((first, second) => first.rank - second.rank)) {
+      for (const task of tasks.toSorted((firstTask, secondTask) => firstTask.rank - secondTask.rank)) {
         // A bench that threw on every iteration is recorded with zero samples — mean/p99 come back
         // Non-finite (undefined or NaN), which would later crash formatBenchmarkMarkdown on `mean.toFixed`
         // With a misleading "failed to write .md" error. Fail loud and named here instead, before any

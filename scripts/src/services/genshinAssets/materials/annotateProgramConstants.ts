@@ -12,7 +12,7 @@ const REGISTER_REGEX = /cb0\[(?<register>\d+)\]/gu;
 const computeRegisters = ({ arrayLength, byteOffset, rows }: ShaderConstant): number[] => {
   const count = Math.max(rows, 1) * Math.max(arrayLength, 1);
   const first = Math.floor(byteOffset / REGISTER_BYTES);
-  return Array.from({ length: count }, (_, index) => first + index);
+  return Array.from({ length: count }, (_value, index) => first + index);
 };
 // The byte past a constant's last: its last register's columns, past every register before it
 const computeEndByte = (constant: ShaderConstant): number =>
@@ -20,7 +20,9 @@ const computeEndByte = (constant: ShaderConstant): number =>
 // Whether no two of a layout's constants share a byte, as one program's layout never does: an overlap is two lists read
 // As one
 const checkIsDisjoint = (layout: readonly ShaderConstant[]): boolean => {
-  const sorted = layout.toSorted((first, second) => first.byteOffset - second.byteOffset);
+  const sorted = layout.toSorted(
+    (firstConstant, secondConstant) => firstConstant.byteOffset - secondConstant.byteOffset,
+  );
   return sorted.every((constant, index) => {
     const previous = sorted[index - 1];
     return !previous || constant.byteOffset >= computeEndByte(previous);
@@ -51,7 +53,7 @@ export const annotateProgramConstants = (assembly: string, layouts: readonly Sha
   }
   if (!best) return assembly;
   const header = best
-    .toSorted((first, second) => first.byteOffset - second.byteOffset)
+    .toSorted((firstConstant, secondConstant) => firstConstant.byteOffset - secondConstant.byteOffset)
     .map((constant) => {
       const register = Math.floor(constant.byteOffset / REGISTER_BYTES);
       const firstComponent = (constant.byteOffset % REGISTER_BYTES) / COMPONENT_BYTES;

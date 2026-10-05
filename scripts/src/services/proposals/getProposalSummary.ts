@@ -17,7 +17,7 @@ const ProposalSignalPathPrefixesMap = {
 // A proposal's own folder indexes are its umbrella, never something it waits on
 const getAncestorRoutes = (route: string): Set<string> => {
   const segments = route.split("/");
-  return new Set(segments.map((_, index) => segments.slice(0, index).join("/")));
+  return new Set(segments.map((_value, index) => segments.slice(0, index).join("/")));
 };
 // Everything is read off what the page already states, so nothing here is a field anyone keeps: the lead — the prose
 // Before the first section — is where a proposal links the proposals it waits on, a Key files row is a table line

@@ -10,7 +10,7 @@ const round = (colors: (readonly number[])[]): number[][] =>
 
 describe(solveStoneLight, () => {
   // A straight ramp from none at its dark end, which the smoothness the solve holds its bends to leaves as it is
-  const ramp = Array.from({ length: STONE_RAMP_KNOT_COUNT }, (_, knot) => [0.05 * knot, 0.04 * knot, 0.03 * knot]);
+  const ramp = Array.from({ length: STONE_RAMP_KNOT_COUNT }, (_value, knot) => [0.05 * knot, 0.04 * knot, 0.03 * knot]);
   const harmonics = [
     [0.5, 0.6, 0.8],
     [0.1, 0, -0.1],
@@ -24,7 +24,7 @@ describe(solveStoneLight, () => {
   ];
   const haze = { color: [0.6, 0.5, 0.4] satisfies Vector, scatterColor: [1, 0.8, 0.5] satisfies Vector };
   // Every ramp knot's coordinate under faces turned every way, each drawn as many times as a bin needs to be read
-  const samples = Array.from({ length: STONE_RAMP_KNOT_COUNT * 6 }, (_, index): StoneLightSample[] => {
+  const samples = Array.from({ length: STONE_RAMP_KNOT_COUNT * 6 }, (_value, index): StoneLightSample[] => {
     const rampCoordinate = (index % STONE_RAMP_KNOT_COUNT) / (STONE_RAMP_KNOT_COUNT - 1);
     const turn = Math.floor(index / STONE_RAMP_KNOT_COUNT);
     const azimuth = turn + index * 0.37;

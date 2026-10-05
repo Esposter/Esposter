@@ -4,9 +4,9 @@ The game is a fifth of the app's source. `components/Dungeons` splits at its sub
 
 | Unit                                                                                                | Swept                 | Notes                                                 |
 | --------------------------------------------------------------------------------------------------- | --------------------- | ----------------------------------------------------- |
-| `Dungeons/Battle`, `MonsterParty`, `MonsterDetails` + their `store/dungeons` slices                 | 2026-09-25 · Opus 5.5 |                                                       |
-| `Dungeons/UI`, `Settings`, `Inventory` + the `UI`/`settings`/`inventory` slices of all three layers | 2026-09-25 · Opus 5.5 |                                                       |
-| `Dungeons/World`, `Title`, `MobileJoystick`, `Preloader`, `Scene.vue` + `store/dungeons` roots      | 2026-09-25 · Opus 5.5 |                                                       |
+| `Dungeons/Battle`, `MonsterParty`, `MonsterDetails` + their `store/dungeons` slices                 | 2026-10-05 · Opus 5.5 |                                                       |
+| `Dungeons/UI`, `Settings`, `Inventory` + the `UI`/`settings`/`inventory` slices of all three layers | 2026-10-05 · Opus 5.5 |                                                       |
+| `Dungeons/World`, `Title`, `MobileJoystick`, `Preloader`, `Scene.vue` + `store/dungeons` roots      | 2026-10-05 · Opus 5.5 |                                                       |
 | `services/dungeons/scene` + `composables/dungeons/scene`                                            | 2026-10-05 · Opus 5.5 | the scene layer is half the game's non-component code |
 | `services/dungeons` less `scene` and `UI`                                                           | 2026-10-05 · Opus 5.5 |                                                       |
 | `composables/dungeons` less `scene` and `UI`, + `composables/phaser` + `services/phaser`            | 2026-10-05 · Opus 5.5 |                                                       |

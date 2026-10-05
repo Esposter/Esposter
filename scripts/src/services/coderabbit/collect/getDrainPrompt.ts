@@ -29,8 +29,9 @@ export const getDrainPrompt = ({
     commentIdSeverityMap === undefined
       ? openThreads
       : openThreads.toSorted(
-          (first, second) =>
-            (commentIdSeverityMap.get(second.commentId) ?? 0) - (commentIdSeverityMap.get(first.commentId) ?? 0),
+          (firstOpenThread, secondOpenThread) =>
+            (commentIdSeverityMap.get(secondOpenThread.commentId) ?? 0) -
+            (commentIdSeverityMap.get(firstOpenThread.commentId) ?? 0),
         );
   const threadSections = rankedThreads.map(
     ({ body, commentId, line, path }) =>

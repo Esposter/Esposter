@@ -15,7 +15,7 @@ const CONTRAST_CONSTANT = 0.03 ** 2;
 // Half the size, each pixel the mean of the four it covers
 const halve = (values: Float32Array, width: number, height: number): Float32Array => {
   const halfWidth = Math.floor(width / 2);
-  return Float32Array.from({ length: halfWidth * Math.floor(height / 2) }, (_, index) => {
+  return Float32Array.from({ length: halfWidth * Math.floor(height / 2) }, (_value, index) => {
     const x = (index % halfWidth) * 2;
     const y = Math.floor(index / halfWidth) * 2;
     return (
@@ -38,7 +38,7 @@ export const scoreLabelSimilarity = (
   labels: Int32Array,
   labelCount: number,
 ): number[] =>
-  Array.from({ length: labelCount }, (_, label) => {
+  Array.from({ length: labelCount }, (_value, label) => {
     const labelCoverage = Float32Array.from(labels, (pixelLabel) => (pixelLabel === label ? 1 : 0));
     let planes: LabelPlanes = {
       coverage: labelCoverage,

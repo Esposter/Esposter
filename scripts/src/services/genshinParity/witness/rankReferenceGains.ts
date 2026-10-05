@@ -57,7 +57,7 @@ export const rankReferenceGains = async (
       ]);
       const readLuminances = async (shot: Buffer): Promise<Float32Array> => {
         const data = await sharp(shot).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
-        return Float32Array.from({ length: width * height }, (_, pixel) =>
+        return Float32Array.from({ length: width * height }, (_value, pixel) =>
           LUMINANCE.reduce(
             (sum, weight, channel) => sum + weight * toLinear((data[pixel * 3 + channel] ?? 0) / BYTE),
             0,
@@ -121,7 +121,7 @@ export const rankReferenceGains = async (
           ceiling: error / Math.max(scoredCount, 1),
           name,
           share: count / Math.max(scoredCount, 1),
-        })).toSorted((first, second) => second.ceiling - first.ceiling),
+        })).toSorted((firstTerm, secondTerm) => secondTerm.ceiling - firstTerm.ceiling),
       };
     },
     () => browser.close(),

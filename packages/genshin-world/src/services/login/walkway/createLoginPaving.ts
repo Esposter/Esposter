@@ -69,7 +69,7 @@ export const createLoginPaving = (): { normalNode: Node<"vec3">; shade: Node<"fl
       context.fill(pockets);
       const getFilledShares = (): Float32Array => {
         const { data } = context.getImageData(0, 0, width, height);
-        return Float32Array.from({ length: width * height }, (_, pixel) => (data[pixel * 4] ?? 0) / MAX_BYTE);
+        return Float32Array.from({ length: width * height }, (_value, pixel) => (data[pixel * 4] ?? 0) / MAX_BYTE);
       };
       const pocketShares = getFilledShares();
       // A groove falls its own slope's share of a rim's depth

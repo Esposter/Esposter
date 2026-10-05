@@ -42,7 +42,7 @@ describe(getFileOrganizationFindings, () => {
       "a table beside its select schema and row type",
       "export const userStatusesInMessage = 0;\nexport type UserStatusInMessage = 0;\nexport const selectUserStatusInMessageSchema = 0;\n",
     ],
-  ])("leaves %s alone", (_, source, path = SERVICE_PATH) => {
+  ])("leaves %s alone", (_description, source, path = SERVICE_PATH) => {
     expect.hasAssertions();
 
     expect(

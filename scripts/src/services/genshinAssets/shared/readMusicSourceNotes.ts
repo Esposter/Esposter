@@ -27,7 +27,7 @@ export const readMusicSourceNotes = async (
     const values = new Float32Array(data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength));
     const frameCount = values.length / ANNOTATIONS_SEMITONES / 2;
     const getRows = (offset: number): number[][] =>
-      Array.from({ length: frameCount }, (_, frame) => [
+      Array.from({ length: frameCount }, (_value, frame) => [
         ...values.subarray((offset + frame) * ANNOTATIONS_SEMITONES, (offset + frame + 1) * ANNOTATIONS_SEMITONES),
       ]);
     readings = { frames: getRows(0), onsets: getRows(frameCount) };

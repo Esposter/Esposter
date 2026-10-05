@@ -23,14 +23,14 @@ export const minimizeNelderMead = async (
     // oxlint-disable-next-line no-await-in-loop -- each vertex is one evaluation, and evaluations run one at a time
     vertices.push(await evaluate(start.map((value, index) => (index === axis ? value + step : value))));
   for (let iteration = 0; iteration < iterationCount; iteration++) {
-    vertices = vertices.toSorted((first, second) => first.cost - second.cost);
+    vertices = vertices.toSorted((firstVertex, secondVertex) => firstVertex.cost - secondVertex.cost);
     const worst = vertices.at(-1);
     const best = vertices[0];
     const secondWorst = vertices.at(-2);
     if (!worst || !best || !secondWorst) break;
     const others = vertices.slice(0, -1);
     const centroid = start.map(
-      (_, index) => others.reduce((sum, { point }) => sum + (point[index] ?? 0), 0) / others.length,
+      (_value, index) => others.reduce((sum, { point }) => sum + (point[index] ?? 0), 0) / others.length,
     );
     // oxlint-disable-next-line no-await-in-loop -- as above
     const reflected = await evaluate(combine(centroid, worst.point, -REFLECTION));
@@ -49,6 +49,6 @@ export const minimizeNelderMead = async (
           vertices[index] = await evaluate(combine(best.point, vertices[index]?.point ?? [], SHRINK));
     }
   }
-  const [bestVertex] = vertices.toSorted((first, second) => first.cost - second.cost);
+  const [bestVertex] = vertices.toSorted((firstVertex, secondVertex) => firstVertex.cost - secondVertex.cost);
   return bestVertex ?? { cost: Number.POSITIVE_INFINITY, point: [...start] };
 };

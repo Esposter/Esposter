@@ -73,7 +73,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 - **A call's result gets a name rather than being nested into the next call**, named after the function with `get`/`read` dropped (`references/named-intermediates.md`)
 - **No `current*` prefix** for reactive refs/computeds — they are always the current value. Exception: global store identifiers distinguishing the active item from a collection: `currentRoomId`
 - `userId` for the session user's ID — never `me`, `myId` or `self`; `my*` on a read scopes it to the caller (`references/session-user.md`)
-- A comparator's pair is named for what it compares — `(firstRoom, secondRoom)`, never `(a, b)` (`no-restricted-syntax` on a `sort`/`toSorted` callback)
+- A comparator's pair is named for what it compares — `(firstRoom, secondRoom)`, never `(a, b)` or a bare `(first, second)` (`no-restricted-syntax` on a `sort`/`toSorted` callback)
 - `new{PropName}` for `onUpdate:*` handler parameters: `(newItemsPerPage) =>`, `(newModelValue) =>`
 - `edited{PropName}` for a **local editable copy** of a prop or store field — never `{prop}Value` (`references/edited-copies.md`)
 - **Unused params keep the `_` prefix _and_ a readable name** — `_event`, never bare `_`, except a loop binding (`references/unused-bindings.md`)

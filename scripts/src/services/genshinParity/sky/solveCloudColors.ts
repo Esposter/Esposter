@@ -6,7 +6,7 @@ import { getLuminance } from "#src/services/genshinParity/sky/getLuminance";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The quantiles the two sets of cloud pixels are paired at, and the share of each set read round each one
-const QUANTILES = Array.from({ length: 19 }, (_, index) => (index + 1) / 20);
+const QUANTILES = Array.from({ length: 19 }, (_value, index) => (index + 1) / 20);
 const QUANTILE_WINDOW = 0.025;
 const computeWindow = <T>(values: readonly T[], quantile: number): T[] => {
   const half = Math.max(Math.round(values.length * QUANTILE_WINDOW), 1);
@@ -33,8 +33,11 @@ export const solveCloudColors = (
     );
   const getLitness = ({ lit, shade }: (typeof ours)[number]): number =>
     getLuminance(lit) / Math.max(getLuminance(lit) + getLuminance(shade), Number.MIN_VALUE);
-  const orderedOurs = ours.toSorted((first, second) => getLitness(first) - getLitness(second));
-  const orderedReference = reference.toSorted((first, second) => getLuminance(first) - getLuminance(second));
+  const orderedOurs = ours.toSorted((firstCloud, secondCloud) => getLitness(firstCloud) - getLitness(secondCloud));
+  const orderedReference = reference.toSorted(
+    (firstReferenceColor, secondReferenceColor) =>
+      getLuminance(firstReferenceColor) - getLuminance(secondReferenceColor),
+  );
   const pairs = QUANTILES.map((quantile) => {
     const window = computeWindow(orderedOurs, quantile);
     return {

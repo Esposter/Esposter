@@ -17,6 +17,6 @@ export const DEFAULT_SKY_GRADIENT: SkyGradient = {
   green: Array.from({ length: DEFAULT_SAMPLE_COUNT }, () => 0),
   red: Array.from(
     { length: DEFAULT_SAMPLE_COUNT },
-    (_, index) => 1 - MathUtils.smoothstep(index, 0, DEFAULT_SAMPLE_COUNT - 1),
+    (_value, index) => 1 - MathUtils.smoothstep(index, 0, DEFAULT_SAMPLE_COUNT - 1),
   ),
 };

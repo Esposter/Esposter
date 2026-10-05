@@ -22,7 +22,7 @@ import { AUDIO_SAMPLE_RATE } from "pitch-transcription";
 const listCombinations = (counts: number[]): number[][] =>
   counts.reduce<number[][]>(
     (combinations, count) =>
-      combinations.flatMap((combination) => Array.from({ length: count }, (_, index) => [...combination, index])),
+      combinations.flatMap((combination) => Array.from({ length: count }, (_value, index) => [...combination, index])),
     [[]],
   );
 const computeDot = (first: Float64Array, second: Float64Array): number =>
@@ -51,7 +51,7 @@ export const solveSampledVoices = async (
   const gameBands = computeBandEnergies(game, AUDIO_SAMPLE_RATE);
   const floors = gameBands.map((energies) => computeBandFloor(energies));
   const computeFrameEnergies = (bands: Float64Array[]): Float64Array =>
-    Float64Array.from({ length: bands.length * frames.length }, (_, index) => {
+    Float64Array.from({ length: bands.length * frames.length }, (_value, index) => {
       const band = Math.floor(index / frames.length);
       return bands[band]?.[frames[index % frames.length] ?? 0] ?? 0;
     });
@@ -122,7 +122,7 @@ export const solveSampledVoices = async (
       const residual = -powers.reduce((sum, power, voice) => sum + power * (right[voice] ?? 0), 0);
       return { combination, powers, residual };
     })
-    .toSorted((first, second) => first.residual - second.residual)
+    .toSorted((firstCombination, secondCombination) => firstCombination.residual - secondCombination.residual)
     .slice(0, SAMPLED_VOICE_REFINED_COUNT);
 
   return ranked
@@ -148,5 +148,7 @@ export const solveSampledVoices = async (
         shaped,
       };
     })
-    .toSorted((first, second) => first.shaped.score.distance - second.shaped.score.distance);
+    .toSorted(
+      (firstSolution, secondSolution) => firstSolution.shaped.score.distance - secondSolution.shaped.score.distance,
+    );
 };

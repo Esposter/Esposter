@@ -20,9 +20,9 @@ export const computeWitnessPoints = (
     const nearPoint = near ? new Vector3(...near) : undefined;
     const part = nearPoint
       ? candidates.toSorted(
-          (first, second) =>
-            first.getWorldPosition(new Vector3()).distanceTo(nearPoint) -
-            second.getWorldPosition(new Vector3()).distanceTo(nearPoint),
+          (firstCandidate, secondCandidate) =>
+            firstCandidate.getWorldPosition(new Vector3()).distanceTo(nearPoint) -
+            secondCandidate.getWorldPosition(new Vector3()).distanceTo(nearPoint),
         )[0]
       : candidates[0];
     if (!part) throw new InvalidOperationError(Operation.Read, mesh, "not a part the witness draws");

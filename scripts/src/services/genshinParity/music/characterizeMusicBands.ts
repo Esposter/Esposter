@@ -37,7 +37,7 @@ export const characterizeMusicBands = (
   const quiet = Math.max(...loudness) * CHROMA_QUIET_SHARE;
   const loudFrames = [...loudness.keys()].filter((frame) => frame < frameCount && (loudness[frame] ?? 0) >= quiet);
   const getPower = (frame: number, bin: number): number => (magnitudes[frame * binCount + bin] ?? 0) ** 2;
-  const totals = Float64Array.from({ length: frameCount }, (_, frame) => {
+  const totals = Float64Array.from({ length: frameCount }, (_value, frame) => {
     let total = 0;
     for (let bin = 0; bin < binCount; bin++) total += getPower(frame, bin);
     return total;
@@ -58,7 +58,7 @@ export const characterizeMusicBands = (
   const loudTotal = sum(loudFrames.map((frame) => totals[frame] ?? 0));
   return LISTEN_BAND_CENTRES.map((centre) => {
     const [low, high] = computeBandBins(centre, sampleRate, frameLength, binCount);
-    const bins = Array.from({ length: high - low + 1 }, (_, index) => low + index);
+    const bins = Array.from({ length: high - low + 1 }, (_value, index) => low + index);
     const bandPowers = new Map(
       loudFrames.map((frame) => [frame, sum(bins.map((bin) => getPower(frame, bin)))] as const),
     );

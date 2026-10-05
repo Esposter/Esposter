@@ -40,7 +40,7 @@ export const readPathClearance = async (
     if (depths.length > 0)
       pierced.push({
         depths: [...new Set(depths.map((depth) => Math.round(depth * 100) / 100))].toSorted(
-          (first, second) => first - second,
+          (firstDepth, secondDepth) => firstDepth - secondDepth,
         ),
         mesh,
         position,

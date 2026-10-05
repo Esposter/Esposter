@@ -29,7 +29,7 @@ export const refineCameraPose = async (
     const boundaries = await readFamilyBoundaries(page, families, topPixel);
     return computeMaskedMean(boundaries, edgeDistances);
   };
-  const freeAxes = pose.flatMap((_, axis) => (heldAxes.includes(axis) ? [] : [axis]));
+  const freeAxes = pose.flatMap((_value, axis) => (heldAxes.includes(axis) ? [] : [axis]));
   const toPose = (free: readonly number[]): number[] =>
     pose.map((value, axis) => (heldAxes.includes(axis) ? value : (free[freeAxes.indexOf(axis)] ?? value)));
   const before = await readDistance(pose);

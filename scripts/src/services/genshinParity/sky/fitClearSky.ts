@@ -59,7 +59,7 @@ export const fitClearSky = (
       else return over > 0 ? OVER_WEIGHT : 1;
     });
   }
-  return Float32Array.from({ length: width * height }, (_, pixel) =>
+  return Float32Array.from({ length: width * height }, (_value, pixel) =>
     computeTerms(((pixel % width) / width) * 2 - 1, (Math.floor(pixel / width) / height) * 2 - 1).reduce(
       (sum, term, index) => sum + term * (coefficients[index] ?? 0),
       0,

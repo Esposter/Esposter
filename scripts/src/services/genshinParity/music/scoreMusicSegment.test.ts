@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 
 describe(scoreMusicSegment, () => {
   // A chord across every band: A in each octave from the lowest band's to the highest's
-  const chord = Float32Array.from({ length: 2 * LISTEN_SAMPLE_RATE }, (_, index) =>
+  const chord = Float32Array.from({ length: 2 * LISTEN_SAMPLE_RATE }, (_value, index) =>
     LISTEN_BAND_CENTRES.reduce(
       (sum, _centre, octave) => sum + Math.sin((2 * Math.PI * 55 * 2 ** octave * index) / LISTEN_SAMPLE_RATE) / 16,
       0,

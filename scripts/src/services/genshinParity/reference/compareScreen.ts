@@ -104,7 +104,7 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
       Object.assign(layer, { ceiling: layer.name === "frame" ? layer.flip : layer.coverage * layer.flip }),
     );
     for (const { ceiling, coverage, detail, flip: layerFlip, name, shape, tone } of layers.toSorted(
-      (first, second) => second.ceiling - first.ceiling,
+      (firstLayer, secondLayer) => secondLayer.ceiling - firstLayer.ceiling,
     ))
       console.log(
         `${name}: ${(coverage * 100).toFixed(1)}% of the frame, shape ${shape.toFixed(3)}, tone ${tone.toFixed(2)}%, detail ${detail.toFixed(2)}%, FLIP ${layerFlip.toFixed(4)}, ceiling ${ceiling.toFixed(4)}`,

@@ -5,7 +5,7 @@ The game.
 | Unit                                                                       | Swept                 | Notes                                                                           |
 | -------------------------------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------- |
 | `app/store/dungeons/battle`, `world`, `monsterParty`                       | 2026-10-05 · Opus 5.5 |                                                                                 |
-| `app/store/dungeons` — the rest                                            | 2026-09-25 · Opus 5.5 |                                                                                 |
+| `app/store/dungeons` — the rest                                            | 2026-10-05 · Opus 5.5 |                                                                                 |
 | `app/composables/dungeons/scene`                                           | 2026-10-05 · Opus 5.5 |                                                                                 |
 | `app/composables/dungeons` — the rest                                      | 2026-10-05 · Opus 5.5 |                                                                                 |
 | `app/services/dungeons/scene/world`, `settings`, `preloader`               | 2026-10-05 · Opus 5.5 |                                                                                 |
@@ -21,4 +21,4 @@ The game.
 | `app/components/Dungeons/Battle`                                           | 2026-10-05 · Opus 5.5 |                                                                                 |
 | `app/components/Dungeons/World`, `UI`                                      | 2026-10-05 · Opus 5.5 |                                                                                 |
 | `app/components/Dungeons/Settings`, `Inventory`                            | 2026-10-05 · Opus 5.5 |                                                                                 |
-| `app/components/Dungeons` — the top level and the rest                     | 2026-09-25 · Opus 5.5 | MonsterParty, Title, MobileJoystick, MonsterDetails, Preloader                  |
+| `app/components/Dungeons` — the top level and the rest                     | 2026-10-05 · Opus 5.5 | MonsterParty, Title, MobileJoystick, MonsterDetails, Preloader                  |

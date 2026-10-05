@@ -23,7 +23,7 @@ export const fitSkyGradient = async (gradient: Buffer | string): Promise<{ green
     return computeColumnMean(left) + (computeColumnMean(right) - computeColumnMean(left)) * (x - left);
   };
   const sample = (channel: number): number[] =>
-    Array.from({ length: SAMPLE_COUNT }, (_, index) =>
+    Array.from({ length: SAMPLE_COUNT }, (_value, index) =>
       roundFitted(computeChannel(channel, index / (SAMPLE_COUNT - 1))),
     );
   return { green: sample(1), red: sample(0) };

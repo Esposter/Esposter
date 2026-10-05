@@ -43,7 +43,7 @@ export const traceImage = async (
   const paper = [0, 1, 2].map(
     (channel) => corners.reduce((sum, corner) => sum + channelAt(corner, channel), 0) / corners.length,
   );
-  const inks = Float32Array.from({ length: pixelCount }, (_, pixel) =>
+  const inks = Float32Array.from({ length: pixelCount }, (_value, pixel) =>
     Math.max(...paper.map((value, channel) => Math.abs(channelAt(pixel, channel) - value))),
   );
   let faintest = Infinity;

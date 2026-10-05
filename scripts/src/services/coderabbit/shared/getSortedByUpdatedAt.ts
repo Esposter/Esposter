@@ -5,4 +5,7 @@ import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 // `created_at` stays pinned to the first review — and an edit keeps the original id, so the newest id can be a
 // Comment that has not moved. `id` is the tie-breaker for two comments written in the same second, never the key.
 export const getSortedByUpdatedAt = <TEntry extends GitHubEntry>(entries: TEntry[]): TEntry[] =>
-  entries.toSorted((first, second) => first.updated_at.localeCompare(second.updated_at) || first.id - second.id);
+  entries.toSorted(
+    (firstEntry, secondEntry) =>
+      firstEntry.updated_at.localeCompare(secondEntry.updated_at) || firstEntry.id - secondEntry.id,
+  );

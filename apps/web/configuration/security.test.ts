@@ -13,7 +13,7 @@ describe("xssValidator", () => {
     ["a comparison", "a < b"],
     ["a password", "<"],
     ["a mention", '<span data-type="mention"></span>'],
-  ])("rejects %s under its default options", (_, value) => {
+  ])("rejects %s under its default options", (_description, value) => {
     expect.hasAssertions();
 
     expect(checkIsRejected(new FilterXSS(), value)).toBe(true);

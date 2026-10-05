@@ -15,7 +15,7 @@ describe(getCollidingRecord, () => {
   test.each([
     ["the session's own edit", "a", 0],
     ["an edit past the window", "b", WARD_WINDOW_MS],
-  ])("never asks for %s", (_, sessionId, now) => {
+  ])("never asks for %s", (_description, sessionId, now) => {
     expect.hasAssertions();
 
     expect(getCollidingRecord(record, sessionId, now)).toBeUndefined();

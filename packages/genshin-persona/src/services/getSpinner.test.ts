@@ -35,7 +35,7 @@ describe(getSpinner, () => {
   test("caps the tips the session holds", () => {
     expect.hasAssertions();
 
-    const manyLines = Array.from({ length: MAX_SPINNER_TIP_COUNT + 1 }, (_, index) => ({
+    const manyLines = Array.from({ length: MAX_SPINNER_TIP_COUNT + 1 }, (_value, index) => ({
       text: `${index}`,
       title: "title",
     }));

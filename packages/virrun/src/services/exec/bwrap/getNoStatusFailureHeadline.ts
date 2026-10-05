@@ -21,5 +21,5 @@ export const getNoStatusFailureHeadline = (stderr: string, exitCode?: number, si
   else if (signal !== undefined) return `the sandbox was killed by ${signal} — an external kill, not a bwrap failure`;
   else if (exitCode !== undefined && exitCode > SIGNAL_EXIT_CODE_BASE)
     return `the sandbox was killed by signal ${exitCode - SIGNAL_EXIT_CODE_BASE} — an external kill, not a bwrap failure`;
-  return "bubblewrap failed to set up the sandbox";
+  else return "bubblewrap failed to set up the sandbox";
 };

@@ -56,7 +56,7 @@ export const samplePolar = async (path: string, bands: number, angles: number): 
     alpha > 0 ? toHex([red / alpha, green / alpha, blue / alpha]) : "",
   );
   for (let band = 0; band < bands; band++) {
-    const colors = Array.from({ length: angles }, (_, angle) => {
+    const colors = Array.from({ length: angles }, (_value, angle) => {
       for (let distance = 0; distance < bands; distance++)
         for (const neighbour of [band - distance, band + distance]) {
           const color = neighbour >= 0 && neighbour < bands ? cellColors[neighbour * angles + angle] : "";

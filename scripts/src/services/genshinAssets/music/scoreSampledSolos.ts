@@ -55,7 +55,9 @@ export const scoreSampledSolos = async (
     }
   }
   return references.map(({ fundamentals }, voice) => {
-    const solos = (voiceSolosList[voice] ?? []).toSorted((first, second) => second.agreement - first.agreement);
+    const solos = (voiceSolosList[voice] ?? []).toSorted(
+      (firstSolo, secondSolo) => secondSolo.agreement - firstSolo.agreement,
+    );
     solos.unshift(fundamentals);
     return solos;
   });

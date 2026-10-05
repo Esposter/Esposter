@@ -139,7 +139,7 @@ export const fitLoginPaving = async (
   const isPocket = new Uint8Array(width * height);
   const pockets = materialNames.flatMap((material, tag) => {
     if (!POCKET_MATERIALS.has(material)) return [];
-    const cells = Array.from({ length: width * height }, (_, cell) => cell).filter((cell) => tags[cell] === tag);
+    const cells = Array.from({ length: width * height }, (_value, cell) => cell).filter((cell) => tags[cell] === tag);
     const threshold = computeOtsuThreshold(cells.map((cell) => blurred[cell] ?? 0));
     const pocketCells = cells.filter((cell) => (blurred[cell] ?? 0) < threshold);
     for (const cell of pocketCells) isPocket[cell] = 1;
@@ -154,7 +154,7 @@ export const fitLoginPaving = async (
     ),
   );
   // Each cell's normal's tilt off its face, as the slope of the stone there
-  const tilts = Float32Array.from({ length: width * height }, (_, cell) => {
+  const tilts = Float32Array.from({ length: width * height }, (_value, cell) => {
     const normal = normals[tags[cell] ?? -1];
     if (!normal) return 0;
     const [column, row] = toTexel([values[cell * 2] ?? 0, values[cell * 2 + 1] ?? 0], normal.info);
@@ -162,7 +162,7 @@ export const fitLoginPaving = async (
     const [x, y, z] = [0, 1, 2].map((channel) => ((normal.data[texel + channel] ?? 0) / BYTE) * 2 - 1);
     return Math.min(Math.hypot(x ?? 0, y ?? 0) / Math.max(z ?? 0, Number.EPSILON), MAX_TILT);
   });
-  const topCells = Array.from({ length: width * height }, (_, cell) => cell).filter(
+  const topCells = Array.from({ length: width * height }, (_value, cell) => cell).filter(
     (cell) => normals[tags[cell] ?? -1],
   );
   const computeTiltThreshold = (cells: readonly number[]): number =>

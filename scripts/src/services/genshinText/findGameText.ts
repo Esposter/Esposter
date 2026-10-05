@@ -15,6 +15,6 @@ export const findGameText = (pattern: string): string[] => {
       return { id: ids.join(", ") || hash, isNamed: ids.length > 0, text };
     });
   return matches
-    .toSorted((first, second) => Number(second.isNamed) - Number(first.isNamed))
+    .toSorted((firstMatch, secondMatch) => Number(secondMatch.isNamed) - Number(firstMatch.isNamed))
     .map(({ id, text }) => `${id}\t${JSON.stringify(text)}`);
 };

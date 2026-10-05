@@ -245,6 +245,12 @@ describe("typescriptRules", () => {
         violations: 2,
       },
       {
+        filePath: "bareOrdinalComparator.ts",
+        name: "bareOrdinalComparator",
+        source: "export const c = d.toSorted((first, second) => first - second);",
+        violations: 2,
+      },
+      {
         filePath: "namedComparator.ts",
         name: "namedComparator",
         source: "export const c = d.toSorted((firstD, secondD) => firstD - secondD);",
@@ -327,6 +333,18 @@ describe("typescriptRules", () => {
         filePath: "isFlagParameter.ts",
         name: "isFlagParameter",
         source: "export const a = (isB: boolean) => isB;",
+        violations: 0,
+      },
+      {
+        filePath: "bareParameter.ts",
+        name: "bareParameter",
+        source: "export const a = [0].map((_, index) => index);",
+        violations: 1,
+      },
+      {
+        filePath: "namedParameter.ts",
+        name: "namedParameter",
+        source: "export const a = [0].map((_value, index) => index);",
         violations: 0,
       },
       {

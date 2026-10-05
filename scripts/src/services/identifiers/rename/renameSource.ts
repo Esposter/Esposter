@@ -8,7 +8,7 @@ export const renameSource = (path: string, text: string, renameMap: RenameMap, i
   path.endsWith(".vue")
     ? text.replaceAll(
         /(?<open><script[^>]*>)(?<script>[\s\S]*?)(?<close><\/script[^>]*>)/giu,
-        (_, open: string, script: string, close: string) =>
+        (_match, open: string, script: string, close: string) =>
           `${open}${renameIdentifiers(script, renameMap, isSource)}${close}`,
       )
     : renameIdentifiers(text, renameMap, isSource);

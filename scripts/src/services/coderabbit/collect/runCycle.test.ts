@@ -116,7 +116,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       // The read is paginated where the post carries a body
       else if (args[1]?.startsWith("repos/{owner}/{repo}/commits/") && args.includes("--paginate"))
         return JSON.stringify([commitComments]);
-      return "[[]]";
+      else return "[[]]";
     });
   };
   const getMarked = (marker: string): GitHubEntry => ({
