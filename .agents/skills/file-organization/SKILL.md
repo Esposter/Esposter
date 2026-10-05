@@ -32,7 +32,7 @@ description: Apply when creating, moving, renaming, or organising any file, expo
 
 ## Constants
 
-- **Constants go in `constants.ts` under `services/`**, never at the top of an SFC or composable; tests use `constants.test.ts` (`references/constants.md`).
+- **Constants go in `constants.ts` under `services/`**, never at the top of an SFC or composable — `no-restricted-syntax` (`restrictedConstantSyntaxes.js`) reads the casing; tests use `constants.test.ts` (`references/constants.md`).
 - **No duplicate constants — one source of truth per value per runtime realm**, tests included; a single-use literal stays inline (`references/constants.md`).
 - A literal or helper a JSON or `postinstall`-evaluated config must repeat, a function's name (`functionName.name`, never a `*_NAME` constant) and a `DEFAULT_*` option object frozen at every depth — `references/constants.md`; editing a config literal that repeats one is `references/config-literals.md`.
 
