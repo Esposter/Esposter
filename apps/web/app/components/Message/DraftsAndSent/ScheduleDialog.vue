@@ -16,29 +16,29 @@ const displayText = computed(() => (target.value ? parse(target.value.content).t
 const { executeMutation } = useMutation();
 // Server-scheduled job — non-optimistic, store refresh in onSuccess
 const scheduleMessage = async () => {
-  const currentTarget = target.value;
-  if (!currentTarget) return true;
+  const targetValue = target.value;
+  if (!targetValue) return true;
   const outcome = await executeMutation(
     () =>
-      currentTarget.scheduledMessageJobId
+      targetValue.scheduledMessageJobId
         ? $trpc.message.scheduledMessageJob.rescheduleMessage.mutate({
-            id: currentTarget.scheduledMessageJobId,
-            message: currentTarget.content,
-            replyRowKey: currentTarget.threadRootRowKey,
-            roomId: currentTarget.roomId,
+            id: targetValue.scheduledMessageJobId,
+            message: targetValue.content,
+            replyRowKey: targetValue.threadRootRowKey,
+            roomId: targetValue.roomId,
             runAt: scheduledAt.value,
           })
         : $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
-            message: currentTarget.content,
-            replyRowKey: currentTarget.threadRootRowKey,
-            roomId: currentTarget.roomId,
+            message: targetValue.content,
+            replyRowKey: targetValue.threadRootRowKey,
+            roomId: targetValue.roomId,
             runAt: scheduledAt.value,
           }),
     {
-      key: currentTarget.scheduledMessageJobId || Symbol("scheduleMessage"),
+      key: targetValue.scheduledMessageJobId || Symbol("scheduleMessage"),
       onSuccess: async () => {
-        if (!currentTarget.scheduledMessageJobId)
-          clearComposer({ roomId: currentTarget.roomId, threadRootRowKey: currentTarget.threadRootRowKey });
+        if (!targetValue.scheduledMessageJobId)
+          clearComposer({ roomId: targetValue.roomId, threadRootRowKey: targetValue.threadRootRowKey });
         // The job is already scheduled by the time this runs, so the refresh reports its own failure rather
         // Than throwing: a rejection here rejects the write's outcome, and the dialog would sit submitting
         // Over a message the server took

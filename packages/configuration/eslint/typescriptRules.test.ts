@@ -254,6 +254,18 @@ describe("typescriptRules", () => {
         source: `export const canonicalLocales = Intl.getCanonicalLocales("en");`,
         violations: 0,
       },
+      {
+        filePath: "currentValue.ts",
+        name: "currentValue",
+        source: "export const a = (b: { value: string }) => {\n  const currentB = b.value;\n  return currentB;\n};",
+        violations: 1,
+      },
+      {
+        filePath: "namedValue.ts",
+        name: "namedValue",
+        source: "export const a = (b: { value: string }) => {\n  const bValue = b.value;\n  return bValue;\n};",
+        violations: 0,
+      },
       { filePath: "regexSuffix.ts", name: "regexSuffix", source: "export const A_REGEX = /a/u;", violations: 0 },
       // A local inside a function is not a named constant
       {

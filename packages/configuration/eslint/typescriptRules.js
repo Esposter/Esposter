@@ -272,6 +272,13 @@ export default {
         ":matches(Program, Program > ExportNamedDeclaration) > VariableDeclaration > VariableDeclarator[id.name!=/^[A-Z][0-9A-Z_]*$/][init.type='NewExpression'][init.callee.object.name='Intl']",
     },
     {
+      // A ref's value read out to narrow it is named for what it holds; `current*` says only that it is the value
+      // Now, which every read of a ref already is (naming skill)
+      message:
+        "Name a ref's narrowed value for what it holds — `targetValue`, never `currentTarget`. See the naming skill.",
+      selector: "VariableDeclarator[id.name=/^current[A-Z]/][init.type='MemberExpression'][init.property.name='value']",
+    },
+    {
       // A sort's pair is named for what it compares, `first*`/`second*`, as every sort in the tree writes it; `a` and
       // `b`, or a bare `first` and `second`, say nothing about what is compared. Read off the callback handed to
       // `sort`/`toSorted` alone, since the two letters are also every fixture key and HTML tag a denylist would refuse
