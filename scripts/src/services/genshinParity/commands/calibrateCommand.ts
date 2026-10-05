@@ -17,8 +17,7 @@ const STONE_LIGHT_PATH = "login/stoneLight.json";
 // The decimals a written light keeps, past which its colours move nothing the screen shows
 const LIGHT_DECIMALS = 4;
 const formatColor = (color: readonly number[]): string => color.map((value) => value.toFixed(3)).join(" ");
-const roundColors = (colors: readonly (readonly number[])[]): number[][] =>
-  colors.map((color) => color.map((value) => Number(value.toFixed(LIGHT_DECIMALS))));
+const roundColor = (color: readonly number[]): number[] => color.map((value) => Number(value.toFixed(LIGHT_DECIMALS)));
 
 export const calibrateCommand: SubCommandsDef[string] = defineCommand({
   args: {
@@ -71,6 +70,7 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
     for (const knot of light.ramp) console.log(`  ${formatColor(knot)}`);
     console.log("harmonics:");
     for (const term of light.harmonics) console.log(`  ${formatColor(term)}`);
+    console.log(`fading with height: ${formatColor(light.heightFade)}`);
     if (!args.self && !args.write) return;
     const timeOfDay = ParityReferenceMap[args.reference]?.props?.timeOfDay;
     if (typeof timeOfDay !== "string")
@@ -86,6 +86,7 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
       const pairs = [
         { set: written.ramp, solved: light.ramp },
         { set: written.harmonics, solved: light.harmonics },
+        { set: [written.heightFade], solved: [light.heightFade] },
       ].flatMap(({ set, solved }) =>
         set.flatMap((colors, index) =>
           colors.map((value, channel) => ({ solved: solved[index]?.[channel] ?? 0, value })),
@@ -97,7 +98,11 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
       console.log(`against the light written for ${timeOfDay}: ${error.toFixed(4)} off over its ${scale.toFixed(4)}`);
       return;
     }
-    lights[timeOfDay] = { harmonics: roundColors(light.harmonics), ramp: roundColors(light.ramp) };
+    lights[timeOfDay] = {
+      harmonics: light.harmonics.map(roundColor),
+      heightFade: roundColor(light.heightFade),
+      ramp: light.ramp.map(roundColor),
+    };
     console.log(await writeWorldData(STONE_LIGHT_PATH, lights));
   },
 });

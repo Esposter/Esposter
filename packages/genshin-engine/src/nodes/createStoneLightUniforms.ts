@@ -24,6 +24,7 @@ export const createStoneLightUniforms = (): StoneLightUniforms => {
       Array.from({ length: STONE_HARMONIC_COUNT }, () => new Vector3()),
       "vec3",
     ),
+    heightFade: uniform(new Color()),
     ramp,
     sunRadiance: uniform(new Color()),
   };

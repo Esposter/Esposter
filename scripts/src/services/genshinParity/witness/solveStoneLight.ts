@@ -5,7 +5,7 @@ import type { StoneLight } from "genshin-engine";
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { solveLinearSystem } from "#src/services/genshinParity/shared/solveLinearSystem";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { STONE_HARMONIC_COUNT, STONE_RAMP_KNOT_COUNT } from "genshin-engine";
+import { STONE_HARMONIC_COUNT, STONE_HEIGHT_FALLOFF, STONE_RAMP_KNOT_COUNT } from "genshin-engine";
 
 // The least pixels a bin is read over, under which its mean is mostly one texel
 const MIN_BIN_COUNT = 30;
@@ -36,13 +36,14 @@ const writeRampWeights = (coordinate: number, weights: number[]): void => {
   weights[knot + 1] = share;
 };
 // The stone's light under the scene's own haze, solved channel by channel by least squares over the bins' means: each
-// Pixel's scene colour is its albedo times the ramp at its coordinate plus the harmonics at its normal, with its glow,
-// The part the haze lets through, plus the haze's own colour blended toward its sunward one by its scatter, by its
-// Opacity, which is linear in the light. The haze's colours are the cloud sea's, measured where it shows them: solved
-// Here, they would take up the light's own errors over the stone and carry them onto the sea. Bins average the pixels
-// Whose texels do not line up with the reference's, so their shading is read rather than their texels. Returns the
-// Light, the pixels its bins kept, and the residual over the bins beside their spread about their mean, the share the
-// Light leaves unexplained. Bins too sparse to read are dropped, and with none left there is no light to solve
+// Pixel's scene colour is its albedo times the ramp at its coordinate, the harmonics at its normal and the light fading
+// With its height, with its glow, the part the haze lets through, plus the haze's own colour blended toward its sunward
+// One by its scatter, by its opacity, which is linear in the light. The haze's colours are the cloud sea's, measured
+// Where it shows them: solved here, they would take up the light's own errors over the stone and carry them onto the
+// Sea. Bins average the pixels whose texels do not line up with the reference's, so their shading is read rather than
+// Their texels. Returns the light, the pixels its bins kept, and the residual over the bins beside their spread about
+// Their mean, the share the light leaves unexplained. Bins too sparse to read are dropped, and with none left there is
+// No light to solve
 export const solveStoneLight = (
   samples: readonly StoneLightSample[],
   { color: hazeColor, scatterColor: hazeScatterColor }: { color: Vector; scatterColor: Vector },
@@ -56,22 +57,35 @@ export const solveStoneLight = (
       `none of ${sampleBinMap.size} holds ${MIN_BIN_COUNT} pixels`,
     );
   const total = bins.reduce((sum, binSamples) => sum + binSamples.length, 0);
-  const unknownCount = STONE_RAMP_KNOT_COUNT + STONE_HARMONIC_COUNT;
+  // The light fading with height is the last unknown, after the ramp's knots and the harmonics' terms
+  const heightFadeUnknown = STONE_RAMP_KNOT_COUNT + STONE_HARMONIC_COUNT;
+  const unknownCount = heightFadeUnknown + 1;
   const weights = Array.from({ length: STONE_RAMP_KNOT_COUNT }, () => 0);
   const ramp = Array.from({ length: STONE_RAMP_KNOT_COUNT }, (): number[] => [0, 0, 0]);
   const harmonics = Array.from({ length: STONE_HARMONIC_COUNT }, (): number[] => [0, 0, 0]);
+  const heightFade = [0, 0, 0];
   let squared = 0;
   let spread = 0;
   for (const channel of CHANNELS) {
     const rows = bins.map((binSamples) => {
       const row = Array.from({ length: unknownCount }, () => 0);
       let target = 0;
-      for (const { albedo, color, emission, harmonics: terms, opacity, rampCoordinate, scatter } of binSamples) {
+      for (const {
+        albedo,
+        color,
+        emission,
+        harmonics: terms,
+        height,
+        opacity,
+        rampCoordinate,
+        scatter,
+      } of binSamples) {
         const through = albedo[channel] * (1 - opacity);
         writeRampWeights(rampCoordinate, weights);
         for (const [knot, weight] of weights.entries()) row[knot] = (row[knot] ?? 0) + weight * through;
         for (const [term, value] of terms.entries())
           row[STONE_RAMP_KNOT_COUNT + term] = (row[STONE_RAMP_KNOT_COUNT + term] ?? 0) + value * through;
+        row[heightFadeUnknown] = (row[heightFadeUnknown] ?? 0) + Math.exp(-height * STONE_HEIGHT_FALLOFF) * through;
         // The glow and the rim the material adds after lighting are known, as is the haze the scene draws over it, so
         // Both leave the colour the light explains
         const haze = opacity * ((1 - scatter) * hazeColor[channel] + scatter * hazeScatterColor[channel]);
@@ -107,6 +121,7 @@ export const solveStoneLight = (
     for (const [knot, knotColor] of ramp.entries()) knotColor[channel] = solution[knot] ?? 0;
     for (const [term, termColor] of harmonics.entries())
       termColor[channel] = solution[STONE_RAMP_KNOT_COUNT + term] ?? 0;
+    heightFade[channel] = solution[heightFadeUnknown] ?? 0;
     const mean = rows.reduce((sum, { target, weight }) => sum + target * weight, 0) / Math.max(total, 1);
     for (const { row, target, weight } of rows) {
       const predicted = row.reduce((sum, value, unknown) => sum + value * (solution[unknown] ?? 0), 0);
@@ -118,7 +133,7 @@ export const solveStoneLight = (
   return {
     count: total,
     deviation: Math.sqrt(spread / count),
-    light: { harmonics, ramp },
+    light: { harmonics, heightFade, ramp },
     residual: Math.sqrt(squared / count),
   };
 };
