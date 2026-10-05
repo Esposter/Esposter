@@ -101,14 +101,13 @@ export const createPostPipeline = ({
   const gradedNode = gradeLutTexture
     ? lut3D(displayNode, texture3D(gradeLutTexture), gradeLutTexture.image.width, gradeIntensity)
     : displayNode;
-  let outputNode: Node<"vec4"> = gradedNode;
 
-  if (!isTraa) {
+  if (isTraa) renderPipeline.outputNode = gradedNode;
+  else {
     const smaaNode = smaa(gradedNode);
     passNodes.push(smaaNode);
-    outputNode = smaaNode;
+    renderPipeline.outputNode = smaaNode;
   }
 
-  renderPipeline.outputNode = outputNode;
   return postPipeline;
 };
