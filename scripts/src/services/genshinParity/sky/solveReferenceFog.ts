@@ -1,7 +1,7 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { FogSample } from "#src/models/genshinParity/sky/FogSample";
-import type { SceneFog } from "#src/models/genshinParity/sky/SceneFog";
 import type { Vector } from "#src/models/shared/Vector";
+import type { SceneFog } from "genshin-world/parity/SceneFog";
 import type { Page } from "playwright";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";

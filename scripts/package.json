@@ -82,6 +82,7 @@
     "@wasm-audio-decoders/ogg-vorbis": "catalog:",
     "genshin-engine": "workspace:*",
     "genshin-persona": "workspace:*",
+    "genshin-world": "workspace:*",
     "imagetracerjs": "catalog:",
     "pitch-transcription": "workspace:*",
     "playwright": "catalog:",

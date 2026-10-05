@@ -1,4 +1,5 @@
-// What the page's `benchScene` hands back: the time between frames, and the renderer's counts a frame and on the device
+// What a bench of a scene measures: the time between each frame and the last, the renderer's own counts of a frame,
+// What it keeps on the device, and the objects it draws by kind
 export interface SceneBench {
   drawCalls: number;
   frameCalls: number;

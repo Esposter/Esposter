@@ -1,22 +1,11 @@
+import type { SceneFog } from "#parity/SceneFog";
 import type { SceneContext } from "#src/models/scene/SceneContext";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // What a scene's haze is drawn with, its uniforms' values as the scene sets them, so a tool solving its colours and its
 // Density reads the rest as the scene holds them
-export const getSceneFog = (
-  context: SceneContext | undefined,
-): {
-  baseHeight: number;
-  color: [number, number, number];
-  density: number;
-  heightFalloff: number;
-  scatterColor: [number, number, number];
-  scatterDirection: [number, number, number];
-  scatterPower: number;
-  scatterStrength: number;
-  startDistance: number;
-} => {
+export const getSceneFog = (context: SceneContext | undefined): SceneFog => {
   if (!context?.fog) throw new InvalidOperationError(Operation.Read, "scene", "no fog handed on, or not rendered yet");
   const {
     baseHeight,

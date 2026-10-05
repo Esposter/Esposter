@@ -43,7 +43,10 @@
       "default": "./dist/terrainTileWorker.js"
     },
     "./package.json": "./package.json",
-    "./style.css": "./dist/style.css"
+    "./style.css": "./dist/style.css",
+    "./parity/*": {
+      "source": "./parity/*.ts"
+    }
   },
   "publishConfig": {
     "exports": {
