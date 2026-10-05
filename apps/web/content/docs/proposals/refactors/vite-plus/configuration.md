@@ -1,84 +1,69 @@
 ---
 title: Configuration
-description: Move lint, format and task settings into the Vite+ config without producing a monolith — one file per concern, composed at the root, and the seam where Nuxt keeps its own config.
-model: claude-opus-5
+description: The one root config `vp` needs, why lint and format keep their own files rather than moving into it, and the seam where Nuxt keeps its config — quieter in this layout than upstream discussion suggests.
+model: claude-opus-5-5
 ---
 
 # Configuration
 
-Vite+ reads its settings from a root `vite.config.ts`, and reads a monorepo's existence from that file too — a root config is how `vp` knows it is in a workspace at all ([monorepo guide](https://viteplus.dev/guide/monorepo)). Lint settings belong in its `lint` block and format settings in its `format` block, and the guide is explicit that standalone `oxlint.config.ts` and `oxfmt.config.ts` files are not the recommended shape alongside it ([lint guide](https://viteplus.dev/guide/lint)).
+Vite+ reads its settings from a root `vite.config.ts`, and reads a monorepo's existence from that file too — a root config is how `vp` knows it is in a workspace at all ([monorepo guide](https://viteplus.dev/guide/monorepo)). The guides then invite moving every tool's settings into blocks of that file: `lint`, `fmt`, `test`, `pack` and `run`. Under this proposal's decision only one of those blocks is taken.
 
-Taken naively that produces one root file carrying every rule, every override glob and every task declaration for a workspace of a dozen-odd packages, which is the wrong end state and is not what this proposes.
+## The root config holds tasks and nothing else
 
-## One file per concern, composed at the root
+The root `vite.config.ts` carries the `run` block: the cache switches, the fingerprinted environment, and any task that needs more than a manifest script gives it. Package scripts are not cached by default — only tasks declared in the config are — so the block turns script caching on rather than redeclaring every script as a task ([run config](https://viteplus.dev/config/run)). At 1.0 a task's cache settings — `env`, `untrackedEnv`, `input` and `output` — live under its `cache` key, and `input` defaults to automatic tracking, which is the only setting this proposal wants.
 
-Vite+ supports composable configs directly: a config value can be imported as a plain object from a separate file and merged into the root's overrides, so ownership distributes while behaviour stays centralised. That is the mechanism this repository already applies twice, for its own reasons, before Vite+ existed:
-
-- `apps/web/configuration/` decomposes the Nuxt config into one module per concern — modules, nitro, vite, content, pwa, security, typescript and the rest — and `nuxt.config.ts` is a thin assembler over them.
-- `packages/configuration/src/` exposes shared factories rather than shared literals, so a package's config calls `getTsdownConfiguration` or `getVitestConfiguration` instead of copying one.
-
-So the target shape is not a new convention, it is the existing one applied to a third config. A root `configuration/` directory holds one module per concern, and `vite.config.ts` composes them and nothing else. The rule that decides whether a concern earns a file is the same rule that governs the app's directory: a concern is a file when it is separately editable and separately reviewable, not when it is merely long.
+That makes the file small, and small is the reason it stays one file. The repository decomposes a config into one module per concern when the concerns are separately editable and separately reviewable — `apps/web/configuration/` for Nuxt, the shared factories in `packages/configuration/src/` for every package — and a single block of cache switches is one concern. A `configuration/` directory beside it would be the structure without the reason.
 
 ```mermaid
 flowchart TD
-  lintRules["configuration/lint.ts — rule set and the plugin list"] --> assemble["vite.config.ts — assembles and nothing else"]
-  lintOverrides["configuration/lintOverrides.ts — the per-glob overrides"] --> assemble
-  jsPlugins["configuration/lintPlugins.ts — the local JS rule plugins"] --> lintRules
-  format["configuration/format.ts — oxfmt options"] --> assemble
-  task["configuration/task.ts — task declarations and fingerprinted env"] --> assemble
-  assemble --> vp["vp lint · vp fmt · vp run"]
-  nuxtConfiguration["apps/web/configuration/* — unchanged, one module per concern"] --> nuxtRoot["apps/web/nuxt.config.ts"]
-  nuxtRoot --> nuxtBuild["nuxt build — its own module graph"]
-  assemble -.->|"does not configure"| nuxtBuild
+  root["vite.config.ts — the run block only"] --> vp["vp run --cache"]
+  oxlintConfig["oxlint.config.ts — rules, overrides, local plugins"] --> oxlint["the catalog's oxlint, invoked by a script"]
+  oxfmtConfig["oxfmt.config.ts"] --> oxfmt["the catalog's oxfmt, invoked by a script"]
+  nuxtRoot["apps/web/nuxt.config.ts and its configuration modules"] --> nuxtBuild["nuxt build — its own module graph"]
+  vp -->|"runs as a task"| oxlint
+  vp -->|"runs as a task"| oxfmt
+  vp -->|"runs as a task"| nuxtBuild
+  root -.->|"configures none of them"| nuxtBuild
 ```
 
-The dotted edge is the point of the diagram. Every other config in the repo feeds one tool; this one feeds `vp` while a second, parallel config tree feeds Nuxt, and the two never merge. That is a seam to hold deliberately, not a transitional state.
+The dotted edge is the point of the diagram. `vp` reaches every tool only as a task, so no tool's behaviour is configured by the file `vp` reads.
+
+## Why lint and format keep their own files
+
+The lint guide is explicit that standalone `oxlint.config.ts` files are not the recommended shape with Vite+ ([lint guide](https://viteplus.dev/guide/lint)). That advice is about `vp lint`, and it does not apply here, because `vp lint` is not used.
+
+The reason is version ownership. The `vite-plus` package depends on exact versions of Oxlint, Oxfmt, the Oxlint plugin API and Vitest, and ships its own build of Vite as a separate package. At 1.0 each of the four trails the version this repository's catalog already runs, and stays behind until the next Vite+ release moves its pin — Renovate can bump the catalog, but not what `vp lint` executes. Running the built-in commands would therefore mean:
+
+- **A second copy of every tool in the lockfile**, and a lint run whose rule set depends on which copy a command reaches.
+- **Every tool bump waiting on a Vite+ release**, so the repository's dependency process stops owning the tools it gates on.
+- **The local rule plugins split across two plugin APIs.** They import their authoring API from the catalog's `@oxlint/plugins`; the bundled linter brings an older copy of it, and the guide points plugin authors at its own re-export instead.
+
+Nothing is bought in return. The `lint` block would hold exactly what `oxlint.config.ts` holds — that file already has the single-config, per-glob-`overrides` shape the monorepo guide describes — so the relocation changes who reads the settings and nothing they do. The item is parked in [phases](/docs/proposals/refactors/vite-plus/phases) with its trigger: the built-in commands running the project's installed tools.
+
+ESLint is untouched either way. Oxlint parses a `.vue` file's script block and not its template, and templates are where a large share of this repo's rules apply; which rules cross over is governed by the [ESLint to oxlint migration](/docs/architecture/lint-toolchain), and Vite+ changes neither what the linter can parse nor who owns that migration.
 
 ## The Nuxt seam
 
-Nuxt wraps Vite and discourages a standalone `vite.config.ts`; Vite+ requires one. Asking `nuxt.config.ts` to be the authoritative source for Vite+ has been raised upstream and closed without an implementation ([issue 912](https://github.com/voidzero-dev/vite-plus/issues/912)), and the maintainer position on the resulting warning is that it is a warning rather than a defect — a separate `vite.config.ts` works, and the real limitation is elsewhere ([Nuxt discussion](https://github.com/nuxt/nuxt/discussions/34857)).
+Nuxt wraps Vite and discourages a standalone `vite.config.ts`; Vite+ requires one. Asking `nuxt.config.ts` to stand in for it was closed upstream without an implementation ([issue 912](https://github.com/voidzero-dev/vite-plus/issues/912)), and a broader request for a Nuxt and Astro integration — a module exposing Vite+ config from the framework's own config, and `vp dev`/`vp build` calling the framework's commands — is open, with a Nuxt maintainer exploring a generated `vite.config.ts` from the Nuxt side ([issue 1506](https://github.com/voidzero-dev/vite-plus/issues/1506)). So far it has produced only a hint pointing `vp dev` users at the package script.
 
-So the arrangement is: the root `vite.config.ts` exists for `vp` and configures no bundler. The app's build, dev server, module graph and prepare output stay entirely Nuxt's, reached as a task rather than as a `vp build` target. Anyone reading the root config expecting to find how the app is built will not find it there, and the file should say so in a comment rather than leaving that inference to be made once per contributor.
+The warning that discussion is about does not reach this layout. Nuxt's external-config check looks for a `vite.config` file by resolving from the app's own root directory, and the config `vp` needs sits at the workspace root, above it; the app's directory gets no `vite.config.ts` of its own, because the app's scripts are cached as manifest scripts rather than declared as tasks there. The two config trees still exist — one for `vp`, one for Nuxt — but they do not overlap, and nothing is warned about.
 
-This is the migration's least satisfying part and it is worth being plain about: two config trees where one would do, held apart because two upstreams disagree about who owns the Vite config. The compensating property is that the seam is _static_ — it does not need per-change attention, and it collapses on its own if the upstream issue is ever reopened and implemented.
-
-## Lint: what moves and what cannot
-
-The rule set, the plugin list and the per-glob `overrides` move into the `lint` block. That part is close to mechanical, because `oxlint.config.ts` already has the shape Vite+ expects — a single centralised config whose `overrides` name file globs is the arrangement the monorepo guide describes, arrived at here independently.
-
-Two things need care:
-
-- **The local JS rule plugins must keep loading.** Several rules enforcing this repository's own conventions are JavaScript plugins declared in `jsPlugins`, and they are not optional — they are the enforcement half of conventions the skills only describe. Oxlint's JS plugin support is what Vite+ exposes, so this is a relocation rather than a rewrite, but it is the first thing to verify and the phase fails without it.
-- **ESLint does not leave.** Oxlint parses a `.vue` file's script block and not its template, and templates are where a large share of this repo's rules apply. `vp lint` therefore replaces the oxlint invocation and not the ESLint one, and the two continue to run side by side exactly as they do today. Which rules eventually cross over is governed by the [ESLint to oxlint migration](/docs/architecture/lint-toolchain) and is not accelerated by this proposal — Vite+ changes who invokes the linter, not what it can parse.
-
-## Format
-
-`oxfmt` is already the formatter and `format`/`format:check` are already the thinnest scripts in the repo. The block gains the options and the per-package overrides; the behaviour does not change.
-
-One property must survive the move. The format check is the workflow's quickest job specifically because it does not depend on the package build and installs only the root project — a formatter reading source files cannot observe a dependency graph, so it waits for nothing. Routing it through `vp` must not reintroduce that wait, which means the format task declares no dependency on any build task. A task runner's default is to respect the graph, so this is an explicit declaration rather than an omission.
+That arrangement is static: it needs no per-change attention, and it collapses on its own if the integration request ships. The root file should still say in a comment that it configures no bundler, because anyone opening it expecting to find how the app is built will not find it there.
 
 ## Node runtime and package manager
 
-`vp env` manages the Node runtime and `vp install`/`vp pm` front the detected package manager. Both are genuine consolidations here, because both jobs currently exist as bespoke scripts — the runtime version is pinned twice in the root manifest on purpose, and one script is the only thing permitted to write either pin, install the version and make it the default. What `vp env` subsumes and what has to stay is settled in [commands](/docs/proposals/refactors/vite-plus/commands).
-
-The catalog does not move. Versions live in the workspace catalog and `vp` drives pnpm rather than replacing it, so the single source of truth for a dependency version is untouched — which also means the [dependency update process](/docs/architecture/monorepo-tooling) survives the migration unedited.
-
-## IDE integration
-
-Vite+ ships an editor story worth taking as part of the same change rather than later, because it is the half of the migration a developer actually feels: a VS Code extension pack wiring Oxc as the default formatter with format-on-save and fix-on-save, `npm.scriptRunner` set so the editor's script panel routes through the cached task runner, and equivalent setups for Zed and JetBrains ([IDE integration](https://viteplus.dev/guide/ide-integration)).
-
-The repository-level part of that is committed editor settings, which is a change with a real cost: an editor config in the repo overrides a contributor's own. It is worth it for the formatter and the fix-on-save actions, because those two decide whether a commit arrives already passing the checks or fails them, and it should stop there — nothing about themes, nothing about keybindings.
+`vp env` manages Node and the package manager together, so it subsumes the provisioning half of `update:node` and nothing else — the pins it writes and why they cannot move are in [commands](/docs/proposals/refactors/vite-plus/commands). The catalog does not move: versions live in the workspace catalog and `vp` drives pnpm rather than replacing it, so the [dependency update process](/docs/architecture/monorepo-tooling) survives unedited — which is the same property the lint decision above protects.
 
 ## Key files
 
-| File                                  | Role after the change                                   |
-| ------------------------------------- | ------------------------------------------------------- |
-| `oxlint.config.ts`                    | lint configuration composed into the root Vite+ config  |
-| `oxfmt.config.ts`                     | format configuration composed the same way              |
-| `apps/web/nuxt.config.ts`             | the Nuxt seam, which keeps owning the app build         |
-| `packages/configuration/src/index.ts` | the shared config factories each concern's file imports |
+| File                                  | Role after the change                                                        |
+| ------------------------------------- | ---------------------------------------------------------------------------- |
+| `oxlint.config.ts`                    | unchanged — the catalog's Oxlint keeps reading it, run as a task             |
+| `oxfmt.config.ts`                     | unchanged, for the same reason                                               |
+| `apps/web/nuxt.config.ts`             | the Nuxt seam, which keeps owning the app build                              |
+| `packages/configuration/src/index.ts` | the shared config factories, untouched — `vp` configures none of these tools |
 
 ## Sources
 
-- [Vite+ — monorepo guide](https://viteplus.dev/guide/monorepo), [lint guide](https://viteplus.dev/guide/lint) and [IDE integration](https://viteplus.dev/guide/ide-integration) — one root config composed from each concern's file, and what the editor reads from it.
-- [Vite+ issue 912](https://github.com/voidzero-dev/vite-plus/issues/912) and the [Nuxt discussion](https://github.com/nuxt/nuxt/discussions/34857) — what Vite+ cannot yet own for a Nuxt app.
+- [Vite+ — monorepo guide](https://viteplus.dev/guide/monorepo), [lint guide](https://viteplus.dev/guide/lint) and [run config](https://viteplus.dev/config/run) — the root config, the advice against standalone lint files, and the 1.0 cache settings.
+- [Vite+ issue 912](https://github.com/voidzero-dev/vite-plus/issues/912), [issue 1506](https://github.com/voidzero-dev/vite-plus/issues/1506) and the [Nuxt discussion](https://github.com/nuxt/nuxt/discussions/34857) — what Vite+ cannot yet own for a Nuxt app, and the integration still open.

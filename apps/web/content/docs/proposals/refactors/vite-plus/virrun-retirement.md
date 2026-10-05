@@ -1,7 +1,7 @@
 ---
 title: virrun retirement
-description: virrun does three separable jobs; Vite+ replaces one, the third turns out to be self-inflicted, and what is left is a speed-against-maintenance trade with nothing gating it.
-model: claude-opus-5
+description: virrun does three separable jobs; Vite+ replaces one, the third turns out to be self-inflicted, and what is left is a speed-against-maintenance trade that the local task cache waits on.
+model: claude-opus-5-5
 ---
 
 # virrun Retirement
@@ -30,6 +30,8 @@ Replays a recorded run when its content key matches ([virrun task cache](/docs/v
 
 `vp run --cache` replaces it and improves on it in the same way it improves on the CI key — the inputs are traced from what the command read rather than derived from a whole-tree hash, so a command that opened three files is not invalidated by a fourth changing. Retiring this job is the migration's cleanest deletion, because it removes one of three competing answers to "is this stale", and three caches that disagree fail toward serving output one of them would have rebuilt.
 
+The replacement cannot run beside virrun, only after it. Nested inside the sandbox, a cache-enabled task cannot spawn any child at all under rootless bubblewrap ([vite-task 700](https://github.com/voidzero-dev/vite-task/issues/700)); wrapped around it on the Windows host, the tracer watches a Windows process whose real reads happen inside WSL, where it cannot follow. So locally the two caches are not alternatives to weigh side by side — the traced one arrives when virrun leaves, and until then the local loop keeps virrun's.
+
 ### Job 2 — speed
 
 Dependencies fetched once into a shared store, `node_modules` and build output living in a RAM filesystem, a warm snapshot forked per run so install is skipped entirely. Vite+ has no equivalent and does not attempt one.
@@ -52,7 +54,7 @@ The consequence is that job 3 is not a reason virrun exists. It is a cost virrun
 
 Nothing external. With job 1 replaced and job 3 self-cancelling, the decision reduces to a single question with no dependencies: **is the local speed of the warm-snapshot loop worth the maintenance surface that keeps it correct?**
 
-That is a judgement call about this repository's priorities rather than a technical unknown, and it can be taken at any point — it does not wait on a Vite+ phase, and a Vite+ phase does not wait on it. Two things inform it and neither is a blocker:
+That is a judgement call about this repository's priorities rather than a technical unknown, and it can be taken at any point. It does not wait on a Vite+ phase, and only one Vite+ phase waits on it: caching in the local loop, for the composition reason under job 1. CI caching does not, because virrun is already a passthrough there. Two things inform it and neither is a blocker:
 
 - **Moving the development loop onto Linux substitutes for job 2.** The repository already maintains an ext4 source mirror inside WSL with a host-side manifest diff keeping it fresh, precisely so Windows-side source reads stop crossing the 9p filesystem ([WSL source mirror](/docs/virrun/wsl-source-mirror)). Working _in_ WSL rather than mirroring _into_ it deletes the mirror, the delta sync, the probe caches and the platform branch — and it recovers most of the filesystem speed that the RAM overlay exists to provide, because the source is then on a Linux filesystem to begin with.
 - **The absolute-path fragility is worth knowing about independently.** Generated declarations carrying host-absolute paths are hostile to anything that relocates the tree — a container, a second checkout path, a cache restored onto a different runner layout. Nothing in this proposal depends on fixing that, and it is not a defect this page is entitled to file, but it is the reason job 3 existed and it does not stop being true when virrun goes.
@@ -82,3 +84,4 @@ That is a decision to take explicitly rather than as a side effect of a toolchai
 ## Sources
 
 - [Vite+ — cache guide](https://viteplus.dev/guide/cache) — `vp run --cache`, which replaces virrun's task cache.
+- [vite-task 700](https://github.com/voidzero-dev/vite-task/issues/700) — cached tasks failing to spawn children under rootless bubblewrap, the reason the replacement follows virrun rather than running beside it.
