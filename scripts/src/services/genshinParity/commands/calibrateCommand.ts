@@ -66,17 +66,17 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
       : {};
     if (args.self) {
       const written = lights[timeOfDay];
+      if (!written)
+        throw new InvalidOperationError(Operation.Read, STONE_LIGHT_PATH, `no light written for ${timeOfDay}`);
       // Every colour channel of the written light beside the one solved for it, knot by knot and term by term
-      const pairs = written
-        ? [
-            { set: written.ramp, solved: light.ramp },
-            { set: written.harmonics, solved: light.harmonics },
-          ].flatMap(({ set, solved }) =>
-            set.flatMap((colors, index) =>
-              colors.map((value, channel) => ({ solved: solved[index]?.[channel] ?? 0, value })),
-            ),
-          )
-        : [];
+      const pairs = [
+        { set: written.ramp, solved: light.ramp },
+        { set: written.harmonics, solved: light.harmonics },
+      ].flatMap(({ set, solved }) =>
+        set.flatMap((colors, index) =>
+          colors.map((value, channel) => ({ solved: solved[index]?.[channel] ?? 0, value })),
+        ),
+      );
       const pairCount = Math.max(pairs.length, 1);
       const scale = Math.sqrt(pairs.reduce((sum, { value }) => sum + value ** 2, 0) / pairCount);
       const error = Math.sqrt(pairs.reduce((sum, { solved, value }) => sum + (solved - value) ** 2, 0) / pairCount);
