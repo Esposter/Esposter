@@ -38,5 +38,17 @@ export const rankCommand: SubCommandsDef[string] = defineCommand({
     );
     for (const { frame: corrected, name } of lightCeilings.rows)
       console.log(`${(lightCeilings.drawn - corrected).toFixed(4)}  ${name}: FLIP ${corrected.toFixed(4)}`);
+    const { depthEdges, heightBands } = lightCeilings;
+    console.log(
+      `each height band's linear luminance over the parts, the reference's against the exports', by depth (under ${depthEdges.join(", ")} m and beyond); one ratio at every depth is a light, a ratio growing with depth the haze:`,
+    );
+    for (const { bottom, cells } of heightBands)
+      console.log(
+        `${bottom === -Infinity ? "under" : `${bottom} m up`}: ${cells
+          .map(({ count, exports, reference }) =>
+            count ? `${reference.toFixed(3)}/${exports.toFixed(3)} (${count})` : "none",
+          )
+          .join(", ")}`,
+      );
   },
 });

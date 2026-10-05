@@ -1,7 +1,7 @@
 import type { WitnessGbuffer } from "#src/models/genshinParity/shared/WitnessGbuffer";
 import type { Vector } from "#src/models/shared/Vector";
 
-import { CHANNELS } from "#src/services/genshinParity/shared/constants";
+import { CHANNELS, LUMINANCE } from "#src/services/genshinParity/shared/constants";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
 import { BYTE } from "#src/services/shared/constants";
 import { toLinear } from "#src/services/shared/toLinear";
@@ -15,6 +15,8 @@ const DEPTH_EDGES = [10, 20, 35, 50, 80, 120, 200];
 const FACING_EDGES = [-0.6, -0.3, 0, 0.3, 0.6];
 const UPWARD_EDGES = [-0.3, 0.3];
 const HEIGHT_EDGES = [-20, -10, -5, 0, 5, 10, 20, 40];
+// The depths the height bands' table splits each band by, in metres, coarse enough that each cell holds many pixels
+const TABLE_DEPTH_EDGES = [20, 40, 80];
 // How far the smooth field reaches either side of a pixel, in the structure's pixels
 const FIELD_RADIUS = 4;
 const MIN_DENOMINATOR = 1e-6;
@@ -24,7 +26,9 @@ const countPassed = (edges: readonly number[], value: number): number => edges.f
 // That depends only on what a bin holds can recover no more than its row, so a row that recovers little says the light
 // Is spent at that grain and the rest of the parts' error varies inside the bins: by depth, facing and how far a face
 // Turns up, by height as well, by each part and its facing, and a field smooth over a few pixels bounding anything
-// Smooth. Each row is the frame's FLIP so corrected, beside the exports' frame as drawn
+// Smooth. Each row is the frame's FLIP so corrected, beside the exports' frame as drawn. Beside them, each height band's
+// Mean linear luminance in the reference and the exports by depth: a light the parts lack at a height stands off by one
+// Ratio at every depth, where a haze wrongly profiled stands further off the deeper the stone lies
 export const readLightCeilings = async ({
   checkIsScored,
   direction,
@@ -39,7 +43,12 @@ export const readLightCeilings = async ({
   gbuffer: Pick<WitnessGbuffer, "depth" | "height" | "normal" | "part" | "width">;
   heights: Float32Array;
   image: Buffer;
-}): Promise<{ drawn: number; rows: { frame: number; name: string }[] }> => {
+}): Promise<{
+  depthEdges: readonly number[];
+  drawn: number;
+  heightBands: { bottom: number; cells: { count: number; exports: number; reference: number }[] }[];
+  rows: { frame: number; name: string }[];
+}> => {
   const count = width * height;
   const readLinear = async (input: Buffer): Promise<Float32Array> => {
     const data = await sharp(input).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
@@ -135,10 +144,30 @@ export const readLightCeilings = async ({
       }),
     ],
   ];
+  const heightBands = [-Infinity, ...HEIGHT_EDGES].map((bottom) => ({
+    bottom,
+    cells: Array.from({ length: TABLE_DEPTH_EDGES.length + 1 }, () => ({ count: 0, exports: 0, reference: 0 })),
+  }));
+  const readLuminance = (linear: Float32Array, pixel: number): number =>
+    LUMINANCE.reduce((sum, weight, channel) => sum + weight * (linear[pixel * CHANNELS.length + channel] ?? 0), 0);
+  for (let pixel = 0; pixel < count; pixel++) {
+    if (!checkIsPart(pixel)) continue;
+    const heightBand = heightBands[countPassed(HEIGHT_EDGES, heights[pixel] ?? 0)];
+    const cell = heightBand?.cells[countPassed(TABLE_DEPTH_EDGES, depth[pixel * 4] ?? 0)];
+    if (!cell) continue;
+    cell.count++;
+    cell.exports += readLuminance(exports, pixel);
+    cell.reference += readLuminance(reference, pixel);
+  }
+  for (const { cells } of heightBands)
+    for (const cell of cells) {
+      cell.exports /= Math.max(cell.count, 1);
+      cell.reference /= Math.max(cell.count, 1);
+    }
   const drawn = await score(exports);
   const rows: { frame: number; name: string }[] = [];
   for (const [name, corrected] of corrections)
     // oxlint-disable-next-line no-await-in-loop -- each correction is encoded and scored in turn, holding one map
     rows.push({ frame: await score(corrected), name });
-  return { drawn, rows };
+  return { depthEdges: TABLE_DEPTH_EDGES, drawn, heightBands, rows };
 };
