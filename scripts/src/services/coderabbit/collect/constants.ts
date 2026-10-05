@@ -68,7 +68,7 @@ export const REPAIR_VERIFY_COMMANDS: string[][] = [
   ["build:packages"],
   ["exec", "tsc"],
   ["-r", "--parallel", "typecheck"],
-  ["exec", "oxlint", "--format=default", "--disable-nested-config"],
+  ["exec", "oxlint", "--debug=timings", "--format=default", "--disable-nested-config"],
   ["exec", "eslint", "."],
   ["-r", "--parallel", "lint"],
   ["lint:unused"],
@@ -88,7 +88,7 @@ export const REPAIR_VERIFY_COMMANDS: string[][] = [
 // (`getRepairPrompt`).
 export const REPAIR_REGENERATE_COMMANDS: string[][] = [
   ["format"],
-  ["exec", "oxlint", "--format=default", "--fix", "--disable-nested-config"],
+  ["exec", "oxlint", "--debug=timings", "--format=default", "--fix", "--disable-nested-config"],
   ["exec", "eslint", "--fix", "."],
   ["-r", "--parallel", "lint:fix"],
   ["ai:sweep:ledger-coverage"],
