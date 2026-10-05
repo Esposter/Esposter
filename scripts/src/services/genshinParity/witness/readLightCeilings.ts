@@ -21,6 +21,8 @@ const TABLE_DEPTH_EDGES = [20, 40, 80];
 const FIELD_RADIUS = 4;
 const MIN_DENOMINATOR = 1e-6;
 const countPassed = (edges: readonly number[], value: number): number => edges.filter((edge) => value > edge).length;
+const readLuminance = (linear: Float32Array, pixel: number): number =>
+  LUMINANCE.reduce((sum, weight, channel) => sum + weight * (linear[pixel * CHANNELS.length + channel] ?? 0), 0);
 // What any light could still recover of a reference's frame: the exports' frame corrected, channel by channel in linear
 // Colour, to the reference's own mean over every part pixel of a bin, and scored again. A light, a haze or a grade
 // That depends only on what a bin holds can recover no more than its row, so a row that recovers little says the light
@@ -148,8 +150,6 @@ export const readLightCeilings = async ({
     bottom,
     cells: Array.from({ length: TABLE_DEPTH_EDGES.length + 1 }, () => ({ count: 0, exports: 0, reference: 0 })),
   }));
-  const readLuminance = (linear: Float32Array, pixel: number): number =>
-    LUMINANCE.reduce((sum, weight, channel) => sum + weight * (linear[pixel * CHANNELS.length + channel] ?? 0), 0);
   for (let pixel = 0; pixel < count; pixel++) {
     if (!checkIsPart(pixel)) continue;
     const heightBand = heightBands[countPassed(HEIGHT_EDGES, heights[pixel] ?? 0)];
