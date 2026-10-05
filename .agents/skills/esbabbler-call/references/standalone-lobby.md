@@ -6,7 +6,7 @@ Read when working on `/calls` or `/calls/[id]`: the shareable link, the pre-join
 
 - `/calls` — standalone lobby; calls `createCall()` then navigates to `/calls/[id]`.
 - `/calls/[id]` — full-screen standalone call; the creator auto-joins via the persisted `callSessionsInMessage.userId`, everyone else sees pre-join and must knock.
-- `InviteCard.vue` is only rendered on `/calls/[id]`, where `window.location.href` is the correct link to copy.
+- `InviteCard.vue` sits in the call view both surfaces mount, and hides itself while `callRoomId` is set, so it shows only on `/calls/[id]`, where `window.location.href` is the correct link to copy.
 
 ## Knock/Admit (lobby/waiting room)
 
