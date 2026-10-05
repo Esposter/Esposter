@@ -2,6 +2,9 @@ import type { OxlintConfig } from "oxlint";
 
 import { defineConfig } from "oxlint";
 
+// The costliest type-aware rules, off in every run: switched to "error" for an occasional pass, the oxlint ledger's
+// Row, then back. See /docs/architecture/lint-toolchain#what-the-type-aware-pass-costs
+const COSTLY_TYPE_AWARE_SEVERITY = "off";
 const BROWSER_GLOBAL_MESSAGE = "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.";
 const CONTEXT_MESSAGE =
   "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent, JSON Forms' dispatch) disables this with its reason.";
@@ -401,10 +404,15 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "typescript/explicit-function-return-type": "off",
     "typescript/explicit-member-accessibility": ["error", { accessibility: "no-public" }],
     "typescript/explicit-module-boundary-types": "off",
+    "typescript/no-confusing-void-expression": COSTLY_TYPE_AWARE_SEVERITY,
+    "typescript/no-deprecated": COSTLY_TYPE_AWARE_SEVERITY,
     "typescript/no-dynamic-delete": "off",
     "typescript/no-empty-interface": "off",
     "typescript/no-empty-object-type": ["error", { allowInterfaces: "with-single-extends" }],
+    "typescript/no-floating-promises": COSTLY_TYPE_AWARE_SEVERITY,
+    "typescript/no-generated-empty-object-type": COSTLY_TYPE_AWARE_SEVERITY,
     "typescript/no-invalid-void-type": "off",
+    "typescript/no-misused-promises": COSTLY_TYPE_AWARE_SEVERITY,
     "typescript/no-redundant-type-constituents": "off",
     "typescript/no-restricted-types": [
       "error",
