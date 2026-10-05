@@ -425,8 +425,8 @@ export const baseMessageRouter = router({
           filter: serializeClauses(replyClauses),
         }),
       ]);
-      if (!rootMessageWithEtag) return replies;
-      return [rootMessageWithEtag.entity, ...replies];
+      if (rootMessageWithEtag) return [rootMessageWithEtag.entity, ...replies];
+      else return replies;
     },
   ),
   searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query<SearchMessagesResult>(

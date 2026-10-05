@@ -20,13 +20,14 @@ const NIGHT_MOON_DIRECTION = getLoginScreenDirection([0.27, 0.11]);
 // So the direction is the one of 44, 60 and 80 degrees that scores best on the door recording and the dusk still
 const DUSK_LIGHT_DIRECTION = new Vector3(0.837, 0.259, 0.483);
 
-// Each hour's sky is solved as the game's sky shader draws it over its frame's clear sky (genshin:parity sky, its clouds
-// Left out by the cloud mask), its colours with its own shape, no colour under none: the dawn's deep blue away from the
-// Sun and grey toward it, the dusk's lavender away and rose toward it, the night's with the glow round its moon. The
-// Dusk's bottom colour toward the sun stands under the recording's clouds, so no pixel holds it. The haze over the
-// Cloud sea (the mean of its brightest two samples low in the frame) and the clouds are read off each reference too.
-// The stone's light is solved apart, as the game's deferred pass casts it (data/login/stoneLight.json), so the sun light
-// Here lends the stone only its direction and its shadow, and the hemisphere lights nothing of the login's
+// Each hour's sky is solved as the game's sky shader draws it over its frame's clear sky (genshin:parity sky, its
+// Clouds left out by the cloud mask), its colours with its own shape, no colour under none: the dawn's deep blue away
+// From the sun and grey toward it, the dusk's lavender away and rose toward it, the night's with the glow round its
+// Moon. The dusk's bottom colour toward the sun stands under the recording's clouds, so no pixel holds it. The haze
+// Over the cloud sea (the mean of its brightest two samples low in the frame) and the clouds are read off each
+// Reference too. The stone's light is solved apart, as the game's deferred pass casts it
+// (data/login/stoneLight.json), so the sun light here lends the stone only its direction and its shadow, and the
+// Hemisphere lights nothing of the login's
 export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
   [LoginTimeOfDay.Dawn]: {
     cloudLitColor: new Color(0xf5efe8),

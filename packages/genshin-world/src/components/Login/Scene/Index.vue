@@ -271,7 +271,8 @@ const getStartGlide = (): LoginGlide => {
   else return { scrolled: LOGIN_GLIDE_TITLE_SCROLLED, speed: LOGIN_GLIDE_TITLE_SPEED };
 };
 let glide = getStartGlide();
-// The towers' row, scrolled with the glide each frame off Vue's reactivity, which would otherwise draw the template anew
+// The towers' row, scrolled with the glide each frame off Vue's reactivity, which would otherwise draw the
+// Template anew
 const towers = new Group();
 // How far past its place of rest the door is, riding on the walkway's copy it comes to rest on
 const doorAhead = shallowRef(0);

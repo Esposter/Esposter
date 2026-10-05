@@ -9,12 +9,12 @@ import { getFencedLines } from "#src/services/skills/extract/getFencedLines";
 // Backticked span closes on the next run of exactly its own length, as markdown reads it, so ``see above`` is one
 // Span rather than two empty ones with the pointer standing between them
 const POSITIONAL_POINTER_REGEX = /\((?:see )?(?:above|below)\)|\bsee (?:above|below)\b|\bas above\b/iu;
-const QUOTED_SPAN_REGEX = /"[^"\n]*"|(?<backtickRun>`+)(?!`)[^\n]*?(?<!`)\k<backtickRun>(?!`)/gu;
+const BACKTICK_SPAN_REGEX = /(?<backtickRun>`+)(?!`)[^\n]*?(?<!`)\k<backtickRun>(?!`)/gu;
+const QUOTED_SPAN_REGEX = new RegExp(String.raw`"[^"\n]*"|${BACKTICK_SPAN_REGEX.source}`, "gu");
 // A heading named and then placed — `see "Heading" below` — reads as a citation, but the word after it is what a
 // Reader follows, and it goes wrong the day the section moves; "on this page" is the form that survives a move. The
 // Pointer ends its clause, where a real placement runs on to what it is placed against (`**top**, above the macros`)
 const PLACED_HEADING_REGEX = /(?:"[^"\n]+"|\*\*[^*\n]+\*\*),? (?:above|below)(?=[).,;:]|$)/u;
-const BACKTICK_SPAN_REGEX = /(?<backtickRun>`+)(?!`)[^\n]*?(?<!`)\k<backtickRun>(?!`)/gu;
 
 export const getPositionalPointerFindings = (files: SkillDocsFile[]): SkillDocsFinding[] =>
   files.flatMap(({ path, text }) => {

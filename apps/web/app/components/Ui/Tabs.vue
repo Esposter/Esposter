@@ -19,8 +19,9 @@ const { isFilling, items, label } = defineProps<Props>();
 </script>
 
 <template>
-  <!-- Laid out by the parent as the list and the panel side by side unless it fills a height, when the two are its own
-    Rows. Mandatory rather than forced: forcing selects the first tab as the tabs register, over the model's own choice -->
+  <!-- Laid out by the parent as the list and the panel side by side unless it fills a height, when the two are its
+    Own rows. Mandatory rather than forced: forcing selects the first tab as the tabs register, over the model's
+    Own choice -->
   <div :class="isFilling ? 'grid rows-[auto_1fr] min-h-0' : 'contents'">
     <Tabs.Root
       :model-value
@@ -48,8 +49,8 @@ const { isFilling, items, label } = defineProps<Props>();
           <span v-if="count !== undefined" text-muted>{{ count }}</span>
         </Tabs.Item>
       </Tabs.List>
-      <!-- Only the selected panel renders its content: a panel not shown would still mount everything in it. A panel may
-      Shrink below its content either way, so a grid or flex parent that gives it a size lets what it holds scroll
+      <!-- Only the selected panel renders its content: a panel not shown would still mount everything in it. A panel
+      May shrink below its content either way, so a grid or flex parent that gives it a size lets what it holds scroll
       Rather than a long line widening the panel past its parent -->
       <Tabs.Panel
         v-for="{ value } of items"

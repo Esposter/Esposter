@@ -2,7 +2,7 @@
 
 // Discord's invite expiry options; the "Never" (the 0 sentinel) option lives in the select, not here
 export const InviteExpireAfterMinutesMap = {
-  "30 minutes": Temporal.Duration.from({ minutes: 30 }).total("minutes"),
+  "30 minutes": 30,
   "1 hour": Temporal.Duration.from({ hours: 1 }).total("minutes"),
   "6 hours": Temporal.Duration.from({ hours: 6 }).total("minutes"),
   "12 hours": Temporal.Duration.from({ hours: 12 }).total("minutes"),

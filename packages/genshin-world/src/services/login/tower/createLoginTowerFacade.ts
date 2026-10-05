@@ -15,13 +15,13 @@ import { attribute, texture } from "three/tsl";
 
 // The login towers' surfaces as `fitLoginTowerFacades` traced them, drawn once into two canvases the towers read where
 // Their geometry says each vertex stands (`createLoginTowersGeometry`): the shade over the towers' stone, each band's
-// Tone, its paint, its recesses and its gilding filled as its loops in its own shade, a recess darkened by the light its
-// Depth keeps out (`getHalfShadeStyle`); and a mask white where the tower stands solid
-// And black where it stands open. Each tower is drawn clipped to its tile and its gutters, its loops once more a whole
-// Turn either side so the gutters carry its surface on round its axis. The gilding is drawn as the stone's colour, not
-// As metal: with no reflection of the sky to show it, a metal reads dark against the game's own exports at every hour.
-// Every shade, a recess's with the light it keeps out, stands its contrast's share as far from the stone as traced,
-// Since the game shows its carving by the light across its relief rather than by its colour alone
+// Tone, its paint, its recesses and its gilding filled as its loops in its own shade, a recess darkened by the light
+// Its depth keeps out (`getHalfShadeStyle`); and a mask white where the tower stands solid and black where it stands
+// Open. Each tower is drawn clipped to its tile and its gutters, its loops once more a whole turn either side so the
+// Gutters carry its surface on round its axis. The gilding is drawn as the stone's colour, not as metal: with no
+// Reflection of the sky to show it, a metal reads dark against the game's own exports at every hour. Every shade, a
+// Recess's with the light it keeps out, stands its contrast's share as far from the stone as traced, since the game
+// Shows its carving by the light across its relief rather than by its colour alone
 export const createLoginTowerFacade = (
   atlas: LoginTowerAtlas,
 ): { dispose: () => void; shade: Node<"vec3">; solid: Node<"float"> } => {

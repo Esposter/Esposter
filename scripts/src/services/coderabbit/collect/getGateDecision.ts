@@ -19,8 +19,9 @@ export const getGateDecision = (checkStatus: CheckStatus | undefined): GateDecis
     return { kind: GateDecisionKind.Proceed, reason: "the review is complete" };
   else if (checkStatus.bucket === PASS_BUCKET && checkStatus.description === RATE_LIMITED_DESCRIPTION)
     return { kind: GateDecisionKind.RateLimited, reason: "rate limited — the bot ran nothing" };
-  return {
-    kind: GateDecisionKind.Fail,
-    reason: `unrecognised check state ${checkStatus.bucket} / ${checkStatus.description}`,
-  };
+  else
+    return {
+      kind: GateDecisionKind.Fail,
+      reason: `unrecognised check state ${checkStatus.bucket} / ${checkStatus.description}`,
+    };
 };

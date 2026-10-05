@@ -13,7 +13,7 @@ import { HostCloseCode } from "#src/models/server/HostCloseCode";
 import { serverMessageSchema } from "#src/models/server/ServerMessage";
 import { ServerMessageType } from "#src/models/server/ServerMessageType";
 import { SessionState } from "#src/models/session/SessionState";
-import { DEFAULT_APP_ORIGIN, DEFAULT_HOSTNAME, SCHEME_PAIRING_CODE_DURATION } from "#src/services/constants";
+import { DEFAULT_APP_ORIGIN, DEFAULT_HOSTNAME, SCHEME_PAIRING_CODE_DURATION_MS } from "#src/services/constants";
 import { readDevices } from "#src/services/device/readDevices";
 import { checkIsSignatureValid } from "#src/services/handshake/checkIsSignatureValid";
 import { createAgentConsoleServer } from "#src/services/server/createAgentConsoleServer";
@@ -75,7 +75,7 @@ describe(createAgentConsoleServer, () => {
   // A page pairing with a code the host holds, resolved once it is admitted
   const pair = async () => {
     const webSocket = connect();
-    server.addPairingCode(code, SCHEME_PAIRING_CODE_DURATION);
+    server.addPairingCode(code, SCHEME_PAIRING_CODE_DURATION_MS);
     const pendingPaired = waitForMessage(webSocket, ServerMessageType.Paired);
     await once(webSocket, "open");
     webSocket.send(JSON.stringify({ code, type: HandshakeMessageType.Pair }));
@@ -179,7 +179,7 @@ describe(createAgentConsoleServer, () => {
   test("refuses a pairing that carries no browser's origin", async () => {
     expect.hasAssertions();
 
-    server.addPairingCode(code, SCHEME_PAIRING_CODE_DURATION);
+    server.addPairingCode(code, SCHEME_PAIRING_CODE_DURATION_MS);
     const webSocket = new WebSocket(`ws://${DEFAULT_HOSTNAME}:${server.port}`);
     await once(webSocket, "open");
     webSocket.send(JSON.stringify({ code, type: HandshakeMessageType.Pair }));

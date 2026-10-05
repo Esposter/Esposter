@@ -30,6 +30,9 @@ export const samplePolar = async (path: string, bands: number, angles: number): 
       outerRadius = Math.max(outerRadius, radius);
     }
   const bandWidth = (Math.min(outerRadius, halfSize) - innerRadius) / bands;
+  // An image with no ink, or ink at one radius, spans no ring to cut into bands
+  if (!(Number.isFinite(bandWidth) && bandWidth > 0))
+    throw new InvalidOperationError(Operation.Read, path, "the ink spans no radial range");
   const sums = Array.from({ length: bands * angles }, () => ({ alpha: 0, blue: 0, green: 0, red: 0 }));
   for (let y = 0; y < height; y++)
     for (let x = 0; x < width; x++) {

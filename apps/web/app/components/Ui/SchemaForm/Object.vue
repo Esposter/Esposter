@@ -18,8 +18,8 @@ const detailUiSchema = computed(() =>
     control.value.path,
     () => {
       const uischema = Generate.uiSchema(control.value.schema, "Group", undefined, control.value.rootSchema);
-      if (!control.value.path) return { ...uischema, type: "VerticalLayout" };
-      return { ...uischema, label: control.value.label };
+      if (control.value.path) return { ...uischema, label: control.value.label };
+      else return { ...uischema, type: "VerticalLayout" };
     },
     control.value.uischema,
     control.value.rootSchema,

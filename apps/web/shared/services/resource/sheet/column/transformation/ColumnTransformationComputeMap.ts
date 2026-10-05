@@ -21,12 +21,13 @@ export const ColumnTransformationComputeMap = {
     computeConvertToTransformation(computeSource(transformation.sourceColumnId), transformation),
   [ColumnTransformationType.DatePart]: (transformation, { computeSource, findSource }) => {
     const sourceColumn = findSource(transformation.sourceColumnId);
-    if (sourceColumn?.type !== ColumnType.Date) return null;
-    return computeDatePartTransformation(
-      computeSource(transformation.sourceColumnId),
-      transformation,
-      sourceColumn.format,
-    );
+    if (sourceColumn?.type === ColumnType.Date)
+      return computeDatePartTransformation(
+        computeSource(transformation.sourceColumnId),
+        transformation,
+        sourceColumn.format,
+      );
+    else return null;
   },
   [ColumnTransformationType.Math]: (transformation, { computeSource }) =>
     computeMathTransformation(transformation, computeSource),

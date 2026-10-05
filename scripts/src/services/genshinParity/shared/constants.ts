@@ -120,7 +120,7 @@ export const CHROMA_HOP_LENGTH = 1200;
 export const CHROMA_MIN_FREQUENCY = 60;
 export const CHROMA_MAX_FREQUENCY = 2500;
 export const CHROMA_QUIET_SHARE = 0.02;
-export const CHROMA_MATCH_SECONDS: number = Temporal.Duration.from({ seconds: 20 }).total("seconds");
+export const CHROMA_MATCH_SECONDS = 20;
 // Music is scored at 22.05 kHz, where its octave bands from 63 Hz to 8 kHz all fit, each band's level in decibels read
 // In the pitch classes' own frames, a level more than 60 dB under the game's loudest in that band read as that floor
 export const LISTEN_SAMPLE_RATE = 22050;

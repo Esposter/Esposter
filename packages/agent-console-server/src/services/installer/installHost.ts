@@ -11,8 +11,9 @@ import { copyFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, win32 } from "node:path";
 import { getAssetKeys, getRawAsset } from "node:sea";
 
-// Copies the executable into the user's local app data, writes out the Claude Code binary and node-pty it carries inside
-// It, and registers the link scheme in the user's own registry classes — one downloaded file, and no administrator asked
+// Copies the executable into the user's local app data, writes out the Claude Code binary and node-pty it carries
+// Inside it, and registers the link scheme in the user's own registry classes — one downloaded file, and no
+// Administrator asked
 export const installHost = (): string => {
   const installDirectory = getHostInstallDirectory();
   const executablePath = join(installDirectory, HOST_EXECUTABLE_FILENAME);

@@ -3,8 +3,8 @@ import { ORNAMENT_END_PATH, ORNAMENT_MIDDLE_PATH } from "#src/services/OrnamentP
 </script>
 
 <template>
-  <!-- The game's divider: a hairline as wide as its parent, a tapered diamond at each end and an interlocked double -->
-  <!-- Diamond at its middle, in the game's units from the parent's `--unit` -->
+  <!-- The game's divider: a hairline as wide as its parent, a tapered diamond at each end and an interlocked double
+       Diamond at its middle, in the game's units from the parent's `--unit` -->
   <div class="ornament-divider" aria-hidden="true">
     <svg class="end" viewBox="0 0 320 224"><path :d="ORNAMENT_END_PATH" /></svg>
     <svg class="middle" viewBox="0 0 480 320"><path :d="ORNAMENT_MIDDLE_PATH" /></svg>

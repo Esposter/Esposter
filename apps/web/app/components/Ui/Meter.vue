@@ -12,9 +12,9 @@ interface Props {
   // The reading in words, which a screen reader says in place of the number
   valueText: string;
 }
-// A reading of how much of something is used, as a row of the style's blocks in the loading bar's look that fill with it.
-// Lower is better, so the fill turns to the warning colour past the low mark and to the danger colour past
-// The high one. A level with no worse end, such as a microphone's, takes neither mark and stays in the accent
+// A reading of how much of something is used, as a row of the style's blocks in the loading bar's look that fill with
+// It. Lower is better, so the fill turns to the warning colour past the low mark and to the danger colour past the high
+// One. A level with no worse end, such as a microphone's, takes neither mark and stays in the accent
 const { high, label, low, value, valueText } = defineProps<Props>();
 const uiStyle = useUiStyle();
 const filledBlockCount = computed(() => Math.round((value / 100) * METER_BLOCK_COUNT));

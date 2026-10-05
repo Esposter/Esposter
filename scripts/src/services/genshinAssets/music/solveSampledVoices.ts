@@ -117,7 +117,8 @@ export const solveSampledVoices = async (
       );
       const right = combination.map((index, voice) => voiceSums[voice]?.[index] ?? 0);
       const powers = solveNonNegativeSystem(gram, right);
-      // At the exact solution of the powers' subset, the residual is the negated product of its powers with the right-hand side
+      // At the exact solution of the powers' subset, the residual is the negated product of its powers with the
+      // Right-hand side
       const residual = -powers.reduce((sum, power, voice) => sum + power * (right[voice] ?? 0), 0);
       return { combination, powers, residual };
     })

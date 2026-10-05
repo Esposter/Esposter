@@ -7,6 +7,6 @@ import { HOST_SCHEME, PAIRING_CODE_PARAMETER } from "#src/services/constants";
 export const getSchemeLaunch = (argument: string): SchemeLaunch | undefined => {
   if (!URL.canParse(argument)) return undefined;
   const url = new URL(argument);
-  if (url.protocol !== `${HOST_SCHEME}:`) return undefined;
-  return { code: url.searchParams.get(PAIRING_CODE_PARAMETER) ?? "" };
+  if (url.protocol === `${HOST_SCHEME}:`) return { code: url.searchParams.get(PAIRING_CODE_PARAMETER) ?? "" };
+  else return undefined;
 };

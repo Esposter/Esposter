@@ -92,8 +92,9 @@ export const fitInstrument = (
       peakFrame = frame;
       peak = reading;
     }
-    if (!checkIsClear(fundamental, toAmplitude(peak.magnitude), note, note.startTimeSeconds, endSeconds)) return [];
-    return [{ endFrame, endSeconds, fundamental, note, peak, peakFrame }];
+    if (checkIsClear(fundamental, toAmplitude(peak.magnitude), note, note.startTimeSeconds, endSeconds))
+      return [{ endFrame, endSeconds, fundamental, note, peak, peakFrame }];
+    else return [];
   });
   const loudest = Math.max(0, ...peaks.map(({ peak }) => peak.magnitude));
   // A note whose peak the source barely holds is the transcription's, or another instrument's, with nothing to measure

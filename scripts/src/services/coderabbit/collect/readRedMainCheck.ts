@@ -46,6 +46,6 @@ export const readRedMainCheck = (mainSha: string, cwd: string): MainCheck | unde
   return MAIN_CHECK_WORKFLOW_FILES.map((workflowFile) => {
     const check = readCheck(workflowFile, MAIN_BRANCH, mainSha);
     if (check?.status === CI_COMPLETED_STATUS || reviewedSha === undefined) return check;
-    return readCheck(workflowFile, DEVELOP_BRANCH, reviewedSha);
+    else return readCheck(workflowFile, DEVELOP_BRANCH, reviewedSha);
   }).find((check) => check?.conclusion === CI_FAILURE_CONCLUSION);
 };

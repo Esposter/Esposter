@@ -100,11 +100,12 @@ export default {
     {
       // The other half of the same family: `is*`/`has*` is a stored boolean, so a function under that name
       // Reads as a value at every call site. The annotation is what makes it decidable without types — a
-      // Function whose declared return is `boolean` or a type predicate answers with one and is `check*`.
+      // Function whose declared return is `boolean` or a type predicate answers with one and is `check*`, and so
+      // Is a parameter typed as one: a callback handed in is called at every site that reads it.
       message:
         "Name a boolean-returning function `check*` — `is*`/`has*` is a stored boolean, never a call. See the naming skill.",
       selector:
-        "VariableDeclarator[id.name=/^(is|has)[A-Z]/][init.type=/^(Arrow)?FunctionExpression$/] > :matches(ArrowFunctionExpression, FunctionExpression) > TSTypeAnnotation.returnType > :matches(TSBooleanKeyword, TSTypePredicate)",
+        "VariableDeclarator[id.name=/^(is|has)[A-Z]/][init.type=/^(Arrow)?FunctionExpression$/] > :matches(ArrowFunctionExpression, FunctionExpression) > TSTypeAnnotation.returnType > :matches(TSBooleanKeyword, TSTypePredicate), Identifier[name=/^(is|has)[A-Z]/] > TSTypeAnnotation > TSFunctionType > TSTypeAnnotation.returnType > :matches(TSBooleanKeyword, TSTypePredicate)",
     },
     {
       // A where-fragment helper builds a clause, so it is a `get*`: the bare noun (`roomWhere = (id) => …`)
@@ -311,6 +312,14 @@ export default {
       message:
         "Compose a tsdown factory with `mergeConfig(getTsdownConfiguration…(), { … })`, never a spread — a spread drops every nested option the factory set. See the build skill.",
       selector: "SpreadElement > CallExpression[callee.name=/^getTsdownConfiguration/]",
+    },
+    {
+      // A duration of one unit totalled in that same unit is the number it was built from, so the wrapper states
+      // Nothing the literal does not; a conversion between units is what `Temporal.Duration` is for
+      message:
+        'Write a duration totalled in the unit it is built from as its literal — `500`, never `Temporal.Duration.from({ milliseconds: 500 }).total("milliseconds")`. See the naming skill\'s numbers-and-time page.',
+      selector:
+        "CallExpression[callee.property.name='total'][callee.object.callee.object.object.name='Temporal'][callee.object.callee.object.property.name='Duration'][callee.object.arguments.0.properties.length=1]:matches([arguments.0.value='milliseconds'][callee.object.arguments.0.properties.0.key.name='milliseconds'], [arguments.0.value='seconds'][callee.object.arguments.0.properties.0.key.name='seconds'], [arguments.0.value='minutes'][callee.object.arguments.0.properties.0.key.name='minutes'], [arguments.0.value='hours'][callee.object.arguments.0.properties.0.key.name='hours'], [arguments.0.value='days'][callee.object.arguments.0.properties.0.key.name='days'])",
     },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line

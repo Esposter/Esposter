@@ -29,7 +29,7 @@ export const computeChroma = (
   const binClasses = Int8Array.from({ length: binCount }, (_, bin) => {
     const frequency = (bin * sampleRate) / CHROMA_FRAME_LENGTH;
     if (bin === 0 || frequency < CHROMA_MIN_FREQUENCY || frequency > CHROMA_MAX_FREQUENCY) return -1;
-    return ((Math.round(69 + 12 * Math.log2(frequency / 440)) % 12) + 12) % 12;
+    else return ((Math.round(69 + 12 * Math.log2(frequency / 440)) % 12) + 12) % 12;
   });
   for (let frame = 0; frame < frameCount; frame++) {
     const offset = frame * 12;

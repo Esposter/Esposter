@@ -113,7 +113,7 @@ describe(useReadResourcesPage, () => {
     const { count, error, items, read } = useReadResourcesPage(
       createOptions(readCount, () => {
         if (isFailing) return Promise.reject(new Error(message));
-        return Promise.resolve(firstPage);
+        else return Promise.resolve(firstPage);
       }),
     );
     await read(firstOptions);

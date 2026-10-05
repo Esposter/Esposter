@@ -38,7 +38,7 @@ description: Apply when creating, moving, renaming, or organising any file, expo
 
 ## Never Duplicate Similar Logic — Source AND Tests
 
-Before writing a helper, grep for an existing one; before finishing a feature, grep for near-twin functions you may have created and collapse them. When ≥2 functions — or ≥2 call sites, the same condition written inline at each — share a shape and differ only in a predicate/parameter, extract **one functional primitive** (`sweepStaleEntries(directory, isStale)`) and make each caller a thin, intention-revealing wrapper that keeps the domain name and passes the constants.
+Before writing a helper, grep for an existing one; before finishing a feature, grep for near-twin functions you may have created and collapse them. When ≥2 functions — or ≥2 call sites, the same condition written inline at each — share a shape and differ only in a predicate/parameter, extract **one functional primitive** (`sweepStaleEntries(directory, checkIsStale)`) and make each caller a thin, intention-revealing wrapper that keeps the domain name and passes the constants.
 
 - **An extraction, a flag or a field earns its place only by taking a mistake away from its call sites** — what that means for a helper and for a flag, and the shapes an extraction takes (a `create*` factory over shared state, classes kept in `models/`), are `references/extraction-and-duplication.md`, and its decidable half is `pass-through-helper/no-forwarding-wrapper`. That syntax is never extracted, and the drift test that tells a rule from a construct, are the `over-engineering` skill's (`references/syntax-extraction.md`).
 

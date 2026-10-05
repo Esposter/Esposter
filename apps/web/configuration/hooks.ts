@@ -22,8 +22,9 @@ export const hooks: Pick<NuxtHooks, "listen" | "ready"> = {
       });
     });
   },
-  // @TODO: no upstream issue — under Nuxt 5's Nitro Vite environment the dev server Nuxt hands the CLI has no `upgrade`,
-  // So `nuxt dev` drops every WebSocket upgrade; each is forwarded to the Nitro environment as Nitro's own listener would
+  // @TODO: no upstream issue — under Nuxt 5's Nitro Vite environment the dev server Nuxt hands the CLI has no
+  // `upgrade`, so `nuxt dev` drops every WebSocket upgrade; each is forwarded to the Nitro environment as Nitro's
+  // Own listener would
   ready: (nuxt) => {
     if (!nuxt.options.dev) return;
     // Registered from here rather than in the configuration's hooks so it runs after the Nitro server's own, which is

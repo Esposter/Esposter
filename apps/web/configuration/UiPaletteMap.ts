@@ -5,10 +5,10 @@ import { UiStyle } from "../app/models/ui/UiStyle.ts";
 import { UiToken } from "../app/models/ui/UiToken.ts";
 
 // The UI library's palette: one entry per token for each design style in each mode. The UnoCSS config reads it as well
-// As the app, and it loads before any alias resolves, so it lives beside it. Every palette uses the same
-// Token names, so a component never knows which one is selected. Voxel's dark palette is dusk, the agent console's as it
-// Was drawn; its light one is dawn, authored beside it rather than computed from it. Voxel lifts nothing by tone and
-// Draws its lines in the edge colour, so its lifted panel is its panel and its divider its border
+// As the app, and it loads before any alias resolves, so it lives beside it. Every palette uses the same token names,
+// So a component never knows which one is selected. Voxel's dark palette is dusk, the agent console's as it was drawn;
+// Its light one is dawn, authored beside it rather than computed from it. Voxel lifts nothing by tone and draws its
+// Lines in the edge colour, so its lifted panel is its panel and its divider its border
 export const UiPaletteMap = {
   // Genshin's menus and its HUD: light is the game's parchment, the cream of its settings and loading screens under its
   // Slate-navy text, with a gold darkened as far as passing on its own tonal fill; dark is the translucent navy of its
@@ -43,10 +43,10 @@ export const UiPaletteMap = {
       [UiToken.Warning]: "#7c5000",
     },
   },
-  // Radix's slate for the neutrals — app background, a panel a tone above it, a lifted panel a tone further, the divider a
-  // Step fainter than the border, muted and text — and Vue's green as the one accent: the bright one its docs lead with in
-  // Dark, and in light its hue darkened as far as passing on its own tonal fill. Light's panel sits a tone below the
-  // Background, as Material's surface containers do, and what is lifted is white
+  // Radix's slate for the neutrals — app background, a panel a tone above it, a lifted panel a tone further, the
+  // Divider a step fainter than the border, muted and text — and Vue's green as the one accent: the bright one its docs
+  // Lead with in dark, and in light its hue darkened as far as passing on its own tonal fill. Light's panel sits a tone
+  // Below the background, as Material's surface containers do, and what is lifted is white
   [UiStyle.Standard]: {
     [ThemeMode.Dark]: {
       [UiToken.Accent]: "#42d392",

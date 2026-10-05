@@ -35,8 +35,8 @@ const items = computed<Item[]>(() => [
 ]);
 </script>
 
-<!-- Stands where the filters were while rows are selected, since what is done to a selection comes first then. It
-     leads with the way out of the selection, as a selection bar does, and the count yields its width to the commands -->
+<!-- Stands where the filters were while rows are selected, since what is done to a selection comes first then. It leads
+     With the way out of the selection, as a selection bar does, and the count yields its width to the commands -->
 <template>
   <div role="toolbar" aria-label="Selected resources" px-4 pb-2 flex gap-2 items-center>
     <UiIconButton

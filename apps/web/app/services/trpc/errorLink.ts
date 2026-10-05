@@ -24,9 +24,9 @@ export const errorLink: TRPCLink<TRPCRouter> =
 
           if (ALERTED_ERROR_CODES.has(error.data.code)) createAlert(error.message, "error");
           else if (["FORBIDDEN", "UNAUTHORIZED"].includes(error.data.code)) {
-            // Both codes also refuse a signed-in caller what it may not do, so only a caller the server finds no session
-            // For is sent to login. The server is asked rather than the client's session store, which reads pending on
-            // A fresh subscription and still signed in once the session has expired on the server
+            // Both codes also refuse a signed-in caller what it may not do, so only a caller the server finds no
+            // Session for is sent to login. The server is asked rather than the client's session store, which reads
+            // Pending on a fresh subscription and still signed in once the session has expired on the server
             const isSignedOut =
               !op.context.isBackground &&
               (await getResultAsync(() => authClient.getSession())

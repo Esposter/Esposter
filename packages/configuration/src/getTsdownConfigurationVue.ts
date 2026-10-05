@@ -8,10 +8,10 @@ import { mergeConfig } from "tsdown";
 import AutoImport from "unplugin-auto-import/rolldown";
 import Vue from "unplugin-vue/rolldown";
 
-// The packages that ship `.vue` files build through tsdown like every other: `unplugin-vue` compiles the
-// Components and `dts.vue` hands declaration generation to vue-tsc. `vueOptions` reaches the compiler, for a package
-// Whose templates hold elements a renderer rather than Vue resolves, such as TresJS's `TresMesh`. Reaching rolldown through
-// Vite would do the same two jobs behind a second build path, free to drift from this one.
+// The packages that ship `.vue` files build through tsdown like every other: `unplugin-vue` compiles the components and
+// `dts.vue` hands declaration generation to vue-tsc. `vueOptions` reaches the compiler, for a package whose templates
+// Hold elements a renderer rather than Vue resolves, such as TresJS's `TresMesh`. Reaching rolldown through vite would
+// Do the same two jobs behind a second build path, free to drift from this one.
 //
 // `eager` is what makes auto-imports typeable. The declaration build seeds its TypeScript program from the
 // Entrypoints alone, and `auto-imports.d.ts` is an ambient file no entrypoint imports — so without this,

@@ -13,8 +13,8 @@ interface Props {
   min: number;
 }
 // The WAI-ARIA window splitter: a separator one stop in the tab order that says the pane's size and its range, dragged
-// By the pointer, stepped by the arrows and sent to either end by Home and End. A line on the pane's edge that takes the
-// Accent while it is pointed at, focused or dragged, over a wider strip that is easier to catch
+// By the pointer, stepped by the arrows and sent to either end by Home and End. A line on the pane's edge that takes
+// The accent while it is pointed at, focused or dragged, over a wider strip that is easier to catch
 const size = defineModel<number>({ required: true });
 const { isReversed, isVertical, label, max, min } = defineProps<Props>();
 // The pointer dragging, so a second touch on the handle neither restarts the drag nor moves or ends it
@@ -22,7 +22,7 @@ const dragPointerId = ref<number>();
 const isDragging = computed(() => dragPointerId.value !== undefined);
 // Where the drag began, read on every move so the size follows the pointer rather than accumulating rounding
 const dragStart = { position: 0, size: 0 };
-const readPosition = (event: PointerEvent) => (isVertical ? event.clientY : event.clientX);
+const getPosition = (event: PointerEvent) => (isVertical ? event.clientY : event.clientX);
 // A template cannot see a language global, so the element's type is checked here
 const startDrag = (event: PointerEvent) => {
   // A drag would otherwise also sweep a text selection across the pane
@@ -30,7 +30,7 @@ const startDrag = (event: PointerEvent) => {
   if (isDragging.value) return;
   if (event.currentTarget instanceof HTMLElement) event.currentTarget.setPointerCapture(event.pointerId);
   dragPointerId.value = event.pointerId;
-  dragStart.position = readPosition(event);
+  dragStart.position = getPosition(event);
   dragStart.size = size.value;
 };
 const endDrag = (event: PointerEvent) => {
@@ -94,7 +94,7 @@ const getNextSize = (event: KeyboardEvent) => {
     @pointermove="
       (event: PointerEvent) => {
         if (event.pointerId !== dragPointerId) return;
-        const delta = readPosition(event) - dragStart.position;
+        const delta = getPosition(event) - dragStart.position;
         // A pointer's position can be fractional, and a saved size is a whole pixel count
         size = clamp(Math.round(dragStart.size + (isReversed ? -delta : delta)));
       }

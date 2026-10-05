@@ -37,8 +37,8 @@ const resultPreview = computed(() => {
 
 <template>
   <div flex flex-col min-w-0>
-    <!-- The call, its result and the preview under it all toggle on a click and brighten under the pointer, so it -->
-    <!-- Reads as one thing that opens; a click that ends a selection in the text is left alone -->
+    <!-- The call, its result and the preview under it all toggle on a click and brighten under the pointer, so it
+         Reads as one thing that opens; a click that ends a selection in the text is left alone -->
     <details :open="isOpen" @toggle="isOpen = ($event.target as HTMLDetailsElement).open">
       <summary flex gap-2 min-w-0 cursor-pointer hover:brightness-150>
         <UiSpinner v-if="!toolCall.result" />

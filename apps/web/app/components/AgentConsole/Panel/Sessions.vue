@@ -81,7 +81,8 @@ const requestNotificationPermission = async () => {
               <span :style="{ color: SessionStateColorMap[state] }">{{ state }}</span>
               <NuxtTime text-muted :datetime="lastActivityAt" relative />
             </div>
-            <!-- The terminal's own resume picker leaves out a session the page started, so its command is copied instead -->
+            <!-- The terminal's own resume picker leaves out a session the page started, so its command is
+                 Copied instead -->
             <UiCopyButton label="Copy the command that resumes it in a terminal" :source="getResumeCommand(cwd, id)" />
             <UiButton @click="sendCommand({ messageUuid: '', sessionId: id, type: CommandType.Fork })"> Fork </UiButton>
             <UiButton

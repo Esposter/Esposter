@@ -1,8 +1,9 @@
 import type { RingBand } from "#src/models/splash/RingBand";
 
-// The publisher ring's colours in two dimensions, sampled from its field (the raster the Commons logo clips to the ring)
-// By `genshin:parity polar HoYoverse_Ring.png 12 72`: twelve bands from the ring's inner edge to its outer, each cut
-// Into seventy-two cells clockwise from the top, so the fill shifts from outside to inside as well as round the ring
+// The publisher ring's colours in two dimensions, sampled from its field (the raster the Commons logo clips to the
+// Ring) by `genshin:parity polar HoYoverse_Ring.png 12 72`: twelve bands from the ring's inner edge to its outer,
+// Each cut into seventy-two cells clockwise from the top, so the fill shifts from outside to inside as well as round
+// The ring
 export const PUBLISHER_RING_BANDS: RingBand[] = [
   {
     colors: [

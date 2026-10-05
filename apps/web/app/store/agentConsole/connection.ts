@@ -29,7 +29,7 @@ import {
   HOST_SCHEME,
   HostCloseCode,
   PAIRING_CODE_PARAMETER,
-  SCHEME_PAIRING_CODE_DURATION,
+  SCHEME_PAIRING_CODE_DURATION_MS,
   serverMessageSchema,
   ServerMessageType,
   SessionState,
@@ -347,7 +347,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
       address,
       code,
       connectionId,
-      deadline: Date.now() + SCHEME_PAIRING_CODE_DURATION,
+      deadline: Date.now() + SCHEME_PAIRING_CODE_DURATION_MS,
       isOpenedByPage,
     };
     getStatusRef(connectionId).value = ConnectionStatus.Connecting;

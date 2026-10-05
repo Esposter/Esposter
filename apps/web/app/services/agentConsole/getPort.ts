@@ -2,5 +2,5 @@
 export const getPort = (address: string): number => {
   const { port, protocol } = new URL(address);
   if (port) return Number(port);
-  return protocol === "wss:" ? 443 : 80;
+  else return protocol === "wss:" ? 443 : 80;
 };

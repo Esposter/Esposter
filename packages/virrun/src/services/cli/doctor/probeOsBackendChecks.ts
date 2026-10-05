@@ -14,5 +14,5 @@ import { probeWslNode } from "#src/services/cli/doctor/probeWslNode";
 export const probeOsBackendChecks = (): DiagnosticCheck[] => {
   const wsl = probeWsl();
   if (wsl.status === DiagnosticStatus.Missing) return [wsl, probeTar()];
-  return [wsl, probeBubblewrap(), probeWslNode(), probePython3(), probeTar(), probeSandbox()];
+  else return [wsl, probeBubblewrap(), probeWslNode(), probePython3(), probeTar(), probeSandbox()];
 };

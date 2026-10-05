@@ -9,8 +9,8 @@ import { DEFAULT_HOSTNAME } from "#src/services/constants";
 import { hashCredential } from "#src/services/device/hashCredential";
 import { writeStateFile } from "#src/services/device/writeStateFile";
 import {
-  SESSION_WINDOW_CONNECT_TIMEOUT,
-  SESSION_WINDOW_REJOIN_DURATION,
+  SESSION_WINDOW_CONNECT_TIMEOUT_MS,
+  SESSION_WINDOW_REJOIN_DURATION_MS,
   SESSION_WINDOWS_FILENAME,
 } from "#src/services/drivers/window/constants";
 import { createWindowDriver } from "#src/services/drivers/window/createWindowDriver";
@@ -140,7 +140,9 @@ describe(createWindowDriver, () => {
 
     await driver.createSession(" ");
     const sessionsChange = new Promise<void>((resolve) => {
-      onSessionsChange.mockImplementation(resolve);
+      onSessionsChange.mockImplementation(() => {
+        resolve();
+      });
     });
     // The reader closing the window
     childAbortController.abort();
@@ -183,10 +185,12 @@ describe(createWindowDriver, () => {
 
     vi.useFakeTimers({ toFake: ["setTimeout"] });
     const { promise: launched, resolve } = Promise.withResolvers<SessionWindowLaunch>();
-    launchSessionWindow.mockImplementationOnce(resolve);
+    launchSessionWindow.mockImplementationOnce((sessionWindowLaunch) => {
+      resolve(sessionWindowLaunch);
+    });
     const opening = driver.createSession(" ");
     const expiredSessionWindowLaunch = await launched;
-    vi.advanceTimersByTime(SESSION_WINDOW_CONNECT_TIMEOUT);
+    vi.advanceTimersByTime(SESSION_WINDOW_CONNECT_TIMEOUT_MS);
 
     await expect(opening).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Create, name:  , the session's window did not start]`,
@@ -258,7 +262,9 @@ describe(createWindowDriver, () => {
     // A session opened in this host's own window first, which waits for the host to listen
     await driver.createSession(" ");
     const sessionsChange = new Promise<void>((resolve) => {
-      onSessionsChange.mockImplementation(resolve);
+      onSessionsChange.mockImplementation(() => {
+        resolve();
+      });
     });
     const rejoiningWebSocket = connect({ port: readSessionWindows(stateDirectory).port, secret });
     await once(rejoiningWebSocket, "open");
@@ -290,7 +296,7 @@ describe(createWindowDriver, () => {
       { onEvents, onSessionOpen, onSessionsChange },
       { launchSessionWindow, stateDirectory, writeLine: vi.fn<(line: string) => void>() },
     );
-    vi.advanceTimersByTime(SESSION_WINDOW_REJOIN_DURATION);
+    vi.advanceTimersByTime(SESSION_WINDOW_REJOIN_DURATION_MS);
     vi.useRealTimers();
     await driver.createSession(" ");
     const [error] = await once(connect({ port: readSessionWindows(stateDirectory).port, secret }), "error");

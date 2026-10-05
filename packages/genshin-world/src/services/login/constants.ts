@@ -22,12 +22,12 @@ export const LOGIN_SPINNER_START_MS = 1300;
 export const LOGIN_TITLE_START_MS = 2000;
 export const LOGIN_WELCOME_FADE_MS = 200;
 // The camera's flight from the title to the door follows loading, then ends a fixed time after it: in the English
-// Recording the bar is full at 8.4 s and the door rises at 11.75, about 3 s later, however long the load before it took.
-// While loading, the camera flies the share of the path the recording's does before its bar is full (6.4 of its 9.75 s
-// From the click, at an even pace), no faster than the last stretch's pace, so a load that ends at once glides rather
-// Than jumps; once loading is done it flies whatever is left while the status row folds and fades, and the door is due.
-// The glide then carries the door's copy to the walkway's far end at its own pace, where the door rises, rising on
-// Average about as long after the bar fills as the recording's does
+// Recording the bar is full at 8.4 s and the door rises at 11.75, about 3 s later, however long the load before it
+// Took. While loading, the camera flies the share of the path the recording's does before its bar is full (6.4 of its
+// 9.75 s from the click, at an even pace), no faster than the last stretch's pace, so a load that ends at once glides
+// Rather than jumps; once loading is done it flies whatever is left while the status row folds and fades, and the door
+// Is due. The glide then carries the door's copy to the walkway's far end at its own pace, where the door rises, rising
+// On average about as long after the bar fills as the recording's does
 export const LOGIN_DOOR_AFTER_LOAD_MS = 500;
 export const LOGIN_FLIGHT_LOADING_SHARE = 0.65;
 // The bar's fill at its fastest, from empty to full: the share shown runs toward loading's own at no more than this

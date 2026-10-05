@@ -6,13 +6,13 @@ import { checkIsTokenValid } from "#src/services/server/checkIsTokenValid";
 export const createPairingCodes = (): PairingCodes => {
   const codeTimeoutMap = new Map<string, NodeJS.Timeout>();
   return {
-    add: (code, duration) => {
+    add: (code, durationMs) => {
       clearTimeout(codeTimeoutMap.get(code));
       codeTimeoutMap.set(
         code,
         setTimeout(() => {
           codeTimeoutMap.delete(code);
-        }, duration),
+        }, durationMs),
       );
     },
     clear: () => {

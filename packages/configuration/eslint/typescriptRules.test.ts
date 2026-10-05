@@ -305,6 +305,42 @@ describe("typescriptRules", () => {
         source: "export const a = mergeConfig(getTsdownConfigurationNode(), { deps: {} });",
         violations: 0,
       },
+      {
+        filePath: "isFunction.ts",
+        name: "isFunction",
+        source: "export const isA = (): boolean => true;",
+        violations: 1,
+      },
+      {
+        filePath: "isCallbackParameter.ts",
+        name: "isCallbackParameter",
+        source: "export const a = (isB: (c: string) => boolean) => isB;",
+        violations: 1,
+      },
+      {
+        filePath: "checkCallbackParameter.ts",
+        name: "checkCallbackParameter",
+        source: "export const a = (checkIsB: (c: string) => boolean) => checkIsB;",
+        violations: 0,
+      },
+      {
+        filePath: "isFlagParameter.ts",
+        name: "isFlagParameter",
+        source: "export const a = (isB: boolean) => isB;",
+        violations: 0,
+      },
+      {
+        filePath: "sameUnitDuration.ts",
+        name: "sameUnitDuration",
+        source: `export const a = Temporal.Duration.from({ milliseconds: 1 }).total("milliseconds");`,
+        violations: 1,
+      },
+      {
+        filePath: "convertedDuration.ts",
+        name: "convertedDuration",
+        source: `export const a = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");`,
+        violations: 0,
+      },
     ],
   });
 });

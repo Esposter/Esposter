@@ -38,17 +38,18 @@ const DROPPED_COVERAGE = 0.01;
 const MIN_CROWN_COVER = 0.05;
 // A band of clouds as one sprite drawn once for all of them, each cloud a camera-facing billboard of its painted cloud
 // In the atlas, cut off where it covers nothing, its foot at its place. Each is a draw of its own as a sprite apiece,
-// And a band runs to hundreds; drawn as one, they are blended in the order given, which three's own sort of the
-// Objects no longer sets, so before each draw they are laid out farthest along the camera's view first, as that sort
-// Would, and the nearer edges blend over the farther; only a draw whose order moved rewrites more than their places.
-// Each is coloured as the game's cloud particles are (Login/Scene/Index.reference.ts, source `cloudParticleShader`):
-// Its shaded colour mixed toward its lit one where its painted crown is, each blended from away from the sun to toward
-// It by how far toward the sun the cloud stands, gaining light with the sky's coverage and brightening toward the sun,
-// Fading out at its soft painted edge and below the horizon. The game also gives a low cloud way to the sky's colour behind it unless the sky is thickly covered, by
-// A coverage its environment sets at run time; ours stands in for its cloud layer's alone, so that waits on the game's
-// Own. Their places are handed back in the order given, for a band that moves to rewrite in place, and the band's cover,
-// The share of its clouds drawn: each cloud is ranked by its place in the order given, which a band scatters at random,
-// So a sky with less cover draws the first of them and leaves the rest, spread as evenly, undrawn
+// And a band runs to hundreds; drawn as one, they are blended in the order given, which three's own sort of the objects
+// No longer sets, so before each draw they are laid out farthest along the camera's view first, as that sort would, and
+// The nearer edges blend over the farther; only a draw whose order moved rewrites more than their places. Each is
+// Coloured as the game's cloud particles are (Login/Scene/Index.reference.ts, source `cloudParticleShader`): its shaded
+// Colour mixed toward its lit one where its painted crown is, each blended from away from the sun to toward it by how
+// Far toward the sun the cloud stands, gaining light with the sky's coverage and brightening toward the sun, fading out
+// At its soft painted edge and below the horizon. The game also gives a low cloud way to the sky's colour behind it
+// Unless the sky is thickly covered, by a coverage its environment sets at run time; ours stands in for its cloud
+// Layer's alone, so that waits on the game's own. Their places are handed back in the order given, for a band that
+// Moves to rewrite in place, and the band's cover, the share of its clouds drawn: each cloud is ranked by its place in
+// The order given, which a band scatters at random, so a sky with less cover draws the first of them and leaves the
+// Rest, spread as evenly, undrawn
 export const createCloudBandSprite = (
   atlas: Texture,
   clouds: readonly CloudPlacement[],
@@ -87,8 +88,8 @@ export const createCloudBandSprite = (
   const toward = pow(max(sunCosine.mul(cloudFrontBackBlend).add(float(1).sub(cloudFrontBackBlend)), 0), 3);
   const lit = mix(cloudLitBackColor, cloudLitColor, toward);
   const shade = mix(cloudShadeBackColor, cloudShadeColor, toward);
-  // The crown's share of the cloud's own cover, so a cloud's fading edge keeps the colour inside it rather than darkening
-  // To its shade where its crown's blur and its outline's both thin out
+  // The crown's share of the cloud's own cover, so a cloud's fading edge keeps the colour inside it rather than
+  // Darkening to its shade where its crown's blur and its outline's both thin out
   const crown = saturate(mask.g.div(max(mask.r, MIN_CROWN_COVER)));
   const cloudColor = mix(shade, lit, crown)
     .add(lit.mul(cloudCoverage.mul(COVERAGE_LIGHT_SHARE)))

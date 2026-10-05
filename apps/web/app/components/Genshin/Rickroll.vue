@@ -62,8 +62,8 @@ onMounted(() => {
 
 <template>
   <div bg-white size-full>
-    <!-- Either player refuses to play without the embedding page's origin, which nuxt-security's no-referrer policy -->
-    <!-- Withholds -->
+    <!-- Either player refuses to play without the embedding page's origin, which nuxt-security's no-referrer policy
+         Withholds -->
     <iframe
       v-if="isYouTubePlayed"
       ref="player"

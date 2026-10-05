@@ -48,10 +48,9 @@ const isOpeningShown = ref(true);
     relative
     of-hidden
   >
-    <!-- What the bar, the console and the pause menu show comes from local storage and the socket, so none is -->
-    <!-- Server-rendered, and none can be reached until the loading screen is gone. The world takes the height the -->
-    <!-- Bar under it leaves, so the bar never covers the replies; the console opens over the world -->
-    <!-- Rather than resizing it -->
+    <!-- What the bar, the console and the pause menu show comes from local storage and the socket, so none is
+      Server-rendered, and none can be reached until the loading screen is gone. The world takes the height the bar
+      Under it leaves, so the bar never covers the replies; the console opens over the world rather than resizing it -->
     <section :inert="!isLoaded" flex flex-col size-full>
       <ClientOnly>
         <div flex-1 min-h-0 relative>
@@ -70,9 +69,9 @@ const isOpeningShown = ref(true);
 </template>
 
 <style scoped>
-/* One size for everything the page renders, the agent's markdown included: the browser's own sizes for headings are */
-/* Dropped, so a reply reads as a line of chat, and what stands out does so by colour and weight. Prose is in the */
-/* Style's body face and code, keys and output in its mono */
+/* One size for everything the page renders, the agent's markdown included: the browser's own sizes for headings are
+   dropped, so a reply reads as a line of chat, and what stands out does so by colour and weight. Prose is in the
+   style's body face and code, keys and output in its mono */
 .agent-console {
   font-family: var(--ui-font-body);
   font-size: var(--ui-text-body);

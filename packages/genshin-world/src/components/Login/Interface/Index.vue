@@ -111,15 +111,15 @@ watch(
 
 <template>
   <GameScreen class="login-interface">
-    <!-- The page as the game's tree under `LoginMainPage` nests it: each piece a `GameRect` placed by its -->
-    <!-- RectTransform inside its game parent's, and what the tree cannot hold measured inside the piece holding it -->
+    <!-- The page as the game's tree under `LoginMainPage` nests it: each piece a `GameRect` placed by its
+         RectTransform inside its game parent's, and what the tree cannot hold measured inside the piece holding it -->
     <GameRect :rect="interfaceRects.GrpLogin">
       <!-- The root the clips play on, the empty path, over GrpLogin's whole box -->
       <div ref="page" class="page">
         <GameRect :rect="interfaceRects['GrpLogin/BgBtn']">
-          <!-- The white the page fades up out of as it arrives and into as it enters, which only the clips draw; its -->
-          <!-- Scale overhangs the page, so the page's own, down to 0.96 as it fades in, never uncovers the screen's -->
-          <!-- Edge -->
+          <!-- The white the page fades up out of as it arrives and into as it enters, which only the clips draw; its
+               Scale overhangs the page, so the page's own, down to 0.96 as it fades in, never uncovers the screen's
+               Edge -->
           <GameRect
             class="white-screen"
             :rect="interfaceRects['GrpLogin/BgBtn/ImgWhiteScreen  ']"
@@ -158,8 +158,8 @@ watch(
             <OrnamentDivider class="divider" />
             <p class="subtitle">{{ gameText[GameTextKey.LoginBegin] }}</p>
           </GameRect>
-          <!-- Mainland China's age rating (CADPA, 12 and over), which its client keeps in the corner of every login -->
-          <!-- Stage -->
+          <!-- Mainland China's age rating (CADPA, 12 and over), which its client keeps in the corner of every login
+               Stage -->
           <GameRect
             v-if="client === GameClient.Mainland"
             :rect="interfaceRects['GrpLogin/Center/BtnCADPA']"
@@ -180,8 +180,8 @@ watch(
           </template>
           {{ welcome }}
         </ToastNotice>
-        <!-- The foot, anchored to the screen's bottom as the game's is, so everything in it stays there on any window: -->
-        <!-- The loading row, the account and the build string, and both button columns -->
+        <!-- The foot, anchored to the screen's bottom as the game's is, so everything in it stays there on any window:
+             The loading row, the account and the build string, and both button columns -->
         <GameRect
           v-if="isFooterShown"
           :rect="interfaceRects['GrpLogin/Bottom']"

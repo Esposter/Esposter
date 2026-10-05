@@ -1,7 +1,7 @@
 <template>
-  <!-- The game's notice card, dropped at the top of a screen: white with rounded corners, 107 units high and at least -->
-  <!-- 537 across, a round mark at its left and its words in the game's near black. Measured from a 1440 high -->
-  <!-- Recording of the welcome the login screen shows -->
+  <!-- The game's notice card, dropped at the top of a screen: white with rounded corners, 107 units high and at least
+       537 across, a round mark at its left and its words in the game's near black. Measured from a 1440 high
+       Recording of the welcome the login screen shows -->
   <div class="toast-notice" role="status">
     <span class="mark"><slot name="mark" /></span>
     <p class="text"><slot /></p>

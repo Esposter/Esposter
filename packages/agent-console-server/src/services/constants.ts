@@ -18,4 +18,4 @@ export const PAIRING_HASH_PARAMETER = "host";
 // Holding everything it ever printed
 export const SHELL_OUTPUT_LENGTH = 100_000;
 // How long a code the page opened the host with pairs it: the reader has that long to allow the browser's prompt
-export const SCHEME_PAIRING_CODE_DURATION: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
+export const SCHEME_PAIRING_CODE_DURATION_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");

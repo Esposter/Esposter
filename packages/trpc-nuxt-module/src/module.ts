@@ -1,4 +1,5 @@
-// Nuxt's `nitro` option is declared by its Nitro builder's augmentation, which a module outside a Nuxt app does not load
+// Nuxt's `nitro` option is declared by its Nitro builder's augmentation, which a module outside a Nuxt app does
+// Not load
 /// <reference types="@nuxt/nitro-server" />
 import type { ModuleOptions } from "#src/models/ModuleOptions";
 import type { NuxtModule } from "@nuxt/schema";

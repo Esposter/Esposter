@@ -22,7 +22,8 @@ const { customEmojis = [] } = defineProps<Props>();
 // The tag leads, because reacting is what most surfaces do with a pick; the record follows for the composer,
 // Which needs the content form rather than the reaction form
 const emit = defineEmits<{ select: [emojiTag: string, emoji: PickableEmoji] }>();
-// A touch screen's field waits for a tap: focusing it would raise the keyboard over the emoji the reader opened it to tap
+// A touch screen's field waits for a tap: focusing it would raise the keyboard over the emoji the reader opened it
+// To tap
 const layoutStore = useLayoutStore();
 const { isTouchScreen } = storeToRefs(layoutStore);
 const emojiPickerStore = useEmojiPickerStore();

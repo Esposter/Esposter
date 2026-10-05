@@ -12,7 +12,8 @@ interface Props {
   context?: object;
   // The form's JSON Schema, which JSON Forms lays out and dispatches field by field
   schema: z.core.JSONSchema.JSONSchema;
-  // The form's Zod schema, which validates the whole value on every change; each issue is shown on the field at its path
+  // The form's Zod schema, which validates the whole value on every change; each issue is shown on the field at
+  // Its path
   validationSchema?: z.ZodType;
 }
 // A form generated from a schema: JSON Forms' core lays it out and keeps every nested value in step, every component

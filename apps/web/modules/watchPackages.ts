@@ -16,8 +16,8 @@ const logger = useLogger("watch-packages");
 const readPackageJson = (directory: string): PackageJson =>
   // oxlint-disable-next-line no-restricted-properties -- a manifest carries no dates, and no workspace dist exists yet at install
   JSON.parse(readFileSync(join(directory, "package.json"), "utf8")) as PackageJson;
-// A sibling a package lists as a dependency or peer stays external in its `dist`, so the app loads that sibling's `dist`
-// Too; a devDependency is bundled from source, which the package's own watcher already follows
+// A sibling a package lists as a dependency or peer stays external in its `dist`, so the app loads that sibling's
+// `dist` too; a devDependency is bundled from source, which the package's own watcher already follows
 const getRuntimeWorkspaceDependencies = (packageJson: PackageJson): string[] =>
   Object.entries<string | undefined>({ ...packageJson.dependencies, ...packageJson.peerDependencies })
     .filter(([, version]) => version?.startsWith(WORKSPACE_PROTOCOL))
@@ -26,9 +26,10 @@ const readSourceFileList = (packageDirectory: string): string =>
   globSync(SOURCE_PATTERNS, { cwd: packageDirectory }).toSorted().join("\n");
 // The app runs every workspace package from its `dist`, so under `nuxt dev` tsdown watches the source of each package
 // The running app loads — the closure of its dependencies — and a package edit reaches the page as a reload. Each
-// Watcher is a plain `node` child of this process rather than a `pnpm exec`, so Ctrl+C stops them all with Nuxt instead
-// Of every Windows `.cmd` shim asking to terminate its batch job. The configuration package is built once first and
-// Never watched: every package's `tsdown.config.ts` imports its `dist`, which its own watcher would clean from under them
+// Watcher is a plain `node` child of this process rather than a `pnpm exec`, so Ctrl+C stops them all with Nuxt
+// Instead of every Windows `.cmd` shim asking to terminate its batch job. The configuration package is built once
+// First and never watched: every package's `tsdown.config.ts` imports its `dist`, which its own watcher would clean
+// From under them
 export default defineNuxtModule({
   meta: { name: "watch-packages" },
   setup: (_options, nuxt) => {
@@ -56,9 +57,9 @@ export default defineNuxtModule({
     // The packages whose watcher is being restarted for a change to their file list rather than having failed
     const restartingPackageNames = new Set<string>();
     let isClosing = false;
-    // A cleaning tsdown watcher deletes the last build's files as each rebuild starts, so a page loaded mid-rebuild finds
-    // No `dist` to import. The watchers overwrite in place instead, and each `dist` is cleared once here so a hashed
-    // Chunk from an earlier session is not left for a size snapshot to measure
+    // A cleaning tsdown watcher deletes the last build's files as each rebuild starts, so a page loaded mid-rebuild
+    // Finds no `dist` to import. The watchers overwrite in place instead, and each `dist` is cleared once here so a
+    // Hashed chunk from an earlier session is not left for a size snapshot to measure
     for (const packageName of watchedPackageNames) {
       const packageDirectory = packageDirectoryMap.get(packageName);
       if (packageDirectory) rmSync(join(packageDirectory, "dist"), { force: true, recursive: true });

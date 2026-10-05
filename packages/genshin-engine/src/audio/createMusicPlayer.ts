@@ -10,10 +10,11 @@ import { scheduleMusicExpression } from "#src/audio/scheduleMusicExpression";
 import { scheduleMusicNote } from "#src/audio/scheduleMusicNote";
 
 // A piece of music played live from the start of its playlist: every half second, the notes due within the next two
-// Seconds of the audio clock are scheduled, so a timer the page delays never leaves a gap. A context still suspended
-// Holds its clock, so the music starts from its beginning once the context resumes. Each time a segment plays, its notes
-// Play through a gain of their own carrying its expression, so a note ringing on past its segment's end keeps the level
-// It ended at, and every segment's gain feeds one output, which `stop` disconnects, silencing whatever is scheduled
+// Seconds of the audio clock are scheduled, so a timer the page delays never leaves a gap. A context still
+// Suspended holds its clock, so the music starts from its beginning once the context resumes. Each time a segment
+// Plays, its notes play through a gain of their own carrying its expression, so a note ringing on past its
+// Segment's end keeps the level it ended at, and every segment's gain feeds one output, which `stop` disconnects,
+// Silencing whatever is scheduled
 export const createMusicPlayer = (
   context: AudioContext,
   music: Music,

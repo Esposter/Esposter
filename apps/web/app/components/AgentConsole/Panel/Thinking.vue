@@ -13,8 +13,8 @@ const isOpen = ref(false);
 <template>
   <!-- A block written with no text, as the terminal writes every one it keeps, has nothing to open onto -->
   <p v-if="!text && !isStreaming" text-muted>✻ Thinking · no text recorded</p>
-  <!-- Folded, as Claude folds it, and a click anywhere on it toggles it, the text included, unless the click ends a -->
-  <!-- Selection being made in that text; it brightens under the pointer so it reads as something that opens -->
+  <!-- Folded, as Claude folds it, and a click anywhere on it toggles it, the text included, unless the click ends a
+       Selection being made in that text; it brightens under the pointer so it reads as something that opens -->
   <details v-else :open="isOpen" @toggle="isOpen = ($event.target as HTMLDetailsElement).open">
     <summary text-muted cursor-pointer hover:brightness-150>✻ Thinking{{ isStreaming ? "…" : "" }}</summary>
     <p

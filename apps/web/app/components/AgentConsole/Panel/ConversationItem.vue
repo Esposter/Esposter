@@ -16,8 +16,8 @@ const { toolCallMap } = storeToRefs(agentConsoleSessionStore);
 </script>
 
 <template>
-  <!-- Every message runs the panel's full width with no box of its own, as the terminal prints it: a prompt is told -->
-  <!-- Apart by its mark, and each message's actions float over its corner while it is hovered or focused -->
+  <!-- Every message runs the panel's full width with no box of its own, as the terminal prints it: a prompt is told
+       Apart by its mark, and each message's actions float over its corner while it is hovered or focused -->
   <div v-if="event.type === AgentEventType.UserMessage" class="group" ws-pre-wrap relative>
     <span text-accent>›</span> {{ event.text }}
     <span v-if="event.attachmentCount > 0" text-muted>[{{ event.attachmentCount }} attached]</span>

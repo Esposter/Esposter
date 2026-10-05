@@ -23,7 +23,7 @@ export const DEFAULT_ERROR_STATUS_CODE = 500;
 // The voxel digits a status page draws its code in: each is this many blocks wide, and each column lands this long
 // After the one to its left
 export const VOXEL_DIGIT_WIDTH = 3;
-export const VOXEL_DROP_STAGGER_MS = Temporal.Duration.from({ milliseconds: 40 }).total("milliseconds");
+export const VOXEL_DROP_STAGGER_MS = 40;
 // The dock's panels open beside it: right of the rail, extending down, and above a narrow screen's bottom bar
 export const DOCK_POPOVER_POSITION_AREA = "right span-bottom";
 // The one key that opens the command palette on every page

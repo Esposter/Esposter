@@ -14,8 +14,8 @@ const weights = Array.from({ length: PITCH_BEND_TOLERANCE * 2 + 1 }, (_, offset)
   Math.exp(-((offset - PITCH_BEND_TOLERANCE) ** 2) / (2 * PITCH_BEND_STANDARD_DEVIATION ** 2)),
 );
 // Each note with its pitch bend at every frame it spans: the contour bin within `PITCH_BEND_TOLERANCE` of its own whose
-// Weighted reading is largest, as its offset in bins (a third of a semitone each) from the note's own. A tie goes to the
-// Lower bin, as NumPy's `argmax` breaks it
+// Weighted reading is largest, as its offset in bins (a third of a semitone each) from the note's own. A tie goes to
+// The lower bin, as NumPy's `argmax` breaks it
 export const addPitchBends = (contours: number[][], notes: NoteEvent[]): NoteEvent[] =>
   notes.map((note) => {
     const bin = (note.pitchMidi - MIDI_OFFSET) * CONTOUR_BINS_PER_SEMITONE;

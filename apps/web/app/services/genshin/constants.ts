@@ -1,5 +1,5 @@
-// How long YouTube has to answer the probe the page sends as it loads; the splashes alone outlast it, so the answer is in
-// Before anyone reaches the door
+// How long YouTube has to answer the probe the page sends as it loads; the splashes alone outlast it, so the answer is
+// In before anyone reaches the door
 export const RICKROLL_PROBE_TIMEOUT = Temporal.Duration.from({ seconds: 10 });
 export const RICKROLL_BILIBILI_URL =
   "https://player.bilibili.com/player.html?bvid=BV1UT42167xb&autoplay=1&danmaku=0&high_quality=1";

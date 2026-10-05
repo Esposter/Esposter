@@ -72,17 +72,17 @@ await runMain(
           readHeadSha(),
         );
         // Forced: a pass that failed mid-sequence leaves what it was holding, and a plain checkout refuses over it —
-        // Which would strand the runner on a tree its post step reads. Quiet: a window the port built and did not push is a
-        // Detached commit this checkout leaves behind, and git's warning about it reads as lost work when the next run
-        // Rebuilds it from the same refs.
+        // Which would strand the runner on a tree its post step reads. Quiet: a window the port built and did not push
+        // Is a detached commit this checkout leaves behind, and git's warning about it reads as lost work when the next
+        // Run rebuilds it from the same refs.
         process.on("exit", () => {
           getResult(() => runGit(["checkout", "--force", "--quiet", startRef])).match(noop, console.error);
         });
       }
 
-      // A counted attempt that failed, or GitHub answering a server error, ends the run idle and wakes the next one rather
-      // Than red: the retry is owed and automatic, and red is kept for what only a person can restart (docs:
-      // Infra/review-collector)
+      // A counted attempt that failed, or GitHub answering a server error, ends the run idle and wakes the next
+      // One rather than red: the retry is owed and automatic, and red is kept for what only a person can restart
+      // (docs: Infra/review-collector)
       const { kind, reason, retriggerDelaySeconds, targetSha } = await getResultAsync(() =>
         runCycle({ collectorSha, cwd, isDryRun, pullRequest }),
       ).match(

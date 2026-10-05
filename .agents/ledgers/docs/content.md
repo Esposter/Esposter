@@ -11,7 +11,7 @@
 | `user/`                                                        | 2026-09-25 · Opus 5.5 |                                                                                    |
 | `vue-phaserjs/`, `achievement/`, `fluid-simulator/`, `anime/`  | 2026-09-25 · Opus 5.5 |                                                                                    |
 | every `deferred/` and `rejected/` page, every `roadmap.md`     | 2026-09-25 · Opus 5.5 | diagram-exempt — read for revisit triggers and re-argued decisions                 |
-| `proposals/`, `docs/index.md`, every area `index.md`           | 2026-09-25 · Opus 5.5 | index coverage is `content/docs/index.test.ts`'s, not a pass's                     |
-| root — `AGENTS.md`, `README.md`, `SCORE.md`, `CONTRIBUTING.md` | 2026-09-25 · Opus 5.5 | plus `SECURITY.md`, `CODE_OF_CONDUCT.md`, `.agents/*.md`                           |
+| `proposals/`, `docs/index.md`, every area `index.md`           | 2026-10-05 · Opus 5.5 | index coverage is `content/docs/index.test.ts`'s, not a pass's                     |
+| root — `AGENTS.md`, `README.md`, `SCORE.md`, `CONTRIBUTING.md` | 2026-10-05 · Opus 5.5 | plus `SECURITY.md`, `CODE_OF_CONDUCT.md`, `.agents/*.md`                           |
 | `packages/*/README.md`                                         | 2026-09-25 · Opus 5.5 | `readme-standards` owns the shape; what drifts is the content a reader acts on     |
 | `apps/*/README.md`                                             | 2026-09-25 · Opus 5.5 | the three apps link the docs site root, since typedoc reaches only `packages/*`    |

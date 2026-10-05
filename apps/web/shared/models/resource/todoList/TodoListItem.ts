@@ -15,8 +15,8 @@ import { createUniqueArraySchema, sanitizeTextHtml } from "@esposter/shared";
 import { z } from "zod";
 
 export class TodoListItem extends ANamedItemEntity {
-  // When it was ticked, and absent while it is open: one field for both facts a completed row shows. Declared, so an item
-  // Left open carries no key for it rather than an own `undefined` a parsed blob would not have
+  // When it was ticked, and absent while it is open: one field for both facts a completed row shows. Declared, so an
+  // Item left open carries no key for it rather than an own `undefined` a parsed blob would not have
   declare completedAt?: Date;
   declare dueAt?: Date;
   // Starred, and absent otherwise, so an item nobody starred carries no key for it

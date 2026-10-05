@@ -44,7 +44,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 ## Booleans
 
 - `is*` prefix for **boolean variables and properties only**: `isMuted`, `isRoomOwner`. Never for callable functions
-- `check*` prefix for **all boolean-returning functions** (top-level, exported, or callback param): `checkIsManageable`, `checkIsStale`. Makes callability unambiguous — `checkIsManageable(...)` is always a call, `isManageable` is always a stored value. An `is*`/`has*` declarator holding a function with a `: boolean` or type-predicate return is a `no-restricted-syntax` error
+- `check*` prefix for **all boolean-returning functions** (top-level, exported, or callback param): `checkIsManageable`, `checkIsStale`. Makes callability unambiguous — `checkIsManageable(...)` is always a call, `isManageable` is always a stored value. An `is*`/`has*` declarator holding a function with a `: boolean` or type-predicate return, or a parameter typed as one, is a `no-restricted-syntax` error
 - `has*` only when `is*` reads unnaturally — possession/membership checks: `hasMore`, `hasThumbnail`. Never `can*` or `should*` — enforced by `no-restricted-syntax` on the declarator name, which leaves a dependency's own key alone (LiveKit's `canPublish` grant, `URL.canParse`). A permission is `hasManageRoles`, a capability `isScreenShareSupported`
 - `show*` is **banned** on a value — rename to `is*Visible`: `showFoo` → `isFooVisible` (`no-restricted-syntax`, for a declarator and a `boolean` interface member)
 - `isPending` for a request in flight, `isLoading` for a wait that is not one request

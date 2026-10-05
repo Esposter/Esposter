@@ -27,12 +27,12 @@ export const useAgentConsoleShellStore = defineStore("agentConsole/shell", () =>
     shellOutputMap.set(shellId, `${shellOutputMap.get(shellId) ?? ""}${data}`.slice(-SHELL_OUTPUT_LENGTH));
     shellListenerMap.get(shellId)?.write(data);
   };
-  const storeShellsClosed = (isClosed: (shell: Shell) => boolean) => {
-    for (const { id } of shells.value.filter((shell) => isClosed(shell))) {
+  const storeShellsClosed = (checkIsClosed: (shell: Shell) => boolean) => {
+    for (const { id } of shells.value.filter((shell) => checkIsClosed(shell))) {
       shellOutputMap.delete(id);
       shellListenerMap.delete(id);
     }
-    shells.value = shells.value.filter((shell) => !isClosed(shell));
+    shells.value = shells.value.filter((shell) => !checkIsClosed(shell));
   };
   // A terminal is written what the shell printed before it opened, then everything after, until it stops listening
   const listenToShell = (shellId: string, shellListener: ShellListener) => {

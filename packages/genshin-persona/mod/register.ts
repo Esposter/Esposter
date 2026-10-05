@@ -116,15 +116,15 @@ export const register: Register = (on) => {
     const { label, tips } = await read($, spinnerAtom);
     const tip = tips[(await read($, tipIndexAtom)) % Math.max(tips.length, 1)];
     if (!tip || e.props.isDraft) return next(e);
-    return next({ ...e, props: { ...e.props, tail: `${label}: ${tip}` } });
+    else return next({ ...e, props: { ...e.props, tail: `${label}: ${tip}` } });
   });
 
   // The character named among the footer's mode labels, where a standing word about the session belongs: the status
   // Line is a settings command no plugin can set, and a label added to `modes` leaves every other plugin's in place
   on("ui.render", { component: "SessionMode" }, async ($, e, next) => {
     const { displayName } = await read($, characterAtom);
-    if (!displayName) return next(e);
-    return next({ ...e, props: { ...e.props, modes: [...e.props.modes, displayName] } });
+    if (displayName) return next({ ...e, props: { ...e.props, modes: [...e.props.modes, displayName] } });
+    else return next(e);
   });
 
   // Every flushed piece of a reply, handed to the speak script as the settings hook handed it; a session with no

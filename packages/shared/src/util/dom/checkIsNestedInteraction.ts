@@ -32,5 +32,5 @@ export const checkIsNestedInteraction = (event: MouseEvent): boolean => {
   const interactiveElement = target.closest(NESTED_INTERACTION_SELECTOR);
   if (interactiveElement && interactiveElement !== currentTarget && currentTarget.contains(interactiveElement))
     return true;
-  return Boolean(window.getSelection()?.toString());
+  else return Boolean(window.getSelection()?.toString());
 };

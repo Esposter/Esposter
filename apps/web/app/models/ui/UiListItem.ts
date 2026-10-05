@@ -3,9 +3,9 @@ import type { RouteLocationRaw } from "vue-router";
 
 // One row of a list: somewhere to go, something to do, or a choice. Every row leads with a mark — what its icon says,
 // Drawn in the nearest style's glyph, a whole class for a glyph no meaning names, or a picture, which is the title's
-// First letter while it is empty: a room's, a friend's — or whatever the list's mark slot draws for it, a role's colour.
-// A mark that is a control of its own, a todo's checkbox, is the list's leading slot, drawn beside the row in the mark's
-// Column since a row that is one button holds nothing interactive
+// First letter while it is empty: a room's, a friend's — or whatever the list's mark slot draws for it, a role's
+// Colour. A mark that is a control of its own, a todo's checkbox, is the list's leading slot, drawn beside the row in
+// The mark's column since a row that is one button holds nothing interactive
 export type UiListItem<T extends string> = {
   description?: string;
   // What it is listed under, drawn as the heading over the rows beside it that share it

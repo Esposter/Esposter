@@ -15,7 +15,7 @@ import { SignaturePurpose } from "#src/models/handshake/SignaturePurpose";
 import { HostCloseCode } from "#src/models/server/HostCloseCode";
 import { ServerMessageType } from "#src/models/server/ServerMessageType";
 import { SessionState } from "#src/models/session/SessionState";
-import { SCHEME_PAIRING_CODE_DURATION } from "#src/services/constants";
+import { SCHEME_PAIRING_CODE_DURATION_MS } from "#src/services/constants";
 import { SECRET_BYTE_LENGTH } from "#src/services/device/constants";
 import { findDevice } from "#src/services/device/findDevice";
 import { getDeviceName } from "#src/services/device/getDeviceName";
@@ -241,7 +241,7 @@ export const createAgentConsoleServer = async ({
         }
 
         if (handshakeMessage.type === HandshakeMessageType.HandOff)
-          pairingCodes.add(handshakeMessage.code, SCHEME_PAIRING_CODE_DURATION);
+          pairingCodes.add(handshakeMessage.code, SCHEME_PAIRING_CODE_DURATION_MS);
         else {
           // The executable wrote the list without it already, but a pairing here that read the list before that write
           // Would have written the device back, and a write here comes after every pairing's

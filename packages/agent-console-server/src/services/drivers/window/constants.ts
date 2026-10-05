@@ -8,10 +8,10 @@ export const SESSION_SUBCOMMAND = "session";
 export const SESSION_SECRET_ENVIRONMENT_VARIABLE: string = `${SITE_NAME.toUpperCase()}_SESSION_SECRET`;
 export const SESSION_SECRET_BYTE_LENGTH = 32;
 // How long a session's window has to connect back before its secret stops admitting anything
-export const SESSION_WINDOW_CONNECT_TIMEOUT: number = Temporal.Duration.from({ seconds: 30 }).total("milliseconds");
+export const SESSION_WINDOW_CONNECT_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 30 }).total("milliseconds");
 // Where the host keeps the windows it holds, for a host started after it went away without ending them
 export const SESSION_WINDOWS_FILENAME = "session-windows.json";
 // How long a new host waits for the last one's windows to come back before it stops admitting their secrets
-export const SESSION_WINDOW_REJOIN_DURATION: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
+export const SESSION_WINDOW_REJOIN_DURATION_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 // How often a window whose host went away tries it again
-export const SESSION_WINDOW_RECONNECT_DELAY: number = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
+export const SESSION_WINDOW_RECONNECT_DELAY_MS: number = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");

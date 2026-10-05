@@ -17,8 +17,8 @@ const installCommands = [
 ];
 </script>
 
-<!-- How a Claude Code session comes to write its follow-ups into this list: a key from the settings, the plugin, and the
-     Three values its install asks for, each with a copy button -->
+<!-- How a Claude Code session comes to write its follow-ups into this list: a key from the settings, the plugin, and
+     The three values its install asks for, each with a copy button -->
 <template>
   <UiIconButton
     aria-haspopup="dialog"
