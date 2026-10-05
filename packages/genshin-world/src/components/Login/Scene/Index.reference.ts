@@ -439,6 +439,18 @@ export const reference: ComponentReference = {
       search:
         "genshin:parity calibrate on every hour with the facing clamped, --write, then compare on every login frame, rank on the dawn title and calibrate --self",
     },
+    {
+      found:
+        "The silhouettes' term was the error either side of them: a silhouette pixel's error averages 0.51 at dawn, the turned-away middle towers' 0.53. Split into the exports' mean error over the pixels within four of it off every silhouette and the excess over that, placement and pose read 0.0034 at dawn, 0.0035 by day and 0.0043 on the door recording, where the whole term read 0.074 to 0.107, so a part a pixel or two off is no longer the largest term. A part a dozen pixels off is charged to the light rows over its area: overlay shows the dawn's left tower standing out into the sky past the recording's",
+      search:
+        "rank on the dawn title, the day title and the door recording with the silhouettes' error split, then overlay on the dawn and the day",
+    },
+    {
+      found:
+        "A mask of the reference's sky by its colour and its grain over five pixels, learnt from the pixels at least six from our own parts' outline, reads the dawn's cloud sea and haze as stone, the two sharing colour and grain (IoU 0.65 with ours). On the door recording its upper sky holds: the middle towers stand a few to fifteen pixels off the recording's each, in no one direction, so each tower's place is off rather than the row's or the pose. Not kept, the cloud sea leaving it no measure to solve on",
+      search:
+        "A scratch mask of each reference's sky, a colour and contrast histogram learnt off our own layout, read per part against the witness's part target on the dawn title and the door recording",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
