@@ -50,7 +50,7 @@ while missing the verdict entirely.
   for a category name puts the loss back.
 - **A thread count under the stated actionable count is reported, not hidden.** It means the findings were
   resolved already or the inline comments failed to post — the review says the latter in a `> [!CAUTION] Inline
-review comments failed to post` block, and either way the body still lists them.
+  review comments failed to post` block, and either way the body still lists them.
 - **Body-bucket findings have no thread to resolve**, so nothing marks them done and no
   later review edits the body that lists them. Check each against the current file before acting: the counts
   reconcile the fetch, never the state of the code.

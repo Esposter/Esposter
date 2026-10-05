@@ -46,7 +46,7 @@ const { isDense } = defineProps<Props>(); // isDense: true | undefined
 ```ts
 // Bar.vue — defaults true → only `false` is meaningful
 interface Props {
-  isInteractive?: false; /* ... */
+  isInteractive?: false /* ... */;
 }
 const { isInteractive = true } = defineProps<Props>(); // boolean at runtime
 ```
