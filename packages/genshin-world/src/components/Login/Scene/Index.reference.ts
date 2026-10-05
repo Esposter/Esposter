@@ -499,6 +499,11 @@ export const reference: ComponentReference = {
       search:
         "maxOpacity on FogUniforms and SceneFog, refined by calibrate --haze on every hour's frame, each profile set in LoginSkyStateMap and its light written by calibrate --write under it, then compare on each hour's frames, compare --witness on the dawn by layer, and compare --all",
     },
+    {
+      found:
+        "Under the night's shipped haze held, a light by the albedo fading with height over the cloud sea leaves a residual of 0.1058 at a falloff of 0.02 a metre, 0.1064 at 0.05, 0.1099 at 0.1 and 0.1124 at 0.4, against 0.1127 without it: what is left with height is a gentle gradient over tens of metres, as clustered probes stepping up the towers would cast it, not a glow off the sea near its top",
+      search: "A scratch term in solveStoneLight at fixed falloffs, the haze held, by calibrate on the night title",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
