@@ -1,6 +1,6 @@
 import { takeOne } from "@esposter/shared";
 
-const formatLong = [
+const LONG_FORMATS = [
   " thousand",
   " million",
   " billion",
@@ -12,8 +12,8 @@ const formatLong = [
   " octillion",
   " nonillion",
 ];
-const prefixesLong = ["", "un", "duo", "tre", "quattuor", "quin", "sex", "septen", "octo", "novem"];
-const suffixesLong = [
+const LONG_PREFIXES = ["", "un", "duo", "tre", "quattuor", "quin", "sex", "septen", "octo", "novem"];
+const LONG_SUFFIXES = [
   "decillion",
   "vigintillion",
   "trigintillion",
@@ -25,8 +25,8 @@ const suffixesLong = [
   "nonagintillion",
 ];
 
-for (const suffixLong of suffixesLong)
-  for (const prefixLong of prefixesLong) formatLong.push(` ${prefixLong}${suffixLong}`);
+for (const suffixLong of LONG_SUFFIXES)
+  for (const prefixLong of LONG_PREFIXES) LONG_FORMATS.push(` ${prefixLong}${suffixLong}`);
 
 export const formatNumberLong = (number: number, fractionDigits?: number) => {
   if (!Number.isFinite(number)) return "Infinity";
@@ -40,8 +40,8 @@ export const formatNumberLong = (number: number, fractionDigits?: number) => {
     base++;
   }
 
-  if (base > formatLong.length - 1) return "Infinity";
-  else if (base >= 0) notation = takeOne(formatLong, base);
+  if (base > LONG_FORMATS.length - 1) return "Infinity";
+  else if (base >= 0) notation = takeOne(LONG_FORMATS, base);
 
   let formattedNumber: number | string = Math.round(currentNumber * 1e3) / 1e3;
   if (fractionDigits !== undefined) formattedNumber = formattedNumber.toFixed(fractionDigits);

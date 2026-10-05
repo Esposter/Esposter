@@ -7,7 +7,7 @@ import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
-const axes: readonly string[] = CAMERA_POSE_AXES;
+const AXIS_NAMES: readonly string[] = CAMERA_POSE_AXES;
 
 export const poseCommand: SubCommandsDef[string] = defineCommand({
   args: {
@@ -46,7 +46,7 @@ export const poseCommand: SubCommandsDef[string] = defineCommand({
     const { errors, imagePath, pose, refinement, rms } = await solveReferencePose(args.reference, args.witness, {
       families: args.families?.split(","),
       heldAxes: args.hold?.split(",").map((axis) => {
-        const index = axes.indexOf(axis);
+        const index = AXIS_NAMES.indexOf(axis);
         if (index === -1)
           throw new InvalidOperationError(Operation.Read, axis, `not an axis: ${CAMERA_POSE_AXES.join(", ")}`);
         return index;
