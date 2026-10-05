@@ -8,7 +8,7 @@ import { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
 // Colour, with the bands' heights solved on every hour's frame at once
 export const LoginCloudCoverMap: Record<LoginTimeOfDay, Record<LoginCloudBand, number>> = {
   [LoginTimeOfDay.Dawn]: { bottom: 0.94, middle: 0.71, top: 0.03 },
-  [LoginTimeOfDay.Day]: { bottom: 0.99, middle: 0.35, top: 0.02 },
-  [LoginTimeOfDay.Dusk]: { bottom: 0.38, middle: 1, top: 0.18 },
-  [LoginTimeOfDay.Night]: { bottom: 0.99, middle: 0.07, top: 0.07 },
+  [LoginTimeOfDay.Day]: { bottom: 0.99, middle: 0.53, top: 0.02 },
+  [LoginTimeOfDay.Dusk]: { bottom: 0.38, middle: 1, top: 0.5 },
+  [LoginTimeOfDay.Night]: { bottom: 0.99, middle: 0.06, top: 0.13 },
 };

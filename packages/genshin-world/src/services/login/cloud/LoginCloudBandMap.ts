@@ -8,7 +8,7 @@ import type { CloudBandOptions } from "genshin-engine";
 // Are solved on the dawn's, the day's, the dusk's and the night's frames at once by the sky's cover band by band of its
 // Height over the horizon, each hour's shares solved again under them by turns (genshin:parity cover --heights)
 export const LoginCloudBandMap: Record<LoginCloudBand, CloudBandOptions> = {
-  bottom: { count: 420, distanceRange: [10, 600], heightRange: [-17.3, -6.7], seed: 1, widthRange: [17.5, 45] },
-  middle: { count: 240, distanceRange: [150, 450], heightRange: [-23.6, 9.8], seed: 2, widthRange: [65, 130] },
-  top: { count: 240, distanceRange: [75, 350], heightRange: [31.6, 396.9], seed: 3, widthRange: [80, 160] },
+  bottom: { count: 420, distanceRange: [10, 600], heightRange: [-26.3, -2.4], seed: 1, widthRange: [17.5, 45] },
+  middle: { count: 240, distanceRange: [150, 450], heightRange: [-22.5, 5.1], seed: 2, widthRange: [65, 130] },
+  top: { count: 240, distanceRange: [75, 350], heightRange: [24.9, 606.6], seed: 3, widthRange: [80, 160] },
 };

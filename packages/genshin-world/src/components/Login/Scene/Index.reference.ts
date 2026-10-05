@@ -110,6 +110,12 @@ export const reference: ComponentReference = {
     },
     {
       found:
+        "The bands' heights solved on every hour at once under the exact reading stand the bottom band 26.3 to 2.4 metres under the walkway, the middle 22.5 under to 5.1 over and the top 24.9 to 606.6 over, the cover's residual over every frame 0.185 against about 0.196, with the dusk's top share 0.5, the day's middle 0.53 and the night's 0.06 and 0.13. The frames score the dawn 0.4382, the day 0.4420, the night 0.4454, the door recording 0.5390 and the phone's door frame 0.4806 against 0.4431, 0.4439, 0.4456, 0.5382 and 0.4785, a better mean. Within 3 degrees of the horizon the day still draws none against the recording's half and the dawn a half against nine tenths, the recordings' haze there reading as cloud; above 25 degrees no hour but the dusk draws any, where the others show a tenth",
+      search:
+        "genshin:parity cover --heights on the dawn, dusk, day and night frames at once, then compare on every login frame",
+    },
+    {
+      found:
         "With the cover at those shares the dusk's clouds solve by their colours' spread to lit #fdf4c9 and shade #ef91a3 (residual 0.10), our clouds 2.02 times their sky's brightness against the recording's 2.50; applied, the door recording's FLIP rises from 0.6006 to 0.6087 and its tone from 12.33% to 12.76%. The spread match is blind to place, and by height ours over-cover 0 to 3 degrees (68% against 35%) and 15 to 25 (44% against 17%) while under-covering 8 to 15 (46% against 70%), so brighter clouds pay most where ours stand and the recording's do not. Kept #fdedc4 and #eb8596: the clouds' place by height comes before their colour",
       search: "genshin:parity clouds login-door-recording after the cover change, its colours applied, then compare",
     },
