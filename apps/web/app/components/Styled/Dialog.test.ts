@@ -2,7 +2,7 @@
 import StyledDialog from "@/components/Styled/Dialog.vue";
 import StyledFormDialog from "@/components/Styled/FormDialog.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { DEFAULT_UI_STYLE } from "@@/configuration/UiStyleMap";
+import { DEFAULT_UI_STYLE } from "@@/configuration/constants";
 import { noop } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";

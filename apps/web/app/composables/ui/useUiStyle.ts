@@ -1,5 +1,5 @@
 import { UI_STYLE_INJECTION_KEY } from "@/services/ui/constants";
-import { DEFAULT_UI_STYLE } from "@@/configuration/UiStyleMap";
+import { DEFAULT_UI_STYLE } from "@@/configuration/constants";
 
 // The style the nearest theme scope draws in, or the reader's, which `NuxtTheme` provides around the whole app.
 // Positional, so it is the library's one provide and inject rather than a store read: a region pinned to a style keeps

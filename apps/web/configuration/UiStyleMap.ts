@@ -1,5 +1,6 @@
 import { UiStyle } from "../app/models/ui/UiStyle.ts";
 import { UiStyleToken } from "../app/models/ui/UiStyleToken.ts";
+import { STANDARD_TONAL_MIX_PERCENTAGE } from "./constants.ts";
 
 const PIXEL_FACE = "VT323, monospace";
 const SANS_FACE = "Inter, ui-sans-serif, system-ui, sans-serif";
@@ -19,11 +20,6 @@ const VOXEL_FRAME_SHADOW = [
 // Custom property is substituted where it is read, so `currentColor` is the colour of whatever wears it
 const getStateLayer = (percentage: number) =>
   `linear-gradient(color-mix(in srgb, currentColor ${percentage}%, transparent) 0 0)`;
-// How much of the accent standard's tonal button mixes over whatever it sits on. The palette test composes the same
-// Mix over every surface to hold its label at AA
-export const STANDARD_TONAL_MIX_PERCENTAGE = 12;
-// The style a reader with no cookie gets
-export const DEFAULT_UI_STYLE = UiStyle.Standard;
 // Each design style's value for every style token. `uno.config.ts` writes a style's column as one rule on its
 // `data-ui-style` value, so the tokens are static CSS, and a value may read the palette's tokens and the step but never
 // Set a length the layout reads. Voxel draws with hard-edged shadows in the edge colour and never a radius or a blur: a
