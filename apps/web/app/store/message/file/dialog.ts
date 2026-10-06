@@ -8,6 +8,6 @@ export const useFileDialogStore = defineStore("message/file/dialog", () => {
   const viewingRoomId = ref<MessageEntity["partitionKey"]>("");
   const deletingFileId = ref<FileEntity["id"]>("");
   const deletingRoomId = ref<MessageEntity["partitionKey"]>("");
-  const deletingRowKey = ref<MessageEntity["rowKey"]>("");
+  const deletingRowKey = ref<"" | MessageEntity["rowKey"]>("");
   return { deletingFileId, deletingRoomId, deletingRowKey, viewingFileId, viewingRoomId };
 });

@@ -4,7 +4,7 @@ import { useReadMessages } from "@/composables/message/message/useReadMessages";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useEmojiStore } from "@/store/message/emoji";
-import { createMessageEntity, MessageType } from "@esposter/db-schema";
+import { createMessageEntity, getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
@@ -26,7 +26,7 @@ describe(useReadMessages, () => {
     const emoji = new MessageEmojiMetadataEntity({
       messageRowKey: message.rowKey,
       partitionKey: roomId,
-      rowKey: crypto.randomUUID(),
+      rowKey: getReverseTickedTimestamp(),
     });
     trpcMsw.message.readMessages.query(async () => {
       await readGate;

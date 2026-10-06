@@ -1,4 +1,6 @@
 // @vitest-environment nuxt
+import type { MessageEntity } from "@esposter/db-schema";
+
 import { getMockSession } from "#server/trpc/context.test";
 import { createId } from "#shared/util/math/random/createId";
 import { useSession } from "@/services/auth/authClient.test";
@@ -85,7 +87,7 @@ describe(useCallStore, () => {
 
   // A thread call carries the room it belongs to, so a route keyed on the room alone lands in the room with the
   // Thread pane shut — the call announced itself in a pane the link then refuses to open
-  test.each([
+  test.each<{ expected: string; threadRootRowKey: "" | MessageEntity["rowKey"]; title: string }>([
     { expected: RoutePath.Messages(roomId), threadRootRowKey: "", title: "the room for a room call" },
     {
       expected: RoutePath.MessagesThread(roomId, threadRootRowKey),

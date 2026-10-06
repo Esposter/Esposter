@@ -11,6 +11,7 @@ import { getRoomEventSubscription } from "#server/trpc/procedure/room/getRoomEve
 import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
 import { messageRouter } from "#server/trpc/routers/message";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
+import { getReverseTickedTimestamp } from "@esposter/db-schema";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 const createDevice = (): Device => ({ sessionId: crypto.randomUUID(), userId: crypto.randomUUID() });
@@ -94,12 +95,14 @@ describe(getRoomEventSubscription, () => {
   test("yields a device-less event to the device that caused it", async () => {
     expect.hasAssertions();
 
-    const deleteMessageInput = { partitionKey: roomId, rowKey: crypto.randomUUID() };
+    const deleteMessageInput = { partitionKey: roomId, rowKey: getReverseTickedTimestamp() };
     const subscription = await messageCaller.onDeleteMessage({ roomId });
     const data = await getFirstEmit(
       () => subscription,
       () => {
-        messageEventEmitter.emit("deleteMessage", [{ partitionKey: crypto.randomUUID(), rowKey: "" }]);
+        messageEventEmitter.emit("deleteMessage", [
+          { partitionKey: crypto.randomUUID(), rowKey: getReverseTickedTimestamp() },
+        ]);
         messageEventEmitter.emit("deleteMessage", [deleteMessageInput]);
         return Promise.resolve();
       },

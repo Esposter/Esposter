@@ -1,3 +1,4 @@
+import type { ReverseTickedTimestamp } from "#src/models/azure/table/ReverseTickedTimestamp";
 import type { MessageMetadataType } from "#src/models/message/metadata/MessageMetadataType";
 
 import { AzureMetadataEntity, createAzureMetadataEntitySchema } from "#src/models/azure/table/AzureMetadataEntity";
@@ -6,7 +7,8 @@ import { standardMessageEntitySchema } from "#src/models/message/StandardMessage
 import { z } from "zod";
 
 export abstract class MessageMetadataEntity<TType extends MessageMetadataType> extends AzureMetadataEntity<TType> {
-  declare messageRowKey: string;
+  declare messageRowKey: ReverseTickedTimestamp;
+  declare rowKey: ReverseTickedTimestamp;
 }
 
 export const createMessageMetadataEntitySchema = <T extends z.ZodType<string>>(typeSchema: T) =>

@@ -12,7 +12,7 @@ import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { useAlertStore } from "@/store/alert";
-import { StandardMessageEntity } from "@esposter/db-schema";
+import { getReverseTickedTimestamp, StandardMessageEntity } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -103,7 +103,7 @@ describe.each<PaginationCacheVariant>([
   });
   const partitionKey = crypto.randomUUID();
   const secondPartitionKey = crypto.randomUUID();
-  const rowKey = crypto.randomUUID();
+  const rowKey = getReverseTickedTimestamp();
   const message = "message";
   const secondMessage = "secondMessage";
   const createMessageEntity = (entityPartitionKey: string = partitionKey, entityMessage: string = message) =>

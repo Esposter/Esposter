@@ -17,7 +17,7 @@ export const getMessageRecipientUserIds = async (
     partitionKey,
     threadRootRowKey,
     userId,
-  }: Pick<MessageEntity, "message" | "partitionKey" | "userId"> & { threadRootRowKey?: string },
+  }: Pick<MessageEntity, "message" | "partitionKey" | "userId"> & { threadRootRowKey?: "" | MessageEntity["rowKey"] },
 ): Promise<string[]> => {
   const andWheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, partitionKey)];
   if (userId) andWheres.push(ne(usersToRoomsInMessage.userId, userId));

@@ -8,6 +8,7 @@ import { useUploadFiles } from "@/composables/message/file/useUploadFiles";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
+import { getReverseTickedTimestamp } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -126,7 +127,7 @@ describe(useUploadFiles, () => {
   test("keeps a thread composer's attachments out of the room composer", async () => {
     expect.hasAssertions();
 
-    const threadTarget: ComposerTarget = { roomId, threadRootRowKey: "threadRootRowKey" };
+    const threadTarget: ComposerTarget = { roomId, threadRootRowKey: getReverseTickedTimestamp() };
     const uploadFileStore = useUploadFileStore();
     const { getComposerFiles } = uploadFileStore;
     uploadBlocksMock.mockResolvedValue(undefined);

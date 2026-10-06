@@ -4,7 +4,7 @@ import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { setupIndexedDbSuite } from "@/services/cache/indexedDb/setupIndexedDbSuite.test";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { createRoom } from "@/services/message/room/createRoom.test";
-import { StandardMessageEntity } from "@esposter/db-schema";
+import { getReverseTickedTimestamp, StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -44,7 +44,8 @@ describe(writeIndexedDb, () => {
     const { limit } = MessageIndexedDbStoreConfiguration;
     const messages = Array.from(
       { length: limit + 1 },
-      (_value) => new StandardMessageEntity({ partitionKey: message1.partitionKey, rowKey: crypto.randomUUID() }),
+      (_value) =>
+        new StandardMessageEntity({ partitionKey: message1.partitionKey, rowKey: getReverseTickedTimestamp() }),
     );
     await writeIndexedDb(MessageIndexedDbStoreConfiguration, messages, message1.partitionKey);
     const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey);

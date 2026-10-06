@@ -1,4 +1,5 @@
 import type { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
+import type { ReverseTickedTimestamp } from "#src/models/azure/table/ReverseTickedTimestamp";
 import type { ResourceActivityType } from "#src/models/resource/ResourceActivityType";
 import type { UserInAuth } from "#src/schema/auth/usersInAuth";
 import type { ToData } from "@esposter/shared";
@@ -19,6 +20,7 @@ export class ResourceActivityEntity extends AzureEntity {
   newName?: string;
   oldName?: string;
   publishVersion?: number;
+  declare rowKey: ReverseTickedTimestamp;
   declare userId: UserInAuth["id"];
 
   constructor(init?: Partial<ResourceActivityEntity> & ToData<CompositeKeyEntity>) {

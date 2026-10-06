@@ -12,7 +12,7 @@ export const useThreadStore = defineStore("message/thread", () => {
   // Response can never land on the thread the user asked for next
   const readThreadKey = Symbol("readThread");
   const { executeQuery, isPending: isReadThreadPending } = useMutation();
-  const activeRootRowKey = ref<MessageEntity["rowKey"]>("");
+  const activeRootRowKey = ref<"" | MessageEntity["rowKey"]>("");
   const activeRoomId = ref<MessageEntity["partitionKey"]>("");
   const threadMessages = ref<MessageEntity[]>([]);
   const layoutStore = useLayoutStore();
@@ -24,7 +24,7 @@ export const useThreadStore = defineStore("message/thread", () => {
   // Renders besides itself is read through the file store, which reads this one back
   const openThread = async (
     roomId: string,
-    threadRootRowKey: string,
+    threadRootRowKey: MessageEntity["rowKey"],
     readThreadMessages: () => Promise<MessageEntity[]>,
   ) => {
     activeRoomId.value = roomId;

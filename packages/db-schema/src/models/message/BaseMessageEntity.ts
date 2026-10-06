@@ -1,4 +1,5 @@
 import type { FileEntity } from "#src/models/azure/table/FileEntity";
+import type { ReverseTickedTimestamp } from "#src/models/azure/table/ReverseTickedTimestamp";
 import type { LinkPreviewResponse } from "#src/models/message/linkPreview/LinkPreviewResponse";
 import type { StandardMessageType } from "#src/models/message/StandardMessageType";
 import type { UserInAuth } from "#src/schema/auth/usersInAuth";
@@ -31,7 +32,8 @@ export class BaseMessageEntity<TType extends MessageType = StandardMessageType>
   linkPreviewResponse: LinkPreviewResponse | null = null;
   mentions: UserInAuth["id"][] = [];
   declare message: string;
-  replyRowKey = "";
+  replyRowKey: "" | ReverseTickedTimestamp = "";
+  declare rowKey: ReverseTickedTimestamp;
   type = MessageType.Message as TType;
 }
 

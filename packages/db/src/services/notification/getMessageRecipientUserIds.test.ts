@@ -5,6 +5,7 @@ import { createUser } from "#src/services/message/createUser.test";
 import { getMessageRecipientUserIds } from "#src/services/notification/getMessageRecipientUserIds";
 import { createMockDb } from "@esposter/db-mock";
 import {
+  getReverseTickedTimestamp,
   NotificationType,
   roomsInMessage,
   RoomType,
@@ -21,7 +22,7 @@ describe(getMessageRecipientUserIds, () => {
   let db: Database;
   const name = "name";
   const roomId = crypto.randomUUID();
-  const threadRootRowKey = "threadRootRowKey";
+  const threadRootRowKey = getReverseTickedTimestamp();
   const allOnlineUserId = crypto.randomUUID();
   const allOfflineUserId = crypto.randomUUID();
   const allNullStatusUserId = crypto.randomUUID();

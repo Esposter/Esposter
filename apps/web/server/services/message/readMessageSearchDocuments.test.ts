@@ -1,12 +1,12 @@
 import { readMessageSearchDocuments } from "#server/services/message/readMessageSearchDocuments";
 import { CompositeKeyPropertyNames, serializeKey } from "@esposter/azure";
-import { MessageType, SearchIndex, StandardMessageEntity } from "@esposter/db-schema";
+import { getReverseTickedTimestamp, MessageType, SearchIndex, StandardMessageEntity } from "@esposter/db-schema";
 import { MockSearchClient, MockSearchDatabase } from "azure-mock";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(readMessageSearchDocuments, () => {
   const partitionKey = crypto.randomUUID();
-  const rowKey = crypto.randomUUID();
+  const rowKey = getReverseTickedTimestamp();
   const message = "message";
   const limit = 1;
   const offset = 1;
