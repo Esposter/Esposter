@@ -2,6 +2,7 @@ import type { SoundEffect } from "genshin-engine";
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { parseSoundBankSounds } from "#src/services/genshinAssets/music/parseSoundBankSounds";
+import { readFileRange } from "#src/services/genshinAssets/music/readFileRange";
 import { readGameAudioPackages } from "#src/services/genshinAssets/music/readGameAudioPackages";
 import { resolveVgmstream } from "#src/services/genshinAssets/music/resolveVgmstream";
 import { computeSpectrogram } from "#src/services/genshinAssets/shared/computeSpectrogram";
@@ -41,10 +42,10 @@ export const fitLoginDoorSound = async (): Promise<SoundEffect> => {
   const bankEntry = minimum?.audioPackage.banks.find(({ id }) => id === DOOR_BANK_ID);
   if (!minimum || !bankEntry)
     throw new InvalidOperationError(Operation.Read, MINIMUM_PACKAGE_NAME, `holds no bank ${DOOR_BANK_ID}`);
-  const bank = Buffer.alloc(bankEntry.size);
+  let bank: Buffer;
   {
     await using file = await open(minimum.path);
-    await file.read(bank, 0, bankEntry.size, bankEntry.offset);
+    bank = await readFileRange(file, minimum.path, bankEntry.offset, bankEntry.size);
   }
   const sounds = parseSoundBankSounds(bank);
   const vgmstreamPath = await resolveVgmstream();

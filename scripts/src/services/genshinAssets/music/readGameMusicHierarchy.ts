@@ -3,6 +3,7 @@ import type { MusicObject } from "#src/models/genshinAssets/music/MusicObject";
 
 import { parseMusicHierarchy } from "#src/services/genshinAssets/music/parseMusicHierarchy";
 import { parseSoundBankMusicObjects } from "#src/services/genshinAssets/music/parseSoundBankMusicObjects";
+import { readFileRange } from "#src/services/genshinAssets/music/readFileRange";
 import { readGameAudioPackages } from "#src/services/genshinAssets/music/readGameAudioPackages";
 import { SOUND_BANK_PACKAGE_PATTERN } from "#src/services/genshinAssets/shared/constants";
 import { open } from "node:fs/promises";
@@ -15,9 +16,8 @@ export const readGameMusicHierarchy = async (): Promise<MusicHierarchy> => {
     // oxlint-disable-next-line no-await-in-loop -- one package is held open at a time
     await using file = await open(path);
     for (const { offset, size } of audioPackage.banks) {
-      const bank = Buffer.alloc(size);
       // oxlint-disable-next-line no-await-in-loop -- a package's banks are read in turn from its one handle
-      await file.read(bank, 0, size, offset);
+      const bank = await readFileRange(file, path, offset, size);
       objects.push(...parseSoundBankMusicObjects(bank));
     }
   }
