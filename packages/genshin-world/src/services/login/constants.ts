@@ -36,6 +36,9 @@ export const LOGIN_PROGRESS_FILL_MS = 100;
 // A click on the door lights it over 400 ms, from the English recording at 60 frames, while the screen whitens as the
 // Game's own clip does
 export const LOGIN_DOOR_LIGHT_MS = 400;
+// The door's sound starts this long after the click, from the English recording: its screen first whitens at 14.633
+// Seconds and the sound's rumble rises from 14.95, fitted over the burst its audio holds above the music
+export const LOGIN_DOOR_SOUND_DELAY_MS = 320;
 // The door's interface after the door has formed, from the English recording at 10 frames a second: formed by 12.7 s,
 // The corner buttons at 13.0, and the prompt's band fading in from 13.7 to full by 14.0
 export const LOGIN_DOOR_BUTTONS_DELAY_MS = 300;

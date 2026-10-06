@@ -7,6 +7,7 @@ import { fitInterfaceClips } from "#src/services/genshinAssets/fit/fitInterfaceC
 import { fitInterfaceRects } from "#src/services/genshinAssets/fit/fitInterfaceRects";
 import { fitLoginClouds } from "#src/services/genshinAssets/fit/fitLoginClouds";
 import { fitLoginDoor } from "#src/services/genshinAssets/fit/fitLoginDoor";
+import { fitLoginDoorSound } from "#src/services/genshinAssets/fit/fitLoginDoorSound";
 import { fitLoginHulls } from "#src/services/genshinAssets/fit/fitLoginHulls";
 import { fitLoginMusic } from "#src/services/genshinAssets/fit/fitLoginMusic";
 import { fitLoginPaving } from "#src/services/genshinAssets/fit/fitLoginPaving";
@@ -28,7 +29,7 @@ import { join } from "node:path";
 
 // The login scene's parts fitted as our own kits' parameters, each written as a data file of the world package's,
 // With its interface's rects and clips and the rows its script scrolls them in: each copied spawn's count and the
-// Length of its step, by its prefab, and its music, whose fit's report stands before its path
+// Length of its step, by its prefab, its music, whose fit's report stands before its path, and its sounds
 export const fitLoginScene = async (only: readonly string[] = []): Promise<string> => {
   const directory = getComponentDirectory(DerivedAssetComponent.Login);
   const placements = await readComponentPlacements(DerivedAssetComponent.Login);
@@ -73,6 +74,8 @@ export const fitLoginScene = async (only: readonly string[] = []): Promise<strin
       const gradient = await fitSkyGradient(join(textureDirectory, "Enviro_Sky_Gradient.png"));
       return [await writeWorldData("login/sky.json", { gradient })];
     },
+    // The sounds the login plays beside its music
+    sounds: async () => [await writeWorldData("login/sounds.json", { door: await fitLoginDoorSound() })],
     stone: async () => {
       const materials = await readComponentMaterials(DerivedAssetComponent.Login);
       return [await writeWorldData("login/stone.json", await fitLoginStone(materials, textureDirectory))];

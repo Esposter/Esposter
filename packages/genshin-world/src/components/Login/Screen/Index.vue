@@ -145,7 +145,7 @@ const onClick = (event: MouseEvent): void => {
         @ready="emit('ready')"
       />
     </TresCanvas>
-    <LoginMusic v-if="!isInterfaceHidden" />
+    <LoginMusic v-if="!isInterfaceHidden" :is-door-opened="stage === LoginStage.Entering || undefined" />
     <LoginInterface
       v-if="!isInterfaceHidden"
       :game-text
