@@ -24,8 +24,8 @@
       "heightOffset": -0.2,
       "id": "windrise-statue-of-the-seven",
       "kind": "StatueOfTheSeven",
-      "position": { "x": 7, "z": 5 },
-      "rotation": 0
+      "position": { "x": 44.38, "z": -0.51 },
+      "rotation": -1.5708
     }
   ]
 }

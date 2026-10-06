@@ -32,7 +32,7 @@ export const DEFERRED_SHADING_BLOCK = "00/00612967.blk";
 // Side and the row its z, named for both (BigWorldTerrain_1_-2.bin, `parseTerrainTileName`), and the texture that
 // Draws a tile from afar
 export const TERRAIN_TILE_SIZE = 1024;
-export const TERRAIN_TILE_REGEX = /_(?<column>-?\d+)_(?<row>-?\d+)\.bin$/u;
+export const TERRAIN_TILE_REGEX: RegExp = /_(?<column>-?\d+)_(?<row>-?\d+)\.bin$/u;
 export const TERRAIN_BASE_MAP_SUFFIX = "_BaseMap";
 // The texture slot a material's albedo is sampled from, which the witness reads as a colour
 export const MAIN_TEXTURE_SLOT = "_MainTex";
@@ -65,6 +65,8 @@ export const GAME_AUDIO_DIRECTORY: string = join(
 );
 export const SOUND_BANK_PACKAGE_PATTERN = "Banks*.pck";
 export const MUSIC_PACKAGE_PATTERN = "Music*.pck";
+// The package the game loads before anything else, whose banks hold the login's own sounds
+export const MINIMUM_PACKAGE_NAME = "Minimum.pck";
 // What the game's music is decoded into, a reference like every other export: each sound as WAV by its id, and each
 // One's pitch classes, which a recording is matched against
 export const MUSIC_DIRECTORY: string = join(EXTRACTED_DIRECTORY, "music");
@@ -201,6 +203,8 @@ export const TOWER_FACADE_MIN_CELLS = 40;
 // Paint on a tower's face stands apart from its band where it is this share darker or lighter
 export const TOWER_FACADE_PAINT_CONTRAST = 0.12;
 export const FITTED_DECIMALS = 2;
+// Unity turns by Euler degrees about z, then x, then y
+export const UNITY_EULER_ORDER = "YXZ";
 // A rotation's components are kept to the ten-thousandth, finer than a centimetre over the scene's farthest part
 export const ROTATION_DECIMALS = 10_000;
 // A walkway's outline is traced on a five-centimetre grid and kept within two centimetres of it, so pieces laid along

@@ -1,7 +1,7 @@
 import door from "#src/data/login/door.json";
 import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoorGeometry";
 import { FrontSide, Mesh, MeshBasicMaterial, Raycaster, Vector3 } from "three";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe(createLoginDoorGeometry, () => {
   // Only faces turned toward a ray are hit, so a face wound the wrong way round reads as a hole
@@ -17,16 +17,19 @@ describe(createLoginDoorGeometry, () => {
 
     const { frame, panel } = createLoginDoorGeometry();
     const frameMesh = new Mesh(frame, material);
+    const jamb = castFront(frameMesh, jambX);
+    assert.exists(jamb);
 
     expect(castFront(frameMesh, 0)).toBeUndefined();
-    expect(castFront(new Mesh(panel, material), 0)).toBeLessThan(castFront(frameMesh, jambX) ?? 0);
+    expect(castFront(new Mesh(panel, material), 0)).toBeLessThan(jamb);
   });
 
   test("turns every face outward, its back the front mirrored", () => {
     expect.hasAssertions();
 
     const mesh = new Mesh(createLoginDoorGeometry().frame, material);
-    const front = castFront(mesh, jambX) ?? 0;
+    const front = castFront(mesh, jambX);
+    assert.exists(front);
     const back = new Raycaster(new Vector3(jambX, height / 2, -10), new Vector3(0, 0, 1)).intersectObject(mesh)[0]
       ?.point.z;
 

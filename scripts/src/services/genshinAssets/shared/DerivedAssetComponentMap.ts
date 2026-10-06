@@ -64,6 +64,10 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
           rotation: "EGALADGLFJM",
         },
       ],
+      regionLandmarks: [
+        { id: "windrise-great-oak", pathId: "6733514611168788700" },
+        { id: "windrise-statue-of-the-seven", pathId: "1660930449232041872" },
+      ],
       streams: [
         {
           blob: { block: "00/03254716.blk", name: "6977197b" },

@@ -64,8 +64,11 @@ export const parseStreamingPlacements = (blob: Buffer, offsets: readonly number[
     if ([x, y, z].some((component) => Number.isNaN(component))) return undefined;
     return [x, y, z];
   };
-  // The blob's first chunk starts it, whether or not its index names it
-  const starts = [...new Set([0, ...offsets])];
+  // The blob's first chunk starts it, whether or not its index names it; each chunk ends where the next start does, so
+  // The starts are put in order and one at or past the blob's end is dropped
+  const starts = [...new Set([0, ...offsets])]
+    .filter((start) => BLOB_LENGTH_BYTES + start < blob.length)
+    .toSorted((firstStart, secondStart) => firstStart - secondStart);
   for (const [index, start] of starts.entries()) {
     cursor = BLOB_LENGTH_BYTES + start;
     end = BLOB_LENGTH_BYTES + (starts[index + 1] ?? blob.length - BLOB_LENGTH_BYTES);

@@ -113,10 +113,16 @@ export const reference: ComponentReference = {
       search:
         "The asset index for MonoBehaviours naming the tile, then each one's raw bytes scanned at every offset for three floats inside the tile's x and z and a height of the region's",
     },
+    {
+      found:
+        "The statue stands 44 metres east of the oak's foot and 7 below it, turned a quarter about the vertical; its meshes hang at its root unmoved, and the root stands 0.8 metres over the tile's ground while the oak's is 0.95 under it. The recordings show the statue on a stepped stone dais: a prefab of the tile's under it, world id 2751255372 with a nine-metre streaming radius, carrying no path hash here, in tiles 1,-1 and 2,-2 under the other statues, or in either HLOD near it",
+      search:
+        "The statue's point and the oak's placement against the tile's heightfield, the statue's prefab in the witness layout, every placement within twelve metres named through the 2.6 index, then tiles 1,-1 and 2,-2 exported for the other Mondstadt statues' placements and the dais's id, and the tile's and area's HLOD meshes searched round the statue",
+    },
   ],
   open: [
-    "The prefabs of the placements carrying only the world's 32-bit id, the trees round the statue among them, and the paths newer than the 2.6 index",
-    "Our statue and oak where the witness stands them: the statue's place, its turn and which of its levels the recordings show",
+    "The prefabs of the placements carrying only the world's 32-bit id, the trees round the statue among them, the dais under the statue, and the paths newer than the 2.6 index",
+    "Our statue's and oak's heights and shapes: the kits stand by their own height over the ground until the statue, its dais and the oak are derived, and which of the statue's levels the recordings show",
     "The ponds above the valley's water: the tile's WaterPlane prefabs, whose root stands at its 512-metre cell's centre and 200 metres up by every pond's bed and shore, a place inferred rather than read",
     "Each recording's camera, solved with landmarks named on the witness, and then the parity references at the hours each recording shows",
     "Mondstadt's sky by hour, from its Enviro profile's raw bytes as the login's was read",
@@ -231,17 +237,17 @@ export const reference: ComponentReference = {
       name: "012854bd, StreamGen/BigWorld_1_-2",
       role: "Every object the tile lays out, the ruins, rocks and grass round the statue among them, its chunk offsets in BigWorld_1_-2_Index in the same block",
     },
-    water: {
-      block: "00/05825684.blk, 012854bd",
-      kind: GameSourceKind.BinaryData,
-      name: "Area_Md_Water_Common_01_Vo, placed by the tile's StreamGen blob",
-      role: "The valley's water surface, a kilometre across, whose height water.json's level is",
-    },
     valleyTimelapse: {
       block: "yt-w-63Sw6IP2w.mp4",
       kind: GameSourceKind.Capture,
       name: "Windswept Wilderness (Windrise) Timelapse Ambience, a 2022 recording",
       role: "The valley from the south through a whole day, a game minute a second, on an older build",
+    },
+    water: {
+      block: "00/05825684.blk, 012854bd",
+      kind: GameSourceKind.BinaryData,
+      name: "Area_Md_Water_Common_01_Vo, placed by the tile's StreamGen blob",
+      role: "The valley's water surface, a kilometre across, whose height water.json's level is",
     },
   },
 };

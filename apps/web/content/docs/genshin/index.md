@@ -42,6 +42,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Title splash](/docs/genshin/title-splash)           | the game's title logo as each language's client draws it                                      |
 | [Login screen](/docs/genshin/login-screen)           | the opening's login: its stages, its flight, its scene and its door                           |
 | [Music](/docs/genshin/music)                         | the game's music re-derived from its sound banks and played by the engine's synthesizer       |
+| [Sound effects](/docs/genshin/sound-effects)         | the game's sounds beside its music, found by a recording and played as our own noise          |
 | [Game data formats](/docs/genshin/game-data-formats) | how each kind of the game's data reads, and the shortcuts to reach for first                  |
 | [Game text](/docs/genshin/game-text)                 | `genshin-text`: every language the game ships, and its strings by the game's own text id      |
 
