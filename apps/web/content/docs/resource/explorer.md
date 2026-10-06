@@ -14,7 +14,7 @@ The single Azure-portal-like UI for every resource: one list, one resource page 
 | All resources list              | `/resource-explorer/all`                                                                             |
 | Create a resource (marketplace) | `/resource-explorer/create` gallery → `/resource-explorer/create/[type]`                             |
 | Resource menu (left nav)        | blade tabs under the title on `/resource-explorer/[id]/[[blade]]`                                    |
-| Overview + Essentials           | Overview blade with Essentials panel                                                                 |
+| Overview + Essentials           | Overview blade with Essentials and Related resources panels                                          |
 | Toolbar commands                | Publish or Share as the one shown action; the rest in the page's overflow menu                       |
 | Breadcrumbs                     | the click path only, current page as the title ([breadcrumb trail](/docs/resource/breadcrumb-trail)) |
 
@@ -53,7 +53,7 @@ flowchart LR
   ALL -->|row click| RES
 
   subgraph bladepage [Resource page]
-    MENU["Blade tabs"] --> OV["Overview<br/>Essentials"]
+    MENU["Blade tabs"] --> OV["Overview<br/>Essentials · Related resources"]
     MENU --> TB["Type blades<br/>one row per type, below"]
   end
 

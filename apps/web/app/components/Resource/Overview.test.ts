@@ -9,6 +9,9 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
 describe("resourceOverview", () => {
+  // The related resources read the link index on mount, and nothing here is about them
+  const global = { stubs: { ResourceRelatedResources: true } };
+
   // The blade mounts only over a resource already read, so a Refresh re-reads with its essentials in hand — a
   // Skeleton over them hides what the reader was just looking at for the length of a round trip
   test("keeps the essentials on screen while the resource is re-read", async () => {
@@ -17,7 +20,7 @@ describe("resourceOverview", () => {
     const resourceStore = useResourceStore();
     const { isPending } = storeToRefs(resourceStore);
     isPending.value = true;
-    const wrapper = await mountSuspended(ResourceOverview, { props: { resource: createResourceListItem() } });
+    const wrapper = await mountSuspended(ResourceOverview, { global, props: { resource: createResourceListItem() } });
 
     expect(wrapper.findComponent(UiSkeleton).exists()).toBe(false);
   });
@@ -33,6 +36,7 @@ describe("resourceOverview", () => {
     const { maxAgeMs } = SnapshotChannelDefinitionMap[SnapshotChannel.Revisions];
     const revisionTakenAt = new Date(Date.now() - maxAgeMs + direction * maxAgeMs * 0.5);
     const wrapper = await mountSuspended(ResourceOverview, {
+      global,
       props: { resource: createResourceListItem({ revisionTakenAt, revisionVersion: 1 }) },
     });
 

@@ -1,10 +1,11 @@
 import type { DoorRelief } from "#src/models/genshinAssets/fit/DoorRelief";
 import type { LoginDoor } from "#src/models/genshinAssets/fit/LoginDoor";
+import type { ReliefLayer } from "#src/models/genshinAssets/fit/ReliefLayer";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { Vector } from "#src/models/shared/Vector";
 
 import { blurWithinTags } from "#src/services/genshinAssets/fit/blurWithinTags";
-import { fitSilhouette } from "#src/services/genshinAssets/fit/fitSilhouette";
+import { fitReliefLayers } from "#src/services/genshinAssets/fit/fitReliefLayers";
 import { rasterizeTopFaces } from "#src/services/genshinAssets/fit/rasterizeTopFaces";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { toTexel } from "#src/services/genshinAssets/fit/toTexel";
@@ -24,24 +25,30 @@ import sharp from "sharp";
 const DOOR_MESH = "LoginScene_Door01_Vo";
 const FRAME_GROUP = `${DOOR_MESH}_0`;
 const PANEL_GROUP = `${DOOR_MESH}_1`;
-// A part's face is traced on a two-centimetre grid and kept within a cell of it, so its diagonals run straight
-const DOOR_CELL_SIZE = 0.02;
-const DOOR_OUTLINE_TOLERANCE = 0.02;
 // The texture the door's mesh paints both its parts with
 const DOOR_TEXTURE = "LoginScene_Door01_Diffuse.png";
-// The door's front read on a half-centimetre grid, its panel's stone over the cell either side past its speckle, and a
-// Relief loop smaller than a few square centimetres dropped as a speck of its paint
-const RELIEF_CELL_SIZE = 0.005;
+// The door's front read on a half-centimetre grid and kept to the millimetre, its relief standing a few millimetres to
+// A few centimetres out: a loop smaller than a few square centimetres dropped as a speck, each kept within a cell
+const DOOR_CELL_SIZE = 0.005;
+const DOOR_DECIMALS = 3;
+const DOOR_MIN_CELLS = 20;
+const DOOR_TOLERANCE_CELLS = 1;
+// Its panel's stone blurred over the cell either side past its speckle
 const RELIEF_BLUR_CELLS = 1;
-const RELIEF_MIN_CELLS = 20;
-const RELIEF_TOLERANCE_CELLS = 1;
-// The door where the scene stands it, its size there, and its frame and panel each as its face seen from the front in
-// Three's axes, every loop round it (an outer ring counterclockwise, a hole clockwise) from the foot of its middle,
-// With the depths its front and back stand at: the frame's head and shoulders as the game's own, where a round head of
-// Shares read off the capture stood in for them before. Its front's relief is read off its texture through its own
-// Coordinates, the front drawn as the camera sees it (`rasterizeTopFaces`): the panel's raised bands, its stone's
-// Lighter tone past its speckle, and the gilding of its feet, each as its loops and its colour over the stone round it,
-// Inside the relief's corner and size
+// A face turned at least this far toward the front is one of the depths the door's front stands at, kept where its
+// Faces at that depth cover at least so many square metres, a few square centimetres
+const DOOR_FLAT_FACING = 0.98;
+const DOOR_MIN_DEPTH_AREA = 0.0004;
+// Two depths within a millimetre are one
+const DOOR_MIN_DEPTH_STEP = 0.001;
+// The door where the scene stands it, its size there, and its frame and panel each as the layers its front stands out
+// In from its middle, deepest first: every loop round what stands at least each depth out seen from the front in
+// Three's axes from the foot of its middle (an outer ring counterclockwise, a hole clockwise), each sloping down to the
+// Loop below it where its faces slope (the chamfer round the frame's opening, the bevels of the panel's bands) and
+// Straight elsewhere, the back the front mirrored as the game's mesh is. Its front's relief is read off its texture
+// Through its own coordinates, the front drawn as the camera sees it (`rasterizeTopFaces`): the panel's raised bands,
+// Its stone's lighter tone past its speckle, and the gilding of its feet, each as its loops and its colour over the
+// Stone round it, inside the relief's corner and size
 export const fitLoginDoor = async (
   placements: readonly AssetPlacement[],
   meshDirectory: string,
@@ -58,26 +65,32 @@ export const fitLoginDoor = async (
   const extent = (axis: 0 | 1 | 2): number =>
     Math.max(...scaled.map((vertex) => vertex[axis])) - Math.min(...scaled.map((vertex) => vertex[axis]));
   const foot = Math.min(...scaled.map(([, y]) => y));
-  const toFront = (index: number): [number, number] => {
-    const [x = 0, y = 0] = scaled[index] ?? [];
-    return [x, y - foot];
+  const corner: [number, number] = [Math.min(...scaled.map(([vertexX]) => vertexX)), 0];
+  const width = Math.ceil(extent(0) / DOOR_CELL_SIZE);
+  const height = Math.ceil(extent(1) / DOOR_CELL_SIZE);
+  const grid = {
+    cellSize: DOOR_CELL_SIZE,
+    corner,
+    decimals: DOOR_DECIMALS,
+    minCells: DOOR_MIN_CELLS,
+    tolerance: DOOR_TOLERANCE_CELLS,
+    width,
   };
+  // Each face from the front, how far out it stands as its height, so the nearest is the one kept: the frame's cells
+  // Tagged 0 and the panel's 1
+  const front = rasterizeTopFaces(
+    faces.map((face, index) => ({
+      corners: face.map((vertex) => {
+        const [vertexX = 0, vertexY = 0, vertexZ = 0] = scaled[vertex] ?? [];
+        return [vertexX, vertexZ, vertexY - foot] as const;
+      }),
+      tag: faceGroups[index] === PANEL_GROUP ? 1 : 0,
+      values: (faceUvs[index] ?? []).map((uv) => uvs[uv] ?? [0, 0]),
+    })),
+    { cellSize: DOOR_CELL_SIZE, corner, height, width },
+  );
   const fitRelief = async (): Promise<DoorRelief> => {
-    const corner: [number, number] = [Math.min(...scaled.map(([vertexX]) => vertexX)), 0];
-    const width = Math.ceil(extent(0) / RELIEF_CELL_SIZE);
-    const height = Math.ceil(extent(1) / RELIEF_CELL_SIZE);
-    // Each face from the front, its depth toward the camera standing as its height, so the nearest is the one kept
-    const { tags, values } = rasterizeTopFaces(
-      faces.map((face, index) => ({
-        corners: face.map((vertex) => {
-          const [vertexX = 0, vertexY = 0, vertexZ = 0] = scaled[vertex] ?? [];
-          return [vertexX, vertexZ, vertexY - foot] as const;
-        }),
-        tag: faceGroups[index] === PANEL_GROUP ? 1 : 0,
-        values: (faceUvs[index] ?? []).map((uv) => uvs[uv] ?? [0, 0]),
-      })),
-      { cellSize: RELIEF_CELL_SIZE, corner, height, width },
-    );
+    const { tags, values } = front;
     const { data, info } = await sharp(join(textureDirectory, DOOR_TEXTURE))
       .removeAlpha()
       .raw()
@@ -98,14 +111,6 @@ export const fitLoginDoor = async (
       const [mean, aroundMean] = [computeMean(cells), computeMean(around)];
       return ([0, 1, 2] as const).map((channel) => roundFitted(mean[channel] / (aroundMean[channel] || 1))) as Vector;
     };
-    const traceCells = (cells: readonly number[]): [number, number][][] =>
-      traceCellLoops(cells, {
-        cellSize: RELIEF_CELL_SIZE,
-        corner,
-        minCells: RELIEF_MIN_CELLS,
-        tolerance: RELIEF_TOLERANCE_CELLS,
-        width,
-      });
     const checkIsGilded = (cell: number): boolean => {
       const [red = 0, , blue = 0] = colors[cell] ?? [];
       return red > blue * GILDING_RED_BLUE_RATIO;
@@ -120,38 +125,62 @@ export const fitLoginDoor = async (
     const gildedSet = new Set(gilded);
     return {
       bands: {
-        loops: traceCells(bands),
+        loops: traceCellLoops(bands, grid),
         shade: computeShade(
           bands,
           panel.filter((cell) => !bandSet.has(cell)),
         ),
       },
-      corner: [roundFitted(corner[0]), corner[1]],
+      corner: [roundFitted(corner[0], DOOR_DECIMALS), corner[1]],
       gilding: {
-        loops: traceCells(gilded),
+        loops: traceCellLoops(gilded, grid),
         shade: computeShade(
           gilded,
           drawn.filter((cell) => tags[cell] === 0 && !gildedSet.has(cell)),
         ),
       },
-      size: [roundFitted(width * RELIEF_CELL_SIZE), roundFitted(height * RELIEF_CELL_SIZE)],
+      size: [roundFitted(width * DOOR_CELL_SIZE, DOOR_DECIMALS), roundFitted(height * DOOR_CELL_SIZE, DOOR_DECIMALS)],
     };
   };
-  const fitPart = (group: string): { depth: [number, number]; loops: [number, number][][] } => {
-    const partFaces = faces.filter((_value, index) => faceGroups[index] === group);
-    const depths = partFaces.flatMap((face) => face.map((index) => scaled[index]?.[2] ?? 0));
-    const triangles = partFaces.map(([a, b, c]) => [toFront(a), toFront(b), toFront(c)] as const);
-    return {
-      depth: [roundFitted(Math.min(...depths)), roundFitted(Math.max(...depths))],
-      loops: fitSilhouette(triangles, { cellSize: DOOR_CELL_SIZE, tolerance: DOOR_OUTLINE_TOLERANCE }).map((loop) =>
-        loop.map(([x, y]): [number, number] => [roundFitted(x), roundFitted(y)]),
+  // A part's depths: those its faces turned to the front stand at over a few square centimetres, and the least its
+  // Front stands anywhere, which its slab's sides rise from
+  const fitLayers = (group: string, tag: number): ReliefLayer[] => {
+    const heights = front.heights.map((value, cell) => (front.tags[cell] === tag ? value : -Infinity));
+    const depthAreaMap = new Map<number, number>();
+    for (const [index, face] of faces.entries()) {
+      if (faceGroups[index] !== group) continue;
+      const [a, b, c] = face.map((vertex) => scaled[vertex]);
+      if (!a || !b || !c) continue;
+      const [ux, uy, uz] = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
+      const [vx, vy, vz] = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
+      const normal = [uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx];
+      const doubleArea = Math.hypot(...normal);
+      const depth = roundFitted((a[2] + b[2] + c[2]) / 3, DOOR_DECIMALS);
+      if (depth <= 0 || Math.abs(normal[2] ?? 0) < DOOR_FLAT_FACING * doubleArea) continue;
+      depthAreaMap.set(depth, (depthAreaMap.get(depth) ?? 0) + doubleArea / 2);
+    }
+    const least = roundFitted(
+      heights.reduce(
+        (leastHeight, value) => (Number.isFinite(value) ? Math.min(leastHeight, value) : leastHeight),
+        Infinity,
       ),
-    };
+      DOOR_DECIMALS,
+    );
+    const depths = [...depthAreaMap]
+      .filter(([, area]) => area >= DOOR_MIN_DEPTH_AREA)
+      .map(([depth]) => depth)
+      .toSorted((firstDepth, secondDepth) => firstDepth - secondDepth)
+      .reduce(
+        // oxlint-disable-next-line no-accumulating-spread -- a part keeps about a dozen depths, so the copies cost nothing
+        (kept, depth) => (depth - (kept.at(-1) ?? -Infinity) < DOOR_MIN_DEPTH_STEP ? kept : [...kept, depth]),
+        [least],
+      );
+    return fitReliefLayers(heights, depths, grid);
   };
   const [x = 0, y = 0, z = 0] = toRightHanded(placement.position).map((value) => roundFitted(value));
   return {
-    frame: fitPart(FRAME_GROUP),
-    panel: fitPart(PANEL_GROUP),
+    frame: fitLayers(FRAME_GROUP, 0),
+    panel: fitLayers(PANEL_GROUP, 1),
     position: [x, y, z],
     relief: await fitRelief(),
     size: [roundFitted(extent(0)), roundFitted(extent(1)), roundFitted(extent(2))],

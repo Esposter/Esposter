@@ -22,4 +22,23 @@ describe(useDataset, () => {
 
     expect(error.value).toBe(getMissingResourceMessage("source"));
   });
+
+  // The dataset on screen is the reference's, so a missing source never sits over the previous source's columns
+  test("drops the previous source's dataset when the next one cannot be read", async () => {
+    expect.hasAssertions();
+
+    const missingReference = { id: crypto.randomUUID(), type: DatasetProviderType.Sheet };
+    trpcMsw.dataset.readDataset.query(({ input }) => {
+      if (input.id === missingReference.id) throw new TRPCError({ code: "NOT_FOUND", message: " " });
+      return { columns: [], rows: [] };
+    });
+    const currentReference = ref(reference);
+    const { dataset, refresh } = useDataset(currentReference);
+    await refresh();
+    currentReference.value = missingReference;
+    await nextTick();
+    await refresh();
+
+    expect(dataset.value).toBeUndefined();
+  });
 });

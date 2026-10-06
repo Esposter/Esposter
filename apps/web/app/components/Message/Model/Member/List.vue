@@ -61,11 +61,19 @@ const getTopRoleColor = (userId: string) => {
   const room = currentRoom.value;
   return room ? getTopRole(getMemberRoles(room.id, userId))?.color || undefined : undefined;
 };
-// One profile for the whole list, hung off the row that opened it
-const isProfileOpen = ref(false);
+// One profile for the whole list, hung off the row that opened it, and open only while its member is listed: one who
+// Leaves takes the row it hung off with them
+const profileMemberId = ref("");
+const profileMember = computed(() => memberMap.value.get(profileMemberId.value));
+const isProfileOpen = computed({
+  get: () => profileMember.value !== undefined,
+  set: (newIsProfileOpen) => {
+    if (!newIsProfileOpen) profileMemberId.value = "";
+  },
+});
 const profileAnchor = ref<HTMLElement>();
-// The member whose profile is open or whose actions were last asked for: a dialog an action opens outlives the
-// Profile's popover
+// The member whose actions were last asked for, from a right-click or their profile: a dialog an action opens outlives
+// The profile's popover
 const memberId = ref("");
 const member = computed(() => memberMap.value.get(memberId.value));
 const getMemberDisplayName = (user?: typeof member.value) =>
@@ -87,7 +95,7 @@ const openProfile = (userId: string) => {
   if (!(row instanceof HTMLElement)) return;
   memberId.value = userId;
   profileAnchor.value = row;
-  isProfileOpen.value = true;
+  profileMemberId.value = userId;
 };
 const { getContextMenuProps } = useContextMenu();
 // Everything the profile offers, and the profile itself, which the row opens on a click as well
@@ -145,10 +153,10 @@ const getContextMenuItems = (userId: string): Item[] => {
       <UiPopover
         v-model:is-open="isProfileOpen"
         :anchor="profileAnchor"
-        :label="getMemberDisplayName(member)"
+        :label="getMemberDisplayName(profileMember)"
         :position-area="MEMBER_PROFILE_POSITION_AREA"
       >
-        <MessageModelUserProfileCard v-if="isProfileOpen && member" :user="member" @open:dialog="openDialog($event)" />
+        <MessageModelUserProfileCard v-if="profileMember" :user="profileMember" @open:dialog="openDialog($event)" />
       </UiPopover>
       <MessageModelMemberActionDialog
         v-if="openedDialogType && dialogMember"

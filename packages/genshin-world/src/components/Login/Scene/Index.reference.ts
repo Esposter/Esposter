@@ -569,6 +569,17 @@ export const reference: ComponentReference = {
       search:
         "The door's and the walkway's saved layer patches applied in turn under the shipped light, the walkway refitted by genshin:assets fit login --only walkway, and compare on every frame each shows",
     },
+    {
+      found:
+        "The game's own door drawn through our light scores worse than our flat door on both door frames (rank's Door: stand-in at -0.0045 on the door recording and -0.0022 on the phone's door frame), so the frames' FLIP cannot judge the door's shape while its light is off. By rank's second table the layers bring the door near its exports: similarity 0.30 to 0.67 and its gap 0.3718 to 0.3105 on the door recording, 0.55 to 0.72 and 0.2854 to 0.2590 on the phone's door frame. Shipped on that measure",
+      search: "rank login-door-recording and login-door --witness login with and without the door's layer patch",
+    },
+    {
+      found:
+        "The towers' traced recesses drawn as relief, each recess's depth blurred into a bevel and its slopes bending the stone's normal round the tower and up it, move the towers away from their exports at every strength on the day title: similarity 0.8192 with none, 0.8161 at a bevel of 2 units, 0.8178 at 6 and 0.8189 at 12, the sign flipped 0.8152; every frame scores between one and fifteen ten-thousandths worse. Drawn side by side from one view (compare --witness), the exports' carving is geometry: their flutes are facets the light and the haze shade one by one, their windows and arches deep recesses, and an open tower's colonnade stands open where our lathe, following the outer radius, stands it solid. The carving waits on geometry carved from the exports, not on a relief over the lathe",
+      search:
+        "A relief canvas over the towers' facade atlas with a tangent round each tower's axis, rank login-day-title --witness login at bevels of 2, 6 and 12 units and the sign flipped, compare on every login frame, and compare login-day-title --witness login read beside its stand-in",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",

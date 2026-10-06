@@ -45,3 +45,6 @@ export const RESOURCE_ASSET_URL_REGEX = new RegExp(
 );
 // A fresh Note is an empty document with a single paragraph — the shape Tiptap starts an editor with
 export const EMPTY_NOTE_DOC: JSONContent = { content: [{ type: "paragraph" }], type: "doc" };
+// The most ids one consumer read takes. A query's input rides its URL, and a few hundred ids would pass the server's
+// Header limit, so a larger selection is read a chunk at a time
+export const READ_RESOURCE_CONSUMERS_IDS_MAX_LENGTH = 100;

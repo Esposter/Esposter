@@ -131,6 +131,7 @@ const { data: viewCount } = useQuery(() => {
       </div>
     </UiFrame>
     <slot name="summary" />
+    <ResourceRelatedResources :id="resource.id" />
     <ResourceTagsEditorDialog
       v-if="isTagsEditorOpen"
       v-model="isTagsEditorOpen"

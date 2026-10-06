@@ -8,7 +8,7 @@ const writeFloats = (...values: number[]): Buffer => {
 };
 
 describe(parseStreamingPlacements, () => {
-  test("reads a record's fields by its mask, vectors by theirs, and skips what places nothing", () => {
+  test("reads the first chunk the index leaves out, a record's fields by its mask, and skips what places nothing", () => {
     expect.hasAssertions();
 
     // Every field: flags, a path hash past one byte, a prefab id, a radius, a full position, a rotation about y alone,
@@ -29,8 +29,18 @@ describe(parseStreamingPlacements, () => {
     const other = Buffer.from([0x07, 0x00, 0x01, 0x04, 0x01]);
     const blob = Buffer.concat([Buffer.alloc(4), chunk, other]);
 
-    expect(parseStreamingPlacements(blob, [0, chunk.length])).toStrictEqual([
+    expect(parseStreamingPlacements(blob, [chunk.length])).toStrictEqual([
       { pathHash: "128", position: [1, 2, 3], prefabId: 2, radius: 1, rotation: [0, 90, 0], scale: [1, 1, 1] },
     ]);
+  });
+
+  test("ends a chunk at a record whose floats run past it", () => {
+    expect.hasAssertions();
+
+    // A record of a full position whose last float the blob cuts short
+    const chunk = Buffer.concat([Buffer.from([0x02, 0x01, 0x10, 0x07]), writeFloats(1, 2), Buffer.from([0x00])]);
+    const blob = Buffer.concat([Buffer.alloc(4), chunk]);
+
+    expect(parseStreamingPlacements(blob, [0])).toStrictEqual([]);
   });
 });

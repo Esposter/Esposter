@@ -12,3 +12,4 @@ Read when client code calls a procedure — a read, a write, an optional or requ
   ```
 
 - **Guard required UUID fields with an early return** — `if (!currentBarId.value) return;` before the call, rather than letting an empty string reach the UUID validator.
+- **A query whose input is a list the reader sizes is read in chunks, each its own request.** A query is a GET whose input rides its URL, and the batch link sets no URL limit, so a selection of a few hundred ids passes the server's header limit and the read fails. The procedure caps its list at a constant sized for the URL, and the caller awaits each chunk in turn — calls issued in one tick would join one batch and one URL again (`ResourceConsumersWarning`, `READ_RESOURCE_CONSUMERS_IDS_MAX_LENGTH`). A write is a POST and carries its list in the body.

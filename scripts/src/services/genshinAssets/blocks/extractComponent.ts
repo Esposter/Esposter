@@ -25,6 +25,8 @@ import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSou
 import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
 import { toMaterialValues } from "#src/services/genshinAssets/shared/toMaterialValues";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
+import { extractWorld } from "#src/services/genshinAssets/world/extractWorld";
+import { getWorldRoots } from "#src/services/genshinAssets/world/getWorldRoots";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, rm } from "node:fs/promises";
@@ -84,11 +86,12 @@ const exportResolvedAssets = async (
 // Per file, then every object its roots reach down their children, the meshes and materials those draw and the textures
 // Each material samples, each pointer resolved through its own file's external references and exported from the block
 // Holding it by its exact name. Its meshes are OBJ, its textures PNG and its materials JSON, grouped by type. Assets no
-// Pointer reaches are exported by the component's name pattern. What was reached is returned as counts, with every
-// Pointer that could not be resolved
+// Pointer reaches are exported by the component's name pattern, and a part of the open world's streams and terrain
+// Beside them. What was reached is returned as counts, with every pointer that could not be resolved
 export const extractComponent = async (component: DerivedAssetComponent): Promise<string> => {
-  const { namePattern, roots: componentRoots, spawns = [] } = DerivedAssetComponentMap[component];
-  const roots = [...componentRoots, ...spawns.map(({ prefab }) => prefab)];
+  const options = DerivedAssetComponentMap[component];
+  const { namePattern, roots: componentRoots, spawns = [] } = options;
+  const roots = [...componentRoots, ...spawns.map(({ prefab }) => prefab), ...getWorldRoots(options)];
   const directory = getComponentDirectory(component);
   const cabMap = parseCabMap(await readFile(CAB_MAP_PATH));
   await Promise.all([directory.assets, directory.layout].map((path) => rm(path, { force: true, recursive: true })));
@@ -137,9 +140,11 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
         ...EXPORTED_ASSET_TYPES,
         ...GROUP_BY_TYPE,
       ]);
+  const world = await extractWorld(component);
   const unresolved = [...closure.unresolved, ...drawn.unresolved, ...sharedNames, ...sampled.unresolved];
   return [
     `${closure.objects.length} objects reached from ${roots.length} roots, ${drawn.assets.length} meshes and materials, ${sampled.assets.length} textures`,
+    ...world,
     ...(unresolved.length > 0 ? [`${unresolved.length} unresolved:`, ...unresolved.map((line) => `  ${line}`)] : []),
   ].join("\n");
 };

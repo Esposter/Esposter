@@ -97,15 +97,28 @@ export const reference: ComponentReference = {
     },
     {
       found:
+        "Tiles 1,-2, 2,-2 and 1,-1 are in 00/00945879.blk and 2,-1 in 00/13138169.blk. A tile's samples run along z within each column of x, stand on the world's zero, and match the tile's ground placements to a tenth of a metre at the median",
+      search:
+        "Every TerrainData of every block exported raw and named by the string its bytes lead with, then the tile's heights compared with every small placement's height in both orders",
+    },
+    {
+      found:
+        "The valley's water is one surface the tile places, Area_Md_Water_Common_01_Vo, a kilometre across at the height the south pond's own plane stands at. The tile's WaterPlane prefabs hold three ponds as children of a root no stream was found placing",
+      search:
+        "The tile's placements named by their path hash for water, then the WaterPlane prefabs' GameObjects and Transforms in their blocks, each pond's height tested against its bed and shore in the heightfield",
+    },
+    {
+      found:
         "BigWorld_1_-2, a SectorBinData script, holds about fourteen hundred positions packed twelve bytes apart, every one inside the tile, those round the statue within two metres of its height: points on the ground about one every 27 metres, exact data a fitted ground can be held to. BigWorld_1_-2_Index, its sibling, holds no position in the tile's range",
       search:
         "The asset index for MonoBehaviours naming the tile, then each one's raw bytes scanned at every offset for three floats inside the tile's x and z and a height of the region's",
     },
   ],
   open: [
-    "Which block holds tile 1,-2's and tile 2,-2's TerrainData",
     "The prefabs of the placements carrying only the world's 32-bit id, the trees round the statue among them, and the paths newer than the 2.6 index",
-    "Each recording's camera, solved once the witness draws the statue, the oak and the ground, and then the parity references at the hours each recording shows",
+    "Our statue and oak where the witness stands them: the statue's place, its turn and which of its levels the recordings show",
+    "The ponds above the valley's water: the tile's WaterPlane prefabs, whose root stands at its 512-metre cell's centre and 200 metres up by every pond's bed and shore, a place inferred rather than read",
+    "Each recording's camera, solved with landmarks named on the witness, and then the parity references at the hours each recording shows",
     "Mondstadt's sky by hour, from its Enviro profile's raw bytes as the login's was read",
   ],
   sources: {
@@ -114,6 +127,12 @@ export const reference: ComponentReference = {
       kind: GameSourceKind.DataTable,
       name: "The game's asset index of version 2.6",
       role: "Every asset's path by its PathHashPre and PathHashLast, which name a streamed blob and a placement's prefab",
+    },
+    groundHeights: {
+      block: "00/00945879.blk, tile 2,-1's in 00/13138169.blk",
+      kind: GameSourceKind.TerrainData,
+      name: "BigWorldTerrain_1_-2.bin, BigWorldTerrain_2_-2.bin, BigWorldTerrain_1_-1.bin, BigWorldTerrain_2_-1.bin",
+      role: "The valley's ground and the slopes north of it, which ground.json's hills are fitted to",
     },
     groundMaterial: {
       block: "00/02094476.blk",
@@ -211,6 +230,12 @@ export const reference: ComponentReference = {
       kind: GameSourceKind.BinaryData,
       name: "012854bd, StreamGen/BigWorld_1_-2",
       role: "Every object the tile lays out, the ruins, rocks and grass round the statue among them, its chunk offsets in BigWorld_1_-2_Index in the same block",
+    },
+    water: {
+      block: "00/05825684.blk, 012854bd",
+      kind: GameSourceKind.BinaryData,
+      name: "Area_Md_Water_Common_01_Vo, placed by the tile's StreamGen blob",
+      role: "The valley's water surface, a kilometre across, whose height water.json's level is",
     },
     valleyTimelapse: {
       block: "yt-w-63Sw6IP2w.mp4",

@@ -3,9 +3,10 @@ import type { PostPipelineOptions } from "#src/models/post/PostPipelineOptions";
 import type { Node } from "three/webgpu";
 
 import { AntialiasingMode } from "#src/models/renderer/AntialiasingMode";
-import { createHeightFogNode } from "#src/post/createHeightFogNode";
 import { STONE_MASK_OUTPUT } from "#src/nodes/constants";
+import { createHeightFogNode } from "#src/post/createHeightFogNode";
 import { createOcclusionNode } from "#src/post/createOcclusionNode";
+import { UnsignedByteType } from "three";
 import { bilateralBlur } from "three/examples/jsm/tsl/display/BilateralBlurNode.js";
 import { bloom } from "three/examples/jsm/tsl/display/BloomNode.js";
 import { depthAwareBlend } from "three/examples/jsm/tsl/display/depthAwareBlend.js";
@@ -13,7 +14,6 @@ import { godrays } from "three/examples/jsm/tsl/display/GodraysNode.js";
 import { lut3D } from "three/examples/jsm/tsl/display/Lut3DNode.js";
 import { smaa } from "three/examples/jsm/tsl/display/SMAANode.js";
 import { traa } from "three/examples/jsm/tsl/display/TRAANode.js";
-import { UnsignedByteType } from "three";
 import { float, modelViewMatrix, mrt, output, positionLocal, renderOutput, texture3D, vec4, velocity } from "three/tsl";
 import { RenderPipeline, ToonOutlinePassNode } from "three/webgpu";
 

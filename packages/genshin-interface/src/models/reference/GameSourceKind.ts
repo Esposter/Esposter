@@ -11,6 +11,7 @@ export enum GameSourceKind {
   MonoBehaviour = "MonoBehaviour",
   RectTransform = "RectTransform",
   Shader = "Shader",
+  TerrainData = "TerrainData",
   Texture = "Texture",
   Transform = "Transform",
 }

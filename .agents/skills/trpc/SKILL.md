@@ -38,7 +38,7 @@ One input schema file per procedure under `shared/models/db/<feature>/`, even fo
 
 ## Client-Side Calling Conventions
 
-Every user-facing read and write goes through `useQuery`/`useMutation`; never `.query({})` (`trpc-procedure/no-empty-input`); an empty optional id is omitted and an empty required one returns early (`references/client-calls.md`).
+Every user-facing read and write goes through `useQuery`/`useMutation`; never `.query({})` (`trpc-procedure/no-empty-input`); an empty optional id is omitted and an empty required one returns early; a reader-sized list in a query's input is read in chunks, since it rides the URL (`references/client-calls.md`).
 
 ## Router Structure
 

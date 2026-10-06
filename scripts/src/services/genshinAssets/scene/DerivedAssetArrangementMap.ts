@@ -61,4 +61,6 @@ export const DerivedAssetArrangementMap: Record<
       },
     },
   },
+  // Windrise's parts stand where the world's own data places them, so its ratios wait on a fitted family to hold
+  [DerivedAssetComponent.Windrise]: { families: [], ratios: {} },
 };

@@ -21,7 +21,10 @@ export const useDataset = (reference: MaybeRefOrGetter<DatasetReference | undefi
       },
       {
         key,
+        // The dataset is the reference's, so a read that failed for it leaves none: the one before would offer the
+        // Previous source's columns under a message saying this one cannot be read
         onError: (newError) => {
+          dataset.value = undefined;
           error.value = getDatasetErrorMessage(newError);
         },
         onSuccess: (newDataset) => {

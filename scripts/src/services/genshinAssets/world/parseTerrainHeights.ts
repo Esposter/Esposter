@@ -31,10 +31,11 @@ export const parseTerrainHeights = (bytes: Buffer): TerrainHeights | undefined =
     if (tailOffset + HEIGHT_SCALE_OFFSET + WORD > bytes.length) continue;
     if (bytes.readUInt32LE(tailOffset) !== resolution || bytes.readUInt32LE(tailOffset + WORD) !== resolution) continue;
     const heightScale = bytes.readFloatLE(tailOffset + HEIGHT_SCALE_OFFSET);
-    const heights = Float32Array.from(
-      { length: count },
-      (_, index) => (bytes.readInt16LE(heightsOffset + index * SAMPLE_BYTES) / MAX_SAMPLE) * heightScale,
-    );
+    // Stored a column of z at a time along x, read into rows along z
+    const heights = Float32Array.from({ length: count }, (_value, index) => {
+      const sampleIndex = (index % resolution) * resolution + Math.floor(index / resolution);
+      return (bytes.readInt16LE(heightsOffset + sampleIndex * SAMPLE_BYTES) / MAX_SAMPLE) * heightScale;
+    });
     return { heights, resolution, spacing: bytes.readFloatLE(tailOffset + SPACING_OFFSET) };
   }
   return undefined;

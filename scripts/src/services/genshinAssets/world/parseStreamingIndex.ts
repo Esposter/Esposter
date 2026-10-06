@@ -11,5 +11,5 @@ export const parseStreamingIndex = (bytes: Buffer): number[] => {
   const nameLength = bytes.readUInt32LE(NAME_LENGTH_OFFSET);
   const countOffset = NAME_LENGTH_OFFSET + WORD + Math.ceil(nameLength / WORD) * WORD;
   const count = bytes.readUInt32LE(countOffset);
-  return Array.from({ length: count }, (_, index) => bytes.readUInt32LE(countOffset + WORD + index * ENTRY_BYTES));
+  return Array.from({ length: count }, (_value, index) => bytes.readUInt32LE(countOffset + WORD + index * ENTRY_BYTES));
 };

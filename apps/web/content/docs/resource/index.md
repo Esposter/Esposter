@@ -42,6 +42,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Resource tags](/docs/resource/tags) — name:value pairs in Essentials, edited in place, filterable on `/all`
 - [Recycle bin](/docs/resource/recycle-bin) — soft delete with restore, permanent purge, and a 30-day timer sweep
 - [Delete-time reference warning](/docs/resource/delete-reference-warning) — a delete confirmation naming the other resources that use what is being deleted
+- [Resource references](/docs/resource/resource-references) — the Overview's Related resources card: what uses a resource and what it uses, each a link
 - [Activity log](/docs/resource/activity-log) — the per-resource audit trail blade, in Azure Table Storage
 - [Resource snapshots](/docs/resource/resource-snapshots) — published versions and revisions of the working copy in one version history panel, with preview, restore and undo
 - [Resource version store](/docs/resource/resource-version-store) — every retained version as a content-addressed keyframe or delta, so a run of edits costs a compressed copy plus the edits rather than a copy per version

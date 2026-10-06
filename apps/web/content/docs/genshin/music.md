@@ -76,7 +76,7 @@ The order, and the rules each step keeps, are the `genshin-parity` skill's `refe
   - Reading a note's level and decay from the frame its voice's attack lands on, rather than from its own loudest frame. The first piece's voices then barely decay: its bands jump several times less often than the game's and its pitch agreement falls by over a hundredth.
   - A decay per octave of overtones, each harmonic dying faster than the fundamental by its number to a fitted power, as additive synthesis gives a plucked string. The fit reads the second piece's top and bass overtones dying faster, as they do in the game's sound, yet playing them so moves neither score by more than a tenth of a decibel, for an oscillator an octave of overtones on every note.
 - **The passes the score orders.** The upper octaves' remaining distance has little bias, so it waits on what changes within a note. `genshin:parity decay` reads each band's gap by how long before it the last note began: in the second piece our bands from 1 kHz to 4 kHz ring several decibels over the game's half a second and more into a note, where one envelope holds every harmonic and an instrument's upper partials die first. A room's reverb would lengthen that ring, not shorten it. Instruments told apart within a register are taken when `listen` ranks them the largest loss.
-- **Sound effects.** The door's opening, the clicks and the wind are sounds rather than music, and each is a page of its own when its turn comes.
+- **Sound effects.** The door's opening, the clicks and the wind are sounds rather than music, and are the [roadmap](/docs/genshin/roadmap)'s own item.
 
 ## Key files
 

@@ -10,11 +10,12 @@ describe("uiPopover", () => {
     setupUiStyle(uiStyle);
 
     const label = "label";
+    const slots = { trigger: "trigger" };
 
     test("names its trigger and ties it to the panel it opens", () => {
       expect.hasAssertions();
 
-      const component = mount(UiPopover, { props: { label } });
+      const component = mount(UiPopover, { props: { label }, slots });
       const trigger = component.get("button");
       const panel = component.get('[role="dialog"]');
 
@@ -28,7 +29,7 @@ describe("uiPopover", () => {
     test("opens from its model, and closes on Escape with focus back on its trigger", async () => {
       expect.hasAssertions();
 
-      const component = mount(UiPopover, { attachTo: document.body, props: { label } });
+      const component = mount(UiPopover, { attachTo: document.body, props: { label }, slots });
       await component.setProps({ isOpen: true });
       await flushPromises();
       const trigger = component.get("button");
@@ -59,6 +60,14 @@ describe("uiPopover", () => {
       expect(component.find("button").exists()).toBe(false);
       expect(anchor.style.getPropertyValue("anchor-name")).not.toBe("");
       expect(document.activeElement).toBe(anchor);
+    });
+
+    test("draws no trigger of its own while the element it hangs off is not there yet", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiPopover, { props: { anchor: undefined, label } });
+
+      expect(component.find("button").exists()).toBe(false);
     });
   });
 });

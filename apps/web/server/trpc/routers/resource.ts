@@ -1,6 +1,8 @@
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
+import type { LinkedResource } from "#shared/models/resource/LinkedResource";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
+import type { ResourceReferences } from "#shared/models/resource/ResourceReferences";
 import type { ResourceTagCount } from "#shared/models/resource/ResourceTagCount";
 import type { ResourceTypeCount } from "#shared/models/resource/ResourceTypeCount";
 import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
@@ -23,7 +25,9 @@ import { getFavoriteJoin } from "#server/services/resource/getFavoriteJoin";
 import { getLastAccessedJoin } from "#server/services/resource/getLastAccessedJoin";
 import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
 import { getSearchSimilarity } from "#server/services/resource/getSearchSimilarity";
+import { readResourceConsumers } from "#server/services/resource/readResourceConsumers";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
+import { readResourceDependencies } from "#server/services/resource/readResourceDependencies";
 import { reapplyLiveResourceContent } from "#server/services/resource/reapplyLiveResourceContent";
 import { resourceListSelection } from "#server/services/resource/resourceListSelection";
 import { saveResourceContent } from "#server/services/resource/saveResourceContent";
@@ -216,24 +220,20 @@ export const resourceRouter = router({
         })) ?? null,
     }),
   ),
-  // The caller's live resources referencing any of these, for a delete to name what it leaves dangling: one indexed
-  // Lookup of the link index by target. One deleted alongside them is left no reference to miss, and another owner's
-  // Resource never resolves a reference to these, so neither is counted — nor would naming one be the caller's to read
+  // What a delete leaves dangling, named in its confirmation
   readResourceConsumers: standardAuthedProcedure
     .input(readResourceConsumersInputSchema)
-    .query<Pick<ResourceInResource, "id" | "name" | "type">[]>(({ ctx, input: { ids } }) =>
-      ctx.db.query.resourcesInResource.findMany({
-        columns: { id: true, name: true, type: true },
-        limit: MAX_READ_LIMIT,
-        orderBy: { name: "asc" },
-        where: {
-          deletedAt: { isNull: true },
-          id: { notIn: ids },
-          links: { targetId: { in: ids } },
-          userId: { eq: ctx.getSessionPayload.user.id },
-        },
-      }),
-    ),
+    .query<LinkedResource[]>(({ ctx, input: { ids } }) => readResourceConsumers(ctx, ids)),
+  // Both directions of the link index around one resource for its Overview, in one round trip
+  readResourceReferences: getOwnerProcedure(undefined, resourceIdInputSchema, "id").query<ResourceReferences>(
+    async ({ ctx }) => {
+      const [consumers, dependencyReferences] = await Promise.all([
+        readResourceConsumers(ctx, [ctx.resource.id]),
+        readResourceDependencies(ctx, ctx.resource.id),
+      ]);
+      return { consumers, ...dependencyReferences };
+    },
+  ),
   readResources: standardAuthedProcedure
     .input(readResourceListInputSchema.prefault({}))
     .query<OffsetPaginationData<ResourceListItem>>(async ({ ctx, input: { limit, offset, sortBy, ...filter } }) => {
