@@ -1,10 +1,13 @@
 import type { FacadeLayer } from "#src/models/genshinAssets/fit/FacadeLayer";
 import type { LatheProfile } from "#src/models/genshinAssets/fit/LatheProfile";
+import type { TowerSlab } from "#src/models/genshinAssets/fit/TowerSlab";
 import type { Vector } from "#src/models/shared/Vector";
 
 export interface TowerFacade {
   // The tone of each run of the tower's height, from its foot, as a share of the tower's own mean stone
   bands: { from: number; shade: Vector; to: number }[];
+  // What stands out from its wall, each built as a slab of its own over the lathe
+  columns: TowerSlab[];
   // Where the tower is open, so the sky shows through between its columns
   holes: [number, number][][];
   // The paint on its face darker and lighter than its band, what stands out from its wall, its recesses shallow and

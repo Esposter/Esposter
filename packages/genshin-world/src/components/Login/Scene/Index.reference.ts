@@ -592,6 +592,12 @@ export const reference: ComponentReference = {
       search:
         "The facade's cells read band by band at 1024 turns and their harmonics, then each section's ring of 64 shares on the lathe kit at 24 and 64 segments round, outward only, clamped and folded to one repeat, rank --witness login on the day and night titles and the door recording, and the door recording's near tower read beside its exports",
     },
+    {
+      found:
+        "What stands out from the walls built as columns of its own, each run of raised cells of forty or more split row by row into rectangles while a row spans the same columns within half a unit of depth, about 1,900 slabs over the six towers, brings every frame's towers nearer their exports: similarity 0.8192 to 0.8338 by day, 0.7210 to 0.7368 by night and 0.7399 to 0.7494 at dusk, their FLIP against the exports 0.1647 to 0.1590, 0.1837 to 0.1773 and 0.2241 to 0.2185. Against the recordings the frames move a thousandth or two either way (the dawn title 0.3805 to 0.3818, the day 0.4321 to 0.4328, the phone's door frame 0.4647 to 0.4662, the door recording 0.5140 to 0.5142, the night 0.3654 to 0.3641) while their edges' shape scores rise on four. A run's bounding box in place of its rectangles stood the second tower's whole body as one shell, its wall's median lying on its inner core",
+      search:
+        "findCellComponents and findCellRectangles over the facade's raised cells, createLoginTowerColumnGeometry merged into each tower's lathe, rank --witness login on the day and night titles and the door recording, compare on every login frame, and the door recording's near tower read beside its exports",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
