@@ -110,7 +110,7 @@ flowchart LR
    pull request shows your commits alone.
 2. Make your changes and ensure all checks pass:
    ```bash
-   pnpm lint:fix && pnpm typecheck && pnpm test <paths your change touched>
+   pnpm lint:fix && vp run typecheck && pnpm test <paths your change touched>
    ```
    Name the paths — a bare `pnpm test` runs every project in the workspace, which is CI's job and takes tens of
    minutes locally.

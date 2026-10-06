@@ -7,7 +7,7 @@ inputs:
 runs:
   using: composite
   steps:
-    # The root closure rides along for the toolchain — `typescript` above all, which no library redeclares and
+    # The root rides along for the toolchain — `typescript` above all, which no library redeclares and
     # the dependency build below generates declarations with
     - name: 📦 Install dependencies
       uses: ./.github/actions/install-projects
