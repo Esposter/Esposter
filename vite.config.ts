@@ -7,22 +7,25 @@ import { defineConfig } from "vite-plus";
 // Without that exclusion `vp` refuses to cache a task; the files stay outputs, so a hit restores them.
 const PNPM_TASK_STATE = "!**/node_modules/.pnpm-task-run-state-v1/**";
 
-const createTask = (script: string, rewrittenPatterns: string[]) => ({
-  cache: {
-    input: [{ auto: true }, PNPM_TASK_STATE, ...rewrittenPatterns.map((pattern) => `!${pattern}`)],
-    output: [{ auto: true }, PNPM_TASK_STATE],
-  },
+const createTask = (
+  script: string,
+  rewrittenPatterns: string[],
+  output: (string | { auto: true })[] = [{ auto: true }, PNPM_TASK_STATE],
+) => ({
+  cache: { input: [{ auto: true }, PNPM_TASK_STATE, ...rewrittenPatterns.map((pattern) => `!${pattern}`)], output },
   command: `pnpm ${script}`,
 });
 
 const configuration: UserConfig = defineConfig({
   run: {
     tasks: {
-      "cached:build": createTask("-C apps/web build", [
-        "apps/web/.data/**",
-        "apps/web/.nuxt/**",
-        "apps/web/node_modules/.cache/**",
-      ]),
+      // Nothing reads the app's `.output`, so a hit restores nothing: the replay itself is the verdict that this
+      // Exact tree already built green
+      "cached:build": createTask(
+        "-C apps/web build",
+        ["apps/web/.data/**", "apps/web/.nuxt/**", "apps/web/node_modules/.cache/**"],
+        [],
+      ),
       "cached:build:packages": createTask("build:packages", [
         "packages/*/auto-imports.d.ts",
         "packages/*/dist/**",

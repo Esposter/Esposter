@@ -68,15 +68,14 @@ jobs:
 
       # A fresh checkout has no `dist` and no barrel, and both the cycle and the drain resolve libraries through
       # them: `scripts` imports `@esposter/shared` by its published entry, and the drain's finishing checks — a
-      # typecheck in the touched package, its test suites — every library the package reads. Restored from the
-      # entry 🏗️ CI saves for this content, so a build here is the miss alone.
-      - name: ♻️ Restore package builds
-        id: restore
-        uses: ./.github/actions/restore-package-builds
-
+      # typecheck in the touched package, its test suites — every library the package reads. Replayed from the
+      # task cache 🏗️ CI saves when this content built there, so a build here is the miss alone, and saved by CI
+      # only.
       - name: 🏗️ Build packages
-        if: steps.restore.outputs.complete != 'true'
-        run: pnpm build:packages
+        uses: ./.github/actions/run-cached-task
+        with:
+          task: cached:build:packages
+          save: false
 
       - name: 🆔 Identify the collector
         # `fileMode` off: the install marks a package's `bin` executable, which reads as a dirty tree on Linux

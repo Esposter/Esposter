@@ -33,7 +33,7 @@ None is speculative and all are checkable before anything is changed.
 - **The sharded blob pipeline.** The suite runs as one root Vitest `projects` config so it shares one run, one coverage report and one `--shard` axis, and CI fans it across shards with `--reporter=blob` and recombines with `--merge-reports`. A wrapper that does not forward those flags cleanly does not merely run slower — it silently stops being one coverage report, and the aggregate gate that means "every shard passed" is exactly the check this repository has already had go green while a shard did not.
 - **The bundled Vitest.** `vp test` runs the Vitest that `vite-plus` bundles at an exact version, with its APIs imported from `vite-plus/test` ([test guide](https://viteplus.dev/guide/test)), and it pins the browser-mode provider as an exact peer. At 1.0 that copy trails the catalog's, so adopting it is a downgrade on every Vitest release until Vite+ ships its next one.
 
-Until all three are answered, the suite stays as [task runner](/docs/proposals/refactors/vite-plus/task-runner) leaves it — Vitest invoked directly, its wrapper the task. That is not a compromise; running a tool through a cached task runner is where the value is, and rewriting how the tool is imported buys nothing on top of it.
+Until all three are answered, the suite stays as [monorepo tooling](/docs/architecture/monorepo-tooling) leaves it — Vitest invoked directly, its wrapper the task. That is not a compromise; running a tool through a cached task runner is where the value is, and rewriting how the tool is imported buys nothing on top of it.
 
 ## `vp migrate` cannot be used here
 
