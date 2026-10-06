@@ -18,7 +18,8 @@ export const getLatestCompatibleTag = (current: string, tags: string[]): string 
     )
       continue;
 
-    const difference = versionTag.release.map((part, index) => part - (latest.release[index] ?? 0)).find(Boolean) ?? 0;
+    const latestRelease = latest.release;
+    const difference = versionTag.release.map((part, index) => part - (latestRelease[index] ?? 0)).find(Boolean) ?? 0;
     if (difference > 0) latest = { release: versionTag.release, tag };
   }
   return latest.tag;

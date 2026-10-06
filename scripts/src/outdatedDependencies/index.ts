@@ -20,16 +20,16 @@ import { printOutdatedDependencies } from "#src/services/outdatedDependencies/pr
 import { printRegistryErrors } from "#src/services/outdatedDependencies/print/printRegistryErrors";
 import { printUncatalogedManifestDependencies } from "#src/services/outdatedDependencies/print/printUncatalogedManifestDependencies";
 import { printUnpinnedReferences } from "#src/services/outdatedDependencies/print/printUnpinnedReferences";
+import { DOCKERFILE, GITHUB_DIRECTORY } from "#src/services/outdatedDependencies/reference/constants";
 import { readReferenceScan } from "#src/services/outdatedDependencies/reference/readReferenceScan";
 import { readRegistryOutdatedDependencies } from "#src/services/outdatedDependencies/registry/readRegistryOutdatedDependencies";
-import { getFollowedTagEntries } from "#src/services/outdatedDependencies/renovate/getFollowedTagEntries";
 import { getDisablingRule } from "#src/services/outdatedDependencies/renovate/getDisablingRule";
+import { getFollowedTagEntries } from "#src/services/outdatedDependencies/renovate/getFollowedTagEntries";
 import { getRenovateRules } from "#src/services/outdatedDependencies/renovate/getRenovateRules";
 import { partitionHeldDependencies } from "#src/services/outdatedDependencies/renovate/partitionHeldDependencies";
 import { getOverrideEntries } from "#src/services/outdatedDependencies/workspace/getOverrideEntries";
 import { getSection } from "#src/services/outdatedDependencies/workspace/getSection";
 import { parseWorkspaceEntries } from "#src/services/outdatedDependencies/workspace/parseWorkspaceEntries";
-import { DOCKERFILE, GITHUB_DIRECTORY } from "#src/services/outdatedDependencies/reference/constants";
 import {
   LOCKFILE_PATH,
   NPM_LOCKFILE,
