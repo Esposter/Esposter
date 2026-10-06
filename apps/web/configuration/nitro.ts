@@ -17,20 +17,25 @@ export const nitro: NuxtConfig["nitro"] = {
     // Output directory's size is logged once the build is written. Source maps are left out, and the brotli size is
     // What is served: a file's brotli copy where the build wrote one, the file itself where it did not
     compiled: async ({ logger, options: { output } }) => {
-      for (const [name, directory] of Object.entries({ public: output.publicDir, server: output.serverDir })) {
-        const entries = await readdir(directory, { recursive: true, withFileTypes: true });
-        const paths = new Set(
-          entries.filter((entry) => entry.isFile()).map((entry) => join(entry.parentPath, entry.name)),
-        );
-        const sizes = await Promise.all(
-          [...paths]
-            .filter((path) => !/\.(?:br|map)$/u.test(path))
-            .map(async (path) => {
-              const { size } = await stat(path);
-              const brotliPath = `${path}.br`;
-              return { brotliSize: paths.has(brotliPath) ? (await stat(brotliPath)).size : size, size };
-            }),
-        );
+      const directorySizes = await Promise.all(
+        Object.entries({ public: output.publicDir, server: output.serverDir }).map(async ([name, directory]) => {
+          const entries = await readdir(directory, { recursive: true, withFileTypes: true });
+          const paths = new Set(
+            entries.filter((entry) => entry.isFile()).map((entry) => join(entry.parentPath, entry.name)),
+          );
+          const sizes = await Promise.all(
+            [...paths]
+              .filter((path) => !/\.(?:br|map)$/u.test(path))
+              .map(async (path) => {
+                const { size } = await stat(path);
+                const brotliPath = `${path}.br`;
+                return { brotliSize: paths.has(brotliPath) ? (await stat(brotliPath)).size : size, size };
+              }),
+          );
+          return { name, sizes };
+        }),
+      );
+      for (const { name, sizes } of directorySizes) {
         const size = sizes.reduce((total, fileSize) => total + fileSize.size, 0);
         const brotliSize = sizes.reduce((total, fileSize) => total + fileSize.brotliSize, 0);
         logger.info(
