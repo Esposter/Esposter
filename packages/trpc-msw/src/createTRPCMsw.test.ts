@@ -17,7 +17,22 @@ describe(createTRPCMsw, () => {
     errorFormatter: ({ shape }) => ({ ...shape, message: `formatted ${shape.message}` }),
     transformer: superjson,
   });
+  // What the chained parsers below have done so far, in the order they did it
+  const parserSteps: string[] = [];
   const router = t.router({
+    chained: t.procedure
+      .input(async (value: unknown): Promise<{ id: string }> => {
+        parserSteps.push("first started");
+        await Promise.resolve();
+        const input = z.object({ id: z.string() }).parse(value);
+        parserSteps.push("first resolved");
+        return input;
+      })
+      .input((value: unknown) => {
+        parserSteps.push("second started");
+        return z.object({ id: z.string() }).parse(value);
+      })
+      .query(() => ""),
     // oxlint-disable-next-line require-await -- A subscription is an AsyncIterable, which only an async generator yields
     events: t.procedure.subscription(async function* () {
       yield 0;
@@ -58,6 +73,7 @@ describe(createTRPCMsw, () => {
   });
 
   afterEach(() => {
+    parserSteps.length = 0;
     reset();
     server.resetHandlers();
   });
@@ -99,6 +115,36 @@ describe(createTRPCMsw, () => {
       ]]
     `);
     expect(read).not.toHaveBeenCalled();
+  });
+
+  test("runs chained parsers in order, each after the one before it resolves", async () => {
+    expect.hasAssertions();
+
+    trpc.chained.query(() => "");
+    await client.chained.query({ id: "" });
+
+    expect(parserSteps).toStrictEqual(["first started", "first resolved", "second started"]);
+  });
+
+  test("runs no chained parser after one rejects", async () => {
+    expect.hasAssertions();
+
+    trpc.chained.query(() => "");
+
+    // @ts-expect-error The input the first parser exists to reject
+    await expect(client.chained.query({ id: 0 })).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCClientError: formatted [
+        {
+          "expected": "string",
+          "code": "invalid_type",
+          "path": [
+            "id"
+          ],
+          "message": "Invalid input: expected string, received number"
+        }
+      ]]
+    `);
+    expect(parserSteps).toStrictEqual(["first started"]);
   });
 
   test("#43 reads FormData mutation input", async () => {
