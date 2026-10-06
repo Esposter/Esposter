@@ -87,6 +87,9 @@ describe("gameOpening", () => {
 
       loginScreen?.click();
       await nextTick();
+      // The entering stage reaches the interface through the screen's render and its own, and its fade starts once that
+      // Render is drawn, a frame after the click
+      await waitForRealFrame(requestRealFrame);
       await playAnimations(requestRealFrame);
       const marks = container.querySelector(".startup-loading .marks");
 
