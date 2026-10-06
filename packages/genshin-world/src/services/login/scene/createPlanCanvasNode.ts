@@ -19,7 +19,9 @@ export const createPlanCanvasNode = (
   draw: (context: OffscreenCanvasRenderingContext2D, toCanvas: (point: readonly number[]) => [number, number]) => void,
 ): PlanCanvasNode => {
   const canvas = new OffscreenCanvas(Math.ceil(sizeFirst * pixelsPerMetre), Math.ceil(sizeSecond * pixelsPerMetre));
-  const context = canvas.getContext("2d");
+  // A plan is drawn once and read back, by its texture's upload and by a drawing reading its own pixels, so its canvas
+  // Lives in memory rather than on the GPU
+  const context = canvas.getContext("2d", { willReadFrequently: true });
   // A texture's first row is its top, which the rectangle's far side along its second axis stands at
   if (context)
     draw(context, ([first = 0, second = 0]) => [
