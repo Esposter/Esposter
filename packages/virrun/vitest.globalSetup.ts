@@ -1,16 +1,22 @@
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
+import { reapStaleTemps } from "#src/services/exec/snapshot/reapStaleTemps";
 import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
 import { getAcceptanceCacheHome } from "#src/services/exec/test/getAcceptanceCacheHome";
+import { getHomeCacheDirectory } from "#src/services/exec/test/getHomeCacheDirectory";
+import { VIRRUN_TEMP_DIR_PREFIX } from "#src/services/exec/util/constants";
 import { getResult, noop } from "@esposter/shared";
 import { existsSync, rmSync } from "node:fs";
 
-// Cleans the warm snapshot the heavy acceptance/equivalence tests share. They capture it lazily (ensureWarmSnapshot)
-// Into one cache home, so no single file can own removing it. Setup is a no-op: capturing here would force a full
-// Monorepo install onto every `vitest` invocation including unit-only runs, whereas lazy capture keeps that loop
-// Free. removeSnapshotDirectory restores the overlay work directory's un-traversable scratch so the rmSync cannot
-// EACCES. The home is resolved at teardown and inside the guard, because on win32 it is asked of WSL: a VM that will
-// Not start must not fail a unit-only run that never touched it.
+// Setup reclaims the home-cache temp directories (corpora, clean checkouts) a killed run stranded — a checkout carries
+// Its own warm store, so each corpse is gigabytes. Only a dead owner's are taken, so a concurrent run keeps its own.
+// The teardown cleans the warm snapshot the heavy acceptance/equivalence tests share. They capture it lazily
+// (ensureWarmSnapshot) into one cache home, so no single file can own removing it, and capturing here instead would
+// Force a full monorepo install onto every `vitest` invocation including unit-only runs. removeSnapshotDirectory
+// Restores the overlay work directory's un-traversable scratch so the rmSync cannot EACCES. The home is resolved at
+// Teardown and inside the guard, because on win32 it is asked of WSL: a VM that will not start must not fail a
+// Unit-only run that never touched it.
 export default function setup(): () => void {
+  reapStaleTemps(getHomeCacheDirectory(), [VIRRUN_TEMP_DIR_PREFIX]);
   return () => {
     // Best-effort cache hygiene, never a test outcome. A concurrent heavy run (the acceptance home is one fixed path,
     // Shared across processes) can still hold an overlay mounted under it, so the chmod/rm here hits EROFS (read-only
