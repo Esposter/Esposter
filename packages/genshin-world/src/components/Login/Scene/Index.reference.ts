@@ -545,6 +545,12 @@ export const reference: ComponentReference = {
       search:
         "The door's mesh split by connectivity and its faces binned by depth and tilt, the lift clip's curves by path, then the door fitted as layers (fit login --only door), rank's second table and compare on login-door and login-door-recording, with the chamfer drawn straight, the panel flat, the old relief and the relief's contrast swept",
     },
+    {
+      found:
+        "The walkway's pieces are boxes with no bevel, their tops at three levels: the stone at 0, its lanes' borders 9 millimetres over it and its curbs 3 centimetres over that. Each piece drawn up to its highest vertex stood its whole top at its curbs, so the middle lane's pieces, which carry none, stood 2 centimetres under their neighbours, and their sides read as dark steps across the walkway. Built with its borders and curbs as levels of their own, the walkway nears its exports on the phone's door frame (FLIP 0.481 to 0.445, similarity 0.44 to 0.61), but the day's title scores 0.4309 against 0.4304 and the night's 0.3657 against 0.3651; every piece flat at its stone scores the dawn 0.3849 against 0.3858, the phone's door frame 0.4688 against 0.4698 and the rest level, so it ships",
+      search:
+        "The walkway's faces binned by tilt and height per piece, its tops read from above, then the walkway fitted with its levels and flat at its stone, compare on every login frame and rank's second table on login-door and login-night-title",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
