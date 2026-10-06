@@ -3,12 +3,7 @@ import type { TerrainTileRequest } from "#src/models/TerrainTileRequest";
 import type { LightUniforms, TerrainOptions, TerrainTile, WaterUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
 
-import {
-  MAX_CACHED_TILE_COUNT,
-  MAX_PENDING_TILE_COUNT,
-  TERRAIN_WORKER_COUNT,
-  TILE_SELECTION_CAPACITY,
-} from "#src/services/constants";
+import { MAX_PENDING_TILE_COUNT, TERRAIN_WORKER_COUNT, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { useLoop, useTres } from "@tresjs/core";
 import {
   computeTerrainIndices,
@@ -53,7 +48,7 @@ const tileStreamer = createTileStreamer<Mesh>({
     tileGroup.remove(mesh);
     mesh.geometry.dispose();
   },
-  maxCachedCount: MAX_CACHED_TILE_COUNT,
+  maxCachedCount: TILE_SELECTION_CAPACITY,
   maxPendingCount: MAX_PENDING_TILE_COUNT,
   requestTile: (key) => {
     const request: TerrainTileRequest = { cellsPerSide, finestTileSize, key };
