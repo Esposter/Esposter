@@ -55,8 +55,8 @@ Common patterns:
 
 ```bash
 pnpm -r build
-pnpm -r --parallel run lint
-pnpm -r --parallel run typecheck
+pnpm -r --parallel lint
+pnpm -r --parallel typecheck
 pnpm -r --filter "./packages/*" build
 pnpm --filter "@esposter/web..." build
 pnpm -C apps/web build
@@ -65,7 +65,7 @@ pnpm -C apps/web build
 Guidelines:
 
 - Tests are the exception: `test`/`coverage` run through one root `vitest.config.ts` `projects` config (a single `vitest run`), not a recursive fan-out, so the whole suite shares one run, one coverage report, and one `--shard` axis.
-- A recursive script whose name the root does not also define is spelled with `run` (`pnpm -r --parallel run lint`): knip reads a bare `pnpm -r lint` as a binary once no root `lint` script exists, which is the case for `lint` and `typecheck`, both `vp run` tasks.
+- A recursive script is invoked bare (`pnpm -r --parallel lint`), never through `run`, which `packageScripts.test.ts` enforces. `lint` and `typecheck` are `vp run` tasks with no root script of the same name, so knip reads the bare argument as a binary; both names sit in knip's `ignoreBinaries` instead.
 - Use `--parallel` for independent checks such as linting and typechecking. Never for `build` — `--parallel` is what discards the topological order, and a package would build against a sibling's `dist` that is mid-write or absent.
 - Output interleaving is settled by environment, not by the scripts. `pnpm -r` runs the graph's independent packages concurrently regardless of `--parallel`, so a failure's stack arrives spliced with another package's output; `aggregate-output` buffers each package into a contiguous block instead. A watched terminal wants the live interleaved default, a log read after the fact wants the blocks, and both run the identical script — so `PNPM_CONFIG_AGGREGATE_OUTPUT` is set by environment and no script carries the flag. It is set once, by `setup-project-dependencies` into `GITHUB_ENV`, rather than by a workflow-level `env` block per workflow: every job that runs pnpm sets its toolchain up through that action, where a workflow `env` reached only the two workflows that remembered it and left the fan-outs inside `build-app` and the review collector interleaved. pnpm reads its settings from `PNPM_CONFIG_<SETTING>`; the npm-style `npm_config_*` spelling is not read. `--stream` is not the counterpart to it and never needs passing: it has been the default since pnpm 12, and `--stream`, `--no-stream` and no flag at all produce identical output.
 - Use filters instead of Lerna scopes/ignores, and only where a filter says something a path cannot: a set, or a dependency closure. One project is `pnpm -C <directory> <script>`.
