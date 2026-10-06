@@ -169,7 +169,7 @@ export const fitLoginDoor = async (
     const depths = [...depthAreaMap]
       .filter(([, area]) => area >= DOOR_MIN_DEPTH_AREA)
       .map(([depth]) => depth)
-      .toSorted((a, b) => a - b)
+      .toSorted((firstDepth, secondDepth) => firstDepth - secondDepth)
       .reduce(
         // oxlint-disable-next-line no-accumulating-spread -- a part keeps about a dozen depths, so the copies cost nothing
         (kept, depth) => (depth - (kept.at(-1) ?? -Infinity) < DOOR_MIN_DEPTH_STEP ? kept : [...kept, depth]),
