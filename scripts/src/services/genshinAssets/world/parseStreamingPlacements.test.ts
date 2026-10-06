@@ -43,4 +43,22 @@ describe(parseStreamingPlacements, () => {
 
     expect(parseStreamingPlacements(blob, [0])).toStrictEqual([]);
   });
+
+  test("reads the chunks in offset order whatever order the index lists them in, and drops an offset past the blob", () => {
+    expect.hasAssertions();
+
+    // A chunk of one record of a position along x alone
+    const placeAt = (x: number): Buffer => Buffer.concat([Buffer.from([0x02, 0x01, 0x10, 0x01]), writeFloats(x)]);
+    const first = placeAt(1);
+    const second = placeAt(2);
+    const third = placeAt(3);
+    const blob = Buffer.concat([Buffer.alloc(4), first, second, third]);
+    const offsets = [first.length + second.length, first.length, blob.length];
+
+    expect(parseStreamingPlacements(blob, offsets).map(({ position }) => position)).toStrictEqual([
+      [1, 0, 0],
+      [2, 0, 0],
+      [3, 0, 0],
+    ]);
+  });
 });
