@@ -1,39 +1,20 @@
 name: Verify Package Builds
-description: Report whether every library that builds has output on disk, so a job gates its build on the build itself rather than on a cache's own verdict
-inputs:
-  fail-when-incomplete:
-    description: Fail the step rather than reporting `complete=false`. For the check that runs *after* a build, where an incomplete tree is a broken build rather than a cold cache
-    required: false
-    default: "false"
-outputs:
-  complete:
-    description: "`true` when every library that builds has a non-empty `dist`"
-    value: ${{ steps.verify.outputs.complete }}
+description: Fail when a library that builds has no output on disk after the build — a replay that restored too little, or a build that wrote too little, fails here by name instead of downstream as a missing module
 runs:
   using: composite
   steps:
     # The set is discovered, not listed: a library builds if it has a tsdown config, so one added later is
-    # covered with nothing edited. `packages/*` because that is what the cache entry holds. `dist` alone: it is
-    # the half that is deployed and published, so its absence is the silent one — a missing barrel fails
-    # `typecheck` and `lint` by name. Shell, because a hit is designed to need no `node_modules`.
+    # covered with nothing edited. `dist` alone: it is the half that is deployed and published, so its absence is
+    # the silent one — a missing barrel fails `typecheck` and `lint` by name.
     - name: 🔍 Verify package builds
-      id: verify
       shell: bash
-      env:
-        FAIL_WHEN_INCOMPLETE: ${{ inputs.fail-when-incomplete }}
       run: |
         missingPackages=()
         for tsdownConfiguration in packages/*/tsdown.config.ts; do
           package="${tsdownConfiguration%/tsdown.config.ts}"
           [ -n "$(ls -A "$package/dist" 2>/dev/null)" ] || missingPackages+=("$package")
         done
-        if [ ${#missingPackages[@]} -eq 0 ]; then
-          echo "complete=true" >> "$GITHUB_OUTPUT"
-          exit 0
-        fi
-        echo "complete=false" >> "$GITHUB_OUTPUT"
-        # Named rather than counted: every package missing is a cold cache, some of them is the partial extract
-        echo "No dist for: ${missingPackages[*]}"
-        if [ "$FAIL_WHEN_INCOMPLETE" = "true" ]; then
+        if [ ${#missingPackages[@]} -gt 0 ]; then
+          echo "No dist for: ${missingPackages[*]}"
           exit 1
         fi

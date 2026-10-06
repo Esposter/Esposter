@@ -5,7 +5,7 @@ description: Apply when writing or editing any workflow, composite action, job, 
 
 # GitHub Actions Authoring
 
-How a workflow file or composite action is written here. **What the CI does** — which jobs exist, the two content-hash caches, the `package-builds` artifact, the shard count, per-job permissions — is `apps/web/content/docs/architecture/monorepo-tooling.md`'s, under `## CI job shape` and `## CI security`. This skill is only the shape of a step.
+How a workflow file or composite action is written here. **What the CI does** — which jobs exist, the traced task cache, the `package-builds` artifact, the shard count, per-job permissions — is `apps/web/content/docs/architecture/monorepo-tooling.md`'s, under `## CI job shape` and `## CI security`. This skill is only the shape of a step.
 
 ## Take the runner's affordance, not a shell reimplementation of it
 

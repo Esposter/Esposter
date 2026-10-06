@@ -10,7 +10,7 @@ The migration changes how scripts are invoked far more than which scripts exist.
 
 ## Cached as tasks
 
-The build scripts are the first to run as cached tasks, because they are what the hand-rolled CI key gates today — `build`, `build:packages` and the per-package `build` they fan out to ([task runner](/docs/proposals/refactors/vite-plus/task-runner)). The checks follow in CI under the same Phase 1 measurement, and locally only after virrun is gone, since a cached task cannot run inside its sandbox ([phases](/docs/proposals/refactors/vite-plus/phases)).
+The build scripts already run as cached tasks in CI — `build:packages` and the app's `build`, each a `cached:` task of the root `vite.config.ts` ([monorepo tooling](/docs/architecture/monorepo-tooling)). The checks can follow in CI under the same probes — `typecheck:root` already replays and misses correctly — and locally only after virrun is gone, since a cached task cannot run inside its sandbox ([phases](/docs/proposals/refactors/vite-plus/phases)).
 
 Two scripts must never become cache-gated by accident, and both are about the dependency graph rather than the cache:
 

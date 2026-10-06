@@ -1,6 +1,6 @@
 ---
 title: Docs cleanup
-description: The pages this migration supersedes, the reversed rejection that has to be inverted rather than deleted, and the audit recipe for prose left over from the workspace layout change.
+description: The pages the remaining phases supersede, and the audit recipe for prose left over from the workspace layout change.
 model: claude-opus-5-5
 ---
 
@@ -8,31 +8,14 @@ model: claude-opus-5-5
 
 Documentation moves with the code that changes it, so none of this is a pass scheduled after the migration — each item belongs to the phase that makes it true. What this page owns is the accounting, because the migration touches pages that no test can catch going stale: the structural half of the content tree is enforced (links resolve, indexes link their neighbours, diagrams parse, Key Files paths exist), and **a stale command name or a reversed argument in prose fails nothing**.
 
-## The rejection that reverses
-
-`architecture/rejected/monorepo-task-runners` rejects Turborepo-style per-package cache keys, and this proposal adopts a task runner. That looks like a straight contradiction and is not quite one, which is why the page cannot simply be deleted and replaced with the opposite.
-
-Its reasoning holds in every particular:
-
-- The package build is a small fraction of the run and gates nothing, so per-package granularity returns little. **Still true**, and this proposal does not claim otherwise — the win is traced inputs, not granularity.
-- A third content-hash cache beside virrun's and the CI key would be a third notion of staleness, and three that disagree fail toward serving stale output. **Still true, and now the argument for the swap** ([task runner](/docs/proposals/refactors/vite-plus/task-runner)).
-- A local task cache is worth little in CI without remote caching. **Still true of the layer it judged**: Vite+ 1.0 ships no remote cache — `vite-task` has merged a client since, with the server left to the user — and the cross-run sharing CI does get comes from restoring and saving the cache directory with `actions/cache` ([task runner](/docs/proposals/refactors/vite-plus/task-runner)) — plumbing the current key already uses, so the CI value comes from the key being right rather than from the cache being shared.
-
-So the page is not wrong; its conclusion was correct against the tool set that existed when it was written, and one input changed. When the migration ships, that page is deleted and its surviving reasoning is inverted into the as-built page in the present tense — the standard for a tombstone is that the rule and the _why_ survive while the past tense and the dead identifier go. The sentence worth keeping is the one about competing notions of staleness, because it is what makes the new arrangement defensible rather than merely newer.
-
-Its revisit trigger already anticipated part of this: it says granularity earns its keep once the package build stops being a small fraction of the run, and that the first step is still not a task runner. That prediction is untouched. What it did not anticipate is a runner arriving that removes caches rather than adding one.
-
 ## Pages rewritten rather than deleted
 
-**`architecture/monorepo-tooling`** takes the largest edit. It owns the workspace layout, recursive orchestration, publishing, installs and the CI job shape, and the migration changes three of those five while leaving the layout and publishing exactly as they are. The parts that move:
+**`architecture/monorepo-tooling`** takes the largest edit. It owns the workspace layout, recursive orchestration, publishing, installs and the CI job shape, and the migration changes three of those five while leaving the layout and publishing exactly as they are. Its CI job shape already describes the traced cache, with the rejected task-runner page's surviving reasoning — one cache deciding staleness, not three — carried into it. The parts still to move:
 
 - The virrun routing rules and the reasoning about which commands belong in the sandbox — deleted with virrun, not reworded.
-- The paragraph explaining that the cache key is deliberately whole-set and pointing at the rejected page — replaced by the traced-input mechanism, which is a different fact rather than a revised one.
 - The `pnpm -r` command examples — respelled, with every rule around them intact. The rule that `--parallel` is never used for `build` is about the dependency graph and survives any runner; so does the guidance that a filter is used only where it says something a path cannot.
 
 The section that must **not** be touched is the workspace layout. Two product roots split by "does anything import it" is a live rule stated in the present tense, and it is what makes every filter in the repository address a set rather than enumerate members. Vite+ happens to recommend the same shape, which is a convergence rather than a dependency — the rule would be identical if Vite+ did not exist.
-
-**`architecture/build-pipeline`** names the `package-builds` artifact, so it inherits whatever the first phase concludes. It needs re-reading against the traced-input model rather than editing in place, because a page whose opening still argues the enumerate-and-subtract policy while its body describes tracing is worse than either version alone. The application-level caching page is not in scope and should not be swept into this by its name — it owns the cached-read primitive and tag invalidation, which this migration does not touch.
 
 ## Auditing what the layout change left behind
 

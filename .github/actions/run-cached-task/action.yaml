@@ -1,0 +1,39 @@
+name: Run Cached Task
+description: Run one task of the root vite.config.ts under vp's traced cache — the cache directory a previous run saved restored first, and saved back when the task executed rather than replayed
+inputs:
+  task:
+    description: The task's name in the root vite.config.ts, e.g. `cached:build:packages`
+    required: true
+  save:
+    description: Save the cache directory after an executed run. Off for a consumer that only reads what 🏗️ CI saves
+    required: false
+    default: "true"
+runs:
+  using: composite
+  steps:
+    # By prefix, and safely so: vp replays an entry only when every input it traced still matches, so another
+    # commit's entry is a miss rather than a stale hit. After the install, because the directory is under
+    # `node_modules`, and because the traced inputs include the dependencies a task read there.
+    - name: ♻️ Restore the task cache
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: node_modules/.vite/task-cache
+        key: vp-${{ inputs.task }}-${{ github.run_id }}-${{ github.run_attempt }}
+        restore-keys: vp-${{ inputs.task }}-
+
+    - name: ⚡ Run ${{ inputs.task }}
+      id: run
+      shell: bash
+      env:
+        TASK: ${{ inputs.task }}
+      run: |
+        set -o pipefail
+        pnpm exec vp run "$TASK" 2>&1 | tee "$RUNNER_TEMP/vp-run.log"
+        grep -q "cache hit, replaying" "$RUNNER_TEMP/vp-run.log" && echo "replayed=true" >> "$GITHUB_OUTPUT" || true
+    # A replay changed nothing worth a new entry; a missed match only costs a redundant save
+    - name: 💾 Save the task cache
+      if: inputs.save == 'true' && steps.run.outputs.replayed != 'true'
+      uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: node_modules/.vite/task-cache
+        key: vp-${{ inputs.task }}-${{ github.run_id }}-${{ github.run_attempt }}

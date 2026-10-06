@@ -1,8 +1,7 @@
 # Running a TypeScript Script
 
-Read when adding a `.ts` script to a package, choosing what runs it, or writing a check CI has to run before an
-install. The rule itself is in `SKILL.md` — `node` where it can, `tsx` where it cannot, and the code is never bent
-to fit `node`; this page is where the line falls and where a pre-install check goes instead.
+Read when adding a `.ts` script to a package or choosing what runs it. The rule itself is in `SKILL.md` — `node`
+where it can, `tsx` where it cannot, and the code is never bent to fit `node`; this page is where the line falls.
 
 ## `node` where it can, `tsx` where it cannot
 
@@ -43,11 +42,3 @@ rejects it. `pnpm run` puts the executable it is in `npm_execpath`, so `scripts`
 `PNPM_ARGS` ahead of its own (`scripts/src/services/shared/constants.ts`) and every argument reaches pnpm
 verbatim, with no quoting for a shell that is not there. A whole command line under `shell` — `crossOS`
 running a manifest's per-platform string — stays a single string.
-
-## A check that has to run before an install is CI's own shell
-
-CI's package-build gate asks its question on a cache hit designed to need no install, so nothing under
-`node_modules` can answer it. `node` could run a dependency-free `.ts` there, but the check is
-`.github/actions/verify-package-builds`, bash that sits beside the bash computing the cache key in
-`get-build-cache-keys`, and the day it grows an enum or an import it would need the install it exists to skip. A
-few lines of bash beside the key is the shape that cannot drift into that.

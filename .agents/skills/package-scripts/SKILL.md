@@ -48,6 +48,6 @@ Once, after all the edits going out together: the tests of what the change touch
 - `references/check-suite.md` — when a change's tests are owed: the directory and the test paths.
 - `references/root-scripts.md` — when choosing which root script runs a build, the suite, a bench, a dependency report or the release.
 - `references/ai-scripts.md` — when a sweep, a review or a skill needs the script that runs its scan.
-- `references/typescript-scripts.md` — when adding a `.ts` script, choosing its runner, or writing a check CI runs before an install.
+- `references/typescript-scripts.md` — when adding a `.ts` script or choosing its runner.
 - `references/scripts-comments.md` — when a script is shaped by something that should later be undone.
 - `references/pnpm-traps.md` — when a filtered check passes too quickly, flags are forwarded through a script, or a `run` prefix is in question.

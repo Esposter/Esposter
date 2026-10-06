@@ -1,6 +1,6 @@
 ---
 title: Vite+ migration
-description: Proposal — adopt `vp run --cache` as the cached task runner and `vp env` as the runtime manager, keep every tool on the repository's own installed version, retire the hand-rolled build cache and virrun, and leave Nuxt owning the app build.
+description: Proposal — with CI's builds already cached under `vp run`, what remains — `vp env` as the runtime manager, the local loop's cache after virrun retires, and the built-in commands — while every tool stays on the catalog's version and Nuxt keeps owning the app build.
 model: claude-opus-5-5
 ---
 
@@ -10,11 +10,7 @@ model: claude-opus-5-5
 
 This repository already runs Vitest, Oxlint, Oxfmt and tsdown, and the app's bundler is already Rolldown's Vite. So the distance to Vite+ is not a toolchain distance. It is an **entry point** distance, and three commands currently claim that position: `pnpm` orchestrates the workspace, `virrun` wraps anything that must run isolated, and `nuxt` owns the app's build and module graph.
 
-What makes the move worth weighing at all is the cache. `vp run --cache` **infers its own inputs** by observing what a command reads — file reads, missing-file probes, directory listings, written outputs ([cache guide](https://viteplus.dev/guide/cache)). This repository's caching does the opposite. It hashes every tracked file under a root and then subtracts by hand, which is a policy `get-build-cache-keys` states outright:
-
-> Everything under a hashed root is an input until proven otherwise, and only three things are subtracted
-
-Each of those subtractions was discovered by paying a wrong rebuild, and each is a place the key can drift toward serving a stale `dist`. A traced input set deletes the whole category — a file no build opened is not an input, and there is no list to maintain. That is the proposal's premise, not an established fact, and the tracer's own issue tracker is the reason it stays a premise: it still has open reports of reads it misses and replays as a stale hit ([Phase 0](/docs/proposals/refactors/vite-plus/phases) lists them). A traced key that misses an input serves a stale build with more confidence than the conservative key it replaced, so nothing below the Phase 0 gate is reachable until the measurement clears it.
+What made the move worth weighing at all is the cache. `vp run` **infers its own inputs** by observing what a command reads — file reads, missing-file probes, directory listings, written outputs ([cache guide](https://viteplus.dev/guide/cache)) — where the key it replaced hashed every tracked file under a root and subtracted by hand. That premise was measured before it gated anything, and it held: both CI builds now run under it, and the hand-kept key is gone ([monorepo tooling](/docs/architecture/monorepo-tooling), `## CI job shape`). What this page still decides is everything beyond CI's builds.
 
 ## The decision
 
@@ -23,22 +19,21 @@ Each of those subtractions was discovered by paying a wrong rebuild, and each is
 The narrower scope than "all of Vite+" has two independent causes:
 
 - **The app is a Nuxt app, not a Vite one.** Vite+'s `dev`, `build` and `migrate` are built for a project that calls Vite directly; the full support matrix is in [Nuxt compatibility](/docs/proposals/refactors/vite-plus/nuxt-compatibility). The app build stays `nuxt build`, reached as a task — a seam, not a pending item.
-- **The built-in tool commands carry their own tool versions.** The `vite-plus` package pins exact versions of Oxlint, Oxfmt and Vitest — at 1.0, each behind what this repository's catalog already runs — and ships its own build of Vite beside the one Nuxt uses. `vp lint`, `vp fmt`, `vp check` and `vp test` would therefore move version ownership from Renovate and the catalog to Vite+'s release cadence — a downgrade on every bump in exchange for a shorter command. Invoking the installed tools as tasks keeps the cache's value and costs none of that.
+- **The built-in tool commands are a separate decision.** The `vite-plus` package pins exact versions of the tools it bundles, each behind the catalog; root overrides point every one of them at the catalog, so the lockfile holds one copy of each and Renovate keeps owning them ([configuration](/docs/proposals/refactors/vite-plus/configuration)). That makes `vp lint` and `vp fmt` usable, but moving the scripts onto them changes who reads the settings and nothing they do, so it waits on its own reason.
 
-## Recommendation at 1.0
+## Recommendation
 
 Each rung of the [adoption ladder](/docs/proposals/refactors/vite-plus/nuxt-compatibility) gets a verdict on its own, because the value and the risk sit on different rungs.
 
 | Rung                                           | Verdict                                     | Why                                                                                                                                                                                                                                      |
 | :--------------------------------------------- | :------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Phase 0 — measure the traced inputs            | **Do now**                                  | a throwaway CI job with nothing committed; the only result that can cancel or unblock the rest                                                                                                                                           |
 | Runtime and package manager (`vp env`)         | **Available now, optional**                 | independent of the cache; deletes the fnm and Corepack workarounds in the local install scripts, while CI already provisions both through one action and gains nothing                                                                   |
-| Task caching in CI                             | **Wait for Phase 0**                        | the whole value of the migration, and the one claim nobody has verified for this tree                                                                                                                                                    |
+| Task caching in CI                             | **Shipped**                                 | both builds under `vp run`, the hand-kept key deleted ([monorepo tooling](/docs/architecture/monorepo-tooling))                                                                                                                          |
 | Task caching in the local loop                 | **Wait for virrun**                         | a cached task cannot spawn children under bubblewrap, and a Windows tracer cannot see into WSL, so local caching only exists for commands that run natively ([virrun retirement](/docs/proposals/refactors/vite-plus/virrun-retirement)) |
-| `vp lint`, `vp fmt`, `vp check`, `vp test`     | **Don't**                                   | bundled, exactly-pinned tool versions behind the catalog's; `vp check`'s type-check cannot read `.vue` files and `vp test` has two blockers of its own                                                                                   |
+| `vp lint`, `vp fmt`, `vp check`, `vp test`     | **Not yet**                                 | the overrides run the catalog's tools, so version ownership no longer blocks them; `vp check`'s type-check cannot read `.vue` files and `vp test` has two blockers of its own                                                            |
 | `vp dev`, `vp build`, `vp migrate` for the app | **Never, while Nuxt owns the module graph** | the app is not a Vite application                                                                                                                                                                                                        |
 
-So the honest short answer at 1.0 is: the stable release removes the config-churn risk from everything this proposal would write, and changes nothing about the Nuxt gap or the tracing question. Run the measurement; take `vp env` if the local install scripts are worth deleting; leave everything else where it is until Phase 0 reports.
+So the short answer now: CI's builds are cached; take `vp env` if the local install scripts are worth deleting; the local loop's cache waits on virrun; everything else waits on its own trigger.
 
 ## Where the entry point lands
 
@@ -65,8 +60,7 @@ The gate is the whole proposal. Today that diamond does not exist in CI: the dec
 | Page                                                                         | Decides                                                                                    |
 | :--------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------- |
 | [Nuxt compatibility](/docs/proposals/refactors/vite-plus/nuxt-compatibility) | what Vite+ supports here, why `vp migrate` is unusable, and the adoption ladder            |
-| [Phases](/docs/proposals/refactors/vite-plus/phases)                         | each phase's blocker, exit condition and kill condition, the upstream issues Phase 0 reads |
-| [Task runner](/docs/proposals/refactors/vite-plus/task-runner)               | `vp run --cache` replacing the two content-hash caches, and the CI job shape               |
+| [Phases](/docs/proposals/refactors/vite-plus/phases)                         | each phase's blocker, exit condition and kill condition, the upstream issues they read     |
 | [Configuration](/docs/proposals/refactors/vite-plus/configuration)           | the one root config `vp` needs, why lint and format stay in their own files, the Nuxt seam |
 | [virrun retirement](/docs/proposals/refactors/vite-plus/virrun-retirement)   | virrun's three separable jobs, and why the local cache waits on removing it                |
 | [Commands](/docs/proposals/refactors/vite-plus/commands)                     | every root script before and after, and which ones stop existing                           |
@@ -74,17 +68,14 @@ The gate is the whole proposal. Today that diamond does not exist in CI: the dec
 
 ## What this is expected to delete
 
-Stated as an expectation rather than a count, because each phase's deletion is only earned once the phase before it has landed:
+CI's two content-hash caches and their subtract-list are already gone. The rest, stated as an expectation rather than a count, because each phase's deletion is only earned once the phase before it has landed:
 
-- One of the two content-hash caches outright, and the composite action that computes the other's key.
-- The subtract-list heuristics in that key — the test-source, bench-artifact and markdown exclusions each stop being expressible, because nothing enumerates inputs any more.
 - The fnm and Corepack provisioning in `update:node`'s install scripts, if `vp env` is taken; the pin-writing half stays.
 - The `virrun --` prefix from every root script, and — once the speed trade is accepted — a published workspace package, its differential correctness harness, its bench artifacts and its docs area.
 
 ## What it does not buy
 
 - **No remote cache in 1.0.** `vite-task` has since merged one — an endpoint named by `cache: { remote: { url } }` or `VP_REMOTE_CACHE_URL`, read by default, written with `--remote-cache=read-write`, uploads authenticated by a GitHub Actions OIDC token ([changelog](https://github.com/voidzero-dev/vite-task/blob/main/CHANGELOG.md)) — but the `vite-task` revision `vite-plus` 1.0.0 pins predates it, and upstream ships no server — its server API is still a [draft design](https://github.com/voidzero-dev/vite-task/pull/713), not a merged contract — so the endpoint would be ours to host, against a specification that may still change. Until a release carries the client, CI wraps a local cache directory in `actions/cache` ([CI guide](https://viteplus.dev/guide/ci)), and the plumbing stays ours; only the key improves.
-- **No early cutoff.** Nothing documented hashes a task's _output_ to stop an invalidation wave when a rebuild produces identical bytes. That remains the one genuinely unowned idea here, recorded as its own item in [task runner](/docs/proposals/refactors/vite-plus/task-runner) rather than assumed away.
 - **No shorter script surface by itself.** The lint, test and typecheck script families encode arguments, but pnpm forwards arguments too, so collapsing them is not something `vp` unlocks ([commands](/docs/proposals/refactors/vite-plus/commands)).
 
 ## Sources

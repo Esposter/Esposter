@@ -1,5 +1,5 @@
 name: 🏗️ CI
-# The job shape, the two content-hash caches and why every gate reads the disk rather than `cache-hit` are
+# The job shape and the traced task cache behind both builds are
 # `apps/web/content/docs/architecture/monorepo-tooling.md` → `## CI job shape`. Comments here keep only what
 # that page does not say.
 
@@ -29,35 +29,20 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # The keys come from tracked files, so they are computed before any install: on a hit nothing below runs
-      - name: 🔑 Get build cache keys
-        id: keys
-        uses: ./.github/actions/get-build-cache-keys
 
-      - name: ♻️ Restore app build marker
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: .app-build-marker
-          key: ${{ steps.keys.outputs.app-build-key }}
-      # Gated on the marker file rather than `cache-hit`: a hit whose `path` drifted extracts nothing and still
-      # reports success. A literal path, so the leading dot is the ordinary character it is.
       - name: 🔧 Setup Project Dependencies
-        if: ${{ hashFiles('.app-build-marker') == '' }}
         uses: ./.github/actions/setup-project-dependencies
 
       - name: 📦 Setup Packages
-        if: ${{ hashFiles('.app-build-marker') == '' }}
         uses: ./.github/actions/setup-packages
         with:
           filter: "@esposter/web..."
-      # The marker is written only after the build returns, so a failed build leaves the post-run save nothing
+      # A replay restores nothing — the task keeps no outputs — so a hit is the verdict alone: this exact tree, down
+      # to the packages' built bytes, already built green
       - name: 🏗️ Build app
-        if: ${{ hashFiles('.app-build-marker') == '' }}
-        env:
-          APP_BUILD_KEY: ${{ steps.keys.outputs.app-build-key }}
-        run: |
-          pnpm -C apps/web build
-          echo "$APP_BUILD_KEY" > .app-build-marker
+        uses: ./.github/actions/run-cached-task
+        with:
+          task: cached:build
 
   # @TODO: https://github.com/TypeStrong/typedoc/issues/3098 — restore this job once TypeDoc runs on TypeScript 7,
   # or a `typescript-native-bridge` build carries the AST navigation API; `pnpm build:docs` is the probe. Commented

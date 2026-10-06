@@ -1,6 +1,6 @@
 ---
 title: Phases
-description: The ordered plan — what each phase does, what blocks it, what proves it finished, and what kills it — plus the upstream issues Phase 0 reads first and the parked items with the trigger each waits on.
+description: The phases left after CI caching shipped — what each does, what blocks it, what proves it finished, and what kills it — plus the upstream issues they read and the parked items with the trigger each waits on.
 model: claude-opus-5-5
 ---
 
@@ -8,16 +8,12 @@ model: claude-opus-5-5
 
 Every phase here is independently shippable and independently revertible, and each one states the condition that ends it. That last part is the point of the page: a migration without exit conditions is a migration that is never finished, only abandoned quietly somewhere in the middle, and the half-migrated state is worse than either end — two ways to run every check, and no way to tell which one a contributor used.
 
-Phase 0 is a measurement rather than a change, and it is the only phase whose result can cancel the caching phases. The runtime phase does not sit behind it: it never touches the cache, so it can land before, after or without the rest.
+Phases 0 and 1 have shipped: the measurement cleared, and both CI builds run under `vp run` with the hand-kept key deleted — the mechanism, and what the measurement found, are in [monorepo tooling](/docs/architecture/monorepo-tooling) under `## CI job shape`. What is left is independent of the cache in CI. The runtime phase never touched the cache, and the local loop's caching waits on virrun.
 
 ```mermaid
 flowchart TD
-  start["Vite+ 1.0 available"] --> probe["Phase 0 — measure the traced input set in CI"]
-  start --> rt["Phase 2 — runtime and package manager"]
-  probe --> ok{"Every probe traced, or refused to cache?"}
-  ok -->|"a stale replay"| stop["Stop the caching phases — re-run on the next vite-task release"]
-  ok -->|yes| ci["Phase 1 — task caching in CI"]
-  ci --> local{"virrun retired?"}
+  start["CI builds cached under vp run"] --> rt["Phase 2 — runtime and package manager"]
+  start --> local{"virrun retired?"}
   retire["Phase 3 — retire virrun"] --> local
   local -->|yes| loop["Phase 4 — task caching in the local loop"]
   local -->|no| ciOnly["CI caches; the local loop keeps virrun's own cache"]
@@ -28,43 +24,17 @@ flowchart TD
   parked -->|yes| reopen["Reopen that item alone"]
 ```
 
-The gate at the top is the one that matters. Everything on the caching side rests on a single unverified claim — that Vite+ can infer this repository's build inputs correctly — and that claim is cheap to test and expensive to assume.
+## Upstream issues the remaining phases read
 
-## Phase 0 — measure
+The tracer is `fspy`, inside the `vite-task` crate set. Its open reports, and what each still means here:
 
-**Does:** in a throwaway CI job, with `vp` installed for that job only and nothing committed, runs `build:packages` under `vp run --cache`, dumps the input set it inferred, computes what `get-build-cache-keys` hashes for the same tree, and diffs them. Then it runs the probes below. The diff method and how to read each direction are in [task runner](/docs/proposals/refactors/vite-plus/task-runner).
-
-**Blocked by:** nothing. It runs on a Linux runner, where virrun already resolves its native passthrough backend, so the sandbox is not in the picture.
-
-**The probes.** Each one edits a single file a cached task read, re-runs the task, and must see a cache miss — or a refusal to cache, which is equally safe. A replay is the failure.
-
-- **A worker fan-out** — a source file of a package whose tsdown build spreads across workers, and a file the app build only reads from a Nuxt worker.
-- **Go code** — the native TypeScript compiler behind `typecheck:root`, which runs in-process inside Node through a dynamically linked addon, and the `tsgolint` binary behind type-aware Oxlint, which is statically linked. Go issues its reads as raw syscalls rather than through libc, and the tracer's Linux preload path only sees libc calls, while a fully static binary is traced through seccomp instead — so the in-process compiler sits in the class the tracer currently misses, and `tsgolint` is the control.
-- **A missing-file probe** — a config file a build looks for and does not find, then created.
-
-**Read first.** The tracer is `fspy`, inside the `vite-task` crate set, and at 1.0 its tracker carries the open reports this phase exists to rule out for this tree:
-
-| Issue                                                                   | What it means for this repository                                                                                                                                                                                                          |
-| :---------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [vite-task 777](https://github.com/voidzero-dev/vite-task/issues/777)   | on Linux, reads a dynamically linked program issues without going through libc are not seen and the task replays stale output; a maintainer confirmed the cause and is designing a new Linux backend — the in-process compiler probe above |
-| [vite-task 700](https://github.com/voidzero-dev/vite-task/issues/700)   | a cache-enabled task cannot spawn any child inside a rootless bubblewrap sandbox — the reason Phase 4 waits on virrun                                                                                                                      |
-| [vite-task 548](https://github.com/voidzero-dev/vite-task/issues/548)   | on Windows, a task can complete and still be refused a cache entry — a refusal rather than a stale hit, so it costs speed, never correctness                                                                                               |
-| [vite-task 504](https://github.com/voidzero-dev/vite-task/issues/504)   | a negative `input` pattern is ignored for files discovered by listing a directory, so a hand-written exclusion cannot be trusted to subtract                                                                                               |
-| [vite-plus 1610](https://github.com/voidzero-dev/vite-plus/issues/1610) | `vp run --filter` reports a cycle where pnpm tolerates one between siblings linked by a dev or peer dependency; whether this workspace has such a pair is answered by running the filter                                                   |
-
-**Ends when:** both directions of the diff are explained and every probe either misses or refuses to cache — none replays stale output. Files hashed today but not traced are the over-invalidation being bought out. Files traced but not hashed are the interesting direction — each is either a tracing artifact or a real input the current key is missing, and the second reading means the existing cache can already serve a stale build, which is a defect to fix on its own timeline.
-
-**Killed by:** any probe replaying. That stops the caching phases for this release only — the trigger to re-run is the next `vite-task` release that closes the Linux backend issue, since the measurement costs one CI job and the cause is upstream.
-
-## Phase 1 — task caching in CI
-
-**Does:** wraps the cached task runner around the existing build scripts and deletes the hand-rolled key. Tasks invoke the current scripts verbatim; no import is rewritten and no tool changes version.
-
-**Blocked by:** Phase 0 clearing.
-
-**Ends when:** `get-build-cache-keys` and its subtract-list are gone, the app-build marker's key comes from the same mechanism, and two properties still hold — a cache hit needs no install, and the skip gate reads the output on disk rather than the cache action's hit flag. Both are argued at length in the existing workflow and both are easy to lose in a rewrite.
-
-**Killed by:** a hit rate below what the content hash achieves today. The whole case is that a traced key invalidates less; a key that invalidates more is a straight regression, whoever maintains it.
+| Issue                                                                   | What it means for this repository                                                                                                                                                                                                                                    |
+| :---------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [vite-task 777](https://github.com/voidzero-dev/vite-task/issues/777)   | on Linux, reads a dynamically linked program issues without going through libc are not seen and the task replays stale output; the in-process native compiler `typecheck:root` runs was probed and traced, so a new tool of that class is probed before it is cached |
+| [vite-task 700](https://github.com/voidzero-dev/vite-task/issues/700)   | a cache-enabled task cannot spawn any child inside a rootless bubblewrap sandbox — the reason Phase 4 waits on virrun                                                                                                                                                |
+| [vite-task 548](https://github.com/voidzero-dev/vite-task/issues/548)   | on Windows, a task can complete and still be refused a cache entry — a refusal rather than a stale hit, so it costs speed, never correctness                                                                                                                         |
+| [vite-task 504](https://github.com/voidzero-dev/vite-task/issues/504)   | a negative `input` pattern is ignored for files discovered by listing a directory, so a hand-written exclusion cannot be trusted to subtract                                                                                                                         |
+| [vite-plus 1610](https://github.com/voidzero-dev/vite-plus/issues/1610) | `vp run --filter` reports a cycle where pnpm tolerates one between siblings linked by a dev or peer dependency; whether this workspace has such a pair is answered by running the filter                                                                             |
 
 ## Phase 2 — runtime and package manager
 
@@ -88,7 +58,7 @@ The gate at the top is the one that matters. Everything on the caching side rest
 
 ## Phase 4 — task caching in the local loop
 
-**Does:** the same cached tasks as Phase 1, run locally. Without virrun the checks run natively, so the tracer sees them.
+**Does:** the same cached tasks CI runs, run locally. Without virrun the checks run natively, so the tracer sees them.
 
 **Blocked by:** Phases 1 and 3. Under virrun a cached task either runs inside bubblewrap, where it cannot spawn children at all, or wraps a Windows-side command whose real work happens inside WSL, where a Windows tracer cannot follow — so there is no arrangement in which the tracer and the sandbox compose.
 
@@ -106,24 +76,21 @@ None of these is scheduled, and none blocks anything above. They are recorded so
 | `vp test` as the runner         | the Nuxt Vitest environment registers under it, the shard, blob and merge flags forward cleanly, **and** it runs the project's own Vitest                                                                                            |
 | `vp build` for the app          | Nuxt stops owning the module graph, or the [Nuxt integration request](https://github.com/voidzero-dev/vite-plus/issues/1506) ships                                                                                                   |
 | Remote caching                  | a `vite-plus` release pins a `vite-task` carrying the client, merged upstream after 1.0 — and upstream merges its server API specification, still a draft, for an endpoint of ours to implement, since upstream does not host one    |
-| Early cutoff on the app build   | independent of this migration in both directions ([task runner](/docs/proposals/refactors/vite-plus/task-runner))                                                                                                                    |
 | Retiring ESLint                 | Oxlint parses `.vue` templates. Governed by its own migration, and not accelerated by this one                                                                                                                                       |
 
 The test triggers are stated as a conjunction deliberately. Any one alone is not enough, and the second is the dangerous one: a wrapper that drops the shard flags does not fail, it quietly stops producing one coverage report, and the aggregate gate — every shard passed — has already gone green here over the report that was never written.
 
 ## Key files
 
-| File                                               | Role after the change                                           |
-| -------------------------------------------------- | --------------------------------------------------------------- |
-| `.github/workflows/CI.yaml`                        | Phase 0's throwaway job, then Phase 1's task caching            |
-| `.github/actions/get-build-cache-keys/action.yaml` | the hand-kept key Phase 1 retires once the traced key is proven |
-| `scripts/src/updateNode/install.sh`                | the provisioning half Phase 2 hands to `vp env`                 |
-| `scripts/src/updateNode/install.ps1`               | its Windows twin, retired with it                               |
-| `virrun.config.ts`                                 | Phase 3's retirement                                            |
+| File                                 | Role after the change                           |
+| ------------------------------------ | ----------------------------------------------- |
+| `scripts/src/updateNode/install.sh`  | the provisioning half Phase 2 hands to `vp env` |
+| `scripts/src/updateNode/install.ps1` | its Windows twin, retired with it               |
+| `virrun.config.ts`                   | Phase 3's retirement                            |
 
 ## Sources
 
-- [Vite+ — CI guide](https://viteplus.dev/guide/ci) and [cache guide](https://viteplus.dev/guide/cache) — the cached task runner Phase 1 puts in CI.
+- [Vite+ — CI guide](https://viteplus.dev/guide/ci) and [cache guide](https://viteplus.dev/guide/cache) — the cached task runner CI runs under.
 - [vite-task 777](https://github.com/voidzero-dev/vite-task/issues/777), [700](https://github.com/voidzero-dev/vite-task/issues/700), [548](https://github.com/voidzero-dev/vite-task/issues/548) and [504](https://github.com/voidzero-dev/vite-task/issues/504) — the tracer's open gaps Phase 0 probes for.
 - [vite-plus 1610](https://github.com/voidzero-dev/vite-plus/issues/1610) — the filter's cycle handling against pnpm's.
 - [Vite+ releases](https://github.com/voidzero-dev/vite-plus/releases) — `vp env` taking over the package manager from Corepack.

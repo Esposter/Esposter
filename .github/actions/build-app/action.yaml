@@ -1,5 +1,5 @@
 name: Build App
-description: Build one app on top of the library builds 🏗️ CI cached — restore them, install the app's closure, rebuild the libraries only when the restore left a `dist` missing, then build the app itself from the source this job checked out
+description: Build one app from the source this job checked out — install the app's closure, build the libraries it links against, then the app itself
 inputs:
   package:
     description: The app's npm name, e.g. `@esposter/functions` — the install, the dependency build and the app build are all selected from it
@@ -7,9 +7,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: ♻️ Restore package builds
-      id: restore
-      uses: ./.github/actions/restore-package-builds
     # The root closure rides along for the toolchain — `typescript` above all, which no library redeclares and
     # the dependency build below generates declarations with
     - name: 📦 Install dependencies
@@ -17,8 +14,9 @@ runs:
       with:
         filter: ${{ inputs.package }}...
 
+    # Uncached: 🏗️ CI's task cache holds the full library set, which this closure-only install cannot replay, and
+    # a deploy is rare enough that building the few libraries an app links against is the cheaper trade
     - name: 🏗️ Build dependencies
-      if: steps.restore.outputs.complete != 'true'
       shell: bash
       env:
         PACKAGE: ${{ inputs.package }}
