@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { TresCanvasInstance, TresRendererSetupContext } from "@tresjs/core";
 import type { QualityTier } from "genshin-engine";
 
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { OrbitControls } from "@tresjs/cientos";
-import { TresCanvas, type TresCanvasInstance, type TresRendererSetupContext } from "@tresjs/core";
+import { TresCanvas } from "@tresjs/core";
 import { createGenshinRenderer, GENSHIN_TONE_MAPPING, QualityTierSettingsMap } from "genshin-engine";
 import { PCFShadowMap } from "three";
 import { unref } from "vue";
