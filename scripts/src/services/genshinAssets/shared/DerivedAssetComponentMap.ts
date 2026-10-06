@@ -79,11 +79,29 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
             },
           ],
         },
-        // The tile's own placements, of which Area_Md_Water_Common_01_Vo, named by its path hash, is the valley's water
+        // The tile's own placements, of which Area_Md_Water_Common_01_Vo, named by its path hash, is the valley's water,
+        // And the two paving stones under the statue's dais steps, whose centres a recording's camera is solved by
         {
           blob: { block: "00/05825684.blk", name: "012854bd" },
           index: { block: "00/05825684.blk", name: "BigWorld_1_-2_Index" },
-          prefabs: [],
+          prefabs: [
+            {
+              prefab: {
+                block: "00/05652564.blk",
+                name: "Area_Common_Build_Ruin_H_06_Vo",
+                pathId: "3982752075327930387",
+              },
+              prefabId: 3_350_382_359,
+            },
+            {
+              prefab: {
+                block: "00/05652564.blk",
+                name: "Area_Common_Build_Ruin_H_07_Vo",
+                pathId: "4746829665091620903",
+              },
+              prefabId: 3_350_382_264,
+            },
+          ],
           waterPrefabId: 1_246_497_777,
         },
       ],

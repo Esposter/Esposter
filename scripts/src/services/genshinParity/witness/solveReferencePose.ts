@@ -72,9 +72,11 @@ export const solveReferencePose = async (
         (landmarks) => (Reflect.get(window, "computeWitnessPoints") as (landmarks: unknown) => Vector[])(landmarks),
         definitions,
       );
-      // An edge stands on a silhouette, never at a corner, so it is read as given
+      // An edge stands on a silhouette and an interior point inside a face, never at a corner, so each is read as given
       const snapped = seen.map(([, pixel], index) =>
-        definitions[index]?.isEdge ? pixel : snapToCorner(grey, width, height, pixel, SNAP_RADIUS),
+        definitions[index]?.isEdge || definitions[index]?.isInterior
+          ? pixel
+          : snapToCorner(grey, width, height, pixel, SNAP_RADIUS),
       );
       const correspondences = points.map((point, index) => ({
         isEdge: definitions[index]?.isEdge,

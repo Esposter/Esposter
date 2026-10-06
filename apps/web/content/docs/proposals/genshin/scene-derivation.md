@@ -1,6 +1,6 @@
 ---
 title: Scene derivation
-description: Proposal — the playbook a 3D scene is re-derived by, so it converges on the game in a pass or two the way the interface does. Every unknown is answered in the order the others depend on it, each by the most exact query the data allows, never by a search over the frame. What the scene holds and what its scripts spawn is read first. Then the arrangement is checked by ratios, the camera solved from correspondences, the frame calibrated by regression over a witness G-buffer, and each stand-in priced by a loss table per layer before a representation is chosen to close it.
+description: Proposal — the playbook a 3D scene is re-derived by, so it converges on the game in a pass or two the way the interface does. Every unknown is answered in the order the others depend on it, each by the most exact query the data allows, never by a search over the frame. What the scene holds and what its scripts spawn is read first. Then the arrangement is checked by ratios, the camera solved from correspondences, the frame calibrated by regression over a witness G-buffer, and each stand-in priced by a loss table per layer before a representation is chosen to close it. An open-world region is first laid out with every object at its exact place as a stand-in, then rebuilt one object at a time, each fitted against its own export.
 model: claude-opus-5-5
 ---
 
@@ -79,6 +79,26 @@ A loss is closed by the least representation that closes it, from this order:
 
 A representation is judged by the loss table, never by how close it looks in isolation: a stone texture that is visibly different up close can cost nothing at the distance the scene shows it, and a tower silhouette that looks right can cost the most.
 
+### The open world: a layout pass, then a pass per object
+
+An open-world region holds hundreds of objects, so it is built in two kinds of pass. The **layout pass** stands every object the game streams there at its exact place and turn, read from its scene points and its StreamGen records, each drawn by a stand-in: a kit we already have, or the export's bounding box where we have none. Nothing in this pass is judged by eye, since what it gets right is exact data, and it is what every later pass stands on: the cameras are solved against it and the light is calibrated over it. Each **object pass** then replaces one stand-in with our own re-derivation of that object, chosen by the loss table and fitted against its own export. It is drawn beside the export at a reference's camera, moment and light, so the only difference left between the two is the object, and it is done when that gap is within the reference's noise. The frame is ranked again before the next object is chosen.
+
+```mermaid
+flowchart TD
+  P["The region's placements: scene points and StreamGen records"] --> L["Layout pass: every object at its exact place and turn, drawn by a stand-in"]
+  L --> C["Every reference's camera solved on the witness"]
+  C --> F["The frame calibrated: light, haze and sky by hour"]
+  F --> R["rank: each stand-in priced by what its export recovers of the frame"]
+  R --> Q{Largest cost worth closing?}
+  Q -->|yes| O["Object pass: our generator for that object, fitted to its export"]
+  O --> G{"Beside its export at the reference's camera and light: gap within noise?"}
+  G -->|no| O
+  G -->|yes| R
+  Q -->|"no: every cost within the reference's noise"| D[Approve on the perceptual score]
+```
+
+An object the game places many times (a ruin slab, a rock) is one object pass however often it stands, since the fit is of its mesh and the layout already places every copy.
+
 ### Scores
 
 - **Each layer is scored on its own**, over its mask, with the existing `shape` and `tone`.
@@ -94,6 +114,12 @@ The login scene is the first scene run through this method. What it has found so
 - **The stone is a physically based material.** Its values are a specular colour, a metallic, a shininess, a rim glow and an occlusion strength, and its mask texture is smoothness in red and metal in green. Its diffuse is a near-neutral grey, so the reference's warm stone is its light. Its shader, `miHoYo/Scene/Login Base`, is one AnimeStudio cannot parse, but its unparsed raw export holds its programs like any other's; its programs only write the G-buffer, so the witness and our stone alike are lit as the deferred pass lights it (`StoneLightingModel`), its ramp and its sky harmonics solved per hour by `calibrate`.
 - **The tone curve is baked into a grading table.** The uber pass's last program samples a 3D table, in PQ space for an HDR display and gamma-encoded otherwise, which another pass bakes. The blocks hold the game's grading tables, and the login's post-processing profile names one by a pointer in its raw bytes, or failing that the grade's regression scores each against the frame.
 - **The clouds' shader reads cleanly.** A cloud samples its atlas through a curl-noise offset, dissolves its alpha with its age, is coloured between a dark and a light colour by the atlas's red with a rim, and fades toward the sky. It reads the Enviro sky's own terms: top and bottom colours front and back of the sun, a horizon halo and a sun halo, which `EnviroSky`'s raw bytes hold by hour.
+
+## The second run: Windrise
+
+Windrise is the first open-world region run through the method, and its layout pass has begun. Its ground is our own hills fitted to the game's terrain, its water stands at the game's level, and its statue and oak stand and turn where the game's placements set them; their shapes are still the kits', the statue about twice the game's size and the oak a fraction of it. The witness lays the region's exports out round the same origin our scene stands round, the oak's foot, so a camera solved on the witness is our scene's camera, and the world screen takes a held camera and a held hour for each reference. Its first camera, the fixed one of a recording of the statue through a whole day, is solved from points on the statue's axis, the paving slabs' centres and the trunk's axis, then refined on the statue's outline, which it lands within a pixel. Refined on the paving's edges as well it drifts to a wider view that matches other stones, which the paving's own landmarks expose, so a refinement is kept only where the landmarks still hold.
+
+Every solve is cross-checked on more than one recording. Windrise's ground and placements are the same on the older builds' recordings, so a 2021 or 2022 recording solves a camera and calibrates a light as well as the current build's, and a field of view or an hour read off one recording is trusted only once another agrees. What is worked on next is chosen by what the solves and `rank` price, never by how far a stand-in looks from the game: the fitted ground stays as it is until a ranking prices a finer one.
 
 ## Scope
 

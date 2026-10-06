@@ -39,6 +39,25 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
     wingRightBack: { mesh: "LoginScene_Bridge01_20_Vo", share: [0, 1, 0.8125] },
     wingRightFront: { mesh: "LoginScene_Bridge01_20_Vo", share: [0, 1, 0.351] },
   },
-  // Named as each recording's camera is solved
-  [DerivedAssetComponent.Windrise]: {},
+  // Points on the statue's axis, which a round part holds from any heading: the centre of its dish and the top of its
+  // Figure; and the top faces' centres of the paving stones east of it, whose edges the grass blurs
+  [DerivedAssetComponent.Windrise]: {
+    slabLeft: {
+      isInterior: true,
+      mesh: "Area_Common_Build_Ruin_H_06_Vo",
+      near: [57.93, -8.29, -1.37],
+      share: [0.5, 1, 0.5],
+    },
+    slabRight: {
+      isInterior: true,
+      mesh: "Area_Common_Build_Ruin_H_07_Vo",
+      near: [60.12, -8.2, -1.69],
+      share: [0.5, 1, 0.5],
+    },
+    statueDish: { isInterior: true, mesh: "Stages_MdGoddess01_Level4AllExtra_Lod0", share: [0.5, 0.37, 0.5] },
+    statueTop: { mesh: "Stages_MdGoddess_Lite01_Lod0", share: [0.5, 1, 0.5] },
+    // The oak's trunk stands upright over its root, our origin, from two metres up to six, so a point four metres up
+    // Its axis is pinned across between its two silhouettes whatever its height
+    trunkAxis: { isEdge: true, mesh: "Stages_Unique_CyTree01_Bark_Lod1", share: [0.5383, 0.2095, 0.603] },
+  },
 };

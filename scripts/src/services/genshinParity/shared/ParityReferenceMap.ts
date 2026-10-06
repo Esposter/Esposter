@@ -103,4 +103,23 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "SplashTitle",
     seconds: 5,
   },
+  // The statue under the oak by day, from the 2026 recording's fixed camera east of it, a game minute a real second
+  // From about six in the morning, an hour still to be read off its sun; its camera is solved from its landmarks and
+  // Refined on the statue's outline
+  "windrise-statue-day": {
+    capture: "yt-zPDi6WBJW9Y.mp4",
+    landmarks: {
+      slabLeft: [1182, 947],
+      slabRight: [1275, 955],
+      statueDish: [841, 612],
+      statueTop: [840, 497],
+      trunkAxis: [643, 580],
+    },
+    props: {
+      cameraPose: { fov: 58.365, heading: 64.614, pitch: 8.047, position: [70.818, -4.053, 8.283] },
+      heldMinutes: 720,
+    },
+    screen: "WorldScreen",
+    seconds: 360,
+  },
 };

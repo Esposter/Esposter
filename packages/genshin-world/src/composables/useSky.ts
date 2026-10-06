@@ -18,7 +18,14 @@ import {
 // Frame's time, the keyframes are sampled at the new minute, and the result is written into everything the sky
 // Lights, and the clouds drift with the wind. The clock is handed back for the tuning panel and the clock control to
 // Set
-export const useSky = ({ skyKeyframes, skyTargets, startMinutes, tilt, windUniforms }: SkyOptions): GameClock => {
+export const useSky = ({
+  checkIsHeld,
+  skyKeyframes,
+  skyTargets,
+  startMinutes,
+  tilt,
+  windUniforms,
+}: SkyOptions): GameClock => {
   const { scene } = useTres();
   const { onBeforeRender } = useLoop();
   const gameClock: GameClock = { minutes: startMinutes, minutesPerSecond: GAME_MINUTES_PER_SECOND };
@@ -33,7 +40,8 @@ export const useSky = ({ skyKeyframes, skyTargets, startMinutes, tilt, windUnifo
   scene.value.backgroundNode = createSkyNode(skyTargets.skyUniforms, gradient);
   writeSky();
 
-  onBeforeRender(({ delta }) => {
+  onBeforeRender(({ delta: frameDelta }) => {
+    const delta = checkIsHeld?.() ? 0 : frameDelta;
     advanceGameClock(gameClock, delta);
     cloudDrift.value.addScaledVector(
       windUniforms.direction.value,

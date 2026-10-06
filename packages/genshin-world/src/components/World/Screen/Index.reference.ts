@@ -119,12 +119,36 @@ export const reference: ComponentReference = {
       search:
         "The statue's point and the oak's placement against the tile's heightfield, the statue's prefab in the witness layout, every placement within twelve metres named through the 2.6 index, then tiles 1,-1 and 2,-2 exported for the other Mondstadt statues' placements and the dais's id, and the tile's and area's HLOD meshes searched round the statue",
     },
+    {
+      found:
+        "The statue is about eight metres tall: its figure is a mesh of its own, Stages_MdGoddess_Lite01_Lod0, hung 4.2 metres up the root at a scale of 2.69, over Level4AllExtra's wide dish at 4.1 to 4.4 metres",
+      search:
+        "The statue prefab's Transforms and its meshes' bounds in the witness layout, each child's place and scale",
+    },
+    {
+      found:
+        "Area_Common_Build_Ruin_H_06_Vo and _07_Vo, the two placements nearest the statue's dais, are irregular paving stones about a metre and a half across that sit under the recordings' dais steps, not pedestals. The carved pedestals about ten metres either side of the statue, turned a quarter, are the near-equal world ids 2068796237 and 2068799372 with a streaming radius of 4.3 and no path hash; they are none of the ruin block's Ruin_H_01 to _05 (rubble), _08, _10, _12, or Ruin_Platform_01 and _04 (42 and 21 metres across)",
+      search:
+        "The two ruins' prefabs added to the tile's stream and drawn in the witness beside the recording, then every ruin prefab of their block exported and measured against the pedestals' size",
+    },
+    {
+      found:
+        "No hash of a name gives the world's 32-bit id: sibling ids often differ by 961, thirty-one squared, yet base-31, 33, 37, 131, 65599 and FNV polynomial hashes of the names, lowercase, with .prefab and as paths, match neither paving stone's id",
+      search:
+        "Both paving stones' ids tested against each polynomial hash over every spelling of their names and paths",
+    },
+    {
+      found:
+        "The statue recording's camera stands still for the whole day, at 70.818, -4.053, 8.283 round the oak's foot, heading 64.614, pitch 8.047, a vertical field of view of 58.365. Its statue's outline lies within a pixel of the recording's edges and the landmarks' reprojection is 12.75 pixels, the paving stones the most (14 and 21) where grass covers their edges. Refining on the paving's edges too drifts to a 71-degree view that matches other stones and leaves the paving landmarks 125 pixels off",
+      search:
+        "A contact sheet of the recording at its 120th, 360th, 720th and 960th seconds, then genshin:parity pose on five landmarks (the paving stones, the statue's dish and top, the oak's trunk) at its 360th second, refined on the statue's edges, checked by overlay and by blending the witness over the frame",
+    },
   ],
   open: [
-    "The prefabs of the placements carrying only the world's 32-bit id, the trees round the statue among them, the dais under the statue, and the paths newer than the 2.6 index",
+    "The prefabs of the placements carrying only the world's 32-bit id, the trees round the statue among them, the dais under the statue, the carved pedestals beside it, and the paths newer than the 2.6 index",
     "Our statue's and oak's heights and shapes: the kits stand by their own height over the ground until the statue, its dais and the oak are derived, and which of the statue's levels the recordings show",
     "The ponds above the valley's water: the tile's WaterPlane prefabs, whose root stands at its 512-metre cell's centre and 200 metres up by every pond's bed and shore, a place inferred rather than read",
-    "Each recording's camera, solved with landmarks named on the witness, and then the parity references at the hours each recording shows",
+    "The other recordings' cameras, solved with landmarks named on the witness, which cross-check the statue recording's field of view, then the parity references at the hours each recording shows",
     "Mondstadt's sky by hour, from its Enviro profile's raw bytes as the login's was read",
   ],
   sources: {

@@ -11,6 +11,9 @@ import { usePostPipeline } from "#src/composables/usePostPipeline";
 import { useRegionData } from "#src/composables/useRegionData";
 import { useSky } from "#src/composables/useSky";
 import water from "#src/data/windrise/water.json";
+import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
+import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import {
   CLOUD_COVERAGE,
   FOG_DENSITY,
@@ -59,6 +62,8 @@ import { HemisphereLight } from "three";
 
 interface Props {
   createTerrainWorker: () => Worker;
+  // The game's minute of the day the clock is held at, in place of its running from the region's start
+  heldMinutes?: number;
   // Whether the development tuning panel is shown, which the app decides
   isTuning: boolean;
   qualityTier: QualityTier;
@@ -66,8 +71,17 @@ interface Props {
   regionDataBaseUrl: string;
 }
 
-const { createTerrainWorker, isTuning, qualityTier, regionDataBaseUrl } = defineProps<Props>();
+const { createTerrainWorker, heldMinutes, isTuning, qualityTier, regionDataBaseUrl } = defineProps<Props>();
 const emit = defineEmits<{ ready: [] }>();
+// The witness render's parts, drawn in place of ours of each family it names when the parity page provides them, beside
+// Ours rather than in the floating origin's group, since the page's tools find the camera among their siblings and stay
+// Within reach of the origin
+const witness = inject(SceneWitnessKey, null);
+const checkIsOwnFamilyDrawn = (family: WindrisePartFamily): boolean => !witness?.families.value.includes(family);
+const hiddenLandmarkKinds = computed(() => [
+  ...(checkIsOwnFamilyDrawn(WindrisePartFamily.Oak) ? [] : [LandmarkKind.Tree]),
+  ...(checkIsOwnFamilyDrawn(WindrisePartFamily.Statue) ? [] : [LandmarkKind.StatueOfTheSeven]),
+]);
 const rampTexture = createRampTexture(WINDRISE_RAMP_OPTIONS);
 const lightUniforms = createLightUniforms();
 lightUniforms.rimStrength.value = RIM_STRENGTH;
@@ -102,6 +116,7 @@ waterUniforms.underwaterFogDensity.value = UNDERWATER_FOG_DENSITY;
 const skyUniforms = createSkyUniforms();
 skyUniforms.cloudCoverage.value = CLOUD_COVERAGE;
 const gameClock = useSky({
+  checkIsHeld: () => heldMinutes !== undefined || (witness?.isClockHeld.value ?? false),
   skyKeyframes: WINDRISE_SKY_KEYFRAMES,
   skyTargets: {
     fogUniforms,
@@ -112,10 +127,16 @@ const gameClock = useSky({
     postUniforms,
     skyUniforms,
   },
-  startMinutes: WINDRISE_START_MINUTES,
+  startMinutes: heldMinutes ?? WINDRISE_START_MINUTES,
   tilt: SUN_TILT,
   windUniforms,
 });
+// Alone, the witness's exports are drawn with no haze and no clouds, so a pose is matched on their edges alone
+if (witness)
+  watchEffect(() => {
+    fogUniforms.density.value = witness.isAlone.value ? 0 : FOG_DENSITY;
+    skyUniforms.cloudCoverage.value = witness.isAlone.value ? 0 : CLOUD_COVERAGE;
+  });
 // Counts every tile that arrives, so what reads the ground under the view knows to read it again
 const terrainChanges = { count: 0 };
 const gradeLutTexture = createGradeLutTexture(WINDRISE_GRADE_OPTIONS);
@@ -167,32 +188,36 @@ onUnmounted(() => {
   <primitive :object="sun" />
   <primitive :object="sun.target" />
   <primitive :object="hemisphere" />
+  <primitive v-if="witness" :object="witness.parts" />
   <!-- Everything placed in the world is in this group, which the floating origin offsets -->
   <TresGroup :position="worldOffset">
-    <WorldTerrain
-      :create-terrain-worker
-      :light-uniforms
-      :origin
-      :ramp-texture
-      :terrain-options="WINDRISE_TERRAIN_OPTIONS"
-      :water-uniforms
-      @change="terrainChanges.count++"
-      @ready="isTerrainSettled = true"
-    />
-    <WorldGrass
-      :blade-height="GRASS_BLADE_HEIGHT"
-      :blade-width="GRASS_BLADE_WIDTH"
-      :light-uniforms
-      :origin
-      :quality-tier
-      :ramp-texture
-      :rings="[NEAR_GRASS_RING, MIDDLE_GRASS_RING]"
-      :terrain-changes
-      :terrain-options="WINDRISE_TERRAIN_OPTIONS"
-      :water-uniforms
-      :wind-uniforms
-    />
+    <!-- Hidden rather than unmounted where the witness draws the ground, since the world is ready once its ground is -->
+    <TresGroup :visible="checkIsOwnFamilyDrawn(WindrisePartFamily.Ground)">
+      <WorldTerrain
+        :create-terrain-worker
+        :light-uniforms
+        :origin
+        :ramp-texture
+        :terrain-options="WINDRISE_TERRAIN_OPTIONS"
+        :water-uniforms
+        @change="terrainChanges.count++"
+        @ready="isTerrainSettled = true"
+      />
+      <WorldGrass
+        :blade-height="GRASS_BLADE_HEIGHT"
+        :blade-width="GRASS_BLADE_WIDTH"
+        :light-uniforms
+        :origin
+        :quality-tier
+        :ramp-texture
+        :rings="[NEAR_GRASS_RING, MIDDLE_GRASS_RING]"
+        :terrain-changes
+        :terrain-options="WINDRISE_TERRAIN_OPTIONS"
+        :water-uniforms
+        :wind-uniforms
+      />
+    </TresGroup>
     <WorldWater :fog-uniforms :light-uniforms :origin :sky-uniforms :water-uniforms />
-    <WorldLandmarks :light-uniforms :ramp-texture :region-data-map :wind-uniforms />
+    <WorldLandmarks :hidden-kinds="hiddenLandmarkKinds" :light-uniforms :ramp-texture :region-data-map :wind-uniforms />
   </TresGroup>
 </template>
