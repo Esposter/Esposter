@@ -19,7 +19,8 @@ Switching the mode from the program is not in it: the mode is the survey's decis
 
 | File                                                                | Role after the change                                 |
 | ------------------------------------------------------------------- | ----------------------------------------------------- |
-| `apps/web/app/components/Resource/Program/Setup.vue`                | reads the bound survey's mode, warns under the select |
+| `apps/web/app/components/Resource/Program/Setup.vue`                | reads the bound survey's mode                         |
+| `apps/web/app/components/Resource/Program/BindingSelect.vue`        | the warning under the select, beside its missing note |
 | `apps/web/app/components/Resource/Program/Status.vue`               | the same line where the response rate stays at zero   |
 | `apps/web/shared/models/resource/survey/SurveySettings.ts`          | `responseMode`, read and unchanged                    |
 | `apps/web/server/services/survey/SurveyResponseModeValidatorMap.ts` | why an Anonymous survey drops the token               |

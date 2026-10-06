@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -21,8 +22,8 @@ const keyColumnItems = computed<UiSelectItem<string>[]>(
   () => dataset.value?.columns.map(({ name }) => ({ meaning: UiIconMeaning.Columns, title: name, value: name })) ?? [],
 );
 // Absent until read, so a failed read never claims every binding is missing
-const emailItems = ref<UiSelectItem<string>[]>();
-const surveyItems = ref<UiSelectItem<string>[]>();
+const emailResources = ref<OffsetPaginationData<UiSelectItem<string>>>();
+const surveyResources = ref<OffsetPaginationData<UiSelectItem<string>>>();
 await loadContent();
 // Both binding pickers are independent of each other, so they resolve together
 await getResultAsync(async () => {
@@ -30,8 +31,14 @@ await getResultAsync(async () => {
     $trpc.email.readResources.query({ limit: MAX_READ_LIMIT }),
     $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT }),
   ]);
-  emailItems.value = emails.items.map(({ id, name }) => ({ meaning: UiIconMeaning.Email, title: name, value: id }));
-  surveyItems.value = surveys.items.map(({ id, name }) => ({ meaning: UiIconMeaning.Survey, title: name, value: id }));
+  emailResources.value = {
+    hasMore: emails.hasMore,
+    items: emails.items.map(({ id, name }) => ({ meaning: UiIconMeaning.Email, title: name, value: id })),
+  };
+  surveyResources.value = {
+    hasMore: surveys.hasMore,
+    items: surveys.items.map(({ id, name }) => ({ meaning: UiIconMeaning.Survey, title: name, value: id })),
+  };
 }).match(noop, console.error);
 // Autosave binding edits — registered after the load, so the hydration itself never reaches the watcher
 watchAutosave(programResource, saveProgram);
@@ -55,8 +62,8 @@ watchAutosave(programResource, saveProgram);
     </UiFrame>
     <UiFrame title="Bindings">
       <p text-muted>The email that invites participants, and the survey their link opens.</p>
-      <ResourceProgramBindingSelect v-model="programResource.emailId" :resources="emailItems" label="Email" />
-      <ResourceProgramBindingSelect v-model="programResource.surveyId" :resources="surveyItems" label="Survey" />
+      <ResourceProgramBindingSelect v-model="programResource.emailId" :resources="emailResources" label="Email" />
+      <ResourceProgramBindingSelect v-model="programResource.surveyId" :resources="surveyResources" label="Survey" />
     </UiFrame>
   </div>
 </template>
