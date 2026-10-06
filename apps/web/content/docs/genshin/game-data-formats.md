@@ -1,6 +1,6 @@
 ---
 title: Game data formats
-description: How each kind of the game's data reads once AnimeStudio has exported it, as decoded while deriving the login scene, and how its Wwise audio reads from the installed packages, and where a component records the data it is derived from. Shaders keep their compiled programs as plain DXBC with their constant layouts beside them; a UI element's anchors sit in its RectTransform's raw tail; an animation clip is streamed cubic segments bound by CRC32 hashes; a renderer names its materials by path ID; and a scene's scripts export without their fields. The shortcuts section is what to reach for first, so no session derives any of it again.
+description: How each kind of the game's data reads once AnimeStudio has exported it, as decoded while deriving the login scene, and how its Wwise audio reads from the installed packages, and where a component records the data it is derived from. Shaders keep their compiled programs as plain DXBC with their constant layouts beside them; a UI element's anchors sit in its RectTransform's raw tail; an animation clip is streamed cubic segments bound by CRC32 hashes; a renderer names its materials by path ID; a scene's scripts export without their fields; and the open world is streamed, its placements mask-led varint records in blobs named by their path's hash and each tile's ground a TerrainData. The shortcuts section is what to reach for first, so no session derives any of it again.
 ---
 
 # Game data formats
@@ -13,6 +13,7 @@ The game's files are references, read locally and never shipped ([derived assets
 flowchart TD
   Q[A question about a scene] --> K{What holds the answer?}
   K -->|"a shape or a place"| M["Mesh and Transform: extract, then witness or fit"]
+  K -->|"a place in the open world"| W["StreamGen placements and the tile's TerrainData, found by path hash"]
   K -->|"a surface"| T["Material values and texture channels: inventory"]
   K -->|"how it is shaded"| S["Shader programs and their constant layouts: shaders"]
   K -->|"an interface's place"| R["RectTransform anchors: the raw tail"]
@@ -41,6 +42,14 @@ flowchart TD
 - **A Transform's dump is its local position, rotation and scale with its father and children by path ID**; its GameObject is found through the GameObject's first component. How placements compose, and what the dumps lose, is on the [derived assets](/docs/genshin/derived-assets) page.
 - **A MeshRenderer names its materials by file index and path ID**, references into other files with no name, one a submesh, resolved through the CAB map; an OBJ export writes each submesh as a group suffixed with its index.
 - **A root's own parent can sit in a block not read.** Such a root is dumped at the origin though the game places it elsewhere, as the login's walkway is: its true place is solved from something it must meet (the door it ends at), never assumed.
+
+### The open world
+
+- **The open world is streamed, not laid out in a scene.** Each 1024-metre tile (`BigWorld_<x>_<z>`, its column the world's x over 1024 and its row its z) and each named area of it (`Area_FQD_City`, Windrise) has a StreamGen blob of placements and an index of the blob's chunks. A tile's ground is a TerrainData of its own, and its far view an HLOD mesh in world coordinates, the area's own HLOD drawing what the area places.
+- **A streamed asset is found by its path.** The asset index AnimeStudio builds holds no GameObject, TerrainData or prefab path, but the game's own asset index (the community publishes one per version up to 2.6) names every asset by path with its PathHashPre and PathHashLast, and AnimeStudio exports a MiHoYoBinData under its PathHashLast in hex, so `StreamGen/BigWorld_1_-2` is the blob `012854bd`. A path hash of 64 bits, a gadget's prefab or a placement's, is PathHashPre in its low byte and PathHashLast in the four above.
+- **A StreamGen blob is a length word, then chunks at its index's offsets** (`parseStreamingIndex`, counted past that word). A chunk is a varint mask, an id, a count and that many records; a record is a varint mask whose bits, in order, carry its flags, its prefab's 64-bit path hash, the world's 32-bit id for the prefab, a streaming radius, its position, its Euler rotation in degrees, its scale, an instance, a parent and a flag with no bytes (`parseStreamingPlacements`). A vector leads with a byte of which components follow, an absent one zero, or one for a scale. A chunk whose mask carries other bits is another structure, the tile's volumes and its trailer among them.
+- **The 32-bit prefab id is the world's own**, no hash of any spelling of the path, so a placement carrying no 64-bit hash is named only through another placement of the same id that carries one.
+- **A tile's heights are its TerrainData**, exported unparsed as `TerrainData#<n>` with its name only in its bytes, so it is found by reading them rather than by a name filter. Its heightfield is a count that is a square of a side a power of two and one, that many 16-bit samples of the tile's height scale, its error and patch-bound arrays, then its side twice, its thickness, its level count and its scale: metres between samples, the height a full sample stands for, metres between rows (`parseTerrainHeights`).
 
 ### Interface
 
@@ -88,6 +97,8 @@ The things that each cost a search to find, to reach for first:
 - **Export raw objects unparsed** (`<Type>:Export`, `ANIMESTUDIO_UNPARSED_SUFFIX`): a raw export needs none of the parser's fields, and the parser refuses objects the game reads, so an object missing from a raw export is a parse failure in AnimeStudio's log, never an object the block lacks.
 - **Look for an exact source before measuring**: a shader's program over a guessed model, a clip's curve over a timed recording, a RectTransform's anchor over a measured position. Measure only what is fieldless.
 - **Solve a camera from landmarks, then refine it on its families' silhouettes, never on all edges**: a reference's clouds are most of its edges, and the part target draws none ([parity](/docs/genshin/parity), `pose`).
+- **Look for an open-world landmark in its area's streaming before its tile's**: a named area (`Area_FQD_City`) places what is its own, the Windrise oak among it, and its HLOD shows where.
+- **Find a prefab no asset index names through what depends on its meshes**: AnimeStudio's CAB map lists the CABs pointing into a mesh's CAB, and their blocks hold the prefabs drawing it.
 - **Suspect an arrangement before a camera**: when no pose fits, a root dumped at the origin is the first cause.
 - **Keep a long solve's page apart**: a second checkout's parity page (`GENSHIN_PARITY_PORT`) takes edits while the first holds a solve.
 
@@ -109,6 +120,8 @@ The things that each cost a search to find, to reach for first:
 | `scripts/src/services/genshinAssets/shared/toMaterialValues.ts`              | A material's values, textures and shader                  |
 | `scripts/src/services/genshinAssets/shared/readSceneLayout.ts`               | Transforms, meshes and the materials each renderer draws  |
 | `scripts/src/services/genshinAssets/materials/writeComponentInventory.ts`    | Everything a component's export holds, as a report        |
+| `scripts/src/services/genshinAssets/world/parseStreamingPlacements.ts`       | The open world's placements out of a StreamGen blob       |
+| `scripts/src/services/genshinAssets/world/parseTerrainHeights.ts`            | A terrain tile's heightfield out of its TerrainData       |
 | `scripts/src/services/genshinAssets/music/parseAudioPackageHeader.ts`        | A Wwise package's banks and sounds                        |
 | `scripts/src/services/genshinAssets/music/parseMusicHierarchy.ts`            | The banks' tracks, segments and playlists                 |
 

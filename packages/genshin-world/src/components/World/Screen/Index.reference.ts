@@ -49,9 +49,51 @@ export const reference: ComponentReference = {
     },
     {
       found:
-        "The tile's base map, splat alphas, tint, mask and specular textures and its CTS profile are named; its heights are not, under any name with height, terrain or the tile in it. The blocks' MiHoYoBinData blobs are length-prefixed records of floats, unit scales among them: placements, not a heightfield",
+        "The tile's base map, splat alphas, tint, mask and specular textures and its CTS profile are named in the asset index; its heights are not, since the index holds no TerrainData. The texture blocks' MiHoYoBinData blobs are another area's placements, not a heightfield",
       search:
         "The asset index for every asset naming the tile, then the raw blobs of the tile's two texture blocks by size and header",
+    },
+    {
+      found:
+        "The tile's BSM text assets are not heights: a header of four grids, 64 cells a side down to 8, each cell a run of four-byte items, but a cell's values follow none of the sector's ground points under it, and the Firmament's scene carries the same format",
+      search:
+        "BigWorld_1_-2_BSM_* exported raw, the grids' cell tables read, and each 16-metre cell's median value correlated with the ground points in it under every cell order",
+    },
+    {
+      found:
+        "The game's own asset index of version 2.6, as the community publishes it, names every streamed asset of the open world by path: per tile a StreamGen blob and its index, per-layer chunks, HLODs, water and fog tiles, reflection probes and its terrain as TerrainData_Final/…/BigWorldTerrain_1_-2.bin. AnimeStudio names a MiHoYoBinData by its path's PathHashLast in hex, so a blob is found by its path",
+      search:
+        "AnimeStudio's --ai_file option traced to radioegor146/gi-asset-indexes, its last full index fetched and its paths under Build/LevelStreaming listed for the tile",
+    },
+    {
+      found:
+        "A StreamGen blob is a length word and chunks at its index's offsets; a chunk is a varint mask, an id, a count and that many records, and a record a varint mask whose bits, in order, carry flags, its prefab's 64-bit path hash, the world's 32-bit id for the prefab, a streaming radius, its position, its Euler rotation in degrees, its scale (each vector led by a byte of which components follow), an instance, a parent and a flag. Every chunk but the tile's last two parses to its next one's offset, about sixteen thousand placements",
+      search:
+        "Records near the statue read by hand, their masks compared across five kinds until every field held one bit, then the grammar run over every chunk of the tile's blob at its index's offsets",
+    },
+    {
+      found:
+        "A 64-bit path hash is the asset index's PathHashPre in its low byte and PathHashLast in the four above, so it names its prefab's _Vo path; through it about half the placements round the statue are named, the ruins, rocks, grass and decals. The 32-bit id is no hash of any path spelling, and GlobalFinMap's keys are path hashes with no 32-bit id at a fixed offset from them",
+      search:
+        "Every placement's 64-bit hash looked up in the 2.6 index; CRC32, FNV-1 and FNV-1a, Java's, MD5's and SHA-1's low words over each named path's spellings tested against its 32-bit id; GlobalFinMap read for both",
+    },
+    {
+      found:
+        "The oak stands in Windrise's own area, Area_FQD_City (FQD for Fēng Qǐ Dì, the region's Chinese name), not the tile: its StreamGen blob places one prefab, unturned at unit scale, and the area's HLOD draws a trunk rising from that point and the crown over the statue. The oak's Lod1 prefab has its root at its origin, so the record is the oak's place. The tile's own placements, its HLOD and its tree layer hold no oak",
+      search:
+        "The tile's placements by radius and rarity, its HLOD and its tree layer's combined meshes for anything tall round the statue, then every area under OpenWorld/BigWorld in the 2.6 index, the area's blob and HLOD exported",
+    },
+    {
+      found:
+        "The statue's prefab is SceneObj_NPC_Goddess: the gadget's prefabPathHash holds that path's PathHashPre and PathHashLast as a placement's 64-bit hash does, and of the gadget roots holding Stages_MdGoddess01_Lod0 it is the one without a nation's suffix",
+      search:
+        "The CABs that depend on the statue meshes' CAB through AnimeStudio's CAB map, their GameObjects named Goddess, then GadgetExcelConfigData's prefab hash for gadget 70110001 decoded against the 2.6 index",
+    },
+    {
+      found:
+        "A tile's heights are a TerrainData, 513 samples a side two metres apart over a kilometre of height, which AnimeStudio exports unparsed as TerrainData#<n> with its name only inside its bytes, so no name filter reaches it",
+      search:
+        "TerrainData exported raw from the tile's texture blocks, which held tile 1,1's, its heightfield found by the square count followed by its error and bound arrays and its side twice",
     },
     {
       found:
@@ -61,12 +103,18 @@ export const reference: ComponentReference = {
     },
   ],
   open: [
-    "The ground's dense heights: the binary the tile's name ends in, and how its samples are laid out; until then our generator is fitted to the sector's ground points",
-    "Where the oak and the rest of Windrise stand: the streaming layers' placement records decoded, or their own scene's roots found",
+    "Which block holds tile 1,-2's and tile 2,-2's TerrainData",
+    "The prefabs of the placements carrying only the world's 32-bit id, the trees round the statue among them, and the paths newer than the 2.6 index",
     "Each recording's camera, solved once the witness draws the statue, the oak and the ground, and then the parity references at the hours each recording shows",
     "Mondstadt's sky by hour, from its Enviro profile's raw bytes as the login's was read",
   ],
   sources: {
+    assetIndex: {
+      block: "radioegor146/gi-asset-indexes, mapped/GenshinImpact_2.6.0.zip_31049740.blk.asset_index.json",
+      kind: GameSourceKind.DataTable,
+      name: "The game's asset index of version 2.6",
+      role: "Every asset's path by its PathHashPre and PathHashLast, which name a streamed blob and a placement's prefab",
+    },
     groundMaterial: {
       block: "00/02094476.blk",
       kind: GameSourceKind.Material,
@@ -77,7 +125,7 @@ export const reference: ComponentReference = {
       block: "00/11755697.blk",
       kind: GameSourceKind.MonoBehaviour,
       name: "BigWorld_1_-2",
-      role: "Points on Windrise's ground, sparse and exact, which the ground's fit is held to",
+      role: "Points on Windrise's ground, sparse and exact, a check on the heightfield read from the tile's TerrainData",
     },
     groundProfile: {
       block: "00/11274841.blk",
@@ -98,11 +146,23 @@ export const reference: ComponentReference = {
       pathId: "6733514611168788700",
       role: "The oak's prefab nearest the camera with one, its bark and leaves as children; Lod0's meshes are beside it",
     },
+    oakCrown: {
+      block: "00/08480638.blk",
+      kind: GameSourceKind.Mesh,
+      name: "Area_FQD_City_Constant_HLOD_Lod1",
+      role: "Windrise's area drawn far off, the oak's trunk and crown among it, which confirms where the area places the oak",
+    },
     oakMaterials: {
       block: "00/00495653.blk",
       kind: GameSourceKind.Material,
       name: "Stages_Unique_CyTree01_Bark01, Stages_Unique_CyTree01_Bark02",
       role: "The oak's bark, in the block holding the statue's material too",
+    },
+    oakPlacement: {
+      block: "00/03254716.blk",
+      kind: GameSourceKind.BinaryData,
+      name: "6977197b, StreamGen/Area_FQD_City",
+      role: "Windrise's own area, whose one placement is the oak's, its chunk offsets in Area_FQD_City_Index beside it",
     },
     oakRecording: {
       block: "yt-2IPBviDPFB8.mp4, the hour from 25 minutes in",
@@ -134,11 +194,23 @@ export const reference: ComponentReference = {
       name: "Point 4",
       role: "Where Windrise's statue stands and how it turns, and where its teleport sets the traveller down",
     },
+    statuePrefab: {
+      block: "00/04803507.blk",
+      kind: GameSourceKind.GameObject,
+      name: "SceneObj_NPC_Goddess",
+      role: "The statue gadget's prefab, which hangs the Stages_MdGoddess01 meshes under its root",
+    },
     statueTimelapse: {
       block: "yt-zPDi6WBJW9Y.mp4",
       kind: GameSourceKind.Capture,
       name: "Windrise Ambience, a 2026 PC recording from a fixed camera through a whole day",
       role: "The statue under the oak at every hour on the current build, a game minute a second",
+    },
+    tilePlacements: {
+      block: "00/05825684.blk",
+      kind: GameSourceKind.BinaryData,
+      name: "012854bd, StreamGen/BigWorld_1_-2",
+      role: "Every object the tile lays out, the ruins, rocks and grass round the statue among them, its chunk offsets in BigWorld_1_-2_Index in the same block",
     },
     valleyTimelapse: {
       block: "yt-w-63Sw6IP2w.mp4",
