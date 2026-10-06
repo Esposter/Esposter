@@ -89,6 +89,7 @@ A "referenced by" panel and a delete-time warning are further readers of the sam
 ## Notes
 
 - **Resource Graph is eventually consistent; this index is not.** Azure keeps its index current from change notifications plus a periodic full scan, and documents that its data lags. Here the index authorizes, so the save itself keeps it in step and every failure leaves it cleared rather than behind — the cost being that a Program whose save failed after its blob landed rejects its survey's tokens until its next save.
+- **A resource is indexed by its first save after the index shipped.** The migration carried every Program's survey binding over as its `Survey` link, so token validation never lost one; a `Dataset` or `Email` link appears when its resource is next saved. Nothing reads those two roles yet, and the first reader that does fills them for every resource first ([resource references](/docs/resource/deferred/resource-references)).
 
 ## Sources
 
