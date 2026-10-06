@@ -35,7 +35,11 @@ jobs:
       - name: 🏗️ Build packages
         uses: ./.github/actions/run-cached-task
         with:
-          task: cached:build:packages
+          task: build:packages
+          paths: |
+            packages/*/dist
+            packages/*/src/index.ts
+            packages/*/src/components/index.ts
       # The build writes the exports map and `inlinedDependencies` into each manifest, and nothing downstream
       # reads one — so an uncommitted manifest is green everywhere else
       - name: 🔍 Check generated manifest fields are committed

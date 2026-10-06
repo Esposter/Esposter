@@ -10,7 +10,7 @@ Vite+ reads its settings from a root `vite.config.ts`, and reads a monorepo's ex
 
 ## The root config holds tasks and nothing else
 
-The root `vite.config.ts` carries the `run` block: one task per cached script, each running the script by name. Tasks rather than script caching, because every script measured so far rewrites a file it also read — a build's previous `dist` and generated barrels, `tsconfig.tsbuildinfo`, Nuxt's build directory and caches, and pnpm's own run-state file — and `vp` refuses to cache a task that modified its inputs. A task's `cache.input` keeps automatic tracking and subtracts exactly those files, while its `cache.output` keeps them so a hit restores them; a script can carry no such setting, and a task may not share a script's name, so each task is the script's name under a `cached:` prefix ([run config](https://viteplus.dev/config/run)).
+The root `vite.config.ts` carries the `run` block: one task per cached build, each carrying its command. Tasks rather than script caching, because every script measured so far rewrites a file it also read — a build's previous `dist` and generated barrels, `tsconfig.tsbuildinfo`, Nuxt's build directory and caches, and pnpm's own run-state file — and `vp` refuses to cache a task that modified its inputs. A task's `cache.input` keeps automatic tracking and subtracts exactly those files, while its `cache.output` keeps them so a hit restores them; a script can carry no such setting, and a task may not share a script's name, so a cached script becomes a task under its own name and the script is deleted — `build:packages` is run as `vp run build:packages` ([run config](https://viteplus.dev/config/run)).
 
 The subtraction is a list, but a different list from the one the CI key keeps. The key subtracts files a build might not read, and is wrong when it guesses; a task subtracts files the build demonstrably rewrote, named by `vp` itself when it refuses, and a missing entry fails as a refusal to cache rather than as a stale hit.
 
@@ -60,14 +60,14 @@ That arrangement is static: it needs no per-change attention, and it collapses o
 
 ## Key files
 
-| File                                  | Role after the change                                                                     |
-| ------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `vite.config.ts`                      | the `run` block — one `cached:` task per cached script, with its rewritten files excluded |
-| `pnpm-workspace.yaml`                 | the `vite-plus` catalog entry and the overrides that leave one copy of each tool          |
-| `oxlint.config.ts`                    | unchanged — the catalog's Oxlint keeps reading it, run as a task                          |
-| `oxfmt.config.ts`                     | unchanged, for the same reason                                                            |
-| `apps/web/nuxt.config.ts`             | the Nuxt seam, which keeps owning the app build                                           |
-| `packages/configuration/src/index.ts` | the shared config factories, untouched — `vp` configures none of these tools              |
+| File                                  | Role after the change                                                            |
+| ------------------------------------- | -------------------------------------------------------------------------------- |
+| `vite.config.ts`                      | the `run` block — one task per cached build, with its rewritten files excluded   |
+| `pnpm-workspace.yaml`                 | the `vite-plus` catalog entry and the overrides that leave one copy of each tool |
+| `oxlint.config.ts`                    | unchanged — the catalog's Oxlint keeps reading it, run as a task                 |
+| `oxfmt.config.ts`                     | unchanged, for the same reason                                                   |
+| `apps/web/nuxt.config.ts`             | the Nuxt seam, which keeps owning the app build                                  |
+| `packages/configuration/src/index.ts` | the shared config factories, untouched — `vp` configures none of these tools     |
 
 ## Sources
 

@@ -18,7 +18,7 @@ From the **repo root**, install dependencies and build workspace packages first:
 
 ```bash
 pnpm i
-pnpm build:packages
+vp run build:packages
 ```
 
 Then from `apps/web/`:

@@ -42,7 +42,7 @@ jobs:
       - name: 🏗️ Build app
         uses: ./.github/actions/run-cached-task
         with:
-          task: cached:build
+          task: build:app
 
   # @TODO: https://github.com/TypeStrong/typedoc/issues/3098 — restore this job once TypeDoc runs on TypeScript 7,
   # or a `typescript-native-bridge` build carries the AST navigation API; `pnpm build:docs` is the probe. Commented

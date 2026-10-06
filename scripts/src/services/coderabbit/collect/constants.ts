@@ -65,7 +65,7 @@ export const REPAIR_BUILD_APPS_COMMAND: string[] = [
 export const REPAIR_VERIFY_COMMANDS: string[][] = [
   INSTALL_COMMAND,
   ["format:check"],
-  ["build:packages"],
+  ["exec", "vp", "run", "build:packages"],
   ["exec", "tsc"],
   ["-r", "--parallel", "typecheck"],
   ["exec", "oxlint", "--debug=timings", "--format=default", "--disable-nested-config"],

@@ -57,7 +57,6 @@
     "bench:ci": "vitest bench --run",
     "build": "pnpm --filter \"@esposter/web...\" build",
     "build:docs": "virrun -- typedoc",
-    "build:packages": "pnpm -r --filter \"./packages/*\" --bail build",
     "coverage": "vitest run --coverage",
     "crossOS": "pnpm -C scripts crossOS",
     "format": "oxfmt",
@@ -82,7 +81,7 @@
     "prepare": "git config core.hooksPath .githooks || true",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
     "refresh:lockfile": "pnpm crossOS refresh:lockfile",
-    "release": "pnpm format:check && pnpm build:packages && pnpm lint:packages && pnpm typecheck:packages && pnpm test:packages && lerna publish --yes",
+    "release": "pnpm format:check && vp run build:packages && pnpm lint:packages && pnpm typecheck:packages && pnpm test:packages && lerna publish --yes",
     "start": "pnpm -C apps/web start",
     "test": "virrun -- vitest run",
     "test:packages": "virrun -- vitest run --project \"packages/*\"",
@@ -119,11 +118,6 @@
       "darwin": "sh ./scripts/src/refreshLockfile/index.sh",
       "linux": "./scripts/src/refreshLockfile/index.sh",
       "win32": "pnpm pwsh scripts/src/refreshLockfile/index.ps1"
-    },
-    "update:node": {
-      "darwin": "sh ./scripts/src/updateNode/install.sh",
-      "linux": "./scripts/src/updateNode/install.sh",
-      "win32": "pnpm pwsh scripts/src/updateNode/install.ps1"
     }
   },
   "scriptsComments": {

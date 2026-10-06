@@ -1,4 +1,4 @@
-import { PNPM_ARGS, PNPM_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getVersionParts } from "#src/services/shared/getVersionParts";
 import { NODE_VERSION_FILENAME } from "#src/services/updateNode/constants";
 import { getLatestVersionForPrefix } from "#src/services/updateNode/getLatestVersionForPrefix";
@@ -25,7 +25,7 @@ await runMain(
       },
     },
     meta: {
-      description: "Pin node everywhere the repository names it, then install and default it",
+      description: "Pin node everywhere the repository names it, then install it through vp env",
       name: "update:node",
     },
     run: async ({ args }) => {
@@ -37,9 +37,8 @@ await runMain(
       // 2. Bump the one node pin, `.node-version`.
       const nodeVersionPath = resolve(REPOSITORY_ROOT, NODE_VERSION_FILENAME);
       const oldVersion = readFileSync(nodeVersionPath, "utf8").trim();
-      // The pin and @types/node only need rewriting when the target differs. We still hand off to fnm
-      // Below even when it matches: a colleague pulling this repo may have an older node defaulted in fnm (or
-      // Not have this version installed at all) and needs switching onto the pinned version.
+      // The pin and @types/node only need rewriting when the target differs. The install below still runs when it
+      // Matches: a colleague pulling this repo may not have the pinned version installed yet.
       const isNewVersion = oldVersion !== version;
       if (isNewVersion) {
         console.info(`Updating node ${oldVersion} → ${version}\n`);
@@ -52,24 +51,26 @@ await runMain(
         const workspaceWithTypesNode = setCatalogTypesNode(workspace, typesVersion);
         writeFileSync(workspacePath, workspaceWithTypesNode);
         console.info(`✔ ${WORKSPACE_FILE} @types/node → ^${typesVersion}`);
-      } else
-        console.info(
-          `node is already ${version} in ${NODE_VERSION_FILENAME} — ensuring fnm has it installed and defaulted.\n`,
-        );
-      // 4. Hand off install / default / cleanup of the old version to the native (per-OS) script via crossOS.
-      // When the version is unchanged, `old === new`, so the native script's guard skips the removal step.
-      console.info("Installing and defaulting via fnm…");
-      const result = spawnSync(PNPM_FILE, [...PNPM_ARGS, "crossOS", "update:node", version, oldVersion], {
-        cwd: REPOSITORY_ROOT,
-        stdio: "inherit",
-      });
-      if (result.status !== 0)
-        throw new InvalidOperationError(Operation.Update, "update:node", "fnm install/switch failed");
+      } else console.info(`node is already ${version} in ${NODE_VERSION_FILENAME} — ensuring it is installed.\n`);
+      // 4. Hand the install to the global `vp`, which reads `.node-version` and `packageManager` itself and shims
+      // Pnpm in place of Corepack; `clean` then removes the versions no pin or default names any more.
+      for (const vpArgs of [
+        ["env", "install"],
+        ["env", "clean"],
+      ]) {
+        const result = spawnSync("vp", vpArgs, { cwd: REPOSITORY_ROOT, stdio: "inherit" });
+        if (result.status !== 0)
+          throw new InvalidOperationError(
+            Operation.Update,
+            "update:node",
+            `\`vp ${vpArgs.join(" ")}\` failed — install the global vp first (https://viteplus.dev/guide/)`,
+          );
+      }
 
       console.info(
         isNewVersion
-          ? `\nDone. Run \`pnpm refresh:lockfile\` to resolve the new @types/node (new shells default to ${version}; already-open ones keep ${oldVersion} until reopened).`
-          : `\nDone. New shells default to ${version}.`,
+          ? `\nDone. Run \`pnpm refresh:lockfile\` to resolve the new @types/node.`
+          : `\nDone. node ${version} is installed.`,
       );
     },
   }),

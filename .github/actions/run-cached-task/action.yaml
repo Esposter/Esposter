@@ -2,8 +2,12 @@ name: Run Cached Task
 description: Run one task of the root vite.config.ts under vp's traced cache — the cache directory a previous run saved restored first, and saved back when the task executed rather than replayed
 inputs:
   task:
-    description: The task's name in the root vite.config.ts, e.g. `cached:build:packages`
+    description: The task's name in the root vite.config.ts, e.g. `build:packages`
     required: true
+  paths:
+    description: Generated files the task's directory listings name, carried with the cache so a fresh checkout lists what the recorded run listed
+    required: false
+    default: ""
   save:
     description: Save the cache directory after an executed run. Off for a consumer that only reads what 🏗️ CI saves
     required: false
@@ -14,10 +18,16 @@ runs:
     # By prefix, and safely so: vp replays an entry only when every input it traced still matches, so another
     # commit's entry is a miss rather than a stale hit. After the install, because the directory is under
     # `node_modules`, and because the traced inputs include the dependencies a task read there.
+    # @TODO: https://github.com/voidzero-dev/vite-task/issues/504 — drop `paths` once a negative input pattern also
+    # removes a name from a directory listing's fingerprint. Until then a listing that names a generated file the
+    # fresh checkout lacks never matches, so the last run's copies are restored beside the cache. Their content is
+    # no input, and a hit extracts the recorded outputs over them while a miss rebuilds them, so none survives a run.
     - name: ♻️ Restore the task cache
       uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
-        path: node_modules/.vite/task-cache
+        path: |
+          node_modules/.vite/task-cache
+          ${{ inputs.paths }}
         key: vp-${{ inputs.task }}-${{ github.run_id }}-${{ github.run_attempt }}
         restore-keys: vp-${{ inputs.task }}-
 
@@ -35,5 +45,7 @@ runs:
       if: inputs.save == 'true' && steps.run.outputs.replayed != 'true'
       uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
-        path: node_modules/.vite/task-cache
+        path: |
+          node_modules/.vite/task-cache
+          ${{ inputs.paths }}
         key: vp-${{ inputs.task }}-${{ github.run_id }}-${{ github.run_attempt }}

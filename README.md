@@ -262,15 +262,21 @@ git reset --hard
 
 ### Installing Dependencies
 
-1. Install Node Modules:
+1. Install the global [Vite+](https://viteplus.dev/guide/) CLI, then the node and pnpm versions the repository pins:
+
+```bash
+vp env install
+```
+
+2. Install Node Modules:
 
 ```bash
 pnpm i
 ```
 
-2. Install [PostgreSQL + PgAdmin](https://www.postgresql.org/download).
+3. Install [PostgreSQL + PgAdmin](https://www.postgresql.org/download).
 
-3. Add `.env` file according to `.env.example` in `apps/web` directory.
+4. Add `.env` file according to `.env.example` in `apps/web` directory.
 
 Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
@@ -279,7 +285,7 @@ Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/de
 1. Build the packages to be used by the application:
 
 ```bash
-pnpm build:packages
+vp run build:packages
 ```
 
 2. Change to the app directory:

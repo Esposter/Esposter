@@ -74,7 +74,11 @@ jobs:
       - name: 🏗️ Build packages
         uses: ./.github/actions/run-cached-task
         with:
-          task: cached:build:packages
+          task: build:packages
+          paths: |
+            packages/*/dist
+            packages/*/src/index.ts
+            packages/*/src/components/index.ts
           save: false
 
       - name: 🆔 Identify the collector
