@@ -17,6 +17,7 @@ import {
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
+import { RoutePath } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -76,6 +77,7 @@ describe(sendNotification, () => {
     await mockDb.insert(pushSubscriptionsInNotification).values(pushSubscription);
     await sendNotification(context, {
       message: { ...standardMessage, message: "<p></p>" },
+      threadRootRowKey: "",
       type: AppNotificationType.Message,
     });
 
@@ -85,10 +87,19 @@ describe(sendNotification, () => {
   test("a message reaches the device without writing a bell row", async () => {
     expect.hasAssertions();
 
+    vi.stubEnv("BASE_URL", "");
     await mockDb.insert(pushSubscriptionsInNotification).values(pushSubscription);
-    await sendNotification(context, { message: standardMessage, type: AppNotificationType.Message });
+    await sendNotification(context, {
+      message: standardMessage,
+      threadRootRowKey: "",
+      type: AppNotificationType.Message,
+    });
 
     expect(vi.mocked(webpush.sendNotification)).toHaveBeenCalledTimes(1);
+    // A message outside a thread carries the empty thread root, so the link falls through to the message itself
+    expect(JSON.parse(String(vi.mocked(webpush.sendNotification).mock.calls[0]?.[1])).data.url).toBe(
+      RoutePath.MessagesMessage(roomId, rowKey),
+    );
     await expect(mockDb.select().from(notificationsInNotification)).resolves.toStrictEqual([]);
   });
 

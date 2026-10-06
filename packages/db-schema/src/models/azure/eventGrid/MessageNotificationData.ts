@@ -18,7 +18,7 @@ export interface MessageNotificationData extends ItemEntityType<AppNotificationT
   appUserId?: string;
   message: Pick<MessageEntity, "message" | "partitionKey" | "rowKey" | "userId">;
   // The rowKey of the thread's root when this message is a reply — the follow key and the deep-link target.
-  threadRootRowKey?: string;
+  threadRootRowKey: string;
 }
 
 const messageNotificationFields = { message: true, partitionKey: true, rowKey: true, userId: true } as const;
@@ -31,6 +31,6 @@ export const messageNotificationDataSchema = z.object({
     standardMessageEntitySchema.pick(messageNotificationFields),
     webhookMessageEntitySchema.pick(messageNotificationFields),
   ]),
-  threadRootRowKey: z.string().optional(),
+  threadRootRowKey: z.string().default(""),
   type: z.literal(AppNotificationType.Message).readonly(),
 }) satisfies z.ZodType<MessageNotificationData>;

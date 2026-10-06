@@ -67,7 +67,7 @@ const createMessageNotificationData = (
   messageText: string,
   partitionKey: string,
   rowKey: string,
-  threadRootRowKey?: string,
+  threadRootRowKey = "",
 ): MessageNotificationData => ({
   message: { message: messageText, partitionKey, rowKey, userId: getMockSession().user.id },
   threadRootRowKey,
