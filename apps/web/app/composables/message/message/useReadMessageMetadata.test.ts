@@ -9,6 +9,7 @@ import { describe, expect, test } from "vitest";
 
 describe(useReadMessageMetadata, () => {
   const { trpcMsw } = setupMswTrpc();
+  let readMessageMetadata: ReturnType<typeof useReadMessageMetadata>;
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
 
@@ -30,7 +31,6 @@ describe(useReadMessageMetadata, () => {
     });
     trpcMsw.room.readMembersByIds.query(() => []);
     trpcMsw.message.emoji.readEmojis.query(() => []);
-    let readMessageMetadata: ReturnType<typeof useReadMessageMetadata>;
     await mountSuspended(
       defineComponent({
         render: () => h("div"),
