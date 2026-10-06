@@ -106,7 +106,7 @@ catalog:
   "@tonejs/midi": ^2.0.28
   "@tresjs/cientos": ^5.9.2
   "@tresjs/core": ^5.9.2
-  "@tresjs/nuxt": ^5.7.2
+  "@tresjs/nuxt": ^5.7.3
   "@trpc/client": ^11.19.0
   "@trpc/server": ^11.19.0
   "@tsdown/css": ^0.23.0
