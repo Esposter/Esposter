@@ -59,6 +59,7 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | Whether a light solve models the render | `calibrate --self`: our render solved, its light handed back                    |
 | How the haze thins with height, an hour | `calibrate --haze`: its density and falloff refined with the light              |
 | Whether a height's error is light, haze | `rank`'s height bands by depth: one ratio a light, a growing one haze           |
+| Where a light's error lies on the frame | `rank`'s light map: the exports' light over the reference's, smoothed           |
 | What a shader computes                  | `shaders`: the annotated disassembly, and HLSL where it decompiles              |
 
 ## Music

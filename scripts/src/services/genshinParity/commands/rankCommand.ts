@@ -1,9 +1,12 @@
 import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { COMPARISONS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { rankReferenceGains } from "#src/services/genshinParity/witness/rankReferenceGains";
 import { readStandInGains } from "#src/services/genshinParity/witness/readStandInGains";
 import { defineCommand } from "citty";
+import { mkdir, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 
 export const rankCommand: SubCommandsDef[string] = defineCommand({
   args: {
@@ -17,7 +20,7 @@ export const rankCommand: SubCommandsDef[string] = defineCommand({
   },
   meta: {
     description:
-      "Every term of a reference's error ranked by its ceiling, the most of the frame's FLIP it could recover: each family's stand-in apart from its light, haze and grade by depth, and the sky by rows; then what a light constant over each binning of the parts could recover",
+      "Every term of a reference's error ranked by its ceiling, the most of the frame's FLIP it could recover: each family's stand-in apart from its light, haze and grade by depth, and the sky by rows; then what a light constant over each binning of the parts could recover, and a map of where the light stands off",
     name: "rank",
   },
   run: async ({ args }) => {
@@ -50,5 +53,11 @@ export const rankCommand: SubCommandsDef[string] = defineCommand({
           )
           .join(", ")}`,
       );
+    await mkdir(COMPARISONS_DIRECTORY, { recursive: true });
+    const ratioMapPath = join(COMPARISONS_DIRECTORY, `${args.reference}-light.png`);
+    await writeFile(ratioMapPath, lightCeilings.ratioMap);
+    console.log(
+      `the exports' light over the reference's, smooth over a few pixels, red brighter and blue darker: ${ratioMapPath}`,
+    );
   },
 });

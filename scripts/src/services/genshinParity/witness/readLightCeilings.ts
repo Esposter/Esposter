@@ -20,6 +20,10 @@ const TABLE_DEPTH_EDGES = [20, 40, 80];
 // How far the smooth field reaches either side of a pixel, in the structure's pixels
 const FIELD_RADIUS = 4;
 const MIN_DENOMINATOR = 1e-6;
+// The ratio the map draws at full strength, ours twice or half the reference's, by its base-two logarithm
+const RATIO_MAP_STOPS = 1;
+// How bright the reference shows round the parts on the map, a share of its own brightness
+const RATIO_MAP_BACKDROP = 0.4;
 const countPassed = (edges: readonly number[], value: number): number => edges.filter((edge) => value > edge).length;
 const readLuminance = (linear: Float32Array, pixel: number): number =>
   LUMINANCE.reduce((sum, weight, channel) => sum + weight * (linear[pixel * CHANNELS.length + channel] ?? 0), 0);
@@ -30,7 +34,9 @@ const readLuminance = (linear: Float32Array, pixel: number): number =>
 // Turns up, by height as well, by each part and its facing, and a field smooth over a few pixels bounding anything
 // Smooth. Each row is the frame's FLIP so corrected, beside the exports' frame as drawn. Beside them, each height band's
 // Mean linear luminance in the reference and the exports by depth: a light the parts lack at a height stands off by one
-// Ratio at every depth, where a haze wrongly profiled stands further off the deeper the stone lies
+// Ratio at every depth, where a haze wrongly profiled stands further off the deeper the stone lies; and a map of that
+// Smooth field's ratio over the frame, red where the exports stand brighter than the reference and blue where darker,
+// So a cell of the table is found on the frame
 export const readLightCeilings = async ({
   checkIsScored,
   direction,
@@ -49,6 +55,7 @@ export const readLightCeilings = async ({
   depthEdges: readonly number[];
   drawn: number;
   heightBands: { bottom: number; cells: { count: number; exports: number; reference: number }[] }[];
+  ratioMap: Buffer;
   rows: { frame: number; name: string }[];
 }> => {
   const count = width * height;
@@ -164,10 +171,31 @@ export const readLightCeilings = async ({
       cell.exports /= Math.max(cell.count, 1);
       cell.reference /= Math.max(cell.count, 1);
     }
+  const ratioPixels = Buffer.alloc(count * CHANNELS.length);
+  for (let pixel = 0; pixel < count; pixel++) {
+    if (!checkIsPart(pixel)) {
+      // The rest of the reference, grey and dimmed, so the parts stand out against where they stand
+      const shade = Math.round(toSrgb(readLuminance(reference, pixel)) * BYTE * RATIO_MAP_BACKDROP);
+      ratioPixels.set([shade, shade, shade], pixel * CHANNELS.length);
+      continue;
+    }
+    const stops = Math.log2(
+      Math.max(readLuminance(blurredExports, pixel), MIN_DENOMINATOR) /
+        Math.max(readLuminance(blurredReference, pixel), MIN_DENOMINATOR),
+    );
+    const strength = Math.round(Math.min(Math.abs(stops) / RATIO_MAP_STOPS, 1) * BYTE);
+    ratioPixels.set(
+      stops > 0 ? [BYTE, BYTE - strength, BYTE - strength] : [BYTE - strength, BYTE - strength, BYTE],
+      pixel * CHANNELS.length,
+    );
+  }
+  const ratioMap = await sharp(ratioPixels, { raw: { channels: CHANNELS.length, height, width } })
+    .png()
+    .toBuffer();
   const drawn = await score(exports);
   const rows: { frame: number; name: string }[] = [];
   for (const [name, corrected] of corrections)
     // oxlint-disable-next-line no-await-in-loop -- each correction is encoded and scored in turn, holding one map
     rows.push({ frame: await score(corrected), name });
-  return { depthEdges: TABLE_DEPTH_EDGES, drawn, heightBands, rows };
+  return { depthEdges: TABLE_DEPTH_EDGES, drawn, heightBands, ratioMap, rows };
 };
