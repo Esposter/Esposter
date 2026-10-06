@@ -6,8 +6,9 @@ import { usePopover } from "@vuetify/v0";
 import { mergeProps } from "vue";
 
 interface Props {
-  // An element already on the page the panel hangs off in place of a trigger of its own, opened through the model: the
-  // Row of a list that was pressed, so one panel serves every row
+  // An element already on the page the panel hangs off, opened through the model: the row of a list that was pressed,
+  // So one panel serves every row. Only the trigger slot draws a trigger, so a panel whose row is not there yet draws
+  // No empty one in its place
   anchor?: HTMLElement;
   // The trigger's own text or a label beside it already reads the label, so no tooltip says it again: a date field
   isLabelShown?: true;
@@ -66,7 +67,7 @@ defineExpose({ triggerElement });
 </script>
 
 <template>
-  <UiTooltip v-if="!anchor" #default="{ activatorProps }" :is-disabled="isOpen || isLabelShown" :label>
+  <UiTooltip v-if="$slots.trigger" #default="{ activatorProps }" :is-disabled="isOpen || isLabelShown" :label>
     <UiButton
       ref="trigger"
       :="mergeProps(activatorProps, $attrs)"
