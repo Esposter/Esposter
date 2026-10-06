@@ -16,8 +16,7 @@ runs:
       shell: bash
       run: echo "PNPM_CONFIG_AGGREGATE_OUTPUT=true" >> "$GITHUB_ENV"
     # pnpm from `packageManager`, node from `.node-version`. `install: false` because each caller owns its
-    # own install — the root alone with `--ignore-scripts` for format, the artifact-aware `setup-packages`
-    # everywhere else.
+    # own install — the root alone with `--ignore-scripts` for format, `install-projects` everywhere else.
     - name: 📦 Install pnpm and node
       uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3.0.0
       with:
