@@ -8,7 +8,7 @@ description: Apply when a value can be empty or missing — an optional field, p
 ## Settled — do not re-propose
 
 - **Turning a `""` sentinel back into `undefined`** — at the write (`value || undefined`, an input transform), at rest (`.optional()` beside `.or(z.literal(""))`) or at the read (`.filter((value) => value !== undefined)`). `undefined` was removed from app-owned strings so `""` is the one absent string end to end; a field still declaring `?: string` is a leftover of that removal, finished by making it `string` with `""`, never by stripping the `""` (`references/string-sentinel.md`).
-- **A lint gate on `null`** — every legitimate boundary site becomes a false positive, and carving them out costs more than the rule catches (`apps/web/content/docs/architecture/null-vs-undefined.md`).
+- **A lint gate on `null`** — rejected, since its false positives at the boundary sites cost more to exempt than it would ever flag (`apps/web/content/docs/architecture/null-vs-undefined.md`).
 
 ## Rules
 

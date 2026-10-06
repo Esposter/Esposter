@@ -17,7 +17,7 @@ import {
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { RoutePath } from "@esposter/shared";
+import { jsonDateParse, RoutePath } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -97,7 +97,7 @@ describe(sendNotification, () => {
 
     expect(vi.mocked(webpush.sendNotification)).toHaveBeenCalledTimes(1);
     // A message outside a thread carries the empty thread root, so the link falls through to the message itself
-    expect(JSON.parse(String(vi.mocked(webpush.sendNotification).mock.calls[0]?.[1])).data.url).toBe(
+    expect(jsonDateParse(String(vi.mocked(webpush.sendNotification).mock.calls[0]?.[1])).data.url).toBe(
       RoutePath.MessagesMessage(roomId, rowKey),
     );
     await expect(mockDb.select().from(notificationsInNotification)).resolves.toStrictEqual([]);

@@ -86,7 +86,7 @@ describe(createTRPCMsw, () => {
     trpc.nested.deep.read.query(read);
 
     // @ts-expect-error The input the real parser exists to reject
-    await expect(client.nested.deep.read.query({})).rejects.toThrowErrorMatchingInlineSnapshot(`
+    await expect(client.nested.deep.read.query({ id: 0 })).rejects.toThrowErrorMatchingInlineSnapshot(`
       [TRPCClientError: formatted [
         {
           "expected": "string",
@@ -94,7 +94,7 @@ describe(createTRPCMsw, () => {
           "path": [
             "id"
           ],
-          "message": "Invalid input: expected string, received undefined"
+          "message": "Invalid input: expected string, received number"
         }
       ]]
     `);
