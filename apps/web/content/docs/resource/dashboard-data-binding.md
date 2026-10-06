@@ -55,4 +55,4 @@ interface VisualDatasetBinding {
 
 - Aggregation runs client-side over the row-capped dataset — no server query language. Revisit only if the row cap becomes a real limit ([dataset row cap](/docs/resource/deferred/dataset-row-cap-pagination)).
 - Fetch on dashboard load + manual refresh; live updates are deferred ([realtime dataset refresh](/docs/resource/deferred/realtime-dataset-refresh)).
-- A bound visual with a deleted/unreadable source renders an error state, never breaks the dashboard.
+- A bound visual whose source is deleted or unreadable renders an error state, never breaks the dashboard; a source that is gone says to pick another or restore it, there and under the binding form's Source picker ([datasets](/docs/architecture/dataset)).

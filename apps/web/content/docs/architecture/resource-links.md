@@ -71,7 +71,7 @@ flowchart LR
   PARTICIPANTS -->|"a match"| ACCEPT["token accepted"]
 ```
 
-A "referenced by" panel and a delete-time warning are further readers of the same index, not yet built ([resource references](/docs/resource/deferred/resource-references), [dangling dataset references](/docs/resource/deferred/dangling-dataset-references)).
+A "referenced by" panel and a delete-time warning are further readers of the same index, not yet built ([resource references](/docs/resource/deferred/resource-references), [delete-time reference warning](/docs/resource/deferred/delete-reference-warning)).
 
 ## Key files
 

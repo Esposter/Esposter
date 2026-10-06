@@ -53,7 +53,7 @@ onUnmounted(() => {
   storeEditor.value = undefined;
 });
 
-const { dataset } = useDataset(() => datasetReference.value);
+const { dataset, error } = useDataset(() => datasetReference.value);
 const columnNames = computed(() => dataset.value?.columns.map(({ name }) => name) ?? []);
 const { publishedSurveys } = useReadPublishedSurveys();
 // A session-driven editor re-init drops every registered block, so both categories re-sync off the editor too
@@ -68,7 +68,11 @@ useSurveyInviteBlocks(editor, publishedSurveys, createEmailSurveyInviteBlocks);
 <template>
   <div flex flex-col h-full>
     <div v-if="session.data" px-4 py-2 flex flex-wrap gap-4 ui-bar items-center>
-      <DatasetReferencePicker :model-value="datasetReference" @update:model-value="saveDatasetReference($event)" />
+      <DatasetReferencePicker
+        :error
+        :model-value="datasetReference"
+        @update:model-value="saveDatasetReference($event)"
+      />
       <!-- The line an inbox shows under the subject; without it an inbox shows the first words of the body -->
       <div v-if="editor" flex-1 min-w-0>
         <UiTextField

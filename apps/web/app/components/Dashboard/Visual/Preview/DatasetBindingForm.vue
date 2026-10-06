@@ -13,7 +13,7 @@ const { $trpc } = useNuxtApp();
 const session = authClient.useSession();
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
-const { dataset } = useDataset(() => modelValue.value?.reference);
+const { dataset, error } = useDataset(() => modelValue.value?.reference);
 // Picking a source reads it before binding it, so the reads race: latest-wins on one key, so a slow read of a source
 // Picked earlier cannot land last and bind that source over the one on screen — and clearing supersedes it too
 const { executeQuery, supersedeKey } = useMutation();
@@ -31,6 +31,7 @@ const aggregationItems = DatasetAggregationTypes.map((value) => ({
 <template>
   <template v-if="session.data">
     <DatasetReferencePicker
+      :error
       :model-value="modelValue?.reference"
       @update:model-value="
         async (newReference) => {

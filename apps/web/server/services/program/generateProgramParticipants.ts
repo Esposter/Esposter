@@ -37,15 +37,14 @@ export const generateProgramParticipants = async (
 ): Promise<GeneratedProgramParticipants> => {
   const content = await readResourceContent(programResourceSchema, programId);
   if (!content?.audience || !content.keyColumn) throw getDanglingProgramBindingError();
-  // A deleted audience makes its provider throw UNAUTHORIZED — surfaced as the program's own
-  // Dangling-binding error rather than thrown through as if the owner had lost access to their program.
-  // Every other failure is a real fault and propagates, so a transient storage or parse error is never
-  // Mistaken for a permanently broken binding
+  // An audience whose source is gone reads as NOT_FOUND — surfaced as the program's own dangling-binding error,
+  // Whose fix is the same rebind. Every other failure is a real fault and propagates, so a transient storage or
+  // Parse error is never mistaken for a permanently broken binding
   const audience = content.audience;
   const audienceDataset = await getResultAsync(() => readDataset(ctx, audience)).match(
     (dataset) => dataset,
     (error) => {
-      if (error instanceof TRPCError && error.code === "UNAUTHORIZED") throw getDanglingProgramBindingError();
+      if (error instanceof TRPCError && error.code === "NOT_FOUND") throw getDanglingProgramBindingError();
       throw error;
     },
   );

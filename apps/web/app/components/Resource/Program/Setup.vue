@@ -15,7 +15,7 @@ const audience = computed({
     programResource.value.audience = value;
   },
 });
-const { dataset } = useDataset(audience);
+const { dataset, error } = useDataset(audience);
 // The key column can only be one the audience actually has, so it is picked, never typed
 const keyColumnItems = computed<UiSelectItem<string>[]>(
   () => dataset.value?.columns.map(({ name }) => ({ meaning: UiIconMeaning.Columns, title: name, value: name })) ?? [],
@@ -42,7 +42,7 @@ watchAutosave(programResource, saveProgram);
   <div p-4 gap-4 grid items-start ui-body md:cols-2>
     <UiFrame title="Audience">
       <p text-muted>The dataset the participants come from, and the column that tells one participant from another.</p>
-      <DatasetReferencePicker v-model="audience" />
+      <DatasetReferencePicker v-model="audience" :error />
       <div flex flex-col gap-1>
         <span text-sm text-muted>Key column</span>
         <UiSelect

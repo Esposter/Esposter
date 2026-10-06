@@ -10,6 +10,12 @@ import { DatasetProviderTypeItemCategoryDefinitions } from "@/services/dataset/D
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
 
+interface Props {
+  // Why the picked source could not be read, from the consumer's own read of it
+  error: string;
+}
+
+const { error } = defineProps<Props>();
 const modelValue = defineModel<DatasetReference | undefined>({ required: true });
 const { $trpc } = useNuxtApp();
 const session = authClient.useSession();
@@ -58,6 +64,7 @@ watchImmediate([() => session.value.data, type], async ([newSession, newType]) =
         :model-value="modelValue?.id ?? ''"
         @update:model-value="modelValue = $event ? { id: $event, type } : undefined"
       />
+      <span v-if="error" role="alert" text-sm text-error>{{ error }}</span>
     </div>
   </div>
 </template>

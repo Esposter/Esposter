@@ -25,12 +25,13 @@ import { createEntity, getTopNEntities } from "@esposter/db";
 import {
   AzureEntityType,
   AzureTable,
+  DatabaseEntityType,
   ProgramParticipantEntity,
   ResourceType,
   SurveyResponseEntity,
   SurveyResponseMode,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
@@ -204,7 +205,7 @@ describe("programRouter", () => {
     assert.exists(content?.audience);
     await sheetCaller.deleteResource({ id: content.audience.id });
 
-    // The provider's UNAUTHORIZED never throws through — it surfaces as the program's own binding error
+    // The missing source never throws through — it surfaces as the program's own binding error
     await expect(caller.generateProgramParticipants({ id: program.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${danglingProgramBindingErrorMessage}]`,
     );
@@ -360,7 +361,9 @@ describe("programRouter", () => {
 
     await expect(
       datasetCaller.readDataset({ id: program.id, type: DatasetProviderType.ProgramStatus }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, program.id).message}]`,
+    );
   });
 
   test("purges program participants with the program", async () => {

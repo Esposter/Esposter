@@ -15,4 +15,4 @@ It is a lineage view nobody has asked for at current resource counts — a user'
 
 ## Revisit when
 
-[Dangling dataset references](/docs/resource/deferred/dangling-dataset-references) gets built — a delete-time "this resource is used by N others" warning reads the same rows, and the panel is the natural place to show them — or resource counts grow past what an owner can hold in their head.
+The [delete-time reference warning](/docs/resource/deferred/delete-reference-warning) gets built, since it reads the same rows after the same backfill and the panel is the natural place to list what it counts. Or resource counts grow past what an owner can hold in their head.

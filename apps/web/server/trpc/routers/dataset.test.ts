@@ -139,15 +139,21 @@ describe("datasetRouter", () => {
 
     await expect(
       caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, newSurvey.id).message}]`,
+    );
   });
 
   test("fails read survey responses with non-existent id", async () => {
     expect.hasAssertions();
 
+    const id = crypto.randomUUID();
+
     await expect(
-      caller.readDataset({ id: crypto.randomUUID(), type: DatasetProviderType.SurveyResponses }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+      caller.readDataset({ id, type: DatasetProviderType.SurveyResponses }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, id).message}]`,
+    );
   });
 
   test("reads file dataset", async () => {
@@ -210,6 +216,8 @@ describe("datasetRouter", () => {
 
     await expect(
       caller.readDataset({ id: newResource.id, type: DatasetProviderType.Sheet }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, newResource.id).message}]`,
+    );
   });
 });

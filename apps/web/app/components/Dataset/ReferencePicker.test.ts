@@ -30,7 +30,7 @@ describe("datasetReferencePicker", () => {
     });
     trpcMsw.sheet.readResources.query(() => ({ hasMore: false, items: [{ ...sheet, publication: null }] }));
     useSession.mockReturnValue(ref({ data: { user: { id: crypto.randomUUID() } } }));
-    const wrapper = await mountSuspended(DatasetReferencePicker, { props: { modelValue: undefined } });
+    const wrapper = await mountSuspended(DatasetReferencePicker, { props: { error: "", modelValue: undefined } });
     const [typeSelect, sourceSelect] = wrapper.findAllComponents(UiSelect);
     typeSelect?.vm.$emit("update:modelValue", DatasetProviderType.Sheet);
     await flushPromises();
