@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import { getMockSession } from "#server/trpc/context.test";
+import { createId } from "#shared/util/math/random/createId";
 import { useSession } from "@/services/auth/authClient.test";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
@@ -8,7 +9,7 @@ import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
-import { AdminActionType } from "@esposter/db-schema";
+import { AdminActionType, CALL_ID_LENGTH, getReverseTickedTimestamp } from "@esposter/db-schema";
 import { RoutePath, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -21,10 +22,10 @@ beforeEach(() => {
 
 describe(useCallStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const callSessionId = crypto.randomUUID();
+  const callSessionId = createId(CALL_ID_LENGTH);
   const imagePath = "imagePath";
   const roomId = crypto.randomUUID();
-  const threadRootRowKey = crypto.randomUUID();
+  const threadRootRowKey = getReverseTickedTimestamp();
 
   // The camera flag is a participant row like any other, so the primitive unwinds and reports its rejection.
   // Rethrowing lets a rejected server write cancel the local work it is composed with — the picked background

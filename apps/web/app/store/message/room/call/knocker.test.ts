@@ -1,8 +1,10 @@
 // @vitest-environment nuxt
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
+import { createId } from "#shared/util/math/random/createId";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { CALL_ID_LENGTH } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";
 
@@ -18,9 +20,9 @@ const createParticipant = (name: string): CallParticipant => ({
 
 describe(useKnockerStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const callId = "callId";
-  const callSessionId = crypto.randomUUID();
-  const rejectedCallId = "rejectedCallId";
+  const callId = createId(CALL_ID_LENGTH);
+  const callSessionId = createId(CALL_ID_LENGTH);
+  const rejectedCallId = createId(CALL_ID_LENGTH);
   const first = createParticipant("first");
   const second = createParticipant("second");
 

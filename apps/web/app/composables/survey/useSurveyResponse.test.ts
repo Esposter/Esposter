@@ -10,8 +10,8 @@ describe(useSurveyResponse, () => {
   const id = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
   const participantToken = "";
-  const model = { "": "" };
-  const submittedModel = { "": " " };
+  const model = { a: "" };
+  const submittedModel = { a: " " };
   const createSurveyResponse = () => new SurveyResponseEntity({ model, partitionKey: id, rowKey });
 
   // A respondent who answers and immediately submits leaves the create in flight, so a submit dropped outright

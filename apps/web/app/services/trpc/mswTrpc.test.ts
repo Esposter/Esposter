@@ -1,6 +1,7 @@
 import type { TRPCRouter } from "#server/trpc/routers";
 
 import { rootConfig } from "#server/trpc/rootConfig";
+import { trpcRouter } from "#server/trpc/routers";
 import { TRPC_CLIENT_PATH, TRPC_WS_PATH } from "@/services/trpc/constants";
 import { initTRPC } from "@trpc/server";
 import { Headers as HappyDomHeaders } from "happy-dom";
@@ -15,6 +16,8 @@ import { afterAll, afterEach, beforeAll, describe, expect, vi } from "vitest";
 export const setupMswTrpc = () => {
   const { handlers, reset, trpc } = createTRPCMsw<TRPCRouter>({
     endpoint: `${window.location.origin}${TRPC_CLIENT_PATH}`,
+    // Every mocked call passes the real procedure's input parsers, so a test sending what the server rejects fails
+    router: trpcRouter,
     t: initTRPC.create(rootConfig),
     webSocketUrl: `ws://${window.location.host}${TRPC_WS_PATH}`,
   });

@@ -6,7 +6,7 @@ import { describe, expect, test } from "vitest";
 
 describe(useBookmarkStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const path = "";
+  const path = "/";
   const title = "title";
 
   // A second tab bookmarked the page first, so this tab's optimistic flip bookmarks it while the server's

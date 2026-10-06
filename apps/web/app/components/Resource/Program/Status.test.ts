@@ -5,15 +5,18 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceProgramStatus from "@/components/Resource/Program/Status.vue";
 import { downloadFile } from "@/services/app/downloadFile";
+import { useSession } from "@/services/auth/authClient.test";
 import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
+import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/app/downloadFile"), () => ({ downloadFile: vi.fn<typeof downloadFile>() }));
+vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 // The blade renders inside the shell's Suspense boundary, which is what shows a skeleton while it resolves —
 // So the blade awaits everything it renders from in setup rather than mounting empty behind its own flag
@@ -27,6 +30,8 @@ describe("resourceProgramStatus", () => {
   const surveyId = crypto.randomUUID();
 
   beforeEach(async () => {
+    // The blade reads its id off the resource page's route, which the auth middleware guards
+    useSession.mockReturnValue({ data: ref({ user: { id: resource.userId } }) });
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     trpcMsw.resource.readResource.query(() => ({ ...resource, publication: null }));
     trpcMsw.program.readResourceContent.query(() => ({ emailId: "", keyColumn, surveyId }));
@@ -44,7 +49,7 @@ describe("resourceProgramStatus", () => {
     expect.hasAssertions();
 
     setStatus(false);
-    const component = await mountSuspended(ResourceProgramStatus);
+    const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
 
     expect(component.text()).toContain(keyValue);
     expect(component.text()).toContain("1 of 1 responded");
@@ -56,7 +61,7 @@ describe("resourceProgramStatus", () => {
     expect.hasAssertions();
 
     setStatus(true);
-    const component = await mountSuspended(ResourceProgramStatus);
+    const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
 
     expect(component.text()).toContain("at least 1 of 1 responded");
     expect(component.get('[role="meter"]').attributes("aria-valuetext")).toBe("at least 100% responded");
@@ -71,7 +76,7 @@ describe("resourceProgramStatus", () => {
     const participants = [{ keyValue, token: crypto.randomUUID() }];
     setStatus(false);
     trpcMsw.program.generateProgramParticipants.mutation(() => ({ participants }));
-    const component = await mountSuspended(ResourceProgramStatus);
+    const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
     const generateButton = component.findAll("button").find((button) => button.text() === "Generate participants");
     assert.exists(generateButton);
     // The click's last call is the status re-read after the download, so the test holds until it lands — a test

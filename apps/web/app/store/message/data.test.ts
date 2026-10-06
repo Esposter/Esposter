@@ -11,7 +11,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
-import { createMessageEntity, MessageType } from "@esposter/db-schema";
+import { createMessageEntity, getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -292,7 +292,7 @@ describe(useDataStore, () => {
     const threadFollowStore = useThreadFollowStore();
     const { checkIsFollowing } = threadFollowStore;
     const { createMessage } = dataStore;
-    const replyRowKey = crypto.randomUUID();
+    const replyRowKey = getReverseTickedTimestamp();
     trpcMsw.message.createMessage.mutation(() =>
       createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
     );

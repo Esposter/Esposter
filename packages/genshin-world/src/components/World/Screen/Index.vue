@@ -24,8 +24,9 @@ const { createTerrainWorker, isPaused, isTuning, qualityTier, regionDataBaseUrl 
 const emit = defineEmits<{ ready: [] }>();
 const { maxPixelRatio } = QualityTierSettingsMap[qualityTier];
 const canvas = useTemplateRef<TresCanvasInstance>("canvas");
-// The world on its own canvas: the camera circling Windrise's oak, and the scene it looks at. A world that cannot
-// Start, where neither WebGPU nor WebGL 2 is available, is ready all the same, so a host waiting on it still moves on
+// The world on its own canvas: the camera circling Windrise's oak, and the scene it looks at. It is ready once the
+// Scene has the ground and the landmarks of its first view, which keep loading while the world is paused. A world that
+// Cannot start, where neither WebGPU nor WebGL 2 is available, is ready all the same, so a host waiting on it moves on
 // @TODO: no upstream issue — TresJS draws only while it owes a frame, and always mode owes one only once it has drawn,
 // So a canvas switched from manual, having drawn the frame it was owed, never draws again. The uncovered world is owed
 // One while the canvas is still manual, before its props change
@@ -49,7 +50,6 @@ watch(
       shadows
       :shadow-map-type="PCFShadowMap"
       @error="emit('ready')"
-      @ready="emit('ready')"
     >
       <TresPerspectiveCamera :far="2000" :fov="45" :look-at="[0, 14, 0]" :position="[62, 26, 58]" />
       <OrbitControls
@@ -59,7 +59,13 @@ watch(
         :min-distance="12"
         :target="[0, 14, 0]"
       />
-      <WorldWindrise :create-terrain-worker :is-tuning="Boolean(isTuning)" :quality-tier :region-data-base-url />
+      <WorldWindrise
+        :create-terrain-worker
+        :is-tuning="Boolean(isTuning)"
+        :quality-tier
+        :region-data-base-url
+        @ready="emit('ready')"
+      />
     </TresCanvas>
   </div>
 </template>

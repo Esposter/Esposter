@@ -11,13 +11,18 @@ import { computeOutlineDistance } from "genshin-engine";
 // Each region's data is fetched when the camera comes within reach of any of its areas' outlines, and released when it
 // Leaves. It is fetched rather than imported because the browser keeps an imported module for the life of the page,
 // So an imported region could never be released. Reach is rechecked only once the camera has moved a stretch, and a
-// Region whose data fails its schema is logged and left undrawn while the rest of the world loads
+// Region whose data fails its schema is logged and left undrawn while the rest of the world loads. The data is settled
+// Once every region in reach of the first view has arrived or failed, which is when the world is ready to be shown
 export const useRegionData = (origin: Vector3, regionDataBaseUrl: string) => {
   const { camera } = useTres();
   const { onBeforeRender } = useLoop();
   const regionDataMap = shallowReactive(new Map<string, RegionData>());
   const pendingRegionIds = new Set<string>();
   const wantedRegionIds = new Set<string>();
+  const isRegionDataSettled = ref(false);
+  const settle = () => {
+    if (pendingRegionIds.size === 0) isRegionDataSettled.value = true;
+  };
   let checkedX = Infinity;
   let checkedZ = Infinity;
 
@@ -54,14 +59,18 @@ export const useRegionData = (origin: Vector3, regionDataBaseUrl: string) => {
           pendingRegionIds.delete(id);
           // A region that left reach while it was fetching is not kept
           if (wantedRegionIds.has(id)) regionDataMap.set(id, regionData);
+          settle();
         },
         (error) => {
           pendingRegionIds.delete(id);
           console.error(error);
+          settle();
         },
       );
     }
+    // A check that has nothing to fetch settles at once
+    settle();
   });
 
-  return regionDataMap;
+  return { isRegionDataSettled, regionDataMap };
 };

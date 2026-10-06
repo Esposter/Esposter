@@ -1,4 +1,4 @@
-import type { Database } from "@esposter/db-schema";
+import type { Database, PushNotificationPayload } from "@esposter/db-schema";
 
 import { MOCK_ENDPOINT } from "#src/services/notification/constants.test";
 import { sendNotification } from "#src/services/notification/sendNotification";
@@ -97,9 +97,9 @@ describe(sendNotification, () => {
 
     expect(vi.mocked(webpush.sendNotification)).toHaveBeenCalledTimes(1);
     // A message outside a thread carries the empty thread root, so the link falls through to the message itself
-    expect(jsonDateParse(String(vi.mocked(webpush.sendNotification).mock.calls[0]?.[1])).data.url).toBe(
-      RoutePath.MessagesMessage(roomId, rowKey),
-    );
+    expect(
+      jsonDateParse<PushNotificationPayload>(String(vi.mocked(webpush.sendNotification).mock.calls[0]?.[1])).data.url,
+    ).toBe(RoutePath.MessagesMessage(roomId, rowKey));
     await expect(mockDb.select().from(notificationsInNotification)).resolves.toStrictEqual([]);
   });
 

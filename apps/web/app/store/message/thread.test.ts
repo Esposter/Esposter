@@ -8,7 +8,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useLayoutStore } from "@/store/layout";
 import { useFileStore } from "@/store/message/file";
 import { useThreadStore } from "@/store/message/thread";
-import { createMessageEntity, MessageType } from "@esposter/db-schema";
+import { createMessageEntity, getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
 import { noop, Operation } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -22,7 +22,7 @@ describe(useThreadStore, () => {
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
   const message = "message";
-  const rootRowKey = crypto.randomUUID();
+  const rootRowKey = getReverseTickedTimestamp();
   const createReply = (replyRowKey?: string) =>
     createMessageEntity({ message, replyRowKey, roomId, type: MessageType.Message, userId });
 
@@ -174,7 +174,7 @@ describe(useThreadStore, () => {
     const { threadMessages } = storeToRefs(threadStore);
     const openThread = useOpenThread();
     await openThread(roomId, rootRowKey);
-    await MessageHookMap[Operation.Create].run(createReply("otherRootRowKey"));
+    await MessageHookMap[Operation.Create].run(createReply(getReverseTickedTimestamp()));
 
     expect(threadMessages.value).toStrictEqual([]);
   });
