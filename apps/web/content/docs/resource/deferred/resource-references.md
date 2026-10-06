@@ -11,8 +11,8 @@ The data is already there: every cross-resource reference is indexed by source, 
 
 ## Why deferred
 
-It is a lineage view nobody has asked for at current resource counts — a user's `/all` list fits on one screen, and the consumers of one resource are usually the ones its owner just built. The index cost that once came with it is paid, so what remains is UI on the Overview blade, a resource-scoped read procedure for it, and one backfill: a resource not saved since the index shipped holds no `Dataset` or `Email` links yet, so building the panel starts by projecting every Program, Dashboard and Email blob into the index on each database.
+It is a lineage view nobody has asked for at current resource counts — a user's `/all` list fits on one screen, and the consumers of one resource are usually the ones its owner just built. The index cost that once came with it is paid, so what remains is UI on the Overview blade and a resource-scoped read procedure for it.
 
 ## Revisit when
 
-The [delete-time reference warning](/docs/resource/deferred/delete-reference-warning) gets built, since it reads the same rows after the same backfill and the panel is the natural place to list what it counts. Or resource counts grow past what an owner can hold in their head.
+The [delete-time reference warning](/docs/resource/deferred/delete-reference-warning) gets built, since it reads the same rows and the panel is the natural place to list what it counts. Or resource counts grow past what an owner can hold in their head.

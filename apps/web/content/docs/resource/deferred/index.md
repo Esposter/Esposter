@@ -18,7 +18,7 @@ One page per deferred idea (not now — with a revisit trigger). Check here and 
 - [Dashboard slicers](/docs/resource/deferred/dashboard-slicers) — a filter model for dashboard queries is the first piece of a query language joins and live refresh would shape too
 - [Dashboard text boxes](/docs/resource/deferred/dashboard-text-boxes) — a non-chart visual kind waits on card and table visuals; chart titles cover labelling
 - [Dashboard kiosk mode](/docs/resource/deferred/dashboard-kiosk-mode) — auto-refresh of baked snapshots refreshes nothing; needs live reads first
-- [Delete-time reference warning](/docs/resource/deferred/delete-reference-warning) — counting consumers needs the link backfill first, and a soft delete is already recoverable
+- [Delete-time reference warning](/docs/resource/deferred/delete-reference-warning) — a soft delete is already recoverable, and a consumer whose source is gone says so
 - [Dataset joins](/docs/resource/deferred/dataset-joins) — a query language's first feature; design only after tracked participants create real demand
 - [Dataset row-cap pagination](/docs/resource/deferred/dataset-row-cap-pagination) — no consumer has hit the 1000-row cap
 - [Resource collaboration](/docs/resource/deferred/document-collaboration) — ACLs + concurrent editing are each their own project; publishing covers read-sharing
