@@ -1,17 +1,9 @@
 import type { GaussianHills, TerrainOptions } from "genshin-engine";
 
-import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { fitGaussianHills } from "#src/services/genshinAssets/fit/fitGaussianHills";
-import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
-import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
-import { createTerrainHeightSampler } from "#src/services/genshinAssets/world/createTerrainHeightSampler";
-import { parseTerrainHeights } from "#src/services/genshinAssets/world/parseTerrainHeights";
-import { parseTerrainTileName } from "#src/services/genshinAssets/world/parseTerrainTileName";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { readWorldTerrainHeight } from "#src/services/genshinAssets/world/readWorldTerrainHeight";
 
 // How far round the origin the ground is fitted, every sample how far apart, and the distance a sample there weighs
 // Half of one at the origin, in metres: the valley the screen's views see, its near ground first
@@ -29,21 +21,10 @@ export const fitWindriseGround = async (): Promise<{
   ground: GaussianHills & Pick<TerrainOptions, "maxHeight" | "minHeight">;
   report: string[];
 }> => {
-  const { world } = DerivedAssetComponentMap[DerivedAssetComponent.Windrise];
-  if (!world) throw new InvalidOperationError(Operation.Read, DerivedAssetComponent.Windrise, "has no world");
-  const directory = getComponentDirectory(DerivedAssetComponent.Windrise);
-  const tiles = await Promise.all(
-    world.terrainTiles.map(async ({ name }) => {
-      const terrainHeights = parseTerrainHeights(
-        await readFile(join(directory.world, AssetType.TerrainData, `${name}.dat`)),
-      );
-      if (!terrainHeights) throw new InvalidOperationError(Operation.Read, name, "holds no heightfield");
-      const { column, row } = parseTerrainTileName(name);
-      return { column, row, terrainHeights };
-    }),
-  );
-  const getGameHeight = createTerrainHeightSampler(tiles);
-  const [originX, originY, originZ] = await readWorldOrigin(DerivedAssetComponent.Windrise);
+  const [getGameHeight, [originX, originY, originZ]] = await Promise.all([
+    readWorldTerrainHeight(DerivedAssetComponent.Windrise),
+    readWorldOrigin(DerivedAssetComponent.Windrise),
+  ]);
   const getHeight = (x: number, z: number): number => getGameHeight(originX + x, originZ - z) - originY;
   const { errors, hills } = fitGaussianHills({
     bands: GROUND_ERROR_BANDS,

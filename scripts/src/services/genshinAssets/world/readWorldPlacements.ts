@@ -2,6 +2,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { WorldPrefabPlacements } from "#src/models/genshinAssets/world/WorldPrefabPlacements";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
+import { UNITY_EULER_ORDER } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { parseStreamingIndex } from "#src/services/genshinAssets/world/parseStreamingIndex";
@@ -19,11 +20,9 @@ interface DumpedVector {
   _y?: number;
   _z?: number;
 }
-// Unity turns by Euler degrees about z, then x, then y
-const EULER_ORDER = "YXZ";
 const toQuaternion = ([x, y, z]: readonly [number, number, number]): [number, number, number, number] =>
   new Quaternion()
-    .setFromEuler(new Euler(MathUtils.degToRad(x), MathUtils.degToRad(y), MathUtils.degToRad(z), EULER_ORDER))
+    .setFromEuler(new Euler(MathUtils.degToRad(x), MathUtils.degToRad(y), MathUtils.degToRad(z), UNITY_EULER_ORDER))
     .toArray();
 const toVector = ({ _x = 0, _y = 0, _z = 0 }: DumpedVector): [number, number, number] => [_x, _y, _z];
 // Every place a part of the open world sets each of its prefabs down: where each scene point stands, read from the
