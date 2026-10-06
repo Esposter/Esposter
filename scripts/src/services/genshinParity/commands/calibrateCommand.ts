@@ -48,7 +48,7 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
   },
   meta: {
     description:
-      "Solve a reference's stone light as the game's deferred pass casts it, its toon ramp and its sky's harmonics under the scene's haze, by least squares over the witness's G-buffer, printing the residual against the bins' spread",
+      "Solve a reference's stone light as the game's deferred pass casts it, its toon ramp, its sky's harmonics and its light fading with height under the scene's haze, by non-negative least squares over lights that never go below none, over the witness's G-buffer, printing the residual against the bins' spread",
     name: "calibrate",
   },
   run: async ({ args }) => {

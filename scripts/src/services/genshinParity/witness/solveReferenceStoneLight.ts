@@ -139,6 +139,7 @@ export const solveReferenceStoneLight = async (
             height: point.y,
             occlusion: occlusion[pixel * 4] ?? 1,
             opacity: 0,
+            part: part[pixel * 4] ?? 0,
             rampCoordinate,
             scatter,
           },

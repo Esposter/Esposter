@@ -551,6 +551,12 @@ export const reference: ComponentReference = {
       search:
         "The walkway's faces binned by tilt and height per piece, its tops read from above, then the walkway fitted with its levels and flat at its stone, compare on every login frame and rank's second table on login-door and login-night-title",
     },
+    {
+      found:
+        "The night's towers turned colour as they rose, red at their tops to blue at their feet: its light solved free faded red below none with height (-0.38) under a sky redder than its frame, and the day's whole ramp stood below none, each light cancelling another where the frames' FLIP scored the sum better. Solved by non-negative least squares over lights that can be (the ramp rising from none by steps none of which falls, the sky a sum of lights from 32 directions round the sphere, each lighting no face below none, the fading light none or more), every tower holds one colour up its height, the dawn scores 0.3849 level, the day 0.4346 against 0.4305, the phone's door frame 0.4732 against 0.4688, the dusk 0.5191 against 0.5143 and the night 0.3737 against 0.3650. Clamping only the night's fading red after the free solve scored 0.3798 and pinker, the other lights solved to cancel it; each part's bins weighed as much as every other part's lit the far towers bright blue, the night 0.4251; the haze re-solved under the held light ran to its bounds (the night a wall of 0.29 opacity, the dawn none), so the far stone's haze is the next measure",
+      search:
+        "stoneLight.json read hour by hour, the night's fading red clamped and compared, then calibrate --write at every hour by non-negative least squares with the parts weighed equally and by their pixels, calibrate --haze under it, and compare on every login frame",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",

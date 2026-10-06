@@ -44,4 +44,38 @@ describe(solveNonNegativeSystem, () => {
       ),
     ).toStrictEqual([1, 0]);
   });
+
+  test("reaches the least residual over more unknowns than every subset could be tried for", () => {
+    expect.hasAssertions();
+
+    // Forty unknowns read by sixty rows of a fixed scatter, toward a target some of them can only reach below none
+    const size = 40;
+    const rows = Array.from({ length: 60 }, (_row, row) =>
+      Array.from(
+        { length: size },
+        (_value, unknown) => Math.sin(row * 1.7 + unknown * 2.3) + Math.cos(row * unknown * 0.3),
+      ),
+    );
+    const target = rows.map((_row, row) => Math.sin(row * 0.9) * 3);
+    const gram = Array.from({ length: size }, (_first, first) =>
+      Array.from({ length: size }, (_second, second) =>
+        rows.reduce((sum, row) => sum + (row[first] ?? 0) * (row[second] ?? 0), 0),
+      ),
+    );
+    const right = Array.from({ length: size }, (_value, unknown) =>
+      rows.reduce((sum, row, index) => sum + (row[unknown] ?? 0) * (target[index] ?? 0), 0),
+    );
+    const solution = solveNonNegativeSystem(gram, right);
+    // At the least residual no unknown is negative, a free one's slope is none and a held one's would only worsen it
+    const slopes = right.map(
+      (value, unknown) =>
+        value - solution.reduce((sum, other, index) => sum + (gram[unknown]?.[index] ?? 0) * other, 0),
+    );
+
+    expect(Math.min(...solution)).toBeGreaterThanOrEqual(0);
+    expect(solution.some((value) => value === 0)).toBe(true);
+    for (const [unknown, slope] of slopes.entries())
+      if ((solution[unknown] ?? 0) > 0) expect(slope).toBeCloseTo(0);
+      else expect(slope).toBeLessThan(1e-6);
+  });
 });

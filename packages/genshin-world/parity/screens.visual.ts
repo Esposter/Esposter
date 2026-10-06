@@ -7,17 +7,22 @@ import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
 // Each screen against its own last approved image, `Index.<platform>.png` in its own folder beside its `Index.vue` and
-// `Index.fixture.ts`, and each of its fixture's variants against one of its own named after it; `pnpm test:visual -u`
-// Approves what it draws now
+// `Index.fixture.ts`, and each of its fixture's variants against one of its own named after it, a moving screen held
+// Still by its fixture's `stillProps`; `pnpm test:visual -u` approves what it draws now
 const IMAGE_NAME = "Index";
 const cases: ((typeof screens)[number] & { imageName: string; title: string })[] = [];
 for (const screen of screens.filter(({ isMotionOnly }) => !isMotionOnly)) {
-  cases.push({ ...screen, imageName: IMAGE_NAME, title: screen.name });
+  cases.push({
+    ...screen,
+    imageName: IMAGE_NAME,
+    props: { ...screen.props, ...screen.stillProps },
+    title: screen.name,
+  });
   for (const [variant, variantProps] of Object.entries(screen.variants ?? {}))
     cases.push({
       ...screen,
       imageName: `${IMAGE_NAME}${FIXTURE_VARIANT_SEPARATOR}${variant}`,
-      props: { ...screen.props, ...variantProps },
+      props: { ...screen.props, ...variantProps, ...screen.stillProps },
       title: `${screen.name}${FIXTURE_VARIANT_SEPARATOR}${variant}`,
     });
 }
