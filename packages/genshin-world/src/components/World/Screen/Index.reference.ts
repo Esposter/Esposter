@@ -53,9 +53,15 @@ export const reference: ComponentReference = {
       search:
         "The asset index for every asset naming the tile, then the raw blobs of the tile's two texture blocks by size and header",
     },
+    {
+      found:
+        "BigWorld_1_-2, a SectorBinData script, holds about fourteen hundred positions packed twelve bytes apart, every one inside the tile, those round the statue within two metres of its height: points on the ground about one every 27 metres, exact data a fitted ground can be held to. BigWorld_1_-2_Index, its sibling, holds no position in the tile's range",
+      search:
+        "The asset index for MonoBehaviours naming the tile, then each one's raw bytes scanned at every offset for three floats inside the tile's x and z and a height of the region's",
+    },
   ],
   open: [
-    "The ground's heights: the binary the tile's name ends in, and how its samples are laid out, or failing that a fit of our own generator to the ground the witness's other parts stand on",
+    "The ground's dense heights: the binary the tile's name ends in, and how its samples are laid out; until then our generator is fitted to the sector's ground points",
     "Where the oak and the rest of Windrise stand: the streaming layers' placement records decoded, or their own scene's roots found",
     "Each recording's camera, solved once the witness draws the statue, the oak and the ground, and then the parity references at the hours each recording shows",
     "Mondstadt's sky by hour, from its Enviro profile's raw bytes as the login's was read",
@@ -66,6 +72,12 @@ export const reference: ComponentReference = {
       kind: GameSourceKind.Material,
       name: "BigWorld_<tile>_Model_LOD0",
       role: "A terrain tile's material: three splat layers, each an albedo and a normal tiled eight times, a splat map and a tint map",
+    },
+    groundPoints: {
+      block: "00/11755697.blk",
+      kind: GameSourceKind.MonoBehaviour,
+      name: "BigWorld_1_-2",
+      role: "Points on Windrise's ground, sparse and exact, which the ground's fit is held to",
     },
     groundProfile: {
       block: "00/11274841.blk",
