@@ -18,7 +18,9 @@ export const createLoginTowerColumnGeometry = (
   { depth, radius, round: [roundFrom = 0, roundTo = 0], up: [bottom = 0, top = 0] }: TowerSlab,
   breadth: number,
 ): BufferGeometry => {
-  const [startTurn, endTurn] = [roundFrom / breadth, roundTo / breadth];
+  // The fit rounds a span to its facade's cells, so one ending at the seam can run on past a whole turn: it stops at the
+  // Seam, where its last corners stand a hair short of it as the lathe's do and read its tile's far edge
+  const [startTurn, endTurn] = [roundFrom / breadth, Math.min(roundTo / breadth, 1)];
   const segmentCount = Math.max(1, Math.ceil((endTurn - startTurn) * LOGIN_TOWER_RADIAL_SEGMENTS));
   const turns = Array.from(
     { length: segmentCount + 1 },
