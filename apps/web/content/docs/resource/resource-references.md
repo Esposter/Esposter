@@ -39,7 +39,7 @@ A reference whose target is deleted, in the recycle bin, or another owner's is s
 
 ## Notes
 
-- Both columns are capped at the list read limit, which is far past what one resource references or is referenced by.
+- Each column holds at most `MAX_READ_LIMIT` resources, more than any one resource binds or is bound by.
 
 ## Sources
 
