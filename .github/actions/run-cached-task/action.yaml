@@ -2,7 +2,7 @@ name: Run Cached Task
 description: Run one task of the root vite.config.ts under vp's traced cache — the cache directory a previous run saved restored first, and saved back when the task executed rather than replayed
 inputs:
   task:
-    description: The task's name in the root vite.config.ts, e.g. `cached:build:packages`
+    description: The task's name in the root vite.config.ts, e.g. `build:packages`
     required: true
   paths:
     description: Generated files the task's directory listings name, carried with the cache so a fresh checkout lists what the recorded run listed

@@ -14,13 +14,13 @@ import { test } from "vitest";
 // `*.bench.md` is written, which is a developer's machine. Skipped here rather than excluded in the workflow
 // So the reason travels with the file.
 const IS_CI = Boolean(process.env.CI);
-// Switched off locally too, and this is that switch. Three iterations over every package is three full `build:packages`
-// Runs — ten minutes before any other member's bench starts — and what it measures is tsdown and rolldown rather than
-// Anything in this repo, so it moves when a dependency bumps and not when the code does. It is also the one bench
-// That deletes state it does not own: each `dist` it removes to force a cold build is the same `dist` a concurrent
-// Member's `vitest.config.ts` resolves `@esposter/configuration` through, which is why the root `bench` script
-// Pins `--workspace-concurrency=1`. Flip to `true` when the build pipeline itself changes, run `pnpm bench` in
-// This package, commit the artifact, flip it back.
+// Switched off locally too, and this is that switch. Three iterations over every package is three full
+// `vp run build:packages` runs — ten minutes before any other member's bench starts — and what it measures is
+// Tsdown and rolldown rather than anything in this repo, so it moves when a dependency bumps and not when the code
+// Does. It is also the one bench that deletes state it does not own: each `dist` it removes to force a cold build is
+// The same `dist` a concurrent member's `vitest.config.ts` resolves `@esposter/configuration` through, which is why
+// The root `bench` script pins `--workspace-concurrency=1`. Flip to `true` when the build pipeline itself changes,
+// Run `pnpm bench` in this package, commit the artifact, flip it back.
 const IS_ENABLED = false;
 const isBenchable = IS_ENABLED && !IS_CI;
 // The cwd is pinned to the repository root rather than inherited: this file's project root is `scripts/`, and a
@@ -60,7 +60,7 @@ const readBuildOrder = (): { directory: string; packageName: string }[] =>
 // CI ahead of the spawn, so a runner does not pay for a workspace walk whose every task is about to be skipped.
 const packages = isBenchable ? readBuildOrder() : [];
 
-// One task per package, declared in build order and so run in it — the serial shape a real `pnpm build:packages`
+// One task per package, declared in build order and so run in it — the serial shape a real `vp run build:packages`
 // Has, which is the only one worth reading. A parallel build is noisier than the differences being measured,
 // Because packages contend for the same cores.
 //

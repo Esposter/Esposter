@@ -2,7 +2,7 @@
 
 Read when taking a bump ahead of Renovate, by hand, from the repo root.
 
-If the very first `pnpm` command dies inside the app's `postinstall` (`nuxt prepare`, `Cannot find module '@nuxt/devtools-kit'`), that is `node_modules` drift blocking every script, not a lockfile problem: `pnpm i --force`, then `pnpm build:packages`. → `apps/web/content/docs/architecture/monorepo-tooling.md`
+If the very first `pnpm` command dies inside the app's `postinstall` (`nuxt prepare`, `Cannot find module '@nuxt/devtools-kit'`), that is `node_modules` drift blocking every script, not a lockfile problem: `pnpm i --force`, then `vp run build:packages`. → `apps/web/content/docs/architecture/monorepo-tooling.md`
 
 A bump ahead of the bot follows the same path Renovate takes:
 

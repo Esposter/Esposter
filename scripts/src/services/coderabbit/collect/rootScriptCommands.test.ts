@@ -57,7 +57,7 @@ describe("rootScriptCommands", () => {
 
     const expected = getExpandedSteps([
       "format:check",
-      "build:packages",
+      ["exec", "vp", "run", "build:packages"],
       "typecheck",
       "lint",
       REPAIR_BUILD_APPS_COMMAND,

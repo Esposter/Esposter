@@ -279,7 +279,7 @@ Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/de
 1. Build the packages to be used by the application:
 
 ```bash
-pnpm build:packages
+vp run build:packages
 ```
 
 2. Change to the app directory:
