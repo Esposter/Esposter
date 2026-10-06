@@ -1,5 +1,5 @@
-import WorldScreen from "#src/components/World/Screen/Index.vue";
 import { props } from "#src/components/World/Screen/Index.fixture";
+import WorldScreen from "#src/components/World/Screen/Index.vue";
 import { describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
@@ -53,7 +53,9 @@ describe("worldScreen", () => {
           0,
         ) / readyLuminances.length;
       // A veil over the whole frame lifts its darkest tones, which the shade and the foliage hold well under half
-      const darkestTwentieth = readyLuminances.toSorted((a, b) => a - b)[Math.floor(readyLuminances.length / 20)];
+      const darkestTwentieth = readyLuminances.toSorted(
+        (firstLuminance, secondLuminance) => firstLuminance - secondLuminance,
+      )[Math.floor(readyLuminances.length / 20)];
 
       expect(meanDifference).toBeLessThan(0.02);
       expect(darkestTwentieth).toBeLessThan(0.5);
