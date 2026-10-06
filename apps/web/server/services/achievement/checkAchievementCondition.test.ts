@@ -181,13 +181,14 @@ describe(checkAchievementCondition, () => {
     ).toBe(false);
   });
 
-  // A message that replies to nothing sends `replyRowKey` as `""`, so the condition must not count it as a reply
+  // The condition reads the raw input, where a message that replies to nothing sends `replyRowKey` as `""` or omits it
   test(MessageAchievementName.ConversationKeeper, () => {
     expect.hasAssertions();
 
     const { condition } = MessageAchievementDefinitionMap[MessageAchievementName.ConversationKeeper];
 
     expect(condition && checkAchievementCondition(condition, { replyRowKey: "" })).toBe(false);
+    expect(condition && checkAchievementCondition(condition, {})).toBe(false);
     expect(condition && checkAchievementCondition(condition, { replyRowKey: getReverseTickedTimestamp() })).toBe(true);
   });
 });
