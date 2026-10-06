@@ -27,6 +27,7 @@ const configuration: UserConfig = defineConfig({
         "packages/*/dist/**",
         "packages/*/src/components/index.ts",
         "packages/*/src/index.ts",
+        "packages/db-schema/src/generated/**",
       ]),
       "cached:typecheck:root": createTask("typecheck:root", ["tsconfig.tsbuildinfo"]),
     },
