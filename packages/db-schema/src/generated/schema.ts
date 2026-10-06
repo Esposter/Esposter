@@ -36,6 +36,7 @@ import { postSchema } from "#src/schema/post/postSchema";
 import { postsInPost } from "#src/schema/post/postsInPost";
 import { resourceAccessesInResource } from "#src/schema/resource/resourceAccessesInResource";
 import { resourceFavoritesInResource } from "#src/schema/resource/resourceFavoritesInResource";
+import { resourceLinksInResource, resourceLinkTypeEnum } from "#src/schema/resource/resourceLinksInResource";
 import { resourcePublicationsInResource } from "#src/schema/resource/resourcePublicationsInResource";
 import { resourceSchema } from "#src/schema/resource/resourceSchema";
 import { resourcesInResource, resourceTypeEnum } from "#src/schema/resource/resourcesInResource";
@@ -79,6 +80,8 @@ export const schema = {
   rateLimiterFlexibleInApp,
   resourceAccessesInResource,
   resourceFavoritesInResource,
+  resourceLinksInResource,
+  resourceLinkTypeEnum,
   resourcePublicationsInResource,
   resourceSchema,
   resourcesInResource,

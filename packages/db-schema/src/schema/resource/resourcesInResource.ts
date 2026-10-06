@@ -18,13 +18,6 @@ export const resourceTypeEnum = resourceSchema.enum("resourceType", ResourceType
 export const resourcesInResource = pgTable(
   "resources",
   {
-    // The one cross-resource link promoted out of blob content into a column, because it is the only one read
-    // On an unauthenticated path: `resolveIdentifiedToken` has to know which Programs are bound to a Survey
-    // Before it can decide whether a participant token was issued for it, and answering that from blobs means
-    // Reading every one of the owner's Programs on every submission. No foreign key — the binding is projected
-    // From the content on every save, so a `set null` on the target's deletion would have the next save rewrite
-    // The dangling id and fail on the constraint; a bare id re-resolved on read fails soft instead
-    boundResourceId: uuid(),
     // The hex SHA-256 of the content's JSON — what the blob's zstd frame decodes to — written in the transaction
     // That writes the blob. A save hands it back so a client can tell whether the bytes it sent are the bytes
     // Stored, which is what a delta save is computed against; empty until the first content write. See
@@ -54,14 +47,8 @@ export const resourcesInResource = pgTable(
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ boundResourceId, name, tags, type, userId }) => [
+    extraConfig: ({ name, tags }) => [
       check("resources_name_length_check", createNameCheckSql(name, RESOURCE_NAME_MAX_LENGTH)),
-      // The exact shape resolveIdentifiedToken asks for — the owner's resources of one type bound to one
-      // Target. Partial, because only a bound resource is ever looked up this way and the column is null
-      // For every resource type that has no binding at all
-      index("resources_bound_resource_index")
-        .on(userId, type, boundResourceId)
-        .where(sql`${boundResourceId} is not null`),
       // GIN backs the `tags @> input` containment filter behind the /all Tag pill
       index("resources_tags_index").using("gin", tags),
       // Trigram GIN backs similarity() ranking in global search, so a typo still finds the resource.

@@ -27,6 +27,7 @@ import { likesInPostRelation } from "#src/relations/post/likesInPostRelation";
 import { postsInPostRelation } from "#src/relations/post/postsInPostRelation";
 import { resourceAccessesInResourceRelation } from "#src/relations/resource/resourceAccessesInResourceRelation";
 import { resourceFavoritesInResourceRelation } from "#src/relations/resource/resourceFavoritesInResourceRelation";
+import { resourceLinksInResourceRelation } from "#src/relations/resource/resourceLinksInResourceRelation";
 import { resourcePublicationsInResourceRelation } from "#src/relations/resource/resourcePublicationsInResourceRelation";
 import { resourcesInResourceRelation } from "#src/relations/resource/resourcesInResourceRelation";
 import { resourceVersionsInResourceRelation } from "#src/relations/resource/resourceVersionsInResourceRelation";
@@ -52,6 +53,7 @@ export const relations = {
   ...pushSubscriptionsInNotificationRelation,
   ...resourceAccessesInResourceRelation,
   ...resourceFavoritesInResourceRelation,
+  ...resourceLinksInResourceRelation,
   ...resourcePublicationsInResourceRelation,
   ...resourcesInResourceRelation,
   ...resourceVersionsInResourceRelation,

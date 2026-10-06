@@ -2,7 +2,9 @@ import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
 import type { ToData } from "@esposter/shared";
 
 import { datasetReferenceSchema } from "#shared/models/dataset/DatasetReference";
+import { createResourceLinkSchema } from "#shared/services/resource/link/createResourceLinkSchema";
 import { MAX_KEY_COLUMN_LENGTH } from "#shared/services/resource/program/constants";
+import { ResourceLinkType } from "@esposter/db-schema";
 import { createNormalizedStringSchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -17,8 +19,8 @@ export interface ProgramResource {
 
 export const programResourceSchema = z.object({
   audience: datasetReferenceSchema.optional(),
-  emailId: z.union([z.literal(""), z.uuid()]).default(""),
+  emailId: createResourceLinkSchema(ResourceLinkType.Email).or(z.literal("")).default(""),
   // Names the audience column identifying a recipient — display and dedupe key, owner-side only
   keyColumn: createNormalizedStringSchema(MAX_KEY_COLUMN_LENGTH).default(""),
-  surveyId: z.union([z.literal(""), z.uuid()]).default(""),
+  surveyId: createResourceLinkSchema(ResourceLinkType.Survey).or(z.literal("")).default(""),
 }) satisfies z.ZodType<ToData<ProgramResource>>;

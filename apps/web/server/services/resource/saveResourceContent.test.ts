@@ -9,6 +9,10 @@ import { saveResourceContent } from "#server/services/resource/saveResourceConte
 import { readSnapshotHistory } from "#server/services/resource/snapshot/readSnapshotHistory";
 import { readSnapshotVersionContent } from "#server/services/resource/snapshot/readSnapshotVersionContent";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
+import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
+import { Visual } from "#shared/models/dashboard/data/Visual";
+import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
+import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
@@ -18,6 +22,8 @@ import {
   AzureQueue,
   AzureTable,
   ResourceActivityType,
+  resourceLinksInResource,
+  ResourceLinkType,
   resourcesInResource,
   ResourceType,
   SnapshotChannel,
@@ -63,13 +69,18 @@ describe(saveResourceContent, () => {
   const surveyId = crypto.randomUUID();
   const unboundProgramContent = { emailId: "", keyColumn: "", surveyId: "" };
   // A Program already bound to a survey, which is the only state an unbind can be observed from
-  const createBoundProgram = async () =>
-    takeOne(
+  const createBoundProgram = async () => {
+    const program = takeOne(
       await ctx.db
         .insert(resourcesInResource)
-        .values({ boundResourceId: surveyId, name, type: ResourceType.Program, userId: ctx.getSessionPayload.user.id })
+        .values({ name, type: ResourceType.Program, userId: ctx.getSessionPayload.user.id })
         .returning(),
     );
+    await ctx.db
+      .insert(resourceLinksInResource)
+      .values({ sourceId: program.id, targetId: surveyId, type: ResourceLinkType.Survey });
+    return program;
+  };
   const readStorageBytesUsed = async () =>
     (
       await mockContext.db.query.usersInAuth.findFirst({
@@ -86,8 +97,11 @@ describe(saveResourceContent, () => {
         where: { resourceId: { eq: resource.id } },
       })
     ).reduce((total, { storedBytes }) => total + storedBytes, 0);
-  const readBoundResourceId = async (id: ResourceInResource["id"]) =>
-    (await ctx.db.query.resourcesInResource.findFirst({ where: { id: { eq: id } } }))?.boundResourceId;
+  const readResourceLinkTargets = (sourceId: ResourceInResource["id"]) =>
+    ctx.db.query.resourceLinksInResource.findMany({
+      columns: { targetId: true, type: true },
+      where: { sourceId: { eq: sourceId } },
+    });
   // The revision clock lives on the row, so a save that reuses the row it was handed last time never sees it
   // Move — which is the whole of what the throttle reads. Every save the revision tests make goes through here
   const saveLatestResourceContent = async (newContent: TodoListResource) => {
@@ -325,9 +339,9 @@ describe(saveResourceContent, () => {
 
   // The blob is not transactional, so a transaction failing after the upload cannot be rolled back to match it:
   // For a Program the row can outlive the content it describes, and an unbind is the fail-open direction because
-  // `resolveIdentifiedToken` would keep accepting tokens the owner just revoked. So the failure lands on null,
-  // Which the resolver reads as "ask the blob"
-  test("leaves no stale binding when the save fails after the content is written", async () => {
+  // `resolveIdentifiedToken` would keep accepting tokens the owner just revoked. So the failure lands on no links,
+  // Which authorize nothing until the next save writes them again
+  test("leaves no stale link when the save fails after the content is written", async () => {
     expect.hasAssertions();
 
     const program = await createBoundProgram();
@@ -346,13 +360,13 @@ describe(saveResourceContent, () => {
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
-    await expect(readBoundResourceId(program.id)).resolves.toBeNull();
+    await expect(readResourceLinkTargets(program.id)).resolves.toStrictEqual([]);
   });
 
   // The other half of the same rule: a save that loses the version check never wrote its content, so it has no
-  // Business clearing a binding the save that beat it just stored. Clearing inside the transaction is what makes
+  // Business clearing links the save that beat it just stored. Clearing inside the transaction is what makes
   // The loser's clear roll back with the rest of it
-  test("leaves the binding alone when the save loses the content version check", async () => {
+  test("leaves the links alone when the save loses the content version check", async () => {
     expect.hasAssertions();
 
     const program = await createBoundProgram();
@@ -367,14 +381,16 @@ describe(saveResourceContent, () => {
       `[TRPCError: Invalid operation: Update, name: Resource, cannot save resource content with old content version]`,
     );
 
-    await expect(readBoundResourceId(program.id)).resolves.toBe(surveyId);
+    await expect(readResourceLinkTargets(program.id)).resolves.toStrictEqual([
+      { targetId: surveyId, type: ResourceLinkType.Survey },
+    ]);
   });
 
-  // The binding is stored after the transaction that bumped the version, so a save committing first can reach
-  // That write last and flatten a newer save's binding, which the established version guards against. Stood in
+  // The links are stored after the transaction that bumped the version, so a save committing first can reach
+  // That write last and flatten a newer save's links, which the established version guards against. Stood in
   // For rather than raced: the charge between the commit and that write bumps the row the way the save that beat
   // This one would have
-  test("leaves a newer save's binding alone when its own version has been superseded", async () => {
+  test("leaves a newer save's links alone when its own version has been superseded", async () => {
     expect.hasAssertions();
 
     const program = await createBoundProgram();
@@ -393,8 +409,48 @@ describe(saveResourceContent, () => {
       resource: program,
     });
 
-    // Null, not `otherSurveyId`: the clear inside the transaction stands, and the store after it finds no row
-    await expect(readBoundResourceId(program.id)).resolves.toBeNull();
+    // None, not `otherSurveyId`: the clear inside the transaction stands, and the write after it finds no row
+    await expect(readResourceLinkTargets(program.id)).resolves.toStrictEqual([]);
+  });
+
+  test("stores an unbound Program's empty ids as no links", async () => {
+    expect.hasAssertions();
+
+    const program = await createBoundProgram();
+
+    await saveResourceContent(ctx, {
+      content: unboundProgramContent,
+      contentVersion: program.contentVersion,
+      resource: program,
+    });
+
+    await expect(readResourceLinkTargets(program.id)).resolves.toStrictEqual([]);
+  });
+
+  test("stores one link for a target several fields bind", async () => {
+    expect.hasAssertions();
+
+    const sheetId = crypto.randomUUID();
+    const dataset = {
+      query: { series: [{ aggregation: DatasetAggregationType.Count, column: name }], xColumn: name },
+      reference: { id: sheetId, type: DatasetProviderType.Sheet },
+    };
+    const dashboard = takeOne(
+      await ctx.db
+        .insert(resourcesInResource)
+        .values({ name, type: ResourceType.Dashboard, userId: ctx.getSessionPayload.user.id })
+        .returning(),
+    );
+
+    await saveResourceContent(ctx, {
+      content: new Dashboard({ visuals: [new Visual({ dataset }), new Visual({ dataset })] }),
+      contentVersion: dashboard.contentVersion,
+      resource: dashboard,
+    });
+
+    await expect(readResourceLinkTargets(dashboard.id)).resolves.toStrictEqual([
+      { targetId: sheetId, type: ResourceLinkType.Dataset },
+    ]);
   });
 
   // The one step a caller may opt out of, and only where `createResourceRow` has already opened the trail

@@ -5,7 +5,7 @@ import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { getInvalidParticipantTokenError } from "#server/services/survey/getInvalidParticipantTokenError";
 import { BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
 import { getTopNEntities } from "@esposter/db";
-import { AzureTable, ProgramParticipantEntity, ResourceType } from "@esposter/db-schema";
+import { AzureTable, ProgramParticipantEntity, ResourceLinkType, ResourceType } from "@esposter/db-schema";
 
 // The program is the issuer, the survey is the gate — a token only passes when it was issued by a
 // Program actually bound to this survey, so another survey's token is as good as a forged one
@@ -20,10 +20,15 @@ export const resolveIdentifiedToken: SurveyResponseModeValidator = async (db, su
   // A recycle-binned program stays in the set: its token links were already distributed to participants,
   // And only an actual purge — not a recoverable soft-delete — should invalidate them.
   //
-  // The binding is a column, written in the same transaction as the content it is projected from, so the whole
-  // Candidate set is one indexed lookup (ResourceBoundResourceIdMap)
+  // A Program binds its survey as a Survey link, kept in step with its content on every save, so the whole
+  // Candidate set is one indexed lookup. The role is what decides it: a Program whose audience is this survey's
+  // Responses holds a Dataset link to it, which issues no tokens for it (/docs/architecture/resource-links)
   const boundPrograms = await db.query.resourcesInResource.findMany({
-    where: { boundResourceId: { eq: surveyId }, type: { eq: ResourceType.Program }, userId: { eq: survey.userId } },
+    where: {
+      links: { targetId: { eq: surveyId }, type: { eq: ResourceLinkType.Survey } },
+      type: { eq: ResourceType.Program },
+      userId: { eq: survey.userId },
+    },
   });
   const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
   // The token is a column rather than the key, so each program is a single-partition scan for one row — the

@@ -7,7 +7,6 @@ import { describe } from "vitest";
 // `Resource` plus the caller's own last-access join, so it stands in wherever a plain `Resource` is wanted
 // Without a cast
 export const createResourceListItem = (overrides: Partial<ResourceListItem> = {}): ResourceListItem => ({
-  boundResourceId: null,
   contentHash: "",
   contentSize: 0,
   contentVersion: 0,

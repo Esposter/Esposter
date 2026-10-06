@@ -14,6 +14,7 @@ import { resourceRouter } from "#server/trpc/routers/resource";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "#server/trpc/routers/sheet";
 import { surveyRouter } from "#server/trpc/routers/survey";
+import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { AZURE_MAX_STRING_PROPERTY_LENGTH } from "@esposter/azure";
 import {
@@ -378,7 +379,7 @@ describe("surveyRouter", () => {
     );
   });
 
-  // The binding is a column now, so unbinding has to clear it — the whole hazard of caching an authorization
+  // The binding is an indexed link, so unbinding has to clear it — the whole hazard of caching an authorization
   // Input is that a stale copy keeps answering yes after the owner has said no
   test(`${SurveyResponseMode.Identified}: rejects a token once the program is unbound from the survey`, async () => {
     expect.hasAssertions();
@@ -391,6 +392,32 @@ describe("surveyRouter", () => {
     assert.exists(unboundProgram);
     await programCaller.saveResourceContent({
       content: { emailId: "", keyColumn: "", surveyId: "" } satisfies ProgramResource,
+      contentVersion: unboundProgram.contentVersion,
+      id: program.id,
+    });
+
+    await expect(createSurveyResponse(survey.id, 0, token)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${invalidParticipantTokenErrorMessage}]`,
+    );
+  });
+
+  // A Program whose audience is this survey's own responses still links to it, as a Dataset rather than a Survey,
+  // And only the Survey role issues tokens — an index without roles would keep accepting the unbound one
+  test(`${SurveyResponseMode.Identified}: rejects a token from a program that reads the survey only as its audience`, async () => {
+    expect.hasAssertions();
+
+    const { program, survey, token } = await setupIdentifiedSurvey();
+    const unboundProgram = await mockContext.db.query.resourcesInResource.findFirst({
+      where: { id: { eq: program.id } },
+    });
+    assert.exists(unboundProgram);
+    await programCaller.saveResourceContent({
+      content: {
+        audience: { id: survey.id, type: DatasetProviderType.SurveyResponses },
+        emailId: "",
+        keyColumn: "",
+        surveyId: "",
+      } satisfies ProgramResource,
       contentVersion: unboundProgram.contentVersion,
       id: program.id,
     });
