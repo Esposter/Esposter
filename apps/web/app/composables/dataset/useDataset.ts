@@ -1,8 +1,7 @@
 import type { Dataset } from "#shared/models/dataset/Dataset";
 import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
 
-import { DATASET_SOURCE_NOT_FOUND_MESSAGE } from "@/services/dataset/constants";
-import { TRPCClientError } from "@trpc/client";
+import { getDatasetErrorMessage } from "@/services/dataset/getDatasetErrorMessage";
 
 export const useDataset = (reference: MaybeRefOrGetter<DatasetReference | undefined>) => {
   const { $trpc } = useNuxtApp();
@@ -22,12 +21,8 @@ export const useDataset = (reference: MaybeRefOrGetter<DatasetReference | undefi
       },
       {
         key,
-        // A missing source is the one failure the owner fixes in place, so it says how rather than echoing the id
         onError: (newError) => {
-          error.value =
-            newError instanceof TRPCClientError && newError.data?.code === "NOT_FOUND"
-              ? DATASET_SOURCE_NOT_FOUND_MESSAGE
-              : newError.message;
+          error.value = getDatasetErrorMessage(newError);
         },
         onSuccess: (newDataset) => {
           dataset.value = newDataset;

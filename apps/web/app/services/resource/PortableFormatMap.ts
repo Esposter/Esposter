@@ -4,6 +4,7 @@ import type { PortableResourceType } from "@/models/resource/PortableResourceTyp
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
+import { getDatasetErrorMessage } from "@/services/dataset/getDatasetErrorMessage";
 import { OPEN_EMAIL_EDITOR_MESSAGE } from "@/services/emailEditor/constants";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
@@ -98,7 +99,7 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
           // So a capped read hands the decision to the Editor blade's confirm instead of exporting
           if (getDatasetTruncation(dataset)) setPendingDataset(resourceId, dataset);
           else exportPersonalizedHtml(resourceId, dataset.rows);
-        }).match(noop, createErrorAlert);
+        }).match(noop, (error) => createErrorAlert(error, getDatasetErrorMessage(error)));
       },
       icon: "i-mdi:language-html5",
       label: "Personalized HTML",

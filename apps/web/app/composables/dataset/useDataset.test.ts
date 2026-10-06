@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
-import { DATASET_SOURCE_NOT_FOUND_MESSAGE } from "@/services/dataset/constants";
+import { getMissingResourceMessage } from "@/services/resource/getMissingResourceMessage";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";
@@ -20,6 +20,6 @@ describe(useDataset, () => {
     const { error, refresh } = useDataset(reference);
     await refresh();
 
-    expect(error.value).toBe(DATASET_SOURCE_NOT_FOUND_MESSAGE);
+    expect(error.value).toBe(getMissingResourceMessage("source"));
   });
 });

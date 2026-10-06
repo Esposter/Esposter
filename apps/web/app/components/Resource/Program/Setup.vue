@@ -20,8 +20,9 @@ const { dataset, error } = useDataset(audience);
 const keyColumnItems = computed<UiSelectItem<string>[]>(
   () => dataset.value?.columns.map(({ name }) => ({ meaning: UiIconMeaning.Columns, title: name, value: name })) ?? [],
 );
-const emailItems = ref<UiSelectItem<string>[]>([]);
-const surveyItems = ref<UiSelectItem<string>[]>([]);
+// Absent until read, so a failed read never claims every binding is missing
+const emailItems = ref<UiSelectItem<string>[]>();
+const surveyItems = ref<UiSelectItem<string>[]>();
 await loadContent();
 // Both binding pickers are independent of each other, so they resolve together
 await getResultAsync(async () => {
@@ -54,22 +55,8 @@ watchAutosave(programResource, saveProgram);
     </UiFrame>
     <UiFrame title="Bindings">
       <p text-muted>The email that invites participants, and the survey their link opens.</p>
-      <div flex flex-col gap-1>
-        <span text-sm text-muted>Email</span>
-        <UiSelect
-          v-model="programResource.emailId"
-          :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...emailItems]"
-          label="Email"
-        />
-      </div>
-      <div flex flex-col gap-1>
-        <span text-sm text-muted>Survey</span>
-        <UiSelect
-          v-model="programResource.surveyId"
-          :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...surveyItems]"
-          label="Survey"
-        />
-      </div>
+      <ResourceProgramBindingSelect v-model="programResource.emailId" :resources="emailItems" label="Email" />
+      <ResourceProgramBindingSelect v-model="programResource.surveyId" :resources="surveyItems" label="Survey" />
     </UiFrame>
   </div>
 </template>
