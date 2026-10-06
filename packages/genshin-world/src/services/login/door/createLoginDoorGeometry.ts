@@ -25,7 +25,7 @@ const createReliefGeometry = (layers: typeof door.frame): BufferGeometry => {
       path.moveTo(firstX, firstY);
       for (const [x = 0, y = 0] of rest) path.lineTo(x, y);
     }
-    for (const shape of path.toShapes(true)) {
+    for (const shape of path.toShapes()) {
       const { holes, shape: contour } = shape.extractPoints(1);
       // A closed path ends where it began, which a triangulation takes once
       const rings = [contour, ...holes].map((ring) =>

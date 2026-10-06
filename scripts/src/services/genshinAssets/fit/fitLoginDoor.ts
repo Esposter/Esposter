@@ -149,7 +149,7 @@ export const fitLoginDoor = async (
     const depthAreaMap = new Map<number, number>();
     for (const [index, face] of faces.entries()) {
       if (faceGroups[index] !== group) continue;
-      const [a, b, c] = face.map((vertex) => scaled[vertex] ?? [0, 0, 0]);
+      const [a, b, c] = face.map((vertex) => scaled[vertex]);
       if (!a || !b || !c) continue;
       const [ux, uy, uz] = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
       const [vx, vy, vz] = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
