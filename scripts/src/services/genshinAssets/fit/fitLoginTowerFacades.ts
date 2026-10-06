@@ -2,9 +2,12 @@ import type { FacadeLayer } from "#src/models/genshinAssets/fit/FacadeLayer";
 import type { LatheProfile } from "#src/models/genshinAssets/fit/LatheProfile";
 import type { Texture } from "#src/models/genshinAssets/fit/Texture";
 import type { TowerFacade } from "#src/models/genshinAssets/fit/TowerFacade";
+import type { TowerSlab } from "#src/models/genshinAssets/fit/TowerSlab";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { Vector } from "#src/models/shared/Vector";
 
+import { findCellComponents } from "#src/services/genshinAssets/fit/findCellComponents";
+import { findCellRectangles } from "#src/services/genshinAssets/fit/findCellRectangles";
 import { fitLatheProfile } from "#src/services/genshinAssets/fit/fitLatheProfile";
 import { rasterizeTopFaces } from "#src/services/genshinAssets/fit/rasterizeTopFaces";
 import { readLevelOfDetailParts } from "#src/services/genshinAssets/fit/readLevelOfDetailParts";
@@ -207,6 +210,25 @@ export const fitLoginTowerFacades = async (
         tolerance: 1,
         width,
       });
+    // What stands out from the wall as slabs over the spans it covers, each run of it joined round the tower's seam and
+    // Kept where it covers enough cells to be carving rather than a speck, then split into rectangles row by row so a rib
+    // Stays one tall slab and a ragged balcony keeps its outline: the wall behind each and how far it stands out, the
+    // Upper median over its cells
+    const columns = findCellComponents(raised, { isWrapped: true, width })
+      .filter((component) => component.length >= TOWER_FACADE_MIN_CELLS)
+      .flatMap((component) =>
+        findCellRectangles(component, {
+          getValue: (cell) => -(depths[cell] ?? 0),
+          tolerance: TOWER_FACADE_SHALLOW_RECESS / 2,
+          width,
+        }),
+      )
+      .map(({ cells: rectangleCells, columns: [firstColumn, lastColumn], rows: [firstRow, lastRow] }): TowerSlab => ({
+        depth: roundFitted(computeUpperMedian(rectangleCells.map((cell) => -(depths[cell] ?? 0)))),
+        radius: roundFitted(computeUpperMedian(rectangleCells.map((cell) => bandWallRadiusMap.get(toBand(cell)) ?? 0))),
+        round: [roundFitted(firstColumn * TOWER_FACADE_CELL_SIZE), roundFitted(lastColumn * TOWER_FACADE_CELL_SIZE)],
+        up: [roundFitted(firstRow * TOWER_FACADE_CELL_SIZE), roundFitted(lastRow * TOWER_FACADE_CELL_SIZE)],
+      }));
     const toLayer = (layerCells: readonly number[], depth: number): FacadeLayer => ({
       depth,
       loops: trace(layerCells),
@@ -214,6 +236,7 @@ export const fitLoginTowerFacades = async (
     });
     facades[tower] = {
       bands,
+      columns,
       holes: trace(cells.filter((cell) => (tags[cell] ?? -1) < 0)),
       layers: [
         toLayer(darkPaint, 0),
