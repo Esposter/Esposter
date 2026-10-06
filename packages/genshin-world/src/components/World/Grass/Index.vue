@@ -4,6 +4,7 @@ import type {
   LightUniforms,
   QualityTier,
   TerrainOptions,
+  TerrainSelection,
   WaterUniforms,
   WindUniforms,
 } from "genshin-engine";
@@ -14,12 +15,15 @@ import {
   GRASS_CAPTURE_RESOLUTION,
   GRASS_CAPTURE_SIZE,
   GRASS_RECAPTURE_DISTANCE,
+  TILE_SELECTION_CAPACITY,
 } from "#src/services/constants";
 import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
 import {
+  checkTerrainDrawsChanged,
   createGrassGeometry,
   createGrassMaterial,
   createGroundCapture,
+  createTerrainSelection,
   QualityTierSettingsMap,
   renderGroundCapture,
 } from "genshin-engine";
@@ -35,8 +39,8 @@ interface Props {
   qualityTier: QualityTier;
   rampTexture: DataTexture;
   rings: GrassRing[];
-  // Counts every change to the ground under the view, so the capture is redrawn when a tile arrives
-  terrainChanges: { count: number };
+  // The tiles the terrain draws, so the capture is redrawn when the ground under it changes
+  terrainDraws: TerrainSelection;
   terrainOptions: TerrainOptions;
   waterUniforms: WaterUniforms;
   windUniforms: WindUniforms;
@@ -50,7 +54,7 @@ const {
   qualityTier,
   rampTexture,
   rings,
-  terrainChanges,
+  terrainDraws,
   terrainOptions,
   waterUniforms,
   windUniforms,
@@ -83,17 +87,23 @@ const grassMeshes = rings.map((ring) => {
 });
 const eye = new Vector3();
 const captureCenter = new Vector3();
-let capturedChangeCount = -1;
-// The capture is redrawn only when the camera has crossed part of it or the ground under it has changed
+const capturedDraws = createTerrainSelection(TILE_SELECTION_CAPACITY);
+// The capture is redrawn only when the camera has crossed part of it or a tile drawn under it has come or gone. The
+// Terrain draws its tiles all round the eye, so turning the camera never changes them and never redraws the capture
 onBeforeRender(() => {
   const activeCamera = camera.value;
   if (!activeCamera || !isWebGPURenderer(renderer)) return;
   eye.copy(activeCamera.position).add(origin);
   cameraGround.value.set(eye.x, eye.z);
   const isFar = Math.hypot(eye.x - captureCenter.x, eye.z - captureCenter.z) > GRASS_RECAPTURE_DISTANCE;
-  if (!isFar && capturedChangeCount === terrainChanges.count) return;
+  if (
+    !isFar &&
+    !checkTerrainDrawsChanged(terrainOptions, capturedDraws, terrainDraws, captureCenter, GRASS_CAPTURE_SIZE / 2)
+  )
+    return;
   captureCenter.set(Math.round(eye.x), 0, Math.round(eye.z));
-  capturedChangeCount = terrainChanges.count;
+  capturedDraws.keys.set(terrainDraws.keys.subarray(0, terrainDraws.count));
+  capturedDraws.count = terrainDraws.count;
   renderGroundCapture(renderer, scene.value, groundCapture, terrainOptions, captureCenter, origin);
 });
 

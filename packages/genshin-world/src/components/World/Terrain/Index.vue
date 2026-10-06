@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { TerrainTileRequest } from "#src/models/TerrainTileRequest";
-import type { LightUniforms, TerrainOptions, TerrainTile, WaterUniforms } from "genshin-engine";
+import type { LightUniforms, TerrainOptions, TerrainSelection, TerrainTile, WaterUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
 
 import { MAX_PENDING_TILE_COUNT, TERRAIN_WORKER_COUNT, TILE_SELECTION_CAPACITY } from "#src/services/constants";
@@ -24,6 +24,8 @@ import { uniform } from "three/tsl";
 interface Props {
   // Starts one of the pool's workers, which the app builds with its bundler from the package's worker entry
   createTerrainWorker: () => Worker;
+  // Written each frame with the tiles drawn, for whatever else reads the ground, such as the grass's capture
+  draws: TerrainSelection;
   lightUniforms: LightUniforms;
   // The world coordinate the scene's origin stands on, which the floating origin moves
   origin: Vector3;
@@ -33,15 +35,16 @@ interface Props {
   waterUniforms?: WaterUniforms;
 }
 
-const { createTerrainWorker, lightUniforms, origin, rampTexture, terrainOptions, waterUniforms } = defineProps<Props>();
-const emit = defineEmits<{ change: []; ready: [] }>();
+const { createTerrainWorker, draws, lightUniforms, origin, rampTexture, terrainOptions, waterUniforms } =
+  defineProps<Props>();
+const emit = defineEmits<{ ready: [] }>();
 const { camera } = useTres();
 const { onBeforeRender } = useLoop();
 const { cellsPerSide, finestTileSize } = terrainOptions;
 const morphEye = uniform(new Vector3());
 const terrainMaterial = createTerrainMaterial(terrainOptions, morphEye, { lightUniforms, rampTexture }, waterUniforms);
 const index = new BufferAttribute(computeTerrainIndices(cellsPerSide), 1);
-// Every held tile is a mesh in this group, shown only while it is drawn, so a tile coming back into view costs a flag
+// Every held tile is a mesh in this group, shown only while it is drawn, so a tile coming back into range costs a flag
 const tileGroup = new Group();
 const workers = Array.from({ length: TERRAIN_WORKER_COUNT }, () => createTerrainWorker());
 let requestCount = 0;
@@ -72,7 +75,6 @@ const receiveTile = (event: MessageEvent<TerrainTile>) => {
   mesh.visible = false;
   tileGroup.add(mesh);
   tileStreamer.receive(key, mesh);
-  emit("change");
 };
 for (const worker of workers)
   worker.addEventListener("message", (event) => {
@@ -82,7 +84,6 @@ for (const worker of workers)
 const checkTileLoaded = (key: number): boolean => tileStreamer.has(key);
 const wanted = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const surrounding = createTerrainSelection(TILE_SELECTION_CAPACITY);
-const draws = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const shown = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const eye = new Vector3();
 const originMatrix = new Matrix4();
@@ -90,8 +91,10 @@ const viewProjection = new Matrix4();
 const frustum = new Frustum();
 let isReady = false;
 // Each frame the quadtree is walked from the eye's world position, what is missing is asked for, and the tiles to
-// Draw are shown in place of last frame's. It is walked twice: in the view, for what is drawn, and all round the eye,
-// For what is held, so a turn of the camera finds its ground generated rather than a hole the sky shows through. The
+// Draw are shown in place of last frame's. It is walked twice: in the view, for what is asked for first and what makes
+// The terrain ready, and all round the eye, for what is held and drawn. Drawn all round, the ground is the same
+// Whichever way the camera looks, and each pass culls the tiles by its own camera: the view keeps what is in front of
+// It, a shadow cascade the hills off screen that shade what is, and the grass's capture the ground under it. The
 // Frustum is built in world coordinates, the scene's view moved by the origin, so the selection never sees the
 // Floating origin. The camera's matrices are brought up to date first, since this runs before the frame's render does
 // It and runs while a paused canvas renders nothing. The eye the ground morphs by is written here too, so every pass of
@@ -110,7 +113,7 @@ onBeforeRender(() => {
   frustum.setFromProjectionMatrix(viewProjection, activeCamera.coordinateSystem);
   selectTerrainTiles(terrainOptions, eye, frustum, wanted);
   selectTerrainTiles(terrainOptions, eye, undefined, surrounding);
-  resolveTerrainDraws(terrainOptions, wanted, checkTileLoaded, draws);
+  resolveTerrainDraws(terrainOptions, surrounding, checkTileLoaded, draws);
   tileStreamer.update(wanted, draws, surrounding);
   for (let drawIndex = 0; drawIndex < shown.count; drawIndex++) {
     const mesh = tileStreamer.get(shown.keys[drawIndex] ?? 0);

@@ -14,7 +14,7 @@ flowchart TD
   WF[Wind: base breeze, gust bands rolling downwind, turbulence] --> G[Grass blades bend by the square of their height]
   WF --> L[Leaf cards lean and flutter]
   WF --> CL[Clouds drift downwind]
-  CAM{Camera crossed part of the capture, or a tile arrived?} -->|yes| CAP[Ground capture: colour and height from above]
+  CAM{Camera crossed part of the capture, or a tile drawn under it came or went?} -->|yes| CAP[Ground capture: colour and height from above]
   CAP --> G
   I[Blade's instance index] --> CELL[Its cell in the ring's grid, moving with the camera in whole cells]
   CELL --> H[A hash of the cell: jitter, turn, size, and whether the tier grows it]
@@ -26,7 +26,7 @@ flowchart TD
 - **One wind field.** The wind at a point on the ground (`createWindNode`) is the region's base breeze along its direction, gust bands travelling downwind that swell and fall, and a little noise so neighbouring plants never move in step. It is a TSL function of world position, so every sampler reads the same field: the grass, the trees' leaves, and the clouds, which drift downwind by its strength. Its direction, strength and gusts are `WindUniforms`, which a region sets. Mondstadt's is a steady breeze from the west with gusts every half minute.
 - **Grass is blades generated in the vertex stage.** A ring is one draw of the same blade shape (`computeGrassBlade`), once per cell of a square grid around the camera (`createGrassMaterial`). A blade's instance index is its cell. The grid moves with the camera in whole cells, so a blade stays where it grew. A hash of the cell jitters the blade within it, turns it, sizes it and decides whether the quality tier grows it, so no blade is stored.
 - **Two rings, then the ground.** The near ring is dense and fine under the eye. The middle ring is sparse, with taller, wider blades, and grows from where the near ring fades. Past it the terrain's own green carries the field, and since a blade takes the ground's colour, the rings fade into it with no seam (`GrassRing`).
-- **Blades stand on a capture of the ground.** A camera looking straight down draws only the terrain's layer into a small half-float target: the ground's colour, and its height in alpha (`createGroundCapture`, `renderGroundCapture`). A blade reads its footing and its colour there. It grows only on green ground, never on rock or sand, and only above the water. The capture is redrawn only when the camera has crossed part of it or a terrain tile has arrived.
+- **Blades stand on a capture of the ground.** A camera looking straight down draws only the terrain's layer into a small half-float target: the ground's colour, and its height in alpha (`createGroundCapture`, `renderGroundCapture`). A blade reads its footing and its colour there. It grows only on green ground, never on rock or sand, and only above the water. The capture camera culls by its own frustum and the terrain draws its tiles all round the eye, so the capture holds the ground under its whole square whichever way the view looks. It is redrawn only when the camera has crossed part of it or a tile drawn under it has come or gone (`checkTerrainDrawsChanged`), never on a tile arriving elsewhere, and never on a turn of the camera, which changes nothing the terrain draws.
 - **Grass shades as a field.** Every blade takes the ground's upward normal instead of its own, and a gradient from a darker root to a lighter tip in the ground's colour, so a meadow toon-shades as one surface with light rolling across it, as Genshin's grass does, rather than a noisy carpet of lit and shaded blades. Blades receive the sun's shadows and cast none.
 - **The wind bends a blade by the square of its height**, so the root stays planted and the tip travels, and the blade dips a little as it bends.
 - **Crowns sway.** The leaf material leans a crown downwind, more the higher up the tree, and each patch of cards flutters on its own phase (`createLeafMaterial`). The lean is the position node, so the crown's shadow sways with it.
@@ -52,7 +52,7 @@ flowchart TD
 ## Notes
 
 - **Trees beyond the oak, scatter and the trail are their own page.** Species, impostors, flowers and rocks scattered by biome, and grass that parts for the character are [trees and scatter](/docs/proposals/genshin/trees-and-scatter).
-- **A blade stands on the ground as captured, not as drawn.** The capture camera stands above the ground, so the terrain it draws is morphed for its distance rather than the eye's, and a blade can sit a few centimetres off the drawn ground far from the eye, where no one sees it.
+- **A blade stands on the ground as captured, not as drawn.** The capture morphs the ground for the eye where it was captured, and the eye can move up to the recapture distance before it is redrawn, so far from the eye a blade can sit a few centimetres off the drawn ground, where no one sees it.
 
 ## Sources
 
