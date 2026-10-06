@@ -22,12 +22,12 @@ export const createMockRouter = <TContext extends object>(
     Object.fromEntries(
       procedureTypes.entries().map(([path, type]) => {
         // The real procedure's parsers, read through tRPC's own `getParseFn`, only judge the input: a rejection is the
-        // BAD_REQUEST the server answers with, and the resolver still receives the input as the transformer decoded it.
-        // They run in order and stop at the first rejection, as the server's chain of input middlewares does
+        // BAD_REQUEST the server answers with, and the resolver still receives the input as the transformer decoded it
         const parseFns = (inputRouter?._def.procedures[path]?._def.inputs ?? []).map((parser: Parser) =>
           getParseFn(parser),
         );
         const procedure = baseProcedure.input(async (value) => {
+          // oxlint-disable-next-line no-await-in-loop -- Order is the contract: the server's input middlewares run in turn and stop at the first rejection
           for (const parseFn of parseFns) await parseFn(value);
           return value;
         });

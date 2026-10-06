@@ -26,7 +26,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
   [MessageAchievementName.ConversationKeeper]: defineAchievementDefinition({
     amount: 50,
     condition: {
-      operation: (value) => Boolean(value),
+      operation: Boolean,
       operator: AchievementOperator.Operation,
       path: "replyRowKey",
       type: AchievementConditionType.Property,
