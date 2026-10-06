@@ -539,6 +539,12 @@ export const reference: ComponentReference = {
       search:
         "calibrate --haze on the day title, the haze set in LoginSkyStateMap, calibrate --write, then compare on both day frames",
     },
+    {
+      found:
+        "The door's mesh is one skinned mesh of two submeshes, welded into four pieces (the body, its two feet and the step under it), so its thirteen rising pieces are bones the export drops, and Ani_LogginScene_Door01_Liftting moves each from about 60 metres below into place. Its front stands at a dozen depths: the frame's face at 0.271 metres out with its feet's ornaments at 0.282 and the step at 0.258 and 0.261, a chamfer leaning at about 62 degrees from the face down to the opening at 0.134, and the panel's base at 0.071 under raised bands at 0.086, 0.094, 0.105 and 0.134, the 0.105 band bevelled at 35 degrees and the 0.134 one at 77. Built as those layers, each loop traced from the front's height on a half-centimetre grid with each corner leaning to the nearest point of the depth below where the cells between them slope, against the exports the door's FLIP falls from 0.361 to 0.324 and its similarity rises from 0.39 to 0.64 on the phone's door frame, and from 0.382 to 0.318 and 0.29 to 0.64 on the recording's. The phone's door frame scores 0.4675 against 0.4698, the chamfer worth 0.0022 of it, but the recording's 0.5157 against 0.5141: our dusk light lights the chamfer gold and the face dark where the recording's face reads a pale blue-grey and its chamfer dark, and the exports drawn under the same light do the same, scoring that frame 0.530 against ours 0.519. The painted relief's contrast at 0.3 or 1 and normals smoothed under 30 degrees each move both frames under a thousandth. Reverted: the carved door waits on the dusk light, the stone's haze and the sun's direction first",
+      search:
+        "The door's mesh split by connectivity and its faces binned by depth and tilt, the lift clip's curves by path, then the door fitted as layers (fit login --only door), rank's second table and compare on login-door and login-door-recording, with the chamfer drawn straight, the panel flat, the old relief and the relief's contrast swept",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
