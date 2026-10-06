@@ -29,4 +29,4 @@ The generated barrel is the package's `.` entry and reaches every module. A seco
 
 ## Why the packages are not built more concurrently
 
-The wall time is one topological chain, because a sibling's `source` arm points at its generated — and gitignored — barrel, so a worker count past what the graph allows changes nothing. What already answers the dev loop is `watch:packages`, and CI's is the `package-builds` content cache.
+The wall time is one topological chain, because a sibling's `source` arm points at its generated — and gitignored — barrel, so a worker count past what the graph allows changes nothing. What already answers the dev loop is `watch:packages`, and CI's is the task cache, which replays the whole build when nothing it read has changed.
