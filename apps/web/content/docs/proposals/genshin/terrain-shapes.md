@@ -36,7 +36,7 @@ flowchart TD
 
 ## Scope
 
-**Today:** the terrain's tiles are generated from a region's height function and painted by a region's colour function, in vertex colours. Windrise's is a knoll, a ring of hills and noise, written in code.
+**Today:** the terrain's tiles are generated from a region's height function and painted by a region's colour function, in vertex colours. Windrise's is Gaussian hills fitted to the game's own terrain tiles.
 
 **This adds:**
 

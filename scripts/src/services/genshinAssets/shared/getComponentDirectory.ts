@@ -15,5 +15,6 @@ export const getComponentDirectory = (component: DerivedAssetComponent): Compone
     music: join(root, "music"),
     root,
     shaders: join(root, "shaders"),
+    world: join(root, "world"),
   };
 };

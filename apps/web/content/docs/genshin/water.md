@@ -5,7 +5,7 @@ description: Genshin's still water in the anime style, one surface for every sea
 
 # Water
 
-The game draws its water clear and bright. The floor shows through the shallows, a white band of foam marks every shore, and the sun breaks on the surface into hard glints. Windrise's valley opens east onto a lake, where the water is first shown.
+The game draws its water clear and bright. The floor shows through the shallows, a white band of foam marks every shore, and the sun breaks on the surface into hard glints. Windrise's creek round the oak and the lake beyond it are where the water is first shown.
 
 ## How it works
 
@@ -36,7 +36,7 @@ flowchart TD
 - **Ripples, glints and the sky.** Two layers of noise drift apart, and their slopes tilt the surface's normal. The light's reflection off it goes through a narrow step, so the sun breaks into bright shapes brighter than white, which bloom lifts where a scene draws it, rather than a smooth highlight. Toward the horizon the sky's colours are reflected by a Fresnel term.
 - **Caustics on the floor.** The ground under the water shimmers with two layers of animated Voronoi cells, stepped into veins in the light's colour, fading out by the deep depth (`createCausticsNode`), so they dim at night with the light.
 - **The world under the surface.** When the eye goes under the water's level, the fog turns even, thick from the eye outward and the water's own colour (`updateUnderwaterFog`). Diving saves the fog above and surfacing gives it back, so the sky and the tuning panel keep their values.
-- **The water is region data.** Its level, colours, depths, caustics and underwater fog are `WaterUniforms`, which a region sets and the tuning panel's **Water** folder moves.
+- **The water is region data.** Its level, colours, depths, caustics and underwater fog are `WaterUniforms`, which a region sets and the tuning panel's **Water** folder moves. Windrise's level is the game's own: the height its tile places the valley's water surface at, over the oak's foot, written by `genshin:assets fit windrise`.
 
 ## What it costs to run
 
@@ -46,18 +46,18 @@ flowchart TD
 
 ## Key files
 
-| File                                                                | Role                                                                   |
-| :------------------------------------------------------------------ | :--------------------------------------------------------------------- |
-| `packages/genshin-engine/src/nodes/createWaterMaterial.ts`          | The surface: depth colour, floor, foam, ripples, glints and reflection |
-| `packages/genshin-engine/src/nodes/createCausticsNode.ts`           | The shimmer on the ground under the water                              |
-| `packages/genshin-engine/src/water/updateUnderwaterFog.ts`          | The fog turned to the water's under the surface, and given back above  |
-| `packages/genshin-world/src/components/World/Water/Index.vue`       | The surface kept under the camera, and the fog swapped each frame      |
-| `packages/genshin-world/src/services/windrise/constants.ts`         | Windrise's lake: its level, colours, depths and underwater fog         |
-| `packages/genshin-world/src/services/windrise/getWindriseHeight.ts` | The valley opening east onto the lake's bowl                           |
+| File                                                          | Role                                                                   |
+| :------------------------------------------------------------ | :--------------------------------------------------------------------- |
+| `packages/genshin-engine/src/nodes/createWaterMaterial.ts`    | The surface: depth colour, floor, foam, ripples, glints and reflection |
+| `packages/genshin-engine/src/nodes/createCausticsNode.ts`     | The shimmer on the ground under the water                              |
+| `packages/genshin-engine/src/water/updateUnderwaterFog.ts`    | The fog turned to the water's under the surface, and given back above  |
+| `packages/genshin-world/src/components/World/Water/Index.vue` | The surface kept under the camera, and the fog swapped each frame      |
+| `packages/genshin-world/src/services/windrise/constants.ts`   | Windrise's water: its colours, depths and underwater fog               |
+| `packages/genshin-world/src/data/windrise/water.json`         | Windrise's water level, fitted from the game's own                     |
 
 ## Notes
 
-- **Still water is one level per region.** A lake above the sea would need its own surface; a region with one sets it when its shapes arrive. Rivers and waterfalls are the [flowing water](/docs/proposals/genshin/flowing-water) proposal.
+- **Still water is one level per region.** A lake above the sea would need its own surface; Windrise's ponds above its valley's water, beside the oak and up its cliffs, are dry until one is drawn. Rivers and waterfalls are the [flowing water](/docs/proposals/genshin/flowing-water) proposal.
 - **The surface seen from below is the same surface.** The game's window of sky through the surface and the mirrored depths around it are [deferred](/docs/genshin/deferred/underwater-window) until Fontaine.
 - **Screen-space reflections are deferred.** The sky's reflection carries the look, and the proposal never let it depend on them ([screen-space reflections](/docs/genshin/deferred/water-screen-space-reflections)).
 

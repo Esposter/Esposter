@@ -21,6 +21,7 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | Where the open world places an object   | `parseStreamingPlacements` over its tile's or area's StreamGen blob             |
 | A placement's prefab                    | its 64-bit path hash looked up in the game's asset index                        |
 | A tile's ground                         | `parseTerrainHeights` over its TerrainData                                      |
+| Our ground drawn as the game's          | `fitGaussianHills`: hills fitted to the tiles round the origin, error printed   |
 | The scene's hierarchy, and what it lost | `genshin:assets tree`: flags anchors, lost fathers                              |
 | A script's settings                     | `behaviours`: raw bytes scanned for shapes                                      |
 | What a script spawns, and where         | `behaviours`, set as `spawns` at their anchors                                  |

@@ -2,6 +2,12 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { SceneLayout } from "genshin-engine";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
+import {
+  MAIN_TEXTURE_SLOT,
+  TERRAIN_BASE_MAP_SUFFIX,
+  TERRAIN_TILE_SIZE,
+} from "#src/services/genshinAssets/shared/constants";
+import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
 import { readComponentPlacements } from "#src/services/genshinAssets/shared/readComponentPlacements";
@@ -9,6 +15,7 @@ import { readIndexedAssets } from "#src/services/genshinAssets/shared/readIndexe
 import { selectFinestLevels } from "#src/services/genshinAssets/shared/selectFinestLevels";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { toRightHandedRotation } from "#src/services/genshinAssets/shared/toRightHandedRotation";
+import { parseTerrainTileName } from "#src/services/genshinAssets/world/parseTerrainTileName";
 import { existsSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -16,7 +23,8 @@ import { join } from "node:path";
 // A component's arrangement as the exports lay it out, for the witness render: each part at its finest level, in
 // Three's axes, with every material it draws with and each material's values and textures, all named by the files the
 // Export holds, under the component's roots or the ones given. It is written beside the exports and never enters the
-// Repository (apps/web/content/docs/proposals/genshin/scene-derivation.md)
+// Repository (apps/web/content/docs/proposals/genshin/scene-derivation.md). A part of the open world's terrain tiles are
+// Laid out at their corners, each drawn with its base map
 export const writeWitnessLayout = async (
   component: DerivedAssetComponent,
   roots?: readonly string[],
@@ -67,6 +75,28 @@ export const writeWitnessLayout = async (
       scale,
     })),
   };
+  const terrainTiles = (DerivedAssetComponentMap[component].world?.terrainTiles ?? []).filter(({ name }) =>
+    checkHasFile(AssetType.Mesh, name, "obj"),
+  );
+  for (const { name } of terrainTiles) {
+    const { column, row } = parseTerrainTileName(name);
+    const baseMap = `${name}${TERRAIN_BASE_MAP_SUFFIX}`;
+    layout.materials[name] = {
+      colors: {},
+      floats: {},
+      name,
+      textures: checkHasFile(AssetType.Texture2D, baseMap, "png")
+        ? { [MAIN_TEXTURE_SLOT]: { name: baseMap, offset: [0, 0], scale: [1, 1] } }
+        : {},
+    };
+    layout.placements.push({
+      materials: [name],
+      mesh: name,
+      position: toRightHanded([column * TERRAIN_TILE_SIZE, 0, row * TERRAIN_TILE_SIZE]),
+      rotation: [0, 0, 0, 1],
+      scale: [1, 1, 1],
+    });
+  }
   const path = join(directory.root, "witness.json");
   await writeFile(path, JSON.stringify(layout));
   return path;

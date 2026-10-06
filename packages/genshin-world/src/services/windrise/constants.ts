@@ -1,37 +1,22 @@
 import type { GradeOptions, GrassRing, RampOptions, SkyKeyframe, TerrainOptions } from "genshin-engine";
 
+import ground from "#src/data/windrise/ground.json";
 import { Color, Vector2 } from "three";
 
 // The ground's quadtree: half-metre cells under the eye in tiles of sixteen metres, six levels out to a root tile of
 // Half a kilometre drawn a kilometre and a half away, well past where the fog closes. The finest range clears twice
-// A finest tile's diagonal, which CDLOD needs for a level's tiles to morph before their neighbours change level
+// A finest tile's diagonal, which CDLOD needs for a level's tiles to morph before their neighbours change level. Every
+// Tile's box spans the heights the fitted ground stands between
 export const WINDRISE_TERRAIN_OPTIONS: TerrainOptions = {
   cellsPerSide: 32,
   finestRange: 48,
   finestTileSize: 16,
   levelCount: 6,
-  maxHeight: 60,
-  minHeight: -10,
+  maxHeight: ground.maxHeight,
+  minHeight: ground.minHeight,
   morphShare: 0.3,
 };
 export const WINDRISE_SEED = 0;
-// The knoll the oak stands on, and the hills that close the valley around it
-export const KNOLL_HEIGHT = 9;
-export const KNOLL_RADIUS = 40;
-export const RIM_HEIGHT = 38;
-export const RIM_START_RADIUS = 110;
-export const RIM_END_RADIUS = 230;
-export const DETAIL_HEIGHT = 1.4;
-export const DETAIL_SCALE = 45;
-// The valley opens to the east, where its hills fall away to a lake's shore: how much of the rim the opening takes,
-// And the lake's centre, radius and the depth its bowl sinks below the ground around it
-export const EAST_OPENING = 0.85;
-export const LAKE_CENTER_X = 300;
-export const LAKE_CENTER_Z = 40;
-export const LAKE_RADIUS = 150;
-export const LAKE_DEPTH = 14;
-// The lake's surface, a few metres under the valley floor, so the water fills only the lake's bowl
-export const WATER_LEVEL = -3;
 // Clear shallows over the pale bed turning a deep blue in the middle, as Mondstadt's lakes read, and a green haze
 // Under the surface
 export const WATER_SHALLOW_COLOR = 0x5fd3c8;

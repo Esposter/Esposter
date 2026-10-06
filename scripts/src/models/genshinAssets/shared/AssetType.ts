@@ -6,10 +6,12 @@ export enum AssetType {
   Mesh = "Mesh",
   MeshFilter = "MeshFilter",
   MeshRenderer = "MeshRenderer",
+  MiHoYoBinData = "MiHoYoBinData",
   MonoBehaviour = "MonoBehaviour",
   RectTransform = "RectTransform",
   Shader = "Shader",
   SkinnedMeshRenderer = "SkinnedMeshRenderer",
+  TerrainData = "TerrainData",
   Texture2D = "Texture2D",
   Transform = "Transform",
 }

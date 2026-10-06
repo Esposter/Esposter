@@ -16,20 +16,19 @@ import { fitLoginTowers } from "#src/services/genshinAssets/fit/fitLoginTowers";
 import { fitLoginWalkway } from "#src/services/genshinAssets/fit/fitLoginWalkway";
 import { fitSkyGradient } from "#src/services/genshinAssets/fit/fitSkyGradient";
 import { fitTitleLogos } from "#src/services/genshinAssets/fit/fitTitleLogos";
+import { runFits } from "#src/services/genshinAssets/fit/runFits";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
 import { readComponentPlacements } from "#src/services/genshinAssets/shared/readComponentPlacements";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // The login scene's parts fitted as our own kits' parameters, each written as a data file of the world package's,
 // With its interface's rects and clips and the rows its script scrolls them in: each copied spawn's count and the
-// Length of its step, by its prefab, and its music, whose fit's report stands before its path. Named, only those
-// Fits run and only their files are written, so one fit's change is read without every other file rewritten
+// Length of its step, by its prefab, and its music, whose fit's report stands before its path
 export const fitLoginScene = async (only: readonly string[] = []): Promise<string> => {
   const directory = getComponentDirectory(DerivedAssetComponent.Login);
   const placements = await readComponentPlacements(DerivedAssetComponent.Login);
@@ -88,13 +87,5 @@ export const fitLoginScene = async (only: readonly string[] = []): Promise<strin
     },
     walkway: async () => [await writeWorldData("login/walkway.json", await fitLoginWalkway(placements, meshDirectory))],
   };
-  const unknown = only.find((name) => !(name in fits));
-  if (unknown !== undefined)
-    throw new InvalidOperationError(Operation.Read, unknown, `not a fit: one of ${Object.keys(fits).join(", ")}`);
-  const lines = await Promise.all(
-    Object.entries(fits)
-      .filter(([name]) => only.length === 0 || only.includes(name))
-      .map(([, fit]) => fit()),
-  );
-  return lines.flat().join("\n");
+  return runFits(fits, only);
 };

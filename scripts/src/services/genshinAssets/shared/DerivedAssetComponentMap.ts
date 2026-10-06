@@ -45,4 +45,50 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
       },
     ],
   },
+  // Windrise is the open world's (World/Screen/Index.reference.ts): the statue's gadget prefab at its scene point, the
+  // Oak's prefab at the one placement of Windrise's own area, the oak's finest meshes, which no prefab holds, and the
+  // Four terrain tiles under the valley and the slopes north of it, with their base maps
+  [DerivedAssetComponent.Windrise]: {
+    namePattern: "^(Stages_Unique_CyTree01_(Bark|Leaf)_Lod0|BigWorldTerrain_(1|2)_-(1|2)\\.bin_BaseMap)$",
+    roots: [],
+    world: {
+      // The oak's foot is the origin of our Windrise, as our scene has always stood round it
+      origin: { block: "00/16170614.blk", name: "Stages_Unique_CyTree01_Lod1", pathId: "6733514611168788700" },
+      points: [
+        {
+          category: "NNGAFPEMOML",
+          file: "BinOutput/Scene/Point/scene3_point.json",
+          id: "4",
+          position: "NPCCBOFKBCO",
+          prefab: { block: "00/04803507.blk", name: "SceneObj_NPC_Goddess", pathId: "1660930449232041872" },
+          rotation: "EGALADGLFJM",
+        },
+      ],
+      streams: [
+        {
+          blob: { block: "00/03254716.blk", name: "6977197b" },
+          index: { block: "00/03254716.blk", name: "Area_FQD_City_Index" },
+          prefabs: [
+            {
+              prefab: { block: "00/16170614.blk", name: "Stages_Unique_CyTree01_Lod1", pathId: "6733514611168788700" },
+              prefabId: 3_891_970_487,
+            },
+          ],
+        },
+        // The tile's own placements, of which Area_Md_Water_Common_01_Vo, named by its path hash, is the valley's water
+        {
+          blob: { block: "00/05825684.blk", name: "012854bd" },
+          index: { block: "00/05825684.blk", name: "BigWorld_1_-2_Index" },
+          prefabs: [],
+          waterPrefabId: 1_246_497_777,
+        },
+      ],
+      terrainTiles: [
+        { block: "00/00945879.blk", name: "BigWorldTerrain_1_-1.bin" },
+        { block: "00/00945879.blk", name: "BigWorldTerrain_1_-2.bin" },
+        { block: "00/00945879.blk", name: "BigWorldTerrain_2_-2.bin" },
+        { block: "00/13138169.blk", name: "BigWorldTerrain_2_-1.bin" },
+      ],
+    },
+  },
 };

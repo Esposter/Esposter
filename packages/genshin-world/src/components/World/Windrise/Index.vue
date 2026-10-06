@@ -10,6 +10,7 @@ import { useGenshinTuning } from "#src/composables/useGenshinTuning";
 import { usePostPipeline } from "#src/composables/usePostPipeline";
 import { useRegionData } from "#src/composables/useRegionData";
 import { useSky } from "#src/composables/useSky";
+import water from "#src/data/windrise/water.json";
 import {
   CLOUD_COVERAGE,
   FOG_DENSITY,
@@ -29,7 +30,6 @@ import {
   WATER_DEEP_COLOR,
   WATER_DEEP_DEPTH,
   WATER_FOAM_DEPTH,
-  WATER_LEVEL,
   WATER_SHALLOW_COLOR,
   WIND_DIRECTION,
   WIND_GUST_SPEED,
@@ -95,7 +95,7 @@ waterUniforms.causticStrength.value = WATER_CAUSTIC_STRENGTH;
 waterUniforms.deepColor.value.set(WATER_DEEP_COLOR);
 waterUniforms.deepDepth.value = WATER_DEEP_DEPTH;
 waterUniforms.foamDepth.value = WATER_FOAM_DEPTH;
-waterUniforms.level.value = WATER_LEVEL;
+waterUniforms.level.value = water.level;
 waterUniforms.shallowColor.value.set(WATER_SHALLOW_COLOR);
 waterUniforms.underwaterFogColor.value.set(UNDERWATER_FOG_COLOR);
 waterUniforms.underwaterFogDensity.value = UNDERWATER_FOG_DENSITY;

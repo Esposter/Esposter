@@ -42,22 +42,25 @@ flowchart TD
 
 ## Key files
 
-| File                                                            | Role                                                                |
-| :-------------------------------------------------------------- | :------------------------------------------------------------------ |
-| `packages/genshin-engine/src/terrain/selectTerrainTiles.ts`     | The quadtree walk by distance and frustum                           |
-| `packages/genshin-engine/src/terrain/resolveTerrainDraws.ts`    | Held tiles drawn, a held ancestor in place of one still coming      |
-| `packages/genshin-engine/src/terrain/computeTerrainTile.ts`     | One tile's heights, normals, colours and coarse positions           |
-| `packages/genshin-engine/src/terrain/createTerrainMaterial.ts`  | The unoutlined toon ground, morphing by distance                    |
-| `packages/genshin-engine/src/streaming/createTileStreamer.ts`   | The tile cache: asked coarsest first, freed least recently wanted   |
-| `packages/genshin-engine/src/world/computeOriginShift.ts`       | When the world is moved back under the camera, and by how much      |
-| `packages/genshin-world/src/components/World/Terrain/Index.vue` | The worker pool, the tile meshes, and the frame's selection         |
-| `packages/genshin-world/src/workers/terrainTile.worker.ts`      | A tile generated from the region's heights and colours              |
-| `packages/genshin-world/src/composables/useFloatingOrigin.ts`   | The shift applied to the camera, its controls and the world's group |
-| `packages/genshin-world/src/services/windrise/constants.ts`     | Windrise's quadtree: its tile size, levels and ranges               |
+| File                                                                | Role                                                                |
+| :------------------------------------------------------------------ | :------------------------------------------------------------------ |
+| `packages/genshin-engine/src/terrain/selectTerrainTiles.ts`         | The quadtree walk by distance and frustum                           |
+| `packages/genshin-engine/src/terrain/resolveTerrainDraws.ts`        | Held tiles drawn, a held ancestor in place of one still coming      |
+| `packages/genshin-engine/src/terrain/computeTerrainTile.ts`         | One tile's heights, normals, colours and coarse positions           |
+| `packages/genshin-engine/src/terrain/createTerrainMaterial.ts`      | The unoutlined toon ground, morphing by distance                    |
+| `packages/genshin-engine/src/streaming/createTileStreamer.ts`       | The tile cache: asked coarsest first, freed least recently wanted   |
+| `packages/genshin-engine/src/world/computeOriginShift.ts`           | When the world is moved back under the camera, and by how much      |
+| `packages/genshin-world/src/components/World/Terrain/Index.vue`     | The worker pool, the tile meshes, and the frame's selection         |
+| `packages/genshin-world/src/workers/terrainTile.worker.ts`          | A tile generated from the region's heights and colours              |
+| `packages/genshin-world/src/composables/useFloatingOrigin.ts`       | The shift applied to the camera, its controls and the world's group |
+| `packages/genshin-world/src/services/windrise/constants.ts`         | Windrise's quadtree: its tile size, levels and ranges               |
+| `packages/genshin-engine/src/terrain/createGaussianHillsHeight.ts`  | A ground of Gaussian hills, each read only in the cells it reaches  |
+| `packages/genshin-world/src/services/windrise/getWindriseHeight.ts` | Windrise's ground, its fitted hills                                 |
+| `scripts/src/services/genshinAssets/fit/fitGaussianHills.ts`        | The hills fitted to a heightfield, widest first, with their error   |
 
 ## Notes
 
-- **Heights are a region's function for now.** Windrise's is a knoll, a ring of hills opening east onto a lake's bowl, and noise, written in code, and its colours are grass in patches and rock on steep faces. Authored shapes, ground layers and paint strokes are the [terrain shapes](/docs/proposals/genshin/terrain-shapes) proposal.
+- **Heights are a region's function.** Windrise's is our own Gaussian hills over a base height (`createGaussianHillsHeight`), several thousand of them fitted by `genshin:assets fit windrise` to the game's terrain tiles round the oak's foot, which stands at the origin. The fit prints the error it leaves, under a metre round the oak and a few metres at the valley's edge, and writes the heights the ground stands between, which bound every tile's box. Past the kilometre it is fitted over, the ground falls back to its base. Its colours are still grass in patches and rock on steep faces. Authored shapes, ground layers and paint strokes are the [terrain shapes](/docs/proposals/genshin/terrain-shapes) proposal.
 - **A tile is its own mesh, not an instance.** The proposal's single instanced draw over a height texture array would take the ground to one draw call, at the price of a texture array and an indirection table to stream into. With a few dozen tiles in view the draws are within the engine's budget, so it waits ([one instanced draw](/docs/genshin/deferred/terrain-instanced-draw)).
 - **The finest range must clear twice a finest tile's diagonal.** Otherwise a tile's neighbour can change level before the tile has finished morphing, and a crack opens between them.
 
