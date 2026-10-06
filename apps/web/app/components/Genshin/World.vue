@@ -1,13 +1,9 @@
 <script setup lang="ts">
-import type { TresCanvasInstance, TresRendererSetupContext } from "@tresjs/core";
-
 import { GENSHIN_REGION_DATA_BASE_URL } from "#shared/services/genshin/constants";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { GENSHIN_QUALITY_TIER } from "@/services/genshin/constants";
-import { createGenshinRenderer, GENSHIN_TONE_MAPPING, QualityTierSettingsMap } from "genshin-engine";
-import { GenshinWorld } from "genshin-world";
+import { WorldScreen } from "genshin-world";
 import TerrainTileWorker from "genshin-world/terrainTileWorker?worker";
-import { PCFShadowMap } from "three";
 
 interface Props {
   // Whether something covers the world, which then keeps loading but draws no frames until it is shown
@@ -16,51 +12,20 @@ interface Props {
 
 const { isPaused } = defineProps<Props>();
 const emit = defineEmits<{ load: []; ready: [] }>();
-const { maxPixelRatio } = QualityTierSettingsMap[GENSHIN_QUALITY_TIER];
-const canvas = useTemplateRef<TresCanvasInstance>("canvas");
-// @TODO: no upstream issue — TresJS draws only while it owes a frame, and always mode owes one only once it has drawn,
-// So a canvas switched from manual, having drawn the frame it was owed, never draws again. The uncovered world is owed
-// One while the canvas is still manual, before its props change
-watch(
-  () => isPaused,
-  (newIsPaused) => {
-    if (!newIsPaused) canvas.value?.context?.renderer.advance();
-  },
-  { flush: "sync" },
-);
-// A world that cannot start, where neither WebGPU nor WebGL 2 is available, is ready all the same, so the opening
-// Still finishes
+// The world's screen with what only the app can hand it: the terrain worker its bundler builds, the URL its server
+// Serves region data at, and whether the tuning panel shows
 onMounted(() => {
   emit("load");
 });
 </script>
 
 <template>
-  <div class="world" size-full>
-    <TresCanvas
-      ref="canvas"
-      :dpr="[1, maxPixelRatio]"
-      :renderer="({ canvas }: TresRendererSetupContext) => createGenshinRenderer(unref(canvas))"
-      :render-mode="isPaused ? 'manual' : 'always'"
-      :tone-mapping="GENSHIN_TONE_MAPPING"
-      shadows
-      :shadow-map-type="PCFShadowMap"
-      @error="emit('ready')"
-      @ready="emit('ready')"
-    >
-      <GenshinWorld
-        :create-terrain-worker="() => new TerrainTileWorker()"
-        :is-tuning="IS_DEVELOPMENT"
-        :quality-tier="GENSHIN_QUALITY_TIER"
-        :region-data-base-url="GENSHIN_REGION_DATA_BASE_URL"
-      />
-    </TresCanvas>
-  </div>
+  <WorldScreen
+    :create-terrain-worker="() => new TerrainTileWorker()"
+    :is-paused
+    :is-tuning="IS_DEVELOPMENT || undefined"
+    :quality-tier="GENSHIN_QUALITY_TIER"
+    :region-data-base-url="GENSHIN_REGION_DATA_BASE_URL"
+    @ready="emit('ready')"
+  />
 </template>
-
-<style scoped>
-.world :deep(canvas) {
-  /* A drag on the world turns the camera, so a touch is never taken for scrolling or zooming the page */
-  touch-action: none;
-}
-</style>

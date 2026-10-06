@@ -28,20 +28,20 @@ It ships no image, model or sound from the game: every mesh, texture and shader 
 pnpm i genshin-world genshin-engine genshin-interface @esposter/shared @tresjs/cientos @tresjs/core @vueuse/core three vue zod
 ```
 
-Mount `GenshinWorld` inside your own `TresCanvas` and pass in only what your bundler and server decide, and load the screens' styles once:
+Mount `WorldScreen`, which brings its own canvas, and pass in only what your bundler and server decide, and load the screens' styles once:
 
 ```vue
 <script setup lang="ts">
-import { GenshinWorld } from "genshin-world";
+import { WorldScreen } from "genshin-world";
 import TerrainTileWorker from "genshin-world/terrainTileWorker?worker";
 import "genshin-interface/style.css";
 import "genshin-world/style.css";
 </script>
 
 <template>
-  <GenshinWorld
+  <WorldScreen
     :create-terrain-worker="() => new TerrainTileWorker()"
-    :is-tuning="isDevelopment"
+    :is-tuning="isDevelopment || undefined"
     :quality-tier
     region-data-base-url="genshin"
   />

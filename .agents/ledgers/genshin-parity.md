@@ -7,7 +7,7 @@ Each screen, scene and piece of music held to its reference, and the tools that 
 | `packages/genshin-interface`                                                                                                                                        | 2026-10-05 · Opus 5.5 |       |
 | `packages/genshin-world/src/components` — `Game`, `Splash`, `Loading`                                                                                               | 2026-10-05 · Opus 5.5 |       |
 | `packages/genshin-world/src/components` — `Login`                                                                                                                   | 2026-10-05 · Opus 5.5 |       |
-| `packages/genshin-world/src/components` — `World`, `GenshinWorld`                                                                                                   | 2026-10-05 · Opus 5.5 |       |
+| `packages/genshin-world/src/components` — `World`                                                                                                                   | 2026-10-05 · Opus 5.5 |       |
 | `packages/genshin-world/parity`                                                                                                                                     | 2026-10-05 · Opus 5.5 |       |
 | `scripts/src/services/genshinParity/commands`                                                                                                                       | 2026-10-05 · Opus 5.5 |       |
 | `scripts/src/services/genshinParity/shared`, `scripts/src/models/genshinParity/shared`                                                                              | 2026-10-05 · Opus 5.5 |       |
