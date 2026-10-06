@@ -52,7 +52,7 @@ apps/web/app/components/AgentConsole/Theme/Genshin/
 | `packages/genshin-persona/scripts/speak.ts`                    | Where the synthesized clip is in hand before it plays              |
 | `packages/agent-console-server/src/contracts.ts`               | The envelope's event on the wire                                   |
 | `apps/web/app/models/agentConsole/AgentConsoleTheme.ts`        | The theme interface the envelope reaches the Genshin theme through |
-| `packages/genshin-world/src/components/GenshinWorld/Index.vue` | The scene the field is drawn behind                                |
+| `packages/genshin-world/src/components/World/Screen/Index.vue` | The scene the field is drawn behind                                |
 
 ## Notes
 

@@ -413,14 +413,17 @@ onUnmounted(() => {
     </template>
   </primitive>
   <!-- The door turns to face the camera coming up the walkway from -z, and stands only once it is due and has come -->
-  <!-- Within the walkway's far end, on the copy the glide comes to rest on: the title's frames show no door at all -->
+  <!-- Within the walkway's far end, on the copy the glide comes to rest on: the title's frames show no door at all. -->
+  <!-- Until then it is drawn at no size and never culled, so its pipelines compile while the scene loads rather than -->
+  <!-- Stalling the frame it rises on -->
   <TresGroup
-    v-if="isDoorRising && checkIsOwnFamilyDrawn(LoginPartFamily.Door)"
+    v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Door)"
     :position="doorPosition"
     :rotation="[0, Math.PI, 0]"
+    :scale="isDoorRising ? 1 : 0"
   >
-    <TresMesh :geometry="doorFrameGeometry" receive-shadow :material="doorFrameMaterial" />
-    <TresMesh :geometry="doorPanelGeometry" receive-shadow :material="doorMaterial" />
+    <TresMesh :frustum-culled="false" :geometry="doorFrameGeometry" receive-shadow :material="doorFrameMaterial" />
+    <TresMesh :frustum-culled="false" :geometry="doorPanelGeometry" receive-shadow :material="doorMaterial" />
   </TresGroup>
   <TresMesh
     v-if="!witness?.isAlone.value"
