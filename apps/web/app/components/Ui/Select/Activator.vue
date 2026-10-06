@@ -19,7 +19,7 @@ const { close, isOpen, modelValue, popover, virtualFocus } = useSelectContext("v
 // The trigger is no invoker of the list, so a press on it while the list is open counts as outside it: the browser's
 // Light dismiss closes the list on the release, and on touch it does so before the click lands, which the primitive
 // Then reads as a press on a closed select and opens it again. A press that began on an open list closes it
-let isOpenOnPointerDown = false;
+const isOpenOnPointerDown = ref(false);
 const selectedItems = computed(() =>
   items.filter(({ value }) =>
     Array.isArray(modelValue.value) ? modelValue.value.includes(value) : value === modelValue.value,
