@@ -9,11 +9,11 @@ Handling a `DatasetReference` whose source resource has been deleted, so a bound
 
 ## Why not a DB cascade
 
-A `DatasetReference` (`{ type, id }`) lives **inside the consumer's content blob** (JSON in Azure Blob), not in a Postgres column — there is no relational FK edge, so Drizzle `onDelete: "cascade"` has nothing to fire on. And cascade-**delete** would be the wrong operation regardless: deleting a source Sheet must **blank/flag** the binding, never delete the Dashboard that binds to it. Only **references** dangle (Dashboard bind, Email merge fields); **imports** copied rows once and are immune.
+A `DatasetReference` (`{ type, id }`) lives **inside the consumer's content blob** (JSON in Azure Blob). The [resource-link index](/docs/architecture/resource-links) mirrors it into Postgres, but deliberately without a foreign key on the target, so Drizzle `onDelete: "cascade"` still has nothing to fire on. And cascade-**delete** would be the wrong operation regardless: deleting a source Sheet must **blank/flag** the binding, never delete the Dashboard that binds to it. Only **references** dangle (Dashboard bind, Email merge fields); **imports** copied rows once and are immune.
 
 ## Why deferred
 
-Eager cleanup means null-the-reference / mark-broken, which needs either a reverse-reference index (a `resource_references` join table) or a scan of all consumers on delete, then a **rewrite of each consumer's content blob** (respecting its `contentVersion`) — real cross-resource write machinery. Acceptable to skip while binding is new and single-owner: today the consumer re-resolves on load and `dataset.readDataset` fails/returns empty. Published snapshots are unaffected — they bake the data in at publish time.
+Eager cleanup means null-the-reference / mark-broken. Finding the consumers is now one read of the [resource-link index](/docs/architecture/resource-links); what remains is a **rewrite of each consumer's content blob** (respecting its `contentVersion`) — real cross-resource write machinery. Acceptable to skip while binding is new and single-owner: today the consumer re-resolves on load and `dataset.readDataset` fails/returns empty. Published snapshots are unaffected — they bake the data in at publish time.
 
 ## Revisit when
 

@@ -56,6 +56,8 @@ Publish state is **normalized into its own table**, `resource_publications` — 
 | `publishVersion` | integer, default 1               | the published channel's version row that is live |
 | `publishedAt`    | timestamp, default now           | when the current publish happened                |
 
+Every cross-resource reference a resource's content holds is indexed in `resourceLinks` — one row per source, role and target, written by the save that writes the content — so which resources point at one is a single lookup ([resource links](/docs/architecture/resource-links)).
+
 Content blobs live in one container, `AzureContainer.ResourceAssets`, keyed by id only (type lives in the row; ids are UUIDs — a type prefix would duplicate authoritative data into path strings):
 
 ```text
@@ -67,7 +69,7 @@ Content blobs live in one container, `AzureContainer.ResourceAssets`, keyed by i
 
 Ownership is enforced through the Postgres row, never inferred from the blob path. Deleting a resource is soft — identically for every type: it stamps `deletedAt` and drops the publication row, leaving the `{id}/` blob directory intact so a restore can hand the content back. Purging is what deletes the directory and then the row ([recycle bin](/docs/resource/recycle-bin)).
 
-Each type owns one content schema (Zod, interface-first, one export per file) in `apps/web/shared/models/`. A content schema always produces an **object** (never a bare string/array) so future fields extend without a blob-shape break.
+Each type owns one content schema (Zod, interface-first, one export per file) in `apps/web/shared/models/`. A content schema always produces an **object** (never a bare string/array) so future fields extend without a blob-shape break. A field holding another resource's id is declared with `createResourceLinkSchema(ResourceLinkType.X)`, never a bare `z.uuid()` — the declaration is what the [resource-link index](/docs/architecture/resource-links) reads, so a reference written any other way is one nothing can find.
 
 ## Capabilities
 

@@ -36,6 +36,7 @@ The test is whether the mechanism's input already exists, uniformly, for every c
 
 - **`createResourceProcedures`** builds every resource type's procedures from its `ResourceDefinitionMap` entry, so a new type is a map entry and never a router of its own ([resources](/docs/architecture/resource)).
 - **`UiSchemaForm`** renders a form from the Zod schema that already validates it, so a new field is a schema field and never template code ([UI library](/docs/architecture/ui-library)).
+- **The resource-link index** reads every type's references off its content schema, where each one is declared by `createResourceLinkSchema`, so a new reference field is indexed by being declared and never by a per-type projector ([resource links](/docs/architecture/resource-links)).
 - **The router input test** walks every procedure's input as JSON Schema, so a new procedure is checked the day it exists, with nothing to register (`apps/web/server/trpc/routers/index.test.ts`).
 
 ## Key files

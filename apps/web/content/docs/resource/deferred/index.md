@@ -15,7 +15,7 @@ One page per deferred idea (not now — with a revisit trigger). Check here and 
 - [Brand kit resource](/docs/resource/deferred/brand-kit-resource) — no cross-editor theming seam exists to consume it
 - [Create wizard tabs](/docs/resource/deferred/create-wizard-tabs) — a wizard over name-only forms is ceremony
 - [Cross-resource activity feed](/docs/resource/deferred/cross-resource-activity-feed) — needs a second user-keyed table for a feed of your own actions
-- [Dangling dataset references](/docs/resource/deferred/dangling-dataset-references) — delete-time consumer rewrites need real machinery; re-resolve fails soft today
+- [Dangling dataset references](/docs/resource/deferred/dangling-dataset-references) — delete-time consumer rewrites need real machinery; finding them is one index read, and re-resolve fails soft today
 - [Dashboard slicers](/docs/resource/deferred/dashboard-slicers) — a filter model for dashboard queries is the first piece of a query language joins and live refresh would shape too
 - [Dashboard text boxes](/docs/resource/deferred/dashboard-text-boxes) — a non-chart visual kind waits on card and table visuals; chart titles cover labelling
 - [Dashboard kiosk mode](/docs/resource/deferred/dashboard-kiosk-mode) — auto-refresh of baked snapshots refreshes nothing; needs live reads first
@@ -33,7 +33,7 @@ One page per deferred idea (not now — with a revisit trigger). Check here and 
 - [Realtime dataset refresh](/docs/resource/deferred/realtime-dataset-refresh) — fetch-on-load + manual refresh covers review workflows
 - [Comments on published resources](/docs/resource/deferred/resource-comments) — needs identity + moderation; esbabbler is the discussion system
 - [Resource groups](/docs/resource/deferred/resource-groups) — type facets + search suffice; a group column would be speculative schema
-- [Resource references](/docs/resource/deferred/resource-references) — a maintained lineage index is a second source of truth; design with dangling-references
+- [Resource references](/docs/resource/deferred/resource-references) — a referenced-by panel over the resource-link index; design with dangling-references
 - [Resource locks](/docs/resource/deferred/resource-locks) — delete guard + recycle bin cover the single-owner threat model
 - [Saved views](/docs/resource/deferred/saved-views) — URL-synced state already makes any view a bookmark
 - [Survey response push](/docs/resource/deferred/survey-response-push) — anonymous writes need digest-first design or they're a harassment vector
