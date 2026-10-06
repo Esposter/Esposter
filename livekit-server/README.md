@@ -1,6 +1,6 @@
 # LiveKit Railway service
 
-This service wraps the official `livekit/livekit-server` image with a Railway-specific entrypoint.
+This service copies the `livekit-server` binary out of the official `livekit/livekit-server` image onto the official `haproxy` image, behind a Railway-specific entrypoint. The base is HAProxy's LTS image rather than a distro with HAProxy installed on it: the image tag is then HAProxy's own version, which Renovate and `pnpm outdated:dependencies` both read, where an `apt-get install` takes whatever the distro carries and no version in the repo names it. The image already holds everything else the entrypoint calls (bash, `getent`, CA certificates), and it runs as its unprivileged `haproxy` user, so the generated LiveKit config is written under `/tmp`.
 
 Railway does not expose UDP publicly, so this follows the TCP-only Railway template pattern: LiveKit advertises the Railway TCP proxy IP for ICE candidates, and HAProxy forwards Railway's application port to the advertised ICE port inside the container. Redis remains a separate Railway Redis service for room state.
 

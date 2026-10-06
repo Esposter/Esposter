@@ -1,6 +1,7 @@
 import type { RenovateRule } from "#src/models/outdatedDependencies/renovate/RenovateRule";
 import type { OutdatedDependency } from "#src/models/outdatedDependencies/shared/OutdatedDependency";
 
+import { getDisablingRule } from "#src/services/outdatedDependencies/renovate/getDisablingRule";
 import { satisfies } from "semver";
 
 // The rule under which Renovate would not propose `latest` for this package: the package is disabled, or `latest`
@@ -11,11 +12,13 @@ export const getHoldingRule = (
   { latest, packageName }: OutdatedDependency,
   rules: RenovateRule[],
 ): RenovateRule | undefined => {
-  const matchingRules = rules.filter(({ matchPackageNames }) => matchPackageNames.includes(packageName));
-  const enabledRule = matchingRules.findLast(({ enabled }) => enabled !== undefined);
-  if (enabledRule?.enabled === false) return enabledRule;
+  const disablingRule = getDisablingRule(packageName, rules);
+  if (disablingRule) return disablingRule;
 
-  const allowedVersionsRule = matchingRules.findLast(({ allowedVersions }) => allowedVersions !== undefined);
+  const allowedVersionsRule = rules.findLast(
+    ({ allowedVersions, matchPackageNames }) =>
+      allowedVersions !== undefined && matchPackageNames.includes(packageName),
+  );
   if (
     allowedVersionsRule?.allowedVersions !== undefined &&
     !satisfies(latest, allowedVersionsRule.allowedVersions, { includePrerelease: true })

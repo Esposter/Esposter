@@ -1,6 +1,9 @@
 import type { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
 
 export interface DependencyEntry {
+  // The digest a reference pins its version to — an image's manifest, an action's commit — which the source can move
+  // Under an unchanged version
+  digest?: string;
   // The manifest that declares the entry, for a group a manifest declares rather than a workspace section; absent,
   // The group's own label is the dependent the report attributes it to
   dependent?: string;

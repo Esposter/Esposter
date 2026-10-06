@@ -3,7 +3,12 @@
   "automergeType": "branch",
   "configMigration": true,
   "dependencyDashboardOSVVulnerabilitySummary": "unresolved",
-  "extends": ["config:recommended", ":semanticCommitTypeAll(chore)", "helpers:pinGitHubActionDigests"],
+  "extends": [
+    "config:recommended",
+    ":semanticCommitTypeAll(chore)",
+    "docker:pinDigests",
+    "helpers:pinGitHubActionDigests"
+  ],
   "ignorePresets": [":prHourlyLimit2"],
   "lockFileMaintenance": { "automerge": true, "enabled": true },
   "osvVulnerabilityAlerts": true,
@@ -57,11 +62,6 @@
       "description": "The collector calls its own reusable workflow at `@ai/queue`; a branch ref is not a version to bump, and a tag here would freeze the collector on one release.",
       "enabled": false,
       "matchPackageNames": ["Esposter/Esposter"]
-    },
-    {
-      "description": "A tag that carries no version (a distro codename, `latest`) gives Renovate nothing to compare, yet its publisher can repoint it at any time. `pinDigests` rewrites the line to `<tag>@sha256:…` once and then keeps the digest current, which turns an invisible upstream rebuild into a reviewable diff. It is read during the lookup, so this rule carries no `matchUpdateTypes`: an update type exists only once the lookup has produced an update.",
-      "matchDatasources": ["docker"],
-      "pinDigests": true
     },
     {
       "automerge": true,
