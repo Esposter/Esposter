@@ -10,13 +10,15 @@ const toCorner = (turn: number, radius: number, y: number): Corner => [
   y,
   radius * Math.cos(turn * 2 * Math.PI),
 ];
-// What stands out from a tower's wall as a slab of its own: a curved prism from a little inside the wall out to its
-// Depth, over the turns its span covers round a tower of that breadth and up its height, each face flat-shaded so its
-// Edges stand sharp as carved stone's do. Its inside stands within the wall and is never seen, so it is not drawn. Each
+// A slab of a tower's wall as geometry of its own, over the turns its span covers round a tower of that breadth and up
+// Its height, each face flat-shaded so its edges stand sharp as carved stone's do. One standing out, a rib or a pilaster,
+// Is a curved prism from a little inside the wall out to its depth, its inside within the wall and never drawn; one sunk
+// In, a window or a bay, is the box behind the lathe's opening, its back turned out and its sides turned into it. Each
 // Face is four corners of its own and two triangles, indexed as the lathe it is merged with is
-export const createLoginTowerColumnGeometry = (
+export const createLoginTowerSlabGeometry = (
   { depth, radius, round: [roundFrom = 0, roundTo = 0], up: [bottom = 0, top = 0] }: TowerSlab,
   breadth: number,
+  { isSunk = false }: { isSunk?: boolean } = {},
 ): BufferGeometry => {
   // The fit rounds a span to its facade's cells, so one ending at the seam can run on past a whole turn: it stops at the
   // Seam, where its last corners stand a hair short of it as the lathe's do and read its tile's far edge
@@ -26,7 +28,12 @@ export const createLoginTowerColumnGeometry = (
     { length: segmentCount + 1 },
     (_value, index) => startTurn + ((endTurn - startTurn) * index) / segmentCount,
   );
-  const [innerRadius, outerRadius] = [radius - LOGIN_TOWER_COLUMN_EMBED, radius + depth];
+  // A slab standing out runs from inside the wall to its face; one sunk in from its back to the wall, where the lathe is
+  // Cut open over it
+  const [innerRadius, outerRadius] = isSunk
+    ? [radius - depth, radius]
+    : [radius - LOGIN_TOWER_COLUMN_EMBED, radius + depth];
+  const faceRadius = isSunk ? innerRadius : outerRadius;
   const positions: number[] = [];
   const normals: number[] = [];
   const indices: number[] = [];
@@ -43,23 +50,28 @@ export const createLoginTowerColumnGeometry = (
     }
     indices.push(first, first + 1, first + 2, first, first + 2, first + 3);
   };
+  // A side between the wall and the face, turned to face into the opening where the slab is sunk
+  const addSide = (a: Corner, b: Corner, c: Corner, d: Corner): void => {
+    if (isSunk) addFace(d, c, b, a);
+    else addFace(a, b, c, d);
+  };
   for (const [index, turn] of turns.entries()) {
     const nextTurn = turns[index + 1];
     if (nextTurn === undefined) break;
-    // Its outer face, then its top and its foot between the wall and that face
+    // Its face, then its top and its foot between the wall and that face
     addFace(
-      toCorner(turn, outerRadius, bottom),
-      toCorner(nextTurn, outerRadius, bottom),
-      toCorner(nextTurn, outerRadius, top),
-      toCorner(turn, outerRadius, top),
+      toCorner(turn, faceRadius, bottom),
+      toCorner(nextTurn, faceRadius, bottom),
+      toCorner(nextTurn, faceRadius, top),
+      toCorner(turn, faceRadius, top),
     );
-    addFace(
+    addSide(
       toCorner(turn, outerRadius, top),
       toCorner(nextTurn, outerRadius, top),
       toCorner(nextTurn, innerRadius, top),
       toCorner(turn, innerRadius, top),
     );
-    addFace(
+    addSide(
       toCorner(turn, innerRadius, bottom),
       toCorner(nextTurn, innerRadius, bottom),
       toCorner(nextTurn, outerRadius, bottom),
@@ -67,13 +79,13 @@ export const createLoginTowerColumnGeometry = (
     );
   }
   // Its two ends, facing back and on round the tower
-  addFace(
+  addSide(
     toCorner(startTurn, innerRadius, bottom),
     toCorner(startTurn, outerRadius, bottom),
     toCorner(startTurn, outerRadius, top),
     toCorner(startTurn, innerRadius, top),
   );
-  addFace(
+  addSide(
     toCorner(endTurn, outerRadius, bottom),
     toCorner(endTurn, innerRadius, bottom),
     toCorner(endTurn, innerRadius, top),

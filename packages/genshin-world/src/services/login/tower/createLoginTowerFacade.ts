@@ -6,12 +6,13 @@ import { createShadeCanvasTexture } from "#src/services/login/scene/createShadeC
 import { getHalfShadeStyle } from "#src/services/login/scene/getHalfShadeStyle";
 import {
   LOGIN_FACADE_ATTRIBUTE,
+  LOGIN_FACADE_CUT_ATTRIBUTE,
   LOGIN_TOWER_FACADE_CONTRAST,
   LOGIN_TOWER_FACADE_GUTTER,
   LOGIN_TOWER_FACADE_PIXELS_PER_UNIT,
   LOGIN_TOWER_RECESS_OCCLUSION,
 } from "#src/services/login/tower/constants";
-import { attribute, texture } from "three/tsl";
+import { attribute, float, texture } from "three/tsl";
 
 // The login towers' surfaces as `fitLoginTowerFacades` traced them, drawn once into two canvases the towers read where
 // Their geometry says each vertex stands (`createLoginTowersGeometry`): the shade over the towers' stone, each band's
@@ -32,7 +33,7 @@ export const createLoginTowerFacade = (atlas: LoginTowerAtlas): LoginTowerFacade
     shadeContext.fillRect(0, 0, atlas.width, atlas.height);
     maskContext.fillStyle = "#fff";
     maskContext.fillRect(0, 0, atlas.width, atlas.height);
-    for (const [tower, { bands, holes, layers, size }] of Object.entries(towers.facades)) {
+    for (const [tower, { bands, holes, layers, recesses, size }] of Object.entries(towers.facades)) {
       const tile = atlas.tiles[tower];
       if (!tile) continue;
       const [breadth = 0] = size;
@@ -80,6 +81,17 @@ export const createLoginTowerFacade = (atlas: LoginTowerAtlas): LoginTowerFacade
       maskContext.fillStyle = "#000";
       // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
       maskContext.fill(toPath(holes), "evenodd");
+      // The lathe opens over each recess, whose own box stands behind it
+      maskContext.fill(
+        toPath(
+          recesses.map(({ round: [roundFrom = 0, roundTo = 0], up: [bottom = 0, top = 0] }) => [
+            [roundFrom, bottom],
+            [roundTo, bottom],
+            [roundTo, top],
+            [roundFrom, top],
+          ]),
+        ),
+      );
       shadeContext.restore();
       maskContext.restore();
     }
@@ -93,6 +105,9 @@ export const createLoginTowerFacade = (atlas: LoginTowerAtlas): LoginTowerFacade
       shadeTexture.dispose();
     },
     shade: texture(shadeTexture, facadeUv).rgb.mul(2),
-    solid: texture(maskTexture, facadeUv).r,
+    // A slab's vertices never read the facade's openings, which cut the lathe alone
+    solid: float(1).sub(
+      attribute<"float">(LOGIN_FACADE_CUT_ATTRIBUTE).mul(float(1).sub(texture(maskTexture, facadeUv).r)),
+    ),
   };
 };

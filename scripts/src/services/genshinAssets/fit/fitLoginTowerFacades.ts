@@ -210,25 +210,24 @@ export const fitLoginTowerFacades = async (
         tolerance: 1,
         width,
       });
-    // What stands out from the wall as slabs over the spans it covers, each run of it joined round the tower's seam and
-    // Kept where it covers enough cells to be carving rather than a speck, then split into rectangles row by row so a rib
-    // Stays one tall slab and a ragged balcony keeps its outline: the wall behind each and how far it stands out, the
-    // Upper median over its cells
-    const columns = findCellComponents(raised, { isWrapped: true, width })
-      .filter((component) => component.length >= TOWER_FACADE_MIN_CELLS)
-      .flatMap((component) =>
-        findCellRectangles(component, {
-          getValue: (cell) => -(depths[cell] ?? 0),
-          tolerance: TOWER_FACADE_SHALLOW_RECESS / 2,
-          width,
-        }),
-      )
-      .map(({ cells: rectangleCells, columns: [firstColumn, lastColumn], rows: [firstRow, lastRow] }): TowerSlab => ({
-        depth: roundFitted(computeUpperMedian(rectangleCells.map((cell) => -(depths[cell] ?? 0)))),
-        radius: roundFitted(computeUpperMedian(rectangleCells.map((cell) => bandWallRadiusMap.get(toBand(cell)) ?? 0))),
-        round: [roundFitted(firstColumn * TOWER_FACADE_CELL_SIZE), roundFitted(lastColumn * TOWER_FACADE_CELL_SIZE)],
-        up: [roundFitted(firstRow * TOWER_FACADE_CELL_SIZE), roundFitted(lastRow * TOWER_FACADE_CELL_SIZE)],
-      }));
+    // What stands out from the wall or sinks deep into it as slabs over the spans it covers, each run of it joined round
+    // The tower's seam and kept where it covers enough cells to be carving rather than a speck, then split into
+    // Rectangles row by row so a rib or a window stays one tall slab and a ragged balcony keeps its outline: the wall at
+    // Each and how far it stands out or sinks in, the upper median over its cells
+    const toSlabs = (slabCells: readonly number[], getDepth: (cell: number) => number): TowerSlab[] =>
+      findCellComponents(slabCells, { isWrapped: true, width })
+        .filter((component) => component.length >= TOWER_FACADE_MIN_CELLS)
+        .flatMap((component) =>
+          findCellRectangles(component, { getValue: getDepth, tolerance: TOWER_FACADE_SHALLOW_RECESS / 2, width }),
+        )
+        .map(({ cells: rectangleCells, columns: [firstColumn, lastColumn], rows: [firstRow, lastRow] }): TowerSlab => ({
+          depth: roundFitted(computeUpperMedian(rectangleCells.map((cell) => getDepth(cell)))),
+          radius: roundFitted(
+            computeUpperMedian(rectangleCells.map((cell) => bandWallRadiusMap.get(toBand(cell)) ?? 0)),
+          ),
+          round: [roundFitted(firstColumn * TOWER_FACADE_CELL_SIZE), roundFitted(lastColumn * TOWER_FACADE_CELL_SIZE)],
+          up: [roundFitted(firstRow * TOWER_FACADE_CELL_SIZE), roundFitted(lastRow * TOWER_FACADE_CELL_SIZE)],
+        }));
     const toLayer = (layerCells: readonly number[], depth: number): FacadeLayer => ({
       depth,
       loops: trace(layerCells),
@@ -236,7 +235,7 @@ export const fitLoginTowerFacades = async (
     });
     facades[tower] = {
       bands,
-      columns,
+      columns: toSlabs(raised, (cell) => -(depths[cell] ?? 0)),
       holes: trace(cells.filter((cell) => (tags[cell] ?? -1) < 0)),
       layers: [
         toLayer(darkPaint, 0),
@@ -246,6 +245,7 @@ export const fitLoginTowerFacades = async (
         toLayer(deep, TOWER_FACADE_DEEP_RECESS),
         toLayer(gilded, 0),
       ],
+      recesses: toSlabs(deep, (cell) => depths[cell] ?? 0),
       sections: toWallSections(),
       size: [roundFitted(circumference), roundFitted(towerHeight)],
     };

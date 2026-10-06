@@ -63,10 +63,17 @@ export const towersTopic: ReferenceTopic = {
     },
     {
       method:
-        "findCellComponents and findCellRectangles over the facade's raised cells, createLoginTowerColumnGeometry merged into each tower's lathe, rank --witness login on the day and night titles and the door recording, compare on every login frame, and the door recording's near tower read beside its exports",
+        "findCellComponents and findCellRectangles over the facade's raised cells, createLoginTowerSlabGeometry merged into each tower's lathe, rank --witness login on the day and night titles and the door recording, compare on every login frame, and the door recording's near tower read beside its exports",
       outcome: InvestigationOutcome.Adopted,
       result:
         "What stands out from the walls built as columns of its own, each run of raised cells of forty or more split row by row into rectangles while a row spans the same columns within half a unit of depth, about 1,900 slabs over the six towers, brings every frame's towers nearer their exports: similarity 0.8192 to 0.8338 by day, 0.7210 to 0.7368 by night and 0.7399 to 0.7494 at dusk, their FLIP against the exports 0.1647 to 0.1590, 0.1837 to 0.1773 and 0.2241 to 0.2185. Against the recordings the frames move a thousandth or two either way (the dawn title 0.3805 to 0.3818, the day 0.4321 to 0.4328, the phone's door frame 0.4647 to 0.4662, the door recording 0.5140 to 0.5142, the night 0.3654 to 0.3641) while their edges' shape scores rise on four. A run's bounding box in place of its rectangles stood the second tower's whole body as one shell, its wall's median lying on its inner core",
+    },
+    {
+      method:
+        "The facade's deep cells, then its shallow and deep cells, as sunk slabs with the lathe cut over them, rank --witness login on the day and night titles and the door recording, compare on every login frame, and the day title's left towers read beside their exports",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "What sinks four units or more into the walls split the same way into 165 recesses, the lathe cut open over each through the facade's mask and a box standing behind it, leaves the towers level against their exports (similarity 0.8338 to 0.8339 by day, 0.7368 to 0.7354 by night, 0.7494 to 0.7497 at dusk) and the frames level against the recordings (the dawn title 0.3819, the day 0.4326, the phone's door frame 0.4662, the door recording 0.5141, the night 0.3645), opening the windows the left towers show by day. Recessing what sinks a unit or more as well, 1,029 recesses, scored every frame worse (0.8310, 0.7273 and 0.7451): the tall arched panels and the lantern tower's bays sink in under four units and stay painted",
     },
   ],
   openQuestions: [

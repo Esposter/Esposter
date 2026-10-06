@@ -14,6 +14,8 @@ export interface TowerFacade {
   // Then deep, and its gilding, each
   // As loops in its own shade over the band under it, drawn in that order
   layers: FacadeLayer[];
+  // What sinks deep into its wall, a window or a bay, each built as an opening in the lathe with a recess behind it
+  recesses: TowerSlab[];
   // The lathe the scene builds it as: its walls' radius band by band, a band merged into the one below while its radius
   // Holds within the tolerance, so its facade lies on the face it was read off rather than out on its columns' and
   // Its cornices' tips
