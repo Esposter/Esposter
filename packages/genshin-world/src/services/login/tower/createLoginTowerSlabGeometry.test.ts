@@ -1,12 +1,12 @@
-import { createLoginTowerColumnGeometry } from "#src/services/login/tower/createLoginTowerColumnGeometry";
+import { createLoginTowerSlabGeometry } from "#src/services/login/tower/createLoginTowerSlabGeometry";
 import { describe, expect, test } from "vitest";
 
-describe(createLoginTowerColumnGeometry, () => {
+describe(createLoginTowerSlabGeometry, () => {
   test("stops a slab running past the seam short of a whole turn", () => {
     expect.hasAssertions();
 
     const breadth = 100;
-    const positions = createLoginTowerColumnGeometry(
+    const positions = createLoginTowerSlabGeometry(
       { depth: 1, radius: 10, round: [90, breadth + 0.5], up: [0, 1] },
       breadth,
     ).getAttribute("position");

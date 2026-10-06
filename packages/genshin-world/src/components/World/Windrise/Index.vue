@@ -11,8 +11,8 @@ import { usePostPipeline } from "#src/composables/usePostPipeline";
 import { useRegionData } from "#src/composables/useRegionData";
 import { useSky } from "#src/composables/useSky";
 import water from "#src/data/windrise/water.json";
-import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
+import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import {
   CLOUD_COVERAGE,
@@ -131,6 +131,13 @@ const gameClock = useSky({
   tilt: SUN_TILT,
   windUniforms,
 });
+// The clock only starts at its held minute, so a minute held anew is set on it
+watch(
+  () => heldMinutes,
+  (minutes) => {
+    if (minutes !== undefined) gameClock.minutes = minutes;
+  },
+);
 // Alone, the witness's exports are drawn with no haze and no clouds, so a pose is matched on their edges alone
 if (witness)
   watchEffect(() => {
