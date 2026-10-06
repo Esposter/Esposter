@@ -71,7 +71,7 @@ flowchart LR
   PARTICIPANTS -->|"a match"| ACCEPT["token accepted"]
 ```
 
-The [delete-time reference warning](/docs/resource/delete-reference-warning) reads the same index the other way, by target: the owner's live resources linking to what a delete is about to bin. A standing "referenced by" panel would be a third reader, not yet built ([resource references](/docs/resource/deferred/resource-references)).
+Two surfaces read the same index the other way, by target: the [delete-time reference warning](/docs/resource/delete-reference-warning) names the owner's live resources linking to what a delete is about to bin, and the Overview's [Related resources](/docs/resource/resource-references) card lists them beside what the resource itself references.
 
 ## Key files
 
@@ -85,6 +85,8 @@ The [delete-time reference warning](/docs/resource/delete-reference-warning) rea
 | `apps/web/server/services/resource/link/ResourceTypeGetLinkTargetsMap.ts` | one walk per type that declares a link                                   |
 | `apps/web/server/services/resource/saveResourceContent.ts`                | where the index is kept in step with the content                         |
 | `apps/web/server/services/survey/resolveIdentifiedToken.ts`               | the reverse lookup that authorizes a participant token                   |
+| `apps/web/server/services/resource/readResourceConsumers.ts`              | the reverse lookup a delete and the Overview name consumers with         |
+| `apps/web/server/services/resource/readResourceDependencies.ts`           | a resource's own links, resolved to the targets its owner can read       |
 
 ## Notes
 

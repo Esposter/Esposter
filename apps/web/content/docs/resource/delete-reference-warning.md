@@ -9,7 +9,7 @@ Deleting a resource that others consume says so before it happens. The confirmat
 
 ## How it works
 
-`ResourceConsumersWarning` sits in both delete confirmations: the blade header's, for the resource the page is open on, and the list's, for one row or a whole selection. It mounts with the confirmation, so the read happens only when a delete is being asked about, and `useQuery` fires `resource.readResourceConsumers` with the ids.
+`ResourceConsumersWarning` sits in both delete confirmations: the blade header's, for the resource the page is open on, and the list's, for one row or a whole selection. It mounts with the confirmation, so the read happens only when a delete is being asked about, and `useQuery` fires `resource.readResourceConsumers` with the ids. A query's input rides its URL, and a few hundred ids would pass the server's header limit, so a large selection is read `READ_RESOURCE_CONSUMERS_IDS_MAX_LENGTH` ids at a time, each chunk its own request. Each chunk leaves out only its own ids, so the warning drops a consumer that another chunk is deleting, and names once a consumer that several chunks found.
 
 The procedure is one lookup of the [resource-link index](/docs/architecture/resource-links) by target. It returns the caller's live resources that hold a link to any of the ids, of any role (a dashboard's or an email's `Dataset`, a program's `Email` or `Survey`), ordered by name. Three kinds of resource are left out, each for its own reason:
 
@@ -32,18 +32,18 @@ The warning is advisory. Delete stays enabled, because the delete is a soft one:
 
 ## Key files
 
-| File                                                               | Role                                                     |
-| ------------------------------------------------------------------ | -------------------------------------------------------- |
-| `apps/web/server/trpc/routers/resource.ts`                         | `readResourceConsumers`, the index lookup by target      |
-| `apps/web/shared/models/db/resource/ReadResourceConsumersInput.ts` | the ids being deleted                                    |
-| `apps/web/app/components/Resource/ConsumersWarning.vue`            | the warning, read when a confirmation opens              |
-| `apps/web/app/components/Resource/Blade/Header.vue`                | the blade's delete confirmation                          |
-| `apps/web/app/components/Resource/List/ConfirmDeleteDialog.vue`    | the list's delete confirmation, for a row or a selection |
+| File                                                               | Role                                                      |
+| ------------------------------------------------------------------ | --------------------------------------------------------- |
+| `apps/web/server/services/resource/readResourceConsumers.ts`       | the index lookup by target, shared with the Overview card |
+| `apps/web/shared/models/db/resource/ReadResourceConsumersInput.ts` | one chunk of the ids being deleted                        |
+| `apps/web/app/components/Resource/ConsumersWarning.vue`            | the warning, read when a confirmation opens               |
+| `apps/web/app/components/Resource/Blade/Header.vue`                | the blade's delete confirmation                           |
+| `apps/web/app/components/Resource/List/ConfirmDeleteDialog.vue`    | the list's delete confirmation, for a row or a selection  |
 
 ## Notes
 
 - The index is written by every save, and it shipped before any consumer held content, so the warning never undercounts a resource saved before it existed ([resource links](/docs/architecture/resource-links)).
-- The read is capped at the list read limit, which is far past the consumers one resource has.
+- Each chunk's read is capped at the list read limit, which is far past the consumers a selection has.
 
 ## Sources
 

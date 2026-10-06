@@ -408,6 +408,32 @@ describe("resourceRouter", () => {
     expect(consumers).toStrictEqual([]);
   });
 
+  // A target bound in two roles is one resource the panel lists, and a reference whose target is binned or another
+  // Owner's is still the caller's own content, counted without the name it is not theirs to read
+  test("reads the references a resource holds", async () => {
+    expect.hasAssertions();
+
+    await mockSessionOnce(mockContext.db);
+    const otherUserTarget = await sheetCaller.createResource({ name });
+    const resource = await dashboardCaller.createResource({ name });
+    const target = await sheetCaller.createResource({ name });
+    const binnedTarget = await sheetCaller.createResource({ name });
+    await mockContext.db.insert(resourceLinksInResource).values([
+      { sourceId: resource.id, targetId: target.id, type: ResourceLinkType.Dataset },
+      { sourceId: resource.id, targetId: target.id, type: ResourceLinkType.Survey },
+      { sourceId: resource.id, targetId: binnedTarget.id, type: ResourceLinkType.Dataset },
+      { sourceId: resource.id, targetId: otherUserTarget.id, type: ResourceLinkType.Dataset },
+    ]);
+    await caller.deleteResources({ ids: [binnedTarget.id] });
+    const references = await caller.readResourceReferences({ id: resource.id });
+
+    expect(references).toStrictEqual({
+      consumers: [],
+      dependencies: [{ id: target.id, name, type: ResourceType.Sheet }],
+      missingDependencyCount: 2,
+    });
+  });
+
   // A snapshot and its cloned assets are stored bytes the owner keeps, and nothing else charges them: a
   // Server-side write raises a BlobCreated for a blob no reserve ever ledgered, so the counter would never move
   test("charges the owner for the snapshot and the assets a publish clones", async () => {
