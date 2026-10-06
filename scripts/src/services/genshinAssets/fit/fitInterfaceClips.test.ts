@@ -6,6 +6,7 @@ import { describe, expect, test } from "vitest";
 const createCurve = (path: string, property: string, samples: number[]): DecodedCurve => ({
   component: "",
   path,
+  pathHash: 0,
   property,
   samples,
   type: "",

@@ -34,12 +34,13 @@ import { join } from "node:path";
 
 const GROUP_BY_TYPE = ["--group_assets", AnimeStudioGroupType.ByType];
 // The resolved objects of the given types, named through the asset index by their block and path ID, each exported
-// From its block by its exact name. The index holds no file, so a block and path ID it names more than once, or that
+// From its block by its exact name, converted or as the export type given. The index holds no file, so a block and path ID it names more than once, or that
 // Several files of the block resolve to, is as unresolved as one it does not name
 const exportResolvedAssets = async (
   resolvedObjects: readonly ResolvedObject[],
   types: readonly AssetType[],
   assetsDirectory: string,
+  exportType?: AnimeStudioExportType,
 ): Promise<{ assets: (IndexedAsset & { file: string })[]; unresolved: string[] }> => {
   const keyObjectsMap = Map.groupBy(resolvedObjects, ({ block, pathId }) => toObjectKey(block, pathId));
   const keyIndexedMap = Map.groupBy(
@@ -78,6 +79,7 @@ const exportResolvedAssets = async (
       "--types",
       ...types,
       ...GROUP_BY_TYPE,
+      ...(exportType ? ["--export_type", exportType] : []),
     ]);
   }
   return { assets, unresolved };
@@ -85,9 +87,10 @@ const exportResolvedAssets = async (
 // One component's closure out of the game's blocks: the layout of each of its roots' and spawned prefabs' blocks dumped
 // Per file, then every object its roots reach down their children, the meshes and materials those draw and the textures
 // Each material samples, each pointer resolved through its own file's external references and exported from the block
-// Holding it by its exact name. Its meshes are OBJ, its textures PNG and its materials JSON, grouped by type. Assets no
-// Pointer reaches are exported by the component's name pattern, and a part of the open world's streams and terrain
-// Beside them. What was reached is returned as counts, with every pointer that could not be resolved
+// Holding it by its exact name. Its meshes are OBJ, with every field beside each as JSON (the skin and bind poses an OBJ
+// Drops among them), its textures PNG and its materials JSON, grouped by type. Assets no pointer reaches are exported
+// By the component's name pattern, and a part of the open world's streams and terrain beside them. What was reached is
+// Returned as counts, with every pointer that could not be resolved
 export const extractComponent = async (component: DerivedAssetComponent): Promise<string> => {
   const options = DerivedAssetComponentMap[component];
   const { namePattern, roots: componentRoots, spawns = [] } = options;
@@ -102,6 +105,7 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
   const { gameObjectDrawingMap, objects } = await readSceneLayout(directory.layout);
   const closure = walkAssetClosure(objects, gameObjectDrawingMap, roots, cabMap);
   const drawn = await exportResolvedAssets(closure.assets, [AssetType.Mesh, AssetType.Material], directory.assets);
+  await exportResolvedAssets(closure.assets, [AssetType.Mesh], directory.assets, AnimeStudioExportType.Json);
   const materialDirectory = join(directory.assets, AssetType.Material);
   // A material is exported under its name, so of several sharing one, which the JSON holds and which file its texture
   // Pointers resolve through is unknown

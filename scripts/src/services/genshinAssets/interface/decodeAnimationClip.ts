@@ -49,7 +49,14 @@ export const decodeAnimationClip = (
     const components = transformProperty?.components ?? [""];
     const property = transformProperty?.property ?? resolveName(attribute);
     for (const component of components)
-      curves.push({ component, path: resolveName(path), property, samples: sampleCurve(curves.length), type: typeID });
+      curves.push({
+        component,
+        path: resolveName(path),
+        pathHash: path,
+        property,
+        samples: sampleCurve(curves.length),
+        type: typeID,
+      });
   }
   return { curves, duration };
 };

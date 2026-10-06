@@ -28,7 +28,8 @@ const findNearest = (loops: readonly [number, number][][], [px, py]: [number, nu
 // Its depths, deepest first: every loop round the cells standing at least that far out, each corner with its foot on
 // The depth below, the nearest point of that depth's loops where the cells between them slope, so its wall leans
 // Down as the relief's faces do, and the corner itself where they do not, so its wall stands straight. A loop whose
-// Wall stands straight all round keeps no feet
+// Wall stands straight all round keeps no feet. A piece cut from a larger relief finds its feet and reads its slopes
+// Over the whole relief (`around`), so a slope it shares with its neighbours leans across, not into the cut beside it
 export const fitReliefLayers = (
   heights: Float32Array,
   depths: readonly number[],
@@ -40,6 +41,7 @@ export const fitReliefLayers = (
     tolerance: number;
     width: number;
   },
+  around: Float32Array = heights,
 ): ReliefLayer[] => {
   const { cellSize, corner, decimals, width } = grid;
   const [cornerX, cornerY] = corner;
@@ -49,18 +51,18 @@ export const fitReliefLayers = (
     const column = Math.floor((x - cornerX) / cellSize);
     const row = Math.floor((y - cornerY) / cellSize);
     if (column < 0 || column >= width || row < 0) return -Infinity;
-    return heights[row * width + column] ?? -Infinity;
+    return around[row * width + column] ?? -Infinity;
   };
   const cells = [...heights.keys()];
-  const layerLoops = depths.map((depth) =>
+  const traceLayer = (values: Float32Array, depth: number): [number, number][][] =>
     traceCellLoops(
-      cells.filter((cell) => (heights[cell] ?? -Infinity) >= depth - tolerance),
+      cells.filter((cell) => (values[cell] ?? -Infinity) >= depth - tolerance),
       grid,
-    ),
-  );
+    );
+  const layerLoops = depths.map((depth) => traceLayer(heights, depth));
   return depths.map((depth, layer) => {
     const below = depths[layer - 1] ?? -Infinity;
-    const belowLoops = layerLoops[layer - 1] ?? [];
+    const belowLoops = layer === 0 ? [] : traceLayer(around, below);
     return {
       depth,
       loops: (layerLoops[layer] ?? []).map((points) => {

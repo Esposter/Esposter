@@ -43,6 +43,20 @@ export const doorTopic: ReferenceTopic = {
       result:
         "The game's own door drawn through our light scores worse than our flat door on both door frames (rank's Door: stand-in at -0.0045 on the door recording and -0.0022 on the phone's door frame), so the frames' FLIP cannot judge the door's shape while its light is off. By rank's second table the layers bring the door near its exports: similarity 0.30 to 0.67 and its gap 0.3718 to 0.3105 on the door recording, 0.55 to 0.72 and 0.2854 to 0.2590 on the phone's door frame. Shipped on that measure",
     },
+    {
+      method:
+        "The door's mesh exported as JSON beside its OBJ (AnimeStudio --export_type JSON), its skin, bind poses and bone hashes read, genshin:assets tree login --root LoginScene_Door01_Vo, and the lift clip's curves matched to the bones by their paths' CRC32",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The OBJ drops the skin, the JSON keeps it: every vertex follows one bone alone, so the door is thirteen rigid pieces, Point_Doorframe_01 to 07 under Point_001 for the frame and Point_Door_01 to 06 under Controller_L and Controller_R for the panel's two leaves, the bones' hashes those paths'. The clip moves each from 50 to 65 of the mesh's units below, 5 to 6.5 metres at the scene's tenth, and up to 4 metres toward the camera, turning as it rises, the first settled after 0.4 seconds and the frame's head last at 1.33; its fourteenth path, Root, moves no bone. Its last sample stands each piece where the mesh binds it",
+    },
+    {
+      method:
+        "The door fitted as its pieces (fitRigidPieces, fit login --only door), each piece's layers fitted alone, then at its part's depths, then with its feet found over the whole front; raycast depth maps against the whole door's, and rank's second table on login-door-recording and login-door beside the whole door on a worktree of the head",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Fitted alone, a piece kept only the depths its own flat faces stand at, so the bands' 0.086 and 0.094 (on the bottom leaf pieces) and the step's 0.203 no longer stepped the slopes on the others, and a long side piece's chamfer contours, their corners all at its cut ends, leaned into the cut and stood straight: similarity 0.49 at dusk and 0.64 on the phone's door frame against the whole door's 0.667 and 0.722. At its part's depths with its feet found over the whole front the door at rest stands 0.7 millimetres from the whole door's on average and nearer its exports: similarity 0.689 at dusk and 0.743 on the phone's door frame, its gap 0.3031 and 0.2564 against 0.3104 and 0.2590. Shipped, rising piece by piece",
+    },
   ],
   openQuestions: [
     "How the script brings the door from its anchor to the walkway: the place is measured (the door spawn's position), the motion is not",

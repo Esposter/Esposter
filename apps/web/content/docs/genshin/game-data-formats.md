@@ -41,6 +41,7 @@ flowchart TD
 
 - **A Transform's dump is its local position, rotation and scale with its father and children by path ID**; its GameObject is found through the GameObject's first component. How placements compose, and what the dumps lose, is on the [derived assets](/docs/genshin/derived-assets) page.
 - **A MeshRenderer names its materials by file index and path ID**, references into other files with no name, one a submesh, resolved through the CAB map; an OBJ export writes each submesh as a group suffixed with its index.
+- **A skinned mesh's bones are in its JSON export, never its OBJ.** The OBJ keeps positions, coordinates and groups and drops the skin, so `extract` writes every mesh's JSON beside its OBJ: each vertex's bones and weights in the OBJ's vertex order, each bone's bind pose (a matrix whose fields are named by column, then row) and the CRC32 of each bone's path under its animator, the hash a clip's bindings name it by. A skin whose every vertex follows one bone is a set of rigid pieces, each posed through a clip by `fitRigidPieces`.
 - **A root's own parent can sit in a block not read.** Such a root is dumped at the origin though the game places it elsewhere, as the login's walkway is: its true place is solved from something it must meet (the door it ends at), never assumed.
 
 ### The open world
@@ -61,7 +62,7 @@ flowchart TD
 
 - **A Mecanim clip keeps its curves in three parts**, streamed, dense and constant, numbered in that order across the clip's bindings, a Transform's position, rotation or scale taking one curve a component.
 - **A streamed clip is a run of frames**, each a float time and a key count, then per key a curve index and four cubic coefficients, a segment's value `((a·t + b)·t + c)·t + d` in the time since its key. The first frame's time is the lowest float and the last's infinity.
-- **A binding names its object and its property by CRC32**: its path is the hash of the object's path under the animator, and its attribute the hash of the property's name. `m_Alpha` (a CanvasGroup's), `m_IsActive`, `m_Color.a`, `m_AnchoredPosition.x`, `m_SizeDelta.x` and `m_SizeDelta.y` are the interface's; a Transform's are 1 for position, 2 rotation, 3 scale and 4 its Euler angles.
+- **A binding names its object and its property by CRC32**: its path is the hash of the object's path under the animator, and its attribute the hash of the property's name. `m_Alpha` (a CanvasGroup's), `m_IsActive`, `m_Color.a`, `m_AnchoredPosition.x`, `m_SizeDelta.x` and `m_SizeDelta.y` are the interface's; a Transform's are 1 for position, 2 rotation, 3 scale and 4 its Euler angles. `clips` resolves a path against the component's interface tree and its scene tree, so a 3D piece's curves print under its name, and keeps each curve's hash beside it for matching a bone.
 
 ### Scripts
 
@@ -79,7 +80,7 @@ Every component derived from the game's data, in `genshin-interface` or `genshin
 
 ```mermaid
 flowchart LR
-  G[The game's data] -->|"names, blocks, path IDs"| R["Index.reference.ts: sources, and a Topic.reference.ts per part: investigations, open questions"]
+  G[The game's data] -->|"names, blocks, path IDs"| R["Index.reference.ts and its topic files"]
   R -->|"a source's key"| D[A derived value: a fitted data file, a constant, a curve]
   D -->|"traced back through the key"| R
 ```

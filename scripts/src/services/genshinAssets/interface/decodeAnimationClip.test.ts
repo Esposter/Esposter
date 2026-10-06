@@ -27,10 +27,10 @@ describe(decodeAnimationClip, () => {
     };
 
     expect(decodeAnimationClip(clip, 1, (hash) => (hash === 1 ? "m_Alpha" : String(hash))).curves).toStrictEqual([
-      { component: "x", path: "0", property: "scale", samples: [2, 3], type: "Transform" },
-      { component: "y", path: "0", property: "scale", samples: [1, 1], type: "Transform" },
-      { component: "z", path: "0", property: "scale", samples: [1, 1], type: "Transform" },
-      { component: "", path: "7", property: "m_Alpha", samples: [1, 1], type: "CanvasGroup" },
+      { component: "x", path: "0", pathHash: 0, property: "scale", samples: [2, 3], type: "Transform" },
+      { component: "y", path: "0", pathHash: 0, property: "scale", samples: [1, 1], type: "Transform" },
+      { component: "z", path: "0", pathHash: 0, property: "scale", samples: [1, 1], type: "Transform" },
+      { component: "", path: "7", pathHash: 7, property: "m_Alpha", samples: [1, 1], type: "CanvasGroup" },
     ]);
   });
 });

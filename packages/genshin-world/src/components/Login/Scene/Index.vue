@@ -4,6 +4,7 @@ import type { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
 import type { QualityTier } from "genshin-engine";
 
 import { usePostPipeline } from "#src/composables/usePostPipeline";
+import door from "#src/data/login/door.json";
 import sky from "#src/data/login/sky.json";
 import stone from "#src/data/login/stone.json";
 import stoneLight from "#src/data/login/stoneLight.json";
@@ -12,12 +13,12 @@ import { LoginStage } from "#src/models/login/LoginStage";
 import { createLoginClouds } from "#src/services/login/cloud/createLoginClouds";
 import { LoginCloudCoverMap } from "#src/services/login/cloud/LoginCloudCoverMap";
 import { LOGIN_DOOR_LIGHT_MS } from "#src/services/login/constants";
+import { applyLoginDoorLift } from "#src/services/login/door/applyLoginDoorLift";
 import {
   LOGIN_DOOR_GLOW_COLOR,
+  LOGIN_DOOR_LIFT_MS,
   LOGIN_DOOR_PANEL_STRENGTH,
   LOGIN_DOOR_POSITION,
-  LOGIN_DOOR_RISE_DEPTH,
-  LOGIN_DOOR_RISE_KEYFRAMES,
   LOGIN_DOOR_SLIT_STRENGTH,
   LOGIN_DOOR_SLIT_WIDTH,
 } from "#src/services/login/door/constants";
@@ -83,7 +84,7 @@ import {
   createSkyUniforms,
   createStoneMaterial,
 } from "genshin-engine";
-import { BatchedMesh, DirectionalLight, Group, HemisphereLight, Matrix4 } from "three";
+import { BatchedMesh, DirectionalLight, Group, HemisphereLight, Matrix4, Mesh } from "three";
 import {
   abs,
   color,
@@ -110,7 +111,6 @@ interface Props {
 
 const { heldScrolled, isDoorLit, qualityTier, stage, timeOfDay } = defineProps<Props>();
 const emit = defineEmits<{ doorFormed: []; ready: [] }>();
-const [doorRiseMs = 0] = LOGIN_DOOR_RISE_KEYFRAMES.at(-1) ?? [];
 // The witness render's parts, drawn in place of the fitted ones of each family it names when the parity page provides
 // Them, alone when it asks
 // oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see
@@ -229,7 +229,24 @@ const walkwayInstances = walkwayPieces.flatMap(({ depth, geometry, seed }) => {
   }));
 });
 const walkwayMatrix = new Matrix4();
-const { frame: doorFrameGeometry, panel: doorPanelGeometry } = createLoginDoorGeometry();
+// The door's pieces, each carried along its own lift as the door rises, off Vue's reactivity: a part a piece holds none
+// Of is left out, and none is culled, as the door is not
+const doorPieceGeometries = createLoginDoorGeometry();
+const doorPieces = doorPieceGeometries.map(({ frame, panel }) => {
+  const piece = new Group();
+  for (const [geometry, material] of [
+    [frame, doorFrameMaterial],
+    [panel, doorMaterial],
+  ] as const) {
+    if (geometry.getAttribute("position").count === 0) continue;
+    const mesh = new Mesh(geometry, material);
+    mesh.frustumCulled = false;
+    mesh.receiveShadow = true;
+    piece.add(mesh);
+  }
+  return piece;
+});
+const doorPieceGroup = new Group().add(...doorPieces);
 // The metres the cloud sea's billows have scrolled toward the camera
 const cloudSeaScrolled = uniform(0);
 // The cloud sea as billows of the clouds' own two colours, lit tops over shaded hollows, which the fog then pales
@@ -257,7 +274,7 @@ let isReadyEmitted = false;
 let isDoorFormed = false;
 // How long the door has been lit, which the rush toward it follows, and how long it has been rising into place
 const rushMs = shallowRef(0);
-const riseMs = shallowRef(0);
+let riseMs = 0;
 const checkIsDoorDue = (): boolean => stage === LoginStage.Door || stage === LoginStage.Entering;
 // The door rises once it is due and has come within the walkway's far end, as its last blocks settle
 const isDoorRising = shallowRef(false);
@@ -278,13 +295,8 @@ const towers = new Group();
 // How far past its place of rest the door is, riding on the walkway's copy it comes to rest on
 const doorAhead = shallowRef(0);
 const doorPosition = computed((): [number, number, number] => {
-  const nextIndex = LOGIN_DOOR_RISE_KEYFRAMES.findIndex(([timeMs]) => timeMs > riseMs.value);
-  const [endMs = 0, endShare = 1] = LOGIN_DOOR_RISE_KEYFRAMES[nextIndex] ?? [];
-  const [startMs = 0, startShare = 1] = LOGIN_DOOR_RISE_KEYFRAMES[nextIndex - 1] ?? [];
-  const share =
-    nextIndex === -1 ? 1 : startShare + ((endShare - startShare) * (riseMs.value - startMs)) / (endMs - startMs);
   const [x, y, z] = LOGIN_DOOR_POSITION;
-  return [x, y - LOGIN_DOOR_RISE_DEPTH * (1 - share), z + doorAhead.value];
+  return [x, y, z + doorAhead.value];
 });
 // The camera holds its pose, and on the click rushes on toward the door
 const cameraZ = computed(() => {
@@ -319,7 +331,6 @@ onRender(({ delta: frameDelta }) => {
         doorAheadOfCamera: isDoorDue ? doorAheadOfCamera : undefined,
       });
     } else if (group.name === LoginPartFamily.Door) {
-      group.position.y += doorPosition.value[1] - LOGIN_DOOR_POSITION[1];
       group.position.z += doorAhead.value;
       group.visible = isDoorRising.value && (witness?.families.value.includes(group.name) ?? false);
     }
@@ -345,14 +356,21 @@ onRender(({ delta: frameDelta }) => {
   doorGlow.value = isDoorLit ? Math.min(doorGlow.value + (delta * 1000) / LOGIN_DOOR_LIGHT_MS, 1) : 0;
   rushMs.value = isDoorLit ? rushMs.value + delta * 1000 : 0;
   isDoorRising.value = isDoorDue && (isDoorRising.value || doorAheadOfCamera <= LOGIN_WALKWAY_SUNK_DISTANCE);
-  riseMs.value = isDoorRising.value ? riseMs.value + delta * 1000 : 0;
-  // The door's own interface waits on the door, once it has risen into place
-  if (!isDoorFormed && isDoorRising.value && riseMs.value >= doorRiseMs) {
+  riseMs = isDoorRising.value ? riseMs + delta * 1000 : 0;
+  if (!isDoorFormed)
+    for (const [index, piece] of doorPieces.entries())
+      applyLoginDoorLift(piece, door.pieces[index]?.lift ?? [], riseMs);
+  // The door's own interface waits on the door, once its last piece has risen into place
+  if (!isDoorFormed && isDoorRising.value && riseMs >= LOGIN_DOOR_LIFT_MS) {
     isDoorFormed = true;
     emit("doorFormed");
   }
   renderedFrameCount++;
-  if (isReadyEmitted || renderedFrameCount < LOGIN_SCENE_READY_FRAME_COUNT || (isDoorDue && riseMs.value < doorRiseMs))
+  if (
+    isReadyEmitted ||
+    renderedFrameCount < LOGIN_SCENE_READY_FRAME_COUNT ||
+    (isDoorDue && riseMs < LOGIN_DOOR_LIFT_MS)
+  )
     return;
   isReadyEmitted = true;
   emit("ready");
@@ -370,8 +388,10 @@ onUnmounted(() => {
   walkway.dispose();
   towersGeometry.dispose();
   hullsGeometry.dispose();
-  doorFrameGeometry.dispose();
-  doorPanelGeometry.dispose();
+  for (const { frame, panel } of doorPieceGeometries) {
+    frame.dispose();
+    panel.dispose();
+  }
   light.dispose();
   hemisphere.dispose();
 });
@@ -422,8 +442,7 @@ onUnmounted(() => {
     :rotation="[0, Math.PI, 0]"
     :scale="isDoorRising ? 1 : 0"
   >
-    <TresMesh :frustum-culled="false" :geometry="doorFrameGeometry" receive-shadow :material="doorFrameMaterial" />
-    <TresMesh :frustum-culled="false" :geometry="doorPanelGeometry" receive-shadow :material="doorMaterial" />
+    <primitive :object="doorPieceGroup" />
   </TresGroup>
   <TresMesh
     v-if="!witness?.isAlone.value"

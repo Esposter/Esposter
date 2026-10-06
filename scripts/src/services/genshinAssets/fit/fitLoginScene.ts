@@ -35,19 +35,21 @@ export const fitLoginScene = async (only: readonly string[] = []): Promise<strin
   const placements = await readComponentPlacements(DerivedAssetComponent.Login);
   const meshDirectory = join(directory.assets, AssetType.Mesh);
   const textureDirectory = join(directory.assets, AssetType.Texture2D);
+  // The component's clips as `genshin:assets clips` decoded them
+  const readClips = async (): Promise<DecodedClip[]> =>
+    parseMachineJson<DecodedClip[]>(await readFile(join(directory.root, "clips", "clips.json"), "utf8"));
   const fits: Record<string, () => Promise<string[]>> = {
     clouds: async () => [await writeWorldData("login/clouds.json", await fitLoginClouds(textureDirectory))],
     door: async () => [
-      await writeWorldData("login/door.json", await fitLoginDoor(placements, meshDirectory, textureDirectory)),
+      await writeWorldData(
+        "login/door.json",
+        await fitLoginDoor(placements, await readClips(), meshDirectory, textureDirectory),
+      ),
     ],
     hulls: async () => [await writeWorldData("login/hulls.json", await fitLoginHulls(placements, meshDirectory))],
-    // The interface's clips as `genshin:assets clips` decoded them
-    interfaceClips: async () => {
-      const clips = parseMachineJson<DecodedClip[]>(
-        await readFile(join(directory.root, "clips", "clips.json"), "utf8"),
-      );
-      return [await writeWorldData("login/interfaceClips.json", fitInterfaceClips(clips))];
-    },
+    interfaceClips: async () => [
+      await writeWorldData("login/interfaceClips.json", fitInterfaceClips(await readClips())),
+    ],
     // The interface's tree as `genshin:assets interface` exported it
     interfaceRects: async () => {
       const interfaceTree = parseMachineJson<InterfaceNode>(

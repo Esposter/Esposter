@@ -27,6 +27,7 @@ Read before any pass on a Genshin screen or scene, and whenever its loop stalls:
 | What a script spawns, and where         | `behaviours`, set as `spawns` at their anchors                                  |
 | A spawned prefab's place and scale      | `composeWorldMatrices`, through the anchor                                      |
 | A row a script scrolls                  | the spawn's `copies`, laid out by `copySpawns` for the witness                  |
+| A skinned part's pieces and their path  | `fitRigidPieces`: the mesh's JSON skin, each bone posed through its clip        |
 | Whether the arrangement is right        | `genshin:assets arrangement`: cross-ratios, drift                               |
 | The camera's pose                       | `genshin:parity pose`: landmarks, refined on edges                              |
 | The camera's path over a flight         | `genshin:parity track`: the pose at each frame, `--top-row` clear               |
