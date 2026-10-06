@@ -5,7 +5,8 @@ import { GameOpening } from "genshin-world";
 // The game as it plays: its opening at once, and once its door is opened the world loading under the startup loading
 // Screen, whose marks follow it, shown once that screen's white gives way. The world is mounted only at the door, and
 // Draws no frames while the opening covers it, though its first view's ground still streams in. Its code arriving and
-// That ground having arrived are the two steps loading can see, since neither reports any finer progress
+// That ground and the regions in reach of it having arrived are the two steps loading can see, since neither reports
+// Any finer progress
 const isLoaded = ref(false);
 const isReady = ref(false);
 const progress = computed(() => (Number(isLoaded.value) + Number(isReady.value)) / 2);

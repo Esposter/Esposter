@@ -1,13 +1,13 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { Clause } from "@esposter/azure";
-import type { CustomTableClient } from "@esposter/db-schema";
+import type { CustomTableClient, ReverseTickedTimestamp } from "@esposter/db-schema";
 
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { readCursorPaginationDataAzureTable } from "#server/services/pagination/cursor/readCursorPaginationDataAzureTable";
 import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { createEntity } from "@esposter/db";
-import { AdminActionType, AzureTable, ModerationLogEntity } from "@esposter/db-schema";
+import { AdminActionType, AzureTable, ModerationLogEntity, reverseTickedTimestampSchema } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
@@ -15,13 +15,13 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 describe(readCursorPaginationDataAzureTable, () => {
   const partitionKey = crypto.randomUUID();
   const otherPartitionKey = crypto.randomUUID();
-  const rowKeys = ["0", "1"];
+  const rowKeys = ["0", "1"].map((rowKey) => reverseTickedTimestampSchema.parse(rowKey));
   const sortBy: SortItem<keyof ModerationLogEntity>[] = [MESSAGE_ROW_KEY_SORT_ITEM];
   const clauses: Clause<ModerationLogEntity>[] = [
     { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: partitionKey },
   ];
   let moderationLogClient: CustomTableClient<ModerationLogEntity>;
-  const createModerationLogEntity = (entityPartitionKey: string, rowKey: string) =>
+  const createModerationLogEntity = (entityPartitionKey: string, rowKey: ReverseTickedTimestamp) =>
     createEntity(
       moderationLogClient,
       new ModerationLogEntity({

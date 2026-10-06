@@ -121,6 +121,7 @@ What stays in ESLint, and why:
 | `packages/configuration/eslint/oxlint.js`                           | Builds the ESLint disable config from `oxlint.config.ts`                                                    |
 | `packages/configuration/eslint/index.typescript.js`, `index.vue.js` | Append the oxlint disables last so they win                                                                 |
 | `packages/configuration/eslint/index.vueScopedStyles.js`            | The Vue config for a package styled by scoped CSS alone, every UnoCSS rule off                              |
+| `packages/configuration/eslint/plugins/scopedStyles.js`             | Such a package's ban on an attribute HTML does not define on a native element, which no utility styles here |
 | `packages/configuration/eslint/typescriptRules.js`                  | ESLint-only rules oxlint cannot express — just `no-restricted-syntax` (plus the parked `naming-convention`) |
 
 ## Notes

@@ -1,5 +1,6 @@
 import type { Context } from "#server/trpc/context";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
+import type { MessageEntity } from "@esposter/db-schema";
 
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { createUserMessage } from "#server/services/message/createUserMessage";
@@ -46,7 +47,7 @@ describe(createUserMessage, () => {
     ]);
     return room;
   };
-  const createReply = (roomId: string, replyRowKey: string) =>
+  const createReply = (roomId: string, replyRowKey: MessageEntity["rowKey"]) =>
     createUserMessage(mockContext.db, replier, { files: [], message, replyRowKey, roomId, type: MessageType.Message });
 
   // Discord notifies you when someone replies to your message, so the root's author follows their own thread

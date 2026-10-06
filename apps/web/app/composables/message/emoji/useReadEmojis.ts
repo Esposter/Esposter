@@ -1,4 +1,4 @@
-import type { RoomInMessage } from "@esposter/db-schema";
+import type { MessageEntity, RoomInMessage } from "@esposter/db-schema";
 
 import { useEmojiStore } from "@/store/message/emoji";
 
@@ -6,7 +6,7 @@ export const useReadEmojis = () => {
   const { $trpc } = useNuxtApp();
   const emojiStore = useEmojiStore();
   const { setEmojis } = emojiStore;
-  return async (roomId: RoomInMessage["id"], messageRowKeys: string[]) => {
+  return async (roomId: RoomInMessage["id"], messageRowKeys: MessageEntity["rowKey"][]) => {
     if (messageRowKeys.length === 0) return;
 
     const emojis = await $trpc.message.emoji.readEmojis.query({ messageRowKeys, roomId });

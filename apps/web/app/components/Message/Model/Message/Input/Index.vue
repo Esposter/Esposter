@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ComposerTarget } from "@/models/message/ComposerTarget";
+
 import { MessageInputCommands } from "@/services/message/input/MessageInputCommands";
 import { useLayoutStore } from "@/store/layout";
 import { useDataStore } from "@/store/message/data";
@@ -15,7 +17,7 @@ const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const roomName = useRoomName(currentRoomId);
 // The room's own composer — the thread pane renders its own with the thread as its target
-const target = computed(() => ({ roomId: currentRoomId.value, threadRootRowKey: "" }));
+const target = computed((): ComposerTarget => ({ roomId: currentRoomId.value, threadRootRowKey: "" }));
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
 const { checkIsInputValid, extensions, sendComposerMessage, uploadFiles } = await useComposer(target);

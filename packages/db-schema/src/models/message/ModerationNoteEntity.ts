@@ -1,4 +1,5 @@
 import type { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
+import type { ReverseTickedTimestamp } from "#src/models/azure/table/ReverseTickedTimestamp";
 import type { UserInAuth } from "#src/schema/auth/usersInAuth";
 import type { ToData } from "@esposter/shared";
 
@@ -13,6 +14,7 @@ import { z } from "zod";
 export class ModerationNoteEntity extends AzureEntity {
   declare actorUserId: UserInAuth["id"];
   declare note: string;
+  declare rowKey: ReverseTickedTimestamp;
   declare targetUserId: UserInAuth["id"];
 
   constructor(init?: Partial<ModerationNoteEntity> & ToData<CompositeKeyEntity>) {

@@ -7,7 +7,7 @@ import { requirePartitionKey } from "@/services/message/requirePartitionKey";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { getRouteParam } from "@/util/router/getRouteParam";
-import { getReverseTickedTimestamp } from "@esposter/db-schema";
+import { getReverseTickedTimestamp, reverseTickedTimestampSchema } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
 export const useReadMessages = () => {
@@ -26,7 +26,10 @@ export const useReadMessages = () => {
     const hasMoreNewer = getHasMoreNewerRef(roomId);
     const nextCursorNewer = getNextCursorNewerRef(roomId);
     return readItems(async () => {
-      const rowKey = getRouteParam(currentRoute.value.params, "rowKey");
+      // A route param is whatever the address bar holds, so one that is no rowKey reads as no message to open on
+      const { data: rowKey } = reverseTickedTimestampSchema.safeParse(
+        getRouteParam(currentRoute.value.params, "rowKey"),
+      );
       if (rowKey) {
         const messages = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
         if (messages.length > 0) {

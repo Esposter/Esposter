@@ -5,5 +5,5 @@ import type { MessageEntity } from "@esposter/db-schema";
 // Whose state a write is for — the empty root rowKey is the room composer
 export interface ComposerTarget {
   roomId: MessageEntity["partitionKey"];
-  threadRootRowKey: MessageEntity["rowKey"];
+  threadRootRowKey: "" | MessageEntity["rowKey"];
 }

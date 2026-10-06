@@ -1,3 +1,5 @@
+import type { ReverseTickedTimestamp } from "#src/models/azure/table/ReverseTickedTimestamp";
+
 import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
@@ -15,7 +17,7 @@ export const threadFollowsInMessage = pgTable(
     roomId: uuid()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
-    threadRootRowKey: text().notNull(),
+    threadRootRowKey: text().$type<ReverseTickedTimestamp>().notNull(),
     userId: text()
       .notNull()
       .references(() => usersInAuth.id, { onDelete: "cascade" }),

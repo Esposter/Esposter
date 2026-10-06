@@ -9,6 +9,7 @@ import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AppNotificationType,
+  getReverseTickedTimestamp,
   notificationsInNotification,
   NotificationType,
   pushSubscriptionsInNotification,
@@ -42,7 +43,7 @@ describe(sendNotification, () => {
   const senderUserId = crypto.randomUUID();
   const subscriberUserId = crypto.randomUUID();
   const roomId = crypto.randomUUID();
-  const rowKey = crypto.randomUUID();
+  const rowKey = getReverseTickedTimestamp();
   const actingSessionId = crypto.randomUUID();
   const standardMessage = { message, partitionKey: roomId, rowKey, userId: senderUserId };
   const { pushSubscription, seedSession } = setupWebPushSuite(() => mockDb, subscriberUserId);

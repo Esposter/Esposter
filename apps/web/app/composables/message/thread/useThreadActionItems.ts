@@ -21,7 +21,11 @@ export const useThreadActionItems = () => {
   const { callThreadRootRowKey, isConnecting, isInCall } = storeToRefs(callStore);
   const messageLayoutStore = useMessageLayoutStore();
   const { previousRightDrawer, splitRightDrawer } = storeToRefs(messageLayoutStore);
-  const isFollowing = computed(() => checkIsFollowing(activeRoomId.value, activeRootRowKey.value));
+  // The pane renders only on an open thread, but the store's empty root is still the type each read starts from
+  const isFollowing = computed(() => {
+    const threadRootRowKey = activeRootRowKey.value;
+    return threadRootRowKey ? checkIsFollowing(activeRoomId.value, threadRootRowKey) : false;
+  });
   // The call this thread can start is the one the user is already in only when it is this thread's — being in
   // The room's call, or another thread's, still leaves this one to start
   const isInThreadCall = computed(() => isInCall.value && callThreadRootRowKey.value === activeRootRowKey.value);
@@ -31,6 +35,8 @@ export const useThreadActionItems = () => {
       onClick: async () => {
         const roomId = activeRoomId.value;
         const threadRootRowKey = activeRootRowKey.value;
+        if (!threadRootRowKey) return;
+
         await executeMutation(
           () => (isFollowing.value ? unfollowThread(roomId, threadRootRowKey) : followThread(roomId, threadRootRowKey)),
           // Single-flight per thread: the menu closes on click, so a second toggle is a double-fire rather
@@ -44,7 +50,8 @@ export const useThreadActionItems = () => {
       icon: "i-mdi:link-variant",
       onClick: async () => {
         // A thread is named by its root message, so its link is that message's link
-        await copyMessageLink(activeRoomId.value, activeRootRowKey.value);
+        const threadRootRowKey = activeRootRowKey.value;
+        if (threadRootRowKey) await copyMessageLink(activeRoomId.value, threadRootRowKey);
       },
       title: "Copy link",
     },

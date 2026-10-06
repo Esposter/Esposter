@@ -19,7 +19,9 @@ const { isOpen, item: file } = useSingletonDialog(deletingFileId, () =>
     v-model="isOpen"
     confirm-label="Remove"
     title="Remove attachment"
-    :confirm="() => file && deleteFile({ id: file.id, partitionKey: deletingRoomId, rowKey: deletingRowKey })"
+    :confirm="
+      () => file && deletingRowKey && deleteFile({ id: file.id, partitionKey: deletingRoomId, rowKey: deletingRowKey })
+    "
     is-optimistic
   >
     <p>Are you sure you want to remove {{ file.filename }}? This cannot be undone.</p>

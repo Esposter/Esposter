@@ -23,7 +23,7 @@ describe(useThreadStore, () => {
   const userId = crypto.randomUUID();
   const message = "message";
   const rootRowKey = getReverseTickedTimestamp();
-  const createReply = (replyRowKey?: string) =>
+  const createReply = (replyRowKey: "" | MessageEntity["rowKey"] = "") =>
     createMessageEntity({ message, replyRowKey, roomId, type: MessageType.Message, userId });
 
   beforeEach(() => {

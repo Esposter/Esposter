@@ -1,3 +1,5 @@
+import type { MessageEntity } from "@esposter/db-schema";
+
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
@@ -40,7 +42,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   const callRoomId = ref("");
   // The thread the joined call belongs to, empty for the room's own call — what tells the thread pane whether
   // The call it can start is the one the user is already in
-  const callThreadRootRowKey = ref("");
+  const callThreadRootRowKey = ref<"" | MessageEntity["rowKey"]>("");
   const activeCallSessionId = ref("");
   // Whether the joined call's knocks are this participant's to answer — the server rejects the knock stream for
   // Anyone else, so it is opened only when this is true
@@ -204,7 +206,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   // With the root the pane is showing — the room's own call is the empty root. Both ids come from the caller
   // Rather than from the thread store: a call is not a thread's own state, and reaching for it here would put
   // The drawer's layout behind every join
-  const joinCallByRoomId = async (roomId: string, threadRootRowKey = "") => {
+  const joinCallByRoomId = async (roomId: string, threadRootRowKey: "" | MessageEntity["rowKey"] = "") => {
     if (!roomId || activeCallSessionId.value) return;
     isConnecting.value = true;
     callRoomId.value = roomId;

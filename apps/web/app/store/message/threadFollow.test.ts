@@ -3,12 +3,13 @@ import type { ReadFollowedThreadsResult } from "#shared/models/message/thread/Re
 
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
+import { getReverseTickedTimestamp } from "@esposter/db-schema";
 import { describe, expect, test, vi } from "vitest";
 
 describe(useThreadFollowStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
-  const threadRootRowKey = crypto.randomUUID();
+  const threadRootRowKey = getReverseTickedTimestamp();
 
   // Every follow button in the room asks on mount, so the read is issued once — and the buttons that joined it
   // Have to see the follow state, or they render an unfollowed star for a thread the user follows

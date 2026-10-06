@@ -1,6 +1,7 @@
 import type { MessageEntity } from "#src/models/message/MessageEntity";
 import type { ItemEntityType } from "@esposter/shared";
 
+import { reverseTickedTimestampSchema } from "#src/models/azure/table/ReverseTickedTimestamp";
 import { standardMessageEntitySchema } from "#src/models/message/StandardMessageEntity";
 import { webhookMessageEntitySchema } from "#src/models/message/WebhookMessageEntity";
 import { AppNotificationType } from "#src/models/notification/AppNotificationType";
@@ -18,7 +19,7 @@ export interface MessageNotificationData extends ItemEntityType<AppNotificationT
   appUserId?: string;
   message: Pick<MessageEntity, "message" | "partitionKey" | "rowKey" | "userId">;
   // The rowKey of the thread's root when this message is a reply — the follow key and the deep-link target.
-  threadRootRowKey: string;
+  threadRootRowKey: "" | MessageEntity["rowKey"];
 }
 
 const messageNotificationFields = { message: true, partitionKey: true, rowKey: true, userId: true } as const;
@@ -31,6 +32,6 @@ export const messageNotificationDataSchema = z.object({
     standardMessageEntitySchema.pick(messageNotificationFields),
     webhookMessageEntitySchema.pick(messageNotificationFields),
   ]),
-  threadRootRowKey: z.string().default(""),
+  threadRootRowKey: reverseTickedTimestampSchema.or(z.literal("")).default(""),
   type: z.literal(AppNotificationType.Message).readonly(),
 }) satisfies z.ZodType<MessageNotificationData>;

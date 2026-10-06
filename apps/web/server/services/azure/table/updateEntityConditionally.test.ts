@@ -2,7 +2,7 @@ import type { AzureUpdateEntity, CustomTableClient } from "@esposter/db-schema";
 
 import { MAX_ENTITY_ETAG_RETRIES } from "#server/services/azure/table/constants";
 import { updateEntityConditionally } from "#server/services/azure/table/updateEntityConditionally";
-import { AzureEntityType, StandardMessageEntity } from "@esposter/db-schema";
+import { AzureEntityType, getReverseTickedTimestamp, StandardMessageEntity } from "@esposter/db-schema";
 import { noop, NotFoundError } from "@esposter/shared";
 import { MockRestError } from "azure-mock";
 import { describe, expect, test, vi } from "vitest";
@@ -14,7 +14,7 @@ const getTableClient = (getEntityImplementation: () => Promise<Record<string, un
 
 describe(updateEntityConditionally, () => {
   const partitionKey = crypto.randomUUID();
-  const rowKey = crypto.randomUUID();
+  const rowKey = getReverseTickedTimestamp();
   const message = "message";
   const concurrentMessage = "concurrentMessage";
   const getEntity = (entityMessage: string) =>

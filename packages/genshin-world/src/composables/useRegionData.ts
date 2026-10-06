@@ -2,7 +2,7 @@ import type { RegionData } from "#src/models/world/RegionData";
 import type { Vector3 } from "three";
 
 import { regionDataSchema } from "#src/models/world/RegionData";
-import { REGION_REACH, REGION_RECHECK_DISTANCE } from "#src/services/constants";
+import { REGION_FETCH_TIMEOUT_MS, REGION_REACH, REGION_RECHECK_DISTANCE } from "#src/services/constants";
 import { catalogue } from "#src/services/world/catalogue";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
@@ -11,8 +11,9 @@ import { computeOutlineDistance } from "genshin-engine";
 // Each region's data is fetched when the camera comes within reach of any of its areas' outlines, and released when it
 // Leaves. It is fetched rather than imported because the browser keeps an imported module for the life of the page,
 // So an imported region could never be released. Reach is rechecked only once the camera has moved a stretch, and a
-// Region whose data fails its schema is logged and left undrawn while the rest of the world loads. The data is settled
-// Once every region in reach of the first view has arrived or failed, which is when the world is ready to be shown
+// Region whose data fails its schema or does not arrive in time is logged and left undrawn while the rest of the world
+// Loads. The data is settled whenever every region in reach has arrived or failed, which the first view's settling
+// Marks as the world ready to be shown
 export const useRegionData = (origin: Vector3, regionDataBaseUrl: string) => {
   const { camera } = useTres();
   const { onBeforeRender } = useLoop();
@@ -21,7 +22,7 @@ export const useRegionData = (origin: Vector3, regionDataBaseUrl: string) => {
   const wantedRegionIds = new Set<string>();
   const isRegionDataSettled = ref(false);
   const settle = () => {
-    if (pendingRegionIds.size === 0) isRegionDataSettled.value = true;
+    isRegionDataSettled.value = pendingRegionIds.size === 0;
   };
   let checkedX = Infinity;
   let checkedZ = Infinity;
@@ -48,7 +49,7 @@ export const useRegionData = (origin: Vector3, regionDataBaseUrl: string) => {
       // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and a frame has nothing to await it
       getResultAsync(async () => {
         const url = `/${regionDataBaseUrl}/${id}.json`;
-        const response = await fetch(url);
+        const response = await fetch(url, { signal: AbortSignal.timeout(REGION_FETCH_TIMEOUT_MS) });
         if (!response.ok)
           throw new InvalidOperationError(Operation.Read, url, `HTTP ${response.status} ${response.statusText}`);
         // A server falling back to a page for a missing file answers 200 with HTML, which fails here or at the schema

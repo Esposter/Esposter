@@ -1,4 +1,5 @@
 import type { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
+import type { ReverseTickedTimestamp } from "#src/models/azure/table/ReverseTickedTimestamp";
 import type { AdminActionType } from "#src/models/message/AdminActionType";
 import type { UserInAuth } from "#src/schema/auth/usersInAuth";
 import type { ToData } from "@esposter/shared";
@@ -14,6 +15,7 @@ import { z } from "zod";
 export class ModerationLogEntity extends AzureEntity {
   declare actorUserId: UserInAuth["id"];
   durationMs?: number;
+  declare rowKey: ReverseTickedTimestamp;
   declare targetUserId: UserInAuth["id"];
   declare type: AdminActionType;
 

@@ -23,6 +23,8 @@ export const CLOUD_DRIFT_PER_WIND = 0.012;
 // Reach is rechecked each time the camera has moved this far
 export const REGION_REACH = 1500;
 export const REGION_RECHECK_DISTANCE = 64;
+// A region's fetch is abandoned as failed past this, so a stalled request cannot hold the world from being ready
+export const REGION_FETCH_TIMEOUT_MS = 10_000;
 // How far the tuning panel moves a grade's tint each way, and a tint's channels by the tuple key it writes through
 export const TUNING_TINT_RANGE = 0.1;
 export const TUNING_TINT_CHANNELS = [

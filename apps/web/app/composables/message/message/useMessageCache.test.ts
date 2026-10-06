@@ -11,7 +11,7 @@ import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { useDataStore } from "@/store/message/data";
-import { StandardMessageEntity } from "@esposter/db-schema";
+import { getReverseTickedTimestamp, StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -21,7 +21,7 @@ describe(useMessageCache, () => {
   let getSlice: ReturnType<typeof useDataStore>["getSlice"];
   const partitionKey = crypto.randomUUID();
   const secondPartitionKey = crypto.randomUUID();
-  const rowKey = crypto.randomUUID();
+  const rowKey = getReverseTickedTimestamp();
   const message = "message";
   // The store refs are captured from inside the mounted component's scope because mountSuspended creates its own
   // Context

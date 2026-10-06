@@ -9,8 +9,12 @@ import { z } from "zod";
 //
 // The length is bounded rather than fixed because the countdown is not zero-padded. Every real timestamp
 // Produces the full width — which is what makes a lexical rowKey sort read newest-first — but the producer is
-// Honest about its own extremes and so is this
+// Honest about its own extremes and so is this. Branded both ways so a bare string, the empty sentinel included,
+// Is a type error wherever a rowKey is declared — a tRPC caller's input as well as a parsed output
 export const reverseTickedTimestampSchema = z
   .string()
   .regex(REVERSE_TICKED_TIMESTAMP_REGEX)
-  .max(AZURE_SELF_DESTRUCT_TIMER.length);
+  .max(AZURE_SELF_DESTRUCT_TIMER.length)
+  .brand<"ReverseTickedTimestamp", "inout">();
+// A branded schema cannot satisfy a hand-written type, so the type is read off the schema
+export type ReverseTickedTimestamp = z.infer<typeof reverseTickedTimestampSchema>;

@@ -1,4 +1,5 @@
 import type { Context } from "#server/trpc/context";
+import type { CallSessionInMessage } from "@esposter/db-schema";
 
 import { MAX_CALL_SESSION_ID_ATTEMPTS } from "#server/services/message/call/constants";
 import { insertCallSessionId } from "#server/services/message/call/insertCallSessionId";
@@ -11,7 +12,7 @@ export const createCallSessionId = async (
   db: Context["db"],
   roomId: string,
   userId: string,
-  threadRootRowKey = "",
+  threadRootRowKey: CallSessionInMessage["threadRootRowKey"] = "",
 ): Promise<string> => {
   for (let attempt = 0; attempt < MAX_CALL_SESSION_ID_ATTEMPTS; attempt++) {
     // oxlint-disable-next-line no-await-in-loop -- Retry: the next attempt runs only because this one lost the race for the room's id

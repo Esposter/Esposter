@@ -72,6 +72,8 @@
     "eslint-plugin-perfectionist": "catalog:",
     "eslint-plugin-pinia": "catalog:",
     "eslint-plugin-vuejs-accessibility": "catalog:",
+    "html-element-attributes": "catalog:",
+    "html-tag-names": "catalog:",
     "rolldown": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",
