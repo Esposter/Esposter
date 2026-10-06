@@ -32,7 +32,7 @@ export const DEFERRED_SHADING_BLOCK = "00/00612967.blk";
 // Side and the row its z, named for both (BigWorldTerrain_1_-2.bin, `parseTerrainTileName`), and the texture that
 // Draws a tile from afar
 export const TERRAIN_TILE_SIZE = 1024;
-export const TERRAIN_TILE_REGEX = /_(?<column>-?\d+)_(?<row>-?\d+)\.bin$/u;
+export const TERRAIN_TILE_REGEX: RegExp = /_(?<column>-?\d+)_(?<row>-?\d+)\.bin$/u;
 export const TERRAIN_BASE_MAP_SUFFIX = "_BaseMap";
 // The texture slot a material's albedo is sampled from, which the witness reads as a colour
 export const MAIN_TEXTURE_SLOT = "_MainTex";

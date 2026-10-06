@@ -231,17 +231,17 @@ export const reference: ComponentReference = {
       name: "012854bd, StreamGen/BigWorld_1_-2",
       role: "Every object the tile lays out, the ruins, rocks and grass round the statue among them, its chunk offsets in BigWorld_1_-2_Index in the same block",
     },
-    water: {
-      block: "00/05825684.blk, 012854bd",
-      kind: GameSourceKind.BinaryData,
-      name: "Area_Md_Water_Common_01_Vo, placed by the tile's StreamGen blob",
-      role: "The valley's water surface, a kilometre across, whose height water.json's level is",
-    },
     valleyTimelapse: {
       block: "yt-w-63Sw6IP2w.mp4",
       kind: GameSourceKind.Capture,
       name: "Windswept Wilderness (Windrise) Timelapse Ambience, a 2022 recording",
       role: "The valley from the south through a whole day, a game minute a second, on an older build",
+    },
+    water: {
+      block: "00/05825684.blk, 012854bd",
+      kind: GameSourceKind.BinaryData,
+      name: "Area_Md_Water_Common_01_Vo, placed by the tile's StreamGen blob",
+      role: "The valley's water surface, a kilometre across, whose height water.json's level is",
     },
   },
 };

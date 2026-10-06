@@ -6,6 +6,8 @@ const writeFloats = (...values: number[]): Buffer => {
   for (const [index, value] of values.entries()) bytes.writeFloatLE(value, index * 4);
   return bytes;
 };
+// A chunk of one record of a position along x alone
+const placeAt = (x: number): Buffer => Buffer.concat([Buffer.from([0x02, 0x01, 0x10, 0x01]), writeFloats(x)]);
 
 describe(parseStreamingPlacements, () => {
   test("reads the first chunk the index leaves out, a record's fields by its mask, and skips what places nothing", () => {
@@ -47,8 +49,6 @@ describe(parseStreamingPlacements, () => {
   test("reads the chunks in offset order whatever order the index lists them in, and drops an offset past the blob", () => {
     expect.hasAssertions();
 
-    // A chunk of one record of a position along x alone
-    const placeAt = (x: number): Buffer => Buffer.concat([Buffer.from([0x02, 0x01, 0x10, 0x01]), writeFloats(x)]);
     const first = placeAt(1);
     const second = placeAt(2);
     const third = placeAt(3);
