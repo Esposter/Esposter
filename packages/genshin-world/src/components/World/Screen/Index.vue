@@ -40,7 +40,7 @@ watch(
 </script>
 
 <template>
-  <div class="world-screen" size-full>
+  <div class="world-screen">
     <TresCanvas
       ref="canvas"
       :dpr="[1, maxPixelRatio]"
@@ -71,6 +71,12 @@ watch(
 </template>
 
 <style scoped>
+/* The package carries no utility classes, so the screen fills its host with a style of its own */
+.world-screen {
+  width: 100%;
+  height: 100%;
+}
+
 .world-screen :deep(canvas) {
   /* A drag on the world turns the camera, so a touch is never taken for scrolling or zooming the page */
   touch-action: none;
