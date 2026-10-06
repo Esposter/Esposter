@@ -2,7 +2,7 @@ import type { ProcedureRegistration } from "#src/models/ProcedureRegistration";
 import type { ProcedureResolverOptions } from "#src/models/ProcedureResolverOptions";
 import type { TRPCMswRoot } from "#src/models/TRPCMswRoot";
 import type { AnyTRPCRouter, TRPCProcedureType } from "@trpc/server";
-import type { Parser } from "@trpc/server/unstable-core-do-not-import";
+import type { ParseFn, Parser } from "@trpc/server/unstable-core-do-not-import";
 
 import { toResolverOptions } from "#src/services/toResolverOptions";
 import { exhaustiveGuard } from "@esposter/shared";
@@ -23,8 +23,8 @@ export const createMockRouter = <TContext extends object>(
       procedureTypes.entries().map(([path, type]) => {
         // The real procedure's parsers, read through tRPC's own `getParseFn`, only judge the input: a rejection is the
         // BAD_REQUEST the server answers with, and the resolver still receives the input as the transformer decoded it
-        const parseFns = (inputRouter?._def.procedures[path]?._def.inputs ?? []).map((parser: Parser) =>
-          getParseFn(parser),
+        const parseFns: ParseFn<unknown>[] = (inputRouter?._def.procedures[path]?._def.inputs ?? []).map(
+          (parser: Parser) => getParseFn(parser),
         );
         const procedure = baseProcedure.input(async (value) => {
           // oxlint-disable-next-line no-await-in-loop -- Order is the contract: the server's input middlewares run in turn and stop at the first rejection

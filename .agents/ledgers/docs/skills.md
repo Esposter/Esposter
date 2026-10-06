@@ -2,6 +2,7 @@
 
 | Unit                      | Swept                 | Notes |
 | ------------------------- | --------------------- | ----- |
+| `absent-values`           | —                     |       |
 | `azure-table`             | 2026-10-05 · Opus 5.5 |       |
 | `backfills`               | 2026-10-05 · Opus 5.5 |       |
 | `bench`                   | 2026-10-05 · Opus 5.5 |       |
