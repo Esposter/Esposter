@@ -131,6 +131,13 @@ const gameClock = useSky({
   tilt: SUN_TILT,
   windUniforms,
 });
+// The clock only starts at its held minute, so a minute held anew is set on it
+watch(
+  () => heldMinutes,
+  (minutes) => {
+    if (minutes !== undefined) gameClock.minutes = minutes;
+  },
+);
 // Alone, the witness's exports are drawn with no haze and no clouds, so a pose is matched on their edges alone
 if (witness)
   watchEffect(() => {
