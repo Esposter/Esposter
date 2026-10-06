@@ -65,6 +65,8 @@ export const GAME_AUDIO_DIRECTORY: string = join(
 );
 export const SOUND_BANK_PACKAGE_PATTERN = "Banks*.pck";
 export const MUSIC_PACKAGE_PATTERN = "Music*.pck";
+// The package the game loads before anything else, whose banks hold the login's own sounds
+export const MINIMUM_PACKAGE_NAME = "Minimum.pck";
 // What the game's music is decoded into, a reference like every other export: each sound as WAV by its id, and each
 // One's pitch classes, which a recording is matched against
 export const MUSIC_DIRECTORY: string = join(EXTRACTED_DIRECTORY, "music");
