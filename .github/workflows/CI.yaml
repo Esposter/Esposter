@@ -168,9 +168,9 @@ jobs:
 
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
-      # The root project alone — where the lockfile-pinned `oxfmt` binary is declared — and no scripts. Not
-      # `{.}...`: that closure provisions `virrun`, and this check is native by design. Not a global or `dlx`
-      # install either: a formatter's version is its output, and a second source of truth for it drifts from
+      # The root project alone — where `vite-plus` and the lockfile-pinned `oxfmt` it runs are declared — and no
+      # scripts. Not `{.}...`: that closure provisions `virrun`, and this check is native by design. Not a global or
+      # `dlx` install either: a formatter's version is its output, and a second source of truth for it drifts from
       # the lockfile until this check and `pnpm format` disagree.
       - name: 📦 Install dependencies
         run: pnpm --filter "{.}" i --ignore-scripts
