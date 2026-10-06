@@ -171,8 +171,9 @@ export default defineConfig({
   // Every template is read once at startup, from the Vite root Nuxt sets to `app/`. Otherwise the dev stylesheet
   // Holds only the utilities of modules transformed so far, and a page first reached by client navigation — or a
   // Component behind `<ClientOnly>` — renders without the ones only it uses until a reload. The pipeline filter still
-  // Applies, so a `.ts` file is read only when it opts in with `@unocss-include`
-  content: { filesystem: ["**/*.{ts,vue}"] },
+  // Applies, so a `.ts` file contributes only when it opts in with `@unocss-include` — which is decided by reading it,
+  // So test files, which never opt in, are left out of the glob rather than opened and discarded
+  content: { filesystem: ["**/*.{ts,vue}", "!**/*.{bench,test,test-d}.ts"] },
   outputToCssLayers: { cssLayerName: (layer) => (layer === "properties" ? null : `uno-${layer}`) },
   // Each design style's tokens as one rule on its `data-ui-style` value, written here so they are static CSS rather
   // Than a stylesheet built at runtime. A theme scope carries the attribute as well as the root, because a token that
