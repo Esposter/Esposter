@@ -102,7 +102,9 @@ export const saveResourceContent = async (
   const resourceLinkTargets = getResourceLinkTargets?.(parsedContent) ?? [];
   // Only when the set moved: most saves leave a resource's links alone, and a type declaring none never reads
   // Them, so neither pays for a write
-  const resourceLinkKeys = new Set(resourceLinkTargets.map(getResourceLinkKey));
+  const resourceLinkKeys = new Set(
+    resourceLinkTargets.map((resourceLinkTarget) => getResourceLinkKey(resourceLinkTarget)),
+  );
   const storedResourceLinkTargets = getResourceLinkTargets
     ? await ctx.db.query.resourceLinksInResource.findMany({
         columns: { targetId: true, type: true },
@@ -132,7 +134,7 @@ export const saveResourceContent = async (
       if (resourceLinkTargets.length > 0)
         await tx
           .insert(resourceLinksInResource)
-          .values(resourceLinkTargets.map((resourceLinkTarget) => ({ ...resourceLinkTarget, sourceId: id })));
+          .values(resourceLinkTargets.map(({ targetId, type }) => ({ sourceId: id, targetId, type })));
     });
   // The links are cleared inside the transaction and written after it commits, so they never claim what the blob
   // Does not back. A cleared set rejects the survey's tokens until the next save that lands writes it again —

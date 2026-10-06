@@ -9,6 +9,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "layer-model",
       "resource",
       "dataset",
+      "resource-links",
       "publishing",
       "serialization",
       "compression",
