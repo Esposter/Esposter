@@ -55,7 +55,7 @@ describe(useResourceStore, () => {
   const otherResourceId = crypto.randomUUID();
   const newName = "newName";
   const failingName = "failingName";
-  const tags: ResourceTags = { "": "" };
+  const tags: ResourceTags = { a: "" };
   const publication = { publishedAt: new Date(0), publishVersion: 1, resourceId } as ResourcePublicationInResource;
   // A Note loads its publication on the way in, so the unpublished answer is the baseline a test overrides
   const setupNoteResource = () => {

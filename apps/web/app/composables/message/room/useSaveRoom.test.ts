@@ -35,6 +35,8 @@ const mountSaveRoom = async (room: RoomInMessage) => {
 describe(useSaveRoom, () => {
   const { trpcMsw } = setupMswTrpc();
   const name = "name";
+  // A name that trims to empty is one the save rejects, so the name it writes keeps a character
+  const savedName = "a";
   const topic = "topic";
 
   // The rollback restores the keys the save wrote, not the row it read. A whole-row restore looks identical
@@ -51,7 +53,7 @@ describe(useSaveRoom, () => {
       storeUpdateRoom({ id: room.id, topic });
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    await saveRoom?.({ name: " " });
+    await saveRoom?.({ name: savedName });
 
     expect(getRoom()?.name).toBe(name);
     expect(getRoom()?.topic).toBe(topic);
@@ -62,9 +64,9 @@ describe(useSaveRoom, () => {
 
     const room = createRoom(name);
     const { getRoom, saveRoom } = await mountSaveRoom(room);
-    trpcMsw.room.updateRoom.mutation(() => ({ ...room, name: " " }));
-    await saveRoom?.({ name: " " });
+    trpcMsw.room.updateRoom.mutation(() => ({ ...room, name: savedName }));
+    await saveRoom?.({ name: savedName });
 
-    expect(getRoom()?.name).toBe(" ");
+    expect(getRoom()?.name).toBe(savedName);
   });
 });

@@ -4,7 +4,7 @@ import type { PollMessageContent } from "#shared/models/message/poll/PollMessage
 import { useVotePoll } from "@/composables/message/poll/useVotePoll";
 import { useSession } from "@/services/auth/authClient.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { MessageType, StandardMessageEntity } from "@esposter/db-schema";
+import { getReverseTickedTimestamp, MessageType, StandardMessageEntity } from "@esposter/db-schema";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -19,12 +19,12 @@ describe(useVotePoll, () => {
     question: "question",
     votes: {},
   };
-  const createPollMessage = (rowKey: string) =>
+  const createPollMessage = () =>
     new StandardMessageEntity({
       createdAt: new Date(0),
       message: JSON.stringify(pollContent),
       partitionKey: roomId,
-      rowKey,
+      rowKey: getReverseTickedTimestamp(),
       type: MessageType.Poll,
       updatedAt: new Date(0),
       userId,
@@ -38,7 +38,7 @@ describe(useVotePoll, () => {
   test("withdraws with an empty option id", async () => {
     expect.hasAssertions();
 
-    const message = createPollMessage(crypto.randomUUID());
+    const message = createPollMessage();
     const votePoll = vi.fn<(input: { optionId: string; partitionKey: string; rowKey: string }) => void>();
     trpcMsw.message.votePoll.mutation(({ input }) => {
       votePoll(input);
@@ -59,8 +59,8 @@ describe(useVotePoll, () => {
   test("reports voting only for the poll it is bound to", async () => {
     expect.hasAssertions();
 
-    const message = createPollMessage(crypto.randomUUID());
-    const otherMessage = createPollMessage(crypto.randomUUID());
+    const message = createPollMessage();
+    const otherMessage = createPollMessage();
     const { promise: voteReleased, resolve: releaseVote } = Promise.withResolvers<void>();
     trpcMsw.message.votePoll.mutation(async () => {
       await voteReleased;

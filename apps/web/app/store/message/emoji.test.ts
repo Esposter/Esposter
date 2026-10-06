@@ -5,6 +5,7 @@ import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/M
 import { useSession } from "@/services/auth/authClient.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useEmojiStore } from "@/store/message/emoji";
+import { getReverseTickedTimestamp } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { MockContainerDatabase } from "azure-mock";
@@ -18,8 +19,8 @@ vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/auth
 describe(useEmojiStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const partitionKey = crypto.randomUUID();
-  const rowKey = crypto.randomUUID();
-  const messageRowKey = crypto.randomUUID();
+  const rowKey = getReverseTickedTimestamp();
+  const messageRowKey = getReverseTickedTimestamp();
 
   beforeEach(() => {
     useSession.mockReturnValue(ref<MockSessionValue>({ data: undefined }));
