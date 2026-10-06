@@ -61,9 +61,6 @@ export const FOG_HEIGHT_FALLOFF = 0.02;
 export const FOG_START_DISTANCE = 60;
 // How far from the eye the sun's last cascade reaches: past the valley's rim, so the hills shadow what they face
 export const SHADOW_MAX_FAR = 320;
-// The god rays' one shadow map, spanning the valley around the oak
-export const GODRAYS_SHADOW_MAP_SIZE = 1024;
-export const GODRAYS_HALF_EXTENT = 160;
 // Windrise's afternoon grade: a touch of contrast and colour, cool shade and warm light, as the game's meadows read
 export const WINDRISE_GRADE_OPTIONS: GradeOptions = {
   contrast: 1.06,

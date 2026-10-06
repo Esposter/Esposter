@@ -38,7 +38,7 @@ interface Props {
 }
 
 const { createTerrainWorker, lightUniforms, origin, rampTexture, terrainOptions, waterUniforms } = defineProps<Props>();
-const emit = defineEmits<{ change: [] }>();
+const emit = defineEmits<{ change: []; ready: [] }>();
 const { camera } = useTres();
 const { onBeforeRender } = useLoop();
 const { cellsPerSide, finestTileSize } = terrainOptions;
@@ -90,12 +90,16 @@ const eye = new Vector3();
 const originMatrix = new Matrix4();
 const viewProjection = new Matrix4();
 const frustum = new Frustum();
+let isReady = false;
 // Each frame the quadtree is walked from the eye's world position, what is missing is asked for, and the tiles to
 // Draw are shown in place of last frame's. The frustum is built in world coordinates, the scene's view moved by the
-// Origin, so the selection never sees the floating origin
+// Origin, so the selection never sees the floating origin. The camera's matrices are brought up to date first, since
+// This runs before the frame's render does it and runs while a paused canvas renders nothing. The terrain is ready
+// The first frame every tile its view wants has arrived
 onBeforeRender(() => {
   const activeCamera = camera.value;
   if (!activeCamera) return;
+  activeCamera.updateMatrixWorld();
   eye.copy(activeCamera.position).add(origin);
   originMatrix.makeTranslation(-origin.x, -origin.y, -origin.z);
   viewProjection
@@ -115,6 +119,9 @@ onBeforeRender(() => {
   }
   shown.keys.set(draws.keys.subarray(0, draws.count));
   shown.count = draws.count;
+  if (isReady || !wanted.keys.subarray(0, wanted.count).every((key) => tileStreamer.has(key))) return;
+  isReady = true;
+  emit("ready");
 });
 
 onUnmounted(() => {

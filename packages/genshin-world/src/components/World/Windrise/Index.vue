@@ -15,8 +15,6 @@ import {
   FOG_DENSITY,
   FOG_HEIGHT_FALLOFF,
   FOG_START_DISTANCE,
-  GODRAYS_HALF_EXTENT,
-  GODRAYS_SHADOW_MAP_SIZE,
   GRASS_BLADE_HEIGHT,
   GRASS_BLADE_WIDTH,
   MIDDLE_GRASS_RING,
@@ -44,11 +42,9 @@ import {
   WINDRISE_START_MINUTES,
   WINDRISE_TERRAIN_OPTIONS,
 } from "#src/services/windrise/constants";
-import { getWindriseHeight } from "#src/services/windrise/getWindriseHeight";
-import { useTres } from "@tresjs/core";
+import { whenever } from "@vueuse/core";
 import {
   createFogUniforms,
-  createGodraysLight,
   createGradeLutTexture,
   createLightUniforms,
   createPostUniforms,
@@ -71,8 +67,7 @@ interface Props {
 }
 
 const { createTerrainWorker, isTuning, qualityTier, regionDataBaseUrl } = defineProps<Props>();
-const { scene } = useTres();
-const knollHeight = getWindriseHeight(0, 0);
+const emit = defineEmits<{ ready: [] }>();
 const rampTexture = createRampTexture(WINDRISE_RAMP_OPTIONS);
 const lightUniforms = createLightUniforms();
 lightUniforms.rimStrength.value = RIM_STRENGTH;
@@ -86,13 +81,10 @@ windUniforms.strength.value = WIND_STRENGTH;
 // The tier is read once: its cascades are built with the sun, and the scene is remounted to change it
 const { cascadeCount, shadowMapSize } = QualityTierSettingsMap[qualityTier];
 const { cascadedShadowNode, light: sun } = createSunLight({ cascadeCount, maxFar: SHADOW_MAX_FAR, shadowMapSize });
-// The god rays' sun looks at the oak, so its one map is centred on what the camera circles
-const godraysLight = createGodraysLight(GODRAYS_SHADOW_MAP_SIZE, GODRAYS_HALF_EXTENT);
-godraysLight.target.position.set(0, knollHeight, 0);
 // Shade is lit only by this, so the sky's colour above and the grass's below are the shade's colours
 const hemisphere = new HemisphereLight();
 const { origin, worldOffset } = useFloatingOrigin();
-const regionDataMap = useRegionData(origin, regionDataBaseUrl);
+const { isRegionDataSettled, regionDataMap } = useRegionData(origin, regionDataBaseUrl);
 const fogUniforms = createFogUniforms();
 fogUniforms.density.value = FOG_DENSITY;
 fogUniforms.heightFalloff.value = FOG_HEIGHT_FALLOFF;
@@ -113,7 +105,6 @@ const gameClock = useSky({
   skyKeyframes: WINDRISE_SKY_KEYFRAMES,
   skyTargets: {
     fogUniforms,
-    godraysLight,
     hemisphere,
     light: sun,
     lightDistance: SUN_DISTANCE,
@@ -128,7 +119,25 @@ const gameClock = useSky({
 // Counts every tile that arrives, so what reads the ground under the view knows to read it again
 const terrainChanges = { count: 0 };
 const gradeLutTexture = createGradeLutTexture(WINDRISE_GRADE_OPTIONS);
-const postPipeline = usePostPipeline(() => qualityTier, { fogUniforms, godraysLight, gradeLutTexture, postUniforms });
+// No god rays and no bloom: neither is measured off a reference of Windrise, and drawn as they stand they veil the
+// Whole frame, the god rays marching hundreds of metres of lit air to their most opacity and bloom lifting the whole
+// Sky past its threshold, so the frame is drawn through the haze, the grade and the tone mapping alone
+const postPipeline = usePostPipeline(() => qualityTier, {
+  fogUniforms,
+  gradeLutTexture,
+  isBloomed: false,
+  postUniforms,
+});
+// The world is ready once the ground of its first view and the regions in reach of it have arrived, so what shows it
+// Never shows the bare water under a ground still streaming in
+const isTerrainSettled = ref(false);
+whenever(
+  () => isTerrainSettled.value && isRegionDataSettled.value,
+  () => {
+    emit("ready");
+  },
+  { once: true },
+);
 if (isTuning)
   useGenshinTuning({
     fogUniforms,
@@ -150,7 +159,6 @@ onUnmounted(() => {
   gradeLutTexture.dispose();
   cascadedShadowNode.dispose();
   sun.dispose();
-  godraysLight.dispose();
   hemisphere.dispose();
 });
 </script>
@@ -161,8 +169,6 @@ onUnmounted(() => {
   <primitive :object="hemisphere" />
   <!-- Everything placed in the world is in this group, which the floating origin offsets -->
   <TresGroup :position="worldOffset">
-    <primitive :object="godraysLight" />
-    <primitive :object="godraysLight.target" />
     <WorldTerrain
       :create-terrain-worker
       :light-uniforms
@@ -170,12 +176,8 @@ onUnmounted(() => {
       :ramp-texture
       :terrain-options="WINDRISE_TERRAIN_OPTIONS"
       :water-uniforms
-      @change="
-        () => {
-          godraysLight.shadow.needsUpdate = true;
-          terrainChanges.count++;
-        }
-      "
+      @change="terrainChanges.count++"
+      @ready="isTerrainSettled = true"
     />
     <WorldGrass
       :blade-height="GRASS_BLADE_HEIGHT"
