@@ -24,9 +24,7 @@ The inflation is not marginal, so a duration read off the full run says nothing 
 
 Tests run on Windows: `configuration/modules.ts` allowlists a minimal set of Nuxt modules under `process.env.VITEST`, so a test needing an excluded module adds it to that branch.
 
-The host is Windows but the root runner is not: the root `pnpm test` and `pnpm test:packages` go through `virrun`, whose win32 backend executes vitest inside WSL, so `process.platform` reads `linux` there while `pnpm build` ran natively. A package's own `pnpm test` — the `apps/web` one the check suite runs included — invokes vitest directly and reads `win32`. Anything gated on `process.platform` is therefore selected by whichever runner started it rather than by the host — see `references/bundle-size.md` for the one suite this makes fail locally by design.
-
-A suite that shells out to git fails under root `pnpm test` on a Windows host for the same reason — an environment artifact, never a regression; why, and the command that runs it instead, is the `package-scripts` skill (`references/pnpm-traps.md`).
+Every runner reads the host: root `pnpm test`, `pnpm test:packages` and a package's own `pnpm test` all invoke vitest natively, so `process.platform` reads `win32` on a Windows host and a test gated on it selects the Windows case. Only a run put through virrun on purpose — `pnpm virrun -- vitest …` — executes inside WSL and reads `linux`, which is how the POSIX half of a split snapshot is measured locally (`references/bundle-size.md`).
 
 ## Narrowing a run: `-t` and `-u`
 

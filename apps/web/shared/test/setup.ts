@@ -86,9 +86,8 @@ vi.mock("nuxt/server", async (importOriginal) => ({
   }),
 }));
 // The first mountSuspended in a worker pays a one-time cold cost: the Nuxt app graph is evaluated and its
-// Plugins applied on first mount. Charged inside a test body it can blow the per-test timeout — especially
-// Under virrun on win32, where the sandbox reads repo source through WSL's /mnt/c (v9fs) and those cold
-// First-reads are 15-64x slower. Warm it once per worker so that cost lands in a hook (billed to the generous
+// Plugins applied on first mount. Charged inside a test body it can blow the per-test timeout. Warm it once per
+// Worker so that cost lands in a hook (billed to the generous
 // `hookTimeout`, not a test's testTimeout), keeping per-test timings honest — written once here for every file
 // Rather than duplicated per file. It must be a beforeEach, not a beforeAll: the nuxt env registers its own
 // `beforeAll(setupNuxt)` after this setup file, and beforeAll order is registration order, so a beforeAll here

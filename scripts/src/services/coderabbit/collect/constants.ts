@@ -48,8 +48,8 @@ export const INSTALL_OUTPUT_MAX_BUFFER_BYTES: number = 64 * 1024 * 1024;
 // The checks a repair earns before it reaches `main`, and the only checks the collector runs on anything it
 // Pushes — a window is verified by develop's own CI and an express cut by main's, since a gate on either held the
 // Red commit and the later one that fixes it at once. Check-only: a repair the collector wrote would be a
-// Commit nobody reviewed. Each is a root script's own passes minus its `virrun` wrapper — the root `tsc` and
-// The recursive typecheck, oxlint and the two ESLint passes — plus the two app bundles the suite asserts against,
+// Commit nobody reviewed. Each is a root script named as the check it is — an aggregating `run-s` script by its
+// Passes, so each reports on its own — plus the two app bundles the suite asserts against,
 // Since `@esposter/functions` and `@esposter/infra` each snapshot a `dist` no source tree holds, and a run
 // Without them fails on files no commit touched. The web app's build alone is left out: it is CI's longest job
 // (`apps/web/content/docs/architecture/monorepo-tooling.md`), and `main`'s own CI runs it on the push. The
@@ -66,17 +66,17 @@ export const REPAIR_VERIFY_COMMANDS: string[][] = [
   INSTALL_COMMAND,
   ["format:check"],
   ["exec", "vp", "run", "build:packages"],
-  ["exec", "tsc"],
-  ["-r", "--parallel", "typecheck"],
-  ["exec", "oxlint", "--debug=timings", "--format=default", "--disable-nested-config"],
-  ["exec", "eslint", "."],
-  ["-r", "--parallel", "lint"],
+  ["typecheck:root"],
+  ["typecheck:workspace"],
+  ["lint:oxlint"],
+  ["lint:eslint"],
+  ["lint:workspace"],
   ["lint:unused"],
   REPAIR_BUILD_APPS_COMMAND,
-  ["exec", "vitest", "run"],
+  ["test"],
 ];
-// What a red `main` is answered with before any session is asked for one, spelled out the way the repair's checks
-// Are — each a root script's own passes minus its `virrun` wrapper. Every one rewrites a tracked artifact from
+// What a red `main` is answered with before any session is asked for one, named the way the repair's checks are —
+// Each a root script, an aggregating one by its passes. Every one rewrites a tracked artifact from
 // The tree that artifact is derived from: the formatter's own output, a lint rule's own autofix, a ledger's
 // Coverage rows. What they write is by construction what the check that failed on it asked for, so the red is
 // Answered by running them rather than by reading it, and a red none of them touches leaves the tree exactly as
@@ -88,9 +88,9 @@ export const REPAIR_VERIFY_COMMANDS: string[][] = [
 // (`getRepairPrompt`).
 export const REPAIR_REGENERATE_COMMANDS: string[][] = [
   ["format"],
-  ["exec", "oxlint", "--debug=timings", "--format=default", "--fix", "--disable-nested-config"],
-  ["exec", "eslint", "--fix", "."],
-  ["-r", "--parallel", "lint:fix"],
+  ["lint:fix:oxlint"],
+  ["lint:fix:eslint"],
+  ["lint:fix:workspace"],
   ["ai:sweep:ledger-coverage"],
 ];
 // The record and field separators (`#src/services/shared/constants`) in git's own spelling, which is what asks
