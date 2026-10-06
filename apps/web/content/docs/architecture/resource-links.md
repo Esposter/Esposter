@@ -71,7 +71,7 @@ flowchart LR
   PARTICIPANTS -->|"a match"| ACCEPT["token accepted"]
 ```
 
-A "referenced by" panel and a delete-time warning are further readers of the same index, not yet built ([resource references](/docs/resource/deferred/resource-references), [delete-time reference warning](/docs/resource/deferred/delete-reference-warning)).
+The [delete-time reference warning](/docs/resource/delete-reference-warning) reads the same index the other way, by target: the owner's live resources linking to what a delete is about to bin. A standing "referenced by" panel would be a third reader, not yet built ([resource references](/docs/resource/deferred/resource-references)).
 
 ## Key files
 

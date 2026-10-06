@@ -28,6 +28,8 @@ import {
   AzureQueue,
   AzureTable,
   ResourceActivityType,
+  resourceLinksInResource,
+  ResourceLinkType,
   ResourceType,
   SnapshotChannel,
   SnapshotReason,
@@ -366,6 +368,44 @@ describe("resourceRouter", () => {
     const deletedResources = await caller.deleteResources({ ids: [otherUserResource.id, ownResource.id] });
 
     expect(deletedResources.map(({ id }) => id)).toStrictEqual([ownResource.id]);
+  });
+
+  // A delete names what it leaves dangling, never a resource going with it nor one already in the recycle bin
+  test("reads the consumers a delete leaves behind", async () => {
+    expect.hasAssertions();
+
+    const source = await sheetCaller.createResource({ name });
+    const consumer = await dashboardCaller.createResource({ name });
+    const binnedConsumer = await dashboardCaller.createResource({ name });
+    const deletingConsumer = await dashboardCaller.createResource({ name });
+    await mockContext.db
+      .insert(resourceLinksInResource)
+      .values(
+        [consumer, binnedConsumer, deletingConsumer].map(({ id }) => ({
+          sourceId: id,
+          targetId: source.id,
+          type: ResourceLinkType.Dataset,
+        })),
+      );
+    await caller.deleteResources({ ids: [binnedConsumer.id] });
+    const consumers = await caller.readResourceConsumers({ ids: [source.id, deletingConsumer.id] });
+
+    expect(consumers).toStrictEqual([{ id: consumer.id, name, type: ResourceType.Dashboard }]);
+  });
+
+  // Another owner's reference never resolves to the caller's resource, and naming it would hand the caller its name
+  test("reads no consumer another owner holds", async () => {
+    expect.hasAssertions();
+
+    await mockSessionOnce(mockContext.db);
+    const otherUserConsumer = await dashboardCaller.createResource({ name });
+    const source = await sheetCaller.createResource({ name });
+    await mockContext.db
+      .insert(resourceLinksInResource)
+      .values({ sourceId: otherUserConsumer.id, targetId: source.id, type: ResourceLinkType.Dataset });
+    const consumers = await caller.readResourceConsumers({ ids: [source.id] });
+
+    expect(consumers).toStrictEqual([]);
   });
 
   // A snapshot and its cloned assets are stored bytes the owner keeps, and nothing else charges them: a

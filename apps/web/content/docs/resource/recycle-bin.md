@@ -9,7 +9,7 @@ Deleting a resource marks it rather than destroying it. `/resource-explorer/recy
 
 ## How it works
 
-A Sheet or a Survey can hold hours of work behind a single Delete button. A confirmation makes that click deliberate, but deliberate and correct are different things, and an undo window costs one column. Delete still asks first, as [every delete does](/docs/architecture/destructive-confirmation), and the bin is what makes a wrong answer cheap.
+A Sheet or a Survey can hold hours of work behind a single Delete button. A confirmation makes that click deliberate, but deliberate and correct are different things, and an undo window costs one column. Delete still asks first, as [every delete does](/docs/architecture/destructive-confirmation), naming any other resource that uses what is going ([delete-time reference warning](/docs/resource/delete-reference-warning)), and the bin is what makes a wrong answer cheap.
 
 Deleting sets `deletedAt` and drops the publication row. The content blob and the `{id}/` directory survive untouched; that is precisely what makes restore possible. Every read already funnels through `getResourcesWhere`, so excluding the bin is one predicate, and `getOwnerProcedure` rejects soft-deleted ids so a binned resource's page 404s. Restore and purge need the opposite, so both take the guard's `isDeletedOnly` mode.
 

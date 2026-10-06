@@ -41,6 +41,7 @@ import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedPr
 import { deleteResourcesInputSchema } from "#shared/models/db/resource/DeleteResourcesInput";
 import { readActivitiesInputSchema } from "#shared/models/db/resource/ReadActivitiesInput";
 import { readDeletedResourcesInputSchema } from "#shared/models/db/resource/ReadDeletedResourcesInput";
+import { readResourceConsumersInputSchema } from "#shared/models/db/resource/ReadResourceConsumersInput";
 import { readResourceListInputSchema } from "#shared/models/db/resource/ReadResourceListInput";
 import { resourceFilterInputSchema } from "#shared/models/db/resource/ResourceFilterInput";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
@@ -215,6 +216,24 @@ export const resourceRouter = router({
         })) ?? null,
     }),
   ),
+  // The caller's live resources referencing any of these, for a delete to name what it leaves dangling: one indexed
+  // Lookup of the link index by target. One deleted alongside them is left no reference to miss, and another owner's
+  // Resource never resolves a reference to these, so neither is counted — nor would naming one be the caller's to read
+  readResourceConsumers: standardAuthedProcedure
+    .input(readResourceConsumersInputSchema)
+    .query<Pick<ResourceInResource, "id" | "name" | "type">[]>(({ ctx, input: { ids } }) =>
+      ctx.db.query.resourcesInResource.findMany({
+        columns: { id: true, name: true, type: true },
+        limit: MAX_READ_LIMIT,
+        orderBy: { name: "asc" },
+        where: {
+          deletedAt: { isNull: true },
+          id: { notIn: ids },
+          links: { targetId: { in: ids } },
+          userId: { eq: ctx.getSessionPayload.user.id },
+        },
+      }),
+    ),
   readResources: standardAuthedProcedure
     .input(readResourceListInputSchema.prefault({}))
     .query<OffsetPaginationData<ResourceListItem>>(async ({ ctx, input: { limit, offset, sortBy, ...filter } }) => {

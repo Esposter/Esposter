@@ -11,8 +11,8 @@ The data is already there: every cross-resource reference is indexed by source, 
 
 ## Why deferred
 
-It is a lineage view nobody has asked for at current resource counts — a user's `/all` list fits on one screen, and the consumers of one resource are usually the ones its owner just built. The index cost that once came with it is paid, so what remains is UI on the Overview blade and a resource-scoped read procedure for it.
+It is a lineage view nobody has asked for at current resource counts — a user's `/all` list fits on one screen, and the consumers of one resource are usually the ones its owner just built. The one moment those consumers matter is a delete, and the [delete-time reference warning](/docs/resource/delete-reference-warning) already names them there through `readResourceConsumers`, the read the panel's "Referenced by" half would reuse. What remains is UI on the Overview blade and a read of the other direction, by source.
 
 ## Revisit when
 
-The [delete-time reference warning](/docs/resource/deferred/delete-reference-warning) gets built, since it reads the same rows and the panel is the natural place to list what it counts. Or resource counts grow past what an owner can hold in their head.
+Resource counts grow past what an owner can hold in their head, or an owner asks what a resource feeds outside of deleting it.

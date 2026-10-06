@@ -37,5 +37,6 @@ const { isOpen, item: deletingResources } = useSingletonDialog(deletingIds, () =
       to the recycle bin? You can restore
       {{ deletingResources.length === 1 ? "it" : "them" }} from there.
     </p>
+    <ResourceConsumersWarning :ids="deletingIds" />
   </UiConfirmDialog>
 </template>

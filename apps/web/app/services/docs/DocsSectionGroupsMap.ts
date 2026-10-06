@@ -125,6 +125,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "favorites-and-recents",
       "tags",
       "recycle-bin",
+      "delete-reference-warning",
       "activity-log",
       "resource-snapshots",
       "resource-version-store",

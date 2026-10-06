@@ -25,6 +25,8 @@ const isPublishable = computed(() => checkHasCapability(resource.type, "publisha
 const isRenameOpen = ref(false);
 const isShareOpen = ref(false);
 const isDeleteOpen = ref(false);
+// What the delete confirmation asks about, for the warning of what it leaves dangling
+const ids = computed(() => [resource.id]);
 // The panel opens from here rather than from the editor, because Sheet and TodoList are blade-only types with
 // No editor at all — the header is the one surface every type has. See /docs/resource/resource-snapshots
 const { openVersionHistory } = useVersionHistoryRoute();
@@ -134,6 +136,8 @@ const items = computed<Item[]>(() => [
       "
     >
       <p>Move {{ resource.name }} to the recycle bin? You can restore it from there.</p>
+      <!-- The confirmation stays mounted while closed, so the read waits for it to open -->
+      <ResourceConsumersWarning v-if="isDeleteOpen" :ids />
     </UiConfirmDialog>
   </div>
 </template>
