@@ -72,10 +72,12 @@ describe(solveNonNegativeSystem, () => {
         value - solution.reduce((sum, other, index) => sum + (gram[unknown]?.[index] ?? 0) * other, 0),
     );
 
+    const freeSlopes = slopes.filter((_slope, unknown) => (solution[unknown] ?? 0) > 0);
+    const heldSlopes = slopes.filter((_slope, unknown) => solution[unknown] === 0);
+
     expect(Math.min(...solution)).toBeGreaterThanOrEqual(0);
-    expect(solution.some((value) => value === 0)).toBe(true);
-    for (const [unknown, slope] of slopes.entries())
-      if ((solution[unknown] ?? 0) > 0) expect(slope).toBeCloseTo(0);
-      else expect(slope).toBeLessThan(1e-6);
+    expect(heldSlopes.length).toBeGreaterThan(0);
+    expect(Math.max(...freeSlopes.map((slope) => Math.abs(slope)))).toBeLessThan(1e-6);
+    expect(Math.max(...heldSlopes)).toBeLessThan(1e-6);
   });
 });
