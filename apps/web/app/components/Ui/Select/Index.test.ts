@@ -68,6 +68,30 @@ describe("uiSelect", () => {
       expect(component.get('[aria-selected="true"]').text()).toBe("Auto");
     });
 
+    // On touch the browser's light dismiss closes the list between the press and the click on its trigger
+    test("opens on a tap and closes on the next, even once light dismiss closed it before the click", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiSelect, { attachTo: document.body, props: { items, label, modelValue: "plan" } });
+      const activator = component.get('[role="combobox"]');
+      const tap = async (isLightDismissed: boolean) => {
+        await activator.trigger("pointerdown");
+        if (isLightDismissed)
+          component
+            .get('[role="listbox"]')
+            .element.dispatchEvent(Object.assign(new Event("toggle"), { newState: "closed", oldState: "open" }));
+        await activator.trigger("click");
+        await flushPromises();
+      };
+      await tap(false);
+
+      expect(activator.attributes("aria-expanded")).toBe("true");
+
+      await tap(true);
+
+      expect(activator.attributes("aria-expanded")).toBe("false");
+    });
+
     test.each([
       [[], label],
       [["plan"], "Plan"],

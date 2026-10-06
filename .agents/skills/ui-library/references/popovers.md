@@ -7,3 +7,5 @@ Read when a component opens a panel through `usePopover` — a popover, a menu, 
 A manual popover whose openness is derived takes a `computed` with a `noop` setter, since only its own show and hide ever write it (`Ui/CaretPopover.vue`, `Ui/Suggestions.vue`).
 
 The panel cannot refuse an open by leaving the model alone: `popovertarget` opens it before the ref is written.
+
+**A trigger is the panel's invoker, or it closes on a press that began open.** Light dismiss treats a press on anything but the invoker as outside, and on touch it closes the panel before the click lands, so a trigger toggling from its own click handler opens the panel again. `popovertarget` is the cure where the trigger owns the click (`Ui/Menu/Index.vue`, `Ui/Popover.vue`); Vuetify 0's `Select.Activator` toggles from its own handler, so `Ui/Select/Activator.vue` reads whether the press began open and closes on its click. Each is pinned by its component's test.

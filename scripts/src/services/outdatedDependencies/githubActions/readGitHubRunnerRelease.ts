@@ -11,7 +11,7 @@ export const readGitHubRunnerRelease = async ({ packageName, specifier }: Depend
   const files = await fetchJson<{ name: string }[]>(
     `https://api.github.com/repos/actions/runner-images/contents/images/${packageName}`,
   );
-  const readmeRegex = new RegExp(`^${packageName}(?<digits>\d+)-Readme\.md$`, "iu");
+  const readmeRegex = new RegExp(String.raw`^${packageName}(?<digits>\d+)-Readme\.md$`, "iu");
   const versions = files.flatMap(({ name }) => {
     const digits = readmeRegex.exec(name)?.groups?.digits;
     if (!digits) return [];
