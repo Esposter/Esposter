@@ -19,7 +19,7 @@ Two scripts must never become cache-gated by accident, and both are about the de
 
 ## What `vp` subsumes
 
-One script, and only half of it: `update:node`. It does two jobs. Its install half provisions the new runtime and the package manager through fnm, working around Corepack no longer shipping with Node; `vp env` manages Node and the package manager together and replaced Corepack with its own shims, so that half goes. Its writer half sets the two node pins and the matching type-definitions catalog entry together — which two, and why neither may be edited alone, is [monorepo tooling](/docs/architecture/monorepo-tooling) — and the only other writer of them is Renovate's `node` group. `vp env` knows nothing about the second pin or the catalog entry, so that half survives, writing the pins and delegating the install. Assuming `vp env` covers it is how one of the pins silently goes stale, and the failure surfaces as CI provisioning the wrong runtime.
+One script, and only half of it: `update:node`. Its install half went to `vp env`, which manages Node and the package manager together through shims that stand in for Corepack. Its writer half stays — the node pin and the matching type-definitions catalog entry, written together, whose only other writer is Renovate's `node` group ([monorepo tooling](/docs/architecture/monorepo-tooling)) — because `vp env` reads the pin and writes neither.
 
 Four more `vp` commands look like replacements and are not taken:
 
@@ -41,7 +41,7 @@ The root manifest carries lint four ways, test and typecheck two ways each, beca
 
 ## Windows-only scripts
 
-`crossOS` and the PowerShell wrapper exist because development happens on a Windows host. If the [virrun retirement](/docs/proposals/refactors/vite-plus/virrun-retirement) decision moves that loop onto Linux, both are dead and are deleted in the same change rather than left as a fallback — a fallback nobody exercises is the thing that breaks silently. `refresh:lockfile` calls through `crossOS` and inherits that decision; it is a real need either way, so it survives, and only its platform branch goes. The PowerShell twin of `update:node`'s install script goes with Phase 2 on its own, whichever way that decision falls.
+`crossOS` and the PowerShell wrapper exist because development happens on a Windows host. If the [virrun retirement](/docs/proposals/refactors/vite-plus/virrun-retirement) decision moves that loop onto Linux, both are dead and are deleted in the same change rather than left as a fallback — a fallback nobody exercises is the thing that breaks silently. `refresh:lockfile` calls through `crossOS` and inherits that decision; it is a real need either way, so it survives, and only its platform branch goes. `update:node`'s install scripts, the other `crossOS` entry, went with `vp env`.
 
 ## The documentation this changes
 

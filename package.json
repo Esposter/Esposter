@@ -118,11 +118,6 @@
       "darwin": "sh ./scripts/src/refreshLockfile/index.sh",
       "linux": "./scripts/src/refreshLockfile/index.sh",
       "win32": "pnpm pwsh scripts/src/refreshLockfile/index.ps1"
-    },
-    "update:node": {
-      "darwin": "sh ./scripts/src/updateNode/install.sh",
-      "linux": "./scripts/src/updateNode/install.sh",
-      "win32": "pnpm pwsh scripts/src/updateNode/install.ps1"
     }
   },
   "scriptsComments": {

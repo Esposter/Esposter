@@ -8,18 +8,16 @@ model: claude-opus-5-5
 
 Every phase here is independently shippable and independently revertible, and each one states the condition that ends it. That last part is the point of the page: a migration without exit conditions is a migration that is never finished, only abandoned quietly somewhere in the middle, and the half-migrated state is worse than either end — two ways to run every check, and no way to tell which one a contributor used.
 
-Phases 0 and 1 have shipped: the measurement cleared, and both CI builds run under `vp run` with the hand-kept key deleted — the mechanism, and what the measurement found, are in [monorepo tooling](/docs/architecture/monorepo-tooling) under `## CI job shape`. What is left is independent of the cache in CI. The runtime phase never touched the cache, and the local loop's caching waits on virrun.
+Phases 0, 1 and 2 have shipped: the measurement cleared, both CI builds run under `vp run` with the hand-kept key deleted, and `update:node` hands its install to `vp env` — the mechanism, and what the measurement found, are in [monorepo tooling](/docs/architecture/monorepo-tooling) under `## CI job shape`. What is left is the local loop, whose caching waits on virrun.
 
 ```mermaid
 flowchart TD
-  start["CI builds cached under vp run"] --> rt["Phase 2 — runtime and package manager"]
-  start --> local{"virrun retired?"}
+  start["CI builds cached under vp run, runtime under vp env"] --> local{"virrun retired?"}
   retire["Phase 3 — retire virrun"] --> local
   local -->|yes| loop["Phase 4 — task caching in the local loop"]
   local -->|no| ciOnly["CI caches; the local loop keeps virrun's own cache"]
   loop --> parked{"Any parked item's trigger fired?"}
   ciOnly --> parked
-  rt --> parked
   parked -->|no| done["Migration complete as scoped"]
   parked -->|yes| reopen["Reopen that item alone"]
 ```
@@ -35,16 +33,6 @@ The tracer is `fspy`, inside the `vite-task` crate set. Its open reports, and wh
 | [vite-task 548](https://github.com/voidzero-dev/vite-task/issues/548)   | on Windows, a task can complete and still be refused a cache entry — a refusal rather than a stale hit, so it costs speed, never correctness                                                                                                                         |
 | [vite-task 504](https://github.com/voidzero-dev/vite-task/issues/504)   | a negative `input` pattern is ignored for files discovered by listing a directory, so a hand-written exclusion cannot be trusted to subtract                                                                                                                         |
 | [vite-plus 1610](https://github.com/voidzero-dev/vite-plus/issues/1610) | `vp run --filter` reports a cycle where pnpm tolerates one between siblings linked by a dev or peer dependency; whether this workspace has such a pair is answered by running the filter                                                                             |
-
-## Phase 2 — runtime and package manager
-
-**Does:** hands local Node and pnpm provisioning to `vp env`, which since the 0.3 line manages both together and replaces Corepack with its own shims ([releases](https://github.com/voidzero-dev/vite-plus/releases)). That is exactly the job the install half of `update:node` does today through fnm, with workarounds for Corepack no longer shipping with Node.
-
-**Blocked by:** nothing in this migration. It is a change to every developer machine rather than to the repository's behaviour, which is the reason to take it deliberately rather than as a side effect.
-
-**Ends when:** the install scripts are gone and `update:node` keeps only its writer half — the two runtime pins and the matching catalog entry, which [commands](/docs/proposals/refactors/vite-plus/commands) explains `vp env` does not know about — and delegates the install.
-
-**Killed by:** nothing, and it may simply be judged not worth doing. CI gains nothing from it: the setup action already reads the package manager from `packageManager` and the runtime from the pin in one step.
 
 ## Phase 3 — retire virrun
 
@@ -82,15 +70,13 @@ The test triggers are stated as a conjunction deliberately. Any one alone is not
 
 ## Key files
 
-| File                                 | Role after the change                           |
-| ------------------------------------ | ----------------------------------------------- |
-| `scripts/src/updateNode/install.sh`  | the provisioning half Phase 2 hands to `vp env` |
-| `scripts/src/updateNode/install.ps1` | its Windows twin, retired with it               |
-| `virrun.config.ts`                   | Phase 3's retirement                            |
+| File               | Role after the change |
+| ------------------ | --------------------- |
+| `virrun.config.ts` | Phase 3's retirement  |
 
 ## Sources
 
 - [Vite+ — CI guide](https://viteplus.dev/guide/ci) and [cache guide](https://viteplus.dev/guide/cache) — the cached task runner CI runs under.
 - [vite-task 777](https://github.com/voidzero-dev/vite-task/issues/777), [700](https://github.com/voidzero-dev/vite-task/issues/700), [548](https://github.com/voidzero-dev/vite-task/issues/548) and [504](https://github.com/voidzero-dev/vite-task/issues/504) — the tracer's open gaps Phase 0 probes for.
 - [vite-plus 1610](https://github.com/voidzero-dev/vite-plus/issues/1610) — the filter's cycle handling against pnpm's.
-- [Vite+ releases](https://github.com/voidzero-dev/vite-plus/releases) — `vp env` taking over the package manager from Corepack.
+- [Vite+ releases](https://github.com/voidzero-dev/vite-plus/releases) — `vp env` taking over the package manager from Corepack, which `update:node` now delegates to.

@@ -1,6 +1,6 @@
 ---
 title: Vite+ migration
-description: Proposal — with CI's builds already cached under `vp run`, what remains — `vp env` as the runtime manager, the local loop's cache after virrun retires, and the built-in commands — while every tool stays on the catalog's version and Nuxt keeps owning the app build.
+description: Proposal — with CI's builds cached under `vp run` and `vp env` provisioning the runtime, what remains — the local loop's cache after virrun retires, and the built-in commands — while every tool stays on the catalog's version and Nuxt keeps owning the app build.
 model: claude-opus-5-5
 ---
 
@@ -27,13 +27,13 @@ Each rung of the [adoption ladder](/docs/proposals/refactors/vite-plus/nuxt-comp
 
 | Rung                                           | Verdict                                     | Why                                                                                                                                                                                                                                      |
 | :--------------------------------------------- | :------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Runtime and package manager (`vp env`)         | **Available now, optional**                 | independent of the cache; deletes the fnm and Corepack workarounds in the local install scripts, while CI already provisions both through one action and gains nothing                                                                   |
+| Runtime and package manager (`vp env`)         | **Shipped**                                 | `update:node` writes the pin and hands the install to `vp env`; the fnm and Corepack install scripts are deleted, and CI, already provisioned by one action, is unchanged                                                                |
 | Task caching in CI                             | **Shipped**                                 | both builds under `vp run`, the hand-kept key deleted ([monorepo tooling](/docs/architecture/monorepo-tooling))                                                                                                                          |
 | Task caching in the local loop                 | **Wait for virrun**                         | a cached task cannot spawn children under bubblewrap, and a Windows tracer cannot see into WSL, so local caching only exists for commands that run natively ([virrun retirement](/docs/proposals/refactors/vite-plus/virrun-retirement)) |
 | `vp lint`, `vp fmt`, `vp check`, `vp test`     | **Not yet**                                 | the overrides run the catalog's tools, so version ownership no longer blocks them; `vp check`'s type-check cannot read `.vue` files and `vp test` has two blockers of its own                                                            |
 | `vp dev`, `vp build`, `vp migrate` for the app | **Never, while Nuxt owns the module graph** | the app is not a Vite application                                                                                                                                                                                                        |
 
-So the short answer now: CI's builds are cached; take `vp env` if the local install scripts are worth deleting; the local loop's cache waits on virrun; everything else waits on its own trigger.
+So the short answer now: CI's builds are cached and `vp env` provisions the runtime; the local loop's cache waits on virrun; everything else waits on its own trigger.
 
 ## Where the entry point lands
 
@@ -68,9 +68,8 @@ The gate is the whole proposal. Before CI's builds moved under `vp run`, that di
 
 ## What this is expected to delete
 
-CI's two content-hash caches and their subtract-list are already gone. The rest, stated as an expectation rather than a count, because each phase's deletion is only earned once the phase before it has landed:
+CI's two content-hash caches, their subtract-list and `update:node`'s fnm and Corepack install scripts are already gone. The rest, stated as an expectation rather than a count, because each phase's deletion is only earned once the phase before it has landed:
 
-- The fnm and Corepack provisioning in `update:node`'s install scripts, if `vp env` is taken; the pin-writing half stays.
 - The `virrun --` prefix from every root script, and — once the speed trade is accepted — a published workspace package, its differential correctness harness, its bench artifacts and its docs area.
 
 ## What it does not buy
