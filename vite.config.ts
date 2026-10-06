@@ -24,6 +24,7 @@ const configuration: UserConfig = defineConfig({
         "apps/web/node_modules/.cache/**",
       ]),
       "cached:build:packages": createTask("build:packages", [
+        "packages/*/auto-imports.d.ts",
         "packages/*/dist/**",
         "packages/*/src/components/index.ts",
         "packages/*/src/index.ts",
