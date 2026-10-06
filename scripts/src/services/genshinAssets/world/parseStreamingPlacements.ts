@@ -13,15 +13,15 @@ const CHUNK_KNOWN_BITS = CHUNK_ID_BIT | CHUNK_RECORDS_BIT;
 // A record's fields, each present where its bit of the record's leading mask is set and written in the bits' order;
 // Bit 9 is a flag with no bytes. A mask with a bit past these ends its chunk, as no record of a placement carries one
 enum RecordBit {
-  Flags = 1 << 0,
-  PathHash = 1 << 1,
-  PrefabId = 1 << 2,
-  Radius = 1 << 3,
-  Position = 1 << 4,
-  Rotation = 1 << 5,
-  Scale = 1 << 6,
-  Instance = 1 << 7,
-  Parent = 1 << 8,
+  Flags = 1,
+  PathHash = 2,
+  PrefabId = 4,
+  Radius = 8,
+  Position = 16,
+  Rotation = 32,
+  Scale = 64,
+  Instance = 128,
+  Parent = 256,
 }
 const RECORD_MASK_LIMIT = 1 << 10;
 // A vector's components each present where their bit of its own leading byte is set, x first
@@ -38,7 +38,8 @@ export const parseStreamingPlacements = (blob: Buffer, offsets: readonly number[
   let end = 0;
   const readVarint = (): bigint => {
     let value = 0n;
-    for (let shift = 0n; cursor < end; shift += VARINT_BITS_PER_BYTE) {
+    for (let shift = 0n; ; shift += VARINT_BITS_PER_BYTE) {
+      if (cursor >= end) break;
       const byte = blob[cursor++] ?? 0;
       value |= BigInt(byte & VARINT_VALUE_BITS) << shift;
       if (!(byte & VARINT_CONTINUATION_BIT)) break;
@@ -66,16 +67,17 @@ export const parseStreamingPlacements = (blob: Buffer, offsets: readonly number[
     if (chunkMask & ~CHUNK_KNOWN_BITS || !(chunkMask & CHUNK_RECORDS_BIT)) continue;
     if (chunkMask & CHUNK_ID_BIT) readVarint();
     const count = Number(readVarint());
-    for (let record = 0; record < count && cursor < end; record++) {
+    for (let record = 0; record < count; record++) {
+      if (cursor >= end) break;
       const mask = Number(readVarint());
       if (mask >= RECORD_MASK_LIMIT) break;
       if (mask & RecordBit.Flags) readVarint();
       const pathHash = mask & RecordBit.PathHash ? String(readVarint()) : "";
       const prefabId = mask & RecordBit.PrefabId ? Number(readVarint()) : 0;
       const radius = mask & RecordBit.Radius ? readFloat() : 0;
-      const position = mask & RecordBit.Position ? readVector(0) : [0, 0, 0];
-      const rotation = mask & RecordBit.Rotation ? readVector(0) : [0, 0, 0];
-      const scale = mask & RecordBit.Scale ? readVector(1) : [1, 1, 1];
+      const position = mask & RecordBit.Position ? readVector(0) : ([0, 0, 0] satisfies [number, number, number]);
+      const rotation = mask & RecordBit.Rotation ? readVector(0) : ([0, 0, 0] satisfies [number, number, number]);
+      const scale = mask & RecordBit.Scale ? readVector(1) : ([1, 1, 1] satisfies [number, number, number]);
       if (Number.isNaN(radius) || !position || !rotation || !scale) break;
       if (mask & RecordBit.Instance) readVarint();
       if (mask & RecordBit.Parent) readVarint();

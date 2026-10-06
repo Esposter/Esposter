@@ -33,7 +33,7 @@ export const parseTerrainHeights = (bytes: Buffer): TerrainHeights | undefined =
     const heightScale = bytes.readFloatLE(tailOffset + HEIGHT_SCALE_OFFSET);
     const heights = Float32Array.from(
       { length: count },
-      (_, index) => (bytes.readInt16LE(heightsOffset + index * SAMPLE_BYTES) / MAX_SAMPLE) * heightScale,
+      (_value, index) => (bytes.readInt16LE(heightsOffset + index * SAMPLE_BYTES) / MAX_SAMPLE) * heightScale,
     );
     return { heights, resolution, spacing: bytes.readFloatLE(tailOffset + SPACING_OFFSET) };
   }
