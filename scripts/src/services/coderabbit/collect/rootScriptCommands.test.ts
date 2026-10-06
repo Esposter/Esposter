@@ -10,21 +10,16 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-// The collector runs the repository's own checks and its own regenerators, and it cannot run the root scripts as
-// They are — `virrun` snapshots the repository, and these run in a throwaway worktree — so each list spells out
-// What the script it stands in for does. That is a copy of the root manifest nothing else holds them to: a pass
-// Added to `lint` would silently stop being a gate on everything reaching `main`, and a regenerator added to
+// The collector runs the repository's own checks and its own regenerators, an aggregating root script by its
+// Passes so each reports on its own. That is a copy of the root manifest's aggregations nothing else holds them to:
+// A pass added to `lint` would silently stop being a gate on everything reaching `main`, and a regenerator added to
 // `lint:fix` would silently stop being tried before a session is spent on the red it answers.
 describe("rootScriptCommands", () => {
   const RUN_S_PREFIX = "run-s ";
-  const VIRRUN_PREFIX = "virrun -- ";
   const WHITESPACE_REGEX = /\s+/u;
   // A root script that aggregates named scripts with `run-s` is each of those expanded in order, its flags
-  // Dropped; one that wraps its passes in `virrun` is expanded to those passes; one that does neither is run by
-  // Name. `pnpm foo` addresses the root script `foo`, so the word itself is dropped and the rest is what
-  // `spawnPnpm` passes; anything else is a binary, which `pnpm` reaches through `exec`. No root script here quotes
-  // An argument, so a split on whitespace is the whole of the parsing — one that grows a quoted argument fails
-  // Here, which is the right place to find out.
+  // Dropped; any other is run by name. No aggregation here quotes an argument, so a split on whitespace is the
+  // Whole of the parsing — one that grows a quoted argument fails here, which is the right place to find out.
   const getExpandedCommands = (scripts: Record<string, string>, name: string): string[][] => {
     const script = scripts[name] ?? "";
     if (script.startsWith(RUN_S_PREFIX))
@@ -33,14 +28,6 @@ describe("rootScriptCommands", () => {
         .split(WHITESPACE_REGEX)
         .filter((word) => !word.startsWith("--"))
         .flatMap((child) => getExpandedCommands(scripts, child));
-    else if (script.includes(VIRRUN_PREFIX))
-      return script.split("&&").map((segment) => {
-        const words = segment.trim().slice(VIRRUN_PREFIX.length).trim().split(WHITESPACE_REGEX);
-        if (words[0] === "pnpm") return words.slice(1);
-
-        words.unshift("exec");
-        return words;
-      });
     else return [[name]];
   };
   const getExpandedSteps = (steps: (string | string[])[]): string[][] => {
@@ -52,7 +39,7 @@ describe("rootScriptCommands", () => {
 
   // The checks a repair owes, in the order they run: a root script named as the one it stands in for,
   // Or the one command no root script holds — the two app bundles the suite asserts against.
-  test("the repair runs what the root scripts run, minus the virrun wrapper", () => {
+  test("the repair runs what the root scripts run", () => {
     expect.hasAssertions();
 
     const expected = getExpandedSteps([

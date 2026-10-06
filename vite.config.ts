@@ -37,6 +37,8 @@ const configuration: UserConfig = defineConfig({
       "build:packages": createTask('pnpm -r --filter "./packages/*" --bail build', [
         "packages/*/auto-imports.d.ts",
         "packages/*/dist/**",
+        // The atomic write the manifest rewrite goes through, which Windows reads back before the rename
+        "packages/*/_tmp_*",
         "packages/*/src/components/index.ts",
         "packages/*/src/index.ts",
         "packages/db-schema/src/generated/**",

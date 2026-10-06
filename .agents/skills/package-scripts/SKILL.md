@@ -39,7 +39,6 @@ Once, after all the edits going out together: the tests of what the change touch
 - **Never `pnpm <script> -- <args>`** — pnpm forwards the literal `--` and the flags are dropped; pass them as direct args (`pnpm test -u`).
 - **A caller runs the script, not the binary under it** — `pnpm exec <binary>` in a workflow is a second definition that drifts; where no script has the shape, add one (`bench:ci`).
 - **A script is invoked bare — `pnpm <script>`, never `pnpm run <script>`** — including under `-C` and `--filter`. `run` is load-bearing only for a name that shadows a pnpm command; `scripts/src/workspace/packageScripts.test.ts` fails on any other inside a manifest, so a workflow or a doc is where the collision is still spotted by eye.
-- **A suite that shells out to `git` cannot run under root `pnpm test` on Windows** — virrun reaches the checkout through WSL, where git refuses to discover the repository, so every `scripts/src/workspace` suite fails on a clean tree; run it as `pnpm -C scripts test <path> --run`.
 - How each fails, and the name that shadows a pnpm command: `references/pnpm-traps.md`.
 
 ## Reference pages

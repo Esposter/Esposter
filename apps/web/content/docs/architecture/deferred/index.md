@@ -12,3 +12,6 @@ Repo-wide mechanisms we deliberately have not adopted. One page per idea with th
 - [Bundle budgets](/docs/architecture/deferred/bundle-budgets) — an enforced payload ceiling in CI instead of a manual analyze run.
 - [Upload content validation](/docs/architecture/deferred/upload-content-validation) — inspecting an uploaded file's bytes instead of trusting the content type its write SAS was signed with.
 - [Commit off the event loop](/docs/architecture/deferred/commit-off-event-loop) — a large save's parse and validation in a worker thread or a Function instead of on the web server's event loop.
+- [Vite+ test runner](/docs/architecture/deferred/vite-plus-test-runner) — the suite through `vp test` instead of the catalog's Vitest.
+- [Vite+ app commands](/docs/architecture/deferred/vite-plus-app-commands) — `vp dev`, `vp build` and `vp migrate` for an app Nuxt builds.
+- [Vite+ remote cache](/docs/architecture/deferred/vite-plus-remote-cache) — the task cache shared through an endpoint instead of `actions/cache`.

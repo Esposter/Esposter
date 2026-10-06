@@ -24,8 +24,6 @@ A program too large for one area's roadmap indexes its own proposals:
 
 - [Genshin](/docs/proposals/genshin) — Genshin Impact's world rebuilt as the agent console's world, a walkable fan recreation with the engine first and each region after it.
 
-Repo-wide refactor plans have no area roadmap and live here directly:
-
-- [the Vite+ migration](/docs/proposals/refactors/vite-plus) — take `vp run --cache` and `vp env` while every tool stays on the catalog's version, retire the hand-rolled caches and virrun, and leave Nuxt owning the app build; at 1.0 only the Phase 0 measurement is worth running now.
+Repo-wide refactor plans have no area roadmap and live here directly, under `proposals/refactors/`; none is open.
 
 Sweeps are not proposals. A proposal designs behaviour that does not exist yet; a sweep carries a settled convention across code that already works and changes nothing about what it does. They are tracked as repo state in `.agents/ledgers/`, one ledger file per sweep — or one coverage folder, once a sweep outgrows a single file.
