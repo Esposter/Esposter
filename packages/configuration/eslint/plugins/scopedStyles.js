@@ -17,7 +17,7 @@ const globalAttributeNames = new Set(htmlElementAttributes["*"]);
 /** @param {string} elementName @param {string} attributeName */
 const checkIsKnownAttribute = (elementName, attributeName) =>
   globalAttributeNames.has(attributeName) ||
-  Boolean(htmlElementAttributes[elementName]?.includes(attributeName)) ||
+  htmlElementAttributes[elementName]?.includes(attributeName) ||
   vueReservedAttributeNames.has(attributeName) ||
   attributeName === "role" ||
   attributeName.startsWith("aria-") ||
