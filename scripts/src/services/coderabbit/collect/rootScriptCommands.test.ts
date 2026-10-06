@@ -8,20 +8,26 @@ import { PACKAGE_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/con
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { describe, expect, test } from "vitest";
 
-// The collector runs the repository's own checks and its own regenerators, an aggregating root script by its
-// Passes so each reports on its own. That is a copy of the root manifest's aggregations nothing else holds them to:
+// The collector runs the repository's own checks and its own regenerators, an aggregating root script or task by its
+// Passes so each reports on its own. That is a copy of the root aggregations nothing else holds them to:
 // A pass added to `lint` would silently stop being a gate on everything reaching `main`, and a regenerator added to
 // `lint:fix` would silently stop being tried before a session is spent on the red it answers.
-describe("rootScriptCommands", () => {
+describe("rootScriptCommands", async () => {
+  // `lint` and `typecheck` are tasks of the root vite.config.ts, cached by `vp run`, so a name resolves to a script
+  // Or to a task's command
+  const { default: viteConfiguration } = (await import(
+    pathToFileURL(join(REPOSITORY_ROOT, "vite.config.ts")).href
+  )) as { default: { run: { tasks: Record<string, { command: string }> } } };
   const RUN_S_PREFIX = "run-s ";
   const WHITESPACE_REGEX = /\s+/u;
-  // A root script that aggregates named scripts with `run-s` is each of those expanded in order, its flags
+  // A root script or task that aggregates named scripts with `run-s` is each of those expanded in order, its flags
   // Dropped; any other is run by name. No aggregation here quotes an argument, so a split on whitespace is the
   // Whole of the parsing — one that grows a quoted argument fails here, which is the right place to find out.
   const getExpandedCommands = (scripts: Record<string, string>, name: string): string[][] => {
-    const script = scripts[name] ?? "";
+    const script = scripts[name] ?? viteConfiguration.run.tasks[name]?.command ?? "";
     if (script.startsWith(RUN_S_PREFIX))
       return script
         .slice(RUN_S_PREFIX.length)

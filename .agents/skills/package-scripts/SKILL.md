@@ -15,7 +15,7 @@ description: Apply when running or recommending any pnpm script. Esposter's pnpm
 
 ## `apps/web`
 
-**`nuxt typecheck` is the only typecheck, and root `pnpm lint` the only lint** — the binaries under them check strictly less than CI; a root check aggregates named leaves with `run-s --continue-on-error`, never `&&`; and `oxfmt` formats markdown tables too (`references/app-scripts.md`).
+**`nuxt typecheck` is the only typecheck, and root `vp run lint` the only lint** — the binaries under them check strictly less than CI; a root check aggregates named leaves with `run-s --continue-on-error`, never `&&`; and `oxfmt` formats markdown tables too (`references/app-scripts.md`).
 
 ## Root Scripts — `references/root-scripts.md`
 

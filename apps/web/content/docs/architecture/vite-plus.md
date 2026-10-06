@@ -5,19 +5,19 @@ description: What `vp` owns here — a traced task cache for the builds and the 
 
 # Vite+
 
-[Vite+](https://viteplus.dev) is the Vite team's toolchain behind one `vp` entry point: a cached task runner, a runtime and package-manager manager, and built-in commands over Vite, Vitest, Oxlint, Oxfmt, Rolldown and tsdown. This repository takes the two jobs nothing else here did well — **a task cache keyed on what a build read, and the runtime install** — and nothing else. Every tool keeps running from the binary the catalog installs, invoked by the scripts that already name it.
+[Vite+](https://viteplus.dev) is the Vite team's toolchain behind one `vp` entry point: a cached task runner, a runtime and package-manager manager, and built-in commands over Vite, Vitest, Oxlint, Oxfmt, Rolldown and tsdown. This repository takes the jobs nothing else here did well — **a task cache keyed on what a command read, the runtime install, and one config every lint and format reader shares** — and leaves the test runner and the app's own commands where they are. Every tool keeps running from the binary the catalog installs.
 
 ## The task cache
 
-The builds run as tasks of the root `vite.config.ts` — `build:packages` and `build:app` — under `vp run`, which traces every file a task and its child processes open, probe or list, and replays the recorded run only when each still matches. How CI carries the cache, why a hit needs the install, and why the app build replays on the packages' built bytes are in [monorepo tooling](/docs/architecture/monorepo-tooling) under `## CI job shape`. Tasks are cached by default, so no `--cache` flag is written; it exists to cache a plain script. The same tasks cache locally, natively on a Windows host: an unchanged `vp run build:packages` replays in seconds where it builds in a minute.
+The builds and the two whole-repository checks run as tasks of the root `vite.config.ts` — `build:packages`, `build:app`, `lint` and `typecheck` — under `vp run`, which traces every file a task and its child processes open, probe or list, and replays the recorded run only when each still matches. How CI carries the cache, why a hit needs the install, and why the app build replays on the packages' built bytes are in [monorepo tooling](/docs/architecture/monorepo-tooling) under `## CI job shape`. Tasks are cached by default, so no `--cache` flag is written; it exists to cache a plain script. The same tasks cache locally, natively on a Windows host: an unchanged `vp run build:packages` replays in seconds where it builds in a minute.
 
-**A cached build is a task, never a script.** A script carries no cache settings, and a task may not share a script's name, so a script that needs caching moves into a task under its own name and the script is deleted — `build:packages` is `vp run build:packages`. `build:app` is the one task with no script behind it: it wraps the app's own `build`, which stays the deploy entrypoint by name.
+**A cached command is a task, never a script.** A script carries no cache settings, and a task may not share a script's name, so a script that needs caching moves into a task under its own name and the script is deleted — `build:packages`, `lint` and `typecheck` are `vp run <name>`, and the leaves `lint` and `typecheck` aggregate stay scripts. `build:app` is the one task with no script behind it: it wraps the app's own `build`, which stays the deploy entrypoint by name. A task that writes nothing anyone reads keeps no outputs, so its replay restores nothing and is the verdict alone.
 
 **A task's settings are the files its command rewrites.** A build that rewrites a file it also read makes `vp` refuse to cache it, naming the file. Each task's `cache.input` keeps automatic tracking and subtracts exactly those files; they stay outputs, so a replay restores them. pnpm's own install and run state is subtracted from every task, since no build's result depends on it and the dependencies themselves are traced file by file. The list fails safe — a newly rewritten file is a refusal, never a stale replay — and `vp` names only the first, so a newly refused build is listed whole by building once and taking the tracked files newer than its start. A test pinning the list would restate the config, so none exists.
 
 **A directory listing is fingerprinted by every name in it**, and an input exclusion does not reach it ([vite-task 504](https://github.com/voidzero-dev/vite-task/issues/504)). A generated file that a fresh checkout lacks would therefore make every run miss; the package build's `dist` and generated barrels travel with the cache for that reason (`run-cached-task`'s `paths`).
 
-Before the cache gated anything, every probe was run against this tree: a source edit, a content edit, a `.vue` edit, a file created where a build had looked for one, and the in-process native compiler `typecheck` runs, whose reads are the class [vite-task 777](https://github.com/voidzero-dev/vite-task/issues/777) misses on Linux. Each missed, or replayed only when nothing it read had changed — and a new tool of that class is probed before a task caches it.
+Before the cache gated anything, every probe was run against this tree: a source edit, a content edit, a `.vue` edit, and a file created where a build had looked for one. Each missed, or replayed only when nothing it read had changed. The native tools were probed on Linux as well, because the tracer there interposes on libc for a dynamically linked process and a read that skips libc goes unseen ([vite-task 777](https://github.com/voidzero-dev/vite-task/issues/777)). The Go compiler `typecheck` loads in-process and tsgolint, the statically linked binary behind type-aware lint, both missed on an edit to a file only they read. A new native tool is probed the same way before a task caches it.
 
 ## One copy of every tool
 
@@ -43,13 +43,13 @@ The root scripts run their tools natively. virrun stays installed with its `virr
 
 ## Key files
 
-| File                                          | Role                                                                              |
-| :-------------------------------------------- | :-------------------------------------------------------------------------------- |
-| `vite.config.ts`                              | the `run` block — each cached build a task, with the files it rewrites subtracted |
-| `pnpm-workspace.yaml`                         | the `vite-plus` catalog entry and the overrides that leave one copy of each tool  |
-| `.github/actions/run-cached-task/action.yaml` | restores the task cache, runs the task, saves the cache when it executed          |
-| `scripts/src/updateNode/index.ts`             | writes the node pin and hands the install to `vp env`                             |
-| `virrun.config.ts`                            | the opt-in sandbox's backend per platform                                         |
+| File                                          | Role                                                                                        |
+| :-------------------------------------------- | :------------------------------------------------------------------------------------------ |
+| `vite.config.ts`                              | the `run` block — each cached build and check a task, with the files it rewrites subtracted |
+| `pnpm-workspace.yaml`                         | the `vite-plus` catalog entry and the overrides that leave one copy of each tool            |
+| `.github/actions/run-cached-task/action.yaml` | restores the task cache, runs the task, saves the cache when it executed                    |
+| `scripts/src/updateNode/index.ts`             | writes the node pin and hands the install to `vp env`                                       |
+| `virrun.config.ts`                            | the opt-in sandbox's backend per platform                                                   |
 
 ## Sources
 

@@ -14,7 +14,7 @@ Read when running a script from `apps/web`, or reaching past `nuxt typecheck` or
 | `pnpm bench`        | Run this package's benchmarks                                      |
 | `pnpm build`        | Build for production                                               |
 
-**`nuxt typecheck` is the only typecheck, and `pnpm lint` from the repo root is the only lint.** Reaching past
+**`nuxt typecheck` is the only typecheck, and `vp run lint` from the repo root is the only lint.** Reaching past
 either for the underlying binary — `vue-tsc -p tsconfig.json` in `apps/web`, `oxlint` over a path — checks
 strictly less than CI does and reports success while CI fails: the app's real project is the generated
 `.nuxt` tsconfig rather than the one in the package, and a package's `lint` is ESLint alone. Which rules only
