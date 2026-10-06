@@ -163,7 +163,7 @@ fi
 # Nowhere and every client lands on the TCP one — the day Railway routes UDP that becomes the fast path with
 # Nothing here to change. Pinning the range to `0..0` says the opposite and does neither: `RTCConfig.Validate`
 # Reads a zero `port_range_start` outside development mode as unset and fills the default back in
-cat > /etc/livekit.yaml <<EOF
+cat > /tmp/livekit.yaml <<EOF
 port: ${PORT}
 bind_addresses:
   - "0.0.0.0"
@@ -197,7 +197,7 @@ if [ "$REDIS_USE_TLS" = true ]; then
     enabled: true"
 fi
 
-cat >> /etc/livekit.yaml <<EOF
+cat >> /tmp/livekit.yaml <<EOF
 
 redis:
   address: '$(yaml_escape "${REDIS_HOST_PORT}")'
@@ -207,7 +207,7 @@ keys:
   '$(yaml_escape "${LIVEKIT_API_KEY}")': '$(yaml_escape "${LIVEKIT_API_SECRET}")'
 EOF
 
-cat >> /etc/livekit.yaml <<EOF
+cat >> /tmp/livekit.yaml <<EOF
 
 webhook:
   api_key: '$(yaml_escape "${LIVEKIT_API_KEY}")'
@@ -224,4 +224,4 @@ echo "  node IP: ${RESOLVED_PROXY_IP}"
 echo "  app webhook: ${LIVEKIT_APP_WEBHOOK_URL}"
 echo "  monitor webhook: ${LIVEKIT_MONITOR_WEBHOOK_URL}"
 
-exec livekit-server --config /etc/livekit.yaml --node-ip "${RESOLVED_PROXY_IP}"
+exec livekit-server --config /tmp/livekit.yaml --node-ip "${RESOLVED_PROXY_IP}"

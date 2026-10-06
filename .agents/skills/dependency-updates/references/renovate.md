@@ -24,7 +24,7 @@ Rules are read in order and a later key overrides an earlier one, which is why a
 - **node** — `groupName: "node"` over `node` and `@types/node` with `ignoreUnstable: false`, so `.node-version` and the types move in one branch along the Current line. The machine's side of a node bump (`fnm`, corepack) is `references/updating-node.md`.
 - **pnpm** — `automerge: false`, so a pnpm minor opens a PR that waits for the release-note read `references/pnpm-bumps.md` describes.
 - **`Esposter/Esposter`** `enabled: false` — the collector's reusable workflow at a branch ref.
-- **Docker digests** — `pinDigests: true` on `matchDatasources: ["docker"]`, and a second docker-only rule automerging `digest`/`pinDigest`. An action's digest update (a tag re-pointed under the same version) matches neither automerge rule and opens a PR, which is the point of the SHA pin.
+- **Docker digests** — the `docker:pinDigests` preset beside `helpers:pinGitHubActionDigests`, so a new `FROM` is pinned the way a new action is, and one docker-only rule automerging `digest`/`pinDigest`. Every tag carries a version — a codename or `latest` names none, and a base that ships its tool from a distro's package manager hides that tool's version too (`livekit-server/README.md`), so the image is chosen to put the version in the tag. An action's digest update (a tag re-pointed under the same version) matches neither automerge rule and opens a PR, which is the point of the SHA pin.
 
 Each rule's `description` is the reason, and the one copy of it: the report prints it, and this page and `SKILL.md` name the keys and point here.
 
