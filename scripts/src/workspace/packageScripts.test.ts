@@ -42,22 +42,28 @@ describe("packageScripts", () => {
   // A `pnpm` call reaching `run` through any flags (`-C dir`, `--filter pkg`, `-r`), and the script it names
   const PNPM_RUN_REGEX =
     /\bpnpm(?:\s+(?:-C|--dir|--filter|-F)\s+[^\s-]\S*|\s+-[-\w=]+)*\s+run\s+(?<script>[^\s&;|]+)/gu;
+  const RECURSIVE_FLAG_REGEX = /\s(?:-r|--recursive)\s/u;
   // Every manifest's scripts, the root's included, each named by its manifest so a failure says where it is
   const scripts = ["", ...readWorkspacePackageDirectories(REPOSITORY_ROOT)].flatMap((packagePath) => {
     const manifestPath = join(packagePath, PACKAGE_JSON_FILENAME).replaceAll("\\", "/");
     const { scripts: manifestScripts = {} } = readJsonFile(join(REPOSITORY_ROOT, manifestPath)) as {
       scripts?: Record<string, string>;
     };
-    return Object.entries(manifestScripts).map(([name, body]) => ({ body, manifestPath, name }));
+    const scriptNames = new Set(Object.keys(manifestScripts));
+    return Object.entries(manifestScripts).map(([name, body]) => ({ body, manifestPath, name, scriptNames }));
   });
 
+  // A recursive call naming a script its own manifest lacks keeps `run` too: knip reads the bare form as an unlisted binary
   test("invoke a script bare, never through `run`", () => {
     expect.hasAssertions();
 
-    const runInvocations = scripts.flatMap(({ body, manifestPath, name }) =>
-      Array.from(body.matchAll(PNPM_RUN_REGEX), (match) => match.groups?.script ?? "")
-        .filter((script) => !PNPM_COMMANDS.has(script))
-        .map((script) => `${manifestPath} ${name}: pnpm run ${script}`),
+    const runInvocations = scripts.flatMap(({ body, manifestPath, name, scriptNames }) =>
+      [...body.matchAll(PNPM_RUN_REGEX)]
+        .filter(
+          ([invocation, script = ""]) =>
+            !PNPM_COMMANDS.has(script) && (!RECURSIVE_FLAG_REGEX.test(invocation) || scriptNames.has(script)),
+        )
+        .map(([, script = ""]) => `${manifestPath} ${name}: pnpm run ${script}`),
     );
 
     expect(runInvocations).toStrictEqual([]);
