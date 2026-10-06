@@ -8,6 +8,8 @@ import { dirname, join } from "node:path";
 import { defineNuxtModule, useLogger } from "nuxt/kit";
 
 const CONFIGURATION_PACKAGE_NAME = "configuration";
+// The exit code Windows gives a process the console's Ctrl+C ended, which Node reports with no `SIGINT` signal
+const STATUS_CONTROL_C_EXIT = 0xc000013a;
 const WATCHER_RESPAWN_DELAY = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
 const WORKSPACE_PROTOCOL = "workspace:";
 const SOURCE_PATTERNS = ["src/**/*.ts", "src/**/*.vue"];
@@ -27,7 +29,9 @@ const readSourceFileList = (packageDirectory: string): string =>
 // The app runs every workspace package from its `dist`, so under `nuxt dev` tsdown watches the source of each package
 // The running app loads — the closure of its dependencies — and a package edit reaches the page as a reload. Each
 // Watcher is a plain `node` child of this process rather than a `pnpm exec`, so Ctrl+C stops them all with Nuxt
-// Instead of every Windows `.cmd` shim asking to terminate its batch job. The configuration package is built once
+// Instead of every Windows `.cmd` shim asking to terminate its batch job. A watcher's stdin is closed: tsdown's watch
+// Mode always reads it for its own shortcuts, and a dozen readers sharing the console with Nuxt eat the keystrokes
+// And the batch job prompt meant for the shell. The configuration package is built once
 // First and never watched: every package's `tsdown.config.ts` imports its `dist`, which its own watcher would clean
 // From under them
 export default defineNuxtModule({
@@ -65,14 +69,16 @@ export default defineNuxtModule({
       if (packageDirectory) rmSync(join(packageDirectory, "dist"), { force: true, recursive: true });
     }
     // A watcher exits when its config fails to reload, which a rebuild of the configuration `dist` it imports causes by
-    // Cleaning it mid-reload, so an exit respawns it after a pause rather than leaving its package silently stale
+    // Cleaning it mid-reload, so an exit respawns it after a pause rather than leaving its package silently stale. A
+    // Ctrl+C reaches every watcher before Nuxt's close hook runs, so a watcher it ended stays ended rather than being
+    // Respawned into a shutting-down process and orphaned on the console
     const spawnWatcher = (packageName: string) => {
       const watcher = spawn(process.execPath, [tsdownPath, "--watch", "--no-clean"], {
         cwd: packageDirectoryMap.get(packageName),
-        stdio: "inherit",
+        stdio: ["ignore", "inherit", "inherit"],
       });
-      watcher.on("exit", (code) => {
-        if (isClosing) return;
+      watcher.on("exit", (code, signal) => {
+        if (isClosing || signal === "SIGINT" || code === STATUS_CONTROL_C_EXIT) return;
         if (restartingPackageNames.delete(packageName))
           logger.info(`A source file of ${packageName} was added or removed, restarting its tsdown watcher`);
         else logger.warn(`tsdown watcher for ${packageName} exited with code ${code}, respawning`);
