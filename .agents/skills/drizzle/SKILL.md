@@ -1,6 +1,6 @@
 ---
 name: drizzle
-description: Apply when writing or modifying DB schema files in packages/db-schema or tRPC routers. Esposter's Drizzle ORM conventions — how a table, a relation and a query are written and how a migration is produced; the v2 relations API (defineRelationsPart, object-based where and orderBy) never v1, every table in its product area's Postgres schema and exported as <table>In<Schema>, registries generated rather than kept, requireMutation on .returning(), empty sentinels over null, and db:gen as the only migration generator.
+description: Apply when writing or modifying DB schema files in packages/db-schema or tRPC routers. Esposter's Drizzle ORM conventions — how a table, a relation and a query are written and how a migration is produced; the v2 relations API (defineRelationsPart, object-based where and orderBy) never v1, every table in its product area's Postgres schema and exported as <table>In<Schema>, registries generated rather than kept, requireMutation on .returning(), and db:gen as the only migration generator.
 ---
 
 # Drizzle ORM Conventions
@@ -21,7 +21,6 @@ description: Apply when writing or modifying DB schema files in packages/db-sche
 - `references/schema-registration.md` — when adding a table, an enum, a schema or a relation part, or a migration fails on a missing type or schema.
 - `references/queries.md` — when writing a query: the select shape, relational or SQL-style, a self-join, a batch insert.
 - `references/returning.md` — when a write returns its rows: `requireMutation`, the full entity, `[0]` against `takeOne`, and a lost claim.
-- `references/sentinel-columns.md` — when adding an optional column or inserting a possibly-absent value.
 - `references/primary-keys.md` — when choosing a new table's primary key.
 
 ## Column Names
@@ -69,11 +68,11 @@ One `INSERT` over an array, never a loop of them (`references/queries.md`).
 
 ## Empty-Sentinel Columns — the DB Schema Is the Source of Truth
 
-An optional text column is `.notNull().default("")` and a numeric one `.default(0)` where `0` means nothing; `null` stays only for a timestamp or a semantically distinct absence (`references/sentinel-columns.md`).
+An optional text column is `.notNull().default("")` and a numeric one `.default(0)` where `0` means nothing; `null` stays only for a timestamp or a semantically distinct absence (the `absent-values` skill, `references/sentinel-columns.md`).
 
 ## Optional Insert Values
 
-Never `?? null` on an insert unless `null` means something the schema distinguishes (`references/sentinel-columns.md`).
+Never `?? null` on an insert unless `null` means something the schema distinguishes (the `absent-values` skill, `references/sentinel-columns.md`).
 
 ## Time Duration Columns
 
