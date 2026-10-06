@@ -14,21 +14,29 @@ export const readProgramStatusRows = async (
   db: Context["db"],
   { id: programId, userId }: Pick<ResourceInResource, "id" | "userId">,
 ): Promise<{ isRespondedPartial: boolean; rows: ProgramStatusParticipantRow[] }> => {
-  const participants = await readProgramParticipantEntities(programId);
   // A deleted or unbound survey leaves the participants readable with nothing responded — the same
-  // Fail-soft posture as every dangling reference
-  const content = await readResourceContent(programResourceSchema, programId);
+  // Fail-soft posture as every dangling reference. Neither read needs the other, so they overlap
+  const [participants, content] = await Promise.all([
+    readProgramParticipantEntities(programId),
+    readResourceContent(programResourceSchema, programId),
+  ]);
   const respondedTokens = new Set<string>();
   // The response read is capped, and a token past that cap is indistinguishable from one that never responded —
   // So a truncated read under-reports `isResponded` rather than failing. The caller is told, because "3 of 900
   // Responded" is a claim the surface cannot make honestly without knowing whether it saw every response
   let isRespondedPartial = false;
-  // Only a survey the program's owner also owns. The content can name any survey id, and another owner's responses
-  // Are theirs to read — nor could one ever match, since only the survey owner's programs issue its tokens
+  // Only a live survey the program's owner also owns. The content can name any survey id, and another owner's
+  // Responses are theirs to read — nor could one ever match, since only the survey owner's programs issue its tokens.
+  // A binned survey is gone to every binding, as it is to the respondent its links open on
   const survey = content?.surveyId
     ? await db.query.resourcesInResource.findFirst({
         columns: { id: true },
-        where: { id: { eq: content.surveyId }, type: { eq: ResourceType.Survey }, userId: { eq: userId } },
+        where: {
+          deletedAt: { isNull: true },
+          id: { eq: content.surveyId },
+          type: { eq: ResourceType.Survey },
+          userId: { eq: userId },
+        },
       })
     : undefined;
   if (survey) {

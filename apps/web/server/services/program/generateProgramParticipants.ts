@@ -8,12 +8,13 @@ import { readDataset } from "#server/services/dataset/readDataset";
 import { getDanglingProgramBindingError } from "#server/services/program/getDanglingProgramBindingError";
 import { getProgramParticipantId } from "#server/services/program/getProgramParticipantId";
 import { readProgramParticipantEntities } from "#server/services/program/readProgramParticipantEntities";
+import { readOwnedResource } from "#server/services/resource/readOwnedResource";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { AZURE_MAX_BATCH_SIZE } from "@esposter/azure";
 import { checkIsConflict, createEntity, getEntity, serializeEntity } from "@esposter/db";
-import { AzureTable, ProgramParticipantEntity } from "@esposter/db-schema";
+import { AzureTable, ProgramParticipantEntity, ResourceType } from "@esposter/db-schema";
 import { chunk, getResultAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
@@ -36,20 +37,24 @@ export const generateProgramParticipants = async (
   programId: ResourceInResource["id"],
 ): Promise<GeneratedProgramParticipants> => {
   const content = await readResourceContent(programResourceSchema, programId);
-  if (!content?.audience || !content.keyColumn) throw getDanglingProgramBindingError();
+  if (!content?.audience || !content.keyColumn || !content.surveyId) throw getDanglingProgramBindingError();
   // An audience whose source is gone reads as NOT_FOUND — surfaced as the program's own dangling-binding error,
   // Whose fix is the same rebind. Every other failure is a real fault and propagates, so a transient storage or
-  // Parse error is never mistaken for a permanently broken binding
-  const audience = content.audience;
-  const audienceDataset = await getResultAsync(() => readDataset(ctx, audience)).match(
-    (dataset) => dataset,
-    (error) => {
-      if (error instanceof TRPCError && error.code === "NOT_FOUND") throw getDanglingProgramBindingError();
-      throw error;
-    },
-  );
+  // Parse error is never mistaken for a permanently broken binding. Every link issued opens the survey, so one
+  // That is gone would hand the owner links to nowhere; the two reads are independent, so they overlap
+  const { audience, keyColumn, surveyId } = content;
+  const [audienceDataset, survey] = await Promise.all([
+    getResultAsync(() => readDataset(ctx, audience)).match(
+      (dataset) => dataset,
+      (error) => {
+        if (error instanceof TRPCError && error.code === "NOT_FOUND") throw getDanglingProgramBindingError();
+        throw error;
+      },
+    ),
+    readOwnedResource(ctx, surveyId, ResourceType.Survey),
+  ]);
   const { columns, rows } = audienceDataset;
-  if (!columns.some(({ name }) => name === content.keyColumn)) throw getDanglingProgramBindingError();
+  if (!survey || !columns.some(({ name }) => name === keyColumn)) throw getDanglingProgramBindingError();
   // The capped page is a warm cache, never the source of truth — a participant past the cap is simply one
   // This read did not see, and the insert below still refuses to issue them a second token
   const existingParticipants = await readProgramParticipantEntities(programId);
@@ -61,7 +66,7 @@ export const generateProgramParticipants = async (
   const newParticipants: ProgramParticipantEntity[] = [];
   const newKeyValues = new Set<string>();
   for (const row of rows) {
-    const keyValue = row[content.keyColumn];
+    const keyValue = row[keyColumn];
     if (typeof keyValue !== "string" || !keyValue || keyValueParticipantMap.has(keyValue) || newKeyValues.has(keyValue))
       continue;
 

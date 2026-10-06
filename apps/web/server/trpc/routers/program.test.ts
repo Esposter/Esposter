@@ -7,6 +7,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { ProgramStatusDatasetColumnName } from "#server/models/dataset/programStatus/ProgramStatusDatasetColumnName";
 import { DANGLING_PROGRAM_BINDING_REASON } from "#server/services/program/constants";
+import { getProgramParticipantId } from "#server/services/program/getProgramParticipantId";
 import { createCallerFactory } from "#server/trpc";
 import { mockSessionOnce } from "#server/trpc/context.test";
 import { AUDIENCE_KEY_COLUMN, createAudienceSheet } from "#server/trpc/routers/createAudienceSheet.test";
@@ -211,6 +212,18 @@ describe("programRouter", () => {
     );
   });
 
+  // Every link issued opens the survey, so a survey that is gone would hand the owner links to nowhere
+  test("fails generate with dangling survey binding", async () => {
+    expect.hasAssertions();
+
+    const { program, survey } = await setupIdentifiedProgram();
+    await surveyCaller.deleteResource({ id: survey.id });
+
+    await expect(caller.generateProgramParticipants({ id: program.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${danglingProgramBindingErrorMessage}]`,
+    );
+  });
+
   test("fails generate with wrong user", async () => {
     expect.hasAssertions();
 
@@ -303,13 +316,24 @@ describe("programRouter", () => {
       sheetCaller,
       surveyId: foreignSurvey.id,
     });
-    const { participants } = await caller.generateProgramParticipants({ id: program.id });
-    const participant = takeOne(participants);
+    // Generating refuses a survey the owner cannot resolve, so the participant is stored as an earlier run left it
+    const token = crypto.randomUUID();
+    const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
+    await createEntity(
+      programParticipantClient,
+      new ProgramParticipantEntity({
+        keyValue,
+        partitionKey: program.id,
+        publicId: crypto.randomUUID(),
+        rowKey: getProgramParticipantId(keyValue),
+        token,
+      }),
+    );
     const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
     await createEntity(
       surveyResponseClient,
       new SurveyResponseEntity({
-        participantToken: participant.token,
+        participantToken: token,
         partitionKey: foreignSurvey.id,
         rowKey: crypto.randomUUID(),
       }),
@@ -323,11 +347,21 @@ describe("programRouter", () => {
     expect.hasAssertions();
 
     const { program, survey } = await setupIdentifiedProgram([" "]);
-    await caller.generateProgramParticipants({ id: program.id });
+    const { participants } = await caller.generateProgramParticipants({ id: program.id });
+    const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+    await createEntity(
+      surveyResponseClient,
+      new SurveyResponseEntity({
+        participantToken: takeOne(participants).token,
+        partitionKey: survey.id,
+        rowKey: crypto.randomUUID(),
+      }),
+    );
     await surveyCaller.deleteResource({ id: survey.id });
     const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
 
-    // Participants persist and stay readable with responses gone — the fail-soft posture for dangling links
+    // Participants persist and stay readable, and a binned survey's responses are gone with it — the fail-soft
+    // Posture for dangling links
     expect(statusRows.map(({ isResponded }) => isResponded)).toStrictEqual([false]);
   });
 
