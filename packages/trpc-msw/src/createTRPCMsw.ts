@@ -24,6 +24,7 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
   createContext,
   endpoint,
   onUnhandledProcedure = UnhandledProcedureAction.Error,
+  router,
   t,
   webSocketUrl,
 }: TRPCMswOptions<TContext>): TRPCMsw<TRouter, TContext> => {
@@ -45,7 +46,7 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
         createContext,
         endpoint: endpointPathname,
         req: request,
-        router: createMockRouter(t, procedureTypes, registrations),
+        router: createMockRouter(t, procedureTypes, registrations, router),
       });
     }),
   ];
@@ -53,7 +54,7 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
     const webSocketServer = new WebSocketServerAdapter<MswWebSocketAdapter>();
     applyWSSHandler({
       createContext,
-      router: createMockRouter(t, new Map(procedureTypes), registrations),
+      router: createMockRouter(t, new Map(procedureTypes), registrations, router),
       wss: webSocketServer,
     });
     return webSocketServer;
