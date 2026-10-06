@@ -33,4 +33,14 @@ describe(parseStreamingPlacements, () => {
       { pathHash: "128", position: [1, 2, 3], prefabId: 2, radius: 1, rotation: [0, 90, 0], scale: [1, 1, 1] },
     ]);
   });
+
+  test("ends a chunk at a record whose floats run past it", () => {
+    expect.hasAssertions();
+
+    // A record of a full position whose last float the blob cuts short
+    const chunk = Buffer.concat([Buffer.from([0x02, 0x01, 0x10, 0x07]), writeFloats(1, 2), Buffer.from([0x00])]);
+    const blob = Buffer.concat([Buffer.alloc(4), chunk]);
+
+    expect(parseStreamingPlacements(blob, [0])).toStrictEqual([]);
+  });
 });

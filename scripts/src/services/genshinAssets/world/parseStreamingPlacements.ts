@@ -45,16 +45,19 @@ export const parseStreamingPlacements = (blob: Buffer, offsets: readonly number[
     }
     return value;
   };
+  // NaN where the float would run past its chunk, which ends the chunk as any malformed record does
   const readFloat = (): number => {
+    if (cursor + FLOAT_BYTES > end) return Number.NaN;
     const value = blob.readFloatLE(cursor);
     cursor += FLOAT_BYTES;
     return value;
   };
   const readVector = (absent: number): [number, number, number] | undefined => {
-    const mask = blob[cursor++] ?? VECTOR_MASK_LIMIT;
+    const mask = cursor < end ? (blob[cursor++] ?? VECTOR_MASK_LIMIT) : VECTOR_MASK_LIMIT;
     if (mask >= VECTOR_MASK_LIMIT) return undefined;
-    const [x, y, z] = VECTOR_AXES.map((axis) => (mask & axis ? readFloat() : absent));
-    return [x ?? absent, y ?? absent, z ?? absent];
+    const [x = absent, y = absent, z = absent] = VECTOR_AXES.map((axis) => (mask & axis ? readFloat() : absent));
+    if ([x, y, z].some((component) => Number.isNaN(component))) return undefined;
+    return [x, y, z];
   };
   for (const [index, offset] of offsets.entries()) {
     cursor = BLOB_LENGTH_BYTES + offset;
@@ -73,7 +76,7 @@ export const parseStreamingPlacements = (blob: Buffer, offsets: readonly number[
       const position = mask & RecordBit.Position ? readVector(0) : [0, 0, 0];
       const rotation = mask & RecordBit.Rotation ? readVector(0) : [0, 0, 0];
       const scale = mask & RecordBit.Scale ? readVector(1) : [1, 1, 1];
-      if (!position || !rotation || !scale) break;
+      if (Number.isNaN(radius) || !position || !rotation || !scale) break;
       if (mask & RecordBit.Instance) readVarint();
       if (mask & RecordBit.Parent) readVarint();
       if (mask & RecordBit.Position) placements.push({ pathHash, position, prefabId, radius, rotation, scale });
