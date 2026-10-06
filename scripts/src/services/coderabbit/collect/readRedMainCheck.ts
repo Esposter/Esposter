@@ -3,8 +3,6 @@ import type { MainCheck } from "#src/models/coderabbit/collect/MainCheck";
 import {
   CI_COMPLETED_STATUS,
   CI_FAILURE_CONCLUSION,
-  DEVELOP_BRANCH,
-  MAIN_BRANCH,
   MAIN_CHECK_WORKFLOW_FILES,
 } from "#src/services/coderabbit/collect/constants";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
@@ -12,15 +10,15 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { runGh } from "#src/services/shared/runGh";
 import { runGit } from "#src/services/shared/runGit";
 
-const readCheck = (workflowFile: string, branch: string, sha: string): MainCheck | undefined =>
+// A workflow's newest run on a commit, found by the commit alone: GitHub's per-workflow branch filter holds none of
+// `develop`'s runs after 2026-09-24 nor `main`'s after April, so a branch narrowing it missed a red that had run
+const readCheck = (workflowFile: string, sha: string): MainCheck | undefined =>
   parseMachineJson<MainCheck[]>(
     runGh([
       "run",
       "list",
       "--workflow",
       workflowFile,
-      "--branch",
-      branch,
       "--commit",
       sha,
       "--limit",
@@ -44,8 +42,8 @@ const readSameTreeParentSha = (mainSha: string, cwd: string): string | undefined
 export const readRedMainCheck = (mainSha: string, cwd: string): MainCheck | undefined => {
   const reviewedSha = readSameTreeParentSha(mainSha, cwd);
   return MAIN_CHECK_WORKFLOW_FILES.map((workflowFile) => {
-    const check = readCheck(workflowFile, MAIN_BRANCH, mainSha);
+    const check = readCheck(workflowFile, mainSha);
     if (check?.status === CI_COMPLETED_STATUS || reviewedSha === undefined) return check;
-    else return readCheck(workflowFile, DEVELOP_BRANCH, reviewedSha);
+    else return readCheck(workflowFile, reviewedSha);
   }).find((check) => check?.conclusion === CI_FAILURE_CONCLUSION);
 };

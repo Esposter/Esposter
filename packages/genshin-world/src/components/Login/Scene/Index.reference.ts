@@ -586,6 +586,12 @@ export const reference: ComponentReference = {
       search:
         "genshin:parity place login-day-title --families Towers,Bridges --witness login --scan z:-100:100:2 and --scan x:-20:20:1, then compare at heldScrolled 32, 38 and 31.6 and the frame at 32 read beside the recording",
     },
+    {
+      found:
+        "The towers' sections are not round: read at 1024 turns round each axis, a band's radius repeats 8, 16 and 24 times in step on the third tower (eight ribs), 16 times on the fifth, and once or a few times on the second (balconies and what stands built onto it), where the facade's lathe keeps one median wall a band and paints the rest. Each section's radius at 64 turns as a share of its wall (upper medians of the facade's cells) brings the towers nearer their exports on the titles but further on the door recording's near lantern tower: similarity 0.8192 to 0.8320 by day, 0.7210 to 0.7328 by night and 0.7399 to 0.7006 at dusk at 64 segments round (0.8289, 0.7289 and 0.6991 at the lathe's 24, which aliases eight ribs into lumps; 64 segments round alone score 0.7402 at dusk). Its windows sink as two-unit steps and its colonnade as zigzags; outward shares alone score 0.8330, 0.7319 and 0.7056, a balcony's disc still swelling where the exports' tower stands slim; shares clamped within 15% or 30%, or kept to each ring's one repeat round, give up the titles' gain and keep the dusk's loss. Not shipped: the ribs want columns of their own and the windows and colonnade recesses and openings, not one ring a band",
+      search:
+        "The facade's cells read band by band at 1024 turns and their harmonics, then each section's ring of 64 shares on the lathe kit at 24 and 64 segments round, outward only, clamped and folded to one repeat, rank --witness login on the day and night titles and the door recording, and the door recording's near tower read beside its exports",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",

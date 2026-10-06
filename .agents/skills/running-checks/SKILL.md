@@ -49,6 +49,15 @@ fixed startup cost, and nothing is learned at chunk 3 that chunk 7 won't also re
 regardless: commits are cheap and protect against other sessions' resets, checks are not. The run follows the
 review's quality lane, since cleanup edits code (`AGENTS.md`, "Finishing a change").
 
+## Watching the push's run
+
+The push's run is found by its commit: `gh run list --commit <sha> --workflow CI.yaml`, the sha `git rev-parse
+origin/ai/queue` after the push, then `gh run watch <id> --exit-status` in the background. Never by `--branch`
+with `--workflow`: GitHub's per-workflow branch filter holds none of `ai/queue`'s runs after 2026-09-24, so it
+answers with weeks-old runs as the newest, while the repository-wide branch filter and the commit filter stay
+current. CI cancels a branch's run in progress when a newer push lands (`concurrency` in `CI.yaml`), so a
+`cancelled` run is no verdict: watch the run of the branch's head then, which builds on the session's commit too.
+
 ## A check CI owns, run locally
 
 Only to answer a red: a session whose push turned a typecheck or lint job red, a session asked to fix a failed CI

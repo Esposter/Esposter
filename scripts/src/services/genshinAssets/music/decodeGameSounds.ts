@@ -1,3 +1,4 @@
+import { readFileRange } from "#src/services/genshinAssets/music/readFileRange";
 import { readGameAudioPackages } from "#src/services/genshinAssets/music/readGameAudioPackages";
 import { resolveVgmstream } from "#src/services/genshinAssets/music/resolveVgmstream";
 import { MUSIC_PACKAGE_PATTERN } from "#src/services/genshinAssets/shared/constants";
@@ -22,9 +23,8 @@ export const decodeGameSounds = async function* (
       if (!filter(id)) continue;
       const wavePath = join(directory, `${id}.wav`);
       if (!existsSync(wavePath)) {
-        const sound = Buffer.alloc(size);
         // oxlint-disable-next-line no-await-in-loop -- a package's sounds are read in turn from its one handle
-        await file.read(sound, 0, size, offset);
+        const sound = await readFileRange(file, path, offset, size);
         const soundPath = join(directory, `${id}.wem`);
         // oxlint-disable-next-line no-await-in-loop -- vgmstream decodes the sound once it is written
         await writeFile(soundPath, sound);
