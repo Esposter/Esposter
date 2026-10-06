@@ -32,6 +32,7 @@ const emit = defineEmits<{ ready: [] }>();
 const { maxPixelRatio } = QualityTierSettingsMap[qualityTier];
 const canvas = useTemplateRef<TresCanvasInstance>("canvas");
 // A witness render's tools set the camera themselves, which the controls would move off the pose they set
+// oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see
 const witness = inject(SceneWitnessKey, null);
 const cameraRotation = computed(() =>
   cameraPose

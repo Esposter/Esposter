@@ -45,7 +45,7 @@ import {
   WINDRISE_START_MINUTES,
   WINDRISE_TERRAIN_OPTIONS,
 } from "#src/services/windrise/constants";
-import { whenever } from "@vueuse/core";
+import { watchImmediate, whenever } from "@vueuse/core";
 import {
   createFogUniforms,
   createGradeLutTexture,
@@ -76,6 +76,7 @@ const emit = defineEmits<{ ready: [] }>();
 // The witness render's parts, drawn in place of ours of each family it names when the parity page provides them, beside
 // Ours rather than in the floating origin's group, since the page's tools find the camera among their siblings and stay
 // Within reach of the origin
+// oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see
 const witness = inject(SceneWitnessKey, null);
 const checkIsOwnFamilyDrawn = (family: WindrisePartFamily): boolean => !witness?.families.value.includes(family);
 const hiddenLandmarkKinds = computed(() => [
@@ -140,9 +141,9 @@ watch(
 );
 // Alone, the witness's exports are drawn with no haze and no clouds, so a pose is matched on their edges alone
 if (witness)
-  watchEffect(() => {
-    fogUniforms.density.value = witness.isAlone.value ? 0 : FOG_DENSITY;
-    skyUniforms.cloudCoverage.value = witness.isAlone.value ? 0 : CLOUD_COVERAGE;
+  watchImmediate(witness.isAlone, (isAlone) => {
+    fogUniforms.density.value = isAlone ? 0 : FOG_DENSITY;
+    skyUniforms.cloudCoverage.value = isAlone ? 0 : CLOUD_COVERAGE;
   });
 // Counts every tile that arrives, so what reads the ground under the view knows to read it again
 const terrainChanges = { count: 0 };
