@@ -19,6 +19,7 @@ import {
   TERRAIN_LAYER,
 } from "genshin-engine";
 import { BufferAttribute, Frustum, Group, Matrix4, Mesh, Vector3 } from "three";
+import { uniform } from "three/tsl";
 
 interface Props {
   // Starts one of the pool's workers, which the app builds with its bundler from the package's worker entry
@@ -37,7 +38,8 @@ const emit = defineEmits<{ change: []; ready: [] }>();
 const { camera } = useTres();
 const { onBeforeRender } = useLoop();
 const { cellsPerSide, finestTileSize } = terrainOptions;
-const terrainMaterial = createTerrainMaterial(terrainOptions, { lightUniforms, rampTexture }, waterUniforms);
+const morphEye = uniform(new Vector3());
+const terrainMaterial = createTerrainMaterial(terrainOptions, morphEye, { lightUniforms, rampTexture }, waterUniforms);
 const index = new BufferAttribute(computeTerrainIndices(cellsPerSide), 1);
 // Every held tile is a mesh in this group, shown only while it is drawn, so a tile coming back into view costs a flag
 const tileGroup = new Group();
@@ -92,12 +94,14 @@ let isReady = false;
 // For what is held, so a turn of the camera finds its ground generated rather than a hole the sky shows through. The
 // Frustum is built in world coordinates, the scene's view moved by the origin, so the selection never sees the
 // Floating origin. The camera's matrices are brought up to date first, since this runs before the frame's render does
-// It and runs while a paused canvas renders nothing. The terrain is ready the first frame every tile its view wants has
+// It and runs while a paused canvas renders nothing. The eye the ground morphs by is written here too, so every pass of
+// The frame draws the ground the view selected. The terrain is ready the first frame every tile its view wants has
 // Arrived
 onBeforeRender(() => {
   const activeCamera = camera.value;
   if (!activeCamera) return;
   activeCamera.updateMatrixWorld();
+  morphEye.value.setFromMatrixPosition(activeCamera.matrixWorld);
   eye.copy(activeCamera.position).add(origin);
   originMatrix.makeTranslation(-origin.x, -origin.y, -origin.z);
   viewProjection
