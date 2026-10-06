@@ -1,5 +1,5 @@
 name: 🏗️ CI
-# The job shape and the traced task cache behind both builds are
+# The job shape and the traced task cache behind the builds and the checks are
 # `apps/web/content/docs/architecture/monorepo-tooling.md` → `## CI job shape`. Comments here keep only what
 # that page does not say.
 
@@ -188,9 +188,9 @@ jobs:
       matrix:
         include:
           - name: Lint
-            script: lint
+            task: lint
           - name: Typecheck
-            script: typecheck
+            task: typecheck
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -204,7 +204,8 @@ jobs:
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
 
+      # Like the app build, a hit restores nothing: the replay is the verdict that this exact tree already passed
       - name: ✅ ${{ matrix.name }}
-        env:
-          SCRIPT: ${{ matrix.script }}
-        run: pnpm "$SCRIPT"
+        uses: ./.github/actions/run-cached-task
+        with:
+          task: ${{ matrix.task }}

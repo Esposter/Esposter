@@ -8,7 +8,7 @@ the directive.
 
 Turning a rule on, loosening its options, or probing what one would report all mean running the linter against code that has not agreed to the rule yet, and a fix variant then **rewrites the repo to satisfy a decision nobody has made**. An autofixable rule lands across the whole tree in one pass, so the diff is too large to read, and the fixes for a rule you go on to reject have to be picked back out of a commit carrying the ones you kept. Some of them do not come back by re-running either: `require-await` strips a keyword the signature needed (`references/rule-notes.md`).
 
-So while `oxlint.config.ts` is being edited, run the **check-only** `pnpm lint` (or `oxlint -c <probe>`), never `lint:fix`/`lint:fix:packages`. The probe-config audit below is the same rule in practice: it reads diagnostics off a copy of the config and touches no source at all. A fix pass earns its run once the rule is settled and committed, not before.
+So while `oxlint.config.ts` is being edited, run the **check-only** `vp run lint` (or `oxlint -c <probe>`), never `lint:fix`/`lint:fix:packages`. The probe-config audit below is the same rule in practice: it reads diagnostics off a copy of the config and touches no source at all. A fix pass earns its run once the rule is settled and committed, not before.
 
 ## Categories — always list `correctness` explicitly
 

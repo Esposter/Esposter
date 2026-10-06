@@ -2,7 +2,7 @@
 
 Read when a backgrounded check has finished and its verdict is being read.
 
-**The verdict is the exit code, never a grep of the output.** The root lint script aggregates one leaf per tool
+**The verdict is the exit code, never a grep of the output.** The root lint task aggregates one leaf per tool
 and every leaf runs, so a passing one prints `Found 0 warnings and 0 errors` above the one that failed and the
 tail of the log belongs to whichever finished last (the `oxlint` skill, "Running lint"). Read the appended exit line first, then the
 log for what failed — all of it, since the point of the aggregate is that there may be more than one.

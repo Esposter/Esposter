@@ -35,7 +35,7 @@ const configuration: UserConfig = defineConfig({
   run: {
     tasks: {
       // Nothing reads the app's `.output`, so a hit restores nothing: the replay itself is the verdict that this
-      // Exact tree already built green
+      // Exact tree already built green — as it is for the two checks below, which write nothing anyone reads
       "build:app": createTask(
         "pnpm -C apps/web build",
         ["apps/web/.data/**", "apps/web/.nuxt/**", "apps/web/node_modules/.cache/**"],
@@ -50,6 +50,8 @@ const configuration: UserConfig = defineConfig({
         "packages/*/src/index.ts",
         "packages/db-schema/src/generated/**",
       ]),
+      lint: createTask("run-s --continue-on-error lint:oxlint lint:eslint lint:workspace lint:unused", [], []),
+      typecheck: createTask("run-s --continue-on-error typecheck:root typecheck:workspace", ["apps/web/.nuxt/**"], []),
     },
   },
 });
