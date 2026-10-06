@@ -83,12 +83,13 @@ Stated as an expectation rather than a count, because each phase's deletion is o
 
 ## What it does not buy
 
-- **No remote cache.** The 1.0 announcement lists it as planned for a future version, so CI still wraps a local cache directory in `actions/cache` ([CI guide](https://viteplus.dev/guide/ci)). The plumbing stays ours; only the key improves.
+- **No remote cache in 1.0.** `vite-task` has since merged one — an endpoint named by `cache: { remote: { url } }` or `VP_REMOTE_CACHE_URL`, read by default, written with `--remote-cache=read-write`, uploads authenticated by a GitHub Actions OIDC token ([changelog](https://github.com/voidzero-dev/vite-task/blob/main/CHANGELOG.md)) — but the `vite-task` revision `vite-plus` 1.0.0 pins predates it, and upstream publishes the server's API contract rather than a server, so the endpoint would be ours to host. Until a release carries the client, CI wraps a local cache directory in `actions/cache` ([CI guide](https://viteplus.dev/guide/ci)), and the plumbing stays ours; only the key improves.
 - **No early cutoff.** Nothing documented hashes a task's _output_ to stop an invalidation wave when a rebuild produces identical bytes. That remains the one genuinely unowned idea here, recorded as its own item in [task runner](/docs/proposals/refactors/vite-plus/task-runner) rather than assumed away.
 - **No shorter script surface by itself.** The lint, test and typecheck script families encode arguments, but pnpm forwards arguments too, so collapsing them is not something `vp` unlocks ([commands](/docs/proposals/refactors/vite-plus/commands)).
 
 ## Sources
 
 - [Announcing Vite+ 1.0](https://voidzero.dev/posts/announcing-vite-plus-1-0) — what 1.0 bundles, and remote caching listed as future work.
+- [vite-task changelog](https://github.com/voidzero-dev/vite-task/blob/main/CHANGELOG.md) and [remote cache server API](https://github.com/voidzero-dev/vite-task/pull/713) — the remote cache client merged after 1.0's pin, and the contract a self-hosted endpoint implements.
 - [Vite+ Q3 plan](https://github.com/voidzero-dev/vite-plus/issues/2405) — what the 1.0 semver promise covers, and that bundled tools keep their own versions.
 - [Vite+ cache guide](https://viteplus.dev/guide/cache) and [run guide](https://viteplus.dev/guide/run) — inputs inferred from what a command reads, and the pnpm-compatible filters.
