@@ -61,31 +61,33 @@ export const createTileStreamer = <TTile>({
       cachedTileMap.set(key, { lastWantedFrame, tile });
       evictStale();
     },
-    update: ({ count, keys }: TerrainSelection, drawn: TerrainSelection) => {
+    update: (wanted: TerrainSelection, drawn: TerrainSelection, surrounding: TerrainSelection) => {
       frame++;
-      let coarsestLevel = 0;
-      for (let index = 0; index < count; index++) {
-        const key = keys[index] ?? 0;
-        const cachedTile = cachedTileMap.get(key);
-        if (cachedTile) cachedTile.lastWantedFrame = frame;
-        else {
-          if (pendingWantedFrameMap.has(key)) pendingWantedFrameMap.set(key, frame);
-          coarsestLevel = Math.max(coarsestLevel, getTerrainTileLevel(key));
-        }
-      }
       // An ancestor drawn in place of a tile still coming is used as much as a wanted one
-      for (let index = 0; index < drawn.count; index++) {
-        const cachedTile = cachedTileMap.get(drawn.keys[index] ?? 0);
-        if (cachedTile) cachedTile.lastWantedFrame = frame;
-      }
-
-      for (let level = coarsestLevel; level >= 0 && pendingWantedFrameMap.size < maxPendingCount; level--)
-        for (let index = 0; index < count && pendingWantedFrameMap.size < maxPendingCount; index++) {
+      for (const { count, keys } of [wanted, drawn, surrounding])
+        for (let index = 0; index < count; index++) {
           const key = keys[index] ?? 0;
-          if (getTerrainTileLevel(key) !== level || cachedTileMap.has(key) || pendingWantedFrameMap.has(key)) continue;
-          pendingWantedFrameMap.set(key, frame);
-          requestTile(key);
+          const cachedTile = cachedTileMap.get(key);
+          if (cachedTile) cachedTile.lastWantedFrame = frame;
+          else if (pendingWantedFrameMap.has(key)) pendingWantedFrameMap.set(key, frame);
         }
+      // Every tile the view wants is asked for before any of those round it, so turning finds the ground held without
+      // Slowing the view's own
+      for (const { count, keys } of [wanted, surrounding]) {
+        let coarsestLevel = 0;
+        for (let index = 0; index < count; index++) {
+          const key = keys[index] ?? 0;
+          if (!cachedTileMap.has(key)) coarsestLevel = Math.max(coarsestLevel, getTerrainTileLevel(key));
+        }
+        for (let level = coarsestLevel; level >= 0 && pendingWantedFrameMap.size < maxPendingCount; level--)
+          for (let index = 0; index < count && pendingWantedFrameMap.size < maxPendingCount; index++) {
+            const key = keys[index] ?? 0;
+            if (getTerrainTileLevel(key) !== level || cachedTileMap.has(key) || pendingWantedFrameMap.has(key))
+              continue;
+            pendingWantedFrameMap.set(key, frame);
+            requestTile(key);
+          }
+      }
     },
   };
 };

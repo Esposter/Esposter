@@ -7,7 +7,9 @@ export interface TileStreamer<TTile> {
   has: (key: number) => boolean;
   // Takes a tile the worker has finished, freed first once the cache is full if it is no longer wanted
   receive: (key: number, tile: TTile) => void;
-  // Marks this frame's wanted and drawn tiles as used, and asks for the missing wanted ones, coarsest first. The
-  // Drawn are the wanted resolved against what is held, so the ancestors standing in for missing tiles stay held
-  update: (wanted: TerrainSelection, drawn: TerrainSelection) => void;
+  // Marks this frame's wanted, drawn and surrounding tiles as used, and asks for the missing wanted ones, coarsest
+  // First, then the missing surrounding ones. The drawn are the wanted resolved against what is held, so the ancestors
+  // Standing in for missing tiles stay held; the surrounding are the tiles round the eye the view does not show, held
+  // So a turn of the camera finds its ground already there rather than a hole while it generates
+  update: (wanted: TerrainSelection, drawn: TerrainSelection, surrounding: TerrainSelection) => void;
 }

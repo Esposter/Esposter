@@ -84,6 +84,7 @@ for (const worker of workers)
 // Built once, since the draws are resolved every frame
 const checkTileLoaded = (key: number): boolean => tileStreamer.has(key);
 const wanted = createTerrainSelection(TILE_SELECTION_CAPACITY);
+const surrounding = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const draws = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const shown = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const eye = new Vector3();
@@ -92,10 +93,12 @@ const viewProjection = new Matrix4();
 const frustum = new Frustum();
 let isReady = false;
 // Each frame the quadtree is walked from the eye's world position, what is missing is asked for, and the tiles to
-// Draw are shown in place of last frame's. The frustum is built in world coordinates, the scene's view moved by the
-// Origin, so the selection never sees the floating origin. The camera's matrices are brought up to date first, since
-// This runs before the frame's render does it and runs while a paused canvas renders nothing. The terrain is ready
-// The first frame every tile its view wants has arrived
+// Draw are shown in place of last frame's. It is walked twice: in the view, for what is drawn, and all round the eye,
+// For what is held, so a turn of the camera finds its ground generated rather than a hole the sky shows through. The
+// Frustum is built in world coordinates, the scene's view moved by the origin, so the selection never sees the
+// Floating origin. The camera's matrices are brought up to date first, since this runs before the frame's render does
+// It and runs while a paused canvas renders nothing. The terrain is ready the first frame every tile its view wants has
+// Arrived
 onBeforeRender(() => {
   const activeCamera = camera.value;
   if (!activeCamera) return;
@@ -107,8 +110,9 @@ onBeforeRender(() => {
     .multiply(originMatrix);
   frustum.setFromProjectionMatrix(viewProjection, activeCamera.coordinateSystem);
   selectTerrainTiles(terrainOptions, eye, frustum, wanted);
+  selectTerrainTiles(terrainOptions, eye, undefined, surrounding);
   resolveTerrainDraws(terrainOptions, wanted, checkTileLoaded, draws);
-  tileStreamer.update(wanted, draws);
+  tileStreamer.update(wanted, draws, surrounding);
   for (let drawIndex = 0; drawIndex < shown.count; drawIndex++) {
     const mesh = tileStreamer.get(shown.keys[drawIndex] ?? 0);
     if (mesh) mesh.visible = false;
