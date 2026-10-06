@@ -557,6 +557,12 @@ export const reference: ComponentReference = {
       search:
         "stoneLight.json read hour by hour, the night's fading red clamped and compared, then calibrate --write at every hour by non-negative least squares with the parts weighed equally and by their pixels, calibrate --haze under it, and compare on every login frame",
     },
+    {
+      found:
+        "The haze over the stone solved as two non-negative colours with the light, away from the sun and toward it, lowers every hour's residual by about a twentieth (dawn 0.1332 to 0.1274, day 0.2242 to 0.2131, dusk 0.1490 to 0.1434, night 0.1332 to 0.1289). Against the cloud sea's, the day's comes out dimmer and bluer with no sunward glow, the dusk's warmer and redder, the dawn's sunward glow dimmer and the night's close; the dusk's light fading with height falls to almost none, its haze taking what it held. Drawn through a stone mask the scene pass writes, every frame scores better: the dawn title 0.3849 to 0.3805, the day title 0.4346 to 0.4321, the phone's door frame 0.4732 to 0.4667, the door recording 0.5191 to 0.5126 and the night title 0.3737 to 0.3654, and calibrate --self on the night hands the haze back within about a twentieth",
+      search:
+        "hazeColor and hazeScatterColor as unknowns in solveStoneLight, then the stone mask on StoneNodeMaterial and the stone light handed to createPostPipeline, calibrate --write at every hour, calibrate --self on the night title and compare on every login frame",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",

@@ -17,21 +17,24 @@ describe("stoneLight", () => {
 
   // Every light is one the scene could cast: lights that cancel one another below none turn a part's colour as its
   // Facing or its height changes, which the night's towers showed as a rainbow up each of them
-  test.each(hours)("lights %s's stone with no light below none", (_hour, { harmonics, heightFade, ramp }) => {
-    expect.hasAssertions();
-    expect(Math.min(...heightFade)).toBeGreaterThanOrEqual(0);
+  test.each(hours)(
+    "lights %s's stone with no light below none",
+    (_hour, { harmonics, hazeColor, hazeScatterColor, heightFade, ramp }) => {
+      expect.hasAssertions();
+      expect(Math.min(...heightFade, ...hazeColor, ...hazeScatterColor)).toBeGreaterThanOrEqual(0);
 
-    for (const [knot, color] of ramp.entries())
-      for (const [channel, value] of color.entries())
-        expect(value).toBeGreaterThanOrEqual(ramp[knot - 1]?.[channel] ?? 0);
+      for (const [knot, color] of ramp.entries())
+        for (const [channel, value] of color.entries())
+          expect(value).toBeGreaterThanOrEqual(ramp[knot - 1]?.[channel] ?? 0);
 
-    const terms = Array.from({ length: STONE_HARMONIC_COUNT }, () => 0);
-    for (const normal of normals) {
-      computeStoneHarmonics(normal, terms);
-      for (const channel of [0, 1, 2])
-        expect(
-          terms.reduce((sum, value, term) => sum + value * (harmonics[term]?.[channel] ?? 0), 0),
-        ).toBeGreaterThanOrEqual(-ROUNDING);
-    }
-  });
+      const terms = Array.from({ length: STONE_HARMONIC_COUNT }, () => 0);
+      for (const normal of normals) {
+        computeStoneHarmonics(normal, terms);
+        for (const channel of [0, 1, 2])
+          expect(
+            terms.reduce((sum, value, term) => sum + value * (harmonics[term]?.[channel] ?? 0), 0),
+          ).toBeGreaterThanOrEqual(-ROUNDING);
+      }
+    },
+  );
 });

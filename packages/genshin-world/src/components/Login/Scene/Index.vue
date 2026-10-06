@@ -248,7 +248,7 @@ cloudSeaMaterial.colorNode = mix(
 // Sky's, the haze's and the stone's light, so the frame is drawn through that alone and each inverts exactly
 usePostPipeline(
   () => qualityTier,
-  { fogUniforms, isBloomed: false, postUniforms },
+  { fogUniforms, isBloomed: false, postUniforms, stoneLight: loginStoneLight },
   () => LoginOcclusionRadiusMap[timeOfDay],
   skyUniforms,
 );

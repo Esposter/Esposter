@@ -1,3 +1,4 @@
+import type { StoneLightUniforms } from "#src/models/nodes/StoneLightUniforms";
 import type { FogUniforms } from "#src/models/post/FogUniforms";
 import type { PostUniforms } from "#src/models/post/PostUniforms";
 import type { QualityTierSettings } from "#src/models/renderer/QualityTierSettings";
@@ -20,4 +21,7 @@ export interface PostPipelineOptions {
   qualityTierSettings: QualityTierSettings;
   renderer: Renderer;
   scene: Scene;
+  // The stone's light, where a scene hazes its stone in colours of its own: the scene pass then writes the stone's mask
+  // And the haze draws the stone under the light's haze colours in place of the rest of the scene's
+  stoneLight?: StoneLightUniforms;
 }

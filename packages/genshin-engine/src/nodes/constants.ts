@@ -7,6 +7,9 @@ export const STONE_SHADOW_EXPONENT = 0.2;
 export const STONE_RAMP_KNOT_COUNT = 16;
 // The terms of the second order spherical harmonics the sky's light on the stone is held in
 export const STONE_HARMONIC_COUNT = 9;
+// The scene pass's output every stone writes one into and the rest of the scene none, which the haze reads to draw the
+// Stone under colours of its own
+export const STONE_MASK_OUTPUT = "stoneMask";
 // How fast the stone's light that fades with height dims, a share a metre up from the scene's ground, fitted to stand
 // In for the reflection pass's clustered probes stepping up the towers: over tens of metres, not off one surface
 export const STONE_HEIGHT_FALLOFF = 0.05;

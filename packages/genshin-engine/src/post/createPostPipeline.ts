@@ -4,6 +4,7 @@ import type { Node } from "three/webgpu";
 
 import { AntialiasingMode } from "#src/models/renderer/AntialiasingMode";
 import { createHeightFogNode } from "#src/post/createHeightFogNode";
+import { STONE_MASK_OUTPUT } from "#src/nodes/constants";
 import { createOcclusionNode } from "#src/post/createOcclusionNode";
 import { bilateralBlur } from "three/examples/jsm/tsl/display/BilateralBlurNode.js";
 import { bloom } from "three/examples/jsm/tsl/display/BloomNode.js";
@@ -12,6 +13,7 @@ import { godrays } from "three/examples/jsm/tsl/display/GodraysNode.js";
 import { lut3D } from "three/examples/jsm/tsl/display/Lut3DNode.js";
 import { smaa } from "three/examples/jsm/tsl/display/SMAANode.js";
 import { traa } from "three/examples/jsm/tsl/display/TRAANode.js";
+import { UnsignedByteType } from "three";
 import { float, modelViewMatrix, mrt, output, positionLocal, renderOutput, texture3D, vec4, velocity } from "three/tsl";
 import { RenderPipeline, ToonOutlinePassNode } from "three/webgpu";
 
@@ -39,6 +41,7 @@ export const createPostPipeline = ({
   qualityTierSettings: { antialiasingMode, godraysStepCount, isBloomEnabled, isOcclusionEnabled },
   renderer,
   scene,
+  stoneLight,
 }: PostPipelineOptions): PostPipeline => {
   const renderPipeline = new RenderPipeline(renderer);
   renderPipeline.outputColorTransform = false;
@@ -48,7 +51,12 @@ export const createPostPipeline = ({
   const thicknessNode = outlineThickness.mul(outlineFadeDistance.div(viewDistance).min(1));
   const scenePass = new ToonOutlinePassNode(scene, camera, outlineColor, thicknessNode, float(1));
   const isTraa = antialiasingMode === AntialiasingMode.Traa;
-  if (isTraa) scenePass.setMRT(mrt({ output, velocity }));
+  // Beside its colour, the scene pass writes the velocity TRAA resolves by and the stone's mask where the scene asks for
+  // Them, every material but the stone's writing none into the mask
+  const sceneOutputs: Record<string, Node> = { output };
+  if (isTraa) sceneOutputs.velocity = velocity;
+  if (stoneLight) sceneOutputs[STONE_MASK_OUTPUT] = float(0);
+  scenePass.setMRT(mrt(sceneOutputs));
   const sceneColor = scenePass.getTextureNode("output");
   const sceneDepth = scenePass.getTextureNode("depth");
   // Every pass holding render targets of its own, each released with the pipeline
@@ -79,7 +87,18 @@ export const createPostPipeline = ({
     postPipeline.godraysNode = godraysNode;
   }
 
-  const foggedNode = createHeightFogNode(litNode, sceneDepth, camera, fogUniforms);
+  if (stoneLight) scenePass.getTexture(STONE_MASK_OUTPUT).type = UnsignedByteType;
+  const foggedNode = createHeightFogNode(
+    litNode,
+    sceneDepth,
+    camera,
+    fogUniforms,
+    stoneLight && {
+      hazeColor: stoneLight.hazeColor,
+      hazeScatterColor: stoneLight.hazeScatterColor,
+      maskNode: scenePass.getTextureNode(STONE_MASK_OUTPUT),
+    },
+  );
   let bloomedNode: Node<"vec4"> = foggedNode;
 
   if (isBloomed && isBloomEnabled) {

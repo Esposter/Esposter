@@ -5,12 +5,19 @@ import type { DirectionalLight } from "three";
 import { Vector3 } from "three";
 
 // An hour's stone light written into the shared uniforms: each ramp knot into its texel, each harmonic's colour into
-// Its term, the light fading with height into its colour, and the sun light's colour at its strength, so a face's
+// Its term, the light fading with height and the haze's into their colours, and the sun light's colour at its strength, so a face's
 // Shadow is read against the light as the hour set it. Called after the sky has set the sun light. Every write is to
 // An existing value, so an hour passing allocates nothing
 export const applyStoneLight = (
-  { harmonics, heightFade, ramp }: StoneLight,
-  { harmonics: harmonicsUniform, heightFade: heightFadeUniform, ramp: rampTexture, sunRadiance }: StoneLightUniforms,
+  { harmonics, hazeColor, hazeScatterColor, heightFade, ramp }: StoneLight,
+  {
+    harmonics: harmonicsUniform,
+    hazeColor: hazeColorUniform,
+    hazeScatterColor: hazeScatterColorUniform,
+    heightFade: heightFadeUniform,
+    ramp: rampTexture,
+    sunRadiance,
+  }: StoneLightUniforms,
   light: DirectionalLight,
 ): void => {
   const { data } = rampTexture.image;
@@ -27,5 +34,7 @@ export const applyStoneLight = (
     if (value instanceof Vector3) value.set(red, green, blue);
   }
   heightFadeUniform.value.fromArray(heightFade);
+  hazeColorUniform.value.fromArray(hazeColor);
+  hazeScatterColorUniform.value.fromArray(hazeScatterColor);
   sunRadiance.value.copy(light.color).multiplyScalar(light.intensity);
 };

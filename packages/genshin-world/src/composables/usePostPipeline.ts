@@ -16,7 +16,7 @@ export const usePostPipeline = (
   qualityTier: MaybeRefOrGetter<QualityTier>,
   postInputs: Pick<
     PostPipelineOptions,
-    "fogUniforms" | "godraysLight" | "gradeLutTexture" | "isBloomed" | "postUniforms"
+    "fogUniforms" | "godraysLight" | "gradeLutTexture" | "isBloomed" | "postUniforms" | "stoneLight"
   >,
   // How far round each pixel in metres the screen-space occlusion reaches, none where the scene draws none
   occlusionRadius: MaybeRefOrGetter<number> = 0,

@@ -82,14 +82,15 @@ describe(solveStoneLight, () => {
     }).flat();
   const samples = drawSamples(heightFade);
 
-  test("recovers the ramp, the harmonics and the light fading with height under a known occlusion and haze", () => {
+  test("recovers the ramp, the harmonics, the light fading with height and the haze's colours under a known occlusion", () => {
     expect.hasAssertions();
 
-    const { light, residual } = solveStoneLight(samples, haze);
+    const { light, residual } = solveStoneLight(samples);
 
     expect(round(light.ramp)).toStrictEqual(round(ramp));
     expect(round(light.harmonics)).toStrictEqual(round(harmonics));
     expect(round([light.heightFade])).toStrictEqual(round([heightFade]));
+    expect(round([light.hazeColor, light.hazeScatterColor])).toStrictEqual(round([haze.color, haze.scatterColor]));
     expect(residual).toBeLessThan(1e-4);
   });
 
@@ -97,7 +98,7 @@ describe(solveStoneLight, () => {
     expect.hasAssertions();
 
     // The night's own trouble: a red that fades below none with height
-    const { light } = solveStoneLight(drawSamples([-0.3, 0, 0.8]), haze);
+    const { light } = solveStoneLight(drawSamples([-0.3, 0, 0.8]));
 
     expect(Math.min(...light.heightFade)).toBeGreaterThanOrEqual(0);
     for (const [knot, color] of light.ramp.entries())
@@ -109,10 +110,7 @@ describe(solveStoneLight, () => {
     expect.hasAssertions();
 
     expect(() =>
-      solveStoneLight(
-        samples.filter((_sample, index) => index % 30 !== 0),
-        haze,
-      ),
+      solveStoneLight(samples.filter((_sample, index) => index % 30 !== 0)),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: bins, none of 96 holds 30 pixels]`,
     );

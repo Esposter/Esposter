@@ -1,5 +1,4 @@
 import type { StoneLightSample } from "#src/models/genshinParity/witness/StoneLightSample";
-import type { Vector } from "#src/models/shared/Vector";
 import type { StoneLight } from "genshin-engine";
 
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
@@ -34,25 +33,25 @@ const writeRampWeights = (coordinate: number, weights: number[]): void => {
   weights[knot] = 1 - share;
   weights[knot + 1] = share;
 };
-// The stone's light under the scene's own haze, solved channel by channel by least squares over the bins' means, over
-// Lights that can be: each pixel's scene colour is its albedo times the ramp at its coordinate, the harmonics at its
-// Normal and the light fading with its height, with its glow, darkened by its occlusion, the part the haze lets
-// Through, plus the haze's own colour blended toward its sunward one by its scatter, by its opacity, which is linear in
-// The light. Every unknown is a light none of which is negative, solved by non-negative least squares
+// The stone's light and the haze's colours over it, solved channel by channel by least squares over the bins' means,
+// Over lights that can be: each pixel's scene colour is its albedo times the ramp at its coordinate, the harmonics at
+// Its normal and the light fading with its height, with its glow, darkened by its occlusion, the part the haze lets
+// Through, plus the haze's colour blended toward its sunward one by its scatter, by its opacity, which is linear in
+// Both. Every unknown is a light none of which is negative, solved by non-negative least squares
 // (`solveNonNegativeSystem`): the ramp rises from none at its dark end by steps none of which falls, the sky is a sum
-// Of lights from directions all round (`computeSkyLobeHarmonics`), and the light fading with height adds. Solved free,
-// One light cancelled another, the night's fading light red below none under a sky redder than its frame, which turned
-// Every tower's colour as it rose. Each part's pixels are binned apart from the others', each bin weighed by its
-// Pixels: weighing every part as much as the walkway filling the frame's foot lit the far towers too bright, scoring
-// The night six hundredths worse. The haze's colours are the cloud sea's, measured where it
-// Shows them: solved here, they would take up the light's own errors over the stone and carry them onto the sea. Bins
+// Of lights from directions all round (`computeSkyLobeHarmonics`), the light fading with height adds, and the haze's
+// Two colours are colours. Solved free, one light cancelled another, the night's fading light red below none under a
+// Sky redder than its frame, which turned every tower's colour as it rose. Each part's pixels are binned apart from the
+// Others', each bin weighed by its pixels: weighing every part as much as the walkway filling the frame's foot lit the
+// Far towers too bright, scoring the night six hundredths worse. The haze over the stone is its own, drawn apart from
+// The cloud sea's (`createHeightFogNode`'s stone mask): held to the cloud sea's, the far stone stood too bright under
+// It by day, and a light that cannot fall below none to darken it again left the error standing. Bins
 // Average the pixels whose texels do not line up with the reference's, so their shading is read rather than their
 // Texels. Returns the light, the pixels its bins kept, and the residual over the bins beside their spread about their
 // Mean, the share the light leaves unexplained. Bins too sparse to read are dropped, and with none left there is no
 // Light to solve
 export const solveStoneLight = (
   samples: readonly StoneLightSample[],
-  { color: hazeColor, scatterColor: hazeScatterColor }: { color: Vector; scatterColor: Vector },
 ): { count: number; deviation: number; light: StoneLight; residual: number } => {
   const sampleBinMap = Map.groupBy(samples, ({ bin, part }) => `${part}/${bin}`);
   const bins = [...sampleBinMap.values()].filter((binSamples) => binSamples.length >= MIN_BIN_COUNT);
@@ -63,10 +62,12 @@ export const solveStoneLight = (
       `none of ${sampleBinMap.size} holds ${MIN_BIN_COUNT} pixels`,
     );
   const total = bins.reduce((sum, binSamples) => sum + binSamples.length, 0);
-  // The ramp's steps up from its dark end, then the sky's lights, then the light fading with height
+  // The ramp's steps up from its dark end, then the sky's lights, the light fading with height, and the haze's colour
+  // Away from the sun and toward it
   const stepCount = STONE_RAMP_KNOT_COUNT - 1;
   const heightFadeUnknown = stepCount + SKY_LOBES.length;
-  const unknownCount = heightFadeUnknown + 1;
+  const hazeUnknown = heightFadeUnknown + 1;
+  const unknownCount = hazeUnknown + 2;
   const weights = Array.from({ length: STONE_RAMP_KNOT_COUNT }, () => 0);
   let squared = 0;
   let spread = 0;
@@ -98,10 +99,10 @@ export const solveStoneLight = (
             (row[stepCount + lobe] ?? 0) +
             lobeTerms.reduce((sum, value, term) => sum + value * (terms[term] ?? 0), 0) * through;
         row[heightFadeUnknown] = (row[heightFadeUnknown] ?? 0) + Math.exp(-height * STONE_HEIGHT_FALLOFF) * through;
-        // The glow and the rim the material adds after lighting are known, as is the haze the scene draws over it, so
-        // Both leave the colour the light explains
-        const haze = opacity * ((1 - scatter) * hazeColor[channel] + scatter * hazeScatterColor[channel]);
-        target += color[channel] - emission[channel] * occlusion * (1 - opacity) - haze;
+        row[hazeUnknown] = (row[hazeUnknown] ?? 0) + opacity * (1 - scatter);
+        row[hazeUnknown + 1] = (row[hazeUnknown + 1] ?? 0) + opacity * scatter;
+        // The glow and the rim the material adds after lighting are known, so they leave the colour the light explains
+        target += color[channel] - emission[channel] * occlusion * (1 - opacity);
       }
       return {
         row: row.map((value) => value / binSamples.length),
@@ -144,11 +145,13 @@ export const solveStoneLight = (
     ),
   );
   const heightFade = solutions.map((solution) => solution[heightFadeUnknown] ?? 0);
+  const hazeColor = solutions.map((solution) => solution[hazeUnknown] ?? 0);
+  const hazeScatterColor = solutions.map((solution) => solution[hazeUnknown + 1] ?? 0);
   const count = Math.max(total * CHANNELS.length, 1);
   return {
     count: total,
     deviation: Math.sqrt(spread / count),
-    light: { harmonics, heightFade, ramp },
+    light: { harmonics, hazeColor, hazeScatterColor, heightFade, ramp },
     residual: Math.sqrt(squared / count),
   };
 };

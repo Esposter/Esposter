@@ -1,3 +1,4 @@
+import type { StoneLightUniforms } from "#src/models/nodes/StoneLightUniforms";
 import type { FogUniforms } from "#src/models/post/FogUniforms";
 import type { Camera } from "three";
 import type { Node, TextureNode } from "three/webgpu";
@@ -8,7 +9,8 @@ const MIN_RAY_CLIMB = 0.000001;
 // Fog as a haze whose density falls off exponentially with height, integrated along the ray from the eye to what the
 // Pixel shows, past a start distance: low ground and the far world thicken toward the sky's colour, hidden no more
 // Than the most opacity, and the peaks rise out of it. Applied after the scene pass, so the outlines fade with what
-// They outline, and never to the sky, which already is the fog's colour
+// They outline, and never to the sky, which already is the fog's colour. Where a scene hazes its stone apart, the
+// Stone's mask turns the haze to the stone light's own colours, at the same opacity and scatter
 export const createHeightFogNode = (
   colorNode: Node<"vec4">,
   depthNode: TextureNode,
@@ -25,6 +27,7 @@ export const createHeightFogNode = (
     scatterStrength,
     startDistance,
   }: FogUniforms,
+  stoneHaze?: Pick<StoneLightUniforms, "hazeColor" | "hazeScatterColor"> & { maskNode: TextureNode },
 ): Node<"vec4"> => {
   const cameraWorldMatrix = uniform(camera.matrixWorld);
   const cameraProjectionMatrixInverse = uniform(camera.projectionMatrixInverse);
@@ -50,8 +53,18 @@ export const createHeightFogNode = (
       });
       const opacity = float(1).sub(exp(opticalDepth.negate())).mul(maxOpacity);
       // Looking toward the sun, the haze is lit by the light it scatters, gathered round the sun by the power
-      const scatter = pow(max(ray.normalize().dot(scatterDirection), 0), scatterPower).mul(scatterStrength);
-      output.assign(vec4(mix(output.rgb, mix(color, scatterColor, scatter.min(1)), opacity), output.a));
+      const scatter = pow(max(ray.normalize().dot(scatterDirection), 0), scatterPower)
+        .mul(scatterStrength)
+        .min(1);
+      const hazeColor = mix(color, scatterColor, scatter);
+      const shownColor = stoneHaze
+        ? mix(
+            hazeColor,
+            mix(stoneHaze.hazeColor, stoneHaze.hazeScatterColor, scatter),
+            stoneHaze.maskNode.sample(uv()).r,
+          )
+        : hazeColor;
+      output.assign(vec4(mix(output.rgb, shownColor, opacity), output.a));
     });
     return output;
   })();

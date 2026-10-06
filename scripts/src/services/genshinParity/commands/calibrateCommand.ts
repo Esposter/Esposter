@@ -25,7 +25,7 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
     haze: {
       default: false,
       description:
-        "Refine the haze's density, height falloff and most opacity with the light, its colours held, and print them beside the residual under the scene's own haze",
+        "Refine the haze's density, height falloff and most opacity with the light and the haze's colours over the stone, and print them beside the residual under the scene's own haze",
       type: "boolean",
     },
     self: {
@@ -48,7 +48,7 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
   },
   meta: {
     description:
-      "Solve a reference's stone light as the game's deferred pass casts it, its toon ramp, its sky's harmonics and its light fading with height under the scene's haze, by non-negative least squares over lights that never go below none, over the witness's G-buffer, printing the residual against the bins' spread",
+      "Solve a reference's stone light as the game's deferred pass casts it, its toon ramp, its sky's harmonics and its light fading with height, with the haze's colours over the stone at the scene's haze's opacity, by non-negative least squares over lights that never go below none, over the witness's G-buffer, printing the residual against the bins' spread",
     name: "calibrate",
   },
   run: async ({ args }) => {
@@ -71,6 +71,9 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
     console.log("harmonics:");
     for (const term of light.harmonics) console.log(`  ${formatColor(term)}`);
     console.log(`fading with height: ${formatColor(light.heightFade)}`);
+    console.log(
+      `haze over the stone: ${formatColor(light.hazeColor)}, toward the sun ${formatColor(light.hazeScatterColor)}`,
+    );
     if (!args.self && !args.write) return;
     const timeOfDay = ParityReferenceMap[args.reference]?.props?.timeOfDay;
     if (typeof timeOfDay !== "string")
@@ -87,6 +90,7 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
         { set: written.ramp, solved: light.ramp },
         { set: written.harmonics, solved: light.harmonics },
         { set: [written.heightFade], solved: [light.heightFade] },
+        { set: [written.hazeColor, written.hazeScatterColor], solved: [light.hazeColor, light.hazeScatterColor] },
       ].flatMap(({ set, solved }) =>
         set.flatMap((colors, index) =>
           colors.map((value, channel) => ({ solved: solved[index]?.[channel] ?? 0, value })),
@@ -100,6 +104,8 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
     }
     lights[timeOfDay] = {
       harmonics: light.harmonics.map(roundColor),
+      hazeColor: roundColor(light.hazeColor),
+      hazeScatterColor: roundColor(light.hazeScatterColor),
       heightFade: roundColor(light.heightFade),
       ramp: light.ramp.map(roundColor),
     };

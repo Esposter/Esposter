@@ -52,9 +52,10 @@ const readPage = <T>(page: Page, name: string): Promise<T> =>
 // A reference's stone light solved as the game's deferred pass casts it, over the parts the witness draws from the
 // Game's exports: each part's interior pixel, its reference colour taken back into scene colour (`toSceneColor`), the
 // Exports' albedo, their normal against the scene's sun and the sun's visibility there giving its ramp coordinate and
-// Its harmonics, the scene's occlusion over their depth, and the scene's own haze giving its opacity and its colours. The light is a linear solve over the bins
-// (`solveStoneLight`) under the scene's own haze, or under the haze's density and height falloff refined with it by
-// The simplex on that solve's residual, its colours held as the cloud sea's: the bins split by height, the high stone
+// Its harmonics, the scene's occlusion over their depth, and the scene's own haze giving its opacity and its scatter.
+// The light and the haze's colours over the stone are a linear solve over the bins (`solveStoneLight`) under the
+// Scene's own haze, or under the haze's density and height falloff refined with them by the simplex on that solve's
+// Residual: the bins split by height, the high stone
 // The haze leaves holds the light, the low stone it pales the haze's profile, and the far stone how much of it the
 // Haze ever hides
 export const solveReferenceStoneLight = async (
@@ -151,7 +152,7 @@ export const solveReferenceStoneLight = async (
       const solve = (haze: Haze) => {
         const hazeFog = { ...fog, ...haze };
         for (const { point, sample } of pixels) sample.opacity = computeFogOpacity(eyePoint, point, hazeFog);
-        return solveStoneLight(samples, fog);
+        return solveStoneLight(samples);
       };
       const sceneHaze = { density: fog.density, heightFalloff: fog.heightFalloff, maxOpacity: fog.maxOpacity };
       const sceneSolution = solve(sceneHaze);
