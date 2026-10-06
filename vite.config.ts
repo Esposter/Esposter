@@ -2,20 +2,28 @@ import type { UserConfig } from "vite-plus";
 
 import { defineConfig } from "vite-plus";
 
-// Read by `vp run` alone, and configures no bundler: the app builds through `nuxt build` from apps/web/nuxt.config.ts.
+// The state pnpm writes on every install and every run, which no build's result depends on: the dependencies
+// Themselves are traced file by file
+const PNPM_STATE_PATTERNS = [
+  "!**/node_modules/.pnpm-task-run-state-v1/**",
+  "!node_modules/.pnpm-workspace-state-v1.json",
+];
+
 // Each task keeps the files its command rewrites out of its inputs, without which `vp` refuses to cache it.
 // Those files stay outputs, so a hit restores them.
-const PNPM_TASK_STATE = "!**/node_modules/.pnpm-task-run-state-v1/**";
-
 const createTask = (
   command: string,
   rewrittenPatterns: string[],
-  output: (string | { auto: true })[] = [{ auto: true }, PNPM_TASK_STATE],
+  output: (string | { auto: true })[] = [{ auto: true }, ...PNPM_STATE_PATTERNS],
 ) => ({
-  cache: { input: [{ auto: true }, PNPM_TASK_STATE, ...rewrittenPatterns.map((pattern) => `!${pattern}`)], output },
+  cache: {
+    input: [{ auto: true }, ...PNPM_STATE_PATTERNS, ...rewrittenPatterns.map((pattern) => `!${pattern}`)],
+    output,
+  },
   command,
 });
 
+// Read by `vp run` alone, and configures no bundler: the app builds through `nuxt build` from apps/web/nuxt.config.ts.
 const configuration: UserConfig = defineConfig({
   run: {
     tasks: {
