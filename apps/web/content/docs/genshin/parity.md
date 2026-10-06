@@ -72,10 +72,10 @@ flowchart TD
   SD --> C
   C -->|off| K
   C -->|matches| V["Approve in the visual suite"]
-  V --> R["Record: findings in the reference, conventions in the skill"]
+  V --> R["Record: investigations in the reference's topics, conventions in the skill"]
 ```
 
-- **Read before searching.** A component's `Index.reference.ts` and the [game data formats](/docs/genshin/game-data-formats) page's shortcuts come first; a search whose answer is recorded is not run again.
+- **Read before searching.** A component's `Index.reference.ts`, the topic files beside it, and the [game data formats](/docs/genshin/game-data-formats) page's shortcuts come first; a search whose answer is recorded is not run again.
 - **Every derived value cites its source.** A rect, a curve, a fitted shape or a constant names the key of the reference source it is taken from.
 - **Exact data outranks measurement.** A RectTransform's anchor, a clip's curve or a shader's program is used before a position, a timing or a model measured off a recording; a recording measures only what is fieldless, such as a layout group's spacing or a script's settings.
 

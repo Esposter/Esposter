@@ -1,162 +1,25 @@
 import type { ComponentReference } from "genshin-interface";
 
+import { groundTopic } from "#src/components/World/Screen/Ground.reference";
+import { oakTopic } from "#src/components/World/Screen/Oak.reference";
+import { parityPageTopic } from "#src/components/World/Screen/ParityPage.reference";
+import { recordingsTopic } from "#src/components/World/Screen/Recordings.reference";
+import { skyTopic } from "#src/components/World/Screen/Sky.reference";
+import { statueTopic } from "#src/components/World/Screen/Statue.reference";
+import { streamingTopic } from "#src/components/World/Screen/Streaming.reference";
+import { waterTopic } from "#src/components/World/Screen/Water.reference";
 import { GameSourceKind } from "genshin-interface";
 
-// Windrise's sources in the game's data and in public recordings, what every search over them found, and what is still
-// Open. A ground tile is the game's own, 1024 metres on a side, its column the world's x over 1024 and its row its z
+// Windrise's sources in the game's data and in public recordings, and its topics, each with what every investigation
+// Found and what is still open. A ground tile is the game's own, 1024 metres on a side, its column the world's x over
+// 1024 and its row its z
 export const reference: ComponentReference = {
-  findings: [
-    {
-      found:
-        "The frame was drawn without the ground and veiled half in the sun's colour; neither was the scene's. The screen was ready before its ground streamed in, and three's god rays reached their most opacity over every ray of the valley",
-      search:
-        "The world screen shot on the parity page at 1920 by 1080 at ready, and its post chain bisected stage by stage",
-    },
-    {
-      found:
-        "Four fixed-camera recordings with no interface: the statue under the oak through a whole day on the 2026 build, the valley from the south through a whole day on a 2022 build, the oak before the mountain through a day on a 2021 build, and the oak beside Venti by day in 4K on the 2026 build. A painted live wallpaper among the results is not the game's",
-      search:
-        "YouTube for Windrise ambience, day and night cycles, time lapses and HUD-free footage, frames read at several seconds of each",
-    },
-    {
-      found:
-        "One real second is one game minute in both whole-day recordings: the statue's opens before dawn and sets its sun near its twelfth minute, the valley's opens near noon and sets near its seventh",
-      search: "A frame a minute of each 24-minute recording laid out as a contact sheet",
-    },
-    {
-      found:
-        "The Statue of The Seven is gadget SceneObj_Resident_Goddess, Mondstadt's of the five; its meshes are Stages_MdGoddess01's by level. No prefab named for the gadget is in the asset map or the index",
-      search:
-        "GadgetExcelConfigData for the gadgets named Statue of The Seven, then the asset index and the raw asset map for its names",
-    },
-    {
-      found:
-        "Windrise's statue is the overworld's scene point 4: of the six statues the points place in Mondstadt, the one whose area is 201, which WorldAreaConfigData names Windrise under Galesong Hill",
-      search:
-        "scene3_point.json for every point naming gadget 70110001, each point's area resolved through the area table and TextMap_MediumEN",
-    },
-    {
-      found:
-        "The oak is Stages_Unique_CyTree01, the one unique tree of the open world's Stages set: a prefab per level of detail, Lod1 to Lod3, each a bark and a leaf child; Lod0's meshes are in the same block with no prefab of their own. WindriseLeaf is the falling-leaf prop",
-      search:
-        "The asset index for Windrise, the pinyin names, Md and unique trees, then the GameObjects and Transforms of the meshes' blocks",
-    },
-    {
-      found:
-        "Mondstadt's ground is BigWorldTerrain tiles of 1024 metres: their base maps laid out by name show Dragonspine's snow under its statue, Starfell's statue to its north and Galesong's to the east, with Windrise's between Dragonspine and Cider Lake in tile 1,-2 near its east edge. The ErosionHeightmap tiles and the far fog's height tiles cover other regions only",
-      search:
-        "Every BigWorldTerrain base map exported and laid out by its tile's name, with the six statues' points marked under columns of x over 1024 and rows of z over 1024",
-    },
-    {
-      found:
-        "The tile's base map, splat alphas, tint, mask and specular textures and its CTS profile are named in the asset index; its heights are not, since the index holds no TerrainData. The texture blocks' MiHoYoBinData blobs are another area's placements, not a heightfield",
-      search:
-        "The asset index for every asset naming the tile, then the raw blobs of the tile's two texture blocks by size and header",
-    },
-    {
-      found:
-        "The tile's BSM text assets are not heights: a header of four grids, 64 cells a side down to 8, each cell a run of four-byte items, but a cell's values follow none of the sector's ground points under it, and the Firmament's scene carries the same format",
-      search:
-        "BigWorld_1_-2_BSM_* exported raw, the grids' cell tables read, and each 16-metre cell's median value correlated with the ground points in it under every cell order",
-    },
-    {
-      found:
-        "The game's own asset index of version 2.6, as the community publishes it, names every streamed asset of the open world by path: per tile a StreamGen blob and its index, per-layer chunks, HLODs, water and fog tiles, reflection probes and its terrain as TerrainData_Final/…/BigWorldTerrain_1_-2.bin. AnimeStudio names a MiHoYoBinData by its path's PathHashLast in hex, so a blob is found by its path",
-      search:
-        "AnimeStudio's --ai_file option traced to radioegor146/gi-asset-indexes, its last full index fetched and its paths under Build/LevelStreaming listed for the tile",
-    },
-    {
-      found:
-        "A StreamGen blob is a length word and chunks at its index's offsets; a chunk is a varint mask, an id, a count and that many records, and a record a varint mask whose bits, in order, carry flags, its prefab's 64-bit path hash, the world's 32-bit id for the prefab, a streaming radius, its position, its Euler rotation in degrees, its scale (each vector led by a byte of which components follow), an instance, a parent and a flag. Every chunk but the tile's last two parses to its next one's offset, about sixteen thousand placements",
-      search:
-        "Records near the statue read by hand, their masks compared across five kinds until every field held one bit, then the grammar run over every chunk of the tile's blob at its index's offsets",
-    },
-    {
-      found:
-        "A 64-bit path hash is the asset index's PathHashPre in its low byte and PathHashLast in the four above, so it names its prefab's _Vo path; through it about half the placements round the statue are named, the ruins, rocks, grass and decals. The 32-bit id is no hash of any path spelling, and GlobalFinMap's keys are path hashes with no 32-bit id at a fixed offset from them",
-      search:
-        "Every placement's 64-bit hash looked up in the 2.6 index; CRC32, FNV-1 and FNV-1a, Java's, MD5's and SHA-1's low words over each named path's spellings tested against its 32-bit id; GlobalFinMap read for both",
-    },
-    {
-      found:
-        "The oak stands in Windrise's own area, Area_FQD_City (FQD for Fēng Qǐ Dì, the region's Chinese name), not the tile: its StreamGen blob places one prefab, unturned at unit scale, and the area's HLOD draws a trunk rising from that point and the crown over the statue. The oak's Lod1 prefab has its root at its origin, so the record is the oak's place. The tile's own placements, its HLOD and its tree layer hold no oak",
-      search:
-        "The tile's placements by radius and rarity, its HLOD and its tree layer's combined meshes for anything tall round the statue, then every area under OpenWorld/BigWorld in the 2.6 index, the area's blob and HLOD exported",
-    },
-    {
-      found:
-        "The statue's prefab is SceneObj_NPC_Goddess: the gadget's prefabPathHash holds that path's PathHashPre and PathHashLast as a placement's 64-bit hash does, and of the gadget roots holding Stages_MdGoddess01_Lod0 it is the one without a nation's suffix",
-      search:
-        "The CABs that depend on the statue meshes' CAB through AnimeStudio's CAB map, their GameObjects named Goddess, then GadgetExcelConfigData's prefab hash for gadget 70110001 decoded against the 2.6 index",
-    },
-    {
-      found:
-        "A tile's heights are a TerrainData, 513 samples a side two metres apart over a kilometre of height, which AnimeStudio exports unparsed as TerrainData#<n> with its name only inside its bytes, so no name filter reaches it",
-      search:
-        "TerrainData exported raw from the tile's texture blocks, which held tile 1,1's, its heightfield found by the square count followed by its error and bound arrays and its side twice",
-    },
-    {
-      found:
-        "Tiles 1,-2, 2,-2 and 1,-1 are in 00/00945879.blk and 2,-1 in 00/13138169.blk. A tile's samples run along z within each column of x, stand on the world's zero, and match the tile's ground placements to a tenth of a metre at the median",
-      search:
-        "Every TerrainData of every block exported raw and named by the string its bytes lead with, then the tile's heights compared with every small placement's height in both orders",
-    },
-    {
-      found:
-        "The valley's water is one surface the tile places, Area_Md_Water_Common_01_Vo, a kilometre across at the height the south pond's own plane stands at. The tile's WaterPlane prefabs hold three ponds as children of a root no stream was found placing",
-      search:
-        "The tile's placements named by their path hash for water, then the WaterPlane prefabs' GameObjects and Transforms in their blocks, each pond's height tested against its bed and shore in the heightfield",
-    },
-    {
-      found:
-        "BigWorld_1_-2, a SectorBinData script, holds about fourteen hundred positions packed twelve bytes apart, every one inside the tile, those round the statue within two metres of its height: points on the ground about one every 27 metres, exact data a fitted ground can be held to. BigWorld_1_-2_Index, its sibling, holds no position in the tile's range",
-      search:
-        "The asset index for MonoBehaviours naming the tile, then each one's raw bytes scanned at every offset for three floats inside the tile's x and z and a height of the region's",
-    },
-    {
-      found:
-        "The statue stands 44 metres east of the oak's foot and 7 below it, turned a quarter about the vertical; its meshes hang at its root unmoved, and the root stands 0.8 metres over the tile's ground while the oak's is 0.95 under it. The recordings show the statue on a stepped stone dais: a prefab of the tile's under it, world id 2751255372 with a nine-metre streaming radius, carrying no path hash here, in tiles 1,-1 and 2,-2 under the other statues, or in either HLOD near it",
-      search:
-        "The statue's point and the oak's placement against the tile's heightfield, the statue's prefab in the witness layout, every placement within twelve metres named through the 2.6 index, then tiles 1,-1 and 2,-2 exported for the other Mondstadt statues' placements and the dais's id, and the tile's and area's HLOD meshes searched round the statue",
-    },
-    {
-      found:
-        "The statue is about eight metres tall: its figure is a mesh of its own, Stages_MdGoddess_Lite01_Lod0, hung 4.2 metres up the root at a scale of 2.69, over Level4AllExtra's wide dish at 4.1 to 4.4 metres",
-      search:
-        "The statue prefab's Transforms and its meshes' bounds in the witness layout, each child's place and scale",
-    },
-    {
-      found:
-        "Area_Common_Build_Ruin_H_06_Vo and _07_Vo, the two placements nearest the statue's dais, are irregular paving stones about a metre and a half across that sit under the recordings' dais steps, not pedestals. The carved pedestals about ten metres either side of the statue, turned a quarter, are the near-equal world ids 2068796237 and 2068799372 with a streaming radius of 4.3 and no path hash; they are none of the ruin block's Ruin_H_01 to _05 (rubble), _08, _10, _12, or Ruin_Platform_01 and _04 (42 and 21 metres across)",
-      search:
-        "The two ruins' prefabs added to the tile's stream and drawn in the witness beside the recording, then every ruin prefab of their block exported and measured against the pedestals' size",
-    },
-    {
-      found:
-        "No hash of a name gives the world's 32-bit id: sibling ids often differ by 961, thirty-one squared, yet base-31, 33, 37, 131, 65599 and FNV polynomial hashes of the names, lowercase, with .prefab and as paths, match neither paving stone's id",
-      search:
-        "Both paving stones' ids tested against each polynomial hash over every spelling of their names and paths",
-    },
-    {
-      found:
-        "The statue recording's camera stands still for the whole day, at 70.818, -4.053, 8.283 round the oak's foot, heading 64.614, pitch 8.047, a vertical field of view of 58.365. Its statue's outline lies within a pixel of the recording's edges and the landmarks' reprojection is 12.75 pixels, the paving stones the most (14 and 21) where grass covers their edges. Refining on the paving's edges too drifts to a 71-degree view that matches other stones and leaves the paving landmarks 125 pixels off",
-      search:
-        "A contact sheet of the recording at its 120th, 360th, 720th and 960th seconds, then genshin:parity pose on five landmarks (the paving stones, the statue's dish and top, the oak's trunk) at its 360th second, refined on the statue's edges, checked by overlay and by blending the witness over the frame",
-    },
-  ],
-  open: [
-    "The prefabs of the placements carrying only the world's 32-bit id, the trees round the statue among them, the dais under the statue, the carved pedestals beside it, and the paths newer than the 2.6 index",
-    "Our statue's and oak's heights and shapes: the kits stand by their own height over the ground until the statue, its dais and the oak are derived, and which of the statue's levels the recordings show",
-    "The ponds above the valley's water: the tile's WaterPlane prefabs, whose root stands at its 512-metre cell's centre and 200 metres up by every pond's bed and shore, a place inferred rather than read",
-    "The other recordings' cameras, solved with landmarks named on the witness, which cross-check the statue recording's field of view, then the parity references at the hours each recording shows",
-    "Mondstadt's sky by hour, from its Enviro profile's raw bytes as the login's was read",
-  ],
   sources: {
     assetIndex: {
-      block: "radioegor146/gi-asset-indexes, mapped/GenshinImpact_2.6.0.zip_31049740.blk.asset_index.json",
       kind: GameSourceKind.DataTable,
       name: "The game's asset index of version 2.6",
       role: "Every asset's path by its PathHashPre and PathHashLast, which name a streamed blob and a placement's prefab",
+      table: "radioegor146/gi-asset-indexes, mapped/GenshinImpact_2.6.0.zip_31049740.blk.asset_index.json",
     },
     groundHeights: {
       block: "00/00945879.blk, tile 2,-1's in 00/13138169.blk",
@@ -214,13 +77,13 @@ export const reference: ComponentReference = {
       role: "Windrise's own area, whose one placement is the oak's, its chunk offsets in Area_FQD_City_Index beside it",
     },
     oakRecording: {
-      block: "yt-2IPBviDPFB8.mp4, the hour from 25 minutes in",
+      capture: "yt-2IPBviDPFB8.mp4",
       kind: GameSourceKind.Capture,
       name: "[4K] Windrise, Mondstadt Ambience, a 2026 PC recording from a fixed camera with Venti in its lower left",
-      role: "The oak by day at 2160 high on the current build",
+      role: "The oak by day at 2160 high on the current build, over the hour from 25 minutes in",
     },
     oakTimelapse: {
-      block: "yt-qJHuDThRieE.mp4",
+      capture: "yt-qJHuDThRieE.mp4",
       kind: GameSourceKind.Capture,
       name: "Windrise, Genshin Impact 24 hour time lapse, a 2021 recording",
       role: "The oak before the mountain through a day, on an older build",
@@ -232,16 +95,16 @@ export const reference: ComponentReference = {
       role: "The Statue of The Seven's meshes by level, its material Stages_MdGoddess01 in 00/00495653.blk",
     },
     statueGadget: {
-      block: "ExcelBinOutput/GadgetExcelConfigData.json",
       kind: GameSourceKind.DataTable,
       name: "70110001 SceneObj_Resident_Goddess",
       role: "The statue as a gadget, which the scene points name",
+      table: "ExcelBinOutput/GadgetExcelConfigData.json",
     },
     statuePoint: {
-      block: "BinOutput/Scene/Point/scene3_point.json",
       kind: GameSourceKind.DataTable,
       name: "Point 4",
       role: "Where Windrise's statue stands and how it turns, and where its teleport sets the traveller down",
+      table: "BinOutput/Scene/Point/scene3_point.json",
     },
     statuePrefab: {
       block: "00/04803507.blk",
@@ -250,9 +113,10 @@ export const reference: ComponentReference = {
       role: "The statue gadget's prefab, which hangs the Stages_MdGoddess01 meshes under its root",
     },
     statueTimelapse: {
-      block: "yt-zPDi6WBJW9Y.mp4",
+      capture: "yt-zPDi6WBJW9Y.mp4",
       kind: GameSourceKind.Capture,
       name: "Windrise Ambience, a 2026 PC recording from a fixed camera through a whole day",
+      parityReference: "windrise-statue-day",
       role: "The statue under the oak at every hour on the current build, a game minute a second",
     },
     tilePlacements: {
@@ -262,7 +126,7 @@ export const reference: ComponentReference = {
       role: "Every object the tile lays out, the ruins, rocks and grass round the statue among them, its chunk offsets in BigWorld_1_-2_Index in the same block",
     },
     valleyTimelapse: {
-      block: "yt-w-63Sw6IP2w.mp4",
+      capture: "yt-w-63Sw6IP2w.mp4",
       kind: GameSourceKind.Capture,
       name: "Windswept Wilderness (Windrise) Timelapse Ambience, a 2022 recording",
       role: "The valley from the south through a whole day, a game minute a second, on an older build",
@@ -273,5 +137,15 @@ export const reference: ComponentReference = {
       name: "Area_Md_Water_Common_01_Vo, placed by the tile's StreamGen blob",
       role: "The valley's water surface, a kilometre across, whose height water.json's level is",
     },
+  },
+  topics: {
+    ground: groundTopic,
+    oak: oakTopic,
+    parityPage: parityPageTopic,
+    recordings: recordingsTopic,
+    sky: skyTopic,
+    statue: statueTopic,
+    streaming: streamingTopic,
+    water: waterTopic,
   },
 };

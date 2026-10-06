@@ -1,70 +1,13 @@
 import type { ComponentReference } from "genshin-interface";
 
+import { layoutTopic } from "#src/components/Login/Interface/Layout.reference";
+import { motionTopic } from "#src/components/Login/Interface/Motion.reference";
 import { GameSourceKind } from "genshin-interface";
 
-// The login interface's sources in the game's data, what every search over them found, and what is still open. Its
-// Layout is the RectTransforms under `LoginMainPage` in units of the canvas's 1600 by 900 reference, fitted into
-// `interfaceRects.json` by path
+// The login interface's sources in the game's data, and its topics, each with what every investigation found and
+// What is still open. Its layout is the RectTransforms under `LoginMainPage` in units of the canvas's 1600 by 900
+// Reference, fitted into `interfaceRects.json` by path
 export const reference: ComponentReference = {
-  findings: [
-    {
-      found:
-        "In 11790361 (838 RectTransforms, with BtnHelp, BtnLogin, BtnRepair, BtnSetting and DoorNode); 16000354 holds 51 and 03544574 334, none of the page's: GameObjects are not in the asset index, so a block is found through an indexed asset beside them, the Ani_LoginMainPage_Waiting clips",
-      search:
-        "Which block holds the login interface, dumping the RectTransforms and GameObjects of 16000354, 11790361 and 03544574",
-    },
-    {
-      found:
-        "Its JSON export has the Transform fields alone; its raw export's last 40 bytes are the anchors, anchored position, size and pivot, and the raw and JSON files share their numbering",
-      search: "Where a RectTransform's anchors are",
-    },
-    {
-      found:
-        "A RectTransform's own path ID is not in its dump: it is its GameObject's first component, so the tree joins through the GameObjects",
-      search: "How the page's tree is built from the dumps",
-    },
-    {
-      found: "1600 by 900, drawn 1.2 times at 1080 high: the server bar's top is 128 plus 32 units up, 192 pixels",
-      search: "The canvas's reference resolution",
-    },
-    {
-      found: "Placed by a layout group at run time: their RectTransforms read zero, so their spacing is measured",
-      search: "The corner buttons' positions",
-    },
-    {
-      found: "Anchored to the screen's foot, not its middle: the foot rides up a window narrower than 16:9 otherwise",
-      search: "Why the footer rose on a narrow window",
-    },
-    {
-      found:
-        "Bottom also holds LoadingDesc, the 58 unit loading row at its top; the prompt is BtnPressStart, a MonoUIContainer whose prefab loads at run time, so its band is measured: 38 units over the foot",
-      search: "Where the loading row and the click-to-begin prompt sit in the tree",
-    },
-    {
-      found:
-        "The build string's rect stretches across the account row with its pivot at the middle; placing it from the pivot's point on its whole length slid it half the row left, off the screen, and the backdrop compare drew the recording's own string over the gap",
-      search: "Why the build string disappeared",
-    },
-    {
-      found:
-        "The bar is full by 8 s, folds over 9 to 9.5 s with its words, and the flight runs on bare until the door rises at 11.75 s; the bar opened at 2.5 s and filled as the recording's own load went, so its pace is loading's, not a floor",
-      search: "The recording's loading end at 4 frames a second (8 s to 13 s)",
-    },
-    {
-      found: "m_Alpha, m_IsActive, m_Color.a, m_AnchoredPosition.x, m_SizeDelta.x and m_SizeDelta.y, by CRC32",
-      search: "The properties the page's clips animate",
-    },
-    {
-      found:
-        "Its rect is a container the page loads the prompt's prefab into, under Center/SwitchServer, so the prompt fades with SwitchServer as the page enters; its own place is measured from that container's box",
-      search: "Where BtnPressStart's prompt sits once the page is laid out from its tree",
-    },
-  ],
-  open: [
-    "The canvas's match between width and height on a window narrower than 16:9: the scaler is a script",
-    "The layout groups' spacing, measured on the recordings",
-    "Each button's hover and pressed states, from the recordings and the page's sprites",
-  ],
   sources: {
     bottom: {
       block: "00/11790361.blk",
@@ -139,4 +82,5 @@ export const reference: ComponentReference = {
       role: "The white the screen turns: four alphas",
     },
   },
+  topics: { layout: layoutTopic, motion: motionTopic },
 };

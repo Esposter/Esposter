@@ -75,18 +75,19 @@ flowchart TD
 
 ## References beside each component
 
-Every component derived from the game's data, in `genshin-interface` or `genshin-world`, has an `Index.reference.ts` beside its `Index.vue`, as it has its fixture and its browser tests: a `ComponentReference` (`genshin-interface`'s model) of every piece of the game's data it is derived from, every search run over it with what it found, and what is still open. It is metadata only, the game's names, blocks, path IDs and what each is for, never a value, a vertex or a pixel. A source is an asset in a block, a GameObject included, a table of the community's dump of the game's data named by its path in the dump (a gadget, a scene point), or a recording.
+Every component derived from the game's data, in `genshin-interface` or `genshin-world`, has an `Index.reference.ts` beside its `Index.vue`, as it has its fixture and its browser tests: a `ComponentReference` (`genshin-interface`'s model) of every piece of the game's data it is derived from, and its topics. A topic is one part of the component (the login's camera, its sky, its door; Windrise's statue, its ground), kept as a `<Topic>.reference.ts` beside the index, holding every investigation run on that part and the questions still open. It is metadata only, the game's names, blocks, path IDs and what each is for, never a value, a vertex or a pixel. A source is an asset in a block (a `GameAssetSource`, a GameObject included), a recording or a still by its file in the captures and the parity reference taking a frame of it (a `GameCaptureSource`), or a table of the community's dump of the game's data by its path in the dump (a `GameTableSource`: a gadget, a scene point).
 
 ```mermaid
 flowchart LR
-  G[The game's data] -->|"names, blocks, path IDs"| R["Index.reference.ts: sources, findings, open"]
+  G[The game's data] -->|"names, blocks, path IDs"| R["Index.reference.ts: sources, and a Topic.reference.ts per part: investigations, open questions"]
   R -->|"a source's key"| D[A derived value: a fitted data file, a constant, a curve]
   D -->|"traced back through the key"| R
 ```
 
 - **Every derivation cites its source.** A derived value names the key of the source it is taken from, in its data file or beside its constant, so any value traces back to the piece of the game's data it came from and that piece can be opened again.
-- **A search's result is recorded where it was run**, dead ends included, in the component's findings, so no session runs it twice.
-- **What is still unknown is its open list**, which the next session starts from.
+- **An investigation is recorded in the topic it was run on**, in the order it was run: its method (the search, the command and its inputs), its result with the numbers it read, and its outcome (`InvestigationOutcome`): `Adopted` for a change of ours the component ships, `Found` for a fact about the game's data, `DeadEnd` for a search that found nothing, `Rejected` for a change tried and turned down, `Superseded` for one shipped and later replaced. Dead ends and rejections stay, so no session runs them twice, and a topic read by its outcomes says what stands without rereading every result.
+- **What is still unknown is its topic's open questions**, which the next session starts from.
+- **A topic is a part of the component, not a kind of search**, so everything known about one part is read in one file: a new part earns its own topic once it holds investigations of its own.
 
 ## Shortcuts
 

@@ -6,7 +6,7 @@ import { LOGIN_DOOR_POSITION } from "#src/services/login/door/constants";
 // Of half a turn, as ModelCamera turns), in the scene's own units, SceneObj's tenth: the pose login-door-recording
 // Solves to on the walkway's and the door's silhouettes, the eye 1.24 metres over the walkway's top and 10.68 short of
 // The door, pitched 5.3 degrees up under a vertical field of view of 51.2, which the glide's frames refine to as well
-// (Login/Scene/Index.reference.ts's findings)
+// (Login/Scene/Camera.reference.ts)
 const EYE_HEIGHT = 1.24;
 export const LOGIN_DOOR_REST_DISTANCE = 10.68;
 export const LOGIN_CAMERA_HEIGHT = walkway.top + EYE_HEIGHT;

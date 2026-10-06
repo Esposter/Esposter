@@ -1,11 +1,11 @@
-import type { GameFinding } from "#src/models/reference/GameFinding";
 import type { GameSource } from "#src/models/reference/GameSource";
+import type { ReferenceTopic } from "#src/models/reference/ReferenceTopic";
 
 // A component's reference, co-located beside it as `Index.reference.ts`: every piece of the game's data it is derived
-// From, by a key its derivations cite, every search run over it with what it found, and what is still open. It is how
+// From, by a key its derivations cite, and its topics, each a part of the component (its camera, its sky, its door)
+// With every investigation run on it and what is still open, kept as `<Topic>.reference.ts` beside the index. It is how
 // A derived value is traced back to its source (apps/web/content/docs/genshin/game-data-formats.md)
 export interface ComponentReference {
-  findings: GameFinding[];
-  open: string[];
   sources: Record<string, GameSource>;
+  topics: Record<string, ReferenceTopic>;
 }
