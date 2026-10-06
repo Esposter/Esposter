@@ -261,10 +261,10 @@ catalog:
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.6
-  survey-core: ^3.1.2
-  survey-creator-core: ^3.1.2
-  survey-creator-vue: ^3.1.2
-  survey-vue3-ui: ^3.1.2
+  survey-core: ^3.2.0
+  survey-creator-core: ^3.2.0
+  survey-creator-vue: ^3.2.0
+  survey-vue3-ui: ^3.2.0
   temporal-polyfill: ^1.0.5
   three: ^0.186.1
   three-globe: ^2.45.3
