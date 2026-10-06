@@ -23,12 +23,18 @@ describe("dashboardVisualPreviewDatasetBindingForm", () => {
 
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
     const { promise: isFirstReadReached, resolve: onFirstReadReached } = Promise.withResolvers<void>();
+    const { promise: isBoundReadReached, resolve: onBoundReadReached } = Promise.withResolvers<void>();
     const firstReference = { id: crypto.randomUUID(), type: DatasetProviderType.Sheet };
     const secondReference = { id: crypto.randomUUID(), type: DatasetProviderType.Sheet };
+    let secondReferenceReadCount = 0;
     trpcMsw.dataset.readDataset.query(async ({ input }) => {
       if (input.id === firstReference.id) {
         onFirstReadReached();
         await readGate;
+      } else {
+        secondReferenceReadCount += 1;
+        // The pick reads the source once, and the bound source's columns read it again
+        if (secondReferenceReadCount === 2) onBoundReadReached();
       }
       return { columns: [{ name: "", type: ColumnType.String }], rows: [] };
     });
@@ -44,6 +50,7 @@ describe("dashboardVisualPreviewDatasetBindingForm", () => {
     await flushPromises();
     releaseRead();
     await flushPromises();
+    await isBoundReadReached;
     const emittedBindings = wrapper.emitted<[undefined | VisualDatasetBinding]>("update:modelValue") ?? [];
 
     expect(emittedBindings.map(([binding]) => binding?.reference)).toStrictEqual([secondReference]);
