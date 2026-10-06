@@ -1,6 +1,7 @@
 import { computeLoopArea } from "#src/services/genshinAssets/fit/computeLoopArea";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { traceCoveredGrid } from "#src/services/genshinAssets/fit/traceCoveredGrid";
+import { FITTED_DECIMALS } from "#src/services/genshinAssets/shared/constants";
 
 // The least and greatest of many values, reduced rather than spread, since a surface's cells run past the arguments a
 // Call can take
@@ -8,16 +9,24 @@ const computeLeast = (values: readonly number[]): number => values.reduce((least
 const computeGreatest = (values: readonly number[]): number =>
   values.reduce((greatest, value) => Math.max(greatest, value));
 // The loops round a set of a grid's cells, traced over the cells' own bounds and kept where they enclose at least
-// `minCells`, in the grid's metres from its corner
+// `minCells`, in the grid's metres from its corner, kept to the centimetre or to as many decimals as asked
 export const traceCellLoops = (
   cells: readonly number[],
   {
     cellSize,
     corner: [cornerX, cornerY],
+    decimals = FITTED_DECIMALS,
     minCells,
     tolerance,
     width,
-  }: { cellSize: number; corner: readonly [number, number]; minCells: number; tolerance: number; width: number },
+  }: {
+    cellSize: number;
+    corner: readonly [number, number];
+    decimals?: number;
+    minCells: number;
+    tolerance: number;
+    width: number;
+  },
 ): [number, number][][] => {
   if (cells.length === 0) return [];
   const columns = cells.map((cell) => cell % width);
@@ -32,8 +41,8 @@ export const traceCellLoops = (
     .filter((loop) => computeLoopArea(loop) >= minCells)
     .map((loop) =>
       loop.map(([column, row]): [number, number] => [
-        roundFitted(cornerX + (firstColumn + column) * cellSize),
-        roundFitted(cornerY + (firstRow + row) * cellSize),
+        roundFitted(cornerX + (firstColumn + column) * cellSize, decimals),
+        roundFitted(cornerY + (firstRow + row) * cellSize, decimals),
       ]),
     );
 };

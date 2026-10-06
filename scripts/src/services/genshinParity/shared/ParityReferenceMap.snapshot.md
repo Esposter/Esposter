@@ -11,8 +11,8 @@ committed.
 | `loading-startup` | `LoadingStartup` | 0.03% | 0.989 | 0.00% | 0.0013 |
 | `login-dawn-title` | `LoginScreen` | 9.46% | 0.480 | 6.71% | 0.3805 |
 | `login-day-title` | `LoginScreen` | 11.40% | 0.402 | 8.64% | 0.4321 |
-| `login-door` | `LoginScreen` | 11.38% | 0.298 | 9.71% | 0.4667 |
-| `login-door-recording` | `LoginScreen` | 13.82% | 0.420 | 9.32% | 0.5126 |
+| `login-door` | `LoginScreen` | 11.25% | 0.338 | 9.54% | 0.4647 |
+| `login-door-recording` | `LoginScreen` | 13.85% | 0.409 | 9.32% | 0.5140 |
 | `login-interface-door` | `LoginInterface` | 0.63% | 0.986 | 0.43% | 0.0252 |
 | `login-interface-loading` | `LoginInterface` | 0.16% | 0.995 | 0.09% | 0.0061 |
 | `login-interface-mainland-rating` | `LoginInterface` | 2.11% | 0.959 | 1.12% | 0.1095 |

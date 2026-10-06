@@ -569,6 +569,11 @@ export const reference: ComponentReference = {
       search:
         "The door's and the walkway's saved layer patches applied in turn under the shipped light, the walkway refitted by genshin:assets fit login --only walkway, and compare on every frame each shows",
     },
+    {
+      found:
+        "The game's own door drawn through our light scores worse than our flat door on both door frames (rank's Door: stand-in at -0.0045 on the door recording and -0.0022 on the phone's door frame), so the frames' FLIP cannot judge the door's shape while its light is off. By rank's second table the layers bring the door near its exports: similarity 0.30 to 0.67 and its gap 0.3718 to 0.3105 on the door recording, 0.55 to 0.72 and 0.2854 to 0.2590 on the phone's door frame. Shipped on that measure",
+      search: "rank login-door-recording and login-door --witness login with and without the door's layer patch",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
