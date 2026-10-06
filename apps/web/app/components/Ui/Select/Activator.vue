@@ -15,7 +15,11 @@ interface Props {
 const { items, label } = defineProps<Props>();
 // Inside the select's root, where its context can be read: the primitive walks the options by arrow and by Home and
 // End, and typing a title's first letters is added here
-const { isOpen, modelValue, popover, virtualFocus } = useSelectContext("v0:select");
+const { close, isOpen, modelValue, popover, virtualFocus } = useSelectContext("v0:select");
+// The trigger is no invoker of the list, so a press on it while the list is open counts as outside it: the browser's
+// Light dismiss closes the list on the release, and on touch it does so before the click lands, which the primitive
+// Then reads as a press on a closed select and opens it again. A press that began on an open list closes it
+let isOpenOnPointerDown = false;
 const selectedItems = computed(() =>
   items.filter(({ value }) =>
     Array.isArray(modelValue.value) ? modelValue.value.includes(value) : value === modelValue.value,
@@ -41,6 +45,13 @@ popover.positionTry.value = POPOVER_POSITION_TRY;
     :data-variant="UiButtonVariant.Field"
     ui-button
     justify-start
+    @pointerdown="isOpenOnPointerDown = isOpen"
+    @click="
+      () => {
+        if (isOpenOnPointerDown) close();
+        isOpenOnPointerDown = false;
+      }
+    "
     @keydown="
       (event: KeyboardEvent) => {
         if (!isOpen) return;
