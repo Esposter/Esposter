@@ -38,6 +38,7 @@ Once, after all the edits going out together: the tests of what the change touch
 - **A `--filter` that matches nothing exits 0** — prefer `pnpm -C <dir>`, and treat a filtered check's empty output as "it did not run" until a real compiler banner or test count proves otherwise.
 - **Never `pnpm <script> -- <args>`** — pnpm forwards the literal `--` and the flags are dropped; pass them as direct args (`pnpm test -u`).
 - **A caller runs the script, not the binary under it** — `pnpm exec <binary>` in a workflow is a second definition that drifts; where no script has the shape, add one (`bench:ci`).
+- **A command stays a script unless caching earns it a `vp run` task** in the root `vite.config.ts` — the three conditions, and what each rules out, are `apps/web/content/docs/architecture/vite-plus.md`, "The task cache".
 - **A script is invoked bare — `pnpm <script>`, never `pnpm run <script>`** — including under `-C` and `--filter`. `run` is load-bearing only for a name that shadows a pnpm command; `scripts/src/workspace/packageScripts.test.ts` fails on any other inside a manifest, so a workflow or a doc is where the collision is still spotted by eye.
 - How each fails, and the name that shadows a pnpm command: `references/pnpm-traps.md`.
 
