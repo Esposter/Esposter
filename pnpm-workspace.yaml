@@ -200,6 +200,8 @@ catalog:
   grid-layout-plus: ^1.1.1
   happy-dom: ^20.14.5
   howler: ^2.2.4
+  html-element-attributes: ^3.5.0
+  html-tag-names: ^2.1.0
   idb: ^8.0.3
   imagetracerjs: ^1.2.6
   js-beautify: ^2.0.3
