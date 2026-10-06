@@ -100,14 +100,14 @@ The gate at the top is the one that matters. Everything on the caching side rest
 
 None of these is scheduled, and none blocks anything above. They are recorded so that a trigger firing is recognised as a trigger rather than rediscovered as an idea.
 
-| Item                            | Reopens when                                                                                                                                                                        |
-| :------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `vp lint`, `vp fmt`, `vp check` | the built-in commands run the project's own installed Oxlint and Oxfmt rather than the copies `vite-plus` pins ([configuration](/docs/proposals/refactors/vite-plus/configuration)) |
-| `vp test` as the runner         | the Nuxt Vitest environment registers under it, the shard, blob and merge flags forward cleanly, **and** it runs the project's own Vitest                                           |
-| `vp build` for the app          | Nuxt stops owning the module graph, or the [Nuxt integration request](https://github.com/voidzero-dev/vite-plus/issues/1506) ships                                                  |
-| Remote caching                  | Vite+ ships it — listed as planned after 1.0                                                                                                                                        |
-| Early cutoff on the app build   | independent of this migration in both directions ([task runner](/docs/proposals/refactors/vite-plus/task-runner))                                                                   |
-| Retiring ESLint                 | Oxlint parses `.vue` templates. Governed by its own migration, and not accelerated by this one                                                                                      |
+| Item                            | Reopens when                                                                                                                                                                                                                         |
+| :------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vp lint`, `vp fmt`, `vp check` | **fired** — the overrides make the built-in commands run the catalog's Oxlint and Oxfmt ([configuration](/docs/proposals/refactors/vite-plus/configuration)); what is left to decide is whether the settings move into the root file |
+| `vp test` as the runner         | the Nuxt Vitest environment registers under it, the shard, blob and merge flags forward cleanly, **and** it runs the project's own Vitest                                                                                            |
+| `vp build` for the app          | Nuxt stops owning the module graph, or the [Nuxt integration request](https://github.com/voidzero-dev/vite-plus/issues/1506) ships                                                                                                   |
+| Remote caching                  | a `vite-plus` release pins a `vite-task` carrying the client, merged upstream after 1.0 — and an endpoint implementing the published server API, which upstream does not host                                                        |
+| Early cutoff on the app build   | independent of this migration in both directions ([task runner](/docs/proposals/refactors/vite-plus/task-runner))                                                                                                                    |
+| Retiring ESLint                 | Oxlint parses `.vue` templates. Governed by its own migration, and not accelerated by this one                                                                                                                                       |
 
 The test triggers are stated as a conjunction deliberately. Any one alone is not enough, and the second is the dangerous one: a wrapper that drops the shard flags does not fail, it quietly stops producing one coverage report, and the aggregate gate — every shard passed — has already gone green here over the report that was never written.
 
