@@ -563,6 +563,12 @@ export const reference: ComponentReference = {
       search:
         "hazeColor and hazeScatterColor as unknowns in solveStoneLight, then the stone mask on StoneNodeMaterial and the stone light handed to createPostPipeline, calibrate --write at every hour, calibrate --self on the night title and compare on every login frame",
     },
+    {
+      found:
+        "Under the stone's own haze the door built as its mesh's layers still splits its two frames: the phone's door frame 0.4667 to 0.4647, the door recording 0.5126 to 0.5140, the dusk's loss a third of what it was under the old light. The walkway drawn with its curbs and its lanes' borders as levels of their own scores level or worse at every hour (the dawn title 0.3805 to 0.3813, the phone's door frame 0.4667 to 0.4673, the night title 0.3654 to 0.3659, the day title and the door recording within a ten-thousandth), so the light was not what cost it",
+      search:
+        "The door's and the walkway's saved layer patches applied in turn under the shipped light, the walkway refitted by genshin:assets fit login --only walkway, and compare on every frame each shows",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
