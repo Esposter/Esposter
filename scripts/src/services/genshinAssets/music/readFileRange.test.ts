@@ -24,7 +24,7 @@ describe(readFileRange, () => {
 
     await using file = await open(path);
 
-    expect(await readFileRange(file, path, 2, 3)).toStrictEqual(Buffer.from([2, 3, 4]));
+    await expect(readFileRange(file, path, 2, 3)).resolves.toStrictEqual(Buffer.from([2, 3, 4]));
   });
 
   test("throws when the file ends before the range", async () => {
