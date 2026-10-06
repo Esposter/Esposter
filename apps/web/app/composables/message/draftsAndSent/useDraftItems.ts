@@ -11,10 +11,19 @@ export const useDraftItems = () => {
   return computed(() =>
     [...drafts.value]
       .flatMap(([composerKey, draft]) => {
-        const { roomId, threadRootRowKey } = getComposerTarget(composerKey);
-        const room = roomMap.value.get(roomId);
+        const target = getComposerTarget(composerKey);
+        if (!target) return [];
+        const room = roomMap.value.get(target.roomId);
         return room
-          ? [{ composerKey, content: draft.content, room, threadRootRowKey, updatedAt: draft.updatedAt }]
+          ? [
+              {
+                composerKey,
+                content: draft.content,
+                room,
+                threadRootRowKey: target.threadRootRowKey,
+                updatedAt: draft.updatedAt,
+              },
+            ]
           : [];
       })
       .toSorted((firstDraft, secondDraft) => secondDraft.updatedAt.getTime() - firstDraft.updatedAt.getTime()),

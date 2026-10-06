@@ -34,7 +34,7 @@ const isActive = computed(() => room.id === currentRoomId.value);
 const hasDraft = computed(
   () =>
     !isActive.value &&
-    [...drafts.value.keys()].some((composerKey) => getComposerTarget(composerKey).roomId === room.id),
+    [...drafts.value.keys()].some((composerKey) => getComposerTarget(composerKey)?.roomId === room.id),
 );
 const userToRoomStore = useUserToRoomStore();
 const { getMyUserToRoom } = userToRoomStore;

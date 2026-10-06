@@ -7,10 +7,13 @@ import { ID_SEPARATOR } from "@esposter/shared";
 // Write it — the drafts page above all, which is handed keys and has to say which room and which thread each
 // One belongs to. Split on the first separator only: a room id never contains one, and a thread root rowKey is
 // A reverse-ticked timestamp, so the first is always the boundary
-export const getComposerTarget = (composerKey: string): ComposerTarget => {
+export const getComposerTarget = (composerKey: string): ComposerTarget | undefined => {
   const separatorIndex = composerKey.indexOf(ID_SEPARATOR);
   if (separatorIndex === -1) return { roomId: composerKey, threadRootRowKey: "" };
-  // The key is read back out of storage, so a thread part that is no rowKey names no thread
-  const { data: threadRootRowKey = "" } = reverseTickedTimestampSchema.safeParse(composerKey.slice(separatorIndex + 1));
-  return { roomId: composerKey.slice(0, separatorIndex), threadRootRowKey };
+  // The key is read back out of storage, so a thread part that is no rowKey names no composer at all — read as
+  // The room's, its draft would be sent to the room and its clear would miss the key it is stored under
+  const { data: threadRootRowKey, success } = reverseTickedTimestampSchema.safeParse(
+    composerKey.slice(separatorIndex + 1),
+  );
+  return success ? { roomId: composerKey.slice(0, separatorIndex), threadRootRowKey } : undefined;
 };
