@@ -580,6 +580,12 @@ export const reference: ComponentReference = {
       search:
         "A relief canvas over the towers' facade atlas with a tangent round each tower's axis, rank login-day-title --witness login at bevels of 2, 6 and 12 units and the sign flipped, compare on every login frame, and compare login-day-title --witness login read beside its stand-in",
     },
+    {
+      found:
+        "The day title's two big towers top left are the exports' own at the day's moment of the loop, drawn so by the witness too, where the recording shows one thin tower. Scanned along the whole 200 metre loop the row's edges fit within 10 to 12 pixels nearly everywhere under the day's haze, their least 86 metres along (heldScrolled 32), where a bridge's deck crosses the frame the recording shows open and the title scores 0.4528 against 118's 0.4321; 38 and 31.6 score 0.4438 and 0.4617. Scanned across from 20 metres left to 20 right, offsets of 4, 6 and 13 metres all fit within a pixel of one another. The edges cannot place the day's towers, so its moment stays at 118: the recording is the 2022 client's, which may lay the row out apart from the current build's",
+      search:
+        "genshin:parity place login-day-title --families Towers,Bridges --witness login --scan z:-100:100:2 and --scan x:-20:20:1, then compare at heldScrolled 32, 38 and 31.6 and the frame at 32 read beside the recording",
+    },
   ],
   open: [
     "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
