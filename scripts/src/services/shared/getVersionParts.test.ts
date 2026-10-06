@@ -14,6 +14,12 @@ describe(getVersionParts, () => {
     expect(getVersionParts("0.0.1-dev.0")).toStrictEqual({ major: 0, minor: 0, patch: 1, prerelease: "dev.0" });
   });
 
+  test("reads past a tag's leading v", () => {
+    expect.hasAssertions();
+
+    expect(getVersionParts("v1.0.0")).toStrictEqual({ major: 1, minor: 0, patch: 0, prerelease: "" });
+  });
+
   test("defaults missing segments to zero", () => {
     expect.hasAssertions();
 

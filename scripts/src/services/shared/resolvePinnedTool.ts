@@ -19,7 +19,7 @@ export const resolvePinnedTool = async ({
 }: PinnedTool): Promise<string> => {
   const [held] = globSync(executablePattern, { cwd: directory });
   if (held) return join(directory, held);
-  const response = await fetchOk(archiveUrl, downloadTimeoutMs);
+  const response = await fetchOk(archiveUrl, { timeoutMs: downloadTimeoutMs });
   const archive = new Uint8Array(await response.arrayBuffer());
   const checksum = createHash("sha256").update(archive).digest("hex");
   if (checksum !== archiveSha256)

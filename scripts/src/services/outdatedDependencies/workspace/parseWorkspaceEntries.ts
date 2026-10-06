@@ -1,7 +1,8 @@
 import type { DependencyEntry } from "#src/models/outdatedDependencies/shared/DependencyEntry";
 import type { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
 
-const ENTRY_REGEX = /^[ ]{2}['"]?(?<packageName>[^'":\n]+)['"]?:\s*(?<specifier>.+)$/gmu;
+// A key and its specifier, either quoted or bare. A comment line is no entry, so a key never opens with `#`
+const ENTRY_REGEX = /^[ ]{2}['"]?(?<packageName>[^'":\n#][^'":\n]*)['"]?:\s*['"]?(?<specifier>[^'"\n]+)['"]?$/gmu;
 
 export const parseWorkspaceEntries = (group: DependencyGroup, section: string): DependencyEntry[] => {
   const entries: DependencyEntry[] = [];

@@ -18,6 +18,12 @@ describe(getColorizedLatestVersion, () => {
     expect(getColorizedLatestVersion(stableVersion, "0.1.0", color)).toBe(`0${color.yellow(".1.0")}`);
   });
 
+  test("a tag's leading v stays plain ahead of the coloured part", () => {
+    expect.hasAssertions();
+
+    expect(getColorizedLatestVersion(`v${stableVersion}`, "v0.1.0", color)).toBe(`v0${color.yellow(".1.0")}`);
+  });
+
   test("patch bump colors the patch tail green", () => {
     expect.hasAssertions();
 

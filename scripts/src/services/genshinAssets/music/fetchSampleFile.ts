@@ -16,7 +16,7 @@ export const fetchSampleFile = async (library: SampleLibrary, path: string): Pro
   const segments = path.split("/").map((segment) => encodeURIComponent(segment));
   const response = await fetchOk(
     `https://raw.githubusercontent.com/sgossner/${library}/${SampleLibraryCommitMap[library]}/${segments.join("/")}`,
-    SAMPLE_DOWNLOAD_TIMEOUT_MS,
+    { timeoutMs: SAMPLE_DOWNLOAD_TIMEOUT_MS },
   );
   const bytes = new Uint8Array(await response.arrayBuffer());
   await mkdir(dirname(localPath), { recursive: true });

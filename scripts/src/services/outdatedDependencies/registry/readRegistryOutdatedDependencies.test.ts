@@ -1,12 +1,16 @@
 import type { DependencyEntry } from "#src/models/outdatedDependencies/shared/DependencyEntry";
 
 import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
+import { readDockerRelease } from "#src/services/outdatedDependencies/docker/readDockerRelease";
 import { readRegistryOutdatedDependencies } from "#src/services/outdatedDependencies/registry/readRegistryOutdatedDependencies";
 import { readLatestVersion } from "#src/services/shared/readLatestVersion";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/shared/readLatestVersion"), () => ({
   readLatestVersion: vi.fn<typeof readLatestVersion>(),
+}));
+vi.mock(import("#src/services/outdatedDependencies/docker/readDockerRelease"), () => ({
+  readDockerRelease: vi.fn<typeof readDockerRelease>(),
 }));
 
 describe(readRegistryOutdatedDependencies, () => {
@@ -71,6 +75,42 @@ describe(readRegistryOutdatedDependencies, () => {
 
     expect(outdatedDependencies).toStrictEqual([
       { current: "0.0.0", dependencyType: "npm", dependents: ["dependent"], latest: "0.0.1", packageName: "a" },
+    ]);
+  });
+
+  test("reports a digest moved under a current version", async () => {
+    expect.hasAssertions();
+
+    const entries: DependencyEntry[] = [
+      { digest: `sha256:${"0".repeat(64)}`, group: DependencyGroup.Docker, packageName: "a", specifier: "0.0.0" },
+    ];
+    vi.mocked(readDockerRelease).mockResolvedValue({ digest: `sha256:${"1".repeat(64)}`, version: "0.0.0" });
+
+    const { outdatedDependencies } = await readRegistryOutdatedDependencies(entries);
+
+    expect(outdatedDependencies).toStrictEqual([
+      {
+        current: "0.0.0@0000000",
+        dependencyType: "digest",
+        dependents: ["docker"],
+        latest: "0.0.0@1111111",
+        packageName: "a",
+      },
+    ]);
+  });
+
+  test("reports a newer version alone, since taking it re-pins the digest", async () => {
+    expect.hasAssertions();
+
+    const entries: DependencyEntry[] = [
+      { digest: `sha256:${"0".repeat(64)}`, group: DependencyGroup.Docker, packageName: "a", specifier: "0.0.0" },
+    ];
+    vi.mocked(readDockerRelease).mockResolvedValue({ digest: `sha256:${"0".repeat(64)}`, version: "0.0.1" });
+
+    const { outdatedDependencies } = await readRegistryOutdatedDependencies(entries);
+
+    expect(outdatedDependencies).toStrictEqual([
+      { current: "0.0.0", dependencyType: "docker", dependents: ["docker"], latest: "0.0.1", packageName: "a" },
     ]);
   });
 });

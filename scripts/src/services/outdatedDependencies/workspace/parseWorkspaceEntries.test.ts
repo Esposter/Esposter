@@ -11,6 +11,14 @@ describe(parseWorkspaceEntries, () => {
     ]);
   });
 
+  test("reads a quoted specifier without its quotes and skips a comment", () => {
+    expect.hasAssertions();
+
+    expect(parseWorkspaceEntries(DependencyGroup.Catalog, '  # a: b\n  "a>b": "catalog:"\n')).toStrictEqual([
+      { group: DependencyGroup.Catalog, packageName: "a>b", specifier: "catalog:" },
+    ]);
+  });
+
   test("returns no entries for an empty section", () => {
     expect.hasAssertions();
 

@@ -3,17 +3,22 @@ import type { OutdatedDependency } from "#src/models/outdatedDependencies/shared
 import type { OutdatedDependencyCheck } from "#src/models/outdatedDependencies/shared/OutdatedDependencyCheck";
 import type { RegistryCheckError } from "#src/models/outdatedDependencies/shared/RegistryCheckError";
 
-import { getRegistryPackageName } from "#src/services/outdatedDependencies/getRegistryPackageName";
 import { getSpecifierBase } from "#src/services/outdatedDependencies/getSpecifierBase";
 import { getVersionChangeLevel } from "#src/services/outdatedDependencies/getVersionChangeLevel";
 import { checkIsVersionOutdated } from "#src/services/outdatedDependencies/registry/checkIsVersionOutdated";
 import { REGISTRY_CONCURRENCY } from "#src/services/outdatedDependencies/registry/constants";
 import { GroupMetadataMap } from "#src/services/outdatedDependencies/registry/GroupMetadataMap";
-import { readLatestVersion } from "#src/services/shared/readLatestVersion";
 import { getResultAsync } from "@esposter/shared";
 
+const DIGEST_DEPENDENCY_TYPE = "digest";
+// A digest's first seven hex characters, as git abbreviates a commit, which tell two digests apart in a table
+const getShortDigest = (digest: string): string => digest.replace(/^sha256:/u, "").slice(0, 7);
+
+// `concurrency` bounds how many requests one source sees at once: the npm registry's default, or every entry at once
+// For a caller whose entries are each a different repository or image
 export const readRegistryOutdatedDependencies = async (
   entries: DependencyEntry[],
+  concurrency: number = REGISTRY_CONCURRENCY,
 ): Promise<OutdatedDependencyCheck> => {
   // Keyed by the entry object itself, because a package name is not an identity: two manifests declaring the
   // Same engine under different constraints are two entries, and so is a package that is both a config
@@ -26,26 +31,35 @@ export const readRegistryOutdatedDependencies = async (
   // Is copied
   let nextIndex = 0;
 
-  const workers = Array.from({ length: REGISTRY_CONCURRENCY }, async () => {
+  const workers = Array.from({ length: concurrency }, async () => {
     for (;;) {
       const entry = entries[nextIndex];
       if (!entry) return;
       nextIndex += 1;
 
-      const { dependent: entryDependent, followTag, group, packageName, resolved, specifier } = entry;
-      const registryPackageName = getRegistryPackageName(entry);
+      const { dependent: entryDependent, digest, followTag, group, packageName, resolved, specifier } = entry;
+      const { dependencyType, dependent, readRelease } = GroupMetadataMap[group];
       // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: each pool worker takes the next package only after its request settles
-      await getResultAsync(() => readLatestVersion(registryPackageName, followTag)).match(
-        (latest) => {
+      await getResultAsync(() => readRelease(entry)).match(
+        ({ digest: latestDigest, version: latest }) => {
           const current = resolved ?? getSpecifierBase(specifier);
-          const { dependencyType, dependent } = GroupMetadataMap[group];
+          const dependents = [entryDependent ?? dependent];
           if (checkIsVersionOutdated(current, latest))
             outdatedDependencyMap.set(entry, {
               current,
               // A followed tag is what the Latest column then holds, so the tag is the label
               dependencyType: followTag ?? dependencyType,
-              dependents: [entryDependent ?? dependent],
+              dependents,
               latest,
+              packageName,
+            });
+          // The version is current and the source has moved what it points at — a rebuilt image, a re-pointed tag
+          else if (digest && latestDigest && digest !== latestDigest)
+            outdatedDependencyMap.set(entry, {
+              current: `${current}@${getShortDigest(digest)}`,
+              dependencyType: DIGEST_DEPENDENCY_TYPE,
+              dependents,
+              latest: `${current}@${getShortDigest(latestDigest)}`,
               packageName,
             });
         },

@@ -7,10 +7,12 @@ import { getVersionParts } from "#src/services/shared/getVersionParts";
 export const getColorizedLatestVersion = (current: string, latest: string, color: ColorPalette): string => {
   const changeLevel = getVersionChangeLevel(current, latest);
   const latestParts = getVersionParts(latest);
+  // A tag's leading `v`, which the coloured part of the version starts after
+  const tagPrefix = latest.startsWith("v") ? "v" : "";
 
   if (changeLevel === VersionChangeLevel.Major) return color.red(latest);
   if (changeLevel === VersionChangeLevel.Minor)
-    return `${latestParts.major}${color.yellow(latest.slice(String(latestParts.major).length))}`;
+    return `${tagPrefix}${latestParts.major}${color.yellow(latest.slice(`${tagPrefix}${latestParts.major}`.length))}`;
 
   const currentParts = getVersionParts(current);
   // For a prerelease bump on the same base, highlight only the changed build tail (from its first digit) in red.
@@ -26,7 +28,7 @@ export const getColorizedLatestVersion = (current: string, latest: string, color
   }
 
   if (currentParts.patch !== latestParts.patch || currentParts.prerelease !== latestParts.prerelease) {
-    const prefix = `${latestParts.major}.${latestParts.minor}.`;
+    const prefix = `${tagPrefix}${latestParts.major}.${latestParts.minor}.`;
     return `${prefix}${color.green(latest.slice(prefix.length))}`;
   }
 
