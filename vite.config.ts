@@ -2,6 +2,9 @@ import type { UserConfig } from "vite-plus";
 
 import { defineConfig } from "vite-plus";
 
+import oxfmtConfiguration from "./oxfmt.config.ts";
+import oxlintConfiguration from "./oxlint.config.ts";
+
 // The state pnpm writes on every install and every run, which no build's result depends on: the dependencies
 // Themselves are traced file by file
 const PNPM_STATE_PATTERNS = [
@@ -23,8 +26,12 @@ const createTask = (
   command,
 });
 
-// Read by `vp run` alone, and configures no bundler: the app builds through `nuxt build` from apps/web/nuxt.config.ts.
+// Composed from one module per tool, as nuxt.config.ts is: the lint and format settings stay in their own files, which
+// The bare binaries and the editor read directly. It configures no bundler: the app builds through `nuxt build` from
+// The app's own nuxt.config.ts.
 const configuration: UserConfig = defineConfig({
+  fmt: oxfmtConfiguration,
+  lint: oxlintConfiguration,
   run: {
     tasks: {
       // Nothing reads the app's `.output`, so a hit restores nothing: the replay itself is the verdict that this

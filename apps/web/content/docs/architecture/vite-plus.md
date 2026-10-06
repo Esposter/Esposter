@@ -23,9 +23,9 @@ Before the cache gated anything, every probe was run against this tree: a source
 
 `vite-plus` is a root dev dependency, and it depends on exact versions of Oxlint, Oxfmt, the Oxlint plugin API, tsgolint and Vitest with its subpackages, each behind the catalog, and aliases `vite` to its own core build. Root `overrides` point every one of those at `catalog:`, and its `vite` takes the workspace's global `vite` override like every other dependent, so the lockfile resolves one version of each tool and `vp` runs on plain Vite. The catalog stays the one statement of every version and Renovate keeps bumping it. The cost is running the `vp` CLI a minor or two ahead of the tools it was released against; a release that starts depending on its core build's internals fails the cached tasks loudly, and the fix is narrowing the `vite` override to leave `vite-plus` out.
 
-## The root config holds tasks and nothing else
+## One config, composed from a module per tool
 
-`vite.config.ts` carries the `run` block only. The lint and format settings are in `oxlint.config.ts` and `oxfmt.config.ts`. The config imports its types from `vite-plus` and configures no bundler — the app builds through `nuxt build` from `apps/web/nuxt.config.ts`. Nuxt discourages a standalone `vite.config.ts`, but its check resolves from the app's own root, and this one sits at the workspace root above it, so the two config trees coexist with nothing warned about.
+`vite.config.ts` composes its blocks the way `nuxt.config.ts` composes `apps/web/configuration/`: `lint` is imported from `oxlint.config.ts`, `fmt` from `oxfmt.config.ts`, and only `run` is written in place. The root lint and format scripts run `vp lint` and `vp fmt`, and the bare `oxlint` and `oxfmt` — the pre-commit hook, the editor, the ESLint bridge — read the same two files, so every reader of a setting reads one object. The built-in commands run the catalog's binaries, through the overrides above, so a lint run is the same pass whichever reader started it. The config imports its types from `vite-plus` and configures no bundler — the app builds through `nuxt build` from `apps/web/nuxt.config.ts`. Nuxt discourages a standalone `vite.config.ts`, but its check resolves from the app's own root, and this one sits at the workspace root above it, so the two config trees coexist with nothing warned about.
 
 ## The runtime
 
