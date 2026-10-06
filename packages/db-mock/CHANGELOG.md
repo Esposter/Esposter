@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
+
+### Features
+
+* **resource:** every cross-resource reference is indexed in resourceLinks, read off the content schemas that declare it ([c0c7976](https://github.com/Esposter/Esposter/commit/c0c7976860da310b3143e760f8212c813f23d065))
+
 # [3.9.0](https://github.com/Esposter/Esposter/compare/v3.8.1...v3.9.0) (2026-10-01)
 
 **Note:** Version bump only for package @esposter/db-mock

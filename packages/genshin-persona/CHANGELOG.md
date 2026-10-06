@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
+
+### Bug Fixes
+
+* **genshin-mods:** reset a conversation's state on clear and resume ([51f07c7](https://github.com/Esposter/Esposter/commit/51f07c7dcb0bea318ecc38e9569c43d3a0dd3b22))
+* **genshin-persona:** stop pinning the character as a notice ([e019451](https://github.com/Esposter/Esposter/commit/e0194519d2824721da9c557223fabd0c977c3fae))
+
+### Features
+
+* **genshin-persona:** name the character among the footer's mode labels ([3e34877](https://github.com/Esposter/Esposter/commit/3e3487752ddbf2cae489938238dbe7f3cc06598f))
+* **genshin-persona:** the nameplate returns as a status line a person names ([10c87bf](https://github.com/Esposter/Esposter/commit/10c87bf02b91639e09e1954db22dd8de4afe5680))
+* **genshin:** a screen reader hears the game's own words for the loading marks and the login's buttons ([79d023a](https://github.com/Esposter/Esposter/commit/79d023a2d7bde3166b6480a4af2c2f06fd98acd9))
+
 # [3.9.0](https://github.com/Esposter/Esposter/compare/v3.8.1...v3.9.0) (2026-10-01)
 
 ### Bug Fixes

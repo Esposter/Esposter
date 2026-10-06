@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
+
+### Bug Fixes
+
+* **genshin:** draw the opening on the PC client's near white, judged on its 2023 recording ([28ade94](https://github.com/Esposter/Esposter/commit/28ade94c1eb7725f629f4a27548892d1ec622fe4)), closes [#fdfdfd](https://github.com/Esposter/Esposter/issues/fdfdfd)
+* **genshin:** the engine's and interface's bundle sizes after the login's door sound ([ea7d9da](https://github.com/Esposter/Esposter/commit/ea7d9dadc254bd8ce363924b4c211a6cde955611))
+* repair main's red — land the app's half of the Nuxt 5 migration ([5b7eb78](https://github.com/Esposter/Esposter/commit/5b7eb78387292e4a3e36520fd13f8fe9a9fcadef)), closes [#1423](https://github.com/Esposter/Esposter/issues/1423)
+* repair main's red Lint job — eslint, oxlint and knip ([8934cc7](https://github.com/Esposter/Esposter/commit/8934cc7dba7e2692c6b1ae5d0af57b7d1ce48a3f))
+
+### Features
+
+* **genshin-interface:** lay the login out from the game's own RectTransform tree ([75c15b6](https://github.com/Esposter/Esposter/commit/75c15b64b01d84fefcc8b1d57b0659b55ec0cd5d))
+* **genshin-world:** Windrise's sources in the game's data and in public recordings, found and written down ([1dbda49](https://github.com/Esposter/Esposter/commit/1dbda4955755b99518add4da17d888451c285e9c))
+* **genshin:** a screen reader hears the game's own words for the loading marks and the login's buttons ([79d023a](https://github.com/Esposter/Esposter/commit/79d023a2d7bde3166b6480a4af2c2f06fd98acd9))
+* **genshin:** the login's door sounds as it opens, its two sounds found in the game's first package and played as our own noise ([c8464ca](https://github.com/Esposter/Esposter/commit/c8464ca32d73917d3ae0797f9669053f6e1555c6))
+* **genshin:** Windrise's ground is our hills fitted to the game's terrain, its water at the game's level, and the witness draws the statue, the oak and the tiles where the game's data stands them ([696c233](https://github.com/Esposter/Esposter/commit/696c233183daa4cbcedce17a7864901dac77037d))
+
 # [3.9.0](https://github.com/Esposter/Esposter/compare/v3.8.1...v3.9.0) (2026-10-01)
 
 ### Bug Fixes

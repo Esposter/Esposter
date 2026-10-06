@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
+
+### Features
+
+* **db-schema:** reverse-ticked rowKeys are branded, so a plain string or "" passed as one fails typecheck ([f44ed62](https://github.com/Esposter/Esposter/commit/f44ed62af6d05148d7b31417b8c5637a5ba57a27))
+
 # [3.9.0](https://github.com/Esposter/Esposter/compare/v3.8.1...v3.9.0) (2026-10-01)
 
 **Note:** Version bump only for package @esposter/db

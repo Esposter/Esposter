@@ -1,6 +1,6 @@
 {
   "name": "genshin-mods",
-  "version": "3.9.0",
+  "version": "4.0.0",
   "description": "A Claude Code plugin of five mods under one band above the prompt: the next steps, the cache and usage with a one-click handoff, recording mode, a goal's task list and a question before editing a file another session just changed.",
   "keywords": [
     "claude-code",

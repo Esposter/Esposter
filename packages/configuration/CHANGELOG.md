@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
+
+### Bug Fixes
+
+* **configuration:** the Intl casing rule's digit class is spelled 0-9, since a string's \d reached the regex as a bare d ([3bae078](https://github.com/Esposter/Esposter/commit/3bae078a244d3f0a8d61ea1624fad90944ff987c))
+* **configuration:** the module-scope Intl casing rule reads only a constructed instance, so a static Intl call's data stays camelCase ([5bb7d39](https://github.com/Esposter/Esposter/commit/5bb7d39a6fd6b1e429632899c0a8fea9110e6d82))
+* **configuration:** the scoped-styles rule's element check reads its optional lookup as the boolean it already is ([8d35eab](https://github.com/Esposter/Esposter/commit/8d35eab3c5182b1378c8245660923122edf7c314))
+* **eslint:** a boolean-returning callback parameter is check*, as a declarator already was ([cd14c47](https://github.com/Esposter/Esposter/commit/cd14c472b2e675a55fbc6c0f018e450fc5e83957))
+* **genshin:** type the world's canvas ref, and drop the Tres ref ban whose helper is gone ([3c6fa94](https://github.com/Esposter/Esposter/commit/3c6fa94ffa99e0dfd3e3167afd3bc3f6d2594ead))
+* main's red typecheck, oxlint and skill-docs test answered ([d2f2a64](https://github.com/Esposter/Esposter/commit/d2f2a64b952b9faf7b25e982f668899fc419a1ca))
+* repair main's red — land the app's half of the Nuxt 5 migration ([5b7eb78](https://github.com/Esposter/Esposter/commit/5b7eb78387292e4a3e36520fd13f8fe9a9fcadef)), closes [#1423](https://github.com/Esposter/Esposter/issues/1423)
+* tests ([97f379e](https://github.com/Esposter/Esposter/commit/97f379eb1da0aba15e1b058861e36ce134dd37ab))
+
+### Features
+
+* **configuration:** a Vue package reports an attribute HTML does not define on a native element ([3be1034](https://github.com/Esposter/Esposter/commit/3be1034d17a69810d2825c6d4bf08189320c0ebd))
+
 # [3.9.0](https://github.com/Esposter/Esposter/compare/v3.8.1...v3.9.0) (2026-10-01)
 
 **Note:** Version bump only for package @esposter/configuration

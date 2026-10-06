@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
+
+### Bug Fixes
+
+* main's lint, infra bundle size and unfiled-todo list after the world screen move ([a0d58bc](https://github.com/Esposter/Esposter/commit/a0d58bccdcda641b7694b6ac97a2bbce044b68f0))
+
+### Features
+
+* **infra:** allow voidzero-dev/setup-vp in the Actions allow-list ([a0b6ecf](https://github.com/Esposter/Esposter/commit/a0b6ecf84ca14bf7dc7099352a8a8f2f9a7214e1))
+
 # [3.9.0](https://github.com/Esposter/Esposter/compare/v3.8.1...v3.9.0) (2026-10-01)
 
 **Note:** Version bump only for package @esposter/infra

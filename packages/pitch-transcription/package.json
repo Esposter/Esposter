@@ -1,6 +1,6 @@
 {
   "name": "pitch-transcription",
-  "version": "3.9.0",
+  "version": "4.0.0",
   "description": "The pitched notes in a recording — Spotify's Basic Pitch model on current TensorFlow.js, its readings turned into notes with pitch bends and written as MIDI.",
   "keywords": [
     "audio",

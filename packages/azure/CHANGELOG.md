@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
+
+### Bug Fixes
+
+* **azure:** a filter clause whose operator is written in upper case parses to the lower-case operator ([8842907](https://github.com/Esposter/Esposter/commit/88429078e4af1b7902ed898cde44aa79a5b5a82e))
+* two CI reds on ai/queue — benchScene's frame callback no longer shadows its time, and azure's bundle size moves with its operator fix ([41d0666](https://github.com/Esposter/Esposter/commit/41d06664f20ae8e6597507cd173891e20ef69d81))
+
 # [3.9.0](https://github.com/Esposter/Esposter/compare/v3.8.1...v3.9.0) (2026-10-01)
 
 **Note:** Version bump only for package @esposter/azure

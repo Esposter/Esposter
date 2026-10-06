@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
+
+### Bug Fixes
+
+* **ci:** the absent-values and trpc-msw pushes typecheck, lint and pass the workspace checks ([2fd617d](https://github.com/Esposter/Esposter/commit/2fd617dc74e364b59dc9c95aa48bf4be4733d733))
+* **esbabbler:** replyRowKey is "" end to end, which a reply count and a notification link both misread ([0512d1b](https://github.com/Esposter/Esposter/commit/0512d1bba6d5f7c989cfd0b7c610a641f1d8bca2))
+* repair main's red typecheck, lint and coverage after the trpc-msw input parsers ([36d40ad](https://github.com/Esposter/Esposter/commit/36d40adb66d93bc61d255f6420ee2a3263d2d0a4))
+* **web:** the webhook proxy returns the function's Response, and the functions bundle size follows the refresh ([97ea6f9](https://github.com/Esposter/Esposter/commit/97ea6f9408f694349da5345a26ce74e9085b7575))
+
+### Features
+
+* **db-schema:** reverse-ticked rowKeys are branded, so a plain string or "" passed as one fails typecheck ([f44ed62](https://github.com/Esposter/Esposter/commit/f44ed62af6d05148d7b31417b8c5637a5ba57a27))
+* **resource:** every cross-resource reference is indexed in resourceLinks, read off the content schemas that declare it ([c0c7976](https://github.com/Esposter/Esposter/commit/c0c7976860da310b3143e760f8212c813f23d065))
+
 # [3.9.0](https://github.com/Esposter/Esposter/compare/v3.8.1...v3.9.0) (2026-10-01)
 
 ### Bug Fixes

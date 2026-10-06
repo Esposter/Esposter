@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
+
+* feat(trpc-nuxt-module)!: serve through Nitro 3 and h3 2.x ([92ae0e9](https://github.com/Esposter/Esposter/commit/92ae0e90ddc507dc682fc5904cc59fb09b6337e9)), closes [#227](https://github.com/Esposter/Esposter/issues/227) [#175](https://github.com/Esposter/Esposter/issues/175)
+
+### Bug Fixes
+
+* **main:** regenerate the artifacts a red head left stale ([c9de917](https://github.com/Esposter/Esposter/commit/c9de9176b1871a83a67b16389f866f5e3e3db66d))
+* repair main's red — land the app's half of the Nuxt 5 migration ([5b7eb78](https://github.com/Esposter/Esposter/commit/5b7eb78387292e4a3e36520fd13f8fe9a9fcadef)), closes [#1423](https://github.com/Esposter/Esposter/issues/1423)
+* **trpc-nuxt-module:** answer a staged bodyless status without tRPC's body ([5ca289f](https://github.com/Esposter/Esposter/commit/5ca289f3048f9c2027655d917a5a7db84c5c55bb))
+* **trpc-nuxt-module:** drop the body's length with a staged bodyless status ([c7a4b46](https://github.com/Esposter/Esposter/commit/c7a4b46192e8c5272c128a8db32c0e97e4d569f8))
+
+### BREAKING CHANGES
+
+* the module requires Nuxt 5 (Nitro 3, h3 2.x); its
+  `meta.compatibility` is `>=5.0.0-0` and `h3` is no longer a peer.
+
 # [3.9.0](https://github.com/Esposter/Esposter/compare/v3.8.1...v3.9.0) (2026-10-01)
 
 **Note:** Version bump only for package trpc-nuxt-module

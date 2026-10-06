@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
+
+### Bug Fixes
+
+* **eslint:** a boolean-returning callback parameter is check*, as a declarator already was ([cd14c47](https://github.com/Esposter/Esposter/commit/cd14c472b2e675a55fbc6c0f018e450fc5e83957))
+* **virrun:** a killed test run's home-cache corpora and checkouts are reaped by the next run ([d686b15](https://github.com/Esposter/Esposter/commit/d686b1578dc7d66fa7890b24969cbf6b14d382f7))
+* **virrun:** unset XDG_RUNTIME_DIR in the sandbox so pnpm 12.9 can take its store lock ([3048eb2](https://github.com/Esposter/Esposter/commit/3048eb2bc7b393d115f735bd8216c72da1ca94a7))
+
 # [3.9.0](https://github.com/Esposter/Esposter/compare/v3.8.1...v3.9.0) (2026-10-01)
 
 **Note:** Version bump only for package virrun

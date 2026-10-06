@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/Esposter/Esposter/compare/v3.9.0...v4.0.0) (2026-10-06)
+
+### Features
+
+* **configuration:** a Vue package reports an attribute HTML does not define on a native element ([3be1034](https://github.com/Esposter/Esposter/commit/3be1034d17a69810d2825c6d4bf08189320c0ebd))
+
 # [3.9.0](https://github.com/Esposter/Esposter/compare/v3.8.1...v3.9.0) (2026-10-01)
 
 ### Features
