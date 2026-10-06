@@ -56,6 +56,7 @@ export const fitLoginWalkway = async (
       return [roundFitted(rightHandedX), roundFitted(rightHandedZ)];
     });
     const xs = world.map(([x]) => x);
+    // oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- a vertex's third coordinate, its z
     const zs = world.map(([, , z]) => z);
     const corner: [number, number] = [Math.min(...xs), Math.min(...zs)];
     const { heights } = rasterizeTopFaces(
@@ -85,6 +86,7 @@ export const fitLoginWalkway = async (
     const topCountMap = new Map<number, number>();
     for (const value of heights)
       if (Number.isFinite(value)) topCountMap.set(roundFitted(value), (topCountMap.get(roundFitted(value)) ?? 0) + 1);
+    // oxlint-disable-next-line typescript/no-useless-default-assignment -- a piece drawing no top has no most common height
     const [[top = 0] = []] = [...topCountMap].toSorted(([, firstCount], [, secondCount]) => secondCount - firstCount);
     pieces.push({ outline, top });
   }
