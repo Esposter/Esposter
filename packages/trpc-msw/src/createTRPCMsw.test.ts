@@ -38,6 +38,7 @@ describe(createTRPCMsw, () => {
       authorization: req instanceof Request ? (req.headers.get("authorization") ?? "") : "",
     }),
     endpoint,
+    router,
     t,
     webSocketUrl,
   });
@@ -76,6 +77,28 @@ describe(createTRPCMsw, () => {
     expect(date).toStrictEqual(new Date(0));
     expect(value).toBe(" ");
     expect(takeOne(read.mock.calls)[0].input).toStrictEqual({ id: "" });
+  });
+
+  test("rejects an input the router's own parser rejects before the resolver runs", async () => {
+    expect.hasAssertions();
+
+    const read = vi.fn<() => Date>(() => new Date(0));
+    trpc.nested.deep.read.query(read);
+
+    // @ts-expect-error The input the real parser exists to reject
+    await expect(client.nested.deep.read.query({})).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCClientError: formatted [
+        {
+          "expected": "string",
+          "code": "invalid_type",
+          "path": [
+            "id"
+          ],
+          "message": "Invalid input: expected string, received undefined"
+        }
+      ]]
+    `);
+    expect(read).not.toHaveBeenCalled();
   });
 
   test("#43 reads FormData mutation input", async () => {

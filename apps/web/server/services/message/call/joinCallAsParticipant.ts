@@ -30,7 +30,7 @@ export const joinCallAsParticipant = async (
     // Is made of, rather than in the room the thread happens to live in
     if (roomId)
       await createSystemRoomMessage(roomId, userId, "", sessionId, {
-        replyRowKey: threadRootRowKey || undefined,
+        replyRowKey: threadRootRowKey,
         type: MessageType.Call,
       }).match(noop, console.error);
   }

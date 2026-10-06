@@ -25,12 +25,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
   }),
   [MessageAchievementName.ConversationKeeper]: defineAchievementDefinition({
     amount: 50,
-    condition: {
-      operator: BinaryOperator.Ne,
-      path: "replyRowKey",
-      type: AchievementConditionType.Property,
-      value: undefined,
-    },
+    condition: { operator: BinaryOperator.Ne, path: "replyRowKey", type: AchievementConditionType.Property, value: "" },
     description: "Reply to 50 messages",
     icon: "i-mdi:reply",
     points: 75,

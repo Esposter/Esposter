@@ -31,7 +31,7 @@ export class BaseMessageEntity<TType extends MessageType = StandardMessageType>
   linkPreviewResponse: LinkPreviewResponse | null = null;
   mentions: UserInAuth["id"][] = [];
   declare message: string;
-  replyRowKey?: string;
+  replyRowKey = "";
   type = MessageType.Message as TType;
 }
 
@@ -45,6 +45,6 @@ export const baseMessageEntitySchema = z.object({
   isPinned: z.literal(true).optional(),
   mentions: createUniqueArraySchema(selectUserInAuthSchema.shape.id).max(MENTION_MAX_LENGTH).default([]),
   message: sanitizedMessageSchema.default(""),
-  replyRowKey: reverseTickedTimestampSchema.or(z.literal("")).optional(),
+  replyRowKey: reverseTickedTimestampSchema.or(z.literal("")).default(""),
   type: standardMessageTypeSchema.default(MessageType.Message),
 }) satisfies z.ZodType<ToData<Except<BaseMessageEntity, "linkPreviewResponse">>>;

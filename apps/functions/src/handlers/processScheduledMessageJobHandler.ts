@@ -139,7 +139,7 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
         );
       const newMessage = await createAndBroadcastMessage(context, {
         message: payload.message,
-        replyRowKey: payload.replyRowKey || undefined,
+        replyRowKey: payload.replyRowKey,
         roomId: processingJob.roomId,
         type: MessageType.Message,
         userId: processingJob.userId,

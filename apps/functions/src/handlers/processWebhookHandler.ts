@@ -26,6 +26,7 @@ export const processWebhookHandler: EventGridHandler = (event, context) => {
           rowKey: newMessage.rowKey,
           userId: newMessage.userId,
         },
+        threadRootRowKey: "",
         type: AppNotificationType.Message,
       }),
     ).match(

@@ -214,7 +214,7 @@ describe("scheduledMessageJobRouter", () => {
     await mockSessionOnce(mockContext.db, member);
     const newMessage = await scheduledMessageJobCaller.sendScheduledMessageNow({ id: scheduledMessageJob.id });
 
-    expect(newMessage.replyRowKey).toBeUndefined();
+    expect(newMessage.replyRowKey).toBe("");
   });
 
   test("fails send scheduled message now with read-only room", async () => {

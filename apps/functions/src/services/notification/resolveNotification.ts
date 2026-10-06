@@ -53,7 +53,7 @@ export const resolveNotification = async (
         icon: author.icon,
         // A reply deep-links to the thread it belongs to rather than to itself: the thread is where the reply is
         // Read, and it is the one destination that is right for a room member and a thread follower alike
-        path: RoutePath.MessagesMessage(partitionKey, data.threadRootRowKey ?? rowKey),
+        path: RoutePath.MessagesMessage(partitionKey, data.threadRootRowKey || rowKey),
         title: author.title,
         userIds,
       };

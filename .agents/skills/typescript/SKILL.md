@@ -1,6 +1,6 @@
 ---
 name: typescript
-description: Apply when writing any TypeScript in this project. Esposter's TypeScript conventions — the banned patterns and what replaces each, the newest platform API over the form it replaces, "" as the absent string and ?: over | undefined, enums over string-literal unions, arrow functions, guard clauses and exhaustive switches, and modelling a type instead of casting it.
+description: Apply when writing any TypeScript in this project. Esposter's TypeScript conventions — the banned patterns and what replaces each, the newest platform API over the form it replaces, enums over string-literal unions, arrow functions, guard clauses and exhaustive switches, and modelling a type instead of casting it.
 ---
 
 # TypeScript Conventions
@@ -8,13 +8,13 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 ## Settled — do not re-propose
 
 - **Turning `typescript/consistent-type-imports` on for `.vue`** — oxlint skips the rule there, since it cannot tell from the script block whether the template uses an import as a value, and nothing in the ESLint config reaches it; the `.ts` half is on (`disallowTypeAnnotations` off, because `vi.mock(import(…))` is the sanctioned Vitest idiom), so a class used only in type position takes `import type` by lint, and a `.vue` file keeps it by reading.
-- **A raw non-printing byte in a literal** — it renders as nothing in a diff, a terminal or an editor, so no reader can tell it from an empty string or its neighbour; the `\uXXXX` escape wins (`references/absent-values.md`).
+- **A raw non-printing byte in a literal** — it renders as nothing in a diff, a terminal or an editor, so no reader can tell it from an empty string or its neighbour; the `\uXXXX` escape wins (`references/non-printing-characters.md`).
 - **Writing the older API a newer one replaces, for compatibility** — the app supports the current release of each browser engine only, and a global one of them lacks is polyfilled rather than avoided (`apps/web/content/docs/architecture/polyfills.md`).
 
 ## Deep dives
 
 - `references/enums.md` — when declaring an enum, its Zod schema, its values array, or a ref that holds one.
-- `references/absent-values.md` — when a value can be empty or absent: a string ref, an optional field, a cursor, a nullable boundary type, or a character that renders as nothing.
+- `references/non-printing-characters.md` — when a non-printing character is about to be written into a literal.
 - `references/collections.md` — when mutating an array, reading-or-inserting on a `Map`, choosing a `Set` over `.some()`, or narrowing what a `.filter()` returns.
 - `references/type-modelling.md` — when reaching for a cast, re-declaring fields a source/SDK type already has, dispatching per variant, a `NuxtConfig` key the compiler can't see, or a TS2590 the compiler cannot represent.
 - `references/control-flow.md` — when writing or reshaping a guard, an `if/else`, or a chain.
@@ -43,7 +43,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 - **Boolean casting** — never `!!`; always `Boolean(value)`.
 - **Interpolation coerces** — `${x}`, never `${x.toString()}`; `no-restricted-syntax` enforces it (a radix `toString(16)` stays). `String(x)` inside a template is only for the types `restrict-template-expressions` rejects (`unknown`, `symbol`).
 - **Regex** — literals for static patterns, `new RegExp(template, flags)` only when the pattern interpolates, and always the `u` flag; all three are lint errors otherwise (`prefer-regex-literals`, `require-unicode-regexp`). Naming (`_REGEX`) is the `naming` skill's rule ("Constants").
-- **A non-printing character is written as its `\uXXXX` escape, never the raw byte** (`scripts/src/workspace/controlCharacters.test.ts`, `references/absent-values.md`).
+- **A non-printing character is written as its `\uXXXX` escape, never the raw byte** (`scripts/src/workspace/controlCharacters.test.ts`, `references/non-printing-characters.md`).
 - **Prefer the shortened assignment forms** — compound (`x += y`, `x ??= y`) over `x = x + y`, chained (`a.value = b.value = value`) over repeating the right-hand side. `restrict-plus-operands` and `no-multi-assign` are off for exactly this reason: a cast to silence a lint rule is strictly worse than the operator it replaces.
 - **`as unknown as T` is `any` with extra steps** — a `no-restricted-syntax` error in source (`restrictedSourceSyntaxes.js`; a suite's fakes are exempt), so a surviving one is a disable naming what the compiler cannot see — never "this is safe"; the seams that earn one are `references/type-modelling.md`.
 - **A compiler limit (TS2590) is a tagged `@ts-expect-error` in place, not a redesign** (`references/type-modelling.md`).
@@ -80,6 +80,4 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 
 ## Absent Values
 
-- **`ref<string>()` is banned** (`no-restricted-syntax`) — app-owned strings are `string` with `""` as the empty sentinel, checked by truthiness, never `string | undefined`.
-- **An absent property is `field?: T`, never `field: T | undefined`**, and `null` only at an external boundary (`references/absent-values.md`).
-- Full sentinel propagation rules, boundary exceptions and the enum-`None` ban: `references/absent-values.md`.
+- `""` as the absent string, `?:` over `| undefined` and `null` only at a boundary are the `absent-values` skill's.

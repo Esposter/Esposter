@@ -254,7 +254,7 @@ export const baseMessageRouter = router({
             isForward: true,
             message: messageEntity.message,
             // Reply information is not forwarded, for privacy
-            replyRowKey: undefined,
+            replyRowKey: "",
             roomId,
             type: MessageType.Message,
             userId: ctx.getSessionPayload.user.id,

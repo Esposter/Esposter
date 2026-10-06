@@ -10,7 +10,7 @@ export const standardCreateMessageInputSchema = refineMessageSchema(
     ...roomIdSchema.shape,
     ...standardMessageEntitySchema
       .pick({ files: true, message: true, replyRowKey: true })
-      .partial({ files: true, message: true }).shape,
+      .partial({ files: true, message: true, replyRowKey: true }).shape,
     type: userMessageTypeSchema.default(MessageType.Message),
   }),
 );

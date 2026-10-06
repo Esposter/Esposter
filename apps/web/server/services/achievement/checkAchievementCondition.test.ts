@@ -1,7 +1,9 @@
 import { checkAchievementCondition } from "#server/services/achievement/checkAchievementCondition";
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
+import { MessageAchievementDefinitionMap } from "#shared/services/achievement/definitions/MessageAchievementDefinitionMap";
 import { BinaryOperator } from "@esposter/azure";
+import { getReverseTickedTimestamp, MessageAchievementName } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(checkAchievementCondition, () => {
@@ -177,5 +179,15 @@ describe(checkAchievementCondition, () => {
         data,
       ),
     ).toBe(false);
+  });
+
+  // A message that replies to nothing sends `replyRowKey` as `""`, so the condition must not count it as a reply
+  test(MessageAchievementName.ConversationKeeper, () => {
+    expect.hasAssertions();
+
+    const { condition } = MessageAchievementDefinitionMap[MessageAchievementName.ConversationKeeper];
+
+    expect(condition && checkAchievementCondition(condition, { replyRowKey: "" })).toBe(false);
+    expect(condition && checkAchievementCondition(condition, { replyRowKey: getReverseTickedTimestamp() })).toBe(true);
   });
 });

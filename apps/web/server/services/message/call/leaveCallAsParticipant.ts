@@ -37,7 +37,7 @@ export const leaveCallAsParticipant = async (
     // The line is worded by the duration it reports, which is what the renderer reads an ended call back as
     await createSystemRoomMessage(callSession.roomId, userId, String(callDurationSeconds), sessionId, {
       // The summary belongs where the call was — the thread it ran in, or the room itself
-      replyRowKey: callSession.threadRootRowKey || undefined,
+      replyRowKey: callSession.threadRootRowKey,
       type: MessageType.Call,
     }).match(noop, console.error);
   }).match(noop, console.error);

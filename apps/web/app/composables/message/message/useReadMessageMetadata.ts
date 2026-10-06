@@ -25,7 +25,6 @@ export const useReadMessageMetadata = () => {
     await Promise.all([
       readMembersByIds(roomId, [...new Set(standardMessages.map(({ userId }) => userId))]),
       readAppUsers(roomId, [...new Set(webhookMessages.map(({ appUser }) => appUser.id))]),
-      // A message that replies to nothing stores `replyRowKey` as `""` as often as it leaves it out
       readReplies(roomId, [
         ...new Set(standardMessages.flatMap(({ replyRowKey }) => (replyRowKey ? [replyRowKey] : []))),
       ]),

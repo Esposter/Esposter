@@ -59,10 +59,10 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | Export                     | Description                                                                                                                     |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | `createTRPCMsw`            | The factory — returns the msw `handlers`, the typed `trpc` registration proxy and `reset`                                       |
-| `TRPCMswOptions`           | `t`, `endpoint`, and optionally `webSocketUrl`, `createContext`, `allowMethodOverride` and `onUnhandledProcedure`               |
+| `TRPCMswOptions`           | `t`, `endpoint`, and optionally `router`, `webSocketUrl`, `createContext`, `allowMethodOverride` and `onUnhandledProcedure`     |
 | `UnhandledProcedureAction` | `Error` (default) answers an unregistered procedure with tRPC's `NOT_FOUND`; `Bypass` passes the request on to the next handler |
 
-A resolver receives what a real one does — `ctx`, `input`, `path`, `signal` — and returns the procedure's output before the transformer, which runs on the way out as it does on the server. A thrown `TRPCError` reaches the client through your error formatter.
+Pass your real `router` and every call is first judged by that procedure's own input parsers, so a client sending what your server would reject gets the same `BAD_REQUEST` instead of a mocked answer; the resolver still receives the input as decoded. A resolver receives what a real one does — `ctx`, `input`, `path`, `signal` — and returns the procedure's output before the transformer, which runs on the way out as it does on the server. A thrown `TRPCError` reaches the client through your error formatter.
 
 ### Commands
 
