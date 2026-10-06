@@ -23,7 +23,11 @@ const configuration: UserConfig = defineConfig({
         "apps/web/.nuxt/**",
         "apps/web/node_modules/.cache/**",
       ]),
-      "cached:build:packages": createTask("build:packages", ["packages/*/dist/**", "packages/*/src/**/index.ts"]),
+      "cached:build:packages": createTask("build:packages", [
+        "packages/*/dist/**",
+        "packages/*/src/components/index.ts",
+        "packages/*/src/index.ts",
+      ]),
       "cached:typecheck:root": createTask("typecheck:root", ["tsconfig.tsbuildinfo"]),
     },
   },
