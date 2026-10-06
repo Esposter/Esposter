@@ -1,6 +1,6 @@
 ---
 name: genshin-engine
-description: Apply when writing or reviewing code in packages/genshin-engine or packages/genshin-world, the app's canvas under components/Genshin, or any TSL material, post pass, generator or kit for it. Esposter's Genshin engine — a published package of plain TypeScript and TSL modules — and the world package that builds the game's regions on it in TresJS components, built to run cheaply in the reader's own browser.
+description: Apply when writing or reviewing code in packages/genshin-engine or packages/genshin-world, the app's Genshin components under components/Genshin, or any TSL material, post pass, generator or kit for it. Esposter's Genshin engine — a published package of plain TypeScript and TSL modules — and the world package that builds the game's regions on it in TresJS components, built to run cheaply in the reader's own browser.
 ---
 
 # Genshin Engine
@@ -17,7 +17,7 @@ The design, from each module's job to the order a frame runs in, is `apps/web/co
 
 ## Rules
 
-- **The engine has no Vue, no store and no DOM beyond a canvas, and no place.** `genshin-engine` is the renderer and the generators, and knows no region by name. `genshin-world` is the game's world on it: the catalogue, the regions' data, and the TresJS layer — components and composables such as `usePostPipeline` — that creates the engine's modules. The app keeps only the canvas (`components/Genshin/Index.vue`), its stores, and the bundler's seams, which the world takes as props: the terrain worker's factory, the URL region data is fetched from, and the tuning panel's visibility.
+- **The engine has no Vue, no store and no DOM beyond a canvas, and no place.** `genshin-engine` is the renderer and the generators, and knows no region by name. `genshin-world` is the game's world on it: the catalogue, the regions' data, and the TresJS layer — components and composables such as `usePostPipeline` — that creates the engine's modules. The world's screen (`WorldScreen`) owns its canvas; the app keeps only the opening (`components/Genshin/Index.vue`), its stores, and the bundler's seams, which the world takes as props: the terrain worker's factory, the URL region data is fetched from, and the tuning panel's visibility.
 - **A generator is pure and seeded, and returns typed arrays**: `computeX(options)` does the work with no three.js object per vertex, and `createXGeometry` only wraps its arrays in a `BufferGeometry`. The `compute*` function is what is tested and benched.
 - **Nothing allocates per vertex or per frame.** Write into the output buffer by index, and pass a writer (`writeColor(colors, offset, …)`) rather than returning a tuple.
 - **Every generator and per-frame selection is benched at two scales or more**, under the `bench` skill, and its cost must follow what is drawn, never the size of the world.

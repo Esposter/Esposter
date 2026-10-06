@@ -12,7 +12,7 @@ flowchart LR
   E[genshin-engine: game-agnostic rendering and kits] --> W[genshin-world: the game's regions, scenes and screens]
   U[genshin-interface: the game's 2D interface] --> W
   U --> A[The app's interface-only pages]
-  W --> A2[The app's canvas and opening]
+  W --> A2[The app's opening and world mount]
 ```
 
 - **Three packages, split by what a page loads.** A page that shows only interface loads `genshin-interface` and no three.js; the engine knows no place by name; the world is everything that is the game's own. A fourth package for assets was rejected: nothing taken from the game is committed, so it would hold nothing.
