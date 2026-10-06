@@ -3,6 +3,6 @@
   "private": true,
   "description": "The persona plugin's speech engine runtime, installed by its voice verb into the plugin's state directory rather than shipped with the plugin.",
   "dependencies": {
-    "@huggingface/transformers": "^4.3.0"
+    "@huggingface/transformers": "^4.3.1"
   }
 }
