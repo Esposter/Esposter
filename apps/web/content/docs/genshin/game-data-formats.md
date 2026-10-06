@@ -66,7 +66,7 @@ flowchart TD
 
 ## References beside each component
 
-Every component derived from the game's data, in `genshin-interface` or `genshin-world`, has an `Index.reference.ts` beside its `Index.vue`, as it has its fixture and its browser tests: a `ComponentReference` (`genshin-interface`'s model) of every piece of the game's data it is derived from, every search run over it with what it found, and what is still open. It is metadata only, the game's names, blocks, path IDs and what each is for, never a value, a vertex or a pixel.
+Every component derived from the game's data, in `genshin-interface` or `genshin-world`, has an `Index.reference.ts` beside its `Index.vue`, as it has its fixture and its browser tests: a `ComponentReference` (`genshin-interface`'s model) of every piece of the game's data it is derived from, every search run over it with what it found, and what is still open. It is metadata only, the game's names, blocks, path IDs and what each is for, never a value, a vertex or a pixel. A source is an asset in a block, a GameObject included, a table of the community's dump of the game's data named by its path in the dump (a gadget, a scene point), or a recording.
 
 ```mermaid
 flowchart LR
