@@ -47,8 +47,23 @@ export const walkwayTopic: ReferenceTopic = {
       result:
         "The 3.12 pixels were the curbs: near the camera the exports' curb tops widen the walkway's outline and their inner faces stand as a dark stripe, where ours stood flat at the stone. Each piece's curbs (3 centimetres) and lanes' borders (9 millimetres) drawn as raised loops over it, the walkway's outline stands 0.49 pixels from the exports', its depth 0.05 hundredths and its normals 6.2 degrees, and the shape holds; the frames' scores that had flattened them weighed the light and the haze along with the shape",
     },
+    {
+      method:
+        "genshin:parity passes login's surface measure on login-door-session and its lightness drawn apart; the tops' plan read as tones by k-means in CIELab (fitPlanTones) over the whole copy at three tones, then folded onto the repeat its colour differs least at (rows shifted by quarter metres up to 8, its red channel's mean difference) at two centimetres a side (foldPlanRepeats) at three and five tones",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The stone of one tone with its pockets a twentieth darker stood 2.34 ΔE from the exports' mean colour and 0.124 in structure against a gate of 0.011: the exports paint the middle lane's bricks paler, with a darker brick about every 0.8 metres, and a pale strip along each lane's border. The copy's colour differs least from itself 8 metres along, 0.017 against about 0.03 at every other shift but 2 and 4 metres (0.024 and 0.027), so its pattern repeats as its wings stand. Three tones over the whole copy read 0.41 ΔE and 0.072 at 216 kilobytes; folded onto the repeat, 0.49 ΔE and 0.082 at 45; five tones folded read 0.090, finer tones adding edges the exports' soft paint does not have. Adopted at three folded tones: the colour holds, the structure does not, and more tones move it away",
+    },
+    {
+      method:
+        "genshin:parity passes login's surface measure with each family's structure read scale by scale (scoreLabelSimilarity), then the walkway's faces that read no plan, its sides, curbs and underside, painted the mean colour their textures paint them, read at four points of each face weighted by its area",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "The walkway loses structure at every scale, 0.895, 0.891, 0.910, 0.939 and 0.972 finest first against its exports' own 0.964 to 0.999 a pixel across, so its layout stands off as well as its detail. Its sides' textures paint them 0.99 to 1.01 of the stone, the stone they already read, and moved the structure from 0.0820 to 0.0815: the sides are not the gap",
+    },
   ],
   openQuestions: [
+    "What the walkway's structure loses to its exports past its tones: 0.082 against a gate of 0.011, neither more tones nor the whole copy's detail closing it, while the exports smoothed over five pixels read 0.017 (the scoring topic), so it is where the tones lie; the structure image shows it along the lanes' lines and where the far end meets the dais",
     "What MonoBlockController does to each walkway piece: the rise is read by eye off the recording's far end; its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$) hold its own curve",
   ],
 };

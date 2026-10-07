@@ -3,6 +3,7 @@ import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityP
 
 import { ParityPass } from "#src/models/genshinParity/passes/ParityPass";
 import { measureCamera } from "#src/services/genshinParity/passes/measureCamera";
+import { measureDisplay } from "#src/services/genshinParity/passes/measureDisplay";
 import { measureInventory } from "#src/services/genshinParity/passes/measureInventory";
 import { measureLayout } from "#src/services/genshinParity/passes/measureLayout";
 import { measureMotion } from "#src/services/genshinParity/passes/measureMotion";
@@ -16,6 +17,7 @@ export const ParityPassMeasureMap: Partial<
   Record<ParityPass, (component: DerivedAssetComponent) => Promise<ParityPassMeasure>>
 > = {
   [ParityPass.Camera]: measureCamera,
+  [ParityPass.Display]: measureDisplay,
   [ParityPass.Inventory]: measureInventory,
   [ParityPass.Layout]: measureLayout,
   [ParityPass.Motion]: measureMotion,

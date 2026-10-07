@@ -14,10 +14,3 @@ export const LOGIN_FACADE_ATTRIBUTE = "facade";
 // The geometry attribute saying whether a tower vertex is its lathe's, which the facade's openings cut, or a slab's,
 // Which stands whole
 export const LOGIN_FACADE_CUT_ATTRIBUTE = "facadeCut";
-// How much of the light a recess keeps for each unit of its mesh it sinks in, the light its sides and its lintel
-// Shut out of a window or a flute, which a lathe's smooth face cannot shade
-export const LOGIN_TOWER_RECESS_OCCLUSION = 0.9;
-// How far each traced shade stands from the stone, as a share of how far its texels' colour stands: drawn beside the
-// Game's own exports at every hour's camera, the towers score best by FLIP and by structural similarity at a quarter,
-// The full traced contrast scoring under the bare stone, as relief painted into a colour stands harsher than lit relief
-export const LOGIN_TOWER_FACADE_CONTRAST = 0.25;

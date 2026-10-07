@@ -1,4 +1,5 @@
 import type { LabelPlanes } from "#src/models/genshinParity/witness/LabelPlanes";
+import type { SimilarityTermMap } from "#src/models/genshinParity/witness/SimilarityTermMap";
 
 import { blurGrey } from "#src/services/genshinParity/shared/blurGrey";
 
@@ -27,9 +28,12 @@ const halve = (values: Float32Array, width: number, height: number): Float32Arra
     );
   });
 };
-// Each label's similarity between two grey images in [0, 1] of one size, a label of -1 read by none; a label with no
-// Pixel left at a scale keeps the terms it had. A coarser scale carries each label's share of a pixel rather than one
-// Label per pixel, so a pixel two labels share reads for both
+// Each label's similarity between two grey images in [0, 1] of one size, a label of -1 read by none, beside its term at
+// Each scale it has pixels at, finest first, so where its structure is lost can be read: at the finest, its detail; at
+// The coarsest, its layout and its luminance. A label with no pixel left at a scale keeps the terms it had. A coarser
+// Scale carries each label's share of a pixel rather than one label per pixel, so a pixel two labels share reads for
+// Both. Each scale's terms are kept pixel by pixel too, finest first, so where on the image a label loses them can be
+// Seen
 export const scoreLabelSimilarity = (
   reference: Float32Array,
   shot: Float32Array,
@@ -37,8 +41,21 @@ export const scoreLabelSimilarity = (
   height: number,
   labels: Int32Array,
   labelCount: number,
-): number[] =>
-  Array.from({ length: labelCount }, (_value, label) => {
+): { labelSimilarities: { scales: number[]; similarity: number }[]; termMaps: SimilarityTermMap[] } => {
+  // Repeated halving rounds down at each step as one division by the scale's power of two does
+  const levels = SCALE_WEIGHTS.map((weight, scale) => {
+    const levelWidth = Math.floor(width / 2 ** scale);
+    const levelHeight = Math.floor(height / 2 ** scale);
+    const pixelCount = levelWidth * levelHeight;
+    return {
+      height: levelHeight,
+      shares: new Float32Array(pixelCount),
+      terms: new Float32Array(pixelCount),
+      weight,
+      width: levelWidth,
+    };
+  });
+  const labelSimilarities = Array.from({ length: labelCount }, (_value, label) => {
     const labelCoverage = Float32Array.from(labels, (pixelLabel) => (pixelLabel === label ? 1 : 0));
     let planes: LabelPlanes = {
       coverage: labelCoverage,
@@ -48,8 +65,9 @@ export const scoreLabelSimilarity = (
       width,
     };
     let score = 1;
-    for (const [scale, weight] of SCALE_WEIGHTS.entries()) {
-      const isCoarsest = scale === SCALE_WEIGHTS.length - 1;
+    const scales: number[] = [];
+    for (const [scale, { shares, terms, weight }] of levels.entries()) {
+      const isCoarsest = scale === levels.length - 1;
       const { coverage, first, height: levelHeight, second, width: levelWidth } = planes;
       const blurLevel = (values: Float32Array) => blurGrey(values, levelWidth, levelHeight, WINDOW_SIGMA);
       // Over a label's coverage c, an image x weighted by it is x·c, so its square is (x·c)²/c and two images' product
@@ -79,8 +97,14 @@ export const scoreLabelSimilarity = (
             (firstAverage ** 2 + secondAverage ** 2 + LUMINANCE_CONSTANT);
         sum += term * share;
         count += share;
+        terms[index] = (terms[index] ?? 0) + term * share;
+        shares[index] = (shares[index] ?? 0) + share;
       }
-      if (count > 0) score *= Math.max(sum / count, 0) ** weight;
+      if (count > 0) {
+        const term = Math.max(sum / count, 0);
+        scales.push(term);
+        score *= term ** weight;
+      }
       if (isCoarsest) break;
       planes = {
         coverage: halve(coverage, levelWidth, levelHeight),
@@ -90,5 +114,14 @@ export const scoreLabelSimilarity = (
         width: Math.floor(levelWidth / 2),
       };
     }
-    return score;
+    return { scales, similarity: score };
   });
+  return {
+    labelSimilarities,
+    termMaps: levels.map(({ height: levelHeight, shares, terms, width: levelWidth }) => ({
+      height: levelHeight,
+      terms: terms.map((term, index) => ((shares[index] ?? 0) > 0 ? term / (shares[index] ?? 1) : Number.NaN)),
+      width: levelWidth,
+    })),
+  };
+};

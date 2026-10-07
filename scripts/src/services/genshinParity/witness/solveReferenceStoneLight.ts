@@ -16,7 +16,7 @@ import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitne
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { checkIsPartInterior } from "#src/services/genshinParity/sky/checkIsPartInterior";
 import { computeFogOpacity } from "#src/services/genshinParity/sky/computeFogOpacity";
-import { getPixelSceneColor } from "#src/services/genshinParity/sky/getPixelSceneColor";
+import { getPixelDisplayColor } from "#src/services/genshinParity/sky/getPixelDisplayColor";
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
 import { solveStoneLight } from "#src/services/genshinParity/witness/solveStoneLight";
 import { withFinalizerAsync } from "@esposter/shared";
@@ -50,7 +50,7 @@ const toLogOdds = (share: number): number => Math.log(share / (1 - share));
 const readPage = <T>(page: Page, name: string): Promise<T> =>
   page.evaluate((functionName) => (Reflect.get(window, functionName) as () => T)(), name);
 // A reference's stone light solved as the game's deferred pass casts it, over the parts the witness draws from the
-// Game's exports: each part's interior pixel, its reference colour taken back into scene colour (`toSceneColor`), the
+// Game's exports: each part's interior pixel, its reference colour as the screen shows it, the
 // Exports' albedo, their normal against the scene's sun and the sun's visibility there giving its ramp coordinate and
 // Its harmonics, the scene's occlusion over their depth, and the scene's own haze giving its opacity and its scatter.
 // The light and the haze's colours over the stone are a linear solve over the bins (`solveStoneLight`) under the
@@ -134,7 +134,7 @@ export const solveReferenceStoneLight = async (
           sample: {
             albedo: [albedo[pixel * 4] ?? 0, albedo[pixel * 4 + 1] ?? 0, albedo[pixel * 4 + 2] ?? 0],
             bin: `${band}/${heightBand}/${rampBin}/${upwardBin}`,
-            color: getPixelSceneColor(referenceShot, pixel),
+            display: getPixelDisplayColor(referenceShot, pixel),
             emission: [emission[pixel * 4] ?? 0, emission[pixel * 4 + 1] ?? 0, emission[pixel * 4 + 2] ?? 0],
             harmonics,
             height: point.y,

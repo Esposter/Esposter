@@ -79,6 +79,8 @@ What each pass's tools stand on, and the runner that checks them in order.
 | Where on the frame a shape misses            | `passes`' shape image, `shapes/<reference>.png`: the normals' angle green to red, outlines apart white and blue                                    |
 | Our unlit colour against the exports'        | `passes`' surface: the same targets' albedo where both draw a family, its mean colour apart and its structure                                      |
 | Where on the frame a surface misses          | `passes`' surface image, `surfaces/<reference>.png`: the lightness apart where both draw a family, red where ours is lighter and blue where darker |
+| Which scale a surface's structure is lost at | `passes`' surface notes: each family's structure scale by scale, finest first, beside its exports' own a pixel across                              |
+| Where on the frame a structure is lost       | `passes`' structure image, `surfaces/<reference>-structure.png`: each scale's similarity term per pixel, finest first, red as it is lost           |
 | A surface's paint from its texture           | `fitPlanTones`: its texture's colours past their speckle as k-means tones in CIELab, traced as loops over a plan                                   |
 
 ### Motion
@@ -92,9 +94,11 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Display
 
-| Unknown                                 | Tool                                                                                                                                    |
-| :-------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
-| The grading table, tone curve and bloom | gap: the post profile's table found, else each table solved on a frame (`apps/web/content/docs/proposals/genshin/recreation-passes.md`) |
+| Unknown                   | Tool                                                                                                                   |
+| :------------------------ | :--------------------------------------------------------------------------------------------------------------------- |
+| The transform's form      | exact: the bloom's and the uber pass's programs, read with their constant layouts (the login's `Display.reference.ts`) |
+| The tone curve's contrast | `passes`' display: each pixel's light, back through the curve over its albedo, flattest on a sun and a sky's plane     |
+| The bloom's fields        | gap: which MHYBloom value is the threshold, the scaler and the intensity, measured where the bloom alone moves         |
 
 ### Light
 
@@ -129,21 +133,21 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Music
 
-| Unknown                                              | Tool                                                                                                                     |
-| :--------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
-| Which music sound a recording plays                  | `genshin:assets music`: pitch classes matched window by window                                                           |
-| What plays a piece, and when                         | `genshin:assets playlist`: its segments in order, its sources decoded                                                    |
-| A piece's notes                                      | `readMusicSourceNotes`: pitch-transcription over a decoded source                                                        |
-| Each voice's instrument and tuning                   | `fitInstrument`: measured at its clear notes, in the fit's report                                                        |
-| Each voice's noise                                   | `fitVoiceNoises`: each noise-like band, solved over every frame                                                          |
-| Which recorded instrument and level plays each voice | `genshin:parity instruments`: pitch-keeping candidates, band-energy least squares, each mix scored under its expression  |
-| Whether a recorded instrument keeps a voice's pitch  | `genshin:parity solos`: each instrument alone against the notes' own pitch classes, beside pure tones, with its best lag |
-| What a band of the game's music holds                | `genshin:parity bands`: share, flatness, attack weight, on partials                                                      |
-| Whether our noise plays what it ships                | `genshin:parity noise`: the solve read back from our render and the game's                                               |
-| How close our music sounds                           | `genshin:parity listen`: pitch agreement, each band's gap and its sign                                                   |
-| Each segment's swells and fades                      | `genshin:parity expression`: one gain a window over every band, refitted against our render and written                  |
-| Whether ours rings longer than the game's            | `genshin:parity decay`: each band's signed gap by the time since the last note began                                     |
-| Whether ours strikes notes the game holds            | `genshin:parity attacks`: each band's share of frames that jump, ours against the game's                                 |
+| Unknown                                              | Tool                                                                                                                      |
+| :--------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| Which music sound a recording plays                  | `genshin:assets music`: pitch classes matched window by window                                                            |
+| What plays a piece, and when                         | `genshin:assets playlist`: its segments in order, its sources decoded                                                     |
+| A piece's notes                                      | `readMusicSourceNotes`: pitch-transcription over a decoded source                                                         |
+| Each voice's instrument and tuning                   | `fitInstrument`: measured at its clear notes, in the fit's report                                                         |
+| Each voice's noise                                   | `fitVoiceNoises`: each noise-like band, solved over every frame                                                           |
+| Which recorded instrument and level plays each voice | `genshin:parity instruments`: pitch-keeping candidates layered over the synthesizer, each mix scored under its expression |
+| Whether a recorded instrument keeps a voice's pitch  | `genshin:parity solos`: each instrument alone against the notes' own pitch classes, beside pure tones, with its best lag  |
+| What a band of the game's music holds                | `genshin:parity bands`: share, flatness, attack weight, on partials                                                       |
+| Whether our noise plays what it ships                | `genshin:parity noise`: the solve read back from our render and the game's                                                |
+| How close our music sounds                           | `genshin:parity listen`: pitch agreement, each band's gap and its sign                                                    |
+| Each segment's swells and fades                      | `genshin:parity expression`: one gain a window over every band, refitted against our render and written                   |
+| Whether ours rings longer than the game's            | `genshin:parity decay`: each band's signed gap by the time since the last note began                                      |
+| Whether ours strikes notes the game holds            | `genshin:parity attacks`: each band's share of frames that jump, ours against the game's                                  |
 
 ### Sound effects
 

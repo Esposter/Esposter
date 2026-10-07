@@ -3,14 +3,13 @@ import { readTargetLightness } from "#src/services/genshinParity/passes/readTarg
 import { SURFACES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { drawPixels } from "#src/services/genshinParity/shared/drawPixels";
 import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
-import { BYTE } from "#src/services/shared/constants";
+import { toByte } from "#src/services/shared/toByte";
 import { toSrgb } from "#src/services/shared/toSrgb";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 
 // The lightness apart, as a share, the diff draws at full strength: a fifth of the way from black to white
 const LIGHTNESS_FULL = 0.2;
-const toByte = (share: number): number => Math.round(Math.min(Math.max(share, 0), 1) * BYTE);
 // Where the surface pass's readings lie on the frame, outside the repository: the exports' unlit colour, ours, and a
 // Diff where both draw one family, red where ours is the lighter and blue where it is the darker, by their lightness
 // (`readTargetLightness`). Returns the image's path

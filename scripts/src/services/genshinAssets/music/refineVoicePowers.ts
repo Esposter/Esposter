@@ -1,19 +1,20 @@
 import { computeMixBandDistance } from "#src/services/genshinAssets/music/computeMixBandDistance";
 import { SAMPLED_VOICE_REFINE_STEPS } from "#src/services/genshinAssets/shared/constants";
 
-// Each voice's power refined against the score's own band distance from a least-squares start: a voice's power doubled
-// Or halved while that lowers the distance, the step halving each time no voice moves, down to
-// `SAMPLED_VOICE_REFINE_STEPS` halvings. A silenced voice starts from a thousandth of the loudest, where a step can
-// Move it
+// Each voice's power over the base it plays on refined against the score's own band distance from a least-squares
+// Start: a voice's power doubled or halved while that lowers the distance, the step halving each time no voice moves,
+// Down to `SAMPLED_VOICE_REFINE_STEPS` halvings. A silenced voice starts from a thousandth of the loudest, where a step
+// Can move it
 export const refineVoicePowers = (
   voiceEnergies: Float64Array[],
   powers: number[],
+  baseEnergies: Float64Array,
   targets: Float64Array,
   floors: number[],
   frameCount: number,
 ): number[] => {
   const computeDistance = (candidate: number[]): number =>
-    computeMixBandDistance(voiceEnergies, candidate, targets, floors, frameCount);
+    computeMixBandDistance(voiceEnergies, candidate, baseEnergies, targets, floors, frameCount);
   const floor = Math.max(...powers) / 1000;
   let refined = powers.map((power) => Math.max(power, floor));
   let distance = computeDistance(refined);

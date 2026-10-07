@@ -8,11 +8,18 @@ describe(computeMixBandDistance, () => {
     const distance = computeMixBandDistance(
       [Float64Array.of(1, 0), Float64Array.of(4, 0)],
       [5, 1],
+      Float64Array.of(0, 0),
       Float64Array.of(0.9, 1),
       [1, 1],
       1,
     );
 
     expect(distance).toBe(5);
+  });
+
+  test("counts the base beneath the voices", () => {
+    expect.hasAssertions();
+
+    expect(computeMixBandDistance([Float64Array.of(1)], [1], Float64Array.of(9), Float64Array.of(10), [1], 1)).toBe(0);
   });
 });

@@ -1,26 +1,43 @@
 <script setup lang="ts">
+import type { MusicPlayer } from "genshin-engine";
+
 import music from "#src/data/login/music.json";
 import sounds from "#src/data/login/sounds.json";
 import { LOGIN_DOOR_SOUND_DELAY_MS } from "#src/services/login/constants";
+import { loadMusicRecordings } from "#src/services/login/music/loadMusicRecordings";
+import { getResultAsync } from "@esposter/shared";
 import { useEventListener } from "@vueuse/core";
 import { createMusicPlayer, createSoundEffectBuffer } from "genshin-engine";
 
 interface Props {
   // The door has been clicked open, which plays its sound once
   isDoorOpened?: true;
+  // Where the music's recordings are served from, which its voices play over their synthesized notes
+  musicRecordingBaseUrl: string;
 }
 
-const { isDoorOpened } = defineProps<Props>();
+const { isDoorOpened, musicRecordingBaseUrl } = defineProps<Props>();
 // The login's music, rendering nothing: its playlist from the start, looping as the game's does, for as long as the
 // Screen shows, and the door's sound once the door opens, both through one context. The browser's autoplay policy may
 // Start the context suspended, and then the music waits for the first pointer or key press anywhere on the window, and
-// Starts there from its beginning
+// Starts there from its beginning. The music starts once its recordings are decoded, or without them where they cannot
+// Be fetched, unless the screen has gone by then
 let close: (() => Promise<void>) | undefined;
 let playDoorSound: (() => void) | undefined;
 onMounted(() => {
   const context = new AudioContext();
-  const player = createMusicPlayer(context, music);
-  player.start();
+  let isClosed = false;
+  let player: MusicPlayer | undefined;
+  const start = (recordingBufferMap: ReadonlyMap<string, AudioBuffer>): void => {
+    if (isClosed) return;
+    player = createMusicPlayer(context, music, recordingBufferMap);
+    player.start();
+  };
+  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and the mount has nothing to await it
+  getResultAsync(() => loadMusicRecordings(context, music, musicRecordingBaseUrl)).match(start, (error) => {
+    console.error(error);
+    start(new Map());
+  });
   const doorSound = createSoundEffectBuffer(context, sounds.door);
   playDoorSound = () => {
     const source = new AudioBufferSourceNode(context, { buffer: doorSound });
@@ -38,7 +55,8 @@ onMounted(() => {
         { once: true },
       );
   close = async () => {
-    player.stop();
+    isClosed = true;
+    player?.stop();
     await context.close();
   };
 });

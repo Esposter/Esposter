@@ -32,6 +32,11 @@ export const SHAPE_NORMAL_GATE_DEGREES = 10;
 // The surface pass's colour gate: a family's mean unlit colour within the CIELab distance two colours side by side are
 // Just told apart at
 export const SURFACE_COLOUR_GATE = 2.3;
+// The display pass reads at this width, and holds the shipped tone contrast to leaving at most this share more of its
+// Light off the plane than the contrast that leaves least: on the login the profile's 0.5 leaves a few hundredths
+// More, and its next value, 0.75, about seven tenths
+export const DISPLAY_WIDTH = 640;
+export const DISPLAY_CONTRAST_GATE = 0.1;
 // The motion pass's clip played within a hundredth of its pace, about a frame over the door's lift; a frame's moment
 // Along its clip refined in steps of a quarter of a millisecond, which a piece rising at metres a second moves a few
 // Millimetres in; and the size it draws the scene at, which none of its readings depend on

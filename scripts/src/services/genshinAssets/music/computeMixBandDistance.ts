@@ -1,9 +1,10 @@
 // The listening score's band distance of a mix from the game's sound: each voice's band energies, `frameCount` frames
-// A band after another, scaled by its power and summed, against the game's, both floored at its band's floor, as the
-// Mean over the bands of each one's mean gap in decibels
+// A band after another, scaled by its power and summed over the base the voices play on, against the game's, both
+// Floored at its band's floor, as the mean over the bands of each one's mean gap in decibels
 export const computeMixBandDistance = (
   voiceEnergies: Float64Array[],
   powers: number[],
+  baseEnergies: Float64Array,
   targets: Float64Array,
   floors: number[],
   frameCount: number,
@@ -13,7 +14,7 @@ export const computeMixBandDistance = (
     let gaps = 0;
     for (let frame = 0; frame < frameCount; frame++) {
       const index = band * frameCount + frame;
-      let energy = 0;
+      let energy = baseEnergies[index] ?? 0;
       for (const [voice, energies] of voiceEnergies.entries()) energy += (powers[voice] ?? 0) * (energies[index] ?? 0);
       gaps += Math.abs(10 * Math.log10(Math.max(energy, floor) / (targets[index] ?? floor)));
     }

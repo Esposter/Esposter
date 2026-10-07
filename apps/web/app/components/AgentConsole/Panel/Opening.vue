@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { LoadingStep } from "@/models/agentConsole/LoadingStep";
 
+import { GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL } from "#shared/services/genshin/constants";
 import { GameLanguageTagMap } from "genshin-text";
 import { GameOpening } from "genshin-world";
 
@@ -21,7 +22,13 @@ const gameText = await useGameText();
 
 <template>
   <div :lang="GameLanguageTagMap[gameText.language]" inset-0 absolute z-1>
-    <GameOpening :game-text="gameText.text" :language="gameText.language" :progress @finish="emit('finish')" />
+    <GameOpening
+      :game-text="gameText.text"
+      :language="gameText.language"
+      :music-recording-base-url="GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL"
+      :progress
+      @finish="emit('finish')"
+    />
     <p role="status" lang="en" sr-only>{{ currentStep ? `${currentStep.title}…` : "Ready" }}</p>
   </div>
 </template>

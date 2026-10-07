@@ -5,8 +5,14 @@ import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 
 import { MEGABYTE } from "../shared/services/app/constants.ts";
-import { GENSHIN_REGION_DATA_BASE_URL } from "../shared/services/genshin/constants.ts";
+import {
+  GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL,
+  GENSHIN_REGION_DATA_BASE_URL,
+} from "../shared/services/genshin/constants.ts";
 import { TEMPORAL_POLYFILL_BASE_URL } from "./constants.ts";
+
+// The world package's own folder, found through its manifest, which is there before any build
+const genshinWorldDirectory = dirname(createRequire(import.meta.url).resolve("genshin-world/package.json"));
 
 export const nitro: NuxtConfig["nitro"] = {
   // Railway's edge passes responses through uncompressed, so the build writes a brotli copy of each asset for the
@@ -47,11 +53,17 @@ export const nitro: NuxtConfig["nitro"] = {
   // A package polyfill is served from its own install under `/polyfills/`, so its version is the lockfile's
   publicAssets: [
     // Each Genshin region's data is served from the world package's own copy, so a region is fetched and released
-    // By reach rather than bundled. It is found through the package's manifest, which is there before any build
+    // By reach rather than bundled
     {
       baseURL: GENSHIN_REGION_DATA_BASE_URL,
       // oxlint-disable-next-line id-denylist -- `dir` is Nitro's own option name
-      dir: join(dirname(createRequire(import.meta.url).resolve("genshin-world/package.json")), "src/data/regions"),
+      dir: join(genshinWorldDirectory, "src/data/regions"),
+    },
+    // The recordings the login's music plays over its synthesizer, fetched once the login shows
+    {
+      baseURL: GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL,
+      // oxlint-disable-next-line id-denylist -- as above
+      dir: join(genshinWorldDirectory, "src/data/login/recordings"),
     },
     {
       baseURL: TEMPORAL_POLYFILL_BASE_URL,

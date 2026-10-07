@@ -16,7 +16,7 @@ describe(compareFamilyAlbedo, () => {
     const exportsTargets = createTargets([0, 0, 1, 1], [1, 1, 1, 1]);
     const oursTargets = createTargets([0, 0, undefined, undefined], [0, 0, 0, 0]);
 
-    const colours = compareFamilyAlbedo(exportsTargets, oursTargets, 4, 2).map(({ colour, family }) => ({
+    const colours = compareFamilyAlbedo(exportsTargets, oursTargets, 4, 2).comparisons.map(({ colour, family }) => ({
       colour,
       family,
     }));

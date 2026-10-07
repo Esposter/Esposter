@@ -12,6 +12,8 @@ interface Props {
   gameText: GameText;
   // The reader's language, whose client's title logo the opening shows
   language: GameLanguage;
+  // Where the login music's recordings are served from
+  musicRecordingBaseUrl: string;
   // The name the login screen welcomes the player by
   playerName?: string;
   // How far the world's loading has gone, from 0 to 1, which the startup loading screen's marks show once the door
@@ -19,7 +21,7 @@ interface Props {
   progress: number;
 }
 
-const { gameText, language, playerName, progress } = defineProps<Props>();
+const { gameText, language, musicRecordingBaseUrl, playerName, progress } = defineProps<Props>();
 const emit = defineEmits<{ begin: []; finish: [] }>();
 // The game's opening as one sequence: its splashes on white, then the login screen under the sky of the player's
 // Hour, its title waiting for a click, its flight and its door waiting for another, then the startup loading screen,
@@ -37,6 +39,7 @@ const timeOfDay = getLoginTimeOfDay(Temporal.Now.plainTimeISO());
     v-else-if="phase === OpeningPhase.Login"
     :game-text
     :language
+    :music-recording-base-url
     :player-name
     :progress="1"
     :time-of-day

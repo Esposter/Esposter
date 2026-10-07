@@ -2,6 +2,7 @@ import GameOpening from "#src/components/Game/Opening/Index.vue";
 import { MARKS_FADE_MS, WHITE_HOLD_MS } from "#src/services/loading/constants";
 import {
   LOGIN_DOOR_AFTER_LOAD_MS,
+  LOGIN_MUSIC_RECORDING_DIRECTORY,
   LOGIN_PROGRESS_FILL_MS,
   LOGIN_STATUS_STEPS,
   LOGIN_TITLE_START_MS,
@@ -58,7 +59,13 @@ describe("gameOpening", () => {
       vi.useFakeTimers({ toFake: ["setTimeout", "requestAnimationFrame", "cancelAnimationFrame"] });
       const onFinish = vi.fn<() => void>();
       const { container } = await render(GameOpening, {
-        props: { gameText: ENGLISH_GAME_TEXT, language: GameLanguage.English, onFinish, progress: 1 },
+        props: {
+          gameText: ENGLISH_GAME_TEXT,
+          language: GameLanguage.English,
+          musicRecordingBaseUrl: LOGIN_MUSIC_RECORDING_DIRECTORY,
+          onFinish,
+          progress: 1,
+        },
       });
       await nextTick();
       for (let splash = 0; splash < splashCount; splash++) {

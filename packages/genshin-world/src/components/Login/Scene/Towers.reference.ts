@@ -124,6 +124,27 @@ export const towersTopic: ReferenceTopic = {
       result:
         "Every carved edge had been read to half a unit, 5 centimetres at the towers' scale and 2 to 3 pixels where the login sees them nearest, which is the misregistration the shape image's red edges show. On quarter units the towers' normals read 10.43 degrees and on eighths 9.88, the outline 0.48 pixels and the depth 0.58 hundredths, and the shape pass holds for every family. The finer profile showed each section's height rounded on its own running the crowns 9 centimetres off, so a height is now the gap between its two ends rounded. The paint loops, which only colour the atlas, stay on half units (154 thousand characters where the eighths traced 341 thousand), and a slab is written as a tuple, so the towers' data stands at 442 thousand characters minified, from 352",
     },
+    {
+      method:
+        "genshin:parity passes login's surface measure on login-door-session, each family's structure read scale by scale (scoreLabelSimilarity); the facade's shades at a quarter of their traced contrast and at all of it, then its recesses with and without the light their depth keeps out",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Drawn unlit beside the exports, the towers at a quarter of their traced contrast lost structure about evenly at every scale (0.86 to 0.89 against the exports' own 0.91 to 1 a pixel across), as a pattern drawn too faint does: 0.131 against a gate of 0.020. At their full contrast they read 0.092 and with no recess darkened by its depth 0.087, colour 1.52 ΔE against 2.3, the coarsest scales gaining most. Supersedes the quarter, read off lit frames where the light across the game's carving stood in for the paint. What is left still runs through every scale, 0.04 to 0.08 under the exports' own (0.871 to 0.950 against 0.913 to 0.998), so the towers' layout of tones, not their grain alone, stands off",
+    },
+    {
+      method:
+        "The surface pass's structure image (surfaces/login-door-session-structure.png) and its lightness image over the near towers, each region's mean and spread read in both, then the towers refitted with every shade over the stone all the towers share (fitAlbedo over their diffuse textures) in place of each tower's own mean",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The near lantern tower's body matched the exports' mean to a byte where its grain spread three times as far, but the near left tower stood about 8 bytes lighter all over: each tower's shades over its own mean drew every tower at the one stone colour the scene multiplies them by, where the game's towers stand from nine tenths to about one of it. Over the shared stone the towers' colour falls from 1.52 to 0.37 ΔE and their structure from 0.087 to 0.081, the coarsest scales gaining most (0.950 to 0.964). The refit also carried the paint grid rounded up to the seam and the crown (sampleFacadeGrid), which towers.json had not been fitted with since, a band merged and the loops run on half a unit to the seam: alone it moved the colour by a ten-thousandth",
+    },
+    {
+      method:
+        "The structure image's slender far column found by genshin:parity parts login-door-session --family Towers as LoginScene_Build05_01_Lod2, the inventory's materials read level by level, then readLevelOfDetailParts making a level drawn with other materials than its part's finest a part of its own, the towers and the hulls refitted, in the passes at login-door-session",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The game stands some towers and bridges far off at their coarsest level alone, and every tower's coarsest (and most bridges' and pillars') is drawn with LoginScene_Ground01 only, about the towers' stone with no band, where our lathe painted every placement with its finest level's bands, the far Build05 dark and blue at its mouldings. Fitted from their own meshes, three towers' coarsest levels stand four placements: the towers' structure falls from 0.081 to 0.071 and their colour from 0.37 to 0.27 ΔE, their normals from 9.88 to 9.57 degrees and their outline from 0.48 to 0.46 pixels; five coarse hulls stand eleven bridges and pillars, their outline from 0.48 to 0.40 pixels and their normals from 9.20 to 9.02 degrees. Build05's middle level keeps its finest's materials and so its facade, which would have added about its finest's 238 thousand characters where the coarsest levels add 64 thousand",
+    },
   ],
   openQuestions: [
     "The towers' gilding and windows: their colour per section scores worse painted as diffuse stone, the game's gold being a metal",

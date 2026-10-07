@@ -17,7 +17,7 @@ import { getPixelSceneColor } from "#src/services/genshinParity/sky/getPixelScen
 import { readCloudSky } from "#src/services/genshinParity/sky/readCloudSky";
 import { toDisplayHex } from "#src/services/genshinParity/sky/toDisplayHex";
 import { withFinalizerAsync } from "@esposter/shared";
-import { toneMapNeutral } from "genshin-engine";
+import { toneMapGenshin } from "genshin-engine";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -132,7 +132,7 @@ export const solveReferenceSky = async (
           weights.reduce((sum, weight, term) => sum + weight * (colors[term]?.[channel] ?? 0), 0),
         ) as Vector;
         pixelModelMap.set(pixel, modelColor);
-        const [red, green, blue] = toneMapNeutral(modelColor);
+        const [red, green, blue] = toneMapGenshin(modelColor);
         const { b, g, r } = new Color(red, green, blue).convertLinearToSRGB();
         const [x, y] = [pixel % width, Math.floor(pixel / width)];
         for (let row = y; row < Math.min(y + SAMPLE_STRIDE, height); row++)

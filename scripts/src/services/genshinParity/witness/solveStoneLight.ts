@@ -6,7 +6,8 @@ import { solveNonNegativeSystem } from "#src/services/genshinParity/shared/solve
 import { computeSkyLobeHarmonics } from "#src/services/genshinParity/witness/computeSkyLobeHarmonics";
 import { SKY_LOBE_DIRECTIONS } from "#src/services/genshinParity/witness/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { STONE_HARMONIC_COUNT, STONE_HEIGHT_FALLOFF, STONE_RAMP_KNOT_COUNT } from "genshin-engine";
+import { STONE_HARMONIC_COUNT, STONE_HEIGHT_FALLOFF, STONE_RAMP_KNOT_COUNT, toSceneColor } from "genshin-engine";
+import { Color } from "three";
 
 // The least pixels a bin is read over, under which its mean is mostly one texel
 const MIN_BIN_COUNT = 30;
@@ -47,8 +48,12 @@ const writeRampWeights = (coordinate: number, weights: number[]): void => {
 // The cloud sea's (`createHeightFogNode`'s stone mask): held to the cloud sea's, the far stone stood too bright under
 // It by day, and a light that cannot fall below none to darken it again left the error standing. Bins
 // Average the pixels whose texels do not line up with the reference's, so their shading is read rather than their
-// Texels. Returns the light, the pixels its bins kept, and the residual over the bins beside their spread about their
-// Mean, the share the light leaves unexplained. Bins too sparse to read are dropped, and with none left there is no
+// Texels. A bin's colour is its pixels' mean as the screen shows them, taken back through the tone curve once
+// (`toSceneColor`): the game's curve is steep near white, and a pixel there taken back alone stood for a scene colour
+// Many times its neighbours', so the bins' means followed their brightest pixels and turned the night's walkway blue.
+// Weighed by the curve's slope as well, the solve followed its darkest bins instead, the curve rising thirty times as
+// Steeply at black as in the middle. Returns the light, the pixels its bins kept, and the residual over the bins
+// Beside their spread about their mean, the share the light leaves unexplained. Bins too sparse to read are dropped, and with none left there is no
 // Light to solve
 export const solveStoneLight = (
   samples: readonly StoneLightSample[],
@@ -75,9 +80,10 @@ export const solveStoneLight = (
     const rows = bins.map((binSamples) => {
       const row = Array.from({ length: unknownCount }, () => 0);
       let target = 0;
+      let shown = 0;
       for (const {
         albedo,
-        color,
+        display,
         emission,
         harmonics: terms,
         height,
@@ -102,11 +108,13 @@ export const solveStoneLight = (
         row[hazeUnknown] = (row[hazeUnknown] ?? 0) + opacity * (1 - scatter);
         row[hazeUnknown + 1] = (row[hazeUnknown + 1] ?? 0) + opacity * scatter;
         // The glow and the rim the material adds after lighting are known, so they leave the colour the light explains
-        target += color[channel] - emission[channel] * occlusion * (1 - opacity);
+        target -= emission[channel] * occlusion * (1 - opacity);
+        shown += display[channel];
       }
+      const meanShown = shown / binSamples.length;
       return {
         row: row.map((value) => value / binSamples.length),
-        target: target / binSamples.length,
+        target: toSceneColor(new Color(meanShown, meanShown, meanShown)).r + target / binSamples.length,
         weight: binSamples.length,
       };
     });
