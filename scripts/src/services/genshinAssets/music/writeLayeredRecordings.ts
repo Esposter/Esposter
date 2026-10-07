@@ -6,7 +6,8 @@ import { fetchSampleFile } from "#src/services/genshinAssets/music/fetchSampleFi
 import { selectShippedRecordings } from "#src/services/genshinAssets/music/selectShippedRecordings";
 import { LOGIN_MUSIC_RECORDING_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { roundMusic } from "#src/services/genshinAssets/shared/roundMusic";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { existsSync } from "node:fs";
 import { mkdir, rename, rm } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -48,14 +49,25 @@ export const writeLayeredRecordings = async (
       }
     }
   }
-  // Encoded beside the directory and swapped in once every recording is, so a failed encode leaves what ships whole
+  // Encoded beside the directory and swapped in once every recording is, so a failed encode leaves what ships whole;
+  // What ships is set aside rather than removed until the swap lands, and put back if it does not
   const partialDirectory = `${LOGIN_MUSIC_RECORDING_DIRECTORY}.partial`;
+  const backupDirectory = `${LOGIN_MUSIC_RECORDING_DIRECTORY}.backup`;
   await rm(partialDirectory, { force: true, recursive: true });
   await mkdir(partialDirectory, { recursive: true });
   for (const [file, { offset, seconds, sourcePath }] of fileRecordingMap)
     // oxlint-disable-next-line no-await-in-loop -- one recording is encoded at a time
     await encodeMusicRecording(sourcePath, offset, roundMusic(seconds), join(partialDirectory, file));
-  await rm(LOGIN_MUSIC_RECORDING_DIRECTORY, { force: true, recursive: true });
-  await rename(partialDirectory, LOGIN_MUSIC_RECORDING_DIRECTORY);
+  await rm(backupDirectory, { force: true, recursive: true });
+  const isShipped = existsSync(LOGIN_MUSIC_RECORDING_DIRECTORY);
+  if (isShipped) await rename(LOGIN_MUSIC_RECORDING_DIRECTORY, backupDirectory);
+  const swapResult = await getResultAsync(() => rename(partialDirectory, LOGIN_MUSIC_RECORDING_DIRECTORY));
+  await swapResult.match(
+    () => rm(backupDirectory, { force: true, recursive: true }),
+    async (error) => {
+      if (isShipped) await rename(backupDirectory, LOGIN_MUSIC_RECORDING_DIRECTORY);
+      throw error;
+    },
+  );
   return Array.from(fileRecordingMap.keys(), (file) => join(LOGIN_MUSIC_RECORDING_DIRECTORY, file));
 };
