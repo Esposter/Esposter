@@ -12,7 +12,7 @@ describe("agent-console-server", () => {
       `"index.js: 11.76 KB (12046 bytes)"`,
     );
     expect(getFileSizeReport(resolve(distDirectory, "contracts.js"))).toMatchInlineSnapshot(
-      `"contracts.js: 5.99 KB (6129 bytes)"`,
+      `"contracts.js: 3.36 KB (3438 bytes)"`,
     );
   });
 

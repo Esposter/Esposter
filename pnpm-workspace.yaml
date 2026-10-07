@@ -28,12 +28,10 @@ allowBuilds:
 
 # Every non-frozen install dedupes as it resolves, so a hand bump and a Renovate branch leave the same lockfile a
 # `pnpm dedupe` would; a frozen install (CI) never rewrites it.
+# @TODO: https://github.com/pnpm/pnpm/pull/16674 — set `lockfile.includeResolutionSettings: true` once a release
+# Carries it, so the lockfile records `autoDedupe` and a `pnpm run` after a frozen install stops starting a second
+# Install; until then the recorded `dedupeInjectedDeps` fails the Functions deploy's `pnpm deploy` frozen install.
 autoDedupe: true
-
-# The lockfile records `autoDedupe` (and the other resolution settings), so a `pnpm run` after a frozen install reuses
-# It rather than starting a second, non-frozen install to resolve it again.
-lockfile:
-  includeResolutionSettings: true
 
 catalog:
   "@2toad/profanity": ^3.3.0
