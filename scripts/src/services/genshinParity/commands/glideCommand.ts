@@ -2,6 +2,7 @@ import type { SubCommandsDef } from "citty";
 
 import { measureGlide } from "#src/services/genshinParity/witness/measureGlide";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
 export const glideCommand: SubCommandsDef[string] = defineCommand({
@@ -32,9 +33,12 @@ export const glideCommand: SubCommandsDef[string] = defineCommand({
     name: "glide",
   },
   run: async ({ args }) => {
+    const crossingsPerRepeat = Number(args.crossings);
+    if (args.crossings.trim() === "" || !Number.isInteger(crossingsPerRepeat) || crossingsPerRepeat < 1)
+      throw new InvalidOperationError(Operation.Read, "crossings", `${args.crossings} is not a positive count`);
     const repeats = await measureGlide(args.reference, {
       columns: parseNumbers(args.columns, "columns"),
-      crossingsPerRepeat: Number(args.crossings),
+      crossingsPerRepeat,
       durationSeconds: Number(args.seconds),
       repeatMetres: Number(args.repeat),
       row: Number(args.row),

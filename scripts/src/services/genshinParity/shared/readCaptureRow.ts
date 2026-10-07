@@ -37,5 +37,8 @@ export const readCaptureRow = async (
     ({ groups }) => startSeconds + Number(groups?.seconds),
   );
   const width = times.length > 0 ? stdout.length / times.length : 0;
+  // A frame log out of step with the frames read would cut every line at a shifted offset
+  if (!Number.isInteger(width))
+    throw new InvalidOperationError(Operation.Read, capturePath, "its frame log does not match the frames read");
   return { lines: times.map((_time, index) => stdout.subarray(index * width, (index + 1) * width)), times };
 };
