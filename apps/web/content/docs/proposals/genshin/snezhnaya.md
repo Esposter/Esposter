@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Snezhnaya
 
-This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/proposals/genshin/terrain-shapes), [vegetation](/docs/genshin/vegetation) and its [trees and scatter](/docs/proposals/genshin/trees-and-scatter), [water](/docs/genshin/water) and its [flow](/docs/proposals/genshin/flowing-water), [sky and time](/docs/genshin/sky-and-time) and [weather](/docs/proposals/genshin/weather), authored by the [reference board](/docs/proposals/genshin/reference-board)'s method. Snezhnaya is the nation of the Cryo Archon, its culture drawn from Russia. Technologically it is the most advanced of the nations, with massive factories and the Fatui's military. Every settlement keeps a Kresnik's Torch burning against the cold. It is the newest nation in the game, released in August 2026. Like Nod-Krai, its kits are parameterised from the board's captures rather than from an earlier region.
+This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/proposals/genshin/terrain-shapes), [vegetation](/docs/genshin/vegetation) and its [trees and scatter](/docs/proposals/genshin/trees-and-scatter), [water](/docs/genshin/water) and its [flow](/docs/proposals/genshin/flowing-water), [sky and time](/docs/genshin/sky-and-time) and [weather](/docs/proposals/genshin/weather), re-derived by the [scene derivation](/docs/genshin/scene-derivation)'s method, each scene in its [recreation passes](/docs/proposals/genshin/recreation-passes). Snezhnaya is the nation of the Cryo Archon, its culture drawn from Russia. Technologically it is the most advanced of the nations, with massive factories and the Fatui's military. Every settlement keeps a Kresnik's Torch burning against the cold. It is the newest nation in the game, released in August 2026. Like Nod-Krai, its kits are parameterised from the board's captures rather than from an earlier region.
 
 ## Decisions
 
@@ -38,7 +38,7 @@ The catalogue holds Snezhnaya's areas as the game names them: Everfrozen Earth, 
 2. **Volkodlak Tundra** and **White Birch Snowgrave**.
 3. **Fellfrost Peak** and **Flamefeather Valley**.
 
-## Capture checklist
+## Reference checklist
 
 Snezhnograd's main street, the Zapolyarny Palace, The Korolevskiy Theater, Central Station, a factory, a village with its Kresnik's Torch at night, a birch forest in snow, Volkodlak Tundra, and a snowstorm on Fellfrost Peak.
 

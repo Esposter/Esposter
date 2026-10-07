@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Recreation passes
 
-This page is the order a Genshin screen is rebuilt in, built on the [scene derivation](/docs/proposals/genshin/scene-derivation)'s three kinds of information and its witness render, and on the [parity](/docs/genshin/parity) loop's commands. The login scene has been worked for a long time by one loop: change something, shoot the whole frame, score it against a recording, rank every term of its error by the most it could recover, and work the largest. Each turn of that loop moves the frame by hundredths of its perceptual score, and the loop does not converge, because every unknown is judged through every other one:
+This page is the order a Genshin screen is rebuilt in, built on the [scene derivation](/docs/genshin/scene-derivation)'s three kinds of information and its witness render, and on the [parity](/docs/genshin/parity) loop's commands. The login scene has been worked for a long time by one loop: change something, shoot the whole frame, score it against a recording, rank every term of its error by the most it could recover, and work the largest. Each turn of that loop moves the frame by hundredths of its perceptual score, and the loop does not converge, because every unknown is judged through every other one:
 
 - **A placement read as a haze.** By day the stone twenty metres up and some way out read twice as bright as the recording's, which the light and the haze were solved against pass after pass. The light map of `rank` found it on two towers standing where the recording shows sky: a placement that no light or haze could ever fix, absorbed by both.
 - **A light traded for a haze.** Solved free, the light went below none to cancel a haze too bright over the far stone. Two unknowns landing in one score settled at whatever hid both.
@@ -80,21 +80,22 @@ Judged through the frame, each of the scene's unknowns is confounded by every ot
 
 ## The first run: the login
 
-The login runs through every pass from the inventory, fixing what each gate finds before the next pass begins. Each of these is known to be in question and settles in its own pass:
-
-- **Layout:** a value fitted to the frames shifts the towers' row from its blocks' placement, and the pass stays red until exact data explains it; the day's towers stand where its recording shows sky; the dusk's middle towers stand a few to fifteen pixels off; the cloud sea's two side banks are not drawn.
-- **Camera:** whether the 2022 recordings share the current build's camera.
-- **Motion:** the walkway's rise, read by eye.
-- **Display:** the frame is drawn through the tone curve alone, its grading table and bloom left out so measured colours invert; the game's own transform is found and every colour measured since is solved again under it.
-- **Light:** the suns' directions, set from screen points by hand; the occlusion's reach, chosen by score; the deferred pass's highlight and probes.
-- **Atmosphere:** the haze's scatter and start, measured by hand; the cloud sea's billows; the cloud layer, ported from the game's own program and waiting on its settings.
-- **Audio:** the buttons' clicks, the door's assembly and the wind, matched as completely as the door's opening is.
-
-Windrise starts at the references the same way once the login's gates hold.
+The login runs through every pass from its inventory once the runner and its measures exist, each gate holding before the next pass begins. What each pass has in question there, a row shifted by a fitted value, a camera the old recordings may not share, a rise read by eye, a transform left out, suns set by hand, a cloud layer waiting on its settings and the sounds still unmatched, is that pass's item on the [roadmap](/docs/genshin/roadmap), in the passes' order. Windrise starts at the references the same way once the login's gates hold.
 
 ## Scope
 
-The method needs one runner and the measures each pass lacks. `genshin:parity passes` runs each pass's measure in order against its gate over every reference of a component, stops at the first red one, and writes its table into a committed snapshot, as `compare` does for its scores. The witness's targets are drawn for our own parts as well as the exports', so shape and surface diff each channel per family. Layout compares transforms in metres before any render. Motion samples our parts on the faked clock against their clips. Display identifies the grading table, and light solves the sun's direction on its shadows' edges. Audio's matcher becomes a command. Everything the passes already have is reused as it is.
+The method needs one runner and the measures each pass lacks, and they are the base every later scene stands on, so they are built before any further world page, in this order:
+
+1. **The runner.** `genshin:parity passes` runs each pass's measure in order against its gate over every reference of a component, stops at the first red one, and writes its table into a committed snapshot, as `compare` does for its scores. It starts over the measures that exist and gains each one below as it lands.
+2. **Layout's diff.** Our transforms against the exports' in metres, then in pixels where they land, before any render.
+3. **Shape and surface's channel diff.** The witness's targets drawn for our own parts as well as the exports', so depth, normal, outline and unlit colour are diffed per family.
+4. **Motion's track check.** Our parts sampled on the faked clock against their decoded clips.
+5. **Display's solve.** The post profile's transform found, its tone curve, grading table and bloom, and drawn by the engine before any light is solved.
+6. **Light's shadow edges.** The sun's direction solved on its shadows' edges over flat receivers.
+7. **Atmosphere's cloud statistics.** The cloud layer's settings solved on the clouds' cover, sizes and colour spread.
+8. **Audio's matcher.** Finding which of the game's sounds a recording plays, and when, as a command.
+
+Everything the passes already have is reused as it is, and each measure, once built, retires its row's gap in the toolbox.
 
 ## Key files
 

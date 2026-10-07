@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Fontaine
 
-This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/proposals/genshin/terrain-shapes), [vegetation](/docs/genshin/vegetation) and its [trees and scatter](/docs/proposals/genshin/trees-and-scatter), [water](/docs/genshin/water) and its [flow](/docs/proposals/genshin/flowing-water), [sky and time](/docs/genshin/sky-and-time) and [weather](/docs/proposals/genshin/weather), authored by the [reference board](/docs/proposals/genshin/reference-board)'s method. Fontaine is the nation of the Hydro Archon, its culture drawn from Western Europe, especially France and Britain. Its plate is raised above the rest of the continent and ends in a massive waterfall, and it prides itself on the arts and on machinery. Half of it is under water. The [water](/docs/genshin/water)'s world under the surface was made part of the engine for this region.
+This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/proposals/genshin/terrain-shapes), [vegetation](/docs/genshin/vegetation) and its [trees and scatter](/docs/proposals/genshin/trees-and-scatter), [water](/docs/genshin/water) and its [flow](/docs/proposals/genshin/flowing-water), [sky and time](/docs/genshin/sky-and-time) and [weather](/docs/proposals/genshin/weather), re-derived by the [scene derivation](/docs/genshin/scene-derivation)'s method, each scene in its [recreation passes](/docs/proposals/genshin/recreation-passes). Fontaine is the nation of the Hydro Archon, its culture drawn from Western Europe, especially France and Britain. Its plate is raised above the rest of the continent and ends in a massive waterfall, and it prides itself on the arts and on machinery. Half of it is under water. The [water](/docs/genshin/water)'s world under the surface was made part of the engine for this region.
 
 ## Decisions
 
@@ -49,7 +49,7 @@ The catalogue holds Fontaine's areas as the game names them: the Court of Fontai
 4. **Erinnyes Forest**, **Liffey**, the **Research Institute** and **Morte**.
 5. **Nostoi** and the **Sea of Bygone Eras** as a layer.
 
-## Capture checklist
+## Reference checklist
 
 The Court of Fontaine from the aquabus, the Fountain of Lucine, Palais Mermonia, Opera Epiclese, the great waterfall from below, Poisson, the Research Institute's machinery, Elynas from the sea, Merusea Village under water, and the Fortress of Meropide from outside.
 

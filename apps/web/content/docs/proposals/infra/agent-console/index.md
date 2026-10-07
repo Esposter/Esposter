@@ -10,7 +10,7 @@ The [agent console](/docs/infra/claude-interface/agent-console) has shipped its 
 
 ## Decisions
 
-- **Every view keeps the world's budget.** A view builds only what is in view and rebuilds only what a change touched, the rules the [Genshin engine](/docs/proposals/genshin/engine-architecture) keeps, so no cost grows with the repository behind it.
+- **Every view keeps the world's budget.** A view builds only what is in view and rebuilds only what a change touched, the rules the [Genshin engine](/docs/genshin/engine-architecture) keeps, so no cost grows with the repository behind it.
 - **The look is behind a theme.** The default theme is the world with no character. A theme may add a palette, a scene in the world, an avatar, reactions and a voice, and Genshin is the first to add them ([themes](/docs/proposals/infra/agent-console/themes)).
 - **Views are separate from themes.** A view is a panel any theme can show, such as the collector harbour, so a repository's tooling is visualised whatever the console is dressed as.
 - **Other tooling joins through tiers, cheapest first.** App routes open in a side pane with no code, external tools arrive through MCP Apps, and a first-party view is written only when a tool needs the scene ([extensions](/docs/proposals/infra/agent-console/extensions)).

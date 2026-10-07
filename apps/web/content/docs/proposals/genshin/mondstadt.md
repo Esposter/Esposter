@@ -6,12 +6,12 @@ model: claude-opus-5-5
 
 # Mondstadt
 
-This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/proposals/genshin/terrain-shapes), [vegetation](/docs/genshin/vegetation) and its [trees and scatter](/docs/proposals/genshin/trees-and-scatter), [water](/docs/genshin/water) and its [flow](/docs/proposals/genshin/flowing-water), [sky and time](/docs/genshin/sky-and-time) and [weather](/docs/proposals/genshin/weather), authored by the [reference board](/docs/proposals/genshin/reference-board)'s method. Mondstadt is where the game begins: the nation of the Anemo Archon, its culture drawn from Germany and Switzerland. It is a land of open grass that the wind keeps moving, low wooded hills, a great lake with the city on an island in it, and sea cliffs to the west. To the south rises Dragonspine, a snowbound mountain around a colossal spike driven into it from the sky. It is the first region because the [rendering style](/docs/genshin/rendering-style)'s Windrise scene already stands in it.
+This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/proposals/genshin/terrain-shapes), [vegetation](/docs/genshin/vegetation) and its [trees and scatter](/docs/proposals/genshin/trees-and-scatter), [water](/docs/genshin/water) and its [flow](/docs/proposals/genshin/flowing-water), [sky and time](/docs/genshin/sky-and-time) and [weather](/docs/proposals/genshin/weather), re-derived by the [scene derivation](/docs/genshin/scene-derivation)'s method, each scene in its [recreation passes](/docs/proposals/genshin/recreation-passes). Mondstadt is where the game begins: the nation of the Anemo Archon, its culture drawn from Germany and Switzerland. It is a land of open grass that the wind keeps moving, low wooded hills, a great lake with the city on an island in it, and sea cliffs to the west. To the south rises Dragonspine, a snowbound mountain around a colossal spike driven into it from the sky. It is the first region because the [rendering style](/docs/genshin/rendering-style)'s Windrise scene already stands in it.
 
 ## Decisions
 
 - **The strongest wind in the world.** Mondstadt's base wind is the highest of any region, and gusts visibly roll across the meadows. This is the [vegetation](/docs/genshin/vegetation)'s wind field at its most visible, and Stormterror's Lair raises it to a gale.
-- **A bright, cool palette.** Saturated spring greens, white limestone, slate and terracotta roofs under a clear high blue. Dandelions and windwheel asters in the meadows, and cecilia flowers on Starsnatch Cliff. The grade and the shade colour are tuned against the reference board at noon and at dusk.
+- **A bright, cool palette.** Saturated spring greens, white limestone, slate and terracotta roofs under a clear high blue. Dandelions and windwheel asters in the meadows, and cecilia flowers on Starsnatch Cliff. Its display transform and its light are solved against references at noon and at dusk, each in its pass.
 - **The Mondstadt building kit.** A building is a footprint with parameters:
   - a stone ground floor
   - one to three upper storeys of white plaster in a dark timber frame, with jettied overhangs
@@ -49,9 +49,9 @@ The catalogue holds Mondstadt's areas as the game names them: Starfell Valley, G
 5. **Dragonspine**, once snow weather exists.
 6. The remaining areas in the catalogue's order.
 
-## Capture checklist
+## Reference checklist
 
-The reference board's routine applies to each of these first: Windrise's oak and statue, the city gate bridge, the cathedral front, the Anemo Archon statue plaza, a windmill, a Springvale house, Dawn Winery's manor, Stormterror's Lair from the approach, Thousand Winds Temple, Starsnatch Cliff, and Skyfrost Nail from the Entombed City.
+References are found for each of these first, published recordings searched before the game is recorded: Windrise's oak and statue, the city gate bridge, the cathedral front, the Anemo Archon statue plaza, a windmill, a Springvale house, Dawn Winery's manor, Stormterror's Lair from the approach, Thousand Winds Temple, Starsnatch Cliff, and Skyfrost Nail from the Entombed City.
 
 ## Key files
 
