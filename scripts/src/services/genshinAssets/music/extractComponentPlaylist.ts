@@ -4,8 +4,8 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import { decodeGameSounds } from "#src/services/genshinAssets/music/decodeGameSounds";
 import { readGameMusicHierarchy } from "#src/services/genshinAssets/music/readGameMusicHierarchy";
 import { resolveMusicPlaylistSegments } from "#src/services/genshinAssets/music/resolveMusicPlaylistSegments";
-import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { MUSIC_PACKAGE_PATTERN } from "#src/services/genshinAssets/shared/constants";
+import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";

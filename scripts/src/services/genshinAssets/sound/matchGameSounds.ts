@@ -51,7 +51,7 @@ export const matchGameSounds = async (
     id,
     powers,
     ...findSoundStart(window, powers, bands),
-  })).toSorted((first, second) => second.score - first.score);
+  })).toSorted((firstStart, secondStart) => secondStart.score - firstStart.score);
   return {
     matches: starts.map(({ id, powers, score, startFrame }) => ({
       id,
@@ -65,7 +65,7 @@ export const matchGameSounds = async (
         residual,
         sounds: set
           .map(({ id, startFrame }) => ({ id, offsetSeconds: (startFrame - firstFrame) * frameSeconds }))
-          .toSorted((first, second) => first.offsetSeconds - second.offsetSeconds),
+          .toSorted((firstSound, secondSound) => firstSound.offsetSeconds - secondSound.offsetSeconds),
         startSeconds: (fromFrame + firstFrame) * frameSeconds,
       };
     }),
