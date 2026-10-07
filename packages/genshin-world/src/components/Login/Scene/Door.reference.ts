@@ -9,7 +9,7 @@ export const doorTopic: ReferenceTopic = {
       method: "genshin:assets clips login: what the scene's clips move",
       outcome: InvestigationOutcome.Found,
       result:
-        "Ani_LogginScene_Door01_Liftting is the door assembling itself over 1.33 s at the flight's end, its pieces rising about 60 metres from below into place; Ani_Login_Lift raises its animator's root 50 metres over a second, easing in and overshooting to 52.5 before settling",
+        "Ani_LogginScene_Door01_Liftting is the door assembling itself over 1.33 s at the flight's end, its pieces rising about 60 metres from below into place; Ani_Login_Lift raises its animator's root 50 units over a second, easing in and overshooting to 52.8 before settling",
     },
     {
       method: "The recording's last second at 15 frames a second (13.6 s to 15.2 s)",

@@ -142,9 +142,37 @@ export const cameraTopic: ReferenceTopic = {
       result:
         "Drawn from ModelCamera as the blocks lay it, the walkway and the door fall out of the frame, the door 7.6 metres ahead and 6 under the eye where the view reaches 22.5 degrees below its axis, and the towers stand about 9 pixels off the recording's edges: the game draws from somewhere ModelCamera's laid-out place is not, so something moves the eye or the walkway's group at run time. Ani_Login_Lift lifts a root 50 units, the towers' row stands 5 metres under where the blocks lay it against the walkway, and the pose's eye stands 4.76 metres under ModelCamera's, so a lift of the walkway's group, its door and its camera together is the next measure",
     },
+    {
+      method:
+        "genshin:assets behaviours login, extended to export every Animator raw and name each component by the game object its leading pointer sits it on",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Each of the walkway's 23 blocks carries its own Animator beside its MonoBlockController, root motion off, its controller in another file, and every other animator of the login's blocks is the interface's or the door's: the clip's 0 to 50 units on the animator's own place over a second lifts each block 5 metres at the walkway's tenth, its x and z held at 0, so the block's controller applies it over the block's laid place. The walkway alone rises: the camera and the towers' row keep their laid places, so the row's 5 metres under the walkway is the walkway's lift (WALKWAY_LIFT), and ModelCamera's 6 metres over the laid walkway put the eye 1 metre over its risen top",
+    },
+    {
+      method:
+        "genshin:parity pose login-door-recording --witness login --families Door,Walkway --refine 80, x, heading and field of view held at 0, 180 and 51.19, with the pitch held at ModelCamera's 5.69 (its quaternion 0, 0.99877, 0.04967, 0) and freed; then the seven walkway and door landmarks alone",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Held at ModelCamera's turn the edges solve the eye to 1.224 metres over the walkway's top and 10.64 short of the door, 0.97 pixels of the recording's edges at 480 wide, and the landmarks to 1.144 and 10.75, 7.85 pixels root mean square at 1920, most of it the back wings'. Freed, the pitch trades with the height, 4.03 degrees at 1.53 metres on the edges and 6.05 at 1.09 on the landmarks, so the exact 5.69 lies inside what the frame can tell; the eye at the lift's 1 metre lands the door 2.52 and the walkway 2.98 pixels off, so the frame rejects it. The towers' edges price the row's height flat, 10.0 to 10.6 pixels over 3 metres, and the lantern tower's two edges stand 0.12 and 0.2 metres from the row's place at the new pose, so the row is left where it stands",
+    },
+    {
+      method:
+        "genshin:parity glide login-door-recording 0 2.5 and 9.5 5 at the pose held to ModelCamera's turn: eye 1.22, pitch 5.69, field of view 51.2",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Each ground row reads a little farther under the steeper pitch, so the pace reads 3.08 to 3.18 metres a second over the title (3.14), 3.68 to 4.16 once preparing between 9.5 and 11 seconds (3.9), and slows by 0.63 a second each second, a line through 11 to 13.5 seconds. The preparing pace over the title's, 1.25, stands near MonoLoginScene's two speeds' 4.5 over 3.5, 1.29, the motion pass's to name",
+    },
+    {
+      method: "LoginCamera's vertical field of view of 45 held horizontally from a wider screen to 16:9",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Held across an 18.5:9 screen, 45 degrees spans 51.19 vertically at 16:9, the 51.2 the door frame's widths and the glide's frames read (51.0 to 51.4). No asset holds the design aspect, and the wiki's 4:3 door still is of an older build's camera, so this explains the measured value without replacing it",
+    },
   ],
   openQuestions: [
-    "Whether the login draws from ModelCamera's place and LoginCamera's field of view of 45, against the pose's 1.24 metres, 5.29 degrees and 51.2: what of MonoLoginScene moves or widens the camera, and how much of the towers' row offset the exact camera explains",
+    "What stands the eye 0.14 to 0.22 metres over the 1 metre ModelCamera and the walkway's lift put it at, and the towers' row 2.47 metres toward -x of where the blocks lay it: MonoLoginScene's floats and curves, or the block controller's rest",
+    "Whether the game holds LoginCamera's 45 degrees horizontally across a design aspect: a current build's recording at another aspect settles it",
     "How the game brings the towers to the door's phase after a long idle: every recording found idles a few seconds, so the title's phase is read off its glide's length, not a rule of the script's",
     "Where the glide comes to rest: the recording's door frame was still slowing at 1.6 metres a second when the click came, so the rest stands a little nearer the door than its pose",
   ],

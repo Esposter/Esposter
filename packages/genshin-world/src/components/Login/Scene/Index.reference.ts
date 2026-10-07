@@ -104,7 +104,7 @@ export const reference: ComponentReference = {
       block: "00/16000354.blk",
       kind: GameSourceKind.AnimationClip,
       name: "Ani_Login_Lift",
-      role: "One root lifted 50 metres over a second at the login's end, between the Start and End clips",
+      role: "Each walkway block lifted 50 units, 5 metres at the walkway's tenth, over a second on its own animator as it rises into place",
     },
     loginScene: {
       block: "00/11790361.blk",
