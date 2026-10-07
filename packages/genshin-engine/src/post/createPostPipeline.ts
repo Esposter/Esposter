@@ -38,7 +38,7 @@ export const createPostPipeline = ({
   gradeLutTexture,
   isBloomed = true,
   occlusionRadius,
-  postUniforms: { godraysColor, gradeIntensity, outlineColor, outlineFadeDistance, outlineThickness },
+  postUniforms: { godraysColor, gradeIntensity, outlineColor, outlineFadeDistance, outlineThickness, whiteBalance },
   qualityTierSettings: { antialiasingMode, godraysStepCount, isBloomEnabled, isOcclusionEnabled },
   renderer,
   scene,
@@ -117,7 +117,8 @@ export const createPostPipeline = ({
     resolvedNode = traaNode;
   }
 
-  const displayNode = renderOutput(vec4(toneMapGenshinNode(resolvedNode.rgb), resolvedNode.a));
+  // The white balance before the curve, as the uber pass draws _WhiteBalanceMat
+  const displayNode = renderOutput(vec4(toneMapGenshinNode(whiteBalance.mul(resolvedNode.rgb)), resolvedNode.a));
   const gradedNode = gradeLutTexture
     ? lut3D(displayNode, texture3D(gradeLutTexture), gradeLutTexture.image.width, gradeIntensity)
     : displayNode;

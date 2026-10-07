@@ -61,9 +61,16 @@ export const displayTopic: ReferenceTopic = {
       result:
         "The night's colour away from the moon solves its red at 22, under the black; its title scores 0.464 and its door session 0.499 as before, and every other frame within its noise. Neither frame's render shows a pixel under the black (compare's line), since the sky holds none of the reference's and the stone's light cannot go under none without the matrix after it",
     },
+    {
+      method:
+        "_WhiteBalanceMat drawn before the curve as Unity's white balance (computeWhiteBalance), its temperature and tint refined from none where the light on the exports' parts lies flattest (genshin:parity balance), every pixel shown over none read",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "With what each light leaves off the plane read where the light lies, the refinement ran past Unity's range to a temperature of 219 and a residual of a millionth of none's: a balance near singular flattens every light by itself. Read in the pixel's own colour instead, the door session lies flattest at a temperature of minus 8.6 and a tint of 11.7, a hundredth under none's residual, and the night title at minus 10.4 and 27.2, a twelfth under; over both at once, minus 9.5 and 16. The temperature agrees between the frames and with the red's lower envelope, and the tint does not. Drawn over the night's stone light as it was solved with no balance, it takes the red under the black on 39% of the title's pixels and 42% of the door session's, against 26% and 32%, and scores 0.468 and 0.503, four thousandths worse: the light solved with no balance already stood for the balance's colour, so the stone's light is solved again under it before it ships",
+    },
   ],
   openQuestions: [
-    "_WhiteBalanceMat's temperature and tint each hour: the matrix drawn before the curve, and solved where the stone's light lies flattest once each pixel's colour is taken back through it; until it is drawn, a solve weighed as the screen shows it is led by the darkest bins it cannot reach",
+    "The night's stone light solved under its white balance: calibrate takes each bin's colour back through the curve and the balance's inverse, which needs the page to hand the hour's balance to the tools beside its fog; until it is, a solve weighed as the screen shows it is led by the darkest bins it cannot reach",
     "Which of MHYBloom_Z's other values is the threshold, the scaler and the intensity: the bloom alone moves what lies around the brightest pixels, so they are measured there once the login draws the game's bloom",
   ],
 };

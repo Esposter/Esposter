@@ -103,7 +103,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 | The tone curve's contrast                        | `passes`' display: each pixel's light, back through the curve over its albedo, flattest on a sun and a sky's plane                                             |
 | The bloom's fields                               | gap: which MHYBloom value is the threshold, the scaler and the intensity, measured where the bloom alone moves                                                 |
 | How much of a frame lies under the curve's black | `genshin:parity black`: each reference's share of pixels with a channel under the curve's black at none, each channel's apart; `compare` prints ours beside it |
-| The night's black                                | gap: `_WhiteBalanceMat` before the curve, no export holds it, its temperature and tint solved where the stone's light lies flattest                            |
+| The night's black                                | `genshin:parity balance`: `_WhiteBalanceMat`'s temperature and tint where the stone's light lies flattest, no export holding it                                |
 
 ### Light
 

@@ -3,6 +3,7 @@ import type { Vector } from "#src/models/shared/Vector";
 
 import { computeLightPlaneResidual } from "#src/services/genshinParity/display/computeLightPlaneResidual";
 import { GENSHIN_TONE_CONTRAST, toneMapGenshin } from "genshin-engine";
+import { Matrix3 } from "three";
 import { describe, expect, test } from "vitest";
 
 describe(computeLightPlaneResidual, () => {
@@ -29,6 +30,26 @@ describe(computeLightPlaneResidual, () => {
       ]),
     })),
   );
+
+  test("reads a light off any plane as off it through a balance that would flatten it by itself", () => {
+    expect.hasAssertions();
+
+    // Three lights no plane holds, through a balance all but losing the blue
+    const offPlaneSamples: DisplaySample[] = [
+      [1, 0.1, 0.1],
+      [0.1, 1, 0.1],
+      [0.1, 0.1, 1],
+    ].map((light) => ({ albedo: [1, 1, 1], display: toneMapGenshin([light[0] ?? 0, light[1] ?? 0, light[2] ?? 0]) }));
+    const residual = computeLightPlaneResidual(offPlaneSamples, GENSHIN_TONE_CONTRAST, new Matrix3());
+
+    expect(
+      computeLightPlaneResidual(
+        offPlaneSamples,
+        GENSHIN_TONE_CONTRAST,
+        new Matrix3().set(1, 0, 0, 0, 1, 0, 0, 0, 1e-4),
+      ),
+    ).toBeGreaterThan(residual / 2);
+  });
 
   test("lays the light flat on the plane two lights span only at the contrast the samples were shown through", () => {
     expect.hasAssertions();
