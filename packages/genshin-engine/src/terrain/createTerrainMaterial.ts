@@ -21,7 +21,8 @@ export const createTerrainMaterial = (
   { finestRange, morphShare }: Pick<TerrainOptions, "finestRange" | "morphShare">,
   // The view's eye in the scene's coordinates, written each frame by whatever selects the tiles
   eye: UniformNode<"vec3", Vector3>,
-  toonMaterialOptions: Pick<ToonMaterialOptions, "color" | "lightUniforms" | "rampTexture">,
+  // No colour of its own: the colour node is the morphed vertex colour, which replaces the material's
+  toonMaterialOptions: Pick<ToonMaterialOptions, "lightUniforms" | "rampTexture">,
   waterUniforms?: WaterUniforms,
 ): ToonNodeMaterial => {
   const terrainMaterial = createToonMaterial({ ...toonMaterialOptions, isOutlined: false });
