@@ -72,7 +72,7 @@ export const reference: ComponentReference = {
     doorRecording: {
       capture: "yt-rBnfA4pXw6U.mp4",
       kind: GameSourceKind.Capture,
-      name: "The English recording's last pose of the current build",
+      name: "The English recording's last pose of an older build",
       parityReference: "login-door-recording",
       role: "The flight's last pose at 16:9, with the door's and the walkway's widths the arrangement is checked by",
     },
@@ -81,6 +81,13 @@ export const reference: ComponentReference = {
       kind: GameSourceKind.AnimationClip,
       name: "Ani_LogginScene_Door01_Liftting",
       role: "The door assembling itself at the flight's end, its pieces rising into place over 1.33 s",
+    },
+    doorSession: {
+      capture: "session-2.mp4",
+      kind: GameSourceKind.Capture,
+      name: "This machine's recording of the current build (7.1) at 21.5:9, from the splash to the door at night",
+      parityReference: "login-door-session",
+      role: "The current build's camera and arrangement: the door a moment before its rest, the towers at the session's phase",
     },
     environment: {
       block: "00/11790361.blk",

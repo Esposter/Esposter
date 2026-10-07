@@ -15,9 +15,11 @@ the change that moved it, as a bench's report is committed.
 | Layout | door | 0.0020 | 0.0200 | m | yes |
 | Layout | Door row across | 0 | 0.0200 | m | yes |
 | Layout | Door row up | 0 | 0.0200 | m | yes |
-| Layout | Bridges row across | 2.4700 | 0.0200 | m | no |
+| Layout | Bridges row across | 0 | 0.0200 | m | yes |
 | Layout | Bridges row up | 0 | 0.0200 | m | yes |
-| Layout | Towers row across | 2.4700 | 0.0200 | m | no |
+| Layout | Towers row across | 0 | 0.0200 | m | yes |
 | Layout | Towers row up | 0 | 0.0200 | m | yes |
 | Layout | Walkway row across | 0 | 0.0200 | m | yes |
 | Layout | Walkway row up | 0 | 0.0200 | m | yes |
+| Camera | login-door-session | 1.2470 | 2 | px | yes |
+| Shape | no measure yet | | | | no |

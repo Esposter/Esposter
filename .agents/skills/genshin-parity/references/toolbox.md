@@ -49,8 +49,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 | A spawned prefab's place and scale     | `composeWorldMatrices`, through the anchor                                                                               |
 | A row a script scrolls                 | the spawn's `copies`, laid out by `copySpawns` for the witness                                                           |
 | A scrolled row's phase on a reference  | `view` held (`heldScrolled`) along the loop, `parts`, then `compare`                                                     |
-| Where a row of parts stands, held cam  | `genshin:parity place`: one offset refined on edges both ways                                                            |
-| A row or a camera on far landmarks     | `place --landmarks`, and `pose` with landmarks that pick an instance                                                     |
+| A camera on far landmarks              | `pose` with landmarks that pick an instance                                                                              |
 | Where each part lands on the reference | `genshin:parity overlay`: boundaries, edge distance                                                                      |
 | Whether a stand-in blocks a path       | `genshin:assets clearance`, held by the hulls' test                                                                      |
 | A tile's ground                        | `parseTerrainHeights` over its TerrainData                                                                               |

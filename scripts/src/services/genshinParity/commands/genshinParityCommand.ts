@@ -24,7 +24,6 @@ import { noiseCommand } from "#src/services/genshinParity/commands/noiseCommand"
 import { overlayCommand } from "#src/services/genshinParity/commands/overlayCommand";
 import { partsCommand } from "#src/services/genshinParity/commands/partsCommand";
 import { passesCommand } from "#src/services/genshinParity/commands/passesCommand";
-import { placeCommand } from "#src/services/genshinParity/commands/placeCommand";
 import { planCommand } from "#src/services/genshinParity/commands/planCommand";
 import { polarCommand } from "#src/services/genshinParity/commands/polarCommand";
 import { poseCommand } from "#src/services/genshinParity/commands/poseCommand";
@@ -55,7 +54,6 @@ export const genshinParityCommand: CommandDef = defineCommand({
     fog: fogCommand,
     overlay: overlayCommand,
     pose: poseCommand,
-    place: placeCommand,
     plan: planCommand,
     parts: partsCommand,
     track: trackCommand,
