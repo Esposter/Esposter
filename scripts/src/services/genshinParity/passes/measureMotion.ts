@@ -8,11 +8,11 @@ import { getComponentDirectory } from "#src/services/genshinAssets/shared/getCom
 import { readComponentClips } from "#src/services/genshinAssets/shared/readComponentClips";
 import { readComponentPlacements } from "#src/services/genshinAssets/shared/readComponentPlacements";
 import {
-  LAYOUT_GATE_METRES,
   MOTION_HEIGHT,
   MOTION_PACE_GATE,
   MOTION_STEP_MS,
   MOTION_WIDTH,
+  PART_GATE_METRES,
 } from "#src/services/genshinParity/passes/constants";
 import { PARITY_FRAME_MS } from "#src/services/genshinParity/shared/constants";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
@@ -178,7 +178,7 @@ export const measureMotion = async (component: DerivedAssetComponent): Promise<P
       `${frames.length} frames over the door's ${duration.toFixed(2)} s lift: furthest piece ${furthest.piece}, ${Math.round(furthest.riseMs)} ms in, played at ${pace.toFixed(4)} of the clip's pace`,
     ],
     readings: [
-      { gate: LAYOUT_GATE_METRES, name: "door lift path", unit: "m", value: furthest.distance },
+      { gate: PART_GATE_METRES, name: "door lift path", unit: "m", value: furthest.distance },
       { gate: MOTION_PACE_GATE, name: "door lift pace", unit: "share", value: Math.abs(pace - 1) },
     ],
   };
