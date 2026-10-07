@@ -20,7 +20,7 @@ An unknown split across kinds (a light whose colour is in a script's bytes but w
 1. **Read what exists.** Every command of the domain's tooling, each by its own `--help`, and the domain's toolbox page; never a memory of what the tools did last time.
 2. **Fill the table from the stalled problem.** A stalled round names its unknown by what kept moving: a pose that kept shifting while the arrangement never was checked is two unknowns tangled, and each gets its row.
 3. **Mark every gap.** A row whose answer is a search, a hand measurement repeated across sessions, the user's eye, or a guess, is a gap.
-4. **Build the gap nearest the root first.** Unknowns form a chain, the passes' order (what the scene holds, then where it stands, the camera that sees it, its shape, motion and surface, the transform to the screen, then the light and the air over it), and a later unknown's solve absorbs an earlier one's error, so the earliest gap is closed before any later row is trusted.
+4. **Build the gap nearest the root first.** Unknowns form a chain, the passes' order (the scene's contents, their placement, the camera, shape, motion and surface, the transform to the screen, then the light and the air), and a later unknown's solve absorbs an earlier one's error, so the earliest gap is closed before any later row is trusted.
 5. **Write the tool back into the table** in the commit that ships it, and delete what it supersedes.
 
 ## Where a tool lives

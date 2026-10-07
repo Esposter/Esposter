@@ -140,7 +140,7 @@ What each pass's tools stand on, and the runner the passes still lack.
 
 ### Sound effects
 
-| Unknown                                       | Tool                                                                                                   |
-| :-------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
-| Which game sounds a recording plays, and when | gap: a `genshin:assets` matching command; the door's were matched by a scratch pass over `Minimum.pck` |
-| A sound effect's levels over time             | `fitLoginDoorSound`: each octave band's level every 25 ms, from the decoded sound                      |
+| Unknown                                       | Tool                                                                                                     |
+| :-------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| Which game sounds a recording plays, and when | gap: a `genshin:assets` matching command; the door's sounds came from a scratch match over `Minimum.pck` |
+| A sound effect's levels over time             | `fitLoginDoorSound`: each octave band's level every 25 ms, from the decoded sound                        |

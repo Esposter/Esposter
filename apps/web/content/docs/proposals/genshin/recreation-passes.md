@@ -82,7 +82,7 @@ Judged through the frame, each of the scene's unknowns is confounded by every ot
 
 The login runs through every pass from the inventory, fixing what each gate finds before the next pass begins. Each of these is known to be in question and settles in its own pass:
 
-- **Layout:** the towers' row stands off where the blocks lay it by an offset fitted on the frames, which the exact data must explain or the pass is red; the day's towers stand where its recording shows sky; the dusk's middle towers stand a few to fifteen pixels off; the cloud sea's two side banks are not drawn.
+- **Layout:** a value fitted to the frames shifts the towers' row from its blocks' placement, and the pass stays red until exact data explains it; the day's towers stand where its recording shows sky; the dusk's middle towers stand a few to fifteen pixels off; the cloud sea's two side banks are not drawn.
 - **Camera:** whether the 2022 recordings share the current build's camera.
 - **Motion:** the walkway's rise, read by eye.
 - **Display:** the frame is drawn through the tone curve alone, its grading table and bloom left out so measured colours invert; the game's own transform is found and every colour measured since is solved again under it.

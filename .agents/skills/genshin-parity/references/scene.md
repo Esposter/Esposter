@@ -1,6 +1,6 @@
 # Scenes
 
-Read when a 3D screen is derived from the game's own assets, arranged, posed or judged against its references. A scene is rebuilt in the `recreation-tooling` skill's passes (`references/passes.md` there), each judged by its own measure and frozen once it holds, and never tuned on its frame; the passes' gates and the measures still missing are `apps/web/content/docs/proposals/genshin/recreation-passes.md`. Which tool answers which unknown is `references/toolbox.md`.
+Read when a 3D screen is derived from the game's own assets, arranged, posed or judged against its references. A scene is rebuilt in the `recreation-tooling` skill's passes (`references/passes.md` there), each held to its own measure and then frozen, and never tuned on its frame; the passes' gates and the measures still missing are `apps/web/content/docs/proposals/genshin/recreation-passes.md`. Which tool answers which unknown is `references/toolbox.md`.
 
 ## Every pass
 

@@ -11,7 +11,7 @@ A recreation is rebuilt in **passes**, one kind of unknown each, in dependency o
 3. **Is gated at the reference's own noise**, never at zero: a recording's softness and compression, an export's texels, a clip's sampling set how close the measure can read, and work past that polishes what nothing shows.
 4. **Is frozen once its gate holds**, by a test over what it produced (an arrangement's cross-ratios, a fit's placements, a clip's timings), so no later pass moves it to better its own numbers.
 
-The source's own data (its parts drawn through our renderer, its clips, its sound banks) judges every pass it holds; a recording's colour judges only what exists at run time, the transform to the screen, the light, the air and the sounds as they play, and each of those over a mask where only its own unknown moves the reading. The camera a recording was shot from, and motion no clip holds, exist only in the recording, so they are read off it by geometry alone, the frozen layout's landmarks found in its pixels.
+The source's own data (its parts drawn through our renderer, its clips, its sound banks) judges every pass it holds; a recording's colour judges only what exists at run time, the transform to the screen, the light, the air and the sounds as they play, and each of those over a region no other unknown changes. The camera a recording was shot from, and motion no clip holds, exist only in the recording, so they are read off it by geometry alone, the frozen layout's landmarks found in its pixels.
 
 ## Gates and reopening
 
