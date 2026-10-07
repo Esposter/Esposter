@@ -10,23 +10,27 @@ const BRIGHT_TRIM_FACTOR = 0.5;
 const TRIM_FACTOR = 2.5;
 // The sky's colours at a shape, solved by least squares on each channel apart over the sky's clear pixels in scene
 // Colour, none of them negative (`solveNonNegativeSystem`): a colour clamped after a free solve leaves the terms it
-// Cancelled too bright, which drew a lavender dusk salmon. The residual, which a shape is refined on, is the root mean
-// Square over the pixels kept, those standing within the pixels' typical distance of the sky solved: a clear sky's
-// Mask still holds haze lit across it, which read with the rest bends the shape to it
+// Cancelled too bright, which drew a lavender dusk salmon. Each pixel's channel is weighted by the tone curve's slope
+// There (`getToneSlope`), so the solve and its residual are of what the screen shows, to first order. The residual,
+// Which a shape is refined on, is the root mean square over the pixels kept, those standing within the pixels' typical
+// Distance of the sky solved: a clear sky's mask still holds haze lit across it, which read with the rest bends the
+// Shape to it
 export const fitSky = (
-  samples: readonly { color: Vector; weights: readonly number[] }[],
+  samples: readonly { color: Vector; slope: Vector; weights: readonly number[] }[],
 ): { colors: Vector[]; fullResidual: number; kept: number; residual: number } => {
   const termCount = SKY_TERMS.length;
   const solved = ([0, 1, 2] as const).map((channel) => {
     const normal = Array.from({ length: termCount }, () => Array.from({ length: termCount }, () => 0));
     const right = Array.from({ length: termCount }, () => 0);
-    for (const { color, weights } of samples)
+    for (const { color, slope, weights } of samples) {
+      const emphasis = slope[channel] ** 2;
       for (let row = 0; row < termCount; row++) {
-        right[row] = (right[row] ?? 0) + (weights[row] ?? 0) * color[channel];
+        right[row] = (right[row] ?? 0) + emphasis * (weights[row] ?? 0) * color[channel];
         const normalRow = normal[row] ?? [];
         for (let column = 0; column < termCount; column++)
-          normalRow[column] = (normalRow[column] ?? 0) + (weights[row] ?? 0) * (weights[column] ?? 0);
+          normalRow[column] = (normalRow[column] ?? 0) + emphasis * (weights[row] ?? 0) * (weights[column] ?? 0);
       }
+    }
     // A term no pixel weighs (no moon in a day sky) is held at none by a touch of damping
     for (let row = 0; row < termCount; row++) (normal[row] ?? [])[row] = (normal[row]?.[row] ?? 0) + 1e-6;
     return solveNonNegativeSystem(normal, right);
@@ -36,10 +40,11 @@ export const fitSky = (
     solved[1]?.[term] ?? 0,
     solved[2]?.[term] ?? 0,
   ]);
-  const differences = samples.map(({ color, weights }) =>
+  const differences = samples.map(({ color, slope, weights }) =>
     ([0, 1, 2] as const).map(
       (channel) =>
-        color[channel] - weights.reduce((sum, weight, term) => sum + weight * (colors[term]?.[channel] ?? 0), 0),
+        slope[channel] *
+        (color[channel] - weights.reduce((sum, weight, term) => sum + weight * (colors[term]?.[channel] ?? 0), 0)),
     ),
   );
   // Each pixel's luminance over the sky solved, a lit haze's above it

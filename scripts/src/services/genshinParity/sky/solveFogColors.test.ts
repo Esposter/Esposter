@@ -5,6 +5,7 @@ describe(solveFogColors, () => {
   type Vector = [number, number, number];
   const color: Vector = [0.5, 0.4, 0.3];
   const scatterColor: Vector = [1, 0.6, 0.2];
+  const slope: Vector = [1, 1, 1];
   // Each point's opacity, its scatter weight and its lit colour
   const points: [number, number, Vector][] = [
     [0.2, 0, [0.5, 0.4, 0.4]],
@@ -27,6 +28,7 @@ describe(solveFogColors, () => {
             lit[channel] * (1 - opacity) + (color[channel] * (1 - scatter) + scatterColor[channel] * scatter) * opacity,
         ) as Vector,
         scatter,
+        slope,
         weight: 1,
       })),
     );
@@ -44,10 +46,23 @@ describe(solveFogColors, () => {
       opacity,
       reference: [opacity, opacity, opacity] as Vector,
       scatter: 0,
+      slope,
       weight: 1,
     }));
     const { color: own, scatterColor: sunward } = solveFogColors(samples);
 
     expect(sunward).toStrictEqual(own);
+  });
+
+  test("leaves out a point the screen shows no change at", () => {
+    expect.hasAssertions();
+
+    const lit: Vector = [0, 0, 0];
+    const { color: own } = solveFogColors([
+      { lit, opacity: 1, reference: color, scatter: 0, slope, weight: 1 },
+      { lit, opacity: 1, reference: [1, 1, 1], scatter: 0, slope: [0, 0, 0], weight: 1 },
+    ]);
+
+    expect(round(own)).toStrictEqual(color);
   });
 });
