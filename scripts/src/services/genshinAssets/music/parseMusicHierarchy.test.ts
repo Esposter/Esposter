@@ -1,7 +1,7 @@
-import type { MusicObject } from "#src/models/genshinAssets/music/MusicObject";
+import type { SoundBankObject } from "#src/models/genshinAssets/music/SoundBankObject";
 
-import { MusicObjectType } from "#src/models/genshinAssets/music/MusicObjectType";
 import { MusicPlaylistType } from "#src/models/genshinAssets/music/MusicPlaylistType";
+import { SoundBankObjectType } from "#src/models/genshinAssets/music/SoundBankObjectType";
 import { parseMusicHierarchy } from "#src/services/genshinAssets/music/parseMusicHierarchy";
 import { describe, expect, test } from "vitest";
 
@@ -33,7 +33,7 @@ describe(parseMusicHierarchy, () => {
   // Properties a node carries before its children, which the parser skips
   const properties = Buffer.from([0, 7, 0, 0]);
   const meterAndStingers = Buffer.concat([Buffer.alloc(23), createWords(0)]);
-  const track: MusicObject = {
+  const track: SoundBankObject = {
     data: Buffer.concat([
       Buffer.from([0]),
       createWords(1),
@@ -42,9 +42,9 @@ describe(parseMusicHierarchy, () => {
       createDoubles(0, 0, -1, duration + 1),
     ]),
     id: trackId,
-    type: MusicObjectType.Track,
+    type: SoundBankObjectType.MusicTrack,
   };
-  const segment: MusicObject = {
+  const segment: SoundBankObject = {
     data: Buffer.concat([
       properties,
       createWords(1, trackId),
@@ -57,9 +57,9 @@ describe(parseMusicHierarchy, () => {
       createWords(0),
     ]),
     id: segmentId,
-    type: MusicObjectType.Segment,
+    type: SoundBankObjectType.MusicSegment,
   };
-  const playlist: MusicObject = {
+  const playlist: SoundBankObject = {
     data: Buffer.concat([
       properties,
       createWords(1, segmentId),
@@ -69,7 +69,7 @@ describe(parseMusicHierarchy, () => {
       createItem(segmentId, 0, MusicPlaylistType.Leaf, 1),
     ]),
     id: playlistId,
-    type: MusicObjectType.Playlist,
+    type: SoundBankObjectType.MusicPlaylist,
   };
 
   test("reads a track's clips, a segment's tracks, duration and cues, and a playlist's tree", () => {

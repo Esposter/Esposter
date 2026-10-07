@@ -1,25 +1,21 @@
 import type { MusicHierarchy } from "#src/models/genshinAssets/music/MusicHierarchy";
-import type { MusicObject } from "#src/models/genshinAssets/music/MusicObject";
+import type { SoundBankObject } from "#src/models/genshinAssets/music/SoundBankObject";
 
+import { SoundBankObjectType } from "#src/models/genshinAssets/music/SoundBankObjectType";
 import { parseMusicHierarchy } from "#src/services/genshinAssets/music/parseMusicHierarchy";
-import { parseSoundBankMusicObjects } from "#src/services/genshinAssets/music/parseSoundBankMusicObjects";
-import { readFileRange } from "#src/services/genshinAssets/music/readFileRange";
-import { readGameAudioPackages } from "#src/services/genshinAssets/music/readGameAudioPackages";
-import { SOUND_BANK_PACKAGE_PATTERN } from "#src/services/genshinAssets/shared/constants";
-import { open } from "node:fs/promises";
+import { parseSoundBankObjects } from "#src/services/genshinAssets/music/parseSoundBankObjects";
+import { readGameSoundBanks } from "#src/services/genshinAssets/music/readGameSoundBanks";
 
+const MUSIC_OBJECT_TYPES: ReadonlySet<SoundBankObjectType> = new Set([
+  SoundBankObjectType.MusicPlaylist,
+  SoundBankObjectType.MusicSegment,
+  SoundBankObjectType.MusicSwitch,
+  SoundBankObjectType.MusicTrack,
+]);
 // The installed game's interactive music, read from every sound bank of every bank package: a bank names the objects
 // Of another, so the hierarchy is parsed once all of them are read
 export const readGameMusicHierarchy = async (): Promise<MusicHierarchy> => {
-  const objects: MusicObject[] = [];
-  for (const { audioPackage, path } of await readGameAudioPackages(SOUND_BANK_PACKAGE_PATTERN)) {
-    // oxlint-disable-next-line no-await-in-loop -- one package is held open at a time
-    await using file = await open(path);
-    for (const { offset, size } of audioPackage.banks) {
-      // oxlint-disable-next-line no-await-in-loop -- a package's banks are read in turn from its one handle
-      const bank = await readFileRange(file, path, offset, size);
-      objects.push(...parseSoundBankMusicObjects(bank));
-    }
-  }
+  const objects: SoundBankObject[] = [];
+  for await (const bank of readGameSoundBanks()) objects.push(...parseSoundBankObjects(bank, MUSIC_OBJECT_TYPES));
   return parseMusicHierarchy(objects);
 };

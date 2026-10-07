@@ -89,7 +89,7 @@ The method needs the measures each pass lacks, each joining `genshin:parity pass
 1. **Layout's projected diff.** Our transforms against the exports' in pixels where they land at each reference's pose, before any render.
 2. **Display's solve.** Built: the uber pass's tone curve read from its program and drawn by the engine, its contrast solved on the light's plane and held by `passes`. The game's bloom is left, its fields still unnamed.
 3. **Light's shadow edges.** The sun's direction solved on its shadows' edges over flat receivers.
-4. **Atmosphere's cloud statistics.** Built: the sky's cover by height, brightness, edges and spread and its clear sky's colour, at each reference's camera, held by `passes` within the spread two halves of the reference's own sky stand apart. The cloud layer's settings are solved on them over the game's own textures, held with the layer's port until textures of ours draw it.
+4. **Atmosphere's cloud statistics.** Built: the sky compared by statistics blind to where its clouds stand and held by `passes` ([parity](/docs/genshin/parity)). The cloud layer's settings are solved on them over the game's own textures, held with the layer's port until textures of ours draw it.
 
 Everything the passes already have is reused as it is, and each measure, once built, retires its row's gap in the toolbox.
 

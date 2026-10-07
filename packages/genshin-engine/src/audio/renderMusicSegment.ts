@@ -7,7 +7,8 @@ import { scheduleMusicNote } from "#src/audio/scheduleMusicNote";
 import { scheduleMusicRecording } from "#src/audio/scheduleMusicRecording";
 
 // One segment of a piece rendered offline as one channel, through the same notes and expression the live player
-// Schedules, for a score to compare against the sound it recreates. It runs to the segment's end, where the next
+// Schedules, for a score to compare against the sound it recreates, so at that sound's level rather than through the
+// Segment's volume in the game's mix. It runs to the segment's end, where the next
 // Segment would start. Its voices' recordings play from `recordingBufferMap`, so an empty map renders the synthesizer
 // Alone
 export const renderMusicSegment = (

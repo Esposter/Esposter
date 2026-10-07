@@ -119,7 +119,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 | Unknown                                 | Tool                                                                                                             |
 | :-------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
-| How the haze thins with height, an hour | `calibrate --haze`: its density and falloff refined with the light                                               |
+| How the haze thins with height, an hour | `calibrate --haze`: an hour's references at once, under a light free per part, read as the display encodes it    |
 | The fog's density and colours           | `genshin:parity fog`: bins by depth and sun angle, solved                                                        |
 | The sky's colours and its shape         | `genshin:parity sky`: least squares over an hour's references' clear sky, none negative, by the curve's slope    |
 | Whether the scene draws the sky solved  | `sky`'s drawn line: ours with no cloud against the reference's clear                                             |
@@ -144,6 +144,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 | Which music sound a recording plays                  | `genshin:assets music`: pitch classes matched window by window                                                            |
 | What plays a piece, and when                         | `genshin:assets playlist`: its segments in order, its sources decoded                                                     |
 | A piece's notes                                      | `readMusicSourceNotes`: pitch-transcription over a decoded source                                                         |
+| Which transcribed notes the game's sound holds       | `genshin:parity notes`: each note's fundamental against our render with it silenced, a sixth at a time, and written       |
 | Each voice's instrument and tuning                   | `fitInstrument`: measured at its clear notes, in the fit's report                                                         |
 | Each voice's noise                                   | `fitVoiceNoises`: each noise-like band, solved over every frame                                                           |
 | Which recorded instrument and level plays each voice | `genshin:parity instruments`: pitch-keeping candidates layered over the synthesizer, each mix scored under its expression |

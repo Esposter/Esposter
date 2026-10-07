@@ -1,9 +1,9 @@
 import type { MusicHierarchy } from "#src/models/genshinAssets/music/MusicHierarchy";
-import type { MusicObject } from "#src/models/genshinAssets/music/MusicObject";
 import type { MusicPlaylistItem } from "#src/models/genshinAssets/music/MusicPlaylistItem";
+import type { SoundBankObject } from "#src/models/genshinAssets/music/SoundBankObject";
 import type { MusicClip } from "#src/models/genshinAssets/shared/MusicClip";
 
-import { MusicObjectType } from "#src/models/genshinAssets/music/MusicObjectType";
+import { SoundBankObjectType } from "#src/models/genshinAssets/music/SoundBankObjectType";
 
 // A track's source: its plugin, how it streams, its id, its size in memory and its bits; and a clip of one: its track
 // Index, its source, an event, then where it plays, its trims and its source's duration as doubles
@@ -24,11 +24,11 @@ const MAX_PLAYLIST_ITEM_COUNT = 4096;
 // Properties every node carries before its children vary in length with what is set on them, so a container's
 // Children are found as the first count followed by that many ids of the kind it holds, and what follows them is read
 // From there; a playlist's tree ends its bytes, so it is found back from the end
-export const parseMusicHierarchy = (objects: readonly MusicObject[]): MusicHierarchy => {
+export const parseMusicHierarchy = (objects: readonly SoundBankObject[]): MusicHierarchy => {
   const idTypeMap = new Map(objects.map(({ id, type }) => [id, type]));
   const findChildren = (
     data: Buffer,
-    childTypes: readonly MusicObjectType[],
+    childTypes: readonly SoundBankObjectType[],
   ): undefined | { end: number; ids: number[] } => {
     for (let offset = 0; offset + 4 <= data.length; offset++) {
       const count = data.readUInt32LE(offset);
@@ -46,7 +46,7 @@ export const parseMusicHierarchy = (objects: readonly MusicObject[]): MusicHiera
   };
   const hierarchy: MusicHierarchy = { playlists: new Map(), segments: new Map(), tracks: new Map() };
   for (const { data, id, type } of objects)
-    if (type === MusicObjectType.Track) {
+    if (type === SoundBankObjectType.MusicTrack) {
       const sourceCount = data.readUInt32LE(1);
       const clipOffset = 5 + sourceCount * SOURCE_LENGTH;
       const clips: MusicClip[] = Array.from({ length: data.readUInt32LE(clipOffset) }, (_value, index) => {
@@ -60,8 +60,8 @@ export const parseMusicHierarchy = (objects: readonly MusicObject[]): MusicHiera
         };
       });
       hierarchy.tracks.set(id, { clips: clips.filter(({ sourceId }) => sourceId !== 0), id });
-    } else if (type === MusicObjectType.Segment) {
-      const children = findChildren(data, [MusicObjectType.Track]);
+    } else if (type === SoundBankObjectType.MusicSegment) {
+      const children = findChildren(data, [SoundBankObjectType.MusicTrack]);
       if (!children) continue;
       let offset = children.end + METER_LENGTH;
       offset += 4 + data.readUInt32LE(offset) * STINGER_LENGTH;
@@ -73,8 +73,12 @@ export const parseMusicHierarchy = (objects: readonly MusicObject[]): MusicHiera
         cueOffset += 16 + data.readUInt32LE(cueOffset + 12);
       }
       hierarchy.segments.set(id, { cues, duration, id, trackIds: children.ids });
-    } else if (type === MusicObjectType.Playlist) {
-      const children = findChildren(data, [MusicObjectType.Segment, MusicObjectType.Playlist, MusicObjectType.Switch]);
+    } else if (type === SoundBankObjectType.MusicPlaylist) {
+      const children = findChildren(data, [
+        SoundBankObjectType.MusicSegment,
+        SoundBankObjectType.MusicPlaylist,
+        SoundBankObjectType.MusicSwitch,
+      ]);
       if (!children) continue;
       for (let count = 1; count <= MAX_PLAYLIST_ITEM_COUNT; count++) {
         const offset = data.length - 4 - count * PLAYLIST_ITEM_LENGTH;

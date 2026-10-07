@@ -54,8 +54,16 @@ export const doorSoundTopic: ReferenceTopic = {
       result:
         "The two sounds are stereo, their channels correlated 0.46. The octave-band fit sat 8.84 decibels off them: its mono downmix read every band about three decibels over each channel's own level, and its bands stopped at 11 kilohertz where the sounds run to 20. Resynthesized from their own readings, thirds of an octave in two channels sit 2.74 to 2.83 decibels off whatever the frame, octaves 3.6 to 3.9, and two resyntheses 3.32 off each other, the noise's own grain. The onset rises over about a quarter second with no click, which 25 millisecond frames follow. Fitted as three noises a band in two channels, each band scaled once by its render read back, the door sits 3.26 decibels off on that measure, and 2.12 on genshin:parity effects with every band within about a decibel and its channels correlated 0.53",
     },
+    {
+      method:
+        "readGameMixVolumes over the sounds playing the door's two sources, and the nodes and buses above them in the banks as wwiser dumps them: each node's volume, filters and effects up to the master bus",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The game does not play the two at the level they are stored at. Through its sound and the mixers above it the rumble plays 16 decibels over its source and the rush 9, so the rumble stands 7 decibels further over the rush than the fit lays them, and both pass a shared mixer's low-pass of 20 and high-pass of 15 on Wwise's scale, then the effects bus's compressor (threshold -9 decibels, ratio 4, no attack, release 0.15 seconds), then the master's 5 decibels down and its peak limiter (threshold -2 decibels, ratio 50). The login's first piece plays 5 decibels under its source through the same master, so before the compressor the game's door stands 16 decibels over that piece where ours, at its sources' level beside the music's mix volume, stands 5 over. Not applied: the filters' cutoffs on Wwise's scale sit behind Audiokinetic's documentation's captcha, and the compressor's detector is not published, while the door recording's music matches neither of the login's pieces at any offset, so the door cannot be read out from under it to measure either",
+    },
   ],
   openQuestions: [
+    "The door's level in the game's mix: its two sounds at their bank volumes through the shared mixer's filters, the effects bus's compressor and the master's limiter, applied once the filters' cutoffs and the compressor's detector are measured, from a recording whose music is the login's own",
     "The login's other sounds: the clicks on its buttons and the wind, each found as the door's was against a recording that plays it",
     "Whether the door's two sounds are one event of the game's: they start 75 milliseconds apart in the match, which the bank's own events would say",
   ],

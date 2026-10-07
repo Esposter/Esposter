@@ -51,7 +51,7 @@ export const fitLoginMusic = async (): Promise<{ music: Music; report: string[] 
   );
   const report: string[] = [];
   const musicSegments: MusicSegment[] = [];
-  for (const { clips, duration, id } of segments) {
+  for (const { clips, duration, id, volume } of segments) {
     const voices: MusicSegment["voices"] = [];
     for (const { beginTrim, duration: sourceDuration, endTrim, playAt, sourceId } of clips) {
       const wavePath = join(directory, `${sourceId}.wav`);
@@ -92,7 +92,7 @@ export const fitLoginMusic = async (): Promise<{ music: Music; report: string[] 
       }
     }
     // A segment's expression is fitted afterwards, against our render of these voices (`genshin:parity expression`)
-    musicSegments.push({ duration: roundMusic(duration / 1000), expression: [], voices });
+    musicSegments.push({ duration: roundMusic(duration / 1000), expression: [], voices, volume: roundMusic(volume) });
   }
   return { music: { isLooping, order, segments: musicSegments }, report };
 };

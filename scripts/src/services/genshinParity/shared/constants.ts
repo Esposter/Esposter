@@ -146,6 +146,17 @@ export const DECAY_AGE_BOUNDS: number[] = [
 ].map((bound) => Temporal.Duration.from(bound).total("seconds"));
 // A band's level this far over the frame before is a jump `attacks` counts, a doubling of its amplitude within a frame
 export const LISTEN_ATTACK_RISE_DECIBELS = 6;
+// A note is heard by `notes` in frames of 4096 samples 512 apart at `LISTEN_SAMPLE_RATE`, at its fundamental within a
+// Third of a semitone, from 40 ms after its start, past its attack's spread, to 600 ms in or its end. It is supported
+// Where the game's level there stands over our render's with it silenced, and each note is judged with a sixth of the
+// Notes silenced at once, every sixth by its start, so a chord's notes are never silenced together
+export const NOTE_SUPPORT_FRAME_LENGTH = 4096;
+export const NOTE_SUPPORT_HOP_LENGTH = 512;
+export const NOTE_SUPPORT_SEMITONES = 0.3;
+export const NOTE_SUPPORT_DELAY_SECONDS = 0.04;
+export const NOTE_SUPPORT_SPAN_SECONDS = 0.6;
+export const NOTE_SUPPORT_MIN_DECIBELS = 0;
+export const NOTE_SUPPORT_FOLDS = 6;
 // The committed report of each music segment's last `listen`
 export const PARITY_MUSIC_SCORES_PATH: string = join(
   REPOSITORY_ROOT,

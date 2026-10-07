@@ -28,7 +28,9 @@ export const playlistCommand: SubCommandsDef[string] = defineCommand({
         ({ beginTrim, endTrim, playAt, sourceId }) =>
           `${sourceId} at ${formatSeconds(playAt)}, trimmed ${formatSeconds(beginTrim)} and ${formatSeconds(endTrim)}`,
       );
-      console.log(`segment ${segment.id}: ${formatSeconds(segment.duration)}, ${clips.join("; ") || "silent"}`);
+      console.log(
+        `segment ${segment.id}: ${formatSeconds(segment.duration)} at ${segment.volume.toFixed(1)} dB, ${clips.join("; ") || "silent"}`,
+      );
     }
     console.log(isLooping ? "then loops forever" : "then ends");
   },

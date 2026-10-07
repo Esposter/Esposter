@@ -30,21 +30,22 @@ const DUSK_LIGHT_DIRECTION = new Vector3(0.837, 0.259, 0.483);
 // Dawn's and the night's so solved score their frames worse, so theirs stay read off the references. The stone's light
 // Is solved apart, as the game's deferred pass casts it (data/login/stoneLight.json), so the sun light here lends the
 // Stone only its direction and its shadow, and the hemisphere lights nothing of the login's. Each hour's haze, its
-// Density at the cloud sea's top and how fast it thins with height, is solved with that light on its frame
-// (genshin:parity calibrate --haze): the dawn's and the night's lie as a dense layer under the walkway, nearly gone ten
-// Metres up, the dusk's rises gently, and the day's thins slowly from a light haze, its title scoring better and its
-// Phone door frame a little worse. The night's and the dusk's hide no more than their most opacity, solved with the
-// Rest, since their far towers stand darker than a haze hiding all of them draws; the dawn's and the day's so solved
-// Scored their frames worse, so they hide all. The night passes through its own white balance before the tone curve,
-// Solved where its stone's light lies flattest over both its frames (genshin:parity balance), which takes the red of
-// Its moonlit stone under the curve's black as the game's _WhiteBalanceMat does, its stone light solved under it
+// Density at the cloud sea's top and how fast it thins with height, is solved over that hour's frames under a light
+// Left free in each part's bins (genshin:parity calibrate --haze): the dawn's and the night's are a wall hiding all
+// The stone under the cloud sea's billows, a few metres under the walkway, and none above it. The day's and the
+// Dusk's, which that measure does not settle, stay as solved with the light: the dusk's rises gently and hides no more
+// Than its most opacity, its far towers darker than a haze hiding all of them draws, and the day's thins slowly from a
+// Light haze and hides all, its title scoring better and its phone door frame a little worse. The night passes
+// Through its own white balance before the tone curve, solved where its stone's light lies flattest over both its
+// Frames (genshin:parity balance), which takes the red of its moonlit stone under the curve's black as the game's
+// _WhiteBalanceMat does, its stone light solved under it
 export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
   [LoginTimeOfDay.Dawn]: {
     cloudLitColor: new Color(0xf5efe8),
     cloudShadeColor: new Color(0x8c91a7),
     fogColor: new Color(0xe9d8c7),
-    fogDensity: 0.3503,
-    fogHeightFalloff: 0.2536,
+    fogDensity: 818,
+    fogHeightFalloff: 0.836,
     haloColor: new Color(0xc0b49a),
     hemisphereGroundColor: new Color(0x8c91a7),
     hemisphereIntensity: 8.34,
@@ -113,9 +114,9 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     cloudLitColor: new Color(0x56b0f5),
     cloudShadeColor: new Color(0x255abb),
     fogColor: new Color(0x5ab4f8),
-    fogDensity: 12.6481,
-    fogHeightFalloff: 0.4607,
-    fogMaxOpacity: 0.6472,
+    fogDensity: 339400,
+    fogHeightFalloff: 1.155,
+    fogMaxOpacity: 0.986,
     haloColor: new Color(0x2c4c9a),
     hemisphereGroundColor: new Color(0x2a4aa8),
     hemisphereIntensity: 8.96,

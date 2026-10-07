@@ -77,6 +77,7 @@ describe(solveStoneLight, () => {
         emission,
         harmonics: terms,
         height,
+        lightBin: "",
         occlusion,
         opacity,
         part: index % 2,
