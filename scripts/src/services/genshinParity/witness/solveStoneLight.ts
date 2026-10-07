@@ -82,7 +82,7 @@ export const solveStoneLight = (
   // Each bin's colour as the screen shows it, taken back through the curve and then the balance
   const inverseWhiteBalance = whiteBalance.clone().invert();
   const binSceneColors = bins.map((binSamples) => {
-    const [red, green, blue] = CHANNELS.map(
+    const [red = 0, green = 0, blue = 0] = CHANNELS.map(
       (channel) => binSamples.reduce((sum, { display }) => sum + display[channel], 0) / binSamples.length,
     );
     return toSceneColor(new Color(red, green, blue)).applyMatrix3(inverseWhiteBalance);
