@@ -20,7 +20,7 @@ export const behavioursCommand: SubCommandsDef[string] = defineCommand({
   },
   meta: {
     description:
-      "Export every MonoBehaviour of a component's layout blocks raw and print the fields their bytes' shapes read: pointers the component's data holds, curves, arrays, gradients, colours and scalars, each at its offset",
+      "Export every MonoBehaviour, animator, camera and light of a component's layout blocks raw and print each on its game object with the fields their bytes' shapes read: pointers the component's data holds, curves, arrays, gradients, colours and scalars, each at its offset",
     name: "behaviours",
   },
   run: async ({ args }) => {
@@ -31,8 +31,8 @@ export const behavioursCommand: SubCommandsDef[string] = defineCommand({
     console.log(
       behaviours
         .map(
-          ({ block, describePointer, fields, file, script }) =>
-            `${script} [${block} ${file}]\n${formatSerializedFields(fields, describePointer, 1)}`,
+          ({ block, describePointer, fields, file, owner, script }) =>
+            `${script} on ${owner} [${block} ${file}]\n${formatSerializedFields(fields, describePointer, 1)}`,
         )
         .join("\n"),
     );

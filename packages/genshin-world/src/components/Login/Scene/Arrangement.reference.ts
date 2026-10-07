@@ -102,7 +102,6 @@ export const arrangementTopic: ReferenceTopic = {
     },
   ],
   openQuestions: [
-    "Which object Ani_Login_Lift's animator is: its root's path hashes to the animator itself",
     "Whether the towers' row tiles at its 200 metres: their fitted field spans about 300 along the glide",
     "Which of the towers' row stands at the door frame's left edge: the recording's is thin and dark with many rings, the exports' nearest there wide and arched",
   ],

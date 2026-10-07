@@ -11,7 +11,7 @@ A recreation is rebuilt in **passes**, one kind of unknown each, in dependency o
 3. **Is gated at the reference's own noise**, never at zero: a recording's softness and compression, an export's texels, a clip's sampling set how close the measure can read, and work past that polishes what nothing shows.
 4. **Is frozen once its gate holds**, by a test over what it produced (an arrangement's cross-ratios, a fit's placements, a clip's timings), so no later pass moves it to better its own numbers.
 
-The source's own data (its parts drawn through our renderer, its clips, its sound banks) judges every pass it holds; a recording judges only what exists at run time, the transform to the screen, the light, the air and the sounds as they play, and each of those over a mask where only its own unknown moves the reading.
+The source's own data (its parts drawn through our renderer, its clips, its sound banks) judges every pass it holds; a recording's colour judges only what exists at run time, the transform to the screen, the light, the air and the sounds as they play, and each of those over a region no other unknown changes. The camera a recording was shot from, and motion no clip holds, exist only in the recording, so they are read off it by geometry alone, the frozen layout's landmarks found in its pixels.
 
 ## Gates and reopening
 
@@ -29,4 +29,4 @@ One frame's score mixes every unknown's error, and each change moves every term 
 
 ## In each domain
 
-The domain's toolbox page lists its passes, each with its source, its measure and its gate, and the runner that checks them in order (Genshin's is the `genshin-parity` skill's `references/toolbox.md`).
+The domain's toolbox page lists its passes, each with its source, its measure and its gate, and the runner that checks them in order, or names that runner as a gap until it is built (Genshin's is the `genshin-parity` skill's `references/toolbox.md`, where `genshin:parity passes` is still a gap).

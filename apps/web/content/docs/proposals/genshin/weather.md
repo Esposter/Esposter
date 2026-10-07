@@ -1,6 +1,6 @@
 ---
 title: Weather
-description: Proposal — Genshin's weather, set per area as the game sets it and drawn only where the camera stands. Rain and thunderstorms first, then snow, fog and sandstorms, each as particles in a volume that follows the camera, a shift of the sky's keyframes, and one wetness uniform.
+description: Proposal — Genshin's weather, set per area as the game sets it and drawn only where the camera stands. Rain and thunderstorms first, then snow, fog and sandstorms, each read from the game's own weather settings, drawn as particles in a volume that follows the camera judged by their statistics, a shift of the sky's state, and one wetness uniform.
 model: claude-opus-5-5
 ---
 
@@ -10,7 +10,7 @@ This page builds on [sky and time](/docs/genshin/sky-and-time), whose keyframes 
 
 ## Decisions
 
-- **Weather belongs to an area, as in the game.** Each area in the catalogue names the weather it can have, and only the weather where the camera stands is drawn:
+- **Weather belongs to an area, as in the game.** Each area in the catalogue names the weather it can have, read from the game's own area and weather data where the inventory finds it and from the wiki where it does not, and only the weather where the camera stands is drawn:
   - clear, cloudy, rain and thunderstorm for most areas
   - snow and snowstorms on Dragonspine
   - fog on Tsurumi Island
@@ -18,7 +18,9 @@ This page builds on [sky and time](/docs/genshin/sky-and-time), whose keyframes 
   - no rain in cities or deserts
   - Inazuma's permanent storm available as an area setting
 - **Weather is particles, tint and a ramp shift.** Rain is instanced streaks in a volume that follows the camera, with splashes where they meet the ground. Snow uses the same volume with slower, drifting flakes. Wet surfaces darken and gain specular through one wetness uniform. Lightning is a brief flash through the sky and the light, followed by a bolt drawn as a mesh. A sandstorm is a thick fog colour and a streak layer driven by the wind.
-- **Weather shifts the sky, not a second sky.** A weather's keyframes are the day's blended toward its own colours by one amount, and it raises the sky's cloud coverage and the fog's density, so a storm darkens the same dome, light and haze the clear day uses.
+- **A weather's settings are the game's.** The game's environment scripts hold each weather's sky, cloud, light and fog colours by the hour beside the clear day's, as the login's `EnviroSky` and `LoginSceneWeather` do, so the inventory names those fields first and each weather's colours are read from them rather than solved off recordings; only what they hold without fields is measured, over a recording of that weather at a known hour.
+- **Weather shifts the sky, not a second sky.** A weather writes its own colours into the same sky state, and raises the sky's cloud coverage and the fog's density, so a storm darkens the same dome, light and haze the clear day uses.
+- **Particles are judged by their statistics.** Rain, snow, splashes and a sandstorm's streaks are scattered at random, so each is matched to a recording by its density, the length and speed of its streaks and its colour, never pixel for pixel.
 
 ## How it works
 

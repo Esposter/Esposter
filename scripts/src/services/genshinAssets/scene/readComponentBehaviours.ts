@@ -17,10 +17,16 @@ import { existsSync } from "node:fs";
 import { readdir, readFile, rm } from "node:fs/promises";
 import { basename, join } from "node:path";
 
-// Every MonoBehaviour of a component's layout blocks exported raw, per file, and scanned for the shapes its fields take
-// (`scanSerializedFields`), each pointer resolved through its file's external references and named by what the layout
-// Or the asset index holds there. A pointer only counts where one of them holds its target, so a float's bits are never
-// Read as one. Only the scripts whose names match are returned when a pattern is given
+// The built-in components read beside the scripts, and where their fields start: past the pointer to their GameObject
+// And their enabled flag, aligned to four bytes. An animator's fields name its controller, and its game object is what
+// Its clips' tracks at "(the animator)" move
+const BUILT_IN_ASSET_TYPES = [AssetType.Animator, AssetType.Camera, AssetType.Light];
+const BUILT_IN_FIELDS_START = 16;
+// Every MonoBehaviour, animator, camera and light of a component's layout blocks exported raw, per file, named by the
+// Game object its leading pointer sits it on and scanned for the shapes its fields take (`scanSerializedFields`), each
+// Pointer resolved through its file's external references and named by what the layout or the asset index holds there.
+// A pointer only counts where one of them holds its target, so a float's bits are never read as one. Only the scripts
+// Whose names match are returned when a pattern is given
 export const readComponentBehaviours = async (
   component: DerivedAssetComponent,
   scriptPattern?: RegExp,
@@ -40,7 +46,12 @@ export const readComponentBehaviours = async (
   await rm(directory.behaviours, { force: true, recursive: true });
   for (const block of blocks)
     // oxlint-disable-next-line no-await-in-loop -- AnimeStudio reads one block at a time
-    await exportBlockBySource(block, [AssetType.MonoBehaviour], AnimeStudioExportType.Raw, directory.behaviours);
+    await exportBlockBySource(
+      block,
+      [AssetType.MonoBehaviour, ...BUILT_IN_ASSET_TYPES],
+      AnimeStudioExportType.Raw,
+      directory.behaviours,
+    );
   const targetBlocks = new Set(
     [...layoutFiles].flatMap((file) =>
       [file, ...(cabMap.get(file)?.dependencies ?? [])].flatMap((target) => cabMap.get(target)?.block ?? []),
@@ -51,40 +62,47 @@ export const readComponentBehaviours = async (
     indexed.map(({ block, name, pathId, type }) => [toObjectKey(block, pathId), `${type} ${name}`]),
   );
   const behaviours: ComponentBehaviour[] = [];
-  for (const block of blocks) {
-    const blockDirectory = join(directory.behaviours, basename(block, ".blk"), AssetType.MonoBehaviour);
-    if (!existsSync(blockDirectory)) continue;
-    // oxlint-disable-next-line no-await-in-loop -- one block's scripts are read at a time
-    for (const file of await readdir(blockDirectory)) {
-      const nameTarget = (pointer: ObjectPointer): string | undefined => {
-        const resolved = resolveObjectPointer(cabMap, file, pointer);
-        if (resolved)
-          return (
-            objectNameMap.get(toObjectKey(resolved.file, resolved.pathId)) ??
-            assetNameMap.get(toObjectKey(resolved.block, resolved.pathId))
-          );
-        else return undefined;
-      };
-      const describePointer = (pointer: ObjectPointer): string => {
-        const resolved = resolveObjectPointer(cabMap, file, pointer);
-        return `${nameTarget(pointer) ?? ""} (${resolved?.block ?? ""} ${resolved?.file ?? ""} ${pointer.pathId})`;
-      };
-      // oxlint-disable-next-line no-await-in-loop -- one file's scripts are listed at a time
-      const scripts = (await readdir(join(blockDirectory, file))).filter(
-        (name) => !scriptPattern || scriptPattern.test(basename(name, ".dat")),
-      );
-      for (const name of scripts) {
-        // oxlint-disable-next-line no-await-in-loop -- one script's bytes are read at a time
-        const bytes = await readFile(join(blockDirectory, file, name));
-        behaviours.push({
-          block,
-          describePointer,
-          fields: scanSerializedFields(bytes, (pointer) => nameTarget(pointer) !== undefined),
-          file,
-          script: basename(name, ".dat"),
-        });
+  for (const block of blocks)
+    for (const type of [AssetType.MonoBehaviour, ...BUILT_IN_ASSET_TYPES]) {
+      const blockDirectory = join(directory.behaviours, basename(block, ".blk"), type);
+      if (!existsSync(blockDirectory)) continue;
+      // oxlint-disable-next-line no-await-in-loop -- one block's scripts are read at a time
+      for (const file of await readdir(blockDirectory)) {
+        const nameTarget = (pointer: ObjectPointer): string | undefined => {
+          const resolved = resolveObjectPointer(cabMap, file, pointer);
+          if (resolved)
+            return (
+              objectNameMap.get(toObjectKey(resolved.file, resolved.pathId)) ??
+              assetNameMap.get(toObjectKey(resolved.block, resolved.pathId))
+            );
+          else return undefined;
+        };
+        const describePointer = (pointer: ObjectPointer): string => {
+          const resolved = resolveObjectPointer(cabMap, file, pointer);
+          return `${nameTarget(pointer) ?? ""} (${resolved?.block ?? ""} ${resolved?.file ?? ""} ${pointer.pathId})`;
+        };
+        // oxlint-disable-next-line no-await-in-loop -- one file's scripts are listed at a time
+        const scripts = (await readdir(join(blockDirectory, file))).filter(
+          (name) => !scriptPattern || scriptPattern.test(basename(name, ".dat")),
+        );
+        for (const name of scripts) {
+          // oxlint-disable-next-line no-await-in-loop -- one script's bytes are read at a time
+          const bytes = await readFile(join(blockDirectory, file, name));
+          const gameObject = { fileIndex: bytes.readInt32LE(0), pathId: bytes.readBigInt64LE(4).toString() };
+          behaviours.push({
+            block,
+            describePointer,
+            fields: scanSerializedFields(
+              bytes,
+              (pointer) => nameTarget(pointer) !== undefined,
+              type === AssetType.MonoBehaviour ? undefined : BUILT_IN_FIELDS_START,
+            ),
+            file,
+            owner: nameTarget(gameObject) ?? describePointer(gameObject),
+            script: basename(name, ".dat"),
+          });
+        }
       }
     }
-  }
   return behaviours;
 };

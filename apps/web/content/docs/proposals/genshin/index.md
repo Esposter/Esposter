@@ -11,19 +11,20 @@ Genshin Impact is set on one continent: seven nations, each with its own element
 ## Decisions
 
 - **A fan work, labelled as one.** Region, place and landmark names are the game's own, since the point is the game's world. The page says it is an unofficial, non-commercial fan recreation and does not pass itself off as HoYoverse's. HoYoverse's written rules for fans cover merchandise rather than software, so this area follows what they ask of any derivative work: it is marked as fan-made, never counterfeits official art, and claims no rights of its own. This supersedes the console's [voxel open world](/docs/infra/rejected/voxel-open-world), whose realm was original, since the realm is now the game's own.
-- **Every asset is authored here.** Geometry is generated in code from parameters, textures are procedural nodes in the Three.js Shading Language (TSL), and shaders are written in the repository. No model, texture, sound or image file taken from the game or its media is committed or served. The one exception is decided: the interface matches the game's exactly, so its glyphs are traced from the game's own marks into paths of our own, the way the [parity](/docs/genshin/parity) loop does it. The other is proposed: the music's instruments, which no oscillator of ours makes sound like an orchestra, are played from public-domain recordings of real instruments, never the game's ([sampled instruments](/docs/proposals/genshin/sampled-instruments)). The world stays generated, which is also what makes the project a showcase of the renderer rather than an asset viewer. Generated is not approximate: a scene is re-derived from the game's own assets as closely as they allow, by our own shaders, generators and data, with no fidelity ceiling short of copying the game's files ([scene derivation](/docs/proposals/genshin/scene-derivation)).
-- **The game's files are references, never shipped.** The installed game keeps its content in encrypted asset bundles. AnimeStudio, a third-party exporter, reads them locally with the game closed, and its exports sit in the references folder beside every screenshot and recording, outside the repository ([derived assets](/docs/genshin/derived-assets)). Nothing is injected into the running game, which an anti-cheat driver watches, and the game's code metadata is not decrypted. What a player can see stays a reference too, gathered the way the [reference board](/docs/proposals/genshin/reference-board) describes: screenshots and recordings taken in the game, the official interactive map, and the community wiki. None of it is committed.
-- **As close to the real region as reference allows.** Layout follows the official map, scale is calibrated against in-game measurements, and each landmark is modelled against its reference board. A region is judged side by side with its screenshots, and that judgement is the user's eyes, as the `run-app` skill already requires for any visual check.
-- **An engine of modules.** The [engine architecture](/docs/proposals/genshin/engine-architecture) divides the world into a package of single-purpose modules that the app mounts, so each system is built, tested and replaced on its own.
+- **Every asset is authored here.** Geometry is generated in code from parameters, textures are procedural nodes in the Three.js Shading Language (TSL), and shaders are written in the repository. No model, texture, sound or image file taken from the game or its media is committed or served. The one exception is decided: the interface matches the game's exactly, so its glyphs are traced from the game's own marks into paths of our own, the way the [parity](/docs/genshin/parity) loop does it. The other is proposed: the music's instruments, which no oscillator of ours makes sound like an orchestra, are played from public-domain recordings of real instruments, never the game's ([sampled instruments](/docs/proposals/genshin/sampled-instruments)). The world stays generated, which is also what makes the project a showcase of the renderer rather than an asset viewer. Generated is not approximate: a scene is re-derived from the game's own assets as closely as they allow, by our own shaders, generators and data, with no fidelity ceiling short of copying the game's files ([scene derivation](/docs/genshin/scene-derivation)).
+- **The game's files are references, never shipped.** The installed game keeps its content in encrypted asset bundles. AnimeStudio, a third-party exporter, reads them locally with the game closed, and its exports sit in the references folder beside every screenshot and recording, outside the repository ([derived assets](/docs/genshin/derived-assets)). Nothing is injected into the running game, which an anti-cheat driver watches, and the game's code metadata is not decrypted. What a player can see stays a reference too, gathered as [parity](/docs/genshin/parity) gathers any: the community wiki and published recordings searched first, and the game recorded only for what nothing published shows. None of it is committed.
+- **As close to the real region as the game's own data allows.** Every scene is rebuilt in the [recreation passes](/docs/proposals/genshin/recreation-passes): its layout read from the game's terrain tiles and streaming records, its shapes and surfaces fitted against the game's own exports, and only its light, air and sounds read off recordings, each pass judged by its own measure and frozen ([scene derivation](/docs/genshin/scene-derivation)). The frame's perceptual score against its references, then the user's eyes, are its acceptance, never its loop.
+- **An engine of modules.** The [engine architecture](/docs/genshin/engine-architecture) divides the world into a package of single-purpose modules that the app mounts, so each system is built, tested and replaced on its own; a page adds the module it first needs.
 - **WebGPU through TresJS.** `TresCanvas` takes a renderer factory, so the scene runs on three's `WebGPURenderer` while components stay declarative. Materials and post-processing are TSL node graphs, as the [fluid simulator](/docs/fluid-simulator) already does. TresJS comes first, and raw Three.js is used only where TresJS and cientos have nothing, with the reason given on the page that does it.
 - **TSL takes the full lint.** Type-aware oxlint loops forever on the fluid simulator's composable, which `oxlint.config.ts` excludes. The engine's modules import the same `three/webgpu` and TSL types and lint in about a second, so the engine takes no exclusion, and a new one is added only for a file measured to hang.
-- **The world keeps a budget.** Its cost grows with what the camera can see, never with the size of the continent. Every page here applies the rules the [engine architecture](/docs/proposals/genshin/engine-architecture) sets out: instancing, level of detail, off-thread generation, and transferable buffers.
+- **The world keeps a budget.** Its cost grows with what the camera can see, never with the size of the continent. Every page here applies the rules the [engine architecture](/docs/genshin/engine-architecture) sets out: instancing, level of detail, off-thread generation, and transferable buffers.
 
 ## How it works
 
 ```mermaid
 flowchart TD
-  R[Reference board: map, screenshots, recordings, wiki] --> A[Authored world data: layout, heights, landmarks]
+  R[The game's own data: terrain tiles, placements, exports] --> P{Recreation passes: each gated by its own measure}
+  P --> A[Fitted world data: heights, placements, kits' parameters]
   A --> W[Worker: terrain tiles, scatter, landmark meshes]
   C[Camera position] --> Q{CDLOD quadtree: which tiles, at what detail}
   Q --> W
@@ -39,19 +40,16 @@ flowchart TD
 
 ### Phase one: the world engine
 
-| Page                                                               | What it adds                                                                      |
-| :----------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
-| [Engine architecture](/docs/proposals/genshin/engine-architecture) | the engine as modules with one job each, and the order a frame runs in            |
-| [Reference board](/docs/proposals/genshin/reference-board)         | how a region is referenced, calibrated and compared so the recreation stays close |
-| [Scene derivation](/docs/proposals/genshin/scene-derivation)       | how a scene is re-derived from the game's own assets, each loss priced first      |
-| [Recreation passes](/docs/proposals/genshin/recreation-passes)     | a screen rebuilt in ordered passes, each gated by its own measure and frozen      |
-| [Localized opening](/docs/proposals/genshin/localized-opening)     | the publisher's splash and layouts as each client language shows                  |
-| [Sampled instruments](/docs/proposals/genshin/sampled-instruments) | the music played through openly licensed recordings of real instruments           |
-| [Terrain shapes](/docs/proposals/genshin/terrain-shapes)           | the continent's heights from authored shapes, and the ground painted by biome     |
-| [Flowing water](/docs/proposals/genshin/flowing-water)             | rivers along their courses, and waterfalls over cliff bands                       |
-| [Trees and scatter](/docs/proposals/genshin/trees-and-scatter)     | tree species and impostors, and flowers, bushes and rocks scattered by biome      |
-| [Weather](/docs/proposals/genshin/weather)                         | rain, storms, snow, fog and sandstorms, set per area as the game sets them        |
-| [Exploring](/docs/proposals/genshin/exploring)                     | a free camera, waypoints to jump between, and the map overlay                     |
+| Page                                                               | What it adds                                                                  |
+| :----------------------------------------------------------------- | :---------------------------------------------------------------------------- |
+| [Recreation passes](/docs/proposals/genshin/recreation-passes)     | a screen rebuilt in ordered passes, each gated by its own measure and frozen  |
+| [Localized opening](/docs/proposals/genshin/localized-opening)     | the publisher's splash and layouts as each client language shows              |
+| [Sampled instruments](/docs/proposals/genshin/sampled-instruments) | the music played through openly licensed recordings of real instruments       |
+| [Terrain shapes](/docs/proposals/genshin/terrain-shapes)           | the continent's heights from authored shapes, and the ground painted by biome |
+| [Flowing water](/docs/proposals/genshin/flowing-water)             | rivers along their courses, and waterfalls over cliff bands                   |
+| [Trees and scatter](/docs/proposals/genshin/trees-and-scatter)     | tree species and impostors, and flowers, bushes and rocks scattered by biome  |
+| [Weather](/docs/proposals/genshin/weather)                         | rain, storms, snow, fog and sandstorms, set per area as the game sets them    |
+| [Exploring](/docs/proposals/genshin/exploring)                     | a free camera, waypoints to jump between, and the map overlay                 |
 
 ### Phase two: the regions
 
@@ -70,13 +68,13 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 
 ## Scope and order
 
-1. **The rest of the engine**, in the order of the table above, each shown first in the Windrise scene the [rendering style](/docs/genshin/rendering-style) is built in. The reference board comes before any region, since it is how a region is authored into the [world map](/docs/genshin/world-map).
+1. **The recreation passes' runner and measures first.** Every later page is judged by them, so they are the base the rest stands on. The rest of the engine follows in the table's order, each built when Windrise's passes reach what it draws and shown first there, in the scene the [rendering style](/docs/genshin/rendering-style) is built in.
 2. **Mondstadt first among the regions.** It is where the game begins, and its opening areas are the ones the Windrise scene already holds. The rest follow in the game's release order.
 3. **Then the play features, one page each, written when the world is walkable.** First the character controller (run, sprint, jump, climb, glide, swim and stamina) and its camera. Then characters, drawn only from a model the person has downloaded for themselves from HoYoverse's official MMD releases and loaded from their own disk. Then elemental reactions, and after that each feature in turn. Each gets its page when its turn comes, not before, so no spec is written against an engine that does not yet exist.
 
 ## What this does not propose
 
-- **Assets from the game.** Nothing exported is committed, served or converted into a file of ours; only what our own fits and generators write ships. The official map is read as a stencil while authoring, and only the shapes drawn over it are kept.
+- **Assets from the game.** Nothing exported is committed, served or converted into a file of ours; only what our own fits and generators write ships.
 - **Multiplayer.** The world is the person's own, as the game's is outside co-op.
 - **A monetised or official-looking product.** No payment, no HoYoverse branding in the chrome, and no claim to be the game.
 
@@ -89,12 +87,11 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 ## Notes
 
 - **As-built pages form a Genshin area.** Each engine page, once built, is rewritten in the [Genshin](/docs/genshin) area, beside the [agent console](/docs/infra/claude-interface/agent-console)'s docs, which keep only the console that works the sessions.
-- **The map is a reference, and the geography is authored.** Coastlines, rivers and heights are drawn by hand over the official map and committed as our own vector data. How close it gets is limited by the reference, not by the renderer.
+- **The geography is the game's own, fitted.** Heights and placements are read from the game's terrain tiles and streaming records on its own coordinates and fitted by our generators ([terrain shapes](/docs/proposals/genshin/terrain-shapes)), so no region is laid out by hand and none needs a transform from a map's pixels.
 
 ## Sources
 
 - [Genshin Impact: Crafting an Anime Style Open World](https://www.gdconf.com/news/learn-about-making-genshin-impacts-open-world-gdc-2021), Haoyu Cai's GDC 2021 talk: the studio's own account of the anime-style open world this area recreates.
 - [miHoYo lists rules on overseas Genshin Impact fan-made merchandise](https://www.siliconera.com/mihoyo-lists-rules-on-overseas-genshin-impact-fan-made-merchandise/), Siliconera: the fan guide's terms, which are to label the work as fan-made, never counterfeit official art and claim no copyright. This area applies them.
 - [The world of Genshin Impact](https://genshin-impact.fandom.com/wiki/Teyvat), Genshin Impact Wiki: the nations, the borderlands and the regions this proposal lists.
-- [The official interactive map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map every region's layout is read from.
 - [TresCanvas](https://docs.tresjs.org/api/components/tres-canvas), TresJS: the `renderer` factory that puts `WebGPURenderer` under declarative components.

@@ -24,7 +24,7 @@ import { join } from "node:path";
 // A component's arrangement as the exports lay it out, for the witness render: each part at its finest level, in
 // Three's axes, with every material it draws with and each material's values and textures, all named by the files the
 // Export holds, under the component's roots or the ones given. It is written beside the exports and never enters the
-// Repository (apps/web/content/docs/proposals/genshin/scene-derivation.md). A part of the open world is laid out round
+// Repository (apps/web/content/docs/genshin/scene-derivation.md). A part of the open world is laid out round
 // Its origin's place, as our scene stands round it, so a camera solved on the witness is our scene's camera, and its
 // Terrain tiles at their corners, each drawn with its base map
 export const writeWitnessLayout = async (

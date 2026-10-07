@@ -38,10 +38,12 @@ const checkIsChannel = (value: number, max: number): boolean => value === 0 || (
 // Script's fields in the order they are declared, each aligned to four bytes, with no names, so each offset from the
 // Header on is read as the first shape that fits it: a pointer the component's data holds (the check says which do), a
 // Curve, an array of records of one shape, a gradient, a colour, and last a scalar. A reading is a candidate until a
-// Scene's use of it is checked against the captures, and a test on its offset then holds it
+// Scene's use of it is checked against the captures, and a test on its offset then holds it. A built-in component of
+// Unity's (a camera, a light) has no script or name, so its fields start where it is told they do
 export const scanSerializedFields = (
   bytes: Buffer,
   checkIsPointer: (pointer: ObjectPointer) => boolean,
+  fieldsStart?: number,
 ): SerializedField[] => {
   const wordCount = Math.floor(bytes.length / WORD);
   const readInt = (offset: number): number => bytes.readInt32LE(offset);
@@ -174,7 +176,7 @@ export const scanSerializedFields = (
   const readers = [readPointer, readCurve, readArray, readGradient, readColor, readScalar];
   const fields: SerializedField[] = [];
   const nameLength = checkHasBytes(NAME_LENGTH_OFFSET, WORD) ? readInt(NAME_LENGTH_OFFSET) : 0;
-  let offset = NAME_LENGTH_OFFSET + WORD + Math.ceil(nameLength / WORD) * WORD;
+  let offset = fieldsStart ?? NAME_LENGTH_OFFSET + WORD + Math.ceil(nameLength / WORD) * WORD;
   while (checkHasBytes(offset, WORD)) {
     const start = offset;
     const read = readers

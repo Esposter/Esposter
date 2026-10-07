@@ -17,7 +17,7 @@ const readNames = (directory: string): Promise<string[]> =>
 // Everything a component's export holds, as a Markdown report beside it: each material's shader, texture slots and
 // Values, each texture's size and what each channel spans, each mesh's vertices and the materials its renderers draw it
 // With, and each shader the `shaders` step read. It is the scene derivation's first step: nothing is built before it is
-// Inventoried (apps/web/content/docs/proposals/genshin/scene-derivation.md)
+// Inventoried (apps/web/content/docs/genshin/scene-derivation.md)
 export const writeComponentInventory = async (component: DerivedAssetComponent): Promise<string> => {
   const directory = getComponentDirectory(component);
   const [materials, { gameObjectDrawingMap }] = await Promise.all([

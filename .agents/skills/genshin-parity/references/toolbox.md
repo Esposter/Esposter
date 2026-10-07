@@ -30,15 +30,16 @@ What each pass's tools stand on, and the runner the passes still lack.
 
 ### Inventory
 
-| Unknown                                 | Tool                                                                |
-| :-------------------------------------- | :------------------------------------------------------------------ |
-| Which assets a scene draws              | `extract`: the closure of its roots by file, path ID                |
-| The scene's hierarchy, and what it lost | `genshin:assets tree`: flags anchors, lost fathers                  |
-| A script's settings                     | `behaviours`: raw bytes scanned for shapes                          |
-| What a script spawns, and where         | `behaviours`, set as `spawns` at their anchors                      |
-| What a shader computes                  | `shaders`: the annotated disassembly, and HLSL where it decompiles  |
-| Where the open world places an object   | `parseStreamingPlacements` over its tile's or area's StreamGen blob |
-| A placement's prefab                    | its 64-bit path hash looked up in the game's asset index            |
+| Unknown                                      | Tool                                                                    |
+| :------------------------------------------- | :---------------------------------------------------------------------- |
+| Which assets a scene draws                   | `extract`: the closure of its roots by file, path ID                    |
+| The scene's hierarchy, and what it lost      | `genshin:assets tree`: flags anchors, lost fathers                      |
+| A script's, a camera's or a light's settings | `behaviours`: raw bytes scanned for shapes, built-ins past their header |
+| Which object a clip's `(the animator)` moves | `behaviours`: each animator printed on its game object                  |
+| What a script spawns, and where              | `behaviours`, set as `spawns` at their anchors                          |
+| What a shader computes                       | `shaders`: the annotated disassembly, and HLSL where it decompiles      |
+| Where the open world places an object        | `parseStreamingPlacements` over its tile's or area's StreamGen blob     |
+| A placement's prefab                         | its 64-bit path hash looked up in the game's asset index                |
 
 ### Layout
 
@@ -140,7 +141,7 @@ What each pass's tools stand on, and the runner the passes still lack.
 
 ### Sound effects
 
-| Unknown                                       | Tool                                                                                                   |
-| :-------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
-| Which game sounds a recording plays, and when | gap: a `genshin:assets` matching command; the door's were matched by a scratch pass over `Minimum.pck` |
-| A sound effect's levels over time             | `fitLoginDoorSound`: each octave band's level every 25 ms, from the decoded sound                      |
+| Unknown                                       | Tool                                                                                                     |
+| :-------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| Which game sounds a recording plays, and when | gap: a `genshin:assets` matching command; the door's sounds came from a scratch match over `Minimum.pck` |
+| A sound effect's levels over time             | `fitLoginDoorSound`: each octave band's level every 25 ms, from the decoded sound                        |

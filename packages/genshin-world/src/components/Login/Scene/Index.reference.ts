@@ -3,6 +3,7 @@ import type { ComponentReference } from "genshin-interface";
 import { arrangementTopic } from "#src/components/Login/Scene/Arrangement.reference";
 import { cameraTopic } from "#src/components/Login/Scene/Camera.reference";
 import { doorTopic } from "#src/components/Login/Scene/Door.reference";
+import { inventoryTopic } from "#src/components/Login/Scene/Inventory.reference";
 import { lightTopic } from "#src/components/Login/Scene/Light.reference";
 import { scoringTopic } from "#src/components/Login/Scene/Scoring.reference";
 import { skyTopic } from "#src/components/Login/Scene/Sky.reference";
@@ -81,11 +82,17 @@ export const reference: ComponentReference = {
       name: "Ani_LogginScene_Door01_Liftting",
       role: "The door assembling itself at the flight's end, its pieces rising into place over 1.33 s",
     },
+    environment: {
+      block: "00/11790361.blk",
+      kind: GameSourceKind.MonoBehaviour,
+      name: "EnviroSky",
+      role: "The environment by the time of day, beside LoginSceneEnviro and LoginSceneWeather in the same block: gradients, curves and colours for the sky, the clouds, the light and the haze, pointing at the sun, moon, cloud layer and emitters",
+    },
     flight: {
       block: "00/16000354.blk",
       kind: GameSourceKind.MonoBehaviour,
       name: "MonoLoginScene",
-      role: "The flight down the walkway: fieldless, so its path is solved from the captures",
+      role: "The flight down the walkway: its rows' prefabs, counts and lengths, two speeds and easing curves, the walkway's rise and the hours' god rays and halos, in raw bytes whose fields are read by their shapes",
     },
     gradingTables: {
       block: "00/00035183.blk",
@@ -97,7 +104,7 @@ export const reference: ComponentReference = {
       block: "00/16000354.blk",
       kind: GameSourceKind.AnimationClip,
       name: "Ani_Login_Lift",
-      role: "One root lifted 50 metres over a second at the login's end, between the Start and End clips",
+      role: "Each walkway block lifted 50 units, 5 metres at the walkway's tenth, over a second on its own animator as it rises into place",
     },
     loginScene: {
       block: "00/11790361.blk",
@@ -117,6 +124,12 @@ export const reference: ComponentReference = {
       name: "Starting Celestia Door (Night), a 2022 PC recording idling on the title with no interface",
       parityReference: "login-night-title",
       role: "The night sky over the title, at the camera the door recording solves",
+    },
+    postProfile: {
+      block: "00/11790361.blk",
+      kind: GameSourceKind.MonoBehaviour,
+      name: "SceneCamera(Clone) Profile",
+      role: "The login's post-processing: MHYBloom_Z, MotionBlur, WaterRipple, ToonLightBuffer, FrameTransition and ElementView, with no colour grading",
     },
     recording: {
       capture: "yt-rBnfA4pXw6U.mp4",
@@ -154,6 +167,7 @@ export const reference: ComponentReference = {
     arrangement: arrangementTopic,
     camera: cameraTopic,
     door: doorTopic,
+    inventory: inventoryTopic,
     light: lightTopic,
     scoring: scoringTopic,
     sky: skyTopic,

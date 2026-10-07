@@ -1,12 +1,12 @@
 ---
 title: Nod-Krai
-description: Proposal — Nod-Krai, the moonlit borderland archipelago at Snezhnaya's southern tip. Islands formed from what was left over when the Three Moons were made, dieselpunk ports and Fatui works, the Frostmoon Scions' enclaves, and Statues of the New Moon in place of the Seven. The look is set by its reference board more than by any other region's precedent.
+description: Proposal — Nod-Krai, the moonlit borderland archipelago at Snezhnaya's southern tip. Islands formed from what was left over when the Three Moons were made, dieselpunk ports and Fatui works, the Frostmoon Scions' enclaves, and Statues of the New Moon in place of the Seven. The look is set by the game's own data and references more than by any other region's precedent.
 model: claude-opus-5-5
 ---
 
 # Nod-Krai
 
-This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/proposals/genshin/terrain-shapes), [vegetation](/docs/genshin/vegetation) and its [trees and scatter](/docs/proposals/genshin/trees-and-scatter), [water](/docs/genshin/water) and its [flow](/docs/proposals/genshin/flowing-water), [sky and time](/docs/genshin/sky-and-time) and [weather](/docs/proposals/genshin/weather), authored by the [reference board](/docs/proposals/genshin/reference-board)'s method. Nod-Krai is an autonomous region at the southern edge of Snezhnaya, an archipelago formed from the material left over when the Three Moons were made. Its culture is fictional, drawn from the Baltic with dieselpunk machinery. People from every nation gather there, the Fatui run a stronghold there, and its indigenous Frostmoon Scions worship a moon goddess. It is the newest of the nations' neighbours in the game, and the least documented, so its page commits to the mechanism and leaves its look to the board.
+This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/proposals/genshin/terrain-shapes), [vegetation](/docs/genshin/vegetation) and its [trees and scatter](/docs/proposals/genshin/trees-and-scatter), [water](/docs/genshin/water) and its [flow](/docs/proposals/genshin/flowing-water), [sky and time](/docs/genshin/sky-and-time) and [weather](/docs/proposals/genshin/weather), re-derived by the [scene derivation](/docs/genshin/scene-derivation)'s method, each scene in its [recreation passes](/docs/proposals/genshin/recreation-passes). Nod-Krai is an autonomous region at the southern edge of Snezhnaya, an archipelago formed from the material left over when the Three Moons were made. Its culture is fictional, drawn from the Baltic with dieselpunk machinery. People from every nation gather there, the Fatui run a stronghold there, and its indigenous Frostmoon Scions worship a moon goddess. It is the newest of the nations' neighbours in the game, and the least documented, so its page commits to the mechanism and leaves its look to the board.
 
 ## Decisions
 
@@ -38,7 +38,7 @@ The catalogue holds Nod-Krai's areas as the game names them: Lempo Isle, Hiisi I
 2. **The Frostmoon Enclave** and the Scions' sites.
 3. **The other isles** and the Moontide Sea, then the rest in the catalogue's order.
 
-## Capture checklist
+## Reference checklist
 
 Nasha Town's port and main street, a Statue of the New Moon, the Frostmoon Enclave, Blue Amber Lake, a Fatui works, the moon at night from each isle, and the sea between the isles.
 

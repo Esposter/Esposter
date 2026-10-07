@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Natlan
 
-This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/proposals/genshin/terrain-shapes), [vegetation](/docs/genshin/vegetation) and its [trees and scatter](/docs/proposals/genshin/trees-and-scatter), [water](/docs/genshin/water) and its [flow](/docs/proposals/genshin/flowing-water), [sky and time](/docs/genshin/sky-and-time) and [weather](/docs/proposals/genshin/weather), authored by the [reference board](/docs/proposals/genshin/reference-board)'s method. Natlan is the nation of the Pyro Archon, its culture drawn from pre-Columbian America, sub-Saharan Africa and Oceania. It lies beyond the west side of Sumeru's desert and is shaped by volcanism: hot springs, lava fields and a great volcano. Its people are six tribes living beside dragons, and each tribe's lands look distinct. This is the region where one kit takes the most variants.
+This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/proposals/genshin/terrain-shapes), [vegetation](/docs/genshin/vegetation) and its [trees and scatter](/docs/proposals/genshin/trees-and-scatter), [water](/docs/genshin/water) and its [flow](/docs/proposals/genshin/flowing-water), [sky and time](/docs/genshin/sky-and-time) and [weather](/docs/proposals/genshin/weather), re-derived by the [scene derivation](/docs/genshin/scene-derivation)'s method, each scene in its [recreation passes](/docs/proposals/genshin/recreation-passes). Natlan is the nation of the Pyro Archon, its culture drawn from pre-Columbian America, sub-Saharan Africa and Oceania. It lies beyond the west side of Sumeru's desert and is shaped by volcanism: hot springs, lava fields and a great volcano. Its people are six tribes living beside dragons, and each tribe's lands look distinct. This is the region where one kit takes the most variants.
 
 ## Decisions
 
@@ -56,7 +56,7 @@ The catalogue holds Natlan's areas as the game names them: Toyac Springs, Tequem
 3. **Coatepec Mountain** and the lava fields, then each tribe's lands in turn.
 4. **Ochkanatlan**, then the rest in the catalogue's order.
 
-## Capture checklist
+## Reference checklist
 
 Toyac Springs' pools and falls, each tribe's central settlement, the Stadium of the Sacred Flame, Coatepec Mountain from a distance, a lava field at night, Colorfall Cliffs, and a painted mural up close.
 
