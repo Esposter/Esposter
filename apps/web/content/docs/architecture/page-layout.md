@@ -14,7 +14,7 @@ flowchart TD
   R[A route] --> A[App.vue<br/>the dock, and the dock insets on the root]
   A --> P[The page]
   P --> L{Which layout}
-  L -->|layout: immersive| I[The whole viewport<br/>no dock, no shell]
+  L -->|layout: immersive| I[The whole viewport<br/>no dock, no shell, the window never scrolls]
   L -->|NuxtLayout name=resource| RS[The resource header over the default shell]
   L -->|NuxtLayout name=messages| MS[The room's drawers over the default shell]
   L -->|NuxtLayout| D[The default shell]
@@ -42,7 +42,9 @@ A wide screen docks every drawer the page has, open. A narrow one keeps each clo
 
 ## What the height changes
 
-Every page scrolls the window, which keeps the browser's scroll restoration, anchors and find-in-page. A page that scrolls inside its own regions — a room, a call, a game — passes `is-viewport-height`: the grid is then exactly the viewport tall, its one row is definite, and the page's `h-full` column resolves against it with its scrolling child `flex-1`. The room's composer is the last row of the room's own column, so the shell has no footer.
+Every page in a shell scrolls the window, which keeps the browser's scroll restoration, anchors and find-in-page. A page that scrolls inside its own regions — a room, a call, a game — passes `is-viewport-height`: the grid is then exactly the viewport tall, its one row is definite, and the page's `h-full` column resolves against it with its scrolling child `flex-1`. The room's composer is the last row of the room's own column, so the shell has no footer.
+
+An immersive page never scrolls the window at all: its layout hides the document's overflow, so it is exactly the viewport. Without that, anything appended to the body after the app — a development tool's inline element, a browser extension's — would run the document past the viewport and show a scrollbar beside a page that has nothing to scroll. An immersive page that needs to scroll does so inside a region of its own.
 
 ## Which part draws each surface
 
@@ -69,6 +71,6 @@ Every page scrolls the window, which keeps the browser's scroll restoration, anc
 | `apps/web/app/layouts/default.vue`             | The shell grid: the drawers as columns or sheets, the page, the height mode |
 | `apps/web/app/layouts/resource.vue`            | The resource header over the default shell                                  |
 | `apps/web/app/layouts/messages.vue`            | The room's drawers over the default shell, sized from the resize handles    |
-| `apps/web/app/layouts/immersive.vue`           | The whole viewport, with no dock and no shell                               |
+| `apps/web/app/layouts/immersive.vue`           | The whole viewport, with no dock, no shell and no document scroll           |
 | `apps/web/app/components/App/DrawerButton.vue` | The one button that opens a drawer on a narrow screen                       |
 | `apps/web/app/store/layout.ts`                 | Whether the screen is wide, and whether each drawer is open                 |
