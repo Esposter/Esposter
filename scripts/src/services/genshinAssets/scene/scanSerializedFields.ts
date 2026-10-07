@@ -187,17 +187,22 @@ export const scanSerializedFields = (
     const gradient = readGradient(start);
     if (gradient) gradientSpans.push([start, gradient.end]);
   }
-  const checkIsCrossing = (start: number, end: number): boolean =>
-    gradientSpans.some(
-      ([gradientStart, gradientEnd]) => gradientStart > start && gradientStart < end && gradientEnd > end,
+  const checkIsCrossing = (start: number, { end, field }: NonNullable<ReturnType<SerializedFieldReader>>): boolean => {
+    const isGradientArray =
+      field.kind === SerializedFieldKind.Array &&
+      field.elements.every(({ kind }) => kind === SerializedFieldKind.Gradient);
+    return gradientSpans.some(
+      ([gradientStart, gradientEnd]) =>
+        gradientStart > start && gradientStart < end && (gradientEnd > end || !isGradientArray),
     );
+  };
   let offset = firstOffset;
   while (checkHasBytes(offset, WORD)) {
     const start = offset;
     const read = readers
       .values()
       .map((reader) => reader(start))
-      .find((result) => result !== undefined && !checkIsCrossing(start, result.end));
+      .find((result) => result !== undefined && !checkIsCrossing(start, result));
     if (read) fields.push(read.field);
     offset = read?.end ?? offset + WORD;
   }

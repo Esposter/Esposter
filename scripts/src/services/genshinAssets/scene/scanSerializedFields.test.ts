@@ -128,4 +128,35 @@ describe(scanSerializedFields, () => {
       { kind: SerializedFieldKind.Gradient, offset: 36 },
     ]);
   });
+
+  test("reads a gradient a curve read three words before it would hold whole", () => {
+    expect.hasAssertions();
+
+    // Times whose words read as finite floats, so eleven keys from the count on read as a curve ending past the gradient
+    const gradientTimes = Buffer.alloc(32);
+    gradientTimes.writeUInt16LE(0x3f_80, 2);
+    gradientTimes.writeUInt16LE(0x3f_80, 18);
+    const bytes = Buffer.concat([
+      header,
+      writeInts(11),
+      writeFloats(0, 0),
+      // Two keys of eight in use, black to yellow
+      writeFloats(0, 0, 0, 1, 1, 1, 0, 1),
+      Buffer.alloc(6 * 16),
+      gradientTimes,
+      writeInts(0),
+      Buffer.from([2, 2, 0, 0]),
+      writeInts(2, 2, 0),
+    ]);
+
+    expect(scanSerializedFields(bytes, checkIsPointer).map(({ kind, offset }) => ({ kind, offset }))).toStrictEqual([
+      { kind: SerializedFieldKind.Integer, offset: 32 },
+      { kind: SerializedFieldKind.Integer, offset: 36 },
+      { kind: SerializedFieldKind.Integer, offset: 40 },
+      { kind: SerializedFieldKind.Gradient, offset: 44 },
+      { kind: SerializedFieldKind.Integer, offset: 212 },
+      { kind: SerializedFieldKind.Integer, offset: 216 },
+      { kind: SerializedFieldKind.Integer, offset: 220 },
+    ]);
+  });
 });
