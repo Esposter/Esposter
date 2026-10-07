@@ -1,4 +1,5 @@
 import type { SampledInstrument } from "#src/models/genshinAssets/shared/SampledInstrument";
+import type { SoundStart } from "#src/models/genshinAssets/sound/SoundStart";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { SampleLibrary } from "#src/models/genshinAssets/shared/SampleLibrary";
@@ -179,6 +180,11 @@ export const SAMPLED_INSTRUMENTS: SampledInstrument[] = [
     "Idiophones/Struck Idiophones/Hand Chimes",
     "Idiophones/Struck Idiophones/Vibraphone - Soft Mallets",
   ].map((name) => ({ library: SampleLibrary.Vcsl, mapping: `${name}.sfz` })),
+  { library: SampleLibrary.DsmolkenDoubleBass, mapping: "d_smolken_rubner_bass_arco.sfz" },
+  { library: SampleLibrary.DsmolkenDoubleBass, mapping: "d_smolken_rubner_bass_pizz.sfz" },
+  { library: SampleLibrary.KaroryferBigcatCello, mapping: "Programs/vc_arco_sus_map.sfz" },
+  { library: SampleLibrary.KaroryferBigcatCello, mapping: "Programs/vc_pizz_basic.sfz" },
+  { library: SampleLibrary.OsirisPiano, mapping: "Programs/01-natural.sfz" },
 ];
 // Vgmstream's command line (github.com/vgmstream/vgmstream), which decodes Wwise's own Vorbis, pinned and checked as
 // FFmpeg is, into the scripts package's cache
@@ -263,3 +269,10 @@ export const LOGIN_DOOR_MESH = "LoginScene_Door01_Vo";
 // Every piece the walkway is laid from: its paving, its borders and its wings
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const WALKWAY_MESH_REGEX: RegExp = /^LoginScene_Bridge01_\d+_Vo$/u;
+// The two sounds the door plays, each found in the package the game loads first by `genshin:assets sounds` against the
+// Door recording's burst: a rumble, then a broadband rush 75 milliseconds later, both at the level they are stored
+// At
+export const LOGIN_DOOR_SOUNDS: readonly SoundStart[] = [
+  { id: 402_626_033, offsetSeconds: 0 },
+  { id: 73_142_117, offsetSeconds: 0.075 },
+];

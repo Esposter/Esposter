@@ -20,10 +20,11 @@ const NIGHT_MOON_DIRECTION = getLoginScreenDirection([0.27, 0.11]);
 const DUSK_LIGHT_DIRECTION = new Vector3(0.837, 0.259, 0.483);
 
 // Each hour's sky is solved as the game's sky shader draws it over the clear sky of every reference at that hour at once
-// (genshin:parity sky, its clouds left out by the cloud mask), its colours with its own shape, no colour under none,
-// Each pixel weighed by how steeply the tone curve shows it: solved in scene colour alone, the curve's inverse took a
-// Pixel near white to many times its neighbours' colour, and the day's horizon came out pure blue. Solved on its title
-// Alone, the day's sky drew its door frame's patch of sky three hundredths worse. The haze
+// (genshin:parity sky, its clouds left out by the cloud mask), its colours with its own shape, no halo under none and
+// No gradient colour under the tone curve's floor, the night's colour away from the moon standing in red under its
+// Black at none, each pixel weighed by how steeply the tone curve shows it: solved in scene colour alone, the curve's
+// Inverse took a pixel near white to many times its neighbours' colour, and the day's horizon came out pure blue.
+// Solved on its title alone, the day's sky drew its door frame's patch of sky three hundredths worse. The haze
 // Over the cloud sea (the mean of its brightest two samples low in the frame) is read off each reference too. The
 // Day's and the dusk's cloud colours are solved by their spread against the recordings' (genshin:parity clouds); the
 // Dawn's and the night's so solved score their frames worse, so theirs stay read off the references. The stone's light
@@ -70,7 +71,7 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     hemisphereIntensity: 7.27,
     hemisphereSkyColor: new Color(0xd4e4ef),
     horizonBackColor: new Color(0x59a5d7),
-    horizonColor: new Color(0x000000),
+    horizonColor: new Color(0x181818),
     lightColor: new Color(0xfff4e6),
     lightDirection: DAY_SUN_DIRECTION,
     lightIntensity: 8.4,
@@ -80,7 +81,7 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     sunDirection: DAY_SUN_DIRECTION,
     sunHaloColor: new Color(0x677918),
     zenithBackColor: new Color(0x29448d),
-    zenithColor: new Color(0x000000),
+    zenithColor: new Color(0x181818),
   },
   [LoginTimeOfDay.Dusk]: {
     cloudLitColor: new Color(0xfcfcc4),
@@ -113,22 +114,22 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     fogDensity: 12.6481,
     fogHeightFalloff: 0.4607,
     fogMaxOpacity: 0.6472,
-    haloColor: new Color(0x2e4d9a),
+    haloColor: new Color(0x2c4c9a),
     hemisphereGroundColor: new Color(0x2a4aa8),
     hemisphereIntensity: 8.96,
     hemisphereSkyColor: new Color(0x2d6fd0),
-    horizonBackColor: new Color(0x1d3986),
+    horizonBackColor: new Color(0x1b3784),
     horizonColor: new Color(0x000000),
     lightColor: new Color(0x9cc8ff),
     lightDirection: NIGHT_MOON_DIRECTION,
     lightIntensity: 8.13,
     moonDirection: NIGHT_MOON_DIRECTION,
-    moonGlowColor: new Color(0x1a2643),
-    shape: { frontBackBlend: 1, haloHeight: 0.258, horizonBand: 0.297, moonSize: 0.383, sunHaloSize: 5.844 },
+    moonGlowColor: new Color(0x18234c),
+    shape: { frontBackBlend: 1, haloHeight: 0.315, horizonBand: 0.304, moonSize: 1.164, sunHaloSize: 4.599 },
     starIntensity: 1,
     sunDirection: NIGHT_MOON_DIRECTION.clone().negate(),
-    sunHaloColor: new Color(0x000000),
-    zenithBackColor: new Color(0x181e5a),
+    sunHaloColor: new Color(0x181818),
+    zenithBackColor: new Color(0x161d58),
     zenithColor: new Color(0x000000),
   },
 };

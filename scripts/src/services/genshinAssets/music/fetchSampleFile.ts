@@ -1,6 +1,7 @@
 import type { SampleLibrary } from "#src/models/genshinAssets/shared/SampleLibrary";
 
 import { SampleLibraryCommitMap } from "#src/services/genshinAssets/music/SampleLibraryCommitMap";
+import { SampleLibraryOwnerMap } from "#src/services/genshinAssets/music/SampleLibraryOwnerMap";
 import { SAMPLE_DOWNLOAD_TIMEOUT_MS, SAMPLES_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { fetchOk } from "#src/services/shared/fetchOk";
 import { existsSync } from "node:fs";
@@ -15,7 +16,7 @@ export const fetchSampleFile = async (library: SampleLibrary, path: string): Pro
   if (existsSync(localPath)) return localPath;
   const segments = path.split("/").map((segment) => encodeURIComponent(segment));
   const response = await fetchOk(
-    `https://raw.githubusercontent.com/sgossner/${library}/${SampleLibraryCommitMap[library]}/${segments.join("/")}`,
+    `https://raw.githubusercontent.com/${SampleLibraryOwnerMap[library]}/${library}/${SampleLibraryCommitMap[library]}/${segments.join("/")}`,
     { timeoutMs: SAMPLE_DOWNLOAD_TIMEOUT_MS },
   );
   const bytes = new Uint8Array(await response.arrayBuffer());

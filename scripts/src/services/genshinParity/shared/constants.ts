@@ -158,3 +158,7 @@ export const PARITY_MUSIC_SCORES_PATH: string = join(
 );
 export const CHANNELS = [0, 1, 2] as const;
 export const LUMINANCE = [0.2126, 0.7152, 0.0722] as const;
+// A sound effect is scored every 5 milliseconds at 48 kHz, finer than its fit's frames, over the cells within 40 decibels
+// Of the game's loudest
+export const SOUND_SCORE_HOP_LENGTH = 240;
+export const SOUND_SCORE_RANGE_DECIBELS = 40;

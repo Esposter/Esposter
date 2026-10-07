@@ -68,21 +68,22 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Shape and surface
 
-| Unknown                                      | Tool                                                                                                                                                                                                                        |
-| :------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| How far a stand-in falls short               | `rank`'s second table: FLIP and similarity against the exports                                                                                                                                                              |
-| Depth, normal, albedo, part per pixel        | `genshin:parity gbuffer`                                                                                                                                                                                                    |
-| A family's surface laid out in metres        | `genshin:parity plan`: its unlit albedo from straight above                                                                                                                                                                 |
-| How a surface reads far off                  | `genshin:parity plan` at a lower `--resolution`: the same albedo through its textures' coarse levels, as a camera that far off and facing it samples them; a grazing view reads finer, the witness sampling anisotropically |
-| A stand-in seen where no reference is        | `genshin:parity view`: any camera, ours beside the exports                                                                                                                                                                  |
-| Which term next, inside a pass               | `genshin:parity rank`: every term's ceiling, largest first, ordering that pass's items                                                                                                                                      |
-| Ours against the exports, channel by channel | `passes`' shape: our parts drawn into the witness's targets, outline, depth and normal per family                                                                                                                           |
-| Where on the frame a shape misses            | `passes`' shape image, `shapes/<reference>.png`: the normals' angle green to red, outlines apart white and blue                                                                                                             |
-| Our unlit colour against the exports'        | `passes`' surface: the same targets' albedo where both draw a family, its mean colour apart and its structure                                                                                                               |
-| Where on the frame a surface misses          | `passes`' surface image, `surfaces/<reference>.png`: the lightness apart where both draw a family, red where ours is lighter and blue where darker                                                                          |
-| Which scale a surface's structure is lost at | `passes`' surface notes: each family's structure scale by scale, finest first, beside its exports' own a pixel across                                                                                                       |
-| Where on the frame a structure is lost       | `passes`' structure image, `surfaces/<reference>-structure.png`: each scale's similarity term per pixel, finest first, red as it is lost                                                                                    |
-| A surface's paint from its texture           | `fitPlanTones`: its texture's colours past their speckle as k-means tones in CIELab, traced as loops over a plan                                                                                                            |
+| Unknown                                        | Tool                                                                                                                                                                                                                        |
+| :--------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| How far a stand-in falls short                 | `rank`'s second table: FLIP and similarity against the exports                                                                                                                                                              |
+| Depth, normal, albedo, part per pixel          | `genshin:parity gbuffer`                                                                                                                                                                                                    |
+| A family's surface laid out in metres          | `genshin:parity plan`: its unlit albedo from straight above                                                                                                                                                                 |
+| How a surface reads far off                    | `genshin:parity plan` at a lower `--resolution`: the same albedo through its textures' coarse levels, as a camera that far off and facing it samples them; a grazing view reads finer, the witness sampling anisotropically |
+| A stand-in seen where no reference is          | `genshin:parity view`: any camera, ours beside the exports                                                                                                                                                                  |
+| Which term next, inside a pass                 | `genshin:parity rank`: every term's ceiling, largest first, ordering that pass's items                                                                                                                                      |
+| Ours against the exports, channel by channel   | `passes`' shape: our parts drawn into the witness's targets, outline, depth and normal per family                                                                                                                           |
+| Where on the frame a shape misses              | `passes`' shape image, `shapes/<reference>.png`: the normals' angle green to red, outlines apart white and blue                                                                                                             |
+| Our unlit colour against the exports'          | `passes`' surface: the same targets' albedo where both draw a family, its mean colour apart and its structure                                                                                                               |
+| Where on the frame a surface misses            | `passes`' surface image, `surfaces/<reference>.png`: the lightness apart where both draw a family, red where ours is lighter and blue where darker                                                                          |
+| Which scale a surface's structure is lost at   | `passes`' surface notes: each family's structure scale by scale, finest first, beside its exports' own a pixel across                                                                                                       |
+| Where on the frame a structure is lost         | `passes`' structure image, `surfaces/<reference>-structure.png`: each scale's similarity term per pixel, finest first, red as it is lost                                                                                    |
+| Which feature of a plan a structure is lost on | `genshin:parity lost`: the surface pass's loss carried onto the family's plan, each band's share of it against its share of the pixels                                                                                      |
+| A surface's paint from its texture             | `fitPlanTones`: its texture's colours past their speckle as k-means tones in CIELab, traced as loops over a plan                                                                                                            |
 
 ### Motion
 
@@ -95,13 +96,13 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Display
 
-| Unknown                                          | Tool                                                                                                                   |
-| :----------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
-| The transform's form                             | exact: the bloom's and the uber pass's programs, read with their constant layouts (the login's `Display.reference.ts`) |
-| The tone curve's contrast                        | `passes`' display: each pixel's light, back through the curve over its albedo, flattest on a sun and a sky's plane     |
-| The bloom's fields                               | gap: which MHYBloom value is the threshold, the scaler and the intensity, measured where the bloom alone moves         |
-| How much of a frame lies under the curve's black | `genshin:parity black`: each reference's share of pixels with a channel darker than the curve shows                    |
-| The night's black                                | gap: what draws channels under the curve's black, _WhiteBalanceMat read off the post profile or a gamma measured       |
+| Unknown                                          | Tool                                                                                                                                                           |
+| :----------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The transform's form                             | exact: the bloom's and the uber pass's programs, read with their constant layouts (the login's `Display.reference.ts`)                                         |
+| The tone curve's contrast                        | `passes`' display: each pixel's light, back through the curve over its albedo, flattest on a sun and a sky's plane                                             |
+| The bloom's fields                               | gap: which MHYBloom value is the threshold, the scaler and the intensity, measured where the bloom alone moves                                                 |
+| How much of a frame lies under the curve's black | `genshin:parity black`: each reference's share of pixels with a channel under the curve's black at none, each channel's apart; `compare` prints ours beside it |
+| The night's black                                | gap: `_WhiteBalanceMat` before the curve, no export holds it, its temperature and tint solved where the stone's light lies flattest                            |
 
 ### Light
 
@@ -154,7 +155,8 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Sound effects
 
-| Unknown                                       | Tool                                                                                                          |
-| :-------------------------------------------- | :------------------------------------------------------------------------------------------------------------ |
-| Which game sounds a recording plays, and when | `genshin:assets sounds`: every sound scored by its bands' levels, the best set of each size with its residual |
-| A sound effect's levels over time             | `fitSoundEffect`: each octave band's level every 25 ms, from the matched sounds decoded                       |
+| Unknown                                       | Tool                                                                                                            |
+| :-------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- |
+| Which game sounds a recording plays, and when | `genshin:assets sounds`: every sound scored by its bands' levels, the best set of each size with its residual   |
+| A sound effect's levels over time             | `fitSoundEffect`: three noises a band every 25 ms, from the matched sounds' mix in both channels                |
+| How near our sound effect plays the game's    | `genshin:parity effects`: both channels every 5 ms in the effect's bands, each band's bias, the channels' width |

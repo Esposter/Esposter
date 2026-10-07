@@ -40,6 +40,20 @@ export const doorSoundTopic: ReferenceTopic = {
       result:
         "The rush scores 0.928 from 15.025 seconds and the rumble 0.913 from 14.950, the rest 0.784 and under. The rumble alone leaves 4.19 decibels unexplained, the rumble and the rush 75 milliseconds after it 3.31, and a third sound 3.27, so the door is the pair, the rush now 75 milliseconds after the rumble rather than the tenth of a second the earlier match read at 50 millisecond frames. A gain a band instead of one over every band reads the rumble alone at 1.99, better than the pair's 3.01: it lets the rumble stand in for the rush's top octaves",
     },
+    {
+      method:
+        "genshin:assets sounds over the door recording's audio from 11 to 13.6 seconds, where the door assembles itself before the click",
+      outcome: InvestigationOutcome.DeadEnd,
+      result:
+        "No set settles: the best sound scores 0.871 against the burst's 0.928, and each sound added to a set still buys about half a decibel, from 7.33 decibels unexplained for one sound to 5.13 for five, with the login's own music among the matches. The music fills the window, so whether the game plays a sound as the door assembles is not separable from this recording",
+    },
+    {
+      method:
+        "The door's two sounds decoded in both channels, their channels' correlation, and our render scored against their mix in thirds of an octave every 5 milliseconds; resynthesized from their own readings at each band width, frame and channel count, and a second resynthesis against the first",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The two sounds are stereo, their channels correlated 0.46. The octave-band fit sat 8.84 decibels off them: its mono downmix read every band about three decibels over each channel's own level, and its bands stopped at 11 kilohertz where the sounds run to 20. Resynthesized from their own readings, thirds of an octave in two channels sit 2.74 to 2.83 decibels off whatever the frame, octaves 3.6 to 3.9, and two resyntheses 3.32 off each other, the noise's own grain. The onset rises over about a quarter second with no click, which 25 millisecond frames follow. Fitted as three noises a band in two channels, each band scaled once by its render read back, the door sits 3.26 decibels off on that measure, and 2.12 on genshin:parity effects with every band within about a decibel and its channels correlated 0.53",
+    },
   ],
   openQuestions: [
     "The login's other sounds: the clicks on its buttons and the wind, each found as the door's was against a recording that plays it",

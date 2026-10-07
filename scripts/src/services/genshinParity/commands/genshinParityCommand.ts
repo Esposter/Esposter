@@ -9,6 +9,7 @@ import { cloudsCommand } from "#src/services/genshinParity/commands/cloudsComman
 import { compareCommand } from "#src/services/genshinParity/commands/compareCommand";
 import { coverCommand } from "#src/services/genshinParity/commands/coverCommand";
 import { decayCommand } from "#src/services/genshinParity/commands/decayCommand";
+import { effectsCommand } from "#src/services/genshinParity/commands/effectsCommand";
 import { expressionCommand } from "#src/services/genshinParity/commands/expressionCommand";
 import { fetchCommand } from "#src/services/genshinParity/commands/fetchCommand";
 import { filmCommand } from "#src/services/genshinParity/commands/filmCommand";
@@ -19,6 +20,7 @@ import { glideCommand } from "#src/services/genshinParity/commands/glideCommand"
 import { instrumentsCommand } from "#src/services/genshinParity/commands/instrumentsCommand";
 import { launchCommand } from "#src/services/genshinParity/commands/launchCommand";
 import { listenCommand } from "#src/services/genshinParity/commands/listenCommand";
+import { lostCommand } from "#src/services/genshinParity/commands/lostCommand";
 import { lumaCommand } from "#src/services/genshinParity/commands/lumaCommand";
 import { measureCommand } from "#src/services/genshinParity/commands/measureCommand";
 import { noiseCommand } from "#src/services/genshinParity/commands/noiseCommand";
@@ -57,6 +59,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     overlay: overlayCommand,
     pose: poseCommand,
     plan: planCommand,
+    lost: lostCommand,
     parts: partsCommand,
     track: trackCommand,
     glide: glideCommand,
@@ -64,6 +67,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     bands: bandsCommand,
     attacks: attacksCommand,
     decay: decayCommand,
+    effects: effectsCommand,
     instruments: instrumentsCommand,
     solos: solosCommand,
     bench: benchCommand,

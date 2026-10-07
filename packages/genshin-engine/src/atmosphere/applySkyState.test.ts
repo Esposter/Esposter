@@ -57,6 +57,15 @@ describe(applySkyState, () => {
     expect(skyTargets.fogUniforms.color.value.getHex()).toBe(0x00ff00);
   });
 
+  test("adds no halo for a sky with none of its own", () => {
+    expect.hasAssertions();
+
+    const skyTargets = createSkyTargets();
+    applySkyState(createSkyState(), skyTargets);
+
+    expect(skyTargets.skyUniforms.haloColor.value.toArray()).toStrictEqual([0, 0, 0]);
+  });
+
   test("writes a state's own sky shape, and the default's back for a state with none", () => {
     expect.hasAssertions();
 

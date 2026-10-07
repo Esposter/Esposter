@@ -1,5 +1,6 @@
 import { SKY_TERMS } from "#src/services/genshinParity/sky/constants";
 import { fitSky } from "#src/services/genshinParity/sky/fitSky";
+import { TONE_CURVE_FLOOR } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 describe(fitSky, () => {
@@ -15,6 +16,15 @@ describe(fitSky, () => {
 
     expect(colors[0]?.map((value) => Number(value.toFixed(2)))).toStrictEqual(color);
     expect(Number(residual.toFixed(2))).toBe(0);
+  });
+
+  test("solves a sky darker than the tone curve's black at none down to the curve's floor", () => {
+    expect.hasAssertions();
+
+    const color: [number, number, number] = [TONE_CURVE_FLOOR / 2, 0.1, 0.3];
+    const { colors } = fitSky([{ color, slope, weights }]);
+
+    expect(colors[0]?.[0]).toBeCloseTo(color[0], 6);
   });
 
   test("leaves a lit haze out of the pixels its residual reads", () => {

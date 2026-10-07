@@ -1,5 +1,4 @@
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
-import type { SoundStart } from "#src/models/genshinAssets/sound/SoundStart";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
@@ -18,7 +17,7 @@ import { fitSkyGradient } from "#src/services/genshinAssets/fit/fitSkyGradient";
 import { fitSoundEffect } from "#src/services/genshinAssets/fit/fitSoundEffect";
 import { fitTitleLogos } from "#src/services/genshinAssets/fit/fitTitleLogos";
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
-import { MINIMUM_PACKAGE_NAME } from "#src/services/genshinAssets/shared/constants";
+import { LOGIN_DOOR_SOUNDS, MINIMUM_PACKAGE_NAME } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentClips } from "#src/services/genshinAssets/shared/readComponentClips";
@@ -29,13 +28,6 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-// The two sounds the door plays, each found in the package the game loads first by `genshin:assets sounds` against the
-// Door recording's burst: a rumble, then a broadband rush 75 milliseconds later, both at the level they are stored
-// At
-const LOGIN_DOOR_SOUNDS: readonly SoundStart[] = [
-  { id: 402_626_033, offsetSeconds: 0 },
-  { id: 73_142_117, offsetSeconds: 0.075 },
-];
 // The login scene's parts fitted as our own kits' parameters, each written as a data file of the world package's,
 // With its interface's rects and clips and the rows its script scrolls them in: each copied spawn's count and the
 // Length of its step, by its prefab, its music, whose fit's report stands before its path, and its sounds

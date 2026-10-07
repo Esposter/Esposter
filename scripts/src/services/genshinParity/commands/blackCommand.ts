@@ -1,6 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
 import { computeUnderBlackShare } from "#src/services/genshinParity/display/computeUnderBlackShare";
+import { formatUnderBlackShare } from "#src/services/genshinParity/display/formatUnderBlackShare";
 import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { parseNames } from "#src/services/shared/parseNames";
@@ -18,7 +19,7 @@ export const blackCommand: SubCommandsDef[string] = defineCommand({
   },
   meta: {
     description:
-      "The share of each reference's pixels holding a channel darker than the tone curve shows anything, its black encoded for the screen",
+      "The share of each reference's pixels holding a channel darker than the tone curve's black at none, encoded for the screen, and each channel's own",
     name: "black",
   },
   run: async ({ args }) => {
@@ -29,9 +30,9 @@ export const blackCommand: SubCommandsDef[string] = defineCommand({
         .removeAlpha()
         .raw()
         .toBuffer();
-      const { blackByte, share } = computeUnderBlackShare(data);
+      const underBlackShare = computeUnderBlackShare(data);
       console.log(
-        `${referenceId}: ${(share * 100).toFixed(1)}% of its pixels hold a channel under ${blackByte} of 255`,
+        `${referenceId}: ${formatUnderBlackShare(underBlackShare)} of its pixels hold a channel under ${underBlackShare.blackByte} of 255`,
       );
     }
   },

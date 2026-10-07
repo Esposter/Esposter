@@ -96,9 +96,16 @@ export const walkwayTopic: ReferenceTopic = {
       result:
         "Three tones over a centimetre take the walkway's structure from 0.088 to 0.073 (finest scale 0.845 to 0.873) and its colour from 0.15 to 0.30 ΔE, the pockets' pale rims now drawn, at 102 kilobytes of paint against 45; five tones read 0.075 and 0.11 ΔE at 162. The joints and rims are barely painted at all (the joints 1.05, 1.03 and 1.02 of the stone, the rims 0.99, the flat lanes 1.06, 1.08 and 1.06), so what the finer cell gains is where the tones' edges lie; held uncommitted for the bundle's cost, since it leaves the walkway four times its gate",
     },
+    {
+      method:
+        "genshin:parity lost --component login --family Walkway --corner=-2,-8 --size=4,16 --resolution=50: the surface pass's loss at login-door-session carried onto the walkway's plan through the witness's position target, banded across the walkway",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The walkway loses 0.086 a pixel, spread over its whole width: every band of its lanes, borders and pockets loses 0.07 to 0.10 a pixel, the lanes' borders (0.28 to 0.38 either side) at the top of that, and only the curbs stand out, the band along each curb's inner edge (0.86 to 0.94) losing 0.15 a pixel and the four curb bands a fifth of the loss over an eighth of the pixels. The plan loses most near the camera, where the exports' grain is a pixel or more wide. So the loss is not one feature misplaced but the texture's detail everywhere, which no few tones carry",
+    },
   ],
   openQuestions: [
-    "What the walkway's structure loses to its exports: 0.088 against a gate of 0.017, most at the finest scale (0.845 against 0.929), along the bricks' joints, the pockets' rims, the lanes' borders and the curbs' edges, which the exports' albedo draws sharp and our three soft tones over two centimetres do not, and where the far end meets the dais. Tones over a centimetre close a sixth of it and more tones none, so the next tool is one that says which of the plan's features the loss lies on: each pixel's term carried back onto the walkway's plan through the witness's depth and camera and summed per cell",
+    "Whether the walkway's gate, 0.017, can be met by any paint of ours: its loss of 0.088 lies a fifth on the curbs, the band along each curb's inner edge losing twice the rest, and the rest evenly over every lane at 0.07 to 0.10 a pixel, the texture's detail near the camera rather than a feature off its place (genshin:parity lost). The curbs are the one feature worth a what-if; past them it is the scoring topic's question of a grain of our own",
     "What MonoBlockController does to each walkway piece: the rise is read by eye off the recording's far end; its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$) hold its own curve",
   ],
 };
