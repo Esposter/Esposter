@@ -5,7 +5,7 @@ import type { SceneWitness } from "#src/models/scene/SceneWitness";
 // Game's own data explains
 export const getWitnessFamilyOffsets = ({ parts }: SceneWitness): Record<string, [number, number, number]> =>
   Object.fromEntries(
-    parts.children.map(({ name, position, userData }) => {
+    parts.children.map(({ name, position, userData }): [string, [number, number, number]] => {
       const [x = 0, y = 0, z = 0] = (userData.offset as [number, number, number] | undefined) ?? [];
       return [name, [position.x - x, position.y - y, position.z - z]];
     }),
