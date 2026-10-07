@@ -12,7 +12,6 @@ const terrainOptions: TerrainOptions = {
   levelCount: 6,
   maxHeight: 60,
   minHeight: -10,
-  morphShare: 0.3,
 };
 // Standing on the ground and flying high above it: the cost follows the tiles in view, which a high eye has fewer
 // Fine ones of, and never the size of the world, which nothing here bounds

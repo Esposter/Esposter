@@ -11,6 +11,4 @@ export interface TerrainOptions {
   // The ground's height range, which bounds every tile for distance and frustum tests
   maxHeight: number;
   minHeight: number;
-  // The share of a level's range, at its far end, over which its vertices morph onto the next level's grid
-  morphShare: number;
 }
