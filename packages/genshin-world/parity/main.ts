@@ -7,6 +7,7 @@ import "@fontsource/signika/600.css";
 import { benchScene } from "#parity/benchScene";
 import { getSceneCamera } from "#parity/getSceneCamera";
 import { getSceneFog } from "#parity/getSceneFog";
+import { getScenePieces } from "#parity/getScenePieces";
 import { getSceneSky } from "#parity/getSceneSky";
 import { renderMusic } from "#parity/renderMusic";
 import { screens } from "#parity/screens";
@@ -87,6 +88,7 @@ if (screen && root) {
   Reflect.set(window, "getSceneCamera", () => getSceneCamera(sceneContext.value));
   Reflect.set(window, "getSceneSky", () => getSceneSky(sceneContext.value));
   Reflect.set(window, "getSceneFog", () => getSceneFog(sceneContext.value));
+  Reflect.set(window, "getScenePieces", (family: string) => getScenePieces(sceneContext.value, family));
   Reflect.set(window, "renderMusic", renderMusic);
   Reflect.set(window, "setSceneCloudColors", (colors?: Parameters<typeof setSceneCloudColors>[1]) => {
     setSceneCloudColors(sceneContext.value, colors);
