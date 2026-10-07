@@ -72,7 +72,7 @@ The interface runs beside these as a pass of its own, placed from the rect tree,
 | Display    | The post program, the grading tables, the post profile  | Which table, which curve and what bloom, before any light                             | None                                         | A display solve and the engine's graded path        |
 | Light      | The recordings, everything before held                  | The sun's direction by its shadows' edges, the ramp and sky by bins                   | `calibrate`                                  | A shadow-edge solve                                 |
 | Atmosphere | The recordings, the emitters' anchors, the cloud layer  | Haze by depth and height, sky over its clear pixels, clouds by statistics             | `calibrate --haze`, `sky`, `cover`, `clouds` | The cloud layer's settings solve                    |
-| Audio      | The game's sound banks, recordings to find each sound   | Each sound's octave bands over time and its onset; the music by `listen`              | The music tools, the door sound's fit        | A sound-matching command                            |
+| Audio      | The game's sound banks, recordings to find each sound   | Each sound's octave bands over time and its onset; the music by `listen`              | The music tools, `sounds`, `fitSoundEffect`  | Its measure in `passes`                             |
 
 ### Why it converges
 
@@ -91,7 +91,6 @@ The method needs the measures each pass lacks, each joining `genshin:parity pass
 3. **Display's solve.** The post profile's transform found, its tone curve, grading table and bloom, and drawn by the engine before any light is solved.
 4. **Light's shadow edges.** The sun's direction solved on its shadows' edges over flat receivers.
 5. **Atmosphere's cloud statistics.** The cloud layer's settings solved on the clouds' cover, sizes and colour spread.
-6. **Audio's matcher.** Finding which of the game's sounds a recording plays, and when, as a command.
 
 Everything the passes already have is reused as it is, and each measure, once built, retires its row's gap in the toolbox.
 
@@ -104,7 +103,7 @@ Everything the passes already have is reused as it is, and each measure, once bu
 | `packages/genshin-world/parity/witness/renderWitnessTargets.ts`          | Draws our parts' albedo beside the exports', for the surface's diff      |
 | `scripts/src/services/genshinParity/witness/rankReferenceGains.ts`       | Orders the work inside a pass, never across passes                       |
 | `scripts/src/services/genshinAssets/scene/DerivedAssetArrangementMap.ts` | The layout pass's frozen invariants, grown to every placement it settles |
-| `scripts/src/services/genshinAssets/fit/fitLoginDoorSound.ts`            | Generalised into the fit every matched sound goes through                |
+| `scripts/src/services/genshinAssets/fit/fitSoundEffect.ts`               | The fit every matched sound goes through                                 |
 | `packages/genshin-engine/src/post/createPostPipeline.ts`                 | Draws the display transform the display pass finds                       |
 
 ## Notes

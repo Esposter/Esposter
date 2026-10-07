@@ -73,6 +73,12 @@ export const MINIMUM_PACKAGE_NAME = "Minimum.pck";
 // What the game's music is decoded into, a reference like every other export: each sound as WAV by its id, and each
 // One's pitch classes, which a recording is matched against
 export const MUSIC_DIRECTORY: string = join(EXTRACTED_DIRECTORY, "music");
+// What the game's sound effects are decoded into, each as WAV by its id, kept for the next match or fit
+export const SOUND_DIRECTORY: string = join(EXTRACTED_DIRECTORY, "sounds");
+// A sound effect's levels are read at the sounds' own rate in Hann windows of 2048 samples, 25 milliseconds apart
+export const SOUND_SAMPLE_RATE = 48_000;
+export const SOUND_FRAME_LENGTH = 2048;
+export const SOUND_HOP_LENGTH = 1200;
 // A music fit reads its source's spectrum in Hann windows of this many samples at the transcription's rate, a hop of
 // The transcription's own apart, so a note's frames line up with the model's: long enough that a low note's harmonics
 // Fall in bins of their own, short enough that an attack is not smeared past the window's half

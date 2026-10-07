@@ -1,7 +1,7 @@
 import type { Chroma } from "#src/models/genshinParity/music/Chroma";
 
 import { decodeGameSounds } from "#src/services/genshinAssets/music/decodeGameSounds";
-import { MUSIC_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { MUSIC_DIRECTORY, MUSIC_PACKAGE_PATTERN } from "#src/services/genshinAssets/shared/constants";
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
 import { CHROMA_SAMPLE_RATE } from "#src/services/genshinParity/shared/constants";
 import { readAudioSamples } from "#src/services/genshinParity/shared/readAudioSamples";
@@ -22,7 +22,11 @@ export const readGameMusicChroma = async (): Promise<Map<number, Chroma>> => {
       .map(({ name }) => Number(name)),
   );
   // oxlint-disable-next-line no-await-in-loop -- one sound's WAV is read and deleted before the next is decoded
-  for await (const { id, path } of decodeGameSounds((soundId) => !held.has(soundId), DECODE_DIRECTORY)) {
+  for await (const { id, path } of decodeGameSounds(
+    MUSIC_PACKAGE_PATTERN,
+    (soundId) => !held.has(soundId),
+    DECODE_DIRECTORY,
+  )) {
     // oxlint-disable-next-line no-await-in-loop -- as above
     const { classes, loudness } = computeChroma(await readAudioSamples(path, CHROMA_SAMPLE_RATE), CHROMA_SAMPLE_RATE);
     // Written beside its name and renamed onto it, so a write cut short is never read as a whole sound's chroma

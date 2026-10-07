@@ -1,25 +1,31 @@
+import { parseSoundBankSounds } from "#src/services/genshinAssets/music/parseSoundBankSounds";
 import { readFileRange } from "#src/services/genshinAssets/music/readFileRange";
 import { readGameAudioPackages } from "#src/services/genshinAssets/music/readGameAudioPackages";
 import { resolveVgmstream } from "#src/services/genshinAssets/music/resolveVgmstream";
-import { MUSIC_PACKAGE_PATTERN } from "#src/services/genshinAssets/shared/constants";
 import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { mkdir, open, rename, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-// Each of the music packages' sounds a filter keeps, decoded as WAV into a folder by its id and yielded one at a time,
-// So a caller reading every sound deletes each before the next is decoded; a sound already decoded there is yielded
-// As it is
+// Each sound a filter keeps of the audio packages a pattern names, streamed or held inside one of their banks, decoded
+// As WAV into a folder by its id and yielded one at a time, so a caller reading every sound deletes each before the
+// Next is decoded; a sound already decoded there is yielded as it is
 export const decodeGameSounds = async function* (
+  pattern: string,
   filter: (id: number) => boolean,
   directory: string,
 ): AsyncGenerator<{ id: number; path: string }> {
   await mkdir(directory, { recursive: true });
   const vgmstreamPath = await resolveVgmstream();
-  for (const { audioPackage, path } of await readGameAudioPackages(MUSIC_PACKAGE_PATTERN)) {
+  for (const { audioPackage, path } of await readGameAudioPackages(pattern)) {
     // oxlint-disable-next-line no-await-in-loop -- one package is held open at a time
     await using file = await open(path);
-    for (const { id, offset, size } of audioPackage.sounds) {
+    const entries = [...audioPackage.sounds];
+    for (const bank of audioPackage.banks)
+      // oxlint-disable-next-line no-await-in-loop -- a package's banks are read in turn from its one handle
+      for (const { id, offset, size } of parseSoundBankSounds(await readFileRange(file, path, bank.offset, bank.size)))
+        entries.push({ id, offset: bank.offset + offset, size });
+    for (const { id, offset, size } of entries) {
       if (!filter(id)) continue;
       const wavePath = join(directory, `${id}.wav`);
       if (!existsSync(wavePath)) {

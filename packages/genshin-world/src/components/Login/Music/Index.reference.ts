@@ -25,7 +25,7 @@ export const reference: ComponentReference = {
       block: "Minimum.pck, bank 3844515483",
       kind: GameSourceKind.Sound,
       name: "73142117",
-      role: "The door's second sound, a broadband rush a tenth of a second after the rumble, its bands' levels read the same way",
+      role: "The door's second sound, a broadband rush 75 milliseconds after the rumble, its bands' levels read the same way",
     },
   },
   topics: { doorSound: doorSoundTopic },

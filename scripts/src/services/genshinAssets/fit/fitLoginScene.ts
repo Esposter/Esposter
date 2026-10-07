@@ -1,4 +1,5 @@
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
+import type { SoundStart } from "#src/models/genshinAssets/sound/SoundStart";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
@@ -6,7 +7,6 @@ import { fitInterfaceClips } from "#src/services/genshinAssets/fit/fitInterfaceC
 import { fitInterfaceRects } from "#src/services/genshinAssets/fit/fitInterfaceRects";
 import { fitLoginClouds } from "#src/services/genshinAssets/fit/fitLoginClouds";
 import { fitLoginDoor } from "#src/services/genshinAssets/fit/fitLoginDoor";
-import { fitLoginDoorSound } from "#src/services/genshinAssets/fit/fitLoginDoorSound";
 import { fitLoginHulls } from "#src/services/genshinAssets/fit/fitLoginHulls";
 import { fitLoginMusic } from "#src/services/genshinAssets/fit/fitLoginMusic";
 import { fitLoginPaving } from "#src/services/genshinAssets/fit/fitLoginPaving";
@@ -15,9 +15,11 @@ import { fitLoginTowerFacades } from "#src/services/genshinAssets/fit/fitLoginTo
 import { fitLoginTowers } from "#src/services/genshinAssets/fit/fitLoginTowers";
 import { fitLoginWalkway } from "#src/services/genshinAssets/fit/fitLoginWalkway";
 import { fitSkyGradient } from "#src/services/genshinAssets/fit/fitSkyGradient";
+import { fitSoundEffect } from "#src/services/genshinAssets/fit/fitSoundEffect";
 import { fitTitleLogos } from "#src/services/genshinAssets/fit/fitTitleLogos";
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
+import { MINIMUM_PACKAGE_NAME } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentClips } from "#src/services/genshinAssets/shared/readComponentClips";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
@@ -27,6 +29,13 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
+// The two sounds the door plays, each found in the package the game loads first by `genshin:assets sounds` against the
+// Door recording's burst: a rumble, then a broadband rush 75 milliseconds later, both at the level they are stored
+// At
+const LOGIN_DOOR_SOUNDS: readonly SoundStart[] = [
+  { id: 402_626_033, offsetSeconds: 0 },
+  { id: 73_142_117, offsetSeconds: 0.075 },
+];
 // The login scene's parts fitted as our own kits' parameters, each written as a data file of the world package's,
 // With its interface's rects and clips and the rows its script scrolls them in: each copied spawn's count and the
 // Length of its step, by its prefab, its music, whose fit's report stands before its path, and its sounds
@@ -82,7 +91,11 @@ export const fitLoginScene = async (only: readonly string[] = []): Promise<strin
       return [await writeWorldData("login/sky.json", { gradient })];
     },
     // The sounds the login plays beside its music
-    sounds: async () => [await writeWorldData("login/sounds.json", { door: await fitLoginDoorSound() })],
+    sounds: async () => [
+      await writeWorldData("login/sounds.json", {
+        door: await fitSoundEffect(MINIMUM_PACKAGE_NAME, LOGIN_DOOR_SOUNDS),
+      }),
+    ],
     stone: async () => {
       const materials = await readComponentMaterials(DerivedAssetComponent.Login);
       return [await writeWorldData("login/stone.json", await fitLoginStone(materials, textureDirectory))];

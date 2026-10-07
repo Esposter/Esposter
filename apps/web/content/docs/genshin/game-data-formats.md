@@ -111,7 +111,7 @@ The things that each cost a search to find, to reach for first:
 - **A node's own properties vary in length**, with what is set on it, so a container's children are found as the first count followed by that many ids of the kind it holds, and a playlist's tree is read back from the end of its bytes, where it always sits.
 - **A bank holds short sounds in itself.** Its index chunk (`DIDX`) lists each sound's id, its offset into the data chunk (`DATA`) and its size (`parseSoundBankSounds`), so a sound effect is read straight out of its bank.
 - **A sound is Wwise's own Vorbis**, which vgmstream decodes, pinned and checked as FFmpeg is (`resolveVgmstream`). Decoded, the music packages run to tens of gigabytes, so a sound is decoded only when a step reads it, and a match keeps only its pitch classes.
-- **Which sound a recording plays is measured**, since a sound has no name: `genshin:assets music` matches a recording's pitch classes against every sound's ([derived assets](/docs/genshin/derived-assets)). What plays it, and when, is then exact, from the hierarchy.
+- **Which sound a recording plays is measured**, since a sound has no name: `genshin:assets music` matches a recording's pitch classes against every sound's ([derived assets](/docs/genshin/derived-assets)). A sound effect is matched by `genshin:assets sounds`, a window's octave bands against every sound a package holds, streamed or in one of its banks ([sound effects](/docs/genshin/sound-effects)). What plays it, and when, is then exact, from the hierarchy.
 
 ## Key files
 
