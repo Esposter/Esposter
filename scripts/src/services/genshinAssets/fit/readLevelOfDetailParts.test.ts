@@ -18,7 +18,7 @@ const createPlacement = (mesh: string, father: string, materials: string[]): Ass
 });
 
 describe(readLevelOfDetailParts, () => {
-  const MESH_REGEX = /^(?<part>Tower)_Lod(?<level>\d)$/u;
+  const meshRegex = /^(?<part>Tower)_Lod(?<level>\d)$/u;
   let directory: string;
 
   beforeEach(() => {
@@ -39,7 +39,7 @@ describe(readLevelOfDetailParts, () => {
       createPlacement("Tower_Lod1", "far", ["ground", "stone"]),
       createPlacement("Tower_Lod2", "farthest", ["ground"]),
     ];
-    const { meshPathMap, partPlacements } = readLevelOfDetailParts(placements, MESH_REGEX, directory);
+    const { meshPathMap, partPlacements } = readLevelOfDetailParts(placements, meshRegex, directory);
 
     expect(partPlacements.map(({ father, part }) => ({ father, part }))).toStrictEqual([
       { father: "near", part: "Tower" },
@@ -62,7 +62,7 @@ describe(readLevelOfDetailParts, () => {
       createPlacement("Tower_Lod0", "plain", ["stone"]),
       createPlacement("Tower_Lod1", "far", ["stone"]),
     ];
-    const { meshPathMap, partPlacements } = readLevelOfDetailParts(placements, MESH_REGEX, directory);
+    const { meshPathMap, partPlacements } = readLevelOfDetailParts(placements, meshRegex, directory);
 
     expect(partPlacements.map(({ father, part }) => ({ father, part }))).toStrictEqual([
       { father: "gilded", part: "Tower" },
