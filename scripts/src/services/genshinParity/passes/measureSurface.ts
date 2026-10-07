@@ -5,6 +5,7 @@ import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTarge
 import { compareFamilyAlbedo } from "#src/services/genshinParity/passes/compareFamilyAlbedo";
 import { SHAPE_OUTLINE_GATE_PIXELS, SURFACE_COLOUR_GATE } from "#src/services/genshinParity/passes/constants";
 import { measureFamilyTargets } from "#src/services/genshinParity/passes/measureFamilyTargets";
+import { writeSurfaceDiff } from "#src/services/genshinParity/passes/writeSurfaceDiff";
 
 const TARGET_NAMES = [WitnessTargetName.Part, WitnessTargetName.Albedo];
 // A target of four floats a pixel moved across by whole pixels, its first columns repeating the edge
@@ -19,7 +20,7 @@ const shiftAcross = (values: Float32Array, width: number, pixels: number): Float
 // Apart, and how unlike their lightness is in structure, gated at what the exports' own albedo reads against itself
 // Moved across by the shape's outline gate, as far as a shape the shape pass holds may stand off its place
 export const measureSurface = (component: DerivedAssetComponent): Promise<ParityPassMeasure> =>
-  measureFamilyTargets(component, TARGET_NAMES, (referenceId, exportsRead, oursRead) => {
+  measureFamilyTargets(component, TARGET_NAMES, async (referenceId, exportsRead, oursRead) => {
     const { families, width } = exportsRead;
     const exportsTargets = {
       albedo: exportsRead.targets.albedo ?? new Float32Array(),
@@ -39,8 +40,9 @@ export const measureSurface = (component: DerivedAssetComponent): Promise<Parity
         structure,
       ]),
     );
+    const diffPath = await writeSurfaceDiff(referenceId, exportsTargets, oursTargets, exportsRead);
     return {
-      notes: [],
+      notes: [`${referenceId} exports | ours | lightness apart: ${diffPath}`],
       readings: compareFamilyAlbedo(exportsTargets, oursTargets, width, families.length).flatMap(
         ({ colour, family, structure }) => {
           const name = `${referenceId} ${families[family] ?? family}`;

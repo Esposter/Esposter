@@ -1,6 +1,7 @@
 import type { Vector } from "#src/models/shared/Vector";
 
 import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
+import { readTargetLightness } from "#src/services/genshinParity/passes/readTargetLightness";
 import { scoreLabelSimilarity } from "#src/services/genshinParity/witness/scoreLabelSimilarity";
 import { toLab } from "#src/services/shared/toLab";
 import { toXyz } from "#src/services/shared/toXyz";
@@ -31,11 +32,9 @@ export const compareFamilyAlbedo = (
     const family = readTargetFamily(exportsTargets.part, pixel);
     return family === readTargetFamily(oursTargets.part, pixel) ? family : -1;
   });
-  const toLightness = (albedo: Float32Array): Float32Array =>
-    Float32Array.from({ length: pixelCount }, (_lightness, pixel) => toLab(toXyz(readColour(albedo, pixel)))[0] / 100);
   const similarities = scoreLabelSimilarity(
-    toLightness(exportsTargets.albedo),
-    toLightness(oursTargets.albedo),
+    readTargetLightness(exportsTargets.albedo),
+    readTargetLightness(oursTargets.albedo),
     width,
     height,
     labels,

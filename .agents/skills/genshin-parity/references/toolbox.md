@@ -68,16 +68,18 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Shape and surface
 
-| Unknown                                      | Tool                                                                                                            |
-| :------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- |
-| How far a stand-in falls short               | `rank`'s second table: FLIP and similarity against the exports                                                  |
-| Depth, normal, albedo, part per pixel        | `genshin:parity gbuffer`                                                                                        |
-| A family's surface laid out in metres        | `genshin:parity plan`: its unlit albedo from straight above                                                     |
-| A stand-in seen where no reference is        | `genshin:parity view`: any camera, ours beside the exports                                                      |
-| Which term next, inside a pass               | `genshin:parity rank`: every term's ceiling, largest first, ordering that pass's items                          |
-| Ours against the exports, channel by channel | `passes`' shape: our parts drawn into the witness's targets, outline, depth and normal per family               |
-| Where on the frame a shape misses            | `passes`' shape image, `shapes/<reference>.png`: the normals' angle green to red, outlines apart white and blue |
-| Our unlit colour against the exports'        | `passes`' surface: the same targets' albedo where both draw a family, its mean colour apart and its structure   |
+| Unknown                                      | Tool                                                                                                                                               |
+| :------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| How far a stand-in falls short               | `rank`'s second table: FLIP and similarity against the exports                                                                                     |
+| Depth, normal, albedo, part per pixel        | `genshin:parity gbuffer`                                                                                                                           |
+| A family's surface laid out in metres        | `genshin:parity plan`: its unlit albedo from straight above                                                                                        |
+| A stand-in seen where no reference is        | `genshin:parity view`: any camera, ours beside the exports                                                                                         |
+| Which term next, inside a pass               | `genshin:parity rank`: every term's ceiling, largest first, ordering that pass's items                                                             |
+| Ours against the exports, channel by channel | `passes`' shape: our parts drawn into the witness's targets, outline, depth and normal per family                                                  |
+| Where on the frame a shape misses            | `passes`' shape image, `shapes/<reference>.png`: the normals' angle green to red, outlines apart white and blue                                    |
+| Our unlit colour against the exports'        | `passes`' surface: the same targets' albedo where both draw a family, its mean colour apart and its structure                                      |
+| Where on the frame a surface misses          | `passes`' surface image, `surfaces/<reference>.png`: the lightness apart where both draw a family, red where ours is lighter and blue where darker |
+| A surface's paint from its texture           | `fitPlanTones`: its texture's colours past their speckle as k-means tones in CIELab, traced as loops over a plan                                   |
 
 ### Motion
 
