@@ -46,8 +46,15 @@ export const scoringTopic: ReferenceTopic = {
       result:
         "Every family's mean colour holds but the walkway's: the door 0.78, the bridges 1.22 and the towers 1.02 against the 2.3 two patches are just told apart at, the walkway 2.34, its middle lane's paler stone missing. No family's structure holds: the door 0.33 against its own 0.083, the towers 0.13 against 0.020, the walkway 0.12 against 0.011 and the bridges 0.044 against 0.021. The door's panel relief is painted and the towers' carving traced from the game's normal map rather than its colour, so the surface pass is the next work, its largest gap the door's",
     },
+    {
+      method:
+        "The surface pass on login-door-session with the exports' albedo also scored against itself averaged within each family over three and five pixels square (blurWithinTags), a what-if run once",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Without its grain the exports' albedo loses little structure: averaged over three pixels the bridges read 0.006, the towers 0.008 and the walkway 0.005, and over five 0.015, 0.023 and 0.017, against gates of 0.021, 0.020 and 0.011 and ours at 0.044, 0.081 and 0.082. So a stand-in exact in its tones to a few pixels, drawing no texture of the game's, reaches about the gate, and what ours loses is where its tones lie, not the grain; the door, whose relief is fine, reads 0.081 over five pixels against its gate of 0.083",
+    },
   ],
   openQuestions: [
-    "Whether a stand-in's structure can reach the exports' own one-pixel noise without drawing the game's textures, which ship nowhere: the bridges come nearest at twice it, and what is left of the door, the towers and the walkway is the roadmap's surface items",
+    "Whether a grain of our own closes the last of the walkway's and the towers' gates, which stand under what their exports read smoothed over five pixels (0.011 against 0.017, 0.020 against 0.023), once their tones lie where the exports' do",
   ],
 };

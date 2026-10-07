@@ -63,7 +63,7 @@ export const walkwayTopic: ReferenceTopic = {
     },
   ],
   openQuestions: [
-    "What the walkway's structure loses to its exports past its tones: 0.082 against a gate of 0.011, and neither more tones nor the whole copy's detail closes it; a map of where the structure is lost is the missing tool",
+    "What the walkway's structure loses to its exports past its tones: 0.082 against a gate of 0.011, neither more tones nor the whole copy's detail closing it, while the exports smoothed over five pixels read 0.017 (the scoring topic), so it is where the tones lie; the structure image shows it along the lanes' lines and where the far end meets the dais",
     "What MonoBlockController does to each walkway piece: the rise is read by eye off the recording's far end; its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$) hold its own curve",
   ],
 };

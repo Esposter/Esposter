@@ -9,7 +9,9 @@ import type { Vector } from "#src/models/shared/Vector";
 import { classifyFacadeCells } from "#src/services/genshinAssets/fit/classifyFacadeCells";
 import { findCellComponents } from "#src/services/genshinAssets/fit/findCellComponents";
 import { findCellRectangles } from "#src/services/genshinAssets/fit/findCellRectangles";
+import { fitAlbedo } from "#src/services/genshinAssets/fit/fitAlbedo";
 import { fitLatheProfile } from "#src/services/genshinAssets/fit/fitLatheProfile";
+import { LoginStoneFamilyMaterialRegexMap } from "#src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap";
 import { rasterizeTopFaces } from "#src/services/genshinAssets/fit/rasterizeTopFaces";
 import { readLevelOfDetailParts } from "#src/services/genshinAssets/fit/readLevelOfDetailParts";
 import { readMaterialNames } from "#src/services/genshinAssets/fit/readMaterialNames";
@@ -37,6 +39,7 @@ import { toLinear } from "#src/services/shared/toLinear";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
+import { Color } from "three";
 
 const readTexture = (path: string): Promise<Texture | undefined> =>
   existsSync(path) ? sharp(path).raw().toBuffer({ resolveWithObject: true }) : Promise.resolve(undefined);
@@ -55,7 +58,8 @@ const toShade = (mean: Vector, base: Vector): Vector =>
 // Its material's diffuse colour and metal there, and how far in from its band's wall it stands. What the lathe
 // Cannot carve is drawn on it instead: the tone of each run of its height, its recesses (the fluting, the windows and
 // The arches) at two depths and its gilding, each traced as loops in its own shade, and where it stands open. Only the
-// Loops and the shades ship, never a texel of the game's
+// Loops and the shades ship, never a texel of the game's. Every shade is over the stone colour all the towers share
+// (`fitAlbedo`), so a tower its texture paints darker than the rest stands darker
 export const fitLoginTowerFacades = async (
   placements: readonly AssetPlacement[],
   meshDirectory: string,
@@ -63,6 +67,15 @@ export const fitLoginTowerFacades = async (
 ): Promise<Record<string, TowerFacade>> => {
   const { meshPathMap, partPlacements } = readLevelOfDetailParts(placements, TOWER_MESH_REGEX, meshDirectory);
   const pathIdNameMap = await readMaterialNames(partPlacements);
+  // Three reads a hex as sRGB and holds it linear, as the scene's material reads the stone's
+  const stoneColor = new Color(
+    await fitAlbedo(
+      [...new Set(pathIdNameMap.values())]
+        .filter((name) => LoginStoneFamilyMaterialRegexMap.towers.test(name))
+        .map((name) => join(textureDirectory, `${name}_Diffuse.png`)),
+    ),
+  );
+  const stone: Vector = [stoneColor.r, stoneColor.g, stoneColor.b];
   const facades: Record<string, TowerFacade> = {};
   for (const [tower, meshPath] of meshPathMap) {
     const placement = partPlacements.find(({ mesh, part }) => part === tower && meshPath.endsWith(`${mesh}.obj`));
@@ -182,7 +195,6 @@ export const fitLoginTowerFacades = async (
     const paint = sampleFacadeGrid(carving, Math.round(TOWER_FACADE_PAINT_CELL_SIZE / TOWER_FACADE_CELL_SIZE));
     const paintCells = classifyFacadeCells(paint);
     const { face } = paintCells;
-    const mean = computeMean(paint.colors, face);
     const bandRows = Math.max(1, Math.round(TOWER_BAND_HEIGHT / paint.cellSize));
     const toBand = (cell: number): number => Math.floor(Math.floor(cell / paint.width) / bandRows);
     const faceBandMap = Map.groupBy(face, (cell) => toBand(cell));
@@ -191,7 +203,7 @@ export const fitLoginTowerFacades = async (
     for (let band = 0; band < Math.ceil(paint.height / bandRows); band++) {
       const bandCells = faceBandMap.get(band);
       if (!bandCells) continue;
-      const shade = toShade(computeMean(paint.colors, bandCells), mean);
+      const shade = toShade(computeMean(paint.colors, bandCells), stone);
       const from = roundFitted(band * bandRows * paint.cellSize);
       const to = roundFitted(Math.min((band + 1) * bandRows, paint.height) * paint.cellSize);
       const last = bands.at(-1);
@@ -224,7 +236,7 @@ export const fitLoginTowerFacades = async (
       });
     const toLayer = (layerCells: readonly number[]): FacadeLayer => ({
       loops: trace(layerCells),
-      shade: toShade(computeMean(paint.colors, layerCells), mean),
+      shade: toShade(computeMean(paint.colors, layerCells), stone),
     });
     facades[tower] = {
       bands,

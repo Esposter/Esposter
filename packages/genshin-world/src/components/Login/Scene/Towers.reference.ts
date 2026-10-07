@@ -131,6 +131,13 @@ export const towersTopic: ReferenceTopic = {
       result:
         "Drawn unlit beside the exports, the towers at a quarter of their traced contrast lost structure about evenly at every scale (0.86 to 0.89 against the exports' own 0.91 to 1 a pixel across), as a pattern drawn too faint does: 0.131 against a gate of 0.020. At their full contrast they read 0.092 and with no recess darkened by its depth 0.087, colour 1.52 ΔE against 2.3, the coarsest scales gaining most. Supersedes the quarter, read off lit frames where the light across the game's carving stood in for the paint. What is left still runs through every scale, 0.04 to 0.08 under the exports' own (0.871 to 0.950 against 0.913 to 0.998), so the towers' layout of tones, not their grain alone, stands off",
     },
+    {
+      method:
+        "The surface pass's structure image (surfaces/login-door-session-structure.png) and its lightness image over the near towers, each region's mean and spread read in both, then the towers refitted with every shade over the stone all the towers share (fitAlbedo over their diffuse textures) in place of each tower's own mean",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The near lantern tower's body matched the exports' mean to a byte where its grain spread three times as far, but the near left tower stood about 8 bytes lighter all over: each tower's shades over its own mean drew every tower at the one stone colour the scene multiplies them by, where the game's towers stand from nine tenths to about one of it. Over the shared stone the towers' colour falls from 1.52 to 0.37 ΔE and their structure from 0.087 to 0.081, the coarsest scales gaining most (0.950 to 0.964). The refit also carried the paint grid rounded up to the seam and the crown (sampleFacadeGrid), which towers.json had not been fitted with since, a band merged and the loops run on half a unit to the seam: alone it moved the colour by a ten-thousandth",
+    },
   ],
   openQuestions: [
     "The towers' gilding and windows: their colour per section scores worse painted as diffuse stone, the game's gold being a metal",
