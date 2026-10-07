@@ -5,7 +5,7 @@ description: Why the agent tree is stored once at .agents with .claude as a syml
 
 # Agent configuration
 
-Coding agents read a tree of repo-specific configuration: skills that state conventions, workflow scripts, sweep ledgers, and the permission allowlist. That tree is stored **once**, at `.agents/`, under a vendor-neutral name. `.claude` is a symlink pointing at it, so Claude Code — the agent this repo is driven by day to day — resolves `.claude/skills` and `.claude/settings.local.json` without a second copy of anything. The same idea already governs the instruction file: `AGENTS.md` is the real file, and `CLAUDE.md` and `GEMINI.md` are symlinks to it.
+Coding agents read a tree of repo-specific configuration: skills that state conventions, workflow scripts, sweep ledgers, and the permission allowlist. That tree is stored **once**, at `.agents/`, under a vendor-neutral name. `.claude` is a symlink pointing at it, so Claude Code — the agent this repo is driven by day to day — resolves `.claude/skills` and `.claude/settings.local.json` without a second copy of anything. The instruction file is vendor-neutral too: `AGENTS.md`, which Claude Code loads wherever a project has no `CLAUDE.md`, so no vendor's name is needed for it at all.
 
 The direction matters. The vendor-neutral path owns the bytes and every tool configuration is written against it; the vendor path is the alias. Adding a second agent means adding a second symlink, never moving files or teaching the toolchain a new root.
 
@@ -111,7 +111,7 @@ root `docs/` folder this layout exists to avoid. Point the skill at `.agents/` i
 | `skills-lock.json`                                      | The skills installer's record of the vendored skills, which every agent-tree scan leaves out                                                                           |
 | `.claude`                                               | Symlink alias to `.agents` so Claude Code resolves its own paths                                                                                                       |
 | `.claude-plugin/marketplace.json`                       | The repository as a Claude Code plugin marketplace — the one vendor path the tool fixes at root                                                                        |
-| `AGENTS.md`                                             | Repo instruction file — `CLAUDE.md` and `GEMINI.md` are symlinks to it                                                                                                 |
+| `AGENTS.md`                                             | Repo instruction file, the only one: Claude Code loads it where no `CLAUDE.md` exists                                                                                  |
 | `packages/configuration/src/constants.ts`               | `AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY`                                                                                             |
 | `scripts/src/workspace/agentDirectories.test.ts`        | Pins both exclusions in the configs that cannot import the constants                                                                                                   |
 | `scripts/src/workspace/citations.test.ts`               | Fails on a cited repo path or skill name in the docs, the tree or a README that resolves nowhere                                                                       |

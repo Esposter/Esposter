@@ -1,6 +1,6 @@
 # Agent Guide
 
-The canonical guidance for AI coding agents working in this repository. `CLAUDE.md` and `GEMINI.md` are symlinks to it.
+The canonical guidance for AI coding agents working in this repository, the one instruction file: Claude Code loads `AGENTS.md` wherever a project has no `CLAUDE.md`, so there is none.
 
 This file is an **index and a process**, never a reference. Anything explaining _how_ a subsystem works belongs to the page or skill that owns it — a recipe restated in two places drifts, and this is the file that goes stale first.
 

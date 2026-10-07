@@ -5,9 +5,8 @@ import { describe } from "vitest";
 
 // The hand-written markdown of the repo, each under its repository-relative path: the root set, the agent tree — its
 // Own pages, the skills and the ledgers, but never the machine-local worktrees — one README per workspace member and
-// The docs site. Generated markdown (CHANGELOG, the TypeDoc output under `public/`) is nobody's to edit, and
-// `CLAUDE.md`/`GEMINI.md` are symlinks to `AGENTS.md`. Every check over the repo's prose reads this one set, so a
-// Page added to it is checked by all of them
+// The docs site. Generated markdown (CHANGELOG, the TypeDoc output under `public/`) is nobody's to edit. Every check
+// Over the repo's prose reads this one set, so a page added to it is checked by all of them
 const ROOT_PAGES = ["AGENTS.md", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", "README.md", "SCORE.md", "SECURITY.md"];
 const repositoryDirectory = join(import.meta.dirname, "..", "..", "..", "..");
 
