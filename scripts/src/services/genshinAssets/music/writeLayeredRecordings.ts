@@ -7,7 +7,7 @@ import { selectShippedRecordings } from "#src/services/genshinAssets/music/selec
 import { LOGIN_MUSIC_RECORDING_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { roundMusic } from "#src/services/genshinAssets/shared/roundMusic";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdir, rm } from "node:fs/promises";
+import { mkdir, rename, rm } from "node:fs/promises";
 import { join } from "node:path";
 
 // Each solved segment's recorded instruments layered into the login's music, one a voice at its solved level, with
@@ -48,14 +48,14 @@ export const writeLayeredRecordings = async (
       }
     }
   }
-  await rm(LOGIN_MUSIC_RECORDING_DIRECTORY, { force: true, recursive: true });
-  await mkdir(LOGIN_MUSIC_RECORDING_DIRECTORY, { recursive: true });
-  const paths: string[] = [];
-  for (const [file, { offset, seconds, sourcePath }] of fileRecordingMap) {
-    const path = join(LOGIN_MUSIC_RECORDING_DIRECTORY, file);
+  // Encoded beside the directory and swapped in once every recording is, so a failed encode leaves what ships whole
+  const partialDirectory = `${LOGIN_MUSIC_RECORDING_DIRECTORY}.partial`;
+  await rm(partialDirectory, { force: true, recursive: true });
+  await mkdir(partialDirectory, { recursive: true });
+  for (const [file, { offset, seconds, sourcePath }] of fileRecordingMap)
     // oxlint-disable-next-line no-await-in-loop -- one recording is encoded at a time
-    await encodeMusicRecording(sourcePath, offset, roundMusic(seconds), path);
-    paths.push(path);
-  }
-  return paths;
+    await encodeMusicRecording(sourcePath, offset, roundMusic(seconds), join(partialDirectory, file));
+  await rm(LOGIN_MUSIC_RECORDING_DIRECTORY, { force: true, recursive: true });
+  await rename(partialDirectory, LOGIN_MUSIC_RECORDING_DIRECTORY);
+  return [...fileRecordingMap.keys()].map((file) => join(LOGIN_MUSIC_RECORDING_DIRECTORY, file));
 };
