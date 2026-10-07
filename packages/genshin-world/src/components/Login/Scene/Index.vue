@@ -4,6 +4,7 @@ import type { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
 import type { QualityTier } from "genshin-engine";
 
 import { usePostPipeline } from "#src/composables/usePostPipeline";
+import cloudLayerTextures from "#src/data/login/cloudLayerTextures.json";
 import door from "#src/data/login/door.json";
 import sky from "#src/data/login/sky.json";
 import stone from "#src/data/login/stone.json";
@@ -77,6 +78,8 @@ import { watchImmediate } from "@vueuse/core";
 import {
   applySkyState,
   applyStoneLight,
+  createCloudLayerTextures,
+  createCloudLayerUniforms,
   createFogUniforms,
   createLightUniforms,
   createPostUniforms,
@@ -156,12 +159,20 @@ const skyTargets = {
 };
 // The sky's gradient, the game's own fitted, which its bottom colour and horizon halo ride up the sky
 const skyGradient = createSkyGradientTexture(sky.gradient);
-scene.value.backgroundNode = createSkyNode(skyUniforms, skyGradient);
+// The game's cloud layer over the sky, on its own fitted dome, its curl and its wisps' opacity its material's, over
+// Textures of our own synthesized from the game's statistics; it draws nothing until an hour's settings are solved
+const cloudLayer = createCloudLayerUniforms(sky.cloudLayer, createCloudLayerTextures(cloudLayerTextures));
+cloudLayer.curlAmplitude.value = sky.cloudLayerMaterial.curlAmplitude;
+cloudLayer.curlSpeed.value = sky.cloudLayerMaterial.curlSpeed;
+cloudLayer.curlTiling.value = sky.cloudLayerMaterial.curlTiling;
+cloudLayer.wispsOpacity.value = sky.cloudLayerMaterial.wispsOpacity;
+scene.value.backgroundNode = createSkyNode(skyUniforms, skyGradient, cloudLayer);
 const loginClouds = createLoginClouds(skyUniforms);
 watchImmediate(
   () => timeOfDay,
   (newTimeOfDay) => {
     applySkyState(LoginSkyStateMap[newTimeOfDay], skyTargets);
+    cloudLayer.lightDirection.value.copy(LoginSkyStateMap[newTimeOfDay].lightDirection);
     applyStoneLight(stoneLight[newTimeOfDay], loginStoneLight, light);
     // Each hour's sky draws its own share of each band's clouds
     for (const [band, cover] of Object.entries(LoginCloudCoverMap[newTimeOfDay])) {
@@ -272,6 +283,7 @@ usePostPipeline(
   { fogUniforms, isBloomed: false, postUniforms, stoneLight: loginStoneLight },
   () => LoginOcclusionRadiusMap[timeOfDay],
   skyUniforms,
+  cloudLayer,
 );
 let renderedFrameCount = 0;
 let isReadyEmitted = false;
@@ -383,6 +395,14 @@ onRender(({ delta: frameDelta }) => {
 onUnmounted(() => {
   scene.value.backgroundNode = null;
   skyGradient.dispose();
+  for (const { value } of [
+    cloudLayer.curl,
+    cloudLayer.density,
+    cloudLayer.normal,
+    cloudLayer.profile,
+    cloudLayer.wisps,
+  ])
+    value.dispose();
   towerFacade.dispose();
   for (const material of [towersMaterial, bridgesMaterial, walkwayMaterial, doorFrameMaterial, doorMaterial])
     material.dispose();

@@ -15,6 +15,7 @@ import { screens } from "#parity/screens";
 import { setSceneCloudColors } from "#parity/setSceneCloudColors";
 import { setSceneCloudCover } from "#parity/setSceneCloudCover";
 import { setSceneCloudHeights } from "#parity/setSceneCloudHeights";
+import { setSceneCloudLayer } from "#parity/setSceneCloudLayer";
 import { setSceneLights } from "#parity/setSceneLights";
 import { claimWitnessRenderers } from "#parity/witness/claimWitnessRenderers";
 import { computeWitnessParts } from "#parity/witness/computeWitnessParts";
@@ -97,6 +98,9 @@ if (screen && root) {
   });
   Reflect.set(window, "setSceneCloudCover", (covers?: Parameters<typeof setSceneCloudCover>[1]) =>
     setSceneCloudCover(sceneContext.value, covers),
+  );
+  Reflect.set(window, "setSceneCloudLayer", (layer: Parameters<typeof setSceneCloudLayer>[1]) =>
+    setSceneCloudLayer(sceneContext.value, layer),
   );
   Reflect.set(window, "setSceneCloudHeights", (heights?: Parameters<typeof setSceneCloudHeights>[1]) =>
     setSceneCloudHeights(sceneContext.value, heights),

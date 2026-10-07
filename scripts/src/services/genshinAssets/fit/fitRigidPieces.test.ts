@@ -34,7 +34,7 @@ describe(fitRigidPieces, () => {
     samples,
     type: "",
   });
-  const mesh: ExportedMesh = {
+  const mesh: Pick<ExportedMesh, "m_BindPose" | "m_BoneNameHashes" | "m_Skin"> = {
     m_BindPose: [bindPose],
     m_BoneNameHashes: [pathHash],
     m_Skin: [{ boneIndex: [0, 0, 0, 0], weight: [1, 0, 0, 0] }],

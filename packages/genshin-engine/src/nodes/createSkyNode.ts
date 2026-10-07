@@ -1,8 +1,10 @@
+import type { CloudLayerUniforms } from "#src/models/atmosphere/CloudLayerUniforms";
 import type { SkyUniforms } from "#src/models/atmosphere/SkyUniforms";
 import type { Texture } from "three";
 import type { Node } from "three/webgpu";
 
 import { LEAST_DIVISOR } from "#src/nodes/constants";
+import { createCloudLayerNode } from "#src/nodes/createCloudLayerNode";
 import { createSkyColorNode } from "#src/nodes/createSkyColorNode";
 import {
   float,
@@ -37,9 +39,14 @@ const MOON_GLOW_POWER = 6;
 // Genshin's sky as the scene's background, drawn behind everything at no depth so the fog and god rays pass over it,
 // As the game's own sky shader draws it (Login/Scene/Index.reference.ts, source `atmosphereShader`): each ray takes
 // The sky's colour along it (`createSkyColorNode`) and the moon's glow. Over it the sun's and moon's discs, stars at
-// Night, and a cloud layer: noise projected onto a plane overhead and cut into cumulus with a hard edge and a stepped
-// Shade band, as the ground's ramp steps its light
-export const createSkyNode = (uniforms: SkyUniforms, gradient: Texture): Node<"vec3"> => {
+// Night, and a cloud layer: given one, the game's own (`createCloudLayerNode`), the sky behind it drawn by one less its
+// Alpha; otherwise noise projected onto a plane overhead and cut into cumulus with a hard edge and a stepped shade
+// Band, as the ground's ramp steps its light
+export const createSkyNode = (
+  uniforms: SkyUniforms,
+  gradient: Texture,
+  cloudLayer?: CloudLayerUniforms,
+): Node<"vec3"> => {
   const {
     cloudCoverage,
     cloudDrift,
@@ -95,6 +102,10 @@ export const createSkyNode = (uniforms: SkyUniforms, gradient: Texture): Node<"v
       .add(vec3(stars))
       .add(vec3(0.85, 0.88, 1).mul(moonDisc))
       .add(lightColor.mul(sunDisc.mul(SUN_DISC_BRIGHTNESS)));
+    if (cloudLayer) {
+      const layer = createCloudLayerNode(cloudLayer, uniforms, direction);
+      return sky.mul(float(1).sub(layer.a)).add(layer.rgb);
+    }
     return mix(sky, cloudColor, cloudDensity);
   })();
 };

@@ -128,8 +128,16 @@ export const arrangementTopic: ReferenceTopic = {
       result:
         "The towers' feet had been checked against the fit's own feet, which hold whatever the fit does to a scale: read at the crowns the towers stood up to 2.57 metres off, every scale kept to the centimetre (0.1028 as 0.1). Kept to five decimals, the furthest crown stands 0.0063 metres off and the layout holds",
     },
+    {
+      method:
+        "genshin:parity scroll login-door-session --witness login --scan=-100,100,2: the towers and bridges moved together along the glide at its camera, priced on their boundaries' distance to the frame's edges, the best offsets shot beside the frame; then the frame held at heldScrolled 320 and the passes run",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The edges price two shallow basins, 20 to 24 and 62 to 78 metres ahead (7.3 and 7.1 px against 8.75 at none); shot beside the frame, 24 ahead stands the ringed towers left of the walkway and the near column right of it where the frame does, so the current build's door rests with the row 120 metres along its loop, on a walkway's copy (heldScrolled 320, twenty of the walkway's copies). Held there the scene stands its towers as the frame does, but the shape pass then reads our door nowhere in its targets (its outline 29 px, its depth none) while the plain shot draws it, so the hold waits on that",
+    },
   ],
   openQuestions: [
+    "Why holding the door frame's scroll (heldScrolled 320) leaves our door out of the shape pass's targets, so the frame can be held where its towers stand and its sky read clear of them",
     "Whether the towers' row tiles at its 200 metres: their fitted field spans about 300 along the glide",
     "Which of the towers' row stands at the door frame's left edge: the recording's is thin and dark with many rings, the exports' nearest there wide and arched",
   ],
