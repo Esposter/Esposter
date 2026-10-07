@@ -27,11 +27,13 @@ const MAX_DEPTH = 80;
 const MIN_ALBEDO = 0.02;
 const MIN_DISPLAY = 0.01;
 const MAX_DISPLAY = 0.95;
+// Any two lights lie on a plane through black, so fewer pixels than three lay flat under every contrast
+const MIN_SAMPLE_COUNT = 3;
 // The display pass: at each current build's reference's camera (`solveReferenceCamera`), every interior pixel of the
 // Exports' parts, its albedo beside the reference's colour there, and the tone curve's contrast its light lies flattest
 // Under (`solveToneContrast`). Its reading is how much more the shipped contrast leaves than that one, gated where the
-// Profile's other values stand well apart. The curve's exposure only scales the light the light pass solves, so no
-// Reference measures it
+// Profile's other values stand well apart, and a reference with too few pixels to read fails it. The curve's exposure
+// Only scales the light the light pass solves, so no reference measures it
 export const measureDisplay = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
   await fetchReferences();
   const measures: ParityPassMeasure[] = [];
@@ -67,6 +69,15 @@ export const measureDisplay = async (component: DerivedAssetComponent): Promise<
       )
         continue;
       samples.push({ albedo: [red, green, blue], display: [shownRed, shownGreen, shownBlue] });
+    }
+    if (samples.length < MIN_SAMPLE_COUNT) {
+      measures.push({
+        notes: [`${referenceId}: ${samples.length} pixels qualify, too few to measure its contrast`],
+        readings: [
+          { gate: DISPLAY_CONTRAST_GATE, name: `${referenceId} contrast's excess`, unit: "share", value: Infinity },
+        ],
+      });
+      continue;
     }
     // oxlint-disable-next-line no-await-in-loop -- each reference's solve is read in turn
     const { contrast, residual } = await solveToneContrast(samples);
