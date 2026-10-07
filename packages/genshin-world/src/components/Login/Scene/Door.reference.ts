@@ -57,6 +57,13 @@ export const doorTopic: ReferenceTopic = {
       result:
         "Fitted alone, a piece kept only the depths its own flat faces stand at, so the bands' 0.086 and 0.094 (on the bottom leaf pieces) and the step's 0.203 no longer stepped the slopes on the others, and a long side piece's chamfer contours, their corners all at its cut ends, leaned into the cut and stood straight: similarity 0.49 at dusk and 0.64 on the phone's door frame against the whole door's 0.667 and 0.722. At its part's depths with its feet found over the whole front the door at rest stands 0.7 millimetres from the whole door's on average and nearer its exports: similarity 0.689 at dusk and 0.743 on the phone's door frame, its gap 0.3031 and 0.2564 against 0.3104 and 0.2590. Shipped, rising piece by piece",
     },
+    {
+      method:
+        "genshin:parity passes login's motion measure: the scene's door pieces read a frame at a time on the faked clock from the last frame they stood at the lift's start, each frame's moment refined along Ani_LogginScene_Door01_Liftting within a frame of its clock's, and the furthest vertex off the clip's place there read with the moments' pace",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The lift holds: 6 to 7 millimetres at most off the clip's path against the 2 centimetre gate, every run, at 0.9996 of its pace. Read at the page's frame times alone the path scattered from 1.7 to 6.5 centimetres run to run, the pieces rising at about 14 metres a second and the page's frames and the scene's own timer a millisecond or two apart; a frame's offset reads 0.23 metres, and the clip read 3% fast fails both readings",
+    },
   ],
   openQuestions: [
     "How the script brings the door from its anchor to the walkway: the place is measured (the door spawn's position), the motion is not",

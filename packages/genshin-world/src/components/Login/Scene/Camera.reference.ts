@@ -183,10 +183,25 @@ export const cameraTopic: ReferenceTopic = {
       result:
         "The door fits within a pixel at 39.2, 45 and 51.2 degrees alike, its distance trading with the field of view, but only 45 stands the eye where the exports do: 0.997 metres over the walkway, 0.005 across, the 1 metre ModelCamera and the lift give. So at 21.5:9 the game draws LoginCamera's own 45 vertically, and 51.2 at 16:9 is the width an 18.5:9 screen shows held on a narrower one; the eye and the field of view are the game's data, and the 1.22 metres and 2.47 across the older recording solved were that build's. At the shipped camera the frame's three landmarks stand 0.74 to 1.5 pixels off (1.25 root mean square) with only its place along the glide solved, the camera still easing toward its rest. The older 16:9 recording reads 43 pixels from the same camera, its towers 80 off, another build's arrangement",
     },
+    {
+      method:
+        "genshin:parity glide login-door-session over 15 to 36 seconds at the current build's camera (eye 1, pitch 5.69, field of view 45), the column straight ahead at 1700 of 3440; then the steady spans (title 25.5 to 29, preparing 29.75 to 33) over three bands from 6.3 to 12 metres and three columns",
+      outcome: InvestigationOutcome.DeadEnd,
+      result:
+        "The glide reads steady at about 3.6 metres a second over the title, about 4.5 from 29.5 seconds, back to 3.6 from 34 and slowing from 35 toward the click, so the current build's title is faster than the older recording's 3.14. But the pace grows with the band's distance (3.57, 3.89 and 4.55 over the title) and varies across columns at one distance (3.20 to 3.57), so its metre scale is off by tens of percent here, and the preparing pace over the title's scatters from 1.15 to 1.62 by band and column, the paving's repeat aliasing the faster pace; nothing names MonoLoginScene's 3.5 and 4.5 from it",
+    },
+    {
+      method:
+        "genshin:parity track login-door-session 34.5 to 35.9 seconds at 10 frames a second on the towers', bridges' and walkway's edges with every axis but the glide's held (a scratch option), from 4.4 metres short of the door frame's solved place",
+      outcome: InvestigationOutcome.DeadEnd,
+      result:
+        "The glide's axis stood still at -10.3 metres for a second and ended at -10.0, where the door frame's own solve stands it at -5.43: along the glide the edges price nearly flat, the walkway repeating every 16 metres and the towers far, so the simplex never left its start. The option was not kept",
+    },
   ],
   openQuestions: [
     "Which data holds the design aspect of 18.5:9, a value read off the older build's 16:9 widths: a frame of the current build at 16:9 or narrower checks it",
     "How the game brings the towers to the door's phase after a long idle: every recording found idles a few seconds, so the title's phase is read off its glide's length, not a rule of the script's",
     "Where the glide comes to rest: the recording's door frame was still slowing at 1.6 metres a second when the click came, so the rest stands a little nearer the door than its pose",
+    "The current build's glide pace, title and preparing, which neither the paving's correlation nor an edge track along the glide reads to better than tens of percent on session-2.mp4: a landmark the layout fixes in metres, such as the seams between the walkway's 16 metre copies crossing one row of the frame, would time it exactly",
   ],
 };
