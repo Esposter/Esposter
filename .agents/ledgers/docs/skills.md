@@ -26,7 +26,7 @@
 | `finishing`               | 2026-10-05 · Opus 5.5 |       |
 | `formatting`              | 2026-10-05 · Opus 5.5 |       |
 | `genshin-engine`          | 2026-10-05 · Opus 5.5 |       |
-| `genshin-parity`          | 2026-10-05 · Opus 5.5 |       |
+| `genshin-parity`          | 2026-10-07 · Opus 5.5 |       |
 | `genshin-text`            | 2026-10-05 · Opus 5.5 |       |
 | `git`                     | 2026-10-05 · Opus 5.5 |       |
 | `github-actions`          | 2026-10-05 · Opus 5.5 |       |
@@ -43,7 +43,7 @@
 | `product-review`          | 2026-10-05 · Opus 5.5 |       |
 | `pulumi-infra`            | 2026-10-05 · Opus 5.5 |       |
 | `readme-standards`        | 2026-10-05 · Opus 5.5 |       |
-| `recreation-tooling`      | 2026-10-05 · Opus 5.5 |       |
+| `recreation-tooling`      | 2026-10-07 · Opus 5.5 |       |
 | `responsive`              | 2026-10-05 · Opus 5.5 |       |
 | `review-queue`            | 2026-10-05 · Opus 5.5 |       |
 | `routing`                 | 2026-10-05 · Opus 5.5 |       |
