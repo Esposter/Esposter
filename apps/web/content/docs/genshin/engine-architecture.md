@@ -9,7 +9,7 @@ The Genshin program is long: terrain, water, vegetation, every region, then a ch
 
 ## How it is divided
 
-- **The engine is a published package; the app only mounts it.** `genshin-engine`, public on npm like `keyframe-store` and `vue-phaserjs`, holds the engine as plain TypeScript and TSL node graphs, with no Vue, no store and no DOM beyond a canvas. It is tested without a DOM, and nothing in the app reaches past a module's interface.
+- **The engine is a published package; the app only mounts it.** `genshin-engine`, public on npm like `keyframe-store` and `vue-phaserjs`, holds the engine as plain TypeScript and TSL node graphs, free of Vue, of stores and of any DOM past a canvas. It is tested without a DOM, and nothing in the app reaches past a module's interface.
 - **The game's world is a second package over the engine.** `genshin-world`, published beside it, holds what is Genshin's rather than any engine's: the catalogue of regions and areas, each region's data, the scenes and screens, and the TresJS components and composables that create the engine's modules for them. The engine knows no place by name. The world's screen owns its canvas; the app keeps its stores and hands the world only what a bundler or a server decides: the terrain worker, where region data is served, and whether the tuning panel shows.
 - **One module, one job.** Each is a folder of the engine's source:
 
@@ -24,7 +24,7 @@ The Genshin program is long: terrain, water, vegetation, every region, then a ch
   | `wind`       | the shared wind field                                                                       |
   | `materials`  | the toon ramp every environment material reads                                              |
   | `nodes`      | every TSL node graph: the toon, stone, leaf and water materials, the sky, the rim, the wind |
-  | `post`       | the frame after the scene: outlines, occlusion, god rays, fog, bloom, grade, anti-aliasing  |
+  | `post`       | what follows the scene: outlines, occlusion, god rays, fog, bloom, grade, anti-aliasing     |
   | `vegetation` | grass generated round the camera, and the ground capture it stands on                       |
   | `water`      | still water's uniforms, and the fog under its surface                                       |
   | `kits`       | the parametric generators a region adds: trees, the statue, architecture                    |
