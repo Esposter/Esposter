@@ -6,7 +6,7 @@ import { fetchSampleFile } from "#src/services/genshinAssets/music/fetchSampleFi
 import { selectShippedRecordings } from "#src/services/genshinAssets/music/selectShippedRecordings";
 import { LOGIN_MUSIC_RECORDING_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { roundMusic } from "#src/services/genshinAssets/shared/roundMusic";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { mkdir, rename, rm } from "node:fs/promises";
 import { join } from "node:path";
@@ -50,7 +50,8 @@ export const writeLayeredRecordings = async (
     }
   }
   // Encoded beside the directory and swapped in once every recording is, so a failed encode leaves what ships whole;
-  // What ships is set aside rather than removed until the swap lands, and put back if it does not
+  // What ships is set aside rather than removed until the swap lands, and put back if it does not. A failed put back is
+  // Logged with where what shipped still lies, and the swap's own error is the one thrown
   const partialDirectory = `${LOGIN_MUSIC_RECORDING_DIRECTORY}.partial`;
   const backupDirectory = `${LOGIN_MUSIC_RECORDING_DIRECTORY}.backup`;
   await rm(partialDirectory, { force: true, recursive: true });
@@ -65,7 +66,13 @@ export const writeLayeredRecordings = async (
   await swapResult.match(
     () => rm(backupDirectory, { force: true, recursive: true }),
     async (error) => {
-      if (isShipped) await rename(backupDirectory, LOGIN_MUSIC_RECORDING_DIRECTORY);
+      if (isShipped)
+        await getResultAsync(() => rename(backupDirectory, LOGIN_MUSIC_RECORDING_DIRECTORY)).match(
+          noop,
+          (restoreError) => {
+            console.error(`The shipped recordings were not put back and remain at ${backupDirectory}`, restoreError);
+          },
+        );
       throw error;
     },
   );
