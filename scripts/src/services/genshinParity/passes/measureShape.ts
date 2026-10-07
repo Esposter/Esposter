@@ -12,6 +12,8 @@ import { measureFamilyTargets } from "#src/services/genshinParity/passes/measure
 import { writeShapeDiff } from "#src/services/genshinParity/passes/writeShapeDiff";
 
 const TARGET_NAMES = [WitnessTargetName.Part, WitnessTargetName.Depth, WitnessTargetName.Normal];
+// How many of a failing family's parts its note names
+const NAMED_PART_COUNT = 5;
 // The shape pass: each family of ours against the exports' it stands for, target by target (`compareFamilyTargets`):
 // Its outline in pixels at the shape's width, and where both draw it, its depth's gap as a share and its normals' angle
 export const measureShape = (component: DerivedAssetComponent): Promise<ParityPassMeasure> =>
@@ -32,8 +34,22 @@ export const measureShape = (component: DerivedAssetComponent): Promise<ParityPa
       exportsRead.families.length,
     );
     const diffPath = await writeShapeDiff(referenceId, exportsTargets, oursTargets, exportsRead);
+    // A family's normals over their gate, named by the exported parts that carry most of their angle
+    const partNotes = comparisons
+      .filter(({ normal }) => normal > SHAPE_NORMAL_GATE_DEGREES)
+      .map(({ family, normalByPart }) => {
+        const total = normalByPart.reduce((sum, { angle }) => sum + angle, 0);
+        const parts = normalByPart
+          .toSorted((first, second) => second.angle - first.angle)
+          .slice(0, NAMED_PART_COUNT)
+          .map(({ angle, part, pixelCount }) => {
+            const mesh = exportsRead.parts.find(({ id }) => id === part)?.mesh ?? part;
+            return `${mesh} #${part} ${((angle / total) * 100).toFixed(0)}% (${(angle / pixelCount).toFixed(1)} degrees over ${pixelCount} px)`;
+          });
+        return `${referenceId} ${exportsRead.families[family] ?? family} normal by part: ${parts.join(", ")}`;
+      });
     return {
-      notes: [`${referenceId} exports | ours | normals' angle and outlines apart: ${diffPath}`],
+      notes: [`${referenceId} exports | ours | normals' angle and outlines apart: ${diffPath}`, ...partNotes],
       readings: comparisons.flatMap(({ depth, family, normal, outline }) => {
         const name = `${referenceId} ${exportsRead.families[family] ?? family}`;
         return [
