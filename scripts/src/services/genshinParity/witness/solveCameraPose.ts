@@ -3,8 +3,8 @@ import type { Vector } from "#src/models/shared/Vector";
 
 import { computeMean } from "#src/services/genshinAssets/shared/computeMean";
 import { solveLinearSystem } from "#src/services/genshinParity/shared/solveLinearSystem";
-import { findSmallestEigenvector } from "#src/services/genshinParity/witness/findSmallestEigenvector";
 import { computeReprojectionErrors } from "#src/services/genshinParity/witness/computeReprojectionErrors";
+import { findSmallestEigenvector } from "#src/services/genshinParity/witness/findSmallestEigenvector";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { MathUtils } from "three";
 

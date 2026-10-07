@@ -1,9 +1,9 @@
 import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
 import { runParityPasses } from "#src/services/genshinParity/passes/runParityPasses";
 import { writeParityPasses } from "#src/services/genshinParity/passes/writeParityPasses";
-import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
 import { defineCommand } from "citty";
 
 export const passesCommand: SubCommandsDef[string] = defineCommand({

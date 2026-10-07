@@ -17,7 +17,7 @@ export const claimWitnessRenderers = (
   const drawnClaims = [...Object.entries(witnessFamilies), ...Object.entries(witnessStandIns)];
   const undrawnClaims = Object.entries(witnessUndrawn);
   const renderers = new Set(placements.map(({ materials, mesh }) => [mesh, ...materials].join(" ")));
-  return [...renderers].map((renderer) => {
+  return Array.from(renderers, (renderer) => {
     const drawnClaim = findClaim(drawnClaims, renderer);
     if (drawnClaim) return { claim: drawnClaim, isDrawn: true, renderer };
     return { claim: findClaim(undrawnClaims, renderer) ?? "", isDrawn: false, renderer };

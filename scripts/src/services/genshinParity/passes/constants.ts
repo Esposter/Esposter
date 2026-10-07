@@ -1,6 +1,20 @@
+import { ParityPass } from "#src/models/genshinParity/passes/ParityPass";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { join } from "node:path";
 
+// The passes in the order they run, each after every pass it depends on
+export const PARITY_PASS_ORDER: readonly ParityPass[] = [
+  ParityPass.Inventory,
+  ParityPass.Layout,
+  ParityPass.Camera,
+  ParityPass.Shape,
+  ParityPass.Motion,
+  ParityPass.Surface,
+  ParityPass.Display,
+  ParityPass.Light,
+  ParityPass.Atmosphere,
+  ParityPass.Audio,
+];
 // The layout pass's gate: each fitted part within this many metres of the exports' object it stands for, twice the
 // Centimetre the fitted data is written to
 export const LAYOUT_GATE_METRES = 0.02;

@@ -48,7 +48,6 @@ What each pass's tools stand on, and the runner that checks them in order.
 | :------------------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
 | A spawned prefab's place and scale     | `composeWorldMatrices`, through the anchor                                                                               |
 | A row a script scrolls                 | the spawn's `copies`, laid out by `copySpawns` for the witness                                                           |
-| Whether the arrangement is right       | `genshin:assets arrangement`: cross-ratios, drift                                                                        |
 | A scrolled row's phase on a reference  | `view` held (`heldScrolled`) along the loop, `parts`, then `compare`                                                     |
 | Where a row of parts stands, held cam  | `genshin:parity place`: one offset refined on edges both ways                                                            |
 | A row or a camera on far landmarks     | `place --landmarks`, and `pose` with landmarks that pick an instance                                                     |
