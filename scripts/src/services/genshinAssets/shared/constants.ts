@@ -246,6 +246,8 @@ export const CLOUD_COVERAGE_THRESHOLD = 0.5;
 export const CLOUD_LIT_THRESHOLD = 0.5;
 // A gilded texel's red runs past its blue by this many times, where the stone's are about equal
 export const GILDING_RED_BLUE_RATIO = 1.8;
+// The login's door: its object and the mesh it draws share this name
+export const LOGIN_DOOR_MESH = "LoginScene_Door01_Vo";
 // Every piece the walkway is laid from: its paving, its borders and its wings
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const WALKWAY_MESH_REGEX: RegExp = /^LoginScene_Bridge01_\d+_Vo$/u;

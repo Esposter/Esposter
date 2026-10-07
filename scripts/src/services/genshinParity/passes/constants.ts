@@ -28,6 +28,15 @@ export const SHAPE_WIDTH = 1280;
 export const SHAPE_OUTLINE_GATE_PIXELS = 1;
 export const SHAPE_DEPTH_GATE = 0.01;
 export const SHAPE_NORMAL_GATE_DEGREES = 10;
+// The motion pass's gates: a moving piece within as many metres of where its clip carries it as the layout's gate holds
+// A still part to, and its clip played within a hundredth of its pace, about a frame over the door's lift; a frame's
+// Moment along its clip refined in steps of a quarter of a millisecond, which a piece rising at metres a second moves a
+// Few millimetres in; and the size it draws the scene at, which none of its readings depend on
+export const MOTION_GATE_METRES = LAYOUT_GATE_METRES;
+export const MOTION_PACE_GATE = 0.01;
+export const MOTION_STEP_MS = 0.25;
+export const MOTION_WIDTH = 640;
+export const MOTION_HEIGHT = 360;
 // The committed report of each component's last run of its passes
 export const PARITY_PASSES_PATH: string = join(
   REPOSITORY_ROOT,

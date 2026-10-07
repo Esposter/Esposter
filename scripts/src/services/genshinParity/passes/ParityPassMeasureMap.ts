@@ -5,6 +5,7 @@ import { ParityPass } from "#src/models/genshinParity/passes/ParityPass";
 import { measureCamera } from "#src/services/genshinParity/passes/measureCamera";
 import { measureInventory } from "#src/services/genshinParity/passes/measureInventory";
 import { measureLayout } from "#src/services/genshinParity/passes/measureLayout";
+import { measureMotion } from "#src/services/genshinParity/passes/measureMotion";
 import { measureShape } from "#src/services/genshinParity/passes/measureShape";
 
 // Each pass's measure over a component, every one in the units its own data reads in and gated at that data's noise;
@@ -16,5 +17,6 @@ export const ParityPassMeasureMap: Partial<
   [ParityPass.Camera]: measureCamera,
   [ParityPass.Inventory]: measureInventory,
   [ParityPass.Layout]: measureLayout,
+  [ParityPass.Motion]: measureMotion,
   [ParityPass.Shape]: measureShape,
 };

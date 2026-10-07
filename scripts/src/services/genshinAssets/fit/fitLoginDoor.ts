@@ -3,39 +3,32 @@ import type { LoginDoor } from "#src/models/genshinAssets/fit/LoginDoor";
 import type { ReliefLayer } from "#src/models/genshinAssets/fit/ReliefLayer";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { DecodedClip } from "#src/models/genshinAssets/shared/DecodedClip";
-import type { ExportedMesh } from "#src/models/genshinAssets/shared/ExportedMesh";
 import type { Vector } from "#src/models/shared/Vector";
+import type { Matrix4 } from "three";
 
 import { blurWithinTags } from "#src/services/genshinAssets/fit/blurWithinTags";
 import { fitReliefLayers } from "#src/services/genshinAssets/fit/fitReliefLayers";
-import { fitRigidPieces } from "#src/services/genshinAssets/fit/fitRigidPieces";
 import { rasterizeTopFaces } from "#src/services/genshinAssets/fit/rasterizeTopFaces";
+import { readLoginDoorPieces } from "#src/services/genshinAssets/fit/readLoginDoorPieces";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { toTexel } from "#src/services/genshinAssets/fit/toTexel";
 import { traceCellLoops } from "#src/services/genshinAssets/fit/traceCellLoops";
 import { computeOtsuThreshold } from "#src/services/genshinAssets/shared/computeOtsuThreshold";
-import { GILDING_RED_BLUE_RATIO } from "#src/services/genshinAssets/shared/constants";
-import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
+import { GILDING_RED_BLUE_RATIO, LOGIN_DOOR_MESH } from "#src/services/genshinAssets/shared/constants";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { BYTE } from "#src/services/shared/constants";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { toLinear } from "#src/services/shared/toLinear";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
-import { Matrix4, Quaternion, Vector3 } from "three";
+import { Quaternion, Vector3 } from "three";
 
-// The door's object and the mesh it draws share this name, its frame drawn in its first submesh and its panel in its
-// Second
-const DOOR_MESH = "LoginScene_Door01_Vo";
-const FRAME_GROUP = `${DOOR_MESH}_0`;
-const PANEL_GROUP = `${DOOR_MESH}_1`;
+// The door's mesh draws its frame in its first submesh and its panel in its second
+const FRAME_GROUP = `${LOGIN_DOOR_MESH}_0`;
+const PANEL_GROUP = `${LOGIN_DOOR_MESH}_1`;
 // The texture the door's mesh paints both its parts with
 const DOOR_TEXTURE = "LoginScene_Door01_Diffuse.png";
-// The clip its pieces rise into place by, as `genshin:assets clips` decoded it, kept every other sample, a thirtieth of
-// A second apart, its places to the millimetre and its turns to four decimals
-const DOOR_LIFT_CLIP = "Ani_LogginScene_Door01_Liftting";
+// The lift its pieces rise into place by kept every other sample, a thirtieth of a second apart, its places to the
+// Millimetre and its turns to four decimals
 const DOOR_LIFT_SAMPLE_STEP = 2;
 const DOOR_LIFT_TURN_DECIMALS = 4;
 // The door's front read on a half-centimetre grid and kept to the millimetre, its relief standing a few millimetres to
@@ -67,24 +60,18 @@ export const fitLoginDoor = async (
   meshDirectory: string,
   textureDirectory: string,
 ): Promise<LoginDoor> => {
-  const placement = placements.find(({ name }) => name === DOOR_MESH);
-  if (!placement) throw new InvalidOperationError(Operation.Read, DOOR_MESH, "not placed in the login scene");
-  const lift = clips.find(({ name }) => name === DOOR_LIFT_CLIP);
-  if (!lift) throw new InvalidOperationError(Operation.Read, DOOR_LIFT_CLIP, "not decoded: run `genshin:assets clips`");
-  const { faceGroups, faces, faceUvs, uvs, vertices } = await readObjMesh(join(meshDirectory, `${DOOR_MESH}.obj`));
-  const { poses, vertexPieces } = fitRigidPieces(
-    parseMachineJson<ExportedMesh>(await readFile(join(meshDirectory, `${DOOR_MESH}.json`), "utf8")),
-    lift,
-  );
+  const {
+    duration,
+    foot,
+    mesh: { faceGroups, faces, faceUvs, uvs },
+    piecePoses,
+    placement,
+    scaled,
+    vertexPieces,
+  } = await readLoginDoorPieces(placements, clips, meshDirectory);
   const getPiece = ([vertex = 0]: readonly number[]): number => vertexPieces[vertex] ?? 0;
-  const [scale] = placement.scale;
-  const scaled = vertices.map((vertex) => {
-    const [x, y, z] = toRightHanded(vertex);
-    return [x * scale, y * scale, z * scale] satisfies [number, number, number];
-  });
   const extent = (axis: 0 | 1 | 2): number =>
     Math.max(...scaled.map((vertex) => vertex[axis])) - Math.min(...scaled.map((vertex) => vertex[axis]));
-  const foot = Math.min(...scaled.map(([, y]) => y));
   const corner: [number, number] = [Math.min(...scaled.map(([vertexX]) => vertexX)), 0];
   const width = Math.ceil(extent(0) / DOOR_CELL_SIZE);
   const height = Math.ceil(extent(1) / DOOR_CELL_SIZE);
@@ -215,21 +202,14 @@ export const fitLoginDoor = async (
     );
     return fitReliefLayers(heights, depths, grid, groupHeightsMap.get(group));
   };
-  // A pose in the game's axes and the mesh's units carried into the layers': scaled, z mirrored and its foot at zero
-  const toLayers = new Matrix4().makeTranslation(0, -foot, 0).multiply(new Matrix4().makeScale(scale, scale, -scale));
-  const fromLayers = toLayers.clone().invert();
-  const sampleCount = poses[0]?.length ?? 0;
+  const sampleCount = piecePoses[0]?.length ?? 0;
   const samples = Array.from({ length: Math.ceil((sampleCount - 1) / DOOR_LIFT_SAMPLE_STEP) + 1 }, (_value, index) =>
     Math.min(index * DOOR_LIFT_SAMPLE_STEP, sampleCount - 1),
   );
-  const fitLift = (piecePoses: readonly Matrix4[]): number[][] =>
+  const fitLift = (poses: readonly Matrix4[]): number[][] =>
     samples.map((sample) => {
       const [position, turn] = [new Vector3(), new Quaternion()];
-      toLayers
-        .clone()
-        .multiply(piecePoses[sample] ?? new Matrix4())
-        .multiply(fromLayers)
-        .decompose(position, turn, new Vector3());
+      poses[sample]?.decompose(position, turn, new Vector3());
       return [
         roundFitted(position.x, DOOR_DECIMALS),
         roundFitted(position.y, DOOR_DECIMALS),
@@ -242,10 +222,10 @@ export const fitLoginDoor = async (
     });
   const [x = 0, y = 0, z = 0] = toRightHanded(placement.position).map((value) => roundFitted(value));
   return {
-    liftRate: Math.round((sampleCount - 1) / lift.duration / DOOR_LIFT_SAMPLE_STEP),
-    pieces: poses.map((piecePoses, piece) => ({
+    liftRate: Math.round((sampleCount - 1) / duration / DOOR_LIFT_SAMPLE_STEP),
+    pieces: piecePoses.map((poses, piece) => ({
       frame: fitLayers(piece, FRAME_GROUP),
-      lift: fitLift(piecePoses),
+      lift: fitLift(poses),
       panel: fitLayers(piece, PANEL_GROUP),
     })),
     position: [x, y, z],

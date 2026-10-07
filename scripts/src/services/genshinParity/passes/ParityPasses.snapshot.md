@@ -34,4 +34,6 @@ the change that moved it, as a bench's report is committed.
 | Shape | login-door-session Walkway outline | 0.4927 | 1 | px | yes |
 | Shape | login-door-session Walkway depth | 0.0005 | 0.0100 | share | yes |
 | Shape | login-door-session Walkway normal | 6.2032 | 10 | degrees | yes |
-| Motion | no measure yet | | | | no |
+| Motion | door lift path | 0.0066 | 0.0200 | m | yes |
+| Motion | door lift pace | 0.0006 | 0.0100 | share | yes |
+| Surface | no measure yet | | | | no |
