@@ -26,7 +26,7 @@ const transformFrame = (samples: Float32Array, start: number): [Float64Array, Fl
 export const computeStereoSoundBandPowers = (
   left: Float32Array,
   right: Float32Array,
-  hopLength = SOUND_HOP_LENGTH,
+  hopLength: number = SOUND_HOP_LENGTH,
 ): StereoSoundBandPowers => {
   const bandBins = getSoundEffectBandBins(SOUND_SAMPLE_RATE);
   const frameCount = Math.ceil(Math.max(left.length, right.length) / hopLength) + 1;

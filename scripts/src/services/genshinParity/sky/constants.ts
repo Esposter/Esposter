@@ -4,4 +4,9 @@ export const SKY_GRADIENT_TERMS = ["zenithBack", "zenith", "horizonBack", "horiz
 // The terms of the game's sky a pixel's colour is a sum of, each a colour the fit solves
 // (Login/Scene/Index.reference.ts, source `atmosphereShader`): the gradient's, then the horizon halo, the sun's halo
 // And the moon's glow, each adding light
-export const SKY_TERMS = [...SKY_GRADIENT_TERMS, "halo", "sunHalo", "moonGlow"] as const;
+export const SKY_TERMS: readonly [...typeof SKY_GRADIENT_TERMS, "halo", "sunHalo", "moonGlow"] = [
+  ...SKY_GRADIENT_TERMS,
+  "halo",
+  "sunHalo",
+  "moonGlow",
+];

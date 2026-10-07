@@ -11,7 +11,7 @@ const INCLUDE_REGEX = /^[^\S\n]*#include[^\S\n]+"(?<path>[^"]+)"/gmu;
 export const readSfzMapping = async (
   library: SampleLibrary,
   mapping: string,
-  directory = posix.dirname(mapping),
+  directory: string = posix.dirname(mapping),
 ): Promise<string> => {
   const text = await readFile(await fetchSampleFile(library, mapping), "utf8");
   const getIncludedPath = (path: string): string => posix.join(directory, path.replaceAll("\\", "/"));

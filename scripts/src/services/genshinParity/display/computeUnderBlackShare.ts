@@ -13,7 +13,7 @@ const BLACK_BYTE = Math.round(curveBlack * BYTE);
 // (the night's red, while its green stands at the black) from a gamma or an encoding darkening every channel alike. A
 // Pixel black in every channel is a letterbox's and is left out
 export const computeUnderBlackShare = (data: Buffer): { blackByte: number; channelShares: Vector; share: number } => {
-  const channelCounts = [0, 0, 0];
+  const channelCounts: Vector = [0, 0, 0];
   let [under, counted] = [0, 0];
   for (let offset = 0; offset < data.length; offset += 3) {
     const channels = [data[offset] ?? 0, data[offset + 1] ?? 0, data[offset + 2] ?? 0];
@@ -25,7 +25,7 @@ export const computeUnderBlackShare = (data: Buffer): { blackByte: number; chann
   const total = Math.max(counted, 1);
   return {
     blackByte: BLACK_BYTE,
-    channelShares: CHANNELS.map((channel) => (channelCounts[channel] ?? 0) / total) as Vector,
+    channelShares: channelCounts.map((count) => count / total) as Vector,
     share: under / total,
   };
 };
