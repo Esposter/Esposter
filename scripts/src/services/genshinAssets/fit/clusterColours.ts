@@ -13,7 +13,7 @@ export const clusterColours = (colours: readonly Vector[], count: number): Int32
   const order = colours
     .map((colour, index) => ({ index, sum: colour[0] + colour[1] + colour[2] }))
     .toSorted((firstColour, secondColour) => firstColour.sum - secondColour.sum);
-  let means = Array.from(
+  const means = Array.from(
     { length: count },
     (_mean, cluster): Vector =>
       colours[order[Math.floor(((cluster + 0.5) / count) * order.length)]?.index ?? 0] ?? [0, 0, 0],
@@ -40,9 +40,8 @@ export const clusterColours = (colours: readonly Vector[], count: number): Int32
       sum[2] += blue;
       sum[3]++;
     }
-    means = sums.map(([red, green, blue, total], cluster) =>
-      total === 0 ? (means[cluster] ?? [0, 0, 0]) : [red / total, green / total, blue / total],
-    );
+    for (const [cluster, [red, green, blue, total]] of sums.entries())
+      if (total > 0) means[cluster] = [red / total, green / total, blue / total];
   }
   return clusters;
 };
