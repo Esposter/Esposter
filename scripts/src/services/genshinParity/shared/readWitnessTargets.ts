@@ -23,7 +23,7 @@ export const readWitnessTargets = async (
     ([targetNames, isSceneDrawn]) =>
       (
         Reflect.get(window, "renderWitnessTargets") as (
-          targetNames: string[],
+          targetNames: readonly string[],
           isScene: boolean,
         ) => Promise<{
           families: string[];
