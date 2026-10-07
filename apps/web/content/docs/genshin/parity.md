@@ -50,7 +50,7 @@ flowchart TD
 
 ## Deriving a screen
 
-A new screen, or a new piece of one, is derived in passes, each answering one kind of unknown from its most exact source and judged by its own measure, so every source is found once, recorded where it is used, and never searched for again, and no pass is judged through another's error. Layout, camera, shape, motion and surface are the game's own data, judged against its exports through the witness; only what is set at run time, the light, the air and the sounds, is read off a recording. The gates each pass is held to, its runner and the measures some passes still lack are the [recreation passes](/docs/proposals/genshin/recreation-passes) proposal.
+A new screen, or a new piece of one, is derived in passes, each answering one kind of unknown from its most exact source and judged by its own measure, so every source is found once, recorded where it is used, and never searched for again, and no pass is judged through another's error. Layout, shape, motion and surface are the game's own data, judged against its exports through the witness; a recording's camera, and motion no clip holds, are read off it by the exports' landmarks alone; and only what is set at run time, the display transform, the light, the air and the sounds, is read off a recording's colour. The gates each pass is held to, its runner and the measures some passes still lack are the [recreation passes](/docs/proposals/genshin/recreation-passes) proposal.
 
 ```mermaid
 flowchart TD
