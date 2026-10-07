@@ -84,7 +84,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 | Unknown                                | Tool                                                                                                                           |
 | :------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
 | A skinned part's pieces and their path | `fitRigidPieces`: the mesh's JSON skin, each bone posed through its clip                                                       |
-| A world's pace past a still camera     | `genshin:parity glide`: the ground resampled into metres, per frame                                                            |
+| A world's pace past a still camera     | `genshin:parity glide`: a layout's edges crossing one row's columns, each timed against its own a repeat later, any pose       |
 | Our scene's motion at exact moments    | `genshin:parity film`: a faked clock, stages set at moments                                                                    |
 | A part's track against its clip        | `passes`' motion: our pieces read frame by frame on the faked clock, each frame's moment refined along the clip, path and pace |
 
