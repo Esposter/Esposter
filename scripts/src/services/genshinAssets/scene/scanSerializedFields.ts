@@ -176,13 +176,28 @@ export const scanSerializedFields = (
   const readers = [readPointer, readCurve, readArray, readGradient, readColor, readScalar];
   const fields: SerializedField[] = [];
   const nameLength = checkHasBytes(NAME_LENGTH_OFFSET, WORD) ? readInt(NAME_LENGTH_OFFSET) : 0;
-  let offset = fieldsStart ?? NAME_LENGTH_OFFSET + WORD + Math.ceil(nameLength / WORD) * WORD;
+  const firstOffset = fieldsStart ?? NAME_LENGTH_OFFSET + WORD + Math.ceil(nameLength / WORD) * WORD;
+  // A gradient is told by its tail, its mode, counts and sorted times, while its keys read as colours from any word
+  // Before them, so a colour read a few words early would swallow its start and every key after it. Every gradient is
+  // Found first, word by word, and a field read before one may not run into it unless it holds it whole (an array of
+  // Gradients)
+  const gradientSpans: [number, number][] = [];
+  for (let start = firstOffset; checkHasBytes(start, WORD); start += WORD) {
+    if (start < (gradientSpans.at(-1)?.[1] ?? 0)) continue;
+    const gradient = readGradient(start);
+    if (gradient) gradientSpans.push([start, gradient.end]);
+  }
+  const checkIsCrossing = (start: number, end: number): boolean =>
+    gradientSpans.some(
+      ([gradientStart, gradientEnd]) => gradientStart > start && gradientStart < end && gradientEnd > end,
+    );
+  let offset = firstOffset;
   while (checkHasBytes(offset, WORD)) {
     const start = offset;
     const read = readers
       .values()
       .map((reader) => reader(start))
-      .find((result) => result !== undefined);
+      .find((result) => result !== undefined && !checkIsCrossing(start, result.end));
     if (read) fields.push(read.field);
     offset = read?.end ?? offset + WORD;
   }
