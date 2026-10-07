@@ -9,13 +9,13 @@ describe(createLoginWalkwayPieces, () => {
     ...pieces.map(({ geometry }) => new Mesh(geometry, new MeshBasicMaterial({ side: DoubleSide }))),
   );
 
-  test("lays the walkway from its underside to its surface, each piece about its own middle", () => {
+  test("lays the walkway from its underside to its raised parts' tops, each piece about its own middle", () => {
     expect.hasAssertions();
 
     const { max, min } = new Box3().setFromObject(group);
 
     expect(min.y).toBeCloseTo(walkway.bottom);
-    expect(max.y).toBeCloseTo(Math.max(...walkway.pieces.map(({ top }) => top)));
+    expect(max.y).toBeCloseTo(Math.max(...walkway.pieces.flatMap(({ raised }) => raised.map(({ top }) => top))));
     for (const { depth, geometry } of pieces) {
       geometry.computeBoundingBox();
       const { max: pieceMax, min: pieceMin } = geometry.boundingBox ?? new Box3();

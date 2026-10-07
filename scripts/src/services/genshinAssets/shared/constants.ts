@@ -218,6 +218,12 @@ export const SCALE_DECIMALS = 5;
 // Its diagonal cracks meet with no gap to see their sides through
 export const WALKWAY_CELL_SIZE = 0.05;
 export const WALKWAY_OUTLINE_TOLERANCE = 0.02;
+// What stands this many metres or more over a walkway piece's stone is raised (a curb, a lane's border), kept where it
+// Covers this many of the centimetre cells it is read on, and its height kept to the millimetre, a curb being only a
+// Centimetre or three high
+export const WALKWAY_RAISED_HEIGHT = 0.005;
+export const WALKWAY_RAISED_MIN_CELLS = 50;
+export const WALKWAY_RAISED_DECIMALS = 3;
 // A bridge's or a pillar's hull is carved on a grid of a unit of its own mesh, a tenth of a metre as the scene scales
 // It
 export const HULL_CELL_SIZE = 1;
