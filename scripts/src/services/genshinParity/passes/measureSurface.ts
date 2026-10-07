@@ -3,7 +3,7 @@ import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityP
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyAlbedo } from "#src/services/genshinParity/passes/compareFamilyAlbedo";
-import { SHAPE_OUTLINE_GATE_PIXELS, SURFACE_COLOUR_GATE } from "#src/services/genshinParity/passes/constants";
+import { COLOUR_GATE, SHAPE_OUTLINE_GATE_PIXELS } from "#src/services/genshinParity/passes/constants";
 import { measureFamilyTargets } from "#src/services/genshinParity/passes/measureFamilyTargets";
 import { writeStructureDiff } from "#src/services/genshinParity/passes/writeStructureDiff";
 import { writeSurfaceDiff } from "#src/services/genshinParity/passes/writeSurfaceDiff";
@@ -63,7 +63,7 @@ export const measureSurface = (component: DerivedAssetComponent): Promise<Parity
       readings: comparisons.flatMap(({ colour, family, structure }) => {
         const name = `${referenceId} ${families[family] ?? family}`;
         return [
-          { gate: SURFACE_COLOUR_GATE, name: `${name} colour`, unit: "ΔE", value: colour },
+          { gate: COLOUR_GATE, name: `${name} colour`, unit: "ΔE", value: colour },
           {
             gate: familyGateMap.get(family)?.structure ?? 0,
             name: `${name} structure`,

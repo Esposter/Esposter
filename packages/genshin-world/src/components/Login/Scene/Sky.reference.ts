@@ -133,9 +133,37 @@ export const skyTopic: ReferenceTopic = {
       result:
         "In scene colour the curve's inverse stretches a pixel near white to about thirteen, so the brightest pixels decide the solve: the day's horizon came out pure blue and its drawn sky stood 0.62 off its frame in scene colour. Weighed by the slope, every hour's drawn sky stands nearer its frame as the screen shows it, the night's 0.060 to 0.041 and the day's 0.119 to 0.095. Solved on its title alone, the day's sky scored the title 0.475 against 0.505 and the phone's door frame 0.511 against 0.479, the two frames' sky patches solving to skies far apart (a zenith of none on one, a white horizon on the other); over both at once, which ships with the night's over its title and door session, the night title scores 0.464, the dawn 0.427, the day 0.469, the door session 0.500 against 0.525 and the door recording 0.583 level, while the phone's door frame stands at 0.503. Where every reference shows cloud, low toward the day's sun, the solved halo stands a yellow green no pixel holds, which the cloud layer covers once it is drawn",
     },
+    {
+      method:
+        "A scratch probe at login-door-session's solved camera, then login-door-recording's: the cloud layer's port drawn over the game's own Enviro_Clouds textures served to the page, scored by FLIP over the sky above the horizon where no part stands; its wisps alone at coverage 0.8 at 32 turns of their strip, at full coverage at four, and its density at half coverage, full opacity and a tiling of two",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "The wisps' alpha peaks at 0.35, so a wisps' coverage under 0.65 draws none, and at full coverage they veil the whole night sky grey (0.374 to 0.51-0.55). At 0.8 no turn of 32 scores the night's sky under the layer drawn with none (0.3741 at best, 0.3785 at worst), nor the dusk's by more than 0.0003 (0.5092 against 0.5095); the density at a guessed half coverage covers the night's clear sky. FLIP over the sky does not price the layer, so its settings are not solved on it",
+    },
+    {
+      method:
+        "The same probe at the night's solved camera with the cloud bands' night shares changed: the top band off, the middle and top off, the top at half and full, the middle at half",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The night's sky scores 0.3741 as shipped, 0.3703 with the top band off and 0.3501 with the middle and top off; the top at half 0.4549 and at full 0.5536, the middle at half 0.4006. Every cloud of ours costs the sky more than it gains, since FLIP charges a cloud out of the reference's place twice, where ours stands and where the reference's does, so no score by pixels judges clouds the game places at random. The cloud tools (clouds, cover) read the sky at the scene's own camera, which at the door session stands off the frame's glide, so their sky mask held the frame's towers as sky there",
+    },
+    {
+      method:
+        "genshin:parity passes login --pass Atmosphere: at login-door-session's solved camera, the sky neither the exports' parts nor the scene's own cover, each image's clouds split alike from its own clear sky, the two skies' statistics held within the spread two halves of the reference's own sky stand apart over chequerboards of 32, 64 and 128 pixels at 960 across",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "With the scene's own parts left in the mask, the scene drew them only where the witness drew none, so they were read as sky until the witness's families were hidden first. Over 116880 pixels of sky the clear sky stands 1.47 ΔE off (gate 2.3), the cover 0.143 (gate 0.074), ours 49% within 3 degrees of the horizon against 25% and 6 to 16% above against 20 to 26%, the clouds 8.96 times their sky against 7.59 (0.166 against 0.051 as a log ratio), their edges 0.024 (gate 0.035) and their spread 0.002 (gate 0.066): the cover and the brightness fail",
+    },
+    {
+      method:
+        "genshin:parity layer login-door-session --witness login, held with the layer's port: the layer over the game's own Enviro_Clouds textures at the camera, its opacity, coverage, tiling, height and wisps' coverage and opacity solved by the simplex on the pass's readings each over its gate, then the three bands' shares with them",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Its settings solve to an opacity of 0.60, a coverage of 0.16, a tiling of 1.94, the wisps' coverage 0.94 and opacity 1.1, the bands barely moving (the middle 0.06 to 0.10): the brightness holds (0.009), the edges and spread hold, the cover falls from 0.143 to 0.104, its upper bands from 6 to 16% to 11 to 25%, and the clear sky's colour rises to 2.58 ΔE past its gate, the layer's thin cover tinting it. Within 3 degrees of the horizon our cover stays near 54% against 25% under every share the simplex tried, so what reads as cloud there is likely the haze over the cloud sea rather than the layer or the bands",
+    },
   ],
   openQuestions: [
-    "The cloud layer (Cloud_LOD0 under Enviro_Cloud_Layer_Mat): its program ported with textures of our own in place of its weather, density, curl, normal and wisps maps, and its run-time coverage, opacity and colours solved by hour",
+    "The cloud layer (Cloud_LOD0 under Enviro_Cloud_Layer_Mat): its program ported with textures of our own in place of its weather, density, curl, normal and wisps maps, and its run-time coverage, opacity and colours solved by hour. FLIP over the sky does not price it and the atmosphere pass's statistics do, its night settings solved on them over the game's textures: its textures of our own, and its settings named from EnviroSky's, LoginSceneEnviro's and LoginSceneWeather's fields at the hours, are next",
     "The sky's own colours by day and at night, the dawn's and the dusk's being solved over their frames' clear sky (the dawn title's and the door recording's): the game's environment system sets its sky shader's _ES_ colours, top and bottom toward the sun and away, the halo, the sun's halo and the moon's glow, at run time from no asset the export holds, so they are measured; one frame's sky by least squares (genshin:parity sky) leaves its shape and its colours unsettled, the sun's direction itself measured and most of the sky under clouds and haze",
     "The dusk sky low on the frame's left: the recording's clear sky there is almost all cloud, so the sky solved over its clear pixels draws a dusty rose band where the recording glows gold, and its bottom colour toward the sun is held by no pixel",
   ],
