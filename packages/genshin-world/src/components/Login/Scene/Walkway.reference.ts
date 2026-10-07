@@ -61,9 +61,44 @@ export const walkwayTopic: ReferenceTopic = {
       result:
         "The walkway loses structure at every scale, 0.895, 0.891, 0.910, 0.939 and 0.972 finest first against its exports' own 0.964 to 0.999 a pixel across, so its layout stands off as well as its detail. Its sides' textures paint them 0.99 to 1.01 of the stone, the stone they already read, and moved the structure from 0.0820 to 0.0815: the sides are not the gap",
     },
+    {
+      method:
+        "The surface pass's structure image over the walkway, then genshin:parity plan login-door-session --family=Walkway at 100 and at 10 pixels a metre, each column's lightness and red over blue read, and every face standing up at the walkway's top read at its texel (a scratch probe)",
+      outcome: InvestigationOutcome.Superseded,
+      result:
+        "The walkway's finest structure is lost along its lanes' borders, which the exports draw at the door session's camera as thin gold lines and ours as darker strips. From above at a centimetre a pixel the borders are 10 centimetre strips a little darker than the stone (138 to 142 against 147) with no gold, and no face standing up at the top is gold either (red over blue 1.01 to 1.08): at 10 centimetres a pixel the same strips read 1.25. The gold is the texture's coarse levels, its border texels averaged with the gilded trim beside them in the atlas, which the game's sampling shows wherever the walkway lies far enough off; our paint is drawn over the plan, where a border lies beside stone, so no level of ours can turn gold",
+    },
+    {
+      method:
+        "A what-if: the two borders painted as one more tone of the walkway's paint at the gold the coarse plan reads (1.22, 1.14 and 0.97 of the stone), in the surface pass at login-door-session",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "The walkway's colour fell from 0.49 to 0.05 ΔE, so the frame does read it that warm on the whole, but its structure rose from 0.082 to 0.121, every scale but the finest worse: near the camera the borders are the darker strips and only far off the gold, so one colour at every distance is wrong at most of them",
+    },
+    {
+      method:
+        "A what-if built whole: each level of the paint's canvas drawn from the tones k-means reads off its textures' own levels, averaged in linear light, at the level the game samples over that level's pixels by the texels each material lays over a metre (510 to 980), its cells 2 to 64 centimetres, then the surface pass at login-door-session with the witness sampling as it did and as below",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "The coarse levels do read the borders gold (1.19, 1.16 and 1.09 of the stone at 4 centimetres a cell), yet the levels moved the walkway's colour from 0.49 to 0.47 ΔE and its structure from 0.082 to 0.083; against the anisotropic witness below they read 0.136 ΔE and 0.0881 where the first level alone reads 0.146 and 0.0880. A sampler reading along a grazing line of sight, ours and the game's, reaches those levels only where a border is a pixel wide, so the tool was deleted at 54 kilobytes of paint against 45",
+    },
+    {
+      method:
+        "The door session's recording and the older day recording beside the witness's exports, then the witness's textures sampled with eight samples along a grazing line of sight, as our shade canvases are (SCENE_TEXTURE_ANISOTROPY), in every pass's measure",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Both recordings show the walkway's brick joints and its pockets' rims sharp down to the door and no gold along its borders. The witness took one sample a pixel, so along the walkway it read each texture a level or more coarser than its width across, where the borders average with the gilded trim beside them in the atlas: the gold lines were the witness's. Sampled as the game samples, the exports draw the bricks, joints and rims the recordings show; the walkway's colour falls from 0.49 to 0.15 ΔE and its gate rises from 0.011 to 0.017 (the towers' 0.020 to 0.023, the bridges' 0.021 to 0.023, the door's 0.083 to 0.089), its structure reading 0.088, finest scale 0.845 against the exports' own 0.929. The shapes' normals move by a tenth of a degree or two and hold",
+    },
+    {
+      method:
+        "fitLoginPaving's paint read over one-centimetre cells rather than two (PAINT_BLOCK_CELLS 1), at three tones and at five, in the surface pass at login-door-session against the anisotropic witness",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Three tones over a centimetre take the walkway's structure from 0.088 to 0.073 (finest scale 0.845 to 0.873) and its colour from 0.15 to 0.30 ΔE, the pockets' pale rims now drawn, at 102 kilobytes of paint against 45; five tones read 0.075 and 0.11 ΔE at 162. The joints and rims are barely painted at all (the joints 1.05, 1.03 and 1.02 of the stone, the rims 0.99, the flat lanes 1.06, 1.08 and 1.06), so what the finer cell gains is where the tones' edges lie; held uncommitted for the bundle's cost, since it leaves the walkway four times its gate",
+    },
   ],
   openQuestions: [
-    "What the walkway's structure loses to its exports past its tones: 0.082 against a gate of 0.011, neither more tones nor the whole copy's detail closing it, while the exports smoothed over five pixels read 0.017 (the scoring topic), so it is where the tones lie; the structure image shows it along the lanes' lines and where the far end meets the dais",
+    "What the walkway's structure loses to its exports: 0.088 against a gate of 0.017, most at the finest scale (0.845 against 0.929), along the bricks' joints, the pockets' rims, the lanes' borders and the curbs' edges, which the exports' albedo draws sharp and our three soft tones over two centimetres do not, and where the far end meets the dais. Tones over a centimetre close a sixth of it and more tones none, so the next tool is one that says which of the plan's features the loss lies on: each pixel's term carried back onto the walkway's plan through the witness's depth and camera and summed per cell",
     "What MonoBlockController does to each walkway piece: the rise is read by eye off the recording's far end; its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$) hold its own curve",
   ],
 };

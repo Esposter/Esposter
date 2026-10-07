@@ -5,12 +5,13 @@ import { describe, expect, test } from "vitest";
 describe(fitSky, () => {
   // Every pixel weighed by the first term alone, so the sky is one colour
   const weights = SKY_TERMS.map((_value, term) => (term === 0 ? 1 : 0));
+  const slope: [number, number, number] = [1, 1, 1];
 
   test("solves a sky of one colour with no residual", () => {
     expect.hasAssertions();
 
     const color: [number, number, number] = [0.2, 0.1, 0.3];
-    const { colors, residual } = fitSky([{ color, weights }]);
+    const { colors, residual } = fitSky([{ color, slope, weights }]);
 
     expect(colors[0]?.map((value) => Number(value.toFixed(2)))).toStrictEqual(color);
     expect(Number(residual.toFixed(2))).toBe(0);
@@ -19,9 +20,25 @@ describe(fitSky, () => {
   test("leaves a lit haze out of the pixels its residual reads", () => {
     expect.hasAssertions();
 
-    const clear = Array.from({ length: 9 }, () => ({ color: [0.2, 0.1, 0.3] as [number, number, number], weights }));
-    const { kept } = fitSky([...clear, { color: [0.9, 0.6, 0.5], weights }]);
+    const clear = Array.from({ length: 9 }, () => ({
+      color: [0.2, 0.1, 0.3] as [number, number, number],
+      slope,
+      weights,
+    }));
+    const { kept } = fitSky([...clear, { color: [0.9, 0.6, 0.5], slope, weights }]);
 
     expect(kept).toBe(clear.length);
+  });
+
+  test("leaves out a pixel the screen shows no change at", () => {
+    expect.hasAssertions();
+
+    const color: [number, number, number] = [0.1, 0.1, 0.1];
+    const { colors } = fitSky([
+      { color, slope, weights },
+      { color: [1, 1, 1], slope: [0, 0, 0], weights },
+    ]);
+
+    expect(colors[0]?.map((value) => Number(value.toFixed(2)))).toStrictEqual(color);
   });
 });

@@ -5,7 +5,7 @@ description: The login's music layers public-domain recordings of real instrumen
 
 # Sampled instruments
 
-The login's [music](/docs/genshin/music) plays the right notes, and the synthesizer playing them is why it does not sound like the game. Each register plays one fixed spectrum of harmonics under one envelope, an organ's sound, where the game's is an orchestra recorded in a hall. The shortest route to a real instrument's sound is a recording of one. So each voice of a piece can play a recording from an openly licensed library on top of its synthesized note, at a level solved against the game's sound. Everything the music derives (the playlist, the notes, the voices, each voice's fitted instrument, the expression and the listening score) is unchanged; the recordings are layered over it.
+The login's [music](/docs/genshin/music) plays the right notes, and the synthesizer playing them is why it does not sound like the game. Each register plays one fixed spectrum of harmonics under one envelope, an organ's sound, where the game's is an orchestra recorded in a hall. The shortest route to a real instrument's sound is a recording of one. So each voice of a piece can play a recording from an openly licensed library on top of its synthesized note, at a level solved against the game's sound. The playlist, the notes, the voices and each voice's fitted instrument are unchanged, and the recordings are layered over them; each segment's expression is refitted once they are, and the listening score read again.
 
 ## How it works
 

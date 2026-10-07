@@ -220,6 +220,12 @@ export const lightTopic: ReferenceTopic = {
       result:
         "Taken back pixel by pixel, the curve's steep top stood a near-white pixel for a scene colour many times its neighbours', each bin's mean followed its brightest pixels and the night's walkway came out pure blue: the night scored 0.484 against the neutral curve's 0.369. Weighed by the curve's slope, the darkest bins led instead, the curve rising thirty times as steeply at black, and the night's light left more than its bins spread. Taken back once from the bins' displayed means and weighed by their pixels, which ships, the night scores 0.462, the dawn 0.449 against 0.402, the day 0.505 against 0.464 and the door recording 0.584 against 0.541, while the phone's door frame comes nearer, 0.479 against 0.510: the sky, the clouds and the haze were all solved under the neutral curve, which the light alone cannot answer",
     },
+    {
+      method: "calibrate --haze on every hour's frame under the game's tone curve, its sky solved again under it",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "Every hour's haze runs off its bracket: the night's density to 3093 at a most opacity of one, the dawn's to 1868, the dusk's to 64 at 0.41, each only a few hundredths under its scene's own haze's residual, and the day's light leaves 0.504 of its bins' 0.580 spread. Taken back once from each bin's displayed mean, the residual is in scene colour, which the curve's steep top stretches near white, while a quarter of each night frame's pixels stand under the darkest the curve shows (Display.reference.ts), so neither weighing reads the haze; it waits on what draws the game's black",
+    },
   ],
   openQuestions: [
     "The dusk sun's direction against its shadows: a tower's shadow falls over the wings in front of the door where the recording's are lit, and the faces' shading cannot settle the direction, the light's binned residual flat round the hand-set one, so the shadows' own edges are the measure left",

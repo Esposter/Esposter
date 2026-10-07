@@ -33,8 +33,16 @@ export const displayTopic: ReferenceTopic = {
       result:
         "On the current build's door at night the light lies flattest at a contrast of 0.437 (residual 1.53e-4), and three's neutral tone mapping leaves sixteen times as much (2.50e-3); the night title's minimum is sharper still at 0.45, where the neutral leaves a thousand times more. Of MHYBloom_Z's values only the 0.5 at byte 260 stands near, leaving 1.59e-4, a twenty-sixth more, where 0.75 leaves seven tenths more, so byte 260 is _MHYBloomContrast and the curve ships with it; the gap to 0.437 is what the user's gamma and the video's encoding trade with it, since both are powers too. The exposure scales every light alike, which the plane never sees, so it ships as the 1.0 at byte 252 beside the contrast and is carried by the light solved under it. The day and dawn titles and the door recording read light fifty times further off any plane at every contrast, their haze and their older builds' cameras over the exports, so they judge nothing",
     },
+    {
+      method:
+        "Every login reference's pixels counted where a channel stands under 24 of 255, the curve's black (its lift of 0.0001 raised to the contrast) through the sRGB encode, letterbox black left out",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "A quarter of each night frame's pixels stand under it, 25.9% of the night title's (a YouTube recording in television range) and 27.8% of the door session's (the user's own, in full range), mostly the red channel of the blue night, at 10 to 20, while the dawn title and the door recording hold none and the day's frames about a hundredth. The curve as read shows nothing that dark: a scene channel a ten-thousandth under none reaches them, which _WhiteBalanceMat can give a saturated blue before the curve, and _UserInputGamma above one darkens the encode toward them, though the contrast the display pass measured asks a gamma under one",
+    },
   ],
   openQuestions: [
+    "What draws the night's channels under the curve's black: _WhiteBalanceMat's matrix, which the post profile may set, a gamma above one, or the recordings' encoding; until it is drawn, a solve weighed as the screen shows it is led by the darkest bins it cannot reach",
     "Which of MHYBloom_Z's other values is the threshold, the scaler and the intensity: the bloom alone moves what lies around the brightest pixels, so they are measured there once the login draws the game's bloom",
   ],
 };

@@ -6,6 +6,7 @@ import type { Page } from "playwright";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUpperMedian";
+import { getToneSlope } from "#src/services/genshinParity/display/getToneSlope";
 import { computePixelPoint } from "#src/services/genshinParity/shared/computePixelPoint";
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
@@ -133,6 +134,7 @@ export const solveReferenceFog = async (
               binPoints.length,
             reference,
             scatter,
+            slope: getToneSlope(reference),
             weight: binPoints.length,
           })),
         );
