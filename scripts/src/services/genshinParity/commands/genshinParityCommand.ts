@@ -19,6 +19,7 @@ import { glideCommand } from "#src/services/genshinParity/commands/glideCommand"
 import { instrumentsCommand } from "#src/services/genshinParity/commands/instrumentsCommand";
 import { launchCommand } from "#src/services/genshinParity/commands/launchCommand";
 import { listenCommand } from "#src/services/genshinParity/commands/listenCommand";
+import { lostCommand } from "#src/services/genshinParity/commands/lostCommand";
 import { lumaCommand } from "#src/services/genshinParity/commands/lumaCommand";
 import { measureCommand } from "#src/services/genshinParity/commands/measureCommand";
 import { noiseCommand } from "#src/services/genshinParity/commands/noiseCommand";
@@ -57,6 +58,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     overlay: overlayCommand,
     pose: poseCommand,
     plan: planCommand,
+    lost: lostCommand,
     parts: partsCommand,
     track: trackCommand,
     glide: glideCommand,

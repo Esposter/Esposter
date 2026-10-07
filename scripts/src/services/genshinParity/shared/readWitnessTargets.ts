@@ -3,10 +3,15 @@ import type { Page } from "playwright";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 
-// The normal target is drawn encoded into 0 to 1, a colour output clipping what falls below 0, so it is let down to
-// -1 to 1 again, its fourth channel left as it is
-const decodeTarget = (name: string, values: Float32Array): Float32Array =>
-  name === WitnessTargetName.Normal ? values.map((value, index) => (index % 4 === 3 ? value : value * 2 - 1)) : values;
+// A colour output clips what falls below 0, so the normal target is drawn encoded into 0 to 1 and let down to -1 to 1
+// Again, and the position target is drawn lifted by the lift the page hands back and let down by it, each pixel's
+// Fourth channel left as it is
+const decodeTarget = (name: string, values: Float32Array, positionLift: number): Float32Array => {
+  if (name === WitnessTargetName.Normal) return values.map((value, index) => (index % 4 === 3 ? value : value * 2 - 1));
+  if (name === WitnessTargetName.Position)
+    return values.map((value, index) => (index % 4 === 3 ? value : value - positionLift));
+  return values;
+};
 // The witness page's targets at the view last set, as its `renderWitnessTargets` reads them back from the renderer,
 // Drawing only the ones named, each handed over as base64 and read here as its floats; told to, of the scene's own parts
 // In place of the exports'
@@ -19,7 +24,7 @@ export const readWitnessTargets = async (
     targets: Partial<Record<WitnessTargetName, Float32Array>>;
   }
 > => {
-  const { families, height, parts, targets, width } = await page.evaluate(
+  const { families, height, parts, positionLift, targets, width } = await page.evaluate(
     ([targetNames, isSceneDrawn]) =>
       (
         Reflect.get(window, "renderWitnessTargets") as (
@@ -29,6 +34,7 @@ export const readWitnessTargets = async (
           families: string[];
           height: number;
           parts: WitnessGbuffer["parts"];
+          positionLift: number;
           targets: Partial<Record<WitnessTargetName, string>>;
           width: number;
         }>
@@ -47,6 +53,7 @@ export const readWitnessTargets = async (
           decodeTarget(
             name,
             new Float32Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / Float32Array.BYTES_PER_ELEMENT),
+            positionLift,
           ),
         ];
       }),

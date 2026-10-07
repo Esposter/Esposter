@@ -6,5 +6,6 @@ export enum WitnessTargetName {
   Normal = "normal",
   Occlusion = "occlusion",
   Part = "part",
+  Position = "position",
   Shadow = "shadow",
 }

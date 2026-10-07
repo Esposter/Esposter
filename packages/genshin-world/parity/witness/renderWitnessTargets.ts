@@ -10,11 +10,24 @@ import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { createOcclusionNode, StoneNodeMaterial } from "genshin-engine";
 import { Color, DirectionalLight, FloatType, Layers, Light, Mesh, RenderTarget, Vector2 } from "three";
-import { cameraViewMatrix, float, normalWorld, pass, positionView, uniform, vec3, vec4 } from "three/tsl";
+import {
+  cameraViewMatrix,
+  float,
+  normalWorld,
+  pass,
+  positionGeometry,
+  positionView,
+  uniform,
+  vec3,
+  vec4,
+} from "three/tsl";
 import { MeshBasicNodeMaterial, NodeMaterial, RenderPipeline } from "three/webgpu";
 
 // The layer the witness's parts are drawn on alone while its targets render, past every layer the scenes use
 const TARGET_LAYER = 31;
+// How far the position target lifts every place, in metres, past any part's own geometry, since the material's colour
+// Output clips what falls below 0, and handed back beside the targets for its reader to take back off
+const POSITION_LIFT = 4096;
 // The material a target draws a part with, built once for the material the part wears (whose colour the albedo
 // Reads), the target and the part's identifier and family, and kept: a material built afresh each read is a pipeline
 // WebGPU compiles and keeps, so a tool reading hundreds of views would fill the page until it crashed
@@ -41,8 +54,10 @@ let occlusion:
 // Renderer as rows of four floats a pixel: the albedo its exported material draws unlit, the depth along the view in
 // Metres, the light the material adds after lighting, the world normal its normal map bends (encoded into 0 to 1, as
 // `readWitnessTargets` decodes it), the share of the sun reaching it through the scene's shadows, the share of light
-// The scene's occlusion leaves it over the parts' own depth (all of it where the scene draws none), and the part (its
-// Identifier from one, the order the header lists it in) with its family's index, the families listed in that order.
+// The scene's occlusion leaves it over the parts' own depth (all of it where the scene draws none), the part (its
+// Identifier from one, the order the header lists it in) with its family's index, the families listed in that order,
+// And the place on the part's own geometry it shows, before its placement moves it (where a plan of ours reads it),
+// Lifted by the lift handed back with them.
 // Only the witness's parts are drawn, over nothing, so a pixel no part covers is zero throughout but in the occlusion,
 // Which leaves it whole. Only the targets asked for are drawn, every
 // One unless told, each handed back as base64, the one form a page hands its caller bytes in. Every
@@ -58,6 +73,7 @@ export const renderWitnessTargets = async (
   families: string[];
   height: number;
   parts: { family: string; id: number; mesh: string }[];
+  positionLift: number;
   targets: Partial<Record<WitnessTarget, string>>;
   width: number;
 }> => {
@@ -120,6 +136,7 @@ export const renderWitnessTargets = async (
       // Drawn only for its depth, which the occlusion's pass reads
       [WitnessTarget.Occlusion]: vec4(1),
       [WitnessTarget.Part]: vec4(float(id), float(familyIndex), 0, 1),
+      [WitnessTarget.Position]: vec4(positionGeometry.add(POSITION_LIFT), 1),
     };
     material.colorNode = targetNodeMap[target];
     targetMaterials.set(key, material);
@@ -205,5 +222,5 @@ export const renderWitnessTargets = async (
       for (const light of lights) light.layers.disable(TARGET_LAYER);
     },
   );
-  return { families, height, parts, targets, width };
+  return { families, height, parts, positionLift: POSITION_LIFT, targets, width };
 };
