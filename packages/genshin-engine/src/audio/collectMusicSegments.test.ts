@@ -9,8 +9,8 @@ describe(collectMusicSegments, () => {
     isLooping: true,
     order: [0, 1, 0, 1],
     segments: [
-      { duration: 2, expression: [], voices: [] },
-      { duration: 3, expression: [], voices: [] },
+      { duration: 2, expression: [], voices: [], volume: 0 },
+      { duration: 3, expression: [], voices: [], volume: 0 },
     ],
   };
 

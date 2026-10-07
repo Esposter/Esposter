@@ -15,8 +15,9 @@ import { scheduleMusicRecording } from "#src/audio/scheduleMusicRecording";
 // Seconds of the audio clock are scheduled, so a timer the page delays never leaves a gap. A context still
 // Suspended holds its clock, so the music starts from its beginning once the context resumes. Each time a segment
 // Plays, its notes play through a gain of their own carrying its expression, so a note ringing on past its
-// Segment's end keeps the level it ended at, and every segment's gain feeds one output, which `stop` disconnects,
-// Silencing whatever is scheduled. A voice's recordings play from `recordingBufferMap`, decoded by file beforehand
+// Segment's end keeps the level it ended at, then through its volume in the game's mix, and every segment's gain feeds
+// One output, which `stop` disconnects, silencing whatever is scheduled. A voice's recordings play from
+// `recordingBufferMap`, decoded by file beforehand
 export const createMusicPlayer = (
   context: AudioContext,
   music: Music,
@@ -42,7 +43,9 @@ export const createMusicPlayer = (
           scheduledSegment.segment.expression,
           origin + scheduledSegment.start,
         );
-        segmentOutput.connect(output);
+        segmentOutput
+          .connect(new GainNode(context, { gain: 10 ** (scheduledSegment.segment.volume / 20) }))
+          .connect(output);
       }
       nextStartSegmentOutputMap.set(scheduledSegment.start, segmentOutput);
       for (const { note, time, voice } of collectMusicNotes(scheduledSegment, scheduledUntil, until)) {

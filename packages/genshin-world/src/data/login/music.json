@@ -1125,9 +1125,10 @@
             { "duration": 1.336, "pitch": 93, "start": 98.33, "velocity": 0.471 }
           ]
         }
-      ]
+      ],
+      "volume": -5
     },
-    { "duration": 10.014, "expression": [], "voices": [] },
+    { "duration": 10.014, "expression": [], "voices": [], "volume": -3 },
     {
       "duration": 92.75,
       "expression": [-2.503, -3.53, -1.069, 0.578, -0.041, -6.451, -3.781, 1.832, -1.498, -0.87, 3.043, -17.725],
@@ -2023,7 +2024,8 @@
             { "duration": 0.698, "pitch": 73, "start": 88.838, "velocity": 0.413 }
           ]
         }
-      ]
+      ],
+      "volume": -16
     }
   ]
 }

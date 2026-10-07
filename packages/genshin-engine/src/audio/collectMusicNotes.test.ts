@@ -29,6 +29,7 @@ describe(collectMusicNotes, () => {
           ],
         },
       ],
+      volume: 0,
     },
     start: 1,
   };

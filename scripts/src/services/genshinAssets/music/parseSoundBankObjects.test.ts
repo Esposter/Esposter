@@ -1,5 +1,5 @@
-import { MusicObjectType } from "#src/models/genshinAssets/music/MusicObjectType";
-import { parseSoundBankMusicObjects } from "#src/services/genshinAssets/music/parseSoundBankMusicObjects";
+import { SoundBankObjectType } from "#src/models/genshinAssets/music/SoundBankObjectType";
+import { parseSoundBankObjects } from "#src/services/genshinAssets/music/parseSoundBankObjects";
 import { describe, expect, test } from "vitest";
 
 const createChunk = (tag: string, body: Buffer): Buffer => {
@@ -16,8 +16,8 @@ const createObject = (type: number, id: number, fields: Buffer): Buffer => {
   return Buffer.concat([head, fields]);
 };
 
-describe(parseSoundBankMusicObjects, () => {
-  test("reads the hierarchy chunk's music objects past the other chunks, leaving its other objects", () => {
+describe(parseSoundBankObjects, () => {
+  test("reads the hierarchy chunk's objects of the kinds given past the other chunks, leaving its other objects", () => {
     expect.hasAssertions();
 
     const fields = Buffer.from([1, 2]);
@@ -25,11 +25,13 @@ describe(parseSoundBankMusicObjects, () => {
     count.writeUInt32LE(2);
     const hierarchy = Buffer.concat([
       count,
-      createObject(2, 1, fields),
-      createObject(MusicObjectType.Segment, 2, fields),
+      createObject(SoundBankObjectType.Sound, 1, fields),
+      createObject(SoundBankObjectType.MusicSegment, 2, fields),
     ]);
     const bank = Buffer.concat([createChunk("BKHD", Buffer.alloc(4)), createChunk("HIRC", hierarchy)]);
 
-    expect(parseSoundBankMusicObjects(bank)).toStrictEqual([{ data: fields, id: 2, type: MusicObjectType.Segment }]);
+    expect(parseSoundBankObjects(bank, new Set([SoundBankObjectType.MusicSegment]))).toStrictEqual([
+      { data: fields, id: 2, type: SoundBankObjectType.MusicSegment },
+    ]);
   });
 });

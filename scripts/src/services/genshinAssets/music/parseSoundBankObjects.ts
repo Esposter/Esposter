@@ -1,20 +1,18 @@
-import type { MusicObject } from "#src/models/genshinAssets/music/MusicObject";
-
-import { MusicObjectType } from "#src/models/genshinAssets/music/MusicObjectType";
+import type { SoundBankObject } from "#src/models/genshinAssets/music/SoundBankObject";
+import type { SoundBankObjectType } from "#src/models/genshinAssets/music/SoundBankObjectType";
 
 const HIERARCHY_CHUNK = "HIRC";
-const MUSIC_OBJECT_TYPES = new Set<number>(Object.values(MusicObjectType).filter((value) => typeof value === "number"));
-// A sound bank's music objects: its chunks are a tag and a size each, and its hierarchy chunk a count of objects, each
-// A type byte, a size and an id, its fields after them
-export const parseSoundBankMusicObjects = (bank: Buffer): MusicObject[] => {
-  const objects: MusicObject[] = [];
+// A sound bank's objects of the kinds given: its chunks are a tag and a size each, and its hierarchy chunk a count of
+// Objects, each a type byte, a size and an id, its fields after them
+export const parseSoundBankObjects = (bank: Buffer, types: ReadonlySet<SoundBankObjectType>): SoundBankObject[] => {
+  const objects: SoundBankObject[] = [];
   for (let offset = 0; offset + 8 <= bank.length; offset += 8 + bank.readUInt32LE(offset + 4)) {
     if (bank.toString("latin1", offset, offset + 4) !== HIERARCHY_CHUNK) continue;
     let objectOffset = offset + 12;
     for (let index = 0; index < bank.readUInt32LE(offset + 8); index++) {
       const type = bank.readUInt8(objectOffset);
       const size = bank.readUInt32LE(objectOffset + 1);
-      if (MUSIC_OBJECT_TYPES.has(type))
+      if (types.has(type))
         objects.push({
           data: bank.subarray(objectOffset + 9, objectOffset + 5 + size),
           id: bank.readUInt32LE(objectOffset + 5),
