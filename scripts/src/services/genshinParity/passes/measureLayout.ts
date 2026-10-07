@@ -3,7 +3,7 @@ import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityP
 
 import { checkArrangement } from "#src/services/genshinAssets/scene/checkArrangement";
 import { ARRANGEMENT_CROSS_RATIO_TOLERANCE } from "#src/services/genshinAssets/shared/constants";
-import { LAYOUT_GATE_METRES } from "#src/services/genshinParity/passes/constants";
+import { PART_GATE_METRES } from "#src/services/genshinParity/passes/constants";
 import { openComponentWitnessPage } from "#src/services/genshinParity/passes/openComponentWitnessPage";
 import { withFinalizerAsync } from "@esposter/shared";
 
@@ -29,12 +29,12 @@ export const measureLayout = async (component: DerivedAssetComponent): Promise<P
             unit: "cross-ratio",
             value: Math.abs(fitted - measured),
           })),
-          ...families.map(({ largest, name }) => ({ gate: LAYOUT_GATE_METRES, name, unit: "m", value: largest })),
+          ...families.map(({ largest, name }) => ({ gate: PART_GATE_METRES, name, unit: "m", value: largest })),
           ...Object.entries(familyOffsets).flatMap(([family, [x, y]]) => {
             const [explainedX, explainedY] = explainedOffsets[family] ?? [0, 0];
             return [
-              { gate: LAYOUT_GATE_METRES, name: `${family} row across`, unit: "m", value: Math.abs(x - explainedX) },
-              { gate: LAYOUT_GATE_METRES, name: `${family} row up`, unit: "m", value: Math.abs(y - explainedY) },
+              { gate: PART_GATE_METRES, name: `${family} row across`, unit: "m", value: Math.abs(x - explainedX) },
+              { gate: PART_GATE_METRES, name: `${family} row up`, unit: "m", value: Math.abs(y - explainedY) },
             ];
           }),
         ],

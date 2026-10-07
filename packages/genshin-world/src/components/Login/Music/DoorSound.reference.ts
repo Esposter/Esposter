@@ -28,14 +28,21 @@ export const doorSoundTopic: ReferenceTopic = {
     },
     {
       method:
-        "Each sound's strongest spectral peaks; fitLoginDoorSound's levels rendered by computeSoundEffectSamples and fitted to the burst as the game's were",
+        "Each sound's strongest spectral peaks; the door sound fit's levels rendered by computeSoundEffectSamples and fitted to the burst as the game's were",
       outcome: InvestigationOutcome.Adopted,
       result:
         "Neither sound has a pitch: their spectra's peaks fall at no harmonic series, so each is noise whose level moves in each octave band, which our noise plays from those levels alone. Rendered so, the door's sound leaves 3.08 decibels of the burst unexplained, as the game's own two do, at the level the fit gives it, starting 0.32 seconds after the click",
     },
+    {
+      method:
+        "genshin:assets sounds over the door recording's audio from 14.633 to 16.5 seconds: every sound of Minimum.pck by its bands' levels from 1 kHz every 25 milliseconds, then every set of the best five, its starts refined, under one gain over every band",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The rush scores 0.928 from 15.025 seconds and the rumble 0.913 from 14.950, the rest 0.784 and under. The rumble alone leaves 4.19 decibels unexplained, the rumble and the rush 75 milliseconds after it 3.31, and a third sound 3.27, so the door is the pair, the rush now 75 milliseconds after the rumble rather than the tenth of a second the earlier match read at 50 millisecond frames. A gain a band instead of one over every band reads the rumble alone at 1.99, better than the pair's 3.01: it lets the rumble stand in for the rush's top octaves",
+    },
   ],
   openQuestions: [
     "The login's other sounds: the clicks on its buttons and the wind, each found as the door's was against a recording that plays it",
-    "Whether the door's two sounds are one event of the game's: they start a tenth of a second apart in every fit, which the bank's own events would say",
+    "Whether the door's two sounds are one event of the game's: they start 75 milliseconds apart in the match, which the bank's own events would say",
   ],
 };

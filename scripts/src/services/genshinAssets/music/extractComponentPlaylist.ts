@@ -4,6 +4,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import { decodeGameSounds } from "#src/services/genshinAssets/music/decodeGameSounds";
 import { readGameMusicHierarchy } from "#src/services/genshinAssets/music/readGameMusicHierarchy";
 import { resolveMusicPlaylistSegments } from "#src/services/genshinAssets/music/resolveMusicPlaylistSegments";
+import { MUSIC_PACKAGE_PATTERN } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
@@ -41,6 +42,6 @@ export const extractComponentPlaylist = async (component: DerivedAssetComponent)
   await mkdir(music, { recursive: true });
   await writeFile(join(music, "playlist.json"), `${JSON.stringify(componentPlaylist, null, 2)}\n`);
   const sourceIds = new Set(segments.flatMap(({ clips }) => clips.map(({ sourceId }) => sourceId)));
-  await Array.fromAsync(decodeGameSounds((id) => sourceIds.has(id), music));
+  await Array.fromAsync(decodeGameSounds(MUSIC_PACKAGE_PATTERN, (id) => sourceIds.has(id), music));
   return componentPlaylist;
 };
