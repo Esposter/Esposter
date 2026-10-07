@@ -5,6 +5,7 @@ import type { SceneWitness } from "#src/models/scene/SceneWitness";
 
 import "@fontsource/signika/600.css";
 import { benchScene } from "#parity/benchScene";
+import { getSceneCamera } from "#parity/getSceneCamera";
 import { getSceneFog } from "#parity/getSceneFog";
 import { getSceneSky } from "#parity/getSceneSky";
 import { renderMusic } from "#parity/renderMusic";
@@ -13,8 +14,10 @@ import { setSceneCloudColors } from "#parity/setSceneCloudColors";
 import { setSceneCloudCover } from "#parity/setSceneCloudCover";
 import { setSceneCloudHeights } from "#parity/setSceneCloudHeights";
 import { setSceneLights } from "#parity/setSceneLights";
+import { claimWitnessRenderers } from "#parity/witness/claimWitnessRenderers";
 import { computeWitnessParts } from "#parity/witness/computeWitnessParts";
 import { computeWitnessPoints } from "#parity/witness/computeWitnessPoints";
+import { getWitnessFamilyOffsets } from "#parity/witness/getWitnessFamilyOffsets";
 import { loadWitness } from "#parity/witness/loadWitness";
 import { renderWitnessTargets } from "#parity/witness/renderWitnessTargets";
 import { setWitnessView } from "#parity/witness/setWitnessView";
@@ -60,13 +63,13 @@ if (screen && root) {
   const readyProps = screen.readyEvent ? { [`on${capitalize(screen.readyEvent)}`]: resolveReady } : {};
   if (!screen.readyEvent) resolveReady();
   const witnessLayoutUrl = searchParameters.get("witness");
-  const witnessParts = witnessLayoutUrl ? await loadWitness(witnessLayoutUrl, screen.witnessFamilies) : undefined;
-  const witness: SceneWitness | undefined = witnessParts
+  const loaded = witnessLayoutUrl ? await loadWitness(witnessLayoutUrl, screen.witnessFamilies) : undefined;
+  const witness: SceneWitness | undefined = loaded
     ? {
-        families: ref(witnessParts.children.map(({ name: family }) => family)),
+        families: ref(loaded.parts.children.map(({ name: family }) => family)),
         isAlone: ref(false),
         isClockHeld: ref(false),
-        parts: witnessParts,
+        parts: loaded.parts,
       }
     : undefined;
   const sceneContext = shallowRef<SceneContext>();
@@ -81,6 +84,7 @@ if (screen && root) {
   }).mount(root);
   Reflect.set(window, "setScreenProps", (screenProps: Record<string, unknown>) => Object.assign(props, screenProps));
   Reflect.set(window, "benchScene", (frameCount: number) => benchScene(sceneContext.value, frameCount));
+  Reflect.set(window, "getSceneCamera", () => getSceneCamera(sceneContext.value));
   Reflect.set(window, "getSceneSky", () => getSceneSky(sceneContext.value));
   Reflect.set(window, "getSceneFog", () => getSceneFog(sceneContext.value));
   Reflect.set(window, "renderMusic", renderMusic);
@@ -96,6 +100,8 @@ if (screen && root) {
   Reflect.set(window, "setSceneLights", (shares: Parameters<typeof setSceneLights>[1]) =>
     setSceneLights(sceneContext.value, shares),
   );
+  // Each renderer of the exports with what of the scene claims it, the inventory pass's measure
+  if (loaded) Reflect.set(window, "claimWitnessRenderers", () => claimWitnessRenderers(loaded.layout, screen));
   // The camera solve and the ranking set the witness's view from the shooting browser, one view a call
   if (witness) {
     Reflect.set(window, "setWitnessView", (view: WitnessView) => setWitnessView(witness, view));
@@ -111,6 +117,8 @@ if (screen && root) {
     Reflect.set(window, "computeWitnessPoints", (landmarks: Parameters<typeof computeWitnessPoints>[1]) =>
       computeWitnessPoints(witness, landmarks),
     );
+    // How far the scene stands each family off its laid-out place, the layout pass's measure
+    Reflect.set(window, "getWitnessFamilyOffsets", () => getWitnessFamilyOffsets(witness));
     // The families the witness draws, which the ranking hands back to the scene
     window.document.body.dataset.witnessFamilies = witness.families.value.join(",");
   }

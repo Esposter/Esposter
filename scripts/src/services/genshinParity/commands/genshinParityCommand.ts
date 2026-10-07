@@ -23,7 +23,7 @@ import { measureCommand } from "#src/services/genshinParity/commands/measureComm
 import { noiseCommand } from "#src/services/genshinParity/commands/noiseCommand";
 import { overlayCommand } from "#src/services/genshinParity/commands/overlayCommand";
 import { partsCommand } from "#src/services/genshinParity/commands/partsCommand";
-import { placeCommand } from "#src/services/genshinParity/commands/placeCommand";
+import { passesCommand } from "#src/services/genshinParity/commands/passesCommand";
 import { planCommand } from "#src/services/genshinParity/commands/planCommand";
 import { polarCommand } from "#src/services/genshinParity/commands/polarCommand";
 import { poseCommand } from "#src/services/genshinParity/commands/poseCommand";
@@ -43,6 +43,7 @@ import { defineCommand } from "citty";
 export const genshinParityCommand: CommandDef = defineCommand({
   meta: { description: "Shoot, score, trace and record the game's screens against ours", name: "genshin:parity" },
   subCommands: {
+    passes: passesCommand,
     fetch: fetchCommand,
     clouds: cloudsCommand,
     cover: coverCommand,
@@ -53,7 +54,6 @@ export const genshinParityCommand: CommandDef = defineCommand({
     fog: fogCommand,
     overlay: overlayCommand,
     pose: poseCommand,
-    place: placeCommand,
     plan: planCommand,
     parts: partsCommand,
     track: trackCommand,

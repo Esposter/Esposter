@@ -14,11 +14,11 @@ const COLOR_SLOTS = new Set<string>([WitnessProperty.MainTexture]);
 // Drawn at every placement with the material each of its submeshes names, in a group per family of the scene's parts
 // Its mesh's name falls in, each part named by its mesh; given families, a mesh none of them names is left out, and
 // Without them every mesh is drawn in one unnamed family. The meshes and textures are served
-// Beside the layout, by their export folders
+// Beside the layout, by their export folders, and the layout is handed back with the parts
 export const loadWitness = async (
   layoutUrl: string,
   familyMeshRegexMap: Readonly<Record<string, RegExp>> = {},
-): Promise<Group> => {
+): Promise<{ layout: SceneLayout; parts: Group }> => {
   const getUrl = (path: string): string => new URL(path, new URL(layoutUrl, window.location.href)).href;
   const response = await fetch(layoutUrl);
   const layout = (await response.json()) as SceneLayout;
@@ -81,5 +81,5 @@ export const loadWitness = async (
     part.scale.set(...scale);
     getFamilyGroup(family ?? "").add(part);
   }
-  return witness;
+  return { layout, parts: witness };
 };

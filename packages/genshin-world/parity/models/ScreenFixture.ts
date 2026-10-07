@@ -17,4 +17,9 @@ export interface ScreenFixture {
   variants?: Record<string, Record<string, unknown>>;
   // For a scene, the game's meshes each family of its parts stands in for, which a witness render groups its exports by
   witnessFamilies?: Record<string, RegExp>;
+  // For a scene, the game's renderers it draws by its own shaders rather than a family's kit, and those it does not draw
+  // Yet, each by what it is, matched as its mesh's name and its materials' joined by spaces: with its families, every
+  // Renderer of its exports is claimed (the inventory pass)
+  witnessStandIns?: Record<string, RegExp>;
+  witnessUndrawn?: Record<string, RegExp>;
 }

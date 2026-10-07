@@ -13,12 +13,19 @@ export const inventoryTopic: ReferenceTopic = {
       result:
         "The scene's own settings are in its scripts' bytes, most never read. MonoLoginScene holds, besides the rows' prefabs, counts and lengths, two speeds of 3.5 and 4.5 beside two easing curves, a run of floats (3, 5, 2, 4, 4.5, 8, 17, 19, 9.5, 18, 23, 6) where the walkway's rise was read by eye at 3 metres down and 17.5 ahead, the CloudEffect and LightShaft anchors, Eff_SceneCamera_Cloud_Login, and four god ray and four halo effects, one an hour. EnviroSky, LoginSceneEnviro and LoginSceneWeather hold about 120 gradients, 750 curves and 1900 colours between them, keyed by the time of day, pointing at the sun, the moon, the cloud layer, the three cloud emitters, the cloud shadow plane, the galaxy and the aurora: the environment's settings by hour, where the sky's, the clouds', the light's and the haze's colours have been solved off the recordings. The post profile (SceneCamera(Clone) Profile) chains MHYBloom_Z, MotionBlur, WaterRipple, ToonLightBuffer, FrameTransition and ElementView, with no colour grading among them. The buttons carry MonoAudioPointerClickEvent2D and MonoAudioButtonClickEvent2D, each a few integers naming the sound it plays, beside MonoWwiseAudio and MonoAudioTimeSynchronizer",
     },
+    {
+      method:
+        "genshin:parity passes login's inventory measure: each renderer of the exports, its mesh and materials, claimed by the login fixture's families, its stand-ins or the parts it names as not drawn",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Every renderer is claimed: the towers, bridges, walkway and door by their families, the sky's dome, moon and stars by the scene's sky, and five named as not drawn, the door's two auras on their cones, the aurora and the cloud layer on the one dome, and the galaxy. The cloud emitters, the god rays and halos and the sounds are effects and banks, which the measure does not read yet",
+    },
   ],
   openQuestions: [
     "Which field of MonoLoginScene each of its floats and curves is: the glide's speeds and easing against the measured 3.14 and 3.9 metres a second, and the walkway's rise against its eye-read sink and distances",
     "Which of EnviroSky's, LoginSceneEnviro's and LoginSceneWeather's gradients and curves is which of the environment's settings, each sampled at an hour against the colour solved off that hour's recording",
     "Whether the login draws any colour grade, its post profile holding none, and MHYBloom_Z's threshold, intensity and tint",
     "Which sound each button's click script names, through the Wwise banks' events",
-    "Every mesh, material and effect the exports hold claimed by a part of ours or named as not drawn: Cloud_LOD0, the cloud layer's dome, was not drawn, nor the god rays, halos, galaxy and aurora",
+    "Every effect, clip and sound the exports hold claimed by a part of ours or named as not drawn, as every renderer is: the cloud emitters, the god rays and the halos",
   ],
 };

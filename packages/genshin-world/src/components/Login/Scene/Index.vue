@@ -28,7 +28,6 @@ import { createLoginHullsGeometry } from "#src/services/login/hull/createLoginHu
 import { advanceLoginGlide } from "#src/services/login/scene/advanceLoginGlide";
 import {
   LOGIN_CAMERA_FAR,
-  LOGIN_CAMERA_FOV,
   LOGIN_CAMERA_HEIGHT,
   LOGIN_CAMERA_PITCH,
   LOGIN_CAMERA_YAW,
@@ -59,6 +58,7 @@ import {
   LOGIN_TOWERS_ROW_OFFSET,
   LOGIN_WALKWAY_ROW,
 } from "#src/services/login/scene/constants";
+import { getLoginCameraFov } from "#src/services/login/scene/getLoginCameraFov";
 import { LoginOcclusionRadiusMap } from "#src/services/login/scene/LoginOcclusionRadiusMap";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
 import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
@@ -116,7 +116,8 @@ const emit = defineEmits<{ doorFormed: []; ready: [] }>();
 // oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see
 const witness = inject(SceneWitnessKey, null);
 const checkIsOwnFamilyDrawn = (family: LoginPartFamily): boolean => !witness?.families.value.includes(family);
-const { scene } = useTres();
+const { scene, sizes } = useTres();
+const cameraFov = computed(() => getLoginCameraFov(sizes.aspectRatio.value));
 const { onRender } = useLoop();
 const lightUniforms = createLightUniforms();
 lightUniforms.rimStrength.value = LOGIN_RIM_STRENGTH;
@@ -400,7 +401,7 @@ onUnmounted(() => {
 <template>
   <TresPerspectiveCamera
     :far="LOGIN_CAMERA_FAR"
-    :fov="LOGIN_CAMERA_FOV"
+    :fov="cameraFov"
     :position="[0, LOGIN_CAMERA_HEIGHT, cameraZ]"
     :rotation="[LOGIN_CAMERA_PITCH, LOGIN_CAMERA_YAW, 0]"
     rotation-order="YXZ"

@@ -46,15 +46,17 @@ flowchart TD
   ORG -->|yes| SHIFT["Shift the world group back round the origin"]
   ORG -->|no| SEL
   SHIFT --> SEL["terrain: the CDLOD tiles wanted, at what detail"]
+  SEL --> DRW["terrain: the cached tiles drawn, an ancestor in place of one still missing"]
   SEL --> STR["streaming: missing tiles asked for, coarsest first"]
   STR --> WK["worker: heights and colours as transferable buffers"]
-  WK --> CACHE["streaming: the cache, least wanted freed"]
-  CACHE --> RND["renderer: the scene pass"]
+  WK -->|a later frame| CACHE["streaming: the cache, least wanted freed"]
+  CACHE --> DRW
+  DRW --> RND["renderer: the scene pass"]
   ATM --> RND
   RND --> PST["post: outlines, occlusion, god rays, fog, bloom, grade, anti-aliasing"]
 ```
 
-Nothing reads state that a later stage of the same frame writes: the light is written before the scene draws, and a tile arrives in the cache before it is selected for drawing.
+Nothing reads state that a later stage of the same frame writes: the light is written before the scene draws, and only a tile already in the cache is drawn, its nearest cached ancestor standing in for one still asked for until it arrives in a later frame.
 
 ## It runs in the reader's browser, so it is minimal first
 

@@ -5,10 +5,11 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The English PC client's notice, from the 2023 recording of its launch at 1080p, in the current build's wording
   "health-notice": { capture: "yt-sQNqMfmfkZU.mp4", screen: "SplashHealthNotice", seconds: 8 },
   "loading-startup": { screen: "LoadingStartup", wikiTitle: "File:Loading Screen Startup.png" },
-  // The title at dawn, day and night: frames of public recordings of the PC client idling on it with no interface, at
-  // The camera the door recording solves, each at the moment of the glide's loop its towers and walkway stand at
+  // The title at dawn, day and night: frames of public recordings of older builds of the PC client idling on it with no
+  // Interface, drawn at the current build's camera, each at the moment of the glide's loop its towers and walkway stand at
   "login-dawn-title": {
     capture: "yt-sQNqMfmfkZU.mp4",
+    isOtherBuild: true,
     props: { heldScrolled: 132, isInterfaceHidden: true, stage: "Title", timeOfDay: "Dawn" },
     screen: "LoginScreen",
     seconds: 18,
@@ -16,6 +17,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Its recording masks the frame's top and bottom 50 rows black, so only the rows between are scored
   "login-day-title": {
     capture: "yt-7kK6HqVfASk.mp4",
+    isOtherBuild: true,
     props: { heldScrolled: 118, isInterfaceHidden: true, stage: "Title", timeOfDay: "Day" },
     region: { height: 980, width: 1920, x: 0, y: 50 },
     screen: "LoginScreen",
@@ -24,15 +26,17 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The door from the flight's last pose, on the phone build at 4:3 under the day sky, scored over the door and its
   // Dais alone, since its interface and its narrower frame differ from the computer's, and drawn at a phone's tier
   "login-door": {
+    isOtherBuild: true,
     props: { isInterfaceHidden: true, qualityTier: "Medium", stage: "Door", timeOfDay: "Day" },
     region: { height: 760, width: 700, x: 690, y: 440 },
     screen: "LoginScreen",
     wikiTitle: "File:Login Menu Door and Platform.png",
   },
-  // The door from the flight's last pose on the current build's PC client at 16:9, the English recording's frame at the
+  // The door from the flight's last pose on an older build's PC client at 16:9, the English recording's frame at the
   // Door, scored over the scene above the prompt and clear of the corner buttons
   "login-door-recording": {
     capture: "yt-rBnfA4pXw6U.mp4",
+    isOtherBuild: true,
     // Read off the recording: the dais's front feet on the walkway's top, the arch's apex, and the walkway's wings at
     // The top of their outer faces
     landmarks: {
@@ -51,6 +55,17 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     region: { height: 960, width: 1560, x: 180, y: 0 },
     screen: "LoginScreen",
     seconds: 14,
+  },
+  // The door at night on the current build (7.1) at 21.5:9, this machine's own recording of the client, its last frame
+  // Before the prompt, the camera still easing toward its rest; scored clear of the corner buttons and the build string
+  "login-door-session": {
+    capture: "session-2.mp4",
+    // Read off the frame: the arch's apex and the dais's front feet on the walkway's top
+    landmarks: { doorApex: [1717, 575], doorFootLeft: [1585, 1028], doorFootRight: [1855, 1028] },
+    props: { isInterfaceHidden: true, stage: "Door", timeOfDay: "Night" },
+    region: { height: 1300, width: 3100, x: 0, y: 0 },
+    screen: "LoginScreen",
+    seconds: 35.9,
   },
   // The login screen's interface over the English recording's own frames of it, at 1080 high: its title, its status as
   // Data loads, and its prompt at the door. The recording is of an older build, whose title shows a repair button and
@@ -88,6 +103,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   "login-night-title": {
     capture: "yt-PnqNza4qWzs.mp4",
+    isOtherBuild: true,
     props: { heldScrolled: 135, isInterfaceHidden: true, stage: "Title", timeOfDay: "Night" },
     screen: "LoginScreen",
     seconds: 12,

@@ -31,7 +31,7 @@ flowchart TD
   W -->|rain or storm| RN[Rain volume, wetness, lightning]
   W -->|snow| SN[Snow volume]
   W -->|fog or sandstorm| FG[Denser fog, streaks]
-  RN --> U[Sky state blended toward the weather's colours]
+  RN --> U[Sky state holding the weather's own colours]
   SN --> U
   FG --> U
   Y --> U
@@ -53,10 +53,10 @@ flowchart TD
 
 ## Key files
 
-| File                                                       | Role after the change                                      |
-| :--------------------------------------------------------- | :--------------------------------------------------------- |
-| `packages/genshin-engine/src/atmosphere/sampleSkyState.ts` | The day's sky, which a weather blends toward its own       |
-| `packages/genshin-engine/src/atmosphere/applySkyState.ts`  | Where the blended sky is written into everything it lights |
+| File                                                       | Role after the change                                        |
+| :--------------------------------------------------------- | :----------------------------------------------------------- |
+| `packages/genshin-engine/src/atmosphere/sampleSkyState.ts` | The day's sky, whose colours a weather writes its own over   |
+| `packages/genshin-engine/src/atmosphere/applySkyState.ts`  | Where the weather's sky is written into everything it lights |
 
 New files:
 

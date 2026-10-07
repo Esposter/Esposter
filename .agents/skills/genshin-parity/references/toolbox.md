@@ -17,52 +17,54 @@ Read before any pass or round on a Genshin screen or scene, and whenever its loo
 
 ### Every pass
 
-What each pass's tools stand on, and the runner the passes still lack.
+What each pass's tools stand on, and the runner that checks them in order.
 
-| Unknown                              | Tool                                                                                                                                         |
-| :----------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- |
-| A render that settles in one frame   | the witness: SMAA, its clock held, one frame                                                                                                 |
-| Which layer a score's loss is in     | `scoreLayers`: `compare --witness`                                                                                                           |
-| A scene's frame cost, and what it is | `genshin:parity bench`: frame time, draw calls, objects by kind                                                                              |
-| One region across frames, or ours    | `zoom --with`: the region of each image stacked                                                                                              |
-| A point read off an image            | `zoom --grid`: lines every so many pixels, labelled                                                                                          |
-| Which pass is red, and its measure   | gap: `genshin:parity passes`, each pass's measure against its gate in order (`apps/web/content/docs/proposals/genshin/recreation-passes.md`) |
+| Unknown                              | Tool                                                                                               |
+| :----------------------------------- | :------------------------------------------------------------------------------------------------- |
+| A render that settles in one frame   | the witness: SMAA, its clock held, one frame                                                       |
+| Which layer a score's loss is in     | `scoreLayers`: `compare --witness`                                                                 |
+| A scene's frame cost, and what it is | `genshin:parity bench`: frame time, draw calls, objects by kind                                    |
+| One region across frames, or ours    | `zoom --with`: the region of each image stacked                                                    |
+| A point read off an image            | `zoom --grid`: lines every so many pixels, labelled                                                |
+| Which pass is red, and its measure   | `genshin:parity passes`: each pass's measure against its gate in order, `ParityPasses.snapshot.md` |
 
 ### Inventory
 
-| Unknown                                      | Tool                                                                    |
-| :------------------------------------------- | :---------------------------------------------------------------------- |
-| Which assets a scene draws                   | `extract`: the closure of its roots by file, path ID                    |
-| The scene's hierarchy, and what it lost      | `genshin:assets tree`: flags anchors, lost fathers                      |
-| A script's, a camera's or a light's settings | `behaviours`: raw bytes scanned for shapes, built-ins past their header |
-| Which object a clip's `(the animator)` moves | `behaviours`: each animator printed on its game object                  |
-| What a script spawns, and where              | `behaviours`, set as `spawns` at their anchors                          |
-| What a shader computes                       | `shaders`: the annotated disassembly, and HLSL where it decompiles      |
-| Where the open world places an object        | `parseStreamingPlacements` over its tile's or area's StreamGen blob     |
-| A placement's prefab                         | its 64-bit path hash looked up in the game's asset index                |
+| Unknown                                      | Tool                                                                     |
+| :------------------------------------------- | :----------------------------------------------------------------------- |
+| Which assets a scene draws                   | `extract`: the closure of its roots by file, path ID                     |
+| The scene's hierarchy, and what it lost      | `genshin:assets tree`: flags anchors, lost fathers                       |
+| A script's, a camera's or a light's settings | `behaviours`: raw bytes scanned for shapes, built-ins past their header  |
+| Which object a clip's `(the animator)` moves | `behaviours`: each animator printed on its game object                   |
+| What a script spawns, and where              | `behaviours`, set as `spawns` at their anchors                           |
+| What a shader computes                       | `shaders`: the annotated disassembly, and HLSL where it decompiles       |
+| Where the open world places an object        | `parseStreamingPlacements` over its tile's or area's StreamGen blob      |
+| A placement's prefab                         | its 64-bit path hash looked up in the game's asset index                 |
+| Whether every renderer is accounted for      | `passes`' inventory: the fixture's families, stand-ins and undrawn parts |
 
 ### Layout
 
-| Unknown                                | Tool                                                                                                                       |
-| :------------------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
-| A spawned prefab's place and scale     | `composeWorldMatrices`, through the anchor                                                                                 |
-| A row a script scrolls                 | the spawn's `copies`, laid out by `copySpawns` for the witness                                                             |
-| Whether the arrangement is right       | `genshin:assets arrangement`: cross-ratios, drift                                                                          |
-| A scrolled row's phase on a reference  | `view` held (`heldScrolled`) along the loop, `parts`, then `compare`                                                       |
-| Where a row of parts stands, held cam  | `genshin:parity place`: one offset refined on edges both ways                                                              |
-| A row or a camera on far landmarks     | `place --landmarks`, and `pose` with landmarks that pick an instance                                                       |
-| Where each part lands on the reference | `genshin:parity overlay`: boundaries, edge distance                                                                        |
-| Whether a stand-in blocks a path       | `genshin:assets clearance`, held by the hulls' test                                                                        |
-| A tile's ground                        | `parseTerrainHeights` over its TerrainData                                                                                 |
-| Our ground drawn as the game's         | `fitGaussianHills`: hills fitted to the tiles round the origin, error printed                                              |
-| Our transforms against the exports'    | gap: a numeric layout diff in metres and projected pixels (`apps/web/content/docs/proposals/genshin/recreation-passes.md`) |
+| Unknown                                | Tool                                                                                                                     |
+| :------------------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
+| A spawned prefab's place and scale     | `composeWorldMatrices`, through the anchor                                                                               |
+| A row a script scrolls                 | the spawn's `copies`, laid out by `copySpawns` for the witness                                                           |
+| A scrolled row's phase on a reference  | `view` held (`heldScrolled`) along the loop, `parts`, then `compare`                                                     |
+| A camera on far landmarks              | `pose` with landmarks that pick an instance                                                                              |
+| Where each part lands on the reference | `genshin:parity overlay`: boundaries, edge distance                                                                      |
+| Whether a stand-in blocks a path       | `genshin:assets clearance`, held by the hulls' test                                                                      |
+| A tile's ground                        | `parseTerrainHeights` over its TerrainData                                                                               |
+| Our ground drawn as the game's         | `fitGaussianHills`: hills fitted to the tiles round the origin, error printed                                            |
+| Our families against the exports'      | `passes`' layout: each family's furthest part in metres, the cross-ratios                                                |
+| A row shifted at run time              | `passes`' layout: each witness family's offset past what the exports explain                                             |
+| Our transforms in projected pixels     | gap: the layout diff projected at each reference's pose (`apps/web/content/docs/proposals/genshin/recreation-passes.md`) |
 
 ### Camera
 
-| Unknown                         | Tool                                                              |
-| :------------------------------ | :---------------------------------------------------------------- |
-| The camera's pose               | `genshin:parity pose`: landmarks, refined on edges                |
-| The camera's path over a flight | `genshin:parity track`: the pose at each frame, `--top-row` clear |
+| Unknown                          | Tool                                                              |
+| :------------------------------- | :---------------------------------------------------------------- |
+| The camera's pose                | `genshin:parity pose`: landmarks, refined on edges                |
+| The camera's path over a flight  | `genshin:parity track`: the pose at each frame, `--top-row` clear |
+| Whether our camera is the game's | `passes`' camera: landmarks from the scene's own camera, no solve |
 
 ### Shape and surface
 

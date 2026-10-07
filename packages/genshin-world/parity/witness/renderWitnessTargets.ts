@@ -165,7 +165,16 @@ export const renderWitnessTargets = async (
             if (target === WitnessTarget.Occlusion) occlusionPipeline.render();
             else renderer.render(scene, camera);
             const pixels = await renderer.readRenderTargetPixelsAsync(drawnTarget, 0, 0, width, height);
-            return new Uint8Array(pixels.buffer, pixels.byteOffset, pixels.byteLength).toBase64();
+            // WebGPU copies a target out in rows padded to 256 bytes, so a width whose row does not fill its last
+            // Block (any aspect but the few whose width works out to a multiple of 16) carries each row's padding,
+            // Which is dropped
+            const paddedRowLength = pixels.length / height;
+            const rows = Array.from({ length: height }, (_row, row) =>
+              pixels.subarray(row * paddedRowLength, row * paddedRowLength + width * 4),
+            );
+            const packed = new Float32Array(width * height * 4);
+            for (const [row, values] of rows.entries()) packed.set(values, row * width * 4);
+            return new Uint8Array(packed.buffer).toBase64();
           },
           () => {
             for (const [index, { mesh }] of drawnMeshes.entries())

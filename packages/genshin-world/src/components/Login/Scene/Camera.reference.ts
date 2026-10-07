@@ -152,7 +152,7 @@ export const cameraTopic: ReferenceTopic = {
     {
       method:
         "genshin:parity pose login-door-recording --witness login --families Door,Walkway --refine 80, x, heading and field of view held at 0, 180 and 51.19, with the pitch held at ModelCamera's 5.69 (its quaternion 0, 0.99877, 0.04967, 0) and freed; then the seven walkway and door landmarks alone",
-      outcome: InvestigationOutcome.Adopted,
+      outcome: InvestigationOutcome.Superseded,
       result:
         "Held at ModelCamera's turn the edges solve the eye to 1.224 metres over the walkway's top and 10.64 short of the door, 0.97 pixels of the recording's edges at 480 wide, and the landmarks to 1.144 and 10.75, 7.85 pixels root mean square at 1920, most of it the back wings'. Freed, the pitch trades with the height, 4.03 degrees at 1.53 metres on the edges and 6.05 at 1.09 on the landmarks, so the exact 5.69 lies inside what the frame can tell; the eye at the lift's 1 metre lands the door 2.52 and the walkway 2.98 pixels off, so the frame rejects it. The towers' edges price the row's height flat, 10.0 to 10.6 pixels over 3 metres, and the lantern tower's two edges stand 0.12 and 0.2 metres from the row's place at the new pose, so the row is left where it stands",
     },
@@ -169,10 +169,23 @@ export const cameraTopic: ReferenceTopic = {
       result:
         "Held across an 18.5:9 screen, 45 degrees spans 51.19 vertically at 16:9, the 51.2 the door frame's widths and the glide's frames read (51.0 to 51.4). No asset holds the design aspect, and the wiki's 4:3 door still is of an older build's camera, so this explains the measured value without replacing it",
     },
+    {
+      method:
+        "genshin:parity passes login's camera measure: login-door-recording's ten landmarks projected from the scene's own camera in the reference's state (eye 0, 1.22, -3.03, heading 180, pitch 5.69, field of view 51.2), nothing solved",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "19.14 pixels root mean square at 1920 against the gate's 2: the right tower's two landmarks 1.2 pixels off, the door's apex and feet 8.0 to 9.6, the walkway's four wings 14.4 to 18.5 and the column's crown 47.3. The camera stands where the edges' solve put it, so what is off is where the landmarks' parts stand in the reference's state, which the layout pass settles before this one is read",
+    },
+    {
+      method:
+        "session-2.mp4, this machine's recording of the current build (7.1) at 3440 by 1440, its frame at 35.9 seconds: the arch's apex and the dais's front feet read as landmarks, the eye solved under ModelCamera's turn at each field of view; then genshin:parity passes login's camera measure with the glide's axis alone solved",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The door fits within a pixel at 39.2, 45 and 51.2 degrees alike, its distance trading with the field of view, but only 45 stands the eye where the exports do: 0.997 metres over the walkway, 0.005 across, the 1 metre ModelCamera and the lift give. So at 21.5:9 the game draws LoginCamera's own 45 vertically, and 51.2 at 16:9 is the width an 18.5:9 screen shows held on a narrower one; the eye and the field of view are the game's data, and the 1.22 metres and 2.47 across the older recording solved were that build's. At the shipped camera the frame's three landmarks stand 0.74 to 1.5 pixels off (1.25 root mean square) with only its place along the glide solved, the camera still easing toward its rest. The older 16:9 recording reads 43 pixels from the same camera, its towers 80 off, another build's arrangement",
+    },
   ],
   openQuestions: [
-    "What stands the eye 0.14 to 0.22 metres over the 1 metre ModelCamera and the walkway's lift put it at, and the towers' row 2.47 metres toward -x of where the blocks lay it: MonoLoginScene's floats and curves, or the block controller's rest",
-    "Whether the game holds LoginCamera's 45 degrees horizontally across a design aspect: a current build's recording at another aspect settles it",
+    "Which data holds the design aspect of 18.5:9, a value read off the older build's 16:9 widths: a frame of the current build at 16:9 or narrower checks it",
     "How the game brings the towers to the door's phase after a long idle: every recording found idles a few seconds, so the title's phase is read off its glide's length, not a rule of the script's",
     "Where the glide comes to rest: the recording's door frame was still slowing at 1.6 metres a second when the click came, so the rest stands a little nearer the door than its pose",
   ],

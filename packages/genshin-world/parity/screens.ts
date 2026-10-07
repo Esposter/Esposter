@@ -15,12 +15,10 @@ const exportedComponents = Object.entries(barrel);
 
 export const screens: (ScreenFixture & { component: Component; directory: string; name: string })[] = Object.entries(
   fixtures,
-).flatMap(([path, { isMotionOnly, motionProps, props, readyEvent, stillProps, variants, witnessFamilies }]) => {
+).flatMap(([path, fixture]) => {
   const component = components[path.replace(/\.fixture\.ts$/u, ".vue")];
   const name = exportedComponents.find(([, exported]) => exported === component)?.[0];
   if (!component || !name) return [];
   const directory = path.slice(COMPONENTS_PREFIX.length, -FIXTURE_FILE.length);
-  return [
-    { component, directory, isMotionOnly, motionProps, name, props, readyEvent, stillProps, variants, witnessFamilies },
-  ];
+  return [{ ...fixture, component, directory, name }];
 });

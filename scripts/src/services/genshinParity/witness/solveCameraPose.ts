@@ -3,8 +3,8 @@ import type { Vector } from "#src/models/shared/Vector";
 
 import { computeMean } from "#src/services/genshinAssets/shared/computeMean";
 import { solveLinearSystem } from "#src/services/genshinParity/shared/solveLinearSystem";
+import { computeReprojectionErrors } from "#src/services/genshinParity/witness/computeReprojectionErrors";
 import { findSmallestEigenvector } from "#src/services/genshinParity/witness/findSmallestEigenvector";
-import { projectWitnessPoint } from "#src/services/genshinParity/witness/projectWitnessPoint";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { MathUtils } from "three";
 
@@ -97,9 +97,8 @@ const computeLinearPose = (
 // The camera pose (along `CAMERA_POSE_AXES`) from which points whose places are known project onto the pixels they
 // Were seen at, with each point's reprojection error in pixels and their root mean square: from six or more, the direct
 // Linear transform gives the pose in closed form, and from fewer a start must be given; Levenberg-Marquardt then
-// Minimises the reprojection error from it over all six axes, the field of view among them, but for any held. An edge's
-// Correspondence, a point on a part's silhouette, is pinned across and free along the silhouette, so only its distance
-// Across counts
+// Minimises the reprojection error from it (`computeReprojectionErrors`) over all six axes, the field of view among
+// Them, but for any held
 export const solveCameraPose = (
   correspondences: readonly { isEdge?: boolean; pixel: Pixel; point: Readonly<Vector> }[],
   width: number,
@@ -116,12 +115,7 @@ export const solveCameraPose = (
       `${correspondences.length} correspondences: ${DLT_POINT_COUNT} or more, or a start`,
     );
   const computeResiduals = (pose: readonly number[]): number[] =>
-    correspondences.flatMap(({ isEdge, pixel, point }) => {
-      const {
-        pixel: [u, v],
-      } = projectWitnessPoint(pose, point, width, height);
-      return [u - pixel[0], isEdge ? 0 : v - pixel[1]];
-    });
+    computeReprojectionErrors(pose, correspondences, width, height).flat();
   let pose = start ? [...start] : computeLinearPose(correspondences, height);
   let residuals = computeResiduals(pose);
   let damping = INITIAL_DAMPING;

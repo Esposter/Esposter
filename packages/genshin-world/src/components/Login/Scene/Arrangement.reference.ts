@@ -89,7 +89,7 @@ export const arrangementTopic: ReferenceTopic = {
     {
       method:
         "genshin:parity parts login-door-recording --family Towers, place --landmarks columnCrown,towerRightInner,towerRightOuter with --axes z, x,z and x,y,z through the door frame's pose, then view --offsets lowering the towers 5 metres beside the recording, and compare at every hour",
-      outcome: InvestigationOutcome.Adopted,
+      outcome: InvestigationOutcome.Superseded,
       result:
         "The towers stand 5 metres low with their bridges, and their row 2.47 metres toward -x and 8.94 nearer at the door. Pinned on the lantern tower's two silhouette edges at the recording's row 460 and the crowned column's top behind the door with the row's height held, no rigid move fitted, which read as each tower moving on its own; seen beside the recording, the lantern tower stood a ring too high, so its edges were pinned at the wrong height. Lowered with the bridges and moved on the edges alone, its window band, gold rings and edges land on the recording's, the crowned column within 20 pixels and the colonnade where it stood, and every hour's frame scores better. The frame's far-left tower is still another of the row's",
     },
@@ -99,6 +99,27 @@ export const arrangementTopic: ReferenceTopic = {
       outcome: InvestigationOutcome.Rejected,
       result:
         "The day title's two big towers top left are the exports' own at the day's moment of the loop, drawn so by the witness too, where the recording shows one thin tower. Scanned along the whole 200 metre loop the row's edges fit within 10 to 12 pixels nearly everywhere under the day's haze, their least 86 metres along (heldScrolled 32), where a bridge's deck crosses the frame the recording shows open and the title scores 0.4528 against 118's 0.4321; 38 and 31.6 score 0.4438 and 0.4617. Scanned across from 20 metres left to 20 right, offsets of 4, 6 and 13 metres all fit within a pixel of one another. The edges cannot place the day's towers, so its moment stays at 118: the recording is the 2022 client's, which may lay the row out apart from the current build's",
+    },
+    {
+      method:
+        "genshin:parity passes login's layout measure: the arrangement's cross-ratio, each fitted family's parts against the exports' objects composed as the family stands them (a tower at its lathe's foot), and each witness family's run-time offset across and up past what the exports explain, gated at 2 centimetres",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Matched by the objects' names, the towers read 124.56 metres off at most: the exports name a duplicated object with a numbered suffix, LoginScene_Build04_01_Lod2 (1), which the pattern refused, and a tower's fit stands it at its lathe's foot, up to 0.47 metres from its object. Matched by mesh and composed through the fit, every tower stands where the exports put it, the bridges and pillars within 0.0061 metres and the door within 0.002, and the door over the walkway holds (0.0023 against 0.01). The towers' row and its bridges stand 5 metres down, exactly Ani_Login_Lift's settled 50 units at the blocks' tenth, and 2.47 metres toward -x, which nothing in the exports explains: the layout pass's one red",
+    },
+    {
+      method:
+        "LOGIN_TOWERS_ROW_OFFSET's 2.47 metres across set to 0 for one run, then genshin:parity pose login-door-recording --witness login from the shipped pose with heading, pitch and field of view held, x freed and then held",
+      outcome: InvestigationOutcome.Superseded,
+      result:
+        "Freed, the eye moves 0.015 metres across and the lantern tower's two landmarks stay 80 to 88 pixels off (42.4 pixels root mean square), so no camera lands the towers and the walkway together with the row unshifted: the 2.47 metres is the towers standing across from the walkway, not the eye standing off it. MonoLoginScene holds a 25 at 0x224, 2.5 metres at the scene's tenth, among what read as light and haze settings, and SceneBeginNode stands 25 units short of DoorNode's 262 across; neither is named yet, so neither is adopted",
+    },
+    {
+      method:
+        "login-door-session, the current build's door frame, at the eye solved on the door's landmarks (0, 0.997, -5.433, ModelCamera's turn, 45 degrees): genshin:parity overlay with the row shipped and with its across offset set to 0, then the towers' and bridges' edges scanned across from -4 to 4 metres with their height held at the lift and their phase at the frame's",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The edges are least 0.03 metres across from where the exports lay the row, 7.61 pixels against 8.5 to 10.8 on either side, so on the current build the towers stand exactly where SceneBeginNode lays them: the 2.47 metres was the older build's frame solved through a camera 0.22 metres high and wide by its field of view, the error landing in the row. The row's offset across is 0 and the layout pass holds. A refinement on the edges with the height free ran the row 1.7 to 4.4 metres up, as edges do",
     },
   ],
   openQuestions: [

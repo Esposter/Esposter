@@ -2,35 +2,36 @@ import scroll from "#src/data/login/scroll.json";
 import walkway from "#src/data/login/walkway.json";
 import { LOGIN_DOOR_POSITION } from "#src/services/login/door/constants";
 
-// The camera holds one pose while the world glides toward it, in the scene's own units, SceneObj's tenth: turned as
-// ModelCamera is, half a turn about an axis 0.0497 toward z, so it looks straight down the walkway's middle along +z
-// Pitched 5.69 degrees up, under the vertical field of view of 51.2 the door frame's widths and the glide's frames
-// Read. Held at that turn, login-door-recording's walkway and door silhouettes put the eye 1.22 metres over the
-// Walkway's top and 10.64 short of the door (Login/Scene/Camera.reference.ts)
-const EYE_HEIGHT = 1.22;
+// How far every block of the walkway rises into place: Ani_Login_Lift, on each block's own animator, lifts it 50 units
+// At the walkway's tenth, and nothing else of the scene rises with it
+const WALKWAY_LIFT = 5;
+// ModelCamera's height over BridgeBeginNode, 60 units at SceneObj's tenth
+const MODEL_CAMERA_HEIGHT = 6;
+// The camera holds one pose while the world glides toward it, in the scene's own units, SceneObj's tenth: ModelCamera's
+// Place and turn, half a turn about an axis 0.0497 toward z, so it looks straight down the walkway's middle along +z
+// Pitched 5.69 degrees up, its eye ModelCamera's height over the walkway once the walkway has risen under it, under
+// LoginCamera's vertical field of view of 45 from an 18.5:9 screen outward (`getLoginCameraFov`). The current build's
+// Door frame at 21.5:9 puts the eye 0.997 metres over the walkway's top at 45 degrees; the design aspect is the one
+// Whose width, held on the older build's 16:9 recording, gives the 51.2 its widths read. The door's rest is that
+// Recording's, 10.64 metres short of the door (Login/Scene/Camera.reference.ts)
+const EYE_HEIGHT = MODEL_CAMERA_HEIGHT - WALKWAY_LIFT;
 export const LOGIN_DOOR_REST_DISTANCE = 10.64;
 export const LOGIN_CAMERA_HEIGHT = walkway.top + EYE_HEIGHT;
 export const LOGIN_CAMERA_Z = LOGIN_DOOR_POSITION[2] - LOGIN_DOOR_REST_DISTANCE;
 export const LOGIN_CAMERA_YAW = Math.PI;
 export const LOGIN_CAMERA_PITCH = (5.69 * Math.PI) / 180;
-export const LOGIN_CAMERA_FOV = 51.2;
+export const LOGIN_CAMERA_FOV = 45;
+export const LOGIN_CAMERA_DESIGN_ASPECT = 18.5 / 9;
 export const LOGIN_CAMERA_FAR = 2000;
 // The rows MonoLoginScene scrolls past the camera, each laid ahead of its own place and wrapped by its length: the
 // Walkway's copies, its own length apart, and the towers' with their bridges and pillars
 export const LOGIN_WALKWAY_ROW = scroll.LoginScene_Bridge01_Vo;
 export const LOGIN_TOWERS_ROW = scroll.LoginScene_Build_All;
-// How far every block of the walkway rises into place: Ani_Login_Lift, on each block's own animator, lifts it 50 units
-// At the walkway's tenth, and nothing else of the scene rises with it
-const WALKWAY_LIFT = 5;
-// Where the towers' row, its bridges and pillars with it, stands off the place the blocks lay it, the camera held at
-// The door frame's pose: the walkway's lift under it, so the colonnade behind the door lands on
-// Login-door-recording's rows (genshin:parity view --offsets at 0, 5, 10 and 14) and the lantern tower's window band
-// And gold rings on its own, and the deck of the bridge that crosses the glide's path passes under the walkway, as the
-// Game's glide passes over it however long the title idles; 2.47 metres toward -x and 8.94 nearer, the lantern tower's
-// Two edges land on the recording's (genshin:parity place --landmarks towerRightInner,towerRightOuter --axes x,z), the
-// Crowned column behind the door within 20 pixels and the colonnade where it stood. Laid where the blocks lay it, the
-// Glide drove into the bridge, and the lantern tower stood a ring too high and a third too narrow
-export const LOGIN_TOWERS_ROW_OFFSET: [number, number, number] = [-2.47, -WALKWAY_LIFT, -8.94];
+// Where the towers' row, its bridges and pillars with it, stands off the place the blocks lay it: the walkway's lift
+// Under it, since the row keeps its laid place while the walkway rises, so the deck of the bridge that crosses the
+// Glide's path passes under the walkway as the game's does however long the title idles; and 8.94 metres nearer, the
+// Row's phase along the glide at login-door-recording's door, which the title's moments are held against
+export const LOGIN_TOWERS_ROW_OFFSET: [number, number, number] = [0, -WALKWAY_LIFT, -8.94];
 // The cloud sea's row, the sea of cloud effect's two copies 300 metres apart (MonoLoginScene's third record)
 export const LOGIN_CLOUD_SEA_ROW = { count: 2, length: 300 };
 // The glide, in metres a second off the English recording's paving at the camera's pose (genshin:parity glide): 3.14
@@ -40,9 +41,9 @@ export const LOGIN_GLIDE_TITLE_SPEED = 3.14;
 export const LOGIN_GLIDE_PREPARING_SPEED = 3.9;
 export const LOGIN_GLIDE_ACCELERATION = 0.63;
 // Where the glide comes to rest at the door, as metres scrolled: nine of the walkway's copies, the towers' row 144
-// Metres along its loop, as both door references place it (genshin:parity place, their towers and bridges moved as one
-// With the camera held: 145.8 and 144.4 along, their other axes scattering either way). There the lantern tower stands
-// Close to the door's right and the colonnade low behind it, as every recording's door frame shows them
+// Metres along its loop, where both older builds' door frames stand it, their towers and bridges moved as one with the
+// Camera held: 145.8 and 144.4 along. There the lantern tower stands close to the door's right and the colonnade low
+// Behind it; the current build's door frame stands the row elsewhere, so the phase follows how long the title idled
 export const LOGIN_GLIDE_DOOR_SCROLLED = 144;
 // The moment of the loop the title opens at, as metres scrolled. Its walkway's phase is where the wiki's dawn still's
 // First solve stood the walkway, 10.4 metres short of the middle of the copy ahead, a still of another camera; its
