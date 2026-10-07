@@ -3,6 +3,7 @@ import type { CommandDef } from "citty";
 import { attacksCommand } from "#src/services/genshinParity/commands/attacksCommand";
 import { bandsCommand } from "#src/services/genshinParity/commands/bandsCommand";
 import { benchCommand } from "#src/services/genshinParity/commands/benchCommand";
+import { blackCommand } from "#src/services/genshinParity/commands/blackCommand";
 import { calibrateCommand } from "#src/services/genshinParity/commands/calibrateCommand";
 import { cloudsCommand } from "#src/services/genshinParity/commands/cloudsCommand";
 import { compareCommand } from "#src/services/genshinParity/commands/compareCommand";
@@ -51,6 +52,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     gbuffer: gbufferCommand,
     calibrate: calibrateCommand,
     sky: skyCommand,
+    black: blackCommand,
     fog: fogCommand,
     overlay: overlayCommand,
     pose: poseCommand,
