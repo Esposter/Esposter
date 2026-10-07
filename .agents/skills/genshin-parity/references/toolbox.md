@@ -119,7 +119,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 | Unknown                                 | Tool                                                                                                             |
 | :-------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
-| How the haze thins with height, an hour | `calibrate --haze`: its density and falloff refined with the light                                               |
+| How the haze thins with height, an hour | `calibrate --haze`: an hour's references at once, under a light free per part, read as the display encodes it    |
 | The fog's density and colours           | `genshin:parity fog`: bins by depth and sun angle, solved                                                        |
 | The sky's colours and its shape         | `genshin:parity sky`: least squares over an hour's references' clear sky, none negative, by the curve's slope    |
 | Whether the scene draws the sky solved  | `sky`'s drawn line: ours with no cloud against the reference's clear                                             |

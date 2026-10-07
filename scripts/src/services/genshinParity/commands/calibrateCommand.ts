@@ -6,7 +6,9 @@ import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constan
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
+import { solveReferenceHaze } from "#src/services/genshinParity/witness/solveReferenceHaze";
 import { solveReferenceStoneLight } from "#src/services/genshinParity/witness/solveReferenceStoneLight";
+import { parseNames } from "#src/services/shared/parseNames";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { existsSync } from "node:fs";
@@ -21,11 +23,16 @@ const roundColor = (color: readonly number[]): number[] => color.map((value) => 
 
 export const calibrateCommand: SubCommandsDef[string] = defineCommand({
   args: {
-    reference: { description: "A reference's id in ParityReferenceMap", required: true, type: "positional" },
+    reference: {
+      description:
+        "A reference's id in ParityReferenceMap, or with --haze references' ids at one hour, separated by commas",
+      required: true,
+      type: "positional",
+    },
     haze: {
       default: false,
       description:
-        "Refine the haze's density, height falloff and most opacity with the light and the haze's colours over the stone, and print them beside the residual under the scene's own haze",
+        "Refine the haze's density, height falloff and most opacity over every reference given, on what it leaves of the stone as the display shows it under a light free in each part's bin, and print them beside the residuals under the scene's own haze and none",
       type: "boolean",
     },
     self: {
@@ -56,16 +63,22 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
     // A haze it was not solved under: the haze is set first, and the light written under the scene's own
     if (args.haze && args.write)
       throw new InvalidOperationError(Operation.Update, STONE_LIGHT_PATH, "--haze solves a haze --write cannot set");
-    const { count, deviation, haze, light, residual, sceneResidual } = await solveReferenceStoneLight(
+    if (args.haze) {
+      const { haze, noneResidual, residual, sceneResidual } = await solveReferenceHaze(
+        parseNames(args.reference, "reference"),
+        args.witness,
+      );
+      console.log(
+        `haze density ${haze.density.toPrecision(4)}, height falloff ${haze.heightFalloff.toFixed(4)}, most opacity ${haze.maxOpacity.toFixed(4)}: residual ${residual.toFixed(4)}, against ${sceneResidual.toFixed(4)} under the scene's own and ${noneResidual.toFixed(4)} under none`,
+      );
+      return;
+    }
+    const { count, deviation, light, residual } = await solveReferenceStoneLight(
       args.reference,
       args.witness,
-      { isHazeSolved: args.haze, isSelf: args.self },
+      args.self,
     );
     console.log(`${count} pixels, residual ${residual.toFixed(4)} against the bins' spread ${deviation.toFixed(4)}`);
-    if (args.haze)
-      console.log(
-        `haze density ${haze.density.toFixed(5)}, height falloff ${haze.heightFalloff.toFixed(4)}, most opacity ${haze.maxOpacity.toFixed(4)}, against a residual of ${sceneResidual.toFixed(4)} under the scene's own`,
-      );
     console.log("ramp, dark end to lit end:");
     for (const knot of light.ramp) console.log(`  ${formatColor(knot)}`);
     console.log("harmonics:");
