@@ -53,6 +53,7 @@ describe(readLevelOfDetailParts, () => {
       ]),
     );
   });
+
   test("names each set of materials the finest level is drawn with a part of its own", () => {
     expect.hasAssertions();
 

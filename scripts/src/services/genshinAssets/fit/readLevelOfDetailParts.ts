@@ -29,10 +29,10 @@ export const readLevelOfDetailParts = (
   // Each part's sets of materials by the part each is named and the mesh it is fitted from, the finest levels' first
   const paintPartMap = new Map<string, { mesh: string; part: string }>();
   const parts = new Set<string>();
-  for (const { level, part, placement } of levelPlacements.toSorted(
-    (first, second) =>
-      Number(first.level !== partFinestLevelMap.get(first.part)) -
-      Number(second.level !== partFinestLevelMap.get(second.part)),
+  for (const { part, placement } of levelPlacements.toSorted(
+    (firstLevelPlacement, secondLevelPlacement) =>
+      Number(firstLevelPlacement.level !== partFinestLevelMap.get(firstLevelPlacement.part)) -
+      Number(secondLevelPlacement.level !== partFinestLevelMap.get(secondLevelPlacement.part)),
   )) {
     const paintKey = toPaintKey(part, placement.materials);
     if (paintPartMap.has(paintKey)) continue;
@@ -41,11 +41,12 @@ export const readLevelOfDetailParts = (
     parts.add(name);
     paintPartMap.set(paintKey, { mesh: placement.mesh, part: name });
   }
+  // oxlint-disable-next-line no-map-spread -- each placement is the caller's, tagged on a copy rather than written back into it
   const partPlacements = levelPlacements.map(({ part, placement }) => ({
     ...placement,
     part: paintPartMap.get(toPaintKey(part, placement.materials))?.part ?? part,
   }));
-  const partMeshMap = new Map([...paintPartMap.values()].map(({ mesh, part }) => [part, mesh]));
+  const partMeshMap = new Map(Array.from(paintPartMap.values(), ({ mesh, part }) => [part, mesh]));
   return {
     meshPathMap: new Map(
       [...partMeshMap.keys()]

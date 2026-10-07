@@ -57,5 +57,5 @@ export const writeLayeredRecordings = async (
     await encodeMusicRecording(sourcePath, offset, roundMusic(seconds), join(partialDirectory, file));
   await rm(LOGIN_MUSIC_RECORDING_DIRECTORY, { force: true, recursive: true });
   await rename(partialDirectory, LOGIN_MUSIC_RECORDING_DIRECTORY);
-  return [...fileRecordingMap.keys()].map((file) => join(LOGIN_MUSIC_RECORDING_DIRECTORY, file));
+  return Array.from(fileRecordingMap.keys(), (file) => join(LOGIN_MUSIC_RECORDING_DIRECTORY, file));
 };
