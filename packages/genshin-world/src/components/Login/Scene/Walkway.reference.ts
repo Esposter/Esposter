@@ -89,9 +89,16 @@ export const walkwayTopic: ReferenceTopic = {
       result:
         "Both recordings show the walkway's brick joints and its pockets' rims sharp down to the door and no gold along its borders. The witness took one sample a pixel, so along the walkway it read each texture a level or more coarser than its width across, where the borders average with the gilded trim beside them in the atlas: the gold lines were the witness's. Sampled as the game samples, the exports draw the bricks, joints and rims the recordings show; the walkway's colour falls from 0.49 to 0.15 ΔE and its gate rises from 0.011 to 0.017 (the towers' 0.020 to 0.023, the bridges' 0.021 to 0.023, the door's 0.083 to 0.089), its structure reading 0.088, finest scale 0.845 against the exports' own 0.929. The shapes' normals move by a tenth of a degree or two and hold",
     },
+    {
+      method:
+        "fitLoginPaving's paint read over one-centimetre cells rather than two (PAINT_BLOCK_CELLS 1), at three tones and at five, in the surface pass at login-door-session against the anisotropic witness",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Three tones over a centimetre take the walkway's structure from 0.088 to 0.073 (finest scale 0.845 to 0.873) and its colour from 0.15 to 0.30 ΔE, the pockets' pale rims now drawn, at 102 kilobytes of paint against 45; five tones read 0.075 and 0.11 ΔE at 162. The joints and rims are barely painted at all (the joints 1.05, 1.03 and 1.02 of the stone, the rims 0.99, the flat lanes 1.06, 1.08 and 1.06), so what the finer cell gains is where the tones' edges lie; held uncommitted for the bundle's cost, since it leaves the walkway four times its gate",
+    },
   ],
   openQuestions: [
-    "What the walkway's structure loses to its exports: 0.088 against a gate of 0.017, most at the finest scale (0.845 against 0.929), along the bricks' joints, the pockets' rims and the lanes' borders, which the exports' albedo draws as thin dark and pale lines and our three soft tones over two centimetres do not. Drawn lines and more tones scored worse only against the witness that blurred them, so a finer paint (tones over a centimetre, or the joints and rims the relief already traces drawn into the albedo) is the next what-if, and with it the far end where the walkway meets the dais",
+    "What the walkway's structure loses to its exports: 0.088 against a gate of 0.017, most at the finest scale (0.845 against 0.929), along the bricks' joints, the pockets' rims, the lanes' borders and the curbs' edges, which the exports' albedo draws sharp and our three soft tones over two centimetres do not, and where the far end meets the dais. Tones over a centimetre close a sixth of it and more tones none, so the next tool is one that says which of the plan's features the loss lies on: each pixel's term carried back onto the walkway's plan through the witness's depth and camera and summed per cell",
     "What MonoBlockController does to each walkway piece: the rise is read by eye off the recording's far end; its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$) hold its own curve",
   ],
 };
