@@ -14,7 +14,7 @@ export const loadMusicRecordings = async (
     segments.flatMap(({ voices }) => voices.flatMap(({ instrument }) => instrument.recordings.map(({ file }) => file))),
   );
   const entries = await Promise.all(
-    [...files].map(async (file): Promise<[string, AudioBuffer]> => {
+    Array.from(files, async (file): Promise<[string, AudioBuffer]> => {
       const url = `/${baseUrl}/${file}`;
       const response = await fetch(url);
       if (!response.ok)

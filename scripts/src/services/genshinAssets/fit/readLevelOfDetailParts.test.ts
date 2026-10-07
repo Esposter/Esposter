@@ -6,7 +6,6 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
-const MESH_REGEX = /^(?<part>Tower)_Lod(?<level>\d)$/u;
 const createPlacement = (mesh: string, father: string, materials: string[]): AssetPlacement => ({
   father,
   materials,
@@ -19,6 +18,7 @@ const createPlacement = (mesh: string, father: string, materials: string[]): Ass
 });
 
 describe(readLevelOfDetailParts, () => {
+  const MESH_REGEX = /^(?<part>Tower)_Lod(?<level>\d)$/u;
   let directory: string;
 
   beforeEach(() => {
