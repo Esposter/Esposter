@@ -1,6 +1,6 @@
 # Music
 
-Read when recreating a piece of the game's music, or when changing the fit, the player or the listening score. How it works and why is `apps/web/content/docs/genshin/music.md`. This page is the order a new piece takes and the rules each step keeps.
+Read when recreating a piece of the game's music, or when changing the fit, the player or the listening score. How it works and why is `apps/web/content/docs/genshin/music.md`. This page is the order a new piece takes and the rules each step keeps; the music is half of a screen's audio pass, its sound effects the other (`references/sound.md`).
 
 ## A new piece, in order
 
@@ -26,7 +26,7 @@ Read when recreating a piece of the game's music, or when changing the fit, the 
 - **A value every sounding note feeds is solved over all the voices at once**, as their noise is (`fitVoiceNoises`): no note in a piece sounds alone, so reading it at one note charges that note with the rest. The solve is fitted in decibels, the score's own measure, since a fit in power is pulled by the loud attacks, and in the score's own frames, since a band of a few bins reads flatter than it is.
 - **A reading is clear of what could move it, not of every partial.** Another note's partial covers a reading only at a level that moves it (`MUSIC_COVER_SHARE`), from the voices' first fit. Counted at any level, a low note's dense upper harmonics cover everything above them. A raised harmonic count then starves the upper voices of clear readings: their levels read low, and their overtones are left silent.
 - **A noise remedy waits on the round trip.** No remedy for a band is chosen from `bands` until `genshin:parity noise` reads our render's noise back at the levels that ship (what it compares is on the music page). A band whose two readings part is a defect of the solve or of the player first, never of the band.
-- **Noise only where the game's band is noise-like** (`MUSIC_NOISE_MIN_FLATNESS`, why on the music page), and **a pass that lowers pitch agreement is a regression**, whatever the bands gain.
+- **Noise only where the game's band is noise-like** (`MUSIC_NOISE_MIN_FLATNESS`, why on the music page), and **a round that lowers pitch agreement is a regression**, whatever the bands gain.
 - **A bend the transcription reads is not a tuning.** Basic Pitch's contours read most frames a bin off the note, while the decoded sound's fundamentals sit within a tenth of a semitone of their pitches. Tuning is measured from the fundamentals' peaks in the decoded sound and carried by the instrument, so notes stay on whole pitches.
 - **Every instrument value is a median over notes, never one fit pooled across them.** A transcription misreads some notes and another voice covers others; pooled, a handful of them decides the curve. The decay is the one value fitted to a curve: the median over the notes of their level at each frame past the peak, in decibels. Per-note decay fits are underdetermined on short notes, and their medians made each voice fade roughly double the game's rate.
 - **The ear's word is turned into a reading before a remedy.** The bands' distance averages a note that dies too fast with one that rings, so a render heard as scattered single notes scored the same. `genshin:parity attacks` counts what was heard, and a remedy is kept by that count and the listening score together.

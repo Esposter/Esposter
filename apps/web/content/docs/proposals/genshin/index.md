@@ -44,6 +44,7 @@ flowchart TD
 | [Engine architecture](/docs/proposals/genshin/engine-architecture) | the engine as modules with one job each, and the order a frame runs in            |
 | [Reference board](/docs/proposals/genshin/reference-board)         | how a region is referenced, calibrated and compared so the recreation stays close |
 | [Scene derivation](/docs/proposals/genshin/scene-derivation)       | how a scene is re-derived from the game's own assets, each loss priced first      |
+| [Recreation passes](/docs/proposals/genshin/recreation-passes)     | a screen rebuilt in ordered passes, each gated by its own measure and frozen      |
 | [Localized opening](/docs/proposals/genshin/localized-opening)     | the publisher's splash and layouts as each client language shows                  |
 | [Sampled instruments](/docs/proposals/genshin/sampled-instruments) | the music played through openly licensed recordings of real instruments           |
 | [Terrain shapes](/docs/proposals/genshin/terrain-shapes)           | the continent's heights from authored shapes, and the ground painted by biome     |
