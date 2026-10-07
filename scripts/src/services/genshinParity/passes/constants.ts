@@ -28,11 +28,10 @@ export const SHAPE_WIDTH = 1280;
 export const SHAPE_OUTLINE_GATE_PIXELS = 1;
 export const SHAPE_DEPTH_GATE = 0.01;
 export const SHAPE_NORMAL_GATE_DEGREES = 10;
-// The motion pass's gates: a moving piece within as many metres of where its clip carries it as the layout's gate holds
-// A still part to, and its clip played within a hundredth of its pace, about a frame over the door's lift; a frame's
-// Moment along its clip refined in steps of a quarter of a millisecond, which a piece rising at metres a second moves a
-// Few millimetres in; and the size it draws the scene at, which none of its readings depend on
-export const MOTION_GATE_METRES = LAYOUT_GATE_METRES;
+// The motion pass's gates, beside the layout's gate it holds a moving piece to along its clip: its clip played within a
+// Hundredth of its pace, about a frame over the door's lift; a frame's moment along its clip refined in steps of a
+// Quarter of a millisecond, which a piece rising at metres a second moves a few millimetres in; and the size it draws
+// The scene at, which none of its readings depend on
 export const MOTION_PACE_GATE = 0.01;
 export const MOTION_STEP_MS = 0.25;
 export const MOTION_WIDTH = 640;
