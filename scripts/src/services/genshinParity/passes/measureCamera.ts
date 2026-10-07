@@ -1,0 +1,52 @@
+import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityPassMeasure";
+import type { WitnessView } from "genshin-world/parity/models/witness/WitnessView";
+
+import { CAMERA_GATE_PIXELS } from "#src/services/genshinParity/passes/constants";
+import { getComponentReferenceIds } from "#src/services/genshinParity/passes/getComponentReferenceIds";
+import { CAMERA_POSE_AXES } from "#src/services/genshinParity/shared/constants";
+import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
+import { fromPageCamera } from "#src/services/genshinParity/shared/fromPageCamera";
+import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
+import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
+import { computeReprojectionErrors } from "#src/services/genshinParity/witness/computeReprojectionErrors";
+import { readReferenceLandmarks } from "#src/services/genshinParity/witness/readReferenceLandmarks";
+import { withFinalizerAsync } from "@esposter/shared";
+
+// The camera pass, with nothing solved: each reference's landmarks against where the scene's own camera, in the
+// Reference's state, projects them, their root mean square in the reference's pixels, and each landmark's distance
+export const measureCamera = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
+  const referenceIds = getComponentReferenceIds(component).filter(
+    (referenceId) => ParityReferenceMap[referenceId]?.landmarks,
+  );
+  await fetchReferences();
+  const measures: ParityPassMeasure[] = [];
+  for (const referenceId of referenceIds) {
+    // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
+    const { browser, page } = await openWitnessPage(referenceId, component);
+    // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
+    const measure = await withFinalizerAsync(
+      async () => {
+        const camera = await page.evaluate(() =>
+          (Reflect.get(window, "getSceneCamera") as () => NonNullable<WitnessView["camera"]>)(),
+        );
+        const { correspondences, height, names, width } = await readReferenceLandmarks(page, referenceId, component);
+        const pose = fromPageCamera(camera);
+        const distances = computeReprojectionErrors(pose, correspondences, width, height).map(([across, down]) =>
+          Math.hypot(across, down),
+        );
+        const rms = Math.sqrt(distances.reduce((sum, distance) => sum + distance ** 2, 0) / distances.length);
+        return {
+          notes: [
+            `${referenceId} from ${CAMERA_POSE_AXES.map((axis, index) => `${axis} ${(pose[index] ?? 0).toFixed(3)}`).join(", ")}`,
+            ...names.map((name, index) => `${referenceId} ${name}: ${(distances[index] ?? 0).toFixed(2)} px`),
+          ],
+          readings: [{ gate: CAMERA_GATE_PIXELS, name: referenceId, unit: "px", value: rms }],
+        };
+      },
+      () => browser.close(),
+    );
+    measures.push(measure);
+  }
+  return { notes: measures.flatMap(({ notes }) => notes), readings: measures.flatMap(({ readings }) => readings) };
+};

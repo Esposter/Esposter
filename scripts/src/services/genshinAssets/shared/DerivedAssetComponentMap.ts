@@ -20,6 +20,7 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
     namePattern:
       "^(Enviro_(Sky_Gradient|Clouds_(Middle_|Top_)?Particle_Atlas|Clouds_(Voronoi|Wispis|Normal)|Cloud_(Layer|Particle|Mid_Particle|Top_Particle)_Mat|Atmosphere_Layer_Mat)$|(Sky|Cloud)_LOD0$)",
     roots: [{ block: "00/11790361.blk", name: "LoginScene", pathId: "-1124867853248233309" }],
+    screen: "LoginScreen",
     // What MonoLoginScene's raw bytes point at, each into the anchor it names before it
     // (Login/Scene/Index.reference.ts), the towers and the walkway with the count and length its record gives them,
     // Laid along ModelCamera's heading
@@ -51,6 +52,7 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   [DerivedAssetComponent.Windrise]: {
     namePattern: "^(Stages_Unique_CyTree01_(Bark|Leaf)_Lod0|BigWorldTerrain_(1|2)_-(1|2)\\.bin_BaseMap)$",
     roots: [],
+    screen: "WorldScreen",
     world: {
       // The oak's foot is the origin of our Windrise, as our scene has always stood round it
       origin: { block: "00/16170614.blk", name: "Stages_Unique_CyTree01_Lod1", pathId: "6733514611168788700" },

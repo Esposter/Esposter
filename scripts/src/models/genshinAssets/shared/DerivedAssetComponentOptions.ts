@@ -7,13 +7,14 @@ import type { WorldOptions } from "#src/models/genshinAssets/world/WorldOptions"
 // For a screen with an interface, the root of its RectTransforms and the pattern of an indexed asset beside them, which
 // Finds their block (GameObjects are not in the asset index), and the name pattern of the animation clips it plays. For
 // A screen with music, the Wwise id of the playlist that plays it. For a part of the open world, what the world places
-// And the ground under it
+// And the ground under it. And always the parity page's screen that draws it, which its references are judged on
 export interface DerivedAssetComponentOptions {
   clipPattern?: string;
   interface?: { anchorPattern: string; root: string };
   musicPlaylistId?: number;
   namePattern?: string;
   roots: AssetRoot[];
+  screen: string;
   spawns?: AssetSpawn[];
   world?: WorldOptions;
 }

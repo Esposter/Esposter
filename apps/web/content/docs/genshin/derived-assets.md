@@ -55,7 +55,7 @@ flowchart LR
 8. **`witness <component>`** lays the exports out as the witness render draws them (`writeWitnessLayout`): the component's placements at each part's finest level, in three's axes, with every material each submesh draws with, as a `SceneLayout`. A part of the open world is laid out round its origin's place, the frame our scene stands in, so a camera solved on the witness is our scene's camera and `view` draws ours and the exports at one place.
 9. **`fit <component>`** (with `--only paving,towers`, those fits alone, each named for the data file it writes, the rest left as they stand) composes every object's world placement from the layout dumps, keeps the arrangements under the component's roots (`readComponentPlacements`), fits our kits' parameters to the meshes and textures, and writes them as the world package's data, the only output that enters the repository. A change of fit or selection reruns it alone.
 
-A new component is its roots in `DerivedAssetComponentMap` and one fit in `DerivedAssetFitMap`; everything else is shared.
+A new component is its roots and the screen drawing it in `DerivedAssetComponentMap` and one fit in `DerivedAssetFitMap`; everything else is shared.
 
 ### Commands
 

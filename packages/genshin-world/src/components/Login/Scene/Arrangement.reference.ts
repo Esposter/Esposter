@@ -100,6 +100,13 @@ export const arrangementTopic: ReferenceTopic = {
       result:
         "The day title's two big towers top left are the exports' own at the day's moment of the loop, drawn so by the witness too, where the recording shows one thin tower. Scanned along the whole 200 metre loop the row's edges fit within 10 to 12 pixels nearly everywhere under the day's haze, their least 86 metres along (heldScrolled 32), where a bridge's deck crosses the frame the recording shows open and the title scores 0.4528 against 118's 0.4321; 38 and 31.6 score 0.4438 and 0.4617. Scanned across from 20 metres left to 20 right, offsets of 4, 6 and 13 metres all fit within a pixel of one another. The edges cannot place the day's towers, so its moment stays at 118: the recording is the 2022 client's, which may lay the row out apart from the current build's",
     },
+    {
+      method:
+        "genshin:parity passes login's layout measure: the arrangement's cross-ratio, and each fitted family's parts against the nearest of the exports' objects it stands for, gated at 2 centimetres",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The door over the walkway holds (0.0023 against 0.01), the bridges and pillars stand within 0.0061 metres of the exports' and the door within 0.002, and the towers fail: their 31 fitted parts stand 6.68 metres from the exports' on average and one 124.56 metres from any, so the towers' fitted field is not the exports' row and is the layout pass's first item",
+    },
   ],
   openQuestions: [
     "Whether the towers' row tiles at its 200 metres: their fitted field spans about 300 along the glide",

@@ -60,19 +60,19 @@ The interface runs beside these as a pass of its own, placed from the rect tree,
 
 ### The passes
 
-| Pass       | Its source of truth                                     | Its measure                                                                           | Tools today                                  | Missing                                               |
-| :--------- | :------------------------------------------------------ | :------------------------------------------------------------------------------------ | :------------------------------------------- | :---------------------------------------------------- |
-| References | The wiki, the data dumps, recordings                    | Each frame's build, camera, region and hour, written down                             | `fetch`, `frames`                            | Nothing                                               |
-| Inventory  | `extract`, `tree`, `inventory`, `behaviours`            | Every renderer, material, shader, texture, clip, sound and spawn named with its kind  | `genshin:assets` commands                    | A checklist per component that the pass's test reads  |
-| Layout     | Placements, spawns, anchors and the rows scripts scroll | Metres against the exports' transforms, then pixels where placeholders' outlines land | `arrangement`, `place`, `parts`              | A numeric layout diff and an outline score per family |
-| Camera     | Landmarks on the frozen layout                          | Reprojection error and the overlay's edge distance                                    | `pose`, `track`, `overlay`                   | The gate                                              |
-| Shape      | Each mesh                                               | Depth, normal and outline per family against the exports at the same camera           | `rank`'s second table, shaded                | A diff of each G-buffer channel, ours against theirs  |
-| Motion     | Decoded clips, the rows scripts move                    | Each animated part's track against its clip, and fieldless motion against its measure | `clips`, `glide`, `film`                     | A track-against-curve check, the walkway's rise       |
-| Surface    | Textures and materials                                  | Unlit colour per family against the exports                                           | `gbuffer`, `plan`                            | The same channel diff as shape                        |
-| Display    | The post program, the grading tables, the post profile  | Which table, which curve and what bloom, before any light                             | None                                         | A display solve and the engine's graded path          |
-| Light      | The recordings, everything before held                  | The sun's direction by its shadows' edges, the ramp and sky by bins                   | `calibrate`                                  | A shadow-edge solve                                   |
-| Atmosphere | The recordings, the emitters' anchors, the cloud layer  | Haze by depth and height, sky over its clear pixels, clouds by statistics             | `calibrate --haze`, `sky`, `cover`, `clouds` | The cloud layer's settings solve                      |
-| Audio      | The game's sound banks, recordings to find each sound   | Each sound's octave bands over time and its onset; the music by `listen`              | The music tools, the door sound's fit        | A sound-matching command                              |
+| Pass       | Its source of truth                                     | Its measure                                                                           | Tools today                                  | Missing                                              |
+| :--------- | :------------------------------------------------------ | :------------------------------------------------------------------------------------ | :------------------------------------------- | :--------------------------------------------------- |
+| References | The wiki, the data dumps, recordings                    | Each frame's build, camera, region and hour, written down                             | `fetch`, `frames`                            | Nothing                                              |
+| Inventory  | `extract`, `tree`, `inventory`, `behaviours`            | Every renderer, material, shader, texture, clip, sound and spawn named with its kind  | `genshin:assets` commands, `passes`          | Effects, clips and sounds in its checklist           |
+| Layout     | Placements, spawns, anchors and the rows scripts scroll | Metres against the exports' transforms, then pixels where placeholders' outlines land | `arrangement`, `place`, `parts`, `passes`    | Projected pixels and an outline score per family     |
+| Camera     | Landmarks on the frozen layout                          | Reprojection error and the overlay's edge distance                                    | `pose`, `track`, `overlay`, `passes`         | Nothing                                              |
+| Shape      | Each mesh                                               | Depth, normal and outline per family against the exports at the same camera           | `rank`'s second table, shaded                | A diff of each G-buffer channel, ours against theirs |
+| Motion     | Decoded clips, the rows scripts move                    | Each animated part's track against its clip, and fieldless motion against its measure | `clips`, `glide`, `film`                     | A track-against-curve check, the walkway's rise      |
+| Surface    | Textures and materials                                  | Unlit colour per family against the exports                                           | `gbuffer`, `plan`                            | The same channel diff as shape                       |
+| Display    | The post program, the grading tables, the post profile  | Which table, which curve and what bloom, before any light                             | None                                         | A display solve and the engine's graded path         |
+| Light      | The recordings, everything before held                  | The sun's direction by its shadows' edges, the ramp and sky by bins                   | `calibrate`                                  | A shadow-edge solve                                  |
+| Atmosphere | The recordings, the emitters' anchors, the cloud layer  | Haze by depth and height, sky over its clear pixels, clouds by statistics             | `calibrate --haze`, `sky`, `cover`, `clouds` | The cloud layer's settings solve                     |
+| Audio      | The game's sound banks, recordings to find each sound   | Each sound's octave bands over time and its onset; the music by `listen`              | The music tools, the door sound's fit        | A sound-matching command                             |
 
 ### Why it converges
 
@@ -80,20 +80,19 @@ Judged through the frame, each of the scene's unknowns is confounded by every ot
 
 ## The first run: the login
 
-The login runs through every pass from its inventory once the runner and its measures exist, each gate holding before the next pass begins. What each pass has in question there, a row shifted by a fitted value, a camera the old recordings may not share, a rise read by eye, a transform left out, suns set by hand, a cloud layer waiting on its settings and the sounds still unmatched, is that pass's item on the [roadmap](/docs/genshin/roadmap), in the passes' order. Windrise starts at the references the same way once the login's gates hold.
+The login runs through every pass from its inventory as its measures land, each gate holding before the next pass begins. What each pass has in question there, a row shifted by a fitted value, a camera the old recordings may not share, a rise read by eye, a transform left out, suns set by hand, a cloud layer waiting on its settings and the sounds still unmatched, is that pass's item on the [roadmap](/docs/genshin/roadmap), in the passes' order. Windrise starts at the references the same way once the login's gates hold.
 
 ## Scope
 
-The method needs one runner and the measures each pass lacks, and they are the base every later scene stands on, so they are built before any further world page, in this order:
+The method needs the measures each pass lacks, each joining `genshin:parity passes` ([parity](/docs/genshin/parity)) as it lands, and they are the base every later scene stands on, so they are built before any further world page, in this order:
 
-1. **The runner.** `genshin:parity passes` runs each pass's measure in order against its gate over every reference of a component, stops at the first red one, and writes its table into a committed snapshot, as `compare` does for its scores. It starts over the measures that exist and gains each one below as it lands.
-2. **Layout's diff.** Our transforms against the exports' in metres, then in pixels where they land, before any render.
-3. **Shape and surface's channel diff.** The witness's targets drawn for our own parts as well as the exports', so depth, normal, outline and unlit colour are diffed per family.
-4. **Motion's track check.** Our parts sampled on the faked clock against their decoded clips.
-5. **Display's solve.** The post profile's transform found, its tone curve, grading table and bloom, and drawn by the engine before any light is solved.
-6. **Light's shadow edges.** The sun's direction solved on its shadows' edges over flat receivers.
-7. **Atmosphere's cloud statistics.** The cloud layer's settings solved on the clouds' cover, sizes and colour spread.
-8. **Audio's matcher.** Finding which of the game's sounds a recording plays, and when, as a command.
+1. **Layout's projected diff.** Our transforms against the exports' in pixels where they land at each reference's pose, before any render.
+2. **Shape and surface's channel diff.** The witness's targets drawn for our own parts as well as the exports', so depth, normal, outline and unlit colour are diffed per family.
+3. **Motion's track check.** Our parts sampled on the faked clock against their decoded clips.
+4. **Display's solve.** The post profile's transform found, its tone curve, grading table and bloom, and drawn by the engine before any light is solved.
+5. **Light's shadow edges.** The sun's direction solved on its shadows' edges over flat receivers.
+6. **Atmosphere's cloud statistics.** The cloud layer's settings solved on the clouds' cover, sizes and colour spread.
+7. **Audio's matcher.** Finding which of the game's sounds a recording plays, and when, as a command.
 
 Everything the passes already have is reused as it is, and each measure, once built, retires its row's gap in the toolbox.
 
@@ -101,7 +100,7 @@ Everything the passes already have is reused as it is, and each measure, once bu
 
 | File                                                                     | Role after the change                                                    |
 | :----------------------------------------------------------------------- | :----------------------------------------------------------------------- |
-| `scripts/src/services/genshinParity/commands/genshinParityCommand.ts`    | Registers the passes' runner beside the commands each pass already has   |
+| `scripts/src/services/genshinParity/passes/ParityPassMeasureMap.ts`      | Gains each pass's measure as it is built                                 |
 | `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`        | The references every pass is judged over                                 |
 | `packages/genshin-world/parity/witness/renderWitnessTargets.ts`          | Draws our parts' targets as well as the exports', for the channel diffs  |
 | `scripts/src/services/genshinParity/witness/rankReferenceGains.ts`       | Orders the work inside a pass, never across passes                       |

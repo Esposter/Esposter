@@ -169,6 +169,13 @@ export const cameraTopic: ReferenceTopic = {
       result:
         "Held across an 18.5:9 screen, 45 degrees spans 51.19 vertically at 16:9, the 51.2 the door frame's widths and the glide's frames read (51.0 to 51.4). No asset holds the design aspect, and the wiki's 4:3 door still is of an older build's camera, so this explains the measured value without replacing it",
     },
+    {
+      method:
+        "genshin:parity passes login's camera measure: login-door-recording's ten landmarks projected from the scene's own camera in the reference's state (eye 0, 1.22, -3.03, heading 180, pitch 5.69, field of view 51.2), nothing solved",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "19.14 pixels root mean square at 1920 against the gate's 2: the right tower's two landmarks 1.2 pixels off, the door's apex and feet 8.0 to 9.6, the walkway's four wings 14.4 to 18.5 and the column's crown 47.3. The camera stands where the edges' solve put it, so what is off is where the landmarks' parts stand in the reference's state, which the layout pass settles before this one is read",
+    },
   ],
   openQuestions: [
     "What stands the eye 0.14 to 0.22 metres over the 1 metre ModelCamera and the walkway's lift put it at, and the towers' row 2.47 metres toward -x of where the blocks lay it: MonoLoginScene's floats and curves, or the block controller's rest",

@@ -26,3 +26,15 @@ export const variants = {
 };
 // The families of the scene's parts a witness render draws from the game's exports
 export const witnessFamilies = LoginPartFamilyMeshRegexMap;
+// The sky's dome, moon and stars, which the scene's sky draws
+export const witnessStandIns = {
+  sky: /^(?:Sky_LOD\d Enviro_Atmosphere_Layer_Mat|Moon_LOD\d moon_layer_mat|Enviro_Stars_LOD\d stars_layer_mat)$/u,
+};
+// What the scene does not draw yet (Login/Scene/Inventory.reference.ts): the door's auras, the cloud layer and the
+// Aurora on the one dome, and the galaxy
+export const witnessUndrawn = {
+  auras: /^Eff_Model_Cone_\d+ Eff_Aura_/u,
+  aurora: /^Cloud_LOD\d aurora_layer_mat$/u,
+  cloudLayer: /^Cloud_LOD\d Enviro_Cloud_Layer_Mat$/u,
+  galaxy: /^MilkywayPlane Enviro_Galaxy_/u,
+};
