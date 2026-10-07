@@ -2,15 +2,21 @@ import type { SerializedField } from "#src/models/genshinAssets/scene/Serialized
 import type { ObjectPointer } from "#src/models/genshinAssets/shared/ObjectPointer";
 
 import { SerializedFieldKind } from "#src/models/genshinAssets/scene/SerializedFieldKind";
+import { sampleSerializedCurve } from "#src/services/genshinAssets/scene/sampleSerializedCurve";
+import { sampleSerializedGradient } from "#src/services/genshinAssets/scene/sampleSerializedGradient";
 import { formatNumbers } from "#src/services/genshinAssets/shared/formatNumbers";
 import { exhaustiveGuard } from "@esposter/shared";
 
+// What a curve or a gradient reads at each time, after an arrow, or nothing with no times
+const formatTimes = (times: readonly number[], read: (time: number) => string): string =>
+  times.length === 0 ? "" : ` → ${times.map((time) => `${formatNumbers([time])}:${read(time)}`).join(" ")}`;
 // A script's scanned fields as text, one a line by its offset in hexadecimal, a pointer named by what it points at and
-// An array's records indented beneath it
+// An array's records indented beneath it, and each curve and gradient followed by what it reads at each of the times given
 export const formatSerializedFields = (
   fields: readonly SerializedField[],
   describePointer: (pointer: ObjectPointer) => string,
   depth = 0,
+  times: readonly number[] = [],
 ): string =>
   fields
     .map((field) => {
@@ -19,20 +25,20 @@ export const formatSerializedFields = (
         case SerializedFieldKind.Array:
           return [
             line(`array of ${field.elements.length}`),
-            formatSerializedFields(field.elements, describePointer, depth + 1),
+            formatSerializedFields(field.elements, describePointer, depth + 1, times),
           ].join("\n");
         case SerializedFieldKind.Color:
           return line(`colour ${formatNumbers(field.color)}`);
         case SerializedFieldKind.Curve:
           return line(
-            `curve ${field.keys.map(({ inSlope, outSlope, time, value }) => `(${formatNumbers([time, value, inSlope, outSlope])})`).join(" ")}`,
+            `curve ${field.keys.map(({ inSlope, outSlope, time, value }) => `(${formatNumbers([time, value, inSlope, outSlope])})`).join(" ")}${formatTimes(times, (time) => formatNumbers([sampleSerializedCurve(field, time)]))}`,
           );
         case SerializedFieldKind.Float:
         case SerializedFieldKind.Integer:
           return line(`${field.kind} ${field.value}`);
         case SerializedFieldKind.Gradient:
           return line(
-            `gradient ${field.colorKeys.map(({ color, time }) => `${formatNumbers([time])}:${formatNumbers(color)}`).join(" ")}, alpha ${field.alphaKeys.map(({ alpha, time }) => `${formatNumbers([time])}:${formatNumbers([alpha])}`).join(" ")}`,
+            `gradient ${field.colorKeys.map(({ color, time }) => `${formatNumbers([time])}:${formatNumbers(color)}`).join(" ")}, alpha ${field.alphaKeys.map(({ alpha, time }) => `${formatNumbers([time])}:${formatNumbers([alpha])}`).join(" ")}${formatTimes(times, (time) => formatNumbers(sampleSerializedGradient(field, time)))}`,
           );
         case SerializedFieldKind.Pointer:
           return line(`pointer ${describePointer(field.pointer)}`);

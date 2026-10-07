@@ -20,6 +20,13 @@ export const inventoryTopic: ReferenceTopic = {
       result:
         "Every renderer is claimed: the towers, bridges, walkway and door by their families, the sky's dome, moon and stars by the scene's sky, and five named as not drawn, the door's two auras on their cones, the aurora and the cloud layer on the one dome, and the galaxy. The cloud emitters, the god rays and halos and the sounds are effects and banks, which the measure does not read yet",
     },
+    {
+      method:
+        "genshin:assets behaviours login with the scanner reading every gradient by its tail first, then each of LoginSceneEnviro's, EnviroSky's and LoginSceneWeather's curves and gradients read at given times (--at)",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "MonoLoginScene's four floats at 0x18c to 0x198 (9.5, 18, 23 and 6) are the login's hours by the clock, the day's, the dusk's, the night's and the dawn's, after its four bounds (4.5, 8, 17 and 19): as shares of a day, 0.396, 0.75, 0.958 and 0.25, exactly where LoginSceneEnviro's gradients hold their keys. So every setting the environment keeps by the time of day reads at each hour with --at 0.25,0.3958,0.75,0.9583. The scripts hold 71, 66 and 81 gradients and some 750 curves, most at Enviro's defaults (white or black, flat)",
+    },
   ],
   openQuestions: [
     "Which field of MonoLoginScene each of its remaining floats and curves is, its two speeds named the title's and the preparing glide's (Camera.reference.ts): the glide's easing, and the walkway's rise against its eye-read sink and distances",

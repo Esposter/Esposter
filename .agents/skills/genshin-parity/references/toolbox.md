@@ -30,17 +30,18 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Inventory
 
-| Unknown                                      | Tool                                                                     |
-| :------------------------------------------- | :----------------------------------------------------------------------- |
-| Which assets a scene draws                   | `extract`: the closure of its roots by file, path ID                     |
-| The scene's hierarchy, and what it lost      | `genshin:assets tree`: flags anchors, lost fathers                       |
-| A script's, a camera's or a light's settings | `behaviours`: raw bytes scanned for shapes, built-ins past their header  |
-| Which object a clip's `(the animator)` moves | `behaviours`: each animator printed on its game object                   |
-| What a script spawns, and where              | `behaviours`, set as `spawns` at their anchors                           |
-| What a shader computes                       | `shaders`: the annotated disassembly, and HLSL where it decompiles       |
-| Where the open world places an object        | `parseStreamingPlacements` over its tile's or area's StreamGen blob      |
-| A placement's prefab                         | its 64-bit path hash looked up in the game's asset index                 |
-| Whether every renderer is accounted for      | `passes`' inventory: the fixture's families, stand-ins and undrawn parts |
+| Unknown                                      | Tool                                                                                                      |
+| :------------------------------------------- | :-------------------------------------------------------------------------------------------------------- |
+| Which assets a scene draws                   | `extract`: the closure of its roots by file, path ID                                                      |
+| The scene's hierarchy, and what it lost      | `genshin:assets tree`: flags anchors, lost fathers                                                        |
+| A script's, a camera's or a light's settings | `behaviours`: raw bytes scanned for shapes, built-ins past their header                                   |
+| A setting by the time of day at each hour    | `behaviours --at`: each curve and gradient read at the times given (the login's hours as shares of a day) |
+| Which object a clip's `(the animator)` moves | `behaviours`: each animator printed on its game object                                                    |
+| What a script spawns, and where              | `behaviours`, set as `spawns` at their anchors                                                            |
+| What a shader computes                       | `shaders`: the annotated disassembly, and HLSL where it decompiles                                        |
+| Where the open world places an object        | `parseStreamingPlacements` over its tile's or area's StreamGen blob                                       |
+| A placement's prefab                         | its 64-bit path hash looked up in the game's asset index                                                  |
+| Whether every renderer is accounted for      | `passes`' inventory: the fixture's families, stand-ins and undrawn parts                                  |
 
 ### Layout
 
