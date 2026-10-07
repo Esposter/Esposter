@@ -3,6 +3,7 @@ import type { Browser, Page } from "playwright";
 
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import {
+  DEVICE_SCALE_MARGIN,
   INTERFACE_HEIGHT,
   PARITY_BACKDROP_FILE,
   PARITY_FRAME_MS,
@@ -37,10 +38,14 @@ export const openParityPage = async ({
   });
   // A failure once the browser is open closes it, since no caller receives a browser to close
   return getResultAsync(async () => {
-    const deviceScaleFactor = height / INTERFACE_HEIGHT;
+    // A canvas is drawn at its CSS size times the device's ratio, floored, and the browser holds that ratio in single
+    // Precision, so the height over the interface's exactly can floor a row short: the ratio is lifted by a margin,
+    // And the width is the least in CSS pixels whose drawn width is the one asked for, so a scene draws exactly the
+    // Pixels a reference is resized to at any aspect
+    const deviceScaleFactor = (height / INTERFACE_HEIGHT) * (1 + DEVICE_SCALE_MARGIN);
     const page = await browser.newPage({
       deviceScaleFactor,
-      viewport: { height: INTERFACE_HEIGHT, width: Math.round(width / deviceScaleFactor) },
+      viewport: { height: INTERFACE_HEIGHT, width: Math.ceil(width / deviceScaleFactor) },
     });
     const motionQuery = motion ? `&motion=${motion}` : "";
     const propsQuery = props ? `&props=${encodeURIComponent(JSON.stringify(props))}` : "";

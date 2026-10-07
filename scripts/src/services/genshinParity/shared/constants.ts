@@ -41,6 +41,8 @@ export const GAME_EXECUTABLE_NAME = "GenshinImpact.exe";
 // The game lays its interface out for a 1080-pixel-high screen and scales it with the height, so a shot is taken at
 // That height in CSS pixels and scaled to the reference's
 export const INTERFACE_HEIGHT = 1080;
+// How much a page's device ratio is lifted over its height's share of the interface's, past single precision's error
+export const DEVICE_SCALE_MARGIN = 1e-6;
 export const RECORD_FRAME_RATE = 60;
 // A session long enough for a handful of screens and their motion, and short enough to sample quickly
 export const RECORD_DEFAULT_SECONDS: number = Temporal.Duration.from({ minutes: 2 }).total("seconds");
