@@ -59,13 +59,11 @@ export const balanceCommand: SubCommandsDef[string] = defineCommand({
         pageBalance = whiteBalance;
       }
       const logShares = (label: string, matrix: Matrix3): void => {
-        for (const [index, [{ ours, reference } = { ours: [0, 0, 0], reference: [0, 0, 0] }]] of readUnderBlackShares(
-          references,
-          matrix,
-        ).entries())
-          console.log(
-            `  ${referenceIds[index]} ${label}: ours ${formatShares(ours)} against ${formatShares(reference)} of ${references[index]?.length ?? 0} pixels`,
-          );
+        for (const [index, [shares]] of readUnderBlackShares(references, matrix).entries())
+          if (shares)
+            console.log(
+              `  ${referenceIds[index]} ${label}: ours ${formatShares(shares.ours)} against ${formatShares(shares.reference)} of ${references[index]?.length ?? 0} pixels`,
+            );
       };
       logShares("under the page's balance", pageBalance);
       for (const [label, solved] of [
