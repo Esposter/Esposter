@@ -1,16 +1,18 @@
 import type { SkyState } from "#src/models/atmosphere/SkyState";
 import type { SkyTargets } from "#src/models/atmosphere/SkyTargets";
+import type { Color } from "three";
 
 import { DEFAULT_SKY_SHAPE } from "#src/atmosphere/constants";
 import { toSceneColor } from "#src/post/toSceneColor";
-import { Color, Vector3 } from "three";
+import { Vector3 } from "three";
 
 // The god rays' map is redrawn once the light has turned this far, a little over the angle it turns in two real
 // Seconds, so a moving sun costs one shadow pass every other second rather than one a frame
 const GODRAYS_REDRAW_COSINE = Math.cos((0.6 * Math.PI) / 180);
 const godraysDirection = new Vector3();
-// A sky with no halo of its own draws none
-const BLACK = new Color(0, 0, 0);
+// A term a sky has none of (a halo, a glow) adds nothing, rather than the curve's black taken back to its floor
+const writeTermColor = (displayColor: Color | undefined, sceneColor: Color): Color =>
+  displayColor ? toSceneColor(displayColor, sceneColor) : sceneColor.setRGB(0, 0, 0);
 // The sky state written into everything it lights: the light and the materials take the light's direction and
 // Colour, the rim and the fog the horizon's, and the hemisphere its sky and ground. The colours the screen shows as
 // They are, the sky's, its clouds' and the fog's, are measured off the references, so each is written as the scene
@@ -41,11 +43,11 @@ export const applySkyState = (
   toSceneColor(horizonColor, skyUniforms.horizonColor.value);
   toSceneColor(skyState.horizonBackColor ?? horizonColor, skyUniforms.horizonBackColor.value);
   toSceneColor(skyState.zenithBackColor ?? skyState.zenithColor, skyUniforms.zenithBackColor.value);
-  toSceneColor(skyState.haloColor ?? BLACK, skyUniforms.haloColor.value);
-  toSceneColor(skyState.sunHaloColor ?? BLACK, skyUniforms.sunHaloColor.value);
+  writeTermColor(skyState.haloColor, skyUniforms.haloColor.value);
+  writeTermColor(skyState.sunHaloColor, skyUniforms.sunHaloColor.value);
   skyUniforms.lightColor.value.copy(lightColor);
   skyUniforms.moonDirection.value.copy(skyState.moonDirection);
-  toSceneColor(skyState.moonGlowColor ?? BLACK, skyUniforms.moonGlowColor.value);
+  writeTermColor(skyState.moonGlowColor, skyUniforms.moonGlowColor.value);
   skyUniforms.starIntensity.value = skyState.starIntensity;
   skyUniforms.sunDirection.value.copy(skyState.sunDirection);
   toSceneColor(skyState.zenithColor, skyUniforms.zenithColor.value);

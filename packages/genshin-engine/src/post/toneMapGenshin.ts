@@ -6,15 +6,15 @@ import {
 } from "#src/renderer/constants";
 
 // A scene colour in linear channels as the renderer's tone curve shows it, before the display's encoding, each channel
-// On its own (`GENSHIN_TONE_MAPPING`). Written into the tuple given, so a caller that runs it every frame allocates
-// Nothing
+// On its own (`GENSHIN_TONE_MAPPING`), black at the curve's floor (`TONE_CURVE_FLOOR`) and under it. Written into the
+// Tuple given, so a caller that runs it every frame allocates nothing
 export const toneMapGenshin = (
   sceneColor: readonly [number, number, number],
   toneMapped: [number, number, number] = [0, 0, 0],
 ): [number, number, number] => {
   for (let index = 0; index < 3; index++)
     toneMapped[index] = Math.min(
-      (1 + TONE_CURVE_LIFT - 2 ** (-GENSHIN_TONE_EXPOSURE * Math.max(sceneColor[index] ?? 0, 0))) **
+      Math.max(1 + TONE_CURVE_LIFT - 2 ** (-GENSHIN_TONE_EXPOSURE * (sceneColor[index] ?? 0)), 0) **
         (GENSHIN_TONE_CONTRAST + TONE_CONTRAST_OFFSET),
       1,
     );

@@ -15,3 +15,7 @@ export const GENSHIN_TONE_EXPOSURE = 1;
 // The program's own constants: what it adds to the contrast and what it lifts each channel by before raising it
 export const TONE_CONTRAST_OFFSET = 0.01;
 export const TONE_CURVE_LIFT = 1e-4;
+// The darkest scene colour the curve shows, black, a ten-thousandth or so under none: the lift lets a channel the
+// Program's _WhiteBalanceMat takes a hair under none still show, darker than the curve's black at none, as a quarter of
+// The night's pixels do in their red. Under it the program raises a negative and shows nothing
+export const TONE_CURVE_FLOOR: number = -Math.log2(1 + TONE_CURVE_LIFT) / GENSHIN_TONE_EXPOSURE;

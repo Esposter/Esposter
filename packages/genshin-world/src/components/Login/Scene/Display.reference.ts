@@ -40,9 +40,30 @@ export const displayTopic: ReferenceTopic = {
       result:
         "A quarter of each night frame's pixels stand under it, 25.9% of the night title's (a YouTube recording in television range) and 27.8% of the door session's (the user's own, in full range), mostly the red channel of the blue night, at 10 to 20, while the dawn title and the door recording hold none and the day's frames about a hundredth. The curve as read shows nothing that dark: a scene channel a ten-thousandth under none reaches them, which _WhiteBalanceMat can give a saturated blue before the curve, and _UserInputGamma above one darkens the encode toward them, though the contrast the display pass measured asks a gamma under one",
     },
+    {
+      method:
+        "The login's exports searched for _WhiteBalanceMat and a colour grading effect: the scene camera's post profile and every MonoBehaviour, the shaders' strings",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The scene camera's profile holds six effects, ElementView, FrameTransition, MHYBloom_Z, MotionBlur, ToonLightBuffer and WaterRipple, and no grading; the ten daytime gradient modulators drive _DayColor and _RimColor. Only the uber shader (Shader#88, and Shader#82 outside the login) names _WhiteBalanceMat, so a script sets it from data the exports do not hold, and the matrix is on screen only",
+    },
+    {
+      method:
+        "Each night frame's channels counted by byte under 40 (genshin:parity black's channel shares), and where its red stands under the black drawn over the frame",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Only the red goes under: it runs down to about 8 of 255, while the green stops at 22 to 25, the curve's black, and the blue far above, the same in the television-range title and the full-range door session. A gamma or an encoding darkens every channel alike, so what takes the red under is a matrix before the curve, _WhiteBalanceMat. The red stands under the black on the towers' moonlit stone, the dais's lit faces and the high dark clouds, and not on the clear sky or the haze, so the stone's own light, albedo times light, is what the matrix takes under none. A lower envelope of the red over the green and the blue in scene colour reads the matrix's red row taking about 0.003 of the blue away in both frames (0.0025 to 0.0032 at the twentieth of the pixels lowest), as a white balance cooled to a temperature of about minus 8 in Unity's construction does; its take of the green is unsettled between them",
+    },
+    {
+      method:
+        "The tone curve drawn down to its floor, a ten-thousandth and a half under none, rather than held at none, and each hour's sky solved again with its gradient's colours free down to the floor",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The night's colour away from the moon solves its red at 22, under the black; its title scores 0.464 and its door session 0.499 as before, and every other frame within its noise. Neither frame's render shows a pixel under the black (compare's line), since the sky holds none of the reference's and the stone's light cannot go under none without the matrix after it",
+    },
   ],
   openQuestions: [
-    "What draws the night's channels under the curve's black: _WhiteBalanceMat's matrix, which the post profile may set, a gamma above one, or the recordings' encoding; until it is drawn, a solve weighed as the screen shows it is led by the darkest bins it cannot reach",
+    "_WhiteBalanceMat's temperature and tint each hour: the matrix drawn before the curve, and solved where the stone's light lies flattest once each pixel's colour is taken back through it; until it is drawn, a solve weighed as the screen shows it is led by the darkest bins it cannot reach",
     "Which of MHYBloom_Z's other values is the threshold, the scaler and the intensity: the bloom alone moves what lies around the brightest pixels, so they are measured there once the login draws the game's bloom",
   ],
 };

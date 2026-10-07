@@ -16,6 +16,16 @@ describe(toSceneColor, () => {
     expect(b).toBeCloseTo(sceneColor[2]);
   });
 
+  test("takes a colour darker than the curve's black at none back under none, which the curve shows again", () => {
+    expect.hasAssertions();
+
+    const displayColor = new Color(...toneMapGenshin([0, 0, 0])).multiplyScalar(0.5);
+    const { b, g, r } = toSceneColor(displayColor);
+
+    expect(r).toBeLessThan(0);
+    expect(toneMapGenshin([r, g, b])[0]).toBeCloseTo(displayColor.r, 5);
+  });
+
   test("writes into the colour given, which may be the measured colour itself", () => {
     expect.hasAssertions();
 

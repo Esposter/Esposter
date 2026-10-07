@@ -1,6 +1,8 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityScore } from "#src/models/genshinParity/reference/ParityScore";
 
+import { computeUnderBlackShare } from "#src/services/genshinParity/display/computeUnderBlackShare";
+import { formatUnderBlackShare } from "#src/services/genshinParity/display/formatUnderBlackShare";
 import { scoreLayers } from "#src/services/genshinParity/reference/scoreLayers";
 import { scoreStructure } from "#src/services/genshinParity/reference/scoreStructure";
 import {
@@ -95,6 +97,14 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
     Math.round((STRUCTURE_WIDTH / region.width) * region.height),
   );
   console.log(`FLIP ${flip.toFixed(4)} (perceptual, 0 is identical)`);
+  // Where the reference shows channels under the tone curve's black at none, how many of ours do
+  const [referenceUnderBlack, shotUnderBlack] = await Promise.all(
+    [referenceRegion, shotRegion].map(async (input) => computeUnderBlackShare(await sharp(input).raw().toBuffer())),
+  );
+  if (referenceUnderBlack && shotUnderBlack && referenceUnderBlack.share > 0)
+    console.log(
+      `under the curve's black: reference ${formatUnderBlackShare(referenceUnderBlack)}, ours ${formatUnderBlackShare(shotUnderBlack)}`,
+    );
   if (witness) {
     const { gbuffer, image } = await readReferenceGbuffer(referenceId, witness);
     const shot = await sharp(shotPath).resize(gbuffer.width, gbuffer.height, { fit: "fill" }).png().toBuffer();
