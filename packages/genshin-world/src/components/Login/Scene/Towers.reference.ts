@@ -75,6 +75,13 @@ export const towersTopic: ReferenceTopic = {
       result:
         "What sinks four units or more into the walls split the same way into 165 recesses, the lathe cut open over each through the facade's mask and a box standing behind it, leaves the towers level against their exports (similarity 0.8338 to 0.8339 by day, 0.7368 to 0.7354 by night, 0.7494 to 0.7497 at dusk) and the frames level against the recordings (the dawn title 0.3819, the day 0.4326, the phone's door frame 0.4662, the door recording 0.5141, the night 0.3645), opening the windows the left towers show by day. Recessing what sinks a unit or more as well, 1,029 recesses, scored every frame worse (0.8310, 0.7273 and 0.7451): the tall arched panels and the lantern tower's bays sink in under four units and stay painted",
     },
+    {
+      method:
+        "genshin:parity passes login's shape measure at login-door-session's camera: our parts drawn into the witness's part, depth and normal targets at 1280 wide beside the exports'",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The towers fail every gate: their outlines stand 1.28 pixels apart on average against the gate's 1, their depth 1.7 hundredths off and their normals 19 degrees, the lathe's smooth rings against the exports' carving. The bridges and pillars hold (0.58 pixels, 0.6 hundredths, 9.1 degrees), as does the door (0.11 pixels, 7.5 degrees)",
+    },
   ],
   openQuestions: [
     "The towers' gilding and windows: their colour per section scores worse painted as diffuse stone, the game's gold being a metal",

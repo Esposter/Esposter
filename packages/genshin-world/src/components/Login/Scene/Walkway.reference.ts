@@ -33,6 +33,13 @@ export const walkwayTopic: ReferenceTopic = {
       result:
         "The walkway's pieces are boxes with no bevel, their tops at three levels: the stone at 0, its lanes' borders 9 millimetres over it and its curbs 3 centimetres over that. Each piece drawn up to its highest vertex stood its whole top at its curbs, so the middle lane's pieces, which carry none, stood 2 centimetres under their neighbours, and their sides read as dark steps across the walkway. Built with its borders and curbs as levels of their own, the walkway nears its exports on the phone's door frame (FLIP 0.481 to 0.445, similarity 0.44 to 0.61), but the day's title scores 0.4309 against 0.4304 and the night's 0.3657 against 0.3651; every piece flat at its stone scores the dawn 0.3849 against 0.3858, the phone's door frame 0.4688 against 0.4698 and the rest level, so it ships",
     },
+    {
+      method:
+        "genshin:parity passes login's shape measure at login-door-session's camera: our parts drawn into the witness's part, depth and normal targets at 1280 wide beside the exports'",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The walkway's outline stands 3.12 pixels from the exports' on average, its depth within 0.6 hundredths and its normals 9.9 degrees, so its pieces stand where the exports' do and are cut a little differently at their edges",
+    },
   ],
   openQuestions: [
     "What MonoBlockController does to each walkway piece: the rise is read by eye off the recording's far end; its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$) hold its own curve",

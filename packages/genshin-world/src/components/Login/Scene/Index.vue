@@ -70,6 +70,7 @@ import { createLoginPaving } from "#src/services/login/walkway/createLoginPaving
 import { createLoginWalkwayPieces } from "#src/services/login/walkway/createLoginWalkwayPieces";
 import { getLoginWalkwaySink } from "#src/services/login/walkway/getLoginWalkwaySink";
 import { sinkLoginWitnessWalkway } from "#src/services/login/walkway/sinkLoginWitnessWalkway";
+import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { useLoop, useTres } from "@tresjs/core";
 import { watchImmediate } from "@vueuse/core";
@@ -220,6 +221,7 @@ walkway.receiveShadow = true;
 // The batch's own bounding sphere is read once and never follows its instances as they move, so the batch is never
 // Culled as one; each piece is still culled on its own
 walkway.frustumCulled = false;
+walkway.userData[SCENE_FAMILY_KEY] = LoginPartFamily.Walkway;
 const walkwayInstances = walkwayPieces.flatMap(({ depth, geometry, seed }) => {
   const geometryId = walkway.addGeometry(geometry);
   return Array.from({ length: LOGIN_WALKWAY_ROW.count }, (_value, copy) => ({
@@ -248,6 +250,7 @@ const doorPieces = doorPieceGeometries.map(({ frame, panel }) => {
   return piece;
 });
 const doorPieceGroup = new Group().add(...doorPieces);
+doorPieceGroup.userData[SCENE_FAMILY_KEY] = LoginPartFamily.Door;
 // The metres the cloud sea's billows have scrolled toward the camera
 const cloudSeaScrolled = uniform(0);
 // The cloud sea as billows of the clouds' own two colours, lit tops over shaded hollows, which the fog then pales
@@ -418,6 +421,7 @@ onUnmounted(() => {
       <TresMesh
         v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Towers)"
         :geometry="towersGeometry"
+        :user-data="{ [SCENE_FAMILY_KEY]: LoginPartFamily.Towers }"
         cast-shadow
         receive-shadow
         :material="towersMaterial"
@@ -426,6 +430,7 @@ onUnmounted(() => {
       <TresMesh
         v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Bridges)"
         :geometry="hullsGeometry"
+        :user-data="{ [SCENE_FAMILY_KEY]: LoginPartFamily.Bridges }"
         cast-shadow
         receive-shadow
         :material="bridgesMaterial"

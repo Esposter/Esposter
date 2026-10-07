@@ -8,20 +8,23 @@ import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTarge
 const decodeTarget = (name: string, values: Float32Array): Float32Array =>
   name === WitnessTargetName.Normal ? values.map((value, index) => (index % 4 === 3 ? value : value * 2 - 1)) : values;
 // The witness page's targets at the view last set, as its `renderWitnessTargets` reads them back from the renderer,
-// Drawing only the ones named, each handed over as base64 and read here as its floats
+// Drawing only the ones named, each handed over as base64 and read here as its floats; told to, of the scene's own parts
+// In place of the exports'
 export const readWitnessTargets = async (
   page: Page,
   names: readonly WitnessTargetName[],
+  isScene = false,
 ): Promise<
   Pick<WitnessGbuffer, "families" | "height" | "parts" | "width"> & {
     targets: Partial<Record<WitnessTargetName, Float32Array>>;
   }
 > => {
   const { families, height, parts, targets, width } = await page.evaluate(
-    (targetNames) =>
+    ([targetNames, isSceneDrawn]) =>
       (
         Reflect.get(window, "renderWitnessTargets") as (
           targetNames: string[],
+          isScene: boolean,
         ) => Promise<{
           families: string[];
           height: number;
@@ -29,8 +32,8 @@ export const readWitnessTargets = async (
           targets: Partial<Record<WitnessTargetName, string>>;
           width: number;
         }>
-      )(targetNames),
-    [...names],
+      )(targetNames, isSceneDrawn),
+    [[...names], isScene] as const,
   );
   return {
     families,

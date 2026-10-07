@@ -68,14 +68,15 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Shape and surface
 
-| Unknown                                      | Tool                                                                                                                               |
-| :------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
-| How far a stand-in falls short               | `rank`'s second table: FLIP and similarity against the exports                                                                     |
-| Depth, normal, albedo, part per pixel        | `genshin:parity gbuffer`                                                                                                           |
-| A family's surface laid out in metres        | `genshin:parity plan`: its unlit albedo from straight above                                                                        |
-| A stand-in seen where no reference is        | `genshin:parity view`: any camera, ours beside the exports                                                                         |
-| Which term next, inside a pass               | `genshin:parity rank`: every term's ceiling, largest first, ordering that pass's items                                             |
-| Ours against the exports, channel by channel | gap: the witness's targets drawn for our parts, diffed per family (`apps/web/content/docs/proposals/genshin/recreation-passes.md`) |
+| Unknown                                      | Tool                                                                                                              |
+| :------------------------------------------- | :---------------------------------------------------------------------------------------------------------------- |
+| How far a stand-in falls short               | `rank`'s second table: FLIP and similarity against the exports                                                    |
+| Depth, normal, albedo, part per pixel        | `genshin:parity gbuffer`                                                                                          |
+| A family's surface laid out in metres        | `genshin:parity plan`: its unlit albedo from straight above                                                       |
+| A stand-in seen where no reference is        | `genshin:parity view`: any camera, ours beside the exports                                                        |
+| Which term next, inside a pass               | `genshin:parity rank`: every term's ceiling, largest first, ordering that pass's items                            |
+| Ours against the exports, channel by channel | `passes`' shape: our parts drawn into the witness's targets, outline, depth and normal per family                 |
+| Our unlit colour against the exports'        | gap: the same targets' albedo, diffed per family (`apps/web/content/docs/proposals/genshin/recreation-passes.md`) |
 
 ### Motion
 

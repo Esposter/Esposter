@@ -106,8 +106,11 @@ if (screen && root) {
   if (witness) {
     Reflect.set(window, "setWitnessView", (view: WitnessView) => setWitnessView(witness, view));
     // Its G-buffer at the view last set, which the pose, the overlay, the layers' scores and calibration read
-    Reflect.set(window, "renderWitnessTargets", (targets?: Parameters<typeof renderWitnessTargets>[2]) =>
-      renderWitnessTargets(witness, sceneContext.value, targets),
+    Reflect.set(
+      window,
+      "renderWitnessTargets",
+      (targets?: Parameters<typeof renderWitnessTargets>[2], isScene?: boolean) =>
+        renderWitnessTargets(witness, sceneContext.value, targets, isScene),
     );
     // Each part of a family with where it lands on the screen, which a reference's landmarks are matched to
     Reflect.set(window, "computeWitnessParts", (family: string) =>

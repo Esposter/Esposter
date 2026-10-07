@@ -1,11 +1,12 @@
 import type { SceneContext } from "#src/models/scene/SceneContext";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
-import type { Camera, Scene } from "three";
+import type { Camera, Object3D, Scene } from "three";
 import type GTAONode from "three/examples/jsm/tsl/display/GTAONode.js";
 import type { Node, PassNode } from "three/webgpu";
 
 import { WitnessShadowMaterial } from "#parity/models/witness/WitnessShadowMaterial";
 import { WitnessTarget, WitnessTargets } from "#parity/models/witness/WitnessTarget";
+import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { createOcclusionNode, StoneNodeMaterial } from "genshin-engine";
 import { Color, DirectionalLight, FloatType, Layers, Light, Mesh, RenderTarget, Vector2 } from "three";
@@ -45,11 +46,14 @@ let occlusion:
 // Only the witness's parts are drawn, over nothing, so a pixel no part covers is zero throughout but in the occlusion,
 // Which leaves it whole. Only the targets asked for are drawn, every
 // One unless told, each handed back as base64, the one form a page hands its caller bytes in. Every
-// Part keeps its own material, handed back once the targets are read
+// Part keeps its own material, handed back once the targets are read. Told to, it draws the scene's own parts in
+// Place of the witness's, each object the scene marks with a family (`SCENE_FAMILY_KEY`) a part of that family, under
+// The witness's family indices, so ours and the exports' are compared target by target
 export const renderWitnessTargets = async (
   witness: SceneWitness,
   context: SceneContext | undefined,
   requestedTargets: readonly WitnessTarget[] = WitnessTargets,
+  isScene = false,
 ): Promise<{
   families: string[];
   height: number;
@@ -62,16 +66,24 @@ export const renderWitnessTargets = async (
   const { x: width, y: height } = renderer.getDrawingBufferSize(new Vector2());
   const parts: { family: string; id: number; mesh: string }[] = [];
   const drawnMeshes: { familyIndex: number; id: number; mesh: Mesh }[] = [];
-  for (const [familyIndex, familyGroup] of witness.parts.children.entries()) {
-    if (!familyGroup.visible) continue;
-    for (const part of familyGroup.children) {
-      const id = parts.length + 1;
-      parts.push({ family: familyGroup.name, id, mesh: part.name });
-      part.traverse((object) => {
-        if (object instanceof Mesh) drawnMeshes.push({ familyIndex, id, mesh: object });
-      });
+  const families = witness.parts.children.map(({ name }) => name);
+  const addPart = (family: string, part: Object3D): void => {
+    const id = parts.length + 1;
+    parts.push({ family, id, mesh: part.name });
+    part.traverseVisible((object) => {
+      if (object instanceof Mesh) drawnMeshes.push({ familyIndex: families.indexOf(family), id, mesh: object });
+    });
+  };
+  if (isScene)
+    scene.traverseVisible((object) => {
+      const family = object.userData[SCENE_FAMILY_KEY] as string | undefined;
+      if (family && families.includes(family)) addPart(family, object);
+    });
+  else
+    for (const familyGroup of witness.parts.children) {
+      if (!familyGroup.visible) continue;
+      for (const part of familyGroup.children) addPart(familyGroup.name, part);
     }
-  }
   const getTargetMaterial = (
     target: WitnessTarget,
     { familyIndex, id, mesh }: (typeof drawnMeshes)[number],
@@ -193,5 +205,5 @@ export const renderWitnessTargets = async (
       for (const light of lights) light.layers.disable(TARGET_LAYER);
     },
   );
-  return { families: witness.parts.children.map(({ name }) => name), height, parts, targets, width };
+  return { families, height, parts, targets, width };
 };

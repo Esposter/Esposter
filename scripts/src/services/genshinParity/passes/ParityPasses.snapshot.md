@@ -22,4 +22,15 @@ the change that moved it, as a bench's report is committed.
 | Layout | Walkway row across | 0 | 0.0200 | m | yes |
 | Layout | Walkway row up | 0 | 0.0200 | m | yes |
 | Camera | login-door-session | 1.2470 | 2 | px | yes |
-| Shape | no measure yet | | | | no |
+| Shape | login-door-session Door outline | 0.1071 | 1 | px | yes |
+| Shape | login-door-session Door depth | 0.0001 | 0.0100 | share | yes |
+| Shape | login-door-session Door normal | 7.4508 | 10 | degrees | yes |
+| Shape | login-door-session Bridges outline | 0.5840 | 1 | px | yes |
+| Shape | login-door-session Bridges depth | 0.0055 | 0.0100 | share | yes |
+| Shape | login-door-session Bridges normal | 9.0721 | 10 | degrees | yes |
+| Shape | login-door-session Towers outline | 1.2846 | 1 | px | no |
+| Shape | login-door-session Towers depth | 0.0168 | 0.0100 | share | no |
+| Shape | login-door-session Towers normal | 19.0554 | 10 | degrees | no |
+| Shape | login-door-session Walkway outline | 3.1163 | 1 | px | no |
+| Shape | login-door-session Walkway depth | 0.0056 | 0.0100 | share | yes |
+| Shape | login-door-session Walkway normal | 9.9457 | 10 | degrees | yes |
