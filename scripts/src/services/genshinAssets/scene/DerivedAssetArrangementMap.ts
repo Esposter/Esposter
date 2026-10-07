@@ -1,3 +1,4 @@
+import type { TowerPlacement } from "#src/models/genshinAssets/fit/TowerPlacement";
 import type { ArrangementFamily } from "#src/models/genshinAssets/scene/ArrangementFamily";
 import type { ArrangementRatio } from "#src/models/genshinAssets/scene/ArrangementRatio";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
@@ -5,9 +6,11 @@ import type { DecodedClip } from "#src/models/genshinAssets/shared/DecodedClip";
 import type { Vector } from "#src/models/shared/Vector";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { fitLoginTowers } from "#src/services/genshinAssets/fit/fitLoginTowers";
+import { composeLatheAxisPoint } from "#src/services/genshinAssets/fit/composeLatheAxisPoint";
+import { readTowerProfiles } from "#src/services/genshinAssets/fit/readTowerProfiles";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
+import { Quaternion, Vector3 } from "three";
 
 // Where an outline's edges cross a depth, the x of each edge that spans it
 const computeOutlineCrossings = (outline: readonly [number, number][], depth: number): number[] =>
@@ -58,13 +61,33 @@ export const DerivedAssetArrangementMap: Record<
     families: [
       {
         name: "towers",
-        // Each at the foot of its lathe's axis, as the towers' fit stands them from the exports
+        // Each by both ends of its lathe's axis, its foot and its crown, so a scale off stands its crown off
         readExpected: async (placements, meshDirectory) =>
-          (await fitLoginTowers(placements, meshDirectory)).placements.map(({ position }) => position),
-        readPositions: async () =>
-          (await readWorldData<{ placements: { position: Vector }[] }>("login/towers.json")).placements.map(
-            ({ position }) => position,
-          ),
+          (await readTowerProfiles(placements, meshDirectory)).flatMap(({ placement, profile }) => [
+            composeLatheAxisPoint(profile, placement, 0),
+            composeLatheAxisPoint(
+              profile,
+              placement,
+              profile.sections.reduce((sum, { height }) => sum + height, 0),
+            ),
+          ]),
+        readPositions: async () => {
+          const { facades, placements } = await readWorldData<{
+            facades: Record<string, { sections: { height: number }[] }>;
+            placements: TowerPlacement[];
+          }>("login/towers.json");
+          return placements.flatMap(({ position, rotation, scale, tower }) => {
+            const height = (facades[tower]?.sections ?? []).reduce((sum, section) => sum + section.height, 0);
+            const [x = 0, y = 0, z = 0, w = 1] = rotation;
+            return [
+              position,
+              new Vector3(0, height * scale, 0)
+                .applyQuaternion(new Quaternion(x, y, z, w))
+                .add(new Vector3(...position))
+                .toArray(),
+            ];
+          });
+        },
       },
       {
         name: "bridges",

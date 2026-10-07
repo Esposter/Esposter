@@ -13,6 +13,7 @@ import { rasterizeTopFaces } from "#src/services/genshinAssets/fit/rasterizeTopF
 import { readLevelOfDetailParts } from "#src/services/genshinAssets/fit/readLevelOfDetailParts";
 import { readMaterialNames } from "#src/services/genshinAssets/fit/readMaterialNames";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { simplifyPath } from "#src/services/genshinAssets/fit/simplifyPath";
 import { toTexel } from "#src/services/genshinAssets/fit/toTexel";
 import { traceCellLoops } from "#src/services/genshinAssets/fit/traceCellLoops";
 import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUpperMedian";
@@ -26,6 +27,7 @@ import {
   TOWER_FACADE_SHADE_TOLERANCE,
   TOWER_FACADE_SHALLOW_RECESS,
   TOWER_MESH_REGEX,
+  TOWER_PROFILE_TOLERANCE,
   TOWER_RADIUS_TOLERANCE,
 } from "#src/services/genshinAssets/shared/constants";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
@@ -139,24 +141,28 @@ export const fitLoginTowerFacades = async (
     );
     for (const cell of cells) depths.push((bandWallRadiusMap.get(toBand(cell)) ?? 0) - (heights[cell] ?? 0));
     const bandCount = Math.ceil(height / bandRows);
+    // The wall's profile up the tower, row by row its median radius at the row's middle, simplified into the sloped
+    // Runs a moulding's roll and a cornice's overhang are, each a frustum
     const toWallSections = (): LatheProfile["sections"] => {
-      const sections: LatheProfile["sections"] = [];
+      const rowRadiiMap = Map.groupBy(drawn, (cell) => Math.floor(cell / width));
+      const points: [number, number][] = [];
       let radius = 0;
-      for (let band = 0; band < bandCount; band++) {
-        // A band the tower stands open all round keeps the wall below it
-        radius = bandWallRadiusMap.get(band) || radius;
-        const bandHeight = (Math.min((band + 1) * bandRows, height) - band * bandRows) * TOWER_FACADE_CELL_SIZE;
-        const last = sections.at(-1);
-        if (last && Math.abs(radius - last.bottomRadius) <= TOWER_RADIUS_TOLERANCE * last.bottomRadius)
-          last.height = roundFitted(last.height + bandHeight);
-        else
-          sections.push({
-            bottomRadius: roundFitted(radius),
-            height: roundFitted(bandHeight),
-            topRadius: roundFitted(radius),
-          });
+      for (let row = 0; row < height; row++) {
+        // A row the tower stands open all round keeps the wall below it
+        radius = computeUpperMedian((rowRadiiMap.get(row) ?? []).map((cell) => heights[cell] ?? 0)) || radius;
+        if (row === 0) points.push([radius, 0]);
+        points.push([radius, (row + 0.5) * TOWER_FACADE_CELL_SIZE]);
       }
-      return sections;
+      points.push([radius, height * TOWER_FACADE_CELL_SIZE]);
+      const wall = simplifyPath(points, TOWER_PROFILE_TOLERANCE);
+      return wall.slice(1).map(([topRadius, top], index) => {
+        const [bottomRadius = 0, bottom = 0] = wall[index] ?? [];
+        return {
+          bottomRadius: roundFitted(bottomRadius),
+          height: roundFitted(top - bottom),
+          topRadius: roundFitted(topRadius),
+        };
+      });
     };
     const checkIsGilded = (cell: number): boolean => {
       const [red = 0, , blue = 0] = colors[cell] ?? [];

@@ -205,11 +205,15 @@ export const TOWER_FACADE_DEEP_RECESS = 4;
 export const TOWER_FACADE_MIN_CELLS = 40;
 // Paint on a tower's face stands apart from its band where it is this share darker or lighter
 export const TOWER_FACADE_PAINT_CONTRAST = 0.12;
+// How far a tower's wall profile may stray from the radii its rows stand at, in units of its mesh, once simplified
+export const TOWER_PROFILE_TOLERANCE = 0.25;
 export const FITTED_DECIMALS = 2;
 // Unity turns by Euler degrees about z, then x, then y
 export const UNITY_EULER_ORDER = "YXZ";
 // A rotation's components are kept to the ten-thousandth, finer than a centimetre over the scene's farthest part
 export const ROTATION_DECIMALS = 10_000;
+// A scale is kept to five decimals, not to the centimetre: a tower's 0.1028 kept as 0.1 stood its crown metres low
+export const SCALE_DECIMALS = 5;
 // A walkway's outline is traced on a five-centimetre grid and kept within two centimetres of it, so pieces laid along
 // Its diagonal cracks meet with no gap to see their sides through
 export const WALKWAY_CELL_SIZE = 0.05;
