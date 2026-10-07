@@ -128,8 +128,16 @@ export const cameraTopic: ReferenceTopic = {
       result:
         "The wiki stills fit no centred camera, so they are replaced. Public recordings of the PC client idling on the title with no interface show the hours at the glide's camera: dawn (yt-sQNqMfmfkZU, 2023), day (yt-7kK6HqVfASk, 2022, its top and bottom 50 rows masked) and night (yt-PnqNza4qWzs, 2022) stand the walkway's far end on the door recording's rows, where the 2021 recordings stand it some 30 rows lower, another camera. Each frame is held at the glide's moment its towers stand at (heldScrolled): night 135 metres and dawn 132, where the lantern tower and the ringed tower frame the walkway as in the frame, peaking the shape score at 0.412 and 0.421; the day's score runs flat under its dense haze, so its 118 is where genshin:parity parts lands the exports' lantern tower and the near tower left of the walkway on its own, scoring 0.394",
     },
+    {
+      method:
+        "genshin:assets tree login for ModelCamera and LoginCamera, and genshin:assets behaviours login --script '^(Camera|Light)#' over the raw exports of the login's built-in components",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The camera is exact data the pose was solved without. ModelCamera stands under SceneObj at 0, 60, 0, six metres over BridgeBeginNode at the scene's tenth, turned half a turn about an axis 0.05 toward z, a pitch of about 5.73 degrees; LoginCamera, at the origin, carries the one Camera component, whose bytes hold a near plane of 0.25, a far plane of 600 and a vertical field of view of 45. The pose solved on the door recording stands the eye 1.24 metres over the walkway pitched 5.29 degrees under a field of view of 51.2, and the towers' row 2.47 metres across, 5 down and 8.94 nearer than the blocks lay it. MonoLoginScene's speeds, curves and distances may move the camera at run time, so which is drawn is the camera pass's to settle against the exact values before any later pass is trusted",
+    },
   ],
   openQuestions: [
+    "Whether the login draws from ModelCamera's place and LoginCamera's field of view of 45, against the pose's 1.24 metres, 5.29 degrees and 51.2: what of MonoLoginScene moves or widens the camera, and how much of the towers' row offset the exact camera explains",
     "How the game brings the towers to the door's phase after a long idle: every recording found idles a few seconds, so the title's phase is read off its glide's length, not a rule of the script's",
     "Where the glide comes to rest: the recording's door frame was still slowing at 1.6 metres a second when the click came, so the rest stands a little nearer the door than its pose",
   ],
