@@ -45,7 +45,7 @@ The sky is the scene's background node (`createSkyNode`), drawn behind everythin
 - **The sun's halo** as three lobes of one falloff, each ten times wider and fainter, tighter toward the zenith, and **the moon's glow**, the sixth power of its closeness.
 - **The sun's disc**, brighter than white so bloom lifts it where a scene draws bloom: the game draws the sun and moon as bodies of their own.
 - **The moon's disc** opposite the sun, and **stars** scattered by cell noise, as bright as the keyframes' star strength.
-- **Stepped clouds.** Noise projected onto a plane overhead, so clouds shrink toward the horizon, is cut into cumulus with a hard edge and a stepped shade band, as the ground's ramp steps its light. Their lit and shade colours come from the keyframes, the sun's glow warms their edges, and they fade out near the horizon. The layer drifts downwind with the [wind](/docs/genshin/vegetation), and its coverage is the region's.
+- **Stepped clouds.** Unless a scene hands its sky a cloud layer of the game's own program, which then takes their place (the [login screen](/docs/genshin/login-screen)): noise projected onto a plane overhead, so clouds shrink toward the horizon, is cut into cumulus with a hard edge and a stepped shade band, as the ground's ramp steps its light. Their lit and shade colours come from the keyframes, the sun's glow warms their edges, and they fade out near the horizon. The layer drifts downwind with the [wind](/docs/genshin/vegetation), and its coverage is the region's.
 
 ## What it costs to run
 

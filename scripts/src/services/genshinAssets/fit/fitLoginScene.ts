@@ -1,7 +1,10 @@
+import type { ExportedMesh } from "#src/models/genshinAssets/shared/ExportedMesh";
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { fitCloudLayerDome } from "#src/services/genshinAssets/fit/fitCloudLayerDome";
+import { fitCloudLayerTextures } from "#src/services/genshinAssets/fit/fitCloudLayerTextures";
 import { fitInterfaceClips } from "#src/services/genshinAssets/fit/fitInterfaceClips";
 import { fitInterfaceRects } from "#src/services/genshinAssets/fit/fitInterfaceRects";
 import { fitLoginClouds } from "#src/services/genshinAssets/fit/fitLoginClouds";
@@ -28,6 +31,15 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
+// The sky's cloud layer's material, and the settings of our cloud layer its floats set, by the property each is read
+// From
+const CLOUD_LAYER_MATERIAL = "Enviro_Cloud_Layer_Mat";
+const CLOUD_LAYER_MATERIAL_SETTING_MAP = {
+  curlAmplitude: "_CloudCurlAmplitude",
+  curlSpeed: "_CloudCurlSpeed",
+  curlTiling: "_CloudCurlTiling",
+  wispsOpacity: "_CloudWispsOpacity",
+} as const;
 // The login scene's parts fitted as our own kits' parameters, each written as a data file of the world package's,
 // With its interface's rects and clips and the rows its script scrolls them in: each copied spawn's count and the
 // Length of its step, by its prefab, its music, whose fit's report stands before its path, and its sounds
@@ -37,6 +49,10 @@ export const fitLoginScene = async (only: readonly string[] = []): Promise<strin
   const meshDirectory = join(directory.assets, AssetType.Mesh);
   const textureDirectory = join(directory.assets, AssetType.Texture2D);
   const fits: Record<string, () => Promise<string[]>> = {
+    // The cloud layer's textures as the statistics ours are synthesized from
+    cloudLayerTextures: async () => [
+      await writeWorldData("login/cloudLayerTextures.json", await fitCloudLayerTextures(textureDirectory)),
+    ],
     clouds: async () => [await writeWorldData("login/clouds.json", await fitLoginClouds(textureDirectory))],
     door: async () => [
       await writeWorldData(
@@ -78,9 +94,22 @@ export const fitLoginScene = async (only: readonly string[] = []): Promise<strin
       );
       return [await writeWorldData("login/scroll.json", scroll)];
     },
+    // The sky's gradient, and the dome its cloud layer is drawn on with its material's curl and wisps
     sky: async () => {
-      const gradient = await fitSkyGradient(join(textureDirectory, "Enviro_Sky_Gradient.png"));
-      return [await writeWorldData("login/sky.json", { gradient })];
+      const [gradient, cloudDome, materials] = await Promise.all([
+        fitSkyGradient(join(textureDirectory, "Enviro_Sky_Gradient.png")),
+        readFile(join(meshDirectory, "Cloud_LOD0.json"), "utf8"),
+        readComponentMaterials(DerivedAssetComponent.Login),
+      ]);
+      const { dome, residual } = fitCloudLayerDome(parseMachineJson<ExportedMesh>(cloudDome));
+      const floats = materials.find(({ name }) => name === CLOUD_LAYER_MATERIAL)?.floats ?? {};
+      const cloudLayerMaterial = Object.fromEntries(
+        Object.entries(CLOUD_LAYER_MATERIAL_SETTING_MAP).map(([setting, property]) => [setting, floats[property] ?? 0]),
+      );
+      return [
+        `the cloud layer's dome drawn from its profiles stands ${residual.toFixed(4)} off its own projections`,
+        await writeWorldData("login/sky.json", { cloudLayer: dome, cloudLayerMaterial, gradient }),
+      ];
     },
     // The sounds the login plays beside its music
     sounds: async () => [

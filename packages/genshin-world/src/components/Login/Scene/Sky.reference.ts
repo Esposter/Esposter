@@ -161,9 +161,23 @@ export const skyTopic: ReferenceTopic = {
       result:
         "Its settings solve to an opacity of 0.60, a coverage of 0.16, a tiling of 1.94, the wisps' coverage 0.94 and opacity 1.1, the bands barely moving (the middle 0.06 to 0.10): the brightness holds (0.009), the edges and spread hold, the cover falls from 0.143 to 0.104, its upper bands from 6 to 16% to 11 to 25%, and the clear sky's colour rises to 2.58 ΔE past its gate, the layer's thin cover tinting it. Within 3 degrees of the horizon our cover stays near 54% against 25% under every share the simplex tried, so what reads as cloud there is likely the haze over the cloud sea rather than the layer or the bands",
     },
+    {
+      method:
+        "genshin:assets fit login --only cloudLayerTextures, then genshin:parity layer login-door-session --witness login --ours at the settings solved over the game's textures, then its settings solved again over ours",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Each of the game's cloud textures is fitted as its channels' spectra by radius and direction and their values' quantiles (fitCloudLayerTextures), its normal map as the height its slopes are of, the wisps at half size by eight bands of rows, and drawn back at load (createCloudLayerTextures, about half a second on this machine): the density's channels stand uncorrelated and the curl's two at -0.61, so only the curl's share their phases. Random phases draw no thin streak, so our wisps are tufts where the game's are lines. Drawn at the game textures' settings, ours read the cover 0.113 against their 0.102 and the clear sky 3.2 against 2.7 ΔE; solved over ours, the cover 0.101, the clear sky 2.46, the brightness, edges and spread holding",
+    },
+    {
+      method:
+        "The same with the door frame held at heldScrolled 320, where its towers stand (Arrangement.reference.ts), so its own towers leave its sky: passes --pass Atmosphere, then the layer solved over ours from the last settings",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Clear of its towers the frame's sky holds far more cloud low down (55% and 46% under 8 degrees, against 25% when its towers read as clear sky), and its halves stand further apart, the cover's gate 0.16. With no layer the cover fails at 0.275 and the spread at 0.23 against 0.075, our clouds' brightness straying further inside them than the game's; the layer solved from the last settings holds the cover (0.147) but fails the brightness, edges and spread, scoring worse over every reading than none, so no hour draws it yet. The spread is the clouds' own colours, owed their re-solve",
+    },
   ],
   openQuestions: [
-    "The cloud layer (Cloud_LOD0 under Enviro_Cloud_Layer_Mat): its program ported with textures of our own in place of its weather, density, curl, normal and wisps maps, and its run-time coverage, opacity and colours solved by hour. FLIP over the sky does not price it and the atmosphere pass's statistics do, its night settings solved on them over the game's textures: its textures of our own, and its settings named from EnviroSky's, LoginSceneEnviro's and LoginSceneWeather's fields at the hours, are next",
+    "The cloud layer's settings by hour: its program and textures of our own are drawn, and no hour's settings yet hold every gate of the atmosphere pass; the door frame held clear of its own towers, the clouds' colours solved again, then each hour solved on its frames and named from the environment scripts where a curve reads it, and its drift over time",
     "The sky's own colours by day and at night, the dawn's and the dusk's being solved over their frames' clear sky (the dawn title's and the door recording's): the game's environment system sets its sky shader's _ES_ colours, top and bottom toward the sun and away, the halo, the sun's halo and the moon's glow, at run time from no asset the export holds, so they are measured; one frame's sky by least squares (genshin:parity sky) leaves its shape and its colours unsettled, the sun's direction itself measured and most of the sky under clouds and haze",
     "The dusk sky low on the frame's left: the recording's clear sky there is almost all cloud, so the sky solved over its clear pixels draws a dusty rose band where the recording glows gold, and its bottom colour toward the sun is held by no pixel",
   ],

@@ -1,4 +1,4 @@
-import type { PostPipeline, PostPipelineOptions, QualityTier, SkyUniforms } from "genshin-engine";
+import type { CloudLayerUniforms, PostPipeline, PostPipelineOptions, QualityTier, SkyUniforms } from "genshin-engine";
 import type { MaybeRefOrGetter } from "vue";
 
 import { SceneContextKey } from "#src/services/scene/SceneContextKey";
@@ -20,8 +20,9 @@ export const usePostPipeline = (
   >,
   // How far round each pixel in metres the screen-space occlusion reaches, none where the scene draws none
   occlusionRadius: MaybeRefOrGetter<number> = 0,
-  // The sky the scene draws, handed on with what it renders with
+  // The sky the scene draws and its cloud layer, handed on with what it renders with
   sky?: SkyUniforms,
+  cloudLayer?: CloudLayerUniforms,
 ) => {
   const { camera, renderer, scene } = useTres();
   /* oxlint-disable no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see */
@@ -55,6 +56,7 @@ export const usePostPipeline = (
       if (sceneContext && activeCamera && isWebGPURenderer(renderer))
         sceneContext.value = {
           camera: activeCamera,
+          cloudLayer,
           fog: postInputs.fogUniforms,
           occlusionRadius: drawnOcclusionRadius,
           renderer,

@@ -20,6 +20,7 @@ import { gbufferCommand } from "#src/services/genshinParity/commands/gbufferComm
 import { glideCommand } from "#src/services/genshinParity/commands/glideCommand";
 import { instrumentsCommand } from "#src/services/genshinParity/commands/instrumentsCommand";
 import { launchCommand } from "#src/services/genshinParity/commands/launchCommand";
+import { layerCommand } from "#src/services/genshinParity/commands/layerCommand";
 import { listenCommand } from "#src/services/genshinParity/commands/listenCommand";
 import { lostCommand } from "#src/services/genshinParity/commands/lostCommand";
 import { lumaCommand } from "#src/services/genshinParity/commands/lumaCommand";
@@ -34,6 +35,7 @@ import { polarCommand } from "#src/services/genshinParity/commands/polarCommand"
 import { poseCommand } from "#src/services/genshinParity/commands/poseCommand";
 import { rankCommand } from "#src/services/genshinParity/commands/rankCommand";
 import { recordCommand } from "#src/services/genshinParity/commands/recordCommand";
+import { scrollCommand } from "#src/services/genshinParity/commands/scrollCommand";
 import { shootCommand } from "#src/services/genshinParity/commands/shootCommand";
 import { skyCommand } from "#src/services/genshinParity/commands/skyCommand";
 import { solosCommand } from "#src/services/genshinParity/commands/solosCommand";
@@ -51,6 +53,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     passes: passesCommand,
     fetch: fetchCommand,
     clouds: cloudsCommand,
+    layer: layerCommand,
     cover: coverCommand,
     compare: compareCommand,
     gbuffer: gbufferCommand,
@@ -63,6 +66,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     pose: poseCommand,
     plan: planCommand,
     lost: lostCommand,
+    scroll: scrollCommand,
     parts: partsCommand,
     track: trackCommand,
     glide: glideCommand,

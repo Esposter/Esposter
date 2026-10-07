@@ -13,7 +13,7 @@ const RIGID_WEIGHT_TOLERANCE = 1e-4;
 // Pose's inverse times the bone's end transform's inverse times its transform at the sample times the bind pose. A
 // Property the clip binds no curve to is read as the identity's, and a bone it binds none to holds still
 export const fitRigidPieces = (
-  { m_BindPose, m_BoneNameHashes, m_Skin }: ExportedMesh,
+  { m_BindPose, m_BoneNameHashes, m_Skin }: Pick<ExportedMesh, "m_BindPose" | "m_BoneNameHashes" | "m_Skin">,
   { curves }: DecodedClip,
 ): { poses: Matrix4[][]; vertexPieces: number[] } => {
   const vertexPieces = m_Skin.map(({ boneIndex, weight }, vertex) => {

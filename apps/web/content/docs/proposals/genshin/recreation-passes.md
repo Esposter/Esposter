@@ -71,7 +71,7 @@ The interface runs beside these as a pass of its own, placed from the rect tree,
 | Surface    | Textures and materials                                  | Unlit colour per family against the exports                                           | `gbuffer`, `plan`, `passes`                            | Nothing                                                      |
 | Display    | The post program, the grading tables, the post profile  | Which table, which curve and what bloom, before any light                             | `passes`                                               | The game's bloom, its fields named                           |
 | Light      | The recordings, everything before held                  | The sun's direction by its shadows' edges, the ramp and sky by bins                   | `calibrate`                                            | A shadow-edge solve                                          |
-| Atmosphere | The recordings, the emitters' anchors, the cloud layer  | Haze by depth and height, sky over its clear pixels, clouds by statistics             | `calibrate --haze`, `sky`, `cover`, `clouds`, `passes` | The cloud layer's textures, and its settings solve           |
+| Atmosphere | The recordings, the emitters' anchors, the cloud layer  | Haze by depth and height, sky over its clear pixels, clouds by statistics             | `calibrate --haze`, `sky`, `cover`, `clouds`, `passes` | Each hour's cloud layer settings                             |
 | Audio      | The game's sound banks, recordings to find each sound   | Each sound's octave bands over time and its onset; the music by `listen`              | The music tools, `sounds`, `fitSoundEffect`            | Its measure in `passes`                                      |
 
 ### Why it converges
@@ -89,7 +89,7 @@ The method needs the measures each pass lacks, each joining `genshin:parity pass
 1. **Layout's projected diff.** Our transforms against the exports' in pixels where they land at each reference's pose, before any render.
 2. **Display's solve.** Built: the uber pass's tone curve read from its program and drawn by the engine, its contrast solved on the light's plane and held by `passes`. The game's bloom is left, its fields still unnamed.
 3. **Light's shadow edges.** The sun's direction solved on its shadows' edges over flat receivers.
-4. **Atmosphere's cloud statistics.** Built: the sky compared by statistics blind to where its clouds stand and held by `passes` ([parity](/docs/genshin/parity)). The cloud layer's settings are solved on them over the game's own textures, held with the layer's port until textures of ours draw it.
+4. **Atmosphere's cloud statistics.** Built: the sky compared by statistics blind to where its clouds stand and held by `passes` ([parity](/docs/genshin/parity)). The cloud layer's settings are solved on them over the game's own textures, drawn over textures of ours, though no hour's settings hold every gate yet.
 
 Everything the passes already have is reused as it is, and each measure, once built, retires its row's gap in the toolbox.
 
