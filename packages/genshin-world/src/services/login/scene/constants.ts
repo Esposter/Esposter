@@ -34,11 +34,12 @@ export const LOGIN_TOWERS_ROW = scroll.LoginScene_Build_All;
 export const LOGIN_TOWERS_ROW_OFFSET: [number, number, number] = [0, -WALKWAY_LIFT, -8.94];
 // The cloud sea's row, the sea of cloud effect's two copies 300 metres apart (MonoLoginScene's third record)
 export const LOGIN_CLOUD_SEA_ROW = { count: 2, length: 300 };
-// The glide, in metres a second off the English recording's paving at the camera's pose (genshin:parity glide): 3.14
-// While the title waits, steady to a few hundredths over its clean frames, about 3.9 once the game prepares, changing
-// Pace by 0.63 each second, the slope of the recording's last three seconds
-export const LOGIN_GLIDE_TITLE_SPEED = 3.14;
-export const LOGIN_GLIDE_PREPARING_SPEED = 3.9;
+// The glide, in metres a second: MonoLoginScene's two speeds, 3.5 while the title waits and 4.5 once the game
+// Prepares, which the current build's recording times by the walkway's repeats (genshin:parity glide) at 3.42 to 3.52
+// And, over a repeat already braking, 4.35. It changes pace by 0.63 each second, the slope of the older recording's
+// Last three seconds read off its paving, until the script's curves are named
+export const LOGIN_GLIDE_TITLE_SPEED = 3.5;
+export const LOGIN_GLIDE_PREPARING_SPEED = 4.5;
 export const LOGIN_GLIDE_ACCELERATION = 0.63;
 // Where the glide comes to rest at the door, as metres scrolled: nine of the walkway's copies, the towers' row 144
 // Metres along its loop, where both older builds' door frames stand it, their towers and bridges moved as one with the
