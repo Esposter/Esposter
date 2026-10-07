@@ -29,4 +29,4 @@ One frame's score mixes every unknown's error, and each change moves every term 
 
 ## In each domain
 
-The domain's toolbox page lists its passes, each with its source, its measure and its gate, and the runner that checks them in order (Genshin's is the `genshin-parity` skill's `references/toolbox.md`).
+The domain's toolbox page lists its passes, each with its source, its measure and its gate, and the runner that checks them in order, or names that runner as a gap until it is built (Genshin's is the `genshin-parity` skill's `references/toolbox.md`, where `genshin:parity passes` is still a gap).
