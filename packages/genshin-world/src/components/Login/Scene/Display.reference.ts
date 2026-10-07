@@ -68,9 +68,16 @@ export const displayTopic: ReferenceTopic = {
       result:
         "With what each light leaves off the plane read where the light lies, the refinement ran past Unity's range to a temperature of 219 and a residual of a millionth of none's: a balance near singular flattens every light by itself. Read in the pixel's own colour instead, the door session lies flattest at a temperature of minus 8.6 and a tint of 11.7, a hundredth under none's residual, and the night title at minus 10.4 and 27.2, a twelfth under; over both at once, minus 9.5 and 16. The temperature agrees between the frames and with the red's lower envelope, and the tint does not. Drawn over the night's stone light as it was solved with no balance, it takes the red under the black on 39% of the title's pixels and 42% of the door session's, against 26% and 32%, and scores 0.468 and 0.503, four thousandths worse: the light solved with no balance already stood for the balance's colour, so the stone's light is solved again under it before it ships",
     },
+    {
+      method:
+        "The night's stone light solved again under its white balance (calibrate, each bin taken back through the curve and the balance's inverse, which the page hands the tools beside its fog), written, and both night frames compared",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The light leaves 0.463 of its bins' spread unexplained, against 0.454 with no balance, while both frames score better: the title 0.463 from 0.464 and the door session 0.497 from 0.499. The red stands under the curve's black on 34% of the title's pixels and 35% of the door session's, against the game's 26% and 32%, where none of ours did; the tint the two frames disagree on is the balance's least settled part",
+    },
   ],
   openQuestions: [
-    "The night's stone light solved under its white balance: calibrate takes each bin's colour back through the curve and the balance's inverse, which needs the page to hand the hour's balance to the tools beside its fog; until it is, a solve weighed as the screen shows it is led by the darkest bins it cannot reach",
+    "Whether the night's tint is the game's: the two night frames read it at 12 and 27, and the stone's light, solved under the balance, now takes its red under the black on a tenth more of the title's pixels than the game's",
     "Which of MHYBloom_Z's other values is the threshold, the scaler and the intensity: the bloom alone moves what lies around the brightest pixels, so they are measured there once the login draws the game's bloom",
   ],
 };

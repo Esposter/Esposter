@@ -7,7 +7,7 @@ import { computeSkyLobeHarmonics } from "#src/services/genshinParity/witness/com
 import { SKY_LOBE_DIRECTIONS } from "#src/services/genshinParity/witness/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { STONE_HARMONIC_COUNT, STONE_HEIGHT_FALLOFF, STONE_RAMP_KNOT_COUNT, toSceneColor } from "genshin-engine";
-import { Color } from "three";
+import { Color, Matrix3 } from "three";
 
 // The least pixels a bin is read over, under which its mean is mostly one texel
 const MIN_BIN_COUNT = 30;
@@ -52,11 +52,14 @@ const writeRampWeights = (coordinate: number, weights: number[]): void => {
 // (`toSceneColor`): the game's curve is steep near white, and a pixel there taken back alone stood for a scene colour
 // Many times its neighbours', so the bins' means followed their brightest pixels and turned the night's walkway blue.
 // Weighed by the curve's slope as well, the solve followed its darkest bins instead, the curve rising thirty times as
-// Steeply at black as in the middle. Returns the light, the pixels its bins kept, and the residual over the bins
+// Steeply at black as in the middle. It is then taken back through the white balance the frame passes through
+// Before the curve, so the light solved is the one under it: the night's balance takes its stone's red under the
+// Curve's black, which no light that cannot fall below none reaches on its own. Returns the light, the pixels its bins kept, and the residual over the bins
 // Beside their spread about their mean, the share the light leaves unexplained. Bins too sparse to read are dropped, and with none left there is no
 // Light to solve
 export const solveStoneLight = (
   samples: readonly StoneLightSample[],
+  whiteBalance: Matrix3 = new Matrix3(),
 ): { count: number; deviation: number; light: StoneLight; residual: number } => {
   const sampleBinMap = Map.groupBy(samples, ({ bin, part }) => `${part}/${bin}`);
   const bins = [...sampleBinMap.values()].filter((binSamples) => binSamples.length >= MIN_BIN_COUNT);
@@ -76,14 +79,20 @@ export const solveStoneLight = (
   const weights = Array.from({ length: STONE_RAMP_KNOT_COUNT }, () => 0);
   let squared = 0;
   let spread = 0;
+  // Each bin's colour as the screen shows it, taken back through the curve and then the balance
+  const inverseWhiteBalance = whiteBalance.clone().invert();
+  const binSceneColors = bins.map((binSamples) => {
+    const [red, green, blue] = CHANNELS.map(
+      (channel) => binSamples.reduce((sum, { display }) => sum + display[channel], 0) / binSamples.length,
+    );
+    return toSceneColor(new Color(red, green, blue)).applyMatrix3(inverseWhiteBalance);
+  });
   const solutions = CHANNELS.map((channel) => {
-    const rows = bins.map((binSamples) => {
+    const rows = bins.map((binSamples, binIndex) => {
       const row = Array.from({ length: unknownCount }, () => 0);
       let target = 0;
-      let shown = 0;
       for (const {
         albedo,
-        display,
         emission,
         harmonics: terms,
         height,
@@ -109,12 +118,10 @@ export const solveStoneLight = (
         row[hazeUnknown + 1] = (row[hazeUnknown + 1] ?? 0) + opacity * scatter;
         // The glow and the rim the material adds after lighting are known, so they leave the colour the light explains
         target -= emission[channel] * occlusion * (1 - opacity);
-        shown += display[channel];
       }
-      const meanShown = shown / binSamples.length;
       return {
         row: row.map((value) => value / binSamples.length),
-        target: toSceneColor(new Color(meanShown, meanShown, meanShown)).r + target / binSamples.length,
+        target: (binSceneColors[binIndex]?.toArray()[channel] ?? 0) + target / binSamples.length,
         weight: binSamples.length,
       };
     });

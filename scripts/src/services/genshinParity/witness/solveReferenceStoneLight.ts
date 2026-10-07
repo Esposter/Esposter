@@ -22,7 +22,7 @@ import { solveStoneLight } from "#src/services/genshinParity/witness/solveStoneL
 import { withFinalizerAsync } from "@esposter/shared";
 import { computeStoneHarmonics, computeStoneRampCoordinate, STONE_HARMONIC_COUNT } from "genshin-engine";
 import sharp from "sharp";
-import { Matrix4, Vector3 } from "three";
+import { Matrix3, Matrix4, Vector3 } from "three";
 
 // A pixel's bin: its depth band, in metres between one and the next, its height band, in metres up to each top, its
 // Ramp coordinate in this many steps, and how far its face turns up in this many, so each bin holds faces the light
@@ -97,6 +97,7 @@ export const solveReferenceStoneLight = async (
       ]);
       const sky = await readPage<{ matrixWorld: number[]; projectionMatrixInverse: number[] }>(page, "getSceneSky");
       const fog = await readPage<SceneFog>(page, "getSceneFog");
+      const whiteBalance = new Matrix3().fromArray(await readPage<number[]>(page, "getSceneWhiteBalance"));
       const { direction } = await page.evaluate(() => (Reflect.get(window, "setSceneLights") as SetLights)({}));
       // Solved against the exports as the scene draws them under its own light, the solve should hand that light back,
       // Which checks its model against the renderer before it is trusted on a reference
@@ -152,7 +153,7 @@ export const solveReferenceStoneLight = async (
       const solve = (haze: Haze) => {
         const hazeFog = { ...fog, ...haze };
         for (const { point, sample } of pixels) sample.opacity = computeFogOpacity(eyePoint, point, hazeFog);
-        return solveStoneLight(samples);
+        return solveStoneLight(samples, whiteBalance);
       };
       const sceneHaze = { density: fog.density, heightFalloff: fog.heightFalloff, maxOpacity: fog.maxOpacity };
       const sceneSolution = solve(sceneHaze);

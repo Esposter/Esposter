@@ -35,7 +35,9 @@ const DUSK_LIGHT_DIRECTION = new Vector3(0.837, 0.259, 0.483);
 // Metres up, the dusk's rises gently, and the day's thins slowly from a light haze, its title scoring better and its
 // Phone door frame a little worse. The night's and the dusk's hide no more than their most opacity, solved with the
 // Rest, since their far towers stand darker than a haze hiding all of them draws; the dawn's and the day's so solved
-// Scored their frames worse, so they hide all
+// Scored their frames worse, so they hide all. The night passes through its own white balance before the tone curve,
+// Solved where its stone's light lies flattest over both its frames (genshin:parity balance), which takes the red of
+// Its moonlit stone under the curve's black as the game's _WhiteBalanceMat does, its stone light solved under it
 export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
   [LoginTimeOfDay.Dawn]: {
     cloudLitColor: new Color(0xf5efe8),
@@ -129,6 +131,7 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     starIntensity: 1,
     sunDirection: NIGHT_MOON_DIRECTION.clone().negate(),
     sunHaloColor: new Color(0x181818),
+    whiteBalance: { temperature: -9.5, tint: 16 },
     zenithBackColor: new Color(0x161d58),
     zenithColor: new Color(0x000000),
   },
