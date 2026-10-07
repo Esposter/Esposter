@@ -25,9 +25,9 @@ export const reference: ComponentReference = {
     cloudLayerShader: {
       block: "00/12903389.blk",
       kind: GameSourceKind.Shader,
-      name: "Enviro_Cloud_Layer_Mat's shader",
+      name: "Shader#8",
       pathId: "5100823853164162496",
-      role: "The cloud layer",
+      role: "The cloud layer Enviro_Cloud_Layer_Mat draws over the sky on Cloud_LOD0, a dome 0.94 across and 1.35 high: a weather map, a scrolled Voronoi density bent by curl, a normal map lighting each cloud between its light and dark colours, and cirrus wisps, its coverage, opacity and colours set at run time",
     },
     cloudParticleShader: {
       block: "00/12903389.blk",

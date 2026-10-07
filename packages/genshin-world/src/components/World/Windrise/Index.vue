@@ -13,6 +13,7 @@ import { useSky } from "#src/composables/useSky";
 import water from "#src/data/windrise/water.json";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import {
   CLOUD_COVERAGE,
@@ -54,6 +55,7 @@ import {
   createRampTexture,
   createSkyUniforms,
   createSunLight,
+  createTerrainSelection,
   createWaterUniforms,
   createWindUniforms,
   QualityTierSettingsMap,
@@ -145,8 +147,8 @@ if (witness)
     fogUniforms.density.value = isAlone ? 0 : FOG_DENSITY;
     skyUniforms.cloudCoverage.value = isAlone ? 0 : CLOUD_COVERAGE;
   });
-// Counts every tile that arrives, so what reads the ground under the view knows to read it again
-const terrainChanges = { count: 0 };
+// The tiles the terrain draws, which it writes each frame and what reads the ground compares against what it last read
+const terrainDraws = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const gradeLutTexture = createGradeLutTexture(WINDRISE_GRADE_OPTIONS);
 // No god rays and no bloom: neither is measured off a reference of Windrise, and drawn as they stand they veil the
 // Whole frame, the god rays marching hundreds of metres of lit air to their most opacity and bloom lifting the whole
@@ -203,12 +205,12 @@ onUnmounted(() => {
     <TresGroup :visible="checkIsOwnFamilyDrawn(WindrisePartFamily.Ground)">
       <WorldTerrain
         :create-terrain-worker
+        :draws="terrainDraws"
         :light-uniforms
         :origin
         :ramp-texture
         :terrain-options="WINDRISE_TERRAIN_OPTIONS"
         :water-uniforms
-        @change="terrainChanges.count++"
         @ready="isTerrainSettled = true"
       />
       <WorldGrass
@@ -219,7 +221,7 @@ onUnmounted(() => {
         :quality-tier
         :ramp-texture
         :rings="[NEAR_GRASS_RING, MIDDLE_GRASS_RING]"
-        :terrain-changes
+        :terrain-draws
         :terrain-options="WINDRISE_TERRAIN_OPTIONS"
         :water-uniforms
         :wind-uniforms

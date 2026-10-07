@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/terrain/checkTerrainDrawsChanged.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.010940000000002215,
+              "name": "unchanged",
+              "p99": 0.01718500000001228,
+              "rme": 20.386774227890665,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.04913999999999703,
+              "name": "changed outside",
+              "p99": 0.06440099999998296,
+              "rme": 13.566595194491008,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "checkTerrainDrawsChanged > eye 2 m up"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.0005300000000005411,
+              "name": "unchanged",
+              "p99": 0.0006910000000203808,
+              "rme": 12.804663185972487,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.030000000000001137,
+              "name": "changed outside",
+              "p99": 0.0394039999999876,
+              "rme": 10.897151350986961,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "checkTerrainDrawsChanged > eye 300 m up"
+        }
+      ]
+    }
+  ]
+}

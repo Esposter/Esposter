@@ -206,6 +206,13 @@ export const lightTopic: ReferenceTopic = {
       result:
         "The haze over the stone solved as two non-negative colours with the light, away from the sun and toward it, lowers every hour's residual by about a twentieth (dawn 0.1332 to 0.1274, day 0.2242 to 0.2131, dusk 0.1490 to 0.1434, night 0.1332 to 0.1289). Against the cloud sea's, the day's comes out dimmer and bluer with no sunward glow, the dusk's warmer and redder, the dawn's sunward glow dimmer and the night's close; the dusk's light fading with height falls to almost none, its haze taking what it held. Drawn through a stone mask the scene pass writes, every frame scores better: the dawn title 0.3849 to 0.3805, the day title 0.4346 to 0.4321, the phone's door frame 0.4732 to 0.4667, the door recording 0.5191 to 0.5126 and the night title 0.3737 to 0.3654, and calibrate --self on the night hands the haze back within about a twentieth",
     },
+    {
+      method:
+        "rank login-day-title --witness login, its height bands by depth read against its light map (the exports' light over the reference's, smooth over a few pixels)",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "By day the stone 20 metres up and 40 to 80 out reads 0.442 in the exports against the recording's 0.198, while every other cell stands within a fifth and beyond 80 metres the ratio holds near 0.8 at every height, so no haze profile explains it. The light map finds that cell on the lantern tower's crown and on the two wide towers top left, which stand where the recording shows sky and one thin ringed tower: the day's towers stand apart from the recording's, which the arrangement's day placement left open, and their stone lit over the recording's sky reads as stone too bright",
+    },
   ],
   openQuestions: [
     "The dusk sun's direction against its shadows: a tower's shadow falls over the wings in front of the door where the recording's are lit, and the faces' shading cannot settle the direction, the light's binned residual flat round the hand-set one, so the shadows' own edges are the measure left",

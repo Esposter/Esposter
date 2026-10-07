@@ -119,8 +119,16 @@ export const skyTopic: ReferenceTopic = {
       result:
         "The night's clouds stand 2.41 times their sky's brightness against the recording's 5.54, mostly at their shade colour; that shade raised halfway to the lit one stands them at 3.10 and scores the night 0.3735 against 0.3674, their spread falling from 0.85 to 0.52, since brighter clouds where the recording has none cost more than the ratio gains. Kept",
     },
+    {
+      method:
+        "rank and sky on login-door-recording, then the extract's inventory and the decompiled programs of the shader Enviro_Cloud_Layer_Mat names (Shader#8 in 00/12903389.blk), and Cloud_LOD0's bounds",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The dusk's clear sky is its largest term a light can reach (0.084 of its 0.52 over the top third, 0.052 over the middle), yet its mean stands on the recording's (#a96f7c against #a86d7b): what is off is the thin cloud, the wisps and the rays over it, which no shape of the sky draws. The login draws a cloud layer the scene lacks: Cloud_LOD0, a dome 0.94 across and 1.35 high, under Enviro_Cloud_Layer_Mat, whose pixel program reads a weather map over the dome's coordinates, a Voronoi density map scrolled at two scales and bent by a curl texture, a normal map lighting each cloud between its light and dark colours toward and away from the sun, and a wisps texture whose alpha over the wisps' coverage blends cirrus in. Its coverage, opacity, height, tiling, wisps' coverage and four colours are the environment system's _ES_ values, set at run time from no asset, so they are measured hour by hour as the sky's colours are",
+    },
   ],
   openQuestions: [
+    "The cloud layer (Cloud_LOD0 under Enviro_Cloud_Layer_Mat): its program ported with textures of our own in place of its weather, density, curl, normal and wisps maps, and its run-time coverage, opacity and colours solved by hour",
     "The sky's own colours by day and at night, the dawn's and the dusk's being solved over their frames' clear sky (the dawn title's and the door recording's): the game's environment system sets its sky shader's _ES_ colours, top and bottom toward the sun and away, the halo, the sun's halo and the moon's glow, at run time from no asset the export holds, so they are measured; one frame's sky by least squares (genshin:parity sky) leaves its shape and its colours unsettled, the sun's direction itself measured and most of the sky under clouds and haze",
     "The dusk sky low on the frame's left: the recording's clear sky there is almost all cloud, so the sky solved over its clear pixels draws a dusty rose band where the recording glows gold, and its bottom colour toward the sun is held by no pixel",
   ],
