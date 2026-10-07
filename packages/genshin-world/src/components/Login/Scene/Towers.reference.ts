@@ -103,6 +103,13 @@ export const towersTopic: ReferenceTopic = {
       result:
         "The towers' normals read 12.9 degrees at 30 and 15.6 at 60, against 11.8 with every meeting a hard edge: a frustum's normal is drawn between its two rings over its whole height, so a ring averaged with a short ledge tilts a tall wall's normal through all of it. Reverted",
     },
+    {
+      method:
+        "The facade's depths read against the wall the lathe draws at each row (its simplified profile at the row's middle) in place of each two-unit band's median, then in the shape pass at login-door-session: the deep recess at 2 and 1 units, columns from half a unit out, runs of 10 cells kept, and the lathe at 32 and 48 sides",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Read against the lathe's own wall, a moulding the lathe already turns is no longer a column too, and each slab stands on the wall drawn under it: the towers' normals fall from 11.82 to 11.55 degrees and the outline from 0.53 to 0.50 pixels, with 89 recesses where the bands found 165. None of the sweeps moves the normals: recesses from 2 units read 12.03 degrees and from 1 unit 12.42, as their frames' scores had found; columns from half a unit 11.52, runs of 10 cells 11.55; 32 sides 11.81 and 48 sides 11.83 against 24's 11.82, the outline and depth a few hundredths better, and the game's towers stand on 27 to 64 sides each. Left: the colonnades' columns, round in the exports and boxes in ours before a solid drum, and the crowns' ornaments",
+    },
   ],
   openQuestions: [
     "The towers' gilding and windows: their colour per section scores worse painted as diffuse stone, the game's gold being a metal",
