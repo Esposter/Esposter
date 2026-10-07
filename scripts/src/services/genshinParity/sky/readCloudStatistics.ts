@@ -1,13 +1,11 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { CloudStatistics } from "#src/models/genshinParity/sky/CloudStatistics";
-import type { SetCloudCover } from "#src/models/genshinParity/sky/SetCloudCover";
+import type { SkyDistance } from "#src/models/genshinParity/sky/SkyDistance";
+import type { SkyStatistics } from "#src/models/genshinParity/sky/SkyStatistics";
 
 import { CLOUDS_WIDTH, COMPARISONS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
-import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
-import { measureClouds } from "#src/services/genshinParity/sky/measureClouds";
-import { readCloudSky } from "#src/services/genshinParity/sky/readCloudSky";
+import { readSkyComparison } from "#src/services/genshinParity/sky/readSkyComparison";
 import { BYTE } from "#src/services/shared/constants";
 import { withFinalizerAsync } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -16,50 +14,35 @@ import sharp from "sharp";
 
 // A clear sky's pixel in the sheet's masks, between a cloud's white and the rest's black
 const CLEAR_SHADE = 96;
-// A reference's clouds and ours by their statistics (`measureClouds`) and their cover band by band of their height over
-// The horizon, over the sky above it where no part stands (`readCloudSky`): the reference's clouds by its own split,
-// Ours where they move our sky from the same sky drawn with none. Each frame is written beside its clouds, the
-// Reference's over ours, for the eye
+// A reference's sky and the scene's as statistics blind to where their clouds stand (`readSkyComparison`): each one's,
+// How far ours stands from the reference's, the spread two halves of the reference's own sky stand apart, and how many
+// Pixels of sky they are read over. Each frame is written beside its clouds, the reference's over ours, for the eye
 export const readCloudStatistics = async (
   referenceId: string,
   witness: DerivedAssetComponent,
 ): Promise<{
-  elevationCoverage: { ours: number[]; reference: number[] };
-  ours: CloudStatistics;
-  reference: CloudStatistics;
+  distance: SkyDistance;
+  ours: SkyStatistics;
+  reference: SkyStatistics;
+  skyCount: number;
+  spread: SkyDistance;
 }> => {
   await fetchReferences();
   const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness, CLOUDS_WIDTH);
   return withFinalizerAsync(
     async () => {
-      const { computeClouds, computeDrawnClouds, computeElevationCoverage, readLuminance, skyMask, width } =
-        await readCloudSky(page, { checkIsScored, height });
-      const bandNames = await page.evaluate(() => (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)());
-      await page.evaluate(
-        (clearCovers) => {
-          (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)(clearCovers);
-        },
-        Object.fromEntries(bandNames.map((band) => [band, 0])),
+      const { compareShot, reference, referenceClouds, sky, spread } = await readSkyComparison(
+        page,
+        referenceId,
+        witness,
+        { checkIsScored, height, image },
       );
-      await setPageWitnessView(page, { families: [] });
-      const clearShot = await page.screenshot();
-      await page.evaluate(() => {
-        (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)();
-      });
-      await setPageWitnessView(page, { families: [] });
       const ourShot = await page.screenshot();
-      const [ourLuminance, clearLuminance, referenceLuminance] = await Promise.all([
-        readLuminance(ourShot),
-        readLuminance(clearShot),
-        readLuminance(image),
-      ]);
-      const [ourClouds, referenceClouds] = [
-        computeDrawnClouds(ourLuminance, clearLuminance),
-        computeClouds(referenceLuminance),
-      ];
+      const { clouds: ourClouds, distance, statistics } = await compareShot(ourShot);
+      const width = sky.length / height;
       // A cloud white, the clear sky grey, and the rest black
       const toMask = (clouds: Uint8Array): Promise<Buffer> =>
-        sharp(Buffer.from(clouds.map((cloud, pixel) => (cloud ? BYTE : (skyMask[pixel] ?? 0) * CLEAR_SHADE))), {
+        sharp(Buffer.from(clouds.map((cloud, pixel) => (cloud ? BYTE : (sky[pixel] ?? 0) * CLEAR_SHADE))), {
           raw: { channels: 1, height, width },
         })
           .png()
@@ -79,14 +62,7 @@ export const readCloudStatistics = async (
         .toBuffer();
       await mkdir(COMPARISONS_DIRECTORY, { recursive: true });
       await writeFile(join(COMPARISONS_DIRECTORY, `${referenceId}.clouds.png`), sheet);
-      return {
-        elevationCoverage: {
-          ours: computeElevationCoverage(ourClouds),
-          reference: computeElevationCoverage(referenceClouds),
-        },
-        ours: measureClouds(ourLuminance, { clouds: ourClouds, sky: skyMask }, width, height),
-        reference: measureClouds(referenceLuminance, { clouds: referenceClouds, sky: skyMask }, width, height),
-      };
+      return { distance, ours: statistics, reference, skyCount: sky.reduce((sum, isSky) => sum + isSky, 0), spread };
     },
     () => browser.close(),
   );

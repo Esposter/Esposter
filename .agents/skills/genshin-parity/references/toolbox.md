@@ -117,16 +117,17 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Atmosphere
 
-| Unknown                                 | Tool                                                                                                                       |
-| :-------------------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
-| How the haze thins with height, an hour | `calibrate --haze`: its density and falloff refined with the light                                                         |
-| The fog's density and colours           | `genshin:parity fog`: bins by depth and sun angle, solved                                                                  |
-| The sky's colours and its shape         | `genshin:parity sky`: least squares over an hour's references' clear sky, none negative, by the curve's slope              |
-| Whether the scene draws the sky solved  | `sky`'s drawn line: ours with no cloud against the reference's clear                                                       |
-| The clouds' lit and shaded colours      | `genshin:parity clouds`: ours and theirs matched by colour spread                                                          |
-| How much of each cloud band an hour has | `genshin:parity cover`: each band's share on the cover by height                                                           |
-| The heights each cloud band stands at   | `cover --heights`: every hour's references at once, shares by turns                                                        |
-| The cloud layer's settings              | gap: solved on the clouds' statistics, its program ported (`apps/web/content/docs/proposals/genshin/recreation-passes.md`) |
+| Unknown                                 | Tool                                                                                                             |
+| :-------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| How the haze thins with height, an hour | `calibrate --haze`: its density and falloff refined with the light                                               |
+| The fog's density and colours           | `genshin:parity fog`: bins by depth and sun angle, solved                                                        |
+| The sky's colours and its shape         | `genshin:parity sky`: least squares over an hour's references' clear sky, none negative, by the curve's slope    |
+| Whether the scene draws the sky solved  | `sky`'s drawn line: ours with no cloud against the reference's clear                                             |
+| The clouds' lit and shaded colours      | `genshin:parity clouds`: ours and theirs matched by colour spread, then the pass's statistics                    |
+| How much of each cloud band an hour has | `genshin:parity cover`: each band's share on the cover by height                                                 |
+| The heights each cloud band stands at   | `cover --heights`: every hour's references at once, shares by turns                                              |
+| Whether the sky holds, and what is off  | `passes --pass Atmosphere`: the sky's statistics at the camera, held within its halves' spread                   |
+| The cloud layer's settings              | gap: solved on the pass's statistics over the game's textures, held with the port until textures of ours draw it |
 
 ### Acceptance
 

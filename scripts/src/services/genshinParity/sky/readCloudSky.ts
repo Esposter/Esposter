@@ -25,20 +25,20 @@ export const readCloudSky = async (
   page: Page,
   { checkIsScored, height }: { checkIsScored: (pixel: number, width: number) => boolean; height: number },
 ): Promise<{
-  computeClouds: (luminance: Float32Array) => Uint8Array;
+  computeClouds: (luminance: Float32Array, sky?: Uint8Array) => Uint8Array;
   computeDrawnClouds: (luminance: Float32Array, clearLuminance: Float32Array) => Uint8Array;
-  computeElevationCoverage: (clouds: Uint8Array) => number[];
+  computeElevationCoverage: (clouds: Uint8Array, sky?: Uint8Array) => number[];
   readLuminance: (input: Buffer) => Promise<Float32Array>;
   skyMask: Uint8Array;
   width: number;
 }> => {
   await setPageWitnessView(page, {});
   const { part, width } = await readWitnessPartTarget(page);
-  const sky = await page.evaluate(() =>
+  const sceneSky = await page.evaluate(() =>
     (Reflect.get(window, "getSceneSky") as () => { matrixWorld: number[]; projectionMatrixInverse: number[] })(),
   );
-  const projectionInverse = new Matrix4().fromArray(sky.projectionMatrixInverse);
-  const world = new Matrix4().fromArray(sky.matrixWorld);
+  const projectionInverse = new Matrix4().fromArray(sceneSky.projectionMatrixInverse);
+  const world = new Matrix4().fromArray(sceneSky.matrixWorld);
   // Each pixel's height over the horizon in degrees
   const elevations = Float32Array.from({ length: width * height }, (_value, pixel) => {
     const [column, row] = [pixel % width, Math.floor(pixel / width)];
@@ -53,29 +53,29 @@ export const readCloudSky = async (
   );
   const logRatio = Math.log(CLOUD_RATIO);
   // How far each pixel of the sky stands over its own clear sky, as the logarithm of their ratio
-  const computeOvers = (luminance: Float32Array): Float32Array => {
+  const computeOvers = (luminance: Float32Array, sky: Uint8Array): Float32Array => {
     const blurred = blurGrey(luminance, width, height, CLASSIFY_BLUR_SIGMA);
-    const clear = fitClearSky(blurred, skyMask, width, height, CLOUD_RATIO);
+    const clear = fitClearSky(blurred, sky, width, height, CLOUD_RATIO);
     return Float32Array.from(blurred, (value, pixel) =>
-      skyMask[pixel] ? Math.max(Math.log(Math.max(value, Number.EPSILON)) - (clear[pixel] ?? 0), 0) : 0,
+      sky[pixel] ? Math.max(Math.log(Math.max(value, Number.EPSILON)) - (clear[pixel] ?? 0), 0) : 0,
     );
   };
   // The clear surface settles under a sky's own wisps and its glow toward the sun, which then stand past the ratio
   // Over it, so the split is Otsu's between the sky's two populations wherever that lies past the ratio
-  const computeThreshold = (overs: Float32Array): number => {
+  const computeThreshold = (overs: Float32Array, sky: Uint8Array): number => {
     const greatest = overs.reduce((most, over) => Math.max(most, over), Number.EPSILON);
     const skyOvers = Array.from(
-      overs.filter((_value, pixel) => skyMask[pixel]),
+      overs.filter((_value, pixel) => sky[pixel]),
       (over) => (over / greatest) * BYTE,
     );
     return Math.max(logRatio, (computeOtsuThreshold(skyOvers) / BYTE) * greatest);
   };
   return {
-    // A sky's clouds by its own split
-    computeClouds: (luminance) => {
-      const overs = computeOvers(luminance);
-      const split = computeThreshold(overs);
-      return Uint8Array.from(overs, (over, pixel) => Number((skyMask[pixel] ?? 0) === 1 && over > split));
+    // A sky's clouds by its own split, over the sky given where a part of its own stands in more of it
+    computeClouds: (luminance, sky = skyMask) => {
+      const overs = computeOvers(luminance, sky);
+      const split = computeThreshold(overs, sky);
+      return Uint8Array.from(overs, (over, pixel) => Number((sky[pixel] ?? 0) === 1 && over > split));
     },
     // Our sky's clouds where it draws them: each pixel its clouds move past the cloud's ratio from the same sky drawn
     // With none, brighter or darker, so a cloud is read by what the renderer draws whatever its colour. Read at the
@@ -92,14 +92,14 @@ export const readCloudSky = async (
         ),
       );
     },
-    // The share of the sky each band of its height holds as cloud
-    computeElevationCoverage: (clouds) =>
+    // The share of the sky each band of its height holds as cloud, over the sky given where only part of it is read
+    computeElevationCoverage: (clouds, sky = skyMask) =>
       CLOUD_ELEVATION_BANDS.slice(1).map((top, band) => {
         const bottom = CLOUD_ELEVATION_BANDS[band] ?? 0;
         let skyCount = 0;
         let cloudCount = 0;
         for (const [pixel, elevation] of elevations.entries())
-          if (skyMask[pixel] && elevation >= bottom && elevation < top) {
+          if (sky[pixel] && elevation >= bottom && elevation < top) {
             skyCount++;
             cloudCount += clouds[pixel] ?? 0;
           }

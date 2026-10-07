@@ -29,14 +29,18 @@ export const SHAPE_WIDTH = 1280;
 export const SHAPE_OUTLINE_GATE_PIXELS = 1;
 export const SHAPE_DEPTH_GATE = 0.01;
 export const SHAPE_NORMAL_GATE_DEGREES = 10;
-// The surface pass's colour gate: a family's mean unlit colour within the CIELab distance two colours side by side are
-// Just told apart at
-export const SURFACE_COLOUR_GATE = 2.3;
+// The gate a mean colour is held to, a surface's unlit or the clear sky's: within the CIELab distance two colours side
+// By side are just told apart at
+export const COLOUR_GATE = 2.3;
 // The display pass reads at this width, and holds the shipped tone contrast to leaving at most this share more of its
 // Light off the plane than the contrast that leaves least: on the login the profile's 0.5 leaves a few hundredths
 // More, and its next value, 0.75, about seven tenths
 export const DISPLAY_WIDTH = 640;
 export const DISPLAY_CONTRAST_GATE = 0.1;
+// The atmosphere pass's chequerboards a reference's sky is split in two by, blocks this many pixels across at the
+// Clouds' width: from about a cloud's tuft to about a third of the frame's height, where a half still holds sky from
+// Every height over the horizon
+export const ATMOSPHERE_SPLIT_BLOCK_SIZES: readonly number[] = [32, 64, 128];
 // The motion pass's clip played within a hundredth of its pace, about a frame over the door's lift; a frame's moment
 // Along its clip refined in steps of a quarter of a millisecond, which a piece rising at metres a second moves a few
 // Millimetres in; and the size it draws the scene at, which none of its readings depend on
