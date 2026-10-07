@@ -17,6 +17,7 @@ import { setSceneLights } from "#parity/setSceneLights";
 import { claimWitnessRenderers } from "#parity/witness/claimWitnessRenderers";
 import { computeWitnessParts } from "#parity/witness/computeWitnessParts";
 import { computeWitnessPoints } from "#parity/witness/computeWitnessPoints";
+import { getWitnessFamilyOffsets } from "#parity/witness/getWitnessFamilyOffsets";
 import { loadWitness } from "#parity/witness/loadWitness";
 import { renderWitnessTargets } from "#parity/witness/renderWitnessTargets";
 import { setWitnessView } from "#parity/witness/setWitnessView";
@@ -116,6 +117,8 @@ if (screen && root) {
     Reflect.set(window, "computeWitnessPoints", (landmarks: Parameters<typeof computeWitnessPoints>[1]) =>
       computeWitnessPoints(witness, landmarks),
     );
+    // How far the scene stands each family off its laid-out place, the layout pass's measure
+    Reflect.set(window, "getWitnessFamilyOffsets", () => getWitnessFamilyOffsets(witness));
     // The families the witness draws, which the ranking hands back to the scene
     window.document.body.dataset.witnessFamilies = witness.families.value.join(",");
   }

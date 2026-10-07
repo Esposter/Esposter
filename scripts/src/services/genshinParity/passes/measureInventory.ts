@@ -2,18 +2,13 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityPassMeasure";
 import type { WitnessClaim } from "genshin-world/parity/models/witness/WitnessClaim";
 
-import { getComponentReferenceIds } from "#src/services/genshinParity/passes/getComponentReferenceIds";
-import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
-import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
-import { InvalidOperationError, Operation, takeOne, withFinalizerAsync } from "@esposter/shared";
+import { openComponentWitnessPage } from "#src/services/genshinParity/passes/openComponentWitnessPage";
+import { withFinalizerAsync } from "@esposter/shared";
 
 // The inventory pass: every renderer of the component's exports claimed by a part of the scene, drawn or named as not
-// Drawn yet, as its screen's fixture claims them on the parity page, opened on any of its references
+// Drawn yet, as its screen's fixture claims them on the parity page
 export const measureInventory = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
-  const referenceIds = getComponentReferenceIds(component);
-  if (referenceIds.length === 0) throw new InvalidOperationError(Operation.Read, component, "no reference to open");
-  await fetchReferences();
-  const { browser, page } = await openWitnessPage(takeOne(referenceIds), component);
+  const { browser, page } = await openComponentWitnessPage(component);
   return withFinalizerAsync(
     async () => {
       const claims = await page.evaluate(() =>

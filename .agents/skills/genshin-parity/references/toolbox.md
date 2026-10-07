@@ -56,6 +56,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 | A tile's ground                        | `parseTerrainHeights` over its TerrainData                                                                               |
 | Our ground drawn as the game's         | `fitGaussianHills`: hills fitted to the tiles round the origin, error printed                                            |
 | Our families against the exports'      | `passes`' layout: each family's furthest part in metres, the cross-ratios                                                |
+| A row shifted at run time              | `passes`' layout: each witness family's offset past what the exports explain                                             |
 | Our transforms in projected pixels     | gap: the layout diff projected at each reference's pose (`apps/web/content/docs/proposals/genshin/recreation-passes.md`) |
 
 ### Camera

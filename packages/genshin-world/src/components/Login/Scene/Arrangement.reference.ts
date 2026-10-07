@@ -102,10 +102,10 @@ export const arrangementTopic: ReferenceTopic = {
     },
     {
       method:
-        "genshin:parity passes login's layout measure: the arrangement's cross-ratio, and each fitted family's parts against the nearest of the exports' objects it stands for, gated at 2 centimetres",
+        "genshin:parity passes login's layout measure: the arrangement's cross-ratio, each fitted family's parts against the exports' objects composed as the family stands them (a tower at its lathe's foot), and each witness family's run-time offset across and up past what the exports explain, gated at 2 centimetres",
       outcome: InvestigationOutcome.Found,
       result:
-        "The door over the walkway holds (0.0023 against 0.01), the bridges and pillars stand within 0.0061 metres of the exports' and the door within 0.002, and the towers fail: their 31 fitted parts stand 6.68 metres from the exports' on average and one 124.56 metres from any, so the towers' fitted field is not the exports' row and is the layout pass's first item",
+        "Matched by the objects' names, the towers read 124.56 metres off at most: the exports name a duplicated object with a numbered suffix, LoginScene_Build04_01_Lod2 (1), which the pattern refused, and a tower's fit stands it at its lathe's foot, up to 0.47 metres from its object. Matched by mesh and composed through the fit, every tower stands where the exports put it, the bridges and pillars within 0.0061 metres and the door within 0.002, and the door over the walkway holds (0.0023 against 0.01). The towers' row and its bridges stand 5 metres down, exactly Ani_Login_Lift's settled 50 units at the blocks' tenth, and 2.47 metres toward -x, which nothing in the exports explains: the layout pass's one red",
     },
   ],
   openQuestions: [
