@@ -4,6 +4,7 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { solveReferenceScroll } from "#src/services/genshinParity/witness/solveReferenceScroll";
 import { parseNames } from "#src/services/shared/parseNames";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
 export const scrollCommand: SubCommandsDef[string] = defineCommand({
@@ -29,6 +30,12 @@ export const scrollCommand: SubCommandsDef[string] = defineCommand({
   },
   run: async ({ args }) => {
     const [from = 0, to = 0, step = 1] = parseNumbers(args.scan, "scan", 3);
+    if (step <= 0 || to < from)
+      throw new InvalidOperationError(
+        Operation.Read,
+        "scan",
+        `${args.scan} is not an increasing range with a positive step`,
+      );
     const offsets = Array.from({ length: Math.floor((to - from) / step) + 1 }, (_offset, index) => from + index * step);
     const readings = await solveReferenceScroll(
       args.reference,
