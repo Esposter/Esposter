@@ -4,17 +4,16 @@ import ground from "#src/data/windrise/ground.json";
 import { Color, Vector2 } from "three";
 
 // The ground's quadtree: half-metre cells under the eye in tiles of sixteen metres, six levels out to a root tile of
-// Half a kilometre drawn a kilometre and a half away, well past where the fog closes. The finest range clears twice
-// A finest tile's diagonal, which CDLOD needs for a level's tiles to morph before their neighbours change level. Every
-// Tile's box spans the heights the fitted ground stands between
+// Half a kilometre drawn two kilometres away, well past where the fog closes. A level's morph runs from a tile's
+// Diagonal past half its range to its range, so the finest range buys that morph about nine metres to blend over
+// Beyond twice the diagonal it must clear. Every tile's box spans the heights the fitted ground stands between
 export const WINDRISE_TERRAIN_OPTIONS: TerrainOptions = {
   cellsPerSide: 32,
-  finestRange: 48,
+  finestRange: 64,
   finestTileSize: 16,
   levelCount: 6,
   maxHeight: ground.maxHeight,
   minHeight: ground.minHeight,
-  morphShare: 0.3,
 };
 export const WINDRISE_SEED = 0;
 // Clear shallows over the pale bed turning a deep blue in the middle, as Mondstadt's lakes read, and a green haze

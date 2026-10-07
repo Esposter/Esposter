@@ -64,6 +64,13 @@ export const doorTopic: ReferenceTopic = {
       result:
         "The lift holds: 6 to 7 millimetres at most off the clip's path against the 2 centimetre gate, every run, at 0.9996 of its pace. Read at the page's frame times alone the path scattered from 1.7 to 6.5 centimetres run to run, the pieces rising at about 14 metres a second and the page's frames and the scene's own timer a millisecond or two apart; a frame's offset reads 0.23 metres, and the clip read 3% fast fails both readings",
     },
+    {
+      method:
+        "genshin:parity passes login's surface measure on login-door-session, its lightness drawn apart (surfaces/login-door-session.png); the relief's contrast at three fifths and at all, then the front's texture read as tones by k-means at two, three and four besides its gilding, in linear colour and in CIELab (fitPlanTones)",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Drawn unlit beside the exports, the panel's bands at three fifths of their contrast left the door's structure at 0.33 against the 0.083 its exports lose to themselves a pixel across, and at their full contrast 0.36: the texture paints the frame paler than the panel, every groove's edge in a pale line and the gilding a deeper gold, which a stone of one tone with lighter bands misses. The front read as the tones its texture paints it, each cell's colour past its speckle grouped by k-means and the tone most cells show drawn under the others, holds the door at three tones: structure 0.056 and colour 0.35 ΔE in CIELab, 0.061 and 0.27 in linear colour, against 0.091 at two and 0.056 at four, three tones taking 48 kilobytes of loops where four took 80. Supersedes the door's three fifths in Towers.reference.ts, read off lit frames",
+    },
   ],
   openQuestions: [
     "How the script brings the door from its anchor to the walkway: the place is measured (the door spawn's position), the motion is not",

@@ -14,7 +14,6 @@ const terrainOptions: TerrainOptions = {
   levelCount: 6,
   maxHeight: 60,
   minHeight: -10,
-  morphShare: 0.3,
 };
 // The views of an eye on the ground and one high above: the cost follows the tiles wanted
 const BENCH_EYE_HEIGHTS = [2, 300];

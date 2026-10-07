@@ -39,6 +39,15 @@ export const scoringTopic: ReferenceTopic = {
       result:
         "The exports' dawn frame corrected to the recording's own colour, channel by channel, over every part pixel of a bin and scored again: by rank's bins it falls 0.002, by depth in eight bands, facing in six and how far a face turns up in three 0.010, by each part and its facing 0.016, but the same bins split by twelve rows 0.062 and a smooth field over four pixels 0.127; the albedo's tone split nothing more and the columns 0.017. So no light over depth and facing, the reflection pass's probes, the clamp and the highlight among them, could buy over a hundredth there: the light rows' error varies with the row",
     },
+    {
+      method:
+        "genshin:parity passes login's surface measure on login-door-session: each family of ours and the exports' drawn into the albedo target at the solved camera, where both draw it the CIELab distance between their mean colours, and one minus the multi-scale structural similarity of their lightness, gated at what the exports' own albedo loses against itself a pixel across",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Every family's mean colour holds but the walkway's: the door 0.78, the bridges 1.22 and the towers 1.02 against the 2.3 two patches are just told apart at, the walkway 2.34, its middle lane's paler stone missing. No family's structure holds: the door 0.33 against its own 0.083, the towers 0.13 against 0.020, the walkway 0.12 against 0.011 and the bridges 0.044 against 0.021. The door's panel relief is painted and the towers' carving traced from the game's normal map rather than its colour, so the surface pass is the next work, its largest gap the door's",
+    },
   ],
-  openQuestions: [],
+  openQuestions: [
+    "Whether a stand-in's structure can reach the exports' own one-pixel noise without drawing the game's textures, which ship nowhere: the bridges come nearest at twice it, and what is left of the door, the towers and the walkway is the roadmap's surface items",
+  ],
 };

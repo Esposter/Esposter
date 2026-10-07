@@ -6,21 +6,20 @@ import type { DecodedClip } from "#src/models/genshinAssets/shared/DecodedClip";
 import type { Vector } from "#src/models/shared/Vector";
 import type { Matrix4 } from "three";
 
-import { blurWithinTags } from "#src/services/genshinAssets/fit/blurWithinTags";
+import { fitAlbedo } from "#src/services/genshinAssets/fit/fitAlbedo";
+import { fitPlanTones } from "#src/services/genshinAssets/fit/fitPlanTones";
 import { fitReliefLayers } from "#src/services/genshinAssets/fit/fitReliefLayers";
 import { rasterizeTopFaces } from "#src/services/genshinAssets/fit/rasterizeTopFaces";
 import { readLoginDoorPieces } from "#src/services/genshinAssets/fit/readLoginDoorPieces";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { toTexel } from "#src/services/genshinAssets/fit/toTexel";
-import { traceCellLoops } from "#src/services/genshinAssets/fit/traceCellLoops";
-import { computeOtsuThreshold } from "#src/services/genshinAssets/shared/computeOtsuThreshold";
-import { GILDING_RED_BLUE_RATIO, LOGIN_DOOR_MESH } from "#src/services/genshinAssets/shared/constants";
+import { LOGIN_DOOR_MESH } from "#src/services/genshinAssets/shared/constants";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { BYTE } from "#src/services/shared/constants";
 import { toLinear } from "#src/services/shared/toLinear";
 import { join } from "node:path";
 import sharp from "sharp";
-import { Quaternion, Vector3 } from "three";
+import { Color, Quaternion, Vector3 } from "three";
 
 // The door's mesh draws its frame in its first submesh and its panel in its second
 const FRAME_GROUP = `${LOGIN_DOOR_MESH}_0`;
@@ -37,8 +36,8 @@ const DOOR_CELL_SIZE = 0.005;
 const DOOR_DECIMALS = 3;
 const DOOR_MIN_CELLS = 20;
 const DOOR_TOLERANCE_CELLS = 1;
-// Its panel's stone blurred over the cell either side past its speckle
-const RELIEF_BLUR_CELLS = 1;
+// The tones its texture paints its front in besides its gilding
+const RELIEF_TONE_COUNT = 3;
 // A face turned at least this far toward the front is one of the depths the door's front stands at, kept where its
 // Faces at that depth cover at least so many square metres, a few square centimetres
 const DOOR_FLAT_FACING = 0.98;
@@ -51,9 +50,9 @@ const DOOR_MIN_DEPTH_STEP = 0.001;
 // Seen from the front in Three's axes from the foot of its middle (an outer ring counterclockwise, a hole clockwise),
 // Each sloping down to the loop below it where its faces slope (the chamfer round the frame's opening, the bevels of the
 // Panel's bands) and straight elsewhere, the back the front mirrored as the game's mesh is. Its front's relief is read
-// Off its texture through its own coordinates, the front drawn as the camera sees it (`rasterizeTopFaces`): the panel's
-// Raised bands, its stone's lighter tone past its speckle, and the gilding of its feet, each as its loops and its colour
-// Over the stone round it, inside the relief's corner and size
+// Off its texture through its own coordinates, the front drawn as the camera sees it (`rasterizeTopFaces`): the gilding
+// Of its feet and the tones its stone is painted in (`fitPlanTones`), each colour over the stone's (`fitAlbedo`), inside
+// The relief's corner and size
 export const fitLoginDoor = async (
   placements: readonly AssetPlacement[],
   clips: readonly DecodedClip[],
@@ -110,46 +109,12 @@ export const fitLoginDoor = async (
       const texel = (row * info.width + column) * info.channels;
       return [0, 1, 2].map((channel) => toLinear((data[texel + channel] ?? 0) / BYTE)) as Vector;
     });
-    const drawn = Array.from({ length: width * height }, (_value, cell) => cell).filter(
-      (cell) => (tags[cell] ?? -1) >= 0,
-    );
-    const computeMean = (cells: readonly number[]): Vector =>
-      [0, 1, 2].map(
-        (channel) => cells.reduce((sum, cell) => sum + (colors[cell]?.[channel] ?? 0), 0) / Math.max(cells.length, 1),
-      ) as Vector;
-    const computeShade = (cells: readonly number[], around: readonly number[]): Vector => {
-      const [mean, aroundMean] = [computeMean(cells), computeMean(around)];
-      return ([0, 1, 2] as const).map((channel) => roundFitted(mean[channel] / (aroundMean[channel] || 1))) as Vector;
-    };
-    const checkIsGilded = (cell: number): boolean => {
-      const [red = 0, , blue = 0] = colors[cell] ?? [];
-      return red > blue * GILDING_RED_BLUE_RATIO;
-    };
-    const gilded = drawn.filter((cell) => checkIsGilded(cell));
-    const panel = drawn.filter((cell) => tags[cell] === 1 && !checkIsGilded(cell));
-    const grey = Float32Array.from(colors, ([red, green, blue]) => (red + green + blue) / 3);
-    const blurred = blurWithinTags(grey, tags, { height, radius: RELIEF_BLUR_CELLS, width });
-    const threshold = computeOtsuThreshold(panel.map((cell) => (blurred[cell] ?? 0) * BYTE));
-    const bands = panel.filter((cell) => (blurred[cell] ?? 0) * BYTE > threshold);
-    const bandSet = new Set(bands);
-    const gildedSet = new Set(gilded);
+    // Three reads a hex as sRGB and holds it linear, as the scene's material reads the stone's
+    const stone = new Color(await fitAlbedo([join(textureDirectory, DOOR_TEXTURE)]));
     return {
-      bands: {
-        loops: traceCellLoops(bands, grid),
-        shade: computeShade(
-          bands,
-          panel.filter((cell) => !bandSet.has(cell)),
-        ),
-      },
       corner: [roundFitted(corner[0], DOOR_DECIMALS), corner[1]],
-      gilding: {
-        loops: traceCellLoops(gilded, grid),
-        shade: computeShade(
-          gilded,
-          drawn.filter((cell) => tags[cell] === 0 && !gildedSet.has(cell)),
-        ),
-      },
       size: [roundFitted(width * DOOR_CELL_SIZE, DOOR_DECIMALS), roundFitted(height * DOOR_CELL_SIZE, DOOR_DECIMALS)],
+      ...fitPlanTones(colors, tags, { grid, height, stone: [stone.r, stone.g, stone.b], toneCount: RELIEF_TONE_COUNT }),
     };
   };
   // A part's depths: those its faces turned to the front stand at over a few square centimetres, on whichever piece, so

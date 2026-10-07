@@ -13,7 +13,6 @@ const terrainOptions: TerrainOptions = {
   levelCount: 6,
   maxHeight: 60,
   minHeight: -10,
-  morphShare: 0.3,
 };
 // The draws all round an eye on the ground and one high above: the cost follows the tiles drawn
 const BENCH_EYE_HEIGHTS = [2, 300];

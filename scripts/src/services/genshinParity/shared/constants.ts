@@ -21,6 +21,8 @@ export const GBUFFER_DIRECTORY: string = join(PARITY_DIRECTORY, "gbuffer");
 export const PLANS_DIRECTORY: string = join(PARITY_DIRECTORY, "plans");
 // Each reference's shape pass drawn where its readings lie, ours beside the exports
 export const SHAPES_DIRECTORY: string = join(PARITY_DIRECTORY, "shapes");
+// Each reference's surface pass drawn where its readings lie, ours beside the exports
+export const SURFACES_DIRECTORY: string = join(PARITY_DIRECTORY, "surfaces");
 // FFmpeg, pinned to one release and its checksum and unpacked inside the checkout the first time the tool needs it:
 // Window capture (`gfxcapture`, Windows Graphics Capture) arrived in FFmpeg 8, which no npm package bundles, and this
 // One build serves every other job the tool gives FFmpeg too. Gyan's releases are versioned and kept

@@ -2,6 +2,7 @@ import type { ParityPassResult } from "#src/models/genshinParity/passes/ParityPa
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { PARITY_PASSES_PATH } from "#src/services/genshinParity/passes/constants";
+import { formatPassValue } from "#src/services/genshinParity/passes/formatPassValue";
 import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 
@@ -13,7 +14,6 @@ const HEADER = [
   "the change that moved it, as a bench's report is committed.",
 ];
 const SECTION_PREFIX = "## ";
-const formatValue = (value: number): string => (Number.isInteger(value) ? String(value) : value.toFixed(4));
 const toSection = (component: DerivedAssetComponent, results: readonly ParityPassResult[]): string =>
   [
     `${SECTION_PREFIX}${component}`,
@@ -25,7 +25,7 @@ const toSection = (component: DerivedAssetComponent, results: readonly ParityPas
         ? [`| ${pass} | ${notes.join("; ")} | | | | no |`]
         : readings.map(
             ({ gate, name, unit, value }) =>
-              `| ${pass} | ${name} | ${formatValue(value)} | ${formatValue(gate)} | ${unit} | ${value <= gate ? "yes" : "no"} |`,
+              `| ${pass} | ${name} | ${formatPassValue(value)} | ${formatPassValue(gate)} | ${unit} | ${value <= gate ? "yes" : "no"} |`,
           ),
     ),
   ].join("\n");

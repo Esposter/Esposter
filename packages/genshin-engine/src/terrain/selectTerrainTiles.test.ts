@@ -14,7 +14,6 @@ describe(selectTerrainTiles, () => {
     levelCount: 2,
     maxHeight: 0,
     minHeight: 0,
-    morphShare: 0.5,
   };
 
   test("draws the finest tile under the eye, coarser tiles farther out, and no tile twice", () => {
