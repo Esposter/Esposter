@@ -1,3 +1,4 @@
+import type { SimilarityTermMap } from "#src/models/genshinParity/witness/SimilarityTermMap";
 import type { Vector } from "#src/models/shared/Vector";
 
 import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
@@ -19,20 +20,24 @@ const addColours = (
 // One view, four floats a pixel, over the pixels both draw it: the CIELab distance between their mean colours, and how
 // Unlike their lightness is in structure (`scoreLabelSimilarity`, 0 alike and 1 nothing alike), which a painted detail
 // Off its place or missing reads where a mean does not. A family the exports draw nowhere is left out, and one ours
-// Draws nowhere they do has no colour to read, so it stands at Infinity
+// Draws nowhere they do has no colour to read, so it stands at Infinity. The structure's terms come back pixel by
+// Pixel too, scale by scale, for where on the frame it is lost
 export const compareFamilyAlbedo = (
   exportsTargets: { albedo: Float32Array; part: Float32Array },
   oursTargets: { albedo: Float32Array; part: Float32Array },
   width: number,
   familyCount: number,
-): { colour: number; family: number; scales: number[]; structure: number }[] => {
+): {
+  comparisons: { colour: number; family: number; scales: number[]; structure: number }[];
+  termMaps: SimilarityTermMap[];
+} => {
   const pixelCount = exportsTargets.part.length / 4;
   const height = pixelCount / width;
   const labels = Int32Array.from({ length: pixelCount }, (_label, pixel) => {
     const family = readTargetFamily(exportsTargets.part, pixel);
     return family === readTargetFamily(oursTargets.part, pixel) ? family : -1;
   });
-  const similarities = scoreLabelSimilarity(
+  const { labelSimilarities, termMaps } = scoreLabelSimilarity(
     readTargetLightness(exportsTargets.albedo),
     readTargetLightness(oursTargets.albedo),
     width,
@@ -40,7 +45,7 @@ export const compareFamilyAlbedo = (
     labels,
     familyCount,
   );
-  return Array.from({ length: familyCount }, (_family, family) => family).flatMap((family) => {
+  const comparisons = Array.from({ length: familyCount }, (_family, family) => family).flatMap((family) => {
     let isDrawn = false;
     let shared = 0;
     let exportsSum: Vector = [0, 0, 0];
@@ -62,9 +67,10 @@ export const compareFamilyAlbedo = (
       {
         colour: Math.hypot(exportsLightness - oursLightness, exportsA - oursA, exportsB - oursB),
         family,
-        scales: similarities[family]?.scales ?? [],
-        structure: 1 - (similarities[family]?.similarity ?? 0),
+        scales: labelSimilarities[family]?.scales ?? [],
+        structure: 1 - (labelSimilarities[family]?.similarity ?? 0),
       },
     ];
   });
+  return { comparisons, termMaps };
 };

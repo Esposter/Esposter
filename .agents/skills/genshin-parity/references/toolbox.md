@@ -80,6 +80,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 | Our unlit colour against the exports'        | `passes`' surface: the same targets' albedo where both draw a family, its mean colour apart and its structure                                      |
 | Where on the frame a surface misses          | `passes`' surface image, `surfaces/<reference>.png`: the lightness apart where both draw a family, red where ours is lighter and blue where darker |
 | Which scale a surface's structure is lost at | `passes`' surface notes: each family's structure scale by scale, finest first, beside its exports' own a pixel across                              |
+| Where on the frame a structure is lost       | `passes`' structure image, `surfaces/<reference>-structure.png`: each scale's similarity term per pixel, finest first, red as it is lost           |
 | A surface's paint from its texture           | `fitPlanTones`: its texture's colours past their speckle as k-means tones in CIELab, traced as loops over a plan                                   |
 
 ### Motion

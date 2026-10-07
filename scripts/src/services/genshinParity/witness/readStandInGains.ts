@@ -63,7 +63,14 @@ export const readStandInGains = async (
         readGrey(exportsShot, width, height),
         readGrey(ourShot, width, height),
       ]);
-      const similarities = scoreLabelSimilarity(exportsGrey, ourGrey, width, height, labels, layerFamilies.length);
+      const { labelSimilarities } = scoreLabelSimilarity(
+        exportsGrey,
+        ourGrey,
+        width,
+        height,
+        labels,
+        layerFamilies.length,
+      );
       const nameTermMap = new Map<string, { count: number; error: number; similarity: number }>();
       let scoredCount = 0;
       for (const [pixel, error] of errorMap.entries()) {
@@ -75,7 +82,7 @@ export const readStandInGains = async (
         const term = getOrCreate(nameTermMap, name, () => ({
           count: 0,
           error: 0,
-          similarity: similarities[family]?.similarity ?? 0,
+          similarity: labelSimilarities[family]?.similarity ?? 0,
         }));
         term.count++;
         term.error += error;

@@ -5,12 +5,12 @@ import { SHAPES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { drawPixels } from "#src/services/genshinParity/shared/drawPixels";
 import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
 import { BYTE } from "#src/services/shared/constants";
+import { toByte } from "#src/services/shared/toByte";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 
 // The normals' angle the diff draws at full red, a few times the gate, so a facet just past it still reads orange
 const ANGLE_FULL_DEGREES = SHAPE_NORMAL_GATE_DEGREES * 4;
-const toByte = (share: number): number => Math.round(Math.min(Math.max(share, 0), 1) * BYTE);
 // Where the shape pass's readings lie on the frame, outside the repository: the exports' normals, ours, and a diff
 // Coloured green to red by the normals' angle where both draw one family, white where only the exports draw a part and
 // Blue where only ours does. Returns the image's path

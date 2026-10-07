@@ -5,6 +5,7 @@ import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTarge
 import { compareFamilyAlbedo } from "#src/services/genshinParity/passes/compareFamilyAlbedo";
 import { SHAPE_OUTLINE_GATE_PIXELS, SURFACE_COLOUR_GATE } from "#src/services/genshinParity/passes/constants";
 import { measureFamilyTargets } from "#src/services/genshinParity/passes/measureFamilyTargets";
+import { writeStructureDiff } from "#src/services/genshinParity/passes/writeStructureDiff";
 import { writeSurfaceDiff } from "#src/services/genshinParity/passes/writeSurfaceDiff";
 
 const TARGET_NAMES = [WitnessTargetName.Part, WitnessTargetName.Albedo];
@@ -23,7 +24,7 @@ const formatScales = (scales: readonly number[]): string => scales.map((scale) =
 // Moved across by the shape's outline gate, as far as a shape the shape pass holds may stand off its place. A family
 // Too thin to meet its moved self reads no structure there, so its gate is none rather than Infinity, which holds any.
 // Each family's structure is noted scale by scale beside its gate's, where a loss at the finest scale is its detail and
-// At the coarsest its layout
+// At the coarsest its layout, and drawn scale by scale where on the frame it is lost
 export const measureSurface = (component: DerivedAssetComponent): Promise<ParityPassMeasure> =>
   measureFamilyTargets(component, TARGET_NAMES, async (referenceId, exportsRead, oursRead) => {
     const { families, width } = exportsRead;
@@ -40,16 +41,20 @@ export const measureSurface = (component: DerivedAssetComponent): Promise<Parity
       part: shiftAcross(exportsTargets.part, width, SHAPE_OUTLINE_GATE_PIXELS),
     };
     const familyGateMap = new Map(
-      compareFamilyAlbedo(exportsTargets, shiftedTargets, width, families.length).map((comparison) => [
+      compareFamilyAlbedo(exportsTargets, shiftedTargets, width, families.length).comparisons.map((comparison) => [
         comparison.family,
         { ...comparison, structure: Number.isFinite(comparison.structure) ? comparison.structure : 0 },
       ]),
     );
-    const comparisons = compareFamilyAlbedo(exportsTargets, oursTargets, width, families.length);
-    const diffPath = await writeSurfaceDiff(referenceId, exportsTargets, oursTargets, exportsRead);
+    const { comparisons, termMaps } = compareFamilyAlbedo(exportsTargets, oursTargets, width, families.length);
+    const [diffPath, structurePath] = await Promise.all([
+      writeSurfaceDiff(referenceId, exportsTargets, oursTargets, exportsRead),
+      writeStructureDiff(referenceId, termMaps, exportsRead),
+    ]);
     return {
       notes: [
         `${referenceId} exports | ours | lightness apart: ${diffPath}`,
+        `${referenceId} structure lost, scale by scale finest first: ${structurePath}`,
         ...comparisons.map(
           ({ family, scales }) =>
             `${referenceId} ${families[family] ?? family} structure by scale, finest first: ${formatScales(scales)} against ${formatScales(familyGateMap.get(family)?.scales ?? [])} a pixel across`,
