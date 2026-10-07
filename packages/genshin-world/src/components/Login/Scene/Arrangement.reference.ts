@@ -135,9 +135,15 @@ export const arrangementTopic: ReferenceTopic = {
       result:
         "The edges price two shallow basins, 20 to 24 and 62 to 78 metres ahead (7.3 and 7.1 px against 8.75 at none); shot beside the frame, 24 ahead stands the ringed towers left of the walkway and the near column right of it where the frame does, so the current build's door rests with the row 120 metres along its loop, on a walkway's copy (heldScrolled 320, twenty of the walkway's copies). Held there the scene stands its towers as the frame does, but the shape pass then reads our door nowhere in its targets (its outline 29 px, its depth none) while the plain shot draws it, so the hold waits on that",
     },
+    {
+      method:
+        "genshin:parity passes login --pass Shape with login-door-session held at heldScrolled 320, on a parity page started fresh with no source edited under it",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Our door reads as it does unheld (outline 0.107 px, depth 0.0001, normal 7.5 degrees): the hold changes nothing the door stands on, the walkway's phase at 320 being the door's rest's at 144, and getStartGlide holding the door ahead at none either way. The door lost earlier was not reproduced; no source the scene reads changed between the two runs, so it was the page's state and not the hold's. Held there, the towers' normals read 10.62 degrees against the gate's 10, a near column standing doubled (Towers.reference.ts), and with its axis fixed every shape gate holds, so the frame is held at 320. The passes then stop at the surface as before, its structure read over other towers: the bridges 0.049 against 0.033, the towers 0.101 against 0.026 and the walkway 0.083 against 0.017",
+    },
   ],
   openQuestions: [
-    "Why holding the door frame's scroll (heldScrolled 320) leaves our door out of the shape pass's targets, so the frame can be held where its towers stand and its sky read clear of them",
     "Whether the towers' row tiles at its 200 metres: their fitted field spans about 300 along the glide",
     "Which of the towers' row stands at the door frame's left edge: the recording's is thin and dark with many rings, the exports' nearest there wide and arched",
   ],
