@@ -180,6 +180,11 @@ export const SAMPLED_INSTRUMENTS: SampledInstrument[] = [
     "Idiophones/Struck Idiophones/Hand Chimes",
     "Idiophones/Struck Idiophones/Vibraphone - Soft Mallets",
   ].map((name) => ({ library: SampleLibrary.Vcsl, mapping: `${name}.sfz` })),
+  { library: SampleLibrary.DsmolkenDoubleBass, mapping: "d_smolken_rubner_bass_arco.sfz" },
+  { library: SampleLibrary.DsmolkenDoubleBass, mapping: "d_smolken_rubner_bass_pizz.sfz" },
+  { library: SampleLibrary.KaroryferBigcatCello, mapping: "Programs/vc_arco_sus_map.sfz" },
+  { library: SampleLibrary.KaroryferBigcatCello, mapping: "Programs/vc_pizz_basic.sfz" },
+  { library: SampleLibrary.OsirisPiano, mapping: "Programs/01-natural.sfz" },
 ];
 // Vgmstream's command line (github.com/vgmstream/vgmstream), which decodes Wwise's own Vorbis, pinned and checked as
 // FFmpeg is, into the scripts package's cache
