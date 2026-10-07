@@ -107,8 +107,16 @@ export const arrangementTopic: ReferenceTopic = {
       result:
         "Matched by the objects' names, the towers read 124.56 metres off at most: the exports name a duplicated object with a numbered suffix, LoginScene_Build04_01_Lod2 (1), which the pattern refused, and a tower's fit stands it at its lathe's foot, up to 0.47 metres from its object. Matched by mesh and composed through the fit, every tower stands where the exports put it, the bridges and pillars within 0.0061 metres and the door within 0.002, and the door over the walkway holds (0.0023 against 0.01). The towers' row and its bridges stand 5 metres down, exactly Ani_Login_Lift's settled 50 units at the blocks' tenth, and 2.47 metres toward -x, which nothing in the exports explains: the layout pass's one red",
     },
+    {
+      method:
+        "LOGIN_TOWERS_ROW_OFFSET's 2.47 metres across set to 0 for one run, then genshin:parity pose login-door-recording --witness login from the shipped pose with heading, pitch and field of view held, x freed and then held",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Freed, the eye moves 0.015 metres across and the lantern tower's two landmarks stay 80 to 88 pixels off (42.4 pixels root mean square), so no camera lands the towers and the walkway together with the row unshifted: the 2.47 metres is the towers standing across from the walkway, not the eye standing off it. MonoLoginScene holds a 25 at 0x224, 2.5 metres at the scene's tenth, among what read as light and haze settings, and SceneBeginNode stands 25 units short of DoorNode's 262 across; neither is named yet, so neither is adopted",
+    },
   ],
   openQuestions: [
+    "Which data stands the towers' row 2.47 metres across from where SceneBeginNode lays it: MonoLoginScene's 25 at 0x224, or the anchor moved at run time",
     "Whether the towers' row tiles at its 200 metres: their fitted field spans about 300 along the glide",
     "Which of the towers' row stands at the door frame's left edge: the recording's is thin and dark with many rings, the exports' nearest there wide and arched",
   ],
