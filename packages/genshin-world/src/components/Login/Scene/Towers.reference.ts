@@ -78,9 +78,37 @@ export const towersTopic: ReferenceTopic = {
     {
       method:
         "genshin:parity passes login's shape measure at login-door-session's camera: our parts drawn into the witness's part, depth and normal targets at 1280 wide beside the exports'",
-      outcome: InvestigationOutcome.Found,
+      outcome: InvestigationOutcome.Superseded,
       result:
         "The towers fail every gate: their outlines stand 1.28 pixels apart on average against the gate's 1, their depth 1.7 hundredths off and their normals 19 degrees, the lathe's smooth rings against the exports' carving. The bridges and pillars hold (0.58 pixels, 0.6 hundredths, 9.1 degrees), as does the door (0.11 pixels, 7.5 degrees)",
+    },
+    {
+      method:
+        "The shape pass's image of login-door-session (the exports' normals, ours, and the angle between them), the near towers cropped side by side, then each tower placement's scale read off the exports beside the fit's",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Our near towers' storeys stood lower than the exports' the higher they rose, their feet level: fitLoginTowers kept each scale to the centimetre as a length, so a tower at 0.1028 stood at 0.1, a 92 metre tower's crown 2.6 metres low. Kept to five decimals, the towers' outlines stand 0.53 pixels apart, their depth 0.63 hundredths off and their normals 11.8 degrees: the outline and the depth hold, and most of the 19 degrees was the misplaced mouldings, not the lathe",
+    },
+    {
+      method:
+        "Each tower's wall read row by row, half a unit of its mesh, as the median radius the row's cells stand at and simplified within a quarter unit into sloped frustums (TOWER_PROFILE_TOLERANCE), against the two-unit bands, both at the true scale, in the shape pass at login-door-session; then the tolerance at a tenth and a half",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Against the exports the rows read the towers' normals at 11.8 degrees where the bands read 15.2, the outline 0.53 pixels against 0.58 and the depth 0.63 hundredths against 0.71: a moulding's roll and a cornice's overhang turn up the profile as sloped runs where the bands stood them as steps. A tenth of a unit reads 11.6 degrees over 758 sections and a half 12.0 over 528, against 641 at a quarter, so the tolerance is not where the rest lies. The image's reds left lie on the window storey's arches and pilasters, the crown's ornaments and the slabs' edges",
+    },
+    {
+      method:
+        "createLatheStackGeometry with a crease angle: where two sections meet at one radius and their sides turn by less than it, the ring they share takes the normal between them, at 30 and 60 degrees in the shape pass at login-door-session",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "The towers' normals read 12.9 degrees at 30 and 15.6 at 60, against 11.8 with every meeting a hard edge: a frustum's normal is drawn between its two rings over its whole height, so a ring averaged with a short ledge tilts a tall wall's normal through all of it. Reverted",
+    },
+    {
+      method:
+        "The facade's depths read against the wall the lathe draws at each row (its simplified profile at the row's middle) in place of each two-unit band's median, then in the shape pass at login-door-session: the deep recess at 2 and 1 units, columns from half a unit out, runs of 10 cells kept, and the lathe at 32 and 48 sides",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Read against the lathe's own wall, a moulding the lathe already turns is no longer a column too, and each slab stands on the wall drawn under it: the towers' normals fall from 11.82 to 11.55 degrees and the outline from 0.53 to 0.50 pixels, with 89 recesses where the bands found 165. None of the sweeps moves the normals: recesses from 2 units read 12.03 degrees and from 1 unit 12.42, as their frames' scores had found; columns from half a unit 11.52, runs of 10 cells 11.55; 32 sides 11.81 and 48 sides 11.83 against 24's 11.82, the outline and depth a few hundredths better, and the game's towers stand on 27 to 64 sides each. Left: the colonnades' columns, round in the exports and boxes in ours before a solid drum, and the crowns' ornaments",
     },
   ],
   openQuestions: [

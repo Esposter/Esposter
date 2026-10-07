@@ -121,6 +121,13 @@ export const arrangementTopic: ReferenceTopic = {
       result:
         "The edges are least 0.03 metres across from where the exports lay the row, 7.61 pixels against 8.5 to 10.8 on either side, so on the current build the towers stand exactly where SceneBeginNode lays them: the 2.47 metres was the older build's frame solved through a camera 0.22 metres high and wide by its field of view, the error landing in the row. The row's offset across is 0 and the layout pass holds. A refinement on the edges with the height free ran the row 1.7 to 4.4 metres up, as edges do",
     },
+    {
+      method:
+        "genshin:parity passes login's layout measure with each tower read by both ends of its lathe's axis, its foot and its crown composed through the exports' own transform, against the fitted data's foot and its crown at the fitted scale",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The towers' feet had been checked against the fit's own feet, which hold whatever the fit does to a scale: read at the crowns the towers stood up to 2.57 metres off, every scale kept to the centimetre (0.1028 as 0.1). Kept to five decimals, the furthest crown stands 0.0063 metres off and the layout holds",
+    },
   ],
   openQuestions: [
     "Whether the towers' row tiles at its 200 metres: their fitted field spans about 300 along the glide",

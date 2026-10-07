@@ -1,5 +1,4 @@
 import type { FacadeLayer } from "#src/models/genshinAssets/fit/FacadeLayer";
-import type { LatheProfile } from "#src/models/genshinAssets/fit/LatheProfile";
 import type { Texture } from "#src/models/genshinAssets/fit/Texture";
 import type { TowerFacade } from "#src/models/genshinAssets/fit/TowerFacade";
 import type { TowerSlab } from "#src/models/genshinAssets/fit/TowerSlab";
@@ -13,6 +12,7 @@ import { rasterizeTopFaces } from "#src/services/genshinAssets/fit/rasterizeTopF
 import { readLevelOfDetailParts } from "#src/services/genshinAssets/fit/readLevelOfDetailParts";
 import { readMaterialNames } from "#src/services/genshinAssets/fit/readMaterialNames";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { simplifyPath } from "#src/services/genshinAssets/fit/simplifyPath";
 import { toTexel } from "#src/services/genshinAssets/fit/toTexel";
 import { traceCellLoops } from "#src/services/genshinAssets/fit/traceCellLoops";
 import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUpperMedian";
@@ -26,6 +26,7 @@ import {
   TOWER_FACADE_SHADE_TOLERANCE,
   TOWER_FACADE_SHALLOW_RECESS,
   TOWER_MESH_REGEX,
+  TOWER_PROFILE_TOLERANCE,
   TOWER_RADIUS_TOLERANCE,
 } from "#src/services/genshinAssets/shared/constants";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
@@ -126,38 +127,34 @@ export const fitLoginTowerFacades = async (
     }
     const cells = Array.from({ length: width * height }, (_value, cell) => cell);
     const drawn = cells.filter((cell) => (tags[cell] ?? -1) >= 0);
-    // Each band's wall stands at the median radius its faces stand at, which a recess sinks into and a column or a
-    // Moulding stands out from
+    // The wall's profile up the tower, row by row the median radius its faces stand at, at the row's middle,
+    // Simplified into the sloped runs a moulding's roll and a cornice's overhang are, each a frustum of the lathe: what
+    // Sinks in from the profile is a recess and what stands out from it a column
+    const toRow = (cell: number): number => Math.floor(cell / width);
+    const rowRadiiMap = Map.groupBy(drawn, (cell) => toRow(cell));
+    const points: [number, number][] = [];
+    let rowRadius = 0;
+    for (let row = 0; row < height; row++) {
+      // A row the tower stands open all round keeps the wall below it
+      rowRadius = computeUpperMedian((rowRadiiMap.get(row) ?? []).map((cell) => heights[cell] ?? 0)) || rowRadius;
+      if (row === 0) points.push([rowRadius, 0]);
+      points.push([rowRadius, (row + 0.5) * TOWER_FACADE_CELL_SIZE]);
+    }
+    points.push([rowRadius, height * TOWER_FACADE_CELL_SIZE]);
+    const wall = simplifyPath(points, TOWER_PROFILE_TOLERANCE);
+    // The profile's radius at each row's middle, between the two of its points the row stands between
+    const rowWallRadii = Array.from({ length: height }, (_value, row) => {
+      const y = (row + 0.5) * TOWER_FACADE_CELL_SIZE;
+      const index = wall.findIndex(([, pointY]) => pointY >= y);
+      const [topRadius = 0, top = 0] = wall[index] ?? [];
+      const [bottomRadius = topRadius, bottom = top] = wall[index - 1] ?? [];
+      return top > bottom ? bottomRadius + ((y - bottom) / (top - bottom)) * (topRadius - bottomRadius) : topRadius;
+    });
+    for (const cell of cells) depths.push((rowWallRadii[toRow(cell)] ?? 0) - (heights[cell] ?? 0));
+    // The face's tones are read in bands of rows
     const bandRows = Math.max(1, Math.round(TOWER_BAND_HEIGHT / TOWER_FACADE_CELL_SIZE));
-    const toBand = (cell: number): number => Math.floor(Math.floor(cell / width) / bandRows);
-    const bandRadiiMap = Map.groupBy(drawn, (cell) => toBand(cell));
-    const bandWallRadiusMap = new Map(
-      Array.from(bandRadiiMap, ([band, bandCells]) => [
-        band,
-        computeUpperMedian(bandCells.map((cell) => heights[cell] ?? 0)),
-      ]),
-    );
-    for (const cell of cells) depths.push((bandWallRadiusMap.get(toBand(cell)) ?? 0) - (heights[cell] ?? 0));
+    const toBand = (cell: number): number => Math.floor(toRow(cell) / bandRows);
     const bandCount = Math.ceil(height / bandRows);
-    const toWallSections = (): LatheProfile["sections"] => {
-      const sections: LatheProfile["sections"] = [];
-      let radius = 0;
-      for (let band = 0; band < bandCount; band++) {
-        // A band the tower stands open all round keeps the wall below it
-        radius = bandWallRadiusMap.get(band) || radius;
-        const bandHeight = (Math.min((band + 1) * bandRows, height) - band * bandRows) * TOWER_FACADE_CELL_SIZE;
-        const last = sections.at(-1);
-        if (last && Math.abs(radius - last.bottomRadius) <= TOWER_RADIUS_TOLERANCE * last.bottomRadius)
-          last.height = roundFitted(last.height + bandHeight);
-        else
-          sections.push({
-            bottomRadius: roundFitted(radius),
-            height: roundFitted(bandHeight),
-            topRadius: roundFitted(radius),
-          });
-      }
-      return sections;
-    };
     const checkIsGilded = (cell: number): boolean => {
       const [red = 0, , blue = 0] = colors[cell] ?? [];
       return (metals[cell] ?? 0) >= METAL_THRESHOLD || red > blue * GILDING_RED_BLUE_RATIO;
@@ -222,9 +219,7 @@ export const fitLoginTowerFacades = async (
         )
         .map(({ cells: rectangleCells, columns: [firstColumn, lastColumn], rows: [firstRow, lastRow] }): TowerSlab => ({
           depth: roundFitted(computeUpperMedian(rectangleCells.map((cell) => getDepth(cell)))),
-          radius: roundFitted(
-            computeUpperMedian(rectangleCells.map((cell) => bandWallRadiusMap.get(toBand(cell)) ?? 0)),
-          ),
+          radius: roundFitted(computeUpperMedian(rectangleCells.map((cell) => rowWallRadii[toRow(cell)] ?? 0))),
           round: [roundFitted(firstColumn * TOWER_FACADE_CELL_SIZE), roundFitted(lastColumn * TOWER_FACADE_CELL_SIZE)],
           up: [roundFitted(firstRow * TOWER_FACADE_CELL_SIZE), roundFitted(lastRow * TOWER_FACADE_CELL_SIZE)],
         }));
@@ -246,7 +241,14 @@ export const fitLoginTowerFacades = async (
         toLayer(gilded, 0),
       ],
       recesses: toSlabs(deep, (cell) => depths[cell] ?? 0),
-      sections: toWallSections(),
+      sections: wall.slice(1).map(([topRadius, top], index) => {
+        const [bottomRadius = 0, bottom = 0] = wall[index] ?? [];
+        return {
+          bottomRadius: roundFitted(bottomRadius),
+          height: roundFitted(top - bottom),
+          topRadius: roundFitted(topRadius),
+        };
+      }),
       size: [roundFitted(circumference), roundFitted(towerHeight)],
     };
   }

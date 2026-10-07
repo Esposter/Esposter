@@ -4,7 +4,7 @@ import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlace
 import { fitVisualHull } from "#src/services/genshinAssets/fit/fitVisualHull";
 import { readLevelOfDetailParts } from "#src/services/genshinAssets/fit/readLevelOfDetailParts";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
-import { HULL_CELL_SIZE, ROTATION_DECIMALS } from "#src/services/genshinAssets/shared/constants";
+import { HULL_CELL_SIZE, ROTATION_DECIMALS, SCALE_DECIMALS } from "#src/services/genshinAssets/shared/constants";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { toRightHandedRotation } from "#src/services/genshinAssets/shared/toRightHandedRotation";
@@ -39,7 +39,7 @@ export const fitLoginHulls = async (
       rotation: toRightHandedRotation(rotation).map(
         (value) => Math.round(value * ROTATION_DECIMALS) / ROTATION_DECIMALS,
       ),
-      scale: scale.map((value) => roundFitted(value)),
+      scale: scale.map((value) => roundFitted(value, SCALE_DECIMALS)),
     });
   }
   return { hulls, placements: [...keyInstanceMap.values()] };

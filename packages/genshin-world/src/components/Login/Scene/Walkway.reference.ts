@@ -29,16 +29,23 @@ export const walkwayTopic: ReferenceTopic = {
     {
       method:
         "The walkway's faces binned by tilt and height per piece, its tops read from above, then the walkway fitted with its levels and flat at its stone, compare on every login frame and rank's second table on login-door and login-night-title",
-      outcome: InvestigationOutcome.Rejected,
+      outcome: InvestigationOutcome.Superseded,
       result:
         "The walkway's pieces are boxes with no bevel, their tops at three levels: the stone at 0, its lanes' borders 9 millimetres over it and its curbs 3 centimetres over that. Each piece drawn up to its highest vertex stood its whole top at its curbs, so the middle lane's pieces, which carry none, stood 2 centimetres under their neighbours, and their sides read as dark steps across the walkway. Built with its borders and curbs as levels of their own, the walkway nears its exports on the phone's door frame (FLIP 0.481 to 0.445, similarity 0.44 to 0.61), but the day's title scores 0.4309 against 0.4304 and the night's 0.3657 against 0.3651; every piece flat at its stone scores the dawn 0.3849 against 0.3858, the phone's door frame 0.4688 against 0.4698 and the rest level, so it ships",
     },
     {
       method:
         "genshin:parity passes login's shape measure at login-door-session's camera: our parts drawn into the witness's part, depth and normal targets at 1280 wide beside the exports'",
-      outcome: InvestigationOutcome.Found,
+      outcome: InvestigationOutcome.Superseded,
       result:
         "The walkway's outline stands 3.12 pixels from the exports' on average, its depth within 0.6 hundredths and its normals 9.9 degrees, so its pieces stand where the exports' do and are cut a little differently at their edges",
+    },
+    {
+      method:
+        "The shape pass's image of login-door-session, the walkway's near corner zoomed, then each piece's tops read from above on the centimetre grid and what stands 5 millimetres or more over its stone traced as loops at its own height (fitLoginWalkway's raised), extruded over the piece, in the shape pass",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The 3.12 pixels were the curbs: near the camera the exports' curb tops widen the walkway's outline and their inner faces stand as a dark stripe, where ours stood flat at the stone. Each piece's curbs (3 centimetres) and lanes' borders (9 millimetres) drawn as raised loops over it, the walkway's outline stands 0.49 pixels from the exports', its depth 0.05 hundredths and its normals 6.2 degrees, and the shape holds; the frames' scores that had flattened them weighed the light and the haze along with the shape",
     },
   ],
   openQuestions: [
