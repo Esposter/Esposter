@@ -39,10 +39,8 @@ export const solveReferenceScroll = async (
           ),
         });
         // oxlint-disable-next-line no-await-in-loop -- read after the view it drew
-        readings.push({
-          distance: computeMaskedMean(await readFamilyBoundaries(page, families, 0), edgeDistances),
-          offset,
-        });
+        const boundaries = await readFamilyBoundaries(page, families, 0);
+        readings.push({ distance: computeMaskedMean(boundaries, edgeDistances), offset });
       }
       return readings;
     },
