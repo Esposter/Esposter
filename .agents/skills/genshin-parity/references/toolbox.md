@@ -60,11 +60,11 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Camera
 
-| Unknown                          | Tool                                                              |
-| :------------------------------- | :---------------------------------------------------------------- |
-| The camera's pose                | `genshin:parity pose`: landmarks, refined on edges                |
-| The camera's path over a flight  | `genshin:parity track`: the pose at each frame, `--top-row` clear |
-| Whether our camera is the game's | `passes`' camera: landmarks from the scene's own camera, no solve |
+| Unknown                          | Tool                                                                                  |
+| :------------------------------- | :------------------------------------------------------------------------------------ |
+| The camera's pose                | `genshin:parity pose`: landmarks, refined on edges                                    |
+| The camera's path over a flight  | `genshin:parity track`: the pose at each frame, `--top-row` clear                     |
+| Whether our camera is the game's | `passes`' camera: landmarks from the scene's own camera, solved along the glide alone |
 
 ### Shape and surface
 
