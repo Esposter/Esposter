@@ -50,6 +50,7 @@ describe(getTerrainMorphStart, () => {
     minHeight: 0,
   };
   const stepCount = 1000;
+  const selectionCapacity = 256;
 
   test("leaves a tile splitting into its children wholly at its level, and them wholly morphed onto its grid", () => {
     expect.hasAssertions();
@@ -61,8 +62,13 @@ describe(getTerrainMorphStart, () => {
       z: 0.5,
     }));
     const frames = eyes.map((eye) => {
-      const { count, keys } = selectTerrainTiles(terrainOptions, eye, undefined, createTerrainSelection(64));
-      return { drawn: new Set(keys.subarray(0, count)), eye };
+      const { count, keys } = selectTerrainTiles(
+        terrainOptions,
+        eye,
+        undefined,
+        createTerrainSelection(selectionCapacity),
+      );
+      return { count, drawn: new Set(keys.subarray(0, count)), eye };
     });
     // Each tile is read where its replacement is drawn: a parent at its children's eye and they at its, whether it
     // Splits or rejoins between two steps
@@ -85,9 +91,11 @@ describe(getTerrainMorphStart, () => {
     }
 
     expect({
+      // A full selection may have dropped tiles, and with them the splits they would show
+      hasFullSelection: frames.some(({ count }) => count === selectionCapacity),
       hasSplit: parentMorphs.length > 0,
       maxParentMorph: Math.max(...parentMorphs),
       minChildMorph: Math.min(...childMorphs),
-    }).toStrictEqual({ hasSplit: true, maxParentMorph: 0, minChildMorph: 1 });
+    }).toStrictEqual({ hasFullSelection: false, hasSplit: true, maxParentMorph: 0, minChildMorph: 1 });
   });
 });

@@ -18,7 +18,8 @@ const shiftAcross = (values: Float32Array, width: number, pixels: number): Float
 // The surface pass: each family's unlit colour of ours against the exports' it stands for, where both draw it
 // (`compareFamilyAlbedo`): the distance between their mean colours, gated where two colours side by side are just told
 // Apart, and how unlike their lightness is in structure, gated at what the exports' own albedo reads against itself
-// Moved across by the shape's outline gate, as far as a shape the shape pass holds may stand off its place
+// Moved across by the shape's outline gate, as far as a shape the shape pass holds may stand off its place. A family
+// Too thin to meet its moved self reads no structure there, so its gate is none rather than Infinity, which holds any
 export const measureSurface = (component: DerivedAssetComponent): Promise<ParityPassMeasure> =>
   measureFamilyTargets(component, TARGET_NAMES, async (referenceId, exportsRead, oursRead) => {
     const { families, width } = exportsRead;
@@ -37,7 +38,7 @@ export const measureSurface = (component: DerivedAssetComponent): Promise<Parity
     const familyStructureGateMap = new Map(
       compareFamilyAlbedo(exportsTargets, shiftedTargets, width, families.length).map(({ family, structure }) => [
         family,
-        structure,
+        Number.isFinite(structure) ? structure : 0,
       ]),
     );
     const diffPath = await writeSurfaceDiff(referenceId, exportsTargets, oursTargets, exportsRead);
