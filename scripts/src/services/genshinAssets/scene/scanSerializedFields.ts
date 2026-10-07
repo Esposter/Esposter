@@ -2,6 +2,8 @@ import type { SerializedField } from "#src/models/genshinAssets/scene/Serialized
 import type { SerializedFieldReader } from "#src/models/genshinAssets/scene/SerializedFieldReader";
 import type { ObjectPointer } from "#src/models/genshinAssets/shared/ObjectPointer";
 
+import { CurveWrapMode } from "#src/models/genshinAssets/scene/CurveWrapMode";
+import { GradientMode } from "#src/models/genshinAssets/scene/GradientMode";
 import { SerializedFieldKind } from "#src/models/genshinAssets/scene/SerializedFieldKind";
 import { SERIALIZED_POINTER_BYTES } from "#src/services/genshinAssets/shared/constants";
 
@@ -22,11 +24,9 @@ const MAX_INTEGER = 1 << 20;
 const MIN_MAGNITUDE = 1e-5;
 const MAX_MAGNITUDE = 1e7;
 const MAX_COLOR_CHANNEL = 16;
-// Unity's wrap modes (default, once, loop, ping-pong, clamp forever) and its rotation orders, which end a curve
-const MAX_WRAP_MODE = 8;
+// Unity's rotation orders, which end a curve after its wrap modes
 const MAX_ROTATION_ORDER = 5;
 const MAX_WEIGHTED_MODE = 3;
-const MAX_GRADIENT_MODE = 2;
 const GRADIENT_TIME_SCALE = 65_535;
 
 const checkIsPlausible = (value: number): boolean =>
@@ -34,6 +34,10 @@ const checkIsPlausible = (value: number): boolean =>
 const checkIsSorted = (times: readonly number[]): boolean =>
   times.every((time, index) => index === 0 || time >= (times[index - 1] ?? 0));
 const checkIsChannel = (value: number, max: number): boolean => value === 0 || (value >= MIN_MAGNITUDE && value <= max);
+const checkIsCurveWrapMode = (mode: number): mode is CurveWrapMode =>
+  mode === CurveWrapMode.Clamp || mode === CurveWrapMode.PingPong || mode === CurveWrapMode.Repeat;
+const checkIsGradientMode = (mode: number): mode is GradientMode =>
+  mode === GradientMode.Blend || mode === GradientMode.Fixed;
 // A script's fields read from its raw serialized bytes without its type data, by the shapes they take. Unity writes a
 // Script's fields in the order they are declared, each aligned to four bytes, with no names, so each offset from the
 // Header on is read as the first shape that fits it: a pointer the component's data holds (the check says which do), a
@@ -84,10 +88,11 @@ export const scanSerializedFields = (
     const [preWrap = -1, postWrap = -1, rotationOrder = -1] = [0, 1, 2].map((word) =>
       readInt(end - 3 * WORD + word * WORD),
     );
-    return [preWrap, postWrap].every((mode) => mode >= 0 && mode <= MAX_WRAP_MODE) &&
+    return checkIsCurveWrapMode(preWrap) &&
+      checkIsCurveWrapMode(postWrap) &&
       rotationOrder >= 0 &&
       rotationOrder <= MAX_ROTATION_ORDER
-      ? { end, field: { keys, kind: SerializedFieldKind.Curve, offset } }
+      ? { end, field: { keys, kind: SerializedFieldKind.Curve, offset, postWrap, preWrap } }
       : undefined;
   };
   const readCurve: SerializedFieldReader = (offset) =>
@@ -101,8 +106,7 @@ export const scanSerializedFields = (
     const colorKeyCount = bytes.readUInt8(modeOffset + WORD);
     const alphaKeyCount = bytes.readUInt8(modeOffset + WORD + 1);
     if (
-      mode < 0 ||
-      mode > MAX_GRADIENT_MODE ||
+      !checkIsGradientMode(mode) ||
       colorKeyCount < 1 ||
       colorKeyCount > GRADIENT_KEYS ||
       alphaKeyCount < 1 ||
@@ -131,6 +135,7 @@ export const scanSerializedFields = (
           return { color: [red, green, blue], time };
         }),
         kind: SerializedFieldKind.Gradient,
+        mode,
         offset,
       },
     };

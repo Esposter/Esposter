@@ -1,3 +1,5 @@
+import { CurveWrapMode } from "#src/models/genshinAssets/scene/CurveWrapMode";
+import { GradientMode } from "#src/models/genshinAssets/scene/GradientMode";
 import { SerializedFieldKind } from "#src/models/genshinAssets/scene/SerializedFieldKind";
 import { scanSerializedFields } from "#src/services/genshinAssets/scene/scanSerializedFields";
 import { describe, expect, test } from "vitest";
@@ -71,6 +73,8 @@ describe(scanSerializedFields, () => {
         ],
         kind: SerializedFieldKind.Curve,
         offset: 32,
+        postWrap: CurveWrapMode.Clamp,
+        preWrap: CurveWrapMode.Clamp,
       },
     ]);
   });
@@ -101,6 +105,7 @@ describe(scanSerializedFields, () => {
           { color: [1, 1, 1], time: 1 },
         ],
         kind: SerializedFieldKind.Gradient,
+        mode: GradientMode.Blend,
         offset: 32,
       },
     ]);
