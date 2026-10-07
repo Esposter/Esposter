@@ -61,9 +61,23 @@ export const walkwayTopic: ReferenceTopic = {
       result:
         "The walkway loses structure at every scale, 0.895, 0.891, 0.910, 0.939 and 0.972 finest first against its exports' own 0.964 to 0.999 a pixel across, so its layout stands off as well as its detail. Its sides' textures paint them 0.99 to 1.01 of the stone, the stone they already read, and moved the structure from 0.0820 to 0.0815: the sides are not the gap",
     },
+    {
+      method:
+        "The surface pass's structure image over the walkway, then genshin:parity plan login-door-session --family=Walkway at 100 and at 10 pixels a metre, each column's lightness and red over blue read, and every face standing up at the walkway's top read at its texel (a scratch probe)",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The walkway's finest structure is lost along its lanes' borders, which the exports draw at the door session's camera as thin gold lines and ours as darker strips. From above at a centimetre a pixel the borders are 10 centimetre strips a little darker than the stone (138 to 142 against 147) with no gold, and no face standing up at the top is gold either (red over blue 1.01 to 1.08): at 10 centimetres a pixel the same strips read 1.25. The gold is the texture's coarse levels, its border texels averaged with the gilded trim beside them in the atlas, which the game's sampling shows wherever the walkway lies far enough off; our paint is drawn over the plan, where a border lies beside stone, so no level of ours can turn gold",
+    },
+    {
+      method:
+        "A what-if: the two borders painted as one more tone of the walkway's paint at the gold the coarse plan reads (1.22, 1.14 and 0.97 of the stone), in the surface pass at login-door-session",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "The walkway's colour fell from 0.49 to 0.05 ΔE, so the frame does read it that warm on the whole, but its structure rose from 0.082 to 0.121, every scale but the finest worse: near the camera the borders are the darker strips and only far off the gold, so one colour at every distance is wrong at most of them",
+    },
   ],
   openQuestions: [
-    "What the walkway's structure loses to its exports past its tones: 0.082 against a gate of 0.011, neither more tones nor the whole copy's detail closing it, while the exports smoothed over five pixels read 0.017 (the scoring topic), so it is where the tones lie; the structure image shows it along the lanes' lines and where the far end meets the dais",
+    "What the walkway's structure loses to its exports past its tones: 0.082 against a gate of 0.011, neither more tones nor the whole copy's detail closing it, while the exports smoothed over five pixels read 0.017 (the scoring topic), so it is where the tones lie; the structure image shows it along the lanes' borders, gold only at the texture's coarse levels, and where the far end meets the dais. The missing tool is paint read level by level: each mip level of a plan's canvas drawn from the tones its textures read at the same level, so a surface turns as the game's does with distance",
     "What MonoBlockController does to each walkway piece: the rise is read by eye off the recording's far end; its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$) hold its own curve",
   ],
 };

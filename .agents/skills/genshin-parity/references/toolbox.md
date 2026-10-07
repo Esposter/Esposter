@@ -73,6 +73,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 | How far a stand-in falls short               | `rank`'s second table: FLIP and similarity against the exports                                                                                     |
 | Depth, normal, albedo, part per pixel        | `genshin:parity gbuffer`                                                                                                                           |
 | A family's surface laid out in metres        | `genshin:parity plan`: its unlit albedo from straight above                                                                                        |
+| How a surface reads far off                  | `genshin:parity plan` at a lower `--resolution`: the same albedo through its textures' coarse levels, as a distant camera samples them             |
 | A stand-in seen where no reference is        | `genshin:parity view`: any camera, ours beside the exports                                                                                         |
 | Which term next, inside a pass               | `genshin:parity rank`: every term's ceiling, largest first, ordering that pass's items                                                             |
 | Ours against the exports, channel by channel | `passes`' shape: our parts drawn into the witness's targets, outline, depth and normal per family                                                  |
