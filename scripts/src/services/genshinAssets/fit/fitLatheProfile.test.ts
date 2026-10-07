@@ -28,6 +28,17 @@ describe(fitLatheProfile, () => {
     ]);
   });
 
+  test("keeps its axis on its bands where a bracket stands out to one side at one height", () => {
+    expect.hasAssertions();
+
+    const { axis } = fitLatheProfile([...ring(2, 5), ...ring(2, 6), [10 + 6, 6, 20], ...ring(2, 7), ...ring(2, 8)], {
+      bandHeight,
+      tolerance,
+    });
+
+    expect(axis).toStrictEqual([10, 20]);
+  });
+
   test("keeps a band with no vertex of its own at the radius below it", () => {
     expect.hasAssertions();
 

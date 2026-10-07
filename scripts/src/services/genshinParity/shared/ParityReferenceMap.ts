@@ -62,7 +62,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     capture: "session-2.mp4",
     // Read off the frame: the arch's apex and the dais's front feet on the walkway's top
     landmarks: { doorApex: [1717, 575], doorFootLeft: [1585, 1028], doorFootRight: [1855, 1028] },
-    props: { isInterfaceHidden: true, stage: "Door", timeOfDay: "Night" },
+    props: { heldScrolled: 320, isInterfaceHidden: true, stage: "Door", timeOfDay: "Night" },
     region: { height: 1300, width: 3100, x: 0, y: 0 },
     screen: "LoginScreen",
     seconds: 35.9,
