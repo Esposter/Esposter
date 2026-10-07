@@ -20,7 +20,11 @@ export const checkArrangement = async (
   ratios: { fitted: number; measured: number; name: string; reference: string }[];
 }> => {
   const { explainedOffsets, families, ratios } = DerivedAssetArrangementMap[component];
-  const [placements, clips] = await Promise.all([readComponentPlacements(component), readComponentClips(component)]);
+  // A component no offset explains, as Windrise, decodes no clips
+  const [placements, clips] = await Promise.all([
+    readComponentPlacements(component),
+    Object.keys(explainedOffsets).length > 0 ? readComponentClips(component) : [],
+  ]);
   const meshDirectory = join(getComponentDirectory(component).assets, AssetType.Mesh);
   return {
     explainedOffsets: Object.fromEntries(

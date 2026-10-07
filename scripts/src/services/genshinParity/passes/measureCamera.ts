@@ -22,6 +22,7 @@ export const measureCamera = async (component: DerivedAssetComponent): Promise<P
   const referenceIds = getComponentReferenceIds(component).filter(
     (referenceId) => ParityReferenceMap[referenceId]?.landmarks && !ParityReferenceMap[referenceId].isOtherBuild,
   );
+  if (referenceIds.length === 0) return { notes: ["no current build's reference with landmarks"], readings: [] };
   await fetchReferences();
   const measures: ParityPassMeasure[] = [];
   for (const referenceId of referenceIds) {

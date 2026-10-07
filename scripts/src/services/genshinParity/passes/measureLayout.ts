@@ -11,36 +11,35 @@ import { withFinalizerAsync } from "@esposter/shared";
 // Family's furthest part from the exports' objects it stands for, and how far across and up the scene stands each
 // Family of the witness off its laid-out place past what the game's own data explains (along the glide is its motion)
 export const measureLayout = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
-  const [{ explainedOffsets, families, ratios }, { browser, page }] = await Promise.all([
-    checkArrangement(component),
-    openComponentWitnessPage(component),
-  ]);
-  const familyOffsets = await withFinalizerAsync(
-    () =>
-      page.evaluate(() =>
+  const { browser, page } = await openComponentWitnessPage(component);
+  return withFinalizerAsync(
+    async () => {
+      const { explainedOffsets, families, ratios } = await checkArrangement(component);
+      const familyOffsets = await page.evaluate(() =>
         (Reflect.get(window, "getWitnessFamilyOffsets") as () => Record<string, [number, number, number]>)(),
-      ),
+      );
+      return {
+        notes: families.map(
+          ({ count, mean, name }) => `${name}: ${count} fitted, ${mean.toFixed(2)} m from the exports on average`,
+        ),
+        readings: [
+          ...ratios.map(({ fitted, measured, name }) => ({
+            gate: ARRANGEMENT_CROSS_RATIO_TOLERANCE,
+            name,
+            unit: "cross-ratio",
+            value: Math.abs(fitted - measured),
+          })),
+          ...families.map(({ largest, name }) => ({ gate: LAYOUT_GATE_METRES, name, unit: "m", value: largest })),
+          ...Object.entries(familyOffsets).flatMap(([family, [x, y]]) => {
+            const [explainedX, explainedY] = explainedOffsets[family] ?? [0, 0];
+            return [
+              { gate: LAYOUT_GATE_METRES, name: `${family} row across`, unit: "m", value: Math.abs(x - explainedX) },
+              { gate: LAYOUT_GATE_METRES, name: `${family} row up`, unit: "m", value: Math.abs(y - explainedY) },
+            ];
+          }),
+        ],
+      };
+    },
     () => browser.close(),
   );
-  return {
-    notes: families.map(
-      ({ count, mean, name }) => `${name}: ${count} fitted, ${mean.toFixed(2)} m from the exports on average`,
-    ),
-    readings: [
-      ...ratios.map(({ fitted, measured, name }) => ({
-        gate: ARRANGEMENT_CROSS_RATIO_TOLERANCE,
-        name,
-        unit: "cross-ratio",
-        value: Math.abs(fitted - measured),
-      })),
-      ...families.map(({ largest, name }) => ({ gate: LAYOUT_GATE_METRES, name, unit: "m", value: largest })),
-      ...Object.entries(familyOffsets).flatMap(([family, [x, y]]) => {
-        const [explainedX, explainedY] = explainedOffsets[family] ?? [0, 0];
-        return [
-          { gate: LAYOUT_GATE_METRES, name: `${family} row across`, unit: "m", value: Math.abs(x - explainedX) },
-          { gate: LAYOUT_GATE_METRES, name: `${family} row up`, unit: "m", value: Math.abs(y - explainedY) },
-        ];
-      }),
-    ],
-  };
 };
