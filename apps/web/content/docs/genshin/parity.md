@@ -79,7 +79,7 @@ flowchart TD
 - **The frame's score is acceptance, not the loop.** A pass is worked on its own measure until it holds, and the frame is compared once every pass before it has; ranking the frame's terms orders the work inside a pass, never across passes, since a later pass's term absorbs an earlier pass's error.
 - **Read before searching.** A component's `Index.reference.ts`, the topic files beside it, and the [game data formats](/docs/genshin/game-data-formats) page's shortcuts come first; a search whose answer is recorded is not run again.
 - **Every derived value cites its source.** A rect, a curve, a fitted shape or a constant names the key of the reference source it is taken from.
-- **Exact data outranks measurement.** A RectTransform's anchor, a clip's curve or a shader's program is used before a position, a timing or a model measured off a recording; a recording measures only what is fieldless, such as a layout group's spacing or a script's settings.
+- **Exact data outranks measurement.** A RectTransform's anchor, a clip's curve or a shader's program is used before a position, a timing or a model measured off a recording; a recording measures only what the exports do not hold: what is fieldless, such as a layout group's spacing or a script's settings, its own camera and the motion no clip holds, read by the exports' landmarks, and what is set at run time.
 
 ## Commands
 
