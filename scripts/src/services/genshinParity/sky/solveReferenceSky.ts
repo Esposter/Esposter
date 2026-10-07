@@ -155,10 +155,6 @@ export const solveReferenceSky = async (
     // oxlint-disable-next-line no-await-in-loop -- each page is opened and closed in turn, so no two browsers run at once
     readings.push(await readSky(referenceId, witness));
   const { gradient } = await readWorldData<{ gradient: { green: number[]; red: number[] } }>(`${witness}/sky.json`);
-  const computeModelColor = (colors: readonly Vector[], weights: readonly number[]): Vector =>
-    CHANNELS.map((channel) =>
-      weights.reduce((sum, weight, term) => sum + weight * (colors[term]?.[channel] ?? 0), 0),
-    ) as Vector;
   const solveAt = (shape: SkyShape) =>
     fitSky(
       readings.flatMap(({ pixels, sky }) =>
@@ -190,7 +186,11 @@ export const solveReferenceSky = async (
       // Draws the shader the solve models and the colours it holds are the ones just solved
       let modelError = 0;
       for (const { direction, pixel } of pixels) {
-        const shown = toneMapGenshin(computeModelColor(colors, computeSkyWeights(direction, sky, gradient, shape)));
+        const weights = computeSkyWeights(direction, sky, gradient, shape);
+        const modelColor = CHANNELS.map((channel) =>
+          weights.reduce((sum, weight, term) => sum + weight * (colors[term]?.[channel] ?? 0), 0),
+        ) as Vector;
+        const shown = toneMapGenshin(modelColor);
         const { b, g, r } = new Color(...shown).convertLinearToSRGB();
         const [x, y] = [pixel % width, Math.floor(pixel / width)];
         for (let row = y; row < Math.min(y + SAMPLE_STRIDE, height); row++)
