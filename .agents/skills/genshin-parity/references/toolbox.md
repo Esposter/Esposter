@@ -76,6 +76,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 | A stand-in seen where no reference is        | `genshin:parity view`: any camera, ours beside the exports                                                        |
 | Which term next, inside a pass               | `genshin:parity rank`: every term's ceiling, largest first, ordering that pass's items                            |
 | Ours against the exports, channel by channel | `passes`' shape: our parts drawn into the witness's targets, outline, depth and normal per family                 |
+| Where on the frame a shape misses            | `passes`' shape image, `shapes/<reference>.png`: the normals' angle green to red, outlines apart white and blue   |
 | Our unlit colour against the exports'        | gap: the same targets' albedo, diffed per family (`apps/web/content/docs/proposals/genshin/recreation-passes.md`) |
 
 ### Motion

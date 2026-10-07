@@ -11,6 +11,7 @@ import {
 } from "#src/services/genshinParity/passes/constants";
 import { getCurrentBuildReferenceIds } from "#src/services/genshinParity/passes/getCurrentBuildReferenceIds";
 import { solveReferenceCamera } from "#src/services/genshinParity/passes/solveReferenceCamera";
+import { writeShapeDiff } from "#src/services/genshinParity/passes/writeShapeDiff";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
@@ -44,14 +45,17 @@ export const measureShape = async (component: DerivedAssetComponent): Promise<Pa
           normal: targets.normal ?? new Float32Array(),
           part: targets.part ?? new Float32Array(),
         });
+        const exportsTargets = toTargets(exportsRead);
+        const oursTargets = toTargets(oursRead);
         const comparisons = compareFamilyTargets(
-          toTargets(exportsRead),
-          toTargets(oursRead),
+          exportsTargets,
+          oursTargets,
           exportsRead.width,
           exportsRead.families.length,
         );
+        const diffPath = await writeShapeDiff(referenceId, exportsTargets, oursTargets, exportsRead);
         return {
-          notes: [],
+          notes: [`${referenceId} exports | ours | normals' angle and outlines apart: ${diffPath}`],
           readings: comparisons.flatMap(({ depth, family, normal, outline }) => {
             const name = `${referenceId} ${exportsRead.families[family] ?? family}`;
             return [

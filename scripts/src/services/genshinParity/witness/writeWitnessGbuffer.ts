@@ -1,6 +1,7 @@
 import type { WitnessGbuffer } from "#src/models/genshinParity/shared/WitnessGbuffer";
 
 import { GBUFFER_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { drawPixels } from "#src/services/genshinParity/shared/drawPixels";
 import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
 import { getFamilyColor } from "#src/services/genshinParity/witness/getFamilyColor";
 import { BYTE } from "#src/services/shared/constants";
@@ -38,26 +39,19 @@ export const writeWitnessGbuffer = async (
     ),
     writeFile(join(directory, "header.json"), JSON.stringify({ families, height, parts, width }, null, 2)),
   ]);
-  const toImage = (readPixel: (pixel: number) => readonly [number, number, number]): Promise<Buffer> => {
-    const pixels = Buffer.alloc(width * height * 3);
-    for (let pixel = 0; pixel < width * height; pixel++) pixels.set(readPixel(pixel), pixel * 3);
-    return sharp(pixels, { raw: { channels: 3, height, width } })
-      .png()
-      .toBuffer();
-  };
   const panels = await Promise.all([
     sharp(shot).resize(width, height).removeAlpha().png().toBuffer(),
-    toImage((pixel) => {
+    drawPixels({ height, width }, (pixel) => {
       if (part[pixel * 4]) return getFamilyColor(part[pixel * 4 + 1] ?? 0);
       else return [0, 0, 0];
     }),
-    toImage((pixel) => getColor(normal, pixel, (value) => value * 0.5 + 0.5)),
-    toImage((pixel) => {
+    drawPixels({ height, width }, (pixel) => getColor(normal, pixel, (value) => value * 0.5 + 0.5)),
+    drawPixels({ height, width }, (pixel) => {
       const distance = depth[pixel * 4] ?? 0;
       const shade = toByte(distance > 0 ? DEPTH_PREVIEW_HALF / (DEPTH_PREVIEW_HALF + distance) : 0);
       return [shade, shade, shade];
     }),
-    toImage((pixel) => getColor(albedo, pixel, (value) => value)),
+    drawPixels({ height, width }, (pixel) => getColor(albedo, pixel, (value) => value)),
   ]);
   const previewPath = join(directory, "preview.png");
   await writeSideBySide(panels, { height, width }, previewPath);
