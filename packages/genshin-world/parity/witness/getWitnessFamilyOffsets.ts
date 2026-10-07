@@ -7,6 +7,7 @@ export const getWitnessFamilyOffsets = ({ parts }: SceneWitness): Record<string,
   Object.fromEntries(
     parts.children.map(({ name, position, userData }) => {
       const [x = 0, y = 0, z = 0] = (userData.offset as [number, number, number] | undefined) ?? [];
-      return [name, [position.x - x, position.y - y, position.z - z]];
+      const offset: [number, number, number] = [position.x - x, position.y - y, position.z - z];
+      return [name, offset];
     }),
   );
