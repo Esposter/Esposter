@@ -1,8 +1,6 @@
+import { SCENE_TEXTURE_ANISOTROPY } from "#src/services/scene/constants";
 import { CanvasTexture, LinearFilter, LinearMipmapLinearFilter, NoColorSpace } from "three";
 
-// The most a texture is sampled along a grazing line of sight, which the walkway's far paving and the towers' far
-// Faces are seen along
-const MAX_ANISOTROPY = 8;
 // A canvas drawn once as the texture a part reads its shade from: values rather than colours, so no colour space
 // Converts them, and filtered through its mipmaps so it holds still as the part glides off into the distance
 export const createShadeCanvasTexture = (canvas: OffscreenCanvas): CanvasTexture<OffscreenCanvas> => {
@@ -10,6 +8,6 @@ export const createShadeCanvasTexture = (canvas: OffscreenCanvas): CanvasTexture
   shadeCanvasTexture.colorSpace = NoColorSpace;
   shadeCanvasTexture.magFilter = LinearFilter;
   shadeCanvasTexture.minFilter = LinearMipmapLinearFilter;
-  shadeCanvasTexture.anisotropy = MAX_ANISOTROPY;
+  shadeCanvasTexture.anisotropy = SCENE_TEXTURE_ANISOTROPY;
   return shadeCanvasTexture;
 };

@@ -4,6 +4,7 @@ import type { Material, Texture } from "three";
 import { WitnessProperty } from "#parity/models/witness/WitnessProperty";
 import { SUBMESH_INDEX_REGEX } from "#parity/witness/constants";
 import { createWitnessMaterial } from "#parity/witness/createWitnessMaterial";
+import { SCENE_TEXTURE_ANISOTROPY } from "#src/services/scene/constants";
 import { Group, Mesh, MeshStandardMaterial, NoColorSpace, RepeatWrapping, SRGBColorSpace, TextureLoader } from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 
@@ -33,9 +34,11 @@ export const loadWitness = async (
         const loaded = await textureLoader.loadAsync(getUrl(`Texture2D/${name}.png`));
         loaded.colorSpace = COLOR_SLOTS.has(slot) ? SRGBColorSpace : NoColorSpace;
         // Tiled past its edges as Unity samples it, since a part's coordinates run past 0 and 1 where it repeats its
-        // Texture (the walkway's bricks), and clamped they smear its edge's texels into streaks
+        // Texture (the walkway's bricks), and clamped they smear its edge's texels into streaks; and sampled along a
+        // Grazing line of sight as the game samples it
         loaded.wrapS = RepeatWrapping;
         loaded.wrapT = RepeatWrapping;
+        loaded.anisotropy = SCENE_TEXTURE_ANISOTROPY;
         return [name, loaded] as const;
       }),
     ),

@@ -49,12 +49,13 @@ export const scoringTopic: ReferenceTopic = {
     {
       method:
         "The surface pass on login-door-session with the exports' albedo also scored against itself averaged within each family over three and five pixels square (blurWithinTags), a what-if run once",
-      outcome: InvestigationOutcome.Found,
+      outcome: InvestigationOutcome.Superseded,
       result:
         "Without its grain the exports' albedo loses little structure: averaged over three pixels the bridges read 0.006, the towers 0.008 and the walkway 0.005, and over five 0.015, 0.023 and 0.017, against gates of 0.021, 0.020 and 0.011 and ours at 0.044, 0.081 and 0.082. So a stand-in exact in its tones to a few pixels, drawing no texture of the game's, reaches about the gate, and what ours loses is where its tones lie, not the grain; the door, whose relief is fine, reads 0.081 over five pixels against its gate of 0.083",
     },
   ],
   openQuestions: [
-    "Whether a grain of our own closes the last of the walkway's and the towers' gates, which stand under what their exports read smoothed over five pixels (0.011 against 0.017, 0.020 against 0.023), once their tones lie where the exports' do",
+    "What the exports' albedo loses smoothed over three and five pixels now that the witness samples its textures as the game does: the grain read above was taken through a sampler that blurred every grazing surface, so whether the gates (the walkway's 0.017, the towers' and the bridges' 0.023) want a grain of our own or finer tones is open again",
+    "Whether the game samples its textures with eight samples along a grazing line of sight or sixteen: SCENE_TEXTURE_ANISOTROPY's eight is what the recordings' sharp joints ask at the least, and the game's own setting sits in its saved graphics data under keys no source names",
   ],
 };
