@@ -1,3 +1,5 @@
+import type { CurveWrapMode } from "#src/models/genshinAssets/scene/CurveWrapMode";
+import type { GradientMode } from "#src/models/genshinAssets/scene/GradientMode";
 import type { SerializedFieldKind } from "#src/models/genshinAssets/scene/SerializedFieldKind";
 import type { ObjectPointer } from "#src/models/genshinAssets/shared/ObjectPointer";
 
@@ -7,10 +9,16 @@ export type SerializedField = (
       alphaKeys: { alpha: number; time: number }[];
       colorKeys: { color: [number, number, number]; time: number }[];
       kind: SerializedFieldKind.Gradient;
+      mode: GradientMode;
     }
   | { color: [number, number, number, number]; kind: SerializedFieldKind.Color }
   | { elements: SerializedField[]; kind: SerializedFieldKind.Array }
-  | { keys: { inSlope: number; outSlope: number; time: number; value: number }[]; kind: SerializedFieldKind.Curve }
+  | {
+      keys: { inSlope: number; outSlope: number; time: number; value: number }[];
+      kind: SerializedFieldKind.Curve;
+      postWrap: CurveWrapMode;
+      preWrap: CurveWrapMode;
+    }
   | { kind: SerializedFieldKind.Float | SerializedFieldKind.Integer; value: number }
   | { kind: SerializedFieldKind.Pointer; pointer: ObjectPointer }
 ) & { offset: number };
