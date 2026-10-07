@@ -3,9 +3,9 @@ import type { SerializedFieldReader } from "#src/models/genshinAssets/scene/Seri
 import type { ObjectPointer } from "#src/models/genshinAssets/shared/ObjectPointer";
 
 import { SerializedFieldKind } from "#src/models/genshinAssets/scene/SerializedFieldKind";
+import { SERIALIZED_POINTER_BYTES } from "#src/services/genshinAssets/shared/constants";
 
 const WORD = 4;
-const POINTER_BYTES = 12;
 // A MonoBehaviour's own fields lead its bytes: its game object and its script as pointers, its enabled flag aligned to
 // Four bytes between them, then its name, a length and that many characters aligned to four
 const NAME_LENGTH_OFFSET = 28;
@@ -50,10 +50,10 @@ export const scanSerializedFields = (
   const readFloat = (offset: number): number => bytes.readFloatLE(offset);
   const checkHasBytes = (offset: number, count: number): boolean => offset + count <= wordCount * WORD;
   const readPointer: SerializedFieldReader = (offset) => {
-    if (!checkHasBytes(offset, POINTER_BYTES)) return undefined;
+    if (!checkHasBytes(offset, SERIALIZED_POINTER_BYTES)) return undefined;
     const pointer = { fileIndex: readInt(offset), pathId: bytes.readBigInt64LE(offset + WORD).toString() };
     return pointer.pathId !== "0" && checkIsPointer(pointer)
-      ? { end: offset + POINTER_BYTES, field: { kind: SerializedFieldKind.Pointer, offset, pointer } }
+      ? { end: offset + SERIALIZED_POINTER_BYTES, field: { kind: SerializedFieldKind.Pointer, offset, pointer } }
       : undefined;
   };
   // A curve whose keyframes are the given number of words: time, value and two slopes, then in Unity's own layout a

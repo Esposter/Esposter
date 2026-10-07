@@ -28,6 +28,8 @@ export const ANIMESTUDIO_UNPARSED_SUFFIX = ":Export";
 // A scene's stone shader only writes the G-buffer, and these light it, so every component's shaders are read beside
 // Them. Found by naming every shader of every block in the asset index from its unparsed raw export
 export const DEFERRED_SHADING_BLOCK = "00/00612967.blk";
+// A serialized pointer to an object: its file's index into the external references, then its path ID
+export const SERIALIZED_POINTER_BYTES = 12;
 // The open world's terrain tiles, a kilometre a side from the world's origin, the column of each the world's x over the
 // Side and the row its z, named for both (BigWorldTerrain_1_-2.bin, `parseTerrainTileName`), and the texture that
 // Draws a tile from afar

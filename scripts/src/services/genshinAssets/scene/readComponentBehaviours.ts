@@ -5,7 +5,7 @@ import type { ObjectPointer } from "#src/models/genshinAssets/shared/ObjectPoint
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { scanSerializedFields } from "#src/services/genshinAssets/scene/scanSerializedFields";
-import { CAB_MAP_PATH } from "#src/services/genshinAssets/shared/constants";
+import { CAB_MAP_PATH, SERIALIZED_POINTER_BYTES } from "#src/services/genshinAssets/shared/constants";
 import { exportBlockBySource } from "#src/services/genshinAssets/shared/exportBlockBySource";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { parseCabMap } from "#src/services/genshinAssets/shared/parseCabMap";
@@ -13,6 +13,7 @@ import { readIndexedAssets } from "#src/services/genshinAssets/shared/readIndexe
 import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLayout";
 import { resolveObjectPointer } from "#src/services/genshinAssets/shared/resolveObjectPointer";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { readdir, readFile, rm } from "node:fs/promises";
 import { basename, join } from "node:path";
@@ -88,6 +89,12 @@ export const readComponentBehaviours = async (
         for (const name of scripts) {
           // oxlint-disable-next-line no-await-in-loop -- one script's bytes are read at a time
           const bytes = await readFile(join(blockDirectory, file, name));
+          if (bytes.length < SERIALIZED_POINTER_BYTES)
+            throw new InvalidOperationError(
+              Operation.Read,
+              `${type} ${name} in ${file}`,
+              `holds ${bytes.length} bytes, too few for its game object's pointer`,
+            );
           const gameObject = { fileIndex: bytes.readInt32LE(0), pathId: bytes.readBigInt64LE(4).toString() };
           behaviours.push({
             block,
