@@ -18,14 +18,15 @@ import { readdir, readFile, rm } from "node:fs/promises";
 import { basename, join } from "node:path";
 
 // The built-in components read beside the scripts, and where their fields start: past the pointer to their GameObject
-// And their enabled flag, aligned to four bytes
-const BUILT_IN_ASSET_TYPES = [AssetType.Camera, AssetType.Light];
+// And their enabled flag, aligned to four bytes. An animator's fields name its controller, and its game object is what
+// Its clips' tracks at "(the animator)" move
+const BUILT_IN_ASSET_TYPES = [AssetType.Animator, AssetType.Camera, AssetType.Light];
 const BUILT_IN_FIELDS_START = 16;
-// Every MonoBehaviour, camera and light of a component's layout blocks exported raw, per file, and scanned for the
-// Shapes its fields take
-// (`scanSerializedFields`), each pointer resolved through its file's external references and named by what the layout
-// Or the asset index holds there. A pointer only counts where one of them holds its target, so a float's bits are never
-// Read as one. Only the scripts whose names match are returned when a pattern is given
+// Every MonoBehaviour, animator, camera and light of a component's layout blocks exported raw, per file, named by the
+// Game object its leading pointer sits it on and scanned for the shapes its fields take (`scanSerializedFields`), each
+// Pointer resolved through its file's external references and named by what the layout or the asset index holds there.
+// A pointer only counts where one of them holds its target, so a float's bits are never read as one. Only the scripts
+// Whose names match are returned when a pattern is given
 export const readComponentBehaviours = async (
   component: DerivedAssetComponent,
   scriptPattern?: RegExp,
@@ -87,6 +88,7 @@ export const readComponentBehaviours = async (
         for (const name of scripts) {
           // oxlint-disable-next-line no-await-in-loop -- one script's bytes are read at a time
           const bytes = await readFile(join(blockDirectory, file, name));
+          const gameObject = { fileIndex: bytes.readInt32LE(0), pathId: bytes.readBigInt64LE(4).toString() };
           behaviours.push({
             block,
             describePointer,
@@ -96,6 +98,7 @@ export const readComponentBehaviours = async (
               type === AssetType.MonoBehaviour ? undefined : BUILT_IN_FIELDS_START,
             ),
             file,
+            owner: nameTarget(gameObject) ?? describePointer(gameObject),
             script: basename(name, ".dat"),
           });
         }

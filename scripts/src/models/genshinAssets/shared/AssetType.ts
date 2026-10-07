@@ -1,6 +1,7 @@
 // A Unity class the tooling asks AnimeStudio for by name, which is also the folder an export groups that class under
 export enum AssetType {
   AnimationClip = "AnimationClip",
+  Animator = "Animator",
   Camera = "Camera",
   GameObject = "GameObject",
   Light = "Light",
