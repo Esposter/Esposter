@@ -27,9 +27,11 @@ const halve = (values: Float32Array, width: number, height: number): Float32Arra
     );
   });
 };
-// Each label's similarity between two grey images in [0, 1] of one size, a label of -1 read by none; a label with no
-// Pixel left at a scale keeps the terms it had. A coarser scale carries each label's share of a pixel rather than one
-// Label per pixel, so a pixel two labels share reads for both
+// Each label's similarity between two grey images in [0, 1] of one size, a label of -1 read by none, beside its term at
+// Each scale it has pixels at, finest first, so where its structure is lost can be read: at the finest, its detail; at
+// The coarsest, its layout and its luminance. A label with no pixel left at a scale keeps the terms it had. A coarser
+// Scale carries each label's share of a pixel rather than one label per pixel, so a pixel two labels share reads for
+// Both
 export const scoreLabelSimilarity = (
   reference: Float32Array,
   shot: Float32Array,
@@ -37,7 +39,7 @@ export const scoreLabelSimilarity = (
   height: number,
   labels: Int32Array,
   labelCount: number,
-): number[] =>
+): { scales: number[]; similarity: number }[] =>
   Array.from({ length: labelCount }, (_value, label) => {
     const labelCoverage = Float32Array.from(labels, (pixelLabel) => (pixelLabel === label ? 1 : 0));
     let planes: LabelPlanes = {
@@ -48,6 +50,7 @@ export const scoreLabelSimilarity = (
       width,
     };
     let score = 1;
+    const scales: number[] = [];
     for (const [scale, weight] of SCALE_WEIGHTS.entries()) {
       const isCoarsest = scale === SCALE_WEIGHTS.length - 1;
       const { coverage, first, height: levelHeight, second, width: levelWidth } = planes;
@@ -80,7 +83,11 @@ export const scoreLabelSimilarity = (
         sum += term * share;
         count += share;
       }
-      if (count > 0) score *= Math.max(sum / count, 0) ** weight;
+      if (count > 0) {
+        const term = Math.max(sum / count, 0);
+        scales.push(term);
+        score *= term ** weight;
+      }
       if (isCoarsest) break;
       planes = {
         coverage: halve(coverage, levelWidth, levelHeight),
@@ -90,5 +97,5 @@ export const scoreLabelSimilarity = (
         width: Math.floor(levelWidth / 2),
       };
     }
-    return score;
+    return { scales, similarity: score };
   });

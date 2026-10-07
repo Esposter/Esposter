@@ -75,7 +75,7 @@ export const readStandInGains = async (
         const term = getOrCreate(nameTermMap, name, () => ({
           count: 0,
           error: 0,
-          similarity: similarities[family] ?? 0,
+          similarity: similarities[family]?.similarity ?? 0,
         }));
         term.count++;
         term.error += error;

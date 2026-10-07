@@ -13,7 +13,7 @@ import { mix, vec3 } from "three/tsl";
 // Colour is drawn at half (`getHalfShadeStyle`) and read back doubled
 export const createPlanTonesNode = (options: PlanCanvasOptions, { stone, tones }: PlanTones): Node<"vec3"> => {
   const { sample, weight } = createPlanCanvasNode(options, (context, toCanvas) => {
-    context.fillStyle = getHalfShadeStyle(stone, 1);
+    context.fillStyle = getHalfShadeStyle(stone);
     context.fillRect(0, 0, context.canvas.width, context.canvas.height);
     for (const { loops, shade } of tones) {
       const path = new Path2D();
@@ -22,7 +22,7 @@ export const createPlanTonesNode = (options: PlanCanvasOptions, { stone, tones }
           path,
           loop.map((point) => toCanvas(point)),
         );
-      context.fillStyle = getHalfShadeStyle(shade, 1);
+      context.fillStyle = getHalfShadeStyle(shade);
       // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
       context.fill(path, "evenodd");
     }

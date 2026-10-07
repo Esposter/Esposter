@@ -7,29 +7,25 @@ import { getHalfShadeStyle } from "#src/services/login/scene/getHalfShadeStyle";
 import {
   LOGIN_FACADE_ATTRIBUTE,
   LOGIN_FACADE_CUT_ATTRIBUTE,
-  LOGIN_TOWER_FACADE_CONTRAST,
   LOGIN_TOWER_FACADE_GUTTER,
   LOGIN_TOWER_FACADE_PIXELS_PER_UNIT,
-  LOGIN_TOWER_RECESS_OCCLUSION,
 } from "#src/services/login/tower/constants";
 import { attribute, float, texture } from "three/tsl";
 
 // The login towers' surfaces as `fitLoginTowerFacades` traced them, drawn once into two canvases the towers read where
 // Their geometry says each vertex stands (`createLoginTowersGeometry`): the shade over the towers' stone, each band's
-// Tone, its paint, its recesses and its gilding filled as its loops in its own shade, a recess darkened by the light
-// Its depth keeps out (`getHalfShadeStyle`); and a mask white where the tower stands solid and black where it stands
-// Open. Each tower is drawn clipped to its tile and its gutters, its loops once more a whole turn either side so the
-// Gutters carry its surface on round its axis. The gilding is drawn as the stone's colour, not as metal: with no
-// Reflection of the sky to show it, a metal reads dark against the game's own exports at every hour. Every shade, a
-// Recess's with the light it keeps out, stands its contrast's share as far from the stone as traced, since the game
-// Shows its carving by the light across its relief rather than by its colour alone
+// Tone, its paint, its recesses and its gilding filled as its loops in its own shade as its texture paints it
+// (`getHalfShadeStyle`); and a mask white where the tower stands solid and black where it stands open. Each tower is
+// Drawn clipped to its tile and its gutters, its loops once more a whole turn either side so the gutters carry its
+// Surface on round its axis. The gilding is drawn as the stone's colour, not as metal: with no reflection of the sky to
+// Show it, a metal reads dark against the game's own exports at every hour
 export const createLoginTowerFacade = (atlas: LoginTowerAtlas): LoginTowerFacade => {
   const shadeCanvas = new OffscreenCanvas(atlas.width, atlas.height);
   const maskCanvas = new OffscreenCanvas(atlas.width, atlas.height);
   const shadeContext = shadeCanvas.getContext("2d");
   const maskContext = maskCanvas.getContext("2d");
   if (shadeContext && maskContext) {
-    shadeContext.fillStyle = getHalfShadeStyle([1, 1, 1], LOGIN_TOWER_FACADE_CONTRAST);
+    shadeContext.fillStyle = getHalfShadeStyle([1, 1, 1]);
     shadeContext.fillRect(0, 0, atlas.width, atlas.height);
     maskContext.fillStyle = "#fff";
     maskContext.fillRect(0, 0, atlas.width, atlas.height);
@@ -65,16 +61,12 @@ export const createLoginTowerFacade = (atlas: LoginTowerAtlas): LoginTowerFacade
       for (const { from, shade, to } of bands) {
         const [, top] = toCanvas([0, to]);
         const [, foot] = toCanvas([0, from]);
-        shadeContext.fillStyle = getHalfShadeStyle(shade, LOGIN_TOWER_FACADE_CONTRAST);
+        shadeContext.fillStyle = getHalfShadeStyle(shade);
         shadeContext.fillRect(left, top, paddedWidth, foot - top);
       }
-      for (const { depth, loops, shade } of layers) {
+      for (const { loops, shade } of layers) {
         const path = toPath(loops);
-        const occlusion = depth > 0 ? LOGIN_TOWER_RECESS_OCCLUSION ** depth : 1;
-        shadeContext.fillStyle = getHalfShadeStyle(
-          shade.map((channel) => channel * occlusion),
-          LOGIN_TOWER_FACADE_CONTRAST,
-        );
+        shadeContext.fillStyle = getHalfShadeStyle(shade);
         // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
         shadeContext.fill(path, "evenodd");
       }

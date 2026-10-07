@@ -25,7 +25,7 @@ export const compareFamilyAlbedo = (
   oursTargets: { albedo: Float32Array; part: Float32Array },
   width: number,
   familyCount: number,
-): { colour: number; family: number; structure: number }[] => {
+): { colour: number; family: number; scales: number[]; structure: number }[] => {
   const pixelCount = exportsTargets.part.length / 4;
   const height = pixelCount / width;
   const labels = Int32Array.from({ length: pixelCount }, (_label, pixel) => {
@@ -53,7 +53,7 @@ export const compareFamilyAlbedo = (
       oursSum = addColours(oursSum, readColour(oursTargets.albedo, pixel));
     }
     if (!isDrawn) return [];
-    if (shared === 0) return [{ colour: Infinity, family, structure: Infinity }];
+    if (shared === 0) return [{ colour: Infinity, family, scales: [], structure: Infinity }];
     const toMeanLab = ([red, green, blue]: Vector): Vector =>
       toLab(toXyz([red / shared, green / shared, blue / shared]));
     const [exportsLightness, exportsA, exportsB] = toMeanLab(exportsSum);
@@ -62,7 +62,8 @@ export const compareFamilyAlbedo = (
       {
         colour: Math.hypot(exportsLightness - oursLightness, exportsA - oursA, exportsB - oursB),
         family,
-        structure: 1 - (similarities[family] ?? 0),
+        scales: similarities[family]?.scales ?? [],
+        structure: 1 - (similarities[family]?.similarity ?? 0),
       },
     ];
   });

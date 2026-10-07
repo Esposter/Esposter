@@ -22,7 +22,6 @@ import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUp
 import {
   TOWER_BAND_HEIGHT,
   TOWER_FACADE_CELL_SIZE,
-  TOWER_FACADE_DEEP_RECESS,
   TOWER_FACADE_MIN_AREA,
   TOWER_FACADE_PAINT_CELL_SIZE,
   TOWER_FACADE_PAINT_CONTRAST,
@@ -223,8 +222,7 @@ export const fitLoginTowerFacades = async (
         tolerance: 1,
         width: paint.width,
       });
-    const toLayer = (layerCells: readonly number[], depth: number): FacadeLayer => ({
-      depth,
+    const toLayer = (layerCells: readonly number[]): FacadeLayer => ({
       loops: trace(layerCells),
       shade: toShade(computeMean(paint.colors, layerCells), mean),
     });
@@ -233,18 +231,12 @@ export const fitLoginTowerFacades = async (
       columns: toSlabs(carvingCells.raised, (cell) => -(carving.depths[cell] ?? 0)),
       holes: trace(paint.tags.flatMap((tag, cell) => (tag < 0 ? [cell] : []))),
       layers: [
-        toLayer(
-          face.filter((cell) => getContrast(cell) < -TOWER_FACADE_PAINT_CONTRAST),
-          0,
-        ),
-        toLayer(
-          face.filter((cell) => getContrast(cell) > TOWER_FACADE_PAINT_CONTRAST),
-          0,
-        ),
-        toLayer(paintCells.raised, -TOWER_FACADE_SHALLOW_RECESS),
-        toLayer(paintCells.shallow, TOWER_FACADE_SHALLOW_RECESS),
-        toLayer(paintCells.deep, TOWER_FACADE_DEEP_RECESS),
-        toLayer(paintCells.gilded, 0),
+        toLayer(face.filter((cell) => getContrast(cell) < -TOWER_FACADE_PAINT_CONTRAST)),
+        toLayer(face.filter((cell) => getContrast(cell) > TOWER_FACADE_PAINT_CONTRAST)),
+        toLayer(paintCells.raised),
+        toLayer(paintCells.shallow),
+        toLayer(paintCells.deep),
+        toLayer(paintCells.gilded),
       ],
       recesses: toSlabs(carvingCells.deep, (cell) => carving.depths[cell] ?? 0),
       sections: wall.slice(1).map(([topRadius, top], index) => {

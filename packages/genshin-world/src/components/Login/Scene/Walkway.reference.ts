@@ -54,6 +54,13 @@ export const walkwayTopic: ReferenceTopic = {
       result:
         "The stone of one tone with its pockets a twentieth darker stood 2.34 ΔE from the exports' mean colour and 0.124 in structure against a gate of 0.011: the exports paint the middle lane's bricks paler, with a darker brick about every 0.8 metres, and a pale strip along each lane's border. The copy's colour differs least from itself 8 metres along, 0.017 against about 0.03 at every other shift but 2 and 4 metres (0.024 and 0.027), so its pattern repeats as its wings stand. Three tones over the whole copy read 0.41 ΔE and 0.072 at 216 kilobytes; folded onto the repeat, 0.49 ΔE and 0.082 at 45; five tones folded read 0.090, finer tones adding edges the exports' soft paint does not have. Adopted at three folded tones: the colour holds, the structure does not, and more tones move it away",
     },
+    {
+      method:
+        "genshin:parity passes login's surface measure with each family's structure read scale by scale (scoreLabelSimilarity), then the walkway's faces that read no plan, its sides, curbs and underside, painted the mean colour their textures paint them, read at four points of each face weighted by its area",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "The walkway loses structure at every scale, 0.895, 0.891, 0.910, 0.939 and 0.972 finest first against its exports' own 0.964 to 0.999 a pixel across, so its layout stands off as well as its detail. Its sides' textures paint them 0.99 to 1.01 of the stone, the stone they already read, and moved the structure from 0.0820 to 0.0815: the sides are not the gap",
+    },
   ],
   openQuestions: [
     "What the walkway's structure loses to its exports past its tones: 0.082 against a gate of 0.011, and neither more tones nor the whole copy's detail closes it; a map of where the structure is lost is the missing tool",

@@ -15,7 +15,9 @@ describe(scoreLabelSimilarity, () => {
 
     const stripes = drawStripes(0);
 
-    expect(scoreLabelSimilarity(stripes, stripes, size, size, labels, 1)).toStrictEqual([1]);
+    expect(scoreLabelSimilarity(stripes, stripes, size, size, labels, 1)).toStrictEqual([
+      { scales: [1, 1, 1, 1, 1], similarity: 1 },
+    ]);
   });
 
   test("scores a label whose own pixels match as identical whatever its neighbour's differ by", () => {
@@ -24,7 +26,8 @@ describe(scoreLabelSimilarity, () => {
     const stripes = drawStripes(0);
     const halves = Int32Array.from({ length: size * size }, (_value, index) => ((index % size) * 2 < size ? 0 : 1));
     const neighbourChanged = stripes.map((value, index) => (halves[index] === 1 ? 1 - value : value));
-    const [own = 0, neighbour = 0] = scoreLabelSimilarity(stripes, neighbourChanged, size, size, halves, 2);
+    const [{ similarity: own } = { similarity: 0 }, { similarity: neighbour } = { similarity: 0 }] =
+      scoreLabelSimilarity(stripes, neighbourChanged, size, size, halves, 2);
 
     expect(own).toBeCloseTo(1);
     expect(neighbour).toBeLessThan(own);
@@ -35,8 +38,15 @@ describe(scoreLabelSimilarity, () => {
 
     const stripes = drawStripes(0);
     const flat = new Float32Array(size * size).fill(0.5);
-    const [shifted = 0] = scoreLabelSimilarity(stripes, drawStripes(1), size, size, labels, 1);
-    const [bare = 0] = scoreLabelSimilarity(stripes, flat, size, size, labels, 1);
+    const [{ similarity: shifted } = { similarity: 0 }] = scoreLabelSimilarity(
+      stripes,
+      drawStripes(1),
+      size,
+      size,
+      labels,
+      1,
+    );
+    const [{ similarity: bare } = { similarity: 0 }] = scoreLabelSimilarity(stripes, flat, size, size, labels, 1);
 
     expect(shifted).toBeGreaterThan(bare);
   });

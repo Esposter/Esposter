@@ -79,6 +79,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 | Where on the frame a shape misses            | `passes`' shape image, `shapes/<reference>.png`: the normals' angle green to red, outlines apart white and blue                                    |
 | Our unlit colour against the exports'        | `passes`' surface: the same targets' albedo where both draw a family, its mean colour apart and its structure                                      |
 | Where on the frame a surface misses          | `passes`' surface image, `surfaces/<reference>.png`: the lightness apart where both draw a family, red where ours is lighter and blue where darker |
+| Which scale a surface's structure is lost at | `passes`' surface notes: each family's structure scale by scale, finest first, beside its exports' own a pixel across                              |
 | A surface's paint from its texture           | `fitPlanTones`: its texture's colours past their speckle as k-means tones in CIELab, traced as loops over a plan                                   |
 
 ### Motion
@@ -92,10 +93,11 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Display
 
-| Unknown                                | Tool                                                                                                                   |
-| :------------------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
-| The transform's form                   | exact: the bloom's and the uber pass's programs, read with their constant layouts (the login's `Display.reference.ts`) |
-| Which MHYBloom value is which property | gap: the curve's contrast solved on a recording's shading ramps, where it alone bends the channels' ratios             |
+| Unknown                   | Tool                                                                                                                   |
+| :------------------------ | :--------------------------------------------------------------------------------------------------------------------- |
+| The transform's form      | exact: the bloom's and the uber pass's programs, read with their constant layouts (the login's `Display.reference.ts`) |
+| The tone curve's contrast | `passes`' display: each pixel's light, back through the curve over its albedo, flattest on a sun and a sky's plane     |
+| The bloom's fields        | gap: which MHYBloom value is the threshold, the scaler and the intensity, measured where the bloom alone moves         |
 
 ### Light
 
