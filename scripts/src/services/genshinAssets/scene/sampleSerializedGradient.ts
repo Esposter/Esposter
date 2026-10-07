@@ -30,7 +30,7 @@ export const sampleSerializedGradient = (
     time,
   );
   const [alpha = 0] = sampleKeys(
-    alphaKeys.map(({ alpha, ...key }) => ({ ...key, channels: [alpha] })),
+    alphaKeys.map(({ alpha: channel, ...key }) => ({ ...key, channels: [channel] })),
     mode,
     time,
   );
