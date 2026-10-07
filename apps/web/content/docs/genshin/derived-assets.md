@@ -119,7 +119,7 @@ flowchart TD
 | Ground, `fitGaussianHills`       | A terrain's heightfields round an origin        | Gaussian hills over a base height by matching pursuit, widest first and weighted toward the origin, each width's heights re-solved together, with the error left by distance and the heights the ground stands between                                                      |
 | Music, `fitLoginMusic`           | The playlist and its decoded sources            | Each source's notes as pitch-transcription hears them, split into three registers by natural breaks, and each register's instrument measured at its clear notes (`fitInstrument`), the segments in the playlist's order                                                     |
 
-A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit filled it (a mesh's triangles, a texture's thresholded channel), and a part drawn at several levels of detail is fitted from its finest by one `readLevelOfDetailParts`. Every number is kept to the centimetre (`roundFitted`).
+A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit filled it (a mesh's triangles, a texture's thresholded channel), and a part drawn at several levels of detail is fitted from its finest by one `readLevelOfDetailParts`, save a level painted with other materials than its finest (every login tower's and most bridges' coarsest, the ground's stone alone), which the game stands where the part is far and is a part of its own, fitted from its own mesh. Every number is kept to the centimetre (`roundFitted`).
 
 ## Inventory
 

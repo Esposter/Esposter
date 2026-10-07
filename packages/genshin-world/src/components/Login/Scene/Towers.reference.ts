@@ -138,6 +138,13 @@ export const towersTopic: ReferenceTopic = {
       result:
         "The near lantern tower's body matched the exports' mean to a byte where its grain spread three times as far, but the near left tower stood about 8 bytes lighter all over: each tower's shades over its own mean drew every tower at the one stone colour the scene multiplies them by, where the game's towers stand from nine tenths to about one of it. Over the shared stone the towers' colour falls from 1.52 to 0.37 ΔE and their structure from 0.087 to 0.081, the coarsest scales gaining most (0.950 to 0.964). The refit also carried the paint grid rounded up to the seam and the crown (sampleFacadeGrid), which towers.json had not been fitted with since, a band merged and the loops run on half a unit to the seam: alone it moved the colour by a ten-thousandth",
     },
+    {
+      method:
+        "The structure image's slender far column found by genshin:parity parts login-door-session --family Towers as LoginScene_Build05_01_Lod2, the inventory's materials read level by level, then readLevelOfDetailParts making a level drawn with other materials than its part's finest a part of its own, the towers and the hulls refitted, in the passes at login-door-session",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The game stands some towers and bridges far off at their coarsest level alone, and every tower's coarsest (and most bridges' and pillars') is drawn with LoginScene_Ground01 only, about the towers' stone with no band, where our lathe painted every placement with its finest level's bands, the far Build05 dark and blue at its mouldings. Fitted from their own meshes, three towers' coarsest levels stand four placements: the towers' structure falls from 0.081 to 0.071 and their colour from 0.37 to 0.27 ΔE, their normals from 9.88 to 9.57 degrees and their outline from 0.48 to 0.46 pixels; five coarse hulls stand eleven bridges and pillars, their outline from 0.48 to 0.40 pixels and their normals from 9.20 to 9.02 degrees. Build05's middle level keeps its finest's materials and so its facade, which would have added about its finest's 238 thousand characters where the coarsest levels add 64 thousand",
+    },
   ],
   openQuestions: [
     "The towers' gilding and windows: their colour per section scores worse painted as diffuse stone, the game's gold being a metal",
