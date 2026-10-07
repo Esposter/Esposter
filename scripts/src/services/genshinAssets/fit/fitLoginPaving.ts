@@ -1,7 +1,13 @@
 import type { Loop } from "#src/models/genshinAssets/fit/Loop";
+import type { PlanTones } from "#src/models/genshinAssets/fit/PlanTones";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
+import type { Vector } from "#src/models/shared/Vector";
 
 import { blurWithinTags } from "#src/services/genshinAssets/fit/blurWithinTags";
+import { fitAlbedo } from "#src/services/genshinAssets/fit/fitAlbedo";
+import { fitPlanTones } from "#src/services/genshinAssets/fit/fitPlanTones";
+import { foldPlanRepeats } from "#src/services/genshinAssets/fit/foldPlanRepeats";
+import { LoginStoneFamilyMaterialRegexMap } from "#src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap";
 import { rasterizeTopFaces } from "#src/services/genshinAssets/fit/rasterizeTopFaces";
 import { readMaterialNames } from "#src/services/genshinAssets/fit/readMaterialNames";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
@@ -14,8 +20,10 @@ import { WALKWAY_MESH_REGEX } from "#src/services/genshinAssets/shared/constants
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { BYTE } from "#src/services/shared/constants";
+import { toLinear } from "#src/services/shared/toLinear";
 import { join } from "node:path";
 import sharp from "sharp";
+import { Color } from "three";
 
 // The materials whose stone is set with pockets, the side lanes' and the wings'
 const POCKET_MATERIALS = new Set(["LoginScene_Bridge01", "LoginScene_Bridge02"]);
@@ -33,6 +41,11 @@ const POCKET_BLUR_CELLS = 2;
 const MIN_LOOP_CELLS = 40;
 // The tolerance in cells each loop is simplified to
 const LOOP_TOLERANCE_CELLS = 1;
+// The tones its textures paint its tops in besides their gilding, read on cells two a side wide over the one repeat of
+// Their pattern each copy paints twice, as its wings stand
+const PAINT_TONE_COUNT = 3;
+const PAINT_BLOCK_CELLS = 2;
+const PAINT_REPEATS = 2;
 // A normal's tilt, its slope off the stone's own face, read up to this much for the split between the stone's flat and
 // Its bevels
 const MAX_TILT = 2;
@@ -48,7 +61,9 @@ const RIM_REACH_CELLS = 4;
 // Slope the bevels' median tilt; a pocket's rim is a bevel by a pocket's edge, the rims' width their area over the
 // Pockets' edges' length; and a groove is the stone tilted anywhere else, the joints between the bricks and the lanes'
 // Borders, split from the flat stone under the rims by the same split again, traced as loops like the pockets, with
-// Their own median slope
+// Their own median slope. The tops' colour is the tones their textures paint them in (`fitPlanTones`), each over the
+// Walkway's stone (`fitAlbedo`), read once over the repeat of their pattern (`foldPlanRepeats`) and laid over the
+// Plan's corner at that repeat's size
 export const fitLoginPaving = async (
   placements: readonly AssetPlacement[],
   meshDirectory: string,
@@ -58,6 +73,7 @@ export const fitLoginPaving = async (
   corner: [number, number];
   grooves: Loop[];
   grooveSlope: number;
+  paint: PlanTones & { size: [number, number] };
   pockets: Loop[];
   size: [number, number];
 }> => {
@@ -126,14 +142,38 @@ export const fitLoginPaving = async (
     const [column, row] = getTexel(cell);
     grey[cell] = texture.data[(row * texture.info.width + column) * texture.info.channels] ?? 0;
   }
-  const traceCells = (cells: readonly number[]): Loop[] =>
-    traceCellLoops(cells, {
-      cellSize: CELL_SIZE,
-      corner: PLAN_CORNER,
-      minCells: MIN_LOOP_CELLS,
-      tolerance: LOOP_TOLERANCE_CELLS,
-      width,
-    });
+  const grid = {
+    cellSize: CELL_SIZE,
+    corner: PLAN_CORNER,
+    minCells: MIN_LOOP_CELLS,
+    tolerance: LOOP_TOLERANCE_CELLS,
+    width,
+  };
+  const traceCells = (cells: readonly number[]): Loop[] => traceCellLoops(cells, grid);
+  const colorTextures = await Promise.all(
+    materialNames.map((name) =>
+      sharp(join(textureDirectory, `${name}_Diffuse.png`))
+        .removeAlpha()
+        .raw()
+        .toBuffer({ resolveWithObject: true }),
+    ),
+  );
+  const colors = Array.from({ length: width * height }, (_value, cell): Vector => {
+    const texture = colorTextures[tags[cell] ?? -1];
+    if (!texture) return [0, 0, 0];
+    const [column, row] = toTexel([values[cell * 2] ?? 0, values[cell * 2 + 1] ?? 0], texture.info);
+    const texel = (row * texture.info.width + column) * texture.info.channels;
+    return [0, 1, 2].map((channel) => toLinear((texture.data[texel + channel] ?? 0) / BYTE)) as Vector;
+  });
+  const paint = foldPlanRepeats(colors, tags, { block: PAINT_BLOCK_CELLS, height, repeats: PAINT_REPEATS, width });
+  // Three reads a hex as sRGB and holds it linear, as the scene's material reads the stone's
+  const stone = new Color(
+    await fitAlbedo(
+      materialNames
+        .filter((name) => LoginStoneFamilyMaterialRegexMap.walkway.test(name))
+        .map((name) => join(textureDirectory, `${name}_Diffuse.png`)),
+    ),
+  );
   // Each cell's stone read over its neighbours of its own material, past the speckle the texture paints it with
   const blurred = blurWithinTags(grey, tags, { height, radius: POCKET_BLUR_CELLS, width });
   const isPocket = new Uint8Array(width * height);
@@ -222,6 +262,20 @@ export const fitLoginPaving = async (
     corner: PLAN_CORNER,
     grooves: traceCells(grooveCells),
     grooveSlope: roundFitted(computeMedianTilt(grooveCells)),
+    paint: {
+      size: [PLAN_SIZE[0], PLAN_SIZE[1] / PAINT_REPEATS],
+      ...fitPlanTones(paint.colors, paint.tags, {
+        grid: {
+          ...grid,
+          cellSize: CELL_SIZE * PAINT_BLOCK_CELLS,
+          minCells: MIN_LOOP_CELLS / PAINT_BLOCK_CELLS ** 2,
+          width: paint.width,
+        },
+        height: paint.height,
+        stone: [stone.r, stone.g, stone.b],
+        toneCount: PAINT_TONE_COUNT,
+      }),
+    },
     pockets,
     size: PLAN_SIZE,
   };

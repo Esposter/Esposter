@@ -3,6 +3,7 @@ import type { MaterialValues } from "#src/models/genshinAssets/shared/MaterialVa
 import type { Vector } from "#src/models/shared/Vector";
 
 import { fitAlbedo } from "#src/services/genshinAssets/fit/fitAlbedo";
+import { LoginStoneFamilyMaterialRegexMap } from "#src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUpperMedian";
 import { BYTE } from "#src/services/shared/constants";
@@ -14,13 +15,6 @@ import sharp from "sharp";
 const MASK_SAMPLE_SIZE = 64;
 // The material property a mask's smoothness is scaled by
 const GLOSS_MAP_SCALE_KEY = "_GlossMapScale";
-// Each family of the login's parts by the materials it draws with, as the materials are named
-const FAMILY_MATERIAL_REGEX_MAP: Record<"bridges" | "door" | "towers" | "walkway", RegExp> = {
-  bridges: /^LoginScene_(?:Bridge0[2-4]|Pillar|Broken)/u,
-  door: /^LoginScene_Door/u,
-  towers: /^LoginScene_Build/u,
-  walkway: /^LoginScene_Bridge01/u,
-};
 const computeMean = (vectors: readonly Vector[]): Vector =>
   ([0, 1, 2] as const).map((channel) =>
     roundFitted(vectors.reduce((sum, vector) => sum + vector[channel], 0) / Math.max(vectors.length, 1)),
@@ -32,9 +26,9 @@ const computeMean = (vectors: readonly Vector[]): Vector =>
 export const fitLoginStone = async (
   materials: readonly MaterialValues[],
   textureDirectory: string,
-): Promise<Record<keyof typeof FAMILY_MATERIAL_REGEX_MAP, FittedStone>> => {
+): Promise<Record<keyof typeof LoginStoneFamilyMaterialRegexMap, FittedStone>> => {
   const entries = await Promise.all(
-    Object.entries(FAMILY_MATERIAL_REGEX_MAP).map(async ([family, regex]) => {
+    Object.entries(LoginStoneFamilyMaterialRegexMap).map(async ([family, regex]) => {
       const familyMaterials = materials.filter(({ name }) => regex.test(name));
       const diffusePaths = familyMaterials
         .map(({ name }) => join(textureDirectory, `${name}_Diffuse.png`))
@@ -76,5 +70,5 @@ export const fitLoginStone = async (
       ] as const;
     }),
   );
-  return Object.fromEntries(entries) as Record<keyof typeof FAMILY_MATERIAL_REGEX_MAP, FittedStone>;
+  return Object.fromEntries(entries) as Record<keyof typeof LoginStoneFamilyMaterialRegexMap, FittedStone>;
 };

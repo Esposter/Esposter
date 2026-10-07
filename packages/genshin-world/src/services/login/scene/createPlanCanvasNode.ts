@@ -2,12 +2,14 @@ import type { PlanCanvasNode } from "#src/models/scene/PlanCanvasNode";
 import type { PlanCanvasOptions } from "#src/models/scene/PlanCanvasOptions";
 
 import { createShadeCanvasTexture } from "#src/services/login/scene/createShadeCanvasTexture";
+import { RepeatWrapping } from "three";
 import { normalGeometry, positionGeometry, step, texture, vec2 } from "three/tsl";
 
 // A rectangle of a part's own geometry drawn once into a canvas, its first axis across the canvas and its second up it,
 // And read back where each vertex of the part stands in it: the walkway's tops over x and z, the door's front over x
 // And y. A face turned away from the axis the plan looks along (`normalAxis`) reads none of it, so a plan drawn on a
-// Part's tops never runs down its sides; its weight, 1 where the plan is read and 0 where not, comes with the sample
+// Part's tops never runs down its sides; its weight, 1 where the plan is read and 0 where not, comes with the sample.
+// The plan repeats past its rectangle, so a pattern drawn once over its repeat is read along the whole of a part
 export const createPlanCanvasNode = (
   {
     axes: [firstAxis, secondAxis],
@@ -28,9 +30,12 @@ export const createPlanCanvasNode = (
       (first - cornerFirst) * pixelsPerMetre,
       (cornerSecond + sizeSecond - second) * pixelsPerMetre,
     ]);
+  const canvasTexture = createShadeCanvasTexture(canvas);
+  canvasTexture.wrapS = RepeatWrapping;
+  canvasTexture.wrapT = RepeatWrapping;
   return {
     sample: texture(
-      createShadeCanvasTexture(canvas),
+      canvasTexture,
       vec2(
         positionGeometry[firstAxis].sub(cornerFirst).div(sizeFirst),
         positionGeometry[secondAxis].sub(cornerSecond).div(sizeSecond),
