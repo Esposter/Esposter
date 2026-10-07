@@ -17,8 +17,8 @@ export const compareFamilyTargets = (
   depth: number;
   family: number;
   normal: number;
-  normalByPart: { angle: number; part: number; pixelCount: number }[];
   outline: number;
+  partNormals: { angle: number; part: number; pixelCount: number }[];
 }[] => {
   const pixelCount = exportsTargets.part.length / 4;
   return Array.from({ length: familyCount }, (_family, family) => family).flatMap((family) => {
@@ -60,8 +60,8 @@ export const compareFamilyTargets = (
         depth: shared > 0 ? depthGap / shared : Infinity,
         family,
         normal: shared > 0 ? normalAngle / shared : Infinity,
-        normalByPart: [...partNormalMap.values()],
         outline: apart / outlineLength,
+        partNormals: [...partNormalMap.values()],
       },
     ];
   });

@@ -38,9 +38,9 @@ export const measureShape = (component: DerivedAssetComponent): Promise<ParityPa
     // Both draw stands at Infinity with no part to name, so its reading alone reports it
     const partNotes = comparisons
       .filter(({ normal }) => Number.isFinite(normal) && normal > SHAPE_NORMAL_GATE_DEGREES)
-      .map(({ family, normalByPart }) => {
-        const total = normalByPart.reduce((sum, { angle }) => sum + angle, 0);
-        const parts = normalByPart
+      .map(({ family, partNormals }) => {
+        const total = partNormals.reduce((sum, { angle }) => sum + angle, 0);
+        const parts = partNormals
           .toSorted((firstPart, secondPart) => secondPart.angle - firstPart.angle)
           .slice(0, NAMED_PART_COUNT)
           .map(({ angle, part, pixelCount }) => {

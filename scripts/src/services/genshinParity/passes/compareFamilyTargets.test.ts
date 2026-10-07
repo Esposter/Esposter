@@ -21,7 +21,7 @@ describe(compareFamilyTargets, () => {
     const oursTargets = createTargets([undefined, undefined, 0, 0], [0, 0, 2, 2], [up, up, toward, toward]);
 
     expect(compareFamilyTargets(exportsTargets, oursTargets, 4, 2)).toStrictEqual([
-      { depth: 1, family: 0, normal: 90, normalByPart: [{ angle: 90, part: 1, pixelCount: 1 }], outline: 1 },
+      { depth: 1, family: 0, normal: 90, outline: 1, partNormals: [{ angle: 90, part: 1, pixelCount: 1 }] },
     ]);
   });
 });
