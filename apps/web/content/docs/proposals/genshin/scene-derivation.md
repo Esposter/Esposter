@@ -69,20 +69,20 @@ A representation is judged by its pass's measure at the references' cameras, nev
 
 ### The open world: a layout pass, then a pass per object
 
-An open-world region holds hundreds of objects, so it is built in two kinds of pass. The **layout pass** stands every object the game streams there at its exact place and turn, read from its scene points and its StreamGen records, each drawn by a stand-in: a kit we already have, or the export's bounding box where we have none. Nothing in this pass is judged by eye, since what it gets right is exact data, and it is what every later pass stands on: the cameras are solved against it and the light is calibrated over it. Each **object pass** then replaces one stand-in with our own re-derivation of that object, chosen by the loss table and fitted against its own export. It is drawn beside the export at a reference's camera, moment and light, so the only difference left between the two is the object, and it is done when that gap is within the reference's noise. The frame is ranked again before the next object is chosen.
+An open-world region holds hundreds of objects, so it is built in two kinds of pass. The **layout pass** stands every object the game streams there at its exact place and turn, read from its scene points and its StreamGen records, each drawn by a stand-in: a kit we already have, or the export's bounding box where we have none. Nothing in this pass is judged by eye, since what it gets right is exact data, and it is what every later pass stands on: the cameras are solved against it. Each **object pass** then replaces one stand-in with our own re-derivation of that object, chosen by the loss table and fitted against its own export. It is drawn beside the export at a reference's camera, moment and light, so the only difference left between the two is the object, and it is done when that gap is within the reference's noise. The frame is ranked again before the next object is chosen. Only once every object's gap is within noise are the display transform, the light, the haze and the sky calibrated over the rebuilt region, in the [recreation passes](/docs/proposals/genshin/recreation-passes)' order, since a light calibrated over stand-ins stands in for their wrong shapes and surfaces.
 
 ```mermaid
 flowchart TD
   P["The region's placements: scene points and StreamGen records"] --> L["Layout pass: every object at its exact place and turn, drawn by a stand-in"]
   L --> C["Every reference's camera solved on the witness"]
-  C --> F["The frame calibrated: light, haze and sky by hour"]
-  F --> R["rank: each stand-in priced by what its export recovers of the frame"]
+  C --> R["rank: each stand-in priced by what its export recovers of the frame"]
   R --> Q{Largest cost worth closing?}
   Q -->|yes| O["Object pass: our generator for that object, fitted to its export"]
   O --> G{"Beside its export at the reference's camera and light: gap within noise?"}
   G -->|no| O
   G -->|yes| R
-  Q -->|"no: every cost within the reference's noise"| D[Approve on the perceptual score]
+  Q -->|"no: every cost within the reference's noise"| F["The frame calibrated: display, light, haze and sky by hour"]
+  F --> D[Approve on the perceptual score]
 ```
 
 An object the game places many times (a ruin slab, a rock) is one object pass however often it stands, since the fit is of its mesh and the layout already places every copy.
