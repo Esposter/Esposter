@@ -2,6 +2,7 @@ import type { ComponentReference } from "genshin-interface";
 
 import { arrangementTopic } from "#src/components/Login/Scene/Arrangement.reference";
 import { cameraTopic } from "#src/components/Login/Scene/Camera.reference";
+import { displayTopic } from "#src/components/Login/Scene/Display.reference";
 import { doorTopic } from "#src/components/Login/Scene/Door.reference";
 import { inventoryTopic } from "#src/components/Login/Scene/Inventory.reference";
 import { lightTopic } from "#src/components/Login/Scene/Light.reference";
@@ -132,6 +133,12 @@ export const reference: ComponentReference = {
       parityReference: "login-night-title",
       role: "The night sky over the title, at the camera the door recording solves",
     },
+    bloomShader: {
+      block: "00/12903389.blk",
+      kind: GameSourceKind.Shader,
+      name: "Shader#90",
+      role: "The bloom: the threshold prefilter, the downsamples and blurs, the four levels composed and the last pass mixing it in",
+    },
     postProfile: {
       block: "00/11790361.blk",
       kind: GameSourceKind.MonoBehaviour,
@@ -160,8 +167,8 @@ export const reference: ComponentReference = {
     uberShader: {
       block: "00/12903389.blk",
       kind: GameSourceKind.Shader,
-      name: "Shader#82",
-      role: "The frame after the scene: bloom, grading, distortion, and the final pass through a 3D table",
+      name: "Shader#88",
+      role: "The frame after the scene: the bloom added, the white balance, the bloom's tone curve and the sRGB encode, with the 3D table only on the wide-range path",
     },
     walkway: {
       block: "00/04803507.blk",
@@ -173,6 +180,7 @@ export const reference: ComponentReference = {
   topics: {
     arrangement: arrangementTopic,
     camera: cameraTopic,
+    display: displayTopic,
     door: doorTopic,
     inventory: inventoryTopic,
     light: lightTopic,

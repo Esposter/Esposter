@@ -92,9 +92,10 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Display
 
-| Unknown                                 | Tool                                                                                                                                    |
-| :-------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
-| The grading table, tone curve and bloom | gap: the post profile's table found, else each table solved on a frame (`apps/web/content/docs/proposals/genshin/recreation-passes.md`) |
+| Unknown                                | Tool                                                                                                                   |
+| :------------------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
+| The transform's form                   | exact: the bloom's and the uber pass's programs, read with their constant layouts (the login's `Display.reference.ts`) |
+| Which MHYBloom value is which property | gap: the curve's contrast solved on a recording's shading ramps, where it alone bends the channels' ratios             |
 
 ### Light
 
