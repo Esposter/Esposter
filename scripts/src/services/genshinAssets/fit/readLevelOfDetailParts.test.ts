@@ -53,4 +53,26 @@ describe(readLevelOfDetailParts, () => {
       ]),
     );
   });
+  test("names each set of materials the finest level is drawn with a part of its own", () => {
+    expect.hasAssertions();
+
+    const placements = [
+      createPlacement("Tower_Lod0", "gilded", ["stone", "gold"]),
+      createPlacement("Tower_Lod0", "plain", ["stone"]),
+      createPlacement("Tower_Lod1", "far", ["stone"]),
+    ];
+    const { meshPathMap, partPlacements } = readLevelOfDetailParts(placements, MESH_REGEX, directory);
+
+    expect(partPlacements.map(({ father, part }) => ({ father, part }))).toStrictEqual([
+      { father: "gilded", part: "Tower" },
+      { father: "plain", part: "Tower_Lod0" },
+      { father: "far", part: "Tower_Lod0" },
+    ]);
+    expect(meshPathMap).toStrictEqual(
+      new Map([
+        ["Tower", join(directory, "Tower_Lod0.obj")],
+        ["Tower_Lod0", join(directory, "Tower_Lod0.obj")],
+      ]),
+    );
+  });
 });
