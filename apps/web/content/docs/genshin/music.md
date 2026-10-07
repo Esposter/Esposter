@@ -65,9 +65,10 @@ The order, and the rules each step keeps, are the `genshin-parity` skill's `refe
 3. Export it with `genshin:assets playlist <component>`.
 4. Fit it through the component's fit, after `fitLoginMusic`.
 5. Fit its expression with `genshin:parity expression`.
-6. Play it from a component that renders nothing, after `Login/Music`, with an `isMotionOnly` fixture.
-7. Score it with `listen`.
-8. The user listens.
+6. Layer its recordings with `genshin:parity instruments`, then refit its expression with `genshin:parity expression`.
+7. Play it from a component that renders nothing, after `Login/Music`, with an `isMotionOnly` fixture.
+8. Score it with `listen`.
+9. The user listens.
 
 ## Not yet
 
