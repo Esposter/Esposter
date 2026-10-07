@@ -175,6 +175,19 @@ export const skyTopic: ReferenceTopic = {
       result:
         "Clear of its towers the frame's sky holds far more cloud low down (55% and 46% under 8 degrees, against 25% when its towers read as clear sky), and its halves stand further apart, the cover's gate 0.16. With no layer the cover fails at 0.275 and the spread at 0.23 against 0.075, our clouds' brightness straying further inside them than the game's; the layer solved from the last settings holds the cover (0.147) but fails the brightness, edges and spread, scoring worse over every reading than none, so no hour draws it yet. The spread is the clouds' own colours, owed their re-solve",
     },
+    {
+      method: "genshin:parity clouds login-door-session --witness login with the frame held at heldScrolled 320",
+      outcome: InvestigationOutcome.Superseded,
+      result:
+        "The spread match read 261 pixels of our clouds against 873 of the reference's and solved a lit #50c8f9 over a shade of #000085, too few to trust: it read the sky at the scene's own camera rather than the reference's solved one, and its clouds by a fixed brightness over our clear sky rather than the clear sky the pass fits. Removed, its colours solved by layer on the pass's own readings",
+    },
+    {
+      method:
+        "genshin:parity layer login-door-session --witness login --ours with lit and shade, the clouds' colours as the screen shows them, solved component by component by the simplex from the night's shipped #56b0f5 and #255abb over 150 steps, at heldScrolled 320",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "Drawn at the shipped colours the layer's readings are the pass's own (cover 0.2696 against 0.2695). Solved, the lit colour runs to #00d6f3 (its red under none, which the curve's inverse holds at its floor) and the shade to #2459df: the clear sky falls from 2.86 to 1.62 ΔE and the spread from 0.236 to 0.058, both inside their gates, and the cover from 0.270 to 0.266, still over its 0.16; but the clouds stand 8.99 times their sky against the game's 7.93 where the shipped stood 7.73 (0.124 against a gate of 0.128, from 0.027), and their edges 0.0075 from 0.0055. It holds one gate more than the shipped colours without beating them on every reading, so the shipped colours stay: two flat colours trade the clouds' brightness over their sky against their spread inside them",
+    },
   ],
   openQuestions: [
     "The cloud layer's settings by hour: its program and textures of our own are drawn, and no hour's settings yet hold every gate of the atmosphere pass; the door frame held clear of its own towers, the clouds' colours solved again, then each hour solved on its frames and named from the environment scripts where a curve reads it, and its drift over time",

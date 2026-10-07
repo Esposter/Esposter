@@ -124,7 +124,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 | The fog's density and colours           | `genshin:parity fog`: bins by depth and sun angle, solved                                                     |
 | The sky's colours and its shape         | `genshin:parity sky`: least squares over an hour's references' clear sky, none negative, by the curve's slope |
 | Whether the scene draws the sky solved  | `sky`'s drawn line: ours with no cloud against the reference's clear                                          |
-| The clouds' lit and shaded colours      | `genshin:parity clouds`: ours and theirs matched by colour spread, then the pass's statistics                 |
+| The clouds' lit and shaded colours      | `genshin:parity layer` with `lit` and `shade` solved, on the pass's statistics                                |
 | How much of each cloud band an hour has | `genshin:parity cover`: each band's share on the cover by height                                              |
 | The heights each cloud band stands at   | `cover --heights`: every hour's references at once, shares by turns                                           |
 | Whether the sky holds, and what is off  | `passes --pass Atmosphere`: the sky's statistics at the camera, held within its halves' spread                |

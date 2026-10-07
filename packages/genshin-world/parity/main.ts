@@ -93,7 +93,7 @@ if (screen && root) {
   Reflect.set(window, "getSceneWhiteBalance", () => getSceneWhiteBalance(sceneContext.value));
   Reflect.set(window, "getScenePieces", (family: string) => getScenePieces(sceneContext.value, family));
   Reflect.set(window, "renderMusic", renderMusic);
-  Reflect.set(window, "setSceneCloudColors", (colors?: Parameters<typeof setSceneCloudColors>[1]) => {
+  Reflect.set(window, "setSceneCloudColors", (colors: Parameters<typeof setSceneCloudColors>[1]) => {
     setSceneCloudColors(sceneContext.value, colors);
   });
   Reflect.set(window, "setSceneCloudCover", (covers?: Parameters<typeof setSceneCloudCover>[1]) =>
