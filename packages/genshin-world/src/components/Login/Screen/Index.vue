@@ -37,6 +37,8 @@ interface Props {
   isInterfaceHidden?: true;
   // The reader's language, whose client's interface the screen shows
   language: GameLanguage;
+  // Where the music's recordings are served from
+  musicRecordingBaseUrl: string;
   playerName?: string;
   // How far loading has gone, from 0 to 1, which the bar shows and the flight to the door follows, ending a fixed time
   // After it is done
@@ -51,6 +53,7 @@ const {
   heldScrolled,
   isInterfaceHidden,
   language,
+  musicRecordingBaseUrl,
   playerName,
   progress,
   qualityTier = QualityTier.High,
@@ -145,7 +148,11 @@ const onClick = (event: MouseEvent): void => {
         @ready="emit('ready')"
       />
     </TresCanvas>
-    <LoginMusic v-if="!isInterfaceHidden" :is-door-opened="stage === LoginStage.Entering || undefined" />
+    <LoginMusic
+      v-if="!isInterfaceHidden"
+      :is-door-opened="stage === LoginStage.Entering || undefined"
+      :music-recording-base-url
+    />
     <LoginInterface
       v-if="!isInterfaceHidden"
       :game-text

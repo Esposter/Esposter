@@ -39,6 +39,9 @@ export const LOGIN_DOOR_LIGHT_MS = 400;
 // The door's sound starts this long after the click, from the English recording: its screen first whitens at 14.633
 // Seconds and the sound's rumble rises from 14.95, fitted over the burst its audio holds above the music
 export const LOGIN_DOOR_SOUND_DELAY_MS = 320;
+// Where the login music's recordings sit in the package, written by `genshin:parity instruments`, which the parity page
+// Serves them from as it serves any of the package's files
+export const LOGIN_MUSIC_RECORDING_DIRECTORY = "src/data/login/recordings";
 // The door's interface after the door has formed, from the English recording at 10 frames a second: formed by 12.7 s,
 // The corner buttons at 13.0, and the prompt's band fading in from 13.7 to full by 14.0
 export const LOGIN_DOOR_BUTTONS_DELAY_MS = 300;

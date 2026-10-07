@@ -10,6 +10,8 @@ describe(collectMusicNotes, () => {
     harmonics: [1],
     level: 1,
     noiseBands: [],
+    recordingLevel: 0,
+    recordings: [],
     release: 1,
     sustain: 1,
     tuning: 0,

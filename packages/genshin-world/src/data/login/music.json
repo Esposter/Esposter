@@ -4,7 +4,7 @@
   "segments": [
     {
       "duration": 104,
-      "expression": [-16.541, -7.14, -8.821, -9.521, -5.636, 4.597, 2.645, 5.474, 4.73, 2.848, -8.3, -9.119, -8.574],
+      "expression": [-17.625, -6.061, -8.994, -10.036, -6.202, 5.74, 1.972, 6.021, 4.95, 3.096, -8.977, -9.312, -8.374],
       "voices": [
         {
           "instrument": {
@@ -17,6 +17,8 @@
             ],
             "level": 0.086,
             "noiseBands": [0.017, 0.024, 0, 0, 0, 0, 0.028, 0.011],
+            "recordingLevel": 0,
+            "recordings": [],
             "release": 1.214,
             "sustain": 0.53,
             "tuning": -0.029
@@ -207,6 +209,8 @@
             "harmonics": [1, 0.278, 0.139, 0.141, 0.045, 0.119, 0.017, 0.048],
             "level": 0.072,
             "noiseBands": [0.005, 0.032, 0, 0, 0, 0, 0.002, 0.002],
+            "recordingLevel": 0,
+            "recordings": [],
             "release": 0.525,
             "sustain": 0.22,
             "tuning": 0.088
@@ -680,6 +684,8 @@
             "harmonics": [1, 0.31, 0.201, 0.08, 0.07, 0.033, 0.014],
             "level": 0.197,
             "noiseBands": [0.01, 0, 0, 0, 0, 0, 0.005, 0.003],
+            "recordingLevel": 0,
+            "recordings": [],
             "release": 0.393,
             "sustain": 0.44,
             "tuning": 0.108
@@ -1124,7 +1130,7 @@
     { "duration": 10.014, "expression": [], "voices": [] },
     {
       "duration": 92.75,
-      "expression": [-1.048, -1.429, 0.032, 1.474, 0.578, -4.509, -1.859, 2.419, 0.376, 0.482, 2.494, -11.524],
+      "expression": [-2.503, -3.53, -1.069, 0.578, -0.041, -6.451, -3.781, 1.832, -1.498, -0.87, 3.043, -17.725],
       "voices": [
         {
           "instrument": {
@@ -1133,6 +1139,19 @@
             "harmonics": [1, 0.401, 0.227, 0.18, 0.04, 0.109, 0.019, 0.011, 0.016, 0.011, 0.006, 0.017],
             "level": 0.08,
             "noiseBands": [0.009, 0.018, 0, 0, 0, 0, 0.002, 0.002],
+            "recordingLevel": 0.022,
+            "recordings": [
+              {
+                "file": "vcsl-idiophones-struck-idiophones-hand-chimes-sus-c3-r01-main.ogg",
+                "gain": 10.770345,
+                "highKey": 61,
+                "highVelocity": 127,
+                "keyCenter": 60,
+                "lowKey": 60,
+                "lowVelocity": 1,
+                "tune": -14
+              }
+            ],
             "release": 1.161,
             "sustain": 0.19,
             "tuning": -0.005
@@ -1328,6 +1347,109 @@
             "harmonics": [1, 0.066, 0.032, 0.016],
             "level": 0.283,
             "noiseBands": [0.002, 0.004, 0, 0, 0, 0, 0.001, 0],
+            "recordingLevel": 0.132,
+            "recordings": [
+              {
+                "file": "vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-a-2-v2-rr1.ogg",
+                "gain": 16.099628,
+                "highKey": 59,
+                "highVelocity": 85,
+                "keyCenter": 58,
+                "lowKey": 58,
+                "lowVelocity": 1,
+                "tune": 0
+              },
+              {
+                "file": "vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-c3-v2-rr1.ogg",
+                "gain": 23.294183,
+                "highKey": 61,
+                "highVelocity": 85,
+                "keyCenter": 60,
+                "lowKey": 60,
+                "lowVelocity": 1,
+                "tune": -2
+              },
+              {
+                "file": "vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-c3-v3-rr1.ogg",
+                "gain": 1.622423,
+                "highKey": 61,
+                "highVelocity": 127,
+                "keyCenter": 60,
+                "lowKey": 60,
+                "lowVelocity": 86,
+                "tune": -4
+              },
+              {
+                "file": "vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-d3-v2-rr1.ogg",
+                "gain": 24.5291,
+                "highKey": 63,
+                "highVelocity": 85,
+                "keyCenter": 62,
+                "lowKey": 62,
+                "lowVelocity": 1,
+                "tune": -1
+              },
+              {
+                "file": "vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-e3-v2-rr1.ogg",
+                "gain": 15.812168,
+                "highKey": 65,
+                "highVelocity": 85,
+                "keyCenter": 64,
+                "lowKey": 64,
+                "lowVelocity": 1,
+                "tune": -3
+              },
+              {
+                "file": "vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-e3-v3-rr1.ogg",
+                "gain": 1.401295,
+                "highKey": 65,
+                "highVelocity": 127,
+                "keyCenter": 64,
+                "lowKey": 64,
+                "lowVelocity": 86,
+                "tune": -6
+              },
+              {
+                "file": "vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-f-3-v2-rr1.ogg",
+                "gain": 24.960702,
+                "highKey": 67,
+                "highVelocity": 85,
+                "keyCenter": 66,
+                "lowKey": 66,
+                "lowVelocity": 1,
+                "tune": -7
+              },
+              {
+                "file": "vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-f-3-v3-rr1.ogg",
+                "gain": 4.51081,
+                "highKey": 67,
+                "highVelocity": 127,
+                "keyCenter": 66,
+                "lowKey": 66,
+                "lowVelocity": 86,
+                "tune": 0
+              },
+              {
+                "file": "vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-g-3-v2-rr1.ogg",
+                "gain": 29.805447,
+                "highKey": 69,
+                "highVelocity": 85,
+                "keyCenter": 68,
+                "lowKey": 68,
+                "lowVelocity": 1,
+                "tune": -3
+              },
+              {
+                "file": "vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-g-3-v3-rr1.ogg",
+                "gain": 6.623642,
+                "highKey": 69,
+                "highVelocity": 127,
+                "keyCenter": 68,
+                "lowKey": 68,
+                "lowVelocity": 86,
+                "tune": -6
+              }
+            ],
             "release": 0.602,
             "sustain": 0.09,
             "tuning": 0.001
@@ -1645,6 +1767,109 @@
             "harmonics": [1, 0.129, 0.049, 0.035, 0.015],
             "level": 0.25,
             "noiseBands": [0.003, 0.006, 0, 0, 0, 0, 0.002, 0.001],
+            "recordingLevel": 0.28,
+            "recordings": [
+              {
+                "file": "vcsl-idiophones-struck-idiophones-hand-chimes-sus-a-3-r01-main.ogg",
+                "gain": 6.526468,
+                "highKey": 71,
+                "highVelocity": 127,
+                "keyCenter": 70,
+                "lowKey": 70,
+                "lowVelocity": 1,
+                "tune": -3
+              },
+              {
+                "file": "vcsl-idiophones-struck-idiophones-hand-chimes-sus-c4-r01-main.ogg",
+                "gain": 7.171051,
+                "highKey": 73,
+                "highVelocity": 127,
+                "keyCenter": 72,
+                "lowKey": 72,
+                "lowVelocity": 1,
+                "tune": 0
+              },
+              {
+                "file": "vcsl-idiophones-struck-idiophones-hand-chimes-sus-d4-r01-main.ogg",
+                "gain": 12.535551,
+                "highKey": 75,
+                "highVelocity": 127,
+                "keyCenter": 74,
+                "lowKey": 74,
+                "lowVelocity": 1,
+                "tune": 0
+              },
+              {
+                "file": "vcsl-idiophones-struck-idiophones-hand-chimes-sus-e4-r01-main.ogg",
+                "gain": 11.247642,
+                "highKey": 77,
+                "highVelocity": 127,
+                "keyCenter": 76,
+                "lowKey": 76,
+                "lowVelocity": 1,
+                "tune": -2
+              },
+              {
+                "file": "vcsl-idiophones-struck-idiophones-hand-chimes-sus-f-4-r01-main.ogg",
+                "gain": 5.779198,
+                "highKey": 79,
+                "highVelocity": 127,
+                "keyCenter": 78,
+                "lowKey": 78,
+                "lowVelocity": 1,
+                "tune": -4
+              },
+              {
+                "file": "vcsl-idiophones-struck-idiophones-hand-chimes-sus-g-4-r01-main.ogg",
+                "gain": 10.41811,
+                "highKey": 80,
+                "highVelocity": 127,
+                "keyCenter": 80,
+                "lowKey": 80,
+                "lowVelocity": 1,
+                "tune": -1
+              },
+              {
+                "file": "vcsl-idiophones-struck-idiophones-hand-chimes-sus-a4-r01-main.ogg",
+                "gain": 21.711023,
+                "highKey": 82,
+                "highVelocity": 127,
+                "keyCenter": 81,
+                "lowKey": 81,
+                "lowVelocity": 1,
+                "tune": 0
+              },
+              {
+                "file": "vcsl-idiophones-struck-idiophones-hand-chimes-sus-c5-r01-main.ogg",
+                "gain": 6.28498,
+                "highKey": 85,
+                "highVelocity": 127,
+                "keyCenter": 84,
+                "lowKey": 83,
+                "lowVelocity": 1,
+                "tune": -3
+              },
+              {
+                "file": "vcsl-idiophones-struck-idiophones-hand-chimes-sus-d5-r01-main.ogg",
+                "gain": 15.569592,
+                "highKey": 87,
+                "highVelocity": 127,
+                "keyCenter": 86,
+                "lowKey": 86,
+                "lowVelocity": 1,
+                "tune": -5
+              },
+              {
+                "file": "vcsl-idiophones-struck-idiophones-hand-chimes-sus-e5-r01-main.ogg",
+                "gain": 12.711201,
+                "highKey": 89,
+                "highVelocity": 127,
+                "keyCenter": 88,
+                "lowKey": 88,
+                "lowVelocity": 1,
+                "tune": -3
+              }
+            ],
             "release": 0.563,
             "sustain": 0.01,
             "tuning": 0.04

@@ -1,7 +1,12 @@
 import type { SampleRegion } from "#src/models/genshinAssets/music/SampleRegion";
 import type { NoteEventTime } from "pitch-transcription/notes";
 
-import { RELEASE_TIME_CONSTANTS, selectMusicSample } from "genshin-engine";
+import {
+  getMusicRecordingGain,
+  getMusicRecordingRate,
+  RELEASE_TIME_CONSTANTS,
+  selectMusicSample,
+} from "genshin-engine";
 
 // A voice's notes played offline by a sampled instrument as the engine's sampler plays them, into `length` frames at
 // The rate its recordings were decoded at: each note its nearest recording, read faster or slower to the note's pitch
@@ -22,8 +27,8 @@ export const renderSampledVoice = (
     const region = selectMusicSample(regions, pitchMidi, amplitude);
     const samples = region && regionSamplesMap.get(region);
     if (!region || !samples) continue;
-    const rate = 2 ** ((pitchMidi - region.keyCenter + tuning) / 12 + region.tune / 1200);
-    const gain = amplitude * 10 ** (region.gain / 20);
+    const rate = getMusicRecordingRate(region, pitchMidi, tuning);
+    const gain = getMusicRecordingGain(region, amplitude);
     const startFrame = Math.round(startTimeSeconds * sampleRate);
     const endFrame = startFrame + Math.round(durationSeconds * sampleRate);
     const lastFrame = Math.min(

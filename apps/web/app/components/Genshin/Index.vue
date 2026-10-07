@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL } from "#shared/services/genshin/constants";
 import { GameLanguageTagMap, GameTextKey } from "genshin-text";
 import { GameOpening } from "genshin-world";
 
@@ -29,6 +30,7 @@ const gameText = await useGameText();
       <GameOpening
         :game-text="gameText.text"
         :language="gameText.language"
+        :music-recording-base-url="GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL"
         :progress
         @begin="isDoorOpened = true"
         @finish="isOpeningShown = false"

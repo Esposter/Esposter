@@ -14,10 +14,12 @@ import { join } from "node:path";
 const PAGE_SIZE = 360;
 // Each segment of a component's music that plays anything, our render beside the game's at `LISTEN_SAMPLE_RATE`: ours
 // Rendered offline on the parity page by the screen that plays it, through the notes and instruments the screen ships,
-// And the game's laid out from its exported sources as the playlist's clips play them (`readGameMusicSegment`)
+// And the game's laid out from its exported sources as the playlist's clips play them (`readGameMusicSegment`). With
+// `isLayered` false ours is the synthesizer alone, without the recordings its voices play over it
 export const renderMusicSegments = async (
   component: DerivedAssetComponent,
   screen: string,
+  isLayered = true,
 ): Promise<{ game: Float32Array; id: number; index: number; ours: Float32Array }[]> => {
   const { music } = getComponentDirectory(component);
   const { segments } = parseMachineJson<ComponentPlaylist>(await readFile(join(music, "playlist.json"), "utf8"));
@@ -31,12 +33,15 @@ export const renderMusicSegments = async (
         const game = await readGameMusicSegment(music, segment, LISTEN_SAMPLE_RATE);
         // oxlint-disable-next-line no-await-in-loop -- as above
         const rendered = await page.evaluate(
-          ([segmentIndex, sampleRate]) =>
-            (Reflect.get(window, "renderMusic") as (segmentIndex: number, sampleRate: number) => Promise<string>)(
-              segmentIndex,
-              sampleRate,
-            ),
-          [index, LISTEN_SAMPLE_RATE] as const,
+          ([segmentIndex, sampleRate, isSegmentLayered]) =>
+            (
+              Reflect.get(window, "renderMusic") as (
+                segmentIndex: number,
+                sampleRate: number,
+                isLayered: boolean,
+              ) => Promise<string>
+            )(segmentIndex, sampleRate, isSegmentLayered),
+          [index, LISTEN_SAMPLE_RATE, isLayered] as const,
         );
         const bytes = Buffer.from(rendered, "base64");
         const ours = new Float32Array(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength));

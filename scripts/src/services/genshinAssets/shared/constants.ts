@@ -129,6 +129,9 @@ export const SAMPLED_VOICE_REPORTED_COUNT = 8;
 export const SAMPLE_ONSET_SHARE = 0.1;
 // The most frames either way a solo render's pitch classes are read against its notes', about a fifth of a second
 export const SAMPLED_VOICE_MAX_LAG = 4;
+// A shipped recording's bit rate as Opus, one channel's half of the 128 kbit/s Xiph gives as about transparent for
+// Stereo music
+export const MUSIC_RECORDING_BITRATE = "64k";
 // A recording runs to tens of megabytes, past the bound a script's ordinary request is given
 export const SAMPLE_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 2 }).total("milliseconds");
 // What a voice's instrument is chosen from: each library's sustained and plucked orchestral instruments and its pianos,
@@ -193,6 +196,9 @@ export const DECOMPILER_DIRECTORY: string = join(REPOSITORY_ROOT, "scripts", "no
 export const DECOMPILER_BATCH_SIZE = 200;
 // Where `fit` writes the parameters it fits, as data of the world package's own, which its scenes read
 export const WORLD_DATA_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world", "src", "data");
+// Where `genshin:parity instruments` writes the recordings the login's music plays, rewritten whole, which the world
+// Package serves from its `LOGIN_MUSIC_RECORDING_DIRECTORY`
+export const LOGIN_MUSIC_RECORDING_DIRECTORY: string = join(WORLD_DATA_DIRECTORY, "login", "recordings");
 // A tower is fitted in two metre bands, a band merged into the one below while its radius holds within 3% of it, and
 // Its numbers kept to the centimetre
 export const TOWER_BAND_HEIGHT = 2;

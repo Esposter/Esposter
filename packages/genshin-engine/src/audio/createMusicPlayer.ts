@@ -9,16 +9,18 @@ import { createInstrumentWave } from "#src/audio/createInstrumentWave";
 import { createNoiseBuffer } from "#src/audio/createNoiseBuffer";
 import { scheduleMusicExpression } from "#src/audio/scheduleMusicExpression";
 import { scheduleMusicNote } from "#src/audio/scheduleMusicNote";
+import { scheduleMusicRecording } from "#src/audio/scheduleMusicRecording";
 
 // A piece of music played live from the start of its playlist: every half second, the notes due within the next two
 // Seconds of the audio clock are scheduled, so a timer the page delays never leaves a gap. A context still
 // Suspended holds its clock, so the music starts from its beginning once the context resumes. Each time a segment
 // Plays, its notes play through a gain of their own carrying its expression, so a note ringing on past its
 // Segment's end keeps the level it ended at, and every segment's gain feeds one output, which `stop` disconnects,
-// Silencing whatever is scheduled
+// Silencing whatever is scheduled. A voice's recordings play from `recordingBufferMap`, decoded by file beforehand
 export const createMusicPlayer = (
   context: AudioContext,
   music: Music,
+  recordingBufferMap: ReadonlyMap<string, AudioBuffer>,
   destination: AudioNode = context.destination,
 ): MusicPlayer => {
   const output = new GainNode(context);
@@ -53,6 +55,7 @@ export const createMusicPlayer = (
           instrumentSoundMap.set(voice.instrument, sound);
         }
         scheduleMusicNote(context, segmentOutput, sound.wave, sound.noiseBuffer, voice.instrument, note, origin + time);
+        scheduleMusicRecording(context, segmentOutput, recordingBufferMap, voice.instrument, note, origin + time);
       }
     }
     startSegmentOutputMap = nextStartSegmentOutputMap;
