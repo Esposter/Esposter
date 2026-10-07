@@ -135,6 +135,13 @@ export const cameraTopic: ReferenceTopic = {
       result:
         "The camera is exact data the pose was solved without. ModelCamera stands under SceneObj at 0, 60, 0, six metres over BridgeBeginNode at the scene's tenth, turned half a turn about an axis 0.05 toward z, a pitch of about 5.73 degrees; LoginCamera, at the origin, carries the one Camera component, whose bytes hold a near plane of 0.25, a far plane of 600 and a vertical field of view of 45. The pose solved on the door recording stands the eye 1.24 metres over the walkway pitched 5.29 degrees under a field of view of 51.2, and the towers' row 2.47 metres across, 5 down and 8.94 nearer than the blocks lay it. MonoLoginScene's speeds, curves and distances may move the camera at run time, so which is drawn is the camera pass's to settle against the exact values before any later pass is trusted",
     },
+    {
+      method:
+        "genshin:parity overlay login-door-recording --witness login --pose 0,6,0,180,5.72,45, the exports at ModelCamera's place and turn under LoginCamera's field of view",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Drawn from ModelCamera as the blocks lay it, the walkway and the door fall out of the frame, the door 7.6 metres ahead and 6 under the eye where the view reaches 22.5 degrees below its axis, and the towers stand about 9 pixels off the recording's edges: the game draws from somewhere ModelCamera's laid-out place is not, so something moves the eye or the walkway's group at run time. Ani_Login_Lift lifts a root 50 units, the towers' row stands 5 metres under where the blocks lay it against the walkway, and the pose's eye stands 4.76 metres under ModelCamera's, so a lift of the walkway's group, its door and its camera together is the next measure",
+    },
   ],
   openQuestions: [
     "Whether the login draws from ModelCamera's place and LoginCamera's field of view of 45, against the pose's 1.24 metres, 5.29 degrees and 51.2: what of MonoLoginScene moves or widens the camera, and how much of the towers' row offset the exact camera explains",
