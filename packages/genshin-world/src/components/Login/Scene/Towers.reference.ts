@@ -110,6 +110,20 @@ export const towersTopic: ReferenceTopic = {
       result:
         "Read against the lathe's own wall, a moulding the lathe already turns is no longer a column too, and each slab stands on the wall drawn under it: the towers' normals fall from 11.82 to 11.55 degrees and the outline from 0.53 to 0.50 pixels, with 89 recesses where the bands found 165. None of the sweeps moves the normals: recesses from 2 units read 12.03 degrees and from 1 unit 12.42, as their frames' scores had found; columns from half a unit 11.52, runs of 10 cells 11.55; 32 sides 11.81 and 48 sides 11.83 against 24's 11.82, the outline and depth a few hundredths better, and the game's towers stand on 27 to 64 sides each. Left: the colonnades' columns, round in the exports and boxes in ours before a solid drum, and the crowns' ornaments",
     },
+    {
+      method:
+        "Each standing slab's face normals bent round its width as a round column's would be, at 45 and 17 degrees at its ends, in the shape pass at login-door-session",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "The towers' normals read 12.79 degrees bent 45 and 11.73 bent 17, against 11.55 flat: the exports' ribs and pilasters are flat-faced, so a round face misses more of them than it gains on the colonnades' columns. Reverted",
+    },
+    {
+      method:
+        "The facade unrolled on cells of a quarter and an eighth of a unit in place of a half, in the shape pass at login-door-session, its paint read again on half units (sampleFacadeGrid) and each slab written as six numbers",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Every carved edge had been read to half a unit, 5 centimetres at the towers' scale and 2 to 3 pixels where the login sees them nearest, which is the misregistration the shape image's red edges show. On quarter units the towers' normals read 10.43 degrees and on eighths 9.88, the outline 0.48 pixels and the depth 0.58 hundredths, and the shape pass holds for every family. The finer profile showed each section's height rounded on its own running the crowns 9 centimetres off, so a height is now the gap between its two ends rounded. The paint loops, which only colour the atlas, stay on half units (154 thousand characters where the eighths traced 341 thousand), and a slab is written as a tuple, so the towers' data stands at 442 thousand characters minified, from 352",
+    },
   ],
   openQuestions: [
     "The towers' gilding and windows: their colour per section scores worse painted as diffuse stone, the game's gold being a metal",

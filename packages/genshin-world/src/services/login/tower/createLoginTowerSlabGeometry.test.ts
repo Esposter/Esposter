@@ -6,10 +6,7 @@ describe(createLoginTowerSlabGeometry, () => {
     expect.hasAssertions();
 
     const breadth = 100;
-    const positions = createLoginTowerSlabGeometry(
-      { depth: 1, radius: 10, round: [90, breadth + 0.5], up: [0, 1] },
-      breadth,
-    ).getAttribute("position");
+    const positions = createLoginTowerSlabGeometry([10, 1, 90, breadth + 0.5, 0, 1], breadth).getAttribute("position");
     // How far round the tower each corner stands, as the towers' geometry reads it for its facade
     const turns = Array.from({ length: positions.count }, (_value, index) => {
       const angle = Math.atan2(positions.getX(index), positions.getZ(index));
