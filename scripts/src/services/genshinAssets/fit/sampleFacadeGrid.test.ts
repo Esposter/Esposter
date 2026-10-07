@@ -20,6 +20,6 @@ describe(sampleFacadeGrid, () => {
       2,
     );
 
-    expect(sampled).toMatchObject({ cellSize: 2, height: 2, tags: [6, 8, 9, 11, 13, 14], width: 3 });
+    expect([sampled.width, sampled.height, sampled.tags]).toStrictEqual([3, 2, [6, 8, 9, 11, 13, 14]]);
   });
 });
