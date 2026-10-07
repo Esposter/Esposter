@@ -69,7 +69,7 @@ The interface runs beside these as a pass of its own, placed from the rect tree,
 | Shape      | Each mesh                                               | Depth, normal and outline per family against the exports at the same camera           | `rank`'s second table, shaded, `passes`      | Nothing                                                      |
 | Motion     | Decoded clips, the rows scripts move                    | Each animated part's track against its clip, and fieldless motion against its measure | `clips`, `glide`, `film`, `passes`           | The walkway's rise and the glide's easing against the script |
 | Surface    | Textures and materials                                  | Unlit colour per family against the exports                                           | `gbuffer`, `plan`, `passes`                  | Nothing                                                      |
-| Display    | The post program, the grading tables, the post profile  | Which table, which curve and what bloom, before any light                             | None                                         | A display solve and the engine's graded path                 |
+| Display    | The post program, the grading tables, the post profile  | Which table, which curve and what bloom, before any light                             | `passes`                                     | The game's bloom, its fields named                           |
 | Light      | The recordings, everything before held                  | The sun's direction by its shadows' edges, the ramp and sky by bins                   | `calibrate`                                  | A shadow-edge solve                                          |
 | Atmosphere | The recordings, the emitters' anchors, the cloud layer  | Haze by depth and height, sky over its clear pixels, clouds by statistics             | `calibrate --haze`, `sky`, `cover`, `clouds` | The cloud layer's settings solve                             |
 | Audio      | The game's sound banks, recordings to find each sound   | Each sound's octave bands over time and its onset; the music by `listen`              | The music tools, `sounds`, `fitSoundEffect`  | Its measure in `passes`                                      |
@@ -87,7 +87,7 @@ The login runs through every pass from its inventory as its measures land, each 
 The method needs the measures each pass lacks, each joining `genshin:parity passes` ([parity](/docs/genshin/parity)) as it lands, and they are the base every later scene stands on, so they are built before any further world page, in this order:
 
 1. **Layout's projected diff.** Our transforms against the exports' in pixels where they land at each reference's pose, before any render.
-2. **Display's solve.** The post profile's transform found, its tone curve, grading table and bloom, and drawn by the engine before any light is solved.
+2. **Display's solve.** Built: the uber pass's tone curve read from its program and drawn by the engine, its contrast solved on the light's plane and held by `passes`. The game's bloom is left, its fields still unnamed.
 3. **Light's shadow edges.** The sun's direction solved on its shadows' edges over flat receivers.
 4. **Atmosphere's cloud statistics.** The cloud layer's settings solved on the clouds' cover, sizes and colour spread.
 

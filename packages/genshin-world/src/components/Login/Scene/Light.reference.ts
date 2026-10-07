@@ -213,6 +213,13 @@ export const lightTopic: ReferenceTopic = {
       result:
         "By day the stone 20 metres up and 40 to 80 out reads 0.442 in the exports against the recording's 0.198, while every other cell stands within a fifth and beyond 80 metres the ratio holds near 0.8 at every height, so no haze profile explains it. The light map finds that cell on the lantern tower's crown and on the two wide towers top left, which stand where the recording shows sky and one thin ringed tower: the day's towers stand apart from the recording's, which the arrangement's day placement left open, and their stone lit over the recording's sky reads as stone too bright",
     },
+    {
+      method:
+        "The engine's neutral tone mapping replaced by the game's curve (Display.reference.ts), calibrate --write on every hour's frame, then compare on every login frame against the neutral curve at the same tree; the bins' means first taken back pixel by pixel, then as the screen shows them weighed by the curve's slope, then as the screen shows them weighed by their pixels",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Taken back pixel by pixel, the curve's steep top stood a near-white pixel for a scene colour many times its neighbours', each bin's mean followed its brightest pixels and the night's walkway came out pure blue: the night scored 0.484 against the neutral curve's 0.369. Weighed by the curve's slope, the darkest bins led instead, the curve rising thirty times as steeply at black, and the night's light left more than its bins spread. Taken back once from the bins' displayed means and weighed by their pixels, which ships, the night scores 0.462, the dawn 0.449 against 0.402, the day 0.505 against 0.464 and the door recording 0.584 against 0.541, while the phone's door frame comes nearer, 0.479 against 0.510: the sky, the clouds and the haze were all solved under the neutral curve, which the light alone cannot answer",
+    },
   ],
   openQuestions: [
     "The dusk sun's direction against its shadows: a tower's shadow falls over the wings in front of the door where the recording's are lit, and the faces' shading cannot settle the direction, the light's binned residual flat round the hand-set one, so the shadows' own edges are the measure left",

@@ -6,6 +6,7 @@ import { AntialiasingMode } from "#src/models/renderer/AntialiasingMode";
 import { STONE_MASK_OUTPUT } from "#src/nodes/constants";
 import { createHeightFogNode } from "#src/post/createHeightFogNode";
 import { createOcclusionNode } from "#src/post/createOcclusionNode";
+import { toneMapGenshinNode } from "#src/post/toneMapGenshinNode";
 import { UnsignedByteType } from "three";
 import { bilateralBlur } from "three/examples/jsm/tsl/display/BilateralBlurNode.js";
 import { bloom } from "three/examples/jsm/tsl/display/BloomNode.js";
@@ -116,7 +117,7 @@ export const createPostPipeline = ({
     resolvedNode = traaNode;
   }
 
-  const displayNode = renderOutput(resolvedNode);
+  const displayNode = renderOutput(vec4(toneMapGenshinNode(resolvedNode.rgb), resolvedNode.a));
   const gradedNode = gradeLutTexture
     ? lut3D(displayNode, texture3D(gradeLutTexture), gradeLutTexture.image.width, gradeIntensity)
     : displayNode;

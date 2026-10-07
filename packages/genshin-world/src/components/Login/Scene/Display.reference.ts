@@ -26,10 +26,15 @@ export const displayTopic: ReferenceTopic = {
       result:
         "Overridden, in field order: 0.75 at byte 60, 2.5 at 76, 0.75 at 84, the four weights 0.3, 0.3, 0.26 and 0.15 at 92 (the compose's four levels, by their shape), then a true at 244, 1.0 at 252, 0.5 at 260 and 0 at 268. A vector of 192, 85, 50 and 20 at 112 and every other field are left at their defaults. With no type data the export carries no field names, and no published source names them, so which value is the threshold, the scaler, the intensity, the exposure or the contrast is not in the data",
     },
+    {
+      method:
+        "A scratch probe, then passes' display: each interior pixel of the exports' parts within 80 metres, the reference's colour taken back through each candidate curve and divided by the exports' albedo, and how far that light strays from the plane a sun and a sky span (computeLightPlaneResidual), on every login reference",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "On the current build's door at night the light lies flattest at a contrast of 0.437 (residual 1.53e-4), and three's neutral tone mapping leaves sixteen times as much (2.50e-3); the night title's minimum is sharper still at 0.45, where the neutral leaves a thousand times more. Of MHYBloom_Z's values only the 0.5 at byte 260 stands near, leaving 1.59e-4, a twenty-sixth more, where 0.75 leaves seven tenths more, so byte 260 is _MHYBloomContrast and the curve ships with it; the gap to 0.437 is what the user's gamma and the video's encoding trade with it, since both are powers too. The exposure scales every light alike, which the plane never sees, so it ships as the 1.0 at byte 252 beside the contrast and is carried by the light solved under it. The day and dawn titles and the door recording read light fifty times further off any plane at every contrast, their haze and their older builds' cameras over the exports, so they judge nothing",
+    },
   ],
   openQuestions: [
-    "Which MHYBloom_Z value is which property: the curve's contrast changes how a surface's channels stand to each other as its light rises, while its exposure only scales the scene, so the contrast can be read off a recording's shading ramps, and the exposure is absorbed by the light pass",
-    "The engine draws the login through three's neutral tone mapping, not the game's curve, so every colour measured through toSceneColor carries the difference until the curve is drawn and those colours are re-solved under it",
-    "Whether the login's standard-range recordings had _MHYBloomTonemapping set at run time, which the profile's true at byte 244 may be",
+    "Which of MHYBloom_Z's other values is the threshold, the scaler and the intensity: the bloom alone moves what lies around the brightest pixels, so they are measured there once the login draws the game's bloom",
   ],
 };

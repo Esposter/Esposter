@@ -9,6 +9,7 @@ import {
   STONE_HARMONIC_COUNT,
   STONE_HEIGHT_FALLOFF,
   STONE_RAMP_KNOT_COUNT,
+  toneMapGenshin,
 } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
@@ -54,7 +55,7 @@ describe(solveStoneLight, () => {
       const opacity = (index % 9) / 20;
       const scatter = (index % 4) / 4;
       const emission: Vector = [0.01 * (index % 3), 0, 0.02];
-      const color = ([0, 1, 2] as const).map((channel) => {
+      const sceneColor = ([0, 1, 2] as const).map((channel) => {
         const position = rampCoordinate * (STONE_RAMP_KNOT_COUNT - 1);
         const knot = Math.min(Math.floor(position), STONE_RAMP_KNOT_COUNT - 2);
         const share = position - knot;
@@ -69,7 +70,7 @@ describe(solveStoneLight, () => {
       return Array.from({ length: 30 }, () => ({
         albedo,
         bin: String(index),
-        color,
+        display: toneMapGenshin(sceneColor),
         emission,
         harmonics: terms,
         height,
