@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-09-29T10:30:16.371Z
-- Commit: af7f333dc6
+- Date: 2026-10-07T04:18:02.869Z
+- Commit: 995051e59e
 - Node: v26.10.0
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -20,12 +20,12 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task  | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ----- | ------- | --------- | ------- | -------- | ------- |
-| flat  | 1.00×   | 0.0680    | ±17.81% | 0.1105   | 10      |
-| noise | 0.43×   | 0.1585    | ±12.88% | 0.2231   | 10      |
+| noise | 1.00×   | 0.2734    | ±6.62%  | 0.3089   | 10      |
+| flat  | 0.97×   | 0.2818    | ±13.26% | 0.3436   | 10      |
 
 ## computeTerrainTile > 64 cells a side
 
-| task  | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ----- | ------- | --------- | ------- | -------- | ------- |
-| flat  | 1.00×   | 0.2811    | ±19.20% | 0.3918   | 10      |
-| noise | 0.46×   | 0.6171    | ±14.24% | 0.7620   | 10      |
+| task  | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| ----- | ------- | --------- | ------ | -------- | ------- |
+| flat  | 1.00×   | 0.3420    | ±3.98% | 0.3717   | 10      |
+| noise | 0.39×   | 0.8727    | ±7.18% | 0.9426   | 10      |

@@ -12,9 +12,16 @@ self.addEventListener("message", (event: MessageEvent<TerrainTileRequest>) => {
     getHeight: getWindriseHeight,
     writeColor: writeWindriseColor,
   });
-  const { coarsePositions, colors, normals, positions } = terrainTile;
+  const { coarseColors, coarseNormals, coarsePositions, colors, normals, positions } = terrainTile;
   // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a Worker's postMessage takes no origin
   self.postMessage(terrainTile, {
-    transfer: [coarsePositions.buffer, colors.buffer, normals.buffer, positions.buffer],
+    transfer: [
+      coarseColors.buffer,
+      coarseNormals.buffer,
+      coarsePositions.buffer,
+      colors.buffer,
+      normals.buffer,
+      positions.buffer,
+    ],
   });
 });
