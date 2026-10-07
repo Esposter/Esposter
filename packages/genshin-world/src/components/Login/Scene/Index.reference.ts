@@ -24,6 +24,12 @@ export const reference: ComponentReference = {
       pathId: "-5017021742717319217",
       role: "The sky dome: its gradient, top and bottom colours front and back of the sun, halos, stars and scattering, ported to createSkyNode from its decompiled vertex and pixel programs",
     },
+    bloomShader: {
+      block: "00/12903389.blk",
+      kind: GameSourceKind.Shader,
+      name: "Shader#90",
+      role: "The bloom: the threshold prefilter, the downsamples and blurs, the four levels composed and the last pass mixing it in",
+    },
     cloudLayerShader: {
       block: "00/12903389.blk",
       kind: GameSourceKind.Shader,
@@ -132,12 +138,6 @@ export const reference: ComponentReference = {
       name: "Starting Celestia Door (Night), a 2022 PC recording idling on the title with no interface",
       parityReference: "login-night-title",
       role: "The night sky over the title, at the camera the door recording solves",
-    },
-    bloomShader: {
-      block: "00/12903389.blk",
-      kind: GameSourceKind.Shader,
-      name: "Shader#90",
-      role: "The bloom: the threshold prefilter, the downsamples and blurs, the four levels composed and the last pass mixing it in",
     },
     postProfile: {
       block: "00/11790361.blk",
