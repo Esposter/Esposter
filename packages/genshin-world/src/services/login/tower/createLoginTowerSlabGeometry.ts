@@ -16,7 +16,7 @@ const toCorner = (turn: number, radius: number, y: number): Corner => [
 // In, a window or a bay, is the box behind the lathe's opening, its back turned out and its sides turned into it. Each
 // Face is four corners of its own and two triangles, indexed as the lathe it is merged with is
 export const createLoginTowerSlabGeometry = (
-  { depth, radius, round: [roundFrom = 0, roundTo = 0], up: [bottom = 0, top = 0] }: TowerSlab,
+  [radius = 0, depth = 0, roundFrom = 0, roundTo = 0, bottom = 0, top = 0]: TowerSlab,
   breadth: number,
   { isSunk = false }: { isSunk?: boolean } = {},
 ): BufferGeometry => {

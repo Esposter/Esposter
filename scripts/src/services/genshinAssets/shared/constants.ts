@@ -194,15 +194,18 @@ export const TOWER_RADIUS_TOLERANCE = 0.03;
 // A tower's mesh at one level of detail, the tower being its name without the level
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const TOWER_MESH_REGEX: RegExp = /^(?<part>LoginScene_Build\d+_\d+)_Lod(?<level>\d)$/u;
-// A tower's surface is unrolled on a grid of half a unit of its mesh, five centimetres as the scene scales it; a run of
-// Its height keeps one tone while each channel of its shade holds within this of the one below; a face standing a unit
-// In from the lathe's radius is a shallow recess (the fluting, a moulding's groove) and four units a deep one (a
-// Window, an arch), and a loop round fewer than this many cells is dropped as a speck of its paint
-export const TOWER_FACADE_CELL_SIZE = 0.5;
+// A tower's surface is unrolled on a grid of an eighth of a unit of its mesh, about a centimetre as the scene scales
+// It, fine enough that its carving's edges land within a pixel of the exports' where the login sees the towers nearest,
+// And its paint read again on half units, as fine as its loops are traced; a run of its height keeps one tone while
+// Each channel of its shade holds within this of the one below; a face standing a unit in from the lathe's radius is a
+// Shallow recess (the fluting, a moulding's groove) and four units a deep one (a window, an arch), and a loop or a run
+// Of carving over less than this many square units is dropped as a speck
+export const TOWER_FACADE_CELL_SIZE = 0.125;
+export const TOWER_FACADE_PAINT_CELL_SIZE = 0.5;
 export const TOWER_FACADE_SHADE_TOLERANCE = 0.04;
 export const TOWER_FACADE_SHALLOW_RECESS = 1;
 export const TOWER_FACADE_DEEP_RECESS = 4;
-export const TOWER_FACADE_MIN_CELLS = 40;
+export const TOWER_FACADE_MIN_AREA = 10;
 // Paint on a tower's face stands apart from its band where it is this share darker or lighter
 export const TOWER_FACADE_PAINT_CONTRAST = 0.12;
 // How far a tower's wall profile may stray from the radii its rows stand at, in units of its mesh, once simplified

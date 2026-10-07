@@ -84,12 +84,16 @@ export const createLoginTowerFacade = (atlas: LoginTowerAtlas): LoginTowerFacade
       // The lathe opens over each recess, whose own box stands behind it
       maskContext.fill(
         toPath(
-          recesses.map(({ round: [roundFrom = 0, roundTo = 0], up: [bottom = 0, top = 0] }) => [
-            [roundFrom, bottom],
-            [roundTo, bottom],
-            [roundTo, top],
-            [roundFrom, top],
-          ]),
+          recesses.map((recess) => {
+            // A slab's span round the tower and up it follows its radius and its depth
+            const [roundFrom = 0, roundTo = 0, bottom = 0, top = 0] = recess.slice(2);
+            return [
+              [roundFrom, bottom],
+              [roundTo, bottom],
+              [roundTo, top],
+              [roundFrom, top],
+            ];
+          }),
         ),
       );
       shadeContext.restore();
