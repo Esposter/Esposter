@@ -155,7 +155,8 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Sound effects
 
-| Unknown                                       | Tool                                                                                                          |
-| :-------------------------------------------- | :------------------------------------------------------------------------------------------------------------ |
-| Which game sounds a recording plays, and when | `genshin:assets sounds`: every sound scored by its bands' levels, the best set of each size with its residual |
-| A sound effect's levels over time             | `fitSoundEffect`: each octave band's level every 25 ms, from the matched sounds decoded                       |
+| Unknown                                       | Tool                                                                                                            |
+| :-------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- |
+| Which game sounds a recording plays, and when | `genshin:assets sounds`: every sound scored by its bands' levels, the best set of each size with its residual   |
+| A sound effect's levels over time             | `fitSoundEffect`: three noises a band every 25 ms, from the matched sounds' mix in both channels                |
+| How near our sound effect plays the game's    | `genshin:parity effects`: both channels every 5 ms in the effect's bands, each band's bias, the channels' width |

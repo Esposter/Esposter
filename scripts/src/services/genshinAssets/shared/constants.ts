@@ -1,4 +1,5 @@
 import type { SampledInstrument } from "#src/models/genshinAssets/shared/SampledInstrument";
+import type { SoundStart } from "#src/models/genshinAssets/sound/SoundStart";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { SampleLibrary } from "#src/models/genshinAssets/shared/SampleLibrary";
@@ -263,3 +264,10 @@ export const LOGIN_DOOR_MESH = "LoginScene_Door01_Vo";
 // Every piece the walkway is laid from: its paving, its borders and its wings
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const WALKWAY_MESH_REGEX: RegExp = /^LoginScene_Bridge01_\d+_Vo$/u;
+// The two sounds the door plays, each found in the package the game loads first by `genshin:assets sounds` against the
+// Door recording's burst: a rumble, then a broadband rush 75 milliseconds later, both at the level they are stored
+// At
+export const LOGIN_DOOR_SOUNDS: readonly SoundStart[] = [
+  { id: 402_626_033, offsetSeconds: 0 },
+  { id: 73_142_117, offsetSeconds: 0.075 },
+];
