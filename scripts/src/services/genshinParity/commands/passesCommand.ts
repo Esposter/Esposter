@@ -2,6 +2,7 @@ import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
+import { formatPassValue } from "#src/services/genshinParity/passes/formatPassValue";
 import { runParityPasses } from "#src/services/genshinParity/passes/runParityPasses";
 import { writeParityPasses } from "#src/services/genshinParity/passes/writeParityPasses";
 import { defineCommand } from "citty";
@@ -25,7 +26,9 @@ export const passesCommand: SubCommandsDef[string] = defineCommand({
     for (const { isHeld, measure, pass } of results) {
       console.log(`${pass}: ${isHeld ? "held" : "not held"}`);
       for (const { gate, name, unit, value } of measure.readings)
-        console.log(`  ${name}: ${value.toFixed(4)} ${unit} against ${gate} ${value <= gate ? "held" : "FAILED"}`);
+        console.log(
+          `  ${name}: ${value.toFixed(4)} ${unit} against ${formatPassValue(gate)} ${value <= gate ? "held" : "FAILED"}`,
+        );
       for (const note of measure.notes) console.log(`  ${note}`);
     }
     await writeParityPasses(component, results);

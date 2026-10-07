@@ -1,3 +1,5 @@
+import type { Vector } from "#src/models/shared/Vector";
+
 import { KIBIBYTE, WORKSPACE_FILE } from "@esposter/configuration";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
@@ -67,5 +69,7 @@ export const PNPM_FILE: string = isPnpmScript ? process.execPath : pnpmExecPath;
 
 export const PNPM_ARGS: readonly string[] = isPnpmScript ? [pnpmExecPath] : [];
 export const BYTE = 255;
+// The D65 white in CIE XYZ, its luminance 1, which sRGB's white is and CIELab is taken against
+export const D65_WHITE: Vector = [0.950428545, 1, 1.088900371];
 // A pinned tool's archive runs to a hundred-odd megabytes, so its download is bounded by minutes rather than seconds
 export const PINNED_TOOL_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");

@@ -7,6 +7,7 @@ import { measureInventory } from "#src/services/genshinParity/passes/measureInve
 import { measureLayout } from "#src/services/genshinParity/passes/measureLayout";
 import { measureMotion } from "#src/services/genshinParity/passes/measureMotion";
 import { measureShape } from "#src/services/genshinParity/passes/measureShape";
+import { measureSurface } from "#src/services/genshinParity/passes/measureSurface";
 
 // Each pass's measure over a component, every one in the units its own data reads in and gated at that data's noise;
 // A pass with none yet stops the run there, its measure the next tool to build
@@ -19,4 +20,5 @@ export const ParityPassMeasureMap: Partial<
   [ParityPass.Layout]: measureLayout,
   [ParityPass.Motion]: measureMotion,
   [ParityPass.Shape]: measureShape,
+  [ParityPass.Surface]: measureSurface,
 };

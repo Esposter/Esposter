@@ -68,7 +68,7 @@ The interface runs beside these as a pass of its own, placed from the rect tree,
 | Camera     | Landmarks on the frozen layout                          | Reprojection error and the overlay's edge distance                                    | `pose`, `track`, `overlay`, `passes`         | Nothing                                                      |
 | Shape      | Each mesh                                               | Depth, normal and outline per family against the exports at the same camera           | `rank`'s second table, shaded, `passes`      | Nothing                                                      |
 | Motion     | Decoded clips, the rows scripts move                    | Each animated part's track against its clip, and fieldless motion against its measure | `clips`, `glide`, `film`, `passes`           | The walkway's rise and the glide's easing against the script |
-| Surface    | Textures and materials                                  | Unlit colour per family against the exports                                           | `gbuffer`, `plan`                            | The shape's channel diff read over the albedo                |
+| Surface    | Textures and materials                                  | Unlit colour per family against the exports                                           | `gbuffer`, `plan`, `passes`                  | Nothing                                                      |
 | Display    | The post program, the grading tables, the post profile  | Which table, which curve and what bloom, before any light                             | None                                         | A display solve and the engine's graded path                 |
 | Light      | The recordings, everything before held                  | The sun's direction by its shadows' edges, the ramp and sky by bins                   | `calibrate`                                  | A shadow-edge solve                                          |
 | Atmosphere | The recordings, the emitters' anchors, the cloud layer  | Haze by depth and height, sky over its clear pixels, clouds by statistics             | `calibrate --haze`, `sky`, `cover`, `clouds` | The cloud layer's settings solve                             |
@@ -87,10 +87,9 @@ The login runs through every pass from its inventory as its measures land, each 
 The method needs the measures each pass lacks, each joining `genshin:parity passes` ([parity](/docs/genshin/parity)) as it lands, and they are the base every later scene stands on, so they are built before any further world page, in this order:
 
 1. **Layout's projected diff.** Our transforms against the exports' in pixels where they land at each reference's pose, before any render.
-2. **Surface's channel diff.** The shape's targets, ours drawn into them beside the exports', read over the unlit colour per family as well.
-3. **Display's solve.** The post profile's transform found, its tone curve, grading table and bloom, and drawn by the engine before any light is solved.
-4. **Light's shadow edges.** The sun's direction solved on its shadows' edges over flat receivers.
-5. **Atmosphere's cloud statistics.** The cloud layer's settings solved on the clouds' cover, sizes and colour spread.
+2. **Display's solve.** The post profile's transform found, its tone curve, grading table and bloom, and drawn by the engine before any light is solved.
+3. **Light's shadow edges.** The sun's direction solved on its shadows' edges over flat receivers.
+4. **Atmosphere's cloud statistics.** The cloud layer's settings solved on the clouds' cover, sizes and colour spread.
 
 Everything the passes already have is reused as it is, and each measure, once built, retires its row's gap in the toolbox.
 

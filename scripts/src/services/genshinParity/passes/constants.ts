@@ -29,6 +29,9 @@ export const SHAPE_WIDTH = 1280;
 export const SHAPE_OUTLINE_GATE_PIXELS = 1;
 export const SHAPE_DEPTH_GATE = 0.01;
 export const SHAPE_NORMAL_GATE_DEGREES = 10;
+// The surface pass's colour gate: a family's mean unlit colour within the CIELab distance two colours side by side are
+// Just told apart at
+export const SURFACE_COLOUR_GATE = 2.3;
 // The motion pass's clip played within a hundredth of its pace, about a frame over the door's lift; a frame's moment
 // Along its clip refined in steps of a quarter of a millisecond, which a piece rising at metres a second moves a few
 // Millimetres in; and the size it draws the scene at, which none of its readings depend on
