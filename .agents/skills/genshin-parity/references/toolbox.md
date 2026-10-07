@@ -100,6 +100,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 | The transform's form      | exact: the bloom's and the uber pass's programs, read with their constant layouts (the login's `Display.reference.ts`) |
 | The tone curve's contrast | `passes`' display: each pixel's light, back through the curve over its albedo, flattest on a sun and a sky's plane     |
 | The bloom's fields        | gap: which MHYBloom value is the threshold, the scaler and the intensity, measured where the bloom alone moves         |
+| The night's black         | gap: what draws channels under the curve's black, _WhiteBalanceMat read off the post profile or a gamma measured       |
 
 ### Light
 

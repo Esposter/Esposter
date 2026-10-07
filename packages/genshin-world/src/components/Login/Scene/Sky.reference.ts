@@ -126,6 +126,13 @@ export const skyTopic: ReferenceTopic = {
       result:
         "The dusk's clear sky is its largest term a light can reach (0.084 of its 0.52 over the top third, 0.052 over the middle), yet its mean stands on the recording's (#a96f7c against #a86d7b): what is off is the thin cloud, the wisps and the rays over it, which no shape of the sky draws. The login draws a cloud layer the scene lacks: Cloud_LOD0, a dome 0.94 across and 1.35 high, under Enviro_Cloud_Layer_Mat, whose pixel program reads a weather map over the dome's coordinates, a Voronoi density map scrolled at two scales and bent by a curl texture, a normal map lighting each cloud between its light and dark colours toward and away from the sun, and a wisps texture whose alpha over the wisps' coverage blends cirrus in. Its coverage, opacity, height, tiling, wisps' coverage and four colours are the environment system's _ES_ values, set at run time from no asset, so they are measured hour by hour as the sky's colours are",
     },
+    {
+      method:
+        "genshin:parity sky on every hour's frame under the game's tone curve (Display.reference.ts), first in scene colour as before, then each pixel weighed by the curve's slope (getToneSlope), then over every reference at its hour at once, each applied and scored by compare on every login frame against the same tree's sky solved under the neutral curve",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "In scene colour the curve's inverse stretches a pixel near white to about thirteen, so the brightest pixels decide the solve: the day's horizon came out pure blue and its drawn sky stood 0.62 off its frame in scene colour. Weighed by the slope, every hour's drawn sky stands nearer its frame as the screen shows it, the night's 0.060 to 0.041 and the day's 0.119 to 0.095. Solved on its title alone, the day's sky scored the title 0.475 against 0.505 and the phone's door frame 0.511 against 0.479, the two frames' sky patches solving to skies far apart (a zenith of none on one, a white horizon on the other); over both at once, which ships with the night's over its title and door session, the night title scores 0.464, the dawn 0.427, the day 0.469, the door session 0.500 against 0.525 and the door recording 0.583 level, while the phone's door frame stands at 0.503. Where every reference shows cloud, low toward the day's sun, the solved halo stands a yellow green no pixel holds, which the cloud layer covers once it is drawn",
+    },
   ],
   openQuestions: [
     "The cloud layer (Cloud_LOD0 under Enviro_Cloud_Layer_Mat): its program ported with textures of our own in place of its weather, density, curl, normal and wisps maps, and its run-time coverage, opacity and colours solved by hour",
