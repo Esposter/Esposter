@@ -25,6 +25,7 @@ import { lostCommand } from "#src/services/genshinParity/commands/lostCommand";
 import { lumaCommand } from "#src/services/genshinParity/commands/lumaCommand";
 import { measureCommand } from "#src/services/genshinParity/commands/measureCommand";
 import { noiseCommand } from "#src/services/genshinParity/commands/noiseCommand";
+import { notesCommand } from "#src/services/genshinParity/commands/notesCommand";
 import { overlayCommand } from "#src/services/genshinParity/commands/overlayCommand";
 import { partsCommand } from "#src/services/genshinParity/commands/partsCommand";
 import { passesCommand } from "#src/services/genshinParity/commands/passesCommand";
@@ -76,6 +77,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     expression: expressionCommand,
     listen: listenCommand,
     noise: noiseCommand,
+    notes: notesCommand,
     film: filmCommand,
     view: viewCommand,
     frames: framesCommand,

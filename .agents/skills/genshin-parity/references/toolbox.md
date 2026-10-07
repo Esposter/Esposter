@@ -144,6 +144,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 | Which music sound a recording plays                  | `genshin:assets music`: pitch classes matched window by window                                                            |
 | What plays a piece, and when                         | `genshin:assets playlist`: its segments in order, its sources decoded                                                     |
 | A piece's notes                                      | `readMusicSourceNotes`: pitch-transcription over a decoded source                                                         |
+| Which transcribed notes the game's sound holds       | `genshin:parity notes`: each note's fundamental against our render with it silenced, a sixth at a time, and written       |
 | Each voice's instrument and tuning                   | `fitInstrument`: measured at its clear notes, in the fit's report                                                         |
 | Each voice's noise                                   | `fitVoiceNoises`: each noise-like band, solved over every frame                                                           |
 | Which recorded instrument and level plays each voice | `genshin:parity instruments`: pitch-keeping candidates layered over the synthesizer, each mix scored under its expression |
