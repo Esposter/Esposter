@@ -19,12 +19,13 @@ export const layerCommand: SubCommandsDef[string] = defineCommand({
     settings: {
       default: "{}",
       description:
-        'The settings drawn, as JSON: a cloud layer uniform by name, "coverage" the sky\'s cloud coverage, "cover.<band>" a cloud band\'s share',
+        'The settings drawn, as JSON: a cloud layer uniform by name, "coverage" the sky\'s cloud coverage, "cover.<band>" a cloud band\'s share, "lit" and "shade" the clouds\' colours as the screen shows them',
       type: "string",
     },
     solve: {
       default: "",
-      description: "The settings to solve from their values given, separated by commas",
+      description:
+        'The settings to solve from their values given, separated by commas, a vector\'s component as "<name>.<index>"',
       type: "string",
     },
     witness: {
@@ -36,7 +37,7 @@ export const layerCommand: SubCommandsDef[string] = defineCommand({
   },
   meta: {
     description:
-      "The scene's cloud layer drawn over the game's own textures at a reference's camera, its sky read against the reference's as the atmosphere pass reads it, and the settings named solved to the least of its readings over their gates",
+      "The sky's clouds at a reference's camera, the cloud layer over the game's own textures or ours, read against the reference's as the atmosphere pass reads it, and the settings named solved to the least of its readings over their gates",
     name: "layer",
   },
   run: async ({ args }) => {

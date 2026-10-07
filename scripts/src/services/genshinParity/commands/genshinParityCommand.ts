@@ -6,7 +6,6 @@ import { bandsCommand } from "#src/services/genshinParity/commands/bandsCommand"
 import { benchCommand } from "#src/services/genshinParity/commands/benchCommand";
 import { blackCommand } from "#src/services/genshinParity/commands/blackCommand";
 import { calibrateCommand } from "#src/services/genshinParity/commands/calibrateCommand";
-import { cloudsCommand } from "#src/services/genshinParity/commands/cloudsCommand";
 import { compareCommand } from "#src/services/genshinParity/commands/compareCommand";
 import { coverCommand } from "#src/services/genshinParity/commands/coverCommand";
 import { decayCommand } from "#src/services/genshinParity/commands/decayCommand";
@@ -52,7 +51,6 @@ export const genshinParityCommand: CommandDef = defineCommand({
   subCommands: {
     passes: passesCommand,
     fetch: fetchCommand,
-    clouds: cloudsCommand,
     layer: layerCommand,
     cover: coverCommand,
     compare: compareCommand,

@@ -34,13 +34,14 @@ export const measureShape = (component: DerivedAssetComponent): Promise<ParityPa
       exportsRead.families.length,
     );
     const diffPath = await writeShapeDiff(referenceId, exportsTargets, oursTargets, exportsRead);
-    // A family's normals over their gate, named by the exported parts that carry most of their angle
+    // A family's normals over their gate, named by the exported parts that carry most of their angle; one with no pixel
+    // Both draw stands at Infinity with no part to name, so its reading alone reports it
     const partNotes = comparisons
-      .filter(({ normal }) => normal > SHAPE_NORMAL_GATE_DEGREES)
-      .map(({ family, normalByPart }) => {
-        const total = normalByPart.reduce((sum, { angle }) => sum + angle, 0);
-        const parts = normalByPart
-          .toSorted((first, second) => second.angle - first.angle)
+      .filter(({ normal }) => Number.isFinite(normal) && normal > SHAPE_NORMAL_GATE_DEGREES)
+      .map(({ family, partNormals }) => {
+        const total = partNormals.reduce((sum, { angle }) => sum + angle, 0);
+        const parts = partNormals
+          .toSorted((firstPart, secondPart) => secondPart.angle - firstPart.angle)
           .slice(0, NAMED_PART_COUNT)
           .map(({ angle, part, pixelCount }) => {
             const mesh = exportsRead.parts.find(({ id }) => id === part)?.mesh ?? part;
