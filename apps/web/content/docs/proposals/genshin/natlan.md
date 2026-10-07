@@ -25,7 +25,7 @@ This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/
   - the Collective of Plenty: markets and forges
   - the Masters of the Night-Wind: dark forest
 
-  They are tuned per tribe against the board's captures.
+  They are fitted per tribe against the tribe's own exports.
 
 - **A saturated palette.** Red rock, orange and gold flowers, turquoise springs and green canopy, painted with the strongest grade of any region.
 - **Landmarks.** The Stadium of the Sacred Flame, Ochkanatlan, Coatepec Mountain, the Ancient Sacred Mountain and the tribes' halls are landmark-tier.
