@@ -2,17 +2,37 @@ import type { LatheProfile } from "#src/models/genshinAssets/fit/LatheProfile";
 
 // A mesh's silhouette as a lathe: its outermost radius about its vertical axis in each band of height, which is what
 // Its outline against the sky shows, then runs of bands whose radius holds within a share of itself merged into one
-// Section. The axis is the middle of its footprint, so a tower whose pivot sits off its middle keeps its own axis
+// Section. The axis is the median of its bands' footprints' middles, so a tower whose pivot sits off its middle keeps
+// Its own axis, and one whose brackets stand out to one side at a few heights is not drawn toward them
 export const fitLatheProfile = (
   vertices: readonly (readonly [number, number, number])[],
   { bandHeight, tolerance }: { bandHeight: number; tolerance: number },
 ): LatheProfile => {
-  const xs = vertices.map(([x]) => x);
   const ys = vertices.map(([, y]) => y);
-  const zs = vertices.map((vertex) => vertex[2]);
-  const axis: [number, number] = [(Math.min(...xs) + Math.max(...xs)) / 2, (Math.min(...zs) + Math.max(...zs)) / 2];
   const foot = Math.min(...ys);
   const bandCount = Math.max(1, Math.ceil((Math.max(...ys) - foot) / bandHeight));
+  const footprints = Array.from({ length: bandCount }, () => ({
+    maxX: -Infinity,
+    maxZ: -Infinity,
+    minX: Infinity,
+    minZ: Infinity,
+  }));
+  for (const [x, y, z] of vertices) {
+    const footprint = footprints[Math.min(Math.floor((y - foot) / bandHeight), bandCount - 1)];
+    if (!footprint) continue;
+    footprint.minX = Math.min(footprint.minX, x);
+    footprint.maxX = Math.max(footprint.maxX, x);
+    footprint.minZ = Math.min(footprint.minZ, z);
+    footprint.maxZ = Math.max(footprint.maxZ, z);
+  }
+  const middles = footprints
+    .filter(({ minX }) => minX !== Infinity)
+    .map(({ maxX, maxZ, minX, minZ }) => [(minX + maxX) / 2, (minZ + maxZ) / 2] as const);
+  const getMedian = (values: number[]): number => {
+    const sorted = values.toSorted((first, second) => first - second);
+    return sorted[Math.floor(sorted.length / 2)] ?? 0;
+  };
+  const axis: [number, number] = [getMedian(middles.map(([x]) => x)), getMedian(middles.map(([, z]) => z))];
   const radii = Array.from({ length: bandCount }, () => 0);
   for (const [x, y, z] of vertices) {
     const band = Math.min(Math.floor((y - foot) / bandHeight), bandCount - 1);

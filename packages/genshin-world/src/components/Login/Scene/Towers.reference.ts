@@ -145,6 +145,13 @@ export const towersTopic: ReferenceTopic = {
       result:
         "The game stands some towers and bridges far off at their coarsest level alone, and every tower's coarsest (and most bridges' and pillars') is drawn with LoginScene_Ground01 only, about the towers' stone with no band, where our lathe painted every placement with its finest level's bands, the far Build05 dark and blue at its mouldings. Fitted from their own meshes, three towers' coarsest levels stand four placements: the towers' structure falls from 0.081 to 0.071 and their colour from 0.37 to 0.27 ΔE, their normals from 9.88 to 9.57 degrees and their outline from 0.48 to 0.46 pixels; five coarse hulls stand eleven bridges and pillars, their outline from 0.48 to 0.40 pixels and their normals from 9.20 to 9.02 degrees. Build05's middle level keeps its finest's materials and so its facade, which would have added about its finest's 238 thousand characters where the coarsest levels add 64 thousand",
     },
+    {
+      method:
+        "The shape pass at login-door-session held at heldScrolled 320, its towers' normals named by exported part (the shape notes), the worst read side by side in its image, then each tower's Lod0 footprint middle read whole and band by band",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Held where its towers stand, the towers' normals read 10.62 degrees against the gate's 10, a tenth of the angle on one slender column right of the walkway, LoginScene_Build02_02 at 38.6 degrees over 10 thousand pixels where every other part reads 9 to 12. Ours stood doubled there, a second run of rings beside the shaft: fitLatheProfile took the axis as the middle of the whole footprint, and Build02_02's and Build02_03's brackets, standing out to one side at a few heights, drew it 4.7 units off the shaft, where every band's own middle stands at none. The lathe turned about that point, and the facade read about half the wall round it as slabs standing out (539 and 588 of them). Taken as the median of the bands' middles, the axis lands on the shaft; the two towers keep 121 and 118 slabs, the data falls from 505 to 479 thousand characters minified, and the towers' normals read 9.24 degrees, their outline 0.48 pixels and their depth 0.33 hundredths, every shape gate holding",
+    },
   ],
   openQuestions: [
     "The towers' gilding and windows: their colour per section scores worse painted as diffuse stone, the game's gold being a metal",
