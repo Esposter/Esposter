@@ -6,6 +6,7 @@ import { solveNonNegativeSystem } from "#src/services/genshinParity/shared/solve
 import { computeSkyLobeHarmonics } from "#src/services/genshinParity/witness/computeSkyLobeHarmonics";
 import { RIDGE, SKY_LOBE_DIRECTIONS } from "#src/services/genshinParity/witness/constants";
 import { groupStoneBins } from "#src/services/genshinParity/witness/groupStoneBins";
+import { writeStoneRampWeights } from "#src/services/genshinParity/witness/writeStoneRampWeights";
 import { STONE_HARMONIC_COUNT, STONE_HEIGHT_FALLOFF, STONE_RAMP_KNOT_COUNT } from "genshin-engine";
 import { Matrix3 } from "three";
 
@@ -19,16 +20,6 @@ const BEND_STENCIL = [
   [0, -1],
   [1, 1],
 ] as const;
-// Each knot's weight at a ramp coordinate, the coordinate read between its two nearest knots as a texture's linear
-// Filtering reads them
-const writeRampWeights = (coordinate: number, weights: number[]): void => {
-  const position = Math.min(Math.max(coordinate, 0), 1) * (STONE_RAMP_KNOT_COUNT - 1);
-  const knot = Math.min(Math.floor(position), STONE_RAMP_KNOT_COUNT - 2);
-  const share = position - knot;
-  weights.fill(0);
-  weights[knot] = 1 - share;
-  weights[knot + 1] = share;
-};
 // The stone's light and the haze's colours over it, solved channel by channel by least squares over the bins' means,
 // Over lights that can be: each pixel's scene colour is its albedo times the ramp at its coordinate, the harmonics at
 // Its normal and the light fading with its height, with its glow, darkened by its occlusion, the part the haze lets
@@ -82,7 +73,7 @@ export const solveStoneLight = (
         scatter,
       } of binSamples) {
         const through = albedo[channel] * occlusion * (1 - opacity);
-        writeRampWeights(rampCoordinate, weights);
+        writeStoneRampWeights(rampCoordinate, weights);
         // A step lifts every knot from its own up, so its weight is theirs together
         let above = 0;
         for (let step = stepCount - 1; step >= 0; step--) {
