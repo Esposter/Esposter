@@ -13,12 +13,12 @@ committed.
 | `login-day-title` | `LoginScreen` | 12.93% | 0.337 | 9.86% | 0.4688 |
 | `login-door` | `LoginScreen` | 13.37% | 0.211 | 11.08% | 0.5030 |
 | `login-door-recording` | `LoginScreen` | 16.80% | 0.361 | 11.94% | 0.5831 |
-| `login-door-session` | `LoginScreen` | 14.51% | 0.426 | 10.48% | 0.4989 |
+| `login-door-session` | `LoginScreen` | 14.52% | 0.428 | 10.41% | 0.4974 |
 | `login-interface-door` | `LoginInterface` | 0.63% | 0.986 | 0.43% | 0.0252 |
 | `login-interface-loading` | `LoginInterface` | 0.16% | 0.995 | 0.09% | 0.0061 |
 | `login-interface-mainland-rating` | `LoginInterface` | 2.11% | 0.959 | 1.12% | 0.1095 |
 | `login-interface-title` | `LoginInterface` | 0.34% | 0.997 | 0.24% | 0.0154 |
-| `login-night-title` | `LoginScreen` | 13.78% | 0.371 | 9.80% | 0.4640 |
+| `login-night-title` | `LoginScreen` | 13.65% | 0.370 | 9.79% | 0.4630 |
 | `publisher-splash` | `SplashPublisher` | 0.07% | 1.000 | 0.01% | 0.0036 |
 | `title-splash` | `SplashTitle` | 0.21% | 1.000 | 0.01% | 0.0090 |
 | `title-splash-mainland` | `SplashTitle` | 1.80% | 0.992 | 0.81% | 0.0787 |

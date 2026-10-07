@@ -7,6 +7,7 @@ import { createSkyUniforms } from "#src/atmosphere/createSkyUniforms";
 import { createLightUniforms } from "#src/nodes/createLightUniforms";
 import { createFogUniforms } from "#src/post/createFogUniforms";
 import { createPostUniforms } from "#src/post/createPostUniforms";
+import { toneMapGenshin } from "#src/post/toneMapGenshin";
 import { Color, DirectionalLight, HemisphereLight } from "three";
 import { describe, expect, test } from "vitest";
 
@@ -55,6 +56,22 @@ describe(applySkyState, () => {
     applySkyState({ ...skyState, fogColor: new Color(0x00ff00) }, skyTargets);
 
     expect(skyTargets.fogUniforms.color.value.getHex()).toBe(0x00ff00);
+  });
+
+  test("writes a colour the screen shows as it is so its white balance and the tone curve show it as it was", () => {
+    expect.hasAssertions();
+
+    const skyState = { ...createSkyState(), whiteBalance: { temperature: -10, tint: 0 } };
+    const skyTargets = createSkyTargets();
+    skyState.horizonColor.setRGB(0.1, 0.2, 0.5);
+    applySkyState(skyState, skyTargets);
+    const { b, g, r } = skyTargets.skyUniforms.horizonColor.value
+      .clone()
+      .applyMatrix3(skyTargets.postUniforms.whiteBalance.value);
+    const shown = toneMapGenshin([r, g, b]);
+
+    expect(shown[0]).toBeCloseTo(skyState.horizonColor.r, 5);
+    expect(shown[2]).toBeCloseTo(skyState.horizonColor.b, 5);
   });
 
   test("adds no halo for a sky with none of its own", () => {

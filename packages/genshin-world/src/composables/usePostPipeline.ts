@@ -60,6 +60,7 @@ export const usePostPipeline = (
           renderer,
           scene: scene.value,
           sky,
+          whiteBalance: postInputs.postUniforms.whiteBalance,
         };
     },
   );

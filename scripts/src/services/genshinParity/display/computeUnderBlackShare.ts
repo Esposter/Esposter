@@ -20,7 +20,8 @@ export const computeUnderBlackShare = (data: Buffer): { blackByte: number; chann
     if (Math.max(...channels) === 0) continue;
     counted++;
     if (Math.min(...channels) < BLACK_BYTE) under++;
-    for (const channel of CHANNELS) if ((channels[channel] ?? 0) < BLACK_BYTE) channelCounts[channel]++;
+    for (const channel of CHANNELS)
+      if ((channels[channel] ?? 0) < BLACK_BYTE) channelCounts[channel] = (channelCounts[channel] ?? 0) + 1;
   }
   const total = Math.max(counted, 1);
   return {

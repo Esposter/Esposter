@@ -52,8 +52,12 @@ export const lostCommand: SubCommandsDef[string] = defineCommand({
   run: async ({ args }) => {
     const axes = args.axes.split(",").map((axis) => AXES.indexOf(axis.trim()));
     const [firstAxis = -1, secondAxis = -1] = axes;
-    if (axes.length !== 2 || firstAxis < 0 || secondAxis < 0)
-      throw new InvalidOperationError(Operation.Read, "axes", `${args.axes} is not two of ${AXES.join(", ")}`);
+    if (axes.length !== 2 || firstAxis < 0 || secondAxis < 0 || firstAxis === secondAxis)
+      throw new InvalidOperationError(
+        Operation.Read,
+        "axes",
+        `${args.axes} is not two different of ${AXES.join(", ")}`,
+      );
     const [cornerFirst = 0, cornerSecond = 0] = parseNumbers(args.corner, "corner", 2);
     const [sizeFirst = 0, sizeSecond = 0] = parseNumbers(args.size, "size", 2);
     const [pixelsPerMetre = 0] = parseNumbers(args.resolution, "resolution", 1);

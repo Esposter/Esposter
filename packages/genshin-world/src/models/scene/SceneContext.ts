@@ -1,6 +1,6 @@
 import type { FogUniforms, SkyUniforms } from "genshin-engine";
-import type { Camera, Scene } from "three";
-import type { Renderer } from "three/webgpu";
+import type { Camera, Matrix3, Scene } from "three";
+import type { Renderer, UniformNode } from "three/webgpu";
 
 // What a scene renders with, which it hands a host that asks: the parity page's tools read its targets, its frame's
 // Draw calls and its pipelines from the renderer rather than the page, its sky's sun and moon, which a sky's colours
@@ -13,4 +13,7 @@ export interface SceneContext {
   renderer: Renderer;
   scene: Scene;
   sky?: SkyUniforms;
+  // The white balance the frame passes through before the tone curve, which a light solved off a reference is taken
+  // Back through
+  whiteBalance: UniformNode<"mat3", Matrix3>;
 }

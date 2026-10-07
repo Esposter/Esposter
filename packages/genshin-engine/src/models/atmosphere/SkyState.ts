@@ -1,5 +1,6 @@
 import type { BaseSkyState } from "#src/models/atmosphere/BaseSkyState";
 import type { SkyShape } from "#src/models/atmosphere/SkyShape";
+import type { WhiteBalance } from "#src/models/post/WhiteBalance";
 import type { Color, Vector3 } from "three";
 
 // The sky at the clock's minute: its keyframes blended, and where the sun and moon stand. The light comes from
@@ -31,6 +32,8 @@ export interface SkyState extends BaseSkyState {
   sunDirection: Vector3;
   // The sun's halo at its strength, where a sky has one
   sunHaloColor?: Color;
+  // The white balance the frame passes through before the tone curve, where a scene sets one per hour, none where not
+  whiteBalance?: WhiteBalance;
   // The top colour away from the sun, where a sky tells it from the colour toward it
   zenithBackColor?: Color;
 }

@@ -30,17 +30,18 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Inventory
 
-| Unknown                                      | Tool                                                                     |
-| :------------------------------------------- | :----------------------------------------------------------------------- |
-| Which assets a scene draws                   | `extract`: the closure of its roots by file, path ID                     |
-| The scene's hierarchy, and what it lost      | `genshin:assets tree`: flags anchors, lost fathers                       |
-| A script's, a camera's or a light's settings | `behaviours`: raw bytes scanned for shapes, built-ins past their header  |
-| Which object a clip's `(the animator)` moves | `behaviours`: each animator printed on its game object                   |
-| What a script spawns, and where              | `behaviours`, set as `spawns` at their anchors                           |
-| What a shader computes                       | `shaders`: the annotated disassembly, and HLSL where it decompiles       |
-| Where the open world places an object        | `parseStreamingPlacements` over its tile's or area's StreamGen blob      |
-| A placement's prefab                         | its 64-bit path hash looked up in the game's asset index                 |
-| Whether every renderer is accounted for      | `passes`' inventory: the fixture's families, stand-ins and undrawn parts |
+| Unknown                                      | Tool                                                                                                      |
+| :------------------------------------------- | :-------------------------------------------------------------------------------------------------------- |
+| Which assets a scene draws                   | `extract`: the closure of its roots by file, path ID                                                      |
+| The scene's hierarchy, and what it lost      | `genshin:assets tree`: flags anchors, lost fathers                                                        |
+| A script's, a camera's or a light's settings | `behaviours`: raw bytes scanned for shapes, built-ins past their header                                   |
+| A setting by the time of day at each hour    | `behaviours --at`: each curve and gradient read at the times given (the login's hours as shares of a day) |
+| Which object a clip's `(the animator)` moves | `behaviours`: each animator printed on its game object                                                    |
+| What a script spawns, and where              | `behaviours`, set as `spawns` at their anchors                                                            |
+| What a shader computes                       | `shaders`: the annotated disassembly, and HLSL where it decompiles                                        |
+| Where the open world places an object        | `parseStreamingPlacements` over its tile's or area's StreamGen blob                                       |
+| A placement's prefab                         | its 64-bit path hash looked up in the game's asset index                                                  |
+| Whether every renderer is accounted for      | `passes`' inventory: the fixture's families, stand-ins and undrawn parts                                  |
 
 ### Layout
 
@@ -96,13 +97,13 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Display
 
-| Unknown                                          | Tool                                                                                                                                                           |
-| :----------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| The transform's form                             | exact: the bloom's and the uber pass's programs, read with their constant layouts (the login's `Display.reference.ts`)                                         |
-| The tone curve's contrast                        | `passes`' display: each pixel's light, back through the curve over its albedo, flattest on a sun and a sky's plane                                             |
-| The bloom's fields                               | gap: which MHYBloom value is the threshold, the scaler and the intensity, measured where the bloom alone moves                                                 |
-| How much of a frame lies under the curve's black | `genshin:parity black`: each reference's share of pixels with a channel under the curve's black at none, each channel's apart; `compare` prints ours beside it |
-| The night's black                                | gap: `_WhiteBalanceMat` before the curve, no export holds it, its temperature and tint solved where the stone's light lies flattest                            |
+| Unknown                                          | Tool                                                                                                                                                                                   |
+| :----------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The transform's form                             | exact: the bloom's and the uber pass's programs, read with their constant layouts (the login's `Display.reference.ts`)                                                                 |
+| The tone curve's contrast                        | `passes`' display: each pixel's light, back through the curve over its albedo, flattest on a sun and a sky's plane                                                                     |
+| The bloom's fields                               | gap: which MHYBloom value is the threshold, the scaler and the intensity, measured where the bloom alone moves                                                                         |
+| How much of a frame lies under the curve's black | `genshin:parity black`: each reference's share of pixels with a channel under the curve's black at none, each channel's apart; `compare` prints ours beside it                         |
+| The night's black                                | `genshin:parity balance`: `_WhiteBalanceMat`'s temperature and tint where the stone's light lies flattest, no export holding it; `calibrate` solves the stone's light under the page's |
 
 ### Light
 

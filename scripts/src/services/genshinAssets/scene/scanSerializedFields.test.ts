@@ -105,4 +105,27 @@ describe(scanSerializedFields, () => {
       },
     ]);
   });
+
+  test("reads a gradient whose first keys a colour read a word before it would swallow", () => {
+    expect.hasAssertions();
+
+    const gradientTimes = Buffer.alloc(32);
+    gradientTimes.writeUInt16LE(65_535, 2);
+    gradientTimes.writeUInt16LE(65_535, 18);
+    const bytes = Buffer.concat([
+      header,
+      writeFloats(0.5),
+      // Two keys of eight in use, white to white
+      writeFloats(1, 1, 1, 1, 1, 1, 1, 1),
+      Buffer.alloc(6 * 16),
+      gradientTimes,
+      writeInts(0),
+      Buffer.from([2, 2, 0, 0]),
+    ]);
+
+    expect(scanSerializedFields(bytes, checkIsPointer).map(({ kind, offset }) => ({ kind, offset }))).toStrictEqual([
+      { kind: SerializedFieldKind.Float, offset: 32 },
+      { kind: SerializedFieldKind.Gradient, offset: 36 },
+    ]);
+  });
 });
