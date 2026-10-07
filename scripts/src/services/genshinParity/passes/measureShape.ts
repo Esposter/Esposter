@@ -41,7 +41,7 @@ export const measureShape = (component: DerivedAssetComponent): Promise<ParityPa
       .map(({ family, normalByPart }) => {
         const total = normalByPart.reduce((sum, { angle }) => sum + angle, 0);
         const parts = normalByPart
-          .toSorted((first, second) => second.angle - first.angle)
+          .toSorted((firstPart, secondPart) => secondPart.angle - firstPart.angle)
           .slice(0, NAMED_PART_COUNT)
           .map(({ angle, part, pixelCount }) => {
             const mesh = exportsRead.parts.find(({ id }) => id === part)?.mesh ?? part;

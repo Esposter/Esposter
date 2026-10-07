@@ -28,7 +28,7 @@ export const compareFamilyTargets = (
     let shared = 0;
     let depthGap = 0;
     let normalAngle = 0;
-    const normalByPart = new Map<number, { angle: number; part: number; pixelCount: number }>();
+    const partNormalMap = new Map<number, { angle: number; part: number; pixelCount: number }>();
     for (let pixel = 0; pixel < pixelCount; pixel++) {
       const isExports = readTargetFamily(exportsTargets.part, pixel) === family;
       const isOurs = readTargetFamily(oursTargets.part, pixel) === family;
@@ -49,10 +49,10 @@ export const compareFamilyTargets = (
       const angle = computeNormalAngle(exportsTargets.normal, oursTargets.normal, pixel);
       normalAngle += angle;
       const part = exportsTargets.part[pixel * 4] ?? 0;
-      const partNormal = normalByPart.get(part) ?? { angle: 0, part, pixelCount: 0 };
+      const partNormal = partNormalMap.get(part) ?? { angle: 0, part, pixelCount: 0 };
       partNormal.angle += angle;
       partNormal.pixelCount++;
-      normalByPart.set(part, partNormal);
+      partNormalMap.set(part, partNormal);
     }
     if (outlineLength === 0) return [];
     return [
@@ -60,7 +60,7 @@ export const compareFamilyTargets = (
         depth: shared > 0 ? depthGap / shared : Infinity,
         family,
         normal: shared > 0 ? normalAngle / shared : Infinity,
-        normalByPart: [...normalByPart.values()],
+        normalByPart: [...partNormalMap.values()],
         outline: apart / outlineLength,
       },
     ];

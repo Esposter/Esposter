@@ -1,5 +1,7 @@
 import type { LatheProfile } from "#src/models/genshinAssets/fit/LatheProfile";
 
+import { computeMedian } from "#src/services/genshinAssets/shared/computeMedian";
+
 // A mesh's silhouette as a lathe: its outermost radius about its vertical axis in each band of height, which is what
 // Its outline against the sky shows, then runs of bands whose radius holds within a share of itself merged into one
 // Section. The axis is the median of its bands' footprints' middles, so a tower whose pivot sits off its middle keeps
@@ -28,11 +30,7 @@ export const fitLatheProfile = (
   const middles = footprints
     .filter(({ minX }) => minX !== Infinity)
     .map(({ maxX, maxZ, minX, minZ }) => [(minX + maxX) / 2, (minZ + maxZ) / 2] as const);
-  const getMedian = (values: number[]): number => {
-    const sorted = values.toSorted((first, second) => first - second);
-    return sorted[Math.floor(sorted.length / 2)] ?? 0;
-  };
-  const axis: [number, number] = [getMedian(middles.map(([x]) => x)), getMedian(middles.map(([, z]) => z))];
+  const axis: [number, number] = [computeMedian(middles.map(([x]) => x)), computeMedian(middles.map(([, z]) => z))];
   const radii = Array.from({ length: bandCount }, () => 0);
   for (const [x, y, z] of vertices) {
     const band = Math.min(Math.floor((y - foot) / bandHeight), bandCount - 1);
