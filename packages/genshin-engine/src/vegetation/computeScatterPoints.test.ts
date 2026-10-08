@@ -12,7 +12,13 @@ describe(computeScatterPoints, () => {
   test("grows the same plants for the same seed", () => {
     expect.hasAssertions();
 
-    const options = { accepts: () => true, candidateCount: CANDIDATE_COUNT, seed: SEED, size: SIZE, spacing: SPACING };
+    const options = {
+      candidateCount: CANDIDATE_COUNT,
+      checkIsAccepted: () => true,
+      seed: SEED,
+      size: SIZE,
+      spacing: SPACING,
+    };
 
     expect(computeScatterPoints(options)).toStrictEqual(computeScatterPoints(options));
   });
@@ -21,8 +27,8 @@ describe(computeScatterPoints, () => {
     expect.hasAssertions();
 
     const points = computeScatterPoints({
-      accepts: () => true,
       candidateCount: CANDIDATE_COUNT,
+      checkIsAccepted: () => true,
       seed: SEED,
       size: SIZE,
       spacing: SPACING,
@@ -45,8 +51,8 @@ describe(computeScatterPoints, () => {
 
     expect(
       computeScatterPoints({
-        accepts: () => false,
         candidateCount: CANDIDATE_COUNT,
+        checkIsAccepted: () => false,
         seed: SEED,
         size: SIZE,
         spacing: SPACING,

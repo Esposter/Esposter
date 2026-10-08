@@ -39,7 +39,8 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Water](/docs/genshin/water)                               | still water graded by depth, foam, glints, caustics, and the world under the surface                     |
 | [Flowing water](/docs/genshin/flowing-water)               | rivers along their courses with foam on their bends, and waterfalls over cliffs                          |
 | [Vegetation](/docs/genshin/vegetation)                     | the wind field, grass blades generated in two rings, and swaying crowns                                  |
-| [Scatter](/docs/genshin/scatter)                           | the small plants and pebbles no record places, scattered by seeded dart throwing                         |
+| [Trees](/docs/genshin/trees)                               | tree species, each drawn as its mesh near the eye and a baked impostor far from it                       |
+| [Scatter](/docs/genshin/scatter)                           | the flowers no record places, scattered on each finest tile in the terrain's worker                      |
 | [World map](/docs/genshin/world-map)                       | the catalogue of regions, areas and subareas, and region data loaded by reach                            |
 | [Region buildings](/docs/genshin/region-buildings)         | each region's capital built by its own kit, on the world's one ground with every region's plateaus       |
 | [Buildings](/docs/genshin/buildings)                       | the parametric building kit: a platform, four walls and a flat or conical roof                           |

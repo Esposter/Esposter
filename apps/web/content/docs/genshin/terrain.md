@@ -53,7 +53,7 @@ flowchart TD
 | `packages/genshin-engine/src/streaming/createTileStreamer.ts`     | The tile cache: asked coarsest first, freed least recently wanted       |
 | `packages/genshin-engine/src/world/computeOriginShift.ts`         | When the world is moved back under the camera, and by how much          |
 | `packages/genshin-world/src/components/World/Terrain/Index.vue`   | The worker pool, the tile meshes, and the frame's selection             |
-| `packages/genshin-world/src/workers/terrainTile.worker.ts`        | A tile generated from the region's heights and colours                  |
+| `packages/genshin-world/src/workers/terrainTile.worker.ts`        | A tile generated from the heights and colours, with its flowers         |
 | `packages/genshin-world/src/composables/useFloatingOrigin.ts`     | The shift applied to the camera, its controls and the world's group     |
 | `packages/genshin-world/src/services/windrise/constants.ts`       | Windrise's quadtree: its tile size, levels and ranges                   |
 | `packages/genshin-engine/src/terrain/createTerrainShapeHeight.ts` | A ground composed in layers: hills, sharp features and residual         |

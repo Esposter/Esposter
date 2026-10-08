@@ -2,28 +2,26 @@ import type { ToonMaterialOptions } from "#src/models/nodes/ToonMaterialOptions"
 import type { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
 import type { WindUniforms } from "#src/models/wind/WindUniforms";
 
+import { createLeafShapeNode } from "#src/nodes/createLeafShapeNode";
 import { createToonMaterial } from "#src/nodes/createToonMaterial";
 import { createWindNode } from "#src/nodes/createWindNode";
 import { DoubleSide } from "three";
-import { float, hash, modelWorldMatrix, positionLocal, sin, step, time, uv, vec3, vec4 } from "three/tsl";
+import { hash, modelWorldMatrix, positionLocal, sin, time, vec3, vec4 } from "three/tsl";
 
 const LEAF_ALPHA_TEST = 0.5;
 // How far a crown leans for a unit of wind, per metre up the tree, and how far each card flutters on its own
 const SWAY_PER_WIND = 0.03;
 const FLUTTER = 0.06;
-// A leaf card cut to a pointed oval in the shader, so a crown is built from plain quads and no leaf texture is
-// Authored or loaded. The card's normals are the crown's, bent outward by the generator, so the lighting reads a soft
-// Mass rather than each card. In a wind the crown leans downwind, more the higher it is, and each patch of cards
-// Flutters on its own phase; the lean is the position node, so the crown's shadow sways with it
+// A leaf card cut to a pointed oval in the shader (`createLeafShapeNode`). The card's normals are the crown's, bent
+// Outward by the generator, so the lighting reads a soft mass rather than each card. In a wind the crown leans
+// Downwind, more the higher it is, and each patch of cards flutters on its own phase; the lean is the position node, so
+// The crown's shadow sways with it
 export const createLeafMaterial = (
   toonMaterialOptions: ToonMaterialOptions,
   windUniforms?: WindUniforms,
 ): ToonNodeMaterial => {
   const leafMaterial = createToonMaterial(toonMaterialOptions);
-  const centered = uv().sub(0.5).mul(2);
-  // Narrower toward the tip and the stem, so the silhouette is a leaf rather than a disc
-  const width = float(1).sub(centered.y.abs().pow(2)).mul(0.8);
-  leafMaterial.opacityNode = step(0, width.sub(centered.x.abs()));
+  leafMaterial.opacityNode = createLeafShapeNode();
   leafMaterial.alphaTest = LEAF_ALPHA_TEST;
   leafMaterial.side = DoubleSide;
   if (windUniforms) {
