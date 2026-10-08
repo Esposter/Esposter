@@ -8,6 +8,7 @@ import { enemiesCommand } from "#src/services/genshinAssets/commands/enemiesComm
 import { explorationCommand } from "#src/services/genshinAssets/commands/explorationCommand";
 import { extractCommand } from "#src/services/genshinAssets/commands/extractCommand";
 import { fitCommand } from "#src/services/genshinAssets/commands/fitCommand";
+import { gcgCommand } from "#src/services/genshinAssets/commands/gcgCommand";
 import { friendshipCommand } from "#src/services/genshinAssets/commands/friendshipCommand";
 import { interfaceCommand } from "#src/services/genshinAssets/commands/interfaceCommand";
 import { inventoryCommand } from "#src/services/genshinAssets/commands/inventoryCommand";
@@ -65,6 +66,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     chests: chestsCommand,
     exploration: explorationCommand,
     puzzles: puzzlesCommand,
+    gcg: gcgCommand,
     shops: shopsCommand,
   },
 });
