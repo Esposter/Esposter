@@ -17,6 +17,22 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   // Asset index: six city indexes share it (Area_FDC_Old01 to Old03, Xsd01 to Xsd03), so its World block waits on an
   // Extraction's call of which one holds the Court's placements, and on the streams' blob names that index does not give
   [DerivedAssetComponent.Fontaine]: { roots: [], screen: "WorldScreen" },
+  // Inazuma City is the Inazuma region's capital, on Narukami Island, whose index the asset index names as
+  // Area_DQSLT_City_Index (DQ, the initials of Dàoqī, Inazuma's Chinese name, as MD in MDSLT is Mondstadt's), read as a
+  // Root so `extract` follows its pointers to the city's streams, prefabs and terrain tiles, which its World block waits
+  // On. Unconfirmed until that read, as Mondstadt's and Sumeru's are
+  [DerivedAssetComponent.Inazuma]: {
+    roots: [{ block: "00/00010731.blk", name: "Area_DQSLT_City_Index", pathId: "-8378121019383011372" }],
+    screen: "WorldScreen",
+  },
+  // Liyue Harbor is the Liyue region's capital, whose index the asset index names as Area_LYSLT_City_Index (LY for Liyue,
+  // The SLT suffix the other capitals' indexes carry), read as a root so `extract` follows its pointers to the city's
+  // Streams, prefabs and terrain tiles, which its World block waits on. Unconfirmed until that read: Area_LYG_City_Index,
+  // The Liyue city stream of the 2.6 index, is the alternative, and the extraction's report says which holds the harbour
+  [DerivedAssetComponent.Liyue]: {
+    roots: [{ block: "00/00010731.blk", name: "Area_LYSLT_City_Index", pathId: "4170994449850561070" }],
+    screen: "WorldScreen",
+  },
   [DerivedAssetComponent.Login]: {
     clipPattern: "^(Ani_LoginMainPage_|Ani_LoginProgressBar_|Ani_Login_Lift$|Ani_LogginScene_Door01_)",
     interface: { anchorPattern: "^Ani_LoginMainPage_Waiting", root: "LoginMainPage" },
@@ -49,22 +65,6 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
         prefab: { block: "00/11790361.blk", name: "LoginScene_Door01_Vo", pathId: "3964741434016489810" },
       },
     ],
-  },
-  // Inazuma City is the Inazuma region's capital, on Narukami Island, whose index the asset index names as
-  // Area_DQSLT_City_Index (DQ, the initials of Dàoqī, Inazuma's Chinese name, as MD in MDSLT is Mondstadt's), read as a
-  // Root so `extract` follows its pointers to the city's streams, prefabs and terrain tiles, which its World block waits
-  // On. Unconfirmed until that read, as Mondstadt's and Sumeru's are
-  [DerivedAssetComponent.Inazuma]: {
-    roots: [{ block: "00/00010731.blk", name: "Area_DQSLT_City_Index", pathId: "-8378121019383011372" }],
-    screen: "WorldScreen",
-  },
-  // Liyue Harbor is the Liyue region's capital, whose index the asset index names as Area_LYSLT_City_Index (LY for Liyue,
-  // The SLT suffix the other capitals' indexes carry), read as a root so `extract` follows its pointers to the city's
-  // Streams, prefabs and terrain tiles, which its World block waits on. Unconfirmed until that read: Area_LYG_City_Index,
-  // The Liyue city stream of the 2.6 index, is the alternative, and the extraction's report says which holds the harbour
-  [DerivedAssetComponent.Liyue]: {
-    roots: [{ block: "00/00010731.blk", name: "Area_LYSLT_City_Index", pathId: "4170994449850561070" }],
-    screen: "WorldScreen",
   },
   // Mondstadt's city is the region's second drawn place, beside Windrise: its capital index is the one the asset index
   // Names as Area_MDSLT_City_Index, the city prefix the Nod-Krai and Liyue capitals carry too, read as a root so `extract`

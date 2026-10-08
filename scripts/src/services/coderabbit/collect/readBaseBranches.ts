@@ -4,21 +4,22 @@
 export const readBaseBranches = (coderabbitYamlText: string): string[] => {
   const lines = coderabbitYamlText.split("\n");
   const autoReviewIndex = lines.findIndex((line) => /^\s*auto_review:\s*(#.*)?$/u.test(line));
-  if (autoReviewIndex === -1) return [];
+  const autoReviewLine = lines[autoReviewIndex];
+  if (autoReviewLine === undefined) return [];
 
-  const autoReviewIndent = getIndent(lines[autoReviewIndex]);
+  const autoReviewIndent = getIndent(autoReviewLine);
   // A block ends at the first content line that is no deeper than its key; comments and blank lines never end one
   const blockLines: string[] = [];
   for (const line of lines.slice(autoReviewIndex + 1)) {
-    if (isIgnored(line)) continue;
+    if (checkIsIgnored(line)) continue;
     if (getIndent(line) <= autoReviewIndent) break;
     blockLines.push(line);
   }
 
   const keyIndex = blockLines.findIndex((line) => /^\s*base_branches:/u.test(line));
-  if (keyIndex === -1) return [];
-
   const keyLine = blockLines[keyIndex];
+  if (keyLine === undefined) return [];
+
   const keyIndent = getIndent(keyLine);
   const inlineValue = stripComment(keyLine.replace(/^\s*base_branches:/u, "")).trim();
   if (inlineValue.startsWith("[")) return inlineValue.slice(1, -1).split(",").map(getScalar).filter(Boolean);
@@ -26,7 +27,7 @@ export const readBaseBranches = (coderabbitYamlText: string): string[] => {
   const itemLines: string[] = [];
   // A block list may sit at its key's own indent, so only a shallower line or a sibling key ends it
   for (const line of blockLines.slice(keyIndex + 1)) {
-    if (isIgnored(line)) continue;
+    if (checkIsIgnored(line)) continue;
     const isItem = /^\s*-/u.test(line);
     if (getIndent(line) < keyIndent || (getIndent(line) === keyIndent && !isItem)) break;
     itemLines.push(line);
@@ -36,7 +37,7 @@ export const readBaseBranches = (coderabbitYamlText: string): string[] => {
 
 const getIndent = (line: string): number => line.length - line.trimStart().length;
 
-const isIgnored = (line: string): boolean => line.trim() === "" || line.trim().startsWith("#");
+const checkIsIgnored = (line: string): boolean => line.trim() === "" || line.trim().startsWith("#");
 
 const stripComment = (text: string): string => text.replace(/\s+#.*$/u, "");
 

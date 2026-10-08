@@ -12,19 +12,15 @@ export const orderWindowStack = (windowPullRequests: WindowPullRequest[]): Windo
     throw new InvalidOperationError(
       Operation.Read,
       "coderabbit",
-      `the window stack forks on ${MAIN_BRANCH} — ${bottomPullRequests.map(({ number }) => `#${number.toString()}`).join(", ")} share its base`,
+      `the window stack forks on ${MAIN_BRANCH} — ${bottomPullRequests.map(({ number }) => `#${number}`).join(", ")} share its base`,
     );
 
   const stack: WindowPullRequest[] = [];
-  let current: WindowPullRequest | undefined = bottomPullRequests[0];
+  let current: undefined | WindowPullRequest = bottomPullRequests[0];
   while (current) {
     // A pull request seen twice means two open ones share a head, and the walk would never end
     if (stack.includes(current))
-      throw new InvalidOperationError(
-        Operation.Read,
-        "coderabbit",
-        `the window stack loops at #${current.number.toString()}`,
-      );
+      throw new InvalidOperationError(Operation.Read, "coderabbit", `the window stack loops at #${current.number}`);
     stack.push(current);
     const { headRefName } = current;
     const abovePullRequests = windowPullRequests.filter(({ baseRefName }) => baseRefName === headRefName);
@@ -32,7 +28,7 @@ export const orderWindowStack = (windowPullRequests: WindowPullRequest[]): Windo
       throw new InvalidOperationError(
         Operation.Read,
         "coderabbit",
-        `the window stack forks on ${headRefName} — ${abovePullRequests.map(({ number }) => `#${number.toString()}`).join(", ")} share its base`,
+        `the window stack forks on ${headRefName} — ${abovePullRequests.map(({ number }) => `#${number}`).join(", ")} share its base`,
       );
     current = abovePullRequests[0];
   }

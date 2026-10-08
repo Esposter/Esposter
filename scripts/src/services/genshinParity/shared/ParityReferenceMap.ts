@@ -21,6 +21,24 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: "File:Court of Fontaine.png",
   },
+  // Everfrozen Earth from the wiki's location image at 1080 high: Snezhnograd on its plateau seen from a railway
+  // Viaduct, at night under the stars, its spires read by eye at the reference's pixels. The Genshin logo in the
+  // Corner is left out of the region scored
+  "everfrozen-earth-location": {
+    component: DerivedAssetComponent.Snezhnaya,
+    landmarks: {
+      centreTowerApex: [983, 488],
+      leftTowerTop: [712, 466],
+      rightSpireLeft: [1231, 482],
+      rightSpireRight: [1242, 482],
+      spireBaseLeft: [909, 448],
+      spireBaseRight: [947, 448],
+      spireTip: [927, 398],
+    },
+    region: { height: 920, width: 1920, x: 0, y: 0 },
+    screen: "WorldScreen",
+    wikiTitle: "File:Everfrozen Earth.png",
+  },
   // The English PC client's Adventurer Handbook open at its experience, the wiki's screenshot, against which the
   // Book's tabs are placed while its pages wait on what they track
   "handbook-experience": { screen: "HandbookScreen", wikiTitle: "File:Adventurer Handbook Experience.png" },
@@ -196,24 +214,6 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "LoginScreen",
     seconds: 12,
   },
-  // Everfrozen Earth from the wiki's location image at 1080 high: Snezhnograd on its plateau seen from a railway
-  // Viaduct, at night under the stars, its spires read by eye at the reference's pixels. The Genshin logo in the
-  // Corner is left out of the region scored
-  "everfrozen-earth-location": {
-    component: DerivedAssetComponent.Snezhnaya,
-    landmarks: {
-      centreTowerApex: [983, 488],
-      leftTowerTop: [712, 466],
-      rightSpireLeft: [1231, 482],
-      rightSpireRight: [1242, 482],
-      spireBaseLeft: [909, 448],
-      spireBaseRight: [947, 448],
-      spireTip: [927, 398],
-    },
-    region: { height: 920, width: 1920, x: 0, y: 0 },
-    screen: "WorldScreen",
-    wikiTitle: "File:Everfrozen Earth.png",
-  },
   // The English PC client's map on M over Jueyun Karst, the wiki's full-screen 1080p screenshot: the drawing, the area
   // Names, the player's pointer, the zoom and the region tag, against the terrain the game paints
   "map-overlay-jueyun": { screen: "MapOverlay", wikiTitle: "File:Map Stardust in Jueyun.png" },
@@ -234,6 +234,25 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     props: { heldMinutes: 720 },
     screen: "WorldScreen",
     wikiTitle: "File:Mondstadt City.png",
+  },
+  // The wiki's 2560 by 1440 location image of Nasha Town, a daytime view of the capital's plaza under its central tower.
+  // Its landmarks are rigid architecture read by eye at the image's pixels off 4x crops: the plinth's front corners, the
+  // Struts under the tower's pod ledge, and the tower's collar and column edges
+  "nasha-town-location": {
+    component: DerivedAssetComponent.NodKrai,
+    landmarks: {
+      ledgeStrutLeft: [1098, 788],
+      ledgeStrutRight: [1204, 787],
+      plinthFrontLeft: [1077, 1184],
+      plinthFrontRight: [1207, 1195],
+      stackCollarLeft: [1155, 352],
+      stackLeftEdge: [1152, 422],
+      stackRightEdge: [1234, 455],
+    },
+    // Provisional: noon, until `shadows` reads the sun's minute off the buildings' shadows
+    props: { heldMinutes: 720 },
+    screen: "WorldScreen",
+    wikiTitle: "File:Nasha Town.png",
   },
   // The English PC client's Paimon menu at 2560 wide, from the 1.3 build's screenshot, the menu over the world and
   // Its Paimon drawn to the panel's right, which the world draws; scored over the side bar and the panel above their
@@ -262,6 +281,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: 'File:"People of the Springs".png',
   },
+  "publisher-splash": { capture: "session-2.mp4", screen: "SplashPublisher", seconds: 1 },
+  // The English PC client's quest screen listing every quest in progress, the wiki's screenshot of it at 1080 high
+  "quest-screen": { screen: "QuestScreen", wikiTitle: "File:Quest Screen.png" },
   // The English PC client's settings on its Graphics tab at 1680 wide, from the wiki's screenshot, scored over its header
   // Band alone: its rows are drawn over the blurred world, which the page has no copy of, and the Audio tab is not built
   "settings-graphics": {
@@ -269,9 +291,6 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "MenuSettings",
     wikiTitle: "File:Login Menu Settings.png",
   },
-  "publisher-splash": { capture: "session-2.mp4", screen: "SplashPublisher", seconds: 1 },
-  // The English PC client's quest screen listing every quest in progress, the wiki's screenshot of it at 1080 high
-  "quest-screen": { screen: "QuestScreen", wikiTitle: "File:Quest Screen.png" },
   // Sumeru City from the wiki's location image of 2022, the only Sumeru City shot found: daylight with a clear sky and
   // Short shadows, so a provisional noon until the shadows solve reads its sun. Its landmarks are the terrace's spire
   // And the green-domed minaret's rigid edges, read at the image's pixels; its build is checked against the export once
@@ -319,30 +338,15 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       statueTop: [840, 497],
       trunkAxis: [643, 580],
     },
+    // Its rigid landmarks cluster at the statue, and the far pedestals cannot be named from the tile data, so no landmark
+    // Pins the camera's far field: the pose holds at about 7 px where the camera pass keeps its 2 px gate, so its misfit
+    // Shows there
+    poseBar: 7.5,
     props: {
       cameraPose: { fov: 58.365, heading: 64.614, pitch: 8.047, position: [70.818, -4.053, 8.283] },
       heldMinutes: 720,
     },
     screen: "WorldScreen",
     seconds: 360,
-  },
-  // The wiki's 2560 by 1440 location image of Nasha Town, a daytime view of the capital's plaza under its central tower.
-  // Its landmarks are rigid architecture read by eye at the image's pixels off 4x crops: the plinth's front corners, the
-  // Struts under the tower's pod ledge, and the tower's collar and column edges
-  "nasha-town-location": {
-    component: DerivedAssetComponent.NodKrai,
-    landmarks: {
-      plinthFrontLeft: [1077, 1184],
-      plinthFrontRight: [1207, 1195],
-      ledgeStrutLeft: [1098, 788],
-      ledgeStrutRight: [1204, 787],
-      stackCollarLeft: [1155, 352],
-      stackLeftEdge: [1152, 422],
-      stackRightEdge: [1234, 455],
-    },
-    // Provisional: noon, until `shadows` reads the sun's minute off the buildings' shadows
-    props: { heldMinutes: 720 },
-    screen: "WorldScreen",
-    wikiTitle: "File:Nasha Town.png",
   },
 };

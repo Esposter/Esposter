@@ -7,6 +7,13 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<string, Landmark>> = {
   // The Court's landmarks name its capital's meshes and their shares, which the extraction has not yet given
   [DerivedAssetComponent.Fontaine]: {},
+  // Inazuma City's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given:
+  // The keep's eaves and ledges, the platform's corners, the houses' bases and roofs and the pavilion's eaves, each read
+  // By eye off the reference's 4x crops (ParityReferenceMap's inazuma-city-location)
+  [DerivedAssetComponent.Inazuma]: {},
+  // Liyue Harbor's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given: the
+  // Steps, plinths, walls, gates and towers its reference's 4x crops show (ParityReferenceMap's liyue-harbor-location)
+  [DerivedAssetComponent.Liyue]: {},
   // The door's dais at its two front feet, and its arch's apex, halfway through its depth; the walkway's two wings by
   // The door's end and the near pair before them, at the top of their outer faces' front and back ends, the camera
   // Looking along +z as ModelCamera turns; the crowned column behind the door's right at its top, and the lantern
@@ -41,13 +48,6 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
     wingRightBack: { mesh: "LoginScene_Bridge01_20_Vo", share: [0, 1, 0.8125] },
     wingRightFront: { mesh: "LoginScene_Bridge01_20_Vo", share: [0, 1, 0.351] },
   },
-  // Inazuma City's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given:
-  // The keep's eaves and ledges, the platform's corners, the houses' bases and roofs and the pavilion's eaves, each read
-  // By eye off the reference's 4x crops (ParityReferenceMap's inazuma-city-location)
-  [DerivedAssetComponent.Inazuma]: {},
-  // Liyue Harbor's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given: the
-  // Steps, plinths, walls, gates and towers its reference's 4x crops show (ParityReferenceMap's liyue-harbor-location)
-  [DerivedAssetComponent.Liyue]: {},
   // Mondstadt's landmarks name its capital's meshes, which the extraction has not yet given: the six corners its reference
   // Names (ParityReferenceMap's mondstadt-city-location) are the towers' and the gate tower's parapets
   [DerivedAssetComponent.Mondstadt]: {},
