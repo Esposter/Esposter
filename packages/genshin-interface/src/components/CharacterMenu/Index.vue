@@ -81,6 +81,7 @@ const characterName = computed(() => characters.find(({ id }) => id === characte
   border-radius: 50%;
   background: rgb(255 255 255 / 0.12);
   color: inherit;
+  cursor: inherit;
   font: inherit;
   font-size: calc(var(--unit) * 18);
   place-items: center;
@@ -128,6 +129,7 @@ const characterName = computed(() => characters.find(({ id }) => id === characte
   border-radius: calc(var(--unit) * 32);
   background: transparent;
   color: inherit;
+  cursor: inherit;
   font: inherit;
   font-size: calc(var(--unit) * 26);
   text-align: start;
