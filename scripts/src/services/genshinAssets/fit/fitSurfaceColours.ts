@@ -44,13 +44,13 @@ const computeTriangleArea = ([ax, ay, az]: Vector, [bx, by, bz]: Vector, [cx, cy
 };
 // The samples of a mesh's faces where its vertices stand in the world. Each face is read at the points `sampleFaceUvs`
 // Spreads over its UV triangle, through the texture its submesh draws with (`diffuses`, by submesh index), each point
-// Weighted by an equal share of the face's world area and how far its texel is covered. A face whose centroid `isKept`
+// Weighted by an equal share of the face's world area and how far its texel is covered. A face whose centroid `checkKept`
 // Refuses counts for nothing
 const readFaceSamples = (
-  { faceGroups, faceUvs, faces, uvs }: ObjMesh,
+  { faceGroups, faces, faceUvs, uvs }: ObjMesh,
   world: Vector[],
   diffuses: (Texture | undefined)[],
-  isKept: (centroid: Vector) => boolean = () => true,
+  checkKept: (centroid: Vector) => boolean = () => true,
 ): SurfaceSample[] =>
   faces.flatMap(([firstIndex, secondIndex, thirdIndex], face) => {
     const [first, second, third] = [world[firstIndex], world[secondIndex], world[thirdIndex]];
@@ -58,7 +58,7 @@ const readFaceSamples = (
     const diffuse = diffuses[submesh];
     if (!first || !second || !third || !diffuse) return [];
     const centroid = ([0, 1, 2] as const).map((axis) => (first[axis] + second[axis] + third[axis]) / 3) as Vector;
-    if (!isKept(centroid)) return [];
+    if (!checkKept(centroid)) return [];
     const [firstUv, secondUv, thirdUv] = (faceUvs[face] ?? [0, 0, 0]).map((index) => uvs[index] ?? [0, 0]) as [
       [number, number],
       [number, number],
@@ -91,7 +91,7 @@ export const fitSurfaceColours = async <Family extends string>(
     readWorldOrigin(component),
   ]);
   await nameMeshPlacements(placements);
-  const materialsByName = new Map(materialValues.map((material) => [material.name, material]));
+  const materialMap = new Map(materialValues.map((material) => [material.name, material]));
   const pathIdNameMap = await readAssetNames(
     new Set([
       ...placements.flatMap((placement) => placement.materials),
@@ -100,7 +100,7 @@ export const fitSurfaceColours = async <Family extends string>(
   );
   // The exported diffuse texture a placed material draws with, if it was exported
   const getDiffusePath = (materialPathId: string): string | undefined => {
-    const material = materialsByName.get(pathIdNameMap.get(materialPathId) ?? "");
+    const material = materialMap.get(pathIdNameMap.get(materialPathId) ?? "");
     const textureName = pathIdNameMap.get(material?.textures[MAIN_TEXTURE_SLOT]?.pathId ?? "");
     const path = textureName === undefined ? undefined : join(textureDirectory, `${textureName}.png`);
     return path && existsSync(path) ? path : undefined;
@@ -114,9 +114,10 @@ export const fitSurfaceColours = async <Family extends string>(
   const readPlacementSamples = async (placement: AssetPlacement): Promise<SurfaceSample[]> => {
     const mesh = await readObjMesh(join(meshDirectory, `${placement.mesh}${OBJ_EXTENSION}`));
     const diffuses = await Promise.all(
-      placement.materials.map((materialPathId) => {
+      placement.materials.map(async (materialPathId) => {
         const path = getDiffusePath(materialPathId);
-        return path === undefined ? undefined : getTexture(path);
+        const texture = path === undefined ? undefined : await getTexture(path);
+        return texture;
       }),
     );
     return readFaceSamples(mesh, toWorldVertices(mesh.vertices, placement), diffuses);
