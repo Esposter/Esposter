@@ -1,13 +1,13 @@
 import { QueuePushOutcome } from "#src/models/queue/QueuePushOutcome";
 import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
 import { QUEUE_BRANCH } from "#src/services/coderabbit/collect/constants";
-import { carryCommit } from "#src/services/queue/carryCommit";
+import { carryReplayCommit } from "#src/services/queue/carryReplayCommit";
 import { readQueueCommits } from "#src/services/queue/readQueueCommits";
 import { selectReplayCommits } from "#src/services/queue/selectReplayCommits";
 import { syncCheckout } from "#src/services/queue/syncCheckout";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
-import { getResult } from "@esposter/shared";
+import { getResult, getResultAsync } from "@esposter/shared";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -26,10 +26,12 @@ const readForkPoint = (head: string, cwd: string): string =>
 // The session's push of `ai/queue`, which never waits on a tree it does not own. A fast-forward pushes at once. Once
 // The collector has rewritten the remote, the session's commits since the fork point are replayed onto it, skipping
 // Those the collector already ported, in a throwaway detached worktree: the checkout's tree may hold another session's
-// Edit, and a rebase or a push reads nothing but git. The push leaves from the checkout, naming the replayed commit,
-// Since the two share one object store. Only a conflict waits, and nothing moves. Once the push lands the checkout's
-// Branch is synced onto the commit it carried (`syncCheckout`), so the local branch never drifts behind the remote
-export const pushQueue = (cwd: string = REPOSITORY_ROOT): QueuePushOutcome => {
+// Edit, and a rebase or a push reads nothing but git. A replay that stops on a conflict is settled in that worktree
+// First (`carryReplayCommit`: the lockfile rebuilt, else one headless session); only a stop neither settles waits, and
+// Nothing moves. The push leaves from the checkout, naming the replayed commit, since the two share one object store.
+// Once the push lands the checkout's branch is synced onto the commit it carried (`syncCheckout`), so the local branch
+// Never drifts behind the remote
+export const pushQueue = async (cwd: string = REPOSITORY_ROOT): Promise<QueuePushOutcome> => {
   runGit(["fetch", "--quiet", "origin", QUEUE_BRANCH], cwd);
   const head = runGit(["rev-parse", "HEAD"], cwd).trim();
   if (checkIsAncestor(REMOTE_QUEUE_REF, head, cwd)) {
@@ -46,8 +48,11 @@ export const pushQueue = (cwd: string = REPOSITORY_ROOT): QueuePushOutcome => {
   // Apart from its directory, so it is removed on every path, a refused push included, or one is left per retry
   const replayCwd = mkdtempSync(join(tmpdir(), WORKTREE_PREFIX));
   runGit(["worktree", "add", "--quiet", "--detach", replayCwd, REMOTE_QUEUE_REF], cwd);
-  const result = getResult(() => {
-    if (!replayCommits.every((commit) => carryCommit(commit.sha, replayCwd))) return QueuePushOutcome.Waiting;
+  const result = await getResultAsync(async () => {
+    for (const commit of replayCommits) {
+      // oxlint-disable-next-line no-await-in-loop -- each commit is picked onto the tree the one before it left
+      if (!(await carryReplayCommit(commit.sha, replayCwd))) return QueuePushOutcome.Waiting;
+    }
 
     const replayed = runGit(["rev-parse", "HEAD"], replayCwd).trim();
     runGit(["push", "--quiet", "origin", `${replayed}:refs/heads/${QUEUE_BRANCH}`], cwd);

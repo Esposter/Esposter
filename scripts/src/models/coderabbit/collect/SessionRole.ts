@@ -1,6 +1,8 @@
 // What a headless session was launched to do. Every role is tiered in `SessionRoleModelMap`, which is a total
 // Record over this enum — so a role added here does not compile until it has been priced.
 export enum SessionRole {
+  // Resolving one commit of the session's queue that a push's replay stops on, onto the remote queue — settled work
+  Carry = "carry",
   // Answering a review's findings — authoring, under the reviewer's judgement
   Drain = "drain",
   // Resolving a merge of `main` into the window

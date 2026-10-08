@@ -33,12 +33,12 @@ sequenceDiagram
   C->>D: fast-forward develop to review/n
   C->>Q: rewrite the queue onto develop, lease on the sha it read
   Note over C: ported commits drop, the rest re-parent, a conflict is resolved here
-  S->>S: git pull --rebase, once git status is clean
-  Note over S: only what the sessions committed since replays
+  S->>S: pnpm ai:queue:push, once the collector has moved the remote
+  Note over S: only what the sessions committed since replays, a conflict settled in a throwaway worktree
   S->>Q: git push
 ```
 
-A queue push spends nothing: it starts no review, only a collector run that measures. The collector holds the standing authorisation for `develop` and the window branches and clears the gates from the remote on every run; the session's side of the loop — a unit committed by pathspec, the push through `pnpm ai:queue:push`, a finding answered by hand with the same trailer — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`). The push replays only the session's commits since the remote's fork point, skipping those the collector already ported, and the sync after it keeps an uncommitted edit by three-way merging it onto the pushed tip where the two touch different lines.
+A queue push spends nothing: it starts no review, only a collector run that measures. The collector holds the standing authorisation for `develop` and the window branches and clears the gates from the remote on every run; the session's side of the loop — a unit committed by pathspec, the push through `pnpm ai:queue:push`, a finding answered by hand with the same trailer — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`). The push replays only the session's commits since the remote's fork point, skipping those the collector already ported, and the sync after it keeps an uncommitted edit by three-way merging it onto the pushed tip where the two touch different lines. A replay that stops on a conflict is settled first in that throwaway worktree — its lockfile rebuilt, otherwise by one headless haiku session — and the push waits only when neither settles it, with nothing moved.
 
 ## Enforced by rulesets
 

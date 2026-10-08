@@ -166,10 +166,12 @@ export const DRAIN_SUBAGENT_CLAUSE =
 export const FINISHING_CHECKS_INSTRUCTION =
   "Run the repo's finishing checks over the paths you touched — `pnpm format` at the root, `pnpm typecheck` in the touched package, `pnpm lint:fix` from the repo root, and the touched test suites — and commit any repairs they produce as their own commit. Run them in the foreground and wait for each to finish: this session is one-shot, so a check started in the background is a check whose result no turn of yours will ever read.";
 // What each role runs on, one entry per role: a total record, so a role added to `SessionRole` does not compile
-// Until it has been priced, and a role moved to another family is this one line. They share a family today —
-// The reconciliation roles are verified by the tree they left rather than trusted, so a cheaper one would be
-// Defensible, and is deliberately not taken (`llm-delegation` skill).
+// Until it has been priced, and a role moved to another family is this one line. The reconciliation roles share
+// The opus family: they are verified by the tree they left rather than trusted, so a cheaper one would be
+// Defensible, and is deliberately not taken (`llm-delegation` skill). The carry role is haiku because its work is
+// Settled before its session starts: the rules a conflict is merged by are written into its prompt.
 export const SessionRoleModelMap: Record<SessionRole, SessionModel> = {
+  [SessionRole.Carry]: SessionModel.Haiku,
   [SessionRole.Drain]: SessionModel.Opus,
   [SessionRole.Fold]: SessionModel.Opus,
   [SessionRole.Repair]: SessionModel.Opus,
