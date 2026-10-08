@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // One entry of a section as its codex table lists it: the table's id for the entry, and the text id of its name, which
-// the world's own chunk of each language holds
+// The world's own chunk of each language holds
 export interface ArchiveEntry {
   id: number;
   nameTextId: string;

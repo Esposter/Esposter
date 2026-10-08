@@ -15,7 +15,7 @@ const getItemArchiveSection = (category: ItemCategory): ArchiveSection | undefin
 // Met and stays open, so opening one already held changes nothing. The progress given is left as it was
 export const openArchiveEntries = (progress: ArchiveProgress, items: readonly InventoryItem[]): ArchiveProgress => {
   const openedIdsMap = new Map<ArchiveSection, Set<number>>(
-    [...progress].map(([section, openedIds]) => [section, new Set(openedIds)]),
+    Array.from(progress, ([section, openedIds]): [ArchiveSection, Set<number>] => [section, new Set(openedIds)]),
   );
   for (const { definition } of items) {
     const section = getItemArchiveSection(definition.category);
