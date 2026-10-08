@@ -24,6 +24,8 @@ defineSlots<{
   health?: () => VNode;
   // The deployed team down the right side
   party?: () => VNode;
+  // The prompts of what the character can act on, beside the centre
+  prompts?: () => VNode;
   // The tracked quest, under the minimap
   quest?: () => VNode;
   // The skill and burst buttons, at the bottom right
@@ -54,6 +56,7 @@ const isTouch = useMediaQuery("(pointer: coarse)");
     <div class="health"><slot name="health" /></div>
     <div class="skills"><slot name="skills" /></div>
     <slot name="stamina" />
+    <slot name="prompts" />
   </GameScreen>
 </template>
 

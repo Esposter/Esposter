@@ -2,13 +2,17 @@
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { Talk } from "#src/models/dialogue/Talk";
+import type { Enemy } from "#src/models/enemy/Enemy";
+import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { HudFrame } from "#src/models/hud/HudFrame";
+import type { Interactable } from "#src/models/interaction/Interactable";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { WorldCameraPose } from "#src/models/world/WorldCameraPose";
+import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext } from "@tresjs/core";
 import type { QualityTier } from "genshin-engine";
@@ -22,6 +26,7 @@ import HudParty from "#src/components/Hud/Party/Index.vue";
 import HudQuest from "#src/components/Hud/Quest/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
 import HudStamina from "#src/components/Hud/Stamina/Index.vue";
+import InteractionPrompts from "#src/components/Interaction/Prompts/Index.vue";
 import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MenuScreen from "#src/components/Menu/Screen/Index.vue";
@@ -30,6 +35,7 @@ import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
+import { useInteraction } from "#src/composables/useInteraction";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -38,7 +44,10 @@ import { createCharacter } from "#src/services/character/createCharacter";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
-import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
+import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
+import { placeEnemyDrops } from "#src/services/interaction/placeEnemyDrops";
+import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
+import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
@@ -49,6 +58,7 @@ import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
 import { InitialBannerKindWishPityMap } from "#src/services/wish/InitialBannerKindWishPityMap";
+import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
 import { getResultAsync } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
@@ -63,6 +73,8 @@ import {
   QualityTierSettingsMap,
   STAMINA_MAX,
 } from "genshin-engine";
+import { InteractionKind } from "genshin-interface";
+import { GameTextKey } from "genshin-text";
 import { Euler, Group, MathUtils, PCFShadowMap, Vector3 } from "three";
 import { unref } from "vue";
 
@@ -213,6 +225,51 @@ const landmarkCollider = createLandmarkCollider();
 // What the character on the field is drawn on, which the controller moves and the scene places among everything in the
 // World
 const characterBody = new Group();
+// The drops lying in the world, which each defeated enemy's are placed among, and how many drops the page has placed,
+// Which numbers the next ones
+const worldDrops = shallowRef<WorldDrop[]>([]);
+let placedDropCount = 0;
+const windrise = useTemplateRef<InstanceType<typeof WorldWindrise>>("windrise");
+// Each talk the quests in progress hold by its id, which a resident's talk is begun from
+const talkMap = new Map(quests.flatMap(({ talks }) => talks.map((questTalk) => [questTalk.id, questTalk] as const)));
+// What the character can act on in the world: each drop, named by its item, and each resident of the regions in reach
+// Whose talk the world holds, named by its text. Each stands on the ground beneath its point
+const interactables = computed<Interactable[]>(() => {
+  const drops = worldDrops.value.map(({ id, itemId, position: { x, z } }) => ({
+    id,
+    kind: InteractionKind.PickUp,
+    name: itemId === MORA_ITEM_ID ? gameText[GameTextKey.Mora] : getItemDefinition(itemId, gameText).name,
+    position: { x, y: getWorldHeight(x, z), z },
+  }));
+  const residents = [...(windrise.value?.regionDataMap.values() ?? [])]
+    .flatMap(({ residents: regionResidents }) => regionResidents)
+    .filter(({ talkId }) => talkMap.has(talkId))
+    .map(({ nameTextId, position: { x, z }, talkId }) => ({
+      id: talkId,
+      kind: InteractionKind.Talk,
+      name: questTextMap[nameTextId] ?? "",
+      position: { x, y: getWorldHeight(x, z), z },
+    }));
+  return [...drops, ...residents];
+});
+const { interactionPrompts, readInteraction } = useInteraction(() => interactables.value, characterBody);
+// A defeated enemy's drops lie where it fell, numbered on from the drops placed before them
+const placeWorldDrops = (enemy: Enemy, enemyDrops: EnemyDrops) => {
+  const drops = placeEnemyDrops(enemy, enemyDrops, placedDropCount);
+  placedDropCount += drops.length;
+  worldDrops.value = [...worldDrops.value, ...drops];
+};
+// A pick up takes the drop's Mora or item into the wallet or the bag, and what the bag has no room for stays on the
+// Ground as a smaller drop
+const pickUpWorldDrop = (worldDrop: WorldDrop) => {
+  const pickUp = pickUpDroppedItem(worldDrop, inventory.value, wallet.value, gameText);
+  inventory.value = pickUp.inventory;
+  wallet.value = pickUp.wallet;
+  worldDrops.value =
+    pickUp.overflow > 0
+      ? worldDrops.value.map((drop) => (drop === worldDrop ? { ...drop, count: pickUp.overflow } : drop))
+      : worldDrops.value.filter((drop) => drop !== worldDrop);
+};
 // Every landmark a jump lands at, which the map and the minimap draw
 const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl);
 const character = useTemplateRef("character");
@@ -302,6 +359,15 @@ defineExpose({ jumpTo, readCameraPosition });
             inputState.pressedActions.has(InputAction.QuestNavigation)
           )
             trackedQuestId = trackerQuest.id;
+          if (!isPaused && screenKind === ScreenKind.World) {
+            const interactable = readInteraction(inputState, context.delta);
+            const worldDrop = worldDrops.find(({ id }) => id === interactable?.id);
+            if (interactable?.kind === InteractionKind.PickUp && worldDrop) pickUpWorldDrop(worldDrop);
+            else if (interactable?.kind === InteractionKind.Talk) {
+              talk = talkMap.get(interactable.id);
+              screenKind = ScreenKind.Dialogue;
+            }
+          }
         }
       "
       @error="emit('ready')"
@@ -335,6 +401,7 @@ defineExpose({ jumpTo, readCameraPosition });
         />
       </template>
       <WorldWindrise
+        ref="windrise"
         :character-body="cameraPose || witness || !locomotion ? undefined : characterBody"
         :character-id="getActiveCharacterId(party)"
         :character-locomotion="locomotion"
@@ -342,12 +409,14 @@ defineExpose({ jumpTo, readCameraPosition });
         :create-terrain-worker
         :held-minutes
         :is-held="screenBehaviour.isHeld || undefined"
+        :interactables
         :is-tuning="Boolean(isTuning)"
         :landmark-collider
         :origin
         :quality-tier
         :quest-target-id
         :region-data-base-url
+        @defeat="(enemy, enemyDrops) => placeWorldDrops(enemy, enemyDrops)"
         @ready="emit('ready')"
       />
     </TresCanvas>
@@ -388,6 +457,9 @@ defineExpose({ jumpTo, readCameraPosition });
       </template>
       <template #stamina>
         <HudStamina :frame="hudFrame" :game-text :max-stamina="STAMINA_MAX" />
+      </template>
+      <template #prompts>
+        <InteractionPrompts :interaction-prompts />
       </template>
     </HudScreen>
     <MenuScreen v-model:screen-kind="screenKind" :game-text @quit="emit('quit')">

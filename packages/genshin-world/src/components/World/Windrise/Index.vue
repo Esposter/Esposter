@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { Enemy } from "#src/models/enemy/Enemy";
+import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
+import type { Interactable } from "#src/models/interaction/Interactable";
 import type { LandmarkCollider, Locomotion, QualityTier } from "genshin-engine";
 import type { Object3D, Vector3 } from "three";
 
@@ -7,6 +10,7 @@ import QuestBeam from "#src/components/Quest/Beam/Index.vue";
 import WorldCharacterPlaceholder from "#src/components/World/CharacterPlaceholder/Index.vue";
 import WorldEnemies from "#src/components/World/Enemies/Index.vue";
 import WorldGrass from "#src/components/World/Grass/Index.vue";
+import WorldInteractables from "#src/components/World/Interactables/Index.vue";
 import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
 import WorldTerrain from "#src/components/World/Terrain/Index.vue";
 import WorldWater from "#src/components/World/Water/Index.vue";
@@ -86,6 +90,8 @@ interface Props {
   createTerrainWorker: () => Worker;
   // The game's minute of the day the clock is held at, in place of its running from the region's start
   heldMinutes?: number;
+  // The drops and the residents in the world, each a row of the prompts and drawn as a stand-in
+  interactables: Interactable[];
   // Whether a screen over the world holds its clock, as the game's menus pause its time
   isHeld?: true;
   // Whether the development tuning panel is shown, which the app decides
@@ -108,6 +114,7 @@ const {
   characterPackBaseUrl,
   createTerrainWorker,
   heldMinutes,
+  interactables,
   isHeld,
   isTuning,
   landmarkCollider,
@@ -116,7 +123,7 @@ const {
   questTargetId,
   regionDataBaseUrl,
 } = defineProps<Props>();
-const emit = defineEmits<{ ready: [] }>();
+const emit = defineEmits<{ defeat: [enemy: Enemy, enemyDrops: EnemyDrops]; ready: [] }>();
 // The witness render's parts, drawn in place of ours of each family it names when the parity page provides them, beside
 // Ours rather than in the floating origin's group, since the page's tools find the camera among their siblings and stay
 // Within reach of the origin
@@ -233,6 +240,8 @@ if (isTuning)
     windUniforms,
   });
 
+// The regions' data, which the world screen reads the residents of the regions in reach from
+defineExpose({ regionDataMap });
 onUnmounted(() => {
   rampTexture.dispose();
   gradeLutTexture.dispose();
@@ -304,7 +313,17 @@ onUnmounted(() => {
       :wind-uniforms
     />
     <!-- Enemies wander where the references show none, so a witness render, judged against them, draws none -->
-    <WorldEnemies v-if="!witness" :is-held :light-uniforms :origin :ramp-texture :region-data-map />
+    <WorldEnemies
+      v-if="!witness"
+      :is-held
+      :light-uniforms
+      :origin
+      :ramp-texture
+      :region-data-map
+      @defeat="(enemy, enemyDrops) => emit('defeat', enemy, enemyDrops)"
+    />
+    <!-- The drops and the residents in the world are stood in as well, which a witness render draws none of either -->
+    <WorldInteractables v-if="!witness" :interactables :light-uniforms :ramp-texture />
     <QuestBeam v-if="questTargetPosition" :origin :position="questTargetPosition" />
     <!-- The character on the field, on the controller's body -->
     <primitive v-if="characterBody" :object="characterBody">
