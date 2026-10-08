@@ -8,9 +8,9 @@ export interface GcgDuel {
   actingSideIndex: number;
   firstSideIndex: number;
   nextFirstSideIndex: number;
-  outcome: GcgOutcome | undefined;
+  outcome?: GcgOutcome;
   phase: GcgPhase;
   round: number;
   sides: [GcgSideState, GcgSideState];
-  winnerSideIndex: number | undefined;
+  winnerSideIndex?: number;
 }

@@ -28,7 +28,7 @@ describe(payGcgCost, () => {
     const side = createSideState([Element.Pyro, GcgDieFace.Omni, Element.Hydro, Element.Cryo]);
     const costs: GcgCost[] = [{ count: 2, element: Element.Pyro, kind: GcgCostKind.Dice }];
 
-    expect({ isPaid: payGcgCost(side, MATCHING_ELEMENT, costs, [0, 1]), dice: side.dice }).toStrictEqual({
+    expect({ dice: side.dice, isPaid: payGcgCost(side, MATCHING_ELEMENT, costs, [0, 1]) }).toStrictEqual({
       dice: [Element.Hydro, Element.Cryo],
       isPaid: true,
     });
@@ -43,7 +43,7 @@ describe(payGcgCost, () => {
       { count: 1, kind: GcgCostKind.Unaligned },
     ];
 
-    expect({ isPaid: payGcgCost(side, MATCHING_ELEMENT, costs, [0, 1]), dice: side.dice }).toStrictEqual({
+    expect({ dice: side.dice, isPaid: payGcgCost(side, MATCHING_ELEMENT, costs, [0, 1]) }).toStrictEqual({
       dice: [Element.Geo],
       isPaid: true,
     });
@@ -55,7 +55,7 @@ describe(payGcgCost, () => {
     const side = createSideState([Element.Hydro, Element.Cryo]);
     const costs: GcgCost[] = [{ count: 1, element: Element.Pyro, kind: GcgCostKind.Dice }];
 
-    expect({ isPaid: payGcgCost(side, MATCHING_ELEMENT, costs, [0]), dice: side.dice }).toStrictEqual({
+    expect({ dice: side.dice, isPaid: payGcgCost(side, MATCHING_ELEMENT, costs, [0]) }).toStrictEqual({
       dice: [Element.Hydro, Element.Cryo],
       isPaid: false,
     });

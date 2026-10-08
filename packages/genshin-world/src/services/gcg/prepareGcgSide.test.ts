@@ -13,7 +13,7 @@ describe(prepareGcgSide, () => {
   const CARD_COUNT = 12;
   const STARTING_HAND_COUNT = 5;
   const deck: GcgDeck = {
-    cardIds: Array.from({ length: CARD_COUNT }, (_, index) => index + 1),
+    cardIds: Array.from({ length: CARD_COUNT }, (_value, index) => index + 1),
     characters: [
       { element: Element.Pyro, hp: 10, id: 1, maxEnergy: 3, skills: [] },
       { element: Element.Hydro, hp: 10, id: 2, maxEnergy: 3, skills: [] },

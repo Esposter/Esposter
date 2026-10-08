@@ -2,7 +2,7 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
-import { isGcgIndexSelection } from "#src/services/gcg/isGcgIndexSelection";
+import { checkIsGcgIndexSelection } from "#src/services/gcg/checkIsGcgIndexSelection";
 import { shuffleGcgCards } from "#src/services/gcg/shuffleGcgCards";
 import { startGcgRound } from "#src/services/gcg/startGcgRound";
 import { takeOne } from "@esposter/shared";
@@ -22,11 +22,12 @@ export const prepareGcgSide = (
   const activeCharacter = side.characters.at(activeIndex);
   if (side.hasPrepared) return GcgActionResult.WrongPhase;
   else if (!activeCharacter || activeCharacter.hp <= 0) return GcgActionResult.Unavailable;
-  else if (!isGcgIndexSelection(switchedHandIndices, side.hand.length)) return GcgActionResult.Unavailable;
-  const switchedCards = side.hand.filter((_, index) => switchedHandIndices.includes(index));
-  side.hand = side.hand.filter((_, index) => !switchedHandIndices.includes(index));
+  else if (!checkIsGcgIndexSelection(switchedHandIndices, side.hand.length)) return GcgActionResult.Unavailable;
+  const switchedCards = side.hand.filter((_card, index) => switchedHandIndices.includes(index));
+  side.hand = side.hand.filter((_card, index) => !switchedHandIndices.includes(index));
   side.drawPile = shuffleGcgCards([...side.drawPile, ...switchedCards], random);
-  side.hand.push(...side.drawPile.splice(0, switchedCards.length));
+  side.hand.push(...side.drawPile.slice(0, switchedCards.length));
+  side.drawPile = side.drawPile.toSpliced(0, switchedCards.length);
   side.activeIndex = activeIndex;
   side.hasPrepared = true;
   if (duel.sides.every((preparedSide) => preparedSide.hasPrepared)) startGcgRound(duel, random);

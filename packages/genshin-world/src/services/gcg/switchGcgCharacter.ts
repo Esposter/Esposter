@@ -2,8 +2,8 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
-import { GCG_SWITCH_DICE_COUNT } from "#src/services/gcg/constants";
 import { checkGcgActingSide } from "#src/services/gcg/checkGcgActingSide";
+import { GCG_SWITCH_DICE_COUNT } from "#src/services/gcg/constants";
 import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
 import { payGcgCost } from "#src/services/gcg/payGcgCost";
 import { takeOne } from "@esposter/shared";

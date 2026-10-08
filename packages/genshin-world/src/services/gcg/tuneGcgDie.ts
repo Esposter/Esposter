@@ -2,7 +2,7 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { checkGcgActingSide } from "#src/services/gcg/checkGcgActingSide";
-import { isGcgIndexSelection } from "#src/services/gcg/isGcgIndexSelection";
+import { checkIsGcgIndexSelection } from "#src/services/gcg/checkIsGcgIndexSelection";
 import { takeOne } from "@esposter/shared";
 
 // A fast action: the side discards a card from its hand to turn one of its dice into its active character's element. The
@@ -14,11 +14,11 @@ export const tuneGcgDie = (duel: GcgDuel, sideIndex: number, cardIndex: number, 
   const active = side.characters.at(side.activeIndex);
   if (
     !active ||
-    !isGcgIndexSelection([cardIndex], side.hand.length) ||
-    !isGcgIndexSelection([dieIndex], side.dice.length)
+    !checkIsGcgIndexSelection([cardIndex], side.hand.length) ||
+    !checkIsGcgIndexSelection([dieIndex], side.dice.length)
   )
     return GcgActionResult.Unavailable;
-  side.hand = side.hand.filter((_, index) => index !== cardIndex);
+  side.hand = side.hand.filter((_card, index) => index !== cardIndex);
   side.dice[dieIndex] = active.character.element;
   return GcgActionResult.Done;
 };

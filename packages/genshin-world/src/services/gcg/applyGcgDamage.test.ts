@@ -119,10 +119,10 @@ describe(applyGcgDamage, () => {
     const shieldAfterPiercing = target.shield;
     applyGcgDamage(duel, 0, { damageType: GcgDamageKind.Physical, value: SHIELD_POINTS + 1 }, rule);
 
-    expect({ hp: target.hp, shieldAfterPiercing, shieldAfterPhysical: target.shield }).toStrictEqual({
+    expect({ hp: target.hp, shieldAfterPhysical: target.shield, shieldAfterPiercing }).toStrictEqual({
       hp: FULL_HP - PYRO_VALUE - 1,
-      shieldAfterPiercing: SHIELD_POINTS,
       shieldAfterPhysical: 0,
+      shieldAfterPiercing: SHIELD_POINTS,
     });
   });
 

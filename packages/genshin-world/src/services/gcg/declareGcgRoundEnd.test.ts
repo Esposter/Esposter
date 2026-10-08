@@ -7,10 +7,10 @@ import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgOutcome } from "#src/models/gcg/GcgOutcome";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
-import { createSeededRandom } from "genshin-engine";
-import { declareGcgRoundEnd } from "#src/services/gcg/declareGcgRoundEnd";
 import { GCG_ROUND_LIMIT } from "#src/services/gcg/constants";
+import { declareGcgRoundEnd } from "#src/services/gcg/declareGcgRoundEnd";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
+import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const createCharacterState = (): GcgCharacterState => ({
