@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import type { Character } from "#src/models/character/Character";
+import type { Inventory } from "#src/models/inventory/Inventory";
+import type { Wallet } from "#src/models/inventory/Wallet";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
+import type { Banner } from "#src/models/wish/Banner";
 import type { WorldCameraPose } from "#src/models/world/WorldCameraPose";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext } from "@tresjs/core";
@@ -12,9 +15,11 @@ import type { GameText } from "genshin-text";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
+import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MenuScreen from "#src/components/Menu/Screen/Index.vue";
 import QuestScreen from "#src/components/Quest/Screen/Index.vue";
+import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
@@ -22,6 +27,7 @@ import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
+import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
@@ -30,6 +36,7 @@ import { switchPartyMember } from "#src/services/party/switchPartyMember";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
+import { InitialBannerKindWishPityMap } from "#src/services/wish/InitialBannerKindWishPityMap";
 import { TresCanvas } from "@tresjs/core";
 import { useEventListener, useRafFn } from "@vueuse/core";
 import {
@@ -90,6 +97,13 @@ const screenKind = ref(ScreenKind.World);
 // The player's characters and their party: the Traveler alone, as a new player's, on the field
 const characters: Character[] = [createCharacter(TRAVELER_CHARACTER_ID)];
 const party = reactive(createParty([TRAVELER_CHARACTER_ID]));
+// The player's bag, wallet, wish counters and characters' copies, holding nothing as a new player's do until the world
+// Gives them something, and the banners the world offers, none until it can name what they draw
+const inventory = ref<Inventory>(EMPTY_INVENTORY);
+const wallet = ref<Wallet>(EMPTY_WALLET);
+const wishPityMap = ref(InitialBannerKindWishPityMap);
+const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(new Map());
+const banners: Banner[] = [];
 // The quests in progress, how far each has come, their words and the one navigated to. Nothing starts a quest yet, so
 // The quest screen opens empty
 const quests: Quest[] = [];
@@ -294,6 +308,20 @@ defineExpose({ jumpTo, readCameraPosition });
           :characters
           :game-text
           :max-stamina="STAMINA_MAX"
+          @close="screenKind = ScreenKind.World"
+        />
+      </template>
+      <template #[ScreenKind.Inventory]>
+        <InventoryScreen :game-text :inventory :wallet @close="screenKind = ScreenKind.World" />
+      </template>
+      <template #[ScreenKind.Wish]>
+        <WishScreen
+          v-model:character-copy-count-map="characterCopyCountMap"
+          v-model:inventory="inventory"
+          v-model:pity-map="wishPityMap"
+          v-model:wallet="wallet"
+          :banners
+          :game-text
           @close="screenKind = ScreenKind.World"
         />
       </template>
