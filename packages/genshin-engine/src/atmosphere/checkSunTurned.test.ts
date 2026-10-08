@@ -2,13 +2,13 @@ import { checkSunTurned } from "#src/atmosphere/checkSunTurned";
 import { MathUtils, Vector3 } from "three";
 import { describe, expect, test } from "vitest";
 
-const DRAWN_DIRECTION = new Vector3(0, 1, 0);
-
 // A unit direction turned this many degrees about the z axis from the drawn one
 const getDirectionAt = (degrees: number): Vector3 =>
   new Vector3(Math.sin(MathUtils.degToRad(degrees)), Math.cos(MathUtils.degToRad(degrees)), 0);
 
 describe(checkSunTurned, () => {
+  const DRAWN_DIRECTION = new Vector3(0, 1, 0);
+
   test("keeps the drawn direction while the sun has not turned past the threshold", () => {
     expect.hasAssertions();
 

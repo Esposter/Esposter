@@ -1,9 +1,9 @@
 import { writeTerrainRingIndices } from "#src/terrain/writeTerrainRingIndices";
 import { describe, expect, test } from "vitest";
 
-const VERTEX_COUNT = 4;
-
 describe(writeTerrainRingIndices, () => {
+  const VERTEX_COUNT = 4;
+
   test("numbers each drawn tile's indices from its place in the ring", () => {
     expect.hasAssertions();
 

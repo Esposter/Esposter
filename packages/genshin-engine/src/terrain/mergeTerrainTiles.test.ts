@@ -4,8 +4,6 @@ import { getTerrainTileKey } from "#src/terrain/getTerrainTileKey";
 import { mergeTerrainTiles } from "#src/terrain/mergeTerrainTiles";
 import { describe, expect, test } from "vitest";
 
-const FINEST_TILE_SIZE = 16;
-
 // A tile of one vertex, its positions at the tile's corner
 const createTerrainTile = (column: number): TerrainTile => ({
   coarseColors: new Float32Array([0.1, 0.2, 0.3]),
@@ -18,6 +16,8 @@ const createTerrainTile = (column: number): TerrainTile => ({
 });
 
 describe(mergeTerrainTiles, () => {
+  const FINEST_TILE_SIZE = 16;
+
   test("moves each tile's positions to its place and keeps its coarse level", () => {
     expect.hasAssertions();
 
