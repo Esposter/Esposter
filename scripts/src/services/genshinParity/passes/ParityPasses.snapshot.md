@@ -69,4 +69,4 @@ the change that moved it, as a bench's report is committed.
 | Layout | Paving row up | 0 | 0.0200 | m | yes |
 | Layout | Ground row across | 0 | 0.0200 | m | yes |
 | Layout | Ground row up | 0 | 0.0200 | m | yes |
-| Camera | windrise-statue-day | 14.7978 | 2 | px | no |
+| Camera | windrise-statue-day | 7.0178 | 2 | px | no |
