@@ -16,8 +16,10 @@ describe(getCharacterAttributeLines, () => {
       {
         artifacts: [],
         ascension: 6,
+        constellationCount: 0,
         id: TRAVELER_ID,
         level: 90,
+        stellaFortunaCount: 0,
         talentLevels: {
           [CombatTalent.ElementalBurst]: 1,
           [CombatTalent.ElementalSkill]: 1,

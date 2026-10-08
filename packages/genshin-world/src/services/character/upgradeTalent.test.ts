@@ -12,8 +12,10 @@ import { describe, expect, test } from "vitest";
 const CHARACTER: Character = {
   artifacts: [],
   ascension: 2,
+  constellationCount: 0,
   id: 1,
   level: 20,
+  stellaFortunaCount: 0,
   talentLevels: { [CombatTalent.ElementalBurst]: 1, [CombatTalent.ElementalSkill]: 1, [CombatTalent.NormalAttack]: 1 },
   weapon: { ascension: 0, experience: 0, id: 1, level: 1, refinement: 1 },
 };
