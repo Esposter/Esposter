@@ -4,11 +4,13 @@ import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { RegionData } from "#src/models/world/RegionData";
 import type { GroundPoint, LightUniforms } from "genshin-engine";
-import type { DataTexture } from "three";
+import type { DataTexture, Scene } from "three";
 
 import { EnemyEvent } from "#src/models/enemy/EnemyEvent";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { advanceElementalState } from "#src/services/combat/aura/advanceElementalState";
+import { computeEnemySightColor } from "#src/services/elementalSight/computeEnemySightColor";
+import { createSightProxy } from "#src/services/elementalSight/createSightProxy";
 import { computeEnemyDrops } from "#src/services/enemy/computeEnemyDrops";
 import { computeEnemyRespawnTime } from "#src/services/enemy/computeEnemyRespawnTime";
 import {
@@ -51,13 +53,16 @@ interface Props {
   lightUniforms: LightUniforms;
   rampTexture: DataTexture;
   regionDataMap: ReadonlyMap<string, RegionData>;
+  // The scene the sight's mask is drawn from, which each enemy's stand-in is added to, lit in its element's colour
+  sightScene: Scene;
   // The point the enemies target, the character's feet, which none is given while no character stands in the world
   target?: GroundPoint;
   // The World Level the camps spawn at, which a change of it spawns every camp anew at
   worldLevel: number;
 }
 
-const { enemyMap, isHeld, lightUniforms, rampTexture, regionDataMap, target, worldLevel } = defineProps<Props>();
+const { enemyMap, isHeld, lightUniforms, rampTexture, regionDataMap, sightScene, target, worldLevel } =
+  defineProps<Props>();
 // A strike for combat to land on the active character, and a defeated enemy's drops for the bag and the party
 const emit = defineEmits<{ defeat: [enemy: Enemy, enemyDrops: EnemyDrops]; strike: [enemy: Enemy] }>();
 const { onBeforeRender } = useLoop();
@@ -136,20 +141,27 @@ const hitFlashMesh = new InstancedMesh(
   ENEMY_CAPACITY,
 );
 hitFlashMesh.frustumCulled = false;
+// The sight's stand-in of the capsules, drawn from the same matrices and lit in each enemy's colour under the sight
+const sightProxy = createSightProxy(enemyMesh);
+sightScene.add(sightProxy);
 const color = new Color();
+const sightColor = new Color();
 const matrix = new Matrix4();
 const point = new Vector3();
 const rotation = new Quaternion();
 const scale = new Vector3(1, 1, 1);
 const up = new Vector3(0, 1, 0);
 // The tint is written for every instance up front, so the material is built reading it
-for (let index = 0; index < ENEMY_CAPACITY; index += 1) enemyMesh.setColorAt(index, color);
+for (let index = 0; index < ENEMY_CAPACITY; index += 1) {
+  enemyMesh.setColorAt(index, color);
+  sightProxy.setColorAt(index, sightColor);
+}
 
 onBeforeRender(({ delta }) => {
   if (!isHeld) fixedStepLoop.advance(delta);
   let count = 0;
   let flashCount = 0;
-  for (const { heading, hitSeconds, position, state } of enemyMap.values()) {
+  for (const { elementalState, enemyKindId, heading, hitSeconds, position, state } of enemyMap.values()) {
     if (count === ENEMY_CAPACITY) break;
     point.set(position.x, getWorldHeight(position.x, position.z) + ENEMY_CAPSULE_HEIGHT / 2, position.z);
     enemyMesh.setMatrixAt(count, matrix.compose(point, rotation.setFromAxisAngle(up, heading), scale));
@@ -157,6 +169,7 @@ onBeforeRender(({ delta }) => {
       count,
       color.setHex(hitSeconds < ENEMY_HIT_TINT_SECONDS ? HIT_TINT_COLOR : EnemyStateColorMap[state]),
     );
+    sightProxy.setColorAt(count, sightColor.set(computeEnemySightColor(elementalState, enemyKindId)));
     if (hitSeconds < ENEMY_HIT_FLASH_SECONDS) {
       hitFlashMesh.setMatrixAt(flashCount, matrix.makeTranslation(point.x, point.y, point.z));
       flashCount += 1;
@@ -164,13 +177,18 @@ onBeforeRender(({ delta }) => {
     count += 1;
   }
   enemyMesh.count = count;
+  sightProxy.count = count;
   hitFlashMesh.count = flashCount;
   enemyMesh.instanceMatrix.needsUpdate = true;
   if (enemyMesh.instanceColor) enemyMesh.instanceColor.needsUpdate = true;
+  if (sightProxy.instanceColor) sightProxy.instanceColor.needsUpdate = true;
   hitFlashMesh.instanceMatrix.needsUpdate = true;
 });
 
 onUnmounted(() => {
+  sightScene.remove(sightProxy);
+  sightProxy.material.dispose();
+  sightProxy.dispose();
   enemyMesh.geometry.dispose();
   enemyMesh.material.dispose();
   enemyMesh.dispose();
