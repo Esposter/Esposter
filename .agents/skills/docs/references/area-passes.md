@@ -4,12 +4,12 @@ Read when ideating, triaging, or sweeping a whole product area's documentation, 
 
 ## One area at a time
 
-Where fan-out is earned at all is the `model-delegation` skill's call. **Docs ideation and triage never earn it**, for two concrete reasons:
+Where fan-out is earned at all is the `llm-delegation` skill's call. **Docs ideation and triage never earn it**, for two concrete reasons:
 
 - **Triage needs one head.** Deciding implement/deferred/rejected across an area requires holding every idea in view at once and checking each against `deferred/`+`rejected/`. Split across agents, they duplicate ideas, re-argue decided ones, and produce inconsistent buckets.
 - **Conflicting writes.** Agents working one area touch the same `index.md`, `roadmap.md`, and `DocsSectionGroupsMap.ts`, so they clobber each other's edits.
 
-So ideation, triage, and the per-area pass run in the main session, **one product area at a time, to completion**. Research and verification — grepping code to confirm what a page claims — stay in the session too (the `model-delegation` skill, "Division of labor"). The one thing that may fan out, and only when the user asks for it, is edits to disjoint areas that share no index file; each agent then gets the area to finish, never a slice of one.
+So ideation, triage, and the per-area pass run in the main session, **one product area at a time, to completion**. Research and verification — grepping code to confirm what a page claims — stay in the session too (the `llm-delegation` skill, "In a session"), or a `haiku` agent's map when the area is too broad to grep. The one thing that may fan out is edits to disjoint areas that share no index file; each agent then gets the area to finish, never a slice of one.
 
 ## The per-area pass
 
