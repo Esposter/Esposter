@@ -29,9 +29,9 @@ export const LOOKUP_TOOLS: readonly string[] = ["Glob", "Grep", "Read", "WebFetc
 export const RESET_TOOLS: readonly string[] = ["Agent", "Edit", "NotebookEdit", "Write"];
 export const SHELL_TOOLS: readonly string[] = ["Bash", "PowerShell"];
 // The `export` and `cd` a session chains ahead of its command, each stripped as one leading segment
-export const LEADING_SEGMENT_REGEX: RegExp = /^\s*(?:export\s[^&;]*&&|cd\s[^&;]*&&|cd\s[^&;]*;)\s*/u;
+export const LEADING_SEGMENT_REGEX = /^\s*(?:export\s[^&;]*&&|cd\s[^&;]*&&|cd\s[^&;]*;)\s*/u;
 // The commands that only read, a whole first word each so `catalog` is not `cat`
-export const LOOKUP_COMMAND_REGEX: RegExp =
+export const LOOKUP_COMMAND_REGEX =
   /^\s*(?:cat|sed|grep|rg|find|ls|head|tail|awk|wc|python|node\s+-e|git\s+(?:show|log|diff)|gh\s+run\s+view)(?:\s|$)/u;
 // Every third lookup in a row, the chain a haiku agent should answer as one bounded question
 export const DELEGATION_NUDGE_EVERY = 3;

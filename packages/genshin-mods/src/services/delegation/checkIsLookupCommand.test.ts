@@ -14,7 +14,7 @@ describe(checkIsLookupCommand, () => {
   ])("counts %s as a lookup", (_description, command) => {
     expect.hasAssertions();
 
-    expect(checkIsLookupCommand(command)).toStrictEqual(true);
+    expect(checkIsLookupCommand(command)).toBe(true);
   });
 
   test.each([
@@ -27,6 +27,6 @@ describe(checkIsLookupCommand, () => {
   ])("does not count %s as a lookup", (_description, command) => {
     expect.hasAssertions();
 
-    expect(checkIsLookupCommand(command)).toStrictEqual(false);
+    expect(checkIsLookupCommand(command)).toBe(false);
   });
 });
