@@ -109,6 +109,8 @@ interface Props {
   questTargetId: string;
   // Where the app serves each region's data, fetched by id as the camera comes within reach
   regionDataBaseUrl: string;
+  // The World Level the camps spawn at, from the player's Adventure EXP and quests
+  worldLevel: number;
 }
 
 const {
@@ -127,6 +129,7 @@ const {
   qualityTier,
   questTargetId,
   regionDataBaseUrl,
+  worldLevel,
 } = defineProps<Props>();
 const emit = defineEmits<{ defeat: [enemy: Enemy, enemyDrops: EnemyDrops]; ready: []; strike: [enemy: Enemy] }>();
 // The witness render's parts, drawn in place of ours of each family it names when the parity page provides them, beside
@@ -330,6 +333,7 @@ onUnmounted(() => {
       :ramp-texture
       :region-data-map
       :target="characterBody?.position"
+      :world-level
       @defeat="(enemy, enemyDrops) => emit('defeat', enemy, enemyDrops)"
       @strike="(enemy) => emit('strike', enemy)"
     />

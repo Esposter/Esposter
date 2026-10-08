@@ -36,6 +36,7 @@ import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { useInteraction } from "#src/composables/useInteraction";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { computeAdventureRankStanding } from "#src/services/adventureRank/computeAdventureRankStanding";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
@@ -205,6 +206,9 @@ const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(new Map())
 // The quest screen opens empty
 const quests: Quest[] = [];
 const questProgressMap = new Map<string, QuestProgress>();
+// The World Level the camps spawn at, from the player's Adventure EXP and quests. No source adds Adventure EXP or
+// Completes a main quest yet, so the player stands at a new player's World Level 0
+const worldLevel = computeAdventureRankStanding(0, new Set<string>()).worldLevel;
 const questTextMap: Record<string, string> = {};
 const trackedQuestId = ref("");
 // The quest on the HUD's tracker, the one navigated to or with none the first in progress, which V navigates to, and the
@@ -468,6 +472,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :quality-tier
         :quest-target-id
         :region-data-base-url
+        :world-level
         @defeat="(enemy, enemyDrops) => placeWorldDrops(enemy, enemyDrops)"
         @ready="emit('ready')"
         @strike="(enemy) => strikeParty(enemy)"
