@@ -45,3 +45,5 @@ export const SETTINGS_RING_WIDTH = 1.9;
 // Joins a component's name to its fixture's variant in its approved image's name, in both packages' visual suites.
 // A file name, so not `ID_SEPARATOR`: a vertical bar is one of the characters Windows rejects in a path
 export const FIXTURE_VARIANT_SEPARATOR = "-";
+// The key the prompts' selected row is marked with, the game's default for Pick Up and Interact
+export const INTERACTION_KEY_LABEL = "F";
