@@ -1,9 +1,9 @@
 import type { GroundPoint } from "genshin-engine";
 
-import { isInsideRegionOutlines } from "#src/services/genshinAssets/fit/isInsideRegionOutlines";
+import { checkIsInsideRegionOutlines } from "#src/services/genshinAssets/fit/checkIsInsideRegionOutlines";
 import { describe, expect, test } from "vitest";
 
-describe(isInsideRegionOutlines, () => {
+describe(checkIsInsideRegionOutlines, () => {
   const SQUARE: GroundPoint[] = [
     { x: 0, z: 0 },
     { x: 10, z: 0 },
@@ -16,14 +16,14 @@ describe(isInsideRegionOutlines, () => {
     expect.hasAssertions();
 
     expect({
-      inside: isInsideRegionOutlines([SQUARE, OTHER_SQUARE], 25, 5),
-      outside: isInsideRegionOutlines([SQUARE, OTHER_SQUARE], 15, 5),
+      inside: checkIsInsideRegionOutlines([SQUARE, OTHER_SQUARE], 25, 5),
+      outside: checkIsInsideRegionOutlines([SQUARE, OTHER_SQUARE], 15, 5),
     }).toStrictEqual({ inside: true, outside: false });
   });
 
   test("holds every point of a region the catalogue gives no outline", () => {
     expect.hasAssertions();
 
-    expect(isInsideRegionOutlines([], 5000, -5000)).toBe(true);
+    expect(checkIsInsideRegionOutlines([], 5000, -5000)).toBe(true);
   });
 });

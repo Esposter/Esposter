@@ -1,9 +1,9 @@
 import type { GroundPoint } from "genshin-engine";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { checkIsInsideRegionOutlines } from "#src/services/genshinAssets/fit/checkIsInsideRegionOutlines";
 import { computeGroundBounds } from "#src/services/genshinAssets/fit/computeGroundBounds";
 import { fitGaussianHills } from "#src/services/genshinAssets/fit/fitGaussianHills";
-import { isInsideRegionOutlines } from "#src/services/genshinAssets/fit/isInsideRegionOutlines";
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
@@ -43,7 +43,7 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
     outline.length > 0 ? [outline] : [],
   );
   const getHeight = (x: number, z: number): number =>
-    isInsideRegionOutlines(outlines, x, z) ? getGameHeight(originX + x, originZ - z) - originY : Number.NaN;
+    checkIsInsideRegionOutlines(outlines, x, z) ? getGameHeight(originX + x, originZ - z) - originY : Number.NaN;
   const { errors, hills } = fitGaussianHills({
     bands: GROUND_ERROR_BANDS,
     center: [centre.x, centre.z],
