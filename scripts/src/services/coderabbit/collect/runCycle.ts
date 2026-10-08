@@ -8,6 +8,7 @@ import { WindowPullRequestState } from "#src/models/coderabbit/collect/WindowPul
 import { checkIsStackingAllowed } from "#src/services/coderabbit/collect/checkIsStackingAllowed";
 import { DEVELOP_BRANCH, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { drainWindow } from "#src/services/coderabbit/collect/drainWindow";
+import { getNewestMergedPullRequest } from "#src/services/coderabbit/collect/getNewestMergedPullRequest";
 import { getNewestWindowPullRequest } from "#src/services/coderabbit/collect/getNewestWindowPullRequest";
 import { getNextWindowNumber } from "#src/services/coderabbit/collect/getNextWindowNumber";
 import { getOpenedInLastHour } from "#src/services/coderabbit/collect/getOpenedInLastHour";
@@ -102,6 +103,31 @@ export const runCycle = async ({
       `pull request #${legacyPullRequest.number} from ${DEVELOP_BRANCH} to ${MAIN_BRANCH} was closed without merging — a person's pause`,
     );
 
+  // The newest merged pull request is the review the next cut answers, so its findings are drained again on every run
+  // until none is open. A drain that left one ended the run that merged it, so nothing above it may merge or open first
+  let reviewFixesSha = branchShas.reviewFixesSha;
+  const pendingPullRequest = getNewestMergedPullRequest([
+    ...windowHistory,
+    ...(legacyPullRequest ? [legacyPullRequest] : []),
+  ]);
+  const drainedBeforeWalk = pendingPullRequest === undefined ? [] : [pendingPullRequest];
+  if (pendingPullRequest !== undefined) {
+    const pending = await drainWindow({
+      collectorSha,
+      cwd,
+      developSha,
+      isDryRun,
+      mainSha,
+      pullRequest: pendingPullRequest,
+      queueSha,
+      reviewFixesSha,
+      viewerLogin,
+    });
+    if (pending.outcome)
+      return getOutcome(pending.outcome.kind, pending.outcome.reason, undefined, pending.outcome.targetSha);
+    reviewFixesSha = pending.reviewFixesSha;
+  }
+
   // Bottom up, the stack is walked: the bottom window merges and is drained once its review completes, a window above
   // An unmerged one waits, and a rate limit is settled wherever it refused a review
   const stack = orderWindowStack(openPullRequests);
@@ -111,7 +137,7 @@ export const runCycle = async ({
     developSha,
     isDryRun,
     queueSha,
-    reviewFixesSha: branchShas.reviewFixesSha,
+    reviewFixesSha,
     stack,
     viewerLogin,
   });
@@ -122,7 +148,7 @@ export const runCycle = async ({
       walked.retriggerDelaySeconds,
       walked.outcome.targetSha,
     );
-  const drainedPullRequests = [...walked.drainedPullRequests];
+  const drainedPullRequests = [...drainedBeforeWalk, ...walked.drainedPullRequests];
   // A named pull request is drained when no window is open, as the merged release was: its findings lead the next cut
   if (namedPullRequest !== undefined && stack.length === 0) {
     const currentShas = readBranchShas(cwd);

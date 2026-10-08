@@ -840,6 +840,38 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSha(`origin/${getWindowBranch(pullRequest)}`)).toBe(developSha);
   });
 
+  // A drain that left the newest merged window's findings open ended the run that merged it: the next run drains it again
+  // first, and nothing is cut over it while one is still open
+  test("holds the cut while the newest merged window's findings stay open", async () => {
+    expect.hasAssertions();
+
+    publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh([getWindowPullRequest(WindowPullRequestState.Merged)]);
+    const drainOutcome = { kind: CycleOutcomeKind.Idle, reason: "the drain could not start — the findings stay open" };
+    runDrainStep.mockResolvedValue({ outcome: drainOutcome, reviewFixesSha: undefined } satisfies DrainStepResult);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(runDrainStep).toHaveBeenCalledTimes(1);
+    expect(runDrainStep).toHaveBeenCalledWith(expect.objectContaining({ pullRequest }));
+    expect(outcome).toStrictEqual({ ...drainOutcome, retriggerDelaySeconds: undefined, targetSha: undefined });
+    expect(getPrCalls("create")).toHaveLength(0);
+  });
+
+  // The release from `develop` that a person merged by hand has its findings drained like a merged window's, before the
+  // first cut over `main`
+  test("drains the release from develop that a person merged before the first cut", async () => {
+    expect.hasAssertions();
+
+    publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh([], [], [], [], [], [{ number: pullRequest, state: WindowPullRequestState.Merged }]);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(runDrainStep).toHaveBeenCalledWith(expect.objectContaining({ pullRequest }));
+    expect(outcome.reason).toBe(getOpenedReason(1));
+  });
+
   // Its findings are drained after the merge, so a merge no session could follow ships them unread until the
   // Limit lifts: the probe's refusal leaves the window open
   test("leaves a reviewed window open when no session can start to drain it", async () => {
