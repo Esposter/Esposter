@@ -71,7 +71,7 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 | :------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
 | [Character controller](/docs/proposals/genshin/character-controller) | every number the body moves by, read for each body type off the game's clips, data and recordings                                 |
 | [Follow camera](/docs/proposals/genshin/follow-camera)               | the camera's numbers solved off recordings, its settings, and how far photo mode may go                                           |
-| [HUD](/docs/proposals/genshin/hud)                                   | the HUD's fitted places, Paimon's mark, the party, health and the skill and burst                                                 |
+| [HUD](/docs/proposals/genshin/hud)                                   | the HUD's fitted places, Paimon's mark, and the skill and burst buttons                                                           |
 | [Characters](/docs/proposals/genshin/characters)                     | the game's characters from HoYoverse's official models                                                                            |
 | [Party](/docs/proposals/genshin/party)                               | Party Setup on L, the HUD's party, a burst on a switch, the fall and Elemental Resonance                                          |
 | [Character screen](/docs/proposals/genshin/character-screen)         | the screen measured, the character in its middle, Details, the other tabs, levelling and ascending                                |
