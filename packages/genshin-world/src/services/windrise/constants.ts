@@ -1,6 +1,7 @@
 import type { GradeOptions, GrassRing, RampOptions, SkyKeyframe, TerrainOptions } from "genshin-engine";
 
 import ground from "#src/data/windrise/ground.json";
+import { WeatherKind } from "genshin-engine";
 import { Color, Vector2 } from "three";
 
 // The ground's quadtree: half-metre cells under the eye in tiles of sixteen metres, six levels out to a root tile of
@@ -58,6 +59,8 @@ export const WINDRISE_START_MINUTES = 900;
 // How far the sun's path leans south of overhead, in radians: its noon stands about sixty-four degrees high
 export const SUN_TILT = 0.45;
 // A fair-weather sky of scattered cumulus
+// Windrise's weather is clear, as its reference screenshots are, so a weather raises the sky over that alone
+export const WINDRISE_WEATHER = WeatherKind.Clear;
 export const CLOUD_COVERAGE = 0.42;
 // Mondstadt's wind: a steady breeze out of the west with gusts rolling across the meadows every half minute
 export const WIND_DIRECTION = new Vector2(0.94, 0.34).normalize();
