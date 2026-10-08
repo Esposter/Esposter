@@ -1,6 +1,6 @@
 import type { ExcelCityLevelupRow } from "#src/models/genshinAssets/statues/ExcelCityLevelupRow";
-import type { ExcelRewardRow } from "#src/models/genshinAssets/statues/ExcelRewardRow";
 
+import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import {
   MONDSTADT_CITY_ID,
@@ -15,9 +15,7 @@ const toJson = (value: unknown): string => `${JSON.stringify(value, undefined, 2
 // Mondstadt's Statue of The Seven levels, each row's reward joined from the reward table, written as one slice in the
 // World's generated folder. An unlisted reward is an error, since a level without its reward would level silently wrong
 export const writeStatueLevels = (): void => {
-  const rewardMap = new Map(
-    readExcelTable<ExcelRewardRow>("RewardExcelConfigData").map((reward) => [reward.rewardId, reward]),
-  );
+  const rewardMap = readRewardMap();
   const levels = readExcelTable<ExcelCityLevelupRow>("CityLevelupConfigData")
     .filter(({ cityId }) => cityId === MONDSTADT_CITY_ID)
     .toSorted((firstLevel, secondLevel) => firstLevel.level - secondLevel.level)

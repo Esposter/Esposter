@@ -1,11 +1,12 @@
-import type { StatueRegion } from "#src/models/statue/StatueRegion";
+import type { OfferingProgress } from "#src/models/offering/OfferingProgress";
+import type { StatueLevel } from "#src/models/statue/StatueLevel";
 
 import { MAXIMUM_STAMINA_CAP } from "#src/services/statue/constants";
 import { STAMINA_MAX } from "genshin-engine";
 
 // The party's maximum stamina: the controller's start, raised by the stamina each reached level of every region adds,
 // And never past the cap. A level is reached when the region's level is at or past it
-export const computeMaximumStamina = (regions: readonly StatueRegion[]): number => {
+export const computeMaximumStamina = (regions: readonly OfferingProgress<StatueLevel>[]): number => {
   const gainedStamina = regions.reduce(
     (total, { level, levels }) =>
       total +

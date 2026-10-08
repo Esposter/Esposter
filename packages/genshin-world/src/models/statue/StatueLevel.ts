@@ -1,22 +1,14 @@
-import type { StatueReward } from "#src/models/statue/StatueReward";
+import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
 
-import { statueRewardSchema } from "#src/models/statue/StatueReward";
+import { offeringLevelSchema } from "#src/models/offering/OfferingLevel";
 import { z } from "zod";
 
-// One level of a region's Statues of The Seven, from the game's level-up table: the Oculi it takes off the held count,
-// The items it pays, and the stamina it adds to the maximum. Level 1 takes no Oculi and is paid when the region starts
-export interface StatueLevel {
-  level: number;
-  oculusCount: number;
-  oculusItemId: number;
-  rewards: StatueReward[];
+// One level of a region's Statues of The Seven: an offering level whose items are Oculi, and the stamina it adds to the
+// Maximum. Level 1 takes no Oculi and is paid when the region starts
+export interface StatueLevel extends OfferingLevel {
   staminaShare: number;
 }
 
-export const statueLevelSchema = z.object({
-  level: z.int().positive(),
-  oculusCount: z.int().nonnegative(),
-  oculusItemId: z.int().nonnegative(),
-  rewards: z.array(statueRewardSchema),
+export const statueLevelSchema = offeringLevelSchema.extend({
   staminaShare: z.int().nonnegative(),
 }) satisfies z.ZodType<StatueLevel>;

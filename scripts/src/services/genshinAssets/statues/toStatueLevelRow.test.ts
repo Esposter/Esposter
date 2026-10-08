@@ -1,8 +1,8 @@
+import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 import type { ExcelCityLevelupRow } from "#src/models/genshinAssets/statues/ExcelCityLevelupRow";
-import type { ExcelRewardRow } from "#src/models/genshinAssets/statues/ExcelRewardRow";
 
 import { toStatueLevelRow } from "#src/services/genshinAssets/statues/toStatueLevelRow";
-import { describe, expect, it } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(toStatueLevelRow, () => {
   const ANEMOCULUS_ITEM_ID = 107_001;
@@ -13,7 +13,7 @@ describe(toStatueLevelRow, () => {
   const REWARD_ID = 210_314;
   const ZERO_REWARD_ITEM = { itemCount: 0, itemId: 0 };
 
-  it("should read the Oculi a level takes, its stamina and its reward's items, dropping the empty slots", () => {
+  test("should read the Oculi a level takes, its stamina and its reward's items, dropping the empty slots", () => {
     expect.hasAssertions();
 
     const levelRow: ExcelCityLevelupRow = {
@@ -33,15 +33,15 @@ describe(toStatueLevelRow, () => {
     };
 
     expect(toStatueLevelRow(levelRow, rewardRow)).toStrictEqual({
+      itemCount: 4,
+      itemId: ANEMOCULUS_ITEM_ID,
       level: LEVEL,
-      oculusCount: 4,
-      oculusItemId: ANEMOCULUS_ITEM_ID,
       rewards: [{ itemCount: ADVENTURE_EXP_COUNT, itemId: ADVENTURE_EXP_ITEM_ID }],
       staminaShare: STAMINA_SHARE,
     });
   });
 
-  it("should give no stamina to a level without an improve-stamina action", () => {
+  test("should give no stamina to a level without an improve-stamina action", () => {
     expect.hasAssertions();
 
     const levelRow: ExcelCityLevelupRow = {
