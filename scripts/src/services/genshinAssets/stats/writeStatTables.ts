@@ -1,4 +1,5 @@
 import type { ExcelCurveRow } from "#src/models/genshinAssets/stats/ExcelCurveRow";
+import type { ExcelWeaponLevelRow } from "#src/models/genshinAssets/stats/ExcelWeaponLevelRow";
 
 import { STATS_GENERATED_DIRECTORY } from "#src/services/genshinAssets/stats/constants";
 import { getArtifactMainAffixCurves } from "#src/services/genshinAssets/stats/getArtifactMainAffixCurves";
@@ -7,6 +8,7 @@ import { getCharacterDatas } from "#src/services/genshinAssets/stats/getCharacte
 import { getWeaponDatas } from "#src/services/genshinAssets/stats/getWeaponDatas";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { toGrowCurves } from "#src/services/genshinAssets/stats/toGrowCurves";
+import { toWeaponLevelRequiredExps } from "#src/services/genshinAssets/stats/toWeaponLevelRequiredExps";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -29,6 +31,9 @@ export const writeStatTables = (): string[] => {
     "weaponGrowCurves.json": toGrowCurves(
       readExcelTable<ExcelCurveRow>("WeaponCurveExcelConfigData"),
       new Set(weaponDatas.flatMap(({ growAttributes }) => growAttributes.map(({ curve }) => curve))),
+    ),
+    "weaponLevelRequiredExps.json": toWeaponLevelRequiredExps(
+      readExcelTable<ExcelWeaponLevelRow>("WeaponLevelExcelConfigData"),
     ),
     "weapons.json": weaponDatas,
   };

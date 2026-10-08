@@ -32,3 +32,5 @@ export const AssociationRegionIdMap: Readonly<Record<string, string>> = {
 export const PLAYABLE_AVATAR_USE_TYPE = "AVATAR_FORMAL";
 // The property a table writes in a slot holding nothing
 export const EMPTY_PROPERTY_TYPE = "FIGHT_PROP_NONE";
+// The item id a slot holding nothing names: an unused cost slot of a phase, and a weapon refined by a copy alone
+export const EMPTY_ITEM_ID = 0;
