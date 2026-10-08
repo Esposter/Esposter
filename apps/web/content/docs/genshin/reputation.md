@@ -31,7 +31,7 @@ flowchart TD
 ## Notes
 
 - **The weekly limit is three of each kind, across nations.** Bounties and requests are counted apart, and each kind's claims are counted from the weekly reset, Monday at the daily reset's hour, a claim at the reset counting toward the new week. The count is the bosses' weekly helper, moved to a shared `services/weekly` folder.
-- **A discount is 10% off, rounded to the nearest five Mora.** A price halfway between two fives goes to the lower, in the player's favour. The wiki's Reputation page did not answer when this was built (HTTP 402), so the tie reads the proposal's own wording.
+- **A discount is 10% off, rounded down to a multiple of five Mora.** The rounding is the player's favour, the five beneath the discounted price. The wiki's Reputation page did not answer when this was built (HTTP 402), so the reading follows the proposal's own wording and the [shops](/docs/proposals/genshin/shops) proposal's.
 - **The discount's shops are the function's text, not yet ids.** Which shops a discount covers is named in the function's text, and the shops' own ids are not joined yet. The discount is the [shops](/docs/genshin/shops) page's to apply once it has a screen.
 - **Not built.** The keeper placed in region data, requests run as world quests, a bounty's trail and its spawned target, the exploration thresholds, the discount applied to a shop's price, the Reputation screen, and Natlan's tribes and supply notices. The [proposal](/docs/proposals/genshin/reputation) keeps them.
 
@@ -40,7 +40,7 @@ flowchart TD
 | File                                                                                    | Role                                                                        |
 | :-------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
 | `packages/genshin-world/src/services/reputation/addReputationExp.ts`                    | The EXP carried up through each level's requirement, held at the last level |
-| `packages/genshin-world/src/services/reputation/computeReputationDiscountedPrice.ts`    | A price's 10% off, rounded to the nearest five Mora, a tie to the lower     |
+| `packages/genshin-world/src/services/reputation/computeReputationDiscountedPrice.ts`    | A price's 10% off, rounded down to a multiple of five Mora                  |
 | `packages/genshin-world/src/services/reputation/checkIsReputationWeeklyLimitReached.ts` | Whether a kind's claims this week have reached the limit across nations     |
 | `packages/genshin-world/src/services/reputation/readMondstadtReputation.ts`             | The generated slice, imported on demand and checked against its shape       |
 | `packages/genshin-world/src/services/reputation/constants.ts`                           | The discount, its rounding and the weekly claim limit                       |
