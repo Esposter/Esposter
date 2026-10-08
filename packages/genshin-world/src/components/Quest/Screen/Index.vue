@@ -92,7 +92,11 @@ useEventListener("keydown", (event) => {
       </div>
       <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">×</button>
     </div>
-    <div class="list" role="tabpanel">
+    <div
+      class="list"
+      :aria-label="gameText[category ? QuestCategoryGameTextKeyMap[category] : GameTextKey.Quests]"
+      role="tabpanel"
+    >
       <section v-for="{ categoryQuests, questCategory } of questGroups" :key="questCategory">
         <p class="heading" role="heading" aria-level="2">{{ gameText[QuestCategoryGameTextKeyMap[questCategory]] }}</p>
         <button
