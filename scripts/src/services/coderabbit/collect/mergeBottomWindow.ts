@@ -98,5 +98,17 @@ export const mergeBottomWindow = async ({
     reviewFixesSha,
     viewerLogin,
   });
-  return { outcome: drain.outcome, reviewFixesSha: drain.reviewFixesSha };
+  // A retarget that did not land holds the walk once the drain has run: the window above is still on this branch, which
+  // the next run retargets before it reads the stack, so nothing is merged or cut over it first
+  if (drain.outcome) return { outcome: drain.outcome, reviewFixesSha: drain.reviewFixesSha };
+  else if (next && !isRetargeted)
+    return {
+      outcome: {
+        kind: CycleOutcomeKind.Idle,
+        reason: `pull request #${next.number} could not be retargeted to ${MAIN_BRANCH} — the next run retargets it before it reads the stack`,
+      },
+      reviewFixesSha: drain.reviewFixesSha,
+      retriggerDelaySeconds: ATTEMPT_RETRY_DELAY_SECONDS,
+    };
+  return { reviewFixesSha: drain.reviewFixesSha };
 };

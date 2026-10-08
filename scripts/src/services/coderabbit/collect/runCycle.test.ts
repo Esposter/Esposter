@@ -807,6 +807,39 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome.reason).toBe(getOpenedReason(1));
   });
 
+  // The window above a merge is retargeted to `main` before the merged branch goes. When that retarget fails the run ends
+  // there, so nothing merges over a base that is not `main` yet, and the merged branch stays for the next run to retarget
+  test("ends the run without merging the window above when its retarget fails", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    publish(getWindowBranch(pullRequest), developSha);
+    const windowAbove = {
+      ...getWindowPullRequest(WindowPullRequestState.Open, pullRequest + 1),
+      baseRefName: getWindowBranch(pullRequest),
+    };
+    answerGh([...openPullRequests, windowAbove]);
+    const answer = runGh.getMockImplementation();
+    runGh.mockImplementation((args) => {
+      if (args[0] === "pr" && args[1] === "edit") throw new Error("the retarget was refused");
+      return answer?.(args) ?? "";
+    });
+    readCheckStatus.mockReturnValue(completedCheck);
+    runSession.mockResolvedValue({ isEnded: true, isStarted: true });
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: `pull request #${windowAbove.number} could not be retargeted to ${MAIN_BRANCH} — the next run retargets it before it reads the stack`,
+      retriggerDelaySeconds: ATTEMPT_RETRY_DELAY_SECONDS,
+      targetSha: undefined,
+    });
+    expect(getPrCalls("merge")).toHaveLength(1);
+    expect(runDrainStep).toHaveBeenCalledTimes(1);
+    expect(readSha(`origin/${getWindowBranch(pullRequest)}`)).toBe(developSha);
+  });
+
   // Its findings are drained after the merge, so a merge no session could follow ships them unread until the
   // Limit lifts: the probe's refusal leaves the window open
   test("leaves a reviewed window open when no session can start to drain it", async () => {
