@@ -3,6 +3,7 @@ import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityP
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { readLoginDoorPieces } from "#src/services/genshinAssets/fit/readLoginDoorPieces";
+import { LOGIN_DOOR_MESH } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentClips } from "#src/services/genshinAssets/shared/readComponentClips";
@@ -45,11 +46,15 @@ const interpolatePose = (poses: readonly Matrix4[], sample: number): Matrix4 => 
 // Frame its stage turns to the door's, held against where the game's own lift clip carries each piece: its path, the
 // Furthest any vertex of a piece stands from the clip's place at the frame's moment in metres, through the lift and at
 // Rest, and its pace, how fast those moments pass against the clock. The login's door is the one part a clip moves so
-// Far, so a component's motion pass reads it until another's parts move by their clips
+// Far, so a component's motion pass reads it, and a component placing no such door is not owed the pass until another's
+// Parts move by their clips
 export const measureMotion = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
+  const placements = await readComponentPlacements(component);
+  if (!placements.some(({ name }) => name === LOGIN_DOOR_MESH))
+    return { isNotOwed: true, notes: [`${component} places no door a clip moves`], readings: [] };
   const meshDirectory = join(getComponentDirectory(component).assets, AssetType.Mesh);
   const { duration, foot, piecePoses, scaled, vertexPieces } = await readLoginDoorPieces(
-    await readComponentPlacements(component),
+    placements,
     await readComponentClips(component),
     meshDirectory,
   );

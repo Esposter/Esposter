@@ -12,6 +12,7 @@ Read before any pass or round on a Genshin screen or scene, and whenever its loo
 | A colour, a size, a place     | `measure`, `zoom`, `polar`                              |
 | A timing                      | `frames`, `luma`                                        |
 | Whether the piece matches     | `compare` over the reference's own frame (`isBackdrop`) |
+| The game's words              | `genshin:text decode`, the install's text maps          |
 
 ## A scene, pass by pass
 
@@ -61,11 +62,11 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Camera
 
-| Unknown                          | Tool                                                                                  |
-| :------------------------------- | :------------------------------------------------------------------------------------ |
-| The camera's pose                | `genshin:parity pose`: landmarks, refined on edges                                    |
-| The camera's path over a flight  | `genshin:parity track`: the pose at each frame, `--top-row` clear                     |
-| Whether our camera is the game's | `passes`' camera: landmarks from the scene's own camera, solved along the glide alone |
+| Unknown                          | Tool                                                                                                                                        |
+| :------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| The camera's pose                | `genshin:parity pose`: landmarks, refined on edges                                                                                          |
+| The camera's path over a flight  | `genshin:parity track`: the pose at each frame, `--top-row` clear                                                                           |
+| Whether our camera is the game's | `passes`' camera: landmarks from the scene's own camera, solved along the glide alone, each held to its reference's pose bar (`getPoseBar`) |
 
 ### Shape and surface
 
@@ -81,7 +82,6 @@ What each pass's tools stand on, and the runner that checks them in order.
 | Where on the frame a shape misses              | `passes`' shape image, `shapes/<reference>.png`: the normals' angle green to red, outlines apart white and blue                                                                                                             |
 | Which parts a family's normals miss on         | `passes`' shape notes: a family over its normal gate, its exported parts carrying most of the angle, each its share, mean and pixels                                                                                        |
 | Our unlit colour against the exports'          | `passes`' surface: the same targets' albedo where both draw a family, its mean colour apart and its structure                                                                                                               |
-| Our glow against the exports'                  | `passes`' surface: the same targets' emission where both draw a family, read as its albedo is; each export's glow cut at its `_EmissionRange` as the stone program cuts it                                                  |
 | Where on the frame a surface misses            | `passes`' surface image, `surfaces/<reference>.png`: the lightness apart where both draw a family, red where ours is lighter and blue where darker                                                                          |
 | Which scale a surface's structure is lost at   | `passes`' surface notes: each family's structure scale by scale, finest first, beside its exports' own a pixel across                                                                                                       |
 | Where on the frame a structure is lost         | `passes`' structure image, `surfaces/<reference>-structure.png`: each scale's similarity term per pixel, finest first, red as it is lost                                                                                    |
@@ -109,14 +109,15 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Light
 
-| Unknown                                 | Tool                                                                                                                                                                         |
-| :-------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| The stone's light at an hour            | `genshin:parity calibrate`: ramp, sky and height fade, none below none, by NNLS                                                                                              |
-| Whether the stone's light holds         | `passes --pass Light`: each bin's shown colour against the light's, in ΔE, gated at our own render under it                                                                  |
-| Whether a light solve models the render | `calibrate --self`: our render solved, its light handed back                                                                                                                 |
-| Whether a height's error is light, haze | `rank`'s height bands by depth: one ratio a light, a growing one haze                                                                                                        |
-| Where a light's error lies on the frame | `rank`'s light map: the exports' light over the reference's, smoothed                                                                                                        |
-| The sun's direction                     | `genshin:parity shadows`: the exports' shadows cast from each direction tried against the reference's edges over flat receivers; `passes --pass Light` reads the scene's own |
+| Unknown                                 | Tool                                                                                                                                                                                                  |
+| :-------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The stone's light at an hour            | `genshin:parity calibrate`: ramp, sky and height fade, none below none, by NNLS                                                                                                                       |
+| Whether the stone's light holds         | `passes --pass Light`: each bin's shown colour against the light's, in ΔE, gated at our own render under it                                                                                           |
+| Our glow against the game's frame       | `passes --pass Light`: each family's pixels the exports' glow lies on, the reference's frame against our stand-in lit under the same camera, colour in ΔE and structure gated at the frame's softness |
+| Whether a light solve models the render | `calibrate --self`: our render solved, its light handed back                                                                                                                                          |
+| Whether a height's error is light, haze | `rank`'s height bands by depth: one ratio a light, a growing one haze                                                                                                                                 |
+| Where a light's error lies on the frame | `rank`'s light map: the exports' light over the reference's, smoothed                                                                                                                                 |
+| The sun's direction                     | `genshin:parity shadows`: the exports' shadows cast from each direction tried against the reference's edges over flat receivers; `passes --pass Light` reads the scene's own                          |
 
 ### Atmosphere
 

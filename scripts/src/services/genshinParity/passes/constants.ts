@@ -21,8 +21,9 @@ export const PARITY_PASS_ORDER: readonly ParityPass[] = [
 export const PART_GATE_METRES = 0.02;
 // The gate a place on the frame is held to, in a reference's own pixels, a 1080-line recording's edges softening over
 // About two: the layout pass's each fitted part from the export it stands for, both projected at the reference's
-// Camera; the camera pass's landmarks, root mean square, from where the scene's camera projects them; and the light
-// Pass's shadows' edges from the reference's, on average both ways
+// Camera; the camera pass's landmarks, root mean square, from where the scene's camera projects them (a reference's own
+// Pose bar where it sets one, `getPoseBar`); and the light pass's shadows' edges from the reference's, on average both
+// Ways; and the glow's structure, the reference's frame moved across by the same
 export const FRAME_GATE_PIXELS = 2;
 // The width the shape pass draws ours and the exports' at, wide enough that a stand-in's outline a pixel off shows,
 // And its gates: the outlines a pixel apart on average, which the exports' own edges rasterise within, the depth a
@@ -31,8 +32,8 @@ export const SHAPE_WIDTH = 1280;
 export const SHAPE_OUTLINE_GATE_PIXELS = 1;
 export const SHAPE_DEPTH_GATE = 0.01;
 export const SHAPE_NORMAL_GATE_DEGREES = 10;
-// The gate a mean colour is held to, a surface's unlit or the clear sky's: within the CIELab distance two colours side
-// By side are just told apart at
+// The gate a mean colour is held to, a surface's unlit or glow or the clear sky's: within the CIELab distance two colours
+// Side by side are just told apart at
 export const COLOUR_GATE = 2.3;
 // The display pass reads at this width, and holds the shipped tone contrast to leaving at most this share more of its
 // Light off the plane than the contrast that leaves least: on the login the profile's 0.5 leaves a few hundredths

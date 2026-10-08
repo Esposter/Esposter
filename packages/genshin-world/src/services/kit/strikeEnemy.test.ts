@@ -18,29 +18,30 @@ import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const CHARACTER_ID = 1;
-const LEVEL = 90;
-const ATTACK = 100;
 const NEVER_CRITICAL = (): number => 1;
-const STURDY_HEALTH = 1e9;
-const kind = getEnemyKind(ENEMY_CAMP_MEMBER.enemyKindId);
-const { defense } = computeEnemyStats(kind, ENEMY_CAMP_MEMBER.level);
-
-const createSturdyEnemy = (): Enemy => ({
-  ...createEnemy(ENEMY_CAMP_MEMBER, ""),
-  health: STURDY_HEALTH,
-  maxHealth: STURDY_HEALTH,
-});
-
-const createCombatant = (element?: Element): Combatant => ({
-  attributes: computeCharacterAttributes([{ attribute: Attribute.Attack, value: ATTACK }]),
-  characterId: CHARACTER_ID,
-  element,
-  kit: TRAVELER_KIT,
-  level: LEVEL,
-});
 
 describe(strikeEnemy, () => {
+  const CHARACTER_ID = 1;
+  const LEVEL = 90;
+  const ATTACK = 100;
+  const STURDY_HEALTH = 1e9;
+  const kind = getEnemyKind(ENEMY_CAMP_MEMBER.enemyKindId);
+  const { defense } = computeEnemyStats(kind, ENEMY_CAMP_MEMBER.level);
+
+  const createSturdyEnemy = (): Enemy => ({
+    ...createEnemy(ENEMY_CAMP_MEMBER, ""),
+    health: STURDY_HEALTH,
+    maxHealth: STURDY_HEALTH,
+  });
+
+  const createCombatant = (element?: Element): Combatant => ({
+    attributes: computeCharacterAttributes([{ attribute: Attribute.Attack, value: ATTACK }]),
+    characterId: CHARACTER_ID,
+    element,
+    kit: TRAVELER_KIT,
+    level: LEVEL,
+  });
+
   test("deals a physical hit the damage of the general formula", () => {
     expect.hasAssertions();
 

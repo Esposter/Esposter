@@ -40,6 +40,13 @@ export const streamingTopic: ReferenceTopic = {
       result:
         "No hash of a name gives the world's 32-bit id: sibling ids often differ by 961, thirty-one squared, yet base-31, 33, 37, 131, 65599 and FNV polynomial hashes of the names, lowercase, with .prefab and as paths, match neither paving stone's id",
     },
+    {
+      method:
+        "Every placement within sixty metres of the statue, and every placement of the three unhashed ids the carved pedestals and the dais carry, 2068796237, 2068799372 and 2751255372, in the tile's blob, each 64-bit hash's low forty bits looked up in the 2.6 index's PathHashPre and PathHashLast",
+      outcome: InvestigationOutcome.DeadEnd,
+      result:
+        "The three ids' seventeen placements carry no path hash in the tile's blob, so they name no prefab. The named placements within sixty metres are Ruin_H_06 and _07, the rock families Stages_MDSRock11 to _15, grass, ground and leaf decals and two effects: no pillar, plinth or column. A placement's hash holds its name in its low forty bits, and its upper twenty-four are unexplained",
+    },
   ],
   openQuestions: [
     "The prefabs of the placements carrying only the world's 32-bit id, the trees round the statue among them, the dais under the statue, the carved pedestals beside it, and the paths newer than the 2.6 index",

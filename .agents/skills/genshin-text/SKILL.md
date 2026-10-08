@@ -1,6 +1,6 @@
 ---
 name: genshin-text
-description: Apply when showing any of Genshin Impact's own words in the app, a Genshin package or the persona plugin, adding a GameTextKey, choosing a reader's game language, or touching packages/genshin-text, scripts/src/services/genshinText, or the persona's src/generated copy. Esposter's game text — the game's strings in its fifteen languages, referenced by the game's own text id and never translated by hand, generated from a dump kept outside the repository.
+description: Apply when showing any of Genshin Impact's own words in the app, a Genshin package or the persona plugin, adding a GameTextKey, choosing a reader's game language, or touching packages/genshin-text, scripts/src/services/genshinText, or the persona's src/generated copy. Esposter's game text — the game's strings in its fifteen languages, referenced by the game's own text id and never translated by hand, generated from the game's text kept outside the repository, its text maps decoded from the installed client and its tables from a dump.
 ---
 
 # Genshin Text

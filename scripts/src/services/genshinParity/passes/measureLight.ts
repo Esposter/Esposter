@@ -5,6 +5,7 @@ import type { StoneLight } from "genshin-engine";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
 import { COLOUR_GATE, FRAME_GATE_PIXELS } from "#src/services/genshinParity/passes/constants";
 import { getCurrentBuildReferenceIds } from "#src/services/genshinParity/passes/getCurrentBuildReferenceIds";
+import { measureGlow } from "#src/services/genshinParity/passes/measureGlow";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { STONE_LIGHT_PATH } from "#src/services/genshinParity/witness/constants";
 import { readReferenceStoneSamples } from "#src/services/genshinParity/witness/readReferenceStoneSamples";
@@ -19,7 +20,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Render draws beside it (the normal maps, the highlight) and no light read through it comes nearer than that. Then the
 // Sun's direction, by where the exports' shadows cast from it fall on the flat receivers against the reference's shadows'
 // Edges (`solveReferenceShadows`), gated in the reference's pixels as any place on the frame is; a reference showing no
-// Shadow's edge on a receiver reads none
+// Shadow's edge on a receiver reads none. The glow the materials add over their lit colour is lit too, so the same pass
+// Reads it against the game's frame (`measureGlow`)
 export const measureLight = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
   const lights = await readWorldData<Record<string, StoneLight>>(STONE_LIGHT_PATH);
   const measures: ParityPassMeasure[] = [];
@@ -48,5 +50,9 @@ export const measureLight = async (component: DerivedAssetComponent): Promise<Pa
       ],
     });
   }
-  return { notes: measures.flatMap(({ notes }) => notes), readings: measures.flatMap(({ readings }) => readings) };
+  const glow = await measureGlow(component);
+  return {
+    notes: [...measures.flatMap(({ notes }) => notes), ...glow.notes],
+    readings: [...measures.flatMap(({ readings }) => readings), ...glow.readings],
+  };
 };

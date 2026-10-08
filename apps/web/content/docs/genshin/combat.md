@@ -1,11 +1,11 @@
 ---
 title: Combat
-description: Genshin's combat rules as built — pure, tested functions in the world package over plain state. An element's attack is left on a target as an aura that decays, a second element triggers the reactions the game tries in its own priority, each consuming its auras by its coefficient, and Electro-Charged, Quicken, Burning and Freeze keep their coexisting auras and ticks. The damage formula, the level multiplier, the internal cooldown on applying an element, shields and energy follow the community's documented mechanics, each held to a worked example from them.
+description: Genshin's combat rules as built — pure, tested functions in the world package over plain state. An element's attack is left on a target as an aura that decays, a second element triggers the reactions the game tries in its own priority, each consuming its auras by its coefficient, and Electro-Charged, Quicken, Burning and Freeze keep their coexisting auras and ticks. The damage formula, the level multiplier, the internal cooldown on applying an element, shields and energy follow the community's documented mechanics, each held to a worked example from them. The Traveler's kit prices its hits through them, and an enemy's strike on the party does too.
 ---
 
 # Combat
 
-The game's combat is one small set of rules every character and enemy shares, and its community has documented them to the decimal. They live in `genshin-world` under `services/combat`, as functions over plain state with no rendering, no input and no three.js, since the engine knows no rule of the game as it knows no place. Nothing draws them yet: the controller and the [enemies](/docs/genshin/enemies) call into them.
+The game's combat is one small set of rules every character and enemy shares, and its community has documented them to the decimal. They live in `genshin-world` under `services/combat`, as functions over plain state with no rendering, no input and no three.js, since the engine knows no rule of the game as it knows no place. The world calls into them from its fixed steps: the character on the field's kit prices each of its hits, and the [enemies](/docs/genshin/enemies) age their elements and strike the party through them.
 
 ## How it works
 
@@ -94,6 +94,39 @@ The rules hold no clock of their own past a target's state, so a caller drives t
 
 The enemies' `damageEnemy` takes a hit's damage and poise damage, which is where these meet the enemies.
 
+### The kit's hits
+
+The character on the field runs its kit at the world's fixed step ([character controller](/docs/genshin/character-controller)). Each step reads the frame's presses and the body's state, starts the action the kit allows, and turns the body to the enemy the action's area scores highest. Every hit that lands runs through the steps above on each enemy in its area, and every particle an enemy drops is handed to the party's energy.
+
+```mermaid
+flowchart TD
+  PRESS["A frame's presses, held for the step, and the attack held"] --> GATE{"Allowed? Movement state, cooldown, charges, energy, stamina"}
+  GATE -->|"no"| IDLE["Nothing starts"]
+  GATE -->|"yes"| ACTION["The kit's action: string, charged attack, plunge, skill or burst"]
+  ACTION -->|"it starts"| AIM["The body turns to the enemy its area scores highest"]
+  ACTION -->|"each hitmark"| HIT["A hit lands on each enemy in its area"]
+  HIT --> STRIKE["strikeEnemy: blunt, internal cooldown, element, getDamage, damageEnemy"]
+  STRIKE -->|"particles"| ENERGY["gainPartyEnergy: each standing member, up to its burst's cost"]
+  ENEMY["An enemy's strike reaches the body"] --> HURT["strikePartyMember: getDamage over the member's Max HP"]
+  HURT -->|"the team all down"| RESPAWN["reviveParty at 35%, jumped to the nearest statue"]
+```
+
+The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK through `getDamage` against the member on the field, and the world screen respawns the deployed team when all of it has fallen.
+
+## Decisions
+
+- **The Traveler's kit is the first, at talent level 1.** Its five strikes, charged attack and plunges are the wiki's figures for Lumine's Foreign Ironwind, read into `TRAVELER_KIT`: strikes of 44.5%, 43.4%, 53.0%, 58.3% and 70.8% of ATK with poise 40.5, 39.6, 48.6, 54 and 64.8; a charged attack of 55.9% and 72.2% for 20 stamina, poise 50.6 each; a plunge's collision of 63.9% with poise 25; and a low and a high plunge of 128% and 160%, poise 100 and 150, both blunt. The normal and charged attacks share the Normal Attack tag, and the plunges apply under none. Until the Traveler resonates with a statue, its skill and burst are placeholders shaped as the Anemo Traveler's: Palm Vortex's one hit of 176% on a 5 second cooldown, and Gust Surge's one hit of 80.8% for 60 energy on a 15 second cooldown.
+- **The elementless Traveler deals physical damage with them.** Their gauges are set, but combat applies an element only for a character that has one, so the skill and burst are physical until a statue gives the Traveler its element.
+- **Actions are a state machine on the fixed step.** Pressing the attack advances the string while the last strike's window is open, which closes at the frame the next attack may start (gcsim v2.47.2's frames, at 60 fps), and the string starts again 0.5 seconds after a strike ends unpressed, provisional. Holding past 0.3 seconds, also provisional, makes the string's next strike the charged attack once that strike ends, if 20 stamina is left to spend it (`startNextKitAction`). A press in the air high enough above the ground is a plunge, a low one when it lands from 2.4 metres or less and a high one from higher. `E` is the skill, on its cooldown, and `Q` the burst, at full energy, which it empties. The step reads the body's movement state, so no attack starts while climbing, swimming or gliding, and the skill and burst also start in the air, falling or jumping.
+- **An attack aims as the game's does.** At each action's start the body turns to the enemy its targeting area scores highest: 0.7 × (1 − distance ÷ radius) + 0.3 × (1 − angle ÷ 180°), a fifth of it while the body stands more than 2 metres above the ground the enemies stand on, and a dead enemy never scored. The swords' normal and charged attacks target within 5 metres and 6 high, Palm Vortex within 15 and 10. With none in the area the body keeps its facing (`selectAttackTarget`).
+- **A hit reaches what its cylinder holds.** Each hit's area is a cylinder centred on the body's feet. It reaches an enemy within its radius plus the capsule's, within half its fan plus the capsule's angular half width as seen from the body, and overlapping in height (`checkIsInAttackArea`). Palm Vortex's area is the wiki's, 6 metres at 100 degrees and 2 high; the plunge's collision is 1 metre all round, as the wiki gives it; the rest are provisional until the attack clips and a recording measure them.
+- **An action holds the body still.** While an action plays, the controller is given the frame's presses with no move, so the body stands where it is and only turns to its target. A jump or a dash ends the action at once, ahead of the attack-cancel frame its `seconds` gives, since the kit does not model the earlier cancels yet.
+- **The plunge strikes on its way down and as it lands.** Every 0.3 seconds while it falls, provisional, its collision hits what stands in its area, and the landing is the low or high plunge by the drop from its start.
+- **A hit goes through combat as built.** A kit's hit is priced by `getDamage` from the attacker's attributes at the talent's multiplier. Its order is blunt first, then the internal cooldown and the element, then the damage with any amplifying, catalyze or transformative bonus, and last `damageEnemy` (`strikeEnemy`). No kit computes damage of its own.
+- **Each member's cooldowns run at the fixed step.** Every member of the deployed team's skill and burst cooldowns lower each step, off the field too, and stand still while a screen holds the world (`stepPartyCooldowns`).
+- **Particles reach every member standing.** Each particle a struck enemy drops gives each standing member of the deployed team `getEnergyGain`'s energy, up to its burst's cost. A fallen member takes none (`gainPartyEnergy`).
+- **An enemy's strike uses the same formula.** Its ATK times a provisional multiplier of 1, as physical damage through `getDamage` with the member on the field's DEF and physical resistance, its base 0%. The damage over the member's Max HP is the share it takes (`strikePartyMember`).
+
 ## Key files
 
 | File                                                                                   | Role                                                                    |
@@ -110,6 +143,13 @@ The enemies' `damageEnemy` takes a hit's damage and poise damage, which is where
 | `packages/genshin-world/src/services/combat/shield/absorbShieldDamage.ts`              | Damage taken on a shield                                                |
 | `packages/genshin-world/src/services/combat/energy/getEnergyGain.ts`                   | Energy from a particle or an orb                                        |
 | `packages/genshin-world/src/models/combat/ReactionType.ts`                             | Every reaction, merged from the amplifying, catalyze and transformative |
+| `packages/genshin-world/src/services/kit/stepKit.ts`                                   | A kit's step: its action, its hits and what the presses start           |
+| `packages/genshin-world/src/services/kit/strikeEnemy.ts`                               | A kit's hit on an enemy, priced and applied by combat                   |
+| `packages/genshin-world/src/services/kit/strikePartyMember.ts`                         | An enemy's strike on the member on the field                            |
+| `packages/genshin-world/src/services/kit/selectAttackTarget.ts`                        | The enemy an action turns the body to                                   |
+| `packages/genshin-world/src/services/kit/checkIsInAttackArea.ts`                       | Whether a hit's cylinder reaches an enemy                               |
+| `packages/genshin-world/src/services/kit/constants.ts`                                 | The Traveler's kit, the kit's timings and its areas                     |
+| `packages/genshin-world/src/services/party/gainPartyEnergy.ts`                         | A particle's energy to each standing member of the deployed team        |
 
 ## Notes
 
@@ -131,4 +171,8 @@ The enemies' `damageEnemy` takes a hit's damage and poise damage, which is where
 - [Internal Cooldown](https://genshin-impact.fandom.com/wiki/Internal_Cooldown) and [its data](https://genshin-impact.fandom.com/wiki/Internal_Cooldown/Data), Genshin Impact Wiki: the standard rule, the tag and group, and each group's reset interval and gauge sequence.
 - [Shield](https://genshin-impact.fandom.com/wiki/Shield) and [Crystallize](https://genshin-impact.fandom.com/wiki/Crystallize), Genshin Impact Wiki: absorption by element and shield strength, and the shard's shield and once-a-second limit.
 - [Energy](https://genshin-impact.fandom.com/wiki/Energy), Genshin Impact Wiki: particles and orbs by element, the shares off the field, and Energy Recharge.
+- [Foreign Ironwind](https://genshin-impact.fandom.com/wiki/Foreign_Ironwind), [Palm Vortex](https://genshin-impact.fandom.com/wiki/Palm_Vortex) and [Gust Surge](https://genshin-impact.fandom.com/wiki/Gust_Surge), Genshin Impact Wiki: the Traveler's multipliers, stamina, poise, tags and blunt plunges, and the Anemo skill's and burst's cooldowns and energy.
+- [Normal Attack](https://genshin-impact.fandom.com/wiki/Normal_Attack), [Charged Attack](https://genshin-impact.fandom.com/wiki/Charged_Attack) and [Plunging Attack](https://genshin-impact.fandom.com/wiki/Plunging_Attack), Genshin Impact Wiki: a string of strikes, the stamina each charged attack costs, and the low and high plunge either side of 2.4 metres.
+- [Area of Effect](https://genshin-impact.fandom.com/wiki/Area_of_Effect), [Targeting](https://genshin-impact.fandom.com/wiki/Targeting) and [Targeting/Data](https://genshin-impact.fandom.com/wiki/Targeting/Data), Genshin Impact Wiki: the hit cylinders, the targeting score and its altitude limit, and the swords' targeting zone.
+- [Exploration](https://genshin-impact.fandom.com/wiki/Exploration), Genshin Impact Wiki: no combat while climbing, gliding or swimming.
 - [Elemental Gauge Theory](https://library.keqingmains.com/combat-mechanics/elemental-effects/elemental-gauge-theory) and [Transformative Reactions](https://library.keqingmains.com/combat-mechanics/elemental-effects/transformative-reactions), KeqingMains Theorycrafting Library: the decay rate, Electro-Charged's ticks, Burning's tick, and the Dendro Core's lifetime and limit.

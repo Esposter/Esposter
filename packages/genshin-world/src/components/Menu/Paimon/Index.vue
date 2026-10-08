@@ -2,7 +2,13 @@
 import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
 import type { GameText } from "genshin-text";
 
-import { PAIMON_MENU_CONTENTS, PAIMON_MENU_SIDE_BAR } from "#src/services/menu/constants";
+import MenuExit from "#src/components/Menu/Exit/Index.vue";
+import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
+import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
+import { PAIMON_MENU_CONTENTS, PAIMON_MENU_LINKS, PAIMON_MENU_SIDE_BAR } from "#src/services/menu/constants";
+import { getMenuGlyphStyle } from "#src/services/menu/getMenuGlyphStyle";
+import { MenuEntryGlyphMap } from "#src/services/menu/MenuEntryGlyphMap";
+import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
 import { ScreenKindGameTextKeyMap } from "#src/services/screen/ScreenKindGameTextKeyMap";
 import { GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
@@ -17,6 +23,8 @@ interface Props {
 const { checkIsBuilt, gameText } = defineProps<Props>();
 const emit = defineEmits<{ close: []; open: [screenKind: TitledScreenKind]; quit: [] }>();
 const backButton = useTemplateRef("backButton");
+// Quit Game opens the prompt over the world in place of the menu, and only its own Continue or exit ends it
+const isExitPrompted = ref(false);
 // The menu is a dialog over the world, so focus starts inside it, on its way back
 onMounted(() => {
   backButton.value?.focus();
@@ -24,102 +32,325 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- The game's pause menu: its side bar of Back, the side bar's screens and Quit Game down the left, and its contents
-       Beside it, the world drawn on to the right where Paimon floats. Every entry the game has is here, in its order,
-       One whose screen is not built yet drawn disabled -->
-  <GameScreen class="paimon-menu" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Paimon]">
-    <nav class="menu">
-      <div class="side-bar" role="group">
-        <button ref="backButton" class="side-entry" type="button" @click="emit('close')">
-          {{ gameText[GameTextKey.Back] }}
-        </button>
-        <button
-          v-for="screenKind of PAIMON_MENU_SIDE_BAR"
-          :key="screenKind"
-          class="side-entry"
-          :disabled="!checkIsBuilt(screenKind)"
-          type="button"
-          @click="emit('open', screenKind)"
-        >
-          {{ gameText[ScreenKindGameTextKeyMap[screenKind]] }}
-        </button>
-        <button class="side-entry" type="button" @click="emit('quit')">{{ gameText[GameTextKey.QuitGame] }}</button>
-      </div>
-      <div class="contents" role="group">
-        <button
-          v-for="screenKind of PAIMON_MENU_CONTENTS"
-          :key="screenKind"
-          class="entry"
-          :disabled="!checkIsBuilt(screenKind)"
-          type="button"
-          @click="emit('open', screenKind)"
-        >
-          {{ gameText[ScreenKindGameTextKeyMap[screenKind]] }}
-        </button>
-      </div>
-    </nav>
+  <!-- The game's pause menu, laid out in the reference's own pixels: its side bar down the left, of Back, the side bar's
+       Screens and Quit Game, the profile card over the panel's entries in the game's four columns, and the world drawn
+       Past the panel, where Paimon floats. Every entry the game has is here in its order: one whose screen is not built
+       Yet is drawn disabled, and the links out to web pages are drawn disabled whole -->
+  <GameScreen
+    v-if="!isExitPrompted"
+    class="paimon-menu"
+    role="dialog"
+    aria-modal="true"
+    :aria-label="gameText[GameTextKey.Paimon]"
+  >
+    <div class="side-bar" />
+    <button
+      ref="backButton"
+      class="back"
+      :aria-label="gameText[GameTextKey.Back]"
+      type="button"
+      @click="emit('close')"
+    />
+    <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Back]" class="back-glyph" />
+    <template v-for="{ icon, screenKind } of PAIMON_MENU_SIDE_BAR" :key="screenKind">
+      <button
+        class="side-entry"
+        :aria-label="gameText[ScreenKindGameTextKeyMap[screenKind]]"
+        :disabled="!checkIsBuilt(screenKind)"
+        :style="getMenuGlyphStyle(MenuFrameGlyphMap[icon])"
+        type="button"
+        @click="emit('open', screenKind)"
+      />
+      <MenuGlyph :class="{ unbuilt: !checkIsBuilt(screenKind) }" :glyph="MenuFrameGlyphMap[icon]" />
+    </template>
+    <button
+      class="side-entry"
+      :aria-label="gameText[GameTextKey.QuitGame]"
+      :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Quit])"
+      type="button"
+      @click="isExitPrompted = true"
+    />
+    <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Quit]" />
+    <div class="panel" />
+    <div class="card" />
+    <div class="avatar" />
+    <div class="edit" />
+    <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Edit]" class="edit-glyph" />
+    <p class="uid-label">{{ gameText[GameTextKey.Uid] }}</p>
+    <div class="uid-pill" />
+    <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Copy]" class="copy-glyph" />
+    <button class="copy" disabled type="button">{{ gameText[GameTextKey.Copy] }}</button>
+    <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.ExpBadge]" />
+    <p class="rank-title">{{ gameText[GameTextKey.AdventureRank] }}</p>
+    <p class="exp-label">{{ gameText[GameTextKey.AdventureExp] }}</p>
+    <div class="exp-bar"><div class="exp-fill" /></div>
+    <p class="world-level">{{ gameText[GameTextKey.WorldLevel] }}</p>
+    <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />
+    <p class="birthday">{{ gameText[GameTextKey.Birthday] }}</p>
+    <div class="contents">
+      <button
+        v-for="{ icon, screenKind } of PAIMON_MENU_CONTENTS"
+        :key="screenKind"
+        class="entry"
+        :disabled="!checkIsBuilt(screenKind)"
+        type="button"
+        @click="emit('open', screenKind)"
+      >
+        <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
+        <span class="label">{{ gameText[ScreenKindGameTextKeyMap[screenKind]] }}</span>
+      </button>
+      <button v-for="{ icon, labelKey } of PAIMON_MENU_LINKS" :key="labelKey" class="entry link" disabled type="button">
+        <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
+        <span class="label">{{ gameText[labelKey] }}</span>
+      </button>
+    </div>
   </GameScreen>
+  <MenuExit v-else :game-text @close="emit('close')" @quit="emit('quit')" />
 </template>
 
 <style scoped>
-/* Provisional: the panel's reach, the side bar's and the contents' sizes, their four columns and every colour wait on
-   A recording of the English PC client's Paimon menu at 1080 high and the fit of its RectTransform tree, as the login's
-   Were measured; the entries' icons wait on their traces */
+/* Provisional where the game is not yet fitted: the card's stars, the avatar's art and the glass of the side bar's and
+   the panel's translucent feet wait on the English PC client's menu measured at 1080 high. Every place is in the
+   Reference's own pixels, a unit being 1.333 of them, so a menu is drawn as the reference is at any window's size */
 .paimon-menu {
-  background: linear-gradient(90deg, rgb(20 24 36 / 0.92), rgb(20 24 36 / 0.85) 55%, rgb(20 24 36 / 0.2));
-  color: #ece5d8;
-}
-
-.menu {
-  display: flex;
-  gap: calc(var(--unit) * 48);
-  height: 100%;
-  padding: calc(var(--unit) * 64) calc(var(--unit) * 72);
-  box-sizing: border-box;
+  --reference-pixel: calc(var(--unit) * 0.75);
+  color: #ece5d7;
 }
 
 .side-bar {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--unit) * 12);
-  width: calc(var(--unit) * 200);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: calc(var(--unit) * 92);
+  background: linear-gradient(#4a5265, #4c5869 40%, #48545c 62%, #445451 88%);
 }
 
-.contents {
-  display: grid;
-  grid-template-columns: repeat(4, calc(var(--unit) * 200));
-  grid-auto-rows: calc(var(--unit) * 150);
-  align-content: start;
-  gap: calc(var(--unit) * 20);
-}
-
-.side-entry,
-.entry {
+.back {
+  position: absolute;
+  top: calc(var(--unit) * 18.25);
+  left: calc(var(--unit) * 18.25);
+  width: calc(var(--unit) * 58);
+  height: calc(var(--unit) * 58);
+  padding: 0;
   border: none;
-  border-radius: calc(var(--unit) * 12);
-  background: rgb(255 255 255 / 0.06);
-  color: inherit;
+  border-radius: 50%;
+  background: #999a9b;
   cursor: inherit;
-  font: inherit;
-  font-size: calc(var(--unit) * 24);
+}
+
+.back::after {
+  content: "";
+  position: absolute;
+  inset: calc(var(--unit) * 6);
+  border-radius: 50%;
+  background: #ece5d7;
 }
 
 .side-entry {
-  padding: calc(var(--unit) * 14) calc(var(--unit) * 18);
-  text-align: start;
+  position: absolute;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: inherit;
 }
 
-.side-entry:hover:enabled,
-.entry:hover:enabled,
 .side-entry:focus-visible,
+.side-entry:hover:enabled,
+.back:focus-visible,
+.back:hover {
+  outline: none;
+  background: rgb(236 229 215 / 0.2);
+}
+
+.unbuilt {
+  opacity: 0.4;
+}
+
+.panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--unit) * 96);
+  width: calc(var(--unit) * 672);
+  background: #ece5d7;
+}
+
+.card {
+  position: absolute;
+  top: 0;
+  left: calc(var(--unit) * 96);
+  width: calc(var(--unit) * 672);
+  height: calc(var(--unit) * 328);
+  background: linear-gradient(#3a424f, #435366 30%, #4a6680 55%, #55799a 75%, #5e9cba 88%, #63a6c6);
+}
+
+.avatar {
+  position: absolute;
+  top: calc(var(--unit) * 41);
+  left: calc(var(--unit) * 140);
+  width: calc(var(--unit) * 128);
+  height: calc(var(--unit) * 128);
+  border: calc(var(--unit) * 4) solid rgb(236 229 215 / 0.6);
+  border-radius: 50%;
+  background: #dd8650;
+  box-sizing: border-box;
+}
+
+.edit {
+  position: absolute;
+  top: calc(var(--unit) * 47);
+  left: calc(var(--unit) * 703);
+  width: calc(var(--unit) * 34);
+  height: calc(var(--unit) * 34);
+  border-radius: calc(var(--unit) * 4);
+  background: #ece5d7;
+}
+
+.edit-glyph {
+  color: #4a5260;
+}
+
+.uid-pill {
+  position: absolute;
+  top: calc(var(--unit) * 196);
+  left: calc(var(--unit) * 112);
+  width: calc(var(--unit) * 184);
+  height: calc(var(--unit) * 28);
+  border: calc(var(--unit) * 2) solid rgb(236 229 215 / 0.85);
+  border-radius: calc(var(--unit) * 14);
+  background: rgb(67 88 113 / 0.85);
+  box-sizing: border-box;
+}
+
+.uid-label {
+  position: absolute;
+  top: calc(var(--unit) * 199);
+  left: calc(var(--unit) * 124);
+  margin: 0;
+  color: #ece9e1;
+  font-size: calc(var(--unit) * 20);
+  line-height: 1;
+}
+
+.back-glyph {
+  color: #3d4655;
+}
+
+.copy-glyph {
+  color: rgb(236 229 215 / 0.5);
+}
+
+.copy {
+  position: absolute;
+  top: calc(var(--unit) * 236);
+  left: calc(var(--unit) * 191);
+  padding: 0;
+  border: none;
+  background: none;
+  color: rgb(236 229 215 / 0.5);
+  cursor: inherit;
+  font: inherit;
+  font-size: calc(var(--unit) * 22);
+  line-height: 1;
+}
+
+.rank-title,
+.exp-label,
+.world-level,
+.birthday {
+  position: absolute;
+  margin: 0;
+  color: #e2e8ed;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.rank-title,
+.world-level,
+.birthday {
+  left: calc(var(--unit) * 313.5);
+  font-size: calc(var(--unit) * 26);
+}
+
+.rank-title {
+  top: calc(var(--unit) * 166);
+}
+
+.exp-label {
+  top: calc(var(--unit) * 201);
+  left: calc(var(--unit) * 349);
+  color: #dbe5ec;
+  font-size: calc(var(--unit) * 19);
+}
+
+.world-level {
+  top: calc(var(--unit) * 246);
+}
+
+.birthday {
+  top: calc(var(--unit) * 286);
+}
+
+.info-glyph {
+  color: #ece5d7;
+}
+
+.exp-bar {
+  position: absolute;
+  top: calc(var(--unit) * 225);
+  left: calc(var(--unit) * 350);
+  width: calc(var(--unit) * 387);
+  height: calc(var(--unit) * 7);
+  background: #334b60;
+}
+
+.exp-fill {
+  width: 31%;
+  height: 100%;
+  background: #ccfe66;
+}
+
+.contents {
+  position: absolute;
+  top: calc(var(--unit) * 352.5);
+  left: calc(var(--unit) * 126);
+  display: grid;
+  grid-template-columns: repeat(4, calc(var(--unit) * 143));
+  grid-auto-rows: calc(var(--unit) * 128);
+  column-gap: calc(var(--unit) * 13);
+  row-gap: calc(var(--unit) * 13.75);
+}
+
+.entry {
+  position: relative;
+  padding: 0;
+  border: none;
+  border-radius: calc(var(--unit) * 2);
+  background: #51596b;
+  color: #ece5d7;
+  cursor: inherit;
+  font: inherit;
+}
+
+.label {
+  position: absolute;
+  right: 0;
+  bottom: calc(var(--unit) * 10);
+  left: 0;
+  font-size: calc(var(--unit) * 22);
+  font-weight: 600;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.entry:hover:enabled,
 .entry:focus-visible {
   outline: none;
-  background: #ece5d8;
-  color: #3b4255;
+  background: #6c7588;
 }
 
-.side-entry:disabled,
-.entry:disabled {
+.entry:disabled:not(.link) {
   opacity: 0.4;
 }
 </style>

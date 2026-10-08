@@ -18,7 +18,8 @@ flowchart LR
   PARSE --> MESH["createPmxMesh: groups, skeleton, metres"]
   MATERIAL --> MESH
   MESH -->|"every file arrived"| MODEL["CharacterModel, facing -z at its holder's origin"]
-  MESH -->|"any file failed"| LOG["Logged, nothing drawn"]
+  MESH -->|"any file failed"| LOG["Logged and emitted"]
+  LOG --> CAPSULE["The body's capsule drawn in its place"]
   BLOB -->|"terms.txt"| TERMS["CharacterTerms, verbatim"]
 ```
 

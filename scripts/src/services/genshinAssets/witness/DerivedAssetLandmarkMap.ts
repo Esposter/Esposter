@@ -5,6 +5,15 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 // Each component's landmarks by name, the points of its parts `pose` solves a reference's camera from where the
 // Reference names the pixels it sees them at
 export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<string, Landmark>> = {
+  // The Court's landmarks name its capital's meshes and their shares, which the extraction has not yet given
+  [DerivedAssetComponent.Fontaine]: {},
+  // Inazuma City's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given:
+  // The keep's eaves and ledges, the platform's corners, the houses' bases and roofs and the pavilion's eaves, each read
+  // By eye off the reference's 4x crops (ParityReferenceMap's inazuma-city-location)
+  [DerivedAssetComponent.Inazuma]: {},
+  // Liyue Harbor's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given: the
+  // Steps, plinths, walls, gates and towers its reference's 4x crops show (ParityReferenceMap's liyue-harbor-location)
+  [DerivedAssetComponent.Liyue]: {},
   // The door's dais at its two front feet, and its arch's apex, halfway through its depth; the walkway's two wings by
   // The door's end and the near pair before them, at the top of their outer faces' front and back ends, the camera
   // Looking along +z as ModelCamera turns; the crowned column behind the door's right at its top, and the lantern
@@ -39,21 +48,27 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
     wingRightBack: { mesh: "LoginScene_Bridge01_20_Vo", share: [0, 1, 0.8125] },
     wingRightFront: { mesh: "LoginScene_Bridge01_20_Vo", share: [0, 1, 0.351] },
   },
-  // Points on the statue's axis, which a round part holds from any heading: the centre of its dish and the top of its
-  // Figure; and the top faces' centres of the paving stones east of it, whose edges the grass blurs
+  // Mondstadt's landmarks name its capital's meshes, which the extraction has not yet given: the six corners its reference
+  // Names (ParityReferenceMap's mondstadt-city-location) are the towers' and the gate tower's parapets
+  [DerivedAssetComponent.Mondstadt]: {},
+  // The People of the Springs' landmarks (ParityReferenceMap's people-of-the-springs-location) name its capital's rigid
+  // Meshes and their shares, which the extraction has not yet given
+  [DerivedAssetComponent.Natlan]: {},
+  // Nasha Town's landmarks name its capital's meshes and their shares, which the extraction has not yet given
+  [DerivedAssetComponent.NodKrai]: {},
+  // Snezhnograd's landmarks name its capital's meshes, which the extraction has not yet given
+  [DerivedAssetComponent.Snezhnaya]: {},
+  // Sumeru City's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given
+  [DerivedAssetComponent.Sumeru]: {},
+  // Rigid architecture only, never decoration: the statue's own meshes. Points on the statue's axis, which a round part
+  // Holds from any heading: the centre of its dish and the top of its figure; the two ends of the dish's brim, the face
+  // Centres of its widest ring; and the two outermost vertices of the plinth's rim, read off the rim's band of vertices
+  // Where the reference's rim ends, since a round plinth has no bounding-box corner or face centre on its rim
   [DerivedAssetComponent.Windrise]: {
-    slabLeft: {
-      isInterior: true,
-      mesh: "Area_Common_Build_Ruin_H_06_Vo",
-      near: [57.93, -8.29, -1.37],
-      share: [0.5, 1, 0.5],
-    },
-    slabRight: {
-      isInterior: true,
-      mesh: "Area_Common_Build_Ruin_H_07_Vo",
-      near: [60.12, -8.2, -1.69],
-      share: [0.5, 1, 0.5],
-    },
+    dishBrimLeft: { isEdge: true, mesh: "Stages_MdGoddess01_Level4AllExtra_Lod0", share: [0.5, 0.445, 1] },
+    dishBrimRight: { isEdge: true, mesh: "Stages_MdGoddess01_Level4AllExtra_Lod0", share: [0.5, 0.445, 0] },
+    plinthRimLeft: { mesh: "Stages_MdGoddess01_Base_Lod0", share: [0.339, 0.279, 0.879] },
+    plinthRimRight: { mesh: "Stages_MdGoddess01_Base_Lod0", share: [0.514, 0.279, 0.121] },
     statueDish: { isInterior: true, mesh: "Stages_MdGoddess01_Level4AllExtra_Lod0", share: [0.5, 0.37, 0.5] },
     statueTop: { mesh: "Stages_MdGoddess_Lite01_Lod0", share: [0.5, 1, 0.5] },
     // The oak's trunk stands upright over its root, our origin, from two metres up to six, so a point four metres up

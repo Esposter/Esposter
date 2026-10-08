@@ -51,16 +51,9 @@ export const writeGameText = (): string[] => {
       }
       return [{ id, name }];
     });
-  const textDirectory = join(GENSHIN_TEXT_GENERATED_DIRECTORY, "text");
-  const copyTextDirectory = join(PERSONA_COPY_DIRECTORY, "generated", "text");
-  for (const directory of [textDirectory, CHARACTER_LINES_DIRECTORY, PERSONA_COPY_DIRECTORY])
-    rmSync(directory, { force: true, recursive: true });
-  for (const directory of [textDirectory, CHARACTER_LINES_DIRECTORY, copyTextDirectory])
-    mkdirSync(directory, { recursive: true });
-
   const englishTextMap = readTextMap(GameLanguage.English);
-  let voicedCount = 0;
-  for (const language of GameLanguages) {
+  // Every language is read before the last run's files are removed, so a text map that fails to read leaves them
+  const languageOutputs = GameLanguages.map((language) => {
     const textMap = language === GameLanguage.English ? englishTextMap : readTextMap(language);
     if (textMap.size === 0)
       throw new InvalidOperationError(Operation.Read, language, "has no text map in the dump: download it first");
@@ -71,17 +64,14 @@ export const writeGameText = (): string[] => {
         if (englishSdkText.has(id)) {
           const text = sdkText.get(id);
           if (!text) notes.push(`${id} has no ${language} text; English stands in`);
-          return [id, text ?? englishSdkText.get(id) ?? ""];
+          return [id, text || (englishSdkText.get(id) ?? "")];
         }
         const hash = idHashMap.get(id) ?? "";
         const text = textMap.get(hash);
         if (!text) notes.push(`${id} has no ${language} text; English stands in`);
-        return [id, getPlainGameText(text ?? englishTextMap.get(hash) ?? "")];
+        return [id, getPlainGameText(text || (englishTextMap.get(hash) ?? ""))];
       }),
     );
-    const gameTextJson = toJson(gameText);
-    writeFileSync(join(textDirectory, `${language}.json`), gameTextJson);
-    writeFileSync(join(copyTextDirectory, `${language}.json`), gameTextJson);
     // A character the game has no lines for yet either — announced, not yet out — is left out rather than written
     // Empty, which reads the same and costs nothing
     const characterLines: Record<string, VoiceLine[]> = Object.fromEntries(
@@ -89,6 +79,20 @@ export const writeGameText = (): string[] => {
         .map(({ id, name }) => [name, getVoiceLines(idFettersMap.get(id) ?? [], textMap)] as const)
         .filter(([, voiceLines]) => voiceLines.length > 0),
     );
+    return { characterLines, gameText, language };
+  });
+  const textDirectory = join(GENSHIN_TEXT_GENERATED_DIRECTORY, "text");
+  const copyTextDirectory = join(PERSONA_COPY_DIRECTORY, "generated", "text");
+  for (const directory of [textDirectory, CHARACTER_LINES_DIRECTORY, PERSONA_COPY_DIRECTORY])
+    rmSync(directory, { force: true, recursive: true });
+  for (const directory of [textDirectory, CHARACTER_LINES_DIRECTORY, copyTextDirectory])
+    mkdirSync(directory, { recursive: true });
+
+  let voicedCount = 0;
+  for (const { characterLines, gameText, language } of languageOutputs) {
+    const gameTextJson = toJson(gameText);
+    writeFileSync(join(textDirectory, `${language}.json`), gameTextJson);
+    writeFileSync(join(copyTextDirectory, `${language}.json`), gameTextJson);
     writeFileSync(join(CHARACTER_LINES_DIRECTORY, `${language}.json`), toJson(characterLines));
     if (language === GameLanguage.English) voicedCount = Object.keys(characterLines).length;
   }

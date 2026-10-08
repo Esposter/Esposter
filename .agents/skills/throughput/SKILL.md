@@ -29,8 +29,8 @@ The plan's usage is spent by the session and its agents, while a compute-queue r
 
 1. Starts nothing new that thinks or builds: no implementation agent, no workflow, no proposal.
 2. Sends each running implementation agent its wrap-up: commit what builds, then end on a handoff spec that a `haiku` agent can build cold.
-3. Commits the edit in hand by pathspec and pushes the queue.
-4. Writes every open item down with what it takes to resume it cold: the paths, what is done, the calls already made, the next step. Genshin work goes on its roadmap, a handoff spec into its proposal page, never only the scratchpad. Anything else goes in as a follow-up through the `follow-ups` plugin's capture skill.
+3. Writes every open item down with what it takes to resume it cold: the paths, what is done, the calls already made, the next step. Genshin work goes on its roadmap, a handoff spec into its proposal page, never only the scratchpad. Anything else goes in as a follow-up through the `follow-ups` plugin's capture skill.
+4. Commits the edit in hand and the records just written by pathspec, and pushes the queue.
 5. Cleans up the page servers, shells, monitors and worktrees nothing still uses.
 6. Keeps the compute queue's runners going, one per lane, until the window resets and the reserve lifts by itself.
 

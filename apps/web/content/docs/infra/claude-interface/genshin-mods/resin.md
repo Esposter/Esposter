@@ -32,6 +32,18 @@ Each is a button, or with the band focused a key: `w`, `c` and `h`.
 
 A plan's usage windows are spent by the session and its agents, and a compute run that is still owed needs some of the window left to start. So when the five-hour or the weekly window passes nine-tenths used (`USAGE_RESERVE_PERCENTAGE` in `constants.ts`), the mod puts a usage reserve into the session and keeps it there until that window resets.
 
+```mermaid
+flowchart TD
+  M["Engine measurement<br/>reads the five-hour and weekly windows"] --> P{"A window past the line<br/>with a reset time?"}
+  P -->|yes, five-hour before weekly| Q{"Reserve already on?"}
+  Q -->|no| ON["Reserve starts"]
+  ON --> T["Toast names the window and its reset, once"]
+  ON --> S["System section, held still while the reserve lasts"]
+  Q -->|yes| HOLD["Reserve holds, no second toast"]
+  P -->|no, reserve on| OFF["Reserve lifts<br/>the section stops being sent"]
+  P -->|no, reserve off| NONE["Nothing shown"]
+```
+
 - **What starts it** — each measurement the engine pushes reads the limit windows. The first window at or past the line, five-hour before weekly, starts the reserve, and a toast names it with its reset time in local time, once. Nothing is shown when the reserve ends.
 - **What the session is told** — one system section naming the window and its reset time, then an instruction: start no new agent or workflow that writes code or designs, have each running one commit what builds and end on a handoff spec, commit and push the work in hand, write every open item down so it can be resumed cold, and clean up idle servers, shells and monitors. The text holds still while the reserve lasts, so it does not break the prompt cache. It is sent only while the resin mod is on.
 - **What lifts it** — the window's reset drops its reading under the line, and the next measurement clears the reserve, so the section simply stops being sent. No button or command does this.

@@ -39,7 +39,7 @@ flowchart TD
 **This adds, in order:**
 
 1. **The range, the mute and the white highlight** of the interaction prompts' things.
-2. **Elements' colours and enemies' names**, read from their elemental state.
+2. **Elements' colours and enemies' names**, a colour read from an aura in `ElementalState` or from an innate element, an enemy's in its kind's traits.
 3. **Trails**, each with the page that leaves one.
 
 ## Data and measures

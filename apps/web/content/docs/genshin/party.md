@@ -32,23 +32,31 @@ flowchart TD
 
 The world screen keeps the player's characters and their party. A new player's is the Traveler alone, made by `createCharacter` once the roster arrives, at level 1 with the weapon the game gives them ([character attributes](/docs/genshin/character-attributes)). Once a frame, in play with no screen over the world, the first party key pressed is passed to `switchPartyMember` at the canvas clock's elapsed seconds, so a screen over the world holds the keys as it holds the rest of play.
 
+The character on the field fights through its kit, which prices every character's hits from its attributes with the Traveler's kit until the kits run gives each its own ([combat](/docs/genshin/combat)). An enemy's strike and a drowning take HP from the party, and a team that has all fallen revives at 35% and is jumped to the Statue of The Seven nearest the body, or left where it fell when none is loaded.
+
 ## Key files
 
-| File                                                                  | Role                                                           |
-| :-------------------------------------------------------------------- | :------------------------------------------------------------- |
-| `packages/genshin-world/src/models/party/Party.ts`                    | The teams, the one deployed, the field, each member, the clock |
-| `packages/genshin-world/src/services/party/createParty.ts`            | A party as the game starts one                                 |
-| `packages/genshin-world/src/services/party/switchPartyMember.ts`      | A key's switch, or the game's reason for refusing it           |
-| `packages/genshin-world/src/services/party/deployPartyTeam.ts`        | A team deployed, its first member standing on the field        |
-| `packages/genshin-world/src/services/party/setPartyTeamCharacters.ts` | A team's members set, the field keeping its slot               |
-| `packages/genshin-world/src/services/party/damagePartyMember.ts`      | HP taken, a fall, and the next member brought on               |
-| `packages/genshin-world/src/services/party/constants.ts`              | The team size, the cooldown, the default teams and the keys    |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`        | Keeps the characters and the party, and switches on the keys   |
+| File                                                                  | Role                                                                                 |
+| :-------------------------------------------------------------------- | :----------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/party/Party.ts`                    | The teams, the one deployed, the field, each member, the clock                       |
+| `packages/genshin-world/src/services/party/createParty.ts`            | A party as the game starts one                                                       |
+| `packages/genshin-world/src/services/party/switchPartyMember.ts`      | A key's switch, or the game's reason for refusing it                                 |
+| `packages/genshin-world/src/services/party/deployPartyTeam.ts`        | A team deployed, its first member standing on the field                              |
+| `packages/genshin-world/src/services/party/setPartyTeamCharacters.ts` | A team's members set, the field keeping its slot                                     |
+| `packages/genshin-world/src/services/party/damagePartyMember.ts`      | HP taken, a fall, and the next member brought on                                     |
+| `packages/genshin-world/src/services/party/gainPartyEnergy.ts`        | A particle's energy to each standing member of the deployed team                     |
+| `packages/genshin-world/src/services/party/stepPartyCooldowns.ts`     | Each member's skill and burst cooldowns, lowered each step                           |
+| `packages/genshin-world/src/services/party/drownParty.ts`             | A drowning: every member's energy and a tenth of its Max HP                          |
+| `packages/genshin-world/src/services/party/reviveParty.ts`            | A fallen team brought back at 35% of its Max HP                                      |
+| `packages/genshin-world/src/services/map/findNearestLandmark.ts`      | The loaded statue nearest the body, where a fallen team is jumped to                 |
+| `packages/genshin-world/src/services/party/constants.ts`              | The team size, the cooldown, the default teams and the keys                          |
+| `packages/genshin-world/src/components/World/Character/Index.vue`     | Steps the field's kit, its cooldowns and a drowning                                  |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`        | Keeps the characters and the party, switches on the keys, and respawns a fallen team |
 
 ## Notes
 
 - **The cooldown is the single player's.** The wiki gives one second; co-op splits the four slots between players and is out of the world's scope.
-- **Nothing in the world takes HP yet.** The rules that take it and revive are built; the enemies' strikes, drowning and the respawn at the nearest statue call them once the fight is wired into the world.
+- **Only the character on the field takes an enemy's strike.** The others' HP falls only by a drowning, which takes every member's energy and a tenth of its Max HP together, while their cooldowns keep running off the field.
 
 ## Sources
 

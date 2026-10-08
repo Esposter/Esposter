@@ -18,8 +18,10 @@ import { checkIsPartInterior } from "#src/services/genshinParity/sky/checkIsPart
 import { getPixelDisplayColor } from "#src/services/genshinParity/sky/getPixelDisplayColor";
 import { computeEdgeDistance } from "#src/services/genshinParity/witness/computeEdgeDistance";
 import { findShadowEdges } from "#src/services/genshinParity/witness/findShadowEdges";
+import { getSkyGridDirections } from "#src/services/genshinParity/witness/getSkyGridDirections";
 import { readReferenceLandmarks } from "#src/services/genshinParity/witness/readReferenceLandmarks";
 import { solveCameraPose } from "#src/services/genshinParity/witness/solveCameraPose";
+import { toSunDirection } from "#src/services/genshinParity/witness/toSunDirection";
 import { BYTE } from "#src/services/shared/constants";
 import { withFinalizerAsync } from "@esposter/shared";
 import { mkdir } from "node:fs/promises";
@@ -35,9 +37,12 @@ const SHADOWED_VISIBILITY = 0.5;
 // A run of shadow or light smaller than this many pixels at the reading's width is a texel's misreading rather than a
 // Shadow, where a tower's shadow across the walkway covers thousands
 const SHADOW_SPECK_AREA = 64;
-// The solve's first step about each angle, in degrees, and how many steps of the simplex it takes
+// The solve's first step about each angle, in degrees, and how many steps of the simplex it takes from each start
 const SOLVE_STEP_DEGREES = 5;
 const SOLVE_ITERATION_COUNT = 40;
+// The grid's best directions the simplex starts from, and how many of the grid's best a solve reports
+const SOLVE_START_COUNT = 3;
+const GRID_REPORT_COUNT = 5;
 // The directions a solve prices first about the scene's, its heading and its height each turned either way, in degrees,
 // So an objective no direction moves shows before the simplex settles on its start
 const PROBE_TURNS_DEGREES: readonly [number, number][] = [
@@ -46,11 +51,12 @@ const PROBE_TURNS_DEGREES: readonly [number, number][] = [
   [0, -10],
   [0, 10],
 ];
-// A direction toward the sun from its heading about up, from +x toward +z, and its height over the horizon, in degrees
-const toDirection = ([azimuth = 0, elevation = 0]: readonly number[]): Vector => {
-  const [heading, height] = [MathUtils.degToRad(azimuth), MathUtils.degToRad(elevation)];
-  return [Math.cos(height) * Math.cos(heading), Math.sin(height), Math.cos(height) * Math.sin(heading)];
-};
+// A sun direction priced: its edges' distance from the reference's and how many edge pixels ours draws
+interface PricedDirection {
+  direction: Vector;
+  distance: number;
+  ourEdgeCount: number;
+}
 const toAngles = ([x, y, z]: Readonly<Vector>): number[] => [
   MathUtils.radToDeg(Math.atan2(z, x)),
   MathUtils.radToDeg(Math.asin(y / Math.hypot(x, y, z))),
@@ -64,8 +70,10 @@ const toLuminance = (red: number, green: number, blue: number): number =>
 // From a direction by the scene's own shadow map (the witness's shadow target, the sun cast from it for that read
 // Alone), and their edges priced against the reference's both ways, the mean of each edge's distance to the other's
 // Nearest, in the reference's pixels (`computeEdgeDistance`). The scene's own direction is priced, and when told, a few
-// Directions about it and the direction solved where the edges meet best, by its heading and its height over the
-// Horizon from the scene's, each with how many edge pixels ours draws. A current build's reference is seen
+// Directions about it, then every direction of the sky's grid (`getSkyGridDirections`) priced; the grid's best few each
+// Start a simplex over their heading and their height above the horizon, and the best of those solved where the edges
+// Meet best. Each priced direction reports how many edge pixels ours draws, and the grid's best few are reported beside
+// The solved. A current build's reference is seen
 // From the scene's own camera, which the camera pass holds; an older build's from its own, solved on its landmarks. An
 // Image of the reference with its edges in green, the scene's in red and the solved in blue is written beside the
 // References
@@ -77,10 +85,11 @@ export const solveReferenceShadows = async (
   direction: Vector;
   distance: number;
   edgeCount: number;
+  grid: PricedDirection[];
   imagePath: string;
   ourEdgeCount: number;
-  probes: { direction: Vector; distance: number; ourEdgeCount: number }[];
-  solved?: { direction: Vector; distance: number; ourEdgeCount: number };
+  probes: PricedDirection[];
+  solved?: PricedDirection;
 }> => {
   await fetchReferences();
   const referencePath = join(REFERENCES_DIRECTORY, `${referenceId}.png`);
@@ -141,31 +150,45 @@ export const solveReferenceShadows = async (
         return { distance: computeEdgeDistance(edges, referenceEdges, width, height) * scale, edges };
       };
       const shipped = await priceDirection(direction);
-      const probes: { direction: Vector; distance: number; ourEdgeCount: number }[] = [];
+      const probes: PricedDirection[] = [];
       const [azimuth = 0, elevation = 0] = toAngles(direction);
       if (isSolved)
         for (const [headingTurn, heightTurn] of PROBE_TURNS_DEGREES) {
-          const probeDirection = toDirection([azimuth + headingTurn, elevation + heightTurn]);
+          const probeDirection = toSunDirection([azimuth + headingTurn, elevation + heightTurn]);
           // oxlint-disable-next-line no-await-in-loop -- the page draws one direction's shadows at a time
           const { distance, edges } = await priceDirection(probeDirection);
           probes.push({ direction: probeDirection, distance, ourEdgeCount: countSetPixels(edges) });
         }
-      const solvedPoint = isSolved
-        ? (
-            await minimizeNelderMead(
-              async (angles) => {
-                const [, elevation = 0] = angles;
-                return elevation <= 0 || elevation >= 90
-                  ? Infinity
-                  : (await priceDirection(toDirection(angles))).distance;
-              },
-              [azimuth, elevation],
-              [SOLVE_STEP_DEGREES, SOLVE_STEP_DEGREES],
-              SOLVE_ITERATION_COUNT,
-            )
-          ).point
-        : undefined;
-      const solvedDirection = solvedPoint ? toDirection(solvedPoint) : undefined;
+      const grid: PricedDirection[] = [];
+      if (isSolved)
+        for (const gridDirection of getSkyGridDirections()) {
+          // oxlint-disable-next-line no-await-in-loop -- the page draws one direction's shadows at a time
+          const { distance, edges } = await priceDirection(gridDirection);
+          grid.push({ direction: gridDirection, distance, ourEdgeCount: countSetPixels(edges) });
+        }
+      const gridBest = grid.toSorted((firstReading, secondReading) => firstReading.distance - secondReading.distance);
+      const simplexResults: { cost: number; point: number[] }[] = [];
+      if (isSolved)
+        for (const { direction: startDirection } of gridBest.slice(0, SOLVE_START_COUNT)) {
+          const [startAzimuth = 0, startElevation = 0] = toAngles(startDirection);
+          // oxlint-disable-next-line no-await-in-loop -- the page draws one direction's shadows at a time
+          const simplexResult = await minimizeNelderMead(
+            async (angles) => {
+              const [, angleElevation = 0] = angles;
+              return angleElevation <= 0 || angleElevation >= 90
+                ? Infinity
+                : (await priceDirection(toSunDirection(angles))).distance;
+            },
+            [startAzimuth, startElevation],
+            [SOLVE_STEP_DEGREES, SOLVE_STEP_DEGREES],
+            SOLVE_ITERATION_COUNT,
+          );
+          simplexResults.push(simplexResult);
+        }
+      const [simplexBest] = simplexResults.toSorted(
+        (firstResult, secondResult) => firstResult.cost - secondResult.cost,
+      );
+      const solvedDirection = simplexBest ? toSunDirection(simplexBest.point) : undefined;
       const solved = solvedDirection ? await priceDirection(solvedDirection) : undefined;
       const marked = Buffer.from(shot);
       for (const [edges, color] of [
@@ -184,6 +207,7 @@ export const solveReferenceShadows = async (
         direction,
         distance: shipped.distance,
         edgeCount: countSetPixels(referenceEdges),
+        grid: gridBest.slice(0, GRID_REPORT_COUNT),
         imagePath,
         ourEdgeCount: countSetPixels(shipped.edges),
         probes,

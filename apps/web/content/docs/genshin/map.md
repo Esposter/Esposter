@@ -36,6 +36,10 @@ flowchart TD
 - **The pose lands in front, facing back.** `computeJumpPose` stands the arrival a fixed distance in front of the landmark, along the way it faces, at a yaw that looks back at it, so the view arrives on what was jumped to, clear of a statue's plinth. The body stands on the ground's height there, read when the jump lands.
 - **The world screen jumps.** `WorldScreen` exposes `jumpTo(pose)` and `readCameraPosition()` to its host. A jump closes the map, fades a black veil over the screen, and once the fade ends asks `WorldCharacter` to `place` the body at the pose, facing its yaw with the [follow camera](/docs/genshin/follow-camera) level behind it, then fades back in.
 
+## Parity
+
+The overlay is scored whole-frame against `map-overlay-jueyun`, the English client's map on M over Jueyun Karst at 1920 by 1080: a mean difference of 31.37% and a FLIP of 0.7918, as the overlay stands. Most of that is terrain: the game paints its map as art, which is not drawn, so the frame's score is the painted map's. The bar is set on the interface layer alone, the area names, the pointer, the close button and the zoom slider, with the terrain masked. `compare` scores one region per reference and cannot mask a terrain yet, so that score is not quoted.
+
 ## Key files
 
 | File                                                                 | Role                                                                                               |

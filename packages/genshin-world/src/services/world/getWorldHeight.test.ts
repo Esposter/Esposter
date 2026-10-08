@@ -1,4 +1,4 @@
-import windriseGround from "#src/data/windrise/ground.json";
+import windriseBaseGround from "#src/data/windrise/base-ground.json";
 import { regionGroundSchema } from "#src/models/world/RegionGround";
 import { WINDRISE_TERRAIN_OPTIONS } from "#src/services/windrise/constants";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
@@ -14,12 +14,10 @@ describe(getWorldHeight, () => {
   test("raises every region's ground at its plateaus, within the heights every tile is bounded by", () => {
     expect.hasAssertions();
 
-    const getWindriseHeight = createTerrainShapeHeight(windriseGround);
-    const plateaus = globSync("*/ground.json", { cwd: DATA_DIRECTORY })
-      .filter((path) => path !== join("windrise", "ground.json"))
-      .flatMap(
-        (path) => regionGroundSchema.parse(jsonDateParse(readFileSync(join(DATA_DIRECTORY, path), "utf8"))).features,
-      );
+    const getWindriseHeight = createTerrainShapeHeight(windriseBaseGround);
+    const plateaus = globSync("*/ground.json", { cwd: DATA_DIRECTORY }).flatMap(
+      (path) => regionGroundSchema.parse(jsonDateParse(readFileSync(join(DATA_DIRECTORY, path), "utf8"))).features,
+    );
     const { maxHeight, minHeight } = WINDRISE_TERRAIN_OPTIONS;
 
     expect(plateaus).not.toHaveLength(0);

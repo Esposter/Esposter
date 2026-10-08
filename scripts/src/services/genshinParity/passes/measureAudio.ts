@@ -21,7 +21,7 @@ const GRAIN_SEED = 3;
 // Already its first frames' bands
 export const measureAudio = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
   const effects = Object.entries(DerivedAssetSoundEffectMap[component]);
-  if (effects.length === 0) return { notes: ["no sound of the game's matched yet"], readings: [] };
+  if (effects.length === 0) return { isNotOwed: true, notes: ["no sound of the game's matched yet"], readings: [] };
   const soundsPath = `${component}/sounds.json`;
   const fitted = await readWorldData<Record<string, SoundEffect>>(soundsPath);
   const measures: ParityPassMeasure[] = [];

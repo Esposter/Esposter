@@ -33,15 +33,15 @@ interface WorldArea {
 // The waypoints the game's area table files under the capital's areas, a waypoint being a point of the kind
 // Windrise's statue is. Where the region's ground is its own file, its first plateau, the capital's, is centred there
 // And raised to the waypoints' median height over the world's base. Every other field stays the files', the landmark's
-// Turn and the plateau's reach among them. A capital with no waypoint is an error. Returns the files written
+// Turn and the plateau's reach among them. A capital with no waypoint is an error, and one set by hand writes its landmark alone. Returns the files written
 export const fitRegionCapitals = async (): Promise<string[]> => {
   const statuePoint = DerivedAssetComponentMap[DerivedAssetComponent.Windrise].world?.points[0];
   if (!statuePoint) throw new InvalidOperationError(Operation.Read, DerivedAssetComponent.Windrise, "has no point");
-  const [areasJson, pointsJson, [originX, originY, originZ], windriseGroundJson] = await Promise.all([
+  const [areasJson, pointsJson, [originX, originY, originZ], windriseBaseGroundJson] = await Promise.all([
     readFile(WORLD_AREAS_PATH, "utf8"),
     readFile(join(GAME_TEXT_DIRECTORY, statuePoint.file), "utf8"),
     readWorldOrigin(DerivedAssetComponent.Windrise),
-    readFile(join(WORLD_DATA_DIRECTORY, "windrise", "ground.json"), "utf8"),
+    readFile(join(WORLD_DATA_DIRECTORY, "windrise", "base-ground.json"), "utf8"),
   ]);
   const textMap = readTextMap(GameLanguage.English);
   const areas = parseMachineJson<WorldArea[]>(areasJson);
@@ -51,9 +51,26 @@ export const fitRegionCapitals = async (): Promise<string[]> => {
   const waypointType = categoryPoints[statuePoint.id]?.$type;
   if (waypointType === undefined)
     throw new InvalidOperationError(Operation.Read, statuePoint.file, `has no point ${statuePoint.id}`);
-  const { base } = parseMachineJson<GaussianHills>(windriseGroundJson);
+  const { base } = parseMachineJson<GaussianHills>(windriseBaseGroundJson);
   const writtenPaths = await Promise.all(
-    Object.entries(RegionCapitalMap).map(async ([region, { areaNames, landmarkId }]) => {
+    Object.entries(RegionCapitalMap).map(async ([region, capital]) => {
+      const { landmarkId } = capital;
+      const regionFile = join("regions", `${region}.json`);
+      const regionData = parseMachineJson<{ landmarks: { id: string }[] }>(
+        await readFile(join(WORLD_DATA_DIRECTORY, regionFile), "utf8"),
+      );
+      if (!regionData.landmarks.some(({ id }) => id === landmarkId))
+        throw new InvalidOperationError(Operation.Read, regionFile, `has no landmark ${landmarkId}`);
+      const writeLandmark = (position: GroundPoint) => {
+        const landmarks = regionData.landmarks.map((landmark) =>
+          landmark.id === landmarkId ? { ...landmark, position } : landmark,
+        );
+        return writeWorldData(regionFile, { ...regionData, landmarks });
+      };
+      // A capital the dump holds no areas for stands at the place its entry sets, so only its landmark is written: its
+      // Plateau's height is the region's own ground fit's, which no waypoint gives it
+      if ("position" in capital) return [await writeLandmark(capital.position)];
+      const { areaNames } = capital;
       const capitalAreaNames = new Set(areaNames);
       const areaIds = new Set(
         areas
@@ -77,17 +94,8 @@ export const fitRegionCapitals = async (): Promise<string[]> => {
         z: roundFitted(originZ - computeUpperMedian(waypoints.map(({ _z = 0 }) => _z))),
       };
       const height = roundFitted(computeUpperMedian(waypoints.map(({ _y = 0 }) => _y)) - originY - base);
-      const regionFile = join("regions", `${region}.json`);
       const groundFile = join(region, "ground.json");
-      const regionData = parseMachineJson<{ landmarks: { id: string }[] }>(
-        await readFile(join(WORLD_DATA_DIRECTORY, regionFile), "utf8"),
-      );
-      if (!regionData.landmarks.some(({ id }) => id === landmarkId))
-        throw new InvalidOperationError(Operation.Read, regionFile, `has no landmark ${landmarkId}`);
-      const landmarks = regionData.landmarks.map((landmark) =>
-        landmark.id === landmarkId ? { ...landmark, position } : landmark,
-      );
-      const paths = [await writeWorldData(regionFile, { ...regionData, landmarks })];
+      const paths = [await writeLandmark(position)];
       if (!existsSync(join(WORLD_DATA_DIRECTORY, groundFile))) return paths;
       const regionGround = parseMachineJson<{ features: PlateauFeature[] }>(
         await readFile(join(WORLD_DATA_DIRECTORY, groundFile), "utf8"),

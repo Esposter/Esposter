@@ -1,5 +1,6 @@
 import { DEVELOP_BRANCH, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
+import { getWindowBranch } from "#src/services/coderabbit/collect/getWindowBranch";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { getResult } from "@esposter/shared";
@@ -23,6 +24,18 @@ describe(pushBranch, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     expect(isPushed).toBe(true);
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(sha);
+  });
+
+  // A window's first push: the branch must not exist yet, and nothing is asserted to descend from anything
+  test("creates a branch that does not exist on the remote", () => {
+    expect.hasAssertions();
+
+    const branch = getWindowBranch(1);
+    const sha = commitFile(TEST_FILENAME, "");
+    const isPushed = pushBranch({ branch, cwd: getCwd(), expectedSha: undefined, isDryRun: false, sha });
+
+    expect(isPushed).toBe(true);
+    expect(readSha(`origin/${branch}`)).toBe(sha);
   });
 
   // The early exit: a branch already known to be stale is not worth a push the lease would refuse anyway

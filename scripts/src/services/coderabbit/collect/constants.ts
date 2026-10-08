@@ -8,6 +8,16 @@ export const DEVELOP_BRANCH = "develop";
 export const QUEUE_BRANCH = "ai/queue";
 // Written by the collector alone and never deleted: the next drain after it is ported re-creates it from develop
 export const REVIEW_FIXES_BRANCH = "ai/review-fixes";
+// Each window is its own branch under this prefix, numbered by a running count (`getWindowBranch`). The stack's pull
+// Requests are the ones whose head starts with it, so no other branch is ever read as a window
+export const WINDOW_BRANCH_PREFIX = "review/";
+// The title every window's pull request carries before its number
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template would otherwise infer
+export const WINDOW_TITLE: string = `release: ${DEVELOP_BRANCH} → ${MAIN_BRANCH}`;
+// The most pull requests one `gh pr list` returns, newest first. The window numbers and the hour's openings are read off
+// The whole history, and the windows are the recent end of it, so this bound is past any the cycle needs to see
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a literal would otherwise infer
+export const PULL_REQUEST_LIST_LIMIT: number = 1000;
 // The trailer a fix commit carries per inline finding it answers, and the one a body-only fix carries per review
 export const ANSWERS_TRAILER = "Answers";
 
@@ -146,6 +156,12 @@ export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";
 export const SESSION_PROBE_PROMPT = "Reply with the one word ready, and run no tool.";
 export const SESSION_DENIALS =
   "Work in this checkout only: never push, never switch branches, never rewrite history, never amend, and never run `gh` or any other command that writes to GitHub — you hold no credential for it, and the collector does every one of those itself once you have exited.";
+// What the drain session may do with a finding's fix: hand it to a foreground subagent on haiku, one finding at a time.
+// The session reads each subagent's diff and judges it before the next, keeps every verdict and every reply its own,
+// And leaves the tree clean. Only the drain is given this clause: the reconciliation roles stay opus-only
+// (`SessionRoleModelMap`), and `CLAUDE_CODE_SUBAGENT_MODEL_FORCE` is never set, so the model asked for is the one used
+export const DRAIN_SUBAGENT_CLAUSE =
+  'The fix to each finding may be handed to a foreground subagent: the Agent tool with `model: "haiku"` and `run_in_background: false`, one at a time. Read each subagent\'s diff and judge it before the next. Keep every verdict and every reply your own. Leave the working tree clean, as the rest of this session does.';
 // The finishing ritual a headless session owes, foreground because a `claude -p` session has no next turn
 export const FINISHING_CHECKS_INSTRUCTION =
   "Run the repo's finishing checks over the paths you touched — `pnpm format` at the root, `pnpm typecheck` in the touched package, `pnpm lint:fix` from the repo root, and the touched test suites — and commit any repairs they produce as their own commit. Run them in the foreground and wait for each to finish: this session is one-shot, so a check started in the background is a check whose result no turn of yours will ever read.";
@@ -204,3 +220,5 @@ export const ATTEMPT_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minu
 export const OUTAGE_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 5 }).total("seconds");
 // The job output the runner's delayed retrigger reads — the only channel between two jobs of one workflow run
 export const RETRIGGER_DELAY_OUTPUT = "retriggerDelaySeconds";
+// The span the hourly ceiling counts openings over, by the creation time of each window pull request
+export const WINDOW_OPENING_WINDOW_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");

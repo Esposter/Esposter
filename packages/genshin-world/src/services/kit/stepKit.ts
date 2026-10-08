@@ -63,10 +63,7 @@ export const stepKit = (
     const isAllowed =
       ON_FOOT_LOCOMOTION_STATES.includes(locomotionState) ||
       (isSkillOrBurst && AIRBORNE_LOCOMOTION_STATES.includes(locomotionState));
-    if (!isAllowed) {
-      kitState.isAttackQueued = false;
-      endKitAction(kitState, kit);
-    } else {
+    if (isAllowed) {
       const fromSeconds = kitState.actionSeconds;
       kitState.actionSeconds += stepSeconds;
       landKitHits(action, fromSeconds, kitState.actionSeconds, landedHits);
@@ -75,6 +72,9 @@ export const stepKit = (
         return undefined;
       }
       isStrikeEnded = kit.normalAttacks.includes(action);
+      endKitAction(kitState, kit);
+    } else {
+      kitState.isAttackQueued = false;
       endKitAction(kitState, kit);
     }
   }

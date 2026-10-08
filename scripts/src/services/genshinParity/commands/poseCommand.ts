@@ -1,8 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { FRAME_GATE_PIXELS } from "#src/services/genshinParity/passes/constants";
 import { CAMERA_POSE_AXES, PARITY_REFERENCE_MAP_PATH } from "#src/services/genshinParity/shared/constants";
+import { getPoseBar } from "#src/services/genshinParity/witness/getPoseBar";
 import { replaceReferenceCameraPose } from "#src/services/genshinParity/witness/replaceReferenceCameraPose";
 import { solveReferencePose } from "#src/services/genshinParity/witness/solveReferencePose";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
@@ -41,7 +41,7 @@ export const poseCommand: SubCommandsDef[string] = defineCommand({
     },
     write: {
       description:
-        "Write the landmarks' pose into the reference's held camera in ParityReferenceMap, when no refinement moved it and it reprojects them within the camera pass's gate",
+        "Write the landmarks' pose into the reference's held camera in ParityReferenceMap, when no refinement moved it and it reprojects them within the reference's pose bar (the camera pass's gate unless it sets its own)",
       type: "boolean",
     },
   },
@@ -71,10 +71,10 @@ export const poseCommand: SubCommandsDef[string] = defineCommand({
     console.log(`pose ${CAMERA_POSE_AXES.map((axis, index) => `${axis} ${(pose[index] ?? 0).toFixed(3)}`).join(", ")}`);
     console.log(`given | snapped | projected: ${imagePath}`);
     if (!args.write) return;
-    // Only a pose the camera pass would hold is written, so a miss leaves the map as it was
-    else if (refinement) console.log("not written: a refinement moved the pose off its landmarks");
-    else if (rms > FRAME_GATE_PIXELS)
-      console.log(`not written: ${rms.toFixed(2)} px over the camera pass's ${FRAME_GATE_PIXELS}`);
+    const bar = getPoseBar(args.reference);
+    // Only a pose its bar holds is written, so a miss leaves the map as it was
+    if (refinement) console.log("not written: a refinement moved the pose off its landmarks");
+    else if (rms > bar) console.log(`not written: ${rms.toFixed(2)} px over ${args.reference}'s bar of ${bar}`);
     else {
       const source = await readFile(PARITY_REFERENCE_MAP_PATH, "utf8");
       await writeFile(PARITY_REFERENCE_MAP_PATH, replaceReferenceCameraPose(source, args.reference, pose));

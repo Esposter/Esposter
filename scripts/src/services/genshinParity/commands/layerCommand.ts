@@ -1,7 +1,9 @@
 import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { checkIsReadingHeld } from "#src/services/genshinParity/passes/checkIsReadingHeld";
 import { formatPassValue } from "#src/services/genshinParity/passes/formatPassValue";
+import { formatReadingValue } from "#src/services/genshinParity/passes/formatReadingValue";
 import { solveReferenceCloudLayer } from "#src/services/genshinParity/sky/solveReferenceCloudLayer";
 import { parseNames } from "#src/services/shared/parseNames";
 import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
@@ -52,9 +54,9 @@ export const layerCommand: SubCommandsDef[string] = defineCommand({
       iterationCount,
       args.ours,
     );
-    for (const { gate, name, unit, value } of measure.readings)
+    for (const reading of measure.readings)
       console.log(
-        `${name}: ${value.toFixed(4)} ${unit} against ${formatPassValue(gate)} ${value <= gate ? "held" : "FAILED"}`,
+        `${reading.name}: ${formatReadingValue(reading)} ${reading.unit} against ${formatPassValue(reading.gate)} ${checkIsReadingHeld(reading) ? "held" : "FAILED"}`,
       );
     for (const note of measure.notes) console.log(note);
     console.log(`settings ${JSON.stringify(settings)}`);

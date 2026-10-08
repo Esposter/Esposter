@@ -10,7 +10,7 @@ This page builds on the [terrain](/docs/genshin/terrain), whose quadtree, worker
 
 ## Decisions
 
-- **The ground is fitted, never drawn.** Each 1024-metre tile's TerrainData holds its heights in metres on the game's own coordinates ([game data formats](/docs/genshin/game-data-formats)), so a region's ground is a fit to those tiles, generalising `fitWindriseGround` from one valley to any set of tiles. The game's coordinates are the world's, so no transform from a map's pixels is needed. What ships is the fit's parameters, the region's data, never the heights themselves.
+- **The ground is fitted, never drawn.** Each 1024-metre tile's TerrainData holds its heights in metres on the game's own coordinates ([game data formats](/docs/genshin/game-data-formats)), so a region's ground is a fit to those tiles: `fitRegionGround` already fits each region's hills, and features and the residual are what this proposal adds. The game's coordinates are the world's, so no transform from a map's pixels is needed. What ships is the fit's parameters, the region's data, never the heights themselves.
 - **The least representation that holds, in order.** Hills come first, as Windrise's are. Where their error stands above the gate, the fit adds the sharp features hills smear: cliff bands with a step height, ridge lines with a profile, plateau outlines and coastlines, each found where the residual is largest and fitted to it, blended in by its signed distance with its own falloff. What is left below the features' reach is filled by noise whose amplitude and scale are fitted to the residual's own spectrum, judged by its statistics as anything random is, never by its heights point for point.
 - **Gated by the shape pass's measure.** A tile's fit is done when its height error over the tile, and its outline and depth against the exports drawn by the witness at each reference's camera, stand within the reference's noise; the fit prints both, and a test freezes the fitted parameters' error once the gate holds.
 - **The ground's layers are fitted to the game's own.** The ground is painted in layers whose weights are solved per vertex by rules of the slope, the height and a path's distance ([ground paint](/docs/genshin/ground-paint)). The inventory reads what each TerrainData holds past its heights, its layers and their weights where it holds them, and a fit replaces the rules' weights with them, while the surface pass fits the layers' colours to the game's by comparing their unlit colour with the exports'. Where the tile holds no weights, the rules' bands are fitted against the same exports.
@@ -46,12 +46,12 @@ flowchart TD
 
 ## Key files
 
-| File                                                          | Role after the change                                                 |
-| :------------------------------------------------------------ | :-------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/fit/fitWindriseGround.ts` | Generalised to fit any set of tiles, hills, features and residual     |
-| `scripts/src/services/genshinAssets/fit/fitGaussianHills.ts`  | The first rung of the fit, its error deciding whether features follow |
-| `packages/genshin-engine/src/terrain/computeTerrainTile.ts`   | The tile generator, which samples the fitted features and noise       |
-| `packages/genshin-world/src/workers/terrainTile.worker.ts`    | The worker, which reads a region's fitted data in place of its code   |
+| File                                                         | Role after the change                                                 |
+| :----------------------------------------------------------- | :-------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/fit/fitRegionGround.ts`  | Each region's hills, built; its features and residual still to fit    |
+| `scripts/src/services/genshinAssets/fit/fitGaussianHills.ts` | The first rung of the fit, its error deciding whether features follow |
+| `packages/genshin-engine/src/terrain/computeTerrainTile.ts`  | The tile generator, which samples the fitted features and noise       |
+| `packages/genshin-world/src/workers/terrainTile.worker.ts`   | The worker, which reads a region's fitted data in place of its code   |
 
 New files:
 

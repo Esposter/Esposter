@@ -1,8 +1,8 @@
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
-import { ENGLISH_GAME_TEXT } from "genshin-text";
 import { ItemCategory } from "genshin-interface";
+import { ENGLISH_GAME_TEXT } from "genshin-text";
 
 // The weapons' tab of the English client at 1080 high, holding 1,347 four-star weapons at level 20, the tab's room
 // Counted beside its name (`Weapons 1347/2000`), as the recording of the account tour shows it
@@ -10,7 +10,7 @@ const WEAPON_COUNT = 1347;
 const WEAPON_LEVEL = 20;
 const WEAPON_RARITY = 4;
 // The first entry is the one the detail panel shows, the Eye of Perception at level 50 as the recording's selected one is
-const weapons: InventoryItem[] = Array.from({ length: WEAPON_COUNT }, (_, index) => ({
+const weapons: InventoryItem[] = Array.from({ length: WEAPON_COUNT }, (_value, index) => ({
   definition: {
     category: ItemCategory.Weapon,
     id: index,

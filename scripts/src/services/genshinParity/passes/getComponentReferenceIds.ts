@@ -1,10 +1,10 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
-import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 
-// The references a component's screen is judged against, in the map's order, not its interface's backdrops
+// The references a component's passes are judged over, in the map's order, not its interface's backdrops: the ones
+// Naming the component, so a screen several components share is measured by each over its own references alone
 export const getComponentReferenceIds = (component: DerivedAssetComponent): string[] =>
   Object.entries(ParityReferenceMap)
-    .filter(([, { isBackdrop, screen }]) => !isBackdrop && screen === DerivedAssetComponentMap[component].screen)
+    .filter(([, { component: referenceComponent, isBackdrop }]) => !isBackdrop && referenceComponent === component)
     .map(([referenceId]) => referenceId);

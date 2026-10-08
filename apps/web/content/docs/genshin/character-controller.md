@@ -31,6 +31,7 @@ sequenceDiagram
 ```
 
 - **Fixed steps, a press kept until one reads it.** The body moves in steps of a sixtieth of a second, so a run covers the same ground at any frame rate. A frame's presses (jump, dash, drop, attack, the walk switch) are held by the controller until the next step reads them, so a press in a frame that runs no step, on a display faster than the step, is never lost; the step that reads them lets them go.
+- **A kit reads the presses before the step spends them.** `heldPresses` is the frame's presses as the next step will read them, so the character's kit takes its attack, skill and burst presses from it before the step clears them. While a kit's action plays, the step is given the same presses with no move, so the body holds where it stands and the presses still reach the controller.
 - **The move is relative to the camera.** `W` moves along the camera's yaw over the ground and `A` and `D` across it, as the game's controls bind them ([controls](/docs/genshin/controls)). On a wall `W` climbs up and `A` and `D` climb across, whatever the camera faces.
 - **The body moves in the world's own coordinates.** It reads the terrain's height function directly, so the [floating origin](/docs/genshin/terrain) never has to move it: what is drawn on it is placed in the world group, which the origin offsets, at the body's place, and the camera is placed in the scene's coordinates by the origin. Its frame callback runs at `CAMERA_FRAME_PRIORITY`, ahead of the origin's shift whatever order it mounts in.
 
@@ -85,6 +86,7 @@ The body is a kinematic capsule, moved by queries rather than a physics solver, 
 - **In the air** it falls under gravity, steered at the speed it left the ground at. A jump leaves at the speed that reaches its jump's height. Landing on ground too steep to stand on slides it down.
 - **On a wall** it moves in the wall's plane. A terrain cliff holds it to the terrain's own surface, read through the height function; a landmark's wall holds it by pressing it into the wall each step, so the push back out reports the wall again. Past a wall's top the body falls onto what stands above, or climbs over onto walkable ground.
 - **In water** it floats with its feet its wading depth under the surface, and stands once the ground rises to meet them.
+- **Turned on the spot.** `face` turns the body to a facing without moving it, which a kit's action does to aim at the enemy it targets. The body's facing is the one the camera follows and the hits are drawn from.
 
 After each move the capsule is pushed out of the landmarks it overlaps. A push mostly upward stands it on a landmark's floor, one mostly sideways holds it against a wall it may climb, and one downward stops a jump under a ceiling.
 
@@ -95,6 +97,8 @@ After each move the capsule is pushed out of the landmarks it overlaps. A push m
 ## Stamina
 
 One pool, shared by the party, starts at 100 and refills at 25 a second once a second and a half passes with no action that costs it, as the game's wiki gives it. A dash costs 18 as it starts, a sprint 18 a second, a climb's jump 25, and a swim's dash 2 to start and 10.2 a second while it moves. A swim costs 4 a stroke, one as it starts and one each stroke on, whether the body moves or treads water. A glide costs 3 a second, the wiki's approximation, and a climb a provisional amount a second while the body moves on the wall, which the wiki leaves unknown; a climb needs 5 to start. The pool refills on foot and in the air outside the glider, and never on a wall, in water or under the glider.
+
+A kit's action spends its own stamina as it starts, through `spend`, which takes the amount at once and restarts the refill's rest, so the pool refills only once the delay has passed from that spend. A sword's charged attack spends 20.
 
 Running out stops what costs: a sprint drops to a run, a climb lets go and falls, a glide closes, and a swim drowns. A drowned body comes back where its stamina was last full on foot, refilled, as the game returns its party. The pool's most stays at 100, since the world has no Statues of The Seven to offer at.
 
@@ -115,24 +119,24 @@ Every speed, height and threshold is a body type's, since how far a character sp
 
 ## Key files
 
-| File                                                                            | Its role                                                                     |
-| :------------------------------------------------------------------------------ | :--------------------------------------------------------------------------- |
-| `packages/genshin-engine/src/locomotion/createCharacterController.ts`           | the body: contact, state, stamina, motion and collision, a step at a time    |
-| `packages/genshin-engine/src/locomotion/computeLocomotionState.ts`              | the states' gates, a pure function                                           |
-| `packages/genshin-engine/src/locomotion/createStamina.ts`                       | the pool: what each state costs, and when it refills                         |
-| `packages/genshin-engine/src/locomotion/constants.ts`                           | the pool's numbers and the body's own thresholds                             |
-| `packages/genshin-engine/src/collision/createLandmarkCollider.ts`               | each landmark's octree, the capsule's push and the sphere's cast             |
-| `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`                 | the steps, and the share of a step a frame has come into                     |
-| `packages/genshin-world/src/components/World/Character/Index.vue`               | the wiring: steps, the drawn body's blend, the follow camera, a jump's place |
-| `packages/genshin-world/src/components/World/CharacterPlaceholder/Index.vue`    | the body's capsule, drawn where no character's model is                      |
-| `packages/genshin-world/src/services/world/locomotion/BodyTypeLocomotionMap.ts` | each body type's numbers                                                     |
-| `packages/genshin-world/src/services/world/locomotion/constants.ts`             | the provisional numbers every unmeasured type moves by                       |
-| `packages/genshin-world/src/components/World/Landmarks/Index.vue`               | gives the collider the landmarks as they arrive                              |
-| `scripts/src/services/genshinAssets/locomotion/readLocomotionClips.ts`          | a body type's clips exported and read for their root motion                  |
+| File                                                                            | Its role                                                                                                         |
+| :------------------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/locomotion/createCharacterController.ts`           | the body: contact, state, stamina, motion and collision, a step at a time                                        |
+| `packages/genshin-engine/src/locomotion/computeLocomotionState.ts`              | the states' gates, a pure function                                                                               |
+| `packages/genshin-engine/src/locomotion/createStamina.ts`                       | the pool: what each state costs, and when it refills                                                             |
+| `packages/genshin-engine/src/locomotion/constants.ts`                           | the pool's numbers and the body's own thresholds                                                                 |
+| `packages/genshin-engine/src/collision/createLandmarkCollider.ts`               | each landmark's octree, the capsule's push and the sphere's cast                                                 |
+| `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`                 | the steps, and the share of a step a frame has come into                                                         |
+| `packages/genshin-world/src/components/World/Character/Index.vue`               | the wiring: steps, the kit's presses, aim and strikes, the drawn body's blend, the follow camera, a jump's place |
+| `packages/genshin-world/src/components/World/CharacterPlaceholder/Index.vue`    | the body's capsule, drawn where no character's model is                                                          |
+| `packages/genshin-world/src/services/world/locomotion/BodyTypeLocomotionMap.ts` | each body type's numbers                                                                                         |
+| `packages/genshin-world/src/services/world/locomotion/constants.ts`             | the provisional numbers every unmeasured type moves by                                                           |
+| `packages/genshin-world/src/components/World/Landmarks/Index.vue`               | gives the collider the landmarks as they arrive                                                                  |
+| `scripts/src/services/genshinAssets/locomotion/readLocomotionClips.ts`          | a body type's clips exported and read for their root motion                                                      |
 
 ## Notes
 
-- **A jump from the map places the body**, standing it on the ground at the jump's point facing its yaw, with the follow camera level behind it, and makes that point where a drowning brings it back to until its stamina is next full on foot.
+- **A jump from the map places the body**, standing it on the ground at the jump's point facing its yaw, with the follow camera level behind it, and makes that point where a drowning brings it back to until its stamina is next full on foot. A place ends a kit's action in progress, since the body no longer stands where it played it.
 - **A party switch changes the body type the next step moves by** and the model drawn on the body, never the body's place or its stamina, which the party shares.
 - **Left Control with `W` held is the browser's close-tab shortcut.** The walk switch is the game's key, so it is pressed apart from a held move ([controls](/docs/genshin/controls)).
 

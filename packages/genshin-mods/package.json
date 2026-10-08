@@ -36,6 +36,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "vitest",
+    "typecheck": "tsc",
     "validate": "claude plugin validate ."
   }
 }

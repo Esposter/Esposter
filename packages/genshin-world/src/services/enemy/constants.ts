@@ -89,6 +89,9 @@ export const ENEMY_MATERIAL_TIER_SHARES: number[][] = [
 export const ENEMY_CAPSULE_RADIUS = 0.4;
 export const ENEMY_CAPSULE_HEIGHT = 1.6;
 export const ENEMY_CAPACITY = 64;
-// While no character stands in the world, the point under the camera is the enemies' target as long as the camera
-// Flies within this height of the ground, in metres
-export const ENEMY_TARGET_CAMERA_HEIGHT = 4;
+// Provisional: how long a hit tints an enemy's capsule, and how long a small flash stands at its middle, in seconds, with
+// The flash's radius in metres and the tint's colour, until a recording of a hit measures them
+export const ENEMY_HIT_TINT_SECONDS = 0.15;
+export const ENEMY_HIT_FLASH_SECONDS = 0.1;
+export const ENEMY_HIT_FLASH_RADIUS = 0.3;
+export const HIT_TINT_COLOR = 0xff_ff_ff;

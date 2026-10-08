@@ -26,6 +26,7 @@ import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
+import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import {
   CLOUD_COVERAGE,
@@ -58,6 +59,7 @@ import {
   WINDRISE_START_MINUTES,
   WINDRISE_TERRAIN_OPTIONS,
 } from "#src/services/windrise/constants";
+import { LandmarkKindWindrisePartFamilyMap } from "#src/services/windrise/LandmarkKindWindrisePartFamilyMap";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { whenever } from "@vueuse/core";
 import {
@@ -88,6 +90,8 @@ interface Props {
   // Where the host serves the characters' model packs, without which the character is drawn as its body's capsule
   characterPackBaseUrl?: string;
   createTerrainWorker: () => Worker;
+  // The enemies in the world by their spawn key, which the enemies write as camps load and enemies die
+  enemyMap: Map<string, Enemy>;
   // The game's minute of the day the clock is held at, in place of its running from the region's start
   heldMinutes?: number;
   // The drops and the residents in the world, each a row of the prompts and drawn as a stand-in
@@ -113,6 +117,7 @@ const {
   characterLocomotion,
   characterPackBaseUrl,
   createTerrainWorker,
+  enemyMap,
   heldMinutes,
   interactables,
   isHeld,
@@ -123,7 +128,7 @@ const {
   questTargetId,
   regionDataBaseUrl,
 } = defineProps<Props>();
-const emit = defineEmits<{ defeat: [enemy: Enemy, enemyDrops: EnemyDrops]; ready: [] }>();
+const emit = defineEmits<{ defeat: [enemy: Enemy, enemyDrops: EnemyDrops]; ready: []; strike: [enemy: Enemy] }>();
 // The witness render's parts, drawn in place of ours of each family it names when the parity page provides them, beside
 // Ours rather than in the floating origin's group, since the page's tools find the camera among their siblings and stay
 // Within reach of the origin
@@ -262,17 +267,20 @@ onUnmounted(() => {
   <TresGroup :position="worldOffset">
     <!-- Hidden rather than unmounted where the witness draws the ground, since the world is ready once its ground is -->
     <TresGroup :visible="checkIsOwnFamilyDrawn(WindrisePartFamily.Ground)">
-      <WorldTerrain
-        :create-terrain-worker
-        :draws="terrainDraws"
-        :light-uniforms
-        :origin
-        :ramp-texture
-        :terrain-options="WINDRISE_TERRAIN_OPTIONS"
-        :water-uniforms
-        :wind-uniforms
-        @ready="isTerrainSettled = true"
-      />
+      <!-- Marked as the ground's family alone, so the grass, which a witness render never draws, is left out of ours -->
+      <TresGroup :user-data="{ [SCENE_FAMILY_KEY]: WindrisePartFamily.Ground }">
+        <WorldTerrain
+          :create-terrain-worker
+          :draws="terrainDraws"
+          :light-uniforms
+          :origin
+          :ramp-texture
+          :terrain-options="WINDRISE_TERRAIN_OPTIONS"
+          :water-uniforms
+          :wind-uniforms
+          @ready="isTerrainSettled = true"
+        />
+      </TresGroup>
       <WorldGrass
         :blade-height="GRASS_BLADE_HEIGHT"
         :blade-width="GRASS_BLADE_WIDTH"
@@ -306,6 +314,7 @@ onUnmounted(() => {
     <WorldWater :fog-uniforms :light-uniforms :origin :sky-uniforms :water-uniforms />
     <WorldLandmarks
       :hidden-kinds="hiddenLandmarkKinds"
+      :kind-family-map="LandmarkKindWindrisePartFamilyMap"
       :landmark-collider
       :light-uniforms
       :ramp-texture
@@ -315,12 +324,14 @@ onUnmounted(() => {
     <!-- Enemies wander where the references show none, so a witness render, judged against them, draws none -->
     <WorldEnemies
       v-if="!witness"
+      :enemy-map
       :is-held
       :light-uniforms
-      :origin
       :ramp-texture
       :region-data-map
+      :target="characterBody?.position"
       @defeat="(enemy, enemyDrops) => emit('defeat', enemy, enemyDrops)"
+      @strike="(enemy) => emit('strike', enemy)"
     />
     <!-- The drops and the residents in the world are stood in as well, which a witness render draws none of either -->
     <WorldInteractables v-if="!witness" :interactables :light-uniforms :ramp-texture />

@@ -1,6 +1,6 @@
 ---
 title: Game text
-description: The game's own words in all fifteen of its languages, in the published genshin-text package — the language registry, a matcher from a reader's locale, and every string a consumer references, looked up by the game's own text id with one lazily loaded chunk per language. A generator reads them out of a text dump kept outside the repository; nothing is translated by hand. The persona plugin takes a generated copy rather than a dependency.
+description: The game's own words in all fifteen of its languages, in the published genshin-text package — the language registry, a matcher from a reader's locale, and every string a consumer references, looked up by the game's own text id with one lazily loaded chunk per language. A generator reads them out of the game's text, its text maps decoded from the installed client and its tables from a dump kept outside the repository; nothing is translated by hand. The persona plugin takes a generated copy rather than a dependency.
 ---
 
 # Game text
@@ -13,7 +13,9 @@ Nothing here is translated by hand. A string the game has is referenced, never w
 
 ```mermaid
 flowchart LR
-  Dump["Text dump, outside the repository<br/>TextMap and ExcelBinOutput, per patch"] --> Write["genshin:text write"]
+  Install["The installed client's text chunks<br/>MiHoYoBinData, named by path hash"] --> Decode["genshin:text decode"]
+  Decode --> Dump["Text dump, outside the repository<br/>TextMap decoded, ExcelBinOutput per patch"]
+  Dump --> Write["genshin:text write"]
   Keys["GameTextKey<br/>the inventory: one line per string"] --> Write
   Roster["The persona's data package<br/>who has no voice lines yet"] --> Write
   Write --> Chunks["genshin-text/src/generated/text/<br/>one JSON chunk per language"]
@@ -25,7 +27,7 @@ flowchart LR
   Copy --> Persona["Persona plugin"]
 ```
 
-- **The source is a text dump outside the repository.** `GENSHIN_TEXT_DIRECTORY`, by default `text` under the parity directory, holds the game's text maps and the tables that point into them, laid out as the community dumps them each patch (`TextMap/TextMap<code>.json`, the medium maps beside them, and `ExcelBinOutput/`). It is a reference like every other the [derived assets](/docs/genshin/derived-assets) read, never committed. The installed client holds the same text as hash-named binary entries a dump decodes each patch, so the repository reads the decoded form.
+- **The text is built to come from the installed client, the tables from a dump.** At 7.1 the client's text maps do not decode yet: the chunks' length and word masks follow the published 7.0 scheme, but the mixer's core constants changed, and a known-plaintext solve against the same revision's text stopped there (2026-10-08). Until a published decoder covers the current patch, the text maps stay the community dump's, pinned to the install's revision. `pnpm -C scripts genshin:text decode` reads each language's text maps from the client's own chunks, `Data/_ExcelBinOutput/TextMap` and `TextMap_Medium` under each language's hash folder, every chunk named by its path hash and taken from the hotfixed copy under `Persistent` where the game has one. It writes them into `GENSHIN_TEXT_DIRECTORY`, by default `text` under the parity directory, as `TextMap/TextMap<code>_<n>.json` and the medium maps beside them, after emptying `TextMap/` so the dump's maps are never a second source. `ExcelBinOutput/` stays the community dump's, pinned to the install's revision: the code-metadata route was researched on 2026-10-08, and found the only public 7.x decoder pinned to 7.0, reading a running process for its asset path and returning positional rows without names, with the build's field names likely scrambled in the metadata too. Everything here is a reference like every other the [derived assets](/docs/genshin/derived-assets) read, never committed. Its run waits on the [roadmap](/docs/genshin/roadmap) until then.
 - **The account kit's strings are the second source.** What the game shows as the player signs in, before it has loaded its text map, comes from HoYoverse's account kit, whose own table per language sits in its resource bundle beside the game (`MiHoYoSDKRes`). The first `write` that needs it exports the tables into the dump with AnimeStudio, refusing while the game runs, and reads them as references like the text map (`readSdkText`). The welcome card's greeting is the one key read there, its `%s` the player's name, placed where each language puts it.
 - **`GameTextKey` is the inventory.** Each member's value is the game's own id for its string: the name the game's manual text map files an interface string under (`INFORMATION_AVATAR_BIRTHDAY`), the raw text hash where it names the string nothing, or the account kit's own key (`tips_enter_game`) for a string the kit shows, so a consumer cannot tell which source a string came from. Referencing a new string is one line there; the generator has no list of its own.
 - **`pnpm -C scripts genshin:text find "<pattern>"` finds the id.** It searches the English text and prints each match's id beside it, named ids first, since an interface string is what a key is usually after.
@@ -71,24 +73,28 @@ The plugin is installed alone by a stranger's frozen `npm ci`, and every release
 
 ## Key files
 
-| File                                                          | Role                                                                                  |
-| :------------------------------------------------------------ | :------------------------------------------------------------------------------------ |
-| `packages/genshin-text/src/models/GameLanguage.ts`            | The game's fifteen languages, spelt as the community data package spells them         |
-| `packages/genshin-text/src/models/GameTextKey.ts`             | Every referenced string by the game's own text id: the inventory the generator reads  |
-| `packages/genshin-text/src/services/GameLanguageTagMap.ts`    | The BCP-47 tag of each language, which `Intl` needs                                   |
-| `packages/genshin-text/src/services/matchGameLanguage.ts`     | A reader's preference list to the nearest game language, English otherwise            |
-| `packages/genshin-text/src/services/getAcceptLanguageTags.ts` | An `Accept-Language` header as tags, most preferred first                             |
-| `packages/genshin-text/src/services/fillGameTextValues.ts`    | An interface string's numbered values filled at once                                  |
-| `packages/genshin-text/src/generated/GameTextLoaderMap.ts`    | English bundled, every other language a chunk imported on first use                   |
-| `scripts/src/services/genshinText/writeGameText.ts`           | The generator: every key, every language, the persona's copy and its newest lines     |
-| `scripts/src/services/genshinText/writeQuests.ts`             | The world's quests, their talks and their words in every language                     |
-| `scripts/src/services/genshinText/writeNames.ts`              | The names the stat tables cite, one chunk of the world's per language                 |
-| `scripts/src/services/genshinText/findGameText.ts`            | The ids of every English string a pattern matches                                     |
-| `scripts/src/services/genshinText/readSdkText.ts`             | One language's account kit strings, exported from the installed game when first read  |
-| `scripts/src/services/genshinText/getPlainGameText.ts`        | A text map string as the game shows it on a PC: markup, furigana and escapes resolved |
-| `scripts/src/services/genshinText/getPersonaModuleSource.ts`  | A module of the package as the persona runs it, under the persona's own alias         |
-| `apps/web/app/composables/genshin/useGameText.ts`             | The reader's language resolved on the server and its chunk handed over in the payload |
+| File                                                                 | Role                                                                                               |
+| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
+| `packages/genshin-text/src/models/GameLanguage.ts`                   | The game's fifteen languages, spelt as the community data package spells them                      |
+| `packages/genshin-text/src/models/GameTextKey.ts`                    | Every referenced string by the game's own text id: the inventory the generator reads               |
+| `packages/genshin-text/src/services/GameLanguageTagMap.ts`           | The BCP-47 tag of each language, which `Intl` needs                                                |
+| `packages/genshin-text/src/services/matchGameLanguage.ts`            | A reader's preference list to the nearest game language, English otherwise                         |
+| `packages/genshin-text/src/services/getAcceptLanguageTags.ts`        | An `Accept-Language` header as tags, most preferred first                                          |
+| `packages/genshin-text/src/services/fillGameTextValues.ts`           | An interface string's numbered values filled at once                                               |
+| `packages/genshin-text/src/generated/GameTextLoaderMap.ts`           | English bundled, every other language a chunk imported on first use                                |
+| `scripts/src/services/genshinText/writeGameText.ts`                  | The generator: every key, every language, the persona's copy and its newest lines                  |
+| `scripts/src/services/genshinText/writeQuests.ts`                    | The world's quests, their talks and their words in every language                                  |
+| `scripts/src/services/genshinText/writeNames.ts`                     | The names the stat tables cite, one chunk of the world's per language                              |
+| `scripts/src/services/genshinText/findGameText.ts`                   | The ids of every English string a pattern matches                                                  |
+| `scripts/src/services/genshinText/decodeGameText.ts`                 | Every language's text map exported from the installed client's chunks and decoded                  |
+| `scripts/src/services/genshinText/decodeTextMap.ts`                  | One text map chunk decoded, ported from the owomocha devkit (MIT), refused unless consumed exactly |
+| `scripts/src/services/genshinAssets/shared/getPathHash.ts`           | The name AnimeStudio exports an asset under, from its path                                         |
+| `scripts/src/services/genshinAssets/shared/getInstalledBlockPath.ts` | A block's file as the game loads it, its hotfixed copy under `Persistent` over StreamingAssets     |
+| `scripts/src/services/genshinText/readSdkText.ts`                    | One language's account kit strings, exported from the installed game when first read               |
+| `scripts/src/services/genshinText/getPlainGameText.ts`               | A text map string as the game shows it on a PC: markup, furigana and escapes resolved              |
+| `scripts/src/services/genshinText/getPersonaModuleSource.ts`         | A module of the package as the persona runs it, under the persona's own alias                      |
+| `apps/web/app/composables/genshin/useGameText.ts`                    | The reader's language resolved on the server and its chunk handed over in the payload              |
 
 ## Sources
 
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump of the game's data: the layout the text dump directory follows — `TextMap/`, the medium maps, and `ExcelBinOutput/ManualTextMapConfigData.json` and `FettersExcelConfigData.json`, the tables naming interface strings and characters' voice-over lines.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump of the game's data: the layout the text dump directory follows — `TextMap/`, the medium maps, and `ExcelBinOutput/ManualTextMapConfigData.json` and `FettersExcelConfigData.json`, the tables naming interface strings and characters' voice-over lines.

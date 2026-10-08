@@ -13,6 +13,26 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 // And the door's; `Start` and `End`, a name the whole game reuses, are left to its reference. Its music is the playlist
 // `genshin:assets music` found over a recording of its title: two pieces with a rest after each, looping forever
 export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAssetComponentOptions> = {
+  // The Court of Fontaine is the Fontaine region's capital, whose area is the city prefix FDC (Fēng Dān Chéng) in the
+  // Asset index: six city indexes share it (Area_FDC_Old01 to Old03, Xsd01 to Xsd03), so its World block waits on an
+  // Extraction's call of which one holds the Court's placements, and on the streams' blob names that index does not give
+  [DerivedAssetComponent.Fontaine]: { roots: [], screen: "WorldScreen" },
+  // Inazuma City is the Inazuma region's capital, on Narukami Island, whose index the asset index names as
+  // Area_DQSLT_City_Index (DQ, the initials of Dàoqī, Inazuma's Chinese name, as MD in MDSLT is Mondstadt's), read as a
+  // Root so `extract` follows its pointers to the city's streams, prefabs and terrain tiles, which its World block waits
+  // On. Unconfirmed until that read, as Mondstadt's and Sumeru's are
+  [DerivedAssetComponent.Inazuma]: {
+    roots: [{ block: "00/00010731.blk", name: "Area_DQSLT_City_Index", pathId: "-8378121019383011372" }],
+    screen: "WorldScreen",
+  },
+  // Liyue Harbor is the Liyue region's capital, whose index the asset index names as Area_LYSLT_City_Index (LY for Liyue,
+  // The SLT suffix the other capitals' indexes carry), read as a root so `extract` follows its pointers to the city's
+  // Streams, prefabs and terrain tiles, which its World block waits on. Unconfirmed until that read: Area_LYG_City_Index,
+  // The Liyue city stream of the 2.6 index, is the alternative, and the extraction's report says which holds the harbour
+  [DerivedAssetComponent.Liyue]: {
+    roots: [{ block: "00/00010731.blk", name: "Area_LYSLT_City_Index", pathId: "4170994449850561070" }],
+    screen: "WorldScreen",
+  },
   [DerivedAssetComponent.Login]: {
     clipPattern: "^(Ani_LoginMainPage_|Ani_LoginProgressBar_|Ani_Login_Lift$|Ani_LogginScene_Door01_)",
     interface: { anchorPattern: "^Ani_LoginMainPage_Waiting", root: "LoginMainPage" },
@@ -45,6 +65,36 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
         prefab: { block: "00/11790361.blk", name: "LoginScene_Door01_Vo", pathId: "3964741434016489810" },
       },
     ],
+  },
+  // Mondstadt's city is the region's second drawn place, beside Windrise: its capital index is the one the asset index
+  // Names as Area_MDSLT_City_Index, the city prefix the Nod-Krai and Liyue capitals carry too, read as a root so `extract`
+  // Follows its pointers to the city's streams, prefabs and terrain tiles, which its World block waits on. Unconfirmed
+  // Until that read: the index's pointers should resolve to the Area_MdCity_Plot materials' blocks
+  [DerivedAssetComponent.Mondstadt]: {
+    roots: [{ block: "00/00010731.blk", name: "Area_MDSLT_City_Index", pathId: "1635023457745490488" }],
+    screen: "WorldScreen",
+  },
+  // Natlan's capital, the People of the Springs in Toyac Springs, whose index the asset index names as
+  // Area_NTSLT_City_Index (NT for Natlan, SLT the suffix the other capitals' indexes carry), read as a root so `extract`
+  // Follows its pointers to the city's streams, prefabs and terrain tiles, which its World block waits on. Unconfirmed
+  // Until that read, as the other capitals' are
+  [DerivedAssetComponent.Natlan]: {
+    roots: [{ block: "00/00010731.blk", name: "Area_NTSLT_City_Index", pathId: "-1258876176621638203" }],
+    screen: "WorldScreen",
+  },
+  // Nasha Town is the Nod-Krai capital, whose World block waits on the names its area's StreamGen index and terrain tiles
+  // Take in the asset index: Area_DCTSL_City_Index is the candidate city index, its area code unconfirmed until extract
+  [DerivedAssetComponent.NodKrai]: { roots: [], screen: "WorldScreen" },
+  // Snezhnograd is the open world's capital, which the asset index names no streams or terrain tiles for yet, so its
+  // World block waits on the names the capital's area table gives
+  [DerivedAssetComponent.Snezhnaya]: { roots: [], screen: "WorldScreen" },
+  // Sumeru City is the Sumeru region's capital, the Avidya Forest's city, whose index the asset index names as
+  // Area_XMSLT_City_Index (XM, the initials of Xūmí, Sumeru's Chinese name, as MD in MDSLT is Mondstadt's), read as a
+  // Root so `extract` follows its pointers to the city's streams, prefabs and terrain tiles, which its World block waits
+  // On. Unconfirmed until that read: the index's pointers should resolve to the city's streams
+  [DerivedAssetComponent.Sumeru]: {
+    roots: [{ block: "00/00010731.blk", name: "Area_XMSLT_City_Index", pathId: "1215126135831135644" }],
+    screen: "WorldScreen",
   },
   // Windrise is the open world's (World/Screen/Index.reference.ts): the statue's gadget prefab at its scene point, the
   // Oak's prefab at the one placement of Windrise's own area, the oak's finest meshes, which no prefab holds, and the

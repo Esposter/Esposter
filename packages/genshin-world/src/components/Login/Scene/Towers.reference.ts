@@ -152,6 +152,13 @@ export const towersTopic: ReferenceTopic = {
       result:
         "Held where its towers stand, the towers' normals read 10.62 degrees against the gate's 10, a tenth of the angle on one slender column right of the walkway, LoginScene_Build02_02 at 38.6 degrees over 10 thousand pixels where every other part reads 9 to 12. Ours stood doubled there, a second run of rings beside the shaft: fitLatheProfile took the axis as the middle of the whole footprint, and Build02_02's and Build02_03's brackets, standing out to one side at a few heights, drew it 4.7 units off the shaft, where every band's own middle stands at none. The lathe turned about that point, and the facade read about half the wall round it as slabs standing out (539 and 588 of them). Taken as the median of the bands' middles, the axis lands on the shaft; the two towers keep 121 and 118 slabs, the data falls from 505 to 479 thousand characters minified, and the towers' normals read 9.24 degrees, their outline 0.48 pixels and their depth 0.33 hundredths, every shape gate holding",
     },
+    {
+      method:
+        "genshin:assets fit login --only towers rerun on the current fit, its facades' band tones and heights compared with the committed towers.json, then passes login's surface measure on login-door-session",
+      outcome: InvestigationOutcome.DeadEnd,
+      result:
+        "The rerun moves LoginScene_Build02_02's band tones at heights 110 and 112 by a hundredth and one corner of its hole by half a cell, and no other tower or section. The towers' structure reads 0.1012 before and after, against its gate of 0.0257, its scale by scale 0.865 to 0.921 against the exports' 0.891 to 0.999, so the coarse and middle losses need a change to the fit's band rule, not a rerun",
+    },
   ],
   openQuestions: [
     "The towers' gilding and windows: their colour per section scores worse painted as diffuse stone, the game's gold being a metal",

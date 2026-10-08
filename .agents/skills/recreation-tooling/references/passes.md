@@ -16,6 +16,7 @@ The source's own data (its parts drawn through our renderer, its clips, its soun
 ## Gates and reopening
 
 - **The first red gate is the next work.** A pass begun over a red pass before it absorbs that error into its own answer, so a later term waits however large it looks.
+- **Not owed is not unread.** A pass whose scene has no unknown for it (Motion for a component no clip moves, Audio for one with no game sound matched to it) is printed as not owed and passed over, since nothing is there for a later pass to absorb. A pass that reads nothing because its inputs are missing (a reference with no landmarks to solve a camera by) stays red and stops the run, since the unread unknown would be absorbed.
 - **A later pass that finds an earlier one wrong reopens it, never compensates for it.** A light that would have to go below none to match, a haze that has to hide a part, a camera that has to move to land a misplaced tower: each names the earlier pass to reopen.
 - **Inside a pass, ceilings order the items** (`references/gain-first.md`); across passes, the order is the dependency order.
 
@@ -29,4 +30,4 @@ One frame's score mixes every unknown's error, and each change moves every term 
 
 ## In each domain
 
-The domain's toolbox page lists its passes, each with its source, its measure and its gate, and the runner that checks them in order, or names that runner as a gap until it is built (Genshin's is the `genshin-parity` skill's `references/toolbox.md`, where `genshin:parity passes` is still a gap).
+The domain's toolbox page lists its passes, each with its source, its measure and its gate, and the runner that checks them in order, or names that runner as a gap until it is built (Genshin's is `genshin:parity passes`, listed in the `genshin-parity` skill's `references/toolbox.md`).

@@ -2,6 +2,7 @@ import type { DrainPromptInput } from "#src/models/coderabbit/collect/DrainPromp
 
 import {
   ANSWERS_TRAILER,
+  DRAIN_SUBAGENT_CLAUSE,
   DRAINS_TRAILER,
   FINISHING_CHECKS_INSTRUCTION,
   SESSION_DENIALS,
@@ -59,6 +60,8 @@ export const getDrainPrompt = ({
       ANSWERS_TRAILER
     }: <comment id>"\`. One commit may answer several findings.`,
     `For each inline finding you reject: append one line \`<comment id> <the evidence that makes it invalid>\` to \`${rejectionsPath}\`. A rejection needs no commit.`,
+    "",
+    DRAIN_SUBAGENT_CLAUSE,
     "",
     `When every finding is answered: ${FINISHING_CHECKS_INSTRUCTION} Leave the working tree clean.`,
     "",

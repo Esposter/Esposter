@@ -13,5 +13,8 @@ export const createFlowerGeometry = (): BufferGeometry => {
   );
   flowerGeometry.setAttribute("uv", new Float32BufferAttribute([0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1], 2));
   flowerGeometry.setIndex([0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7]);
+  // Each card's face, turned to its front, which the toon material lights; the cards share no vertices, so no face is
+  // Smoothed into the other
+  flowerGeometry.computeVertexNormals();
   return flowerGeometry;
 };

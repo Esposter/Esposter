@@ -37,8 +37,8 @@ the change that moved it, as a bench's report is committed.
 | Shape | login-door-session Walkway outline | 0.4927 | 1 | px | yes |
 | Shape | login-door-session Walkway depth | 0.0005 | 0.0100 | share | yes |
 | Shape | login-door-session Walkway normal | 5.9980 | 10 | degrees | yes |
-| Motion | door lift path | 0.0066 | 0.0200 | m | yes |
-| Motion | door lift pace | 0.0007 | 0.0100 | share | yes |
+| Motion | door lift path | 0.0080 | 0.0200 | m | yes |
+| Motion | door lift pace | 0.0001 | 0.0100 | share | yes |
 | Surface | login-door-session Door colour | 0.3250 | 2.3000 | ΔE | yes |
 | Surface | login-door-session Door structure | 0.0560 | 0.0892 | share | yes |
 | Surface | login-door-session Bridges colour | 1.0674 | 2.3000 | ΔE | yes |
@@ -47,14 +47,6 @@ the change that moved it, as a bench's report is committed.
 | Surface | login-door-session Towers structure | 0.1012 | 0.0257 | share | no |
 | Surface | login-door-session Walkway colour | 0.1288 | 2.3000 | ΔE | yes |
 | Surface | login-door-session Walkway structure | 0.0826 | 0.0172 | share | no |
-| Surface | login-door-session Door glow colour | 0.3730 | 2.3000 | ΔE | yes |
-| Surface | login-door-session Door glow structure | 0.1597 | 0.0931 | share | no |
-| Surface | login-door-session Bridges glow colour | 7.3386 | 2.3000 | ΔE | no |
-| Surface | login-door-session Bridges glow structure | 0.3291 | 0.2541 | share | no |
-| Surface | login-door-session Towers glow colour | 0.6887 | 2.3000 | ΔE | yes |
-| Surface | login-door-session Towers glow structure | 0.1925 | 0.0787 | share | no |
-| Surface | login-door-session Walkway glow colour | 50.1179 | 2.3000 | ΔE | no |
-| Surface | login-door-session Walkway glow structure | 0.8384 | 0.0269 | share | no |
 
 ## windrise
 
@@ -69,4 +61,16 @@ the change that moved it, as a bench's report is committed.
 | Layout | Paving row up | 0 | 0.0200 | m | yes |
 | Layout | Ground row across | 0 | 0.0200 | m | yes |
 | Layout | Ground row up | 0 | 0.0200 | m | yes |
-| Camera | windrise-statue-day | 14.7978 | 2 | px | no |
+| Camera | windrise-statue-day | 7.0178 | 7.5000 | px | yes |
+| Shape | windrise-statue-day Statue outline | 20.4525 | 1 | px | no |
+| Shape | windrise-statue-day Statue depth | 0.0282 | 0.0100 | share | no |
+| Shape | windrise-statue-day Statue normal | 39.8537 | 10 | degrees | no |
+| Shape | windrise-statue-day Oak outline | 63.4814 | 1 | px | no |
+| Shape | windrise-statue-day Oak depth | 0.1892 | 0.0100 | share | no |
+| Shape | windrise-statue-day Oak normal | 79.0836 | 10 | degrees | no |
+| Shape | windrise-statue-day Paving outline | 8.5194 | 1 | px | no |
+| Shape | windrise-statue-day Paving depth | no overlap | 0.0100 | share | no |
+| Shape | windrise-statue-day Paving normal | no overlap | 10 | degrees | no |
+| Shape | windrise-statue-day Ground outline | 18.1689 | 1 | px | no |
+| Shape | windrise-statue-day Ground depth | 0.0374 | 0.0100 | share | no |
+| Shape | windrise-statue-day Ground normal | 9.9784 | 10 | degrees | yes |

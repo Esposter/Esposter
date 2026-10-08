@@ -5,9 +5,11 @@ import type { Talk } from "#src/models/dialogue/Talk";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { HudFrame } from "#src/models/hud/HudFrame";
+import type { HudMember } from "#src/models/hud/HudMember";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
@@ -21,12 +23,8 @@ import type { GameLanguage, GameText } from "genshin-text";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
-import HudHealth from "#src/components/Hud/Health/Index.vue";
-import HudParty from "#src/components/Hud/Party/Index.vue";
-import HudQuest from "#src/components/Hud/Quest/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
-import HudStamina from "#src/components/Hud/Stamina/Index.vue";
-import InteractionPrompts from "#src/components/Interaction/Prompts/Index.vue";
+import InteractionPromptList from "#src/components/Interaction/PromptList/Index.vue";
 import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MenuScreen from "#src/components/Menu/Screen/Index.vue";
@@ -48,11 +46,17 @@ import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
 import { placeEnemyDrops } from "#src/services/interaction/placeEnemyDrops";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { TRAVELER_KIT } from "#src/services/kit/constants";
+import { strikePartyMember } from "#src/services/kit/strikePartyMember";
+import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
+import { findNearestLandmark } from "#src/services/map/findNearestLandmark";
+import { checkIsPartyDown } from "#src/services/party/checkIsPartyDown";
 import { PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { reviveParty } from "#src/services/party/reviveParty";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
@@ -119,8 +123,7 @@ const canvas = useTemplateRef<TresCanvasInstance>("canvas");
 // oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see
 const witness = inject(SceneWitnessKey, null);
 // The keys, pointer and gamepad, read once a frame ahead of everything the frame moves, which reads the same state
-const controller = new AbortController();
-const input = createInput(window, controller.signal);
+const input = createInput(window);
 const inputState = input.readInput(0);
 // What is open over the world, one screen at a time, and what it does to the world under it
 const screenKind = ref(ScreenKind.World);
@@ -158,13 +161,39 @@ const party = reactive(createParty([TRAVELER_CHARACTER_ID]));
 const locomotion = computed(() =>
   statTables.value ? getCharacterLocomotion(getActiveCharacterId(party), statTables.value.characterDataMap) : undefined,
 );
-// The character on the field once the roster has arrived, and the Max HP its attributes give, which the HUD's health bar
-// Fills by
-const activeCharacter = computed(() => characters.value.find(({ id }) => id === getActiveCharacterId(party)));
-const activeMaxHealth = computed(() => {
-  if (!statTables.value || !activeCharacter.value) return 0;
-  const attributeLines = getCharacterAttributeLines(activeCharacter.value, statTables.value);
-  return computeCharacterAttributes(attributeLines).maxHealth;
+// Each character's combat once the roster has arrived, priced by the Traveler's kit for every character until the kits
+// Run reads each one's own. The character on the field's combat and its party member are what the HUD's health and
+// Skills read
+const characterIdCombatantMap = computed(() => {
+  const combatantMap = new Map<number, Combatant>();
+  if (!statTables.value) return combatantMap;
+  for (const character of characters.value)
+    combatantMap.set(character.id, {
+      attributes: computeCharacterAttributes(getCharacterAttributeLines(character, statTables.value)),
+      characterId: character.id,
+      kit: TRAVELER_KIT,
+      level: character.level,
+    });
+  return combatantMap;
+});
+const activeCombatant = computed(() => characterIdCombatantMap.value.get(getActiveCharacterId(party)));
+const activePartyMember = computed(() => getPartyMember(party, getActiveCharacterId(party)));
+// The field member's figures the HUD's health and skill buttons show, none until the character on the field is known
+const hudMember = computed<HudMember | undefined>(() => {
+  const combatant = activeCombatant.value;
+  if (!combatant) return undefined;
+  const partyMember = activePartyMember.value;
+  return {
+    burstCooldown: partyMember.burstCooldownSeconds,
+    burstCooldownSeconds: combatant.kit.burstCooldownSeconds,
+    energy: partyMember.energy,
+    energyCost: combatant.kit.burstEnergyCost,
+    health: partyMember.healthShare * combatant.attributes.maxHealth,
+    level: combatant.level,
+    maxHealth: combatant.attributes.maxHealth,
+    skillCooldown: partyMember.skillCooldownSeconds,
+    skillCooldownSeconds: combatant.kit.skillCooldownSeconds,
+  };
 });
 // The player's bag, wallet, wish counters and characters' copies, holding nothing as a new player's do until the world
 // Gives them something
@@ -216,7 +245,7 @@ useEventListener(
   },
 );
 onUnmounted(() => {
-  controller.abort();
+  input.dispose();
 });
 // The world's origin, owned here so the cameras read the ground through it before the floating origin shifts it
 const origin = new Vector3();
@@ -225,6 +254,9 @@ const landmarkCollider = createLandmarkCollider();
 // What the character on the field is drawn on, which the controller moves and the scene places among everything in the
 // World
 const characterBody = new Group();
+// The enemies in the world by their spawn key, which the enemies write as their camps load and as they die, and which
+// The character's kit strikes and an enemy's strike lands from
+const enemyMap = new Map<string, Enemy>();
 // The drops lying in the world, which each defeated enemy's are placed among, and how many drops the page has placed,
 // Which numbers the next ones
 const worldDrops = shallowRef<WorldDrop[]>([]);
@@ -302,6 +334,21 @@ useRafFn(() => {
 const jumpPose = shallowRef<WorldJumpPose>();
 const jumpTo = (pose: WorldJumpPose) => {
   jumpPose.value = pose;
+};
+// A team that has all fallen revives at the share the game brings it back with, and is jumped to the landmark nearest
+// The body, or left where it fell when no landmark is loaded
+const respawnParty = () => {
+  if (!checkIsPartyDown(party)) return;
+  reviveParty(party);
+  const nearestLandmark = findNearestLandmark(jumpLandmarks.value, characterBody.position);
+  if (nearestLandmark) jumpTo(computeJumpPose(nearestLandmark));
+};
+// An enemy's strike lands on the character on the field, and a team it fells respawns
+const strikeParty = (enemy: Enemy) => {
+  const combatant = activeCombatant.value;
+  if (!combatant) return;
+  strikePartyMember(party, enemy, combatant);
+  respawnParty();
 };
 // Where the camera stands in world metres, which its host reads to know where a player is
 const readCameraPosition = (): Vector3 => {
@@ -387,11 +434,15 @@ defineExpose({ jumpTo, readCameraPosition });
           v-if="!witness && locomotion"
           ref="character"
           :body="characterBody"
+          :character-id-combatant-map
+          :enemy-map
           :input-state
           :is-held="screenKind !== ScreenKind.World || undefined"
           :landmark-collider
           :locomotion
           :origin
+          :party
+          @drown="respawnParty()"
         />
         <WorldFreeCamera
           v-if="!witness && screenKind === ScreenKind.PhotoMode"
@@ -407,6 +458,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :character-locomotion="locomotion"
         :character-pack-base-url
         :create-terrain-worker
+        :enemy-map
         :held-minutes
         :is-held="screenBehaviour.isHeld || undefined"
         :interactables
@@ -418,48 +470,29 @@ defineExpose({ jumpTo, readCameraPosition });
         :region-data-base-url
         @defeat="(enemy, enemyDrops) => placeWorldDrops(enemy, enemyDrops)"
         @ready="emit('ready')"
+        @strike="(enemy) => strikeParty(enemy)"
       />
     </TresCanvas>
     <!-- No HUD over a reference's held camera or a witness render, which the game's recordings show bare -->
     <HudScreen
       v-if="!cameraPose && !witness && !isPaused && !isHudHidden && !screenBehaviour.isHudHidden"
       :camera="mapCamera"
+      :character-data-map="statTables?.characterDataMap"
+      :frame="hudFrame"
       :game-text
       :input
       :landmarks="jumpLandmarks"
+      :member="hudMember"
+      :name-text-map="nameText"
+      :party
+      :quest-progress="trackerQuest && questProgressMap.get(trackerQuest.id)"
+      :quest-text-map
+      :tracked-quest="trackerQuest"
       @map="screenKind = ScreenKind.Map"
       @menu="screenKind = ScreenKind.PaimonMenu"
     >
-      <template v-if="trackerQuest" #quest>
-        <HudQuest
-          :input
-          :quest="trackerQuest"
-          :quest-progress="questProgressMap.get(trackerQuest.id)"
-          :text-map="questTextMap"
-        />
-      </template>
-      <template v-if="statTables" #party>
-        <HudParty
-          :character-data-map="statTables.characterDataMap"
-          :frame="hudFrame"
-          :input
-          :name-text-map="nameText"
-          :party
-        />
-      </template>
-      <template v-if="activeCharacter" #health>
-        <HudHealth
-          :game-text
-          :health="getPartyMember(party, activeCharacter.id).healthShare * activeMaxHealth"
-          :level="activeCharacter.level"
-          :max-health="activeMaxHealth"
-        />
-      </template>
-      <template #stamina>
-        <HudStamina :frame="hudFrame" :game-text :max-stamina="STAMINA_MAX" />
-      </template>
       <template #prompts>
-        <InteractionPrompts :interaction-prompts />
+        <InteractionPromptList :interaction-prompts />
       </template>
     </HudScreen>
     <MenuScreen v-model:screen-kind="screenKind" :game-text @quit="emit('quit')">
@@ -491,12 +524,13 @@ defineExpose({ jumpTo, readCameraPosition });
       <template #[ScreenKind.AdventurerHandbook]>
         <HandbookScreen :game-text @close="screenKind = ScreenKind.World" />
       </template>
-      <template v-if="statTables" #[ScreenKind.Character]>
+      <template v-if="statTables && nameText" #[ScreenKind.Character]>
         <CharacterScreen
           :active-character-id="getActiveCharacterId(party)"
           :characters
           :game-text
           :max-stamina="STAMINA_MAX"
+          :name-text
           :stat-tables
           @close="screenKind = ScreenKind.World"
         />

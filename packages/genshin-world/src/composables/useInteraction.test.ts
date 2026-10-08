@@ -63,6 +63,18 @@ describe(useInteraction, () => {
     });
   });
 
+  test("a row renamed in place is handed on", () => {
+    expect.hasAssertions();
+
+    let interactables = [drop];
+    const { interactionPrompts, readInteraction } = useInteraction(() => interactables, new Object3D());
+    readInteraction(idleInput, 0);
+    interactables = [{ ...drop, name: "Slime Condensate" }];
+    readInteraction(idleInput, 0);
+
+    expect(interactionPrompts.value.interactables[0]?.name).toBe("Slime Condensate");
+  });
+
   test("the wheel is left to the camera with one row", () => {
     expect.hasAssertions();
 

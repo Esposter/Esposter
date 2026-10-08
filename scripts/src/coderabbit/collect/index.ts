@@ -3,6 +3,7 @@ import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
 import { AttemptFailedError } from "#src/models/coderabbit/collect/AttemptFailedError";
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { SessionLimitedError } from "#src/models/coderabbit/collect/SessionLimitedError";
+import { WindowPullRequestListState } from "#src/models/coderabbit/collect/WindowPullRequestListState";
 import {
   ATTEMPT_RETRY_DELAY_SECONDS,
   COLLECTOR_SOURCE_PATH,
@@ -10,10 +11,11 @@ import {
   OUTAGE_RETRY_DELAY_SECONDS,
   RETRIGGER_DELAY_OUTPUT,
 } from "#src/services/coderabbit/collect/constants";
+import { getNewestWindowPullRequest } from "#src/services/coderabbit/collect/getNewestWindowPullRequest";
 import { postSessionLimited } from "#src/services/coderabbit/collect/postSessionLimited";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
-import { readReleasePullRequest } from "#src/services/coderabbit/collect/readReleasePullRequest";
+import { readWindowPullRequests } from "#src/services/coderabbit/collect/readWindowPullRequests";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { writeJobOutput } from "#src/services/coderabbit/collect/writeJobOutput";
 import { checkIsGitHubNumber } from "#src/services/shared/checkIsGitHubNumber";
@@ -32,7 +34,7 @@ await runMain(
     args: {
       pullRequest: {
         description:
-          "The merged release pull request whose findings are answered, in place of the one the release merged",
+          "A merged window pull request whose findings are answered when no window is open, in place of the stack's own",
         required: false,
         type: "positional",
       },
@@ -99,8 +101,8 @@ await runMain(
               retriggerDelaySeconds: ATTEMPT_RETRY_DELAY_SECONDS,
             };
           else if (error instanceof SessionLimitedError) {
-            const releasePullRequest = readReleasePullRequest();
-            if (releasePullRequest && !isDryRun) postSessionLimited(releasePullRequest.number, error.limitResetAtMs);
+            const newestWindow = getNewestWindowPullRequest(readWindowPullRequests(WindowPullRequestListState.All));
+            if (newestWindow && !isDryRun) postSessionLimited(newestWindow.number, error.limitResetAtMs);
             return { kind: CycleOutcomeKind.Idle, reason: error.message };
           } else if (GITHUB_OUTAGE_REGEX.test(error.message))
             return {

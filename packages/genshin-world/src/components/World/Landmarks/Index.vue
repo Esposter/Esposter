@@ -7,11 +7,14 @@ import WorldLandmarkBuilding from "#src/components/World/Landmark/Building/Index
 import WorldLandmarkStatue from "#src/components/World/Landmark/Statue/Index.vue";
 import WorldLandmarkTree from "#src/components/World/Landmark/Tree/Index.vue";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { Group } from "three";
 
 interface Props {
   // The kinds a witness render draws in place of ours, which stay mounted, unseen
   hiddenKinds?: LandmarkKind[];
+  // The witness family each kind's landmarks stand for, marked on their groups so a witness render draws ours of it
+  kindFamilyMap?: Partial<Record<LandmarkKind, string>>;
   // What the body and the camera collide with, given each landmark as it arrives
   landmarkCollider: LandmarkCollider;
   lightUniforms: LightUniforms;
@@ -22,6 +25,7 @@ interface Props {
 
 const {
   hiddenKinds = [],
+  kindFamilyMap = {},
   landmarkCollider,
   lightUniforms,
   rampTexture,
@@ -45,7 +49,12 @@ watch(regionLandmarks, () => landmarkCollider.syncLandmarks(landmarksGroup), { f
 
 <template>
   <primitive :object="landmarksGroup">
-    <TresGroup v-for="landmark of regionLandmarks" :key="landmark.id" :visible="!hiddenKinds.includes(landmark.kind)">
+    <TresGroup
+      v-for="landmark of regionLandmarks"
+      :key="landmark.id"
+      :visible="!hiddenKinds.includes(landmark.kind)"
+      :user-data="{ [SCENE_FAMILY_KEY]: kindFamilyMap[landmark.kind] }"
+    >
       <WorldLandmarkTree
         v-if="landmark.kind === LandmarkKind.Tree"
         :landmark

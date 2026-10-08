@@ -18,6 +18,7 @@ on:
   pull_request:
     branches:
       - main
+      - review/**
     types:
       - closed
   # A review's completion is a commit status flipped a moment after the review body; listening to both ends of that gap
@@ -52,13 +53,13 @@ permissions:
 jobs:
   run:
     name: Run
-    # Only the bot's reviews of the release pull request, CodeRabbit's own status on a commit `develop` carries
+    # Only the bot's reviews of a window pull request, CodeRabbit's own status on a commit a window carries
     # (every deployment writes one against the same commits) and the bot's own comments run a cycle — the
     # collector's marker comments would otherwise wake the cycle that posted them. The status event needs the
     # branch as well as the context: the bot writes that status on every pull request it is asked about,
     # renovate's included, and a cycle woken by one only reaches the gates and exits, having paid for a runner,
     # an install and a clone to do it. A status payload lists every branch carrying its sha, not just the ones
-    # heading it, so a status on a sha `develop` has already moved past still names it. A CI run's completion
+    # heading it, so a status on a sha a window has already moved past still names it. A CI run's completion
     # runs a cycle only when it is `main`'s and red — the one conclusion the repairer answers; every other branch's
     # CI, and a green `main`, would pay for a runner to reach the gates and exit.
     #
@@ -72,11 +73,11 @@ jobs:
     # the second copy skip nothing while they agree.
     if: >-
       (github.event_name != 'pull_request_review' ||
-      (github.event.review.user.login == 'coderabbitai[bot]' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'develop')) &&
+      (github.event.review.user.login == 'coderabbitai[bot]' && github.event.pull_request.head.repo.full_name == github.repository && startsWith(github.event.pull_request.head.ref, 'review/'))) &&
       (github.event_name != 'pull_request' ||
-      (github.event.action == 'closed' && github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'develop' && github.event.pull_request.base.ref == 'main')) &&
+      (github.event.action == 'closed' && github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'review/') && (github.event.pull_request.base.ref == 'main' || startsWith(github.event.pull_request.base.ref, 'review/')))) &&
       (github.event_name != 'status' ||
-      (github.event.context == 'CodeRabbit' && contains(github.event.branches.*.name, 'develop'))) &&
+      (github.event.context == 'CodeRabbit' && contains(join(github.event.branches.*.name, ','), 'review/'))) &&
       (github.event_name != 'issue_comment' ||
       (github.event.comment.user.login == 'coderabbitai[bot]' && github.event.issue.pull_request)) &&
       (github.event_name != 'workflow_run' ||

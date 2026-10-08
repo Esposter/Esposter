@@ -67,5 +67,7 @@ reviews:
     auto_incremental_review: false
     # 0 disables the auto-pause; its resume prompt costs a review slot to answer
     auto_pause_after_reviewed_commits: 0
+    # The stacked windows' pull requests target the window below them, not the default branch, so the bot reviews them too
+    base_branches: ["^review/"]
     ignore_usernames:
       - renovate[bot]

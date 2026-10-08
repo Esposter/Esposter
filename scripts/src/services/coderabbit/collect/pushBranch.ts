@@ -2,10 +2,18 @@ import type { PushBranchInput } from "#src/models/coderabbit/collect/PushBranchI
 
 import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
+import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 
+// `ls-remote` answers a branch the remote does not have with nothing, where a fetch of it would fail the run: a window
+// Branch is read before it exists, so its first push is a push that must not find one
 const readRemoteSha = (branch: string, cwd?: string): string | undefined => {
+  const remoteRef = `refs/heads/${branch}`;
+  const remoteLine = getNonEmptyLines(runGit(["ls-remote", "--heads", "origin", remoteRef], cwd)).find((line) =>
+    line.endsWith(`\t${remoteRef}`),
+  );
+  if (remoteLine === undefined) return undefined;
   runGit(["fetch", "origin", branch], cwd);
   return readSha(`origin/${branch}`, cwd);
 };
@@ -22,16 +30,17 @@ export const pushBranch = ({ branch, cwd, expectedSha, isDryRun, isRewrite, sha 
     return true;
   }
 
-  if (!isRewrite && !checkIsAncestor(expectedSha, sha, cwd))
+  if (!isRewrite && expectedSha !== undefined && !checkIsAncestor(expectedSha, sha, cwd))
     throw new InvalidOperationError(
       Operation.Update,
       "coderabbit",
       `${sha} is not a descendant of ${branch} at ${expectedSha}`,
     );
 
+  // A lease with an empty expectation is one git reads as "the branch must not exist yet": a new window's first push
   return getResult(() =>
     runGit(
-      ["push", `--force-with-lease=refs/heads/${branch}:${expectedSha}`, "origin", `${sha}:refs/heads/${branch}`],
+      ["push", `--force-with-lease=refs/heads/${branch}:${expectedSha ?? ""}`, "origin", `${sha}:refs/heads/${branch}`],
       cwd,
     ),
   ).match(

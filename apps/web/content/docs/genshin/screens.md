@@ -18,7 +18,9 @@ stateDiagram-v2
   Screen --> World: its own shortcut, Escape, Start, a pad's cancel, or its way back
   World --> Talk: F on a resident
   Talk --> World: its end, the only key that closes it
-  PaimonMenu --> [*]: Quit Game, to the app's home
+  PaimonMenu --> QuitPrompt: Quit Game
+  QuitPrompt --> World: Continue Game
+  QuitPrompt --> [*]: Exit to Login Interface or Exit to Desktop, to the app's home
 ```
 
 `getNextScreenKind` is the rule, a pure function of what is open and the frame's pressed actions:
@@ -61,11 +63,14 @@ A talk is none of these: `MenuScreen` draws nothing for it, and the world screen
 
 ## The Paimon menu
 
-The shell of the game's pause menu: its side bar down the left, from Back to Quit Game, and its contents beside it, each in the game's own order and every label the game's own text. Its links out to web pages (Special Event, Community, Version Highlights, Feedback, Survey) are left out.
+The game's pause menu, laid out as the English PC client's 1.3 still draws it at 2560 wide: its side bar down the left, from Back to Quit Game, and its contents beside it, each in the game's own order and every label the game's own text. Every icon is traced from that still into a path of our own. Community and Feedback, the game's links out to web pages, are drawn disabled at the foot of the contents; Special Event, Version Highlights and Survey, which the still does not show, are left out. Training Guide is left out too, since no still of the menu the references hold draws it.
 
 - **Every entry the game has, an unbuilt one disabled.** An entry opens its screen once that screen is built, which is whether `MenuScreen` has a slot for it; until then it is drawn disabled. A disabled entry says the game has the screen and this world does not yet, while a missing one would say the game has no such screen.
-- **Back closes it, Quit Game leaves.** Quit Game leaves the world for the app's home, which the app does, since leaving the page is the browser's closing of the game.
-- **Its layout is provisional.** Sizes, places and colours are stand-ins until the menu is measured off the game's own interface tree, and its entries carry their labels without their icons; both wait on the [menu screens](/docs/proposals/genshin/menu-screens) proposal's references.
+- **Back closes it, Quit Game asks first.** Quit Game opens the quit prompt over the world, the menu set aside while it shows. Continue Game sets the world back, and the two exits leave the world for the app's home, since leaving the page is the browser's closing of the game. Both exits leave alike, as the browser cannot tell one from the other.
+- **Its layout is in the reference's own pixels.** Every place is read off the still by `--reference-pixel`, one pixel of the 2560 wide still at any window's size, and every glyph is placed the same way. Scored over the side bar and the panel above their translucent feet, the still's mean difference is 5.35%, its FLIP 0.2237. What is left is the card's stars, the game's typeface where Signika stands in, the translucent foot of the panel where the world shows through, and the Traveler's avatar, which is the game's art and so drawn as a plain disc.
+- **The quit prompt is the game's three buttons over the world.** Continue Game in a cream pill with a yellow play icon, then Exit to Login Interface and Exit to Desktop with their red icons, each on a dark disc at the pill's left and its label centred in the rest. Its scale is provisional: the only still the wiki holds is a 799 by 475 crop, with no whole frame to read the game's unit from, so the prompt is laid out at a 1080 high window until the recording on the Recordings owed list (`menu-quit-prompt.mkv`) fixes it. Its layout is therefore not scored yet.
+- **The Graphics tab's header is scored; its rows are not.** The band over the header is 2.01% of its 82 pixels, FLIP 0.1037. The rows sit over the game's blurred world, which the page has no copy of, so no score covers them. The reference's quality row reads Custom, a state the renderer's tiers do not hold, so the row shows Medium until that choice is backed, and its FPS, global illumination and character resolution rows stay out as the renderer lacks those knobs.
+- **Its profile card shows labels, not values, until the profile is backed.** The Adventure Rank, World Level and Birthday labels stand over empty values, as the signed-out player has none; the [menu screens](/docs/proposals/genshin/menu-screens) proposal builds the values.
 
 ## Key files
 
@@ -76,11 +81,18 @@ The shell of the game's pause menu: its side bar down the left, from Back to Qui
 | `packages/genshin-world/src/services/screen/InputActionScreenKindMap.ts` | the screen each shortcut opens                                                                        |
 | `packages/genshin-world/src/services/screen/getNextScreenKind.ts`        | the rule moving between screens on a frame's pressed actions                                          |
 | `packages/genshin-world/src/services/screen/ScreenKindGameTextKeyMap.ts` | each screen's title in the game's words                                                               |
-| `packages/genshin-world/src/services/menu/constants.ts`                  | the Paimon menu's contents and side bar, in the game's order                                          |
+| `packages/genshin-world/src/services/menu/constants.ts`                  | the Paimon menu's contents, links and side bar, in the game's order, each with its icon               |
+| `packages/genshin-world/src/services/menu/MenuEntryGlyphMap.ts`          | each contents entry's icon, traced, placed in its tile                                                |
+| `packages/genshin-world/src/services/menu/MenuFrameGlyphMap.ts`          | the side bar's, Back's, the card's and the settings header's icons, traced, placed in the reference   |
+| `packages/genshin-world/src/components/Menu/Glyph/Index.vue`             | one traced icon, placed in the reference's pixels from its parent                                     |
 | `packages/genshin-world/src/components/World/Screen/Index.vue`           | reads the input once a frame, keeps what is open, holds the world, lets the pointer go, mounts a talk |
 | `packages/genshin-world/src/components/Menu/Screen/Index.vue`            | draws the open screen: the Paimon menu, a built screen's slot or a placeholder                        |
-| `packages/genshin-world/src/components/Menu/Paimon/Index.vue`            | the Paimon menu's shell                                                                               |
+| `packages/genshin-world/src/components/Menu/Paimon/Index.vue`            | the Paimon menu, laid out in the 1.3 still's pixels, its icons placed and its card drawn              |
+| `packages/genshin-world/src/components/Menu/Settings/Index.vue`          | the Graphics tab's header, tab and quality row; not yet opened by the world                           |
 | `packages/genshin-world/src/components/Menu/Placeholder/Index.vue`       | an unbuilt screen's title and way back                                                                |
+| `packages/genshin-world/src/components/Menu/Exit/Index.vue`              | the quit prompt Quit Game opens: Continue Game and the two exits, over the world                      |
+| `packages/genshin-world/src/services/menu/MenuPromptGlyphMap.ts`         | the prompt's three icons, traced, placed on their discs in the button's pixels                        |
+| `packages/genshin-world/src/models/menu/MenuPromptIcon.ts`               | the prompt's icons, one per button                                                                    |
 | `apps/web/app/components/Genshin/World.vue`                              | hands the world its game text, and leaves for the app's home on Quit Game                             |
 
 ## Notes

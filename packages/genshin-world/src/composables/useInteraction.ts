@@ -39,7 +39,9 @@ export const useInteraction = (getInteractables: () => Interactable[], body: Obj
       selectedId === prompts.selectedId &&
       windowStart === prompts.windowStart &&
       rows.length === prompts.interactables.length &&
-      rows.every(({ id }, index) => id === prompts.interactables[index]?.id);
+      rows.every(
+        ({ id, name }, index) => id === prompts.interactables[index]?.id && name === prompts.interactables[index].name,
+      );
     if (!isUnchanged) interactionPrompts.value = prompts;
 
     if (inputState.pressedActions.has(InputAction.Interact)) {

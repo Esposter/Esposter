@@ -18,11 +18,11 @@ jobs:
     # filter admits, and why, is written on the caller's copy.
     if: >-
       (github.event_name != 'pull_request_review' ||
-      (github.event.review.user.login == 'coderabbitai[bot]' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'develop')) &&
+      (github.event.review.user.login == 'coderabbitai[bot]' && github.event.pull_request.head.repo.full_name == github.repository && startsWith(github.event.pull_request.head.ref, 'review/'))) &&
       (github.event_name != 'pull_request' ||
-      (github.event.action == 'closed' && github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'develop' && github.event.pull_request.base.ref == 'main')) &&
+      (github.event.action == 'closed' && github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'review/') && (github.event.pull_request.base.ref == 'main' || startsWith(github.event.pull_request.base.ref, 'review/')))) &&
       (github.event_name != 'status' ||
-      (github.event.context == 'CodeRabbit' && contains(github.event.branches.*.name, 'develop'))) &&
+      (github.event.context == 'CodeRabbit' && contains(join(github.event.branches.*.name, ','), 'review/'))) &&
       (github.event_name != 'issue_comment' ||
       (github.event.comment.user.login == 'coderabbitai[bot]' && github.event.issue.pull_request)) &&
       (github.event_name != 'workflow_run' ||

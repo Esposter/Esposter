@@ -46,7 +46,7 @@ export const strikeEnemy = (enemy: Enemy, kitHit: KitHit, combatant: Combatant, 
   let amplifyingMultiplier = 1;
   let additiveBaseDamageBonus = 0;
   let transformativeDamage = 0;
-  for (const { element: reactionElement, reactionType } of reactions) {
+  for (const { element: reactionElement, reactionType } of reactions)
     if (
       (reactionType === AmplifyingReactionType.Melt || reactionType === AmplifyingReactionType.Vaporize) &&
       element !== undefined
@@ -67,7 +67,6 @@ export const strikeEnemy = (enemy: Enemy, kitHit: KitHit, combatant: Combatant, 
         elementalMastery,
         reactionElement === undefined ? kind.physicalResistance : kind.elementResistances[reactionElement],
       );
-  }
 
   const damage = getDamage({
     additiveBaseDamageBonus,

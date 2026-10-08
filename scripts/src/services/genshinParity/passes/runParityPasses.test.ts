@@ -37,6 +37,39 @@ describe(runParityPasses, () => {
     expect(measureCamera).not.toHaveBeenCalled();
   });
 
+  test("prints a pass the scene is not owed and runs on past it", async () => {
+    expect.hasAssertions();
+
+    const log = vi.spyOn(console, "log").mockReturnValue(undefined);
+    const notOwed: ParityPassMeasure = { isNotOwed: true, notes: [], readings: [] };
+    measureInventory.mockResolvedValueOnce(held);
+    measureLayout.mockResolvedValueOnce(notOwed);
+    measureCamera.mockResolvedValueOnce(held);
+    const results = await runParityPasses(DerivedAssetComponent.Windrise);
+
+    expect(results).toStrictEqual([
+      { isHeld: true, measure: held, pass: ParityPass.Inventory },
+      { isHeld: true, measure: held, pass: ParityPass.Camera },
+      { isHeld: false, measure: { notes: ["no measure yet"], readings: [] }, pass: ParityPass.Shape },
+    ]);
+    expect(log).toHaveBeenCalledWith(`${ParityPass.Layout}: not owed for ${DerivedAssetComponent.Windrise}`);
+    log.mockRestore();
+  });
+
+  test("holds a pass on a reading no value could be read for, with its reason", async () => {
+    expect.hasAssertions();
+
+    const noOverlap: ParityPassMeasure = {
+      notes: [],
+      readings: [{ gate: 1, name: "", reason: "no overlap", unit: "" }],
+    };
+    measureInventory.mockResolvedValueOnce(noOverlap);
+    const results = await runParityPasses(DerivedAssetComponent.Login);
+
+    expect(results).toStrictEqual([{ isHeld: false, measure: noOverlap, pass: ParityPass.Inventory }]);
+    expect(measureLayout).not.toHaveBeenCalled();
+  });
+
   test("stops at a pass that reads nothing, and at the first with no measure", async () => {
     expect.hasAssertions();
 

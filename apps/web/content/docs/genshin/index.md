@@ -27,62 +27,62 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 
 ## The pages of this area
 
-| Page                                                       | What it covers                                                                                                                               |
-| :--------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Engine architecture](/docs/genshin/engine-architecture)   | the engine as modules with one job each, and the order a frame runs in                                                                       |
-| [Rendering style](/docs/genshin/rendering-style)           | the toon materials, outlines, cascaded shadows, god rays, fog, grade and AA                                                                  |
-| [Sky and time](/docs/genshin/sky-and-time)                 | the twenty-four-minute day, the painted sky, and the light it casts                                                                          |
-| [Weather](/docs/genshin/weather)                           | each area's weather, blended as it changes: rain, snow, fog, sand, lightning and wet ground                                                  |
-| [Terrain](/docs/genshin/terrain)                           | the ground on a streamed CDLOD quadtree, morphing between levels, and the floating origin                                                    |
-| [Terrain shape height](/docs/genshin/terrain-shape-height) | a ground's height as hills over a base, the sharp features they smear, and a fine residual                                                   |
-| [Ground paint](/docs/genshin/ground-paint)                 | the ground painted in layers of grass, earth, sand, snow, path and rock by rules of its slope and height                                     |
-| [Water](/docs/genshin/water)                               | still water graded by depth, foam, glints, caustics, and the world under the surface                                                         |
-| [Flowing water](/docs/genshin/flowing-water)               | rivers along their courses with foam on their bends, and waterfalls over cliffs                                                              |
-| [Vegetation](/docs/genshin/vegetation)                     | the wind field, grass blades generated in two rings, and swaying crowns                                                                      |
-| [Trees](/docs/genshin/trees)                               | tree species, each drawn as its mesh near the eye and a baked impostor far from it                                                           |
-| [Scatter](/docs/genshin/scatter)                           | the flowers no record places, scattered on each finest tile in the terrain's worker                                                          |
-| [World map](/docs/genshin/world-map)                       | the catalogue of regions, areas and subareas, and region data loaded by reach                                                                |
-| [Region buildings](/docs/genshin/region-buildings)         | each region's capital built by its own kit, on the world's one ground with every region's plateaus                                           |
-| [Buildings](/docs/genshin/buildings)                       | the generic kit: a platform, four walls and a flat or conical roof, one geometry from its options                                            |
-| [Mondstadt buildings](/docs/genshin/mondstadt-buildings)   | Mondstadt's timber-framed house over a stone ground floor, under a steep gable                                                               |
-| [Liyue building kit](/docs/genshin/liyue-building-kit)     | Liyue's terrace, lacquer columns and lattice under tiers of upturned eaves, and its palette                                                  |
-| [Inazuma](/docs/genshin/inazuma)                           | Inazuma's post-and-beam kit with deep eaves, its island palette and its region data                                                          |
-| [Sumeru kits](/docs/genshin/sumeru-kits)                   | Sumeru's terraced rainforest city, its stilt hut and its desert ruins                                                                        |
-| [Nod-Krai's kits](/docs/genshin/nod-krai-kits)             | Nod-Krai's dieselpunk works and the Frostmoon Scions' stone rings                                                                            |
-| [Snezhnaya](/docs/genshin/snezhnaya)                       | Snezhnaya's industrial and capital halls and the Kresnik's Torch                                                                             |
-| [Character controller](/docs/genshin/character-controller) | the body walked through the game's movement states on its stamina, against the ground and the landmarks                                      |
-| [Follow camera](/docs/genshin/follow-camera)               | the camera behind the character, pulled in by the ground and the landmarks, and the pointer's lock                                           |
-| [Free camera](/docs/genshin/free-camera)                   | photo mode's camera, flown with the keys, the pointer and a gamepad above the ground                                                         |
-| [Controls](/docs/genshin/controls)                         | the game's default key, mouse and gamepad bindings, read once a frame into the actions held and pressed                                      |
-| [Screens](/docs/genshin/screens)                           | the screens opened over the world one at a time, what each holds, and the Paimon menu's shell                                                |
-| [Map](/docs/genshin/map)                                   | the map on M at full screen, its keyboard jump list, and a jump's fade to black and back                                                     |
-| [Minimap](/docs/genshin/minimap)                           | the HUD's corner map, the map's drawing cut to a circle round the camera and turned with it                                                  |
-| [HUD](/docs/genshin/hud)                                   | the heads-up display's Paimon button, minimap, quest tracker, stamina meter, party and health, and hiding it                                 |
-| [Touch controls](/docs/genshin/touch-controls)             | the stick on the left half, the look on the right and the jump button, fed into the one input                                                |
-| [Enemies](/docs/genshin/enemies)                           | enemy kinds and their stats, their AI and camps, respawn and drops, drawn as stand-in capsules                                               |
-| [Combat](/docs/genshin/combat)                             | auras and reactions in the game's priority, the damage formula, internal cooldown, shields and energy                                        |
-| [Characters](/docs/genshin/characters)                     | the official MMD packs read by our own PMX reader and drawn on the toon ramp, with their terms                                               |
-| [Character attributes](/docs/genshin/character-attributes) | the roster, weapons and artifacts from the game's tables, and a character's attributes summed as the game sums them                          |
-| [Character screen](/docs/genshin/character-screen)         | the C screen's frame, its six tabs in the game's words, and the Attributes tab's level and attributes                                        |
-| [Party](/docs/genshin/party)                               | the teams, the one deployed and the member on the field, switched on 1 to 4 past the one second cooldown                                     |
-| [Interaction](/docs/genshin/interaction)                   | the F prompts: what is in reach nearest first, the selection kept by its thing and stepped by the wheel                                      |
-| [Inventory](/docs/genshin/inventory)                       | the bag's nine tabs, its stacks, room and sorts, the wallet's currencies, and its screen on B                                                |
-| [Wish](/docs/genshin/wish)                                 | the standard and beginners' pools, the rates, pity and guarantees, Capturing Radiance, the Epitomized Path and returns, and its screen on F3 |
-| [Dialogue](/docs/genshin/dialogue)                         | a talk's graph of lines and replies, its runner, the dialogue screen with auto-play and skip, and residents                                  |
-| [Quests](/docs/genshin/quests)                             | the quests' kinds, steps and objectives, their progression, the quest screen, navigation and the reader                                      |
-| [Adventurer Handbook](/docs/genshin/adventurer-handbook)   | F1's book and its six tabs, their pages waiting on what they track                                                                           |
-| [Parity](/docs/genshin/parity)                             | matching a screen to the game's: references, tracing, scoring, motion and the visual suite                                                   |
-| [Scene derivation](/docs/genshin/scene-derivation)         | how the game's own assets are re-derived into a scene, each loss priced first                                                                |
-| [Derived assets](/docs/genshin/derived-assets)             | which reference each part is measured from, how it becomes ours, and each part's progress                                                    |
-| [Interface library](/docs/genshin/interface-library)       | `genshin-interface`: the game's screen root, units, pointer, and the pieces its screens share                                                |
-| [Interface layout](/docs/genshin/interface-layout)         | every screen laid out from the game's own RectTransform tree, nothing by hand                                                                |
-| [Title splash](/docs/genshin/title-splash)                 | the game's title logo as each language's client draws it                                                                                     |
-| [Login screen](/docs/genshin/login-screen)                 | the opening's login: its stages, its flight, its scene and its door                                                                          |
-| [Music](/docs/genshin/music)                               | the game's music re-derived from its sound banks and played by the engine's synthesizer                                                      |
-| [Sampled instruments](/docs/genshin/sampled-instruments)   | public-domain recordings layered over a piece's voices where they bring it nearer the game                                                   |
-| [Sound effects](/docs/genshin/sound-effects)               | the game's sounds beside its music, found by a recording and played as our own noise                                                         |
-| [Game data formats](/docs/genshin/game-data-formats)       | how each kind of the game's data reads, and the shortcuts to reach for first                                                                 |
-| [Game text](/docs/genshin/game-text)                       | `genshin-text`: every language the game ships, and its strings by the game's own text id                                                     |
+| Page                                                       | What it covers                                                                                                                                       |
+| :--------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Engine architecture](/docs/genshin/engine-architecture)   | the engine as modules with one job each, and the order a frame runs in                                                                               |
+| [Rendering style](/docs/genshin/rendering-style)           | the toon materials, outlines, cascaded shadows, god rays, fog, grade and AA                                                                          |
+| [Sky and time](/docs/genshin/sky-and-time)                 | the twenty-four-minute day, the painted sky, and the light it casts                                                                                  |
+| [Weather](/docs/genshin/weather)                           | each area's weather, blended as it changes: rain, snow, fog, sand, lightning and wet ground                                                          |
+| [Terrain](/docs/genshin/terrain)                           | the ground on a streamed CDLOD quadtree, morphing between levels, and the floating origin                                                            |
+| [Terrain shape height](/docs/genshin/terrain-shape-height) | a ground's height as hills over a base, the sharp features they smear, and a fine residual                                                           |
+| [Ground paint](/docs/genshin/ground-paint)                 | the ground painted in layers of grass, earth, sand, snow, path and rock by rules of its slope and height                                             |
+| [Water](/docs/genshin/water)                               | still water graded by depth, foam, glints, caustics, and the world under the surface                                                                 |
+| [Flowing water](/docs/genshin/flowing-water)               | rivers along their courses with foam on their bends, and waterfalls over cliffs                                                                      |
+| [Vegetation](/docs/genshin/vegetation)                     | the wind field, grass blades generated in two rings, and swaying crowns                                                                              |
+| [Trees](/docs/genshin/trees)                               | tree species, each drawn as its mesh near the eye and a baked impostor far from it                                                                   |
+| [Scatter](/docs/genshin/scatter)                           | the flowers no record places, scattered on each finest tile in the terrain's worker                                                                  |
+| [World map](/docs/genshin/world-map)                       | the catalogue of regions, areas and subareas, and region data loaded by reach                                                                        |
+| [Region buildings](/docs/genshin/region-buildings)         | each region's capital built by its own kit, on the world's one ground with every region's plateaus                                                   |
+| [Buildings](/docs/genshin/buildings)                       | the generic kit: a platform, four walls and a flat or conical roof, one geometry from its options                                                    |
+| [Mondstadt buildings](/docs/genshin/mondstadt-buildings)   | Mondstadt's timber-framed house over a stone ground floor, under a steep gable                                                                       |
+| [Liyue building kit](/docs/genshin/liyue-building-kit)     | Liyue's terrace, lacquer columns and lattice under tiers of upturned eaves, and its palette                                                          |
+| [Inazuma](/docs/genshin/inazuma)                           | Inazuma's post-and-beam kit with deep eaves, its island palette and its region data                                                                  |
+| [Sumeru kits](/docs/genshin/sumeru-kits)                   | Sumeru's terraced rainforest city, its stilt hut and its desert ruins                                                                                |
+| [Nod-Krai's kits](/docs/genshin/nod-krai-kits)             | Nod-Krai's dieselpunk works and the Frostmoon Scions' stone rings                                                                                    |
+| [Snezhnaya](/docs/genshin/snezhnaya)                       | Snezhnaya's industrial and capital halls and the Kresnik's Torch                                                                                     |
+| [Character controller](/docs/genshin/character-controller) | the body walked through the game's movement states on its stamina, against the ground and the landmarks                                              |
+| [Follow camera](/docs/genshin/follow-camera)               | the camera behind the character, pulled in by the ground and the landmarks, and the pointer's lock                                                   |
+| [Free camera](/docs/genshin/free-camera)                   | photo mode's camera, flown with the keys, the pointer and a gamepad above the ground                                                                 |
+| [Controls](/docs/genshin/controls)                         | the game's default key, mouse and gamepad bindings, read once a frame into the actions held and pressed                                              |
+| [Screens](/docs/genshin/screens)                           | the screens opened over the world one at a time, what each holds, and the Paimon menu's shell                                                        |
+| [Map](/docs/genshin/map)                                   | the map on M at full screen, its keyboard jump list, and a jump's fade to black and back                                                             |
+| [Minimap](/docs/genshin/minimap)                           | the HUD's corner map, the map's drawing cut to a circle round the camera and turned with it                                                          |
+| [HUD](/docs/genshin/hud)                                   | the heads-up display's Paimon button, minimap, quest tracker, stamina meter, party, health and skill and burst buttons, and hiding it                |
+| [Touch controls](/docs/genshin/touch-controls)             | the stick on the left half, the look on the right and the jump button, fed into the one input                                                        |
+| [Enemies](/docs/genshin/enemies)                           | enemy kinds and their stats, their AI and camps, respawn and drops, struck by the kit and drawn as stand-in capsules                                 |
+| [Combat](/docs/genshin/combat)                             | auras and reactions in the game's priority, the damage formula, internal cooldown, shields and energy, and the Traveler's kit's hits                 |
+| [Characters](/docs/genshin/characters)                     | the official MMD packs read by our own PMX reader and drawn on the toon ramp, with their terms                                                       |
+| [Character attributes](/docs/genshin/character-attributes) | the roster, weapons and artifacts from the game's tables, and a character's attributes summed as the game sums them                                  |
+| [Character screen](/docs/genshin/character-screen)         | the C screen's frame, its six tabs in the game's words, and the Attributes tab's level and attributes                                                |
+| [Party](/docs/genshin/party)                               | the teams, the one deployed and the member on the field, switched on 1 to 4 past the one second cooldown, each with its own HP, energy and cooldowns |
+| [Interaction](/docs/genshin/interaction)                   | the F prompts over the world: the drops and talks in reach nearest first, F picking up or talking, the wheel and a held F's repeat                   |
+| [Inventory](/docs/genshin/inventory)                       | the bag's nine tabs, its stacks, room and sorts, the wallet's currencies, its screen on B, and the enemies' materials from the game's table          |
+| [Wish](/docs/genshin/wish)                                 | the standard and beginners' pools, the rates, pity and guarantees, Capturing Radiance, the Epitomized Path and returns, and its screen on F3         |
+| [Dialogue](/docs/genshin/dialogue)                         | a talk's graph of lines and replies, its runner, the dialogue screen with auto-play and skip, and residents                                          |
+| [Quests](/docs/genshin/quests)                             | the quests' kinds, steps and objectives, their progression, the quest screen, navigation and the reader                                              |
+| [Adventurer Handbook](/docs/genshin/adventurer-handbook)   | F1's book and its six tabs, their pages waiting on what they track                                                                                   |
+| [Parity](/docs/genshin/parity)                             | matching a screen to the game's: references, tracing, scoring, motion and the visual suite                                                           |
+| [Scene derivation](/docs/genshin/scene-derivation)         | how the game's own assets are re-derived into a scene, each loss priced first                                                                        |
+| [Derived assets](/docs/genshin/derived-assets)             | which reference each part is measured from, how it becomes ours, and each part's progress                                                            |
+| [Interface library](/docs/genshin/interface-library)       | `genshin-interface`: the game's screen root, units, pointer, and the pieces its screens share                                                        |
+| [Interface layout](/docs/genshin/interface-layout)         | every screen laid out from the game's own RectTransform tree, nothing by hand                                                                        |
+| [Title splash](/docs/genshin/title-splash)                 | the game's title logo as each language's client draws it                                                                                             |
+| [Login screen](/docs/genshin/login-screen)                 | the opening's login: its stages, its flight, its scene and its door                                                                                  |
+| [Music](/docs/genshin/music)                               | the game's music re-derived from its sound banks and played by the engine's synthesizer                                                              |
+| [Sampled instruments](/docs/genshin/sampled-instruments)   | public-domain recordings layered over a piece's voices where they bring it nearer the game                                                           |
+| [Sound effects](/docs/genshin/sound-effects)               | the game's sounds beside its music, found by a recording and played as our own noise                                                                 |
+| [Game data formats](/docs/genshin/game-data-formats)       | how each kind of the game's data reads, and the shortcuts to reach for first                                                                         |
+| [Game text](/docs/genshin/game-text)                       | `genshin-text`: every language the game ships, and its strings by the game's own text id                                                             |
 
 What is still to build is the [Genshin proposal](/docs/proposals/genshin), and the open work on what is built is the [roadmap](/docs/genshin/roadmap). Decided ideas: [deferred](/docs/genshin/deferred) and [rejected](/docs/genshin/rejected).
 
@@ -107,7 +107,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - Characters read from HoYoverse's official MMD packs by the engine's own PMX reader and drawn at rest on the toon ramp.
 - Combat's rules as pure, tested functions: auras and reactions, the damage formula, internal cooldown, shields and energy.
 - The party switched on 1 to 4, the character screen on C, and a character's attributes summed from the game's own tables.
-- The F prompts' rules, the bag and its wallet on B, and the wish's published rules with its screen on F3, which offers no banner until the banners' pools are written.
+- The F prompts' rules, the bag and its wallet on B, and the wish's published rules with its screen on F3, offering the standard and beginners' wishes from their pools.
 
 ## Key files
 

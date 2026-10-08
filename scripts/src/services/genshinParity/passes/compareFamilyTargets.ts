@@ -6,17 +6,17 @@ import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetF
 // Of the exports' outline, the pixels the outlines stand apart on average; and where both draw it, the depth's gap as
 // A share of the exports' and the normals' angle in degrees, each on average, with each exported part's sum of that
 // Angle and its pixels, so a family's loss is named by the parts it lies on. A family the exports draw no outline of
-// Is left out, and one ours does not draw where the exports do has no depth or normal to read, so they stand at
-// Infinity
+// Is left out, and where the two draw no pixel of the family in common there is no depth or normal to read, so both are
+// Undefined: no overlap, which a reading reports as its reason rather than as a number
 export const compareFamilyTargets = (
   exportsTargets: { depth: Float32Array; normal: Float32Array; part: Float32Array },
   oursTargets: { depth: Float32Array; normal: Float32Array; part: Float32Array },
   width: number,
   familyCount: number,
 ): {
-  depth: number;
+  depth: number | undefined;
   family: number;
-  normal: number;
+  normal: number | undefined;
   outline: number;
   partNormals: { angle: number; part: number; pixelCount: number }[];
 }[] => {
@@ -57,9 +57,9 @@ export const compareFamilyTargets = (
     if (outlineLength === 0) return [];
     return [
       {
-        depth: shared > 0 ? depthGap / shared : Infinity,
+        depth: shared > 0 ? depthGap / shared : undefined,
         family,
-        normal: shared > 0 ? normalAngle / shared : Infinity,
+        normal: shared > 0 ? normalAngle / shared : undefined,
         outline: apart / outlineLength,
         partNormals: [...partNormalMap.values()],
       },

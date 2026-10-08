@@ -51,6 +51,14 @@ export const GAME_BLOCKS_DIRECTORY: string = join(
   "AssetBundles",
   "blocks",
 );
+// The copies the game's hotfix downloads put under `Persistent`, which the game reads over the StreamingAssets copy
+export const GAME_PERSISTENT_BLOCKS_DIRECTORY: string = join(
+  dirname(GAME_EXECUTABLE_PATH),
+  "GenshinImpact_Data",
+  "Persistent",
+  "AssetBundles",
+  "blocks",
+);
 // The asset types an export writes as files, and the types dumped as JSON to rebuild where each mesh stands and what
 // Materials it draws with
 export const EXPORTED_ASSET_TYPES: readonly AssetType[] = [AssetType.Mesh, AssetType.Texture2D, AssetType.Material];
