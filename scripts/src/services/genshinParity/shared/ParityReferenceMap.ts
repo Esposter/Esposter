@@ -17,7 +17,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     props: { initialTab: "Artifacts" },
     region: { height: 800, width: 900, x: 120, y: 180 },
     screen: "CharacterScreen",
-    seconds: 157,
+    seconds: 157.5,
   },
   // The English PC client's character screen on Xilonen's Attributes tab at 21:9, from the user's own recording of the
   // Current build (session-2.mp4 at 154.4 seconds, before the character's model rises into the frame)
@@ -56,7 +56,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     props: { initialTab: "Constellation" },
     region: { height: 800, width: 900, x: 120, y: 180 },
     screen: "CharacterScreen",
-    seconds: 157.5,
+    seconds: 158.3,
   },
   // The English PC client's character screen on the Talents tab at 21:9, the same recording at 159 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
   "character-talents": {
