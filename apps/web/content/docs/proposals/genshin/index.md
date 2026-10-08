@@ -94,6 +94,11 @@ What still separates the recreation from the whole game once the world and its p
 | [Constellations](/docs/proposals/genshin/constellations)             | six per character from their Stella Fortuna, the Traveler's by element                           |
 | [Weapon enhancement](/docs/proposals/genshin/weapon-enhancement)     | a weapon levelled, ascended and refined, and its passive at its rank                             |
 | [Artifact enhancement](/docs/proposals/genshin/artifact-enhancement) | an artifact rolled and enhanced by the game's rules, and its set's conditional bonus             |
+| [Adventure Rank](/docs/proposals/genshin/adventure-rank)             | the player's rank to 60 and the World Level that follows it, held by the ascension quests        |
+| [Original Resin](/docs/proposals/genshin/original-resin)             | resin regenerating while the page is closed, and the claim every resin challenge shares          |
+| [Domains](/docs/proposals/genshin/domains)                           | entrances, levels by rank, scenes of their own, the days' materials and the Petrified Tree       |
+| [Ley line outcrops](/docs/proposals/genshin/ley-line-outcrops)       | each region's two blossoms, fought, claimed and moved on by the game's own groups                |
+| [Bosses](/docs/proposals/genshin/bosses)                             | normal bosses' arenas, moves and blossoms, and weekly bosses claimed once a week                 |
 
 ## Scope and order
 
