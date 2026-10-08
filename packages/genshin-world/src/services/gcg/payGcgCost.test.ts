@@ -28,10 +28,9 @@ describe(payGcgCost, () => {
     const side = createSideState([Element.Pyro, GcgDieFace.Omni, Element.Hydro, Element.Cryo]);
     const costs: GcgCost[] = [{ count: 2, element: Element.Pyro, kind: GcgCostKind.Dice }];
 
-    expect({ dice: side.dice, isPaid: payGcgCost(side, MATCHING_ELEMENT, costs, [0, 1]) }).toStrictEqual({
-      dice: [Element.Hydro, Element.Cryo],
-      isPaid: true,
-    });
+    const isPaid = payGcgCost(side, MATCHING_ELEMENT, costs, [0, 1]);
+
+    expect({ dice: side.dice, isPaid }).toStrictEqual({ dice: [Element.Hydro, Element.Cryo], isPaid: true });
   });
 
   test("should pay Matching dice from the character's own element and Unaligned dice from any face", () => {
@@ -43,10 +42,9 @@ describe(payGcgCost, () => {
       { count: 1, kind: GcgCostKind.Unaligned },
     ];
 
-    expect({ dice: side.dice, isPaid: payGcgCost(side, MATCHING_ELEMENT, costs, [0, 1]) }).toStrictEqual({
-      dice: [Element.Geo],
-      isPaid: true,
-    });
+    const isPaid = payGcgCost(side, MATCHING_ELEMENT, costs, [0, 1]);
+
+    expect({ dice: side.dice, isPaid }).toStrictEqual({ dice: [Element.Geo], isPaid: true });
   });
 
   test("should refuse dice that lack the element, leaving the dice as they were", () => {
@@ -55,10 +53,9 @@ describe(payGcgCost, () => {
     const side = createSideState([Element.Hydro, Element.Cryo]);
     const costs: GcgCost[] = [{ count: 1, element: Element.Pyro, kind: GcgCostKind.Dice }];
 
-    expect({ dice: side.dice, isPaid: payGcgCost(side, MATCHING_ELEMENT, costs, [0]) }).toStrictEqual({
-      dice: [Element.Hydro, Element.Cryo],
-      isPaid: false,
-    });
+    const isPaid = payGcgCost(side, MATCHING_ELEMENT, costs, [0]);
+
+    expect({ dice: side.dice, isPaid }).toStrictEqual({ dice: [Element.Hydro, Element.Cryo], isPaid: false });
   });
 
   test("should refuse a choice of more or fewer dice than the costs take", () => {
