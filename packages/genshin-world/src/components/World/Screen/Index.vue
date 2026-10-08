@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Character } from "#src/models/character/Character";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
@@ -8,6 +9,7 @@ import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext
 import type { QualityTier } from "genshin-engine";
 import type { GameText } from "genshin-text";
 
+import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
@@ -17,7 +19,13 @@ import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createCharacter } from "#src/services/character/createCharacter";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
+import { PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
+import { createParty } from "#src/services/party/createParty";
+import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
+import { switchPartyMember } from "#src/services/party/switchPartyMember";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
@@ -29,6 +37,7 @@ import {
   GENSHIN_TONE_MAPPING,
   InputAction,
   QualityTierSettingsMap,
+  STAMINA_MAX,
 } from "genshin-engine";
 import { Euler, MathUtils, PCFShadowMap, Vector3 } from "three";
 import { unref } from "vue";
@@ -76,6 +85,9 @@ const input = createInput(window, controller.signal);
 const inputState = input.readInput(0);
 // What is open over the world, one screen at a time, and what it does to the world under it
 const screenKind = ref(ScreenKind.World);
+// The player's characters and their party: the Traveler alone, as a new player's, on the field
+const characters: Character[] = [createCharacter(TRAVELER_CHARACTER_ID)];
+const party = reactive(createParty([TRAVELER_CHARACTER_ID]));
 // The quests in progress, how far each has come, their words and the one navigated to. Nothing starts a quest yet, so
 // The quest screen opens empty
 const quests: Quest[] = [];
@@ -172,6 +184,11 @@ defineExpose({ jumpTo, readCameraPosition });
           if (!isPaused) screenKind = getNextScreenKind(screenKind, inputState.pressedActions);
           if (!isPaused && screenKind === ScreenKind.World && inputState.pressedActions.has(InputAction.HideInterface))
             isHudHidden = !isHudHidden;
+          const partyMemberIndex = PARTY_MEMBER_INPUT_ACTIONS.findIndex((action) =>
+            inputState.pressedActions.has(action),
+          );
+          if (!isPaused && screenKind === ScreenKind.World && partyMemberIndex !== -1)
+            switchPartyMember(party, partyMemberIndex, context.elapsed);
         }
       "
       @error="emit('ready')"
@@ -243,6 +260,15 @@ defineExpose({ jumpTo, readCameraPosition });
       </template>
       <template #[ScreenKind.AdventurerHandbook]>
         <HandbookScreen :game-text @close="screenKind = ScreenKind.World" />
+      </template>
+      <template #[ScreenKind.Character]>
+        <CharacterScreen
+          :active-character-id="getActiveCharacterId(party)"
+          :characters
+          :game-text
+          :max-stamina="STAMINA_MAX"
+          @close="screenKind = ScreenKind.World"
+        />
       </template>
     </MenuScreen>
     <div
