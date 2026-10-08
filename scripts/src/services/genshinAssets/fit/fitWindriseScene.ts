@@ -3,6 +3,7 @@ import { fitRegionCapitals } from "#src/services/genshinAssets/fit/fitRegionCapi
 import { fitRegionGround } from "#src/services/genshinAssets/fit/fitRegionGround";
 import { fitRegionLandmarks } from "#src/services/genshinAssets/fit/fitRegionLandmarks";
 import { fitWindrisePaving } from "#src/services/genshinAssets/fit/fitWindrisePaving";
+import { fitWindriseStatue } from "#src/services/genshinAssets/fit/fitWindriseStatue";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
@@ -10,9 +11,9 @@ import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrig
 import { readWorldWaterLevel } from "#src/services/genshinAssets/world/readWorldWaterLevel";
 
 // Windrise's parts fitted as our own generators' parameters, each written as a data file of the world package's: its
-// Ground as hills, its landmarks' places and turns in Mondstadt's region data, and its water's level over the oak's
-// Foot, the last two exact. Every region's capital is placed with the landmarks, round the same origin, since the oak's
-// Foot is the whole world's
+// Ground as hills, its landmarks' places and turns in Mondstadt's region data, its statue as two lathes and its water's
+// Level over the oak's foot, the last two exact. Every region's capital is placed with the landmarks, round the same
+// Origin, since the oak's foot is the whole world's
 export const fitWindriseScene = (only: readonly string[] = []): Promise<string> =>
   runFits(
     {
@@ -23,6 +24,7 @@ export const fitWindriseScene = (only: readonly string[] = []): Promise<string> 
         ...(await fitRegionCapitals()),
       ],
       paving: async () => [await writeWorldData("windrise/paving.json", await fitWindrisePaving())],
+      statue: fitWindriseStatue,
       water: async () => {
         const [[, originY], waterLevel] = await Promise.all([
           readWorldOrigin(DerivedAssetComponent.Windrise),
