@@ -2,7 +2,9 @@ import type { ParityPassResult } from "#src/models/genshinParity/passes/ParityPa
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { PARITY_PASSES_PATH } from "#src/services/genshinParity/passes/constants";
+import { checkIsReadingHeld } from "#src/services/genshinParity/passes/checkIsReadingHeld";
 import { formatPassValue } from "#src/services/genshinParity/passes/formatPassValue";
+import { formatReadingValue } from "#src/services/genshinParity/passes/formatReadingValue";
 import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 
@@ -24,8 +26,8 @@ const toSection = (component: DerivedAssetComponent, results: readonly ParityPas
       readings.length === 0
         ? [`| ${pass} | ${notes.join("; ")} | | | | no |`]
         : readings.map(
-            ({ gate, name, unit, value }) =>
-              `| ${pass} | ${name} | ${formatPassValue(value)} | ${formatPassValue(gate)} | ${unit} | ${value <= gate ? "yes" : "no"} |`,
+            (reading) =>
+              `| ${pass} | ${reading.name} | ${formatReadingValue(reading)} | ${formatPassValue(reading.gate)} | ${reading.unit} | ${checkIsReadingHeld(reading) ? "yes" : "no"} |`,
           ),
     ),
   ].join("\n");

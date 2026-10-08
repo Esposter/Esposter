@@ -1,4 +1,4 @@
-import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityPassMeasure";
+import type { ParityPassReading } from "#src/models/genshinParity/passes/ParityPassReading";
 import type { SkyDistance } from "#src/models/genshinParity/sky/SkyDistance";
 
 import { COLOUR_GATE } from "#src/services/genshinParity/passes/constants";
@@ -11,7 +11,7 @@ export const toSkyReadings = (
   referenceId: string,
   distance: SkyDistance,
   spread: SkyDistance,
-): ParityPassMeasure["readings"] => [
+): Extract<ParityPassReading, { value: number }>[] => [
   { gate: COLOUR_GATE, name: `${referenceId} clear sky colour`, unit: "ΔE", value: distance.colour },
   {
     gate: Math.max(COLOUR_GATE, spread.cloudColour),

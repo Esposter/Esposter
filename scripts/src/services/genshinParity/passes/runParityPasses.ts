@@ -1,6 +1,7 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassResult } from "#src/models/genshinParity/passes/ParityPassResult";
 
+import { checkIsReadingHeld } from "#src/services/genshinParity/passes/checkIsReadingHeld";
 import { PARITY_PASS_ORDER } from "#src/services/genshinParity/passes/constants";
 import { ParityPassMeasureMap } from "#src/services/genshinParity/passes/ParityPassMeasureMap";
 
@@ -21,7 +22,7 @@ export const runParityPasses = async (component: DerivedAssetComponent): Promise
       console.log(`${pass}: not owed for ${component}`);
       continue;
     }
-    const isHeld = measure.readings.length > 0 && measure.readings.every(({ gate, value }) => value <= gate);
+    const isHeld = measure.readings.length > 0 && measure.readings.every(checkIsReadingHeld);
     results.push({ isHeld, measure, pass });
     if (!isHeld) break;
   }

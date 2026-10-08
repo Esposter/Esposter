@@ -24,4 +24,16 @@ describe(compareFamilyTargets, () => {
       { depth: 1, family: 0, normal: 90, outline: 1, partNormals: [{ angle: 90, part: 1, pixelCount: 1 }] },
     ]);
   });
+
+  test("reads no depth or normal where the two draw no pixel of a family in common", () => {
+    expect.hasAssertions();
+
+    const up: [number, number, number] = [0, 1, 0];
+    const exportsTargets = createTargets([undefined, 0], [0, 1], [up, up]);
+    const oursTargets = createTargets([undefined, undefined], [0, 0], [up, up]);
+
+    expect(compareFamilyTargets(exportsTargets, oursTargets, 2, 1)).toStrictEqual([
+      { depth: undefined, family: 0, normal: undefined, outline: 1, partNormals: [] },
+    ]);
+  });
 });

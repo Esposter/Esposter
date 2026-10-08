@@ -4,7 +4,9 @@ import type { SubCommandsDef } from "citty";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { ParityPass } from "#src/models/genshinParity/passes/ParityPass";
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
+import { checkIsReadingHeld } from "#src/services/genshinParity/passes/checkIsReadingHeld";
 import { formatPassValue } from "#src/services/genshinParity/passes/formatPassValue";
+import { formatReadingValue } from "#src/services/genshinParity/passes/formatReadingValue";
 import { ParityPassMeasureMap } from "#src/services/genshinParity/passes/ParityPassMeasureMap";
 import { runParityPasses } from "#src/services/genshinParity/passes/runParityPasses";
 import { writeParityPasses } from "#src/services/genshinParity/passes/writeParityPasses";
@@ -12,9 +14,9 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
 const logMeasure = ({ notes, readings }: ParityPassMeasure): void => {
-  for (const { gate, name, unit, value } of readings)
+  for (const reading of readings)
     console.log(
-      `  ${name}: ${value.toFixed(4)} ${unit} against ${formatPassValue(gate)} ${value <= gate ? "held" : "FAILED"}`,
+      `  ${reading.name}: ${formatReadingValue(reading)} ${reading.unit} against ${formatPassValue(reading.gate)} ${checkIsReadingHeld(reading) ? "held" : "FAILED"}`,
     );
   for (const note of notes) console.log(`  ${note}`);
 };

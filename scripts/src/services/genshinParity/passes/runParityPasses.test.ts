@@ -56,6 +56,20 @@ describe(runParityPasses, () => {
     log.mockRestore();
   });
 
+  test("holds a pass on a reading no value could be read for, with its reason", async () => {
+    expect.hasAssertions();
+
+    const noOverlap: ParityPassMeasure = {
+      notes: [],
+      readings: [{ gate: 1, name: "", reason: "no overlap", unit: "" }],
+    };
+    measureInventory.mockResolvedValueOnce(noOverlap);
+    const results = await runParityPasses(DerivedAssetComponent.Login);
+
+    expect(results).toStrictEqual([{ isHeld: false, measure: noOverlap, pass: ParityPass.Inventory }]);
+    expect(measureLayout).not.toHaveBeenCalled();
+  });
+
   test("stops at a pass that reads nothing, and at the first with no measure", async () => {
     expect.hasAssertions();
 
