@@ -55,10 +55,10 @@ export const openParityPage = async ({
     deviceScaleFactor,
     viewport: { height: INTERFACE_HEIGHT, width: Math.ceil(width / deviceScaleFactor) },
   });
-  // The shared browser serves every command, so only a browser this page launched is closed with it
+  // Closing a connected browser only disconnects from it, which leaves the shared one serving the other commands
   const close = async (): Promise<void> => {
     await context.close();
-    if (!sharedBrowser) await browser.close();
+    await browser.close();
   };
   // A failure once the page is open closes it, since no caller receives it to close
   return getResultAsync(async () => {
