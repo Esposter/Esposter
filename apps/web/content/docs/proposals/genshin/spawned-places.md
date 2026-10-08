@@ -10,7 +10,7 @@ The servers' spawned places are not in the client's data, so the world holds non
 
 ## Decisions
 
-- **The fit needs no waypoint landmark.** The map's statues and waypoints are fitted against the scene's transport points, which the dump holds for every waypoint, so the fit does not wait on [exploring](/docs/proposals/genshin/exploring) placing the waypoints into region data. The fit's own calls are on the [as-built page](/docs/genshin/spawned-places).
+- **The fit needs no waypoint landmark.** The map's statues and waypoints are fitted against the scene's transport points, which the dump holds for every nation but Snezhnaya, so the fit does not wait on [exploring](/docs/proposals/genshin/exploring) placing the waypoints into region data. The fit's own calls are on the [as-built page](/docs/genshin/spawned-places).
 - **Only fitted places ship.** The map's data stays a reference; what enters the repository is each place's kind and its fitted position and facing in the region's data, as every landmark's is.
 - **Stood on what is beneath.** A map point has no height, so a fitted place stands on the ground under it, or on the top of a landmark whose collision holds it. An underground layer's points stand on that layer's own floor. A place whose height the ground cannot give is reported, never guessed.
 - **Each kind is checked against the wiki's count.** The map's points are contributed by its users, so each kind's count in a region is held to the wiki's, and a shortfall or a surplus is reported per kind. The Oculi are checked already; the other kinds take their wiki counts as their pages land.
