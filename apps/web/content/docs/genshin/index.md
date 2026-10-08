@@ -59,6 +59,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Minimap](/docs/genshin/minimap)                           | the HUD's corner map, the map's drawing cut to a circle round the camera and turned with it                                                          |
 | [Map unlocking](/docs/genshin/map-unlocking)               | a Statue of The Seven resonated with on F, its area filled in on the map and minimap, and only the unlocked statues offered as jumps and revives     |
 | [Statues of The Seven](/docs/genshin/statues-of-the-seven) | a region's levels and rewards from the game's table, the stamina they raise to 240, and the Blessing's pool and heals, not yet on a screen           |
+| [Offering systems](/docs/genshin/offering-systems)         | the offering rule, every item held offered at once to its levels, and the Frostbearing Tree's levels from the game's table, not yet on a screen      |
 | [HUD](/docs/genshin/hud)                                   | the heads-up display's Paimon button, minimap, quest tracker, stamina meter, party, health and skill and burst buttons, and hiding it                |
 | [Touch controls](/docs/genshin/touch-controls)             | the stick on the left half, the look on the right and the jump button, fed into the one input                                                        |
 | [Enemies](/docs/genshin/enemies)                           | enemy kinds and their stats, their AI and camps, respawn and drops, struck by the kit and drawn as stand-in capsules                                 |
@@ -66,6 +67,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Original Resin](/docs/genshin/original-resin)             | the resin regenerating from its last change to 200, refills from Primogems at six daily prices, and a claim's price and Adventure EXP                |
 | [Domains](/docs/genshin/domains)                           | each kind's opening by Adventure Rank, and by the day: Blessing every day, Forgery and Mastery on Sundays and their set days                         |
 | [Ley line outcrops](/docs/genshin/ley-line-outcrops)       | each region's two blossoms read from the game's tables, opened by Adventure Rank and a nation's area, started and moved on along their places        |
+| [Bosses](/docs/genshin/bosses)                             | a normal boss back five seconds after its Trounce Blossom's claim, and the weekly claims counted from the Monday 04:00 reset in the reader's zone    |
 | [Combat](/docs/genshin/combat)                             | auras and reactions in the game's priority, the damage formula, internal cooldown, shields and energy, and the Traveler's kit's hits                 |
 | [Character kits](/docs/genshin/character-kits)             | each playable character's skill sets from the game's tables, the Traveler's kit checked against its Anemo set                                        |
 | [Characters](/docs/genshin/characters)                     | the official MMD packs read by our own PMX reader and drawn on the toon ramp, with their terms                                                       |
@@ -77,6 +79,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Character screen](/docs/genshin/character-screen)         | the C screen's frame, its six tabs in the game's words, and the Attributes tab's level and attributes                                                |
 | [Party](/docs/genshin/party)                               | the teams, the one deployed and the member on the field, switched on 1 to 4 past the one second cooldown, each with its own HP, energy and cooldowns |
 | [Interaction](/docs/genshin/interaction)                   | the F prompts over the world: the drops and talks in reach nearest first, F picking up or talking, the wheel and a held F's repeat                   |
+| [Elemental Sight](/docs/genshin/elemental-sight)           | the range that spreads from the character, the world muted and what matters lit, enemies' colours and names                                          |
 | [Inventory](/docs/genshin/inventory)                       | the bag's nine tabs, its stacks, room and sorts, the wallet's currencies, its screen on B, and the enemies' materials from the game's table          |
 | [Wish](/docs/genshin/wish)                                 | the standard and beginners' pools, the rates, pity and guarantees, Capturing Radiance, the Epitomized Path and returns, and its screen on F3         |
 | [Dialogue](/docs/genshin/dialogue)                         | a talk's graph of lines and replies, its runner, the dialogue screen with auto-play and skip, and residents                                          |
@@ -85,6 +88,8 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Parity](/docs/genshin/parity)                             | matching a screen to the game's: references, tracing, scoring, motion and the visual suite                                                           |
 | [Scene derivation](/docs/genshin/scene-derivation)         | how the game's own assets are re-derived into a scene, each loss priced first                                                                        |
 | [Derived assets](/docs/genshin/derived-assets)             | which reference each part is measured from, how it becomes ours, and each part's progress                                                            |
+| [Spawned places](/docs/genshin/spawned-places)             | the official Teyvat map's statues and waypoints fitted to the scene's transport points, with the residual and each region's Oculi against the wiki's |
+| [Chests](/docs/genshin/chests)                             | the official map's chests fitted into each region as five tiers and the buried and sealed places, ground only, nothing opened yet                    |
 | [Interface library](/docs/genshin/interface-library)       | `genshin-interface`: the game's screen root, units, pointer, and the pieces its screens share                                                        |
 | [Interface layout](/docs/genshin/interface-layout)         | every screen laid out from the game's own RectTransform tree, nothing by hand                                                                        |
 | [Title splash](/docs/genshin/title-splash)                 | the game's title logo as each language's client draws it                                                                                             |
@@ -124,6 +129,8 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - Original Resin: its count regenerating while the page is closed, its refills from Primogems at the game's daily prices, a claim's price and Adventure EXP, and its counter on the map's top bar.
 - Ley line outcrops: each region's Revelation and Wealth read from the game's tables, their openings by rank and nation, a drawn start and the move along their places, with the touch and the claim still unbuilt.
 - Constellations: each character's six from the game's table, activated with its own Stella Fortuna, which a duplicate draw brings and a five-star past six a Masterless one.
+- Elemental Sight: the range spread from the character and held to its reach, the world muted outside what is lit, interactables in white, enemies in their element's colour with their names, and the sight ended by a short walk.
+- The official Teyvat map's statues and waypoints read into the references folder and fitted to the scene's transport points: one similarity over the whole map, its residual printed, and each region's Oculi checked against the wiki's.
 
 ## Key files
 

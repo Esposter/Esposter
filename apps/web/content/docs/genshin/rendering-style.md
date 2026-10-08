@@ -30,7 +30,10 @@ flowchart TD
   G -->|yes| GR[March, blur, blend in the sun's colour at the depth's edges]
   G -->|no| Z
   GR --> Z[Height fog in the sky's colour, never over the sky]
-  Z --> B{Bloom on the tier?}
+  Z --> SG{Elemental Sight on?}
+  SG -->|yes| SGL["Mute outside the reach, lit things in their colour, a ring at the edge"]
+  SG -->|no| B{Bloom on the tier?}
+  SGL --> B
   B -->|yes| BL[Add what is brighter than nearly white]
   B -->|no| AA
   BL --> AA{TRAA on the tier?}

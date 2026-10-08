@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { LightUniforms } from "genshin-engine";
-import type { DataTexture } from "three";
+import type { DataTexture, Scene } from "three";
 
+import { createSightProxy } from "#src/services/elementalSight/createSightProxy";
 import {
   DROP_STAND_IN_COLOR,
   DROP_STAND_IN_RADIUS,
@@ -20,9 +21,11 @@ interface Props {
   interactables: Interactable[];
   lightUniforms: LightUniforms;
   rampTexture: DataTexture;
+  // The scene the sight's mask is drawn from, which the stand-ins of the drops and the residents are added to
+  sightScene: Scene;
 }
 
-const { interactables, lightUniforms, rampTexture } = defineProps<Props>();
+const { interactables, lightUniforms, rampTexture, sightScene } = defineProps<Props>();
 // A drop is a small sphere on the ground, and a resident the capsule every body stands in as until it is measured
 const dropMesh = new InstancedMesh(
   new SphereGeometry(DROP_STAND_IN_RADIUS),
@@ -40,13 +43,18 @@ const residentMesh = new InstancedMesh(
 // The stand-ins are placed anywhere in the world, so the mesh's bounds, measured from its geometry alone, would cull them
 dropMesh.frustumCulled = false;
 residentMesh.frustumCulled = false;
+// The sight's stand-ins of both, drawn from the same points and lit white, since no element is on a drop or a resident
+const dropSightProxy = createSightProxy(dropMesh);
+const residentSightProxy = createSightProxy(residentMesh);
+sightScene.add(dropSightProxy, residentSightProxy);
 const matrix = new Matrix4();
 const point = new Vector3();
 const scale = new Vector3(1, 1, 1);
 const rotation = new Quaternion();
 // Each stand-in stands on its row's ground point, lifted by the half of its own height
-const writeStandIns = (mesh: InstancedMesh, rows: Interactable[], lift: number) => {
+const writeStandIns = (mesh: InstancedMesh, sightProxy: InstancedMesh, rows: Interactable[], lift: number) => {
   mesh.count = rows.length;
+  sightProxy.count = rows.length;
   for (const [index, { position }] of rows.entries()) {
     point.set(position.x, position.y + lift, position.z);
     mesh.setMatrixAt(index, matrix.compose(point, rotation, scale));
@@ -59,11 +67,13 @@ watchImmediate(
   (rows) => {
     writeStandIns(
       dropMesh,
+      dropSightProxy,
       rows.filter(({ kind }) => kind === InteractionKind.PickUp).slice(0, INTERACTABLE_CAPACITY),
       DROP_STAND_IN_RADIUS,
     );
     writeStandIns(
       residentMesh,
+      residentSightProxy,
       rows.filter(({ kind }) => kind === InteractionKind.Talk).slice(0, INTERACTABLE_CAPACITY),
       PROVISIONAL_LOCOMOTION.capsuleHeight / 2,
     );
@@ -71,6 +81,11 @@ watchImmediate(
 );
 
 onUnmounted(() => {
+  for (const sightProxy of [dropSightProxy, residentSightProxy]) {
+    sightScene.remove(sightProxy);
+    sightProxy.material.dispose();
+    sightProxy.dispose();
+  }
   for (const mesh of [dropMesh, residentMesh]) {
     mesh.geometry.dispose();
     mesh.material.dispose();

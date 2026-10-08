@@ -1,8 +1,8 @@
 [
   {
+    "itemCount": 0,
+    "itemId": 0,
     "level": 1,
-    "oculusCount": 0,
-    "oculusItemId": 0,
     "rewards": [
       {
         "itemCount": 40,
@@ -20,9 +20,9 @@
     "staminaShare": 0
   },
   {
+    "itemCount": 1,
+    "itemId": 107001,
     "level": 2,
-    "oculusCount": 1,
-    "oculusItemId": 107001,
     "rewards": [
       {
         "itemCount": 80,
@@ -40,9 +40,9 @@
     "staminaShare": 7
   },
   {
+    "itemCount": 2,
+    "itemId": 107001,
     "level": 3,
-    "oculusCount": 2,
-    "oculusItemId": 107001,
     "rewards": [
       {
         "itemCount": 120,
@@ -60,9 +60,9 @@
     "staminaShare": 7
   },
   {
+    "itemCount": 4,
+    "itemId": 107001,
     "level": 4,
-    "oculusCount": 4,
-    "oculusItemId": 107001,
     "rewards": [
       {
         "itemCount": 160,
@@ -80,9 +80,9 @@
     "staminaShare": 8
   },
   {
+    "itemCount": 6,
+    "itemId": 107001,
     "level": 5,
-    "oculusCount": 6,
-    "oculusItemId": 107001,
     "rewards": [
       {
         "itemCount": 200,
@@ -100,9 +100,9 @@
     "staminaShare": 8
   },
   {
+    "itemCount": 7,
+    "itemId": 107001,
     "level": 6,
-    "oculusCount": 7,
-    "oculusItemId": 107001,
     "rewards": [
       {
         "itemCount": 240,
@@ -120,9 +120,9 @@
     "staminaShare": 8
   },
   {
+    "itemCount": 8,
+    "itemId": 107001,
     "level": 7,
-    "oculusCount": 8,
-    "oculusItemId": 107001,
     "rewards": [
       {
         "itemCount": 280,
@@ -140,9 +140,9 @@
     "staminaShare": 8
   },
   {
+    "itemCount": 10,
+    "itemId": 107001,
     "level": 8,
-    "oculusCount": 10,
-    "oculusItemId": 107001,
     "rewards": [
       {
         "itemCount": 320,
@@ -160,9 +160,9 @@
     "staminaShare": 8
   },
   {
+    "itemCount": 12,
+    "itemId": 107001,
     "level": 9,
-    "oculusCount": 12,
-    "oculusItemId": 107001,
     "rewards": [
       {
         "itemCount": 360,
@@ -180,9 +180,9 @@
     "staminaShare": 8
   },
   {
+    "itemCount": 15,
+    "itemId": 107001,
     "level": 10,
-    "oculusCount": 15,
-    "oculusItemId": 107001,
     "rewards": [
       {
         "itemCount": 400,

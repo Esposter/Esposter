@@ -1,20 +1,13 @@
-import type { DumpedScenePoint } from "#src/models/genshinAssets/world/DumpedScenePoint";
-import type { DumpedVector } from "#src/models/genshinAssets/world/DumpedVector";
 import type { GaussianHills, GroundPoint, PlateauFeature } from "genshin-engine";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { RegionCapitalMap } from "#src/services/genshinAssets/fit/RegionCapitalMap";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUpperMedian";
-import {
-  SCENE_POINT_AREA_FIELD,
-  WORLD_AREAS_PATH,
-  WORLD_DATA_DIRECTORY,
-} from "#src/services/genshinAssets/shared/constants";
-import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
+import { WORLD_AREAS_PATH, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
+import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
-import { GAME_TEXT_DIRECTORY } from "#src/services/genshinText/constants";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -35,22 +28,14 @@ interface WorldArea {
 // And raised to the waypoints' median height over the world's base. Every other field stays the files', the landmark's
 // Turn and the plateau's reach among them. A capital with no waypoint is an error, and one set by hand writes its landmark alone. Returns the files written
 export const fitRegionCapitals = async (): Promise<string[]> => {
-  const statuePoint = DerivedAssetComponentMap[DerivedAssetComponent.Windrise].world?.points[0];
-  if (!statuePoint) throw new InvalidOperationError(Operation.Read, DerivedAssetComponent.Windrise, "has no point");
-  const [areasJson, pointsJson, [originX, originY, originZ], windriseBaseGroundJson] = await Promise.all([
+  const [areasJson, transportPoints, [originX, originY, originZ], windriseBaseGroundJson] = await Promise.all([
     readFile(WORLD_AREAS_PATH, "utf8"),
-    readFile(join(GAME_TEXT_DIRECTORY, statuePoint.file), "utf8"),
+    readSceneTransportPoints(),
     readWorldOrigin(DerivedAssetComponent.Windrise),
     readFile(join(WORLD_DATA_DIRECTORY, "windrise", "base-ground.json"), "utf8"),
   ]);
   const textMap = readTextMap(GameLanguage.English);
   const areas = parseMachineJson<WorldArea[]>(areasJson);
-  const categoryPoints =
-    parseMachineJson<Record<string, Record<string, DumpedScenePoint> | undefined>>(pointsJson)[statuePoint.category] ??
-    {};
-  const waypointType = categoryPoints[statuePoint.id]?.$type;
-  if (waypointType === undefined)
-    throw new InvalidOperationError(Operation.Read, statuePoint.file, `has no point ${statuePoint.id}`);
   const { base } = parseMachineJson<GaussianHills>(windriseBaseGroundJson);
   const writtenPaths = await Promise.all(
     Object.entries(RegionCapitalMap).map(async ([region, capital]) => {
@@ -77,23 +62,14 @@ export const fitRegionCapitals = async (): Promise<string[]> => {
           .filter(({ areaNameTextMapHash }) => capitalAreaNames.has(textMap.get(String(areaNameTextMapHash)) ?? ""))
           .map(({ areaID2 }) => areaID2),
       );
-      const waypoints = Object.values(categoryPoints).flatMap((point): DumpedVector[] => {
-        const area = point[SCENE_POINT_AREA_FIELD];
-        const position = point[statuePoint.position];
-        return point.$type === waypointType &&
-          typeof area === "number" &&
-          areaIds.has(area) &&
-          typeof position === "object"
-          ? [position]
-          : [];
-      });
+      const waypoints = transportPoints.filter(({ area }) => area !== undefined && areaIds.has(area));
       if (waypoints.length === 0)
         throw new InvalidOperationError(Operation.Read, landmarkId, `has no waypoint in ${areaNames.join(", ")}`);
       const position: GroundPoint = {
-        x: roundFitted(computeUpperMedian(waypoints.map(({ _x = 0 }) => _x)) - originX),
-        z: roundFitted(originZ - computeUpperMedian(waypoints.map(({ _z = 0 }) => _z))),
+        x: roundFitted(computeUpperMedian(waypoints.map((waypoint) => waypoint.position.x)) - originX),
+        z: roundFitted(originZ - computeUpperMedian(waypoints.map((waypoint) => waypoint.position.z))),
       };
-      const height = roundFitted(computeUpperMedian(waypoints.map(({ _y = 0 }) => _y)) - originY - base);
+      const height = roundFitted(computeUpperMedian(waypoints.map((waypoint) => waypoint.height)) - originY - base);
       const groundFile = join(region, "ground.json");
       const paths = [await writeLandmark(position)];
       if (!existsSync(join(WORLD_DATA_DIRECTORY, groundFile))) return paths;

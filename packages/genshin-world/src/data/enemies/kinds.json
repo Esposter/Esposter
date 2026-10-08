@@ -18,6 +18,7 @@
     "enemyType": "NORMAL",
     "healthCurve": "GROW_CURVE_HP",
     "id": 21010101,
+    "nameTextId": "2561869233",
     "physicalResistance": 0.1
   }
 ]

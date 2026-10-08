@@ -1,6 +1,7 @@
 import type { CommandDef } from "citty";
 
 import { behavioursCommand } from "#src/services/genshinAssets/commands/behavioursCommand";
+import { chestsCommand } from "#src/services/genshinAssets/commands/chestsCommand";
 import { clearanceCommand } from "#src/services/genshinAssets/commands/clearanceCommand";
 import { clipsCommand } from "#src/services/genshinAssets/commands/clipsCommand";
 import { enemiesCommand } from "#src/services/genshinAssets/commands/enemiesCommand";
@@ -13,6 +14,7 @@ import { leyLineCommand } from "#src/services/genshinAssets/commands/leyLineComm
 import { locomotionCommand } from "#src/services/genshinAssets/commands/locomotionCommand";
 import { mapCommand } from "#src/services/genshinAssets/commands/mapCommand";
 import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand";
+import { offeringsCommand } from "#src/services/genshinAssets/commands/offeringsCommand";
 import { playlistCommand } from "#src/services/genshinAssets/commands/playlistCommand";
 import { pointsCommand } from "#src/services/genshinAssets/commands/pointsCommand";
 import { pointsFitCommand } from "#src/services/genshinAssets/commands/pointsFitCommand";
@@ -50,9 +52,11 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     fit: fitCommand,
     rank: rankCommand,
     statues: statuesCommand,
+    offerings: offeringsCommand,
     stats: statsCommand,
     enemies: enemiesCommand,
     items: itemsCommand,
     outcrops: leyLineCommand,
+    chests: chestsCommand,
   },
 });

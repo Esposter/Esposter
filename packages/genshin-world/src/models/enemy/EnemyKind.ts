@@ -17,6 +17,8 @@ export interface EnemyKind {
   enemyType: EnemyType;
   healthCurve: string;
   id: EnemyKindId;
+  // The text id of the kind's name in the game's text, which the names of the world's language are read by
+  nameTextId: string;
   physicalResistance: number;
 }
 
@@ -31,5 +33,6 @@ export const enemyKindSchema = z.object({
   enemyType: z.enum(EnemyType) satisfies z.ZodType<EnemyType>,
   healthCurve: z.string().min(1),
   id: z.enum(EnemyKindId) satisfies z.ZodType<EnemyKindId>,
+  nameTextId: z.string().min(1),
   physicalResistance: z.number(),
 }) satisfies z.ZodType<EnemyKind>;

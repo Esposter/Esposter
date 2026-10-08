@@ -13,6 +13,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
+import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { WorldCameraPose } from "#src/models/world/WorldCameraPose";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
@@ -31,6 +32,7 @@ import MenuScreen from "#src/components/Menu/Screen/Index.vue";
 import QuestScreen from "#src/components/Quest/Screen/Index.vue";
 import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
+import WorldEnemyNameTags from "#src/components/World/EnemyNameTags/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { useInteraction } from "#src/composables/useInteraction";
@@ -43,6 +45,7 @@ import { createCharacter } from "#src/services/character/createCharacter";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
+import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
 import { placeEnemyDrops } from "#src/services/interaction/placeEnemyDrops";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
@@ -258,6 +261,8 @@ const landmarkCollider = createLandmarkCollider();
 // What the character on the field is drawn on, which the controller moves and the scene places among everything in the
 // World
 const characterBody = new Group();
+// Elemental Sight, which its binding turns on and off where the world is open, spreading from the place it was turned on
+const elementalSight: ElementalSight = { isOn: false, origin: { x: 0, z: 0 }, spreadSeconds: 0 };
 // The enemies in the world by their spawn key, which the enemies write as their camps load and as they die, and which
 // The character's kit strikes and an enemy's strike lands from
 const enemyMap = new Map<string, Enemy>();
@@ -372,6 +377,8 @@ const readCameraPosition = (): Vector3 => {
   const activeCamera = canvas.value?.context?.camera.activeCamera.value;
   return activeCamera ? activeCamera.position.clone().add(origin) : origin.clone();
 };
+// The camera the world is drawn through, which the enemies' name tags project their enemies through
+const getCamera = () => canvas.value?.context?.camera.activeCamera.value;
 const cameraRotation = computed(() =>
   cameraPose
     ? new Euler(MathUtils.degToRad(cameraPose.pitch), MathUtils.degToRad(cameraPose.heading), 0, "YXZ")
@@ -410,6 +417,14 @@ defineExpose({ jumpTo, readCameraPosition });
           if (!isPaused) screenKind = getNextScreenKind(screenKind, inputState.pressedActions);
           if (!isPaused && screenKind === ScreenKind.World && inputState.pressedActions.has(InputAction.HideInterface))
             isHudHidden = !isHudHidden;
+          if (!isPaused && screenKind === ScreenKind.World)
+            stepElementalSight(
+              elementalSight,
+              characterBody.position,
+              context.delta,
+              inputState.pressedActions.has(InputAction.ElementalSight),
+            );
+          else elementalSight.isOn = false;
           if (inputState.pressedActions.has(InputAction.ShowCursor)) showCursor();
           const partyMemberIndex = PARTY_MEMBER_INPUT_ACTIONS.findIndex((action) =>
             inputState.pressedActions.has(action),
@@ -477,6 +492,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :character-locomotion="locomotion"
         :character-pack-base-url
         :create-terrain-worker
+        :elemental-sight
         :enemy-map
         :held-minutes
         :is-held="screenBehaviour.isHeld || undefined"
@@ -493,6 +509,7 @@ defineExpose({ jumpTo, readCameraPosition });
         @strike="(enemy) => strikeParty(enemy)"
       />
     </TresCanvas>
+    <WorldEnemyNameTags :elemental-sight :enemy-map :get-camera :name-text />
     <!-- No HUD over a reference's held camera or a witness render, which the game's recordings show bare -->
     <HudScreen
       v-if="!cameraPose && !witness && !isPaused && !isHudHidden && !screenBehaviour.isHudHidden"

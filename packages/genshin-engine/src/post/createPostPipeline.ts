@@ -6,6 +6,7 @@ import { AntialiasingMode } from "#src/models/renderer/AntialiasingMode";
 import { STONE_MASK_OUTPUT } from "#src/nodes/constants";
 import { createHeightFogNode } from "#src/post/createHeightFogNode";
 import { createOcclusionNode } from "#src/post/createOcclusionNode";
+import { createSightNode } from "#src/post/createSightNode";
 import { toneMapGenshinNode } from "#src/post/toneMapGenshinNode";
 import { UnsignedByteType } from "three";
 import { bilateralBlur } from "three/examples/jsm/tsl/display/BilateralBlurNode.js";
@@ -15,7 +16,18 @@ import { godrays } from "three/examples/jsm/tsl/display/GodraysNode.js";
 import { lut3D } from "three/examples/jsm/tsl/display/Lut3DNode.js";
 import { smaa } from "three/examples/jsm/tsl/display/SMAANode.js";
 import { traa } from "three/examples/jsm/tsl/display/TRAANode.js";
-import { float, modelViewMatrix, mrt, output, positionLocal, renderOutput, texture3D, vec4, velocity } from "three/tsl";
+import {
+  float,
+  modelViewMatrix,
+  mrt,
+  output,
+  pass,
+  positionLocal,
+  renderOutput,
+  texture3D,
+  vec4,
+  velocity,
+} from "three/tsl";
 import { RenderPipeline, ToonOutlinePassNode } from "three/webgpu";
 
 const BLOOM_STRENGTH = 0.35;
@@ -27,8 +39,9 @@ const MIN_VIEW_DISTANCE = 0.001;
 //    By its screen-space occlusion where the scene draws it
 // 2. God rays are marched through the sun's shadow at half resolution, blurred, and blended in the sun's colour
 // 3. The height fog hazes what lies far or low, the outlines with it
-// 4. Bloom lifts only what is brighter than nearly white: the sun, glints and elemental light
-// 5. The grade maps display colours through the region's LUT, so it follows the tone mapping rather than feeding it
+// 4. Where a scene has a sight, its reach mutes what is not lit and shows what is in the colour it is lit in
+// 5. Bloom lifts only what is brighter than nearly white: the sun, glints and elemental light
+// 6. The grade maps display colours through the region's LUT, so it follows the tone mapping rather than feeding it
 // TRAA resolves the scene's edges before the tone mapping, from a velocity target the scene pass writes beside its
 // Colour; SMAA smooths the graded frame instead, for a tier that pays for neither
 export const createPostPipeline = ({
@@ -42,6 +55,7 @@ export const createPostPipeline = ({
   qualityTierSettings: { antialiasingMode, godraysStepCount, isBloomEnabled, isOcclusionEnabled },
   renderer,
   scene,
+  sight,
   stoneLight,
 }: PostPipelineOptions): PostPipeline => {
   const renderPipeline = new RenderPipeline(renderer);
@@ -100,12 +114,20 @@ export const createPostPipeline = ({
       maskNode: scenePass.getTextureNode(STONE_MASK_OUTPUT),
     },
   );
-  let bloomedNode: Node<"vec4"> = foggedNode;
+  let sightedNode: Node<"vec4"> = foggedNode;
+
+  if (sight) {
+    const litPass = pass(sight.litScene, camera);
+    passNodes.push(litPass);
+    sightedNode = createSightNode(foggedNode, sceneDepth, camera, litPass, sight.uniforms);
+  }
+
+  let bloomedNode: Node<"vec4"> = sightedNode;
 
   if (isBloomed && isBloomEnabled) {
-    const bloomNode = bloom(foggedNode, BLOOM_STRENGTH, BLOOM_RADIUS, BLOOM_THRESHOLD);
+    const bloomNode = bloom(sightedNode, BLOOM_STRENGTH, BLOOM_RADIUS, BLOOM_THRESHOLD);
     passNodes.push(bloomNode);
-    bloomedNode = foggedNode.add(bloomNode);
+    bloomedNode = sightedNode.add(bloomNode);
     postPipeline.bloomNode = bloomNode;
   }
 

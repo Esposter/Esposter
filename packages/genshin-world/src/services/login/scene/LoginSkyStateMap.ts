@@ -18,6 +18,11 @@ const NIGHT_MOON_DIRECTION = getLoginScreenDirection([0.27, 0.11]);
 // Grid of directions fits within a hundredth). Its cost is none on the recording's frame, which scores 17.22% to 16.88%
 // Of mean difference and 0.5942 to 0.5878 FLIP; the dusk's stone light is still solved under the old direction
 const DUSK_LIGHT_DIRECTION = new Vector3(0.493, 0.763, 0.418);
+// Where the night's moonlight falls from, apart from where the moon shows. Its shadows set it: the solve over the door
+// Session's shadows (genshin:parity shadows, after the night shadows' strength was fitted to the frame) casts their edges
+// 23.35 px from the reference's, against 137.44 px from the moon's own direction, 113.3 degrees away. What is left is
+// The casters' and the softness's, never a further solve
+const NIGHT_LIGHT_DIRECTION = new Vector3(-0.67, 0.57, -0.476).normalize();
 
 // Each hour's sky is solved as the game's sky shader draws it over the clear sky of every reference at that hour at once
 // (genshin:parity sky, its clouds left out by the cloud mask), its colours with its own shape, no halo under none and
@@ -124,7 +129,7 @@ export const LoginSkyStateMap: Record<LoginTimeOfDay, SkyState> = {
     horizonBackColor: new Color(0x1b3784),
     horizonColor: new Color(0x000000),
     lightColor: new Color(0x9cc8ff),
-    lightDirection: NIGHT_MOON_DIRECTION,
+    lightDirection: NIGHT_LIGHT_DIRECTION,
     lightIntensity: 8.13,
     moonDirection: NIGHT_MOON_DIRECTION,
     moonGlowColor: new Color(0x18234c),

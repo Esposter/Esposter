@@ -1,6 +1,7 @@
 import type { StoneLightUniforms } from "#src/models/nodes/StoneLightUniforms";
 import type { FogUniforms } from "#src/models/post/FogUniforms";
 import type { PostUniforms } from "#src/models/post/PostUniforms";
+import type { SightUniforms } from "#src/models/post/SightUniforms";
 import type { QualityTierSettings } from "#src/models/renderer/QualityTierSettings";
 import type { Camera, Data3DTexture, DirectionalLight, Scene } from "three";
 import type { Renderer } from "three/webgpu";
@@ -21,6 +22,9 @@ export interface PostPipelineOptions {
   qualityTierSettings: QualityTierSettings;
   renderer: Renderer;
   scene: Scene;
+  // The sight, where a scene lights what it can act on: the things drawn into `litScene` in the colours they are lit in,
+  // Which the scene draws beside itself, and the uniforms the sight spreads by. It is drawn after the fog, before bloom
+  sight?: { litScene: Scene; uniforms: SightUniforms };
   // The stone's light, where a scene hazes its stone in colours of its own: the scene pass then writes the stone's mask
   // And the haze draws the stone under the light's haze colours in place of the rest of the scene's
   stoneLight?: StoneLightUniforms;

@@ -30,7 +30,7 @@ The Genshin program is long: terrain, water, vegetation, every region, then a ch
   | `wind`       | the shared wind field                                                                                                                               |
   | `materials`  | the toon ramp every environment material reads                                                                                                      |
   | `nodes`      | every TSL node graph: the toon, stone, leaf and water materials, the sky, the rim, the wind                                                         |
-  | `post`       | what follows the scene: outlines, occlusion, god rays, fog, bloom, grade, anti-aliasing                                                             |
+  | `post`       | what follows the scene: outlines, occlusion, god rays, fog, the sight, bloom, grade, anti-aliasing                                                  |
   | `vegetation` | grass generated round the camera, and the ground capture it stands on                                                                               |
   | `water`      | still water's uniforms, and the fog under its surface                                                                                               |
   | `kits`       | the parametric generators a region's kits are built from: trees, the statue, architecture                                                           |
@@ -59,7 +59,7 @@ flowchart TD
   CACHE --> DRW
   DRW --> RND["renderer: the scene pass"]
   ATM --> RND
-  RND --> PST["post: outlines, occlusion, god rays, fog, bloom, grade, anti-aliasing"]
+  RND --> PST["post: outlines, occlusion, god rays, fog, the sight, bloom, grade, anti-aliasing"]
 ```
 
 Nothing reads state that a later stage of the same frame writes: the light is written before the scene draws, and only a tile already in the cache is drawn, its nearest cached ancestor standing in for one still asked for until it arrives in a later frame.

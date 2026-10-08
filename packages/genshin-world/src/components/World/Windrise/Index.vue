@@ -2,6 +2,7 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { Interactable } from "#src/models/interaction/Interactable";
+import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { LandmarkCollider, Locomotion, QualityTier } from "genshin-engine";
 import type { Object3D, Vector3 } from "three";
 
@@ -26,6 +27,7 @@ import water from "#src/data/windrise/water.json";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
+import { getSightRadius } from "#src/services/elementalSight/getSightRadius";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
@@ -64,6 +66,7 @@ import {
 import { createWindrisePavingGeometry } from "#src/services/windrise/createWindrisePavingGeometry";
 import { LandmarkKindWindrisePartFamilyMap } from "#src/services/windrise/LandmarkKindWindrisePartFamilyMap";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
+import { useLoop } from "@tresjs/core";
 import { whenever } from "@vueuse/core";
 import {
   createFogUniforms,
@@ -72,6 +75,7 @@ import {
   createLightUniforms,
   createPostUniforms,
   createRampTexture,
+  createSightUniforms,
   createSkyUniforms,
   createSunLight,
   createTerrainSelection,
@@ -80,7 +84,7 @@ import {
   createWindUniforms,
   QualityTierSettingsMap,
 } from "genshin-engine";
-import { HemisphereLight } from "three";
+import { HemisphereLight, Scene } from "three";
 
 interface Props {
   // What the character is drawn on, which the screen's controller moves in the world's own coordinates, so it is placed
@@ -94,6 +98,9 @@ interface Props {
   // Where the host serves the characters' model packs, without which the character is drawn as its body's capsule
   characterPackBaseUrl?: string;
   createTerrainWorker: () => Worker;
+  // The sight the screen turns on and off, which the world spreads its range by and lights its things under, none where
+  // No screen holds one
+  elementalSight?: ElementalSight;
   // The enemies in the world by their spawn key, which the enemies write as camps load and enemies die
   enemyMap: Map<string, Enemy>;
   // The game's minute of the day the clock is held at, in place of its running from the region's start
@@ -123,6 +130,7 @@ const {
   characterLocomotion,
   characterPackBaseUrl,
   createTerrainWorker,
+  elementalSight,
   enemyMap,
   heldMinutes,
   interactables,
@@ -173,6 +181,18 @@ const fogUniforms = createFogUniforms();
 fogUniforms.heightFalloff.value = FOG_HEIGHT_FALLOFF;
 fogUniforms.startDistance.value = FOG_START_DISTANCE;
 const postUniforms = createPostUniforms();
+// The sight's mask: the drops, the residents and the enemies, drawn in the colours the sight lights them, which the post
+// Chain reads where its reach is. Its spread and strength are read off the screen's sight each frame, and none is drawn
+// While no screen gives one
+const sightScene = new Scene();
+const sightUniforms = createSightUniforms();
+const { onBeforeRender } = useLoop();
+onBeforeRender(() => {
+  if (!elementalSight) return;
+  sightUniforms.origin.value.set(elementalSight.origin.x, elementalSight.origin.z);
+  sightUniforms.radius.value = getSightRadius(elementalSight);
+  sightUniforms.strength.value = elementalSight.isOn ? 1 : 0;
+});
 const waterUniforms = createWaterUniforms();
 waterUniforms.causticStrength.value = WATER_CAUSTIC_STRENGTH;
 waterUniforms.deepColor.value.set(WATER_DEEP_COLOR);
@@ -227,7 +247,13 @@ const gradeLutTexture = createGradeLutTexture(WINDRISE_GRADE_OPTIONS);
 // Either, and the sky handed on with it as the login's is, which the parity page's tools read each pixel's ray under
 const postPipeline = usePostPipeline(
   () => qualityTier,
-  { fogUniforms, gradeLutTexture, isBloomed: false, postUniforms },
+  {
+    fogUniforms,
+    gradeLutTexture,
+    isBloomed: false,
+    postUniforms,
+    sight: { litScene: sightScene, uniforms: sightUniforms },
+  },
   0,
   skyUniforms,
 );
@@ -351,13 +377,14 @@ onUnmounted(() => {
       :light-uniforms
       :ramp-texture
       :region-data-map
+      :sight-scene
       :target="characterBody?.position"
       :world-level
       @defeat="(enemy, enemyDrops) => emit('defeat', enemy, enemyDrops)"
       @strike="(enemy) => emit('strike', enemy)"
     />
     <!-- The drops and the residents in the world are stood in as well, which a witness render draws none of either -->
-    <WorldInteractables v-if="!witness" :interactables :light-uniforms :ramp-texture />
+    <WorldInteractables v-if="!witness" :interactables :light-uniforms :ramp-texture :sight-scene />
     <QuestBeam v-if="questTargetPosition" :origin :position="questTargetPosition" />
     <!-- The character on the field, on the controller's body -->
     <primitive v-if="characterBody" :object="characterBody">
