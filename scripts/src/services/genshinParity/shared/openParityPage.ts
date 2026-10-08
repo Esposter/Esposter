@@ -16,6 +16,7 @@ import {
 } from "#src/services/genshinParity/shared/constants";
 import { readSharedBrowser } from "#src/services/genshinParity/shared/readSharedBrowser";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { chromium } from "playwright";
 
@@ -71,6 +72,7 @@ export const openParityPage = async ({
     await browser.close();
   };
   // A failure once the page is open closes it, since no caller receives it to close
+  const missingFiles: string[] = [];
   return getResultAsync(async () => {
     const page = await context.newPage();
     const motionQuery = motion ? `&motion=${motion}` : "";
@@ -84,9 +86,14 @@ export const openParityPage = async ({
       const { assets, root } = getComponentDirectory(witness);
       await page.route(`**${WITNESS_PATH_PREFIX}**`, (route) => {
         const path = decodeURIComponent(new URL(route.request().url()).pathname.slice(WITNESS_PATH_PREFIX.length));
-        return route.fulfill({
-          path: path === WITNESS_LAYOUT_PATH ? join(root, WITNESS_LAYOUT_FILE_NAME) : join(assets, path),
-        });
+        const filePath = path === WITNESS_LAYOUT_PATH ? join(root, WITNESS_LAYOUT_FILE_NAME) : join(assets, path);
+        // An export not on disk is answered as missing: the page fails loading it, and the failure is thrown below with
+        // The path. Fulfilling from a file that is not there would reject inside this handler, where nothing awaits it
+        if (!existsSync(filePath)) {
+          missingFiles.push(filePath);
+          return route.fulfill({ status: 404 });
+        }
+        return route.fulfill({ path: filePath });
       });
     }
     // A faked clock runs only as far as the caller moves it, frame by frame, so a motion is shot at exact moments
@@ -111,7 +118,14 @@ export const openParityPage = async ({
       // oxlint-disable-next-line no-await-in-loop -- read after the frame it drew
       ({ parityError, parityReady: readyScreen } = await readPageState());
     }
-    if (parityError !== undefined) throw new InvalidOperationError(Operation.Read, screen, parityError);
+    if (parityError !== undefined) {
+      const [missingFile] = missingFiles;
+      throw new InvalidOperationError(
+        Operation.Read,
+        screen,
+        missingFile === undefined ? parityError : `${parityError}, its export ${missingFile} is not on disk`,
+      );
+    }
     // An unknown name draws the list of screens, which would otherwise be shot and scored as the screen
     if (readyScreen !== screen)
       throw new InvalidOperationError(Operation.Read, screen, "not a screen with a fixture on the parity page");
