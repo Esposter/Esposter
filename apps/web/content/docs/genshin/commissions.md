@@ -51,7 +51,7 @@ The Adventure Treasure Pack the wiki lists is not paid. The preview names its it
 
 `pnpm -C scripts genshin:assets commissions` writes `packages/genshin-world/src/generated/commissions/mondstadt.json` from the game text dump outside the repository. The run reads the daily task, reward and level tables and the reward previews, and refuses a level table that is not the game's twelve bands. The slice is imported on demand by `readMondstadtCommissions` and checked against its schema as it arrives.
 
-The dump at its revision lacked the three daily task tables, so they were fetched from that repository into the dump, as the shops' were, and nothing from them is committed.
+The dump at its revision lacked the three daily task tables, which the [game data formats](/docs/genshin/game-data-formats) page covers, and nothing from them is committed.
 
 ## Not built yet
 

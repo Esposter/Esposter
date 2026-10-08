@@ -14,11 +14,11 @@ The blacksmith's recipes, queues, orders and daily cap are built, as the [forgin
 - **The blacksmith's place is an NPC of the Mondstadt scene.** The official map has no blacksmith label, so the place is read from the region's own placements, not from the spawned places. Every blacksmith is one forge, so the place is a screen's concern only.
 - **A character's forging talent gives its bonus to the forge.** The bonus is read from the character's passive, as the wiki lists each. The wiki's page was not reachable from the build that settled the rest, so the talents wait on a source that lists them.
 - **The Serenitea Pot's forge refuses Magical Crystal Chunks.** The rule is the pot's, and it is applied by the [Serenitea Pot](/docs/proposals/genshin/serenitea-pot) page. The only forge recipe that takes the chunks is the drop-table Mystic below, so the refusal has nothing to refuse until that recipe is written.
-- **The Mystic Enhancement Ore from Magical Crystal Chunks and Original Resin waits on its drop table.** Its result is drawn from a table the build does not read yet. Its forge points are zero, so it does not count toward the day's cap whenever it is written.
+- **The Mystic Enhancement Ore waits on its drop table.** Its result is drawn from a table the build does not read yet. Its forge points are zero, so it does not count toward the day's cap whenever it is written.
 
 ## Scope and order
 
-**Built:** the recipes, queues by rank, real-time orders, the daily cap, and the four-star weapons from billets with their diagrams. See the [forging](/docs/genshin/forging) page.
+**Built:** the [forging page](/docs/genshin/forging) records what is built.
 
 **Still to build, in order:**
 

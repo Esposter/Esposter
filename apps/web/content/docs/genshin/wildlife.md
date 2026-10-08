@@ -5,7 +5,7 @@ description: The official map's fleeing birds and beasts, the White Pigeon, the 
 
 # Wildlife
 
-The client does not place the game's animals, so each stands at a point of the official map's public data, which [spawned places](/docs/genshin/spawned-places) reads. This page is the first half of the [wildlife](/docs/proposals/genshin/wildlife) proposal: the three kinds of bird and beast the map marks as fleeing are moved into scene coordinates by the fit's transform and saved in each region's slice, and in Windrise's scene each one stands at its place and runs from the character when it comes near. Nothing is struck, dropped or picked up yet.
+The client does not place the game's animals, so the map's public points stand in for them, per the [spawned places](/docs/genshin/spawned-places) page. This page is the built part of the [wildlife](/docs/proposals/genshin/wildlife) proposal: the three kinds of bird and beast the map marks as fleeing are placed in the scene by the fit's transform and written into each region's slice, and in Windrise's scene each one stands at its place and runs from the character when it comes near. Nothing is struck, dropped or picked up yet.
 
 ## How it works
 

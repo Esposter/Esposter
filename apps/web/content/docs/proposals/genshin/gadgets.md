@@ -37,7 +37,7 @@ flowchart TD
 
 **This still adds, in order:**
 
-1. **The quick-use slot.** The equipped gadget and its use on `Z`, with the usable-here check once domains stand. The item writer names only two material types, neither the widgets', so the slot waits on the items.
+1. **The quick-use slot.** The equipped gadget and its use on `Z`, with the usable-here check once domains stand. The slot waits on the bag's items, which hold no widget material type yet.
 2. **Detectors**, the Treasure Compass to treasure boxes once a compass's city joins a region's chest slice, then the Oculus Resonance Stone once its target is settled.
 3. **Collectors and placed devices**, one kind at a time.
 4. **The quick swap.**
