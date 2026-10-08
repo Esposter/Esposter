@@ -1,6 +1,9 @@
 import type { ExcelAvatarFettersLevelRow } from "#src/models/genshinAssets/friendship/ExcelAvatarFettersLevelRow";
 
-import { FRIENDSHIP_GENERATED_DIRECTORY, FRIENDSHIP_LEVELS_PATH } from "#src/services/genshinAssets/friendship/constants";
+import {
+  FRIENDSHIP_GENERATED_DIRECTORY,
+  FRIENDSHIP_LEVELS_PATH,
+} from "#src/services/genshinAssets/friendship/constants";
 import { toFriendshipLevels } from "#src/services/genshinAssets/friendship/toFriendshipLevels";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { mkdirSync, writeFileSync } from "node:fs";
