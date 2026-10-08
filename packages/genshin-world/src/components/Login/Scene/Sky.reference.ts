@@ -223,6 +223,13 @@ export const skyTopic: ReferenceTopic = {
       result:
         "Under the shipped colours the dusk's clouds stand 9.9 ΔE off the recording's (L 81.9, a 8.1, b 21.7 against 78.0, 14.2, 14.9) and the night's 13.7 (a 3.9 and b -31.5 against -0.8 and -44.3, ours greyer). Solved, the dusk's lit #fffcd0 and shade #d853af take the clouds' colour to 3.6 against a gate of 4.2, the clear sky to 2.85, the edges to 0.028 and the spread to 0.086, every one but the cover nearer, and the cover from 0.060 to 0.067 still inside its 0.11: four gates held where the shipped hold one. The night's lit #00bbff and shade #0094dc take its clouds' colour to 3.9, the cover to 0.17 and the spread to 0.014, but the clear sky from 2.86 to 3.17 and the brightness from 0.027 to 0.103. Neither beats its shipped colours on every reading, so both wait on whether a reading still held that moves within its gate may be traded",
     },
+    {
+      method:
+        "The dusk's solved colours set in LoginSkyStateMap as #fffcd0 and #d853af, read again from the scene's own sky state, then compare login-door-recording under them and under the shipped",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "A solve ships where no gate it holds fails and every reading past its gate moves nearer, so the dusk's colours ship and the night's, whose clear sky moves further, stay. Written as bytes the colours read the clouds' colour 3.10, the clear sky 2.87, the cover 0.070, the edges 0.027 and the spread 0.089 against the solve's own, and the brightness 0.146 against the shipped 0.143: the lit's green and blue rounded to a byte move it 0.009, so the reading resolves no finer than a byte of colour. The frame scores FLIP 0.5939 against 0.5831 and tone 12.25% against 11.95%, as a score by pixels charges every cloud standing elsewhere than the recording's",
+    },
   ],
   openQuestions: [
     "The cloud layer's settings by hour: solved from an opacity near none on every hour's frame, no hour's layer beats drawing none on every reading, each staying thin and trading the clear sky's colour against its clouds; what the layer would draw is read again once the clouds' own colours and the sky's hold, its coverage kept within none to one, and named from the environment scripts where a curve reads it",
