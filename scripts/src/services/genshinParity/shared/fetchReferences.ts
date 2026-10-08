@@ -19,7 +19,7 @@ export const fetchReferences = async (): Promise<void> => {
   const wikiTitles = missing.flatMap(([, { wikiTitle }]) => (wikiTitle === undefined ? [] : [wikiTitle]));
   const urls = wikiTitles.length > 0 ? await readWikiFileUrls(wikiTitles) : new Map<string, string>();
   const lines = await Promise.all(
-    missing.map(async ([id, { capture, crop, seconds, wikiTitle }]) => {
+    missing.map(async ([id, { capture, crop, placement, seconds, wikiTitle }]) => {
       const path = join(REFERENCES_DIRECTORY, `${id}.png`);
       if (capture !== undefined) {
         const capturePath = join(CAPTURES_DIRECTORY, capture);
@@ -36,7 +36,15 @@ export const fetchReferences = async (): Promise<void> => {
       const url = urls.get(wikiTitle);
       const file = url ? await readWikiFile(url) : undefined;
       if (!file) return `${id}: not on the wiki as ${wikiTitle}`;
-      await sharp(file).png().toFile(path);
+      // A crop placed in its frame is drawn on the frame's black, so the reference is the whole frame at its scale
+      if (placement)
+        await sharp({
+          create: { background: "#000", channels: 3, height: placement.frameHeight, width: placement.frameWidth },
+        })
+          .composite([{ input: await sharp(file).png().toBuffer(), left: placement.x, top: placement.y }])
+          .png()
+          .toFile(path);
+      else await sharp(file).png().toFile(path);
       return path;
     }),
   );

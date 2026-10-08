@@ -171,9 +171,21 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: "File:Everfrozen Earth.png",
   },
-  // The English PC client's quit prompt, the wiki's 799 by 475 crop of its three buttons over the world, with no whole
-  // Frame behind them, so its scale is a call the Recordings owed list settles before the prompt is scored
-  "exit-prompt": { screen: "MenuExit", wikiTitle: "File:Paimon Menu Exit Prompt.png" },
+  // The English PC client's quit prompt, the wiki's 799 by 475 crop of its three buttons over the world, placed at its
+  // 1080 high frame's pixels with the prompt's stack centred on the frame, as the screen centres it. Scored over the
+  // Panel's box and its three buttons alone, since the world between them is the game's own; the crop's place and the
+  // Frame's scale are a call until the whole-frame recording (the Recordings owed list) settles them
+  "exit-prompt": {
+    mask: [
+      { height: 84, width: 767, x: 576, y: 338 },
+      { height: 84, width: 767, x: 576, y: 498 },
+      { height: 84, width: 767, x: 576, y: 658 },
+    ],
+    placement: { frameHeight: 1080, frameWidth: 1920, x: 559, y: 298 },
+    region: { height: 404, width: 767, x: 576, y: 338 },
+    screen: "MenuExit",
+    wikiTitle: "File:Paimon Menu Exit Prompt.png",
+  },
   // The English PC client's Adventurer Handbook open at its experience, the wiki's screenshot, against which the
   // Book's tabs are placed while its pages wait on what they track
   "handbook-experience": { screen: "HandbookScreen", wikiTitle: "File:Adventurer Handbook Experience.png" },

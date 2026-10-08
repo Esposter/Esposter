@@ -1,13 +1,15 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { ParityPlacement } from "#src/models/genshinParity/shared/ParityPlacement";
 import type { ParityRegion } from "#src/models/genshinParity/shared/ParityRegion";
 
 // A reference is a wiki file, or one frame of a recording kept in the captures folder: a still the wiki lacks is taken
 // From the game itself, at the second it shows, cropped to the game's own screen when the recording letterboxes it
-// (a public video of a phone or a window)
+// (a public video of a phone or a window). A wiki crop with no whole frame behind it is placed in the frame it was cut
+// From, so it is shot and scored at that frame's scale
 export type ParityReference = ParityReferenceBase &
   (
     | { capture: string; crop?: ParityRegion; seconds: number; wikiTitle?: never }
-    | { capture?: never; crop?: never; seconds?: never; wikiTitle: string }
+    | { capture?: never; crop?: never; placement?: ParityPlacement; seconds?: never; wikiTitle: string }
   );
 interface ParityReferenceBase {
   // The component whose witness the passes judge the reference by: a screen several components share is measured by
