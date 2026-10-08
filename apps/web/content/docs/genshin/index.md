@@ -55,7 +55,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Free camera](/docs/genshin/free-camera)                   | photo mode's camera, flown with the keys, the pointer and a gamepad above the ground                                |
 | [Controls](/docs/genshin/controls)                         | the game's default key, mouse and gamepad bindings, read once a frame into the actions held and pressed             |
 | [Screens](/docs/genshin/screens)                           | the screens opened over the world one at a time, what each holds, and the Paimon menu's shell                       |
-| [Map](/docs/genshin/map)                                   | the map on M, its jump list, and a jump's fade to black and back                                                    |
+| [Map](/docs/genshin/map)                                   | the map on M at full screen, its keyboard jump list, and a jump's fade to black and back                            |
 | [Minimap](/docs/genshin/minimap)                           | the HUD's corner map, the map's drawing cut to a circle round the camera and turned with it                         |
 | [HUD](/docs/genshin/hud)                                   | the heads-up display's Paimon button, minimap, quest tracker and stamina meter, its places, and hiding it           |
 | [Touch controls](/docs/genshin/touch-controls)             | the stick on the left half, the look on the right and the jump button, fed into the one input                       |

@@ -50,6 +50,11 @@ Clips nothing published shows, which the user records: each 30 seconds or less, 
 - [ ] `menu-paimon.mkv` — the Paimon menu opened and closed.
 - [ ] `menu-character.mkv` — 30 seconds at most, the character screen at 60 frames a second: the character strip scrolled past its first portrait, a portrait pressed, a tab hovered and pressed, and the way back. Its six tabs in turn are already in `session-2.mp4` from about 154 seconds (Attributes to Talents, the open tab's pill sliding at 157 to 159 seconds), so the clip does not repeat them.
 - [ ] `mobile-touch.png` — a screenshot of the mobile client's play screen with its touch controls.
+- [ ] `bag-open-close.mkv` — the bag opened with B from the world and closed with B again, its weapons tab open, the English client at 1080p and 60 frames a second. The account tour's clip (`yt-_agTJviXj7s`) shows the bag's tabs at rest, and its open and close were not checked frame by frame.
+- [ ] `bag-tabs.mkv` — the nine tabs clicked in their order, a second held on each, the hover and press of each in view.
+- [ ] `bag-sort.mkv` — the sort switched from Quality to Level and back, the order arrow pressed both ways, the list reordering as it goes.
+- [ ] `bag-scroll.mkv` — the weapons' grid scrolled from its first row to its last with the wheel, then back to the top.
+- [ ] `bag-select.mkv` — three entries clicked in turn, the detail panel's change in view with each.
 
 ## Opening
 
