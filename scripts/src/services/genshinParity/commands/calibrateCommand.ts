@@ -6,6 +6,7 @@ import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constan
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
+import { STONE_LIGHT_PATH } from "#src/services/genshinParity/witness/constants";
 import { solveReferenceHaze } from "#src/services/genshinParity/witness/solveReferenceHaze";
 import { solveReferenceStoneLight } from "#src/services/genshinParity/witness/solveReferenceStoneLight";
 import { parseNames } from "#src/services/shared/parseNames";
@@ -14,8 +15,6 @@ import { defineCommand } from "citty";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
-// The world data file each hour's stone light is written into, keyed by the hour
-const STONE_LIGHT_PATH = "login/stoneLight.json";
 // The decimals a written light keeps, past which its colours move nothing the screen shows
 const LIGHT_DECIMALS = 4;
 const formatColor = (color: readonly number[]): string => color.map((value) => value.toFixed(3)).join(" ");

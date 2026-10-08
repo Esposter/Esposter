@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL } from "#shared/services/genshin/constants";
-import { GameLanguageTagMap } from "genshin-text";
+import { GameLanguageTagMap, GameTextKey } from "genshin-text";
 import { GameOpening } from "genshin-world";
 
 // The game as it plays: its opening at once, and once its door is opened the world loading under the startup loading
@@ -35,6 +35,9 @@ const gameText = await useGameText();
         @begin="isDoorOpened = true"
         @finish="isOpeningShown = false"
       />
+      <!-- A progressbar is no live region, so its reaching the end is announced by nothing of its own. The world being
+        Ready is said here to a screen reader alone, and only then, since the splashes and login load nothing -->
+      <p role="status" sr-only>{{ isReady ? gameText.text[GameTextKey.Ready] : "" }}</p>
     </div>
   </div>
 </template>

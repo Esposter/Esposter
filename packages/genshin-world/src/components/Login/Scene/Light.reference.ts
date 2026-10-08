@@ -233,8 +233,45 @@ export const lightTopic: ReferenceTopic = {
       result:
         "Under the balance the night's haze still ran off its bracket (density 8831 at an opacity of one, its red light none), with four fifths of the scene-colour residual in bins shown brighter than 0.6. Under a light free per part every hour's haze came out a step: the dawn's hiding all the stone under about 6 metres below the walkway, the night's 2 to 3 and the day's about 2.5, where the cloud sea's billows stand (LoginCloudBandMap's bottom band, its clouds' middles up to 2.4 under), and the step held its place with the stone under the walkway cut. Above the walkway no haze is left: its best is a near-black fog over the far stone, which stands darker against its albedo the further off it lies, as rank's height bands by depth show at every height, and no profile settles from different starts. Solved jointly over the night's frames the step converged from three starts (density 3.4e5, falloff 1.155, most opacity 0.986), its residual 0.109 against 0.120 under the scene's haze and 0.176 under none, and the dawn's alone likewise (818, 0.836, all); the day's starts landed apart and the dusk's two shapes scored within four ten-thousandths, so both stay. Set with their lights solved under them, the night title scores 0.4479 against 0.4630, the door session 0.4752 against 0.4974 and the dawn 0.4143 against 0.4270, our red under the black on 39% and 42% of the night's pixels against the game's 26% and 32%",
     },
+    {
+      method:
+        "The night's stone on the door session and the night title sorted into eight bands of how bright the reference shows its green, the light solved free with each band's mean shown colour, height, haze, normal and ramp coordinate read beside the game's, then the day title and the door recording the same way",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "On the door session the game's darkest stone is its high stone, 13 to 16 metres up with no haze, and its brightest the low stone 2 to 6 metres under the walkway inside the haze's step, while the ramp coordinate barely moves between bands (0.27 to 0.48), so the night's dark and bright are height and haze, not the moon's side and the shade. By day our stone reads flat across the bands (red 0.46 to 0.56) where the game's runs 0.07 to 0.80, the light leaving 0.51 of the bins' 0.58 spread: bands of the reference's own brightness pick out the pixels its texels darken, and ours, a pixel off, regress to the frame's mean, so banded by the reference no light reads apart from the noise its pixels hold. The balance's bands by the green (Display.reference.ts) read the same way",
+    },
+    {
+      method:
+        "The light pass's measure (passes --pass Light, measureLight): each bin a solve reads, its mean colour as the reference shows it against the shipped light's cast through the white balance and the tone curve, in CIELab, weighed by its pixels (readStoneColourDistance), gated at 2.3 or at what the same light reads against our own render of the exports under it",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "On the door session the shipped night light, solved on the night title, reads 23.4 ΔE, by height 9 to 28, and our own render under it 0.9, so the light's model holds what the render draws to under a ΔE and the pass is gated at 2.3. The bins hold one part's faces at one depth, height, ramp coordinate and tilt, which a pixel's misalignment does not move between",
+    },
+    {
+      method:
+        "The stone program's G-buffer variant (Shader#171) and the deferred pass's shading model 13 read for the glow, then each material's colours decoded from sRGB in toMaterialValues, the witness laid out again (genshin:assets witness login) and the stone fitted again (fit login --only stone)",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The program writes the glow (the emission graded into _RGColor at _RGStrength by the rim) normalized by its brightest channel past one, that channel as sqrt(0.05 x) in the fifth target, and the pass adds the normalized colour by twenty times that squared, so the screen shows the glow as the program builds it wherever its length reaches _EmissionRange (0.1 on every stone) and none under. Unity saves a colour as the sRGB its inspector shows, which a project lit in linear space decodes before a shader reads it, and the materials' colours were read as saved: the walkway's _RGColor of 0.70, 0.96 and 1 is 0.45, 0.92 and 1 in linear light, and the night's near walkway's glow red fell from 0.12 to 0.08, still eight times the 0.009 the game's frame shows there in scene colour. The towers' and the door's rims fit bluer (0.06, 0.25, 0.88 for 0.27, 0.54, 0.95). Under the night light solved before, the door session scores 0.4985 against 0.4752 and the night title 0.4411 against 0.4479, the light having stood for the undecoded glow",
+    },
+    {
+      method:
+        "Scratch terms in solveStoneLight over the night's two frames and every other hour's: the glow's colour solved per channel as a scale of the material's, faster height falloffs (0.15, 0.05 with 0.2, and 0.5 a metre), and the bins weighed by the tone curve's slope to the half and the whole, each read by bands of the reference's green",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "Solved free, the glow's red and green go to none at night (0.00 to 0.01) and its blue to a fifth to two thirds, but by day and at dusk its red to 2.4 to 7.6 with its blue none: it takes each frame's hue onto its grazing faces rather than reading a glow, and moves the bands' mean distance by under a ΔE. No falloff or weighing lowers the bands' mean distance on both night frames, and a falloff of 0.5 a metre runs to e^20 forty metres under the walkway. Not built",
+    },
+    {
+      method:
+        "The night's light solved on the current build's door session under the decoded glow (calibrate --write), read by the light pass's measure, and offline on both night frames beside the light solved on the night title and on both at once",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Solved on the door session the light reads 15.1 ΔE there against the shipped 23.4, and on the night title, which it was not solved on, 13.9 against the shipped 19.1 and the title's own solve's 14.7; solved on both at once it reads 16.5 and 14.8. The light's red is none in every term and its green within a hundredth or two of none, the night's stone lit in blue alone. The high stone still stands furthest off, 19 to 23 ΔE 10 to 40 metres up, the game's shown colour halving about every 5 metres up where ours barely darkens: the solve weighs its bins in scene colour, where that stone's error is small, so the light solved on the measure's own ΔE is next. Every other hour's light was solved under the undecoded glow and waits on a current build's frame at its hour. With the decoded rims, the night title scores 0.4339 against 0.4479 and the door session 0.4893 against 0.4752, its mean and tone nearer and its FLIP further: the light lends the near walkway no green, the exports' ground glow (LoginScene_Ground01 and 02, cyan at a strength of 0.3 and 1) supplying it, and our walkway fits its rim from LoginScene_Bridge01 alone, at a strength of none, so it draws the walkway a saturated blue",
+    },
   ],
   openQuestions: [
+    "The walkway's ground glow: the exports' ground materials glow cyan along the near walkway, which the night's light now leaves to them, while our walkway's rim is fitted from Bridge01 alone at a strength of none; the stand-ins' glow against the exports' is measured by no pass yet",
+    "The night's high stone, 10 to 40 metres up, still 19 to 23 ΔE off: the light solved on the light pass's own ΔE rather than in scene colour",
     "What tells the day's and the dusk's stone haze from their light: calibrate --haze settles neither, and the stone's albedo varies too little to split a haze that adds from a light that scales",
     "The dusk sun's direction against its shadows: a tower's shadow falls over the wings in front of the door where the recording's are lit, and the faces' shading cannot settle the direction, the light's binned residual flat round the hand-set one, so the shadows' own edges are the measure left",
     "What the day's and the dusk's falling ramps stand in for: not the sun's direction, and holding them to rise scores the dusk worse, so the highlight, the reflection and the normal maps the solve lacks first",

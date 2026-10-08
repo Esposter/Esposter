@@ -111,6 +111,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 | Unknown                                 | Tool                                                                                                                   |
 | :-------------------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
 | The stone's light at an hour            | `genshin:parity calibrate`: ramp, sky and height fade, none below none, by NNLS                                        |
+| Whether the stone's light holds         | `passes --pass Light`: each bin's shown colour against the light's, in ΔE, gated at our own render under it            |
 | Whether a light solve models the render | `calibrate --self`: our render solved, its light handed back                                                           |
 | Whether a height's error is light, haze | `rank`'s height bands by depth: one ratio a light, a growing one haze                                                  |
 | Where a light's error lies on the frame | `rank`'s light map: the exports' light over the reference's, smoothed                                                  |
