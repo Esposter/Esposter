@@ -32,6 +32,30 @@ describe(createInput, () => {
     });
   });
 
+  test("lets go of every key held when the target loses focus", () => {
+    expect.hasAssertions();
+
+    const target = new EventTarget();
+    const { readInput } = createInput(target as unknown as Window);
+    target.dispatchEvent(Object.assign(new Event("keydown"), { code: KEY_CODE_FORWARD }));
+    target.dispatchEvent(new Event("blur"));
+    vi.stubGlobal("navigator", { getGamepads: () => [] });
+
+    expect(readInput().moveForward).toBe(0);
+  });
+
+  test("hears nothing once disposed", () => {
+    expect.hasAssertions();
+
+    const target = new EventTarget();
+    const { dispose, readInput } = createInput(target as unknown as Window);
+    dispose();
+    target.dispatchEvent(Object.assign(new Event("keydown"), { code: KEY_CODE_FORWARD }));
+    vi.stubGlobal("navigator", { getGamepads: () => [] });
+
+    expect(readInput().moveForward).toBe(0);
+  });
+
   test("turns the look by the pointer's movement while it is locked, once a read", () => {
     expect.hasAssertions();
 

@@ -35,7 +35,7 @@ The order is the reason for the registration. The floating origin reads the came
 - **Mouse**: the pointer turns the look while it is locked. Nothing requests the lock yet, so the mouse look is inert until a page asks for it.
 - **Gamepad**: the first connected gamepad's left stick moves over the ground, with a deadzone at the stick's centre.
 
-The camera's motion is per second, so a key held for a frame moves it the same distance at any frame rate. The input is read once a frame and the steps of that frame all use it.
+The camera's motion is per second, so a key held for a frame moves it the same distance at any frame rate. The input is read once a frame and the steps of that frame all use its move. The look is a turn rather than a rate, so the frame's first step spends it and the rest turn nothing; a frame that runs no step carries its turn into the next frame's, so no pointer movement is lost or repeated at any frame rate.
 
 ## The motion
 
@@ -49,20 +49,19 @@ The camera is never held under the ground: after each step its height is raised 
 
 ## Key files
 
-| File                                                               | Its role                                                                          |
-| :----------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
-| `packages/genshin-engine/src/input/createInput.ts`                 | keys, locked pointer and the gamepad's left stick, read once a frame              |
-| `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`    | runs whole steps from an accumulator, at most five a frame                        |
-| `packages/genshin-engine/src/camera/createFreeCamera.ts`           | the flight: look, move by height, and the clamp above the ground                  |
-| `packages/genshin-engine/src/collision/createGroundQuery.ts`       | the ground's height and normal at a point, and the water's level                  |
-| `packages/genshin-world/src/components/World/FreeCamera/Index.vue` | the world's wiring: the loop run before the origin's shift, on the scene's ground |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`     | owns the origin and mounts the free camera in place of the orbit controls         |
-| `packages/genshin-world/src/services/constants.ts`                 | the fixed step's length                                                           |
+| File                                                               | Its role                                                                                        |
+| :----------------------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/input/createInput.ts`                 | keys, locked pointer and the gamepad's left stick, read once a frame; a blur releases every key |
+| `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`    | runs whole steps from an accumulator, at most five a frame                                      |
+| `packages/genshin-engine/src/camera/createFreeCamera.ts`           | the flight: look, move by height, and the clamp above the ground                                |
+| `packages/genshin-engine/src/collision/createGroundQuery.ts`       | the ground's height and normal at a point, and the water's level                                |
+| `packages/genshin-world/src/components/World/FreeCamera/Index.vue` | the world's wiring: the loop run before the origin's shift, on the scene's ground               |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`     | owns the origin and mounts the free camera in place of the orbit controls                       |
+| `packages/genshin-world/src/services/constants.ts`                 | the fixed step's length                                                                         |
 
 ## Notes
 
 - **The free camera is replaced, not extended, once a character walks.** A controller then owns the camera's follow, and the free camera stays as a photo mode; [exploring](/docs/proposals/genshin/exploring) holds what comes after.
-- **The look is applied by each step, not each frame.** Every step of a frame turns the view by the frame's whole look, so a frame that runs several steps turns it several times, and a frame that runs none drops the look it read. How a per-frame look meets the fixed step is still open ([exploring](/docs/proposals/genshin/exploring)).
 
 ## Sources
 
