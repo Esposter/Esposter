@@ -8,7 +8,7 @@ import type {
   TerrainOptions,
 } from "genshin-engine";
 
-import ground from "#src/data/windrise/ground.json";
+import baseGround from "#src/data/windrise/base-ground.json";
 import water from "#src/data/windrise/water.json";
 import { GroundLayer } from "genshin-engine";
 import { Color, Vector2 } from "three";
@@ -22,8 +22,8 @@ export const WINDRISE_TERRAIN_OPTIONS: TerrainOptions = {
   finestRange: 64,
   finestTileSize: 16,
   levelCount: 6,
-  maxHeight: ground.maxHeight,
-  minHeight: ground.minHeight,
+  maxHeight: baseGround.maxHeight,
+  minHeight: baseGround.minHeight,
 };
 export const WINDRISE_SEED = 0;
 // Clear shallows over the pale bed turning a deep blue in the middle, as Mondstadt's lakes read, and a green haze

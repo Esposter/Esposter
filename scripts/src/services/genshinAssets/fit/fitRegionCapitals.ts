@@ -37,11 +37,11 @@ interface WorldArea {
 export const fitRegionCapitals = async (): Promise<string[]> => {
   const statuePoint = DerivedAssetComponentMap[DerivedAssetComponent.Windrise].world?.points[0];
   if (!statuePoint) throw new InvalidOperationError(Operation.Read, DerivedAssetComponent.Windrise, "has no point");
-  const [areasJson, pointsJson, [originX, originY, originZ], windriseGroundJson] = await Promise.all([
+  const [areasJson, pointsJson, [originX, originY, originZ], windriseBaseGroundJson] = await Promise.all([
     readFile(WORLD_AREAS_PATH, "utf8"),
     readFile(join(GAME_TEXT_DIRECTORY, statuePoint.file), "utf8"),
     readWorldOrigin(DerivedAssetComponent.Windrise),
-    readFile(join(WORLD_DATA_DIRECTORY, "windrise", "ground.json"), "utf8"),
+    readFile(join(WORLD_DATA_DIRECTORY, "windrise", "base-ground.json"), "utf8"),
   ]);
   const textMap = readTextMap(GameLanguage.English);
   const areas = parseMachineJson<WorldArea[]>(areasJson);
@@ -51,7 +51,7 @@ export const fitRegionCapitals = async (): Promise<string[]> => {
   const waypointType = categoryPoints[statuePoint.id]?.$type;
   if (waypointType === undefined)
     throw new InvalidOperationError(Operation.Read, statuePoint.file, `has no point ${statuePoint.id}`);
-  const { base } = parseMachineJson<GaussianHills>(windriseGroundJson);
+  const { base } = parseMachineJson<GaussianHills>(windriseBaseGroundJson);
   const writtenPaths = await Promise.all(
     Object.entries(RegionCapitalMap).map(async ([region, capital]) => {
       const { landmarkId } = capital;

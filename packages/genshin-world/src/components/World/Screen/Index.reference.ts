@@ -25,7 +25,7 @@ export const reference: ComponentReference = {
       block: "00/00945879.blk, tile 2,-1's in 00/13138169.blk",
       kind: GameSourceKind.TerrainData,
       name: "BigWorldTerrain_1_-2.bin, BigWorldTerrain_2_-2.bin, BigWorldTerrain_1_-1.bin, BigWorldTerrain_2_-1.bin",
-      role: "The valley's ground and the slopes north of it, which ground.json's hills are fitted to",
+      role: "The valley's ground and the slopes north of it, which base-ground.json's hills are fitted to",
     },
     groundMaterial: {
       block: "00/02094476.blk",
