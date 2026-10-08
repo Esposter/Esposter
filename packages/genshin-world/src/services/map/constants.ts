@@ -8,15 +8,19 @@ export const JUMP_STANDOFF_DISTANCE = 8;
 // Provisional: the minimap measured off a recording of the English PC client's world HUD. The metres from the
 // Minimap's centre to its rim
 export const MINIMAP_RADIUS = 120;
-// Provisional: the map's marks and names measured off the game's map with the HUD's reference. A mark's radius and a
-// Name's height, each a share of the extent a view shows, so both are drawn one size at any view's scale
+// Provisional: the map's marks measured off the game's map with the HUD's reference. A mark's radius is a share of the
+// Extent a view shows, so it is drawn one size at any view's scale
 export const MAP_MARK_SHARE = 0.02;
-export const MAP_LABEL_SHARE = 0.025;
-// The share of the drawn extent the map overlay leaves round what it draws, so nothing sits on its edge
-export const MAP_MARGIN = 0.1;
-// The camera's pointer on a unit square, pointing north, as the overlay draws it where the camera stands and the
-// Minimap at its centre
-export const MAP_POINTER_PATH = "M 0 -1.6 L 1 1 L 0 0.4 L -1 1 Z";
+// Provisional: the open map's disc at the reference's scale, about 13 pixels of 1080 high. The minimap keeps its own
+// Share, its view being a fraction of the open map's extent
+export const MAP_OVERLAY_MARK_SHARE = 0.0068;
+// Provisional: an area's name at the reference's scale, about 34 pixels of 1080 high, and its dark outline a few pixels
+// Wide, each a share of the open map's extent so it is drawn at the view's own scale
+export const MAP_LABEL_SHARE = 0.0177;
+export const MAP_LABEL_OUTLINE_SHARE = 0.0016;
+// Provisional: the metres the open map shows across its width at the zoom slider's default, centred on the player; not
+// Yet read off the game's zoom levels, which needs the regions' true shapes to measure against
+export const MAP_VIEW_METRES = 400;
 // Provisional: a recording of a teleport, read frame by frame. How long a jump's fade to black and its fade back in
 // Take, in milliseconds
 export const TELEPORT_FADE_OUT_MS = 400;

@@ -9,8 +9,12 @@ import MapJumpList from "#src/components/Map/JumpList/Index.vue";
 import MapPointer from "#src/components/Map/Pointer/Index.vue";
 import { computeAreaLabels } from "#src/services/map/computeAreaLabels";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
-import { MAP_LABEL_SHARE, MAP_MARGIN, MAP_MARK_SHARE, MINIMAP_RADIUS } from "#src/services/map/constants";
-import { catalogue } from "#src/services/world/catalogue";
+import {
+  MAP_LABEL_OUTLINE_SHARE,
+  MAP_LABEL_SHARE,
+  MAP_OVERLAY_MARK_SHARE,
+  MAP_VIEW_METRES,
+} from "#src/services/map/constants";
 import { GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
@@ -24,23 +28,9 @@ interface Props {
 const { camera, gameText, landmarks } = defineProps<Props>();
 const emit = defineEmits<{ close: []; jump: [pose: WorldJumpPose] }>();
 const closeButton = useTemplateRef("closeButton");
-// The square the map shows, round everything it draws: the drawn outlines, the landmarks and the player, never closer
-// In than the minimap shows
-const view = computed(() => {
-  const points = [
-    ...catalogue.regions.flatMap(({ areas }) => areas.flatMap(({ outline }) => outline)),
-    ...landmarks.map(({ position }) => position),
-    camera,
-  ];
-  const xs = points.map(({ x }) => x);
-  const zs = points.map(({ z }) => z);
-  const minX = Math.min(...xs);
-  const maxX = Math.max(...xs);
-  const minZ = Math.min(...zs);
-  const maxZ = Math.max(...zs);
-  const extent = Math.max(maxX - minX, maxZ - minZ, MINIMAP_RADIUS * 2) * (1 + MAP_MARGIN * 2);
-  return { extent, x: (minX + maxX - extent) / 2, z: (minZ + maxZ - extent) / 2 };
-});
+// The open map is centred on the player, the drawn metres across its width at the zoom slider's default
+const view = computed(() => ({ x: camera.x - MAP_VIEW_METRES / 2, z: camera.z - MAP_VIEW_METRES / 2 }));
+const markRadius = MAP_VIEW_METRES * MAP_OVERLAY_MARK_SHARE;
 const areaLabels = computed(() => computeAreaLabels(landmarks));
 // The map is a dialog over the world, so focus starts inside it
 onMounted(() => {
@@ -49,27 +39,38 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- The map on M: the one drawing of the catalogue across everything it holds, north up, each area's name, the player
-       As a pointer facing the view's way, and the jump list beside it. A landmark clicked on the map or chosen in the
-       List jumps there -->
+  <!-- The map on M, full screen as the game shows it: the one drawing of the catalogue centred on the player, north
+       Up, each area's name and the player's pointer, the close button and the zoom slider. The jump list is kept for the
+       Keyboard and a screen reader, since the game shows no list. A landmark chosen on the map or in the list jumps there -->
   <GameScreen class="map-overlay" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Map]">
-    <svg class="map" :viewBox="`${view.x} ${view.z} ${view.extent} ${view.extent}`" aria-hidden="true">
-      <MapDrawing
-        :landmarks
-        :mark-radius="view.extent * MAP_MARK_SHARE"
-        @select="(landmark) => emit('jump', computeJumpPose(landmark))"
-      />
+    <svg
+      class="map"
+      :viewBox="`${view.x} ${view.z} ${MAP_VIEW_METRES} ${MAP_VIEW_METRES}`"
+      preserveAspectRatio="xMidYMid slice"
+      aria-hidden="true"
+    >
+      <MapDrawing :landmarks :mark-radius @select="(landmark) => emit('jump', computeJumpPose(landmark))" />
       <text
         v-for="{ id, name, x, z } of areaLabels"
         :key="id"
         class="area-name"
-        :font-size="view.extent * MAP_LABEL_SHARE"
+        :font-size="MAP_VIEW_METRES * MAP_LABEL_SHARE"
+        :stroke-width="MAP_VIEW_METRES * MAP_LABEL_OUTLINE_SHARE"
         :x
         :y="z"
       >
         {{ name }}
       </text>
-      <MapPointer :size="view.extent * MAP_MARK_SHARE" :x="camera.x" :yaw="camera.yaw" :z="camera.z" />
+      <MapPointer :size="markRadius" :x="camera.x" :yaw="camera.yaw" :z="camera.z" />
+    </svg>
+    <svg class="zoom" viewBox="0 0 56 270" aria-hidden="true">
+      <rect class="zoom-track" x="23" y="43" width="10" height="194" rx="5" />
+      <path class="zoom-stop" d="M 28 16.5 L 39.5 28 L 28 39.5 L 16.5 28 Z" />
+      <path class="zoom-sign" d="M 28 22 V 34 M 22 28 H 34" />
+      <path class="zoom-stop" d="M 28 110.5 L 40.5 123 L 28 135.5 L 15.5 123 Z" />
+      <path class="zoom-thumb" d="M 28 116 L 32 123 L 28 130 L 24 123 Z" />
+      <path class="zoom-stop" d="M 28 241.5 L 39.5 253 L 28 264.5 L 16.5 253 Z" />
+      <path class="zoom-sign" d="M 22 253 H 34" />
     </svg>
     <MapJumpList class="jumps" :game-text :landmarks @jump="(landmark) => emit('jump', computeJumpPose(landmark))" />
     <button
@@ -79,49 +80,91 @@ onMounted(() => {
       :aria-label="gameText[GameTextKey.Back]"
       @click="emit('close')"
     >
-      <svg viewBox="-1 -1 2 2" aria-hidden="true"><path d="M -0.6 -0.6 L 0.6 0.6 M 0.6 -0.6 L -0.6 0.6" /></svg>
+      <svg viewBox="-1 -1 2 2" aria-hidden="true">
+        <path
+          d="M -0.7 -0.7 L 0.7 0.7 M 0.7 -0.7 L -0.7 0.7 M -0.7 -0.7 h 0.45 M -0.7 -0.7 v 0.45 M 0.7 -0.7 h -0.45 M 0.7 -0.7 v 0.45 M -0.7 0.7 h 0.45 M -0.7 0.7 v -0.45 M 0.7 0.7 h -0.45 M 0.7 0.7 v -0.45"
+        />
+      </svg>
     </button>
   </GameScreen>
 </template>
 
 <style scoped>
-/* Provisional: the map's look, measured off the game's map with the HUD's reference */
+/* Provisional: the colours and the zoom slider's place measured off the English PC client's map over Jueyun Karst at
+   1080 high; the map's terrain is the game's painted art, which is not drawn here */
 .map-overlay {
-  background: rgb(23 29 41 / 0.92);
+  background: #111317;
 }
 
 .map {
   position: absolute;
-  inset: 0 calc(var(--unit) * 480) 0 0;
-  width: calc(100% - var(--unit) * 480);
+  inset: 0;
+  width: 100%;
   height: 100%;
 }
 
 .area-name {
-  fill: #ece5d8;
+  fill: #ece5d7;
+  paint-order: stroke;
+  stroke: rgb(0 0 0 / 0.5);
   text-anchor: middle;
   dominant-baseline: middle;
 }
 
+.zoom {
+  position: absolute;
+  top: calc(var(--unit) * 400);
+  left: 0;
+  width: calc(var(--unit) * 56);
+  height: calc(var(--unit) * 270);
+}
+
+.zoom-track {
+  fill: #111317;
+  stroke: rgb(255 255 255 / 0.35);
+  stroke-width: 0.8;
+}
+
+.zoom-stop,
+.zoom-thumb {
+  fill: #ede4e0;
+  stroke: #111317;
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+
+.zoom-thumb {
+  fill: #4b5367;
+  stroke: none;
+}
+
+.zoom-sign {
+  fill: none;
+  stroke: #384150;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
 .jumps {
   position: absolute;
-  top: calc(var(--unit) * 120);
-  right: calc(var(--unit) * 48);
-  bottom: calc(var(--unit) * 48);
-  width: calc(var(--unit) * 400);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .close {
   position: absolute;
-  top: calc(var(--unit) * 32);
-  right: calc(var(--unit) * 48);
+  top: calc(var(--unit) * 18);
+  right: calc(var(--unit) * 49);
   display: grid;
-  width: calc(var(--unit) * 56);
-  height: calc(var(--unit) * 56);
-  padding: calc(var(--unit) * 12);
-  border: none;
+  width: calc(var(--unit) * 57);
+  height: calc(var(--unit) * 57);
+  padding: calc(var(--unit) * 9);
+  border: calc(var(--unit) * 5) solid #849493;
   border-radius: 50%;
-  background: rgb(255 255 255 / 0.12);
+  background: #ece5d7;
   cursor: inherit;
   place-items: center;
 }
@@ -130,7 +173,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   fill: none;
-  stroke: #ece5d8;
-  stroke-width: 0.2;
+  stroke: #384150;
+  stroke-width: 0.26;
 }
 </style>
