@@ -13,8 +13,8 @@ export const INVENTORY_KIND_LIMIT = 2300;
 // A new weapon is at level 1 and a new artifact at 0
 export const WEAPON_START_LEVEL = 1;
 export const ARTIFACT_START_LEVEL = 0;
-// The currencies the bag shows beside its tabs, and those it files among its Precious Items, in the game's order
-export const INVENTORY_CURRENCIES: readonly Currency[] = [Currency.Mora];
+// The currencies the foot of the bag shows where the sort is not, and those it files among its Precious Items, in the game's order
+export const INVENTORY_CURRENCIES: readonly Currency[] = [Currency.Primogem, Currency.Mora];
 export const PRECIOUS_CURRENCIES: readonly Currency[] = [
   Currency.MasterlessStarglitter,
   Currency.MasterlessStardust,

@@ -26,6 +26,7 @@ const weapons: InventoryItem[] = Array.from({ length: WEAPON_COUNT }, (_value, i
 
 export const props = {
   gameText: ENGLISH_GAME_TEXT,
+  initialCategory: ItemCategory.Weapon,
   inventory: { items: weapons, nextId: WEAPON_COUNT },
   wallet: EMPTY_WALLET,
 };

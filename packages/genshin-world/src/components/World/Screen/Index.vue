@@ -77,7 +77,7 @@ import {
   QualityTierSettingsMap,
   STAMINA_MAX,
 } from "genshin-engine";
-import { InteractionKind } from "genshin-interface";
+import { InteractionKind, ItemCategory } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 import { Euler, Group, MathUtils, PCFShadowMap, Vector3 } from "three";
 import { unref } from "vue";
@@ -536,7 +536,13 @@ defineExpose({ jumpTo, readCameraPosition });
         />
       </template>
       <template #[ScreenKind.Inventory]>
-        <InventoryScreen :game-text :inventory :wallet @close="screenKind = ScreenKind.World" />
+        <InventoryScreen
+          :game-text
+          :initial-category="ItemCategory.Weapon"
+          :inventory
+          :wallet
+          @close="screenKind = ScreenKind.World"
+        />
       </template>
       <template v-if="statTables && nameText" #[ScreenKind.Wish]>
         <WishScreen

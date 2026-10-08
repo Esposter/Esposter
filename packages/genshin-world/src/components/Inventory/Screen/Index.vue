@@ -3,6 +3,7 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { GameText } from "genshin-text";
 
+import { Currency } from "#src/models/inventory/Currency";
 import { computeInventoryTab } from "#src/services/inventory/computeInventoryTab";
 import { EQUIPMENT_CATEGORIES, INVENTORY_CURRENCIES, PRECIOUS_CURRENCIES } from "#src/services/inventory/constants";
 import { countCategoryPieces } from "#src/services/inventory/countCategoryPieces";
@@ -15,15 +16,17 @@ import { GameScreen, InventoryScreen, InventorySort, ItemCategories, ItemCategor
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
+  // The tab the bag opens on
+  initialCategory: ItemCategory;
   // The game's words in the reader's language
   gameText: GameText;
   inventory: Inventory;
   wallet: Wallet;
 }
 
-const { gameText, inventory, wallet } = defineProps<Props>();
+const { gameText, initialCategory, inventory, wallet } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
-const category = ref(ItemCategory.Weapon);
+const category = ref(initialCategory);
 const selectedId = ref("");
 const sort = ref(InventorySort.Level);
 const isDescending = ref(true);
@@ -75,6 +78,7 @@ const cells = computed(() => {
 const currencies = computed(() =>
   INVENTORY_CURRENCIES.map((currency) => ({
     id: currency,
+    isTopUp: currency === Currency.Primogem || undefined,
     name: gameText[CurrencyGameTextKeyMap[currency]],
     quantity: wallet[currency],
   })),
