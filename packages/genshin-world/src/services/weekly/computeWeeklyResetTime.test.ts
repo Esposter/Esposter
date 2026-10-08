@@ -1,5 +1,5 @@
-import { computeWeeklyResetTime } from "#src/services/bosses/computeWeeklyResetTime";
 import { DAILY_RESET_TIME } from "#src/services/enemy/constants";
+import { computeWeeklyResetTime } from "#src/services/weekly/computeWeeklyResetTime";
 import { describe, expect, test } from "vitest";
 
 describe(computeWeeklyResetTime, () => {

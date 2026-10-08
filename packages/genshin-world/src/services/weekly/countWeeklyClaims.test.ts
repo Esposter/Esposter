@@ -1,8 +1,8 @@
-import { countWeeklyBossClaims } from "#src/services/bosses/countWeeklyBossClaims";
 import { DAILY_RESET_TIME } from "#src/services/enemy/constants";
+import { countWeeklyClaims } from "#src/services/weekly/countWeeklyClaims";
 import { describe, expect, test } from "vitest";
 
-describe(countWeeklyBossClaims, () => {
+describe(countWeeklyClaims, () => {
   // The epoch is a Thursday, so four days on is the Monday that starts its week
   const epoch = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC");
   const weeklyReset = epoch
@@ -16,19 +16,19 @@ describe(countWeeklyBossClaims, () => {
 
     const claimedAts = [weeklyReset.subtract({ minutes: 1 }), weeklyReset, weeklyReset.add({ days: 1 })];
 
-    expect(countWeeklyBossClaims(claimedAts, now)).toBe(2);
+    expect(countWeeklyClaims(claimedAts, now)).toBe(2);
   });
 
   test("counts a claim at now, never one made after it", () => {
     expect.hasAssertions();
 
-    expect(countWeeklyBossClaims([now, now.add({ minutes: 1 })], now)).toBe(1);
+    expect(countWeeklyClaims([now, now.add({ minutes: 1 })], now)).toBe(1);
   });
 
   test("counts none when no claim was made this week, a claim from last week not among them", () => {
     expect.hasAssertions();
 
-    expect(countWeeklyBossClaims([], now)).toBe(0);
-    expect(countWeeklyBossClaims([weeklyReset.subtract({ weeks: 1 })], now)).toBe(0);
+    expect(countWeeklyClaims([], now)).toBe(0);
+    expect(countWeeklyClaims([weeklyReset.subtract({ weeks: 1 })], now)).toBe(0);
   });
 });
