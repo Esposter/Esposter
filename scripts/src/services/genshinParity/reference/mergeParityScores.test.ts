@@ -43,6 +43,24 @@ describe(mergeParityScores, () => {
     ]);
   });
 
+  test("replaces a key's row in place, adds a new key, and collapses a key the lines hold twice into one row", () => {
+    expect.hasAssertions();
+
+    const report = mergeParityScores(
+      [
+        "| `a` | `S` | 1.00% | 0.000 | 0.00% | 0.0000 |",
+        "| `b` | `S` | 1.00% | 0.000 | 0.00% | 0.0000 |",
+        "| `a` | `S` | 2.00% | 0.000 | 0.00% | 0.0000 |",
+      ],
+      { b: { ...createScore([]), meanDifference: 3, screen: "S" }, c: { ...createScore([]), screen: "S" } },
+      ["a", "b", "c"],
+    );
+
+    expect(readKeys(report)).toStrictEqual(["a", "b", "c"]);
+    expect(report).toContain("| `a` | `S` | 2.00% |");
+    expect(report).toContain("| `b` | `S` | 3.00% |");
+  });
+
   test("writes no layers table where no reference has layers", () => {
     expect.hasAssertions();
 
