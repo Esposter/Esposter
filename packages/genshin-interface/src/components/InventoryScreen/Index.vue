@@ -82,7 +82,7 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
       <p class="detail-caption">{{ selectedCell.caption }}</p>
     </section>
     <div class="bar">
-      <button class="trash" type="button" aria-hidden="true" tabindex="-1" />
+      <span class="trash" />
       <div v-if="isSortable" class="sort" role="group">
         <button
           v-for="inventorySort of InventorySorts"
