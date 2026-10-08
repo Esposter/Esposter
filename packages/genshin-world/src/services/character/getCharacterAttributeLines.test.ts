@@ -17,7 +17,7 @@ describe(getCharacterAttributeLines, () => {
         ascension: 6,
         id: TRAVELER_ID,
         level: 90,
-        weapon: { ascension: 4, id: DULL_BLADE_ID, level: 70 },
+        weapon: { ascension: 4, experience: 0, id: DULL_BLADE_ID, level: 70, refinement: 1 },
       },
       statTables,
     );

@@ -13,6 +13,6 @@ export const createCharacter = (id: number, characterDataMap: ReadonlyMap<number
     ascension: 0,
     id,
     level: 1,
-    weapon: { ascension: 0, id: characterData.initialWeaponId, level: 1 },
+    weapon: { ascension: 0, experience: 0, id: characterData.initialWeaponId, level: 1, refinement: 1 },
   };
 };
