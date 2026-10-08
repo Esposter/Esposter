@@ -63,8 +63,7 @@ const RIM_REACH_CELLS = 4;
 // Borders, split from the flat stone under the rims by the same split again, traced as loops like the pockets, with
 // Their own median slope. The tops' colour is the tones their textures paint them in (`fitPlanTones`), each over the
 // Walkway's stone (`fitAlbedo`), read once over the repeat of their pattern (`foldPlanRepeats`) and laid over the
-// Plan's corner at that repeat's size. Its glows are where the tops draw with the materials that glow, traced as loops
-// Like the pockets: its borders' and curbs' and its middle lane's
+// Plan's corner at that repeat's size
 export const fitLoginPaving = async (
   placements: readonly AssetPlacement[],
   meshDirectory: string,
@@ -72,7 +71,6 @@ export const fitLoginPaving = async (
 ): Promise<{
   bevel: { slope: number; width: number };
   corner: [number, number];
-  glows: Record<"walkwayEdge" | "walkwayLane", Loop[]>;
   grooves: Loop[];
   grooveSlope: number;
   paint: PlanTones & { size: [number, number] };
@@ -187,13 +185,6 @@ export const fitLoginPaving = async (
     for (const cell of pocketCells) isPocket[cell] = 1;
     return traceCells(pocketCells);
   });
-  // The tops each glowing material draws
-  const traceMaterialCells = (regex: RegExp): Loop[] =>
-    traceCells(
-      Array.from({ length: width * height }, (_value, cell) => cell).filter((cell) =>
-        regex.test(materialNames[tags[cell] ?? -1] ?? ""),
-      ),
-    );
   const normals = await Promise.all(
     materialNames.map((name) =>
       sharp(join(textureDirectory, `${name}_Normal.png`))
@@ -269,10 +260,6 @@ export const fitLoginPaving = async (
       width: roundFitted((rimCells.length * CELL_SIZE ** 2) / Math.max(edgeLength, Number.EPSILON)),
     },
     corner: PLAN_CORNER,
-    glows: {
-      walkwayEdge: traceMaterialCells(LoginStoneFamilyMaterialRegexMap.walkwayEdge),
-      walkwayLane: traceMaterialCells(LoginStoneFamilyMaterialRegexMap.walkwayLane),
-    },
     grooves: traceCells(grooveCells),
     grooveSlope: roundFitted(computeMedianTilt(grooveCells)),
     paint: {

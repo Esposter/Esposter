@@ -282,8 +282,16 @@ export const lightTopic: ReferenceTopic = {
       result:
         "Weighed by pixels, the light solved under the cut glow reads 14.68 ΔE on the door session against the shipped 14.69 and 13.72 on the night title against 14.09, so it ships, read back from the scene at 14.68. Weighed by the measure's sensitivity at the reference it reads 17.6 and 23.7, the dark bins taking the light, and re-weighed at ours it swings between 15.0 and 18.5 on the door session without settling. The stone 20 to 40 metres up stands 18 to 21 ΔE off under every weighing: no weighing of these bins darkens it, so the light's form lacks what darkens the game's high stone, not its solve",
     },
+    {
+      method:
+        "The door session's frame looked at beside the reference with the walkway lit by its materials' glows, then the deferred pass's model 13 read again (Shader#25/00101) and the exported materials searched for their shader keywords",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "Lit so, the walkway's middle lane draws near white where the game shows grey-blue stone: Ground02's cyan at a strength of 1 by one less the facing ratio squared nearly fills at the camera's grazing look, and the game's frame holds about an eighth of the glow the materials predict on the near walkway. The deferred pass adds a model 13 pixel's glow whole, so the program as read would draw it; what decides it is the variant a material compiles, chosen by its shader keywords, which the exported materials do not hold (their files keep only the shader, the name and the saved properties), so _EnableRimGlow read as a float is no proof the glow is drawn. The surface pass graded our glow against the witness's, which draws it by the same float, and held what the frame shows wrong. The walkway's glow is taken out, its families and its paving's loops with it; the door's frame and panel, the program's cut and the textures read through their slots stay",
+    },
   ],
   openQuestions: [
+    "Which stone materials the game compiles with their rim glow: the exporter drops a material's shader keywords, so their raw serialized bytes are to be read, as a MonoBehaviour's are, before the witness or our stone draws a glow by _EnableRimGlow's float; the walkway's Ground02 is drawn by the game with far less glow than its float implies",
     "The bridges' and the towers' glow by material: the bridges' glow reads 7.3 ΔE off, our bridges fitted from their Bridge materials alone where the exports' glow through Edge01 and Ground01, and the towers' structure 0.19 against 0.08, their Build materials' glows averaged into one",
     "The night's high stone, 20 to 40 metres up, still 18 to 21 ΔE off under every weighing of the solve: the form that darkens it, the game's shown colour halving about every 5 metres up, is missing from the light, where the falloffs tried so far fail",
     "What tells the day's and the dusk's stone haze from their light: calibrate --haze settles neither, and the stone's albedo varies too little to split a haze that adds from a light that scales",
