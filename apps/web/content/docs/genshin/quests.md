@@ -60,6 +60,10 @@ A quest's progress is the step it is on, which equals the number of steps once i
 
 The dump scrambles the binary output's field names each patch, so the reader finds each field by its shape, as [game data formats](/docs/genshin/game-data-formats) describes. A step with no words is the game's own bookkeeping and is left out. A shown step whose conditions ask nothing the Traveler does, such as a cutscene played, is left out and noted.
 
+## Parity
+
+The quest screen is scored whole-frame against `quest-screen`, the English client's quest screen at 1920 by 1080: a mean difference of 55.84% and a FLIP of 0.8998. The wiki's screenshot draws the blurred scene and its own text under the screen, so the whole-frame score counts a double print rather than a placement. The blur behind J is provisional until `quest-open.mkv` lands on the roadmap's Recordings owed list.
+
 ## Key files
 
 | File                                                                   | Role                                                                |

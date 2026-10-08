@@ -178,6 +178,7 @@ Clips nothing published shows, which the user records: each 30 seconds or less, 
 - [ ] `bag-scroll.mkv` — the weapons' grid scrolled from its first row to its last with the wheel, then back to the top.
 - [ ] `bag-select.mkv` — three entries clicked in turn, the detail panel's change in view with each.
 - [ ] `wish-ten.mkv` — a ten-wish on the English PC client at 1080p, from Wish ×10 to the summary dismissed; a published clip searched first.
+- [ ] `handbook-open-close.mkv` — F1 pressed in the open world, the Adventurer Handbook opening over the blurred scene, a tab clicked and its hover in view, then F1 closing it, 30 seconds at most at 60 frames a second; the open and close timings and the blur behind the book are read off it.
 
 ## Opening
 

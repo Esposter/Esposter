@@ -61,6 +61,10 @@ Where a talk stands is a `TalkProgress`: the id of the line on screen, empty onc
 
 A region's data lists its residents beside its landmarks. Each resident has the game's own id, a name by text id, the spot they idle at and the way they face there, their catalogue area, and the talk F begins with them. The [quests](/docs/genshin/quests) page's navigation finds a resident by their id or by their talk's id.
 
+## Parity
+
+Not scored yet. The reference is the English client's dialogue choices in `yt-nWBqOXWZuFg.mp4`, about 18 seconds in at 720 high. `DialogueTalk` mounts `DialogueScreen` and runs the reveal on `requestAnimationFrame`, so the line written out and the replies on offer live in its own state. The parity page's time control drives Web Animations, not that clock, and no prop sets the state, so a fixture cannot hold the revealed or the choosing state. Which way to settle it is a call for the main session: a clock or state prop on the talk, or the page taking genshin-interface's components as well.
+
 ## Key files
 
 | File                                                                 | Role                                                                  |
