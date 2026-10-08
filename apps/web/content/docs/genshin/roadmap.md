@@ -160,6 +160,7 @@ Only the acts that are physically the user's wait here; every other call is made
   - `packages/genshin-world/src/components/Character/Screen/Index.win32.png`
   - `packages/genshin-world/src/components/Inventory/Screen/Index.win32.png`
   - `packages/genshin-world/src/components/Menu/Exit/Index.win32.png`, `Menu/Paimon/Index.win32.png` and `Menu/Settings/Index.win32.png`
+- **The artifact weights checked against the wiki.** [Artifact enhancement](/docs/genshin/artifact-enhancement)'s main, minor and starting-count weights are recalled, not read from the wiki, which this build could not reach; each is a constant marked provisional there until its page is read.
 - **An eye on the provisional looks** the passes cannot score yet: the prompt list's pill end and fill, the HUD's minimap disc, the drops' and residents' stand-in tints.
 
 ## Recordings owed
@@ -208,6 +209,7 @@ Clips nothing published shows, which the user records: each 30 seconds or less, 
 - [ ] `character-details.mkv` — Xilonen's Attributes tab with Details pressed, the advanced and elemental lists in view, then Details pressed again, 20 seconds at most at 60 frames a second, on the 21:9 frame's client. Its open motion and the list's layout are owed; nothing published shows it.
 - [ ] `weapon-levelling.mkv` — the Weapons tab on the English PC client: a three-star weapon at level 1 with no EXP fed one Enhancement Ore, with the Mora its change costs; then a weapon at its phase's cap fed ores past it, with the ores returned. 30 seconds at most. It settles the EXP each level takes, the Mora per ten points, and the EXP under the smallest ore that the game returns.
 - [ ] `character-attributes-1080.png` — the Attributes tab on the English PC client at 1080 high, the chosen character's panel and the portraits in view, to check the panel's place at 16:9 against the 21:9 frame it is measured from.
+- [ ] `enemy-level-world-level-1.mkv`, `enemy-level-world-level-5.mkv`, `enemy-level-world-level-9.mkv` — a Hilichurl of the Windrise camp, its name plate's level read at World Level 1, 5 and 9 in turn, each clip with the camp in reach and the World Level set on the Profile. The camp is level 2 at World Level 0, so the provisional rule reads 10, 53 and 84 ([Adventure Rank](/docs/genshin/adventure-rank)).
 
 ## Opening
 

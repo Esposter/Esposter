@@ -94,8 +94,8 @@ What still separates the recreation from the whole game once the world and its p
 | [Talents](/docs/proposals/genshin/talents)                           | combat talents levelled to 10 by phase, and the passives each phase opens                                          |
 | [Constellations](/docs/proposals/genshin/constellations)             | six per character from their Stella Fortuna, the Traveler's by element                                             |
 | [Weapon enhancement](/docs/proposals/genshin/weapon-enhancement)     | a weapon's passive at its refinement rank, once the character kits stand                                           |
-| [Artifact enhancement](/docs/proposals/genshin/artifact-enhancement) | an artifact rolled and enhanced by the game's rules, and its set's conditional bonus                               |
-| [Adventure Rank](/docs/proposals/genshin/adventure-rank)             | the player's rank to 60 and the World Level that follows it, held by the ascension quests                          |
+| [Artifact enhancement](/docs/proposals/genshin/artifact-enhancement) | each artifact set's conditional bonus, a module as the set is carried                                              |
+| [Adventure Rank](/docs/proposals/genshin/adventure-rank)             | the rank's EXP sources, Katheryne's rewards, the systems each rank opens and the profile card's values             |
 | [Original Resin](/docs/proposals/genshin/original-resin)             | resin regenerating while the page is closed, and the claim every resin challenge shares                            |
 | [Domains](/docs/proposals/genshin/domains)                           | entrances, levels by rank, scenes of their own, the days' materials and the Petrified Tree                         |
 | [Ley line outcrops](/docs/proposals/genshin/ley-line-outcrops)       | each region's two blossoms, fought, claimed and moved on by the game's own groups                                  |
