@@ -5,7 +5,7 @@ description: Mondstadt's house kit, a parametric building of four materials. A s
 
 # Mondstadt buildings
 
-A Mondstadt house is generated from its parameters by `createMondstadtBuildingGeometries`, one of the world's region kits, built on the engine's [kit](/docs/genshin/engine-architecture) primitives. It returns one merged geometry per material, so a building is one draw for each of its four materials. Nothing is read from the game: every part is a box or an extruded gable, placed by the parameters alone.
+A Mondstadt house is generated from its parameters by `createMondstadtBuildingGeometries`, one of the world's region kits, built on the engine's [kit](/docs/genshin/engine-architecture) primitives. It returns one merged geometry per material, so a building is one draw for each of its four materials. Nothing is read from the game: every part is a box or an extruded gable, placed by the parameters alone. Mondstadt City's first house stands in the region's data as a [building landmark](/docs/genshin/region-buildings).
 
 ```mermaid
 flowchart TD

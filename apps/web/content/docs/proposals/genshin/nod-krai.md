@@ -48,7 +48,7 @@ Nasha Town's port and main street, a Statue of the New Moon, the Frostmoon Encla
 | :-------------------------------------------------------- | :---------------------------------------- |
 | `packages/genshin-engine/src/noise/createSimplexNoise.ts` | The detail noise each isle's ground tunes |
 
-The two kits' generators and the region's data file are built, as [Nod-Krai's kits](/docs/genshin/nod-krai-kits). Their fitted values and the open calls below are not.
+The two kits' generators and the region's data file are built, as [Nod-Krai's kits](/docs/genshin/nod-krai-kits), and Nasha Town's first works stand as a [building landmark](/docs/genshin/region-buildings). Their fitted values are not.
 
 ## Sources
 

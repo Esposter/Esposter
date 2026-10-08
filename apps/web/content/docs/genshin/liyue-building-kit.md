@@ -34,10 +34,10 @@ The palette's hues are the ones the game's Liyue reads as: ochre and grey rock, 
 
 ## Key files
 
-| File                                                                         | Role                                                                 |
-| :--------------------------------------------------------------------------- | :------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/liyue/createLiyueBuildingGeometries.ts` | The building: terrace, columns and beams, lattice and roof tiers     |
-| `packages/genshin-world/src/services/liyue/createLiyueRoofTierGeometry.ts`   | One roof tier: the upturned shell and its finials                    |
-| `packages/genshin-world/src/services/liyue/getLiyueBays.ts`                  | A wall's bays, none wider than the bay width                         |
-| `packages/genshin-world/src/services/liyue/constants.ts`                     | The kit's proportions in metres, and the palette's hues              |
-| `packages/genshin-world/src/data/regions/liyue.json`                         | Liyue's region data, with no landmarks until their positions are fit |
+| File                                                                         | Role                                                             |
+| :--------------------------------------------------------------------------- | :--------------------------------------------------------------- |
+| `packages/genshin-world/src/services/liyue/createLiyueBuildingGeometries.ts` | The building: terrace, columns and beams, lattice and roof tiers |
+| `packages/genshin-world/src/services/liyue/createLiyueRoofTierGeometry.ts`   | One roof tier: the upturned shell and its finials                |
+| `packages/genshin-world/src/services/liyue/getLiyueBays.ts`                  | A wall's bays, none wider than the bay width                     |
+| `packages/genshin-world/src/services/liyue/constants.ts`                     | The kit's proportions in metres, and the palette's hues          |
+| `packages/genshin-world/src/data/regions/liyue.json`                         | Liyue Harbor's building, at a provisional place until it is fit  |

@@ -36,4 +36,4 @@ flowchart TD
 | `packages/genshin-world/src/services/nod-krai/createPipeworkGeometry.ts`    | Pipework as one cylinder per run                                  |
 | `packages/genshin-world/src/services/nod-krai/createStoneCircleGeometry.ts` | The Frostmoon Scions' ring of standing stones                     |
 | `packages/genshin-world/src/models/nod-krai/DieselpunkOptions.ts`           | The dieselpunk structure's options                                |
-| `packages/genshin-world/src/data/regions/nod-krai.json`                     | Nod-Krai's region data, empty until its landmarks are placed      |
+| `packages/genshin-world/src/data/regions/nod-krai.json`                     | Nasha Town's dieselpunk works, at a provisional place             |

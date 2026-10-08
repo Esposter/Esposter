@@ -1,11 +1,11 @@
 ---
 title: Inazuma
-description: As built — Inazuma's building kit (a raised timber floor, post-and-beam walls with plaster panels, a hipped or gabled roof with deep eaves, storeys stacked by a setback), its island palette and its region data file. Landmarks and the terrain of its islands are not yet built.
+description: As built — Inazuma's building kit (a raised timber floor, post-and-beam walls with plaster panels, a hipped or gabled roof with deep eaves, storeys stacked by a setback), its island palette and its region data file. Inazuma City's first building stands at a provisional place; the terrain of its islands is not yet built.
 ---
 
 # Inazuma
 
-The parts of [Inazuma](/docs/proposals/genshin/inazuma) built so far: the building kit its towns are made of, the colours of its islands, and the region's data file. No landmark is placed yet, since each one's position needs the game's map, so the region draws nothing until its landmarks are fitted.
+The parts of [Inazuma](/docs/proposals/genshin/inazuma) built so far: the building kit its towns are made of, the colours of its islands, and the region's data file. Inazuma City stands as one building of the kit at a provisional place until the fit writes it ([region buildings](/docs/genshin/region-buildings)).
 
 ## Building kit
 
@@ -28,7 +28,7 @@ The roof is a convex solid: its base closes it, so a camera under the eaves sees
 
 ## Region data
 
-`data/regions/inazuma.json` is the region's data in the shape `regionDataSchema` reads, with no landmarks yet. Its catalogue areas have no outlines, so the region is not fetched until they are filled.
+`data/regions/inazuma.json` is the region's data in the shape `regionDataSchema` reads, holding Inazuma City's building. Narukami Island's outline is a provisional square round the city, so the region is fetched as the camera nears it.
 
 ## Key files
 
@@ -38,4 +38,4 @@ The roof is a convex solid: its base closes it, so a camera under the eaves sees
 | `packages/genshin-world/src/services/inazuma/createInazumaRoofGeometry.ts`     | A hipped or gabled roof as a closed convex solid     |
 | `packages/genshin-world/src/models/inazuma/InazumaBuildingOptions.ts`          | A building's proportions in metres                   |
 | `packages/genshin-world/src/services/inazuma/constants.ts`                     | The island palettes and the building colours         |
-| `packages/genshin-world/src/data/regions/inazuma.json`                         | The region's landmarks, none yet                     |
+| `packages/genshin-world/src/data/regions/inazuma.json`                         | Inazuma City's building, at a provisional place      |
