@@ -126,7 +126,7 @@ What still separates the recreation from the whole game once the world and its p
 | [Serenitea Pot](/docs/proposals/genshin/serenitea-pot)               | the player's realm, its placement editor, Tubby's furnishings, Trust Rank and companions                                                          |
 | [Spiral Abyss](/docs/proposals/genshin/spiral-abyss)                 | twelve floors from the game's tower tables, stars, and the Moon Spire's latest period                                                             |
 | [Imaginarium Theater](/docs/proposals/genshin/imaginarium-theater)   | the latest season's cast, Vigor, events paid in Fantasia Flowers, and Blessing Level                                                              |
-| [Genius Invokation TCG](/docs/proposals/genshin/genius-invokation)   | the card game as a rules engine of its own, every card the game's, against its residents                                                          |
+| [Genius Invokation TCG](/docs/proposals/genshin/genius-invokation)   | the card game's cards, their modules, the duel screen, invitationals and the Card Shop, past its built rules engine                               |
 
 ## Scope and order
 
