@@ -14,6 +14,8 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
     ```
 
   - It fixes the errors in its own files; one in another agent's half-written file is theirs. A package with no log is checked by hand, once.
+  - **A watcher costs memory** — half a gigabyte for a small package, two for `scripts` — so watchers run only for the packages a wave is editing. The main session stops a package's watcher and **deletes its log** when the package goes quiet or the memory gate is near, since a stale log reads as a clean pass. A watcher that died leaves a log whose last write stops moving, and it is restarted or its log deleted.
+  - The checks folder holds the watchers' logs only; an agent's own scratch output goes in its scratchpad.
 - **Lint: the touched files only.** Run `vp lint --disable-nested-config <files>` and `pnpm exec eslint <files>` from the package, never the package's whole `pnpm lint`.
 - **Tests: the touched tests only.** Run `pnpm exec vitest run <paths>`.
 - **Build: only to regenerate a barrel.** After an agent adds, renames or deletes a module file, it runs `pnpm exec tsdown --no-clean`, never `pnpm build`; otherwise it does not build at all. The parity page and every sibling's typecheck read a package's source through its `source` export condition and the generated barrel, and the user's `nuxt dev` rebuilds every package itself.
