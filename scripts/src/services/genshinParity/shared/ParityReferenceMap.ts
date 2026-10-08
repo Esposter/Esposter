@@ -4,6 +4,23 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
+  // The Court of Fontaine from the wiki's location image at 4K, by day with the sun high. Its landmarks are rigid stone
+  // And steel read off 4x crops: the arch's two feet, the bridge's two springs and the drum tower's roof corners
+  "court-of-fontaine-location": {
+    component: DerivedAssetComponent.Fontaine,
+    // Provisional noon until the shadows pass solves the sun's minute
+    landmarks: {
+      archFootLeft: [1745, 1567],
+      archFootRight: [1800, 1566],
+      bridgeSpringLeft: [2517, 957],
+      bridgeSpringRight: [2700, 951],
+      towerRightRoofLeft: [2144, 1165],
+      towerRightRoofRight: [2371, 1190],
+    },
+    props: { heldMinutes: 720 },
+    screen: "WorldScreen",
+    wikiTitle: "File:Court of Fontaine.png",
+  },
   // The English PC client's Adventurer Handbook open at its experience, the wiki's screenshot, against which the
   // Book's tabs are placed while its pages wait on what they track
   "handbook-experience": { screen: "HandbookScreen", wikiTitle: "File:Adventurer Handbook Experience.png" },
@@ -161,23 +178,6 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "LoginScreen",
     seconds: 12,
   },
-  // The Court of Fontaine from the wiki's location image at 4K, by day with the sun high. Its landmarks are rigid stone
-  // and steel read off 4x crops: the arch's two feet, the bridge's two springs and the drum tower's roof corners
-  "court-of-fontaine-location": {
-    component: DerivedAssetComponent.Fontaine,
-    // Provisional noon until the shadows pass solves the sun's minute
-    landmarks: {
-      archFootLeft: [1745, 1567],
-      archFootRight: [1800, 1566],
-      bridgeSpringLeft: [2517, 957],
-      bridgeSpringRight: [2700, 951],
-      towerRightRoofLeft: [2144, 1165],
-      towerRightRoofRight: [2371, 1190],
-    },
-    props: { heldMinutes: 720 },
-    screen: "WorldScreen",
-    wikiTitle: "File:Court of Fontaine.png",
-  },
   // Everfrozen Earth from the wiki's location image at 1080 high: Snezhnograd on its plateau seen from a railway
   // Viaduct, at night under the stars, its spires read by eye at the reference's pixels. The Genshin logo in the
   // Corner is left out of the region scored
@@ -217,6 +217,15 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: "File:Mondstadt City.png",
   },
+  // The English PC client's Paimon menu at 2560 wide, from the 1.3 build's screenshot, the menu over the world and
+  // Its Paimon drawn to the panel's right, which the world draws; scored over the side bar and the panel above their
+  // Translucent feet, where the world shows through
+  "paimon-menu": {
+    isOtherBuild: true,
+    region: { height: 1030, width: 1024, x: 0, y: 0 },
+    screen: "MenuPaimon",
+    wikiTitle: "File:Paimon Menu Version 1.3.png",
+  },
   // The People of the Springs from the wiki's location image at 2560 wide, a daytime view of the Natlan capital's hall,
   // Spire and walkway, whose build is not stated (a 2024 upload). Its landmarks are rigid architecture read by eye off
   // 4x crops: the spire's apex and cap, the hall's two roof tips and its platform's corner, a terrace's stair top and a
@@ -235,15 +244,6 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: 'File:"People of the Springs".png',
   },
-  // The English PC client's Paimon menu at 2560 wide, from the 1.3 build's screenshot, the menu over the world and
-  // Its Paimon drawn to the panel's right, which the world draws; scored over the side bar and the panel above their
-  // Translucent feet, where the world shows through
-  "paimon-menu": {
-    isOtherBuild: true,
-    region: { height: 1030, width: 1024, x: 0, y: 0 },
-    screen: "MenuPaimon",
-    wikiTitle: "File:Paimon Menu Version 1.3.png",
-  },
   // The English PC client's settings on its Graphics tab at 1680 wide, from the wiki's screenshot, scored over its header
   // Band alone: its rows are drawn over the blurred world, which the page has no copy of, and the Audio tab is not built
   "settings-graphics": {
@@ -255,9 +255,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The English PC client's quest screen listing every quest in progress, the wiki's screenshot of it at 1080 high
   "quest-screen": { screen: "QuestScreen", wikiTitle: "File:Quest Screen.png" },
   // Sumeru City from the wiki's location image of 2022, the only Sumeru City shot found: daylight with a clear sky and
-  // Short shadows, so a provisional noon until the shadows solve reads its sun. Its landmarks are the terrace's spire and
-  // The green-domed minaret's rigid edges, read at the image's pixels; its build is checked against the export once the
-  // Capital's witness has one, since the upload is older than the current client
+  // Short shadows, so a provisional noon until the shadows solve reads its sun. Its landmarks are the terrace's spire
+  // And the green-domed minaret's rigid edges, read at the image's pixels; its build is checked against the export once
+  // The capital's witness has one, since the upload is older than the current client
   "sumeru-city-location": {
     component: DerivedAssetComponent.Sumeru,
     landmarks: {
@@ -327,10 +327,21 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: "File:Nasha Town.png",
   },
-  // The wiki's 4096 by 2304 location image of Liyue Harbor, the capital on the harbour's cliff: its landmarks are read by
-  // Eye at the image's pixels off 4x crops, and are added once those crops are read
+  // The wiki's 4096 by 2304 location image of Liyue Harbor, a daytime view of the harbour's stepped quay under the sea of
+  // Clouds. Its landmarks are rigid architecture read by eye at the image's pixels off 4x crops: the plinth corners of the
+  // Arch gate over the quay and of the stone-based tower on the water to its left
   "liyue-harbor-location": {
     component: DerivedAssetComponent.Liyue,
+    landmarks: {
+      gatePlinthLeft: [3115, 1640],
+      gatePlinthOuter: [3425, 1660],
+      gatePlinthRight: [3328, 1641],
+      towerPlinthFront: [1895, 1271],
+      towerPlinthLeft: [1796, 1246],
+      towerPlinthRight: [1960, 1243],
+    },
+    // Provisional: noon, until `shadows` reads the sun's minute off the buildings' shadows
+    props: { heldMinutes: 720 },
     screen: "WorldScreen",
     wikiTitle: "File:Liyue Harbor.png",
   },

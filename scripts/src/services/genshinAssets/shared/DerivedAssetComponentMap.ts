@@ -13,6 +13,10 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 // And the door's; `Start` and `End`, a name the whole game reuses, are left to its reference. Its music is the playlist
 // `genshin:assets music` found over a recording of its title: two pieces with a rest after each, looping forever
 export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAssetComponentOptions> = {
+  // The Court of Fontaine is the Fontaine region's capital, whose area is the city prefix FDC (Fēng Dān Chéng) in the
+  // Asset index: six city indexes share it (Area_FDC_Old01 to Old03, Xsd01 to Xsd03), so its World block waits on an
+  // Extraction's call of which one holds the Court's placements, and on the streams' blob names that index does not give
+  [DerivedAssetComponent.Fontaine]: { roots: [], screen: "WorldScreen" },
   [DerivedAssetComponent.Login]: {
     clipPattern: "^(Ani_LoginMainPage_|Ani_LoginProgressBar_|Ani_Login_Lift$|Ani_LogginScene_Door01_)",
     interface: { anchorPattern: "^Ani_LoginMainPage_Waiting", root: "LoginMainPage" },
@@ -46,10 +50,6 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
       },
     ],
   },
-  // The Court of Fontaine is the Fontaine region's capital, whose area is the city prefix FDC (Fēng Dān Chéng) in the
-  // Asset index: six city indexes share it (Area_FDC_Old01 to Old03, Xsd01 to Xsd03), so its World block waits on an
-  // Extraction's call of which one holds the Court's placements, and on the streams' blob names that index does not give
-  [DerivedAssetComponent.Fontaine]: { roots: [], screen: "WorldScreen" },
   // Inazuma City is the Inazuma region's capital, on Narukami Island, whose index the asset index names as
   // Area_DQSLT_City_Index (DQ, the initials of Dàoqī, Inazuma's Chinese name, as MD in MDSLT is Mondstadt's), read as a
   // Root so `extract` follows its pointers to the city's streams, prefabs and terrain tiles, which its World block waits
@@ -89,9 +89,9 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   // World block waits on the names the capital's area table gives
   [DerivedAssetComponent.Snezhnaya]: { roots: [], screen: "WorldScreen" },
   // Sumeru City is the Sumeru region's capital, the Avidya Forest's city, whose index the asset index names as
-  // Area_XMSLT_City_Index (XM, the initials of Xūmí, Sumeru's Chinese name, as MD in MDSLT is Mondstadt's), read as a root so
-  // `extract` follows its pointers to the city's streams, prefabs and terrain tiles, which its World block waits on.
-  // Unconfirmed until that read: the index's pointers should resolve to the city's streams
+  // Area_XMSLT_City_Index (XM, the initials of Xūmí, Sumeru's Chinese name, as MD in MDSLT is Mondstadt's), read as a
+  // Root so `extract` follows its pointers to the city's streams, prefabs and terrain tiles, which its World block waits
+  // On. Unconfirmed until that read: the index's pointers should resolve to the city's streams
   [DerivedAssetComponent.Sumeru]: {
     roots: [{ block: "00/00010731.blk", name: "Area_XMSLT_City_Index", pathId: "1215126135831135644" }],
     screen: "WorldScreen",

@@ -5,6 +5,8 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 // Each component's landmarks by name, the points of its parts `pose` solves a reference's camera from where the
 // Reference names the pixels it sees them at
 export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<string, Landmark>> = {
+  // The Court's landmarks name its capital's meshes and their shares, which the extraction has not yet given
+  [DerivedAssetComponent.Fontaine]: {},
   // The door's dais at its two front feet, and its arch's apex, halfway through its depth; the walkway's two wings by
   // The door's end and the near pair before them, at the top of their outer faces' front and back ends, the camera
   // Looking along +z as ModelCamera turns; the crowned column behind the door's right at its top, and the lantern
@@ -39,8 +41,6 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
     wingRightBack: { mesh: "LoginScene_Bridge01_20_Vo", share: [0, 1, 0.8125] },
     wingRightFront: { mesh: "LoginScene_Bridge01_20_Vo", share: [0, 1, 0.351] },
   },
-  // The Court's landmarks name its capital's meshes and their shares, which the extraction has not yet given
-  [DerivedAssetComponent.Fontaine]: {},
   // Inazuma City's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given:
   // The keep's eaves and ledges, the platform's corners, the houses' bases and roofs and the pavilion's eaves, each read
   // By eye off the reference's 4x crops (ParityReferenceMap's inazuma-city-location)

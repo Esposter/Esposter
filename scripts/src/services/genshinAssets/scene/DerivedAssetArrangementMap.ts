@@ -55,6 +55,8 @@ export const DerivedAssetArrangementMap: Record<
     ratios: Record<string, ArrangementRatio>;
   }
 > = {
+  // The Court's parts stand where the world's own data places them, as Windrise's do, so its families wait on the export
+  [DerivedAssetComponent.Fontaine]: { explainedOffsets: {}, families: [], ratios: {} },
   [DerivedAssetComponent.Login]: {
     // The towers' row and its bridges keep their laid places while every block of the walkway rises under the camera,
     // So the scene, which stands the walkway risen, stands them the lift lower
@@ -135,8 +137,6 @@ export const DerivedAssetArrangementMap: Record<
       },
     },
   },
-  // The Court's parts stand where the world's own data places them, as Windrise's do, so its families wait on the export
-  [DerivedAssetComponent.Fontaine]: { explainedOffsets: {}, families: [], ratios: {} },
   // Inazuma City's parts stand where the city's own data places them, as Windrise's do, so its families wait on the export
   [DerivedAssetComponent.Inazuma]: { explainedOffsets: {}, families: [], ratios: {} },
   // Liyue Harbor's parts stand where the city's own data places them, as Windrise's do, so its families wait on the export
