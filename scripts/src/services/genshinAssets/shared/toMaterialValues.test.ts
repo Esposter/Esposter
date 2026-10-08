@@ -30,4 +30,16 @@ describe(toMaterialValues, () => {
       textures: { _MainTex: { fileIndex: 1, offset: [0, 0], pathId: "1", scale: [1, 1] } },
     });
   });
+
+  test("carries the keywords the material is read with", () => {
+    expect.hasAssertions();
+
+    const material: ExportedMaterial = {
+      m_Name: "",
+      m_SavedProperties: { m_TexEnvs: {} },
+      m_Shader: { IsNull: false, m_FileID: 0, m_PathID: "0" },
+    };
+
+    expect(toMaterialValues(material, ["A", "B"]).keywords).toStrictEqual(["A", "B"]);
+  });
 });
