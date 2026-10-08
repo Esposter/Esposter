@@ -6,6 +6,9 @@
 export enum GameTextKey {
   // The screens the world opens are named as the Paimon menu names their entries, or as a screen titles its own page
   Achievements = "UI_ACHIEVEMENT_TITLE",
+  // The currencies by their item names: the two Fates, Genesis Crystals, the Masterless Starglitter and Stardust
+  // Wishes return, Mora and Primogems
+  AcquaintFate = "1444439468",
   AdventurerHandbook = "UI_ADVENTURE_CARD_TITLE",
   Archive = "UI_CODEX_HOME_TITLE",
   // The character screen's attributes under the game's own names, and the groups its details sort them into
@@ -45,14 +48,37 @@ export enum GameTextKey {
   CharacterWeapons = "UI_STC_CHARACTERPAGE_WEAPON",
   Chat = "UI_CHAT_CHAT_BUTTON",
   CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
+  // The dialogue's auto-play button, as it reads while off and while playing
+  DialogueAuto = "UI_TALK_DIALOG_AUTO_TALK_START",
+  DialogueAutoPlaying = "UI_TALK_DIALOG_AUTO_TALK_STOP",
   Events = "UI_STC_GAMEENTRYPAGE_ACTIVITY",
   Friends = "UI_FRIEND_TITLE",
   // The game's own name, as its window's title says it
   GameTitle = "LANGUAGE_WINDOWS_TITLENAME",
+  GenesisCrystal = "2722599324",
+  // The Adventurer Handbook's tabs
+  HandbookCommissions = "UI_ADVENTURE_CARD_EVENT_TITLE",
+  HandbookDomains = "UI_ADVENTURE_CARD_DUNGEON_TITLE",
+  HandbookEmbattle = "UI_ADVENTURE_INVESTIGATION_CHARASCEND",
+  HandbookEnemies = "UI_ADVENTURE_INVESTIGATION_MONSTER_PAGE",
+  HandbookExperience = "UI_ADVENTURE_TRAVELS",
+  HandbookGuide = "UI_TEXT_QUEST_GUIDE_BOOKMARK",
   // The health notice's paragraphs, a blank line between them
   HealthNotice = "684850635",
   HealthNoticeTitle = "1737243758",
+  IntertwinedFate = "4203128180",
   Inventory = "UI_STC_BAGPAGE_BAG",
+  // The bag's tabs, and a tab's room as its name, its count and its limit fill `{0} {1}/{2}`
+  InventoryArtifacts = "ITEM_EQUIP",
+  InventoryCapacity = "UI_STC_BAGPAGE_CAPACITY_TITLE",
+  InventoryCharacterDevelopmentItems = "ITEM_AVATAR",
+  InventoryFood = "ITEM_FOOD",
+  InventoryFurnishings = "ITEM_FURNITURE",
+  InventoryGadget = "ITEM_CITY_REPUTATION",
+  InventoryMaterials = "ITEM_MATERIAL",
+  InventoryPreciousItems = "ITEM_CONSUME",
+  InventoryQuest = "ITEM_QUEST",
+  InventoryWeapons = "ITEM_WEAPON",
   // The touch controls' jump button, which a screen reader says in place of its glyph
   Jump = "UI_ACTIVITY_LOLI_RUN_JUMP",
   // A level as the game writes one, its number in place of `{0}`
@@ -76,15 +102,35 @@ export enum GameTextKey {
   LoginWelcome = "tips_enter_game",
   Mail = "UI_PLAYER_PROFILE_MAIL",
   Map = "UI_STC_MAP_TITLE",
+  MasterlessStardust = "3899400612",
+  MasterlessStarglitter = "1417946372",
+  Mora = "3578052980",
   Notices = "UI_STC_GAMEENTRYPAGE_BULLETIN",
   // The HUD's corner button that opens the Paimon menu, named for the face it shows
   Paimon = "NPC_EXPNAME_12911",
   PartySetup = "UI_TEAM_TITLE",
+  Primogem = "2696654964",
+  // The quest screen's button on the quest being navigated to
+  QuestCancelNavigation = "TASK_TRACK_CLEAR",
+  // The quest screen's lists, each a tab and a heading over its quests
+  QuestCategoryArchon = "TASK_TYPE_MAIN",
+  QuestCategoryCommission = "TASK_TYPE_WORLD",
+  QuestCategoryStory = "TASK_TYPE_BRANCH",
+  QuestCategoryWorld = "TASK_TYPE_OTHERS",
+  // The same button on any other quest
+  QuestNavigate = "TASK_TRACK_ENSURE",
   Quests = "UI_STC_GAMEENTRYPAGE_QUEST",
   QuitGame = "UI_STC_GAMEENTRYPAGE_EXIT_TIPS",
   Ready = "ONLINE_DUNGEON_GUEST_IS_READY",
   Settings = "UI_STC_GAMEENTRYPAGE_OPTION",
   Shop = "UI_STC_GAMEENTRYPAGE_SHOP",
+  // The dialogue's button that runs on to the next reply or the end
+  Skip = "UI_SKIP_BUTTON",
+  // The weapons' and artifacts' sort, by level or quality, ascending or descending
+  SortAscending = "UI_RelicIterations_Ordering_Ascending",
+  SortDescending = "UI_RelicIterations_Ordering_Descending",
+  SortLevel = "SORT_BY_LEVEL",
+  SortQuality = "SORT_BY_QUALITY",
   // A Statue of The Seven, as the map titles its mark
   StatueOfTheSeven = "UI_MAPMARK_MarkGoddess_TITLE",
   // Photo mode's own shutter, which the Paimon menu's entry into it says too
@@ -98,6 +144,15 @@ export enum GameTextKey {
   // The player's own title, a word per gender where the language has one
   Traveler = "UI_TEXT_QUEST_GUIDE_LABEL",
   Wish = "UI_GACHA_TITLE",
+  // The wish's kinds, a set's button with its count in place of `{0}`, and the Epitomized Path with its Fate Points
+  // In place of `{0}` of `{1}`
+  WishBeginners = "UI_GACHA_SHOW_PANEL_A016_TITLE",
+  WishCharacterEvent = "UI_GACHA_TYPE_03",
+  WishCount = "UI_GACHAPAGE_DOGACHA",
+  WishEpitomizedPath = "UI_GACHA_WISH",
+  WishFatePoint = "UI_GACHA_WISH_POINT",
+  WishStandard = "UI_GACHA_TYPE_02",
+  WishWeaponEvent = "UI_GACHA_TYPE_04",
 }
 
 export const GameTextKeys: readonly GameTextKey[] = Object.values(GameTextKey);
