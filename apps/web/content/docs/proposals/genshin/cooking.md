@@ -1,67 +1,55 @@
 ---
 title: Cooking
-description: Proposal — cooking and processing as the game runs them. A dish is cooked by hand at a stove or a lit campfire, the indicator stopped in the game's own zones for a Delicious, Regular or Suspicious dish, until its proficiency fills and Auto Cook makes it Delicious by the batch; a character's specialty may replace it at the game's chances; and processing turns ingredients into others over real time in queues of 99.
+description: Proposal — the stove and the cooking screen, what a dish does once eaten through the character kits, and the passives that bonus a kind of dish. The dishes, Auto Cook, specialties, processing and campfires are built and recorded on the Genshin area's cooking page.
 model: claude-opus-5-5
 ---
 
 # Cooking
 
-Food is how a party heals, revives and fights stronger in the game, and every dish is cooked from ingredients first gathered, hunted or bought. Cooking happens at a city's stove or a campfire in the wild, and processing beside it turns raw ingredients into flour, butter, cream and the like. It spends what [gathering](/docs/proposals/genshin/gathering) and [wildlife](/docs/proposals/genshin/wildlife) give, so it waits on them, and the dishes it makes are eaten through the [inventory](/docs/proposals/genshin/inventory)'s using.
+Food is how a party heals, revives and fights stronger in the game, and every dish is cooked from ingredients first gathered, hunted or bought. The dishes cooked by hand to proficiency, Auto Cook, the specialties, processing and campfires are built, as the [cooking](/docs/genshin/cooking) page records. What remains is the stove where a city cooks, the cooking screen, what a dish does once it is eaten, and the passives that bonus a kind of dish. The dishes are eaten through the [inventory](/docs/proposals/genshin/inventory)'s using.
 
 ## Decisions
 
-- **Every recipe is the game's own.** `CookRecipeExcelConfigData` holds each dish: its ingredients, its method, its kind of food, its three results by quality, its maximum proficiency, and its cooking zones (`qteParam`) with the weights of each quality's result. Names, descriptions and effects are its items' own, by text id.
-- **Cooked by hand first.** Cooking a dish by hand runs the game's timer: the indicator stopped in the orange zone makes a Delicious dish and adds a proficiency, in the yellow a Regular dish, and in the grey a Suspicious one. Leaving the minigame spends nothing.
-- **Proficiency unlocks Auto Cook.** A dish's proficiency fills one Delicious dish at a time to its maximum, which grows with the dish's rarity. Once full, Auto Cook makes up to 99 at once, always Delicious, and cannot be stopped once started.
-- **A character's specialty.** Cooking with the character a dish names may make their special dish in its place, at the chance `CookBonusExcelConfigData` gives for the quality cooked. A few characters' passives bonus their kind of dish, and Raiden Shogun cannot cook at all, as the game refuses her.
-- **Stoves and campfires.** A city's stove always cooks; a campfire in the wild cooks only while lit, which Pyro lights, and Anemo, Cryo, Electro, Geo, Hydro or rain in the open puts out, through [combat](/docs/genshin/combat)'s elements and the world's [weather](/docs/genshin/weather).
-- **Processing over real time.** `CompoundExcelConfigData` gives each processed ingredient's inputs, outputs and time. Up to 99 of each are queued at once, kept with the time they started so they finish while the page is closed, never cancelled once begun.
+- **A city's stove always cooks.** A stove stands in a city and cooks whenever it is used, where a campfire cooks only while lit. Its place comes from the scene's streaming records, as the [crafting](/docs/genshin/crafting) bench's would, and Mondstadt's stove is the first placed.
+- **The cooking screen's indicator is measured.** The indicator's speed and how a recipe's zone parameters lay its zones out come off a recording of the cooking screen, not from the table. Until it is read, the built zones stay provisional.
 - **Food's effects act through the kits.** A dish's heal, revive or bonus is its item's use, read from the material table, and a bonus lasts as its description says, applied through the [character kits](/docs/proposals/genshin/character-kits)' shared effects.
+- **A passive bonuses its kind of dish.** A few characters' passives bonus their kind of dish, matched by the dish's food type as the table gives it (heal, function, attack or defense), and applied where the dish is cooked. The passives are read from the [talents](/docs/proposals/genshin/talents) once they are built.
 
 ## How it works
 
 ```mermaid
 flowchart TD
-  STOVE["F at a stove, or a lit campfire"] --> DISH{"Its proficiency full?"}
-  DISH -->|"no"| HAND["Cooked by hand: the indicator stopped"]
-  HAND --> ZONE{"Which zone?"}
-  ZONE -->|"orange"| DELICIOUS["Delicious, a proficiency added"]
-  ZONE -->|"yellow"| REGULAR["Regular"]
-  ZONE -->|"grey"| SUSPICIOUS["Suspicious"]
-  DISH -->|"yes"| AUTO["Auto Cook: up to 99, all Delicious"]
-  DELICIOUS --> SPECIAL{"Cooked by the dish's character?"}
-  AUTO --> SPECIAL
-  SPECIAL -->|"at its chance"| SPECIALTY["Their special dish"]
+  STOVE["F at a city's stove"] --> SCREEN["The cooking screen, its indicator measured"]
+  SCREEN --> RULES["The built rules: quality, proficiency, Auto Cook"]
+  PASS["A passive names a kind of dish"] --> BONUS["Its bonus where a dish of that kind is cooked"]
+  BONUS --> RULES
+  EAT["A dish eaten from the bag"] --> USE["Its use: heal, revive or bonus"]
+  USE --> KIT["The character kits' shared effects"]
 ```
 
 ## Scope and order
 
-**Today:** the bag files food among its tabs, and nothing makes it.
+**Today:** the dishes, Auto Cook, specialties, processing and campfires are built, and nothing makes a dish in the world, which has no stove and no screen.
 
 **This adds, in order:**
 
-1. **Recipes, cooking by hand and proficiency**, at Mondstadt's stove.
-2. **Auto Cook.**
-3. **Processing.**
-4. **Campfires**, lit and put out.
-5. **Specialties and talents**, with the characters' passives.
+1. **The stove and the cooking screen**, at Mondstadt's streaming records, with the indicator measured.
+2. **Eating a dish**, its use applied through the kits' shared effects.
+3. **Passives bonusing a kind of dish**, once the talents page reads the passives.
 
 ## Data and measures
 
-- **Read from the game's tables:** `CookRecipeExcelConfigData`, `CookBonusExcelConfigData`, `CompoundExcelConfigData` and the dishes' and ingredients' rows of `MaterialExcelConfigData`.
-- **Measured:** the indicator's speed and how the recipe's zone parameters lay its zones out, off a recording of the cooking screen, provisional until then.
+- **Read from the game's tables:** a dish's use from its item row in `MaterialExcelConfigData`, and the passives that name a kind of dish from the talents' tables.
+- **Measured:** the indicator's speed and the zone layout off a recording of the cooking screen, provisional until then. The queued processing's timing and whether its units run one after another are also owed a recording.
+- **Not yet read:** the source that teaches most processings, which the table does not name, so they stay closed.
 
 ## Key files
 
-| File                                                                | Role after the change                       |
-| :------------------------------------------------------------------ | :------------------------------------------ |
-| `packages/genshin-world/src/services/inventory/addInventoryItem.ts` | The dishes and ingredients made, in the bag |
-| `packages/genshin-world/src/models/inventory/ItemDefinition.ts`     | The dishes and ingredients the recipes read |
-| `packages/genshin-world/src/models/screen/ScreenKind.ts`            | Gains the cooking and processing screens    |
-| `packages/genshin-world/src/services/combat/aura/applyElement.ts`   | The elements that light and put out a fire  |
+| File                                                     | Role after the change    |
+| :------------------------------------------------------- | :----------------------- |
+| `packages/genshin-world/src/models/screen/ScreenKind.ts` | Gains the cooking screen |
 
 ## Sources
 
-- [Cooking](https://genshin-impact.fandom.com/wiki/Cooking), Genshin Impact Wiki: the timer's three zones, proficiency and Auto Cook up to 99 always Delicious, stoves and campfires lit by Pyro and put out by the other elements and rain, special dishes, character bonuses, and Raiden Shogun's refusal.
-- [Processing](https://genshin-impact.fandom.com/wiki/Processing), Genshin Impact Wiki: ingredients processed over time, 99 of each at once, never cancelled.
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the recipe, cooking bonus and processing tables.
+- [Cooking](https://genshin-impact.fandom.com/wiki/Cooking), Genshin Impact Wiki: stoves and campfires, the special dishes, and eating a dish's effects. The page was not reachable from this build, so the claims it backs wait on the recordings owed.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the dish item rows and the passives' tables the remaining parts are read from.
