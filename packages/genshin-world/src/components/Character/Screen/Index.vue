@@ -8,9 +8,10 @@ import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { CharacterMenuTabGameTextKeyMap } from "#src/services/character/CharacterMenuTabGameTextKeyMap";
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { ARTIFACT_SLOT_ORDER, COMBAT_TALENT_ORDER, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
 import { LOGIN_TRAVELER_GENDER } from "#src/services/login/constants";
+import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import {
   CharacterMenu,
   CharacterMenuArtifacts,
@@ -59,17 +60,6 @@ const characterName = computed(() => menuEntries.value.find(({ id }) => id === c
 const tabLabels = computed(() =>
   Object.fromEntries(CharacterMenuTabs.map((menuTab) => [menuTab, gameText[CharacterMenuTabGameTextKeyMap[menuTab]]])),
 );
-// The game's order of the five artifact slots, and of the three combat talents, which the tabs list them in
-const ARTIFACT_SLOT_ORDER = [
-  ArtifactSlot.FlowerOfLife,
-  ArtifactSlot.PlumeOfDeath,
-  ArtifactSlot.SandsOfEon,
-  ArtifactSlot.GobletOfEonothem,
-  ArtifactSlot.CircletOfLogos,
-];
-const COMBAT_TALENT_ORDER = [CombatTalent.NormalAttack, CombatTalent.ElementalSkill, CombatTalent.ElementalBurst];
-// A character's constellations, six a character's depot holds
-const CONSTELLATION_COUNT = 6;
 // The weapon the character wields at its level and phase: its name, base ATK and secondary attribute, as the Weapons tab
 // Shows them
 const weaponPanel = computed(() => {
@@ -101,7 +91,7 @@ const artifactsEquipped = computed(() =>
 );
 // Which of the six constellations are activated, the first the character's count of them
 const constellationsActivated = computed(() =>
-  Array.from({ length: CONSTELLATION_COUNT }, (_, index) => index < (character.value?.constellationCount ?? 0)),
+  Array.from({ length: CONSTELLATION_COUNT }, (_value, index) => index < (character.value?.constellationCount ?? 0)),
 );
 // Each combat talent's level in the order the Talents tab lists them
 const talentLevels = computed(() => COMBAT_TALENT_ORDER.map((talent) => character.value?.talentLevels[talent] ?? 0));
@@ -120,7 +110,7 @@ const talentLevels = computed(() => COMBAT_TALENT_ORDER.map((talent) => characte
         :name="characterName"
         :stat-tables
       />
-      <CharacterMenuWeapons v-else-if="weaponPanel && tab === CharacterMenuTab.Weapons" v-bind="weaponPanel" />
+      <CharacterMenuWeapons v-else-if="weaponPanel && tab === CharacterMenuTab.Weapons" :="weaponPanel" />
       <CharacterMenuArtifacts
         v-else-if="character && tab === CharacterMenuTab.Artifacts"
         :equipped="artifactsEquipped"

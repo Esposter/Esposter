@@ -1,3 +1,5 @@
+// The stars a weapon's ascension phases show, from none to the last one
+export const ASCENSION_PHASE_COUNT = 6;
 // The game's own face first, for a reader who has it installed, since it is a commercial face nothing may ship; then
 // Signika, the open face nearest it: set the game's own lines (a large frame of its notice) in each of seventy open
 // Candidates, scale each line to the game's box, and Signika's ink overlaps the game's most. The host loads it: the
