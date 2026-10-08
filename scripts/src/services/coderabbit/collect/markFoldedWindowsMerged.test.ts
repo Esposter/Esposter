@@ -7,16 +7,17 @@ import { markFoldedWindowsMerged } from "#src/services/coderabbit/collect/markFo
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { describe, expect, test } from "vitest";
 
+const getWindowPullRequest = (number: number, headRefOid: string): WindowPullRequest => ({
+  baseRefName: MAIN_BRANCH,
+  createdAt: Temporal.Instant.fromEpochMilliseconds(0).toString(),
+  headRefName: getWindowBranch(number),
+  headRefOid,
+  number,
+  state: WindowPullRequestState.Closed,
+});
+
 describe(markFoldedWindowsMerged, () => {
   const { commitFile, getCwd, readSha, switchTo } = setupFixtureRepository();
-  const getWindowPullRequest = (number: number, headRefOid: string): WindowPullRequest => ({
-    baseRefName: MAIN_BRANCH,
-    createdAt: Temporal.Instant.fromEpochMilliseconds(0).toString(),
-    headRefName: getWindowBranch(number),
-    headRefOid,
-    number,
-    state: WindowPullRequestState.Closed,
-  });
 
   test("reads a closed window whose head main carries as merged", () => {
     expect.hasAssertions();
