@@ -16,7 +16,7 @@ import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWi
 import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
 import { checkIsPartInterior } from "#src/services/genshinParity/sky/checkIsPartInterior";
 import { getPixelDisplayColor } from "#src/services/genshinParity/sky/getPixelDisplayColor";
-import { computeDistanceTransform } from "#src/services/genshinParity/witness/computeDistanceTransform";
+import { computeEdgeDistance } from "#src/services/genshinParity/witness/computeEdgeDistance";
 import { findShadowEdges } from "#src/services/genshinParity/witness/findShadowEdges";
 import { readReferenceLandmarks } from "#src/services/genshinParity/witness/readReferenceLandmarks";
 import { solveCameraPose } from "#src/services/genshinParity/witness/solveCameraPose";
@@ -38,6 +38,14 @@ const SHADOW_SPECK_AREA = 64;
 // The solve's first step about each angle, in degrees, and how many steps of the simplex it takes
 const SOLVE_STEP_DEGREES = 5;
 const SOLVE_ITERATION_COUNT = 40;
+// The directions a solve prices first about the scene's, its heading and its height each turned either way, in degrees,
+// So an objective no direction moves shows before the simplex settles on its start
+const PROBE_TURNS_DEGREES: readonly [number, number][] = [
+  [-15, 0],
+  [15, 0],
+  [0, -10],
+  [0, 10],
+];
 // A direction toward the sun from its heading about up, from +x toward +z, and its height over the horizon, in degrees
 const toDirection = ([azimuth = 0, elevation = 0]: readonly number[]): Vector => {
   const [heading, height] = [MathUtils.degToRad(azimuth), MathUtils.degToRad(elevation)];
@@ -47,16 +55,7 @@ const toAngles = ([x, y, z]: Readonly<Vector>): number[] => [
   MathUtils.radToDeg(Math.atan2(z, x)),
   MathUtils.radToDeg(Math.asin(y / Math.hypot(x, y, z))),
 ];
-// The mean of a distance map over a mask's pixels, as far as can be where the mask holds none
-const readMaskMean = (mask: Uint8Array, distances: Float32Array): number => {
-  let [sum, count] = [0, 0];
-  for (const [pixel, isSet] of mask.entries())
-    if (isSet) {
-      sum += distances[pixel] ?? 0;
-      count++;
-    }
-  return count > 0 ? sum / count : Infinity;
-};
+const countSetPixels = (mask: Uint8Array): number => mask.reduce((count, isSet) => count + isSet, 0);
 const toLuminance = (red: number, green: number, blue: number): number =>
   LUMINANCE[0] * red + LUMINANCE[1] * green + LUMINANCE[2] * blue;
 // The light pass's shadows on a reference: its flat receivers are the interior pixels of the exports' parts that face
@@ -64,8 +63,9 @@ const toLuminance = (red: number, green: number, blue: number): number =>
 // Light, and the shadow's edges are those (`findShadowEdges`). The exports' occluders are cast onto the same receivers
 // From a direction by the scene's own shadow map (the witness's shadow target, the sun cast from it for that read
 // Alone), and their edges priced against the reference's both ways, the mean of each edge's distance to the other's
-// Nearest, in the reference's pixels. The scene's own direction is priced, and when told, the direction solved where the
-// Edges meet best, by its heading and its height over the horizon from the scene's. A current build's reference is seen
+// Nearest, in the reference's pixels (`computeEdgeDistance`). The scene's own direction is priced, and when told, a few
+// Directions about it and the direction solved where the edges meet best, by its heading and its height over the
+// Horizon from the scene's, each with how many edge pixels ours draws. A current build's reference is seen
 // From the scene's own camera, which the camera pass holds; an older build's from its own, solved on its landmarks. An
 // Image of the reference with its edges in green, the scene's in red and the solved in blue is written beside the
 // References
@@ -78,7 +78,9 @@ export const solveReferenceShadows = async (
   distance: number;
   edgeCount: number;
   imagePath: string;
-  solved?: { direction: Vector; distance: number };
+  ourEdgeCount: number;
+  probes: { direction: Vector; distance: number; ourEdgeCount: number }[];
+  solved?: { direction: Vector; distance: number; ourEdgeCount: number };
 }> => {
   await fetchReferences();
   const referencePath = join(REFERENCES_DIRECTORY, `${referenceId}.png`);
@@ -127,7 +129,6 @@ export const solveReferenceShadows = async (
       );
       removeMaskSpecks(isShadowed, width, height, SHADOW_SPECK_AREA);
       const referenceEdges = findShadowEdges(isShadowed, isReceiver, width, height);
-      const referenceDistances = computeDistanceTransform(referenceEdges, width, height);
       const scale = referenceWidth / width;
       const priceDirection = async (candidate: Readonly<Vector>): Promise<{ distance: number; edges: Uint8Array }> => {
         const {
@@ -137,11 +138,18 @@ export const solveReferenceShadows = async (
           Number(Boolean(isSet) && (shadow[pixel * 4] ?? 0) < SHADOWED_VISIBILITY),
         );
         const edges = findShadowEdges(isOursShadowed, isReceiver, width, height);
-        const there = readMaskMean(edges, referenceDistances);
-        const back = readMaskMean(referenceEdges, computeDistanceTransform(edges, width, height));
-        return { distance: ((there + back) / 2) * scale, edges };
+        return { distance: computeEdgeDistance(edges, referenceEdges, width, height) * scale, edges };
       };
       const shipped = await priceDirection(direction);
+      const probes: { direction: Vector; distance: number; ourEdgeCount: number }[] = [];
+      const [azimuth = 0, elevation = 0] = toAngles(direction);
+      if (isSolved)
+        for (const [headingTurn, heightTurn] of PROBE_TURNS_DEGREES) {
+          const probeDirection = toDirection([azimuth + headingTurn, elevation + heightTurn]);
+          // oxlint-disable-next-line no-await-in-loop -- the page draws one direction's shadows at a time
+          const { distance, edges } = await priceDirection(probeDirection);
+          probes.push({ direction: probeDirection, distance, ourEdgeCount: countSetPixels(edges) });
+        }
       const solvedPoint = isSolved
         ? (
             await minimizeNelderMead(
@@ -151,7 +159,7 @@ export const solveReferenceShadows = async (
                   ? Infinity
                   : (await priceDirection(toDirection(angles))).distance;
               },
-              toAngles(direction),
+              [azimuth, elevation],
               [SOLVE_STEP_DEGREES, SOLVE_STEP_DEGREES],
               SOLVE_ITERATION_COUNT,
             )
@@ -175,9 +183,18 @@ export const solveReferenceShadows = async (
       return {
         direction,
         distance: shipped.distance,
-        edgeCount: referenceEdges.reduce((count, isSet) => count + isSet, 0),
+        edgeCount: countSetPixels(referenceEdges),
         imagePath,
-        ...(solvedDirection && solved && { solved: { direction: solvedDirection, distance: solved.distance } }),
+        ourEdgeCount: countSetPixels(shipped.edges),
+        probes,
+        ...(solvedDirection &&
+          solved && {
+            solved: {
+              direction: solvedDirection,
+              distance: solved.distance,
+              ourEdgeCount: countSetPixels(solved.edges),
+            },
+          }),
       };
     },
     () => browser.close(),

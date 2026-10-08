@@ -25,7 +25,7 @@ export const shadowsCommand: SubCommandsDef[string] = defineCommand({
     name: "shadows",
   },
   run: async ({ args }) => {
-    const { direction, distance, edgeCount, imagePath, solved } = await solveReferenceShadows(
+    const { direction, distance, edgeCount, imagePath, ourEdgeCount, probes, solved } = await solveReferenceShadows(
       args.reference,
       args.witness,
       true,
@@ -35,12 +35,17 @@ export const shadowsCommand: SubCommandsDef[string] = defineCommand({
       return;
     }
     console.log(
-      `the scene's direction ${formatDirection(direction)}: its shadows' edges ${distance.toFixed(2)} px from the reference's ${edgeCount} edge pixels`,
+      `the scene's direction ${formatDirection(direction)}: its shadows' ${ourEdgeCount} edge pixels ${distance.toFixed(2)} px from the reference's ${edgeCount}`,
     );
+    // The objective about the scene's direction: a cost no direction moves is a render that drew no direction's shadow
+    for (const probe of probes)
+      console.log(
+        `  probed ${formatDirection(probe.direction)}: ${probe.ourEdgeCount} edge pixels, ${probe.distance.toFixed(2)} px`,
+      );
     if (solved) {
       const angle = MathUtils.radToDeg(new Vector3(...direction).angleTo(new Vector3(...solved.direction)));
       console.log(
-        `solved ${formatDirection(solved.direction)}: ${solved.distance.toFixed(2)} px, ${angle.toFixed(1)} degrees from the scene's`,
+        `solved ${formatDirection(solved.direction)}: ${solved.ourEdgeCount} edge pixels, ${solved.distance.toFixed(2)} px, ${angle.toFixed(1)} degrees from the scene's`,
       );
     }
     console.log(`the reference's edges green, the scene's red, the solved blue: ${imagePath}`);
