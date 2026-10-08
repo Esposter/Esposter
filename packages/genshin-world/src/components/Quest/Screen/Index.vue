@@ -5,6 +5,7 @@ import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { GameText } from "genshin-text";
 
 import { QUEST_CATEGORIES, QUEST_TAB_NEXT_CODE, QUEST_TAB_PREVIOUS_CODE } from "#src/services/quest/constants";
+import { getQuestCounter } from "#src/services/quest/getQuestCounter";
 import { QuestCategoryGameTextKeyMap } from "#src/services/quest/QuestCategoryGameTextKeyMap";
 import { QuestKindCategoryMap } from "#src/services/quest/QuestKindCategoryMap";
 import { checkIsActionKey } from "#src/services/shared/checkIsActionKey";
@@ -39,7 +40,7 @@ const questGroups = computed(() =>
     .filter(({ categoryQuests }) => categoryQuests.length > 0),
 );
 const selectedQuest = computed(() => quests.find(({ id }) => id === selectedQuestId.value));
-// The selected quest's step, and how far its first counted objective has come, as the game shows "(0/3)" after it
+// The selected quest's step, and how far its first counted objective has come
 const questStep = computed(() => {
   if (!selectedQuest.value) return undefined;
   const { objectiveCounts, stepIndex } = questProgressMap.get(selectedQuest.value.id) ?? {
@@ -48,9 +49,7 @@ const questStep = computed(() => {
   };
   const step = selectedQuest.value.steps[stepIndex];
   if (!step) return undefined;
-  const countedIndex = step.objectives.findIndex(({ count }) => count > 1);
-  const counted = step.objectives[countedIndex];
-  return { counter: counted ? `(${objectiveCounts[countedIndex] ?? 0}/${counted.count})` : "", textId: step.textId };
+  return { counter: getQuestCounter(step, objectiveCounts), textId: step.textId };
 });
 const navigate = (questId: string) => {
   emit("navigate", questId === trackedQuestId ? "" : questId);
@@ -70,28 +69,38 @@ useEventListener("keydown", (event) => {
 <template>
   <!-- The game's quest screen, which J opens: its tabs along the top, every quest in progress listed down the left under
        Its kind's heading, and the selected one's title, step and description on the right over the button that
-       Navigates to it. Provisional: the tabs' glyphs, sizes, places and colours wait on the parity pass against the
-       Wiki's screenshot of the English client's -->
+       Navigates to it. The game lays it over the world, blurred, so the parity page draws the reference's frame behind
+       It and scores only what the screen draws. Not yet built: the tabs' glyphs (a diamond stands in for each until
+       Traced), the quest kind and place marks, each quest's distance, the rewards row, the overview button and the UID -->
   <GameScreen class="quest-screen">
-    <div class="header">
-      <div class="tabs" role="tablist">
-        <button class="tab" :aria-selected="!category" role="tab" type="button" @click="category = undefined">
-          {{ gameText[GameTextKey.Quests] }}
-        </button>
-        <button
-          v-for="questCategory of QUEST_CATEGORIES"
-          :key="questCategory"
-          class="tab"
-          :aria-selected="category === questCategory"
-          role="tab"
-          type="button"
-          @click="category = questCategory"
-        >
-          {{ gameText[QuestCategoryGameTextKeyMap[questCategory]] }}
-        </button>
-      </div>
-      <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">×</button>
+    <p class="header-title">{{ gameText[GameTextKey.Quests] }}</p>
+    <div class="tabs" role="tablist">
+      <button
+        class="tab"
+        :aria-label="gameText[GameTextKey.Quests]"
+        :aria-selected="!category"
+        role="tab"
+        type="button"
+        @click="category = undefined"
+      >
+        <span class="glyph" />
+      </button>
+      <button
+        v-for="questCategory of QUEST_CATEGORIES"
+        :key="questCategory"
+        class="tab"
+        :aria-label="gameText[QuestCategoryGameTextKeyMap[questCategory]]"
+        :aria-selected="category === questCategory"
+        role="tab"
+        type="button"
+        @click="category = questCategory"
+      >
+        <span class="glyph" />
+      </button>
     </div>
+    <span class="key previous">Q</span>
+    <span class="key next">E</span>
+    <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">×</button>
     <div
       class="list"
       :aria-label="gameText[category ? QuestCategoryGameTextKeyMap[category] : GameTextKey.Quests]"
@@ -129,86 +138,133 @@ useEventListener("keydown", (event) => {
 
 <style scoped>
 .quest-screen {
-  background: linear-gradient(rgb(28 33 54 / 0.92), rgb(46 51 79 / 0.92));
-  color: #ece5d8;
+  color: #fff;
 }
 
-.header {
-  position: absolute;
-  inset: 0 0 auto;
-  display: flex;
-  height: calc(var(--unit) * 92);
-  align-items: center;
-  justify-content: center;
-}
-
-.tabs {
-  display: flex;
-  gap: calc(var(--unit) * 24);
-}
-
+.header-title,
 .tab,
 .close,
 .quest,
 .navigate {
+  margin: 0;
   border: none;
   cursor: inherit;
   font: inherit;
   font-weight: 600;
 }
 
-.tab {
-  padding: calc(var(--unit) * 8) calc(var(--unit) * 16);
-  border-bottom: calc(var(--unit) * 3) solid transparent;
-  background: none;
-  color: rgb(236 229 216 / 0.6);
+.header-title {
+  position: absolute;
+  top: 0;
+  left: calc(var(--unit) * 144);
+  height: calc(var(--unit) * 95);
+  color: #d7c28f;
   font-size: calc(var(--unit) * 24);
+  line-height: calc(var(--unit) * 95);
 }
 
-.tab[aria-selected="true"] {
-  border-bottom-color: #d3bc8e;
-  color: #ece5d8;
+.tabs {
+  position: absolute;
+  top: 0;
+  left: calc(var(--unit) * 720);
+  display: flex;
+  height: calc(var(--unit) * 95);
+}
+
+.tab {
+  position: relative;
+  display: grid;
+  width: calc(var(--unit) * 96);
+  height: calc(var(--unit) * 95);
+  background: none;
+  place-items: center;
+}
+
+.glyph {
+  width: calc(var(--unit) * 34);
+  height: calc(var(--unit) * 34);
+  border: calc(var(--unit) * 4) solid rgb(236 229 216 / 0.7);
+  transform: rotate(45deg);
+}
+
+.tab[aria-selected="true"]::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: calc(var(--unit) * 5);
+  background: #d7c28f;
+  content: "";
+}
+
+.tab[aria-selected="true"] .glyph {
+  border-color: #ece5d8;
+}
+
+.key {
+  position: absolute;
+  top: calc(var(--unit) * 33);
+  display: grid;
+  width: calc(var(--unit) * 32);
+  height: calc(var(--unit) * 28);
+  background: #ece5d8;
+  color: #000;
+  font-size: calc(var(--unit) * 20);
+  place-items: center;
+}
+
+.key.previous {
+  left: calc(var(--unit) * 675);
+}
+
+.key.next {
+  left: calc(var(--unit) * 1213);
 }
 
 .close {
   position: absolute;
-  right: calc(var(--unit) * 60);
+  top: calc(var(--unit) * 19);
+  right: calc(var(--unit) * 50);
   width: calc(var(--unit) * 56);
   height: calc(var(--unit) * 56);
-  border-radius: 50%;
-  background: #ece5d8;
+  border-radius: calc(var(--unit) * 6);
+  background: rgb(236 229 216 / 0.85);
   color: #3b4255;
-  font-size: calc(var(--unit) * 36);
+  font-size: calc(var(--unit) * 40);
   line-height: 1;
 }
 
 .list {
   position: absolute;
-  top: calc(var(--unit) * 110);
-  bottom: calc(var(--unit) * 120);
+  top: calc(var(--unit) * 105);
+  bottom: calc(var(--unit) * 125);
   left: calc(var(--unit) * 150);
   display: flex;
-  width: calc(var(--unit) * 680);
+  width: calc(var(--unit) * 666);
   flex-direction: column;
-  gap: calc(var(--unit) * 10);
   overflow-y: auto;
+  scrollbar-width: none;
 }
 
 .heading {
-  margin: calc(var(--unit) * 16) 0 calc(var(--unit) * 8);
+  height: calc(var(--unit) * 50);
+  margin: calc(var(--unit) * 4) 0 0;
+  padding-left: calc(var(--unit) * 45);
   font-size: calc(var(--unit) * 26);
   font-weight: 600;
+  line-height: calc(var(--unit) * 50);
 }
 
 .quest {
   display: block;
   width: 100%;
-  min-height: calc(var(--unit) * 80);
-  margin-bottom: calc(var(--unit) * 10);
-  padding: 0 calc(var(--unit) * 24);
-  background: rgb(255 255 255 / 0.1);
+  height: calc(var(--unit) * 76);
+  margin-bottom: calc(var(--unit) * 13);
+  padding: calc(var(--unit) * 14) calc(var(--unit) * 30) 0;
+  background: rgb(40 50 70 / 0.72);
   color: inherit;
-  font-size: calc(var(--unit) * 28);
+  font-size: calc(var(--unit) * 24);
+  line-height: calc(var(--unit) * 26);
   text-align: start;
 }
 
@@ -217,50 +273,68 @@ useEventListener("keydown", (event) => {
 }
 
 .quest.tracked {
-  color: #d3bc8e;
+  color: #e3c886;
 }
 
 .details {
   position: absolute;
-  top: calc(var(--unit) * 120);
-  right: calc(var(--unit) * 150);
-  bottom: calc(var(--unit) * 60);
-  display: flex;
-  width: calc(var(--unit) * 900);
-  flex-direction: column;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--unit) * 877);
+  width: calc(var(--unit) * 899);
 }
 
 .title {
+  position: absolute;
+  top: calc(var(--unit) * 120);
+  left: 0;
+  right: 0;
   margin: 0;
-  font-size: calc(var(--unit) * 40);
+  font-size: calc(var(--unit) * 32);
   font-weight: 600;
+  line-height: calc(var(--unit) * 40);
 }
 
 .step {
+  position: absolute;
+  top: calc(var(--unit) * 241);
+  left: 0;
+  right: 0;
   display: flex;
-  justify-content: space-between;
-  margin: calc(var(--unit) * 32) 0 0;
-  padding: calc(var(--unit) * 14) calc(var(--unit) * 24);
-  background: rgb(255 255 255 / 0.1);
-  font-size: calc(var(--unit) * 28);
+  height: calc(var(--unit) * 56);
+  margin: 0;
+  padding: 0 calc(var(--unit) * 14) 0 calc(var(--unit) * 53);
+  background: rgb(255 255 255 / 0.15);
+  font-size: calc(var(--unit) * 24);
   font-weight: 600;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .description {
-  margin: calc(var(--unit) * 20) 0 0;
-  font-size: calc(var(--unit) * 26);
+  position: absolute;
+  top: calc(var(--unit) * 315);
+  left: 0;
+  right: 0;
+  margin: 0;
+  font-size: calc(var(--unit) * 24);
   font-weight: 600;
-  line-height: 1.4;
+  line-height: calc(var(--unit) * 29);
 }
 
 .navigate {
-  align-self: flex-end;
-  min-width: calc(var(--unit) * 400);
-  min-height: calc(var(--unit) * 72);
-  margin-top: auto;
-  border-radius: calc(var(--unit) * 36);
-  background: #ece5d8;
-  color: #3b4255;
-  font-size: calc(var(--unit) * 30);
+  position: absolute;
+  top: calc(var(--unit) * 988);
+  left: calc(var(--unit) * 635);
+  display: grid;
+  width: calc(var(--unit) * 288);
+  height: calc(var(--unit) * 62);
+  border: calc(var(--unit) * 2) solid rgb(255 255 255 / 0.6);
+  border-radius: calc(var(--unit) * 8);
+  background: rgb(255 255 255 / 0.2);
+  color: #fff;
+  font-size: calc(var(--unit) * 28);
+  line-height: calc(var(--unit) * 30);
+  place-items: center;
 }
 </style>

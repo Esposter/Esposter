@@ -7,6 +7,7 @@ committed.
 
 | Reference | Screen | Mean difference | Shape | Tone | FLIP |
 | :-------- | :----- | --------------: | ----: | ---: | ---: |
+| `handbook-experience` | `HandbookScreen` | 18.12% | 0.173 | 13.29% | 0.5150 |
 | `health-notice` | `SplashHealthNotice` | 6.00% | 0.961 | 0.83% | 0.1853 |
 | `loading-startup` | `LoadingStartup` | 0.03% | 0.989 | 0.00% | 0.0013 |
 | `login-dawn-title` | `LoginScreen` | 10.34% | 0.468 | 7.35% | 0.4133 |
@@ -19,7 +20,9 @@ committed.
 | `login-interface-mainland-rating` | `LoginInterface` | 2.11% | 0.959 | 1.12% | 0.1095 |
 | `login-interface-title` | `LoginInterface` | 0.34% | 0.997 | 0.24% | 0.0154 |
 | `login-night-title` | `LoginScreen` | 11.16% | 0.358 | 8.40% | 0.4231 |
+| `map-overlay-jueyun` | `MapOverlay` | 34.00% | 0.135 | 30.55% | 0.7145 |
 | `publisher-splash` | `SplashPublisher` | 0.07% | 1.000 | 0.01% | 0.0036 |
+| `quest-screen` | `QuestScreen` | 55.84% | 0.274 | 53.90% | 0.8998 |
 | `title-splash` | `SplashTitle` | 0.20% | 1.000 | 0.01% | 0.0090 |
 | `title-splash-mainland` | `SplashTitle` | 1.80% | 0.992 | 0.81% | 0.0787 |
 | `windrise-statue-day` | `WorldScreen` | 43.15% | 0.161 | 45.35% | 0.8676 |

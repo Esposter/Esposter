@@ -51,7 +51,7 @@ A quest's progress is the step it is on, which equals the number of steps once i
 
 ### Navigation
 
-`findQuestTargetPosition` finds where an objective's target stands among the regions in reach: the resident or landmark it names, or the resident whose talk it names. `QuestBeam` raises a column of light over that spot once the camera is 50 metres or more away, the distance at which the wiki says the game's beam appears. The beam reaches from under the lowest ground to over the highest peak, so it rises out of the ground wherever it stands with no height read for it.
+`findQuestTargetPosition` finds where an objective's target stands among the regions in reach: the resident or landmark it names, or the resident whose talk it names. `QuestBeam` raises a column of light over that spot once the camera is 50 metres or more away, the distance at which the wiki says the game's beam appears. The beam reaches from under the lowest ground to over the highest peak, so it rises out of the ground wherever it stands with no height read for it. The world raises it over the first objective of the navigated quest's current step, in the floating origin's group, and V or a press on the [HUD](/docs/genshin/hud)'s tracker navigates to the quest the tracker shows.
 
 ### The quests' content
 
@@ -81,6 +81,7 @@ The dump scrambles the binary output's field names each patch, so the reader fin
 - **Nothing starts a quest yet.** The world screen's quest list is empty until quests are loaded and started, so J opens an empty screen. The [quests proposal](/docs/proposals/genshin/quests) lists what joins them to the world.
 - **A step keeps one objective.** A step that finishes on any of several places lists each as a condition, so the reader keeps the first condition that asks something. A step asking for two things at once would lose the second.
 - **The beam's look is provisional.** Its radius and colour wait on a recording of the English client navigating to an objective.
+- **The quest screen is laid out, not yet likeness.** Its header, tabs, list, details and navigation button sit at the English client's 1080-high places, measured off the wiki's screenshot. Its five tab glyphs stand in as diamonds until traced, its header reads the game's "Quests" where the client reads "In Progress" (that text is not in the English the package carries), and its quest distances, kind and place marks, rewards row, Quest Overview button and UID are not built. The client draws the world blurred behind the screen; the parity page has no world to draw, so its frame scores 55.84% mean and 0.8998 FLIP, most of it that blur, and the screen's open, close and tab animations are not yet timed (the roadmap's Recordings owed).
 
 ## Sources
 
