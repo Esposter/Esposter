@@ -1,7 +1,10 @@
 import type { ExcelExploreAreaTotalRow } from "#src/models/genshinAssets/exploration/ExcelExploreAreaTotalRow";
 import type { ExcelWorldAreaExploreEventRow } from "#src/models/genshinAssets/exploration/ExcelWorldAreaExploreEventRow";
 
-import { EXPLORATION_GENERATED_DIRECTORY, MONDSTADT_EXPLORATION_PATH } from "#src/services/genshinAssets/exploration/constants";
+import {
+  EXPLORATION_GENERATED_DIRECTORY,
+  MONDSTADT_EXPLORATION_PATH,
+} from "#src/services/genshinAssets/exploration/constants";
 import { ExploreAreaCatalogueIdMap } from "#src/services/genshinAssets/exploration/ExploreAreaCatalogueIdMap";
 import { toExplorationDoing } from "#src/services/genshinAssets/exploration/toExplorationDoing";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
