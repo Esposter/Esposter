@@ -13,6 +13,8 @@ export const DerivedAssetSoundEffectMap: Record<
   [DerivedAssetComponent.Fontaine]: {},
   // Inazuma City's sounds wait on a recording that names them, as a city's do, so it has none yet
   [DerivedAssetComponent.Inazuma]: {},
+  // Liyue Harbor's sounds wait on a recording that names them, as a city's do, so it has none yet
+  [DerivedAssetComponent.Liyue]: {},
   [DerivedAssetComponent.Login]: { door: { pattern: MINIMUM_PACKAGE_NAME, sounds: LOGIN_DOOR_SOUNDS } },
   [DerivedAssetComponent.Mondstadt]: {},
   [DerivedAssetComponent.Natlan]: {},

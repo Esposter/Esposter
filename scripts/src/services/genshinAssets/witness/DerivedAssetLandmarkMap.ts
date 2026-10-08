@@ -42,9 +42,12 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // The Court's landmarks name its capital's meshes and their shares, which the extraction has not yet given
   [DerivedAssetComponent.Fontaine]: {},
   // Inazuma City's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given:
-  // the keep's eaves and ledges, the platform's corners, the houses' bases and roofs and the pavilion's eaves, each read
+  // The keep's eaves and ledges, the platform's corners, the houses' bases and roofs and the pavilion's eaves, each read
   // By eye off the reference's 4x crops (ParityReferenceMap's inazuma-city-location)
   [DerivedAssetComponent.Inazuma]: {},
+  // Liyue Harbor's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given: the
+  // Steps, plinths, walls, gates and towers its reference's 4x crops show (ParityReferenceMap's liyue-harbor-location)
+  [DerivedAssetComponent.Liyue]: {},
   // Mondstadt's landmarks name its capital's meshes, which the extraction has not yet given: the six corners its reference
   // Names (ParityReferenceMap's mondstadt-city-location) are the towers' and the gate tower's parapets
   [DerivedAssetComponent.Mondstadt]: {},

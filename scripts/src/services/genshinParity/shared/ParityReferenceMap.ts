@@ -212,6 +212,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       westTowerTopLeft: [1077, 1044],
       westTowerTopRight: [1162, 1058],
     },
+    // Provisional: noon until the shadows' solve reads the sun's minute off the wall's shadow edges
+    props: { heldMinutes: 720 },
     screen: "WorldScreen",
     wikiTitle: "File:Mondstadt City.png",
   },
@@ -324,5 +326,12 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     props: { heldMinutes: 720 },
     screen: "WorldScreen",
     wikiTitle: "File:Nasha Town.png",
+  },
+  // The wiki's 4096 by 2304 location image of Liyue Harbor, the capital on the harbour's cliff: its landmarks are read by
+  // Eye at the image's pixels off 4x crops, and are added once those crops are read
+  "liyue-harbor-location": {
+    component: DerivedAssetComponent.Liyue,
+    screen: "WorldScreen",
+    wikiTitle: "File:Liyue Harbor.png",
   },
 };
