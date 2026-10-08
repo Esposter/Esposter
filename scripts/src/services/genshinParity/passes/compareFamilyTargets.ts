@@ -14,9 +14,9 @@ export const compareFamilyTargets = (
   width: number,
   familyCount: number,
 ): {
-  depth: number | undefined;
+  depth?: number;
   family: number;
-  normal: number | undefined;
+  normal?: number;
   outline: number;
   partNormals: { angle: number; part: number; pixelCount: number }[];
 }[] => {

@@ -16,7 +16,7 @@ export const FILMS_DIRECTORY: string = join(PARITY_DIRECTORY, "films");
 export const PARITY_FRAME_MS: number = 1000 / 60;
 // How long a page may take to draw its first frame, a full window at 1080 high on a machine running several pages at
 // Once taking near a minute, where Playwright's default half minute gave up on a page still loading
-export const PARITY_READY_TIMEOUT_MS: number = 120_000;
+export const PARITY_READY_TIMEOUT_MS = 120_000;
 export const COMPARISONS_DIRECTORY: string = join(PARITY_DIRECTORY, "comparisons");
 // Each reference's witness G-buffer, its targets as raw floats beside a header and a preview
 export const GBUFFER_DIRECTORY: string = join(PARITY_DIRECTORY, "gbuffer");
@@ -44,7 +44,7 @@ export const SHARED_BROWSER_PATH: string = join(PARITY_DIRECTORY, "browser.json"
 // To write its address, polling for it every tenth of a second
 export const SHARED_BROWSER_CONNECT_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
 export const SHARED_BROWSER_START_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 60 }).total("milliseconds");
-export const SHARED_BROWSER_POLL_MS: number = Temporal.Duration.from({ milliseconds: 100 }).total("milliseconds");
+export const SHARED_BROWSER_POLL_MS = 100;
 // `browser start` runs the parity tool again, as `browser serve`, in the process it detaches from its own
 export const PARITY_ENTRY_PATH: string = join(REPOSITORY_ROOT, "scripts", "src", "genshinParity", "index.ts");
 export const SCRIPTS_DIRECTORY: string = join(REPOSITORY_ROOT, "scripts");
