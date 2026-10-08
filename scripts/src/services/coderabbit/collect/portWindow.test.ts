@@ -21,7 +21,7 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     return readSha("HEAD");
   };
 
-  test("ports the fixes first and the queue after them, counting from the merge base", () => {
+  test("ports the fixes first and the queue after them, counting from the window's base", () => {
     expect.hasAssertions();
 
     const developSha = readSha("HEAD");
@@ -130,7 +130,7 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(() =>
       portWindow({ baseSha: developSha, cwd: getCwd(), developSha, fixShas: [fixSha], queueSha: developSha }),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the fixes alone overflow the cap of 300 files from the merge base]`,
+      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the fixes alone overflow the cap of 300 files from the window's base]`,
     );
   });
 });

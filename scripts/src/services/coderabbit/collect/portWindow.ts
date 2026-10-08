@@ -27,7 +27,7 @@ export const portWindow = ({ baseSha, cwd, developSha, fixShas, queueSha }: Port
     throw new InvalidOperationError(
       Operation.Update,
       "coderabbit",
-      `the fixes alone overflow the cap of ${REVIEW_FILE_CAP} files from the merge base`,
+      `the fixes alone overflow the cap of ${REVIEW_FILE_CAP} files from the window's base`,
     );
   // Owed against the tree the fixes built, not develop: a queue rebased onto `ai/review-fixes` carries the fix
   // Commits as ancestors, and against develop they would be re-picked onto a tree that already holds them
