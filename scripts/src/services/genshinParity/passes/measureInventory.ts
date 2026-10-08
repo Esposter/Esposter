@@ -8,7 +8,7 @@ import { withFinalizerAsync } from "@esposter/shared";
 // The inventory pass: every renderer of the component's exports claimed by a part of the scene, drawn or named as not
 // Drawn yet, as its screen's fixture claims them on the parity page
 export const measureInventory = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
-  const { browser, page } = await openComponentWitnessPage(component);
+  const { close, page } = await openComponentWitnessPage(component);
   return withFinalizerAsync(
     async () => {
       const claims = await page.evaluate(() =>
@@ -25,6 +25,6 @@ export const measureInventory = async (component: DerivedAssetComponent): Promis
         readings: [{ gate: 0, name: "renderers unclaimed", unit: "renderers", value: unclaimed.length }],
       };
     },
-    () => browser.close(),
+    () => close(),
   );
 };

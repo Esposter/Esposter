@@ -23,7 +23,7 @@ export const readCloudStatistics = async (
   spread: SkyDistance;
 }> => {
   await fetchReferences();
-  const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness, CLOUDS_WIDTH);
+  const { close, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness, CLOUDS_WIDTH);
   return withFinalizerAsync(
     async () => {
       const { compareShot, reference, referenceClouds, sky, spread } = await readSkyComparison(
@@ -44,6 +44,6 @@ export const readCloudStatistics = async (
       });
       return { distance, ours: statistics, reference, skyCount: sky.reduce((sum, isSky) => sum + isSky, 0), spread };
     },
-    () => browser.close(),
+    () => close(),
   );
 };

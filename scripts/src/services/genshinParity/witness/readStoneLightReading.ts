@@ -42,7 +42,7 @@ export const readStoneLightReading = async (
   isSelf = false,
 ): Promise<StoneLightReading> => {
   await fetchReferences();
-  const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
+  const { close, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
       await setPageWitnessView(page, {});
@@ -119,6 +119,6 @@ export const readStoneLightReading = async (
       }
       return { eye: eye.toArray(), fog, pixels, whiteBalance };
     },
-    () => browser.close(),
+    () => close(),
   );
 };

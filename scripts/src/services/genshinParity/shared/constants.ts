@@ -37,6 +37,16 @@ export const FFMPEG_ARCHIVE_SHA256 = "60f467265b1e312373dbcd92200c2618a74850f98d
 // Its own port unless `GENSHIN_PARITY_PORT` names another: a second checkout's page, while a long solve holds the first
 // oxlint-disable-next-line typescript/no-inferrable-types -- isolated declarations need a template literal's type written
 export const PARITY_PAGE_URL: string = `http://localhost:${process.env.GENSHIN_PARITY_PORT ?? "3002"}/parity/?screen=`;
+// The shared browser `genshin:parity browser start` holds: the address and process it is served by are written here
+export const SHARED_BROWSER_PATH: string = join(PARITY_DIRECTORY, "browser.json");
+// How long a command may take to connect to a shared browser, and how long `browser start` waits for the one it starts
+// To write its address, polling for it every tenth of a second
+export const SHARED_BROWSER_CONNECT_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
+export const SHARED_BROWSER_START_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 60 }).total("milliseconds");
+export const SHARED_BROWSER_POLL_MS: number = Temporal.Duration.from({ milliseconds: 100 }).total("milliseconds");
+// `browser start` runs the parity tool again, as `browser serve`, in the process it detaches from its own
+export const PARITY_ENTRY_PATH: string = join(REPOSITORY_ROOT, "scripts", "src", "genshinParity", "index.ts");
+export const SCRIPTS_DIRECTORY: string = join(REPOSITORY_ROOT, "scripts");
 // The name a backdrop is served to the parity page under, which the page is told in its query
 export const PARITY_BACKDROP_FILE = "parity-backdrop.png";
 // Where a witness's files are served to the page: its layout, which the page is told of, and its meshes and textures

@@ -20,7 +20,7 @@ export const measureCamera = async (component: DerivedAssetComponent): Promise<P
   const measures: ParityPassMeasure[] = [];
   for (const referenceId of referenceIds) {
     // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
-    const { browser, page } = await openWitnessPage(referenceId, component);
+    const { close, page } = await openWitnessPage(referenceId, component);
     // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
     const measure = await withFinalizerAsync(
       async () => {
@@ -33,7 +33,7 @@ export const measureCamera = async (component: DerivedAssetComponent): Promise<P
           readings: [{ gate: getPoseBar(referenceId), name: referenceId, unit: "px", value: rms }],
         };
       },
-      () => browser.close(),
+      () => close(),
     );
     measures.push(measure);
   }

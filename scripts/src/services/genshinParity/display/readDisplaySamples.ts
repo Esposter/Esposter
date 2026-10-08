@@ -28,14 +28,14 @@ export const readDisplaySamples = async (
   component: DerivedAssetComponent,
   minDisplay: number,
 ): Promise<DisplaySample[]> => {
-  const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, component, DISPLAY_WIDTH);
+  const { close, checkIsScored, height, image, page } = await openWitnessPage(referenceId, component, DISPLAY_WIDTH);
   const { targets, width } = await withFinalizerAsync(
     async () => {
       const { pose } = await solveReferenceCamera(page, referenceId, component);
       await setPageWitnessView(page, { camera: toPageCamera(pose), isAlone: true });
       return readWitnessTargets(page, TARGET_NAMES);
     },
-    () => browser.close(),
+    () => close(),
   );
   const { albedo = new Float32Array(), depth = new Float32Array(), part = new Float32Array() } = targets;
   const shot = await sharp(image).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();

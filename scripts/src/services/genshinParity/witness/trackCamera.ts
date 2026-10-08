@@ -51,7 +51,7 @@ export const trackCamera = async (
     startSeconds,
     durationSeconds,
   );
-  const { browser, height, page } = await openWitnessPage(referenceId, witness);
+  const { close, height, page } = await openWitnessPage(referenceId, witness);
   const track = await withFinalizerAsync(
     async () => {
       const poses: TrackedPose[] = [];
@@ -76,7 +76,7 @@ export const trackCamera = async (
       }
       return poses;
     },
-    () => browser.close(),
+    () => close(),
   );
   const path = join(directory, "track.json");
   await writeFile(path, JSON.stringify(track, null, 2));

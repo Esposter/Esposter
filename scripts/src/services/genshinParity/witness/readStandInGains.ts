@@ -37,7 +37,7 @@ export const readStandInGains = async (
   witness: DerivedAssetComponent,
 ): Promise<{ gap: number; mean: number; name: string; share: number; similarity: number }[]> => {
   await fetchReferences();
-  const { browser, checkIsScored, height, page } = await openWitnessPage(referenceId, witness, STAND_IN_WIDTH);
+  const { close, checkIsScored, height, page } = await openWitnessPage(referenceId, witness, STAND_IN_WIDTH);
   return withFinalizerAsync(
     async () => {
       const families = await readWitnessFamilies(page);
@@ -95,6 +95,6 @@ export const readStandInGains = async (
         similarity,
       })).toSorted((firstTerm, secondTerm) => secondTerm.gap - firstTerm.gap);
     },
-    () => browser.close(),
+    () => close(),
   );
 };

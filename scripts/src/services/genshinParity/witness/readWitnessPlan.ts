@@ -43,7 +43,7 @@ export const readWitnessPlan = async (
   const widthMultiple = (ROW_PIXEL_MULTIPLE * scale) / gcd(ROW_PIXEL_MULTIPLE, scale);
   const width = Math.ceil((sizeX * pixelsPerMetre) / widthMultiple) * widthMultiple;
   const drawnSize: [number, number] = [width / pixelsPerMetre, height / pixelsPerMetre];
-  const { browser, page } = await openParityPage({
+  const { close, page } = await openParityPage({
     height,
     props: reference.props,
     screen: reference.screen,
@@ -83,6 +83,6 @@ export const readWitnessPlan = async (
         }
       return { albedo: turned, height: drawnHeight, size: drawnSize, width: drawnWidth };
     },
-    () => browser.close(),
+    () => close(),
   );
 };

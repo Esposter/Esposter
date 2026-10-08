@@ -16,7 +16,7 @@ export const benchScreen = async ({
   warmMs,
   ...options
 }: ParityPageOptions & { frameCount: number; warmMs: number }): Promise<SceneBench> => {
-  const { browser, page } = await openParityPage({ ...options, isFrameRateUnlimited: true });
+  const { close, page } = await openParityPage({ ...options, isFrameRateUnlimited: true });
   return withFinalizerAsync(
     async () => {
       await page.waitForTimeout(warmMs);
@@ -50,6 +50,6 @@ export const benchScreen = async ({
       console.log(`${bench.programs} pipelines, ${bench.geometries} geometries, ${bench.textures} textures kept`);
       return bench;
     },
-    () => browser.close(),
+    () => close(),
   );
 };

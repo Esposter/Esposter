@@ -1,7 +1,7 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { SetCloudCover } from "#src/models/genshinParity/sky/SetCloudCover";
 import type { SetCloudHeights } from "#src/models/genshinParity/sky/SetCloudHeights";
-import type { Browser, Page } from "playwright";
+import type { Page } from "playwright";
 
 import { CLOUDS_WIDTH } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
@@ -47,7 +47,7 @@ export const solveReferenceCloudCover = async (
   residual: number;
 }> => {
   await fetchReferences();
-  const browsers: Browser[] = [];
+  const closes: (() => Promise<void>)[] = [];
   return withFinalizerAsync(
     async () => {
       const skies: {
@@ -58,12 +58,8 @@ export const solveReferenceCloudCover = async (
       }[] = [];
       for (const referenceId of referenceIds) {
         // oxlint-disable-next-line no-await-in-loop -- each page is opened in turn, so one that fails leaves the opened ones to close
-        const { browser, checkIsScored, height, image, page } = await openWitnessPage(
-          referenceId,
-          witness,
-          CLOUDS_WIDTH,
-        );
-        browsers.push(browser);
+        const { close, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness, CLOUDS_WIDTH);
+        closes.push(close);
         // oxlint-disable-next-line no-await-in-loop -- read on the page just opened
         const { computeClouds, computeDrawnClouds, computeElevationCoverage, readLuminance } = await readCloudSky(
           page,
@@ -188,7 +184,7 @@ export const solveReferenceCloudCover = async (
       return { heights, references, residual: Math.sqrt(squaredResidual / Math.max(residualCount, 1)) };
     },
     async () => {
-      await Promise.all(browsers.map((browser) => browser.close()));
+      await Promise.all(closes.map((close) => close()));
     },
   );
 };

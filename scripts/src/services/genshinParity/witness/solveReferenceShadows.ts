@@ -93,7 +93,7 @@ export const solveReferenceShadows = async (
 }> => {
   await fetchReferences();
   const referencePath = join(REFERENCES_DIRECTORY, `${referenceId}.png`);
-  const [{ browser, checkIsScored, image, page }, { width: referenceWidth }] = await Promise.all([
+  const [{ close, checkIsScored, image, page }, { width: referenceWidth }] = await Promise.all([
     openWitnessPage(referenceId, witness, SHADOW_WIDTH),
     sharp(referencePath).metadata(),
   ]);
@@ -221,6 +221,6 @@ export const solveReferenceShadows = async (
           }),
       };
     },
-    () => browser.close(),
+    () => close(),
   );
 };

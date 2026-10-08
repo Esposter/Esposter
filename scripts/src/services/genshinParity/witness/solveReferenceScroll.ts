@@ -22,7 +22,7 @@ export const solveReferenceScroll = async (
   offsets: readonly number[],
 ): Promise<{ distance: number; offset: number }[]> => {
   await fetchReferences();
-  const { browser, image, page } = await openWitnessPage(referenceId, component);
+  const { close, image, page } = await openWitnessPage(referenceId, component);
   return withFinalizerAsync(
     async () => {
       const { pose } = await solveReferenceCamera(page, referenceId, component);
@@ -44,6 +44,6 @@ export const solveReferenceScroll = async (
       }
       return readings;
     },
-    () => browser.close(),
+    () => close(),
   );
 };

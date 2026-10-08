@@ -48,7 +48,7 @@ export const rankReferenceGains = async (
   terms: { ceiling: number; name: string; share: number }[];
 }> => {
   await fetchReferences();
-  const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
+  const { close, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
       const families = await readWitnessFamilies(page);
@@ -173,6 +173,6 @@ export const rankReferenceGains = async (
         })).toSorted((firstTerm, secondTerm) => secondTerm.ceiling - firstTerm.ceiling),
       };
     },
-    () => browser.close(),
+    () => close(),
   );
 };
