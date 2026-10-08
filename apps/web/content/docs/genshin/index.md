@@ -27,27 +27,28 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 
 ## The pages of this area
 
-| Page                                                     | What it covers                                                                                |
-| :------------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
-| [Engine architecture](/docs/genshin/engine-architecture) | the engine as modules with one job each, and the order a frame runs in                        |
-| [Rendering style](/docs/genshin/rendering-style)         | the toon materials, outlines, cascaded shadows, god rays, fog, grade and AA                   |
-| [Sky and time](/docs/genshin/sky-and-time)               | the twenty-four-minute day, the painted sky, and the light it casts                           |
-| [Terrain](/docs/genshin/terrain)                         | the ground on a streamed CDLOD quadtree, morphing between levels, and the floating origin     |
-| [Water](/docs/genshin/water)                             | still water graded by depth, foam, glints, caustics, and the world under the surface          |
-| [Vegetation](/docs/genshin/vegetation)                   | the wind field, grass blades generated in two rings, and swaying crowns                       |
-| [World map](/docs/genshin/world-map)                     | the catalogue of regions, areas and subareas, and region data loaded by reach                 |
-| [Parity](/docs/genshin/parity)                           | matching a screen to the game's: references, tracing, scoring, motion and the visual suite    |
-| [Scene derivation](/docs/genshin/scene-derivation)       | how the game's own assets are re-derived into a scene, each loss priced first                 |
-| [Derived assets](/docs/genshin/derived-assets)           | which reference each part is measured from, how it becomes ours, and each part's progress     |
-| [Interface library](/docs/genshin/interface-library)     | `genshin-interface`: the game's screen root, units, pointer, and the pieces its screens share |
-| [Interface layout](/docs/genshin/interface-layout)       | every screen laid out from the game's own RectTransform tree, nothing by hand                 |
-| [Title splash](/docs/genshin/title-splash)               | the game's title logo as each language's client draws it                                      |
-| [Login screen](/docs/genshin/login-screen)               | the opening's login: its stages, its flight, its scene and its door                           |
-| [Music](/docs/genshin/music)                             | the game's music re-derived from its sound banks and played by the engine's synthesizer       |
-| [Sampled instruments](/docs/genshin/sampled-instruments) | public-domain recordings layered over a piece's voices where they bring it nearer the game    |
-| [Sound effects](/docs/genshin/sound-effects)             | the game's sounds beside its music, found by a recording and played as our own noise          |
-| [Game data formats](/docs/genshin/game-data-formats)     | how each kind of the game's data reads, and the shortcuts to reach for first                  |
-| [Game text](/docs/genshin/game-text)                     | `genshin-text`: every language the game ships, and its strings by the game's own text id      |
+| Page                                                     | What it covers                                                                                           |
+| :------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| [Engine architecture](/docs/genshin/engine-architecture) | the engine as modules with one job each, and the order a frame runs in                                   |
+| [Rendering style](/docs/genshin/rendering-style)         | the toon materials, outlines, cascaded shadows, god rays, fog, grade and AA                              |
+| [Sky and time](/docs/genshin/sky-and-time)               | the twenty-four-minute day, the painted sky, and the light it casts                                      |
+| [Terrain](/docs/genshin/terrain)                         | the ground on a streamed CDLOD quadtree, morphing between levels, and the floating origin                |
+| [Water](/docs/genshin/water)                             | still water graded by depth, foam, glints, caustics, and the world under the surface                     |
+| [Vegetation](/docs/genshin/vegetation)                   | the wind field, grass blades generated in two rings, and swaying crowns                                  |
+| [World map](/docs/genshin/world-map)                     | the catalogue of regions, areas and subareas, and region data loaded by reach                            |
+| [Free camera](/docs/genshin/free-camera)                 | the camera the world flies: its keys, pointer and gamepad, its fixed steps and the ground it holds above |
+| [Parity](/docs/genshin/parity)                           | matching a screen to the game's: references, tracing, scoring, motion and the visual suite               |
+| [Scene derivation](/docs/genshin/scene-derivation)       | how the game's own assets are re-derived into a scene, each loss priced first                            |
+| [Derived assets](/docs/genshin/derived-assets)           | which reference each part is measured from, how it becomes ours, and each part's progress                |
+| [Interface library](/docs/genshin/interface-library)     | `genshin-interface`: the game's screen root, units, pointer, and the pieces its screens share            |
+| [Interface layout](/docs/genshin/interface-layout)       | every screen laid out from the game's own RectTransform tree, nothing by hand                            |
+| [Title splash](/docs/genshin/title-splash)               | the game's title logo as each language's client draws it                                                 |
+| [Login screen](/docs/genshin/login-screen)               | the opening's login: its stages, its flight, its scene and its door                                      |
+| [Music](/docs/genshin/music)                             | the game's music re-derived from its sound banks and played by the engine's synthesizer                  |
+| [Sampled instruments](/docs/genshin/sampled-instruments) | public-domain recordings layered over a piece's voices where they bring it nearer the game               |
+| [Sound effects](/docs/genshin/sound-effects)             | the game's sounds beside its music, found by a recording and played as our own noise                     |
+| [Game data formats](/docs/genshin/game-data-formats)     | how each kind of the game's data reads, and the shortcuts to reach for first                             |
+| [Game text](/docs/genshin/game-text)                     | `genshin-text`: every language the game ships, and its strings by the game's own text id                 |
 
 What is still to build is the [Genshin proposal](/docs/proposals/genshin), and the open work on what is built is the [roadmap](/docs/genshin/roadmap). Decided ideas: [deferred](/docs/genshin/deferred) and [rejected](/docs/genshin/rejected).
 
@@ -60,6 +61,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - Still water, first in the lake east of Windrise.
 - The wind, and grass generated around the camera.
 - The world map's catalogue, and Mondstadt's landmarks loaded by reach.
+- The free camera flying the world, on the engine's input, simulation, camera and collision modules.
 - Scene derivation: every scene re-derived from the game's own exports, drawn beside them by the witness render and priced term by term.
 - The game's opening: its splashes, health notice, login screen with its flight to the door, and startup loading screen.
 - The game's own words in its fifteen languages, served to the page in the reader's and to the persona plugin.

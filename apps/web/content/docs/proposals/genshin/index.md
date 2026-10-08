@@ -48,7 +48,7 @@ flowchart TD
 | [Flowing water](/docs/proposals/genshin/flowing-water)         | rivers along their courses, and waterfalls over cliff bands                   |
 | [Trees and scatter](/docs/proposals/genshin/trees-and-scatter) | tree species and impostors, and flowers, bushes and rocks scattered by biome  |
 | [Weather](/docs/proposals/genshin/weather)                     | rain, storms, snow, fog and sandstorms, set per area as the game sets them    |
-| [Exploring](/docs/proposals/genshin/exploring)                 | a free camera, waypoints to jump between, and the map overlay                 |
+| [Exploring](/docs/proposals/genshin/exploring)                 | waypoints to jump between, the map overlay, the clock control and touch       |
 | [Minimap](/docs/proposals/genshin/minimap)                     | the HUD's corner map, the overlay's drawing cut to a circle round the camera  |
 
 ### Phase two: the regions
