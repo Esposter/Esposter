@@ -7,10 +7,11 @@ import {
   COOK_RECIPE_TABLE_NAME,
   COOKING_GENERATED_DIRECTORY,
   COOKING_RECIPES_PATH,
+  UNLOCK_COOK_RECIPE_USE_OP,
 } from "#src/services/genshinAssets/cooking/constants";
-import { readCookUnlockItemIdMap } from "#src/services/genshinAssets/cooking/readCookUnlockItemIdMap";
 import { toCookingRecipe } from "#src/services/genshinAssets/cooking/toCookingRecipe";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/crafting/constants";
+import { readUnlockItemIdMap } from "#src/services/genshinAssets/items/readUnlockItemIdMap";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { mkdirSync, writeFileSync } from "node:fs";
 
@@ -19,7 +20,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 export const writeCookingRecipes = (): void => {
   const materialRows = readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME);
   const materialMap = new Map(materialRows.map((row) => [row.id, row]));
-  const unlockItemIdMap = readCookUnlockItemIdMap(materialRows);
+  const unlockItemIdMap = readUnlockItemIdMap(materialRows, UNLOCK_COOK_RECIPE_USE_OP);
   const bonusRows = readExcelTable<CookBonusRow>(COOK_BONUS_TABLE_NAME);
   const recipes = readExcelTable<CookRecipeRow>(COOK_RECIPE_TABLE_NAME)
     .map((row) => toCookingRecipe(row, { bonusRows, materialMap, unlockItemIds: unlockItemIdMap.get(row.id) ?? [] }))
