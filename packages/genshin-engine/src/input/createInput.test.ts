@@ -120,6 +120,18 @@ describe(createInput, () => {
     expect(readInput(0).pressedActions).toStrictEqual(new Set([InputAction.QuickUseGadget]));
   });
 
+  test("zooms by the wheel's notches since the last read, however far each scrolls", () => {
+    expect.hasAssertions();
+
+    const target = createTarget();
+    const { readInput } = createInput(target as unknown as Window);
+    target.dispatchEvent(Object.assign(new Event("wheel"), { deltaY: POINTER_MOVE }));
+    target.dispatchEvent(Object.assign(new Event("wheel"), { deltaY: POINTER_MOVE }));
+    const { zoomSteps } = readInput(0);
+
+    expect({ next: readInput(0).zoomSteps, zoomSteps }).toStrictEqual({ next: 0, zoomSteps: 2 });
+  });
+
   test("leaves a key typed into a field to the field", () => {
     expect.hasAssertions();
 
