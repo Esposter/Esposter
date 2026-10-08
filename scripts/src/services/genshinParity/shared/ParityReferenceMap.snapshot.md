@@ -20,7 +20,7 @@ committed.
 | `character-weapons` | `CharacterScreen` | 10.91% | 0.477 | 7.10% | 0.4369 |
 | `character-weapons-tabs` | `CharacterScreen` | 6.94% | 0.499 | 5.03% | 0.3201 |
 | `dialogue-choices-line` | `DialogueTalk` | 10.34% | 0.893 | 9.46% | 0.3660 |
-| `dialogue-choices-replies` | `DialogueTalk` | 28.75% | 0.770 | 22.29% | 0.6161 |
+| `dialogue-choices-replies` | `DialogueTalk` | 20.89% | 0.762 | 13.88% | 0.5405 |
 | `dialogue-choices-speaker` | `DialogueTalk` | 2.63% | 1.000 | 2.68% | 0.1807 |
 | `dialogue-line` | `DialogueTalk` | 15.68% | 0.557 | 9.36% | 0.5065 |
 | `dialogue-paimon-line` | `DialogueTalk` | 7.74% | 0.916 | 6.58% | 0.3145 |
