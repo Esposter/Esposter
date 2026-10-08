@@ -26,9 +26,9 @@ stateDiagram-v2
   Preparation --> Roll
   Roll --> Action: eight dice, one reroll
   Action --> Action: skill, card or switch, in turn
-  Action --> End: both sides end the round
-  End --> Roll: the next round
-  End --> [*]: a side's characters all defeated, or fifteen rounds
+  Action --> EndPhase: both sides end the round
+  EndPhase --> Roll: the next round
+  EndPhase --> [*]: a side's characters all defeated, or fifteen rounds
 ```
 
 ## Scope and order
