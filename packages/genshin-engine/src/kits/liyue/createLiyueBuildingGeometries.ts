@@ -25,9 +25,9 @@ import { getLiyueBays } from "#src/kits/liyue/getLiyueBays";
 import { mergeGeometryParts } from "#src/kits/mergeGeometryParts";
 
 const WALL_SIDES = [-1, 1];
-// A Liyue building as a stone terrace, red columns, beams and lattice, and one to three roof tiers, each upturned at
-// Its eaves and topped with ridge ornaments, merged into one geometry per material. It stands on the origin, its terrace
-// On the ground and its walls rising from the terrace
+// A Liyue building as a stone terrace, red columns, beams and lattice, and one to three roof tiers, each upturned at its
+// Eaves and topped with ridge ornaments, merged into one geometry per material. It stands on the origin, its terrace on
+// The ground and its walls rising from the terrace
 export const createLiyueBuildingGeometries = ({
   depth,
   roofTierCount,
