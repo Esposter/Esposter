@@ -101,7 +101,7 @@ describe(stepKit, () => {
     expect(step({ isSkillPressed: true })).toBe(TRAVELER_KIT.elementalSkill);
     expect(partyMember.skillCooldownSeconds).toBe(TRAVELER_KIT.skillCooldownSeconds);
 
-    for (let index = 0; index < 6; index++) step();
+    for (let index = 0; index < 11; index++) step();
 
     expect(step({ isSkillPressed: true })).toBeUndefined();
   });

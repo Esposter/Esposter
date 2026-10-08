@@ -46,7 +46,8 @@ const SWORD_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, hei
 // Provisional: the burst's and the plunges' targeting reach, taken as the skill's and a sword's until the wiki gives them
 const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
-// Provisional: the strike timings a recording of the Traveler's normal attack clips reads, through `genshin:assets timings`
+// Measured: gcsim v2.47.2 (MIT) traveler/common/anemo attack.go, 60 fps frames,
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/traveler/common/anemo/attack.go
 const createNormalAttack = (
   talentMultiplier: number,
   poiseDamage: number,
@@ -72,57 +73,64 @@ const createNormalAttack = (
 export const TRAVELER_KIT: Kit = {
   burstCooldownSeconds: 15,
   burstEnergyCost: 60,
+  // Measured: gcsim v2.47.2 (MIT) traveler/common/anemo charge.go, 60 fps frames,
+  // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/traveler/common/anemo/charge.go
   chargedAttack: {
     hits: [
       {
         hitArea: SWORD_HIT_AREA,
-        hitmarkSeconds: 0.3,
+        hitmarkSeconds: 14 / 60,
         internalCooldownTag: InternalCooldownTag.NormalAttack,
         poiseDamage: 50.6,
         talentMultiplier: 0.559,
       },
       {
         hitArea: SWORD_HIT_AREA,
-        hitmarkSeconds: 0.45,
+        hitmarkSeconds: 25 / 60,
         internalCooldownTag: InternalCooldownTag.NormalAttack,
         poiseDamage: 50.6,
         talentMultiplier: 0.722,
       },
     ],
-    seconds: 0.8,
+    seconds: 58 / 60,
     targetingArea: SWORD_TARGETING_AREA,
   },
   chargedAttackStamina: 20,
+  // Measured: gcsim v2.47.2 (MIT) traveler/common/anemo burst.go, 60 fps frames,
+  // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/traveler/common/anemo/burst.go
   elementalBurst: {
     hits: [
       {
         gauge: 1,
         hitArea: BURST_HIT_AREA,
-        hitmarkSeconds: 0.5,
+        hitmarkSeconds: 94 / 60,
         internalCooldownTag: InternalCooldownTag.ElementalBurst,
         // Provisional: no source yet gives Gust Surge's poise damage
         poiseDamage: 0,
         talentMultiplier: 0.808,
       },
     ],
-    seconds: 1,
+    seconds: 105 / 60,
     targetingArea: SKILL_TARGETING_AREA,
   },
+  // Measured: gcsim v2.47.2 (MIT) traveler/common/anemo skill.go, 60 fps frames,
+  // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/traveler/common/anemo/skill.go
   elementalSkill: {
     hits: [
       {
         gauge: 1,
         hitArea: PALM_VORTEX_HIT_AREA,
-        hitmarkSeconds: 0.2,
+        hitmarkSeconds: 34 / 60,
         internalCooldownTag: InternalCooldownTag.ElementalSkill,
         // Provisional: no source yet gives Palm Vortex's poise damage
         poiseDamage: 0,
         talentMultiplier: 1.76,
       },
     ],
-    seconds: 0.6,
+    seconds: 61 / 60,
     targetingArea: SKILL_TARGETING_AREA,
   },
+  // Provisional: no source gives the plunges' landing frames, so each hits as its action starts
   highPlunge: {
     hits: [
       { hitArea: HIGH_PLUNGE_HIT_AREA, hitmarkSeconds: 0, isBlunt: true, poiseDamage: 150, talentMultiplier: 1.6 },
@@ -138,11 +146,12 @@ export const TRAVELER_KIT: Kit = {
     targetingArea: SWORD_TARGETING_AREA,
   },
   normalAttacks: [
-    createNormalAttack(0.445, 40.5, 0.15, 0.4),
-    createNormalAttack(0.434, 39.6, 0.15, 0.4),
-    createNormalAttack(0.53, 48.6, 0.15, 0.4),
-    createNormalAttack(0.583, 54, 0.15, 0.4),
-    createNormalAttack(0.708, 64.8, 0.25, 0.6),
+    createNormalAttack(0.445, 40.5, 16 / 60, 24 / 60),
+    // oxlint-disable-next-line oxc/approx-constant -- the second strike's talent multiplier is 43.4%, not log10(e)
+    createNormalAttack(0.434, 39.6, 10 / 60, 21 / 60),
+    createNormalAttack(0.53, 48.6, 19 / 60, 27 / 60),
+    createNormalAttack(0.583, 54, 23 / 60, 38 / 60),
+    createNormalAttack(0.708, 64.8, 14 / 60, 64 / 60),
   ],
   plungeCollision: { hitArea: PLUNGE_COLLISION_HIT_AREA, hitmarkSeconds: 0, poiseDamage: 25, talentMultiplier: 0.639 },
   skillCooldownSeconds: 5,
@@ -150,6 +159,6 @@ export const TRAVELER_KIT: Kit = {
 // The wiki's targeting score weighs an enemy's nearness to the body at 0.7 and its being ahead of it at 0.3
 export const TARGET_DISTANCE_WEIGHT = 0.7;
 export const TARGET_ANGLE_WEIGHT = 0.3;
-// Provisional: an enemy's strike is its ATK at this multiple, which no table gives until a recording of an enemy's attack
-// measures it
+// Provisional: an enemy's strike is its ATK at this multiple, which no table gives
+// Until a recording of an enemy's attack measures it
 export const ENEMY_STRIKE_TALENT_MULTIPLIER = 1;
