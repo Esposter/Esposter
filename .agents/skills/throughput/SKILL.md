@@ -21,3 +21,14 @@ Time and effort are the limit, so every resource the session holds works at once
 - **Mind what a running job reads.** An edit that reloads a server, rebuilds a package or rewrites a data file a run is reading kills or corrupts that run; while it runs, the session works outside what it reads, or the run gets a server or worktree of its own. Each domain names its own locks (the `genshin-parity` skill names the parity page's).
 - **The machine works too, not only the agents.** While a batch is open the GPU runs the compute queue's page lane and the cores its CPU lane, each lane's runner looping by itself; the main session starts a lane's runner the moment its first item lands, and every run reads the free memory first, waiting under about 4 GB rather than swapping (`genshin-parity`'s `references/compute-queue.md`). A long CPU run is made cheap before it starts. A scan over a whole video decodes on the GPU's video engine (`-hwaccel d3d11va`) and scales each frame down before any per-frame filter (`scale=64:-2` ahead of `signalstats`), and it runs at below-normal priority, so the agents' checks and the page lane keep their cores.
 - **A turn ends when nothing is ready**, or every ready unit waits on the user; its report lists what is still running, what lands next, and the one batch of asks.
+
+## The usage reserve
+
+The plan's usage is spent by the session and its agents, while a compute-queue run spends the machine and only needs a cheap `haiku` runner to start it. So the last tenth of either usage window, five-hour or weekly, is kept for the runners, and a session never runs dry with long runs still owed. The `genshin-mods` cache-and-handoff mod watches the windows and puts the reserve into the session's system prompt when one reaches 90% used. From then until the window resets, the session:
+
+1. Starts nothing new that thinks or builds: no implementation agent, no workflow, no proposal.
+2. Sends each running implementation agent its wrap-up: commit what builds, then end on a handoff spec that a `haiku` agent can build cold.
+3. Commits the edit in hand by pathspec and pushes the queue.
+4. Writes every open item down with what it takes to resume it cold: the paths, what is done, the calls already made, the next step. Genshin work goes on its roadmap, a handoff spec into its proposal page, never only the scratchpad. Anything else goes in as a follow-up through the `follow-ups` plugin's capture skill.
+5. Cleans up the page servers, shells, monitors and worktrees nothing still uses.
+6. Keeps the compute queue's runners going, one per lane, until the window resets and the reserve lifts by itself.
