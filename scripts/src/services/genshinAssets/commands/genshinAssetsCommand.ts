@@ -13,6 +13,7 @@ import { explorationCommand } from "#src/services/genshinAssets/commands/explora
 import { extractCommand } from "#src/services/genshinAssets/commands/extractCommand";
 import { fishingCommand } from "#src/services/genshinAssets/commands/fishingCommand";
 import { fitCommand } from "#src/services/genshinAssets/commands/fitCommand";
+import { forgingCommand } from "#src/services/genshinAssets/commands/forgingCommand";
 import { friendshipCommand } from "#src/services/genshinAssets/commands/friendshipCommand";
 import { gadgetsCommand } from "#src/services/genshinAssets/commands/gadgetsCommand";
 import { gatheringCommand } from "#src/services/genshinAssets/commands/gatheringCommand";
@@ -76,6 +77,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     chests: chestsCommand,
     crafting: craftingCommand,
     cooking: cookingCommand,
+    forging: forgingCommand,
     exploration: explorationCommand,
     puzzles: puzzlesCommand,
     gathering: gatheringCommand,
