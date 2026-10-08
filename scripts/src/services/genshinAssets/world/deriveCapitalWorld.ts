@@ -43,9 +43,10 @@ const checkIsInView = ({ position: [x, , z] }: WorldPlacement, { x: centerX, z: 
   Math.abs(x - centerX) <= CAPITAL_VIEW_METRES && Math.abs(z - centerZ) <= CAPITAL_VIEW_METRES;
 // A region's open world block derived from its capital the way Windrise's is laid out, with no hand step: the tiles its
 // View covers and their StreamGen blobs by path hash, the placements in view, each prefab of them rooted at the game
-// Object its name finds in the blocks that name it, and the 2x2 of terrain tiles its capital stands in. Each step reads
-// The game's own data (the asset index, the blobs, the community's path names, the dumped layouts), so a region gives
-// Only its capital's place. Returns the block with the lines that report what did not resolve
+// Object its name finds in the blocks that name it or, failing that, in any block dumped for the derivation (a game
+// Object's block need not index its own mesh or material), and the 2x2 of terrain tiles its capital stands in. Each
+// Step reads the game's own data (the asset index, the blobs, the community's path names, the dumped layouts), so a
+// Region gives only its capital's place. Returns the block with the lines that report what did not resolve
 export const deriveCapitalWorld = async (
   component: DerivedAssetComponent,
   directory: ComponentDirectory,
@@ -100,12 +101,16 @@ export const deriveCapitalWorld = async (
     if (!blocks.includes(block)) blocks.push(block);
     nameBlocksMap.set(indexedName, blocks);
   }
-  await dumpLayouts([...new Set([...nameBlocksMap.values()].flat())]);
+  const dumpedBlocks = [...new Set([...nameBlocksMap.values()].flat())];
+  await dumpLayouts(dumpedBlocks);
   const { objects } = await readSceneLayout(directory.layout);
   const prefabIdRootMap = new Map<number, AssetRoot>();
   const unrootedNames = new Set<string>();
   for (const [prefabId, name] of prefabNames) {
-    const root = resolvePrefabRoot(name, nameBlocksMap.get(name) ?? [], objects);
+    // A name's game object is looked for in the blocks indexing it first, then in every dumped block, since the index may
+    // Name a prefab's mesh or material in a block its game object does not stand in
+    const indexedRoot = resolvePrefabRoot(name, nameBlocksMap.get(name) ?? [], objects);
+    const root = indexedRoot ?? resolvePrefabRoot(name, dumpedBlocks, objects);
     if (root) prefabIdRootMap.set(prefabId, root);
     else unrootedNames.add(name);
   }
