@@ -2,6 +2,7 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Banner } from "#src/models/wish/Banner";
+import type { WishItem } from "#src/models/wish/WishItem";
 import type { WishPity } from "#src/models/wish/WishPity";
 import type { WishResultCell } from "genshin-interface";
 import type { GameText } from "genshin-text";
@@ -16,6 +17,7 @@ import { checkIsWishSetOffered } from "#src/services/wish/checkIsWishSetOffered"
 import { BEGINNERS_WISH_LIMIT, FATE_POINT_LIMIT, TEN_WISH_COUNT } from "#src/services/wish/constants";
 import { getWishCost } from "#src/services/wish/getWishCost";
 import { makeWishes } from "#src/services/wish/makeWishes";
+import { sortWishResults } from "#src/services/wish/sortWishResults";
 import { BannerKind, BannerKinds, GameScreen, ItemCategory, WishScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
@@ -70,18 +72,32 @@ const currencies = computed(() =>
   })),
 );
 const isWeaponWish = computed(() => bannerKind.value === BannerKind.WeaponEvent);
+const banner = computed(() => banners.find(({ kind }) => kind === bannerKind.value));
+const toPoolCells = (items: WishItem[], isFeatured: boolean) =>
+  items.map(({ id, name, rarity }) => ({ id, isFeatured, name, rarity }));
+// What the open banner can draw, the highest rarity first and its featured items first of each rarity
+const pool = computed(() => {
+  if (!banner.value) return [];
+  const { featuredFiveStars, featuredFourStars, fiveStars, fourStars, threeStars } = banner.value;
+  return [
+    ...toPoolCells(featuredFiveStars, true),
+    ...toPoolCells(fiveStars, false),
+    ...toPoolCells(featuredFourStars, true),
+    ...toPoolCells(fourStars, false),
+    ...toPoolCells(threeStars, false),
+  ];
+});
 const results = ref<WishResultCell[]>([]);
 // A set's wishes made: the counters, the wallet and the characters' copies after them, every weapon drawn into the bag,
-// And what each drew shown until a click goes on
+// And what each drew shown until a click goes on, a card each in the order the game shows them
 const wish = (count: number) => {
-  const banner = banners.find(({ kind }) => kind === bannerKind.value);
-  if (!banner) return;
+  if (!banner.value) return;
   const wishes = makeWishes(
     {
-      banner,
+      banner: banner.value,
       count,
       heldCountMap: characterCopyCountMap.value,
-      pity: pityMap.value[banner.kind],
+      pity: pityMap.value[banner.value.kind],
       wallet: wallet.value,
     },
     () => Math.random(),
@@ -96,14 +112,16 @@ const wish = (count: number) => {
       ).inventory;
   characterCopyCountMap.value = wishes.heldCountMap;
   inventory.value = nextInventory;
-  pityMap.value = { ...pityMap.value, [banner.kind]: wishes.pity };
+  pityMap.value = { ...pityMap.value, [banner.value.kind]: wishes.pity };
   wallet.value = wishes.wallet;
-  results.value = wishes.results.map(({ isCapturingRadiance, item: { name, rarity }, wishReturn }) => ({
-    isCapturingRadiance,
-    name,
-    rarity,
-    wishReturn: wishReturn ? toCountText(wishReturn.currency, wishReturn.quantity) : "",
-  }));
+  results.value = sortWishResults(wishes.results).map(
+    ({ isCapturingRadiance, item: { name, rarity }, wishReturn }) => ({
+      isCapturingRadiance,
+      name,
+      rarity,
+      wishReturn: wishReturn ? toCountText(wishReturn.currency, wishReturn.quantity) : "",
+    }),
+  );
 };
 </script>
 
@@ -126,6 +144,7 @@ const wish = (count: number) => {
           : ''
       "
       :path-label="isWeaponWish ? gameText[GameTextKey.WishEpitomizedPath] : ''"
+      :pool
       :results
       :sets
       :title="gameText[GameTextKey.Wish]"
