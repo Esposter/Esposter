@@ -60,7 +60,7 @@ The daily reset is the reader's own 04:00, since the world has no server to keep
 
 ## Drops
 
-A defeated enemy's drops are rolled by `computeEnemyDrops` from its level's band of five levels, the last band holding every level from 90. Its family's base Mora is scaled by the band's share: a random amount in the band's range for a common enemy, and the band's one share for an elite. Character EXP is the band's, for common and elite enemies. Each material drops its whole expected count and one more at the chance of its fraction, the second tier starting at level 40 and the third at 60. A boss drops nothing, since its reward is claimed from its blossom. Enemies give no Adventure EXP: the game awards it only for claiming a boss's reward.
+A defeated enemy's drops are rolled by `computeEnemyDrops` from its level's band of five levels, the last band holding every level from 90. Its family's base Mora is scaled by the band's share: a random amount in the band's range for a common enemy, and the band's one share for an elite. Character EXP is the band's, for common and elite enemies. Each material drops its whole expected count and one more at the chance of its fraction, the second tier starting at level 40 and the third at 60. A boss drops nothing, since its reward is claimed from its blossom. Enemies give no Adventure EXP: the game awards it only for claiming a boss's reward. The Mora and the materials lie where the enemy fell, Mora as one pile and each material piece as a drop of its own, and the player picks them up as the [interaction](/docs/genshin/interaction) page describes.
 
 ## The stand-in
 
@@ -92,7 +92,7 @@ A defeated enemy's drops are rolled by `computeEnemyDrops` from its level's band
 
 - **The tables hold one kind until they are read.** `kinds.json` holds the Hilichurl Fighter as the game's table has it, and `levelCurves.json` its curves' first ten levels, until `genshin:assets enemies` writes them whole from the dump.
 - **The AI's numbers are provisional.** Its ranges, speeds and timings, the leash and the capsule's size are starting points marked in `services/enemy/constants.ts`, each to be measured off a recording or the Hilichurl's own clips.
-- **The seams wait on their consumers.** Nothing lands a hit on an enemy until combat does, a strike lands on no one until the party has health, and a defeat's drops reach no bag. The component emits `strike` and `defeat` for them.
+- **The seams wait on their consumers.** Nothing lands a hit on an enemy until combat does, a strike lands on no one until the party has health, and Character EXP waits on the party's levelling. A defeat's drops are placed and picked up by the world's screen; the component emits `strike` and `defeat` for the rest.
 - **Defeats last the page's life.** A reload of the page brings every enemy back, until a saved game keeps when each was defeated.
 - **Windrise's camp stands where we put it.** Its place and level are ours until the game's own spawns are read.
 

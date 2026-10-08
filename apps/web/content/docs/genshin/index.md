@@ -65,8 +65,8 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Character attributes](/docs/genshin/character-attributes) | the roster, weapons and artifacts from the game's tables, and a character's attributes summed as the game sums them                          |
 | [Character screen](/docs/genshin/character-screen)         | the C screen's frame, its six tabs in the game's words, and the Attributes tab's level and attributes                                        |
 | [Party](/docs/genshin/party)                               | the teams, the one deployed and the member on the field, switched on 1 to 4 past the one second cooldown                                     |
-| [Interaction](/docs/genshin/interaction)                   | the F prompts: what is in reach nearest first, the selection kept by its thing and stepped by the wheel                                      |
-| [Inventory](/docs/genshin/inventory)                       | the bag's nine tabs, its stacks, room and sorts, the wallet's currencies, and its screen on B                                                |
+| [Interaction](/docs/genshin/interaction)                   | the F prompts over the world: the drops and talks in reach nearest first, F picking up or talking, the wheel and a held F's repeat           |
+| [Inventory](/docs/genshin/inventory)                       | the bag's nine tabs, its stacks, room and sorts, the wallet's currencies, its screen on B, and the enemies' materials from the game's table  |
 | [Wish](/docs/genshin/wish)                                 | the standard and beginners' pools, the rates, pity and guarantees, Capturing Radiance, the Epitomized Path and returns, and its screen on F3 |
 | [Dialogue](/docs/genshin/dialogue)                         | a talk's graph of lines and replies, its runner, the dialogue screen with auto-play and skip, and residents                                  |
 | [Quests](/docs/genshin/quests)                             | the quests' kinds, steps and objectives, their progression, the quest screen, navigation and the reader                                      |

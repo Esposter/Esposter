@@ -1,6 +1,6 @@
 ---
 title: Inventory
-description: The game's bag and its currencies as pure state. Nine tabs in the game's order, items stacking to their own limits, weapons and artifacts one each, the bag's room per tab and by kind, each tab sorted as the game sorts it, and a wallet of Mora, Primogems, Genesis Crystals, the two Fates, Starglitter and Stardust. Its screen opens on B, its words the game's own. Nothing is bought with money.
+description: The game's bag and its currencies as pure state. Nine tabs in the game's order, items stacking to their own limits, weapons and artifacts one each, the bag's room per tab and by kind, each tab sorted as the game sorts it, and a wallet of Mora, Primogems, Genesis Crystals, the two Fates, Starglitter and Stardust. The materials the enemies drop are defined from the game's material table and taken into the bag on a pick up. Its screen opens on B, its words the game's own. Nothing is bought with money.
 ---
 
 # Inventory
@@ -27,6 +27,7 @@ flowchart TD
 
 - **The game's nine tabs.** `ItemCategory` is Weapons, Artifacts, Character Development Items, Food, Materials, Gadget, Quest, Precious Items and Furnishings, and `ItemCategories` lists them in the game's order. Each tab's name is the game's own text (`ITEM_WEAPON` to `ITEM_FURNITURE`, through `ItemCategoryGameTextKeyMap`).
 - **An item is its definition.** `ItemDefinition` carries the game's item id, its tab, its name in the reader's language, its rarity, its stack limit and its rank, the place the game gives it in its tab's own order. The bag holds `InventoryItem` entries, each numbered by the bag's own count of what it has taken in, so an entry's id never repeats and runs in the order obtained.
+- **The world's materials are read from the game's table.** `pnpm -C scripts genshin:assets items` reads the material table of the game's dump for every item the drop families name, and writes `packages/genshin-world/src/data/items/materials.json`: each item's id, its material type as the table spells it, the text id of its name, its rank, its rarity and its stack limit. The reader fails for a name no `GameTextKey` holds, so every item's name is the game's own text. `getItemDefinition` builds the definition from a row, its name read from the game text in the reader's language, and `MaterialTypeItemCategoryMap` files the material's type in its tab, the character development items for the enemies' masks.
 - **Stacks fill to their item's own limit.** `addInventoryItem` adds to an item's stack up to its `stackLimit`, or opens a new stack. The limit is the item's own: most stop at 9,999, ores and experience materials hold 99,999, food and the common bosses' drops 2,000, consumable gadgets 99, and reusable gadgets and most quest items one, as the wiki lists them.
 - **Weapons and artifacts never stack.** Each is an entry of its own with its level, a weapon from 1 and an artifact from 0.
 - **The bag's room is the game's.** `ItemCategoryRoomMap` gives the tabs counted on their own their room in pieces: 2,000 weapons, 2,400 artifacts and 2,600 furnishings. Every other tab shares `INVENTORY_KIND_LIMIT`, 2,300 kinds of item counted by kind rather than quantity.
@@ -38,17 +39,22 @@ flowchart TD
 
 ## Key files
 
-| File                                                                      | Role                                                                                |
-| :------------------------------------------------------------------------ | :---------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`       | A pick up taken into the bag: stacks, single pieces, room and what is left          |
-| `packages/genshin-world/src/services/inventory/computeInventoryTab.ts`    | A tab's entries in the order the game shows them                                    |
-| `packages/genshin-world/src/services/inventory/ItemCategoryRoomMap.ts`    | The room of the tabs counted on their own                                           |
-| `packages/genshin-world/src/services/inventory/constants.ts`              | The bag's kinds, the starting levels, the currencies shown, an empty bag and wallet |
-| `packages/genshin-world/src/models/inventory/Currency.ts`                 | The seven currencies the wallet counts                                              |
-| `packages/genshin-world/src/components/Inventory/Screen/Index.vue`        | The bag's screen in the reader's language                                           |
-| `packages/genshin-world/src/components/Inventory/Screen/Index.fixture.ts` | The weapons tab of 1,347 entries, the parity page's and the visual suite's state    |
-| `packages/genshin-interface/src/components/InventoryScreen/Index.vue`     | The bag's tabs, room, sort, grid and counts                                         |
-| `packages/genshin-interface/src/models/ItemCategory.ts`                   | The nine tabs, in the game's order                                                  |
+| File                                                                           | Role                                                                                |
+| :----------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`            | A pick up taken into the bag: stacks, single pieces, room and what is left          |
+| `packages/genshin-world/src/services/inventory/computeInventoryTab.ts`         | A tab's entries in the order the game shows them                                    |
+| `packages/genshin-world/src/services/inventory/ItemCategoryRoomMap.ts`         | The room of the tabs counted on their own                                           |
+| `packages/genshin-world/src/services/inventory/constants.ts`                   | The bag's kinds, the starting levels, the currencies shown, an empty bag and wallet |
+| `packages/genshin-world/src/services/inventory/getItemDefinition.ts`           | An item's definition, read from the materials table in the reader's language        |
+| `packages/genshin-world/src/services/inventory/MaterialTypeItemCategoryMap.ts` | The tab each material type is filed in                                              |
+| `packages/genshin-world/src/models/inventory/MaterialData.ts`                  | A row of the materials table, checked against its schema as the world loads         |
+| `packages/genshin-world/src/data/items/materials.json`                         | The materials the enemies' drops name, as `genshin:assets items` writes them        |
+| `scripts/src/services/genshinAssets/items/writeItems.ts`                       | The reader that writes the materials table from the game's dump                     |
+| `packages/genshin-world/src/models/inventory/Currency.ts`                      | The seven currencies the wallet counts                                              |
+| `packages/genshin-world/src/components/Inventory/Screen/Index.vue`             | The bag's screen in the reader's language                                           |
+| `packages/genshin-world/src/components/Inventory/Screen/Index.fixture.ts`      | The weapons tab of 1,347 entries, the parity page's and the visual suite's state    |
+| `packages/genshin-interface/src/components/InventoryScreen/Index.vue`          | The bag's tabs, room, sort, grid and counts                                         |
+| `packages/genshin-interface/src/models/ItemCategory.ts`                        | The nine tabs, in the game's order                                                  |
 
 ## Notes
 
@@ -62,3 +68,5 @@ flowchart TD
 - [Inventory](https://genshin-impact.fandom.com/wiki/Inventory), Genshin Impact Wiki: the nine categories and what each holds, the stack limits, the 2,300 kinds, the weapons', artifacts' and furnishings' room, each tab's order, and the full-bag hint.
 - [Genesis Crystal](https://genshin-impact.fandom.com/wiki/Genesis_Crystal), Genshin Impact Wiki: the paid currency, bought only by topping up.
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: the inventory on B.
+- [Damaged Mask](https://genshin-impact.fandom.com/wiki/Damaged_Mask), Genshin Impact Wiki: the hilichurls' masks, filed among the Character Development Items.
+- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's dump of the game's data: `MaterialExcelConfigData`, each material's type, name, rank, rarity and stack limit.

@@ -77,8 +77,8 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 | [Character screen](/docs/proposals/genshin/character-screen)         | the screen measured, the character in its middle, Details, the other tabs, levelling and ascending                                |
 | [Menu screens](/docs/proposals/genshin/menu-screens)                 | the Paimon menu, and the Time and Settings screens it opens                                                                       |
 | [Combat](/docs/proposals/genshin/combat)                             | the Lunar reactions, self and immutable auras, reaction limits, reach and attack energy                                           |
-| [Interaction](/docs/proposals/genshin/interaction)                   | the F prompts over the world: the wheel, a held F's repeat, and the reach measured                                                |
-| [Inventory](/docs/proposals/genshin/inventory)                       | the items themselves, the full-bag hint, Fates for Primogems, using and destroying                                                |
+| [Interaction](/docs/proposals/genshin/interaction)                   | the reach, the window's rows and a held F's interval, measured off a recording                                                    |
+| [Inventory](/docs/proposals/genshin/inventory)                       | the full-bag hint, Fates for Primogems, using and destroying                                                                      |
 | [Wish](/docs/proposals/genshin/wish)                                 | the banners' pools, a charted course, Character Event Wish-2 and the history                                                      |
 | [Dialogue](/docs/proposals/genshin/dialogue)                         | F on a resident begins their talk, its words loaded and filled, a resident's open quests offered, and the screen measured         |
 | [Quests](/docs/proposals/genshin/quests)                             | the carried quests served, started and advanced by the world's doings, kept, held V's step and the map's pin, and the commissions |
