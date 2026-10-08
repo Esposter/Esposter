@@ -8,7 +8,7 @@ import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
 
 describe(pushQueue, () => {
-  const { commitFile, getCwd, publish, readSha, switchTo } = setupFixtureRepository();
+  const { commitFile, getCwd, installPreReceiveHook, publish, readSha, switchTo } = setupFixtureRepository();
   const remoteQueueRef = `origin/${QUEUE_BRANCH}`;
   const readRemoteSubjects = () => runGit(["log", "--format=%s", remoteQueueRef], getCwd()).trim().split("\n");
   // The remote queue moves past the base while the session commits on the base: another session's push
@@ -18,18 +18,77 @@ describe(pushQueue, () => {
     switchTo(base);
     return commitFile(localPath, "b");
   };
+  // Another session commits into this checkout while the remote receives the push. A hook runs in the remote, so it
+  // Reaches the checkout by its path, and the variables git hands a hook would point its commands back at the remote
+  const landCommit = (path: string, content: string) => {
+    installPreReceiveHook(`unset GIT_DIR GIT_QUARANTINE_PATH GIT_OBJECT_DIRECTORY GIT_ALTERNATE_OBJECT_DIRECTORIES
+printf '%s' '${content}' > ../clone/${path}
+git -C ../clone add ${path}
+git -C ../clone commit --quiet --message ${path}`);
+  };
 
-  test("pushes over another session's work mid-edit, leaving the tree and the branch as they were", () => {
+  test("pushes over another session's work mid-edit, syncing the branch and keeping that work", () => {
     expect.hasAssertions();
 
-    const local = setupMovedRemote("a", "b");
+    setupMovedRemote("a", "b");
     writeFileSync(join(getCwd(), ".gitignore"), "a");
 
     expect(pushQueue(getCwd())).toBe(QueuePushOutcome.Pushed);
     expect(readRemoteSubjects().slice(0, 2)).toStrictEqual(["b", "a"]);
-    expect(readSha("HEAD")).toBe(local);
+    expect(readSha("HEAD")).toBe(readSha(remoteQueueRef));
     expect(readFileSync(join(getCwd(), ".gitignore"), "utf8")).toBe("a");
     expect(runGit(["worktree", "list"], getCwd()).trim().split("\n")).toHaveLength(1);
+  });
+
+  test("carries a commit that landed on the branch while the push ran onto the synced branch", () => {
+    expect.hasAssertions();
+
+    setupMovedRemote("a", "b");
+    writeFileSync(join(getCwd(), ".gitignore"), "a");
+    landCommit("landed", "landed");
+
+    expect(pushQueue(getCwd())).toBe(QueuePushOutcome.Pushed);
+    expect(readSha("HEAD~1")).toBe(readSha(remoteQueueRef));
+    expect(runGit(["log", "--format=%s", "-1"], getCwd())).toBe("landed\n");
+    expect(readFileSync(join(getCwd(), ".gitignore"), "utf8")).toBe("a");
+  });
+
+  test("carries a commit that landed while a push ahead of the remote ran", () => {
+    expect.hasAssertions();
+
+    publish(QUEUE_BRANCH, readSha("HEAD"));
+    const local = commitFile("b", "b");
+    landCommit("landed", "landed");
+
+    expect(pushQueue(getCwd())).toBe(QueuePushOutcome.Pushed);
+    expect(readSha(remoteQueueRef)).toBe(local);
+    expect(readSha("HEAD~1")).toBe(local);
+    expect(runGit(["log", "--format=%s", "-1"], getCwd())).toBe("landed\n");
+  });
+
+  test("refuses to sync over an uncommitted file the remote changed, leaving the branch where it was", () => {
+    expect.hasAssertions();
+
+    const local = setupMovedRemote(".gitignore", "b");
+    writeFileSync(join(getCwd(), ".gitignore"), "dirty");
+
+    expect(pushQueue(getCwd())).toBe(QueuePushOutcome.Pushed);
+    expect(readRemoteSubjects().slice(0, 2)).toStrictEqual(["b", ".gitignore"]);
+    expect(readSha("HEAD")).toBe(local);
+    expect(readFileSync(join(getCwd(), ".gitignore"), "utf8")).toBe("dirty");
+  });
+
+  test("stops carrying at a landed commit that does not apply, aborting it and keeping the tree clear", () => {
+    expect.hasAssertions();
+
+    setupMovedRemote("a", "b");
+    writeFileSync(join(getCwd(), ".gitignore"), "dirty");
+    // The remote's `a` and the landed one both add the file, so the pick conflicts
+    landCommit("a", "x");
+
+    expect(pushQueue(getCwd())).toBe(QueuePushOutcome.Pushed);
+    expect(readSha("HEAD")).toBe(readSha(remoteQueueRef));
+    expect(runGit(["status", "--porcelain"], getCwd())).toBe(" M .gitignore\n");
   });
 
   test("replays the branch itself over a clean tree", () => {
