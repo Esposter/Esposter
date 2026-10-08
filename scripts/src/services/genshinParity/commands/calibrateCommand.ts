@@ -85,8 +85,13 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
       args.darkening === undefined
         ? ((typeof timeOfDay === "string" ? lights[timeOfDay]?.heightDarkening : undefined) ?? 0)
         : Number(args.darkening);
-    if (!Number.isFinite(heightDarkening))
-      throw new InvalidOperationError(Operation.Read, "darkening", `${args.darkening} is not a number`);
+    // A negative rate is light growing with height, which no darkening draws
+    if (!Number.isFinite(heightDarkening) || heightDarkening < 0)
+      throw new InvalidOperationError(
+        Operation.Read,
+        "darkening",
+        `${args.darkening ?? heightDarkening} is not a rate of none or more`,
+      );
     const { count, deviation, light, residual } = await solveReferenceStoneLight(
       args.reference,
       args.witness,
