@@ -10,7 +10,7 @@ import {
   ELEMENTAL_ATTRIBUTE_GAME_TEXT_KEYS,
 } from "#src/services/character/constants";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
-import { GameTextKey } from "genshin-text";
+import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
   character: Character;
@@ -22,8 +22,8 @@ interface Props {
 
 const { character, gameText, maxStamina } = defineProps<Props>();
 const levelText = computed(() =>
-  gameText[GameTextKey.LevelFormat].replace(
-    "{0}",
+  fillGameTextValues(
+    gameText[GameTextKey.LevelFormat],
     `${character.level}/${CharacterDataMap.get(character.id)?.ascensionPhases[character.ascension]?.maxLevel ?? ""}`,
   ),
 );
