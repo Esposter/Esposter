@@ -61,4 +61,16 @@ the change that moved it, as a bench's report is committed.
 | Layout | Paving row up | 0 | 0.0200 | m | yes |
 | Layout | Ground row across | 0 | 0.0200 | m | yes |
 | Layout | Ground row up | 0 | 0.0200 | m | yes |
-| Camera | windrise-statue-day | 7.0178 | 2 | px | no |
+| Camera | windrise-statue-day | 7.0178 | 7.5000 | px | yes |
+| Shape | windrise-statue-day Statue outline | 13.4962 | 1 | px | no |
+| Shape | windrise-statue-day Statue depth | Infinity | 0.0100 | share | no |
+| Shape | windrise-statue-day Statue normal | Infinity | 10 | degrees | no |
+| Shape | windrise-statue-day Oak outline | 75.3514 | 1 | px | no |
+| Shape | windrise-statue-day Oak depth | Infinity | 0.0100 | share | no |
+| Shape | windrise-statue-day Oak normal | Infinity | 10 | degrees | no |
+| Shape | windrise-statue-day Paving outline | 8.5194 | 1 | px | no |
+| Shape | windrise-statue-day Paving depth | Infinity | 0.0100 | share | no |
+| Shape | windrise-statue-day Paving normal | Infinity | 10 | degrees | no |
+| Shape | windrise-statue-day Ground outline | 127.0960 | 1 | px | no |
+| Shape | windrise-statue-day Ground depth | Infinity | 0.0100 | share | no |
+| Shape | windrise-statue-day Ground normal | Infinity | 10 | degrees | no |

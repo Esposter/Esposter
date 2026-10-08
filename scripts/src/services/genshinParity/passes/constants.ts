@@ -21,9 +21,9 @@ export const PARITY_PASS_ORDER: readonly ParityPass[] = [
 export const PART_GATE_METRES = 0.02;
 // The gate a place on the frame is held to, in a reference's own pixels, a 1080-line recording's edges softening over
 // About two: the layout pass's each fitted part from the export it stands for, both projected at the reference's
-// Camera; the camera pass's landmarks, root mean square, from where the scene's camera projects them; and the light
-// Pass's shadows' edges from the reference's, on average both ways; and the glow's structure, the reference's frame
-// Moved across by the same
+// Camera; the camera pass's landmarks, root mean square, from where the scene's camera projects them (a reference's own
+// Pose bar where it sets one, `getPoseBar`); and the light pass's shadows' edges from the reference's, on average both
+// Ways; and the glow's structure, the reference's frame moved across by the same
 export const FRAME_GATE_PIXELS = 2;
 // The width the shape pass draws ours and the exports' at, wide enough that a stand-in's outline a pixel off shows,
 // And its gates: the outlines a pixel apart on average, which the exports' own edges rasterise within, the depth a
