@@ -4,6 +4,14 @@ import type { ParityReference } from "#src/models/genshinParity/shared/ParityRef
 export const ParityReferenceMap: Record<string, ParityReference> = {
   // The English PC client's notice, from the 2023 recording of its launch at 1080p, in the current build's wording
   "health-notice": { capture: "yt-sQNqMfmfkZU.mp4", screen: "SplashHealthNotice", seconds: 8 },
+  // Mainland China's notice in its own words, from the public recording of an older build's launch its splash is taken
+  // From, held from about 7 to 12 seconds
+  "health-notice-mainland": {
+    capture: "bili-av532052219.mp4",
+    props: { language: "ChineseSimplified" },
+    screen: "SplashHealthNotice",
+    seconds: 9.5,
+  },
   "loading-startup": { screen: "LoadingStartup", wikiTitle: "File:Loading Screen Startup.png" },
   // The title at dawn, day and night: frames of public recordings of older builds of the PC client idling on it with no
   // Interface, drawn at the current build's camera, each at the moment of the glide's loop its towers and walkway stand at
