@@ -48,5 +48,5 @@ flowchart TD
 
 ## Sources
 
-- [Teleport Waypoint](https://genshin-impact.fandom.com/wiki/Teleport_Waypoint), Genshin Impact Wiki: fast travel by selecting a waypoint on the map, with statues and domains acting as waypoints too.
-- [Map](https://genshin-impact.fandom.com/wiki/Map), Genshin Impact Wiki: the map on M, and teleporting from it.
+- [Teleport Waypoint](https://genshin-impact.fandom.com/wiki/Teleport_Waypoint), Genshin Impact Wiki: a waypoint chosen on the map as a fast-travel target, statues and domains counting as waypoints too.
+- [Map](https://genshin-impact.fandom.com/wiki/Map), Genshin Impact Wiki: the map opened on M and a teleport chosen from it.

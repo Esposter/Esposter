@@ -49,5 +49,5 @@ flowchart TD
 ## Sources
 
 - [Paimon Menu](https://genshin-impact.fandom.com/wiki/Paimon_Menu), Genshin Impact Wiki: the Paimon button in the top left corner opening the menu, as Escape does.
-- [Map](https://genshin-impact.fandom.com/wiki/Map), Genshin Impact Wiki: the minimap in the top left, opening the map.
+- [Map](https://genshin-impact.fandom.com/wiki/Map), Genshin Impact Wiki: the top-left minimap, which opens the map.
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: Hide UI on the backslash.

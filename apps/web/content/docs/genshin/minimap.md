@@ -5,7 +5,7 @@ description: The HUD's corner map, as the game keeps one in play. The map's one 
 
 # Minimap
 
-While a player is in the world, the game keeps a small round map in the top left of its heads-up display, so they know where they stand without opening the full [map](/docs/genshin/map). The world's minimap is that map's own drawing, viewed close round the character.
+In the world, the game keeps a small round map in the top left of its heads-up display, so they know where they stand without opening the full [map](/docs/genshin/map). The world's minimap is that map's own drawing, viewed close round the character.
 
 ## How it works
 

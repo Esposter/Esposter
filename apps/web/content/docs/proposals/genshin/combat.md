@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Combat
 
-This page builds on [combat](/docs/genshin/combat) as built: auras, the reactions in the game's priority, the damage formula, internal cooldown, shields and energy. What it leaves out falls in two kinds. Some are rules the game added later or keeps for special targets. The rest are what reaches past one target, which only the world that places targets can resolve. Each is built the way the built rules were, as pure functions in `genshin-world`'s `services/combat`, each held to a worked example from its source.
+This page builds on [combat](/docs/genshin/combat) as built: auras, reactions by the game's priority, damage, internal cooldown, shields and energy. What it leaves out falls in two kinds. Some are rules the game added later or keeps for special targets. The rest are what reaches past one target, which only the world that places targets can resolve. Each is built the way the built rules were, as pure functions in `genshin-world`'s `services/combat`, each held to a worked example from its source.
 
 ## Decisions
 

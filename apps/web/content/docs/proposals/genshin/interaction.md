@@ -40,4 +40,4 @@ This page builds on [interaction](/docs/genshin/interaction), whose selector row
 
 ## Sources
 
-- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: Pick Up and Interact on F, X on an Xbox controller and Square on a PlayStation one.
+- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: the default bindings for Pick Up and Interact, F on a keyboard, X on an Xbox pad and Square on a PlayStation's.

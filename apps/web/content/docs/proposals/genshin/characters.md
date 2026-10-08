@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Characters
 
-This page builds on [characters](/docs/genshin/characters) as built: a character's official model pack is read from the app's Blob Storage by the engine's own PMX reader and drawn at rest on the toon ramp, at the origin of whatever holds it. It also builds on the [character controller](/docs/genshin/character-controller), whose body a character is drawn on. What is left is the character's place, its motion, its scale and where its terms are shown.
+This page builds on [characters](/docs/genshin/characters) as built: the engine reads a character's official model pack from the app's Blob Storage with its own PMX reader and draws it at rest on the toon ramp, at the origin of whatever holds it. It also builds on the [character controller](/docs/genshin/character-controller), whose body a character is drawn on. What is left is the character's place, its motion, its scale and where its terms are shown.
 
 ## Decisions
 
@@ -45,4 +45,4 @@ flowchart LR
 
 ## Sources
 
-- The terms bundled with each official model, read secondhand so far from fan sites reproducing them (3dnchu.com, fnoji.com); each pack's own terms file is read when it is uploaded.
+- Each official model's bundled terms, as the [characters](/docs/genshin/characters) page cites them.

@@ -55,7 +55,7 @@ A new character is `createCharacter`: level 1 in its first phase, with the weapo
 
 ## Sources
 
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump of the game's tables: `AvatarExcelConfigData`, `AvatarCurveExcelConfigData`, `AvatarPromoteExcelConfigData`, `AvatarSkillDepotExcelConfigData`, `AvatarSkillExcelConfigData`, `FetterInfoExcelConfigData`, `WeaponExcelConfigData`, `WeaponCurveExcelConfigData`, `WeaponPromoteExcelConfigData`, `ReliquaryLevelExcelConfigData`, `ReliquarySetExcelConfigData` and `EquipAffixExcelConfigData`, the tables the run reads.
+- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), a dump of the game's tables the community makes each patch: `AvatarExcelConfigData`, `AvatarCurveExcelConfigData`, `AvatarPromoteExcelConfigData`, `AvatarSkillDepotExcelConfigData`, `AvatarSkillExcelConfigData`, `FetterInfoExcelConfigData`, `WeaponExcelConfigData`, `WeaponCurveExcelConfigData`, `WeaponPromoteExcelConfigData`, `ReliquaryLevelExcelConfigData`, `ReliquarySetExcelConfigData` and `EquipAffixExcelConfigData`, the tables the run reads.
 - [Character](https://genshin-impact.fandom.com/wiki/Character), Genshin Impact Wiki: the ascension phases, their level caps and the bonus attribute from the second.
 - [Traveler](https://genshin-impact.fandom.com/wiki/Traveler), Genshin Impact Wiki: the Traveler's base HP, ATK and DEF at each level and phase, which the tables reproduce.
 - [Attributes](https://genshin-impact.fandom.com/wiki/Attributes), Genshin Impact Wiki: the basic and advanced attributes and the damage bonuses.

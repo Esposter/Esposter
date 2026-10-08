@@ -10,7 +10,7 @@ The [follow camera](/docs/genshin/follow-camera) stands behind the character tod
 
 ## Decisions
 
-- **The camera's pose is solved off recordings.** The pivot's height, the field of view, the pitch's limits, the wheel's nearest and furthest distances and the unit of the default distance setting are solved by `pose` off recordings of the game in play, as the [recreation passes](/docs/proposals/genshin/recreation-passes)' camera pass solves any recording's camera from the exports' landmarks, each reading kept in the camera's reference. How quickly the eye is pulled in and how it eases back out once the way clears are read off a recording of the camera passing a wall.
+- **The camera's pose is solved off recordings.** The field of view, the pivot's height, the limits of the pitch, the wheel's nearest and furthest distances and the unit of the default distance setting are solved by `pose` off recordings of the game in play, as the [recreation passes](/docs/proposals/genshin/recreation-passes)' camera pass solves any recording's camera from the exports' landmarks, each reading kept in the camera's reference. How quickly the eye is pulled in and how it eases back out once the way clears are read off a recording of the camera passing a wall.
 - **The game's settings for this camera.** Its horizontal and vertical sensitivity, its default distance between 4.5 and 6.0, which the camera returns to after a zoom, after combat and after a teleport, and whether its pitch follows the slope as the character climbs or descends, are read from the [menu screens](/docs/proposals/genshin/menu-screens)' Settings, each with the game's range and default.
 
 ## How it works
@@ -32,7 +32,7 @@ flowchart TD
 
 **This adds, in order:**
 
-1. **The references.** Recordings of the game's camera in play are found, published ones first, each with a turn, a zoom through the wheel's range and a pass by a wall, and solved.
+1. **The references.** Recordings that show the game's camera in play are found, published ones first, each with a turn, a zoom through the wheel's range and a pass by a wall, and solved.
 2. **The settings**, once the Settings screen holds them.
 
 The camera is approved by its own measure: at each reference's state, the eye and the look solved from the recording match the camera's within that solve's noise.
@@ -58,7 +58,7 @@ packages/genshin-world/src/components/World/Character/Camera.reference.ts
 
 ## Sources
 
-- [Settings](https://genshin-impact.fandom.com/wiki/Settings), Genshin Impact Wiki: the camera's horizontal and vertical sensitivity from 1 to 5, the default distance from 4.5 to 6.0 restored after a zoom, combat or a teleport, and the pitch that follows slopes.
+- [Settings](https://genshin-impact.fandom.com/wiki/Settings), Genshin Impact Wiki: the camera's horizontal and vertical sensitivity, each 1 to 5, and its default distance, 4.5 to 6.0, which a zoom, combat or a teleport resets; its pitch can follow slopes.
 - [Photo Mode](https://genshin-impact.fandom.com/wiki/Photo_Mode), Genshin Impact Wiki: photo mode's camera moved round the character by sliders, one horizontal and one vertical, and a zoom.
 
 ## Open questions

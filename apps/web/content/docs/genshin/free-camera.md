@@ -64,7 +64,7 @@ The camera is never held under the ground or the water's surface: after each ste
 
 ## Notes
 
-- **Photo mode flies anywhere.** The game's photo mode moves its camera round the character within a range; how far this one may go is open on the [follow camera](/docs/proposals/genshin/follow-camera)'s proposal.
+- **Photo mode flies anywhere.** The game's photo mode keeps its camera within a range of the character; how far this one may go is open on the [follow camera](/docs/proposals/genshin/follow-camera)'s proposal.
 
 ## Sources
 

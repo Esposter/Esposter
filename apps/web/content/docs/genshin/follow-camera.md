@@ -40,7 +40,7 @@ The arm is cleared each frame before the eye is placed. A sphere of the camera's
 
 A click on the world locks the pointer, as the game hides its cursor in play, and Left Alt lets it go to show the cursor, as the game's Show Cursor does; a lock let go that way does not open the Paimon menu, which a lock lost to `Escape` does ([screens](/docs/genshin/screens)). The next click takes the pointer again.
 
-Photo mode, chosen from the Paimon menu, holds the body where it stands and hands the view to the [free camera](/docs/genshin/free-camera), which flies from wherever the follow camera left it. The world's clock runs on as the game's does in photo mode. Leaving photo mode gives the view back to the follow camera, behind the character as it was.
+Photo mode, chosen from the Paimon menu, holds the body where it stands and hands the view to the [free camera](/docs/genshin/free-camera), which picks up the view where the follow camera left it. The world's clock runs on as the game's does in photo mode. Leaving photo mode gives the view back to the follow camera, behind the character as it was.
 
 ## The numbers
 
@@ -53,7 +53,7 @@ The pivot's height, the field of view, the pitch's limits, the default, nearest 
 | `packages/genshin-engine/src/camera/createFollowCamera.ts`        | the orbit: look, zoom, reset, and the eye pulled in along the arm        |
 | `packages/genshin-engine/src/camera/constants.ts`                 | the camera's provisional numbers                                         |
 | `packages/genshin-engine/src/collision/createLandmarkCollider.ts` | the sphere cast along the arm                                            |
-| `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`   | the share of a step a frame has come into                                |
+| `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`   | how far into the next step a frame has come                              |
 | `packages/genshin-world/src/components/World/Character/Index.vue` | runs the camera each frame on the blended body, and locks the pointer    |
 | `packages/genshin-world/src/components/World/Screen/Index.vue`    | shows the cursor on Left Alt, and swaps in the free camera in photo mode |
 
@@ -63,4 +63,4 @@ The pivot's height, the field of view, the pitch's limits, the default, nearest 
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: the camera turned by the mouse and the right stick, its reset, and Show Cursor on Left Alt.
 - [Photo Mode](https://genshin-impact.fandom.com/wiki/Photo_Mode), Genshin Impact Wiki: photo mode reached from the Paimon menu.
 - [Time](https://genshin-impact.fandom.com/wiki/Time), Genshin Impact Wiki: the clock running in photo mode.
-- [Fix your timestep!](https://gafferongames.com/post/fix_your_timestep/), Glenn Fiedler: the state shown blended between the last two steps by the accumulator's remainder over the step.
+- [Fix your timestep!](https://gafferongames.com/post/fix_your_timestep/), Glenn Fiedler: the shown state as a blend of the two latest steps, weighted by what the accumulator has left over.

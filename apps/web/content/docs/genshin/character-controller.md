@@ -32,7 +32,7 @@ sequenceDiagram
 
 - **Fixed steps, a press kept until one reads it.** The body moves in steps of a sixtieth of a second, so a run covers the same ground at any frame rate. A frame's presses (jump, dash, drop, attack, the walk switch) are held by the controller until the next step reads them, so a press in a frame that runs no step, on a display faster than the step, is never lost; the step that reads them lets them go.
 - **The move is relative to the camera.** `W` moves along the camera's yaw over the ground and `A` and `D` across it, as the game's controls bind them ([controls](/docs/genshin/controls)). On a wall `W` climbs up and `A` and `D` climb across, whatever the camera faces.
-- **The body moves in the world's own coordinates.** It reads the terrain's height function directly, so the [floating origin](/docs/genshin/terrain) never has to move it: what is drawn on it stands in the world group the origin offsets, at the body's place, and the camera is placed in the scene's coordinates by the origin. Its frame callback runs at `CAMERA_FRAME_PRIORITY`, ahead of the origin's shift whatever order it mounts in.
+- **The body moves in the world's own coordinates.** It reads the terrain's height function directly, so the [floating origin](/docs/genshin/terrain) never has to move it: what is drawn on it is placed in the world group, which the origin offsets, at the body's place, and the camera is placed in the scene's coordinates by the origin. Its frame callback runs at `CAMERA_FRAME_PRIORITY`, ahead of the origin's shift whatever order it mounts in.
 
 ## The states
 
