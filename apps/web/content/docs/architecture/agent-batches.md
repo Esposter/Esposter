@@ -20,9 +20,14 @@ flowchart TD
   CI -->|"red"| F
   F --> Q
   W -->|"a measure owed off the game"| CQ["Compute queue — the roadmap"]
-  CQ -->|"a few at a time"| R["Runners — run the command,<br/>read the measure"]
-  R -->|"meets its bar"| Q
-  R -->|"misses"| M
+  CQ -->|"[page] lane"| RP["One page runner — the GPU,<br/>its own worktree"]
+  CQ -->|"[cpu] lane"| RC["A few CPU runners —<br/>the shared checkout"]
+  RP -->|"meets its bar"| Q
+  RC -->|"meets its bar"| Q
+  RP -->|"misses"| M
+  RC -->|"misses"| M
+  RP -->|"next item"| CQ
+  RC -->|"next item"| CQ
   M -->|"what only the user can settle,<br/>asked in one batch"| U["The user"]
   U --> M
   M -->|"the reports' open work"| W
@@ -34,7 +39,8 @@ flowchart TD
 - **Package checks only inside the wave.** An agent typechecks, lints, tests and builds the packages it touched, which takes seconds and keeps the user's `nuxt dev` running, since the app loads every package from its `dist` and a broken package build stops the page. Nothing runs against the app itself: its suite and typecheck take minutes, and many agents running them at once cost more than the work they guard. When every report is in, one agent runs the batch's remaining checks once and fixes what they find, and CI on the push is the backstop.
 - **Calls are settled before the wave, or by the agent that owns them.** A unit whose design needs judgement goes to an Opus agent trusted to decide inside it, writing each decision into its page. A unit with every call made goes to a Haiku agent. Only taste, money, licensing and the user's eyes and ears come back as questions, and they are asked in one batch.
 - **Logic now, measures later.** Rules, state, navigation and shortcuts are built in the wave, as close to the game as public sources allow. A value that must be measured off the game gets a provisional constant and a [compute queue](/docs/genshin/roadmap) item. The item gives the exact command, its inputs and outputs, and the measure with its bar. A runner on the cheapest model takes it, and a miss comes back to the main session as a call, never as a second run with a guessed value.
-- **No loop runs it.** Each agent's completion is the event that drives the next step: a report is read, its branch of work lands, its open work becomes the next wave's units. Nothing is scheduled and nothing polls.
+- **Every resource busy, none thrashing.** While the batch is open the main session keeps three things working at once: the agents on their units, the GPU on the queue's page lane, and the cores on its CPU lane. The page lane has one runner, in one reused runner worktree, so the wave's edits never reload the page under a run; the CPU lane runs a few runners in the shared checkout. Before each run a runner reads the free memory and waits under about 4 GB, since a machine that swaps slows every run more than one that waits ([the compute queue](/docs/genshin/roadmap)).
+- **No loop runs it.** Each agent's completion is the event that drives the next step: a report is read, its work lands, its open work becomes the next wave's units, and an item it queued starts a runner if its lane has none. A runner loops through its lane by itself until the lane is empty. Nothing is scheduled and nothing polls.
 
 ## How a batch stops
 
