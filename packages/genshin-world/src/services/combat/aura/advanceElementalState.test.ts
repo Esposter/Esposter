@@ -11,12 +11,13 @@ import { FREEZE_DECAY_RATE } from "#src/services/combat/aura/constants";
 import { createElementalState } from "#src/services/combat/aura/createElementalState";
 import { describe, expect, test } from "vitest";
 
+const createState = (auras: [AuraType, Aura][]): ElementalState => ({
+  ...createElementalState(),
+  auras: new Map(auras),
+});
+
 describe(advanceElementalState, () => {
   const stepSeconds = 1 / 60;
-  const createState = (auras: [AuraType, Aura][]): ElementalState => ({
-    ...createElementalState(),
-    auras: new Map(auras),
-  });
   const run = (state: ElementalState, seconds: number): Reaction[] => {
     const reactions: Reaction[] = [];
     for (let step = 0; step < Math.round(seconds / stepSeconds); step++)

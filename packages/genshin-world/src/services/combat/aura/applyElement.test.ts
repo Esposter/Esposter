@@ -9,12 +9,12 @@ import { FREEZE_DECAY_RATE } from "#src/services/combat/aura/constants";
 import { createElementalState } from "#src/services/combat/aura/createElementalState";
 import { describe, expect, test } from "vitest";
 
-describe(applyElement, () => {
-  const createState = (auras: [AuraType, Aura][]): ElementalState => ({
-    ...createElementalState(),
-    auras: new Map(auras),
-  });
+const createState = (auras: [AuraType, Aura][]): ElementalState => ({
+  ...createElementalState(),
+  auras: new Map(auras),
+});
 
+describe(applyElement, () => {
   test("taxes an attack's gauge to four fifths as an aura, decaying over 2.5 seconds a unit plus 7", () => {
     expect.hasAssertions();
 
