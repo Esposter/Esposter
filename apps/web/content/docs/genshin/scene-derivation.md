@@ -107,18 +107,25 @@ Windrise is the first open-world region run through the method, and its layout p
 
 Every solve is cross-checked on more than one recording. Windrise's ground and placements are the same on the older builds' recordings, so a 2021 or 2022 recording solves a camera and calibrates a light as well as the current build's, and a field of view or an hour read off one recording is trusted only once another agrees. What is worked on next is chosen by what the solves and `rank` price, never by how far a stand-in looks from the game: the fitted ground stays as it is until a ranking prices a finer one.
 
+## Each region's ground
+
+A region's base ground is fitted by `fitRegionGround`, the same fit Windrise's ground goes through. It fits Gaussian hills to the game's terrain tiles of the region's component, round the region's capital: the place its `RegionCapitalMap` landmark stands at, or for Snezhnaya the place set by hand. The hills are fitted only on the catalogue's outlines of the region's areas, so no region's ground runs into another's. A region the catalogue gives no outline, Windrise, is fitted over its disc instead.
+
+Every region is in the world's axes round the oak's foot, so its heights are read against Windrise's origin rather than its own component's. The fit writes `<region>/base-ground.json` beside the region's plateau in `<region>/ground.json`, and prints the error its hills leave. That error is the bar every region's ground is held to: its RMS within 60 metres of the centre, where Windrise's fit leaves 0.62 metres. Each region's fit is an entry in `DerivedAssetFitMap` that runs the fit with its centre; none is written yet, so `fit <region>` has nothing to run.
+
 ## Key files
 
-| File                                                                    | Role                                                                        |
-| :---------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts` | Each component's roots, spawns and landmarks, grown to its shader and grade |
-| `scripts/src/services/genshinAssets/fit/fitLoginScene.ts`               | The login screen's fits, each printing the error it leaves on screen        |
-| `scripts/src/services/genshinAssets/fit/fitAlbedo.ts`                   | A part's one albedo, the median of its export's diffuse textures            |
-| `scripts/src/services/genshinParity/reference/compareScreen.ts`         | Scores each layer, and the detail and perceptual scores                     |
-| `scripts/src/services/genshinParity/witness/rankReferenceGains.ts`      | The loss table: every term's ceiling, ordering the work inside a pass       |
-| `packages/genshin-world/parity/screens.ts`                              | The page the witness render is mounted beside                               |
-| `packages/genshin-world/src/components/Login/Scene/Index.vue`           | The first scene run through the method                                      |
-| `packages/genshin-engine/src/nodes/createToonMaterial.ts`               | The environment material the witness render judges                          |
+| File                                                                    | Role                                                                           |
+| :---------------------------------------------------------------------- | :----------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts` | Each component's roots, spawns and landmarks, grown to its shader and grade    |
+| `scripts/src/services/genshinAssets/fit/fitRegionGround.ts`             | Each region's base ground: hills fitted round its capital, inside its outlines |
+| `scripts/src/services/genshinAssets/fit/fitLoginScene.ts`               | The login screen's fits, each printing the error it leaves on screen           |
+| `scripts/src/services/genshinAssets/fit/fitAlbedo.ts`                   | A part's one albedo, the median of its export's diffuse textures               |
+| `scripts/src/services/genshinParity/reference/compareScreen.ts`         | Scores each layer, and the detail and perceptual scores                        |
+| `scripts/src/services/genshinParity/witness/rankReferenceGains.ts`      | The loss table: every term's ceiling, ordering the work inside a pass          |
+| `packages/genshin-world/parity/screens.ts`                              | The page the witness render is mounted beside                                  |
+| `packages/genshin-world/src/components/Login/Scene/Index.vue`           | The first scene run through the method                                         |
+| `packages/genshin-engine/src/nodes/createToonMaterial.ts`               | The environment material the witness render judges                             |
 
 ## Notes
 
