@@ -9,6 +9,7 @@ The world screen's camera is a free camera: the player flies it over Windrise an
 
 ```mermaid
 sequenceDiagram
+  participant WS as World screen (TresJS beforeLoop)
   participant F as Frame (TresJS onBeforeRender)
   participant FC as World free camera
   participant IN as input
@@ -16,9 +17,9 @@ sequenceDiagram
   participant CAM as camera
   participant CL as collision
   participant FO as floating origin
+  WS->>IN: readInput(delta), the frame's move, look and actions
   F->>FC: the frame begins, registered before the origin's shift
-  FC->>IN: readInput(delta), the frame's move and look
-  FC->>CAM: look(input), once a frame
+  FC->>CAM: look(input), once a frame, unless a screen holds the world
   FC->>SIM: advance(delta), in steps of a sixtieth of a second
   loop at most five steps a frame
     SIM->>CAM: step(input, step)
@@ -36,7 +37,7 @@ The order is the reason for the registration. The floating origin reads the came
 - **Mouse**: a click on the canvas locks the pointer, and while it is locked the pointer turns the look.
 - **Gamepad**: the first connected gamepad's left stick moves over the ground, and its right stick turns the look at a rate of 2.5 radians a second. Both have a deadzone at the stick's centre.
 
-The camera's motion is per second, so a key held for the same time moves it the same distance at any frame rate. The look is not: the mouse turns it by a fixed angle for each pixel the pointer moves, and only the gamepad's right stick turns it per second. The input is read once a frame: its look turns the camera once, before the frame's steps, and the steps of that frame all use its move, so no pointer movement is lost or repeated at any frame rate. Losing focus clears the keys held, since their releases never reach the page. The input's listeners and the canvas's click are released when the component unmounts, so a remount does not stack them.
+The camera's motion is per second, so a key held for the same time moves it the same distance at any frame rate. The look is not: the mouse turns it by a fixed angle for each pixel the pointer moves, and only the gamepad's right stick turns it per second. The world screen reads the input once a frame, ahead of every frame callback, and hands the camera the state it read: its look turns the camera once, before the frame's steps, and the steps of that frame all use its move, so no pointer movement is lost or repeated at any frame rate. While a screen holds the world ([screens](/docs/genshin/screens)), the camera neither looks nor steps. Losing focus clears the keys held, since their releases never reach the page. The input's listeners and the canvas's click are released when the component holding them unmounts, so a remount does not stack them.
 
 ## The motion
 
@@ -57,7 +58,7 @@ The camera is never held under the ground or the water's surface: after each ste
 | `packages/genshin-engine/src/camera/createFreeCamera.ts`           | the flight: look, move by height, and the clamp above the ground                            |
 | `packages/genshin-engine/src/collision/createGroundQuery.ts`       | the ground's height and normal at a point, and the water's level                            |
 | `packages/genshin-world/src/components/World/FreeCamera/Index.vue` | the world's wiring: the loop run before the origin's shift, on the scene's ground           |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`     | owns the origin and mounts the free camera in place of the orbit controls                   |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`     | reads the input once a frame, owns the origin and mounts the free camera                    |
 | `packages/genshin-world/src/services/constants.ts`                 | the fixed step's length                                                                     |
 
 ## Notes
