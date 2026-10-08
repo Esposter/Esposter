@@ -24,16 +24,16 @@ export const computeSkySplitSpread = (
       };
     }),
   );
-  const distances = splits.map(({ distance }) => distance);
-  const cloudedDistances = splits.filter(({ isClouded }) => isClouded).map(({ distance }) => distance);
-  const readRootMeanSquare = (key: keyof SkyDistance, readDistances: SkyDistance[]): number =>
-    Math.sqrt(readDistances.reduce((sum, distance) => sum + distance[key] ** 2, 0) / Math.max(readDistances.length, 1));
+  const readRootMeanSquare = (key: keyof SkyDistance, isOverClouds = false): number => {
+    const distances = splits.filter(({ isClouded }) => !isOverClouds || isClouded).map(({ distance }) => distance);
+    return Math.sqrt(distances.reduce((sum, distance) => sum + distance[key] ** 2, 0) / Math.max(distances.length, 1));
+  };
   return {
-    brightness: readRootMeanSquare("brightness", cloudedDistances),
-    cloudColour: readRootMeanSquare("cloudColour", cloudedDistances),
-    colour: readRootMeanSquare("colour", distances),
-    cover: readRootMeanSquare("cover", distances),
-    edgeSharpness: readRootMeanSquare("edgeSharpness", cloudedDistances),
-    spread: readRootMeanSquare("spread", cloudedDistances),
+    brightness: readRootMeanSquare("brightness", true),
+    cloudColour: readRootMeanSquare("cloudColour", true),
+    colour: readRootMeanSquare("colour"),
+    cover: readRootMeanSquare("cover"),
+    edgeSharpness: readRootMeanSquare("edgeSharpness", true),
+    spread: readRootMeanSquare("spread", true),
   };
 };
