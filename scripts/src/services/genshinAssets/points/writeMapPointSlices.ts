@@ -6,7 +6,7 @@ import { join } from "node:path";
 // Each region's places written as one slice in the given generated folder, which the world imports on demand. The folder
 // Is cleared first, so a region left with no places keeps no slice from an earlier run. The report counts each region's
 // Places under the noun, then what was left out
-export const writeMapPointSlices = async <Kind extends string>(
+export const writeMapPointSlices = async <Kind>(
   directory: string,
   placement: MapPointPlacement<Kind>,
   noun: string,
