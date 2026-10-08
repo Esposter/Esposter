@@ -100,7 +100,7 @@ One pool, shared by the party, starts at 100 and refills at 25 a second once a s
 
 A kit's action spends its own stamina as it starts, through `spend`, which takes the amount at once and restarts the refill's rest, so the pool refills only once the delay has passed from that spend. A sword's charged attack spends 20.
 
-Running out stops what costs: a sprint drops to a run, a climb lets go and falls, a glide closes, and a swim drowns. A drowned body comes back where its stamina was last full on foot, refilled, as the game returns its party. The pool's most stays at 100, since the world has no Statues of The Seven to offer at.
+Running out stops what costs: a sprint drops to a run, a climb lets go and falls, a glide closes, and a swim drowns. A drowned body comes back where its stamina was last full on foot, refilled, as the game returns its party. The pool's most is the controller's `staminaMaximum` option, held at 100 by the character component, since no statue's level is reached in the world yet ([Statues of The Seven](/docs/genshin/statues-of-the-seven)).
 
 ## The numbers
 
