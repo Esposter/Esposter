@@ -42,6 +42,9 @@ Clips nothing published shows, which the user records: each 30 seconds or less, 
 - [ ] `world-thunderstorm.mkv` — a thunderstorm with several strikes, the camera still.
 - [ ] `world-movement.mkv` — run, sprint, a jump, a glide off a height, a climb, a swim, the stamina meter in view, and the camera zoomed in and out.
 - [ ] `world-dialogue.mkv` — talking to a resident through a line with replies to choose.
+- [ ] `dialogue-reveal.mkv` — three lines of one talk at 60 frames a second, each from its first frame to the last, the scene held still: the line written out a character at a time, or shown whole if the game does not write it.
+- [ ] `dialogue-auto-skip.mkv` — a talk with auto-play switched on through three lines, then Skip pressed, with the Auto and Skip buttons in view, their look and their keys shown.
+- [ ] `dialogue-backdrop.png` — a resident's scene at the moment before a talk's band appears, with no dialogue on screen, at 1080 high, for the parity backdrop.
 - [ ] `world-camp.mkv` — walking up to a Hilichurl camp until it wakes, then backing away until it returns home.
 - [ ] `menu-paimon.mkv`, `menu-character.mkv` — the Paimon menu opened and closed, and the character screen's tabs walked through.
 - [ ] `mobile-touch.png` — a screenshot of the mobile client's play screen with its touch controls.

@@ -26,8 +26,10 @@ The talk graph, its pure runner, the dialogue screen and the talk host that runs
 These need a recording of the English PC client's dialogue at 1080 high, found among published recordings first ([parity](/docs/genshin/parity)):
 
 - **Whether the world runs on around a talk**: the sky, the clouds and the residents behind the speaker moving or still, read by eye.
-- **The line's reveal rate and auto-play's hold**, read off the line's darkness frame by frame (`frames`, then `luma` over the line's band), into `TALK_REVEAL_MS_PER_CHARACTER` and `TALK_AUTO_PLAY_HOLD_MS`.
-- **The band, the speaker's name, the line and the replies**: their sizes, places, colours and fades, measured as the login's interface is.
+- **The line's reveal rate and auto-play's hold**, read off the line's darkness frame by frame (`frames`, then `luma` over the line's band), into `TALK_REVEAL_MS_PER_CHARACTER` and `TALK_AUTO_PLAY_HOLD_MS`. The published recording of the dialogue choices shows each line whole in one 30 frames a second frame, so the reveal needs a 60 frames a second recording of a line being written out.
+- **The band's gradient, the selected reply's look and the fades**: the speaker's name, the line and the replies are sized and placed off one published frame, and their fades are not yet read.
+- **A backdrop with the dialogue off**: `compare`'s backdrop draws the game's own line and replies, so the overlay cannot be scored until the scene is shot without them.
+- **The speaker's role line** (the title under the name, "Waitress, Good Hunter" in the published frame), which the talk's schema does not hold: its text id comes from the dialog table.
 - **The replies' marks**, traced from the wiki's files of the game's own (`Icon Dialogue Talk White.png`, `Icon Dialogue Quest.png`, `Icon Dialogue Story Quest.png`) into paths of our own, and the auto-play and skip buttons' glyphs beside them.
 
 ## Key files
