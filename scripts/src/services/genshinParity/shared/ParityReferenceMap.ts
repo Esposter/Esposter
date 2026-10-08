@@ -35,6 +35,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       spireBaseRight: [947, 448],
       spireTip: [927, 398],
     },
+    // Provisional: midnight, the night frame's held minute, as it has no sun whose shadows could solve it
+    props: { heldMinutes: 0 },
     region: { height: 920, width: 1920, x: 0, y: 0 },
     screen: "WorldScreen",
     wikiTitle: "File:Everfrozen Earth.png",
