@@ -26,7 +26,7 @@ import HudParty from "#src/components/Hud/Party/Index.vue";
 import HudQuest from "#src/components/Hud/Quest/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
 import HudStamina from "#src/components/Hud/Stamina/Index.vue";
-import InteractionPrompts from "#src/components/Interaction/Prompts/Index.vue";
+import InteractionPromptList from "#src/components/Interaction/PromptList/Index.vue";
 import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MenuScreen from "#src/components/Menu/Screen/Index.vue";
@@ -459,7 +459,7 @@ defineExpose({ jumpTo, readCameraPosition });
         <HudStamina :frame="hudFrame" :game-text :max-stamina="STAMINA_MAX" />
       </template>
       <template #prompts>
-        <InteractionPrompts :interaction-prompts />
+        <InteractionPromptList :interaction-prompts />
       </template>
     </HudScreen>
     <MenuScreen v-model:screen-kind="screenKind" :game-text @quit="emit('quit')">

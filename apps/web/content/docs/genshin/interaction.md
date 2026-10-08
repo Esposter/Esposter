@@ -37,7 +37,7 @@ flowchart TD
 - **A press acts on the selected row.** F acts once on the selected row: a drop is picked up, and a resident's row begins their talk, which the world opens as a screen over itself ([dialogue](/docs/genshin/dialogue)).
 - **A held F repeats its pick up.** While Interact stays held after its press, `getHeldPickUp` is picked up once each `INTERACTION_HELD_REPEAT_SECONDS`: the selected row when it is an item, else the first item in the list. A repeat never opens, talks, reads or activates, since each of those leaves the world for a screen.
 - **F is the input's.** Pick Up and Interact are `InputAction.Interact` in the engine's `InputActionBindingMap`, on F, X on an Xbox controller and Square on a PlayStation one, as the game's defaults have them. Nothing listens for the key itself.
-- **The list is drawn over the world.** `Interaction/Prompts` draws the window's slice through `genshin-interface`'s `InteractionPrompts`, in the HUD's `prompts` slot, so it hides wherever the HUD does. The composable hands its prompts on only when their rows, selection or window changed, so a still player re-renders nothing.
+- **The list is drawn over the world.** `Interaction/PromptList` draws the window's slice through `genshin-interface`'s `InteractionPrompts`, in the HUD's `prompts` slot, so it hides wherever the HUD does. The composable hands its prompts on only when their rows, selection or window changed, so a still player re-renders nothing.
 
 ## The drops and the residents
 
@@ -61,7 +61,7 @@ flowchart TD
 | `packages/genshin-world/src/models/world/WorldDrop.ts`                         | A drop lying on the ground: its item, count, id and point             |
 | `packages/genshin-world/src/components/World/Screen/Index.vue`                 | Holds the drops and the residents, and acts on the selected row       |
 | `packages/genshin-world/src/components/World/Interactables/Index.vue`          | The drops' and the residents' stand-ins                               |
-| `packages/genshin-world/src/components/Interaction/Prompts/Index.vue`          | The window's rows, drawn in the HUD beside the centre                 |
+| `packages/genshin-world/src/components/Interaction/PromptList/Index.vue`       | The window's rows, drawn in the HUD beside the centre                 |
 | `packages/genshin-world/src/components/Hud/Screen/Index.vue`                   | The `prompts` slot the list is drawn in                               |
 | `packages/genshin-interface/src/models/InteractionKind.ts`                     | The five kinds of interaction                                         |
 | `packages/genshin-interface/src/components/InteractionPrompts/Index.vue`       | The prompt list's rows, the selected one marked with F                |
