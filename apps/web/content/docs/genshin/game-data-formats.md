@@ -76,6 +76,10 @@ flowchart TD
 
 - **The gadgets are the widget config, one entry per widget by its item id.** `BinOutput/Widget/ConfigWidget.json` names each widget's type, which is its kind, with its cooldowns in seconds, its cooldown group and whether it is equipable on `Z`. The widget's item row is in `MaterialExcelConfigData.json` under the same id, and the spawned gadget it makes is in `GadgetExcelConfigData.json`, whose path name, such as `SceneObj_Toys_SeekerTreasureBox_LY`, says what it finds. Its useable rule is in `WidgetUseableExcelConfigData.json`. Read by [gadgets](/docs/genshin/gadgets).
 
+### Crafting
+
+- **A recipe is a row of the combine table, and an instruction names the recipe it opens.** `ExcelBinOutput/CombineExcelConfigData.json` holds each craft's materials, Mora, rank and result, its combine type and recipe type. The material table's `ITEM_USE_UNLOCK_COMBINE` uses name the combine id they open as their first parameter, which is how a hidden recipe finds its instruction. The [crafting](/docs/genshin/crafting) page reads the kinds it builds and leaves the rest out.
+
 ### Text
 
 - **The client's text is hash-named "MiHoYoBinData"**, most of it in one block, in a binary layout the community decodes afresh each patch. So `genshin:text decode` decodes each language's text maps from the installed client's own chunks, each named by its path hash, and the repository reads the community's per-patch dump only for the tables naming which hash an interface string or a voice-over line is, pinned to the install's revision, as the [game text](/docs/genshin/game-text) page records.
