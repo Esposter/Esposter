@@ -20,7 +20,7 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   // Where the talk is held when it opens, on any of its lines and written out whole or not; its first line unwritten
-  // when absent. The parity page holds a state the reference shows this way, the reveal's clock not running
+  // When absent. The parity page holds a state the reference shows this way, the reveal's clock not running
   startProgress?: TalkProgress;
   talk: Talk;
   // The talk's own words in the reader's language, by the game's text id

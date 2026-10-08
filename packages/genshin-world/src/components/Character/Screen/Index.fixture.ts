@@ -22,7 +22,7 @@ import { ENGLISH_GAME_TEXT } from "genshin-text";
 const XILONEN_ID = 10000103;
 const XILONEN_MAX_LEVEL = 90;
 // Xilonen's Peak Patrol Song at level 90 in its sixth phase and refinement five, and her three combat talents at 10, 13
-// and 13, as the recording's Weapons and Talents tabs show them; the others hold the Dull Blade at the first level
+// And 13, as the recording's Weapons and Talents tabs show them; the others hold the Dull Blade at the first level
 const XILONEN_WEAPON: Weapon = { ascension: 6, experience: 0, id: 11516, level: 90, refinement: 5 };
 const DULL_BLADE: Weapon = { ascension: 0, experience: 0, id: 11101, level: 1, refinement: 1 };
 const XILONEN_TALENT_LEVELS: TalentLevels = {

@@ -1,5 +1,5 @@
 // Peak Patrol Song on Xilonen at level 90 in her sixth phase and refinement rank five, as the English client's Weapons tab
-// shows it at 156 seconds
+// Shows it at 156 seconds
 export const props = {
   ascension: 6,
   baseAttack: 542,

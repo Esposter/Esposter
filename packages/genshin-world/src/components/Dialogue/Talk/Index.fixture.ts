@@ -5,8 +5,8 @@ import { DialogueChoiceIcon } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
 // Three states of the English PC client's dialogue at 720 high (`yt-nWBqOXWZuFg.mp4`): Sara's line with the Traveler's
-// two replies on offer, about 18 seconds in; Sara's line with none, about 23 seconds in; and Paimon's, about 29 seconds
-// in. Each is held whole by the start progress a reference names, so the state is the reference's props, not a clock.
+// Two replies on offer, about 18 seconds in; Sara's line with none, about 23 seconds in; and Paimon's, about 29 seconds
+// In. Each is held whole by the start progress a reference names, so the state is the reference's props, not a clock.
 // The talk's text ids are readable names for this fixture alone, not the game's
 const TALK: Talk = {
   id: "dialogue-choices",
