@@ -338,6 +338,13 @@ export const lightTopic: ReferenceTopic = {
       result:
         "Both decode the texel as its three channels by two less one, unswizzled and unscaled, and Ground02 saves _FillNormalGaps at 0, so neither flattens a normal. The map is nearly flat, its blue 0.995 on average and never under 0.87, its red and green centred on a half, so its tilts lean every way alike about the face's normal. The one difference is the frame: the game turns the texel by each vertex's tangent, the witness by the screen's derivatives, its meshes read from OBJ without tangents. A frame turns each texel's lean, not the lane's mean facing, so it cannot take most of the rim away",
     },
+    {
+      method:
+        "passes login's surface measure on login-door-session with its glow terms moved out, then the glow read by the light pass against the reference's frame (measureGlow): each family's glow pixels, the frame there against our stand-in lit under the same camera, the structure gated at the frame's two pixels",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The surface pass holds its unlit colour and structure alone, and stops red on its three structure terms (the bridges 0.0491 against 0.0331, the towers 0.1012 against 0.0257, the walkway 0.0826 against 0.0172). Its four glow pairs compared our emission target with the exports', which the frame does not show, so the light pass reads them against the frame instead; that read has not run, since `passes --pass Light` waits on the surface's gate",
+    },
   ],
   openQuestions: [
     "Why the game shows the walkway's middle lane with a fraction of Ground02's glow though every input the program reads matches the witness's: a G-buffer variant the dump does not hold, the normal map's decode being the same; the witness still draws it whole, so the light is solved under a glow the frame does not show",
