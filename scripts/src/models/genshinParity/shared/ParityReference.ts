@@ -22,6 +22,9 @@ interface ParityReferenceBase {
   // The pixels, in the reference's own, its component's landmarks are seen at, read by eye and snapped to the nearest
   // Corner, which `pose` solves the camera from
   landmarks?: Record<string, [number, number]>;
+  // The reprojection, in the reference's pixels, `pose --write` holds its solved camera to in place of the camera pass's
+  // Gate, for a reference whose rigid landmarks cannot reach that gate; the reason is written beside the entry
+  poseBar?: number;
   // The props the screen is shot with in place of its fixture's, where one screen is judged against several references
   // (a scene at each time of day)
   props?: Record<string, unknown>;
