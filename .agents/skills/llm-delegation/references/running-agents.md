@@ -16,7 +16,7 @@ Plan the batch around what the agents touch:
 
 - Each agent owns its unit's new files. A file several agents need — a barrel, an index page, a shared constants file — any of them edits, re-reading it right before each edit and editing only its own lines, as the main session does beside a peer session (the `review-queue` skill).
 - Each agent commits its own paths on `ai/queue` as it goes, by pathspec, and never pushes; a commit that sweeps in a peer's lines in a shared file is fine, since both land on the same branch. The main session pushes the queue.
-- **No install, and no check of the app.** An agent may typecheck, lint, test and build the packages it touched, which takes seconds, and keeps their builds green, since the user's `nuxt dev` loads every package from its `dist`. It never runs anything against `apps/web`, whose suite and typecheck take minutes. When every agent has reported, **one** agent runs the batch's remaining checks a single time and fixes what they find; CI on the push is the backstop.
+- **No install, and no check of the app.** An agent may typecheck, lint, test and build the packages it touched, which takes seconds, and keeps their builds green, since the user's `nuxt dev` loads every package from its `dist`. It builds with `pnpm exec tsdown --no-clean`, never `pnpm build`: a cleaning build that fails on a sibling's half-written edit leaves no `dist` at all and stops the user's page, where a failed `--no-clean` build leaves the last good one. It never runs anything against `apps/web`, whose suite and typecheck take minutes. When every agent has reported, **one** agent runs the batch's remaining checks a single time and fixes what they find; CI on the push is the backstop.
 
 ## Cleaning up
 
