@@ -61,7 +61,7 @@ flowchart TD
 ## Sources
 
 - [Puzzle](https://genshin-impact.fandom.com/wiki/Puzzle), Genshin Impact Wiki: the mechanisms of the open world and of each region, and what solving them does.
-- [Genshin Impact: How to Light Up the Elemental Monuments in Minacious Isle](https://gamerant.com/genshin-impact-light-elemental-monuments-minacious-isle/), GameRant: the Minacious Isle monuments, lit in the order a Seelie shows.
+- The Elemental Monument and Minacious Isle sequence sources are the [puzzles](/docs/genshin/puzzles) page's, which the monument's state machine is built from.
 - [Seelie](https://genshin-impact.fandom.com/wiki/Seelie), Genshin Impact Wiki: Seelies led to their courts, returning if left, Elemental Sight's trail, and the chest a settled Seelie gives.
 - [Time Trial Challenge](https://genshin-impact.fandom.com/wiki/Time_Trial_Challenge), Genshin Impact Wiki: the challenges, their limits and their rewards.
 - [Shrine of Depths](https://genshin-impact.fandom.com/wiki/Shrine_of_Depths), Genshin Impact Wiki: shrines opened with their region's keys, each holding a Luxurious chest.
