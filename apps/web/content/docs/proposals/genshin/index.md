@@ -91,7 +91,7 @@ What still separates the recreation from the whole game once the world and its p
 | Page                                                                 | What it adds                                                                                                       |
 | :------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------- |
 | [Character kits](/docs/proposals/genshin/character-kits)             | every character's skill, burst and passives on the framework the Traveler's kit runs on, priced by combat as built |
-| [Talents](/docs/proposals/genshin/talents)                           | combat talents levelled to 10 by phase, and the passives each phase opens                                          |
+| [Talents](/docs/proposals/genshin/talents)                           | a constellation's levels past 10, and the Talents tab's upgrade, the levelling and passives being built            |
 | [Constellations](/docs/proposals/genshin/constellations)             | six per character from their Stella Fortuna, the Traveler's by element                                             |
 | [Weapon enhancement](/docs/proposals/genshin/weapon-enhancement)     | a weapon's passive at its refinement rank, once the character kits stand                                           |
 | [Artifact enhancement](/docs/proposals/genshin/artifact-enhancement) | each artifact set's conditional bonus, a module as the set is carried                                              |

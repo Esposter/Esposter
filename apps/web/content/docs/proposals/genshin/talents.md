@@ -1,62 +1,51 @@
 ---
 title: Talents
-description: Proposal — a character's talents levelled as the game levels them. The three combat talents start at level 1 and rise to 10 with Character Talent Materials, weekly bosses' materials and Mora, each level capped by the ascension phase the game's table names; the passives open at the first and fourth phases; and every number a level changes is the game's own, read from its tables.
-model: claude-opus-5-5
+description: Proposal — the constellations' extra levels on a combat talent, and the Talents tab's upgrade pressed on the character screen. The levelling, its costs and the passives each phase opens are built, as the talents page describes.
+model: claude-haiku-5-5
 ---
 
 # Talents
 
-Every character carries three combat talents, the normal attack, the Elemental Skill and the Elemental Burst, and a few passives. The [character kits](/docs/proposals/genshin/character-kits) page plays them at a level; this page is how that level rises and when each passive opens, so it waits on the kits. The upgrade itself is pressed on the character screen's Talents tab, whose panel the [character screen](/docs/proposals/genshin/character-screen) proposal draws.
+The levelling is built: each combat talent rises from 1 to 10 by its phase, Mora and materials, and a character's passives open by phase, as the [talents](/docs/genshin/talents) page describes. Two parts are left. A constellation adds to a talent's level past the materials' 10, and the Talents tab presses the upgrade on the character screen. The [character kits](/docs/proposals/genshin/character-kits) page plays a talent at the level it reads, so this page waits on the constellations and the character screen.
 
 ## Decisions
 
-- **Combat talents start at 1 and rise to 10.** Each is raised a level at a time with its level's materials and Mora, and a talent's current maximum is set by the character's ascension phase. Both are read per level from `ProudSkillExcelConfigData`: its `costItems` and `coinCost` are what a level spends, and its `breakLevel` the phase it needs, so no requirement is typed by hand.
-- **Constellations add three, past ten.** A constellation that raises a talent adds 3 to its level, which also raises its cap to 15, though materials never take it past its own 10. The level a kit reads is the talent's own plus what its constellations add, and the multipliers at 11 to 15 are the game's own rows of the same table.
-- **The passives open by phase.** Of a character's passives, the utility passive comes with the character, and the first and fourth ascension passives open at the first and fourth phases. The skill depot's `inherentProudSkillOpens` names each one and the phase that opens it. A passive has no level.
-- **Spending is checked whole before anything is taken.** An upgrade checks every material and the Mora before taking any, so a refused upgrade leaves the bag and the wallet as they were.
-- **The alternate sprint is not levelled**, as the wiki says, since it is a talent with no levels.
+- **A constellation adds to its talent's level.** A constellation that raises a talent adds three to its level. Materials never pay for a level past 10, so the levels past it are a constellation's alone, read from the same table's rows past 10. The [constellations](/docs/proposals/genshin/constellations) page settles which constellation raises which talent, and the highest level a talent reaches, since the table's rows run to 15 and one constellation's three alone reach 13.
+- **The level a kit reads is the talent's own plus what its constellations add.** The kit reads the level the character holds, plus the constellations' additions for that talent, and nothing else.
+- **The Talents tab presses the upgrade.** It lists each combat talent with its level, the phase its next level needs, and its cost, and presses `upgradeTalent`. Its look is the [character screen](/docs/proposals/genshin/character-screen)'s.
 
 ## How it works
 
 ```mermaid
 flowchart TD
-  UP["Upgrade on the Talents tab"] --> CAP{"Below 10, and the phase allows the next level?"}
-  CAP -->|"no"| REFUSE["Refused, with the phase it needs"]
-  CAP -->|"yes"| COST{"Materials and Mora on hand?"}
-  COST -->|"no"| REFUSE2["Refused, nothing spent"]
-  COST -->|"yes"| SPEND["Spend them, raise the level"]
-  SPEND --> LEVEL["The kit reads the level plus its constellations' 3"]
+  TAB["Talents tab: press a talent's upgrade"] --> UP["upgradeTalent: phase, Mora and items checked"]
+  UP -->|"refused"| NO["The tab says what the level needs"]
+  UP -->|"taken"| LEVEL["The talent's own level, raised by one"]
+  CON["Constellations: a talent's additions"] --> READ["The kit reads the own level plus the additions"]
+  LEVEL --> READ
 ```
 
 ## Scope and order
 
-**Today:** a character is its level, phase, weapon and artifacts; nothing records a talent's level.
+**Today:** the levelling, its costs and the passives are built, and nothing presses an upgrade.
 
 **This adds, in order:**
 
-1. **A character's talent levels**, each at 1, and the level a kit reads.
-2. **The upgrade's rule and costs**, read from the proud skill table by the stats run.
-3. **The passives opened by phase.**
-4. **The Talents tab's upgrade**, once the character screen draws the tab.
+1. **The constellations' levels**, once the [constellations](/docs/proposals/genshin/constellations) page reads which talent each raises: the kit's level becomes the talent's own plus its additions.
+2. **The Talents tab's upgrade**, once the [character screen](/docs/proposals/genshin/character-screen) draws the tab.
 
 ## Data and measures
 
-- **Read from the game's tables:** `ProudSkillExcelConfigData`'s costs, Mora and phase per level, and `AvatarSkillDepotExcelConfigData`'s passives with the phase each needs, in the run that writes the kits.
+- **Read from the game's tables:** the rows past 10 of `ProudSkillExcelConfigData`, which the constellations' run reads beside the kits' multipliers.
 - **Measured:** nothing; the Talents tab's look is the character screen's.
 
 ## Key files
 
-| File                                                                | Role after the change                                     |
-| :------------------------------------------------------------------ | :-------------------------------------------------------- |
-| `packages/genshin-world/src/models/character/Character.ts`          | Gains each combat talent's level                          |
-| `packages/genshin-world/src/services/character/createCharacter.ts`  | Starts every talent at level 1                            |
-| `packages/genshin-world/src/models/inventory/Wallet.ts`             | The Mora an upgrade spends                                |
-| `packages/genshin-world/src/services/inventory/addInventoryItem.ts` | The bag an upgrade takes its materials from               |
-| `scripts/src/services/genshinAssets/stats/writeStatTables.ts`       | Writes each level's costs and phase with the kits' tables |
+| File                                                                | Role after the change                                             |
+| :------------------------------------------------------------------ | :---------------------------------------------------------------- |
+| `packages/genshin-world/src/models/character/CharacterTalentKit.ts` | Gains the constellations' additions to each combat talent's level |
+| `packages/genshin-world/src/services/character/upgradeTalent.ts`    | Its caller is the Talents tab, which presses the upgrade          |
 
 ## Sources
 
-- [Talent](https://genshin-impact.fandom.com/wiki/Talent), Genshin Impact Wiki: combat talents from level 1 to 10 by Character Talent Materials capped by the ascension phase, constellations' three levels and the cap of 15, materials never past 13 with them, and the passives opened at the first and fourth phases.
-- [Combat Talents](https://genshin-impact.fandom.com/wiki/Combat_Talents), Genshin Impact Wiki: talents upgraded with Character Talent Materials and the weekly bosses' materials, and the alternate sprint never levelled.
-- [Talent: Leveling](https://genshin-impact.fandom.com/wiki/Talent/Leveling), Genshin Impact Wiki: each character's talent materials, which the run's table reproduces.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the proud skill table's costs, Mora and phase per level.
+- [Talent](https://genshin-impact.fandom.com/wiki/Talent), Genshin Impact Wiki: the constellations' three levels to a combat talent, as the constellations page reads them.
