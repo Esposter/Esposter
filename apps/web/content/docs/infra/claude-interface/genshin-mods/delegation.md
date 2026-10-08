@@ -9,7 +9,7 @@ Part of [Genshin mods](/docs/infra/claude-interface/genshin-mods). The main sess
 
 ## How it works
 
-Every call the main session makes is classified before it runs. A lookup is a call to Read, Grep, Glob or WebFetch, or a Bash or PowerShell command that only reads: `cat`, `sed`, `grep`, `rg`, `find`, `ls`, `head`, `tail`, `awk`, `wc`, `python`, `node -e`, `git show`, `git log`, `git diff` or `gh run view`. A leading `export` or `cd` chained ahead of the command is stripped first, so `cd "$W" && cat file` is a lookup, and a shell command run in the background is never one.
+Every call the main session makes is classified before it runs. A lookup is a call to Read, Grep, Glob or WebFetch, or a Bash or PowerShell command that only reads: `cat`, `sed`, `grep`, `rg`, `find`, `ls`, `head`, `tail`, `awk`, `wc`, `git show`, `git log`, `git diff`, `gh run view`, or PowerShell's `Get-Content`, `Get-ChildItem` or `Select-String` in any case. No interpreter counts, since a script may write as readily as read. A leading `export` or `cd` chained ahead of the command is stripped first, so `cd "$W" && cat file` is a lookup, and a shell command run in the background is never one.
 
 Calls that change the picture reset the count to zero: an Agent call, an Edit, a Write, a NotebookEdit, a shell command that is not a lookup, and each new prompt the person sends. A subagent's calls never count and never reset it, and neither do tools outside those lists, which leave the count as it was.
 
