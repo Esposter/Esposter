@@ -32,6 +32,8 @@ const {
 } = defineProps<Props>();
 const skillCode = getActionKeyCode(InputAction.ElementalSkill);
 const burstCode = getActionKeyCode(InputAction.ElementalBurst);
+// The share of a cooldown left, none for a kit whose cooldown is no time at all
+const getCooldownShare = (secondsLeft: number, seconds: number) => (seconds > 0 ? secondsLeft / seconds : 0);
 // Hidden with the HUD, the buttons let go of the keys they hold
 onUnmounted(() => {
   input.release(skillCode);
@@ -47,7 +49,7 @@ onUnmounted(() => {
     <button
       class="skill"
       :aria-label="gameText[GameTextKey.ElementalSkill]"
-      :style="{ '--cooldown': skillCooldown / skillCooldownSeconds }"
+      :style="{ '--cooldown': getCooldownShare(skillCooldown, skillCooldownSeconds) }"
       type="button"
       @pointercancel="input.release(skillCode)"
       @pointerdown="input.press(skillCode)"
@@ -59,7 +61,10 @@ onUnmounted(() => {
       class="burst"
       :class="{ ready: energy >= energyCost && burstCooldown <= 0 }"
       :aria-label="gameText[GameTextKey.ElementalBurst]"
-      :style="{ '--cooldown': burstCooldown / burstCooldownSeconds, '--energy': Math.min(energy / energyCost, 1) }"
+      :style="{
+        '--cooldown': getCooldownShare(burstCooldown, burstCooldownSeconds),
+        '--energy': Math.min(energy / energyCost, 1),
+      }"
       type="button"
       @pointercancel="input.release(burstCode)"
       @pointerdown="input.press(burstCode)"
