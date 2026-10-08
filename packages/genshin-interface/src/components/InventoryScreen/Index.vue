@@ -40,7 +40,7 @@ const emit = defineEmits<{ close: [] }>();
        Of the English client at 1080 high -->
   <div class="inventory-screen">
     <header class="head">
-      <h1 class="title">{{ title }}</h1>
+      <p class="title" role="heading" aria-level="1">{{ title }}</p>
       <ul class="tabs">
         <li v-for="itemCategory of ItemCategories" :key="itemCategory">
           <button class="tab" :aria-pressed="itemCategory === category" type="button" @click="category = itemCategory">

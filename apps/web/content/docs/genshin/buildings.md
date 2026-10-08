@@ -25,7 +25,7 @@ flowchart TD
 - **A conical roof is a cone scaled to the footprint.** A unit cone is stretched to half the footprint's width and depth, so its base lies over the walls' outside edge on any rectangle, not only a square. Its apex stands the roof height above the walls.
 - **The result is merged** into one geometry, the parts freed once merged (`mergeGeometryParts`).
 
-The building is centred on the origin and stands on it, so a caller places it on the ground with its position.
+The building is centred on the origin and stands on it, so a caller places it on the ground with its position. Natlan's tribes build with it, the People of the Springs' first building standing as a [building landmark](/docs/genshin/region-buildings).
 
 ## Key files
 

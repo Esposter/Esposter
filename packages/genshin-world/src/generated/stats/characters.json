@@ -831,6 +831,7 @@
       }
     ],
     "id": 10000007,
+    "initialWeaponId": 11101,
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },

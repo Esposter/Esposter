@@ -1,4 +1,12 @@
-import type { GradeOptions, GrassRing, GroundPaint, RampOptions, SkyKeyframe, TerrainOptions } from "genshin-engine";
+import type {
+  GradeOptions,
+  GrassRing,
+  GroundPaint,
+  GroundPoint,
+  RampOptions,
+  SkyKeyframe,
+  TerrainOptions,
+} from "genshin-engine";
 
 import ground from "#src/data/windrise/ground.json";
 import water from "#src/data/windrise/water.json";
@@ -50,6 +58,9 @@ export const WINDRISE_GROUND_PAINT: GroundPaint = {
   rockSlope: { end: 0.55, start: 0.3 },
   sandHeight: { end: water.level + 0.4, start: water.level + 1.2 },
 };
+// Where a character starts in Windrise: on the slope before the statue, in the free camera's first view, its back to
+// The camera as the game shows a character
+export const WINDRISE_START_POINT: GroundPoint = { x: 36, z: 12 };
 // Colours as the palette sees them, in sRGB
 export const BARK_COLOR = 0x6b4a33;
 export const LEAF_COLOR = 0x6fae3f;
@@ -102,6 +113,15 @@ export const MIDDLE_GRASS_RING: GrassRing = {
   scale: 1.7,
   spacing: 0.8,
 };
+// Windrise's flowers, scattered on each finest tile above the water: kept this far apart, out of this many candidates a
+// Tile, where the ground is at least this share grass, each between these heights in metres, in white, yellow and lilac
+// As the palette sees them. Provisional: matched to the references by their density, sizes and colours' spread
+export const FLOWER_SPACING = 2.5;
+export const FLOWER_CANDIDATE_COUNT = 48;
+export const FLOWER_MIN_GRASS = 0.9;
+export const FLOWER_MIN_SIZE = 0.5;
+export const FLOWER_MAX_SIZE = 0.75;
+export const FLOWER_COLORS: readonly number[] = [0xf4f1e6, 0xf2d64b, 0xb8a6e8];
 // Windrise's day: a deep blue night lit by the moon, an apricot dawn, a high clear afternoon, a gold and violet dusk.
 // The light is near nothing at six and eighteen, where the moon hands the sky to the sun and back
 export const WINDRISE_SKY_KEYFRAMES: readonly SkyKeyframe[] = [

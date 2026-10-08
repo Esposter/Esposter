@@ -62,7 +62,6 @@ The Court of Fontaine from the aquabus, the Fountain of Lucine, Palais Mermonia,
 New files:
 
 ```text
-packages/genshin-world/src/data/regions/fontaine.json
 packages/genshin-world/src/services/fontaine/   ← aqueduct, clock tower and machinery generators (the building kit is built)
 ```
 

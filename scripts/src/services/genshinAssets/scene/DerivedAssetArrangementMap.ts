@@ -36,6 +36,10 @@ const readWalkwayLift = (placements: readonly AssetPlacement[], clips: readonly 
   const block = placements.find(({ name }) => /^LoginScene_Bridge01_\d+_Vo$/u.test(name));
   return (height ?? 0) * (block?.scale[1] ?? 0);
 };
+// The row MonoLoginScene scrolls the towers in, their bridges and pillars with them, as the scene draws it
+const readTowersRow = async (): Promise<{ count: number; length: number }> =>
+  (await readWorldData<{ LoginScene_Build_All: { count: number; length: number } }>("login/scroll.json"))
+    .LoginScene_Build_All;
 // Each component's arrangement: the ratios its references show between parts that meet, its fitted families, each
 // Beside the exports' objects it stands for, composed as the family stands its parts, and how far across and up the
 // Game's own data stands each family of the witness off its laid-out place at run time, a family not named standing
@@ -88,6 +92,7 @@ export const DerivedAssetArrangementMap: Record<
             ];
           });
         },
+        readRow: readTowersRow,
       },
       {
         name: "Bridges",
@@ -101,6 +106,7 @@ export const DerivedAssetArrangementMap: Record<
           (await readWorldData<{ placements: { position: Vector }[] }>("login/hulls.json")).placements.map(
             ({ position }) => position,
           ),
+        readRow: readTowersRow,
       },
       {
         name: "Door",

@@ -29,6 +29,7 @@ flowchart LR
 - **The account kit's strings are the second source.** What the game shows as the player signs in, before it has loaded its text map, comes from HoYoverse's account kit, whose own table per language sits in its resource bundle beside the game (`MiHoYoSDKRes`). The first `write` that needs it exports the tables into the dump with AnimeStudio, refusing while the game runs, and reads them as references like the text map (`readSdkText`). The welcome card's greeting is the one key read there, its `%s` the player's name, placed where each language puts it.
 - **`GameTextKey` is the inventory.** Each member's value is the game's own id for its string: the name the game's manual text map files an interface string under (`INFORMATION_AVATAR_BIRTHDAY`), the raw text hash where it names the string nothing, or the account kit's own key (`tips_enter_game`) for a string the kit shows, so a consumer cannot tell which source a string came from. Referencing a new string is one line there; the generator has no list of its own.
 - **`pnpm -C scripts genshin:text find "<pattern>"` finds the id.** It searches the English text and prints each match's id beside it, named ids first, since an interface string is what a key is usually after.
+- **`pnpm -C scripts genshin:text quests` writes the world's quests.** The quests `QuestId` names are written into the world with their talks, and every word they show goes into a text chunk of the world's own for each language, by the same text ids, since a quest's words are far too many to list one by one in `GameTextKey` ([quests](/docs/genshin/quests)).
 - **`pnpm -C scripts genshin:text write` writes everything.** Every key in every language becomes one JSON chunk per language, and the loader map names them. A key a language's map lacks takes English's text there and the run says so, since a dump that lost a string is the dump's fault rather than a reason to ship none. Its output is never formatted, so a format pass over the tree leaves alone what it wrote.
 
 ### Looking a string up
@@ -47,6 +48,8 @@ flowchart TD
 A consumer resolves a language once, loads its chunk once, and indexes the result by key — a lookup is `gameText[GameTextKey.Loading]`, with nothing between the key and its string. English is the one chunk bundled with the package, as the text every other language shows until its own arrives, and each other language is a dynamic import of a chunk of its own, so a page downloads only the language it shows.
 
 `matchGameLanguage` takes a reader's preference list, most preferred first, and returns the first game language that shares a tag's language and, once both are maximized through `Intl.Locale`, its script: `zh-TW` and `zh-HK` read Traditional Chinese and `zh-CN` Simplified, while `pt-BR` and `en-GB` take the one Portuguese and English the game ships. A tag that is not well formed is skipped rather than thrown on, since a header is anyone's to write, and English is the answer when nothing matches. `getAcceptLanguageTags` turns a header into that list by its quality weights.
+
+An interface string the game fills numbers its values, `{0}` first: a wish's button is `Wish ×{0}` and a bag tab's room `{0} {1}/{2}`. `fillGameTextValues` fills every number at once with the values as they are, so a name holding a replacement pattern is never read as one, and a number with no value is left in place.
 
 ### The /genshin page
 
@@ -74,8 +77,10 @@ The plugin is installed alone by a stranger's frozen `npm ci`, and every release
 | `packages/genshin-text/src/services/GameLanguageTagMap.ts`    | The BCP-47 tag of each language, which `Intl` needs                                   |
 | `packages/genshin-text/src/services/matchGameLanguage.ts`     | A reader's preference list to the nearest game language, English otherwise            |
 | `packages/genshin-text/src/services/getAcceptLanguageTags.ts` | An `Accept-Language` header as tags, most preferred first                             |
+| `packages/genshin-text/src/services/fillGameTextValues.ts`    | An interface string's numbered values filled at once                                  |
 | `packages/genshin-text/src/generated/GameTextLoaderMap.ts`    | English bundled, every other language a chunk imported on first use                   |
 | `scripts/src/services/genshinText/writeGameText.ts`           | The generator: every key, every language, the persona's copy and its newest lines     |
+| `scripts/src/services/genshinText/writeQuests.ts`             | The world's quests, their talks and their words in every language                     |
 | `scripts/src/services/genshinText/findGameText.ts`            | The ids of every English string a pattern matches                                     |
 | `scripts/src/services/genshinText/readSdkText.ts`             | One language's account kit strings, exported from the installed game when first read  |
 | `scripts/src/services/genshinText/getPlainGameText.ts`        | A text map string as the game shows it on a PC: markup, furigana and escapes resolved |

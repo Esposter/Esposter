@@ -37,6 +37,10 @@ const sourceTargetMaterialsMap = new WeakMap<object, Map<string, NodeMaterial>>(
 const sunRadiance = uniform(new Color());
 // The one target every read draws into, rebuilt only when the drawing buffer's size changes
 let renderTarget: RenderTarget | undefined;
+// A shadow map is drawn once a frame for each camera drawing it, and the scene's own frame draws its sun's with the
+// Scene's camera under the scene's own direction, which a read in that frame would reuse whatever direction it was
+// Given. So the shadow target is drawn from a camera of its own, standing where the scene's does, in a frame of its own
+const shadowCameraMap = new WeakMap<Camera, Camera>();
 // The pipeline the occlusion target is drawn through, the scene's own occlusion over the parts' depth, rebuilt only when
 // The scene, its camera or the occlusion's reach changes. The pipeline, the depth pass and the occlusion each hold
 // Targets of their own, so a rebuild releases all three
@@ -81,6 +85,13 @@ export const renderWitnessTargets = async (
   width: number;
 }> => {
   if (!context) throw new InvalidOperationError(Operation.Read, "witness", "the scene has not rendered yet");
+  // Ahead of the sun being moved, which the scene's own frame would move back
+  if (requestedTargets.includes(WitnessTarget.Shadow))
+    await new Promise<void>((resolve) => {
+      window.requestAnimationFrame(() => {
+        resolve();
+      });
+    });
   const { camera, occlusionRadius, renderer, scene } = context;
   const { x: width, y: height } = renderer.getDrawingBufferSize(new Vector2());
   const parts: { family: string; id: number; mesh: string }[] = [];
@@ -186,6 +197,12 @@ export const renderWitnessTargets = async (
           .copy(sun.target.position)
           .addScaledVector(new Vector3(...lightDirection).normalize(), sun.position.distanceTo(sun.target.position));
       camera.layers.set(TARGET_LAYER);
+      // Its own place in the world the scene camera's, whatever holds that camera or freezes its matrix
+      const shadowCamera = shadowCameraMap.get(camera) ?? camera.clone();
+      shadowCameraMap.set(camera, shadowCamera);
+      shadowCamera.copy(camera, false);
+      shadowCamera.matrixAutoUpdate = true;
+      camera.matrixWorld.decompose(shadowCamera.position, shadowCamera.quaternion, shadowCamera.scale);
       for (const { mesh } of drawnMeshes) mesh.layers.enable(TARGET_LAYER);
       for (const light of lights) light.layers.enable(TARGET_LAYER);
       scene.background = null;
@@ -200,7 +217,7 @@ export const renderWitnessTargets = async (
               mesh.material = targetMaterials[index] ?? mesh.material;
             renderer.setRenderTarget(drawnTarget);
             if (target === WitnessTarget.Occlusion) occlusionPipeline.render();
-            else renderer.render(scene, camera);
+            else renderer.render(scene, target === WitnessTarget.Shadow ? shadowCamera : camera);
             const pixels = await renderer.readRenderTargetPixelsAsync(drawnTarget, 0, 0, width, height);
             // WebGPU copies a target out in rows padded to 256 bytes, so a width whose row does not fill its last
             // Block (any aspect but the few whose width works out to a multiple of 16) carries each row's padding,

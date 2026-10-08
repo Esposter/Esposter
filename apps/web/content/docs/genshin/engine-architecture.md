@@ -13,31 +13,32 @@ The Genshin program is long: terrain, water, vegetation, every region, then a ch
 - **The game's world is a second package over the engine.** `genshin-world`, published beside it, holds what is Genshin's rather than any engine's: the catalogue of regions and areas, each region's data, the scenes and screens, and the TresJS components and composables that create the engine's modules for them. The engine knows no place by name. The world's screen owns its canvas; the app keeps its stores and hands the world only what a bundler or a server decides: the terrain worker, where region data is served, and whether the tuning panel shows.
 - **One module, one job.** Each is a folder of the engine's source:
 
-  | Module       | Its job                                                                                                                         |
-  | :----------- | :------------------------------------------------------------------------------------------------------------------------------ |
-  | `renderer`   | builds `WebGPURenderer` and owns the quality tier                                                                               |
-  | `clock`      | the game's day, advanced by each frame's seconds                                                                                |
-  | `world`      | the floating origin's shift, and how far the camera stands from an area's outline                                               |
-  | `simulation` | fixed steps from an accumulator, at most five a frame, so a motion is the same at any rate                                      |
-  | `input`      | the keys, mouse buttons, the locked pointer and a gamepad, read once a frame into one move, look and the actions the game binds |
-  | `camera`     | the free camera's flight, held above the ground                                                                                 |
-  | `collision`  | the surface a moving thing stands on: the ground under it, and the water's surface                                              |
-  | `character`  | an MMD model read from its PMX file, and drawn as one skinned mesh on the toon ramp                                             |
-  | `streaming`  | which tiles are wanted, asked for coarsest first, and a cache that frees the least wanted                                       |
-  | `terrain`    | height tiles, the CDLOD selection and mesh, and the ground material                                                             |
-  | `atmosphere` | the sky, its clouds and the light state they produce                                                                            |
-  | `wind`       | the shared wind field                                                                                                           |
-  | `materials`  | the toon ramp every environment material reads                                                                                  |
-  | `nodes`      | every TSL node graph: the toon, stone, leaf and water materials, the sky, the rim, the wind                                     |
-  | `post`       | what follows the scene: outlines, occlusion, god rays, fog, bloom, grade, anti-aliasing                                         |
-  | `vegetation` | grass generated round the camera, and the ground capture it stands on                                                           |
-  | `water`      | still water's uniforms, and the fog under its surface                                                                           |
-  | `kits`       | the parametric generators a region's kits are built from: trees, the statue, architecture                                       |
-  | `audio`      | the music's player, its synthesizer and sampler, and the sound effects' buffers                                                 |
-  | `noise`      | simplex noise, the one source of procedural detail                                                                              |
-  | `random`     | a seeded random source, so a generator runs the same everywhere                                                                 |
+  | Module       | Its job                                                                                                                                             |
+  | :----------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | `renderer`   | builds `WebGPURenderer` and owns the quality tier                                                                                                   |
+  | `clock`      | the game's day, advanced by each frame's seconds                                                                                                    |
+  | `world`      | the floating origin's shift, and how far the camera stands from an area's outline                                                                   |
+  | `simulation` | fixed steps from an accumulator, at most five a frame, so a motion is the same at any rate                                                          |
+  | `input`      | the keys, mouse buttons, the locked pointer, a gamepad and the touch controls, read once a frame into one move, look and the actions the game binds |
+  | `camera`     | the follow camera behind a body, pulled in by what stands between, and the free camera's flight, held above the ground                              |
+  | `collision`  | what a moving thing meets: the ground under it, the water's surface, and the landmarks' meshes a capsule is pushed out of and a sphere cast against |
+  | `locomotion` | the character's body through the game's movement states, and the stamina they spend                                                                 |
+  | `character`  | an MMD model read from its PMX file, and drawn as one skinned mesh on the toon ramp                                                                 |
+  | `streaming`  | which tiles are wanted, asked for coarsest first, and a cache that frees the least wanted                                                           |
+  | `terrain`    | height tiles, the CDLOD selection and mesh, and the ground material                                                                                 |
+  | `atmosphere` | the sky, its clouds and the light state they produce                                                                                                |
+  | `wind`       | the shared wind field                                                                                                                               |
+  | `materials`  | the toon ramp every environment material reads                                                                                                      |
+  | `nodes`      | every TSL node graph: the toon, stone, leaf and water materials, the sky, the rim, the wind                                                         |
+  | `post`       | what follows the scene: outlines, occlusion, god rays, fog, bloom, grade, anti-aliasing                                                             |
+  | `vegetation` | grass generated round the camera, and the ground capture it stands on                                                                               |
+  | `water`      | still water's uniforms, and the fog under its surface                                                                                               |
+  | `kits`       | the parametric generators a region's kits are built from: trees, the statue, architecture                                                           |
+  | `audio`      | the music's player, its synthesizer and sampler, and the sound effects' buffers                                                                     |
+  | `noise`      | simplex noise, the one source of procedural detail                                                                                                  |
+  | `random`     | a seeded random source, so a generator runs the same everywhere                                                                                     |
 
-  A module is added by the proposal that first needs it, never ahead of it as an empty folder: `input`, `simulation`, `camera` and `collision` with the [free camera](/docs/genshin/free-camera), and per-instance culling with [trees and scatter](/docs/proposals/genshin/trees-and-scatter).
+  A module is added by the proposal that first needs it, never ahead of it as an empty folder: `input`, `simulation`, `camera` and `collision` with the [free camera](/docs/genshin/free-camera), `locomotion` with the [character controller](/docs/genshin/character-controller), and per-instance culling with [trees and scatter](/docs/proposals/genshin/trees-and-scatter).
 
 - **State flows one way.** Modules expose read-only state and commands. The light state and the wind are uniforms that materials read, so the hour and the wind move the whole world by writing a few values. Region data flows from the world package into the terrain worker, the vegetation and the kits. No module imports a sibling's internals, and a dependency that points back up the frame's order is a design error.
 - **Every generator is pure and seeded.** Tile heights, grass and kit geometry are pure functions of region data, a tile key and a seed, returning typed arrays. They run the same in a worker, a test or a bench, and the same spot always generates the same world.

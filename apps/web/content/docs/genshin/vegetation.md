@@ -51,7 +51,7 @@ flowchart TD
 
 ## Notes
 
-- **Trees beyond the oak, scatter and the trail are their own page.** Species, impostors, flowers and rocks scattered by biome, and grass that parts for the character are [trees and scatter](/docs/proposals/genshin/trees-and-scatter).
+- **Trees and flowers are their own pages.** A tree is a species drawn as its mesh or its impostor ([trees](/docs/genshin/trees)), and the flowers no record places are scattered on each finest tile ([scatter](/docs/genshin/scatter)); every placed plant, its culling and grass that parts for the character are [trees and scatter](/docs/proposals/genshin/trees-and-scatter).
 - **A blade stands on the ground as captured, not as drawn.** The capture morphs the ground for the eye where it was captured, and the eye can move up to the recapture distance before it is redrawn, so far from the eye a blade can sit a few centimetres off the drawn ground, where no one sees it.
 
 ## Sources

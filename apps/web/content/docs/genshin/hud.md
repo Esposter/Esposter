@@ -26,7 +26,7 @@ flowchart TD
 ```
 
 - **Only what the world backs.** A piece appears with the feature it shows, never as an inert copy, since a button that does nothing tells the player the world has something it lacks. The Paimon button opens the Paimon menu ([screens](/docs/genshin/screens)), and the [minimap](/docs/genshin/minimap) opens the [map](/docs/genshin/map). The game's other pieces (health, the skill and burst buttons, the quest tracker, the top right's shortcuts and the chat) wait on the features behind them.
-- **Places for the pieces other features draw.** The party's portraits down the right side and the stamina meter beside the character are slots of `Hud/Screen`, filled by the world screen with the party's and the controller's own components, so the HUD gains them with no change of its own. The stamina meter places itself, since it follows the character across the screen.
+- **Places for the pieces other features draw.** The party's portraits down the right side and the stamina meter beside the character are slots of `Hud/Screen`, both empty today since the world screen fills neither. Each is to be filled with the party's and the controller's own components, so the HUD gains them with no change of its own, and the stamina meter is to place itself, since it follows the character across the screen.
 - **It hides as the game's does.** The backslash, bound to the input's `HideInterface` action as the game's Hide UI key is ([controls](/docs/genshin/controls)), hides and shows it. Every menu and the map hide it too, as does photo mode, through the screen's own behaviour ([screens](/docs/genshin/screens)).
 - **The world stays reachable through it.** The HUD's root lets every pointer through to the world, and only its pieces take one, so a click on the world between them still locks the pointer and turns the camera.
 - **The Paimon button is named for a screen reader.** It shows a mark alone, so it carries Paimon's name in the game's words.
@@ -49,5 +49,5 @@ flowchart TD
 ## Sources
 
 - [Paimon Menu](https://genshin-impact.fandom.com/wiki/Paimon_Menu), Genshin Impact Wiki: the Paimon button in the top left corner opening the menu, as Escape does.
-- [Map](https://genshin-impact.fandom.com/wiki/Map), Genshin Impact Wiki: the minimap in the top left, opening the map.
+- [Map](https://genshin-impact.fandom.com/wiki/Map), Genshin Impact Wiki: the top-left minimap, which opens the map.
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: Hide UI on the backslash.

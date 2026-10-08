@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import type { PlantedTerrainTile } from "#src/models/PlantedTerrainTile";
 import type { TerrainTileRequest } from "#src/models/TerrainTileRequest";
-import type { LightUniforms, TerrainOptions, TerrainSelection, TerrainTile, WaterUniforms } from "genshin-engine";
+import type { LightUniforms, TerrainOptions, TerrainSelection, WaterUniforms, WindUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
 
 import { MAX_PENDING_TILE_COUNT, TERRAIN_WORKER_COUNT, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { useLoop, useTres } from "@tresjs/core";
 import {
   computeTerrainIndices,
+  createFlowerGeometry,
+  createFlowerMaterial,
   createTerrainMaterial,
   createTerrainSelection,
   createTerrainTileGeometry,
@@ -18,7 +21,16 @@ import {
   selectTerrainTiles,
   TERRAIN_LAYER,
 } from "genshin-engine";
-import { BufferAttribute, Frustum, Group, Matrix4, Mesh, Vector3 } from "three";
+import {
+  BufferAttribute,
+  Frustum,
+  Group,
+  InstancedBufferAttribute,
+  InstancedMesh,
+  Matrix4,
+  Mesh,
+  Vector3,
+} from "three";
 import { uniform } from "three/tsl";
 
 interface Props {
@@ -33,9 +45,11 @@ interface Props {
   terrainOptions: TerrainOptions;
   // The region's water, whose caustics shimmer on the ground under it
   waterUniforms?: WaterUniforms;
+  // The wind the flowers scattered on the finest tiles sway in
+  windUniforms: WindUniforms;
 }
 
-const { createTerrainWorker, draws, lightUniforms, origin, rampTexture, terrainOptions, waterUniforms } =
+const { createTerrainWorker, draws, lightUniforms, origin, rampTexture, terrainOptions, waterUniforms, windUniforms } =
   defineProps<Props>();
 const emit = defineEmits<{ ready: [] }>();
 const { camera } = useTres();
@@ -44,6 +58,10 @@ const { cellsPerSide, finestTileSize } = terrainOptions;
 const morphEye = uniform(new Vector3());
 const terrainMaterial = createTerrainMaterial(terrainOptions, morphEye, { lightUniforms, rampTexture }, waterUniforms);
 const index = new BufferAttribute(computeTerrainIndices(cellsPerSide), 1);
+// Every finest tile's flowers are one instanced draw of the one flower, a child of its tile's mesh, so they show, hide
+// And go with the tile
+const flowerGeometry = createFlowerGeometry();
+const flowerMaterial = createFlowerMaterial({ lightUniforms, rampTexture }, windUniforms);
 // Every held tile is a mesh in this group, shown only while it is drawn, so a tile coming back into range costs a flag
 const tileGroup = new Group();
 const workers = Array.from({ length: TERRAIN_WORKER_COUNT }, () => createTerrainWorker());
@@ -52,6 +70,7 @@ const tileStreamer = createTileStreamer<Mesh>({
   disposeTile: (mesh) => {
     tileGroup.remove(mesh);
     mesh.geometry.dispose();
+    for (const child of mesh.children) if (child instanceof InstancedMesh) child.dispose();
   },
   maxCachedCount: TILE_SELECTION_CAPACITY,
   maxPendingCount: MAX_PENDING_TILE_COUNT,
@@ -61,9 +80,9 @@ const tileStreamer = createTileStreamer<Mesh>({
     requestCount++;
   },
 });
-const receiveTile = (event: MessageEvent<TerrainTile>) => {
+const receiveTile = (event: MessageEvent<PlantedTerrainTile>) => {
   const terrainTile = event.data;
-  const { key } = terrainTile;
+  const { key, plantColors, plantMatrices } = terrainTile;
   const size = finestTileSize * 2 ** getTerrainTileLevel(key);
   const mesh = new Mesh(createTerrainTileGeometry(terrainTile, index), terrainMaterial);
   mesh.position.set(getTerrainTileColumn(key) * size, 0, getTerrainTileRow(key) * size);
@@ -73,6 +92,14 @@ const receiveTile = (event: MessageEvent<TerrainTile>) => {
   mesh.receiveShadow = true;
   mesh.layers.enable(TERRAIN_LAYER);
   mesh.visible = false;
+  if (plantMatrices.length > 0) {
+    const flowerMesh = new InstancedMesh(flowerGeometry, flowerMaterial, plantMatrices.length / 16);
+    flowerMesh.instanceMatrix = new InstancedBufferAttribute(plantMatrices, 16);
+    flowerMesh.instanceColor = new InstancedBufferAttribute(plantColors, 3);
+    flowerMesh.receiveShadow = true;
+    flowerMesh.computeBoundingSphere();
+    mesh.add(flowerMesh);
+  }
   tileGroup.add(mesh);
   tileStreamer.receive(key, mesh);
 };
@@ -134,6 +161,8 @@ onUnmounted(() => {
   for (const worker of workers) worker.terminate();
   tileStreamer.dispose();
   terrainMaterial.dispose();
+  flowerGeometry.dispose();
+  flowerMaterial.dispose();
 });
 </script>
 

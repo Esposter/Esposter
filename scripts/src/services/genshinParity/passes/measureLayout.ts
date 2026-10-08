@@ -6,8 +6,9 @@ import type { Page } from "playwright";
 
 import { checkArrangement } from "#src/services/genshinAssets/scene/checkArrangement";
 import { ARRANGEMENT_CROSS_RATIO_TOLERANCE } from "#src/services/genshinAssets/shared/constants";
+import { computeLayoutFrameMeasure } from "#src/services/genshinParity/passes/computeLayoutFrameMeasure";
 import { computeProjectedGaps } from "#src/services/genshinParity/passes/computeProjectedGaps";
-import { FRAME_GATE_PIXELS, PART_GATE_METRES } from "#src/services/genshinParity/passes/constants";
+import { PART_GATE_METRES } from "#src/services/genshinParity/passes/constants";
 import { getCurrentBuildReferenceIds } from "#src/services/genshinParity/passes/getCurrentBuildReferenceIds";
 import { openComponentWitnessPage } from "#src/services/genshinParity/passes/openComponentWitnessPage";
 import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
@@ -28,9 +29,10 @@ const shift = (point: Readonly<Vector>, [x, y, z]: Readonly<Vector>): Vector => 
 // Family's furthest part from the exports' objects it stands for, and how far across and up the scene stands each
 // Family of the witness off its laid-out place past what the game's own data explains (along the glide is its motion);
 // Then at each current build's reference, each fitted part and the export it stands for carried as the scene carries
-// Their family in the reference's state and projected from the scene's camera there, the furthest apart in the
-// Reference's own pixels. The camera is the next pass's, but both points of a pair move alike under a pose a little
-// Off, so their gap reads the placement alone
+// Their family in the reference's state, at every copy of a row it repeats the family along, and projected from the
+// Scene's camera there, the furthest apart in the reference's own pixels (`computeLayoutFrameMeasure`). The camera is
+// The next pass's, but both points of a pair move alike under a pose a little off, so their gap reads the placement
+// Alone
 export const measureLayout = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
   const { explainedOffsets, families, ratios } = await checkArrangement(component);
   const { browser, page } = await openComponentWitnessPage(component);
@@ -38,13 +40,13 @@ export const measureLayout = async (component: DerivedAssetComponent): Promise<P
     () => readFamilyOffsets(page),
     () => browser.close(),
   );
-  const projected: ParityPassMeasure[] = [];
+  const projected: { families: { gaps: number[]; name: string }[]; referenceId: string }[] = [];
   for (const referenceId of getCurrentBuildReferenceIds(component)) {
     // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
     const { browser: referenceBrowser, page: referencePage } = await openWitnessPage(referenceId, component);
     // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
-    const measure = await withFinalizerAsync(
-      async (): Promise<ParityPassMeasure> => {
+    const referenceFamilies = await withFinalizerAsync(
+      async () => {
         const [camera, offsets, { height, width }] = await Promise.all([
           referencePage.evaluate(() =>
             (Reflect.get(window, "getSceneCamera") as () => NonNullable<WitnessView["camera"]>)(),
@@ -53,38 +55,32 @@ export const measureLayout = async (component: DerivedAssetComponent): Promise<P
           sharp(join(REFERENCES_DIRECTORY, `${referenceId}.png`)).metadata(),
         ]);
         const pose = fromPageCamera(camera);
-        const familyGaps = families.map(({ name, pairs }) => {
-          const offset = offsets[name] ?? [0, 0, 0];
-          const shifted = pairs.map(({ expected, fitted }) => ({
-            expected: shift(expected, offset),
-            fitted: shift(fitted, offset),
-          }));
+        return families.map(({ name, pairs, row: { count, length } }) => {
+          const [x, y, z] = offsets[name] ?? [0, 0, 0];
+          const shifted = Array.from({ length: count }, (_value, copy): Vector => [x, y, z + copy * length]).flatMap(
+            (offset) =>
+              pairs.map(({ expected, fitted }) => ({
+                expected: shift(expected, offset),
+                fitted: shift(fitted, offset),
+              })),
+          );
           return { gaps: computeProjectedGaps(pose, shifted, width, height), name };
         });
-        return {
-          notes: familyGaps
-            .filter(({ gaps }) => gaps.length === 0)
-            .map(({ name }) => `${referenceId} ${name}: no part on the frame`),
-          readings: familyGaps
-            .filter(({ gaps }) => gaps.length > 0)
-            .map(({ gaps, name }) => ({
-              gate: FRAME_GATE_PIXELS,
-              name: `${referenceId} ${name}`,
-              unit: "px",
-              value: Math.max(...gaps),
-            })),
-        };
       },
       () => referenceBrowser.close(),
     );
-    projected.push(measure);
+    projected.push({ families: referenceFamilies, referenceId });
   }
+  const frameMeasure = computeLayoutFrameMeasure(
+    families.map(({ name }) => name),
+    projected,
+  );
   return {
     notes: [
       ...families.map(
         ({ mean, name, pairs }) => `${name}: ${pairs.length} fitted, ${mean.toFixed(2)} m from the exports on average`,
       ),
-      ...projected.flatMap(({ notes }) => notes),
+      ...frameMeasure.notes,
     ],
     readings: [
       ...ratios.map(({ fitted, measured, name }) => ({
@@ -101,7 +97,7 @@ export const measureLayout = async (component: DerivedAssetComponent): Promise<P
           { gate: PART_GATE_METRES, name: `${family} row up`, unit: "m", value: Math.abs(y - explainedY) },
         ];
       }),
-      ...projected.flatMap(({ readings }) => readings),
+      ...frameMeasure.readings,
     ],
   };
 };

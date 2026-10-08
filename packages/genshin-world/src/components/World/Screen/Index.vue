@@ -1,37 +1,61 @@
 <script setup lang="ts">
+import type { Character } from "#src/models/character/Character";
+import type { Inventory } from "#src/models/inventory/Inventory";
+import type { Wallet } from "#src/models/inventory/Wallet";
 import type { MapCamera } from "#src/models/map/MapCamera";
+import type { Quest } from "#src/models/quest/Quest";
+import type { QuestProgress } from "#src/models/quest/QuestProgress";
+import type { Banner } from "#src/models/wish/Banner";
 import type { WorldCameraPose } from "#src/models/world/WorldCameraPose";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext } from "@tresjs/core";
 import type { QualityTier } from "genshin-engine";
 import type { GameText } from "genshin-text";
 
+import CharacterScreen from "#src/components/Character/Screen/Index.vue";
+import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
+import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MenuScreen from "#src/components/Menu/Screen/Index.vue";
+import QuestScreen from "#src/components/Quest/Screen/Index.vue";
+import WishScreen from "#src/components/Wish/Screen/Index.vue";
+import WorldCharacter from "#src/components/World/Character/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createCharacter } from "#src/services/character/createCharacter";
+import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
+import { PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
+import { createParty } from "#src/services/party/createParty";
+import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
+import { switchPartyMember } from "#src/services/party/switchPartyMember";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
+import { InitialBannerKindWishPityMap } from "#src/services/wish/InitialBannerKindWishPityMap";
 import { TresCanvas } from "@tresjs/core";
 import { useEventListener, useRafFn } from "@vueuse/core";
 import {
   createGenshinRenderer,
   createInput,
+  createLandmarkCollider,
   GENSHIN_TONE_MAPPING,
   InputAction,
   QualityTierSettingsMap,
+  STAMINA_MAX,
 } from "genshin-engine";
-import { Euler, MathUtils, PCFShadowMap, Vector3 } from "three";
+import { Euler, Group, MathUtils, PCFShadowMap, Vector3 } from "three";
 import { unref } from "vue";
 
 interface Props {
   // A camera held still, as a reference of the game's sees the world, in place of the one circling the oak
   cameraPose?: WorldCameraPose;
+  // Where the host serves the characters' model packs, without which no character is drawn
+  characterPackBaseUrl?: string;
   createTerrainWorker: () => Worker;
   // The game's words in the reader's language
   gameText: GameText;
@@ -46,8 +70,17 @@ interface Props {
   regionDataBaseUrl: string;
 }
 
-const { cameraPose, createTerrainWorker, gameText, heldMinutes, isPaused, isTuning, qualityTier, regionDataBaseUrl } =
-  defineProps<Props>();
+const {
+  cameraPose,
+  characterPackBaseUrl,
+  createTerrainWorker,
+  gameText,
+  heldMinutes,
+  isPaused,
+  isTuning,
+  qualityTier,
+  regionDataBaseUrl,
+} = defineProps<Props>();
 // Quitting the game leaves the world, which its host does
 const emit = defineEmits<{ quit: []; ready: [] }>();
 const { maxPixelRatio } = QualityTierSettingsMap[qualityTier];
@@ -61,6 +94,22 @@ const input = createInput(window, controller.signal);
 const inputState = input.readInput(0);
 // What is open over the world, one screen at a time, and what it does to the world under it
 const screenKind = ref(ScreenKind.World);
+// The player's characters and their party: the Traveler alone, as a new player's, on the field
+const characters: Character[] = [createCharacter(TRAVELER_CHARACTER_ID)];
+const party = reactive(createParty([TRAVELER_CHARACTER_ID]));
+// The player's bag, wallet, wish counters and characters' copies, holding nothing as a new player's do until the world
+// Gives them something, and the banners the world offers, none until it can name what they draw
+const inventory = ref<Inventory>(EMPTY_INVENTORY);
+const wallet = ref<Wallet>(EMPTY_WALLET);
+const wishPityMap = ref(InitialBannerKindWishPityMap);
+const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(new Map());
+const banners: Banner[] = [];
+// The quests in progress, how far each has come, their words and the one navigated to. Nothing starts a quest yet, so
+// The quest screen opens empty
+const quests: Quest[] = [];
+const questProgressMap = new Map<string, QuestProgress>();
+const questTextMap: Record<string, string> = {};
+const trackedQuestId = ref("");
 const screenBehaviour = computed(() => ScreenBehaviourMap[screenKind.value]);
 // A screen with a cursor of its own lets the pointer go, which a click on the world takes again once it closes
 watch(
@@ -69,42 +118,51 @@ watch(
     if (isPointerReleased) window.document.exitPointerLock();
   },
 );
+// Left Alt shows the cursor, as the game's Show Cursor does, letting the lock go without opening the Paimon menu
+let isCursorShown = false;
+const showCursor = () => {
+  isCursorShown = true;
+  window.document.exitPointerLock();
+};
 // The browser keeps Escape for itself while the pointer is locked, letting the lock go in place of passing the key on,
-// So a lock lost with the world in play opens the Paimon menu as Escape does
+// So a lock lost with the world in play opens the Paimon menu as Escape does, unless it was let go to show the cursor
 useEventListener(
   () => window.document,
   "pointerlockchange",
   () => {
-    if (window.document.pointerLockElement === null && screenKind.value === ScreenKind.World)
-      screenKind.value = ScreenKind.PaimonMenu;
+    if (window.document.pointerLockElement !== null) isCursorShown = false;
+    else if (screenKind.value === ScreenKind.World && !isCursorShown) screenKind.value = ScreenKind.PaimonMenu;
   },
 );
 onUnmounted(() => {
   controller.abort();
 });
-// The world's origin, owned here so the free camera reads the ground through it before the floating origin shifts it
+// The world's origin, owned here so the cameras read the ground through it before the floating origin shifts it
 const origin = new Vector3();
+// What the character's body and the camera collide with, given the landmarks as they arrive
+const landmarkCollider = createLandmarkCollider();
+// What the character on the field is drawn on, which the controller moves and the scene places among everything in the
+// World
+const characterBody = new Group();
 // Every landmark a jump lands at, which the map and the minimap draw
 const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl);
-const freeCamera = useTemplateRef("freeCamera");
+const character = useTemplateRef("character");
 // Whether the backslash has hidden the HUD, as the game's Hide UI does, apart from the screens that hide it
 const isHudHidden = ref(false);
-// The camera's ground point and yaw in world metres for the map and the minimap, read each frame and handed on only
-// When it moved, so a still camera re-renders nothing
+// The character's ground point in world metres and the yaw the view faces, for the map and the minimap, read each frame
+// And handed on only when it moved, so a still player re-renders nothing
 const mapCamera = shallowRef<MapCamera>({ x: 0, yaw: 0, z: 0 });
 const cameraEuler = new Euler();
 useRafFn(() => {
   const activeCamera = canvas.value?.context?.camera.activeCamera.value;
   if (!activeCamera) return;
-  const x = activeCamera.position.x + origin.x;
-  const z = activeCamera.position.z + origin.z;
+  const { x, z } = characterBody.position;
   const { y: yaw } = cameraEuler.setFromQuaternion(activeCamera.quaternion, "YXZ");
   if (x !== mapCamera.value.x || yaw !== mapCamera.value.yaw || z !== mapCamera.value.z)
     mapCamera.value = { x, yaw, z };
 });
-// A jump's pose while the screen is faded for it: set, the screen fades to black, and once that fade ends the camera is
-// Placed and the pose let go, so the screen fades back in. Once a character walks, its body is placed in the free
-// Camera's stead
+// A jump's pose while the screen is faded for it: set, the screen fades to black, and once that fade ends the character
+// Is placed and the pose let go, so the screen fades back in
 const jumpPose = shallowRef<WorldJumpPose>();
 const jumpTo = (pose: WorldJumpPose) => {
   jumpPose.value = pose;
@@ -149,7 +207,14 @@ defineExpose({ jumpTo, readCameraPosition });
         (context: TresContextWithClock) => {
           input.readInput(context.delta);
           if (!isPaused) screenKind = getNextScreenKind(screenKind, inputState.pressedActions);
-          if (inputState.pressedActions.has(InputAction.HideInterface)) isHudHidden = !isHudHidden;
+          if (!isPaused && screenKind === ScreenKind.World && inputState.pressedActions.has(InputAction.HideInterface))
+            isHudHidden = !isHudHidden;
+          if (inputState.pressedActions.has(InputAction.ShowCursor)) showCursor();
+          const partyMemberIndex = PARTY_MEMBER_INPUT_ACTIONS.findIndex((action) =>
+            inputState.pressedActions.has(action),
+          );
+          if (!isPaused && screenKind === ScreenKind.World && partyMemberIndex !== -1)
+            switchPartyMember(party, partyMemberIndex, context.elapsed);
         }
       "
       @error="emit('ready')"
@@ -163,19 +228,34 @@ defineExpose({ jumpTo, readCameraPosition });
       />
       <template v-else>
         <TresPerspectiveCamera :far="2000" :fov="45" :look-at="[0, 14, 0]" :position="[62, 26, 58]" />
-        <WorldFreeCamera
+        <!-- The character walks the world with the camera behind it, held where it stands under a menu and in photo
+        mode, whose camera flies free from where the follow camera left it -->
+        <WorldCharacter
           v-if="!witness"
-          ref="freeCamera"
+          ref="character"
+          :body="characterBody"
+          :character-id="getActiveCharacterId(party)"
+          :input-state
+          :is-held="screenBehaviour.isHeld || screenKind === ScreenKind.PhotoMode || undefined"
+          :landmark-collider
+          :origin
+        />
+        <WorldFreeCamera
+          v-if="!witness && screenKind === ScreenKind.PhotoMode"
           :input-state
           :is-held="screenBehaviour.isHeld || undefined"
           :origin
         />
       </template>
       <WorldWindrise
+        :character-body="cameraPose || witness ? undefined : characterBody"
+        :character-id="getActiveCharacterId(party)"
+        :character-pack-base-url
         :create-terrain-worker
         :held-minutes
         :is-held="screenBehaviour.isHeld || undefined"
         :is-tuning="Boolean(isTuning)"
+        :landmark-collider
         :origin
         :quality-tier
         :region-data-base-url
@@ -207,6 +287,43 @@ defineExpose({ jumpTo, readCameraPosition });
           "
         />
       </template>
+      <template #[ScreenKind.Quests]>
+        <QuestScreen
+          :game-text
+          :quest-progress-map
+          :quests
+          :text-map="questTextMap"
+          :tracked-quest-id
+          @close="screenKind = ScreenKind.World"
+          @navigate="(questId) => (trackedQuestId = questId)"
+        />
+      </template>
+      <template #[ScreenKind.AdventurerHandbook]>
+        <HandbookScreen :game-text @close="screenKind = ScreenKind.World" />
+      </template>
+      <template #[ScreenKind.Character]>
+        <CharacterScreen
+          :active-character-id="getActiveCharacterId(party)"
+          :characters
+          :game-text
+          :max-stamina="STAMINA_MAX"
+          @close="screenKind = ScreenKind.World"
+        />
+      </template>
+      <template #[ScreenKind.Inventory]>
+        <InventoryScreen :game-text :inventory :wallet @close="screenKind = ScreenKind.World" />
+      </template>
+      <template #[ScreenKind.Wish]>
+        <WishScreen
+          v-model:character-copy-count-map="characterCopyCountMap"
+          v-model:inventory="inventory"
+          v-model:pity-map="wishPityMap"
+          v-model:wallet="wallet"
+          :banners
+          :game-text
+          @close="screenKind = ScreenKind.World"
+        />
+      </template>
     </MenuScreen>
     <div
       class="teleport-fade"
@@ -214,7 +331,7 @@ defineExpose({ jumpTo, readCameraPosition });
       @transitionend="
         () => {
           if (!jumpPose) return;
-          freeCamera?.place(jumpPose);
+          character?.place(jumpPose);
           jumpPose = undefined;
         }
       "

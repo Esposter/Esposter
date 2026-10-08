@@ -17,7 +17,7 @@ describe(computeLightningBolt, () => {
     // The channel's last segment's far end, its third vertex
     const topOffset = ((lightningBoltOptions.segmentCount - 1) * 4 + 2) * 3;
 
-    expect({ strike: Array.from(positions.subarray(0, 3)), top: positions[topOffset + 1] }).toStrictEqual({
+    expect({ strike: [...positions.subarray(0, 3)], top: positions[topOffset + 1] }).toStrictEqual({
       strike: [0, 0, 0],
       top: lightningBoltOptions.height,
     });

@@ -59,13 +59,7 @@ Sumeru City from the gate and from the Akademiya, Port Ormos, a Gandharva Ville 
 | :-------------------------------------------------------- | :------------------------------------ |
 | `packages/genshin-engine/src/noise/createSimplexNoise.ts` | The detail noise and the dune ripples |
 
-Built: the kits, as [Sumeru kits](/docs/genshin/sumeru-kits). Its region data file is built empty of landmarks.
-
-New files still to come:
-
-```text
-packages/genshin-world/src/services/sumeru/   ← palette, once its values are settled
-```
+Built: the kits, as [Sumeru kits](/docs/genshin/sumeru-kits), and Sumeru City's first landmark with a provisional colour, as [region buildings](/docs/genshin/region-buildings). Still to come: the region's full palette, sampled from its references.
 
 ## Sources
 

@@ -21,8 +21,8 @@ const emit = defineEmits<{ open: [] }>();
 </script>
 
 <template>
-  <!-- The map's drawing cut to a circle round the camera and turned with it, so its facing is always up, the pointer at
-       Its centre. Pressing it opens the map, as M does -->
+  <!-- The map's drawing cut to a circle round the player and turned with the view, so its facing is always up,
+       The pointer at its centre. Pressing it opens the map, as M does -->
   <button class="minimap" type="button" :aria-label="gameText[GameTextKey.Map]" @click="emit('open')">
     <svg
       :viewBox="`${-MINIMAP_RADIUS} ${-MINIMAP_RADIUS} ${MINIMAP_RADIUS * 2} ${MINIMAP_RADIUS * 2}`"

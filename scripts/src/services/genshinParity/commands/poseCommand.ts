@@ -1,11 +1,14 @@
 import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { CAMERA_POSE_AXES } from "#src/services/genshinParity/shared/constants";
+import { FRAME_GATE_PIXELS } from "#src/services/genshinParity/passes/constants";
+import { CAMERA_POSE_AXES, PARITY_REFERENCE_MAP_PATH } from "#src/services/genshinParity/shared/constants";
+import { replaceReferenceCameraPose } from "#src/services/genshinParity/witness/replaceReferenceCameraPose";
 import { solveReferencePose } from "#src/services/genshinParity/witness/solveReferencePose";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
+import { readFile, writeFile } from "node:fs/promises";
 
 const AXIS_NAMES: readonly string[] = CAMERA_POSE_AXES;
 
@@ -36,6 +39,11 @@ export const poseCommand: SubCommandsDef[string] = defineCommand({
       options: Object.values(DerivedAssetComponent),
       type: "enum",
     },
+    write: {
+      description:
+        "Write the landmarks' pose into the reference's held camera in ParityReferenceMap, when no refinement moved it and it reprojects them within the camera pass's gate",
+      type: "boolean",
+    },
   },
   meta: {
     description:
@@ -62,5 +70,15 @@ export const poseCommand: SubCommandsDef[string] = defineCommand({
       console.log(`edges ${refinement.before.toFixed(2)} px to ${refinement.after.toFixed(2)} px from the reference's`);
     console.log(`pose ${CAMERA_POSE_AXES.map((axis, index) => `${axis} ${(pose[index] ?? 0).toFixed(3)}`).join(", ")}`);
     console.log(`given | snapped | projected: ${imagePath}`);
+    if (!args.write) return;
+    // Only a pose the camera pass would hold is written, so a miss leaves the map as it was
+    else if (refinement) console.log("not written: a refinement moved the pose off its landmarks");
+    else if (rms > FRAME_GATE_PIXELS)
+      console.log(`not written: ${rms.toFixed(2)} px over the camera pass's ${FRAME_GATE_PIXELS}`);
+    else {
+      const source = await readFile(PARITY_REFERENCE_MAP_PATH, "utf8");
+      await writeFile(PARITY_REFERENCE_MAP_PATH, replaceReferenceCameraPose(source, args.reference, pose));
+      console.log(`written as ${args.reference}'s held camera: ${PARITY_REFERENCE_MAP_PATH}`);
+    }
   },
 });

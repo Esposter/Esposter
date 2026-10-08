@@ -17,6 +17,7 @@ This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/
   Windmills are their own kit, a stone tower with sails that turn in the wind field. The city wall, the gate bridge and the cathedral are landmark-tier pieces built from the kit's parts and matched pose by pose.
 
 - **Species.** Broad oaks, with Windrise's great oak as a landmark, apple trees, pines on the slopes, grape rows at Dawn Winery, and dense old forest in Wolvendom and Whispering Woods.
+- **Windrise stays in Galesong Hill.** The game's own area table files Windrise under Galesong Hill, and the catalogue does too, so its oak and statue stay that area's landmarks; Mondstadt City's buildings are Starfell Valley's.
 - **Dragonspine is a snow biome with ruins.** It has snow ground, ice, frozen falls, snow and snowstorm weather, and the Entombed City's ruins. Skyfrost Nail is a landmark-tier spike mesh, and Starglow Cavern and Wyrmrest Valley are surface caves and hollows.
 
 ## Areas
@@ -45,7 +46,6 @@ References are found for each of these first, published recordings searched befo
 New files:
 
 ```text
-packages/genshin-world/src/data/regions/mondstadt.json
 packages/genshin-world/src/services/mondstadt/   ← windmill and wall generators (the building kit is built)
 ```
 

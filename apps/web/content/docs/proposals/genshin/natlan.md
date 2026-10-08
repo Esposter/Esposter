@@ -24,7 +24,7 @@ This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/
   - the Collective of Plenty: markets and forges
   - the Masters of the Night-Wind: dark forest
 
-  They are fitted per tribe against the tribe's own exports.
+  They are fitted per tribe against the tribe's own exports. The kit's parts stay the engine's generic `kits/architecture`, since nothing in them is Natlan's; each tribe's parameters and palette are the world's, in `services/natlan`.
 
 - **A saturated palette.** Red rock, orange and gold flowers, turquoise springs and green canopy, painted with the strongest grade of any region.
 - **Landmarks.** The Stadium of the Sacred Flame, Ochkanatlan, Coatepec Mountain, the Ancient Sacred Mountain and the tribes' halls are landmark-tier.
@@ -68,7 +68,6 @@ Toyac Springs' pools and falls, each tribe's central settlement, the Stadium of 
 New files:
 
 ```text
-packages/genshin-world/src/data/regions/natlan.json
 packages/genshin-engine/src/kits/architecture/  ← the tribe-variant building kit's remaining parts, murals, lava channels
 ```
 

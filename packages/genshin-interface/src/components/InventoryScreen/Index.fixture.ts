@@ -7,13 +7,10 @@ export const props = {
   capacity: "Weapons 2/2000",
   category: ItemCategory.Weapon,
   cells: [
-    { caption: "Lv. 1", id: 0, name: "Dull Blade", rarity: 1 },
-    { caption: "Lv. 1", id: 1, name: "Hunter's Bow", rarity: 1 },
+    { caption: "Lv. 1", id: "0", name: "Dull Blade", rarity: 1 },
+    { caption: "Lv. 1", id: "1", name: "Hunter's Bow", rarity: 1 },
   ],
-  currencies: [
-    { id: "Mora", name: "Mora", quantity: 0 },
-    { id: "Primogem", name: "Primogem", quantity: 0 },
-  ],
+  currencies: [{ id: "Mora", name: "Mora", quantity: 0 }],
   isDescending: true,
   isSortable: true,
   orderLabel: "Descending",
@@ -37,8 +34,8 @@ export const variants = {
     capacity: "",
     category: ItemCategory.Material,
     cells: [
-      { caption: "3", id: 2, name: "Sweet Flower", rarity: 1 },
-      { caption: "1", id: 3, name: "Windwheel Aster", rarity: 1 },
+      { caption: "3", id: "2", name: "Sweet Flower", rarity: 1 },
+      { caption: "1", id: "3", name: "Windwheel Aster", rarity: 1 },
     ],
     isSortable: undefined,
   },

@@ -72,6 +72,7 @@ flowchart TD
 ### Text
 
 - **The client's text is hash-named "MiHoYoBinData"**, most of it in one block, in a binary layout the community decodes afresh each patch. So the repository reads the decoded dump the community publishes per patch — text maps from hash to string per language, and the tables naming which hash an interface string or a voice-over line is — rather than the blocks ([game text](/docs/genshin/game-text)).
+- **The dump scrambles a table's field names each patch.** The quest, dialog and character tables keep most of their names readable, but a dialog's own id sits under eleven scrambled capitals, and each quest's binary output under `BinOutput/Quest/` scrambles every name. So a reader finds a field by the shape of its value rather than its name: a quest's sub quests are the array whose items hold conditions, a condition carries a `QUEST_CONTENT_` code and its parameters, a step's id is the number in its quest's hundred, and its words are the hash the text map holds ([quests](/docs/genshin/quests)).
 - **The welcome is the account kit's.** The welcome card's greeting comes from HoYoverse's account kit, whose string tables sit in its own bundle beside the game (`MiHoYoSDKRes`) rather than in the dump ([game text](/docs/genshin/game-text)); everything else the opening says, the health notice, the login status lines and the door's prompt among it, is in the text map.
 
 ## References beside each component

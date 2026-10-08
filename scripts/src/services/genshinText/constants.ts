@@ -11,6 +11,15 @@ export const TEXT_MAP_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "TextMap");
 export const EXCEL_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "ExcelBinOutput");
 export const MANUAL_TEXT_MAP_PATH: string = join(EXCEL_DIRECTORY, "ManualTextMapConfigData.json");
 export const FETTERS_PATH: string = join(EXCEL_DIRECTORY, "FettersExcelConfigData.json");
+// The quest, dialog and character tables a quest's steps and talks are read from, and the binary output holding each
+// Quest's steps under its id
+export const MAIN_QUEST_PATH: string = join(EXCEL_DIRECTORY, "MainQuestExcelConfigData.json");
+export const DIALOG_PATH: string = join(EXCEL_DIRECTORY, "DialogExcelConfigData.json");
+export const NPC_PATH: string = join(EXCEL_DIRECTORY, "NpcExcelConfigData.json");
+export const QUEST_BINARY_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "BinOutput", "Quest");
+// A dialog's own id sits under one of the names the dump scrambles, eleven capitals
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
+export const SCRAMBLED_KEY_REGEX: RegExp = /^[A-Z]{11}$/u;
 // The code each language's text map is filed under; the largest are split into numbered parts
 export const GameLanguageCodeMap: Record<GameLanguage, string> = {
   [GameLanguage.ChineseSimplified]: "CHS",
@@ -34,6 +43,16 @@ export const GameLanguageCodeMap: Record<GameLanguage, string> = {
 export const VOICE_LINE_FETTER_TYPE = 1;
 export const GENSHIN_TEXT_SOURCE_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-text", "src");
 export const GENSHIN_TEXT_GENERATED_DIRECTORY: string = join(GENSHIN_TEXT_SOURCE_DIRECTORY, "generated");
+// Where the world's quests are written, one file a quest, and their words, one chunk a language
+const GENSHIN_WORLD_GENERATED_DIRECTORY: string = join(
+  REPOSITORY_ROOT,
+  "packages",
+  "genshin-world",
+  "src",
+  "generated",
+);
+export const QUESTS_DIRECTORY: string = join(GENSHIN_WORLD_GENERATED_DIRECTORY, "quests");
+export const QUEST_TEXT_DIRECTORY: string = join(GENSHIN_WORLD_GENERATED_DIRECTORY, "questText");
 const PERSONA_GENERATED_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-persona", "src", "generated");
 export const CHARACTER_LINES_DIRECTORY: string = join(PERSONA_GENERATED_DIRECTORY, "characterLines");
 // The persona is installed alone by a stranger's `npm ci` and so takes no workspace package; it gets a copy of the

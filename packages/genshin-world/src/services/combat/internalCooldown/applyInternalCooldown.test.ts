@@ -4,9 +4,9 @@ import { applyInternalCooldown } from "#src/services/combat/internalCooldown/app
 import { DEFAULT_INTERNAL_COOLDOWN_GROUP } from "#src/services/combat/internalCooldown/constants";
 import { describe, expect, test } from "vitest";
 
-describe(applyInternalCooldown, () => {
-  const createInternalCooldown = (): InternalCooldown => ({ hitIndex: 0, startSeconds: -Infinity });
+const createInternalCooldown = (): InternalCooldown => ({ hitIndex: 0, startSeconds: -Infinity });
 
+describe(applyInternalCooldown, () => {
   test("applies the 1st, 4th and 7th of seven hits inside the timer, as Yoimiya's arrows melt", () => {
     expect.hasAssertions();
 

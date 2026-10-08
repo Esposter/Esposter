@@ -8,6 +8,7 @@ import { extractCommand } from "#src/services/genshinAssets/commands/extractComm
 import { fitCommand } from "#src/services/genshinAssets/commands/fitCommand";
 import { interfaceCommand } from "#src/services/genshinAssets/commands/interfaceCommand";
 import { inventoryCommand } from "#src/services/genshinAssets/commands/inventoryCommand";
+import { locomotionCommand } from "#src/services/genshinAssets/commands/locomotionCommand";
 import { mapCommand } from "#src/services/genshinAssets/commands/mapCommand";
 import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand";
 import { playlistCommand } from "#src/services/genshinAssets/commands/playlistCommand";
@@ -31,6 +32,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     inventory: inventoryCommand,
     interface: interfaceCommand,
     clips: clipsCommand,
+    locomotion: locomotionCommand,
     witness: witnessCommand,
     music: musicCommand,
     sounds: soundsCommand,

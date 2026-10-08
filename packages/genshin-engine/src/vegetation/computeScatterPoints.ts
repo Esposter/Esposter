@@ -42,8 +42,8 @@ const checkIsCrowded = (
 // It and no kept plant stands closer than the spacing, so the plants are spaced evenly yet without a visible grid. The
 // Same options give the same plants, returned as x and z pairs relative to the square's corner
 export const computeScatterPoints = ({
-  accepts,
   candidateCount,
+  checkIsAccepted,
   seed,
   size,
   spacing,
@@ -58,7 +58,7 @@ export const computeScatterPoints = ({
     const z = random() * size;
     const column = Math.floor(x / cellSize);
     const row = Math.floor(z / cellSize);
-    if (!accepts(x, z) || checkIsCrowded(cells, cellsPerSide, points, spacing, column, row, x, z)) continue;
+    if (!checkIsAccepted(x, z) || checkIsCrowded(cells, cellsPerSide, points, spacing, column, row, x, z)) continue;
     cells[row * cellsPerSide + column] = points.length / 2;
     points.push(x, z);
   }

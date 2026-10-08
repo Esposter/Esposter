@@ -64,6 +64,7 @@ export const getCharacterDatas = (notes: string[]): CharacterData[] => {
           curve: growCurve,
         })),
         id: row.id,
+        initialWeaponId: row.initialWeapon,
         rarity: QualityTypeRarityMap[row.qualityType],
         regionId: association === undefined ? undefined : AssociationRegionIdMap[association],
         weaponType: row.weaponType,

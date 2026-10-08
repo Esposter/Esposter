@@ -70,7 +70,7 @@ useEventListener("keydown", (event) => {
   const choice = choices.value[selectedChoiceIndex.value];
   if (event.code === "ArrowDown" || event.code === "ArrowUp") {
     const step = event.code === "ArrowDown" ? 1 : -1;
-    selectedChoiceIndex.value = Math.min(Math.max(selectedChoiceIndex.value + step, 0), choices.value.length - 1);
+    selectedChoiceIndex.value = Math.max(Math.min(selectedChoiceIndex.value + step, choices.value.length - 1), 0);
   } else if (choice && checkIsActionKey(InputAction.Interact, event.code)) choose(choice.id);
   else if (checkIsActionKey(InputAction.Interact, event.code) || checkIsActionKey(InputAction.Jump, event.code))
     setProgress(advanceTalk(talk, progress.value));

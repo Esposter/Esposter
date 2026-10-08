@@ -52,3 +52,18 @@ the change that moved it, as a bench's report is committed.
 | Surface | login-door-session Towers glow structure | 0.1925 | 0.0787 | share | no |
 | Surface | login-door-session Walkway glow colour | 50.1179 | 2.3000 | ΔE | no |
 | Surface | login-door-session Walkway glow structure | 0.8384 | 0.0269 | share | no |
+
+## windrise
+
+| Pass | Reading | Value | Gate | Unit | Held |
+| :--- | :------ | ----: | ---: | :--- | :--- |
+| Inventory | renderers unclaimed | 0 | 0 | renderers | yes |
+| Layout | Statue row across | 0 | 0.0200 | m | yes |
+| Layout | Statue row up | 0 | 0.0200 | m | yes |
+| Layout | Oak row across | 0 | 0.0200 | m | yes |
+| Layout | Oak row up | 0 | 0.0200 | m | yes |
+| Layout | Paving row across | 0 | 0.0200 | m | yes |
+| Layout | Paving row up | 0 | 0.0200 | m | yes |
+| Layout | Ground row across | 0 | 0.0200 | m | yes |
+| Layout | Ground row up | 0 | 0.0200 | m | yes |
+| Camera | windrise-statue-day | 14.7978 | 2 | px | no |

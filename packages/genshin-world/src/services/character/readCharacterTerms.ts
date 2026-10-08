@@ -6,7 +6,7 @@ import { getResultAsync } from "@esposter/shared";
 // So the terms of each model are shown rather than a summary of them
 export const readCharacterTerms = (
   characterPackBaseUrl: string,
-  characterId: string,
+  characterId: number,
 ): ReturnType<typeof getResultAsync<string>> =>
   getResultAsync(async () => {
     const response = await readCharacterPackFile(

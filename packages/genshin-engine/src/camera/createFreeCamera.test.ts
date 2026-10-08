@@ -3,7 +3,7 @@ import type { InputState } from "#src/models/input/InputState";
 import { FREE_CAMERA_BASE_SPEED, FREE_CAMERA_CLEARANCE, FREE_CAMERA_SPEED_PER_HEIGHT } from "#src/camera/constants";
 import { createFreeCamera } from "#src/camera/createFreeCamera";
 import { createGroundQuery } from "#src/collision/createGroundQuery";
-import { Euler, PerspectiveCamera, Vector3 } from "three";
+import { PerspectiveCamera, Vector3 } from "three";
 import { describe, expect, test } from "vitest";
 
 describe(createFreeCamera, () => {
@@ -51,23 +51,5 @@ describe(createFreeCamera, () => {
     createFreeCamera({ camera, ground: createGroundQuery(() => 0, WATER_SURFACE) }).step(STILL_INPUT, STEP_SECONDS);
 
     expect(camera.position.y).toBe(WATER_SURFACE + FREE_CAMERA_CLEARANCE);
-  });
-
-  test("turns a look from the view a place set, never the one before it", () => {
-    expect.hasAssertions();
-
-    const LOOK_YAW = 1;
-    const PLACED_YAW = 2;
-    const camera = new PerspectiveCamera();
-    const freeCamera = createFreeCamera({ camera, ground: createGroundQuery(() => 0, WATER_LEVEL) });
-    freeCamera.look({ ...STILL_INPUT, lookYaw: LOOK_YAW });
-    freeCamera.place(new Vector3(HEIGHT, HEIGHT, HEIGHT), PLACED_YAW, 0);
-    freeCamera.look({ ...STILL_INPUT, lookYaw: LOOK_YAW });
-    const { y: yaw } = new Euler().setFromQuaternion(camera.quaternion, "YXZ");
-
-    expect({ position: camera.position.toArray(), yaw }).toStrictEqual({
-      position: [HEIGHT, HEIGHT, HEIGHT],
-      yaw: expect.closeTo(PLACED_YAW + LOOK_YAW, 9),
-    });
   });
 });

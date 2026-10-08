@@ -14,7 +14,7 @@ One line under the roadmap's **Compute queue** (`apps/web/content/docs/genshin/r
 - what it writes;
 - the measure that says it worked, with its bar.
 
-An item missing any of these is not queued: the gap is a call, and calls are the main session's. Items stand in the recreation passes' order: an item waits on every earlier pass of its scene, so the queue reads top to bottom.
+An item missing any of these is not queued: the gap is a call, and calls are the main session's. Items stand in the recreation passes' order, so the queue reads top to bottom. An item waits on the earlier passes **its measure reads**, not on every earlier pass: a sun solved on the exports' shadow edges reads the shape and the camera, so it runs while the surface is still red, and a light pass that scores our stone's colour does not. Releasing an item past a red pass is the main session's call, made by naming what its measure reads.
 
 ## The lanes
 

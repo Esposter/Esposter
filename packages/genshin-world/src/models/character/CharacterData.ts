@@ -11,9 +11,9 @@ import { WeaponType } from "#src/models/weapon/WeaponType";
 import { z } from "zod";
 
 // A character of the game's roster as its tables hold it, by the game's own id: its element, which the Traveler has none
-// Of until they resonate with a statue; the kind of weapon it wields; its rarity in stars; the catalogue region its
-// Association names, none for one that names no nation; its body; the attributes that grow with its level, its
-// Ascension phases, and the attributes every level of it starts with
+// Of until they resonate with a statue; the kind of weapon it wields and the one it comes with; its rarity in stars;
+// The catalogue region its association names, none for one that names no nation; its body; the attributes that grow
+// With its level, its ascension phases, and the attributes every level of it starts with
 export interface CharacterData {
   ascensionPhases: AscensionPhase[];
   attributeLines: AttributeLine[];
@@ -21,6 +21,7 @@ export interface CharacterData {
   element?: Element;
   growAttributes: GrowAttribute[];
   id: number;
+  initialWeaponId: number;
   rarity: number;
   regionId?: string;
   weaponType: WeaponType;
@@ -33,6 +34,7 @@ export const characterDataSchema = z.object({
   element: z.enum(Element).optional(),
   growAttributes: z.array(growAttributeSchema),
   id: z.int().positive(),
+  initialWeaponId: z.int().positive(),
   rarity: z.int().min(1).max(5),
   regionId: z.string().min(1).optional(),
   weaponType: z.enum(WeaponType),

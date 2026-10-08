@@ -36,7 +36,7 @@ const emit = defineEmits<{ close: []; dismiss: []; wish: [count: number] }>();
        Falling star wait on the wish's passes against a recording of the English client at 1080 high -->
   <div class="wish-screen">
     <header class="head">
-      <h1 class="title">{{ title }}</h1>
+      <p class="title" role="heading" aria-level="1">{{ title }}</p>
       <ul class="banners">
         <li v-for="kind of bannerKinds" :key="kind">
           <button class="banner" :aria-pressed="kind === bannerKind" type="button" @click="bannerKind = kind">

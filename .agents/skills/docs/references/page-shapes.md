@@ -85,8 +85,11 @@ Prioritized top-down, checkbox-driven (`- [ ]` with nested sub-steps), grouped b
 | Designed                  | `proposals/<area>/<name>.md` | Write the proposal; roadmap item links to it                                             |
 | Shipped                   | `<area>/<feature>.md`        | Rewrite proposal as an as-built page; delete proposal + roadmap item; log in `index.md`  |
 | Shipped (one-time change) | —                            | Delete proposal + roadmap item, sweep references, one shipped-log line — no feature page |
+| Shipped in part           | both                         | What shipped becomes the as-built page; the proposal keeps only what is unbuilt          |
 | Won't do                  | `<area>/rejected/<idea>.md`  | One page with rationale                                                                  |
 | Deferred                  | `<area>/deferred/<idea>.md`  | One page with rationale + revisit trigger                                                |
+
+**A proposal shipped in part leaves two pages sharing no sentence.** The proposal's opener points at the as-built page rather than summarizing it, and a source both cite is worded for what each page reads off it, since `scripts/src/workspace/duplicateProse.test.ts` fails on ten words the two share. A split that copies the sources list or the summary across is the one shape that test catches by the dozen.
 
 **A one-time change** — a rename, a migration, a mechanical sweep — has no as-built feature to describe, so when it is done the proposal and its roadmap item are deleted and every reference swept, and it is never converted into a docs page; the shipped-log line in the area `index.md` is the only trace. That log is **one line per program of work, not per change** — a paragraph restating a feature page listed above it on the same index is the index restating its own contents, and what belongs at that level is the standing fact no single page holds (what the whole program cost, what it did not add).
 

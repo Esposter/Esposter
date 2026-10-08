@@ -1,0 +1,11 @@
+// What the game counts rather than lists: Mora, Primogems and Genesis Crystals, held outside the bag's tabs, and the two
+// Fates, Masterless Starglitter and Masterless Stardust, among its Precious Items
+export enum Currency {
+  AcquaintFate = "AcquaintFate",
+  GenesisCrystal = "GenesisCrystal",
+  IntertwinedFate = "IntertwinedFate",
+  MasterlessStardust = "MasterlessStardust",
+  MasterlessStarglitter = "MasterlessStarglitter",
+  Mora = "Mora",
+  Primogem = "Primogem",
+}
