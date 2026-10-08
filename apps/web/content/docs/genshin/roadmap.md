@@ -150,6 +150,18 @@ Items whose input does not exist yet, each naming what it waits on: a recording 
 - [ ] `[page]` **Paimon: the menu's open and close, timed.** Waits on `menu-paimon.mkv`. The menu has no transition yet, so it opens and closes at once. Once the clip lands, `pnpm -C scripts genshin:parity frames <file> 60 <start> <seconds>` over the opening, and the timing and easing it reads go in the Paimon section's constants with how they were measured.
 - [ ] `[page]` **Settings: the Graphics rows and the Audio tab, scored over the whole frame.** Waits on `menu-settings.mkv`. Each row's place and label read from the clip's frames, the Audio tab's rows and volumes built beside them, and the frame scored with `pnpm -C scripts genshin:parity compare settings-graphics-rows`, a reference the clip adds. Bar: 2%, with the blurred world counted as the one thing the page cannot draw.
 
+## Awaiting the user
+
+Only the acts that are physically the user's wait here; every other call is made and built. The clips owed are the next section.
+
+- **Approve the visual-suite images** the screen passes wrote, each untracked until approved with `test:visual -u`. Each is a screen's current build, not its target:
+  - `packages/genshin-interface/src/components/CharacterMenu/Index.win32.png`
+  - `packages/genshin-interface/src/components/InventoryScreen/Index.win32.png` and `Index-materials.win32.png`
+  - `packages/genshin-world/src/components/Character/Screen/Index.win32.png`
+  - `packages/genshin-world/src/components/Inventory/Screen/Index.win32.png`
+  - `packages/genshin-world/src/components/Menu/Exit/Index.win32.png`, `Menu/Paimon/Index.win32.png` and `Menu/Settings/Index.win32.png`
+- **An eye on the provisional looks** the passes cannot score yet: the prompt list's pill end and fill, the HUD's minimap disc, the drops' and residents' stand-in tints.
+
 ## Recordings owed
 
 Clips nothing published shows, which the user records: each 30 seconds or less, the English PC client at 1080p and 60 frames a second unless it says otherwise, saved under `~/Esposter/genshin-parity/captures/` by the name given. A published clip is searched for first ([parity](/docs/genshin/parity), "Search before recording"); one found is fetched under the same name and its line leaves this list. The compute-queue items that read a clip name it, and run once it lands.
