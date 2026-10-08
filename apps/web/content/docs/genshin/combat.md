@@ -66,7 +66,7 @@ Each recorded reaction carries the element its damage is dealt in, none for Shat
 
 ### Damage
 
-`getDamage` is the game's general formula. The talent's multiplier of its stat, plus any flat bonus, is multiplied by one plus the damage bonus and by a crit's one plus critical damage. It is then cut by the enemy's defence, (attacker level + 100) / (attacker level + 100 + enemy level + 100) before any reduction or ignoring, and by the enemy's resistance. Last it is multiplied by an amplifying reaction's multiplier. `getResistanceMultiplier` adds half a negative resistance, takes off a resistance up to 75%, and leaves 1 / (4 × resistance + 1) past that.
+`getDamage` is the game's general formula. The talent's multiplier of its stat, plus any flat bonus, is multiplied by one plus the damage bonus and by a crit's one plus critical damage. It is then cut by the enemy's defence against the attacker's level, (5 × attacker level + 500) / (enemy defence + 5 × attacker level + 500) before any reduction or ignoring, and by the enemy's resistance. An enemy of level L has 5 × L + 500 defence, so a hit from its own level is halved. Last it is multiplied by an amplifying reaction's multiplier. `getResistanceMultiplier` adds half a negative resistance, takes off a resistance up to 75%, and leaves 1 / (4 × resistance + 1) past that.
 
 - **Amplifying**: Vaporize and Melt multiply their hit by 2 where Hydro vaporizes or Pyro melts, and by 1.5 the other way round. Elemental mastery raises that by 2.78 × EM / (EM + 1400), plus any reaction bonus (`getAmplifyingMultiplier`).
 - **Catalyze**: Aggravate adds 1.15 and Spread 1.25 times the character's level multiplier to the hit's flat bonus, raised by 5 × EM / (EM + 1200) (`getCatalyzeBonus`).

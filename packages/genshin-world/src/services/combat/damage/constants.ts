@@ -10,6 +10,7 @@ export const CRYSTALLIZE_ELEMENTAL_MASTERY_CURVE: ElementalMasteryCurve = Object
 // Pyro's Melt, and multiplies it by 1.5 the other way round
 export const FORWARD_AMPLIFYING_MULTIPLIER = 2;
 export const REVERSE_AMPLIFYING_MULTIPLIER = 1.5;
-// An enemy of level L has 5L + 500 defence, against an attacker of level A taking off defence / (defence + 5A + 500), so
-// The share of damage left is (A + 100) / (A + 100 + L + 100) before any defence is reduced or ignored
-export const DEFENSE_LEVEL_OFFSET = 100;
+// An attacker of level A has 5A + 500 defence against which an enemy's defence is taken off, so the share of damage left
+// Is (5A + 500) / (defence + 5A + 500) before any defence is reduced or ignored
+export const ATTACKER_LEVEL_DEFENSE_SCALE = 5;
+export const ATTACKER_LEVEL_DEFENSE_OFFSET = 500;

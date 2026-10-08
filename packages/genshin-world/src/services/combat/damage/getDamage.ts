@@ -1,30 +1,29 @@
 import type { DamageOptions } from "#src/models/combat/DamageOptions";
 
-import { DEFENSE_LEVEL_OFFSET } from "#src/services/combat/damage/constants";
+import { ATTACKER_LEVEL_DEFENSE_OFFSET, ATTACKER_LEVEL_DEFENSE_SCALE } from "#src/services/combat/damage/constants";
 import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
 
 // A hit's damage by the game's general formula: its base damage, the talent's multiplier of its stat plus any flat bonus,
-// Raised by its damage bonus and a crit, and cut by the enemy's defence, which an attacker of the enemy's level halves
-// And reduction or ignoring lowers, and by its resistance, then multiplied by an amplifying reaction's multiplier
+// Raised by its damage bonus and a crit, and cut by the enemy's defence against the attacker's level, which reduction or
+// Ignoring lowers, and by its resistance, then multiplied by an amplifying reaction's multiplier
 export const getDamage = ({
   additiveBaseDamageBonus = 0,
   amplifyingMultiplier = 1,
-  characterLevel,
+  attackerLevel,
   criticalDamage = 0,
   damageBonus = 0,
+  defense,
   defenseIgnored = 0,
   defenseReduction = 0,
-  enemyLevel,
   isCritical = false,
   resistance,
   stat,
   talentMultiplier,
 }: DamageOptions): number => {
   const baseDamage = talentMultiplier * stat + additiveBaseDamageBonus;
-  const characterDefenseLevel = characterLevel + DEFENSE_LEVEL_OFFSET;
-  const enemyDefenseLevel = enemyLevel + DEFENSE_LEVEL_OFFSET;
+  const attackerDefenseLevel = ATTACKER_LEVEL_DEFENSE_SCALE * attackerLevel + ATTACKER_LEVEL_DEFENSE_OFFSET;
   const defenseMultiplier =
-    characterDefenseLevel / ((1 - defenseReduction) * (1 - defenseIgnored) * enemyDefenseLevel + characterDefenseLevel);
+    attackerDefenseLevel / ((1 - defenseReduction) * (1 - defenseIgnored) * defense + attackerDefenseLevel);
   const criticalMultiplier = isCritical ? 1 + criticalDamage : 1;
   return (
     baseDamage *
