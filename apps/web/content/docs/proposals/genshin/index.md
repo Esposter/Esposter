@@ -120,6 +120,12 @@ What still separates the recreation from the whole game once the world and its p
 | [Expeditions](/docs/proposals/genshin/expeditions)                   | characters sent out for hours in real time, and their places' rewards                             |
 | [Companionship](/docs/proposals/genshin/companionship)               | Friendship Levels from the party's EXP, and the stories, voice-overs and namecard they open       |
 | [Resident schedules](/docs/proposals/genshin/resident-schedules)     | each resident's day and night spots from the game's records, and vendors' hours                   |
+| [Achievements](/docs/proposals/genshin/achievements)                 | the game's achievements as watchers of their own triggers, paid in Primogems and namecards        |
+| [Archive](/docs/proposals/genshin/archive)                           | the seven sections from the game's codex tables, each entry opened when first met                 |
+| [Serenitea Pot](/docs/proposals/genshin/serenitea-pot)               | the player's realm, its placement editor, Tubby's furnishings, Trust Rank and companions          |
+| [Spiral Abyss](/docs/proposals/genshin/spiral-abyss)                 | twelve floors from the game's tower tables, stars, and the Moon Spire's latest period             |
+| [Imaginarium Theater](/docs/proposals/genshin/imaginarium-theater)   | the latest season's cast, Vigor, events paid in Fantasia Flowers, and Blessing Level              |
+| [Genius Invokation TCG](/docs/proposals/genshin/genius-invokation)   | the card game as a rules engine of its own, every card the game's, against its residents          |
 
 ## Scope and order
 
@@ -131,7 +137,7 @@ What still separates the recreation from the whole game once the world and its p
 ## What this does not propose
 
 - **Assets from the game.** Nothing exported is committed, served or converted into a file of ours; only what our own fits and generators write ships.
-- **Multiplayer.** The world is the person's own, as the game's is outside co-op.
+- **Multiplayer.** The world is the person's own, as the game's is outside co-op ([co-op](/docs/genshin/deferred/co-op) is deferred).
 - **A monetised or official-looking product.** No payment, no HoYoverse branding in the chrome, and no claim to be the game.
 
 ## Key files
