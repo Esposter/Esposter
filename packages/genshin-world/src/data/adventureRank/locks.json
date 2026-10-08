@@ -1,0 +1,12 @@
+[
+  { "rankCap": 20, "unlockMainQuestId": "", "unlockPlayerLevel": 0, "worldLevel": 0 },
+  { "rankCap": 25, "unlockMainQuestId": "", "unlockPlayerLevel": 20, "worldLevel": 1 },
+  { "rankCap": 30, "unlockMainQuestId": "25001", "unlockPlayerLevel": 0, "worldLevel": 2 },
+  { "rankCap": 35, "unlockMainQuestId": "", "unlockPlayerLevel": 30, "worldLevel": 3 },
+  { "rankCap": 40, "unlockMainQuestId": "25005", "unlockPlayerLevel": 0, "worldLevel": 4 },
+  { "rankCap": 45, "unlockMainQuestId": "", "unlockPlayerLevel": 40, "worldLevel": 5 },
+  { "rankCap": 50, "unlockMainQuestId": "25009", "unlockPlayerLevel": 0, "worldLevel": 6 },
+  { "rankCap": 55, "unlockMainQuestId": "25011", "unlockPlayerLevel": 50, "worldLevel": 7 },
+  { "rankCap": 60, "unlockMainQuestId": "", "unlockPlayerLevel": 55, "worldLevel": 8 },
+  { "rankCap": 60, "unlockMainQuestId": "25015", "unlockPlayerLevel": 58, "worldLevel": 9 }
+]
