@@ -39,12 +39,12 @@ interface RegionData {
   landmarks: { id: string; position: GroundPoint }[];
 }
 // A region's open world block derived from its capital the way Windrise's is laid out, with no hand step: the tiles its
-// View and its architecture radius cover and their StreamGen blobs by path hash, the placements those select (every one
-// In view, and each architecture placement within the radius), each prefab of them rooted at the game
-// Object its name finds in the blocks that name it or, failing that, in any block dumped for the derivation (a game
-// Object's block need not index its own mesh or material), and the 2x2 of terrain tiles its capital stands in. Each
-// Step reads the game's own data (the asset index, the blobs, the community's path names, the dumped layouts), so a
-// Region gives only its capital's place. Returns the block with the lines that report what did not resolve
+// View and its architecture radius cover and its city's own StreamGen blob, all read by path hash, the placements
+// Those select (every one in view, and each architecture placement within the radius), each prefab of them rooted at
+// The game object its name finds in the blocks that name it or, failing that, in any block dumped for the derivation (a
+// Game object's block need not index its own mesh or material), and the 2x2 of terrain tiles its capital stands in.
+// Each step reads the game's own data (the asset index, the blobs, the community's path names, the dumped layouts), so
+// A region gives only its capital's place. Returns the block with the lines that report what did not resolve
 export const deriveCapitalWorld = async (
   component: DerivedAssetComponent,
   directory: ComponentDirectory,
@@ -62,22 +62,24 @@ export const deriveCapitalWorld = async (
   const origin = await readWorldOrigin(component);
   const place = toCapitalWorldPlace(landmark.position, origin);
   const lines: string[] = [];
-  // Each covered tile's blob and index, by the names its path hash and index name give
+  // Each covered tile's blob and index, then the capital's own city blob and index, by the names their path hash and
+  // Index name give. The city blob holds the props and buildings the tiles do not
   const tileNames = getCoveredTiles(place, ARCHITECTURE_VIEW_METRES).map(({ column, row }) =>
     getWorldTileName(column, row),
   );
-  const streamNames = new Set(
-    tileNames.flatMap((tileName) => [getStreamBlobName(tileName), `${tileName}${STREAM_INDEX_SUFFIX}`]),
+  const streamNames = capital.cityArea ? [...tileNames, `Area_${capital.cityArea}_City`] : tileNames;
+  const streamAssetNames = new Set(
+    streamNames.flatMap((streamName) => [getStreamBlobName(streamName), `${streamName}${STREAM_INDEX_SUFFIX}`]),
   );
-  const streamAssets = await readIndexedAssets(({ name }) => streamNames.has(name));
+  const streamAssets = await readIndexedAssets(({ name }) => streamAssetNames.has(name));
   const streams: WorldOptions["streams"] = [];
-  for (const tileName of tileNames) {
-    const blobName = getStreamBlobName(tileName);
-    const indexName = `${tileName}${STREAM_INDEX_SUFFIX}`;
+  for (const streamName of streamNames) {
+    const blobName = getStreamBlobName(streamName);
+    const indexName = `${streamName}${STREAM_INDEX_SUFFIX}`;
     const blob = streamAssets.find(({ name, type }) => name === blobName && type === AssetType.MiHoYoBinData);
     const index = streamAssets.find(({ name, type }) => name === indexName && type === AssetType.MonoBehaviour);
     if (blob && index) streams.push({ blob, index, prefabs: [] });
-    else lines.push(`${tileName}: no stream in the asset index`);
+    else lines.push(`${streamName}: no stream in the asset index`);
   }
   exportWorldStreams(streams, directory.world);
   // Each stream's placements, read from the blobs the export just wrote, and the names every prefab they draw is given

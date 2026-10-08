@@ -1,8 +1,8 @@
 import type { WorldPlacement } from "#src/models/genshinAssets/world/WorldPlacement";
 import type { GroundPoint } from "genshin-engine";
 
+import { checkIsArchitectureName } from "#src/services/genshinAssets/world/checkIsArchitectureName";
 import { ARCHITECTURE_VIEW_METRES, CAPITAL_VIEW_METRES } from "#src/services/genshinAssets/world/constants";
-import { isArchitectureName } from "#src/services/genshinAssets/world/isArchitectureName";
 
 // Whether a placement stands within the square a capital is viewed across, round its place in the game's axes
 const checkIsInView = ({ position: [x, , z] }: WorldPlacement, { x: centerX, z: centerZ }: GroundPoint): boolean =>
@@ -21,5 +21,5 @@ export const selectCapitalPlacements = (
   placements.filter(
     (placement) =>
       checkIsInView(placement, place) ||
-      (isArchitectureName(prefabNames.get(placement.prefabId) || "") && checkIsInRadius(placement, place)),
+      (checkIsArchitectureName(prefabNames.get(placement.prefabId) || "") && checkIsInRadius(placement, place)),
   );

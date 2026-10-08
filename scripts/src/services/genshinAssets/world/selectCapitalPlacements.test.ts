@@ -3,14 +3,6 @@ import type { WorldPlacement } from "#src/models/genshinAssets/world/WorldPlacem
 import { selectCapitalPlacements } from "#src/services/genshinAssets/world/selectCapitalPlacements";
 import { describe, expect, test } from "vitest";
 
-const CAPITAL_PLACE = { x: 0, z: 0 };
-const ARCHITECTURE_PREFAB_ID = 1;
-const DECORATION_PREFAB_ID = 2;
-const PREFAB_NAMES = new Map([
-  [ARCHITECTURE_PREFAB_ID, "Stages_Build_BeaconTower01"],
-  [DECORATION_PREFAB_ID, "Area_MdProps_Flower03_Vo"],
-]);
-
 const createPlacement = (prefabId: number, x: number, z: number): WorldPlacement => ({
   pathHash: "",
   position: [x, 0, z],
@@ -21,6 +13,14 @@ const createPlacement = (prefabId: number, x: number, z: number): WorldPlacement
 });
 
 describe(selectCapitalPlacements, () => {
+  const CAPITAL_PLACE = { x: 0, z: 0 };
+  const ARCHITECTURE_PREFAB_ID = 1;
+  const DECORATION_PREFAB_ID = 2;
+  const PREFAB_NAMES = new Map([
+    [ARCHITECTURE_PREFAB_ID, "Area_MdBuild_Window57_Vo"],
+    [DECORATION_PREFAB_ID, "Area_MdProps_Flower03_Vo"],
+  ]);
+
   test("keeps architecture in the radius past the view, and leaves out decoration there and far placements", () => {
     expect.hasAssertions();
 
