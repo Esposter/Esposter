@@ -26,6 +26,13 @@ export const oakTopic: ReferenceTopic = {
       result:
         "Landed. The oak's outline falls from 63.5 to 8.1 pixels, its normal from 79.1 to 48.4 degrees and its depth from 0.189 to 0.180, all three still failing their gates (1 pixel, 0.01, 10 degrees), so the depth's move is the record of the change. The Ground's outline falls from 16.7 to 9.6 pixels with its normal held at 9.7 degrees and its depth at 0.0373 against 0.0374; the statue and the paving are unchanged. The fit reads the export's axes as the other fits do (mirrored across z), a half turn about the trunk from a raw read of the file, which gave 11.7 pixels, normal 48.5 and depth 0.212 with a percentile taken on the lower rank. The cluster centres match that read exactly under the half turn; the radii, now on the nearest rank, sit up to 0.16 metres wider at the canopy and 0.4 at the trunk. Eighty clusters lowered the outline further in the raw read (10.0 pixels at 400 cards a cluster) and raised the depth to 0.224, so the forty stay",
     },
+    {
+      method:
+        "The Oak family's depth at the reference camera, ours against the export's per pixel: the signed gap by the export's depth band, the family's centroid and extent, and the export's leaves (each card's size, its facing against the radial direction, and each triangle's distance from its cluster centre over the cluster's radius)",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Not a placement offset: the median of ours over the exports' depth is 1.006, and the signed gap changes sign with depth, ours 15% farther where the export's crown is nearest (27 to 37 metres) and 1 to 6% nearer past 64 metres. The leaves' signed mean is 0.06 of their 0.186 gap, so most of the 0.180 is per-pixel scatter rather than a shift. The export's leaves are 5.9-metre cards at random facings (mean cosine 0.50 against radial) with centroids peaking at 0.6 to 0.8 of their cluster's radius, so radial facing and a shell at the radius are not what the export shows, and the card size already matches it. Cards per cluster from 400 to 800 lower the depth to 0.164 and the normal to 47.7 degrees, the outline rises to 8.41 pixels, and the Ground's normal holds at 9.6 degrees, so it lands. 1600 cards a cluster never reached the page's ready state within the parity timeout and is not recorded",
+    },
   ],
   openQuestions: [],
 };
