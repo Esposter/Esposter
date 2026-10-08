@@ -6,6 +6,7 @@ import { clearanceCommand } from "#src/services/genshinAssets/commands/clearance
 import { clipsCommand } from "#src/services/genshinAssets/commands/clipsCommand";
 import { commissionsCommand } from "#src/services/genshinAssets/commands/commissionsCommand";
 import { craftingCommand } from "#src/services/genshinAssets/commands/craftingCommand";
+import { cookingCommand } from "#src/services/genshinAssets/commands/cookingCommand";
 import { enemiesCommand } from "#src/services/genshinAssets/commands/enemiesCommand";
 import { expeditionsCommand } from "#src/services/genshinAssets/commands/expeditionsCommand";
 import { explorationCommand } from "#src/services/genshinAssets/commands/explorationCommand";
@@ -74,6 +75,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     outcrops: leyLineCommand,
     chests: chestsCommand,
     crafting: craftingCommand,
+    cooking: cookingCommand,
     exploration: explorationCommand,
     puzzles: puzzlesCommand,
     gathering: gatheringCommand,
