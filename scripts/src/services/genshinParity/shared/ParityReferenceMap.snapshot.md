@@ -9,6 +9,7 @@ committed.
 | :-------- | :----- | --------------: | ----: | ---: | ---: |
 | `handbook-experience` | `HandbookScreen` | 18.12% | 0.173 | 13.29% | 0.5150 |
 | `health-notice` | `SplashHealthNotice` | 6.00% | 0.961 | 0.83% | 0.1853 |
+| `health-notice-mainland` | `SplashHealthNotice` | 6.88% | 0.834 | 2.70% | 0.2025 |
 | `inventory-weapons` | `InventoryScreen` | 9.14% | 0.612 | 7.41% | 0.3080 |
 | `loading-startup` | `LoadingStartup` | 0.03% | 0.989 | 0.00% | 0.0013 |
 | `login-dawn-title` | `LoginScreen` | 10.34% | 0.468 | 7.35% | 0.4133 |
