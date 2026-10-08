@@ -61,6 +61,14 @@ export const solveReferenceCloudLayer = async (
   for (const name of solvedNames)
     if (readSolvedSetting(settings, name) === undefined)
       throw new InvalidOperationError(Operation.Read, name, "not a number among the settings given");
+  for (const name of COLOR_SETTINGS) {
+    const color = settings[name];
+    if (
+      color !== undefined &&
+      (!Array.isArray(color) || color.length !== 3 || color.some((channel) => !Number.isFinite(channel)))
+    )
+      throw new InvalidOperationError(Operation.Read, name, "not a colour of three numbers");
+  }
   await fetchReferences();
   const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, component, CLOUDS_WIDTH);
   return withFinalizerAsync(

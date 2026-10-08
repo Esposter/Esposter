@@ -73,6 +73,7 @@ import { getLoginWalkwaySink } from "#src/services/login/walkway/getLoginWalkway
 import { sinkLoginWitnessWalkway } from "#src/services/login/walkway/sinkLoginWitnessWalkway";
 import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
+import { getResultAsync } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
 import { watchImmediate } from "@vueuse/core";
 import {
@@ -87,6 +88,7 @@ import {
   createSkyNode,
   createSkyUniforms,
   createStoneMaterial,
+  synthesizeCloudLayerTextures,
 } from "genshin-engine";
 import { BatchedMesh, DirectionalLight, Group, HemisphereLight, Matrix4, Mesh } from "three";
 import {
@@ -160,8 +162,20 @@ const skyTargets = {
 // The sky's gradient, the game's own fitted, which its bottom colour and horizon halo ride up the sky
 const skyGradient = createSkyGradientTexture(sky.gradient);
 // The game's cloud layer over the sky, on its own fitted dome, its curl and its wisps' opacity its material's, over
-// Textures of our own synthesized from the game's statistics; it draws nothing until an hour's settings are solved
-const cloudLayer = createCloudLayerUniforms(sky.cloudLayer, createCloudLayerTextures(cloudLayerTextures));
+// Textures of our own synthesized from the game's statistics into blank ones of their sizes an idle moment at a time
+// Once the scene mounts; it draws nothing until an hour's settings are solved
+const cloudLayerTextureMap = createCloudLayerTextures(cloudLayerTextures);
+const cloudLayer = createCloudLayerUniforms(sky.cloudLayer, cloudLayerTextureMap);
+let isCloudLayerSynthesized = false;
+// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and the setup has nothing to await it
+getResultAsync(() => synthesizeCloudLayerTextures(cloudLayerTextures, cloudLayerTextureMap)).match(
+  () => {
+    isCloudLayerSynthesized = true;
+  },
+  (error) => {
+    console.error(error);
+  },
+);
 cloudLayer.curlAmplitude.value = sky.cloudLayerMaterial.curlAmplitude;
 cloudLayer.curlSpeed.value = sky.cloudLayerMaterial.curlSpeed;
 cloudLayer.curlTiling.value = sky.cloudLayerMaterial.curlTiling;
@@ -385,7 +399,9 @@ onRender(({ delta: frameDelta }) => {
   if (
     isReadyEmitted ||
     renderedFrameCount < LOGIN_SCENE_READY_FRAME_COUNT ||
-    (isDoorDue && riseMs < LOGIN_DOOR_LIFT_MS)
+    (isDoorDue && riseMs < LOGIN_DOOR_LIFT_MS) ||
+    // The parity page's tools read the cloud layer over our own textures, so a scene they open waits on them
+    (witness && !isCloudLayerSynthesized)
   )
     return;
   isReadyEmitted = true;

@@ -75,9 +75,16 @@ export const displayTopic: ReferenceTopic = {
       result:
         "The light leaves 0.463 of its bins' spread unexplained, against 0.454 with no balance, while both frames score better: the title 0.463 from 0.464 and the door session 0.497 from 0.499. The red stands under the curve's black on 34% of the title's pixels and 35% of the door session's, against the game's 26% and 32%, where none of ours did; the tint the two frames disagree on is the balance's least settled part",
     },
+    {
+      method:
+        "genshin:parity balance login-night-title,login-door-session --witness login --black: under each candidate balance the stone's light solved again over each frame's stone (solveStoneLight), every sample's colour cast by it through the balance and the curve (computeStoneSampleColor), and its share under the curve's black matched to the frame's on the same pixels, first over each frame whole, then in eight bands of how bright the frame shows their green, over both frames and each alone",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Over the stone the game's red stands under the black on 27.9% of the title's pixels and 37.3% of the door session's, where any one balance takes ours under on about the same share of both (32.8% and 32.7% under the shipped), our one scene at one hour drawing both frames alike: the frames disagree, the title a 2022 client and the door session the current build. One share a frame fixes only a line of balances (the title's matched at -5.0 and 6.4, the door session's at -15.6 and 21.4). Banded by the green, the game's red goes under on 80 to 94% of the darkest half of the stone and on a hundredth or none of the brighter half, a cut by brightness; ours goes under on 5 to 45% of every band, and the balance closest on the door session alone (-22.0, -77.4) matches its dark half to a few points while still taking 11 to 27% of its bright half under. A balance takes a channel under by a pixel's hue, so the game's dark stone is a bluer light than its lit stone where ours lights both alike: the light's split between the moon's side and the shade, not the balance, is what stands off, and the shipped balance stays until the light pass holds it",
+    },
   ],
   openQuestions: [
-    "Whether the night's tint is the game's: the two night frames read it at 12 and 27, and the stone's light, solved under the balance, now takes its red under the black on a tenth more of the title's pixels than the game's",
+    "Whether the night's tint is the game's: the balance closest by the stone's share under the black still takes the red of our lit stone under it where the game's lit stone holds none, so the night's light is solved again, its moonlit side warmer than its shade, before the tint is read again by the same bands (balance --black)",
     "Which of MHYBloom_Z's other values is the threshold, the scaler and the intensity: the bloom alone moves what lies around the brightest pixels, so they are measured there once the login draws the game's bloom",
   ],
 };

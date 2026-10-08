@@ -247,6 +247,13 @@ export const app: NuxtConfig["app"] = {
         defer: true,
         src: `/${TEMPORAL_POLYFILL_BASE_URL}/global.js`,
       },
+      {
+        // @TODO: https://webstatus.dev/features/requestidlecallback
+        // Safari ships no requestIdleCallback, nor does any iOS browser. The Genshin login synthesizes its cloud
+        // Layer's textures a texture an idle moment at a time. It leaves a native one alone
+        defer: true,
+        src: "/polyfills/requestIdleCallback.js",
+      },
     ],
   },
 };
