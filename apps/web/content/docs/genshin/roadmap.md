@@ -161,6 +161,7 @@ Only the acts that are physically the user's wait here; every other call is made
   - `packages/genshin-world/src/components/Menu/Exit/Index.win32.png`, `Menu/Paimon/Index.win32.png` and `Menu/Settings/Index.win32.png`
 - **The artifact weights checked against the wiki.** [Artifact enhancement](/docs/genshin/artifact-enhancement)'s main, minor and starting-count weights are recalled, not read from the wiki, which this build could not reach; each is a constant marked provisional there until its page is read.
 - **An eye on the provisional looks** the passes cannot score yet: the prompt list's pill end and fill, the HUD's minimap disc, the drops' and residents' stand-in tints.
+- **The Oculi of Fontaine, Natlan and Nod-Krai against the wiki's 271 each.** The official map gives 225, 249 and 197, and [spawned places](/docs/genshin/spawned-places) reports those shortfalls rather than filling them. Whether the map or the wiki is short is the game's to show, so a count in game settles it.
 
 ## Recordings owed
 
