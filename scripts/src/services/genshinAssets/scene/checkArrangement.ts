@@ -11,8 +11,9 @@ import { join } from "node:path";
 
 // A component's arrangement checked with no pixels: each ratio's cross-ratio as its reference measures it beside the
 // Fitted data's, and each family's fitted instances against the exports' objects it stands for, composed as the family
-// Stands them, each instance beside the nearest of them, with its distance in metres, their mean and their largest;
-// And the offsets across and up the game's own data explains for each family of the witness
+// Stands them, each instance beside the nearest of them, with its distance in metres, their mean and their largest,
+// And the row the scene repeats it along, one copy for a family drawn once; and the offsets across and up the game's
+// Own data explains for each family of the witness
 export const checkArrangement = async (
   component: DerivedAssetComponent,
 ): Promise<{
@@ -22,6 +23,7 @@ export const checkArrangement = async (
     mean: number;
     name: string;
     pairs: { distance: number; expected: Vector; fitted: Vector }[];
+    row: { count: number; length: number };
   }[];
   ratios: { fitted: number; measured: number; name: string; reference: string }[];
 }> => {
@@ -37,8 +39,12 @@ export const checkArrangement = async (
       Object.entries(explainedOffsets).map(([family, readOffset]) => [family, readOffset(placements, clips)]),
     ),
     families: await Promise.all(
-      families.map(async ({ name, readExpected, readPositions }) => {
-        const [targets, positions] = await Promise.all([readExpected(placements, meshDirectory), readPositions()]);
+      families.map(async ({ name, readExpected, readPositions, readRow }) => {
+        const [targets, positions, row] = await Promise.all([
+          readExpected(placements, meshDirectory),
+          readPositions(),
+          readRow?.() ?? { count: 1, length: 0 },
+        ]);
         const pairs = positions.map((fitted) =>
           targets
             .map((expected) => ({
@@ -57,6 +63,7 @@ export const checkArrangement = async (
           mean: pairs.reduce((sum, { distance }) => sum + distance, 0) / pairs.length,
           name,
           pairs,
+          row,
         };
       }),
     ),
