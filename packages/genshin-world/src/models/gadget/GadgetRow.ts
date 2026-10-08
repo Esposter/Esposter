@@ -1,7 +1,7 @@
 import { GadgetKind } from "#src/models/gadget/GadgetKind";
 import { z } from "zod";
 
-// A gadget as the widget config gives it: its item id, its kind, whether it is equipped on Z, its cooldown in seconds, its
+// A gadget as the widget config gives it: its item id, its kind, whether it can be equipped on Z, its cooldown in seconds, its
 // Cooldown on a failed use and its cooldown group. The config gives no cooldown on a failed use or a group for some
 // Gadgets, and those read as zero
 export interface GadgetRow {
