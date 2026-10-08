@@ -1,7 +1,7 @@
 import type { Party } from "#src/models/party/Party";
 
 import { PartyTeamResult } from "#src/models/party/PartyTeamResult";
-import { PARTY_TEAM_SIZE } from "#src/services/party/constants";
+import { checkIsPartyTeam } from "#src/services/party/checkIsPartyTeam";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Sets a team's members, each character once and four at most. On the deployed team the field keeps its slot, or the
@@ -9,7 +9,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Down landing in the slot on the field
 export const setPartyTeamCharacters = (party: Party, teamIndex: number, characterIds: number[]): PartyTeamResult => {
   const team = party.teams[teamIndex];
-  if (!team || characterIds.length > PARTY_TEAM_SIZE || new Set(characterIds).size < characterIds.length)
+  if (!team || !checkIsPartyTeam(characterIds))
     throw new InvalidOperationError(
       Operation.Update,
       setPartyTeamCharacters.name,
