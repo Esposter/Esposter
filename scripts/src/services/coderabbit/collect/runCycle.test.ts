@@ -12,8 +12,8 @@ import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 import type { SpawnSyncReturns } from "node:child_process";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
-import { SessionLimitedError } from "#src/models/coderabbit/collect/SessionLimitedError";
 import { ReleasePullRequestState } from "#src/models/coderabbit/collect/ReleasePullRequestState";
+import { SessionLimitedError } from "#src/models/coderabbit/collect/SessionLimitedError";
 import {
   CHECK_NAME,
   CI_COMPLETED_STATUS,
