@@ -26,6 +26,8 @@ export enum GameTextKey {
   HealthNotice = "684850635",
   HealthNoticeTitle = "1737243758",
   Inventory = "UI_STC_BAGPAGE_BAG",
+  // The touch controls' jump button, which a screen reader says in place of its glyph
+  Jump = "UI_ACTIVITY_LOLI_RUN_JUMP",
   Loading = "UI_BEYOND_RECOMMEND_EMPTY_LOADING",
   // The door's prompt, worded per platform in the game's text and the PC's kept
   LoginBegin = "3535917252",
@@ -46,14 +48,20 @@ export enum GameTextKey {
   Mail = "UI_PLAYER_PROFILE_MAIL",
   Map = "UI_STC_MAP_TITLE",
   Notices = "UI_STC_GAMEENTRYPAGE_BULLETIN",
+  // The HUD's corner button that opens the Paimon menu, named for the face it shows
+  Paimon = "NPC_EXPNAME_12911",
   PartySetup = "UI_TEAM_TITLE",
   Quests = "UI_STC_GAMEENTRYPAGE_QUEST",
   QuitGame = "UI_STC_GAMEENTRYPAGE_EXIT_TIPS",
   Ready = "ONLINE_DUNGEON_GUEST_IS_READY",
   Settings = "UI_STC_GAMEENTRYPAGE_OPTION",
   Shop = "UI_STC_GAMEENTRYPAGE_SHOP",
+  // A Statue of The Seven, as the map titles its mark
+  StatueOfTheSeven = "UI_MAPMARK_MarkGoddess_TITLE",
   // Photo mode's own shutter, which the Paimon menu's entry into it says too
   TakePhoto = "UI_PIC_MAIN_PCPS_C",
+  // The map's way to a place, as its button says
+  Teleport = "UI_BUTTON_GOTO",
   Time = "UI_STC_GAMEENTRYPAGE_TIME",
   // The mainland client's publishing licence under its title logo: its approval, ISBN, publisher and copyright holder
   TitleLicence = "3231160485",
