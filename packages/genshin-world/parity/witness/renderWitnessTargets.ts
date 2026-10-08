@@ -9,7 +9,7 @@ import { WitnessTarget, WitnessTargets } from "#parity/models/witness/WitnessTar
 import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { createOcclusionNode, StoneNodeMaterial } from "genshin-engine";
-import { Color, DirectionalLight, FloatType, Layers, Light, Mesh, RenderTarget, Vector2 } from "three";
+import { Color, DirectionalLight, FloatType, Layers, Light, Mesh, RenderTarget, Vector2, Vector3 } from "three";
 import {
   cameraViewMatrix,
   float,
@@ -63,12 +63,15 @@ let occlusion:
 // One unless told, each handed back as base64, the one form a page hands its caller bytes in. Every
 // Part keeps its own material, handed back once the targets are read. Told to, it draws the scene's own parts in
 // Place of the witness's, each object the scene marks with a family (`SCENE_FAMILY_KEY`) a part of that family, under
-// The witness's family indices, so ours and the exports' are compared target by target
+// The witness's family indices, so ours and the exports' are compared target by target. Told a direction, the sun
+// Casts from it for this read alone, at its own distance from its target, so the light pass prices where a sun's
+// Shadows would fall without the scene's hour moving
 export const renderWitnessTargets = async (
   witness: SceneWitness,
   context: SceneContext | undefined,
   requestedTargets: readonly WitnessTarget[] = WitnessTargets,
   isScene = false,
+  lightDirection?: readonly [number, number, number],
 ): Promise<{
   families: string[];
   height: number;
@@ -150,6 +153,11 @@ export const renderWitnessTargets = async (
   });
   const sun = lights.find((light) => light instanceof DirectionalLight && light.castShadow);
   if (sun) sunRadiance.value.copy(sun.color).multiplyScalar(sun.intensity);
+  const sunPosition = sun?.position.clone();
+  if (sun instanceof DirectionalLight && lightDirection)
+    sun.position
+      .copy(sun.target.position)
+      .addScaledVector(new Vector3(...lightDirection).normalize(), sun.position.distanceTo(sun.target.position));
   const cameraLayers = new Layers();
   cameraLayers.mask = camera.layers.mask;
   const { background, backgroundNode } = scene;
@@ -220,6 +228,7 @@ export const renderWitnessTargets = async (
       camera.layers.mask = cameraLayers.mask;
       for (const { mesh } of drawnMeshes) mesh.layers.disable(TARGET_LAYER);
       for (const light of lights) light.layers.disable(TARGET_LAYER);
+      if (sun && sunPosition) sun.position.copy(sunPosition);
     },
   );
   return { families, height, parts, positionLift: POSITION_LIFT, targets, width };

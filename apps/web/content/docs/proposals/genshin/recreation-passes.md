@@ -23,6 +23,9 @@ The interface did not have this problem. Its pieces are placed from the game's o
 - **Random content is judged by its statistics.** Clouds, wisps and anything else the game scatters is matched by its cover by height, its size and its colour spread, never by a pixel score.
 - **The frame's perceptual score is acceptance.** Once every gate holds, `compare` scores each reference and the user's eye checks it. A frame that still stands off names a pass whose measure missed something, which is the measure's defect to fix.
 - **Ceilings order the work inside a pass, never across passes.** Within one pass, the items are worked largest first by what they could recover, as `rank` prices them; a term in a later pass waits for every earlier gate however large it is.
+- **The layout reads a placement in pixels by its pairs, before any render.** Each fitted part beside the export nearest it, both carried as the scene carries their family in a current build's reference's state and projected from the scene's camera there, read only where the export lands on the frame and gated at a recording's two pixels of softness. The camera is the next pass's, but both points of a pair move alike under a camera a little off, so their gap reads the placement alone. A family's outline in pixels is the shape pass's, drawn at the same camera, so the layout needs none.
+- **The light reads the sun's direction on its shadows' edges over flat receivers.** The receivers are the exports' parts facing up; the reference's shadow on them is its shading, its colour over the exports' albedo, split by Otsu's threshold; ours is the exports' occluders cast by the scene's own shadow map from the direction tried. The two edges are priced both ways in the reference's pixels and gated as any place on the frame is, and the direction is solved by its heading and its height over the horizon from the scene's, an older build's reference seen from its own camera solved on its landmarks.
+- **The audio pass reads each sound's bands, never its onset.** Each effect is scored against the game's sounds it was fitted from in both channels every 5 milliseconds and gated at a second take of our own noise seeded apart, the grain only the game's samples would close. Its delay after what sets it off is one reading off the recording's frames, written straight into its constant with nothing solved over it, and its own rise is already its first frames' bands.
 
 ## How it works
 
@@ -64,15 +67,15 @@ The interface runs beside these as a pass of its own, placed from the rect tree,
 | :--------- | :------------------------------------------------------ | :------------------------------------------------------------------------------------ | :---------------------------------------------------- | :----------------------------------------------------------- |
 | References | The wiki, the data dumps, recordings                    | Each frame's build, camera, region and hour, written down                             | `fetch`, `frames`                                     | Nothing                                                      |
 | Inventory  | `extract`, `tree`, `inventory`, `behaviours`            | Every renderer, material, shader, texture, clip, sound and spawn named with its kind  | `genshin:assets` commands, `passes`                   | Effects, clips and sounds in its checklist                   |
-| Layout     | Placements, spawns, anchors and the rows scripts scroll | Metres against the exports' transforms, then pixels where placeholders' outlines land | `parts`, `passes`                                     | Projected pixels and an outline score per family             |
+| Layout     | Placements, spawns, anchors and the rows scripts scroll | Metres against the exports' transforms, then pixels where each part lands             | `parts`, `passes`                                     | Nothing                                                      |
 | Camera     | Landmarks on the frozen layout                          | Reprojection error and the overlay's edge distance                                    | `pose`, `track`, `overlay`, `passes`                  | Nothing                                                      |
 | Shape      | Each mesh                                               | Depth, normal and outline per family against the exports at the same camera           | `rank`'s second table, shaded, `passes`               | Nothing                                                      |
 | Motion     | Decoded clips, the rows scripts move                    | Each animated part's track against its clip, and fieldless motion against its measure | `clips`, `glide`, `film`, `passes`                    | The walkway's rise and the glide's easing against the script |
 | Surface    | Textures and materials                                  | Unlit colour and glow per family against the exports                                  | `gbuffer`, `plan`, `passes`                           | Nothing                                                      |
 | Display    | The post program, the grading tables, the post profile  | Which table, which curve and what bloom, before any light                             | `passes`                                              | The game's bloom, its fields named                           |
-| Light      | The recordings, everything before held                  | The stone's shown colour by bins, the sun's direction by its shadows' edges           | `calibrate`, `passes`                                 | A shadow-edge solve                                          |
+| Light      | The recordings, everything before held                  | The stone's shown colour by bins, the sun's direction by its shadows' edges           | `calibrate`, `shadows`, `passes`                      | Nothing                                                      |
 | Atmosphere | The recordings, the emitters' anchors, the cloud layer  | Haze by depth and height, sky over its clear pixels, clouds by statistics             | `calibrate --haze`, `sky`, `cover`, `layer`, `passes` | Each hour's cloud layer settings                             |
-| Audio      | The game's sound banks, recordings to find each sound   | Each sound's octave bands over time and its onset; the music by `listen`              | The music tools, `sounds`, `fitSoundEffect`           | Its measure in `passes`                                      |
+| Audio      | The game's sound banks, recordings to find each sound   | Each sound's octave bands over time; the music by `listen`                            | The music tools, `sounds`, `fitSoundEffect`, `passes` | Nothing                                                      |
 
 ### Why it converges
 
@@ -84,12 +87,10 @@ The login runs through every pass from its inventory as its measures land, each 
 
 ## Scope
 
-The method needs the measures each pass lacks, each joining `genshin:parity passes` ([parity](/docs/genshin/parity)) as it lands, and they are the base every later scene stands on, so they are built before any further world page, in this order:
+Every pass has its measure in `genshin:parity passes` ([parity](/docs/genshin/parity)), and each run it owes is an item of the [roadmap](/docs/genshin/roadmap)'s compute queue. What the passes still lack is in two of them:
 
-1. **Layout's projected diff.** Our transforms against the exports' in pixels where they land at each reference's pose, before any render.
-2. **Display's solve.** Built: the uber pass's tone curve read from its program and drawn by the engine, its contrast solved on the light's plane and held by `passes`. The game's bloom is left, its fields still unnamed.
-3. **Light's shadow edges.** The sun's direction solved on its shadows' edges over flat receivers.
-4. **Atmosphere's cloud statistics.** Built: the sky compared by statistics blind to where its clouds stand and held by `passes` ([parity](/docs/genshin/parity)). The cloud layer's settings are solved on them over the game's own textures, drawn over textures of ours, though no hour's settings hold every gate yet.
+1. **Display's bloom.** The game's bloom, its fields still unnamed: which of `MHYBloom_Z`'s values is the threshold, the scaler and the intensity.
+2. **Atmosphere's cloud layer.** The cloud layer's settings are solved on its statistics over the game's own textures, drawn over textures of ours, though no hour's settings hold every gate yet.
 
 Everything the passes already have is reused as it is, and each measure, once built, retires its row's gap in the toolbox.
 
@@ -97,7 +98,8 @@ Everything the passes already have is reused as it is, and each measure, once bu
 
 | File                                                                     | Role after the change                                                        |
 | :----------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
-| `scripts/src/services/genshinParity/passes/ParityPassMeasureMap.ts`      | Gains each pass's measure as it is built                                     |
+| `scripts/src/services/genshinParity/passes/ParityPassMeasureMap.ts`      | Each pass's measure, which `passes` runs in order against its gate           |
+| `scripts/src/services/genshinParity/witness/solveReferenceShadows.ts`    | The light pass's shadows' edges, priced and solved for the sun's direction   |
 | `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`        | The references every pass is judged over                                     |
 | `packages/genshin-world/parity/witness/renderWitnessTargets.ts`          | Draws our parts' albedo and glow beside the exports', for the surface's diff |
 | `scripts/src/services/genshinParity/witness/rankReferenceGains.ts`       | Orders the work inside a pass, never across passes                           |

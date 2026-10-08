@@ -39,6 +39,9 @@ export const COLOUR_GATE = 2.3;
 // More, and its next value, 0.75, about seven tenths
 export const DISPLAY_WIDTH = 640;
 export const DISPLAY_CONTRAST_GATE = 0.1;
+// The light pass reads a reference's shadows at this width, where its gate, two of a 1080-line recording's pixels,
+// Spans more than one
+export const SHADOW_WIDTH = 1280;
 // The atmosphere pass's chequerboards a reference's sky is split in two by, blocks this many pixels across at the
 // Clouds' width: from about a cloud's tuft to about a third of the frame's height, where a half still holds sky from
 // Every height over the horizon
