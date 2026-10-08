@@ -87,28 +87,39 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 
 What still separates the recreation from the whole game once the world and its play features stand: how characters fight and grow, what the world gives back for exploring it, and the pastimes and challenges beside it. Each page is one system, in the order the systems wait on each other. The systems that need a server or other players are [deferred](/docs/genshin/deferred) instead, since the world keeps no server.
 
-| Page                                                                 | What it adds                                                                                     |
-| :------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
-| [Character kits](/docs/proposals/genshin/character-kits)             | every character's attacks, skill, burst and passives on one framework, priced by combat as built |
-| [Talents](/docs/proposals/genshin/talents)                           | combat talents levelled to 10 by phase, and the passives each phase opens                        |
-| [Constellations](/docs/proposals/genshin/constellations)             | six per character from their Stella Fortuna, the Traveler's by element                           |
-| [Weapon enhancement](/docs/proposals/genshin/weapon-enhancement)     | a weapon levelled, ascended and refined, and its passive at its rank                             |
-| [Artifact enhancement](/docs/proposals/genshin/artifact-enhancement) | an artifact rolled and enhanced by the game's rules, and its set's conditional bonus             |
-| [Adventure Rank](/docs/proposals/genshin/adventure-rank)             | the player's rank to 60 and the World Level that follows it, held by the ascension quests        |
-| [Original Resin](/docs/proposals/genshin/original-resin)             | resin regenerating while the page is closed, and the claim every resin challenge shares          |
-| [Domains](/docs/proposals/genshin/domains)                           | entrances, levels by rank, scenes of their own, the days' materials and the Petrified Tree       |
-| [Ley line outcrops](/docs/proposals/genshin/ley-line-outcrops)       | each region's two blossoms, fought, claimed and moved on by the game's own groups                |
-| [Bosses](/docs/proposals/genshin/bosses)                             | normal bosses' arenas, moves and blossoms, and weekly bosses claimed once a week                 |
-| [Spawned places](/docs/proposals/genshin/spawned-places)             | where the servers' chests, Oculi, puzzles and camps stand, fitted from the official map's points |
-| [Map unlocking](/docs/proposals/genshin/map-unlocking)               | waypoints, statues and domains unlocked by reaching them, and areas filled in on the map         |
-| [Statues of The Seven](/docs/proposals/genshin/statues-of-the-seven) | Oculi offered for the region's levels and stamina, the Statue's Blessing, and the Traveler       |
-| [Offering systems](/docs/proposals/genshin/offering-systems)         | the regions' sacred trees, fountains and shrines, each taking its items for its levels           |
-| [Elemental Sight](/docs/proposals/genshin/elemental-sight)           | the world muted and what matters lit, enemies named, and trails drawn                            |
-| [Chests](/docs/proposals/genshin/chests)                             | five kinds at their fitted places, locked, dug or sealed, and their rewards                      |
-| [Puzzles](/docs/proposals/genshin/puzzles)                           | mechanisms as state machines, monuments, Seelies, time trials and the Shrines of Depths          |
-| [Exploration progress](/docs/proposals/genshin/exploration-progress) | each area's percentage on the map, and a nation's thresholds of Reputation                       |
-| [Commissions](/docs/proposals/genshin/commissions)                   | the game's daily tasks, their rewards, Katheryne's bonus and Encounter Points                    |
-| [Reputation](/docs/proposals/genshin/reputation)                     | each nation's levels from bounties, requests and exploration, and their rewards                  |
+| Page                                                                 | What it adds                                                                                      |
+| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
+| [Character kits](/docs/proposals/genshin/character-kits)             | every character's attacks, skill, burst and passives on one framework, priced by combat as built  |
+| [Talents](/docs/proposals/genshin/talents)                           | combat talents levelled to 10 by phase, and the passives each phase opens                         |
+| [Constellations](/docs/proposals/genshin/constellations)             | six per character from their Stella Fortuna, the Traveler's by element                            |
+| [Weapon enhancement](/docs/proposals/genshin/weapon-enhancement)     | a weapon levelled, ascended and refined, and its passive at its rank                              |
+| [Artifact enhancement](/docs/proposals/genshin/artifact-enhancement) | an artifact rolled and enhanced by the game's rules, and its set's conditional bonus              |
+| [Adventure Rank](/docs/proposals/genshin/adventure-rank)             | the player's rank to 60 and the World Level that follows it, held by the ascension quests         |
+| [Original Resin](/docs/proposals/genshin/original-resin)             | resin regenerating while the page is closed, and the claim every resin challenge shares           |
+| [Domains](/docs/proposals/genshin/domains)                           | entrances, levels by rank, scenes of their own, the days' materials and the Petrified Tree        |
+| [Ley line outcrops](/docs/proposals/genshin/ley-line-outcrops)       | each region's two blossoms, fought, claimed and moved on by the game's own groups                 |
+| [Bosses](/docs/proposals/genshin/bosses)                             | normal bosses' arenas, moves and blossoms, and weekly bosses claimed once a week                  |
+| [Spawned places](/docs/proposals/genshin/spawned-places)             | where the servers' chests, Oculi, puzzles and camps stand, fitted from the official map's points  |
+| [Map unlocking](/docs/proposals/genshin/map-unlocking)               | waypoints, statues and domains unlocked by reaching them, and areas filled in on the map          |
+| [Statues of The Seven](/docs/proposals/genshin/statues-of-the-seven) | Oculi offered for the region's levels and stamina, the Statue's Blessing, and the Traveler        |
+| [Offering systems](/docs/proposals/genshin/offering-systems)         | the regions' sacred trees, fountains and shrines, each taking its items for its levels            |
+| [Elemental Sight](/docs/proposals/genshin/elemental-sight)           | the world muted and what matters lit, enemies named, and trails drawn                             |
+| [Chests](/docs/proposals/genshin/chests)                             | five kinds at their fitted places, locked, dug or sealed, and their rewards                       |
+| [Puzzles](/docs/proposals/genshin/puzzles)                           | mechanisms as state machines, monuments, Seelies, time trials and the Shrines of Depths           |
+| [Exploration progress](/docs/proposals/genshin/exploration-progress) | each area's percentage on the map, and a nation's thresholds of Reputation                        |
+| [Commissions](/docs/proposals/genshin/commissions)                   | the game's daily tasks, their rewards, Katheryne's bonus and Encounter Points                     |
+| [Reputation](/docs/proposals/genshin/reputation)                     | each nation's levels from bounties, requests and exploration, and their rewards                   |
+| [Gathering](/docs/proposals/genshin/gathering)                       | plants, ores and specialties picked or mined, back on the game's own refresh policies             |
+| [Wildlife](/docs/proposals/genshin/wildlife)                         | animals that flee, charge or fight back, and the materials picked off them                        |
+| [Crafting](/docs/proposals/genshin/crafting)                         | the bench's recipes from the game's table, Condensed Resin, and crafting talents                  |
+| [Cooking](/docs/proposals/genshin/cooking)                           | dishes cooked by hand to proficiency then Auto Cook, specialties, and processing                  |
+| [Forging](/docs/proposals/genshin/forging)                           | the forge's queues by rank in real time, the daily cap, and weapons from billets                  |
+| [Gadgets](/docs/proposals/genshin/gadgets)                           | each gadget's kind from the game's config on Z, cooldowns that run while paused                   |
+| [Shops](/docs/proposals/genshin/shops)                               | every vendor's goods and restocks, Paimon's Bargains and the Souvenir Shops, nothing for crystals |
+| [Fishing](/docs/proposals/genshin/fishing)                           | points, bait, the bite and the tension minigame, every number from the fish tables                |
+| [Expeditions](/docs/proposals/genshin/expeditions)                   | characters sent out for hours in real time, and their places' rewards                             |
+| [Companionship](/docs/proposals/genshin/companionship)               | Friendship Levels from the party's EXP, and the stories, voice-overs and namecard they open       |
+| [Resident schedules](/docs/proposals/genshin/resident-schedules)     | each resident's day and night spots from the game's records, and vendors' hours                   |
 
 ## Scope and order
 
