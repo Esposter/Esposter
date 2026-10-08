@@ -22,7 +22,7 @@ export const createInazumaRoofGeometry = (
   const d = point(-halfLength, 0, halfBreadth);
   const ridgeStart = point(-ridgeHalfLength, height, 0);
   const ridgeEnd = point(ridgeHalfLength, height, 0);
-  const faces = [
+  const faces: [Vector3, Vector3, Vector3][] = [
     [a, b, c],
     [a, c, d],
     [a, b, ridgeEnd],

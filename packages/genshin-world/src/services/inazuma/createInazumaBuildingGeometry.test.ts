@@ -21,9 +21,10 @@ describe(createInazumaBuildingGeometry, () => {
 
     // The first roof's eaves reach 2.5 metres out, its base sits at 1 + 3 metres and its ridge two above that, and the
     // Upper storey's roof stands on it, so the roofs span 4 to 11 metres in height
-    expect(new Box3().setFromBufferAttribute(roofGeometry.getAttribute("position"))).toStrictEqual(
-      new Box3(new Vector3(-2.5, 4, -2.5), new Vector3(2.5, 11, 2.5)),
-    );
-    expect(new Box3().setFromBufferAttribute(timberGeometry.getAttribute("position")).min.y).toBe(0);
+    roofGeometry.computeBoundingBox();
+    timberGeometry.computeBoundingBox();
+
+    expect(roofGeometry.boundingBox).toStrictEqual(new Box3(new Vector3(-2.5, 4, -2.5), new Vector3(2.5, 11, 2.5)));
+    expect(timberGeometry.boundingBox?.min.y).toBe(0);
   });
 });

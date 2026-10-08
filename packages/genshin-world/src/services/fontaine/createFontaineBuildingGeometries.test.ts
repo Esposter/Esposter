@@ -22,7 +22,8 @@ describe(createFontaineBuildingGeometries, () => {
       storeyCount: STOREY_COUNT,
     });
     const roofBaseY = FONTAINE_GROUND_FLOOR_HEIGHT + STOREY_COUNT * FONTAINE_STOREY_HEIGHT;
-    const roof = new Box3().setFromBufferAttribute(slateGeometry.getAttribute("position"));
+    slateGeometry.computeBoundingBox();
+    const roof = slateGeometry.boundingBox ?? new Box3();
 
     expect(roof.min.y).toBeCloseTo(roofBaseY);
     expect(roof.max.y).toBeCloseTo(roofBaseY + FONTAINE_MANSARD_LOWER_HEIGHT + FONTAINE_MANSARD_UPPER_HEIGHT);

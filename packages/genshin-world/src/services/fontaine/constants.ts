@@ -1,3 +1,5 @@
+import type { LatheSection } from "genshin-engine";
+
 // Fontaine's palette as the proposal names it, in sRGB: turquoise water, white and cream stone, blue slate roofs, gold
 // trim and green lawns under a hazy blue sky, with pink and purple in Erinnyes Forest and grey in Morte. The hex values
 // are a first reading of those names, to be checked against the reference screenshots
@@ -52,7 +54,7 @@ export const FONTAINE_DORMER_INSET = 0.5;
 export const FONTAINE_DORMER_PROJECTION = 0.9;
 export const FONTAINE_LAMP_OFFSET = 1.5;
 export const FONTAINE_LAMP_RADIAL_SEGMENTS = 8;
-export const FONTAINE_LAMP_POST_SECTIONS = [
+export const FONTAINE_LAMP_POST_SECTIONS: LatheSection[] = [
   { bottomRadius: 0.25, height: 0.4, topRadius: 0.18 },
   { bottomRadius: 0.1, height: 3.2, topRadius: 0.08 },
 ];

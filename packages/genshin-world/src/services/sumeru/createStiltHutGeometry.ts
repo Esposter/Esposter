@@ -3,7 +3,7 @@ import type { BufferGeometry } from "three";
 
 import { createBoxesGeometry } from "genshin-engine";
 
-const CORNER_SIGNS = [
+const CORNER_SIGNS: [number, number][] = [
   [-1, -1],
   [1, -1],
   [-1, 1],
