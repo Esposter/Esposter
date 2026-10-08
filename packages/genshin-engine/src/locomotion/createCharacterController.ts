@@ -218,9 +218,13 @@ export const createCharacterController = ({
       facing = Math.atan2(-moveDirection.x, -moveDirection.z);
   };
   return {
+    face: (targetFacing) => {
+      facing = targetFacing;
+    },
     get facing() {
       return facing;
     },
+    heldPresses,
     holdPresses: (input) => {
       for (const action of input.pressedActions) heldPresses.add(action);
     },
