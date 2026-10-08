@@ -9,5 +9,6 @@ export const CurrencyGameTextKeyMap = {
   [Currency.MasterlessStardust]: GameTextKey.MasterlessStardust,
   [Currency.MasterlessStarglitter]: GameTextKey.MasterlessStarglitter,
   [Currency.Mora]: GameTextKey.Mora,
+  [Currency.OriginalResin]: GameTextKey.OriginalResin,
   [Currency.Primogem]: GameTextKey.Primogem,
 } as const satisfies Record<Currency, GameTextKey>;

@@ -2,6 +2,7 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 
 import { Currency } from "#src/models/inventory/Currency";
+import { ORIGINAL_RESIN_CAP } from "#src/services/originalResin/constants";
 import { ItemCategory } from "genshin-interface";
 
 // The tabs whose every weapon or artifact is an entry of its own, never stacked, sorted by level or quality as chosen
@@ -21,7 +22,7 @@ export const PRECIOUS_CURRENCIES: readonly Currency[] = [
   Currency.IntertwinedFate,
   Currency.AcquaintFate,
 ];
-// A new player's bag and wallet, holding nothing
+// A new player's bag holds nothing, and their wallet nothing but Original Resin at its regeneration cap, from the epoch
 export const EMPTY_INVENTORY: Readonly<Inventory> = { items: [], nextId: 0 };
 export const EMPTY_WALLET: Readonly<Wallet> = {
   [Currency.AcquaintFate]: 0,
@@ -30,7 +31,11 @@ export const EMPTY_WALLET: Readonly<Wallet> = {
   [Currency.MasterlessStardust]: 0,
   [Currency.MasterlessStarglitter]: 0,
   [Currency.Mora]: 0,
+  [Currency.OriginalResin]: ORIGINAL_RESIN_CAP,
   [Currency.Primogem]: 0,
+  originalResinChangedAt: Temporal.Instant.fromEpochMilliseconds(0),
+  primogemResinRefillCount: 0,
+  primogemResinRefillDay: Temporal.PlainDate.from("1970-01-01"),
 };
 // Mora's item id in the game's tables, which every pile of it a defeated enemy drops is filed under
 export const MORA_ITEM_ID = 202;

@@ -506,6 +506,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :camera="mapCamera"
           :game-text
           :landmarks="jumpLandmarks"
+          :wallet
           @close="screenKind = ScreenKind.World"
           @jump="
             (pose) => {

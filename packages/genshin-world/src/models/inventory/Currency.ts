@@ -1,5 +1,5 @@
-// What the game counts rather than lists: Mora, Primogems and Genesis Crystals, held outside the bag's tabs, and the two
-// Fates, Masterless Starglitter and Masterless Stardust, among its Precious Items
+// What the game counts rather than lists: Mora, Primogems and Genesis Crystals, held outside the bag's tabs, Original
+// Resin, which regenerates, and the two Fates, Masterless Starglitter and Masterless Stardust, among its Precious Items
 export enum Currency {
   AcquaintFate = "AcquaintFate",
   GenesisCrystal = "GenesisCrystal",
@@ -7,5 +7,6 @@ export enum Currency {
   MasterlessStardust = "MasterlessStardust",
   MasterlessStarglitter = "MasterlessStarglitter",
   Mora = "Mora",
+  OriginalResin = "OriginalResin",
   Primogem = "Primogem",
 }
