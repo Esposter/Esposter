@@ -42,9 +42,7 @@ flowchart LR
 
 ## Key files
 
-| File                                                  | Role after the change                                         |
-| :---------------------------------------------------- | :------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/` | Each character's constellations as switches in its own module |
+Nothing is listed yet: each character's constellation effects are a module of their own under the kit folder, which this change creates, so no file it names exists to be listed.
 
 ## Sources
 
