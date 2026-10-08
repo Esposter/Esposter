@@ -27,7 +27,7 @@ flowchart LR
 
 ## Scope and order
 
-**Today:** the table, the activation rule, the talent additions and the Stella Fortuna a wish counts to its character are built. Nothing yet reads a constellation's effect, and the Traveler has no set chosen.
+**Today:** what is built is on the [constellations](/docs/genshin/constellations) page. Nothing yet reads a constellation's effect, and the Traveler has no set chosen.
 
 **This adds, in order:**
 

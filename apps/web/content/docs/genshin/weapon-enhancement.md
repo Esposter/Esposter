@@ -41,7 +41,7 @@ flowchart TD
 ## Ascension
 
 - **A weapon ascends at its cap.** Its level must be its phase's cap, and the next phase must exist. It stays at that level, which the next phase starts from.
-- **The Adventure Rank and the bag are checked before anything is taken.** The player's Adventure Rank must reach the next phase's requirement, the wallet must hold its Mora, and the bag must hold each of its items. Items come out of the bag's stacks from the first onwards, and a stack emptied is dropped.
+- **The Adventure Rank and the bag are checked before anything is taken.** The player's Adventure Rank must reach the next phase's requirement, the wallet must hold its Mora, and the bag must hold each of its items. Each leaves the bag's stacks as [inventory](/docs/genshin/inventory) describes.
 
 ## Refinement
 

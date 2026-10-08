@@ -17,7 +17,7 @@ Rolling, enhancing and locking artifacts is [built](/docs/genshin/artifact-enhan
 
 **Today:** an artifact's unconditional set lines are summed, and a conditional bonus adds no line and is only the set's description.
 
-**This adds:** each set's conditional bonus as a module, in the order the sets are carried, once the [character kits](/docs/proposals/genshin/character-kits) provide the shared effect it acts through.
+**This adds:** each set's conditional bonus as a module, in the order the sets are carried, once the [character kits](/docs/proposals/genshin/character-kits) provide the shared effect each bonus rests on.
 
 ## Data and measures
 

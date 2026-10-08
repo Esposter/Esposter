@@ -5,7 +5,7 @@ description: Each playable character's six constellations read per skill set fro
 
 # Constellations
 
-A character's six constellations are sequential upgrades, each activated with one Stella Fortuna of that character. What is built is the table side, which the stats run writes beside the [character kits](/docs/genshin/character-kits), the activation as a pure rule over the character, the talent levels the active raises add, and the Stella Fortuna a wish counts to its character. A constellation's effect is a kit module's and waits on the [character kits](/docs/proposals/genshin/character-kits), as the Traveler's element sets wait on the statues.
+A character's six constellations are sequential upgrades, each activated with one Stella Fortuna of that character. What is built is the table side, which the stats run writes with the other stat tables, the activation as a pure rule over the character, the talent levels the active raises add, and the Stella Fortuna a wish counts to its character. A constellation's effect is a kit module's and waits on the [character kits](/docs/proposals/genshin/character-kits), as the Traveler's element sets wait on the statues.
 
 ## The table
 

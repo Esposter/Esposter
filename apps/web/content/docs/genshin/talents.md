@@ -5,7 +5,7 @@ description: Each playable character's three combat talents levelled from 1 by t
 
 # Talents
 
-A character's three combat talents, the normal attack, the Elemental Skill and the Elemental Burst, are levelled from 1 by the game's own rule: each level costs Mora and talent materials, and needs an ascension phase the character has reached. What is built is the table side, which the stats run writes beside the [character kits](/docs/genshin/character-kits), and the upgrade as a pure rule over the character, its wallet and its bag. The passives are read as the phases open them. The Talents tab that presses an upgrade is not built, and stays in the [talents proposal](/docs/proposals/genshin/talents). A constellation's extra levels are added by the [constellations](/docs/genshin/constellations) page, which no kit reads yet.
+A character's three combat talents, the normal attack, the Elemental Skill and the Elemental Burst, are levelled from 1 by the game's own rule: each level costs Mora and talent materials, and needs an ascension phase the character has reached. The table side is built, written by the stats run beside the other stat tables, and the upgrade as a pure rule over the character, its wallet and its bag. The passives are read as the phases open them. The Talents tab that presses an upgrade is not built, and stays in the [talents proposal](/docs/proposals/genshin/talents). A constellation's extra levels are added by the [constellations](/docs/genshin/constellations) page, which no kit reads yet.
 
 ## The tables
 
@@ -28,7 +28,7 @@ flowchart LR
 ## Levelling
 
 - **Every combat talent starts at level 1.** `createCharacter` sets all three to `TALENT_START_LEVEL`.
-- **An upgrade raises one talent one level.** The level above the talent's own is looked up among its upgrades. The upgrade is refused where there is none, which is past level 10 for the materials, where the character's ascension phase is below the level's phase, where the wallet lacks the Mora, and where the bag lacks an item. The items come out of the bag's stacks from the first onward, as [inventory](/docs/genshin/inventory) takes them.
+- **An upgrade raises one talent one level.** The level above the talent's own is looked up among its upgrades. The upgrade is refused where there is none, which is past level 10 for the materials, where the character's ascension phase is below the level's phase, where the wallet lacks the Mora, and where the bag lacks an item. Those items leave the bag as [inventory](/docs/genshin/inventory) describes.
 - **A refusal leaves nothing behind.** The rule throws before it returns anything, so the caller keeps the character, the wallet and the bag it passed in, with no part of the cost taken.
 - **The phase numbers are the ascension phases'.** Level 2 needs the second phase, levels 3 and 4 the third, 5 and 6 the fourth, 7 and 8 the fifth, and 9 and 10 the sixth. A character at the first phase can therefore be raised to level 1 only, and a character must reach the sixth phase to bring any talent to level 10.
 

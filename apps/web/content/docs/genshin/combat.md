@@ -149,7 +149,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 | `packages/genshin-world/src/services/kit/selectAttackTarget.ts`                        | The enemy an action turns the body to                                   |
 | `packages/genshin-world/src/services/kit/checkIsInAttackArea.ts`                       | Whether a hit's cylinder reaches an enemy                               |
 | `packages/genshin-world/src/services/kit/constants.ts`                                 | The Traveler's kit, the kit's timings and its areas                     |
-| `packages/genshin-world/src/services/party/gainPartyEnergy.ts`                         | A particle's energy to each standing member of the deployed team        |
+| `packages/genshin-world/src/services/party/gainPartyEnergy.ts`                         | Particle energy, as [party](/docs/genshin/party) gives it               |
 
 ## Notes
 
