@@ -55,8 +55,9 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // Tower, gate, wall or plinth, and its wall columns stand 412 metres or more off the city. Its layout dumps name a
   // Stages_Build_BeaconTower01 that no OBJ exports, so a re-extraction is the way to name them
   [DerivedAssetComponent.Mondstadt]: {},
-  // The People of the Springs' landmarks (ParityReferenceMap's people-of-the-springs-location) name its capital's rigid
-  // Meshes and their shares, which the extraction has not yet given
+  // The People of the Springs' seven landmarks (ParityReferenceMap's people-of-the-springs-location: the spire, the hall,
+  // A terrace stair and the walkway post) name no mesh, so all seven are dropped: the extraction draws its capital as
+  // Water, planes and terrain tiles alone, and its layout dumps name sentry posts that no OBJ exports
   [DerivedAssetComponent.Natlan]: {},
   // Nasha Town's landmarks name its capital's meshes and their shares, which the extraction has not yet given
   [DerivedAssetComponent.NodKrai]: {},
