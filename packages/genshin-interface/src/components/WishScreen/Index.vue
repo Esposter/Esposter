@@ -60,7 +60,7 @@ const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rari
     </header>
     <ul class="pool">
       <li v-for="[rarity, cells] of poolRarityCellsMap" :key="rarity" class="pool-rarity">
-        <span class="stars" role="img" :aria-label="`${rarity}`">{{ "★".repeat(rarity) }}</span>
+        <span class="stars">{{ "★".repeat(rarity) }}</span>
         <ul class="pool-items">
           <li v-for="{ id, isFeatured, name } of cells" :key="id" class="pool-item" :data-featured="isFeatured">
             {{ name }}
@@ -95,7 +95,7 @@ const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rari
           :data-rarity="rarity"
         >
           <span class="result-name">{{ name }}</span>
-          <span class="stars" role="img" :aria-label="`${rarity}`">{{ "★".repeat(rarity) }}</span>
+          <span class="stars">{{ "★".repeat(rarity) }}</span>
           <span class="result-return">{{ wishReturn }}</span>
         </li>
       </ul>
