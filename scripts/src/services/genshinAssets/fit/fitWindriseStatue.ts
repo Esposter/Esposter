@@ -50,7 +50,8 @@ export const fitWindriseStatue = async (): Promise<string[]> => {
     // oxlint-disable-next-line no-await-in-loop -- one mesh of thousands of vertices is read at a time
     const { vertices } = await readObjMesh(join(meshDirectory, `${placement.mesh}.obj`));
     const points = vertices.map((vertex) => new Vector3(...toRightHanded(vertex)).applyMatrix4(transform));
-    for (const point of points) (STATUE_FIGURE_MESH_REGEX.test(placement.mesh) ? figure : stone).push(point);
+    const pool = STATUE_FIGURE_MESH_REGEX.test(placement.mesh) ? figure : stone;
+    pool.push(...points);
   }
   const toPart = (points: Vector3[]): { position: number[]; sections: LatheProfile["sections"] } => {
     const profile = fitLatheProfile(
