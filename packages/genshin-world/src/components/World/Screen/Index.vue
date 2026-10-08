@@ -17,6 +17,8 @@ import type { GameLanguage, GameText } from "genshin-text";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
+import HudHealth from "#src/components/Hud/Health/Index.vue";
+import HudParty from "#src/components/Hud/Party/Index.vue";
 import HudQuest from "#src/components/Hud/Quest/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
 import HudStamina from "#src/components/Hud/Stamina/Index.vue";
@@ -30,8 +32,10 @@ import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
+import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
@@ -39,6 +43,7 @@ import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/con
 import { PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
@@ -141,6 +146,14 @@ const party = reactive(createParty([TRAVELER_CHARACTER_ID]));
 const locomotion = computed(() =>
   statTables.value ? getCharacterLocomotion(getActiveCharacterId(party), statTables.value.characterDataMap) : undefined,
 );
+// The character on the field once the roster has arrived, and the Max HP its attributes give, which the HUD's health bar
+// Fills by
+const activeCharacter = computed(() => characters.value.find(({ id }) => id === getActiveCharacterId(party)));
+const activeMaxHealth = computed(() => {
+  if (!statTables.value || !activeCharacter.value) return 0;
+  const attributeLines = getCharacterAttributeLines(activeCharacter.value, statTables.value);
+  return computeCharacterAttributes(attributeLines).maxHealth;
+});
 // The player's bag, wallet, wish counters and characters' copies, holding nothing as a new player's do until the world
 // Gives them something
 const inventory = ref<Inventory>(EMPTY_INVENTORY);
@@ -211,7 +224,7 @@ const mapCamera = shallowRef<MapCamera>({ x: 0, yaw: 0, z: 0 });
 const cameraEuler = new Euler();
 // What the HUD's pieces read each frame. The stamina meter's pivot is projected only while the pool is spent or
 // Refilling, and once it is full the meter fades out where it stood
-const hudFrame = reactive<HudFrame>({ pivotX: 0, pivotY: 0, stamina: STAMINA_MAX });
+const hudFrame = reactive<HudFrame>({ pivotX: 0, pivotY: 0, seconds: 0, stamina: STAMINA_MAX });
 const pivot = new Vector3();
 useRafFn(() => {
   const activeCamera = canvas.value?.context?.camera.activeCamera.value;
@@ -272,6 +285,7 @@ defineExpose({ jumpTo, readCameraPosition });
       @before-loop="
         (context: TresContextWithClock) => {
           input.readInput(context.delta);
+          hudFrame.seconds = context.elapsed;
           if (!isPaused) screenKind = getNextScreenKind(screenKind, inputState.pressedActions);
           if (!isPaused && screenKind === ScreenKind.World && inputState.pressedActions.has(InputAction.HideInterface))
             isHudHidden = !isHudHidden;
@@ -353,6 +367,23 @@ defineExpose({ jumpTo, readCameraPosition });
           :quest="trackerQuest"
           :quest-progress="questProgressMap.get(trackerQuest.id)"
           :text-map="questTextMap"
+        />
+      </template>
+      <template v-if="statTables" #party>
+        <HudParty
+          :character-data-map="statTables.characterDataMap"
+          :frame="hudFrame"
+          :input
+          :name-text-map="nameText"
+          :party
+        />
+      </template>
+      <template v-if="activeCharacter" #health>
+        <HudHealth
+          :game-text
+          :health="getPartyMember(party, activeCharacter.id).healthShare * activeMaxHealth"
+          :level="activeCharacter.level"
+          :max-health="activeMaxHealth"
         />
       </template>
       <template #stamina>
