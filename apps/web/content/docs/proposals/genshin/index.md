@@ -75,6 +75,7 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 | [HUD](/docs/proposals/genshin/hud)                                   | the heads-up display's Paimon button and stamina meter, and the minimap's place |
 | [Characters](/docs/proposals/genshin/characters)                     | the game's characters from HoYoverse's official models                          |
 | [Menu screens](/docs/proposals/genshin/menu-screens)                 | the Paimon menu, and the Time and Settings screens it opens                     |
+| [Enemies](/docs/proposals/genshin/enemies)                           | enemy kinds and their stats, their AI and camps, spawns, respawn and drops      |
 
 ## Scope and order
 
