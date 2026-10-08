@@ -152,6 +152,9 @@ Clips nothing published shows, which the user records: each 30 seconds or less, 
 - [ ] `login-door-rest.mkv` — the door at rest on the current build.
 - [ ] `opening-japanese.mkv`, `opening-korean.mkv` — launch to the title, the client's language set to each.
 - [ ] `world-hud.mkv` — standing still in the open world, the whole HUD on screen, then the minimap turning as the view turns.
+- [ ] `world-hud-hidden.mkv` — the same standing shot as `world-hud.mkv`, the backslash pressed to hide the HUD and pressed again to show it, so the bare scene scores the HUD alone; the composite compare of the HUD draws over a recording that already shows its HUD.
+- [ ] `world-stamina.mkv` — sprinting until the stamina meter appears beside the character, then resting until it fades out, the meter in view throughout, 30 seconds at most.
+- [ ] `world-skill-burst.mkv` — the Traveler on the field with the skill pressed and its cooldown counted down, then the burst energy filling until the burst glows, the skill and burst buttons in view.
 - [ ] `world-teleport.mkv` — a teleport between two waypoints in one area, Teleport pressed at the third second.
 - [ ] `world-map.mkv` — the map opened on M over the character's own area, the zoom slider pressed in and out to its ends, a waypoint chosen on the map and Teleport pressed on the panel it opens, 30 seconds at most.
 - [ ] `world-pickup.mkv` — walking slowly up to a lone item, standing in a pile of more drops than the list shows, scrolling the wheel from the first row to the last, then holding F until the pile is gone.
