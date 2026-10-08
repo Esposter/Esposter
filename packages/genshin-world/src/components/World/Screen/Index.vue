@@ -5,6 +5,7 @@ import type { Talk } from "#src/models/dialogue/Talk";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { HudFrame } from "#src/models/hud/HudFrame";
+import type { HudMember } from "#src/models/hud/HudMember";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -22,12 +23,7 @@ import type { GameLanguage, GameText } from "genshin-text";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
-import HudHealth from "#src/components/Hud/Health/Index.vue";
-import HudParty from "#src/components/Hud/Party/Index.vue";
-import HudQuest from "#src/components/Hud/Quest/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
-import HudSkills from "#src/components/Hud/Skills/Index.vue";
-import HudStamina from "#src/components/Hud/Stamina/Index.vue";
 import InteractionPromptList from "#src/components/Interaction/PromptList/Index.vue";
 import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
@@ -182,6 +178,23 @@ const characterIdCombatantMap = computed(() => {
 });
 const activeCombatant = computed(() => characterIdCombatantMap.value.get(getActiveCharacterId(party)));
 const activePartyMember = computed(() => getPartyMember(party, getActiveCharacterId(party)));
+// The field member's figures the HUD's health and skill buttons show, none until the character on the field is known
+const hudMember = computed<HudMember | undefined>(() => {
+  const combatant = activeCombatant.value;
+  if (!combatant) return undefined;
+  const partyMember = activePartyMember.value;
+  return {
+    burstCooldown: partyMember.burstCooldownSeconds,
+    burstCooldownSeconds: combatant.kit.burstCooldownSeconds,
+    energy: partyMember.energy,
+    energyCost: combatant.kit.burstEnergyCost,
+    health: partyMember.healthShare * combatant.attributes.maxHealth,
+    level: combatant.level,
+    maxHealth: combatant.attributes.maxHealth,
+    skillCooldown: partyMember.skillCooldownSeconds,
+    skillCooldownSeconds: combatant.kit.skillCooldownSeconds,
+  };
+});
 // The player's bag, wallet, wish counters and characters' copies, holding nothing as a new player's do until the world
 // Gives them something
 const inventory = ref<Inventory>(EMPTY_INVENTORY);
@@ -464,52 +477,20 @@ defineExpose({ jumpTo, readCameraPosition });
     <HudScreen
       v-if="!cameraPose && !witness && !isPaused && !isHudHidden && !screenBehaviour.isHudHidden"
       :camera="mapCamera"
+      :character-data-map="statTables?.characterDataMap"
+      :frame="hudFrame"
       :game-text
       :input
       :landmarks="jumpLandmarks"
+      :member="hudMember"
+      :name-text-map="nameText"
+      :party
+      :quest-progress="trackerQuest && questProgressMap.get(trackerQuest.id)"
+      :quest-text-map
+      :tracked-quest="trackerQuest"
       @map="screenKind = ScreenKind.Map"
       @menu="screenKind = ScreenKind.PaimonMenu"
     >
-      <template v-if="trackerQuest" #quest>
-        <HudQuest
-          :input
-          :quest="trackerQuest"
-          :quest-progress="questProgressMap.get(trackerQuest.id)"
-          :text-map="questTextMap"
-        />
-      </template>
-      <template v-if="statTables" #party>
-        <HudParty
-          :character-data-map="statTables.characterDataMap"
-          :frame="hudFrame"
-          :input
-          :name-text-map="nameText"
-          :party
-        />
-      </template>
-      <template v-if="activeCombatant" #health>
-        <HudHealth
-          :game-text
-          :health="activePartyMember.healthShare * activeCombatant.attributes.maxHealth"
-          :level="activeCombatant.level"
-          :max-health="activeCombatant.attributes.maxHealth"
-        />
-      </template>
-      <template v-if="activeCombatant" #skills>
-        <HudSkills
-          :burst-cooldown="activePartyMember.burstCooldownSeconds"
-          :burst-cooldown-seconds="activeCombatant.kit.burstCooldownSeconds"
-          :energy="activePartyMember.energy"
-          :energy-cost="activeCombatant.kit.burstEnergyCost"
-          :game-text
-          :input
-          :skill-cooldown="activePartyMember.skillCooldownSeconds"
-          :skill-cooldown-seconds="activeCombatant.kit.skillCooldownSeconds"
-        />
-      </template>
-      <template #stamina>
-        <HudStamina :frame="hudFrame" :game-text :max-stamina="STAMINA_MAX" />
-      </template>
       <template #prompts>
         <InteractionPromptList :interaction-prompts />
       </template>
@@ -543,12 +524,13 @@ defineExpose({ jumpTo, readCameraPosition });
       <template #[ScreenKind.AdventurerHandbook]>
         <HandbookScreen :game-text @close="screenKind = ScreenKind.World" />
       </template>
-      <template v-if="statTables" #[ScreenKind.Character]>
+      <template v-if="statTables && nameText" #[ScreenKind.Character]>
         <CharacterScreen
           :active-character-id="getActiveCharacterId(party)"
           :characters
           :game-text
           :max-stamina="STAMINA_MAX"
+          :name-text
           :stat-tables
           @close="screenKind = ScreenKind.World"
         />

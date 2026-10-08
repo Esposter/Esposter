@@ -1,39 +1,69 @@
 <script setup lang="ts">
+import type { CharacterData } from "#src/models/character/CharacterData";
+import type { HudFrame } from "#src/models/hud/HudFrame";
+import type { HudMember } from "#src/models/hud/HudMember";
 import type { MapCamera } from "#src/models/map/MapCamera";
+import type { Party } from "#src/models/party/Party";
+import type { Quest } from "#src/models/quest/Quest";
+import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { Input } from "genshin-engine";
 import type { GameText } from "genshin-text";
 import type { VNode } from "vue";
 
+import HudHealth from "#src/components/Hud/Health/Index.vue";
 import HudMinimap from "#src/components/Hud/Minimap/Index.vue";
 import HudPaimonButton from "#src/components/Hud/PaimonButton/Index.vue";
+import HudParty from "#src/components/Hud/Party/Index.vue";
+import HudQuest from "#src/components/Hud/Quest/Index.vue";
+import HudSkills from "#src/components/Hud/Skills/Index.vue";
+import HudStamina from "#src/components/Hud/Stamina/Index.vue";
 import HudTouch from "#src/components/Hud/Touch/Index.vue";
 import { useMediaQuery } from "@vueuse/core";
+import { STAMINA_MAX } from "genshin-engine";
 import { GameScreen } from "genshin-interface";
 
 interface Props {
   camera: MapCamera;
+  // The deployed team's characters' data, which the team stays hidden without until the stat tables arrive
+  characterDataMap?: ReadonlyMap<number, CharacterData>;
+  // The world's frame: the stamina the meter fills by, where the follow camera's pivot stands, and the world's clock
+  frame: HudFrame;
   // The game's words in the reader's language
   gameText: GameText;
   input: Input;
   landmarks: Landmark[];
+  // The field member's HP, level and cooldowns, hidden until the character on the field is known
+  member?: HudMember;
+  // The names the deployed team's text ids cite in the reader's language, which stay blank until they load
+  nameTextMap?: Readonly<Record<string, string>>;
+  party: Party;
+  // The tracked quest's progress, none for a quest just started
+  questProgress?: QuestProgress;
+  // The quests' own words in the reader's language, by the game's text id
+  questTextMap: Readonly<Record<string, string>>;
+  // The quest on the tracker under the minimap, none while no quest is tracked
+  trackedQuest?: Quest;
 }
 
 defineSlots<{
-  // The member on the field's HP bar and level, at the bottom's middle
-  health?: () => VNode;
-  // The deployed team down the right side
-  party?: () => VNode;
   // The prompts of what the character can act on, beside the centre
   prompts?: () => VNode;
-  // The tracked quest, under the minimap
-  quest?: () => VNode;
-  // The skill and burst buttons, at the bottom right
-  skills?: () => VNode;
-  // The stamina meter beside the character, which places itself where the character stands on the screen
-  stamina?: () => VNode;
 }>();
-const { camera, gameText, input, landmarks } = defineProps<Props>();
+const {
+  camera,
+  characterDataMap,
+  frame,
+  gameText,
+  input,
+  landmarks,
+  member,
+  nameTextMap,
+  party,
+  questProgress,
+  questTextMap,
+  trackedQuest,
+} = defineProps<Props>();
 const emit = defineEmits<{ map: []; menu: [] }>();
 // A device whose main pointer is a finger has no keys or mouse to move and look with, so the touch controls are drawn
 const isTouch = useMediaQuery("(pointer: coarse)");
@@ -51,11 +81,28 @@ const isTouch = useMediaQuery("(pointer: coarse)");
       <HudPaimonButton :game-text @press="emit('menu')" />
       <HudMinimap :camera :game-text :landmarks @open="emit('map')" />
     </div>
-    <div class="quest"><slot name="quest" /></div>
-    <div class="party"><slot name="party" /></div>
-    <div class="health"><slot name="health" /></div>
-    <div class="skills"><slot name="skills" /></div>
-    <slot name="stamina" />
+    <div v-if="trackedQuest" class="quest">
+      <HudQuest :input :quest="trackedQuest" :quest-progress :text-map="questTextMap" />
+    </div>
+    <div v-if="characterDataMap" class="party">
+      <HudParty :character-data-map :frame :input :name-text-map :party />
+    </div>
+    <div v-if="member" class="health">
+      <HudHealth :game-text :health="member.health" :level="member.level" :max-health="member.maxHealth" />
+    </div>
+    <div v-if="member" class="skills">
+      <HudSkills
+        :burst-cooldown="member.burstCooldown"
+        :burst-cooldown-seconds="member.burstCooldownSeconds"
+        :energy="member.energy"
+        :energy-cost="member.energyCost"
+        :game-text
+        :input
+        :skill-cooldown="member.skillCooldown"
+        :skill-cooldown-seconds="member.skillCooldownSeconds"
+      />
+    </div>
+    <HudStamina :frame :game-text :max-stamina="STAMINA_MAX" />
     <slot name="prompts" />
   </GameScreen>
 </template>
