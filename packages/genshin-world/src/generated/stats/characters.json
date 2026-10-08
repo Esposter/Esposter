@@ -1,0 +1,167 @@
+[
+  {
+    "ascensionPhases": [
+      {
+        "attributeLines": [],
+        "maxLevel": 20
+      },
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_BASE_HP",
+            "value": 681.15454
+          },
+          {
+            "attribute": "FIGHT_PROP_BASE_DEFENSE",
+            "value": 42.75
+          },
+          {
+            "attribute": "FIGHT_PROP_BASE_ATTACK",
+            "value": 13.3038
+          }
+        ],
+        "maxLevel": 40
+      },
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_BASE_HP",
+            "value": 1165.1328
+          },
+          {
+            "attribute": "FIGHT_PROP_BASE_DEFENSE",
+            "value": 73.125
+          },
+          {
+            "attribute": "FIGHT_PROP_BASE_ATTACK",
+            "value": 22.7565
+          },
+          {
+            "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+            "value": 0.06
+          }
+        ],
+        "maxLevel": 50
+      },
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_BASE_HP",
+            "value": 1810.4371
+          },
+          {
+            "attribute": "FIGHT_PROP_BASE_DEFENSE",
+            "value": 113.625
+          },
+          {
+            "attribute": "FIGHT_PROP_BASE_ATTACK",
+            "value": 35.3601
+          },
+          {
+            "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+            "value": 0.12
+          }
+        ],
+        "maxLevel": 60
+      },
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_BASE_HP",
+            "value": 2294.4153
+          },
+          {
+            "attribute": "FIGHT_PROP_BASE_DEFENSE",
+            "value": 144
+          },
+          {
+            "attribute": "FIGHT_PROP_BASE_ATTACK",
+            "value": 44.8128
+          },
+          {
+            "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+            "value": 0.12
+          }
+        ],
+        "maxLevel": 70
+      },
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_BASE_HP",
+            "value": 2778.3936
+          },
+          {
+            "attribute": "FIGHT_PROP_BASE_DEFENSE",
+            "value": 174.375
+          },
+          {
+            "attribute": "FIGHT_PROP_BASE_ATTACK",
+            "value": 54.2655
+          },
+          {
+            "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+            "value": 0.18
+          }
+        ],
+        "maxLevel": 80
+      },
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_BASE_HP",
+            "value": 3262.3718
+          },
+          {
+            "attribute": "FIGHT_PROP_BASE_DEFENSE",
+            "value": 204.75
+          },
+          {
+            "attribute": "FIGHT_PROP_BASE_ATTACK",
+            "value": 63.7182
+          },
+          {
+            "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+            "value": 0.24
+          }
+        ],
+        "maxLevel": 90
+      }
+    ],
+    "attributeLines": [
+      {
+        "attribute": "FIGHT_PROP_CRITICAL",
+        "value": 0.05
+      },
+      {
+        "attribute": "FIGHT_PROP_CRITICAL_HURT",
+        "value": 0.5
+      },
+      {
+        "attribute": "FIGHT_PROP_CHARGE_EFFICIENCY",
+        "value": 1
+      }
+    ],
+    "bodyType": "BODY_GIRL",
+    "growAttributes": [
+      {
+        "attribute": "FIGHT_PROP_BASE_HP",
+        "base": 911.791,
+        "curve": "GROW_CURVE_HP_S4"
+      },
+      {
+        "attribute": "FIGHT_PROP_BASE_ATTACK",
+        "base": 17.808,
+        "curve": "GROW_CURVE_ATTACK_S4"
+      },
+      {
+        "attribute": "FIGHT_PROP_BASE_DEFENSE",
+        "base": 57.225,
+        "curve": "GROW_CURVE_HP_S4"
+      }
+    ],
+    "id": 10000007,
+    "rarity": 5,
+    "weaponType": "WEAPON_SWORD_ONE_HAND"
+  }
+]
