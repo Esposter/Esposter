@@ -6,25 +6,24 @@ import {
   MOUSE_LOOK_RADIANS_PER_PIXEL,
 } from "#src/input/constants";
 import { createInput } from "#src/input/createInput";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
+
+// An event target standing in for the window, with the gamepads it reports and the element holding its pointer lock
+const createTarget = (gamepads: unknown[] = [], pointerLockElement: unknown = null) =>
+  Object.assign(new EventTarget(), { document: { pointerLockElement }, navigator: { getGamepads: () => gamepads } });
 
 describe(createInput, () => {
   const POINTER_MOVE = 10;
   const STICK_AXIS = 0.5;
 
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
   test("moves by the keys held, a pair held against each other cancelling", () => {
     expect.hasAssertions();
 
-    const target = new EventTarget();
+    const target = createTarget();
     const { readInput } = createInput(target as unknown as Window);
     target.dispatchEvent(Object.assign(new Event("keydown"), { code: KEY_CODE_FORWARD }));
     target.dispatchEvent(Object.assign(new Event("keydown"), { code: KEY_CODE_BACKWARD }));
     target.dispatchEvent(Object.assign(new Event("keydown"), { code: KEY_CODE_RIGHT }));
-    vi.stubGlobal("navigator", { getGamepads: () => [] });
 
     expect({ moveForward: readInput().moveForward, moveRight: readInput().moveRight }).toStrictEqual({
       moveForward: 0,
@@ -35,11 +34,10 @@ describe(createInput, () => {
   test("lets go of every key held when the target loses focus", () => {
     expect.hasAssertions();
 
-    const target = new EventTarget();
+    const target = createTarget();
     const { readInput } = createInput(target as unknown as Window);
     target.dispatchEvent(Object.assign(new Event("keydown"), { code: KEY_CODE_FORWARD }));
     target.dispatchEvent(new Event("blur"));
-    vi.stubGlobal("navigator", { getGamepads: () => [] });
 
     expect(readInput().moveForward).toBe(0);
   });
@@ -47,11 +45,10 @@ describe(createInput, () => {
   test("hears nothing once disposed", () => {
     expect.hasAssertions();
 
-    const target = new EventTarget();
+    const target = createTarget();
     const { dispose, readInput } = createInput(target as unknown as Window);
     dispose();
     target.dispatchEvent(Object.assign(new Event("keydown"), { code: KEY_CODE_FORWARD }));
-    vi.stubGlobal("navigator", { getGamepads: () => [] });
 
     expect(readInput().moveForward).toBe(0);
   });
@@ -59,10 +56,8 @@ describe(createInput, () => {
   test("turns the look by the pointer's movement while it is locked, once a read", () => {
     expect.hasAssertions();
 
-    const target = new EventTarget();
+    const target = createTarget([], true);
     const { readInput } = createInput(target as unknown as Window);
-    vi.stubGlobal("document", { pointerLockElement: target });
-    vi.stubGlobal("navigator", { getGamepads: () => [] });
     target.dispatchEvent(Object.assign(new Event("mousemove"), { movementX: POINTER_MOVE, movementY: 0 }));
     const { lookYaw } = readInput();
 
@@ -75,9 +70,8 @@ describe(createInput, () => {
   test("moves by the first gamepad's left stick past its deadzone", () => {
     expect.hasAssertions();
 
-    const target = new EventTarget();
+    const target = createTarget([{ axes: [STICK_AXIS, -GAMEPAD_STICK_DEADZONE / 2] }]);
     const { readInput } = createInput(target as unknown as Window);
-    vi.stubGlobal("navigator", { getGamepads: () => [{ axes: [STICK_AXIS, -GAMEPAD_STICK_DEADZONE / 2] }] });
     const { moveForward, moveRight } = readInput();
 
     expect({ moveForward, moveRight }).toStrictEqual({ moveForward: 0, moveRight: STICK_AXIS });
