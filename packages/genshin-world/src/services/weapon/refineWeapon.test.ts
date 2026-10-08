@@ -6,19 +6,19 @@ import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { refineWeapon } from "#src/services/weapon/refineWeapon";
 import { describe, expect, test } from "vitest";
 
-const WEAPON_DATA: WeaponData = {
-  ascensionPhases: [{ attributeLines: [], coinCost: 0, costItems: [], maxLevel: 20, requiredPlayerLevel: 0 }],
-  baseExp: 1800,
-  growAttributes: [],
-  id: 1,
-  nameTextId: "1",
-  rarity: 3,
-  refinementCosts: [500, 1000, 2000, 4000],
-  refinementMaterialId: 0,
-  weaponType: WeaponType.Sword,
-};
-
 describe(refineWeapon, () => {
+  const WEAPON_DATA: WeaponData = {
+    ascensionPhases: [{ attributeLines: [], coinCost: 0, costItems: [], maxLevel: 20, requiredPlayerLevel: 0 }],
+    baseExp: 1800,
+    growAttributes: [],
+    id: 1,
+    nameTextId: "1",
+    rarity: 3,
+    refinementCosts: [500, 1000, 2000, 4000],
+    refinementMaterialId: 0,
+    weaponType: WeaponType.Sword,
+  };
+
   test("pays the Mora each rank gained costs, a copy of rank two gaining two ranks", () => {
     expect.hasAssertions();
     const weapon = { ascension: 0, experience: 0, id: 1, level: 1, refinement: 2 };
