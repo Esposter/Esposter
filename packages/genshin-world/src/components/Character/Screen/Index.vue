@@ -17,27 +17,30 @@ interface Props {
   characters: Character[];
   // The game's words in the reader's language
   gameText: GameText;
+  // The names the stat tables cite, in the reader's language, by their text id
+  nameText: Readonly<Record<string, string>>;
   // The party's stamina, which the Attributes tab shows with every character's own attributes
   maxStamina: number;
   // The game's tables the characters' attributes are summed from
   statTables: StatTables;
 }
 
-const { activeCharacterId, characters, gameText, maxStamina, statTables } = defineProps<Props>();
+const { activeCharacterId, characters, gameText, maxStamina, nameText, statTables } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const characterId = ref(activeCharacterId);
 const tab = ref(CharacterMenuTab.Attributes);
 const character = computed(() => characters.find(({ id }) => id === characterId.value));
-// The Traveler's name is the game's own, and every other character's waits on the roster's names
+// The Traveler's name is the game's own, and every other character's is the name its table cites
 const menuEntries = computed(() =>
   characters.map(({ id }) => ({
     id,
     name:
       id === TRAVELER_CHARACTER_ID
         ? fillLinePlaceholders(gameText[GameTextKey.Traveler], "", LOGIN_TRAVELER_GENDER)
-        : "",
+        : nameText[statTables.characterDataMap.get(id)?.nameTextId ?? ""] || "",
   })),
 );
+const characterName = computed(() => menuEntries.value.find(({ id }) => id === characterId.value)?.name ?? "");
 const tabLabels = computed(() =>
   Object.fromEntries(CharacterMenuTabs.map((menuTab) => [menuTab, gameText[CharacterMenuTabGameTextKeyMap[menuTab]]])),
 );
@@ -53,14 +56,43 @@ const tabLabels = computed(() =>
         :character
         :game-text
         :max-stamina
+        :name="characterName"
         :stat-tables
       />
     </CharacterMenu>
+    <span class="grid" />
+    <p class="training-guide">{{ gameText[GameTextKey.TrainingGuide] }}</p>
     <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">×</button>
   </GameScreen>
 </template>
 
 <style scoped>
+/* The foot's pieces, measured off the same frame: the grid's disc centred 148 units from the left and 1006 from the top,
+   and the Training Guide pill from 200 units, 49 high. Their colours are provisional */
+.grid {
+  position: absolute;
+  top: calc(var(--unit) * 978);
+  left: calc(var(--unit) * 120);
+  width: calc(var(--unit) * 56);
+  height: calc(var(--unit) * 56);
+  border-radius: 50%;
+  background: rgb(236 229 216 / 0.3);
+}
+
+.training-guide {
+  position: absolute;
+  top: calc(var(--unit) * 983);
+  left: calc(var(--unit) * 200);
+  margin: 0;
+  padding: 0 calc(var(--unit) * 26);
+  border-radius: calc(var(--unit) * 25);
+  background: rgb(236 229 216 / 0.9);
+  color: #3b4255;
+  font-size: calc(var(--unit) * 26);
+  font-weight: 600;
+  line-height: calc(var(--unit) * 49);
+}
+
 /* The way back's centre is 49 units from the top and 149 from the right, off the English client's character screen at
    21:9 (references/character-attributes-session.png). Its size and colours are provisional, as the quest screen's */
 .close {

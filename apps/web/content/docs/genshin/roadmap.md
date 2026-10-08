@@ -192,6 +192,9 @@ Clips nothing published shows, which the user records: each 30 seconds or less, 
 - [ ] `wish-ten.mkv` — a ten-wish on the English PC client at 1080p, from Wish ×10 to the summary dismissed. A published 1080p clip (`yt-uhCW3MZTgL8.mp4`) shows the event banner and single pulls' reveals only, so the ten-pull results grid is still owed.
 - [ ] `wish-standard.png` — the Standard Wish banner screen at 1080 high, English PC client, no pull under way; the published stills are the banner art and the details popups, not the screen itself.
 - [ ] `handbook-open-close.mkv` — F1 pressed in the open world, the Adventurer Handbook opening over the blurred scene, a tab clicked and its hover in view, then F1 closing it, 30 seconds at most at 60 frames a second; the open and close timings and the blur behind the book are read off it.
+- [ ] `bag-sort-open.png` — the weapons tab's sort dropdown opened on Quality at 1080 high, its list in view, the English PC client, no other screen. The published frames show it closed only, so the list's look and its open motion wait on this still.
+- [ ] `character-details.mkv` — Xilonen's Attributes tab with Details pressed, the advanced and elemental lists in view, then Details pressed again, 20 seconds at most at 60 frames a second, on the 21:9 frame's client. Its open motion and the list's layout are owed; nothing published shows it.
+- [ ] `character-attributes-1080.png` — the Attributes tab on the English PC client at 1080 high, the chosen character's panel and the portraits in view, to check the panel's place at 16:9 against the 21:9 frame it is measured from.
 
 ## Opening
 
