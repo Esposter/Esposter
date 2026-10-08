@@ -1,5 +1,5 @@
-import type { PavingStoneShape } from "genshin-engine";
 import type { PavingPlacement } from "#src/models/genshinAssets/fit/PavingPlacement";
+import type { PavingStoneShape } from "genshin-engine";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
@@ -30,7 +30,7 @@ export const fitWindrisePaving = async (): Promise<{
   const meshDirectory = join(getComponentDirectory(DerivedAssetComponent.Windrise).assets, AssetType.Mesh);
   const stones = placements.filter(({ mesh }) => PAVING_MESH_REGEX.test(mesh));
   const shapes: Record<string, PavingStoneShape> = {};
-  for (const mesh of new Set(stones.map(({ mesh }) => mesh))) {
+  for (const mesh of new Set(stones.map((stone) => stone.mesh))) {
     // oxlint-disable-next-line no-await-in-loop -- one mesh is read at a time
     const { vertices } = await readObjMesh(join(meshDirectory, `${mesh}.obj`));
     shapes[mesh] = fitPavingStoneShape(vertices.map((vertex) => toRightHanded(vertex)));

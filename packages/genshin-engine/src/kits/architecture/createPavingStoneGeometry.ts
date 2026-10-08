@@ -1,4 +1,5 @@
 import type { PavingStoneShape } from "#src/models/kits/architecture/PavingStoneShape";
+
 import { BufferAttribute, BufferGeometry } from "three";
 
 type Corner = [number, number, number];

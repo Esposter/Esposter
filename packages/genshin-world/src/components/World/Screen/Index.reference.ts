@@ -2,8 +2,8 @@ import type { ComponentReference } from "genshin-interface";
 
 import { groundTopic } from "#src/components/World/Screen/Ground.reference";
 import { oakTopic } from "#src/components/World/Screen/Oak.reference";
-import { pavingTopic } from "#src/components/World/Screen/Paving.reference";
 import { parityPageTopic } from "#src/components/World/Screen/ParityPage.reference";
+import { pavingTopic } from "#src/components/World/Screen/Paving.reference";
 import { recordingsTopic } from "#src/components/World/Screen/Recordings.reference";
 import { skyTopic } from "#src/components/World/Screen/Sky.reference";
 import { statueTopic } from "#src/components/World/Screen/Statue.reference";
@@ -142,8 +142,8 @@ export const reference: ComponentReference = {
   topics: {
     ground: groundTopic,
     oak: oakTopic,
-    paving: pavingTopic,
     parityPage: parityPageTopic,
+    paving: pavingTopic,
     recordings: recordingsTopic,
     sky: skyTopic,
     statue: statueTopic,
