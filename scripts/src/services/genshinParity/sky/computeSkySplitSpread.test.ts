@@ -30,4 +30,23 @@ describe(computeSkySplitSpread, () => {
       spread: 0,
     });
   });
+
+  test("reads its clouds' statistics only over splits whose halves both hold clouds", () => {
+    expect.hasAssertions();
+
+    // Clouds over the left half alone: blocks of two leave one half cloudless unshifted, whose clouds would read black,
+    // And deal them evenly shifted by one, where both halves' clouds are the same white
+    const sky = Uint8Array.from([1, 1, 1, 1, 0, 0, 0, 0]);
+    const readStatistics = (region: Uint8Array): SkyStatistics => {
+      const isClouded = region.some((isSky, pixel) => isSky && pixel % width < width / 2);
+      return {
+        clearColour: [0, 0, 0],
+        cloudColour: isClouded ? [100, 0, 0] : [0, 0, 0],
+        clouds: { contrast: 1, coverage: Number(isClouded), edgeSharpness: 0, spread: 0 },
+        elevationCoverage: [],
+      };
+    };
+
+    expect(computeSkySplitSpread(readStatistics, sky, width, [2]).cloudColour).toBe(0);
+  });
 });
