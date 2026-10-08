@@ -26,6 +26,7 @@ import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
+import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import {
   CLOUD_COVERAGE,
@@ -58,6 +59,7 @@ import {
   WINDRISE_START_MINUTES,
   WINDRISE_TERRAIN_OPTIONS,
 } from "#src/services/windrise/constants";
+import { LandmarkKindWindrisePartFamilyMap } from "#src/services/windrise/LandmarkKindWindrisePartFamilyMap";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { whenever } from "@vueuse/core";
 import {
@@ -265,17 +267,20 @@ onUnmounted(() => {
   <TresGroup :position="worldOffset">
     <!-- Hidden rather than unmounted where the witness draws the ground, since the world is ready once its ground is -->
     <TresGroup :visible="checkIsOwnFamilyDrawn(WindrisePartFamily.Ground)">
-      <WorldTerrain
-        :create-terrain-worker
-        :draws="terrainDraws"
-        :light-uniforms
-        :origin
-        :ramp-texture
-        :terrain-options="WINDRISE_TERRAIN_OPTIONS"
-        :water-uniforms
-        :wind-uniforms
-        @ready="isTerrainSettled = true"
-      />
+      <!-- Marked as the ground's family alone, so the grass, which a witness render never draws, is left out of ours -->
+      <TresGroup :user-data="{ [SCENE_FAMILY_KEY]: WindrisePartFamily.Ground }">
+        <WorldTerrain
+          :create-terrain-worker
+          :draws="terrainDraws"
+          :light-uniforms
+          :origin
+          :ramp-texture
+          :terrain-options="WINDRISE_TERRAIN_OPTIONS"
+          :water-uniforms
+          :wind-uniforms
+          @ready="isTerrainSettled = true"
+        />
+      </TresGroup>
       <WorldGrass
         :blade-height="GRASS_BLADE_HEIGHT"
         :blade-width="GRASS_BLADE_WIDTH"
@@ -309,6 +314,7 @@ onUnmounted(() => {
     <WorldWater :fog-uniforms :light-uniforms :origin :sky-uniforms :water-uniforms />
     <WorldLandmarks
       :hidden-kinds="hiddenLandmarkKinds"
+      :kind-family-map="LandmarkKindWindrisePartFamilyMap"
       :landmark-collider
       :light-uniforms
       :ramp-texture
