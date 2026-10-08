@@ -24,3 +24,16 @@ export const HANDOFF_QUESTION =
 export const VEIL_SECTION_ID = "genshin-mods-veil";
 export const VEIL_SYSTEM_SECTION =
   "Recording mode is on: the screen is being recorded or shared. Never write an email address, a phone number, a money amount, an API key, a token or a password in a reply; write a placeholder such as [email], [phone], [amount] or [secret] instead, even when asked for the value. Tool calls still use the real values.";
+// The tools that look something up, the tools that change files, and the shells whose command decides which it is
+export const LOOKUP_TOOLS: readonly string[] = ["Glob", "Grep", "Read", "WebFetch"];
+export const RESET_TOOLS: readonly string[] = ["Agent", "Edit", "NotebookEdit", "Write"];
+export const SHELL_TOOLS: readonly string[] = ["Bash", "PowerShell"];
+// The `export` and `cd` a session chains ahead of its command, each stripped as one leading segment
+export const LEADING_SEGMENT_REGEX: RegExp = /^\s*(?:export\s[^&;]*&&|cd\s[^&;]*&&|cd\s[^&;]*;)\s*/u;
+// The commands that only read, a whole first word each so `catalog` is not `cat`
+export const LOOKUP_COMMAND_REGEX: RegExp =
+  /^\s*(?:cat|sed|grep|rg|find|ls|head|tail|awk|wc|python|node\s+-e|git\s+(?:show|log|diff)|gh\s+run\s+view)(?:\s|$)/u;
+// Every third lookup in a row, the chain a haiku agent should answer as one bounded question
+export const DELEGATION_NUDGE_EVERY = 3;
+export const DELEGATION_NUDGE =
+  "Third lookup in a row with no decision between them: by the llm-delegation skill's hop rule this chain goes to a haiku agent as one bounded question.";

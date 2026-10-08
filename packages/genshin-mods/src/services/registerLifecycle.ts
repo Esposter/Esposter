@@ -21,6 +21,7 @@ const lastCacheRequestAtAtom = atom(
   { key: "lastCacheRequestAt", plugin: "genshin-mods" } as const,
   InitialState.lastCacheRequestAt,
 );
+const lookupStreakAtom = atom({ key: "lookupStreak", plugin: "genshin-mods" } as const, InitialState.lookupStreak);
 const nowAtom = atom({ key: "now", plugin: "genshin-mods" } as const, InitialState.now);
 const waypointsAtom = atom({ key: "waypoints", plugin: "genshin-mods" } as const, InitialState.waypoints);
 
@@ -100,9 +101,11 @@ export const registerLifecycle = (on: On): void => {
   });
 
   // The prompt is kept as the goal of a commission this turn may open, and a commission whose every task is done has
-  // Shown its finished row since the last turn ended, so it closes as the person moves on
+  // Shown its finished row since the last turn ended, so it closes as the person moves on. A new prompt also starts
+  // The lookup count again, since the lookups of the last turn are not the chain of this one
   on("prompt.submit", async ($, e, next) => {
     await update($, waypointsAtom, () => InitialState.waypoints);
+    await update($, lookupStreakAtom, () => InitialState.lookupStreak);
     await update($, lastPromptAtom, () => e.text);
     const { tasks } = await read($, commissionAtom);
     if (tasks.length > 0 && tasks.every(({ status }) => status === "completed")) await closeCommission($);

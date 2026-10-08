@@ -36,6 +36,7 @@ declare module "claude-code" {
       isHandingOff: boolean;
       lastCacheRequestAt: number;
       lastPrompt: string;
+      lookupStreak: number;
       now: number;
       waypoints: string[];
     };
