@@ -37,6 +37,8 @@ An item missing any of these is not queued: the gap is a call, and calls are the
 - **Ending:** the bench is left clean, its page stopped, and the lock removed.
 - **`[cpu]`** covers fits, solves, extraction and sampling that read files and need no page. They run in the shared checkout, as many at once as the cores and the memory gate allow (**Keeping it busy**).
 
+**A rewritten snapshot is committed by whoever ran the command.** `compare`, `passes` and their kin rewrite committed snapshot files as they measure. The agent or runner that ran one commits what it wrote in the same unit, or restores the file when the run does not count. An orphaned snapshot edit blocks every sync of the shared checkout until someone claims it.
+
 ## Running one
 
 1. **Claim it.** Take the top unclaimed item of your lane, append ` — running` to its line, and commit that one line straight away, so no other runner takes it.
