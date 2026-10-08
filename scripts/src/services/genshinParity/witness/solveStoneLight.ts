@@ -7,7 +7,12 @@ import { computeSkyLobeHarmonics } from "#src/services/genshinParity/witness/com
 import { RIDGE, SKY_LOBE_DIRECTIONS } from "#src/services/genshinParity/witness/constants";
 import { groupStoneBins } from "#src/services/genshinParity/witness/groupStoneBins";
 import { writeStoneRampWeights } from "#src/services/genshinParity/witness/writeStoneRampWeights";
-import { STONE_HARMONIC_COUNT, STONE_HEIGHT_FALLOFF, STONE_RAMP_KNOT_COUNT } from "genshin-engine";
+import {
+  computeStoneDarkening,
+  STONE_HARMONIC_COUNT,
+  STONE_HEIGHT_FALLOFF,
+  STONE_RAMP_KNOT_COUNT,
+} from "genshin-engine";
 import { Matrix3 } from "three";
 
 // How strongly the ramp's bends are held toward a straight line, as a share of the pixels: a ramp is a smooth curve
@@ -22,8 +27,9 @@ const BEND_STENCIL = [
 ] as const;
 // The stone's light and the haze's colours over it, solved channel by channel by least squares over the bins' means,
 // Over lights that can be: each pixel's scene colour is its albedo times the ramp at its coordinate, the harmonics at
-// Its normal and the light fading with its height, with its glow, darkened by its occlusion, the part the haze lets
-// Through, plus the haze's colour blended toward its sunward one by its scatter, by its opacity, which is linear in
+// Its normal and the light fading with its height, all darkening with its height at the rate given
+// (`computeStoneDarkening`), which the solve holds rather than solves, with its glow, darkened by its occlusion, the
+// Part the haze lets through, plus the haze's colour blended toward its sunward one by its scatter, by its opacity, which is linear in
 // Both. Every unknown is a light none of which is negative, solved by non-negative least squares
 // (`solveNonNegativeSystem`): the ramp rises from none at its dark end by steps none of which falls, the sky is a sum
 // Of lights from directions all round (`computeSkyLobeHarmonics`), the light fading with height adds, and the haze's
@@ -45,6 +51,7 @@ const BEND_STENCIL = [
 export const solveStoneLight = (
   samples: readonly StoneLightSample[],
   whiteBalance: Matrix3 = new Matrix3(),
+  heightDarkening = 0,
 ): { count: number; deviation: number; light: StoneLight; residual: number } => {
   const stoneBins = groupStoneBins(samples, whiteBalance);
   const bins = stoneBins.map(({ samples: binSamples }) => binSamples);
@@ -73,18 +80,20 @@ export const solveStoneLight = (
         scatter,
       } of binSamples) {
         const through = albedo[channel] * occlusion * (1 - opacity);
+        // The light alone darkens with height, not the glow the material adds after it nor the haze over it
+        const lit = through * computeStoneDarkening(height, heightDarkening);
         writeStoneRampWeights(rampCoordinate, weights);
         // A step lifts every knot from its own up, so its weight is theirs together
         let above = 0;
         for (let step = stepCount - 1; step >= 0; step--) {
           above += weights[step + 1] ?? 0;
-          row[step] = (row[step] ?? 0) + above * through;
+          row[step] = (row[step] ?? 0) + above * lit;
         }
         for (const [lobe, lobeTerms] of SKY_LOBES.entries())
           row[stepCount + lobe] =
             (row[stepCount + lobe] ?? 0) +
-            lobeTerms.reduce((sum, value, term) => sum + value * (terms[term] ?? 0), 0) * through;
-        row[heightFadeUnknown] = (row[heightFadeUnknown] ?? 0) + Math.exp(-height * STONE_HEIGHT_FALLOFF) * through;
+            lobeTerms.reduce((sum, value, term) => sum + value * (terms[term] ?? 0), 0) * lit;
+        row[heightFadeUnknown] = (row[heightFadeUnknown] ?? 0) + Math.exp(-height * STONE_HEIGHT_FALLOFF) * lit;
         row[hazeUnknown] = (row[hazeUnknown] ?? 0) + opacity * (1 - scatter);
         row[hazeUnknown + 1] = (row[hazeUnknown + 1] ?? 0) + opacity * scatter;
         // The glow and the rim the material adds after lighting are known, so they leave the colour the light explains
@@ -137,7 +146,7 @@ export const solveStoneLight = (
   return {
     count: total,
     deviation: Math.sqrt(spread / count),
-    light: { harmonics, hazeColor, hazeScatterColor, heightFade, ramp },
+    light: { harmonics, hazeColor, hazeScatterColor, heightDarkening, heightFade, ramp },
     residual: Math.sqrt(squared / count),
   };
 };

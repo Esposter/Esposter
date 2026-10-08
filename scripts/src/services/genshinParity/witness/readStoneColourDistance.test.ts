@@ -31,6 +31,7 @@ describe(readStoneColourDistance, () => {
       harmonics: Array.from({ length: STONE_HARMONIC_COUNT }, () => [0, 0, 0]),
       hazeColor: [0, 0, 0],
       hazeScatterColor: [0, 0, 0],
+      heightDarkening: 0,
       heightFade: [0, 0, 0],
       ramp: Array.from({ length: STONE_RAMP_KNOT_COUNT }, () => [100, 100, 100]),
     };

@@ -5,6 +5,7 @@ import { computeSkyLobeHarmonics } from "#src/services/genshinParity/witness/com
 import { SKY_LOBE_DIRECTIONS } from "#src/services/genshinParity/witness/constants";
 import { solveStoneLight } from "#src/services/genshinParity/witness/solveStoneLight";
 import {
+  computeStoneDarkening,
   computeStoneHarmonics,
   computeWhiteBalance,
   STONE_HARMONIC_COUNT,
@@ -37,8 +38,13 @@ describe(solveStoneLight, () => {
   const heightFade = [0.2, 0.15, 0.1];
   const haze = { color: [0.6, 0.5, 0.4] satisfies Vector, scatterColor: [1, 0.8, 0.5] satisfies Vector };
   // Every ramp knot's coordinate under faces turned every way, lit by a light fading with height as given, each drawn
-  // As many times as a bin needs to be read, the bins split between two parts, shown through a white balance
-  const drawSamples = (fade: readonly number[], whiteBalance = new Matrix3()): StoneLightSample[] =>
+  // As many times as a bin needs to be read, the bins split between two parts, shown through a white balance, the light
+  // Darkening with height at the rate given
+  const drawSamples = (
+    fade: readonly number[],
+    whiteBalance = new Matrix3(),
+    heightDarkening = 0,
+  ): StoneLightSample[] =>
     Array.from({ length: STONE_RAMP_KNOT_COUNT * 6 }, (_value, index): StoneLightSample[] => {
       const rampCoordinate = (index % STONE_RAMP_KNOT_COUNT) / (STONE_RAMP_KNOT_COUNT - 1);
       const turn = Math.floor(index / STONE_RAMP_KNOT_COUNT);
@@ -66,7 +72,11 @@ describe(solveStoneLight, () => {
         const hazeColor = (1 - scatter) * haze.color[channel] + scatter * haze.scatterColor[channel];
         const fading = (fade[channel] ?? 0) * Math.exp(-height * STONE_HEIGHT_FALLOFF);
         return (
-          (albedo[channel] * (sun + sky + fading) + emission[channel]) * occlusion * (1 - opacity) + hazeColor * opacity
+          (albedo[channel] * (sun + sky + fading) * computeStoneDarkening(height, heightDarkening) +
+            emission[channel]) *
+            occlusion *
+            (1 - opacity) +
+          hazeColor * opacity
         );
       }) as Vector;
       const { x, y, z } = new Vector3(...sceneColor).applyMatrix3(whiteBalance);
@@ -106,6 +116,15 @@ describe(solveStoneLight, () => {
     const { light } = solveStoneLight(drawSamples(heightFade, whiteBalance), whiteBalance);
 
     expect(round(light.ramp)).toStrictEqual(round(ramp));
+  });
+
+  test("recovers the light under the darkening with height it is held at, the glow and the haze undarkened", () => {
+    expect.hasAssertions();
+
+    const { light } = solveStoneLight(drawSamples(heightFade, new Matrix3(), 0.1), new Matrix3(), 0.1);
+
+    expect(round(light.ramp)).toStrictEqual(round(ramp));
+    expect(round([light.hazeColor, light.hazeScatterColor])).toStrictEqual(round([haze.color, haze.scatterColor]));
   });
 
   test("solves a scene a free solve would light below none to a light that never is", () => {

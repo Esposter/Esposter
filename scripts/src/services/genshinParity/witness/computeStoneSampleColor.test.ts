@@ -26,6 +26,7 @@ describe(computeStoneSampleColor, () => {
       harmonics: Array.from({ length: STONE_HARMONIC_COUNT }, () => [0.1, 0.1, 0.1]),
       hazeColor: [1, 0, 0],
       hazeScatterColor: [0, 1, 0],
+      heightDarkening: 0,
       heightFade: [0.3, 0.3, 0.3],
       ramp: Array.from({ length: STONE_RAMP_KNOT_COUNT }, () => [0.2, 0.2, 0.2]),
     });

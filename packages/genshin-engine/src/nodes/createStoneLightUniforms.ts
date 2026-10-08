@@ -26,6 +26,7 @@ export const createStoneLightUniforms = (): StoneLightUniforms => {
     ),
     hazeColor: uniform(new Color()),
     hazeScatterColor: uniform(new Color()),
+    heightDarkening: uniform(0),
     heightFade: uniform(new Color()),
     ramp,
     sunRadiance: uniform(new Color()),

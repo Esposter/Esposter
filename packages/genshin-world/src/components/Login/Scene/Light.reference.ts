@@ -289,11 +289,33 @@ export const lightTopic: ReferenceTopic = {
       result:
         "Lit so, the walkway's middle lane draws near white where the game shows grey-blue stone: Ground02's cyan at a strength of 1 by one less the facing ratio squared nearly fills at the camera's grazing look, and the game's frame holds about an eighth of the glow the materials predict on the near walkway. The deferred pass adds a model 13 pixel's glow whole, so the program as read would draw it; what decides it is the variant a material compiles, chosen by its shader keywords, which the exported materials do not hold (their files keep only the shader, the name and the saved properties), so _EnableRimGlow read as a float is no proof the glow is drawn. The surface pass graded our glow against the witness's, which draws it by the same float, and held what the frame shows wrong. The walkway's glow is taken out, its families and its paving's loops with it; the door's frame and panel, the program's cut and the textures read through their slots stay",
     },
+    {
+      method:
+        "Every stone material exported raw beside its JSON (extract), its keywords read past its name and its shader's pointer (readMaterialKeywords), the witness drawing a rim glow only under ENABLE_RIM_GLOW_ON and fitLoginStone counting a material without it at none, then the surface and light passes at login-door-session",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Every stone material compiles ENABLE_RIM_GLOW_ON but Door02, the door's panel, which holds _EnableRimGlow at 1 and compiles no glow; Ground02 and Edge01 compile it, so the walkway's white middle lane is not a variant the material leaves out. Drawn so, the door's glow structure falls from 0.208 to 0.160 against a gate of 0.093, its colour 0.37 ΔE within its gate, and the light pass from 14.68 to 14.64 ΔE",
+    },
+    {
+      method:
+        "The light pass's distance by height with the haze's opacity scaled to a half and to none, then the light darkened with height as a factor e^(-k h) over the walkway held through solveStoneLight, k from 0.03 to 0.2 a metre and stopping at 10 to 40 metres or never, solved on the door session and read on both night frames, then written (calibrate --darkening 0.14 --write) and read back",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The haze is 0.08 opaque 5 metres up and none from 20, and less of it leaves every band further off, so the pale towers over the walkway are the light's. Darkened at 0.14 a metre up to 20 metres the light reads 13.49 ΔE on the door session against 14.68 and 12.89 on the night title, never solved on, against 13.72, the stone 20 to 40 metres up 12.9 against 20.6; read back from the scene, 13.50. The crowns past 40 metres, 80 pixels, stand darker than the game's (27.5 against 23.6), and past 20 metres the darkening holds, which darkened on stood them darker still. The door session's frame scores 0.4791 against 0.4836 and the night title 0.4230 against 0.4297, the rest level. Every other hour keeps none until a frame of its hour solves its own",
+    },
+    {
+      method:
+        "The door session's frame beside the reference under the darkened light, the haze's density read along a ray below the walkway, and calibrate --haze over both night frames under the new light",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The near towers' mean colour now stands 2.6 ΔE from the game's, yet the far towers stay pale: their bodies stand below the walkway, where the night's haze holds about 10 a metre 5 metres down and hides any stone within a metre, while the game shows them dark down to its cloud sea. Both measures weigh by pixels and read those towers on a few dozen, 63 and 67 pixels in the two lowest bands, so the haze solve keeps its wall (residual 0.0974 against 0.0983 under the shipped): the wall stands for the cloud billows under the near walkway, and a haze measure weighing the far stone by its depth is the tool owed before the haze is solved again",
+    },
   ],
   openQuestions: [
-    "Which stone materials the game compiles with their rim glow: the exporter drops a material's shader keywords, so their raw serialized bytes are to be read, as a MonoBehaviour's are, before the witness or our stone draws a glow by _EnableRimGlow's float; the walkway's Ground02 is drawn by the game with far less glow than its float implies",
+    "Why the game shows the walkway's middle lane without Ground02's glow though its variant compiles it (ENABLE_RIM_GLOW_ON): a property block MonoBlockController sets on each rising piece, a different deferred variant, or a glow the program writes that the pass does not add as read; the witness still draws it, so the light is solved under a glow the frame does not show",
     "The bridges' and the towers' glow by material: the bridges' glow reads 7.3 ΔE off, our bridges fitted from their Bridge materials alone where the exports' glow through Edge01 and Ground01, and the towers' structure 0.19 against 0.08, their Build materials' glows averaged into one",
-    "The night's high stone, 20 to 40 metres up, still 18 to 21 ΔE off under every weighing of the solve: the form that darkens it, the game's shown colour halving about every 5 metres up, is missing from the light, where the falloffs tried so far fail",
+    "The night's crowns past 40 metres, darker than the game's under the darkening that holds past 20 metres, and the form the darkening stands in for: the reflection pass's clustered probes or a haze form the scene lacks",
+    "The night's far towers below the walkway, hidden in the haze's wall where the game shows them dark: a haze measure weighing the stone by its depth, then the haze solved again under it",
     "What tells the day's and the dusk's stone haze from their light: calibrate --haze settles neither, and the stone's albedo varies too little to split a haze that adds from a light that scales",
     "The dusk sun's direction against its shadows: a tower's shadow falls over the wings in front of the door where the recording's are lit, and the faces' shading cannot settle the direction, the light's binned residual flat round the hand-set one, so the shadows' own edges are the measure left",
     "What the day's and the dusk's falling ramps stand in for: not the sun's direction, and holding them to rise scores the dusk worse, so the highlight, the reflection and the normal maps the solve lacks first",
