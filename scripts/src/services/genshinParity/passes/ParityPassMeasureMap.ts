@@ -7,6 +7,7 @@ import { measureCamera } from "#src/services/genshinParity/passes/measureCamera"
 import { measureDisplay } from "#src/services/genshinParity/passes/measureDisplay";
 import { measureInventory } from "#src/services/genshinParity/passes/measureInventory";
 import { measureLayout } from "#src/services/genshinParity/passes/measureLayout";
+import { measureLight } from "#src/services/genshinParity/passes/measureLight";
 import { measureMotion } from "#src/services/genshinParity/passes/measureMotion";
 import { measureShape } from "#src/services/genshinParity/passes/measureShape";
 import { measureSurface } from "#src/services/genshinParity/passes/measureSurface";
@@ -22,6 +23,7 @@ export const ParityPassMeasureMap: Partial<
   [ParityPass.Display]: measureDisplay,
   [ParityPass.Inventory]: measureInventory,
   [ParityPass.Layout]: measureLayout,
+  [ParityPass.Light]: measureLight,
   [ParityPass.Motion]: measureMotion,
   [ParityPass.Shape]: measureShape,
   [ParityPass.Surface]: measureSurface,

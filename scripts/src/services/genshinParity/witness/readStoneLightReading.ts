@@ -14,18 +14,17 @@ import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitne
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { checkIsPartInterior } from "#src/services/genshinParity/sky/checkIsPartInterior";
 import { getPixelDisplayColor } from "#src/services/genshinParity/sky/getPixelDisplayColor";
+import { STONE_HEIGHT_BANDS } from "#src/services/genshinParity/witness/constants";
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
 import { withFinalizerAsync } from "@esposter/shared";
 import { computeStoneHarmonics, computeStoneRampCoordinate, STONE_HARMONIC_COUNT } from "genshin-engine";
 import sharp from "sharp";
 import { Matrix3, Matrix4, Vector3 } from "three";
 
-// A pixel's bin: its depth band, in metres between one and the next, its height band, in metres up to each top, its
+// A pixel's bin: its depth band, in metres between one and the next, its height band (`STONE_HEIGHT_BANDS`), its
 // Ramp coordinate in this many steps, and how far its face turns up in this many, so each bin holds faces the light
-// And the haze treat alike: the haze thins with height, so a bin spanning it would average the low stone it pales into
-// The high stone it leaves, and the light solved over it stands too dark below and too bright above
+// And the haze treat alike, and the light solved over it stands neither too dark below nor too bright above
 const DEPTH_BANDS = [0, 10, 20, 40, 80, 160, 320, 640, Infinity];
-const HEIGHT_BANDS = [-20, -10, -5, 0, 5, 10, 20, 40, Infinity];
 const RAMP_BIN_COUNT = 12;
 const UPWARD_BIN_COUNT = 4;
 const readPage = <T>(page: Page, name: string): Promise<T> =>
@@ -97,7 +96,7 @@ export const readStoneLightReading = async (
         const ray = point.clone().sub(eye).normalize();
         const scatter = Math.min(Math.max(ray.dot(scatterDirection), 0) ** fog.scatterPower * fog.scatterStrength, 1);
         const band = DEPTH_BANDS.findIndex((far) => pixelDepth < far);
-        const heightBand = HEIGHT_BANDS.findIndex((top) => point.y < top);
+        const heightBand = STONE_HEIGHT_BANDS.findIndex((top) => point.y < top);
         const rampBin = Math.min(Math.floor(rampCoordinate * RAMP_BIN_COUNT), RAMP_BIN_COUNT - 1);
         const upwardBin = Math.min(Math.floor(((faceNormal.y + 1) / 2) * UPWARD_BIN_COUNT), UPWARD_BIN_COUNT - 1);
         pixels.push({
