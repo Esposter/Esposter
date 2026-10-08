@@ -84,7 +84,7 @@ export const displayTopic: ReferenceTopic = {
     },
   ],
   openQuestions: [
-    "Whether the night's tint is the game's: the balance closest by the stone's share under the black still takes the red of our lit stone under it where the game's lit stone holds none, so the night's light is solved again, its moonlit side warmer than its shade, before the tint is read again by the same bands (balance --black)",
+    "Whether the night's tint is the game's: balance --black bands the stone by how bright the reference shows it, which leaves ours, a pixel off, at the frame's mean (Light.reference.ts), and the game's dark half is its high stone and its bright half the hazed low stone rather than the moon's side and the shade, so the tint is read again over the light pass's bins once the night's high stone holds",
     "Which of MHYBloom_Z's other values is the threshold, the scaler and the intensity: the bloom alone moves what lies around the brightest pixels, so they are measured there once the login draws the game's bloom",
   ],
 };
