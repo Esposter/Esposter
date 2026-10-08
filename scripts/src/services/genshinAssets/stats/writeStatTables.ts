@@ -2,7 +2,10 @@ import type { ExcelCurveRow } from "#src/models/genshinAssets/stats/ExcelCurveRo
 import type { ExcelWeaponLevelRow } from "#src/models/genshinAssets/stats/ExcelWeaponLevelRow";
 
 import { STATS_GENERATED_DIRECTORY } from "#src/services/genshinAssets/stats/constants";
+import { getArtifactExpMaterials } from "#src/services/genshinAssets/stats/getArtifactExpMaterials";
 import { getArtifactMainAffixCurves } from "#src/services/genshinAssets/stats/getArtifactMainAffixCurves";
+import { getArtifactMainAffixPools } from "#src/services/genshinAssets/stats/getArtifactMainAffixPools";
+import { getArtifactRarityDatas } from "#src/services/genshinAssets/stats/getArtifactRarityDatas";
 import { getArtifactSetDatas } from "#src/services/genshinAssets/stats/getArtifactSetDatas";
 import { getCharacterDatas } from "#src/services/genshinAssets/stats/getCharacterDatas";
 import { getCharacterSkillKits } from "#src/services/genshinAssets/stats/getCharacterSkillKits";
@@ -22,7 +25,10 @@ export const writeStatTables = (): string[] => {
   const characterDatas = getCharacterDatas(notes);
   const weaponDatas = getWeaponDatas(notes);
   const tableMap = {
+    "artifactExpMaterials.json": getArtifactExpMaterials(),
     "artifactMainAffixCurves.json": getArtifactMainAffixCurves(notes),
+    "artifactMainAffixPools.json": getArtifactMainAffixPools(),
+    "artifactRarities.json": getArtifactRarityDatas(),
     "artifactSets.json": getArtifactSetDatas(notes),
     "characterGrowCurves.json": toGrowCurves(
       readExcelTable<ExcelCurveRow>("AvatarCurveExcelConfigData"),
