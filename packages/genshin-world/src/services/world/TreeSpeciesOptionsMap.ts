@@ -1,19 +1,18 @@
 import type { TreeOptions } from "genshin-engine";
 
+import oak from "#src/data/windrise/oak.json";
 import { TreeSpecies } from "#src/models/world/TreeSpecies";
 
-// Each species as the tree kit's parameters. Windrise's great oak is the first: a broad trunk and seven boughs under a
-// Crown of large clusters, as its reference screenshots show it. Provisional: each is fitted to its species' own export,
-// Its outline and depth in the shape pass
+// Each species as the tree kit's parameters. Windrise's great oak's leaf clusters and trunk taper are read off its
+// Export's leaf and bark meshes (`data/windrise/oak.json`), its branches still provisional
 export const TreeSpeciesOptionsMap: Record<TreeSpecies, TreeOptions> = {
   [TreeSpecies.GreatOak]: {
     branchLength: 11,
-    cardSize: 1.3,
-    cardsPerCluster: 220,
-    clusterRadius: 5.5,
+    cardSize: 2.5,
+    cardsPerCluster: 400,
+    clusters: oak.clusters,
     mainBranchCount: 7,
     seed: 0,
-    trunkHeight: 12,
-    trunkRadius: 1.9,
+    trunk: oak.trunk,
   },
 };

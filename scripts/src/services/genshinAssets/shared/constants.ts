@@ -234,6 +234,16 @@ export const STATUE_RADIUS_TOLERANCE = 0.02;
 export const STATUE_MESH_REGEX: RegExp = /^Stages_MdGoddess/u;
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const STATUE_FIGURE_MESH_REGEX: RegExp = /^Stages_MdGoddess_Lite/u;
+// The great oak as its export's Lod1 meshes: its canopy's clusters grouped from the leaf's card centres by a seeded
+// K-means, the same export always clustering the same way, and its trunk's radius at each station read off the bark
+// Within a slab of a station's height and within the trunk's reach of its axis
+export const OAK_LEAF_MESH = "Stages_Unique_CyTree01_Leaf_Lod1";
+export const OAK_BARK_MESH = "Stages_Unique_CyTree01_Bark_Lod1";
+export const OAK_CLUSTER_COUNT = 40;
+export const OAK_CLUSTER_SEED = 12345;
+export const OAK_TRUNK_HEIGHTS: number[] = [0, 2, 4, 6, 8, 10, 12];
+export const OAK_TRUNK_SLAB_HALF_HEIGHT = 1;
+export const OAK_TRUNK_REACH = 8;
 // A tower's surface is unrolled on a grid of an eighth of a unit of its mesh, about a centimetre as the scene scales
 // It, fine enough that its carving's edges land within a pixel of the exports' where the login sees the towers nearest,
 // And its paint read again on half units, as fine as its loops are traced; a run of its height keeps one tone while

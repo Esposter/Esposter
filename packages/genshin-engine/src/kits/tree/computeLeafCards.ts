@@ -1,6 +1,6 @@
 import type { LeafCards } from "#src/models/kits/tree/LeafCards";
+import type { TreeCluster } from "#src/models/kits/tree/TreeCluster";
 import type { TreeOptions } from "#src/models/kits/tree/TreeOptions";
-import type { Vector3 } from "three";
 
 import { createSeededRandom } from "#src/random/createSeededRandom";
 
@@ -12,26 +12,21 @@ const CORNER_SIGNS = [
   [1, 1],
   [-1, 1],
 ] as const;
-// Leaf cards scattered through a sphere around each cluster centre, each facing a random way. Every vertex's normal
+// Leaf cards scattered through a sphere around each cluster's centre, each facing a random way. Every vertex's normal
 // Points out from its cluster's centre rather than off its card, so the toon ramp shades each cluster as one soft
 // Mass with a clean terminator, which is how the game's crowns read
 export const computeLeafCards = (
-  clusterCenters: readonly Vector3[],
-  {
-    cardSize,
-    cardsPerCluster,
-    clusterRadius,
-    seed,
-  }: Pick<TreeOptions, "cardSize" | "cardsPerCluster" | "clusterRadius" | "seed">,
+  clusters: readonly TreeCluster[],
+  { cardSize, cardsPerCluster, seed }: Pick<TreeOptions, "cardSize" | "cardsPerCluster" | "seed">,
 ): LeafCards => {
   const random = createSeededRandom(seed + 1);
-  const cardCount = clusterCenters.length * cardsPerCluster;
+  const cardCount = clusters.length * cardsPerCluster;
   const positions = new Float32Array(cardCount * VERTICES_PER_CARD * 3);
   const normals = new Float32Array(cardCount * VERTICES_PER_CARD * 3);
   const uvs = new Float32Array(cardCount * VERTICES_PER_CARD * 2);
   const indices = new Uint32Array(cardCount * INDICES_PER_CARD);
   let card = 0;
-  for (const { x: centerX, y: centerY, z: centerZ } of clusterCenters)
+  for (const { radius, x: centerX, y: centerY, z: centerZ } of clusters)
     for (let cardIndex = 0; cardIndex < cardsPerCluster; cardIndex++, card++) {
       // A point in the unit ball by rejection, flattened a little so a cluster is wider than it is tall
       let offsetX: number;
@@ -42,9 +37,9 @@ export const computeLeafCards = (
         offsetY = random() * 2 - 1;
         offsetZ = random() * 2 - 1;
       } while (offsetX * offsetX + offsetY * offsetY + offsetZ * offsetZ > 1);
-      const cardX = centerX + offsetX * clusterRadius;
-      const cardY = centerY + offsetY * clusterRadius * 0.7;
-      const cardZ = centerZ + offsetZ * clusterRadius;
+      const cardX = centerX + offsetX * radius;
+      const cardY = centerY + offsetY * radius * 0.7;
+      const cardZ = centerZ + offsetZ * radius;
       // The card's plane from a random facing: a tangent across it and a bitangent up it
       const facingAngle = random() * Math.PI * 2;
       const tiltAngle = (random() - 0.5) * Math.PI;
