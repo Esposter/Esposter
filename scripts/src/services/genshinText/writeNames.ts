@@ -17,21 +17,23 @@ export const writeNames = (): string[] => {
     parseMachineJson<(CharacterData | WeaponData)[]>(readFileSync(join(STATS_GENERATED_DIRECTORY, fileName), "utf8")),
   );
   const textIds = [...new Set(datas.map(({ nameTextId }) => nameTextId))].toSorted();
-  rmSync(NAME_TEXT_DIRECTORY, { force: true, recursive: true });
-  mkdirSync(NAME_TEXT_DIRECTORY, { recursive: true });
-
   const englishTextMap = readTextMap(GameLanguage.English);
-  for (const language of GameLanguages) {
+  // Every language is read before the last run's chunks are removed, so a text map that fails to read leaves them
+  const languageNameTexts = GameLanguages.map((language) => {
     const textMap = language === GameLanguage.English ? englishTextMap : readTextMap(language);
     const nameText = Object.fromEntries(
       textIds.map((textId) => {
         const text = textMap.get(textId);
         if (!text) notes.push(`${textId} has no ${language} text; English stands in`);
-        return [textId, getPlainGameText(text ?? englishTextMap.get(textId) ?? "")];
+        return [textId, getPlainGameText(text || (englishTextMap.get(textId) ?? ""))];
       }),
     );
+    return [language, nameText] as const;
+  });
+  rmSync(NAME_TEXT_DIRECTORY, { force: true, recursive: true });
+  mkdirSync(NAME_TEXT_DIRECTORY, { recursive: true });
+  for (const [language, nameText] of languageNameTexts)
     writeFileSync(join(NAME_TEXT_DIRECTORY, `${language}.json`), `${JSON.stringify(nameText, undefined, 2)}\n`);
-  }
 
   notes.push(`${textIds.length} names written in ${GameLanguages.length} languages`);
   return notes;

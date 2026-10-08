@@ -89,6 +89,18 @@ export const writeQuests = (): string[] => {
     ]),
   );
   textIds.delete("");
+  // Every language is read before the last run's files are removed, so a text map that fails to read leaves them
+  const languageQuestTexts = GameLanguages.map((language) => {
+    const textMap = language === GameLanguage.English ? englishTextMap : readTextMap(language);
+    const questText = Object.fromEntries(
+      [...textIds].toSorted().map((textId) => {
+        const text = textMap.get(textId);
+        if (!text) notes.push(`${textId} has no ${language} text; English stands in`);
+        return [textId, getPlainGameText(text || (englishTextMap.get(textId) ?? ""))];
+      }),
+    );
+    return [language, questText] as const;
+  });
   for (const directory of [QUESTS_DIRECTORY, QUEST_TEXT_DIRECTORY]) {
     rmSync(directory, { force: true, recursive: true });
     mkdirSync(directory, { recursive: true });
@@ -96,17 +108,8 @@ export const writeQuests = (): string[] => {
 
   for (const quest of quests)
     writeFileSync(join(QUESTS_DIRECTORY, `${quest.id}.json`), `${JSON.stringify(quest, undefined, 2)}\n`);
-  for (const language of GameLanguages) {
-    const textMap = language === GameLanguage.English ? englishTextMap : readTextMap(language);
-    const questText = Object.fromEntries(
-      [...textIds].toSorted().map((textId) => {
-        const text = textMap.get(textId);
-        if (!text) notes.push(`${textId} has no ${language} text; English stands in`);
-        return [textId, getPlainGameText(text ?? englishTextMap.get(textId) ?? "")];
-      }),
-    );
+  for (const [language, questText] of languageQuestTexts)
     writeFileSync(join(QUEST_TEXT_DIRECTORY, `${language}.json`), `${JSON.stringify(questText, undefined, 2)}\n`);
-  }
 
   notes.push(
     `${quests.length} quests, and ${textIds.size} of their words, written in ${GameLanguages.length} languages`,
