@@ -10,7 +10,7 @@ import { Matrix4, Vector3 } from "three";
 // The sun's cascades are drawn only when something they show has turned: the sun, the view they are split from, the
 // Character's body or an enemy. Each frame that decides it, after the sky has turned the sun and the origin has
 // Shifted, and a turn redraws every cascade, since each is split from the view and lit by the sun alike
-export const useSunShadow = ({ characterBody, enemyMap, sunLight }: SunShadowOptions): void => {
+export const useSunShadow = ({ enemyMap, getCharacterBody, sunLight }: SunShadowOptions): void => {
   const { camera } = useTres();
   const { onBeforeRender } = useLoop();
   const { cascadedShadowNode, light } = sunLight;
@@ -25,6 +25,7 @@ export const useSunShadow = ({ characterBody, enemyMap, sunLight }: SunShadowOpt
     if (!activeCamera) return;
     activeCamera.updateMatrix();
     sunDirection.subVectors(light.position, light.target.position).normalize();
+    const characterBody = getCharacterBody();
     if (characterBody) characterBody.updateMatrix();
     const isBodyMoved = characterBody !== undefined && !characterBody.matrix.equals(drawnBodyMatrix);
     const isMoved =
