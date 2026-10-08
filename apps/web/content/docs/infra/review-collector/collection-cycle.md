@@ -36,7 +36,7 @@ Then the cycle cuts every queue commit that claims it needs no review onto `main
 
 ## The open release: gate and merge
 
-**A release gets one review, and merges the moment it completes.** Nothing reaches `develop` while its pull request is open — the collector pushes a window only with none open, and `.coderabbit.yaml` turns incremental reviews off — so the review that runs when the pull request opens is the only one it ever gets, and it reads the whole window. Whatever it finds is not fixed on this pull request: it merges, and its findings are drained into the next window, whose release reviews the fixes in full.
+**A release gets one review, and merges once it completes and a session could drain it.** Nothing reaches `develop` while its pull request is open — the collector pushes a window only with none open, and `.coderabbit.yaml` turns incremental reviews off — so the review that runs when the pull request opens is the only one it ever gets, and it reads the whole window. Whatever it finds is not fixed on this pull request: it merges once a session probe succeeds, and its findings are drained into the next window, whose release reviews the fixes in full.
 
 ```mermaid
 flowchart TD
@@ -46,6 +46,7 @@ flowchart TD
   ST -->|pass, Review completed| PB{A session starts}
   ST -->|missing or anything else| X2[Fail — a person looks]
   PB -->|no, the account's limit| X3[Mark the instant it lifts, exit — the release stays open]
+  PB -->|started, exited non-zero| X4[Exit, retried a minute later — the release stays open]
   PB -->|yes| FC{main conflicts with develop}
   FC -->|no| MG[Merge the pull request as administrator<br/>at the head the review read]
   FC -->|yes| FR[Fold main into develop's head<br/>push the fold to main — GitHub reads it as merged]
@@ -53,7 +54,7 @@ flowchart TD
 
 - **The status is the whole answer.** With one review per release, a completed check at the head is that review, and its flip to completed arrives as a status event of its own. A missing check or a state the gate does not recognise fails the run rather than guessing.
 - **A rate limit asks again.** `Review rate limited` means the bot ran nothing; the ask is posted once the deadline the bot stated has passed, and the [runner's retrigger](/docs/infra/review-collector/runner) sleeps out a deadline still ahead.
-- **The merge waits for a session that could drain it.** The findings are answered after the merge, so a release merged while Claude Code is out of session ships them unread until the limit lifts. Before the merge a session is started on a prompt that does nothing; a refusal marks the instant the limit lifts and leaves the release open, and every run until then exits before the merge ([drain](/docs/infra/review-collector/drain), "When it cannot").
+- **The merge waits for a session that could drain it.** The findings are answered after the merge, so a release merged while Claude Code is out of session ships them unread until the limit lifts. Before the merge a session is started on a prompt that does nothing, and only one that exits clean lets the merge through; a refusal marks the instant the limit lifts and leaves the release open, and every run until then exits before the merge, while a probe that started and exited non-zero leaves it open too and wakes the next run a minute later, as any failed session does ([drain](/docs/infra/review-collector/drain), "When it cannot").
 - **The merge names the head the review read.** `gh pr merge --match-head-commit` is the same compare-and-swap the push makes: a `develop` that moved since is refused rather than released unread.
 - **A release `main` conflicts with is folded, never re-reviewed.** A repair or an express cut can land on `main` after the window went out, and a merge GitHub cannot create fails every run that tries it. So the release is tried against `main` in memory; a conflict folds `main` into `develop`'s head through the same resolver the window's fold uses, and the fold is pushed to `main` itself — it descends from both, and GitHub closes a pull request whose head its base carries as merged. The fold adds nothing but `main`'s own content, so no review is owed for it. A release that still merges cleanly is left to GitHub.
 - **The checks do not gate it.** `develop` runs them, and the release does not wait: the review is the gate, and a red check is one more commit in the next window.

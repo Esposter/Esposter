@@ -15,6 +15,7 @@ import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKin
 import { ReleasePullRequestState } from "#src/models/coderabbit/collect/ReleasePullRequestState";
 import { SessionLimitedError } from "#src/models/coderabbit/collect/SessionLimitedError";
 import {
+  ATTEMPT_RETRY_DELAY_SECONDS,
   CHECK_NAME,
   CI_COMPLETED_STATUS,
   CI_FAILURE_CONCLUSION,
@@ -716,6 +717,25 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     runSession.mockRejectedValue(new SessionLimitedError(0));
 
     await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toStrictEqual(new SessionLimitedError(0));
+    expect(getPrCalls("merge")).toHaveLength(0);
+    expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
+  });
+
+  test("leaves a reviewed release open when its session probe exits non-zero", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh(openPullRequests);
+    readCheckStatus.mockReturnValue(completedCheck);
+    runSession.mockResolvedValue({ isEnded: false, isStarted: true });
+
+    await expect(runCycle({ ...baseInput, cwd: getCwd() })).resolves.toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: "the session probe exited non-zero — the release waits for a session that can drain its findings",
+      retriggerDelaySeconds: ATTEMPT_RETRY_DELAY_SECONDS,
+      targetSha: undefined,
+    });
     expect(getPrCalls("merge")).toHaveLength(0);
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });
