@@ -26,6 +26,7 @@ import HudHealth from "#src/components/Hud/Health/Index.vue";
 import HudParty from "#src/components/Hud/Party/Index.vue";
 import HudQuest from "#src/components/Hud/Quest/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
+import HudSkills from "#src/components/Hud/Skills/Index.vue";
 import HudStamina from "#src/components/Hud/Stamina/Index.vue";
 import InteractionPromptList from "#src/components/Interaction/PromptList/Index.vue";
 import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
@@ -492,6 +493,18 @@ defineExpose({ jumpTo, readCameraPosition });
           :health="activePartyMember.healthShare * activeCombatant.attributes.maxHealth"
           :level="activeCombatant.level"
           :max-health="activeCombatant.attributes.maxHealth"
+        />
+      </template>
+      <template v-if="activeCombatant" #skills>
+        <HudSkills
+          :burst-cooldown="activePartyMember.burstCooldownSeconds"
+          :burst-cooldown-seconds="activeCombatant.kit.burstCooldownSeconds"
+          :energy="activePartyMember.energy"
+          :energy-cost="activeCombatant.kit.burstEnergyCost"
+          :game-text
+          :input
+          :skill-cooldown="activePartyMember.skillCooldownSeconds"
+          :skill-cooldown-seconds="activeCombatant.kit.skillCooldownSeconds"
         />
       </template>
       <template #stamina>
