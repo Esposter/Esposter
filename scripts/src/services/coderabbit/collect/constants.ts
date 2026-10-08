@@ -8,6 +8,11 @@ export const DEVELOP_BRANCH = "develop";
 export const QUEUE_BRANCH = "ai/queue";
 // Written by the collector alone and never deleted: the next drain after it is ported re-creates it from develop
 export const REVIEW_FIXES_BRANCH = "ai/review-fixes";
+// Each window is its own branch under this prefix, numbered by a running count (`getWindowBranch`). The stack's pull
+// Requests are the ones whose head starts with it, so no other branch is ever read as a window
+export const WINDOW_BRANCH_PREFIX = "review/";
+// The title every window's pull request carries before its number
+export const WINDOW_TITLE = `release: ${DEVELOP_BRANCH} → ${MAIN_BRANCH}`;
 // The trailer a fix commit carries per inline finding it answers, and the one a body-only fix carries per review
 export const ANSWERS_TRAILER = "Answers";
 
