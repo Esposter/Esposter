@@ -150,3 +150,6 @@ export const TRAVELER_KIT: Kit = {
 // The wiki's targeting score weighs an enemy's nearness to the body at 0.7 and its being ahead of it at 0.3
 export const TARGET_DISTANCE_WEIGHT = 0.7;
 export const TARGET_ANGLE_WEIGHT = 0.3;
+// Provisional: an enemy's strike is its ATK at this multiple, which no table gives until a recording of an enemy's attack
+// measures it
+export const ENEMY_STRIKE_TALENT_MULTIPLIER = 1;
