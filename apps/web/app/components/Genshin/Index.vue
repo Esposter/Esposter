@@ -35,10 +35,13 @@ const gameText = await useGameText();
         @begin="isDoorOpened = true"
         @finish="isOpeningShown = false"
       />
-      <!-- What loads is shown by no words of the startup screen's, so it is announced to a screen reader alone -->
-      <p role="status" sr-only>
-        {{ gameText.text[isReady ? GameTextKey.Ready : GameTextKey.Loading] }}
-      </p>
+      <!-- What loads is shown by no words of the startup screen's, so it is announced to a screen reader alone, and on
+        The client alone, since the dev server's first paint has no styles to hide it -->
+      <ClientOnly>
+        <p role="status" sr-only>
+          {{ gameText.text[isReady ? GameTextKey.Ready : GameTextKey.Loading] }}
+        </p>
+      </ClientOnly>
     </div>
   </div>
 </template>
