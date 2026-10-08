@@ -9,6 +9,7 @@ import { enemiesCommand } from "#src/services/genshinAssets/commands/enemiesComm
 import { expeditionsCommand } from "#src/services/genshinAssets/commands/expeditionsCommand";
 import { explorationCommand } from "#src/services/genshinAssets/commands/explorationCommand";
 import { extractCommand } from "#src/services/genshinAssets/commands/extractCommand";
+import { fishingCommand } from "#src/services/genshinAssets/commands/fishingCommand";
 import { fitCommand } from "#src/services/genshinAssets/commands/fitCommand";
 import { gadgetsCommand } from "#src/services/genshinAssets/commands/gadgetsCommand";
 import { gatheringCommand } from "#src/services/genshinAssets/commands/gatheringCommand";
@@ -61,6 +62,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     points: pointsCommand,
     "points-fit": pointsFitCommand,
     fit: fitCommand,
+    fishing: fishingCommand,
     rank: rankCommand,
     statues: statuesCommand,
     offerings: offeringsCommand,
