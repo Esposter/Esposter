@@ -25,11 +25,8 @@ export const shadowsCommand: SubCommandsDef[string] = defineCommand({
     name: "shadows",
   },
   run: async ({ args }) => {
-    const { direction, distance, edgeCount, imagePath, ourEdgeCount, probes, solved } = await solveReferenceShadows(
-      args.reference,
-      args.witness,
-      true,
-    );
+    const { direction, distance, edgeCount, grid, imagePath, ourEdgeCount, probes, solved } =
+      await solveReferenceShadows(args.reference, args.witness, true);
     if (edgeCount === 0) {
       console.log(`${args.reference} shows no shadow's edge on a flat receiver`);
       return;
@@ -41,6 +38,11 @@ export const shadowsCommand: SubCommandsDef[string] = defineCommand({
     for (const probe of probes)
       console.log(
         `  probed ${formatDirection(probe.direction)}: ${probe.ourEdgeCount} edge pixels, ${probe.distance.toFixed(2)} px`,
+      );
+    // The sky's grid priced before the simplex, its best few with each one's cost, the simplex started from the best three
+    for (const reading of grid)
+      console.log(
+        `  grid ${formatDirection(reading.direction)}: ${reading.ourEdgeCount} edge pixels, ${reading.distance.toFixed(2)} px`,
       );
     if (solved) {
       const angle = MathUtils.radToDeg(new Vector3(...direction).angleTo(new Vector3(...solved.direction)));

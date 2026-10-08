@@ -20,3 +20,9 @@ export const SKY_LOBE_DIRECTIONS: [number, number, number][] = Array.from(
     return [radius * Math.cos(azimuth), y, radius * Math.sin(azimuth)];
   },
 );
+// The sun directions a solve prices first, in degrees: every azimuth a step apart round the whole sky, and every
+// Elevation from the minimum up to the maximum a step apart, so a dusk sun low over the horizon is among them
+export const SKY_GRID_AZIMUTH_STEP_DEGREES = 10;
+export const SKY_GRID_ELEVATION_MINIMUM_DEGREES = 2;
+export const SKY_GRID_ELEVATION_MAXIMUM_DEGREES = 60;
+export const SKY_GRID_ELEVATION_STEP_DEGREES = 5;
