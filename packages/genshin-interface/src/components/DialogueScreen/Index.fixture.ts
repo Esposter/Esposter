@@ -1,13 +1,17 @@
 import { DialogueChoiceIcon } from "#src/models/DialogueChoiceIcon";
 
-// Paimon waking the Traveler at the prologue's start, the Traveler's reply on offer, and the line half written out
-const LINE = "You said we'd watch the sunrise together, how are you still asleep?";
+// Sara's line at the bar and the Traveler's two replies on offer, from the English PC client's recording of the
+// Dialogue choices at 720 high (`yt-nWBqOXWZuFg.mp4`, about 18 seconds in)
+const LINE = "Ah, finally, I caught you!";
 
 export const props = {
-  choices: [{ icon: DialogueChoiceIcon.Talk, id: "3510103", text: "Wow..." }],
+  choices: [
+    { icon: DialogueChoiceIcon.Talk, id: "1", text: "Is something wrong, Sara?" },
+    { icon: DialogueChoiceIcon.Talk, id: "2", text: "Sorry, I already ate." },
+  ],
   line: LINE,
   revealedLength: LINE.length,
-  selectedChoiceId: "3510103",
-  speakerName: "Paimon",
+  selectedChoiceId: "1",
+  speakerName: "Sara",
 };
 export const variants = { revealing: { choices: [], revealedLength: Math.floor(LINE.length / 2) } };
