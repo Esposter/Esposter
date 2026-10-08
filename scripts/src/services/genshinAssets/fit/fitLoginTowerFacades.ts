@@ -14,7 +14,6 @@ import { fitLatheProfile } from "#src/services/genshinAssets/fit/fitLatheProfile
 import { LoginStoneFamilyMaterialRegexMap } from "#src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap";
 import { rasterizeTopFaces } from "#src/services/genshinAssets/fit/rasterizeTopFaces";
 import { readLevelOfDetailParts } from "#src/services/genshinAssets/fit/readLevelOfDetailParts";
-import { readMaterialNames } from "#src/services/genshinAssets/fit/readMaterialNames";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { sampleFacadeGrid } from "#src/services/genshinAssets/fit/sampleFacadeGrid";
 import { simplifyPath } from "#src/services/genshinAssets/fit/simplifyPath";
@@ -33,6 +32,7 @@ import {
   TOWER_PROFILE_TOLERANCE,
   TOWER_RADIUS_TOLERANCE,
 } from "#src/services/genshinAssets/shared/constants";
+import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { BYTE } from "#src/services/shared/constants";
 import { toLinear } from "#src/services/shared/toLinear";
@@ -66,7 +66,7 @@ export const fitLoginTowerFacades = async (
   textureDirectory: string,
 ): Promise<Record<string, TowerFacade>> => {
   const { meshPathMap, partPlacements } = readLevelOfDetailParts(placements, TOWER_MESH_REGEX, meshDirectory);
-  const pathIdNameMap = await readMaterialNames(partPlacements);
+  const pathIdNameMap = await readAssetNames(new Set(partPlacements.flatMap(({ materials }) => materials)));
   // Three reads a hex as sRGB and holds it linear, as the scene's material reads the stone's
   const stoneColor = new Color(
     await fitAlbedo(

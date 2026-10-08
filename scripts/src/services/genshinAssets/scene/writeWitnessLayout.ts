@@ -9,6 +9,7 @@ import {
 } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
+import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
 import { readComponentPlacements } from "#src/services/genshinAssets/shared/readComponentPlacements";
 import { readIndexedAssets } from "#src/services/genshinAssets/shared/readIndexedAssets";
@@ -52,8 +53,7 @@ export const writeWitnessLayout = async (
     ...drawn.flatMap(({ materials: drawnMaterials }) => drawnMaterials),
     ...materials.flatMap(({ textures }) => Object.values(textures).map(({ pathId }) => pathId)),
   ]);
-  const indexed = await readIndexedAssets(({ pathId }) => referencedIds.has(pathId));
-  const pathIdNameMap = new Map(indexed.map(({ name, pathId }) => [pathId, name]));
+  const pathIdNameMap = await readAssetNames(referencedIds);
   const layout: SceneLayout = {
     materials: Object.fromEntries(
       materials.map(({ colors, floats, name, textures }) => [
