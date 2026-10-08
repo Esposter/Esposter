@@ -4,6 +4,7 @@ import { behavioursCommand } from "#src/services/genshinAssets/commands/behaviou
 import { chestsCommand } from "#src/services/genshinAssets/commands/chestsCommand";
 import { clearanceCommand } from "#src/services/genshinAssets/commands/clearanceCommand";
 import { clipsCommand } from "#src/services/genshinAssets/commands/clipsCommand";
+import { commissionsCommand } from "#src/services/genshinAssets/commands/commissionsCommand";
 import { enemiesCommand } from "#src/services/genshinAssets/commands/enemiesCommand";
 import { expeditionsCommand } from "#src/services/genshinAssets/commands/expeditionsCommand";
 import { explorationCommand } from "#src/services/genshinAssets/commands/explorationCommand";
@@ -78,5 +79,6 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     reputation: reputationCommand,
     wildlife: wildlifeCommand,
     expeditions: expeditionsCommand,
+    commissions: commissionsCommand,
   },
 });
