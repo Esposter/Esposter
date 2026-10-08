@@ -10,7 +10,6 @@ import { gainPartyEnergy } from "#src/services/party/gainPartyEnergy";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
-const PARTICLE_COUNT = 2;
 const createCombatant = (characterId: number, element: Element): Combatant => ({
   attributes: computeCharacterAttributes([{ attribute: Attribute.EnergyRecharge, value: 1 }]),
   characterId,
@@ -20,6 +19,8 @@ const createCombatant = (characterId: number, element: Element): Combatant => ({
 });
 
 describe(gainPartyEnergy, () => {
+  const PARTICLE_COUNT = 2;
+
   test("gives the member on the field its own element's energy and one off the field less", () => {
     expect.hasAssertions();
 

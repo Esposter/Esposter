@@ -1,9 +1,9 @@
 import { readBaseBranches } from "#src/services/coderabbit/collect/readBaseBranches";
 import { describe, expect, test } from "vitest";
 
-const BASE_BRANCH_PATTERN = "^review/";
-
 describe(readBaseBranches, () => {
+  const BASE_BRANCH_PATTERN = "^review/";
+
   test("reads a flow list on the key's own line", () => {
     expect.hasAssertions();
 

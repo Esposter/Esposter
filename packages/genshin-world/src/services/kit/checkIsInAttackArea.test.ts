@@ -6,12 +6,12 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { describe, expect, test } from "vitest";
 
-const BODY: KitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-const AREA = { angle: Math.PI / 2, height: 2, radius: 3 };
-
 const createEnemyAt = (x: number, z: number): Enemy => ({ ...createEnemy(ENEMY_CAMP_MEMBER, ""), position: { x, z } });
 
 describe(checkIsInAttackArea, () => {
+  const BODY: KitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+  const AREA = { angle: Math.PI / 2, height: 2, radius: 3 };
+
   test("reaches an enemy ahead of the body within its radius", () => {
     expect.hasAssertions();
 

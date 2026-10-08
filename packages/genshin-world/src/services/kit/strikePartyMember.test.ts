@@ -13,19 +13,19 @@ import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
-const MAX_HEALTH = 1000;
-const DEFENSE = 100;
-const combatant: Combatant = {
-  attributes: computeCharacterAttributes([
-    { attribute: Attribute.Health, value: MAX_HEALTH },
-    { attribute: Attribute.Defense, value: DEFENSE },
-  ]),
-  characterId: 1,
-  kit: TRAVELER_KIT,
-  level: 1,
-};
-
 describe(strikePartyMember, () => {
+  const MAX_HEALTH = 1000;
+  const DEFENSE = 100;
+  const combatant: Combatant = {
+    attributes: computeCharacterAttributes([
+      { attribute: Attribute.Health, value: MAX_HEALTH },
+      { attribute: Attribute.Defense, value: DEFENSE },
+    ]),
+    characterId: 1,
+    kit: TRAVELER_KIT,
+    level: 1,
+  };
+
   test("takes the share of the member's Max HP that an enemy's strike does through its defence", () => {
     expect.hasAssertions();
 

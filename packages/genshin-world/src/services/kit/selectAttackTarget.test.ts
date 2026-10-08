@@ -8,12 +8,12 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
 import { describe, expect, test } from "vitest";
 
-const BODY: KitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-const ZONE: AttackArea = { angle: 2 * Math.PI, height: 6, radius: 5 };
-
 const createEnemyAt = (x: number, z: number): Enemy => ({ ...createEnemy(ENEMY_CAMP_MEMBER, ""), position: { x, z } });
 
 describe(selectAttackTarget, () => {
+  const BODY: KitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+  const ZONE: AttackArea = { angle: 2 * Math.PI, height: 6, radius: 5 };
+
   test("turns to the nearer enemy ahead over a farther one", () => {
     expect.hasAssertions();
 

@@ -1,9 +1,9 @@
 import { getWindowOpenCount } from "#src/services/coderabbit/collect/getWindowOpenCount";
 import { describe, expect, test } from "vitest";
 
-const REVIEWS_PER_HOUR_FIXTURE = 2;
-
 describe(getWindowOpenCount, () => {
+  const REVIEWS_PER_HOUR_FIXTURE = 2;
+
   test.each([
     // Nothing open and nothing opened: the whole hourly ceiling is free
     [{ isStackingAllowed: false, openCount: 0, openedInLastHour: 0 }, REVIEWS_PER_HOUR_FIXTURE],

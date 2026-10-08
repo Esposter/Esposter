@@ -8,30 +8,38 @@ import { createPartyMember } from "#src/services/party/createPartyMember";
 import { createStamina, LocomotionState } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-const STEP_SECONDS = 0.1;
-const IDLE_INPUT: KitInput = {
-  height: 0,
-  isAttackHeld: false,
-  isAttackPressed: false,
-  isBurstPressed: false,
-  isSkillPressed: false,
-  locomotionState: LocomotionState.Idle,
-};
-
-// One character's kit, its party member and the stamina it spends, stepped by its input at the fixed step
-const createFixture = () => {
-  const kitState = createKitState();
-  const landedHits: KitHit[] = [];
-  const partyMember = createPartyMember();
-  const stamina = createStamina();
-  const step = (input: Partial<KitInput> = {}) => {
-    landedHits.length = 0;
-    return stepKit(kitState, TRAVELER_KIT, { ...IDLE_INPUT, ...input }, partyMember, stamina, STEP_SECONDS, landedHits);
-  };
-  return { kitState, landedHits, partyMember, stamina, step };
-};
-
 describe(stepKit, () => {
+  const STEP_SECONDS = 0.1;
+  const IDLE_INPUT: KitInput = {
+    height: 0,
+    isAttackHeld: false,
+    isAttackPressed: false,
+    isBurstPressed: false,
+    isSkillPressed: false,
+    locomotionState: LocomotionState.Idle,
+  };
+
+  // One character's kit, its party member and the stamina it spends, stepped by its input at the fixed step
+  const createFixture = () => {
+    const kitState = createKitState();
+    const landedHits: KitHit[] = [];
+    const partyMember = createPartyMember();
+    const stamina = createStamina();
+    const step = (input: Partial<KitInput> = {}) => {
+      landedHits.length = 0;
+      return stepKit(
+        kitState,
+        TRAVELER_KIT,
+        { ...IDLE_INPUT, ...input },
+        partyMember,
+        stamina,
+        STEP_SECONDS,
+        landedHits,
+      );
+    };
+    return { kitState, landedHits, partyMember, stamina, step };
+  };
+
   test("advances the string on each press as the last strike ends", () => {
     expect.hasAssertions();
 
