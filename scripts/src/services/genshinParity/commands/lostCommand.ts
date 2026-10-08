@@ -3,7 +3,7 @@ import type { SubCommandsDef } from "citty";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { carryLossToPlan } from "#src/services/genshinParity/passes/carryLossToPlan";
-import { compareFamilyAlbedo } from "#src/services/genshinParity/passes/compareFamilyAlbedo";
+import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";
 import { measureFamilyTargets } from "#src/services/genshinParity/passes/measureFamilyTargets";
 import { PLANS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
@@ -77,10 +77,10 @@ export const lostCommand: SubCommandsDef[string] = defineCommand({
             `${args.family} is not one of ${families.join(", ")}`,
           );
         const read = (targets: typeof exportsRead.targets) => ({
-          albedo: targets.albedo ?? new Float32Array(),
+          colour: targets.albedo ?? new Float32Array(),
           part: targets.part ?? new Float32Array(),
         });
-        const { termMaps } = compareFamilyAlbedo(
+        const { termMaps } = compareFamilyColour(
           read(exportsRead.targets),
           read(oursRead.targets),
           width,
