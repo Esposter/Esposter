@@ -16,3 +16,8 @@ export const STONE_HEIGHT_FALLOFF = 0.05;
 // The height in metres over the scene's ground the stone's light stops darkening at (`computeStoneDarkening`): past
 // It the towers' crowns hold the light they reach there, which darkened on up stood them darker than the game's
 export const STONE_DARKENING_TOP = 20;
+// How far a wet surface darkens at full wetness, the share of its colour it keeps
+export const WET_DARKENING = 0.35;
+// The lobe the sun's glint on a wet surface is drawn with, and how strongly it shows at full wetness
+export const WET_SHEEN_POWER = 32;
+export const WET_SHEEN_STRENGTH = 0.25;

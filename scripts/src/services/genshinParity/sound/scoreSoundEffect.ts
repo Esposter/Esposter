@@ -1,10 +1,7 @@
 import type { SoundEffectScore } from "#src/models/genshinParity/sound/SoundEffectScore";
-import type { SoundEffect } from "genshin-engine";
 
-import { SOUND_SAMPLE_RATE } from "#src/services/genshinAssets/shared/constants";
 import { computeStereoSoundBandPowers } from "#src/services/genshinAssets/sound/computeStereoSoundBandPowers";
 import { SOUND_SCORE_HOP_LENGTH, SOUND_SCORE_RANGE_DECIBELS } from "#src/services/genshinParity/shared/constants";
-import { computeSoundEffectSamples } from "genshin-engine";
 
 const toDecibels = (power: number): number => 10 * Math.log10(Math.max(power, Number.MIN_VALUE));
 // Each channel's level in each band frame by frame, its own power and the shared one's together
@@ -26,15 +23,14 @@ const computeCorrelation = (left: Float32Array, right: Float32Array): number => 
   }
   return product / Math.sqrt(leftPower * rightPower);
 };
-// A sound effect rendered by the engine (`computeSoundEffectSamples`) against the game's sound it was fitted from, both
-// Channels, in its own bands every `SOUND_SCORE_HOP_LENGTH`: finer than the fit's frames, so a level the frames
-// Smooth over shows. Only the cells within `SOUND_SCORE_RANGE_DECIBELS` of the game's loudest count, where the sound is
-// Heard over its own tail
+// A sound effect as the engine renders it (`computeSoundEffectSamples`) against the game's sound it was fitted from, or
+// Against another render of its own, both channels, in its own bands every `SOUND_SCORE_HOP_LENGTH`: finer than the
+// Fit's frames, so a level the frames smooth over shows. Only the cells within `SOUND_SCORE_RANGE_DECIBELS` of the
+// Game's loudest count, where the sound is heard over its own tail
 export const scoreSoundEffect = (
-  effect: SoundEffect,
+  ours: readonly [Float32Array, Float32Array],
   game: readonly [Float32Array, Float32Array],
 ): SoundEffectScore => {
-  const ours = computeSoundEffectSamples(effect, SOUND_SAMPLE_RATE);
   const gameLevels = computeChannelLevels(...game);
   const ourLevels = computeChannelLevels(...ours);
   const loudest = Math.max(...gameLevels.flatMap((frames) => frames.flat()));

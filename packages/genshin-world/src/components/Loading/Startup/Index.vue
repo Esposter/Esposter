@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
 
-import { ElementTypes } from "#src/models/loading/ElementType";
+import { Elements } from "#src/models/Element";
 import { MARKS_FADE_MS, WHITE_HOLD_MS } from "#src/services/loading/constants";
 import { ElementMarkPathMap } from "#src/services/loading/ElementMarkPathMap";
 import { useTimeoutFn, whenever } from "@vueuse/core";
@@ -52,14 +52,8 @@ whenever(
       :style="isLit ? { clipPath: litInset } : undefined"
       @animationend="isFadedIn = true"
     >
-      <svg
-        v-for="elementType of ElementTypes"
-        :key="elementType"
-        class="mark"
-        viewBox="0 0 1600 1600"
-        aria-hidden="true"
-      >
-        <path :d="ElementMarkPathMap[elementType]" />
+      <svg v-for="element of Elements" :key="element" class="mark" viewBox="0 0 1600 1600" aria-hidden="true">
+        <path :d="ElementMarkPathMap[element]" />
       </svg>
     </div>
   </GameScreen>

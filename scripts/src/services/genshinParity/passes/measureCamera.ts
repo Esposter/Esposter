@@ -1,7 +1,7 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityPassMeasure";
 
-import { CAMERA_GATE_PIXELS } from "#src/services/genshinParity/passes/constants";
+import { FRAME_GATE_PIXELS } from "#src/services/genshinParity/passes/constants";
 import { getCurrentBuildReferenceIds } from "#src/services/genshinParity/passes/getCurrentBuildReferenceIds";
 import { solveReferenceCamera } from "#src/services/genshinParity/passes/solveReferenceCamera";
 import { CAMERA_POSE_AXES } from "#src/services/genshinParity/shared/constants";
@@ -29,7 +29,7 @@ export const measureCamera = async (component: DerivedAssetComponent): Promise<P
             `${referenceId} from ${CAMERA_POSE_AXES.map((axis, index) => `${axis} ${(pose[index] ?? 0).toFixed(3)}`).join(", ")}`,
             ...names.map((name, index) => `${referenceId} ${name}: ${(errors[index] ?? 0).toFixed(2)} px`),
           ],
-          readings: [{ gate: CAMERA_GATE_PIXELS, name: referenceId, unit: "px", value: rms }],
+          readings: [{ gate: FRAME_GATE_PIXELS, name: referenceId, unit: "px", value: rms }],
         };
       },
       () => browser.close(),

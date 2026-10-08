@@ -19,9 +19,11 @@ export const PARITY_PASS_ORDER: readonly ParityPass[] = [
 // Exports' object it stands for, and the motion pass's piece of where its clip carries it, twice the centimetre the
 // Fitted data is written to
 export const PART_GATE_METRES = 0.02;
-// The camera pass's gate: a reference's landmarks within this many of its own pixels, root mean square, of where the
-// Scene's camera projects them, a 1080-line recording's edges softening over about two
-export const CAMERA_GATE_PIXELS = 2;
+// The gate a place on the frame is held to, in a reference's own pixels, a 1080-line recording's edges softening over
+// About two: the layout pass's each fitted part from the export it stands for, both projected at the reference's
+// Camera; the camera pass's landmarks, root mean square, from where the scene's camera projects them; and the light
+// Pass's shadows' edges from the reference's, on average both ways
+export const FRAME_GATE_PIXELS = 2;
 // The width the shape pass draws ours and the exports' at, wide enough that a stand-in's outline a pixel off shows,
 // And its gates: the outlines a pixel apart on average, which the exports' own edges rasterise within, the depth a
 // Hundredth off, and the normals ten degrees, where a toon ramp's light barely moves
@@ -37,6 +39,9 @@ export const COLOUR_GATE = 2.3;
 // More, and its next value, 0.75, about seven tenths
 export const DISPLAY_WIDTH = 640;
 export const DISPLAY_CONTRAST_GATE = 0.1;
+// The light pass reads a reference's shadows at this width, where its gate, two of a 1080-line recording's pixels,
+// Spans more than one
+export const SHADOW_WIDTH = 1280;
 // The atmosphere pass's chequerboards a reference's sky is split in two by, blocks this many pixels across at the
 // Clouds' width: from about a cloud's tuft to about a third of the frame's height, where a half still holds sky from
 // Every height over the horizon

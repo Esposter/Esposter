@@ -43,7 +43,7 @@ flowchart TD
 
 1. **Species** fitted to their exports, as parameters, the oak first.
 2. **Impostors**, instancing and **GPU culling** per species.
-3. **Scatter** in the terrain's worker for what no record places.
+3. **Scatter** called from the terrain's worker and drawn for what no record places. The seeded generator is built ([scatter](/docs/genshin/scatter)); its sizes, colours and the tile hookup are not.
 4. **The trail**, with the character controller.
 
 ## Key files

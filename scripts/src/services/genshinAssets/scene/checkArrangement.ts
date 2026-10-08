@@ -1,4 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { Vector } from "#src/models/shared/Vector";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { computeCrossRatio } from "#src/services/genshinAssets/scene/computeCrossRatio";
@@ -10,13 +11,18 @@ import { join } from "node:path";
 
 // A component's arrangement checked with no pixels: each ratio's cross-ratio as its reference measures it beside the
 // Fitted data's, and each family's fitted instances against the exports' objects it stands for, composed as the family
-// Stands them, as the distance from each instance to the nearest of them in metres, its mean and its largest; and the
-// Offsets across and up the game's own data explains for each family of the witness
+// Stands them, each instance beside the nearest of them, with its distance in metres, their mean and their largest;
+// And the offsets across and up the game's own data explains for each family of the witness
 export const checkArrangement = async (
   component: DerivedAssetComponent,
 ): Promise<{
   explainedOffsets: Record<string, [number, number]>;
-  families: { count: number; largest: number; mean: number; name: string }[];
+  families: {
+    largest: number;
+    mean: number;
+    name: string;
+    pairs: { distance: number; expected: Vector; fitted: Vector }[];
+  }[];
   ratios: { fitted: number; measured: number; name: string; reference: string }[];
 }> => {
   const { explainedOffsets, families, ratios } = DerivedAssetArrangementMap[component];
@@ -33,16 +39,24 @@ export const checkArrangement = async (
     families: await Promise.all(
       families.map(async ({ name, readExpected, readPositions }) => {
         const [targets, positions] = await Promise.all([readExpected(placements, meshDirectory), readPositions()]);
-        const distances = positions.map((position) =>
-          Math.min(
-            ...targets.map((target) => Math.hypot(...target.map((value, index) => value - (position[index] ?? 0)))),
-          ),
+        const pairs = positions.map((fitted) =>
+          targets
+            .map((expected) => ({
+              distance: Math.hypot(...expected.map((value, index) => value - (fitted[index] ?? 0))),
+              expected,
+              fitted,
+            }))
+            .reduce((nearest, pair) => (pair.distance < nearest.distance ? pair : nearest), {
+              distance: Infinity,
+              expected: fitted,
+              fitted,
+            }),
         );
         return {
-          count: distances.length,
-          largest: Math.max(...distances),
-          mean: distances.reduce((sum, distance) => sum + distance, 0) / distances.length,
+          largest: Math.max(...pairs.map(({ distance }) => distance)),
+          mean: pairs.reduce((sum, { distance }) => sum + distance, 0) / pairs.length,
           name,
+          pairs,
         };
       }),
     ),

@@ -61,17 +61,19 @@ const computeSoundEffectNoise = (
   return output.subarray(0, length);
 };
 // A sound effect as two channels of our own noise: the noise both share and each channel's own, every one built frame
-// By frame from its levels (`computeSoundEffectNoise`) with a seed of its own so the three are apart, the shared noise
-// Added to each channel's. Noises apart add their powers, so each channel's level is its own and the shared noise's
-// Together, as the effect was measured
+// By frame from its levels (`computeSoundEffectNoise`) with a seed of its own, the seed given and the two after it, so
+// The three are apart, the shared noise added to each channel's. Noises apart add their powers, so each channel's level
+// Is its own and the shared noise's together, as the effect was measured; a render seeded past those three is another
+// Take of the same levels, which the audio pass reads the noise's own grain by
 export const computeSoundEffectSamples = (
   { frameSeconds, leftLevels, rightLevels, sharedLevels }: SoundEffect,
   sampleRate: number,
+  seed = 0,
 ): [Float32Array, Float32Array] => {
   const length = Math.ceil(sharedLevels.length * frameSeconds * sampleRate);
-  const shared = computeSoundEffectNoise(sharedLevels, frameSeconds, sampleRate, length, 0);
-  const left = computeSoundEffectNoise(leftLevels, frameSeconds, sampleRate, length, 1);
-  const right = computeSoundEffectNoise(rightLevels, frameSeconds, sampleRate, length, 2);
+  const shared = computeSoundEffectNoise(sharedLevels, frameSeconds, sampleRate, length, seed);
+  const left = computeSoundEffectNoise(leftLevels, frameSeconds, sampleRate, length, seed + 1);
+  const right = computeSoundEffectNoise(rightLevels, frameSeconds, sampleRate, length, seed + 2);
   for (const [index, sample] of shared.entries()) {
     left[index] = (left[index] ?? 0) + sample;
     right[index] = (right[index] ?? 0) + sample;

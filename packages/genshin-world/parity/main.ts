@@ -129,12 +129,16 @@ if (screen && root) {
   // The camera solve and the ranking set the witness's view from the shooting browser, one view a call
   if (witness) {
     Reflect.set(window, "setWitnessView", (view: WitnessView) => setWitnessView(witness, view));
-    // Its G-buffer at the view last set, which the pose, the overlay, the layers' scores and calibration read
+    // Its G-buffer at the view last set, which the pose, the overlay, the layers' scores and calibration read, the sun
+    // Cast from a direction given for the light pass's shadows
     Reflect.set(
       window,
       "renderWitnessTargets",
-      (targets?: Parameters<typeof renderWitnessTargets>[2], isScene?: boolean) =>
-        renderWitnessTargets(witness, sceneContext.value, targets, isScene),
+      (
+        targets?: Parameters<typeof renderWitnessTargets>[2],
+        isScene?: boolean,
+        lightDirection?: Parameters<typeof renderWitnessTargets>[4],
+      ) => renderWitnessTargets(witness, sceneContext.value, targets, isScene, lightDirection),
     );
     // Each part of a family with where it lands on the screen, which a reference's landmarks are matched to
     Reflect.set(window, "computeWitnessParts", (family: string) =>

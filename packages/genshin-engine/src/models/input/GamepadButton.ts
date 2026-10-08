@@ -1,0 +1,20 @@
+// A gamepad's button in the browser's standard layout, named by where it sits so it reads the same on any brand's pad,
+// And spelt apart from every keyboard code so the two share one set of what is held
+export enum GamepadButton {
+  Back = "GamepadBack",
+  DirectionalPadDown = "GamepadDirectionalPadDown",
+  DirectionalPadLeft = "GamepadDirectionalPadLeft",
+  DirectionalPadRight = "GamepadDirectionalPadRight",
+  DirectionalPadUp = "GamepadDirectionalPadUp",
+  FaceBottom = "GamepadFaceBottom",
+  FaceLeft = "GamepadFaceLeft",
+  FaceRight = "GamepadFaceRight",
+  FaceTop = "GamepadFaceTop",
+  LeftBumper = "GamepadLeftBumper",
+  LeftStick = "GamepadLeftStick",
+  LeftTrigger = "GamepadLeftTrigger",
+  RightBumper = "GamepadRightBumper",
+  RightStick = "GamepadRightStick",
+  RightTrigger = "GamepadRightTrigger",
+  Start = "GamepadStart",
+}

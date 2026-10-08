@@ -11,10 +11,9 @@ This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/
 ## Decisions
 
 - **Volcanism as material and light.** Lava is an emissive flow material on authored channels, with its glow in bloom and light spilling on the rock around it. Basalt and ash are ground layers. Steam rises from vents and springs. Eruptions are an area weather that suspends rain, as the game's volcano does.
-- **Six tribes, one kit, six variants.** The Natlan kit builds on:
-  - a stone or timber platform
-  - walls of carved stone or woven panels
-  - flat, conical or thatched roofs
+- **Six tribes, one kit, six variants.** The building kit's platform, walls and flat or conical roofs are built ([buildings](/docs/genshin/buildings)). Still to build on it:
+  - a stone or timber platform, and carved stone or woven walls, as materials
+  - thatched roofs
   - murals and graffiti painted by pattern
 
   Each tribe is a set of parameters and a palette:
@@ -70,7 +69,7 @@ New files:
 
 ```text
 packages/genshin-world/src/data/regions/natlan.json
-packages/genshin-engine/src/kits/natlan/   ← the tribe-variant building kit, murals, lava channels
+packages/genshin-engine/src/kits/architecture/  ← the tribe-variant building kit's remaining parts, murals, lava channels
 ```
 
 ## Sources

@@ -5,8 +5,8 @@ import { GameTextKey } from "genshin-text";
 // Glyph
 export const InterfaceIconGameTextKeyMap: Record<InterfaceIcon, GameTextKey> = {
   [InterfaceIcon.Exit]: GameTextKey.LoginLogOut,
-  [InterfaceIcon.Notice]: GameTextKey.LoginNotices,
-  [InterfaceIcon.Power]: GameTextKey.LoginQuit,
+  [InterfaceIcon.Notice]: GameTextKey.Notices,
+  [InterfaceIcon.Power]: GameTextKey.QuitGame,
   [InterfaceIcon.Repair]: GameTextKey.LoginRepair,
-  [InterfaceIcon.Settings]: GameTextKey.LoginSettings,
+  [InterfaceIcon.Settings]: GameTextKey.Settings,
 };

@@ -1,4 +1,5 @@
 import type { WitnessGbuffer } from "#src/models/genshinParity/shared/WitnessGbuffer";
+import type { Vector } from "#src/models/shared/Vector";
 import type { Page } from "playwright";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
@@ -14,22 +15,24 @@ const decodeTarget = (name: string, values: Float32Array, positionLift: number):
 };
 // The witness page's targets at the view last set, as its `renderWitnessTargets` reads them back from the renderer,
 // Drawing only the ones named, each handed over as base64 and read here as its floats; told to, of the scene's own parts
-// In place of the exports'
+// In place of the exports', and given a direction, under the sun cast from it for this read alone
 export const readWitnessTargets = async (
   page: Page,
   names: readonly WitnessTargetName[],
   isScene = false,
+  lightDirection?: Readonly<Vector>,
 ): Promise<
   Pick<WitnessGbuffer, "families" | "height" | "parts" | "width"> & {
     targets: Partial<Record<WitnessTargetName, Float32Array>>;
   }
 > => {
   const { families, height, parts, positionLift, targets, width } = await page.evaluate(
-    ([targetNames, isSceneDrawn]) =>
+    ([targetNames, isSceneDrawn, direction]) =>
       (
         Reflect.get(window, "renderWitnessTargets") as (
           targetNames: readonly string[],
           isScene: boolean,
+          lightDirection?: Readonly<Vector>,
         ) => Promise<{
           families: string[];
           height: number;
@@ -38,8 +41,8 @@ export const readWitnessTargets = async (
           targets: Partial<Record<WitnessTargetName, string>>;
           width: number;
         }>
-      )(targetNames, isSceneDrawn),
-    [[...names], isScene] as const,
+      )(targetNames, isSceneDrawn, direction),
+    [[...names], isScene, lightDirection] as const,
   );
   return {
     families,

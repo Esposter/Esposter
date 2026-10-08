@@ -6,6 +6,7 @@ import WorldGrass from "#src/components/World/Grass/Index.vue";
 import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
 import WorldTerrain from "#src/components/World/Terrain/Index.vue";
 import WorldWater from "#src/components/World/Water/Index.vue";
+import WorldWeather from "#src/components/World/Weather/Index.vue";
 import { useFloatingOrigin } from "#src/composables/useFloatingOrigin";
 import { useGenshinTuning } from "#src/composables/useGenshinTuning";
 import { usePostPipeline } from "#src/composables/usePostPipeline";
@@ -46,8 +47,9 @@ import {
   WINDRISE_SKY_KEYFRAMES,
   WINDRISE_START_MINUTES,
   WINDRISE_TERRAIN_OPTIONS,
+  WINDRISE_WEATHER,
 } from "#src/services/windrise/constants";
-import { watchImmediate, whenever } from "@vueuse/core";
+import { whenever } from "@vueuse/core";
 import {
   createFogUniforms,
   createGradeLutTexture,
@@ -106,7 +108,6 @@ const hemisphere = new HemisphereLight();
 const worldOffset = useFloatingOrigin(origin);
 const { isRegionDataSettled, regionDataMap } = useRegionData(origin, regionDataBaseUrl);
 const fogUniforms = createFogUniforms();
-fogUniforms.density.value = FOG_DENSITY;
 fogUniforms.heightFalloff.value = FOG_HEIGHT_FALLOFF;
 fogUniforms.startDistance.value = FOG_START_DISTANCE;
 const postUniforms = createPostUniforms();
@@ -120,7 +121,9 @@ waterUniforms.shallowColor.value.set(WATER_SHALLOW_COLOR);
 waterUniforms.underwaterFogColor.value.set(UNDERWATER_FOG_COLOR);
 waterUniforms.underwaterFogDensity.value = UNDERWATER_FOG_DENSITY;
 const skyUniforms = createSkyUniforms();
-skyUniforms.cloudCoverage.value = CLOUD_COVERAGE;
+// Alone, the witness's exports are drawn with no haze and no clouds, so a pose is matched on their edges alone
+const baseCloudCoverage = computed(() => (witness?.isAlone.value ? 0 : CLOUD_COVERAGE));
+const baseFogDensity = computed(() => (witness?.isAlone.value ? 0 : FOG_DENSITY));
 const gameClock = useSky({
   checkIsHeld: () => heldMinutes !== undefined || (witness?.isClockHeld.value ?? false),
   skyKeyframes: WINDRISE_SKY_KEYFRAMES,
@@ -144,12 +147,6 @@ watch(
     if (minutes !== undefined) gameClock.minutes = minutes;
   },
 );
-// Alone, the witness's exports are drawn with no haze and no clouds, so a pose is matched on their edges alone
-if (witness)
-  watchImmediate(witness.isAlone, (isAlone) => {
-    fogUniforms.density.value = isAlone ? 0 : FOG_DENSITY;
-    skyUniforms.cloudCoverage.value = isAlone ? 0 : CLOUD_COVERAGE;
-  });
 // The tiles the terrain draws, which it writes each frame and what reads the ground compares against what it last read
 const terrainDraws = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const gradeLutTexture = createGradeLutTexture(WINDRISE_GRADE_OPTIONS);
@@ -231,6 +228,16 @@ onUnmounted(() => {
       />
     </TresGroup>
     <WorldWater :fog-uniforms :light-uniforms :origin :sky-uniforms :water-uniforms />
+    <WorldWeather
+      :base-cloud-coverage="baseCloudCoverage"
+      :base-fog-density="baseFogDensity"
+      :fog-uniforms
+      :light-uniforms
+      :origin
+      :sky-uniforms
+      :weather="WINDRISE_WEATHER"
+      :wind-uniforms
+    />
     <WorldLandmarks :hidden-kinds="hiddenLandmarkKinds" :light-uniforms :ramp-texture :region-data-map :wind-uniforms />
   </TresGroup>
 </template>

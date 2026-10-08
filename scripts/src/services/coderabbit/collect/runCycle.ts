@@ -8,6 +8,7 @@ import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKin
 import { ReleasePullRequestState } from "#src/models/coderabbit/collect/ReleasePullRequestState";
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import {
+  ATTEMPT_RETRY_DELAY_SECONDS,
   DEVELOP_BRANCH,
   MAIN_BRANCH,
   QUEUE_BRANCH,
@@ -94,8 +95,8 @@ export const runCycle = async ({
       CycleOutcomeKind.Idle,
       `pull request #${releasePullRequest.number} was closed without merging — a person's pause, re-open it to resume`,
     );
-  // An open release gets one review and merges the moment it completes: nothing reaches `develop` while it is open,
-  // So no incremental review is ever asked for, and its findings are drained after the merge
+  // An open release gets one review and merges once it completes and a session can follow: nothing reaches `develop`
+  // While it is open, so no incremental review is ever asked for, and its findings are drained after the merge
   else if (releasePullRequest?.state === ReleasePullRequestState.Open) {
     const openPullRequest = releasePullRequest.number;
     const gate = getGateDecision(readCheckStatus(openPullRequest));
@@ -115,9 +116,10 @@ export const runCycle = async ({
       return settlement.outcome ?? getOutcome(CycleOutcomeKind.Idle, gate.reason);
     }
     // A release merges only when a session could drain its findings after it, since they are answered after the
-    // Merge: asked of Claude Code itself with a prompt that does nothing, a limit throwing out of the pass from here
+    // Merge: asked of Claude Code itself with a prompt that does nothing, a limit throwing out of the pass from here.
+    // A probe that started and still exited non-zero is a failed session like any other: idle, and retried shortly
     if (!isDryRun) {
-      const { isStarted } = await runSession({
+      const { isEnded, isStarted } = await runSession({
         cwd,
         model: SessionRoleModelMap[SessionRole.Drain],
         prompt: SESSION_PROBE_PROMPT,
@@ -127,6 +129,13 @@ export const runCycle = async ({
           CycleOutcomeKind.Idle,
           "no session could start — the release waits for one that can drain its findings",
         );
+      else if (!isEnded) {
+        retriggerDelaySeconds = ATTEMPT_RETRY_DELAY_SECONDS;
+        return getOutcome(
+          CycleOutcomeKind.Idle,
+          "the session probe exited non-zero — the release waits for a session that can drain its findings",
+        );
+      }
     }
     const folded = await foldReleaseMain({ collectorSha, cwd, developSha, isDryRun, mainSha, viewerLogin });
     return folded ?? mergeReleasePullRequest({ developSha, isDryRun, pullRequest: openPullRequest });

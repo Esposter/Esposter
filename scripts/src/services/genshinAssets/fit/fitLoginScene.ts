@@ -1,5 +1,6 @@
 import type { ExportedMesh } from "#src/models/genshinAssets/shared/ExportedMesh";
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
+import type { SoundEffect } from "genshin-engine";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
@@ -20,13 +21,13 @@ import { fitSkyGradient } from "#src/services/genshinAssets/fit/fitSkyGradient";
 import { fitSoundEffect } from "#src/services/genshinAssets/fit/fitSoundEffect";
 import { fitTitleLogos } from "#src/services/genshinAssets/fit/fitTitleLogos";
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
-import { LOGIN_DOOR_SOUNDS, MINIMUM_PACKAGE_NAME } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentClips } from "#src/services/genshinAssets/shared/readComponentClips";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
 import { readComponentPlacements } from "#src/services/genshinAssets/shared/readComponentPlacements";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
+import { DerivedAssetSoundEffectMap } from "#src/services/genshinAssets/sound/DerivedAssetSoundEffectMap";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -111,12 +112,14 @@ export const fitLoginScene = async (only: readonly string[] = []): Promise<strin
         await writeWorldData("login/sky.json", { cloudLayer: dome, cloudLayerMaterial, gradient }),
       ];
     },
-    // The sounds the login plays beside its music
-    sounds: async () => [
-      await writeWorldData("login/sounds.json", {
-        door: await fitSoundEffect(MINIMUM_PACKAGE_NAME, LOGIN_DOOR_SOUNDS),
-      }),
-    ],
+    // The sounds the login plays beside its music, each from the game's sounds matched for it
+    sounds: async () => {
+      const effects: Record<string, SoundEffect> = {};
+      for (const [name, { pattern, sounds }] of Object.entries(DerivedAssetSoundEffectMap[DerivedAssetComponent.Login]))
+        // oxlint-disable-next-line no-await-in-loop -- each effect's sounds are decoded into one folder in turn
+        effects[name] = await fitSoundEffect(pattern, sounds);
+      return [await writeWorldData("login/sounds.json", effects)];
+    },
     stone: async () => {
       const materials = await readComponentMaterials(DerivedAssetComponent.Login);
       return [await writeWorldData("login/stone.json", await fitLoginStone(materials, textureDirectory))];

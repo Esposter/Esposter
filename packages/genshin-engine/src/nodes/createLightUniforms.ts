@@ -9,4 +9,5 @@ export const createLightUniforms = (): LightUniforms => ({
   rimColor: uniform(new Color()),
   rimStrength: uniform(0),
   sunDirection: uniform(new Vector3(0, 1, 0)),
+  wetness: uniform(0),
 });

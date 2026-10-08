@@ -56,4 +56,5 @@ The loop and why it is shaped this way are `apps/web/content/docs/genshin/parity
 - `references/motion.md` — when recording the game, reading a timing off a recording, holding a screen's motion or testing what only a browser plays.
 - `references/scene.md` — when deriving, arranging, fitting, lighting or posing a 3D scene, or running a witness solve.
 - `references/sound.md` — when a sound effect of the game is found, fitted, played or timed: the audio pass beside the music.
+- `references/compute-queue.md` — when a long run is owed with no judgement left in it, or when running one: the roadmap's queue and how a runner takes an item.
 - `references/music.md` — when recreating a piece of the game's music, or changing its fit, its player or `listen`.

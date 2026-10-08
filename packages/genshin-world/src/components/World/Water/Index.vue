@@ -3,7 +3,12 @@ import type { FogUniforms, LightUniforms, SkyUniforms, WaterUniforms } from "gen
 
 import { WATER_SURFACE_SIZE } from "#src/services/constants";
 import { useLoop, useTres } from "@tresjs/core";
-import { createUnderwaterFogState, createWaterMaterial, updateUnderwaterFog } from "genshin-engine";
+import {
+  createUnderwaterFogState,
+  createWaterFlowUniforms,
+  createWaterMaterial,
+  updateUnderwaterFog,
+} from "genshin-engine";
 import { Mesh, PlaneGeometry, Vector3 } from "three";
 
 interface Props {
@@ -21,7 +26,7 @@ const { onBeforeRender } = useLoop();
 // One square of water at the region's level, kept under the camera, so every sea and lake the ground dips beneath
 // Shows through it and the ground hides it everywhere else: one draw for all of them
 const waterGeometry = new PlaneGeometry(WATER_SURFACE_SIZE, WATER_SURFACE_SIZE).rotateX(-Math.PI / 2);
-const waterMaterial = createWaterMaterial(lightUniforms, skyUniforms, waterUniforms);
+const waterMaterial = createWaterMaterial(lightUniforms, skyUniforms, waterUniforms, createWaterFlowUniforms());
 const water = new Mesh(waterGeometry, waterMaterial);
 const underwaterFogState = createUnderwaterFogState();
 const eye = new Vector3();

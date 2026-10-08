@@ -5,7 +5,7 @@ import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKin
 import { MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { runGh } from "#src/services/shared/runGh";
 
-// A release merges the moment its one review completes, whatever the review found: the findings are drained after
+// A release merges once its one review completes, whatever the review found: the findings are drained after
 // The merge and lead the next window. `--admin` because the branch rules hold every check `develop` runs and the
 // Release does not wait on them. `--match-head-commit` is the same compare-and-swap the push makes
 // (`pushBranch`): a `develop` that moved since the review read it is never released on that review.

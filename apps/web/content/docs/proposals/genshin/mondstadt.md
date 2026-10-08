@@ -12,29 +12,12 @@ This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/
 
 - **The strongest wind in the world.** Mondstadt's base wind is the highest of any region, and gusts visibly roll across the meadows. This is the [vegetation](/docs/genshin/vegetation)'s wind field at its most visible, and Stormterror's Lair raises it to a gale.
 - **A bright, cool palette.** Saturated spring greens, white limestone, slate and terracotta roofs under a clear high blue. Dandelions and windwheel asters in the meadows, and cecilia flowers on Starsnatch Cliff. Its display transform and its light are solved against references at noon and at dusk, each in its pass.
-- **The Mondstadt building kit.** A building is a footprint with parameters:
-  - a stone ground floor
-  - one to three upper storeys of white plaster in a dark timber frame, with jettied overhangs
-  - a steep gabled roof with dormers and a chimney
-  - dressing: window boxes, shutters, lanterns, banners
+- **The Mondstadt building kit** is built as [Mondstadt buildings](/docs/genshin/mondstadt-buildings). Its dressing is not: window boxes, shutters, lanterns, banners.
 
   Windmills are their own kit, a stone tower with sails that turn in the wind field. The city wall, the gate bridge and the cathedral are landmark-tier pieces built from the kit's parts and matched pose by pose.
 
 - **Species.** Broad oaks, with Windrise's great oak as a landmark, apple trees, pines on the slopes, grape rows at Dawn Winery, and dense old forest in Wolvendom and Whispering Woods.
 - **Dragonspine is a snow biome with ruins.** It has snow ground, ice, frozen falls, snow and snowstorm weather, and the Entombed City's ruins. Skyfrost Nail is a landmark-tier spike mesh, and Starglow Cavern and Wyrmrest Valley are surface caves and hollows.
-
-## How it works
-
-```mermaid
-flowchart TD
-  FP[Landmark footprint and parameters] --> GF[Stone ground floor]
-  GF --> US{Upper storeys?}
-  US -->|one to three| TF[Plaster between timber frame, jettied]
-  US -->|none| RF[Roof]
-  TF --> RF[Steep gable, dormers, chimney]
-  RF --> DR[Dressing: shutters, window boxes, lanterns, banners]
-  DR --> MG[Merged per building, instanced per variant]
-```
 
 ## Areas
 
@@ -63,7 +46,7 @@ New files:
 
 ```text
 packages/genshin-world/src/data/regions/mondstadt.json
-packages/genshin-engine/src/kits/mondstadt/   ← building, windmill and wall generators
+packages/genshin-world/src/services/mondstadt/   ← windmill and wall generators (the building kit is built)
 ```
 
 ## Sources

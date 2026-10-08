@@ -1,6 +1,8 @@
-import type { GradeOptions, GrassRing, RampOptions, SkyKeyframe, TerrainOptions } from "genshin-engine";
+import type { GradeOptions, GrassRing, GroundPaint, RampOptions, SkyKeyframe, TerrainOptions } from "genshin-engine";
 
 import ground from "#src/data/windrise/ground.json";
+import water from "#src/data/windrise/water.json";
+import { GroundLayer, WeatherKind } from "genshin-engine";
 import { Color, Vector2 } from "three";
 
 // The ground's quadtree: half-metre cells under the eye in tiles of sixteen metres, six levels out to a root tile of
@@ -28,15 +30,30 @@ export const UNDERWATER_FOG_DENSITY = 0.08;
 // How far the sun and the god rays' sun stand from what they look at
 export const SUN_DISTANCE = 120;
 export const RIM_STRENGTH = 0.55;
+// Windrise's ground as a temperate meadow paints it, its colours as the palette sees them in sRGB: grass in patches of
+// Lighter and darker green, bare earth on the steeper banks, rock on what is steeper still and sand on the shore, with no
+// Snow line, and no path until the game's own are read. Provisional: the bands and colours are fitted to the game's own
+// Terrain layers, and their unlit colour against the exports in the surface pass
+export const WINDRISE_GROUND_PAINT: GroundPaint = {
+  earthSlope: { end: 0.3, start: 0.2 },
+  layerColors: {
+    [GroundLayer.Earth]: { color: 0x8a6a48, patchColor: 0x9c7a52 },
+    [GroundLayer.Grass]: { color: 0x5f9e3b, patchColor: 0x9ed05a },
+    [GroundLayer.Path]: { color: 0xb59a72, patchColor: 0xc4ab84 },
+    [GroundLayer.Rock]: { color: 0x9c9486, patchColor: 0x9c9486 },
+    [GroundLayer.Sand]: { color: 0xd8c9a0, patchColor: 0xe2d4ae },
+    [GroundLayer.Snow]: { color: 0xeef3f8, patchColor: 0xeef3f8 },
+  },
+  patchScale: 18,
+  pathFalloff: 0.6,
+  paths: [],
+  rockSlope: { end: 0.55, start: 0.3 },
+  sandHeight: { end: water.level + 0.4, start: water.level + 1.2 },
+};
 // Colours as the palette sees them, in sRGB
-export const GRASS_LIGHT_COLOR = 0x9ed05a;
-export const GRASS_DARK_COLOR = 0x5f9e3b;
-export const ROCK_COLOR = 0x9c9486;
 export const BARK_COLOR = 0x6b4a33;
 export const LEAF_COLOR = 0x6fae3f;
 export const STONE_COLOR = 0xd9d2c1;
-// Slopes steeper than this show rock through the grass
-export const ROCK_SLOPE = 0.3;
 // The ramp every material shades through: a narrow step, a little past the grazing angle
 export const WINDRISE_RAMP_OPTIONS: RampOptions = { resolution: 64, softness: 0.08, terminator: 0.52 };
 // A haze thickest on the valley floor and gone a few hundred metres up, starting past the knoll so the oak stays clear
@@ -58,6 +75,8 @@ export const WINDRISE_START_MINUTES = 900;
 // How far the sun's path leans south of overhead, in radians: its noon stands about sixty-four degrees high
 export const SUN_TILT = 0.45;
 // A fair-weather sky of scattered cumulus
+// Windrise's weather is clear, as its reference screenshots are, so a weather raises the sky over that alone
+export const WINDRISE_WEATHER = WeatherKind.Clear;
 export const CLOUD_COVERAGE = 0.42;
 // Mondstadt's wind: a steady breeze out of the west with gusts rolling across the meadows every half minute
 export const WIND_DIRECTION = new Vector2(0.94, 0.34).normalize();

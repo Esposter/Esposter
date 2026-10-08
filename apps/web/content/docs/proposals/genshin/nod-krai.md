@@ -48,12 +48,7 @@ Nasha Town's port and main street, a Statue of the New Moon, the Frostmoon Encla
 | :-------------------------------------------------------- | :---------------------------------------- |
 | `packages/genshin-engine/src/noise/createSimplexNoise.ts` | The detail noise each isle's ground tunes |
 
-New files:
-
-```text
-packages/genshin-world/src/data/regions/nod-krai.json
-packages/genshin-engine/src/kits/nod-krai/   ← dieselpunk and Frostmoon Scion generators
-```
+The two kits' generators and the region's data file are built, as [Nod-Krai's kits](/docs/genshin/nod-krai-kits). Their fitted values and the open calls below are not.
 
 ## Sources
 

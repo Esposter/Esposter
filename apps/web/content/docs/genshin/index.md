@@ -33,6 +33,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Rendering style](/docs/genshin/rendering-style)         | the toon materials, outlines, cascaded shadows, god rays, fog, grade and AA                              |
 | [Sky and time](/docs/genshin/sky-and-time)               | the twenty-four-minute day, the painted sky, and the light it casts                                      |
 | [Terrain](/docs/genshin/terrain)                         | the ground on a streamed CDLOD quadtree, morphing between levels, and the floating origin                |
+| [Ground paint](/docs/genshin/ground-paint)               | the ground painted in layers of grass, earth, sand, snow, path and rock by rules of its slope and height |
 | [Water](/docs/genshin/water)                             | still water graded by depth, foam, glints, caustics, and the world under the surface                     |
 | [Vegetation](/docs/genshin/vegetation)                   | the wind field, grass blades generated in two rings, and swaying crowns                                  |
 | [World map](/docs/genshin/world-map)                     | the catalogue of regions, areas and subareas, and region data loaded by reach                            |

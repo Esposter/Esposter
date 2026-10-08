@@ -31,7 +31,7 @@ The Genshin program is long: terrain, water, vegetation, every region, then a ch
   | `post`       | what follows the scene: outlines, occlusion, god rays, fog, bloom, grade, anti-aliasing      |
   | `vegetation` | grass generated round the camera, and the ground capture it stands on                        |
   | `water`      | still water's uniforms, and the fog under its surface                                        |
-  | `kits`       | the parametric generators a region adds: trees, the statue, architecture                     |
+  | `kits`       | the parametric generators a region's kits are built from: trees, the statue, architecture    |
   | `audio`      | the music's player, its synthesizer and sampler, and the sound effects' buffers              |
   | `noise`      | simplex noise, the one source of procedural detail                                           |
   | `random`     | a seeded random source, so a generator runs the same everywhere                              |

@@ -9,7 +9,6 @@ import { calibrateCommand } from "#src/services/genshinParity/commands/calibrate
 import { compareCommand } from "#src/services/genshinParity/commands/compareCommand";
 import { coverCommand } from "#src/services/genshinParity/commands/coverCommand";
 import { decayCommand } from "#src/services/genshinParity/commands/decayCommand";
-import { effectsCommand } from "#src/services/genshinParity/commands/effectsCommand";
 import { expressionCommand } from "#src/services/genshinParity/commands/expressionCommand";
 import { fetchCommand } from "#src/services/genshinParity/commands/fetchCommand";
 import { filmCommand } from "#src/services/genshinParity/commands/filmCommand";
@@ -35,6 +34,7 @@ import { poseCommand } from "#src/services/genshinParity/commands/poseCommand";
 import { rankCommand } from "#src/services/genshinParity/commands/rankCommand";
 import { recordCommand } from "#src/services/genshinParity/commands/recordCommand";
 import { scrollCommand } from "#src/services/genshinParity/commands/scrollCommand";
+import { shadowsCommand } from "#src/services/genshinParity/commands/shadowsCommand";
 import { shootCommand } from "#src/services/genshinParity/commands/shootCommand";
 import { skyCommand } from "#src/services/genshinParity/commands/skyCommand";
 import { solosCommand } from "#src/services/genshinParity/commands/solosCommand";
@@ -60,6 +60,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     black: blackCommand,
     balance: balanceCommand,
     fog: fogCommand,
+    shadows: shadowsCommand,
     overlay: overlayCommand,
     pose: poseCommand,
     plan: planCommand,
@@ -72,7 +73,6 @@ export const genshinParityCommand: CommandDef = defineCommand({
     bands: bandsCommand,
     attacks: attacksCommand,
     decay: decayCommand,
-    effects: effectsCommand,
     instruments: instrumentsCommand,
     solos: solosCommand,
     bench: benchCommand,

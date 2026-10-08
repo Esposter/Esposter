@@ -62,12 +62,7 @@ Ritou's harbour, Inazuma City's main street, Tenshukaku from the plaza, the Gran
 | :-------------------------------------------------------- | :----------------------------------------- |
 | `packages/genshin-engine/src/noise/createSimplexNoise.ts` | The detail noise each island's biome tunes |
 
-New files:
-
-```text
-packages/genshin-world/src/data/regions/inazuma.json
-packages/genshin-engine/src/kits/inazuma/   ← building, shrine, torii and Enkanomiya ruin generators
-```
+Built (see [the as-built page](/docs/genshin/inazuma)): the building kit, the island palettes and the region data file. Still unbuilt: the shrine, torii and Enkanomiya ruin generators, which are in `packages/genshin-world/src/services/inazuma/` when built.
 
 ## Sources
 

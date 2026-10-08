@@ -59,11 +59,12 @@ Sumeru City from the gate and from the Akademiya, Port Ormos, a Gandharva Ville 
 | :-------------------------------------------------------- | :------------------------------------ |
 | `packages/genshin-engine/src/noise/createSimplexNoise.ts` | The detail noise and the dune ripples |
 
-New files:
+Built: the kits, as [Sumeru kits](/docs/genshin/sumeru-kits). Its region data file is built empty of landmarks.
+
+New files still to come:
 
 ```text
-packages/genshin-world/src/data/regions/sumeru.json
-packages/genshin-engine/src/kits/sumeru/   ← rainforest city, stilt hut and desert ruin generators
+packages/genshin-world/src/services/sumeru/   ← palette, once its values are settled
 ```
 
 ## Sources

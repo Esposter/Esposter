@@ -63,7 +63,7 @@ New files:
 
 ```text
 packages/genshin-world/src/data/regions/fontaine.json
-packages/genshin-engine/src/kits/fontaine/   ← building, aqueduct, clock tower and machinery generators
+packages/genshin-world/src/services/fontaine/   ← aqueduct, clock tower and machinery generators (the building kit is built)
 ```
 
 ## Sources

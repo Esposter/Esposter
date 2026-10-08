@@ -19,7 +19,7 @@ Work is committed faster than CodeRabbit reviews complete, and every step that t
 
 What the session does on its side — pushing `ai/queue`, rebasing, answering a finding by hand — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).
 
-**One review per release, merged on its completion** — why nothing is fixed on its own pull request, and where its findings go instead, is [gate and merge](/docs/infra/review-collector/collection-cycle). No incremental review is trusted, because none is ever asked for. Closing the pull request without merging is a person's pause.
+**One review per release, merged on its completion once a session could drain it** — why nothing is fixed on its own pull request, and where its findings go instead, is [gate and merge](/docs/infra/review-collector/collection-cycle). No incremental review is trusted, because none is ever asked for. Closing the pull request without merging is a person's pause.
 
 ## Principles
 
@@ -57,7 +57,7 @@ flowchart TD
   PR -->|yes, rate limited| AK[Ask again at the stated deadline]
   PR -->|yes, review complete| PB{A session starts}
   PB -->|no| LX
-  PB -->|yes| MG[Merge it — a fold pushed to main<br/>when main conflicts — exit]
+  PB -->|yes, exited clean| MG[Merge it — a fold pushed to main<br/>when main conflicts — exit]
   PR -->|no| DR[Drain the merged release's open findings<br/>into ai/review-fixes, reply on answered threads]
   DR --> SY[Rewrite ai/queue onto the tree the window is built on<br/>Claude resolves a conflict, repackages a commit alone over the window's room]
   SY --> P{A fix, or anything the queue still owes}
