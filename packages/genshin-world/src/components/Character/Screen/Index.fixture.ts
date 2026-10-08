@@ -42,6 +42,7 @@ const roster: Character[] = ROSTER_IDS.map((id) => ({
   artifacts: [],
   ascension: id === XILONEN_ID ? XILONEN_ASCENSION : 0,
   constellationCount: 0,
+  friendshipExp: 0,
   id,
   level: id === XILONEN_ID ? XILONEN_MAX_LEVEL : 1,
   stellaFortunaCount: 0,

@@ -14,6 +14,7 @@ describe(upgradeTalent, () => {
     artifacts: [],
     ascension: 2,
     constellationCount: 0,
+    friendshipExp: 0,
     id: 1,
     level: 20,
     stellaFortunaCount: 0,
