@@ -106,10 +106,12 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     wikiTitle: "File:Court of Fontaine.png",
   },
   // The English PC client's dialogue at 720 high from the public recording, about 19 seconds in: Sara's line with the
-  // Traveler's two replies on offer, scored apart as the speaker's name, the line and the replies. The band's gradient
-  // Shows the scene behind it, which the page has no copy of, so only the text and the replies' pills are scored
+  // Traveler's two replies on offer, scored apart as the speaker's name, the line and the replies. The reference frame
+  // Is drawn behind the screen as its own backdrop until captures/dialogue-backdrop.png lands, so the band's gradient
+  // Darkens the game's own pixels twice where it is translucent; that bias sits under the band's cells and is named
   "dialogue-choices-line": {
     capture: "yt-nWBqOXWZuFg.mp4",
+    isBackdrop: true,
     props: { startProgress: { isRevealed: true, lineId: "ah-finally" } },
     region: { height: 28, width: 320, x: 480, y: 586 },
     screen: "DialogueTalk",
@@ -117,6 +119,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   "dialogue-choices-replies": {
     capture: "yt-nWBqOXWZuFg.mp4",
+    isBackdrop: true,
     props: { startProgress: { isRevealed: true, lineId: "ah-finally" } },
     region: { height: 74, width: 250, x: 850, y: 463 },
     screen: "DialogueTalk",
@@ -124,6 +127,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   "dialogue-choices-speaker": {
     capture: "yt-nWBqOXWZuFg.mp4",
+    isBackdrop: true,
     props: { startProgress: { isRevealed: true, lineId: "ah-finally" } },
     region: { height: 24, width: 80, x: 600, y: 546 },
     screen: "DialogueTalk",
@@ -132,6 +136,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The same talk's line with no replies on offer, about 23 seconds in, its speaker's role line under the name left out
   "dialogue-line": {
     capture: "yt-nWBqOXWZuFg.mp4",
+    isBackdrop: true,
     props: { startProgress: { isRevealed: true, lineId: "knights-of-favonius" } },
     region: { height: 50, width: 800, x: 240, y: 586 },
     screen: "DialogueTalk",
@@ -140,6 +145,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Paimon's line about 29 seconds in, from the same recording
   "dialogue-paimon-line": {
     capture: "yt-nWBqOXWZuFg.mp4",
+    isBackdrop: true,
     props: { startProgress: { isRevealed: true, lineId: "so-it-is-jean" } },
     region: { height: 30, width: 420, x: 430, y: 582 },
     screen: "DialogueTalk",
