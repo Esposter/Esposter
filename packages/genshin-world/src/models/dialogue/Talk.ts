@@ -12,8 +12,14 @@ export interface Talk {
   startLineId: string;
 }
 
-export const talkSchema = z.object({
-  id: z.string().min(1),
-  lines: createUniqueArraySchema(talkLineSchema, "id"),
-  startLineId: z.string().min(1),
-}) satisfies z.ZodType<Talk>;
+// Every line it starts at or leads on to is one it holds, so a talk never breaks partway through
+export const talkSchema = z
+  .object({
+    id: z.string().min(1),
+    lines: createUniqueArraySchema(talkLineSchema, "id"),
+    startLineId: z.string().min(1),
+  })
+  .refine(({ lines, startLineId }) => {
+    const lineIds = new Set(lines.map(({ id }) => id));
+    return [startLineId, ...lines.flatMap(({ nextLineIds }) => nextLineIds)].every((lineId) => lineIds.has(lineId));
+  }, "Talk line ids must name lines the talk holds") satisfies z.ZodType<Talk>;
