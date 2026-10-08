@@ -212,6 +212,8 @@ Clips nothing published shows, which the user records: each 30 seconds or less, 
 - [ ] `weapon-levelling.mkv` — the Weapons tab on the English PC client: a three-star weapon at level 1 with no EXP fed one Enhancement Ore, with the Mora its change costs; then a weapon at its phase's cap fed ores past it, with the ores returned. 30 seconds at most. It settles the EXP each level takes, the Mora per ten points, and the EXP under the smallest ore that the game returns.
 - [ ] `character-attributes-1080.png` — the Attributes tab on the English PC client at 1080 high, the chosen character's panel and the portraits in view, to check the panel's place at 16:9 against the 21:9 frame it is measured from.
 - [ ] `enemy-level-world-level-1.mkv`, `enemy-level-world-level-5.mkv`, `enemy-level-world-level-9.mkv` — a Hilichurl of the Windrise camp, its name plate's level read at World Level 1, 5 and 9 in turn, each clip with the camp in reach and the World Level set on the Profile. The camp is level 2 at World Level 0, so the provisional rule reads 10, 53 and 84 ([Adventure Rank](/docs/genshin/adventure-rank)).
+- [ ] `liyue-outcrop-rank.mkv` — the map on M opened in Liyue at Adventure Rank 8 and again at 18, with no statue of Liyue activated in the second, 10 seconds at most; each shows whether a ley line blossom is offered there, which settles whether Liyue opens its blossoms at 8 and 12, as the wiki has it, or at 18, as the dump's table does.
+- [ ] `ley-line-claim.mkv` — a ley line blossom claimed with resin at the reader's World Level, the reward window in view, then the map after the claim; the claim's rewards by World Level are read from it, and the outcrop's move after a claim is checked against the rule.
 
 ## Opening
 

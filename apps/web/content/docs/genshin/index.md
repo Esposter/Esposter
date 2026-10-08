@@ -64,6 +64,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Adventure Rank](/docs/genshin/adventure-rank)             | the rank to 60 on the game's table, held at the ascension quests, the World Level and its lowering, and the enemies it raises                        |
 | [Original Resin](/docs/genshin/original-resin)             | the resin regenerating from its last change to 200, refills from Primogems at six daily prices, and a claim's price and Adventure EXP                |
 | [Domains](/docs/genshin/domains)                           | each kind's opening by Adventure Rank, and by the day: Blessing every day, Forgery and Mastery on Sundays and their set days                         |
+| [Ley line outcrops](/docs/genshin/ley-line-outcrops)       | each region's two blossoms read from the game's tables, opened by Adventure Rank and a nation's area, started and moved on along their places        |
 | [Combat](/docs/genshin/combat)                             | auras and reactions in the game's priority, the damage formula, internal cooldown, shields and energy, and the Traveler's kit's hits                 |
 | [Character kits](/docs/genshin/character-kits)             | each playable character's skill sets from the game's tables, the Traveler's kit checked against its Anemo set                                        |
 | [Characters](/docs/genshin/characters)                     | the official MMD packs read by our own PMX reader and drawn on the toon ramp, with their terms                                                       |
@@ -120,6 +121,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - An artifact rolled by the game's pools and the wiki's weights, enhanced with Artifact EXP at a Mora a point, its fodder and its locks as the game keeps them.
 - The F prompts' rules, the bag and its wallet on B, and the wish's published rules with its screen on F3, offering the standard and beginners' wishes from their pools.
 - Original Resin: its count regenerating while the page is closed, its refills from Primogems at the game's daily prices, a claim's price and Adventure EXP, and its counter on the map's top bar.
+- Ley line outcrops: each region's Revelation and Wealth read from the game's tables, their openings by rank and nation, a drawn start and the move along their places, with the touch and the claim still unbuilt.
 - Constellations: each character's six from the game's table, activated with its own Stella Fortuna, which a duplicate draw brings and a five-star past six a Masterless one.
 
 ## Key files
