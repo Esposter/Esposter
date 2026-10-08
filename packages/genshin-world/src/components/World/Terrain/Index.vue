@@ -7,6 +7,7 @@ import type { DataTexture } from "three";
 import { MAX_PENDING_TILE_COUNT, TERRAIN_WORKER_COUNT, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { useLoop, useTres } from "@tresjs/core";
 import {
+  checkTerrainTileCasts,
   computeTerrainIndices,
   createFlowerGeometry,
   createFlowerMaterial,
@@ -42,6 +43,8 @@ interface Props {
   // The world coordinate the scene's origin stands on, which the floating origin moves
   origin: Vector3;
   rampTexture: DataTexture;
+  // How far from the eye the sun's shadows reach, past which a ring's tiles are drawn into no shadow map
+  shadowReach: number;
   terrainOptions: TerrainOptions;
   // The region's water, whose caustics shimmer on the ground under it
   waterUniforms?: WaterUniforms;
@@ -49,8 +52,17 @@ interface Props {
   windUniforms: WindUniforms;
 }
 
-const { createTerrainWorker, draws, lightUniforms, origin, rampTexture, terrainOptions, waterUniforms, windUniforms } =
-  defineProps<Props>();
+const {
+  createTerrainWorker,
+  draws,
+  lightUniforms,
+  origin,
+  rampTexture,
+  shadowReach,
+  terrainOptions,
+  waterUniforms,
+  windUniforms,
+} = defineProps<Props>();
 const emit = defineEmits<{ ready: [] }>();
 const { camera } = useTres();
 const { onBeforeRender } = useLoop();
@@ -88,7 +100,7 @@ const receiveTile = (event: MessageEvent<PlantedTerrainTile>) => {
   mesh.position.set(getTerrainTileColumn(key) * size, 0, getTerrainTileRow(key) * size);
   mesh.matrixAutoUpdate = false;
   mesh.updateMatrix();
-  mesh.castShadow = true;
+  mesh.castShadow = checkTerrainTileCasts(terrainOptions, key, shadowReach);
   mesh.receiveShadow = true;
   mesh.layers.enable(TERRAIN_LAYER);
   mesh.visible = false;

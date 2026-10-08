@@ -289,6 +289,7 @@ onUnmounted(() => {
           :light-uniforms
           :origin
           :ramp-texture
+          :shadow-reach="SHADOW_MAX_FAR"
           :terrain-options="WINDRISE_TERRAIN_OPTIONS"
           :water-uniforms
           :wind-uniforms
