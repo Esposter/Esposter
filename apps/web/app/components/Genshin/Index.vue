@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL } from "#shared/services/genshin/constants";
-import { GameLanguageTagMap, GameTextKey } from "genshin-text";
+import { GameLanguageTagMap } from "genshin-text";
 import { GameOpening } from "genshin-world";
 
 // The game as it plays: its opening at once, and once its door is opened the world loading under the startup loading
@@ -35,13 +35,6 @@ const gameText = await useGameText();
         @begin="isDoorOpened = true"
         @finish="isOpeningShown = false"
       />
-      <!-- What loads is shown by no words of the startup screen's, so it is announced to a screen reader alone, and on
-        The client alone, since the dev server's first paint has no styles to hide it -->
-      <ClientOnly>
-        <p role="status" sr-only>
-          {{ gameText.text[isReady ? GameTextKey.Ready : GameTextKey.Loading] }}
-        </p>
-      </ClientOnly>
     </div>
   </div>
 </template>
