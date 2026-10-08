@@ -76,8 +76,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <!-- The touch controls under the HUD's pieces: the left half a stick that moves, drawn where the thumb landed while it
-       Is held, the right half a drag that looks, and the jump button at the bottom right -->
+  <!-- The touch controls under the HUD's pieces: the left half a stick that moves, drawn where the thumb landed while
+       It is held, the right half a drag that looks, and the jump button at the bottom right -->
   <div ref="layer" class="touch-layer">
     <div v-if="stick.isHeld" class="ring" :style="ringStyle"><div class="knob" :style="knobStyle" /></div>
   </div>

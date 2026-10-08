@@ -24,7 +24,7 @@ interface Props {
 const { camera, gameText, landmarks } = defineProps<Props>();
 const emit = defineEmits<{ close: []; jump: [pose: WorldJumpPose] }>();
 const closeButton = useTemplateRef("closeButton");
-// The square the map shows, round everything it draws: the drawn outlines, the landmarks and the camera, never closer
+// The square the map shows, round everything it draws: the drawn outlines, the landmarks and the player, never closer
 // In than the minimap shows
 const view = computed(() => {
   const points = [
@@ -49,9 +49,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- The map on M: the one drawing of the catalogue across everything it holds, north up, each area's name, the camera
-       As a pointer facing its way, and the jump list beside it. A landmark clicked on the map or chosen in the list
-       Jumps there -->
+  <!-- The map on M: the one drawing of the catalogue across everything it holds, north up, each area's name, the player
+       As a pointer facing the view's way, and the jump list beside it. A landmark clicked on the map or chosen in the
+       List jumps there -->
   <GameScreen class="map-overlay" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Map]">
     <svg class="map" :viewBox="`${view.x} ${view.z} ${view.extent} ${view.extent}`" aria-hidden="true">
       <MapDrawing

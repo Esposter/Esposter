@@ -6,7 +6,7 @@ interface Props {
   // How far the pointer reaches from its point, in the view's metres
   size: number;
   x?: number;
-  // The yaw the camera faces, in radians, as the free camera turns it
+  // The yaw the view faces, in radians, as the camera turns it
   yaw?: number;
   z?: number;
 }
@@ -15,8 +15,8 @@ const { size, x = 0, yaw = 0, z = 0 } = defineProps<Props>();
 </script>
 
 <template>
-  <!-- The camera on the map, pointing the way it faces: north at a yaw of none, and turned the other way about the
-       Vertical than three turns it, since the map looks down on the ground -->
+  <!-- The player on the map, pointing the way the view faces: north at a yaw of none, and turned the other way about
+       The vertical than three turns it, since the map looks down on the ground -->
   <path
     class="pointer"
     :d="MAP_POINTER_PATH"
