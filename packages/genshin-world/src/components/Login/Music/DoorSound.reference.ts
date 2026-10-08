@@ -61,9 +61,16 @@ export const doorSoundTopic: ReferenceTopic = {
       result:
         "The game does not play the two at the level they are stored at. Through its sound and the mixers above it the rumble plays 16 decibels over its source and the rush 9, so the rumble stands 7 decibels further over the rush than the fit lays them, and both pass a shared mixer's low-pass of 20 and high-pass of 15 on Wwise's scale, then the effects bus's compressor (threshold -9 decibels, ratio 4, no attack, release 0.15 seconds), then the master's 5 decibels down and its peak limiter (threshold -2 decibels, ratio 50). The login's first piece plays 5 decibels under its source through the same master, so before the compressor the game's door stands 16 decibels over that piece where ours, at its sources' level beside the music's mix volume, stands 5 over. Not applied: the filters' cutoffs on Wwise's scale sit behind Audiokinetic's documentation's captcha, and the compressor's detector is not published, while the door recording's music matches neither of the login's pieces at any offset, so the door cannot be read out from under it to measure either",
     },
+    {
+      method:
+        "readGameSoundEffect laying each matched sound at the volume readGameMixVolumes reads for its source, every bus up to the master's, then the door fitted again (fit login --only sounds) and scored (genshin:parity effects), and the login's player sending the door through a compressor at the effects bus's settings and a limiter at the master's",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The rumble now plays 16 decibels over its source and the rush 9, the door 11 decibels nearer the music's level than at the sources'. Fitted so, the door reads 2.18 decibels off the game's sounds at their mix volumes, its channels correlated 0.58 against 0.53, every band's bias within about a decibel, as at the sources' level. The player's compressor holds the effects bus's -9 decibels, 4 to 1, no attack and 0.15 seconds' release, its threshold 5 decibels lower since the data carries the master's 5 down; the master's limiter holds -2 decibels at 20 to 1, the most a browser's compressor takes, against the game's 50. Neither dynamic is scored, since the recording's music hides the door",
+    },
   ],
   openQuestions: [
-    "The door's level in the game's mix: its two sounds at their bank volumes through the shared mixer's filters, the effects bus's compressor and the master's limiter, applied once the filters' cutoffs and the compressor's detector are measured, from a recording whose music is the login's own",
+    "The shared mixer's low-pass of 20 and high-pass of 15 on Wwise's scale, whose cutoffs sit behind Audiokinetic's documentation's captcha, and the compressor's detector, unpublished, so the browser's own stands in: each measured from a recording whose music is the login's own, or from the cutoff table",
     "The login's other sounds: the clicks on its buttons and the wind, each found as the door's was against a recording that plays it",
     "Whether the door's two sounds are one event of the game's: they start 75 milliseconds apart in the match, which the bank's own events would say",
   ],
