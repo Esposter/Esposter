@@ -2,6 +2,9 @@ import type { ParityReference } from "#src/models/genshinParity/shared/ParityRef
 
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
+  // The English PC client's Adventurer Handbook open at its experience, the wiki's screenshot, against which the
+  // Book's tabs are placed while its pages wait on what they track
+  "handbook-experience": { screen: "HandbookScreen", wikiTitle: "File:Adventurer Handbook Experience.png" },
   // The English PC client's notice, from the 2023 recording of its launch at 1080p, in the current build's wording
   "health-notice": { capture: "yt-sQNqMfmfkZU.mp4", screen: "SplashHealthNotice", seconds: 8 },
   // Mainland China's notice in its own words, from the public recording of an older build's launch its splash is taken
@@ -117,6 +120,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     seconds: 12,
   },
   "publisher-splash": { capture: "session-2.mp4", screen: "SplashPublisher", seconds: 1 },
+  // The English PC client's quest screen listing every quest in progress, the wiki's screenshot of it at 1080 high
+  "quest-screen": { screen: "QuestScreen", wikiTitle: "File:Quest Screen.png" },
   // The English PC client's splash, from the 2023 recording of its launch at 1080p, held from 4.5 to 5.75 seconds
   "title-splash": { capture: "yt-sQNqMfmfkZU.mp4", screen: "SplashTitle", seconds: 5 },
   // Mainland China's splash, its 原神 logo with its licence under it, from a public recording of an older build's launch

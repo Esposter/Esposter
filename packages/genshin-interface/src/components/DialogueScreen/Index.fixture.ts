@@ -7,6 +7,7 @@ export const props = {
   choices: [{ icon: DialogueChoiceIcon.Talk, id: "3510103", text: "Wow..." }],
   line: LINE,
   revealedLength: LINE.length,
+  selectedChoiceId: "3510103",
   speakerName: "Paimon",
 };
 export const variants = { revealing: { choices: [], revealedLength: Math.floor(LINE.length / 2) } };
