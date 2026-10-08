@@ -10,8 +10,16 @@ describe(createFreeCamera, () => {
   const WATER_LEVEL = 0;
   const HEIGHT = 10;
   const STEP_SECONDS = 1;
-  const FORWARD_INPUT: InputState = { lookPitch: 0, lookYaw: 0, moveForward: 1, moveRight: 0, moveUp: 0 };
-  const STILL_INPUT: InputState = { lookPitch: 0, lookYaw: 0, moveForward: 0, moveRight: 0, moveUp: 0 };
+  const STILL_INPUT: InputState = {
+    heldActions: new Set(),
+    lookPitch: 0,
+    lookYaw: 0,
+    moveForward: 0,
+    moveRight: 0,
+    moveUp: 0,
+    pressedActions: new Set(),
+  };
+  const FORWARD_INPUT: InputState = { ...STILL_INPUT, moveForward: 1 };
 
   test("flies along the view faster the higher it is above the ground", () => {
     expect.hasAssertions();

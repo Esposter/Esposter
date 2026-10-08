@@ -1,4 +1,5 @@
 import {
+  GAMEPAD_BUTTONS,
   GAMEPAD_STICK_DEADZONE,
   KEY_CODE_BACKWARD,
   KEY_CODE_FORWARD,
@@ -6,11 +7,17 @@ import {
   MOUSE_LOOK_RADIANS_PER_PIXEL,
 } from "#src/input/constants";
 import { createInput } from "#src/input/createInput";
+import { GamepadButton } from "#src/models/input/GamepadButton";
+import { InputAction } from "#src/models/input/InputAction";
 import { describe, expect, test } from "vitest";
 
-// An event target standing in for the window, with the gamepads it reports and the element holding its pointer lock
-const createTarget = (gamepads: unknown[] = [], pointerLockElement: unknown = null) =>
-  Object.assign(new EventTarget(), { document: { pointerLockElement }, navigator: { getGamepads: () => gamepads } });
+// An event target standing in for the window, with the gamepads it reports, the element holding its pointer lock and
+// The element holding its focus
+const createTarget = (gamepads: unknown[] = [], pointerLockElement: unknown = null, activeElement: unknown = null) =>
+  Object.assign(new EventTarget(), {
+    document: { activeElement, pointerLockElement },
+    navigator: { getGamepads: () => gamepads },
+  });
 
 describe(createInput, () => {
   const POINTER_MOVE = 10;
@@ -78,10 +85,59 @@ describe(createInput, () => {
     expect({ moveForward, moveRight }).toStrictEqual({ moveForward: 1, moveRight: STICK_AXIS });
   });
 
+  test("presses an action for the one read after its key goes down, and holds it while the key stays down", () => {
+    expect.hasAssertions();
+
+    const target = createTarget();
+    const { readInput } = createInput(target as unknown as Window);
+    target.dispatchEvent(Object.assign(new Event("keydown"), { code: "KeyM" }));
+    const pressedActions = new Set(readInput(0).pressedActions);
+    const { heldActions, pressedActions: nextPressedActions } = readInput(0);
+
+    expect({ heldActions, nextPressedActions, pressedActions }).toStrictEqual({
+      heldActions: new Set([InputAction.OpenMap]),
+      nextPressedActions: new Set(),
+      pressedActions: new Set([InputAction.OpenMap]),
+    });
+  });
+
+  test("presses a gamepad bumper's shortcut alone when a face button goes down under it", () => {
+    expect.hasAssertions();
+
+    const pressedButtons = [GamepadButton.LeftBumper];
+    const target = createTarget([
+      {
+        axes: [],
+        get buttons() {
+          return GAMEPAD_BUTTONS.map((button) => ({ pressed: pressedButtons.includes(button) }));
+        },
+      },
+    ]);
+    const { readInput } = createInput(target as unknown as Window);
+    readInput(0);
+    pressedButtons.push(GamepadButton.FaceRight);
+
+    expect(readInput(0).pressedActions).toStrictEqual(new Set([InputAction.QuickUseGadget]));
+  });
+
+  test("leaves a key typed into a field to the field", () => {
+    expect.hasAssertions();
+
+    const target = createTarget([], null, { matches: () => true });
+    const { readInput } = createInput(target as unknown as Window);
+    const event = Object.assign(new Event("keydown", { cancelable: true }), { code: "KeyM" });
+    target.dispatchEvent(event);
+
+    expect({ isDefaultPrevented: event.defaultPrevented, pressedActions: readInput(0).pressedActions }).toStrictEqual({
+      isDefaultPrevented: false,
+      pressedActions: new Set(),
+    });
+  });
+
   test("moves by the first gamepad's left stick past its deadzone", () => {
     expect.hasAssertions();
 
-    const target = createTarget([{ axes: [STICK_AXIS, -GAMEPAD_STICK_DEADZONE / 2] }]);
+    const target = createTarget([{ axes: [STICK_AXIS, -GAMEPAD_STICK_DEADZONE / 2], buttons: [] }]);
     const { readInput } = createInput(target as unknown as Window);
     const { moveForward, moveRight } = readInput(0);
 
