@@ -33,6 +33,7 @@ import { statsCommand } from "#src/services/genshinAssets/commands/statsCommand"
 import { statuesCommand } from "#src/services/genshinAssets/commands/statuesCommand";
 import { timingsCommand } from "#src/services/genshinAssets/commands/timingsCommand";
 import { treeCommand } from "#src/services/genshinAssets/commands/treeCommand";
+import { wildlifeCommand } from "#src/services/genshinAssets/commands/wildlifeCommand";
 import { witnessCommand } from "#src/services/genshinAssets/commands/witnessCommand";
 import { defineCommand } from "citty";
 
@@ -73,6 +74,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     gadgets: gadgetsCommand,
     shops: shopsCommand,
     reputation: reputationCommand,
+    wildlife: wildlifeCommand,
     expeditions: expeditionsCommand,
   },
 });

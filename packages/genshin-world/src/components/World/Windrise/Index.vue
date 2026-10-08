@@ -16,6 +16,7 @@ import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
 import WorldTerrain from "#src/components/World/Terrain/Index.vue";
 import WorldWater from "#src/components/World/Water/Index.vue";
 import WorldWeather from "#src/components/World/Weather/Index.vue";
+import WorldWildlife from "#src/components/World/Wildlife/Index.vue";
 import { useAreaWeather } from "#src/composables/useAreaWeather";
 import { useFloatingOrigin } from "#src/composables/useFloatingOrigin";
 import { useGenshinTuning } from "#src/composables/useGenshinTuning";
@@ -24,6 +25,8 @@ import { useRegionData } from "#src/composables/useRegionData";
 import { useSky } from "#src/composables/useSky";
 import { useSunShadow } from "#src/composables/useSunShadow";
 import water from "#src/data/windrise/water.json";
+import mondstadtWildlife from "#src/generated/wildlife/mondstadt.json";
+import { wildlifePlaceSchema } from "#src/models/wildlife/WildlifePlace";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
@@ -85,6 +88,7 @@ import {
   QualityTierSettingsMap,
 } from "genshin-engine";
 import { HemisphereLight, Scene } from "three";
+import { z } from "zod";
 
 interface Props {
   // What the character is drawn on, which the screen's controller moves in the world's own coordinates, so it is placed
@@ -181,6 +185,8 @@ const fogUniforms = createFogUniforms();
 fogUniforms.heightFalloff.value = FOG_HEIGHT_FALLOFF;
 fogUniforms.startDistance.value = FOG_START_DISTANCE;
 const postUniforms = createPostUniforms();
+// The Mondstadt animals the official map marks, read from their generated slice and checked as the world's own data
+const wildlifePlaces = z.array(wildlifePlaceSchema).parse(mondstadtWildlife);
 // The sight's mask: the drops, the residents and the enemies, drawn in the colours the sight lights them, which the post
 // Chain reads where its reach is. Its spread and strength are read off the screen's sight each frame, and none is drawn
 // While no screen gives one. Its stand-ins are placed in the world's own coordinates, so the scene is offset by the floating
@@ -384,6 +390,15 @@ onUnmounted(() => {
       :world-level
       @defeat="(enemy, enemyDrops) => emit('defeat', enemy, enemyDrops)"
       @strike="(enemy) => emit('strike', enemy)"
+    />
+    <!-- The animals run from the character where the references show none, so a witness render draws none of them -->
+    <WorldWildlife
+      v-if="!witness"
+      :is-held
+      :light-uniforms
+      :places="wildlifePlaces"
+      :ramp-texture
+      :target="characterBody?.position"
     />
     <!-- The drops and the residents in the world are stood in as well, which a witness render draws none of either -->
     <WorldInteractables v-if="!witness" :interactables :light-uniforms :ramp-texture :sight-scene />
