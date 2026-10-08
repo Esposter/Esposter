@@ -1,5 +1,6 @@
 import type { spawn as baseSpawn, ChildProcessWithoutNullStreams } from "node:child_process";
 
+import { SessionLimitedError } from "#src/models/coderabbit/collect/SessionLimitedError";
 import { SessionModel } from "#src/models/coderabbit/collect/SessionModel";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { EventEmitter } from "node:events";
@@ -48,14 +49,13 @@ describe(runSession, () => {
     expect.hasAssertions();
 
     mockSession(0, [
-      getAssistantLine(`Fixed the ${REFUSAL_LINE} wording in getDrainLimitResetMs.ts.`),
+      getAssistantLine(`Fixed the ${REFUSAL_LINE} wording in getSessionLimitResetMs.ts.`),
       getResultLine("success", REFUSAL_LINE),
     ]);
 
     await expect(runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" })).resolves.toStrictEqual({
       isEnded: true,
       isStarted: true,
-      limitResetAtMs: undefined,
     });
   });
 
@@ -69,7 +69,6 @@ describe(runSession, () => {
     await expect(runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" })).resolves.toStrictEqual({
       isEnded: false,
       isStarted: true,
-      limitResetAtMs: undefined,
     });
   });
 
@@ -81,11 +80,9 @@ describe(runSession, () => {
 
     mockSession(1, [getResultLine("success", REFUSAL_LINE)]);
 
-    await expect(runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" })).resolves.toStrictEqual({
-      isEnded: false,
-      isStarted: false,
-      limitResetAtMs: LIMIT_RESET_AT_MS,
-    });
+    await expect(runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" })).rejects.toStrictEqual(
+      new SessionLimitedError(LIMIT_RESET_AT_MS),
+    );
   });
 
   // Claude Code refusing to start writes a sentence rather than JSON, and that sentence is the only thing that
@@ -95,11 +92,9 @@ describe(runSession, () => {
 
     mockSession(1, [REFUSAL_LINE]);
 
-    await expect(runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" })).resolves.toStrictEqual({
-      isEnded: false,
-      isStarted: false,
-      limitResetAtMs: LIMIT_RESET_AT_MS,
-    });
+    await expect(runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" })).rejects.toStrictEqual(
+      new SessionLimitedError(LIMIT_RESET_AT_MS),
+    );
   });
 
   // `pnpm` refusing to launch the session — a conflicted `pnpm-workspace.yaml` is one such refusal, and it is
@@ -113,7 +108,6 @@ describe(runSession, () => {
     await expect(runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" })).resolves.toStrictEqual({
       isEnded: false,
       isStarted: false,
-      limitResetAtMs: undefined,
     });
   });
 

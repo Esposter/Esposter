@@ -45,15 +45,19 @@ flowchart TD
   C[Collector run<br/>serialized by concurrency group] --> R[Read remote state<br/>refs, release PR, status, threads]
   R --> RS{develop an ancestor of main}
   RS -->|yes| FF[Fast-forward develop to main<br/>no slot spent, the pass goes on against it]
-  RS -->|no| E
-  FF --> E{Any owed commit claims<br/>nothing to review}
+  RS -->|no| LM
+  FF --> LM{Claude Code's limit<br/>marked and not lifted}
+  LM -->|yes| LX[Exit — nothing merges or ports<br/>until a session can follow it]
+  LM -->|no| E{Any owed commit claims<br/>nothing to review}
   E -->|yes| EP[Cherry-pick onto main<br/>push unverified, exit — no window spent]
   E -->|no| MR{main red on CI}
   MR -->|yes| RG[Regenerators, else Claude repairs<br/>push, exit — no window spent]
   MR -->|no| PR{Release PR open}
   PR -->|yes, review running| X[Exit]
   PR -->|yes, rate limited| AK[Ask again at the stated deadline]
-  PR -->|yes, review complete| MG[Merge it — a fold pushed to main<br/>when main conflicts — exit]
+  PR -->|yes, review complete| PB{A session starts}
+  PB -->|no| LX
+  PB -->|yes| MG[Merge it — a fold pushed to main<br/>when main conflicts — exit]
   PR -->|no| DR[Drain the merged release's open findings<br/>into ai/review-fixes, reply on answered threads]
   DR --> SY[Rewrite ai/queue onto the tree the window is built on<br/>Claude resolves a conflict, repackages a commit alone over the window's room]
   SY --> P{A fix, or anything the queue still owes}

@@ -2,6 +2,7 @@ import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
 
 import { AttemptFailedError } from "#src/models/coderabbit/collect/AttemptFailedError";
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
+import { SessionLimitedError } from "#src/models/coderabbit/collect/SessionLimitedError";
 import {
   ATTEMPT_RETRY_DELAY_SECONDS,
   COLLECTOR_SOURCE_PATH,
@@ -10,7 +11,9 @@ import {
   RETRIGGER_DELAY_OUTPUT,
 } from "#src/services/coderabbit/collect/constants";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
+import { postSessionLimited } from "#src/services/coderabbit/collect/postSessionLimited";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
+import { readReleasePullRequest } from "#src/services/coderabbit/collect/readReleasePullRequest";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { writeJobOutput } from "#src/services/coderabbit/collect/writeJobOutput";
 import { checkIsGitHubNumber } from "#src/services/shared/checkIsGitHubNumber";
@@ -82,7 +85,8 @@ await runMain(
 
       // A counted attempt that failed, or GitHub answering a server error, ends the run idle and wakes the next
       // One rather than red: the retry is owed and automatic, and red is kept for what only a person can restart
-      // (docs: Infra/review-collector)
+      // (docs: Infra/review-collector). A limit Claude Code hit is marked on the newest release with the instant it
+      // Lifts, which every run reads to hold the merge and the port until then
       const { kind, reason, retriggerDelaySeconds, targetSha } = await getResultAsync(() =>
         runCycle({ collectorSha, cwd, isDryRun, pullRequest }),
       ).match(
@@ -94,7 +98,11 @@ await runMain(
               reason: error.message,
               retriggerDelaySeconds: ATTEMPT_RETRY_DELAY_SECONDS,
             };
-          else if (GITHUB_OUTAGE_REGEX.test(error.message))
+          else if (error instanceof SessionLimitedError) {
+            const releasePullRequest = readReleasePullRequest();
+            if (releasePullRequest && !isDryRun) postSessionLimited(releasePullRequest.number, error.limitResetAtMs);
+            return { kind: CycleOutcomeKind.Idle, reason: error.message };
+          } else if (GITHUB_OUTAGE_REGEX.test(error.message))
             return {
               kind: CycleOutcomeKind.Idle,
               reason: error.message,

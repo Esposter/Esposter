@@ -112,7 +112,7 @@ export const COLLECTOR_SOURCE_PATH = "scripts";
 export const DRAIN_FAILED_MARKER = "review-collector drain-failed";
 // Claude Code's own limit, which is not this review's problem and not counted against the attempt cap. The
 // Marker carries the instant it lifts, because nothing announces that.
-export const DRAIN_LIMITED_MARKER = "review-collector drain-limited";
+export const SESSION_LIMITED_MARKER = "review-collector session-limited";
 
 // A review whose drain failed past the attempt cap, noted once per basis on its pull request
 export const DRAIN_HELD_MARKER = "review-collector drain-held";
@@ -141,6 +141,9 @@ export const SYNC_PUSH_ATTEMPT_CAP = 3;
 export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";
 // What every headless session in the runner is denied: it holds no credential that can act on this repository,
 // And the collector does each of these itself once the session has exited clean
+// What the session asked whether one can run before a release merges is told: the answer is never read, only
+// Whether Claude Code started at all
+export const SESSION_PROBE_PROMPT = "Reply with the one word ready, and run no tool.";
 export const SESSION_DENIALS =
   "Work in this checkout only: never push, never switch branches, never rewrite history, never amend, and never run `gh` or any other command that writes to GitHub — you hold no credential for it, and the collector does every one of those itself once you have exited.";
 // The finishing ritual a headless session owes, foreground because a `claude -p` session has no next turn
@@ -167,7 +170,22 @@ export const REJECTIONS_FILE = "rejections.txt";
 
 export const VERDICT_FILE = "verdict.txt";
 // The backoff when the limit states no deadline this can read — short enough that a misparse costs one run
-export const DRAIN_LIMIT_FALLBACK_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
+export const SESSION_LIMIT_FALLBACK_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
+// The month a weekly limit's reset date names, by the three letters it opens with
+export const MONTH_ABBREVIATIONS: string[] = [
+  "jan",
+  "feb",
+  "mar",
+  "apr",
+  "may",
+  "jun",
+  "jul",
+  "aug",
+  "sep",
+  "oct",
+  "nov",
+  "dec",
+];
 // The reset is a time of day, so an already-passed one is tomorrow's
 export const DAY_MS: number = Temporal.Duration.from({ hours: 24 }).total("milliseconds");
 // The walkthrough CodeRabbit rewrites when the limit makes it skip a review. It carries the deadline the cycle

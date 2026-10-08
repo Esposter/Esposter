@@ -4,9 +4,8 @@ export interface SessionRun {
   // Whether the session exited zero, which says it ended and never that it finished — what proves the work is
   // The tree it left, read by the caller that knows what to expect of it
   isEnded: boolean;
-  // Whether the session began at all: a `pnpm dlx` that never launched and a refusal by the session limit are
-  // Both nobody's attempt, and a caller that counted one would spend the attempt cap on an outage
+  // Whether the session began at all: a `pnpm dlx` that never launched is nobody's attempt, and a caller that
+  // Counted one would spend the attempt cap on an outage. A refusal by the account's limit is thrown instead
+  // (`SessionLimitedError`)
   isStarted: boolean;
-  // Set when Claude Code refused to start because the account hit a limit, and when it lifts
-  limitResetAtMs?: number;
 }

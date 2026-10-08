@@ -11,12 +11,10 @@ The drain answers every finding of the newest merged release's review, at every 
 flowchart TD
   O[Open set: threads the bot spoke last on<br/>plus the newest body's own buckets] --> Q{Attempt cap reached}
   Q -->|yes| P[Held notice, run fails red —<br/>nothing ports until a person answers]
-  Q -->|no| L{Claude Code's own limit<br/>still ahead}
-  L -->|yes| X[Exit — nothing ports ahead of open findings]
-  L -->|no| B[Checkout ai/review-fixes<br/>install for that tree]
+  Q -->|no| B[Checkout ai/review-fixes<br/>install for that tree]
   B --> C[Claude: fix with a trailer<br/>or reject to a file]
   C --> R{Non-zero exit stating<br/>Claude Code's own limit}
-  R -->|yes| M[Limit marker with the reset instant<br/>— no attempt counted]
+  R -->|yes| M[Limit marker with the reset instant<br/>— no attempt counted, the pass ends]
   R -->|no| E{Exited clean<br/>with a clean tree}
   E -->|no| F[Failed-attempt marker, run fails]
   E -->|yes| V[Post the rejections] --> PU[Push ai/review-fixes with a lease]
@@ -50,17 +48,19 @@ Once Claude exits, the script — the only process with a credential — posts a
 
 **A drain that cannot close its findings holds the queue, not retried forever and never ported past.** Each failed drain of a review leaves a hidden marker in a pull request comment; past the attempt cap the collector posts a held notice once and every run fails red, porting nothing. Porting past it is the one thing it may not do: the window it cut would open the next release, that release merges the moment its own review completes, and the findings would ship unread with no drain left to read them — the newest merged release is the only review a drain looks at. The failed run is red, so someone sees it, and three things clear it: a commit on `ai/queue` answering the findings (`Answers:` / `Drains:`), the threads resolved, or a change to the collector, since every marker names the collector's own source as its basis ([the runner's counts](/docs/infra/review-collector/runner)) and a collector changed since drains the review again. This is the [no manual recovery](/docs/architecture/no-manual-recovery) shape: land the failure durably, cap the attempts, hold visibly.
 
-**A drain that never started is not a failed attempt.** Claude Code refusing to run because the account hit a limit — the session one or the weekly one, the sentence names either — exits non-zero like a drain that tried, and counting it would spend the attempt cap on an outage. Read as failures, one weekly limit held three reviews in a row under the old porting rule, and their releases went out with the findings unread. The step reads the sentence Claude Code prints on its way out — off its own lines, never the model's narration, and never trusting the result frame, which states `success` for a refusal — and a limit writes a marker carrying the instant it lifts. Until then every cycle skips the drain and stops before the port. No job sleeps this one out: Claude's reset is a time of day, up to a day off, and the next `ai/queue` push wakes the cycle soon enough.
+**A session that never started is not a failed attempt.** Claude Code refusing to run because the account hit a limit — the session one or the weekly one, the sentence names either — exits non-zero like a session that tried, and counting it would spend the attempt cap on an outage. Read as failures, one weekly limit held three reviews in a row under the old porting rule, and their releases went out with the findings unread. The launcher reads the sentence Claude Code prints on its way out — off its own lines, never the model's narration, and never trusting the result frame, which states `success` for a refusal — with the reset as a time of day or, for the weekly limit, a date and a time, and throws: whichever role was refused, the pass ends there and a marker on the newest release carries the instant the limit lifts.
+
+**Nothing merges or ports while the limit stands.** Every run reads that marker right after the return stroke and exits until the instant passes — no express cut, no repair, no merge, no port — since each either needs a session or puts work ahead of a drain that cannot follow it. The merge is guarded a second time, before the limit is known: a release whose review completed is merged only after a session started on a prompt that does nothing, so a release never merges while its drain would be refused. Releases merged on their review alone once shipped their findings unread for the two days a weekly limit had left. No job sleeps a limit out: Claude's reset is up to days off, and the next `ai/queue` push wakes the cycle soon enough.
 
 ## Key files
 
-| File                                                               | Role                                                                               |
-| :----------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
-| `scripts/src/services/coderabbit/collect/runDrainStep.ts`          | the open set it reads, and what stops it — nothing open, dry run, the Claude limit |
-| `scripts/src/services/coderabbit/collect/drainFindings.ts`         | the hold, the branch, the install, the session, the verdicts, the push             |
-| `scripts/src/services/coderabbit/collect/getDrainPrompt.ts`        | what Claude is told, in the order it is told                                       |
-| `scripts/src/services/coderabbit/collect/readFindingSeverities.ts` | the score each finding is ordered by                                               |
-| `scripts/src/services/coderabbit/collect/runSession.ts`            | the headless session, its scrubbed environment and its streamed log                |
-| `scripts/src/services/coderabbit/collect/postDrainVerdicts.ts`     | the rejections, posted by the one process holding a credential                     |
-| `scripts/src/services/coderabbit/feedback/getFeedbackReport.ts`    | the report the CLI prints and the drain is handed                                  |
-| `.agents/skills/code-review/references/fixing-findings.md`         | the order of work the prompt points the session at                                 |
+| File                                                               | Role                                                                              |
+| :----------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
+| `scripts/src/services/coderabbit/collect/runDrainStep.ts`          | the open set it reads, and what stops it — nothing open, dry run, a failed launch |
+| `scripts/src/services/coderabbit/collect/drainFindings.ts`         | the hold, the branch, the install, the session, the verdicts, the push            |
+| `scripts/src/services/coderabbit/collect/getDrainPrompt.ts`        | what Claude is told, in the order it is told                                      |
+| `scripts/src/services/coderabbit/collect/readFindingSeverities.ts` | the score each finding is ordered by                                              |
+| `scripts/src/services/coderabbit/collect/runSession.ts`            | the headless session, its scrubbed environment and its streamed log               |
+| `scripts/src/services/coderabbit/collect/postDrainVerdicts.ts`     | the rejections, posted by the one process holding a credential                    |
+| `scripts/src/services/coderabbit/feedback/getFeedbackReport.ts`    | the report the CLI prints and the drain is handed                                 |
+| `.agents/skills/code-review/references/fixing-findings.md`         | the order of work the prompt points the session at                                |

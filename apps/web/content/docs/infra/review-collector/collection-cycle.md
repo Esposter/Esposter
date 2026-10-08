@@ -43,14 +43,17 @@ flowchart TD
   S[Release pull request open] --> ST{CodeRabbit check}
   ST -->|pending| X1[Exit — the review is running]
   ST -->|pass, Review rate limited| RL[Ask for the review at the deadline the bot stated]
-  ST -->|pass, Review completed| FC{main conflicts with develop}
+  ST -->|pass, Review completed| PB{A session starts}
   ST -->|missing or anything else| X2[Fail — a person looks]
+  PB -->|no, the account's limit| X3[Mark the instant it lifts, exit — the release stays open]
+  PB -->|yes| FC{main conflicts with develop}
   FC -->|no| MG[Merge the pull request as administrator<br/>at the head the review read]
   FC -->|yes| FR[Fold main into develop's head<br/>push the fold to main — GitHub reads it as merged]
 ```
 
 - **The status is the whole answer.** With one review per release, a completed check at the head is that review, and its flip to completed arrives as a status event of its own. A missing check or a state the gate does not recognise fails the run rather than guessing.
 - **A rate limit asks again.** `Review rate limited` means the bot ran nothing; the ask is posted once the deadline the bot stated has passed, and the [runner's retrigger](/docs/infra/review-collector/runner) sleeps out a deadline still ahead.
+- **The merge waits for a session that could drain it.** The findings are answered after the merge, so a release merged while Claude Code is out of session ships them unread until the limit lifts. Before the merge a session is started on a prompt that does nothing; a refusal marks the instant the limit lifts and leaves the release open, and every run until then exits before the merge ([drain](/docs/infra/review-collector/drain), "When it cannot").
 - **The merge names the head the review read.** `gh pr merge --match-head-commit` is the same compare-and-swap the push makes: a `develop` that moved since is refused rather than released unread.
 - **A release `main` conflicts with is folded, never re-reviewed.** A repair or an express cut can land on `main` after the window went out, and a merge GitHub cannot create fails every run that tries it. So the release is tried against `main` in memory; a conflict folds `main` into `develop`'s head through the same resolver the window's fold uses, and the fold is pushed to `main` itself — it descends from both, and GitHub closes a pull request whose head its base carries as merged. The fold adds nothing but `main`'s own content, so no review is owed for it. A release that still merges cleanly is left to GitHub.
 - **The checks do not gate it.** `develop` runs them, and the release does not wait: the review is the gate, and a red check is one more commit in the next window.

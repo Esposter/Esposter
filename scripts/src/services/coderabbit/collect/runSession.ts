@@ -1,9 +1,10 @@
 import type { SessionInput } from "#src/models/coderabbit/collect/SessionInput";
 import type { SessionRun } from "#src/models/coderabbit/collect/SessionRun";
 
+import { SessionLimitedError } from "#src/models/coderabbit/collect/SessionLimitedError";
 import { CLAUDE_CODE_PACKAGE } from "#src/services/coderabbit/collect/constants";
 import { getDrainEventLine } from "#src/services/coderabbit/collect/getDrainEventLine";
-import { getDrainLimitResetMs } from "#src/services/coderabbit/collect/getDrainLimitResetMs";
+import { getSessionLimitResetMs } from "#src/services/coderabbit/collect/getSessionLimitResetMs";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
@@ -20,7 +21,8 @@ const SECRET_VARIABLE_REGEX = /credential|key|password|secret|token/iu;
 // The one launcher every role goes through, its model handed in rather than fixed here (`SessionRoleModelMap`).
 // Stdout is streamed rather than inherited: each event is logged as it lands, and the sentence Claude Code
 // Prints on its way out — parsed off its own lines, never the model's narration — is what separates a session
-// That failed from one that never started.
+// That failed from one that never started. A limit throws rather than returns: no step can go on without a
+// Session, so the pass ends where it stood and the entry point marks when the limit lifts.
 export const runSession = async ({ cwd, model, prompt }: SessionInput): Promise<SessionRun> => {
   const environment = Object.fromEntries(
     Object.keys(process.env)
@@ -66,8 +68,9 @@ export const runSession = async ({ cwd, model, prompt }: SessionInput): Promise<
   // A limit is a refusal to start, read only off a non-zero exit: the refusal's own result frame states `success`,
   // And reading a clean exit's output for the sentence would discard work over text the session merely echoed
   const isEnded = child.exitCode === 0;
-  const limitResetAtMs = isEnded ? undefined : getDrainLimitResetMs(ownLines.join("\n"), Date.now());
+  const limitResetAtMs = isEnded ? undefined : getSessionLimitResetMs(ownLines.join("\n"), Date.now());
+  if (limitResetAtMs !== undefined) throw new SessionLimitedError(limitResetAtMs);
   // A session that wrote nothing to its stream never ran — `pnpm` refusing to launch one writes to stderr alone,
   // While the sentence Claude Code prints for itself is a line here, as every event of a session that did run is
-  return { isEnded, isStarted: hasOutput && limitResetAtMs === undefined, limitResetAtMs };
+  return { isEnded, isStarted: hasOutput };
 };
