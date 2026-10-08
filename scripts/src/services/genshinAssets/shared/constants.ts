@@ -4,6 +4,7 @@ import type { SoundStart } from "#src/models/genshinAssets/sound/SoundStart";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { SampleLibrary } from "#src/models/genshinAssets/shared/SampleLibrary";
 import { GAME_EXECUTABLE_PATH, PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { EXCEL_DIRECTORY } from "#src/services/genshinText/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
@@ -202,6 +203,11 @@ export const DECOMPILER_DIRECTORY: string = join(REPOSITORY_ROOT, "scripts", "no
 export const DECOMPILER_BATCH_SIZE = 200;
 // Where `fit` writes the parameters it fits, as data of the world package's own, which its scenes read
 export const WORLD_DATA_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world", "src", "data");
+// The game's own area table in the community's dump, each area's id and the text id of its name, and the field a scene
+// Point files the area it stands in under, as the dump obfuscates it: Windrise's statue's holds 201, which the table
+// Names Windrise
+export const WORLD_AREAS_PATH: string = join(EXCEL_DIRECTORY, "WorldAreaConfigData.json");
+export const SCENE_POINT_AREA_FIELD = "HDMEDFBJMPK";
 // Where `genshin:parity instruments` writes the recordings the login's music plays, rewritten whole, which the world
 // Package serves from its `LOGIN_MUSIC_RECORDING_DIRECTORY`
 export const LOGIN_MUSIC_RECORDING_DIRECTORY: string = join(WORLD_DATA_DIRECTORY, "login", "recordings");
