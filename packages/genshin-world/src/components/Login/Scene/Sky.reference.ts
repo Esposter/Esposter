@@ -188,9 +188,32 @@ export const skyTopic: ReferenceTopic = {
       result:
         "Drawn at the shipped colours the layer's readings are the pass's own (cover 0.2696 against 0.2695). Solved, the lit colour runs to #00d6f3 (its red under none, which the curve's inverse holds at its floor) and the shade to #2459df: the clear sky falls from 2.86 to 1.62 ΔE and the spread from 0.236 to 0.058, both inside their gates, and the cover from 0.270 to 0.266, still over its 0.16; but the clouds stand 8.99 times their sky against the game's 7.93 where the shipped stood 7.73 (0.124 against a gate of 0.128, from 0.027), and their edges 0.0075 from 0.0055. It holds one gate more than the shipped colours without beating them on every reading, so the shipped colours stay: two flat colours trade the clouds' brightness over their sky against their spread inside them",
     },
+    {
+      method:
+        "genshin:parity layer login-door-session --witness login --ours at heldScrolled 320, the layer's opacity, the sky's coverage, the tiling, the height and the wisps' coverage and opacity solved by the simplex over 150 steps from a fresh start at an opacity of 0.05 (coverage 0.16, tiling 1.94, height none, wisps 0.7 and 1), against the layer drawn at none",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "The simplex keeps the layer thin, an opacity of 0.066 under a coverage run below none (-0.12), the tiling 1.97, the height 0.07 and the wisps 0.68 and 1.13: it tints the clear sky, which falls from 2.86 to 0.90 ΔE, and the spread eases from 0.236 to 0.221, still past its 0.076; but the cover rises from 0.270 to 0.276, the brightness from 0.027 to 0.071 and the edges from 0.0055 to 0.0061. It beats drawing none on two readings of five, so the night draws no layer: what the layer reaches is the clear sky's colour, which the sky's own colours own",
+    },
+    {
+      method:
+        "The same solve on login-dawn-title, login-day-title and login-door-recording (the dusk), each beside the layer drawn at none on the same frame",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "The dawn's layer (opacity 0.07) lowers the cover from 0.271 to 0.191, the brightness from 0.231 to 0.038 and the spread from 0.579 to 0.308, but takes the clear sky from 1.59 to 3.98 ΔE and the edges from 0.092 to 0.093; the day's (0.14) lowers the cover, the brightness, the edges and the spread and takes the clear sky from 4.07 to 6.80. The dusk's beat drawing none on all five (clear sky 6.36 to 2.74, cover 0.060 to 0.053, brightness 0.143 to 0.084, edges 0.075 to 0.026, spread 0.345 to 0.068), but under a coverage below none (-0.11), outside the game's range of none to one: held at none, as solved and solved again, its readings stand where none's do (clear sky 6.74). The coverage also scales the cloud bands' lit colour (createCloudBandSprite), so below none it darkened the dusk's clouds rather than drawing a layer; the dusk's clouds stand too bright, which their colours' solve owns. No hour draws the layer",
+    },
+    {
+      method:
+        "The layer's textures synthesized in idle moments after the mount and swapped into its texture nodes, then written in place into blank textures of their sizes the layer was built over, each read at the night's layer settings above against the textures synthesized before the mount, their texels hashed alike",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "Synthesis takes about 0.19 seconds for the density, 0.17 for the wisps and 0.02 to 0.03 for the curl and the normal map, so each is drawn in an idle moment of its own. Swapped in as new textures with the same texels, filters and wrapping, the layer read differently (edges 0.077 against 0.006, cover 0.188 against 0.276), the swapped textures drawn without their mipmaps; written in place it reads the same to four places. The game's own textures, which layer swaps in the same way, may have been read without theirs, so the readings over them above are owed a repeat",
+    },
   ],
   openQuestions: [
-    "The cloud layer's settings by hour: its program and textures of our own are drawn, and no hour's settings yet hold every gate of the atmosphere pass; the door frame held clear of its own towers, the clouds' colours solved again, then each hour solved on its frames and named from the environment scripts where a curve reads it, and its drift over time",
+    "The cloud layer's settings by hour: solved from an opacity near none on every hour's frame, no hour's layer beats drawing none on every reading, each staying thin and trading the clear sky's colour against its clouds; what the layer would draw is read again once the clouds' own colours and the sky's hold, its coverage kept within none to one, and named from the environment scripts where a curve reads it",
+    "The dusk's clouds' colours on the atmosphere pass's readings (layer with lit and shade), since a coverage below none darkening their lit colour beat drawing none on every reading of the door recording",
+    "The readings over the game's own cloud textures, which layer swaps into the texture nodes and so may draw without their mipmaps",
     "The sky's own colours by day and at night, the dawn's and the dusk's being solved over their frames' clear sky (the dawn title's and the door recording's): the game's environment system sets its sky shader's _ES_ colours, top and bottom toward the sun and away, the halo, the sun's halo and the moon's glow, at run time from no asset the export holds, so they are measured; one frame's sky by least squares (genshin:parity sky) leaves its shape and its colours unsettled, the sun's direction itself measured and most of the sky under clouds and haze",
     "The dusk sky low on the frame's left: the recording's clear sky there is almost all cloud, so the sky solved over its clear pixels draws a dusty rose band where the recording glows gold, and its bottom colour toward the sun is held by no pixel",
   ],
