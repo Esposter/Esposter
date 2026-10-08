@@ -21,10 +21,12 @@ Each nation keeps a Reputation, raised by work done for its people. Its levels g
 
 ```mermaid
 flowchart TD
-  BOUNTY["A bounty: trail by Elemental Sight, target defeated"] --> WEEK{"Under three this week, across nations?"}
-  REQUEST["A request: items delivered or a camp cleared"] --> WEEK
-  WEEK -->|"yes"| EXP["Reputation EXP for its nation"]
-  WEEK -->|"no"| SHUT["Not offered until the weekly reset"]
+  BOUNTY["A bounty: trail by Elemental Sight, target defeated"] --> BOUNTY_WEEK{"Under three bounties this week, across nations?"}
+  REQUEST["A request: items delivered or a camp cleared"] --> REQUEST_WEEK{"Under three requests this week, across nations?"}
+  BOUNTY_WEEK -->|"yes"| EXP["Reputation EXP for its nation"]
+  REQUEST_WEEK -->|"yes"| EXP
+  BOUNTY_WEEK -->|"no"| SHUT["Not offered until the weekly reset"]
+  REQUEST_WEEK -->|"no"| SHUT
   EXPLORE["Exploration thresholds, Reputation quests"] --> EXP
   EXP --> MAX{"At the nation's last level?"}
   MAX -->|"no"| LEVEL["Level up: its reward and unlock"]

@@ -38,7 +38,7 @@ flowchart TD
 
 **This adds, in order:**
 
-1. **Oculi**, placed from the streaming records, and Mondstadt's statue levels with their rewards.
+1. **Oculi**, placed from the spawned places' fit of the official map, and Mondstadt's statue levels with their rewards.
 2. **The maximum stamina**, raised by the levels.
 3. **The Statue's Blessing**, its pool and auto-recover, once the party has health.
 4. **The Traveler's resonance**, once the Traveler's kit follows its element.

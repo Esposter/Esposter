@@ -107,7 +107,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - Characters read from HoYoverse's official MMD packs by the engine's own PMX reader and drawn at rest on the toon ramp.
 - Combat's rules as pure, tested functions: auras and reactions, the damage formula, internal cooldown, shields and energy.
 - The party switched on 1 to 4, the character screen on C, and a character's attributes summed from the game's own tables.
-- The F prompts' rules, the bag and its wallet on B, and the wish pulled by the game's published rules on F3, spending earned Fates and nothing bought with money.
+- The F prompts' rules, the bag and its wallet on B, and the wish's published rules with its screen on F3, which offers no banner until the banners' pools are written.
 
 ## Key files
 

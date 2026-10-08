@@ -1,12 +1,12 @@
 ---
 title: Character controller
-description: Proposal — what the character controller still lacks past its states, its body and its stamina: every number the body moves by, read for each body type from the game's own clips, its data and recordings of it, in place of the provisional table every type moves by today, and each state approved by its own measure against those readings.
+description: Proposal — what the character controller still lacks past its states, its body and its stamina: every number the body moves by, read for each body type from the game's own clips, its data and recordings of it, in place of the provisional table every type but the medium female body's clip-read speeds moves by today, and each state approved by its own measure against those readings.
 model: claude-opus-5-5
 ---
 
 # Character controller
 
-The [character controller](/docs/genshin/character-controller) walks the world today: a kinematic capsule moves through the game's movement states on its stamina, in fixed steps, against the ground and the landmarks. Every speed, height and threshold it moves by is provisional, one table every body type shares. This page reads each of them off the game.
+The [character controller](/docs/genshin/character-controller) walks the world today: a kinematic capsule moves through the game's movement states on its stamina, in fixed steps, against the ground and the landmarks. The medium female body's walk, run, sprint, dash, climb, swim and drowning are read from its clips; every other number, and every number of the other body types, is provisional, one table they share. This page reads each of them off the game.
 
 ## Decisions
 

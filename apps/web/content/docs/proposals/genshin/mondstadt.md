@@ -26,7 +26,7 @@ The catalogue holds Mondstadt's areas as the game names them: Starfell Valley, G
 
 ## Build order
 
-1. **Starfell Valley** around Windrise, which grows out of the rendering-style scene: Starfell Lake, Whispering Woods and the road to the city.
+1. **Starfell Valley** beside Galesong Hill's Windrise, growing out of the rendering-style scene: Starfell Lake, Whispering Woods and the road to the city.
 2. **Mondstadt City** on its island: the gate bridge, the walls, the cathedral, the plaza of the Anemo Archon's statue and the windmills. It is matched landmark by landmark.
 3. **Windwail Highland and Springvale**, then **Dawn Winery** and **Galesong Hill**.
 4. **Stormterror's Lair** and **Brightcrown Mountains**.
