@@ -13,6 +13,8 @@ describe(getNextScreenKind, () => {
     [ScreenKind.Map, InputAction.OpenPaimonMenu, ScreenKind.World],
     [ScreenKind.Map, InputAction.Cancel, ScreenKind.World],
     [ScreenKind.PaimonMenu, InputAction.OpenPaimonMenu, ScreenKind.World],
+    [ScreenKind.Dialogue, InputAction.OpenPaimonMenu, ScreenKind.Dialogue],
+    [ScreenKind.Dialogue, InputAction.OpenMap, ScreenKind.Dialogue],
   ])("from %s, %s leaves %s open", (screenKind, action, nextScreenKind) => {
     expect.hasAssertions();
 

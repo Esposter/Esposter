@@ -23,6 +23,7 @@ const gameText = await useGameText();
         v-if="isDoorOpened"
         :game-text="gameText.text"
         :is-paused="isOpeningShown || undefined"
+        :language="gameText.language"
         @load="isLoaded = true"
         @ready="isReady = true"
       />

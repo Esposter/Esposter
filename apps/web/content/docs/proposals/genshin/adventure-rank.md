@@ -43,7 +43,7 @@ flowchart TD
 2. **The World Level**, raising the enemies' levels and their drops' bands.
 3. **The ascension quests' holds**, with the quests that lift them.
 4. **The ranks' rewards** from Katheryne, once she stands in Mondstadt's region data.
-5. **Lowering the World Level**, from the profile card, once the [menu screens](/docs/proposals/genshin/menu-screens)' open question of what the card shows is settled.
+5. **The rank and World Level on the profile card**, which the [menu screens](/docs/proposals/genshin/menu-screens) draw, and lowering the World Level from it.
 
 ## Data and measures
 

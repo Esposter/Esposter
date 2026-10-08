@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Character } from "#src/models/character/Character";
+import type { StatTables } from "#src/models/character/StatTables";
 import type { GameText } from "genshin-text";
 
 import CharacterAttributeList from "#src/components/Character/AttributeList/Index.vue";
@@ -12,15 +13,17 @@ import { fillLinePlaceholders, GameTextKey } from "genshin-text";
 interface Props {
   // The character the screen opens on, the one on the field
   activeCharacterId: number;
-  // The player's characters, down the screen's left in the order given
+  // The player's characters, across the screen's top in the order given
   characters: Character[];
   // The game's words in the reader's language
   gameText: GameText;
   // The party's stamina, which the Attributes tab shows with every character's own attributes
   maxStamina: number;
+  // The game's tables the characters' attributes are summed from
+  statTables: StatTables;
 }
 
-const { activeCharacterId, characters, gameText, maxStamina } = defineProps<Props>();
+const { activeCharacterId, characters, gameText, maxStamina, statTables } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const characterId = ref(activeCharacterId);
 const tab = ref(CharacterMenuTab.Attributes);
@@ -50,6 +53,7 @@ const tabLabels = computed(() =>
         :character
         :game-text
         :max-stamina
+        :stat-tables
       />
     </CharacterMenu>
     <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">×</button>
@@ -57,12 +61,12 @@ const tabLabels = computed(() =>
 </template>
 
 <style scoped>
-/* Provisional: the way back's place, size and colours, as the quest screen's, until the character screen's passes
-   Measure them off a recording of the English client */
+/* The way back's centre is 49 units from the top and 149 from the right, off the English client's character screen at
+   21:9 (references/character-attributes-session.png). Its size and colours are provisional, as the quest screen's */
 .close {
   position: absolute;
-  top: calc(var(--unit) * 36);
-  right: calc(var(--unit) * 48);
+  top: calc(var(--unit) * 21);
+  right: calc(var(--unit) * 121);
   width: calc(var(--unit) * 56);
   height: calc(var(--unit) * 56);
   border: none;

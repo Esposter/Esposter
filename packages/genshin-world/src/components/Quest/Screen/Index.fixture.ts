@@ -2,12 +2,12 @@ import { QuestKind } from "#src/models/quest/QuestKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
-// The prologue's first Archon quest navigated to, a step on, and a world quest beside it a third of its way through
-// Collecting, in the game's own English words for them
+// The world quest the reference navigates to, at its first step with none of its three fragments collected, and the
+// Prologue's Archon quest beside it, in the game's own English words for them
 export const props = {
   gameText: ENGLISH_GAME_TEXT,
   questProgressMap: new Map([
-    ["0", { objectiveCounts: [1], stepIndex: 0 }],
+    ["0", { objectiveCounts: [0], stepIndex: 0 }],
     ["351", { objectiveCounts: [], stepIndex: 1 }],
   ]),
   quests: [
@@ -42,5 +42,5 @@ export const props = {
     "35100": "Go to Paimon",
     "35101": "Follow Paimon",
   },
-  trackedQuestId: "351",
+  trackedQuestId: "0",
 };

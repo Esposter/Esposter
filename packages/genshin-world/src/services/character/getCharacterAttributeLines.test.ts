@@ -1,23 +1,27 @@
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
+import { readStatTables } from "#src/services/character/readStatTables";
 import { describe, expect, test } from "vitest";
 
 describe(getCharacterAttributeLines, () => {
   const TRAVELER_ID = 10_000_007;
   const DULL_BLADE_ID = 11_101;
 
-  test("gives the Traveler at level 90 the wiki's Max HP and DEF, and both ATK bases raised by the ascension's 24%", () => {
+  test("gives the Traveler at level 90 the wiki's Max HP and DEF, and both ATK bases raised by the ascension's 24%", async () => {
     expect.hasAssertions();
 
-    const { attack, defense, maxHealth } = computeCharacterAttributes(
-      getCharacterAttributeLines({
+    const statTables = await readStatTables();
+    const attributeLines = getCharacterAttributeLines(
+      {
         artifacts: [],
         ascension: 6,
         id: TRAVELER_ID,
         level: 90,
         weapon: { ascension: 4, id: DULL_BLADE_ID, level: 70 },
-      }),
+      },
+      statTables,
     );
+    const { attack, defense, maxHealth } = computeCharacterAttributes(attributeLines);
 
     expect({
       attack: Math.round(attack),

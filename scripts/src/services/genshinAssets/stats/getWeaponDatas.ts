@@ -7,8 +7,8 @@ import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable
 import { toAttributeLines } from "#src/services/genshinAssets/stats/toAttributeLines";
 import { weaponDataSchema } from "genshin-world";
 
-// Every weapon with ascension phases as the game's tables hold it: its base ATK and secondary attribute growing along
-// Their curves, and its phases from its promotion table
+// Every weapon with ascension phases as the game's tables hold it: its name by text id, its base ATK and secondary
+// Attribute growing along their curves, and its phases from its promotion table
 export const getWeaponDatas = (notes: string[]): WeaponData[] => {
   const promoteIdRowsMap = Map.groupBy(
     readExcelTable<ExcelWeaponPromoteRow>("WeaponPromoteExcelConfigData"),
@@ -29,6 +29,7 @@ export const getWeaponDatas = (notes: string[]): WeaponData[] => {
           .filter(({ propType }) => propType !== EMPTY_PROPERTY_TYPE)
           .map(({ initValue = 0, propType, type }) => ({ attribute: propType, base: initValue, curve: type })),
         id: row.id,
+        nameTextId: String(row.nameTextMapHash),
         rarity: row.rankLevel,
         weaponType: row.weaponType,
       }),

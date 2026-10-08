@@ -7,7 +7,10 @@ committed.
 
 | Reference | Screen | Mean difference | Shape | Tone | FLIP |
 | :-------- | :----- | --------------: | ----: | ---: | ---: |
+| `handbook-experience` | `HandbookScreen` | 18.12% | 0.173 | 13.29% | 0.5150 |
 | `health-notice` | `SplashHealthNotice` | 6.00% | 0.961 | 0.83% | 0.1853 |
+| `health-notice-mainland` | `SplashHealthNotice` | 6.88% | 0.834 | 2.70% | 0.2025 |
+| `inventory-weapons` | `InventoryScreen` | 9.14% | 0.612 | 7.41% | 0.3080 |
 | `loading-startup` | `LoadingStartup` | 0.03% | 0.989 | 0.00% | 0.0013 |
 | `login-dawn-title` | `LoginScreen` | 10.34% | 0.468 | 7.35% | 0.4133 |
 | `login-day-title` | `LoginScreen` | 12.92% | 0.336 | 9.86% | 0.4688 |
@@ -19,7 +22,10 @@ committed.
 | `login-interface-mainland-rating` | `LoginInterface` | 2.11% | 0.959 | 1.12% | 0.1095 |
 | `login-interface-title` | `LoginInterface` | 0.34% | 0.997 | 0.24% | 0.0154 |
 | `login-night-title` | `LoginScreen` | 11.16% | 0.358 | 8.40% | 0.4231 |
+| `map-overlay-jueyun` | `MapOverlay` | 31.37% | 0.072 | 30.13% | 0.7918 |
+| `paimon-menu` | `MenuPaimon` | 8.06% | 0.740 | 6.15% | 0.2757 |
 | `publisher-splash` | `SplashPublisher` | 0.07% | 1.000 | 0.01% | 0.0036 |
+| `quest-screen` | `QuestScreen` | 55.84% | 0.274 | 53.90% | 0.8998 |
 | `title-splash` | `SplashTitle` | 0.20% | 1.000 | 0.01% | 0.0090 |
 | `title-splash-mainland` | `SplashTitle` | 1.80% | 0.992 | 0.81% | 0.0787 |
 | `windrise-statue-day` | `WorldScreen` | 43.15% | 0.161 | 45.35% | 0.8676 |

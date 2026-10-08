@@ -33,6 +33,7 @@ describe(damageEnemy, () => {
       ...createEnemy(ENEMY_CAMP_MEMBER, ""),
       droppedThresholdCount: energyDrops.length,
       health: 0,
+      hitSeconds: 0,
       state: EnemyState.Dead,
     });
   });
@@ -46,6 +47,7 @@ describe(damageEnemy, () => {
 
     expect(enemy).toStrictEqual({
       ...createEnemy(ENEMY_CAMP_MEMBER, ""),
+      hitSeconds: 0,
       poise: 0,
       poiseBrokenSeconds: resetSeconds,
       state: EnemyState.Stagger,

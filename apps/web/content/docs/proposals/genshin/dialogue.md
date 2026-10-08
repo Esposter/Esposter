@@ -6,11 +6,11 @@ model: claude-opus-5-5
 
 # Dialogue
 
-The talk graph, its pure runner, the dialogue screen and the talk host that runs one over the world, with auto-play and skip, are built. So is a resident placed in a region's data with the talk F begins: see [dialogue](/docs/genshin/dialogue). What remains joins a talk to the world, loads its words, and measures the screen against the game's.
+The talk graph, its pure runner, the dialogue screen and the talk host that runs one over the world, with auto-play and skip, are built. So is a resident placed in a region's data with the talk F begins, and the world's screen for a talk: see [dialogue](/docs/genshin/dialogue). What remains begins a talk from the world's residents, loads its words, and measures the screen against the game's.
 
 ## Decisions
 
-- **F on a resident begins their talk.** The [interaction](/docs/proposals/genshin/interaction) prompts list each resident in reach as a talk, named in the reader's language and standing on the ground at their spot. F on one mounts the talk host over the world. While a talk runs, the world holds its controls, so the F and Space that move the talk on never also act or jump, and the HUD hides as the game's does. The talk's end gives them back.
+- **F on a resident begins their talk.** The [interaction](/docs/proposals/genshin/interaction) prompts list each resident in reach whose talk the world holds as a talk, named in the reader's language and standing on the ground at their spot. F on one sets that talk and opens `ScreenKind.Dialogue`, and the world screen mounts `DialogueTalk` over the world with the talks' text map while it is open; the talk's `end` sets the world back. Until residents' own talks are served, the talks the world holds are its quests' talks.
 - **A quest's talk takes the resident's place while its step is open.** When the current step of a quest in progress asks for a talk with a resident, F on that resident runs the quest's talk rather than their own. Its end is the talk-to event the quest's progress waits on ([quests](/docs/genshin/quests)).
 - **A resident offers every talk open to them, each with its mark.** In the game, a character with a quest to give or advance offers it as a reply beside their own chat, drawn with the mark of a quest or a story quest. The first line of a resident's talk offers each open quest talk as a reply with that mark.
 - **A talk's words are loaded with it.** The reader writes a text map for each language, holding every word the carried quests and residents show (`generated/questText`). The host loads the reader's language once, as [game text](/docs/genshin/game-text) loads its chunk, and hands it to the talk host.
@@ -22,8 +22,11 @@ The talk graph, its pure runner, the dialogue screen and the talk host that runs
 
 These need a recording of the English PC client's dialogue at 1080 high, found among published recordings first ([parity](/docs/genshin/parity)):
 
-- **The line's reveal rate and auto-play's hold**, read off the line's darkness frame by frame (`frames`, then `luma` over the line's band), into `TALK_REVEAL_MS_PER_CHARACTER` and `TALK_AUTO_PLAY_HOLD_MS`.
-- **The band, the speaker's name, the line and the replies**: their sizes, places, colours and fades, measured as the login's interface is.
+- **Whether the world runs on around a talk**: the sky, the clouds and the residents behind the speaker moving or still, read by eye.
+- **The line's reveal rate and auto-play's hold**, read off the line's darkness frame by frame (`frames`, then `luma` over the line's band), into `TALK_REVEAL_MS_PER_CHARACTER` and `TALK_AUTO_PLAY_HOLD_MS`. The published recording of the dialogue choices shows each line whole in one 30 frames a second frame, so the reveal needs a 60 frames a second recording of a line being written out.
+- **The band's gradient, the selected reply's look and the fades**: the speaker's name, the line and the replies are sized and placed off one published frame, and their fades are not yet read.
+- **A backdrop with the dialogue off**: `compare`'s backdrop draws the game's own line and replies, so the overlay cannot be scored until the scene is shot without them.
+- **The speaker's role line** (the title under the name, "Waitress, Good Hunter" in the published frame), which the talk's schema does not hold: its text id comes from the dialog table.
 - **The replies' marks**, traced from the wiki's files of the game's own (`Icon Dialogue Talk White.png`, `Icon Dialogue Quest.png`, `Icon Dialogue Story Quest.png`) into paths of our own, and the auto-play and skip buttons' glyphs beside them.
 
 ## Key files

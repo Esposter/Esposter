@@ -1,6 +1,6 @@
 ---
 title: Quests
-description: Proposal — Genshin's quests, still to come. The carried quests are written from the community's dump and served to the world with their words, started as the game starts them, and advanced by every doing the world records. Their progress is kept in the browser, the HUD's tracker shows the navigated step, V navigates and held V shows the step, the map pins the objective, and the daily commissions are dealt at the reset. The quest screen and the handbook are measured. The quest model, its progression, the quest screen, the navigation beam, the handbook's tabs and the reader are built, as the quests page describes.
+description: Proposal — Genshin's quests, still to come. The carried quests are written from the community's dump, with their words to be taken from the installed game's own text, and served to the world with those words, started as the game starts them, and advanced by every doing the world records. Their progress is kept in the browser, held V shows the step, the map pins the objective, and the daily commissions are dealt at the reset. The quest screen and the handbook are measured. The quest model, its progression, the quest screen, the navigation beam, the HUD's tracker and V, the handbook's tabs and the reader are built, as the quests page describes.
 model: claude-opus-5-5
 ---
 
@@ -14,13 +14,10 @@ The quest model and its pure progression, the quest screen J opens, the beam ove
 - **A quest starts as the game starts it.** An Archon quest starts when the one before it finishes, from the prologue's first. A world or story quest starts from the talk that offers it. A commission is dealt at the daily reset. Only what has started shows on the quest screen.
 - **Every doing the world records is an event.** A talk's end is a talk-to event under its talk's id. A trigger reached is a go-to under the trigger's. An item picked up is a collect under the item's id ([inventory](/docs/proposals/genshin/inventory)), an enemy defeated is a defeat under its kind ([enemies](/docs/genshin/enemies)), and a thing acted on or a waypoint unlocked is an interact ([interaction](/docs/proposals/genshin/interaction)). Each is handed to every quest in progress, so one doing can advance several.
 - **Progress is kept in the browser.** Each quest's progress, the quests finished and the one navigated to are kept per device, as the [menu screens](/docs/proposals/genshin/menu-screens)' settings are, since the world is the person's own and needs no account.
-- **The navigated quest is shown and found as the game shows it.** The HUD's tracker under the minimap shows the navigated quest's title and step line. V navigates to it, mounting the beam over its objective in the world's group, and holding V shows the step. The map pins the objective, and its distance shows beside the HUD's mark.
+- **The navigated quest is found as the game finds it.** The HUD's tracker and V's navigation are built ([HUD](/docs/genshin/hud)). Holding V shows the step's objective, the map pins the objective, and its distance shows beside the HUD's mark.
 - **A place's trigger is placed in region data.** A go-to objective names the trigger the game fires, so a region's data places each trigger the carried quests name, and reaching it is the go-to event. Navigation then finds it as it finds a resident.
 - **The daily commissions are four a day, dealt at the reset.** As the wiki describes them, they are drawn from the pool of the areas the player has reached, with the preferred region the handbook sets.
-
-## Still to decide
-
-- **Where a talk's missing words come from.** The reader is built and reads the prologue's quests: their steps, their objectives and their talks' graphs. But the community dump's text maps hold the words of only about half the dialog table's lines (some 100,000 of 204,000 at its last commit), so about half of a talk's lines would show nothing, two of the five in Bird's Eye View's talk with Paimon among them. The source still to be chosen is either the game's own text blocks, decoded at the same patch as the tables, or another community dump that carries them. Once it is chosen, the reader's run joins the compute queue: it fetches the dump's quest, dialog and character tables and each carried quest's binary output from one commit, and its bar is no line without English words.
+- **The quest and dialogue text is the install's own.** A quest's words and a talk's are decoded from the installed game at the same patch as every other export, so a line, its id and its quest cannot drift apart. The community dump's half-empty English text then stops mattering.
 
 ## Measures owed
 
@@ -32,12 +29,11 @@ These need the English PC client at 1080 high, published screenshots and recordi
 
 ## Key files
 
-| File                                                           | Role after the change                                                      |
-| :------------------------------------------------------------- | :------------------------------------------------------------------------- |
-| `packages/genshin-world/src/components/World/Screen/Index.vue` | Holds the quests in progress, hands each doing to them, and navigates on V |
-| `packages/genshin-world/src/components/Quest/Beam/Index.vue`   | Mounted in the world's group over the navigated objective                  |
-| `packages/genshin-world/src/models/world/RegionData.ts`        | Gains the triggers the carried quests name                                 |
-| `packages/genshin-world/src/models/quest/QuestId.ts`           | Grows by a line for each quest carried                                     |
+| File                                                           | Role after the change                                     |
+| :------------------------------------------------------------- | :-------------------------------------------------------- |
+| `packages/genshin-world/src/components/World/Screen/Index.vue` | Holds the quests in progress and hands each doing to them |
+| `packages/genshin-world/src/models/world/RegionData.ts`        | Gains the triggers the carried quests name                |
+| `packages/genshin-world/src/models/quest/QuestId.ts`           | Grows by a line for each quest carried                    |
 
 ## Sources
 

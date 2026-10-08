@@ -97,4 +97,26 @@ describe(createCharacterController, () => {
     expect(characterController.phase.state).toBe(LocomotionState.Swim);
     expect(characterController.position.y).toBe(WATER_LEVEL - LOCOMOTION.swimDepth);
   });
+
+  test("comes back where it was placed when it drowns before standing anywhere", () => {
+    expect.hasAssertions();
+
+    const characterController = createCharacterController({
+      ground: createGroundQuery((x) => (x > 50 ? -5 : 0), 0),
+      landmarkCollider: createLandmarkCollider(),
+      position: new Vector3(),
+    });
+    const placedPosition = new Vector3(100, -LOCOMOTION.swimDepth, 0);
+    characterController.place(placedPosition, 0);
+    let isDrowned = false;
+    for (let stepIndex = 0; stepIndex < 60 * 600 && !isDrowned; stepIndex++) {
+      characterController.step(STILL_INPUT, 0, LOCOMOTION, STEP_SECONDS);
+      isDrowned = characterController.phase.state === LocomotionState.Drown;
+    }
+    while (characterController.phase.state === LocomotionState.Drown)
+      characterController.step(STILL_INPUT, 0, LOCOMOTION, STEP_SECONDS);
+
+    expect(isDrowned).toBe(true);
+    expect(characterController.position.x).toBe(placedPosition.x);
+  });
 });

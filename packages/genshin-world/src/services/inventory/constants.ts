@@ -32,3 +32,5 @@ export const EMPTY_WALLET: Readonly<Wallet> = {
   [Currency.Mora]: 0,
   [Currency.Primogem]: 0,
 };
+// Mora's item id in the game's tables, which every pile of it a defeated enemy drops is filed under
+export const MORA_ITEM_ID = 202;

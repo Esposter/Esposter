@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { BannerKind } from "#src/models/BannerKind";
 import type { CurrencyCount } from "#src/models/CurrencyCount";
+import type { WishPoolCell } from "#src/models/WishPoolCell";
 import type { WishResultCell } from "#src/models/WishResultCell";
 import type { WishSet } from "#src/models/WishSet";
 
@@ -16,7 +17,10 @@ interface Props {
   fatePoints: string;
   // The Epitomized Path's name, "" on every banner but the weapon wish's
   pathLabel: string;
-  // What the last wishes drew, shown over the screen until a click goes on, none before a wish
+  // What the open banner can draw, the highest rarity first and the featured first of each rarity
+  pool: WishPoolCell[];
+  // What the last wishes drew, one card each in the order the game shows them, over the screen until a click goes on,
+  // None before a wish
   results: WishResultCell[];
   // The open banner's ×1 and ×10
   sets: WishSet[];
@@ -24,16 +28,18 @@ interface Props {
 }
 
 const bannerKind = defineModel<BannerKind>("bannerKind");
-const { backLabel, bannerKinds, bannerLabels, currencies, fatePoints, pathLabel, results, sets, title } =
+const { backLabel, bannerKinds, bannerLabels, currencies, fatePoints, pathLabel, pool, results, sets, title } =
   defineProps<Props>();
 const emit = defineEmits<{ close: []; dismiss: []; wish: [count: number] }>();
+const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rarity));
 </script>
 
 <template>
   <!-- The wish, the F3 key's: the banners across the head with the counts and the way back beside them, the open banner's
-       Epitomized Path on the weapon wish, its ×1 and ×10 with their costs, and over it all what the last wishes drew,
-       Each by its rarity, until a click goes on. Provisional: every place, size and colour here, the banners' art and the
-       Falling star wait on the wish's passes against a recording of the English client at 1080 high -->
+       Pool by rarity, its Epitomized Path on the weapon wish, its ×1 and ×10 with their costs, and over it all what the
+       Last wishes drew, a card each with its stars, until a click goes on. Provisional: every place, size and colour here,
+       The stars' mark, the banners' art and the falling star wait on the wish's passes against a recording of the English
+       Client at 1080 high -->
   <div class="wish-screen">
     <header class="head">
       <p class="title" role="heading" aria-level="1">{{ title }}</p>
@@ -52,6 +58,16 @@ const emit = defineEmits<{ close: []; dismiss: []; wish: [count: number] }>();
       </ul>
       <button class="back" type="button" @click="emit('close')">{{ backLabel }}</button>
     </header>
+    <ul class="pool">
+      <li v-for="[rarity, cells] of poolRarityCellsMap" :key="rarity" class="pool-rarity">
+        <span class="stars" role="img" :aria-label="`${rarity}`">{{ "★".repeat(rarity) }}</span>
+        <ul class="pool-items">
+          <li v-for="{ id, isFeatured, name } of cells" :key="id" class="pool-item" :data-featured="isFeatured">
+            {{ name }}
+          </li>
+        </ul>
+      </li>
+    </ul>
     <p v-if="pathLabel" class="path">
       {{ pathLabel }}
       <span class="fate-points">{{ fatePoints }}</span>
@@ -79,6 +95,7 @@ const emit = defineEmits<{ close: []; dismiss: []; wish: [count: number] }>();
           :data-rarity="rarity"
         >
           <span class="result-name">{{ name }}</span>
+          <span class="stars" role="img" :aria-label="`${rarity}`">{{ "★".repeat(rarity) }}</span>
           <span class="result-return">{{ wishReturn }}</span>
         </li>
       </ul>
@@ -112,6 +129,8 @@ const emit = defineEmits<{ close: []; dismiss: []; wish: [count: number] }>();
 
 .banners,
 .currencies,
+.pool,
+.pool-items,
 .result-list {
   margin: 0;
   padding: 0;
@@ -151,6 +170,33 @@ const emit = defineEmits<{ close: []; dismiss: []; wish: [count: number] }>();
 .currency-name,
 .cost {
   opacity: 0.7;
+}
+
+.pool {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--unit) * 12);
+  font-size: calc(var(--unit) * 18);
+}
+
+.pool-rarity {
+  display: flex;
+  gap: calc(var(--unit) * 16);
+}
+
+.pool-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--unit) * 4) calc(var(--unit) * 16);
+}
+
+.pool-item[data-featured="true"] {
+  color: #ffd780;
+}
+
+.stars {
+  color: #ffcc32;
+  white-space: nowrap;
 }
 
 .path {

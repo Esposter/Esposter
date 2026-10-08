@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Character } from "#src/models/character/Character";
+import type { StatTables } from "#src/models/character/StatTables";
 import type { GameText } from "genshin-text";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { CharacterDataMap } from "#src/services/character/CharacterDataMap";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import {
   ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS,
@@ -18,21 +18,22 @@ interface Props {
   gameText: GameText;
   // The party's stamina, which the tab shows with every character's own attributes
   maxStamina: number;
+  // The game's tables the character's level cap and attributes are read from
+  statTables: StatTables;
 }
 
-const { character, gameText, maxStamina } = defineProps<Props>();
+const { character, gameText, maxStamina, statTables } = defineProps<Props>();
 const levelText = computed(() =>
   fillGameTextValues(
     gameText[GameTextKey.LevelFormat],
-    `${character.level}/${CharacterDataMap.get(character.id)?.ascensionPhases[character.ascension]?.maxLevel ?? ""}`,
+    `${character.level}/${statTables.characterDataMap.get(character.id)?.ascensionPhases[character.ascension]?.maxLevel ?? ""}`,
   ),
 );
 // The tab's attributes in the groups its details sort them into, each as the game writes it: Max HP, ATK, DEF,
 // Elemental Mastery and Max Stamina whole, every other a percentage to one place
 const groups = computed(() => {
-  const { attack, attributeTotalMap, defense, maxHealth } = computeCharacterAttributes(
-    getCharacterAttributeLines(character),
-  );
+  const attributeLines = getCharacterAttributeLines(character, statTables);
+  const { attack, attributeTotalMap, defense, maxHealth } = computeCharacterAttributes(attributeLines);
   const toPercentRows = (attributeGameTextKeys: readonly (readonly [Attribute, GameTextKey])[]) =>
     attributeGameTextKeys.map(([attribute, gameTextKey]) => ({
       label: gameText[gameTextKey],

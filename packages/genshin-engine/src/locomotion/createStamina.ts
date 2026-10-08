@@ -48,12 +48,14 @@ export const createStamina = (): Stamina => {
     refill: () => {
       stamina.value = STAMINA_MAX;
     },
+    spend: (amount) => {
+      stamina.value = Math.max(0, stamina.value - amount);
+      restSeconds = 0;
+    },
     step: (phase, isEntered, isMoving, stepSeconds) => {
       const spend = computeSpend(phase, isEntered, isMoving, stepSeconds);
-      if (spend > 0) {
-        stamina.value = Math.max(0, stamina.value - spend);
-        restSeconds = 0;
-      } else if (STAMINA_REFILL_STATES.includes(phase.state)) {
+      if (spend > 0) stamina.spend(spend);
+      else if (STAMINA_REFILL_STATES.includes(phase.state)) {
         restSeconds += stepSeconds;
         if (restSeconds >= STAMINA_REFILL_DELAY_SECONDS)
           stamina.value = Math.min(STAMINA_MAX, stamina.value + STAMINA_REFILL_PER_SECOND * stepSeconds);

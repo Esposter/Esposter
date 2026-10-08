@@ -67,25 +67,25 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 
 ### Phase three: the play features
 
-| Page                                                                 | What it adds                                                                                                               |
-| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
-| [Character controller](/docs/proposals/genshin/character-controller) | every number the body moves by, read for each body type off the game's clips, data and recordings                          |
-| [Follow camera](/docs/proposals/genshin/follow-camera)               | the camera's numbers solved off recordings, its settings, and how far photo mode may go                                    |
-| [HUD](/docs/proposals/genshin/hud)                                   | the HUD's fitted places, Paimon's mark, the stamina meter and the party                                                    |
-| [Characters](/docs/proposals/genshin/characters)                     | the game's characters from HoYoverse's official models                                                                     |
-| [Party](/docs/proposals/genshin/party)                               | Party Setup on L, the HUD's party, a burst on a switch, the fall and Elemental Resonance                                   |
-| [Character screen](/docs/proposals/genshin/character-screen)         | the screen measured, the character in its middle, Details, the other tabs, levelling and ascending                         |
-| [Menu screens](/docs/proposals/genshin/menu-screens)                 | the Paimon menu, and the Time and Settings screens it opens                                                                |
-| [Combat](/docs/proposals/genshin/combat)                             | the Lunar reactions, self and immutable auras, reaction limits, reach and attack energy                                    |
-| [Interaction](/docs/proposals/genshin/interaction)                   | the F prompts over the world: the wheel, a held F's repeat, and the reach measured                                         |
-| [Inventory](/docs/proposals/genshin/inventory)                       | the items themselves, the full-bag hint, Fates for Primogems, using and destroying                                         |
-| [Wish](/docs/proposals/genshin/wish)                                 | the banners' pools, a charted course, Character Event Wish-2 and the history                                               |
-| [Dialogue](/docs/proposals/genshin/dialogue)                         | F on a resident begins their talk, its words loaded and filled, a resident's open quests offered, and the screen measured  |
-| [Quests](/docs/proposals/genshin/quests)                             | the carried quests served, started and advanced by the world's doings, kept, tracked on the HUD and V, and the commissions |
+| Page                                                                 | What it adds                                                                                                                      |
+| :------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| [Character controller](/docs/proposals/genshin/character-controller) | every number the body moves by, read for each body type off the game's clips, data and recordings                                 |
+| [Follow camera](/docs/proposals/genshin/follow-camera)               | the camera's numbers solved off recordings, its settings, and how far photo mode may go                                           |
+| [HUD](/docs/proposals/genshin/hud)                                   | the HUD's fitted places, Paimon's mark, and the skill and burst buttons                                                           |
+| [Characters](/docs/proposals/genshin/characters)                     | the game's characters from HoYoverse's official models                                                                            |
+| [Party](/docs/proposals/genshin/party)                               | Party Setup on L, the HUD's party, a burst on a switch, the fall and Elemental Resonance                                          |
+| [Character screen](/docs/proposals/genshin/character-screen)         | the screen measured, the character in its middle, Details, the other tabs, levelling and ascending                                |
+| [Menu screens](/docs/proposals/genshin/menu-screens)                 | the Paimon menu, and the Time and Settings screens it opens                                                                       |
+| [Combat](/docs/proposals/genshin/combat)                             | the Lunar reactions, self and immutable auras, reaction limits, reach and attack energy                                           |
+| [Interaction](/docs/proposals/genshin/interaction)                   | the F prompts over the world: the wheel, a held F's repeat, and the reach measured                                                |
+| [Inventory](/docs/proposals/genshin/inventory)                       | the items themselves, the full-bag hint, Fates for Primogems, using and destroying                                                |
+| [Wish](/docs/proposals/genshin/wish)                                 | the banners' pools, a charted course, Character Event Wish-2 and the history                                                      |
+| [Dialogue](/docs/proposals/genshin/dialogue)                         | F on a resident begins their talk, its words loaded and filled, a resident's open quests offered, and the screen measured         |
+| [Quests](/docs/proposals/genshin/quests)                             | the carried quests served, started and advanced by the world's doings, kept, held V's step and the map's pin, and the commissions |
 
 ### Phase four: the game's systems
 
-What still separates the recreation from the whole game once the world and its play features stand: how characters fight and grow, what the world gives back for exploring it, and the pastimes and challenges beside it. Each page is one system, in the order the systems wait on each other. The systems that need a server or other players are [deferred](/docs/genshin/deferred) instead, since the world keeps no server.
+What still separates the recreation from the whole game once the world and its play features stand: how characters fight and grow, what the world gives back for exploring it, and the pastimes and challenges beside it. Each page is one system, in the order the systems wait on each other. The game's tables a page names are read from the user's installed game at its own patch once that file's reading lands, and from the community's dump until then, as the `genshin-parity` skill settles. The systems that need a server or other players are [deferred](/docs/genshin/deferred) instead, since the world keeps no server.
 
 | Page                                                                 | What it adds                                                                                      |
 | :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
@@ -120,6 +120,12 @@ What still separates the recreation from the whole game once the world and its p
 | [Expeditions](/docs/proposals/genshin/expeditions)                   | characters sent out for hours in real time, and their places' rewards                             |
 | [Companionship](/docs/proposals/genshin/companionship)               | Friendship Levels from the party's EXP, and the stories, voice-overs and namecard they open       |
 | [Resident schedules](/docs/proposals/genshin/resident-schedules)     | each resident's day and night spots from the game's records, and vendors' hours                   |
+| [Achievements](/docs/proposals/genshin/achievements)                 | the game's achievements as watchers of their own triggers, paid in Primogems and namecards        |
+| [Archive](/docs/proposals/genshin/archive)                           | the seven sections from the game's codex tables, each entry opened when first met                 |
+| [Serenitea Pot](/docs/proposals/genshin/serenitea-pot)               | the player's realm, its placement editor, Tubby's furnishings, Trust Rank and companions          |
+| [Spiral Abyss](/docs/proposals/genshin/spiral-abyss)                 | twelve floors from the game's tower tables, stars, and the Moon Spire's latest period             |
+| [Imaginarium Theater](/docs/proposals/genshin/imaginarium-theater)   | the latest season's cast, Vigor, events paid in Fantasia Flowers, and Blessing Level              |
+| [Genius Invokation TCG](/docs/proposals/genshin/genius-invokation)   | the card game as a rules engine of its own, every card the game's, against its residents          |
 
 ## Scope and order
 
@@ -131,7 +137,7 @@ What still separates the recreation from the whole game once the world and its p
 ## What this does not propose
 
 - **Assets from the game.** Nothing exported is committed, served or converted into a file of ours; only what our own fits and generators write ships.
-- **Multiplayer.** The world is the person's own, as the game's is outside co-op.
+- **Multiplayer.** The world is the person's own, as the game's is outside co-op ([co-op](/docs/genshin/deferred/co-op) is deferred).
 - **A monetised or official-looking product.** No payment, no HoYoverse branding in the chrome, and no claim to be the game.
 
 ## Key files

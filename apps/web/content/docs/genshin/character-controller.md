@@ -102,7 +102,7 @@ Running out stops what costs: a sprint drops to a run, a climb lets go and falls
 
 Every speed, height and threshold is a body type's, since how far a character sprints and jumps differs by its body. `BodyTypeLocomotionMap` holds one `Locomotion` for each of the game's body types, and `getCharacterLocomotion` reads the party's character on the field into its body type's. Until a type is measured it moves by `PROVISIONAL_LOCOMOTION`; a measured type takes its own entry and never lends it to another. The measures are owed by the most exact source the game has for each:
 
-- **The game's own clips** for the speeds: `pnpm -C scripts genshin:assets locomotion <body>` exports a body type's walk, run, sprint, dash, jump, climb, climb jump, swim, swim dash, drowning and glide clips from the asset index and reads each one's root motion, its seconds, the ground it covers and its rise beside the average speed it records. The medium female body, the Traveler's whom the world plays, is read: its walk, run and sprint, its dash, its climb and climb jump, its swim and swim dash and its drowning are its own clips' root motion, each speed within a fraction of a percent of the average its clip records. Its glide's clip holds its root still and its jump's falls through the clip, so neither moves the body, and both are read off recordings.
+- **The game's own clips** for the speeds: `pnpm -C scripts genshin:assets locomotion <body>` exports a body type's walk, run, sprint, dash, jump, climb, climb jump, swim, swim dash, drowning and glide clips from the asset index and reads each one's root motion, its seconds, the ground it covers and its rise beside the average speed it records. The medium female body, the Traveler's whom the world plays, is read: its walk, run and sprint, its dash, its climb and climb jump, its swim and swim dash and its drowning are its own clips' root motion, each speed within a fraction of a percent of the average its clip records. Its glide's clip holds its root still and its jump's falls through the clip, so neither moves the body: both stay provisional until a recording measures them.
 - **Recordings** for what no clip holds: the jump's height and gravity, the glide's sink, the plunge, the step, the steepest walkable slope, the wading depth, the glider's height, the capsule, the glide's and the climb's costs, and how each stop looks.
 
 ## Decisions
@@ -132,7 +132,7 @@ Every speed, height and threshold is a body type's, since how far a character sp
 
 ## Notes
 
-- **A jump from the map places the body**, standing it on the ground at the jump's point facing its yaw, with the follow camera level behind it.
+- **A jump from the map places the body**, standing it on the ground at the jump's point facing its yaw, with the follow camera level behind it, and makes that point where a drowning brings it back to until its stamina is next full on foot.
 - **A party switch changes the body type the next step moves by** and the model drawn on the body, never the body's place or its stamina, which the party shares.
 - **Left Control with `W` held is the browser's close-tab shortcut.** The walk switch is the game's key, so it is pressed apart from a held move ([controls](/docs/genshin/controls)).
 

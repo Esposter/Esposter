@@ -25,7 +25,7 @@ flowchart LR
 ### The pack
 
 - **One folder per character, named by its id in the game's data** as the party's characters are, under the base URL the app hands the world, `GENSHIN_CHARACTER_PACK_PATH` in its assets container: `model.pmx`, the model renamed on upload; `terms.txt`, the terms bundled with it; and the textures at the paths the model names them by, relative to it. `readCharacterPackFile` reads every one of them, so the three kinds of file share one layout, and it encodes each part of a path on its own, since a model's paths hold MMD's backslashes and letters of any script.
-- **A pack is drawn whole or not at all.** Only the textures a material draws with are fetched; a toon ramp or a sphere map the model names is never fetched, since the world's own light stands in for both. A failed read is logged and leaves nothing drawn, and a model arriving after its character has gone is released at once.
+- **A pack is drawn whole or not at all.** Only the textures a material draws with are fetched; a toon ramp or a sphere map the model names is never fetched, since the world's own light stands in for both. A failed read is logged and emitted, and the world draws the body's capsule in its place, and a model arriving after its character has gone is released at once.
 
 ### Reading a PMX
 

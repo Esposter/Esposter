@@ -28,8 +28,8 @@ const lineParts = computed(() => {
 
 <template>
   <!-- The game's dialogue over the world: a click anywhere goes on, the speaker's name over the line at the foot of the
-       Screen, and the replies down the right. Provisional: every size, place and colour here waits on the parity pass
-       Against a recording of the English client's dialogue -->
+       Screen, and the replies down the right. Sized and placed off the English client's recording of its dialogue
+       choices; the band's gradient, the selected reply's look and the speaker's role line wait on recordings still owed -->
   <div class="dialogue-screen" @click="emit('advance')">
     <div class="band" aria-live="polite">
       <p v-if="speakerName" class="speaker">{{ speakerName }}</p>
@@ -74,10 +74,11 @@ const lineParts = computed(() => {
   background: linear-gradient(transparent, rgb(0 0 0 / 0.6));
 }
 
+/* The name's gold is the brightest saturated pixel of its letters in the English client's recording */
 .speaker {
   margin: 0;
-  color: #d3bc8e;
-  font-size: calc(var(--unit) * 34);
+  color: #ffc700;
+  font-size: calc(var(--unit) * 30);
   font-weight: 600;
   line-height: 1;
 }
@@ -106,14 +107,16 @@ const lineParts = computed(() => {
   white-space: nowrap;
 }
 
+/* The replies' place is read off the English client's recording: the first pill's left edge at 1275 of 1920 and its top
+   at 698 of 1080, each pill 45 high and 15 apart */
 .choices {
   position: absolute;
-  top: calc(var(--unit) * 560);
-  right: calc(var(--unit) * 200);
+  top: calc(var(--unit) * 698);
+  right: calc(var(--unit) * 273);
   display: flex;
-  width: calc(var(--unit) * 560);
+  width: calc(var(--unit) * 372);
   flex-direction: column;
-  gap: calc(var(--unit) * 12);
+  gap: calc(var(--unit) * 15);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -122,17 +125,17 @@ const lineParts = computed(() => {
 .choice {
   display: flex;
   width: 100%;
-  min-height: calc(var(--unit) * 60);
+  min-height: calc(var(--unit) * 45);
   align-items: center;
-  gap: calc(var(--unit) * 16);
-  padding: 0 calc(var(--unit) * 24);
+  gap: calc(var(--unit) * 12);
+  padding: 0 calc(var(--unit) * 18);
   border: none;
-  border-radius: calc(var(--unit) * 30);
-  background: rgb(0 0 0 / 0.45);
-  color: #ece5d8;
+  border-radius: calc(var(--unit) * 23);
+  background: rgb(0 0 0 / 0.6);
+  color: #fff;
   cursor: inherit;
   font: inherit;
-  font-size: calc(var(--unit) * 28);
+  font-size: calc(var(--unit) * 26);
   font-weight: 600;
   text-align: start;
 }
@@ -147,8 +150,8 @@ const lineParts = computed(() => {
 
 /* The mark's place, its glyph to come from the trace of the game's own */
 .icon {
-  width: calc(var(--unit) * 36);
-  height: calc(var(--unit) * 36);
+  width: calc(var(--unit) * 27);
+  height: calc(var(--unit) * 27);
   flex: none;
 }
 </style>

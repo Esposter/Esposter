@@ -3,8 +3,9 @@ import type { ScreenBehaviour } from "#src/models/screen/ScreenBehaviour";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { MENU_SCREEN_BEHAVIOUR } from "#src/services/screen/constants";
 
-// What each screen does to the world under it: every menu holds it, as the game's single-player menus pause it, and
-// Photo mode alone leaves the clock running and the camera flying, the pointer still turning it, with the HUD hidden
+// What each screen does to the world under it: every menu holds it, as the game's single-player menus pause it, while
+// Photo mode and a talk leave the clock running with the HUD hidden, photo mode's camera flying and its pointer turning
+// It, and a talk's pointer let go for its replies
 export const ScreenBehaviourMap: Readonly<Record<ScreenKind, Readonly<ScreenBehaviour>>> = {
   [ScreenKind.Achievements]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.AdventurerHandbook]: MENU_SCREEN_BEHAVIOUR,
@@ -14,6 +15,7 @@ export const ScreenBehaviourMap: Readonly<Record<ScreenKind, Readonly<ScreenBeha
   [ScreenKind.CharacterArchive]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Chat]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.CoOp]: MENU_SCREEN_BEHAVIOUR,
+  [ScreenKind.Dialogue]: { isHeld: false, isHudHidden: true, isPointerReleased: true },
   [ScreenKind.Events]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Friends]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Inventory]: MENU_SCREEN_BEHAVIOUR,

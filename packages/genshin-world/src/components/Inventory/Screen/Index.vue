@@ -24,6 +24,7 @@ interface Props {
 const { gameText, inventory, wallet } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const category = ref(ItemCategory.Weapon);
+const selectedId = ref("");
 const sort = ref(InventorySort.Level);
 const isDescending = ref(true);
 const tabLabels = computed(() =>
@@ -87,6 +88,7 @@ const currencies = computed(() =>
       v-model:category="category"
       v-model:is-descending="isDescending"
       v-model:sort="sort"
+      v-model:selected-id="selectedId"
       :back-label="gameText[GameTextKey.Back]"
       :capacity
       :cells

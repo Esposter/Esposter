@@ -6,6 +6,7 @@ export const CACHE_LOW_MS: number = Temporal.Duration.from({ minutes: 10 }).tota
 export const CACHE_WARNING_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 export const CLOCK_TICK_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 export const USAGE_WARNING_PERCENTAGE = 80;
+export const USAGE_RESERVE_PERCENTAGE = 90;
 export const MAX_WAYPOINTS = 3;
 export const MAX_SHOWN_TASKS = 8;
 // Whole minutes as the band writes them, `12m`
@@ -24,15 +25,19 @@ export const HANDOFF_QUESTION =
 export const VEIL_SECTION_ID = "genshin-mods-veil";
 export const VEIL_SYSTEM_SECTION =
   "Recording mode is on: the screen is being recorded or shared. Never write an email address, a phone number, a money amount, an API key, a token or a password in a reply; write a placeholder such as [email], [phone], [amount] or [secret] instead, even when asked for the value. Tool calls still use the real values.";
+export const RESERVE_SECTION_ID = "genshin-mods-reserve";
+// The reserve's section ends on this instruction, the same for every window so only the window and its reset time vary
+export const RESERVE_INSTRUCTION =
+  "Until it resets, start no new agent or workflow that writes code or designs; have each running one commit what builds and end on a handoff spec; commit and push the work in hand; write every open item down with what it takes to resume it cold (its paths, what is done, the calls made, the next step); clean up idle servers, shells and monitors; keep only long-running compute going.";
 // The tools that look something up, the tools that change files, and the shells whose command decides which it is
 export const LOOKUP_TOOLS: readonly string[] = ["Glob", "Grep", "Read", "WebFetch"];
 export const RESET_TOOLS: readonly string[] = ["Agent", "Edit", "NotebookEdit", "Write"];
 export const SHELL_TOOLS: readonly string[] = ["Bash", "PowerShell"];
 // The `export` and `cd` a session chains ahead of its command, each stripped as one leading segment
-export const LEADING_SEGMENT_REGEX = /^\s*(?:export\s[^&;]*&&|cd\s[^&;]*&&|cd\s[^&;]*;)\s*/u;
+export const LEADING_SEGMENT_REGEX: RegExp = /^\s*(?:export\s[^&;]*&&|cd\s[^&;]*&&|cd\s[^&;]*;)\s*/u;
 // The commands that only read, a whole first word each so `catalog` is not `cat`. No interpreter is one, since what
 // It runs may write as readily as read; PowerShell's cmdlets are matched in any case, as PowerShell matches them
-export const LOOKUP_COMMAND_REGEX =
+export const LOOKUP_COMMAND_REGEX: RegExp =
   /^\s*(?:cat|sed|grep|rg|find|ls|head|tail|awk|wc|get-content|get-childitem|select-string|git\s+(?:show|log|diff)|gh\s+run\s+view)(?:\s|$)/iu;
 // Every third lookup in a row, the chain a haiku agent should answer as one bounded question
 export const DELEGATION_NUDGE_EVERY = 3;

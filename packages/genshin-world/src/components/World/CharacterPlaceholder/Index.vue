@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import type { LightUniforms } from "genshin-engine";
+import type { LightUniforms, Locomotion } from "genshin-engine";
 import type { DataTexture } from "three";
 
 import { CHARACTER_PLACEHOLDER_COLOR } from "#src/services/constants";
-import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
 import { createToonMaterial } from "genshin-engine";
 import { CapsuleGeometry } from "three";
 
 interface Props {
-  characterId: number;
   lightUniforms: LightUniforms;
+  // How the character moves, whose body's capsule is drawn
+  locomotion: Locomotion;
   rampTexture: DataTexture;
 }
 
-const { characterId, lightUniforms, rampTexture } = defineProps<Props>();
+const { lightUniforms, locomotion, rampTexture } = defineProps<Props>();
 // The character's body's capsule, stood on its feet, drawn where no model of it is
 const placeholderGeometry = computed(() => {
-  const { capsuleHeight, capsuleRadius } = getCharacterLocomotion(characterId);
+  const { capsuleHeight, capsuleRadius } = locomotion;
   return new CapsuleGeometry(capsuleRadius, capsuleHeight - capsuleRadius * 2).translate(0, capsuleHeight / 2, 0);
 });
 const placeholderMaterial = createToonMaterial({ color: CHARACTER_PLACEHOLDER_COLOR, lightUniforms, rampTexture });

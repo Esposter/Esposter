@@ -38,20 +38,23 @@ flowchart TD
 
 ## Key files
 
-| File                                                                   | Role                                                                                |
-| :--------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`    | A pick up taken into the bag: stacks, single pieces, room and what is left          |
-| `packages/genshin-world/src/services/inventory/computeInventoryTab.ts` | A tab's entries in the order the game shows them                                    |
-| `packages/genshin-world/src/services/inventory/ItemCategoryRoomMap.ts` | The room of the tabs counted on their own                                           |
-| `packages/genshin-world/src/services/inventory/constants.ts`           | The bag's kinds, the starting levels, the currencies shown, an empty bag and wallet |
-| `packages/genshin-world/src/models/inventory/Currency.ts`              | The seven currencies the wallet counts                                              |
-| `packages/genshin-world/src/components/Inventory/Screen/Index.vue`     | The bag's screen in the reader's language                                           |
-| `packages/genshin-interface/src/components/InventoryScreen/Index.vue`  | The bag's tabs, room, sort, grid and counts                                         |
-| `packages/genshin-interface/src/models/ItemCategory.ts`                | The nine tabs, in the game's order                                                  |
+| File                                                                      | Role                                                                                |
+| :------------------------------------------------------------------------ | :---------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`       | A pick up taken into the bag: stacks, single pieces, room and what is left          |
+| `packages/genshin-world/src/services/inventory/computeInventoryTab.ts`    | A tab's entries in the order the game shows them                                    |
+| `packages/genshin-world/src/services/inventory/ItemCategoryRoomMap.ts`    | The room of the tabs counted on their own                                           |
+| `packages/genshin-world/src/services/inventory/constants.ts`              | The bag's kinds, the starting levels, the currencies shown, an empty bag and wallet |
+| `packages/genshin-world/src/models/inventory/Currency.ts`                 | The seven currencies the wallet counts                                              |
+| `packages/genshin-world/src/components/Inventory/Screen/Index.vue`        | The bag's screen in the reader's language                                           |
+| `packages/genshin-world/src/components/Inventory/Screen/Index.fixture.ts` | The weapons tab of 1,347 entries, the parity page's and the visual suite's state    |
+| `packages/genshin-interface/src/components/InventoryScreen/Index.vue`     | The bag's tabs, room, sort, grid and counts                                         |
+| `packages/genshin-interface/src/models/ItemCategory.ts`                   | The nine tabs, in the game's order                                                  |
 
 ## Notes
 
-- **The screen's look is provisional.** Every place, size and colour, and the tabs' and items' icons, wait on the inventory's passes against a recording of the English client; which counts the game shows beside its tabs is read off the same recording.
+- **The weapons tab is the first state matched.** Its reference is a frame of a public account tour's recording of the English PC client at 1080 high, 30 seconds into its clip, drawn behind the screen (`inventory-weapons` in `ParityReferenceMap`). The grid's four columns, its cells, the detail panel's bands and name, the tab row and the count sit where the frame puts them, and the mean difference went from 24.87% (FLIP 0.7626) to 9.14% (FLIP 0.3080) over that frame's own pixels.
+- **What the backdrop cannot score.** A reference drawn behind the screen shows the game's own tab icons, arrows and Details button through every area the screen leaves transparent, so a piece this screen drops there scores as if drawn. Those pieces are the nine tabs' icons, the arrows, the Details button and the stats block of the detail panel, none built yet. The remaining difference is the grid's item art, which the rules keep out, and the stats the model does not hold.
+- **Not built yet.** The nine tabs' icons (a glyph pass over the wiki's 64 pixel icons), the grid's item icons and stars, the detail panel's stats, its footer line, the Details button and its arrows, the sort as the game's dropdown, and the currencies' place, which the frame does not show and this screen places beside the count. The screen's animations wait on the recordings listed in the roadmap.
 - **The wish's currencies are counted, not stacked.** The game files the Fates, Starglitter and Stardust as Precious Items with a stack of their own, so each takes one of the bag's kinds; the wallet counts them apart, and the bag's kinds leave them out.
 
 ## Sources

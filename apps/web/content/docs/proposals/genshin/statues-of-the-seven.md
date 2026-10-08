@@ -38,16 +38,16 @@ flowchart TD
 
 **This adds, in order:**
 
-1. **Oculi**, placed from the streaming records, and Mondstadt's statue levels with their rewards.
+1. **Oculi**, placed from the spawned places' fit of the official map, and Mondstadt's statue levels with their rewards.
 2. **The maximum stamina**, raised by the levels.
 3. **The Statue's Blessing**, its pool and auto-recover, once the party has health.
 4. **The Traveler's resonance**, once the Traveler's kit follows its element.
-5. **Each later region's Oculi and levels**, as the region is built.
+5. **Each later region's Oculi and levels**, with that region.
 
 ## Data and measures
 
 - **Read from the game's tables:** `CityLevelupConfigData` and `CityConfigData` for the levels, their Oculi, rewards and actions, and the levels' reward rows; the Oculi's places from the spawned places' fit.
-- **Measured:** how near an Oculus shows on the minimap, off a recording, provisional until then.
+- **Measured:** how near an Oculus shows on the minimap, read off a recording of one being found.
 
 ## Key files
 

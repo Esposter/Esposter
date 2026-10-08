@@ -10,6 +10,9 @@ export enum GameTextKey {
   // The currencies by their item names: the two Fates, Genesis Crystals, the Masterless Starglitter and Stardust
   // Wishes return, Mora and Primogems
   AcquaintFate = "1444439468",
+  // The Paimon menu's profile card, its experience and rank, the world level and the player's UID with its copy
+  AdventureExp = "UI_PLAYER_PROFILE_PLAYEREXP",
+  AdventureRank = "UI_PLAYER_PROFILE_PLAYERLV",
   AdventurerHandbook = "UI_ADVENTURE_CARD_TITLE",
   Archive = "UI_CODEX_HOME_TITLE",
   // The character screen's attributes under the game's own names, and the groups its details sort them into
@@ -35,6 +38,8 @@ export enum GameTextKey {
   AttributePyroDamageBonus = "FIGHT_PROP_FIRE_ADD_HURT",
   // A screen's way back to the world
   Back = "VIDEO_RETREAT",
+  // The settings' side bar tab for the sound, with the graphics one beside it
+  Audio = "UI_SETTING_PAGE_SOUND_CATEGORY",
   BattlePass = "UI_STC_GAMEENTRYPAGE_BP",
   // The label over a character's birthday on their profile
   Birthday = "INFORMATION_AVATAR_BIRTHDAY",
@@ -47,14 +52,36 @@ export enum GameTextKey {
   CharacterProfile = "FETTER_NAME",
   CharacterTalents = "UI_STC_CHARACTERPAGE_SKILL",
   CharacterWeapons = "UI_STC_CHARACTERPAGE_WEAPON",
+  // The Paimon menu's link to the game's community, which opens a web page
+  Community = "UI_STC_GAMEENTRYPAGE_COMMUNITY",
   Chat = "UI_CHAT_CHAT_BUTTON",
+  CompatibilityMode = "1992637634",
+  // The quit prompt's first button, which goes back to the world
+  ContinueGame = "UI_LOGOUT_CONFIRM_CONTINUE_GAME",
   CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
+  Copy = "UI_FRIEND_COPY",
+  // The enemies' drops by their item names
+  DamagedMask = "461826100",
   // The dialogue's auto-play button, as it reads while off and while playing
   DialogueAuto = "UI_TALK_DIALOG_AUTO_TALK_START",
   DialogueAutoPlaying = "UI_TALK_DIALOG_AUTO_TALK_STOP",
+  // The HUD's skill and burst buttons, named as the controls name their keys
+  ElementalBurst = "CONTROL_SKILL5",
+  ElementalSkill = "CONTROL_SKILL2",
+  // The quit prompt's button that exits the game to the desktop
+  ExitToDesktop = "UI_LOGOUT_CONFIRM_EXIT_TO_DESKTOP",
+  // The quit prompt's button that leaves the world for the login interface
+  ExitToLoginInterface = "UI_LOGOUT_CONFIRM_EXIT_TO_TITLE_SCREEN",
   Events = "UI_STC_GAMEENTRYPAGE_ACTIVITY",
+  // The feedback link, a web page the Paimon menu opens
+  Feedback = "UI_STC_GAMEENTRYPAGE_FEEDBACK",
   Friends = "UI_FRIEND_TITLE",
   // The game's own name, as its window's title says it
+  // The settings' graphics tab and its rows: the quality tier, the custom tier's and the global illumination
+  Graphics = "UI_SETTING_PAGE_GRAPHIC_CATEGORY",
+  GraphicsAdvanced = "UI_SETTING_GRAPHICS_ADVANCED",
+  GraphicsGlobalIllumination = "UI_SETTING_GRAPHICS_GLOBAL_ILLUMINATION",
+  GraphicsQuality = "UI_SETTING_GRAPHICS_QUALITY",
   GameTitle = "LANGUAGE_WINDOWS_TITLENAME",
   GenesisCrystal = "2722599324",
   // The Adventurer Handbook's tabs
@@ -64,6 +91,8 @@ export enum GameTextKey {
   HandbookEnemies = "UI_ADVENTURE_INVESTIGATION_MONSTER_PAGE",
   HandbookExperience = "UI_ADVENTURE_TRAVELS",
   HandbookGuide = "UI_TEXT_QUEST_GUIDE_BOOKMARK",
+  // The HUD's HP bars, named for a screen reader
+  Health = "FIGHT_PROP_CUR_HP",
   // The health notice's paragraphs, a blank line between them
   HealthNotice = "684850635",
   HealthNoticeTitle = "1737243758",
@@ -104,14 +133,17 @@ export enum GameTextKey {
   // The welcome card's greeting, the player's name in place of its `%s`
   LoginWelcome = "tips_enter_game",
   Mail = "UI_PLAYER_PROFILE_MAIL",
+
   Map = "UI_STC_MAP_TITLE",
   MasterlessStardust = "3899400612",
   MasterlessStarglitter = "1417946372",
   Mora = "3578052980",
   Notices = "UI_STC_GAMEENTRYPAGE_BULLETIN",
+  OminousMask = "1726035172",
   // The HUD's corner button that opens the Paimon menu, named for the face it shows
   Paimon = "NPC_EXPNAME_12911",
   PartySetup = "UI_TEAM_TITLE",
+  PressToOpen = "1860729186",
   Primogem = "2696654964",
   // The quest screen's button on the quest being navigated to
   QuestCancelNavigation = "TASK_TRACK_CLEAR",
@@ -134,6 +166,9 @@ export enum GameTextKey {
   SortDescending = "UI_RelicIterations_Ordering_Descending",
   SortLevel = "SORT_BY_LEVEL",
   SortQuality = "SORT_BY_QUALITY",
+  StainedMask = "3015475460",
+  // The HUD's stamina meter, named for a screen reader
+  Stamina = "133358079",
   // A Statue of The Seven, as the map titles its mark
   StatueOfTheSeven = "UI_MAPMARK_MarkGoddess_TITLE",
   // Photo mode's own shutter, which the Paimon menu's entry into it says too
@@ -146,6 +181,7 @@ export enum GameTextKey {
   TrainingGuide = "UI_TRAININGGUIDE_TITLE",
   // The player's own title, a word per gender where the language has one
   Traveler = "UI_TEXT_QUEST_GUIDE_LABEL",
+  UID = "UI_PLAYER_PROFILE_UID",
   Wish = "UI_GACHA_TITLE",
   // The wish's kinds, a set's button with its count in place of `{0}`, and the Epitomized Path with its Fate Points
   // In place of `{0}` of `{1}`
@@ -156,6 +192,7 @@ export enum GameTextKey {
   WishFatePoint = "UI_GACHA_WISH_POINT",
   WishStandard = "UI_GACHA_TYPE_02",
   WishWeaponEvent = "UI_GACHA_TYPE_04",
+  WorldLevel = "UI_WORLDLEVEL_TITLE",
 }
 
 export const GameTextKeys: readonly GameTextKey[] = Object.values(GameTextKey);

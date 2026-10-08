@@ -8,6 +8,7 @@ import { extractCommand } from "#src/services/genshinAssets/commands/extractComm
 import { fitCommand } from "#src/services/genshinAssets/commands/fitCommand";
 import { interfaceCommand } from "#src/services/genshinAssets/commands/interfaceCommand";
 import { inventoryCommand } from "#src/services/genshinAssets/commands/inventoryCommand";
+import { itemsCommand } from "#src/services/genshinAssets/commands/itemsCommand";
 import { locomotionCommand } from "#src/services/genshinAssets/commands/locomotionCommand";
 import { mapCommand } from "#src/services/genshinAssets/commands/mapCommand";
 import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand";
@@ -15,6 +16,7 @@ import { playlistCommand } from "#src/services/genshinAssets/commands/playlistCo
 import { shadersCommand } from "#src/services/genshinAssets/commands/shadersCommand";
 import { soundsCommand } from "#src/services/genshinAssets/commands/soundsCommand";
 import { statsCommand } from "#src/services/genshinAssets/commands/statsCommand";
+import { timingsCommand } from "#src/services/genshinAssets/commands/timingsCommand";
 import { treeCommand } from "#src/services/genshinAssets/commands/treeCommand";
 import { witnessCommand } from "#src/services/genshinAssets/commands/witnessCommand";
 import { defineCommand } from "citty";
@@ -33,6 +35,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     interface: interfaceCommand,
     clips: clipsCommand,
     locomotion: locomotionCommand,
+    timings: timingsCommand,
     witness: witnessCommand,
     music: musicCommand,
     sounds: soundsCommand,
@@ -40,5 +43,6 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     fit: fitCommand,
     stats: statsCommand,
     enemies: enemiesCommand,
+    items: itemsCommand,
   },
 });

@@ -15,6 +15,16 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "SplashHealthNotice",
     seconds: 9.5,
   },
+  // The weapons' tab of the bag at 1080 high, from a public account tour's recording of the English PC client, its frame
+  // At 30 seconds into the clip, drawn behind the bag so only the bag can differ. The streamer's camera at the top left
+  // And the recording's UID at the bottom right sit outside the region
+  "inventory-weapons": {
+    capture: "yt-_agTJviXj7s-bag.mp4",
+    isBackdrop: true,
+    region: { height: 1048, width: 1270, x: 650, y: 0 },
+    screen: "InventoryScreen",
+    seconds: 30,
+  },
   "loading-startup": { screen: "LoadingStartup", wikiTitle: "File:Loading Screen Startup.png" },
   // The title at dawn, day and night: frames of public recordings of older builds of the PC client idling on it with no
   // Interface, drawn at the current build's camera, each at the moment of the glide's loop its towers and walkway stand at
@@ -118,6 +128,18 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     props: { heldScrolled: 135, isInterfaceHidden: true, stage: "Title", timeOfDay: "Night" },
     screen: "LoginScreen",
     seconds: 12,
+  },
+  // The English PC client's map on M over Jueyun Karst, the wiki's full-screen 1080p screenshot: the drawing, the area
+  // Names, the player's pointer, the zoom and the region tag, against the terrain the game paints
+  "map-overlay-jueyun": { screen: "MapOverlay", wikiTitle: "File:Map Stardust in Jueyun.png" },
+  // The English PC client's Paimon menu at 2560 wide, from the 1.3 build's screenshot, the menu over the world and
+  // Its Paimon drawn to the panel's right, which the world draws; scored over the side bar and the panel above their
+  // Translucent feet, where the world shows through
+  "paimon-menu": {
+    isOtherBuild: true,
+    region: { height: 1030, width: 1024, x: 0, y: 0 },
+    screen: "MenuPaimon",
+    wikiTitle: "File:Paimon Menu Version 1.3.png",
   },
   "publisher-splash": { capture: "session-2.mp4", screen: "SplashPublisher", seconds: 1 },
   // The English PC client's quest screen listing every quest in progress, the wiki's screenshot of it at 1080 high

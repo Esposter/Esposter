@@ -7,7 +7,8 @@ const BANNER_LABELS = {
   [BannerKind.WeaponEvent]: "Weapon Event Wish",
 };
 
-// The weapon wish open with its Epitomized Path, one Intertwined Fate held, and a ten's draw shown over it
+// The weapon wish open with its pool and its Epitomized Path, one Intertwined Fate held, and a draw shown over it, the
+// Highest rarity first
 export const props = {
   backLabel: "Back",
   bannerKind: BannerKind.WeaponEvent,
@@ -19,6 +20,12 @@ export const props = {
   ],
   fatePoints: "Fate Point: 0/1",
   pathLabel: "Epitomized Path",
+  pool: [
+    { id: 15_502, isFeatured: true, name: "Amos' Bow", rarity: 5 },
+    { id: 11_501, isFeatured: false, name: "Aquila Favonia", rarity: 5 },
+    { id: 11_401, isFeatured: true, name: "Favonius Sword", rarity: 4 },
+    { id: 11_301, isFeatured: false, name: "Cool Steel", rarity: 3 },
+  ],
   results: [],
   sets: [
     { cost: "Intertwined Fate ×1", count: 1, isAffordable: true, label: "Wish ×1" },

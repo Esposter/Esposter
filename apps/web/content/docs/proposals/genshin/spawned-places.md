@@ -56,6 +56,6 @@ flowchart TD
 
 ## Sources
 
-- [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map, its labels and its points, whose data the map serves publicly.
+- [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map, which draws its points in the browser alone, and [its label tree](https://sg-public-api-static.hoyolab.com/common/map_user/ys_obc/v1/map/label/tree?map_id=2&app_sn=ys_obc&lang=en-us), the public data it serves: every label, the statues, waypoints, Oculi and chests among them. Its point list beside it gives each point's label, map place, layer, area and contributor.
 - [Oculus](https://genshin-impact.fandom.com/wiki/Oculus), Genshin Impact Wiki: each region's count of Oculi, one of the counts a fit is held to.
 - [Chest](https://genshin-impact.fandom.com/wiki/Chest), Genshin Impact Wiki: the chests and their kinds the map marks.

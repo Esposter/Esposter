@@ -5,7 +5,9 @@ describe(getDamage, () => {
   test("halves a hit on an enemy of the attacker's level, its defence neither reduced nor ignored", () => {
     expect.hasAssertions();
 
-    expect(getDamage({ characterLevel: 90, enemyLevel: 90, resistance: 0, stat: 1, talentMultiplier: 1 })).toBe(0.5);
+    expect(getDamage({ attackerLevel: 90, defense: 5 * 90 + 500, resistance: 0, stat: 1, talentMultiplier: 1 })).toBe(
+      0.5,
+    );
   });
 
   test("multiplies the base damage and flat bonus by the damage bonus, crit, defence, resistance and amplifier", () => {
@@ -14,10 +16,10 @@ describe(getDamage, () => {
     const damage = getDamage({
       additiveBaseDamageBonus: 200,
       amplifyingMultiplier: 2,
-      characterLevel: 90,
+      attackerLevel: 90,
       criticalDamage: 1,
       damageBonus: 0.5,
-      enemyLevel: 90,
+      defense: 5 * 90 + 500,
       isCritical: true,
       resistance: 0.1,
       stat: 1000,
@@ -31,10 +33,10 @@ describe(getDamage, () => {
     expect.hasAssertions();
 
     const damage = getDamage({
-      characterLevel: 90,
+      attackerLevel: 90,
+      defense: 5 * 90 + 500,
       defenseIgnored: 0.5,
       defenseReduction: 0.5,
-      enemyLevel: 90,
       resistance: 0,
       stat: 1,
       talentMultiplier: 1,

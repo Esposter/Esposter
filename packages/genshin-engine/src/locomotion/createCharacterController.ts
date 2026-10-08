@@ -218,9 +218,13 @@ export const createCharacterController = ({
       facing = Math.atan2(-moveDirection.x, -moveDirection.z);
   };
   return {
+    face: (targetFacing) => {
+      facing = targetFacing;
+    },
     get facing() {
       return facing;
     },
+    heldPresses,
     holdPresses: (input) => {
       for (const action of input.pressedActions) heldPresses.add(action);
     },
@@ -228,6 +232,7 @@ export const createCharacterController = ({
     place: (placedPosition, placedFacing) => {
       position.copy(placedPosition);
       previousPosition.copy(placedPosition);
+      lastFullPosition.copy(placedPosition);
       velocity.set(0, 0, 0);
       phase.state = LocomotionState.Idle;
       phase.stateSeconds = 0;

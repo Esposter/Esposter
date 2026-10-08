@@ -44,7 +44,7 @@ flowchart TD
 2. **Auto Cook.**
 3. **Processing.**
 4. **Campfires**, lit and put out.
-5. **Specialties and talents**, once the characters' passives are read.
+5. **Specialties and talents**, with the characters' passives.
 
 ## Data and measures
 

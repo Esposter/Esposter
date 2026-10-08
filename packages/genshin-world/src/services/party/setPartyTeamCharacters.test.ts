@@ -1,5 +1,6 @@
 import { PartyTeamResult } from "#src/models/party/PartyTeamResult";
 import { createParty } from "#src/services/party/createParty";
+import { createPartyMember } from "#src/services/party/createPartyMember";
 import { setPartyTeamCharacters } from "#src/services/party/setPartyTeamCharacters";
 import { describe, expect, test } from "vitest";
 
@@ -11,18 +12,19 @@ describe(setPartyTeamCharacters, () => {
     party.activeIndex = 2;
     const result = setPartyTeamCharacters(party, 0, [4, 5]);
 
-    expect({ activeIndex: party.activeIndex, characterIds: party.teams[0]?.characterIds, result }).toStrictEqual({
-      activeIndex: 1,
-      characterIds: [4, 5],
-      result: PartyTeamResult.Done,
-    });
+    expect({
+      activeIndex: party.activeIndex,
+      characterIds: party.teams[0]?.characterIds,
+      isNewMemberKept: party.characterIdMemberMap.has(5),
+      result,
+    }).toStrictEqual({ activeIndex: 1, characterIds: [4, 5], isNewMemberKept: true, result: PartyTeamResult.Done });
   });
 
   test("refuses to empty the deployed team or to put a character who is down on the field", () => {
     expect.hasAssertions();
 
     const party = createParty([1]);
-    party.fallenCharacterIds.push(2);
+    party.characterIdMemberMap.set(2, { ...createPartyMember(), healthShare: 0 });
 
     expect([
       setPartyTeamCharacters(party, 0, []),

@@ -20,8 +20,16 @@ interface Props {
 }
 
 defineSlots<{
-  // The party's portraits down the right side, which party setup draws
+  // The member on the field's HP bar and level, at the bottom's middle
+  health?: () => VNode;
+  // The deployed team down the right side
   party?: () => VNode;
+  // The prompts of what the character can act on, beside the centre
+  prompts?: () => VNode;
+  // The tracked quest, under the minimap
+  quest?: () => VNode;
+  // The skill and burst buttons, at the bottom right
+  skills?: () => VNode;
   // The stamina meter beside the character, which places itself where the character stands on the screen
   stamina?: () => VNode;
 }>();
@@ -33,16 +41,22 @@ const isTouch = useMediaQuery("(pointer: coarse)");
 
 <template>
   <!-- The heads-up display over the world: only the pieces the world backs, each in its place. The Paimon button and
-       The minimap in the top left, the party down the right, the stamina meter where it places itself, and on a touch
-       Screen the touch controls under them all. Everything between the pieces lets the pointer through to the world -->
-  <GameScreen class="hud">
+       The minimap in the top left with the quest tracker under them, the party down the right, the member on the
+       Field's health at the bottom's middle, the skill and burst at the bottom right, the stamina meter where it places
+       Itself, and on a touch screen the touch controls under them all. Everything between the pieces lets the pointer
+       Through to the world, and a press on a piece stays the piece's, never reaching the world's input as an attack -->
+  <GameScreen class="hud" @mousedown.stop>
     <HudTouch v-if="isTouch" :game-text :input />
     <div class="corner">
       <HudPaimonButton :game-text @press="emit('menu')" />
       <HudMinimap :camera :game-text :landmarks @open="emit('map')" />
     </div>
+    <div class="quest"><slot name="quest" /></div>
     <div class="party"><slot name="party" /></div>
+    <div class="health"><slot name="health" /></div>
+    <div class="skills"><slot name="skills" /></div>
     <slot name="stamina" />
+    <slot name="prompts" />
   </GameScreen>
 </template>
 
@@ -62,10 +76,29 @@ const isTouch = useMediaQuery("(pointer: coarse)");
   gap: calc(var(--unit) * 24);
 }
 
+.quest {
+  position: absolute;
+  top: calc(var(--unit) * 270);
+  left: calc(var(--canvas-inset) + var(--unit) * 32);
+}
+
 .party {
   position: absolute;
   top: 50%;
   right: calc(var(--canvas-inset) + var(--unit) * 32);
   translate: 0 -50%;
+}
+
+.health {
+  position: absolute;
+  bottom: calc(var(--unit) * 40);
+  left: 50%;
+  translate: -50% 0;
+}
+
+.skills {
+  position: absolute;
+  right: calc(var(--canvas-inset) + var(--unit) * 64);
+  bottom: calc(var(--unit) * 40);
 }
 </style>

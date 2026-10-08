@@ -8,7 +8,7 @@
 A Claude Code plugin of six mods: five drawn as one band above the prompt, in the session character's colour (the next steps one press away, what the session is spending with a one-press handoff, recording mode, a goal's task list and clock, and a question before editing a file another session just changed), and a delegation guard that nudges a run of lookups toward a haiku agent.
 
 - **Waypoints** — after each answered turn, up to three next steps the session suggests, each a button that sends it as the next prompt.
-- **Resin** — the prompt cache's time left, the context window, the five-hour and weekly limits and the cost so far, with **Warm**, **Compact** and **Handoff**, and a toast before the cache goes cold.
+- **Resin** — the prompt cache's time left, the context window, the five-hour and weekly limits and the cost so far, with **Warm**, **Compact** and **Handoff**, a toast before the cache goes cold, and a usage reserve past nine-tenths of a limit window that has the session wind down until the window resets.
 - **Veil** — recording mode: emails, amounts, phone numbers and secrets shown as placeholders while the model still reads the real values.
 - **Commission** — a goal meter over the session's task list: the goal, tasks done, the share complete and the minutes since it started.
 - **Ward** — before an edit to a file another session changed in the last half hour, a question: proceed, move to a worktree, or cancel.

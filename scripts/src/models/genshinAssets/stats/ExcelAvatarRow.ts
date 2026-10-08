@@ -10,6 +10,7 @@ export interface ExcelAvatarRow {
   hpBase: number;
   id: number;
   initialWeapon: number;
+  nameTextMapHash: number;
   propGrowCurves: { growCurve: string; type: string }[];
   qualityType: string;
   skillDepotId: number;

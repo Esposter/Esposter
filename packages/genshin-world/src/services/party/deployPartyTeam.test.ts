@@ -1,5 +1,6 @@
 import { PartyTeamResult } from "#src/models/party/PartyTeamResult";
 import { createParty } from "#src/services/party/createParty";
+import { createPartyMember } from "#src/services/party/createPartyMember";
 import { deployPartyTeam } from "#src/services/party/deployPartyTeam";
 import { describe, expect, test } from "vitest";
 
@@ -9,7 +10,7 @@ describe(deployPartyTeam, () => {
 
     const party = createParty([1]);
     party.teams[1] = { characterIds: [2, 3], name: "" };
-    party.fallenCharacterIds.push(2);
+    party.characterIdMemberMap.set(2, { ...createPartyMember(), healthShare: 0 });
     const result = deployPartyTeam(party, 1);
 
     expect({ activeIndex: party.activeIndex, deployedTeamIndex: party.deployedTeamIndex, result }).toStrictEqual({
@@ -24,7 +25,7 @@ describe(deployPartyTeam, () => {
 
     const party = createParty([1]);
     party.teams[1] = { characterIds: [2], name: "" };
-    party.fallenCharacterIds.push(2);
+    party.characterIdMemberMap.set(2, { ...createPartyMember(), healthShare: 0 });
 
     expect([deployPartyTeam(party, 1), deployPartyTeam(party, 2), party.deployedTeamIndex]).toStrictEqual([
       PartyTeamResult.Down,
