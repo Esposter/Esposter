@@ -237,6 +237,7 @@ Clips nothing published shows, which the user records: each 30 seconds or less, 
 - [ ] `wildlife-flee-squirrel.mkv` — the same flight from a Squirrel in Windrise's area, 15 seconds at most, read into the same constants.
 - [ ] `wildlife-flee-crimson-fox.mkv` — the same flight from a Crimson Fox in Windrise's area, 15 seconds at most, read into the same constants.
 - [ ] `gadget-cooldown-pause.mkv` — a Treasure Compass or another gadget used, then the menu held open until its cooldown would have ended and closed, and the gadget used again at once, 45 seconds at most; it shows whether the cooldown counts on through the menu, as the wiki states and the [gadgets](/docs/genshin/gadgets) page keeps it.
+- [ ] `gather-pick.mkv` — a cooking ingredient and a local specialty picked with F from standing in reach, the point gone from the screen after each pick and the bag's count rising by one, 15 seconds at most; whether one press takes a point and whether a picked point is drawn again are read from it, and the respawns the wiki gives (46 hours, and the midnight after for an ingredient) are not checkable in one clip, so they wait on a longer sitting.
 
 ## Opening
 
