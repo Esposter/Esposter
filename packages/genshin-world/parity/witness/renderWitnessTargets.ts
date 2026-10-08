@@ -192,10 +192,11 @@ export const renderWitnessTargets = async (
   // A failed readback still hands the scene back as it was, so a later render or capture never draws the targets
   await withFinalizerAsync(
     async () => {
-      if (sun instanceof DirectionalLight && lightDirection)
-        sun.position
-          .copy(sun.target.position)
-          .addScaledVector(new Vector3(...lightDirection).normalize(), sun.position.distanceTo(sun.target.position));
+      if (sun instanceof DirectionalLight && lightDirection) {
+        // Measured before the copy, which moves the light onto its target and would leave the distance at zero
+        const distance = sun.position.distanceTo(sun.target.position);
+        sun.position.copy(sun.target.position).addScaledVector(new Vector3(...lightDirection).normalize(), distance);
+      }
       camera.layers.set(TARGET_LAYER);
       // Its own place in the world the scene camera's, whatever holds that camera or freezes its matrix
       const shadowCamera = shadowCameraMap.get(camera) ?? camera.clone();
