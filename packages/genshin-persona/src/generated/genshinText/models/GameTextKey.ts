@@ -79,6 +79,8 @@ export enum GameTextKey {
   GameTitle = "LANGUAGE_WINDOWS_TITLENAME",
   GenesisCrystal = "2722599324",
   // The game's own name, as its window's title says it
+  GameTitle = "LANGUAGE_WINDOWS_TITLENAME",
+  GenesisCrystal = "2722599324",
   // The settings' graphics tab and its rows: the quality tier, the custom tier's and the global illumination
   Graphics = "UI_SETTING_PAGE_GRAPHIC_CATEGORY",
   GraphicsAdvanced = "UI_SETTING_GRAPHICS_ADVANCED",
@@ -182,7 +184,7 @@ export enum GameTextKey {
   TrainingGuide = "UI_TRAININGGUIDE_TITLE",
   // The player's own title, a word per gender where the language has one
   Traveler = "UI_TEXT_QUEST_GUIDE_LABEL",
-  UID = "UI_PLAYER_PROFILE_UID",
+  Uid = "UI_PLAYER_PROFILE_UID",
   Wish = "UI_GACHA_TITLE",
   // The wish's kinds, a set's button with its count in place of `{0}`, and the Epitomized Path with its Fate Points
   // In place of `{0}` of `{1}`

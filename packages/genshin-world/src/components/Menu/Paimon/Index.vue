@@ -67,7 +67,7 @@ onMounted(() => {
     <div class="avatar" />
     <div class="edit" />
     <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Edit]" class="edit-glyph" />
-    <p class="uid-label">{{ gameText[GameTextKey.UID] }}</p>
+    <p class="uid-label">{{ gameText[GameTextKey.Uid] }}</p>
     <div class="uid-pill" />
     <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Copy]" class="copy-glyph" />
     <button class="copy" disabled type="button">{{ gameText[GameTextKey.Copy] }}</button>
