@@ -15,7 +15,6 @@ import { locomotionCommand } from "#src/services/genshinAssets/commands/locomoti
 import { mapCommand } from "#src/services/genshinAssets/commands/mapCommand";
 import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand";
 import { offeringsCommand } from "#src/services/genshinAssets/commands/offeringsCommand";
-import { offeringsCommand } from "#src/services/genshinAssets/commands/offeringsCommand";
 import { playlistCommand } from "#src/services/genshinAssets/commands/playlistCommand";
 import { pointsCommand } from "#src/services/genshinAssets/commands/pointsCommand";
 import { pointsFitCommand } from "#src/services/genshinAssets/commands/pointsFitCommand";
@@ -53,7 +52,6 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     fit: fitCommand,
     rank: rankCommand,
     statues: statuesCommand,
-    offerings: offeringsCommand,
     offerings: offeringsCommand,
     stats: statsCommand,
     enemies: enemiesCommand,
