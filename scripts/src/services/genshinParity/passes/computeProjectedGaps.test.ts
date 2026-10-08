@@ -21,4 +21,20 @@ describe(computeProjectedGaps, () => {
 
     expect(gap).toBeCloseTo(0);
   });
+
+  test("reads no pair whose export stands behind the eye or off the frame", () => {
+    expect.hasAssertions();
+
+    const gaps = computeProjectedGaps(
+      POSE,
+      [
+        { expected: [0, 0, -DEPTH], fitted: [0, 0, DEPTH] },
+        { expected: [2 * -DEPTH, 0, DEPTH], fitted: [0, 0, DEPTH] },
+      ],
+      SIZE,
+      SIZE,
+    );
+
+    expect(gaps).toStrictEqual([]);
+  });
 });

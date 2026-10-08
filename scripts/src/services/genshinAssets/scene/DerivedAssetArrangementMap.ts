@@ -60,7 +60,7 @@ export const DerivedAssetArrangementMap: Record<
     },
     families: [
       {
-        name: "towers",
+        name: "Towers",
         // Each by both ends of its lathe's axis, its foot and its crown, so a scale off stands its crown off
         readExpected: async (placements, meshDirectory) =>
           (await readTowerProfiles(placements, meshDirectory)).flatMap(({ placement, profile }) => [
@@ -90,7 +90,7 @@ export const DerivedAssetArrangementMap: Record<
         },
       },
       {
-        name: "bridges",
+        name: "Bridges",
         readExpected: (placements) =>
           Promise.resolve(
             readObjectPositions(placements, ({ mesh }) =>
@@ -103,7 +103,7 @@ export const DerivedAssetArrangementMap: Record<
           ),
       },
       {
-        name: "door",
+        name: "Door",
         // Its skin, which names no mesh of its own
         readExpected: (placements) =>
           Promise.resolve(readObjectPositions(placements, ({ name }) => name === "LoginScene_Door01_Vo")),
