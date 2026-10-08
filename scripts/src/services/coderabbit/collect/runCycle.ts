@@ -1,264 +1,181 @@
 import type { CycleInput } from "#src/models/coderabbit/collect/CycleInput";
 import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
-import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
-import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
-import { ReleasePullRequestState } from "#src/models/coderabbit/collect/ReleasePullRequestState";
-import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
-import {
-  ATTEMPT_RETRY_DELAY_SECONDS,
-  DEVELOP_BRANCH,
-  MAIN_BRANCH,
-  QUEUE_BRANCH,
-  SESSION_PROBE_PROMPT,
-  SessionRoleModelMap,
-} from "#src/services/coderabbit/collect/constants";
-import { foldCandidate } from "#src/services/coderabbit/collect/foldCandidate";
-import { foldReleaseMain } from "#src/services/coderabbit/collect/foldReleaseMain";
-import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
-import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
-import { mergeReleasePullRequest } from "#src/services/coderabbit/collect/mergeReleasePullRequest";
-import { openReleasePullRequest } from "#src/services/coderabbit/collect/openReleasePullRequest";
-import { portWindow } from "#src/services/coderabbit/collect/portWindow";
-import { postHeldNotice } from "#src/services/coderabbit/collect/postHeldNotice";
-import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
-import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
+import { WindowPullRequestListState } from "#src/models/coderabbit/collect/WindowPullRequestListState";
+import { checkIsStackingAllowed } from "#src/services/coderabbit/collect/checkIsStackingAllowed";
+import { DEVELOP_BRANCH } from "#src/services/coderabbit/collect/constants";
+import { drainWindow } from "#src/services/coderabbit/collect/drainWindow";
+import { getNewestWindowPullRequest } from "#src/services/coderabbit/collect/getNewestWindowPullRequest";
+import { getNextWindowNumber } from "#src/services/coderabbit/collect/getNextWindowNumber";
+import { getOpenedInLastHour } from "#src/services/coderabbit/collect/getOpenedInLastHour";
+import { getPausedWindow } from "#src/services/coderabbit/collect/getPausedWindow";
+import { getWindowOpenCount } from "#src/services/coderabbit/collect/getWindowOpenCount";
+import { openNextWindow } from "#src/services/coderabbit/collect/openNextWindow";
+import { orderWindowStack } from "#src/services/coderabbit/collect/orderWindowStack";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
-import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
-import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
-import { readReleasePullRequest } from "#src/services/coderabbit/collect/readReleasePullRequest";
+import { readMainCoderabbitConfig } from "#src/services/coderabbit/collect/readMainCoderabbitConfig";
 import { readSessionLimitResetMs } from "#src/services/coderabbit/collect/readSessionLimitResetMs";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
-import { replyAnswered } from "#src/services/coderabbit/collect/replyAnswered";
-import { runDrainStep } from "#src/services/coderabbit/collect/runDrainStep";
+import { readWindowPullRequests } from "#src/services/coderabbit/collect/readWindowPullRequests";
 import { runExpressLane } from "#src/services/coderabbit/collect/runExpressLane";
 import { runReturnStroke } from "#src/services/coderabbit/collect/runReturnStroke";
-import { runSession } from "#src/services/coderabbit/collect/runSession";
-import { settleRateLimit } from "#src/services/coderabbit/collect/settleRateLimit";
-import { syncFixes } from "#src/services/coderabbit/collect/syncFixes";
-import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
-import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
+import { walkWindowStack } from "#src/services/coderabbit/collect/walkWindowStack";
+import { REVIEWS_PER_HOUR } from "#src/services/coderabbit/shared/constants";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
-import { runGit } from "#src/services/shared/runGit";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// One pass: return, express, then either the open release — gate, merge — or the merged one — reply, drain, sync,
-// Port, push, reply, open. Every input is a remote fact and every write is either the single push or guarded by a
-// Predicate a later run re-evaluates, so any event may run this and a run against unchanged state does nothing. It
-// Returns its verdict rather than exiting, which is what makes a dry run one mode of the same code path (docs:
-// Infra/review-collector).
+// Every outcome from the stack down carries whatever retrigger the bot's stated deadline owes, which only the walk over
+// The stack learns — the outcomes before it carry none
+const getOutcome = (
+  kind: CycleOutcomeKind,
+  reason: string,
+  retriggerDelaySeconds?: number,
+  targetSha?: string,
+): CycleOutcome => ({ kind, reason, retriggerDelaySeconds, targetSha });
+
+// One pass: return, express, then the open stack — each window's gate, the bottom one merged and drained once its review
+// Completes — and then as many windows opened as the hourly ceiling and the stacking guard allow, each cut from the top
+// Of the stack. Every input is a remote fact and every write is either a push or guarded by a predicate a later run
+// Re-evaluates, so any event may run this and a run against unchanged state does nothing. It returns its verdict rather
+// Than exiting, which is what makes a dry run one mode of the same code path (docs: infra/review-collector).
 export const runCycle = async ({
   collectorSha,
   cwd,
   isDryRun,
   pullRequest: namedPullRequest,
 }: CycleInput): Promise<CycleOutcome> => {
-  // Every outcome from the gate down carries whatever retrigger the bot's stated deadline owes
-  let retriggerDelaySeconds: number | undefined;
-  const getOutcome = (kind: CycleOutcomeKind, reason: string, targetSha?: string): CycleOutcome => ({
-    kind,
-    reason,
-    retriggerDelaySeconds,
-    targetSha,
-  });
-
   const branchShas = readBranchShas(cwd);
   const { mainSha, queueSha } = branchShas;
-  // The drain may create or advance the fixes branch mid-pass, so this one is carried rather than re-read
-  let reviewFixesSha = branchShas.reviewFixesSha;
-  // The return stroke first: a release that merged moves `develop` before anything is measured against it
-  const returned = runReturnStroke({ cwd, developSha: branchShas.developSha, isDryRun, mainSha });
+  const viewerLogin = readViewerLogin();
+  const openPullRequests = readWindowPullRequests(WindowPullRequestListState.Open);
+  const windowHistory = readWindowPullRequests(WindowPullRequestListState.All);
+  // The return stroke first: a stack that merged moves `develop` before anything is measured against it, and an open
+  // Stack keeps `develop` on its top window
+  const returned = runReturnStroke({
+    cwd,
+    developSha: branchShas.developSha,
+    isDryRun,
+    isStackOpen: openPullRequests.length > 0,
+    mainSha,
+  });
   if (returned.outcome) return returned.outcome;
   const { developSha } = returned;
-  const viewerLogin = readViewerLogin();
-  const releasePullRequest = readReleasePullRequest();
-  // A limit Claude Code hit holds everything past the return stroke until it lifts: a release merged or a window
-  // Ported then has no drain behind it, and every session-backed step would download Claude Code to be refused again
+  // A limit Claude Code hit holds everything past the return stroke until it lifts: a window merged or cut then has no
+  // Drain behind it, and every session-backed step would download Claude Code to be refused again. It is marked on the
+  // Newest window, so that is the one whose comments are read
+  const newestWindow = getNewestWindowPullRequest(windowHistory);
   const sessionLimitResetMs =
-    releasePullRequest &&
-    readSessionLimitResetMs(readEntries<GitHubEntry>(`issues/${releasePullRequest.number}/comments`), viewerLogin);
+    newestWindow &&
+    readSessionLimitResetMs(readEntries<GitHubEntry>(`issues/${newestWindow.number}/comments`), viewerLogin);
   if (sessionLimitResetMs !== undefined && sessionLimitResetMs > Date.now())
     return getOutcome(
       CycleOutcomeKind.Idle,
       `the session is limited until ${new Date(sessionLimitResetMs).toISOString()} — nothing merges or ports until a session can follow it`,
     );
-  // The express lane, before the pull request is even looked up: a commit claiming no review reaches `main`
-  // Directly and the fold carries it to `develop` with the next window — and a red `main` its cut cannot pass is
-  // Repaired by the lane's own cut
+  // The express lane, before the stack is looked at: a commit claiming no review reaches `main` directly and the fold
+  // Carries it to `develop` with the next window — and a red `main` its cut cannot pass is repaired by the lane's own cut
   const expressed = await runExpressLane({ collectorSha, cwd, developSha, isDryRun, mainSha, queueSha, viewerLogin });
   if (expressed.outcome) return expressed.outcome;
-  // Closed without merging is a person's pause: opening another over it would spend the slot they were withholding
-  if (releasePullRequest?.state === ReleasePullRequestState.Closed)
+  // A window closed without merging is a person's pause, as a closed release was: opening another over it would spend
+  // The slot they were withholding
+  const pausedWindow = getPausedWindow(windowHistory, openPullRequests);
+  if (pausedWindow)
     return getOutcome(
       CycleOutcomeKind.Idle,
-      `pull request #${releasePullRequest.number} was closed without merging — a person's pause, re-open it to resume`,
+      `pull request #${pausedWindow.number} was closed without merging — a person's pause, re-open it to resume`,
     );
-  // An open release gets one review and merges once it completes and a session can follow: nothing reaches `develop`
-  // While it is open, so no incremental review is ever asked for, and its findings are drained after the merge
-  else if (releasePullRequest?.state === ReleasePullRequestState.Open) {
-    const openPullRequest = releasePullRequest.number;
-    const gate = getGateDecision(readCheckStatus(openPullRequest));
-    console.info(`pull request #${openPullRequest} as ${viewerLogin}${isDryRun ? " (dry run)" : ""}`);
-    console.info(`gate: ${gate.kind} — ${gate.reason}`);
-    if (gate.kind === GateDecisionKind.Exit) return getOutcome(CycleOutcomeKind.Idle, gate.reason);
-    else if (gate.kind === GateDecisionKind.Fail)
-      throw new InvalidOperationError(Operation.Read, "coderabbit", gate.reason);
-    else if (gate.kind === GateDecisionKind.RateLimited) {
-      const settlement = settleRateLimit({
-        isDryRun,
-        issueComments: readEntries<GitHubEntry>(`issues/${openPullRequest}/comments`),
-        pullRequest: openPullRequest,
-        viewerLogin,
-      });
-      retriggerDelaySeconds = settlement.retriggerDelaySeconds;
-      return settlement.outcome ?? getOutcome(CycleOutcomeKind.Idle, gate.reason);
-    }
-    // A release merges only when a session could drain its findings after it, since they are answered after the
-    // Merge: asked of Claude Code itself with a prompt that does nothing, a limit throwing out of the pass from here.
-    // A probe that started and still exited non-zero is a failed session like any other: idle, and retried shortly
-    if (!isDryRun) {
-      const { isEnded, isStarted } = await runSession({
-        cwd,
-        model: SessionRoleModelMap[SessionRole.Drain],
-        prompt: SESSION_PROBE_PROMPT,
-      });
-      if (!isStarted)
-        return getOutcome(
-          CycleOutcomeKind.Idle,
-          "no session could start — the release waits for one that can drain its findings",
-        );
-      else if (!isEnded) {
-        retriggerDelaySeconds = ATTEMPT_RETRY_DELAY_SECONDS;
-        return getOutcome(
-          CycleOutcomeKind.Idle,
-          "the session probe exited non-zero — the release waits for a session that can drain its findings",
-        );
-      }
-    }
-    const folded = await foldReleaseMain({ collectorSha, cwd, developSha, isDryRun, mainSha, viewerLogin });
-    return folded ?? mergeReleasePullRequest({ developSha, isDryRun, pullRequest: openPullRequest });
-  }
-  // No release open: the newest merged one is the review the next window answers, its fixes leading it
-  const pullRequest =
-    namedPullRequest ??
-    (releasePullRequest?.state === ReleasePullRequestState.Merged ? releasePullRequest.number : undefined);
-  const mergeBaseSha = runGit(["merge-base", mainSha, developSha], cwd).trim();
-  console.info(
-    `merged pull request ${pullRequest === undefined ? "none" : `#${pullRequest}`} as ${viewerLogin}${isDryRun ? " (dry run)" : ""}`,
-  );
-  console.info(
-    `develop ${developSha}\nqueue   ${queueSha}\nfixes   ${reviewFixesSha ?? "none"}\nbase    ${mergeBaseSha}`,
-  );
-  // What `develop` carries above `main` — a window a dying run pushed and never opened — answers findings already
-  const developCommits = readAnsweredCommits([`${mergeBaseSha}..${developSha}`], cwd);
-  if (pullRequest !== undefined) {
-    const issueComments = readEntries<GitHubEntry>(`issues/${pullRequest}/comments`);
-    // Replies before any exit: a run that pushed and died before replying is finished by whichever event fires next
-    replyAnswered({ commits: developCommits, isDryRun, issueComments, pullRequest, viewerLogin });
-    const drain = await runDrainStep({
-      collectorSha,
-      cwd,
-      developCommits,
-      developSha,
-      isDryRun,
-      issueComments,
-      pullRequest,
-      queueSha,
-      reviewFixesSha,
-      reviews: readBotEntries<GitHubReview>(`pulls/${pullRequest}/reviews`),
-      viewerLogin,
-    });
-    if (drain.outcome) return drain.outcome;
-    reviewFixesSha = drain.reviewFixesSha;
-  }
-  // What the fixes branch still owes develop, settled once the drain has finished moving it and the fixes sit on
-  // Develop: the sync replays the queue onto that tree and the port builds the window on top of the same
-  // Commits, so both read one answer
-  const owedFixShas = reviewFixesSha === undefined ? [] : readCherryShas(developSha, reviewFixesSha, cwd);
-  let owingFixesSha = owedFixShas.length > 0 ? reviewFixesSha : undefined;
-  if (owingFixesSha !== undefined) {
-    const syncedFixes = await syncFixes({ collectorSha, cwd, developSha, isDryRun, owingFixesSha, viewerLogin });
-    if (syncedFixes.outcome) return syncedFixes.outcome;
-    owingFixesSha = syncedFixes.owingFixesSha;
-  }
-  const fixShas = owingFixesSha === undefined ? [] : readCherryShas(developSha, owingFixesSha, cwd);
-  // The queue is rebuilt on the tree the window is built on before the port reads it, so a conflict is met here
-  // Once rather than held on every run
-  const syncedQueueSha = await syncQueue({
+
+  // Bottom up, the stack is walked: the bottom window merges and is drained once its review completes, a window above
+  // An unmerged one waits, and a rate limit is settled wherever it refused a review
+  const stack = orderWindowStack(openPullRequests);
+  const walked = await walkWindowStack({
     collectorSha,
     cwd,
     developSha,
     isDryRun,
-    mergeBaseSha,
-    owingFixesSha,
     queueSha,
+    reviewFixesSha: branchShas.reviewFixesSha,
+    stack,
     viewerLogin,
   });
-  if (syncedQueueSha === undefined) return getMovedOutcome(QUEUE_BRANCH);
-  const port = portWindow({ cwd, developSha, fixShas, mergeBaseSha, queueSha: syncedQueueSha });
-  // What `develop` already carries above the merge base is the release's window as much as what the port adds
-  const pendingCommitCount = Number(runGit(["rev-list", "--count", `${mergeBaseSha}..${developSha}`], cwd).trim());
-  console.info(
-    `window: ${port.fixCount} fix commits + ${pendingCommitCount} pending commits + ${port.queueShas.length} queue commits = ${port.fileCount} files${port.heldSha ? `, held from ${port.heldSha}` : ""}`,
-  );
-  // Anything owed goes out, at whatever size the port reached: there is no floor under the cap because the port
-  // Already took every commit the queue owes, and fixes alone spend the slot rather than wait on a push nothing
-  // Has promised — a limit refusing the review arrives as an event, and the retrigger asks for it again
-  const isReady = port.fixCount > 0 || pendingCommitCount + port.queueShas.length > 0;
-  if (!isReady) {
-    // A held first commit is the residual person's case: the reshaper or the resolver failed on it past the
-    // Attempt cap, and no event clears that. The commit is told first, then the run fails red so someone is.
-    if (port.queueShas.length === 0 && port.heldSha) {
-      // A dry run reshapes and resolves nothing, so its hold says nothing about a live run's
-      if (isDryRun)
-        return getOutcome(CycleOutcomeKind.Idle, `held at ${port.heldSha} — a dry run reshapes and resolves nothing`);
-      postHeldNotice(port.heldSha, isDryRun, viewerLogin);
-      throw new InvalidOperationError(
-        Operation.Update,
-        "coderabbit",
-        `held at ${port.heldSha} — the first owed commit could not be reshaped under the cap or its conflict was not resolved past the attempt cap, so a person splits it or rebases ${QUEUE_BRANCH} (its commit comments say which)`,
-      );
-    }
-    // A claimed commit no cut carried is owed to `main` still, and the port never counts it: said here, or an
-    // Idle run reads as a synced queue over a commit still owed to `main`
-    else if (expressed.heldShas.length > 0)
-      return getOutcome(
-        CycleOutcomeKind.Idle,
-        `${expressed.heldShas.length} claimed commits wait on the express lane — a patch that does not apply to ${MAIN_BRANCH} yet`,
-      );
-    return getOutcome(CycleOutcomeKind.Idle, `nothing owed — ${QUEUE_BRANCH} is synced with ${DEVELOP_BRANCH}`);
-  }
-  // Ready with nothing to add: develop already carries the window, and only the pull request is owed
-  if (port.queueShas.length === 0 && port.fixCount === 0)
-    return openReleasePullRequest({ cwd, developSha, isDryRun, mainSha });
-  else if (isDryRun)
+  if (walked.outcome)
     return getOutcome(
-      CycleOutcomeKind.Pushed,
-      `would fold ${MAIN_BRANCH} in and push the window to ${DEVELOP_BRANCH}, then open the release pull request`,
+      walked.outcome.kind,
+      walked.outcome.reason,
+      walked.retriggerDelaySeconds,
+      walked.outcome.targetSha,
     );
-
-  const targetSha = await foldCandidate({
-    collectorSha,
-    cwd,
-    developSha,
-    fixCount: port.fixCount,
-    mergeBaseSha,
-    queueSha: syncedQueueSha,
-    queueShas: port.queueShas,
-    viewerLogin,
-  });
-  if (!pushBranch({ branch: DEVELOP_BRANCH, cwd, expectedSha: developSha, isDryRun, sha: targetSha }))
-    return getMovedOutcome(DEVELOP_BRANCH);
-
-  if (pullRequest !== undefined)
-    replyAnswered({
-      commits: readAnsweredCommits([`${developSha}..${targetSha}`], cwd),
+  const drainedPullRequests = [...walked.drainedPullRequests];
+  // A named pull request is drained when no window is open, as the merged release was: its findings lead the next cut
+  if (namedPullRequest !== undefined && stack.length === 0) {
+    const currentShas = readBranchShas(cwd);
+    const drain = await drainWindow({
+      collectorSha,
+      cwd,
+      developSha,
       isDryRun,
-      issueComments: readEntries<GitHubEntry>(`issues/${pullRequest}/comments`),
-      pullRequest,
+      mainSha: currentShas.mainSha,
+      pullRequest: namedPullRequest,
+      queueSha: currentShas.queueSha,
+      reviewFixesSha: currentShas.reviewFixesSha,
       viewerLogin,
     });
-  return openReleasePullRequest({ cwd, developSha: targetSha, isDryRun, mainSha });
+    if (drain.outcome)
+      return getOutcome(
+        drain.outcome.kind,
+        drain.outcome.reason,
+        walked.retriggerDelaySeconds,
+        drain.outcome.targetSha,
+      );
+    drainedPullRequests.push(namedPullRequest);
+  }
+
+  // The windows: one at a time, for as long as the hourly ceiling and the stacking guard allow. A window that did not
+  // Reach the remote ends the openings, and what the openings returned is the run's verdict
+  const isStackingAllowed = checkIsStackingAllowed(readMainCoderabbitConfig(cwd));
+  let openedStack = orderWindowStack(readWindowPullRequests(WindowPullRequestListState.Open));
+  let history = readWindowPullRequests(WindowPullRequestListState.All);
+  let openingOutcome: CycleOutcome | undefined;
+  while (
+    getWindowOpenCount({
+      isStackingAllowed,
+      openCount: openedStack.length,
+      openedInLastHour: getOpenedInLastHour(history, Date.now()),
+      reviewsPerHour: REVIEWS_PER_HOUR,
+    }) > 0
+  ) {
+    // oxlint-disable-next-line no-await-in-loop -- each window is cut from the remote the one before it moved
+    const opened = await openNextWindow({
+      collectorSha,
+      cwd,
+      drainedPullRequests,
+      expressHeldCount: expressed.heldShas.length,
+      isDryRun,
+      isFirstWindow: openingOutcome === undefined,
+      openPullRequests: openedStack,
+      viewerLogin,
+      windowNumber: getNextWindowNumber(history),
+    });
+    if (!opened.isWindowOpened) {
+      openingOutcome ??= opened.outcome;
+      break;
+    }
+    openingOutcome = opened.outcome;
+    // A dry run moves nothing, so the window it would open is the same one again: it is reported once
+    if (isDryRun) break;
+    openedStack = orderWindowStack(readWindowPullRequests(WindowPullRequestListState.Open));
+    history = readWindowPullRequests(WindowPullRequestListState.All);
+  }
+
+  if (openingOutcome === undefined || openingOutcome.kind === CycleOutcomeKind.Idle) {
+    const idleReasons = [...walked.blockReasons, ...(openingOutcome === undefined ? [] : [openingOutcome.reason])];
+    return getOutcome(
+      CycleOutcomeKind.Idle,
+      idleReasons.join("; ") ||
+        `no window opens — the hourly ceiling or the stacking guard holds for ${DEVELOP_BRANCH}`,
+      walked.retriggerDelaySeconds,
+    );
+  }
+  return getOutcome(openingOutcome.kind, openingOutcome.reason, walked.retriggerDelaySeconds, openingOutcome.targetSha);
 };

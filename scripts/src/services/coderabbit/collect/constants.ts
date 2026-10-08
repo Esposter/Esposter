@@ -12,7 +12,11 @@ export const REVIEW_FIXES_BRANCH = "ai/review-fixes";
 // Requests are the ones whose head starts with it, so no other branch is ever read as a window
 export const WINDOW_BRANCH_PREFIX = "review/";
 // The title every window's pull request carries before its number
-export const WINDOW_TITLE = `release: ${DEVELOP_BRANCH} → ${MAIN_BRANCH}`;
+export const WINDOW_TITLE: string = `release: ${DEVELOP_BRANCH} → ${MAIN_BRANCH}`;
+// The most pull requests one `gh pr list` returns, newest first. The window numbers and the hour's openings are read off
+// The whole history, and the windows are the recent end of it, so this bound is past any the cycle needs to see
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a literal would otherwise infer
+export const PULL_REQUEST_LIST_LIMIT: number = 1000;
 // The trailer a fix commit carries per inline finding it answers, and the one a body-only fix carries per review
 export const ANSWERS_TRAILER = "Answers";
 
@@ -209,3 +213,5 @@ export const ATTEMPT_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minu
 export const OUTAGE_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 5 }).total("seconds");
 // The job output the runner's delayed retrigger reads — the only channel between two jobs of one workflow run
 export const RETRIGGER_DELAY_OUTPUT = "retriggerDelaySeconds";
+// The span the hourly ceiling counts openings over, by the creation time of each window pull request
+export const WINDOW_OPENING_WINDOW_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");

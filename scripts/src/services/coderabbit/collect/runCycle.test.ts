@@ -1,7 +1,7 @@
 import type { CheckStatus } from "#src/models/coderabbit/collect/CheckStatus";
 import type { DrainStepResult } from "#src/models/coderabbit/collect/DrainStepResult";
 import type { MainCheck } from "#src/models/coderabbit/collect/MainCheck";
-import type { ReleasePullRequest } from "#src/models/coderabbit/collect/ReleasePullRequest";
+import type { WindowPullRequest } from "#src/models/coderabbit/collect/WindowPullRequest";
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 import type { readCheckStatus as baseReadCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
@@ -12,8 +12,9 @@ import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 import type { SpawnSyncReturns } from "node:child_process";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
-import { ReleasePullRequestState } from "#src/models/coderabbit/collect/ReleasePullRequestState";
 import { SessionLimitedError } from "#src/models/coderabbit/collect/SessionLimitedError";
+import { WindowPullRequestListState } from "#src/models/coderabbit/collect/WindowPullRequestListState";
+import { WindowPullRequestState } from "#src/models/coderabbit/collect/WindowPullRequestState";
 import {
   ATTEMPT_RETRY_DELAY_SECONDS,
   CHECK_NAME,
@@ -36,11 +37,13 @@ import {
   REVIEW_FIXES_BRANCH,
   SESSION_ATTEMPT_CAP,
   SESSION_LIMITED_MARKER,
+  WINDOW_TITLE,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getRepairPrompt } from "#src/services/coderabbit/collect/getRepairPrompt";
 import { getRepairTrailer } from "#src/services/coderabbit/collect/getRepairTrailer";
+import { getWindowBranch } from "#src/services/coderabbit/collect/getWindowBranch";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { PROBE_COMMENT, REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
@@ -78,6 +81,9 @@ vi.mock(import("#src/services/coderabbit/collect/runDrainStep"), () => ({
   runDrainStep: runDrainStep as unknown as typeof baseRunDrainStep,
 }));
 
+// The window a cut opens, as the collector titles it, over the base it stacks on
+const getOpenedReason = (windowNumber: number, baseBranch = MAIN_BRANCH): string =>
+  `${WINDOW_TITLE} ${windowNumber} is open over ${baseBranch} — its review reads only the commits above it`;
 const getPrCalls = (subcommand: string) =>
   runGh.mock.calls.filter(([args]) => args[0] === "pr" && args[1] === subcommand);
 const getCommitCommentPosts = (sha: string) =>
@@ -89,28 +95,58 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const pullRequest = 0;
   const viewerLogin = "viewerLogin";
   const completedCheck: CheckStatus = { bucket: PASS_BUCKET, description: COMPLETED_DESCRIPTION, name: CHECK_NAME };
-  const openPullRequests: ReleasePullRequest[] = [{ number: pullRequest, state: ReleasePullRequestState.Open }];
-  const mergedPullRequests: ReleasePullRequest[] = [{ number: pullRequest, state: ReleasePullRequestState.Merged }];
+  // A window is the pull request whose head is its own window branch and whose base is `main`
+  const getWindowPullRequest = (state: WindowPullRequestState, number = pullRequest): WindowPullRequest => ({
+    baseRefName: MAIN_BRANCH,
+    createdAt: Temporal.Instant.fromEpochMilliseconds(0).toString(),
+    headRefName: getWindowBranch(number),
+    number,
+    state,
+  });
+  const openPullRequests: WindowPullRequest[] = [getWindowPullRequest(WindowPullRequestState.Open)];
   const overflowPaths = Array.from({ length: REVIEW_FILE_CAP + 1 }, (_value, index) => `${TEST_FILENAME}/${index}`);
+
   // CI's verdict on main's head, red when a test says so, and what every `pnpm` the lane spawns answers
   const redRun: MainCheck = { conclusion: CI_FAILURE_CONCLUSION, databaseId: 0, status: CI_COMPLETED_STATUS, url: "" };
   const greenSpawn: SpawnSyncReturns<string> = { output: [], pid: 0, signal: null, status: 0, stderr: "", stdout: "" };
-  // What `gh` answers: the login, the release pull request list, the reviews, the issue comments, every commit's
-  // Comments, CI's runs for main's head, a red run's log, and `[[]]` for every other paginated list — the one
-  // Page of nothing a `--slurp` returns
+  // What `gh` answers: the login, the window pull requests, the reviews, the issue comments, every commit's comments,
+  // CI's runs for main's head, a red run's log, and `[[]]` for every other paginated list — the one page of nothing a
+  // `--slurp` returns. The pull requests are kept as GitHub would hold them: a merge closes its window and a create
+  // Opens one, so a run reads back what it wrote
   const collectorSha = "collectorSha";
   const baseInput = { collectorSha, isDryRun: false };
   const answerGh = (
-    releasePullRequests: ReleasePullRequest[],
+    windowPullRequests: WindowPullRequest[] = [],
     reviews: GitHubReview[] = [],
     issueComments: GitHubEntry[] = [],
     commitComments: GitHubEntry[] = [],
     mainChecks: MainCheck[] = [],
   ) => {
+    const windowPullRequestsNow = windowPullRequests.map((windowPullRequest) => ({ ...windowPullRequest }));
+    runDrainStep.mockResolvedValue({ reviewFixesSha: undefined } satisfies DrainStepResult);
     runGh.mockImplementation((args) => {
       if (args[1] === "user") return viewerLogin;
-      else if (args[0] === "pr" && args[1] === "list") return JSON.stringify(releasePullRequests);
-      else if (args[0] === "run" && args[1] === "list") return JSON.stringify(mainChecks);
+      else if (args[0] === "pr" && args[1] === "list") {
+        const isOpenOnly = args[args.indexOf("--state") + 1] === WindowPullRequestListState.Open;
+        return JSON.stringify(
+          isOpenOnly
+            ? windowPullRequestsNow.filter(({ state }) => state === WindowPullRequestState.Open)
+            : windowPullRequestsNow,
+        );
+      } else if (args[0] === "pr" && args[1] === "merge") {
+        const merged = windowPullRequestsNow.find(({ number }) => number.toString() === args[2]);
+        if (merged) merged.state = WindowPullRequestState.Merged;
+        return "";
+      } else if (args[0] === "pr" && args[1] === "create") {
+        windowPullRequestsNow.push({
+          baseRefName: args[args.indexOf("--base") + 1] ?? MAIN_BRANCH,
+          createdAt: Temporal.Instant.fromEpochMilliseconds(0).toString(),
+          headRefName: args[args.indexOf("--head") + 1] ?? "",
+          number: windowPullRequestsNow.length + pullRequest + 1,
+          state: WindowPullRequestState.Open,
+        });
+        return "";
+      } else if (args[0] === "run" && args[1] === "list") return JSON.stringify(mainChecks);
       else if (args[0] === "run" && args[1] === "view") return "";
       else if (args[1]?.startsWith(`repos/{owner}/{repo}/pulls/${pullRequest}/reviews`))
         return JSON.stringify([reviews]);
@@ -349,8 +385,8 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runSession).not.toHaveBeenCalled();
   });
 
-  // A claimed commit built on the window the release still reviews cannot apply to main: the lane leaves it for
-  // The release to carry there, and main is left where it was
+  // A claimed commit built on the window the stack still reviews cannot apply to main: the lane leaves it for the
+  // Window to carry there, and main is left where it was
   test("leaves a claimed commit whose patch does not apply to main where it is", async () => {
     expect.hasAssertions();
 
@@ -364,7 +400,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
-      reason: "the review is running",
+      reason: `pull request #${pullRequest} — the review is running`,
       retriggerDelaySeconds: undefined,
       targetSha: undefined,
     });
@@ -432,7 +468,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   // One commit is the whole of what the queue owed — the port stops only at the cap or on a conflict — so there
   // Is nothing a size floor could wait for. The queue sits on develop's head, so the window is a fast-forward to
   // The queue's own sha.
-  test("pushes a single owed commit and opens the release pull request over it", async () => {
+  test("pushes a single owed commit and opens the first window over it", async () => {
     expect.hasAssertions();
 
     publish(DEVELOP_BRANCH, MAIN_BRANCH);
@@ -442,15 +478,17 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
-      reason: `the release: ${DEVELOP_BRANCH} → ${MAIN_BRANCH} pull request is open — its first review reads the whole window`,
+      reason: getOpenedReason(1),
+      retriggerDelaySeconds: undefined,
       targetSha: queueSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(queueSha);
+    expect(readSha(`origin/${getWindowBranch(1)}`)).toBe(queueSha);
     expect(getPrCalls("create")).toHaveLength(1);
   });
 
-  // The last release merged and develop already carries the next window: nothing to port, only the pull request owed
-  test("opens the release pull request over a develop that already carries the window", async () => {
+  // Develop already carries the next window: nothing to port, only the window's pull request owed
+  test("opens the first window over a develop that already carries it", async () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
@@ -460,7 +498,8 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
-      reason: `the release: ${DEVELOP_BRANCH} → ${MAIN_BRANCH} pull request is open — its first review reads the whole window`,
+      reason: getOpenedReason(1),
+      retriggerDelaySeconds: undefined,
       targetSha: developSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
@@ -477,7 +516,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Pushed,
-      reason: `would fold ${MAIN_BRANCH} in and push the window to ${DEVELOP_BRANCH}, then open the release pull request`,
+      reason: `would fold ${MAIN_BRANCH} in and push the window to ${DEVELOP_BRANCH}, then open it`,
       retriggerDelaySeconds: undefined,
       targetSha: undefined,
     });
@@ -485,8 +524,6 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(getPrCalls("create")).toHaveLength(0);
   });
 
-  // A first commit over the cap is the reshaper's; past its attempts it can never fit and no event clears it, so
-  // The commit is told once and the run fails red for a person
   const getExhaustedReshapes = (sha: string): GitHubEntry[] =>
     Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
       ...getMarked(getMarker(RESHAPE_FAILED_MARKER, sha, [collectorSha])),
@@ -546,12 +583,12 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(getCommitCommentPosts(heldSha)).toHaveLength(0);
   });
 
-  test("opens nothing over a release pull request a person closed", async () => {
+  test("opens nothing over a window pull request a person closed", async () => {
     expect.hasAssertions();
 
     publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
-    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Closed }]);
+    answerGh([getWindowPullRequest(WindowPullRequestState.Closed)]);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(outcome).toStrictEqual({
@@ -563,7 +600,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(getPrCalls("create")).toHaveLength(0);
   });
 
-  test("exits at the gate while a review is running", async () => {
+  test("opens nothing over an open window while the stacking guard is not on main", async () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
@@ -574,7 +611,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
-      reason: "the review is running",
+      reason: `pull request #${pullRequest} — the review is running`,
       retriggerDelaySeconds: undefined,
       targetSha: undefined,
     });
@@ -582,53 +619,81 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runDrainStep).not.toHaveBeenCalled();
   });
 
-  test("fails the run when the pull request carries no check to read", async () => {
+  // A window stacked over an open one is cut from the top of the stack, its base the window below it
+  test("stacks the next window over an open one when main's config lets the stack reach it", async () => {
     expect.hasAssertions();
 
-    publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
-    answerGh(openPullRequests);
-    readCheckStatus.mockReturnValue(undefined);
-
-    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: coderabbit, no CodeRabbit check on the pull request]`,
+    const configSha = publish(
+      MAIN_BRANCH,
+      commitFile(".coderabbit.yaml", 'reviews:\n  auto_review:\n    base_branches: ["^review/"]\n'),
     );
+    const developSha = publish(DEVELOP_BRANCH, configSha);
+    publish(getWindowBranch(pullRequest), developSha);
+    const queueSha = publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh(openPullRequests);
+    readCheckStatus.mockReturnValue({ bucket: PENDING_BUCKET, description: "", name: CHECK_NAME });
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Opened,
+      reason: getOpenedReason(1, getWindowBranch(pullRequest)),
+      retriggerDelaySeconds: undefined,
+      targetSha: queueSha,
+    });
+    // The body lists the window's commits, which the test does not restate: the flags around it are what is asserted
+    expect(getPrCalls("create")[0]?.[0]?.slice(0, 9)).toStrictEqual([
+      "pr",
+      "create",
+      "--base",
+      getWindowBranch(pullRequest),
+      "--head",
+      getWindowBranch(1),
+      "--title",
+      `${WINDOW_TITLE} 1`,
+      "--body",
+    ]);
   });
 
-  // The merged release's findings are drained first and its fixes lead the next window, the queue behind them
-  test("drains the merged release, ports the queue behind the fixes and opens the next release", async () => {
+  test("drains the window it merges, ports the queue behind the fixes and opens the next window", async () => {
     expect.hasAssertions();
 
-    publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     const queueSha = publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
-    answerGh(mergedPullRequests);
-    runDrainStep.mockResolvedValue({ reviewFixesSha: undefined } satisfies DrainStepResult);
+    publish(getWindowBranch(pullRequest), developSha);
+    answerGh(openPullRequests);
+    readCheckStatus.mockReturnValue(completedCheck);
+    runSession.mockResolvedValue({ isEnded: true, isStarted: true });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(runDrainStep).toHaveBeenCalledTimes(1);
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
-      reason: `the release: ${DEVELOP_BRANCH} → ${MAIN_BRANCH} pull request is open — its first review reads the whole window`,
+      reason: getOpenedReason(1),
+      retriggerDelaySeconds: undefined,
       targetSha: queueSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(queueSha);
   });
 
   // Fixes never wait for the queue: over one level with develop, the drain's commit is the whole window
-  test("opens a release of the drained fixes alone over a queue that owes nothing", async () => {
+  test("opens a window of the drained fixes alone over a queue that owes nothing", async () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, developSha);
+    publish(getWindowBranch(pullRequest), developSha);
     const reviewFixesSha = publish(REVIEW_FIXES_BRANCH, commitFile(TEST_FILENAME, ""));
-    answerGh(mergedPullRequests);
+    answerGh(openPullRequests);
+    readCheckStatus.mockReturnValue(completedCheck);
+    runSession.mockResolvedValue({ isEnded: true, isStarted: true });
     runDrainStep.mockResolvedValue({ reviewFixesSha } satisfies DrainStepResult);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
     const targetSha = readSha(`origin/${DEVELOP_BRANCH}`);
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
-      reason: `the release: ${DEVELOP_BRANCH} → ${MAIN_BRANCH} pull request is open — its first review reads the whole window`,
+      reason: getOpenedReason(1),
+      retriggerDelaySeconds: undefined,
       targetSha,
     });
     expect(runGit(["log", "--format=%s", `${developSha}..${targetSha}`], getCwd())).toBe(`${TEST_FILENAME}
@@ -655,7 +720,8 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 `);
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
-      reason: `the release: ${DEVELOP_BRANCH} → ${MAIN_BRANCH} pull request is open — its first review reads the whole window`,
+      reason: getOpenedReason(1),
+      retriggerDelaySeconds: undefined,
       targetSha: queueSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(queueSha);
@@ -676,42 +742,41 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
       reason: `${DEVELOP_BRANCH} moved during the run — nothing pushed, the next run re-measures`,
+      retriggerDelaySeconds: undefined,
+      targetSha: undefined,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(movedSha);
     expect(getPrCalls("create")).toHaveLength(0);
   });
 
-  // The one review completing is the release, whatever it found and whatever the queue holds: nothing reaches
-  // Develop while the release is open, so no incremental review is ever read
-  test("merges the release pull request once its review completes", async () => {
+  // The one review completing is the window, whatever it found and whatever the queue holds: its head is named in
+  // The merge itself, and its findings are drained straight after
+  test("merges the bottom window once its review completes, then drains it", async () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    const headSha = publish(getWindowBranch(pullRequest), developSha);
     answerGh(openPullRequests);
     readCheckStatus.mockReturnValue(completedCheck);
     runSession.mockResolvedValue({ isEnded: true, isStarted: true });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
-    expect(outcome).toStrictEqual({
-      kind: CycleOutcomeKind.Merged,
-      reason: `pull request #${pullRequest} merged — the push to ${MAIN_BRANCH} runs the return stroke, and the next run drains its findings`,
-    });
-    // The head the review read is named in the merge itself: a develop that moved since is refused by GitHub
     expect(getPrCalls("merge")).toStrictEqual([
-      [["pr", "merge", pullRequest.toString(), "--merge", "--admin", "--match-head-commit", developSha]],
+      [["pr", "merge", pullRequest.toString(), "--merge", "--admin", "--match-head-commit", headSha]],
     ]);
-    expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
-    expect(runDrainStep).not.toHaveBeenCalled();
+    expect(runDrainStep).toHaveBeenCalledTimes(1);
+    expect(outcome.reason).toBe(getOpenedReason(1));
   });
 
   // Its findings are drained after the merge, so a merge no session could follow ships them unread until the
-  // Limit lifts: the probe's refusal leaves the release open
-  test("leaves a reviewed release open when no session can start to drain it", async () => {
+  // Limit lifts: the probe's refusal leaves the window open
+  test("leaves a reviewed window open when no session can start to drain it", async () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    publish(getWindowBranch(pullRequest), developSha);
     answerGh(openPullRequests);
     readCheckStatus.mockReturnValue(completedCheck);
     runSession.mockRejectedValue(new SessionLimitedError(0));
@@ -721,18 +786,19 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });
 
-  test("leaves a reviewed release open when its session probe exits non-zero", async () => {
+  test("leaves a reviewed window open when its session probe exits non-zero", async () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    publish(getWindowBranch(pullRequest), developSha);
     answerGh(openPullRequests);
     readCheckStatus.mockReturnValue(completedCheck);
     runSession.mockResolvedValue({ isEnded: false, isStarted: true });
 
     await expect(runCycle({ ...baseInput, cwd: getCwd() })).resolves.toStrictEqual({
       kind: CycleOutcomeKind.Idle,
-      reason: "the session probe exited non-zero — the release waits for a session that can drain its findings",
+      reason: "the session probe exited non-zero — the window waits for a session that can drain its findings",
       retriggerDelaySeconds: ATTEMPT_RETRY_DELAY_SECONDS,
       targetSha: undefined,
     });
@@ -758,9 +824,9 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });
 
-  // A named pull request picks which merged release to drain, never a window past an open one: pushed under it,
-  // The window would merge with the release unread
-  test("waits on an open release when a pull request is named", async () => {
+  // A named pull request picks which merged window to drain when none is open, never a window past an open one:
+  // Pushed under it, the window would merge with the review unread
+  test("waits on an open window when a pull request is named", async () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
@@ -769,7 +835,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     readCheckStatus.mockReturnValue({ bucket: PENDING_BUCKET, description: "", name: CHECK_NAME });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd(), pullRequest });
 
-    expect(outcome.reason).toBe("the review is running");
+    expect(outcome.reason).toBe(`pull request #${pullRequest} — the review is running`);
     expect(runDrainStep).not.toHaveBeenCalled();
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });
@@ -786,15 +852,17 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
       reason: "asked for the review the limit refused — the bot's answer fires the cycle again",
+      retriggerDelaySeconds: undefined,
+      targetSha: undefined,
     });
     expect(getPrCalls("comment")).toStrictEqual([[["pr", "comment", pullRequest.toString(), "--body", PROBE_COMMENT]]]);
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });
 
-  // What lands on main after the window went out — a repair, an express cut — can conflict with the release, and a
-  // Merge GitHub cannot create fails every run: main is folded into the release and the fold pushed to main itself,
+  // What lands on main after the window went out — a repair, an express cut — can conflict with the window, and a
+  // Merge GitHub cannot create fails every run: main is folded into the window and the fold pushed to main itself,
   // Which GitHub reads as the pull request merged
-  test("pushes a fold to main when the reviewed release conflicts with it", async () => {
+  test("pushes a fold to main when the reviewed window conflicts with it", async () => {
     expect.hasAssertions();
 
     const baseSha = commitFile(TEST_FILENAME, "");
@@ -802,6 +870,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     switchTo(baseSha);
     const developSha = publish(DEVELOP_BRANCH, deleteFile(TEST_FILENAME));
     publish(QUEUE_BRANCH, developSha);
+    publish(getWindowBranch(pullRequest), developSha);
     answerGh(openPullRequests);
     readCheckStatus.mockReturnValue(completedCheck);
     // The probe first, which asks only whether a session starts
@@ -812,14 +881,9 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       runGit(["commit", "--quiet", "--no-edit"], getCwd());
       return Promise.resolve({ isEnded: true, isStarted: true });
     });
-    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+    await runCycle({ ...baseInput, cwd: getCwd() });
     const foldedSha = readSha(`origin/${MAIN_BRANCH}`);
 
-    expect(outcome).toStrictEqual({
-      kind: CycleOutcomeKind.Merged,
-      reason: `${MAIN_BRANCH} folded into the release and the fold pushed to ${MAIN_BRANCH} — the release conflicted with it`,
-      targetSha: foldedSha,
-    });
     expect(runGit(["rev-list", "--parents", "--max-count=1", foldedSha], getCwd()).trim()).toBe(
       `${foldedSha} ${developSha} ${mainSha}`,
     );
@@ -828,7 +892,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   });
 
   // A main that moved but still merges cleanly is GitHub's to merge
-  test("merges a reviewed release over a main it diverged from without conflict", async () => {
+  test("merges a reviewed window over a main it diverged from without conflict", async () => {
     expect.hasAssertions();
 
     const baseSha = readSha("HEAD");
@@ -836,13 +900,20 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     switchTo(baseSha);
     const developSha = publish(DEVELOP_BRANCH, commitFile(`${TEST_FILENAME}.ts`, ""));
     publish(QUEUE_BRANCH, developSha);
+    const headSha = publish(getWindowBranch(pullRequest), developSha);
     answerGh(openPullRequests);
     readCheckStatus.mockReturnValue(completedCheck);
     runSession.mockResolvedValue({ isEnded: true, isStarted: true });
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
-    await expect(runCycle({ ...baseInput, cwd: getCwd() })).resolves.toStrictEqual({
-      kind: CycleOutcomeKind.Merged,
-      reason: `pull request #${pullRequest} merged — the push to ${MAIN_BRANCH} runs the return stroke, and the next run drains its findings`,
+    expect(getPrCalls("merge")).toStrictEqual([
+      [["pr", "merge", pullRequest.toString(), "--merge", "--admin", "--match-head-commit", headSha]],
+    ]);
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Opened,
+      reason: getOpenedReason(1),
+      retriggerDelaySeconds: undefined,
+      targetSha: developSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });
