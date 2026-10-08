@@ -34,4 +34,20 @@ describe(createRiverGeometry, () => {
 
     expect([...geometry.getAttribute(RIVER_BEND_FOAM_ATTRIBUTE).array]).toStrictEqual([0, 0, 0, 0, 1, 0, 0, 0]);
   });
+
+  test("keeps the water's width where the course turns straight back, and narrows a lone point to nothing", () => {
+    expect.hasAssertions();
+
+    const turnedBack = createRiverGeometry([
+      { level: 0, width: 2, x: 0, z: 0 },
+      { level: 0, width: 2, x: 4, z: 0 },
+      { level: 0, width: 2, x: 0, z: 0 },
+    ]);
+    const lone = createRiverGeometry([{ level: 0, width: 2, x: 3, z: 0 }]);
+
+    expect({
+      lone: [...lone.getAttribute("position").array],
+      turnedBack: [...turnedBack.getAttribute("position").array].slice(6, 12),
+    }).toStrictEqual({ lone: [3, 0, 0, 3, 0, 0], turnedBack: [4, 0, -1, 4, 0, 1] });
+  });
 });
