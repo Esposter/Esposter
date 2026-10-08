@@ -31,7 +31,7 @@ committed.
 | `health-notice-mainland` | `SplashHealthNotice` | 6.88% | 0.834 | 2.70% | 0.2025 |
 | `hud-world-pickup` | `HudScreen` | 0.92% | 0.946 | 0.56% | 0.0492 |
 | `interaction-prompts-pickup` | `InteractionPromptList` | 6.88% | 0.898 | 3.75% | 0.2645 |
-| `inventory-food` | `InventoryScreen` | 2.41% | 0.967 | 0.92% | 0.0774 |
+| `inventory-food` | `InventoryScreen` | 2.26% | 0.962 | 0.75% | 0.0810 |
 | `inventory-weapons` | `InventoryScreen` | 9.13% | 0.614 | 7.40% | 0.3076 |
 | `liyue-harbor-location` | `WorldScreen` | 28.60% | 0.331 | 24.24% | 0.8114 |
 | `loading-startup` | `LoadingStartup` | 0.03% | 0.989 | 0.00% | 0.0013 |
