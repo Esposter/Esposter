@@ -39,19 +39,19 @@ A new character is `createCharacter` over the roster: level 1 in its first phase
 
 ## Key files
 
-| File                                                                           | Role                                                             |
-| :----------------------------------------------------------------------------- | :--------------------------------------------------------------- |
-| `packages/genshin-world/src/models/character/Attribute.ts`                     | Every attribute summed, by the game's own id                     |
-| `packages/genshin-world/src/models/character/CharacterData.ts`                 | A character of the roster as the tables hold it                  |
-| `packages/genshin-world/src/models/character/Character.ts`                     | A character the player has: level, phase, weapon and artifacts   |
-| `packages/genshin-world/src/models/character/StatTables.ts`                    | Every table a character is made and summed from                  |
-| `packages/genshin-world/src/services/character/readStatTables.ts`              | The tables imported on demand and checked against their schemas  |
-| `packages/genshin-world/src/services/character/getGrownAttributeLines.ts`      | A base grown along its curve, and its phase's lines              |
-| `packages/genshin-world/src/services/character/getCharacterAttributeLines.ts`  | Every line a character carries                                   |
-| `packages/genshin-world/src/services/character/computeCharacterAttributes.ts`  | The lines summed, and Max HP, ATK and DEF built from their bases |
-| `packages/genshin-world/src/services/artifact/getArtifactSetAttributeLines.ts` | The bonuses a set's worn pieces reach                            |
-| `packages/genshin-world/src/services/character/createCharacter.ts`             | A character as the game gives one                                |
-| `scripts/src/services/genshinAssets/stats/writeStatTables.ts`                  | The tables read from the dump and written into the world         |
+| File                                                                           | Role                                                                              |
+| :----------------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/character/Attribute.ts`                     | Every attribute summed, by the game's own id                                      |
+| `packages/genshin-world/src/models/character/CharacterData.ts`                 | A character of the roster as the tables hold it                                   |
+| `packages/genshin-world/src/models/character/Character.ts`                     | A character the player has: level, phase, weapon, artifacts and Companionship EXP |
+| `packages/genshin-world/src/models/character/StatTables.ts`                    | Every table a character is made and summed from                                   |
+| `packages/genshin-world/src/services/character/readStatTables.ts`              | The tables imported on demand and checked against their schemas                   |
+| `packages/genshin-world/src/services/character/getGrownAttributeLines.ts`      | A base grown along its curve, and its phase's lines                               |
+| `packages/genshin-world/src/services/character/getCharacterAttributeLines.ts`  | Every line a character carries                                                    |
+| `packages/genshin-world/src/services/character/computeCharacterAttributes.ts`  | The lines summed, and Max HP, ATK and DEF built from their bases                  |
+| `packages/genshin-world/src/services/artifact/getArtifactSetAttributeLines.ts` | The bonuses a set's worn pieces reach                                             |
+| `packages/genshin-world/src/services/character/createCharacter.ts`             | A character as the game gives one                                                 |
+| `scripts/src/services/genshinAssets/stats/writeStatTables.ts`                  | The tables read from the dump and written into the world                          |
 
 ## Notes
 
