@@ -7,24 +7,24 @@ import { scoreLabelSimilarity } from "#src/services/genshinParity/witness/scoreL
 import { toLab } from "#src/services/shared/toLab";
 import { toXyz } from "#src/services/shared/toXyz";
 
-const readColour = (albedo: Float32Array, pixel: number): Vector => [
-  albedo[pixel * 4] ?? 0,
-  albedo[pixel * 4 + 1] ?? 0,
-  albedo[pixel * 4 + 2] ?? 0,
+const readColour = (colour: Float32Array, pixel: number): Vector => [
+  colour[pixel * 4] ?? 0,
+  colour[pixel * 4 + 1] ?? 0,
+  colour[pixel * 4 + 2] ?? 0,
 ];
 const addColours = (
   [firstRed, firstGreen, firstBlue]: Vector,
   [secondRed, secondGreen, secondBlue]: Vector,
 ): Vector => [firstRed + secondRed, firstGreen + secondGreen, firstBlue + secondBlue];
-// Each family's unlit colour, ours against the exports', from the part and albedo targets the witness drew of each at
-// One view, four floats a pixel, over the pixels both draw it: the CIELab distance between their mean colours, and how
+// Each family's colour in one of the witness's colour targets (its unlit albedo, its glow), ours against the exports',
+// From the part target and that colour target the witness drew of each at one view, four floats a pixel, over the pixels both draw it: the CIELab distance between their mean colours, and how
 // Unlike their lightness is in structure (`scoreLabelSimilarity`, 0 alike and 1 nothing alike), which a painted detail
 // Off its place or missing reads where a mean does not. A family the exports draw nowhere is left out, and one ours
 // Draws nowhere they do has no colour to read, so it stands at Infinity. The structure's terms come back pixel by
 // Pixel too, scale by scale, for where on the frame it is lost
-export const compareFamilyAlbedo = (
-  exportsTargets: { albedo: Float32Array; part: Float32Array },
-  oursTargets: { albedo: Float32Array; part: Float32Array },
+export const compareFamilyColour = (
+  exportsTargets: { colour: Float32Array; part: Float32Array },
+  oursTargets: { colour: Float32Array; part: Float32Array },
   width: number,
   familyCount: number,
 ): {
@@ -38,8 +38,8 @@ export const compareFamilyAlbedo = (
     return family === readTargetFamily(oursTargets.part, pixel) ? family : -1;
   });
   const { labelSimilarities, termMaps } = scoreLabelSimilarity(
-    readTargetLightness(exportsTargets.albedo),
-    readTargetLightness(oursTargets.albedo),
+    readTargetLightness(exportsTargets.colour),
+    readTargetLightness(oursTargets.colour),
     width,
     height,
     labels,
@@ -54,8 +54,8 @@ export const compareFamilyAlbedo = (
       if (readTargetFamily(exportsTargets.part, pixel) === family) isDrawn = true;
       if (labels[pixel] !== family) continue;
       shared++;
-      exportsSum = addColours(exportsSum, readColour(exportsTargets.albedo, pixel));
-      oursSum = addColours(oursSum, readColour(oursTargets.albedo, pixel));
+      exportsSum = addColours(exportsSum, readColour(exportsTargets.colour, pixel));
+      oursSum = addColours(oursSum, readColour(oursTargets.colour, pixel));
     }
     if (!isDrawn) return [];
     if (shared === 0) return [{ colour: Infinity, family, scales: [], structure: Infinity }];

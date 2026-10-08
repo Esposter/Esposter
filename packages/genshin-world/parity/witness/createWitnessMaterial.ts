@@ -5,12 +5,13 @@ import type { Node } from "three/webgpu";
 import { WitnessProperty } from "#parity/models/witness/WitnessProperty";
 import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
 import { StoneNodeMaterial } from "genshin-engine";
-import { color, float, mix, normalMap, normalView, positionViewDirection, texture, vec3 } from "three/tsl";
+import { color, float, mix, normalMap, normalView, positionViewDirection, step, texture, vec3 } from "three/tsl";
 
 // One exported material drawn as the stone's shader writes it into the game's G-buffer (`miHoYo/Scene/Login Base`):
 // The diffuse texture tinted by its colour, its normal map, and its mask texture (`SMBE`, read by the inventory) with
 // Emission in alpha where the material turns it on. The emission grades into the rim glow's colour at its strength by
-// One less the facing ratio raised to its power, as the program mixes them. It is lit as our stone is, by the game's
+// One less the facing ratio raised to its power, as the program mixes them, and is drawn only where its length reaches
+// The material's emission range, the program writing every glow under it as none. It is lit as our stone is, by the game's
 // Deferred pass from the login's stone light, so a stand-in and its export differ only in what each draws; the mask's
 // Smoothness and metal wait on the pass's highlight
 export const createWitnessMaterial = (
@@ -51,6 +52,6 @@ export const createWitnessMaterial = (
       rimNode,
     );
   }
-  material.emissiveNode = emissionNode;
+  material.emissiveNode = emissionNode.mul(step(floats[WitnessProperty.EmissionRange] ?? 0, emissionNode.length()));
   return material;
 };

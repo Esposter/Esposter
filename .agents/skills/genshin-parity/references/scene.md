@@ -29,7 +29,7 @@ Read when a 3D screen is derived from the game's own assets, arranged, posed or 
 
 ## Shape and surface
 
-- **A stand-in is judged against its own exports, at the references' cameras.** Its shape by its outline, depth and normal and its surface by its unlit colour, drawn beside the exports at the reference's camera and moment, where every pixel lines up and only the stand-in differs, and gated at what the reference can show. `rank`'s second table is that measure today, FLIP and structural similarity per family, and its first table orders the stand-ins inside the pass by what each could recover of the frame. The exports ride the scene's own motion as its parts do (the login's row, its walkway's copies, its door only where ours stands), so a frame held mid-loop compares like with like. Its eye check is a crop of the frame, ours and the exports side by side.
+- **A stand-in is judged against its own exports, at the references' cameras.** Its shape by its outline, depth and normal and its surface by its unlit colour and its glow, drawn beside the exports at the reference's camera and moment, where every pixel lines up and only the stand-in differs, and gated at what the reference can show. `rank`'s second table is that measure today, FLIP and structural similarity per family, and its first table orders the stand-ins inside the pass by what each could recover of the frame. The exports ride the scene's own motion as its parts do (the login's row, its walkway's copies, its door only where ours stands), so a frame held mid-loop compares like with like. Its eye check is a crop of the frame, ours and the exports side by side.
 
 ## Light and air
 

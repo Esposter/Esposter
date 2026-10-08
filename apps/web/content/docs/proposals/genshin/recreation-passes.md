@@ -39,7 +39,7 @@ flowchart TD
   S -->|"within noise, frozen"| M{"5 Motion: each track against its clip or its measured path"}
   M -->|"off"| M
   REC -->|"landmarks only"| M
-  M -->|"within noise, frozen"| F{"6 Surface: unlit colour against the exports"}
+  M -->|"within noise, frozen"| F{"6 Surface: unlit colour and glow against the exports"}
   F -->|"off"| F
   F -->|"within noise, frozen"| D{"7 Display: the tone curve, grading table and bloom"}
   REC --> D
@@ -68,7 +68,7 @@ The interface runs beside these as a pass of its own, placed from the rect tree,
 | Camera     | Landmarks on the frozen layout                          | Reprojection error and the overlay's edge distance                                    | `pose`, `track`, `overlay`, `passes`                  | Nothing                                                      |
 | Shape      | Each mesh                                               | Depth, normal and outline per family against the exports at the same camera           | `rank`'s second table, shaded, `passes`               | Nothing                                                      |
 | Motion     | Decoded clips, the rows scripts move                    | Each animated part's track against its clip, and fieldless motion against its measure | `clips`, `glide`, `film`, `passes`                    | The walkway's rise and the glide's easing against the script |
-| Surface    | Textures and materials                                  | Unlit colour per family against the exports                                           | `gbuffer`, `plan`, `passes`                           | Nothing                                                      |
+| Surface    | Textures and materials                                  | Unlit colour and glow per family against the exports                                  | `gbuffer`, `plan`, `passes`                           | Nothing                                                      |
 | Display    | The post program, the grading tables, the post profile  | Which table, which curve and what bloom, before any light                             | `passes`                                              | The game's bloom, its fields named                           |
 | Light      | The recordings, everything before held                  | The stone's shown colour by bins, the sun's direction by its shadows' edges           | `calibrate`, `passes`                                 | A shadow-edge solve                                          |
 | Atmosphere | The recordings, the emitters' anchors, the cloud layer  | Haze by depth and height, sky over its clear pixels, clouds by statistics             | `calibrate --haze`, `sky`, `cover`, `layer`, `passes` | Each hour's cloud layer settings                             |
@@ -95,15 +95,15 @@ Everything the passes already have is reused as it is, and each measure, once bu
 
 ## Key files
 
-| File                                                                     | Role after the change                                                    |
-| :----------------------------------------------------------------------- | :----------------------------------------------------------------------- |
-| `scripts/src/services/genshinParity/passes/ParityPassMeasureMap.ts`      | Gains each pass's measure as it is built                                 |
-| `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`        | The references every pass is judged over                                 |
-| `packages/genshin-world/parity/witness/renderWitnessTargets.ts`          | Draws our parts' albedo beside the exports', for the surface's diff      |
-| `scripts/src/services/genshinParity/witness/rankReferenceGains.ts`       | Orders the work inside a pass, never across passes                       |
-| `scripts/src/services/genshinAssets/scene/DerivedAssetArrangementMap.ts` | The layout pass's frozen invariants, grown to every placement it settles |
-| `scripts/src/services/genshinAssets/fit/fitSoundEffect.ts`               | The fit every matched sound goes through                                 |
-| `packages/genshin-engine/src/post/createPostPipeline.ts`                 | Draws the display transform the display pass finds                       |
+| File                                                                     | Role after the change                                                        |
+| :----------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
+| `scripts/src/services/genshinParity/passes/ParityPassMeasureMap.ts`      | Gains each pass's measure as it is built                                     |
+| `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`        | The references every pass is judged over                                     |
+| `packages/genshin-world/parity/witness/renderWitnessTargets.ts`          | Draws our parts' albedo and glow beside the exports', for the surface's diff |
+| `scripts/src/services/genshinParity/witness/rankReferenceGains.ts`       | Orders the work inside a pass, never across passes                           |
+| `scripts/src/services/genshinAssets/scene/DerivedAssetArrangementMap.ts` | The layout pass's frozen invariants, grown to every placement it settles     |
+| `scripts/src/services/genshinAssets/fit/fitSoundEffect.ts`               | The fit every matched sound goes through                                     |
+| `packages/genshin-engine/src/post/createPostPipeline.ts`                 | Draws the display transform the display pass finds                           |
 
 ## Notes
 

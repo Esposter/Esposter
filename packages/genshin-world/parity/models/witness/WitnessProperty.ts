@@ -3,6 +3,7 @@ export enum WitnessProperty {
   Color = "_Color",
   DetailMask = "_DetailMask",
   EmissionColor = "_EmissionColor",
+  EmissionRange = "_EmissionRange",
   EmissionStrength = "_EmissionStrength",
   EmissionType = "Emission_Type",
   EnableRimGlow = "_EnableRimGlow",
