@@ -1,1 +1,29 @@
-{ "id": "sumeru", "landmarks": [] }
+{
+  "enemyCamps": [],
+  "id": "sumeru",
+  "landmarks": [
+    {
+      "areaId": "avidya-forest",
+      "building": {
+        "kit": "Sumeru",
+        "options": {
+          "baseRadius": 40,
+          "domeHeight": 12,
+          "domeRadius": 14,
+          "radialSegments": 24,
+          "radiusStep": 6,
+          "tierCount": 3,
+          "tierHeight": 8,
+          "walkwayHeight": 1,
+          "walkwayOverhang": 3
+        }
+      },
+      "heightOffset": 0,
+      "id": "sumeru-city",
+      "kind": "Building",
+      "position": { "x": -2310, "z": -4050 },
+      "rotation": 0
+    }
+  ],
+  "residents": []
+}

@@ -1,1 +1,19 @@
-{ "id": "snezhnaya", "landmarks": [] }
+{
+  "enemyCamps": [],
+  "id": "snezhnaya",
+  "landmarks": [
+    {
+      "areaId": "everfrozen-earth",
+      "building": {
+        "kit": "Snezhnaya",
+        "options": { "depth": 30, "setback": 3, "storeyCount": 4, "storeyHeight": 8, "width": 50 }
+      },
+      "heightOffset": 0,
+      "id": "snezhnograd",
+      "kind": "Building",
+      "position": { "x": 3750, "z": -10730 },
+      "rotation": 0
+    }
+  ],
+  "residents": []
+}

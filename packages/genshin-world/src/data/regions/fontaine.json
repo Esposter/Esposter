@@ -1,1 +1,16 @@
-{ "id": "fontaine", "landmarks": [] }
+{
+  "enemyCamps": [],
+  "id": "fontaine",
+  "landmarks": [
+    {
+      "areaId": "court-of-fontaine-region",
+      "building": { "kit": "Fontaine", "options": { "bayCount": 5, "bayWidth": 4, "depth": 12, "storeyCount": 3 } },
+      "heightOffset": 0,
+      "id": "court-of-fontaine",
+      "kind": "Building",
+      "position": { "x": 1580, "z": -5780 },
+      "rotation": 0
+    }
+  ],
+  "residents": []
+}

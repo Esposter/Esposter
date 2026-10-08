@@ -1,1 +1,29 @@
-{ "id": "inazuma", "landmarks": [] }
+{
+  "enemyCamps": [],
+  "id": "inazuma",
+  "landmarks": [
+    {
+      "areaId": "narukami-island",
+      "building": {
+        "kit": "Inazuma",
+        "options": {
+          "depth": 10,
+          "eaveOverhang": 1.2,
+          "floorHeight": 1,
+          "roof": "Hipped",
+          "roofHeight": 3,
+          "storeyCount": 3,
+          "storeyHeight": 3.5,
+          "storeySetback": 1,
+          "width": 12
+        }
+      },
+      "heightOffset": 0,
+      "id": "inazuma-city",
+      "kind": "Building",
+      "position": { "x": -4940, "z": 3140 },
+      "rotation": 0
+    }
+  ],
+  "residents": []
+}
