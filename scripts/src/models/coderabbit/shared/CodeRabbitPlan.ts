@@ -1,5 +1,5 @@
 export enum CodeRabbitPlan {
-  // The fourteen-day Pro+ trial
+  // The fourteen-day Advanced trial
   AdvancedTrial = "AdvancedTrial",
   // The paid $24/month tier
   Essentials = "Essentials",
