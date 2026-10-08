@@ -85,7 +85,7 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 
 ### Phase four: the game's systems
 
-What still separates the recreation from the whole game once the world and its play features stand: how characters fight and grow, what the world gives back for exploring it, and the pastimes and challenges beside it. Each page is one system, in the order the systems wait on each other. The systems that need a server or other players are [deferred](/docs/genshin/deferred) instead, since the world keeps no server.
+What still separates the recreation from the whole game once the world and its play features stand: how characters fight and grow, what the world gives back for exploring it, and the pastimes and challenges beside it. Each page is one system, in the order the systems wait on each other. The game's tables a page names are read from the user's installed game at its own patch once that file's reading lands, and from the community's dump until then, as the `genshin-parity` skill settles. The systems that need a server or other players are [deferred](/docs/genshin/deferred) instead, since the world keeps no server.
 
 | Page                                                                 | What it adds                                                                                      |
 | :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
