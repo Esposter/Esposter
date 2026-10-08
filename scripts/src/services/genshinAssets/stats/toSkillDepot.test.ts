@@ -11,12 +11,12 @@ const BURST_ID = 3;
 const ELEMENTLESS_BURST_ID = 4;
 
 const skillMap: ReadonlyMap<number, ExcelSkillRow> = new Map<number, ExcelSkillRow>([
-  [BURST_ID, { cdTime: 15, costElemType: "Wind", costElemVal: 60, id: BURST_ID, maxChargeNum: 1 }],
+  [BURST_ID, { cdTime: 15, costElemType: "Wind", costElemVal: 60, id: BURST_ID, maxChargeNum: 1, nameTextMapHash: 0 }],
   [
     ELEMENTLESS_BURST_ID,
-    { cdTime: 10, costElemType: "None", costElemVal: 0, id: ELEMENTLESS_BURST_ID, maxChargeNum: 1 },
+    { cdTime: 10, costElemType: "None", costElemVal: 0, id: ELEMENTLESS_BURST_ID, maxChargeNum: 1, nameTextMapHash: 0 },
   ],
-  [SKILL_ID, { cdTime: 5, costElemType: "None", costElemVal: 0, id: SKILL_ID, maxChargeNum: 1 }],
+  [SKILL_ID, { cdTime: 5, costElemType: "None", costElemVal: 0, id: SKILL_ID, maxChargeNum: 1, nameTextMapHash: 0 }],
 ]);
 
 describe(toSkillDepot, () => {

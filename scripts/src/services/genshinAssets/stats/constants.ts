@@ -1,3 +1,4 @@
+import { GAME_TEXT_DIRECTORY } from "#src/services/genshinText/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { ArtifactSlot, Element } from "genshin-world";
 import { join } from "node:path";
@@ -57,3 +58,8 @@ export const ArtifactRarityAffixDepotMap: ReadonlyMap<number, number> = new Map(
 ]);
 // The item use that adds EXP to an artifact, its first parameter the EXP one of the item gives
 export const ARTIFACT_EXP_ITEM_USE = "ITEM_USE_ADD_RELIQUARY_EXP";
+// The dump's talent configs, one file for each group of characters, each a map from a talent's config name to its actions
+export const TALENT_CONFIG_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "BinOutput", "Talent", "AvatarTalents");
+// The last digit of a skill's proud skill group is the slot a constellation names the skill by: 1 the normal attack, 2 the
+// Elemental Skill and 9 the burst, as the dump numbers them
+export const PROUD_SKILL_SLOT_MODULUS = 10;

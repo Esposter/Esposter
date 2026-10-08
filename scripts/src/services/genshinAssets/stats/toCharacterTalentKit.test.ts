@@ -10,9 +10,12 @@ const NORMAL_ATTACK_ID = 1;
 const SKILL_ID = 2;
 const BURST_ID = 3;
 const skillMap: ReadonlyMap<number, ExcelSkillRow> = new Map<number, ExcelSkillRow>([
-  [BURST_ID, { cdTime: 15, costElemVal: 60, id: BURST_ID, maxChargeNum: 1, proudSkillGroupId: 13 }],
-  [NORMAL_ATTACK_ID, { cdTime: 0, costElemVal: 0, id: NORMAL_ATTACK_ID, maxChargeNum: 1, proudSkillGroupId: 11 }],
-  [SKILL_ID, { cdTime: 10, costElemVal: 0, id: SKILL_ID, maxChargeNum: 1, proudSkillGroupId: 12 }],
+  [BURST_ID, { cdTime: 15, costElemVal: 60, id: BURST_ID, maxChargeNum: 1, nameTextMapHash: 0, proudSkillGroupId: 13 }],
+  [
+    NORMAL_ATTACK_ID,
+    { cdTime: 0, costElemVal: 0, id: NORMAL_ATTACK_ID, maxChargeNum: 1, nameTextMapHash: 0, proudSkillGroupId: 11 },
+  ],
+  [SKILL_ID, { cdTime: 10, costElemVal: 0, id: SKILL_ID, maxChargeNum: 1, nameTextMapHash: 0, proudSkillGroupId: 12 }],
 ]);
 // An own form's set that names no Elemental Skill or burst, as the Traveler's does
 const OWN_DEPOT: ExcelSkillDepotRow = {

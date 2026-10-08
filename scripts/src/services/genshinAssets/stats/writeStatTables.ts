@@ -8,6 +8,7 @@ import { getArtifactMainAffixCurves } from "#src/services/genshinAssets/stats/ge
 import { getArtifactMainAffixPools } from "#src/services/genshinAssets/stats/getArtifactMainAffixPools";
 import { getArtifactRarityDatas } from "#src/services/genshinAssets/stats/getArtifactRarityDatas";
 import { getArtifactSetDatas } from "#src/services/genshinAssets/stats/getArtifactSetDatas";
+import { getCharacterConstellationKits } from "#src/services/genshinAssets/stats/getCharacterConstellationKits";
 import { getCharacterDatas } from "#src/services/genshinAssets/stats/getCharacterDatas";
 import { getCharacterSkillKits } from "#src/services/genshinAssets/stats/getCharacterSkillKits";
 import { getCharacterTalentKits } from "#src/services/genshinAssets/stats/getCharacterTalentKits";
@@ -34,6 +35,7 @@ export const writeStatTables = (): string[] => {
     "artifactMainAffixPools.json": getArtifactMainAffixPools(),
     "artifactRarities.json": getArtifactRarityDatas(),
     "artifactSets.json": getArtifactSetDatas(notes),
+    "characterConstellationKits.json": getCharacterConstellationKits(notes),
     "characterGrowCurves.json": toGrowCurves(
       readExcelTable<ExcelCurveRow>("AvatarCurveExcelConfigData"),
       new Set(characterDatas.flatMap(({ growAttributes }) => growAttributes.map(({ curve }) => curve))),
