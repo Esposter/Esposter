@@ -4,14 +4,14 @@ import { toMaterialValues } from "#src/services/genshinAssets/shared/toMaterialV
 import { describe, expect, test } from "vitest";
 
 describe(toMaterialValues, () => {
-  test("keeps the filled texture slots and reads colours as tuples", () => {
+  test("keeps the filled texture slots and reads colours as linear tuples, alpha as saved", () => {
     expect.hasAssertions();
 
     const tiling = { m_Offset: { X: 0, Y: 0 }, m_Scale: { X: 1, Y: 1 } };
     const material: ExportedMaterial = {
       m_Name: "",
       m_SavedProperties: {
-        m_Colors: { _Color: { a: 1, b: 0, g: 0, r: 1 } },
+        m_Colors: { _Color: { a: 0.5, b: 0, g: 0.5, r: 1 } },
         m_Floats: { _Metal: 1 },
         m_TexEnvs: {
           _BumpMap: { ...tiling, m_Texture: { IsNull: true, m_FileID: 0, m_PathID: "0" } },
@@ -22,7 +22,7 @@ describe(toMaterialValues, () => {
     };
 
     expect(toMaterialValues(material)).toStrictEqual({
-      colors: { _Color: [1, 0, 0, 1] },
+      colors: { _Color: [1, 0.21404114048223255, 0, 0.5] },
       floats: { _Metal: 1 },
       name: "",
       shaderPathId: "2",

@@ -1,11 +1,18 @@
 import type { ExportedMaterial } from "#src/models/genshinAssets/shared/ExportedMaterial";
 import type { MaterialValues } from "#src/models/genshinAssets/shared/MaterialValues";
 
-// A material's export read as its values: its empty texture slots dropped, and its colours as tuples
+import { toLinear } from "#src/services/shared/toLinear";
+
+// A material's export read as its values: its empty texture slots dropped, and its colours as tuples decoded to linear
+// Light, since Unity saves a colour as the sRGB its inspector shows and a project lit in linear space decodes it before
+// A shader reads it: read as saved, the stone's rim glow stood several times too red on the night's moonlit walkway
 export const toMaterialValues = ({ m_Name, m_SavedProperties, m_Shader }: ExportedMaterial): MaterialValues => ({
   colors: Object.fromEntries(
     Object.entries(m_SavedProperties.m_Colors ?? {}).map(
-      ([name, { a, b, g, r }]): [string, [number, number, number, number]] => [name, [r, g, b, a]],
+      ([name, { a, b, g, r }]): [string, [number, number, number, number]] => [
+        name,
+        [toLinear(r), toLinear(g), toLinear(b), a],
+      ],
     ),
   ),
   floats: { ...m_SavedProperties.m_Floats },
