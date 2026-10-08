@@ -19,7 +19,7 @@ export const collectProcessing = (
 ): { inventory: Inventory; job?: ProcessingJob } => {
   if (!job) return { inventory };
   const elapsedSeconds = now.since(job.startedAt).total({ unit: "second" });
-  const doneCount = Math.min(job.count, Math.floor(elapsedSeconds / recipe.costTime));
+  const doneCount = Math.min(job.count, Math.max(Math.floor(elapsedSeconds / recipe.costTime), 0));
   if (doneCount === 0) return { inventory, job };
   const addition = addInventoryItem(inventory, resultDefinition, doneCount * recipe.result.count);
   if (addition.overflow > 0) return { inventory, job };
