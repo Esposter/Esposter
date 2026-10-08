@@ -11,17 +11,25 @@ import { Euler } from "three";
 
 // A camera flown over the ground: a step's move goes along the view on the ground and straight up or down, faster the
 // Higher it is, and never under the ground or the water's surface. The look, once a frame rather than once a step,
-// Turns its yaw and tilts its pitch, read from where it already faces
+// Turns its yaw and tilts its pitch, read from where it already faces, and a place sets both outright, so the next look
+// Turns from the placed view rather than snapping back to the last one
 export const createFreeCamera = ({ camera, ground }: FreeCameraOptions): FreeCamera => {
   const euler = new Euler().setFromQuaternion(camera.quaternion, "YXZ");
   let yaw = euler.y;
   let pitch = euler.x;
+  const face = (newYaw: number, newPitch: number) => {
+    yaw = newYaw;
+    pitch = Math.max(-FREE_CAMERA_MAX_PITCH, Math.min(FREE_CAMERA_MAX_PITCH, newPitch));
+    euler.set(pitch, yaw, 0, "YXZ");
+    camera.quaternion.setFromEuler(euler);
+  };
   return {
     look: (input) => {
-      yaw += input.lookYaw;
-      pitch = Math.max(-FREE_CAMERA_MAX_PITCH, Math.min(FREE_CAMERA_MAX_PITCH, pitch + input.lookPitch));
-      euler.set(pitch, yaw, 0, "YXZ");
-      camera.quaternion.setFromEuler(euler);
+      face(yaw + input.lookYaw, pitch + input.lookPitch);
+    },
+    place: (position, placedYaw, placedPitch) => {
+      camera.position.copy(position);
+      face(placedYaw, placedPitch);
     },
     step: (input, stepSeconds) => {
       const heightAboveGround = camera.position.y - ground.getGround(camera.position.x, camera.position.z).height;
