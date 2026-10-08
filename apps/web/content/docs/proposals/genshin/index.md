@@ -67,17 +67,19 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 
 ### Phase three: the play features
 
-| Page                                                                 | What it adds                                                                            |
-| :------------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
-| [Character controller](/docs/proposals/genshin/character-controller) | running, sprinting, jumping, climbing, gliding, swimming and their stamina              |
-| [Follow camera](/docs/proposals/genshin/follow-camera)               | the camera behind the character, pulled in by the ground; photo mode                    |
-| [HUD](/docs/proposals/genshin/hud)                                   | the HUD's fitted places, Paimon's mark, the stamina meter and the party                 |
-| [Characters](/docs/proposals/genshin/characters)                     | the game's characters from HoYoverse's official models                                  |
-| [Menu screens](/docs/proposals/genshin/menu-screens)                 | the Paimon menu, and the Time and Settings screens it opens                             |
-| [Combat](/docs/proposals/genshin/combat)                             | the Lunar reactions, self and immutable auras, reaction limits, reach and attack energy |
-| [Interaction](/docs/proposals/genshin/interaction)                   | the F prompts: what is in reach, nearest first, scrolled by the wheel                   |
-| [Inventory](/docs/proposals/genshin/inventory)                       | the bag's nine tabs, stacks, room and sorting, and the currencies                       |
-| [Wish](/docs/proposals/genshin/wish)                                 | the banners, rates, pity, guarantees and Capturing Radiance, on earned Fates            |
+| Page                                                                 | What it adds                                                                                       |
+| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
+| [Character controller](/docs/proposals/genshin/character-controller) | running, sprinting, jumping, climbing, gliding, swimming and their stamina                         |
+| [Follow camera](/docs/proposals/genshin/follow-camera)               | the camera behind the character, pulled in by the ground; photo mode                               |
+| [HUD](/docs/proposals/genshin/hud)                                   | the HUD's fitted places, Paimon's mark, the stamina meter and the party                            |
+| [Characters](/docs/proposals/genshin/characters)                     | the game's characters from HoYoverse's official models                                             |
+| [Party](/docs/proposals/genshin/party)                               | Party Setup on L, the HUD's party, a burst on a switch, the fall and Elemental Resonance           |
+| [Character screen](/docs/proposals/genshin/character-screen)         | the screen measured, the character in its middle, Details, the other tabs, levelling and ascending |
+| [Menu screens](/docs/proposals/genshin/menu-screens)                 | the Paimon menu, and the Time and Settings screens it opens                                        |
+| [Combat](/docs/proposals/genshin/combat)                             | the Lunar reactions, self and immutable auras, reaction limits, reach and attack energy            |
+| [Interaction](/docs/proposals/genshin/interaction)                   | the F prompts: what is in reach, nearest first, scrolled by the wheel                              |
+| [Inventory](/docs/proposals/genshin/inventory)                       | the bag's nine tabs, stacks, room and sorting, and the currencies                                  |
+| [Wish](/docs/proposals/genshin/wish)                                 | the banners, rates, pity, guarantees and Capturing Radiance, on earned Fates                       |
 
 ## Scope and order
 
