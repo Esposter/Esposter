@@ -68,6 +68,24 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "InventoryScreen",
     seconds: 30,
   },
+  // The wiki's 4096 by 2304 location image of Liyue Harbor, a daytime view of the harbour's stepped quay under the sea of
+  // Clouds. Its landmarks are rigid architecture read by eye at the image's pixels off 4x crops: the plinth corners of the
+  // Arch gate over the quay and of the stone-based tower on the water to its left
+  "liyue-harbor-location": {
+    component: DerivedAssetComponent.Liyue,
+    landmarks: {
+      gatePlinthLeft: [3115, 1640],
+      gatePlinthOuter: [3425, 1660],
+      gatePlinthRight: [3328, 1641],
+      towerPlinthFront: [1895, 1271],
+      towerPlinthLeft: [1796, 1246],
+      towerPlinthRight: [1960, 1243],
+    },
+    // Provisional: noon, until `shadows` reads the sun's minute off the buildings' shadows
+    props: { heldMinutes: 720 },
+    screen: "WorldScreen",
+    wikiTitle: "File:Liyue Harbor.png",
+  },
   "loading-startup": { screen: "LoadingStartup", wikiTitle: "File:Loading Screen Startup.png" },
   // The title at dawn, day and night: frames of public recordings of older builds of the PC client idling on it with no
   // Interface, drawn at the current build's camera, each at the moment of the glide's loop its towers and walkway stand at
@@ -326,23 +344,5 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     props: { heldMinutes: 720 },
     screen: "WorldScreen",
     wikiTitle: "File:Nasha Town.png",
-  },
-  // The wiki's 4096 by 2304 location image of Liyue Harbor, a daytime view of the harbour's stepped quay under the sea of
-  // Clouds. Its landmarks are rigid architecture read by eye at the image's pixels off 4x crops: the plinth corners of the
-  // Arch gate over the quay and of the stone-based tower on the water to its left
-  "liyue-harbor-location": {
-    component: DerivedAssetComponent.Liyue,
-    landmarks: {
-      gatePlinthLeft: [3115, 1640],
-      gatePlinthOuter: [3425, 1660],
-      gatePlinthRight: [3328, 1641],
-      towerPlinthFront: [1895, 1271],
-      towerPlinthLeft: [1796, 1246],
-      towerPlinthRight: [1960, 1243],
-    },
-    // Provisional: noon, until `shadows` reads the sun's minute off the buildings' shadows
-    props: { heldMinutes: 720 },
-    screen: "WorldScreen",
-    wikiTitle: "File:Liyue Harbor.png",
   },
 };
