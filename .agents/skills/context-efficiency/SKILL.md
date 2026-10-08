@@ -9,7 +9,7 @@ The main session's context is the scarce resource. These are the habits that sto
 
 ## Keep dumps out of the session
 
-- **Answering a question that spans many files → narrow the search first.** A targeted `Grep` with an output mode that returns the answer (`files_with_matches`, `count`, a line with its context) keeps the files out; a question no grep narrows goes to a `haiku` `Explore` agent whose prompt bounds its report (the `llm-delegation` skill, "In a session"). For a single fact in a file you can already name, just read it.
+- **Answering a question that spans many files → narrow the search first.** A targeted `Grep` with an output mode that returns the answer (`files_with_matches`, `count`, a line with its context) keeps the files out; a question no single grep answers goes to a `haiku` agent whose prompt bounds its report, by the hop rule (the `llm-delegation` skill, "In a session"). For a single fact in a file you can already name, just read it.
 - **A long command's output is read by its tail or its numbers**, never whole: a parity run, a build log or a CI job log goes through `tail`, a `grep` for the lines that matter, or a `haiku` agent that reads it back to the failing line.
 - **Never `Read`/`tail` a subagent's output file.** It is the full JSONL transcript; reading it overflows the context the subagent existed to protect. Wait for the completion notification.
 - **Read the range, not the file**, when the symbol's location is known. Whole-file reads are for files you are about to restructure.
