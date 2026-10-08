@@ -10,10 +10,10 @@ committed.
 | `character-artifacts` | `CharacterScreen` | 10.44% | 0.415 | 6.69% | 0.4314 |
 | `character-artifacts-tabs` | `CharacterScreen` | 7.93% | 0.478 | 5.72% | 0.3583 |
 | `character-attributes` | `CharacterScreen` | 7.78% | 0.766 | 5.57% | 0.3535 |
-| `character-attributes-panel` | `CharacterScreen` | 7.31% | 0.573 | 4.39% | 0.3185 |
+| `character-attributes-panel` | `CharacterScreen` | 7.31% | 0.573 | 4.39% | 0.3186 |
 | `character-attributes-tabs` | `CharacterScreen` | 6.37% | 0.496 | 5.07% | 0.3096 |
 | `character-attributes-top` | `CharacterScreen` | 11.67% | 0.744 | 5.64% | 0.4180 |
-| `character-constellation` | `CharacterScreen` | 6.74% | 0.655 | 4.47% | 0.2813 |
+| `character-constellation` | `CharacterScreen` | 6.74% | 0.656 | 4.47% | 0.2813 |
 | `character-constellation-tabs` | `CharacterScreen` | 5.32% | 0.489 | 3.57% | 0.2054 |
 | `character-talents` | `CharacterScreen` | 7.94% | 0.467 | 4.91% | 0.3512 |
 | `character-talents-tabs` | `CharacterScreen` | 6.94% | 0.470 | 5.07% | 0.3231 |
