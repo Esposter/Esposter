@@ -33,10 +33,11 @@ export const FFMPEG_DIRECTORY: string = join(REPOSITORY_ROOT, "scripts", "node_m
 export const FFMPEG_ARCHIVE_URL =
   "https://github.com/GyanD/codexffmpeg/releases/download/9.0.2/ffmpeg-9.0.2-essentials_build.zip";
 export const FFMPEG_ARCHIVE_SHA256 = "60f467265b1e312373dbcd92200c2618a74850f98d3d078e94296bb3fa2047ba";
-// The world package's parity page (`pnpm -C packages/genshin-world parity`), which renders a screen without Nuxt, on
-// Its own port unless `GENSHIN_PARITY_PORT` names another: a second checkout's page, while a long solve holds the first
+// The world package's parity page, which renders a screen without Nuxt. Its port is 3011 unless `GENSHIN_PARITY_PORT`
+// Names another: the shared checkout's page, which the main session serves once for every agent. A runner's worktree
+// Serves its own on 3002 (`pnpm -C packages/genshin-world parity`) and names that port
 // oxlint-disable-next-line typescript/no-inferrable-types -- isolated declarations need a template literal's type written
-export const PARITY_PAGE_URL: string = `http://localhost:${process.env.GENSHIN_PARITY_PORT ?? "3002"}/parity/?screen=`;
+export const PARITY_PAGE_URL: string = `http://localhost:${process.env.GENSHIN_PARITY_PORT ?? "3011"}/parity/?screen=`;
 // The shared browser `genshin:parity browser start` holds: the address and process it is served by are written here
 export const SHARED_BROWSER_PATH: string = join(PARITY_DIRECTORY, "browser.json");
 // How long a command may take to connect to a shared browser, and how long `browser start` waits for the one it starts

@@ -42,8 +42,9 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 
 ## Keep the GPU busy
 
-- **The page lane runs several scenes at once.** Its runner serves one parity page per item from its own worktree, on its own port (3003 upward), for items whose measures read different scenes. Items reading the same scene stay in order.
-- **Each screen agent serves its own page** on its own port (3011 upward), so a 2D comparison never waits on the lane.
+- **The GPU is already the one doing the work.** Headless Edge gets the machine's own AMD RDNA 3 adapter by default, and the launch flags tried (`--use-angle=d3d11`, `--ignore-gpu-blocklist`, `--enable-unsafe-webgpu`) change nothing that matters: the last adds three features, and a launch forced onto SwiftShader gets no adapter at all. A bench's frame is set by the main thread instead: in a 475-mesh scene about nine of its twelve milliseconds a frame are main-thread work, so a low GPU share is that scene's draw loop, not a missing flag.
+- **The page lane runs several scenes at once.** Its runner serves every item's page from its one parity server in its own worktree (port 3002), each item a page of its own by its screen query, for items whose measures read different scenes. Items reading the same scene stay in order.
+- **One dev server and one browser serve every agent.** The shared checkout's parity page is served once on port 3011, and one shared Edge (`genshin:parity browser start`) takes every command as a context of its own, so a wave's commands share one server and one browser rather than each starting their own. Measured with three `film` commands at once, one server and one shared Edge peaked near 6 GB of private memory and ran about three cores on average, against near 8 GB and about five cores with three servers and three Edges, and the commands' processes fell from about 75 to about 45. The shared Edge stays up between commands, which the next wave's commands join at once.
 - **A GPU idle while the queue holds items is a lane waiting on a miss.** A miss is a call only the main session makes, so it settles the misses before anything else: each holds the GPU.
 
 ## Tokens are a resource too

@@ -129,7 +129,7 @@ From `scripts/`, as `pnpm genshin:parity <command>`, each with its own `--help`;
 Each step takes seconds, so the loop runs as often as a test would:
 
 - The parity page is up in about a second.
-- One Edge serves every command. `browser start` holds it, and each command opens its page in a context of its own, so none pays for a browser. A bench is the exception: its unlimited frame rate needs launch flags a shared Edge was not started with, so it launches its own.
+- One Edge serves every command. `browser start` holds it, and each command opens its page in a context of its own, so none pays for a browser. The parity page is served once per checkout: the shared checkout's on port 3011, which `GENSHIN_PARITY_PORT` changes. A bench is the exception: its unlimited frame rate needs launch flags a shared Edge was not started with, so it launches its own.
 - A comparison, shot included, takes a few seconds.
 - The visual suite's first screen takes a few seconds, and each further screen a fraction of one.
 - A trace at a mark's full 1600-unit resolution takes a second or two.
