@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
 
-import { ElementTypes } from "#src/models/loading/ElementType";
+import { ElementTypes } from "#src/models/shared/ElementType";
 import { MARKS_FADE_MS, WHITE_HOLD_MS } from "#src/services/loading/constants";
 import { ElementMarkPathMap } from "#src/services/loading/ElementMarkPathMap";
 import { useTimeoutFn, whenever } from "@vueuse/core";

@@ -1,4 +1,4 @@
-import { ElementType } from "#src/models/loading/ElementType";
+import { ElementType } from "#src/models/shared/ElementType";
 
 // Each element's mark as one filled path on a 1600-unit square, traced at full resolution from the wiki's own render
 // Of it (`pnpm -C scripts genshin:parity trace "File:Element <Name>.svg" 0 0 1600 1600`)
