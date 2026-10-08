@@ -68,7 +68,7 @@ The sky is the scene's background node (`createSkyNode`), drawn behind everythin
 ## Notes
 
 - **A set hour is a cut, not a sweep.** Setting the clock jumps the keyframes; only the running clock blends, so reduced motion needs nothing extra.
-- **Weather is its own page.** It belongs to an area, and no area exists until the world map does, so rain, storms, snow, fog and sandstorms are the [weather](/docs/proposals/genshin/weather) proposal.
+- **Weather is its own page.** A weather raises the sky's cloud cover and the fog's density over these keyframes, as the [weather](/docs/genshin/weather) page describes.
 - **The clock control is exploring's.** A reader sets the hour from the control the [exploring](/docs/proposals/genshin/exploring) page adds; until then, the tuning panel sets it in development.
 
 ## Sources
