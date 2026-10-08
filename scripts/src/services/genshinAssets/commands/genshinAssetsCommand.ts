@@ -37,6 +37,7 @@ import { reputationCommand } from "#src/services/genshinAssets/commands/reputati
 import { shadersCommand } from "#src/services/genshinAssets/commands/shadersCommand";
 import { shopsCommand } from "#src/services/genshinAssets/commands/shopsCommand";
 import { soundsCommand } from "#src/services/genshinAssets/commands/soundsCommand";
+import { spiralAbyssCommand } from "#src/services/genshinAssets/commands/spiralAbyssCommand";
 import { statsCommand } from "#src/services/genshinAssets/commands/statsCommand";
 import { statuesCommand } from "#src/services/genshinAssets/commands/statuesCommand";
 import { timingsCommand } from "#src/services/genshinAssets/commands/timingsCommand";
@@ -92,5 +93,6 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     wildlife: wildlifeCommand,
     expeditions: expeditionsCommand,
     commissions: commissionsCommand,
+    "spiral-abyss": spiralAbyssCommand,
   },
 });
