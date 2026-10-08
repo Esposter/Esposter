@@ -97,6 +97,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Exploration progress](/docs/genshin/exploration-progress) | the map's area labels with each area's count and percentage once a statue is unlocked, Galesong Hill first, its scale waiting on a recording                                                |
 | [Shops](/docs/genshin/shops)                               | Paimon's Bargains' Fates bought with Masterless Starglitter or Stardust from the game's shop table, restocked monthly, nothing yet on a screen                                              |
 | [Expeditions](/docs/genshin/expeditions)                   | Mondstadt's expedition places sent for 4 to 20 hours, returned on the moment they left and claimed for items and Mora, nothing yet on a screen                                              |
+| [Wildlife](/docs/genshin/wildlife)                         | the official map's fleeing birds and beasts stood in Windrise's scene and running from the character in reach, nothing struck or dropped yet                                                |
 | [Interface library](/docs/genshin/interface-library)       | `genshin-interface`: the game's screen root, units, pointer, and the pieces its screens share                                                                                               |
 | [Interface layout](/docs/genshin/interface-layout)         | every screen laid out from the game's own RectTransform tree, nothing by hand                                                                                                               |
 | [Title splash](/docs/genshin/title-splash)                 | the game's title logo as each language's client draws it                                                                                                                                    |
@@ -143,6 +144,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - Paimon's Bargains' Fates bought with Masterless Starglitter or Stardust: the goods read from the game's shop table into one slice, each offered from its Adventure Rank and within its dates, a buy limit restocked on the monthly refresh, and the price taken from the wallet.
 - Mondstadt's Reputation: its levels, requests and weekly bounties read from the game's table, the EXP carried up through each level and the limit of three a kind a week across nations, with no keeper or screen yet.
 - Expeditions: Mondstadt's places sent and returned on the moment they left, claimed for their items and Mora, recalled for nothing, and the limit raised by rank, with Katheryne and the screen not yet built.
+- The official map's fleeing birds and beasts, White Pigeon, Crimson Fox and Squirrel, stood in Windrise's scene and running from the character in reach, on provisional flight numbers, with no strike, drop or pick-up yet.
 
 ## Key files
 

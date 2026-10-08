@@ -233,6 +233,9 @@ Clips nothing published shows, which the user records: each 30 seconds or less, 
 - [ ] `ley-line-claim.mkv` — a ley line blossom claimed with resin at the reader's World Level, the reward window in view, then the map after the claim; the claim's rewards by World Level are read from it, and the outcrop's move after a claim is checked against the rule.
 - [ ] `exploration-steps.mkv` — the English PC client's map (M) zoomed out until Galesong Hill's percentage shows, then the Statue of The Seven at Windrise resonated with, one chest in the area opened, one camp cleared, and one ingredient picked up from a plant in the area, the percentage read before and after each, 2 minutes at most, at 60 frames a second. Each kind's weight is the step in the percentage times the area's total, and the picked ingredient shows whether gathering counts ([exploration progress](/docs/proposals/genshin/exploration-progress)).
 - [ ] `gcg-swirl-spread.mkv` — a duel's Swirl on a team whose other characters hold an aura, 15 seconds at most; whether its spread applies the aura's element and reacts is read from it, where the engine settles it as damage only ([Genius Invokation TCG](/docs/genshin/genius-invokation)).
+- [ ] `wildlife-flee-white-pigeon.mkv` — a White Pigeon in Windrise's area approached from about ten metres until it runs, the flight followed to where it stands idle, 15 seconds at most; its escape radius, escape time and flight speed are read from it, to replace the provisional constants in `packages/genshin-world/src/services/wildlife/constants.ts`.
+- [ ] `wildlife-flee-squirrel.mkv` — the same flight from a Squirrel in Windrise's area, 15 seconds at most, read into the same constants.
+- [ ] `wildlife-flee-crimson-fox.mkv` — the same flight from a Crimson Fox in Windrise's area, 15 seconds at most, read into the same constants.
 
 ## Opening
 
