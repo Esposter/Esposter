@@ -2,6 +2,7 @@ import type { Input } from "#src/models/input/Input";
 import type { InputState } from "#src/models/input/InputState";
 
 import {
+  GAMEPAD_LOOK_RADIANS_PER_SECOND,
   GAMEPAD_STICK_DEADZONE,
   KEY_CODE_BACKWARD,
   KEY_CODE_DOWN,
@@ -62,11 +63,12 @@ export const createInput = (target: Window): Input => {
     dispose: () => {
       controller.abort();
     },
-    readInput: () => {
+    readInput: (frameSeconds) => {
       const gamepad = target.navigator.getGamepads().find((candidate): candidate is Gamepad => candidate !== null);
-      const [stickX = 0, stickY = 0] = gamepad?.axes ?? [];
-      inputState.lookYaw = pendingLookYaw;
-      inputState.lookPitch = pendingLookPitch;
+      const [stickX = 0, stickY = 0, lookStickX = 0, lookStickY = 0] = gamepad?.axes ?? [];
+      inputState.lookYaw = pendingLookYaw - toDeadzoned(lookStickX) * GAMEPAD_LOOK_RADIANS_PER_SECOND * frameSeconds;
+      inputState.lookPitch =
+        pendingLookPitch - toDeadzoned(lookStickY) * GAMEPAD_LOOK_RADIANS_PER_SECOND * frameSeconds;
       pendingLookYaw = 0;
       pendingLookPitch = 0;
       inputState.moveForward = Math.max(

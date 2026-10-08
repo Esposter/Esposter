@@ -32,4 +32,15 @@ describe(createFreeCamera, () => {
 
     expect(camera.position.toArray()).toStrictEqual(new Vector3(0, FREE_CAMERA_CLEARANCE, 0).toArray());
   });
+
+  test("is held above the water's surface where the water lies above the ground", () => {
+    expect.hasAssertions();
+
+    const WATER_SURFACE = 4;
+    const camera = new PerspectiveCamera();
+    camera.position.set(0, 0, 0);
+    createFreeCamera({ camera, ground: createGroundQuery(() => 0, WATER_SURFACE) }).step(STILL_INPUT, STEP_SECONDS);
+
+    expect(camera.position.y).toBe(WATER_SURFACE + FREE_CAMERA_CLEARANCE);
+  });
 });

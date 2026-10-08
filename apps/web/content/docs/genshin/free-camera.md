@@ -1,6 +1,6 @@
 ---
 title: Free camera
-description: The camera the world screen flies over the continent, with the keyboard, the mouse and a gamepad's left stick. Its input is read once a frame, its motion runs in fixed steps registered ahead of the floating origin's shift, and it is held above the ground the terrain's own height function gives.
+description: The camera the world screen flies over the continent, with the keyboard, the mouse and a gamepad's sticks. Its input is read once a frame and its look turns once a frame, its motion runs in fixed steps registered ahead of the floating origin's shift, and it is held above the ground and the water's surface.
 ---
 
 # Free camera
@@ -17,7 +17,8 @@ sequenceDiagram
   participant CL as collision
   participant FO as floating origin
   F->>FC: the frame begins, registered before the origin's shift
-  FC->>IN: readInput() once, the frame's move and look
+  FC->>IN: readInput(delta), the frame's move and look
+  FC->>CAM: look(input), once a frame
   FC->>SIM: advance(delta), in steps of a sixtieth of a second
   loop at most five steps a frame
     SIM->>CAM: step(input, step)
@@ -32,16 +33,16 @@ The order is the reason for the registration. The floating origin reads the came
 ## The controls
 
 - **Keyboard**: `W` and `S` move forward and back over the ground, `A` and `D` move left and right, `Space` rises and `Shift` falls. A pair held against each other cancels.
-- **Mouse**: the pointer turns the look while it is locked. Nothing requests the lock yet, so the mouse look is inert until a page asks for it.
-- **Gamepad**: the first connected gamepad's left stick moves over the ground, with a deadzone at the stick's centre.
+- **Mouse**: a click on the canvas locks the pointer, and while it is locked the pointer turns the look.
+- **Gamepad**: the first connected gamepad's left stick moves over the ground, and its right stick turns the look at a rate of 2.5 radians a second. Both have a deadzone at the stick's centre.
 
-The camera's motion is per second, so a key held for a frame moves it the same distance at any frame rate. The input is read once a frame and the steps of that frame all use its move. The look is a turn rather than a rate, so the frame's first step spends it and the rest turn nothing; a frame that runs no step carries its turn into the next frame's, so no pointer movement is lost or repeated at any frame rate.
+The camera's motion and look are per second, so a key held for a frame moves it the same distance at any frame rate. The input is read once a frame: its look turns the camera once, before the frame's steps, and the steps of that frame all use its move, so no pointer movement is lost or repeated at any frame rate. Losing focus clears the keys held, since their releases never reach the page. The input's listeners and the canvas's click are released when the component unmounts, so a remount does not stack them.
 
 ## The motion
 
 A move goes along the view on the ground, and straight up or down. Its speed grows with the camera's height above the ground, so a crossing takes seconds and a slow pass over grass stays slow; the speed's base and its growth live in `packages/genshin-engine/src/camera/constants.ts`. The look turns the yaw and tilts the pitch, which is clamped short of straight up or down so the view never flips.
 
-The camera is never held under the ground: after each step its height is raised to the ground's height at its place plus a clearance, which the same constants file holds. The water's surface is not a floor yet, so the camera can fly over and into the water's volume.
+The camera is never held under the ground or the water's surface: after each step its height is raised to the higher of the ground's height at its place and the water's level, plus a clearance, which the same constants file holds.
 
 ## The ground
 
@@ -49,15 +50,15 @@ The camera is never held under the ground: after each step its height is raised 
 
 ## Key files
 
-| File                                                               | Its role                                                                                        |
-| :----------------------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
-| `packages/genshin-engine/src/input/createInput.ts`                 | keys, locked pointer and the gamepad's left stick, read once a frame; a blur releases every key |
-| `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`    | runs whole steps from an accumulator, at most five a frame                                      |
-| `packages/genshin-engine/src/camera/createFreeCamera.ts`           | the flight: look, move by height, and the clamp above the ground                                |
-| `packages/genshin-engine/src/collision/createGroundQuery.ts`       | the ground's height and normal at a point, and the water's level                                |
-| `packages/genshin-world/src/components/World/FreeCamera/Index.vue` | the world's wiring: the loop run before the origin's shift, on the scene's ground               |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`     | owns the origin and mounts the free camera in place of the orbit controls                       |
-| `packages/genshin-world/src/services/constants.ts`                 | the fixed step's length                                                                         |
+| File                                                               | Its role                                                                                    |
+| :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
+| `packages/genshin-engine/src/input/createInput.ts`                 | keys, locked pointer and the gamepad's sticks, read once a frame; a blur releases every key |
+| `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`    | runs whole steps from an accumulator, at most five a frame                                  |
+| `packages/genshin-engine/src/camera/createFreeCamera.ts`           | the flight: look, move by height, and the clamp above the ground                            |
+| `packages/genshin-engine/src/collision/createGroundQuery.ts`       | the ground's height and normal at a point, and the water's level                            |
+| `packages/genshin-world/src/components/World/FreeCamera/Index.vue` | the world's wiring: the loop run before the origin's shift, on the scene's ground           |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`     | owns the origin and mounts the free camera in place of the orbit controls                   |
+| `packages/genshin-world/src/services/constants.ts`                 | the fixed step's length                                                                     |
 
 ## Notes
 
