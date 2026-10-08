@@ -79,6 +79,7 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
     <template v-if="isSortable">
       <span class="filter" />
       <div class="sort">
+        <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -- the sort's caption is no game text key yet, so no name in the reader's language exists until the bag's sort recording keys it; its options name it meanwhile -->
         <select v-model="sort" class="sort-select">
           <option v-for="inventorySort of InventorySorts" :key="inventorySort" :value="inventorySort">
             {{ sortLabels[inventorySort] }}
