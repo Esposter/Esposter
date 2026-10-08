@@ -45,5 +45,5 @@ flowchart TD
 
 ## Sources
 
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ShopGoodsExcelConfigData`, the goods, their prices, limits, refreshes, ranks and dates, and `ShopExcelConfigData`, the shops and their refreshes. The dump at its revision lacked the four shop tables; they were taken from the same repository's files into the game text dump, never committed.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ShopGoodsExcelConfigData`, the goods, their prices, limits, refreshes, ranks and dates, and "ShopExcelConfigData", the shops and their refreshes. The dump at its revision lacked the four shop tables; they were taken from the same repository's files into the game text dump, never committed.
 - [Paimon's Bargains](https://genshin-impact.fandom.com/wiki/Paimon%27s_Bargains), Genshin Impact Wiki: the proposal's source for the monthly reset and the Fates' prices. Its page was not reachable for this build, so the table is the check.

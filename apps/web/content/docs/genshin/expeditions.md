@@ -33,7 +33,7 @@ stateDiagram-v2
 
 - **Read from the game's tables:** `ExpeditionDataExcelConfigData` for each place's nation, its rank and statue and quest conditions, and its durations and reward previews; `RewardPreviewExcelConfigData` for the items and their counts; and `PlayerLevelExcelConfigData` for each rank's `expeditionLimitAdd`. The three expedition tables and the reward preview table are fetched from the community's dump into the game's text directory, which the dump lacked, and not committed.
 - **Written by** `pnpm -C scripts genshin:assets expeditions`, which writes Mondstadt's places as `packages/genshin-world/src/generated/expeditions/mondstadt.json` and the limit's ranks as `packages/genshin-world/src/data/expeditions/limits.json`. `pnpm -C scripts genshin:assets items` writes the expedition materials into the items data beside the drops'.
-- **Not read by this page:** `ExpeditionPathExcelConfigData` names the Adventurers' Guild's expedition missions, each with its team's elements, and `ExpeditionBonusExcelConfigData` gives a chance of a bonus by the sent character's level. Neither is a place to send a character, and neither's effect is in the tables read.
+- **Not read by this page:** "ExpeditionPathExcelConfigData" names the Adventurers' Guild's expedition missions, each with its team's elements, and "ExpeditionBonusExcelConfigData" gives a chance of a bonus by the sent character's level. Neither is a place to send a character, and neither's effect is in the tables read.
 
 ## Not built yet
 
