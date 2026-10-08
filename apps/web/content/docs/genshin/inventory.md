@@ -1,6 +1,6 @@
 ---
 title: Inventory
-description: The game's bag and its currencies as pure state. Nine tabs in the game's order, items stacking to their own limits, weapons and artifacts one each, the bag's room per tab and by kind, each tab sorted as the game sorts it, and a wallet of Mora, Primogems, Genesis Crystals, the two Fates, Starglitter and Stardust. The materials the enemies drop are defined from the game's material table and taken into the bag on a pick up. Its screen opens on B, its words the game's own. Nothing is bought with money.
+description: The game's bag and its currencies as pure state. Nine tabs in the game's order, items stacking to their own limits, weapons and artifacts one each, the bag's room per tab and by kind, each tab sorted as the game sorts it, and a wallet of Mora, Primogems, Genesis Crystals, the two Fates, Starglitter, Stardust and Original Resin, which regenerates. The materials the enemies drop are defined from the game's material table and taken into the bag on a pick up. Its screen opens on B, its words the game's own. Nothing is bought with money.
 ---
 
 # Inventory
@@ -33,28 +33,28 @@ flowchart TD
 - **The bag's room is the game's.** `ItemCategoryRoomMap` gives the tabs counted on their own their room in pieces: 2,000 weapons, 2,400 artifacts and 2,600 furnishings. Every other tab shares `INVENTORY_KIND_LIMIT`, 2,300 kinds of item counted by kind rather than quantity.
 - **What does not fit is left over.** An addition returns the bag after it and how many there was no room for, which stay where they lay, as the game leaves a pick up the bag cannot take.
 - **Each tab sorts as the game's does.** `computeInventoryTab` takes a tab's entries in the game's order. Weapons and artifacts sort by Level or Quality, ascending or descending (`InventorySortOrder`), the other key breaking a tie the same way. Furnishings run from the first obtained, gadgets and quest items from the highest quality down, and every other tab in the game's own order by rank. A tie left falls to rank, then to the order obtained.
-- **A wallet of the game's currencies.** `Wallet` counts each `Currency`: Mora, Primogems and Genesis Crystals, which the game holds outside the tabs, and Intertwined Fate, Acquaint Fate, Masterless Starglitter and Masterless Stardust, which it files among the Precious Items. Each is named by its item's own text (`CurrencyGameTextKeyMap`).
+- **A wallet of the game's currencies.** `Wallet` counts each `Currency`: Mora, Primogems and Genesis Crystals, which the game holds outside the tabs, and Intertwined Fate, Acquaint Fate, Masterless Starglitter and Masterless Stardust, which it files among the Precious Items. Each is named by its item's own text (`CurrencyGameTextKeyMap`). Original Resin is counted in the same wallet, beside the moment it last changed, from which it regenerates ([original resin](/docs/genshin/original-resin)).
 - **Nothing is bought with money.** Genesis Crystals are the game's paid currency, bought only by topping up. Nothing here takes a payment, so the wallet's Genesis Crystals stay at none and every Primogem and Fate is one the world gives.
 - **The screen opens on B.** `InputAction.OpenInventory` is on B, and the screens' map opens `ScreenKind.Inventory` from it or from the Paimon menu. `Inventory/Screen` opens on the weapons, sorted by level from the highest, and hands `InventoryScreen` the tabs, the open tab's cells, its room in the game's own wording ("Weapons 0/2000", only on a tab counted on its own), the sort with its order's word for a screen reader, and the Mora count beside the tabs. A weapon's caption is its level as the game writes one, an artifact's its plus, and a stack's its count. Precious Items shows the wish's four currencies the wallet holds, in the game's order, ahead of the bag's own precious items.
 
 ## Key files
 
-| File                                                                           | Role                                                                                |
-| :----------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`            | A pick up taken into the bag: stacks, single pieces, room and what is left          |
-| `packages/genshin-world/src/services/inventory/computeInventoryTab.ts`         | A tab's entries in the order the game shows them                                    |
-| `packages/genshin-world/src/services/inventory/ItemCategoryRoomMap.ts`         | The room of the tabs counted on their own                                           |
-| `packages/genshin-world/src/services/inventory/constants.ts`                   | The bag's kinds, the starting levels, the currencies shown, an empty bag and wallet |
-| `packages/genshin-world/src/services/inventory/getItemDefinition.ts`           | An item's definition, read from the materials table in the reader's language        |
-| `packages/genshin-world/src/services/inventory/MaterialTypeItemCategoryMap.ts` | The tab each material type is filed in                                              |
-| `packages/genshin-world/src/models/inventory/MaterialData.ts`                  | A row of the materials table, checked against its schema as the world loads         |
-| `packages/genshin-world/src/data/items/materials.json`                         | The materials the enemies' drops name, as `genshin:assets items` writes them        |
-| `scripts/src/services/genshinAssets/items/writeItems.ts`                       | The reader that writes the materials table from the game's dump                     |
-| `packages/genshin-world/src/models/inventory/Currency.ts`                      | The seven currencies the wallet counts                                              |
-| `packages/genshin-world/src/components/Inventory/Screen/Index.vue`             | The bag's screen in the reader's language                                           |
-| `packages/genshin-world/src/components/Inventory/Screen/Index.fixture.ts`      | The weapons tab of 1,347 entries, the parity page's and the visual suite's state    |
-| `packages/genshin-interface/src/components/InventoryScreen/Index.vue`          | The bag's tabs, room, sort, grid and counts                                         |
-| `packages/genshin-interface/src/models/ItemCategory.ts`                        | The nine tabs, in the game's order                                                  |
+| File                                                                           | Role                                                                                                           |
+| :----------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`            | A pick up taken into the bag: stacks, single pieces, room and what is left                                     |
+| `packages/genshin-world/src/services/inventory/computeInventoryTab.ts`         | A tab's entries in the order the game shows them                                                               |
+| `packages/genshin-world/src/services/inventory/ItemCategoryRoomMap.ts`         | The room of the tabs counted on their own                                                                      |
+| `packages/genshin-world/src/services/inventory/constants.ts`                   | The bag's kinds, the starting levels, the currencies shown, an empty bag and a wallet with Original Resin full |
+| `packages/genshin-world/src/services/inventory/getItemDefinition.ts`           | An item's definition, read from the materials table in the reader's language                                   |
+| `packages/genshin-world/src/services/inventory/MaterialTypeItemCategoryMap.ts` | The tab each material type is filed in                                                                         |
+| `packages/genshin-world/src/models/inventory/MaterialData.ts`                  | A row of the materials table, checked against its schema as the world loads                                    |
+| `packages/genshin-world/src/data/items/materials.json`                         | The materials the enemies' drops name, as `genshin:assets items` writes them                                   |
+| `scripts/src/services/genshinAssets/items/writeItems.ts`                       | The reader that writes the materials table from the game's dump                                                |
+| `packages/genshin-world/src/models/inventory/Currency.ts`                      | The currencies the wallet counts, Original Resin among them                                                    |
+| `packages/genshin-world/src/components/Inventory/Screen/Index.vue`             | The bag's screen in the reader's language                                                                      |
+| `packages/genshin-world/src/components/Inventory/Screen/Index.fixture.ts`      | The weapons tab of 1,347 entries, the parity page's and the visual suite's state                               |
+| `packages/genshin-interface/src/components/InventoryScreen/Index.vue`          | The bag's tabs, room, sort, grid and counts                                                                    |
+| `packages/genshin-interface/src/models/ItemCategory.ts`                        | The nine tabs, in the game's order                                                                             |
 
 ## Notes
 

@@ -42,25 +42,25 @@ The overlay is scored whole-frame against `map-overlay-jueyun`, the English clie
 
 ## Key files
 
-| File                                                                 | Role                                                                                               |
-| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/components/Map/Drawing/Index.vue`        | The one drawing of the catalogue, which both views draw                                            |
-| `packages/genshin-world/src/components/Map/Overlay/Index.vue`        | The map on M: the drawing centred on the player, the names, the pointer, the close and zoom chrome |
-| `packages/genshin-world/src/components/Map/Overlay/Index.fixture.ts` | The state the parity page shoots, the player in the Sea of Clouds                                  |
-| `packages/genshin-world/src/components/Map/JumpList/Index.vue`       | Every jump, grouped by region, as buttons, visually hidden on the overlay                          |
-| `packages/genshin-world/src/components/Map/Pointer/Index.vue`        | The player on the map: a disc with a cap pointing the way the view faces                           |
-| `packages/genshin-world/src/composables/useJumpLandmarks.ts`         | Every region's landmarks a jump lands at, read once                                                |
-| `packages/genshin-world/src/services/map/computeJumpPose.ts`         | Where a jump to a landmark lands, and which way it faces                                           |
-| `packages/genshin-world/src/services/map/computeAreaLabels.ts`       | Where each area's name is written                                                                  |
-| `packages/genshin-world/src/services/map/constants.ts`               | The kinds a jump lands at, the arrival's distance, the view's metres, the marks' and names' sizes  |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`       | Opens the map, fades and places on a jump, and exposes both to its host                            |
-| `packages/genshin-world/src/components/World/Character/Index.vue`    | Places the body at a pose, the follow camera level behind it                                       |
+| File                                                                 | Role                                                                                                                                              |
+| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/components/Map/Drawing/Index.vue`        | The one drawing of the catalogue, which both views draw                                                                                           |
+| `packages/genshin-world/src/components/Map/Overlay/Index.vue`        | The map on M: the drawing centred on the player, the names, the pointer, the close and zoom chrome, and the Original Resin counter on the top bar |
+| `packages/genshin-world/src/components/Map/Overlay/Index.fixture.ts` | The state the parity page shoots, the player in the Sea of Clouds                                                                                 |
+| `packages/genshin-world/src/components/Map/JumpList/Index.vue`       | Every jump, grouped by region, as buttons, visually hidden on the overlay                                                                         |
+| `packages/genshin-world/src/components/Map/Pointer/Index.vue`        | The player on the map: a disc with a cap pointing the way the view faces                                                                          |
+| `packages/genshin-world/src/composables/useJumpLandmarks.ts`         | Every region's landmarks a jump lands at, read once                                                                                               |
+| `packages/genshin-world/src/services/map/computeJumpPose.ts`         | Where a jump to a landmark lands, and which way it faces                                                                                          |
+| `packages/genshin-world/src/services/map/computeAreaLabels.ts`       | Where each area's name is written                                                                                                                 |
+| `packages/genshin-world/src/services/map/constants.ts`               | The kinds a jump lands at, the arrival's distance, the view's metres, the marks' and names' sizes                                                 |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`       | Opens the map, fades and places on a jump, and exposes both to its host                                                                           |
+| `packages/genshin-world/src/components/World/Character/Index.vue`    | Places the body at a pose, the follow camera level behind it                                                                                      |
 
 ## Notes
 
 - **Its looks are provisional.** The map's colours, the marks, the pointer, the list's look and the fade's durations are each marked provisional in their file, until the map's and the teleport's recordings are measured ([roadmap](/docs/genshin/roadmap)).
 - **The map's terrain is not drawn.** The game paints its map as art, and that art is kept out of the repository, so the overlay draws only the catalogue's outlines, which are provisional squares for most areas. Against the wiki's full-screen screenshot of Jueyun Karst (`map-overlay-jueyun`), the overlay scores 31.37% mean difference and a FLIP of 0.7920; the terrain and the squares are the difference, while the chrome and the names are placed from the reference's own pixels.
-- **Not built yet.** The zoom slider does not zoom and the map does not pan ([exploring](/docs/proposals/genshin/exploring)). The region tag at the bottom right, its exploration progress, the UID line and the domains-only toggle are missing: their words are not in the text dump, so they wait on their text ids rather than being typed by hand. The top bar's floor and resin counters belong to features not yet built. No reference for the teleport panel has been found, so it is not drawn ([roadmap](/docs/genshin/roadmap)).
+- **Not built yet.** The zoom slider does not zoom and the map does not pan ([exploring](/docs/proposals/genshin/exploring)). The region tag at the bottom right, its exploration progress, the UID line and the domains-only toggle are missing: their words are not in the text dump, so they wait on their text ids rather than being typed by hand. The top bar's floor counter belongs to a feature not yet built, and its resin counter is [Original Resin](/docs/genshin/original-resin)'s, placed provisionally until its recording lands. No reference for the teleport panel has been found, so it is not drawn ([roadmap](/docs/genshin/roadmap)).
 - **The jump list is hidden, not removed.** It is kept for the keyboard and a screen reader and is not drawn, because the reference shows no list. Whether it should be shown beside the map is a call for the user.
 - **The pointer is shared with the minimap.** Both draw `Map/Pointer`, so the minimap's centre pointer takes the same disc and cap.
 - **The arrival is a fixed distance until the game's own arrival points are read.** The game sets a transport point for every statue and waypoint, which the text dump's scene points hold under obfuscated field names; until they are named and fitted, a jump lands a provisional distance in front of the landmark.
