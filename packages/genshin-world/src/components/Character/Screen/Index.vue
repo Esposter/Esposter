@@ -4,11 +4,24 @@ import type { StatTables } from "#src/models/character/StatTables";
 import type { GameText } from "genshin-text";
 
 import CharacterAttributeList from "#src/components/Character/AttributeList/Index.vue";
+import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
+import { Attribute } from "#src/models/character/Attribute";
+import { CombatTalent } from "#src/models/character/CombatTalent";
 import { CharacterMenuTabGameTextKeyMap } from "#src/services/character/CharacterMenuTabGameTextKeyMap";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
 import { LOGIN_TRAVELER_GENDER } from "#src/services/login/constants";
-import { CharacterMenu, CharacterMenuTab, CharacterMenuTabs, GameScreen } from "genshin-interface";
-import { fillLinePlaceholders, GameTextKey } from "genshin-text";
+import {
+  CharacterMenu,
+  CharacterMenuArtifacts,
+  CharacterMenuConstellation,
+  CharacterMenuTab,
+  CharacterMenuTabs,
+  CharacterMenuTalents,
+  CharacterMenuWeapons,
+  GameScreen,
+} from "genshin-interface";
+import { fillGameTextValues, fillLinePlaceholders, GameTextKey } from "genshin-text";
 
 interface Props {
   // The character the screen opens on, the one on the field
@@ -46,11 +59,57 @@ const characterName = computed(() => menuEntries.value.find(({ id }) => id === c
 const tabLabels = computed(() =>
   Object.fromEntries(CharacterMenuTabs.map((menuTab) => [menuTab, gameText[CharacterMenuTabGameTextKeyMap[menuTab]]])),
 );
+// The game's order of the five artifact slots, and of the three combat talents, which the tabs list them in
+const ARTIFACT_SLOT_ORDER = [
+  ArtifactSlot.FlowerOfLife,
+  ArtifactSlot.PlumeOfDeath,
+  ArtifactSlot.SandsOfEon,
+  ArtifactSlot.GobletOfEonothem,
+  ArtifactSlot.CircletOfLogos,
+];
+const COMBAT_TALENT_ORDER = [CombatTalent.NormalAttack, CombatTalent.ElementalSkill, CombatTalent.ElementalBurst];
+// A character's constellations, six a character's depot holds
+const CONSTELLATION_COUNT = 6;
+// The weapon the character wields at its level and phase: its name, base ATK and secondary attribute, as the Weapons tab
+// Shows them
+const weaponPanel = computed(() => {
+  const weapon = character.value?.weapon;
+  const weaponData = weapon && statTables.weaponDataMap.get(weapon.id);
+  if (!weapon || !weaponData) return undefined;
+  const attributeLines = getGrownAttributeLines(
+    weaponData,
+    statTables.weaponGrowCurveMap,
+    weapon.level,
+    weapon.ascension,
+  );
+  const getAttributeValue = (attribute: Attribute): number =>
+    attributeLines.find((line) => line.attribute === attribute)?.value ?? 0;
+  const maxLevel = weaponData.ascensionPhases[weapon.ascension]?.maxLevel ?? weapon.level;
+  return {
+    ascension: weapon.ascension,
+    baseAttack: Math.round(getAttributeValue(Attribute.BaseAttack)),
+    levelText: fillGameTextValues(gameText[GameTextKey.LevelFormat], `${weapon.level}/${maxLevel}`),
+    name: nameText[weaponData.nameTextId] || "",
+    rarity: weaponData.rarity,
+    refinement: weapon.refinement,
+    subStatValue: `${(getAttributeValue(Attribute.DefensePercent) * 100).toFixed(1)}%`,
+  };
+});
+// Which artifact slots the character wears one in, in the game's order
+const artifactsEquipped = computed(() =>
+  ARTIFACT_SLOT_ORDER.map((slot) => character.value?.artifacts.some((artifact) => artifact.slot === slot) ?? false),
+);
+// Which of the six constellations are activated, the first the character's count of them
+const constellationsActivated = computed(() =>
+  Array.from({ length: CONSTELLATION_COUNT }, (_, index) => index < (character.value?.constellationCount ?? 0)),
+);
+// Each combat talent's level in the order the Talents tab lists them
+const talentLevels = computed(() => COMBAT_TALENT_ORDER.map((talent) => character.value?.talentLevels[talent] ?? 0));
 </script>
 
 <template>
   <!-- The character screen, the C key's, a dialog over the world: the player's characters, the one on the field chosen
-       First, the open tab's panel for the chosen one, of which only the Attributes tab's is drawn yet, and the way back -->
+       First, the open tab's panel for the chosen one, the Profile's aside, and the way back -->
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Character]">
     <CharacterMenu v-model:character-id="characterId" v-model:tab="tab" :characters="menuEntries" :tab-labels>
       <CharacterAttributeList
@@ -61,6 +120,16 @@ const tabLabels = computed(() =>
         :name="characterName"
         :stat-tables
       />
+      <CharacterMenuWeapons v-else-if="weaponPanel && tab === CharacterMenuTab.Weapons" v-bind="weaponPanel" />
+      <CharacterMenuArtifacts
+        v-else-if="character && tab === CharacterMenuTab.Artifacts"
+        :equipped="artifactsEquipped"
+      />
+      <CharacterMenuConstellation
+        v-else-if="character && tab === CharacterMenuTab.Constellation"
+        :activated="constellationsActivated"
+      />
+      <CharacterMenuTalents v-else-if="character && tab === CharacterMenuTab.Talents" :levels="talentLevels" />
     </CharacterMenu>
     <span class="grid" />
     <p class="training-guide">{{ gameText[GameTextKey.TrainingGuide] }}</p>

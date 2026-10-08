@@ -1,4 +1,6 @@
 import type { Character } from "#src/models/character/Character";
+import type { TalentLevels } from "#src/models/character/TalentLevels";
+import type { Weapon } from "#src/models/weapon/Weapon";
 
 import englishNameText from "#src/generated/nameText/English.json";
 import artifactExpMaterials from "#src/generated/stats/artifactExpMaterials.json";
@@ -18,8 +20,16 @@ import { ENGLISH_GAME_TEXT } from "genshin-text";
 // Xilonen on the Attributes tab at level 90, the English PC client's character screen as the 21:9 recording shows her
 // Beside fourteen of the player's other characters, the Traveler among them, their weapons held at the first level
 const XILONEN_ID = 10000103;
-const XILONEN_WEAPON_ID = 11101;
 const XILONEN_MAX_LEVEL = 90;
+// Xilonen's Peak Patrol Song at level 90 in its sixth phase and refinement five, and her three combat talents at 10, 13
+// and 13, as the recording's Weapons and Talents tabs show them; the others hold the Dull Blade at the first level
+const XILONEN_WEAPON: Weapon = { ascension: 6, experience: 0, id: 11516, level: 90, refinement: 5 };
+const DULL_BLADE: Weapon = { ascension: 0, experience: 0, id: 11101, level: 1, refinement: 1 };
+const XILONEN_TALENT_LEVELS: TalentLevels = {
+  [CombatTalent.ElementalBurst]: 13,
+  [CombatTalent.ElementalSkill]: 13,
+  [CombatTalent.NormalAttack]: 10,
+};
 const XILONEN_ASCENSION = 6;
 const STAMINA = 240;
 const ROSTER_IDS = [
@@ -47,8 +57,11 @@ const roster: Character[] = ROSTER_IDS.map((id) => ({
   id,
   level: id === XILONEN_ID ? XILONEN_MAX_LEVEL : 1,
   stellaFortunaCount: 0,
-  talentLevels: { [CombatTalent.ElementalBurst]: 1, [CombatTalent.ElementalSkill]: 1, [CombatTalent.NormalAttack]: 1 },
-  weapon: { ascension: 0, experience: 0, id: XILONEN_WEAPON_ID, level: 1, refinement: 1 },
+  talentLevels:
+    id === XILONEN_ID
+      ? XILONEN_TALENT_LEVELS
+      : { [CombatTalent.ElementalBurst]: 1, [CombatTalent.ElementalSkill]: 1, [CombatTalent.NormalAttack]: 1 },
+  weapon: id === XILONEN_ID ? XILONEN_WEAPON : DULL_BLADE,
 }));
 
 export const props = {
