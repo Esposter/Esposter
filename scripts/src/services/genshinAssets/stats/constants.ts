@@ -35,6 +35,8 @@ export const PLAYABLE_AVATAR_USE_TYPE = "AVATAR_FORMAL";
 export const EMPTY_PROPERTY_TYPE = "FIGHT_PROP_NONE";
 // The item id a slot holding nothing names: an unused cost slot of a phase, and a weapon refined by a copy alone
 export const EMPTY_ITEM_ID = 0;
+// The last level a combat talent's materials raise it to. Each level past it is a constellation's, which no material pays for
+export const MAX_MATERIAL_TALENT_LEVEL = 10;
 // The seven elements as the game's tables spell them, which a skill's energy names and each character's element is read from
 export const ElementNameSet: ReadonlySet<string> = new Set<string>(Object.values(Element));
 // The depot each slot's standard pieces draw their main affix from, the depot holding that slot's own attributes
