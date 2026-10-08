@@ -36,7 +36,7 @@ describe(toMaterialValues, () => {
 
     const material: ExportedMaterial = {
       m_Name: "",
-      m_SavedProperties: { m_TexEnvs: {} },
+      m_SavedProperties: { m_Colors: null, m_Floats: null, m_TexEnvs: {} },
       m_Shader: { IsNull: false, m_FileID: 0, m_PathID: "0" },
     };
 

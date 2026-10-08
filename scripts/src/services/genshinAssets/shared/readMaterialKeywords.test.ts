@@ -30,6 +30,8 @@ describe(readMaterialKeywords, () => {
 
     const bytes = Buffer.concat([serializeString("a"), Buffer.alloc(12), serializeString("A B").subarray(0, 6)]);
 
-    expect(() => readMaterialKeywords(bytes)).toThrow("keywords end at byte 27 of 26");
+    expect(() => readMaterialKeywords(bytes)).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: readMaterialKeywords, keywords end at byte 27 of 26]`,
+    );
   });
 });
