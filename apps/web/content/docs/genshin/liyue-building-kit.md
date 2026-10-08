@@ -5,7 +5,7 @@ description: The parametric building kit that builds Liyue's towns, and the pale
 
 # Liyue building kit
 
-Liyue's towns are built from one kit: a stone terrace, lacquered columns and beams, and roofs stacked one above another with their eaves turned up. The kit is pure geometry on `genshin-engine`, so a building is generated the same way anywhere and nothing about its placement lives in it.
+Liyue's towns are built from one kit: a stone terrace, lacquered columns and beams, and roofs stacked one above another with their eaves turned up. The kit is pure geometry in `genshin-world` over the engine's primitives, so a building is generated the same way anywhere and nothing about its placement lives in it.
 
 ## How it works
 
@@ -34,11 +34,10 @@ The palette's hues are the ones the game's Liyue reads as: ochre and grey rock, 
 
 ## Key files
 
-| File                                                                              | Role                                                                  |
-| :-------------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
-| `packages/genshin-engine/src/kits/liyue/createLiyueBuildingGeometries.ts`         | The building: terrace, columns and beams, lattice and roof tiers      |
-| `packages/genshin-engine/src/kits/liyue/createLiyueRoofTierGeometry.ts`           | One roof tier: the upturned shell and its finials                     |
-| `packages/genshin-engine/src/kits/liyue/getLiyueBays.ts`                          | A wall's bays, none wider than the bay width                          |
-| `packages/genshin-engine/src/kits/liyue/constants.ts`                             | The kit's proportions, in metres                                      |
-| `packages/genshin-world/src/services/liyue/constants.ts`                          | The palette's hues                                                    |
-| `packages/genshin-world/src/data/regions/liyue.json`                              | Liyue's region data, with no landmarks until their positions are fit |
+| File                                                                         | Role                                                                 |
+| :--------------------------------------------------------------------------- | :------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/liyue/createLiyueBuildingGeometries.ts` | The building: terrace, columns and beams, lattice and roof tiers     |
+| `packages/genshin-world/src/services/liyue/createLiyueRoofTierGeometry.ts`   | One roof tier: the upturned shell and its finials                    |
+| `packages/genshin-world/src/services/liyue/getLiyueBays.ts`                  | A wall's bays, none wider than the bay width                         |
+| `packages/genshin-world/src/services/liyue/constants.ts`                     | The kit's proportions in metres, and the palette's hues              |
+| `packages/genshin-world/src/data/regions/liyue.json`                         | Liyue's region data, with no landmarks until their positions are fit |

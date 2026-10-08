@@ -46,7 +46,7 @@ New files:
 
 ```text
 packages/genshin-world/src/data/regions/mondstadt.json
-packages/genshin-engine/src/kits/mondstadt/   ← windmill and wall generators (the building kit is built)
+packages/genshin-world/src/services/mondstadt/   ← windmill and wall generators (the building kit is built)
 ```
 
 ## Sources

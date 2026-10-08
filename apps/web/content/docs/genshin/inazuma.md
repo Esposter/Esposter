@@ -9,11 +9,11 @@ The parts of [Inazuma](/docs/proposals/genshin/inazuma) built so far: the buildi
 
 ## Building kit
 
-`createBuildingGeometry` builds a building from its proportions as three geometries, one per material: timber, plaster and roof tile. Each storey stands on the roof below, and an upper storey is inset from the one below by the setback, so a tower's storeys step up.
+`createInazumaBuildingGeometry` builds a building from its proportions as three geometries, one per material: timber, plaster and roof tile. Each storey stands on the roof below, and an upper storey is inset from the one below by the setback, so a tower's storeys step up.
 
 ```mermaid
 flowchart TD
-  OP[BuildingOptions] --> FL[Timber floor slab on corner posts, floor height above the ground]
+  OP[InazumaBuildingOptions] --> FL[Timber floor slab on corner posts, floor height above the ground]
   FL --> WL[Corner posts and top beams, plaster panels between]
   WL --> RF[Roof on the walls, eaves past them by the overhang]
   RF -->|another storey| IN[Next storey stands on the roof, inset by the setback]
@@ -32,10 +32,10 @@ The roof is a convex solid: its base closes it, so a camera under the eaves sees
 
 ## Key files
 
-| File                                                                 | Role                                                 |
-| :------------------------------------------------------------------- | :--------------------------------------------------- |
-| `packages/genshin-engine/src/kits/inazuma/createBuildingGeometry.ts` | The building kit: floors, frame, plaster and storeys |
-| `packages/genshin-engine/src/kits/inazuma/createRoofGeometry.ts`     | A hipped or gabled roof as a closed convex solid     |
-| `packages/genshin-engine/src/models/kits/inazuma/BuildingOptions.ts` | A building's proportions in metres                   |
-| `packages/genshin-world/src/services/inazuma/constants.ts`           | The island palettes and the building colours         |
-| `packages/genshin-world/src/data/regions/inazuma.json`               | The region's landmarks, none yet                     |
+| File                                                                           | Role                                                 |
+| :----------------------------------------------------------------------------- | :--------------------------------------------------- |
+| `packages/genshin-world/src/services/inazuma/createInazumaBuildingGeometry.ts` | The building kit: floors, frame, plaster and storeys |
+| `packages/genshin-world/src/services/inazuma/createInazumaRoofGeometry.ts`     | A hipped or gabled roof as a closed convex solid     |
+| `packages/genshin-world/src/models/inazuma/InazumaBuildingOptions.ts`          | A building's proportions in metres                   |
+| `packages/genshin-world/src/services/inazuma/constants.ts`                     | The island palettes and the building colours         |
+| `packages/genshin-world/src/data/regions/inazuma.json`                         | The region's landmarks, none yet                     |

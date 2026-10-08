@@ -27,14 +27,14 @@ flowchart TD
 
 ## Key files
 
-| File                                                                         | Role                                                       |
-| :--------------------------------------------------------------------------- | :--------------------------------------------------------- |
-| `packages/genshin-engine/src/kits/snezhnaya/createFactoryGeometry.ts`        | The industrial kit: a factory hall with its chimney        |
-| `packages/genshin-engine/src/kits/snezhnaya/createHallGeometry.ts`           | The capital kit: a hall of storeys set back as it rises    |
-| `packages/genshin-engine/src/kits/snezhnaya/createKresnikTorchGeometry.ts`   | A Kresnik's Torch as its stone and its flame               |
-| `packages/genshin-engine/src/models/kits/snezhnaya/FactoryOptions.ts`        | A factory's options                                        |
-| `packages/genshin-engine/src/models/kits/snezhnaya/HallOptions.ts`           | A hall's options                                           |
-| `packages/genshin-world/src/data/regions/snezhnaya.json`                     | Snezhnaya's region data, with no landmarks yet             |
+| File                                                                          | Role                                                    |
+| :---------------------------------------------------------------------------- | :------------------------------------------------------ |
+| `packages/genshin-world/src/services/snezhnaya/createFactoryGeometry.ts`      | The industrial kit: a factory hall with its chimney     |
+| `packages/genshin-world/src/services/snezhnaya/createHallGeometry.ts`         | The capital kit: a hall of storeys set back as it rises |
+| `packages/genshin-world/src/services/snezhnaya/createKresnikTorchGeometry.ts` | A Kresnik's Torch as its stone and its flame            |
+| `packages/genshin-world/src/models/snezhnaya/FactoryOptions.ts`               | A factory's options                                     |
+| `packages/genshin-world/src/models/snezhnaya/HallOptions.ts`                  | A hall's options                                        |
+| `packages/genshin-world/src/data/regions/snezhnaya.json`                      | Snezhnaya's region data, with no landmarks yet          |
 
 ## Notes
 

@@ -54,7 +54,7 @@ Stone Gate, Wangshu Inn from the bridge, Liyue Harbor from the sea and from the 
 New files:
 
 ```text
-packages/genshin-engine/src/kits/liyue/   ← karst and stone-forest generators
+packages/genshin-world/src/services/liyue/   ← karst and stone-forest generators
 ```
 
 ## Sources

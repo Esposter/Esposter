@@ -1,11 +1,11 @@
 ---
 title: Nod-Krai's kits
-description: The two building kits Nod-Krai's structures are made from, both generators over the engine's architecture parts. The dieselpunk kit merges boxes, pipework and smokestacks into one geometry for the ports, towns and Fatui works; the Frostmoon kit stands a ring of stones for the Scions' sites. Each takes its numbers as options, so the region's fitted values reach the mesh without the code knowing a place.
+description: The two building kits Nod-Krai's structures are made from, both generators over the engine's architecture parts. The dieselpunk kit merges boxes, pipework and smokestacks into one geometry for the ports, towns and Fatui works; the Frostmoon kit stands a ring of stones for the Scions' sites. Each takes its numbers as options, so the region's fitted values reach the mesh as data.
 ---
 
 # Nod-Krai's kits
 
-Nod-Krai's structures are not Mondstadt's or Inazuma's, so each of its two kits is a generator of its own, built over the engine's shared architecture parts rather than over any region's kit. The engine knows no region: the kits take their numbers as options, and the region's fitted values are supplied by the world package.
+Nod-Krai's structures are not Mondstadt's or Inazuma's, so each of its two kits is a generator of its own, built over the engine's shared architecture parts rather than over any region's kit. Both live in the world package, beside the region's data, since the engine knows no place; they take their numbers as options, so the region's fitted values are supplied as data.
 
 ## How it works
 
@@ -30,10 +30,10 @@ flowchart TD
 
 ## Key files
 
-| File                                                                    | Role                                                             |
-| :---------------------------------------------------------------------- | :--------------------------------------------------------------- |
-| `packages/genshin-engine/src/kits/nod-krai/createDieselpunkGeometry.ts` | The dieselpunk structure, merged from its boxes, pipes and stacks |
-| `packages/genshin-engine/src/kits/nod-krai/createPipeworkGeometry.ts`   | Pipework as one cylinder per run                                 |
-| `packages/genshin-engine/src/kits/nod-krai/createStoneCircleGeometry.ts` | The Frostmoon Scions' ring of standing stones                    |
-| `packages/genshin-engine/src/models/kits/nod-krai/DieselpunkOptions.ts` | The dieselpunk structure's options                               |
-| `packages/genshin-world/src/data/regions/nod-krai.json`                 | Nod-Krai's region data, empty until its landmarks are placed     |
+| File                                                                        | Role                                                              |
+| :-------------------------------------------------------------------------- | :---------------------------------------------------------------- |
+| `packages/genshin-world/src/services/nod-krai/createDieselpunkGeometry.ts`  | The dieselpunk structure, merged from its boxes, pipes and stacks |
+| `packages/genshin-world/src/services/nod-krai/createPipeworkGeometry.ts`    | Pipework as one cylinder per run                                  |
+| `packages/genshin-world/src/services/nod-krai/createStoneCircleGeometry.ts` | The Frostmoon Scions' ring of standing stones                     |
+| `packages/genshin-world/src/models/nod-krai/DieselpunkOptions.ts`           | The dieselpunk structure's options                                |
+| `packages/genshin-world/src/data/regions/nod-krai.json`                     | Nod-Krai's region data, empty until its landmarks are placed      |

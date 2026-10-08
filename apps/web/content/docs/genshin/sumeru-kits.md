@@ -1,11 +1,11 @@
 ---
 title: Sumeru kits
-description: The parametric building kits of Sumeru, built in the engine from its lathe and box primitives. A rainforest city of tiered terraces with a walkway on each tier and a dome on top, a stilt hut of boxes on posts, and a desert ruin that places colonnades, obelisks, stepped pyramids and half-buried halls by position. Each generator is pure and returns one merged geometry, and no region places them yet.
+description: The parametric building kits of Sumeru, built in the world package from the engine's lathe and box primitives. A rainforest city of tiered terraces with a walkway on each tier and a dome on top, a stilt hut of boxes on posts, and a desert ruin that places colonnades, obelisks, stepped pyramids and half-buried halls by position. Each generator is pure and returns one merged geometry, and no region places them yet.
 ---
 
 # Sumeru kits
 
-Sumeru has two building kits, one per biome. The rainforest kit builds the city grown into the colossal tree and the village huts on stilts; the desert kit builds the sandstone ruins. Both are generators in the engine's `kits/sumeru` folder, built from the same two primitives the other kits use, so a building is a few numbers rather than an authored mesh.
+Sumeru has two building kits, one per biome. The rainforest kit builds the city grown into the colossal tree and the village huts on stilts; the desert kit builds the sandstone ruins. Both are generators in the world package's `services/sumeru` folder, built from the same two primitives the other kits use, so a building is a few numbers rather than an authored mesh.
 
 ## How a building is made
 
@@ -27,12 +27,12 @@ The city's tiers narrow by a fixed step each, every walkway ledge overhangs its 
 
 ## Key files
 
-| File                                                                       | Role                                                                                 |
-| :------------------------------------------------------------------------- | :----------------------------------------------------------------------------------- |
-| `packages/genshin-engine/src/kits/sumeru/createRainforestCityGeometry.ts`  | The city's tiers, walkways and dome as one stacked lathe                             |
-| `packages/genshin-engine/src/kits/sumeru/createStiltHutGeometry.ts`        | A hut's posts, floor, walls and overhanging roof as boxes                            |
-| `packages/genshin-engine/src/kits/sumeru/createDesertRuinGeometry.ts`      | The ruin's pieces, each built from its shape and placed, merged into one geometry    |
-| `packages/genshin-engine/src/models/kits/sumeru/DesertRuinPiece.ts`        | The four piece kinds a ruin is made of, each with its own dimensions and position    |
-| `packages/genshin-engine/src/kits/architecture/createLatheStackGeometry.ts` | The stacked lathe every tier, column, dome and pyramid is built on                  |
-| `packages/genshin-engine/src/kits/architecture/createBoxesGeometry.ts`     | The boxes every post, floor, wall, roof and hall is built from                       |
-| `packages/genshin-world/src/data/regions/sumeru.json`                      | Sumeru's region data, empty of landmarks until the regions' placements are settled |
+| File                                                                         | Role                                                                               |
+| :--------------------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/sumeru/createRainforestCityGeometry.ts` | The city's tiers, walkways and dome as one stacked lathe                           |
+| `packages/genshin-world/src/services/sumeru/createStiltHutGeometry.ts`       | A hut's posts, floor, walls and overhanging roof as boxes                          |
+| `packages/genshin-world/src/services/sumeru/createDesertRuinGeometry.ts`     | The ruin's pieces, each built from its shape and placed, merged into one geometry  |
+| `packages/genshin-world/src/models/sumeru/DesertRuinPiece.ts`                | The four piece kinds a ruin is made of, each with its own dimensions and position  |
+| `packages/genshin-engine/src/kits/architecture/createLatheStackGeometry.ts`  | The stacked lathe every tier, column, dome and pyramid is built on                 |
+| `packages/genshin-engine/src/kits/architecture/createBoxesGeometry.ts`       | The boxes every post, floor, wall, roof and hall is built from                     |
+| `packages/genshin-world/src/data/regions/sumeru.json`                        | Sumeru's region data, empty of landmarks until the regions' placements are settled |
