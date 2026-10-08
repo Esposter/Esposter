@@ -13,7 +13,7 @@ import { join } from "node:path";
 
 // Every name the world's stat tables and enemy kinds cite by text id, each character's, each weapon's and each enemy
 // Kind's, as `genshin:assets stats` and `genshin:assets enemies` last wrote them, into the world's own chunk per language;
-// a name a language lacks takes English's and says so
+// A name a language lacks takes English's and says so
 export const writeNames = (): string[] => {
   const notes: string[] = [];
   const datas = ["characters.json", "weapons.json"].flatMap((fileName) =>

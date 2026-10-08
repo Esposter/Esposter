@@ -20,8 +20,8 @@ import { openNextWindow } from "#src/services/coderabbit/collect/openNextWindow"
 import { orderWindowStack } from "#src/services/coderabbit/collect/orderWindowStack";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
 import { readCoderabbitConfig } from "#src/services/coderabbit/collect/readCoderabbitConfig";
-import { readMergedPullRequestsSince } from "#src/services/coderabbit/collect/readMergedPullRequestsSince";
 import { readLegacyReleasePullRequest } from "#src/services/coderabbit/collect/readLegacyReleasePullRequest";
+import { readMergedPullRequestsSince } from "#src/services/coderabbit/collect/readMergedPullRequestsSince";
 import { readSessionLimitResetMs } from "#src/services/coderabbit/collect/readSessionLimitResetMs";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
 import { readWindowPullRequests } from "#src/services/coderabbit/collect/readWindowPullRequests";

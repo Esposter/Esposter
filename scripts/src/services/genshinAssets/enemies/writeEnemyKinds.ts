@@ -31,7 +31,7 @@ const getGrowCurve = ({ id, propGrowCurves }: MonsterRow, property: string): str
   return growCurve;
 };
 // The kinds every region's camps place, each read from the game's monster table with its family from the archive and
-// its name's text id, and every level curve they name, written as the world's kinds and level curves tables. A kind the tables lack is an
+// Its name's text id, and every level curve they name, written as the world's kinds and level curves tables. A kind the tables lack is an
 // Error. The resistances are keyed by the world's elements, spelt as the game's tables spell them, which the world's
 // Schema checks. Returns the files' paths
 export const writeEnemyKinds = async (): Promise<string[]> => {

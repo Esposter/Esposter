@@ -8,11 +8,11 @@ describe(placeChests, () => {
     const transform = { mirrored: false, offset: { x: 10, z: 20 }, scale: 1, turn: 0 };
     const placement = placeChests(
       [
-        { area_id: 1, label_id: 17, x_pos: 1.5, y_pos: 2.25, z_level: 0, id: 1 },
-        { area_id: 1, label_id: 69, x_pos: 1.5, y_pos: 2.25, z_level: 0, id: 2 },
-        { area_id: 1, label_id: 17, x_pos: 1.5, y_pos: 2.25, z_level: 2, id: 3 },
-        { area_id: 5, label_id: 17, x_pos: 1.5, y_pos: 2.25, z_level: 0, id: 4 },
-        { area_id: 1, label_id: 2, x_pos: 1.5, y_pos: 2.25, z_level: 0, id: 5 },
+        { area_id: 1, id: 1, label_id: 17, x_pos: 1.5, y_pos: 2.25, z_level: 0 },
+        { area_id: 1, id: 2, label_id: 69, x_pos: 1.5, y_pos: 2.25, z_level: 0 },
+        { area_id: 1, id: 3, label_id: 17, x_pos: 1.5, y_pos: 2.25, z_level: 2 },
+        { area_id: 5, id: 4, label_id: 17, x_pos: 1.5, y_pos: 2.25, z_level: 0 },
+        { area_id: 1, id: 5, label_id: 2, x_pos: 1.5, y_pos: 2.25, z_level: 0 },
       ],
       transform,
     );

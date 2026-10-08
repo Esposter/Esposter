@@ -3,11 +3,11 @@ import type { InteractiveMapPoint } from "#src/models/genshinAssets/points/Inter
 import type { SimilarityTransform } from "#src/models/genshinAssets/points/SimilarityTransform";
 import type { ChestPlace } from "genshin-world";
 
-import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { ChestKindLabelIdMap } from "#src/services/genshinAssets/chests/ChestKindLabelIdMap";
 import { GROUND_LAYER } from "#src/services/genshinAssets/chests/constants";
-import { InteractiveMapRegionMap } from "#src/services/genshinAssets/points/InteractiveMapRegionMap";
+import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { applySimilarityTransform } from "#src/services/genshinAssets/points/applySimilarityTransform";
+import { InteractiveMapRegionMap } from "#src/services/genshinAssets/points/InteractiveMapRegionMap";
 import { ChestKind } from "genshin-world";
 
 // Every chest the official map marks, carried into the game's coordinates by the fit's transform and kept by region. A
