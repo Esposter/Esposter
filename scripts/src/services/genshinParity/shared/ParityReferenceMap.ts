@@ -1,5 +1,7 @@
 import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
 
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
   // The English PC client's Adventurer Handbook open at its experience, the wiki's screenshot, against which the
@@ -30,6 +32,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Interface, drawn at the current build's camera, each at the moment of the glide's loop its towers and walkway stand at
   "login-dawn-title": {
     capture: "yt-sQNqMfmfkZU.mp4",
+    component: DerivedAssetComponent.Login,
     isOtherBuild: true,
     props: { heldScrolled: 132, isInterfaceHidden: true, stage: "Title", timeOfDay: "Dawn" },
     screen: "LoginScreen",
@@ -38,6 +41,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Its recording masks the frame's top and bottom 50 rows black, so only the rows between are scored
   "login-day-title": {
     capture: "yt-7kK6HqVfASk.mp4",
+    component: DerivedAssetComponent.Login,
     isOtherBuild: true,
     props: { heldScrolled: 118, isInterfaceHidden: true, stage: "Title", timeOfDay: "Day" },
     region: { height: 980, width: 1920, x: 0, y: 50 },
@@ -47,6 +51,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The door from the flight's last pose, on the phone build at 4:3 under the day sky, scored over the door and its
   // Dais alone, since its interface and its narrower frame differ from the computer's, and drawn at a phone's tier
   "login-door": {
+    component: DerivedAssetComponent.Login,
     isOtherBuild: true,
     props: { isInterfaceHidden: true, qualityTier: "Medium", stage: "Door", timeOfDay: "Day" },
     region: { height: 760, width: 700, x: 690, y: 440 },
@@ -57,6 +62,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Door, scored over the scene above the prompt and clear of the corner buttons
   "login-door-recording": {
     capture: "yt-rBnfA4pXw6U.mp4",
+    component: DerivedAssetComponent.Login,
     isOtherBuild: true,
     // Read off the recording: the dais's front feet on the walkway's top, the arch's apex, and the walkway's wings at
     // The top of their outer faces
@@ -81,6 +87,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Before the prompt, the camera still easing toward its rest; scored clear of the corner buttons and the build string
   "login-door-session": {
     capture: "session-2.mp4",
+    component: DerivedAssetComponent.Login,
     // Read off the frame: the arch's apex and the dais's front feet on the walkway's top
     landmarks: { doorApex: [1717, 575], doorFootLeft: [1585, 1028], doorFootRight: [1855, 1028] },
     props: { heldScrolled: 320, isInterfaceHidden: true, stage: "Door", timeOfDay: "Night" },
@@ -124,6 +131,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   "login-night-title": {
     capture: "yt-PnqNza4qWzs.mp4",
+    component: DerivedAssetComponent.Login,
     isOtherBuild: true,
     props: { heldScrolled: 135, isInterfaceHidden: true, stage: "Title", timeOfDay: "Night" },
     screen: "LoginScreen",
@@ -140,6 +148,13 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     region: { height: 1030, width: 1024, x: 0, y: 0 },
     screen: "MenuPaimon",
     wikiTitle: "File:Paimon Menu Version 1.3.png",
+  },
+  // The English PC client's settings on its Graphics tab at 1680 wide, from the wiki's screenshot, scored over its header
+  // Band alone: its rows are drawn over the blurred world, which the page has no copy of, and the Audio tab is not built
+  "settings-graphics": {
+    region: { height: 82, width: 1680, x: 0, y: 0 },
+    screen: "MenuSettings",
+    wikiTitle: "File:Login Menu Settings.png",
   },
   "publisher-splash": { capture: "session-2.mp4", screen: "SplashPublisher", seconds: 1 },
   // The English PC client's quest screen listing every quest in progress, the wiki's screenshot of it at 1080 high
@@ -159,9 +174,12 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Refined on the statue's outline
   "windrise-statue-day": {
     capture: "yt-zPDi6WBJW9Y.mp4",
+    component: DerivedAssetComponent.Windrise,
     landmarks: {
-      slabLeft: [1182, 947],
-      slabRight: [1275, 955],
+      dishBrimLeft: [785, 617],
+      dishBrimRight: [899, 617],
+      plinthRimLeft: [800, 758],
+      plinthRimRight: [887, 758],
       statueDish: [841, 612],
       statueTop: [840, 497],
       trunkAxis: [643, 580],

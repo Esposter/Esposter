@@ -23,7 +23,8 @@ committed.
 | `login-interface-title` | `LoginInterface` | 0.34% | 0.997 | 0.24% | 0.0154 |
 | `login-night-title` | `LoginScreen` | 11.16% | 0.358 | 8.40% | 0.4231 |
 | `map-overlay-jueyun` | `MapOverlay` | 31.37% | 0.072 | 30.13% | 0.7918 |
-| `paimon-menu` | `MenuPaimon` | 8.06% | 0.740 | 6.15% | 0.2757 |
+| `paimon-menu` | `MenuPaimon` | 5.35% | 0.908 | 3.53% | 0.2237 |
+| `settings-graphics` | `MenuSettings` | 2.01% | 1.000 | 1.29% | 0.1037 |
 | `publisher-splash` | `SplashPublisher` | 0.07% | 1.000 | 0.01% | 0.0036 |
 | `quest-screen` | `QuestScreen` | 55.84% | 0.274 | 53.90% | 0.8998 |
 | `title-splash` | `SplashTitle` | 0.20% | 1.000 | 0.01% | 0.0090 |
