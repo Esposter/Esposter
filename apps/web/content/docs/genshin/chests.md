@@ -32,6 +32,8 @@ flowchart TD
 - **The ground only.** Points on a layer under the ground stand on floors of their own, which the place does not yet know, so they are counted and left out.
 - **Mapped areas only.** A point in an area no region is mapped to has no region to join, so it is counted and left out. The current run leaves none out.
 - **Mora chests are not chests of these kinds.** The map's Mora chests are not among the seven, so the writer does not place them.
+- **Not landmarks.** A landmark is built by a region kit, and a chest is acted on, so the places live in their own model rather than in `LandmarkKind`, and no kit draws them.
+- **Regions, not catalogue areas.** Each slice is a region, and a place does not yet name its catalogue area, since that needs the region outlines the exploration progress reads. The area each chest counts toward is not set.
 - **No height is written.** A place stands on the ground at its point, and that height is read where the place is stood on, which the runtime step does when it lands.
 
 ## Key files
