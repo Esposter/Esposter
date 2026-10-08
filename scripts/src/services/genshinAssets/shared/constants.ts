@@ -12,6 +12,8 @@ import { dirname, join } from "node:path";
 // What the game's own files are exported into: references like every other, kept outside the repository and never
 // Shipped. Only the parameters `fit` writes from them, which are ours, enter a package
 export const EXTRACTED_DIRECTORY: string = join(PARITY_DIRECTORY, "extracted");
+// The layout a component's witness is written as, beside its exports in the component's root
+export const WITNESS_LAYOUT_FILE_NAME = "witness.json";
 export const ASSET_MAP_NAME = "gi_map";
 // The asset map AnimeStudio writes, about a gigabyte of JSON, and the name, type and block of each entry pulled out of
 // It as tab separated lines, which a component's search reads in seconds
