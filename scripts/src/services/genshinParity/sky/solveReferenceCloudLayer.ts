@@ -65,7 +65,7 @@ export const solveReferenceCloudLayer = async (
     const color = settings[name];
     if (
       color !== undefined &&
-      (!Array.isArray(color) || color.length !== 3 || color.some((component) => !Number.isFinite(component)))
+      (!Array.isArray(color) || color.length !== 3 || color.some((channel) => !Number.isFinite(channel)))
     )
       throw new InvalidOperationError(Operation.Read, name, "not a colour of three numbers");
   }
