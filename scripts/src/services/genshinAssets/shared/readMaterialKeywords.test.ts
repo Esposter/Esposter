@@ -1,4 +1,5 @@
 import { readMaterialKeywords } from "#src/services/genshinAssets/shared/readMaterialKeywords";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 // A string as Unity serializes it: its length, its characters, and padding to four bytes
@@ -31,7 +32,7 @@ describe(readMaterialKeywords, () => {
     const bytes = Buffer.concat([serializeString("a"), Buffer.alloc(12), serializeString("A B").subarray(0, 6)]);
 
     expect(() => readMaterialKeywords(bytes)).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: readMaterialKeywords, keywords end at byte 27 of 26]`,
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, readMaterialKeywords.name, `keywords end at byte ${bytes.length + 1} of ${bytes.length}`).message}]`,
     );
   });
 });
