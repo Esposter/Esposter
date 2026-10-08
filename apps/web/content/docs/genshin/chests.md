@@ -38,16 +38,16 @@ flowchart TD
 
 ## Key files
 
-| File                                                               | Role                                                                          |
-| :----------------------------------------------------------------- | :---------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/chests/placeChests.ts`         | Carries each chest point into its region by kind, the ground and mapped areas |
-| `scripts/src/services/genshinAssets/chests/writeChestPlaces.ts`    | Writes each region's slice from the points and the fit                        |
-| `scripts/src/services/genshinAssets/chests/ChestKindLabelIdMap.ts` | Each chest kind's label on the official map                                   |
-| `scripts/src/services/genshinAssets/chests/constants.ts`           | The slice folder and the ground layer                                         |
-| `scripts/src/services/genshinAssets/commands/chestsCommand.ts`     | `genshin:assets chests`                                                       |
-| `packages/genshin-world/src/models/chest/ChestKind.ts`             | The five tiers, and the buried and sealed places                              |
-| `packages/genshin-world/src/models/chest/ChestPlace.ts`            | A placed chest: its id, kind and ground position                              |
-| `packages/genshin-world/src/generated/chests/`                     | One slice per region, imported on demand by the world                         |
+| File                                                               | Role                                                                                             |
+| :----------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/points/placeMapPoints.ts`      | Carries each kind's points into its region, the ground and mapped areas, shared with the puzzles |
+| `scripts/src/services/genshinAssets/chests/writeChestPlaces.ts`    | Writes each region's slice from the points and the fit                                           |
+| `scripts/src/services/genshinAssets/chests/ChestKindLabelIdMap.ts` | Each chest kind's label on the official map                                                      |
+| `scripts/src/services/genshinAssets/chests/constants.ts`           | The slice folder                                                                                 |
+| `scripts/src/services/genshinAssets/commands/chestsCommand.ts`     | `genshin:assets chests`                                                                          |
+| `packages/genshin-world/src/models/chest/ChestKind.ts`             | The five tiers, and the buried and sealed places                                                 |
+| `packages/genshin-world/src/models/chest/ChestPlace.ts`            | A placed chest: its id, kind and ground position                                                 |
+| `packages/genshin-world/src/generated/chests/`                     | One slice per region, imported on demand by the world                                            |
 
 ## Sources
 
