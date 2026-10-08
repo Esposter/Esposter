@@ -1,6 +1,6 @@
 export interface WindowOpenCountInput {
   // Whether a window may sit on top of one already open: the stacking guard's answer, which only matters once
-  // something is open
+  // Something is open
   isStackingAllowed: boolean;
   // Window pull requests open now
   openCount: number;

@@ -8,16 +8,16 @@ import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 
 // Fold `main` into the candidate the port built and name the sha `develop` is pushed to. The fold is never undone for
-// the cap, and on a window cut from `main` what it brings costs the review nothing, since the bot counts the window's
-// own side of `main` alone. On a window stacked above another the fold's files do count, so the caller measures the cut
-// again after this returns (`openNextWindow`). Nothing is verified here: `develop`'s own CI is the check
+// The cap, and on a window cut from `main` what it brings costs the review nothing, since the bot counts the window's
+// Own side of `main` alone. On a window stacked above another the fold's files do count, so the caller measures the cut
+// Again after this returns (`openNextWindow`). Nothing is verified here: `develop`'s own CI is the check
 // (`REPAIR_VERIFY_COMMANDS` says why).
 export const foldCandidate = async ({
+  baseSha,
   collectorSha,
   cwd,
   developSha,
   fixCount,
-  baseSha,
   queueSha,
   queueShas,
   viewerLogin,

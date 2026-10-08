@@ -1,7 +1,7 @@
 import type { WindowOpenCountInput } from "#src/models/coderabbit/collect/WindowOpenCountInput";
 
 // How many more window pull requests may open now. Each count is held under the hourly ceiling on its own, so the
-// smaller room is the answer, and a window may sit on top of one already open only when the stack may carry it
+// Smaller room is the answer, and a window may sit on top of one already open only when the stack may carry it
 export const getWindowOpenCount = ({
   isStackingAllowed,
   openCount,

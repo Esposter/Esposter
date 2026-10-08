@@ -10,7 +10,7 @@ import { runGit } from "#src/services/shared/runGit";
 import { getResult, noop } from "@esposter/shared";
 
 // The recovery for a merge whose retarget failed: the window above the merged one is retargeted to `main` and the
-// merged head deleted, the order the merge itself keeps. A dry run reports the same stack in memory and moves nothing.
+// Merged head deleted, the order the merge itself keeps. A dry run reports the same stack in memory and moves nothing.
 // Returns the open window pull requests as they stand once this is done.
 export const retargetStrandedWindows = ({
   cwd,

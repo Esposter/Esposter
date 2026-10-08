@@ -6,7 +6,7 @@ import { WindowPullRequestState } from "#src/models/coderabbit/collect/WindowPul
 // Alike. A pull request's number is GitHub's creation order, so the highest one is the newest review the next cut answers.
 export const getNewestMergedPullRequest = (
   pullRequests: Pick<WindowPullRequest, "number" | "state">[],
-): undefined | number => {
+): number | undefined => {
   const mergedNumbers = pullRequests
     .filter(({ state }) => state === WindowPullRequestState.Merged)
     .map(({ number }) => number);

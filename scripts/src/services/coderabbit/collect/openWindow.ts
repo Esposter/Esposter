@@ -25,7 +25,7 @@ export const openWindow = ({
   const branch = getWindowBranch(windowNumber);
   const title = `${WINDOW_TITLE} ${windowNumber}`;
   // A number no pull request carries has no window behind it, so a branch already on it is a dead run's: its head need
-  // not be an ancestor of this cut, and the lease alone guards the overwrite
+  // Not be an ancestor of this cut, and the lease alone guards the overwrite
   if (
     !pushBranch({
       branch,

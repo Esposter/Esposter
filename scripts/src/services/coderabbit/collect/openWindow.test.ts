@@ -1,3 +1,5 @@
+import type { runGh } from "#src/services/shared/runGh";
+
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { DEVELOP_BRANCH, MAIN_BRANCH, WINDOW_TITLE } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
@@ -6,7 +8,7 @@ import { openWindow } from "#src/services/coderabbit/collect/openWindow";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/shared/runGh"), () => ({ runGh: vi.fn() }));
+vi.mock(import("#src/services/shared/runGh"), () => ({ runGh: vi.fn<typeof runGh>() }));
 
 describe(openWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const { commitFile, getCwd, publish, readSha, switchTo } = setupFixtureRepository();

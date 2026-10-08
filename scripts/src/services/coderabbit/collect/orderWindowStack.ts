@@ -5,7 +5,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The open window pull requests bottom up, each one's base the head of the one below it and the bottom one's base
 // `main`. A fork (two pull requests on one base) and a gap (a pull request whose base no open window carries as its
-// head) are both refused: a merge or a retarget against the wrong one would move work nobody reviewed
+// Head) are both refused: a merge or a retarget against the wrong one would move work nobody reviewed
 export const orderWindowStack = (windowPullRequests: WindowPullRequest[]): WindowPullRequest[] => {
   const bottomPullRequests = windowPullRequests.filter(({ baseRefName }) => baseRefName === MAIN_BRANCH);
   if (bottomPullRequests.length > 1)
