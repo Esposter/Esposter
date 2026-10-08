@@ -1,73 +1,57 @@
 ---
 title: Combat
-description: Proposal — the game's combat rules as pure, tested logic in the world package. Elements left on a target as auras that decay, the reactions two of them trigger and the gauge each consumes, the damage formula, the internal cooldown on applying an element, shields and energy, each taken from the community's documented mechanics and held to a worked example from them. No rendering and no input; the controller and the enemies call into it.
+description: Proposal — the combat rules the built ones leave out. The Lunar and Stellar Glimmer reactions of the game's newest characters, the auras no attack applies, the enemies' and the environment's own level multiplier, the limits on how often a reaction lands, Superconduct's resistance shred, the reach of a reaction round its target, and the energy normal attacks generate, each from the community's documented mechanics.
 model: claude-opus-5-5
 ---
 
 # Combat
 
-Genshin's combat is a small set of rules the whole game shares. An elemental attack leaves its element on the target as an aura, which decays. A second element meets the aura and triggers a reaction, which consumes part of it by a fixed rule. A hit's damage is one formula over the attacker's stats and the target's level and resistance. These rules are the game's own, documented by its community to the decimal, and they are the same for every character and enemy. So they are built once, as pure functions over plain state, before any character or enemy that uses them.
+This page builds on [combat](/docs/genshin/combat) as built: auras, the reactions in the game's priority, the damage formula, internal cooldown, shields and energy. What it leaves out falls in two kinds. Some are rules the game added later or keeps for special targets. The rest are what reaches past one target, which only the world that places targets can resolve. Each is built the way the built rules were, as pure functions in `genshin-world`'s `services/combat`, each held to a worked example from its source.
 
 ## Decisions
 
-- **Rules belong to the world, not the engine.** The engine knows no rule of the game, as it knows no place. Combat lives in `genshin-world`, under `services/combat` and `models/combat`, as plain TypeScript with no Vue, no three.js and no input.
-- **Elemental gauge theory, as the community documents it.** An attack applies a number of gauge units of its element. Left as an aura it is taxed to 0.8 of that and decays linearly over 2.5 seconds a unit plus 7. A reaction consumes the aura by its coefficient times the trigger's gauge. Every number is the [Genshin Impact Wiki](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory)'s and the [KeqingMains Theorycrafting Library](https://library.keqingmains.com/combat-mechanics/elemental-effects/elemental-gauge-theory)'s, which agree.
-- **The game's reaction priority, as data.** When an element meets several auras at once, the game tries its reactions in a fixed order, and what is left of the trigger after one goes on to the next. That order is one table keyed by the applied element, so a reaction is added or reordered in one place.
-- **The coexisting auras the game keeps.** Electro and Hydro coexist as Electro-Charged, which ticks every second. Quicken is its own aura beside Dendro or Electro, and Aggravate and Spread consume neither. Burning keeps a Burning aura over the Pyro and Dendro beneath it. Freeze sits over the Cryo or Hydro under it and decays faster the longer it holds.
-- **The damage formula in full.** Base damage is the talent multiplier times the stat, plus any flat bonus. It is multiplied by one plus the damage bonus, the critical multiplier, the enemy's defence by level, its resistance (with the negative and above-75% branches), and an amplifying reaction's multiplier. Transformative reactions use the level multiplier table instead and ignore defence.
-- **Public tables are constants.** The level multiplier table and the Crystallize shield's are published facts, not anything exported from the game, so they are written as constants.
-- **Each rule tested against a worked example from its source.** Every function is held to a number the wiki or the library works out, so a test fails only when the rule is wrong.
-
-## How it works
-
-```mermaid
-flowchart TD
-  HIT["A hit: its element, gauge and internal cooldown tag"] --> ICD{"Internal cooldown: does this hit apply its element?"}
-  ICD -->|"no: 0 units"| DMG
-  ICD -->|"yes"| STEPS["The element's reactions, in the game's priority order"]
-  STEPS --> CONSUME["Each consumes the aura by coefficient times what is left of the trigger"]
-  CONSUME --> AURA{"Anything left, and nothing it reacts with?"}
-  AURA -->|"yes"| LEFT["Left as an aura: taxed, decaying"]
-  AURA -->|"no"| REACT
-  LEFT --> REACT["The reactions triggered"]
-  CONSUME --> REACT
-  REACT --> DMG["Damage: amplified, catalyzed, or a transformative instance of its own"]
-  STEP["Each fixed step"] --> DECAY["Auras decay; Electro-Charged and Burning tick"]
-  DECAY --> REACT
-```
+- **The Lunar and Stellar Glimmer reactions as their own formula.** Lunar-Charged, Lunar-Bloom and Lunar-Crystallize, with Stellar-Conduct and Stellar Swirl, are dealt directly by a talent or as a separate instance. Each contributor's damage is worked out alone with standard crit, then the four highest are weighted 0.6, 0.3, 0.05 and 0.05. Lunar-Charged replaces Electro-Charged while a Moonsign character is in the party, so the step that starts Electro-Charged reads the party.
+- **Self and immutable auras as a kind of aura.** Water, rain, an enemy's innate element and its elemental shields put an element on a target with no aura tax and a decay of their own, or none. An immutable aura is never consumed, but what is left of the trigger after it goes on to the auras beside it. Both enter `ElementalState` with their source's fixed gauge, and the enemies give each kind its own.
+- **The enemies' level multiplier.** Enemies and the environment trigger reactions on the wiki's second table, which parts from the characters' from level 58 up. It sits beside `CharacterLevelMultiplierMap`, and a reaction's damage takes the table of the side that triggered it.
+- **The game's limits on how often a reaction lands.** Swirl, Bloom and Shatter deal two instances to a target every half second from each source, Electro-Charged one, and Swirls of one element within a tenth of a second land once. A target keeps these timers in its state, as it keeps Crystallize's.
+- **Debuffs a reaction leaves.** Superconduct takes 40% off the target's Physical resistance for 12 seconds, which the damage formula then reads.
+- **Reach, resolved by the world.** A Swirl's element spreads to every target round it but the one it triggered on, Burning's Pyro lands within a metre, and Electro-Charged arcs to one Wet target within 5 metres. A Dendro Core bursts over 5 metres, and Hyperbloom homes on the nearest enemy. A Crystallize shard lasts 15 seconds and grants the one Crystallize shield, which a new one overwrites. The rules already return what each spreads and at what gauge; the world asks which targets stand within reach and applies it to each.
+- **Energy from attacks.** A normal or charged attack's hit has a chance to give 1 energy, starting at its weapon's base and rising with each miss until it lands: a sword 10% and 5% more a miss, a bow 0% and 5%, a claymore and a catalyst 0% and 10%, a polearm 0% and 4%. Energy Recharge does not touch it. It draws on the world's seeded random source.
 
 ## Scope and order
 
-**Today:** no part of the world has an element, health or damage.
+**Today:** auras, reactions and their damage on one target, the internal cooldown, shields and energy from particles and orbs, as the [combat](/docs/genshin/combat) page describes.
 
-**This adds:**
+**This adds, in order:**
 
-1. Elements and auras: application, the aura tax, decay, the coexisting auras and Freeze.
-2. Reactions: amplifying, transformative, Crystallize and the catalyze bonus, each with the gauge it consumes.
-3. The damage formula.
-4. The internal cooldown on applying an element.
-5. Shields and their absorption.
-6. Energy from particles and orbs.
+1. Self and immutable auras, which the enemies' slimes and elemental shields need first.
+2. The enemies' level multiplier, so an enemy's reaction on a character is priced.
+3. The limits on reaction damage, and Superconduct's shred.
+4. Reach, once the enemies and the character stand in one world to measure distances between.
+5. Energy from attacks.
+6. The Lunar and Stellar Glimmer reactions, with the first character whose kit triggers them.
 
 ## What this does not propose
 
-- **Characters' kits.** Talent multipliers, each ability's gauge and internal cooldown tag, and its particles are a character's data, added with the [characters](/docs/proposals/genshin/characters) that use them.
-- **Anything drawn or pressed.** Hit detection, the reaction's text and the aura's icon belong to the controller, the enemies and the HUD, which call into these rules.
+- **Characters' kits.** Talent multipliers, each ability's gauge, internal cooldown tag and particles are a character's data, added with the [characters](/docs/genshin/characters) that use them.
+- **Anything drawn.** A reaction's text, an aura's icon over its target and a shield's bar belong to the HUD and the enemies.
 
 ## Key files
 
-| File                                           | Role after the change                                                    |
-| :--------------------------------------------- | :----------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/Element.ts` | The seven elements, shared by the loading screen, the enemies and combat |
+| File                                                                               | Role after the change                                               |
+| :--------------------------------------------------------------------------------- | :------------------------------------------------------------------ |
+| `packages/genshin-world/src/models/combat/ElementalState.ts`                       | Gains a target's self and immutable auras and its reaction limits   |
+| `packages/genshin-world/src/services/combat/aura/applyElement.ts`                  | Reads immutable auras, the party's Moonsign and the reaction limits |
+| `packages/genshin-world/src/services/combat/damage/getTransformativeDamage.ts`     | Takes the level multiplier of the side that triggered the reaction  |
+| `packages/genshin-world/src/services/combat/damage/CharacterLevelMultiplierMap.ts` | Joined by the enemies' and the environment's table                  |
+| `packages/genshin-world/src/services/enemy/damageEnemy.ts`                         | Where a reaction's damage and its reach reach the enemies           |
 
 ## Sources
 
-- [Elemental Gauge Theory](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory), Genshin Impact Wiki: the aura tax, the aura's duration and decay, reapplication, and each reaction's coefficient.
-- [Elemental Gauge Theory: Advanced Mechanics](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Advanced_Mechanics), Genshin Impact Wiki: Swirl's gauge, Freeze's gauge and duration, Shatter, Quicken's aura and Burning's.
-- [Simultaneous Reaction Priority](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Simultaneous_Reaction_Priority), Genshin Impact Wiki: the order an applied element tries its reactions in.
-- [Damage](https://genshin-impact.fandom.com/wiki/Damage), Genshin Impact Wiki: the general formula, defence, resistance, and the amplifying, transformative and catalyze formulas.
-- [Elemental Reaction: Level Scaling](https://genshin-impact.fandom.com/wiki/Elemental_Reaction/Level_Scaling), Genshin Impact Wiki: the level multiplier and the Crystallize shield's base by level.
-- [Internal Cooldown](https://genshin-impact.fandom.com/wiki/Internal_Cooldown/Data), Genshin Impact Wiki: the ICD tag and type, the reset interval and the gauge sequence.
-- [Shield](https://genshin-impact.fandom.com/wiki/Shield), Genshin Impact Wiki: absorption by element and shield strength.
-- [Energy](https://genshin-impact.fandom.com/wiki/Energy), Genshin Impact Wiki: particles and orbs by element, off-field shares and Energy Recharge.
-- [Elemental Gauge Theory](https://library.keqingmains.com/combat-mechanics/elemental-effects/elemental-gauge-theory) and [Transformative Reactions](https://library.keqingmains.com/combat-mechanics/elemental-effects/transformative-reactions), KeqingMains Theorycrafting Library: the decay rate, Electro-Charged's ticks, and the Dendro Core's lifetime and limit.
+- [Damage](https://genshin-impact.fandom.com/wiki/Damage), Genshin Impact Wiki: the Lunar and Stellar Glimmer formulas, direct and indirect, and the four contributors' weights.
+- [Elemental Gauge Theory: Advanced Mechanics](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Advanced_Mechanics), Genshin Impact Wiki: self auras, immutable auras and their gauges, Freeze resistance, and the shielded skirmishers' reaction coefficients.
+- [Elemental Reaction: Level Scaling](https://genshin-impact.fandom.com/wiki/Elemental_Reaction/Level_Scaling), Genshin Impact Wiki: the enemies' and the environment's level multiplier.
+- [Swirl](https://genshin-impact.fandom.com/wiki/Swirl), [Bloom](https://genshin-impact.fandom.com/wiki/Bloom) and [Electro-Charged](https://genshin-impact.fandom.com/wiki/Electro-Charged), Genshin Impact Wiki: each reaction's reach and its damage limits.
+- [Crystallize](https://genshin-impact.fandom.com/wiki/Crystallize), Genshin Impact Wiki: the shard's lifetime, the three kept, and the one shield.
+- [Energy](https://genshin-impact.fandom.com/wiki/Energy), Genshin Impact Wiki: energy from normal and charged attacks by weapon type.
+- [Transformative Reactions](https://library.keqingmains.com/combat-mechanics/elemental-effects/transformative-reactions), KeqingMains Theorycrafting Library: Superconduct's shred, and the damage limits on Electro-Charged, Swirl and Shatter.

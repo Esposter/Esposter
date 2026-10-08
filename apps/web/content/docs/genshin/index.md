@@ -57,6 +57,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [HUD](/docs/genshin/hud)                                   | the heads-up display's Paimon button and minimap, its places for the party and stamina, and hiding it    |
 | [Touch controls](/docs/genshin/touch-controls)             | the stick on the left half, the look on the right and the jump button, fed into the one input            |
 | [Enemies](/docs/genshin/enemies)                           | enemy kinds and their stats, their AI and camps, respawn and drops, drawn as stand-in capsules           |
+| [Combat](/docs/genshin/combat)                             | auras and reactions in the game's priority, the damage formula, internal cooldown, shields and energy    |
 | [Characters](/docs/genshin/characters)                     | the official MMD packs read by our own PMX reader and drawn on the toon ramp, with their terms           |
 | [Parity](/docs/genshin/parity)                             | matching a screen to the game's: references, tracing, scoring, motion and the visual suite               |
 | [Scene derivation](/docs/genshin/scene-derivation)         | how the game's own assets are re-derived into a scene, each loss priced first                            |
@@ -91,6 +92,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - The map on M with its jump list, a jump fading to black and back, the HUD's shell with its minimap, and the touch controls.
 - Enemies: kinds read from the game's tables, an AI on the fixed step, camps, respawn and drops, drawn as capsules.
 - Characters read from HoYoverse's official MMD packs by the engine's own PMX reader and drawn at rest on the toon ramp.
+- Combat's rules as pure, tested functions: auras and reactions, the damage formula, internal cooldown, shields and energy.
 
 ## Key files
 
