@@ -34,9 +34,8 @@ flowchart LR
 
 **This adds:**
 
-1. **The model's reading**, PMX and its textures, in the engine.
-2. **The hosted packs**, each uploaded with its bundled terms, and the terms and credit shown where a character is chosen.
-3. **The character in the world**, on the toon material and outline, on the controller's body.
+1. **The model's reading**, PMX and its textures, in the engine. Blocked: three has no MMD loader and no PMX parser is in the workspace, so this needs a dependency or a reader written for it.
+2. **The character in the world**, on the toon material and outline, on the controller's body.
 
 ## Sources
 
