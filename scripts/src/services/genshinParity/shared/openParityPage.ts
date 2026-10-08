@@ -66,14 +66,21 @@ export const openParityPage = async ({
     await page.goto(`${PARITY_PAGE_URL}${screen}${motionQuery}${propsQuery}${backdropQuery}${witnessQuery}`, {
       waitUntil: "networkidle",
     });
-    let isReady = !isClockFaked;
-    while (!isReady) {
+    // The page is drawn once it is ready, or never once a failure nothing caught has stopped it
+    const readPageState = () =>
+      page.evaluate(() => {
+        const { parityError, parityReady } = window.document.body.dataset;
+        return { parityError, parityReady };
+      });
+    if (!isClockFaked) await page.locator("body[data-parity-ready], body[data-parity-error]").waitFor();
+    let { parityError, parityReady: readyScreen } = await readPageState();
+    while (parityError === undefined && readyScreen === undefined) {
       // oxlint-disable-next-line no-await-in-loop -- the page draws one frame after another until it is ready
       await page.clock.runFor(PARITY_FRAME_MS);
       // oxlint-disable-next-line no-await-in-loop -- read after the frame it drew
-      isReady = await page.evaluate(() => window.document.body.dataset.parityReady !== undefined);
+      ({ parityError, parityReady: readyScreen } = await readPageState());
     }
-    const readyScreen = await page.locator("[data-parity-ready]").getAttribute("data-parity-ready");
+    if (parityError !== undefined) throw new InvalidOperationError(Operation.Read, screen, parityError);
     // An unknown name draws the list of screens, which would otherwise be shot and scored as the screen
     if (readyScreen !== screen)
       throw new InvalidOperationError(Operation.Read, screen, "not a screen with a fixture on the parity page");

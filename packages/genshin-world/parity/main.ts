@@ -31,7 +31,8 @@ import { capitalize, jsonDateParse } from "@esposter/shared";
 // One screen at a time, by `?screen=<Name>`, or the list of them. `&motion` asks for a motion held at its start for the
 // Tool that shoots it to set each moment: `entry` holds the screen's own animations as it mounts, and `props` lets
 // Those finish, then applies the fixture's motion props and holds the transitions they start. `data-parity-ready` marks
-// The page drawn, holding the screen's name, or nothing for the list, so a name with no fixture is told apart.
+// The page drawn, holding the screen's name, or nothing for the list, so a name with no fixture is told apart, and
+// `data-parity-error` a failure nothing caught, so a tool waiting on a screen that will never be ready fails with it.
 // `&backdrop=<file>` draws that image under the screen, for an overlay shot over the frame it is judged against, and
 // `&variant=<name>` renders the fixture's variant of that name, and `&witness=<layout>` draws a scene's exports in
 // Place of its own parts, from the layout the shooting browser serves there. A tool sets the screen's props as it runs,
@@ -40,6 +41,15 @@ const holdAnimations = (): void => {
   // Reading the animations resolves the styles that start them, and a held one stays listed once it would have ended
   for (const animation of window.document.getAnimations()) animation.pause();
 };
+const recordError = (error: unknown): void => {
+  window.document.body.dataset.parityError = error instanceof Error ? error.message : String(error);
+};
+window.addEventListener("error", ({ error }) => {
+  recordError(error);
+});
+window.addEventListener("unhandledrejection", ({ reason }) => {
+  recordError(reason);
+});
 const searchParameters = new URLSearchParams(window.location.search);
 const name = searchParameters.get("screen");
 const motion = searchParameters.get("motion");
@@ -76,7 +86,7 @@ if (screen && root) {
       }
     : undefined;
   const sceneContext = shallowRef<SceneContext>();
-  createApp({
+  const app = createApp({
     setup: () => {
       /* oxlint-disable no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see */
       provide(SceneContextKey, sceneContext);
@@ -84,7 +94,13 @@ if (screen && root) {
       /* oxlint-enable no-restricted-globals */
       return () => h(component, { ...props, ...readyProps });
     },
-  }).mount(root);
+  });
+  // A component's failure Vue would only log, recorded like any other
+  app.config.errorHandler = (error) => {
+    console.error(error);
+    recordError(error);
+  };
+  app.mount(root);
   Reflect.set(window, "setScreenProps", (screenProps: Record<string, unknown>) => Object.assign(props, screenProps));
   Reflect.set(window, "benchScene", (frameCount: number) => benchScene(sceneContext.value, frameCount));
   Reflect.set(window, "getSceneCamera", () => getSceneCamera(sceneContext.value));

@@ -23,6 +23,7 @@ export const computeSkySplitSpread = (
     Math.sqrt(distances.reduce((sum, distance) => sum + distance[key] ** 2, 0) / Math.max(distances.length, 1));
   return {
     brightness: readRootMeanSquare("brightness"),
+    cloudColour: readRootMeanSquare("cloudColour"),
     colour: readRootMeanSquare("colour"),
     cover: readRootMeanSquare("cover"),
     edgeSharpness: readRootMeanSquare("edgeSharpness"),

@@ -23,6 +23,11 @@ import { toLinear } from "#src/services/shared/toLinear";
 import { toXyz } from "#src/services/shared/toXyz";
 import sharp from "sharp";
 
+// The mean of a sum of linear colours over so many pixels, in CIELab
+const toMeanLab = (sum: Vector, count: number): Vector => {
+  const [red = 0, green = 0, blue = 0] = sum.map((channelSum) => channelSum / Math.max(count, 1));
+  return toLab(toXyz([red, green, blue]));
+};
 // A witness page's reference and the scene's sky beside it as statistics blind to where their clouds stand
 // (`SkyStatistics`), since the game scatters its clouds and drifts its cloud layer, so no score by pixels judges ours:
 // At the reference's camera, solved on its landmarks where it has them (`solveReferenceCamera`) and the scene's own in
@@ -75,15 +80,18 @@ export const readSkyComparison = async (
     const clouds = computeClouds(luminance, sky);
     const readRegion = (region: Uint8Array): SkyStatistics => {
       const clearSum: Vector = [0, 0, 0];
-      let clearCount = 0;
+      const cloudSum: Vector = [0, 0, 0];
+      let [clearCount, cloudCount] = [0, 0];
       for (const [pixel, isSky] of region.entries()) {
-        if (!isSky || clouds[pixel]) continue;
-        clearCount++;
-        for (const channel of [0, 1, 2] as const) clearSum[channel] += linear[pixel * 3 + channel] ?? 0;
+        if (!isSky) continue;
+        const sum = clouds[pixel] ? cloudSum : clearSum;
+        if (clouds[pixel]) cloudCount++;
+        else clearCount++;
+        for (const channel of [0, 1, 2] as const) sum[channel] += linear[pixel * 3 + channel] ?? 0;
       }
-      const [red, green, blue] = clearSum.map((sum) => sum / Math.max(clearCount, 1));
       return {
-        clearColour: toLab(toXyz([red ?? 0, green ?? 0, blue ?? 0])),
+        clearColour: toMeanLab(clearSum, clearCount),
+        cloudColour: toMeanLab(cloudSum, cloudCount),
         clouds: measureClouds(luminance, { clouds, sky: region }, width, height),
         elevationCoverage: computeElevationCoverage(clouds, region),
       };

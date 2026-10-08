@@ -12,7 +12,7 @@ committed.
 | `login-dawn-title` | `LoginScreen` | 10.43% | 0.456 | 7.43% | 0.4143 |
 | `login-day-title` | `LoginScreen` | 12.93% | 0.337 | 9.86% | 0.4688 |
 | `login-door` | `LoginScreen` | 13.37% | 0.211 | 11.08% | 0.5030 |
-| `login-door-recording` | `LoginScreen` | 16.80% | 0.361 | 11.94% | 0.5831 |
+| `login-door-recording` | `LoginScreen` | 17.30% | 0.352 | 12.25% | 0.5939 |
 | `login-door-session` | `LoginScreen` | 13.95% | 0.432 | 9.94% | 0.4752 |
 | `login-interface-door` | `LoginInterface` | 0.63% | 0.986 | 0.43% | 0.0252 |
 | `login-interface-loading` | `LoginInterface` | 0.16% | 0.995 | 0.09% | 0.0061 |
