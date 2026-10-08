@@ -88,6 +88,8 @@ interface Props {
   // Where the host serves the characters' model packs, without which the character is drawn as its body's capsule
   characterPackBaseUrl?: string;
   createTerrainWorker: () => Worker;
+  // The enemies in the world by their spawn key, which the enemies write as camps load and enemies die
+  enemyMap: Map<string, Enemy>;
   // The game's minute of the day the clock is held at, in place of its running from the region's start
   heldMinutes?: number;
   // The drops and the residents in the world, each a row of the prompts and drawn as a stand-in
@@ -113,6 +115,7 @@ const {
   characterLocomotion,
   characterPackBaseUrl,
   createTerrainWorker,
+  enemyMap,
   heldMinutes,
   interactables,
   isHeld,
@@ -123,7 +126,7 @@ const {
   questTargetId,
   regionDataBaseUrl,
 } = defineProps<Props>();
-const emit = defineEmits<{ defeat: [enemy: Enemy, enemyDrops: EnemyDrops]; ready: [] }>();
+const emit = defineEmits<{ defeat: [enemy: Enemy, enemyDrops: EnemyDrops]; ready: []; strike: [enemy: Enemy] }>();
 // The witness render's parts, drawn in place of ours of each family it names when the parity page provides them, beside
 // Ours rather than in the floating origin's group, since the page's tools find the camera among their siblings and stay
 // Within reach of the origin
@@ -315,12 +318,14 @@ onUnmounted(() => {
     <!-- Enemies wander where the references show none, so a witness render, judged against them, draws none -->
     <WorldEnemies
       v-if="!witness"
+      :enemy-map
       :is-held
       :light-uniforms
-      :origin
       :ramp-texture
       :region-data-map
+      :target="characterBody?.position"
       @defeat="(enemy, enemyDrops) => emit('defeat', enemy, enemyDrops)"
+      @strike="(enemy) => emit('strike', enemy)"
     />
     <!-- The drops and the residents in the world are stood in as well, which a witness render draws none of either -->
     <WorldInteractables v-if="!witness" :interactables :light-uniforms :ramp-texture />
