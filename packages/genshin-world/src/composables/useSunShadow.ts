@@ -33,7 +33,7 @@ export const useSunShadow = ({ characterBody, enemyMap, sunLight }: SunShadowOpt
       isBodyMoved ||
       checkEnemiesMoved(enemyMap, drawnEnemyPoses);
     // Set on the frame the cascades are drawn and cleared on every other: three leaves a shadow's flag standing after it
-    // draws whenever its depth map's version has moved meanwhile, so a flag left to the shadow would draw it every frame.
+    // Draws whenever its depth map's version has moved meanwhile, so a flag left to the shadow would draw it every frame.
     // The template's flag is the one the cascades built later copy
     light.shadow.needsUpdate = isMoved;
     for (const { shadow } of cascadedShadowNode.lights) if (shadow) shadow.needsUpdate = isMoved;
