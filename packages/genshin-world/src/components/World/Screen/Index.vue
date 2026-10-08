@@ -36,6 +36,7 @@ import WorldEnemyNameTags from "#src/components/World/EnemyNameTags/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { useExplorationAreas } from "#src/composables/useExplorationAreas";
+import { useGatheringPoints } from "#src/composables/useGatheringPoints";
 import { useInteraction } from "#src/composables/useInteraction";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
@@ -47,10 +48,14 @@ import { getCharacterAttributeLines } from "#src/services/character/getCharacter
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
+import { checkIsGatheringPlaceStanding } from "#src/services/gathering/checkIsGatheringPlaceStanding";
+import { GATHERING_CLOCK_INTERVAL_MS } from "#src/services/gathering/constants";
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
 import { placeEnemyDrops } from "#src/services/interaction/placeEnemyDrops";
+import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
 import { TRAVELER_KIT } from "#src/services/kit/constants";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
@@ -71,7 +76,7 @@ import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
 import { getResultAsync } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
-import { useEventListener, useRafFn } from "@vueuse/core";
+import { useEventListener, useIntervalFn, useNow, useRafFn } from "@vueuse/core";
 import {
   createGenshinRenderer,
   createInput,
@@ -279,6 +284,12 @@ const talkMap = new Map(quests.flatMap(({ talks }) => talks.map((questTalk) => [
 const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl);
 // The areas the map counts the exploration of, read as the world opens and shown on each area the unlocked statues fill
 const explorationAreas = useExplorationAreas();
+// Mondstadt's gathering points and the items they give, read as the world opens. A point picked is kept with the instant
+// It was picked, and stands again once its respawn has come, read each time the clock is looked at
+const { gatheringItems, gatheringPlaces } = useGatheringPoints();
+const idGatheringItemMap = computed(() => new Map(gatheringItems.value.map((item) => [item.id, item] as const)));
+const gatheringPlaceIdPickedAtMap = shallowRef<ReadonlyMap<string, Temporal.Instant>>(new Map());
+const gatheringClock = useNow({ scheduler: (callback) => useIntervalFn(callback, GATHERING_CLOCK_INTERVAL_MS) });
 const unlockedLandmarkIds = shallowRef<ReadonlySet<string>>(new Set());
 const unlockedLandmarks = computed(() => jumpLandmarks.value.filter(({ id }) => unlockedLandmarkIds.value.has(id)));
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
@@ -309,7 +320,22 @@ const interactables = computed<Interactable[]>(() => {
       name: gameText[GameTextKey.StatueOfTheSeven],
       position: { x, y: getWorldHeight(x, z), z },
     }));
-  return [...drops, ...residents, ...statues];
+  // Each gathering point that stands now, named by its item, and drawn beside the drops as the same kind of row
+  const now = Temporal.Instant.fromEpochMilliseconds(gatheringClock.value.getTime());
+  const gatherings = gatheringPlaces.value.flatMap(({ id, kind, position: { x, z } }) => {
+    const item = idGatheringItemMap.value.get(kind);
+    if (!item || !checkIsGatheringPlaceStanding(gatheringPlaceIdPickedAtMap.value.get(id), item.respawn, now))
+      return [];
+    return [
+      {
+        id,
+        kind: InteractionKind.PickUp,
+        name: toItemDefinition(item, gameText).name,
+        position: { x, y: getWorldHeight(x, z), z },
+      },
+    ];
+  });
+  return [...drops, ...gatherings, ...residents, ...statues];
 });
 const { interactionPrompts, readInteraction } = useInteraction(() => interactables.value, characterBody);
 // A defeated enemy's drops lie where it fell, numbered on from the drops placed before them
@@ -328,6 +354,20 @@ const pickUpWorldDrop = (worldDrop: WorldDrop) => {
     pickUp.overflow > 0
       ? worldDrops.value.map((drop) => (drop === worldDrop ? { ...drop, count: pickUp.overflow } : drop))
       : worldDrops.value.filter((drop) => drop !== worldDrop);
+};
+// A gathering point is picked into the bag as one of its item, and is kept as picked only once the bag has taken it
+const pickUpGatheringPlace = (placeId: string) => {
+  const place = gatheringPlaces.value.find(({ id }) => id === placeId);
+  if (!place) return;
+  const item = idGatheringItemMap.value.get(place.kind);
+  if (!item) return;
+  const addition = addInventoryItem(inventory.value, toItemDefinition(item, gameText), 1);
+  inventory.value = addition.inventory;
+  if (addition.overflow === 0)
+    gatheringPlaceIdPickedAtMap.value = new Map([
+      ...gatheringPlaceIdPickedAtMap.value,
+      [placeId, Temporal.Instant.fromEpochMilliseconds(Date.now())],
+    ]);
 };
 const character = useTemplateRef("character");
 // Whether the backslash has hidden the HUD, as the game's Hide UI does, apart from the screens that hide it
@@ -445,6 +485,7 @@ defineExpose({ jumpTo, readCameraPosition });
             const interactable = readInteraction(inputState, context.delta);
             const worldDrop = worldDrops.find(({ id }) => id === interactable?.id);
             if (interactable?.kind === InteractionKind.PickUp && worldDrop) pickUpWorldDrop(worldDrop);
+            else if (interactable?.kind === InteractionKind.PickUp) pickUpGatheringPlace(interactable.id);
             else if (interactable?.kind === InteractionKind.Activate)
               unlockedLandmarkIds = new Set([...unlockedLandmarkIds, interactable.id]);
             else if (interactable?.kind === InteractionKind.Talk) {
