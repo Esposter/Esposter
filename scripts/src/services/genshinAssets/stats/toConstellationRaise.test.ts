@@ -2,20 +2,20 @@ import { toConstellationRaise } from "#src/services/genshinAssets/stats/toConste
 import { CombatTalent } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
-const PROUD_SKILL_GROUP_IDS = {
-  [CombatTalent.ElementalBurst]: 239,
-  [CombatTalent.ElementalSkill]: 232,
-  [CombatTalent.NormalAttack]: 231,
-};
-const SKILL_NAMES = {
-  [CombatTalent.ElementalBurst]: "Soumetsu",
-  [CombatTalent.ElementalSkill]: "Hyouka",
-  [CombatTalent.NormalAttack]: "Frostflake",
-};
-const SCRAMBLED_ACTION = { $type: "CJJAJHDMAHL", CCDDFPKKMDK: 9, MONCLPCEMJG: "AvatarSkill", PLLGLGGOCHL: 3 };
-const PLAIN_ACTION = { $type: "MDAHCMHCOGN", extraLevel: 3, talentIndex: 2, talentType: "AvatarSkill" };
-
 describe(toConstellationRaise, () => {
+  const PROUD_SKILL_GROUP_IDS = {
+    [CombatTalent.ElementalBurst]: 239,
+    [CombatTalent.ElementalSkill]: 232,
+    [CombatTalent.NormalAttack]: 231,
+  };
+  const SKILL_NAMES = {
+    [CombatTalent.ElementalBurst]: "Soumetsu",
+    [CombatTalent.ElementalSkill]: "Hyouka",
+    [CombatTalent.NormalAttack]: "Frostflake",
+  };
+  const SCRAMBLED_ACTION = { $type: "CJJAJHDMAHL", CCDDFPKKMDK: 9, MONCLPCEMJG: "AvatarSkill", PLLGLGGOCHL: 3 };
+  const PLAIN_ACTION = { $type: "MDAHCMHCOGN", extraLevel: 3, talentIndex: 2, talentType: "AvatarSkill" };
+
   test("raises the talent whose proud skill group ends in the action's slot, in either shape", () => {
     expect.hasAssertions();
 
