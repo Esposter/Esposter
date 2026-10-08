@@ -41,6 +41,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Vegetation](/docs/genshin/vegetation)                     | the wind field, grass blades generated in two rings, and swaying crowns                                  |
 | [Scatter](/docs/genshin/scatter)                           | the small plants and pebbles no record places, scattered by seeded dart throwing                         |
 | [World map](/docs/genshin/world-map)                       | the catalogue of regions, areas and subareas, and region data loaded by reach                            |
+| [Region buildings](/docs/genshin/region-buildings)         | each region's capital built by its own kit, on the world's one ground with every region's plateaus       |
 | [Buildings](/docs/genshin/buildings)                       | the parametric building kit: a platform, four walls and a flat or conical roof                           |
 | [Mondstadt buildings](/docs/genshin/mondstadt-buildings)   | Mondstadt's house kit: a stone ground floor, timber-framed storeys and a steep gable                     |
 | [Liyue building kit](/docs/genshin/liyue-building-kit)     | Liyue's kit: a stone terrace, lacquer columns and lattice, and tiers of upturned roofs                   |
@@ -51,6 +52,10 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Free camera](/docs/genshin/free-camera)                   | the camera the world flies: its keys, pointer and gamepad, its fixed steps and the ground it holds above |
 | [Controls](/docs/genshin/controls)                         | the game's default key, mouse and gamepad bindings, read once a frame into the actions held and pressed  |
 | [Screens](/docs/genshin/screens)                           | the screens opened over the world one at a time, what each holds, and the Paimon menu's shell            |
+| [Map](/docs/genshin/map)                                   | the map on M, its jump list, and a jump's fade to black and back                                         |
+| [Minimap](/docs/genshin/minimap)                           | the HUD's corner map, the map's drawing cut to a circle round the camera and turned with it              |
+| [HUD](/docs/genshin/hud)                                   | the heads-up display's Paimon button and minimap, its places for the party and stamina, and hiding it    |
+| [Touch controls](/docs/genshin/touch-controls)             | the stick on the left half, the look on the right and the jump button, fed into the one input            |
 | [Enemies](/docs/genshin/enemies)                           | enemy kinds and their stats, their AI and camps, respawn and drops, drawn as stand-in capsules           |
 | [Characters](/docs/genshin/characters)                     | the official MMD packs read by our own PMX reader and drawn on the toon ramp, with their terms           |
 | [Parity](/docs/genshin/parity)                             | matching a screen to the game's: references, tracing, scoring, motion and the visual suite               |
@@ -83,6 +88,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - The game's own words in its fifteen languages, served to the page in the reader's and to the persona plugin.
 - The login's music, its second piece played with public-domain recordings layered over the synthesizer.
 - The game's default controls, and its screens opened over the world from them and from the Paimon menu, an unbuilt screen a placeholder under its title.
+- The map on M with its jump list, a jump fading to black and back, the HUD's shell with its minimap, and the touch controls.
 - Enemies: kinds read from the game's tables, an AI on the fixed step, camps, respawn and drops, drawn as capsules.
 - Characters read from HoYoverse's official MMD packs by the engine's own PMX reader and drawn at rest on the toon ramp.
 
