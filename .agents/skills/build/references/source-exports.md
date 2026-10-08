@@ -88,3 +88,4 @@ What follows is easy to get wrong:
 
 - **A `dist` sibling externalizes its own siblings.** A package's build emits its sibling's bare specifier, so whatever resolves _that_ decides which arm it gets. This is why the `default` arm has to exist rather than being handled at the consumer: every hop resolves independently.
 - **Never point a condition-less export at source to "make it simpler".** The failure lands in Nitro's prerender or a `pulumi preview`, a phase away from the change that caused it, naming a module path nobody edited.
+- **A plain-TypeScript consumer of a Vue package's source includes that package's `auto-imports.d.ts`.** The package reaches `ref`, `shallowRef` and `onUnmounted` as globals its own `unplugin-auto-import` declares, so a consumer whose tsconfig lacks them reports `Cannot find name` in the package's composables — `scripts/tsconfig.json` lists `genshin-world`'s for this. The app needs none, since Nuxt declares the same globals.

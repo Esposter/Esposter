@@ -18,7 +18,7 @@ export const DIALOG_PATH: string = join(EXCEL_DIRECTORY, "DialogExcelConfigData.
 export const NPC_PATH: string = join(EXCEL_DIRECTORY, "NpcExcelConfigData.json");
 export const QUEST_BINARY_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "BinOutput", "Quest");
 // A dialog's own id sits under one of the names the dump scrambles, eleven capitals
-export const SCRAMBLED_KEY_REGEX = /^[A-Z]{11}$/u;
+export const SCRAMBLED_KEY_REGEX: RegExp = /^[A-Z]{11}$/u;
 // The code each language's text map is filed under; the largest are split into numbered parts
 export const GameLanguageCodeMap: Record<GameLanguage, string> = {
   [GameLanguage.ChineseSimplified]: "CHS",
