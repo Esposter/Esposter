@@ -211,10 +211,12 @@ towersMaterial.opacityNode = towerFacade.solid;
 towersMaterial.alphaTest = 0.5;
 const bridgesMaterial = createStoneMaterial(stone.bridges, loginStoneLight);
 const walkwayMaterial = createStoneMaterial(stone.walkway, loginStoneLight);
-// The walkway's tops painted in its textures' tones and carved with its paving, its rims tilted to the light
+// The walkway's tops painted in its textures' tones and carved with its paving, its rims tilted to the light, and lit
+// By its materials' glows where each draws
 const paving = createLoginPaving();
 walkwayMaterial.colorNode = paving.shade.mul(color(stone.walkway.albedo));
 walkwayMaterial.normalNode = paving.normalNode;
+walkwayMaterial.emissiveNode = paving.glow;
 const doorFrameMaterial = createStoneMaterial(stone.door, loginStoneLight);
 // The door lights from a line down its middle outward, over the panel's own glow, as the game opens it
 const doorGlow = uniform(0);

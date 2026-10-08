@@ -23,8 +23,14 @@ const RIM_GLOW_KEYWORD = "ENABLE_RIM_GLOW_ON";
 const RIM_STRENGTH_KEY = "_RGStrength";
 // The share of a family's rim glow the game's frame shows where its materials predict more, by family (the light pass,
 // `passes login --pass Light`): the frame holds about an eighth of the door's and the towers' glow, and the glow colour
-// Reads flat from none to an eighth, then climbs; a family not listed draws its materials' glow whole
-const GLOW_SCALES: Partial<Record<string, number>> = { door: 0.125, towers: 0.125 };
+// Reads flat from none to an eighth, then climbs; the walkway's edges and middle lane take a quarter, the lane's colour
+// Falling the most at it. A family not listed draws its materials' glow whole
+const GLOW_SCALES: Partial<Record<string, number>> = {
+  door: 0.125,
+  towers: 0.125,
+  walkwayEdge: 0.25,
+  walkwayLane: 0.25,
+};
 const computeMeanValue = (values: readonly number[]): number =>
   roundFitted(values.reduce((sum, value) => sum + value, 0) / Math.max(values.length, 1));
 const computeMean = (vectors: readonly Vector[]): Vector =>

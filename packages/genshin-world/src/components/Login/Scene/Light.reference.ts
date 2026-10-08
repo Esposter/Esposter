@@ -371,12 +371,26 @@ export const lightTopic: ReferenceTopic = {
         "The walkway's and the bridges' glow terms read at their fitted strength, which holds none, against the frame's glow colour (passes --pass Light)",
       outcome: InvestigationOutcome.Found,
       result:
-        "Both families draw no glow, so no scale reaches them: the walkway's colour stands at 41.01 ΔE and the bridges' at 15.21 ΔE. The walkway's glow was taken out for its near-white middle lane; restoring it at an eighth, as the door and the towers take theirs, is unmeasured and waits on a call, since the paving's glow loops are not in the scene yet",
+        "Both families draw no glow, so no scale reaches them: the walkway's colour stands at 41.01 ΔE and the bridges' at 15.21 ΔE. The walkway's glow was taken out for its near-white middle lane; restoring it was measured once the paving's glow loops were in the scene, in the entries below",
+    },
+    {
+      method:
+        "passes --pass Light's bridges glow term with the bridges' rim drawn over every piece from the mean of Edge01's and Ground01's rims, at a half of its strength, an eighth and none, each read by ΔE and its structure against the frame",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "The bridges' colour reads 15.27 ΔE at a half and 15.21 at none, its structure 0.394 against 0.387. At an eighth the rim stays under the stone's glow range and draws no pixel, so it reads 15.21 as none does. The blue rim does not bring the frame's bridge glow nearer at any share measured, so the bridges' glow is dropped: its family, its fitted scale and its stone entry are gone",
+    },
+    {
+      method:
+        "passes --pass Light's walkway glow terms with the paving's loops drawn into the walkway's material: the middle lane's over its tops (Ground02) and the edges' (Edge01) over the tops they cover and every face that is not a top, at none (the baseline), the edges alone at a quarter, then the lane at an eighth and at a quarter with the edges at a quarter, each read by ΔE and its structure against the frame",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "With none the walkway reads 41.01 ΔE and structure 0.428. The edges alone at a quarter read 40.97 and 0.429, their rim drawing no pixel at that share. The lane at an eighth reads 26.78 and 0.594, at a quarter 20.13 and 0.612, so the lane's glow lowers the colour and raises the structure at each step. A lit rim brightens toward the grazing end, where the game's middle lane stays pale grey-blue, so its structure cannot follow its colour under any single scale. Shipped at a quarter for both walkway families (GLOW_SCALES): colour 20.13 ΔE against 2.30 and structure 0.612 against 0.125, both still failing",
     },
   ],
   openQuestions: [
     "Why the game shows the walkway's middle lane with a fraction of Ground02's glow though every input the program reads matches the witness's: a G-buffer variant the dump does not hold, the normal map's decode being the same; the witness still draws it whole, so the light is solved under a glow the frame does not show",
-    "The bridges' and the towers' glow by material: the bridges' glow reads 7.3 ΔE off, our bridges fitted from their Bridge materials alone where the exports' glow through Edge01 and Ground01, and the towers' structure 0.19 against 0.08, their Build materials' glows averaged into one",
+    "The towers' glow by material: the towers' structure 0.19 against 0.08 with their Build materials' glows averaged into one. The bridges' glow, which the exports draw through Edge01 and Ground01, was tried over every bridge piece and dropped (the entries above)",
     "The night's crowns past 40 metres, darker than the game's under the darkening that holds past 20 metres, and the form the darkening stands in for: the reflection pass's clustered probes or a haze form the scene lacks",
     "The night's far towers below the walkway, hidden in the haze's wall where the game shows them dark: the wall stands for the cloud sea's billows under the near walkway, which no weighing of the haze's one exponential form releases, so the cloud layer drawing the billows comes first and the haze is solved again after it",
     "What tells the day's and the dusk's stone haze from their light: calibrate --haze settles neither, and the stone's albedo varies too little to split a haze that adds from a light that scales",

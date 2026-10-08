@@ -43,5 +43,23 @@
     "rimStrength": 0,
     "smoothness": 0.18,
     "specularColor": [0.83, 0.58, 0.38]
+  },
+  "walkwayEdge": {
+    "albedo": "#9a968f",
+    "glowRange": 0.1,
+    "rimColor": [0.06, 0.25, 0.88],
+    "rimPower": 3.88,
+    "rimStrength": 0.13,
+    "smoothness": 0.3,
+    "specularColor": [0.97, 0.49, 0.36]
+  },
+  "walkwayLane": {
+    "albedo": "#999591",
+    "glowRange": 0.1,
+    "rimColor": [0.45, 0.92, 1],
+    "rimPower": 2,
+    "rimStrength": 0.25,
+    "smoothness": 0.31,
+    "specularColor": [0.26, 0.48, 0.72]
   }
 }
