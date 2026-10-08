@@ -4,9 +4,9 @@ import type { LightUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
 
 import statue from "#src/data/windrise/statue.json";
-import { STATUE_COLOR } from "#src/services/windrise/constants";
+import { getStatuePartColor } from "#src/services/windrise/constants";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
-import { createStatueGeometry, createToonMaterial } from "genshin-engine";
+import { createStatueGeometries, createToonMaterial } from "genshin-engine";
 
 interface Props {
   landmark: StatueLandmark;
@@ -17,19 +17,26 @@ interface Props {
 const { landmark, lightUniforms, rampTexture } = defineProps<Props>();
 const { heightOffset, position, rotation } = landmark;
 const groundHeight = getWorldHeight(position.x, position.z);
-const statueGeometry = createStatueGeometry(statue.parts);
-const stoneMaterial = createToonMaterial({ color: STATUE_COLOR, lightUniforms, rampTexture });
+// Each part of the statue is drawn in its own colour, as its export mesh's textures paint it
+const statueParts = Object.entries(createStatueGeometries(statue.parts)).map(([part, geometry]) => ({
+  geometry,
+  material: createToonMaterial({ color: getStatuePartColor(part), lightUniforms, rampTexture }),
+}));
 
 onUnmounted(() => {
-  statueGeometry.dispose();
-  stoneMaterial.dispose();
+  for (const { geometry, material } of statueParts) {
+    geometry.dispose();
+    material.dispose();
+  }
 });
 </script>
 
 <template>
   <TresMesh
-    :geometry="statueGeometry"
-    :material="stoneMaterial"
+    v-for="({ geometry, material }, index) in statueParts"
+    :key="index"
+    :geometry="geometry"
+    :material="material"
     :position="[position.x, groundHeight + heightOffset, position.z]"
     :rotation-y="rotation"
     cast-shadow

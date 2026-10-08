@@ -8,9 +8,9 @@ describe(computeSurfaceTones, () => {
     expect(
       computeSurfaceTones(
         [
-          { colour: [0, 0, 0], weight: 1 },
-          { colour: [255, 255, 255], weight: 3 },
-          { colour: [100, 100, 100], weight: 0 },
+          { colour: [0, 0, 0], part: "", weight: 1 },
+          { colour: [255, 255, 255], part: "", weight: 3 },
+          { colour: [100, 100, 100], part: "", weight: 0 },
         ],
         2,
       ),

@@ -16,8 +16,8 @@ import { WindrisePartFamilyMeshRegexMap } from "genshin-world";
 
 // Windrise's parts fitted as our own generators' parameters, each written as a data file of the world package's: its
 // Ground as hills, its landmarks' places and turns in Mondstadt's region data, its oak's canopy as clusters and its
-// Trunk's taper read off the export, its statue as two radial profiles, its families' surface colours as the export's
-// Textures paint them, and its water's level over the oak's foot, the last three exact. Every region's capital is placed
+// Trunk's taper read off the export, its statue as one radial profile per mesh, its families' surface colours and each
+// Part's as the export's textures paint them, and its water's level over the oak's foot, the last three exact. Every region's capital is placed
 // With the landmarks, round the same origin, since the oak's foot is the whole world's. The statue's angle count is its
 // Own option, the rest ignore it
 export const fitWindriseScene = (only: readonly string[] = [], angleCount?: number): Promise<string> =>

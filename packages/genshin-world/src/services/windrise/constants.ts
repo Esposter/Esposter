@@ -63,19 +63,17 @@ export const WINDRISE_GROUND_PAINT: GroundPaint = {
 // Where a character starts in Windrise: on the slope before the statue, in the free camera's first view, its back to
 // The camera as the game shows a character
 export const WINDRISE_START_POINT: GroundPoint = { x: 36, z: 12 };
-// The families' colours as their exports' textures paint them, fitted into `surfaces.json`. The oak's leaves outweigh its
-// Bark, so they take its family colour, and its bark takes the tone of its palette that leans least toward green
-const getGreenLean = (color: string): number => {
-  const { g, r } = new Color(color);
-  return g - r;
-};
-export const BARK_COLOR =
-  surfaces.Oak.palette.toSorted(
-    (firstTone, secondTone) => getGreenLean(firstTone.color) - getGreenLean(secondTone.color),
-  )[0]?.color ?? surfaces.Oak.color;
-export const LEAF_COLOR = surfaces.Oak.color;
+// The families' colours as their exports' textures paint them, fitted into `surfaces.json`, and each family's parts, the
+// Meshes it is drawn with, each in its own colour. A part the export gave no weight to takes its family's colour
+const getPartColor = (family: { color: string; parts: Record<string, { color: string }> }, part: string): string =>
+  family.parts[part]?.color ?? family.color;
+// The oak's bark is its trunk and its leaves are its cards, each the export's mesh of that name
+const OAK_BARK_PART = "Stages_Unique_CyTree01_Bark_Lod1";
+const OAK_LEAF_PART = "Stages_Unique_CyTree01_Leaf_Lod1";
+export const BARK_COLOR = getPartColor(surfaces.Oak, OAK_BARK_PART);
+export const LEAF_COLOR = getPartColor(surfaces.Oak, OAK_LEAF_PART);
 export const PAVING_COLOR = surfaces.Paving.color;
-export const STATUE_COLOR = surfaces.Statue.color;
+export const getStatuePartColor = (part: string): string => getPartColor(surfaces.Statue, part);
 // The ramp every material shades through: a narrow step, a little past the grazing angle
 export const WINDRISE_RAMP_OPTIONS: RampOptions = { resolution: 64, softness: 0.08, terminator: 0.52 };
 // A haze thickest on the valley floor and gone a few hundred metres up, starting past the knoll so the oak stays clear

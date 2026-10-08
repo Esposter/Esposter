@@ -155,32 +155,32 @@ A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit fille
 
 ## Key files
 
-| File                                                                        | Role                                                                                         |
-| :-------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/shared/constants.ts`                    | Where the exports are kept, and every fit's tolerance                                        |
-| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts`     | Each component's assets by name, and the roots it is                                         |
-| `scripts/src/services/genshinAssets/fit/DerivedAssetFitMap.ts`              | Each component's fit                                                                         |
-| `scripts/src/services/genshinAssets/fit/fitLoginScene.ts`                   | Every fit the login screen writes                                                            |
-| `scripts/src/services/genshinAssets/fit/fitWindriseScene.ts`                | Every fit Windrise writes: ground, landmarks, paving, surfaces, water                        |
-| `scripts/src/services/genshinAssets/fit/fitSurfaceColours.ts`               | Each family's colour and palette from its export's textures                                  |
-| `scripts/src/services/genshinAssets/fit/fitWindrisePaving.ts`               | Windrise's paving stones: placements and outlines                                            |
-| `scripts/src/services/genshinAssets/fit/fitPavingStoneShape.ts`             | One stone's outline as its convex hull's radii                                               |
-| `scripts/src/services/genshinAssets/fit/fitRadialProfile.ts`                | A mesh's outermost radius at each angle and band, the profile the statue is fitted as        |
-| `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts`              | A region's landmarks where the world places them                                             |
-| `scripts/src/services/genshinAssets/world/extractWorld.ts`                  | A part of the open world's streams and terrain                                               |
-| `scripts/src/services/genshinAssets/world/deriveCapitalWorld.ts`            | A region's open world, derived from its capital's place                                      |
-| `scripts/src/services/genshinAssets/world/readWorldOptions.ts`              | The open world block every reader of a component takes                                       |
-| `scripts/src/services/genshinAssets/world/placeWorldPrefabs.ts`             | Each world prefab hung from an anchor at its place                                           |
-| `scripts/src/services/genshinAssets/fit/traceCoveredGrid.ts`                | The loops round a grid's covered cells                                                       |
-| `scripts/src/services/genshinAssets/materials/extractComponentShaders.ts`   | Each shader's programs carved out and disassembled                                           |
-| `scripts/src/services/genshinAssets/materials/writeComponentInventory.ts`   | The inventory report of everything an export holds                                           |
-| `scripts/src/services/genshinAssets/scene/writeWitnessLayout.ts`            | The exports laid out for the witness render                                                  |
-| `scripts/src/services/genshinAssets/music/extractComponentPlaylist.ts`      | A component's music playlist exported and decoded                                            |
-| `scripts/src/services/genshinAssets/interface/extractComponentInterface.ts` | A screen's interface tree from its RectTransforms                                            |
-| `packages/genshin-world/src/data`                                           | The fitted parameters the scenes read                                                        |
-| `packages/genshin-engine/src/kits/architecture`                             | The kits the fitted shapes drive                                                             |
-| `packages/genshin-engine/src/kits/statue`                                   | The statue's surface lofted from its radial profiles, a ring at each section's foot and head |
-| `packages/genshin-engine/src/atmosphere/placeCloudBand.ts`                  | A band of painted clouds scattered round a centre                                            |
+| File                                                                        | Role                                                                                                                  |
+| :-------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/shared/constants.ts`                    | Where the exports are kept, and every fit's tolerance                                                                 |
+| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts`     | Each component's assets by name, and the roots it is                                                                  |
+| `scripts/src/services/genshinAssets/fit/DerivedAssetFitMap.ts`              | Each component's fit                                                                                                  |
+| `scripts/src/services/genshinAssets/fit/fitLoginScene.ts`                   | Every fit the login screen writes                                                                                     |
+| `scripts/src/services/genshinAssets/fit/fitWindriseScene.ts`                | Every fit Windrise writes: ground, landmarks, paving, surfaces, water                                                 |
+| `scripts/src/services/genshinAssets/fit/fitSurfaceColours.ts`               | Each family's colour and palette, and each part's, from its export's textures                                         |
+| `scripts/src/services/genshinAssets/fit/fitWindrisePaving.ts`               | Windrise's paving stones: placements and outlines                                                                     |
+| `scripts/src/services/genshinAssets/fit/fitPavingStoneShape.ts`             | One stone's outline as its convex hull's radii                                                                        |
+| `scripts/src/services/genshinAssets/fit/fitRadialProfile.ts`                | A mesh's outermost radius at each angle and band, the profile the statue is fitted as                                 |
+| `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts`              | A region's landmarks where the world places them                                                                      |
+| `scripts/src/services/genshinAssets/world/extractWorld.ts`                  | A part of the open world's streams and terrain                                                                        |
+| `scripts/src/services/genshinAssets/world/deriveCapitalWorld.ts`            | A region's open world, derived from its capital's place                                                               |
+| `scripts/src/services/genshinAssets/world/readWorldOptions.ts`              | The open world block every reader of a component takes                                                                |
+| `scripts/src/services/genshinAssets/world/placeWorldPrefabs.ts`             | Each world prefab hung from an anchor at its place                                                                    |
+| `scripts/src/services/genshinAssets/fit/traceCoveredGrid.ts`                | The loops round a grid's covered cells                                                                                |
+| `scripts/src/services/genshinAssets/materials/extractComponentShaders.ts`   | Each shader's programs carved out and disassembled                                                                    |
+| `scripts/src/services/genshinAssets/materials/writeComponentInventory.ts`   | The inventory report of everything an export holds                                                                    |
+| `scripts/src/services/genshinAssets/scene/writeWitnessLayout.ts`            | The exports laid out for the witness render                                                                           |
+| `scripts/src/services/genshinAssets/music/extractComponentPlaylist.ts`      | A component's music playlist exported and decoded                                                                     |
+| `scripts/src/services/genshinAssets/interface/extractComponentInterface.ts` | A screen's interface tree from its RectTransforms                                                                     |
+| `packages/genshin-world/src/data`                                           | The fitted parameters the scenes read                                                                                 |
+| `packages/genshin-engine/src/kits/architecture`                             | The kits the fitted shapes drive                                                                                      |
+| `packages/genshin-engine/src/kits/statue`                                   | The statue's surface lofted from its radial profiles, a ring at each section's foot and head, each part in its colour |
+| `packages/genshin-engine/src/atmosphere/placeCloudBand.ts`                  | A band of painted clouds scattered round a centre                                                                     |
 
 ## Sources
 

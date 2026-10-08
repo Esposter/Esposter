@@ -1,8 +1,7 @@
 import type { RadialProfile } from "#src/models/genshinAssets/fit/RadialProfile";
 
+import { toRadialSector } from "#src/services/genshinAssets/fit/toRadialSector";
 import { computeMedian } from "#src/services/genshinAssets/shared/computeMedian";
-
-const FULL_TURN = Math.PI * 2;
 // The radius of the nearest sector that holds one, so a gap in a band's sampling is read across rather than as the axis
 const fillEmptySectors = (radii: readonly number[]): number[] =>
   radii.map((radius, sector) => {
@@ -52,8 +51,7 @@ export const fitRadialProfile = (
   for (const [x, y, z] of vertices) {
     const row = sampled[bandOf(y)];
     if (!row) continue;
-    const turn = Math.round((Math.atan2(z - axis[1], x - axis[0]) / FULL_TURN) * angleCount);
-    const sector = ((turn % angleCount) + angleCount) % angleCount;
+    const sector = toRadialSector(x, z, axis, angleCount);
     row[sector] = Math.max(row[sector] ?? 0, Math.hypot(x - axis[0], z - axis[1]));
   }
   const bands: number[][] = [];

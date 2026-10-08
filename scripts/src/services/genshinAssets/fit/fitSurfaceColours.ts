@@ -1,4 +1,4 @@
-import type { FittedSurface } from "#src/models/genshinAssets/fit/FittedSurface";
+import type { FittedFamily } from "#src/models/genshinAssets/fit/FittedFamily";
 import type { SurfaceSample } from "#src/models/genshinAssets/fit/SurfaceSample";
 import type { Texture } from "#src/models/genshinAssets/fit/Texture";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
@@ -6,6 +6,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { Vector } from "#src/models/shared/Vector";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
+import { computePartSurfaces } from "#src/services/genshinAssets/fit/computePartSurfaces";
 import { computeSurfaceTones } from "#src/services/genshinAssets/fit/computeSurfaceTones";
 import { sampleFaceUvs } from "#src/services/genshinAssets/fit/sampleFaceUvs";
 import { sampleSurfaceTexture } from "#src/services/genshinAssets/fit/sampleSurfaceTexture";
@@ -44,12 +45,13 @@ const computeTriangleArea = ([ax, ay, az]: Vector, [bx, by, bz]: Vector, [cx, cy
 };
 // The samples of a mesh's faces where its vertices stand in the world. Each face is read at the points `sampleFaceUvs`
 // Spreads over its UV triangle, through the texture its submesh draws with (`diffuses`, by submesh index), each point
-// Weighted by an equal share of the face's world area and how far its texel is covered. A face whose centroid `checkKept`
-// Refuses counts for nothing
+// Weighted by an equal share of the face's world area and how far its texel is covered, and tagged with the `part` it
+// Is read for. A face whose centroid `checkKept` refuses counts for nothing
 const readFaceSamples = (
   { faceGroups, faces, faceUvs, uvs }: ObjMesh,
   world: Vector[],
   diffuses: (Texture | undefined)[],
+  part: string,
   checkKept: (centroid: Vector) => boolean = () => true,
 ): SurfaceSample[] =>
   faces.flatMap(([firstIndex, secondIndex, thirdIndex], face) => {
@@ -68,19 +70,20 @@ const readFaceSamples = (
     const weight = computeTriangleArea(first, second, third) / points.length;
     return points.map((uv) => {
       const { colour, coverage } = sampleSurfaceTexture(diffuse, uv);
-      return { colour, weight: weight * coverage };
+      return { colour, part, weight: weight * coverage };
     });
   });
 // Each family's surface as its export's textures paint it, returned as the colour and palette `computeSurfaceTones`
-// Reads off the samples its meshes give. A family's meshes are its placed meshes, each drawn with its submeshes' diffuse
-// Textures, and its terrain tiles, each drawn with its base map and read only where its faces stand within the
-// Terrain radius of the world's origin, the ground beyond which the screen never shows. Every face is read where it
-// Stands in the world and weighted by its area there. Writes no file: the caller writes what this returns
+// Reads off the samples its meshes give, and each part's apart as `computePartSurfaces` reads them. A family's meshes
+// Are its placed meshes, each drawn with its submeshes' diffuse textures, and its terrain tiles, each drawn with its base
+// Map and read only where its faces stand within the terrain radius of the world's origin, the ground beyond which the
+// Screen never shows. Every face is read where it stands in the world and weighted by its area there. Writes no file: the
+// Caller writes what this returns
 export const fitSurfaceColours = async <Family extends string>(
   component: DerivedAssetComponent,
   meshRegexMap: Record<Family, RegExp>,
   terrainRadius: number,
-): Promise<Record<Family, FittedSurface>> => {
+): Promise<Record<Family, FittedFamily>> => {
   const directory = getComponentDirectory(component);
   const meshDirectory = join(directory.assets, AssetType.Mesh);
   const textureDirectory = join(directory.assets, AssetType.Texture2D);
@@ -111,6 +114,8 @@ export const fitSurfaceColours = async <Family extends string>(
     textures.set(path, texture);
     return texture;
   };
+  // A placed mesh is one part, named by its mesh, since a material can span parts: the statue's stone levels all draw one
+  // Material, and its gold dish sits in it
   const readPlacementSamples = async (placement: AssetPlacement): Promise<SurfaceSample[]> => {
     const mesh = await readObjMesh(join(meshDirectory, `${placement.mesh}${OBJ_EXTENSION}`));
     const diffuses = await Promise.all(
@@ -120,7 +125,7 @@ export const fitSurfaceColours = async <Family extends string>(
         return texture;
       }),
     );
-    return readFaceSamples(mesh, toWorldVertices(mesh.vertices, placement), diffuses);
+    return readFaceSamples(mesh, toWorldVertices(mesh.vertices, placement), diffuses, placement.mesh);
   };
   // A terrain tile is never placed: its vertices are local to its column and row, which are its offset in the world
   const readTerrainSamples = async (tile: string): Promise<SurfaceSample[]> => {
@@ -130,7 +135,13 @@ export const fitSurfaceColours = async <Family extends string>(
     const world = mesh.vertices.map(([x, y, z]): Vector => [x + offsetX, y, z + offsetZ]);
     const baseMap = join(textureDirectory, `${tile}${TERRAIN_BASE_MAP_SUFFIX}.png`);
     const diffuses = [existsSync(baseMap) ? await getTexture(baseMap) : undefined];
-    return readFaceSamples(mesh, world, diffuses, ([x, , z]) => Math.hypot(x - originX, z - originZ) <= terrainRadius);
+    return readFaceSamples(
+      mesh,
+      world,
+      diffuses,
+      "",
+      ([x, , z]) => Math.hypot(x - originX, z - originZ) <= terrainRadius,
+    );
   };
   const readFamilySamples = async (regex: RegExp): Promise<SurfaceSample[]> => {
     const placed = await Promise.all(
@@ -153,8 +164,8 @@ export const fitSurfaceColours = async <Family extends string>(
             family,
             "has no placed mesh or terrain tile its faces can be read from",
           );
-        return [family, computeSurfaceTones(samples)] as const;
+        return [family, { ...computeSurfaceTones(samples), parts: computePartSurfaces(samples) }] as const;
       }),
     ),
-  ) as Record<Family, FittedSurface>;
+  ) as Record<Family, FittedFamily>;
 };
