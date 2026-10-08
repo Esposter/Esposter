@@ -1,0 +1,46 @@
+[
+  {
+    "beginTime": "2019-12-01T00:00:00+08:00",
+    "buyLimit": 0,
+    "endTime": "2035-01-01T00:00:00+08:00",
+    "goodsId": 102003,
+    "itemCount": 1,
+    "itemId": 223,
+    "minPlayerLevel": 4,
+    "priceCount": 5,
+    "priceItemId": 221
+  },
+  {
+    "beginTime": "2019-12-01T00:00:00+08:00",
+    "buyLimit": 0,
+    "endTime": "2035-01-01T00:00:00+08:00",
+    "goodsId": 102004,
+    "itemCount": 1,
+    "itemId": 224,
+    "minPlayerLevel": 4,
+    "priceCount": 5,
+    "priceItemId": 221
+  },
+  {
+    "beginTime": "2019-12-01T00:00:00+08:00",
+    "buyLimit": 5,
+    "endTime": "2035-01-01T00:00:00+08:00",
+    "goodsId": 102501,
+    "itemCount": 1,
+    "itemId": 223,
+    "minPlayerLevel": 4,
+    "priceCount": 75,
+    "priceItemId": 222
+  },
+  {
+    "beginTime": "2019-12-01T00:00:00+08:00",
+    "buyLimit": 5,
+    "endTime": "2035-01-01T00:00:00+08:00",
+    "goodsId": 102502,
+    "itemCount": 1,
+    "itemId": 224,
+    "minPlayerLevel": 4,
+    "priceCount": 75,
+    "priceItemId": 222
+  }
+]

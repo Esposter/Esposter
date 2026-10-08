@@ -92,6 +92,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Spawned places](/docs/genshin/spawned-places)             | the official Teyvat map's statues and waypoints fitted to the scene's transport points, with the residual and each region's Oculi against the wiki's                                        |
 | [Chests](/docs/genshin/chests)                             | the official map's chests fitted into each region as five tiers and the buried and sealed places, ground only, nothing opened yet                                                           |
 | [Puzzles](/docs/genshin/puzzles)                           | the official map's puzzle marks fitted into each region's slice by kind, and an Elemental Monument lit by its element or a reaction, a timed one going out, nothing placed in the world yet |
+| [Shops](/docs/genshin/shops)                               | Paimon's Bargains' Fates bought with Masterless Starglitter or Stardust from the game's shop table, restocked monthly, nothing yet on a screen                                              |
 | [Interface library](/docs/genshin/interface-library)       | `genshin-interface`: the game's screen root, units, pointer, and the pieces its screens share                                                                                               |
 | [Interface layout](/docs/genshin/interface-layout)         | every screen laid out from the game's own RectTransform tree, nothing by hand                                                                                                               |
 | [Title splash](/docs/genshin/title-splash)                 | the game's title logo as each language's client draws it                                                                                                                                    |
@@ -135,6 +136,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - Elemental Sight: the range spread from the character and held to its reach, the world muted outside what is lit, interactables in white, enemies in their element's colour with their names, and the sight ended by a short walk.
 - The official Teyvat map's statues and waypoints read into the references folder and fitted to the scene's transport points: one similarity over the whole map, its residual printed, and each region's Oculi checked against the wiki's.
 - The official map's puzzle marks fitted into each region's slices by kind, and the Elemental Monument's state machine: lit by its element or a reaction of its own, a timed one going out after its time, and a puzzle of monuments solved once all are lit together.
+- Paimon's Bargains' Fates bought with Masterless Starglitter or Stardust: the goods read from the game's shop table into one slice, each offered from its Adventure Rank and within its dates, a buy limit restocked on the monthly refresh, and the price taken from the wallet.
 
 ## Key files
 
