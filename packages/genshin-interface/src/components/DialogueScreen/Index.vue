@@ -8,11 +8,13 @@ interface Props {
   // How many of the line's characters are written out so far; the rest keep their place unseen, so the line never
   // Rewraps as it is written
   revealedLength: number;
+  // The reply F would choose, lit as the pointer lights one
+  selectedChoiceId: string;
   // The speaker's name over the line, none for a narration
   speakerName: string;
 }
 
-const { choices, line, revealedLength, speakerName } = defineProps<Props>();
+const { choices, line, revealedLength, selectedChoiceId, speakerName } = defineProps<Props>();
 const emit = defineEmits<{ advance: []; choose: [id: string] }>();
 // The line split where it is written out to, by character so a pair of code units is never cut
 const lineParts = computed(() => {
@@ -39,7 +41,13 @@ const lineParts = computed(() => {
     </div>
     <ul v-if="choices.length > 0" class="choices">
       <li v-for="{ icon, id, text } of choices" :key="id">
-        <button class="choice" :data-icon="icon" type="button" @click.stop="emit('choose', id)">
+        <button
+          class="choice"
+          :class="{ selected: id === selectedChoiceId }"
+          :data-icon="icon"
+          type="button"
+          @click.stop="emit('choose', id)"
+        >
           <span class="icon" aria-hidden="true" />
           {{ text }}
         </button>
@@ -130,7 +138,8 @@ const lineParts = computed(() => {
 }
 
 .choice:hover,
-.choice:focus-visible {
+.choice:focus-visible,
+.choice.selected {
   background: rgb(255 255 255 / 0.85);
   color: #3b4255;
   outline: none;

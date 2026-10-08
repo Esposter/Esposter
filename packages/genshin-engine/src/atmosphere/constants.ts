@@ -1,3 +1,5 @@
+import type { LightningBoltOptions } from "#src/models/atmosphere/LightningBoltOptions";
+import type { LightningFlashPulse } from "#src/models/atmosphere/LightningFlashPulse";
 import type { PrecipitationSettings } from "#src/models/atmosphere/PrecipitationSettings";
 import type { SkyGradient } from "#src/models/atmosphere/SkyGradient";
 import type { SkyShape } from "#src/models/atmosphere/SkyShape";
@@ -37,8 +39,10 @@ export const PRECIPITATION_SETTINGS_MAP: Readonly<Record<PrecipitationKind, Prec
   [PrecipitationKind.Sand]: { fallSpeed: 1.5, length: 2.5, opacity: 0.3, sway: 0.2, width: 0.05, windDrift: 1 },
   [PrecipitationKind.Snow]: { fallSpeed: 1.6, length: 0.12, opacity: 0.9, sway: 0.8, width: 0.12, windDrift: 0.3 },
 };
-// Each weather's sky, fog, wetness and particles, as starting values to be fitted to the game's own weather settings.
-// Clear keeps the region's own sky and haze; the others raise them over it
+// Each weather's sky, fog, wetness, particles and lightning, as starting values to be fitted to the game's own weather
+// Settings. Clear keeps the region's own sky and haze; the others raise them over it. Provisional: the sandstorm's sand
+// Haze is measured off a recording of the Desert of Hadramaveth's storm, and the thunderstorm's strikes a minute are
+// Counted off a recording of one
 export const WEATHER_SETTINGS_MAP: Readonly<Record<WeatherKind, WeatherSettings>> = {
   [WeatherKind.Clear]: { cloudCoverage: 0, fogDensity: 0, wetness: 0 },
   [WeatherKind.Cloudy]: { cloudCoverage: 0.6, fogDensity: 0, wetness: 0 },
@@ -51,6 +55,7 @@ export const WEATHER_SETTINGS_MAP: Readonly<Record<WeatherKind, WeatherSettings>
   },
   [WeatherKind.Sandstorm]: {
     cloudCoverage: 0.3,
+    fogColor: 0xc9a66b,
     fogDensity: 0.008,
     precipitation: { density: 0.8, kind: PrecipitationKind.Sand },
     wetness: 0,
@@ -64,7 +69,42 @@ export const WEATHER_SETTINGS_MAP: Readonly<Record<WeatherKind, WeatherSettings>
   [WeatherKind.Thunderstorm]: {
     cloudCoverage: 1,
     fogDensity: 0.002,
+    lightningRate: 4,
     precipitation: { density: 1, kind: PrecipitationKind.Rain },
     wetness: 1,
   },
 };
+// A weather changes over this many seconds, eased in and out, so the sky darkens and the rain thickens together.
+// Provisional: measured off a recording of the game's weather turning
+export const WEATHER_TRANSITION_SECONDS = 10;
+// A strike's flash: two pulses, the second dimmer, each dying away over its decay, so the sky flickers and is dark
+// Again within a second. The flash turns the sky's colours this far toward its own, sRGB as the palette sees it, and
+// Adds this much to the ambient light, at its brightest. Provisional: each read off a recording of a thunderstorm
+export const LIGHTNING_FLASH_PULSES: readonly LightningFlashPulse[] = [
+  { seconds: 0, strength: 1 },
+  { seconds: 0.15, strength: 0.6 },
+];
+export const LIGHTNING_FLASH_DECAY_SECONDS = 0.08;
+export const LIGHTNING_FLASH_COLOR = 0xdadfff;
+export const LIGHTNING_FLASH_SKY = 0.6;
+export const LIGHTNING_FLASH_AMBIENT = 1.2;
+// A flash dimmer than this is over: its bolt is hidden and the sky is the weather's own again
+export const LIGHTNING_FLASH_END = 0.01;
+// A bolt's shape, a new seed each strike, and its glow, sRGB as the palette sees it and brighter than white. It falls
+// Between these distances from the eye, in metres. Provisional: each read off a recording of a thunderstorm
+export const LIGHTNING_BOLT_OPTIONS: Readonly<
+  Pick<LightningBoltOptions, "branchCount" | "height" | "roughness" | "segmentCount" | "width">
+> = { branchCount: 3, height: 240, roughness: 1.2, segmentCount: 24, width: 1.6 };
+export const LIGHTNING_BOLT_COLOR = 0xe8e6ff;
+export const LIGHTNING_BOLT_BRIGHTNESS = 3;
+export const LIGHTNING_MIN_DISTANCE = 150;
+export const LIGHTNING_MAX_DISTANCE = 600;
+// Where rain meets the ground: this many splashes in a square this many metres from the eye to its side, each living
+// This many seconds, as wide as this at its widest, at this opacity, lifted this far off what it stands on so the
+// Ground never hides it. Provisional: matched to a recording of rain by its statistics
+export const SPLASH_COUNT = 768;
+export const SPLASH_RADIUS = 16;
+export const SPLASH_LIFETIME = 0.35;
+export const SPLASH_SIZE = 0.4;
+export const SPLASH_OPACITY = 0.5;
+export const SPLASH_LIFT = 0.03;

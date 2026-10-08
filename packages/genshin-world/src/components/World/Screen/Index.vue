@@ -1,19 +1,31 @@
 <script setup lang="ts">
+import type { MapCamera } from "#src/models/map/MapCamera";
 import type { WorldCameraPose } from "#src/models/world/WorldCameraPose";
+import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext } from "@tresjs/core";
 import type { QualityTier } from "genshin-engine";
 import type { GameText } from "genshin-text";
 
+import HudScreen from "#src/components/Hud/Screen/Index.vue";
+import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MenuScreen from "#src/components/Menu/Screen/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
+import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
 import { TresCanvas } from "@tresjs/core";
-import { useEventListener } from "@vueuse/core";
-import { createGenshinRenderer, createInput, GENSHIN_TONE_MAPPING, QualityTierSettingsMap } from "genshin-engine";
+import { useEventListener, useRafFn } from "@vueuse/core";
+import {
+  createGenshinRenderer,
+  createInput,
+  GENSHIN_TONE_MAPPING,
+  InputAction,
+  QualityTierSettingsMap,
+} from "genshin-engine";
 import { Euler, MathUtils, PCFShadowMap, Vector3 } from "three";
 import { unref } from "vue";
 
@@ -72,6 +84,36 @@ onUnmounted(() => {
 });
 // The world's origin, owned here so the free camera reads the ground through it before the floating origin shifts it
 const origin = new Vector3();
+// Every landmark a jump lands at, which the map and the minimap draw
+const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl);
+const freeCamera = useTemplateRef("freeCamera");
+// Whether the backslash has hidden the HUD, as the game's Hide UI does, apart from the screens that hide it
+const isHudHidden = ref(false);
+// The camera's ground point and yaw in world metres for the map and the minimap, read each frame and handed on only
+// When it moved, so a still camera re-renders nothing
+const mapCamera = shallowRef<MapCamera>({ x: 0, yaw: 0, z: 0 });
+const cameraEuler = new Euler();
+useRafFn(() => {
+  const activeCamera = canvas.value?.context?.camera.activeCamera.value;
+  if (!activeCamera) return;
+  const x = activeCamera.position.x + origin.x;
+  const z = activeCamera.position.z + origin.z;
+  const { y: yaw } = cameraEuler.setFromQuaternion(activeCamera.quaternion, "YXZ");
+  if (x !== mapCamera.value.x || yaw !== mapCamera.value.yaw || z !== mapCamera.value.z)
+    mapCamera.value = { x, yaw, z };
+});
+// A jump's pose while the screen is faded for it: set, the screen fades to black, and once that fade ends the camera is
+// Placed and the pose let go, so the screen fades back in. Once a character walks, its body is placed in the free
+// Camera's stead
+const jumpPose = shallowRef<WorldJumpPose>();
+const jumpTo = (pose: WorldJumpPose) => {
+  jumpPose.value = pose;
+};
+// Where the camera stands in world metres, which its host reads to know where a player is
+const readCameraPosition = (): Vector3 => {
+  const activeCamera = canvas.value?.context?.camera.activeCamera.value;
+  return activeCamera ? activeCamera.position.clone().add(origin) : origin.clone();
+};
 const cameraRotation = computed(() =>
   cameraPose
     ? new Euler(MathUtils.degToRad(cameraPose.pitch), MathUtils.degToRad(cameraPose.heading), 0, "YXZ")
@@ -90,6 +132,7 @@ watch(
   },
   { flush: "sync" },
 );
+defineExpose({ jumpTo, readCameraPosition });
 </script>
 
 <template>
@@ -106,6 +149,7 @@ watch(
         (context: TresContextWithClock) => {
           input.readInput(context.delta);
           if (!isPaused) screenKind = getNextScreenKind(screenKind, inputState.pressedActions);
+          if (inputState.pressedActions.has(InputAction.HideInterface)) isHudHidden = !isHudHidden;
         }
       "
       @error="emit('ready')"
@@ -119,7 +163,13 @@ watch(
       />
       <template v-else>
         <TresPerspectiveCamera :far="2000" :fov="45" :look-at="[0, 14, 0]" :position="[62, 26, 58]" />
-        <WorldFreeCamera v-if="!witness" :input-state :is-held="screenBehaviour.isHeld || undefined" :origin />
+        <WorldFreeCamera
+          v-if="!witness"
+          ref="freeCamera"
+          :input-state
+          :is-held="screenBehaviour.isHeld || undefined"
+          :origin
+        />
       </template>
       <WorldWindrise
         :create-terrain-worker
@@ -132,7 +182,43 @@ watch(
         @ready="emit('ready')"
       />
     </TresCanvas>
-    <MenuScreen v-model:screen-kind="screenKind" :game-text @quit="emit('quit')" />
+    <!-- No HUD over a reference's held camera or a witness render, which the game's recordings show bare -->
+    <HudScreen
+      v-if="!cameraPose && !witness && !isPaused && !isHudHidden && !screenBehaviour.isHudHidden"
+      :camera="mapCamera"
+      :game-text
+      :input
+      :landmarks="jumpLandmarks"
+      @map="screenKind = ScreenKind.Map"
+      @menu="screenKind = ScreenKind.PaimonMenu"
+    />
+    <MenuScreen v-model:screen-kind="screenKind" :game-text @quit="emit('quit')">
+      <template #[ScreenKind.Map]>
+        <MapOverlay
+          :camera="mapCamera"
+          :game-text
+          :landmarks="jumpLandmarks"
+          @close="screenKind = ScreenKind.World"
+          @jump="
+            (pose) => {
+              screenKind = ScreenKind.World;
+              jumpTo(pose);
+            }
+          "
+        />
+      </template>
+    </MenuScreen>
+    <div
+      class="teleport-fade"
+      :class="{ faded: jumpPose }"
+      @transitionend="
+        () => {
+          if (!jumpPose) return;
+          freeCamera?.place(jumpPose);
+          jumpPose = undefined;
+        }
+      "
+    />
   </div>
 </template>
 
@@ -142,6 +228,21 @@ watch(
   position: relative;
   width: 100%;
   height: 100%;
+}
+
+/* Provisional: the teleport's fade to black and back, measured off a recording of a teleport */
+.teleport-fade {
+  position: absolute;
+  background: #000;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity calc(v-bind(TELEPORT_FADE_IN_MS) * 1ms) linear;
+}
+
+.teleport-fade.faded {
+  opacity: 1;
+  transition-duration: calc(v-bind(TELEPORT_FADE_OUT_MS) * 1ms);
 }
 
 .world-screen :deep(canvas) {

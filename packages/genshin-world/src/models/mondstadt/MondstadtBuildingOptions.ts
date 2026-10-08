@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export interface MondstadtBuildingOptions {
   // Along the front and back walls' normal, the footprint's depth in metres
   depth: number;
@@ -15,3 +17,14 @@ export interface MondstadtBuildingOptions {
   // Along the gable walls, the footprint's width in metres
   width: number;
 }
+
+export const mondstadtBuildingOptionsSchema = z.object({
+  depth: z.number().positive(),
+  dormerCount: z.int().nonnegative(),
+  groundHeight: z.number().positive(),
+  jettyDepth: z.number().nonnegative(),
+  roofRise: z.number().positive(),
+  storeyCount: z.int().min(1).max(3),
+  storeyHeight: z.number().positive(),
+  width: z.number().positive(),
+}) satisfies z.ZodType<MondstadtBuildingOptions>;

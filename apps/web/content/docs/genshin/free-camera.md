@@ -9,6 +9,7 @@ The world screen's camera is a free camera: the player flies it over Windrise an
 
 ```mermaid
 sequenceDiagram
+  participant WS as World screen (TresJS beforeLoop)
   participant F as Frame (TresJS onBeforeRender)
   participant FC as World free camera
   participant IN as input
@@ -16,9 +17,9 @@ sequenceDiagram
   participant CAM as camera
   participant CL as collision
   participant FO as floating origin
+  WS->>IN: readInput(delta), the frame's move, look and actions
   F->>FC: the frame begins, registered before the origin's shift
-  FC->>IN: readInput(delta), the frame's move and look
-  FC->>CAM: look(input), once a frame
+  FC->>CAM: look(input), once a frame, unless a screen holds the world
   FC->>SIM: advance(delta), in steps of a sixtieth of a second
   loop at most five steps a frame
     SIM->>CAM: step(input, step)
@@ -35,8 +36,9 @@ The order is the reason for the registration. The floating origin reads the came
 - **Keyboard**: `W` and `S` move forward and back over the ground, `A` and `D` move left and right, `Space` rises and `Shift` falls. A pair held against each other cancels.
 - **Mouse**: a click on the canvas locks the pointer, and while it is locked the pointer turns the look.
 - **Gamepad**: the first connected gamepad's left stick moves over the ground, and its right stick turns the look at a rate of 2.5 radians a second. Both have a deadzone at the stick's centre.
+- **Touch**: on a touch screen, a stick under the left thumb moves, a drag on the right half looks and a button rises, through the same input ([touch controls](/docs/genshin/touch-controls)).
 
-The camera's motion is per second, so a key held for the same time moves it the same distance at any frame rate. The look is not: the mouse turns it by a fixed angle for each pixel the pointer moves, and only the gamepad's right stick turns it per second. The input is read once a frame: its look turns the camera once, before the frame's steps, and the steps of that frame all use its move, so no pointer movement is lost or repeated at any frame rate. Losing focus clears the keys held, since their releases never reach the page. The input's listeners and the canvas's click are released when the component unmounts, so a remount does not stack them.
+The camera's motion is per second, so a key held for the same time moves it the same distance at any frame rate. The look is not: the mouse turns it by a fixed angle for each pixel the pointer moves, and only the gamepad's right stick turns it per second. The world screen reads the input once a frame, ahead of every frame callback, and hands the camera the state it read: its look turns the camera once, before the frame's steps, and the steps of that frame all use its move, so no pointer movement is lost or repeated at any frame rate. While a screen holds the world ([screens](/docs/genshin/screens)), the camera neither looks nor steps. Losing focus clears the keys held, since their releases never reach the page. The input's listeners and the canvas's click are released when the component holding them unmounts, so a remount does not stack them.
 
 ## The motion
 
@@ -44,9 +46,11 @@ A move goes along the view on the ground, and straight up or down. Its speed gro
 
 The camera is never held under the ground or the water's surface: after each step its height is raised to the higher of the ground's height at its place and the water's level, plus a clearance, which the same constants file holds.
 
+A jump from the [map](/docs/genshin/map) places the camera rather than flying it: `place` stands it at a position and sets its yaw and pitch outright, so the next look turns from the placed view rather than snapping back to where it faced before. The world's free camera exposes it with a jump's pose, read through the scene's origin onto the ground there.
+
 ## The ground
 
-`collision` answers the ground's height and normal at a point from the height function the terrain is built from. The world screen passes it `getWindriseHeight` read at the scene's origin plus the camera's own place, on the main thread, so the answer is the one the terrain draws, never a read back from a worker's tile. The normal is read from the same function's slopes across a tenth of a metre. The sample object is reused by every query, so a frame reads the ground allocating nothing.
+`collision` answers the ground's height and normal at a point from the height function the terrain is built from. The world screen passes it `getWorldHeight` read at the scene's origin plus the camera's own place, on the main thread, so the answer is the one the terrain draws, never a read back from a worker's tile. The normal is read from the same function's slopes across a tenth of a metre. The sample object is reused by every query, so a frame reads the ground allocating nothing.
 
 ## Key files
 
@@ -54,10 +58,10 @@ The camera is never held under the ground or the water's surface: after each ste
 | :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
 | `packages/genshin-engine/src/input/createInput.ts`                 | keys, locked pointer and the gamepad's sticks, read once a frame; a blur releases every key |
 | `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`    | runs whole steps from an accumulator, at most five a frame                                  |
-| `packages/genshin-engine/src/camera/createFreeCamera.ts`           | the flight: look, move by height, and the clamp above the ground                            |
+| `packages/genshin-engine/src/camera/createFreeCamera.ts`           | the flight: look, move by height, the clamp above the ground, and a place                   |
 | `packages/genshin-engine/src/collision/createGroundQuery.ts`       | the ground's height and normal at a point, and the water's level                            |
 | `packages/genshin-world/src/components/World/FreeCamera/Index.vue` | the world's wiring: the loop run before the origin's shift, on the scene's ground           |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`     | owns the origin and mounts the free camera in place of the orbit controls                   |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`     | reads the input once a frame, owns the origin and mounts the free camera                    |
 | `packages/genshin-world/src/services/constants.ts`                 | the fixed step's length                                                                     |
 
 ## Notes

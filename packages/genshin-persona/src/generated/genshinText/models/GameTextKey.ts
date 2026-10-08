@@ -80,6 +80,8 @@ export enum GameTextKey {
   InventoryPreciousItems = "ITEM_CONSUME",
   InventoryQuest = "ITEM_QUEST",
   InventoryWeapons = "ITEM_WEAPON",
+  // An item and its count, its name in place of `{0}` and the count in place of `{1}`
+  ItemCount = "SHOP_ITEM_NAME_AND_COUNT",
   // The touch controls' jump button, which a screen reader says in place of its glyph
   Jump = "UI_ACTIVITY_LOLI_RUN_JUMP",
   // A level as the game writes one, its number in place of `{0}`

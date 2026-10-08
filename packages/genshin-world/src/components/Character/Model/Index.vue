@@ -17,9 +17,11 @@ let isUnmounted = false;
 const disposeMesh = ({ geometry, material, skeleton }: SkinnedMesh<BufferGeometry, ToonNodeMaterial[]>) => {
   geometry.dispose();
   skeleton.dispose();
-  for (const characterMaterial of material) {
-    characterMaterial.map?.dispose();
-    characterMaterial.dispose();
+  for (const characterMaterial of material) characterMaterial.dispose();
+  // A texture several materials draw with is released once, its decoded image closed with it, which three leaves open
+  for (const texture of new Set(material.map(({ map }) => map).filter((map) => map !== null))) {
+    texture.dispose();
+    if (texture.image instanceof ImageBitmap) texture.image.close();
   }
 };
 // The character's model from its pack, drawn once it has all arrived. A failure is logged and leaves nothing drawn, and

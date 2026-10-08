@@ -1,4 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { DumpedVector } from "#src/models/genshinAssets/world/DumpedVector";
 import type { WorldPrefabPlacements } from "#src/models/genshinAssets/world/WorldPrefabPlacements";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
@@ -14,12 +15,6 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { Euler, MathUtils, Quaternion } from "three";
 
-// A vector as the community's dump writes one
-interface DumpedVector {
-  _x?: number;
-  _y?: number;
-  _z?: number;
-}
 const toQuaternion = ([x, y, z]: readonly [number, number, number]): [number, number, number, number] =>
   new Quaternion()
     .setFromEuler(new Euler(MathUtils.degToRad(x), MathUtils.degToRad(y), MathUtils.degToRad(z), UNITY_EULER_ORDER))

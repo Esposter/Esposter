@@ -17,3 +17,7 @@ export const MAP_MARGIN = 0.1;
 // The camera's pointer on a unit square, pointing north, as the overlay draws it where the camera stands and the
 // Minimap at its centre
 export const MAP_POINTER_PATH = "M 0 -1.6 L 1 1 L 0 0.4 L -1 1 Z";
+// Provisional: a recording of a teleport, read frame by frame. How long a jump's fade to black and its fade back in
+// Take, in milliseconds
+export const TELEPORT_FADE_OUT_MS = 400;
+export const TELEPORT_FADE_IN_MS = 600;

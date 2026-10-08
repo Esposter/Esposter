@@ -3,6 +3,7 @@ import type { RegionData } from "#src/models/world/RegionData";
 import type { LightUniforms, WindUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
 
+import WorldLandmarkBuilding from "#src/components/World/Landmark/Building/Index.vue";
 import WorldLandmarkStatue from "#src/components/World/Landmark/Statue/Index.vue";
 import WorldLandmarkTree from "#src/components/World/Landmark/Tree/Index.vue";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
@@ -31,6 +32,17 @@ const regionLandmarks = computed(() => [...regionDataMap.values()].flatMap(({ la
       :ramp-texture
       :wind-uniforms
     />
-    <WorldLandmarkStatue v-else :landmark :light-uniforms :ramp-texture />
+    <WorldLandmarkStatue
+      v-else-if="landmark.kind === LandmarkKind.StatueOfTheSeven"
+      :landmark
+      :light-uniforms
+      :ramp-texture
+    />
+    <WorldLandmarkBuilding
+      v-else-if="landmark.kind === LandmarkKind.Building"
+      :landmark
+      :light-uniforms
+      :ramp-texture
+    />
   </TresGroup>
 </template>

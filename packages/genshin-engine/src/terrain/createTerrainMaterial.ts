@@ -8,6 +8,8 @@ import type { UniformNode } from "three/webgpu";
 import { createCausticsNode } from "#src/nodes/createCausticsNode";
 import { createRimNode } from "#src/nodes/createRimNode";
 import { createToonMaterial } from "#src/nodes/createToonMaterial";
+import { createWetDarkeningNode } from "#src/nodes/createWetDarkeningNode";
+import { createWetSheenNode } from "#src/nodes/createWetSheenNode";
 import { getTerrainMorphStart } from "#src/terrain/getTerrainMorphStart";
 import {
   attribute,
@@ -32,8 +34,8 @@ import {
 // So a tile splitting into its children is short of its morph everywhere (`getTerrainMorphStart`). The morph is the
 // Position node, which the shadow passes use too, so it is measured from the view's eye rather than the camera
 // Rendering: a cascade's camera moves whenever the view turns, and morphing by it would reshape the ground each
-// Cascade draws, flickering its shadows across the hills. Where the region has water, the floor under it shimmers with
-// Caustics
+// Cascade draws, flickering its shadows across the hills. Wet ground darkens and glints as every toon surface does,
+// And where the region has water, the floor under it shimmers with caustics
 export const createTerrainMaterial = (
   terrainOptions: Pick<TerrainOptions, "finestRange" | "finestTileSize" | "maxHeight" | "minHeight">,
   // The view's eye in the scene's coordinates, written each frame by whatever selects the tiles
@@ -57,12 +59,16 @@ export const createTerrainMaterial = (
     return mix(positionGeometry, coarsePosition.xyz, morphAmount);
   })();
   terrainMaterial.colorNode = vec4(
-    varying(mix(attribute("color", "vec3"), attribute("coarseColor", "vec3"), morphAmount)),
+    varying(mix(attribute("color", "vec3"), attribute("coarseColor", "vec3"), morphAmount)).mul(
+      createWetDarkeningNode(toonMaterialOptions.lightUniforms),
+    ),
     1,
   );
   if (waterUniforms) {
     const { lightUniforms } = toonMaterialOptions;
-    terrainMaterial.emissiveNode = createRimNode(lightUniforms).add(createCausticsNode(lightUniforms, waterUniforms));
+    terrainMaterial.emissiveNode = createRimNode(lightUniforms)
+      .add(createWetSheenNode(lightUniforms))
+      .add(createCausticsNode(lightUniforms, waterUniforms));
   }
   return terrainMaterial;
 };

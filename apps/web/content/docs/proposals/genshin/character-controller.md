@@ -71,7 +71,7 @@ Each state is approved by its own measure against the readings, as the motion pa
 - **Fall damage, health, or anything of combat.** That covers plunging and charged attacks too. Nothing has health until combat, so a fall from any height lands.
 - **Movement a character or a nation changes**: alternate sprints and movement talents, Fontaine's diving and its aquatic stamina, Natlan's Nightsoul movement, and gadgets and wind currents. Each comes with the page that adds its character, region or gadget.
 - **The model and its animation**, which are [characters](/docs/proposals/genshin/characters)', and the camera behind the body, which is the [follow camera](/docs/proposals/genshin/follow-camera)'s.
-- **Touch.** [Exploring](/docs/proposals/genshin/exploring)'s joystick feeds the same input the controller reads.
+- **Touch.** The [touch controls](/docs/genshin/touch-controls)' stick and jump button feed the same input the controller reads.
 
 ## Key files
 

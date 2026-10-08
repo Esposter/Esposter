@@ -48,8 +48,7 @@ flowchart TD
 | [Flowing water](/docs/proposals/genshin/flowing-water)         | rivers along their courses, and waterfalls over cliff bands                   |
 | [Trees and scatter](/docs/proposals/genshin/trees-and-scatter) | tree species and impostors, and flowers, bushes and rocks scattered by biome  |
 | [Weather](/docs/proposals/genshin/weather)                     | rain, storms, snow, fog and sandstorms, set per area as the game sets them    |
-| [Exploring](/docs/proposals/genshin/exploring)                 | waypoints to jump between, the map overlay, the clock control and touch       |
-| [Minimap](/docs/proposals/genshin/minimap)                     | the HUD's corner map, the overlay's drawing cut to a circle round the camera  |
+| [Exploring](/docs/proposals/genshin/exploring)                 | waypoints to jump to, the game's arrival points, and the map's pan and zoom   |
 
 ### Phase two: the regions
 
@@ -68,23 +67,23 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 
 ### Phase three: the play features
 
-| Page                                                                 | What it adds                                                                    |
-| :------------------------------------------------------------------- | :------------------------------------------------------------------------------ |
-| [Character controller](/docs/proposals/genshin/character-controller) | running, sprinting, jumping, climbing, gliding, swimming and their stamina      |
-| [Follow camera](/docs/proposals/genshin/follow-camera)               | the camera behind the character, pulled in by the ground; photo mode            |
-| [HUD](/docs/proposals/genshin/hud)                                   | the heads-up display's Paimon button and stamina meter, and the minimap's place |
-| [Characters](/docs/proposals/genshin/characters)                     | the game's characters from HoYoverse's official models                          |
-| [Menu screens](/docs/proposals/genshin/menu-screens)                 | the Paimon menu, and the Time and Settings screens it opens                     |
-| [Combat](/docs/proposals/genshin/combat)                             | elements, auras and reactions, the damage formula, ICD, shields and energy      |
-| [Interaction](/docs/proposals/genshin/interaction)                   | the F prompts: what is in reach, nearest first, scrolled by the wheel           |
-| [Inventory](/docs/proposals/genshin/inventory)                       | the bag's nine tabs, stacks, room and sorting, and the currencies               |
-| [Wish](/docs/proposals/genshin/wish)                                 | the banners, rates, pity, guarantees and Capturing Radiance, on earned Fates    |
+| Page                                                                 | What it adds                                                                 |
+| :------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
+| [Character controller](/docs/proposals/genshin/character-controller) | running, sprinting, jumping, climbing, gliding, swimming and their stamina   |
+| [Follow camera](/docs/proposals/genshin/follow-camera)               | the camera behind the character, pulled in by the ground; photo mode         |
+| [HUD](/docs/proposals/genshin/hud)                                   | the HUD's fitted places, Paimon's mark, the stamina meter and the party      |
+| [Characters](/docs/proposals/genshin/characters)                     | the game's characters from HoYoverse's official models                       |
+| [Menu screens](/docs/proposals/genshin/menu-screens)                 | the Paimon menu, and the Time and Settings screens it opens                  |
+| [Combat](/docs/proposals/genshin/combat)                             | elements, auras and reactions, the damage formula, ICD, shields and energy   |
+| [Interaction](/docs/proposals/genshin/interaction)                   | the F prompts: what is in reach, nearest first, scrolled by the wheel        |
+| [Inventory](/docs/proposals/genshin/inventory)                       | the bag's nine tabs, stacks, room and sorting, and the currencies            |
+| [Wish](/docs/proposals/genshin/wish)                                 | the banners, rates, pity, guarantees and Capturing Radiance, on earned Fates |
 
 ## Scope and order
 
 1. **The recreation passes' runner and measures first.** Every later page is judged by them, so they are the base the rest stands on. The rest of the engine follows in the table's order, each built when Windrise's passes reach what it draws and shown first there, in the scene the [rendering style](/docs/genshin/rendering-style) is built in.
 2. **Mondstadt first among the regions.** It is where the game begins, and its opening areas are the ones the Windrise scene already holds. The rest follow in the game's release order.
-3. **Then the play features, one page each.** First the [character controller](/docs/proposals/genshin/character-controller) (run, sprint, jump, climb, glide, swim and stamina) and its [follow camera](/docs/proposals/genshin/follow-camera). Then the [HUD](/docs/proposals/genshin/hud), whose stamina meter the controller needs. Then [characters](/docs/proposals/genshin/characters), from HoYoverse's official MMD models, hosted in the app's Blob Storage. Then the [menu screens](/docs/proposals/genshin/menu-screens), whose Paimon is drawn as a character is. Then elemental reactions, and after that each feature in turn. Each feature is built when its turn comes, not before, so nothing is built against an engine that does not yet exist; a feature's page may be written earlier, as combat's, enemies', interaction's, inventory's and wish's are, and states only its proposed scope.
+3. **Then the play features, one page each.** First the [character controller](/docs/proposals/genshin/character-controller) (run, sprint, jump, climb, glide, swim and stamina) and its [follow camera](/docs/proposals/genshin/follow-camera). Then the [HUD](/docs/proposals/genshin/hud), whose stamina meter the controller needs. Then [characters](/docs/proposals/genshin/characters), from HoYoverse's official MMD models, hosted in the app's Blob Storage. Then the [menu screens](/docs/proposals/genshin/menu-screens), whose Paimon is drawn as a character is. Then elemental reactions, and after that each feature in turn. Each feature is built when its turn comes, not before, so nothing is built against an engine that does not yet exist; a feature's page may be written earlier, as combat's, interaction's, inventory's and wish's are, and states only its proposed scope.
 
 ## What this does not propose
 

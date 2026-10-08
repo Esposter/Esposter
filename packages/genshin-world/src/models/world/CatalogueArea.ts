@@ -5,10 +5,12 @@ import { catalogueSubareaSchema } from "#src/models/world/CatalogueSubarea";
 import { groundPointSchema } from "#src/models/world/groundPointSchema";
 import { WorldLayer } from "#src/models/world/WorldLayer";
 import { createUniqueArraySchema } from "@esposter/shared";
+import { WeatherKind } from "genshin-engine";
 import { z } from "zod";
 
 // An area of a region as the game names it, the part of the map its Statue of The Seven lights: which map it is on,
-// Its outline, empty until the reference board draws it, its subareas, and the subregion it belongs to, "" for none
+// Its outline, empty until the reference board draws it, its subareas, the subregion it belongs to, "" for none, and
+// The weathers it can have, as the game ties weather to an area, the first its own: the weather a visit finds it in
 export interface CatalogueArea {
   id: string;
   layer: WorldLayer;
@@ -16,6 +18,7 @@ export interface CatalogueArea {
   outline: GroundPoint[];
   subareas: CatalogueSubarea[];
   subregion: string;
+  weathers: WeatherKind[];
 }
 
 export const catalogueAreaSchema = z.object({
@@ -26,4 +29,5 @@ export const catalogueAreaSchema = z.object({
   outline: z.array(groundPointSchema),
   subareas: createUniqueArraySchema(catalogueSubareaSchema, "id"),
   subregion: z.string(),
+  weathers: createUniqueArraySchema(z.enum(WeatherKind)).min(1),
 }) satisfies z.ZodType<CatalogueArea>;

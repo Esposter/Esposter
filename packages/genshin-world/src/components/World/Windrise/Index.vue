@@ -8,6 +8,7 @@ import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
 import WorldTerrain from "#src/components/World/Terrain/Index.vue";
 import WorldWater from "#src/components/World/Water/Index.vue";
 import WorldWeather from "#src/components/World/Weather/Index.vue";
+import { useAreaWeather } from "#src/composables/useAreaWeather";
 import { useFloatingOrigin } from "#src/composables/useFloatingOrigin";
 import { useGenshinTuning } from "#src/composables/useGenshinTuning";
 import { usePostPipeline } from "#src/composables/usePostPipeline";
@@ -16,7 +17,7 @@ import { useSky } from "#src/composables/useSky";
 import water from "#src/data/windrise/water.json";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
-import { TILE_SELECTION_CAPACITY } from "#src/services/constants";
+import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import {
   CLOUD_COVERAGE,
@@ -48,12 +49,13 @@ import {
   WINDRISE_SKY_KEYFRAMES,
   WINDRISE_START_MINUTES,
   WINDRISE_TERRAIN_OPTIONS,
-  WINDRISE_WEATHER,
 } from "#src/services/windrise/constants";
+import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { whenever } from "@vueuse/core";
 import {
   createFogUniforms,
   createGradeLutTexture,
+  createGroundCapture,
   createLightUniforms,
   createPostUniforms,
   createRampTexture,
@@ -153,6 +155,11 @@ watch(
 );
 // The tiles the terrain draws, which it writes each frame and what reads the ground compares against what it last read
 const terrainDraws = createTerrainSelection(TILE_SELECTION_CAPACITY);
+// The ground under the camera from above, which the grass redraws as the camera moves and grows on, and the rain's
+// Splashes stand on
+const groundCapture = createGroundCapture(GRASS_CAPTURE_SIZE, GRASS_CAPTURE_RESOLUTION);
+// The weather of the area the camera stands in, which Windrise's is clear in, as its reference screenshots are
+const areaWeather = useAreaWeather(origin);
 const gradeLutTexture = createGradeLutTexture(WINDRISE_GRADE_OPTIONS);
 // No god rays and no bloom: neither is measured off a reference of Windrise, and drawn as they stand they veil the
 // Whole frame, the god rays marching hundreds of metres of lit air to their most opacity and bloom lifting the whole
@@ -192,6 +199,8 @@ if (isTuning)
 onUnmounted(() => {
   rampTexture.dispose();
   gradeLutTexture.dispose();
+  groundCapture.renderTarget.dispose();
+  groundCapture.material.dispose();
   cascadedShadowNode.dispose();
   sun.dispose();
   hemisphere.dispose();
@@ -220,6 +229,7 @@ onUnmounted(() => {
       <WorldGrass
         :blade-height="GRASS_BLADE_HEIGHT"
         :blade-width="GRASS_BLADE_WIDTH"
+        :ground-capture
         :light-uniforms
         :origin
         :quality-tier
@@ -231,17 +241,22 @@ onUnmounted(() => {
         :wind-uniforms
       />
     </TresGroup>
-    <WorldWater :fog-uniforms :light-uniforms :origin :sky-uniforms :water-uniforms />
+    <!-- Ahead of the water, whose haze replaces the weather's under its surface -->
     <WorldWeather
       :base-cloud-coverage
       :base-fog-density
       :fog-uniforms
+      :get-ground-height="getWorldHeight"
+      :ground-capture
+      :hemisphere
       :light-uniforms
       :origin
       :sky-uniforms
-      :weather="WINDRISE_WEATHER"
+      :water-uniforms
+      :weather="areaWeather"
       :wind-uniforms
     />
+    <WorldWater :fog-uniforms :light-uniforms :origin :sky-uniforms :water-uniforms />
     <WorldLandmarks :hidden-kinds="hiddenLandmarkKinds" :light-uniforms :ramp-texture :region-data-map :wind-uniforms />
     <!-- Enemies wander where the references show none, so a witness render, judged against them, draws none -->
     <WorldEnemies v-if="!witness" :is-held :light-uniforms :origin :ramp-texture :region-data-map />
