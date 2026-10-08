@@ -6,6 +6,8 @@ Read while a subagent is running, before launching several at once, or when clea
 
 ## Running several agents at once
 
+The whole flow — waves, the fixer, the compute queue's runners — is `apps/web/content/docs/architecture/agent-batches.md`.
+
 A batch runs in the one shared checkout, every agent on `ai/queue`, never a worktree: each worktree is a full install, and a batch of them floods the machine's memory and disk before any work is written. The Agent tool's `isolation: "worktree"` refuses this repository anyway (`.claude` is a committed symlink, `apps/web/content/docs/architecture/agent-configuration.md`).
 
 A batch is earned by its prompts: every one a self-contained spec (`references/delegation-prompt.md`), each on the cheapest family its work allows. Its failure mode is agents burning their budget re-reading context and never producing work, which is what a prompt that is a topic instead of a spec produces. Ideation, triage and docs authoring stay in the main session, one area at a time; the one docs work a batch may take is the fan-out over separate areas that the `docs` skill allows, an agent per area (`references/area-passes.md`).
