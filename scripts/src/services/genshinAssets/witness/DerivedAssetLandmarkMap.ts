@@ -13,7 +13,7 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   [DerivedAssetComponent.Inazuma]: {},
   // Liyue Harbor's six landmarks (ParityReferenceMap's liyue-harbor-location: the gate's and the tower's plinths) name
   // No mesh, so all six are dropped: the extraction holds nothing rigid within 140 metres of the harbour's anchor, its
-  // Nearest floor plate (Plot_05, 1.7 metres across) 142 metres off and its pillars 218 metres, and its layout dumps name
+  // Nearest floor plate (Plot_05, 1.7 metres across) 142 metres off and its pillars 218 metres; its layout dumps name
   // Stairs and boards (Area_Ly_Build_LYG_MT_Stairs_02) that no OBJ exports, so a re-extraction is the way to name them
   [DerivedAssetComponent.Liyue]: {},
   // The door's dais at its two front feet, and its arch's apex, halfway through its depth; the walkway's two wings by
