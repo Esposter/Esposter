@@ -1,5 +1,6 @@
 import type { ArchiveEntry } from "genshin-world";
 
+import { ARCHIVE_GENERATED_DIRECTORY, ArchiveSectionFileNameMap } from "#src/services/genshinAssets/archive/constants";
 import { readBookCandidates } from "#src/services/genshinAssets/archive/readBookCandidates";
 import { readEquipmentCandidates } from "#src/services/genshinAssets/archive/readEquipmentCandidates";
 import { readGeographyCandidates } from "#src/services/genshinAssets/archive/readGeographyCandidates";
@@ -7,10 +8,9 @@ import { readLivingBeingCandidates } from "#src/services/genshinAssets/archive/r
 import { readMaterialCandidates } from "#src/services/genshinAssets/archive/readMaterialCandidates";
 import { readTravelLogCandidates } from "#src/services/genshinAssets/archive/readTravelLogCandidates";
 import { toArchiveEntries } from "#src/services/genshinAssets/archive/toArchiveEntries";
-import { ARCHIVE_GENERATED_DIRECTORY, ArchiveSectionFileNameMap } from "#src/services/genshinAssets/archive/constants";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
-import { ArchiveSection, archiveEntrySchema } from "genshin-world";
 import { GameLanguage } from "genshin-text";
+import { archiveEntrySchema, ArchiveSection } from "genshin-world";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -21,16 +21,16 @@ export const writeArchive = (): string[] => {
   const englishTextMap = readTextMap(GameLanguage.English);
   const { artifactSets, weapons } = readEquipmentCandidates();
   const sectionEntriesMap: Record<ArchiveSection, ArchiveEntry[]> = {
+    [ArchiveSection.Books]: toArchiveEntries(readBookCandidates(), englishTextMap),
     [ArchiveSection.Equipment]: [
       ...toArchiveEntries(weapons, englishTextMap),
       ...toArchiveEntries(artifactSets, englishTextMap),
     ],
-    [ArchiveSection.LivingBeings]: toArchiveEntries(readLivingBeingCandidates(), englishTextMap),
-    [ArchiveSection.Tutorials]: [],
     [ArchiveSection.Geography]: toArchiveEntries(readGeographyCandidates(), englishTextMap),
-    [ArchiveSection.TravelLog]: toArchiveEntries(readTravelLogCandidates(), englishTextMap),
-    [ArchiveSection.Books]: toArchiveEntries(readBookCandidates(), englishTextMap),
+    [ArchiveSection.LivingBeings]: toArchiveEntries(readLivingBeingCandidates(), englishTextMap),
     [ArchiveSection.Materials]: toArchiveEntries(readMaterialCandidates(), englishTextMap),
+    [ArchiveSection.TravelLog]: toArchiveEntries(readTravelLogCandidates(), englishTextMap),
+    [ArchiveSection.Tutorials]: [],
   };
   mkdirSync(ARCHIVE_GENERATED_DIRECTORY, { recursive: true });
   return Object.values(ArchiveSection).map((section) => {

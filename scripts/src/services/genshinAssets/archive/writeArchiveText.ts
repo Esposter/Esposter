@@ -7,8 +7,8 @@ import {
 } from "#src/services/genshinAssets/archive/constants";
 import { writeTextChunks } from "#src/services/genshinText/writeTextChunks";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { ArchiveSection } from "genshin-world";
 import { GameLanguages } from "genshin-text";
+import { ArchiveSection } from "genshin-world";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 

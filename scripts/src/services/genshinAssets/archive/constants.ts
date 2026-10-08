@@ -1,5 +1,5 @@
-import { ArchiveSection } from "genshin-world";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { ArchiveSection } from "genshin-world";
 import { join } from "node:path";
 
 // The game's tables the Archive's sections are read from, in the dump beside its text maps, read by their names
@@ -37,11 +37,11 @@ export const ARCHIVE_TEXT_GENERATED_DIRECTORY: string = join(
   "archiveText",
 );
 export const ArchiveSectionFileNameMap: Record<ArchiveSection, string> = {
-  [ArchiveSection.Equipment]: "equipment.json",
-  [ArchiveSection.LivingBeings]: "livingBeings.json",
-  [ArchiveSection.Tutorials]: "tutorials.json",
-  [ArchiveSection.Geography]: "geography.json",
-  [ArchiveSection.TravelLog]: "travelLog.json",
   [ArchiveSection.Books]: "books.json",
+  [ArchiveSection.Equipment]: "equipment.json",
+  [ArchiveSection.Geography]: "geography.json",
+  [ArchiveSection.LivingBeings]: "livingBeings.json",
   [ArchiveSection.Materials]: "materials.json",
+  [ArchiveSection.TravelLog]: "travelLog.json",
+  [ArchiveSection.Tutorials]: "tutorials.json",
 };
