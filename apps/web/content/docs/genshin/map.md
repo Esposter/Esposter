@@ -12,7 +12,7 @@ The game's map opens on M and is how a player crosses the continent: they choose
 ```mermaid
 flowchart TD
   M["M, or the HUD's minimap"] --> SCR["The screen kind becomes Map, which holds the world as a menu does"]
-  SCR --> OV["The overlay: the drawing centred on the player, the area names, the pointer, the close button and zoom slider"]
+  SCR --> OV["The overlay: the player-centred drawing, area names, pointer, close button and zoom slider"]
   REG["Every region's data, read once"] --> LM["The landmarks a jump lands at"]
   LM --> OV
   OV -->|"a landmark chosen, on the map or in the jump list"| POSE["The jump's pose: in front of it, facing it"]

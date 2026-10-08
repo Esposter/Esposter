@@ -13,7 +13,7 @@ A character has one skill set in its own form, and a set for each element form i
 
 ```mermaid
 flowchart LR
-  AV["AvatarExcelConfigData: each playable avatar's own skill set and the element sets it may take"] --> RD["getCharacterSkillKits: each set's skill and burst, read from their rows"]
+  AV["AvatarExcelConfigData: each avatar's own skill sets and the element sets it may take"] --> RD["getCharacterSkillKits: each set's skill and burst, read from their rows"]
   SK["AvatarSkillDepotExcelConfigData and AvatarSkillExcelConfigData, in the dump"] --> RD
   RD --> JSON["characterSkillKits.json, written with the other stat tables"]
   JSON --> APP["genshin-world loads it on demand; no kit reads it yet"]
