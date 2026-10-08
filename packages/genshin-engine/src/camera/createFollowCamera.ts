@@ -29,6 +29,16 @@ export const createFollowCamera = ({ camera, ground, landmarkCollider }: FollowC
   let armLength = distance;
   camera.fov = FOLLOW_CAMERA_FOV;
   camera.updateProjectionMatrix();
+  const turn = (): void => {
+    euler.set(pitch, yaw, 0, "YXZ");
+    camera.quaternion.setFromEuler(euler);
+  };
+  const reset = (facing: number): void => {
+    yaw = facing;
+    pitch = 0;
+    distance = FOLLOW_CAMERA_DEFAULT_DISTANCE;
+    turn();
+  };
   // How far the arm reaches out from the pivot before the ground or the water's surface stands within its clearance
   const computeGroundReach = (pivot: Vector3, reach: number): number => {
     for (let travelled = FOLLOW_CAMERA_ARM_STEP; travelled <= reach; travelled += FOLLOW_CAMERA_ARM_STEP) {
@@ -50,20 +60,18 @@ export const createFollowCamera = ({ camera, ground, landmarkCollider }: FollowC
     },
     look: (input, facing) => {
       if (input.pressedActions.has(InputAction.ResetCamera)) {
-        yaw = facing;
-        pitch = 0;
-        distance = FOLLOW_CAMERA_DEFAULT_DISTANCE;
-      } else {
-        yaw += input.lookYaw;
-        pitch = Math.max(FOLLOW_CAMERA_MIN_PITCH, Math.min(FOLLOW_CAMERA_MAX_PITCH, pitch + input.lookPitch));
-        distance = Math.max(
-          FOLLOW_CAMERA_MIN_DISTANCE,
-          Math.min(FOLLOW_CAMERA_MAX_DISTANCE, distance + input.zoomSteps * FOLLOW_CAMERA_DISTANCE_PER_ZOOM_STEP),
-        );
+        reset(facing);
+        return;
       }
-      euler.set(pitch, yaw, 0, "YXZ");
-      camera.quaternion.setFromEuler(euler);
+      yaw += input.lookYaw;
+      pitch = Math.max(FOLLOW_CAMERA_MIN_PITCH, Math.min(FOLLOW_CAMERA_MAX_PITCH, pitch + input.lookPitch));
+      distance = Math.max(
+        FOLLOW_CAMERA_MIN_DISTANCE,
+        Math.min(FOLLOW_CAMERA_MAX_DISTANCE, distance + input.zoomSteps * FOLLOW_CAMERA_DISTANCE_PER_ZOOM_STEP),
+      );
+      turn();
     },
+    reset,
     get yaw() {
       return yaw;
     },

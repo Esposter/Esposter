@@ -225,6 +225,14 @@ export const createCharacterController = ({
       for (const action of input.pressedActions) heldPresses.add(action);
     },
     phase,
+    place: (placedPosition, placedFacing) => {
+      position.copy(placedPosition);
+      previousPosition.copy(placedPosition);
+      velocity.set(0, 0, 0);
+      phase.state = LocomotionState.Idle;
+      phase.stateSeconds = 0;
+      facing = placedFacing;
+    },
     position,
     previousPosition,
     stamina,
