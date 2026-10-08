@@ -33,7 +33,7 @@ flowchart TD
 
 ### Materials and textures
 
-- **A material's export is its shader's path ID, its texture slots by path ID and its floats and colours by name** (`toMaterialValues`). A texture slot's path ID names its texture through the asset index.
+- **A material's export is its shader's path ID, its texture slots by path ID and its floats and colours by name** (`toMaterialValues`). A texture slot's path ID names its texture through the asset index. Its shader keywords, which pick the variant it compiles, are not in the JSON: `extract` exports each material's raw bytes beside it and `readMaterialKeywords` reads them past its name and shader pointer. A toggle's float is no proof of its variant: the door's panel holds `_EnableRimGlow` at 1 with no `ENABLE_RIM_GLOW_ON`, so it draws no glow.
 - **The environment's mask texture is `SMBE`:** smoothness in red, metalness in green, blue empty, emission in alpha where the material enables it. The diffuse is albedo and nearly neutral, so a surface's warmth is its light.
 - **Grading tables are textures** (`Stages_*_LUT`), but which one a scene uses is set in its post-processing profile, which is fieldless.
 
@@ -122,6 +122,7 @@ The things that each cost a search to find, to reach for first:
 | `scripts/src/services/genshinAssets/materials/parseShaderConstantLayouts.ts` | A shader's constant buffer layouts                        |
 | `scripts/src/services/genshinAssets/materials/annotateProgramConstants.ts`   | A program headed by what its registers hold               |
 | `scripts/src/services/genshinAssets/shared/toMaterialValues.ts`              | A material's values, textures and shader                  |
+| `scripts/src/services/genshinAssets/shared/readMaterialKeywords.ts`          | A material's shader keywords from its raw bytes           |
 | `scripts/src/services/genshinAssets/shared/readSceneLayout.ts`               | Transforms, meshes and the materials each renderer draws  |
 | `scripts/src/services/genshinAssets/music/parseWwiseNode.ts`                 | A bank node's or bus's volumes, bus, parent and curves    |
 | `scripts/src/services/genshinAssets/music/readGameMixVolumes.ts`             | How loud the game's mix plays a sound or a music track    |

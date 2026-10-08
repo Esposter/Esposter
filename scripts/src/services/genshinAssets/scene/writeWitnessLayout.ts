@@ -56,11 +56,12 @@ export const writeWitnessLayout = async (
   const pathIdNameMap = await readAssetNames(referencedIds);
   const layout: SceneLayout = {
     materials: Object.fromEntries(
-      materials.map(({ colors, floats, name, textures }) => [
+      materials.map(({ colors, floats, keywords, name, textures }) => [
         name,
         {
           colors,
           floats,
+          keywords,
           name,
           textures: Object.fromEntries(
             Object.entries(textures).flatMap(([slot, { offset, pathId, scale }]) => {
@@ -88,6 +89,7 @@ export const writeWitnessLayout = async (
     layout.materials[name] = {
       colors: {},
       floats: {},
+      keywords: [],
       name,
       textures: checkHasFile(AssetType.Texture2D, baseMap, "png")
         ? { [MAIN_TEXTURE_SLOT]: { name: baseMap, offset: [0, 0], scale: [1, 1] } }

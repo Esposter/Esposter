@@ -106,6 +106,8 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
   const closure = walkAssetClosure(objects, gameObjectDrawingMap, roots, cabMap);
   const drawn = await exportResolvedAssets(closure.assets, [AssetType.Mesh, AssetType.Material], directory.assets);
   await exportResolvedAssets(closure.assets, [AssetType.Mesh], directory.assets, AnimeStudioExportType.Json);
+  // A material's raw bytes beside its JSON, for the shader keywords the JSON drops
+  await exportResolvedAssets(closure.assets, [AssetType.Material], directory.assets, AnimeStudioExportType.Raw);
   const materialDirectory = join(directory.assets, AssetType.Material);
   // A material is exported under its name, so of several sharing one, which the JSON holds and which file its texture
   // Pointers resolve through is unknown

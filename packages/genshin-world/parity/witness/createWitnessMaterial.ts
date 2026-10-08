@@ -2,6 +2,7 @@ import type { SceneMaterial } from "genshin-engine";
 import type { Texture } from "three";
 import type { Node } from "three/webgpu";
 
+import { WitnessKeyword } from "#parity/models/witness/WitnessKeyword";
 import { WitnessProperty } from "#parity/models/witness/WitnessProperty";
 import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
 import { StoneNodeMaterial } from "genshin-engine";
@@ -9,13 +10,14 @@ import { color, float, mix, normalMap, normalView, positionViewDirection, step, 
 
 // One exported material drawn as the stone's shader writes it into the game's G-buffer (`miHoYo/Scene/Login Base`):
 // The diffuse texture tinted by its colour, its normal map, and its mask texture (`SMBE`, read by the inventory) with
-// Emission in alpha where the material turns it on. The emission grades into the rim glow's colour at its strength by
-// One less the facing ratio raised to its power, as the program mixes them, and is drawn only where its length reaches
-// The material's emission range, the program writing every glow under it as none. It is lit as our stone is, by the game's
-// Deferred pass from the login's stone light, so a stand-in and its export differ only in what each draws; the mask's
-// Smoothness and metal wait on the pass's highlight
+// Emission in alpha where the material turns it on. Where its variant compiles the rim glow, by its keyword rather than
+// Its toggle's float, the emission grades into the glow's colour at its strength by one less the facing ratio raised to
+// Its power, as the program mixes them, and is drawn only where its length reaches the material's emission range, the
+// Program writing every glow under it as none. It is lit as our stone is, by the game's deferred pass from the login's
+// Stone light, so a stand-in and its export differ only in what each draws; the mask's smoothness and metal wait on the
+// Pass's highlight
 export const createWitnessMaterial = (
-  { colors, floats, textures }: SceneMaterial,
+  { colors, floats, keywords, textures }: SceneMaterial,
   nameTextureMap: ReadonlyMap<string, Texture>,
 ): StoneNodeMaterial => {
   const material = new StoneNodeMaterial(loginStoneLight);
@@ -39,7 +41,7 @@ export const createWitnessMaterial = (
         .mul(maskNode.a)
         .mul(floats[WitnessProperty.EmissionStrength] ?? 1);
   }
-  if (floats[WitnessProperty.EnableRimGlow]) {
+  if (keywords.includes(WitnessKeyword.RimGlow)) {
     const [rimRed = 0, rimGreen = 0, rimBlue = 0] = colors[WitnessProperty.RimGlowColor] ?? [];
     const facing = float(1).sub(normalView.dot(positionViewDirection).max(0)).max(0);
     const rimNode = facing
