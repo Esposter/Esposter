@@ -17,6 +17,30 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "SplashHealthNotice",
     seconds: 9.5,
   },
+  // Inazuma City from the wiki's 4K location image, a daytime haze with its sun's minute unread (noon provisionally).
+  // Its build is not stated, so it is read as current and a red camera pass reopens it. Its landmarks are rigid
+  // Architecture picked off 4x crops: the keep's eaves and its second tier's ledge, the paved platform's corners, a
+  // House's base, the pavilion's eaves and a house's roof edge
+  "inazuma-city-location": {
+    component: DerivedAssetComponent.Inazuma,
+    landmarks: {
+      houseFrontLeft: [1631, 1145],
+      houseFrontRight: [1684, 1145],
+      houseRoofLeft: [3168, 1623],
+      keepEaveLeft: [1374, 160],
+      keepEaveRight: [1531, 164],
+      keepLedgeLeft: [1383, 203],
+      keepLedgeRight: [1524, 203],
+      pavilionEaveLeft: [2904, 1478],
+      pavilionEaveRight: [2994, 1478],
+      platformBackLeft: [1601, 1101],
+      platformFrontLeft: [1571, 1157],
+    },
+    // Provisional: noon until `shadows` solves the sun's minute from the image's own shadows
+    props: { heldMinutes: 720 },
+    screen: "WorldScreen",
+    wikiTitle: "File:Inazuma City.png",
+  },
   // The weapons' tab of the bag at 1080 high, from a public account tour's recording of the English PC client, its frame
   // At 30 seconds into the clip, drawn behind the bag so only the bag can differ. The streamer's camera at the top left
   // And the recording's UID at the bottom right sit outside the region
@@ -137,9 +161,78 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "LoginScreen",
     seconds: 12,
   },
+  // The Court of Fontaine from the wiki's location image at 4K, by day with the sun high. Its landmarks are rigid stone
+  // and steel read off 4x crops: the arch's two feet, the bridge's two springs and the drum tower's roof corners
+  "court-of-fontaine-location": {
+    component: DerivedAssetComponent.Fontaine,
+    // Provisional noon until the shadows pass solves the sun's minute
+    landmarks: {
+      archFootLeft: [1745, 1567],
+      archFootRight: [1800, 1566],
+      bridgeSpringLeft: [2517, 957],
+      bridgeSpringRight: [2700, 951],
+      towerRightRoofLeft: [2144, 1165],
+      towerRightRoofRight: [2371, 1190],
+    },
+    props: { heldMinutes: 720 },
+    screen: "WorldScreen",
+    wikiTitle: "File:Court of Fontaine.png",
+  },
+  // Everfrozen Earth from the wiki's location image at 1080 high: Snezhnograd on its plateau seen from a railway
+  // Viaduct, at night under the stars, its spires read by eye at the reference's pixels. The Genshin logo in the
+  // Corner is left out of the region scored
+  "everfrozen-earth-location": {
+    component: DerivedAssetComponent.Snezhnaya,
+    landmarks: {
+      centreTowerApex: [983, 488],
+      leftTowerTop: [712, 466],
+      rightSpireLeft: [1231, 482],
+      rightSpireRight: [1242, 482],
+      spireBaseLeft: [909, 448],
+      spireBaseRight: [947, 448],
+      spireTip: [927, 398],
+    },
+    region: { height: 920, width: 1920, x: 0, y: 0 },
+    screen: "WorldScreen",
+    wikiTitle: "File:Everfrozen Earth.png",
+  },
   // The English PC client's map on M over Jueyun Karst, the wiki's full-screen 1080p screenshot: the drawing, the area
   // Names, the player's pointer, the zoom and the region tag, against the terrain the game paints
   "map-overlay-jueyun": { screen: "MapOverlay", wikiTitle: "File:Map Stardust in Jueyun.png" },
+  // The English PC client's Mondstadt city from the wiki's 4K location image of 2024, in daylight (short shadows, a clear
+  // Sky; the sun's minute waits on its shadows' edges). Its six landmarks are the corners of the two west and east towers'
+  // Parapets and the gate tower's front corners, read by eye at 4x crops of the image's pixels
+  "mondstadt-city-location": {
+    component: DerivedAssetComponent.Mondstadt,
+    landmarks: {
+      eastTowerTopLeft: [2867, 1106],
+      eastTowerTopRight: [2959, 1104],
+      gateTowerFrontLeft: [2219, 1329],
+      gateTowerFrontRight: [2312, 1328],
+      westTowerTopLeft: [1077, 1044],
+      westTowerTopRight: [1162, 1058],
+    },
+    screen: "WorldScreen",
+    wikiTitle: "File:Mondstadt City.png",
+  },
+  // The People of the Springs from the wiki's location image at 2560 wide, a daytime view of the Natlan capital's hall,
+  // Spire and walkway, whose build is not stated (a 2024 upload). Its landmarks are rigid architecture read by eye off
+  // 4x crops: the spire's apex and cap, the hall's two roof tips and its platform's corner, a terrace's stair top and a
+  // Walkway post's foot
+  "people-of-the-springs-location": {
+    component: DerivedAssetComponent.Natlan,
+    landmarks: {
+      hallPlatformCorner: [1137, 871],
+      hallRoofLeft: [1316, 545],
+      hallRoofRight: [2055, 654],
+      spireApex: [891, 592],
+      spireCap: [911, 654],
+      terraceStairTop: [1828, 1063],
+      walkwayPostFoot: [419, 1137],
+    },
+    screen: "WorldScreen",
+    wikiTitle: 'File:"People of the Springs".png',
+  },
   // The English PC client's Paimon menu at 2560 wide, from the 1.3 build's screenshot, the menu over the world and
   // Its Paimon drawn to the panel's right, which the world draws; scored over the side bar and the panel above their
   // Translucent feet, where the world shows through
@@ -159,6 +252,28 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "publisher-splash": { capture: "session-2.mp4", screen: "SplashPublisher", seconds: 1 },
   // The English PC client's quest screen listing every quest in progress, the wiki's screenshot of it at 1080 high
   "quest-screen": { screen: "QuestScreen", wikiTitle: "File:Quest Screen.png" },
+  // Sumeru City from the wiki's location image of 2022, the only Sumeru City shot found: daylight with a clear sky and
+  // Short shadows, so a provisional noon until the shadows solve reads its sun. Its landmarks are the terrace's spire and
+  // The green-domed minaret's rigid edges, read at the image's pixels; its build is checked against the export once the
+  // Capital's witness has one, since the upload is older than the current client
+  "sumeru-city-location": {
+    component: DerivedAssetComponent.Sumeru,
+    landmarks: {
+      minaretCollarLeft: [795, 930],
+      minaretCollarRight: [869, 929],
+      minaretDomeLeft: [811, 778],
+      minaretDomeRight: [858, 784],
+      minaretFinial: [835, 746],
+      spireBaseLeft: [1191, 436],
+      spireTip: [1214, 314],
+      spireWingLeft: [1188, 357],
+      spireWingRight: [1245, 347],
+    },
+    // Provisional: noon, until the shadows solve reads the held minute off this image's sun
+    props: { heldMinutes: 720 },
+    screen: "WorldScreen",
+    wikiTitle: "File:Sumeru City.png",
+  },
   // The English PC client's splash, from the 2023 recording of its launch at 1080p, held from 4.5 to 5.75 seconds
   "title-splash": { capture: "yt-sQNqMfmfkZU.mp4", screen: "SplashTitle", seconds: 5 },
   // Mainland China's splash, its 原神 logo with its licence under it, from a public recording of an older build's launch
@@ -190,5 +305,24 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     },
     screen: "WorldScreen",
     seconds: 360,
+  },
+  // The wiki's 2560 by 1440 location image of Nasha Town, a daytime view of the capital's plaza under its central tower.
+  // Its landmarks are rigid architecture read by eye at the image's pixels off 4x crops: the plinth's front corners, the
+  // Struts under the tower's pod ledge, and the tower's collar and column edges
+  "nasha-town-location": {
+    component: DerivedAssetComponent.NodKrai,
+    landmarks: {
+      plinthFrontLeft: [1077, 1184],
+      plinthFrontRight: [1207, 1195],
+      ledgeStrutLeft: [1098, 788],
+      ledgeStrutRight: [1204, 787],
+      stackCollarLeft: [1155, 352],
+      stackLeftEdge: [1152, 422],
+      stackRightEdge: [1234, 455],
+    },
+    // Provisional: noon, until `shadows` reads the sun's minute off the buildings' shadows
+    props: { heldMinutes: 720 },
+    screen: "WorldScreen",
+    wikiTitle: "File:Nasha Town.png",
   },
 };

@@ -135,6 +135,20 @@ export const DerivedAssetArrangementMap: Record<
       },
     },
   },
+  // Inazuma City's parts stand where the city's own data places them, as Windrise's do, so its families wait on the export
+  [DerivedAssetComponent.Inazuma]: { explainedOffsets: {}, families: [], ratios: {} },
+  // The Court's parts stand where the world's own data places them, as Windrise's do, so its families wait on the export
+  [DerivedAssetComponent.Fontaine]: { explainedOffsets: {}, families: [], ratios: {} },
+  // Mondstadt's parts stand where the city's own data places them, as Windrise's do, so its families wait on the export
+  [DerivedAssetComponent.Mondstadt]: { explainedOffsets: {}, families: [], ratios: {} },
+  // The People of the Springs' parts stand where the world's own data places them, as Windrise's do
+  [DerivedAssetComponent.Natlan]: { explainedOffsets: {}, families: [], ratios: {} },
+  // Nasha Town's parts stand where the world's own data places them, as Windrise's do
+  [DerivedAssetComponent.NodKrai]: { explainedOffsets: {}, families: [], ratios: {} },
+  // Snezhnograd's parts stand where the world's own data places them, as Windrise's do
+  [DerivedAssetComponent.Snezhnaya]: { explainedOffsets: {}, families: [], ratios: {} },
+  // Sumeru City's parts stand where the world's own data places them, as Windrise's do
+  [DerivedAssetComponent.Sumeru]: { explainedOffsets: {}, families: [], ratios: {} },
   // Windrise's parts stand where the world's own data places them, so its ratios wait on a fitted family to hold
   [DerivedAssetComponent.Windrise]: { explainedOffsets: {}, families: [], ratios: {} },
 };

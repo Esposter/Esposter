@@ -39,6 +39,24 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
     wingRightBack: { mesh: "LoginScene_Bridge01_20_Vo", share: [0, 1, 0.8125] },
     wingRightFront: { mesh: "LoginScene_Bridge01_20_Vo", share: [0, 1, 0.351] },
   },
+  // The Court's landmarks name its capital's meshes and their shares, which the extraction has not yet given
+  [DerivedAssetComponent.Fontaine]: {},
+  // Inazuma City's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given:
+  // the keep's eaves and ledges, the platform's corners, the houses' bases and roofs and the pavilion's eaves, each read
+  // By eye off the reference's 4x crops (ParityReferenceMap's inazuma-city-location)
+  [DerivedAssetComponent.Inazuma]: {},
+  // Mondstadt's landmarks name its capital's meshes, which the extraction has not yet given: the six corners its reference
+  // Names (ParityReferenceMap's mondstadt-city-location) are the towers' and the gate tower's parapets
+  [DerivedAssetComponent.Mondstadt]: {},
+  // The People of the Springs' landmarks (ParityReferenceMap's people-of-the-springs-location) name its capital's rigid
+  // Meshes and their shares, which the extraction has not yet given
+  [DerivedAssetComponent.Natlan]: {},
+  // Nasha Town's landmarks name its capital's meshes and their shares, which the extraction has not yet given
+  [DerivedAssetComponent.NodKrai]: {},
+  // Snezhnograd's landmarks name its capital's meshes, which the extraction has not yet given
+  [DerivedAssetComponent.Snezhnaya]: {},
+  // Sumeru City's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given
+  [DerivedAssetComponent.Sumeru]: {},
   // Rigid architecture only, never decoration: the statue's own meshes. Points on the statue's axis, which a round part
   // Holds from any heading: the centre of its dish and the top of its figure; the two ends of the dish's brim, the face
   // Centres of its widest ring; and the two outermost vertices of the plinth's rim, read off the rim's band of vertices
