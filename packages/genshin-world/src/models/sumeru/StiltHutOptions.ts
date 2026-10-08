@@ -4,6 +4,6 @@ export interface StiltHutOptions {
   depth: number;
   floorHeight: number;
   postSize: number;
-  width: number;
   wallHeight: number;
+  width: number;
 }

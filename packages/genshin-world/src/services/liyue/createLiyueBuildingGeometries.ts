@@ -112,7 +112,7 @@ export const createLiyueBuildingGeometries = ({
   const terraceHalfWidth = halfWidth + LIYUE_TERRACE_MARGIN;
   const terraceHalfDepth = halfDepth + LIYUE_TERRACE_MARGIN;
   // Each tier's eave is the one below's scaled, and its base stands where the tier below's roof rises to
-  const roofGeometries = Array.from({ length: roofTierCount }, (_, tier) => {
+  const roofGeometries = Array.from({ length: roofTierCount }, (_value, tier) => {
     const tierScale = LIYUE_ROOF_TIER_SCALE ** tier;
     return createLiyueRoofTierGeometry({
       baseY: wallTop + LIYUE_ROOF_TIER_HEIGHT * tier,

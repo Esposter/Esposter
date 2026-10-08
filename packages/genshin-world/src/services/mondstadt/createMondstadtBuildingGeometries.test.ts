@@ -7,8 +7,8 @@ describe(createMondstadtBuildingGeometries, () => {
     expect.hasAssertions();
 
     const { plaster, roof } = createMondstadtBuildingGeometries({
-      dormerCount: 0,
       depth: 3,
+      dormerCount: 0,
       groundHeight: 2,
       jettyDepth: 0.5,
       roofRise: 3,

@@ -9,7 +9,7 @@ const CELL_SIZE_PER_SPACING = 1 / Math.SQRT2;
 const CELL_REACH = Math.ceil(Math.SQRT2);
 
 // Whether a kept plant stands closer than the spacing to a point, looking only at the cells that could hold one
-const isCrowded = (
+const checkIsCrowded = (
   cells: Int32Array,
   cellsPerSide: number,
   points: number[],
@@ -58,7 +58,7 @@ export const computeScatterPoints = ({
     const z = random() * size;
     const column = Math.floor(x / cellSize);
     const row = Math.floor(z / cellSize);
-    if (!accepts(x, z) || isCrowded(cells, cellsPerSide, points, spacing, column, row, x, z)) continue;
+    if (!accepts(x, z) || checkIsCrowded(cells, cellsPerSide, points, spacing, column, row, x, z)) continue;
     cells[row * cellsPerSide + column] = points.length / 2;
     points.push(x, z);
   }

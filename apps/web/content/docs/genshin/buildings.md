@@ -29,9 +29,9 @@ The building is centred on the origin and stands on it, so a caller places it on
 
 ## Key files
 
-| File                                                                    | Role                                                              |
-| :---------------------------------------------------------------------- | :---------------------------------------------------------------- |
-| `packages/genshin-engine/src/kits/architecture/createBuildingGeometry.ts` | Builds a building's platform, walls and roof as one geometry     |
-| `packages/genshin-engine/src/models/kits/architecture/BuildingOptions.ts` | The dimensions a building is built from, in metres               |
-| `packages/genshin-engine/src/models/kits/architecture/RoofKind.ts`      | The roof a building is capped with: flat or conical              |
-| `packages/genshin-engine/src/kits/architecture/createBoxesGeometry.ts`  | The box builder the walls and platform are made from             |
+| File                                                                      | Role                                                         |
+| :------------------------------------------------------------------------ | :----------------------------------------------------------- |
+| `packages/genshin-engine/src/kits/architecture/createBuildingGeometry.ts` | Builds a building's platform, walls and roof as one geometry |
+| `packages/genshin-engine/src/models/kits/architecture/BuildingOptions.ts` | The dimensions a building is built from, in metres           |
+| `packages/genshin-engine/src/models/kits/architecture/RoofKind.ts`        | The roof a building is capped with: flat or conical          |
+| `packages/genshin-engine/src/kits/architecture/createBoxesGeometry.ts`    | The box builder the walls and platform are made from         |

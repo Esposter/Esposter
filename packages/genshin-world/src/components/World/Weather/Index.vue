@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { FogUniforms, LightUniforms, SkyUniforms, WeatherKind, WindUniforms } from "genshin-engine";
+import type { Vector3 } from "three";
 
 import { useLoop, useTres } from "@tresjs/core";
 import { watchImmediate } from "@vueuse/core";
 import {
   applyPrecipitationSettings,
+  applyWeatherSettings,
   createPrecipitationGeometry,
   createPrecipitationMaterial,
   createPrecipitationUniforms,
@@ -12,8 +14,6 @@ import {
   PRECIPITATION_SETTINGS_MAP,
   WEATHER_SETTINGS_MAP,
 } from "genshin-engine";
-import type { Vector3 } from "three";
-
 import { Mesh } from "three";
 
 interface Props {
@@ -42,10 +42,13 @@ precipitationMesh.frustumCulled = false;
 // The weather writes the sky, fog, wetness and particles it sets over the region's own, each whenever the weather or
 // The region's clear values change
 const writeWeather = () => {
-  const { cloudCoverage, fogDensity, precipitation, wetness } = WEATHER_SETTINGS_MAP[weather];
-  skyUniforms.cloudCoverage.value = Math.max(baseCloudCoverage, cloudCoverage);
-  fogUniforms.density.value = Math.max(baseFogDensity, fogDensity);
-  lightUniforms.wetness.value = wetness;
+  const weatherSettings = WEATHER_SETTINGS_MAP[weather];
+  applyWeatherSettings(
+    weatherSettings,
+    { cloudCoverage: baseCloudCoverage, fogDensity: baseFogDensity },
+    { fogUniforms, lightUniforms, skyUniforms },
+  );
+  const { precipitation } = weatherSettings;
   precipitationUniforms.density.value = precipitation?.density ?? 0;
   if (precipitation) applyPrecipitationSettings(PRECIPITATION_SETTINGS_MAP[precipitation.kind], precipitationUniforms);
 };

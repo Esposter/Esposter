@@ -11,7 +11,7 @@ describe(createInazumaRoofGeometry, () => {
     const interior = new Vector3(0, HEIGHT / 4, 0);
     const outwardFaces = [InazumaBuildingRoof.Gabled, InazumaBuildingRoof.Hipped].flatMap((roof) => {
       const position = createInazumaRoofGeometry(roof, 4, 6, HEIGHT).getAttribute("position");
-      return Array.from({ length: position.count / 3 }, (_, index) => {
+      return Array.from({ length: position.count / 3 }, (_value, index) => {
         const triangle = new Triangle(
           new Vector3().fromBufferAttribute(position, index * 3),
           new Vector3().fromBufferAttribute(position, index * 3 + 1),

@@ -229,8 +229,8 @@ onUnmounted(() => {
     </TresGroup>
     <WorldWater :fog-uniforms :light-uniforms :origin :sky-uniforms :water-uniforms />
     <WorldWeather
-      :base-cloud-coverage="baseCloudCoverage"
-      :base-fog-density="baseFogDensity"
+      :base-cloud-coverage
+      :base-fog-density
       :fog-uniforms
       :light-uniforms
       :origin

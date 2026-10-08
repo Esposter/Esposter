@@ -1,8 +1,8 @@
 export interface MondstadtBuildingOptions {
-  // How many dormers sit evenly along each roof slope
-  dormerCount: number;
   // Along the front and back walls' normal, the footprint's depth in metres
   depth: number;
+  // How many dormers sit evenly along each roof slope
+  dormerCount: number;
   // The stone ground floor's height in metres
   groundHeight: number;
   // How far each storey overhangs the one below it on the front and back, in metres

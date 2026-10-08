@@ -8,7 +8,7 @@ Read while a subagent is running, before launching several at once, or when clea
 
 The whole flow — waves, the fixer, the compute queue's runners — is `apps/web/content/docs/architecture/agent-batches.md`.
 
-A batch runs in the one shared checkout, every agent on `ai/queue`, never a worktree: each worktree is a full install, and a batch of them floods the machine's memory and disk before any work is written. The Agent tool's `isolation: "worktree"` refuses this repository anyway (`.claude` is a committed symlink, `apps/web/content/docs/architecture/agent-configuration.md`).
+A batch runs in the one shared checkout, every agent on `ai/queue`, never a worktree: each worktree is a full install, so a batch of them floods memory and disk before any work is written. The Agent tool's `isolation: "worktree"` refuses this repository anyway (`.claude` is a committed symlink, `apps/web/content/docs/architecture/agent-configuration.md`).
 
 A batch is earned by its prompts: every one a self-contained spec (`references/delegation-prompt.md`), each on the cheapest family its work allows: `haiku` for a unit with every call made, `opus` for a unit whose design calls are open and that the agent is trusted to settle inside it, writing each decision into its page — the user asked for opus agents on an area's gaps (2026-10-08). Its failure mode is agents burning their budget re-reading context and never producing work, which is what a prompt that is a topic instead of a spec produces. Ideation, triage and docs authoring stay in the main session, one area at a time; the one docs work a batch may take is the fan-out over separate areas that the `docs` skill allows, an agent per area (`references/area-passes.md`).
 
@@ -16,7 +16,7 @@ Plan the batch around what the agents touch:
 
 - Each agent owns its unit's new files. A file several agents need — a barrel, an index page, a shared constants file — any of them edits, re-reading it right before each edit and editing only its own lines, as the main session does beside a peer session (the `review-queue` skill).
 - Each agent commits its own paths on `ai/queue` as it goes, by pathspec, and never pushes; a commit that sweeps in a peer's lines in a shared file is fine, since both land on the same branch. The main session pushes the queue.
-- **No install, and no check of the app.** An agent may typecheck, lint, test and build the packages it touched, which takes seconds, and keeps their builds green, since the user's `nuxt dev` loads every package from its `dist`. It never runs anything against `apps/web`, whose suite and typecheck take minutes. When every agent has reported, **one** agent runs the batch's remaining checks once and fixes what they find; CI on the push is the backstop.
+- **No install, and no check of the app.** An agent may typecheck, lint, test and build the packages it touched, which takes seconds, and keeps their builds green, since the user's `nuxt dev` loads every package from its `dist`. It never runs anything against `apps/web`, whose suite and typecheck take minutes. When every agent has reported, **one** agent runs the batch's remaining checks a single time and fixes what they find; CI on the push is the backstop.
 
 ## Cleaning up
 

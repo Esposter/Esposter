@@ -1,5 +1,5 @@
-import { createResidualHeight } from "#src/terrain/createResidualHeight";
 import { createSimplexNoise } from "#src/noise/createSimplexNoise";
+import { createResidualHeight } from "#src/terrain/createResidualHeight";
 import { describe, expect, test } from "vitest";
 
 describe(createResidualHeight, () => {

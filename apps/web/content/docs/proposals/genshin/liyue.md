@@ -12,7 +12,7 @@ This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/
 
 - **Karst and stone forests are meshes.** Jueyun Karst's pillars, Huaguang Stone Forest, Guyun Stone Forest's spears in the sea, and the sea stacks are generated rock meshes: layered strata, eroded vertical faces, flat tops carrying trees and grass. They are placed as landmarks or scattered by rule within their area's outline, and they rise from a heightfield that keeps only the ground between them.
 - **A sea of clouds.** Around Jueyun Karst and the high peaks, a layer of stepped cloud sits below the summits, drawn with the [sky](/docs/genshin/sky-and-time)'s cloud material on a flat layer at a set height.
-- **A warm, golden palette.** Ochre and grey rock, jade-green water, golden ginkgo and autumn maples, and red and gold architecture. Glaze lilies, silk flowers and qingxin on the peaks are scattered by biome. Dihua Marsh is reed beds and shallow water.
+- **A warm, golden palette.** Its hues are the ones the [Liyue building kit](/docs/genshin/liyue-building-kit) names. Glaze lilies, silk flowers and qingxin on the peaks are scattered by biome. Dihua Marsh is reed beds and shallow water.
 - **The Liyue building kit is built** as the [building kit](/docs/genshin/liyue-building-kit): a stone terrace, red-lacquered columns and beams with lattice, and a roof in one to three tiers with upturned eaves and ridge ornaments. Its dressing (lanterns, banners, railings) is not yet built.
 
   Liyue Harbor is a set of landmarks on authored stepped streets up the cliff, with its wharves below. Wangshu Inn is a tower on a rock pillar. Qingce Village is terraced paddies of still water around a great tree.

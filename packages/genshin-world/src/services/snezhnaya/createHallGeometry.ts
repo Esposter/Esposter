@@ -12,7 +12,7 @@ export const createHallGeometry = ({
   storeyHeight,
   width,
 }: HallOptions): BufferGeometry => {
-  const boxes = Array.from({ length: storeyCount }, (_, storey) => {
+  const boxes = Array.from({ length: storeyCount }, (_value, storey) => {
     const inset = storey * setback;
     const footHeight = storey * storeyHeight;
     return [

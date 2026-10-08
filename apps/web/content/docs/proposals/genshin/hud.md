@@ -39,7 +39,7 @@ flowchart TD
 
 **This adds, in order:**
 
-1. **The references.** A recording of the world's HUD, with the meter draining and refilling, is found or recorded. The HUD's block, its component entry and its fitted rects come with it.
+1. **The references.** A recording of the world's HUD, with the meter draining and refilling, is found or recorded. The HUD's block comes with it, with its component entry and its fitted rects.
 2. **`Hud/Screen`**, mounted by the world screen, with the minimap's place in it.
 3. **The stamina meter**, with the controller's stamina.
 4. **The Paimon button**, with the menu screens.

@@ -1,5 +1,5 @@
-import type { TerrainFeature } from "#src/models/terrain/TerrainFeature";
 import type { TerrainBounds } from "#src/models/terrain/TerrainBounds";
+import type { TerrainFeature } from "#src/models/terrain/TerrainFeature";
 
 import { TerrainFeatureKind } from "#src/models/terrain/TerrainFeatureKind";
 import { GAUSSIAN_REACH_WIDTHS } from "#src/terrain/constants";

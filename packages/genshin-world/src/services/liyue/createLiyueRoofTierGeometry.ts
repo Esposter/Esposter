@@ -33,7 +33,7 @@ const UNIT_SIDES: readonly (readonly [readonly [number, number], readonly [numbe
 ];
 // The eave's perimeter, LIYUE_ROOF_SIDE_SEGMENTS points to a side, so every corner is one of its points
 const UNIT_PERIMETER = UNIT_SIDES.flatMap(([from, to]) =>
-  Array.from({ length: LIYUE_ROOF_SIDE_SEGMENTS }, (_, step): [number, number] => {
+  Array.from({ length: LIYUE_ROOF_SIDE_SEGMENTS }, (_value, step): [number, number] => {
     const progress = step / LIYUE_ROOF_SIDE_SEGMENTS;
     return [from[0] + (to[0] - from[0]) * progress, from[1] + (to[1] - from[1]) * progress];
   }),

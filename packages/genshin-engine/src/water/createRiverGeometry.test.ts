@@ -32,6 +32,6 @@ describe(createRiverGeometry, () => {
       { level: 0, width: 1, x: 2, z: 1 },
     ]);
 
-    expect(Array.from(geometry.getAttribute(RIVER_BEND_FOAM_ATTRIBUTE).array)).toStrictEqual([0, 0, 0, 0, 1, 0, 0, 0]);
+    expect([...geometry.getAttribute(RIVER_BEND_FOAM_ATTRIBUTE).array]).toStrictEqual([0, 0, 0, 0, 1, 0, 0, 0]);
   });
 });

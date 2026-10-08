@@ -3,14 +3,6 @@ import type { GroundPoint } from "genshin-engine";
 
 // A piece of a desert ruin standing at its position on the ground, in metres
 export type DesertRuinPiece =
-  | {
-      columnCount: number;
-      columnHeight: number;
-      columnRadius: number;
-      columnSpacing: number;
-      kind: DesertRuinPieceKind.Colonnade;
-      position: GroundPoint;
-    }
   | { baseRadius: number; height: number; kind: DesertRuinPieceKind.Obelisk; position: GroundPoint }
   | {
       baseRadius: number;
@@ -26,4 +18,12 @@ export type DesertRuinPiece =
       length: number;
       position: GroundPoint;
       width: number;
+    }
+  | {
+      columnCount: number;
+      columnHeight: number;
+      columnRadius: number;
+      columnSpacing: number;
+      kind: DesertRuinPieceKind.Colonnade;
+      position: GroundPoint;
     };

@@ -120,10 +120,10 @@ export const createInput = (target: Window): Input => {
     readInput: (frameSeconds) => {
       const gamepad = target.navigator.getGamepads().find((candidate): candidate is Gamepad => candidate !== null);
       const [stickX = 0, stickY = 0, lookStickX = 0, lookStickY = 0] = gamepad?.axes ?? [];
-      for (const [index, button] of GAMEPAD_BUTTONS.entries()) {
+      for (const [index, button] of GAMEPAD_BUTTONS.entries())
         if (gamepad?.buttons[index]?.pressed) press(button);
         else heldCodes.delete(button);
-      }
+
       inputState.lookYaw = pendingLookYaw - toDeadzoned(lookStickX) * GAMEPAD_LOOK_RADIANS_PER_SECOND * frameSeconds;
       inputState.lookPitch =
         pendingLookPitch - toDeadzoned(lookStickY) * GAMEPAD_LOOK_RADIANS_PER_SECOND * frameSeconds;

@@ -43,11 +43,11 @@ sequenceDiagram
 
 ## Scope and order
 
-**Today:** the free camera flies the world. Its look is applied by each step, so a frame of several steps turns it several times, and nothing locks the pointer.
+**Today:** the world is flown by the free camera. Its look is applied by each step, so a frame of several steps turns it several times, and nothing locks the pointer.
 
 **This adds, in order:**
 
-1. **The references.** Recordings of the game's camera in play are found, published ones first, each with a turn, a zoom through the wheel's range and a pass by a wall. `pose` solves them for the pivot, the distances, the field of view, the pitch's limits and the pull-in.
+1. **The references.** Recordings showing the game's camera in play are found, published ones first, each with a turn, a zoom through the wheel's range and a pass by a wall. `pose` solves them for the pivot, the distances, the field of view, the pitch's limits and the pull-in.
 2. **The loop's leftover share**, and the camera run once a frame on the blended body.
 3. **The orbit, its zoom and its settings**, with the pointer lock and the right stick.
 4. **The arm's collision** against the ground and the landmarks.

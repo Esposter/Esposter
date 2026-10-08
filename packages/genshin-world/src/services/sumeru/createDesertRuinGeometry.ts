@@ -16,9 +16,9 @@ const OBELISK_SHAFT_SHARE = 0.9;
 const OBELISK_TAPER = 0.5;
 
 type ColonnadePiece = Extract<DesertRuinPiece, { kind: DesertRuinPieceKind.Colonnade }>;
+type HalfBuriedHallPiece = Extract<DesertRuinPiece, { kind: DesertRuinPieceKind.HalfBuriedHall }>;
 type ObeliskPiece = Extract<DesertRuinPiece, { kind: DesertRuinPieceKind.Obelisk }>;
 type SteppedPyramidPiece = Extract<DesertRuinPiece, { kind: DesertRuinPieceKind.SteppedPyramid }>;
-type HalfBuriedHallPiece = Extract<DesertRuinPiece, { kind: DesertRuinPieceKind.HalfBuriedHall }>;
 
 // A row of columns, each a tapering shaft under a flared capital, centred on the piece's position
 const createColonnade = ({
@@ -30,7 +30,7 @@ const createColonnade = ({
 }: ColonnadePiece): BufferGeometry => {
   const shaftHeight = columnHeight * COLUMN_SHAFT_SHARE;
   const capitalRadius = columnRadius * COLUMN_CAPITAL_FLARE;
-  const columnGeometries = Array.from({ length: columnCount }, (_, index) =>
+  const columnGeometries = Array.from({ length: columnCount }, (_value, index) =>
     createLatheStackGeometry({
       isFaceted: false,
       radialSegments: COLUMN_RADIAL_SEGMENTS,
@@ -60,7 +60,7 @@ const createObelisk = ({ baseRadius, height, position }: ObeliskPiece): BufferGe
 
 // Each step a flat square drum a step narrower than the one below, so the sections are ledges rather than a slope
 const createSteppedPyramid = ({ baseRadius, position, stepCount, stepHeight }: SteppedPyramidPiece): BufferGeometry => {
-  const sections = Array.from({ length: stepCount }, (_, step) => {
+  const sections = Array.from({ length: stepCount }, (_value, step) => {
     const stepRadius = baseRadius * (1 - step / stepCount);
     return { bottomRadius: stepRadius, height: stepHeight, topRadius: stepRadius };
   });

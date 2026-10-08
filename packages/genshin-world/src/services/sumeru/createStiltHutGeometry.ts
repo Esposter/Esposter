@@ -19,8 +19,8 @@ export const createStiltHutGeometry = ({
   depth,
   floorHeight,
   postSize,
-  width,
   wallHeight,
+  width,
 }: StiltHutOptions): BufferGeometry => {
   const halfWidth = width / 2;
   const halfDepth = depth / 2;

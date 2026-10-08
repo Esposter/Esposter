@@ -38,7 +38,7 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** nothing in the world has an element, health or damage.
+**Today:** no part of the world has an element, health or damage.
 
 **This adds:**
 

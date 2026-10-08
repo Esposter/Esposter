@@ -44,8 +44,8 @@ const getTimberSpan = (sign: number, halfExtent: number): [number, number] =>
 // A Mondstadt house as four materials: a stone ground floor, storeys of plaster in a timber frame that overhang the one
 // Below, and a steep gable with dormers and a chimney. Each storey's jetty is measured from the storey beneath it
 export const createMondstadtBuildingGeometries = ({
-  dormerCount,
   depth,
+  dormerCount,
   groundHeight,
   jettyDepth,
   roofRise,

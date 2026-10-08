@@ -21,7 +21,7 @@ This page builds on the [inventory](/docs/proposals/genshin/inventory), whose wa
 - **Counters shared as the game shares them.** The character event wishes share one set, the weapon wish another and the standard wish a third, each carried over from one banner to the next. The beginners' wish counts on the standard wish's, as the community's wish trackers count it.
 - **A duplicate returns Starglitter.** A new character returns nothing. A duplicate returns its Stella Fortuna and 10 Masterless Starglitter at five stars or 2 at four, and 25 or 5 once its constellations are complete. A five-star weapon returns 10 Starglitter, a four-star 2, and a three-star 15 Masterless Stardust.
 - **A pure pull with a seeded random source.** The pull takes the banner, the counters and a random source and returns the item and the next counters, so a test replays any sequence from a seed. The engine's `createSeededRandom` is the source.
-- **The screen opens on F3.** It is an entry in the screens' screen kinds and shortcut map. It shows the banners, the open banner's Fate cost on Wish ×1 and Wish ×10, the wallet's Primogems and Fates, the Epitomized Path's course and points on the weapon wish, and the results.
+- **The screen opens on F3.** The screens' screen kinds and shortcut map hold it as an entry. It shows the banners, the open banner's Fate cost on Wish ×1 and Wish ×10, the wallet's Primogems and Fates, the Epitomized Path's course and points on the weapon wish, and the results.
 
 ## How it works
 
@@ -62,7 +62,7 @@ flowchart TD
 
 1. **The pull.** The rates, the pity, the guarantees, Capturing Radiance and the Epitomized Path in one pure function over a seeded random source, tested against each rule.
 2. **The returns and the cost.** Starglitter and Stardust by duplicate count, and a wish ×1 or ×10 spending its Fates from the wallet.
-3. **The screen's structure.** A `genshin-interface` screen drawing the banners, the costs, the wallet and the results, its words handed in, opened on F3 through the screens' screen kind.
+3. **The screen's structure.** A `genshin-interface` screen that draws the banners, the costs, the wallet and the results, its words handed in, opened on F3 by a screen kind of the screens'.
 
 ## What this does not propose
 

@@ -8,7 +8,7 @@ A build writes the script; the run waits in the queue. A queue item is work whos
 
 One line under the roadmap's **Compute queue** (`apps/web/content/docs/genshin/roadmap.md`), carrying everything a runner needs and nothing it must decide:
 
-- its lane, `[page]` or `[cpu]` (below), first;
+- its lane, `[page]` or `[cpu]` (see **The lanes** on this page), first;
 - the exact command, from the repo root, with every argument;
 - what it reads, paths outside the repo named (`~/Esposter/genshin-parity/...`);
 - what it writes;
@@ -27,7 +27,7 @@ An item missing any of these is not queued: the gap is a call, and calls are the
 ## Running one
 
 1. **Claim it.** Take the top unclaimed item of your lane, append ` — running` to its line, and commit that one line straight away, so no other runner takes it.
-2. **Check the memory first.** If free physical memory is under about 4 GB (`Get-CimInstance Win32_OperatingSystem`, `FreePhysicalMemory`), wait for a run to end before starting another. Thrashing slows every run more than waiting does.
+2. **Check the memory first.** If free physical memory is under about 4 GB (read off `Get-CimInstance Win32_OperatingSystem`, in kilobytes), wait for a run to end before starting another. Thrashing slows every run more than waiting does.
 3. **Run it in the background.** The runner reads its output when it ends, never with a foreground wait.
 4. **If the measure meets its bar,** commit what the command wrote (data, a report row) and delete the item from the queue in the same commit. The roadmap holds open work only.
 5. **If the measure misses,** commit nothing and change no parameter. Put the number on the item's line in place of ` — running`, and report it. A miss is a call for the main session, never a second run with a guessed value.

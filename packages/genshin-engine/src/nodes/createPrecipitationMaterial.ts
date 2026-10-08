@@ -6,10 +6,9 @@ import {
   PRECIPITATION_VOLUME_SIZE,
 } from "#src/atmosphere/constants";
 import { DoubleSide } from "three";
-import { MeshBasicNodeMaterial } from "three/webgpu";
 import {
-  cross,
   cos,
+  cross,
   float,
   hash,
   instanceIndex,
@@ -21,6 +20,7 @@ import {
   time,
   vec3,
 } from "three/tsl";
+import { MeshBasicNodeMaterial } from "three/webgpu";
 
 const TAU = Math.PI * 2;
 const VOLUME_SPAN = vec3(PRECIPITATION_VOLUME_SIZE, PRECIPITATION_VOLUME_HEIGHT, PRECIPITATION_VOLUME_SIZE);

@@ -1,14 +1,14 @@
 import { computeScatterPoints } from "#src/vegetation/computeScatterPoints";
 import { describe, expect, test } from "vitest";
 
-const SIZE = 2;
-const SPACING = 0.5;
-const CANDIDATE_COUNT = 64;
-const SEED = 0;
-// How far a float32 rounding may shorten a distance that the spacing already allows
-const ROUNDING = 1e-5;
-
 describe(computeScatterPoints, () => {
+  const SIZE = 2;
+  const SPACING = 0.5;
+  const CANDIDATE_COUNT = 64;
+  const SEED = 0;
+  // How far a float32 rounding may shorten a distance that the spacing already allows
+  const ROUNDING = 1e-5;
+
   test("grows the same plants for the same seed", () => {
     expect.hasAssertions();
 

@@ -32,18 +32,18 @@ The residual is simplex noise with the given seed, its first octave's amplitude 
 
 ## Key files
 
-| File                                                                | Role                                                                 |
-| :------------------------------------------------------------------ | :------------------------------------------------------------------- |
-| `packages/genshin-engine/src/terrain/createTerrainShapeHeight.ts`   | The three layers summed into one ground's height                     |
-| `packages/genshin-engine/src/terrain/createGaussianHillsHeight.ts`  | The hills layer: a base plus every hill its cell reaches             |
-| `packages/genshin-engine/src/terrain/createTerrainFeaturesHeight.ts` | The features layer, each feature read only in the cells it reaches   |
-| `packages/genshin-engine/src/terrain/getTerrainFeatureBounds.ts`    | The rectangle each feature's height reaches past zero within         |
-| `packages/genshin-engine/src/terrain/getCliffHeight.ts`             | A cliff's terrace, blended across its falloff and past its ends      |
-| `packages/genshin-engine/src/terrain/getRidgeHeight.ts`             | A ridge's Gaussian profile over its distance from the segment        |
-| `packages/genshin-engine/src/terrain/getPlateauHeight.ts`           | A plateau's flat top and blended edge                                |
-| `packages/genshin-engine/src/terrain/createResidualHeight.ts`       | The residual's octaves of simplex noise                              |
-| `packages/genshin-engine/src/terrain/fileByCell.ts`                 | Items filed under the cells their bounds cover, read by a point      |
-| `packages/genshin-world/src/services/windrise/getWindriseHeight.ts` | Windrise's ground, composed from its fitted shape                    |
+| File                                                                 | Role                                                               |
+| :------------------------------------------------------------------- | :----------------------------------------------------------------- |
+| `packages/genshin-engine/src/terrain/createTerrainShapeHeight.ts`    | The three layers summed into one ground's height                   |
+| `packages/genshin-engine/src/terrain/createGaussianHillsHeight.ts`   | The hills layer: a base plus every hill its cell reaches           |
+| `packages/genshin-engine/src/terrain/createTerrainFeaturesHeight.ts` | The features layer, each feature read only in the cells it reaches |
+| `packages/genshin-engine/src/terrain/getTerrainFeatureBounds.ts`     | The rectangle each feature's height reaches past zero within       |
+| `packages/genshin-engine/src/terrain/getCliffHeight.ts`              | A cliff's terrace, blended across its falloff and past its ends    |
+| `packages/genshin-engine/src/terrain/getRidgeHeight.ts`              | A ridge's Gaussian profile over its distance from the segment      |
+| `packages/genshin-engine/src/terrain/getPlateauHeight.ts`            | A plateau's flat top and blended edge                              |
+| `packages/genshin-engine/src/terrain/createResidualHeight.ts`        | The residual's octaves of simplex noise                            |
+| `packages/genshin-engine/src/terrain/fileByCell.ts`                  | Items filed under the cells their bounds cover, read by a point    |
+| `packages/genshin-world/src/services/windrise/getWindriseHeight.ts`  | Windrise's ground, composed from its fitted shape                  |
 
 ## Notes
 

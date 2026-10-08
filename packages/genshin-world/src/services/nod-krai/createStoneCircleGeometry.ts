@@ -13,7 +13,7 @@ export const createStoneCircleGeometry = ({
   pillarWidth,
   radius,
 }: StoneCircleOptions): BufferGeometry => {
-  const parts = Array.from({ length: pillarCount }, (_, index) => {
+  const parts = Array.from({ length: pillarCount }, (_value, index) => {
     const angle = (index / pillarCount) * Math.PI * 2;
     return new BoxGeometry(pillarWidth, pillarHeight, pillarThickness)
       .rotateY(Math.PI / 2 - angle)

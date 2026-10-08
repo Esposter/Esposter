@@ -6,7 +6,7 @@ import { LIYUE_BAY_WIDTH } from "#src/services/liyue/constants";
 export const getLiyueBays = (length: number): LiyueBay[] => {
   const bayCount = Math.max(1, Math.ceil(length / LIYUE_BAY_WIDTH));
   const bayLength = length / bayCount;
-  return Array.from({ length: bayCount }, (_, index) => ({
+  return Array.from({ length: bayCount }, (_value, index) => ({
     end: -length / 2 + bayLength * (index + 1),
     start: -length / 2 + bayLength * index,
   }));
