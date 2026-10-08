@@ -1,0 +1,28 @@
+// What is open over the world: the world itself, in play with nothing over it, or one of the screens the game opens
+// From it, by a shortcut or the Paimon menu's entries
+export enum ScreenKind {
+  Achievements = "Achievements",
+  AdventurerHandbook = "AdventurerHandbook",
+  Archive = "Archive",
+  BattlePass = "BattlePass",
+  Character = "Character",
+  CharacterArchive = "CharacterArchive",
+  Chat = "Chat",
+  CoOp = "CoOp",
+  Events = "Events",
+  Friends = "Friends",
+  Inventory = "Inventory",
+  Mail = "Mail",
+  Map = "Map",
+  Notices = "Notices",
+  PaimonMenu = "PaimonMenu",
+  PartySetup = "PartySetup",
+  PhotoMode = "PhotoMode",
+  Quests = "Quests",
+  Settings = "Settings",
+  Shop = "Shop",
+  Time = "Time",
+  TrainingGuide = "TrainingGuide",
+  Wish = "Wish",
+  World = "World",
+}
