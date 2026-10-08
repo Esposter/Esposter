@@ -18,8 +18,8 @@ export const openWitnessPage = async (
   witness: DerivedAssetComponent,
   width: number = STRUCTURE_WIDTH,
 ): Promise<{
-  close: () => Promise<void>;
   checkIsScored: (pixel: number, width: number) => boolean;
+  close: () => Promise<void>;
   height: number;
   image: Buffer;
   page: Page;
@@ -49,5 +49,5 @@ export const openWitnessPage = async (
       row < (region.y + region.height) * scale
     );
   };
-  return { close, checkIsScored, height, image, page };
+  return { checkIsScored, close, height, image, page };
 };

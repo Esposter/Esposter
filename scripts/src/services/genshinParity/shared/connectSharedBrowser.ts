@@ -1,9 +1,9 @@
 import type { SharedBrowser } from "#src/models/genshinParity/shared/SharedBrowser";
+import type { Browser } from "playwright";
 
 import { SHARED_BROWSER_CONNECT_TIMEOUT_MS } from "#src/services/genshinParity/shared/constants";
 import { getResultAsync } from "@esposter/shared";
 import { chromium } from "playwright";
-import type { Browser } from "playwright";
 
 // The shared browser a command opens its pages in, or nothing when none was started or the one written no longer
 // Answers, a stale file after the browser's process has died, so the command launches its own as it always did

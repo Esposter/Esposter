@@ -2,6 +2,7 @@ import type { ParityPageOptions } from "#src/models/genshinParity/shared/ParityP
 import type { Page } from "playwright";
 
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
+import { connectSharedBrowser } from "#src/services/genshinParity/shared/connectSharedBrowser";
 import {
   DEVICE_SCALE_MARGIN,
   INTERFACE_HEIGHT,
@@ -12,7 +13,6 @@ import {
   WITNESS_LAYOUT_PATH,
   WITNESS_PATH_PREFIX,
 } from "#src/services/genshinParity/shared/constants";
-import { connectSharedBrowser } from "#src/services/genshinParity/shared/connectSharedBrowser";
 import { readSharedBrowser } from "#src/services/genshinParity/shared/readSharedBrowser";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { join } from "node:path";

@@ -1,5 +1,6 @@
 import type { SharedBrowser } from "#src/models/genshinParity/shared/SharedBrowser";
 
+import { connectSharedBrowser } from "#src/services/genshinParity/shared/connectSharedBrowser";
 import {
   PARITY_ENTRY_PATH,
   SCRIPTS_DIRECTORY,
@@ -7,7 +8,6 @@ import {
   SHARED_BROWSER_POLL_MS,
   SHARED_BROWSER_START_TIMEOUT_MS,
 } from "#src/services/genshinParity/shared/constants";
-import { connectSharedBrowser } from "#src/services/genshinParity/shared/connectSharedBrowser";
 import { readSharedBrowser } from "#src/services/genshinParity/shared/readSharedBrowser";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";

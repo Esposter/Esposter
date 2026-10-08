@@ -1,7 +1,7 @@
 import type { SharedBrowser } from "#src/models/genshinParity/shared/SharedBrowser";
 
-import { SHARED_BROWSER_CONNECT_TIMEOUT_MS } from "#src/services/genshinParity/shared/constants";
 import { connectSharedBrowser } from "#src/services/genshinParity/shared/connectSharedBrowser";
+import { SHARED_BROWSER_CONNECT_TIMEOUT_MS } from "#src/services/genshinParity/shared/constants";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { connect } = vi.hoisted(() => ({ connect: vi.fn<(wsEndpoint: string, options: object) => Promise<object>>() }));

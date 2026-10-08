@@ -58,7 +58,7 @@ export const solveReferenceCloudCover = async (
       }[] = [];
       for (const referenceId of referenceIds) {
         // oxlint-disable-next-line no-await-in-loop -- each page is opened in turn, so one that fails leaves the opened ones to close
-        const { close, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness, CLOUDS_WIDTH);
+        const { checkIsScored, close, height, image, page } = await openWitnessPage(referenceId, witness, CLOUDS_WIDTH);
         closes.push(close);
         // oxlint-disable-next-line no-await-in-loop -- read on the page just opened
         const { computeClouds, computeDrawnClouds, computeElevationCoverage, readLuminance } = await readCloudSky(

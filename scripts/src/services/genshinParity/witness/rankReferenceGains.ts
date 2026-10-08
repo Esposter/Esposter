@@ -48,7 +48,7 @@ export const rankReferenceGains = async (
   terms: { ceiling: number; name: string; share: number }[];
 }> => {
   await fetchReferences();
-  const { close, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
+  const { checkIsScored, close, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
       const families = await readWitnessFamilies(page);

@@ -69,7 +69,7 @@ interface SkyReading {
 // Scene draws its sky with, and the scene's own sky drawn with no cloud over the same frame: what the scene draws where
 // The solve reads, so a sky solved well and drawn otherwise (a haze, a grade or a pass over it) shows as its own residual
 const readSky = async (referenceId: string, witness: DerivedAssetComponent): Promise<SkyReading> => {
-  const { close, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
+  const { checkIsScored, close, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
       const { computeClouds, readLuminance, skyMask, width } = await readCloudSky(page, { checkIsScored, height });
