@@ -24,6 +24,7 @@ import { pointsCommand } from "#src/services/genshinAssets/commands/pointsComman
 import { pointsFitCommand } from "#src/services/genshinAssets/commands/pointsFitCommand";
 import { puzzlesCommand } from "#src/services/genshinAssets/commands/puzzlesCommand";
 import { rankCommand } from "#src/services/genshinAssets/commands/rankCommand";
+import { reputationCommand } from "#src/services/genshinAssets/commands/reputationCommand";
 import { shadersCommand } from "#src/services/genshinAssets/commands/shadersCommand";
 import { shopsCommand } from "#src/services/genshinAssets/commands/shopsCommand";
 import { soundsCommand } from "#src/services/genshinAssets/commands/soundsCommand";
@@ -69,6 +70,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     puzzles: puzzlesCommand,
     gcg: gcgCommand,
     shops: shopsCommand,
+    reputation: reputationCommand,
     expeditions: expeditionsCommand,
   },
 });
