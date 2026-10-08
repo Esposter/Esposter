@@ -2,6 +2,7 @@ import type { DesertRuinPiece } from "#src/models/sumeru/DesertRuinPiece";
 import type { BufferGeometry } from "three";
 
 import { DesertRuinPieceKind } from "#src/models/sumeru/DesertRuinPieceKind";
+import { exhaustiveGuard } from "@esposter/shared";
 import { createBoxesGeometry, createLatheStackGeometry, mergeGeometryParts } from "genshin-engine";
 
 const COLUMN_RADIAL_SEGMENTS = 12;
@@ -93,9 +94,11 @@ const createPieceGeometry = (piece: DesertRuinPiece): BufferGeometry => {
       return createObelisk(piece);
     case DesertRuinPieceKind.SteppedPyramid:
       return createSteppedPyramid(piece);
+    default:
+      return exhaustiveGuard(piece);
   }
 };
 
 // A desert ruin's pieces, each standing where it is placed, merged into one geometry for one material
 export const createDesertRuinGeometry = (pieces: DesertRuinPiece[]): BufferGeometry =>
-  mergeGeometryParts(pieces.map(createPieceGeometry));
+  mergeGeometryParts(pieces.map((piece) => createPieceGeometry(piece)));
