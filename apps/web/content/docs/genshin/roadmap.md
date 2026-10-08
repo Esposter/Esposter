@@ -11,6 +11,10 @@ Open work only, part by part of the game. What was decided against is in [deferr
 
 Runs owed with every call already made: the exact command, what it reads, what it writes, and the measure that says it worked. A run that meets its measure commits what it wrote and leaves the queue; one that misses goes back as a call, never run again with a value guessed.
 
+- [ ] `[page]` **Login: every pass to the first red, the layout read in pixels.** `pnpm -C scripts genshin:parity passes login`. Reads the login's references and exports under `~/Esposter/genshin-parity` (`references/`, `extracted/login/`). Writes the login section of `scripts/src/services/genshinParity/passes/ParityPasses.snapshot.md`. Bar: every reading from Inventory through Motion held, the layout's new `login-door-session Towers`, `Bridges` and `Door` each within 2 px; the run stops at Surface, whose structure readings are red as before.
+- [ ] `[cpu]` **Login: the audio pass.** `pnpm -C scripts genshin:parity passes login --pass Audio`. Reads `Minimum.pck` from the installed game, decoded into `~/Esposter/genshin-parity/extracted/sounds/`, and `packages/genshin-world/src/data/login/sounds.json`. Writes nothing; prints the reading. Bar: `door bands` at or under its gate, the second take of its own noise.
+- [ ] `[page]` **Windrise: every pass to the first red.** `pnpm -C scripts genshin:parity passes windrise`. Reads `~/Esposter/genshin-parity/references/windrise-statue-day.png` and `extracted/windrise/`. Writes the windrise section of `ParityPasses.snapshot.md`. Bar: Inventory holds, no renderer of the exports unclaimed.
+
 ## Opening
 
 ### Next
