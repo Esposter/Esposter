@@ -1,5 +1,6 @@
 import type { SkyUniforms } from "#src/models/atmosphere/SkyUniforms";
 import type { LightUniforms } from "#src/models/nodes/LightUniforms";
+import type { WaterFlow } from "#src/models/water/WaterFlow";
 import type { WaterUniforms } from "#src/models/water/WaterUniforms";
 import type { Node } from "three/webgpu";
 
@@ -39,15 +40,19 @@ const REFLECTION_STRENGTH = 0.55;
 // Floor, read from the scene's depth along the view ray, grades its colour from the shallow tint to the deep one and
 // Lets the floor show through the shallows, bent by the ripples. Where that depth is small, at every shore, rock or
 // Pillar, animated foam lines gather with no mesh authored. The sun breaks on the ripples into hard glints stepped
-// Out of a narrow highlight, and the sky's colours are reflected toward the horizon
+// Out of a narrow highlight, and the sky's colours are reflected toward the horizon. A flow carries the ripples and foam
+// Downstream, so a river's surface reads as moving
 export const createWaterMaterial = (
   { lightColor, sunDirection }: Pick<LightUniforms, "lightColor" | "sunDirection">,
   { horizonColor, zenithColor }: Pick<SkyUniforms, "horizonColor" | "zenithColor">,
   { deepColor, deepDepth, foamColor, foamDepth, shallowColor }: WaterUniforms,
+  { direction, speed }: WaterFlow,
 ): MeshBasicNodeMaterial => {
   const waterMaterial = new MeshBasicNodeMaterial({ side: DoubleSide, transparent: true });
   // Two layers of noise drifting apart, whose slopes, read by finite differences, tilt the surface normal
-  const ripplePosition = positionWorld.xz.mul(RIPPLE_SCALE);
+  // The pattern is sampled upstream of each point, so it is carried downstream; still water has no flow and samples in place
+  const flowedPosition = positionWorld.xz.sub(direction.mul(speed).mul(time));
+  const ripplePosition = flowedPosition.mul(RIPPLE_SCALE);
   const drift = time.mul(RIPPLE_SPEED);
   const sampleRipples = (offset: Node<"vec2">) =>
     mx_fractal_noise_float(vec3(ripplePosition.add(offset).add(vec2(drift, drift.mul(0.6))), 0), 3)
@@ -88,7 +93,7 @@ export const createWaterMaterial = (
   const highlight = pow(reflect(sunDirection.negate(), normal).dot(eyeDirection).max(0), GLINT_POWER);
   const glints = lightColor.mul(smoothstep(0.45, 0.5, highlight).mul(GLINT_BRIGHTNESS));
   const shore = float(1).sub(smoothstep(0, foamDepth, depth));
-  const foamNoise = mx_fractal_noise_float(vec3(positionWorld.xz.mul(FOAM_SCALE), time.mul(0.3)), 2)
+  const foamNoise = mx_fractal_noise_float(vec3(flowedPosition.mul(FOAM_SCALE), time.mul(0.3)), 2)
     .mul(0.5)
     .add(0.5);
   const foam = smoothstep(0.55, 0.6, foamNoise.add(shore.mul(0.5))).mul(shore);

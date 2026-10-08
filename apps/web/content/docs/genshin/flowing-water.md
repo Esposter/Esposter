@@ -1,0 +1,42 @@
+---
+title: Flowing water
+description: Genshin's rivers and waterfalls in the anime style, built on the still water's material. A flow carries the ripples and foam downstream, a river is a ribbon along its course at the water's width and level, and a waterfall is a sheet whose streaks fall with its height. The game's own courses and falls are fitted in a later pass.
+---
+
+# Flowing water
+
+The [water](/docs/genshin/water) is one still surface at each region's level, and a river is not: it runs one way and falls with its valley. The water's material now takes a flow, and two shapes take it further, a river's ribbon along its course and a waterfall's sheet down a cliff. Still water has no flow, so the sea and lakes draw exactly as before.
+
+## How it works
+
+```mermaid
+flowchart TD
+  COURSE["A river's course: points with level and width"] --> RIB["Ribbon: a vertex pair a point, u across, v in metres downstream"]
+  LIP["A waterfall's lip, across and drop"] --> SHEET["Sheet: a quad hung from the lip down to the pool"]
+  RIB --> MAT["Water material, with a flow carried downstream"]
+  SHEET --> STREAK["Waterfall material: streaks falling with v"]
+  FLOW["Flow: a direction and a speed, zero for still water"] --> MAT
+```
+
+- **The flow carries the ripples and foam.** The water material samples its ripple and foam noise at the point minus the flow's direction times its speed and time, so the pattern moves downstream. A flow of zero leaves the still water's sampling where it was.
+- **A river is a ribbon.** Its surface is two vertices a point across the course, each at the point's level and half its width to either side of the course's direction. Across, u runs bank to bank; down the course, v counts metres from the head, so a texture reads downstream.
+- **A waterfall is a sheet.** One quad from the lip's two ends straight down by its drop. Its material streaks the foam colour along the width and lets each streak fall with v, opaque on a streak and clear between.
+
+## Scope
+
+**Built:** the flow on the water material, the river ribbon, the waterfall sheet and its streak material. Still water passes a zero flow in the [world's water](/docs/genshin/water) component.
+
+**Not yet:** where rivers and waterfalls stand in each region, which needs the game's own water surfaces and falls, and the mist and foam pool at a waterfall's foot. Both are the [flowing water](/docs/proposals/genshin/flowing-water) proposal.
+
+## Key files
+
+| File                                                           | Role                                                                     |
+| :------------------------------------------------------------- | :----------------------------------------------------------------------- |
+| `packages/genshin-engine/src/nodes/createWaterMaterial.ts`     | The water material, which takes a flow that carries its ripples and foam |
+| `packages/genshin-engine/src/water/createWaterFlowUniforms.ts` | The still water's flow, zero                                             |
+| `packages/genshin-engine/src/water/createRiverGeometry.ts`     | The river ribbon along a course                                          |
+| `packages/genshin-engine/src/water/createWaterfallGeometry.ts` | The waterfall sheet hung from its lip                                    |
+| `packages/genshin-engine/src/nodes/createWaterfallMaterial.ts` | The waterfall's streaks falling down its sheet                           |
+| `packages/genshin-engine/src/models/water/RiverCoursePoint.ts` | A point along a river's course                                           |
+| `packages/genshin-engine/src/models/water/WaterfallSheet.ts`   | A waterfall's lip, width and drop                                        |
+| `packages/genshin-world/src/components/World/Water/Index.vue`  | The region's still water, passing it the zero flow                       |
