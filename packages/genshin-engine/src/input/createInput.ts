@@ -20,13 +20,16 @@ const toDeadzoned = (stickAxis: number): number => (Math.abs(stickAxis) < GAMEPA
 // The keys held, the pointer's movement while it is locked, and the first gamepad's left stick, all read through the
 // Window handed in, once a frame. The look is what the pointer moved since the last read, and the move is the keys
 // And the stick combined, a pair of opposite keys cancelling. A window that loses focus hears no key's release, so a
-// Blur lets go of every key
+// Blur lets go of every key. The touch controls drawn over the world hold a key through its on-screen button, push an
+// On-screen stick read with the gamepad's, and turn the look as a drag across the screen does
 export const createInput = (target: Window): Input => {
   const controller = new AbortController();
   const { signal } = controller;
   const pressedCodes = new Set<string>();
   let pendingLookYaw = 0;
   let pendingLookPitch = 0;
+  let touchStickX = 0;
+  let touchStickY = 0;
   const inputState: InputState = { lookPitch: 0, lookYaw: 0, moveForward: 0, moveRight: 0, moveUp: 0 };
   const checkIsPressed = (code: string): boolean => pressedCodes.has(code);
   target.addEventListener(
@@ -63,6 +66,9 @@ export const createInput = (target: Window): Input => {
     dispose: () => {
       controller.abort();
     },
+    press: (code) => {
+      pressedCodes.add(code);
+    },
     readInput: (frameSeconds) => {
       const gamepad = target.navigator.getGamepads().find((candidate): candidate is Gamepad => candidate !== null);
       const [stickX = 0, stickY = 0, lookStickX = 0, lookStickY = 0] = gamepad?.axes ?? [];
@@ -73,14 +79,33 @@ export const createInput = (target: Window): Input => {
       pendingLookPitch = 0;
       inputState.moveForward = Math.max(
         -1,
-        Math.min(1, toAxis(checkIsPressed(KEY_CODE_FORWARD), checkIsPressed(KEY_CODE_BACKWARD)) - toDeadzoned(stickY)),
+        Math.min(
+          1,
+          toAxis(checkIsPressed(KEY_CODE_FORWARD), checkIsPressed(KEY_CODE_BACKWARD)) -
+            toDeadzoned(stickY) -
+            touchStickY,
+        ),
       );
       inputState.moveRight = Math.max(
         -1,
-        Math.min(1, toAxis(checkIsPressed(KEY_CODE_RIGHT), checkIsPressed(KEY_CODE_LEFT)) + toDeadzoned(stickX)),
+        Math.min(
+          1,
+          toAxis(checkIsPressed(KEY_CODE_RIGHT), checkIsPressed(KEY_CODE_LEFT)) + toDeadzoned(stickX) + touchStickX,
+        ),
       );
       inputState.moveUp = toAxis(checkIsPressed(KEY_CODE_UP), checkIsPressed(KEY_CODE_DOWN));
       return inputState;
+    },
+    release: (code) => {
+      pressedCodes.delete(code);
+    },
+    setTouchStick: (x, y) => {
+      touchStickX = x;
+      touchStickY = y;
+    },
+    turn: (lookYaw, lookPitch) => {
+      pendingLookYaw += lookYaw;
+      pendingLookPitch += lookPitch;
     },
   };
 };

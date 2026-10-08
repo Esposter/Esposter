@@ -67,6 +67,17 @@ describe(createInput, () => {
     });
   });
 
+  test("moves by the touch controls: the key a button holds and the on-screen stick", () => {
+    expect.hasAssertions();
+
+    const input = createInput(createTarget() as unknown as Window);
+    input.press(KEY_CODE_FORWARD);
+    input.setTouchStick(STICK_AXIS, 0);
+    const { moveForward, moveRight } = input.readInput(0);
+
+    expect({ moveForward, moveRight }).toStrictEqual({ moveForward: 1, moveRight: STICK_AXIS });
+  });
+
   test("moves by the first gamepad's left stick past its deadzone", () => {
     expect.hasAssertions();
 
