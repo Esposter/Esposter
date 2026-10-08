@@ -16,6 +16,8 @@ One line under the roadmap's **Compute queue** (`apps/web/content/docs/genshin/r
 
 An item missing any of these is not queued: the gap is a call, and calls are the main session's. Items stand in the recreation passes' order, so the queue reads top to bottom. An item waits on the earlier passes **its measure reads**, not on every earlier pass: a sun solved on the exports' shadow edges reads the shape and the camera, so it runs while the surface is still red, and a light pass that scores our stone's colour does not. Releasing an item past a red pass is the main session's call, made by naming what its measure reads.
 
+**The queue holds only what can be digested.** Every item in it can run now, or once an item above it has run. An item whose input does not exist yet sits under the queue's own **Waiting** heading and names its blocker: a recording on the Recordings owed list, or a fix in progress. No runner takes one, and it moves up when its input lands. A missed item keeps its miss on its line, and no runner retakes it until the main session's call changes that line. A queue that only grows is a queue nothing can finish.
+
 ## The lanes
 
 - **`[page]`** covers anything that drives the parity page: `compare`, `rank`, `film`, `listen`, `calibrate` and every witness command.
@@ -39,5 +41,6 @@ An item missing any of these is not queued: the gap is a call, and calls are the
 The queue is never left idle while it holds items.
 
 - **Who starts runners:** the main session starts a runner for each lane with work as soon as an item lands.
-- **How many:** the `[page]` lane always has one runner. The `[cpu]` lane runs a few at once, the count set by the cores and the free memory.
+- **How many:** each lane has one runner, and the runner runs several items at once, each in the background. The `[page]` lane runs one page per item on its own port, for items whose measures read different scenes. The `[cpu]` lane runs as many items as the cores and the memory gate allow, each at below-normal priority.
+- **When it ends:** a runner ends when no item of its lane can run. It never waits for one to become runnable, and the main session starts it again when one does.
 - **Nothing schedules it:** a runner loops through its lane by itself (step 6).
