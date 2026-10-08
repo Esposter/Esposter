@@ -66,6 +66,18 @@ git -C ../clone commit --quiet --message ${path}`);
     expect(runGit(["log", "--format=%s", "-1"], getCwd())).toBe("landed\n");
   });
 
+  test("keeps another session's staged work when the push leaves the branch where it stands", () => {
+    expect.hasAssertions();
+
+    publish(QUEUE_BRANCH, readSha("HEAD"));
+    commitFile("b", "b");
+    writeFileSync(join(getCwd(), ".gitignore"), "staged");
+    runGit(["add", ".gitignore"], getCwd());
+
+    expect(pushQueue(getCwd())).toBe(QueuePushOutcome.Pushed);
+    expect(runGit(["status", "--porcelain"], getCwd())).toBe("M  .gitignore\n");
+  });
+
   test("refuses to sync over an uncommitted file the remote changed, leaving the branch where it was", () => {
     expect.hasAssertions();
 

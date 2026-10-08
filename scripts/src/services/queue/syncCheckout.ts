@@ -1,3 +1,4 @@
+import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
 import { QUEUE_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
@@ -16,13 +17,19 @@ const carryCommit = (commit: string, cwd: string): boolean => {
 };
 
 // Moves the checkout's branch onto `pushed`, the commit the push just carried, then carries on top of it what landed
-// On the branch since `base`, the head the replay started from. `--keep` is the only reset that can run over another
-// Session's uncommitted work: it moves the branch and updates just the files that differ between the two commits, and
-// It refuses rather than overwrite an edit. The reset takes what landed during the push off the branch, so those
-// Commits are carried back on top; a pick that conflicts stops the carrying and stays reachable from the reflog.
+// On the branch since `base`, the head the replay started from. A branch already holding `pushed` is left alone, since
+// `--keep` resets the index even onto the commit it stands at and would unstage another session's staged work. `--keep`
+// Is the only reset that can run over another session's uncommitted work: it moves the branch and updates just the
+// Files that differ between the two commits, and it refuses rather than overwrite an edit. The reset takes what landed
+// During the push off the branch, so those commits are carried back on top; a pick that conflicts stops the carrying
+// And stays reachable from the reflog.
 export const syncCheckout = (pushed: string, base: string, cwd: string): void => {
-  // Read before the reset, so the range never depends on the reflog the reset writes
-  const head = runGit(["rev-parse", "HEAD"], cwd).trim();
+  const synced = `synced ${QUEUE_BRANCH} onto ${pushed}`;
+  if (checkIsAncestor(pushed, "HEAD", cwd)) {
+    console.info(synced);
+    return;
+  }
+
   const isReset = getResult(() => runGit(["reset", "--keep", pushed], cwd)).match(
     () => true,
     () => false,
@@ -32,10 +39,12 @@ export const syncCheckout = (pushed: string, base: string, cwd: string): void =>
     return;
   }
 
+  // The tip the reset moved off, as the reset itself recorded it, so a commit that landed after any earlier read of
+  // `HEAD` is still in the range carried back
+  const head = runGit(["rev-parse", "ORIG_HEAD"], cwd).trim();
   const landed = getNonEmptyLines(runGit(["rev-list", "--reverse", `${base}..${head}`], cwd));
   // `find` stops at the first commit that does not carry, which is the one the message names
   const conflicted = landed.find((commit) => !carryCommit(commit, cwd));
-  const synced = `synced ${QUEUE_BRANCH} onto ${pushed}`;
   if (conflicted !== undefined)
     console.info(
       `${synced}, stopped carrying at ${conflicted}, which does not apply on top of it — it stays in the reflog`,
