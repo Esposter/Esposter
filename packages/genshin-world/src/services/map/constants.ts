@@ -18,6 +18,10 @@ export const MAP_OVERLAY_MARK_SHARE = 0.0068;
 // Wide, each a share of the open map's extent so it is drawn at the view's own scale
 export const MAP_LABEL_SHARE = 0.0177;
 export const MAP_LABEL_OUTLINE_SHARE = 0.0016;
+// Provisional: an area's progress line, the count and the percentage, at about 60% of the name's size and a little under
+// The name's baseline, not yet read off the game's map, which shows it at its own size and place
+export const MAP_PROGRESS_SHARE = 0.0106;
+export const MAP_PROGRESS_OFFSET_SHARE = 0.0265;
 // Provisional: the metres the open map shows across its width at the zoom slider's default, centred on the player; not
 // Yet read off the game's zoom levels, which needs the regions' true shapes to measure against
 export const MAP_VIEW_METRES = 400;
