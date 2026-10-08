@@ -57,6 +57,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Screens](/docs/genshin/screens)                           | the screens opened over the world one at a time, what each holds, and the Paimon menu's shell                                                        |
 | [Map](/docs/genshin/map)                                   | the map on M at full screen, its keyboard jump list, and a jump's fade to black and back                                                             |
 | [Minimap](/docs/genshin/minimap)                           | the HUD's corner map, the map's drawing cut to a circle round the camera and turned with it                                                          |
+| [Map unlocking](/docs/genshin/map-unlocking)               | a Statue of The Seven resonated with on F, its area filled in on the map and minimap, and only the unlocked statues offered as jumps and revives     |
 | [HUD](/docs/genshin/hud)                                   | the heads-up display's Paimon button, minimap, quest tracker, stamina meter, party, health and skill and burst buttons, and hiding it                |
 | [Touch controls](/docs/genshin/touch-controls)             | the stick on the left half, the look on the right and the jump button, fed into the one input                                                        |
 | [Enemies](/docs/genshin/enemies)                           | enemy kinds and their stats, their AI and camps, respawn and drops, struck by the kit and drawn as stand-in capsules                                 |
@@ -111,6 +112,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - The login's music, its second piece played with public-domain recordings layered over the synthesizer.
 - The game's default controls, and its screens opened over the world from them and from the Paimon menu, an unbuilt screen a placeholder under its title.
 - The map on M with its jump list, a jump fading to black and back, the HUD's shell with its minimap, and the touch controls.
+- Map unlocking's statues: resonating with a Statue of The Seven on F fills its area in on the map and minimap, and only the unlocked statues are jumps and places to revive.
 - Enemies: kinds read from the game's tables, an AI on the fixed step, camps, respawn and drops, drawn as capsules.
 - Characters read from HoYoverse's official MMD packs by the engine's own PMX reader and drawn at rest on the toon ramp.
 - Combat's rules as pure, tested functions: auras and reactions, the damage formula, internal cooldown, shields and energy.

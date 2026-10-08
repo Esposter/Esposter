@@ -12,13 +12,13 @@ In the world, the game keeps a small round map in the top left of its heads-up d
 ```mermaid
 flowchart LR
   CAM["The character's ground point and the view's yaw, read each frame they change"] --> TURN["The drawing turned by the yaw and moved under the centre"]
-  DRAW["Map/Drawing: the catalogue's outlines and the jump landmarks"] --> TURN
+  DRAW["Map/Drawing: the filled areas' outlines and the unlocked jump landmarks"] --> TURN
   TURN --> CUT["Cut to a circle a fixed number of metres across"]
   CUT --> MINI["The minimap, the pointer at its centre facing up"]
   MINI -->|"pressed"| MAP["The map opens"]
 ```
 
-- **The map's drawing, not a second one.** `Hud/Minimap` draws `Map/Drawing` with the landmarks the map holds, so a landmark or an outline the map gains appears on the minimap with no change of its own.
+- **The map's drawing, not a second one.** `Hud/Minimap` draws `Map/Drawing` with the unlocked landmarks the map holds, so a landmark the map gains, or an area a statue fills in, appears on the minimap with no change of its own ([map unlocking](/docs/genshin/map-unlocking)).
 - **It turns with the view.** The drawing is moved so the character's ground point sits at the centre and turned by the camera's yaw, so the way the view faces is always up, and the pointer at the centre never turns. The circle shows `MINIMAP_RADIUS` metres each way.
 - **Read once a frame, handed on when it moves.** The world screen reads the character's body's ground point in world metres and the camera's yaw once a frame, and hands the HUD a new reading only when one of them moved, so a still player re-renders nothing.
 - **One button.** The minimap is a button named for the map in the game's words; pressing it opens the map, as M does. The drawing inside it is hidden from a screen reader and takes no pointer of its own.
