@@ -35,10 +35,10 @@ export enum GameTextKey {
   AttributeMaxStamina = "PROP_MAX_STAMINA",
   AttributePhysicalDamageBonus = "FIGHT_PROP_PHYSICAL_ADD_HURT",
   AttributePyroDamageBonus = "FIGHT_PROP_FIRE_ADD_HURT",
-  // A screen's way back to the world
-  Back = "VIDEO_RETREAT",
   // The settings' side bar tab for the sound, with the graphics one beside it
   Audio = "UI_SETTING_PAGE_SOUND_CATEGORY",
+  // A screen's way back to the world
+  Back = "VIDEO_RETREAT",
   BattlePass = "UI_STC_GAMEENTRYPAGE_BP",
   // The label over a character's birthday on their profile
   Birthday = "INFORMATION_AVATAR_BIRTHDAY",
@@ -51,9 +51,9 @@ export enum GameTextKey {
   CharacterProfile = "FETTER_NAME",
   CharacterTalents = "UI_STC_CHARACTERPAGE_SKILL",
   CharacterWeapons = "UI_STC_CHARACTERPAGE_WEAPON",
+  Chat = "UI_CHAT_CHAT_BUTTON",
   // The Paimon menu's link to the game's community, which opens a web page
   Community = "UI_STC_GAMEENTRYPAGE_COMMUNITY",
-  Chat = "UI_CHAT_CHAT_BUTTON",
   CompatibilityMode = "1992637634",
   // The quit prompt's first button, which goes back to the world
   ContinueGame = "UI_LOGOUT_CONFIRM_CONTINUE_GAME",
@@ -67,22 +67,22 @@ export enum GameTextKey {
   // The HUD's skill and burst buttons, named as the controls name their keys
   ElementalBurst = "CONTROL_SKILL5",
   ElementalSkill = "CONTROL_SKILL2",
+  Events = "UI_STC_GAMEENTRYPAGE_ACTIVITY",
   // The quit prompt's button that exits the game to the desktop
   ExitToDesktop = "UI_LOGOUT_CONFIRM_EXIT_TO_DESKTOP",
   // The quit prompt's button that leaves the world for the login interface
   ExitToLoginInterface = "UI_LOGOUT_CONFIRM_EXIT_TO_TITLE_SCREEN",
-  Events = "UI_STC_GAMEENTRYPAGE_ACTIVITY",
   // The feedback link, a web page the Paimon menu opens
   Feedback = "UI_STC_GAMEENTRYPAGE_FEEDBACK",
   Friends = "UI_FRIEND_TITLE",
+  GameTitle = "LANGUAGE_WINDOWS_TITLENAME",
+  GenesisCrystal = "2722599324",
   // The game's own name, as its window's title says it
   // The settings' graphics tab and its rows: the quality tier, the custom tier's and the global illumination
   Graphics = "UI_SETTING_PAGE_GRAPHIC_CATEGORY",
   GraphicsAdvanced = "UI_SETTING_GRAPHICS_ADVANCED",
   GraphicsGlobalIllumination = "UI_SETTING_GRAPHICS_GLOBAL_ILLUMINATION",
   GraphicsQuality = "UI_SETTING_GRAPHICS_QUALITY",
-  GameTitle = "LANGUAGE_WINDOWS_TITLENAME",
-  GenesisCrystal = "2722599324",
   // The Adventurer Handbook's tabs
   HandbookCommissions = "UI_ADVENTURE_CARD_EVENT_TITLE",
   HandbookDomains = "UI_ADVENTURE_CARD_DUNGEON_TITLE",

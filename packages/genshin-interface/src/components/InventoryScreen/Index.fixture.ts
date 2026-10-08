@@ -13,8 +13,8 @@ export const props = {
   currencies: [{ id: "Mora", name: "Mora", quantity: 0 }],
   isDescending: true,
   isSortable: true,
-  selectedId: "0",
   orderLabel: "Descending",
+  selectedId: "0",
   sort: InventorySort.Level,
   sortLabels: { [InventorySort.Level]: "Level", [InventorySort.Quality]: "Quality" },
   tabLabels: {
