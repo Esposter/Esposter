@@ -29,7 +29,7 @@ export const CodeRabbitPlanReviewsPerHourMap: Record<CodeRabbitPlan, number> = {
 // The plan the repository is on — the one line a plan change or a trial's end edits. The collector runs from
 // `ai/queue`'s own checkout, so the edit takes effect on the first cycle after it is pushed there. The collector's
 // Overflow fixtures are built at the cap, so the same commit refreshes their snapshots with `vitest -u`
-export const CODERABBIT_PLAN: CodeRabbitPlan = CodeRabbitPlan.AdvancedTrial;
+export const CODERABBIT_PLAN: CodeRabbitPlan = CodeRabbitPlan.Essentials;
 // The one knob of the review budget, and the only size a window is measured against. No prose restates the
 // Number — a page says "the cap" and cites this file (a test holds it to that). There is no floor beneath it:
 // The port takes every commit the queue owes, so a window that came out small is the whole of what was left, and

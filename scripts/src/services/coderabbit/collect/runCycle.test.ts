@@ -552,7 +552,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     answerGh([], [], [], getExhaustedReshapes(heldSha));
 
     await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, held at 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 — the first owed commit could not be reshaped under the cap or its conflict was not resolved past the attempt cap, so a person splits it or rebases ai/queue (its commit comments say which)]`,
+      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, held at 30e00c79f6d80fba63a7669701f892f6b3cb1a45 — the first owed commit could not be reshaped under the cap or its conflict was not resolved past the attempt cap, so a person splits it or rebases ai/queue (its commit comments say which)]`,
     );
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
     expect(getCommitCommentPosts(heldSha)).toStrictEqual([
@@ -592,7 +592,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     answerGh([], [], [], [...getExhaustedReshapes(heldSha), getMarked(getMarker(HELD_MARKER, heldSha))]);
 
     await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, held at 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 — the first owed commit could not be reshaped under the cap or its conflict was not resolved past the attempt cap, so a person splits it or rebases ai/queue (its commit comments say which)]`,
+      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, held at 30e00c79f6d80fba63a7669701f892f6b3cb1a45 — the first owed commit could not be reshaped under the cap or its conflict was not resolved past the attempt cap, so a person splits it or rebases ai/queue (its commit comments say which)]`,
     );
     expect(getCommitCommentPosts(heldSha)).toHaveLength(0);
   });
