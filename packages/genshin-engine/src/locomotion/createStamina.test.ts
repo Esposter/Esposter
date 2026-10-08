@@ -64,4 +64,29 @@ describe(createStamina, () => {
 
     expect(stamina.value).toBe(0);
   });
+
+  test("a spend restarts the rest, so the pool refills only once the delay has passed since it", () => {
+    expect.hasAssertions();
+
+    const stamina = createStamina();
+    for (let restSeconds = STEP_SECONDS; restSeconds < STAMINA_REFILL_DELAY_SECONDS; restSeconds += STEP_SECONDS)
+      stamina.step({ state: LocomotionState.Idle, stateSeconds: restSeconds }, false, false, STEP_SECONDS);
+    stamina.spend(DASH_STAMINA_COST);
+    const spentValue = stamina.value;
+    for (let restSeconds = STEP_SECONDS; restSeconds < STAMINA_REFILL_DELAY_SECONDS; restSeconds += STEP_SECONDS)
+      stamina.step({ state: LocomotionState.Idle, stateSeconds: restSeconds }, false, false, STEP_SECONDS);
+    const restedValue = stamina.value;
+    stamina.step(
+      { state: LocomotionState.Idle, stateSeconds: STAMINA_REFILL_DELAY_SECONDS },
+      false,
+      false,
+      STEP_SECONDS,
+    );
+
+    expect({ refilledValue: stamina.value, restedValue, spentValue }).toStrictEqual({
+      refilledValue: spentValue + STAMINA_REFILL_PER_SECOND * STEP_SECONDS,
+      restedValue: spentValue,
+      spentValue: STAMINA_MAX - DASH_STAMINA_COST,
+    });
+  });
 });
