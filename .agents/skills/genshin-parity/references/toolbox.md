@@ -19,14 +19,14 @@ Read before any pass or round on a Genshin screen or scene, and whenever its loo
 
 What each pass's tools stand on, and the runner that checks them in order.
 
-| Unknown                              | Tool                                                                                               |
-| :----------------------------------- | :------------------------------------------------------------------------------------------------- |
-| A render that settles in one frame   | the witness: SMAA, its clock held, one frame                                                       |
-| Which layer a score's loss is in     | `scoreLayers`: `compare --witness`                                                                 |
-| A scene's frame cost, and what it is | `genshin:parity bench`: frame time, draw calls, objects by kind                                    |
-| One region across frames, or ours    | `zoom --with`: the region of each image stacked                                                    |
-| A point read off an image            | `zoom --grid`: lines every so many pixels, labelled                                                |
-| Which pass is red, and its measure   | `genshin:parity passes`: each pass's measure against its gate in order, `ParityPasses.snapshot.md` |
+| Unknown                              | Tool                                                                                                                                                                    |
+| :----------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A render that settles in one frame   | the witness: SMAA, its clock held, one frame                                                                                                                            |
+| Which layer a score's loss is in     | `scoreLayers`: every `compare` of a scene, each family's colour, tone and FLIP against the reference in the report's layers table; `compare --witness` over the exports |
+| A scene's frame cost, and what it is | `genshin:parity bench`: frame time, draw calls, objects by kind                                                                                                         |
+| One region across frames, or ours    | `zoom --with`: the region of each image stacked                                                                                                                         |
+| A point read off an image            | `zoom --grid`: lines every so many pixels, labelled                                                                                                                     |
+| Which pass is red, and its measure   | `genshin:parity passes`: each pass's measure against its gate in order, `ParityPasses.snapshot.md`                                                                      |
 
 ### Inventory
 
