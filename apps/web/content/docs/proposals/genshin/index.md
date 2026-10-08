@@ -49,6 +49,7 @@ flowchart TD
 | [Trees and scatter](/docs/proposals/genshin/trees-and-scatter) | tree species and impostors, and flowers, bushes and rocks scattered by biome  |
 | [Weather](/docs/proposals/genshin/weather)                     | rain, storms, snow, fog and sandstorms, set per area as the game sets them    |
 | [Exploring](/docs/proposals/genshin/exploring)                 | a free camera, waypoints to jump between, and the map overlay                 |
+| [Minimap](/docs/proposals/genshin/minimap)                     | the HUD's corner map, the overlay's drawing cut to a circle round the camera  |
 
 ### Phase two: the regions
 
@@ -69,7 +70,7 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 
 1. **The recreation passes' runner and measures first.** Every later page is judged by them, so they are the base the rest stands on. The rest of the engine follows in the table's order, each built when Windrise's passes reach what it draws and shown first there, in the scene the [rendering style](/docs/genshin/rendering-style) is built in.
 2. **Mondstadt first among the regions.** It is where the game begins, and its opening areas are the ones the Windrise scene already holds. The rest follow in the game's release order.
-3. **Then the play features, one page each, written when the world is walkable.** First the character controller (run, sprint, jump, climb, glide, swim and stamina) and its camera. Then characters, drawn only from a model the person has downloaded for themselves from HoYoverse's official MMD releases and loaded from their own disk, and moved by motion fitted to the game's own locomotion clips in the [recreation passes](/docs/proposals/genshin/recreation-passes)' motion pass, so only the fitted parameters ship. Then elemental reactions, and after that each feature in turn. Each gets its page when its turn comes, not before, so no spec is written against an engine that does not yet exist.
+3. **Then the play features, one page each, written when the world is walkable.** First the character controller (run, sprint, jump, climb, glide, swim and stamina) and its camera. Then [characters](/docs/proposals/genshin/characters), from HoYoverse's official models within their terms. Then elemental reactions, and after that each feature in turn. Each gets its page when its turn comes, not before, so no spec is written against an engine that does not yet exist.
 
 ## What this does not propose
 
