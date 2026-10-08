@@ -82,9 +82,15 @@ export const displayTopic: ReferenceTopic = {
       result:
         "Over the stone the game's red stands under the black on 27.9% of the title's pixels and 37.3% of the door session's, where any one balance takes ours under on about the same share of both (32.8% and 32.7% under the shipped), our one scene at one hour drawing both frames alike: the frames disagree, the title a 2022 client and the door session the current build. One share a frame fixes only a line of balances (the title's matched at -5.0 and 6.4, the door session's at -15.6 and 21.4). Banded by the green, the game's red goes under on 80 to 94% of the darkest half of the stone and on a hundredth or none of the brighter half, a cut by brightness; ours goes under on 5 to 45% of every band, and the balance closest on the door session alone (-22.0, -77.4) matches its dark half to a few points while still taking 11 to 27% of its bright half under. A balance takes a channel under by a pixel's hue, so the game's dark stone is a bluer light than its lit stone where ours lights both alike: the light's split between the moon's side and the shade, not the balance, is what stands off, and the shipped balance stays until the light pass holds it",
     },
+    {
+      method: "The bands balance --black matched in, read against the light pass's bins (Light.reference.ts)",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "Banding by how bright the reference shows its stone leaves ours, a pixel off, at the frame's mean, and the game's dark half is its high stone and its bright half the hazed low stone rather than the moon's side and the shade, so the match read no light and moved no measure: --black and the shares it matched (solveUnderBlackBalance, readUnderBlackShares, compareSampleUnderBlackShares) are deleted",
+    },
   ],
   openQuestions: [
-    "Whether the night's tint is the game's: balance --black bands the stone by how bright the reference shows it, which leaves ours, a pixel off, at the frame's mean (Light.reference.ts), and the game's dark half is its high stone and its bright half the hazed low stone rather than the moon's side and the shade, so the tint is read again over the light pass's bins once the night's high stone holds",
+    "Whether the night's tint is the game's, read over the light pass's bins once the night's high stone holds",
     "Which of MHYBloom_Z's other values is the threshold, the scaler and the intensity: the bloom alone moves what lies around the brightest pixels, so they are measured there once the login draws the game's bloom",
   ],
 };
