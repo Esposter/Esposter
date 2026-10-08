@@ -185,13 +185,14 @@ const areaWeather = useAreaWeather(origin);
 const gradeLutTexture = createGradeLutTexture(WINDRISE_GRADE_OPTIONS);
 // No god rays and no bloom: neither is measured off a reference of Windrise, and drawn as they stand they veil the
 // Whole frame, the god rays marching hundreds of metres of lit air to their most opacity and bloom lifting the whole
-// Sky past its threshold, so the frame is drawn through the haze, the grade and the tone mapping alone
-const postPipeline = usePostPipeline(() => qualityTier, {
-  fogUniforms,
-  gradeLutTexture,
-  isBloomed: false,
-  postUniforms,
-});
+// Sky past its threshold, so the frame is drawn through the haze, the grade and the tone mapping alone. No occlusion
+// Either, and the sky handed on with it as the login's is, which the parity page's tools read each pixel's ray under
+const postPipeline = usePostPipeline(
+  () => qualityTier,
+  { fogUniforms, gradeLutTexture, isBloomed: false, postUniforms },
+  0,
+  skyUniforms,
+);
 // The world is ready once the ground of its first view and the regions in reach of it have arrived, so what shows it
 // Never shows the bare water under a ground still streaming in
 const isTerrainSettled = ref(false);
