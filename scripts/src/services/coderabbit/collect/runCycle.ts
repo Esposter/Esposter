@@ -1,5 +1,6 @@
 import type { CycleInput } from "#src/models/coderabbit/collect/CycleInput";
 import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
+import type { WindowPullRequest } from "#src/models/coderabbit/collect/WindowPullRequest";
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
@@ -17,8 +18,8 @@ import { getWindowOpenCount } from "#src/services/coderabbit/collect/getWindowOp
 import { openNextWindow } from "#src/services/coderabbit/collect/openNextWindow";
 import { orderWindowStack } from "#src/services/coderabbit/collect/orderWindowStack";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
+import { readCoderabbitConfig } from "#src/services/coderabbit/collect/readCoderabbitConfig";
 import { readLegacyReleasePullRequest } from "#src/services/coderabbit/collect/readLegacyReleasePullRequest";
-import { readMainCoderabbitConfig } from "#src/services/coderabbit/collect/readMainCoderabbitConfig";
 import { readSessionLimitResetMs } from "#src/services/coderabbit/collect/readSessionLimitResetMs";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
 import { readWindowPullRequests } from "#src/services/coderabbit/collect/readWindowPullRequests";
@@ -37,6 +38,13 @@ const getOutcome = (
   retriggerDelaySeconds?: number,
   targetSha?: string,
 ): CycleOutcome => ({ kind, reason, retriggerDelaySeconds, targetSha });
+
+// A window is cut over the top of the open stack and CodeRabbit reviews it under the config its base carries, so the
+// Guard reads the top's copy. With nothing open the window is cut over `main`, which needs no guard
+const checkIsStackingAllowedOver = (openStack: WindowPullRequest[], cwd: string): boolean => {
+  const top = openStack.at(-1);
+  return top === undefined || checkIsStackingAllowed(readCoderabbitConfig(top.headRefName, cwd), top.headRefName);
+};
 
 // One pass: return, express, then the open stack — each window's gate, the bottom one merged and drained once its review
 // Completes — and then as many windows opened as the hourly ceiling and the stacking guard allow, each cut from the top
@@ -104,7 +112,7 @@ export const runCycle = async ({
     );
 
   // The newest merged pull request is the review the next cut answers, so its findings are drained again on every run
-  // until none is open. A drain that left one ended the run that merged it, so nothing above it may merge or open first
+  // Until none is open. A drain that left one ended the run that merged it, so nothing above it may merge or open first
   let reviewFixesSha = branchShas.reviewFixesSha;
   const pendingPullRequest = getNewestMergedPullRequest([
     ...windowHistory,
@@ -174,7 +182,7 @@ export const runCycle = async ({
   }
 
   // A window cut over `develop` while the release before the stack is open would move that pull request's head under its
-  // own review, and nothing here reviews it, so the windows wait until a person merges or closes it
+  // Own review, and nothing here reviews it, so the windows wait until a person merges or closes it
   if (legacyPullRequest?.state === WindowPullRequestState.Open)
     return getOutcome(
       CycleOutcomeKind.Idle,
@@ -184,13 +192,12 @@ export const runCycle = async ({
 
   // The windows: one at a time, for as long as the hourly ceiling and the stacking guard allow. A window that did not
   // Reach the remote ends the openings, and what the openings returned is the run's verdict
-  const isStackingAllowed = checkIsStackingAllowed(readMainCoderabbitConfig(cwd));
   let openedStack = orderWindowStack(readWindowPullRequests(WindowPullRequestListState.Open));
   let history = readWindowPullRequests(WindowPullRequestListState.All);
   let openingOutcome: CycleOutcome | undefined;
   while (
     getWindowOpenCount({
-      isStackingAllowed,
+      isStackingAllowed: checkIsStackingAllowedOver(openedStack, cwd),
       openCount: openedStack.length,
       openedInLastHour: getOpenedInLastHour(history, Date.now()),
       reviewsPerHour: REVIEWS_PER_HOUR,

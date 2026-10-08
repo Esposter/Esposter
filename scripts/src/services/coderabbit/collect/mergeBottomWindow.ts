@@ -80,7 +80,7 @@ export const mergeBottomWindow = async ({
   else if (fold === undefined) mergeWindowPullRequest({ headSha, isDryRun, pullRequest: number });
 
   // A failed retarget leaves the window above stranded on this branch, which the next run retargets before it reads the
-  // stack (`retargetStrandedWindows`). The branch stays until it lands, and the drain below does not wait on it
+  // Stack (`retargetStrandedWindows`). The branch stays until it lands, and the drain below does not wait on it
   const isRetargeted = next === undefined || isDryRun || retargetPullRequest(next.number);
   if (next && isDryRun) console.info(`would retarget pull request #${next.number} to ${MAIN_BRANCH}`);
   if (!isDryRun && isRetargeted)
@@ -99,7 +99,7 @@ export const mergeBottomWindow = async ({
     viewerLogin,
   });
   // A retarget that did not land holds the walk once the drain has run: the window above is still on this branch, which
-  // the next run retargets before it reads the stack, so nothing is merged or cut over it first
+  // The next run retargets before it reads the stack, so nothing is merged or cut over it first
   if (drain.outcome) return { outcome: drain.outcome, reviewFixesSha: drain.reviewFixesSha };
   else if (next && !isRetargeted)
     return {
