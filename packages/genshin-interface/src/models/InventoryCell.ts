@@ -2,7 +2,7 @@
 // Its icon, its rarity in stars, and its caption, the count of a stack or a weapon's or an artifact's level
 export interface InventoryCell {
   caption: string;
-  id: number;
+  id: string;
   name: string;
   rarity: number;
 }

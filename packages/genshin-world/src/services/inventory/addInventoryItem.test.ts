@@ -10,6 +10,7 @@ import { assert, describe, expect, test } from "vitest";
 const createDefinition = (category: ItemCategory, id: number, stackLimit = 1): ItemDefinition => ({
   category,
   id,
+  name: "",
   rank: 0,
   rarity: 0,
   stackLimit,

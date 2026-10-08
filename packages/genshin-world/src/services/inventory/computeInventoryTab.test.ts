@@ -10,7 +10,7 @@ const createItem = (
   rarity: number,
   rank: number,
   level?: number,
-): InventoryItem => ({ definition: { category, id, rank, rarity, stackLimit: 1 }, id, level, quantity: 1 });
+): InventoryItem => ({ definition: { category, id, name: "", rank, rarity, stackLimit: 1 }, id, level, quantity: 1 });
 
 describe(computeInventoryTab, () => {
   const sortOrder = { isDescending: true, sort: InventorySort.Level };

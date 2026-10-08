@@ -24,7 +24,7 @@ describe(getWishReturn, () => {
   ])("returns Starglitter for a %s of %s stars with %s held", (kind, rarity, heldCount, quantity) => {
     expect.hasAssertions();
 
-    expect(getWishReturn({ id: 0, kind, rarity }, heldCount)).toStrictEqual({
+    expect(getWishReturn({ id: 0, kind, name: "", rarity }, heldCount)).toStrictEqual({
       currency: Currency.MasterlessStarglitter,
       quantity,
     });
@@ -33,7 +33,7 @@ describe(getWishReturn, () => {
   test("returns Stardust for a three-star weapon", () => {
     expect.hasAssertions();
 
-    expect(getWishReturn({ id: 0, kind: WishItemKind.Weapon, rarity: 3 }, 0)).toStrictEqual({
+    expect(getWishReturn({ id: 0, kind: WishItemKind.Weapon, name: "", rarity: 3 }, 0)).toStrictEqual({
       currency: Currency.MasterlessStardust,
       quantity: THREE_STAR_WEAPON_STARDUST,
     });
@@ -42,6 +42,6 @@ describe(getWishReturn, () => {
   test("returns nothing for a new character", () => {
     expect.hasAssertions();
 
-    expect(getWishReturn({ id: 0, kind: WishItemKind.Character, rarity: 5 }, 0)).toBeUndefined();
+    expect(getWishReturn({ id: 0, kind: WishItemKind.Character, name: "", rarity: 5 }, 0)).toBeUndefined();
   });
 });

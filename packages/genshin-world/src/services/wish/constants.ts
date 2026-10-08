@@ -1,4 +1,5 @@
 import type { RarityRate } from "#src/models/wish/RarityRate";
+import type { WishPity } from "#src/models/wish/WishPity";
 
 // Capturing Radiance's published base rate is 0.018% a wish, a share of the five-star's 0.6%, so it triggers on 3% of the
 // Character event five-stars the 50/50 decides, and on the next one for certain once the promotional character has come
@@ -37,3 +38,13 @@ export const WEAPON_WISH_FIVE_STAR_RATE: RarityRate = {
   softPityStep: 0.07,
 };
 export const WEAPON_WISH_FOUR_STAR_RATE: RarityRate = { base: 0.06, hardPity: 10, softPityStart: 8, softPityStep: 0.6 };
+// A kind of wish's counters before its first wish
+export const INITIAL_WISH_PITY: Readonly<WishPity> = {
+  fatePoints: 0,
+  fiveStarCount: 0,
+  fourStarCount: 0,
+  isFiveStarGuaranteed: false,
+  isFourStarGuaranteed: false,
+  lossCount: 0,
+  wishCount: 0,
+};

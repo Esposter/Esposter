@@ -39,5 +39,5 @@ export const makeWishes = (
     nextPity = pull.pity;
   }
 
-  return { pity: nextPity, results, wallet: nextWallet };
+  return { heldCountMap: nextHeldCountMap, pity: nextPity, results, wallet: nextWallet };
 };

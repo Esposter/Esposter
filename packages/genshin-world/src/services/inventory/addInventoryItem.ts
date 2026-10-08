@@ -8,6 +8,7 @@ import {
   INVENTORY_KIND_LIMIT,
   WEAPON_START_LEVEL,
 } from "#src/services/inventory/constants";
+import { countCategoryPieces } from "#src/services/inventory/countCategoryPieces";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
 import { ItemCategory } from "genshin-interface";
 
@@ -22,12 +23,7 @@ export const addInventoryItem = (
 ): InventoryAddition => {
   const categoryRoom = ItemCategoryRoomMap[definition.category];
   const tabRoom =
-    categoryRoom === undefined
-      ? Infinity
-      : categoryRoom -
-        items
-          .filter((item) => item.definition.category === definition.category)
-          .reduce((total, item) => total + item.quantity, 0);
+    categoryRoom === undefined ? Infinity : categoryRoom - countCategoryPieces(items, definition.category);
   if (EQUIPMENT_CATEGORIES.includes(definition.category)) {
     const addedCount = Math.max(Math.min(quantity, tabRoom), 0);
     const level = definition.category === ItemCategory.Weapon ? WEAPON_START_LEVEL : ARTIFACT_START_LEVEL;

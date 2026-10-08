@@ -13,7 +13,7 @@ import { describe, expect, test } from "vitest";
 const random = (): number => 0;
 
 describe(makeWishes, () => {
-  const character = { id: 0, kind: WishItemKind.Character, rarity: 5 };
+  const character = { id: 0, kind: WishItemKind.Character, name: "", rarity: 5 };
   const banner: Banner = {
     featuredFiveStars: [],
     featuredFourStars: [],
@@ -50,6 +50,7 @@ describe(makeWishes, () => {
         random,
       ),
     ).toStrictEqual({
+      heldCountMap: new Map([[character.id, 2]]),
       pity: { ...pity, fourStarCount: 2, wishCount: 2 },
       results: [
         { isCapturingRadiance: false, item: character },

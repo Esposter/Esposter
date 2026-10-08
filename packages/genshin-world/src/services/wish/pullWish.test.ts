@@ -12,7 +12,7 @@ const createRandom = (values: number[]): (() => number) => {
   let index = 0;
   return () => values[index++] ?? 0;
 };
-const createItem = (id: number, kind: WishItemKind, rarity: number): WishItem => ({ id, kind, rarity });
+const createItem = (id: number, kind: WishItemKind, rarity: number): WishItem => ({ id, kind, name: "", rarity });
 
 describe(pullWish, () => {
   const fiveStar = createItem(0, WishItemKind.Character, 5);
