@@ -253,6 +253,7 @@ Clips nothing published shows, which the user records: each 30 seconds or less, 
 - [ ] `realm-store-start.png` and `realm-store-hour.png` — two stills, not a clip, of one realm's Realm Currency and Realm Bounty stores an hour of real time apart, with its Adeptal Energy rank and Trust Rank shown beside them; they read whether a store fills per real hour at the table's rate ([Serenitea Pot](/docs/genshin/serenitea-pot)).
 - [ ] `trust-queues.mkv` — Tubby's making at two Trust Ranks, the rank read off the Trust screen, a furnishing started in each queue, 30 seconds at most; it shows whether each rank holds one queue more than the rank below it ([Serenitea Pot](/docs/genshin/serenitea-pot)).
 - [ ] `realm-load.png` — one realm area's load traffic light at a few placements, with its load figure visible; it names the load each area holds, the number the placement editor waits on ([Serenitea Pot](/docs/proposals/genshin/serenitea-pot)).
+- [ ] `archive-screen.mkv` — the Archive opened from the Paimon menu on the English PC client, a section’s tab and one of its open entries in view, 30 seconds at most; the screen’s places and the sections’ look are measured from it.
 
 ## Opening
 
