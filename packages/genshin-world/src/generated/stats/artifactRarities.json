@@ -1,0 +1,558 @@
+[
+  {
+    "affixLevels": [
+      4,
+      8,
+      12,
+      16,
+      20
+    ],
+    "baseExperience": 420,
+    "levelExperiences": [
+      600,
+      750,
+      875,
+      1025
+    ],
+    "maxLevel": 4,
+    "minorAffixGroups": [
+      {
+        "attribute": "FIGHT_PROP_HP",
+        "values": [
+          23.9,
+          29.88
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_HP_PERCENT",
+        "values": [
+          0.0117,
+          0.0146
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_ATTACK",
+        "values": [
+          1.56,
+          1.95
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+        "values": [
+          0.0117,
+          0.0146
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_DEFENSE",
+        "values": [
+          1.85,
+          2.31
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_DEFENSE_PERCENT",
+        "values": [
+          0.0146,
+          0.0182
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_CHARGE_EFFICIENCY",
+        "values": [
+          0.013,
+          0.0162
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_ELEMENT_MASTERY",
+        "values": [
+          4.66,
+          5.83
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_CRITICAL",
+        "values": [
+          0.0078,
+          0.0097
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_CRITICAL_HURT",
+        "values": [
+          0.0155,
+          0.0194
+        ]
+      }
+    ],
+    "rarity": 1
+  },
+  {
+    "affixLevels": [
+      4,
+      8,
+      12,
+      16,
+      20
+    ],
+    "baseExperience": 840,
+    "levelExperiences": [
+      1200,
+      1500,
+      1775,
+      2050
+    ],
+    "maxLevel": 4,
+    "minorAffixGroups": [
+      {
+        "attribute": "FIGHT_PROP_HP",
+        "values": [
+          50.19,
+          60.95,
+          71.7
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_HP_PERCENT",
+        "values": [
+          0.0163,
+          0.0198,
+          0.0233
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_ATTACK",
+        "values": [
+          3.27,
+          3.97,
+          4.67
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+        "values": [
+          0.0163,
+          0.0198,
+          0.0233
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_DEFENSE",
+        "values": [
+          3.89,
+          4.72,
+          5.56
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_DEFENSE_PERCENT",
+        "values": [
+          0.0204,
+          0.0248,
+          0.0291
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_CHARGE_EFFICIENCY",
+        "values": [
+          0.0181,
+          0.022,
+          0.0259
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_ELEMENT_MASTERY",
+        "values": [
+          6.53,
+          7.93,
+          9.33
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_CRITICAL",
+        "values": [
+          0.0109,
+          0.0132,
+          0.0155
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_CRITICAL_HURT",
+        "values": [
+          0.0218,
+          0.0264,
+          0.0311
+        ]
+      }
+    ],
+    "rarity": 2
+  },
+  {
+    "affixLevels": [
+      4,
+      8,
+      12,
+      16,
+      20
+    ],
+    "baseExperience": 1260,
+    "levelExperiences": [
+      1800,
+      2225,
+      2650,
+      3100,
+      3550,
+      4000,
+      4500,
+      5000,
+      5525,
+      6075,
+      6625,
+      7225
+    ],
+    "maxLevel": 12,
+    "minorAffixGroups": [
+      {
+        "attribute": "FIGHT_PROP_HP",
+        "values": [
+          100.38,
+          114.72,
+          129.06,
+          143.4
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_HP_PERCENT",
+        "values": [
+          0.0245,
+          0.028,
+          0.0315,
+          0.035
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_ATTACK",
+        "values": [
+          6.54,
+          7.47,
+          8.4,
+          9.34
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+        "values": [
+          0.0245,
+          0.028,
+          0.0315,
+          0.035
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_DEFENSE",
+        "values": [
+          7.78,
+          8.89,
+          10,
+          11.11
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_DEFENSE_PERCENT",
+        "values": [
+          0.0306,
+          0.035,
+          0.0393,
+          0.0437
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_CHARGE_EFFICIENCY",
+        "values": [
+          0.0272,
+          0.0311,
+          0.035,
+          0.0389
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_ELEMENT_MASTERY",
+        "values": [
+          9.79,
+          11.19,
+          12.59,
+          13.99
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_CRITICAL",
+        "values": [
+          0.0163,
+          0.0186,
+          0.021,
+          0.0233
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_CRITICAL_HURT",
+        "values": [
+          0.0326,
+          0.0373,
+          0.042,
+          0.0466
+        ]
+      }
+    ],
+    "rarity": 3
+  },
+  {
+    "affixLevels": [
+      4,
+      8,
+      12,
+      16,
+      20
+    ],
+    "baseExperience": 2520,
+    "levelExperiences": [
+      2400,
+      2975,
+      3550,
+      4125,
+      4725,
+      5350,
+      6000,
+      6675,
+      7375,
+      8100,
+      8850,
+      9625,
+      10425,
+      12125,
+      14075,
+      16300
+    ],
+    "maxLevel": 16,
+    "minorAffixGroups": [
+      {
+        "attribute": "FIGHT_PROP_HP",
+        "values": [
+          167.3,
+          191.2,
+          215.1,
+          239
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_HP_PERCENT",
+        "values": [
+          0.0326,
+          0.0373,
+          0.042,
+          0.0466
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_ATTACK",
+        "values": [
+          10.89,
+          12.45,
+          14,
+          15.56
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+        "values": [
+          0.0326,
+          0.0373,
+          0.042,
+          0.0466
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_DEFENSE",
+        "values": [
+          12.96,
+          14.82,
+          16.67,
+          18.52
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_DEFENSE_PERCENT",
+        "values": [
+          0.0408,
+          0.0466,
+          0.0525,
+          0.0583
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_CHARGE_EFFICIENCY",
+        "values": [
+          0.0363,
+          0.0414,
+          0.0466,
+          0.0518
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_ELEMENT_MASTERY",
+        "values": [
+          13.06,
+          14.92,
+          16.79,
+          18.65
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_CRITICAL",
+        "values": [
+          0.0218,
+          0.0249,
+          0.028,
+          0.0311
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_CRITICAL_HURT",
+        "values": [
+          0.0435,
+          0.0497,
+          0.056,
+          0.0622
+        ]
+      }
+    ],
+    "rarity": 4
+  },
+  {
+    "affixLevels": [
+      4,
+      8,
+      12,
+      16,
+      20
+    ],
+    "baseExperience": 3780,
+    "levelExperiences": [
+      3000,
+      3725,
+      4425,
+      5150,
+      5900,
+      6675,
+      7500,
+      8350,
+      9225,
+      10125,
+      11050,
+      12025,
+      13025,
+      15150,
+      17600,
+      20375,
+      23500,
+      27050,
+      31050,
+      35575
+    ],
+    "maxLevel": 20,
+    "minorAffixGroups": [
+      {
+        "attribute": "FIGHT_PROP_HP",
+        "values": [
+          209.13,
+          239,
+          268.88,
+          298.75
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_HP_PERCENT",
+        "values": [
+          0.0408,
+          0.0466,
+          0.0525,
+          0.0583
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_ATTACK",
+        "values": [
+          13.62,
+          15.56,
+          17.51,
+          19.45
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+        "values": [
+          0.0408,
+          0.0466,
+          0.0525,
+          0.0583
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_DEFENSE",
+        "values": [
+          16.2,
+          18.52,
+          20.83,
+          23.15
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_DEFENSE_PERCENT",
+        "values": [
+          0.051,
+          0.0583,
+          0.0656,
+          0.0729
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_CHARGE_EFFICIENCY",
+        "values": [
+          0.0453,
+          0.0518,
+          0.0583,
+          0.0648
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_ELEMENT_MASTERY",
+        "values": [
+          16.32,
+          18.65,
+          20.98,
+          23.31
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_CRITICAL",
+        "values": [
+          0.0272,
+          0.0311,
+          0.035,
+          0.0389
+        ]
+      },
+      {
+        "attribute": "FIGHT_PROP_CRITICAL_HURT",
+        "values": [
+          0.0544,
+          0.0622,
+          0.0699,
+          0.0777
+        ]
+      }
+    ],
+    "rarity": 5
+  }
+]

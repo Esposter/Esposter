@@ -1,12 +1,15 @@
 import type { Character } from "#src/models/character/Character";
 
+import englishNameText from "#src/generated/nameText/English.json";
+import artifactExpMaterials from "#src/generated/stats/artifactExpMaterials.json";
 import artifactMainAffixCurves from "#src/generated/stats/artifactMainAffixCurves.json";
+import artifactMainAffixPools from "#src/generated/stats/artifactMainAffixPools.json";
+import artifactRarities from "#src/generated/stats/artifactRarities.json";
 import artifactSets from "#src/generated/stats/artifactSets.json";
 import characterGrowCurves from "#src/generated/stats/characterGrowCurves.json";
 import characters from "#src/generated/stats/characters.json";
 import weaponGrowCurves from "#src/generated/stats/weaponGrowCurves.json";
 import weapons from "#src/generated/stats/weapons.json";
-import englishNameText from "#src/generated/nameText/English.json";
 import { parseStatTables } from "#src/services/character/parseStatTables";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
@@ -39,7 +42,7 @@ const roster: Character[] = ROSTER_IDS.map((id) => ({
   ascension: id === XILONEN_ID ? XILONEN_ASCENSION : 0,
   id,
   level: id === XILONEN_ID ? XILONEN_MAX_LEVEL : 1,
-  weapon: { ascension: 0, id: XILONEN_WEAPON_ID, level: 1 },
+  weapon: { ascension: 0, experience: 0, id: XILONEN_WEAPON_ID, level: 1, refinement: 1 },
 }));
 
 export const props = {
@@ -49,7 +52,10 @@ export const props = {
   maxStamina: STAMINA,
   nameText: englishNameText,
   statTables: parseStatTables({
+    artifactExpMaterials,
     artifactMainAffixCurves,
+    artifactMainAffixPools,
+    artifactRarities,
     artifactSets,
     characterGrowCurves,
     characters,
