@@ -72,11 +72,8 @@ export const stepKit = (
         return undefined;
       }
       isStrikeEnded = kit.normalAttacks.includes(action);
-      endKitAction(kitState, kit);
-    } else {
-      kitState.isAttackQueued = false;
-      endKitAction(kitState, kit);
-    }
+    } else kitState.isAttackQueued = false;
+    endKitAction(kitState, kit);
   }
 
   kitState.comboSeconds += stepSeconds;

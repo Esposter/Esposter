@@ -17,10 +17,10 @@ interface Props {
   characters: Character[];
   // The game's words in the reader's language
   gameText: GameText;
-  // The names the stat tables cite, in the reader's language, by their text id
-  nameText: Readonly<Record<string, string>>;
   // The party's stamina, which the Attributes tab shows with every character's own attributes
   maxStamina: number;
+  // The names the stat tables cite, in the reader's language, by their text id
+  nameText: Readonly<Record<string, string>>;
   // The game's tables the characters' attributes are summed from
   statTables: StatTables;
 }

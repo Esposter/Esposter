@@ -14,7 +14,7 @@ describe(toggleWorldLevelLowering, () => {
     expect(toggleWorldLevelLowering(unlocked, 2, now)).toStrictEqual(unlocked);
   });
 
-  test("World Level 3 is lowered by one, and restored once the cooldown runs", () => {
+  test("world Level 3 is lowered by one, and restored once the cooldown runs", () => {
     expect.hasAssertions();
 
     const lowered = toggleWorldLevelLowering(unlocked, 3, now);
