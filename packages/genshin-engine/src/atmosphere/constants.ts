@@ -9,6 +9,9 @@ import { PrecipitationKind } from "#src/models/atmosphere/PrecipitationKind";
 import { WeatherKind } from "#src/models/atmosphere/WeatherKind";
 import { MathUtils } from "three";
 
+// A sun shadow map is drawn again once the sun has turned this far, a little over the angle it turns in two real
+// Seconds, so a moving sun costs its shadow passes every other second rather than one a frame
+export const SUN_REDRAW_COSINE: number = Math.cos((0.6 * Math.PI) / 180);
 // The sky's shape where a state sets none of its own
 export const DEFAULT_SKY_SHAPE: Readonly<SkyShape> = {
   frontBackBlend: 1,

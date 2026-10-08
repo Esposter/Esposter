@@ -21,6 +21,7 @@ import { useGenshinTuning } from "#src/composables/useGenshinTuning";
 import { usePostPipeline } from "#src/composables/usePostPipeline";
 import { useRegionData } from "#src/composables/useRegionData";
 import { useSky } from "#src/composables/useSky";
+import { useSunShadow } from "#src/composables/useSunShadow";
 import water from "#src/data/windrise/water.json";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
@@ -201,6 +202,8 @@ const gameClock = useSky({
   tilt: SUN_TILT,
   windUniforms,
 });
+// The sun's shadows are drawn again only when the sun, the view or a caster has moved, after the sky has turned the sun
+useSunShadow({ characterBody, enemyMap, sunLight: { cascadedShadowNode, light: sun } });
 // The clock only starts at its held minute, so a minute held anew is set on it
 watch(
   () => heldMinutes,
