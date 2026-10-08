@@ -12,7 +12,6 @@ This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/
 
 - **Cold is the standing weather.** Snow ground and ice cover most of the region, and snow and snowstorms are its regular weather, as on Dragonspine but across a nation. The game's chill zones are play, so here they only thicken fog and snowfall by level.
 - **Warm light against the cold.** Each settlement's Kresnik's Torch is a landmark with warm emissive light and bloom, the brightest point in a pale scene. The region's shade colour is the coldest of any, which makes every torch, window and furnace stand out.
-- **Industry and capital, two kits.** The industrial kit builds factories, rail lines, stations, chimneys and depots. The capital kit builds Snezhnograd's streets, halls and theatre, with the Zapolyarny Palace and the Pale Crown Palace as landmark-tier pieces. Both are fitted against their own exports.
 - **Birch and tundra.** The vegetation species are white birch, which dominates White Birch Snowgrave, dark conifers on the peaks, and sparse tundra grass that shows through the snow in Volkodlak Tundra.
 
 ## How it works
@@ -23,9 +22,6 @@ flowchart TD
   CH -->|higher| FOG[Denser fog and heavier snowfall]
   CH -->|lower| SN[Regular snow weather]
   TO[Kresnik's Torch landmark] --> LT[Warm emissive light and bloom]
-  FP[Landmark footprint] --> KI{Which kit?}
-  KI -->|industry| IN[Factories, rail, chimneys, depots]
-  KI -->|capital| CA[Streets, halls, theatre, palaces]
 ```
 
 ## Areas
@@ -48,12 +44,7 @@ Snezhnograd's main street, the Zapolyarny Palace, The Korolevskiy Theater, Centr
 | :-------------------------------------------------------- | :------------------------------------------- |
 | `packages/genshin-engine/src/noise/createSimplexNoise.ts` | The detail noise of the tundra and the peaks |
 
-New files:
-
-```text
-packages/genshin-world/src/data/regions/snezhnaya.json
-packages/genshin-engine/src/kits/snezhnaya/   ← industrial and capital generators, Kresnik's Torch
-```
+The industrial and capital kits and the Kresnik's Torch are built, as [its as-built page](/docs/genshin/snezhnaya) describes.
 
 ## Sources
 
