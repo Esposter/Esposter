@@ -70,6 +70,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Artifact enhancement](/docs/genshin/artifact-enhancement) | an artifact rolled from its slot's pool and the rarity's minor affixes, enhanced with Artifact EXP at a Mora a point, and locked against fodder      |
 | [Weapon enhancement](/docs/genshin/weapon-enhancement)     | a weapon levelled from ores and fodder at Mora, ascended at each phase's cap, and refined from a copy or a material, its passive waiting on the kits |
 | [Talents](/docs/genshin/talents)                           | each combat talent levelled from 1 to 10 by the game's table, each level paid in Mora and materials at its phase, and the passives each phase opens  |
+| [Constellations](/docs/genshin/constellations)             | each playable character's six constellations from the game's table, activated with its own Stella Fortuna, and the talent its third and fifth raise  |
 | [Character screen](/docs/genshin/character-screen)         | the C screen's frame, its six tabs in the game's words, and the Attributes tab's level and attributes                                                |
 | [Party](/docs/genshin/party)                               | the teams, the one deployed and the member on the field, switched on 1 to 4 past the one second cooldown, each with its own HP, energy and cooldowns |
 | [Interaction](/docs/genshin/interaction)                   | the F prompts over the world: the drops and talks in reach nearest first, F picking up or talking, the wheel and a held F's repeat                   |
@@ -117,6 +118,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - An artifact rolled by the game's pools and the wiki's weights, enhanced with Artifact EXP at a Mora a point, its fodder and its locks as the game keeps them.
 - The F prompts' rules, the bag and its wallet on B, and the wish's published rules with its screen on F3, offering the standard and beginners' wishes from their pools.
 - Original Resin: its count regenerating while the page is closed, its refills from Primogems at the game's daily prices, a claim's price and Adventure EXP, and its counter on the map's top bar.
+- Constellations: each character's six from the game's table, activated with its own Stella Fortuna, which a duplicate draw brings and a five-star past six a Masterless one.
 
 ## Key files
 

@@ -1,11 +1,11 @@
 ---
 title: Talents
-description: Each playable character's three combat talents levelled from 1 by the game's proud skill table, each level raised by the ascension phase it needs and paid in Mora and talent materials, and the passives each phase opens. The stats run writes the table, the upgrade is a pure rule over it, and the Talents tab and the constellations' levels wait on their pages.
+description: Each playable character's three combat talents levelled from 1 by the game's proud skill table, each level raised by the ascension phase it needs and paid in Mora and talent materials, and the passives each phase opens. The stats run writes the table, the upgrade is a pure rule over it, and the Talents tab waits on its page.
 ---
 
 # Talents
 
-A character's three combat talents, the normal attack, the Elemental Skill and the Elemental Burst, are levelled from 1 by the game's own rule: each level costs Mora and talent materials, and needs an ascension phase the character has reached. What is built is the table side, which the stats run writes beside the [character kits](/docs/genshin/character-kits), and the upgrade as a pure rule over the character, its wallet and its bag. The passives are read as the phases open them. The Talents tab that presses an upgrade and the constellations' extra levels are not built, and stay in the [talents proposal](/docs/proposals/genshin/talents).
+A character's three combat talents, the normal attack, the Elemental Skill and the Elemental Burst, are levelled from 1 by the game's own rule: each level costs Mora and talent materials, and needs an ascension phase the character has reached. What is built is the table side, which the stats run writes beside the [character kits](/docs/genshin/character-kits), and the upgrade as a pure rule over the character, its wallet and its bag. The passives are read as the phases open them. The Talents tab that presses an upgrade is not built, and stays in the [talents proposal](/docs/proposals/genshin/talents). A constellation's extra levels are added by the [constellations](/docs/genshin/constellations) page, which no kit reads yet.
 
 ## The tables
 
@@ -49,7 +49,7 @@ A passive has no level. It is open where the character's ascension phase has rea
 
 ## Not built yet
 
-- **The constellations' levels.** A constellation that raises a talent adds to its level, and the rows past 10 are read for it. The level a kit reads is the talent's own until the [constellations](/docs/proposals/genshin/constellations) page is built.
+- **The kit's read of the constellations' levels.** The levels a constellation adds are built, on the [constellations](/docs/genshin/constellations) page. The kit that plays a talent at its own level plus them is the [character kits](/docs/proposals/genshin/character-kits)' and is not built.
 - **The Talents tab's upgrade.** It is pressed on the character screen, whose tabs are a proposal. Nothing calls `upgradeTalent` or `readTalentTables` yet.
 
 ## Key files
