@@ -1,4 +1,4 @@
-import { QueueCommit } from "#src/models/queue/QueueCommit";
+import type { QueueCommit } from "#src/models/queue/QueueCommit";
 
 const getPortKey = ({ authorDate, subject }: QueueCommit): string => `${authorDate} ${subject}`;
 

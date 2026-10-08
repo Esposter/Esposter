@@ -1,4 +1,5 @@
-import { QueueCommit } from "#src/models/queue/QueueCommit";
+import type { QueueCommit } from "#src/models/queue/QueueCommit";
+
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 
