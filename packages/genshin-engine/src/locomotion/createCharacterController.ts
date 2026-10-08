@@ -228,6 +228,7 @@ export const createCharacterController = ({
     place: (placedPosition, placedFacing) => {
       position.copy(placedPosition);
       previousPosition.copy(placedPosition);
+      lastFullPosition.copy(placedPosition);
       velocity.set(0, 0, 0);
       phase.state = LocomotionState.Idle;
       phase.stateSeconds = 0;

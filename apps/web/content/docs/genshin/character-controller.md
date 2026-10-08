@@ -132,7 +132,7 @@ Every speed, height and threshold is a body type's, since how far a character sp
 
 ## Notes
 
-- **A jump from the map places the body**, standing it on the ground at the jump's point facing its yaw, with the follow camera level behind it.
+- **A jump from the map places the body**, standing it on the ground at the jump's point facing its yaw, with the follow camera level behind it, and makes that point where a drowning brings it back to until its stamina is next full on foot.
 - **A party switch changes the body type the next step moves by** and the model drawn on the body, never the body's place or its stamina, which the party shares.
 - **Left Control with `W` held is the browser's close-tab shortcut.** The walk switch is the game's key, so it is pressed apart from a held move ([controls](/docs/genshin/controls)).
 
