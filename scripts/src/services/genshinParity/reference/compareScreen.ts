@@ -34,9 +34,10 @@ const toPercent = (sum: number, count: number): number => (sum / Math.max(count,
 // The reference, ours and their difference side by side in one image, and how far apart they are: the mean over the
 // Compared region, then the same over a grid of cells, row by row, so where they differ is read without looking; the
 // Scores are handed back for the committed report, FLIP's perceptual error among them. A scene's shot is scored again
-// Layer by layer over the families the witness's part target gives at the reference's view, so a family that moves away
-// From the reference shows on its own row even where the frame's score barely moves. With a witness, the scene draws
-// That component's exports in place of its own parts and its image is kept apart from the scene's own
+// Layer by layer over the families the witness's part target gives at the reference's view, over the region its row
+// Scores, so a family that moves away from the reference shows on its own row even where the frame's score barely
+// Moves, and the frame's layer is the row. With a witness, the scene draws that component's exports in place of its
+// Own parts and its image is kept apart from the scene's own
 export const compareScreen = async (referenceId: string, witness?: DerivedAssetComponent): Promise<ParityScore> => {
   const reference = ParityReferenceMap[referenceId];
   if (!reference)
@@ -117,9 +118,8 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
     Object.values(DerivedAssetComponent).find((component) => getComponentReferenceIds(component).includes(referenceId));
   let layers: LayerScore[] = [];
   if (layerComponent) {
-    const { gbuffer, image } = await readReferenceGbuffer(referenceId, layerComponent);
-    const shot = await sharp(shotPath).resize(gbuffer.width, gbuffer.height, { fit: "fill" }).png().toBuffer();
-    layers = await scoreLayers(image, shot, gbuffer);
+    const { gbuffer } = await readReferenceGbuffer(referenceId, layerComponent);
+    layers = await scoreLayers(referenceRegion, shotRegion, gbuffer, region, { height, width });
     for (const layer of layers.toSorted((firstLayer, secondLayer) => getCeiling(secondLayer) - getCeiling(firstLayer)))
       console.log(
         `${layer.name}: ${(layer.coverage * 100).toFixed(1)}% of the frame, colour ${layer.colour.toFixed(2)} ΔE, shape ${layer.shape.toFixed(3)}, tone ${layer.tone.toFixed(2)}%, detail ${layer.detail.toFixed(2)}%, FLIP ${layer.flip.toFixed(4)}, ceiling ${getCeiling(layer).toFixed(4)}`,

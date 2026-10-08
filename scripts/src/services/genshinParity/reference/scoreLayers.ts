@@ -1,4 +1,5 @@
 import type { LayerScore } from "#src/models/genshinParity/reference/LayerScore";
+import type { ParityRegion } from "#src/models/genshinParity/shared/ParityRegion";
 import type { WitnessGbuffer } from "#src/models/genshinParity/shared/WitnessGbuffer";
 import type { Vector } from "#src/models/shared/Vector";
 
@@ -12,41 +13,48 @@ import { toLinear } from "#src/services/shared/toLinear";
 import { toXyz } from "#src/services/shared/toXyz";
 import sharp from "sharp";
 
-// A layer's mask at the G-buffer's size laid onto the structure's width its shape and detail are read at, which the
-// Page's whole-pixel viewport can leave a pixel off the G-buffer's
-const toStructureMask = (mask: Uint8Array, width: number, height: number): Promise<Uint8Array> =>
-  sharp(mask, { raw: { channels: 1, height, width } })
-    .resize(STRUCTURE_WIDTH, height, { fit: "fill", kernel: "nearest" })
-    .toColourspace("b-w")
-    .raw()
-    .toBuffer();
-// An image's pixels at the G-buffer's size, three channels each
-const readPixels = (image: Buffer, width: number, height: number): Promise<Buffer> =>
-  sharp(image).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
-// A shot scored against its reference layer by layer, each layer the pixels the witness's part target gives one family
-// Of the scene's parts, and the sky the pixels no part covers: the CIELab distance between their mean colours, its
-// Shape, tone and detail over its pixels alone, and the FLIP error averaged over them, read once over the whole frame
-// At the G-buffer's size as on a full screen. The frame itself is the first row
-export const scoreLayers = async (reference: Buffer, shot: Buffer, gbuffer: WitnessGbuffer): Promise<LayerScore[]> => {
-  const { families, height, part, width } = gbuffer;
-  const pixelCount = width * height;
+// An image's pixels at the structure's size, three channels each
+const readPixels = (image: Buffer, height: number): Promise<Buffer> =>
+  sharp(image).resize(STRUCTURE_WIDTH, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
+// A shot scored against its reference layer by layer, both cut to the reference's scored region and read at the
+// Structure's width as `compare` scores its row, so the frame's layer is that row: each layer the pixels the witness's
+// Part target gives one family of the scene's parts, each pixel's family read off the G-buffer at its place in the
+// Frame, and the sky the pixels no part covers. Each has the CIELab distance between their mean colours, its shape,
+// Tone and detail over its pixels alone, and the FLIP error averaged over them, read once over the region as on a full
+// Screen. The frame itself is the first row
+export const scoreLayers = async (
+  reference: Buffer,
+  shot: Buffer,
+  { families, height: gbufferHeight, part, width: gbufferWidth }: WitnessGbuffer,
+  // The region both images are cut from, in the frame's own pixels, and the frame's size
+  region: ParityRegion,
+  frame: { height: number; width: number },
+): Promise<LayerScore[]> => {
+  const { height: regionHeight = 0, width: regionWidth = 0 } = await sharp(reference).metadata();
+  const height = Math.round((STRUCTURE_WIDTH / regionWidth) * regionHeight);
+  const pixelCount = STRUCTURE_WIDTH * height;
+  // Each pixel's G-buffer pixel, at the pixel's middle's place in the frame
+  const gbufferPixels = Uint32Array.from({ length: pixelCount }, (_value, pixel) => {
+    const frameX = region.x + ((pixel % STRUCTURE_WIDTH) + 0.5) * (region.width / STRUCTURE_WIDTH);
+    const frameY = region.y + (Math.floor(pixel / STRUCTURE_WIDTH) + 0.5) * (region.height / height);
+    const column = Math.min(gbufferWidth - 1, Math.floor((frameX / frame.width) * gbufferWidth));
+    const row = Math.min(gbufferHeight - 1, Math.floor((frameY / frame.height) * gbufferHeight));
+    return row * gbufferWidth + column;
+  });
   const masks = [
     { mask: undefined, name: FRAME_LAYER },
     ...families.map((name, familyIndex) => ({
-      mask: Uint8Array.from({ length: pixelCount }, (_value, pixel) =>
-        Number(part[pixel * 4] !== 0 && part[pixel * 4 + 1] === familyIndex),
+      mask: Uint8Array.from(gbufferPixels, (gbufferPixel) =>
+        Number(part[gbufferPixel * 4] !== 0 && part[gbufferPixel * 4 + 1] === familyIndex),
       ),
       name: name || "unnamed",
     })),
-    {
-      mask: Uint8Array.from({ length: pixelCount }, (_value, pixel) => Number(part[pixel * 4] === 0)),
-      name: SKY_LAYER,
-    },
+    { mask: Uint8Array.from(gbufferPixels, (gbufferPixel) => Number(part[gbufferPixel * 4] === 0)), name: SKY_LAYER },
   ].filter(({ mask }) => !mask || mask.includes(1));
   const [{ errorMap }, referencePixels, shotPixels] = await Promise.all([
-    readFlipErrorMap(reference, shot, width, height),
-    readPixels(reference, width, height),
-    readPixels(shot, width, height),
+    readFlipErrorMap(reference, shot, STRUCTURE_WIDTH, height),
+    readPixels(reference, height),
+    readPixels(shot, height),
   ]);
   // An image's mean colour over a mask in CIELab, its pixels decoded to linear light before they are averaged
   const readMeanLab = (pixels: Buffer, mask: Uint8Array | undefined): Vector => {
@@ -61,10 +69,9 @@ export const scoreLayers = async (reference: Buffer, shot: Buffer, gbuffer: Witn
   };
   return Promise.all(
     masks.map(async ({ mask, name }) => {
-      const structureMask = mask && (await toStructureMask(mask, width, height));
       const [{ edgeScore, toneDifference }, detail] = await Promise.all([
-        scoreStructure(reference, shot, structureMask),
-        scoreDetail(reference, shot, structureMask),
+        scoreStructure(reference, shot, mask),
+        scoreDetail(reference, shot, mask),
       ]);
       let flipSum = 0;
       let count = 0;
