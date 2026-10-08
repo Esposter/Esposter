@@ -99,6 +99,16 @@ What still separates the recreation from the whole game once the world and its p
 | [Domains](/docs/proposals/genshin/domains)                           | entrances, levels by rank, scenes of their own, the days' materials and the Petrified Tree       |
 | [Ley line outcrops](/docs/proposals/genshin/ley-line-outcrops)       | each region's two blossoms, fought, claimed and moved on by the game's own groups                |
 | [Bosses](/docs/proposals/genshin/bosses)                             | normal bosses' arenas, moves and blossoms, and weekly bosses claimed once a week                 |
+| [Spawned places](/docs/proposals/genshin/spawned-places)             | where the servers' chests, Oculi, puzzles and camps stand, fitted from the official map's points |
+| [Map unlocking](/docs/proposals/genshin/map-unlocking)               | waypoints, statues and domains unlocked by reaching them, and areas filled in on the map         |
+| [Statues of The Seven](/docs/proposals/genshin/statues-of-the-seven) | Oculi offered for the region's levels and stamina, the Statue's Blessing, and the Traveler       |
+| [Offering systems](/docs/proposals/genshin/offering-systems)         | the regions' sacred trees, fountains and shrines, each taking its items for its levels           |
+| [Elemental Sight](/docs/proposals/genshin/elemental-sight)           | the world muted and what matters lit, enemies named, and trails drawn                            |
+| [Chests](/docs/proposals/genshin/chests)                             | five kinds at their fitted places, locked, dug or sealed, and their rewards                      |
+| [Puzzles](/docs/proposals/genshin/puzzles)                           | mechanisms as state machines, monuments, Seelies, time trials and the Shrines of Depths          |
+| [Exploration progress](/docs/proposals/genshin/exploration-progress) | each area's percentage on the map, and a nation's thresholds of Reputation                       |
+| [Commissions](/docs/proposals/genshin/commissions)                   | the game's daily tasks, their rewards, Katheryne's bonus and Encounter Points                    |
+| [Reputation](/docs/proposals/genshin/reputation)                     | each nation's levels from bounties, requests and exploration, and their rewards                  |
 
 ## Scope and order
 

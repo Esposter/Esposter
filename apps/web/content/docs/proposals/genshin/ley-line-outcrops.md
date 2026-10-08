@@ -41,7 +41,7 @@ stateDiagram-v2
 ## Data and measures
 
 - **Read from the game's tables:** `BlossomGroupsExcelConfigData`, `BlossomSectionOrderExcelConfigData`, `BlossomRefreshExcelConfigData`, `BlossomOpenExcelConfigData` and `BlossomChestExcelConfigData`, with the claims' reward rows.
-- **Still to find:** where each place stands. The groups table names each by the game's scene group, and whether the client's scene data places those groups is not yet known; the official interactive map's marks are the fallback, fitted to the game's coordinates as the region's landmarks are.
+- **Placed by the spawned places:** the table names each place by the game's scene group, which runs on its servers, so each place is the official map's outcrop mark fitted into the world ([spawned places](/docs/proposals/genshin/spawned-places)).
 - **Read from the wiki:** each region's enemies at an outcrop, and its rewards by World Level.
 
 ## Key files
