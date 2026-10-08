@@ -41,6 +41,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: "File:Everfrozen Earth.png",
   },
+  // The English PC client's quit prompt, the wiki's 799 by 475 crop of its three buttons over the world, with no whole
+  // Frame behind them, so its scale is a call the Recordings owed list settles before the prompt is scored
+  "exit-prompt": { screen: "MenuExit", wikiTitle: "File:Paimon Menu Exit Prompt.png" },
   // The English PC client's Adventurer Handbook open at its experience, the wiki's screenshot, against which the
   // Book's tabs are placed while its pages wait on what they track
   "handbook-experience": { screen: "HandbookScreen", wikiTitle: "File:Adventurer Handbook Experience.png" },
@@ -53,6 +56,17 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     props: { language: "ChineseSimplified" },
     screen: "SplashHealthNotice",
     seconds: 9.5,
+  },
+  // The English PC client's world HUD from the public recording of a session at 70 seconds, its black letterbox bars
+  // Cropped away and its subtitles left out of the region scored. The HUD is drawn over the recording's own frame, so
+  // A piece the HUD drops reads as the game's own (the screen is shot bare too, `isBackdrop` only shows the overlay)
+  "hud-world-pickup": {
+    capture: "world-pickup.mkv",
+    crop: { height: 935, width: 1920, x: 0, y: 72 },
+    isBackdrop: true,
+    region: { height: 880, width: 1920, x: 0, y: 0 },
+    screen: "HudScreen",
+    seconds: 70,
   },
   // Inazuma City from the wiki's 4K location image, a daytime haze with its sun's minute unread (noon provisionally).
   // Its build is not stated, so it is read as current and a red camera pass reopens it. Its landmarks are rigid
@@ -78,6 +92,20 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: "File:Inazuma City.png",
   },
+  // The English PC client's pickup at 1080 high: three drops in reach, the first row selected with its F cap, from a public
+  // Tutorial's recording at 9 seconds with no caption over it, the cap held on that row from 7 to 13 seconds. Drawn behind the prompt list, so only the list's own
+  // Pieces can differ, and the scene the list's pills show through is the game's own; the streamer's camera sits outside
+  // The region
+  "interaction-prompts-pickup": {
+    capture: "world-pickup.mkv",
+    isBackdrop: true,
+    region: { height: 220, width: 370, x: 1095, y: 430 },
+    screen: "InteractionPromptList",
+    seconds: 9,
+  },
+  // The English PC client's character screen on Xilonen's Attributes tab at 21:9, from the user's own recording of the
+  // Current build (session-2.mp4 at 154 seconds). Its scene is the background, so the score covers its pieces alone
+  "character-attributes": { capture: "session-2.mp4", screen: "CharacterScreen", seconds: 154 },
   // The weapons' tab of the bag at 1080 high, from a public account tour's recording of the English PC client, its frame
   // At 30 seconds into the clip, drawn behind the bag so only the bag can differ. The streamer's camera at the top left
   // And the recording's UID at the bottom right sit outside the region
