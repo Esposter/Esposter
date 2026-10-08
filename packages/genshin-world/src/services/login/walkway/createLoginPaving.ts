@@ -1,13 +1,12 @@
 import type { LoginPaving } from "#src/models/login/LoginPaving";
 
 import paving from "#src/data/login/paving.json";
-import stone from "#src/data/login/stone.json";
 import { SceneAxis } from "#src/models/scene/SceneAxis";
 import { createPlanCanvasNode } from "#src/services/login/scene/createPlanCanvasNode";
 import { createPlanTonesNode } from "#src/services/login/scene/createPlanTonesNode";
 import { LOGIN_PAVING_PIXELS_PER_METRE } from "#src/services/login/walkway/constants";
-import { addSmoothLoop, createStoneGlowNode, MAX_BYTE } from "genshin-engine";
-import { abs, float, mix, normalView, transformNormalToView, vec3 } from "three/tsl";
+import { addSmoothLoop, MAX_BYTE } from "genshin-engine";
+import { mix, normalView, transformNormalToView, vec3 } from "three/tsl";
 
 // The box a rim is blurred by, twice over: a quarter of the rim's width either side, and a pixel at the least
 const BEVEL_PIXELS = Math.max(Math.round((paving.bevel.width * LOGIN_PAVING_PIXELS_PER_METRE) / 4), 1);
@@ -48,10 +47,7 @@ const blurChannel = (values: Float32Array, width: number, height: number, radius
 // Pockets and the grooves filled as smooth curves and blurred over the rim's width into the stone's depth, whose
 // Slopes across and along the walkway are the canvas's red and green about their middle. The normal tilts by the slopes
 // On the tops alone, a rim falling its fitted slope's and width's depth; the shade is the tones its textures paint the
-// Tops in, drawn once over the repeat of their pattern and read again along the copy (`createPlanTonesNode`); the glow
-// Is each glowing material's own (`createStoneGlowNode`) where it draws: its middle lane's where the tops draw with it,
-// And its borders' and curbs' there and on every face but the tops, which their material draws, as the canvas's blue
-// Holds them, the lane whole and the borders half
+// Tops in, drawn once over the repeat of their pattern and read again along the copy (`createPlanTonesNode`)
 export const createLoginPaving = (): LoginPaving => {
   const plan = {
     axes: [SceneAxis.X, SceneAxis.Z],
@@ -62,46 +58,35 @@ export const createLoginPaving = (): LoginPaving => {
   } as const;
   const { sample, weight } = createPlanCanvasNode(plan, (context, toCanvas) => {
     const { height, width } = context.canvas;
-    const getFilledShares = (): Float32Array => {
-      const { data } = context.getImageData(0, 0, width, height);
-      return Float32Array.from({ length: width * height }, (_value, pixel) => (data[pixel * 4] ?? 0) / MAX_BYTE);
-    };
-    // Loops straight from point to point, cut square as the materials' faces are
-    const toPath = (loops: readonly (readonly (readonly number[])[])[]): Path2D => {
-      const path = new Path2D();
-      for (const loop of loops) {
-        for (const [index, point] of loop.entries()) {
-          const [x, y] = toCanvas(point);
-          if (index === 0) path.moveTo(x, y);
-          else path.lineTo(x, y);
-        }
-        path.closePath();
-      }
-      return path;
-    };
-    context.fillStyle = "#fff";
-    const [laneShares, edgeShares] = [paving.glows.walkwayLane, paving.glows.walkwayEdge].map((loops) => {
-      context.clearRect(0, 0, width, height);
-      // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
-      context.fill(toPath(loops), "evenodd");
-      return getFilledShares();
-    });
-    context.clearRect(0, 0, width, height);
     const pockets = new Path2D();
     for (const pocket of paving.pockets)
       addSmoothLoop(
         pockets,
         pocket.map((point) => toCanvas(point)),
       );
+    context.fillStyle = "#fff";
     // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
     context.fill(pockets);
+    const getFilledShares = (): Float32Array => {
+      const { data } = context.getImageData(0, 0, width, height);
+      return Float32Array.from({ length: width * height }, (_value, pixel) => (data[pixel * 4] ?? 0) / MAX_BYTE);
+    };
     // A groove falls its own slope's share of a rim's depth
     const grooveByte = Math.round(Math.min(paving.grooveSlope / paving.bevel.slope, 1) * MAX_BYTE);
     context.globalCompositeOperation = "lighten";
     context.fillStyle = `rgb(${grooveByte} ${grooveByte} ${grooveByte})`;
+    const grooves = new Path2D();
     // A joint runs straight and turns square, and the bricks it runs round are holes in its loop
+    for (const groove of paving.grooves) {
+      for (const [index, point] of groove.entries()) {
+        const [x, y] = toCanvas(point);
+        if (index === 0) grooves.moveTo(x, y);
+        else grooves.lineTo(x, y);
+      }
+      grooves.closePath();
+    }
     // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
-    context.fill(toPath(paving.grooves), "evenodd");
+    context.fill(grooves, "evenodd");
     const depths = getFilledShares();
     blurChannel(depths, width, height, BEVEL_PIXELS);
     const image = context.getImageData(0, 0, width, height);
@@ -116,10 +101,6 @@ export const createLoginPaving = (): LoginPaving => {
         (depths[Math.min(row + 1, height - 1) * width + column] ?? 0);
       image.data[pixel * 4] = toByte(across / 2);
       image.data[pixel * 4 + 1] = toByte(along / 2);
-      const lane = laneShares?.[pixel] ?? 0;
-      image.data[pixel * 4 + 2] = Math.round(
-        Math.min(lane + ((edgeShares?.[pixel] ?? 0) * (1 - lane)) / 2, 1) * MAX_BYTE,
-      );
       image.data[pixel * 4 + 3] = MAX_BYTE;
     }
     context.putImageData(image, 0, 0);
@@ -130,13 +111,7 @@ export const createLoginPaving = (): LoginPaving => {
     .mul(2)
     .sub(1)
     .mul((paving.bevel.slope * paving.bevel.width * LOGIN_PAVING_PIXELS_PER_METRE) / BEVEL_PEAK_PIXELS);
-  // The lane whole and the borders half, each read back to its share, and the borders on every face the tops are not
-  const laneShare = sample.b.mul(2).sub(1).saturate();
-  const edgeShare = mix(float(1), float(1).sub(abs(sample.b.mul(2).sub(1))), weight);
   return {
-    glow: createStoneGlowNode(stone.walkwayLane)
-      .mul(laneShare.mul(weight))
-      .add(createStoneGlowNode(stone.walkwayEdge).mul(edgeShare)),
     normalNode: mix(normalView, transformNormalToView(vec3(slopes.x, 1, slopes.y).normalize()), weight),
     shade: createPlanTonesNode({ ...plan, size: paving.paint.size }, paving.paint),
   };
