@@ -1,10 +1,10 @@
+import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
+
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { GameTextKey } from "genshin-text";
 
 // Each screen's title in the game's words, which its Paimon menu entry and its placeholder show
-export const ScreenKindGameTextKeyMap: Readonly<
-  Record<Exclude<ScreenKind, ScreenKind.PaimonMenu | ScreenKind.World>, GameTextKey>
-> = {
+export const ScreenKindGameTextKeyMap: Readonly<Record<TitledScreenKind, GameTextKey>> = {
   [ScreenKind.Achievements]: GameTextKey.Achievements,
   [ScreenKind.AdventurerHandbook]: GameTextKey.AdventurerHandbook,
   [ScreenKind.Archive]: GameTextKey.Archive,

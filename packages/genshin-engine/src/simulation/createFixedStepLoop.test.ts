@@ -16,6 +16,15 @@ describe(createFixedStepLoop, () => {
     expect(step).toHaveBeenCalledTimes(2);
   });
 
+  test("gives how far the time left over has come into the next step", () => {
+    expect.hasAssertions();
+
+    const loop = createFixedStepLoop(STEP_SECONDS, vi.fn<() => void>());
+    loop.advance(STEP_SECONDS * 1.5);
+
+    expect(loop.getStepShare()).toBe(0.5);
+  });
+
   test("runs at most the most steps a frame, and drops what it cannot run", () => {
     expect.hasAssertions();
 

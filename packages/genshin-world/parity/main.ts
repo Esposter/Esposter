@@ -27,6 +27,7 @@ import { setWitnessView } from "#parity/witness/setWitnessView";
 import { SceneContextKey } from "#src/services/scene/SceneContextKey";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { capitalize, jsonDateParse } from "@esposter/shared";
+import { checkIsGameLanguage, GameTextLoaderMap } from "genshin-text";
 
 // One screen at a time, by `?screen=<Name>`, or the list of them. `&motion` asks for a motion held at its start for the
 // Tool that shoots it to set each moment: `entry` holds the screen's own animations as it mounts, and `props` lets
@@ -65,6 +66,10 @@ if (screen && root) {
     ...(variant ? screen.variants?.[variant] : {}),
     ...(referenceProps ? jsonDateParse<Record<string, unknown>>(referenceProps) : {}),
   });
+  // A reference in another language hands a screen taking the game's words that language's own, as its reader sees them
+  const { language } = props;
+  if ("gameText" in props && typeof language === "string" && checkIsGameLanguage(language))
+    props.gameText = await GameTextLoaderMap[language]();
   const backdrop = searchParameters.get("backdrop");
   // Drawn pixel for pixel, since it is scaled by the page's device ratio alone, so it matches its reference exactly
   if (backdrop)

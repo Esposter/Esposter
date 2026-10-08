@@ -53,7 +53,7 @@ flowchart TD
   G -->|"within noise, frozen"| A{"9 Atmosphere: haze by depth and height, sky over clear pixels, clouds by statistics"}
   REC --> A
   A -->|"off"| A
-  A -->|"within noise, frozen"| N{"10 Audio: each sound's bands and onset"}
+  A -->|"within noise, frozen"| N{"10 Audio: each sound's bands"}
   REC --> N
   N -->|"within noise, frozen"| X["Acceptance: compare's perceptual score and the user's eye"]
   X -->|"stands off"| W["The pass whose measure missed it reopens"]

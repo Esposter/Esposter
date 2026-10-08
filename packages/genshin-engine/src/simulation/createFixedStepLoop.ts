@@ -17,5 +17,6 @@ export const createFixedStepLoop = (stepSeconds: number, step: () => void): Fixe
       }
       if (accumulator >= stepSeconds) accumulator = 0;
     },
+    getStepShare: () => accumulator / stepSeconds,
   };
 };

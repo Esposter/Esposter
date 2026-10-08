@@ -1,1 +1,16 @@
-{ "id": "liyue", "landmarks": [] }
+{
+  "enemyCamps": [],
+  "id": "liyue",
+  "landmarks": [
+    {
+      "areaId": "sea-of-clouds",
+      "building": { "kit": "Liyue", "options": { "depth": 12, "roofTierCount": 3, "storeyHeight": 5, "width": 18 } },
+      "heightOffset": 0,
+      "id": "liyue-harbor",
+      "kind": "Building",
+      "position": { "x": -2390, "z": -1560 },
+      "rotation": 0
+    }
+  ],
+  "residents": []
+}

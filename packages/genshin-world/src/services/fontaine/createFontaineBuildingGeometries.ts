@@ -177,7 +177,7 @@ export const createFontaineBuildingGeometries = ({
     ),
   ];
 
-  // A lamp post stands at each front corner, its lantern on the post's head
+  // An iron lamp post stands at each front corner, its gold lantern on the post's head
   const lampPostGeometry = createLatheStackGeometry({
     isFaceted: false,
     radialSegments: FONTAINE_LAMP_RADIAL_SEGMENTS,
@@ -205,8 +205,8 @@ export const createFontaineBuildingGeometries = ({
 
   return {
     awningGeometry: createBoxesGeometry(awningBoxes),
-    goldGeometry: mergeGeometryParts([createBoxesGeometry(goldBoxes), ...lampPostParts]),
-    ironGeometry: createBoxesGeometry(ironBoxes),
+    goldGeometry: createBoxesGeometry(goldBoxes),
+    ironGeometry: mergeGeometryParts([createBoxesGeometry(ironBoxes), ...lampPostParts]),
     slateGeometry: mergeGeometryParts([...roofParts, createBoxesGeometry(slateBoxes)]),
     stoneGeometry: mergeGeometryParts([createBoxesGeometry(stoneBoxes), ...archParts]),
   };

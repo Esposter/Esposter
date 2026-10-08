@@ -3,6 +3,7 @@ import type { CommandDef } from "citty";
 import { behavioursCommand } from "#src/services/genshinAssets/commands/behavioursCommand";
 import { clearanceCommand } from "#src/services/genshinAssets/commands/clearanceCommand";
 import { clipsCommand } from "#src/services/genshinAssets/commands/clipsCommand";
+import { enemiesCommand } from "#src/services/genshinAssets/commands/enemiesCommand";
 import { extractCommand } from "#src/services/genshinAssets/commands/extractCommand";
 import { fitCommand } from "#src/services/genshinAssets/commands/fitCommand";
 import { interfaceCommand } from "#src/services/genshinAssets/commands/interfaceCommand";
@@ -34,5 +35,6 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     sounds: soundsCommand,
     playlist: playlistCommand,
     fit: fitCommand,
+    enemies: enemiesCommand,
   },
 });

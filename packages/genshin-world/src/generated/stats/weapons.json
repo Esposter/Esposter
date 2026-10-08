@@ -1,0 +1,56 @@
+[
+  {
+    "ascensionPhases": [
+      {
+        "attributeLines": [],
+        "maxLevel": 20
+      },
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_BASE_ATTACK",
+            "value": 11.7
+          }
+        ],
+        "maxLevel": 40
+      },
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_BASE_ATTACK",
+            "value": 23.3
+          }
+        ],
+        "maxLevel": 50
+      },
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_BASE_ATTACK",
+            "value": 35
+          }
+        ],
+        "maxLevel": 60
+      },
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_BASE_ATTACK",
+            "value": 46.7
+          }
+        ],
+        "maxLevel": 70
+      }
+    ],
+    "growAttributes": [
+      {
+        "attribute": "FIGHT_PROP_BASE_ATTACK",
+        "base": 23.245,
+        "curve": "GROW_CURVE_ATTACK_101"
+      }
+    ],
+    "id": 11101,
+    "rarity": 1,
+    "weaponType": "WEAPON_SWORD_ONE_HAND"
+  }
+]

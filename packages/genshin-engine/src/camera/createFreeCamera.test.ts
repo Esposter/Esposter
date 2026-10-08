@@ -18,6 +18,7 @@ describe(createFreeCamera, () => {
     moveRight: 0,
     moveUp: 0,
     pressedActions: new Set(),
+    zoomSteps: 0,
   };
   const FORWARD_INPUT: InputState = { ...STILL_INPUT, moveForward: 1 };
 

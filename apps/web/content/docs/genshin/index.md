@@ -49,6 +49,9 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Nod-Krai's kits](/docs/genshin/nod-krai-kits)             | Nod-Krai's dieselpunk works and the Frostmoon Scions' stone rings                                        |
 | [Snezhnaya](/docs/genshin/snezhnaya)                       | Snezhnaya's industrial and capital building kits and the Kresnik's Torch                                 |
 | [Free camera](/docs/genshin/free-camera)                   | the camera the world flies: its keys, pointer and gamepad, its fixed steps and the ground it holds above |
+| [Controls](/docs/genshin/controls)                         | the game's default key, mouse and gamepad bindings, read once a frame into the actions held and pressed  |
+| [Screens](/docs/genshin/screens)                           | the screens opened over the world one at a time, what each holds, and the Paimon menu's shell            |
+| [Enemies](/docs/genshin/enemies)                           | enemy kinds and their stats, their AI and camps, respawn and drops, drawn as stand-in capsules           |
 | [Characters](/docs/genshin/characters)                     | the official model packs each character is served from, and the terms shown beside them                  |
 | [Parity](/docs/genshin/parity)                             | matching a screen to the game's: references, tracing, scoring, motion and the visual suite               |
 | [Scene derivation](/docs/genshin/scene-derivation)         | how the game's own assets are re-derived into a scene, each loss priced first                            |
@@ -79,6 +82,8 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - The game's opening: its splashes, health notice, login screen with its flight to the door, and startup loading screen.
 - The game's own words in its fifteen languages, served to the page in the reader's and to the persona plugin.
 - The login's music, its second piece played with public-domain recordings layered over the synthesizer.
+- The game's default controls, and its screens opened over the world from them and from the Paimon menu, an unbuilt screen a placeholder under its title.
+- Enemies: kinds read from the game's tables, an AI on the fixed step, camps, respawn and drops, drawn as capsules.
 
 ## Key files
 

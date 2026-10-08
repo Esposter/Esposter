@@ -6,8 +6,7 @@ import { BufferGeometry, Float32BufferAttribute } from "three";
 // A river's surface as a ribbon along its course, two vertices a point across it at the water's width and level. Across
 // The ribbon u runs from one bank to the other, and down the course v runs in metres from the head, so a texture or a
 // Flow reads downstream. A bend gathers foam on its outer bank, by how sharply the course turns there for the river's
-// Width, written per vertex so the water material reads it and the inner bank stays clear. The course needs two points
-// Or more to have a direction
+// Width, written per vertex so the water material reads it and the inner bank stays clear
 export const createRiverGeometry = (course: readonly RiverCoursePoint[]): BufferGeometry => {
   const positions: number[] = [];
   const uvs: number[] = [];
@@ -21,9 +20,19 @@ export const createRiverGeometry = (course: readonly RiverCoursePoint[]): Buffer
     const inLength = Math.hypot(x - previous.x, z - previous.z);
     const outLength = Math.hypot(next.x - x, next.z - z);
     downstream += inLength;
-    const tangentX = next.x - previous.x;
-    const tangentZ = next.z - previous.z;
-    const tangentLength = Math.hypot(tangentX, tangentZ);
+    // A course turning straight back has its neighbours on one place, so the point takes the way it came in, or else
+    // The way it goes out; a point with neither, alone or on both its neighbours, narrows to nothing
+    let tangentX = next.x - previous.x;
+    let tangentZ = next.z - previous.z;
+    if (tangentX === 0 && tangentZ === 0) {
+      tangentX = x - previous.x;
+      tangentZ = z - previous.z;
+    }
+    if (tangentX === 0 && tangentZ === 0) {
+      tangentX = next.x - x;
+      tangentZ = next.z - z;
+    }
+    const tangentLength = Math.hypot(tangentX, tangentZ) || 1;
     const halfWidth = width / 2;
     const acrossX = (-tangentZ / tangentLength) * halfWidth;
     const acrossZ = (tangentX / tangentLength) * halfWidth;

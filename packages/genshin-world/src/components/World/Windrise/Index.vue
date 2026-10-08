@@ -2,6 +2,7 @@
 import type { QualityTier } from "genshin-engine";
 import type { Vector3 } from "three";
 
+import WorldEnemies from "#src/components/World/Enemies/Index.vue";
 import WorldGrass from "#src/components/World/Grass/Index.vue";
 import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
 import WorldTerrain from "#src/components/World/Terrain/Index.vue";
@@ -69,6 +70,8 @@ interface Props {
   createTerrainWorker: () => Worker;
   // The game's minute of the day the clock is held at, in place of its running from the region's start
   heldMinutes?: number;
+  // Whether a screen over the world holds its clock, as the game's menus pause its time
+  isHeld?: true;
   // Whether the development tuning panel is shown, which the app decides
   isTuning: boolean;
   // The world coordinate the scene's origin stands on, which the screen's free camera reads the ground through
@@ -78,7 +81,8 @@ interface Props {
   regionDataBaseUrl: string;
 }
 
-const { createTerrainWorker, heldMinutes, isTuning, origin, qualityTier, regionDataBaseUrl } = defineProps<Props>();
+const { createTerrainWorker, heldMinutes, isHeld, isTuning, origin, qualityTier, regionDataBaseUrl } =
+  defineProps<Props>();
 const emit = defineEmits<{ ready: [] }>();
 // The witness render's parts, drawn in place of ours of each family it names when the parity page provides them, beside
 // Ours rather than in the floating origin's group, since the page's tools find the camera among their siblings and stay
@@ -125,7 +129,7 @@ const skyUniforms = createSkyUniforms();
 const baseCloudCoverage = computed(() => (witness?.isAlone.value ? 0 : CLOUD_COVERAGE));
 const baseFogDensity = computed(() => (witness?.isAlone.value ? 0 : FOG_DENSITY));
 const gameClock = useSky({
-  checkIsHeld: () => heldMinutes !== undefined || (witness?.isClockHeld.value ?? false),
+  checkIsHeld: () => Boolean(isHeld) || heldMinutes !== undefined || (witness?.isClockHeld.value ?? false),
   skyKeyframes: WINDRISE_SKY_KEYFRAMES,
   skyTargets: {
     fogUniforms,
@@ -239,5 +243,7 @@ onUnmounted(() => {
       :wind-uniforms
     />
     <WorldLandmarks :hidden-kinds="hiddenLandmarkKinds" :light-uniforms :ramp-texture :region-data-map :wind-uniforms />
+    <!-- Enemies wander where the references show none, so a witness render, judged against them, draws none -->
+    <WorldEnemies v-if="!witness" :is-held :light-uniforms :origin :ramp-texture :region-data-map />
   </TresGroup>
 </template>

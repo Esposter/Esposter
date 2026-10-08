@@ -1,1 +1,27 @@
-{ "id": "natlan", "landmarks": [] }
+{
+  "enemyCamps": [],
+  "id": "natlan",
+  "landmarks": [
+    {
+      "areaId": "toyac-springs",
+      "building": {
+        "kit": "Natlan",
+        "options": {
+          "depth": 8,
+          "platformHeight": 0.6,
+          "roofHeight": 3,
+          "roofKind": "Conical",
+          "wallHeight": 3,
+          "wallThickness": 0.4,
+          "width": 8
+        }
+      },
+      "heightOffset": 0,
+      "id": "people-of-the-springs",
+      "kind": "Building",
+      "position": { "x": -4570, "z": -10190 },
+      "rotation": 0
+    }
+  ],
+  "residents": []
+}

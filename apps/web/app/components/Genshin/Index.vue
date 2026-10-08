@@ -21,6 +21,7 @@ const gameText = await useGameText();
     <ClientOnly>
       <LazyGenshinWorld
         v-if="isDoorOpened"
+        :game-text="gameText.text"
         :is-paused="isOpeningShown || undefined"
         @load="isLoaded = true"
         @ready="isReady = true"
