@@ -35,7 +35,7 @@ flowchart TD
 
 ## Scope
 
-**Today:** the terrain's tiles are generated from a region's height function and painted by a region's colour function, in vertex colours. Windrise's is Gaussian hills fitted to the game's own terrain tiles; its colours are grass in patches and rock on steep faces.
+**Today:** the terrain's tiles are generated from a region's height function and painted by a region's colour function, in vertex colours. Windrise's is Gaussian hills fitted to the game's own terrain tiles; its colours are grass in patches and rock on steep faces. The layers the composition sums (hills, cliff, ridge and plateau features, and the residual's noise) are built as [terrain shape height](/docs/genshin/terrain-shape-height); no region has fitted features or a residual yet.
 
 **This adds:**
 
