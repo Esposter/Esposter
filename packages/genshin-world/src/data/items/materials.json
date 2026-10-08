@@ -1,0 +1,26 @@
+[
+  {
+    "id": 112005,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "461826100",
+    "rank": 10602,
+    "rarity": 1,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112006,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3015475460",
+    "rank": 10602,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112007,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1726035172",
+    "rank": 10602,
+    "rarity": 3,
+    "stackLimit": 9999
+  }
+]
