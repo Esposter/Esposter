@@ -13,3 +13,7 @@ export const PARTY_MEMBER_INPUT_ACTIONS: readonly InputAction[] = [
   InputAction.SwitchToPartyMember3,
   InputAction.SwitchToPartyMember4,
 ];
+// The share of its Max HP each member of a team that has all fallen comes back with, at the nearest waypoint
+export const REVIVE_HEALTH_SHARE = 0.35;
+// The share of its Max HP every member of the team loses when the one on the field drowns
+export const DROWN_HEALTH_SHARE_LOSS = 0.1;

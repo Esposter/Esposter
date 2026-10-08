@@ -1,6 +1,7 @@
 import { PartySwitchResult } from "#src/models/party/PartySwitchResult";
 import { PARTY_SWITCH_COOLDOWN_SECONDS } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
+import { createPartyMember } from "#src/services/party/createPartyMember";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
 import { describe, expect, test } from "vitest";
 
@@ -25,7 +26,7 @@ describe(switchPartyMember, () => {
     expect.hasAssertions();
 
     const party = createParty([1, 2]);
-    party.fallenCharacterIds.push(2);
+    party.characterIdMemberMap.set(2, { ...createPartyMember(), healthShare: 0 });
 
     expect([
       switchPartyMember(party, 1, 0),
