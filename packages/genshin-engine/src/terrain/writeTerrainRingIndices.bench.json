@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/terrain/writeTerrainRingIndices.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.24387999999999863,
+              "name": "32 cells a side",
+              "p99": 0.31870600000000565,
+              "rme": 11.601412460499864,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.9429699999999998,
+              "name": "64 cells a side",
+              "p99": 0.9877120000000003,
+              "rme": 2.3838493946368673,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "writeTerrainRingIndices > 8 drawn tiles"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 1.710630000000009,
+              "name": "32 cells a side",
+              "p99": 2.6213330000000394,
+              "rme": 15.100797093913501,
+              "sampleCount": 10
+            },
+            {
+              "mean": 6.264500000000004,
+              "name": "64 cells a side",
+              "p99": 6.678740999999995,
+              "rme": 2.9673240996624695,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "writeTerrainRingIndices > 64 drawn tiles"
+        }
+      ]
+    }
+  ]
+}

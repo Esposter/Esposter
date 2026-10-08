@@ -1,9 +1,9 @@
 // The regexes `reviews.auto_review.base_branches` lists, read from the file's own lines. The collector reads one YAML
-// document, for this one key, so the grammar is the two forms the file can take: a flow list on the key's line, or a
-// block list of `- item` lines beneath it. A key the file does not carry lists nothing.
+// Document, for this one key, so the grammar is the two forms the file can take: a flow list on the key's line, or a
+// Block list of `- item` lines beneath it. A key the file does not carry lists nothing.
 export const readBaseBranches = (coderabbitYamlText: string): string[] => {
   const lines = coderabbitYamlText.split("\n");
-  const autoReviewIndex = lines.findIndex((line) => /^\s*auto_review:\s*(#.*)?$/u.test(line));
+  const autoReviewIndex = lines.findIndex((line) => /^\s*auto_review:\s*(?<comment>#.*)?$/u.test(line));
   const autoReviewLine = lines[autoReviewIndex];
   if (autoReviewLine === undefined) return [];
 
@@ -22,7 +22,12 @@ export const readBaseBranches = (coderabbitYamlText: string): string[] => {
 
   const keyIndent = getIndent(keyLine);
   const inlineValue = stripComment(keyLine.replace(/^\s*base_branches:/u, "")).trim();
-  if (inlineValue.startsWith("[")) return inlineValue.slice(1, -1).split(",").map(getScalar).filter(Boolean);
+  if (inlineValue.startsWith("["))
+    return inlineValue
+      .slice(1, -1)
+      .split(",")
+      .map((item) => getScalar(item))
+      .filter(Boolean);
 
   const itemLines: string[] = [];
   // A block list may sit at its key's own indent, so only a shallower line or a sibling key ends it
@@ -41,4 +46,4 @@ const checkIsIgnored = (line: string): boolean => line.trim() === "" || line.tri
 
 const stripComment = (text: string): string => text.replace(/\s+#.*$/u, "");
 
-const getScalar = (text: string): string => text.trim().replace(/^(["'])(.*)\1$/u, "$2");
+const getScalar = (text: string): string => text.trim().replace(/^(?<quote>["'])(?<value>.*)\k<quote>$/u, "$<value>");

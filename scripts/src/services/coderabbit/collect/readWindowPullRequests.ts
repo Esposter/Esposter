@@ -1,8 +1,8 @@
 import type { WindowPullRequest } from "#src/models/coderabbit/collect/WindowPullRequest";
 import type { WindowPullRequestListState } from "#src/models/coderabbit/collect/WindowPullRequestListState";
 
-import { PULL_REQUEST_LIST_LIMIT } from "#src/services/coderabbit/collect/constants";
 import { checkIsWindowBranch } from "#src/services/coderabbit/collect/checkIsWindowBranch";
+import { PULL_REQUEST_LIST_LIMIT } from "#src/services/coderabbit/collect/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { runGh } from "#src/services/shared/runGh";
 

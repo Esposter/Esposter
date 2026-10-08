@@ -7,7 +7,7 @@ import { measureCamera } from "#src/services/genshinParity/passes/measureCamera"
 import { describe, expect, test, vi } from "vitest";
 
 const { openWitnessPage, solveReferenceCamera } = vi.hoisted(() => ({
-  openWitnessPage: vi.fn<() => Promise<{ browser: { close: () => Promise<void> }; page: object }>>(),
+  openWitnessPage: vi.fn<() => Promise<{ close: () => Promise<void>; page: object }>>(),
   solveReferenceCamera: vi.fn<() => Promise<{ errors: number[]; names: string[]; pose: number[]; rms: number }>>(),
 }));
 
@@ -36,7 +36,7 @@ describe(measureCamera, () => {
   test("gates each reference at its own pose bar where it sets one, else at the camera pass's gate", async () => {
     expect.hasAssertions();
 
-    openWitnessPage.mockResolvedValue({ browser: { close: () => Promise.resolve() }, page: {} });
+    openWitnessPage.mockResolvedValue({ close: () => Promise.resolve(), page: {} });
     solveReferenceCamera.mockResolvedValue({ errors: [], names: [], pose: [], rms: 5 });
 
     const { readings } = await measureCamera(DerivedAssetComponent.Windrise);

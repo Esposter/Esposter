@@ -12,7 +12,6 @@ import {
   GROUND_CONTACT_DISTANCE,
   GROUND_LOCOMOTION_STATES,
   GROUND_PRESS_SPEED,
-  STAMINA_MAX,
   STEEP_SLIDE_SPEED,
   WALK_MOVE_MAGNITUDE,
   WALL_PRESS_SPEED,
@@ -45,6 +44,7 @@ export const createCharacterController = ({
   ground,
   landmarkCollider,
   position,
+  staminaMaximum,
 }: CharacterControllerOptions): CharacterController => {
   const previousPosition = position.clone();
   const lastFullPosition = position.clone();
@@ -57,7 +57,7 @@ export const createCharacterController = ({
   const capsule = new Capsule();
   const heldPresses = new Set<InputAction>();
   const phase: LocomotionPhase = { state: LocomotionState.Idle, stateSeconds: 0 };
-  const stamina = createStamina();
+  const stamina = createStamina(staminaMaximum);
   const contact: LocomotionContact = {
     isFacingWall: false,
     isGrounded: true,
@@ -270,7 +270,7 @@ export const createCharacterController = ({
       move(locomotion, isMoving, stepSeconds);
       resolve(locomotion, stepSeconds);
       turn(isMoving);
-      if (stamina.value >= STAMINA_MAX && GROUND_LOCOMOTION_STATES.includes(phase.state))
+      if (stamina.value >= stamina.maximum && GROUND_LOCOMOTION_STATES.includes(phase.state))
         lastFullPosition.copy(position);
     },
   };

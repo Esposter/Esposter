@@ -17,13 +17,13 @@ export const readReferenceGbuffer = async (
   camera?: WitnessView["camera"],
 ): Promise<{ gbuffer: WitnessGbuffer; image: Buffer; shot: Buffer }> => {
   await fetchReferences();
-  const { browser, image, page } = await openWitnessPage(referenceId, witness);
+  const { close, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
       await setPageWitnessView(page, { camera });
       const shot = await page.screenshot({ animations: "disabled" });
       return { gbuffer: await readWitnessGbuffer(page), image, shot };
     },
-    () => browser.close(),
+    () => close(),
   );
 };

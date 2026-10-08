@@ -45,7 +45,7 @@ export const solveReferencePose = async (
   rms: number;
 }> => {
   await fetchReferences();
-  const { browser, height: pageHeight, image, page } = await openWitnessPage(referenceId, witness);
+  const { close, height: pageHeight, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
       const { correspondences, given, height, names, width } = await readReferenceLandmarks(
@@ -82,6 +82,6 @@ export const solveReferencePose = async (
       });
       return { errors, imagePath, pose, refinement: { after, before }, rms: solved.rms };
     },
-    () => browser.close(),
+    () => close(),
   );
 };

@@ -29,10 +29,10 @@ import { runGit } from "#src/services/shared/runGit";
 // Is counted on the commit and ends the run, and past the cap the commit is left as it is — the port holds on
 // It, and the held notice says so (docs: infra/review-collector/collection-cycle, "Sync").
 export const reshapeQueue = async ({
+  baseSha,
   collectorSha,
   cwd,
   isDryRun,
-  baseSha,
   targetSha,
   viewerLogin,
 }: ReshapeInput): Promise<boolean> => {

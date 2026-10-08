@@ -14,7 +14,7 @@ const toJson = (value: unknown): string => `${JSON.stringify(value, undefined, 2
 export const writeAdventureRankTables = (): void => {
   const levels = readExcelTable<ExcelPlayerLevelRow>("PlayerLevelExcelConfigData")
     .map(({ exp, level }) => ({ exp, level }))
-    .sort((firstLevel, secondLevel) => firstLevel.level - secondLevel.level);
+    .toSorted((firstLevel, secondLevel) => firstLevel.level - secondLevel.level);
   const locks = readExcelTable<ExcelPlayerLevelLockRow>("PlayerLevelLockExcelConfigData")
     .map(({ playerLevelUpperLimit, unlockMainQuestId, unlockPlayerLevel, worldLevel }) => ({
       rankCap: playerLevelUpperLimit,
@@ -22,10 +22,10 @@ export const writeAdventureRankTables = (): void => {
       unlockPlayerLevel,
       worldLevel,
     }))
-    .sort((firstLock, secondLock) => firstLock.worldLevel - secondLock.worldLevel);
+    .toSorted((firstLock, secondLock) => firstLock.worldLevel - secondLock.worldLevel);
   const worldLevels = readExcelTable<ExcelWorldLevelRow>("WorldLevelExcelConfigData")
     .map(({ level, monsterLevel }) => ({ level, monsterLevel }))
-    .sort((firstWorldLevel, secondWorldLevel) => firstWorldLevel.level - secondWorldLevel.level);
+    .toSorted((firstWorldLevel, secondWorldLevel) => firstWorldLevel.level - secondWorldLevel.level);
   mkdirSync(ADVENTURE_RANK_DATA_DIRECTORY, { recursive: true });
   writeFileSync(join(ADVENTURE_RANK_DATA_DIRECTORY, "levels.json"), toJson(levels));
   writeFileSync(join(ADVENTURE_RANK_DATA_DIRECTORY, "locks.json"), toJson(locks));

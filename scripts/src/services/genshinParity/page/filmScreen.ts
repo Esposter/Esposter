@@ -70,7 +70,7 @@ export const filmScreen = async ({
   const directory = join(FILMS_DIRECTORY, options.screen);
   await rm(directory, { force: true, recursive: true });
   await mkdir(directory, { recursive: true });
-  const { browser, page } = await openParityPage({ ...options, isClockFaked: true });
+  const { close, page } = await openParityPage({ ...options, isClockFaked: true });
   const momentProps = Object.entries(propsAt)
     .map(([ms, props]) => ({ ms: Number(ms), props }))
     .toSorted((firstMoment, secondMoment) => firstMoment.ms - secondMoment.ms);
@@ -94,7 +94,7 @@ export const filmScreen = async ({
       }
       return paths;
     },
-    () => browser.close(),
+    () => close(),
   );
   const sheetPath = join(directory, "sheet.png");
   const sheetFramePaths = beside ? await pairWithRecording(framePaths, directory, beside, stepMs) : framePaths;

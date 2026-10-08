@@ -40,12 +40,15 @@ flowchart TD
 - **A frame's selection allocates nothing.** The quadtree, the draw resolution and the streamer's bookkeeping write into buffers kept for the page. The benches beside `selectTerrainTiles` and `resolveTerrainDraws` hold their cost flat from the origin to fifty kilometres out, at an eye on the ground and one high above.
 - **A tile costs its vertices.** The bench beside `computeTerrainTile` holds its cost to the grid's size, with the region's noise on top.
 - **Draws are the tiles in each pass's camera**, a few dozen in the view, each sharing the one ground material and the one index buffer; the tiles round the eye cost each pass a bounding-sphere test.
+- **The far rings are one mesh a level.** A level past the shadows' reach holds its tiles' arrays rather than a mesh each (`mergeTerrainTiles` lays them end to end, each tile's positions moved to its place), and its one mesh's index names the tiles the view draws (`writeTerrainRingIndices`), rewritten only when that set changes. The mesh is rebuilt when a tile of its level arrives or leaves, and disposed with the level's last tile. Its cost is the arrays it holds, not an object walk per tile; at Windrise's view a handful of far tiles are in sight, so the merge trims the scene's meshes by about a third and the frame's main thread by a few tenths of a millisecond, without cutting the view's draw calls.
 
 ## Key files
 
 | File                                                              | Role                                                                    |
 | :---------------------------------------------------------------- | :---------------------------------------------------------------------- |
 | `packages/genshin-engine/src/terrain/selectTerrainTiles.ts`       | The quadtree walk by distance and frustum                               |
+| `packages/genshin-engine/src/terrain/mergeTerrainTiles.ts`        | A far level's tiles laid end to end, moved to their places              |
+| `packages/genshin-engine/src/terrain/writeTerrainRingIndices.ts`  | The index of the far tiles a level's mesh draws                         |
 | `packages/genshin-engine/src/terrain/resolveTerrainDraws.ts`      | Held tiles drawn, a held ancestor in place of one still coming          |
 | `packages/genshin-engine/src/terrain/computeTerrainTile.ts`       | One tile's heights, normals, colours and the coarser grid's             |
 | `packages/genshin-engine/src/terrain/createTerrainMaterial.ts`    | The unoutlined toon ground, morphing by distance                        |

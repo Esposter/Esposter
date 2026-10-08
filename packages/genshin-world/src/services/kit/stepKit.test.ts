@@ -5,7 +5,7 @@ import { TRAVELER_KIT } from "#src/services/kit/constants";
 import { createKitState } from "#src/services/kit/createKitState";
 import { stepKit } from "#src/services/kit/stepKit";
 import { createPartyMember } from "#src/services/party/createPartyMember";
-import { createStamina, LocomotionState } from "genshin-engine";
+import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 describe(stepKit, () => {
@@ -24,7 +24,7 @@ describe(stepKit, () => {
     const kitState = createKitState();
     const landedHits: KitHit[] = [];
     const partyMember = createPartyMember();
-    const stamina = createStamina();
+    const stamina = createStamina(STAMINA_MAX);
     const step = (input: Partial<KitInput> = {}) => {
       landedHits.length = 0;
       return stepKit(

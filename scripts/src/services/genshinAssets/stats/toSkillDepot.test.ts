@@ -5,21 +5,31 @@ import { toSkillDepot } from "#src/services/genshinAssets/stats/toSkillDepot";
 import { Element } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
-const DEPOT_ID = 1;
-const SKILL_ID = 2;
-const BURST_ID = 3;
-const ELEMENTLESS_BURST_ID = 4;
-
-const skillMap: ReadonlyMap<number, ExcelSkillRow> = new Map<number, ExcelSkillRow>([
-  [BURST_ID, { cdTime: 15, costElemType: "Wind", costElemVal: 60, id: BURST_ID, maxChargeNum: 1 }],
-  [
-    ELEMENTLESS_BURST_ID,
-    { cdTime: 10, costElemType: "None", costElemVal: 0, id: ELEMENTLESS_BURST_ID, maxChargeNum: 1 },
-  ],
-  [SKILL_ID, { cdTime: 5, costElemType: "None", costElemVal: 0, id: SKILL_ID, maxChargeNum: 1 }],
-]);
-
 describe(toSkillDepot, () => {
+  const DEPOT_ID = 1;
+  const SKILL_ID = 2;
+  const BURST_ID = 3;
+  const ELEMENTLESS_BURST_ID = 4;
+
+  const skillMap: ReadonlyMap<number, ExcelSkillRow> = new Map<number, ExcelSkillRow>([
+    [
+      BURST_ID,
+      { cdTime: 15, costElemType: "Wind", costElemVal: 60, id: BURST_ID, maxChargeNum: 1, nameTextMapHash: 0 },
+    ],
+    [
+      ELEMENTLESS_BURST_ID,
+      {
+        cdTime: 10,
+        costElemType: "None",
+        costElemVal: 0,
+        id: ELEMENTLESS_BURST_ID,
+        maxChargeNum: 1,
+        nameTextMapHash: 0,
+      },
+    ],
+    [SKILL_ID, { cdTime: 5, costElemType: "None", costElemVal: 0, id: SKILL_ID, maxChargeNum: 1, nameTextMapHash: 0 }],
+  ]);
+
   test("reads the skill slot and the energy skill, with the burst's element", () => {
     expect.hasAssertions();
     const row: ExcelSkillDepotRow = { energySkill: BURST_ID, id: DEPOT_ID, skills: [0, SKILL_ID, 0, 0] };

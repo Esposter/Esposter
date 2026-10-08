@@ -14,12 +14,12 @@ import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
   character: Character;
-  // The character's name in the reader's language, which the panel's top names it by
-  name: string;
   // The game's words in the reader's language
   gameText: GameText;
   // The party's stamina, which the tab shows with every character's own attributes
   maxStamina: number;
+  // The character's name in the reader's language, which the panel's top names it by
+  name: string;
   // The game's tables the character's level cap and attributes are read from
   statTables: StatTables;
 }

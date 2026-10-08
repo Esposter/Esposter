@@ -18,9 +18,10 @@ export const placeEnemyDrops = (
     ...(mora > 0 ? [{ count: mora, itemId: MORA_ITEM_ID }] : []),
     ...materials.flatMap(({ count, itemId }) => Array.from({ length: count }, () => ({ count: 1, itemId }))),
   ];
-  return droppedItems.map((droppedItem, index) => ({
-    ...droppedItem,
+  return droppedItems.map(({ count, itemId }, index) => ({
+    count,
     id: [campId, id, placedDropCount + index].join(ID_SEPARATOR),
+    itemId,
     position: { x: position.x, z: position.z },
   }));
 };

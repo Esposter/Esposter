@@ -7,4 +7,6 @@ export interface CharacterControllerOptions {
   ground: GroundQuery;
   landmarkCollider: LandmarkCollider;
   position: Vector3;
+  // The most stamina the body starts with and holds, which the Statues of The Seven raise as their levels are reached
+  staminaMaximum: number;
 }

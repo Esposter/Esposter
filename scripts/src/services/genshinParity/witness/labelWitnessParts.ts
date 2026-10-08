@@ -24,7 +24,7 @@ export const labelWitnessParts = async (
   await fetchReferences();
   const referencePath = join(REFERENCES_DIRECTORY, `${referenceId}.png`);
   const { height, width } = await sharp(referencePath).metadata();
-  const { browser, page } = await openWitnessPage(referenceId, witness);
+  const { close, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
       await setPageWitnessView(page, { camera });
@@ -63,6 +63,6 @@ export const labelWitnessParts = async (
       await writeSideBySide(labelledPanels, { height, width }, imagePath);
       return { imagePath, parts };
     },
-    () => browser.close(),
+    () => close(),
   );
 };

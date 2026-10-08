@@ -23,9 +23,9 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One window cut from the top of the stack and opened over it. The fixes and the queue are synced onto `develop`, the
 // Port builds the window measured from the base the bot reviews it against (the top window's head, or `main` when none
-// is open) against the same cap, and the window is pushed and opened over the window below. Every ref is read fresh
-// here, since the previous window moved `develop`. `isWindowOpened` says whether one reached the remote; an empty cut
-// says why not.
+// Is open) against the same cap, and the window is pushed and opened over the window below. Every ref is read fresh
+// Here, since the previous window moved `develop`. `isWindowOpened` says whether one reached the remote; an empty cut
+// Says why not.
 export const openNextWindow = async ({
   collectorSha,
   cwd,
@@ -58,17 +58,17 @@ export const openNextWindow = async ({
   }
   const fixShas = owingFixesSha === undefined ? [] : readCherryShas(developSha, owingFixesSha, cwd);
   const syncedQueueSha = await syncQueue({
+    baseSha,
     collectorSha,
     cwd,
     developSha,
     isDryRun,
-    baseSha,
     owingFixesSha,
     queueSha,
     viewerLogin,
   });
   if (syncedQueueSha === undefined) return { isWindowOpened: false, outcome: getMovedOutcome(QUEUE_BRANCH) };
-  const port = portWindow({ cwd, developSha, fixShas, baseSha, queueSha: syncedQueueSha });
+  const port = portWindow({ baseSha, cwd, developSha, fixShas, queueSha: syncedQueueSha });
   // What `develop` carries above the window below — a window a dying run pushed and never opened — is owed too
   const pendingCommitCount = Number(runGit(["rev-list", "--count", `${baseSha}..${developSha}`], cwd).trim());
   console.info(
@@ -135,17 +135,17 @@ export const openNextWindow = async ({
   const targetSha = isDevelopCarryingWindow
     ? developSha
     : await foldCandidate({
+        baseSha,
         collectorSha,
         cwd,
         developSha,
         fixCount: port.fixCount,
-        baseSha,
         queueSha: syncedQueueSha,
         queueShas: port.queueShas,
         viewerLogin,
       });
   // The fold is the one step the port never measured: on a window stacked above another, the `main` it brings is in the
-  // bot's count, so a cut over the cap is held until the stack below moves and the next run measures it again
+  // Bot's count, so a cut over the cap is held until the stack below moves and the next run measures it again
   const foldedFileCount = readWindowFileCount(baseSha, cwd, targetSha);
   if (!isDevelopCarryingWindow && foldedFileCount > REVIEW_FILE_CAP)
     return {

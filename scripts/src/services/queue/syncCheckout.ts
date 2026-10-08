@@ -36,13 +36,11 @@ export const syncCheckout = (pushed: string, base: string, cwd: string): void =>
   // `find` stops at the first commit that does not carry, which is the one the message names
   const conflicted = landed.find((commit) => !carryCommit(commit, cwd));
   const synced = `synced ${QUEUE_BRANCH} onto ${pushed}`;
-  if (conflicted !== undefined) {
+  if (conflicted !== undefined)
     console.info(
       `${synced}, stopped carrying at ${conflicted}, which does not apply on top of it — it stays in the reflog`,
     );
-  } else if (landed.length > 0) {
+  else if (landed.length > 0)
     console.info(`${synced}, carrying ${landed.length} commit(s) that landed during the push`);
-  } else {
-    console.info(synced);
-  }
+  else console.info(synced);
 };

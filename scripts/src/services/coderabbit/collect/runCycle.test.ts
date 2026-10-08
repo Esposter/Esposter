@@ -103,6 +103,14 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     number,
     state,
   });
+  // The release from `develop` to `main` that predates the stack, which the stack holds as its bottom while it is open
+  const getLegacyPullRequest = (state: WindowPullRequestState): WindowPullRequest => ({
+    baseRefName: MAIN_BRANCH,
+    createdAt: Temporal.Instant.fromEpochMilliseconds(0).toString(),
+    headRefName: DEVELOP_BRANCH,
+    number: pullRequest,
+    state,
+  });
   const openPullRequests: WindowPullRequest[] = [getWindowPullRequest(WindowPullRequestState.Open)];
   const overflowPaths = Array.from({ length: REVIEW_FILE_CAP + 1 }, (_value, index) => `${TEST_FILENAME}/${index}`);
 
@@ -121,7 +129,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     issueComments: GitHubEntry[] = [],
     commitComments: GitHubEntry[] = [],
     mainChecks: MainCheck[] = [],
-    legacyPullRequests: Pick<WindowPullRequest, "number" | "state">[] = [],
+    legacyPullRequests: WindowPullRequest[] = [],
   ) => {
     const windowPullRequestsNow = windowPullRequests.map((windowPullRequest) => ({ ...windowPullRequest }));
     runDrainStep.mockResolvedValue({ reviewFixesSha: undefined } satisfies DrainStepResult);
@@ -603,20 +611,49 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(getPrCalls("create")).toHaveLength(0);
   });
 
-  test("opens nothing over develop while the release pull request from develop is open", async () => {
+  // The open release is the stack's bottom: its one review completing merges it and drains its findings, and the windows
+  // Open over `main` once it has merged, the stroke having followed `main` onto `develop` first
+  test("merges and drains the open release from develop once its review completes, then opens the window", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    const queueSha = publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh([], [], [], [], [], [getLegacyPullRequest(WindowPullRequestState.Open)]);
+    readCheckStatus.mockReturnValue(completedCheck);
+    runSession.mockResolvedValue({ isEnded: true, isStarted: true });
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(getPrCalls("merge")).toStrictEqual([
+      [["pr", "merge", pullRequest.toString(), "--merge", "--admin", "--match-head-commit", developSha]],
+    ]);
+    expect(runDrainStep).toHaveBeenCalledTimes(1);
+    expect(getPrCalls("edit")).toHaveLength(0);
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Opened,
+      reason: getOpenedReason(1),
+      retriggerDelaySeconds: undefined,
+      targetSha: queueSha,
+    });
+    expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(queueSha);
+  });
+
+  test("holds every window while the release from develop is still reviewing", async () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
-    answerGh([], [], [], [], [], [{ number: pullRequest, state: WindowPullRequestState.Open }]);
+    answerGh([], [], [], [], [], [getLegacyPullRequest(WindowPullRequestState.Open)]);
+    readCheckStatus.mockReturnValue({ bucket: PENDING_BUCKET, description: "", name: CHECK_NAME });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
-      reason: `pull request #${pullRequest} from ${DEVELOP_BRANCH} to ${MAIN_BRANCH} is open — no window opens over ${DEVELOP_BRANCH} until a person merges or closes it`,
+      reason: `pull request #${pullRequest} from ${DEVELOP_BRANCH} to ${MAIN_BRANCH} is open — no window opens until its review completes and it merges`,
       retriggerDelaySeconds: undefined,
       targetSha: undefined,
     });
+    expect(getPrCalls("merge")).toHaveLength(0);
+    expect(runDrainStep).not.toHaveBeenCalled();
     expect(getPrCalls("create")).toHaveLength(0);
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });
@@ -626,7 +663,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
-    answerGh([], [], [], [], [], [{ number: pullRequest, state: WindowPullRequestState.Closed }]);
+    answerGh([], [], [], [], [], [getLegacyPullRequest(WindowPullRequestState.Closed)]);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(outcome).toStrictEqual({
@@ -638,7 +675,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(getPrCalls("create")).toHaveLength(0);
   });
 
-  test("opens nothing over an open window while the stacking guard is not on main", async () => {
+  test("opens nothing over an open window while no stacking guard reaches it", async () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
@@ -657,8 +694,33 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runDrainStep).not.toHaveBeenCalled();
   });
 
+  // CodeRabbit reads the guard from the window the next one stacks on, so `main` listing the windows does not open one
+  // Over a window whose own copy lacks the list
+  test("opens nothing over an open window whose own copy lacks the stacking guard, though main carries it", async () => {
+    expect.hasAssertions();
+
+    const configSha = publish(
+      MAIN_BRANCH,
+      commitFile(".coderabbit.yaml", 'reviews:\n  auto_review:\n    base_branches: ["^review/"]\n'),
+    );
+    publish(DEVELOP_BRANCH, configSha);
+    publish(getWindowBranch(pullRequest), deleteFile(".coderabbit.yaml"));
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh(openPullRequests);
+    readCheckStatus.mockReturnValue({ bucket: PENDING_BUCKET, description: "", name: CHECK_NAME });
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: `pull request #${pullRequest} — the review is running`,
+      retriggerDelaySeconds: undefined,
+      targetSha: undefined,
+    });
+    expect(getPrCalls("create")).toHaveLength(0);
+  });
+
   // A window stacked over an open one is cut from the top of the stack, its base the window below it
-  test("stacks the next window over an open one when main's config lets the stack reach it", async () => {
+  test("stacks the next window over an open one when its base's config lets the stack reach it", async () => {
     expect.hasAssertions();
 
     const configSha = publish(
@@ -804,6 +866,71 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       [["pr", "merge", pullRequest.toString(), "--merge", "--admin", "--match-head-commit", headSha]],
     ]);
     expect(runDrainStep).toHaveBeenCalledTimes(1);
+    expect(outcome.reason).toBe(getOpenedReason(1));
+  });
+
+  // The window above a merge is retargeted to `main` before the merged branch goes. When that retarget fails the run ends
+  // There, so nothing merges over a base that is not `main` yet, and the merged branch stays for the next run to retarget
+  test("ends the run without merging the window above when its retarget fails", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    publish(getWindowBranch(pullRequest), developSha);
+    const windowAbove = {
+      ...getWindowPullRequest(WindowPullRequestState.Open, pullRequest + 1),
+      baseRefName: getWindowBranch(pullRequest),
+    };
+    answerGh([...openPullRequests, windowAbove]);
+    const answer = runGh.getMockImplementation();
+    runGh.mockImplementation((args) => {
+      if (args[0] === "pr" && args[1] === "edit") throw new Error("the retarget was refused");
+      return answer?.(args) ?? "";
+    });
+    readCheckStatus.mockReturnValue(completedCheck);
+    runSession.mockResolvedValue({ isEnded: true, isStarted: true });
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: `pull request #${windowAbove.number} could not be retargeted to ${MAIN_BRANCH} — the next run retargets it before it reads the stack`,
+      retriggerDelaySeconds: ATTEMPT_RETRY_DELAY_SECONDS,
+      targetSha: undefined,
+    });
+    expect(getPrCalls("merge")).toHaveLength(1);
+    expect(runDrainStep).toHaveBeenCalledTimes(1);
+    expect(readSha(`origin/${getWindowBranch(pullRequest)}`)).toBe(developSha);
+  });
+
+  // A drain that left the newest merged window's findings open ended the run that merged it: the next run drains it again
+  // First, and nothing is cut over it while one is still open
+  test("holds the cut while the newest merged window's findings stay open", async () => {
+    expect.hasAssertions();
+
+    publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh([getWindowPullRequest(WindowPullRequestState.Merged)]);
+    const drainOutcome = { kind: CycleOutcomeKind.Idle, reason: "the drain could not start — the findings stay open" };
+    runDrainStep.mockResolvedValue({ outcome: drainOutcome, reviewFixesSha: undefined } satisfies DrainStepResult);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(runDrainStep).toHaveBeenCalledTimes(1);
+    expect(runDrainStep.mock.calls[0]?.[0]?.pullRequest).toBe(pullRequest);
+    expect(outcome).toStrictEqual({ ...drainOutcome, retriggerDelaySeconds: undefined, targetSha: undefined });
+    expect(getPrCalls("create")).toHaveLength(0);
+  });
+
+  // The release from `develop` that a person merged by hand has its findings drained like a merged window's, before the
+  // First cut over `main`
+  test("drains the release from develop that a person merged before the first cut", async () => {
+    expect.hasAssertions();
+
+    publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh([], [], [], [], [], [getLegacyPullRequest(WindowPullRequestState.Merged)]);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(runDrainStep.mock.calls[0]?.[0]?.pullRequest).toBe(pullRequest);
     expect(outcome.reason).toBe(getOpenedReason(1));
   });
 

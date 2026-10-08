@@ -5,7 +5,7 @@ description: Genshin's character kits as built — every playable character's sk
 
 # Character kits
 
-A character's combat kit is its skills, cooldowns, costs and talent multipliers, and the game keeps those in its tables by the character's skill sets. The Traveler's first kit is typed beside its hits, and every character on the roster fights with it until a kit reads its own. What is built is the table side: each playable character's skill sets, written beside the stat tables, and the targeting that turns an action to its enemy. The kits' hits are [combat](/docs/genshin/combat)'s, and the kit's action state machine is documented there too.
+A character's combat kit is its skills, cooldowns, costs and talent multipliers, and the game keeps those in its tables by the character's skill sets. The Traveler's first kit is typed beside its hits, and every character on the roster fights with it until a kit reads its own. What is built is the table side: each playable character's skill sets, written beside the stat tables by the stats run, and the targeting that turns an action to its enemy. The kits' hits are [combat](/docs/genshin/combat)'s, and the kit's action state machine is documented there too.
 
 ## Skill sets
 
@@ -13,7 +13,7 @@ A character has one skill set in its own form, and a set for each element form i
 
 ```mermaid
 flowchart LR
-  AV["AvatarExcelConfigData: each playable avatar's own skill set and the element sets it may take"] --> RD["getCharacterSkillKits: each set's skill and burst, read from their rows"]
+  AV["AvatarExcelConfigData: each avatar's own skill sets and the element sets it may take"] --> RD["getCharacterSkillKits: each set's skill and burst, read from their rows"]
   SK["AvatarSkillDepotExcelConfigData and AvatarSkillExcelConfigData, in the dump"] --> RD
   RD --> JSON["characterSkillKits.json, written with the other stat tables"]
   JSON --> APP["genshin-world loads it on demand; no kit reads it yet"]

@@ -70,7 +70,7 @@ export const solveReferenceCloudLayer = async (
       throw new InvalidOperationError(Operation.Read, name, "not a colour of three numbers");
   }
   await fetchReferences();
-  const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, component, CLOUDS_WIDTH);
+  const { checkIsScored, close, height, image, page } = await openWitnessPage(referenceId, component, CLOUDS_WIDTH);
   return withFinalizerAsync(
     async () => {
       const { camera, compareShot, reference, referenceClouds, sky, spread } = await readSkyComparison(
@@ -177,6 +177,6 @@ export const solveReferenceCloudLayer = async (
         settings: solved,
       };
     },
-    () => browser.close(),
+    () => close(),
   );
 };

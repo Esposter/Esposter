@@ -34,7 +34,7 @@ export const measureGlow = async (component: DerivedAssetComponent): Promise<Par
   const measures: ParityPassMeasure[] = [];
   for (const referenceId of getCurrentBuildReferenceIds(component)) {
     // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
-    const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, component, SHAPE_WIDTH);
+    const { checkIsScored, close, height, image, page } = await openWitnessPage(referenceId, component, SHAPE_WIDTH);
     // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
     const measure = await withFinalizerAsync(
       async () => {
@@ -92,7 +92,7 @@ export const measureGlow = async (component: DerivedAssetComponent): Promise<Par
           }),
         };
       },
-      () => browser.close(),
+      () => close(),
     );
     measures.push(measure);
   }

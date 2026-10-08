@@ -83,6 +83,12 @@ export const LOGIN_SHADOW_MAP_SIZE = 2048;
 export const LOGIN_SHADOW_EXTENT = 50;
 export const LOGIN_SHADOW_BIAS = -0.0005;
 export const LOGIN_SHADOW_NORMAL_BIAS = 0.0125;
+// The shadow's strength, the light's own at one. The night's moon is read through a deeper bias and a strength of 0.8:
+// At the bias the other hours keep, the walkway's carved relief casts speckled shadow edges, 243 edge pixels where the
+// Reference shows 99 (genshin:parity shadows login-door-session), and at these settings they read 107
+export const LOGIN_SHADOW_INTENSITY = 1;
+export const LOGIN_NIGHT_SHADOW_BIAS = -0.006;
+export const LOGIN_NIGHT_SHADOW_INTENSITY = 0.8;
 export const LOGIN_CLOUD_COVERAGE = 0;
 // The frames drawn before the scene is said to be ready: WebGPU compiles each pipeline on first use, so the first few
 // Frames can come out before every material has. A scene mounted at the door is ready only once the door has risen

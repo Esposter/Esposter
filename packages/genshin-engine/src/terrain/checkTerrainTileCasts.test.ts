@@ -2,10 +2,10 @@ import { checkTerrainTileCasts } from "#src/terrain/checkTerrainTileCasts";
 import { getTerrainTileKey } from "#src/terrain/getTerrainTileKey";
 import { describe, expect, test } from "vitest";
 
-const FINEST_RANGE = 64;
-const SHADOW_REACH = 128;
-
 describe(checkTerrainTileCasts, () => {
+  const FINEST_RANGE = 64;
+  const SHADOW_REACH = 128;
+
   test("casts from a ring whose range is within the shadows' reach", () => {
     expect.hasAssertions();
 

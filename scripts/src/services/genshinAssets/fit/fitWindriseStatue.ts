@@ -29,6 +29,20 @@ const toMatrix = ({ position, rotation, scale }: Pick<AssetPlacement, "position"
     new Quaternion(...toRightHandedRotation(rotation)),
     new Vector3(...scale),
   );
+const toPart = (points: Vector3[]): { position: number[]; sections: LatheProfile["sections"] } => {
+  const profile = fitLatheProfile(
+    points.map(({ x, y, z }) => [x, y, z] as const),
+    { bandHeight: STATUE_BAND_HEIGHT, tolerance: STATUE_RADIUS_TOLERANCE },
+  );
+  return {
+    position: [roundFitted(profile.axis[0]), roundFitted(profile.foot), roundFitted(profile.axis[1])],
+    sections: profile.sections.map(({ bottomRadius, height, topRadius }) => ({
+      bottomRadius: roundFitted(bottomRadius),
+      height: roundFitted(height),
+      topRadius: roundFitted(topRadius),
+    })),
+  };
+};
 // The Statue of The Seven as two lathes, its stone (every level of the stand it is drawn on) and its figure, each a
 // Stack of sections standing at its own axis in the statue's frame: its root at the origin, unturned, so the landmark's
 // Place and turn set it down. Every statue mesh is taken into that frame by its placement, then pooled into its part
@@ -53,20 +67,6 @@ export const fitWindriseStatue = async (): Promise<string[]> => {
     const pool = STATUE_FIGURE_MESH_REGEX.test(placement.mesh) ? figure : stone;
     pool.push(...points);
   }
-  const toPart = (points: Vector3[]): { position: number[]; sections: LatheProfile["sections"] } => {
-    const profile = fitLatheProfile(
-      points.map(({ x, y, z }) => [x, y, z] as const),
-      { bandHeight: STATUE_BAND_HEIGHT, tolerance: STATUE_RADIUS_TOLERANCE },
-    );
-    return {
-      position: [roundFitted(profile.axis[0]), roundFitted(profile.foot), roundFitted(profile.axis[1])],
-      sections: profile.sections.map(({ bottomRadius, height, topRadius }) => ({
-        bottomRadius: roundFitted(bottomRadius),
-        height: roundFitted(height),
-        topRadius: roundFitted(topRadius),
-      })),
-    };
-  };
   const parts = [toPart(stone), toPart(figure)];
   const path = await writeWorldData("windrise/statue.json", { parts });
   return [

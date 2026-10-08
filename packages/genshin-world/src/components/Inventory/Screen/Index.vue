@@ -16,10 +16,10 @@ import { GameScreen, InventoryScreen, InventorySort, ItemCategories, ItemCategor
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
-  // The tab the bag opens on
-  initialCategory: ItemCategory;
   // The game's words in the reader's language
   gameText: GameText;
+  // The tab the bag opens on
+  initialCategory: ItemCategory;
   inventory: Inventory;
   wallet: Wallet;
 }

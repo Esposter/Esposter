@@ -29,9 +29,9 @@ flowchart TD
 ## Not built yet
 
 - **The entrances and their landmark.** Each entrance is placed from the streaming records, which the fit does not read yet. No `LandmarkKind` is added until a fit produces one.
-- **The days each kind sets.** They sit in `DailyDungeonConfigData`, which the dump does not hold, so no caller passes them yet. `DungeonExcelConfigData` and `DungeonEntryExcelConfigData` are missing from the dump too, so the levels wait on the same reader.
+- **The days each kind sets.** They sit in DailyDungeonConfigData, which the dump does not hold, so no caller passes them yet. DungeonExcelConfigData and DungeonEntryExcelConfigData are missing from the dump too, so the levels wait on the same reader.
 - **The levels, challenges and scenes.** Waves, time limits, ley line disorders and the domain's own scene wait on those tables and on scene derivation.
-- **The Petrified Tree's reward.** Its claim is already priced at 20 as a domain blossom ([Original Resin](/docs/genshin/original-resin)). Its reward rows wait on `BlossomChestExcelConfigData`, which the dump does not hold.
+- **The Petrified Tree's reward.** Its claim is already priced at 20 as a domain blossom ([Original Resin](/docs/genshin/original-resin)). Its reward rows wait on BlossomChestExcelConfigData, which the dump does not hold.
 - **One-time domains and the quest's earlier rank.** The first-clear rewards come with their table rows, and the earlier rank waits on the wiki.
 
 ## Key files

@@ -28,4 +28,17 @@ describe(resolvePrefabRoot, () => {
 
     expect(resolvePrefabRoot("Stages_SGrass12_Vo", ["00/00010731.blk"], objects)).toBeUndefined();
   });
+
+  test("roots a name at its game object in a block its own index rows do not name, once that block is a candidate", () => {
+    expect.hasAssertions();
+
+    const objects = [createSceneObject("1", "0", { block: "09102146", name: "Stages_MDSRock11_Vo" })];
+
+    expect(resolvePrefabRoot("Stages_MDSRock11_Vo", ["00/00495653.blk"], objects)).toBeUndefined();
+    expect(resolvePrefabRoot("Stages_MDSRock11_Vo", ["00/00495653.blk", "00/09102146.blk"], objects)).toStrictEqual({
+      block: "00/09102146.blk",
+      name: "Stages_MDSRock11_Vo",
+      pathId: "1",
+    });
+  });
 });

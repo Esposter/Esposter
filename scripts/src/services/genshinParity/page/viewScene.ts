@@ -42,7 +42,7 @@ export const viewScene = async ({
   witness: DerivedAssetComponent;
 }): Promise<string> => {
   await mkdir(SHOTS_DIRECTORY, { recursive: true });
-  const { browser, page } = await openParityPage({ height, props, screen, width, witness });
+  const { close, page } = await openParityPage({ height, props, screen, width, witness });
   const path = join(SHOTS_DIRECTORY, `${screen}.view@${[x, y, z, yaw, pitch, fov].join(",")}.png`);
   await withFinalizerAsync(
     async () => {
@@ -60,7 +60,7 @@ export const viewScene = async ({
       const { height: shotHeight, width: shotWidth } = await sharp(ours).metadata();
       await writeSideBySide([ours, exported], { height: shotHeight, width: shotWidth }, path);
     },
-    () => browser.close(),
+    () => close(),
   );
   console.log(path);
   return path;

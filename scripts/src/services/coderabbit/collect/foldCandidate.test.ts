@@ -23,11 +23,11 @@ describe(foldCandidate, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const developSha = readSha("HEAD");
     const queueShas = [commitFile(filePath, ""), commitFile(nestedPath, "")];
     const targetSha = await foldCandidate({
+      baseSha: developSha,
       collectorSha,
       cwd: getCwd(),
       developSha,
       fixCount: 0,
-      baseSha: developSha,
       queueSha: takeOne(queueShas, 1),
       queueShas,
       viewerLogin,
@@ -48,11 +48,11 @@ describe(foldCandidate, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     switchTo(developSha);
     for (const sha of [firstSha, queueSha]) pickCommit(sha, getCwd());
     const targetSha = await foldCandidate({
+      baseSha: developSha,
       collectorSha,
       cwd: getCwd(),
       developSha,
       fixCount: 0,
-      baseSha: developSha,
       queueSha,
       queueShas: [firstSha, queueSha],
       viewerLogin,
@@ -73,11 +73,11 @@ describe(foldCandidate, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     switchTo(developSha);
     pickCommit(queueSha, getCwd());
     const targetSha = await foldCandidate({
+      baseSha: developSha,
       collectorSha,
       cwd: getCwd(),
       developSha,
       fixCount: 0,
-      baseSha: developSha,
       queueSha,
       queueShas: [queueSha],
       viewerLogin,
@@ -95,11 +95,11 @@ describe(foldCandidate, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     switchTo(developSha);
     const queueSha = commitFile(filePath, "");
     const targetSha = await foldCandidate({
+      baseSha: developSha,
       collectorSha,
       cwd: getCwd(),
       developSha,
       fixCount: 0,
-      baseSha: developSha,
       queueSha,
       queueShas: [queueSha],
       viewerLogin,
@@ -125,11 +125,11 @@ describe(foldCandidate, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     switchTo(developSha);
     const queueSha = commitFile(filePath, "");
     const targetSha = await foldCandidate({
+      baseSha: developSha,
       collectorSha,
       cwd: getCwd(),
       developSha,
       fixCount: 0,
-      baseSha: developSha,
       queueSha,
       queueShas: [queueSha],
       viewerLogin,

@@ -56,11 +56,11 @@ const pushRewrite = (cwd: string, expectedSha: string, isDryRun: boolean): strin
 // Read when nothing was rewritten — or nothing when the queue moved under the run: the push that moved it fires
 // A run of its own, and a port read off the stale head would hold on a conflict the next run resolves.
 export const syncQueue = async ({
+  baseSha,
   collectorSha,
   cwd,
   developSha,
   isDryRun,
-  baseSha,
   owingFixesSha,
   queueSha,
   viewerLogin,
@@ -84,7 +84,7 @@ export const syncQueue = async ({
     if (replayOutcome !== ReplayOutcome.Replayed) return queueSha;
   }
 
-  const isReshaped = await reshapeQueue({ collectorSha, cwd, isDryRun, baseSha, targetSha, viewerLogin });
+  const isReshaped = await reshapeQueue({ baseSha, collectorSha, cwd, isDryRun, targetSha, viewerLogin });
   if (isOnTarget && !isReshaped) return queueSha;
   else return pushRewrite(cwd, queueSha, isDryRun);
 };

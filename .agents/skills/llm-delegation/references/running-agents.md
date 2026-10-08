@@ -2,6 +2,7 @@
 
 Read while a subagent is running, before launching several at once, or when cleaning up after a batch.
 
+- **An interim report is not a result.** An agent that ends its turn waiting on its own background run ("the run is still going, I'll commit when it reports") can stop there for good. When no final report follows within the run's expected time, read its commits, take what it left unbuilt, and give that to a new agent; never wait on it again.
 - Never spawn a duplicate agent for the same task; wait for the completion notification, then verify its commit yourself (git log, the grep audits, the diff) before building on it. Never read its output file: it is the whole transcript (the `context-efficiency` skill).
 
 ## Running several agents at once
@@ -16,7 +17,7 @@ Plan the batch around what the agents touch:
 
 - Each agent owns its unit's new files. A file several agents need — a barrel, an index page, a shared constants file — any of them edits, re-reading it right before each edit and editing only its own lines, as the main session does beside a peer session (the `review-queue` skill).
 - Each agent commits its own paths on `ai/queue` as it goes, by pathspec, and never pushes; a commit that sweeps in a peer's lines in a shared file is fine, since both land on the same branch. The main session pushes the queue.
-- **No install, no check of the app, and no check run twice.** A check every agent needs runs once for all of them: the main session starts one typecheck watcher per package the wave edits, and every agent reads its log instead of typechecking. An agent lints and tests only the files it touched, builds only to regenerate a barrel (`pnpm exec tsdown --no-clean`, never `pnpm build`), reads the free memory before a run, and never runs anything against `apps/web`. The recipes are the `throughput` skill's `references/machine-efficiency.md`. When every agent has reported, **one** fixer runs the full checks once and repairs what fails; CI on the push is the backstop. The watcher and the fixer are a batch's exception to the `running-checks` skill's rule that typecheck and lint are CI's alone: an agent never pushes, so no CI run checks its commits until the main session pushes the wave, and the watcher gives every agent that check for the price of one.
+- **No install, no check of the app, and no check run twice.** A check every agent needs runs once for all of them: every agent reads the watcher's log instead of typechecking. Its checks stay on the files it touched, and it builds only to regenerate a barrel (`pnpm exec tsdown --no-clean`, never `pnpm build`), reads the free memory before a run, and never runs anything against `apps/web`. The recipes are the `throughput` skill's `references/machine-efficiency.md`. When every agent has reported, **one** fixer runs the checks once, as those recipes set out. The watcher and the fixer are a batch's exception to the `running-checks` skill's rule that typecheck and lint are CI's alone: an agent never pushes, so no CI run checks its commits until the main session pushes the wave, and the watcher gives every agent that check for the price of one.
 
 ## Cleaning up
 

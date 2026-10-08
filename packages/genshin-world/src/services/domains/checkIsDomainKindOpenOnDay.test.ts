@@ -2,14 +2,14 @@ import { DomainKind } from "#src/models/domains/DomainKind";
 import { checkIsDomainKindOpenOnDay } from "#src/services/domains/checkIsDomainKindOpenOnDay";
 import { describe, expect, test } from "vitest";
 
-// The epoch fell on a Thursday, so three, four and five days after it are a Sunday, a Monday and a Tuesday
-const EPOCH_DAY = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate();
-const SUNDAY = EPOCH_DAY.add({ days: 3 });
-const MONDAY = EPOCH_DAY.add({ days: 4 });
-const TUESDAY = EPOCH_DAY.add({ days: 5 });
-const SCHEDULED_DAYS_OF_WEEK = [1, 4];
-
 describe(checkIsDomainKindOpenOnDay, () => {
+  // The epoch fell on a Thursday, so three, four and five days after it are a Sunday, a Monday and a Tuesday
+  const EPOCH_DAY = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate();
+  const SUNDAY = EPOCH_DAY.add({ days: 3 });
+  const MONDAY = EPOCH_DAY.add({ days: 4 });
+  const TUESDAY = EPOCH_DAY.add({ days: 5 });
+  const SCHEDULED_DAYS_OF_WEEK = [1, 4];
+
   test("a Domain of Blessing is open every day, whatever its set days are", () => {
     expect.hasAssertions();
 

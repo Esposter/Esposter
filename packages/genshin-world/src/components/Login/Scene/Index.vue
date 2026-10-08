@@ -51,7 +51,6 @@ import {
   LOGIN_LIGHT_DISTANCE,
   LOGIN_RIM_STRENGTH,
   LOGIN_SCENE_READY_FRAME_COUNT,
-  LOGIN_SHADOW_BIAS,
   LOGIN_SHADOW_EXTENT,
   LOGIN_SHADOW_MAP_SIZE,
   LOGIN_SHADOW_NORMAL_BIAS,
@@ -61,6 +60,8 @@ import {
 } from "#src/services/login/scene/constants";
 import { getLoginCameraFov } from "#src/services/login/scene/getLoginCameraFov";
 import { LoginOcclusionRadiusMap } from "#src/services/login/scene/LoginOcclusionRadiusMap";
+import { LoginShadowBiasMap } from "#src/services/login/scene/LoginShadowBiasMap";
+import { LoginShadowIntensityMap } from "#src/services/login/scene/LoginShadowIntensityMap";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
 import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
 import { computeLoginTowerAtlas } from "#src/services/login/tower/computeLoginTowerAtlas";
@@ -139,7 +140,6 @@ Object.assign(light.shadow.camera, {
   right: LOGIN_SHADOW_EXTENT,
   top: LOGIN_SHADOW_EXTENT,
 });
-light.shadow.bias = LOGIN_SHADOW_BIAS;
 light.shadow.normalBias = LOGIN_SHADOW_NORMAL_BIAS;
 const hemisphere = new HemisphereLight();
 const fogUniforms = createFogUniforms();
@@ -190,6 +190,8 @@ watchImmediate(
     applySkyState(LoginSkyStateMap[newTimeOfDay], skyTargets);
     cloudLayer.lightDirection.value.copy(LoginSkyStateMap[newTimeOfDay].lightDirection);
     applyStoneLight(stoneLight[newTimeOfDay], loginStoneLight, light);
+    light.shadow.bias = LoginShadowBiasMap[newTimeOfDay];
+    light.shadow.intensity = LoginShadowIntensityMap[newTimeOfDay];
     // Each hour's sky draws its own share of each band's clouds
     for (const [band, cover] of Object.entries(LoginCloudCoverMap[newTimeOfDay])) {
       const coverUniform = loginClouds.covers[band];

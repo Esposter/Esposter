@@ -6,7 +6,7 @@ model: claude-haiku-5-5
 
 # Domains
 
-A domain is an instance behind a temple-like entrance: a challenge in a scene of its own, cleared for a reward. Challenge domains give artifacts, talent materials and weapon ascension materials, the materials every growth page here spends; one-time domains reward their first clear; the trounce domains, where the weekly bosses wait, are the bosses' page, which enters them as this page enters any. A domain's reward is claimed with [Original Resin](/docs/proposals/genshin/original-resin), the domains open by [Adventure Rank](/docs/proposals/genshin/adventure-rank), and they are fought with the [character kits](/docs/proposals/genshin/character-kits), so this page waits on all three.
+A domain is the kind of instance the [domains](/docs/genshin/domains) page defines: a challenge in a scene of its own, cleared for a reward. Challenge domains give artifacts, talent materials and weapon ascension materials, the materials every growth page here spends; one-time domains reward their first clear; the trounce domains, where the weekly bosses wait, are the bosses' page, which enters them as this page enters any. A domain's reward is claimed with [Original Resin](/docs/proposals/genshin/original-resin), the domains open by [Adventure Rank](/docs/proposals/genshin/adventure-rank), and they are fought with the [character kits](/docs/proposals/genshin/character-kits), so this page waits on all three.
 
 The opening rules, each kind by its Adventure Rank and by the day of the week, are built and read on [the domains page](/docs/genshin/domains). What is left here is the world's side of a domain and its challenge.
 

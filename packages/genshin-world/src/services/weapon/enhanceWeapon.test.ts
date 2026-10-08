@@ -6,23 +6,29 @@ import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { enhanceWeapon } from "#src/services/weapon/enhanceWeapon";
 import { describe, expect, test } from "vitest";
 
-const REQUIRED_EXPS_MAP = { "3": Array.from({ length: 40 }, () => 100) };
-const WEAPON_DATA: WeaponData = {
-  ascensionPhases: [
-    { attributeLines: [], coinCost: 0, costItems: [], maxLevel: 20, requiredPlayerLevel: 0 },
-    { attributeLines: [], coinCost: 500, costItems: [{ count: 3, id: 114001 }], maxLevel: 40, requiredPlayerLevel: 15 },
-  ],
-  baseExp: 1800,
-  growAttributes: [],
-  id: 1,
-  nameTextId: "1",
-  rarity: 3,
-  refinementCosts: [500, 1000, 2000, 4000],
-  refinementMaterialId: 0,
-  weaponType: WeaponType.Sword,
-};
-
 describe(enhanceWeapon, () => {
+  const REQUIRED_EXPS_MAP = { "3": Array.from({ length: 40 }, () => 100) };
+  const WEAPON_DATA: WeaponData = {
+    ascensionPhases: [
+      { attributeLines: [], coinCost: 0, costItems: [], maxLevel: 20, requiredPlayerLevel: 0 },
+      {
+        attributeLines: [],
+        coinCost: 500,
+        costItems: [{ count: 3, id: 114001 }],
+        maxLevel: 40,
+        requiredPlayerLevel: 15,
+      },
+    ],
+    baseExp: 1800,
+    growAttributes: [],
+    id: 1,
+    nameTextId: "1",
+    rarity: 3,
+    refinementCosts: [500, 1000, 2000, 4000],
+    refinementMaterialId: 0,
+    weaponType: WeaponType.Sword,
+  };
+
   test("levels up past each requirement and carries the rest", () => {
     expect.hasAssertions();
     const weapon = { ascension: 0, experience: 50, id: 1, level: 1, refinement: 1 };

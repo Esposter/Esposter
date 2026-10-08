@@ -17,11 +17,7 @@ export const shootScreen = async ({
 }: ShootOptions): Promise<string[]> => {
   await mkdir(SHOTS_DIRECTORY, { recursive: true });
   // A still is the fixture's first state; shooting at times asks the page to hold the motion it names
-  const { browser, page } = await openParityPage({
-    ...options,
-    motion: timesMs.length > 0 ? motion : undefined,
-    screen,
-  });
+  const { close, page } = await openParityPage({ ...options, motion: timesMs.length > 0 ? motion : undefined, screen });
   const paths = await withFinalizerAsync(
     async () => {
       const shotPaths: string[] = [];
@@ -47,7 +43,7 @@ export const shootScreen = async ({
 
       return shotPaths;
     },
-    () => browser.close(),
+    () => close(),
   );
   for (const path of paths) console.log(path);
   return paths;

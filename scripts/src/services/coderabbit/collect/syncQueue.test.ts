@@ -47,10 +47,10 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const collectorSha = "collectorSha";
   // Every queue here is owed above `main`'s root, so that root is the merge base each window counts from
   const readBaseInput = () => ({
+    baseSha: readSha(`origin/${MAIN_BRANCH}`),
     collectorSha,
     cwd: getCwd(),
     isDryRun: false,
-    baseSha: readSha(`origin/${MAIN_BRANCH}`),
     viewerLogin,
   });
   // The attempts are read off the conflicting commit's own comments, one `gh` page of none unless a test says otherwise

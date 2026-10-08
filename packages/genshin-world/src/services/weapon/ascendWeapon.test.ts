@@ -8,30 +8,36 @@ import { ascendWeapon } from "#src/services/weapon/ascendWeapon";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
-const WEAPON_DATA: WeaponData = {
-  ascensionPhases: [
-    { attributeLines: [], coinCost: 0, costItems: [], maxLevel: 20, requiredPlayerLevel: 0 },
-    { attributeLines: [], coinCost: 500, costItems: [{ count: 3, id: 114001 }], maxLevel: 40, requiredPlayerLevel: 15 },
-  ],
-  baseExp: 1800,
-  growAttributes: [],
-  id: 1,
-  nameTextId: "1",
-  rarity: 3,
-  refinementCosts: [500, 1000, 2000, 4000],
-  refinementMaterialId: 0,
-  weaponType: WeaponType.Sword,
-};
-const MATERIAL: ItemDefinition = {
-  category: ItemCategory.Material,
-  id: 114001,
-  name: "",
-  rank: 1,
-  rarity: 1,
-  stackLimit: 99,
-};
-
 describe(ascendWeapon, () => {
+  const WEAPON_DATA: WeaponData = {
+    ascensionPhases: [
+      { attributeLines: [], coinCost: 0, costItems: [], maxLevel: 20, requiredPlayerLevel: 0 },
+      {
+        attributeLines: [],
+        coinCost: 500,
+        costItems: [{ count: 3, id: 114001 }],
+        maxLevel: 40,
+        requiredPlayerLevel: 15,
+      },
+    ],
+    baseExp: 1800,
+    growAttributes: [],
+    id: 1,
+    nameTextId: "1",
+    rarity: 3,
+    refinementCosts: [500, 1000, 2000, 4000],
+    refinementMaterialId: 0,
+    weaponType: WeaponType.Sword,
+  };
+  const MATERIAL: ItemDefinition = {
+    category: ItemCategory.Material,
+    id: 114001,
+    name: "",
+    rank: 1,
+    rarity: 1,
+    stackLimit: 99,
+  };
+
   test("takes the next phase's Mora and items and moves the weapon into it", () => {
     expect.hasAssertions();
     const weapon = { ascension: 0, experience: 0, id: 1, level: 20, refinement: 1 };

@@ -16,7 +16,7 @@ describe(createStamina, () => {
   test("spends a dash once, as it starts", () => {
     expect.hasAssertions();
 
-    const stamina = createStamina();
+    const stamina = createStamina(STAMINA_MAX);
     stamina.step({ state: LocomotionState.Dash, stateSeconds: 0 }, true, true, STEP_SECONDS);
     stamina.step({ state: LocomotionState.Dash, stateSeconds: STEP_SECONDS }, false, true, STEP_SECONDS);
 
@@ -26,7 +26,7 @@ describe(createStamina, () => {
   test("refills only once the body has rested the delay", () => {
     expect.hasAssertions();
 
-    const stamina = createStamina();
+    const stamina = createStamina(STAMINA_MAX);
     stamina.step({ state: LocomotionState.Dash, stateSeconds: 0 }, true, true, STEP_SECONDS);
     for (let restSeconds = STEP_SECONDS; restSeconds < STAMINA_REFILL_DELAY_SECONDS; restSeconds += STEP_SECONDS)
       stamina.step({ state: LocomotionState.Idle, stateSeconds: restSeconds }, false, false, STEP_SECONDS);
@@ -47,7 +47,7 @@ describe(createStamina, () => {
   test("spends a stroke as a swim starts and at each stroke after, and never refills in water", () => {
     expect.hasAssertions();
 
-    const stamina = createStamina();
+    const stamina = createStamina(STAMINA_MAX);
     stamina.step({ state: LocomotionState.Swim, stateSeconds: 0 }, true, true, STEP_SECONDS);
     for (let stepIndex = 1; stepIndex <= Math.ceil(SWIM_STROKE_SECONDS / STEP_SECONDS); stepIndex++)
       stamina.step({ state: LocomotionState.Swim, stateSeconds: stepIndex * STEP_SECONDS }, false, true, STEP_SECONDS);
@@ -58,7 +58,7 @@ describe(createStamina, () => {
   test("never spends below none", () => {
     expect.hasAssertions();
 
-    const stamina = createStamina();
+    const stamina = createStamina(STAMINA_MAX);
     stamina.value = 1;
     stamina.step({ state: LocomotionState.Dash, stateSeconds: 0 }, true, true, STEP_SECONDS);
 
@@ -68,7 +68,7 @@ describe(createStamina, () => {
   test("a spend restarts the rest, so the pool refills only once the delay has passed since it", () => {
     expect.hasAssertions();
 
-    const stamina = createStamina();
+    const stamina = createStamina(STAMINA_MAX);
     for (let restSeconds = STEP_SECONDS; restSeconds < STAMINA_REFILL_DELAY_SECONDS; restSeconds += STEP_SECONDS)
       stamina.step({ state: LocomotionState.Idle, stateSeconds: restSeconds }, false, false, STEP_SECONDS);
     stamina.spend(DASH_STAMINA_COST);

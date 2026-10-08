@@ -1,10 +1,10 @@
-import type { TerrainTile } from "#src/models/terrain/TerrainTile";
+import type { TerrainTileArrays } from "#src/models/terrain/TerrainTileArrays";
 
 import { BufferAttribute, BufferGeometry } from "three";
 
 // A tile's arrays wrapped for the GPU over the index every tile shares, with its bounds for frustum culling
 export const createTerrainTileGeometry = (
-  { coarseColors, coarseNormals, coarsePositions, colors, normals, positions }: TerrainTile,
+  { coarseColors, coarseNormals, coarsePositions, colors, normals, positions }: TerrainTileArrays,
   index: BufferAttribute,
 ): BufferGeometry => {
   const geometry = new BufferGeometry();

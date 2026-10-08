@@ -35,6 +35,7 @@ import {
   FOLLOW_CAMERA_PIVOT_HEIGHT,
   InputAction,
   LocomotionState,
+  STAMINA_MAX,
 } from "genshin-engine";
 import { PerspectiveCamera, Vector3 } from "three";
 
@@ -76,6 +77,7 @@ const characterController = createCharacterController({
     getWorldHeight(WINDRISE_START_POINT.x, WINDRISE_START_POINT.z),
     WINDRISE_START_POINT.z,
   ),
+  staminaMaximum: STAMINA_MAX,
 });
 let followCamera: FollowCamera | undefined;
 // The kit of the character on the field, which starts over when a switch brings another on

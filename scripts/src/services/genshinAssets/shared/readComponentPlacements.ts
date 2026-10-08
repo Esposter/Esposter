@@ -7,6 +7,7 @@ import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/Der
 import { readComponentLayout } from "#src/services/genshinAssets/shared/readComponentLayout";
 import { getWorldRoots } from "#src/services/genshinAssets/world/getWorldRoots";
 import { placeWorldPrefabs } from "#src/services/genshinAssets/world/placeWorldPrefabs";
+import { readWorldOptions } from "#src/services/genshinAssets/world/readWorldOptions";
 import { readWorldPlacements } from "#src/services/genshinAssets/world/readWorldPlacements";
 
 // Where every object of a component stands, composed from its layout dumps with each spawned prefab under its anchor,
@@ -17,18 +18,16 @@ import { readWorldPlacements } from "#src/services/genshinAssets/world/readWorld
 // World sets them down, and are its roots beside the ones its map names
 export const readComponentPlacements = async (
   component: DerivedAssetComponent,
-  {
-    isCopied = false,
-    roots = [...DerivedAssetComponentMap[component].roots, ...getWorldRoots(DerivedAssetComponentMap[component])].map(
-      ({ name }) => name,
-    ),
-  }: { isCopied?: boolean; roots?: readonly string[] } = {},
+  { isCopied = false, roots }: { isCopied?: boolean; roots?: readonly string[] } = {},
 ): Promise<AssetPlacement[]> => {
-  const [{ gameObjectDrawingMap, objects }, worldPlacements] = await Promise.all([
+  const [{ gameObjectDrawingMap, objects }, worldPlacements, world] = await Promise.all([
     readComponentLayout(component),
     readWorldPlacements(component),
+    readWorldOptions(component),
   ]);
+  const rootNames =
+    roots ?? [...DerivedAssetComponentMap[component].roots, ...getWorldRoots(world)].map(({ name }) => name);
   const spawned = isCopied ? copySpawns(objects, DerivedAssetComponentMap[component].spawns ?? []) : objects;
   const laidOut = placeWorldPrefabs(spawned, worldPlacements);
-  return composeAssetPlacements(laidOut, gameObjectDrawingMap).filter(({ root }) => roots.includes(root));
+  return composeAssetPlacements(laidOut, gameObjectDrawingMap).filter(({ root }) => rootNames.includes(root));
 };

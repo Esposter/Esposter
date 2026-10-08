@@ -26,7 +26,7 @@ export const renderMusicSegments = async (
 ): Promise<{ game: Float32Array; id: number; index: number; ours: Float32Array }[]> => {
   const { music } = getComponentDirectory(component);
   const { segments } = parseMachineJson<ComponentPlaylist>(await readFile(join(music, "playlist.json"), "utf8"));
-  const { browser, page } = await openParityPage({ height: PAGE_SIZE, screen, width: PAGE_SIZE });
+  const { close, page } = await openParityPage({ height: PAGE_SIZE, screen, width: PAGE_SIZE });
   return withFinalizerAsync(
     async () => {
       const renders: { game: Float32Array; id: number; index: number; ours: Float32Array }[] = [];
@@ -53,6 +53,6 @@ export const renderMusicSegments = async (
       }
       return renders;
     },
-    () => browser.close(),
+    () => close(),
   );
 };

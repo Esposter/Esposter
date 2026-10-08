@@ -1,6 +1,6 @@
 ---
 title: Map
-description: The world's map on M, and the jumps it makes. The game's open map at full screen: one drawing of the catalogue (its drawn outlines and every landmark a jump lands at) centred on the player, north up, with each area's name, the player as a pointer, and the game's close button and zoom slider. Choosing a landmark, on the map or in the keyboard's jump list, fades the world to black, places the view in front of it facing it, and fades back in.
+description: The world's map on M, and the jumps it makes. The game's open map at full screen: one drawing of the catalogue (the outlines of its filled areas and every unlocked landmark a jump lands at) centred on the player, north up, with each area's name, the player as a pointer, and the game's close button and zoom slider. Choosing a landmark, on the map or in the keyboard's jump list, fades the world to black, places the view in front of it facing it, and fades back in.
 ---
 
 # Map
@@ -12,7 +12,7 @@ The game's map opens on M and is how a player crosses the continent: they choose
 ```mermaid
 flowchart TD
   M["M, or the HUD's minimap"] --> SCR["The screen kind becomes Map, which holds the world as a menu does"]
-  SCR --> OV["The overlay: the drawing centred on the player, the area names, the pointer, the close button and zoom slider"]
+  SCR --> OV["The overlay: the player-centred drawing, area names, pointer, close button and zoom slider"]
   REG["Every region's data, read once"] --> LM["The landmarks a jump lands at"]
   LM --> OV
   OV -->|"a landmark chosen, on the map or in the jump list"| POSE["The jump's pose: in front of it, facing it"]
@@ -22,8 +22,8 @@ flowchart TD
   PLACE --> IN["The screen fades back in"]
 ```
 
-- **One drawing, two views.** `Map/Drawing` draws the catalogue's drawn area outlines and every landmark a jump lands at, in world metres with x east and z south, so north is up. The overlay centres it on the player and the [minimap](/docs/genshin/minimap) cuts it to a circle round the camera, so the two never disagree about what the world holds. A mark's radius is a share of the extent a view shows, so it is drawn one size at any scale.
-- **The overlay is the open map at full screen.** It centres the drawing on the player with `MAP_VIEW_METRES` metres across its width, and the screen's own aspect fills the rest. Each area's name sits at the middle of its outline, or of its landmarks where its outline is not drawn yet, and an area with neither has no name on the map. The name's size is a share of the same extent, so it reads one size at any scale.
+- **One drawing, two views.** `Map/Drawing` draws the outlines of the filled areas and every unlocked landmark a jump lands at ([map unlocking](/docs/genshin/map-unlocking)), in world metres with x east and z south, so north is up. The overlay centres it on the player and the [minimap](/docs/genshin/minimap) cuts it to a circle round the camera, so the two never disagree about what the world holds. A mark's radius is a share of the extent a view shows, so it is drawn one size at any scale.
+- **The overlay is the open map at full screen.** It centres the drawing on the player with `MAP_VIEW_METRES` metres across its width, and the screen's own aspect fills the rest. Each filled area's name sits at the middle of its outline, or of its unlocked landmarks where its outline is not drawn yet, and an area with neither has no name on the map; an area no unlocked statue stands in is blank. The name's size is a share of the same extent, so it reads one size at any scale.
 - **The game's chrome sits where the reference puts it.** The close button stands at the top right and the zoom slider down the left, each at its place in the wiki's 1080 high screenshot and drawn in `--unit`. The slider is drawn at its default and does not zoom yet.
 - **The map is a screen.** It is the `Map` screen kind, opened by M through the input's `OpenMap` action ([controls](/docs/genshin/controls)) and closed by M, Escape or its own button, as every screen opens and closes ([screens](/docs/genshin/screens)). It holds the world under it as the game's menus do, and the HUD is hidden while it is open.
 - **The jump list is for the keyboard and a screen reader.** The game shows no list, so the jumps are a visually hidden list beside the map, each landmark a button carrying its area's name and its kind in the game's own words, grouped under its region's name. The drawing itself is hidden from a screen reader, since the list says everything it jumps to. Focus starts on the overlay's close button.
@@ -31,7 +31,7 @@ flowchart TD
 
 ## The jump
 
-- **The landmarks a jump lands at.** `JUMP_LANDMARK_KINDS` holds the Statue of The Seven alone today, as the game teleports to its statues and waypoints and nowhere else; a tree is never a jump. Teleport Waypoints join as a landmark kind of their own once the regions' data holds them.
+- **The landmarks a jump lands at.** `JUMP_LANDMARK_KINDS` holds the Statue of The Seven alone today, as the game teleports to its statues and waypoints and nowhere else; a tree is never a jump. Only the unlocked ones are offered, as the world's jump list, the map and a revive are given the unlocked landmarks alone ([map unlocking](/docs/genshin/map-unlocking)). Teleport Waypoints join as a landmark kind of their own once the regions' data holds them.
 - **A landmark's name is its area's.** Each statue lights one area, so its area's catalogue name is the name a jump goes by, with no name of its own written anywhere.
 - **The pose lands in front, facing back.** `computeJumpPose` stands the arrival a fixed distance in front of the landmark, along the way it faces, at a yaw that looks back at it, so the view arrives on what was jumped to, clear of a statue's plinth. The body stands on the ground's height there, read when the jump lands.
 - **The world screen jumps.** `WorldScreen` exposes `jumpTo(pose)` and `readCameraPosition()` to its host. A jump closes the map, fades a black veil over the screen, and once the fade ends asks `WorldCharacter` to `place` the body at the pose, facing its yaw with the [follow camera](/docs/genshin/follow-camera) level behind it, then fades back in.

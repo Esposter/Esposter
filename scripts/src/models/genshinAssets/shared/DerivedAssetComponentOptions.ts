@@ -11,6 +11,8 @@ import type { WorldOptions } from "#src/models/genshinAssets/world/WorldOptions"
 export interface DerivedAssetComponentOptions {
   clipPattern?: string;
   interface?: { anchorPattern: string; root: string };
+  // A part of the open world whose world block is derived from its capital's place (`deriveCapitalWorld`), not set by hand
+  isCapitalWorld?: boolean;
   musicPlaylistId?: number;
   namePattern?: string;
   roots: AssetRoot[];

@@ -8,6 +8,7 @@ export const CurrencyGameTextKeyMap = {
   [Currency.IntertwinedFate]: GameTextKey.IntertwinedFate,
   [Currency.MasterlessStardust]: GameTextKey.MasterlessStardust,
   [Currency.MasterlessStarglitter]: GameTextKey.MasterlessStarglitter,
+  [Currency.MasterlessStellaFortuna]: GameTextKey.MasterlessStellaFortuna,
   [Currency.Mora]: GameTextKey.Mora,
   [Currency.OriginalResin]: GameTextKey.OriginalResin,
   [Currency.Primogem]: GameTextKey.Primogem,

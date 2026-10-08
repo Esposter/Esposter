@@ -7,10 +7,11 @@ import { describe, expect, test } from "vitest";
 
 type EnemyPose = Pick<Enemy, "heading" | "position">;
 
-const ENEMY_ID = "enemy";
 const createEnemyPose = (): EnemyPose => ({ heading: 0, position: { x: 1, z: 2 } });
 
 describe(checkEnemiesMoved, () => {
+  const ENEMY_ID = "enemy";
+
   test("keeps the poses the enemies were drawn at", () => {
     expect.hasAssertions();
 

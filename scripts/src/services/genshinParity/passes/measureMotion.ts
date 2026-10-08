@@ -61,7 +61,7 @@ export const measureMotion = async (component: DerivedAssetComponent): Promise<P
   const pieceVertices = piecePoses.map((_poses, piece) =>
     scaled.flatMap(([x, y, z], vertex) => (vertexPieces[vertex] === piece ? [new Vector3(x, y - foot, z)] : [])),
   );
-  const { browser, page } = await openParityPage({
+  const { close, page } = await openParityPage({
     height: MOTION_HEIGHT,
     isClockFaked: true,
     props: { heldScrolled: 0, isInterfaceHidden: true, stage: STILL_STAGE },
@@ -121,7 +121,7 @@ export const measureMotion = async (component: DerivedAssetComponent): Promise<P
       }
       return read;
     },
-    () => browser.close(),
+    () => close(),
   );
   const sampleRate = ((piecePoses[0]?.length ?? 1) - 1) / duration;
   // Each piece's box, whose corners stand furthest from its place among its vertices

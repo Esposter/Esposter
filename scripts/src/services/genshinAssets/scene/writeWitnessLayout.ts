@@ -7,7 +7,6 @@ import {
   TERRAIN_BASE_MAP_SUFFIX,
   TERRAIN_TILE_SIZE,
 } from "#src/services/genshinAssets/shared/constants";
-import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
@@ -17,6 +16,7 @@ import { selectFinestLevels } from "#src/services/genshinAssets/shared/selectFin
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { toRightHandedRotation } from "#src/services/genshinAssets/shared/toRightHandedRotation";
 import { parseTerrainTileName } from "#src/services/genshinAssets/world/parseTerrainTileName";
+import { readWorldOptions } from "#src/services/genshinAssets/world/readWorldOptions";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { existsSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
@@ -35,7 +35,7 @@ export const writeWitnessLayout = async (
   const directory = getComponentDirectory(component);
   const checkHasFile = (type: AssetType, name: string, extension: string): boolean =>
     existsSync(join(directory.assets, type, `${name}.${extension}`));
-  const { world } = DerivedAssetComponentMap[component];
+  const world = await readWorldOptions(component);
   const [placements, materials, [originX, originY, originZ]] = await Promise.all([
     readComponentPlacements(component, { isCopied: true, roots }),
     readComponentMaterials(component),

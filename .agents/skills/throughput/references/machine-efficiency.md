@@ -16,6 +16,7 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
   - It fixes the errors in its own files; one in another agent's half-written file is theirs. A package with no log is checked by hand, once.
   - **A watcher costs memory** — half a gigabyte for a small package, two for `scripts` — so watchers run only for the packages a wave is editing. The main session stops a package's watcher and **deletes its log** when the package goes quiet or the memory gate is near, since a stale log reads as a clean pass. A watcher that died leaves a log whose last write stops moving, and it is restarted or its log deleted.
   - The checks folder holds the watchers' logs only; an agent's own scratch output goes in its scratchpad.
+  - **TS6307 on a new file is a stale build-info file**, not a missing include: "File … is not listed within the file list of project" while the file sits under an included glob. Delete the package's git-ignored `tsconfig.tsbuildinfo` and restart its watcher.
 - **Lint: the touched files only.** Run `vp lint --disable-nested-config <files>` and `pnpm exec eslint <files>` from the package, never the package's whole `pnpm lint`.
 - **Tests: the touched tests only.** Run `pnpm exec vitest run <paths>`.
 - **Build: only to regenerate a barrel.** After an agent adds, renames or deletes a module file, it runs `pnpm exec tsdown --no-clean`, never `pnpm build`; otherwise it does not build at all. The parity page and every sibling's typecheck read a package's source through its `source` export condition and the generated barrel, and the user's `nuxt dev` rebuilds every package itself.
@@ -42,8 +43,9 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 
 ## Keep the GPU busy
 
-- **The page lane runs several scenes at once.** Its runner serves one parity page per item from its own worktree, on its own port (3003 upward), for items whose measures read different scenes. Items reading the same scene stay in order.
-- **Each screen agent serves its own page** on its own port (3011 upward), so a 2D comparison never waits on the lane.
+- **The GPU is already the one doing the work.** Headless Edge gets the machine's own AMD RDNA 3 adapter by default, and the launch flags tried (`--use-angle=d3d11`, `--ignore-gpu-blocklist`, `--enable-unsafe-webgpu`) change nothing that matters: the last adds three features, and a launch forced onto SwiftShader gets no adapter at all. A bench's frame is set by the main thread instead: in a 475-mesh scene about nine of its twelve milliseconds a frame are main-thread work, so a low GPU share is that scene's draw loop, not a missing flag.
+- **The page lane runs several scenes at once.** Its runner serves every item's page from its one parity server in its own worktree (port 3002), as `.agents/skills/genshin-parity/references/compute-queue.md` sets out.
+- **One dev server and one browser serve every agent.** The shared checkout's parity page is served once on port 3011, and one shared Edge (`genshin:parity browser start`) takes every command as a context of its own, so a wave's commands share one server and one browser rather than each starting their own. Measured with three `film` commands at once, one server and one shared Edge peaked near 6 GB of private memory and ran about three cores on average, against near 8 GB and about five cores with three servers and three Edges, and the commands' processes fell from about 75 to about 45. The shared Edge stays up between commands, which the next wave's commands join at once.
 - **A GPU idle while the queue holds items is a lane waiting on a miss.** A miss is a call only the main session makes, so it settles the misses before anything else: each holds the GPU.
 
 ## Tokens are a resource too

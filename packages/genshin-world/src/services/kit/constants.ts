@@ -47,7 +47,7 @@ const SWORD_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, hei
 const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) traveler/common/anemo attack.go, 60 fps frames, for the hitmarks and seconds. The file
-// gives no poise, so each strike's poise is provisional until a source gives it
+// Gives no poise, so each strike's poise is provisional until a source gives it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/traveler/common/anemo/attack.go
 const createNormalAttack = (
   talentMultiplier: number,
@@ -134,7 +134,7 @@ export const TRAVELER_KIT: Kit = {
     targetingArea: SKILL_TARGETING_AREA,
   },
   // Provisional: no source gives the plunges' landing frames, so each hits as its action starts. Their poise is gcsim
-  // v2.47.2's (MIT) plunge poise, in its pyro plunge file:
+  // V2.47.2's (MIT) plunge poise, in its pyro plunge file:
   // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/traveler/common/pyro/plunge.go
   highPlunge: {
     hits: [

@@ -1,5 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { Browser, Page } from "playwright";
+import type { Page } from "playwright";
 
 import { REFERENCES_DIRECTORY, STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
@@ -12,14 +12,14 @@ import sharp from "sharp";
 // Time of day), at the structure's width unless another is given and the reference's aspect, drawing the component's
 // Exports, beside the reference at that size, and whether a pixel of a target that wide stands in the reference's
 // Scored region, so a tool reads nothing a recording masks or a corner button covers. The caller fetches the
-// References first and closes the browser
+// References first and closes the page
 export const openWitnessPage = async (
   referenceId: string,
   witness: DerivedAssetComponent,
   width: number = STRUCTURE_WIDTH,
 ): Promise<{
-  browser: Browser;
   checkIsScored: (pixel: number, width: number) => boolean;
+  close: () => Promise<void>;
   height: number;
   image: Buffer;
   page: Page;
@@ -30,7 +30,7 @@ export const openWitnessPage = async (
   const { height: referenceHeight, width: referenceWidth } = await sharp(referencePath).metadata();
   const height = Math.round((width / referenceWidth) * referenceHeight);
   const image = await sharp(referencePath).resize(width, height).removeAlpha().png().toBuffer();
-  const { browser, page } = await openParityPage({
+  const { close, page } = await openParityPage({
     height,
     props: reference.props,
     screen: reference.screen,
@@ -49,5 +49,5 @@ export const openWitnessPage = async (
       row < (region.y + region.height) * scale
     );
   };
-  return { browser, checkIsScored, height, image, page };
+  return { checkIsScored, close, height, image, page };
 };

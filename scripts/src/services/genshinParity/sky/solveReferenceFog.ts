@@ -50,7 +50,7 @@ export const solveReferenceFog = async (
   solutions: { color: string; density: number; direction: string; residual: number; scatterColor: string }[];
 }> => {
   await fetchReferences();
-  const { browser, checkIsScored, height, image, page } = await openWitnessPage(referenceId, witness);
+  const { checkIsScored, close, height, image, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(
     async () => {
       await setPageWitnessView(page, {});
@@ -172,6 +172,6 @@ export const solveReferenceFog = async (
         }),
       };
     },
-    () => browser.close(),
+    () => close(),
   );
 };

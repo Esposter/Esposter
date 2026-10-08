@@ -1,8 +1,8 @@
 import type { ParityPassResult } from "#src/models/genshinParity/passes/ParityPassResult";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { PARITY_PASSES_PATH } from "#src/services/genshinParity/passes/constants";
 import { checkIsReadingHeld } from "#src/services/genshinParity/passes/checkIsReadingHeld";
+import { PARITY_PASSES_PATH } from "#src/services/genshinParity/passes/constants";
 import { formatPassValue } from "#src/services/genshinParity/passes/formatPassValue";
 import { formatReadingValue } from "#src/services/genshinParity/passes/formatReadingValue";
 import { existsSync } from "node:fs";

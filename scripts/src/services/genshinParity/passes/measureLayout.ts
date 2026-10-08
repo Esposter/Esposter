@@ -35,15 +35,15 @@ const shift = (point: Readonly<Vector>, [x, y, z]: Readonly<Vector>): Vector => 
 // Alone
 export const measureLayout = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
   const { explainedOffsets, families, ratios } = await checkArrangement(component);
-  const { browser, page } = await openComponentWitnessPage(component);
+  const { close, page } = await openComponentWitnessPage(component);
   const familyOffsets = await withFinalizerAsync(
     () => readFamilyOffsets(page),
-    () => browser.close(),
+    () => close(),
   );
   const projected: { families: { gaps: number[]; name: string }[]; referenceId: string }[] = [];
   for (const referenceId of getCurrentBuildReferenceIds(component)) {
     // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
-    const { browser: referenceBrowser, page: referencePage } = await openWitnessPage(referenceId, component);
+    const { close: referenceClose, page: referencePage } = await openWitnessPage(referenceId, component);
     // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
     const referenceFamilies = await withFinalizerAsync(
       async () => {
@@ -67,7 +67,7 @@ export const measureLayout = async (component: DerivedAssetComponent): Promise<P
           return { gaps: computeProjectedGaps(pose, shifted, width, height), name };
         });
       },
-      () => referenceBrowser.close(),
+      () => referenceClose(),
     );
     projected.push({ families: referenceFamilies, referenceId });
   }

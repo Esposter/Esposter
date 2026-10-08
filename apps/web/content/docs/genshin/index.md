@@ -57,12 +57,15 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Screens](/docs/genshin/screens)                           | the screens opened over the world one at a time, what each holds, and the Paimon menu's shell                                                        |
 | [Map](/docs/genshin/map)                                   | the map on M at full screen, its keyboard jump list, and a jump's fade to black and back                                                             |
 | [Minimap](/docs/genshin/minimap)                           | the HUD's corner map, the map's drawing cut to a circle round the camera and turned with it                                                          |
+| [Map unlocking](/docs/genshin/map-unlocking)               | a Statue of The Seven resonated with on F, its area filled in on the map and minimap, and only the unlocked statues offered as jumps and revives     |
+| [Statues of The Seven](/docs/genshin/statues-of-the-seven) | a region's levels and rewards from the game's table, the stamina they raise to 240, and the Blessing's pool and heals, not yet on a screen           |
 | [HUD](/docs/genshin/hud)                                   | the heads-up display's Paimon button, minimap, quest tracker, stamina meter, party, health and skill and burst buttons, and hiding it                |
 | [Touch controls](/docs/genshin/touch-controls)             | the stick on the left half, the look on the right and the jump button, fed into the one input                                                        |
 | [Enemies](/docs/genshin/enemies)                           | enemy kinds and their stats, their AI and camps, respawn and drops, struck by the kit and drawn as stand-in capsules                                 |
 | [Adventure Rank](/docs/genshin/adventure-rank)             | the rank to 60 on the game's table, held at the ascension quests, the World Level and its lowering, and the enemies it raises                        |
 | [Original Resin](/docs/genshin/original-resin)             | the resin regenerating from its last change to 200, refills from Primogems at six daily prices, and a claim's price and Adventure EXP                |
 | [Domains](/docs/genshin/domains)                           | each kind's opening by Adventure Rank, and by the day: Blessing every day, Forgery and Mastery on Sundays and their set days                         |
+| [Ley line outcrops](/docs/genshin/ley-line-outcrops)       | each region's two blossoms read from the game's tables, opened by Adventure Rank and a nation's area, started and moved on along their places        |
 | [Combat](/docs/genshin/combat)                             | auras and reactions in the game's priority, the damage formula, internal cooldown, shields and energy, and the Traveler's kit's hits                 |
 | [Character kits](/docs/genshin/character-kits)             | each playable character's skill sets from the game's tables, the Traveler's kit checked against its Anemo set                                        |
 | [Characters](/docs/genshin/characters)                     | the official MMD packs read by our own PMX reader and drawn on the toon ramp, with their terms                                                       |
@@ -70,6 +73,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Artifact enhancement](/docs/genshin/artifact-enhancement) | an artifact rolled from its slot's pool and the rarity's minor affixes, enhanced with Artifact EXP at a Mora a point, and locked against fodder      |
 | [Weapon enhancement](/docs/genshin/weapon-enhancement)     | a weapon levelled from ores and fodder at Mora, ascended at each phase's cap, and refined from a copy or a material, its passive waiting on the kits |
 | [Talents](/docs/genshin/talents)                           | each combat talent levelled from 1 to 10 by the game's table, each level paid in Mora and materials at its phase, and the passives each phase opens  |
+| [Constellations](/docs/genshin/constellations)             | each playable character's six constellations from the game's table, activated with its own Stella Fortuna, and the talent its third and fifth raise  |
 | [Character screen](/docs/genshin/character-screen)         | the C screen's frame, its six tabs in the game's words, and the Attributes tab's level and attributes                                                |
 | [Party](/docs/genshin/party)                               | the teams, the one deployed and the member on the field, switched on 1 to 4 past the one second cooldown, each with its own HP, energy and cooldowns |
 | [Interaction](/docs/genshin/interaction)                   | the F prompts over the world: the drops and talks in reach nearest first, F picking up or talking, the wheel and a held F's repeat                   |
@@ -110,6 +114,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - The login's music, its second piece played with public-domain recordings layered over the synthesizer.
 - The game's default controls, and its screens opened over the world from them and from the Paimon menu, an unbuilt screen a placeholder under its title.
 - The map on M with its jump list, a jump fading to black and back, the HUD's shell with its minimap, and the touch controls.
+- Map unlocking's statues: resonating with a Statue of The Seven on F fills its area in on the map and minimap, and only the unlocked statues are jumps and places to revive.
 - Enemies: kinds read from the game's tables, an AI on the fixed step, camps, respawn and drops, drawn as capsules.
 - Characters read from HoYoverse's official MMD packs by the engine's own PMX reader and drawn at rest on the toon ramp.
 - Combat's rules as pure, tested functions: auras and reactions, the damage formula, internal cooldown, shields and energy.
@@ -117,6 +122,8 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - An artifact rolled by the game's pools and the wiki's weights, enhanced with Artifact EXP at a Mora a point, its fodder and its locks as the game keeps them.
 - The F prompts' rules, the bag and its wallet on B, and the wish's published rules with its screen on F3, offering the standard and beginners' wishes from their pools.
 - Original Resin: its count regenerating while the page is closed, its refills from Primogems at the game's daily prices, a claim's price and Adventure EXP, and its counter on the map's top bar.
+- Ley line outcrops: each region's Revelation and Wealth read from the game's tables, their openings by rank and nation, a drawn start and the move along their places, with the touch and the claim still unbuilt.
+- Constellations: each character's six from the game's table, activated with its own Stella Fortuna, which a duplicate draw brings and a five-star past six a Masterless one.
 
 ## Key files
 

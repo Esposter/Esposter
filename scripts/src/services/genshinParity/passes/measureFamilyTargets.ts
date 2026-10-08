@@ -29,7 +29,7 @@ export const measureFamilyTargets = async (
   const measures: ParityPassMeasure[] = [];
   for (const referenceId of getCurrentBuildReferenceIds(component)) {
     // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
-    const { browser, page } = await openWitnessPage(referenceId, component, SHAPE_WIDTH);
+    const { close, page } = await openWitnessPage(referenceId, component, SHAPE_WIDTH);
     // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
     const measure = await withFinalizerAsync(
       async () => {
@@ -41,7 +41,7 @@ export const measureFamilyTargets = async (
         const oursRead = await readWitnessTargets(page, targetNames, true);
         return compare(referenceId, exportsRead, oursRead);
       },
-      () => browser.close(),
+      () => close(),
     );
     measures.push(measure);
   }

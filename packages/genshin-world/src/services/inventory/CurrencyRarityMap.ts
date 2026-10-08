@@ -7,6 +7,7 @@ export const CurrencyRarityMap = {
   [Currency.IntertwinedFate]: 5,
   [Currency.MasterlessStardust]: 4,
   [Currency.MasterlessStarglitter]: 5,
+  [Currency.MasterlessStellaFortuna]: 5,
   [Currency.Mora]: 3,
   [Currency.OriginalResin]: 3,
   [Currency.Primogem]: 5,

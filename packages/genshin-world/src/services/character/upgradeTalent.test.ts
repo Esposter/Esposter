@@ -9,25 +9,31 @@ import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
-const CHARACTER: Character = {
-  artifacts: [],
-  ascension: 2,
-  id: 1,
-  level: 20,
-  talentLevels: { [CombatTalent.ElementalBurst]: 1, [CombatTalent.ElementalSkill]: 1, [CombatTalent.NormalAttack]: 1 },
-  weapon: { ascension: 0, experience: 0, id: 1, level: 1, refinement: 1 },
-};
-const MATERIAL: ItemDefinition = {
-  category: ItemCategory.Material,
-  id: 104_323,
-  name: "",
-  rank: 1,
-  rarity: 1,
-  stackLimit: 99,
-};
-const UPGRADES: TalentUpgrade[] = [{ coinCost: 500, costItems: [{ count: 3, id: MATERIAL.id }], level: 2, phase: 2 }];
-
 describe(upgradeTalent, () => {
+  const CHARACTER: Character = {
+    artifacts: [],
+    ascension: 2,
+    constellationCount: 0,
+    id: 1,
+    level: 20,
+    stellaFortunaCount: 0,
+    talentLevels: {
+      [CombatTalent.ElementalBurst]: 1,
+      [CombatTalent.ElementalSkill]: 1,
+      [CombatTalent.NormalAttack]: 1,
+    },
+    weapon: { ascension: 0, experience: 0, id: 1, level: 1, refinement: 1 },
+  };
+  const MATERIAL: ItemDefinition = {
+    category: ItemCategory.Material,
+    id: 104_323,
+    name: "",
+    rank: 1,
+    rarity: 1,
+    stackLimit: 99,
+  };
+  const UPGRADES: TalentUpgrade[] = [{ coinCost: 500, costItems: [{ count: 3, id: MATERIAL.id }], level: 2, phase: 2 }];
+
   test("takes the level's Mora and items and raises the talent one level", () => {
     expect.hasAssertions();
     expect(

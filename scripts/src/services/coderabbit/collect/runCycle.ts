@@ -1,5 +1,6 @@
 import type { CycleInput } from "#src/models/coderabbit/collect/CycleInput";
 import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
+import type { WindowPullRequest } from "#src/models/coderabbit/collect/WindowPullRequest";
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
@@ -8,6 +9,7 @@ import { WindowPullRequestState } from "#src/models/coderabbit/collect/WindowPul
 import { checkIsStackingAllowed } from "#src/services/coderabbit/collect/checkIsStackingAllowed";
 import { DEVELOP_BRANCH, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { drainWindow } from "#src/services/coderabbit/collect/drainWindow";
+import { getNewestMergedPullRequest } from "#src/services/coderabbit/collect/getNewestMergedPullRequest";
 import { getNewestWindowPullRequest } from "#src/services/coderabbit/collect/getNewestWindowPullRequest";
 import { getNextWindowNumber } from "#src/services/coderabbit/collect/getNextWindowNumber";
 import { getOpenedInLastHour } from "#src/services/coderabbit/collect/getOpenedInLastHour";
@@ -16,8 +18,8 @@ import { getWindowOpenCount } from "#src/services/coderabbit/collect/getWindowOp
 import { openNextWindow } from "#src/services/coderabbit/collect/openNextWindow";
 import { orderWindowStack } from "#src/services/coderabbit/collect/orderWindowStack";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
+import { readCoderabbitConfig } from "#src/services/coderabbit/collect/readCoderabbitConfig";
 import { readLegacyReleasePullRequest } from "#src/services/coderabbit/collect/readLegacyReleasePullRequest";
-import { readMainCoderabbitConfig } from "#src/services/coderabbit/collect/readMainCoderabbitConfig";
 import { readSessionLimitResetMs } from "#src/services/coderabbit/collect/readSessionLimitResetMs";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
 import { readWindowPullRequests } from "#src/services/coderabbit/collect/readWindowPullRequests";
@@ -37,11 +39,19 @@ const getOutcome = (
   targetSha?: string,
 ): CycleOutcome => ({ kind, reason, retriggerDelaySeconds, targetSha });
 
-// One pass: return, express, then the open stack — each window's gate, the bottom one merged and drained once its review
-// Completes — and then as many windows opened as the hourly ceiling and the stacking guard allow, each cut from the top
-// Of the stack. Every input is a remote fact and every write is either a push or guarded by a predicate a later run
-// Re-evaluates, so any event may run this and a run against unchanged state does nothing. It returns its verdict rather
-// Than exiting, which is what makes a dry run one mode of the same code path (docs: infra/review-collector).
+// A window is cut over the top of the open stack and CodeRabbit reviews it under the config its base carries, so the
+// Guard reads the top's copy. With nothing open the window is cut over `main`, which needs no guard
+const checkIsStackingAllowedOver = (openStack: WindowPullRequest[], cwd: string): boolean => {
+  const top = openStack.at(-1);
+  return top === undefined || checkIsStackingAllowed(readCoderabbitConfig(top.headRefName, cwd), top.headRefName);
+};
+
+// One pass: return, express, then the open stack — the release from `develop` while it is open, and each window's gate,
+// The bottom one merged and drained once its review completes — and then as many windows opened as the hourly ceiling
+// And the stacking guard allow, each cut from the top of the stack. Every input is a remote fact and every write is
+// Either a push or guarded by a predicate a later run re-evaluates, so any event may run this and a run against
+// Unchanged state does nothing. It returns its verdict rather than exiting, which is what makes a dry run one mode of
+// The same code path (docs: infra/review-collector).
 export const runCycle = async ({
   collectorSha,
   cwd,
@@ -59,13 +69,20 @@ export const runCycle = async ({
     openPullRequests: readWindowPullRequests(WindowPullRequestListState.Open),
     windowHistory,
   });
+  // The release from `develop` to `main` that predates the stack is the stack's bottom while it is open: it is gated,
+  // Merged and drained as a window is, and never retargeted or deleted, since `develop` is its head
+  const legacyPullRequest = readLegacyReleasePullRequest();
+  const stackPullRequests =
+    legacyPullRequest?.state === WindowPullRequestState.Open
+      ? [legacyPullRequest, ...openPullRequests]
+      : openPullRequests;
   // The return stroke first: a stack that merged moves `develop` before anything is measured against it, and an open
   // Stack keeps `develop` on its top window
   const returned = runReturnStroke({
     cwd,
     developSha: branchShas.developSha,
     isDryRun,
-    isStackOpen: openPullRequests.length > 0,
+    isStackOpen: stackPullRequests.length > 0,
     mainSha,
   });
   if (returned.outcome) return returned.outcome;
@@ -94,24 +111,48 @@ export const runCycle = async ({
       CycleOutcomeKind.Idle,
       `pull request #${pausedWindow.number} was closed without merging — a person's pause, re-open it to resume`,
     );
-  // The release before the stack is a pause too when a person closed it, and the stack waits on it when it is open
-  const legacyPullRequest = readLegacyReleasePullRequest();
+  // The release before the stack is a pause too when a person closed it
   if (legacyPullRequest?.state === WindowPullRequestState.Closed)
     return getOutcome(
       CycleOutcomeKind.Idle,
       `pull request #${legacyPullRequest.number} from ${DEVELOP_BRANCH} to ${MAIN_BRANCH} was closed without merging — a person's pause`,
     );
 
-  // Bottom up, the stack is walked: the bottom window merges and is drained once its review completes, a window above
-  // An unmerged one waits, and a rate limit is settled wherever it refused a review
-  const stack = orderWindowStack(openPullRequests);
+  // The newest merged pull request is the review the next cut answers, so its findings are drained again on every run
+  // Until none is open. A drain that left one ended the run that merged it, so nothing above it may merge or open first
+  let reviewFixesSha = branchShas.reviewFixesSha;
+  const pendingPullRequest = getNewestMergedPullRequest([
+    ...windowHistory,
+    ...(legacyPullRequest ? [legacyPullRequest] : []),
+  ]);
+  const drainedBeforeWalk = pendingPullRequest === undefined ? [] : [pendingPullRequest];
+  if (pendingPullRequest !== undefined) {
+    const pending = await drainWindow({
+      collectorSha,
+      cwd,
+      developSha,
+      isDryRun,
+      mainSha,
+      pullRequest: pendingPullRequest,
+      queueSha,
+      reviewFixesSha,
+      viewerLogin,
+    });
+    if (pending.outcome)
+      return getOutcome(pending.outcome.kind, pending.outcome.reason, undefined, pending.outcome.targetSha);
+    reviewFixesSha = pending.reviewFixesSha;
+  }
+
+  // Bottom up, the stack is walked: the bottom merges and is drained once its review completes, a window above an
+  // Unmerged one waits, and a rate limit is settled wherever it refused a review
+  const stack = orderWindowStack(stackPullRequests);
   const walked = await walkWindowStack({
     collectorSha,
     cwd,
     developSha,
     isDryRun,
     queueSha,
-    reviewFixesSha: branchShas.reviewFixesSha,
+    reviewFixesSha,
     stack,
     viewerLogin,
   });
@@ -122,7 +163,7 @@ export const runCycle = async ({
       walked.retriggerDelaySeconds,
       walked.outcome.targetSha,
     );
-  const drainedPullRequests = [...walked.drainedPullRequests];
+  const drainedPullRequests = [...drainedBeforeWalk, ...walked.drainedPullRequests];
   // A named pull request is drained when no window is open, as the merged release was: its findings lead the next cut
   if (namedPullRequest !== undefined && stack.length === 0) {
     const currentShas = readBranchShas(cwd);
@@ -147,24 +188,39 @@ export const runCycle = async ({
     drainedPullRequests.push(namedPullRequest);
   }
 
-  // A window cut over `develop` while the release before the stack is open would move that pull request's head under its
-  // own review, and nothing here reviews it, so the windows wait until a person merges or closes it
-  if (legacyPullRequest?.state === WindowPullRequestState.Open)
+  // A window cut over `develop` while the release is open would move that pull request's head under its own review, so
+  // No window opens until the walk has merged it. Once merged, `main` has moved past `develop` and the stroke follows it
+  // Before a window is cut, as the next run's would
+  if (
+    legacyPullRequest?.state === WindowPullRequestState.Open &&
+    !walked.drainedPullRequests.includes(legacyPullRequest.number)
+  )
     return getOutcome(
       CycleOutcomeKind.Idle,
-      `pull request #${legacyPullRequest.number} from ${DEVELOP_BRANCH} to ${MAIN_BRANCH} is open — no window opens over ${DEVELOP_BRANCH} until a person merges or closes it`,
+      `pull request #${legacyPullRequest.number} from ${DEVELOP_BRANCH} to ${MAIN_BRANCH} is open — no window opens until its review completes and it merges`,
       walked.retriggerDelaySeconds,
     );
 
   // The windows: one at a time, for as long as the hourly ceiling and the stacking guard allow. A window that did not
   // Reach the remote ends the openings, and what the openings returned is the run's verdict
-  const isStackingAllowed = checkIsStackingAllowed(readMainCoderabbitConfig(cwd));
   let openedStack = orderWindowStack(readWindowPullRequests(WindowPullRequestListState.Open));
+  if (walked.drainedPullRequests.length > 0) {
+    // The walk merged something, so the stroke is asked again: it moves `develop` only once the stack is empty
+    const currentShas = readBranchShas(cwd);
+    const followed = runReturnStroke({
+      cwd,
+      developSha: currentShas.developSha,
+      isDryRun,
+      isStackOpen: openedStack.length > 0,
+      mainSha: currentShas.mainSha,
+    });
+    if (followed.outcome) return followed.outcome;
+  }
   let history = readWindowPullRequests(WindowPullRequestListState.All);
   let openingOutcome: CycleOutcome | undefined;
   while (
     getWindowOpenCount({
-      isStackingAllowed,
+      isStackingAllowed: checkIsStackingAllowedOver(openedStack, cwd),
       openCount: openedStack.length,
       openedInLastHour: getOpenedInLastHour(history, Date.now()),
       reviewsPerHour: REVIEWS_PER_HOUR,

@@ -41,8 +41,10 @@ const ROSTER_IDS = [
 const roster: Character[] = ROSTER_IDS.map((id) => ({
   artifacts: [],
   ascension: id === XILONEN_ID ? XILONEN_ASCENSION : 0,
+  constellationCount: 0,
   id,
   level: id === XILONEN_ID ? XILONEN_MAX_LEVEL : 1,
+  stellaFortunaCount: 0,
   talentLevels: { [CombatTalent.ElementalBurst]: 1, [CombatTalent.ElementalSkill]: 1, [CombatTalent.NormalAttack]: 1 },
   weapon: { ascension: 0, experience: 0, id: XILONEN_WEAPON_ID, level: 1, refinement: 1 },
 }));

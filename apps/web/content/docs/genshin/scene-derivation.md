@@ -115,6 +115,10 @@ A region's base ground is fitted by `fitRegionGround`, the same fit Windrise's g
 
 Every region is in the world's axes round the oak's foot, so its heights are read against Windrise's origin rather than its own component's. The fit writes `<region>/base-ground.json` beside the region's plateau in `<region>/ground.json`, and prints the error its hills leave. That error is the bar every region's ground is held to: its RMS within 60 metres of the centre, where Windrise's fit leaves 0.62 metres. Each region's fit is an entry in `DerivedAssetFitMap` that runs the fit with its centre; none is written yet, so `fit <region>` has nothing to run.
 
+## The other regions
+
+Each other region's open world is derived by `extract` from its capital's catalogued place, the way Windrise's is laid out, and is never rooted at its capital's index. The index is the chunk index of the capital's own StreamGen blob, a MonoBehaviour holding that blob's chunk offsets and hashes and no game object. A closure starts from the layout of game objects, so a root that holds none walks to nothing, and `extract` reports 0 objects for it. The capital's props and buildings are not in that index at all: they are the placements of the tiles its view covers ([game data formats](/docs/genshin/game-data-formats)). So the derivation reads those tiles' blobs by path hash, places their prefabs in the capital's view, roots each prefab at the game object its name finds, and takes the ground from the 2x2 of terrain tiles its own tile starts (its east, north and north-east neighbours), as Windrise's is. The derived block is written beside the exports as `world.json`, and every reader takes it through `readWorldOptions`.
+
 ## Key files
 
 | File                                                                    | Role                                                                           |
