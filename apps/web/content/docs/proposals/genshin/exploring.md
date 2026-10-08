@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Exploring
 
-This page builds on the [world map](/docs/genshin/world-map), whose waypoints and outlines it presents. The free camera that flies the world is built, as the [free camera](/docs/genshin/free-camera) page describes. What is left is the means to go between places the camera cannot fly to in reasonable time, a map of where the places are, and the controls a player reaches for. Exploring is replaced, not extended, when the phase-three character controller arrives. After that the character walks and the free camera stays as a photo mode.
+This page builds on the [world map](/docs/genshin/world-map), whose waypoints and outlines it presents. The free camera that flies the world is built, as the [free camera](/docs/genshin/free-camera) page describes. What is left is the means to go between places the camera cannot fly to in reasonable time, a map of where the places are, and the controls a player reaches for. Exploring is replaced, not extended, when the [character controller](/docs/proposals/genshin/character-controller) arrives. After that the character walks and the free camera stays as a photo mode.
 
 ## Decisions
 

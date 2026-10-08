@@ -66,11 +66,21 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 | [Nod-Krai](/docs/proposals/genshin/nod-krai)   | the moonlit borderland archipelago                   |
 | [Snezhnaya](/docs/proposals/genshin/snezhnaya) | the Cryo nation of tundra, factories and its capital |
 
+### Phase three: the play features
+
+| Page                                                                 | What it adds                                                                    |
+| :------------------------------------------------------------------- | :------------------------------------------------------------------------------ |
+| [Character controller](/docs/proposals/genshin/character-controller) | running, sprinting, jumping, climbing, gliding, swimming and their stamina      |
+| [Follow camera](/docs/proposals/genshin/follow-camera)               | the camera behind the character, pulled in by the ground; photo mode            |
+| [HUD](/docs/proposals/genshin/hud)                                   | the heads-up display's Paimon button and stamina meter, and the minimap's place |
+| [Characters](/docs/proposals/genshin/characters)                     | the game's characters from HoYoverse's official models                          |
+| [Menu screens](/docs/proposals/genshin/menu-screens)                 | the Paimon menu, and the Time and Settings screens it opens                     |
+
 ## Scope and order
 
 1. **The recreation passes' runner and measures first.** Every later page is judged by them, so they are the base the rest stands on. The rest of the engine follows in the table's order, each built when Windrise's passes reach what it draws and shown first there, in the scene the [rendering style](/docs/genshin/rendering-style) is built in.
 2. **Mondstadt first among the regions.** It is where the game begins, and its opening areas are the ones the Windrise scene already holds. The rest follow in the game's release order.
-3. **Then the play features, one page each, written when the world is walkable.** First the character controller (run, sprint, jump, climb, glide, swim and stamina) and its camera. Then [characters](/docs/proposals/genshin/characters), from HoYoverse's official MMD models, hosted in the app's Blob Storage. Then elemental reactions, and after that each feature in turn. Each gets its page when its turn comes, not before, so no spec is written against an engine that does not yet exist.
+3. **Then the play features, one page each.** First the [character controller](/docs/proposals/genshin/character-controller) (run, sprint, jump, climb, glide, swim and stamina) and its [follow camera](/docs/proposals/genshin/follow-camera). Then the [HUD](/docs/proposals/genshin/hud), whose stamina meter the controller needs. Then [characters](/docs/proposals/genshin/characters), from HoYoverse's official MMD models, hosted in the app's Blob Storage. Then the [menu screens](/docs/proposals/genshin/menu-screens), whose Paimon is drawn as a character is. Then elemental reactions, and after that each feature in turn. Each later feature gets its page when its turn comes, not before, so no spec is written against an engine that does not yet exist.
 
 ## What this does not propose
 

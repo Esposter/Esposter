@@ -62,7 +62,7 @@ The camera is never held under the ground or the water's surface: after each ste
 
 ## Notes
 
-- **The free camera is replaced, not extended, once a character walks.** A controller then owns the camera's follow, and the free camera stays as a photo mode; [exploring](/docs/proposals/genshin/exploring) holds what comes after.
+- **The free camera is replaced, not extended, once a character walks.** The [follow camera](/docs/proposals/genshin/follow-camera) then follows the [character controller](/docs/proposals/genshin/character-controller)'s body, and the free camera stays as the photo mode.
 
 ## Sources
 
