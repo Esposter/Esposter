@@ -4,6 +4,13 @@ Read when a wave starts, when an agent is about to check, build, search or scan,
 
 A wave of agents multiplies every habit by the number of agents. A typecheck each agent runs before each commit is the same check run a dozen times over a tree that changes under all of them. So a check every agent needs runs once for all of them, every search reads only what git tracks, and every long run goes to whichever of the cores, the GPU or the video engine does it cheapest.
 
+## Every improvement ships, measured, and trims what it replaced
+
+- **An efficiency gain found in any work is built then**, as its own unit, never noted for later: a check run twice, a process held by nothing, a server per lane that one could serve, a mechanism a simpler one now covers.
+- **It is measured before and after, on this machine.** Memory of the process tree, time to ready and CPU seconds, as medians over a few runs. The numbers decide it: a mechanism that saves nothing measurable is removed, however sensible it sounded.
+- **What it replaced goes in the same change.** The old script, flag, port, rule or prose line is deleted, not left beside the new one, so the machine never runs both and the reader never wonders which holds.
+- **The architecture is a docs page with its diagram.** How the local lanes, servers, browser and watchers fit together is explained in `apps/web/content/docs`, with a magnitude for what each one saves. This page keeps only the rules an agent follows.
+
 ## Checks run once, for every agent
 
 - **Typecheck: one watcher per package, read by every agent.** When a wave starts, the main session starts one watcher in each package the wave edits. It runs hidden from the package folder: `pnpm exec tsc --noEmit --watch --preserveWatchOutput > ~/Esposter/checks/<package>.log 2>&1`, or `vue-tsc` in a package with `.vue` files. The workspace's `typescript` is the tsgo-backed fork, so an incremental pass takes seconds. The main session stops the watchers when the wave ends.
