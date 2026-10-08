@@ -87,6 +87,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Parity](/docs/genshin/parity)                             | matching a screen to the game's: references, tracing, scoring, motion and the visual suite                                                           |
 | [Scene derivation](/docs/genshin/scene-derivation)         | how the game's own assets are re-derived into a scene, each loss priced first                                                                        |
 | [Derived assets](/docs/genshin/derived-assets)             | which reference each part is measured from, how it becomes ours, and each part's progress                                                            |
+| [Spawned places](/docs/genshin/spawned-places)             | the official Teyvat map's statues and waypoints fitted to the scene's transport points, with the residual and each region's Oculi against the wiki's |
 | [Interface library](/docs/genshin/interface-library)       | `genshin-interface`: the game's screen root, units, pointer, and the pieces its screens share                                                        |
 | [Interface layout](/docs/genshin/interface-layout)         | every screen laid out from the game's own RectTransform tree, nothing by hand                                                                        |
 | [Title splash](/docs/genshin/title-splash)                 | the game's title logo as each language's client draws it                                                                                             |
@@ -127,6 +128,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - Ley line outcrops: each region's Revelation and Wealth read from the game's tables, their openings by rank and nation, a drawn start and the move along their places, with the touch and the claim still unbuilt.
 - Constellations: each character's six from the game's table, activated with its own Stella Fortuna, which a duplicate draw brings and a five-star past six a Masterless one.
 - Elemental Sight: the range spread from the character and held to its reach, the world muted outside what is lit, interactables in white, enemies in their element's colour with their names, and the sight ended by a short walk.
+- The official Teyvat map's statues and waypoints read into the references folder and fitted to the scene's transport points: one similarity over the whole map, its residual printed, and each region's Oculi checked against the wiki's.
 
 ## Key files
 
