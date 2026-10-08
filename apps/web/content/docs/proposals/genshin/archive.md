@@ -55,4 +55,4 @@ flowchart LR
 ## Sources
 
 - [Archive](https://genshin-impact.fandom.com/wiki/Archive), Genshin Impact Wiki: its unlock after its quest, its sections, entries opened when first obtained or defeated, artifact sets once every piece is held, kill counts and turning models, and Geography's viewpoints.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the weapon, artifact, animal, book, material, view and quest codex tables.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the weapon, artifact, animal, book, material, view and quest codex tables.

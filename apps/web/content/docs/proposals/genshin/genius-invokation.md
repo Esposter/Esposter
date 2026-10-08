@@ -61,4 +61,4 @@ stateDiagram-v2
 
 - [Genius Invokation TCG](https://genshin-impact.fandom.com/wiki/Genius_Invokation_TCG), Genshin Impact Wiki: the unlock at rank 32 and the tutorial quest, duels against characters and NPCs, unrewarded duels with friends, character and action cards, and the Card Shop and Lucky Coins.
 - [Genius Invokation TCG: Rules](https://genshin-impact.fandom.com/wiki/Genius_Invokation_TCG/Rules), Genshin Impact Wiki: the zones and their limits, five drawn and one switch, eight dice and one reroll, the round's phases, and fifteen rounds at most.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the GCG card, character, skill, cost, reaction, rule and deck tables, and the GCG configs.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the GCG card, character, skill, cost, reaction, rule and deck tables, and the GCG configs.

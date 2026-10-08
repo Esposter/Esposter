@@ -57,4 +57,4 @@ flowchart TD
 ## Sources
 
 - [Achievements](https://genshin-impact.fandom.com/wiki/Achievements), Genshin Impact Wiki: Primogems for each, a namecard for a category done, open-ended categories, and tiers shown as stars.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the achievement table with each one's category, trigger, progress, reward and tier, and the categories' table.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the achievement table with each one's category, trigger, progress, reward and tier, and the categories' table.

@@ -55,4 +55,4 @@ stateDiagram-v2
 ## Sources
 
 - [Expedition](https://genshin-impact.fandom.com/wiki/Expedition), Genshin Impact Wiki: the unlock at rank 14 through Katheryne, any character but the Traveler for 4, 8, 12 or 20 hours, still usable while away, places opened by their statues, rewards by place varying slightly, the timer running offline, recall forfeiting the reward, and two at once rising with rank.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the expedition tables and the player level table's expedition limit.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the expedition tables and the player level table's expedition limit.

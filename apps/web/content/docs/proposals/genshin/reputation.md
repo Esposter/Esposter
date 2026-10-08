@@ -63,4 +63,4 @@ flowchart TD
 
 - [Reputation](https://genshin-impact.fandom.com/wiki/Reputation), Genshin Impact Wiki: the nations' Reputation and its sources, the unlock at rank 25 with each nation's quests, bounties from level 2 tracked by Elemental Sight and three a week across nations, requests at 80 Reputation and 20,000 Mora three a week, Natlan's supply notices, exploration's share, the rewards, the last level's close, and the 10% discount rounded in the player's favour.
 - [Daily Reset](https://genshin-impact.fandom.com/wiki/Daily_Reset), Genshin Impact Wiki: the weekly reset bounties and requests start again at.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the reputation tables and the bounties' refresh table.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the reputation tables and the bounties' refresh table.

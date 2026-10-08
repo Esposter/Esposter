@@ -55,4 +55,4 @@ flowchart TD
 
 - [Statue of The Seven](https://genshin-impact.fandom.com/wiki/Statue_of_The_Seven), Genshin Impact Wiki: the regions' shared levels, the maximum stamina to 240, the Restorative Power pool and its refill, the 10% heal, and auto-recover's revive at 35%.
 - [Oculus](https://genshin-impact.fandom.com/wiki/Oculus), Genshin Impact Wiki: the Anemoculi of Mondstadt, one count the levels are checked against.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the city level-up table and the reward table the slice is written from.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the city level-up table and the reward table the slice is written from.

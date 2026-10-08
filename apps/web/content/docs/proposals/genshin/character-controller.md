@@ -67,4 +67,4 @@ Each state is approved by its own measure against the readings, as the motion pa
 - [Stamina](https://genshin-impact.fandom.com/wiki/Stamina), Genshin Impact Wiki: each action's cost, the climb's marked unknown.
 - [Gliding](https://genshin-impact.fandom.com/wiki/Gliding), Genshin Impact Wiki: the glide's cost approximated from player testing.
 - [Model Type](https://genshin-impact.fandom.com/wiki/Model_Type), Genshin Impact Wiki: the five playable model types, and movement differing between them.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's dump of the game's data: the characters' configurations under `BinOutput/Avatar`, their field names obfuscated.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's dump of the game's data: the characters' configurations under `BinOutput/Avatar`, their field names obfuscated.

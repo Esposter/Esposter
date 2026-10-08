@@ -59,4 +59,4 @@ stateDiagram-v2
 ## Sources
 
 - [Spiral Abyss](https://genshin-impact.fandom.com/wiki/Spiral_Abyss), Genshin Impact Wiki: Musk Reef and its wormhole, the unlock at rank 20, the Corridor and the Moon Spire, twelve floors of three chambers, 300 and 600 seconds, the monolith, two teams sharing a chamber's time, six stars to go on, stars kept as the best, health and energy recorded at a chamber's end, the reset on the 16th, and the enemies changing by version.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the tower's schedule, floor, chamber, blessing and reward tables.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the tower's schedule, floor, chamber, blessing and reward tables.

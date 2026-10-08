@@ -64,4 +64,4 @@ flowchart TD
 
 - [Cooking](https://genshin-impact.fandom.com/wiki/Cooking), Genshin Impact Wiki: the timer's three zones, proficiency and Auto Cook up to 99 always Delicious, stoves and campfires lit by Pyro and put out by the other elements and rain, special dishes, character bonuses, and Raiden Shogun's refusal.
 - [Processing](https://genshin-impact.fandom.com/wiki/Processing), Genshin Impact Wiki: ingredients processed over time, 99 of each at once, never cancelled.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the recipe, cooking bonus and processing tables.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the recipe, cooking bonus and processing tables.

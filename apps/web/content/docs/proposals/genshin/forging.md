@@ -59,4 +59,4 @@ flowchart TD
 
 - [Forging](https://genshin-impact.fandom.com/wiki/Forging), Genshin Impact Wiki: forging ores and billets, time and Mora stacking per item, every blacksmith one forge and the Serenitea Pot's refusing Magical Crystal Chunks, four queues at ranks 1, 5, 10 and 15, the hidden cap of 400,000 Weapon EXP and the recipe it spares, the refusal's words, and forging talents.
 - [Enhancement Ore](https://genshin-impact.fandom.com/wiki/Enhancement_Ore), Genshin Impact Wiki: the ore's 400 Weapon EXP, up to 40 a queue, and its share of the daily cap.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the forge recipes with their forge points, and the queues by rank.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the forge recipes with their forge points, and the queues by rank.
