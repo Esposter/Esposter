@@ -1,11 +1,11 @@
 ---
 title: Free camera
-description: The photo mode's camera, flown over the continent with the keyboard, the mouse and a gamepad's sticks from wherever the follow camera left the view. Its input is read once a frame and its look turns once a frame, its motion runs in fixed steps ahead of the floating origin's shift, and it is held above the ground and the water's surface.
+description: The free camera, flown over the continent with the keyboard, the mouse and a gamepad's sticks from wherever the follow camera left the view, which photo mode mounts today. Its input is read once a frame and its look turns once a frame, its motion runs in fixed steps ahead of the floating origin's shift, and it is held above the ground and the water's surface.
 ---
 
 # Free camera
 
-Photo mode's camera is a free camera: the player flies it over Windrise and beyond, while the character holds where it stood. In play the [follow camera](/docs/genshin/follow-camera) stands behind the [character](/docs/genshin/character-controller); choosing photo mode from the Paimon menu mounts the free camera, which flies from wherever the follow camera left the view, and leaving it unmounts it again. The camera is built from three engine modules, `input`, `simulation` and `camera`, and reads the ground through `collision`, all in `genshin-engine` and knowing no place by name. The world screen wires them to its own origin and its own height function.
+Photo mode's camera today is the free camera, the developer's flight: the player flies it over Windrise and beyond, while the character holds where it stood. Photo mode is proposed to orbit the character within the game's range instead, and the free camera then stays as a developer tool behind the tuning panel ([follow camera](/docs/proposals/genshin/follow-camera)). In play the [follow camera](/docs/genshin/follow-camera) stands behind the [character](/docs/genshin/character-controller); choosing photo mode from the Paimon menu mounts the free camera, which flies from wherever the follow camera left the view, and leaving it unmounts it again. The camera is built from three engine modules, `input`, `simulation` and `camera`, and reads the ground through `collision`, all in `genshin-engine` and knowing no place by name. The world screen wires them to its own origin and its own height function.
 
 ```mermaid
 sequenceDiagram
@@ -64,7 +64,7 @@ The camera is never held under the ground or the water's surface: after each ste
 
 ## Notes
 
-- **Photo mode flies anywhere.** The game's photo mode keeps its camera within a range of the character; how far this one may go is open on the [follow camera](/docs/proposals/genshin/follow-camera)'s proposal.
+- **Photo mode flies anywhere for now.** The game's photo mode keeps its camera within a range of the character, and this one does not until the orbit within that range is built, as the [follow camera](/docs/proposals/genshin/follow-camera)'s proposal sets out.
 
 ## Sources
 

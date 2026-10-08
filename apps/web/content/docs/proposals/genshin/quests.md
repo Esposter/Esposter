@@ -1,6 +1,6 @@
 ---
 title: Quests
-description: Proposal — Genshin's quests, still to come. The carried quests are written from the community's dump and served to the world with their words, started as the game starts them, and advanced by every doing the world records. Their progress is kept in the browser, the HUD's tracker shows the navigated step, V navigates and held V shows the step, the map pins the objective, and the daily commissions are dealt at the reset. The quest screen and the handbook are measured. The quest model, its progression, the quest screen, the navigation beam, the handbook's tabs and the reader are built, as the quests page describes.
+description: Proposal — Genshin's quests, still to come. The carried quests are written from the community's dump, with their words to be taken from the installed game's own text, and served to the world with those words, started as the game starts them, and advanced by every doing the world records. Their progress is kept in the browser, the HUD's tracker shows the navigated step, V navigates and held V shows the step, the map pins the objective, and the daily commissions are dealt at the reset. The quest screen and the handbook are measured. The quest model, its progression, the quest screen, the navigation beam, the handbook's tabs and the reader are built, as the quests page describes.
 model: claude-opus-5-5
 ---
 
@@ -17,10 +17,7 @@ The quest model and its pure progression, the quest screen J opens, the beam ove
 - **The navigated quest is shown and found as the game shows it.** The HUD's tracker under the minimap shows the navigated quest's title and step line. V navigates to it, mounting the beam over its objective in the world's group, and holding V shows the step. The map pins the objective, and its distance shows beside the HUD's mark.
 - **A place's trigger is placed in region data.** A go-to objective names the trigger the game fires, so a region's data places each trigger the carried quests name, and reaching it is the go-to event. Navigation then finds it as it finds a resident.
 - **The daily commissions are four a day, dealt at the reset.** As the wiki describes them, they are drawn from the pool of the areas the player has reached, with the preferred region the handbook sets.
-
-## Still to decide
-
-- **Where a talk's missing words come from.** The reader is built and reads the prologue's quests: their steps, their objectives and their talks' graphs. But the community dump's text maps hold the words of only about half the dialog table's lines (some 100,000 of 204,000 at its last commit), so about half of a talk's lines would show nothing, two of the five in Bird's Eye View's talk with Paimon among them. The source still to be chosen is either the game's own text blocks, decoded at the same patch as the tables, or another community dump that carries them. Once it is chosen, the reader's run joins the compute queue: it fetches the dump's quest, dialog and character tables and each carried quest's binary output from one commit, and its bar is no line without English words.
+- **The quest and dialogue text is the install's own.** A quest's words and a talk's are decoded from the installed game at the same patch as every other export, so a line, its id and its quest cannot drift apart. The community dump's half-empty English text then stops mattering.
 
 ## Measures owed
 

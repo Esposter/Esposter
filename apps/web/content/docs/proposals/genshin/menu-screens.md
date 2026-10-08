@@ -1,6 +1,6 @@
 ---
 title: Menu screens
-description: Proposal — the Paimon menu measured against the game and Paimon drawn beside it, and the Time and Settings screens it opens that the world can back. The menu's shell, its pause and its entries are built; what is left is every screen laid out by the game's own rect tree, its entries' icons traced, Paimon read from her official model, and the two screens of the side bar the world has something behind.
+description: Proposal — the Paimon menu measured against the game and Paimon drawn beside it, and the Time and Settings screens it opens that the world can back. The menu's shell, its pause and its entries are built; what is left is every screen laid out by the game's own rect tree, its entries' icons traced, Paimon read from her official model once one is published, and the two screens of the side bar the world has something behind.
 model: claude-opus-5-5
 ---
 
@@ -13,6 +13,8 @@ This page builds on [screens](/docs/genshin/screens), where the Paimon menu's sh
 - **Time is the game's own control of the clock.** Its screen sets an hour at least half an hour ahead of the current one and at most two days on, never back, as the game allows. It writes the hour the world's clock is held to, the world screen's `heldMinutes`. It is the world's one control of the hour, and that control is the game's: no clock control of the world's own is drawn.
 - **Settings shows only the rows the world has.** Each row the world backs is laid out with the game's name, range and default. Graphics Quality is the renderer's quality tier. Volume, Music Volume and SFX Volume run from 1 to 10 over the music's player and the sound effects. Game Language offers the fifteen languages of [game text](/docs/genshin/game-text). The camera sensitivities and default distance belong to the follow camera. Settings are kept in the browser, as the game keeps its settings per device. A row the world does not back is left out, never drawn disabled.
 - **Paimon is drawn as a character is.** She appears to the right of the menu with her idle animations, as the game shows her. She is read from her official model and drawn by [characters](/docs/proposals/genshin/characters)' reader and toon material, her motion fitted to the game's own clips, so nothing of the game's files ships.
+- **Paimon waits for an official model.** If HoYoverse's published packs hold no Paimon model, the menu ships without her: she is decoration, and the menu works whole without her. Characters are drawn only from official models, so no stand-in is made, and she is added once an official model is published.
+- **The profile card shows what the world backs.** Signed in, it shows the account's name and avatar; signed out, the game's default name, Traveler. Adventure Rank and World Level join it with the [Adventure Rank](/docs/proposals/genshin/adventure-rank) proposal's system, and the signature, namecard, birthday and UID each join when the system behind it lands.
 - **Measured like the login, in the game's words.** Each screen is a component of the `Menu` section in the world package, laid out by its RectTransform tree through `GameRect`. Its blocks are found and fitted as the HUD's are. Its entry icons are traced into paths of our own, and it is compared over a recording of the English PC client. The shell's stand-in sizes and colours give way to the fitted rects, and its labels stay the `GameTextKey`s they are.
 
 ## How it works
@@ -76,8 +78,3 @@ packages/genshin-world/src/data/menu/interfaceRects.json
 - [Time](https://genshin-impact.fandom.com/wiki/Time), Genshin Impact Wiki: one in-game minute a second, the Time option advancing from half an hour to two days ahead, and the clock paused in the menu but not in photo mode.
 - [Settings](https://genshin-impact.fandom.com/wiki/Settings), Genshin Impact Wiki: the graphics quality, the volumes from 1 to 10, the fifteen game languages and the camera's rows, and settings kept per device.
 - [Shortcut Wheel](https://genshin-impact.fandom.com/wiki/Shortcut_Wheel), Genshin Impact Wiki: the wheel's entries, the same screens as the menu's.
-
-## Open questions
-
-- **What does the profile card show?** The game's card holds a nickname, a signature, the Adventure Rank, the World Level, a birthday, an avatar, a namecard and a UID. The world has no player profile, and the page can be played signed out. Should the card show the signed-in account's name and avatar with every other row left out, or be left out entirely until the world has a profile?
-- **What if no official model of Paimon is found?** Paimon beside the menu is drawn from her official model, as characters are. If HoYoverse's packs hold none, should the menu ship without her, or wait until one is published?
