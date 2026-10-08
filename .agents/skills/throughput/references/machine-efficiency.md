@@ -31,6 +31,13 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 - **Decode a whole-video scan on the GPU, at a small size.** Pass `-hwaccel d3d11va` to use the GPU's video engine, and scale each frame down before any per-frame filter (`scale=64:-2` ahead of `signalstats`). A luma scan only needs one number per frame.
 - **Sweep the orphans.** An agent that ends can leave its background processes running. The main session lists the processes whose parent is gone (a `grep`, an `ffmpeg`, a `tail -f` feeding a dead monitor) and stops them.
 
+## Watch the machine
+
+- **A watcher wakes the session, so nothing polls.** While agents or runners are working, the main session runs `.agents/skills/throughput/scripts/watch-machine.ps1` under the Monitor tool, re-armed at each expiry. It is silent while the machine is busy. It prints one line when the CPU has averaged under 80% for three minutes with more than 6 GB free, and one when free memory falls under the 4 GB gate. Either line repeats every 15 minutes while its state holds.
+- **An idle line is a call to start what can run:** a lane's runner for a runnable item, a page per independent scene, the next wave's ready units.
+- **A machine idle because nothing can run is correct.** That line is answered by saying so. No item is queued, and no unit invented, to fill the cores: a queue that only grows is never digested.
+- **A tight line holds new starts** until memory comes back.
+
 ## Keep the GPU busy
 
 - **The page lane runs several scenes at once.** Its runner serves one parity page per item from its own worktree, on its own port (3003 upward), for items whose measures read different scenes. Items reading the same scene stay in order.
