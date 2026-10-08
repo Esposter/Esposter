@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Character } from "#src/models/character/Character";
+import type { StatTables } from "#src/models/character/StatTables";
 import type { GameText } from "genshin-text";
 
 import CharacterAttributeList from "#src/components/Character/AttributeList/Index.vue";
@@ -18,9 +19,11 @@ interface Props {
   gameText: GameText;
   // The party's stamina, which the Attributes tab shows with every character's own attributes
   maxStamina: number;
+  // The game's tables the characters' attributes are summed from
+  statTables: StatTables;
 }
 
-const { activeCharacterId, characters, gameText, maxStamina } = defineProps<Props>();
+const { activeCharacterId, characters, gameText, maxStamina, statTables } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const characterId = ref(activeCharacterId);
 const tab = ref(CharacterMenuTab.Attributes);
@@ -50,6 +53,7 @@ const tabLabels = computed(() =>
         :character
         :game-text
         :max-stamina
+        :stat-tables
       />
     </CharacterMenu>
     <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">×</button>

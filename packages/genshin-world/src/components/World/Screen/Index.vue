@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Character } from "#src/models/character/Character";
+import type { StatTables } from "#src/models/character/StatTables";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { MapCamera } from "#src/models/map/MapCamera";
@@ -27,6 +28,7 @@ import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
+import { readStatTables } from "#src/services/character/readStatTables";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
@@ -37,6 +39,8 @@ import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
 import { InitialBannerKindWishPityMap } from "#src/services/wish/InitialBannerKindWishPityMap";
+import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
+import { getResultAsync } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
 import { useEventListener, useRafFn } from "@vueuse/core";
 import {
@@ -94,9 +98,27 @@ const input = createInput(window, controller.signal);
 const inputState = input.readInput(0);
 // What is open over the world, one screen at a time, and what it does to the world under it
 const screenKind = ref(ScreenKind.World);
-// The player's characters and their party: the Traveler alone, as a new player's, on the field
-const characters: Character[] = [createCharacter(TRAVELER_CHARACTER_ID)];
+// The game's stat tables, read as the world starts rather than with the package, which the opening downloads, and the
+// Player's characters made from them and their party: the Traveler alone, as a new player's, on the field. Until the
+// Tables arrive nobody walks the field and the character screen opens as a placeholder, and tables that fail to arrive
+// Are logged and leave it so
+const statTables = shallowRef<StatTables>();
+const characters = shallowRef<Character[]>([]);
+// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+getResultAsync(readStatTables).match(
+  (newStatTables) => {
+    statTables.value = newStatTables;
+    characters.value = [createCharacter(TRAVELER_CHARACTER_ID, newStatTables.characterDataMap)];
+  },
+  (error) => {
+    console.error(error);
+  },
+);
 const party = reactive(createParty([TRAVELER_CHARACTER_ID]));
+// How the character on the field moves, its body type's, once the roster has arrived
+const locomotion = computed(() =>
+  statTables.value ? getCharacterLocomotion(getActiveCharacterId(party), statTables.value.characterDataMap) : undefined,
+);
 // The player's bag, wallet, wish counters and characters' copies, holding nothing as a new player's do until the world
 // Gives them something, and the banners the world offers, none until it can name what they draw
 const inventory = ref<Inventory>(EMPTY_INVENTORY);
@@ -231,13 +253,13 @@ defineExpose({ jumpTo, readCameraPosition });
         <!-- The character walks the world with the camera behind it, held where it stands under a menu and in photo
         mode, whose camera flies free from where the follow camera left it -->
         <WorldCharacter
-          v-if="!witness"
+          v-if="!witness && locomotion"
           ref="character"
           :body="characterBody"
-          :character-id="getActiveCharacterId(party)"
           :input-state
           :is-held="screenBehaviour.isHeld || screenKind === ScreenKind.PhotoMode || undefined"
           :landmark-collider
+          :locomotion
           :origin
         />
         <WorldFreeCamera
@@ -248,8 +270,9 @@ defineExpose({ jumpTo, readCameraPosition });
         />
       </template>
       <WorldWindrise
-        :character-body="cameraPose || witness ? undefined : characterBody"
+        :character-body="cameraPose || witness || !locomotion ? undefined : characterBody"
         :character-id="getActiveCharacterId(party)"
+        :character-locomotion="locomotion"
         :character-pack-base-url
         :create-terrain-worker
         :held-minutes
@@ -301,12 +324,13 @@ defineExpose({ jumpTo, readCameraPosition });
       <template #[ScreenKind.AdventurerHandbook]>
         <HandbookScreen :game-text @close="screenKind = ScreenKind.World" />
       </template>
-      <template #[ScreenKind.Character]>
+      <template v-if="statTables" #[ScreenKind.Character]>
         <CharacterScreen
           :active-character-id="getActiveCharacterId(party)"
           :characters
           :game-text
           :max-stamina="STAMINA_MAX"
+          :stat-tables
           @close="screenKind = ScreenKind.World"
         />
       </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LandmarkCollider, QualityTier } from "genshin-engine";
+import type { LandmarkCollider, Locomotion, QualityTier } from "genshin-engine";
 import type { Object3D, Vector3 } from "three";
 
 import CharacterModel from "#src/components/Character/Model/Index.vue";
@@ -77,6 +77,8 @@ interface Props {
   // The character on the field, drawn on the body from its pack, or as its body's capsule where no pack is served or its
   // Model fails to load
   characterId: number;
+  // How the character on the field moves, whose body's capsule is drawn where no pack is served
+  characterLocomotion?: Locomotion;
   // Where the host serves the characters' model packs, without which the character is drawn as its body's capsule
   characterPackBaseUrl?: string;
   createTerrainWorker: () => Worker;
@@ -98,6 +100,7 @@ interface Props {
 const {
   characterBody,
   characterId,
+  characterLocomotion,
   characterPackBaseUrl,
   createTerrainWorker,
   heldMinutes,
@@ -305,7 +308,12 @@ onUnmounted(() => {
         :ramp-texture
         @error="failedCharacterId = characterId"
       />
-      <WorldCharacterPlaceholder v-else :character-id :light-uniforms :ramp-texture />
+      <WorldCharacterPlaceholder
+        v-else-if="characterLocomotion"
+        :light-uniforms
+        :locomotion="characterLocomotion"
+        :ramp-texture
+      />
     </primitive>
   </TresGroup>
 </template>
