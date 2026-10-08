@@ -1,5 +1,6 @@
 import type { CommandDef } from "citty";
 
+import { achievementsCommand } from "#src/services/genshinAssets/commands/achievementsCommand";
 import { behavioursCommand } from "#src/services/genshinAssets/commands/behavioursCommand";
 import { chestsCommand } from "#src/services/genshinAssets/commands/chestsCommand";
 import { clearanceCommand } from "#src/services/genshinAssets/commands/clearanceCommand";
@@ -79,6 +80,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     crafting: craftingCommand,
     cooking: cookingCommand,
     forging: forgingCommand,
+    achievements: achievementsCommand,
     home: homeCommand,
     exploration: explorationCommand,
     puzzles: puzzlesCommand,
