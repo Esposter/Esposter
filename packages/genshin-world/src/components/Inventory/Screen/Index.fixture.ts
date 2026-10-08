@@ -10,7 +10,7 @@ const WEAPON_COUNT = 1347;
 const WEAPON_LEVEL = 20;
 const WEAPON_RARITY = 4;
 // The first entry is the one the detail panel shows, the Eye of Perception at level 50 as the recording's selected one is
-const weapons: InventoryItem[] = Array.from({ length: WEAPON_COUNT }, (_, index) => ({
+const weapons: InventoryItem[] = Array.from({ length: WEAPON_COUNT }, (_value, index) => ({
   definition: {
     category: ItemCategory.Weapon,
     id: index,
