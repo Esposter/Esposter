@@ -1,9 +1,9 @@
 // @TODO: no upstream issue — under Nuxt 5's Nitro Vite environment Nuxt turns Vite's `publicDir` off and never mounts
 // The dev handler that keeps Vite's transform off a URL outside its base, so a script in `public/` comes back as a
 // Module exporting its own URL and a classic head script throws "Cannot use import statement outside a module"
+import { contentType } from "mime-types";
 import { createReadStream, statSync } from "node:fs";
 import { extname, join, resolve, sep } from "node:path";
-import { contentType } from "mime-types";
 import { defineNuxtModule } from "nuxt/kit";
 
 // Each file in `public/` is answered as it is, ahead of the transform, as Vite's own public middleware would. A request
