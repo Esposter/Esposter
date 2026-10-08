@@ -3,9 +3,9 @@ import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { GameLanguage } from "genshin-text";
 import { dirname, join } from "node:path";
 
-// The game's text as the community dumps it per patch — `TextMap/` and `ExcelBinOutput/` as the AnimeGameData
-// Repository lays them out — kept outside the repository like every other reference and never shipped. Only the
-// Strings a consumer names, which `write` reads out of it, enter a package
+// The game's text kept outside the repository like every other reference and never shipped: `ExcelBinOutput/` as the
+// AnimeGameData Repository lays it out per patch, and `TextMap/`, which `decode` writes from the installed game's own
+// Chunks. Only the strings a consumer names, which `write` reads out of it, enter a package
 export const GAME_TEXT_DIRECTORY: string = process.env.GENSHIN_TEXT_DIRECTORY ?? join(PARITY_DIRECTORY, "text");
 export const TEXT_MAP_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "TextMap");
 export const EXCEL_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "ExcelBinOutput");
@@ -17,6 +17,29 @@ export const MAIN_QUEST_PATH: string = join(EXCEL_DIRECTORY, "MainQuestExcelConf
 export const DIALOG_PATH: string = join(EXCEL_DIRECTORY, "DialogExcelConfigData.json");
 export const NPC_PATH: string = join(EXCEL_DIRECTORY, "NpcExcelConfigData.json");
 export const QUEST_BINARY_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "BinOutput", "Quest");
+// The install's text chunks sit under this folder, each a MiHoYoBinData named by the path it is built from, and each
+// Text map is split across the chunks of its kind's folder, numbered from its range's first to its last
+export const EXCEL_BIN_OUTPUT_PATH = "Data/_ExcelBinOutput";
+export const TextMapChunkRangeMap: Record<string, { first: number; last: number }> = {
+  TextMap: { first: 512, last: 1023 },
+  TextMap_Medium: { first: 0, last: 511 },
+};
+// The TextMap's obfuscation as the owomocha devkit (MIT, github.com/owomocha/genshin-7.0-local-re-devkit) decodes it for
+// 7.0.0: the entry count is masked by an addend and an XOR; each entry's key and length are the low and high halves of
+// A 64-bit mixer's output, keyed by the entry's index and by the key; and each body is the bytes of its length, padded
+// To eight, each word added to the length's mixer output
+export const TEXT_MAP_COUNT_ADDEND = 0x57f28181;
+export const TEXT_MAP_COUNT_XOR = 0xdf7f775a;
+export const TEXT_MAP_MAX_COUNT = 4_000_000;
+export const TEXT_MAP_KEY_FINISH = 0x3fb6960056f173c2n;
+export const TEXT_MAP_LENGTH_FINISH = 0x873aa2af7e6c0c67n;
+export const TEXT_MAP_MIXER_FIRST_MULTIPLIER = 0xc2b2ae3d27d4eb4fn;
+export const TEXT_MAP_MIXER_FIRST_ADDEND = 0xaef8026097596711n;
+export const TEXT_MAP_MIXER_SECOND_MULTIPLIER = 0x9e3779b185ebca87n;
+export const TEXT_MAP_MIXER_SECOND_ADDEND = 0x3020e9bdf1cb30ffn;
+export const TEXT_MAP_MIXER_XOR = 0x7fcdb9dfc6a6de1dn;
+export const TEXT_MAP_MIXER_THIRD_MULTIPLIER = 0x441e34c8d03cabe3n;
+export const TEXT_MAP_MIXER_ROTATION = 31n;
 // A dialog's own id sits under one of the names the dump scrambles, eleven capitals
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const SCRAMBLED_KEY_REGEX: RegExp = /^[A-Z]{11}$/u;

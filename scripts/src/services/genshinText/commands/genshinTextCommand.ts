@@ -1,5 +1,6 @@
 import type { CommandDef } from "citty";
 
+import { decodeCommand } from "#src/services/genshinText/commands/decodeCommand";
 import { findCommand } from "#src/services/genshinText/commands/findCommand";
 import { namesCommand } from "#src/services/genshinText/commands/namesCommand";
 import { questsCommand } from "#src/services/genshinText/commands/questsCommand";
@@ -13,5 +14,11 @@ export const genshinTextCommand: CommandDef = defineCommand({
       "Find the game's own strings and write the ones referenced, the world's quests and its tables' names, in every language",
     name: "genshin:text",
   },
-  subCommands: { find: findCommand, names: namesCommand, quests: questsCommand, write: writeCommand },
+  subCommands: {
+    decode: decodeCommand,
+    find: findCommand,
+    names: namesCommand,
+    quests: questsCommand,
+    write: writeCommand,
+  },
 });
