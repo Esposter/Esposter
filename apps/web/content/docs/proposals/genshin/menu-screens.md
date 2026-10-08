@@ -36,13 +36,13 @@ flowchart TD
 
 ## Scope and order
 
-**Built:** the references, the Paimon menu's layout and icons, and the Graphics tab's header. The Paimon menu is measured at 5.35% over its side bar and panel (FLIP 0.2237), its frame icons traced at three times the still's pixels; the header is 2.01%. The as-built state is in [screens](/docs/genshin/screens).
+**Built:** the references, the Paimon menu's layout and icons, the Graphics tab's header, and the quit prompt Quit Game opens. The Paimon menu is measured at 5.35% over its side bar and panel (FLIP 0.2237), its frame icons traced at three times the still's pixels; the header is 2.01%. The prompt is drawn at a provisional scale, unscored until its whole frame is recorded. The as-built state is in [screens](/docs/genshin/screens).
 
 **Still open, in order:**
 
 1. **Time**, once its recording lands: its layout and its hour control, which sets the held hour.
 2. **Settings' body**: the Graphics Quality row's choices and the store its value is kept in, the Audio tab, and the rows' colours over the blurred world the page has no copy of.
-3. **Quit Game's exit prompt**, with Continue Game, Exit to Login Interface and Exit to Desktop, once its still's scale is known.
+3. **The quit prompt's scale**, once `menu-quit-prompt.mkv` lands: its layout is fitted to the whole frame, which the wiki's 799 by 475 crop cannot give.
 4. **Paimon's portrait and the profile card's values**, once their sources are settled.
 
 ## What this does not propose
