@@ -1,8 +1,6 @@
 import { getMissingReferenceInputs } from "#src/services/genshinParity/reference/getMissingReferenceInputs";
 import { describe, expect, test } from "vitest";
 
-const referencePath = "reference.png";
-const witnessLayoutPath = "witness.json";
 // Whether a path is on disk, given the paths that are
 const onDisk =
   (...paths: string[]) =>
@@ -10,6 +8,9 @@ const onDisk =
     paths.includes(path);
 
 describe(getMissingReferenceInputs, () => {
+  const referencePath = "reference.png";
+  const witnessLayoutPath = "witness.json";
+
   test("names nothing missing when the reference image and its witness layout are on disk", () => {
     expect.hasAssertions();
 
