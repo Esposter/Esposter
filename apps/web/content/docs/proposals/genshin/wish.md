@@ -1,6 +1,6 @@
 ---
 title: Wish
-description: Proposal — what the wish still lacks: the banners' pools, named in the reader's language, a course charted on the Epitomized Path, Character Event Wish-2 beside the first, the wish history, and the falling star measured off the game. Fates stay earned, never bought with money.
+description: Proposal — what the wish still lacks: a course charted on the Epitomized Path, Character Event Wish-2 beside the first and the event banners, the wish history, and the falling star measured off the game. Fates stay earned, never bought with money.
 model: claude-opus-5-5
 ---
 
@@ -23,14 +23,13 @@ This page builds on the [wish](/docs/genshin/wish), whose pull, rates, guarantee
 
 ## Scope and order
 
-**Today:** the pull, the rates, the guarantees, Capturing Radiance, the Epitomized Path's rules, the returns and the screen on F3 are built, with the pool by rarity and the results in the game's order; the standard and the beginners' pools, `createBanners`, the stat tables' `nameTextId` and the names chunks are built, and the world does not yet hand them to the screen.
+**Today:** the pull, the rates, the guarantees, Capturing Radiance, the Epitomized Path's rules, the returns and the screen on F3 are built, with the pool by rarity and the results in the game's order; the standard and the beginners' pools, `createBanners`, the stat tables' `nameTextId` and the names chunks are built.
 
 **This adds, in order:**
 
-1. **The standard and beginners' banners offered**: the world screen loads the names, builds the banners and adds a new character to the roster.
-2. **Charting a course** on the weapon wish.
-3. **Character Event Wish-2** and the event banners.
-4. **The history.**
+1. **Charting a course** on the weapon wish.
+2. **Character Event Wish-2** and the event banners.
+3. **The history.**
 
 ## What this does not propose
 

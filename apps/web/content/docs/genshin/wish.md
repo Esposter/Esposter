@@ -52,7 +52,7 @@ flowchart TD
 - **A draw returns Starglitter or Stardust.** `getWishReturn` gives nothing for a new character and Masterless Starglitter for a duplicate: 10 at five stars and 2 at four while its six constellations are incomplete, 25 and 5 once they are. A weapon returns 10 Starglitter at five stars and 2 at four, and a three-star 15 Masterless Stardust. The Stella Fortuna a duplicate also brings is its character's own, outside the wallet.
 - **A wish ×1 or ×10 spends from the wallet.** `makeWishes` spends the set's Fates (`getWishCost`: Intertwined Fate on the event wishes, Acquaint Fate on the others), pulls each wish in turn, adds each return to the wallet, and counts a character drawn twice in one set as held by the second. A set the wallet cannot pay for, or past the beginners' twentieth wish, is refused by `checkIsWishSetOffered`, the same check that disables the screen's button for it.
 - **Nothing is bought with money.** Fates are the wallet's, which the world fills; no Genesis Crystal is sold and no Fate is bought with money.
-- **The screen opens on F3.** `InputAction.OpenWish` is on F3, and the screens' map opens `ScreenKind.Wish` from it or from the Paimon menu. `Wish/Screen` offers the banners the world has in the game's order, the beginners' wish gone once spent, with Primogems and the open banner's Fate counted beside them, the Epitomized Path's Fate Points on the weapon wish, and Wish ×1 and ×10 with their costs, each disabled when the wallet cannot pay. A wish draws from `Math.random`, puts each weapon drawn into the bag, and shows what each wish drew and returned until a click goes on.
+- **The screen opens on F3.** `InputAction.OpenWish` is on F3, and the screens' map opens `ScreenKind.Wish` from it or from the Paimon menu. `Wish/Screen` offers the banners the world has in the game's order, the beginners' wish gone once spent, with Primogems and the open banner's Fate counted beside them, the Epitomized Path's Fate Points on the weapon wish, and Wish ×1 and ×10 with their costs, each disabled when the wallet cannot pay. It lists the open banner's pool by rarity, each rarity under its stars with its featured items first. A wish draws from `Math.random`, puts each weapon drawn into the bag, adds a character drawn for the first time to the roster, and shows a card for each wish drawn with its name, its stars and what it returned, in the game's order (the highest rarity first, a character ahead of a weapon of the same rarity, the rest in the order drawn) until a click goes on.
 
 ## Key files
 
@@ -61,15 +61,18 @@ flowchart TD
 | `packages/genshin-world/src/services/wish/pullWish.ts`               | One wish: the rarity from one number, the four-star's share and guarantee |
 | `packages/genshin-world/src/services/wish/pullFiveStar.ts`           | Which five-star: the 50/50, Capturing Radiance and the Epitomized Path    |
 | `packages/genshin-world/src/services/wish/BannerKindWishRatesMap.ts` | Each kind's rates and featured shares                                     |
-| `packages/genshin-world/src/services/wish/constants.ts`              | The rates, the guarantees' limits and the returns                         |
+| `packages/genshin-world/src/services/wish/constants.ts`              | The rates, the guarantees' limits, the returns and the pools' ids         |
 | `packages/genshin-world/src/services/wish/getWishReturn.ts`          | What a draw returns by duplicate count                                    |
 | `packages/genshin-world/src/services/wish/makeWishes.ts`             | A set's Fates spent, its wishes pulled and their returns added            |
+| `packages/genshin-world/src/services/wish/createBanners.ts`          | The two banners the world offers, from the stat tables and the names      |
+| `packages/genshin-world/src/services/wish/sortWishResults.ts`        | A set's results in the order the game shows them                          |
+| `packages/genshin-world/src/services/character/NameTextLoaderMap.ts` | One language's names the stat tables cite, imported on first use          |
 | `packages/genshin-world/src/components/Wish/Screen/Index.vue`        | The wish's screen in the reader's language                                |
 | `packages/genshin-interface/src/components/WishScreen/Index.vue`     | The banners, the sets, the counts and the results                         |
 
 ## Notes
 
-- **The banners' pools are not written yet.** A banner names the characters and weapons it draws, and the world cannot yet name them in the reader's language, so the world offers no banner and the screen opens on the wallet alone. The [wish proposal](/docs/proposals/genshin/wish) keeps the pools with the rest of what is unbuilt.
+- **The banners' pools are the wiki's, by the game's ids.** `services/wish/constants.ts` lists the standard wish's and the beginners' characters and weapons as the wiki's Wanderlust Invocation and Beginners' Wish item pools give them, and `createBanners` builds the two banners the world offers from the stat tables, each item's rarity read from them and its name from the world's names in the reader's language. The beginners' wish takes the standard wish's three-star weapons alone. A member the wiki's pool lists that the dump's tables do not hold yet, Alyosha, is left out until a later dump carries it. The event banners wait on the schedule of the current ones, which no stable table names ([wish proposal](/docs/proposals/genshin/wish)).
 - **The beginners' wish keeps counters of its own.** The game's details do not say whether it shares the standard wish's, and the guides that say anything say it does not.
 
 ## Sources
@@ -77,6 +80,6 @@ flowchart TD
 - [Wish](https://genshin-impact.fandom.com/wiki/Wish), Genshin Impact Wiki: the banner kinds, the Fates, the separate counters carried between banners, and the Starglitter and Stardust each draw returns.
 - [Character Event Wish](https://genshin-impact.fandom.com/wiki/Character_Event_Wish), Genshin Impact Wiki: the rates, the community's soft pity model, the guarantees, Capturing Radiance's published rules and Character Event Wish-2's shared counters.
 - [Weapon Event Wish](https://genshin-impact.fandom.com/wiki/Weapon_Event_Wish), Genshin Impact Wiki: the weapon wish's rates, its soft pity, its 75% shares and the Epitomized Path.
-- [Wanderlust Invocation](https://genshin-impact.fandom.com/wiki/Wanderlust_Invocation), Genshin Impact Wiki: the standard wish's rates, and its equal chance of a character or a weapon at each rarity.
-- [Beginners' Wish](https://genshin-impact.fandom.com/wiki/Beginners%27_Wish), Genshin Impact Wiki: twenty wishes, eight Acquaint Fates for ten, no four-star or five-star weapons, and Noelle on the eighth wish.
+- [Wanderlust Invocation](https://genshin-impact.fandom.com/wiki/Wanderlust_Invocation), Genshin Impact Wiki: the standard wish's rates, its item pool, and its equal chance of a character or a weapon at each rarity.
+- [Beginners' Wish](https://genshin-impact.fandom.com/wiki/Beginners%27_Wish), Genshin Impact Wiki: its item pool, twenty wishes, eight Acquaint Fates for ten, no four-star or five-star weapons, and Noelle on the eighth wish.
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: the wish screen on F3.

@@ -28,7 +28,7 @@ This page builds on the [character screen](/docs/genshin/character-screen) as bu
 1. **The references and the look**, through the passes, replacing every provisional value.
 2. **The character in the middle and the element's mark.**
 3. **Details**, then the **Weapons** and **Artifacts** tabs over the [character attributes](/docs/genshin/character-attributes)' tables.
-4. **The roster's names**, each character's name a key of the [game text](/docs/genshin/game-text) once the stats run writes the roster.
+4. **The roster's names**, each character's name read from the world's names by its `nameTextId`, `nameText[characterData.nameTextId]`, not a key of the [game text](/docs/genshin/game-text).
 5. **Level Up and Ascend**, on the [inventory](/docs/proposals/genshin/inventory)'s materials.
 6. **Constellation, Talents and Profile**, then levels 95 and 100 and the Traveler's bonuses.
 
@@ -39,7 +39,7 @@ This page builds on the [character screen](/docs/genshin/character-screen) as bu
 | `packages/genshin-interface/src/components/CharacterMenu/Index.vue`       | The frame, measured                                        |
 | `packages/genshin-world/src/components/Character/Screen/Index.vue`        | The screen, with the character in the middle and every tab |
 | `packages/genshin-world/src/components/Character/AttributeList/Index.vue` | The summary, with Details beside it                        |
-| `packages/genshin-text/src/models/GameTextKey.ts`                         | Gains every label of the panels and the roster's names     |
+| `packages/genshin-text/src/models/GameTextKey.ts`                         | Gains every label of the panels                            |
 | `scripts/src/services/genshinAssets/stats/writeStatTables.ts`             | Gains the promotion materials and the levels' EXP          |
 
 ## Sources

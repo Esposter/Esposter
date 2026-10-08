@@ -30,6 +30,7 @@ flowchart LR
 - **`GameTextKey` is the inventory.** Each member's value is the game's own id for its string: the name the game's manual text map files an interface string under (`INFORMATION_AVATAR_BIRTHDAY`), the raw text hash where it names the string nothing, or the account kit's own key (`tips_enter_game`) for a string the kit shows, so a consumer cannot tell which source a string came from. Referencing a new string is one line there; the generator has no list of its own.
 - **`pnpm -C scripts genshin:text find "<pattern>"` finds the id.** It searches the English text and prints each match's id beside it, named ids first, since an interface string is what a key is usually after.
 - **`pnpm -C scripts genshin:text quests` writes the world's quests.** The quests `QuestId` names are written into the world with their talks, and every word they show goes into a text chunk of the world's own for each language, by the same text ids, since a quest's words are far too many to list one by one in `GameTextKey` ([quests](/docs/genshin/quests)).
+- **`pnpm -C scripts genshin:text names` writes the names the stat tables cite.** It reads the stat tables `genshin:assets stats` last wrote, so it runs after them, and writes every character's and weapon's name, by the text id its table gives it, into a chunk of the world's own for each language. A name a language lacks takes English's and the run says so, and the world loads only the reader's language's chunk ([wish](/docs/genshin/wish)).
 - **`pnpm -C scripts genshin:text write` writes everything.** Every key in every language becomes one JSON chunk per language, and the loader map names them. A key a language's map lacks takes English's text there and the run says so, since a dump that lost a string is the dump's fault rather than a reason to ship none. Its output is never formatted, so a format pass over the tree leaves alone what it wrote.
 
 ### Looking a string up
@@ -81,6 +82,7 @@ The plugin is installed alone by a stranger's frozen `npm ci`, and every release
 | `packages/genshin-text/src/generated/GameTextLoaderMap.ts`    | English bundled, every other language a chunk imported on first use                   |
 | `scripts/src/services/genshinText/writeGameText.ts`           | The generator: every key, every language, the persona's copy and its newest lines     |
 | `scripts/src/services/genshinText/writeQuests.ts`             | The world's quests, their talks and their words in every language                     |
+| `scripts/src/services/genshinText/writeNames.ts`              | The names the stat tables cite, one chunk of the world's per language                 |
 | `scripts/src/services/genshinText/findGameText.ts`            | The ids of every English string a pattern matches                                     |
 | `scripts/src/services/genshinText/readSdkText.ts`             | One language's account kit strings, exported from the installed game when first read  |
 | `scripts/src/services/genshinText/getPlainGameText.ts`        | A text map string as the game shows it on a PC: markup, furigana and escapes resolved |
