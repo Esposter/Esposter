@@ -1,0 +1,1076 @@
+[
+  {
+    "costTime": 60,
+    "id": 1001,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 100017
+      }
+    ],
+    "isDefaultUnlocked": true,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 1,
+      "id": 110001
+    }
+  },
+  {
+    "costTime": 180,
+    "id": 1002,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 100078
+      }
+    ],
+    "isDefaultUnlocked": true,
+    "queueSize": 99,
+    "rankLevel": 2,
+    "result": {
+      "count": 1,
+      "id": 110002
+    }
+  },
+  {
+    "costTime": 300,
+    "id": 1003,
+    "ingredients": [
+      {
+        "count": 3,
+        "id": 100064
+      },
+      {
+        "count": 1,
+        "id": 100075
+      }
+    ],
+    "isDefaultUnlocked": true,
+    "queueSize": 99,
+    "rankLevel": 2,
+    "result": {
+      "count": 1,
+      "id": 110003
+    }
+  },
+  {
+    "costTime": 300,
+    "id": 1004,
+    "ingredients": [
+      {
+        "count": 2,
+        "id": 100078
+      }
+    ],
+    "isDefaultUnlocked": true,
+    "queueSize": 99,
+    "rankLevel": 2,
+    "result": {
+      "count": 1,
+      "id": 110004
+    }
+  },
+  {
+    "costTime": 300,
+    "id": 1005,
+    "ingredients": [
+      {
+        "count": 2,
+        "id": 100061
+      },
+      {
+        "count": 1,
+        "id": 100075
+      }
+    ],
+    "isDefaultUnlocked": true,
+    "queueSize": 99,
+    "rankLevel": 2,
+    "result": {
+      "count": 1,
+      "id": 110005
+    }
+  },
+  {
+    "costTime": 180,
+    "id": 1006,
+    "ingredients": [
+      {
+        "count": 2,
+        "id": 100012
+      }
+    ],
+    "isDefaultUnlocked": true,
+    "queueSize": 99,
+    "rankLevel": 2,
+    "result": {
+      "count": 1,
+      "id": 110006
+    }
+  },
+  {
+    "costTime": 1200,
+    "id": 1007,
+    "ingredients": [
+      {
+        "count": 4,
+        "id": 100073
+      }
+    ],
+    "isDefaultUnlocked": true,
+    "queueSize": 99,
+    "rankLevel": 3,
+    "result": {
+      "count": 1,
+      "id": 100074
+    }
+  },
+  {
+    "costTime": 600,
+    "id": 1008,
+    "ingredients": [
+      {
+        "count": 3,
+        "id": 100002
+      },
+      {
+        "count": 2,
+        "id": 100051
+      },
+      {
+        "count": 1,
+        "id": 110006
+      }
+    ],
+    "isDefaultUnlocked": true,
+    "queueSize": 99,
+    "rankLevel": 3,
+    "result": {
+      "count": 1,
+      "id": 110008
+    }
+  },
+  {
+    "costTime": 600,
+    "id": 1009,
+    "ingredients": [
+      {
+        "count": 3,
+        "id": 100078
+      }
+    ],
+    "isDefaultUnlocked": true,
+    "queueSize": 99,
+    "rankLevel": 3,
+    "result": {
+      "count": 1,
+      "id": 110009
+    }
+  },
+  {
+    "costTime": 900,
+    "id": 1010,
+    "ingredients": [
+      {
+        "count": 2,
+        "id": 100061
+      },
+      {
+        "count": 2,
+        "id": 100075
+      }
+    ],
+    "isDefaultUnlocked": true,
+    "queueSize": 99,
+    "rankLevel": 3,
+    "result": {
+      "count": 1,
+      "id": 110010
+    }
+  },
+  {
+    "costTime": 1200,
+    "id": 1011,
+    "ingredients": [
+      {
+        "count": 3,
+        "id": 100061
+      }
+    ],
+    "isDefaultUnlocked": true,
+    "queueSize": 99,
+    "rankLevel": 3,
+    "result": {
+      "count": 1,
+      "id": 110011
+    }
+  },
+  {
+    "costTime": 60,
+    "id": 1012,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 100094
+      }
+    ],
+    "isDefaultUnlocked": true,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 1,
+      "id": 100061
+    }
+  },
+  {
+    "costTime": 60,
+    "id": 1013,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131000
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 1,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 60,
+    "id": 1014,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131001
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 1,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 60,
+    "id": 1015,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131002
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 1,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 60,
+    "id": 1016,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131003
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 1,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 60,
+    "id": 1017,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131004
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 1,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 60,
+    "id": 1018,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131005
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 1,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1019,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131006
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1020,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131007
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1021,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131008
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1022,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131009
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1023,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131010
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 180,
+    "id": 1024,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131011
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 3,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 180,
+    "id": 1025,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131012
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 3,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1026,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131013
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1027,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131014
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1028,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131015
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1029,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131016
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1030,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131017
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 180,
+    "id": 1031,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131019
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 3,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 180,
+    "id": 1032,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131020
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 3,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 180,
+    "id": 1033,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131021
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 3,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 180,
+    "id": 1034,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131022
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 3,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1035,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131023
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1036,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131024
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1037,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131025
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1038,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131026
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1039,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131027
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1040,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131028
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 60,
+    "id": 1041,
+    "ingredients": [
+      {
+        "count": 2,
+        "id": 101216
+      }
+    ],
+    "isDefaultUnlocked": true,
+    "queueSize": 99,
+    "rankLevel": 2,
+    "result": {
+      "count": 1,
+      "id": 110014
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1043,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131029
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1044,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131030
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1045,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131031
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1046,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131037
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 180,
+    "id": 1047,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131038
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 3,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 180,
+    "id": 1048,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131039
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 3,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 180,
+    "id": 1049,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131040
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 3,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1050,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131041
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1051,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131042
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1052,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131043
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1053,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131044
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 60,
+    "id": 1054,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 100100
+      }
+    ],
+    "isDefaultUnlocked": true,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 1,
+      "id": 110016
+    }
+  },
+  {
+    "costTime": 180,
+    "id": 1055,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 100078
+      }
+    ],
+    "isDefaultUnlocked": true,
+    "queueSize": 99,
+    "rankLevel": 2,
+    "result": {
+      "count": 1,
+      "id": 110015
+    }
+  },
+  {
+    "costTime": 60,
+    "id": 1056,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131046
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 1,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 60,
+    "id": 1057,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131047
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 1,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 60,
+    "id": 1058,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131048
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 1,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 180,
+    "id": 1059,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131049
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 3,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 180,
+    "id": 1060,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131050
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 3,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1061,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131051
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 120,
+    "id": 1062,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131052
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 2,
+      "id": 100084
+    }
+  },
+  {
+    "costTime": 180,
+    "id": 1063,
+    "ingredients": [
+      {
+        "count": 1,
+        "id": 131053
+      }
+    ],
+    "isDefaultUnlocked": false,
+    "queueSize": 99,
+    "rankLevel": 1,
+    "result": {
+      "count": 3,
+      "id": 100084
+    }
+  }
+]
