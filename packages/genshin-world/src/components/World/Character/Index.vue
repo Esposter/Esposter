@@ -81,12 +81,14 @@ onBeforeRender(({ delta }) => {
 // A click on the canvas takes the pointer, which the look reads while it is locked
 useEventListener(renderer.domElement, "click", () => renderer.domElement.requestPointerLock());
 const placedPosition = new Vector3();
-// A jump stands the body on the ground at its pose's point, facing the pose's yaw, with the camera level behind it
+// A jump stands the body on the ground at its pose's point, facing the pose's yaw, with the camera level behind it. The
+// Party's stamina is read by the HUD's meter
 defineExpose({
   place: ({ point, yaw }: WorldJumpPose) => {
     characterController.place(placedPosition.set(point.x, getWorldHeight(point.x, point.z), point.z), yaw);
     followCamera?.reset(yaw);
   },
+  stamina: characterController.stamina,
 });
 </script>
 
