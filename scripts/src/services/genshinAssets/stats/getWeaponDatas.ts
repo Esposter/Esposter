@@ -25,9 +25,7 @@ export const getWeaponDatas = (notes: string[]): WeaponData[] => {
           .map(({ addProps, coinCost, costItems, requiredPlayerLevel, unlockMaxLevel }) => ({
             attributeLines: toAttributeLines(addProps, notes),
             coinCost,
-            costItems: costItems
-              .filter(({ id }) => id !== EMPTY_ITEM_ID)
-              .map(({ count, id }) => ({ count, id })),
+            costItems: costItems.filter(({ id }) => id !== EMPTY_ITEM_ID).map(({ count, id }) => ({ count, id })),
             maxLevel: unlockMaxLevel,
             requiredPlayerLevel,
           })),
