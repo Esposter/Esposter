@@ -29,7 +29,7 @@ const lineParts = computed(() => {
 <template>
   <!-- The game's dialogue over the world: a click anywhere goes on, the speaker's name over the line at the foot of the
        Screen, and the replies down the right. Sized and placed off the English client's recording of its dialogue
-       choices; the band's gradient, the selected reply's look and the speaker's role line wait on recordings still owed -->
+       choices; the selected reply's look and the speaker's role line wait on recordings still owed -->
   <div class="dialogue-screen" @click="emit('advance')">
     <div class="band" aria-live="polite">
       <p v-if="speakerName" class="speaker">{{ speakerName }}</p>
@@ -71,7 +71,6 @@ const lineParts = computed(() => {
   flex-direction: column;
   align-items: center;
   padding-top: calc(var(--unit) * 96);
-  background: linear-gradient(transparent, rgb(0 0 0 / 0.6));
 }
 
 /* The name's gold is the brightest saturated pixel of its letters in the English client's recording */
@@ -85,7 +84,7 @@ const lineParts = computed(() => {
 
 .line {
   max-width: calc(var(--unit) * 1200);
-  margin: calc(var(--unit) * 20) 0 0;
+  margin: calc(var(--unit) * 42) 0 0;
   color: #fff;
   font-size: calc(var(--unit) * 32);
   font-weight: 600;
