@@ -30,7 +30,7 @@ export const scoreLayers = async (
   region: ParityRegion,
   frame: { height: number; width: number },
 ): Promise<LayerScore[]> => {
-  const { height: regionHeight = 0, width: regionWidth = 0 } = await sharp(reference).metadata();
+  const { height: regionHeight, width: regionWidth } = await sharp(reference).metadata();
   const height = Math.round((STRUCTURE_WIDTH / regionWidth) * regionHeight);
   const pixelCount = STRUCTURE_WIDTH * height;
   // Each pixel's G-buffer pixel, at the pixel's middle's place in the frame

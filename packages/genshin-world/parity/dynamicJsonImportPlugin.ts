@@ -11,7 +11,7 @@ export const dynamicJsonImportPlugin: Plugin = {
     filter: { code: 'type: "json"' },
     handler: (code) =>
       code.replaceAll(
-        /(import\(\s*["'][^"']+\.json["'])\s*,\s*\{\s*with:\s*\{\s*type:\s*"json"\s*\}\s*\}\s*\)/gu,
+        /(?<specifier>import\(\s*["'][^"']+\.json["'])\s*,\s*\{\s*with:\s*\{\s*type:\s*"json"\s*\}\s*\}\s*\)/gu,
         "$1)",
       ),
   },
