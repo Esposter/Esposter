@@ -1,13 +1,16 @@
-import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { LayerScore } from "#src/models/genshinParity/reference/LayerScore";
 import type { ParityScore } from "#src/models/genshinParity/reference/ParityScore";
 
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { computeUnderBlackShare } from "#src/services/genshinParity/display/computeUnderBlackShare";
 import { formatUnderBlackShare } from "#src/services/genshinParity/display/formatUnderBlackShare";
+import { getComponentReferenceIds } from "#src/services/genshinParity/passes/getComponentReferenceIds";
 import { scoreLayers } from "#src/services/genshinParity/reference/scoreLayers";
 import { scoreStructure } from "#src/services/genshinParity/reference/scoreStructure";
 import {
   COMPARISON_HEIGHT,
   COMPARISONS_DIRECTORY,
+  FRAME_LAYER,
   REFERENCES_DIRECTORY,
   STRUCTURE_WIDTH,
 } from "#src/services/genshinParity/shared/constants";
@@ -24,12 +27,16 @@ import { join } from "node:path";
 import sharp from "sharp";
 
 const GRID_SIZE = 6;
+// The frame's FLIP is its pixels' mean, so a layer drawn exactly would take its share times its own FLIP off the
+// Frame's: its ceiling, which ranks the layers by the most work on each could recover, largest first
+const getCeiling = ({ coverage, flip, name }: LayerScore): number => (name === FRAME_LAYER ? flip : coverage * flip);
 const toPercent = (sum: number, count: number): number => (sum / Math.max(count, 1) / BYTE) * 100;
 // The reference, ours and their difference side by side in one image, and how far apart they are: the mean over the
 // Compared region, then the same over a grid of cells, row by row, so where they differ is read without looking; the
-// Scores are handed back for the committed report, FLIP's perceptual error among them. With a witness, the scene draws
-// That component's exports in place of its own parts, its image is kept apart from the scene's own, and each layer the
-// Witness's part target gives is scored on its own
+// Scores are handed back for the committed report, FLIP's perceptual error among them. A scene's shot is scored again
+// Layer by layer over the families the witness's part target gives at the reference's view, so a family that moves away
+// From the reference shows on its own row even where the frame's score barely moves. With a witness, the scene draws
+// That component's exports in place of its own parts and its image is kept apart from the scene's own
 export const compareScreen = async (referenceId: string, witness?: DerivedAssetComponent): Promise<ParityScore> => {
   const reference = ParityReferenceMap[referenceId];
   if (!reference)
@@ -105,19 +112,17 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
     console.log(
       `under the curve's black: reference ${formatUnderBlackShare(referenceUnderBlack)}, ours ${formatUnderBlackShare(shotUnderBlack)}`,
     );
-  if (witness) {
-    const { gbuffer, image } = await readReferenceGbuffer(referenceId, witness);
+  const layerComponent =
+    witness ??
+    Object.values(DerivedAssetComponent).find((component) => getComponentReferenceIds(component).includes(referenceId));
+  let layers: LayerScore[] = [];
+  if (layerComponent) {
+    const { gbuffer, image } = await readReferenceGbuffer(referenceId, layerComponent);
     const shot = await sharp(shotPath).resize(gbuffer.width, gbuffer.height, { fit: "fill" }).png().toBuffer();
-    // The frame's FLIP is its pixels' mean, so a layer drawn exactly would take its share times its own FLIP off the
-    // Frame's: its ceiling, which ranks the layers by the most work on each could recover, largest first
-    const layers = (await scoreLayers(image, shot, gbuffer)).map((layer) =>
-      Object.assign(layer, { ceiling: layer.name === "frame" ? layer.flip : layer.coverage * layer.flip }),
-    );
-    for (const { ceiling, coverage, detail, flip: layerFlip, name, shape, tone } of layers.toSorted(
-      (firstLayer, secondLayer) => secondLayer.ceiling - firstLayer.ceiling,
-    ))
+    layers = await scoreLayers(image, shot, gbuffer);
+    for (const layer of layers.toSorted((firstLayer, secondLayer) => getCeiling(secondLayer) - getCeiling(firstLayer)))
       console.log(
-        `${name}: ${(coverage * 100).toFixed(1)}% of the frame, shape ${shape.toFixed(3)}, tone ${tone.toFixed(2)}%, detail ${detail.toFixed(2)}%, FLIP ${layerFlip.toFixed(4)}, ceiling ${ceiling.toFixed(4)}`,
+        `${layer.name}: ${(layer.coverage * 100).toFixed(1)}% of the frame, colour ${layer.colour.toFixed(2)} ΔE, shape ${layer.shape.toFixed(3)}, tone ${layer.tone.toFixed(2)}%, detail ${layer.detail.toFixed(2)}%, FLIP ${layer.flip.toFixed(4)}, ceiling ${getCeiling(layer).toFixed(4)}`,
       );
   }
   const panelWidth = Math.round((region.width / region.height) * COMPARISON_HEIGHT);
@@ -133,5 +138,5 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
     .png()
     .toFile(outputPath);
   console.log(`reference | ours | difference: ${outputPath}`);
-  return { edgeScore, flip, meanDifference, screen: reference.screen, toneDifference };
+  return { edgeScore, flip, layers, meanDifference, screen: reference.screen, toneDifference };
 };

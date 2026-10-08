@@ -1,23 +1,34 @@
 import type { StoneLightUniforms } from "#src/models/nodes/StoneLightUniforms";
 import type { LightingModelDirectInput, LightingModelReflectedLight, Node, NodeBuilder } from "three/webgpu";
 
-import { STONE_HEIGHT_FALLOFF, STONE_RAMP_KNOT_COUNT, STONE_SHADOW_EXPONENT } from "#src/nodes/constants";
+import {
+  STONE_DARKENING_TOP,
+  STONE_HEIGHT_FALLOFF,
+  STONE_RAMP_KNOT_COUNT,
+  STONE_SHADOW_EXPONENT,
+} from "#src/nodes/constants";
 import { createSunVisibilityNode } from "#src/nodes/createSunVisibilityNode";
-import { diffuseColor, normalView, normalWorld, positionWorld, texture, vec2 } from "three/tsl";
+import { diffuseColor, exp, normalView, normalWorld, positionWorld, texture, vec2 } from "three/tsl";
 import { LightingModel } from "three/webgpu";
 
 // The game's deferred pass as it lights the stone's G-buffer, with no highlight yet: the sun through the toon ramp,
 // Read at a half plus half the face's facing to it scaled by the sun's visibility there raised to a fifth
 // (`computeStoneRampCoordinate`), the sky's light as second order spherical harmonics over the world normal
 // (`computeStoneHarmonics`), and a fitted light fading with height standing in for the reflection pass's clustered
-// Probes up the towers, each times the diffuse colour. The ramp holds the sun's colour, so the sun light lends only
-// Its direction and its shadow, read as its shadowed colour against its own
+// Probes up the towers, each times the diffuse colour and all of it darkening with height as the hour sets it
+// (`computeStoneDarkening`). The ramp holds the sun's colour, so the sun light lends only its direction and its shadow,
+// Read as its shadowed colour against its own
 export class StoneLightingModel extends LightingModel {
   readonly stoneLight: StoneLightUniforms;
 
   constructor(stoneLight: StoneLightUniforms) {
     super();
     this.stoneLight = stoneLight;
+  }
+
+  // The share of the light reaching the face's height, as `computeStoneDarkening` reads it
+  createDarkeningNode(): Node<"float"> {
+    return exp(this.stoneLight.heightDarkening.negate().mul(positionWorld.y.clamp(0, STONE_DARKENING_TOP)));
   }
 
   // Three types the light's data and its builder's context loosely, so each is read as the node it is
@@ -34,7 +45,9 @@ export class StoneLightingModel extends LightingModel {
       .mul(STONE_RAMP_KNOT_COUNT - 1)
       .add(0.5)
       .div(STONE_RAMP_KNOT_COUNT);
-    (reflectedLight.directDiffuse as Node<"vec3">).addAssign(texture(ramp, vec2(rampU, 0.5)).rgb.mul(diffuseColor.rgb));
+    (reflectedLight.directDiffuse as Node<"vec3">).addAssign(
+      texture(ramp, vec2(rampU, 0.5)).rgb.mul(diffuseColor.rgb).mul(this.createDarkeningNode()),
+    );
   }
 
   override indirect(builder: NodeBuilder): void {
@@ -52,6 +65,8 @@ export class StoneLightingModel extends LightingModel {
       .add(harmonics.element(8).mul(y.mul(y).mul(3).sub(1)))
       .add(heightFade.mul(positionWorld.y.mul(-STONE_HEIGHT_FALLOFF).exp()));
     const { reflectedLight } = builder.context as { reflectedLight: LightingModelReflectedLight };
-    (reflectedLight.indirectDiffuse as Node<"vec3">).addAssign(ambient.mul(diffuseColor.rgb));
+    (reflectedLight.indirectDiffuse as Node<"vec3">).addAssign(
+      ambient.mul(diffuseColor.rgb).mul(this.createDarkeningNode()),
+    );
   }
 }

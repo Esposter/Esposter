@@ -7,7 +7,8 @@ import { extname, join, resolve, sep } from "node:path";
 import { defineNuxtModule } from "nuxt/kit";
 
 // Each file in `public/` is answered as it is, ahead of the transform, as Vite's own public middleware would. A request
-// With a query is an asset import's, which stays Vite's
+// Carrying Vite's `import` or `url` query is an asset import's, which stays Vite's; any other query, a cache buster's,
+// Still gets the file
 export default defineNuxtModule({
   meta: { name: "serve-public-directory" },
   setup: (_options, nuxt) => {
@@ -17,11 +18,16 @@ export default defineNuxtModule({
     nuxt.hook("vite:serverCreated", (viteServer, { isClient }) => {
       if (!isClient) return;
       viteServer.middlewares.use((req, res, next) => {
-        if ((req.method !== "GET" && req.method !== "HEAD") || !req.url || req.url.includes("?")) {
+        if ((req.method !== "GET" && req.method !== "HEAD") || !req.url) {
           next();
           return;
         }
-        const path = join(publicDirectory, decodeURIComponent(req.url));
+        const { pathname, searchParams } = new URL(req.url, "http://localhost");
+        if (searchParams.has("import") || searchParams.has("url")) {
+          next();
+          return;
+        }
+        const path = join(publicDirectory, decodeURIComponent(pathname));
         if (!path.startsWith(`${publicDirectory}${sep}`) || !statSync(path, { throwIfNoEntry: false })?.isFile()) {
           next();
           return;

@@ -22,6 +22,11 @@ const roundColor = (color: readonly number[]): number[] => color.map((value) => 
 
 export const calibrateCommand: SubCommandsDef[string] = defineCommand({
   args: {
+    darkening: {
+      description:
+        "The rate a metre up the light darkens at with height, held through the solve; the light written for the reference's hour keeps its own when none is given",
+      type: "string",
+    },
     reference: {
       description:
         "A reference's id in ParityReferenceMap, or with --haze references' ids at one hour, separated by commas",
@@ -72,27 +77,34 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
       );
       return;
     }
+    const timeOfDay = ParityReferenceMap[args.reference]?.props?.timeOfDay;
+    const lights = existsSync(join(WORLD_DATA_DIRECTORY, STONE_LIGHT_PATH))
+      ? await readWorldData<Record<string, StoneLight>>(STONE_LIGHT_PATH)
+      : {};
+    const heightDarkening =
+      args.darkening === undefined
+        ? ((typeof timeOfDay === "string" ? lights[timeOfDay]?.heightDarkening : undefined) ?? 0)
+        : Number(args.darkening);
+    if (!Number.isFinite(heightDarkening))
+      throw new InvalidOperationError(Operation.Read, "darkening", `${args.darkening} is not a number`);
     const { count, deviation, light, residual } = await solveReferenceStoneLight(
       args.reference,
       args.witness,
       args.self,
+      heightDarkening,
     );
     console.log(`${count} pixels, residual ${residual.toFixed(4)} against the bins' spread ${deviation.toFixed(4)}`);
     console.log("ramp, dark end to lit end:");
     for (const knot of light.ramp) console.log(`  ${formatColor(knot)}`);
     console.log("harmonics:");
     for (const term of light.harmonics) console.log(`  ${formatColor(term)}`);
-    console.log(`fading with height: ${formatColor(light.heightFade)}`);
+    console.log(`fading with height: ${formatColor(light.heightFade)}, darkening ${light.heightDarkening} a metre up`);
     console.log(
       `haze over the stone: ${formatColor(light.hazeColor)}, toward the sun ${formatColor(light.hazeScatterColor)}`,
     );
     if (!args.self && !args.write) return;
-    const timeOfDay = ParityReferenceMap[args.reference]?.props?.timeOfDay;
     if (typeof timeOfDay !== "string")
       throw new InvalidOperationError(Operation.Read, STONE_LIGHT_PATH, `${args.reference} sets no time of day`);
-    const lights = existsSync(join(WORLD_DATA_DIRECTORY, STONE_LIGHT_PATH))
-      ? await readWorldData<Record<string, StoneLight>>(STONE_LIGHT_PATH)
-      : {};
     if (args.self) {
       const written = lights[timeOfDay];
       if (!written)
@@ -118,6 +130,7 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
       harmonics: light.harmonics.map(roundColor),
       hazeColor: roundColor(light.hazeColor),
       hazeScatterColor: roundColor(light.hazeScatterColor),
+      heightDarkening: light.heightDarkening,
       heightFade: roundColor(light.heightFade),
       ramp: light.ramp.map(roundColor),
     };

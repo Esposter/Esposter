@@ -33,7 +33,6 @@
 | `grapesjs`                | 2026-10-05 · Opus 5.5 |       |
 | `invariants`              | 2026-10-05 · Opus 5.5 |       |
 | `llm-delegation`          | 2026-10-05 · Opus 5.5 |       |
-| `model-delegation`        | 2026-10-05 · Opus 5.5 |       |
 | `naming`                  | 2026-10-05 · Opus 5.5 |       |
 | `over-engineering`        | 2026-10-05 · Opus 5.5 |       |
 | `oxlint`                  | 2026-10-05 · Opus 5.5 |       |

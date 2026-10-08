@@ -6,7 +6,6 @@ export enum WitnessProperty {
   EmissionRange = "_EmissionRange",
   EmissionStrength = "_EmissionStrength",
   EmissionType = "Emission_Type",
-  EnableRimGlow = "_EnableRimGlow",
   MainTexture = "_MainTex",
   NormalMap = "_BumpMap",
   RimGlowColor = "_RGColor",

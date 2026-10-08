@@ -115,6 +115,8 @@ export const FLIP_SCREEN_WIDTH = 3840;
 export const FLIP_PIXELS_PER_DEGREE: number = 0.7 * (FLIP_SCREEN_WIDTH / 0.7) * (Math.PI / 180);
 // The layer of a scene's pixels no part covers: the sky, its clouds and whatever the scene draws past its parts
 export const SKY_LAYER = "sky";
+// The layer the whole frame is scored as, every pixel counted
+export const FRAME_LAYER = "frame";
 // A sky pixel the reference shows at least this many times as bright as our clear sky is one of its clouds
 export const CLOUD_BRIGHTNESS_RATIO = 1.4;
 // A recording's or a sound's pitch classes are read at 12 kHz, mono, in frames of 4096 samples a tenth of a second

@@ -9,7 +9,7 @@ The runnable form of the skill pass over the whole tree. What one skill's pass d
 
 ## Settled — do not re-propose
 
-- **Fanning the skills out to subagents.** A reading pass is priced by files read, and a finding one skill teaches applies to the next; the run stays in the main session, one skill at a time (the `model-delegation` skill, `references/reading-passes.md`).
+- **Fanning the skills out to subagents.** A reading pass is priced by files read, and a finding one skill teaches applies to the next; the run stays in the main session, one skill at a time and reading decides every edit, which keeps it off a cheaper reader (the `llm-delegation` skill, `references/reading-passes.md`).
 - **Reading by grep or by skimming.** The findings that matter — a claim the code no longer bears out, a copy between pages — live in prose a grep does not reach; every `SKILL.md` and every `references/` page is read whole.
 - **An installed third-party skill in the run.** A skill `skills-lock.json` installs is upstream's, outside the `docs/skills` ledger, and edited by nobody here. A skill one of our own plugins ships (`packages/*/skills`) is ours and is read with the package that ships it.
 - **Fixing the same kind of finding by hand twice.** The second one is an enforcer (the `sweeps` skill, `references/handing-to-an-enforcer.md`).

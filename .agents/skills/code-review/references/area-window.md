@@ -34,7 +34,7 @@ When the target is narrowed, say what was left out and mark the claims whose fil
 
 ## The one escape hatch — cold readers for a subsystem nothing has read
 
-This is the single place a subagent still earns its keep, it is deliberately narrow, and it waits for the user to ask for it — a reader re-reads what the session could, so by default the session opens the files itself (the `model-delegation` skill, "Never a subagent to look something up").
+This is the single place a subagent earns its keep in a review, and it is deliberately narrow: a reader maps, it never judges. Each reader is a `haiku` `Explore` agent (the `llm-delegation` skill, "In a session"), so its reads cost a fraction of the session's own.
 
 **When the target is large and cold** — a subsystem this session has never opened, where loading it in full would crowd out the reading itself — spawn a small handful of **readers**, never finders. Each takes one sub-path and returns a structured map: what each file does, the public surface, the invariants it appears to enforce, and the lines that look load-bearing. Then find, refute and report **in-thread** against those maps, opening the specific files the candidates depend on.
 

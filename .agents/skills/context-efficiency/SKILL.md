@@ -5,11 +5,12 @@ description: Apply when a task spans many files, when waiting on an external pro
 
 # Context Efficiency
 
-The main session's context is the scarce resource. These are the habits that stop it being spent on things that carry no judgment. **Which command to run and from where is the `package-scripts` skill; whether to hand execution to a subagent is `model-delegation`; when a check runs and how the session waits on it is `running-checks`.** This skill is only about what the main session reads, waits on, and re-does.
+The main session's context is the scarce resource. These are the habits that stop it being spent on things that carry no judgment. **Which command to run and from where is the `package-scripts` skill; whether work goes to a subagent and on which family is `llm-delegation`; when a check runs and how the session waits on it is `running-checks`.** This skill is only about what the main session reads, waits on, and re-does.
 
 ## Keep dumps out of the session
 
-- **Answering a question that spans many files → narrow the search, never hand it to a subagent.** A targeted `Grep` with an output mode that returns the answer (`files_with_matches`, `count`, a line with its context) keeps the files out without paying a second context to re-read them; why a lookup is never delegated is the `model-delegation` skill ("Never a subagent to look something up"). For a single fact in a file you can already name, just read it.
+- **Answering a question that spans many files → narrow the search first.** A targeted `Grep` with an output mode that returns the answer (`files_with_matches`, `count`, a line with its context) keeps the files out; a question no grep narrows goes to a `haiku` `Explore` agent whose prompt bounds its report (the `llm-delegation` skill, "In a session"). For a single fact in a file you can already name, just read it.
+- **A long command's output is read by its tail or its numbers**, never whole: a parity run, a build log or a CI job log goes through `tail`, a `grep` for the lines that matter, or a `haiku` agent that reads it back to the failing line.
 - **Never `Read`/`tail` a subagent's output file.** It is the full JSONL transcript; reading it overflows the context the subagent existed to protect. Wait for the completion notification.
 - **Read the range, not the file**, when the symbol's location is known. Whole-file reads are for files you are about to restructure.
 

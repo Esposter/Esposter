@@ -24,6 +24,7 @@ describe(toMaterialValues, () => {
     expect(toMaterialValues(material)).toStrictEqual({
       colors: { _Color: [1, 0.21404114048223255, 0, 0.5] },
       floats: { _Metal: 1 },
+      keywords: [],
       name: "",
       shaderPathId: "2",
       textures: { _MainTex: { fileIndex: 1, offset: [0, 0], pathId: "1", scale: [1, 1] } },

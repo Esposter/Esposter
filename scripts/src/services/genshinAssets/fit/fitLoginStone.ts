@@ -18,6 +18,11 @@ const MASK_SAMPLE_SIZE = 64;
 const GLOSS_MAP_SCALE_KEY = "_GlossMapScale";
 const DIFFUSE_SLOT = "_MainTex";
 const MASK_SLOT = "_DetailMask";
+// The keyword a material's variant draws its rim glow under, and the property its strength is read from
+const RIM_GLOW_KEYWORD = "ENABLE_RIM_GLOW_ON";
+const RIM_STRENGTH_KEY = "_RGStrength";
+const computeMeanValue = (values: readonly number[]): number =>
+  roundFitted(values.reduce((sum, value) => sum + value, 0) / Math.max(values.length, 1));
 const computeMean = (vectors: readonly Vector[]): Vector =>
   ([0, 1, 2] as const).map((channel) =>
     roundFitted(vectors.reduce((sum, vector) => sum + vector[channel], 0) / Math.max(vectors.length, 1)),
@@ -66,10 +71,12 @@ export const fitLoginStone = async (
           const color = colors[key];
           return color ? [[color[0], color[1], color[2]] satisfies Vector] : [];
         });
-      const computeMeanFloat = (key: string): number => {
-        const values = familyMaterials.flatMap(({ floats }) => (floats[key] === undefined ? [] : [floats[key]]));
-        return roundFitted(values.reduce((sum, value) => sum + value, 0) / Math.max(values.length, 1));
-      };
+      const computeMeanFloat = (key: string): number =>
+        computeMeanValue(familyMaterials.flatMap(({ floats }) => (floats[key] === undefined ? [] : [floats[key]])));
+      // A material whose variant compiles no rim glow draws none, whatever its strength holds
+      const rimStrengths = familyMaterials.map(({ floats, keywords }) =>
+        keywords.includes(RIM_GLOW_KEYWORD) ? (floats[RIM_STRENGTH_KEY] ?? 0) : 0,
+      );
       return [
         family,
         {
@@ -77,7 +84,7 @@ export const fitLoginStone = async (
           glowRange: computeMeanFloat("_EmissionRange"),
           rimColor: computeMean(getColors("_RGColor")),
           rimPower: computeMeanFloat("_RGPower"),
-          rimStrength: computeMeanFloat("_RGStrength"),
+          rimStrength: computeMeanValue(rimStrengths),
           smoothness: roundFitted(computeUpperMedian(smoothnesses.flat())),
           specularColor: computeMean(getColors("_SpecColor")),
         },

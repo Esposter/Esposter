@@ -6,6 +6,8 @@ Read when a release the repo needs ships only under another package's name — a
 
 **Taking a newer build is a lockfile refresh, never a catalog edit.** The specifier names no version to move, so step 2 of `references/bumping-by-hand.md` has nothing to write for it; `pnpm refresh:lockfile` re-resolves the tag, and the lockfile it writes is the bump. Renovate's weekly `lockFileMaintenance` does the same on the branch it runs against: it deletes the lockfile and installs afresh, so the tag moves there unasked, and a `packageRules` entry that disables the alias does not hold it, since that rule matches package updates, not the whole-lockfile one. The hand refresh is for taking a build before the next maintenance run.
 
+**A lockfile the install before a script moved is that same bump, so it is committed, never restored.** pnpm installs before running any script once the tree is out of sync with the lockfile, and an alias on a tag such as `@latest` re-resolves to the build the tag names then, so the lockfile changes mid-session with no edit of anyone’s: only the alias’s rows move. Commit it on its own as a `chore(deps)` commit; checking it out again only has the next script’s install write it back.
+
 **How the report reads one** — in every group a lockfile resolves (the catalog, `configDependencies`, an npm manifest):
 
 - The mismatch table skips it, since a tag names no version for the resolution to drift from.
