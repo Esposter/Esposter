@@ -2,6 +2,7 @@
 // Coordinates, the map's area it lies in and its layer, zero for the ground and above
 export interface InteractiveMapPoint {
   area_id: number;
+  id: number;
   label_id: number;
   x_pos: number;
   y_pos: number;
