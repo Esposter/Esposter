@@ -29,3 +29,6 @@ export const INTERACTIVE_MAP_MATCH_ITERATIONS = 60;
 export const INTERACTIVE_MAP_MATCH_START_SCALE = 1;
 // The turns a match starts from, evenly spaced round the circle, each tried both as drawn and mirrored
 export const INTERACTIVE_MAP_MATCH_TURNS = 16;
+// The map's layer of the ground and above. Points on the layers under it stand on floors of their own, which no placed
+// Kind is written for yet
+export const GROUND_LAYER = 0;

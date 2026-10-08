@@ -18,6 +18,7 @@ import { offeringsCommand } from "#src/services/genshinAssets/commands/offerings
 import { playlistCommand } from "#src/services/genshinAssets/commands/playlistCommand";
 import { pointsCommand } from "#src/services/genshinAssets/commands/pointsCommand";
 import { pointsFitCommand } from "#src/services/genshinAssets/commands/pointsFitCommand";
+import { puzzlesCommand } from "#src/services/genshinAssets/commands/puzzlesCommand";
 import { rankCommand } from "#src/services/genshinAssets/commands/rankCommand";
 import { shadersCommand } from "#src/services/genshinAssets/commands/shadersCommand";
 import { soundsCommand } from "#src/services/genshinAssets/commands/soundsCommand";
@@ -58,5 +59,6 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     items: itemsCommand,
     outcrops: leyLineCommand,
     chests: chestsCommand,
+    puzzles: puzzlesCommand,
   },
 });

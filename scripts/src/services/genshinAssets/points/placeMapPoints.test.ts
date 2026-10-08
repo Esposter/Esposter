@@ -1,12 +1,12 @@
-import { placeChests } from "#src/services/genshinAssets/chests/placeChests";
+import { placeMapPoints } from "#src/services/genshinAssets/points/placeMapPoints";
 import { describe, expect, test } from "vitest";
 
-describe(placeChests, () => {
-  test("carries each ground chest into its region at the fit's place, and leaves out the rest", () => {
+describe(placeMapPoints, () => {
+  test("carries each ground point of a kind into its region at the fit's place, and leaves out the rest", () => {
     expect.hasAssertions();
     // A point at (1.5, 2.25) under an offset of (10, 20) lands at (11.5, 22.25) in the game's coordinates
     const transform = { mirrored: false, offset: { x: 10, z: 20 }, scale: 1, turn: 0 };
-    const placement = placeChests(
+    const placement = placeMapPoints(
       [
         { area_id: 1, id: 1, label_id: 17, x_pos: 1.5, y_pos: 2.25, z_level: 0 },
         { area_id: 1, id: 2, label_id: 69, x_pos: 1.5, y_pos: 2.25, z_level: 0 },
@@ -15,6 +15,11 @@ describe(placeChests, () => {
         { area_id: 1, id: 5, label_id: 2, x_pos: 1.5, y_pos: 2.25, z_level: 0 },
       ],
       transform,
+      new Map([
+        [17, "Common"],
+        [69, "Buried"],
+      ]),
+      "chest",
     );
     expect(placement).toStrictEqual({
       places: {
