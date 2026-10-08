@@ -22,6 +22,7 @@ An item missing any of these is not queued: the gap is a call, and calls are the
   - It renders on the GPU, and an edit to world or engine source reloads the page and kills every run on it.
   - So the lane has **one runner**, working in **one runner worktree**: `<scratchpad>/wt-runner`, cut from `origin/ai/queue`, installed once and reused, and fast-forwarded between items. The parity page is served from that worktree.
   - A batch's edits in the shared checkout never touch it.
+- **A screen being built** is not a queue item: an agent bringing a 2D screen to the game's likeness runs its own parity page from the shared checkout on a port of its own (`pnpm -C packages/genshin-world exec vite --config parity/vite.config.ts --port <port> --strictPort`, with `GENSHIN_PARITY_PORT=<port>` on its `genshin:parity` commands), so its edit-and-compare loop never waits on the queue. A 2D comparison takes seconds, so a reload from another agent's edit costs one retry. Each page and its browser hold a gigabyte or so, so a few run at once under the memory gate, and each agent stops its own server when it ends.
 - **`[cpu]`** covers fits, solves, extraction and sampling that read files and need no page. They run in the shared checkout, a few at once.
 
 ## Running one
