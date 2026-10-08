@@ -4,6 +4,21 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
+  // The English PC client's character screen on the Artifacts tab at 21:9, the same recording at 157 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
+  "character-artifacts": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Artifacts" },
+    screen: "CharacterScreen",
+    seconds: 157,
+  },
+  // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Artifacts tab open
+  "character-artifacts-tabs": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Artifacts" },
+    region: { height: 800, width: 900, x: 120, y: 180 },
+    screen: "CharacterScreen",
+    seconds: 157,
+  },
   // The English PC client's character screen on Xilonen's Attributes tab at 21:9, from the user's own recording of the
   // Current build (session-2.mp4 at 154.4 seconds, before the character's model rises into the frame)
   "character-attributes": { capture: "session-2.mp4", screen: "CharacterScreen", seconds: 154.4 },
@@ -27,36 +42,6 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     region: { height: 135, width: 3440, x: 0, y: 0 },
     screen: "CharacterScreen",
     seconds: 154.4,
-  },
-  // The English PC client's character screen on the Weapons tab at 21:9, the same recording at 156 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
-  "character-weapons": {
-    capture: "session-2.mp4",
-    props: { initialTab: "Weapons" },
-    screen: "CharacterScreen",
-    seconds: 156,
-  },
-  // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Weapons tab open
-  "character-weapons-tabs": {
-    capture: "session-2.mp4",
-    props: { initialTab: "Weapons" },
-    region: { height: 800, width: 900, x: 120, y: 180 },
-    screen: "CharacterScreen",
-    seconds: 156,
-  },
-  // The English PC client's character screen on the Artifacts tab at 21:9, the same recording at 157 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
-  "character-artifacts": {
-    capture: "session-2.mp4",
-    props: { initialTab: "Artifacts" },
-    screen: "CharacterScreen",
-    seconds: 157,
-  },
-  // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Artifacts tab open
-  "character-artifacts-tabs": {
-    capture: "session-2.mp4",
-    props: { initialTab: "Artifacts" },
-    region: { height: 800, width: 900, x: 120, y: 180 },
-    screen: "CharacterScreen",
-    seconds: 157,
   },
   // The English PC client's character screen on the Constellation tab at 21:9, the same recording at 158 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
   "character-constellation": {
@@ -87,6 +72,21 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     region: { height: 800, width: 900, x: 120, y: 180 },
     screen: "CharacterScreen",
     seconds: 159,
+  },
+  // The English PC client's character screen on the Weapons tab at 21:9, the same recording at 156 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
+  "character-weapons": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Weapons" },
+    screen: "CharacterScreen",
+    seconds: 156,
+  },
+  // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Weapons tab open
+  "character-weapons-tabs": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Weapons" },
+    region: { height: 800, width: 900, x: 120, y: 180 },
+    screen: "CharacterScreen",
+    seconds: 156,
   },
   // The Court of Fontaine from the wiki's location image at 4K, by day with the sun high. Its landmarks are rigid stone
   // And steel read off 4x crops: the arch's two feet, the bridge's two springs and the drum tower's roof corners
