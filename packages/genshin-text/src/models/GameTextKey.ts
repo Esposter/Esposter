@@ -51,6 +51,9 @@ export enum GameTextKey {
   // The dialogue's auto-play button, as it reads while off and while playing
   DialogueAuto = "UI_TALK_DIALOG_AUTO_TALK_START",
   DialogueAutoPlaying = "UI_TALK_DIALOG_AUTO_TALK_STOP",
+  // The HUD's skill and burst buttons, named as the controls name their keys
+  ElementalBurst = "CONTROL_SKILL5",
+  ElementalSkill = "CONTROL_SKILL2",
   Events = "UI_STC_GAMEENTRYPAGE_ACTIVITY",
   Friends = "UI_FRIEND_TITLE",
   // The game's own name, as its window's title says it
@@ -63,6 +66,8 @@ export enum GameTextKey {
   HandbookEnemies = "UI_ADVENTURE_INVESTIGATION_MONSTER_PAGE",
   HandbookExperience = "UI_ADVENTURE_TRAVELS",
   HandbookGuide = "UI_TEXT_QUEST_GUIDE_BOOKMARK",
+  // The HUD's HP bars, named for a screen reader
+  Health = "FIGHT_PROP_CUR_HP",
   // The health notice's paragraphs, a blank line between them
   HealthNotice = "684850635",
   HealthNoticeTitle = "1737243758",
@@ -133,6 +138,8 @@ export enum GameTextKey {
   SortDescending = "UI_RelicIterations_Ordering_Descending",
   SortLevel = "SORT_BY_LEVEL",
   SortQuality = "SORT_BY_QUALITY",
+  // The HUD's stamina meter, named for a screen reader
+  Stamina = "133358079",
   // A Statue of The Seven, as the map titles its mark
   StatueOfTheSeven = "UI_MAPMARK_MarkGoddess_TITLE",
   // Photo mode's own shutter, which the Paimon menu's entry into it says too
