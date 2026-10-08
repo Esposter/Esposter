@@ -171,7 +171,7 @@ const rebuildRing = (level: number): void => {
   ringWrittenMap.delete(level);
   const keys = [...farTileMap.keys()]
     .filter((key) => getTerrainTileLevel(key) === level)
-    .toSorted((first, second) => first - second);
+    .toSorted((firstKey, secondKey) => firstKey - secondKey);
   for (const [ordinal, key] of keys.entries()) ringOrdinalMap.set(key, ordinal);
   if (keys.length === 0) return;
   const tiles = keys.map((key) => farTileMap.get(key)).filter((tile) => tile !== undefined);
