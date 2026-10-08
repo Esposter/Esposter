@@ -163,6 +163,7 @@
     ],
     "id": 10000002,
     "initialWeaponId": 11101,
+    "nameTextId": "1006042610",
     "rarity": 5,
     "regionId": "inazuma",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -331,6 +332,7 @@
     ],
     "id": 10000003,
     "initialWeaponId": 11101,
+    "nameTextId": "3221565738",
     "rarity": 5,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -498,6 +500,7 @@
     ],
     "id": 10000005,
     "initialWeaponId": 11101,
+    "nameTextId": "1533656306",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -665,6 +668,7 @@
     ],
     "id": 10000006,
     "initialWeaponId": 14101,
+    "nameTextId": "3344622722",
     "rarity": 4,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_CATALYST"
@@ -832,6 +836,7 @@
     ],
     "id": 10000007,
     "initialWeaponId": 11101,
+    "nameTextId": "3816664530",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -999,6 +1004,7 @@
     ],
     "id": 10000014,
     "initialWeaponId": 14101,
+    "nameTextId": "3775298658",
     "rarity": 4,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_CATALYST"
@@ -1167,6 +1173,7 @@
     ],
     "id": 10000015,
     "initialWeaponId": 11101,
+    "nameTextId": "4119662698",
     "rarity": 4,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -1335,6 +1342,7 @@
     ],
     "id": 10000016,
     "initialWeaponId": 12101,
+    "nameTextId": "3608179810",
     "rarity": 5,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_CLAYMORE"
@@ -1503,6 +1511,7 @@
     ],
     "id": 10000020,
     "initialWeaponId": 12101,
+    "nameTextId": "4160146730",
     "rarity": 4,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_CLAYMORE"
@@ -1671,6 +1680,7 @@
     ],
     "id": 10000021,
     "initialWeaponId": 15101,
+    "nameTextId": "1966438658",
     "rarity": 4,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_BOW"
@@ -1839,6 +1849,7 @@
     ],
     "id": 10000022,
     "initialWeaponId": 15101,
+    "nameTextId": "2466140362",
     "rarity": 5,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_BOW"
@@ -2007,6 +2018,7 @@
     ],
     "id": 10000023,
     "initialWeaponId": 13101,
+    "nameTextId": "1130995834",
     "rarity": 4,
     "regionId": "liyue",
     "weaponType": "WEAPON_POLE"
@@ -2175,6 +2187,7 @@
     ],
     "id": 10000024,
     "initialWeaponId": 12101,
+    "nameTextId": "2646367730",
     "rarity": 4,
     "regionId": "liyue",
     "weaponType": "WEAPON_CLAYMORE"
@@ -2343,6 +2356,7 @@
     ],
     "id": 10000025,
     "initialWeaponId": 11101,
+    "nameTextId": "4197635170",
     "rarity": 4,
     "regionId": "liyue",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -2511,6 +2525,7 @@
     ],
     "id": 10000026,
     "initialWeaponId": 13101,
+    "nameTextId": "1021947178",
     "rarity": 5,
     "regionId": "liyue",
     "weaponType": "WEAPON_POLE"
@@ -2679,6 +2694,7 @@
     ],
     "id": 10000027,
     "initialWeaponId": 14101,
+    "nameTextId": "4127888458",
     "rarity": 4,
     "regionId": "liyue",
     "weaponType": "WEAPON_CATALYST"
@@ -2847,6 +2863,7 @@
     ],
     "id": 10000029,
     "initialWeaponId": 14101,
+    "nameTextId": "3339083250",
     "rarity": 5,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_CATALYST"
@@ -3015,6 +3032,7 @@
     ],
     "id": 10000030,
     "initialWeaponId": 13101,
+    "nameTextId": "3862787418",
     "rarity": 5,
     "regionId": "liyue",
     "weaponType": "WEAPON_POLE"
@@ -3183,6 +3201,7 @@
     ],
     "id": 10000031,
     "initialWeaponId": 15101,
+    "nameTextId": "3277782506",
     "rarity": 4,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_BOW"
@@ -3351,6 +3370,7 @@
     ],
     "id": 10000032,
     "initialWeaponId": 11101,
+    "nameTextId": "968892866",
     "rarity": 4,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -3519,6 +3539,7 @@
     ],
     "id": 10000033,
     "initialWeaponId": 15101,
+    "nameTextId": "3847142754",
     "rarity": 5,
     "regionId": "snezhnaya",
     "weaponType": "WEAPON_BOW"
@@ -3687,6 +3708,7 @@
     ],
     "id": 10000034,
     "initialWeaponId": 12101,
+    "nameTextId": "1921418330",
     "rarity": 4,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_CLAYMORE"
@@ -3855,6 +3877,7 @@
     ],
     "id": 10000035,
     "initialWeaponId": 11101,
+    "nameTextId": "168956210",
     "rarity": 5,
     "regionId": "liyue",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -4023,6 +4046,7 @@
     ],
     "id": 10000036,
     "initialWeaponId": 12101,
+    "nameTextId": "2876340530",
     "rarity": 4,
     "regionId": "liyue",
     "weaponType": "WEAPON_CLAYMORE"
@@ -4191,6 +4215,7 @@
     ],
     "id": 10000037,
     "initialWeaponId": 15101,
+    "nameTextId": "2679780610",
     "rarity": 5,
     "regionId": "liyue",
     "weaponType": "WEAPON_BOW"
@@ -4359,6 +4384,7 @@
     ],
     "id": 10000038,
     "initialWeaponId": 11101,
+    "nameTextId": "4108620210",
     "rarity": 5,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -4527,6 +4553,7 @@
     ],
     "id": 10000039,
     "initialWeaponId": 15101,
+    "nameTextId": "1468367026",
     "rarity": 4,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_BOW"
@@ -4695,6 +4722,7 @@
     ],
     "id": 10000041,
     "initialWeaponId": 14101,
+    "nameTextId": "1113306282",
     "rarity": 5,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_CATALYST"
@@ -4863,6 +4891,7 @@
     ],
     "id": 10000042,
     "initialWeaponId": 11101,
+    "nameTextId": "1864015138",
     "rarity": 5,
     "regionId": "liyue",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -5031,6 +5060,7 @@
     ],
     "id": 10000043,
     "initialWeaponId": 14101,
+    "nameTextId": "1053433018",
     "rarity": 4,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_CATALYST"
@@ -5199,6 +5229,7 @@
     ],
     "id": 10000044,
     "initialWeaponId": 12101,
+    "nameTextId": "4273845410",
     "rarity": 4,
     "regionId": "liyue",
     "weaponType": "WEAPON_CLAYMORE"
@@ -5367,6 +5398,7 @@
     ],
     "id": 10000045,
     "initialWeaponId": 13101,
+    "nameTextId": "4260733330",
     "rarity": 4,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_POLE"
@@ -5535,6 +5567,7 @@
     ],
     "id": 10000046,
     "initialWeaponId": 13101,
+    "nameTextId": "1940919482",
     "rarity": 5,
     "regionId": "liyue",
     "weaponType": "WEAPON_POLE"
@@ -5703,6 +5736,7 @@
     ],
     "id": 10000047,
     "initialWeaponId": 11101,
+    "nameTextId": "88505754",
     "rarity": 5,
     "regionId": "inazuma",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -5871,6 +5905,7 @@
     ],
     "id": 10000048,
     "initialWeaponId": 14101,
+    "nameTextId": "697277554",
     "rarity": 4,
     "regionId": "liyue",
     "weaponType": "WEAPON_CATALYST"
@@ -6039,6 +6074,7 @@
     ],
     "id": 10000049,
     "initialWeaponId": 15101,
+    "nameTextId": "2504399314",
     "rarity": 5,
     "regionId": "inazuma",
     "weaponType": "WEAPON_BOW"
@@ -6207,6 +6243,7 @@
     ],
     "id": 10000050,
     "initialWeaponId": 13101,
+    "nameTextId": "3555115090",
     "rarity": 4,
     "regionId": "inazuma",
     "weaponType": "WEAPON_POLE"
@@ -6375,6 +6412,7 @@
     ],
     "id": 10000051,
     "initialWeaponId": 12101,
+    "nameTextId": "3717666906",
     "rarity": 5,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_CLAYMORE"
@@ -6543,6 +6581,7 @@
     ],
     "id": 10000052,
     "initialWeaponId": 13101,
+    "nameTextId": "3024506994",
     "rarity": 5,
     "regionId": "inazuma",
     "weaponType": "WEAPON_POLE"
@@ -6711,6 +6750,7 @@
     ],
     "id": 10000053,
     "initialWeaponId": 12101,
+    "nameTextId": "2388785242",
     "rarity": 4,
     "regionId": "inazuma",
     "weaponType": "WEAPON_CLAYMORE"
@@ -6879,6 +6919,7 @@
     ],
     "id": 10000054,
     "initialWeaponId": 14101,
+    "nameTextId": "3914045794",
     "rarity": 5,
     "regionId": "inazuma",
     "weaponType": "WEAPON_CATALYST"
@@ -7047,6 +7088,7 @@
     ],
     "id": 10000055,
     "initialWeaponId": 15101,
+    "nameTextId": "3400133034",
     "rarity": 4,
     "regionId": "inazuma",
     "weaponType": "WEAPON_BOW"
@@ -7215,6 +7257,7 @@
     ],
     "id": 10000056,
     "initialWeaponId": 15101,
+    "nameTextId": "1483922610",
     "rarity": 4,
     "regionId": "inazuma",
     "weaponType": "WEAPON_BOW"
@@ -7383,6 +7426,7 @@
     ],
     "id": 10000057,
     "initialWeaponId": 12101,
+    "nameTextId": "3068316954",
     "rarity": 5,
     "regionId": "inazuma",
     "weaponType": "WEAPON_CLAYMORE"
@@ -7551,6 +7595,7 @@
     ],
     "id": 10000058,
     "initialWeaponId": 14101,
+    "nameTextId": "2713452722",
     "rarity": 5,
     "regionId": "inazuma",
     "weaponType": "WEAPON_CATALYST"
@@ -7719,6 +7764,7 @@
     ],
     "id": 10000059,
     "initialWeaponId": 14101,
+    "nameTextId": "646031578",
     "rarity": 4,
     "regionId": "inazuma",
     "weaponType": "WEAPON_CATALYST"
@@ -7887,6 +7933,7 @@
     ],
     "id": 10000060,
     "initialWeaponId": 15101,
+    "nameTextId": "2848373866",
     "rarity": 5,
     "regionId": "liyue",
     "weaponType": "WEAPON_BOW"
@@ -8055,6 +8102,7 @@
     ],
     "id": 10000061,
     "initialWeaponId": 11101,
+    "nameTextId": "1456642530",
     "rarity": 4,
     "regionId": "inazuma",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -8223,6 +8271,7 @@
     ],
     "id": 10000062,
     "initialWeaponId": 15101,
+    "nameTextId": "3689107586",
     "rarity": 5,
     "weaponType": "WEAPON_BOW"
   },
@@ -8390,6 +8439,7 @@
     ],
     "id": 10000063,
     "initialWeaponId": 13101,
+    "nameTextId": "334242122",
     "rarity": 5,
     "regionId": "liyue",
     "weaponType": "WEAPON_POLE"
@@ -8558,6 +8608,7 @@
     ],
     "id": 10000064,
     "initialWeaponId": 13101,
+    "nameTextId": "655825362",
     "rarity": 4,
     "regionId": "liyue",
     "weaponType": "WEAPON_POLE"
@@ -8726,6 +8777,7 @@
     ],
     "id": 10000065,
     "initialWeaponId": 11101,
+    "nameTextId": "1940821474",
     "rarity": 4,
     "regionId": "inazuma",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -8894,6 +8946,7 @@
     ],
     "id": 10000066,
     "initialWeaponId": 11101,
+    "nameTextId": "1588620330",
     "rarity": 5,
     "regionId": "inazuma",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -9062,6 +9115,7 @@
     ],
     "id": 10000067,
     "initialWeaponId": 15101,
+    "nameTextId": "2948361666",
     "rarity": 4,
     "regionId": "sumeru",
     "weaponType": "WEAPON_BOW"
@@ -9230,6 +9284,7 @@
     ],
     "id": 10000068,
     "initialWeaponId": 12101,
+    "nameTextId": "388272194",
     "rarity": 4,
     "regionId": "sumeru",
     "weaponType": "WEAPON_CLAYMORE"
@@ -9398,6 +9453,7 @@
     ],
     "id": 10000069,
     "initialWeaponId": 15101,
+    "nameTextId": "2506955778",
     "rarity": 5,
     "regionId": "sumeru",
     "weaponType": "WEAPON_BOW"
@@ -9566,6 +9622,7 @@
     ],
     "id": 10000070,
     "initialWeaponId": 11101,
+    "nameTextId": "3850149970",
     "rarity": 5,
     "regionId": "sumeru",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -9734,6 +9791,7 @@
     ],
     "id": 10000071,
     "initialWeaponId": 13101,
+    "nameTextId": "1049891906",
     "rarity": 5,
     "regionId": "sumeru",
     "weaponType": "WEAPON_POLE"
@@ -9902,6 +9960,7 @@
     ],
     "id": 10000072,
     "initialWeaponId": 13101,
+    "nameTextId": "3092975658",
     "rarity": 4,
     "regionId": "sumeru",
     "weaponType": "WEAPON_POLE"
@@ -10070,6 +10129,7 @@
     ],
     "id": 10000073,
     "initialWeaponId": 14101,
+    "nameTextId": "712500570",
     "rarity": 5,
     "regionId": "sumeru",
     "weaponType": "WEAPON_CATALYST"
@@ -10238,6 +10298,7 @@
     ],
     "id": 10000074,
     "initialWeaponId": 11101,
+    "nameTextId": "2889777514",
     "rarity": 4,
     "regionId": "sumeru",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -10406,6 +10467,7 @@
     ],
     "id": 10000075,
     "initialWeaponId": 14101,
+    "nameTextId": "3230559562",
     "rarity": 5,
     "regionId": "sumeru",
     "weaponType": "WEAPON_CATALYST"
@@ -10574,6 +10636,7 @@
     ],
     "id": 10000076,
     "initialWeaponId": 15101,
+    "nameTextId": "2387711482",
     "rarity": 4,
     "regionId": "sumeru",
     "weaponType": "WEAPON_BOW"
@@ -10742,6 +10805,7 @@
     ],
     "id": 10000077,
     "initialWeaponId": 13101,
+    "nameTextId": "1732417970",
     "rarity": 4,
     "regionId": "liyue",
     "weaponType": "WEAPON_POLE"
@@ -10910,6 +10974,7 @@
     ],
     "id": 10000078,
     "initialWeaponId": 11101,
+    "nameTextId": "4002156906",
     "rarity": 5,
     "regionId": "sumeru",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -11078,6 +11143,7 @@
     ],
     "id": 10000079,
     "initialWeaponId": 12101,
+    "nameTextId": "2360533154",
     "rarity": 5,
     "regionId": "sumeru",
     "weaponType": "WEAPON_CLAYMORE"
@@ -11246,6 +11312,7 @@
     ],
     "id": 10000080,
     "initialWeaponId": 13101,
+    "nameTextId": "231911858",
     "rarity": 4,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_POLE"
@@ -11414,6 +11481,7 @@
     ],
     "id": 10000081,
     "initialWeaponId": 12101,
+    "nameTextId": "466355514",
     "rarity": 4,
     "regionId": "sumeru",
     "weaponType": "WEAPON_CLAYMORE"
@@ -11582,6 +11650,7 @@
     ],
     "id": 10000082,
     "initialWeaponId": 14101,
+    "nameTextId": "2984815066",
     "rarity": 5,
     "regionId": "liyue",
     "weaponType": "WEAPON_CATALYST"
@@ -11750,6 +11819,7 @@
     ],
     "id": 10000083,
     "initialWeaponId": 11101,
+    "nameTextId": "1225226258",
     "rarity": 4,
     "regionId": "fontaine",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -11918,6 +11988,7 @@
     ],
     "id": 10000084,
     "initialWeaponId": 15101,
+    "nameTextId": "2472444970",
     "rarity": 5,
     "regionId": "fontaine",
     "weaponType": "WEAPON_BOW"
@@ -12086,6 +12157,7 @@
     ],
     "id": 10000085,
     "initialWeaponId": 12101,
+    "nameTextId": "4201963842",
     "rarity": 4,
     "regionId": "fontaine",
     "weaponType": "WEAPON_CLAYMORE"
@@ -12254,6 +12326,7 @@
     ],
     "id": 10000086,
     "initialWeaponId": 14101,
+    "nameTextId": "370150538",
     "rarity": 5,
     "regionId": "fontaine",
     "weaponType": "WEAPON_CATALYST"
@@ -12422,6 +12495,7 @@
     ],
     "id": 10000087,
     "initialWeaponId": 14101,
+    "nameTextId": "1504902330",
     "rarity": 5,
     "regionId": "fontaine",
     "weaponType": "WEAPON_CATALYST"
@@ -12590,6 +12664,7 @@
     ],
     "id": 10000088,
     "initialWeaponId": 14101,
+    "nameTextId": "3831162130",
     "rarity": 4,
     "regionId": "fontaine",
     "weaponType": "WEAPON_CATALYST"
@@ -12758,6 +12833,7 @@
     ],
     "id": 10000089,
     "initialWeaponId": 11101,
+    "nameTextId": "2180900234",
     "rarity": 5,
     "regionId": "fontaine",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -12926,6 +13002,7 @@
     ],
     "id": 10000090,
     "initialWeaponId": 13101,
+    "nameTextId": "540313842",
     "rarity": 4,
     "regionId": "fontaine",
     "weaponType": "WEAPON_POLE"
@@ -13094,6 +13171,7 @@
     ],
     "id": 10000091,
     "initialWeaponId": 12101,
+    "nameTextId": "2877588578",
     "rarity": 5,
     "regionId": "fontaine",
     "weaponType": "WEAPON_CLAYMORE"
@@ -13262,6 +13340,7 @@
     ],
     "id": 10000092,
     "initialWeaponId": 12101,
+    "nameTextId": "2822240322",
     "rarity": 4,
     "regionId": "liyue",
     "weaponType": "WEAPON_CLAYMORE"
@@ -13430,6 +13509,7 @@
     ],
     "id": 10000093,
     "initialWeaponId": 14101,
+    "nameTextId": "3648220258",
     "rarity": 5,
     "regionId": "liyue",
     "weaponType": "WEAPON_CATALYST"
@@ -13598,6 +13678,7 @@
     ],
     "id": 10000094,
     "initialWeaponId": 11101,
+    "nameTextId": "1944606922",
     "rarity": 5,
     "regionId": "inazuma",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -13766,6 +13847,7 @@
     ],
     "id": 10000095,
     "initialWeaponId": 15101,
+    "nameTextId": "781488450",
     "rarity": 5,
     "regionId": "fontaine",
     "weaponType": "WEAPON_BOW"
@@ -13934,6 +14016,7 @@
     ],
     "id": 10000096,
     "initialWeaponId": 13101,
+    "nameTextId": "167198962",
     "rarity": 5,
     "regionId": "snezhnaya",
     "weaponType": "WEAPON_POLE"
@@ -14102,6 +14185,7 @@
     ],
     "id": 10000097,
     "initialWeaponId": 15101,
+    "nameTextId": "1431321834",
     "rarity": 4,
     "regionId": "sumeru",
     "weaponType": "WEAPON_BOW"
@@ -14270,6 +14354,7 @@
     ],
     "id": 10000098,
     "initialWeaponId": 11101,
+    "nameTextId": "2745368786",
     "rarity": 5,
     "regionId": "fontaine",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -14438,6 +14523,7 @@
     ],
     "id": 10000099,
     "initialWeaponId": 13101,
+    "nameTextId": "1705785610",
     "rarity": 5,
     "regionId": "fontaine",
     "weaponType": "WEAPON_POLE"
@@ -14606,6 +14692,7 @@
     ],
     "id": 10000100,
     "initialWeaponId": 13101,
+    "nameTextId": "2531816890",
     "rarity": 4,
     "regionId": "natlan",
     "weaponType": "WEAPON_POLE"
@@ -14774,6 +14861,7 @@
     ],
     "id": 10000101,
     "initialWeaponId": 12101,
+    "nameTextId": "4172712122",
     "rarity": 5,
     "regionId": "natlan",
     "weaponType": "WEAPON_CLAYMORE"
@@ -14942,6 +15030,7 @@
     ],
     "id": 10000102,
     "initialWeaponId": 14101,
+    "nameTextId": "3949670506",
     "rarity": 5,
     "regionId": "natlan",
     "weaponType": "WEAPON_CATALYST"
@@ -15110,6 +15199,7 @@
     ],
     "id": 10000103,
     "initialWeaponId": 11101,
+    "nameTextId": "2515292370",
     "rarity": 5,
     "regionId": "natlan",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -15278,6 +15368,7 @@
     ],
     "id": 10000104,
     "initialWeaponId": 15101,
+    "nameTextId": "3746229466",
     "rarity": 5,
     "regionId": "natlan",
     "weaponType": "WEAPON_BOW"
@@ -15446,6 +15537,7 @@
     ],
     "id": 10000105,
     "initialWeaponId": 15101,
+    "nameTextId": "1198350762",
     "rarity": 4,
     "regionId": "natlan",
     "weaponType": "WEAPON_BOW"
@@ -15614,6 +15706,7 @@
     ],
     "id": 10000106,
     "initialWeaponId": 12101,
+    "nameTextId": "113398050",
     "rarity": 5,
     "regionId": "natlan",
     "weaponType": "WEAPON_CLAYMORE"
@@ -15782,6 +15875,7 @@
     ],
     "id": 10000107,
     "initialWeaponId": 14101,
+    "nameTextId": "1197974530",
     "rarity": 5,
     "regionId": "natlan",
     "weaponType": "WEAPON_CATALYST"
@@ -15950,6 +16044,7 @@
     ],
     "id": 10000108,
     "initialWeaponId": 14101,
+    "nameTextId": "1888132250",
     "rarity": 4,
     "regionId": "liyue",
     "weaponType": "WEAPON_CATALYST"
@@ -16118,6 +16213,7 @@
     ],
     "id": 10000109,
     "initialWeaponId": 14101,
+    "nameTextId": "3784387026",
     "rarity": 5,
     "regionId": "inazuma",
     "weaponType": "WEAPON_CATALYST"
@@ -16286,6 +16382,7 @@
     ],
     "id": 10000110,
     "initialWeaponId": 13101,
+    "nameTextId": "3120492002",
     "rarity": 4,
     "regionId": "natlan",
     "weaponType": "WEAPON_POLE"
@@ -16454,6 +16551,7 @@
     ],
     "id": 10000111,
     "initialWeaponId": 14101,
+    "nameTextId": "283438362",
     "rarity": 5,
     "regionId": "natlan",
     "weaponType": "WEAPON_CATALYST"
@@ -16622,6 +16720,7 @@
     ],
     "id": 10000112,
     "initialWeaponId": 13101,
+    "nameTextId": "4035850498",
     "rarity": 5,
     "regionId": "fontaine",
     "weaponType": "WEAPON_POLE"
@@ -16790,6 +16889,7 @@
     ],
     "id": 10000113,
     "initialWeaponId": 14101,
+    "nameTextId": "3398664506",
     "rarity": 4,
     "regionId": "natlan",
     "weaponType": "WEAPON_CATALYST"
@@ -16958,6 +17058,7 @@
     ],
     "id": 10000114,
     "initialWeaponId": 11101,
+    "nameTextId": "123650378",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -17125,6 +17226,7 @@
     ],
     "id": 10000115,
     "initialWeaponId": 11101,
+    "nameTextId": "2332663914",
     "rarity": 4,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -17293,6 +17395,7 @@
     ],
     "id": 10000116,
     "initialWeaponId": 13101,
+    "nameTextId": "2759230658",
     "rarity": 5,
     "regionId": "nod-krai",
     "weaponType": "WEAPON_POLE"
@@ -17460,6 +17563,7 @@
     ],
     "id": 10000117,
     "initialWeaponId": 11101,
+    "nameTextId": "1496871274",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -17626,6 +17730,7 @@
     ],
     "id": 10000118,
     "initialWeaponId": 11101,
+    "nameTextId": "4125864442",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -17793,6 +17898,7 @@
     ],
     "id": 10000119,
     "initialWeaponId": 14101,
+    "nameTextId": "1776873506",
     "rarity": 5,
     "regionId": "nod-krai",
     "weaponType": "WEAPON_CATALYST"
@@ -17961,6 +18067,7 @@
     ],
     "id": 10000120,
     "initialWeaponId": 13101,
+    "nameTextId": "1804674298",
     "rarity": 5,
     "regionId": "nod-krai",
     "weaponType": "WEAPON_POLE"
@@ -18129,6 +18236,7 @@
     ],
     "id": 10000121,
     "initialWeaponId": 12101,
+    "nameTextId": "3887687898",
     "rarity": 4,
     "regionId": "nod-krai",
     "weaponType": "WEAPON_CLAYMORE"
@@ -18297,6 +18405,7 @@
     ],
     "id": 10000122,
     "initialWeaponId": 14101,
+    "nameTextId": "2745785690",
     "rarity": 5,
     "regionId": "nod-krai",
     "weaponType": "WEAPON_CATALYST"
@@ -18465,6 +18574,7 @@
     ],
     "id": 10000123,
     "initialWeaponId": 11101,
+    "nameTextId": "2801077538",
     "rarity": 5,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_SWORD_ONE_HAND"
@@ -18633,6 +18743,7 @@
     ],
     "id": 10000124,
     "initialWeaponId": 15101,
+    "nameTextId": "1438964010",
     "rarity": 4,
     "regionId": "nod-krai",
     "weaponType": "WEAPON_BOW"
@@ -18801,6 +18912,7 @@
     ],
     "id": 10000125,
     "initialWeaponId": 14101,
+    "nameTextId": "1888371106",
     "rarity": 5,
     "regionId": "nod-krai",
     "weaponType": "WEAPON_CATALYST"
@@ -18969,6 +19081,7 @@
     ],
     "id": 10000126,
     "initialWeaponId": 11101,
+    "nameTextId": "937532578",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -19136,6 +19249,7 @@
     ],
     "id": 10000127,
     "initialWeaponId": 13101,
+    "nameTextId": "102656474",
     "rarity": 4,
     "regionId": "nod-krai",
     "weaponType": "WEAPON_POLE"
@@ -19304,6 +19418,7 @@
     ],
     "id": 10000128,
     "initialWeaponId": 12101,
+    "nameTextId": "963351866",
     "rarity": 5,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_CLAYMORE"
@@ -19472,6 +19587,7 @@
     ],
     "id": 10000129,
     "initialWeaponId": 13101,
+    "nameTextId": "2872823194",
     "rarity": 5,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_POLE"
@@ -19640,6 +19756,7 @@
     ],
     "id": 10000130,
     "initialWeaponId": 15101,
+    "nameTextId": "1961019898",
     "rarity": 5,
     "regionId": "nod-krai",
     "weaponType": "WEAPON_BOW"
@@ -19808,6 +19925,7 @@
     ],
     "id": 10000131,
     "initialWeaponId": 14101,
+    "nameTextId": "1711582634",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -19975,6 +20093,7 @@
     ],
     "id": 10000132,
     "initialWeaponId": 14101,
+    "nameTextId": "2787504450",
     "rarity": 4,
     "regionId": "mondstadt",
     "weaponType": "WEAPON_CATALYST"
@@ -20143,6 +20262,7 @@
     ],
     "id": 10000901,
     "initialWeaponId": 12101,
+    "nameTextId": "3293134138",
     "rarity": 5,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -20310,6 +20430,7 @@
     ],
     "id": 10000902,
     "initialWeaponId": 13101,
+    "nameTextId": "853393626",
     "rarity": 5,
     "weaponType": "WEAPON_POLE"
   },
@@ -20477,6 +20598,7 @@
     ],
     "id": 10000903,
     "initialWeaponId": 13101,
+    "nameTextId": "1422574882",
     "rarity": 5,
     "weaponType": "WEAPON_POLE"
   },
@@ -20644,6 +20766,7 @@
     ],
     "id": 10000904,
     "initialWeaponId": 14101,
+    "nameTextId": "2211498234",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -20712,6 +20835,7 @@
     ],
     "id": 10000998,
     "initialWeaponId": 10009,
+    "nameTextId": "88676646",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -20780,6 +20904,7 @@
     ],
     "id": 10000999,
     "initialWeaponId": 10009,
+    "nameTextId": "3434459630",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   }

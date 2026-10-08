@@ -50,6 +50,7 @@
       }
     ],
     "id": 11101,
+    "nameTextId": "2410593283",
     "rarity": 1,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -104,6 +105,7 @@
       }
     ],
     "id": 11201,
+    "nameTextId": "2125205883",
     "rarity": 2,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -181,6 +183,7 @@
       }
     ],
     "id": 11301,
+    "nameTextId": "479076483",
     "rarity": 3,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -258,6 +261,7 @@
       }
     ],
     "id": 11302,
+    "nameTextId": "1608953027",
     "rarity": 3,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -335,6 +339,7 @@
       }
     ],
     "id": 11303,
+    "nameTextId": "3673791555",
     "rarity": 3,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -412,6 +417,7 @@
       }
     ],
     "id": 11304,
+    "nameTextId": "160492707",
     "rarity": 3,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -489,6 +495,7 @@
       }
     ],
     "id": 11305,
+    "nameTextId": "3421966723",
     "rarity": 3,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -566,6 +573,7 @@
       }
     ],
     "id": 11306,
+    "nameTextId": "1388004419",
     "rarity": 3,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -643,6 +651,7 @@
       }
     ],
     "id": 11401,
+    "nameTextId": "2474354867",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -720,6 +729,7 @@
       }
     ],
     "id": 11402,
+    "nameTextId": "3587621259",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -797,6 +807,7 @@
       }
     ],
     "id": 11403,
+    "nameTextId": "1990641987",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -874,6 +885,7 @@
       }
     ],
     "id": 11404,
+    "nameTextId": "2375993851",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -951,6 +963,7 @@
       }
     ],
     "id": 11405,
+    "nameTextId": "1321135155",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -1028,6 +1041,7 @@
       }
     ],
     "id": 11406,
+    "nameTextId": "1991707099",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -1105,6 +1119,7 @@
       }
     ],
     "id": 11407,
+    "nameTextId": "4103021923",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -1182,6 +1197,7 @@
       }
     ],
     "id": 11408,
+    "nameTextId": "3378007475",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -1259,6 +1275,7 @@
       }
     ],
     "id": 11409,
+    "nameTextId": "3796905099",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -1336,6 +1353,7 @@
       }
     ],
     "id": 11410,
+    "nameTextId": "2947140987",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -1390,6 +1408,7 @@
       }
     ],
     "id": 11411,
+    "nameTextId": "1203074099",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -1467,6 +1486,7 @@
       }
     ],
     "id": 11412,
+    "nameTextId": "1773424643",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -1544,6 +1564,7 @@
       }
     ],
     "id": 11413,
+    "nameTextId": "2749853923",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -1621,6 +1642,7 @@
       }
     ],
     "id": 11414,
+    "nameTextId": "1990820123",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -1698,6 +1720,7 @@
       }
     ],
     "id": 11415,
+    "nameTextId": "342097035",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -1775,6 +1798,7 @@
       }
     ],
     "id": 11416,
+    "nameTextId": "1012170803",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -1852,6 +1876,7 @@
       }
     ],
     "id": 11417,
+    "nameTextId": "313300315",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -1929,6 +1954,7 @@
       }
     ],
     "id": 11418,
+    "nameTextId": "143051931",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -2006,6 +2032,7 @@
       }
     ],
     "id": 11419,
+    "nameTextId": "1499745395",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -2083,6 +2110,7 @@
       }
     ],
     "id": 11420,
+    "nameTextId": "1538092267",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -2160,6 +2188,7 @@
       }
     ],
     "id": 11421,
+    "nameTextId": "3464026523",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -2237,6 +2266,7 @@
       }
     ],
     "id": 11422,
+    "nameTextId": "2448629019",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -2314,6 +2344,7 @@
       }
     ],
     "id": 11424,
+    "nameTextId": "2265792579",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -2391,6 +2422,7 @@
       }
     ],
     "id": 11425,
+    "nameTextId": "800766043",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -2468,6 +2500,7 @@
       }
     ],
     "id": 11426,
+    "nameTextId": "1921306659",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -2545,6 +2578,7 @@
       }
     ],
     "id": 11427,
+    "nameTextId": "1790066971",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -2622,6 +2656,7 @@
       }
     ],
     "id": 11428,
+    "nameTextId": "3016493443",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -2699,6 +2734,7 @@
       }
     ],
     "id": 11429,
+    "nameTextId": "594850195",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -2776,6 +2812,7 @@
       }
     ],
     "id": 11430,
+    "nameTextId": "495182275",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -2853,6 +2890,7 @@
       }
     ],
     "id": 11431,
+    "nameTextId": "3434743027",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -2930,6 +2968,7 @@
       }
     ],
     "id": 11432,
+    "nameTextId": "590019915",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -3007,6 +3046,7 @@
       }
     ],
     "id": 11433,
+    "nameTextId": "3426916507",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -3084,6 +3124,7 @@
       }
     ],
     "id": 11434,
+    "nameTextId": "357888027",
     "rarity": 4,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -3161,6 +3202,7 @@
       }
     ],
     "id": 11501,
+    "nameTextId": "902264035",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -3238,6 +3280,7 @@
       }
     ],
     "id": 11502,
+    "nameTextId": "4055003299",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -3315,6 +3358,7 @@
       }
     ],
     "id": 11503,
+    "nameTextId": "2949448043",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -3392,6 +3436,7 @@
       }
     ],
     "id": 11504,
+    "nameTextId": "944332883",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -3469,6 +3514,7 @@
       }
     ],
     "id": 11505,
+    "nameTextId": "1345343763",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -3523,6 +3569,7 @@
       }
     ],
     "id": 11506,
+    "nameTextId": "231836963",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -3577,6 +3624,7 @@
       }
     ],
     "id": 11507,
+    "nameTextId": "3780343147",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -3631,6 +3679,7 @@
       }
     ],
     "id": 11508,
+    "nameTextId": "1664039091",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -3708,6 +3757,7 @@
       }
     ],
     "id": 11509,
+    "nameTextId": "4124851547",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -3785,6 +3835,7 @@
       }
     ],
     "id": 11510,
+    "nameTextId": "1600274803",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -3862,6 +3913,7 @@
       }
     ],
     "id": 11511,
+    "nameTextId": "454086795",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -3939,6 +3991,7 @@
       }
     ],
     "id": 11512,
+    "nameTextId": "275622963",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -4016,6 +4069,7 @@
       }
     ],
     "id": 11513,
+    "nameTextId": "1473398931",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -4093,6 +4147,7 @@
       }
     ],
     "id": 11514,
+    "nameTextId": "1818340435",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -4170,6 +4225,7 @@
       }
     ],
     "id": 11515,
+    "nameTextId": "1009471939",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -4247,6 +4303,7 @@
       }
     ],
     "id": 11516,
+    "nameTextId": "3432339555",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -4324,6 +4381,7 @@
       }
     ],
     "id": 11517,
+    "nameTextId": "1479740763",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -4401,6 +4459,7 @@
       }
     ],
     "id": 11518,
+    "nameTextId": "4099034547",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -4478,6 +4537,7 @@
       }
     ],
     "id": 11519,
+    "nameTextId": "1573691659",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -4532,6 +4592,7 @@
       }
     ],
     "id": 12101,
+    "nameTextId": "2666950755",
     "rarity": 1,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -4586,6 +4647,7 @@
       }
     ],
     "id": 12201,
+    "nameTextId": "1182966091",
     "rarity": 2,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -4663,6 +4725,7 @@
       }
     ],
     "id": 12301,
+    "nameTextId": "1479961067",
     "rarity": 3,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -4740,6 +4803,7 @@
       }
     ],
     "id": 12302,
+    "nameTextId": "4090429643",
     "rarity": 3,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -4817,6 +4881,7 @@
       }
     ],
     "id": 12303,
+    "nameTextId": "850802171",
     "rarity": 3,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -4894,6 +4959,7 @@
       }
     ],
     "id": 12304,
+    "nameTextId": "1516554699",
     "rarity": 3,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -4971,6 +5037,7 @@
       }
     ],
     "id": 12305,
+    "nameTextId": "3097441403",
     "rarity": 3,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -5048,6 +5115,7 @@
       }
     ],
     "id": 12306,
+    "nameTextId": "2614169915",
     "rarity": 3,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -5125,6 +5193,7 @@
       }
     ],
     "id": 12401,
+    "nameTextId": "735056283",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -5202,6 +5271,7 @@
       }
     ],
     "id": 12402,
+    "nameTextId": "930640955",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -5279,6 +5349,7 @@
       }
     ],
     "id": 12403,
+    "nameTextId": "1675686363",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -5356,6 +5427,7 @@
       }
     ],
     "id": 12404,
+    "nameTextId": "877751435",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -5433,6 +5505,7 @@
       }
     ],
     "id": 12405,
+    "nameTextId": "3684723963",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -5510,6 +5583,7 @@
       }
     ],
     "id": 12406,
+    "nameTextId": "3722933411",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -5587,6 +5661,7 @@
       }
     ],
     "id": 12407,
+    "nameTextId": "680509899",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -5664,6 +5739,7 @@
       }
     ],
     "id": 12408,
+    "nameTextId": "20848859",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -5741,6 +5817,7 @@
       }
     ],
     "id": 12409,
+    "nameTextId": "1437658243",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -5818,6 +5895,7 @@
       }
     ],
     "id": 12410,
+    "nameTextId": "2006422931",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -5895,6 +5973,7 @@
       }
     ],
     "id": 12411,
+    "nameTextId": "2753539107",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -5972,6 +6051,7 @@
       }
     ],
     "id": 12412,
+    "nameTextId": "346510395",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -6049,6 +6129,7 @@
       }
     ],
     "id": 12414,
+    "nameTextId": "4193089947",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -6126,6 +6207,7 @@
       }
     ],
     "id": 12415,
+    "nameTextId": "3073454355",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -6203,6 +6285,7 @@
       }
     ],
     "id": 12416,
+    "nameTextId": "2359798963",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -6280,6 +6363,7 @@
       }
     ],
     "id": 12417,
+    "nameTextId": "902184067",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -6357,6 +6441,7 @@
       }
     ],
     "id": 12418,
+    "nameTextId": "1200948347",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -6434,6 +6519,7 @@
       }
     ],
     "id": 12424,
+    "nameTextId": "3459616011",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -6511,6 +6597,7 @@
       }
     ],
     "id": 12425,
+    "nameTextId": "2077869251",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -6588,6 +6675,7 @@
       }
     ],
     "id": 12426,
+    "nameTextId": "933441683",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -6665,6 +6753,7 @@
       }
     ],
     "id": 12427,
+    "nameTextId": "3693117451",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -6742,6 +6831,7 @@
       }
     ],
     "id": 12430,
+    "nameTextId": "688237043",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -6819,6 +6909,7 @@
       }
     ],
     "id": 12431,
+    "nameTextId": "2481463563",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -6896,6 +6987,7 @@
       }
     ],
     "id": 12432,
+    "nameTextId": "3573591363",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -6973,6 +7065,7 @@
       }
     ],
     "id": 12433,
+    "nameTextId": "3225522227",
     "rarity": 4,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -7050,6 +7143,7 @@
       }
     ],
     "id": 12501,
+    "nameTextId": "1089949747",
     "rarity": 5,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -7127,6 +7221,7 @@
       }
     ],
     "id": 12502,
+    "nameTextId": "3995709851",
     "rarity": 5,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -7204,6 +7299,7 @@
       }
     ],
     "id": 12503,
+    "nameTextId": "1075646787",
     "rarity": 5,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -7281,6 +7377,7 @@
       }
     ],
     "id": 12504,
+    "nameTextId": "2792766467",
     "rarity": 5,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -7335,6 +7432,7 @@
       }
     ],
     "id": 12505,
+    "nameTextId": "977648923",
     "rarity": 5,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -7389,6 +7487,7 @@
       }
     ],
     "id": 12506,
+    "nameTextId": "2597527627",
     "rarity": 5,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -7443,6 +7542,7 @@
       }
     ],
     "id": 12508,
+    "nameTextId": "759707691",
     "rarity": 5,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -7497,6 +7597,7 @@
       }
     ],
     "id": 12509,
+    "nameTextId": "2507837467",
     "rarity": 5,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -7574,6 +7675,7 @@
       }
     ],
     "id": 12510,
+    "nameTextId": "3914951691",
     "rarity": 5,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -7651,6 +7753,7 @@
       }
     ],
     "id": 12511,
+    "nameTextId": "2834063555",
     "rarity": 5,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -7728,6 +7831,7 @@
       }
     ],
     "id": 12512,
+    "nameTextId": "3812523339",
     "rarity": 5,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -7805,6 +7909,7 @@
       }
     ],
     "id": 12513,
+    "nameTextId": "1183453507",
     "rarity": 5,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -7882,6 +7987,7 @@
       }
     ],
     "id": 12514,
+    "nameTextId": "1876377995",
     "rarity": 5,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -7959,6 +8065,7 @@
       }
     ],
     "id": 12515,
+    "nameTextId": "3121311955",
     "rarity": 5,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -8013,6 +8120,7 @@
       }
     ],
     "id": 13101,
+    "nameTextId": "2796697027",
     "rarity": 1,
     "weaponType": "WEAPON_POLE"
   },
@@ -8067,6 +8175,7 @@
       }
     ],
     "id": 13201,
+    "nameTextId": "3070169307",
     "rarity": 2,
     "weaponType": "WEAPON_POLE"
   },
@@ -8144,6 +8253,7 @@
       }
     ],
     "id": 13301,
+    "nameTextId": "1390797107",
     "rarity": 3,
     "weaponType": "WEAPON_POLE"
   },
@@ -8221,6 +8331,7 @@
       }
     ],
     "id": 13302,
+    "nameTextId": "618786059",
     "rarity": 3,
     "weaponType": "WEAPON_POLE"
   },
@@ -8298,6 +8409,7 @@
       }
     ],
     "id": 13303,
+    "nameTextId": "4103766499",
     "rarity": 3,
     "weaponType": "WEAPON_POLE"
   },
@@ -8370,6 +8482,7 @@
       }
     ],
     "id": 13304,
+    "nameTextId": "500612307",
     "rarity": 3,
     "weaponType": "WEAPON_POLE"
   },
@@ -8447,6 +8560,7 @@
       }
     ],
     "id": 13401,
+    "nameTextId": "2664628619",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -8524,6 +8638,7 @@
       }
     ],
     "id": 13402,
+    "nameTextId": "1154009435",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -8601,6 +8716,7 @@
       }
     ],
     "id": 13403,
+    "nameTextId": "578574771",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -8678,6 +8794,7 @@
       }
     ],
     "id": 13404,
+    "nameTextId": "481755219",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -8755,6 +8872,7 @@
       }
     ],
     "id": 13405,
+    "nameTextId": "4049410139",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -8832,6 +8950,7 @@
       }
     ],
     "id": 13406,
+    "nameTextId": "716252627",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -8909,6 +9028,7 @@
       }
     ],
     "id": 13407,
+    "nameTextId": "3755004051",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -8986,6 +9106,7 @@
       }
     ],
     "id": 13408,
+    "nameTextId": "2935286203",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -9063,6 +9184,7 @@
       }
     ],
     "id": 13409,
+    "nameTextId": "3443142923",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -9140,6 +9262,7 @@
       }
     ],
     "id": 13414,
+    "nameTextId": "2491796803",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -9217,6 +9340,7 @@
       }
     ],
     "id": 13415,
+    "nameTextId": "1148024091",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -9294,6 +9418,7 @@
       }
     ],
     "id": 13416,
+    "nameTextId": "4122508571",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -9371,6 +9496,7 @@
       }
     ],
     "id": 13417,
+    "nameTextId": "452357427",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -9448,6 +9574,7 @@
       }
     ],
     "id": 13419,
+    "nameTextId": "1470442731",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -9525,6 +9652,7 @@
       }
     ],
     "id": 13424,
+    "nameTextId": "449192411",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -9602,6 +9730,7 @@
       }
     ],
     "id": 13425,
+    "nameTextId": "4158971171",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -9679,6 +9808,7 @@
       }
     ],
     "id": 13426,
+    "nameTextId": "2847771107",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -9756,6 +9886,7 @@
       }
     ],
     "id": 13427,
+    "nameTextId": "882305379",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -9833,6 +9964,7 @@
       }
     ],
     "id": 13430,
+    "nameTextId": "1965515155",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -9910,6 +10042,7 @@
       }
     ],
     "id": 13431,
+    "nameTextId": "415520051",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -9987,6 +10120,7 @@
       }
     ],
     "id": 13432,
+    "nameTextId": "486512643",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -10064,6 +10198,7 @@
       }
     ],
     "id": 13433,
+    "nameTextId": "2225698043",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -10141,6 +10276,7 @@
       }
     ],
     "id": 13434,
+    "nameTextId": "980370707",
     "rarity": 4,
     "weaponType": "WEAPON_POLE"
   },
@@ -10218,6 +10354,7 @@
       }
     ],
     "id": 13501,
+    "nameTextId": "3235324379",
     "rarity": 5,
     "weaponType": "WEAPON_POLE"
   },
@@ -10295,6 +10432,7 @@
       }
     ],
     "id": 13502,
+    "nameTextId": "4158505107",
     "rarity": 5,
     "weaponType": "WEAPON_POLE"
   },
@@ -10349,6 +10487,7 @@
       }
     ],
     "id": 13503,
+    "nameTextId": "469555475",
     "rarity": 5,
     "weaponType": "WEAPON_POLE"
   },
@@ -10426,6 +10565,7 @@
       }
     ],
     "id": 13504,
+    "nameTextId": "197755235",
     "rarity": 5,
     "weaponType": "WEAPON_POLE"
   },
@@ -10503,6 +10643,7 @@
       }
     ],
     "id": 13505,
+    "nameTextId": "1997709467",
     "rarity": 5,
     "weaponType": "WEAPON_POLE"
   },
@@ -10557,6 +10698,7 @@
       }
     ],
     "id": 13506,
+    "nameTextId": "3532343299",
     "rarity": 5,
     "weaponType": "WEAPON_POLE"
   },
@@ -10634,6 +10776,7 @@
       }
     ],
     "id": 13507,
+    "nameTextId": "688991243",
     "rarity": 5,
     "weaponType": "WEAPON_POLE"
   },
@@ -10711,6 +10854,7 @@
       }
     ],
     "id": 13509,
+    "nameTextId": "3717849275",
     "rarity": 5,
     "weaponType": "WEAPON_POLE"
   },
@@ -10788,6 +10932,7 @@
       }
     ],
     "id": 13511,
+    "nameTextId": "4238339131",
     "rarity": 5,
     "weaponType": "WEAPON_POLE"
   },
@@ -10865,6 +11010,7 @@
       }
     ],
     "id": 13512,
+    "nameTextId": "2944936171",
     "rarity": 5,
     "weaponType": "WEAPON_POLE"
   },
@@ -10942,6 +11088,7 @@
       }
     ],
     "id": 13513,
+    "nameTextId": "1948935171",
     "rarity": 5,
     "weaponType": "WEAPON_POLE"
   },
@@ -11019,6 +11166,7 @@
       }
     ],
     "id": 13514,
+    "nameTextId": "518077587",
     "rarity": 5,
     "weaponType": "WEAPON_POLE"
   },
@@ -11096,6 +11244,7 @@
       }
     ],
     "id": 13515,
+    "nameTextId": "2878068027",
     "rarity": 5,
     "weaponType": "WEAPON_POLE"
   },
@@ -11173,6 +11322,7 @@
       }
     ],
     "id": 13516,
+    "nameTextId": "3869745515",
     "rarity": 5,
     "weaponType": "WEAPON_POLE"
   },
@@ -11250,6 +11400,7 @@
       }
     ],
     "id": 13517,
+    "nameTextId": "3376210043",
     "rarity": 5,
     "weaponType": "WEAPON_POLE"
   },
@@ -11304,6 +11455,7 @@
       }
     ],
     "id": 14101,
+    "nameTextId": "3584825427",
     "rarity": 1,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -11358,6 +11510,7 @@
       }
     ],
     "id": 14201,
+    "nameTextId": "2705029563",
     "rarity": 2,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -11435,6 +11588,7 @@
       }
     ],
     "id": 14301,
+    "nameTextId": "2279290283",
     "rarity": 3,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -11512,6 +11666,7 @@
       }
     ],
     "id": 14302,
+    "nameTextId": "3500934491",
     "rarity": 3,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -11589,6 +11744,7 @@
       }
     ],
     "id": 14303,
+    "nameTextId": "1406746947",
     "rarity": 3,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -11666,6 +11822,7 @@
       }
     ],
     "id": 14304,
+    "nameTextId": "2963220587",
     "rarity": 3,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -11743,6 +11900,7 @@
       }
     ],
     "id": 14305,
+    "nameTextId": "3719372203",
     "rarity": 3,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -11820,6 +11978,7 @@
       }
     ],
     "id": 14306,
+    "nameTextId": "302690787",
     "rarity": 3,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -11897,6 +12056,7 @@
       }
     ],
     "id": 14401,
+    "nameTextId": "623534363",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -11974,6 +12134,7 @@
       }
     ],
     "id": 14402,
+    "nameTextId": "1163263227",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -12051,6 +12212,7 @@
       }
     ],
     "id": 14403,
+    "nameTextId": "2195665171",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -12128,6 +12290,7 @@
       }
     ],
     "id": 14404,
+    "nameTextId": "3827788923",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -12205,6 +12368,7 @@
       }
     ],
     "id": 14405,
+    "nameTextId": "37146739",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -12282,6 +12446,7 @@
       }
     ],
     "id": 14406,
+    "nameTextId": "2521338131",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -12359,6 +12524,7 @@
       }
     ],
     "id": 14407,
+    "nameTextId": "1072884907",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -12436,6 +12602,7 @@
       }
     ],
     "id": 14408,
+    "nameTextId": "3273998499",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -12513,6 +12680,7 @@
       }
     ],
     "id": 14409,
+    "nameTextId": "3156385219",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -12590,6 +12758,7 @@
       }
     ],
     "id": 14410,
+    "nameTextId": "3090373787",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -12644,6 +12813,7 @@
       }
     ],
     "id": 14411,
+    "nameTextId": "415851979",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -12721,6 +12891,7 @@
       }
     ],
     "id": 14412,
+    "nameTextId": "2587614459",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -12798,6 +12969,7 @@
       }
     ],
     "id": 14413,
+    "nameTextId": "3456986307",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -12875,6 +13047,7 @@
       }
     ],
     "id": 14414,
+    "nameTextId": "2324146259",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -12952,6 +13125,7 @@
       }
     ],
     "id": 14415,
+    "nameTextId": "2539207947",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -13029,6 +13203,7 @@
       }
     ],
     "id": 14416,
+    "nameTextId": "426363227",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -13106,6 +13281,7 @@
       }
     ],
     "id": 14417,
+    "nameTextId": "2267978875",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -13183,6 +13359,7 @@
       }
     ],
     "id": 14424,
+    "nameTextId": "2275710371",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -13260,6 +13437,7 @@
       }
     ],
     "id": 14425,
+    "nameTextId": "2432865507",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -13337,6 +13515,7 @@
       }
     ],
     "id": 14426,
+    "nameTextId": "2722902043",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -13414,6 +13593,7 @@
       }
     ],
     "id": 14427,
+    "nameTextId": "422144187",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -13491,6 +13671,7 @@
       }
     ],
     "id": 14430,
+    "nameTextId": "1445287979",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -13568,6 +13749,7 @@
       }
     ],
     "id": 14431,
+    "nameTextId": "3092853059",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -13645,6 +13827,7 @@
       }
     ],
     "id": 14432,
+    "nameTextId": "21074019",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -13722,6 +13905,7 @@
       }
     ],
     "id": 14433,
+    "nameTextId": "658627627",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -13799,6 +13983,7 @@
       }
     ],
     "id": 14434,
+    "nameTextId": "3497154619",
     "rarity": 4,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -13876,6 +14061,7 @@
       }
     ],
     "id": 14501,
+    "nameTextId": "807607555",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -13953,6 +14139,7 @@
       }
     ],
     "id": 14502,
+    "nameTextId": "1455107483",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -14007,6 +14194,7 @@
       }
     ],
     "id": 14503,
+    "nameTextId": "452042771",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -14084,6 +14272,7 @@
       }
     ],
     "id": 14504,
+    "nameTextId": "693353755",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -14161,6 +14350,7 @@
       }
     ],
     "id": 14505,
+    "nameTextId": "4007372867",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -14238,6 +14428,7 @@
       }
     ],
     "id": 14506,
+    "nameTextId": "1890162851",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -14292,6 +14483,7 @@
       }
     ],
     "id": 14508,
+    "nameTextId": "4123949539",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -14369,6 +14561,7 @@
       }
     ],
     "id": 14509,
+    "nameTextId": "310246731",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -14446,6 +14639,7 @@
       }
     ],
     "id": 14511,
+    "nameTextId": "1201790155",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -14523,6 +14717,7 @@
       }
     ],
     "id": 14512,
+    "nameTextId": "359484419",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -14600,6 +14795,7 @@
       }
     ],
     "id": 14513,
+    "nameTextId": "724880659",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -14677,6 +14873,7 @@
       }
     ],
     "id": 14514,
+    "nameTextId": "4176922867",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -14754,6 +14951,7 @@
       }
     ],
     "id": 14515,
+    "nameTextId": "3660626387",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -14831,6 +15029,7 @@
       }
     ],
     "id": 14516,
+    "nameTextId": "1673987515",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -14908,6 +15107,7 @@
       }
     ],
     "id": 14517,
+    "nameTextId": "2466897131",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -14985,6 +15185,7 @@
       }
     ],
     "id": 14518,
+    "nameTextId": "3790622155",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -15062,6 +15263,7 @@
       }
     ],
     "id": 14519,
+    "nameTextId": "2559426851",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -15139,6 +15341,7 @@
       }
     ],
     "id": 14520,
+    "nameTextId": "1198975171",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -15216,6 +15419,7 @@
       }
     ],
     "id": 14521,
+    "nameTextId": "1566338363",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -15293,6 +15497,7 @@
       }
     ],
     "id": 14522,
+    "nameTextId": "1441327235",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -15370,6 +15575,7 @@
       }
     ],
     "id": 14523,
+    "nameTextId": "1871665507",
     "rarity": 5,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -15424,6 +15630,7 @@
       }
     ],
     "id": 15101,
+    "nameTextId": "3600623979",
     "rarity": 1,
     "weaponType": "WEAPON_BOW"
   },
@@ -15478,6 +15685,7 @@
       }
     ],
     "id": 15201,
+    "nameTextId": "2340969555",
     "rarity": 2,
     "weaponType": "WEAPON_BOW"
   },
@@ -15555,6 +15763,7 @@
       }
     ],
     "id": 15301,
+    "nameTextId": "3975746731",
     "rarity": 3,
     "weaponType": "WEAPON_BOW"
   },
@@ -15632,6 +15841,7 @@
       }
     ],
     "id": 15302,
+    "nameTextId": "656120259",
     "rarity": 3,
     "weaponType": "WEAPON_BOW"
   },
@@ -15709,6 +15919,7 @@
       }
     ],
     "id": 15303,
+    "nameTextId": "4267718859",
     "rarity": 3,
     "weaponType": "WEAPON_BOW"
   },
@@ -15786,6 +15997,7 @@
       }
     ],
     "id": 15304,
+    "nameTextId": "1021898027",
     "rarity": 3,
     "weaponType": "WEAPON_BOW"
   },
@@ -15863,6 +16075,7 @@
       }
     ],
     "id": 15305,
+    "nameTextId": "4139294019",
     "rarity": 3,
     "weaponType": "WEAPON_BOW"
   },
@@ -15940,6 +16153,7 @@
       }
     ],
     "id": 15306,
+    "nameTextId": "2242026883",
     "rarity": 3,
     "weaponType": "WEAPON_BOW"
   },
@@ -16017,6 +16231,7 @@
       }
     ],
     "id": 15401,
+    "nameTextId": "1240067179",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -16094,6 +16309,7 @@
       }
     ],
     "id": 15402,
+    "nameTextId": "2556914171",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -16171,6 +16387,7 @@
       }
     ],
     "id": 15403,
+    "nameTextId": "2400012483",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -16248,6 +16465,7 @@
       }
     ],
     "id": 15404,
+    "nameTextId": "2832647675",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -16325,6 +16543,7 @@
       }
     ],
     "id": 15405,
+    "nameTextId": "3169209451",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -16402,6 +16621,7 @@
       }
     ],
     "id": 15406,
+    "nameTextId": "3625393307",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -16479,6 +16699,7 @@
       }
     ],
     "id": 15407,
+    "nameTextId": "411685275",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -16556,6 +16777,7 @@
       }
     ],
     "id": 15408,
+    "nameTextId": "3447736723",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -16633,6 +16855,7 @@
       }
     ],
     "id": 15409,
+    "nameTextId": "3439749347",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -16710,6 +16933,7 @@
       }
     ],
     "id": 15410,
+    "nameTextId": "2417717595",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -16787,6 +17011,7 @@
       }
     ],
     "id": 15411,
+    "nameTextId": "2425414923",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -16864,6 +17089,7 @@
       }
     ],
     "id": 15412,
+    "nameTextId": "3949653067",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -16941,6 +17167,7 @@
       }
     ],
     "id": 15413,
+    "nameTextId": "650049651",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -17018,6 +17245,7 @@
       }
     ],
     "id": 15414,
+    "nameTextId": "4186179883",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -17095,6 +17323,7 @@
       }
     ],
     "id": 15415,
+    "nameTextId": "540938627",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -17172,6 +17401,7 @@
       }
     ],
     "id": 15416,
+    "nameTextId": "1860795787",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -17249,6 +17479,7 @@
       }
     ],
     "id": 15417,
+    "nameTextId": "3176598571",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -17326,6 +17557,7 @@
       }
     ],
     "id": 15418,
+    "nameTextId": "3063191787",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -17403,6 +17635,7 @@
       }
     ],
     "id": 15419,
+    "nameTextId": "316078299",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -17480,6 +17713,7 @@
       }
     ],
     "id": 15424,
+    "nameTextId": "2958179435",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -17557,6 +17791,7 @@
       }
     ],
     "id": 15425,
+    "nameTextId": "2600875323",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -17634,6 +17869,7 @@
       }
     ],
     "id": 15426,
+    "nameTextId": "4038675555",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -17711,6 +17947,7 @@
       }
     ],
     "id": 15427,
+    "nameTextId": "1055194523",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -17788,6 +18025,7 @@
       }
     ],
     "id": 15430,
+    "nameTextId": "4019353779",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -17865,6 +18103,7 @@
       }
     ],
     "id": 15431,
+    "nameTextId": "565052459",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -17942,6 +18181,7 @@
       }
     ],
     "id": 15432,
+    "nameTextId": "2846112011",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -18019,6 +18259,7 @@
       }
     ],
     "id": 15433,
+    "nameTextId": "3380504699",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -18096,6 +18337,7 @@
       }
     ],
     "id": 15434,
+    "nameTextId": "2320082227",
     "rarity": 4,
     "weaponType": "WEAPON_BOW"
   },
@@ -18173,6 +18415,7 @@
       }
     ],
     "id": 15501,
+    "nameTextId": "3933622347",
     "rarity": 5,
     "weaponType": "WEAPON_BOW"
   },
@@ -18250,6 +18493,7 @@
       }
     ],
     "id": 15502,
+    "nameTextId": "828711395",
     "rarity": 5,
     "weaponType": "WEAPON_BOW"
   },
@@ -18327,6 +18571,7 @@
       }
     ],
     "id": 15503,
+    "nameTextId": "3112678643",
     "rarity": 5,
     "weaponType": "WEAPON_BOW"
   },
@@ -18381,6 +18626,7 @@
       }
     ],
     "id": 15504,
+    "nameTextId": "565328963",
     "rarity": 5,
     "weaponType": "WEAPON_BOW"
   },
@@ -18435,6 +18681,7 @@
       }
     ],
     "id": 15505,
+    "nameTextId": "1994080563",
     "rarity": 5,
     "weaponType": "WEAPON_BOW"
   },
@@ -18489,6 +18736,7 @@
       }
     ],
     "id": 15506,
+    "nameTextId": "2824690859",
     "rarity": 5,
     "weaponType": "WEAPON_BOW"
   },
@@ -18566,6 +18814,7 @@
       }
     ],
     "id": 15507,
+    "nameTextId": "1901972563",
     "rarity": 5,
     "weaponType": "WEAPON_BOW"
   },
@@ -18643,6 +18892,7 @@
       }
     ],
     "id": 15508,
+    "nameTextId": "4230231107",
     "rarity": 5,
     "weaponType": "WEAPON_BOW"
   },
@@ -18720,6 +18970,7 @@
       }
     ],
     "id": 15509,
+    "nameTextId": "2918525435",
     "rarity": 5,
     "weaponType": "WEAPON_BOW"
   },
@@ -18797,6 +19048,7 @@
       }
     ],
     "id": 15511,
+    "nameTextId": "1348687251",
     "rarity": 5,
     "weaponType": "WEAPON_BOW"
   },
@@ -18874,6 +19126,7 @@
       }
     ],
     "id": 15512,
+    "nameTextId": "2988480723",
     "rarity": 5,
     "weaponType": "WEAPON_BOW"
   },
@@ -18951,6 +19204,7 @@
       }
     ],
     "id": 15513,
+    "nameTextId": "1257395531",
     "rarity": 5,
     "weaponType": "WEAPON_BOW"
   },
@@ -19028,6 +19282,7 @@
       }
     ],
     "id": 15514,
+    "nameTextId": "1363661099",
     "rarity": 5,
     "weaponType": "WEAPON_BOW"
   },
@@ -19105,6 +19360,7 @@
       }
     ],
     "id": 15515,
+    "nameTextId": "1235520915",
     "rarity": 5,
     "weaponType": "WEAPON_BOW"
   },
@@ -19182,6 +19438,7 @@
       }
     ],
     "id": 15516,
+    "nameTextId": "2250670211",
     "rarity": 5,
     "weaponType": "WEAPON_BOW"
   },
@@ -19236,6 +19493,7 @@
       }
     ],
     "id": 20001,
+    "nameTextId": "4137694339",
     "rarity": 5,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -19290,6 +19548,7 @@
       }
     ],
     "id": 10002,
+    "nameTextId": "2719831547",
     "rarity": 1,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   },
@@ -19344,6 +19603,7 @@
       }
     ],
     "id": 10003,
+    "nameTextId": "500987091",
     "rarity": 1,
     "weaponType": "WEAPON_CLAYMORE"
   },
@@ -19398,6 +19658,7 @@
       }
     ],
     "id": 10004,
+    "nameTextId": "1595734083",
     "rarity": 1,
     "weaponType": "WEAPON_POLE"
   },
@@ -19452,6 +19713,7 @@
       }
     ],
     "id": 10005,
+    "nameTextId": "2009975059",
     "rarity": 1,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -19506,6 +19768,7 @@
       }
     ],
     "id": 10006,
+    "nameTextId": "4162981171",
     "rarity": 1,
     "weaponType": "WEAPON_CATALYST"
   },
@@ -19560,6 +19823,7 @@
       }
     ],
     "id": 10008,
+    "nameTextId": "3762436507",
     "rarity": 1,
     "weaponType": "WEAPON_BOW"
   },
@@ -19614,6 +19878,7 @@
       }
     ],
     "id": 10009,
+    "nameTextId": "123009179",
     "rarity": 1,
     "weaponType": "WEAPON_SWORD_ONE_HAND"
   }

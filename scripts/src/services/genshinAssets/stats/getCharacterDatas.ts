@@ -14,8 +14,8 @@ import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable
 import { toAttributeLines } from "#src/services/genshinAssets/stats/toAttributeLines";
 import { Attribute, characterDataSchema, Element } from "genshin-world";
 
-// Every playable character as the roster holds it: its element from its burst's energy, its region from its
-// Association, its growth, its ascension phases from its promotion table, and what every level of it starts with
+// Every playable character as the roster holds it: its name by text id, its element from its burst's energy, its region
+// From its association, its growth, its ascension phases from its promotion table, and what its every level starts with
 export const getCharacterDatas = (notes: string[]): CharacterData[] => {
   const promoteIdRowsMap = Map.groupBy(
     readExcelTable<ExcelAvatarPromoteRow>("AvatarPromoteExcelConfigData"),
@@ -65,6 +65,7 @@ export const getCharacterDatas = (notes: string[]): CharacterData[] => {
         })),
         id: row.id,
         initialWeaponId: row.initialWeapon,
+        nameTextId: String(row.nameTextMapHash),
         rarity: QualityTypeRarityMap[row.qualityType],
         regionId: association === undefined ? undefined : AssociationRegionIdMap[association],
         weaponType: row.weaponType,
