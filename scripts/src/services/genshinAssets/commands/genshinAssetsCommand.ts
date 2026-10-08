@@ -5,6 +5,7 @@ import { chestsCommand } from "#src/services/genshinAssets/commands/chestsComman
 import { clearanceCommand } from "#src/services/genshinAssets/commands/clearanceCommand";
 import { clipsCommand } from "#src/services/genshinAssets/commands/clipsCommand";
 import { enemiesCommand } from "#src/services/genshinAssets/commands/enemiesCommand";
+import { expeditionsCommand } from "#src/services/genshinAssets/commands/expeditionsCommand";
 import { explorationCommand } from "#src/services/genshinAssets/commands/explorationCommand";
 import { extractCommand } from "#src/services/genshinAssets/commands/extractCommand";
 import { fitCommand } from "#src/services/genshinAssets/commands/fitCommand";
@@ -68,5 +69,6 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     puzzles: puzzlesCommand,
     gcg: gcgCommand,
     shops: shopsCommand,
+    expeditions: expeditionsCommand,
   },
 });
