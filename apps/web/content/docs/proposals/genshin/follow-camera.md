@@ -17,7 +17,7 @@ The [follow camera](/docs/genshin/follow-camera) stands behind the character tod
 
 ```mermaid
 flowchart TD
-  REC["Recordings of the camera in play: a turn, a zoom through the wheel's range, a pass by a wall"] -->|"pose, on the exports' landmarks"| POSE["Pivot, distances, field of view, pitch limits"]
+  REC["Recordings of the camera in play"] -->|"pose, on the exports' landmarks"| POSE["Pivot, distances, field of view, pitch limits"]
   REC -->|"the eye's distance over time"| EASE["The pull-in and the ease back out"]
   SET["The Settings screen"] --> USER["Sensitivity, default distance, slope pitch"]
   POSE --> CONST["The camera's constants"]
