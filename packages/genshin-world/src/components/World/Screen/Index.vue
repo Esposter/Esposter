@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
+import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { MapCamera } from "#src/models/map/MapCamera";
@@ -15,7 +16,9 @@ import type { GameText } from "genshin-text";
 
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
+import HudQuest from "#src/components/Hud/Quest/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
+import HudStamina from "#src/components/Hud/Stamina/Index.vue";
 import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MenuScreen from "#src/components/Menu/Screen/Index.vue";
@@ -47,6 +50,7 @@ import {
   createGenshinRenderer,
   createInput,
   createLandmarkCollider,
+  FOLLOW_CAMERA_PIVOT_HEIGHT,
   GENSHIN_TONE_MAPPING,
   InputAction,
   QualityTierSettingsMap,
@@ -132,6 +136,14 @@ const quests: Quest[] = [];
 const questProgressMap = new Map<string, QuestProgress>();
 const questTextMap: Record<string, string> = {};
 const trackedQuestId = ref("");
+// The quest on the HUD's tracker, the one navigated to or with none the first in progress, which V navigates to, and the
+// Navigated one's objective, which its beam rises over
+const trackerQuest = computed(() => quests.find(({ id }) => id === trackedQuestId.value) ?? quests[0]);
+const questTargetId = computed(() => {
+  if (!trackedQuestId.value || !trackerQuest.value) return "";
+  const { id, steps } = trackerQuest.value;
+  return steps[questProgressMap.get(id)?.stepIndex ?? 0]?.objectives[0]?.targetId ?? "";
+});
 const screenBehaviour = computed(() => ScreenBehaviourMap[screenKind.value]);
 // A screen with a cursor of its own lets the pointer go, which a click on the world takes again once it closes
 watch(
@@ -175,13 +187,23 @@ const isHudHidden = ref(false);
 // And handed on only when it moved, so a still player re-renders nothing
 const mapCamera = shallowRef<MapCamera>({ x: 0, yaw: 0, z: 0 });
 const cameraEuler = new Euler();
+// What the HUD's pieces read each frame. The stamina meter's pivot is projected only while the pool is spent or
+// Refilling, and once it is full the meter fades out where it stood
+const hudFrame = reactive<HudFrame>({ pivotX: 0, pivotY: 0, stamina: STAMINA_MAX });
+const pivot = new Vector3();
 useRafFn(() => {
   const activeCamera = canvas.value?.context?.camera.activeCamera.value;
   if (!activeCamera) return;
-  const { x, z } = characterBody.position;
+  const { x, y, z } = characterBody.position;
   const { y: yaw } = cameraEuler.setFromQuaternion(activeCamera.quaternion, "YXZ");
   if (x !== mapCamera.value.x || yaw !== mapCamera.value.yaw || z !== mapCamera.value.z)
     mapCamera.value = { x, yaw, z };
+  const stamina = character.value?.stamina.value ?? STAMINA_MAX;
+  if (stamina >= STAMINA_MAX && hudFrame.stamina >= STAMINA_MAX) return;
+  hudFrame.stamina = stamina;
+  pivot.set(x - origin.x, y + FOLLOW_CAMERA_PIVOT_HEIGHT, z - origin.z).project(activeCamera);
+  hudFrame.pivotX = (pivot.x + 1) / 2;
+  hudFrame.pivotY = (1 - pivot.y) / 2;
 });
 // A jump's pose while the screen is faded for it: set, the screen fades to black, and once that fade ends the character
 // Is placed and the pose let go, so the screen fades back in
@@ -237,6 +259,13 @@ defineExpose({ jumpTo, readCameraPosition });
           );
           if (!isPaused && screenKind === ScreenKind.World && partyMemberIndex !== -1)
             switchPartyMember(party, partyMemberIndex, context.elapsed);
+          if (
+            !isPaused &&
+            screenKind === ScreenKind.World &&
+            trackerQuest &&
+            inputState.pressedActions.has(InputAction.QuestNavigation)
+          )
+            trackedQuestId = trackerQuest.id;
         }
       "
       @error="emit('ready')"
@@ -281,6 +310,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :landmark-collider
         :origin
         :quality-tier
+        :quest-target-id
         :region-data-base-url
         @ready="emit('ready')"
       />
@@ -294,7 +324,19 @@ defineExpose({ jumpTo, readCameraPosition });
       :landmarks="jumpLandmarks"
       @map="screenKind = ScreenKind.Map"
       @menu="screenKind = ScreenKind.PaimonMenu"
-    />
+    >
+      <template v-if="trackerQuest" #quest>
+        <HudQuest
+          :input
+          :quest="trackerQuest"
+          :quest-progress="questProgressMap.get(trackerQuest.id)"
+          :text-map="questTextMap"
+        />
+      </template>
+      <template #stamina>
+        <HudStamina :frame="hudFrame" :game-text :max-stamina="STAMINA_MAX" />
+      </template>
+    </HudScreen>
     <MenuScreen v-model:screen-kind="screenKind" :game-text @quit="emit('quit')">
       <template #[ScreenKind.Map]>
         <MapOverlay

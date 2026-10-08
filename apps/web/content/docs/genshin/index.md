@@ -57,7 +57,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Screens](/docs/genshin/screens)                           | the screens opened over the world one at a time, what each holds, and the Paimon menu's shell                       |
 | [Map](/docs/genshin/map)                                   | the map on M, its jump list, and a jump's fade to black and back                                                    |
 | [Minimap](/docs/genshin/minimap)                           | the HUD's corner map, the map's drawing cut to a circle round the camera and turned with it                         |
-| [HUD](/docs/genshin/hud)                                   | the heads-up display's Paimon button and minimap, its places for the party and stamina, and hiding it               |
+| [HUD](/docs/genshin/hud)                                   | the heads-up display's Paimon button, minimap, quest tracker and stamina meter, its places, and hiding it           |
 | [Touch controls](/docs/genshin/touch-controls)             | the stick on the left half, the look on the right and the jump button, fed into the one input                       |
 | [Enemies](/docs/genshin/enemies)                           | enemy kinds and their stats, their AI and camps, respawn and drops, drawn as stand-in capsules                      |
 | [Combat](/docs/genshin/combat)                             | auras and reactions in the game's priority, the damage formula, internal cooldown, shields and energy               |

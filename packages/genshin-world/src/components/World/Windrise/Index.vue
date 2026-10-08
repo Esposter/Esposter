@@ -3,6 +3,7 @@ import type { LandmarkCollider, Locomotion, QualityTier } from "genshin-engine";
 import type { Object3D, Vector3 } from "three";
 
 import CharacterModel from "#src/components/Character/Model/Index.vue";
+import QuestBeam from "#src/components/Quest/Beam/Index.vue";
 import WorldCharacterPlaceholder from "#src/components/World/CharacterPlaceholder/Index.vue";
 import WorldEnemies from "#src/components/World/Enemies/Index.vue";
 import WorldGrass from "#src/components/World/Grass/Index.vue";
@@ -20,6 +21,7 @@ import water from "#src/data/windrise/water.json";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
+import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import {
   CLOUD_COVERAGE,
@@ -93,6 +95,8 @@ interface Props {
   // The world coordinate the scene's origin stands on, which the screen's free camera reads the ground through
   origin: Vector3;
   qualityTier: QualityTier;
+  // The navigated quest's objective, by the target its condition names, which a beam rises over, "" with none
+  questTargetId: string;
   // Where the app serves each region's data, fetched by id as the camera comes within reach
   regionDataBaseUrl: string;
 }
@@ -109,6 +113,7 @@ const {
   landmarkCollider,
   origin,
   qualityTier,
+  questTargetId,
   regionDataBaseUrl,
 } = defineProps<Props>();
 const emit = defineEmits<{ ready: [] }>();
@@ -139,6 +144,9 @@ const { cascadedShadowNode, light: sun } = createSunLight({ cascadeCount, maxFar
 const hemisphere = new HemisphereLight();
 const worldOffset = useFloatingOrigin(origin);
 const { isRegionDataSettled, regionDataMap } = useRegionData(origin, regionDataBaseUrl);
+const questTargetPosition = computed(() =>
+  questTargetId ? findQuestTargetPosition(regionDataMap, questTargetId) : undefined,
+);
 const fogUniforms = createFogUniforms();
 fogUniforms.heightFalloff.value = FOG_HEIGHT_FALLOFF;
 fogUniforms.startDistance.value = FOG_START_DISTANCE;
@@ -297,6 +305,7 @@ onUnmounted(() => {
     />
     <!-- Enemies wander where the references show none, so a witness render, judged against them, draws none -->
     <WorldEnemies v-if="!witness" :is-held :light-uniforms :origin :ramp-texture :region-data-map />
+    <QuestBeam v-if="questTargetPosition" :origin :position="questTargetPosition" />
     <!-- The character on the field, on the controller's body -->
     <primitive v-if="characterBody" :object="characterBody">
       <CharacterModel
