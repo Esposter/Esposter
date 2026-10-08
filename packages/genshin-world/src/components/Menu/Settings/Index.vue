@@ -51,8 +51,9 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* Provisional where the game is not yet fitted: the header's colour, the tabs' diamonds, the rows' glass and the caret
-   wait on the English PC client's settings measured at 1680 wide, where a unit is 0.875 of its pixels */
+/* Provisional where the game is not yet fitted: the tabs' diamonds, the rows' glass and the caret wait on the English PC
+   client's settings measured at 1680 wide, where a unit is 0.875 of its pixels. The header's colour is measured there, and
+   the body is the game's blurred world, which the page has no copy of, so the rows are not scored */
 .settings {
   --reference-pixel: calc(var(--unit) / 0.875);
   color: #ece5d7;

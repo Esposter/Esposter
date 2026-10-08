@@ -2,6 +2,7 @@
 import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
 import type { GameText } from "genshin-text";
 
+import MenuExit from "#src/components/Menu/Exit/Index.vue";
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { PAIMON_MENU_CONTENTS, PAIMON_MENU_LINKS, PAIMON_MENU_SIDE_BAR } from "#src/services/menu/constants";
@@ -22,6 +23,8 @@ interface Props {
 const { checkIsBuilt, gameText } = defineProps<Props>();
 const emit = defineEmits<{ close: []; open: [screenKind: TitledScreenKind]; quit: [] }>();
 const backButton = useTemplateRef("backButton");
+// Quit Game opens the prompt over the world in place of the menu, and only its own Continue or exit ends it
+const isExitPrompted = ref(false);
 // The menu is a dialog over the world, so focus starts inside it, on its way back
 onMounted(() => {
   backButton.value?.focus();
@@ -33,7 +36,13 @@ onMounted(() => {
        Screens and Quit Game, the profile card over the panel's entries in the game's four columns, and the world drawn
        Past the panel, where Paimon floats. Every entry the game has is here in its order: one whose screen is not built
        Yet is drawn disabled, and the links out to web pages are drawn disabled whole -->
-  <GameScreen class="paimon-menu" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Paimon]">
+  <GameScreen
+    v-if="!isExitPrompted"
+    class="paimon-menu"
+    role="dialog"
+    aria-modal="true"
+    :aria-label="gameText[GameTextKey.Paimon]"
+  >
     <div class="side-bar" />
     <button
       ref="backButton"
@@ -59,7 +68,7 @@ onMounted(() => {
       :aria-label="gameText[GameTextKey.QuitGame]"
       :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Quit])"
       type="button"
-      @click="emit('quit')"
+      @click="isExitPrompted = true"
     />
     <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Quit]" />
     <div class="panel" />
@@ -96,6 +105,7 @@ onMounted(() => {
       </button>
     </div>
   </GameScreen>
+  <MenuExit v-else :game-text @close="emit('close')" @quit="emit('quit')" />
 </template>
 
 <style scoped>
