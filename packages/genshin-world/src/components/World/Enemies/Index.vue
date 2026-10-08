@@ -53,9 +53,11 @@ interface Props {
   regionDataMap: ReadonlyMap<string, RegionData>;
   // The point the enemies target, the character's feet, which none is given while no character stands in the world
   target?: GroundPoint;
+  // The World Level the camps spawn at, which a change of it spawns every camp anew at
+  worldLevel: number;
 }
 
-const { enemyMap, isHeld, lightUniforms, rampTexture, regionDataMap, target } = defineProps<Props>();
+const { enemyMap, isHeld, lightUniforms, rampTexture, regionDataMap, target, worldLevel } = defineProps<Props>();
 // A strike for combat to land on the active character, and a defeated enemy's drops for the bag and the party
 const emit = defineEmits<{ defeat: [enemy: Enemy, enemyDrops: EnemyDrops]; strike: [enemy: Enemy] }>();
 const { onBeforeRender } = useLoop();
@@ -67,9 +69,15 @@ const loadedCampIds = new Set<string>();
 const elementalReactions: Reaction[] = [];
 // A camp spawns as its region's data arrives, each member whose respawn time has come, and is dropped as it leaves,
 // So an enemy comes back only on a load, never in view
+let spawnedWorldLevel = worldLevel;
 watchImmediate(
-  () => [...regionDataMap.values()].flatMap(({ enemyCamps }) => enemyCamps),
-  (enemyCamps) => {
+  () => [worldLevel, [...regionDataMap.values()].flatMap(({ enemyCamps }) => enemyCamps)] as const,
+  ([currentWorldLevel, enemyCamps]) => {
+    if (currentWorldLevel !== spawnedWorldLevel) {
+      spawnedWorldLevel = currentWorldLevel;
+      enemyMap.clear();
+      loadedCampIds.clear();
+    }
     const campIds = new Set(enemyCamps.map(({ id }) => id));
     for (const [spawnKey, { campId }] of enemyMap) if (!campIds.has(campId)) enemyMap.delete(spawnKey);
     for (const campId of loadedCampIds.difference(campIds)) loadedCampIds.delete(campId);
@@ -84,7 +92,7 @@ watchImmediate(
         if (defeatedAt && Temporal.ZonedDateTime.compare(computeEnemyRespawnTime(campEnemyTypes, defeatedAt), now) > 0)
           continue;
         spawnKeyDefeatedAtMap.delete(spawnKey);
-        enemyMap.set(spawnKey, createEnemy(member, id));
+        enemyMap.set(spawnKey, createEnemy(member, id, currentWorldLevel));
       }
     }
   },

@@ -1,13 +1,13 @@
 import type { WindowPullRequest } from "#src/models/coderabbit/collect/WindowPullRequest";
 
 import { WINDOW_BRANCH_PREFIX } from "#src/services/coderabbit/collect/constants";
+import { checkIsWindowBranch } from "#src/services/coderabbit/collect/checkIsWindowBranch";
 
 // One above the highest number any window pull request carries in its head, open or closed: a closed window keeps its
-// number, so the next one never reuses it. A head under the prefix that is not numbered is no window and is skipped.
+// Number, so the next one never reuses it. A head that is not a numbered window is skipped.
 export const getNextWindowNumber = (windowPullRequests: WindowPullRequest[]): number => {
-  const windowNumbers = windowPullRequests.flatMap(({ headRefName }) => {
-    const numberText = headRefName.slice(WINDOW_BRANCH_PREFIX.length);
-    return headRefName.startsWith(WINDOW_BRANCH_PREFIX) && /^\d+$/u.test(numberText) ? [Number(numberText)] : [];
-  });
+  const windowNumbers = windowPullRequests
+    .filter(({ headRefName }) => checkIsWindowBranch(headRefName))
+    .map(({ headRefName }) => Number(headRefName.slice(WINDOW_BRANCH_PREFIX.length)));
   return Math.max(0, ...windowNumbers) + 1;
 };

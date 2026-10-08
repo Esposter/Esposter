@@ -57,12 +57,6 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
     </ul>
     <p class="capacity">{{ capacity }}</p>
     <button class="back" :aria-label="backLabel" type="button" @click="emit('close')" />
-    <ul class="currencies">
-      <li v-for="{ id, name, quantity } of currencies" :key="id" class="currency">
-        <span class="currency-name">{{ name }}</span>
-        {{ quantity }}
-      </li>
-    </ul>
     <ul class="grid">
       <li v-for="cell of cells" :key="cell.id">
         <button
@@ -81,28 +75,32 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
       <p class="detail-name">{{ selectedCell.name }}</p>
       <p class="detail-caption">{{ selectedCell.caption }}</p>
     </section>
-    <div class="bar">
-      <span class="trash" />
-      <div v-if="isSortable" class="sort" role="group">
-        <button
-          v-for="inventorySort of InventorySorts"
-          :key="inventorySort"
-          class="sort-choice"
-          :aria-pressed="inventorySort === sort"
-          type="button"
-          @click="sort = inventorySort"
-        >
-          {{ sortLabels[inventorySort] }}
-        </button>
-        <button
-          class="order"
-          :aria-label="orderLabel"
-          :data-descending="isDescending"
-          type="button"
-          @click="isDescending = !isDescending"
-        />
+    <span class="trash" />
+    <template v-if="isSortable">
+      <span class="filter" />
+      <div class="sort">
+        <select v-model="sort" class="sort-select">
+          <option v-for="inventorySort of InventorySorts" :key="inventorySort" :value="inventorySort">
+            {{ sortLabels[inventorySort] }}
+          </option>
+        </select>
       </div>
-    </div>
+      <button
+        class="order"
+        :aria-label="orderLabel"
+        :data-descending="isDescending"
+        type="button"
+        @click="isDescending = !isDescending"
+      />
+    </template>
+    <ul v-else class="currencies">
+      <li v-for="{ id, isTopUp, name, quantity } of currencies" :key="id" class="currency" :data-currency="id">
+        <span class="currency-name">{{ name }}</span>
+        <span class="currency-icon" />
+        {{ quantity }}
+        <span v-if="isTopUp" class="top-up" />
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -174,19 +172,6 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
   border: none;
   border-radius: 50%;
   background: rgb(255 255 255 / 0.14);
-}
-
-.currencies {
-  position: absolute;
-  top: calc(var(--unit) * 96);
-  right: calc(var(--unit) * 115);
-  display: flex;
-  gap: calc(var(--unit) * 16);
-  font-size: calc(var(--unit) * 18);
-}
-
-.currency-name {
-  opacity: 0.7;
 }
 
 .grid {
@@ -278,44 +263,118 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
   font-weight: 600;
 }
 
-.bar {
-  position: absolute;
-  top: calc(var(--unit) * 993);
-  left: calc(var(--unit) * 51);
-  right: calc(var(--unit) * 133);
-  height: calc(var(--unit) * 48);
-  display: flex;
-  align-items: center;
-  gap: calc(var(--unit) * 16);
-}
-
+/* The foot bar's pieces, measured off the bag's recording at 1080 high: the trash, the filter and the sort's dropdown and
+   order on an equipment tab, the Primogems and Mora on the rest. The dropdown is the game's own pill, its list drawn by the
+   browser until its open motion is measured */
 .trash,
+.filter,
 .order {
-  width: calc(var(--unit) * 48);
-  height: calc(var(--unit) * 48);
+  position: absolute;
+  width: calc(var(--unit) * 50);
+  height: calc(var(--unit) * 50);
   padding: 0;
   border: none;
   border-radius: 50%;
   background: rgb(255 255 255 / 0.14);
 }
 
+.trash {
+  top: calc(var(--unit) * 988);
+  left: calc(var(--unit) * 47);
+  width: calc(var(--unit) * 58);
+  height: calc(var(--unit) * 58);
+}
+
+.filter {
+  top: calc(var(--unit) * 992);
+  left: calc(var(--unit) * 140);
+}
+
+.order {
+  top: calc(var(--unit) * 992);
+  left: calc(var(--unit) * 532);
+  width: calc(var(--unit) * 48);
+  height: calc(var(--unit) * 48);
+  background: #ece3d8;
+}
+
 .sort {
-  display: flex;
-  gap: calc(var(--unit) * 8);
+  position: absolute;
+  top: calc(var(--unit) * 992);
+  left: calc(var(--unit) * 208);
+  width: calc(var(--unit) * 304);
+  height: calc(var(--unit) * 50);
 }
 
-.sort-choice {
-  padding: calc(var(--unit) * 8) calc(var(--unit) * 14);
+.sort-select {
+  width: 100%;
+  height: 100%;
+  padding: 0 calc(var(--unit) * 18);
   border: none;
-  border-radius: calc(var(--unit) * 24);
-  background: rgb(255 255 255 / 0.14);
-  color: inherit;
-  font: inherit;
-  font-size: calc(var(--unit) * 18);
-}
-
-.sort-choice[aria-pressed="true"] {
+  border-radius: calc(var(--unit) * 25);
   background: #ece3d8;
   color: #3b4255;
+  appearance: none;
+  font: inherit;
+  font-size: calc(var(--unit) * 22);
+  font-weight: 600;
+}
+
+.sort::after {
+  position: absolute;
+  top: 50%;
+  right: calc(var(--unit) * 26);
+  width: 0;
+  height: 0;
+  border-top: calc(var(--unit) * 6) solid #3b4255;
+  border-right: calc(var(--unit) * 6) solid transparent;
+  border-left: calc(var(--unit) * 6) solid transparent;
+  content: "";
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.currencies {
+  position: absolute;
+  top: calc(var(--unit) * 1002);
+  left: calc(var(--unit) * 140);
+  display: flex;
+  gap: calc(var(--unit) * 43);
+  font-size: calc(var(--unit) * 22);
+  font-weight: 600;
+}
+
+.currency {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 10);
+  height: calc(var(--unit) * 35);
+  padding: 0 calc(var(--unit) * 13);
+  border-radius: calc(var(--unit) * 18);
+  background: rgb(38 42 56 / 0.5);
+}
+
+/* Provisional: the Primogem and Mora marks and the top-up plus, until the glyph pass traces them from the game's own icons */
+.currency-icon {
+  width: calc(var(--unit) * 24);
+  height: calc(var(--unit) * 24);
+  border-radius: 50%;
+  background: #d8e4f0;
+}
+
+.top-up {
+  width: calc(var(--unit) * 26);
+  height: calc(var(--unit) * 26);
+  margin-left: calc(var(--unit) * 4);
+  border-radius: 50%;
+  background: #ece3d8;
+}
+
+.currency-name {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
 }
 </style>

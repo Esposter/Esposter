@@ -121,11 +121,14 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     issueComments: GitHubEntry[] = [],
     commitComments: GitHubEntry[] = [],
     mainChecks: MainCheck[] = [],
+    legacyPullRequests: Pick<WindowPullRequest, "number" | "state">[] = [],
   ) => {
     const windowPullRequestsNow = windowPullRequests.map((windowPullRequest) => ({ ...windowPullRequest }));
     runDrainStep.mockResolvedValue({ reviewFixesSha: undefined } satisfies DrainStepResult);
     runGh.mockImplementation((args) => {
       if (args[1] === "user") return viewerLogin;
+      else if (args[0] === "pr" && args[1] === "list" && args.includes("--head"))
+        return JSON.stringify(legacyPullRequests);
       else if (args[0] === "pr" && args[1] === "list") {
         const isOpenOnly = args[args.indexOf("--state") + 1] === WindowPullRequestListState.Open;
         return JSON.stringify(
@@ -594,6 +597,41 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
       reason: `pull request #${pullRequest} was closed without merging — a person's pause, re-open it to resume`,
+      retriggerDelaySeconds: undefined,
+      targetSha: undefined,
+    });
+    expect(getPrCalls("create")).toHaveLength(0);
+  });
+
+  test("opens nothing over develop while the release pull request from develop is open", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh([], [], [], [], [], [{ number: pullRequest, state: WindowPullRequestState.Open }]);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: `pull request #${pullRequest} from ${DEVELOP_BRANCH} to ${MAIN_BRANCH} is open — no window opens over ${DEVELOP_BRANCH} until a person merges or closes it`,
+      retriggerDelaySeconds: undefined,
+      targetSha: undefined,
+    });
+    expect(getPrCalls("create")).toHaveLength(0);
+    expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
+  });
+
+  test("pauses on a release pull request from develop that a person closed", async () => {
+    expect.hasAssertions();
+
+    publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh([], [], [], [], [], [{ number: pullRequest, state: WindowPullRequestState.Closed }]);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: `pull request #${pullRequest} from ${DEVELOP_BRANCH} to ${MAIN_BRANCH} was closed without merging — a person's pause`,
       retriggerDelaySeconds: undefined,
       targetSha: undefined,
     });

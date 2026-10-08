@@ -14,6 +14,8 @@ import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
   character: Character;
+  // The character's name in the reader's language, which the panel's top names it by
+  name: string;
   // The game's words in the reader's language
   gameText: GameText;
   // The party's stamina, which the tab shows with every character's own attributes
@@ -22,37 +24,37 @@ interface Props {
   statTables: StatTables;
 }
 
-const { character, gameText, maxStamina, statTables } = defineProps<Props>();
+const { character, gameText, maxStamina, name, statTables } = defineProps<Props>();
 const levelText = computed(() =>
   fillGameTextValues(
     gameText[GameTextKey.LevelFormat],
     `${character.level}/${statTables.characterDataMap.get(character.id)?.ascensionPhases[character.ascension]?.maxLevel ?? ""}`,
   ),
 );
-// The tab's attributes in the groups its details sort them into, each as the game writes it: Max HP, ATK, DEF,
-// Elemental Mastery and Max Stamina whole, every other a percentage to one place
+// The tab's attributes: the base five the panel shows first, each as the game writes it, Max HP, ATK, DEF, Elemental
+// Mastery and Max Stamina whole, then the advanced and elemental groups under them, each a percentage to one place
+const attributes = computed(() => computeCharacterAttributes(getCharacterAttributeLines(character, statTables)));
+const rows = computed(() => {
+  const { attack, attributeTotalMap, defense, maxHealth } = attributes.value;
+  return [
+    { label: gameText[GameTextKey.AttributeMaxHealth], value: `${Math.round(maxHealth)}` },
+    { label: gameText[GameTextKey.AttributeAttack], value: `${Math.round(attack)}` },
+    { label: gameText[GameTextKey.AttributeDefense], value: `${Math.round(defense)}` },
+    {
+      label: gameText[GameTextKey.AttributeElementalMastery],
+      value: `${Math.round(attributeTotalMap[Attribute.ElementalMastery])}`,
+    },
+    { label: gameText[GameTextKey.AttributeMaxStamina], value: `${maxStamina}` },
+  ];
+});
 const groups = computed(() => {
-  const attributeLines = getCharacterAttributeLines(character, statTables);
-  const { attack, attributeTotalMap, defense, maxHealth } = computeCharacterAttributes(attributeLines);
+  const { attributeTotalMap } = attributes.value;
   const toPercentRows = (attributeGameTextKeys: readonly (readonly [Attribute, GameTextKey])[]) =>
     attributeGameTextKeys.map(([attribute, gameTextKey]) => ({
       label: gameText[gameTextKey],
       value: `${(attributeTotalMap[attribute] * 100).toFixed(1)}%`,
     }));
   return [
-    {
-      rows: [
-        { label: gameText[GameTextKey.AttributeMaxHealth], value: `${Math.round(maxHealth)}` },
-        { label: gameText[GameTextKey.AttributeAttack], value: `${Math.round(attack)}` },
-        { label: gameText[GameTextKey.AttributeDefense], value: `${Math.round(defense)}` },
-        {
-          label: gameText[GameTextKey.AttributeElementalMastery],
-          value: `${Math.round(attributeTotalMap[Attribute.ElementalMastery])}`,
-        },
-        { label: gameText[GameTextKey.AttributeMaxStamina], value: `${maxStamina}` },
-      ],
-      title: gameText[GameTextKey.AttributeGroupBase],
-    },
     { rows: toPercentRows(ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS), title: gameText[GameTextKey.AttributeGroupAdvanced] },
     { rows: toPercentRows(ELEMENTAL_ATTRIBUTE_GAME_TEXT_KEYS), title: gameText[GameTextKey.AttributeGroupElemental] },
   ];
@@ -60,14 +62,22 @@ const groups = computed(() => {
 </script>
 
 <template>
-  <!-- The Attributes tab's panel: the character's level over its cap, and its attributes by group as its details list
-       Them -->
+  <!-- The Attributes tab's panel: the character's name and level over its cap, the experience bar, and its base attributes
+       as the game shows them. Its advanced and elemental groups sit beneath, each under its title -->
   <div class="attribute-list">
+    <p class="name">{{ name }}</p>
     <p class="level">{{ levelText }}</p>
-    <section v-for="{ rows, title } of groups" :key="title">
+    <div class="experience" />
+    <dl class="rows">
+      <div v-for="{ label, value } of rows" :key="label" class="row">
+        <dt>{{ label }}</dt>
+        <dd class="value">{{ value }}</dd>
+      </div>
+    </dl>
+    <section v-for="{ rows: groupRows, title } of groups" :key="title">
       <h2 class="title">{{ title }}</h2>
       <dl class="rows">
-        <div v-for="{ label, value } of rows" :key="label" class="row">
+        <div v-for="{ label, value } of groupRows" :key="label" class="row">
           <dt>{{ label }}</dt>
           <dd class="value">{{ value }}</dd>
         </div>
@@ -77,19 +87,37 @@ const groups = computed(() => {
 </template>
 
 <style scoped>
-/* Provisional: every size and colour here, until the character screen's passes measure them off a recording of the
-   English client at 1080 high */
+/* Measured off the English PC client's character screen at 21:9 (references/character-attributes-session.png), in units
+   from the panel's left edge: its name centred 148 from the frame's top, its level 225, its experience bar 251 and 3
+   thick, its five base rows on a 36-unit pitch from 298, every value flush with the panel's right edge. Provisional
+   where the reference's colours are not sampled yet */
 .attribute-list {
   display: flex;
   flex-direction: column;
-  gap: calc(var(--unit) * 20);
-  font-size: calc(var(--unit) * 22);
+  gap: calc(var(--unit) * 14);
+  padding-top: calc(var(--unit) * 6);
+  font-size: calc(var(--unit) * 26);
+}
+
+.name {
+  margin: 0;
+  font-size: calc(var(--unit) * 36);
+  font-weight: 600;
+  line-height: calc(var(--unit) * 40);
+  text-shadow: 0 calc(var(--unit) * 1) calc(var(--unit) * 3) rgb(0 0 0 / 0.4);
 }
 
 .level {
-  margin: 0;
-  font-size: calc(var(--unit) * 32);
+  margin: calc(var(--unit) * 24) 0 0;
+  font-size: calc(var(--unit) * 30);
   font-weight: 600;
+  line-height: calc(var(--unit) * 36);
+}
+
+.experience {
+  width: 100%;
+  height: calc(var(--unit) * 3);
+  background: #4fc3d9;
 }
 
 .title {
@@ -99,17 +127,13 @@ const groups = computed(() => {
 }
 
 .rows {
-  margin: 0;
+  margin: calc(var(--unit) * 5) 0 0;
 }
 
 .row {
   display: flex;
   justify-content: space-between;
-  padding: calc(var(--unit) * 8) calc(var(--unit) * 12);
-}
-
-.row:nth-child(odd) {
-  background: rgb(255 255 255 / 0.06);
+  line-height: calc(var(--unit) * 36);
 }
 
 .value {

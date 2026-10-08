@@ -13,17 +13,17 @@ import { runGit } from "#src/services/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Build the window as a branch, one cherry-pick at a time, and measure after each from the tree that will be pushed.
-// Every count is taken from `main`'s merge base, since the release's one review reads everything above it — a window
-// `develop` already carries unopened included. A commit alone over the cap never reaches here unheld — the sync
+// Every count is the bot's own: the diff against the window's base (`main`, or the window below), since its one review
+// reads everything above that base — a window `develop` already carries unopened included. A commit alone over the cap never reaches here unheld — the sync
 // Reshapes it first — so a hold is the residual case: a reshaping or a resolution past its attempt cap.
-export const portWindow = ({ cwd, developSha, fixShas, mergeBaseSha, queueSha }: PortInput): PortResult => {
+export const portWindow = ({ cwd, developSha, fixShas, baseSha, queueSha }: PortInput): PortResult => {
   runGit(["switch", "--detach", developSha], cwd);
 
   for (const sha of fixShas)
     if (pickCommit(sha, cwd) === PickOutcome.Conflict)
       throw new InvalidOperationError(Operation.Update, "coderabbit", `fix ${sha} conflicts with develop`);
   // Fixes ride whole or the run fails: a drain that touched more files than its findings is for a person to see
-  if (fixShas.length > 0 && readWindowFileCount(mergeBaseSha, cwd) > REVIEW_FILE_CAP)
+  if (fixShas.length > 0 && readWindowFileCount(baseSha, cwd) > REVIEW_FILE_CAP)
     throw new InvalidOperationError(
       Operation.Update,
       "coderabbit",
@@ -45,7 +45,7 @@ export const portWindow = ({ cwd, developSha, fixShas, mergeBaseSha, queueSha }:
       skippedShas.push(sha);
       continue;
     }
-    const baseSha = readHeadSha(cwd);
+    const beforeSha = readHeadSha(cwd);
     let carriedShas: string[] = [];
     let outcome = pickCommit(sha, cwd);
     // Unless what follows builds on it — its own fix, most often — which the lane cannot apply either while the
@@ -56,10 +56,10 @@ export const portWindow = ({ cwd, developSha, fixShas, mergeBaseSha, queueSha }:
       outcome = pickCommit(sha, cwd);
     }
     if (outcome === PickOutcome.Empty) {
-      runGit(["reset", "--hard", baseSha], cwd);
+      runGit(["reset", "--hard", beforeSha], cwd);
       continue;
-    } else if (outcome === PickOutcome.Conflict || readWindowFileCount(mergeBaseSha, cwd) > REVIEW_FILE_CAP) {
-      runGit(["reset", "--hard", baseSha], cwd);
+    } else if (outcome === PickOutcome.Conflict || readWindowFileCount(baseSha, cwd) > REVIEW_FILE_CAP) {
+      runGit(["reset", "--hard", beforeSha], cwd);
       heldSha = sha;
       break;
     }
@@ -67,5 +67,5 @@ export const portWindow = ({ cwd, developSha, fixShas, mergeBaseSha, queueSha }:
     skippedShas = skippedShas.filter((skippedSha) => !carriedShas.includes(skippedSha));
   }
 
-  return { fileCount: readWindowFileCount(mergeBaseSha, cwd), fixCount: fixShas.length, heldSha, queueShas };
+  return { fileCount: readWindowFileCount(baseSha, cwd), fixCount: fixShas.length, heldSha, queueShas };
 };

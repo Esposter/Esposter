@@ -13,7 +13,7 @@
     "glowRange": 0.1,
     "rimColor": [0.06, 0.25, 0.88],
     "rimPower": 3,
-    "rimStrength": 1.1,
+    "rimStrength": 0.14,
     "smoothness": 0.19,
     "specularColor": [0.72, 0.42, 0.19]
   },
@@ -31,7 +31,7 @@
     "glowRange": 0.1,
     "rimColor": [0.08, 0.27, 0.82],
     "rimPower": 4.13,
-    "rimStrength": 0.73,
+    "rimStrength": 0.09,
     "smoothness": 0.33,
     "specularColor": [0.74, 0.53, 0.35]
   },

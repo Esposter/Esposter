@@ -139,10 +139,14 @@ export enum GameTextKey {
   Map = "UI_STC_MAP_TITLE",
   MasterlessStardust = "3899400612",
   MasterlessStarglitter = "1417946372",
+  // The Stella Fortuna a five-star drawn past its six constellations brings, which activates no constellation
+  MasterlessStellaFortuna = "958504444",
   Medium = "UI_SETTING_MEDIUM",
   Mora = "3578052980",
   Notices = "UI_STC_GAMEENTRYPAGE_BULLETIN",
   OminousMask = "1726035172",
+  // The resin the map's top bar counts and the claims at a blossom spend
+  OriginalResin = "3246419172",
   // The HUD's corner button that opens the Paimon menu, named for the face it shows
   Paimon = "NPC_EXPNAME_12911",
   PartySetup = "UI_TEAM_TITLE",

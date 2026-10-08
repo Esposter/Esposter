@@ -8,5 +8,6 @@ export const CurrencyRarityMap = {
   [Currency.MasterlessStardust]: 4,
   [Currency.MasterlessStarglitter]: 5,
   [Currency.Mora]: 3,
+  [Currency.OriginalResin]: 3,
   [Currency.Primogem]: 5,
 } as const satisfies Record<Currency, number>;

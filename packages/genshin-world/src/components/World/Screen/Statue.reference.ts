@@ -42,6 +42,6 @@ export const statueTopic: ReferenceTopic = {
     },
   ],
   openQuestions: [
-    "Our statue's and oak's heights and shapes: the kits stand by their own height over the ground until the statue, its dais and the oak are derived, and which of the statue's levels the recordings show",
+    "Our statue's shape is two lathes fitted from its meshes (the stone and the figure, `windrise/statue.json`), which read an outline of 12.7 pixels against 1 and a normal of 37 degrees against 10: the stone's base and the dish are not round, and the figure is a robed body, so a lathe's outermost radius per band does not match its normals. Still the kits': the oak's height and shape, and which of the statue's levels the recordings show",
   ],
 };

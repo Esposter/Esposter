@@ -2,14 +2,12 @@ import type { SkyState } from "#src/models/atmosphere/SkyState";
 import type { SkyTargets } from "#src/models/atmosphere/SkyTargets";
 import type { Color } from "three";
 
+import { checkSunTurned } from "#src/atmosphere/checkSunTurned";
 import { DEFAULT_SKY_SHAPE } from "#src/atmosphere/constants";
 import { computeWhiteBalance } from "#src/post/computeWhiteBalance";
 import { toSceneColor } from "#src/post/toSceneColor";
 import { Matrix3, Vector3 } from "three";
 
-// The god rays' map is redrawn once the light has turned this far, a little over the angle it turns in two real
-// Seconds, so a moving sun costs one shadow pass every other second rather than one a frame
-const GODRAYS_REDRAW_COSINE = Math.cos((0.6 * Math.PI) / 180);
 const godraysDirection = new Vector3();
 const inverseWhiteBalance = new Matrix3();
 // A colour the screen shows as it is, as the scene colour the white balance and the tone curve show as it
@@ -68,7 +66,7 @@ export const applySkyState = (
   if (!godraysLight) return;
   godraysDirection.subVectors(godraysLight.position, godraysLight.target.position).normalize();
   // A light still standing on its target has no direction, which fails the test, so the first call places it
-  if (godraysDirection.dot(lightDirection) >= GODRAYS_REDRAW_COSINE) return;
+  if (!checkSunTurned(godraysDirection, lightDirection)) return;
   godraysLight.position.copy(godraysLight.target.position).addScaledVector(lightDirection, lightDistance);
   godraysLight.shadow.needsUpdate = true;
 };

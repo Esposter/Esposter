@@ -104,8 +104,29 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     seconds: 9,
   },
   // The English PC client's character screen on Xilonen's Attributes tab at 21:9, from the user's own recording of the
-  // Current build (session-2.mp4 at 154 seconds). Its scene is the background, so the score covers its pieces alone
-  "character-attributes": { capture: "session-2.mp4", screen: "CharacterScreen", seconds: 154 },
+  // Current build (session-2.mp4 at 154.4 seconds, before the character's model rises into the frame)
+  "character-attributes": { capture: "session-2.mp4", screen: "CharacterScreen", seconds: 154.4 },
+  // The same frame's band across the top, the name, the portraits and the Geo emblem, clear of the scene
+  "character-attributes-top": {
+    capture: "session-2.mp4",
+    region: { height: 135, width: 3440, x: 0, y: 0 },
+    screen: "CharacterScreen",
+    seconds: 154.4,
+  },
+  // The frame's tab column, its words and their diamonds, clear of the scene's light
+  "character-attributes-tabs": {
+    capture: "session-2.mp4",
+    region: { height: 800, width: 900, x: 120, y: 180 },
+    screen: "CharacterScreen",
+    seconds: 154.4,
+  },
+  // The frame's panel down the right: the name, the level, the bar and the five base rows
+  "character-attributes-panel": {
+    capture: "session-2.mp4",
+    region: { height: 620, width: 640, x: 2800, y: 180 },
+    screen: "CharacterScreen",
+    seconds: 154.4,
+  },
   // The weapons' tab of the bag at 1080 high, from a public account tour's recording of the English PC client, its frame
   // At 30 seconds into the clip, drawn behind the bag so only the bag can differ. The streamer's camera at the top left
   // And the recording's UID at the bottom right sit outside the region
@@ -115,6 +136,27 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     region: { height: 1048, width: 1270, x: 650, y: 0 },
     screen: "InventoryScreen",
     seconds: 30,
+  },
+  // The food tab of the bag, from the same account tour's recording of the English PC client 58 seconds in: the foot's
+  // Primogems and Mora where the sort's dropdown stands on an equipment tab, drawn behind the bag so only its foot can differ
+  "inventory-food": {
+    capture: "yt-_agTJviXj7s-bag.mp4",
+    isBackdrop: true,
+    props: {
+      initialCategory: "Food",
+      wallet: {
+        AcquaintFate: 0,
+        GenesisCrystal: 0,
+        IntertwinedFate: 0,
+        MasterlessStardust: 0,
+        MasterlessStarglitter: 0,
+        Mora: 6031059,
+        Primogem: 1399,
+      },
+    },
+    region: { height: 120, width: 700, x: 0, y: 960 },
+    screen: "InventoryScreen",
+    seconds: 58,
   },
   // The wiki's 4096 by 2304 location image of Liyue Harbor, a daytime view of the harbour's stepped quay under the sea of
   // Clouds. Its landmarks are rigid architecture read by eye at the image's pixels off 4x crops: the plinth corners of the

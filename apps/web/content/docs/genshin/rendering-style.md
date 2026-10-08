@@ -56,7 +56,8 @@ flowchart TD
 ### Shadows
 
 - **The sun casts through cascades.** `createSunLight` attaches three's `CSMShadowNode` to the sun: the view is split from the eye outward in the practical scheme, each cascade with its own map. Near shadows stay crisp and far ones cheap, and each cascade spans more ground than the last, which softens the far shadows into the blotches the game draws. Neighbouring cascades fade into each other rather than meeting at a seam. The cascades follow the camera on their own, so the light's position sets only the sun's direction, and the last cascade ends at the region's `SHADOW_MAX_FAR`.
-- **The ground casts too**, so a hill shadows the slope behind it when the sun is low.
+- **The ground casts too**, but only within the shadows' reach: a terrain ring casts when its range is within the region's `SHADOW_MAX_FAR` (`checkTerrainTileCasts`), so a hill shadows the slope behind it when the sun is low, and the rings past the reach draw into the view alone.
+- **The cascades are drawn only when something they show has turned.** `createSunLight` turns off the cascades' automatic drawing, and `useSunShadow` flags them to be drawn again when the sun has turned past the angle the god rays' map is redrawn at (`checkSunTurned`), when the view has moved, since the cascades split from it, when the character's body has moved, or when an enemy has walked or turned past a quarter of a metre or a tenth of a radian since its shadow was drawn (`checkEnemiesMoved`), so a wandering enemy costs a redraw a few times a second rather than a frame. A still frame draws four passes, not the eight a turning frame draws, and a frame in which the view moves draws every cascade, as before. The trees' crowns sway in the wind in the shadow pass as well, but a sway is not a turn, so a crown's shadow holds between redraws.
 
 ### After the scene
 
@@ -91,7 +92,10 @@ In a Vite development build, `createGenshinRenderer` puts three's inspector on e
 | `packages/genshin-engine/src/models/nodes/ToonNodeMaterial.ts`   | The toon material with the emissive rim and the outline flag                       |
 | `packages/genshin-engine/src/nodes/createRimNode.ts`             | The rim: Fresnel on the lit side, tinted by the sky                                |
 | `packages/genshin-engine/src/materials/computeRampValues.ts`     | The ramp's bytes, from dark through a narrow step to lit                           |
-| `packages/genshin-engine/src/atmosphere/createSunLight.ts`       | The sun and its fading cascades                                                    |
+| `packages/genshin-engine/src/atmosphere/createSunLight.ts`       | The sun and its fading cascades, drawn only when flagged                           |
+| `packages/genshin-engine/src/atmosphere/checkSunTurned.ts`       | Whether the sun has turned far enough to redraw its shadows                        |
+| `packages/genshin-engine/src/terrain/checkTerrainTileCasts.ts`   | Which terrain rings cast into the shadow maps, by their reach                      |
+| `packages/genshin-world/src/composables/useSunShadow.ts`         | What turns the sun's cascades: the sun, the view, the character and the enemies    |
 | `packages/genshin-engine/src/post/createGodraysLight.ts`         | The unlit sun whose one map the god rays march through                             |
 | `packages/genshin-engine/src/post/createPostPipeline.ts`         | The frame after the scene: outlines, occlusion, god rays, fog, bloom, grade and AA |
 | `packages/genshin-engine/src/post/createOcclusionNode.ts`        | The screen-space occlusion over the depth, the scene's and the witness's           |

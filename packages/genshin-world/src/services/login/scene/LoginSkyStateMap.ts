@@ -12,12 +12,12 @@ const DAWN_SUN_DIRECTION = getLoginScreenDirection([-0.05, 0.35]);
 const DAY_SUN_DIRECTION = new Vector3(-0.526, 0.789, -0.316).normalize();
 const DUSK_SUN_DIRECTION = getLoginScreenDirection([-0.05, 0.35]);
 const NIGHT_MOON_DIRECTION = getLoginScreenDirection([0.27, 0.11]);
-// Where the dusk's sunlight falls from, apart from where its glow shows: 60 degrees left of the walkway and 15 up, so
-// It lights the lantern tower's face toward the frame's left, leaves the door's face and the near towers' dark, and
-// Casts the dais's shadow aside rather than over the walkway, as the door recording shows. Its glow just past the
-// Frame's edge alone sets no direction a shading reads apart (a grid of its directions fits within a hundredth),
-// So the direction is the one of 44, 60 and 80 degrees that scores best on the door recording and the dusk still
-const DUSK_LIGHT_DIRECTION = new Vector3(0.837, 0.259, 0.483);
+// Where the dusk's sunlight falls from, apart from where its glow shows. Its shadows set it: the direction the shadow
+// Solve reads off the door recording's tower shadows (genshin:parity shadows, the grid's start at f2422d7309) casts
+// Their edges 5.28 px from the reference's, 35.7 degrees from the one it replaces. The shading never settled it (a
+// Grid of directions fits within a hundredth). Its cost is none on the recording's frame, which scores 17.22% to 16.88%
+// Of mean difference and 0.5942 to 0.5878 FLIP; the dusk's stone light is still solved under the old direction
+const DUSK_LIGHT_DIRECTION = new Vector3(0.493, 0.763, 0.418);
 
 // Each hour's sky is solved as the game's sky shader draws it over the clear sky of every reference at that hour at once
 // (genshin:parity sky, its clouds left out by the cloud mask), its colours with its own shape, no halo under none and

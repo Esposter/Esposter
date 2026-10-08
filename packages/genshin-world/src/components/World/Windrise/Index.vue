@@ -21,6 +21,7 @@ import { useGenshinTuning } from "#src/composables/useGenshinTuning";
 import { usePostPipeline } from "#src/composables/usePostPipeline";
 import { useRegionData } from "#src/composables/useRegionData";
 import { useSky } from "#src/composables/useSky";
+import { useSunShadow } from "#src/composables/useSunShadow";
 import water from "#src/data/windrise/water.json";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
@@ -39,6 +40,7 @@ import {
   NEAR_GRASS_RING,
   RIM_STRENGTH,
   SHADOW_MAX_FAR,
+  STONE_COLOR,
   SUN_DISTANCE,
   SUN_TILT,
   UNDERWATER_FOG_COLOR,
@@ -59,6 +61,7 @@ import {
   WINDRISE_START_MINUTES,
   WINDRISE_TERRAIN_OPTIONS,
 } from "#src/services/windrise/constants";
+import { createWindrisePavingGeometry } from "#src/services/windrise/createWindrisePavingGeometry";
 import { LandmarkKindWindrisePartFamilyMap } from "#src/services/windrise/LandmarkKindWindrisePartFamilyMap";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { whenever } from "@vueuse/core";
@@ -72,6 +75,7 @@ import {
   createSkyUniforms,
   createSunLight,
   createTerrainSelection,
+  createToonMaterial,
   createWaterUniforms,
   createWindUniforms,
   QualityTierSettingsMap,
@@ -109,6 +113,8 @@ interface Props {
   questTargetId: string;
   // Where the app serves each region's data, fetched by id as the camera comes within reach
   regionDataBaseUrl: string;
+  // The World Level the camps spawn at, from the player's Adventure EXP and quests
+  worldLevel: number;
 }
 
 const {
@@ -127,6 +133,7 @@ const {
   qualityTier,
   questTargetId,
   regionDataBaseUrl,
+  worldLevel,
 } = defineProps<Props>();
 const emit = defineEmits<{ defeat: [enemy: Enemy, enemyDrops: EnemyDrops]; ready: []; strike: [enemy: Enemy] }>();
 // The witness render's parts, drawn in place of ours of each family it names when the parity page provides them, beside
@@ -142,6 +149,9 @@ const hiddenLandmarkKinds = computed(() => [
 const rampTexture = createRampTexture(WINDRISE_RAMP_OPTIONS);
 const lightUniforms = createLightUniforms();
 lightUniforms.rimStrength.value = RIM_STRENGTH;
+// The paving stones round the statue, cut from the stone the statue is made of
+const pavingGeometry = createWindrisePavingGeometry();
+const pavingMaterial = createToonMaterial({ color: STONE_COLOR, lightUniforms, rampTexture });
 
 const windUniforms = createWindUniforms();
 windUniforms.direction.value.copy(WIND_DIRECTION);
@@ -192,6 +202,8 @@ const gameClock = useSky({
   tilt: SUN_TILT,
   windUniforms,
 });
+// The sun's shadows are drawn again only when the sun, the view or a caster has moved, after the sky has turned the sun
+useSunShadow({ characterBody, enemyMap, sunLight: { cascadedShadowNode, light: sun } });
 // The clock only starts at its held minute, so a minute held anew is set on it
 watch(
   () => heldMinutes,
@@ -249,6 +261,8 @@ if (isTuning)
 defineExpose({ regionDataMap });
 onUnmounted(() => {
   rampTexture.dispose();
+  pavingGeometry.dispose();
+  pavingMaterial.dispose();
   gradeLutTexture.dispose();
   groundCapture.renderTarget.dispose();
   groundCapture.material.dispose();
@@ -275,6 +289,7 @@ onUnmounted(() => {
           :light-uniforms
           :origin
           :ramp-texture
+          :shadow-reach="SHADOW_MAX_FAR"
           :terrain-options="WINDRISE_TERRAIN_OPTIONS"
           :water-uniforms
           :wind-uniforms
@@ -295,6 +310,13 @@ onUnmounted(() => {
         :water-uniforms
         :wind-uniforms
       />
+    </TresGroup>
+    <!-- Marked as the paving family alone, so a witness render draws ours of the stones round the statue in place of the exports' -->
+    <TresGroup
+      :visible="checkIsOwnFamilyDrawn(WindrisePartFamily.Paving)"
+      :user-data="{ [SCENE_FAMILY_KEY]: WindrisePartFamily.Paving }"
+    >
+      <TresMesh :geometry="pavingGeometry" :material="pavingMaterial" cast-shadow receive-shadow />
     </TresGroup>
     <!-- Ahead of the water, whose haze replaces the weather's under its surface -->
     <WorldWeather
@@ -330,6 +352,7 @@ onUnmounted(() => {
       :ramp-texture
       :region-data-map
       :target="characterBody?.position"
+      :world-level
       @defeat="(enemy, enemyDrops) => emit('defeat', enemy, enemyDrops)"
       @strike="(enemy) => emit('strike', enemy)"
     />

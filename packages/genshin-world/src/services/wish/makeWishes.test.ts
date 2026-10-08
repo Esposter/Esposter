@@ -4,6 +4,7 @@ import type { WishPity } from "#src/models/wish/WishPity";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { WishItemKind } from "#src/models/wish/WishItemKind";
+import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { BEGINNERS_WISH_LIMIT, FIVE_STAR_DUPLICATE_STARGLITTER } from "#src/services/wish/constants";
 import { makeWishes } from "#src/services/wish/makeWishes";
 import { BannerKind } from "genshin-interface";
@@ -31,15 +32,7 @@ describe(makeWishes, () => {
     lossCount: 0,
     wishCount: 0,
   };
-  const wallet: Wallet = {
-    [Currency.AcquaintFate]: 0,
-    [Currency.GenesisCrystal]: 0,
-    [Currency.IntertwinedFate]: 0,
-    [Currency.MasterlessStardust]: 0,
-    [Currency.MasterlessStarglitter]: 0,
-    [Currency.Mora]: 0,
-    [Currency.Primogem]: 0,
-  };
+  const wallet: Wallet = { ...EMPTY_WALLET };
 
   test("spends its Fates and returns Starglitter for a character drawn twice in one set", () => {
     expect.hasAssertions();

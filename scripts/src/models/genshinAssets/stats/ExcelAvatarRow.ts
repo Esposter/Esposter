@@ -3,6 +3,7 @@ export interface ExcelAvatarRow {
   attackBase: number;
   avatarPromoteId: number;
   bodyType: string;
+  candSkillDepotIds: number[];
   chargeEfficiency: number;
   critical: number;
   criticalHurt: number;

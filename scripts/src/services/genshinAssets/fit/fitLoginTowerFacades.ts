@@ -12,6 +12,7 @@ import { findCellRectangles } from "#src/services/genshinAssets/fit/findCellRect
 import { fitAlbedo } from "#src/services/genshinAssets/fit/fitAlbedo";
 import { fitLatheProfile } from "#src/services/genshinAssets/fit/fitLatheProfile";
 import { LoginStoneFamilyMaterialRegexMap } from "#src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap";
+import { mergeFacadeBands } from "#src/services/genshinAssets/fit/mergeFacadeBands";
 import { rasterizeTopFaces } from "#src/services/genshinAssets/fit/rasterizeTopFaces";
 import { readLevelOfDetailParts } from "#src/services/genshinAssets/fit/readLevelOfDetailParts";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
@@ -198,22 +199,18 @@ export const fitLoginTowerFacades = async (
     const bandRows = Math.max(1, Math.round(TOWER_BAND_HEIGHT / paint.cellSize));
     const toBand = (cell: number): number => Math.floor(Math.floor(cell / paint.width) / bandRows);
     const faceBandMap = Map.groupBy(face, (cell) => toBand(cell));
-    // The face's tone run by run of its height, a band merged into the one below while its tone holds
-    const bands: TowerFacade["bands"] = [];
+    // The face's tone band by band up the height, a band merged into the one below while its tone holds
+    const unmergedBands: TowerFacade["bands"] = [];
     for (let band = 0; band < Math.ceil(paint.height / bandRows); band++) {
       const bandCells = faceBandMap.get(band);
       if (!bandCells) continue;
-      const shade = toShade(computeMean(paint.colors, bandCells), stone);
-      const from = roundFitted(band * bandRows * paint.cellSize);
-      const to = roundFitted(Math.min((band + 1) * bandRows, paint.height) * paint.cellSize);
-      const last = bands.at(-1);
-      if (
-        last &&
-        shade.every((channel, index) => Math.abs(channel - (last.shade[index] ?? 0)) <= TOWER_FACADE_SHADE_TOLERANCE)
-      )
-        last.to = to;
-      else bands.push({ from, shade, to });
+      unmergedBands.push({
+        from: roundFitted(band * bandRows * paint.cellSize),
+        shade: toShade(computeMean(paint.colors, bandCells), stone),
+        to: roundFitted(Math.min((band + 1) * bandRows, paint.height) * paint.cellSize),
+      });
     }
+    const bands = mergeFacadeBands(unmergedBands, TOWER_FACADE_SHADE_TOLERANCE);
     // The paint on the face: a cell darker or lighter than its band's mean by the paint's contrast
     const getLuminance = (cell: number): number => {
       const [red = 0, green = 0, blue = 0] = paint.colors[cell] ?? [];

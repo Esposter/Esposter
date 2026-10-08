@@ -37,5 +37,16 @@ export const FIXED_STEP_SECONDS = 1 / 60;
 // The frame priority what moves the camera runs at, ahead of the floating origin's shift at TresJS's default of none,
 // Whatever order it mounts in, so the shift reads where the camera now stands
 export const CAMERA_FRAME_PRIORITY = -1;
+// The frame priority what decides whether the sun's shadows are drawn again runs at, after the sky has turned the sun
+// And the camera and the floating origin have moved, so the decision reads where each now stands
+export const SHADOW_FRAME_PRIORITY = 1;
+// The numbers an enemy's pose is kept as, its position's x and z and its heading, for the sun's shadows to tell an
+// Enemy has moved since they were drawn
+export const ENEMY_POSE_LENGTH = 3;
+// How far an enemy must walk, in metres, or turn, in radians, from where its shadow was last drawn before the shadow is drawn
+// Again: a quarter of a metre is about as far as a shadow's edge can stand out from the body that casts it, and an enemy
+// Stepping less than that is a moving edge the eye does not follow
+export const CASTER_REDRAW_DISTANCE = 0.25;
+export const CASTER_REDRAW_ANGLE = 0.1;
 // The colour the capsule a character's body is drawn as where no model stands on it, a pale stone the eye finds
 export const CHARACTER_PLACEHOLDER_COLOR = 0xe8e2d4;

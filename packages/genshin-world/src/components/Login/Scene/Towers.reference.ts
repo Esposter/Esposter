@@ -159,6 +159,13 @@ export const towersTopic: ReferenceTopic = {
       result:
         "The rerun moves LoginScene_Build02_02's band tones at heights 110 and 112 by a hundredth and one corner of its hole by half a cell, and no other tower or section. The towers' structure reads 0.1012 before and after, against its gate of 0.0257, its scale by scale 0.865 to 0.921 against the exports' 0.891 to 0.999, so the coarse and middle losses need a change to the fit's band rule, not a rerun",
     },
+    {
+      method:
+        "Each paint layer's shade as its colour over the tone of the band its cells sit in, rather than over the tower's whole mean: fitLoginTowerFacades' layers taken over each band's run, createLoginTowerFacade filling each layer within its band at the product of the two, then genshin:parity passes login --pass Surface on login-door-session",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "The towers' colour falls from 0.1170 to 0.1015 ΔE, but their structure rises from 0.1012 to 0.1145 against a gate of 0.0257, every scale losing ground (finest 0.865 to 0.854, coarsest 0.921 to 0.911 against the exports' 0.999). With the change in, the surface image's row profile still runs ours lighter by four to five at rows 40 to 64 and darker by three to five at 128 to 176, so the rows' tone moved less than the structure's loss, which sits at every scale. Reverted, the layers back over each tower's whole mean",
+    },
   ],
   openQuestions: [
     "The towers' gilding and windows: their colour per section scores worse painted as diffuse stone, the game's gold being a metal",

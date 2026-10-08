@@ -60,9 +60,16 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [HUD](/docs/genshin/hud)                                   | the heads-up display's Paimon button, minimap, quest tracker, stamina meter, party, health and skill and burst buttons, and hiding it                |
 | [Touch controls](/docs/genshin/touch-controls)             | the stick on the left half, the look on the right and the jump button, fed into the one input                                                        |
 | [Enemies](/docs/genshin/enemies)                           | enemy kinds and their stats, their AI and camps, respawn and drops, struck by the kit and drawn as stand-in capsules                                 |
+| [Adventure Rank](/docs/genshin/adventure-rank)             | the rank to 60 on the game's table, held at the ascension quests, the World Level and its lowering, and the enemies it raises                        |
+| [Original Resin](/docs/genshin/original-resin)             | the resin regenerating from its last change to 200, refills from Primogems at six daily prices, and a claim's price and Adventure EXP                |
+| [Domains](/docs/genshin/domains)                           | each kind's opening by Adventure Rank, and by the day: Blessing every day, Forgery and Mastery on Sundays and their set days                         |
 | [Combat](/docs/genshin/combat)                             | auras and reactions in the game's priority, the damage formula, internal cooldown, shields and energy, and the Traveler's kit's hits                 |
+| [Character kits](/docs/genshin/character-kits)             | each playable character's skill sets from the game's tables, the Traveler's kit checked against its Anemo set                                        |
 | [Characters](/docs/genshin/characters)                     | the official MMD packs read by our own PMX reader and drawn on the toon ramp, with their terms                                                       |
 | [Character attributes](/docs/genshin/character-attributes) | the roster, weapons and artifacts from the game's tables, and a character's attributes summed as the game sums them                                  |
+| [Artifact enhancement](/docs/genshin/artifact-enhancement) | an artifact rolled from its slot's pool and the rarity's minor affixes, enhanced with Artifact EXP at a Mora a point, and locked against fodder      |
+| [Weapon enhancement](/docs/genshin/weapon-enhancement)     | a weapon levelled from ores and fodder at Mora, ascended at each phase's cap, and refined from a copy or a material, its passive waiting on the kits |
+| [Talents](/docs/genshin/talents)                           | each combat talent levelled from 1 to 10 by the game's table, each level paid in Mora and materials at its phase, and the passives each phase opens  |
 | [Character screen](/docs/genshin/character-screen)         | the C screen's frame, its six tabs in the game's words, and the Attributes tab's level and attributes                                                |
 | [Party](/docs/genshin/party)                               | the teams, the one deployed and the member on the field, switched on 1 to 4 past the one second cooldown, each with its own HP, energy and cooldowns |
 | [Interaction](/docs/genshin/interaction)                   | the F prompts over the world: the drops and talks in reach nearest first, F picking up or talking, the wheel and a held F's repeat                   |
@@ -107,7 +114,9 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - Characters read from HoYoverse's official MMD packs by the engine's own PMX reader and drawn at rest on the toon ramp.
 - Combat's rules as pure, tested functions: auras and reactions, the damage formula, internal cooldown, shields and energy.
 - The party switched on 1 to 4, the character screen on C, and a character's attributes summed from the game's own tables.
+- An artifact rolled by the game's pools and the wiki's weights, enhanced with Artifact EXP at a Mora a point, its fodder and its locks as the game keeps them.
 - The F prompts' rules, the bag and its wallet on B, and the wish's published rules with its screen on F3, offering the standard and beginners' wishes from their pools.
+- Original Resin: its count regenerating while the page is closed, its refills from Primogems at the game's daily prices, a claim's price and Adventure EXP, and its counter on the map's top bar.
 
 ## Key files
 

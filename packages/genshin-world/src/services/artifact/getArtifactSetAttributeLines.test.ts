@@ -6,6 +6,8 @@ import { getArtifactSetAttributeLines } from "#src/services/artifact/getArtifact
 import { describe, expect, test } from "vitest";
 
 const createArtifact = (setId: number) => ({
+  experience: 0,
+  isLocked: false,
   level: 0,
   mainAffix: Attribute.Health,
   minorAffixes: [],

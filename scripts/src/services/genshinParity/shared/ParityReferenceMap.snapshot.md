@@ -17,8 +17,8 @@ committed.
 | `login-dawn-title` | `LoginScreen` | 10.34% | 0.468 | 7.35% | 0.4133 |
 | `login-day-title` | `LoginScreen` | 12.92% | 0.336 | 9.86% | 0.4688 |
 | `login-door` | `LoginScreen` | 13.37% | 0.205 | 11.08% | 0.5030 |
-| `login-door-recording` | `LoginScreen` | 17.23% | 0.355 | 12.14% | 0.5944 |
-| `login-door-session` | `LoginScreen` | 13.26% | 0.371 | 9.29% | 0.4792 |
+| `login-door-recording` | `LoginScreen` | 16.84% | 0.368 | 11.81% | 0.5886 |
+| `login-door-session` | `LoginScreen` | 12.69% | 0.405 | 9.01% | 0.4657 |
 | `login-interface-door` | `LoginInterface` | 0.63% | 0.986 | 0.43% | 0.0252 |
 | `login-interface-loading` | `LoginInterface` | 0.16% | 0.995 | 0.09% | 0.0061 |
 | `login-interface-mainland-rating` | `LoginInterface` | 2.11% | 0.959 | 1.12% | 0.1095 |
@@ -58,18 +58,18 @@ drawn away from the reference shows on its own row.
 | `login-door/Towers` | 27.4% | 3.82 | 9.95% | 0.5474 |
 | `login-door/Walkway` | 14.0% | 11.02 | 10.88% | 0.6040 |
 | `login-door/sky` | 53.7% | 5.29 | 9.28% | 0.4061 |
-| `login-door-recording/frame` | 100.0% | 6.63 | 12.27% | 0.6060 |
-| `login-door-recording/Door` | 3.1% | 32.67 | 18.71% | 0.8133 |
-| `login-door-recording/Bridges` | 3.3% | 8.68 | 12.72% | 0.5884 |
-| `login-door-recording/Towers` | 30.3% | 7.80 | 11.60% | 0.6169 |
-| `login-door-recording/Walkway` | 9.4% | 18.68 | 8.51% | 0.6986 |
-| `login-door-recording/sky` | 53.9% | 6.54 | 12.90% | 0.5727 |
-| `login-door-session/frame` | 100.0% | 3.05 | 9.39% | 0.4939 |
-| `login-door-session/Door` | 3.1% | 4.47 | 7.45% | 0.5839 |
-| `login-door-session/Bridges` | 1.5% | 15.15 | 8.31% | 0.5380 |
-| `login-door-session/Towers` | 52.9% | 2.57 | 8.87% | 0.4744 |
-| `login-door-session/Walkway` | 6.5% | 40.37 | 14.61% | 0.7247 |
-| `login-door-session/sky` | 36.0% | 5.43 | 9.43% | 0.4711 |
+| `login-door-recording/frame` | 100.0% | 5.47 | 11.81% | 0.5886 |
+| `login-door-recording/Door` | 4.3% | 30.50 | 17.50% | 0.7711 |
+| `login-door-recording/Bridges` | 3.9% | 8.91 | 11.62% | 0.5856 |
+| `login-door-recording/Towers` | 35.4% | 8.54 | 12.39% | 0.6273 |
+| `login-door-recording/Walkway` | 6.9% | 18.03 | 8.97% | 0.6805 |
+| `login-door-recording/sky` | 49.5% | 2.43 | 11.30% | 0.5324 |
+| `login-door-session/frame` | 100.0% | 1.98 | 9.01% | 0.4657 |
+| `login-door-session/Door` | 3.9% | 4.06 | 7.84% | 0.5739 |
+| `login-door-session/Bridges` | 1.8% | 14.33 | 8.41% | 0.5314 |
+| `login-door-session/Towers` | 52.6% | 4.32 | 8.31% | 0.4393 |
+| `login-door-session/Walkway` | 4.6% | 39.26 | 14.92% | 0.7421 |
+| `login-door-session/sky` | 37.1% | 5.82 | 9.43% | 0.4545 |
 | `login-night-title/frame` | 100.0% | 6.08 | 8.40% | 0.4231 |
 | `login-night-title/Bridges` | 2.5% | 21.53 | 12.12% | 0.5853 |
 | `login-night-title/Towers` | 37.7% | 9.57 | 8.51% | 0.4547 |

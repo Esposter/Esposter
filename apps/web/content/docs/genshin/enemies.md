@@ -50,7 +50,7 @@ What the game's table does not hold is authored from the wiki in `EnemyKindTrait
 
 ## Spawns and respawn
 
-A region's data places its enemies in camps, each member with its kind, its level, its spawn and its patrol. The world spawns a camp when its region's data arrives, and drops it when the region leaves reach. A member defeated earlier is spawned again only once its respawn time has passed, so an enemy never comes back in view:
+A region's data places its enemies in camps, each member with its kind, its level at World Level 0, its spawn and its patrol. The world spawns each member at the level its World Level raises it to, as the [Adventure Rank](/docs/genshin/adventure-rank) page sets out, and a change of World Level spawns every camp anew. The world spawns a camp when its region's data arrives, and drops it when the region leaves reach. A member defeated earlier is spawned again only once its respawn time has passed, so an enemy never comes back in view:
 
 | Camp                   | A defeated member comes back                                 |
 | :--------------------- | :----------------------------------------------------------- |

@@ -19,6 +19,16 @@ import { runGh } from "#src/services/shared/runGh";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
 
+// A failed retarget is logged rather than thrown, so the drain still runs: the window above is retargeted by the next run
+const retargetPullRequest = (pullRequest: number): boolean =>
+  getResult(() => runGh(["pr", "edit", pullRequest.toString(), "--base", MAIN_BRANCH])).match(
+    () => true,
+    (error) => {
+      console.error(error);
+      return false;
+    },
+  );
+
 // The bottom window of the stack, merged once its review completes, and its findings drained before anything above it
 // Is looked at. Order matters: the next window is retargeted to `main` before this one's branch is deleted, since
 // Deleting a base branch closes every pull request stacked on it. A session has to be able to start first, since the
@@ -69,9 +79,12 @@ export const mergeBottomWindow = async ({
   if (fold?.kind === CycleOutcomeKind.Idle) return { outcome: fold, reviewFixesSha };
   else if (fold === undefined) mergeWindowPullRequest({ headSha, isDryRun, pullRequest: number });
 
+  // A failed retarget leaves the window above stranded on this branch, which the next run retargets before it reads the
+  // stack (`retargetStrandedWindows`). The branch stays until it lands, and the drain below does not wait on it
+  const isRetargeted = next === undefined || isDryRun || retargetPullRequest(next.number);
   if (next && isDryRun) console.info(`would retarget pull request #${next.number} to ${MAIN_BRANCH}`);
-  else if (next) runGh(["pr", "edit", next.number.toString(), "--base", MAIN_BRANCH]);
-  if (!isDryRun) getResult(() => runGit(["push", "origin", "--delete", headRefName], cwd)).match(noop, console.error);
+  if (!isDryRun && isRetargeted)
+    getResult(() => runGit(["push", "origin", "--delete", headRefName], cwd)).match(noop, console.error);
 
   const { mainSha: mergedMainSha } = readBranchShas(cwd);
   const drain = await drainWindow({

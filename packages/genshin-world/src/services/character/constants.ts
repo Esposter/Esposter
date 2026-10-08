@@ -1,6 +1,8 @@
 import { Attribute } from "#src/models/character/Attribute";
 import { GameTextKey } from "genshin-text";
 
+// The level every combat talent starts at, before any upgrade raises it
+export const TALENT_START_LEVEL = 1;
 // A pack's own files, named alike in every pack: its model, uploaded under this name, and the terms bundled with it.
 // The model's textures keep the paths the model names them by
 export const CHARACTER_MODEL_PATH = "model.pmx";

@@ -8,6 +8,7 @@ import {
   PARITY_BACKDROP_FILE,
   PARITY_FRAME_MS,
   PARITY_PAGE_URL,
+  PARITY_READY_TIMEOUT_MS,
   WITNESS_LAYOUT_PATH,
   WITNESS_PATH_PREFIX,
 } from "#src/services/genshinParity/shared/constants";
@@ -72,7 +73,10 @@ export const openParityPage = async ({
         const { parityError, parityReady } = window.document.body.dataset;
         return { parityError, parityReady };
       });
-    if (!isClockFaked) await page.locator("body[data-parity-ready], body[data-parity-error]").waitFor();
+    if (!isClockFaked)
+      await page
+        .locator("body[data-parity-ready], body[data-parity-error]")
+        .waitFor({ timeout: PARITY_READY_TIMEOUT_MS });
     let { parityError, parityReady: readyScreen } = await readPageState();
     while (parityError === undefined && readyScreen === undefined) {
       // oxlint-disable-next-line no-await-in-loop -- the page draws one frame after another until it is ready

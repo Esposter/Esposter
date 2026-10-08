@@ -46,7 +46,8 @@ const SWORD_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, hei
 // Provisional: the burst's and the plunges' targeting reach, taken as the skill's and a sword's until the wiki gives them
 const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
-// Measured: gcsim v2.47.2 (MIT) traveler/common/anemo attack.go, 60 fps frames,
+// Measured: gcsim v2.47.2 (MIT) traveler/common/anemo attack.go, 60 fps frames, for the hitmarks and seconds. The file
+// gives no poise, so each strike's poise is provisional until a source gives it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/traveler/common/anemo/attack.go
 const createNormalAttack = (
   talentMultiplier: number,
@@ -105,7 +106,8 @@ export const TRAVELER_KIT: Kit = {
         hitArea: BURST_HIT_AREA,
         hitmarkSeconds: 94 / 60,
         internalCooldownTag: InternalCooldownTag.ElementalBurst,
-        // Provisional: no source yet gives Gust Surge's poise damage
+        // Measured: gcsim v2.47.2 (MIT) sets no poise damage on the anemo burst, so none stands
+        // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/traveler/common/anemo/burst.go
         poiseDamage: 0,
         talentMultiplier: 0.808,
       },
@@ -122,7 +124,8 @@ export const TRAVELER_KIT: Kit = {
         hitArea: PALM_VORTEX_HIT_AREA,
         hitmarkSeconds: 34 / 60,
         internalCooldownTag: InternalCooldownTag.ElementalSkill,
-        // Provisional: no source yet gives Palm Vortex's poise damage
+        // Measured: gcsim v2.47.2 (MIT) sets no poise damage on the anemo skill, so none stands
+        // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/traveler/common/anemo/skill.go
         poiseDamage: 0,
         talentMultiplier: 1.76,
       },
@@ -130,7 +133,9 @@ export const TRAVELER_KIT: Kit = {
     seconds: 61 / 60,
     targetingArea: SKILL_TARGETING_AREA,
   },
-  // Provisional: no source gives the plunges' landing frames, so each hits as its action starts
+  // Provisional: no source gives the plunges' landing frames, so each hits as its action starts. Their poise is gcsim
+  // v2.47.2's (MIT) plunge poise, in its pyro plunge file:
+  // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/traveler/common/pyro/plunge.go
   highPlunge: {
     hits: [
       { hitArea: HIGH_PLUNGE_HIT_AREA, hitmarkSeconds: 0, isBlunt: true, poiseDamage: 150, talentMultiplier: 1.6 },

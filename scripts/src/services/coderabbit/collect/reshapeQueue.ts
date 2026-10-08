@@ -32,7 +32,7 @@ export const reshapeQueue = async ({
   collectorSha,
   cwd,
   isDryRun,
-  mergeBaseSha,
+  baseSha,
   targetSha,
   viewerLogin,
 }: ReshapeInput): Promise<boolean> => {
@@ -43,7 +43,7 @@ export const reshapeQueue = async ({
   // The room is what the cap leaves beside the fixes and pending commits every window carries ahead of the queue:
   // A commit that fits the cap alone but not beside them is held behind every window a review's findings lead, and
   // The queue ships nothing but fixes. Fixes that fill the cap alone are the port's failure, not a shape to ask for
-  const windowPaths = new Set(readWindowFilePaths(mergeBaseSha, cwd, targetSha));
+  const windowPaths = new Set(readWindowFilePaths(baseSha, cwd, targetSha));
   const roomFileCount = REVIEW_FILE_CAP - windowPaths.size;
   if (roomFileCount <= 0) return false;
   // A file the window already counts costs a commit nothing, so only the files it adds are measured against the

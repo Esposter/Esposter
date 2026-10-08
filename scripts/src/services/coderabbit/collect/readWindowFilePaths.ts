@@ -1,16 +1,9 @@
-import { MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 
-// The files the next review reads: changed since the merge base, and on the pull request's own side of `main`. A
-// Fold of `main` puts `main`'s files into the range from the merge base, but the bot's file cap is the pull
-// Request's diff against its base, which a merged-in base never enters — so the fold is never what overflows a
-// Window (docs: infra/review-collector/collection-cycle, "Port")
-export const readWindowFilePaths = (mergeBaseSha: string, cwd?: string, headRef = "HEAD"): string[] => {
-  const sideFiles = new Set(
-    getNonEmptyLines(runGit(["diff", "--name-only", `origin/${MAIN_BRANCH}...${headRef}`], cwd)),
-  );
-  return getNonEmptyLines(runGit(["diff", "--name-only", `${mergeBaseSha}..${headRef}`], cwd)).filter((path) =>
-    sideFiles.has(path),
-  );
-};
+// The files the bot's review counts: the diff against the window's base — `main`'s tip for a window cut from the bottom,
+// the head of the window below otherwise. Three dots count only the head's side of that merge base, so a fold of `main`
+// into a window on `main` adds nothing, while a window stacked on another counts what `main` brought, as the bot does
+// (docs: infra/review-collector/collection-cycle, "Port")
+export const readWindowFilePaths = (baseSha: string, cwd?: string, headRef = "HEAD"): string[] =>
+  getNonEmptyLines(runGit(["diff", "--name-only", `${baseSha}...${headRef}`], cwd));

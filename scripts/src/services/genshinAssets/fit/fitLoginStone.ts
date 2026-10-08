@@ -21,6 +21,10 @@ const MASK_SLOT = "_DetailMask";
 // The keyword a material's variant draws its rim glow under, and the property its strength is read from
 const RIM_GLOW_KEYWORD = "ENABLE_RIM_GLOW_ON";
 const RIM_STRENGTH_KEY = "_RGStrength";
+// The share of a family's rim glow the game's frame shows where its materials predict more, by family (the light pass,
+// `passes login --pass Light`): the frame holds about an eighth of the door's and the towers' glow, and the glow colour
+// reads flat from none to an eighth, then climbs; a family not listed draws its materials' glow whole
+const GLOW_SCALES: Partial<Record<string, number>> = { door: 0.125, towers: 0.125 };
 const computeMeanValue = (values: readonly number[]): number =>
   roundFitted(values.reduce((sum, value) => sum + value, 0) / Math.max(values.length, 1));
 const computeMean = (vectors: readonly Vector[]): Vector =>
@@ -84,7 +88,7 @@ export const fitLoginStone = async (
           glowRange: computeMeanFloat("_EmissionRange"),
           rimColor: computeMean(getColors("_RGColor")),
           rimPower: computeMeanFloat("_RGPower"),
-          rimStrength: computeMeanValue(rimStrengths),
+          rimStrength: roundFitted(computeMeanValue(rimStrengths) * (GLOW_SCALES[family] ?? 1)),
           smoothness: roundFitted(computeUpperMedian(smoothnesses.flat())),
           specularColor: computeMean(getColors("_SpecColor")),
         },

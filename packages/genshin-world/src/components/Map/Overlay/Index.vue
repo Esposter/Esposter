@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Wallet } from "#src/models/inventory/Wallet";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
@@ -7,6 +8,7 @@ import type { GameText } from "genshin-text";
 import MapDrawing from "#src/components/Map/Drawing/Index.vue";
 import MapJumpList from "#src/components/Map/JumpList/Index.vue";
 import MapPointer from "#src/components/Map/Pointer/Index.vue";
+import { Currency } from "#src/models/inventory/Currency";
 import { computeAreaLabels } from "#src/services/map/computeAreaLabels";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import {
@@ -15,6 +17,8 @@ import {
   MAP_OVERLAY_MARK_SHARE,
   MAP_VIEW_METRES,
 } from "#src/services/map/constants";
+import { ORIGINAL_RESIN_CAP } from "#src/services/originalResin/constants";
+import { regenerateOriginalResin } from "#src/services/originalResin/regenerateOriginalResin";
 import { GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
@@ -23,15 +27,18 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   landmarks: Landmark[];
+  // The wallet, whose Original Resin the top bar counts as it regenerates to the moment the map opens
+  wallet: Wallet;
 }
 
-const { camera, gameText, landmarks } = defineProps<Props>();
+const { camera, gameText, landmarks, wallet } = defineProps<Props>();
 const emit = defineEmits<{ close: []; jump: [pose: WorldJumpPose] }>();
 const closeButton = useTemplateRef("closeButton");
 // The open map is centred on the player, the drawn metres across its width at the zoom slider's default
 const view = computed(() => ({ x: camera.x - MAP_VIEW_METRES / 2, z: camera.z - MAP_VIEW_METRES / 2 }));
 const markRadius = MAP_VIEW_METRES * MAP_OVERLAY_MARK_SHARE;
 const areaLabels = computed(() => computeAreaLabels(landmarks));
+const originalResin = computed(() => regenerateOriginalResin(wallet, Temporal.Now.instant())[Currency.OriginalResin]);
 // The map is a dialog over the world, so focus starts inside it
 onMounted(() => {
   closeButton.value?.focus();
@@ -73,6 +80,10 @@ onMounted(() => {
       <path class="zoom-sign" d="M 22 253 H 34" />
     </svg>
     <MapJumpList class="jumps" :game-text :landmarks @jump="(landmark) => emit('jump', computeJumpPose(landmark))" />
+    <p class="resin">
+      <span>{{ gameText[GameTextKey.OriginalResin] }}</span>
+      <span>{{ originalResin }}/{{ ORIGINAL_RESIN_CAP }}</span>
+    </p>
     <button
       ref="closeButton"
       class="close"
@@ -152,6 +163,19 @@ onMounted(() => {
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* Provisional: the resin counter's place, left of the close button, and its type, until a recording of the English PC
+   client's map top bar measures them */
+.resin {
+  position: absolute;
+  top: calc(var(--unit) * 40);
+  right: calc(var(--unit) * 130);
+  display: flex;
+  gap: calc(var(--unit) * 14);
+  margin: 0;
+  color: #ece5d7;
+  font-size: calc(var(--unit) * 26);
 }
 
 .close {

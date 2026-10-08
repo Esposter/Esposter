@@ -24,7 +24,18 @@ export const openWindow = ({
 }: OpenWindowInput): CycleOutcome => {
   const branch = getWindowBranch(windowNumber);
   const title = `${WINDOW_TITLE} ${windowNumber}`;
-  if (!pushBranch({ branch, cwd, expectedSha: readSha(`origin/${branch}`, cwd), isDryRun, sha: targetSha }))
+  // A number no pull request carries has no window behind it, so a branch already on it is a dead run's: its head need
+  // not be an ancestor of this cut, and the lease alone guards the overwrite
+  if (
+    !pushBranch({
+      branch,
+      cwd,
+      expectedSha: readSha(`origin/${branch}`, cwd),
+      isDryRun,
+      isRewrite: true,
+      sha: targetSha,
+    })
+  )
     return getMovedOutcome(branch);
   if (!pushBranch({ branch: DEVELOP_BRANCH, cwd, expectedSha: developSha, isDryRun, sha: targetSha }))
     return getMovedOutcome(DEVELOP_BRANCH);
