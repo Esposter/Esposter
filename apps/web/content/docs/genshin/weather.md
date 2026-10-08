@@ -43,7 +43,7 @@ The values are starting points, not the game's: they are fitted to the game's ow
 
 ## Cost
 
-- **One draw for every particle.** The streaks are an instanced geometry, placed and turned in the vertex stage, so no particle is stored and no frame writes per particle.
+- **One instanced draw for all particles.** The streaks are an instanced geometry, placed and turned in the vertex stage, so no particle is stored and no frame writes per particle.
 - **A frame writes the eye and nothing else for the particles.** The weather's settings are written once when it changes.
 - **A dry world costs nothing extra.** The wetness darkening and glint multiply by zero and add nothing, so a clear scene draws as it did before.
 
