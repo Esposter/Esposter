@@ -24,4 +24,14 @@ describe(readMaterialKeywords, () => {
 
     expect(readMaterialKeywords(bytes)).toStrictEqual([]);
   });
+
+  test("throws on bytes ending before their keywords do", () => {
+    expect.hasAssertions();
+
+    const bytes = Buffer.concat([serializeString("a"), Buffer.alloc(12), serializeString("A B").subarray(0, 6)]);
+
+    expect(() => readMaterialKeywords(bytes)).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: readMaterialKeywords, keywords end at byte 27 of 26]`,
+    );
+  });
 });
