@@ -1,11 +1,11 @@
 ---
 title: Free camera
-description: The camera the world screen flies over the continent, with the keyboard, the mouse and a gamepad's sticks. Its input is read once a frame and its look turns once a frame, its motion runs in fixed steps registered ahead of the floating origin's shift, and it is held above the ground and the water's surface.
+description: The photo mode's camera, flown over the continent with the keyboard, the mouse and a gamepad's sticks from wherever the follow camera left the view. Its input is read once a frame and its look turns once a frame, its motion runs in fixed steps ahead of the floating origin's shift, and it is held above the ground and the water's surface.
 ---
 
 # Free camera
 
-The world screen's camera is a free camera: the player flies it over Windrise and beyond. It replaces the orbit controls the screen first drew around the oak. The camera is built from three engine modules, `input`, `simulation` and `camera`, and reads the ground through `collision`, all in `genshin-engine` and knowing no place by name. The world screen wires them to its own origin and its own height function.
+Photo mode's camera is a free camera: the player flies it over Windrise and beyond, while the character holds where it stood. In play the [follow camera](/docs/genshin/follow-camera) stands behind the [character](/docs/genshin/character-controller); choosing photo mode from the Paimon menu mounts the free camera, which flies from wherever the follow camera left the view, and leaving it unmounts it again. The camera is built from three engine modules, `input`, `simulation` and `camera`, and reads the ground through `collision`, all in `genshin-engine` and knowing no place by name. The world screen wires them to its own origin and its own height function.
 
 ```mermaid
 sequenceDiagram
@@ -18,7 +18,7 @@ sequenceDiagram
   participant CL as collision
   participant FO as floating origin
   WS->>IN: readInput(delta), the frame's move, look and actions
-  F->>FC: the frame begins, registered before the origin's shift
+  F->>FC: the frame begins, at the camera's priority ahead of the origin's shift
   FC->>CAM: look(input), once a frame, unless a screen holds the world
   FC->>SIM: advance(delta), in steps of a sixtieth of a second
   loop at most five steps a frame
@@ -29,7 +29,7 @@ sequenceDiagram
   F->>FO: the origin's shift reads where the camera now stands
 ```
 
-The order is the reason for the registration. The floating origin reads the camera to decide whether to shift the world back under it, and the terrain and grass read the camera for their tiles, so both must see where it has been moved to. The free camera registers its frame callback in the world screen's child that comes before the scene, so it runs first.
+The order is the reason for the priority. The floating origin reads the camera to decide whether to shift the world back under it, and the terrain and grass read the camera for their tiles, so both must see where it has been moved to. The free camera registers its frame callback at `CAMERA_FRAME_PRIORITY`, ahead of TresJS's default the origin runs at, so it runs first though it mounts after the scene.
 
 ## The controls
 
@@ -46,8 +46,6 @@ A move goes along the view on the ground, and straight up or down. Its speed gro
 
 The camera is never held under the ground or the water's surface: after each step its height is raised to the higher of the ground's height at its place and the water's level, plus a clearance, which the same constants file holds.
 
-A jump from the [map](/docs/genshin/map) places the camera rather than flying it: `place` stands it at a position and sets its yaw and pitch outright, so the next look turns from the placed view rather than snapping back to where it faced before. The world's free camera exposes it with a jump's pose, read through the scene's origin onto the ground there.
-
 ## The ground
 
 `collision` answers the ground's height and normal at a point from the height function the terrain is built from. The world screen passes it `getWorldHeight` read at the scene's origin plus the camera's own place, on the main thread, so the answer is the one the terrain draws, never a read back from a worker's tile. The normal is read from the same function's slopes across a tenth of a metre. The sample object is reused by every query, so a frame reads the ground allocating nothing.
@@ -58,15 +56,15 @@ A jump from the [map](/docs/genshin/map) places the camera rather than flying it
 | :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
 | `packages/genshin-engine/src/input/createInput.ts`                 | keys, locked pointer and the gamepad's sticks, read once a frame; a blur releases every key |
 | `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`    | runs whole steps from an accumulator, at most five a frame                                  |
-| `packages/genshin-engine/src/camera/createFreeCamera.ts`           | the flight: look, move by height, the clamp above the ground, and a place                   |
+| `packages/genshin-engine/src/camera/createFreeCamera.ts`           | the flight: look, move by height, and the clamp above the ground                            |
 | `packages/genshin-engine/src/collision/createGroundQuery.ts`       | the ground's height and normal at a point, and the water's level                            |
 | `packages/genshin-world/src/components/World/FreeCamera/Index.vue` | the world's wiring: the loop run before the origin's shift, on the scene's ground           |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`     | reads the input once a frame, owns the origin and mounts the free camera                    |
-| `packages/genshin-world/src/services/constants.ts`                 | the fixed step's length                                                                     |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`     | reads the input once a frame, owns the origin and mounts the camera in photo mode           |
+| `packages/genshin-world/src/services/constants.ts`                 | the fixed step's length, and the priority a camera runs at                                  |
 
 ## Notes
 
-- **The free camera is replaced, not extended, once a character walks.** The [follow camera](/docs/proposals/genshin/follow-camera) then follows the [character controller](/docs/proposals/genshin/character-controller)'s body, and the free camera stays as the photo mode.
+- **Photo mode flies anywhere.** The game's photo mode moves its camera round the character within a range; how far this one may go is open on the [follow camera](/docs/proposals/genshin/follow-camera)'s proposal.
 
 ## Sources
 

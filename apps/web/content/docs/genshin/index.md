@@ -50,7 +50,9 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Sumeru kits](/docs/genshin/sumeru-kits)                   | Sumeru's terraced city, stilt hut and desert ruin kits                                                              |
 | [Nod-Krai's kits](/docs/genshin/nod-krai-kits)             | Nod-Krai's dieselpunk works and the Frostmoon Scions' stone rings                                                   |
 | [Snezhnaya](/docs/genshin/snezhnaya)                       | Snezhnaya's industrial and capital building kits and the Kresnik's Torch                                            |
-| [Free camera](/docs/genshin/free-camera)                   | the camera the world flies: its keys, pointer and gamepad, its fixed steps and the ground it holds above            |
+| [Character controller](/docs/genshin/character-controller) | the body walked through the game's movement states on its stamina, against the ground and the landmarks             |
+| [Follow camera](/docs/genshin/follow-camera)               | the camera behind the character, pulled in by the ground and the landmarks, and the pointer's lock                  |
+| [Free camera](/docs/genshin/free-camera)                   | photo mode's camera, flown with the keys, the pointer and a gamepad above the ground                                |
 | [Controls](/docs/genshin/controls)                         | the game's default key, mouse and gamepad bindings, read once a frame into the actions held and pressed             |
 | [Screens](/docs/genshin/screens)                           | the screens opened over the world one at a time, what each holds, and the Paimon menu's shell                       |
 | [Map](/docs/genshin/map)                                   | the map on M, its jump list, and a jump's fade to black and back                                                    |
@@ -94,6 +96,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - The wind, and grass generated around the camera.
 - The world map's catalogue, and Mondstadt's landmarks loaded by reach.
 - The free camera flying the world, on the engine's input, simulation, camera and collision modules.
+- The character walking the world on the controller's body through the game's movement states and stamina, the follow camera behind it, and the free camera kept as photo mode.
 - Scene derivation: every scene re-derived from the game's own exports, drawn beside them by the witness render and priced term by term.
 - The game's opening: its splashes, health notice, login screen with its flight to the door, and startup loading screen.
 - The game's own words in its fifteen languages, served to the page in the reader's and to the persona plugin.

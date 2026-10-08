@@ -6,12 +6,12 @@ model: claude-opus-5-5
 
 # Characters
 
-This page builds on [characters](/docs/genshin/characters) as built: a character's official model pack is read from the app's Blob Storage by the engine's own PMX reader and drawn at rest on the toon ramp, at the origin of whatever holds it. It also builds on the [character controller](/docs/proposals/genshin/character-controller), whose body a character is drawn on. What is left is the character's place, its motion, its scale and where its terms are shown.
+This page builds on [characters](/docs/genshin/characters) as built: a character's official model pack is read from the app's Blob Storage by the engine's own PMX reader and drawn at rest on the toon ramp, at the origin of whatever holds it. It also builds on the [character controller](/docs/genshin/character-controller), whose body a character is drawn on. What is left is the character's place, its motion, its scale and where its terms are shown.
 
 ## Decisions
 
 - **The character is drawn on the controller's body.** It stands where the body stands, between the body's last two steps as a frame blends them, and faces where it faces. The model already faces -z at its holder's origin, as the body's yaw of none does, so the body's world component holds the model and moves itself, and nothing turns the model on its own.
-- **Its motion is fitted to the game's own locomotion clips** in the [recreation passes](/docs/proposals/genshin/recreation-passes)' motion pass, so only the fitted parameters ship, never a motion file. How far and how fast the body moves is the controller's, and how it is seen is the [follow camera](/docs/proposals/genshin/follow-camera)'s.
+- **Its motion is fitted to the game's own locomotion clips** in the [recreation passes](/docs/proposals/genshin/recreation-passes)' motion pass, so only the fitted parameters ship, never a motion file. How far and how fast the body moves is the controller's, and how it is seen is the [follow camera](/docs/genshin/follow-camera)'s.
 - **Its scale is the game's.** MMD's unit stands at the community's reckoning of eight centimetres until the game's own model of the character measures it: that model's height in the exports over the PMX's height in units.
 - **Its terms are shown where it is chosen.** The terms view already reads and shows a pack's terms with their credit; the screens that choose a character, the party's, mount it beside the character.
 

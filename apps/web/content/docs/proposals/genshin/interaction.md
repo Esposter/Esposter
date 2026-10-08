@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Interaction
 
-This page builds on [interaction](/docs/genshin/interaction), whose selector rows what is in reach and whose prompt list draws it, and on the [character controller](/docs/proposals/genshin/character-controller), whose body reach is measured from. The rules are built; what is left is the world placing things to act on, the wheel and the held F reaching the selector, and the numbers measured off the game.
+This page builds on [interaction](/docs/genshin/interaction), whose selector rows what is in reach and whose prompt list draws it, and on the [character controller](/docs/genshin/character-controller), whose body reach is measured from. The rules are built; what is left is the world placing things to act on, the wheel and the held F reaching the selector, and the numbers measured off the game.
 
 ## Decisions
 

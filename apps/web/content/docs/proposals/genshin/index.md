@@ -69,8 +69,8 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 
 | Page                                                                 | What it adds                                                                                                               |
 | :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
-| [Character controller](/docs/proposals/genshin/character-controller) | running, sprinting, jumping, climbing, gliding, swimming and their stamina                                                 |
-| [Follow camera](/docs/proposals/genshin/follow-camera)               | the camera behind the character, pulled in by the ground; photo mode                                                       |
+| [Character controller](/docs/proposals/genshin/character-controller) | every number the body moves by, read for each body type off the game's clips, data and recordings                          |
+| [Follow camera](/docs/proposals/genshin/follow-camera)               | the camera's numbers solved off recordings, its settings, and how far photo mode may go                                    |
 | [HUD](/docs/proposals/genshin/hud)                                   | the HUD's fitted places, Paimon's mark, the stamina meter and the party                                                    |
 | [Characters](/docs/proposals/genshin/characters)                     | the game's characters from HoYoverse's official models                                                                     |
 | [Party](/docs/proposals/genshin/party)                               | Party Setup on L, the HUD's party, a burst on a switch, the fall and Elemental Resonance                                   |

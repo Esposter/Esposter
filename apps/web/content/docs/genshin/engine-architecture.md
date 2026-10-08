@@ -20,8 +20,9 @@ The Genshin program is long: terrain, water, vegetation, every region, then a ch
   | `world`      | the floating origin's shift, and how far the camera stands from an area's outline                                                                   |
   | `simulation` | fixed steps from an accumulator, at most five a frame, so a motion is the same at any rate                                                          |
   | `input`      | the keys, mouse buttons, the locked pointer, a gamepad and the touch controls, read once a frame into one move, look and the actions the game binds |
-  | `camera`     | the free camera's flight, held above the ground, and its place at a jump                                                                            |
-  | `collision`  | the surface a moving thing stands on: the ground under it, and the water's surface                                                                  |
+  | `camera`     | the follow camera behind a body, pulled in by what stands between, and the free camera's flight, held above the ground                              |
+  | `collision`  | what a moving thing meets: the ground under it, the water's surface, and the landmarks' meshes a capsule is pushed out of and a sphere cast against |
+  | `locomotion` | the character's body through the game's movement states, and the stamina they spend                                                                 |
   | `character`  | an MMD model read from its PMX file, and drawn as one skinned mesh on the toon ramp                                                                 |
   | `streaming`  | which tiles are wanted, asked for coarsest first, and a cache that frees the least wanted                                                           |
   | `terrain`    | height tiles, the CDLOD selection and mesh, and the ground material                                                                                 |
@@ -37,7 +38,7 @@ The Genshin program is long: terrain, water, vegetation, every region, then a ch
   | `noise`      | simplex noise, the one source of procedural detail                                                                                                  |
   | `random`     | a seeded random source, so a generator runs the same everywhere                                                                                     |
 
-  A module is added by the proposal that first needs it, never ahead of it as an empty folder: `input`, `simulation`, `camera` and `collision` with the [free camera](/docs/genshin/free-camera), and per-instance culling with [trees and scatter](/docs/proposals/genshin/trees-and-scatter).
+  A module is added by the proposal that first needs it, never ahead of it as an empty folder: `input`, `simulation`, `camera` and `collision` with the [free camera](/docs/genshin/free-camera), `locomotion` with the [character controller](/docs/genshin/character-controller), and per-instance culling with [trees and scatter](/docs/proposals/genshin/trees-and-scatter).
 
 - **State flows one way.** Modules expose read-only state and commands. The light state and the wind are uniforms that materials read, so the hour and the wind move the whole world by writing a few values. Region data flows from the world package into the terrain worker, the vegetation and the kits. No module imports a sibling's internals, and a dependency that points back up the frame's order is a design error.
 - **Every generator is pure and seeded.** Tile heights, grass and kit geometry are pure functions of region data, a tile key and a seed, returning typed arrays. They run the same in a worker, a test or a bench, and the same spot always generates the same world.

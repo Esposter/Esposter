@@ -39,7 +39,7 @@ The rule is read only while the world is shown, so nothing opens under the openi
 
 Every menu answers true to all three, as the game's single-player menus pause its simulation and its time while its music and particles carry on. Photo mode alone holds nothing: its clock runs, its camera flies and the pointer still turns it, with the HUD hidden. The world in play answers false to all three.
 
-- **Held.** The free camera neither looks nor steps while the world is held, and Windrise's clock and its clouds stand still. Drawing goes on, so the world stays behind the screen. This is a different thing from the world screen's `isPaused`, which stops drawing altogether while the opening covers the world.
+- **Held.** The character's body and its follow camera neither look nor step while the world is held, nor does photo mode's free camera, and Windrise's clock and its clouds stand still. Drawing goes on, so the world stays behind the screen. This is a different thing from the world screen's `isPaused`, which stops drawing altogether while the opening covers the world.
 - **Pointer.** A screen that lets the pointer go releases the lock when it opens. Closing it does not take the lock back, since the browser grants one only to a click; a click on the world takes it, as it did the first time.
 - **A lock lost in play opens the menu.** The browser keeps `Escape` for itself while the pointer is locked, so a lock lost with the world in play opens the Paimon menu as the key would have.
 
