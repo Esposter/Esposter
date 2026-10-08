@@ -28,6 +28,8 @@ stateDiagram-v2
   Windup --> Dead: health reaches zero
   Recovery --> Dead: health reaches zero
   Stagger --> Dead: health reaches zero
+  Idle --> Dead: health reaches zero
+  Alert --> Dead: health reaches zero
   Dead --> [*]: its death passes, its drops are rolled
 ```
 
@@ -66,7 +68,7 @@ A defeated enemy's drops are rolled by `computeEnemyDrops` from its level's band
 
 ## Cost
 
-- **One draw for every enemy.** The capsules are one instanced mesh, its matrices and tints written each frame from scratch objects, so a frame allocates nothing for them.
+- **One draw for all enemies.** The capsules are one instanced mesh, its matrices and tints written each frame from scratch objects, so a frame allocates nothing for them.
 - **The AI costs what is in reach.** Only the camps of regions in reach are stepped, and waking a camp compares each idle enemy with its camp-mates, which a camp's handful keeps cheap.
 
 ## Key files
