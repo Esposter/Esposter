@@ -32,7 +32,7 @@ flowchart TD
 
 **Not built yet:**
 
-- **The Trounce Blossom's offer and its claim.** Its F prompt, the claim's resin spent, the boss's respawn on the claim, and the blossom's drawing wait on the enemies' defeat map and the interaction prompts, both of which carry another session's uncommitted changes. The world does not yet keep a claim time for a defeated boss.
+- **The Trounce Blossom's offer and its claim.** Its F prompt, the claim's resin spent, the boss's respawn on the claim, and the blossom's drawing wait on the enemies' defeat map and the interaction prompts. The world does not yet keep a claim time for a defeated boss.
 - **The boss's rewards.** The Adventure EXP, Mora and Companionship EXP, its ascension material and its artifacts by World Level are not read: the dump's blossom tables hold no normal boss's row, so the reward table has to be fetched before the claim can give anything.
 - **Each boss's moves**, its phases and shields, and the poise and immunities that come with them.
 - **The weekly bosses' domains**, their quests and Andrius in the open world, and the once-a-week gate per boss.
