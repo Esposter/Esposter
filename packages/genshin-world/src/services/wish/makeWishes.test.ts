@@ -70,7 +70,7 @@ describe(makeWishes, () => {
     expect(() =>
       makeWishes({ banner, count: 1, heldCountMap: new Map(), pity, wallet }, random),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: makeWishes, 1 AcquaintFate are needed]`,
+      `[InvalidOperationError: Invalid operation: Update, name: makeWishes, 1 wishes are not on offer]`,
     );
   });
 
@@ -89,7 +89,7 @@ describe(makeWishes, () => {
         random,
       ),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: makeWishes, 20 wishes at most]`,
+      `[InvalidOperationError: Invalid operation: Update, name: makeWishes, 1 wishes are not on offer]`,
     );
   });
 });

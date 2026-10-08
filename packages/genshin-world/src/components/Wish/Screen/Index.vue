@@ -12,6 +12,7 @@ import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
 import { BannerKindFateMap } from "#src/services/wish/BannerKindFateMap";
 import { BannerKindGameTextKeyMap } from "#src/services/wish/BannerKindGameTextKeyMap";
+import { checkIsWishSetOffered } from "#src/services/wish/checkIsWishSetOffered";
 import { BEGINNERS_WISH_LIMIT, FATE_POINT_LIMIT, TEN_WISH_COUNT } from "#src/services/wish/constants";
 import { getWishCost } from "#src/services/wish/getWishCost";
 import { makeWishes } from "#src/services/wish/makeWishes";
@@ -56,9 +57,7 @@ const sets = computed(() => {
     return {
       cost: toCountText(currency, quantity),
       count,
-      isAffordable:
-        wallet.value[currency] >= quantity &&
-        (kind !== BannerKind.Beginners || pityMap.value[kind].wishCount + count <= BEGINNERS_WISH_LIMIT),
+      isAffordable: checkIsWishSetOffered(kind, pityMap.value[kind], wallet.value, count),
       label: fillGameTextValues(gameText[GameTextKey.WishCount], count),
     };
   });
