@@ -149,15 +149,14 @@ const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl);
 const character = useTemplateRef("character");
 // Whether the backslash has hidden the HUD, as the game's Hide UI does, apart from the screens that hide it
 const isHudHidden = ref(false);
-// The camera's ground point and yaw in world metres for the map and the minimap, read each frame and handed on only
-// When it moved, so a still camera re-renders nothing
+// The character's ground point in world metres and the yaw the view faces, for the map and the minimap, read each frame
+// And handed on only when it moved, so a still player re-renders nothing
 const mapCamera = shallowRef<MapCamera>({ x: 0, yaw: 0, z: 0 });
 const cameraEuler = new Euler();
 useRafFn(() => {
   const activeCamera = canvas.value?.context?.camera.activeCamera.value;
   if (!activeCamera) return;
-  const x = activeCamera.position.x + origin.x;
-  const z = activeCamera.position.z + origin.z;
+  const { x, z } = characterBody.position;
   const { y: yaw } = cameraEuler.setFromQuaternion(activeCamera.quaternion, "YXZ");
   if (x !== mapCamera.value.x || yaw !== mapCamera.value.yaw || z !== mapCamera.value.z)
     mapCamera.value = { x, yaw, z };
