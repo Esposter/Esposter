@@ -18,6 +18,7 @@ import { friendshipCommand } from "#src/services/genshinAssets/commands/friendsh
 import { gadgetsCommand } from "#src/services/genshinAssets/commands/gadgetsCommand";
 import { gatheringCommand } from "#src/services/genshinAssets/commands/gatheringCommand";
 import { gcgCommand } from "#src/services/genshinAssets/commands/gcgCommand";
+import { homeCommand } from "#src/services/genshinAssets/commands/homeCommand";
 import { interfaceCommand } from "#src/services/genshinAssets/commands/interfaceCommand";
 import { inventoryCommand } from "#src/services/genshinAssets/commands/inventoryCommand";
 import { itemsCommand } from "#src/services/genshinAssets/commands/itemsCommand";
@@ -78,6 +79,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     crafting: craftingCommand,
     cooking: cookingCommand,
     forging: forgingCommand,
+    home: homeCommand,
     exploration: explorationCommand,
     puzzles: puzzlesCommand,
     gathering: gatheringCommand,
