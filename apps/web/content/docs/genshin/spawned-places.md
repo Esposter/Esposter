@@ -5,7 +5,7 @@ description: The official Teyvat Interactive Map's statues and waypoints read in
 
 # Spawned places
 
-The game's servers spawn chests, Oculi, puzzles and camps, and the client's data does not place them, so the official Teyvat Interactive Map's public points stand in for them. This page is the first half of the [spawned places](/docs/proposals/genshin/spawned-places) proposal: the map's points read into the references folder, and its statues and waypoints fitted onto the scene's own transport points. Nothing is written into region data yet. Each kind's places land with the page that uses them.
+The game's servers spawn chests, Oculi, puzzles and camps, and the client's data does not place them, so the official Teyvat Interactive Map's public points stand in for them. This page is the first half of the [spawned places](/docs/proposals/genshin/spawned-places) proposal: the map's points read into the references folder, and its statues and waypoints fitted onto the scene's own transport points. Chests are the first kind written, into their own slices by the [chests](/docs/genshin/chests) page; each other kind's places land with the page that uses them.
 
 ## How it works
 

@@ -27,13 +27,12 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** the map's points are read and fitted, and region data holds what the client's data places, with the enemy camps written into it.
+**Today:** the map's points are read and fitted, the chests are written into their slices by [chests](/docs/genshin/chests), and region data holds what the client's data places, with the enemy camps written into it.
 
 **This adds, as each consuming page lands:**
 
 1. **Oculi**, for [statues of The Seven](/docs/proposals/genshin/statues-of-the-seven), at each fitted place.
-2. **Chests**, for [chests](/docs/proposals/genshin/chests), at each fitted place, locked, dug or sealed.
-3. **Gathering points, and the camps** the map marks, for [gathering](/docs/proposals/genshin/gathering) and [enemies](/docs/genshin/enemies).
+2. **Gathering points, and the camps** the map marks, for [gathering](/docs/proposals/genshin/gathering) and [enemies](/docs/genshin/enemies).
 
 ## Data and measures
 
