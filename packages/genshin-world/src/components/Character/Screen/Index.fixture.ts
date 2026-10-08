@@ -31,6 +31,8 @@ const XILONEN_TALENT_LEVELS: TalentLevels = {
   [CombatTalent.NormalAttack]: 10,
 };
 const XILONEN_ASCENSION = 6;
+// All six of Xilonen's constellations activated, as the recording's Constellation tab shows them lit
+const XILONEN_CONSTELLATION_COUNT = 6;
 const STAMINA = 240;
 const ROSTER_IDS = [
   10000002,
@@ -52,7 +54,7 @@ const ROSTER_IDS = [
 const roster: Character[] = ROSTER_IDS.map((id) => ({
   artifacts: [],
   ascension: id === XILONEN_ID ? XILONEN_ASCENSION : 0,
-  constellationCount: 0,
+  constellationCount: id === XILONEN_ID ? XILONEN_CONSTELLATION_COUNT : 0,
   friendshipExp: 0,
   id,
   level: id === XILONEN_ID ? XILONEN_MAX_LEVEL : 1,
