@@ -56,9 +56,9 @@ flowchart TD
 
 ## Key files
 
-| File                                                      | Role after the change                                       |
-| :-------------------------------------------------------- | :---------------------------------------------------------- |
-| `packages/genshin-world/src/models/shared/ElementType.ts` | The seven elements, shared by the loading screen and combat |
+| File                                           | Role after the change                                                    |
+| :--------------------------------------------- | :----------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/Element.ts` | The seven elements, shared by the loading screen, the enemies and combat |
 
 ## Sources
 
