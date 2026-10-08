@@ -57,17 +57,17 @@ Measured off the reference frame at 21:9, 3440 by 1440 pixels, in units: a pixel
 
 - **Five states are scored, each a frame of the same recording.** `Character/Screen` fixes the roster of fifteen characters, the Traveler among them, with Xilonen chosen at level 90 and phase six, and its stat tables parsed from the generated tables by `parseStatTables`. `initialTab` opens the screen on the tab the reference shows, and the fixture's `variants` open it on the other four. Each reference is a frame of the user's recording of the current build (`session-2.mp4`) at 21:9, the tab settled, and it is scored over the whole frame and the tab column:
 
-| Tab open            | Reference | Whole frame, mean / FLIP              | Tab column, mean / FLIP |
-| :------------------ | :-------- | :------------------------------------ | :---------------------- |
-| Attributes, Xilonen | 154.4 s   | 8.10% / 0.3570                        | 7.26% / 0.3337          |
-| Weapons             | 156 s     | 10.91% / 0.4369 (was 11.04% / 0.4399) | 6.94% / 0.3201          |
-| Artifacts           | 157 s     | 11.08% / 0.4422 (was 11.02% / 0.4413) | 6.90% / 0.3196          |
-| Constellation       | 157.5 s   | 13.01% / 0.5021 (was 13.01% / 0.5022) | 6.90% / 0.3191          |
-| Talents             | 159 s     | 11.56% / 0.4587 (was 11.55% / 0.4585) | 6.42% / 0.3055          |
+| Tab open            | Reference | Whole frame, mean / FLIP                         | Tab column, mean / FLIP     |
+| :------------------ | :-------- | :----------------------------------------------- | :-------------------------- |
+| Attributes, Xilonen | 154.4 s   | 8.10% / 0.3570                                   | 7.26% / 0.3337              |
+| Weapons             | 156 s     | 10.91% / 0.4369 (was 11.04% / 0.4399)            | 6.94% / 0.3201              |
+| Artifacts           | 157.5 s   | 13.01% / 0.5022 (was 11.08% / 0.4422 at 157 s)   | 6.90% / 0.3196 (at 157 s)   |
+| Constellation       | 158.3 s   | 23.19% / 0.7391 (was 13.01% / 0.5021 at 157.5 s) | 6.90% / 0.3191 (at 157.5 s) |
+| Talents             | 159 s     | 11.56% / 0.4587 (was 11.55% / 0.4585)            | 6.42% / 0.3055              |
 
 Attributes stays at 8.10% (FLIP 0.3570), and Xilonen's record now holds the Weapons and Talents frames' state (Peak Patrol Song at level 90, refinement five, and talents at 10, 13 and 13), which moves no Attributes figure by more than 0.01 (the panel's row, 7.96% to 7.97%). The four panels are drawn in this pass. Their whole-frame means barely move, while their shape rises: Weapons 0.334 to 0.477, Artifacts 0.347 to 0.477, Constellation 0.330 to 0.387, Talents 0.434 to 0.463. The tab columns do not move, since the pill and words are the same.
 
-The Artifacts and Constellation references do not show their tabs, so their whole-frame scores cannot show their panels. The 157 second frame is mid-slide, with Weapons still lit and its Weapons panel still drawn. The 157.5 second frame has settled on Artifacts, not Constellation, and the Constellation tab settles near 158 seconds, so those two registrations want their seconds corrected before their scores mean anything. The pill's slide is provisional until it is timed off a recording (the owed clip `menu-character.mkv`, and the Profile still on the roadmap's Recordings owed list).
+The Artifacts and Constellation references do not show their tabs, so their whole-frame scores cannot show their panels. The 157 second frame was mid-slide, with Weapons still lit and its Weapons panel still drawn, so Artifacts is re-timed to 157.5 seconds, where its tab has settled. The Constellation tab's node list is still fading in at 158 seconds, so it is re-timed to 158.3 seconds, where the list is drawn in full. Their tab-column references, `character-artifacts-tabs` and `character-constellation-tabs`, still sit at their old seconds (157 and 157.5), and want the same correction before their tab-column scores mean anything. The pill's slide is provisional until it is timed off a recording (the owed clip `menu-character.mkv`, and the Profile still on the roadmap's Recordings owed list).
 
 - **The rest of the frame is the game's scene, a floor for now.** The middle is the held scene: the golden beams and particles and the character's model, which rises over 154.4 to 155.6 seconds and is the game's art, so the screen draws a tint sampled from the reference's scene (about #6c5224 at the dark corners, #af9544 at the bright centre) and nothing more.
 - **Not drawn yet, for want of text or art.** The Details button and the Friendship row with its bar, which the default panel shows under the base rows, and the character's description: their words are not in the decoded English text yet. The element emblem, the element-coloured stars, the Q and E keys, W and S, the arrows, the Ascension Limit pill and the UID wait on the glyph pass or the text. The panel shows the advanced and elemental groups beneath the base five, which the game holds behind Details.

@@ -4,12 +4,12 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
-  // The English PC client's character screen on the Artifacts tab at 21:9, the same recording at 157 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
+  // The English PC client's character screen on the Artifacts tab at 21:9, the same recording at 157.5 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
   "character-artifacts": {
     capture: "session-2.mp4",
     props: { initialTab: "Artifacts" },
     screen: "CharacterScreen",
-    seconds: 157,
+    seconds: 157.5,
   },
   // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Artifacts tab open
   "character-artifacts-tabs": {
@@ -43,12 +43,12 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "CharacterScreen",
     seconds: 154.4,
   },
-  // The English PC client's character screen on the Constellation tab at 21:9, the same recording at 158 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
+  // The English PC client's character screen on the Constellation tab at 21:9, the same recording at 158.3 seconds, the tab settled (158 seconds still fades its node list in). Its panel is not drawn yet, so only the frame is scored
   "character-constellation": {
     capture: "session-2.mp4",
     props: { initialTab: "Constellation" },
     screen: "CharacterScreen",
-    seconds: 157.5,
+    seconds: 158.3,
   },
   // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Constellation tab open
   "character-constellation-tabs": {
