@@ -2,7 +2,7 @@
 import type { InteractionPrompts } from "#src/models/interaction/InteractionPrompts";
 
 import { INTERACTION_WINDOW_SIZE } from "#src/services/interaction/constants";
-import { InteractionPrompts as InteractionPromptList } from "genshin-interface";
+import { GameScreen, InteractionPrompts as InteractionPromptList } from "genshin-interface";
 
 interface Props {
   // The prompts beside the character, whose window of rows the list draws
@@ -19,18 +19,27 @@ const windowInteractables = computed(() =>
 </script>
 
 <template>
-  <!-- The window of the prompts beside the character, beside the centre of the screen. Provisional: its place waits on the
-       Interaction's passes against a recording of the English client at 1080 high -->
-  <div class="prompts">
-    <InteractionPromptList :prompts="windowInteractables" :selected-id="interactionPrompts.selectedId" />
-  </div>
+  <!-- The window of the prompts beside the character, its cap's left edge 139 units right of the screen's centre and its
+       rows centred on the screen's middle. A full-screen layer that lets the pointer through to the world, as the HUD
+       it is drawn in does; it is also a screen root of its own, so the parity page draws it with a unit -->
+  <GameScreen class="prompt-list">
+    <div class="prompts">
+      <InteractionPromptList :prompts="windowInteractables" :selected-id="interactionPrompts.selectedId" />
+    </div>
+  </GameScreen>
 </template>
 
 <style scoped>
-/* Provisional: the prompt list's place, until the recreation passes measure it */
+.prompt-list {
+  pointer-events: none;
+}
+
+/* The prompt list's place, measured off the English PC client's pickup at 1080 high: its cap 139 units right of the
+   centre, its rows' middle on the middle of the screen */
 .prompts {
   position: absolute;
-  left: calc(50% + var(--unit) * 260);
+  left: calc(50% + var(--unit) * 139);
   top: 50%;
+  transform: translateY(-50%);
 }
 </style>

@@ -20,7 +20,7 @@ This page builds on [interaction](/docs/genshin/interaction), whose prompts, dro
 
 ## What this does not propose
 
-- **The prompt list's look.** Its place, sizes, colours and the kinds' icons are measured and traced in the [recreation passes](/docs/proposals/genshin/recreation-passes).
+- **The prompt list's open look.** Its rows, cap, pill and place are built against the pickup at 1080 high ([interaction](/docs/genshin/interaction#parity)). What stays open is the item icons (the game's art, which nothing ships), the kinds' icons, the selection's move and the pill's right end, each waiting on a recording the [roadmap](/docs/genshin/roadmap) lists as owed.
 - **What each interaction opens.** A chest's loot, a dialogue's content and a book's pages each belong to the page that adds that content.
 
 ## Key files

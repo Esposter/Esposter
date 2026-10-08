@@ -46,6 +46,20 @@ flowchart TD
 - **A resident is a talk in reach.** Every resident of the regions in reach whose talk the world holds is a `Talk` row, named from the talks' text. A resident whose talk is not held is drawn but offered no prompt, since F on it would have no talk to open.
 - **The stand-ins.** `World/Interactables` draws each drop as a small sphere and each resident as the locomotion capsule every body stands in as until its own is measured, one instanced mesh per kind rewritten only when the list changes. A witness render draws none.
 
+## Parity
+
+The list is scored against the English PC client at 1080 high in its pickup: a public tutorial's recording at 9 seconds, drawn behind the list (`interaction-prompts-pickup`, `isBackdrop`), over the list's own box. Measured off that frame:
+
+- Three rows of 59 on a 72 pitch, the stack centred on the screen's middle, its cap's left edge 139 right of the centre.
+- The cap 40 wide and 33 high, its pointer 8 by 15 at 45 from the cap's left, the pill 290 wide from 60 past the cap's left, its name's cap height 22 in a face of 31 with letter-spacing to the game's line width, the icon 34 across at 12 inside the pill.
+
+The scores, mean difference and FLIP: the first build 8.27% and 0.2813, and with the name's place, its width and the icon's inset 6.88% and 0.2645. The two-percent bar is not met. What is left:
+
+- **The item icons.** Three icons of 34 across are the game's own item art, which nothing ships, so a disc stands in. They are the largest term in the difference grid.
+- **The pill's fill and rim.** The backdrop draws the game's pill under ours, so the fill is printed twice and the rim sits a pixel off.
+
+Provisional and unmeasured: the pill's right end (290 units, since the rock behind it is not separable on the frame), its fill, the kinds' icons (Talk, Open, Read and Activate have no reference), and the selection's move, which the list does not animate: in the clip's stretch at 13 seconds the cap changes row within a frame or two. The clip is a captioned tutorial with a camera inset, so it gives the first row's state but no clean scroll; the clean clips are on the [roadmap](/docs/genshin/roadmap)'s Recordings owed list. No visual-suite image is approved, since the compare is over its bar.
+
 ## Key files
 
 | File                                                                           | Role                                                                  |
@@ -61,7 +75,7 @@ flowchart TD
 | `packages/genshin-world/src/models/world/WorldDrop.ts`                         | A drop lying on the ground: its item, count, id and point             |
 | `packages/genshin-world/src/components/World/Screen/Index.vue`                 | Holds the drops and the residents, and acts on the selected row       |
 | `packages/genshin-world/src/components/World/Interactables/Index.vue`          | The drops' and the residents' stand-ins                               |
-| `packages/genshin-world/src/components/Interaction/PromptList/Index.vue`       | The window's rows, drawn in the HUD beside the centre                 |
+| `packages/genshin-world/src/components/Interaction/PromptList/Index.vue`       | The window's rows, drawn in the HUD 139 units right of the centre     |
 | `packages/genshin-world/src/components/Hud/Screen/Index.vue`                   | The `prompts` slot the list is drawn in                               |
 | `packages/genshin-interface/src/models/InteractionKind.ts`                     | The five kinds of interaction                                         |
 | `packages/genshin-interface/src/components/InteractionPrompts/Index.vue`       | The prompt list's rows, the selected one marked with F                |

@@ -1,11 +1,12 @@
 import { InteractionKind } from "#src/models/InteractionKind";
 
-// A chest, a flower and a character in reach, the flower selected
+// The English PC client's pickup at 1080 high, three Sunsettia and Matsutake rows in reach with the first selected, as
+// The public tutorial's recording at 15 seconds shows them
 export const props = {
   prompts: [
-    { id: "0", kind: InteractionKind.Open, name: "Common Chest" },
-    { id: "1", kind: InteractionKind.PickUp, name: "Windwheel Aster" },
-    { id: "2", kind: InteractionKind.Talk, name: "Amber" },
+    { id: "0", kind: InteractionKind.PickUp, name: "Sunsettia" },
+    { id: "1", kind: InteractionKind.PickUp, name: "Matsutake" },
+    { id: "2", kind: InteractionKind.PickUp, name: "Sunsettia" },
   ],
-  selectedId: "1",
+  selectedId: "0",
 };
