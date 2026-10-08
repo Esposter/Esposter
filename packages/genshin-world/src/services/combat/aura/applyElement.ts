@@ -23,13 +23,13 @@ import { tickElectroCharged } from "#src/services/combat/aura/tickElectroCharged
 // Its reactions in the game's order, each consuming its auras by its coefficient times what is left of the trigger,
 // And each recorded once however many auras it meets. A Burning already lit is refreshed, not triggered again, and
 // Pyro and Electro meet only the Freeze over a hidden Hydro. What is left, meeting nothing more it consumes, stays as an
-// Aura, and Electro come to lie beside Hydro starts Electro-Charged, which ticks at once
+// Aura, and Electro coming to lie beside Hydro starts Electro-Charged, which ticks at once. Crystallize triggers once
+// A second, however many auras it could meet
 export const applyElement = (state: ElementalState, element: Element, gauge: number): Reaction[] => {
   const { auras, seconds } = state;
   const steps = ElementReactionStepsMap[element];
   const wasElectroCharged = checkIsElectroCharged(auras);
   const isHydroHidden = auras.has(AuraType.Freeze) && [Element.Electro, Element.Pyro].includes(element);
-  const isCrystallizeReady = seconds - state.crystallizeSeconds >= CRYSTALLIZE_COOLDOWN_SECONDS;
   const reactions: Reaction[] = [];
   let remainingGauge = gauge;
   for (const { auraTypes, coefficient, ...reaction } of steps) {
@@ -39,7 +39,8 @@ export const applyElement = (state: ElementalState, element: Element, gauge: num
     if (
       auraGauge === 0 ||
       (isHydroHidden && auraTypes.includes(AuraType.Hydro)) ||
-      (reaction.reactionType === ReactionType.Crystallize && !isCrystallizeReady) ||
+      (reaction.reactionType === ReactionType.Crystallize &&
+        seconds - state.crystallizeSeconds < CRYSTALLIZE_COOLDOWN_SECONDS) ||
       (reaction.reactionType === ReactionType.Burning && auras.has(AuraType.Burning))
     )
       continue;

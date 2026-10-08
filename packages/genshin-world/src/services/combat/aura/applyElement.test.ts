@@ -121,6 +121,20 @@ describe(applyElement, () => {
     expect(state.auras.get(AuraType.Electro)?.gauge).toBeCloseTo(0.3);
   });
 
+  test("crystallizes the Electro of an Electro-Charged target and not the Hydro beside it, once a second", () => {
+    expect.hasAssertions();
+
+    const hydro = { decayRate: 0, gauge: 1 };
+    const state = createState([
+      [AuraType.Electro, { decayRate: 0, gauge: 0.4 }],
+      [AuraType.Hydro, hydro],
+    ]);
+    const reactions = applyElement(state, Element.Geo, 2);
+
+    expect(reactions).toStrictEqual([{ element: Element.Electro, reactionType: ReactionType.Crystallize }]);
+    expect(state.auras).toStrictEqual(new Map([[AuraType.Hydro, hydro]]));
+  });
+
   test("freezes a target with twice the gauge it consumed", () => {
     expect.hasAssertions();
 
