@@ -177,6 +177,7 @@ Clips nothing published shows, which the user records: each 30 seconds or less, 
 - [ ] `world-stamina.mkv` — sprinting until the stamina meter appears beside the character, then resting until it fades out, the meter in view throughout, 30 seconds at most.
 - [ ] `world-skill-burst.mkv` — the Traveler on the field with the skill pressed and its cooldown counted down, then the burst energy filling until the burst glows, the skill and burst buttons in view.
 - [ ] `world-teleport.mkv` — a teleport between two waypoints in one area, Teleport pressed at the third second.
+- [ ] `domain-entry.mkv` — standing at a domain's entrance and pressing F to enter, the fade into its scene, then the fade back out when the domain is left, 30 seconds at most. The fade's durations are measured from it, as the teleport's are.
 - [ ] `world-map.mkv` — the map opened on M over the character's own area, the zoom slider pressed in and out to its ends, a waypoint chosen on the map and Teleport pressed on the panel it opens, 30 seconds at most.
 - [ ] `world-pickup.mkv` — walking slowly up to a lone item, standing in a pile of more drops than the list shows, scrolling the wheel from the first row to the last, then holding F until the pile is gone.
 - [ ] `prompt-kinds.mkv` — a chest, a notice to read, a waypoint and a resident with a talk, each in reach one at a time, their rows' icons in view at 1080 high, 30 seconds at most.
