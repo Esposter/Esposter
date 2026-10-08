@@ -10,6 +10,7 @@ import characterGrowCurves from "#src/generated/stats/characterGrowCurves.json";
 import characters from "#src/generated/stats/characters.json";
 import weaponGrowCurves from "#src/generated/stats/weaponGrowCurves.json";
 import weapons from "#src/generated/stats/weapons.json";
+import { CombatTalent } from "#src/models/character/CombatTalent";
 import { parseStatTables } from "#src/services/character/parseStatTables";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
@@ -42,6 +43,7 @@ const roster: Character[] = ROSTER_IDS.map((id) => ({
   ascension: id === XILONEN_ID ? XILONEN_ASCENSION : 0,
   id,
   level: id === XILONEN_ID ? XILONEN_MAX_LEVEL : 1,
+  talentLevels: { [CombatTalent.ElementalBurst]: 1, [CombatTalent.ElementalSkill]: 1, [CombatTalent.NormalAttack]: 1 },
   weapon: { ascension: 0, experience: 0, id: XILONEN_WEAPON_ID, level: 1, refinement: 1 },
 }));
 

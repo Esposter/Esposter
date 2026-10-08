@@ -1,3 +1,4 @@
+import { CombatTalent } from "#src/models/character/CombatTalent";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -17,6 +18,11 @@ describe(getCharacterAttributeLines, () => {
         ascension: 6,
         id: TRAVELER_ID,
         level: 90,
+        talentLevels: {
+          [CombatTalent.ElementalBurst]: 1,
+          [CombatTalent.ElementalSkill]: 1,
+          [CombatTalent.NormalAttack]: 1,
+        },
         weapon: { ascension: 4, experience: 0, id: DULL_BLADE_ID, level: 70, refinement: 1 },
       },
       statTables,
