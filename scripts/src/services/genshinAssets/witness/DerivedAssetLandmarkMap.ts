@@ -56,12 +56,14 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // Stages_Build_BeaconTower01 that no OBJ exports, so a re-extraction is the way to name them
   [DerivedAssetComponent.Mondstadt]: {},
   // The People of the Springs' seven landmarks (ParityReferenceMap's people-of-the-springs-location: the spire and the
-  // Hall, a terrace stair and the walkway post) name no mesh, so all seven are dropped: the extraction draws the capital
+  // Hall, a terrace stair and the walkway post) name no mesh, all seven dropped: the extraction draws the capital
   // As water, planes and terrain tiles alone, and its layout dumps name sentry posts that no OBJ exports
   [DerivedAssetComponent.Natlan]: {},
   // Nasha Town's landmarks name its capital's meshes and their shares, which the extraction has not yet given
   [DerivedAssetComponent.NodKrai]: {},
-  // Snezhnograd's landmarks name its capital's meshes, which the extraction has not yet given
+  // Snezhnograd's seven landmarks (ParityReferenceMap's everfrozen-earth-location: its spires and towers) name no mesh,
+  // So all seven are dropped: the extraction holds five house pieces and three stair pieces 128 to 148 metres off the
+  // Capital, none a spire or tower, and its layout dumps name sentry posts that no OBJ exports
   [DerivedAssetComponent.Snezhnaya]: {},
   // Sumeru City's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given
   [DerivedAssetComponent.Sumeru]: {},
