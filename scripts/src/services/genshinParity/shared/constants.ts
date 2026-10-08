@@ -14,6 +14,9 @@ export const SHOTS_DIRECTORY: string = join(PARITY_DIRECTORY, "shots");
 export const FILMS_DIRECTORY: string = join(PARITY_DIRECTORY, "films");
 // A frame at 60 a second, the step a faked clock is moved by
 export const PARITY_FRAME_MS: number = 1000 / 60;
+// How long a page may take to draw its first frame, a full window at 1080 high on a machine running several pages at
+// Once taking near a minute, where Playwright's default half minute gave up on a page still loading
+export const PARITY_READY_TIMEOUT_MS: number = 120_000;
 export const COMPARISONS_DIRECTORY: string = join(PARITY_DIRECTORY, "comparisons");
 // Each reference's witness G-buffer, its targets as raw floats beside a header and a preview
 export const GBUFFER_DIRECTORY: string = join(PARITY_DIRECTORY, "gbuffer");
