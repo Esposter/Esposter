@@ -1,1 +1,1046 @@
-[]
+[
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+            "value": 0.18
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 10001
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+            "value": 0.18
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 10002
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_DEFENSE_PERCENT",
+            "value": 0.3
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 10003
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 10004
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_CRITICAL",
+            "value": 0.12
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 10005
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 10006
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ELEMENT_MASTERY",
+            "value": 80
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 10007
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 10008
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_CHARGE_EFFICIENCY",
+            "value": 0.2
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 10009
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_HP",
+            "value": 1000
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 10010
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_DEFENSE",
+            "value": 100
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 10011
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_CHARGE_EFFICIENCY",
+            "value": 0.2
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 10012
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_HEALED_ADD",
+            "value": 0.2
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 10013
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ICE_ADD_HURT",
+            "value": 0.15
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 14001
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ELEC_SUB_HURT",
+            "value": 0.4
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 14002
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_FIRE_SUB_HURT",
+            "value": 0.4
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 14003
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_HEAL_ADD",
+            "value": 0.15
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 14004
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+            "value": 0.18
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15001
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_WIND_ADD_HURT",
+            "value": 0.15
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15002
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ELEMENT_MASTERY",
+            "value": 80
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15003
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ICE_ADD_HURT",
+            "value": 0.15
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15004
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ELEC_ADD_HURT",
+            "value": 0.15
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15005
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_FIRE_ADD_HURT",
+            "value": 0.15
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15006
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15007
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_PHYSICAL_ADD_HURT",
+            "value": 0.25
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15008
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [],
+        "pieceCount": 1
+      }
+    ],
+    "id": 15009
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [],
+        "pieceCount": 1
+      }
+    ],
+    "id": 15010
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [],
+        "pieceCount": 1
+      }
+    ],
+    "id": 15011
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [],
+        "pieceCount": 1
+      }
+    ],
+    "id": 15012
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [],
+        "pieceCount": 1
+      }
+    ],
+    "id": 15013
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ROCK_ADD_HURT",
+            "value": 0.15
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15014
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_SHIELD_COST_MINUS_RATIO",
+            "value": 0.35
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15015
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_WATER_ADD_HURT",
+            "value": 0.15
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15016
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_HP_PERCENT",
+            "value": 0.2
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15017
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_PHYSICAL_ADD_HURT",
+            "value": 0.25
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15018
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+            "value": 0.18
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15019
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_CHARGE_EFFICIENCY",
+            "value": 0.2
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15020
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_DEFENSE_PERCENT",
+            "value": 0.3
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15021
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_HEAL_ADD",
+            "value": 0.15
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15022
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+            "value": 0.18
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15023
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+            "value": 0.18
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15024
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_GRASS_ADD_HURT",
+            "value": 0.15
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15025
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ELEMENT_MASTERY",
+            "value": 80
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15026
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_WIND_ADD_HURT",
+            "value": 0.15
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15027
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ELEMENT_MASTERY",
+            "value": 80
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15028
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_WATER_ADD_HURT",
+            "value": 0.15
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15029
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_HP_PERCENT",
+            "value": 0.2
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15030
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15031
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15032
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_HEAL_ADD",
+            "value": 0.15
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15033
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+            "value": 0.18
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15034
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+            "value": 0.18
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15035
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+            "value": 0.18
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15036
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15037
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15038
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15039
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ICE_ADD_HURT",
+            "value": 0.15
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15040
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ELEMENT_MASTERY",
+            "value": 80
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15041
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_CHARGE_EFFICIENCY",
+            "value": 0.2
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15042
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ELEMENT_MASTERY",
+            "value": 80
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15043
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+            "value": 0.18
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15044
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_CHARGE_EFFICIENCY",
+            "value": 0.2
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15045
+  },
+  {
+    "bonuses": [
+      {
+        "attributeLines": [
+          {
+            "attribute": "FIGHT_PROP_ATTACK_PERCENT",
+            "value": 0.18
+          }
+        ],
+        "pieceCount": 2
+      },
+      {
+        "attributeLines": [],
+        "pieceCount": 4
+      }
+    ],
+    "id": 15046
+  }
+]
