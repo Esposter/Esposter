@@ -345,6 +345,34 @@ export const lightTopic: ReferenceTopic = {
       result:
         "The surface pass holds its unlit colour and structure alone, and stops red on its three structure terms (the bridges 0.0491 against 0.0331, the towers 0.1012 against 0.0257, the walkway 0.0826 against 0.0172). Its four glow pairs compared our emission target with the exports', which the frame does not show, so the light pass reads them against the frame instead; that read has not run, since `passes --pass Light` waits on the surface's gate",
     },
+    {
+      method:
+        "The dusk sun set to the shadow solve's direction (genshin:parity shadows on login-door-recording, the grid's start at f2422d7309) against the one it replaced, then compare login-door-recording at each, and passes --pass Light read on the door session",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The solved direction [0.493, 0.763, 0.418] lies 35.7 degrees from the old one and casts the recording's tower shadows 5.28 px from its edges. The recording's frame falls from 17.22% to 16.88% mean difference (shape 0.356 to 0.368, tone 12.14% to 11.90%, FLIP 0.5942 to 0.5878). The door session's shadow edges stay at 143.28 px: that session is the night, lit by the moon, which no solve sets, so the moon's shadows wait on a shadow solve over the door session",
+    },
+    {
+      method:
+        "calibrate login-door-session --witness login without --write, the solve set beside the night light written, then passes --pass Light's stone colour read on the result",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The re-solve reproduces the written night light to four decimals in its ramp, harmonics and haze colours, residual 0.1751 against the bins' spread 0.3372, so the light's colour, intensity and ambient already sit at their least-squares floor and the stone colour holds at 13.50 ΔE against 2.30. What stays is the form's: the bins at 20 to 40 metres (12.9 to 27.5 ΔE) and the bulk from 0 to 20 metres (3.2 to 15.7 ΔE) hold no colour, intensity or ambient term that moves them, so nothing was written",
+    },
+    {
+      method:
+        "passes --pass Light's glow terms with the door's and the towers' rim strength at none, an eighth, a quarter, a half and the materials' whole, each family's glow colour read by ΔE and its structure against the frame",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The door's glow colour is 25.46 ΔE at the whole strength, 21.76 at a half, 19.86 at an eighth and 19.68 at none, its structure 0.377, 0.376, 0.324 and 0.325. The towers' is 7.03 at the whole, 1.77 at a quarter, 1.42 at an eighth and 1.43 at none, structure 0.559, 0.491, 0.474 and 0.473: a glow whose peak stays under the stone's 0.1 range draws no pixel, so below an eighth the towers' colour reads flat. The eighth is taken for both families as the frame's share, shipped as `GLOW_SCALES` in `fitLoginStone` (door 1.1 to 0.14, towers 0.73 to 0.09), which holds the towers' colour at 1.43 ΔE, inside its gate. The door's colour floor of 19.7 ΔE is its albedo under the glow pixels, the surface pass's, not the glow's. Night session: mean difference 13.26% to 12.69%, FLIP 0.4792 to 0.4657; door recording: 16.88% to 16.84%, FLIP 0.5878 to 0.5886",
+    },
+    {
+      method:
+        "The walkway's and the bridges' glow terms read at their fitted strength, which holds none, against the frame's glow colour (passes --pass Light)",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Both families draw no glow, so no scale reaches them: the walkway's colour stands at 41.01 ΔE and the bridges' at 15.21 ΔE. The walkway's glow was taken out for its near-white middle lane; restoring it at an eighth, as the door and the towers take theirs, is unmeasured and waits on a call, since the paving's glow loops are not in the scene yet",
+    },
   ],
   openQuestions: [
     "Why the game shows the walkway's middle lane with a fraction of Ground02's glow though every input the program reads matches the witness's: a G-buffer variant the dump does not hold, the normal map's decode being the same; the witness still draws it whole, so the light is solved under a glow the frame does not show",
@@ -352,7 +380,7 @@ export const lightTopic: ReferenceTopic = {
     "The night's crowns past 40 metres, darker than the game's under the darkening that holds past 20 metres, and the form the darkening stands in for: the reflection pass's clustered probes or a haze form the scene lacks",
     "The night's far towers below the walkway, hidden in the haze's wall where the game shows them dark: the wall stands for the cloud sea's billows under the near walkway, which no weighing of the haze's one exponential form releases, so the cloud layer drawing the billows comes first and the haze is solved again after it",
     "What tells the day's and the dusk's stone haze from their light: calibrate --haze settles neither, and the stone's albedo varies too little to split a haze that adds from a light that scales",
-    "The dusk sun's direction against its shadows: a tower's shadow falls over the wings in front of the door where the recording's are lit, and the faces' shading cannot settle the direction, the light's binned residual flat round the hand-set one, so the shadows' own edges are the measure left",
+    "The night's moon against the door session's shadows: the dusk sun is set to its shadow solve on the door recording, but the door session is the night, whose moon no solve sets, and its shadow edges read 143.28 px; a shadow solve over the door session is the measure owed, its grid run as a queue item",
     "What the day's and the dusk's falling ramps stand in for: not the sun's direction, and holding them to rise scores the dusk worse, so the highlight, the reflection and the normal maps the solve lacks first",
     "The reflection pass's light probes and cube, set at run time, which the unclamped ramp's lower half stands in for on turned-away faces until they are modelled; the highlight, a dielectric's, waits behind them, and its stone smoothness is to be fitted without _GlossMapScale",
     "How the deferred pass lights shading model 13, the rim glow's pixels, and what the post pass's haze adds after it",
