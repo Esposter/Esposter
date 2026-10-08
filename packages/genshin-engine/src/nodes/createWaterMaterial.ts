@@ -41,12 +41,14 @@ const REFLECTION_STRENGTH = 0.55;
 // Lets the floor show through the shallows, bent by the ripples. Where that depth is small, at every shore, rock or
 // Pillar, animated foam lines gather with no mesh authored. The sun breaks on the ripples into hard glints stepped
 // Out of a narrow highlight, and the sky's colours are reflected toward the horizon. A flow carries the ripples and foam
-// Downstream, so a river's surface reads as moving
+// Downstream, so a river's surface reads as moving, and a river's ribbon passes its bend foam (`createRiverGeometry`),
+// Which gathers foam along a bend's outer bank as a shore does; still water gathers none there
 export const createWaterMaterial = (
   { lightColor, sunDirection }: Pick<LightUniforms, "lightColor" | "sunDirection">,
   { horizonColor, zenithColor }: Pick<SkyUniforms, "horizonColor" | "zenithColor">,
   { deepColor, deepDepth, foamColor, foamDepth, shallowColor }: WaterUniforms,
   { direction, speed }: WaterFlow,
+  bendFoam: Node<"float"> = float(0),
 ): MeshBasicNodeMaterial => {
   const waterMaterial = new MeshBasicNodeMaterial({ side: DoubleSide, transparent: true });
   // Two layers of noise drifting apart, whose slopes, read by finite differences, tilt the surface normal
@@ -96,7 +98,8 @@ export const createWaterMaterial = (
   const foamNoise = mx_fractal_noise_float(vec3(flowedPosition.mul(FOAM_SCALE), time.mul(0.3)), 2)
     .mul(0.5)
     .add(0.5);
-  const foam = smoothstep(0.55, 0.6, foamNoise.add(shore.mul(0.5))).mul(shore);
+  const gathered = shore.max(bendFoam);
+  const foam = smoothstep(0.55, 0.6, foamNoise.add(gathered.mul(0.5))).mul(gathered);
   waterMaterial.colorNode = mix(reflected, foamColor, foam).add(glints);
   return waterMaterial;
 };
