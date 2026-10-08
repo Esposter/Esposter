@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GameText } from "genshin-text";
+import type { GameLanguage, GameText } from "genshin-text";
 
 import { GENSHIN_CHARACTER_PACK_PATH, GENSHIN_REGION_DATA_BASE_URL } from "#shared/services/genshin/constants";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
@@ -14,9 +14,11 @@ interface Props {
   gameText: GameText;
   // Whether something covers the world, which then keeps loading but draws no frames until it is shown
   isPaused?: true;
+  // The reader's game language, whose names the world loads
+  language: GameLanguage;
 }
 
-const { gameText, isPaused } = defineProps<Props>();
+const { gameText, isPaused, language } = defineProps<Props>();
 const emit = defineEmits<{ load: []; ready: [] }>();
 const containerBaseUrl = useContainerBaseUrl();
 // The world's screen with what only the app can hand it: the terrain worker its bundler builds, the URL its server
@@ -34,6 +36,7 @@ onMounted(() => {
     :game-text
     :is-paused
     :is-tuning="IS_DEVELOPMENT || undefined"
+    :language
     :quality-tier="GENSHIN_QUALITY_TIER"
     :region-data-base-url="GENSHIN_REGION_DATA_BASE_URL"
     @quit="navigateTo(RoutePath.Index)"

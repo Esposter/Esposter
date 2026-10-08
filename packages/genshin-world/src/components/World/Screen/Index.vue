@@ -1,20 +1,21 @@
 <script setup lang="ts">
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
+import type { Talk } from "#src/models/dialogue/Talk";
 import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
-import type { Banner } from "#src/models/wish/Banner";
 import type { WorldCameraPose } from "#src/models/world/WorldCameraPose";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext } from "@tresjs/core";
 import type { QualityTier } from "genshin-engine";
-import type { GameText } from "genshin-text";
+import type { GameLanguage, GameText } from "genshin-text";
 
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
+import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
 import HudQuest from "#src/components/Hud/Quest/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
@@ -31,6 +32,7 @@ import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
+import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
@@ -73,6 +75,8 @@ interface Props {
   isPaused?: true;
   // Whether the development tuning panel is shown, which the host decides
   isTuning?: true;
+  // The reader's game language, whose names the world loads
+  language: GameLanguage;
   qualityTier: QualityTier;
   // Where the host serves each region's data, fetched by id as the camera comes within reach
   regionDataBaseUrl: string;
@@ -86,6 +90,7 @@ const {
   heldMinutes,
   isPaused,
   isTuning,
+  language,
   qualityTier,
   regionDataBaseUrl,
 } = defineProps<Props>();
@@ -102,6 +107,8 @@ const input = createInput(window, controller.signal);
 const inputState = input.readInput(0);
 // What is open over the world, one screen at a time, and what it does to the world under it
 const screenKind = ref(ScreenKind.World);
+// The talk a resident has begun, which the talk host runs over the world while the talk screen is open
+const talk = shallowRef<Talk>();
 // The game's stat tables, read as the world starts rather than with the package, which the opening downloads, and the
 // Player's characters made from them and their party: the Traveler alone, as a new player's, on the field. Until the
 // Tables arrive nobody walks the field and the character screen opens as a placeholder, and tables that fail to arrive
@@ -118,18 +125,28 @@ getResultAsync(readStatTables).match(
     console.error(error);
   },
 );
+// The names the stat tables cite, in the reader's language, which the banners are named with once they arrive
+const nameText = shallowRef<Readonly<Record<string, string>>>();
+// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+getResultAsync(() => NameTextLoaderMap[language]()).match(
+  (newNameText) => {
+    nameText.value = newNameText;
+  },
+  (error) => {
+    console.error(error);
+  },
+);
 const party = reactive(createParty([TRAVELER_CHARACTER_ID]));
 // How the character on the field moves, its body type's, once the roster has arrived
 const locomotion = computed(() =>
   statTables.value ? getCharacterLocomotion(getActiveCharacterId(party), statTables.value.characterDataMap) : undefined,
 );
 // The player's bag, wallet, wish counters and characters' copies, holding nothing as a new player's do until the world
-// Gives them something, and the banners the world offers, none until it can name what they draw
+// Gives them something
 const inventory = ref<Inventory>(EMPTY_INVENTORY);
 const wallet = ref<Wallet>(EMPTY_WALLET);
 const wishPityMap = ref(InitialBannerKindWishPityMap);
 const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(new Map());
-const banners: Banner[] = [];
 // The quests in progress, how far each has come, their words and the one navigated to. Nothing starts a quest yet, so
 // The quest screen opens empty
 const quests: Quest[] = [];
@@ -152,6 +169,11 @@ watch(
     if (isPointerReleased) window.document.exitPointerLock();
   },
 );
+// The press that closes a screen is spent with it, so the F, Space or click that ended it never reaches the world as an
+// Interact, a jump or an attack
+watch(screenKind, (newScreenKind) => {
+  if (newScreenKind === ScreenKind.World) input.readInput(0);
+});
 // Left Alt shows the cursor, as the game's Show Cursor does, letting the lock go without opening the Paimon menu
 let isCursorShown = false;
 const showCursor = () => {
@@ -279,14 +301,14 @@ defineExpose({ jumpTo, readCameraPosition });
       />
       <template v-else>
         <TresPerspectiveCamera :far="2000" :fov="45" :look-at="[0, 14, 0]" :position="[62, 26, 58]" />
-        <!-- The character walks the world with the camera behind it, held where it stands under a menu and in photo
-        mode, whose camera flies free from where the follow camera left it -->
+        <!-- The character walks the world with the camera behind it, held under any screen but the world, as a menu,
+        photo mode or a talk holds it, and photo mode's camera flies free from where the follow camera left it -->
         <WorldCharacter
           v-if="!witness && locomotion"
           ref="character"
           :body="characterBody"
           :input-state
-          :is-held="screenBehaviour.isHeld || screenKind === ScreenKind.PhotoMode || undefined"
+          :is-held="screenKind !== ScreenKind.World || undefined"
           :landmark-collider
           :locomotion
           :origin
@@ -379,18 +401,27 @@ defineExpose({ jumpTo, readCameraPosition });
       <template #[ScreenKind.Inventory]>
         <InventoryScreen :game-text :inventory :wallet @close="screenKind = ScreenKind.World" />
       </template>
-      <template #[ScreenKind.Wish]>
+      <template v-if="statTables && nameText" #[ScreenKind.Wish]>
         <WishScreen
           v-model:character-copy-count-map="characterCopyCountMap"
+          v-model:characters="characters"
           v-model:inventory="inventory"
           v-model:pity-map="wishPityMap"
           v-model:wallet="wallet"
-          :banners
           :game-text
+          :name-text
+          :stat-tables
           @close="screenKind = ScreenKind.World"
         />
       </template>
     </MenuScreen>
+    <DialogueTalk
+      v-if="screenKind === ScreenKind.Dialogue && talk"
+      :game-text
+      :talk
+      :text-map="questTextMap"
+      @end="screenKind = ScreenKind.World"
+    />
     <div
       class="teleport-fade"
       :class="{ faded: jumpPose }"

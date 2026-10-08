@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { Character } from "#src/models/character/Character";
+import type { StatTables } from "#src/models/character/StatTables";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
-import type { Banner } from "#src/models/wish/Banner";
 import type { WishItem } from "#src/models/wish/WishItem";
 import type { WishPity } from "#src/models/wish/WishPity";
 import type { WishResultCell } from "genshin-interface";
@@ -9,12 +10,14 @@ import type { GameText } from "genshin-text";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { WishItemKind } from "#src/models/wish/WishItemKind";
+import { createCharacter } from "#src/services/character/createCharacter";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
 import { BannerKindFateMap } from "#src/services/wish/BannerKindFateMap";
 import { BannerKindGameTextKeyMap } from "#src/services/wish/BannerKindGameTextKeyMap";
 import { checkIsWishSetOffered } from "#src/services/wish/checkIsWishSetOffered";
 import { BEGINNERS_WISH_LIMIT, FATE_POINT_LIMIT, TEN_WISH_COUNT } from "#src/services/wish/constants";
+import { createBanners } from "#src/services/wish/createBanners";
 import { getWishCost } from "#src/services/wish/getWishCost";
 import { makeWishes } from "#src/services/wish/makeWishes";
 import { sortWishResults } from "#src/services/wish/sortWishResults";
@@ -22,25 +25,31 @@ import { BannerKind, BannerKinds, GameScreen, ItemCategory, WishScreen } from "g
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
-  // The banners the world offers, one of a kind
-  banners: Banner[];
   // The game's words in the reader's language
   gameText: GameText;
+  // The names the stat tables cite by text id, in the reader's language
+  nameText: Readonly<Record<string, string>>;
+  // The game's stat tables, which the banners' pools are read from
+  statTables: StatTables;
 }
 
 // The copies of each character the player holds, the bag a drawn weapon goes into, each kind's counters and the wallet
 // The Fates are spent from and the returns go into
 const characterCopyCountMap = defineModel<ReadonlyMap<number, number>>("characterCopyCountMap", { required: true });
+// The player's characters, which a character drawn for the first time joins
+const characters = defineModel<Character[]>("characters", { required: true });
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const pityMap = defineModel<Readonly<Record<BannerKind, WishPity>>>("pityMap", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
-const { banners, gameText } = defineProps<Props>();
+const { gameText, nameText, statTables } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
+// The banners the world offers, their pools read from the stat tables and named in the reader's language
+const banners = computed(() => createBanners(statTables, nameText));
 // The banners on offer in the game's order, the beginners' wish gone once its wishes are made
 const bannerKinds = computed(() =>
   BannerKinds.filter(
     (bannerKind) =>
-      banners.some(({ kind }) => kind === bannerKind) &&
+      banners.value.some(({ kind }) => kind === bannerKind) &&
       (bannerKind !== BannerKind.Beginners || pityMap.value[bannerKind].wishCount < BEGINNERS_WISH_LIMIT),
   ),
 );
@@ -72,7 +81,7 @@ const currencies = computed(() =>
   })),
 );
 const isWeaponWish = computed(() => bannerKind.value === BannerKind.WeaponEvent);
-const banner = computed(() => banners.find(({ kind }) => kind === bannerKind.value));
+const banner = computed(() => banners.value.find(({ kind }) => kind === bannerKind.value));
 const toPoolCells = (items: WishItem[], isFeatured: boolean) =>
   items.map(({ id, name, rarity }) => ({ id, isFeatured, name, rarity }));
 // What the open banner can draw, the highest rarity first and its featured items first of each rarity
@@ -110,6 +119,11 @@ const wish = (count: number) => {
         { category: ItemCategory.Weapon, id: item.id, name: item.name, rank: 0, rarity: item.rarity, stackLimit: 1 },
         1,
       ).inventory;
+  // A character drawn for the first time joins the roster in the order it was drawn, a duplicate only counting a copy
+  const newCharacters = [...wishes.heldCountMap.keys()]
+    .filter((id) => !characterCopyCountMap.value.has(id))
+    .map((id) => createCharacter(id, statTables.characterDataMap));
+  if (newCharacters.length > 0) characters.value = [...characters.value, ...newCharacters];
   characterCopyCountMap.value = wishes.heldCountMap;
   inventory.value = nextInventory;
   pityMap.value = { ...pityMap.value, [banner.value.kind]: wishes.pity };
