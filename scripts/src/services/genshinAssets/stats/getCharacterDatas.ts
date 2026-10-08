@@ -7,12 +7,13 @@ import type { CharacterData } from "genshin-world";
 
 import {
   AssociationRegionIdMap,
+  ElementNameSet,
   PLAYABLE_AVATAR_USE_TYPE,
   QualityTypeRarityMap,
 } from "#src/services/genshinAssets/stats/constants";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { toAttributeLines } from "#src/services/genshinAssets/stats/toAttributeLines";
-import { Attribute, characterDataSchema, Element } from "genshin-world";
+import { Attribute, characterDataSchema } from "genshin-world";
 
 // Every playable character as the roster holds it: its name by text id, its element from its burst's energy, its region
 // From its association, its growth, its ascension phases from its promotion table, and what its every level starts with
@@ -31,7 +32,6 @@ export const getCharacterDatas = (notes: string[]): CharacterData[] => {
       avatarAssocType,
     ]),
   );
-  const elements = new Set<string>(Object.values(Element));
   return readExcelTable<ExcelAvatarRow>("AvatarExcelConfigData")
     .filter(({ useType }) => useType === PLAYABLE_AVATAR_USE_TYPE)
     .map((row) => {
@@ -57,7 +57,7 @@ export const getCharacterDatas = (notes: string[]): CharacterData[] => {
           { attribute: Attribute.EnergyRecharge, value: row.chargeEfficiency },
         ],
         bodyType: row.bodyType,
-        element: costElemType && elements.has(costElemType) ? costElemType : undefined,
+        element: costElemType && ElementNameSet.has(costElemType) ? costElemType : undefined,
         growAttributes: row.propGrowCurves.map(({ growCurve, type }) => ({
           attribute: type,
           base: baseMap[type],
