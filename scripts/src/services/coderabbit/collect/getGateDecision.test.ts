@@ -11,6 +11,9 @@ const getCheckStatus = (bucket: string, description: string): CheckStatus => ({
 });
 
 describe(getGateDecision, () => {
+  const headSha = "head";
+  const olderSha = "older";
+
   test.each([
     ["pending", "Review in progress", GateDecisionKind.Exit],
     ["pass", "Review completed", GateDecisionKind.Proceed],
@@ -19,15 +22,39 @@ describe(getGateDecision, () => {
   ])("decides %s / %s as %s", (bucket, description, expected) => {
     expect.hasAssertions();
 
-    const { kind } = getGateDecision(getCheckStatus(bucket, description));
+    const { kind } = getGateDecision(getCheckStatus(bucket, description), headSha, headSha);
 
     expect(kind).toBe(expected);
+  });
+
+  test("proceeds on a skipped incremental pass when the full review read the head", () => {
+    expect.hasAssertions();
+
+    const { kind } = getGateDecision(
+      getCheckStatus("pass", "Review skipped: incremental reviews are disabled"),
+      headSha,
+      headSha,
+    );
+
+    expect(kind).toBe(GateDecisionKind.Proceed);
+  });
+
+  test("fails on a skipped incremental pass when commits landed after the full review", () => {
+    expect.hasAssertions();
+
+    const { kind } = getGateDecision(
+      getCheckStatus("pass", "Review skipped: incremental reviews are disabled"),
+      headSha,
+      olderSha,
+    );
+
+    expect(kind).toBe(GateDecisionKind.Fail);
   });
 
   test("fails when the pull request carries no check", () => {
     expect.hasAssertions();
 
-    const { kind } = getGateDecision(undefined);
+    const { kind } = getGateDecision(undefined, headSha, headSha);
 
     expect(kind).toBe(GateDecisionKind.Fail);
   });

@@ -1,11 +1,14 @@
 import type { WindowStackWalkInput } from "#src/models/coderabbit/collect/WindowStackWalkInput";
 import type { WindowStackWalkResult } from "#src/models/coderabbit/collect/WindowStackWalkResult";
+import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
 import { mergeBottomWindow } from "#src/services/coderabbit/collect/mergeBottomWindow";
 import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
+import { readPullRequestHeadSha } from "#src/services/coderabbit/collect/readPullRequestHeadSha";
 import { settleRateLimit } from "#src/services/coderabbit/collect/settleRateLimit";
+import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -30,7 +33,9 @@ export const walkWindowStack = async ({
 
   for (const [index, window] of stack.entries()) {
     const { number } = window;
-    const gate = getGateDecision(readCheckStatus(number));
+    // The bot's latest submitted review names the commit it read; the head is where the pull request stands now
+    const reviewedSha = readBotEntries<GitHubReview>(`pulls/${number}/reviews`).at(-1)?.commit_id || "";
+    const gate = getGateDecision(readCheckStatus(number), readPullRequestHeadSha(number), reviewedSha);
     if (gate.kind === GateDecisionKind.Proceed && isBottom) {
       // oxlint-disable-next-line no-await-in-loop -- each window is walked after the one below it has merged or stayed put
       const step = await mergeBottomWindow({

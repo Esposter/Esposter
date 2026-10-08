@@ -5,19 +5,35 @@ import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKin
 import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
 import {
   COMPLETED_DESCRIPTION,
+  INCREMENTAL_SKIPPED_DESCRIPTION,
   PASS_BUCKET,
   RATE_LIMITED_DESCRIPTION,
 } from "#src/services/coderabbit/collect/constants";
 
 // A release gets one review, so its status is the whole answer: nothing is pushed to `develop` while the pull
 // Request is open, and the flip to completed arrives as its own status event. No check at all is a person's
-// Problem, where a pending one resolves itself.
-export const getGateDecision = (checkStatus: CheckStatus | undefined): GateDecision => {
+// Problem, where a pending one resolves itself. A skipped incremental pass is the bot declining to review again, so
+// The full review it already completed stands when it read the head; commits that landed after it do not.
+export const getGateDecision = (
+  checkStatus: CheckStatus | undefined,
+  headSha: string,
+  reviewedSha: string,
+): GateDecision => {
   if (!checkStatus) return { kind: GateDecisionKind.Fail, reason: "no CodeRabbit check on the pull request" };
   else if (!checkIsSlotFree(checkStatus)) return { kind: GateDecisionKind.Exit, reason: "the review is running" };
   else if (checkStatus.bucket === PASS_BUCKET && checkStatus.description === COMPLETED_DESCRIPTION)
     return { kind: GateDecisionKind.Proceed, reason: "the review is complete" };
-  else if (checkStatus.bucket === PASS_BUCKET && checkStatus.description === RATE_LIMITED_DESCRIPTION)
+  else if (checkStatus.bucket === PASS_BUCKET && checkStatus.description === INCREMENTAL_SKIPPED_DESCRIPTION) {
+    if (reviewedSha === headSha)
+      return {
+        kind: GateDecisionKind.Proceed,
+        reason: "the full review covers the head; the incremental pass was declined",
+      };
+    return {
+      kind: GateDecisionKind.Fail,
+      reason: "commits landed after its review, and the bot declined an incremental review of them",
+    };
+  } else if (checkStatus.bucket === PASS_BUCKET && checkStatus.description === RATE_LIMITED_DESCRIPTION)
     return { kind: GateDecisionKind.RateLimited, reason: "rate limited — the bot ran nothing" };
   else
     return {
