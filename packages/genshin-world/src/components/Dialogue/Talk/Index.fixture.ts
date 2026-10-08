@@ -59,9 +59,9 @@ const TEXT_MAP: Record<string, string> = {
   "knights-of-favonius":
     "I have something I'd like the Knights of Favonius to do for me, and I want you to pass on my request to the Acting Grand Master.",
   paimon: "Paimon",
+  sara: "Sara",
   "so-it-is-jean": "Oh, so it's Jean you were really hoping to see.",
   "sorry-already-ate": "Sorry, I already ate.",
-  sara: "Sara",
 };
 
 export const props = {
