@@ -48,8 +48,10 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
     wingRightBack: { mesh: "LoginScene_Bridge01_20_Vo", share: [0, 1, 0.8125] },
     wingRightFront: { mesh: "LoginScene_Bridge01_20_Vo", share: [0, 1, 0.351] },
   },
-  // Mondstadt's landmarks name its capital's meshes, which the extraction has not yet given: the six corners its reference
-  // Names (ParityReferenceMap's mondstadt-city-location) are the towers' and the gate tower's parapets
+  // Mondstadt's six landmarks (ParityReferenceMap's mondstadt-city-location: the towers' and the gate tower's parapets)
+  // Name no mesh, so all six are dropped: the extraction holds the city's ruin blocks, flags and steps, none named a
+  // Tower, gate, wall or plinth, and its wall columns stand 412 metres or more off the city. Its layout dumps name a
+  // Stages_Build_BeaconTower01 that no OBJ exports, so a re-extraction is the way to name them
   [DerivedAssetComponent.Mondstadt]: {},
   // The People of the Springs' landmarks (ParityReferenceMap's people-of-the-springs-location) name its capital's rigid
   // Meshes and their shares, which the extraction has not yet given
