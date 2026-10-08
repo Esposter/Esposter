@@ -1,5 +1,7 @@
 import type { CharacterData, WeaponData } from "genshin-world";
 
+import { ENEMY_KINDS_PATH } from "#src/services/genshinAssets/enemies/constants";
+import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { STATS_GENERATED_DIRECTORY } from "#src/services/genshinAssets/stats/constants";
 import { NAME_TEXT_DIRECTORY } from "#src/services/genshinText/constants";
 import { getPlainGameText } from "#src/services/genshinText/getPlainGameText";
@@ -9,14 +11,18 @@ import { GameLanguage, GameLanguages } from "genshin-text";
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-// Every name the world's stat tables cite by text id, each character's and each weapon's, as `genshin:assets stats`
-// Last wrote them, into the world's own chunk per language; a name a language lacks takes English's and says so
+// Every name the world's stat tables and enemy kinds cite by text id, each character's, each weapon's and each enemy
+// Kind's, as `genshin:assets stats` and `genshin:assets enemies` last wrote them, into the world's own chunk per language;
+// a name a language lacks takes English's and says so
 export const writeNames = (): string[] => {
   const notes: string[] = [];
   const datas = ["characters.json", "weapons.json"].flatMap((fileName) =>
     parseMachineJson<(CharacterData | WeaponData)[]>(readFileSync(join(STATS_GENERATED_DIRECTORY, fileName), "utf8")),
   );
-  const textIds = [...new Set(datas.map(({ nameTextId }) => nameTextId))].toSorted();
+  const enemyKinds = parseMachineJson<{ nameTextId: string }[]>(
+    readFileSync(join(WORLD_DATA_DIRECTORY, ENEMY_KINDS_PATH), "utf8"),
+  );
+  const textIds = [...new Set([...datas, ...enemyKinds].map(({ nameTextId }) => nameTextId))].toSorted();
   const englishTextMap = readTextMap(GameLanguage.English);
   // Every language is read before the last run's chunks are removed, so a text map that fails to read leaves them
   const languageNameTexts = GameLanguages.map((language) => {
