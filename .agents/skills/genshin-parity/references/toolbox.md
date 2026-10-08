@@ -12,6 +12,7 @@ Read before any pass or round on a Genshin screen or scene, and whenever its loo
 | A colour, a size, a place     | `measure`, `zoom`, `polar`                              |
 | A timing                      | `frames`, `luma`                                        |
 | Whether the piece matches     | `compare` over the reference's own frame (`isBackdrop`) |
+| The game's words              | `genshin:text decode`, the install's text maps          |
 
 ## A scene, pass by pass
 

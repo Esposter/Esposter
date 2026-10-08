@@ -11,7 +11,8 @@ The game's quests are its story: the Archon quests of the main story, a characte
 
 ```mermaid
 flowchart TD
-  DUMP["The community's dump, outside the repository:<br/>its tables, quest files and text maps"] --> READ["genshin:text quests: the quests QuestId names"]
+  DUMP["The community's dump, outside the repository:<br/>its tables and quest files"] --> READ["genshin:text quests: the quests QuestId names"]
+  DECODE["The text maps, decoded from the installed client"] --> READ
   READ --> FILES["generated/quests: one file a quest, checked by its schema"]
   READ --> WORDS["generated/questText: the quests' words, one chunk a language"]
   DOING["The Traveler's doing: a talk ended, a place reached,<br/>an item, an enemy, a thing"] --> ADVANCE["advanceQuest"]
@@ -89,4 +90,4 @@ The dump scrambles the binary output's field names each patch, so the reader fin
 - [Quest/Menu](https://genshin-impact.fandom.com/wiki/Quest/Menu), Genshin Impact Wiki: the quest screen's list grouped by Archon quests, story quests, commissions and world quests, its tabs, and its quest information with its Navigate button.
 - [Event Quest](https://genshin-impact.fandom.com/wiki/Event_Quest), Genshin Impact Wiki: most event quests are world quests, and a flagship event's are story quests.
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: J for the quest menu, V for quest navigation, and holding V to show the step's objective.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the quest table's types and words, each quest's binary output of steps and conditions, and the dialog and character tables a talk is read from.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the quest table's types and words, each quest's binary output of steps and conditions, and the dialog and character tables a talk is read from.
