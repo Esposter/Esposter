@@ -39,6 +39,7 @@ import {
   NEAR_GRASS_RING,
   RIM_STRENGTH,
   SHADOW_MAX_FAR,
+  STONE_COLOR,
   SUN_DISTANCE,
   SUN_TILT,
   UNDERWATER_FOG_COLOR,
@@ -59,6 +60,7 @@ import {
   WINDRISE_START_MINUTES,
   WINDRISE_TERRAIN_OPTIONS,
 } from "#src/services/windrise/constants";
+import { createWindrisePavingGeometry } from "#src/services/windrise/createWindrisePavingGeometry";
 import { LandmarkKindWindrisePartFamilyMap } from "#src/services/windrise/LandmarkKindWindrisePartFamilyMap";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { whenever } from "@vueuse/core";
@@ -72,6 +74,7 @@ import {
   createSkyUniforms,
   createSunLight,
   createTerrainSelection,
+  createToonMaterial,
   createWaterUniforms,
   createWindUniforms,
   QualityTierSettingsMap,
@@ -145,6 +148,9 @@ const hiddenLandmarkKinds = computed(() => [
 const rampTexture = createRampTexture(WINDRISE_RAMP_OPTIONS);
 const lightUniforms = createLightUniforms();
 lightUniforms.rimStrength.value = RIM_STRENGTH;
+// The paving stones round the statue, cut from the stone the statue is made of
+const pavingGeometry = createWindrisePavingGeometry();
+const pavingMaterial = createToonMaterial({ color: STONE_COLOR, lightUniforms, rampTexture });
 
 const windUniforms = createWindUniforms();
 windUniforms.direction.value.copy(WIND_DIRECTION);
@@ -252,6 +258,8 @@ if (isTuning)
 defineExpose({ regionDataMap });
 onUnmounted(() => {
   rampTexture.dispose();
+  pavingGeometry.dispose();
+  pavingMaterial.dispose();
   gradeLutTexture.dispose();
   groundCapture.renderTarget.dispose();
   groundCapture.material.dispose();
@@ -298,6 +306,13 @@ onUnmounted(() => {
         :water-uniforms
         :wind-uniforms
       />
+    </TresGroup>
+    <!-- Marked as the paving family alone, so a witness render draws ours of the stones round the statue in place of the exports' -->
+    <TresGroup
+      :visible="checkIsOwnFamilyDrawn(WindrisePartFamily.Paving)"
+      :user-data="{ [SCENE_FAMILY_KEY]: WindrisePartFamily.Paving }"
+    >
+      <TresMesh :geometry="pavingGeometry" :material="pavingMaterial" cast-shadow receive-shadow />
     </TresGroup>
     <!-- Ahead of the water, whose haze replaces the weather's under its surface -->
     <WorldWeather
