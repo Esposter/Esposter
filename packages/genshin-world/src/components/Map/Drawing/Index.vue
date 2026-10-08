@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { Landmark } from "#src/models/world/Landmark";
 
+import { computeFilledAreaIds } from "#src/services/map/computeFilledAreaIds";
 import { catalogue } from "#src/services/world/catalogue";
 
 interface Props {
+  // The landmarks the player has unlocked, which mark the map and fill in their areas
   landmarks: Landmark[];
   // How far a landmark's mark reaches from its point, in metres, so a mark is drawn one size at any view's scale
   markRadius: number;
@@ -11,11 +13,15 @@ interface Props {
 
 const { landmarks, markRadius } = defineProps<Props>();
 const emit = defineEmits<{ select: [landmark: Landmark] }>();
-const areaOutlines = catalogue.regions.flatMap(({ areas }) =>
-  areas
-    .filter(({ outline }) => outline.length > 0)
-    .map(({ id, outline }) => ({ id, points: outline.map(({ x, z }) => `${x},${z}`).join(" ") })),
-);
+// Only a filled area's outline is drawn: the rest of the map is blank until a statue of it is resonated with
+const areaOutlines = computed(() => {
+  const filledAreaIds = computeFilledAreaIds(landmarks);
+  return catalogue.regions.flatMap(({ areas }) =>
+    areas
+      .filter(({ id, outline }) => outline.length > 0 && filledAreaIds.has(id))
+      .map(({ id, outline }) => ({ id, points: outline.map(({ x, z }) => `${x},${z}`).join(" ") })),
+  );
+});
 </script>
 
 <template>

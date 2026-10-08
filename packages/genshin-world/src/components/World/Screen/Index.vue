@@ -268,8 +268,14 @@ let placedDropCount = 0;
 const windrise = useTemplateRef<InstanceType<typeof WorldWindrise>>("windrise");
 // Each talk the quests in progress hold by its id, which a resident's talk is begun from
 const talkMap = new Map(quests.flatMap(({ talks }) => talks.map((questTalk) => [questTalk.id, questTalk] as const)));
-// What the character can act on in the world: each drop, named by its item, and each resident of the regions in reach
-// Whose talk the world holds, named by its text. Each stands on the ground beneath its point
+// Every landmark a jump lands at, and the ones the player has unlocked: the map, the minimap, the jump list and a revive
+// Offer only those. A new player has unlocked none, and each is unlocked by resonating with it
+const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl);
+const unlockedLandmarkIds = shallowRef<ReadonlySet<string>>(new Set());
+const unlockedLandmarks = computed(() => jumpLandmarks.value.filter(({ id }) => unlockedLandmarkIds.value.has(id)));
+// What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
+// Whose talk the world holds, named by its text, and each jump landmark still locked, which it resonates with. Each
+// Stands on the ground beneath its point
 const interactables = computed<Interactable[]>(() => {
   const drops = worldDrops.value.map(({ id, itemId, position: { x, z } }) => ({
     id,
@@ -286,7 +292,16 @@ const interactables = computed<Interactable[]>(() => {
       name: questTextMap[nameTextId] ?? "",
       position: { x, y: getWorldHeight(x, z), z },
     }));
-  return [...drops, ...residents];
+  // A jump landmark is a Statue of The Seven until waypoints join the jumps, so each locked one is named by the statue
+  const statues = jumpLandmarks.value
+    .filter(({ id }) => !unlockedLandmarkIds.value.has(id))
+    .map(({ id, position: { x, z } }) => ({
+      id,
+      kind: InteractionKind.Activate,
+      name: gameText[GameTextKey.StatueOfTheSeven],
+      position: { x, y: getWorldHeight(x, z), z },
+    }));
+  return [...drops, ...residents, ...statues];
 });
 const { interactionPrompts, readInteraction } = useInteraction(() => interactables.value, characterBody);
 // A defeated enemy's drops lie where it fell, numbered on from the drops placed before them
@@ -306,8 +321,6 @@ const pickUpWorldDrop = (worldDrop: WorldDrop) => {
       ? worldDrops.value.map((drop) => (drop === worldDrop ? { ...drop, count: pickUp.overflow } : drop))
       : worldDrops.value.filter((drop) => drop !== worldDrop);
 };
-// Every landmark a jump lands at, which the map and the minimap draw
-const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl);
 const character = useTemplateRef("character");
 // Whether the backslash has hidden the HUD, as the game's Hide UI does, apart from the screens that hide it
 const isHudHidden = ref(false);
@@ -339,12 +352,12 @@ const jumpPose = shallowRef<WorldJumpPose>();
 const jumpTo = (pose: WorldJumpPose) => {
   jumpPose.value = pose;
 };
-// A team that has all fallen revives at the share the game brings it back with, and is jumped to the landmark nearest
-// The body, or left where it fell when no landmark is loaded
+// A team that has all fallen revives at the share the game brings it back with, and is jumped to the unlocked landmark
+// Nearest the body, or left where it fell when none is unlocked
 const respawnParty = () => {
   if (!checkIsPartyDown(party)) return;
   reviveParty(party);
-  const nearestLandmark = findNearestLandmark(jumpLandmarks.value, characterBody.position);
+  const nearestLandmark = findNearestLandmark(unlockedLandmarks.value, characterBody.position);
   if (nearestLandmark) jumpTo(computeJumpPose(nearestLandmark));
 };
 // An enemy's strike lands on the character on the field, and a team it fells respawns
@@ -414,6 +427,8 @@ defineExpose({ jumpTo, readCameraPosition });
             const interactable = readInteraction(inputState, context.delta);
             const worldDrop = worldDrops.find(({ id }) => id === interactable?.id);
             if (interactable?.kind === InteractionKind.PickUp && worldDrop) pickUpWorldDrop(worldDrop);
+            else if (interactable?.kind === InteractionKind.Activate)
+              unlockedLandmarkIds.value = new Set([...unlockedLandmarkIds.value, interactable.id]);
             else if (interactable?.kind === InteractionKind.Talk) {
               talk = talkMap.get(interactable.id);
               screenKind = ScreenKind.Dialogue;
@@ -486,7 +501,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :frame="hudFrame"
       :game-text
       :input
-      :landmarks="jumpLandmarks"
+      :landmarks="unlockedLandmarks"
       :member="hudMember"
       :name-text-map="nameText"
       :party
@@ -505,7 +520,7 @@ defineExpose({ jumpTo, readCameraPosition });
         <MapOverlay
           :camera="mapCamera"
           :game-text
-          :landmarks="jumpLandmarks"
+          :landmarks="unlockedLandmarks"
           :wallet
           @close="screenKind = ScreenKind.World"
           @jump="
