@@ -15,6 +15,7 @@ import HudScreen from "#src/components/Hud/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MenuScreen from "#src/components/Menu/Screen/Index.vue";
 import QuestScreen from "#src/components/Quest/Screen/Index.vue";
+import WorldCharacter from "#src/components/World/Character/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
@@ -34,12 +35,13 @@ import { useEventListener, useRafFn } from "@vueuse/core";
 import {
   createGenshinRenderer,
   createInput,
+  createLandmarkCollider,
   GENSHIN_TONE_MAPPING,
   InputAction,
   QualityTierSettingsMap,
   STAMINA_MAX,
 } from "genshin-engine";
-import { Euler, MathUtils, PCFShadowMap, Vector3 } from "three";
+import { Euler, Group, MathUtils, PCFShadowMap, Vector3 } from "three";
 import { unref } from "vue";
 
 interface Props {
@@ -102,24 +104,35 @@ watch(
     if (isPointerReleased) window.document.exitPointerLock();
   },
 );
+// Left Alt shows the cursor, as the game's Show Cursor does, letting the lock go without opening the Paimon menu
+let isCursorShown = false;
+const showCursor = () => {
+  isCursorShown = true;
+  window.document.exitPointerLock();
+};
 // The browser keeps Escape for itself while the pointer is locked, letting the lock go in place of passing the key on,
-// So a lock lost with the world in play opens the Paimon menu as Escape does
+// So a lock lost with the world in play opens the Paimon menu as Escape does, unless it was let go to show the cursor
 useEventListener(
   () => window.document,
   "pointerlockchange",
   () => {
-    if (window.document.pointerLockElement === null && screenKind.value === ScreenKind.World)
-      screenKind.value = ScreenKind.PaimonMenu;
+    if (window.document.pointerLockElement !== null) isCursorShown = false;
+    else if (screenKind.value === ScreenKind.World && !isCursorShown) screenKind.value = ScreenKind.PaimonMenu;
   },
 );
 onUnmounted(() => {
   controller.abort();
 });
-// The world's origin, owned here so the free camera reads the ground through it before the floating origin shifts it
+// The world's origin, owned here so the cameras read the ground through it before the floating origin shifts it
 const origin = new Vector3();
+// What the character's body and the camera collide with, given the landmarks as they arrive
+const landmarkCollider = createLandmarkCollider();
+// What the character on the field is drawn on, which the controller moves and the scene places among everything in the
+// World
+const characterBody = new Group();
 // Every landmark a jump lands at, which the map and the minimap draw
 const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl);
-const freeCamera = useTemplateRef("freeCamera");
+const character = useTemplateRef("character");
 // Whether the backslash has hidden the HUD, as the game's Hide UI does, apart from the screens that hide it
 const isHudHidden = ref(false);
 // The camera's ground point and yaw in world metres for the map and the minimap, read each frame and handed on only
@@ -135,9 +148,8 @@ useRafFn(() => {
   if (x !== mapCamera.value.x || yaw !== mapCamera.value.yaw || z !== mapCamera.value.z)
     mapCamera.value = { x, yaw, z };
 });
-// A jump's pose while the screen is faded for it: set, the screen fades to black, and once that fade ends the camera is
-// Placed and the pose let go, so the screen fades back in. Once a character walks, its body is placed in the free
-// Camera's stead
+// A jump's pose while the screen is faded for it: set, the screen fades to black, and once that fade ends the character
+// Is placed and the pose let go, so the screen fades back in
 const jumpPose = shallowRef<WorldJumpPose>();
 const jumpTo = (pose: WorldJumpPose) => {
   jumpPose.value = pose;
@@ -184,6 +196,7 @@ defineExpose({ jumpTo, readCameraPosition });
           if (!isPaused) screenKind = getNextScreenKind(screenKind, inputState.pressedActions);
           if (!isPaused && screenKind === ScreenKind.World && inputState.pressedActions.has(InputAction.HideInterface))
             isHudHidden = !isHudHidden;
+          if (inputState.pressedActions.has(InputAction.ShowCursor)) showCursor();
           const partyMemberIndex = PARTY_MEMBER_INPUT_ACTIONS.findIndex((action) =>
             inputState.pressedActions.has(action),
           );
@@ -202,20 +215,34 @@ defineExpose({ jumpTo, readCameraPosition });
       />
       <template v-else>
         <TresPerspectiveCamera :far="2000" :fov="45" :look-at="[0, 14, 0]" :position="[62, 26, 58]" />
-        <WorldFreeCamera
+        <!-- The character walks the world with the camera behind it, held where it stands under a menu and in photo
+        mode, whose camera flies free from where the follow camera left it -->
+        <WorldCharacter
           v-if="!witness"
-          ref="freeCamera"
+          ref="character"
+          :body="characterBody"
+          :character-id="getActiveCharacterId(party)"
+          :input-state
+          :is-held="screenBehaviour.isHeld || screenKind === ScreenKind.PhotoMode || undefined"
+          :landmark-collider
+          :origin
+        />
+        <WorldFreeCamera
+          v-if="!witness && screenKind === ScreenKind.PhotoMode"
           :input-state
           :is-held="screenBehaviour.isHeld || undefined"
           :origin
         />
       </template>
       <WorldWindrise
+        :character-body="cameraPose || witness ? undefined : characterBody"
+        :character-id="getActiveCharacterId(party)"
         :character-pack-base-url
         :create-terrain-worker
         :held-minutes
         :is-held="screenBehaviour.isHeld || undefined"
         :is-tuning="Boolean(isTuning)"
+        :landmark-collider
         :origin
         :quality-tier
         :region-data-base-url
@@ -277,7 +304,7 @@ defineExpose({ jumpTo, readCameraPosition });
       @transitionend="
         () => {
           if (!jumpPose) return;
-          freeCamera?.place(jumpPose);
+          character?.place(jumpPose);
           jumpPose = undefined;
         }
       "

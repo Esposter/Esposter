@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { QualityTier } from "genshin-engine";
-import type { Vector3 } from "three";
+import type { LandmarkCollider, QualityTier } from "genshin-engine";
+import type { Object3D, Vector3 } from "three";
 
 import CharacterModel from "#src/components/Character/Model/Index.vue";
+import WorldCharacterPlaceholder from "#src/components/World/CharacterPlaceholder/Index.vue";
 import WorldEnemies from "#src/components/World/Enemies/Index.vue";
 import WorldGrass from "#src/components/World/Grass/Index.vue";
 import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
@@ -18,7 +19,6 @@ import { useSky } from "#src/composables/useSky";
 import water from "#src/data/windrise/water.json";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import {
@@ -50,7 +50,6 @@ import {
   WINDRISE_RAMP_OPTIONS,
   WINDRISE_SKY_KEYFRAMES,
   WINDRISE_START_MINUTES,
-  WINDRISE_START_POINT,
   WINDRISE_TERRAIN_OPTIONS,
 } from "#src/services/windrise/constants";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
@@ -72,7 +71,12 @@ import {
 import { HemisphereLight } from "three";
 
 interface Props {
-  // Where the host serves the characters' model packs, without which no character is drawn
+  // What the character is drawn on, which the screen's controller moves in the world's own coordinates, so it is placed
+  // Among everything in the world
+  characterBody?: Object3D;
+  // The character on the field, drawn on the body from its pack, or as its body's capsule where no pack is served
+  characterId: number;
+  // Where the host serves the characters' model packs, without which the character is drawn as its body's capsule
   characterPackBaseUrl?: string;
   createTerrainWorker: () => Worker;
   // The game's minute of the day the clock is held at, in place of its running from the region's start
@@ -81,6 +85,8 @@ interface Props {
   isHeld?: true;
   // Whether the development tuning panel is shown, which the app decides
   isTuning: boolean;
+  // What the character's body and the camera collide with, which the landmarks are given to as they arrive
+  landmarkCollider: LandmarkCollider;
   // The world coordinate the scene's origin stands on, which the screen's free camera reads the ground through
   origin: Vector3;
   qualityTier: QualityTier;
@@ -89,16 +95,18 @@ interface Props {
 }
 
 const {
+  characterBody,
+  characterId,
   characterPackBaseUrl,
   createTerrainWorker,
   heldMinutes,
   isHeld,
   isTuning,
+  landmarkCollider,
   origin,
   qualityTier,
   regionDataBaseUrl,
 } = defineProps<Props>();
-const characterGroundHeight = getWorldHeight(WINDRISE_START_POINT.x, WINDRISE_START_POINT.z);
 const emit = defineEmits<{ ready: [] }>();
 // The witness render's parts, drawn in place of ours of each family it names when the parity page provides them, beside
 // Ours rather than in the floating origin's group, since the page's tools find the camera among their siblings and stay
@@ -238,6 +246,7 @@ onUnmounted(() => {
         :ramp-texture
         :terrain-options="WINDRISE_TERRAIN_OPTIONS"
         :water-uniforms
+        :wind-uniforms
         @ready="isTerrainSettled = true"
       />
       <WorldGrass
@@ -271,15 +280,27 @@ onUnmounted(() => {
       :wind-uniforms
     />
     <WorldWater :fog-uniforms :light-uniforms :origin :sky-uniforms :water-uniforms />
-    <WorldLandmarks :hidden-kinds="hiddenLandmarkKinds" :light-uniforms :ramp-texture :region-data-map :wind-uniforms />
+    <WorldLandmarks
+      :hidden-kinds="hiddenLandmarkKinds"
+      :landmark-collider
+      :light-uniforms
+      :ramp-texture
+      :region-data-map
+      :wind-uniforms
+    />
     <!-- Enemies wander where the references show none, so a witness render, judged against them, draws none -->
     <WorldEnemies v-if="!witness" :is-held :light-uniforms :origin :ramp-texture :region-data-map />
-    <!-- The Traveler, whom the world plays, where it starts until the controller's body holds it, never in a witness -->
-    <TresGroup
-      v-if="characterPackBaseUrl && !witness"
-      :position="[WINDRISE_START_POINT.x, characterGroundHeight, WINDRISE_START_POINT.z]"
-    >
-      <CharacterModel :character-id="TRAVELER_CHARACTER_ID" :character-pack-base-url :light-uniforms :ramp-texture />
-    </TresGroup>
+    <!-- The character on the field, on the controller's body -->
+    <primitive v-if="characterBody" :object="characterBody">
+      <CharacterModel
+        v-if="characterPackBaseUrl"
+        :key="characterId"
+        :character-id
+        :character-pack-base-url
+        :light-uniforms
+        :ramp-texture
+      />
+      <WorldCharacterPlaceholder v-else :character-id :light-uniforms :ramp-texture />
+    </primitive>
   </TresGroup>
 </template>

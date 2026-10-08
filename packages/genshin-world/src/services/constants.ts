@@ -31,5 +31,11 @@ export const TUNING_TINT_CHANNELS = [
   { key: "1", name: "green" },
   { key: "2", name: "blue" },
 ] as const;
-// The free camera moves in fixed steps of a sixtieth of a second, so its motion is the same at any frame rate
-export const FREE_CAMERA_STEP_SECONDS = 1 / 60;
+// The character's body and the free camera move in fixed steps of a sixtieth of a second, so a motion is the same at any
+// Frame rate
+export const FIXED_STEP_SECONDS = 1 / 60;
+// The frame priority what moves the camera runs at, ahead of the floating origin's shift at TresJS's default of none,
+// Whatever order it mounts in, so the shift reads where the camera now stands
+export const CAMERA_FRAME_PRIORITY = -1;
+// The colour the capsule a character's body is drawn as where no model stands on it, a pale stone the eye finds
+export const CHARACTER_PLACEHOLDER_COLOR = 0xe8e2d4;
