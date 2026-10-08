@@ -5,7 +5,7 @@ import type { RidgeFeature } from "#src/models/terrain/RidgeFeature";
 const measurement = new Float64Array(2);
 
 // Measures a point against a segment into the shared buffer: its signed distance across the segment's line, positive to
-// the left of its direction, and its distance beyond the segment's ends along the line, zero within them
+// The left of its direction, and its distance beyond the segment's ends along the line, zero within them
 export const measureSegment = (
   { endX, endZ, startX, startZ }: CliffFeature | RidgeFeature,
   x: number,

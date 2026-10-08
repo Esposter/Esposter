@@ -1,7 +1,7 @@
 import type { TerrainFeatureKind } from "#src/models/terrain/TerrainFeatureKind";
 
 // A cliff band along a segment: a terrace raised by its height up the side of the segment's line its left normal points
-// to, out to its width across the line, blended in and out across its falloff, and faded past the segment's ends by it
+// To, out to its width across the line, blended in and out across its falloff, and faded past the segment's ends by it
 export interface CliffFeature {
   endX: number;
   endZ: number;

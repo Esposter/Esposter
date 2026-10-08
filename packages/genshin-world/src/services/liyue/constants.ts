@@ -1,7 +1,7 @@
 import type { LatheSection } from "genshin-engine";
 
 // Liyue's palette in sRGB, the hues the game's Liyue reads as: ochre and grey rock, jade-green water, golden ginkgo and
-// autumn maples, and the red lacquer and gold of its architecture
+// Autumn maples, and the red lacquer and gold of its architecture
 export const LIYUE_OCHRE_ROCK_COLOR = 0xb8925a;
 export const LIYUE_GREY_ROCK_COLOR = 0x8f8a80;
 export const LIYUE_JADE_WATER_COLOR = 0x5fae97;

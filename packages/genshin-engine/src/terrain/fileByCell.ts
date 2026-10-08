@@ -6,7 +6,7 @@ const NO_ITEMS: never[] = [];
 
 const toCellKey = (column: number, row: number): string => `${column},${row}`;
 // Files each item under every cell its bounds cover, and returns the items filed under the cell a point stands in, so
-// a point reads one cell's list rather than every item
+// A point reads one cell's list rather than every item
 export const fileByCell = <T>(
   items: readonly T[],
   getBounds: (item: T) => TerrainBounds,
@@ -22,5 +22,6 @@ export const fileByCell = <T>(
         else cellItemsMap.set(key, [item]);
       }
   }
-  return (x, z) => cellItemsMap.get(toCellKey(Math.floor(x / TERRAIN_CELL_SIZE), Math.floor(z / TERRAIN_CELL_SIZE))) ?? NO_ITEMS;
+  return (x, z) =>
+    cellItemsMap.get(toCellKey(Math.floor(x / TERRAIN_CELL_SIZE), Math.floor(z / TERRAIN_CELL_SIZE))) ?? NO_ITEMS;
 };

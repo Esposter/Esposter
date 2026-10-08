@@ -7,7 +7,7 @@ import { CylinderGeometry, Quaternion, Vector3 } from "three";
 const PIPE_RADIAL_SEGMENTS = 8;
 const UP = new Vector3(0, 1, 0);
 // Pipework as one cylinder of the given radius between each run's two ends, every cylinder standing on its run, merged
-// into one geometry
+// Into one geometry
 export const createPipeworkGeometry = (runs: PipeRun[], radius: number): BufferGeometry => {
   const direction = new Vector3();
   const middle = new Vector3();

@@ -24,8 +24,10 @@ export const createRainforestCityGeometry = ({
   for (let tier = 0; tier < tierCount; tier++) {
     const tierRadius = baseRadius - tier * radiusStep;
     const walkwayRadius = tierRadius + walkwayOverhang;
-    sections.push({ bottomRadius: tierRadius, height: tierHeight, topRadius: tierRadius });
-    sections.push({ bottomRadius: walkwayRadius, height: walkwayHeight, topRadius: walkwayRadius });
+    sections.push(
+      { bottomRadius: tierRadius, height: tierHeight, topRadius: tierRadius },
+      { bottomRadius: walkwayRadius, height: walkwayHeight, topRadius: walkwayRadius },
+    );
   }
   const domeStepHeight = domeHeight / DOME_STEP_COUNT;
   const getDomeRingRadius = (step: number): number => domeRadius * Math.sqrt(1 - (step / DOME_STEP_COUNT) ** 2);

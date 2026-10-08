@@ -44,7 +44,7 @@ import { createBoxesGeometry, createLatheStackGeometry, mergeGeometryParts } fro
 import { CylinderGeometry, TorusGeometry } from "three";
 
 // A four-sided frustum standing on the origin's plane at the given height, its base the given half sizes and its top
-// that share of them, its sides flat and its corners on the diagonals
+// That share of them, its sides flat and its corners on the diagonals
 const createFrustumGeometry = (
   baseHalfWidth: number,
   baseHalfDepth: number,
@@ -58,9 +58,9 @@ const createFrustumGeometry = (
     .translate(0, baseY + height / 2, 0);
 
 // A Fontaine building as its stone, iron, gold, slate and awning, one geometry each, from its bays, depth and storeys:
-// a solid stone block of arched ground floor and storeys, each storey capped by a gold cornice, every upper bay with a
-// balcony of iron rails and a flower box, the mansard roof of two slopes with a dormer in each bay, an awning over each
-// arch, and a lamp post either side of the front
+// A solid stone block of arched ground floor and storeys, each storey capped by a gold cornice, every upper bay with a
+// Balcony of iron rails and a flower box, the mansard roof of two slopes with a dormer in each bay, an awning over each
+// Arch, and a lamp post either side of the front
 export const createFontaineBuildingGeometries = ({
   bayCount,
   bayWidth,

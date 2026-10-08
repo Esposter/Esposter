@@ -5,7 +5,7 @@ import { mergeGeometryParts } from "genshin-engine";
 import { BoxGeometry } from "three";
 
 // A ring of standing stones, each turned so its thickness lies across the radius, merged into one geometry standing on
-// the origin's ground plane
+// The origin's ground plane
 export const createStoneCircleGeometry = ({
   pillarCount,
   pillarHeight,

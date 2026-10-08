@@ -3,7 +3,7 @@ import type { InazumaBuildingOptions } from "#src/models/inazuma/InazumaBuilding
 
 import { createInazumaRoofGeometry } from "#src/services/inazuma/createInazumaRoofGeometry";
 import { createBoxesGeometry, mergeGeometryParts } from "genshin-engine";
-import { BufferGeometry } from "three";
+import type { BufferGeometry } from "three";
 
 const POST_SIZE = 0.3;
 const BEAM_SIZE = 0.2;

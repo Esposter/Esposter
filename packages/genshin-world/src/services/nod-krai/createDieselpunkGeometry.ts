@@ -6,7 +6,7 @@ import { createBoxesGeometry, createLatheStackGeometry, mergeGeometryParts } fro
 
 const SMOKESTACK_RADIAL_SEGMENTS = 12;
 // A dieselpunk structure as one geometry for one material: its boxes of sheds, plates and cranes, its pipework and its
-// smokestacks. Every part is indexed, so the parts merge; a faceted stack would not
+// Smokestacks. Every part is indexed, so the parts merge; a faceted stack would not
 export const createDieselpunkGeometry = ({
   boxes,
   pipeRadius,
