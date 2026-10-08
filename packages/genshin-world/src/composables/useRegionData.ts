@@ -1,10 +1,10 @@
 import type { RegionData } from "#src/models/world/RegionData";
 import type { Vector3 } from "three";
 
-import { regionDataSchema } from "#src/models/world/RegionData";
-import { REGION_FETCH_TIMEOUT_MS, REGION_REACH, REGION_RECHECK_DISTANCE } from "#src/services/constants";
+import { REGION_REACH, REGION_RECHECK_DISTANCE } from "#src/services/constants";
 import { catalogue } from "#src/services/world/catalogue";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { readRegionData } from "#src/services/world/readRegionData";
+import { getResultAsync } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
 import { computeOutlineDistance } from "genshin-engine";
 
@@ -47,15 +47,7 @@ export const useRegionData = (origin: Vector3, regionDataBaseUrl: string) => {
       if (regionDataMap.has(id) || pendingRegionIds.has(id)) continue;
       pendingRegionIds.add(id);
       // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and a frame has nothing to await it
-      getResultAsync(async () => {
-        const url = `/${regionDataBaseUrl}/${id}.json`;
-        const response = await fetch(url, { signal: AbortSignal.timeout(REGION_FETCH_TIMEOUT_MS) });
-        if (!response.ok)
-          throw new InvalidOperationError(Operation.Read, url, `HTTP ${response.status} ${response.statusText}`);
-        // A server falling back to a page for a missing file answers 200 with HTML, which fails here or at the schema
-        const regionJson: unknown = await response.json();
-        return regionDataSchema.parse(regionJson);
-      }).match(
+      getResultAsync(() => readRegionData(regionDataBaseUrl, id)).match(
         (regionData) => {
           pendingRegionIds.delete(id);
           // A region that left reach while it was fetching is not kept
