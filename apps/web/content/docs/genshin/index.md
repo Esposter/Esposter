@@ -78,6 +78,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Character screen](/docs/genshin/character-screen)         | the C screen's frame, its six tabs in the game's words, and the Attributes tab's level and attributes                                                |
 | [Party](/docs/genshin/party)                               | the teams, the one deployed and the member on the field, switched on 1 to 4 past the one second cooldown, each with its own HP, energy and cooldowns |
 | [Interaction](/docs/genshin/interaction)                   | the F prompts over the world: the drops and talks in reach nearest first, F picking up or talking, the wheel and a held F's repeat                   |
+| [Elemental Sight](/docs/genshin/elemental-sight)           | the range that spreads from the character, the world muted and what matters lit, enemies' colours and names                                          |
 | [Inventory](/docs/genshin/inventory)                       | the bag's nine tabs, its stacks, room and sorts, the wallet's currencies, its screen on B, and the enemies' materials from the game's table          |
 | [Wish](/docs/genshin/wish)                                 | the standard and beginners' pools, the rates, pity and guarantees, Capturing Radiance, the Epitomized Path and returns, and its screen on F3         |
 | [Dialogue](/docs/genshin/dialogue)                         | a talk's graph of lines and replies, its runner, the dialogue screen with auto-play and skip, and residents                                          |
@@ -125,6 +126,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - Original Resin: its count regenerating while the page is closed, its refills from Primogems at the game's daily prices, a claim's price and Adventure EXP, and its counter on the map's top bar.
 - Ley line outcrops: each region's Revelation and Wealth read from the game's tables, their openings by rank and nation, a drawn start and the move along their places, with the touch and the claim still unbuilt.
 - Constellations: each character's six from the game's table, activated with its own Stella Fortuna, which a duplicate draw brings and a five-star past six a Masterless one.
+- Elemental Sight: the range spread from the character and held to its reach, the world muted outside what is lit, interactables in white, enemies in their element's colour with their names, and the sight ended by a short walk.
 
 ## Key files
 
