@@ -89,6 +89,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 | Where on the frame a structure is lost                         | `passes`' structure image, `surfaces/<reference>-structure.png`: each scale's similarity term per pixel, finest first, red as it is lost                                                                                    |
 | Which feature of a plan a structure is lost on                 | `genshin:parity lost`: the surface pass's loss carried onto the family's plan, each band's share of it against its share of the pixels                                                                                      |
 | A surface's paint from its texture                             | `fitPlanTones`: its texture's colours past their speckle as k-means tones in CIELab, traced as loops over a plan                                                                                                            |
+| A family's colour and palette from its export's textures       | `fitSurfaceColours` (`genshin:assets fit windrise --only surfaces`): each face read through its submesh's diffuse texture at points spread over its UV triangle, weighted by world area and alpha coverage                  |
 
 ### Motion
 

@@ -4,7 +4,7 @@ import type { LightUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
 
 import statue from "#src/data/windrise/statue.json";
-import { STONE_COLOR } from "#src/services/windrise/constants";
+import { STATUE_COLOR } from "#src/services/windrise/constants";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { createStatueGeometry, createToonMaterial } from "genshin-engine";
 
@@ -18,7 +18,7 @@ const { landmark, lightUniforms, rampTexture } = defineProps<Props>();
 const { heightOffset, position, rotation } = landmark;
 const groundHeight = getWorldHeight(position.x, position.z);
 const statueGeometry = createStatueGeometry(statue.parts);
-const stoneMaterial = createToonMaterial({ color: STONE_COLOR, lightUniforms, rampTexture });
+const stoneMaterial = createToonMaterial({ color: STATUE_COLOR, lightUniforms, rampTexture });
 
 onUnmounted(() => {
   statueGeometry.dispose();

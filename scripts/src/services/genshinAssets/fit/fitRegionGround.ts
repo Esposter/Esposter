@@ -4,7 +4,7 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { checkIsInsideRegionOutlines } from "#src/services/genshinAssets/fit/checkIsInsideRegionOutlines";
 import { computeGroundBounds } from "#src/services/genshinAssets/fit/computeGroundBounds";
 import { fitGaussianHills } from "#src/services/genshinAssets/fit/fitGaussianHills";
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { GROUND_RADIUS, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldTerrainHeight } from "#src/services/genshinAssets/world/readWorldTerrainHeight";
@@ -12,9 +12,8 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-// How far round the centre the ground is fitted, every sample how far apart, and the distance a sample there weighs
-// Half of one at the centre, in metres: the valley the screen's views see, its near ground first
-const GROUND_RADIUS = 1000;
+// Every sample how far apart, and the distance a sample there weighs half of one at the centre, in metres: the valley
+// The screen's views see, its near ground first
 const GROUND_STEP = 6;
 const GROUND_FALLOFF = 200;
 // The hills' widths, widest first, down to the knolls round the oak and the statue

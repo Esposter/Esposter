@@ -2,20 +2,24 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { fitRegionCapitals } from "#src/services/genshinAssets/fit/fitRegionCapitals";
 import { fitRegionGround } from "#src/services/genshinAssets/fit/fitRegionGround";
 import { fitRegionLandmarks } from "#src/services/genshinAssets/fit/fitRegionLandmarks";
+import { fitSurfaceColours } from "#src/services/genshinAssets/fit/fitSurfaceColours";
 import { fitWindriseOak } from "#src/services/genshinAssets/fit/fitWindriseOak";
 import { fitWindrisePaving } from "#src/services/genshinAssets/fit/fitWindrisePaving";
 import { fitWindriseStatue } from "#src/services/genshinAssets/fit/fitWindriseStatue";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
+import { GROUND_RADIUS } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldWaterLevel } from "#src/services/genshinAssets/world/readWorldWaterLevel";
+import { WindrisePartFamilyMeshRegexMap } from "genshin-world";
 
 // Windrise's parts fitted as our own generators' parameters, each written as a data file of the world package's: its
 // Ground as hills, its landmarks' places and turns in Mondstadt's region data, its oak's canopy as clusters and its
-// Trunk's taper read off the export, its statue as two radial profiles and its water's level over the oak's foot, the
-// Last three exact. Every region's capital is placed with the landmarks, round the same origin, since the oak's foot is
-// The whole world's. The statue's angle count is its own option, the rest ignore it
+// Trunk's taper read off the export, its statue as two radial profiles, its families' surface colours as the export's
+// Textures paint them, and its water's level over the oak's foot, the last three exact. Every region's capital is placed
+// With the landmarks, round the same origin, since the oak's foot is the whole world's. The statue's angle count is its
+// Own option, the rest ignore it
 export const fitWindriseScene = (only: readonly string[] = [], angleCount?: number): Promise<string> =>
   runFits(
     {
@@ -28,6 +32,12 @@ export const fitWindriseScene = (only: readonly string[] = [], angleCount?: numb
       oak: fitWindriseOak,
       paving: async () => [await writeWorldData("windrise/paving.json", await fitWindrisePaving())],
       statue: () => fitWindriseStatue(angleCount),
+      surfaces: async () => [
+        await writeWorldData(
+          "windrise/surfaces.json",
+          await fitSurfaceColours(DerivedAssetComponent.Windrise, WindrisePartFamilyMeshRegexMap, GROUND_RADIUS),
+        ),
+      ],
       water: async () => {
         const [[, originY], waterLevel] = await Promise.all([
           readWorldOrigin(DerivedAssetComponent.Windrise),

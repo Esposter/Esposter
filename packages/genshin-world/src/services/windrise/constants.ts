@@ -9,6 +9,7 @@ import type {
 } from "genshin-engine";
 
 import baseGround from "#src/data/windrise/base-ground.json";
+import surfaces from "#src/data/windrise/surfaces.json";
 import water from "#src/data/windrise/water.json";
 import { GroundLayer } from "genshin-engine";
 import { Color, Vector2 } from "three";
@@ -38,19 +39,20 @@ export const UNDERWATER_FOG_DENSITY = 0.08;
 // How far the sun and the god rays' sun stand from what they look at
 export const SUN_DISTANCE = 120;
 export const RIM_STRENGTH = 0.55;
-// Windrise's ground as a temperate meadow paints it, its colours as the palette sees them in sRGB: grass in patches of
-// Lighter and darker green, bare earth on the steeper banks, rock on what is steeper still and sand on the shore, with no
-// Snow line, and no path until the game's own are read. Provisional: the bands and colours are fitted to the game's own
-// Terrain layers, and their unlit colour against the exports in the surface pass
+// Windrise's ground as a temperate meadow paints it: the layers say where grass, bare earth, rock, sand, snow and path
+// Lie, and every layer paints the one colour the ground's terrain base maps hold, as fitted into `surfaces.json` (the
+// Ground's mean colour, read against the exports in the surface pass). Its layers' weights still place the plants
+const GROUND_COLOR = new Color(surfaces.Ground.color).getHex();
+const GROUND_LAYER_COLORS = { color: GROUND_COLOR, patchColor: GROUND_COLOR };
 export const WINDRISE_GROUND_PAINT: GroundPaint = {
   earthSlope: { end: 0.3, start: 0.2 },
   layerColors: {
-    [GroundLayer.Earth]: { color: 0x8a6a48, patchColor: 0x9c7a52 },
-    [GroundLayer.Grass]: { color: 0x5f9e3b, patchColor: 0x9ed05a },
-    [GroundLayer.Path]: { color: 0xb59a72, patchColor: 0xc4ab84 },
-    [GroundLayer.Rock]: { color: 0x9c9486, patchColor: 0x9c9486 },
-    [GroundLayer.Sand]: { color: 0xd8c9a0, patchColor: 0xe2d4ae },
-    [GroundLayer.Snow]: { color: 0xeef3f8, patchColor: 0xeef3f8 },
+    [GroundLayer.Earth]: GROUND_LAYER_COLORS,
+    [GroundLayer.Grass]: GROUND_LAYER_COLORS,
+    [GroundLayer.Path]: GROUND_LAYER_COLORS,
+    [GroundLayer.Rock]: GROUND_LAYER_COLORS,
+    [GroundLayer.Sand]: GROUND_LAYER_COLORS,
+    [GroundLayer.Snow]: GROUND_LAYER_COLORS,
   },
   patchScale: 18,
   pathFalloff: 0.6,
@@ -61,10 +63,19 @@ export const WINDRISE_GROUND_PAINT: GroundPaint = {
 // Where a character starts in Windrise: on the slope before the statue, in the free camera's first view, its back to
 // The camera as the game shows a character
 export const WINDRISE_START_POINT: GroundPoint = { x: 36, z: 12 };
-// Colours as the palette sees them, in sRGB
-export const BARK_COLOR = 0x6b4a33;
-export const LEAF_COLOR = 0x6fae3f;
-export const STONE_COLOR = 0xd9d2c1;
+// The families' colours as their exports' textures paint them, fitted into `surfaces.json`. The oak's leaves outweigh its
+// Bark, so they take its family colour, and its bark takes the tone of its palette that leans least toward green
+const getGreenLean = (color: string): number => {
+  const { g, r } = new Color(color);
+  return g - r;
+};
+export const BARK_COLOR =
+  surfaces.Oak.palette.toSorted(
+    (firstTone, secondTone) => getGreenLean(firstTone.color) - getGreenLean(secondTone.color),
+  )[0]?.color ?? surfaces.Oak.color;
+export const LEAF_COLOR = surfaces.Oak.color;
+export const PAVING_COLOR = surfaces.Paving.color;
+export const STATUE_COLOR = surfaces.Statue.color;
 // The ramp every material shades through: a narrow step, a little past the grazing angle
 export const WINDRISE_RAMP_OPTIONS: RampOptions = { resolution: 64, softness: 0.08, terminator: 0.52 };
 // A haze thickest on the valley floor and gone a few hundred metres up, starting past the knoll so the oak stays clear

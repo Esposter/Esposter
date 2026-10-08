@@ -41,6 +41,8 @@ export const TERRAIN_TILE_SIZE = 1024;
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const TERRAIN_TILE_REGEX: RegExp = /_(?<column>-?\d+)_(?<row>-?\d+)\.bin$/u;
 export const TERRAIN_BASE_MAP_SUFFIX = "_BaseMap";
+// How far round a region's centre its ground is fitted and its terrain read, in metres: the valley the screen's views see
+export const GROUND_RADIUS = 1000;
 // The texture slot a material's albedo is sampled from, which the witness reads as a colour
 export const MAIN_TEXTURE_SLOT = "_MainTex";
 // The suffix AnimeStudio gives the folder it exports a block into when its assets are grouped by source

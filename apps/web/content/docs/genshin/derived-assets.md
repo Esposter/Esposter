@@ -161,7 +161,8 @@ A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit fille
 | `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts`     | Each component's assets by name, and the roots it is                                         |
 | `scripts/src/services/genshinAssets/fit/DerivedAssetFitMap.ts`              | Each component's fit                                                                         |
 | `scripts/src/services/genshinAssets/fit/fitLoginScene.ts`                   | Every fit the login screen writes                                                            |
-| `scripts/src/services/genshinAssets/fit/fitWindriseScene.ts`                | Every fit Windrise writes: ground, landmarks, paving, water                                  |
+| `scripts/src/services/genshinAssets/fit/fitWindriseScene.ts`                | Every fit Windrise writes: ground, landmarks, paving, surfaces, water                        |
+| `scripts/src/services/genshinAssets/fit/fitSurfaceColours.ts`               | Each family's colour and palette from its export's textures                                  |
 | `scripts/src/services/genshinAssets/fit/fitWindrisePaving.ts`               | Windrise's paving stones: placements and outlines                                            |
 | `scripts/src/services/genshinAssets/fit/fitPavingStoneShape.ts`             | One stone's outline as its convex hull's radii                                               |
 | `scripts/src/services/genshinAssets/fit/fitRadialProfile.ts`                | A mesh's outermost radius at each angle and band, the profile the statue is fitted as        |
