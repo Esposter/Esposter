@@ -138,6 +138,8 @@ export enum GameTextKey {
   Map = "UI_STC_MAP_TITLE",
   MasterlessStardust = "3899400612",
   MasterlessStarglitter = "1417946372",
+  // The Stella Fortuna a five-star drawn past its six constellations brings, which activates no constellation
+  MasterlessStellaFortuna = "958504444",
   Medium = "UI_SETTING_MEDIUM",
   Mora = "3578052980",
   Notices = "UI_STC_GAMEENTRYPAGE_BULLETIN",
