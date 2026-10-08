@@ -22,6 +22,13 @@ export interface EnabledMods {
   waypoints: boolean;
 }
 
+// The rate-limit window past the usage reserve's line, named as its section spells it, and when it resets; `""` in both
+// Fields is the absent reserve
+export interface ReserveWindow {
+  name: string;
+  resetsAt: string;
+}
+
 export interface WardRecord {
   editedAt: number;
   sessionId: string;
@@ -38,6 +45,7 @@ declare module "claude-code" {
       lastPrompt: string;
       lookupStreak: number;
       now: number;
+      reserveWindow: ReserveWindow;
       waypoints: string[];
     };
   }

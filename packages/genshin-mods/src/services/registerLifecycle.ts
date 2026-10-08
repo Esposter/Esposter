@@ -4,10 +4,21 @@ import { atom, read, update } from "claude-code";
 
 import type { EnabledMods } from "../../types";
 
-import { CACHE_WARNING_MS, CLOCK_TICK_MS, VEIL_SECTION_ID, VEIL_SYSTEM_SECTION, WAYPOINTS_QUESTION } from "./constants";
+import {
+  CACHE_WARNING_MS,
+  CLOCK_TICK_MS,
+  RESERVE_SECTION_ID,
+  USAGE_RESERVE_PERCENTAGE,
+  VEIL_SECTION_ID,
+  VEIL_SYSTEM_SECTION,
+  WAYPOINTS_QUESTION,
+} from "./constants";
 import { InitialState } from "./InitialState";
 import { ModDescriptionMap, ModNames } from "./ModDescriptionMap";
+import { formatResetsAt } from "./resin/formatResetsAt";
 import { getCacheRemainingMs } from "./resin/getCacheRemainingMs";
+import { getReserveWindow } from "./resin/getReserveWindow";
+import { reserveText } from "./resin/reserveText";
 import { parseWaypoints } from "./waypoints/parseWaypoints";
 
 const commissionAtom = atom({ key: "commission", plugin: "genshin-mods" } as const, InitialState.commission);
@@ -23,6 +34,7 @@ const lastCacheRequestAtAtom = atom(
 );
 const lookupStreakAtom = atom({ key: "lookupStreak", plugin: "genshin-mods" } as const, InitialState.lookupStreak);
 const nowAtom = atom({ key: "now", plugin: "genshin-mods" } as const, InitialState.now);
+const reserveWindowAtom = atom({ key: "reserveWindow", plugin: "genshin-mods" } as const, InitialState.reserveWindow);
 const waypointsAtom = atom({ key: "waypoints", plugin: "genshin-mods" } as const, InitialState.waypoints);
 
 // The events a plugin may hook once with no matcher, each hooked here for every mod, with the commands that switch
@@ -112,12 +124,17 @@ export const registerLifecycle = (on: On): void => {
     return next(e);
   });
 
-  // While the veil is on, the model is told to write placeholders too, so a reply never holds a value to hide
+  // While the veil is on, the model is told to write placeholders too, so a reply never holds a value to hide. While a
+  // Usage reserve holds and the resin mod is on, the model is told to wind down until the window resets
   on("prompt.compose", async ($, e, next) => {
     const result = await next(e);
-    if ((await read($, enabledModsAtom)).veil)
-      return { sections: [...result.sections, { id: VEIL_SECTION_ID, scope: "session", text: VEIL_SYSTEM_SECTION }] };
-    else return result;
+    const { resin, veil } = await read($, enabledModsAtom);
+    const reserveWindow = await read($, reserveWindowAtom);
+    const sections = [...result.sections];
+    if (veil) sections.push({ id: VEIL_SECTION_ID, scope: "session", text: VEIL_SYSTEM_SECTION });
+    if (resin && reserveWindow.name)
+      sections.push({ id: RESERVE_SECTION_ID, scope: "session", text: reserveText(reserveWindow) });
+    return { sections };
   });
 
   on("turn.start", (_$, e, next) => {
@@ -153,5 +170,21 @@ export const registerLifecycle = (on: On): void => {
         suggestWaypoints($);
       });
     return result;
+  });
+
+  // The reserve is read off each measurement: it starts at the first window past the line and lifts at the measurement
+  // A window's reset raises, which finds none. The toast names the window once, as the reserve starts
+  on("session.measure", async ($, e, next) => {
+    const reserveWindow = getReserveWindow(e.rateLimits);
+    const previousReserveWindow = await read($, reserveWindowAtom);
+    await update($, reserveWindowAtom, () => reserveWindow ?? InitialState.reserveWindow);
+    if (reserveWindow && !previousReserveWindow.name && (await read($, enabledModsAtom)).resin) {
+      const { name, resetsAt } = reserveWindow;
+      $.ui.toast(
+        `Usage reserve: the ${name} usage window has passed ${USAGE_RESERVE_PERCENTAGE}% and resets at ${formatResetsAt(resetsAt)}.`,
+      );
+    }
+
+    return next(e);
   });
 };
