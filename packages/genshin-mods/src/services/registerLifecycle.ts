@@ -125,14 +125,15 @@ export const registerLifecycle = (on: On): void => {
   });
 
   // While the veil is on, the model is told to write placeholders too, so a reply never holds a value to hide. While a
-  // Usage reserve holds and the resin mod is on, the model is told to wind down until the window resets
+  // Usage reserve holds and the resin mod is on, the model is told to wind down until the window resets, which it may
+  // Have done since the last measurement
   on("prompt.compose", async ($, e, next) => {
     const result = await next(e);
     const { resin, veil } = await read($, enabledModsAtom);
     const reserveWindow = await read($, reserveWindowAtom);
     const sections = [...result.sections];
     if (veil) sections.push({ id: VEIL_SECTION_ID, scope: "session", text: VEIL_SYSTEM_SECTION });
-    if (resin && reserveWindow.name)
+    if (resin && reserveWindow.name && Date.parse(reserveWindow.resetsAt) > (await $.clock.now()))
       sections.push({ id: RESERVE_SECTION_ID, scope: "session", text: reserveText(reserveWindow) });
     return { sections };
   });
