@@ -65,6 +65,7 @@ The top bar's place and type are provisional until a recording measures them. Th
 
 - **The map reads its count once.** The count is taken when the map opens, so it holds still while the map is up, which is the moment a player reads it.
 - **The rate and the cap are the game's public figures.** They are constants, not measures. Only the top bar's place and type are measured, and they wait on the recording.
+- **A claim's Companionship EXP is a rule of its own.** The claim gives no Companionship EXP itself; a blossom's amount goes to the deployed team through the [companionship](/docs/genshin/companionship) grant, its amounts provisional until recorded.
 
 ## Sources
 
