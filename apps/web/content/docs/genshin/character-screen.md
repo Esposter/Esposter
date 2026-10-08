@@ -14,15 +14,20 @@ flowchart TD
   C["C, or the Paimon menu's Character"] --> SCREEN["CharacterScreen, a dialog over the held world"]
   SCREEN --> MENU["CharacterMenu: the characters, the name and the tabs"]
   MENU -->|"a character chosen"| CHOSEN["the chosen character"]
-  MENU -->|"a tab chosen"| TAB{"Attributes?"}
-  TAB -->|yes| LIST["CharacterAttributeList: level, then the attributes by group"]
-  TAB -->|no| EMPTY["An empty panel under the tab"]
+  MENU -->|"a tab chosen"| TAB{"which tab?"}
+  TAB -->|Attributes| LIST["CharacterAttributeList: level, then the attributes by group"]
+  TAB -->|Weapons| WEAPONS["CharacterMenuWeapons: the weapon at its level and phase"]
+  TAB -->|Artifacts| ARTIFACTS["CharacterMenuArtifacts: the five slots, worn or not"]
+  TAB -->|Constellation| CONSTELLATIONS["CharacterMenuConstellation: six rings, activated ones lit"]
+  TAB -->|Talents| TALENTS["CharacterMenuTalents: the three combat talents' levels"]
+  TAB -->|Profile| EMPTY["An empty panel, not built yet"]
   CHOSEN --> LIST
 ```
 
 - **A frame with no words of its own.** `CharacterMenu`, in `genshin-interface`, draws the frame: the characters across the top, each a button naming the character, the chosen character's name at the top left, the six tabs down the left in the game's order (`CharacterMenuTabs`) with the open one lit, and the open tab's panel down the right as its slot. The chosen character and the open tab are its two models. Every word is a prop, so the interface package needs no game text and no world data.
-- **The world's screen fills it.** `CharacterScreen`, in `genshin-world`, takes the player's characters, the one on the field, the game's words, the party's stamina and the stat tables the world screen has read ([character attributes](/docs/genshin/character-attributes)), opening as its placeholder until they arrive. It opens on the character on the field and on Attributes, names each tab by the game's own text (`CharacterMenuTabGameTextKeyMap`) and the Traveler by the game's own word for them, and draws the Attributes tab's panel. It is a dialog over the held world with a way back, and the screens' rule closes it on `Escape`, a pad's cancel or `C` again ([screens](/docs/genshin/screens)).
+- **The world's screen fills it.** `CharacterScreen`, in `genshin-world`, takes the player's characters, the one on the field, the game's words, the party's stamina and the stat tables the world screen has read ([character attributes](/docs/genshin/character-attributes)), opening as its placeholder until they arrive. It opens on the character on the field and on Attributes, names each tab by the game's own text (`CharacterMenuTabGameTextKeyMap`) and the Traveler by the game's own word for them, and draws the open tab's panel: the Attributes list, or one of the four panels below. It is a dialog over the held world with a way back, and the screens' rule closes it on `Escape`, a pad's cancel or `C` again ([screens](/docs/genshin/screens)).
 - **The Attributes tab is the game's sums.** `CharacterAttributeList` shows the character's name, its level over its phase's cap in the game's `Lv.` wording, the experience bar, then its base five attributes: Max HP, ATK, DEF, Elemental Mastery and Max Stamina, whole. The advanced group (CRIT Rate, CRIT DMG, Healing Bonus and Energy Recharge) and each element's DMG Bonus with Physical's sit beneath, each a percentage to one place, under their titles. Every value comes from [character attributes](/docs/genshin/character-attributes).
+- **The four other panels are `genshin-interface` components, filled from the systems.** `CharacterMenuWeapons` takes the weapon's name by its text id, its rarity, its base ATK and secondary attribute at its level and phase (`getGrownAttributeLines`, as the Attributes tab reads them), the level over its phase's cap, its refinement rank and its ascension phase. `CharacterMenuArtifacts` takes which of the five slots are worn, in the game's order. `CharacterMenuConstellation` takes which of the six are activated, from the character's count. `CharacterMenuTalents` takes the three combat talents' levels, the normal attack, the Elemental Skill and the Burst. Each is a prop-only frame with the game's words left out, since the game's text for their labels and names is not decoded yet.
 
 ## Layout
 
@@ -52,15 +57,17 @@ Measured off the reference frame at 21:9, 3440 by 1440 pixels, in units: a pixel
 
 - **Five states are scored, each a frame of the same recording.** `Character/Screen` fixes the roster of fifteen characters, the Traveler among them, with Xilonen chosen at level 90 and phase six, and its stat tables parsed from the generated tables by `parseStatTables`. `initialTab` opens the screen on the tab the reference shows, and the fixture's `variants` open it on the other four. Each reference is a frame of the user's recording of the current build (`session-2.mp4`) at 21:9, the tab settled, and it is scored over the whole frame and the tab column:
 
-| Tab open            | Reference | Whole frame, mean / FLIP | Tab column, mean / FLIP |
-| :------------------ | :-------- | :----------------------- | :---------------------- |
-| Attributes, Xilonen | 154.4 s   | 8.10% / 0.3570           | 7.26% / 0.3337          |
-| Weapons             | 156 s     | 11.04% / 0.4399          | 6.94% / 0.3201          |
-| Artifacts           | 157 s     | 11.02% / 0.4413          | 6.90% / 0.3196          |
-| Constellation       | 157.5 s   | 13.01% / 0.5022          | 6.90% / 0.3191          |
-| Talents             | 159 s     | 11.55% / 0.4585          | 6.42% / 0.3055          |
+| Tab open            | Reference | Whole frame, mean / FLIP              | Tab column, mean / FLIP |
+| :------------------ | :-------- | :------------------------------------ | :---------------------- |
+| Attributes, Xilonen | 154.4 s   | 8.10% / 0.3570                        | 7.26% / 0.3337          |
+| Weapons             | 156 s     | 10.91% / 0.4369 (was 11.04% / 0.4399) | 6.94% / 0.3201          |
+| Artifacts           | 157 s     | 11.08% / 0.4422 (was 11.02% / 0.4413) | 6.90% / 0.3196          |
+| Constellation       | 157.5 s   | 13.01% / 0.5021 (was 13.01% / 0.5022) | 6.90% / 0.3191          |
+| Talents             | 159 s     | 11.56% / 0.4587 (was 11.55% / 0.4585) | 6.42% / 0.3055          |
 
-Attributes went from 9.62% (FLIP 0.4052) to 8.10% (FLIP 0.3570) in an earlier pass, and this loop moved neither figure. The other four are scored as first measured: their panels are not drawn, so the whole frame carries the panel's content, and the tab column carries the open tab's pill, the words and the scene tint. Constellation was first cut at 158 seconds (21.48% whole, 25.27% tab column), where the pill still streaks toward Talents, so its reference is the frame at 157.5 seconds, where the pill has settled on the word. The pill's slide is provisional until it is timed off a recording (the owed clip `menu-character.mkv`, and the Profile still on the roadmap's Recordings owed list).
+Attributes stays at 8.10% (FLIP 0.3570), and Xilonen's record now holds the Weapons and Talents frames' state (Peak Patrol Song at level 90, refinement five, and talents at 10, 13 and 13), which moves no Attributes figure by more than 0.01 (the panel's row, 7.96% to 7.97%). The four panels are drawn in this pass. Their whole-frame means barely move, while their shape rises: Weapons 0.334 to 0.477, Artifacts 0.347 to 0.477, Constellation 0.330 to 0.387, Talents 0.434 to 0.463. The tab columns do not move, since the pill and words are the same.
+
+The Artifacts and Constellation references do not show their tabs, so their whole-frame scores cannot show their panels. The 157 second frame is mid-slide, with Weapons still lit and its Weapons panel still drawn. The 157.5 second frame has settled on Artifacts, not Constellation, and the Constellation tab settles near 158 seconds, so those two registrations want their seconds corrected before their scores mean anything. The pill's slide is provisional until it is timed off a recording (the owed clip `menu-character.mkv`, and the Profile still on the roadmap's Recordings owed list).
 
 - **The rest of the frame is the game's scene, a floor for now.** The middle is the held scene: the golden beams and particles and the character's model, which rises over 154.4 to 155.6 seconds and is the game's art, so the screen draws a tint sampled from the reference's scene (about #6c5224 at the dark corners, #af9544 at the bright centre) and nothing more.
 - **Not drawn yet, for want of text or art.** The Details button and the Friendship row with its bar, which the default panel shows under the base rows, and the character's description: their words are not in the decoded English text yet. The element emblem, the element-coloured stars, the Q and E keys, W and S, the arrows, the Ascension Limit pill and the UID wait on the glyph pass or the text. The panel shows the advanced and elemental groups beneath the base five, which the game holds behind Details.
@@ -71,17 +78,21 @@ Attributes went from 9.62% (FLIP 0.4052) to 8.10% (FLIP 0.3570) in an earlier pa
 
 ## Key files
 
-| File                                                                              | Role                                                        |
-| :-------------------------------------------------------------------------------- | :---------------------------------------------------------- |
-| `packages/genshin-interface/src/components/CharacterMenu/Index.vue`               | The frame: the characters, the name, the tabs and the panel |
-| `packages/genshin-interface/src/components/CharacterMenu/Index.fixture.ts`        | Xilonen on Attributes, the reference's state                |
-| `packages/genshin-interface/src/models/CharacterMenuTab.ts`                       | The six tabs, and their order down the screen               |
-| `packages/genshin-world/src/components/Character/Screen/Index.vue`                | The screen: the words, the characters and the way back      |
-| `packages/genshin-world/src/components/Character/AttributeList/Index.vue`         | The Attributes tab's level and attributes by group          |
-| `packages/genshin-world/src/services/character/CharacterMenuTabGameTextKeyMap.ts` | Each tab's name in the game's text                          |
-| `packages/genshin-world/src/services/character/constants.ts`                      | The Traveler's id and the advanced and elemental groups     |
-| `packages/genshin-world/src/services/character/parseStatTables.ts`                | The generated tables parsed against their schemas, sync     |
-| `packages/genshin-world/src/components/Character/Screen/Index.fixture.ts`         | The roster and Xilonen's tables, the parity page's state    |
+| File                                                                              | Role                                                           |
+| :-------------------------------------------------------------------------------- | :------------------------------------------------------------- |
+| `packages/genshin-interface/src/components/CharacterMenu/Index.vue`               | The frame: the characters, the name, the tabs and the panel    |
+| `packages/genshin-interface/src/components/CharacterMenu/Index.fixture.ts`        | Xilonen on Attributes, the reference's state                   |
+| `packages/genshin-interface/src/models/CharacterMenuTab.ts`                       | The six tabs, and their order down the screen                  |
+| `packages/genshin-interface/src/components/CharacterMenuWeapons/Index.vue`        | The Weapons panel: the weapon, its stats, level and refinement |
+| `packages/genshin-interface/src/components/CharacterMenuArtifacts/Index.vue`      | The Artifacts panel: the five slots, worn or not               |
+| `packages/genshin-interface/src/components/CharacterMenuConstellation/Index.vue`  | The Constellation panel: six rings, activated ones lit         |
+| `packages/genshin-interface/src/components/CharacterMenuTalents/Index.vue`        | The Talents panel: the three combat talents' levels            |
+| `packages/genshin-world/src/components/Character/Screen/Index.vue`                | The screen: the words, the characters and the way back         |
+| `packages/genshin-world/src/components/Character/AttributeList/Index.vue`         | The Attributes tab's level and attributes by group             |
+| `packages/genshin-world/src/services/character/CharacterMenuTabGameTextKeyMap.ts` | Each tab's name in the game's text                             |
+| `packages/genshin-world/src/services/character/constants.ts`                      | The Traveler's id and the advanced and elemental groups        |
+| `packages/genshin-world/src/services/character/parseStatTables.ts`                | The generated tables parsed against their schemas, sync        |
+| `packages/genshin-world/src/components/Character/Screen/Index.fixture.ts`         | The roster and Xilonen's tables, the parity page's state       |
 
 ## Sources
 

@@ -7,18 +7,18 @@ committed.
 
 | Reference | Screen | Mean difference | Shape | Tone | FLIP |
 | :-------- | :----- | --------------: | ----: | ---: | ---: |
-| `character-attributes` | `CharacterScreen` | 8.10% | 0.758 | 5.59% | 0.3570 |
-| `character-attributes-panel` | `CharacterScreen` | 7.96% | 0.573 | 4.63% | 0.3422 |
-| `character-attributes-tabs` | `CharacterScreen` | 7.26% | 0.495 | 5.99% | 0.3337 |
-| `character-attributes-top` | `CharacterScreen` | 11.15% | 0.734 | 4.64% | 0.4087 |
-| `character-weapons` | `CharacterScreen` | 11.04% | 0.334 | 7.33% | 0.4399 |
-| `character-weapons-tabs` | `CharacterScreen` | 6.94% | 0.498 | 5.03% | 0.3201 |
-| `character-artifacts` | `CharacterScreen` | 11.02% | 0.347 | 7.26% | 0.4413 |
+| `character-artifacts` | `CharacterScreen` | 11.08% | 0.477 | 7.34% | 0.4422 |
 | `character-artifacts-tabs` | `CharacterScreen` | 6.90% | 0.505 | 5.08% | 0.3196 |
-| `character-constellation` | `CharacterScreen` | 13.01% | 0.330 | 8.56% | 0.5022 |
+| `character-attributes` | `CharacterScreen` | 8.10% | 0.758 | 5.59% | 0.3570 |
+| `character-attributes-panel` | `CharacterScreen` | 7.97% | 0.572 | 4.62% | 0.3422 |
+| `character-attributes-tabs` | `CharacterScreen` | 7.26% | 0.495 | 6.00% | 0.3337 |
+| `character-attributes-top` | `CharacterScreen` | 11.15% | 0.734 | 4.64% | 0.4087 |
+| `character-constellation` | `CharacterScreen` | 13.01% | 0.387 | 8.55% | 0.5021 |
 | `character-constellation-tabs` | `CharacterScreen` | 6.90% | 0.478 | 5.23% | 0.3191 |
-| `character-talents` | `CharacterScreen` | 11.55% | 0.434 | 7.89% | 0.4585 |
+| `character-talents` | `CharacterScreen` | 11.56% | 0.463 | 7.86% | 0.4587 |
 | `character-talents-tabs` | `CharacterScreen` | 6.42% | 0.468 | 4.75% | 0.3055 |
+| `character-weapons` | `CharacterScreen` | 10.91% | 0.477 | 7.10% | 0.4369 |
+| `character-weapons-tabs` | `CharacterScreen` | 6.94% | 0.499 | 5.03% | 0.3201 |
 | `dialogue-choices-line` | `DialogueTalk` | 10.34% | 0.893 | 9.46% | 0.3660 |
 | `dialogue-choices-replies` | `DialogueTalk` | 28.75% | 0.770 | 22.29% | 0.6161 |
 | `dialogue-choices-speaker` | `DialogueTalk` | 2.63% | 1.000 | 2.68% | 0.1807 |
