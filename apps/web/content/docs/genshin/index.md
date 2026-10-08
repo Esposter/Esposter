@@ -66,6 +66,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Original Resin](/docs/genshin/original-resin)             | the resin regenerating from its last change to 200, refills from Primogems at six daily prices, and a claim's price and Adventure EXP                |
 | [Domains](/docs/genshin/domains)                           | each kind's opening by Adventure Rank, and by the day: Blessing every day, Forgery and Mastery on Sundays and their set days                         |
 | [Ley line outcrops](/docs/genshin/ley-line-outcrops)       | each region's two blossoms read from the game's tables, opened by Adventure Rank and a nation's area, started and moved on along their places        |
+
 | [Combat](/docs/genshin/combat)                             | auras and reactions in the game's priority, the damage formula, internal cooldown, shields and energy, and the Traveler's kit's hits                 |
 | [Character kits](/docs/genshin/character-kits)             | each playable character's skill sets from the game's tables, the Traveler's kit checked against its Anemo set                                        |
 | [Characters](/docs/genshin/characters)                     | the official MMD packs read by our own PMX reader and drawn on the toon ramp, with their terms                                                       |
