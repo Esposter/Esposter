@@ -1,34 +1,34 @@
 ---
 title: Review collector
-description: The event-triggered, idempotent collector that ports windows from the permanent ai/queue branch onto develop, merges each release the moment its one review completes, drains that review's findings into the next window, and sends what needs no review straight to main — never waiting on a person.
+description: The event-triggered, idempotent collector that ports windows from the permanent ai/queue branch, cuts each one as its own review/ branch and stacks its pull request on the window below, merges the stack bottom up the moment each review completes, drains that review's findings into the next window, and sends what needs no review straight to main — never waiting on a person.
 ---
 
 # Review Collector
 
-Work is committed faster than CodeRabbit reviews complete, and every step that turns a finished review into the next one — merging the release, fixing its findings, replying on each thread, sizing the next window, cutting it to the cap, pushing it — runs without a person at a keyboard. Local work is pushed to **one permanent `ai/queue` branch** with no window boundaries on it; the collector cuts the windows. It is the garbage collector of the review budget: allocation (the queue pushed) and freeing (a review completed) trigger the same run, the run reads every fact it needs from the remote, decides in one pass, and pushes at most one window. Re-running it against unchanged state does nothing, which is what lets any event fire it without a schedule.
+Work is committed faster than CodeRabbit reviews complete, and every step that turns a finished review into the next one — merging the bottom window, fixing its findings, replying on each thread, sizing the next window, cutting it to the cap, pushing it and opening its pull request — runs without a person at a keyboard. Local work is pushed to **one permanent `ai/queue` branch** with no window boundaries on it; the collector cuts the windows. Each window is its own branch and its own pull request, and the open ones stack: each is based on the window below it, so a review reads only what its window adds. The collector is the garbage collector of the review budget: allocation (the queue pushed) and freeing (a review completed) trigger the same run, the run reads every fact it needs from the remote, decides in one pass, and pushes what it cut. Re-running it against unchanged state does nothing, which is what lets any event fire it without a schedule.
 
 ## The parts
 
-1. [The collection cycle](/docs/infra/review-collector/collection-cycle) — the one pass every trigger runs, from what it reads off the remote to the single push it ends at. One script, `ai:coderabbit:collect`.
-2. [The drain](/docs/infra/review-collector/drain) — the first of the steps Claude runs: which findings of the merged release are open, what the session is handed and denied, and how a drain that fails past its attempts holds every window. The resolvers, the reshaper and the repairer are the same session pointed at other work.
-3. [The runner](/docs/infra/review-collector/runner) — the workflow that fires the cycle, the credentials it holds, why it has no cron, and what a failed run leaves behind.
-4. [Two writers](/docs/infra/review-collector/two-writers) — the ref ownership that lets a session and the collector work one pull request without racing.
+1. [The collection cycle](/docs/infra/review-collector/collection-cycle) — the one pass every trigger runs, from what it reads off the remote to the pushes it ends at: the walk of the stack, the sync, and the opening of the next window. One script, `ai:coderabbit:collect`.
+2. [The drain](/docs/infra/review-collector/drain) — the step Claude runs after each merge: which findings of the merged window are open, what the session is handed and denied, whether a fix may go to a haiku subagent, and how a drain that fails past its attempts holds the stack. The resolvers, the reshaper and the repairer are the same session pointed at other work.
+3. [The runner](/docs/infra/review-collector/runner) — the workflow that fires the cycle, the filters that name the window branches, the credentials it holds, why it has no cron, and what a failed run leaves behind.
+4. [Two writers](/docs/infra/review-collector/two-writers) — the ref ownership that lets a session and the collector work one stack without racing: the collector writes `develop` and each window branch, the session writes `ai/queue`.
 5. [The express lane](/docs/infra/review-collector/express-lane) — the commits that never occupy a window, because they claim nothing in them needs review; they land on `main` unverified, and a red they leave is the repairer's.
 6. [Repair](/docs/infra/review-collector/repair) — a red `main` answered from CI's own verdict by the repo's own regenerators where they answer it and by the same session where they do not, either way as a cut of the lane's own.
 7. [Realign](/docs/infra/review-collector/realign) — the queue rebased onto `develop` on request, when a hand repair outside the collector has left its diff counting files the base already holds.
 
 What the session does on its side — pushing `ai/queue`, rebasing, answering a finding by hand — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).
 
-**One review per release, merged on its completion once a session could drain it** — why nothing is fixed on its own pull request, and where its findings go instead, is [gate and merge](/docs/infra/review-collector/collection-cycle). No incremental review is trusted, because none is ever asked for. Closing the pull request without merging is a person's pause.
+**One review per window, and the windows stack.** Each window is reviewed once, when its pull request opens, and that review reads only what the window adds on top of the window below it. The open windows form a stack from `main` upward. The bottom one merges the moment its review completes and a session could drain it, and the next one moves to the bottom and follows. Why nothing is fixed on its own pull request, and where its findings go instead, is [gate and merge](/docs/infra/review-collector/collection-cycle). How many windows may be open at once, and how the next one is opened, is the opening section of the [collection cycle](/docs/infra/review-collector/collection-cycle). No incremental review is trusted, because none is ever asked for. Closing a window's pull request without merging is a person's pause.
 
 ## Principles
 
-- **Non-blocking.** A person is told, never waited on. Two cases remain theirs, each posted where it is read: a conflict or a reshaping that failed past its attempt cap, and a red `main` past its repairs — and only the first holds anything behind it.
+- **Non-blocking.** A person is told, never waited on. The cases that stay theirs are each posted where it is read: a conflict or a reshaping that failed past its attempt cap, a drain whose findings were not answered past its attempts, and a red `main` past its repairs. The first two hold what is behind them; the last is a comment.
 - **Never blocked by what it carries.** A tree that fails — to install, to pass a check, to replay — is the red of the step working on it, never the run's. The runner installs only the collector's own projects, so no app's postinstall stands between an event and the cycle; a step's own install that fails is handed to its session as one more red to repair; and a session that fails counts its attempt, ends the run idle and wakes the next one a minute later, so a step failing for good reaches its cap and is routed around in minutes rather than on the next push. A GitHub outage met mid-pass ends the run idle the same way. A run goes red only on the collector's own code, or on a first commit held for a person. **Rejected: a collector that never fails at all** — a broken collector would read as a quiet one, and nothing else reports it. **Rejected: capping the outage retries**, so a server error GitHub gives the same request every time — a GraphQL query timing out answers 502 — reaches a person as red. The cap would be a count, a marker to keep it in and the tests holding both, all to save runner minutes a public repository is never billed for, and a run held on one still names the error as its idle reason in the Actions tab every five minutes.
 - **Zero-trust commit content.** A session commits anything, in any shape; nothing reads a message as a signal of what a diff is. The collector classifies diffs and rewrites packaging — a commit no window can carry is repackaged, never sent back. A trailer is a claim, never a proof — nothing gates the cut it buys, and `main`'s own CI is what reads it.
 - **Judgement is the only thing Claude is paid for.** Five bounded entry points ([runner](/docs/infra/review-collector/runner)), and nothing a rule could decide reaches one of them; the tree or the remote proves every step afterwards.
-- **The review is the gate, never CI.** A release merges on its completed review, whatever the checks say. What CI holds at that point is a snapshot a rename moved, a lint rule a sweep enabled, a bundle nobody rebuilt — trivia the bot has already read the cause of, and the [repair](/docs/infra/review-collector/repair) answers it on `main` from CI's own verdict. Waiting for green parks every release behind a repair no review is owed, which is the block this design exists to remove.
-- **One irreversible act per run, compare-and-swapped** — below.
+- **The review is the gate, never CI.** A window merges on its completed review, whatever the checks say. What CI holds at that point is a snapshot a rename moved, a lint rule a sweep enabled, a bundle nobody rebuilt — trivia the bot has already read the cause of, and the [repair](/docs/infra/review-collector/repair) answers it on `main` from CI's own verdict. Waiting for green parks every window behind a repair no review is owed, which is the block this design exists to remove.
+- **Each irreversible act is compare-and-swapped** — below.
 
 ## How it works
 
@@ -37,14 +37,14 @@ Every trigger runs the same cycle. Which event it was is irrelevant, because the
 ```mermaid
 flowchart TD
   A[ai/queue pushed<br/>by a working session] --> C
-  F[Review submitted<br/>by the bot on the release PR] --> C
+  F[Review submitted or a window closed<br/>on a review/ branch] --> C
   D[Manual dispatch] --> C
-  MN[main pushed<br/>a release merged or a bump landed] --> C
+  MN[main pushed<br/>a window merged or a bump landed] --> C
   CM[Bot comment<br/>answering a retrigger] --> C
   CI[CI red on main<br/>the repair's event] --> C
-  C[Collector run<br/>serialized by concurrency group] --> R[Read remote state<br/>refs, release PR, status, threads]
-  R --> RS{develop an ancestor of main}
-  RS -->|yes| FF[Fast-forward develop to main<br/>no slot spent, the pass goes on against it]
+  C[Collector run<br/>serialized by concurrency group] --> R[Read remote state<br/>refs, the window stack, checks, threads]
+  R --> RS{No window open, develop an ancestor of main}
+  RS -->|yes| FF[Fast-forward develop to main]
   RS -->|no| LM
   FF --> LM{Claude Code's limit<br/>marked and not lifted}
   LM -->|yes| LX[Exit — nothing merges or ports<br/>until a session can follow it]
@@ -52,51 +52,47 @@ flowchart TD
   E -->|yes| EP[Cherry-pick onto main<br/>push unverified, exit — no window spent]
   E -->|no| MR{main red on CI}
   MR -->|yes| RG[Regenerators, else Claude repairs<br/>push, exit — no window spent]
-  MR -->|no| PR{Release PR open}
-  PR -->|yes, review running| X[Exit]
-  PR -->|yes, rate limited| AK[Ask again at the stated deadline]
-  PR -->|yes, review complete| PB{A session starts}
-  PB -->|no| LX
-  PB -->|yes, exited clean| MG[Merge it — a fold pushed to main<br/>when main conflicts — exit]
-  PR -->|no| DR[Drain the merged release's open findings<br/>into ai/review-fixes, reply on answered threads]
-  DR --> SY[Rewrite ai/queue onto the tree the window is built on<br/>Claude resolves a conflict, repackages a commit alone over the window's room]
-  SY --> P{A fix, or anything the queue still owes}
-  P -->|none| PK[Wait — nothing owed]
-  P -->|first commit held alone, past its attempts| FL[Note it on the commit, fail —<br/>a person resolves or splits it]
-  P -->|any| W[Port fixes then queue prefix<br/>largest prefix under the cap, main folded in]
-  W --> PU[Compare-and-swap push to develop]
-  PU --> OP[Open the release PR<br/>its one review reads the window]
+  MR -->|no| CL{A window closed without merging}
+  CL -->|yes| PZ[Exit — a person's pause]
+  CL -->|no| BW{Bottom window's review}
+  BW -->|running or rate limited| SY
+  BW -->|complete| MG[Merge it, retarget the next to main,<br/>delete its branch, drain its findings] --> BW
+  BW -->|no window open| SY
+  SY[Rewrite ai/queue onto develop or the fixes] --> OB{Budget left, stacking allowed,<br/>something owed}
+  OB -->|yes| W[Cut the next window, push review/n,<br/>fast-forward develop, open its pull request] --> OB
+  OB -->|no| X[Exit]
 ```
 
 Three properties make the picture safe to fire from anything:
 
-- **All state is remote.** Which release is open or merged is read from the pull requests, open findings from the merged one's threads, fixes awaiting a push from `ai/review-fixes`, which thread a fix answers from a trailer on the fix commit, and what the queue still owes from `git cherry` against the tree the fixes built minus every commit a copy on `develop` or `main` names under any sha it has carried. A second run sees exactly what the first saw plus whatever the first pushed.
-- **One irreversible act per run** — the express lane's push to `main`, the repair's, or the window's push to `develop` — and it is a compare-and-swap the remote performs, on the sha every count was measured from, so a branch that moved is refused with nothing written and the next run re-measures against it ([push](/docs/infra/review-collector/collection-cycle)). The return stroke's fast-forward is the one push that ends nothing: it spends no slot, a push to `develop` fires no run, and every count after it is measured against the head it made. Everything before the act is a local branch in the runner; everything after it is idempotent by predicate — a reply is posted only where the thread lacks one citing that sha, the pull request is opened only when none is open. Nothing is ever deleted.
-- **The cap is measured on the tree that will be pushed,** never estimated: the porter cherry-picks one commit at a time and reads the file count from the merge base after each, on the pull request's own side of `main`.
+- **All state is remote.** Which windows are open and in what order is read from their pull requests and their bases, open findings from each merged window's threads, fixes awaiting a push from `ai/review-fixes`, which thread a fix answers from a trailer on the fix commit, and what the queue still owes from `git cherry` against the tree the fixes built minus every commit a copy on `develop` or `main` names under any sha it has carried. A second run sees exactly what the first saw plus whatever the first pushed.
+- **Each irreversible act is compare-and-swapped on the sha its count was measured from.** Those acts are a merge, the express lane's push to `main`, the repair's, and a window's push to its own branch with `develop`'s fast-forward after it. The remote performs the compare, so a branch that moved is refused with nothing written and the next run re-measures against it ([push](/docs/infra/review-collector/collection-cycle)). A run may make several — a merge for each completed review it walks past, a window for each open slot — and each is read against the remote before the next. The return stroke's fast-forward is the one push that ends nothing: it spends no slot, a push to `develop` fires no run, and every count after it is measured against the head it made. Everything after an act is idempotent by predicate — a reply is posted only where the thread lacks one citing that sha, and a pull request is opened only when none is open over that branch. Nothing is deleted except a window's branch once its pull request has merged.
+- **The cap is measured on the tree that will be pushed,** never estimated: the porter cherry-picks one commit at a time and reads the file count from the merge base after each, so the open windows below a new one are counted with it.
 
 ## Parameters
 
-The review budget has one knob, the file cap, in `scripts/src/services/coderabbit/shared/constants.ts` — read off the CodeRabbit plan the repository is on, so a trial starting or ending is one line naming the plan, live on the first cycle after it reaches `ai/queue`. No prose restates it as a number — a test over the skill and these pages fails on one written back in. There is no second knob beneath it: a window has no minimum size, because the port takes everything the queue owes and a small one is all there was. The collector's own values — branch names, trailer keys, the drain attempt cap, the check strings — sit in `scripts/src/services/coderabbit/collect/constants.ts`. Neither the slot duration nor the plan's hourly review count is a parameter: an event-triggered collector runs the minute a review completes, and a rate limit is waited out to the deadline the bot states.
+The review budget reads two figures off the CodeRabbit plan the repository is on, both in one file. The file cap bounds each window. The plan's hourly review figure bounds how many window pull requests may be open at once and how many may open in an hour. Both sit beside the plan line in `scripts/src/services/coderabbit/shared/constants.ts`, so a trial starting or ending is one line naming the plan, live on the first cycle after it reaches `ai/queue`. No prose restates either figure as a number. There is no further knob: a window has no minimum size, because the port takes everything the queue owes and a small one is all there was. The collector's own values — branch names, the window branch prefix, trailer keys, the drain attempt cap, the check strings — sit in `scripts/src/services/coderabbit/collect/constants.ts`. The slot duration is not a parameter: an event-triggered collector runs the minute a review completes, and a rate limit is waited out to the deadline the bot states.
 
 ## Key files
 
-| File                                                  | Role                                                                                                                                                                         |
-| :---------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `scripts/src/coderabbit/collect/index.ts`             | the entry point — `pnpm ai:coderabbit:collect [pr] [--dry-run]`                                                                                                              |
-| `scripts/src/services/coderabbit/collect/runCycle.ts` | the pass itself, which returns its verdict rather than exiting                                                                                                               |
-| `scripts/src/services/coderabbit/collect`             | one service per step — gate and merge, drain, sync and reshape, port, express, repair, the fold of `main`, reply — the git-touching ones proved against a fixture repository |
-| `scripts/src/models/coderabbit/collect`               | the inputs and outcomes the steps exchange                                                                                                                                   |
-| `.github/workflows/ReviewCollector.yaml`              | the runner's triggers, calling `run-review-collector.yaml` at `ai/queue`                                                                                                     |
-| `scripts/src/services/coderabbit/shared/constants.ts` | the file cap — the one knob of the review budget                                                                                                                             |
-| `scripts/src/coderabbit/feedback/index.ts`            | the finding report, printed by hand and handed to the drain                                                                                                                  |
-| `.agents/skills/review-queue/SKILL.md`                | the session's side of the loop — pushing `ai/queue` and catching up after a window                                                                                           |
+| File                                                  | Role                                                                                                                                                                                                        |
+| :---------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/src/coderabbit/collect/index.ts`             | the entry point — `pnpm ai:coderabbit:collect [pr] [--dry-run]`                                                                                                                                             |
+| `scripts/src/services/coderabbit/collect/runCycle.ts` | the pass itself, which walks the stack and returns its verdict rather than exiting                                                                                                                          |
+| `scripts/src/services/coderabbit/collect`             | one service per step — gate and merge, drain, sync and reshape, port, the window's push and opening, express, repair, the fold of `main`, reply — the git-touching ones proved against a fixture repository |
+| `scripts/src/models/coderabbit/collect`               | the inputs and outcomes the steps exchange                                                                                                                                                                  |
+| `.github/workflows/ReviewCollector.yaml`              | the runner's triggers, calling `run-review-collector.yaml` at `ai/queue`                                                                                                                                    |
+| `scripts/src/services/coderabbit/shared/constants.ts` | the file cap and the plan's hourly figure — the review budget's two knobs                                                                                                                                   |
+| `.coderabbit.yaml`                                    | the window branches listed as bases CodeRabbit reviews on creation                                                                                                                                          |
+| `scripts/src/coderabbit/feedback/index.ts`            | the finding report, printed by hand and handed to the drain                                                                                                                                                 |
+| `.agents/skills/review-queue/SKILL.md`                | the session's side of the loop — pushing `ai/queue` and catching up after a window                                                                                                                          |
 
 ## Notes
 
 - **One queue, not numbered bookmarks.** A bookmark per window would make a person decide where a window ends and remember to delete it afterwards; measuring does the first and the second stops existing.
-- **Fixes go out the moment they are drained, alone if need be.** They are the next release, and a limit refusing its review is an event the retrigger answers. **Rejected: parking fixes until the queue owes a commit**, to save the slot for a fuller window — the only case it changed was the empty queue, where it parked them for good: the release unmergeable over findings already fixed while the slot sat idle, and the `force` dispatch that unparked them a person's job. **Rejected: parking with a deadline** — a timer and a second retrigger reason for a saving the retrigger already makes free.
-- **Claude judges and never decides alone:** whether a finding is real, how a conflict resolves, what in an over-cap commit needs a reviewer. Every answer is proved by TypeScript afterwards — a clean tree, a complete sequence, an identical tree — so the expensive steps are the only ones that can be wrong in an interesting way, and every other step can be dry-run locally against the live pull request.
+- **Fixes go out the moment they are drained, alone if need be.** They are the next window, and a limit refusing its review is an event the retrigger answers. **Rejected: parking fixes until the queue owes a commit**, to save the slot for a fuller window — the only case it changed was the empty queue, where it parked them for good: findings already fixed sat unmerged while the slot stood idle, and the `force` dispatch that unparked them was a person's job. **Rejected: parking with a deadline** — a timer and a second retrigger reason for a saving the retrigger already makes free.
+- **Stacking spends the hourly figure instead of waiting on one review.** One open window would wait out its review before the next could be cut, so an hour's allowance bought one review's worth of windows. A stack spends the allowance as it comes. The price: each window's base is the window below it, so a merge retargets the next one, a window closed without merging pauses the whole stack, and the file count runs from `main`, so the open windows together stay under the cap rather than each window alone.
 - **An event that fires too often is the cheap failure;** the one this design refuses is an event that never fires. The bot's own replies arrive as reviews, several within seconds of a drain; the concurrency group serializes them and every one after the first exits at the gates.
-- **Rejected: replacing the bot — reviews bought past the plan's included ones, or a Claude review of every push in CI.** The design maximises what the plan's included reviews cover, with the file cap and the hourly slot as its levers; every mechanism here is the price of a review the plan already pays for, and either alternative spends on every push where the drain spends only on findings.
+- **Rejected: replacing the bot — reviews bought past the plan's included ones, or a Claude review of every push in CI.** The design maximises what the plan's included reviews cover, with the file cap and the plan's hourly figure as its levers; every mechanism here is the price of a review the plan already pays for, and either alternative spends on every push where the drain spends only on findings.
 - **Rejected: waiting on `develop`'s checks before the merge.** Honouring the branch rules would need a trigger on their completion and a merge-state read, for a gate the review already is — so the merge is made as an administrator instead.
-- **Rejected: an incremental review of an open release.** The bot declined one it could not recover, flipped its check to completed with no range stated, and the release merged on a verdict over commits no review read. Every mechanism that second-guessed an incremental review — the frontier, skipped-review detection, the merge-risk gate, the verdict — is gone with it ([collection cycle](/docs/infra/review-collector/collection-cycle), Notes).
+- **Rejected: an incremental review of an open window.** The bot declined one it could not recover, flipped its check to completed with no range stated, and the window merged on a verdict over commits no review read. Every mechanism that second-guessed an incremental review — the frontier, skipped-review detection, the merge-risk gate, the verdict — is gone with it ([collection cycle](/docs/infra/review-collector/collection-cycle), Notes).

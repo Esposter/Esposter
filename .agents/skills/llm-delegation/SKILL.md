@@ -16,7 +16,7 @@ The scarce resource is one shared Claude Code account limit. The main session, e
 
 ## In a session — the main session thinks, subagents run
 
-The split is by the work, and each kind of work has a family. Every `Agent` call passes `model`, and runs in the background so the main session keeps working beside it.
+The split is by the work, and each kind of work has a family. Every `Agent` call passes `model`, and runs in the background so the main session keeps working beside it; the one headless exception is below.
 
 There are two tiers and no middle one: `opus` thinks, `haiku` runs.
 
@@ -57,6 +57,10 @@ Ask the lowest tier first, and let it hand up what it cannot answer. A tier that
 - A predicate over data already read is code. A count, a trailer, an sha ancestry, a file count, a label, a threshold: no model.
 - A judgement over prose or over a diff — is this concern real, how severe is this finding, which label does this issue take — is Jev's, when its answer is one of a fixed set and the state fits in the request.
 - Only what must open files it cannot be handed, or must write, is a session.
+
+## A headless session delegates in the foreground, and only the drain does
+
+The drain session is the one headless session that delegates. Its fixes may go to `haiku` subagents, each called with `model: "haiku"` and `run_in_background: false`, one finding at a time, with the session judging each diff before the next (`apps/web/content/docs/infra/review-collector/drain.md`). Foreground is forced by the shape: a `claude -p` session has no next turn in which to read a backgrounded result. The sync, fold, reshape and repair sessions carry no such clause and stay on the opus tier. The subagent tier is named per call, and `CLAUDE_CODE_SUBAGENT_MODEL_FORCE` stays unset, so no environment setting overrides it.
 
 ## A deterministic tier does not have to know whether it applies
 

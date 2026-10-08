@@ -5,20 +5,20 @@ description: Apply when fetching, addressing or replying to CodeRabbit comments,
 
 # CodeRabbit Conventions
 
-What the bot does, and what that makes true for every session. The session's own loop — pushing `ai/queue`, never `develop` — is the `review-queue` skill; the collector that clears the gates, drains findings and cuts windows is `apps/web/content/docs/infra/review-collector/`.
+What the bot does, and what that makes true for every session. The session's own loop — pushing `ai/queue`, never `develop` or a window branch — is the `review-queue` skill; the collector that clears the gates, drains findings and cuts windows is `apps/web/content/docs/infra/review-collector/`.
 
 ## Settled — do not re-propose
 
 - **Replacing the bot** with a per-push review, or buying reviews past the plan's included ones. The drain pays only where a finding exists, and both alternatives pay per push; the case is `apps/web/content/docs/infra/review-collector/index.md`.
 - **A `schedule` trigger in place of the collector's delayed retrigger.** No polling is the standing rule (`apps/web/content/docs/architecture/no-polling.md`), and the one deadline a clock would wake for is one the bot states (`apps/web/content/docs/infra/review-collector/runner.md`).
-- **Adding a base to the "reviews.auto_review.base_branches" list** so a pull request against it reviews itself. It turns every intermediate PR into a spent slot; one against any base but `main` is triggered by hand with `@coderabbitai review` (`references/triggers.md`).
+- **Adding a base other than the window branches to "reviews.auto_review.base_branches"** so a pull request against it reviews itself. The stack's `^review/` is the one base that does: every window it opens is counted against the plan's figures, while any other intermediate PR would spend a slot the collector does not account for. One against any other base is triggered by hand with `@coderabbitai review` (`references/triggers.md`).
 - **Grepping the review body for the word "nitpick"** to collect them. The buckets are not a fixed set — duplicates, refactor suggestions and an additional-comments block appear once a review carries many — so a grep silently drops whichever bucket it did not name (`references/review-feedback.md`).
 - **A confirmation gate on a repo script whose side effect is restartable or regenerable** — the process kill in `pnpm refresh:lockfile`, a snapshot a build rewrites, a generated file a script replaces. The session runs it unattended and the answer to the prompt is always yes, so the finding is closed by the Settled line the owning skill carries for that script (the `dependency-updates` skill's Settled list, for the kill), never by adding the gate or asking the user first.
-- **Trusting an incremental review** — turning `auto_incremental_review` back on, or pushing fixes to an open release. The bot can decline an incremental review it cannot recover and still flip its check to completed, so a release merges over commits no review read. A release gets one full review and merges when it completes; its findings are drained into the next window, whose own full review reads the fixes (`apps/web/content/docs/infra/review-collector/collection-cycle.md`, Notes).
+- **Trusting an incremental review** — turning `auto_incremental_review` back on, or pushing fixes to an open window. The bot can decline an incremental review it cannot recover and still flip its check to completed, so a window merges over commits no review read. A window gets one full review and merges when it completes; its findings are drained into the next window, whose own full review reads the fixes (`apps/web/content/docs/infra/review-collector/collection-cycle.md`, Notes).
 
 ## What Triggers a Review
 
-Only a pull request against `main` reviews itself, and only on creation — incremental reviews are off; any other base is asked with `@coderabbitai review`, and `.coderabbit.yaml` is read from the base branch (`references/triggers.md`).
+A pull request against `main` or against a window branch (`review/<n>`, listed in `.coderabbit.yaml`) reviews itself, and only on creation — incremental reviews are off; any other base is asked with `@coderabbitai review`, and `.coderabbit.yaml` is read from the base branch (`references/triggers.md`).
 
 ## Never Push Into an In-Flight Review
 
