@@ -310,12 +310,33 @@ export const lightTopic: ReferenceTopic = {
       result:
         "The near towers' mean colour now stands 2.6 ΔE from the game's, yet the far towers stay pale: their bodies stand below the walkway, where the night's haze holds about 10 a metre 5 metres down and hides any stone within a metre, while the game shows them dark down to its cloud sea. Both measures weigh by pixels and read those towers on a few dozen, 63 and 67 pixels in the two lowest bands, so the haze solve keeps its wall (residual 0.0974 against 0.0983 under the shipped): the wall stands for the cloud billows under the near walkway, and a haze measure weighing the far stone by its depth is the tool owed before the haze is solved again",
     },
+    {
+      method:
+        "The stone program's per-material and per-camera buffers named from its own serialized layouts (parseShaderConstantLayouts over Shader#171's raw export), the login's scripts read for a property block (genshin:assets behaviours login, MonoBlockController and MonoLoginScene's fields), its clips searched for a material curve, and the walkway's middle lane read along its length in the door session's reference",
+      outcome: InvestigationOutcome.DeadEnd,
+      result:
+        "The G-buffer variant reads _RGColor at cb2[5], _RGPower and _RGStrength at cb2[6].xy and _EmissionRange at cb2[9].x, and the view from _WorldSpaceCameraPos at cb1[5], each as the witness reads it, and its rim takes the normal-mapped normal; the lighting pass adds a model 13 pixel's glow whole. The MonoBlockController the dump names, on one bridge piece, holds every field zero, and every other piece's component, named by its object, two small integers and no material or float; MonoLoginScene holds transforms, effects and timings and no material, and the login's clips animate its interface and the lift alone, so nothing found sets the walkway's glow at run time. The game's middle lane is pale grey-blue, from 56, 160, 236 near to 68, 172, 237 far in the frame's sRGB, brightening only a little toward the grazing end, between our lane without the glow (saturated blue) and with it (near white)",
+    },
+    {
+      method:
+        "The haze's residual weighed by depth rather than by pixels, every octave of the stone's distance from the eye counting alike (computeHazeResidual given a weight a bin, held through its solve and its residual), then calibrate --haze over both night frames under it and again by pixels",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "Weighed by depth the haze solves to density 2.4e7, falloff 1.48 and opacity up to all, residual 0.1164 against 0.1171 under the scene's own; by pixels to 2.4e7, 1.43 and all, 0.0974 against 0.0983. Both keep the wall: the far towers' octaves weighed up do not release it, so what holds it is the haze's one exponential form, which cannot draw the bright billows under the near walkway and leave the far stone dark below them. The wall stands for the cloud sea, and the measure moved nothing, so it was not kept",
+    },
+    {
+      method:
+        "The night light solved on the door session (calibrate login-door-session, unwritten) with the witness drawing no rim glow on Ground02 and Edge01, as the shipped walkway draws none, against the same solve under the witness as it stands",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Without the walkway's glow the solve leaves 0.1739 against 0.1751 with it, over the same 34,482 pixels, and the light stays blue alone, its harmonics' red under a hundredth either way: the glow is not what keeps red and green out of the night light. The game's middle lane carries red and green the light cannot, so a share of Ground02's glow stands in the frame, between none (our saturated blue lane) and all (the witness's near white one)",
+    },
   ],
   openQuestions: [
-    "Why the game shows the walkway's middle lane without Ground02's glow though its variant compiles it (ENABLE_RIM_GLOW_ON): a property block MonoBlockController sets on each rising piece, a different deferred variant, or a glow the program writes that the pass does not add as read; the witness still draws it, so the light is solved under a glow the frame does not show",
+    "Why the game shows the walkway's middle lane with a fraction of Ground02's glow though every input the program reads matches the witness's: the lane's normal map as the program decodes it against ours, which the rim reads, or a G-buffer variant the dump does not hold; the witness still draws it whole, so the light is solved under a glow the frame does not show",
     "The bridges' and the towers' glow by material: the bridges' glow reads 7.3 ΔE off, our bridges fitted from their Bridge materials alone where the exports' glow through Edge01 and Ground01, and the towers' structure 0.19 against 0.08, their Build materials' glows averaged into one",
     "The night's crowns past 40 metres, darker than the game's under the darkening that holds past 20 metres, and the form the darkening stands in for: the reflection pass's clustered probes or a haze form the scene lacks",
-    "The night's far towers below the walkway, hidden in the haze's wall where the game shows them dark: a haze measure weighing the stone by its depth, then the haze solved again under it",
+    "The night's far towers below the walkway, hidden in the haze's wall where the game shows them dark: the wall stands for the cloud sea's billows under the near walkway, which no weighing of the haze's one exponential form releases, so the cloud layer drawing the billows comes first and the haze is solved again after it",
     "What tells the day's and the dusk's stone haze from their light: calibrate --haze settles neither, and the stone's albedo varies too little to split a haze that adds from a light that scales",
     "The dusk sun's direction against its shadows: a tower's shadow falls over the wings in front of the door where the recording's are lit, and the faces' shading cannot settle the direction, the light's binned residual flat round the hand-set one, so the shadows' own edges are the measure left",
     "What the day's and the dusk's falling ramps stand in for: not the sun's direction, and holding them to rise scores the dusk worse, so the highlight, the reflection and the normal maps the solve lacks first",
