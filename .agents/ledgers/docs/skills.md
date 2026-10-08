@@ -59,6 +59,7 @@
 | `sweeps`                  | 2026-10-05 · Opus 5.5 |       |
 | `test-values`             | 2026-10-05 · Opus 5.5 |       |
 | `testing`                 | 2026-10-05 · Opus 5.5 |       |
+| `throughput`              |                       |       |
 | `tiptap`                  | 2026-10-05 · Opus 5.5 |       |
 | `todos`                   | 2026-10-05 · Opus 5.5 |       |
 | `trpc`                    | 2026-10-05 · Opus 5.5 |       |
