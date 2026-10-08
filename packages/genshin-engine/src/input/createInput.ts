@@ -30,7 +30,9 @@ const toDeadzoned = (stickAxis: number): number => (Math.abs(stickAxis) < GAMEPA
 // Code of one of its chords is, and pressed when a chord's last code was pressed since the last read with the rest held,
 // The longest chord pressed by a code winning, so a gamepad's bumper and a face button are the bumper's shortcut alone.
 // A bound key's browser default is prevented, but for the keys focus moves with, and a key typed into a field is the
-// Field's. A window that loses focus hears no key's release, so a blur lets go of every key
+// Field's. A window that loses focus hears no key's release, so a blur lets go of every key. The
+// Touch controls drawn over the world press a code through its on-screen button, push an on-screen stick read with the
+// Gamepad's, and turn the look as a drag across the screen does
 export const createInput = (target: Window): Input => {
   const controller = new AbortController();
   const { signal } = controller;
@@ -41,6 +43,9 @@ export const createInput = (target: Window): Input => {
   const codeChordLengthMap = new Map<string, number>();
   let pendingLookYaw = 0;
   let pendingLookPitch = 0;
+  // The touch controls' on-screen stick, read with the gamepad's left stick
+  let touchStickX = 0;
+  let touchStickY = 0;
   const heldActions = new Set<InputAction>();
   const pressedActions = new Set<InputAction>();
   const inputState: InputState = {
@@ -111,6 +116,7 @@ export const createInput = (target: Window): Input => {
     dispose: () => {
       controller.abort();
     },
+    press,
     readInput: (frameSeconds) => {
       const gamepad = target.navigator.getGamepads().find((candidate): candidate is Gamepad => candidate !== null);
       const [stickX = 0, stickY = 0, lookStickX = 0, lookStickY = 0] = gamepad?.axes ?? [];
@@ -125,11 +131,17 @@ export const createInput = (target: Window): Input => {
       pendingLookPitch = 0;
       inputState.moveForward = Math.max(
         -1,
-        Math.min(1, toAxis(heldCodes.has(KEY_CODE_FORWARD), heldCodes.has(KEY_CODE_BACKWARD)) - toDeadzoned(stickY)),
+        Math.min(
+          1,
+          toAxis(heldCodes.has(KEY_CODE_FORWARD), heldCodes.has(KEY_CODE_BACKWARD)) - toDeadzoned(stickY) - touchStickY,
+        ),
       );
       inputState.moveRight = Math.max(
         -1,
-        Math.min(1, toAxis(heldCodes.has(KEY_CODE_RIGHT), heldCodes.has(KEY_CODE_LEFT)) + toDeadzoned(stickX)),
+        Math.min(
+          1,
+          toAxis(heldCodes.has(KEY_CODE_RIGHT), heldCodes.has(KEY_CODE_LEFT)) + toDeadzoned(stickX) + touchStickX,
+        ),
       );
       inputState.moveUp = toAxis(heldCodes.has(KEY_CODE_UP), heldCodes.has(KEY_CODE_DOWN));
       codeChordLengthMap.clear();
@@ -154,6 +166,17 @@ export const createInput = (target: Window): Input => {
         }
       pressedCodes.clear();
       return inputState;
+    },
+    release: (code) => {
+      heldCodes.delete(code);
+    },
+    setTouchStick: (x, y) => {
+      touchStickX = x;
+      touchStickY = y;
+    },
+    turn: (lookYaw, lookPitch) => {
+      pendingLookYaw += lookYaw;
+      pendingLookPitch += lookPitch;
     },
   };
 };
