@@ -209,6 +209,20 @@ export const skyTopic: ReferenceTopic = {
       result:
         "Synthesis takes about 0.19 seconds for the density, 0.17 for the wisps and 0.02 to 0.03 for the curl and the normal map, so each is drawn in an idle moment of its own. Swapped in as new textures with the same texels, filters and wrapping, the layer read differently (edges 0.077 against 0.006, cover 0.188 against 0.276), the swapped textures drawn without their mipmaps; written in place it reads the same to four places. The game's own textures, which layer swaps in the same way, may have been read without theirs, so the readings over them above are owed a repeat",
     },
+    {
+      method:
+        "genshin:parity layer login-door-recording --witness login --ours with lit and shade solved from the dusk's shipped #fcfcc4 and #eb8596 over 150 steps, then the measure read for which of its statistics see a cloud's hue",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Solved, the dusk beat its shipped colours on every reading (clear sky 6.36 to 2.01 ΔE, cover 0.060 to 0.043, brightness 0.143 to 0.017, edges 0.075 to 0.039, spread 0.345 to 0.054) with a lit #f7f7e7 over a shade of #f000c9, its green run under none: every cloud statistic read brightness alone, the clouds' contrast, cover, edges and spread, so no reading saw the shade's hue, nor the night's lit #00d6f3 above. The pass now reads the clouds' mean colour in CIELab beside the clear sky's (readSkyComparison), gated at the colour gate or the halves' own spread, whichever is wider",
+    },
+    {
+      method:
+        "The dusk's and the night's colours solved again with the clouds' colour read, each beside its shipped colours drawn at none, at the door recording and at login-door-session held at heldScrolled 320",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Under the shipped colours the dusk's clouds stand 9.9 ΔE off the recording's (L 81.9, a 8.1, b 21.7 against 78.0, 14.2, 14.9) and the night's 13.7 (a 3.9 and b -31.5 against -0.8 and -44.3, ours greyer). Solved, the dusk's lit #fffcd0 and shade #d853af take the clouds' colour to 3.6 against a gate of 4.2, the clear sky to 2.85, the edges to 0.028 and the spread to 0.086, every one but the cover nearer, and the cover from 0.060 to 0.067 still inside its 0.11: four gates held where the shipped hold one. The night's lit #00bbff and shade #0094dc take its clouds' colour to 3.9, the cover to 0.17 and the spread to 0.014, but the clear sky from 2.86 to 3.17 and the brightness from 0.027 to 0.103. Neither beats its shipped colours on every reading, so both wait on whether a reading still held that moves within its gate may be traded",
+    },
   ],
   openQuestions: [
     "The cloud layer's settings by hour: solved from an opacity near none on every hour's frame, no hour's layer beats drawing none on every reading, each staying thin and trading the clear sky's colour against its clouds; what the layer would draw is read again once the clouds' own colours and the sky's hold, its coverage kept within none to one, and named from the environment scripts where a curve reads it",

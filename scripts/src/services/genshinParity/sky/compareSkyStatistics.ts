@@ -5,12 +5,19 @@ import type { SkyStatistics } from "#src/models/genshinParity/sky/SkyStatistics"
 export const compareSkyStatistics = (first: SkyStatistics, second: SkyStatistics): SkyDistance => {
   const [firstLightness, firstA, firstB] = first.clearColour;
   const [secondLightness, secondA, secondB] = second.clearColour;
+  const [firstCloudLightness, firstCloudA, firstCloudB] = first.cloudColour;
+  const [secondCloudLightness, secondCloudA, secondCloudB] = second.cloudColour;
   const coverGaps = first.elevationCoverage.map((cover, band) =>
     Math.abs(cover - (second.elevationCoverage[band] ?? 0)),
   );
   return {
     brightness: Math.abs(
       Math.log(Math.max(first.clouds.contrast, Number.EPSILON) / Math.max(second.clouds.contrast, Number.EPSILON)),
+    ),
+    cloudColour: Math.hypot(
+      firstCloudLightness - secondCloudLightness,
+      firstCloudA - secondCloudA,
+      firstCloudB - secondCloudB,
     ),
     colour: Math.hypot(firstLightness - secondLightness, firstA - secondA, firstB - secondB),
     cover: coverGaps.reduce((sum, gap) => sum + gap, 0) / Math.max(coverGaps.length, 1),

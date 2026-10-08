@@ -14,6 +14,7 @@ describe(computeSkySplitSpread, () => {
     const sky = Uint8Array.from([1, 1, 1, 1, 0, 0, 0, 0]);
     const readStatistics = (region: Uint8Array): SkyStatistics => ({
       clearColour: [0, 0, 0],
+      cloudColour: [0, 0, 0],
       clouds: { contrast: 1, coverage: 0, edgeSharpness: 0, spread: 0 },
       elevationCoverage: [
         region.filter((isSky, pixel) => isSky && pixel % width < width / 2).length / region.filter(Boolean).length,
@@ -22,6 +23,7 @@ describe(computeSkySplitSpread, () => {
 
     expect(computeSkySplitSpread(readStatistics, sky, width, [2])).toStrictEqual({
       brightness: 0,
+      cloudColour: 0,
       colour: 0,
       cover: Math.SQRT1_2,
       edgeSharpness: 0,
