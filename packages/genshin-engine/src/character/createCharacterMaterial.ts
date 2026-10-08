@@ -27,6 +27,8 @@ export const createCharacterMaterial = ({
       opacity,
       side: isDoubleSided ? DoubleSide : FrontSide,
       transparent: true,
+      // A material left at no opacity, which a pack hides an alternate part with, is not drawn, so its depth hides nothing
+      visible: opacity > 0,
     },
     isOutlined,
   );

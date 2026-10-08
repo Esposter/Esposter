@@ -2,7 +2,7 @@
 import { readCharacterTerms } from "#src/services/character/readCharacterTerms";
 
 interface Props {
-  characterId: string;
+  characterId: number;
   characterPackBaseUrl: string;
 }
 

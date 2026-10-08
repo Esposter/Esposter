@@ -11,7 +11,7 @@ import { createCharacterMaterial, createPmxMesh, createPmxTexture, parsePmx } fr
 // Light stands in for, is never fetched. A pack is drawn whole or, should any of its files fail to arrive, not at all
 export const readCharacterMesh = (
   characterPackBaseUrl: string,
-  characterId: string,
+  characterId: number,
   { lightUniforms, rampTexture }: Pick<CharacterMaterialOptions, "lightUniforms" | "rampTexture">,
 ): ReturnType<typeof getResultAsync<SkinnedMesh<BufferGeometry, ToonNodeMaterial[]>>> =>
   getResultAsync(async () => {

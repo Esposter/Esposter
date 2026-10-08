@@ -4,7 +4,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Path a model names may hold MMD's backslashes and letters of any script, so each of its parts is encoded on its own
 export const readCharacterPackFile = async (
   characterPackBaseUrl: string,
-  characterId: string,
+  characterId: number,
   path: string,
   timeoutMs: number,
 ): Promise<Response> => {

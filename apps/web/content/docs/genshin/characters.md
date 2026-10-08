@@ -24,7 +24,7 @@ flowchart LR
 
 ### The pack
 
-- **One folder per character, named by its id**, under the base URL the app hands the world: `model.pmx`, the model renamed on upload; `terms.txt`, the terms bundled with it; and the textures at the paths the model names them by, relative to it. `readCharacterPackFile` reads every one of them, so the three kinds of file share one layout, and it encodes each part of a path on its own, since a model's paths hold MMD's backslashes and letters of any script.
+- **One folder per character, named by its id in the game's data** as the party's characters are, under the base URL the app hands the world, `GENSHIN_CHARACTER_PACK_PATH` in its assets container: `model.pmx`, the model renamed on upload; `terms.txt`, the terms bundled with it; and the textures at the paths the model names them by, relative to it. `readCharacterPackFile` reads every one of them, so the three kinds of file share one layout, and it encodes each part of a path on its own, since a model's paths hold MMD's backslashes and letters of any script.
 - **A pack is drawn whole or not at all.** Only the textures a material draws with are fetched; a toon ramp or a sphere map the model names is never fetched, since the world's own light stands in for both. A failed read is logged and leaves nothing drawn, and a model arriving after its character has gone is released at once.
 
 ### Reading a PMX
@@ -43,6 +43,7 @@ flowchart LR
 - **Blended in the model's own order.** Every material is blended and writes its depth, as MMD draws one, so a texel the texture leaves clear shows what the materials before it drew. A material set to draw both faces is drawn from behind as well.
 - **Textures as the model samples them.** `createPmxTexture` decodes a texture unpremultiplied and unconverted, leaving the blend and the colour space to three, and unflipped, since a PMX model's texture coordinates run from the image's top left. Past its edges it repeats.
 - **It faces where its holder faces.** `CharacterModel` stands the model at the origin of whatever holds it, turned half round to face -z as a yaw of none does. The [character controller](/docs/proposals/genshin/character-controller)'s body faces the same way, so whatever moves the body moves the model by holding it.
+- **The Traveler stands where Windrise starts.** The world plays the Traveler (`TRAVELER_CHARACTER_ID`), drawn at `WINDRISE_START_POINT` on the ground until the controller's body holds it. Without the packs' address, as on the parity page, and in a witness render, no character is drawn.
 
 ## Key files
 
@@ -63,6 +64,8 @@ flowchart LR
 | `packages/genshin-world/src/services/character/constants.ts`             | A pack's file names, and how long each read waits                              |
 | `packages/genshin-world/src/components/Character/Model/Index.vue`        | Draws a character's model at its holder's origin, and releases it              |
 | `packages/genshin-world/src/components/Character/Terms/Index.vue`        | Shows the terms verbatim, or that they could not be loaded                     |
+| `packages/genshin-world/src/components/World/Windrise/Index.vue`         | Stands the Traveler at Windrise's start point                                  |
+| `apps/web/shared/services/genshin/constants.ts`                          | Where the packs are kept in the app's assets container                         |
 
 ## Notes
 

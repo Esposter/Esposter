@@ -2,6 +2,7 @@
 import type { QualityTier } from "genshin-engine";
 import type { Vector3 } from "three";
 
+import CharacterModel from "#src/components/Character/Model/Index.vue";
 import WorldEnemies from "#src/components/World/Enemies/Index.vue";
 import WorldGrass from "#src/components/World/Grass/Index.vue";
 import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
@@ -17,6 +18,7 @@ import { useSky } from "#src/composables/useSky";
 import water from "#src/data/windrise/water.json";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import {
@@ -48,6 +50,7 @@ import {
   WINDRISE_RAMP_OPTIONS,
   WINDRISE_SKY_KEYFRAMES,
   WINDRISE_START_MINUTES,
+  WINDRISE_START_POINT,
   WINDRISE_TERRAIN_OPTIONS,
 } from "#src/services/windrise/constants";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
@@ -69,6 +72,8 @@ import {
 import { HemisphereLight } from "three";
 
 interface Props {
+  // Where the host serves the characters' model packs, without which no character is drawn
+  characterPackBaseUrl?: string;
   createTerrainWorker: () => Worker;
   // The game's minute of the day the clock is held at, in place of its running from the region's start
   heldMinutes?: number;
@@ -83,8 +88,17 @@ interface Props {
   regionDataBaseUrl: string;
 }
 
-const { createTerrainWorker, heldMinutes, isHeld, isTuning, origin, qualityTier, regionDataBaseUrl } =
-  defineProps<Props>();
+const {
+  characterPackBaseUrl,
+  createTerrainWorker,
+  heldMinutes,
+  isHeld,
+  isTuning,
+  origin,
+  qualityTier,
+  regionDataBaseUrl,
+} = defineProps<Props>();
+const characterGroundHeight = getWorldHeight(WINDRISE_START_POINT.x, WINDRISE_START_POINT.z);
 const emit = defineEmits<{ ready: [] }>();
 // The witness render's parts, drawn in place of ours of each family it names when the parity page provides them, beside
 // Ours rather than in the floating origin's group, since the page's tools find the camera among their siblings and stay
@@ -260,5 +274,12 @@ onUnmounted(() => {
     <WorldLandmarks :hidden-kinds="hiddenLandmarkKinds" :light-uniforms :ramp-texture :region-data-map :wind-uniforms />
     <!-- Enemies wander where the references show none, so a witness render, judged against them, draws none -->
     <WorldEnemies v-if="!witness" :is-held :light-uniforms :origin :ramp-texture :region-data-map />
+    <!-- The Traveler, whom the world plays, where it starts until the controller's body holds it, never in a witness -->
+    <TresGroup
+      v-if="characterPackBaseUrl && !witness"
+      :position="[WINDRISE_START_POINT.x, characterGroundHeight, WINDRISE_START_POINT.z]"
+    >
+      <CharacterModel :character-id="TRAVELER_CHARACTER_ID" :character-pack-base-url :light-uniforms :ramp-texture />
+    </TresGroup>
   </TresGroup>
 </template>

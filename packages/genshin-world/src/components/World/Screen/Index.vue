@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import type { MapCamera } from "#src/models/map/MapCamera";
+import type { Quest } from "#src/models/quest/Quest";
+import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { WorldCameraPose } from "#src/models/world/WorldCameraPose";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext } from "@tresjs/core";
 import type { QualityTier } from "genshin-engine";
 import type { GameText } from "genshin-text";
 
+import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MenuScreen from "#src/components/Menu/Screen/Index.vue";
+import QuestScreen from "#src/components/Quest/Screen/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
@@ -32,6 +36,8 @@ import { unref } from "vue";
 interface Props {
   // A camera held still, as a reference of the game's sees the world, in place of the one circling the oak
   cameraPose?: WorldCameraPose;
+  // Where the host serves the characters' model packs, without which no character is drawn
+  characterPackBaseUrl?: string;
   createTerrainWorker: () => Worker;
   // The game's words in the reader's language
   gameText: GameText;
@@ -46,8 +52,17 @@ interface Props {
   regionDataBaseUrl: string;
 }
 
-const { cameraPose, createTerrainWorker, gameText, heldMinutes, isPaused, isTuning, qualityTier, regionDataBaseUrl } =
-  defineProps<Props>();
+const {
+  cameraPose,
+  characterPackBaseUrl,
+  createTerrainWorker,
+  gameText,
+  heldMinutes,
+  isPaused,
+  isTuning,
+  qualityTier,
+  regionDataBaseUrl,
+} = defineProps<Props>();
 // Quitting the game leaves the world, which its host does
 const emit = defineEmits<{ quit: []; ready: [] }>();
 const { maxPixelRatio } = QualityTierSettingsMap[qualityTier];
@@ -61,6 +76,12 @@ const input = createInput(window, controller.signal);
 const inputState = input.readInput(0);
 // What is open over the world, one screen at a time, and what it does to the world under it
 const screenKind = ref(ScreenKind.World);
+// The quests in progress, how far each has come, their words and the one navigated to. Nothing starts a quest yet, so
+// The quest screen opens empty
+const quests: Quest[] = [];
+const questProgressMap = new Map<string, QuestProgress>();
+const questTextMap: Record<string, string> = {};
+const trackedQuestId = ref("");
 const screenBehaviour = computed(() => ScreenBehaviourMap[screenKind.value]);
 // A screen with a cursor of its own lets the pointer go, which a click on the world takes again once it closes
 watch(
@@ -149,7 +170,8 @@ defineExpose({ jumpTo, readCameraPosition });
         (context: TresContextWithClock) => {
           input.readInput(context.delta);
           if (!isPaused) screenKind = getNextScreenKind(screenKind, inputState.pressedActions);
-          if (inputState.pressedActions.has(InputAction.HideInterface)) isHudHidden = !isHudHidden;
+          if (!isPaused && screenKind === ScreenKind.World && inputState.pressedActions.has(InputAction.HideInterface))
+            isHudHidden = !isHudHidden;
         }
       "
       @error="emit('ready')"
@@ -172,6 +194,7 @@ defineExpose({ jumpTo, readCameraPosition });
         />
       </template>
       <WorldWindrise
+        :character-pack-base-url
         :create-terrain-worker
         :held-minutes
         :is-held="screenBehaviour.isHeld || undefined"
@@ -206,6 +229,20 @@ defineExpose({ jumpTo, readCameraPosition });
             }
           "
         />
+      </template>
+      <template #[ScreenKind.Quests]>
+        <QuestScreen
+          :game-text
+          :quest-progress-map
+          :quests
+          :text-map="questTextMap"
+          :tracked-quest-id
+          @close="screenKind = ScreenKind.World"
+          @navigate="(questId) => (trackedQuestId = questId)"
+        />
+      </template>
+      <template #[ScreenKind.AdventurerHandbook]>
+        <HandbookScreen :game-text @close="screenKind = ScreenKind.World" />
       </template>
     </MenuScreen>
     <div

@@ -29,7 +29,7 @@ flowchart LR
 
 ## Scope
 
-**Today:** a character's model is read and drawn at rest at its holder's origin, at MMD's reckoned scale, and nothing moves it.
+**Today:** a character's model is read and drawn at rest at its holder's origin, at MMD's reckoned scale, the Traveler standing where Windrise starts, and nothing moves it.
 
 **This adds:**
 

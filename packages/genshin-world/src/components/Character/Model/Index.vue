@@ -5,7 +5,7 @@ import type { BufferGeometry, DataTexture, SkinnedMesh } from "three";
 import { readCharacterMesh } from "#src/services/character/readCharacterMesh";
 
 interface Props {
-  characterId: string;
+  characterId: number;
   characterPackBaseUrl: string;
   lightUniforms: LightUniforms;
   rampTexture: DataTexture;

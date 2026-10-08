@@ -1,4 +1,12 @@
-import type { GradeOptions, GrassRing, GroundPaint, RampOptions, SkyKeyframe, TerrainOptions } from "genshin-engine";
+import type {
+  GradeOptions,
+  GrassRing,
+  GroundPaint,
+  GroundPoint,
+  RampOptions,
+  SkyKeyframe,
+  TerrainOptions,
+} from "genshin-engine";
 
 import ground from "#src/data/windrise/ground.json";
 import water from "#src/data/windrise/water.json";
@@ -50,6 +58,9 @@ export const WINDRISE_GROUND_PAINT: GroundPaint = {
   rockSlope: { end: 0.55, start: 0.3 },
   sandHeight: { end: water.level + 0.4, start: water.level + 1.2 },
 };
+// Where a character starts in Windrise: on the slope before the statue, in the free camera's first view, its back to
+// The camera as the game shows a character
+export const WINDRISE_START_POINT: GroundPoint = { x: 36, z: 12 };
 // Colours as the palette sees them, in sRGB
 export const BARK_COLOR = 0x6b4a33;
 export const LEAF_COLOR = 0x6fae3f;
