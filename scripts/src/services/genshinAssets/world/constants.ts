@@ -10,8 +10,11 @@ export const TILE_NAME_PREFIX = "BigWorld";
 export const TERRAIN_NAME_PREFIX = "BigWorldTerrain";
 export const TERRAIN_NAME_SUFFIX = ".bin";
 // The half side of the square round a capital that its reference is shot across, in metres either way. A city's view
-// Covers its own tile's width and a little past it, so the tiles it touches are the ones its prefabs are read from
+// Covers its own tile's width and a little past it
 export const CAPITAL_VIEW_METRES = 512;
+// The radius round a capital's landmark, in metres, within which the architecture its prefabs are built of is rooted
+// Whole, past the view: a landmark stands on a tower or a wall the view's edge can cut. Its tiles are read as well
+export const ARCHITECTURE_VIEW_METRES = 600;
 // The file a derived world block is written beside its exports, which every reader of the world reads back
 export const WORLD_JSON_NAME = "world.json";
 // The community's asset index (the one published per version up to 2.6), which names every asset by its path and so
