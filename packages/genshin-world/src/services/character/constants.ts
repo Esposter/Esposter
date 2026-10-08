@@ -1,3 +1,6 @@
+import { Attribute } from "#src/models/character/Attribute";
+import { GameTextKey } from "genshin-text";
+
 // A pack's own files, named alike in every pack: its model, uploaded under this name, and the terms bundled with it.
 // The model's textures keep the paths the model names them by
 export const CHARACTER_MODEL_PATH = "model.pmx";
@@ -7,3 +10,23 @@ export const CHARACTER_TERMS_FETCH_TIMEOUT_MS = 10_000;
 // A model and each of its textures run to megabytes, and are abandoned past this so a stalled request cannot leave a
 // Character loading for good
 export const CHARACTER_MODEL_FETCH_TIMEOUT_MS = 60_000;
+// The Traveler the world plays, the female twin, as the login's Traveler is
+export const TRAVELER_CHARACTER_ID = 10_000_007;
+// The Attributes tab's advanced attributes and the game's name for each, in the order its details list them
+export const ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, GameTextKey])[] = [
+  [Attribute.CriticalRate, GameTextKey.AttributeCriticalRate],
+  [Attribute.CriticalDamage, GameTextKey.AttributeCriticalDamage],
+  [Attribute.HealingBonus, GameTextKey.AttributeHealingBonus],
+  [Attribute.EnergyRecharge, GameTextKey.AttributeEnergyRecharge],
+];
+// The Attributes tab's damage bonuses and the game's name for each, in the order its details list them
+export const ELEMENTAL_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, GameTextKey])[] = [
+  [Attribute.PyroDamageBonus, GameTextKey.AttributePyroDamageBonus],
+  [Attribute.HydroDamageBonus, GameTextKey.AttributeHydroDamageBonus],
+  [Attribute.DendroDamageBonus, GameTextKey.AttributeDendroDamageBonus],
+  [Attribute.ElectroDamageBonus, GameTextKey.AttributeElectroDamageBonus],
+  [Attribute.AnemoDamageBonus, GameTextKey.AttributeAnemoDamageBonus],
+  [Attribute.CryoDamageBonus, GameTextKey.AttributeCryoDamageBonus],
+  [Attribute.GeoDamageBonus, GameTextKey.AttributeGeoDamageBonus],
+  [Attribute.PhysicalDamageBonus, GameTextKey.AttributePhysicalDamageBonus],
+];
