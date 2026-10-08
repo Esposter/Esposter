@@ -47,7 +47,7 @@ flowchart TD
 
 ## Notes
 
-- **Not yet wired.** The world screen holds the unlocked statues and has uncommitted edits from another session, so the region's level, the pool and the auto-recover setting are not yet its state. Until they are, the character component passes the start maximum, and no Oculus is offered to a region.
+- **Not yet wired.** The world screen holds the unlocked statues, but the region's level, the pool and the auto-recover setting are not yet its state. Until they are, the character component passes the start maximum, and no Oculus is offered to a region.
 - **Oculi wait on the spawned places.** Oculi are not in the world's data, and their places come from the spawned places' fit ([spawned places](/docs/proposals/genshin/spawned-places)).
 - **Decided here.** A click on a fallen member does nothing, since the fallen are revived by auto-recover at no cost to the pool. A click that the pool cannot cover in full heals what it holds.
 
