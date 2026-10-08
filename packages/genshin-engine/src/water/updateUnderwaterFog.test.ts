@@ -34,4 +34,23 @@ describe(updateUnderwaterFog, () => {
       underwater: { density: 1, heightFalloff: 0, maxOpacity: 1 },
     });
   });
+
+  test("keeps the water's density under it, and gives back a density written above meanwhile on surfacing", () => {
+    expect.hasAssertions();
+
+    const waterUniforms = createWaterUniforms();
+    waterUniforms.underwaterFogDensity.value = 1;
+    const fogUniforms = createFogUniforms();
+    const underwaterFogState = createUnderwaterFogState();
+    updateUnderwaterFog(-1, waterUniforms, fogUniforms, underwaterFogState);
+    fogUniforms.density.value = 0.5;
+    updateUnderwaterFog(-1, waterUniforms, fogUniforms, underwaterFogState);
+    const underwaterDensity = fogUniforms.density.value;
+    updateUnderwaterFog(1, waterUniforms, fogUniforms, underwaterFogState);
+
+    expect({ aboveDensity: fogUniforms.density.value, underwaterDensity }).toStrictEqual({
+      aboveDensity: 0.5,
+      underwaterDensity: 1,
+    });
+  });
 });

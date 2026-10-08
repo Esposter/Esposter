@@ -6,4 +6,5 @@ export const createUnderwaterFogState = (): UnderwaterFogState => ({
   aboveMaxOpacity: 1,
   aboveStartDistance: 0,
   isUnderwater: false,
+  underwaterDensity: 0,
 });

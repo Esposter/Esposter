@@ -2,6 +2,8 @@ import type { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
 import type { GrassOptions } from "#src/models/vegetation/GrassOptions";
 
 import { createToonMaterial } from "#src/nodes/createToonMaterial";
+import { createWetDarkeningNode } from "#src/nodes/createWetDarkeningNode";
+import { createWetSheenNode } from "#src/nodes/createWetSheenNode";
 import { createWindNode } from "#src/nodes/createWindNode";
 import { DoubleSide } from "three";
 import {
@@ -31,7 +33,8 @@ const BEND_PER_WIND = 0.9;
 // Of the cell jitters it, turns it, sizes it and decides whether the tier grows it. It stands on the ground
 // Capture's height and takes its colour, and grows only on green ground above the water. The wind bends it by the
 // Square of the height up it, and it fades in and out over its ring's distances. Every blade takes the ground's
-// Upward normal, so a meadow toon-shades as one surface with light rolling across it, darker at the root
+// Upward normal, so a meadow toon-shades as one surface with light rolling across it, darker at the root. A wet meadow
+// Darkens and takes the sun's glint as the ground does, and no rim
 export const createGrassMaterial = ({
   bladeHeight,
   bladeWidth,
@@ -45,7 +48,7 @@ export const createGrassMaterial = ({
   windUniforms,
 }: GrassOptions): ToonNodeMaterial => {
   const grassMaterial = createToonMaterial({ isOutlined: false, lightUniforms, rampTexture });
-  grassMaterial.emissiveNode = null;
+  grassMaterial.emissiveNode = createWetSheenNode(lightUniforms);
   grassMaterial.side = DoubleSide;
   const { cellsPerSide, fadeEnd, fadeStart, innerRadius, scale, spacing } = ring;
   const index = float(instanceIndex);
@@ -93,6 +96,8 @@ export const createGrassMaterial = ({
   );
   grassMaterial.normalNode = cameraViewMatrix.mul(vec4(0, 1, 0, 0)).xyz;
   const groundColor = varying(captured.rgb);
-  grassMaterial.colorNode = mix(groundColor.mul(0.72), groundColor.mul(1.12).add(vec3(0.03, 0.03, 0)), up);
+  grassMaterial.colorNode = mix(groundColor.mul(0.72), groundColor.mul(1.12).add(vec3(0.03, 0.03, 0)), up).mul(
+    createWetDarkeningNode(lightUniforms),
+  );
   return grassMaterial;
 };

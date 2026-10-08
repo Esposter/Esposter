@@ -11,7 +11,8 @@
             { "id": "brightcrown-canyon", "name": "Brightcrown Canyon" },
             { "id": "stormterrors-lair", "name": "Stormterror's Lair" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "dragonspine",
@@ -26,7 +27,8 @@
             { "id": "starglow-cavern", "name": "Starglow Cavern" },
             { "id": "wyrmrest-valley", "name": "Wyrmrest Valley" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Snow"]
         },
         {
           "id": "galesong-hill",
@@ -45,7 +47,8 @@
             { "id": "musk-reef", "name": "Musk Reef" },
             { "id": "windrise", "name": "Windrise" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "starfell-valley",
@@ -67,7 +70,8 @@
             { "id": "thousand-winds-temple", "name": "Thousand Winds Temple" },
             { "id": "whispering-woods", "name": "Whispering Woods" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "windrest-peak",
@@ -79,7 +83,8 @@
             { "id": "millhaven", "name": "Millhaven" },
             { "id": "old-sanatorium-site", "name": "Old Sanatorium Site" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "windwail-highland",
@@ -91,7 +96,8 @@
             { "id": "springvale", "name": "Springvale" },
             { "id": "wolvendom", "name": "Wolvendom" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         }
       ],
       "id": "mondstadt",
@@ -112,7 +118,8 @@
             { "id": "wangshu-inn", "name": "Wangshu Inn" },
             { "id": "wuwang-hill", "name": "Wuwang Hill" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "chenyu-vale-southern-mountain",
@@ -127,7 +134,8 @@
             { "id": "teatree-slope", "name": "Teatree Slope" },
             { "id": "yaodie-valley", "name": "Yaodie Valley" }
           ],
-          "subregion": "Chenyu Vale"
+          "subregion": "Chenyu Vale",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "chenyu-vale-upper-vale",
@@ -142,7 +150,8 @@
             { "id": "qiaoying-village", "name": "Qiaoying Village" },
             { "id": "yilong-wharf", "name": "Yilong Wharf" }
           ],
-          "subregion": "Chenyu Vale"
+          "subregion": "Chenyu Vale",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "lisha",
@@ -154,7 +163,8 @@
             { "id": "lingju-pass", "name": "Lingju Pass" },
             { "id": "qingxu-pool", "name": "Qingxu Pool" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "minlin",
@@ -171,7 +181,8 @@
             { "id": "qingyun-peak", "name": "Qingyun Peak" },
             { "id": "tianqiu-valley", "name": "Tianqiu Valley" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "mt-laixin",
@@ -182,7 +193,8 @@
             { "id": "carps-rest", "name": "Carp's Rest" },
             { "id": "chiwang-terrace", "name": "Chiwang Terrace" }
           ],
-          "subregion": "Chenyu Vale"
+          "subregion": "Chenyu Vale",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "qiongji-estuary",
@@ -195,7 +207,8 @@
             { "id": "mingyun-village", "name": "Mingyun Village" },
             { "id": "yaoguang-shoal", "name": "Yaoguang Shoal" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "sea-of-clouds",
@@ -212,7 +225,8 @@
             { "id": "liyue-harbor", "name": "Liyue Harbor" },
             { "id": "mt-tianheng", "name": "Mt. Tianheng" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "the-chasm",
@@ -228,7 +242,8 @@
             { "id": "the-surface", "name": "The Surface" },
             { "id": "tiangong-gorge", "name": "Tiangong Gorge" }
           ],
-          "subregion": "The Chasm"
+          "subregion": "The Chasm",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "the-chasm-underground-mines",
@@ -244,7 +259,8 @@
             { "id": "the-serpents-cave", "name": "The Serpent's Cave" },
             { "id": "underground-waterway", "name": "Underground Waterway" }
           ],
-          "subregion": "The Chasm"
+          "subregion": "The Chasm",
+          "weathers": ["Clear"]
         }
       ],
       "id": "liyue",
@@ -267,7 +283,8 @@
             { "id": "yachimatahikos-locus", "name": "Yachimatahiko's Locus" },
             { "id": "yachimatahimes-locus", "name": "Yachimatahime's Locus" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear"]
         },
         {
           "id": "kannazuka",
@@ -278,7 +295,8 @@
             { "id": "kujou-encampment", "name": "Kujou Encampment" },
             { "id": "tatarasuna", "name": "Tatarasuna" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "narukami-island",
@@ -303,7 +321,8 @@
             { "id": "mt-yougou", "name": "Mt. Yougou" },
             { "id": "ritou", "name": "Ritou" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "seirai-island",
@@ -317,7 +336,8 @@
             { "id": "fort-hiraumi", "name": "Fort Hiraumi" },
             { "id": "koseki-village", "name": "Koseki Village" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "three-realms-gateway-offering",
@@ -325,7 +345,8 @@
           "name": "Three Realms Gateway Offering",
           "outline": [],
           "subareas": [],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear"]
         },
         {
           "id": "tsurumi-island",
@@ -341,7 +362,8 @@
             { "id": "shirikoro-peak", "name": "Shirikoro Peak" },
             { "id": "wakukau-shoal", "name": "Wakukau Shoal" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Fog"]
         },
         {
           "id": "watatsumi-island",
@@ -354,7 +376,8 @@
             { "id": "sangonomiya-shrine", "name": "Sangonomiya Shrine" },
             { "id": "suigetsu-pool", "name": "Suigetsu Pool" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "yashiori-island",
@@ -370,7 +393,8 @@
             { "id": "nazuchi-beach", "name": "Nazuchi Beach" },
             { "id": "serpents-head", "name": "Serpent's Head" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Thunderstorm"]
         }
       ],
       "id": "inazuma",
@@ -388,7 +412,8 @@
             { "id": "port-ormos", "name": "Port Ormos" },
             { "id": "vimara-village", "name": "Vimara Village" }
           ],
-          "subregion": "Dharma Forest"
+          "subregion": "Dharma Forest",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "ashavan-realm",
@@ -402,7 +427,8 @@
             { "id": "ruins-of-dahri", "name": "Ruins of Dahri" },
             { "id": "yasna-monument", "name": "Yasna Monument" }
           ],
-          "subregion": "Dharma Forest"
+          "subregion": "Dharma Forest",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "avidya-forest",
@@ -421,7 +447,8 @@
             { "id": "sumeru-city", "name": "Sumeru City" },
             { "id": "yazadaha-pool", "name": "Yazadaha Pool" }
           ],
-          "subregion": "Dharma Forest"
+          "subregion": "Dharma Forest",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "desert-of-hadramaveth",
@@ -441,7 +468,8 @@
             { "id": "wadi-al-majuj", "name": "Wadi Al-Majuj" },
             { "id": "wounded-shin-valley", "name": "Wounded Shin Valley" }
           ],
-          "subregion": "Great Red Sand"
+          "subregion": "Great Red Sand",
+          "weathers": ["Clear", "Sandstorm"]
         },
         {
           "id": "gavireh-lajavard",
@@ -453,7 +481,8 @@
             { "id": "temir-mountains", "name": "Temir Mountains" },
             { "id": "tunigi-hollow", "name": "Tunigi Hollow" }
           ],
-          "subregion": "Girdle of the Sands"
+          "subregion": "Girdle of the Sands",
+          "weathers": ["Clear", "Cloudy"]
         },
         {
           "id": "hypostyle-desert",
@@ -468,7 +497,8 @@
             { "id": "the-dune-of-magma", "name": "The Dune of Magma" },
             { "id": "the-mausoleum-of-king-deshret", "name": "The Mausoleum of King Deshret" }
           ],
-          "subregion": "Great Red Sand"
+          "subregion": "Great Red Sand",
+          "weathers": ["Clear", "Cloudy"]
         },
         {
           "id": "land-of-lower-setekh",
@@ -481,7 +511,8 @@
             { "id": "dar-al-shifa", "name": "Dar al-Shifa" },
             { "id": "khaj-nisut", "name": "Khaj-Nisut" }
           ],
-          "subregion": "Great Red Sand"
+          "subregion": "Great Red Sand",
+          "weathers": ["Clear", "Cloudy"]
         },
         {
           "id": "land-of-upper-setekh",
@@ -489,7 +520,8 @@
           "name": "Land of Upper Setekh",
           "outline": [],
           "subareas": [{ "id": "valley-of-dahri", "name": "Valley of Dahri" }],
-          "subregion": "Great Red Sand"
+          "subregion": "Great Red Sand",
+          "weathers": ["Clear", "Cloudy"]
         },
         {
           "id": "lokapala-jungle",
@@ -502,7 +534,8 @@
             { "id": "mawtiyima-forest", "name": "Mawtiyima Forest" },
             { "id": "the-palace-of-alcazarzaray", "name": "The Palace of Alcazarzaray" }
           ],
-          "subregion": "Dharma Forest"
+          "subregion": "Dharma Forest",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "lost-nursery",
@@ -510,7 +543,8 @@
           "name": "Lost Nursery",
           "outline": [],
           "subareas": [{ "id": "old-vanarana", "name": "Old Vanarana" }],
-          "subregion": "Dharma Forest"
+          "subregion": "Dharma Forest",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "realm-of-farakhkert",
@@ -523,7 +557,8 @@
             { "id": "samudra-coast", "name": "Samudra Coast" },
             { "id": "vourukasha-oasis", "name": "Vourukasha Oasis" }
           ],
-          "subregion": "Girdle of the Sands"
+          "subregion": "Girdle of the Sands",
+          "weathers": ["Clear", "Cloudy"]
         },
         {
           "id": "vanarana",
@@ -531,7 +566,8 @@
           "name": "Vanarana",
           "outline": [],
           "subareas": [{ "id": "vanarana-subarea", "name": "Vanarana (Subarea)" }],
-          "subregion": "Dharma Forest"
+          "subregion": "Dharma Forest",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "vissudha-field",
@@ -539,7 +575,8 @@
           "name": "Vissudha Field",
           "outline": [],
           "subareas": [{ "id": "fane-of-ashvattha", "name": "Fane of Ashvattha" }],
-          "subregion": "Dharma Forest"
+          "subregion": "Dharma Forest",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         }
       ],
       "id": "sumeru",
@@ -557,7 +594,8 @@
             { "id": "romaritime-harbor", "name": "Romaritime Harbor" },
             { "id": "west-slopes-of-mont-automnequi", "name": "West Slopes of Mont Automnequi" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "beryl-region",
@@ -572,7 +610,8 @@
             { "id": "elynas", "name": "Elynas" },
             { "id": "merusea-village", "name": "Merusea Village" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "court-of-fontaine-region",
@@ -595,7 +634,8 @@
             { "id": "salacia-plain", "name": "Salacia Plain" },
             { "id": "thalatta-submarine-canyon", "name": "Thalatta Submarine Canyon" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "erinnyes-forest",
@@ -608,7 +648,8 @@
             { "id": "lumidouce-harbor", "name": "Lumidouce Harbor" },
             { "id": "weeping-willow-of-the-lake", "name": "Weeping Willow of the Lake" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "fontaine-research-institute-of-kinetic-energy-engineering-region",
@@ -619,7 +660,8 @@
             { "id": "central-laboratory-ruins", "name": "Central Laboratory Ruins" },
             { "id": "new-fontaine-research-institute", "name": "New Fontaine Research Institute" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "liffey-region",
@@ -630,7 +672,8 @@
             { "id": "fortress-of-meropide", "name": "Fortress of Meropide" },
             { "id": "mont-esus-east", "name": "Mont Esus East" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "morte-region",
@@ -642,7 +685,8 @@
             { "id": "fort-charybdis-ruins", "name": "Fort Charybdis Ruins" },
             { "id": "tower-of-ipsissimus", "name": "Tower of Ipsissimus" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "nostoi-region",
@@ -653,7 +697,8 @@
             { "id": "faded-castle", "name": "Faded Castle" },
             { "id": "petrichor", "name": "Petrichor" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "sea-of-bygone-eras",
@@ -669,7 +714,8 @@
             { "id": "initium-iani", "name": "Initium Iani" },
             { "id": "portus-anticus", "name": "Portus Anticus" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear"]
         }
       ],
       "id": "fontaine",
@@ -692,7 +738,8 @@
             { "id": "sea-of-shifting-sentience", "name": "Sea of Shifting Sentience" },
             { "id": "summoning-hall", "name": "Summoning Hall" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "atocpan",
@@ -706,7 +753,8 @@
             { "id": "remnants-of-tetenanco", "name": "Remnants of Tetenanco" },
             { "id": "skyfire-circlet", "name": "Skyfire Circlet" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "basin-of-unnumbered-flames",
@@ -717,7 +765,8 @@
             { "id": "huitztli-hill", "name": "Huitztli Hill" },
             { "id": "stadium-of-the-sacred-flame", "name": "Stadium of the Sacred Flame" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "coatepec-mountain",
@@ -730,7 +779,8 @@
             { "id": "firethiefs-secret-isle", "name": "Firethief's Secret Isle" },
             { "id": "teticpac-peak", "name": "Teticpac Peak" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "easybreeze-holiday-resort",
@@ -751,7 +801,8 @@
             { "id": "villa-guiztli", "name": "Villa Guiztli" },
             { "id": "wavey-bay", "name": "Wavey Bay" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "ochkanatlan",
@@ -759,7 +810,8 @@
           "name": "Ochkanatlan",
           "outline": [],
           "subareas": [{ "id": "legendary-tonatiuh", "name": "Legendary Tonatiuh" }],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "quahuacan-cliff",
@@ -770,7 +822,8 @@
             { "id": "flower-feather-clan", "name": "\"Flower-Feather Clan\"" },
             { "id": "malinalco-grotto", "name": "Malinalco Grotto" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "tequemecan-valley",
@@ -782,7 +835,8 @@
             { "id": "sulfurous-veins", "name": "Sulfurous Veins" },
             { "id": "tepeacac-rise", "name": "Tepeacac Rise" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "tezcatepetonco-range",
@@ -793,7 +847,8 @@
             { "id": "masters-of-the-night-wind", "name": "\"Masters of the Night-Wind\"" },
             { "id": "tecoloapan-bay", "name": "Tecoloapan Bay" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "toyac-springs",
@@ -809,7 +864,8 @@
             { "id": "people-of-the-springs", "name": "\"People of the Springs\"" },
             { "id": "ameyalco-waters", "name": "Ameyalco Waters" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         }
       ],
       "id": "natlan",
@@ -827,7 +883,8 @@
             { "id": "kipumaki-cliff", "name": "Kipumaki Cliff" },
             { "id": "special-territory-research-institute", "name": "Special Territory Research Institute" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "dark-side-of-the-moon",
@@ -835,7 +892,8 @@
           "name": "Dark Side of the Moon",
           "outline": [],
           "subareas": [{ "id": "dark-side-of-the-moon-subarea", "name": "Dark Side of the Moon (Subarea)" }],
-          "subregion": "Frost Moon"
+          "subregion": "Frost Moon",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "dunanna-pit",
@@ -846,7 +904,8 @@
             { "id": "dunanna-forward-station", "name": "Dunanna Forward Station" },
             { "id": "misty-shoal", "name": "Misty Shoal" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "hiisi-island",
@@ -858,7 +917,8 @@
             { "id": "light-bathed-platform", "name": "Light-Bathed Platform" },
             { "id": "silvermoon-hall", "name": "Silvermoon Hall" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "lempo-isle",
@@ -879,7 +939,8 @@
             { "id": "nothing-passage", "name": "Nothing Passage" },
             { "id": "starsand-shoal", "name": "Starsand Shoal" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "lunar-highlands",
@@ -895,7 +956,8 @@
             { "id": "travelers-crater", "name": "Traveler's Crater" },
             { "id": "ungiens-circle", "name": "Ungien's Circle" }
           ],
-          "subregion": "Frost Moon"
+          "subregion": "Frost Moon",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "moontide-sea",
@@ -906,7 +968,8 @@
             { "id": "curtain-form-blackbody-containment-lab", "name": "Curtain-Form Blackbody Containment Lab" },
             { "id": "moontide-sea-subarea", "name": "Moontide Sea (Subarea)" }
           ],
-          "subregion": "Frost Moon"
+          "subregion": "Frost Moon",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "paha-isle",
@@ -917,7 +980,8 @@
             { "id": "final-night-cemetery", "name": "Final Night Cemetery" },
             { "id": "kuuvahki-experimental-design-bureau", "name": "Kuuvahki Experimental Design Bureau" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "voidsea-outlook",
@@ -928,7 +992,8 @@
             { "id": "dreadshade-mire", "name": "Dreadshade Mire" },
             { "id": "piramida", "name": "Piramida" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
           "id": "wavechaser-plain",
@@ -941,7 +1006,8 @@
             { "id": "pillar-of-embla", "name": "Pillar of Embla" },
             { "id": "wing-of-keres", "name": "Wing of Keres" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         }
       ],
       "id": "nod-krai",
@@ -970,7 +1036,8 @@
             { "id": "the-korolevskiy-theater", "name": "The Korolevskiy Theater" },
             { "id": "zapolyarny-palace", "name": "Zapolyarny Palace" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Snow"]
         },
         {
           "id": "fellfrost-peak",
@@ -982,7 +1049,8 @@
             { "id": "jack-frost-village", "name": "Jack Frost Village" },
             { "id": "tidesong-cavern", "name": "Tidesong Cavern" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Snow"]
         },
         {
           "id": "flamefeather-valley",
@@ -993,7 +1061,8 @@
             { "id": "okurov", "name": "Okurov" },
             { "id": "teeming-mire", "name": "Teeming Mire" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Snow"]
         },
         {
           "id": "volkodlak-tundra",
@@ -1005,7 +1074,8 @@
             { "id": "rankova-zorya", "name": "Rankova Zorya" },
             { "id": "sretomorozsk", "name": "Sretomorozsk" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Snow"]
         },
         {
           "id": "white-birch-snowgrave",
@@ -1016,7 +1086,8 @@
             { "id": "pale-crown-palace", "name": "Pale Crown Palace" },
             { "id": "pilgrimage-to-the-sacred-gorge", "name": "Pilgrimage to the Sacred Gorge" }
           ],
-          "subregion": ""
+          "subregion": "",
+          "weathers": ["Clear", "Cloudy", "Snow"]
         }
       ],
       "id": "snezhnaya",

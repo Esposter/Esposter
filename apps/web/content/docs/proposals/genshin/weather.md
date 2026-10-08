@@ -1,41 +1,34 @@
 ---
 title: Weather
-description: Proposal — Genshin's weather, still to come: each area naming its weather from the game's own data, each weather's sky colours read from the game's environment scripts, the lightning flash and bolt, the splashes where rain meets the ground, and the sandstorm's fog colour. The weather states, their particles and the wetness are built, as the weather page describes.
+description: Proposal — Genshin's weather, still to come: each weather's sky colours read from the game's environment scripts, an area's weather turning over time on the game's own schedule, the cities that never rain, and every provisional look fitted to recordings. The weather states, their blend, particles, splashes, lightning, sand haze and wetness, and each area's weathers in the catalogue are built, as the weather page describes.
 model: claude-opus-5-5
 ---
 
 # Weather
 
-The rain, snow, fog and sandstorm states, their particles and the one wetness uniform are built: see [weather](/docs/genshin/weather). What remains is what needs the game's data or a decision that is not yet made.
+The weathers, the blend between them, their particles and splashes, the lightning, the sandstorm's haze, the wetness and each area's weathers are built: see [weather](/docs/genshin/weather). What remains is what needs the game's data.
 
 ## Decisions
 
-- **Weather belongs to an area, as in the game.** Each area in the catalogue names the weather it can have, read from the game's own area and weather data where the inventory finds it and from the wiki where it does not. Only the weather where the camera stands is drawn.
 - **A weather's sky colours are the game's.** The game's environment scripts hold each weather's sky, cloud, light and fog colours by the hour beside the clear day's, so the inventory names those fields first, and each weather's colours are read from them rather than solved off recordings.
-- **Lightning is a brief flash through the sky and the light, followed by a bolt drawn as a mesh.**
-- **Rain splashes where the drops meet the ground.**
-- **A sandstorm's fog takes the sand's colour** and no longer the clear haze's.
-
-## Still to decide
-
-- **How weather changes.** Whether a change blends over a duration or cuts, and how long a blend runs. The weather page sets a weather at once.
-- **When lightning strikes.** How often, how long the flash lasts, and where the bolt falls.
-- **Wet specular on grass.** The grass material sets its own colour, so wet grass takes neither the darkening nor the glint.
+- **An area's weather turns on the game's own schedule.** Regular weather changes over time while special climates hold one weather; the game's own weather data for an area holds which weathers it turns between and how long each lasts, so the world turns an area's weather by it, each change blending as the built blend does.
+- **Cities never rain.** The wiki has rain stop at a city's edge even while the area round it rains, so a city subarea's outline, once the catalogue draws subareas', holds its weather clear inside the area's.
 
 ## Deferred compute
 
 - **Each weather's colours.** From the environment scripts' fields once the inventory names them, each weather's colours by the hour, fitted into `WEATHER_SETTINGS_MAP`.
-- **The particles' look.** Density, streak length and speed, and colour, matched to a recording of each weather by its statistics and never pixel for pixel.
-- **The areas' weather.** The catalogue's weather per area, from the game's data and the wiki.
+- **The particles' and splashes' look.** Density, streak length and speed, colour, and the splashes' size, life and count, matched to a recording of each weather by their statistics and never pixel for pixel.
+- **The blend and the lightning.** How long a change takes, read off a recording of the weather turning; how often a thunderstorm strikes, its flash's pulses and colour, and its bolt's shape and distance, read off a recording of one; and the sandstorm's haze colour, off a recording of the Desert of Hadramaveth's storm.
+- **The areas' weather.** The catalogue's weathers per area are the wiki's; the game's own area and weather data replace them where the inventory finds it, Snezhnaya's first, which the wiki does not give.
 
 ## Key files
 
-| File                                                            | Role                                                       |
-| :-------------------------------------------------------------- | :--------------------------------------------------------- |
-| `packages/genshin-engine/src/atmosphere/constants.ts`           | The weather settings and particle looks still to be fitted |
-| `packages/genshin-world/src/services/world/catalogue.ts`        | Where each area's weather will be read from                |
-| `packages/genshin-world/src/components/World/Weather/Index.vue` | Where the lightning and splashes will be drawn             |
+| File                                                       | Role                                                       |
+| :--------------------------------------------------------- | :--------------------------------------------------------- |
+| `packages/genshin-engine/src/atmosphere/constants.ts`      | The weather settings and looks still to be fitted          |
+| `packages/genshin-world/src/data/catalogue.json`           | Each area's weathers, the wiki's until the game's are read |
+| `packages/genshin-world/src/composables/useAreaWeather.ts` | Where an area's weather will turn on the game's schedule   |
 
 ## Sources
 
-- [Weather](https://genshin-impact.fandom.com/wiki/Weather), Genshin Impact Wiki: weather tied to areas with only the current location's drawn, rain and thunderstorms, no rain in cities or deserts, snow on Dragonspine, fog on Tsurumi Island, and sandstorms in the Desert of Hadramaveth.
+- [Weather](https://genshin-impact.fandom.com/wiki/Weather), Genshin Impact Wiki: regular weather changing over time, special climates holding one weather, and no rain in cities.

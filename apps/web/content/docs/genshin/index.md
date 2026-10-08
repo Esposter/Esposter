@@ -32,12 +32,12 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Engine architecture](/docs/genshin/engine-architecture)   | the engine as modules with one job each, and the order a frame runs in                                   |
 | [Rendering style](/docs/genshin/rendering-style)           | the toon materials, outlines, cascaded shadows, god rays, fog, grade and AA                              |
 | [Sky and time](/docs/genshin/sky-and-time)                 | the twenty-four-minute day, the painted sky, and the light it casts                                      |
-| [Weather](/docs/genshin/weather)                           | each weather's clouds, fog, wet ground and falling particles over the region's clear sky                 |
+| [Weather](/docs/genshin/weather)                           | each area's weather, blended as it changes: rain, snow, fog, sand, lightning and wet ground              |
 | [Terrain](/docs/genshin/terrain)                           | the ground on a streamed CDLOD quadtree, morphing between levels, and the floating origin                |
 | [Terrain shape height](/docs/genshin/terrain-shape-height) | a ground's height in three layers: hills over a base, sharp features, and a noise residual               |
 | [Ground paint](/docs/genshin/ground-paint)                 | the ground painted in layers of grass, earth, sand, snow, path and rock by rules of its slope and height |
 | [Water](/docs/genshin/water)                               | still water graded by depth, foam, glints, caustics, and the world under the surface                     |
-| [Flowing water](/docs/genshin/flowing-water)               | rivers as ribbons along their course and waterfalls as falling sheets, on the still water's material     |
+| [Flowing water](/docs/genshin/flowing-water)               | rivers along their courses with foam on their bends, and waterfalls over cliffs                          |
 | [Vegetation](/docs/genshin/vegetation)                     | the wind field, grass blades generated in two rings, and swaying crowns                                  |
 | [Scatter](/docs/genshin/scatter)                           | the small plants and pebbles no record places, scattered by seeded dart throwing                         |
 | [World map](/docs/genshin/world-map)                       | the catalogue of regions, areas and subareas, and region data loaded by reach                            |

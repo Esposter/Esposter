@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type {
   GrassRing,
+  GroundCapture,
   LightUniforms,
   QualityTier,
   TerrainOptions,
@@ -12,7 +13,6 @@ import type { DataTexture } from "three";
 
 import {
   GRASS_BLADE_SEGMENT_COUNT,
-  GRASS_CAPTURE_RESOLUTION,
   GRASS_CAPTURE_SIZE,
   GRASS_RECAPTURE_DISTANCE,
   TILE_SELECTION_CAPACITY,
@@ -22,7 +22,6 @@ import {
   checkTerrainDrawsChanged,
   createGrassGeometry,
   createGrassMaterial,
-  createGroundCapture,
   createTerrainSelection,
   QualityTierSettingsMap,
   renderGroundCapture,
@@ -33,6 +32,8 @@ import { uniform } from "three/tsl";
 interface Props {
   bladeHeight: number;
   bladeWidth: number;
+  // The ground under the camera from above, which this redraws as the camera moves and the rain's splashes read too
+  groundCapture: GroundCapture;
   lightUniforms: LightUniforms;
   // The world coordinate the scene's origin stands on, which the floating origin moves
   origin: Vector3;
@@ -49,6 +50,7 @@ interface Props {
 const {
   bladeHeight,
   bladeWidth,
+  groundCapture,
   lightUniforms,
   origin,
   qualityTier,
@@ -63,7 +65,6 @@ const { camera, renderer, scene } = useTres();
 const { onBeforeRender } = useLoop();
 const cameraGround = uniform(new Vector2());
 const density = uniform(QualityTierSettingsMap[qualityTier].grassDensity);
-const groundCapture = createGroundCapture(GRASS_CAPTURE_SIZE, GRASS_CAPTURE_RESOLUTION);
 // One mesh a ring, each a single draw of its every blade, placed in the vertex stage and so never culled whole
 const grassMeshes = rings.map((ring) => {
   const grassMesh = new Mesh(
@@ -112,8 +113,6 @@ onUnmounted(() => {
     grassMesh.geometry.dispose();
     grassMesh.material.dispose();
   }
-  groundCapture.renderTarget.dispose();
-  groundCapture.material.dispose();
 });
 </script>
 
