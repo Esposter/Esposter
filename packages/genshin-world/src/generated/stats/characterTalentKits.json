@@ -44,6 +44,24 @@
     }
   },
   {
+    "characterId": 10000005,
+    "passives": [
+      {
+        "phase": 1,
+        "proudSkillGroupId": 521
+      },
+      {
+        "phase": 4,
+        "proudSkillGroupId": 522
+      }
+    ],
+    "talentGroupIds": {
+      "ElementalBurst": 539,
+      "ElementalSkill": 532,
+      "NormalAttack": 530
+    }
+  },
+  {
     "characterId": 10000006,
     "passives": [
       {
@@ -63,6 +81,24 @@
       "ElementalBurst": 439,
       "ElementalSkill": 432,
       "NormalAttack": 431
+    }
+  },
+  {
+    "characterId": 10000007,
+    "passives": [
+      {
+        "phase": 1,
+        "proudSkillGroupId": 521
+      },
+      {
+        "phase": 4,
+        "proudSkillGroupId": 522
+      }
+    ],
+    "talentGroupIds": {
+      "ElementalBurst": 539,
+      "ElementalSkill": 532,
+      "NormalAttack": 531
     }
   },
   {
@@ -2275,6 +2311,50 @@
       "ElementalBurst": 11639,
       "ElementalSkill": 11632,
       "NormalAttack": 11631
+    }
+  },
+  {
+    "characterId": 10000117,
+    "passives": [
+      {
+        "phase": 1,
+        "proudSkillGroupId": 11721
+      },
+      {
+        "phase": 4,
+        "proudSkillGroupId": 11722
+      },
+      {
+        "phase": 0,
+        "proudSkillGroupId": 11725
+      }
+    ],
+    "talentGroupIds": {
+      "ElementalBurst": 11739,
+      "ElementalSkill": 11732,
+      "NormalAttack": 11731
+    }
+  },
+  {
+    "characterId": 10000118,
+    "passives": [
+      {
+        "phase": 1,
+        "proudSkillGroupId": 11721
+      },
+      {
+        "phase": 4,
+        "proudSkillGroupId": 11722
+      },
+      {
+        "phase": 0,
+        "proudSkillGroupId": 11725
+      }
+    ],
+    "talentGroupIds": {
+      "ElementalBurst": 11739,
+      "ElementalSkill": 11732,
+      "NormalAttack": 11731
     }
   },
   {

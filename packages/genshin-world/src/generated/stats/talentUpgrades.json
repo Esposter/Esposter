@@ -1412,6 +1412,634 @@
       "phase": 6
     }
   ],
+  "530": [
+    {
+      "coinCost": 12500,
+      "costItems": [
+        {
+          "count": 3,
+          "id": 104347
+        },
+        {
+          "count": 6,
+          "id": 112104
+        }
+      ],
+      "level": 2,
+      "phase": 2
+    },
+    {
+      "coinCost": 17500,
+      "costItems": [
+        {
+          "count": 2,
+          "id": 104351
+        },
+        {
+          "count": 3,
+          "id": 112105
+        }
+      ],
+      "level": 3,
+      "phase": 3
+    },
+    {
+      "coinCost": 25000,
+      "costItems": [
+        {
+          "count": 4,
+          "id": 104354
+        },
+        {
+          "count": 4,
+          "id": 112105
+        }
+      ],
+      "level": 4,
+      "phase": 3
+    },
+    {
+      "coinCost": 30000,
+      "costItems": [
+        {
+          "count": 6,
+          "id": 104348
+        },
+        {
+          "count": 6,
+          "id": 112105
+        }
+      ],
+      "level": 5,
+      "phase": 4
+    },
+    {
+      "coinCost": 37500,
+      "costItems": [
+        {
+          "count": 9,
+          "id": 104351
+        },
+        {
+          "count": 9,
+          "id": 112105
+        }
+      ],
+      "level": 6,
+      "phase": 4
+    },
+    {
+      "coinCost": 120000,
+      "costItems": [
+        {
+          "count": 4,
+          "id": 104355
+        },
+        {
+          "count": 4,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113063
+        }
+      ],
+      "level": 7,
+      "phase": 5
+    },
+    {
+      "coinCost": 260000,
+      "costItems": [
+        {
+          "count": 6,
+          "id": 104349
+        },
+        {
+          "count": 6,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113063
+        }
+      ],
+      "level": 8,
+      "phase": 5
+    },
+    {
+      "coinCost": 450000,
+      "costItems": [
+        {
+          "count": 12,
+          "id": 104352
+        },
+        {
+          "count": 9,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113063
+        }
+      ],
+      "level": 9,
+      "phase": 6
+    },
+    {
+      "coinCost": 700000,
+      "costItems": [
+        {
+          "count": 16,
+          "id": 104355
+        },
+        {
+          "count": 12,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113063
+        },
+        {
+          "count": 1,
+          "id": 104319
+        }
+      ],
+      "level": 10,
+      "phase": 6
+    }
+  ],
+  "531": [
+    {
+      "coinCost": 12500,
+      "costItems": [
+        {
+          "count": 3,
+          "id": 104347
+        },
+        {
+          "count": 6,
+          "id": 112104
+        }
+      ],
+      "level": 2,
+      "phase": 2
+    },
+    {
+      "coinCost": 17500,
+      "costItems": [
+        {
+          "count": 2,
+          "id": 104351
+        },
+        {
+          "count": 3,
+          "id": 112105
+        }
+      ],
+      "level": 3,
+      "phase": 3
+    },
+    {
+      "coinCost": 25000,
+      "costItems": [
+        {
+          "count": 4,
+          "id": 104354
+        },
+        {
+          "count": 4,
+          "id": 112105
+        }
+      ],
+      "level": 4,
+      "phase": 3
+    },
+    {
+      "coinCost": 30000,
+      "costItems": [
+        {
+          "count": 6,
+          "id": 104348
+        },
+        {
+          "count": 6,
+          "id": 112105
+        }
+      ],
+      "level": 5,
+      "phase": 4
+    },
+    {
+      "coinCost": 37500,
+      "costItems": [
+        {
+          "count": 9,
+          "id": 104351
+        },
+        {
+          "count": 9,
+          "id": 112105
+        }
+      ],
+      "level": 6,
+      "phase": 4
+    },
+    {
+      "coinCost": 120000,
+      "costItems": [
+        {
+          "count": 4,
+          "id": 104355
+        },
+        {
+          "count": 4,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113063
+        }
+      ],
+      "level": 7,
+      "phase": 5
+    },
+    {
+      "coinCost": 260000,
+      "costItems": [
+        {
+          "count": 6,
+          "id": 104349
+        },
+        {
+          "count": 6,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113063
+        }
+      ],
+      "level": 8,
+      "phase": 5
+    },
+    {
+      "coinCost": 450000,
+      "costItems": [
+        {
+          "count": 12,
+          "id": 104352
+        },
+        {
+          "count": 9,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113063
+        }
+      ],
+      "level": 9,
+      "phase": 6
+    },
+    {
+      "coinCost": 700000,
+      "costItems": [
+        {
+          "count": 16,
+          "id": 104355
+        },
+        {
+          "count": 12,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113063
+        },
+        {
+          "count": 1,
+          "id": 104319
+        }
+      ],
+      "level": 10,
+      "phase": 6
+    }
+  ],
+  "532": [
+    {
+      "coinCost": 12500,
+      "costItems": [
+        {
+          "count": 3,
+          "id": 104347
+        },
+        {
+          "count": 6,
+          "id": 112104
+        }
+      ],
+      "level": 2,
+      "phase": 2
+    },
+    {
+      "coinCost": 17500,
+      "costItems": [
+        {
+          "count": 2,
+          "id": 104351
+        },
+        {
+          "count": 3,
+          "id": 112105
+        }
+      ],
+      "level": 3,
+      "phase": 3
+    },
+    {
+      "coinCost": 25000,
+      "costItems": [
+        {
+          "count": 4,
+          "id": 104354
+        },
+        {
+          "count": 4,
+          "id": 112105
+        }
+      ],
+      "level": 4,
+      "phase": 3
+    },
+    {
+      "coinCost": 30000,
+      "costItems": [
+        {
+          "count": 6,
+          "id": 104348
+        },
+        {
+          "count": 6,
+          "id": 112105
+        }
+      ],
+      "level": 5,
+      "phase": 4
+    },
+    {
+      "coinCost": 37500,
+      "costItems": [
+        {
+          "count": 9,
+          "id": 104351
+        },
+        {
+          "count": 9,
+          "id": 112105
+        }
+      ],
+      "level": 6,
+      "phase": 4
+    },
+    {
+      "coinCost": 120000,
+      "costItems": [
+        {
+          "count": 4,
+          "id": 104355
+        },
+        {
+          "count": 4,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113063
+        }
+      ],
+      "level": 7,
+      "phase": 5
+    },
+    {
+      "coinCost": 260000,
+      "costItems": [
+        {
+          "count": 6,
+          "id": 104349
+        },
+        {
+          "count": 6,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113063
+        }
+      ],
+      "level": 8,
+      "phase": 5
+    },
+    {
+      "coinCost": 450000,
+      "costItems": [
+        {
+          "count": 12,
+          "id": 104352
+        },
+        {
+          "count": 9,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113063
+        }
+      ],
+      "level": 9,
+      "phase": 6
+    },
+    {
+      "coinCost": 700000,
+      "costItems": [
+        {
+          "count": 16,
+          "id": 104355
+        },
+        {
+          "count": 12,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113063
+        },
+        {
+          "count": 1,
+          "id": 104319
+        }
+      ],
+      "level": 10,
+      "phase": 6
+    }
+  ],
+  "539": [
+    {
+      "coinCost": 12500,
+      "costItems": [
+        {
+          "count": 3,
+          "id": 104347
+        },
+        {
+          "count": 6,
+          "id": 112104
+        }
+      ],
+      "level": 2,
+      "phase": 2
+    },
+    {
+      "coinCost": 17500,
+      "costItems": [
+        {
+          "count": 2,
+          "id": 104351
+        },
+        {
+          "count": 3,
+          "id": 112105
+        }
+      ],
+      "level": 3,
+      "phase": 3
+    },
+    {
+      "coinCost": 25000,
+      "costItems": [
+        {
+          "count": 4,
+          "id": 104354
+        },
+        {
+          "count": 4,
+          "id": 112105
+        }
+      ],
+      "level": 4,
+      "phase": 3
+    },
+    {
+      "coinCost": 30000,
+      "costItems": [
+        {
+          "count": 6,
+          "id": 104348
+        },
+        {
+          "count": 6,
+          "id": 112105
+        }
+      ],
+      "level": 5,
+      "phase": 4
+    },
+    {
+      "coinCost": 37500,
+      "costItems": [
+        {
+          "count": 9,
+          "id": 104351
+        },
+        {
+          "count": 9,
+          "id": 112105
+        }
+      ],
+      "level": 6,
+      "phase": 4
+    },
+    {
+      "coinCost": 120000,
+      "costItems": [
+        {
+          "count": 4,
+          "id": 104355
+        },
+        {
+          "count": 4,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113063
+        }
+      ],
+      "level": 7,
+      "phase": 5
+    },
+    {
+      "coinCost": 260000,
+      "costItems": [
+        {
+          "count": 6,
+          "id": 104349
+        },
+        {
+          "count": 6,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113063
+        }
+      ],
+      "level": 8,
+      "phase": 5
+    },
+    {
+      "coinCost": 450000,
+      "costItems": [
+        {
+          "count": 12,
+          "id": 104352
+        },
+        {
+          "count": 9,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113063
+        }
+      ],
+      "level": 9,
+      "phase": 6
+    },
+    {
+      "coinCost": 700000,
+      "costItems": [
+        {
+          "count": 16,
+          "id": 104355
+        },
+        {
+          "count": 12,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113063
+        },
+        {
+          "count": 1,
+          "id": 104319
+        }
+      ],
+      "level": 10,
+      "phase": 6
+    }
+  ],
   "1431": [
     {
       "coinCost": 12500,
@@ -47414,6 +48042,477 @@
     }
   ],
   "11639": [
+    {
+      "coinCost": 12500,
+      "costItems": [
+        {
+          "count": 3,
+          "id": 104353
+        },
+        {
+          "count": 6,
+          "id": 112104
+        }
+      ],
+      "level": 2,
+      "phase": 2
+    },
+    {
+      "coinCost": 17500,
+      "costItems": [
+        {
+          "count": 2,
+          "id": 104354
+        },
+        {
+          "count": 3,
+          "id": 112105
+        }
+      ],
+      "level": 3,
+      "phase": 3
+    },
+    {
+      "coinCost": 25000,
+      "costItems": [
+        {
+          "count": 4,
+          "id": 104354
+        },
+        {
+          "count": 4,
+          "id": 112105
+        }
+      ],
+      "level": 4,
+      "phase": 3
+    },
+    {
+      "coinCost": 30000,
+      "costItems": [
+        {
+          "count": 6,
+          "id": 104354
+        },
+        {
+          "count": 6,
+          "id": 112105
+        }
+      ],
+      "level": 5,
+      "phase": 4
+    },
+    {
+      "coinCost": 37500,
+      "costItems": [
+        {
+          "count": 9,
+          "id": 104354
+        },
+        {
+          "count": 9,
+          "id": 112105
+        }
+      ],
+      "level": 6,
+      "phase": 4
+    },
+    {
+      "coinCost": 120000,
+      "costItems": [
+        {
+          "count": 4,
+          "id": 104355
+        },
+        {
+          "count": 4,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113069
+        }
+      ],
+      "level": 7,
+      "phase": 5
+    },
+    {
+      "coinCost": 260000,
+      "costItems": [
+        {
+          "count": 6,
+          "id": 104355
+        },
+        {
+          "count": 6,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113069
+        }
+      ],
+      "level": 8,
+      "phase": 5
+    },
+    {
+      "coinCost": 450000,
+      "costItems": [
+        {
+          "count": 12,
+          "id": 104355
+        },
+        {
+          "count": 9,
+          "id": 112106
+        },
+        {
+          "count": 2,
+          "id": 113069
+        }
+      ],
+      "level": 9,
+      "phase": 6
+    },
+    {
+      "coinCost": 700000,
+      "costItems": [
+        {
+          "count": 16,
+          "id": 104355
+        },
+        {
+          "count": 12,
+          "id": 112106
+        },
+        {
+          "count": 2,
+          "id": 113069
+        },
+        {
+          "count": 1,
+          "id": 104319
+        }
+      ],
+      "level": 10,
+      "phase": 6
+    }
+  ],
+  "11731": [
+    {
+      "coinCost": 12500,
+      "costItems": [
+        {
+          "count": 3,
+          "id": 104353
+        },
+        {
+          "count": 6,
+          "id": 112104
+        }
+      ],
+      "level": 2,
+      "phase": 2
+    },
+    {
+      "coinCost": 17500,
+      "costItems": [
+        {
+          "count": 2,
+          "id": 104354
+        },
+        {
+          "count": 3,
+          "id": 112105
+        }
+      ],
+      "level": 3,
+      "phase": 3
+    },
+    {
+      "coinCost": 25000,
+      "costItems": [
+        {
+          "count": 4,
+          "id": 104354
+        },
+        {
+          "count": 4,
+          "id": 112105
+        }
+      ],
+      "level": 4,
+      "phase": 3
+    },
+    {
+      "coinCost": 30000,
+      "costItems": [
+        {
+          "count": 6,
+          "id": 104354
+        },
+        {
+          "count": 6,
+          "id": 112105
+        }
+      ],
+      "level": 5,
+      "phase": 4
+    },
+    {
+      "coinCost": 37500,
+      "costItems": [
+        {
+          "count": 9,
+          "id": 104354
+        },
+        {
+          "count": 9,
+          "id": 112105
+        }
+      ],
+      "level": 6,
+      "phase": 4
+    },
+    {
+      "coinCost": 120000,
+      "costItems": [
+        {
+          "count": 4,
+          "id": 104355
+        },
+        {
+          "count": 4,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113069
+        }
+      ],
+      "level": 7,
+      "phase": 5
+    },
+    {
+      "coinCost": 260000,
+      "costItems": [
+        {
+          "count": 6,
+          "id": 104355
+        },
+        {
+          "count": 6,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113069
+        }
+      ],
+      "level": 8,
+      "phase": 5
+    },
+    {
+      "coinCost": 450000,
+      "costItems": [
+        {
+          "count": 12,
+          "id": 104355
+        },
+        {
+          "count": 9,
+          "id": 112106
+        },
+        {
+          "count": 2,
+          "id": 113069
+        }
+      ],
+      "level": 9,
+      "phase": 6
+    },
+    {
+      "coinCost": 700000,
+      "costItems": [
+        {
+          "count": 16,
+          "id": 104355
+        },
+        {
+          "count": 12,
+          "id": 112106
+        },
+        {
+          "count": 2,
+          "id": 113069
+        },
+        {
+          "count": 1,
+          "id": 104319
+        }
+      ],
+      "level": 10,
+      "phase": 6
+    }
+  ],
+  "11732": [
+    {
+      "coinCost": 12500,
+      "costItems": [
+        {
+          "count": 3,
+          "id": 104353
+        },
+        {
+          "count": 6,
+          "id": 112104
+        }
+      ],
+      "level": 2,
+      "phase": 2
+    },
+    {
+      "coinCost": 17500,
+      "costItems": [
+        {
+          "count": 2,
+          "id": 104354
+        },
+        {
+          "count": 3,
+          "id": 112105
+        }
+      ],
+      "level": 3,
+      "phase": 3
+    },
+    {
+      "coinCost": 25000,
+      "costItems": [
+        {
+          "count": 4,
+          "id": 104354
+        },
+        {
+          "count": 4,
+          "id": 112105
+        }
+      ],
+      "level": 4,
+      "phase": 3
+    },
+    {
+      "coinCost": 30000,
+      "costItems": [
+        {
+          "count": 6,
+          "id": 104354
+        },
+        {
+          "count": 6,
+          "id": 112105
+        }
+      ],
+      "level": 5,
+      "phase": 4
+    },
+    {
+      "coinCost": 37500,
+      "costItems": [
+        {
+          "count": 9,
+          "id": 104354
+        },
+        {
+          "count": 9,
+          "id": 112105
+        }
+      ],
+      "level": 6,
+      "phase": 4
+    },
+    {
+      "coinCost": 120000,
+      "costItems": [
+        {
+          "count": 4,
+          "id": 104355
+        },
+        {
+          "count": 4,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113069
+        }
+      ],
+      "level": 7,
+      "phase": 5
+    },
+    {
+      "coinCost": 260000,
+      "costItems": [
+        {
+          "count": 6,
+          "id": 104355
+        },
+        {
+          "count": 6,
+          "id": 112106
+        },
+        {
+          "count": 1,
+          "id": 113069
+        }
+      ],
+      "level": 8,
+      "phase": 5
+    },
+    {
+      "coinCost": 450000,
+      "costItems": [
+        {
+          "count": 12,
+          "id": 104355
+        },
+        {
+          "count": 9,
+          "id": 112106
+        },
+        {
+          "count": 2,
+          "id": 113069
+        }
+      ],
+      "level": 9,
+      "phase": 6
+    },
+    {
+      "coinCost": 700000,
+      "costItems": [
+        {
+          "count": 16,
+          "id": 104355
+        },
+        {
+          "count": 12,
+          "id": 112106
+        },
+        {
+          "count": 2,
+          "id": 113069
+        },
+        {
+          "count": 1,
+          "id": 104319
+        }
+      ],
+      "level": 10,
+      "phase": 6
+    }
+  ],
+  "11739": [
     {
       "coinCost": 12500,
       "costItems": [
