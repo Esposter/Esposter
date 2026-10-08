@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/kits/statue/computeStatueSurface.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.049210000000002196,
+              "name": "16 angles",
+              "p99": 0.05817400000000362,
+              "rme": 10.795039349406581,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.05578000000000145,
+              "name": "32 angles",
+              "p99": 0.07242899999999594,
+              "rme": 9.585019531300347,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "computeStatueSurface > 8 sections"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.18670999999999652,
+              "name": "16 angles",
+              "p99": 0.24651800000000434,
+              "rme": 9.860731385692823,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.35178999999999977,
+              "name": "32 angles",
+              "p99": 0.3839800000000085,
+              "rme": 5.901954496757711,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "computeStatueSurface > 64 sections"
+        }
+      ]
+    }
+  ]
+}

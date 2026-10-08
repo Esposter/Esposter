@@ -226,10 +226,12 @@ export const TOWER_RADIUS_TOLERANCE = 0.03;
 // A tower's mesh at one level of detail, the tower being its name without the level
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const TOWER_MESH_REGEX: RegExp = /^(?<part>LoginScene_Build\d+_\d+)_Lod(?<level>\d)$/u;
-// The Statue of The Seven is fitted in a tenth of a metre's bands, a band merged into the one below while its radius
-// Holds within 2% of it, its figure's mesh (`Lite`) apart from the stone every other level of it is drawn on
+// The Statue of The Seven is fitted in a tenth of a metre's bands, a band merged into the one below while its radii hold
+// Within 2% of it at every angle, its radii read at `STATUE_ANGLE_COUNT` angles, its figure's mesh (`Lite`) apart from
+// The stone every other level of it is drawn on
 export const STATUE_BAND_HEIGHT = 0.1;
 export const STATUE_RADIUS_TOLERANCE = 0.02;
+export const STATUE_ANGLE_COUNT = 16;
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const STATUE_MESH_REGEX: RegExp = /^Stages_MdGoddess/u;
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
