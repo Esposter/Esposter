@@ -15,6 +15,7 @@ import { getNextWindowNumber } from "#src/services/coderabbit/collect/getNextWin
 import { getOpenedInLastHour } from "#src/services/coderabbit/collect/getOpenedInLastHour";
 import { getPausedWindow } from "#src/services/coderabbit/collect/getPausedWindow";
 import { getWindowOpenCount } from "#src/services/coderabbit/collect/getWindowOpenCount";
+import { markFoldedWindowsMerged } from "#src/services/coderabbit/collect/markFoldedWindowsMerged";
 import { openNextWindow } from "#src/services/coderabbit/collect/openNextWindow";
 import { orderWindowStack } from "#src/services/coderabbit/collect/orderWindowStack";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
@@ -61,7 +62,7 @@ export const runCycle = async ({
   const branchShas = readBranchShas(cwd);
   const { mainSha, queueSha } = branchShas;
   const viewerLogin = readViewerLogin();
-  const windowHistory = readWindowPullRequests(WindowPullRequestListState.All);
+  const windowHistory = markFoldedWindowsMerged(readWindowPullRequests(WindowPullRequestListState.All), mainSha, cwd);
   // A merge whose retarget failed strands the window above it, which is retargeted before the stack is read
   const openPullRequests = retargetStrandedWindows({
     cwd,

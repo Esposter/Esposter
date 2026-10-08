@@ -10,6 +10,7 @@ const getWindowPullRequest = (headRefName: string, state: WindowPullRequestState
   baseRefName: MAIN_BRANCH,
   createdAt: Temporal.Instant.fromEpochMilliseconds(0).toString(),
   headRefName,
+  headRefOid: "",
   number: 0,
   state,
 });

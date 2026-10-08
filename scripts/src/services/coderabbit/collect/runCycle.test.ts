@@ -100,6 +100,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     baseRefName: MAIN_BRANCH,
     createdAt: Temporal.Instant.fromEpochMilliseconds(0).toString(),
     headRefName: getWindowBranch(number),
+    headRefOid: "",
     number,
     state,
   });
@@ -108,6 +109,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     baseRefName: MAIN_BRANCH,
     createdAt: Temporal.Instant.fromEpochMilliseconds(0).toString(),
     headRefName: DEVELOP_BRANCH,
+    headRefOid: "",
     number: pullRequest,
     state,
   });
@@ -153,6 +155,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
           baseRefName: args[args.indexOf("--base") + 1] ?? MAIN_BRANCH,
           createdAt: Temporal.Instant.fromEpochMilliseconds(0).toString(),
           headRefName: args[args.indexOf("--head") + 1] ?? "",
+          headRefOid: "",
           number: windowPullRequestsNow.length + pullRequest + 1,
           state: WindowPullRequestState.Open,
         });
