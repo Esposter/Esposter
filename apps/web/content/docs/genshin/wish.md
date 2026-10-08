@@ -75,6 +75,15 @@ flowchart TD
 - **The banners' pools are the wiki's, by the game's ids.** `services/wish/constants.ts` lists the standard wish's and the beginners' characters and weapons as the wiki's Wanderlust Invocation and Beginners' Wish item pools give them, and `createBanners` builds the two banners the world offers from the stat tables, each item's rarity read from them and its name from the world's names in the reader's language. The beginners' wish takes the standard wish's three-star weapons alone. A member the wiki's pool lists that the dump's tables do not hold yet, Alyosha, is left out until a later dump carries it. The event banners wait on the schedule of the current ones, which no stable table names ([wish proposal](/docs/proposals/genshin/wish)).
 - **The beginners' wish keeps counters of its own.** The game's details do not say whether it shares the standard wish's, and the guides that say anything say it does not.
 
+## Parity
+
+Not yet compared with the game: no `compare` score exists for the wish screen, and no fixture reaches the parity page yet.
+
+- **References held.** A published 1080p clip of the English client's event wish (`yt-uhCW3MZTgL8`) shows the banner card, Shop, Details and History, the Wish ×1 and ×10 buttons, the pull animation and each single pull's reveal. Its ten-pull results grid is not in it, so `wish-ten.mkv` stays on the Recordings owed list.
+- **The pool is not on the game's main screen.** The game lists a banner's items in the Details popup's List of Items tab, beside Promotional Items and Details, and the screen itself shows only the banner card. The screen here lists the pool across its body, a deviation the next pass resolves.
+- **The world offers two banners.** The game's shown banner is a character event wish, which the world does not build yet; the event banners wait on the schedule the proposal names.
+- **Banner art is the game's asset.** It cannot ship, so the banner card's art stays a placeholder.
+
 ## Sources
 
 - [Wish](https://genshin-impact.fandom.com/wiki/Wish), Genshin Impact Wiki: the banner kinds, the Fates, the separate counters carried between banners, and the Starglitter and Stardust each draw returns.
