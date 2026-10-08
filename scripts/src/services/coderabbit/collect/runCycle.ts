@@ -20,6 +20,7 @@ import { openNextWindow } from "#src/services/coderabbit/collect/openNextWindow"
 import { orderWindowStack } from "#src/services/coderabbit/collect/orderWindowStack";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
 import { readCoderabbitConfig } from "#src/services/coderabbit/collect/readCoderabbitConfig";
+import { readMergedPullRequestsSince } from "#src/services/coderabbit/collect/readMergedPullRequestsSince";
 import { readLegacyReleasePullRequest } from "#src/services/coderabbit/collect/readLegacyReleasePullRequest";
 import { readSessionLimitResetMs } from "#src/services/coderabbit/collect/readSessionLimitResetMs";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
@@ -227,11 +228,19 @@ export const runCycle = async ({
       reviewsPerHour: REVIEWS_PER_HOUR,
     }) > 0
   ) {
+    // A pull request drained by an earlier run that opened nothing is answered by this cut too
+    const previousWindow = getNewestWindowPullRequest(history);
+    const answeredPullRequests = [
+      ...new Set([
+        ...drainedPullRequests,
+        ...(previousWindow ? readMergedPullRequestsSince(previousWindow.createdAt) : []),
+      ]),
+    ];
     // oxlint-disable-next-line no-await-in-loop -- each window is cut from the remote the one before it moved
     const opened = await openNextWindow({
       collectorSha,
       cwd,
-      drainedPullRequests,
+      drainedPullRequests: answeredPullRequests,
       expressHeldCount: expressed.heldShas.length,
       isDryRun,
       isFirstWindow: openingOutcome === undefined,
