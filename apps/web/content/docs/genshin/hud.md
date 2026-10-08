@@ -1,6 +1,6 @@
 ---
 title: HUD
-description: The heads-up display over the world, holding only the pieces the world backs. The Paimon button and the minimap in the top left with the quest tracker under them, the stamina meter following the character, the deployed team's portraits down the right, the member on the field's health at the bottom's middle, a place for the skill and burst buttons, and on a touch screen the touch controls under them. It hides on the backslash, as the game's Hide UI does, and under any menu, a talk or photo mode.
+description: The heads-up display over the world, holding only the pieces the world backs. The Paimon button and the minimap in the top left with the quest tracker under them, the stamina meter following the character, the deployed team's portraits down the right, the member on the field's health at the bottom's middle, its skill and burst buttons at the bottom right, and on a touch screen the touch controls under them. It hides on the backslash, as the game's Hide UI does, and under any menu, a talk or photo mode.
 ---
 
 # HUD
@@ -20,7 +20,10 @@ flowchart TD
   HUD --> TRACKER["Quest tracker, under the minimap"]
   HUD --> PARTY["Hud/Party, down the right"]
   HUD --> HEALTH["Hud/Health, at the bottom's middle"]
-  HUD --> SLOTS["Empty place for the skill and burst buttons"]
+  HUD --> SKILLS["Hud/Skills, at the bottom right"]
+  FIELD["The member on the field: cooldowns and energy"] --> SKILLS
+  SKILLS -->|"pressed and held"| KEYS["E or Q, held in the input until released"]
+  SKILLS -->|"the HUD hides"| RELEASE["Both keys let go"]
   HUD --> STAMINA["Stamina meter"]
   HUD --> TOUCH{"A finger the main pointer?"}
   TOUCH -->|"yes"| CONTROLS["Touch controls, under every piece"]
@@ -39,9 +42,10 @@ flowchart TD
 ```
 
 - **Only what the world backs.** A piece appears with the feature it shows, never as an inert copy, since a button that does nothing tells the player the world has something it lacks. The Paimon button opens the Paimon menu ([screens](/docs/genshin/screens)), and the [minimap](/docs/genshin/minimap) opens the [map](/docs/genshin/map). The game's other pieces (the top right's shortcuts and the chat) wait on the features behind them.
-- **Slots for the pieces the world fills.** The quest tracker under the minimap, the deployed team's portraits down the right, the member on the field's health at the bottom's middle and the skill and burst buttons at the bottom right are slots of `Hud/Screen`, filled by the world screen with each piece and the state it reads, so the HUD gains a piece with no change of its own. The skill and burst slot stays empty until its buttons land. The stamina meter places itself, since it follows the character across the screen.
+- **Slots for the pieces the world fills.** The quest tracker under the minimap, the deployed team's portraits down the right, the member on the field's health at the bottom's middle and the skill and burst buttons at the bottom right are slots of `Hud/Screen`, filled by the world screen with each piece and the state it reads, so the HUD gains a piece with no change of its own. The stamina meter places itself, since it follows the character across the screen.
 - **The deployed team's portraits.** `Hud/Party` draws the deployed team down the right, a row a member in slot order: the member's name from the roster's name text, a round portrait stand-in, a thin HP bar under the name and the slot's number. The member on the field is marked and a member who is down is greyed. For `PARTY_SWITCH_COOLDOWN_SECONDS` after a switch every other row is darkened by the share of the cooldown left, read off the world's clock, which the frame carries as `seconds`. A press on a row holds that slot's key, through `getActionKeyCode` over `PARTY_MEMBER_INPUT_ACTIONS`, so a pointer switches as the number keys do. The names are blank until the world's names load in the reader's language.
 - **The member on the field's health.** `Hud/Health` shows the game's level (`LevelFormat`) before a bar, the bar filled by HP over Max HP, and the two as whole numbers under it, HP rounded up and Max HP rounded. The Max HP is the one the character's attributes give, and the bar carries `role="meter"` named by the game's word for HP.
+- **The skill and burst buttons.** `Hud/Skills` shows the member on the field's skill and burst at the bottom right. A cooldown darkens its button by the share left and counts its seconds down to a tenth, and the burst fills from its foot with its energy over its cost, lit once full and off cooldown. The cooldowns and energy are the member's own in the party, and the costs and cooldowns are the kit's ([combat](/docs/genshin/combat)). Pressing one holds `E` or `Q` in the world's input until released, as the touch controls hold theirs, so a held skill holds as the key does, and the buttons let go of both as the HUD hides. Each is named by the game's words for the skill and the burst.
 - **The stamina meter follows the character.** The world screen reads the party's stamina off the character on the field, which hands its controller's pool up, and while the pool is spent or refilling it projects the follow camera's pivot over the character onto the screen each frame. Both go into one reactive frame object, `HudFrame`, which the meter reads, so the frame re-renders the meter alone. The meter stands beside that point as a curved bar filled from its foot, as the wiki has the game draw it to the character's right, flashes once the pool falls under a quarter, and fades out once the pool is full, held where it last stood. It carries `role="meter"` with the pool's value and the game's word for stamina.
 - **The quest tracker shows the quest V navigates to.** Under the minimap it shows the navigated quest's title over its step's line and how far its counted objective has come, as the quest screen counts it (`getQuestCounter`). With no quest navigated it shows the first quest in progress, the one V would navigate to. V, in play, or a press on the tracker navigates to the tracker's quest, and the world raises the [quests](/docs/genshin/quests)' beam over its step's first objective. While no quest is loaded both stay empty.
 - **A piece presses what its key does.** A HUD piece the player presses holds its action's own key in the world's input, as the touch controls do (`getActionKeyCode`), so a press passes the same checks as the key: the tracker presses V.
@@ -60,17 +64,18 @@ flowchart TD
 | `packages/genshin-world/src/components/Hud/Stamina/Index.vue`      | The stamina meter beside the character                                  |
 | `packages/genshin-world/src/components/Hud/Party/Index.vue`        | The deployed team's portraits down the right                            |
 | `packages/genshin-world/src/components/Hud/Health/Index.vue`       | The member on the field's level and HP at the bottom's middle           |
+| `packages/genshin-world/src/components/Hud/Skills/Index.vue`       | The skill and burst buttons at the bottom right                         |
 | `packages/genshin-world/src/components/Hud/Touch/Index.vue`        | The touch controls under the pieces                                     |
 | `packages/genshin-world/src/models/hud/HudFrame.ts`                | What the HUD reads off the world each frame                             |
 | `packages/genshin-world/src/services/quest/getQuestCounter.ts`     | A step's counted objective, as the tracker and the quest screen show it |
 | `packages/genshin-world/src/services/shared/getActionKeyCode.ts`   | The key a pressed piece holds in the world's input                      |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`     | Mounts the HUD, fills its slots, writes its frame and navigates on V    |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`     | Mounts the HUD, fills its slots with each piece's state, navigates on V |
 | `packages/genshin-world/src/components/World/Windrise/Index.vue`   | Raises the beam over the navigated objective in the world's group       |
 | `packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts` | Which screens hide the HUD                                              |
 
 ## Notes
 
-- **Its places and looks are provisional.** Each piece is to sit in the rect of its place in the HUD's own RectTransform tree, as the login's interface does ([interface layout](/docs/genshin/interface-layout)), once the HUD's block is found among the game's assets and its rects are fitted. Until then each place, size and colour is a provisional value marked in its file, as are the meter's offset, arc, flash and fades and its low share (`STAMINA_METER_LOW_SHARE`), the party's rows and the health bar's looks, and the Paimon button's mark waits on a trace of the game's ([roadmap](/docs/genshin/roadmap)).
+- **Its places and looks are provisional.** Each piece is to sit in the rect of its place in the HUD's own RectTransform tree, as the login's interface does ([interface layout](/docs/genshin/interface-layout)), once the HUD's block is found among the game's assets and its rects are fitted. Until then each place, size and colour is a provisional value marked in its file, as are the meter's offset, arc, flash and fades and its low share (`STAMINA_METER_LOW_SHARE`), the party's rows, the health bar's looks, and the skill and burst buttons' sizes, places, colours, sweep and glow. The Paimon button's mark waits on a trace of the game's ([roadmap](/docs/genshin/roadmap)).
 - **The meter has one section.** The game cuts it into sections of 100, and nothing raises the pool past `STAMINA_MAX` yet.
 
 ## Sources
@@ -81,3 +86,5 @@ flowchart TD
 - [Stamina](https://genshin-impact.fandom.com/wiki/Stamina), Genshin Impact Wiki: the meter to the right of the character while stamina drains or refills, hidden when full, cut into sections of 100.
 - [Quest](https://genshin-impact.fandom.com/wiki/Quest), Genshin Impact Wiki: navigating a quest marks its objective with a beam from 50 metres off.
 - [Party](https://genshin-impact.fandom.com/wiki/Party), Genshin Impact Wiki: the one second cooldown between switches.
+- [Elemental Skill](https://genshin-impact.fandom.com/wiki/Elemental_Skill), Genshin Impact Wiki: the skill's cooldown, during which it cannot be used.
+- [Elemental Burst](https://genshin-impact.fandom.com/wiki/Elemental_Burst), Genshin Impact Wiki: the burst's icon at the bottom right showing its cooldown's time and filling with the character's energy, glowing once ready.

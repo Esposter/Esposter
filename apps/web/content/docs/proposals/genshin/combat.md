@@ -20,7 +20,7 @@ This page builds on [combat](/docs/genshin/combat) as built: auras, reactions by
 
 ## Scope and order
 
-**Today:** auras, reactions and their damage on one target, the internal cooldown, shields and energy from particles and orbs, as the [combat](/docs/genshin/combat) page describes.
+**Today:** auras, reactions and their damage on one target, the internal cooldown, shields and energy from particles and orbs, and the Traveler's kit's hits through them, as the [combat](/docs/genshin/combat) page describes.
 
 **This adds, in order:**
 
