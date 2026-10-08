@@ -890,7 +890,12 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
-    answerGh([], [], [], [], [], [{ number: pullRequest, state: WindowPullRequestState.Merged }]);
+    const legacyPullRequest: WindowPullRequest = {
+      ...getWindowPullRequest(WindowPullRequestState.Merged),
+      baseRefName: DEVELOP_BRANCH,
+      headRefName: DEVELOP_BRANCH,
+    };
+    answerGh([], [], [], [], [], [legacyPullRequest]);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(runDrainStep.mock.calls[0]?.[0]?.pullRequest).toBe(pullRequest);
