@@ -7,15 +7,22 @@ import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcom
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 
 // `main` is ahead and `develop` has nothing of its own, so it follows by fast-forward. What moved `main` is not
-// Asked — a release that merged, an express cut and a bump pushed straight at it all arrive in this shape, and all
+// Asked — a window that merged, an express cut and a bump pushed straight at it all arrive in this shape, and all
 // Already sit on the branch a window is diffed against, so no window could carry them to a review, while refusing
 // One would strand `develop` behind `main` and close the express lane. Divergence is the porter's case instead.
-// The stroke spends nothing — no pull request is open — so the pass goes on measuring against the `develop` it
-// Made: a push to `develop` fires no run, and a run that ended here would leave the queue waiting on the next
+// While a window is open `develop` is the top of the stack, which `main` is not behind until the stack has merged, so
+// The stroke waits for an empty stack. The stroke spends nothing, so the pass goes on measuring against the `develop`
+// It made: a push to `develop` fires no run, and a run that ended here would leave the queue waiting on the next
 // Session push for the window it could have cut now.
-export const runReturnStroke = ({ cwd, developSha, isDryRun, mainSha }: ReturnStrokeInput): ReturnStrokeResult => {
+export const runReturnStroke = ({
+  cwd,
+  developSha,
+  isDryRun,
+  isStackOpen,
+  mainSha,
+}: ReturnStrokeInput): ReturnStrokeResult => {
   // Equal first: `--is-ancestor` is reflexive, and a branch is nothing to carry to itself
-  if (developSha === mainSha || !checkIsAncestor(developSha, mainSha, cwd)) return { developSha };
+  if (isStackOpen || developSha === mainSha || !checkIsAncestor(developSha, mainSha, cwd)) return { developSha };
 
   console.info(`${DEVELOP_BRANCH} is an ancestor of ${MAIN_BRANCH} — fast-forwarding it`);
   if (!pushBranch({ branch: DEVELOP_BRANCH, cwd, expectedSha: developSha, isDryRun, sha: mainSha }))
