@@ -28,6 +28,7 @@ An item missing any of these is not queued: the gap is a call, and calls are the
 
 ## The bench
 
+- **Each worktree names its own page.** `GENSHIN_PARITY_PORT` defaults to the shared checkout's server on 3011, which serves that checkout's uncommitted edits, so the runner always sets 3002 and the bench 3020. A runner that forgets measures someone's half-written file.
 - **What it is:** `<scratchpad>/wt-bench`, cut from `origin/ai/queue`, installed once and reused. Its packages are built in dependency order (`configuration`, `shared`, `pitch-transcription`, which the scripts load, then the Genshin packages, each `tsdown --no-clean`).
 - **One loop at a time.** A loop takes it by writing its label to `<scratchpad>/wt-bench.lock`, and removes the lock when it ends. Another loop waits for the lock.
 - **Starting:** with the bench clean, `git fetch origin ai/queue` and `git checkout --detach origin/ai/queue` in it, then rebuild a package whose module files changed. Its page is served from the bench on port 3020 (`GENSHIN_PARITY_PORT=3020`), started and stopped by the loop.
