@@ -20,6 +20,7 @@ import { rankCommand } from "#src/services/genshinAssets/commands/rankCommand";
 import { shadersCommand } from "#src/services/genshinAssets/commands/shadersCommand";
 import { soundsCommand } from "#src/services/genshinAssets/commands/soundsCommand";
 import { statsCommand } from "#src/services/genshinAssets/commands/statsCommand";
+import { statuesCommand } from "#src/services/genshinAssets/commands/statuesCommand";
 import { timingsCommand } from "#src/services/genshinAssets/commands/timingsCommand";
 import { treeCommand } from "#src/services/genshinAssets/commands/treeCommand";
 import { witnessCommand } from "#src/services/genshinAssets/commands/witnessCommand";
@@ -48,6 +49,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     "points-fit": pointsFitCommand,
     fit: fitCommand,
     rank: rankCommand,
+    statues: statuesCommand,
     stats: statsCommand,
     enemies: enemiesCommand,
     items: itemsCommand,

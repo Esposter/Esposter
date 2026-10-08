@@ -7,7 +7,6 @@ import {
   DASH_STAMINA_COST,
   GLIDE_STAMINA_PER_SECOND,
   SPRINT_STAMINA_PER_SECOND,
-  STAMINA_MAX,
   STAMINA_REFILL_DELAY_SECONDS,
   STAMINA_REFILL_PER_SECOND,
   STAMINA_REFILL_STATES,
@@ -40,13 +39,15 @@ const computeSpend = (
     return (isEntered ? SWIM_DASH_STAMINA_COST : 0) + (isMoving ? SWIM_DASH_STAMINA_PER_SECOND * stepSeconds : 0);
   else return 0;
 };
-// The party's stamina, full to start. A step spends what its state costs, never below none; with nothing spent it
-// Refills once the body has rested the delay in a state that refills, and the rest restarts in any other
-export const createStamina = (): Stamina => {
+// The party's stamina, full to start at the maximum it is given. A step spends what its state costs, never below none;
+// With nothing spent it refills once the body has rested the delay in a state that refills, and the rest restarts in any
+// Other
+export const createStamina = (maximum: number): Stamina => {
   let restSeconds = 0;
   const stamina: Stamina = {
+    maximum,
     refill: () => {
-      stamina.value = STAMINA_MAX;
+      stamina.value = stamina.maximum;
     },
     spend: (amount) => {
       stamina.value = Math.max(0, stamina.value - amount);
@@ -58,10 +59,10 @@ export const createStamina = (): Stamina => {
       else if (STAMINA_REFILL_STATES.includes(phase.state)) {
         restSeconds += stepSeconds;
         if (restSeconds >= STAMINA_REFILL_DELAY_SECONDS)
-          stamina.value = Math.min(STAMINA_MAX, stamina.value + STAMINA_REFILL_PER_SECOND * stepSeconds);
+          stamina.value = Math.min(stamina.maximum, stamina.value + STAMINA_REFILL_PER_SECOND * stepSeconds);
       } else restSeconds = 0;
     },
-    value: STAMINA_MAX,
+    value: maximum,
   };
   return stamina;
 };

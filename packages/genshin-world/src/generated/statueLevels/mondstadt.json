@@ -1,0 +1,202 @@
+[
+  {
+    "level": 1,
+    "oculusCount": 0,
+    "oculusItemId": 0,
+    "rewards": [
+      {
+        "itemCount": 40,
+        "itemId": 102
+      },
+      {
+        "itemCount": 10,
+        "itemId": 201
+      },
+      {
+        "itemCount": 5,
+        "itemId": 305
+      }
+    ],
+    "staminaShare": 0
+  },
+  {
+    "level": 2,
+    "oculusCount": 1,
+    "oculusItemId": 107001,
+    "rewards": [
+      {
+        "itemCount": 80,
+        "itemId": 102
+      },
+      {
+        "itemCount": 10,
+        "itemId": 201
+      },
+      {
+        "itemCount": 5,
+        "itemId": 305
+      }
+    ],
+    "staminaShare": 7
+  },
+  {
+    "level": 3,
+    "oculusCount": 2,
+    "oculusItemId": 107001,
+    "rewards": [
+      {
+        "itemCount": 120,
+        "itemId": 102
+      },
+      {
+        "itemCount": 10,
+        "itemId": 201
+      },
+      {
+        "itemCount": 5,
+        "itemId": 305
+      }
+    ],
+    "staminaShare": 7
+  },
+  {
+    "level": 4,
+    "oculusCount": 4,
+    "oculusItemId": 107001,
+    "rewards": [
+      {
+        "itemCount": 160,
+        "itemId": 102
+      },
+      {
+        "itemCount": 10,
+        "itemId": 201
+      },
+      {
+        "itemCount": 5,
+        "itemId": 305
+      }
+    ],
+    "staminaShare": 8
+  },
+  {
+    "level": 5,
+    "oculusCount": 6,
+    "oculusItemId": 107001,
+    "rewards": [
+      {
+        "itemCount": 200,
+        "itemId": 102
+      },
+      {
+        "itemCount": 10,
+        "itemId": 201
+      },
+      {
+        "itemCount": 10,
+        "itemId": 305
+      }
+    ],
+    "staminaShare": 8
+  },
+  {
+    "level": 6,
+    "oculusCount": 7,
+    "oculusItemId": 107001,
+    "rewards": [
+      {
+        "itemCount": 240,
+        "itemId": 102
+      },
+      {
+        "itemCount": 10,
+        "itemId": 201
+      },
+      {
+        "itemCount": 10,
+        "itemId": 305
+      }
+    ],
+    "staminaShare": 8
+  },
+  {
+    "level": 7,
+    "oculusCount": 8,
+    "oculusItemId": 107001,
+    "rewards": [
+      {
+        "itemCount": 280,
+        "itemId": 102
+      },
+      {
+        "itemCount": 10,
+        "itemId": 201
+      },
+      {
+        "itemCount": 10,
+        "itemId": 305
+      }
+    ],
+    "staminaShare": 8
+  },
+  {
+    "level": 8,
+    "oculusCount": 10,
+    "oculusItemId": 107001,
+    "rewards": [
+      {
+        "itemCount": 320,
+        "itemId": 102
+      },
+      {
+        "itemCount": 10,
+        "itemId": 201
+      },
+      {
+        "itemCount": 15,
+        "itemId": 305
+      }
+    ],
+    "staminaShare": 8
+  },
+  {
+    "level": 9,
+    "oculusCount": 12,
+    "oculusItemId": 107001,
+    "rewards": [
+      {
+        "itemCount": 360,
+        "itemId": 102
+      },
+      {
+        "itemCount": 10,
+        "itemId": 201
+      },
+      {
+        "itemCount": 15,
+        "itemId": 305
+      }
+    ],
+    "staminaShare": 8
+  },
+  {
+    "level": 10,
+    "oculusCount": 15,
+    "oculusItemId": 107001,
+    "rewards": [
+      {
+        "itemCount": 400,
+        "itemId": 102
+      },
+      {
+        "itemCount": 10,
+        "itemId": 201
+      },
+      {
+        "itemCount": 15,
+        "itemId": 305
+      }
+    ],
+    "staminaShare": 8
+  }
+]

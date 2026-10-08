@@ -3,6 +3,7 @@ import type { Locomotion } from "#src/models/locomotion/Locomotion";
 
 import { createGroundQuery } from "#src/collision/createGroundQuery";
 import { createLandmarkCollider } from "#src/collision/createLandmarkCollider";
+import { STAMINA_MAX } from "#src/locomotion/constants";
 import { createCharacterController } from "#src/locomotion/createCharacterController";
 import { InputAction } from "#src/models/input/InputAction";
 import { LocomotionState } from "#src/models/locomotion/LocomotionState";
@@ -55,6 +56,7 @@ describe(createCharacterController, () => {
       ground: createGroundQuery(() => 0, DRY_LEVEL),
       landmarkCollider: createLandmarkCollider(),
       position: new Vector3(),
+      staminaMaximum: STAMINA_MAX,
     });
     characterController.step(FORWARD_INPUT, Math.PI / 2, LOCOMOTION, 1);
 
@@ -71,6 +73,7 @@ describe(createCharacterController, () => {
       ground: createGroundQuery(() => 0, DRY_LEVEL),
       landmarkCollider: createLandmarkCollider(),
       position: new Vector3(),
+      staminaMaximum: STAMINA_MAX,
     });
     characterController.holdPresses({ ...STILL_INPUT, pressedActions: new Set([InputAction.Jump]) });
     let apex = 0;
@@ -91,6 +94,7 @@ describe(createCharacterController, () => {
       ground: createGroundQuery(() => 0, WATER_LEVEL),
       landmarkCollider: createLandmarkCollider(),
       position: new Vector3(),
+      staminaMaximum: STAMINA_MAX,
     });
     characterController.step(STILL_INPUT, 0, LOCOMOTION, STEP_SECONDS);
 
