@@ -154,10 +154,6 @@ export const renderWitnessTargets = async (
   const sun = lights.find((light) => light instanceof DirectionalLight && light.castShadow);
   if (sun) sunRadiance.value.copy(sun.color).multiplyScalar(sun.intensity);
   const sunPosition = sun?.position.clone();
-  if (sun instanceof DirectionalLight && lightDirection)
-    sun.position
-      .copy(sun.target.position)
-      .addScaledVector(new Vector3(...lightDirection).normalize(), sun.position.distanceTo(sun.target.position));
   const cameraLayers = new Layers();
   cameraLayers.mask = camera.layers.mask;
   const { background, backgroundNode } = scene;
@@ -185,6 +181,10 @@ export const renderWitnessTargets = async (
   // A failed readback still hands the scene back as it was, so a later render or capture never draws the targets
   await withFinalizerAsync(
     async () => {
+      if (sun instanceof DirectionalLight && lightDirection)
+        sun.position
+          .copy(sun.target.position)
+          .addScaledVector(new Vector3(...lightDirection).normalize(), sun.position.distanceTo(sun.target.position));
       camera.layers.set(TARGET_LAYER);
       for (const { mesh } of drawnMeshes) mesh.layers.enable(TARGET_LAYER);
       for (const light of lights) light.layers.enable(TARGET_LAYER);
