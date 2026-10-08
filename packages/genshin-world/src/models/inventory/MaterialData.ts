@@ -3,7 +3,8 @@ import { GameTextKey } from "genshin-text";
 import { z } from "zod";
 
 // A row of the world's materials table, as `genshin:assets items` writes it: an item's id and type, the key of its name
-// In the game text, its rank in its tab, its rarity in stars and how many of it one stack holds
+// In the game text, its rank in its tab, its rarity in stars (zero where the game's table gives it none) and how many of
+// It one stack holds
 export interface MaterialData {
   id: number;
   materialType: MaterialType;
@@ -18,6 +19,6 @@ export const materialDataSchema = z.object({
   materialType: z.enum(MaterialType) satisfies z.ZodType<MaterialType>,
   nameTextId: z.enum(GameTextKey) satisfies z.ZodType<GameTextKey>,
   rank: z.int().nonnegative(),
-  rarity: z.int().positive(),
+  rarity: z.int().nonnegative(),
   stackLimit: z.int().positive(),
 }) satisfies z.ZodType<MaterialData>;
