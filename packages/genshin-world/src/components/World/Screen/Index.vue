@@ -93,7 +93,7 @@ import {
   QualityTierSettingsMap,
   STAMINA_MAX,
 } from "genshin-engine";
-import { InteractionKind, ItemCategory } from "genshin-interface";
+import { CharacterMenuTab, InteractionKind, ItemCategory } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 import { Euler, Group, MathUtils, PCFShadowMap, Vector3 } from "three";
 import { unref } from "vue";
@@ -654,6 +654,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :active-character-id="getActiveCharacterId(party)"
           :characters
           :game-text
+          :initial-tab="CharacterMenuTab.Attributes"
           :max-stamina="STAMINA_MAX"
           :name-text
           :stat-tables

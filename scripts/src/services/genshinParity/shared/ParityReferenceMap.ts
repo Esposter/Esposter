@@ -28,6 +28,66 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "CharacterScreen",
     seconds: 154.4,
   },
+  // The English PC client's character screen on the Weapons tab at 21:9, the same recording at 156 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
+  "character-weapons": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Weapons" },
+    screen: "CharacterScreen",
+    seconds: 156,
+  },
+  // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Weapons tab open
+  "character-weapons-tabs": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Weapons" },
+    region: { height: 800, width: 900, x: 120, y: 180 },
+    screen: "CharacterScreen",
+    seconds: 156,
+  },
+  // The English PC client's character screen on the Artifacts tab at 21:9, the same recording at 157 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
+  "character-artifacts": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Artifacts" },
+    screen: "CharacterScreen",
+    seconds: 157,
+  },
+  // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Artifacts tab open
+  "character-artifacts-tabs": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Artifacts" },
+    region: { height: 800, width: 900, x: 120, y: 180 },
+    screen: "CharacterScreen",
+    seconds: 157,
+  },
+  // The English PC client's character screen on the Constellation tab at 21:9, the same recording at 158 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
+  "character-constellation": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Constellation" },
+    screen: "CharacterScreen",
+    seconds: 157.5,
+  },
+  // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Constellation tab open
+  "character-constellation-tabs": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Constellation" },
+    region: { height: 800, width: 900, x: 120, y: 180 },
+    screen: "CharacterScreen",
+    seconds: 157.5,
+  },
+  // The English PC client's character screen on the Talents tab at 21:9, the same recording at 159 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
+  "character-talents": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Talents" },
+    screen: "CharacterScreen",
+    seconds: 159,
+  },
+  // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Talents tab open
+  "character-talents-tabs": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Talents" },
+    region: { height: 800, width: 900, x: 120, y: 180 },
+    screen: "CharacterScreen",
+    seconds: 159,
+  },
   // The Court of Fontaine from the wiki's location image at 4K, by day with the sun high. Its landmarks are rigid stone
   // And steel read off 4x crops: the arch's two feet, the bridge's two springs and the drum tower's roof corners
   "court-of-fontaine-location": {

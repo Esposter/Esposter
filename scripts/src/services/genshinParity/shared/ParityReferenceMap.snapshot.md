@@ -11,6 +11,14 @@ committed.
 | `character-attributes-panel` | `CharacterScreen` | 7.96% | 0.573 | 4.63% | 0.3422 |
 | `character-attributes-tabs` | `CharacterScreen` | 7.26% | 0.495 | 5.99% | 0.3337 |
 | `character-attributes-top` | `CharacterScreen` | 11.15% | 0.734 | 4.64% | 0.4087 |
+| `character-weapons` | `CharacterScreen` | 11.04% | 0.334 | 7.33% | 0.4399 |
+| `character-weapons-tabs` | `CharacterScreen` | 6.94% | 0.498 | 5.03% | 0.3201 |
+| `character-artifacts` | `CharacterScreen` | 11.02% | 0.347 | 7.26% | 0.4413 |
+| `character-artifacts-tabs` | `CharacterScreen` | 6.90% | 0.505 | 5.08% | 0.3196 |
+| `character-constellation` | `CharacterScreen` | 13.01% | 0.330 | 8.56% | 0.5022 |
+| `character-constellation-tabs` | `CharacterScreen` | 6.90% | 0.478 | 5.23% | 0.3191 |
+| `character-talents` | `CharacterScreen` | 11.55% | 0.434 | 7.89% | 0.4585 |
+| `character-talents-tabs` | `CharacterScreen` | 6.42% | 0.468 | 4.75% | 0.3055 |
 | `dialogue-choices-line` | `DialogueTalk` | 39.58% | 0.199 | 37.47% | 0.7964 |
 | `dialogue-choices-replies` | `DialogueTalk` | 38.00% | 0.662 | 32.45% | 0.7431 |
 | `dialogue-choices-speaker` | `DialogueTalk` | 63.87% | 0.000 | 65.02% | 0.9586 |

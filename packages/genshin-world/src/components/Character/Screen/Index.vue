@@ -17,6 +17,8 @@ interface Props {
   characters: Character[];
   // The game's words in the reader's language
   gameText: GameText;
+  // The tab the screen opens on, Attributes as the game's C opens it
+  initialTab: CharacterMenuTab;
   // The party's stamina, which the Attributes tab shows with every character's own attributes
   maxStamina: number;
   // The names the stat tables cite, in the reader's language, by their text id
@@ -25,10 +27,10 @@ interface Props {
   statTables: StatTables;
 }
 
-const { activeCharacterId, characters, gameText, maxStamina, nameText, statTables } = defineProps<Props>();
+const { activeCharacterId, characters, gameText, initialTab, maxStamina, nameText, statTables } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const characterId = ref(activeCharacterId);
-const tab = ref(CharacterMenuTab.Attributes);
+const tab = ref(initialTab);
 const character = computed(() => characters.find(({ id }) => id === characterId.value));
 // The Traveler's name is the game's own, and every other character's is the name its table cites
 const menuEntries = computed(() =>

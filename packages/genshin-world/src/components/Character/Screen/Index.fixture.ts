@@ -12,6 +12,7 @@ import weaponGrowCurves from "#src/generated/stats/weaponGrowCurves.json";
 import weapons from "#src/generated/stats/weapons.json";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { parseStatTables } from "#src/services/character/parseStatTables";
+import { CharacterMenuTab } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
 // Xilonen on the Attributes tab at level 90, the English PC client's character screen as the 21:9 recording shows her
@@ -54,6 +55,7 @@ export const props = {
   activeCharacterId: XILONEN_ID,
   characters: roster,
   gameText: ENGLISH_GAME_TEXT,
+  initialTab: CharacterMenuTab.Attributes,
   maxStamina: STAMINA,
   nameText: englishNameText,
   statTables: parseStatTables({
@@ -67,4 +69,12 @@ export const props = {
     weaponGrowCurves,
     weapons,
   }),
+};
+
+// The other tabs the English client shows at the same level, each opened on its own, the panel under it not drawn yet
+export const variants = {
+  artifacts: { initialTab: CharacterMenuTab.Artifacts },
+  constellation: { initialTab: CharacterMenuTab.Constellation },
+  talents: { initialTab: CharacterMenuTab.Talents },
+  weapons: { initialTab: CharacterMenuTab.Weapons },
 };

@@ -5,7 +5,7 @@ description: The game's character screen on C, its layout measured off the Engli
 
 # Character screen
 
-In the game, `C` opens the character screen: the player's characters across its top, one chosen, six tabs down its left, Attributes, Weapons, Artifacts, Constellation, Talents and Profile, and the open tab's panel down its right. The layout is measured off the English PC client's own frame (below). The look is provisional until the passes measure the colours, the portraits and the element's background, and nothing on the screen is scored against the game yet.
+In the game, `C` opens the character screen: the player's characters across its top, one chosen, six tabs down its left, Attributes, Weapons, Artifacts, Constellation, Talents and Profile, and the open tab's panel down its right. The layout is measured off the English PC client's own frame (below). The look is provisional until the passes measure the colours, the portraits and the element's background. Each tab the recording shows is scored against its own frame of it, in the Notes.
 
 ## How it works
 
@@ -50,7 +50,18 @@ Measured off the reference frame at 21:9, 3440 by 1440 pixels, in units: a pixel
 
 ## Notes
 
-- **The scored state is Xilonen's Attributes tab.** `Character/Screen` fixes the roster of fifteen characters, the Traveler among them, with Xilonen chosen at level 90 and phase six, and its stat tables parsed from the generated tables by `parseStatTables`. Its reference is the frame at 154.4 seconds of the user's recording of the current build (`session-2.mp4`), at 21:9, before the character's model rises into the frame. Scored over the whole frame, its mean difference went from 9.62% (FLIP 0.4052) to 8.10% (FLIP 0.3570). Over the regions the frame's pieces are scored by: the top band 12.62% to 11.15%, the tab column 8.67% to 7.26%, and the panel 12.47% to 7.96%.
+- **Five states are scored, each a frame of the same recording.** `Character/Screen` fixes the roster of fifteen characters, the Traveler among them, with Xilonen chosen at level 90 and phase six, and its stat tables parsed from the generated tables by `parseStatTables`. `initialTab` opens the screen on the tab the reference shows, and the fixture's `variants` open it on the other four. Each reference is a frame of the user's recording of the current build (`session-2.mp4`) at 21:9, the tab settled, and it is scored over the whole frame and the tab column:
+
+| Tab open            | Reference | Whole frame, mean / FLIP | Tab column, mean / FLIP |
+| :------------------ | :-------- | :----------------------- | :---------------------- |
+| Attributes, Xilonen | 154.4 s   | 8.10% / 0.3570           | 7.26% / 0.3337          |
+| Weapons             | 156 s     | 11.04% / 0.4399          | 6.94% / 0.3201          |
+| Artifacts           | 157 s     | 11.02% / 0.4413          | 6.90% / 0.3196          |
+| Constellation       | 157.5 s   | 13.01% / 0.5022          | 6.90% / 0.3191          |
+| Talents             | 159 s     | 11.55% / 0.4585          | 6.42% / 0.3055          |
+
+Attributes went from 9.62% (FLIP 0.4052) to 8.10% (FLIP 0.3570) in an earlier pass, and this loop moved neither figure. The other four are scored as first measured: their panels are not drawn, so the whole frame carries the panel's content, and the tab column carries the open tab's pill, the words and the scene tint. Constellation was first cut at 158 seconds (21.48% whole, 25.27% tab column), where the pill still streaks toward Talents, so its reference is the frame at 157.5 seconds, where the pill has settled on the word. The pill's slide is provisional until it is timed off a recording (the owed clip `menu-character.mkv`, and the Profile still on the roadmap's Recordings owed list).
+
 - **The rest of the frame is the game's scene, a floor for now.** The middle is the held scene: the golden beams and particles and the character's model, which rises over 154.4 to 155.6 seconds and is the game's art, so the screen draws a tint sampled from the reference's scene (about #6c5224 at the dark corners, #af9544 at the bright centre) and nothing more.
 - **Not drawn yet, for want of text or art.** The Details button and the Friendship row with its bar, which the default panel shows under the base rows, and the character's description: their words are not in the decoded English text yet. The element emblem, the element-coloured stars, the Q and E keys, W and S, the arrows, the Ascension Limit pill and the UID wait on the glyph pass or the text. The panel shows the advanced and elemental groups beneath the base five, which the game holds behind Details.
 - **The level line reads "Lv. 90/90".** The game writes "Level 90 / 90", a wording not in the decoded text yet.
