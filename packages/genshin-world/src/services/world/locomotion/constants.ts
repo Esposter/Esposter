@@ -1,9 +1,9 @@
 import type { Locomotion } from "genshin-engine";
 
-// The movement every body type moves by until its own is measured, in metres, seconds and radians. Provisional, each
-// Read as `apps/web/content/docs/genshin/character-controller.md` lists: the speeds, the dash and the climb's and the
-// Swim's motion off the body type's locomotion clips by `genshin:assets locomotion`, and the jump, the fall, the glide,
-// The plunge, the capsule, the step, the slope, the wading depth, the glider's height and drowning off recordings
+// The movement every body type moves by until its own is measured, in metres, seconds and radians. Provisional: the
+// Speeds, the dash and the climb's, the swim's and drowning's motion read off each body type's locomotion clips by
+// `genshin:assets locomotion`, and the jump, the fall, the glide, the plunge, the capsule, the step, the slope, the
+// Wading depth and the glider's height off recordings (`apps/web/content/docs/genshin/character-controller.md`)
 export const PROVISIONAL_LOCOMOTION: Locomotion = {
   capsuleHeight: 1.6,
   capsuleRadius: 0.3,

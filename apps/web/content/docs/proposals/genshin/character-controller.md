@@ -11,9 +11,9 @@ The [character controller](/docs/genshin/character-controller) walks the world t
 ## Decisions
 
 - **Every number from the game, by the most exact source.** The controller sets no number of its own. Each is read in the order [parity](/docs/genshin/parity) ranks sources:
-  1. The game's locomotion clips, exported and read for their root motion by `genshin:assets locomotion`: the walk, run and sprint speeds, the dash's distance and seconds, the climb's speed, the climb jump's height and seconds, the swim and swim dash speeds, drowning's seconds and the glide's forward speed.
+  1. The game's locomotion clips, exported and read for their root motion by `genshin:assets locomotion`: the walk, run and sprint speeds, the dash's speed and seconds, the climb's speed, the climb jump's height and seconds, the swim and swim dash speeds and drowning's seconds. The glide's and the jump's clips do not move the body.
   2. The character's configuration in the community's data dump, under `BinOutput/Avatar`. Its field names are obfuscated, so a value is named only by matching it to a reading from another source.
-  3. A recording, the body's path read off it by where the exports' landmarks land, as the [recreation passes](/docs/proposals/genshin/recreation-passes)' motion pass reads motion no clip holds: the jump's height and the fall's gravity, the glide's sink, the plunge's speed, the step, the steepest walkable slope, the wading depth, the height a glider opens at, and how fast a body slides down ground too steep to stand on.
+  3. A recording, the body's path read off it by where the exports' landmarks land, as the [recreation passes](/docs/proposals/genshin/recreation-passes)' motion pass reads motion no clip holds: the jump's height and the fall's gravity, the glide's forward speed and its sink, the plunge's speed, the step, the steepest walkable slope, the wading depth, the height a glider opens at, and how fast a body slides down ground too steep to stand on.
 - **A table per body type, never copied.** A body type takes its own entry in `BodyTypeLocomotionMap` once it is measured, and moves by the provisional table until then. The capsule's size per type is read from the character's collider in the exports.
 - **The costs the wiki leaves open are read off the meter.** The glide's 3 a second is the wiki's approximation and the climb's cost unknown; both, and whether a still body treading water strokes, are read from a recording of the meter draining.
 - **Only a climbable surface is climbed.** The body climbs a surface too steep to walk on only where `collision` reports it climbable, since some, such as a domain's walls, are not at any angle; today it climbs any wall.
@@ -37,15 +37,14 @@ The readings are named work before any constant changes. Each is an open questio
 
 ## Scope and order
 
-**Today:** every body type moves by the provisional table, and the medium female body's clips are queued to be read ([roadmap](/docs/genshin/roadmap)).
+**Today:** the medium female body moves by its own clips' speeds, dash, climb, swim and drowning, and by the provisional table for the rest; every other body type moves by the provisional table.
 
 **This adds, in order:**
 
-1. **The medium female body's clips**, read and written into its own entry.
-2. **The recordings**: a timed run between Windrise's statue and oak, a jump and a fall from a ledge, a glide and its plunge, a climb and its climb jump, a swim into deep water and out, and the meter draining on a wall, in a glide and treading water, published ones first.
-3. **The other body types**, each in turn.
+1. **The recordings**: a timed run between Windrise's statue and oak, a jump and a fall from a ledge, a glide and its plunge, a climb and its climb jump, a swim into deep water and out, and the meter draining on a wall, in a glide and treading water, published ones first.
+2. **The other body types**, each in turn.
 
-Each state is approved by its own measure against the readings, as the motion pass judges any motion: a run between two landmarks takes the recording's time within that recording's noise, and a jump's apex stands at the clip's height. A unit test then holds each measure, so no later state retunes it.
+Each state is approved by its own measure against the readings, as the motion pass judges any motion: a run between two landmarks takes the recording's time within that recording's noise, and a jump's apex stands at the recording's height. A unit test then holds each measure, so no later state retunes it.
 
 ## What this does not propose
 
