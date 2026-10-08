@@ -34,5 +34,7 @@ export const oakTopic: ReferenceTopic = {
         "Not a placement offset: the median of ours over the exports' depth is 1.006, and the signed gap changes sign with depth, ours 15% farther where the export's crown is nearest (27 to 37 metres) and 1 to 6% nearer past 64 metres. The leaves' signed mean is 0.06 of their 0.186 gap, so most of the 0.180 is per-pixel scatter rather than a shift. The export's leaves are 5.9-metre cards at random facings (mean cosine 0.50 against radial) with centroids peaking at 0.6 to 0.8 of their cluster's radius, so radial facing and a shell at the radius are not what the export shows, and the card size already matches it. Cards per cluster from 400 to 800 lower the depth to 0.164 and the normal to 47.7 degrees, the outline rises to 8.41 pixels, and the Ground's normal holds at 9.6 degrees, so it lands. 1600 cards a cluster never reached the page's ready state within the parity timeout and is not recorded",
     },
   ],
-  openQuestions: [],
+  openQuestions: [
+    "Its colour per part, the bark and the leaves each read from their own mesh's textures (`windrise/surfaces.json`), reads 3.29 ΔE against 2.30, from 3.82 with the family in one colour, so the gate still fails. Its surface structure reads 0.5499 share against 0.0324, failing, and its structure before this change was not read",
+  ],
 };
