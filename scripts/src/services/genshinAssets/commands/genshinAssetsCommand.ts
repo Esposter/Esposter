@@ -21,6 +21,7 @@ import { gadgetsCommand } from "#src/services/genshinAssets/commands/gadgetsComm
 import { gatheringCommand } from "#src/services/genshinAssets/commands/gatheringCommand";
 import { gcgCommand } from "#src/services/genshinAssets/commands/gcgCommand";
 import { homeCommand } from "#src/services/genshinAssets/commands/homeCommand";
+import { imaginariumCommand } from "#src/services/genshinAssets/commands/imaginariumCommand";
 import { interfaceCommand } from "#src/services/genshinAssets/commands/interfaceCommand";
 import { inventoryCommand } from "#src/services/genshinAssets/commands/inventoryCommand";
 import { itemsCommand } from "#src/services/genshinAssets/commands/itemsCommand";
@@ -96,5 +97,6 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     expeditions: expeditionsCommand,
     commissions: commissionsCommand,
     "spiral-abyss": spiralAbyssCommand,
+    imaginarium: imaginariumCommand,
   },
 });
