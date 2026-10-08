@@ -4,8 +4,9 @@ import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { WindowPullRequestListState } from "#src/models/coderabbit/collect/WindowPullRequestListState";
+import { WindowPullRequestState } from "#src/models/coderabbit/collect/WindowPullRequestState";
 import { checkIsStackingAllowed } from "#src/services/coderabbit/collect/checkIsStackingAllowed";
-import { DEVELOP_BRANCH } from "#src/services/coderabbit/collect/constants";
+import { DEVELOP_BRANCH, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { drainWindow } from "#src/services/coderabbit/collect/drainWindow";
 import { getNewestWindowPullRequest } from "#src/services/coderabbit/collect/getNewestWindowPullRequest";
 import { getNextWindowNumber } from "#src/services/coderabbit/collect/getNextWindowNumber";
@@ -15,10 +16,12 @@ import { getWindowOpenCount } from "#src/services/coderabbit/collect/getWindowOp
 import { openNextWindow } from "#src/services/coderabbit/collect/openNextWindow";
 import { orderWindowStack } from "#src/services/coderabbit/collect/orderWindowStack";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
+import { readLegacyReleasePullRequest } from "#src/services/coderabbit/collect/readLegacyReleasePullRequest";
 import { readMainCoderabbitConfig } from "#src/services/coderabbit/collect/readMainCoderabbitConfig";
 import { readSessionLimitResetMs } from "#src/services/coderabbit/collect/readSessionLimitResetMs";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
 import { readWindowPullRequests } from "#src/services/coderabbit/collect/readWindowPullRequests";
+import { retargetStrandedWindows } from "#src/services/coderabbit/collect/retargetStrandedWindows";
 import { runExpressLane } from "#src/services/coderabbit/collect/runExpressLane";
 import { runReturnStroke } from "#src/services/coderabbit/collect/runReturnStroke";
 import { walkWindowStack } from "#src/services/coderabbit/collect/walkWindowStack";
@@ -48,8 +51,14 @@ export const runCycle = async ({
   const branchShas = readBranchShas(cwd);
   const { mainSha, queueSha } = branchShas;
   const viewerLogin = readViewerLogin();
-  const openPullRequests = readWindowPullRequests(WindowPullRequestListState.Open);
   const windowHistory = readWindowPullRequests(WindowPullRequestListState.All);
+  // A merge whose retarget failed strands the window above it, which is retargeted before the stack is read
+  const openPullRequests = retargetStrandedWindows({
+    cwd,
+    isDryRun,
+    openPullRequests: readWindowPullRequests(WindowPullRequestListState.Open),
+    windowHistory,
+  });
   // The return stroke first: a stack that merged moves `develop` before anything is measured against it, and an open
   // Stack keeps `develop` on its top window
   const returned = runReturnStroke({
@@ -84,6 +93,13 @@ export const runCycle = async ({
     return getOutcome(
       CycleOutcomeKind.Idle,
       `pull request #${pausedWindow.number} was closed without merging — a person's pause, re-open it to resume`,
+    );
+  // The release before the stack is a pause too when a person closed it, and the stack waits on it when it is open
+  const legacyPullRequest = readLegacyReleasePullRequest();
+  if (legacyPullRequest?.state === WindowPullRequestState.Closed)
+    return getOutcome(
+      CycleOutcomeKind.Idle,
+      `pull request #${legacyPullRequest.number} from ${DEVELOP_BRANCH} to ${MAIN_BRANCH} was closed without merging — a person's pause`,
     );
 
   // Bottom up, the stack is walked: the bottom window merges and is drained once its review completes, a window above
@@ -130,6 +146,15 @@ export const runCycle = async ({
       );
     drainedPullRequests.push(namedPullRequest);
   }
+
+  // A window cut over `develop` while the release before the stack is open would move that pull request's head under its
+  // own review, and nothing here reviews it, so the windows wait until a person merges or closes it
+  if (legacyPullRequest?.state === WindowPullRequestState.Open)
+    return getOutcome(
+      CycleOutcomeKind.Idle,
+      `pull request #${legacyPullRequest.number} from ${DEVELOP_BRANCH} to ${MAIN_BRANCH} is open — no window opens over ${DEVELOP_BRANCH} until a person merges or closes it`,
+      walked.retriggerDelaySeconds,
+    );
 
   // The windows: one at a time, for as long as the hourly ceiling and the stacking guard allow. A window that did not
   // Reach the remote ends the openings, and what the openings returned is the run's verdict

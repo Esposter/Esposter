@@ -7,16 +7,17 @@ import { readWindowFileCount } from "#src/services/coderabbit/collect/readWindow
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 
-// Fold `main` into the candidate the port built and name the sha `develop` is pushed to. The fold is never
-// Undone for the cap: the window is counted on the pull request's own side of `main` (`readWindowFilePaths`), so
-// What `main` brings costs the review nothing. Nothing is verified here: `develop`'s own CI is the check
+// Fold `main` into the candidate the port built and name the sha `develop` is pushed to. The fold is never undone for
+// the cap, and on a window cut from `main` what it brings costs the review nothing, since the bot counts the window's
+// own side of `main` alone. On a window stacked above another the fold's files do count, so the caller measures the cut
+// again after this returns (`openNextWindow`). Nothing is verified here: `develop`'s own CI is the check
 // (`REPAIR_VERIFY_COMMANDS` says why).
 export const foldCandidate = async ({
   collectorSha,
   cwd,
   developSha,
   fixCount,
-  mergeBaseSha,
+  baseSha,
   queueSha,
   queueShas,
   viewerLogin,
@@ -36,7 +37,7 @@ export const foldCandidate = async ({
   const isFastForward = fixCount === 0 && mergeBase === developSha && isCutExact && !isMainMerged;
   const targetSha = isFastForward ? (cutSha ?? developSha) : readHeadSha(cwd);
   console.info(
-    `cut: ${queueShas.length} queue commits = ${readWindowFileCount(mergeBaseSha, cwd)} files${isMainMerged ? ", main folded in" : ""}${mergeOutcome === MergeMainOutcome.Conflicted ? ", main conflicts past the resolver's attempts — the release merge is a person's" : ""}${isFastForward ? ", fast-forward" : ""}`,
+    `cut: ${queueShas.length} queue commits = ${readWindowFileCount(baseSha, cwd)} files${isMainMerged ? ", main folded in" : ""}${mergeOutcome === MergeMainOutcome.Conflicted ? ", main conflicts past the resolver's attempts — the release merge is a person's" : ""}${isFastForward ? ", fast-forward" : ""}`,
   );
   return targetSha;
 };

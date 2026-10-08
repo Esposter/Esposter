@@ -50,7 +50,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     collectorSha,
     cwd: getCwd(),
     isDryRun: false,
-    mergeBaseSha: readSha(`origin/${MAIN_BRANCH}`),
+    baseSha: readSha(`origin/${MAIN_BRANCH}`),
     viewerLogin,
   });
   // The attempts are read off the conflicting commit's own comments, one `gh` page of none unless a test says otherwise

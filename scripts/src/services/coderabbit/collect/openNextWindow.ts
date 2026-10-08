@@ -13,16 +13,19 @@ import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnswer
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
+import { readWindowFileCount } from "#src/services/coderabbit/collect/readWindowFileCount";
 import { replyPullRequestAnswers } from "#src/services/coderabbit/collect/replyPullRequestAnswers";
 import { syncFixes } from "#src/services/coderabbit/collect/syncFixes";
 import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
+import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One window cut from the top of the stack and opened over it. The fixes and the queue are synced onto `develop`, the
-// Port builds the window measured from the top window's head (or `main`'s merge base when none is open) against the
-// Same cap, and the window is pushed and opened over the window below. Every ref is read fresh here, since the
-// Previous window moved `develop`. `isWindowOpened` says whether one reached the remote; an empty cut says why not.
+// Port builds the window measured from the base the bot reviews it against (the top window's head, or `main` when none
+// is open) against the same cap, and the window is pushed and opened over the window below. Every ref is read fresh
+// here, since the previous window moved `develop`. `isWindowOpened` says whether one reached the remote; an empty cut
+// says why not.
 export const openNextWindow = async ({
   collectorSha,
   cwd,
@@ -43,8 +46,8 @@ export const openNextWindow = async ({
       "coderabbit",
       `${topPullRequest.headRefName} is missing on the remote`,
     );
-  const mergeBaseSha = runGit(["merge-base", mainSha, developSha], cwd).trim();
-  const windowBaseSha = topSha ?? mergeBaseSha;
+  // The base the bot reviews this window against, which every count of the window is taken from
+  const baseSha = topSha ?? mainSha;
 
   const owedFixShas = reviewFixesSha === undefined ? [] : readCherryShas(developSha, reviewFixesSha, cwd);
   let owingFixesSha = owedFixShas.length > 0 ? reviewFixesSha : undefined;
@@ -59,15 +62,15 @@ export const openNextWindow = async ({
     cwd,
     developSha,
     isDryRun,
-    mergeBaseSha: windowBaseSha,
+    baseSha,
     owingFixesSha,
     queueSha,
     viewerLogin,
   });
   if (syncedQueueSha === undefined) return { isWindowOpened: false, outcome: getMovedOutcome(QUEUE_BRANCH) };
-  const port = portWindow({ cwd, developSha, fixShas, mergeBaseSha: windowBaseSha, queueSha: syncedQueueSha });
+  const port = portWindow({ cwd, developSha, fixShas, baseSha, queueSha: syncedQueueSha });
   // What `develop` carries above the window below — a window a dying run pushed and never opened — is owed too
-  const pendingCommitCount = Number(runGit(["rev-list", "--count", `${windowBaseSha}..${developSha}`], cwd).trim());
+  const pendingCommitCount = Number(runGit(["rev-list", "--count", `${baseSha}..${developSha}`], cwd).trim());
   console.info(
     `window: ${port.fixCount} fix commits + ${pendingCommitCount} pending commits + ${port.queueShas.length} queue commits = ${port.fileCount} files${port.heldSha ? `, held from ${port.heldSha}` : ""}`,
   );
@@ -136,15 +139,26 @@ export const openNextWindow = async ({
         cwd,
         developSha,
         fixCount: port.fixCount,
-        mergeBaseSha: windowBaseSha,
+        baseSha,
         queueSha: syncedQueueSha,
         queueShas: port.queueShas,
         viewerLogin,
       });
+  // The fold is the one step the port never measured: on a window stacked above another, the `main` it brings is in the
+  // bot's count, so a cut over the cap is held until the stack below moves and the next run measures it again
+  const foldedFileCount = readWindowFileCount(baseSha, cwd, targetSha);
+  if (!isDevelopCarryingWindow && foldedFileCount > REVIEW_FILE_CAP)
+    return {
+      isWindowOpened: false,
+      outcome: {
+        kind: CycleOutcomeKind.Idle,
+        reason: `the cut with ${MAIN_BRANCH} folded in is ${foldedFileCount} files, over the cap of ${REVIEW_FILE_CAP} — held until the window below merges`,
+      },
+    };
 
   const outcome: CycleOutcome = openWindow({
     baseBranch: topPullRequest?.headRefName ?? MAIN_BRANCH,
-    baseSha: topSha ?? mainSha,
+    baseSha,
     cwd,
     developSha,
     isDryRun,

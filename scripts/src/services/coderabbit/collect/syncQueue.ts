@@ -60,7 +60,7 @@ export const syncQueue = async ({
   cwd,
   developSha,
   isDryRun,
-  mergeBaseSha,
+  baseSha,
   owingFixesSha,
   queueSha,
   viewerLogin,
@@ -84,7 +84,7 @@ export const syncQueue = async ({
     if (replayOutcome !== ReplayOutcome.Replayed) return queueSha;
   }
 
-  const isReshaped = await reshapeQueue({ collectorSha, cwd, isDryRun, mergeBaseSha, targetSha, viewerLogin });
+  const isReshaped = await reshapeQueue({ collectorSha, cwd, isDryRun, baseSha, targetSha, viewerLogin });
   if (isOnTarget && !isReshaped) return queueSha;
   else return pushRewrite(cwd, queueSha, isDryRun);
 };
