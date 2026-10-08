@@ -4,7 +4,7 @@ import type { LightUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
 
 import { STONE_COLOR } from "#src/services/windrise/constants";
-import { getWindriseHeight } from "#src/services/windrise/getWindriseHeight";
+import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { createStatueGeometry, createToonMaterial } from "genshin-engine";
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
 
 const { landmark, lightUniforms, rampTexture } = defineProps<Props>();
 const { heightOffset, position, rotation } = landmark;
-const groundHeight = getWindriseHeight(position.x, position.z);
+const groundHeight = getWorldHeight(position.x, position.z);
 const statueGeometry = createStatueGeometry();
 const stoneMaterial = createToonMaterial({ color: STONE_COLOR, lightUniforms, rampTexture });
 

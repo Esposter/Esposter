@@ -4,7 +4,7 @@ import type { LightUniforms, WindUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
 
 import { BARK_COLOR, LEAF_COLOR } from "#src/services/windrise/constants";
-import { getWindriseHeight } from "#src/services/windrise/getWindriseHeight";
+import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { createLeafMaterial, createToonMaterial, createTreeGeometry } from "genshin-engine";
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 
 const { landmark, lightUniforms, rampTexture, windUniforms } = defineProps<Props>();
 const { heightOffset, position, rotation, treeOptions } = landmark;
-const groundHeight = getWindriseHeight(position.x, position.z);
+const groundHeight = getWorldHeight(position.x, position.z);
 const { branchGeometry, leafGeometry } = createTreeGeometry(treeOptions);
 const barkMaterial = createToonMaterial({ color: BARK_COLOR, lightUniforms, rampTexture });
 const leafMaterial = createLeafMaterial({ color: LEAF_COLOR, lightUniforms, rampTexture }, windUniforms);

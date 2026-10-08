@@ -51,7 +51,12 @@
           "id": "starfell-valley",
           "layer": "Surface",
           "name": "Starfell Valley",
-          "outline": [],
+          "outline": [
+            { "x": -10, "z": -920 },
+            { "x": 790, "z": -920 },
+            { "x": 790, "z": -120 },
+            { "x": -10, "z": -120 }
+          ],
           "subareas": [
             { "id": "cider-lake", "name": "Cider Lake" },
             { "id": "mondstadt-city", "name": "Mondstadt City" },
@@ -196,7 +201,12 @@
           "id": "sea-of-clouds",
           "layer": "Surface",
           "name": "Sea of Clouds",
-          "outline": [],
+          "outline": [
+            { "x": -2790, "z": -1960 },
+            { "x": -1990, "z": -1960 },
+            { "x": -1990, "z": -1160 },
+            { "x": -2790, "z": -1160 }
+          ],
           "subareas": [
             { "id": "guyun-stone-forest", "name": "Guyun Stone Forest" },
             { "id": "liyue-harbor", "name": "Liyue Harbor" },
@@ -274,7 +284,12 @@
           "id": "narukami-island",
           "layer": "Surface",
           "name": "Narukami Island",
-          "outline": [],
+          "outline": [
+            { "x": -5340, "z": 2740 },
+            { "x": -4540, "z": 2740 },
+            { "x": -4540, "z": 3540 },
+            { "x": -5340, "z": 3540 }
+          ],
           "subareas": [
             { "id": "amakane-island", "name": "Amakane Island" },
             { "id": "araumi", "name": "Araumi" },
@@ -393,7 +408,12 @@
           "id": "avidya-forest",
           "layer": "Surface",
           "name": "Avidya Forest",
-          "outline": [],
+          "outline": [
+            { "x": -2710, "z": -4450 },
+            { "x": -1910, "z": -4450 },
+            { "x": -1910, "z": -3650 },
+            { "x": -2710, "z": -3650 }
+          ],
           "subareas": [
             { "id": "chinvat-ravine", "name": "Chinvat Ravine" },
             { "id": "gandha-hill", "name": "Gandha Hill" },
@@ -558,7 +578,12 @@
           "id": "court-of-fontaine-region",
           "layer": "Surface",
           "name": "Court of Fontaine Region",
-          "outline": [],
+          "outline": [
+            { "x": 1180, "z": -6180 },
+            { "x": 1980, "z": -6180 },
+            { "x": 1980, "z": -5380 },
+            { "x": 1180, "z": -5380 }
+          ],
           "subareas": [
             { "id": "annapausis", "name": "Annapausis" },
             { "id": "chemin-de-lespoir", "name": "Chemin de L'Espoir" },
@@ -774,7 +799,12 @@
           "id": "toyac-springs",
           "layer": "Surface",
           "name": "Toyac Springs",
-          "outline": [],
+          "outline": [
+            { "x": -4970, "z": -10590 },
+            { "x": -4170, "z": -10590 },
+            { "x": -4170, "z": -9790 },
+            { "x": -4970, "z": -9790 }
+          ],
           "subareas": [
             { "id": "people-of-the-springs", "name": "\"People of the Springs\"" },
             { "id": "ameyalco-waters", "name": "Ameyalco Waters" }
@@ -834,7 +864,12 @@
           "id": "lempo-isle",
           "layer": "Surface",
           "name": "Lempo Isle",
-          "outline": [],
+          "outline": [
+            { "x": -650, "z": -11130 },
+            { "x": 150, "z": -11130 },
+            { "x": 150, "z": -10330 },
+            { "x": -650, "z": -10330 }
+          ],
           "subareas": [
             { "id": "barrowmoss-barrens", "name": "Barrowmoss Barrens" },
             { "id": "blue-amber-lake", "name": "Blue Amber Lake" },
@@ -918,7 +953,12 @@
           "id": "everfrozen-earth",
           "layer": "Surface",
           "name": "Everfrozen Earth",
-          "outline": [],
+          "outline": [
+            { "x": 3350, "z": -11130 },
+            { "x": 4150, "z": -11130 },
+            { "x": 4150, "z": -10330 },
+            { "x": 3350, "z": -10330 }
+          ],
           "subareas": [
             { "id": "central-station", "name": "Central Station" },
             { "id": "druzhna-hq", "name": "Druzhna HQ" },

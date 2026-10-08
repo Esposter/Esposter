@@ -4,7 +4,7 @@ import type { Vector3 } from "three";
 
 import water from "#src/data/windrise/water.json";
 import { FREE_CAMERA_STEP_SECONDS } from "#src/services/constants";
-import { getWindriseHeight } from "#src/services/windrise/getWindriseHeight";
+import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { useLoop, useTres } from "@tresjs/core";
 import { createFixedStepLoop, createFreeCamera, createGroundQuery, createInput } from "genshin-engine";
 import { PerspectiveCamera } from "three";
@@ -21,7 +21,7 @@ const { onBeforeRender } = useLoop();
 const controller = new AbortController();
 const input = createInput(window);
 // The ground is the terrain's own height function, read at the world coordinate the scene's origin shifts the camera to
-const ground = createGroundQuery((x, z) => getWindriseHeight(x + origin.x, z + origin.z), water.level);
+const ground = createGroundQuery((x, z) => getWorldHeight(x + origin.x, z + origin.z), water.level);
 let frameInput: InputState = input.readInput(0);
 let freeCamera: FreeCamera | undefined;
 const fixedStepLoop = createFixedStepLoop(FREE_CAMERA_STEP_SECONDS, () => {
