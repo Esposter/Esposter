@@ -45,19 +45,19 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Layout
 
-| Unknown                                | Tool                                                                                                                     |
-| :------------------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
-| A spawned prefab's place and scale     | `composeWorldMatrices`, through the anchor                                                                               |
-| A row a script scrolls                 | the spawn's `copies`, laid out by `copySpawns` for the witness                                                           |
-| A scrolled row's phase on a reference  | `genshin:parity scroll`: the rows moved along the glide, priced on edges; then `heldScrolled`                            |
-| A camera on far landmarks              | `pose` with landmarks that pick an instance                                                                              |
-| Where each part lands on the reference | `genshin:parity overlay`: boundaries, edge distance                                                                      |
-| Whether a stand-in blocks a path       | `genshin:assets clearance`, held by the hulls' test                                                                      |
-| A tile's ground                        | `parseTerrainHeights` over its TerrainData                                                                               |
-| Our ground drawn as the game's         | `fitGaussianHills`: hills fitted to the tiles round the origin, error printed                                            |
-| Our families against the exports'      | `passes`' layout: each family's furthest part in metres, the cross-ratios                                                |
-| A row shifted at run time              | `passes`' layout: each witness family's offset past what the exports explain                                             |
-| Our transforms in projected pixels     | gap: the layout diff projected at each reference's pose (`apps/web/content/docs/proposals/genshin/recreation-passes.md`) |
+| Unknown                                | Tool                                                                                                                                                                               |
+| :------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A spawned prefab's place and scale     | `composeWorldMatrices`, through the anchor                                                                                                                                         |
+| A row a script scrolls                 | the spawn's `copies`, laid out by `copySpawns` for the witness                                                                                                                     |
+| A scrolled row's phase on a reference  | `genshin:parity scroll`: the rows moved along the glide, priced on edges; then `heldScrolled`                                                                                      |
+| A camera on far landmarks              | `pose` with landmarks that pick an instance                                                                                                                                        |
+| Where each part lands on the reference | `genshin:parity overlay`: boundaries, edge distance                                                                                                                                |
+| Whether a stand-in blocks a path       | `genshin:assets clearance`, held by the hulls' test                                                                                                                                |
+| A tile's ground                        | `parseTerrainHeights` over its TerrainData                                                                                                                                         |
+| Our ground drawn as the game's         | `fitGaussianHills`: hills fitted to the tiles round the origin, error printed                                                                                                      |
+| Our families against the exports'      | `passes`' layout: each family's furthest part in metres, the cross-ratios                                                                                                          |
+| A row shifted at run time              | `passes`' layout: each witness family's offset past what the exports explain                                                                                                       |
+| Our transforms in projected pixels     | `passes`' layout: each fitted part and its nearest export carried as the scene carries their family, projected at each current build's reference, the furthest apart in its pixels |
 
 ### Camera
 
@@ -162,8 +162,8 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Sound effects
 
-| Unknown                                       | Tool                                                                                                            |
-| :-------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- |
-| Which game sounds a recording plays, and when | `genshin:assets sounds`: every sound scored by its bands' levels, the best set of each size with its residual   |
-| A sound effect's levels over time             | `fitSoundEffect`: three noises a band every 25 ms, from the matched sounds' mix in both channels                |
-| How near our sound effect plays the game's    | `genshin:parity effects`: both channels every 5 ms in the effect's bands, each band's bias, the channels' width |
+| Unknown                                       | Tool                                                                                                                                                                     |
+| :-------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Which game sounds a recording plays, and when | `genshin:assets sounds`: every sound scored by its bands' levels, the best set of each size with its residual                                                            |
+| A sound effect's levels over time             | `fitSoundEffect`: three noises a band every 25 ms, from the matched sounds' mix in both channels                                                                         |
+| How near our sound effect plays the game's    | `passes --pass Audio`: both channels every 5 ms in the effect's bands against the game's, gated at a second take of our own noise; each band's bias, the channels' width |
