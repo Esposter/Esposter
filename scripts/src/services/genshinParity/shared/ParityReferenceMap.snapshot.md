@@ -7,18 +7,18 @@ committed.
 
 | Reference | Screen | Mean difference | Shape | Tone | FLIP |
 | :-------- | :----- | --------------: | ----: | ---: | ---: |
-| `character-artifacts` | `CharacterScreen` | 13.01% | 0.421 | 8.51% | 0.5022 |
-| `character-artifacts-tabs` | `CharacterScreen` | 6.73% | 0.478 | 4.96% | 0.3174 |
-| `character-attributes` | `CharacterScreen` | 8.10% | 0.758 | 5.59% | 0.3570 |
-| `character-attributes-panel` | `CharacterScreen` | 7.97% | 0.572 | 4.62% | 0.3422 |
-| `character-attributes-tabs` | `CharacterScreen` | 7.26% | 0.495 | 6.00% | 0.3337 |
-| `character-attributes-top` | `CharacterScreen` | 11.15% | 0.734 | 4.64% | 0.4087 |
-| `character-constellation` | `CharacterScreen` | 23.13% | 0.624 | 16.95% | 0.7374 |
-| `character-constellation-tabs` | `CharacterScreen` | 27.18% | 0.481 | 20.98% | 0.8279 |
-| `character-talents` | `CharacterScreen` | 11.56% | 0.463 | 7.86% | 0.4587 |
-| `character-talents-tabs` | `CharacterScreen` | 6.42% | 0.468 | 4.75% | 0.3055 |
-| `character-weapons` | `CharacterScreen` | 10.91% | 0.477 | 7.10% | 0.4369 |
-| `character-weapons-tabs` | `CharacterScreen` | 6.94% | 0.499 | 5.03% | 0.3201 |
+| `character-artifacts` | `CharacterScreen` | 10.44% | 0.415 | 6.69% | 0.4314 |
+| `character-artifacts-tabs` | `CharacterScreen` | 7.93% | 0.478 | 5.72% | 0.3583 |
+| `character-attributes` | `CharacterScreen` | 7.78% | 0.766 | 5.57% | 0.3535 |
+| `character-attributes-panel` | `CharacterScreen` | 7.31% | 0.573 | 4.39% | 0.3185 |
+| `character-attributes-tabs` | `CharacterScreen` | 6.37% | 0.496 | 5.07% | 0.3096 |
+| `character-attributes-top` | `CharacterScreen` | 11.67% | 0.744 | 5.64% | 0.4180 |
+| `character-constellation` | `CharacterScreen` | 6.74% | 0.655 | 4.47% | 0.2813 |
+| `character-constellation-tabs` | `CharacterScreen` | 5.32% | 0.489 | 3.57% | 0.2054 |
+| `character-talents` | `CharacterScreen` | 7.94% | 0.467 | 4.91% | 0.3512 |
+| `character-talents-tabs` | `CharacterScreen` | 6.94% | 0.470 | 5.07% | 0.3231 |
+| `character-weapons` | `CharacterScreen` | 10.21% | 0.476 | 6.42% | 0.4153 |
+| `character-weapons-tabs` | `CharacterScreen` | 7.39% | 0.499 | 5.26% | 0.3384 |
 | `dialogue-choices-line` | `DialogueTalk` | 10.34% | 0.893 | 9.46% | 0.3660 |
 | `dialogue-choices-replies` | `DialogueTalk` | 20.89% | 0.762 | 13.88% | 0.5405 |
 | `dialogue-choices-speaker` | `DialogueTalk` | 2.63% | 1.000 | 2.68% | 0.1807 |
