@@ -39,13 +39,13 @@ stateDiagram-v2
 1. **Birds and beasts that flee and drop**, in Windrise's area, drawn as the enemies' stand-ins until their models.
 2. **Material sources**, picked up.
 3. **Boars, and the wildlife that fights back.**
-4. **Pets**, and each region's own animals with its region.
+4. **Pets**, and each region's own animals when its region lands.
 
 ## Data and measures
 
 - **Read from the game's tables:** `EnvAnimalGatherExcelConfigData`, `CaptureExcelConfigData`, `AnimalCodexExcelConfigData` and the animals' monster rows.
 - **Placed by the spawned places:** where each kind lives, from the official map's marks.
-- **Measured:** how fast each kind flees, off recordings, provisional until then.
+- **Measured:** how fast each kind flees, timed off recordings of each.
 
 ## Key files
 

@@ -10,7 +10,7 @@ The Imaginarium Theater is the game's roguelike combat challenge, held in the Mo
 
 ## Decisions
 
-- **The season is the latest begun.** `RoleCombatScheduleExcelConfigData` lists the game's seasons with their dates, elements, opening characters and special guests. The Theater runs the season whose start is the latest before today, so a dump read some months ago keeps its last season rather than none, as the Spiral Abyss keeps its period.
+- **The season is the latest begun.** `RoleCombatScheduleExcelConfigData` lists the game's seasons with their dates, elements, opening characters and special guests. The Theater plays the most recent season already begun, so an older dump holds on to its final season instead of none, as the Spiral Abyss keeps its period.
 - **The cast by the season's rules.** Four members perform each stage. The Alternate Cast is the player's own characters of the season's three elements, plus its four special guests whatever their element, at least level 60 for the lower difficulties and 70 above, as many as the difficulty asks. The opening characters are the player's own or their trial versions, and an owned opening character takes 20% more HP, ATK and DEF for the season, inside and out. A cast's stats are fixed once chosen, and every member starts each stage at full health and energy.
 - **Two Vigor each.** Each character has two Vigor and spends one for every stage performed, and with none left cannot perform again this run; only a Mystery Cache's option restores it.
 - **Events between battles.** A Battle Event gives Fantasia Flowers and the choice of one of two Alternate Cast members to join the Principal Cast. The other events are paid in Fantasia Flowers: a Companion event invites a character, a Brilliant Blessing grants a reaction's buff, and a Mystery Cache grants an effect, some for the worse. Events can be rerolled, and a run can be rewound to the end of its last boss stage a limited number of times.
@@ -44,12 +44,12 @@ flowchart TD
 2. **Vigor, the acts and Battle Events.**
 3. **The paid events and Blessing Level.**
 4. **Stella, the rewind and the other difficulties.**
-5. **The Theater Lobby**, once the Mondstadt Library's interior is derived.
+5. **The Theater Lobby**, once the Mondstadt Library's interior stands.
 
 ## Data and measures
 
 - **Read from the game's tables:** the `RoleCombat*` tables: its schedule, difficulties, levels, buffs, events and rewards.
-- **Read from the wiki:** what each Mystery Cache and Brilliant Blessing does where its description leaves it open.
+- **Read from the wiki:** what each Mystery Cache and Brilliant Blessing does, where the game's own description is unclear.
 
 ## Key files
 

@@ -47,7 +47,7 @@ flowchart TD
 
 - **Read from the wiki:** each kind's rewards by Adventure Rank, and the regions holding Remarkable chests.
 - **Read from the game's tables:** `ChestLevelSetConfigData`'s chest levels by an area's level, which the rewards' bands follow.
-- **Measured:** the reach a camp or a puzzle locks within, against the chests the map marks beside them, and the chest's opening off a recording.
+- **Measured:** the reach a camp or a puzzle locks within, against the chests the map marks beside them, and how a chest opens, read off a recording of one.
 
 ## Key files
 

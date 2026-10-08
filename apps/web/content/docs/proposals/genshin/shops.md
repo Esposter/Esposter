@@ -15,7 +15,7 @@ The game's shops are its vendors in the cities, the Souvenir Shops that take eac
 - **Paimon's Bargains.** It is opened from the Paimon menu or the wish. It takes Masterless Starglitter for Fates, a monthly two of the game's twelve rotating four-star characters, the monthly weapons and top materials, and Masterless Stardust for Fates and materials with monthly limits, all resetting on the first of each month, as the wiki gives them. A character whose constellations are full cannot be bought. Fates for Primogems are the [inventory](/docs/proposals/genshin/inventory) proposal's.
 - **Souvenir Shops take Sigils.** Each region's main city trades its own Sigils for materials, blueprints and Mora, never restocking. Since 2.0 a region's shop opens only once its region's offering is at its last level, as Sumeru's waits on Vanarana's Favor ([offering systems](/docs/proposals/genshin/offering-systems)).
 - **Nothing for Genesis Crystals.** The Gift Shop and the outfit shop sell only for Genesis Crystals, which the world never sells, so their goods are never offered, as the [Genshin](/docs/proposals/genshin) proposal rules out any payment.
-- **A Reputation discount is the price's.** A nation's discount takes 10% off its named shops, rounded to the nearest five Mora in the player's favour ([reputation](/docs/proposals/genshin/reputation)).
+- **A Reputation discount is the price's.** A nation's discount takes 10% off its named shops, rounded in the player's favour to a multiple of five Mora ([reputation](/docs/proposals/genshin/reputation)).
 - **A vendor is a resident.** A city's vendor is placed as a resident, and their shop opens from their talk, as the game opens it.
 
 ## How it works

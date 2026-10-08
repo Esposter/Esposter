@@ -42,7 +42,7 @@ flowchart TD
 ## Data and measures
 
 - **Read from the game's tables:** `TransPointRewardConfigData` for each place's first-unlock reward, and the scene points for which waypoints a quest unlocks.
-- **Measured:** the unlock's animation and how long it holds the player, off a recording, as the jump's fade is.
+- **Measured:** the unlock's animation and how long it holds the player, measured off a recording like the jump's fade.
 
 ## Key files
 

@@ -15,7 +15,7 @@ An artifact's attributes are already summed: its main affix at its rarity and le
 - **How many it starts with is the table's.** `ReliquaryExcelConfigData` gives each piece's rarity, its maximum level, how many minor affixes it starts with and the levels a new one is added at, and its base Artifact EXP as fodder.
 - **Every fourth level adds or raises one.** At each fourth level, an artifact with fewer than four minor affixes gains one from the pool, and one with four raises one of them, chosen evenly, by a tier.
 - **Artifact EXP costs a Mora a point.** Materials give their EXP, and a fodder artifact its rarity's base plus 80% of what it was levelled with, the recovered share costing no Mora. Each enhancement's EXP is multiplied by 1 at 90%, 2 at 9% or 5 at 1%, as the wiki gives the bonus, drawn from the world's seeded random source.
-- **A set's conditional bonus is a module.** A two or four-piece bonus that waits on combat, such as a burst used or a reaction triggered, is written as a small module over the kits' shared effects, its numbers the set table's, as a weapon's passive is. Its unconditional attributes stay what the sum already reads.
+- **A set's conditional bonus is a module.** A two or four-piece bonus that waits on combat, such as a burst used or a reaction triggered, is a small module of its own over the shared effects the kits use, its numbers the set table's, as a weapon's passive is. Its unconditional attributes stay what the sum already reads.
 - **A worn or locked artifact is never fodder.** Locking keeps one from being consumed, and the wearer's pieces are always kept.
 
 ## How it works
@@ -25,7 +25,7 @@ flowchart TD
   NEW["A new artifact: domain, boss or chest"] --> MAIN["Main affix by its slot's weights"]
   MAIN --> MINOR["Its starting minor affixes, by weight from the pool left"]
   ENH["Materials and fodder chosen"] --> PAY{"A Mora a point on hand?"}
-  PAY -->|"no"| REFUSE["Refused, nothing spent"]
+  PAY -->|"no"| REFUSE["Refused, the bag untouched"]
   PAY -->|"yes"| MULT["EXP times 1, 2 or 5"]
   MULT --> LEVEL["Levels gained, to the rarity's maximum"]
   LEVEL -->|"each fourth level"| FOUR{"Fewer than four minor affixes?"}

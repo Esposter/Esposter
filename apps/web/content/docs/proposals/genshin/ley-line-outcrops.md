@@ -36,13 +36,13 @@ stateDiagram-v2
 
 1. **An outcrop's challenge and blossom**, in Mondstadt first.
 2. **The groups' moves and the daily reset.**
-3. **The kinds' ranks and statue conditions**, and each region's outcrops as its region is built.
+3. **The kinds' ranks and statue conditions**, and each region's own outcrops alongside it.
 
 ## Data and measures
 
 - **Read from the game's tables:** `BlossomGroupsExcelConfigData`, `BlossomSectionOrderExcelConfigData`, `BlossomRefreshExcelConfigData`, `BlossomOpenExcelConfigData` and `BlossomChestExcelConfigData`, with the claims' reward rows.
 - **Placed by the spawned places:** the table names each place by the game's scene group, which runs on its servers, so each place is the official map's outcrop mark fitted into the world ([spawned places](/docs/proposals/genshin/spawned-places)).
-- **Read from the wiki:** each region's enemies at an outcrop, and its rewards by World Level.
+- **Read from the wiki:** each region's enemies at an outcrop, and what each World Level's claim gives.
 
 ## Key files
 
@@ -56,5 +56,5 @@ stateDiagram-v2
 ## Sources
 
 - [Ley Line Outcrops](https://genshin-impact.fandom.com/wiki/Ley_Line_Outcrops), Genshin Impact Wiki: the two kinds and their rewards, the ranks that open them in each region, enemies by region at the World Level, the blossom for 20 resin, a claimed outcrop moving within its group, one cleared but unclaimed staying until the reset, and rewards by World Level.
-- [Daily Reset](https://genshin-impact.fandom.com/wiki/Daily_Reset), Genshin Impact Wiki: the outcrops' places drawn again at the daily reset.
+- [Daily Reset](https://genshin-impact.fandom.com/wiki/Daily_Reset), Genshin Impact Wiki: the outcrops' places drawn afresh with each day's reset.
 - [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the blossom groups with their next places, the sections' order, and each kind's conditions.

@@ -43,7 +43,7 @@ flowchart TD
 ## Data and measures
 
 - **Read from the game's tables:** `AchievementExcelConfigData` and `AchievementGoalExcelConfigData`, their reward rows, and their words by text id.
-- **Read from the wiki:** what a server-fired achievement asks, where its description leaves it open.
+- **Read from the wiki:** what a server-fired achievement asks for, wherever its own words are vague.
 
 ## Key files
 
