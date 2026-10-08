@@ -58,6 +58,7 @@ export const stepEnemy = (
   target: GroundPoint | undefined,
   stepSeconds: number,
 ): EnemyEvent | undefined => {
+  enemy.hitSeconds += stepSeconds;
   enemy.stateSeconds += stepSeconds;
   enemy.attackCooldownSeconds = Math.max(0, enemy.attackCooldownSeconds - stepSeconds);
   if (enemy.state !== EnemyState.Dead) stepPoise(enemy, stepSeconds);

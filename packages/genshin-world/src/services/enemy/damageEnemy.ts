@@ -10,9 +10,10 @@ import { setEnemyState } from "#src/services/enemy/setEnemyState";
 // A hit combat lands on an enemy, written into it in place. Its health falls, and the energy of every threshold it
 // Falls to is dropped, each once for the enemy's life however it is healed. A hit on a broken poise, or one that
 // Breaks it, staggers it, and any other hit sets an unengaged enemy on its attacker. A returning or dead enemy is
-// Immune. It returns the energy the hit dropped
+// Immune, and any other hit restarts the seconds since the enemy was last hit. It returns the energy the hit dropped
 export const damageEnemy = (enemy: Enemy, { damage, poiseDamage }: EnemyHit): EnergyDrop[] => {
   if ([EnemyState.Dead, EnemyState.Return].includes(enemy.state)) return [];
+  enemy.hitSeconds = 0;
   const { energyDrops, poiseType } = EnemyKindTraitsMap[enemy.enemyKindId];
   enemy.health = Math.max(0, enemy.health - damage);
   const healthPercent = (enemy.health / enemy.maxHealth) * 100;

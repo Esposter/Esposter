@@ -147,3 +147,6 @@ export const TRAVELER_KIT: Kit = {
   plungeCollision: { hitArea: PLUNGE_COLLISION_HIT_AREA, hitmarkSeconds: 0, poiseDamage: 25, talentMultiplier: 0.639 },
   skillCooldownSeconds: 5,
 };
+// The wiki's targeting score weighs an enemy's nearness to the body at 0.7 and its being ahead of it at 0.3
+export const TARGET_DISTANCE_WEIGHT = 0.7;
+export const TARGET_ANGLE_WEIGHT = 0.3;
