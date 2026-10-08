@@ -1,4 +1,5 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { Element } from "genshin-world";
 import { join } from "node:path";
 
 // Where the stat tables are written, the world package's generated folder its loaders read
@@ -34,3 +35,5 @@ export const PLAYABLE_AVATAR_USE_TYPE = "AVATAR_FORMAL";
 export const EMPTY_PROPERTY_TYPE = "FIGHT_PROP_NONE";
 // The item id a slot holding nothing names: an unused cost slot of a phase, and a weapon refined by a copy alone
 export const EMPTY_ITEM_ID = 0;
+// The seven elements as the game's tables spell them, which a skill's energy names and each character's element is read from
+export const ElementNameSet: ReadonlySet<string> = new Set<string>(Object.values(Element));
