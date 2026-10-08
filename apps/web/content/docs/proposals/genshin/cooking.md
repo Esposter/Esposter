@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Cooking
 
-Food is how a party heals, revives and fights stronger in the game, and every dish is cooked from ingredients first gathered, hunted or bought. The dishes cooked by hand to proficiency, Auto Cook, the specialties, processing and campfires are built, as the [cooking](/docs/genshin/cooking) page records. What remains is the stove where a city cooks, the cooking screen, what a dish does once it is eaten, and the passives that bonus a kind of dish. The dishes are eaten through the [inventory](/docs/proposals/genshin/inventory)'s using.
+Food is how a party heals, revives and fights stronger in the game, and every dish is cooked from ingredients first gathered, hunted or bought. The dishes cooked by hand to proficiency, Auto Cook, the specialties, processing and campfires are built, as the [cooking](/docs/genshin/cooking) page records. What remains is the stove where a city cooks, the cooking screen, what a dish does once it is eaten, and the passives that bonus a kind of dish. Eating goes through the [inventory](/docs/proposals/genshin/inventory)'s using.
 
 ## Decisions
 
