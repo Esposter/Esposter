@@ -83,11 +83,24 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 | [Dialogue](/docs/proposals/genshin/dialogue)                         | F on a resident begins their talk, its words loaded and filled, a resident's open quests offered, and the screen measured  |
 | [Quests](/docs/proposals/genshin/quests)                             | the carried quests served, started and advanced by the world's doings, kept, tracked on the HUD and V, and the commissions |
 
+### Phase four: the game's systems
+
+What still separates the recreation from the whole game once the world and its play features stand: how characters fight and grow, what the world gives back for exploring it, and the pastimes and challenges beside it. Each page is one system, in the order the systems wait on each other. The systems that need a server or other players are [deferred](/docs/genshin/deferred) instead, since the world keeps no server.
+
+| Page                                                                 | What it adds                                                                                     |
+| :------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
+| [Character kits](/docs/proposals/genshin/character-kits)             | every character's attacks, skill, burst and passives on one framework, priced by combat as built |
+| [Talents](/docs/proposals/genshin/talents)                           | combat talents levelled to 10 by phase, and the passives each phase opens                        |
+| [Constellations](/docs/proposals/genshin/constellations)             | six per character from their Stella Fortuna, the Traveler's by element                           |
+| [Weapon enhancement](/docs/proposals/genshin/weapon-enhancement)     | a weapon levelled, ascended and refined, and its passive at its rank                             |
+| [Artifact enhancement](/docs/proposals/genshin/artifact-enhancement) | an artifact rolled and enhanced by the game's rules, and its set's conditional bonus             |
+
 ## Scope and order
 
 1. **The recreation passes' runner and measures first.** Every later page is judged by them, so they are the base the rest stands on. The rest of the engine follows in the table's order, each built when Windrise's passes reach what it draws and shown first there, in the scene the [rendering style](/docs/genshin/rendering-style) is built in.
 2. **Mondstadt first among the regions.** It is where the game begins, and its opening areas are the ones the Windrise scene already holds. The rest follow in the game's release order.
 3. **Then the play features, one page each.** First the [character controller](/docs/proposals/genshin/character-controller) (run, sprint, jump, climb, glide, swim and stamina) and its [follow camera](/docs/proposals/genshin/follow-camera). Then the [HUD](/docs/proposals/genshin/hud), whose stamina meter the controller needs. Then [characters](/docs/proposals/genshin/characters), from HoYoverse's official MMD models, hosted in the app's Blob Storage. Then the [menu screens](/docs/proposals/genshin/menu-screens), whose Paimon is drawn as a character is. Then elemental reactions, and after that each feature in turn. Each feature is built when its turn comes, not before, so nothing is built against an engine that does not yet exist; a feature's page may be written earlier, as combat's, interaction's, inventory's and wish's are, and states only its proposed scope.
+4. **Then the game's systems, in phase four's order.** The [character kits](/docs/proposals/genshin/character-kits) come first, since combat's rules strike nothing until a kit does, and every growth system, reward and challenge after them acts through a kit. Phase four's pages are written ahead of their turn as the map of what is left, each holding only what the game's tables and the wiki settle, and each is re-read against the engine when its turn comes.
 
 ## What this does not propose
 
