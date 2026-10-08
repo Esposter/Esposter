@@ -76,7 +76,6 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 | [Characters](/docs/proposals/genshin/characters)                     | the game's characters from HoYoverse's official models                          |
 | [Menu screens](/docs/proposals/genshin/menu-screens)                 | the Paimon menu, and the Time and Settings screens it opens                     |
 | [Combat](/docs/proposals/genshin/combat)                             | elements, auras and reactions, the damage formula, ICD, shields and energy      |
-| [Enemies](/docs/proposals/genshin/enemies)                           | enemy kinds and their stats, their AI and camps, spawns, respawn and drops      |
 | [Interaction](/docs/proposals/genshin/interaction)                   | the F prompts: what is in reach, nearest first, scrolled by the wheel           |
 | [Inventory](/docs/proposals/genshin/inventory)                       | the bag's nine tabs, stacks, room and sorting, and the currencies               |
 | [Wish](/docs/proposals/genshin/wish)                                 | the banners, rates, pity, guarantees and Capturing Radiance, on earned Fates    |
