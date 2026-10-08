@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { QualityTier } from "genshin-engine";
+import type { Vector3 } from "three";
 
 import WorldGrass from "#src/components/World/Grass/Index.vue";
 import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
@@ -68,12 +69,14 @@ interface Props {
   heldMinutes?: number;
   // Whether the development tuning panel is shown, which the app decides
   isTuning: boolean;
+  // The world coordinate the scene's origin stands on, which the screen's free camera reads the ground through
+  origin: Vector3;
   qualityTier: QualityTier;
   // Where the app serves each region's data, fetched by id as the camera comes within reach
   regionDataBaseUrl: string;
 }
 
-const { createTerrainWorker, heldMinutes, isTuning, qualityTier, regionDataBaseUrl } = defineProps<Props>();
+const { createTerrainWorker, heldMinutes, isTuning, origin, qualityTier, regionDataBaseUrl } = defineProps<Props>();
 const emit = defineEmits<{ ready: [] }>();
 // The witness render's parts, drawn in place of ours of each family it names when the parity page provides them, beside
 // Ours rather than in the floating origin's group, since the page's tools find the camera among their siblings and stay
@@ -100,7 +103,7 @@ const { cascadeCount, shadowMapSize } = QualityTierSettingsMap[qualityTier];
 const { cascadedShadowNode, light: sun } = createSunLight({ cascadeCount, maxFar: SHADOW_MAX_FAR, shadowMapSize });
 // Shade is lit only by this, so the sky's colour above and the grass's below are the shade's colours
 const hemisphere = new HemisphereLight();
-const { origin, worldOffset } = useFloatingOrigin();
+const worldOffset = useFloatingOrigin(origin);
 const { isRegionDataSettled, regionDataMap } = useRegionData(origin, regionDataBaseUrl);
 const fogUniforms = createFogUniforms();
 fogUniforms.density.value = FOG_DENSITY;

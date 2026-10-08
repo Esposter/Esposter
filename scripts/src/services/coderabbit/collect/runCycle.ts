@@ -6,7 +6,14 @@ import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { ReleasePullRequestState } from "#src/models/coderabbit/collect/ReleasePullRequestState";
-import { DEVELOP_BRANCH, MAIN_BRANCH, QUEUE_BRANCH } from "#src/services/coderabbit/collect/constants";
+import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
+import {
+  DEVELOP_BRANCH,
+  MAIN_BRANCH,
+  QUEUE_BRANCH,
+  SESSION_PROBE_PROMPT,
+  SessionRoleModelMap,
+} from "#src/services/coderabbit/collect/constants";
 import { foldCandidate } from "#src/services/coderabbit/collect/foldCandidate";
 import { foldReleaseMain } from "#src/services/coderabbit/collect/foldReleaseMain";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
@@ -21,11 +28,13 @@ import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas"
 import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { readReleasePullRequest } from "#src/services/coderabbit/collect/readReleasePullRequest";
+import { readSessionLimitResetMs } from "#src/services/coderabbit/collect/readSessionLimitResetMs";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
 import { replyAnswered } from "#src/services/coderabbit/collect/replyAnswered";
 import { runDrainStep } from "#src/services/coderabbit/collect/runDrainStep";
 import { runExpressLane } from "#src/services/coderabbit/collect/runExpressLane";
 import { runReturnStroke } from "#src/services/coderabbit/collect/runReturnStroke";
+import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { settleRateLimit } from "#src/services/coderabbit/collect/settleRateLimit";
 import { syncFixes } from "#src/services/coderabbit/collect/syncFixes";
 import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
@@ -63,13 +72,22 @@ export const runCycle = async ({
   if (returned.outcome) return returned.outcome;
   const { developSha } = returned;
   const viewerLogin = readViewerLogin();
+  const releasePullRequest = readReleasePullRequest();
+  // A limit Claude Code hit holds everything past the return stroke until it lifts: a release merged or a window
+  // Ported then has no drain behind it, and every session-backed step would download Claude Code to be refused again
+  const sessionLimitResetMs =
+    releasePullRequest &&
+    readSessionLimitResetMs(readEntries<GitHubEntry>(`issues/${releasePullRequest.number}/comments`), viewerLogin);
+  if (sessionLimitResetMs !== undefined && sessionLimitResetMs > Date.now())
+    return getOutcome(
+      CycleOutcomeKind.Idle,
+      `the session is limited until ${new Date(sessionLimitResetMs).toISOString()} — nothing merges or ports until a session can follow it`,
+    );
   // The express lane, before the pull request is even looked up: a commit claiming no review reaches `main`
   // Directly and the fold carries it to `develop` with the next window — and a red `main` its cut cannot pass is
   // Repaired by the lane's own cut
   const expressed = await runExpressLane({ collectorSha, cwd, developSha, isDryRun, mainSha, queueSha, viewerLogin });
   if (expressed.outcome) return expressed.outcome;
-  // Read whether a pull request is named or not: a window pushed under an open release would merge with it unread
-  const releasePullRequest = readReleasePullRequest();
   // Closed without merging is a person's pause: opening another over it would spend the slot they were withholding
   if (releasePullRequest?.state === ReleasePullRequestState.Closed)
     return getOutcome(
@@ -95,6 +113,20 @@ export const runCycle = async ({
       });
       retriggerDelaySeconds = settlement.retriggerDelaySeconds;
       return settlement.outcome ?? getOutcome(CycleOutcomeKind.Idle, gate.reason);
+    }
+    // A release merges only when a session could drain its findings after it, since they are answered after the
+    // Merge: asked of Claude Code itself with a prompt that does nothing, a limit throwing out of the pass from here
+    if (!isDryRun) {
+      const { isStarted } = await runSession({
+        cwd,
+        model: SessionRoleModelMap[SessionRole.Drain],
+        prompt: SESSION_PROBE_PROMPT,
+      });
+      if (!isStarted)
+        return getOutcome(
+          CycleOutcomeKind.Idle,
+          "no session could start — the release waits for one that can drain its findings",
+        );
     }
     const folded = await foldReleaseMain({ collectorSha, cwd, developSha, isDryRun, mainSha, viewerLogin });
     return folded ?? mergeReleasePullRequest({ developSha, isDryRun, pullRequest: openPullRequest });

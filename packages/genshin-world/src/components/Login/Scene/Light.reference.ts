@@ -331,9 +331,16 @@ export const lightTopic: ReferenceTopic = {
       result:
         "Without the walkway's glow the solve leaves 0.1739 against 0.1751 with it, over the same 34,482 pixels, and the light stays blue alone, its harmonics' red under a hundredth either way: the glow is not what keeps red and green out of the night light. The game's middle lane carries red and green the light cannot, so a share of Ground02's glow stands in the frame, between none (our saturated blue lane) and all (the witness's near white one)",
     },
+    {
+      method:
+        "Ground02's normal map as the stone program decodes it against the witness's: the material's saved _FillNormalGaps, the exported texture's channels, and the witness's texture load and tangent frame (loadWitness, three's NormalMapNode)",
+      outcome: InvestigationOutcome.DeadEnd,
+      result:
+        "Both decode the texel as its three channels by two less one, unswizzled and unscaled, and Ground02 saves _FillNormalGaps at 0, so neither flattens a normal. The map is nearly flat, its blue 0.995 on average and never under 0.87, its red and green centred on a half, so its tilts lean every way alike about the face's normal. The one difference is the frame: the game turns the texel by each vertex's tangent, the witness by the screen's derivatives, its meshes read from OBJ without tangents. A frame turns each texel's lean, not the lane's mean facing, so it cannot take most of the rim away",
+    },
   ],
   openQuestions: [
-    "Why the game shows the walkway's middle lane with a fraction of Ground02's glow though every input the program reads matches the witness's: the lane's normal map as the program decodes it against ours, which the rim reads, or a G-buffer variant the dump does not hold; the witness still draws it whole, so the light is solved under a glow the frame does not show",
+    "Why the game shows the walkway's middle lane with a fraction of Ground02's glow though every input the program reads matches the witness's: a G-buffer variant the dump does not hold, the normal map's decode being the same; the witness still draws it whole, so the light is solved under a glow the frame does not show",
     "The bridges' and the towers' glow by material: the bridges' glow reads 7.3 ΔE off, our bridges fitted from their Bridge materials alone where the exports' glow through Edge01 and Ground01, and the towers' structure 0.19 against 0.08, their Build materials' glows averaged into one",
     "The night's crowns past 40 metres, darker than the game's under the darkening that holds past 20 metres, and the form the darkening stands in for: the reflection pass's clustered probes or a haze form the scene lacks",
     "The night's far towers below the walkway, hidden in the haze's wall where the game shows them dark: the wall stands for the cloud sea's billows under the near walkway, which no weighing of the haze's one exponential form releases, so the cloud layer drawing the billows comes first and the haze is solved again after it",

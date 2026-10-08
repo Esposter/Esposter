@@ -13,6 +13,7 @@ import type { SpawnSyncReturns } from "node:child_process";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { ReleasePullRequestState } from "#src/models/coderabbit/collect/ReleasePullRequestState";
+import { SessionLimitedError } from "#src/models/coderabbit/collect/SessionLimitedError";
 import {
   CHECK_NAME,
   CI_COMPLETED_STATUS,
@@ -33,6 +34,7 @@ import {
   RESHAPE_FAILED_MARKER,
   REVIEW_FIXES_BRANCH,
   SESSION_ATTEMPT_CAP,
+  SESSION_LIMITED_MARKER,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
@@ -687,6 +689,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
     answerGh(openPullRequests);
     readCheckStatus.mockReturnValue(completedCheck);
+    runSession.mockResolvedValue({ isEnded: true, isStarted: true });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(outcome).toStrictEqual({
@@ -699,6 +702,40 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     ]);
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
     expect(runDrainStep).not.toHaveBeenCalled();
+  });
+
+  // Its findings are drained after the merge, so a merge no session could follow ships them unread until the
+  // Limit lifts: the probe's refusal leaves the release open
+  test("leaves a reviewed release open when no session can start to drain it", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh(openPullRequests);
+    readCheckStatus.mockReturnValue(completedCheck);
+    runSession.mockRejectedValue(new SessionLimitedError(0));
+
+    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toStrictEqual(new SessionLimitedError(0));
+    expect(getPrCalls("merge")).toHaveLength(0);
+    expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
+  });
+
+  test("merges nothing and ports nothing while a session limit it marked has not lifted", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    const resetAt = new Date(Date.now() + Temporal.Duration.from({ hours: 1 }).total("milliseconds")).toISOString();
+    answerGh(openPullRequests, [], [getMarked(`<!-- ${SESSION_LIMITED_MARKER} until ${resetAt} -->`)]);
+    readCheckStatus.mockReturnValue(completedCheck);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome.reason).toBe(
+      `the session is limited until ${resetAt} — nothing merges or ports until a session can follow it`,
+    );
+    expect(runSession).not.toHaveBeenCalled();
+    expect(getPrCalls("merge")).toHaveLength(0);
+    expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });
 
   // A named pull request picks which merged release to drain, never a window past an open one: pushed under it,
@@ -747,6 +784,8 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     publish(QUEUE_BRANCH, developSha);
     answerGh(openPullRequests);
     readCheckStatus.mockReturnValue(completedCheck);
+    // The probe first, which asks only whether a session starts
+    runSession.mockResolvedValueOnce({ isEnded: true, isStarted: true });
     runSession.mockImplementation(() => {
       writeFileSync(join(getCwd(), TEST_FILENAME), " ");
       runGit(["add", TEST_FILENAME], getCwd());
@@ -779,6 +818,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     publish(QUEUE_BRANCH, developSha);
     answerGh(openPullRequests);
     readCheckStatus.mockReturnValue(completedCheck);
+    runSession.mockResolvedValue({ isEnded: true, isStarted: true });
 
     await expect(runCycle({ ...baseInput, cwd: getCwd() })).resolves.toStrictEqual({
       kind: CycleOutcomeKind.Merged,

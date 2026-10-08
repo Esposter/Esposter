@@ -31,3 +31,5 @@ export const TUNING_TINT_CHANNELS = [
   { key: "1", name: "green" },
   { key: "2", name: "blue" },
 ] as const;
+// The free camera moves in fixed steps of a sixtieth of a second, so its motion is the same at any frame rate
+export const FREE_CAMERA_STEP_SECONDS = 1 / 60;

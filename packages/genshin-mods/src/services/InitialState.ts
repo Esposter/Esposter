@@ -9,6 +9,7 @@ export const InitialState: PluginState["genshin-mods"] = {
   isHandingOff: false,
   lastCacheRequestAt: 0,
   lastPrompt: "",
+  lookupStreak: 0,
   now: 0,
   waypoints: [],
 };

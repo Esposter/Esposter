@@ -3,7 +3,11 @@ import type { MusicPlayer } from "genshin-engine";
 
 import music from "#src/data/login/music.json";
 import sounds from "#src/data/login/sounds.json";
-import { LOGIN_DOOR_SOUND_DELAY_MS } from "#src/services/login/constants";
+import {
+  LOGIN_DOOR_SOUND_DELAY_MS,
+  LOGIN_EFFECTS_COMPRESSOR_OPTIONS,
+  LOGIN_MASTER_LIMITER_OPTIONS,
+} from "#src/services/login/constants";
 import { loadMusicRecordings } from "#src/services/login/music/loadMusicRecordings";
 import { getResultAsync } from "@esposter/shared";
 import { useEventListener } from "@vueuse/core";
@@ -18,7 +22,8 @@ interface Props {
 
 const { isDoorOpened, musicRecordingBaseUrl } = defineProps<Props>();
 // The login's music, rendering nothing: its playlist from the start, looping as the game's does, for as long as the
-// Screen shows, and the door's sound once the door opens, both through one context. The browser's autoplay policy may
+// Screen shows, and the door's sound once the door opens through the effects bus's compressor and the master's limiter
+// As the game's mix passes it, both through one context. The browser's autoplay policy may
 // Start the context suspended, and then the music waits for the first pointer or key press anywhere on the window, and
 // Starts there from its beginning. The music starts once its recordings are decoded, or without them where they cannot
 // Be fetched, unless the screen has gone by then
@@ -39,9 +44,11 @@ onMounted(() => {
     start(new Map());
   });
   const doorSound = createSoundEffectBuffer(context, sounds.door);
+  const effectsBus = new DynamicsCompressorNode(context, LOGIN_EFFECTS_COMPRESSOR_OPTIONS);
+  effectsBus.connect(new DynamicsCompressorNode(context, LOGIN_MASTER_LIMITER_OPTIONS)).connect(context.destination);
   playDoorSound = () => {
     const source = new AudioBufferSourceNode(context, { buffer: doorSound });
-    source.connect(context.destination);
+    source.connect(effectsBus);
     source.start(context.currentTime + LOGIN_DOOR_SOUND_DELAY_MS / 1000);
   };
   if (context.state === "suspended")

@@ -7,13 +7,11 @@ import { getOpenBodyReviewId } from "#src/services/coderabbit/collect/getOpenBod
 import { getOpenFindings } from "#src/services/coderabbit/collect/getOpenFindings";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
-import { readDrainLimitResetMs } from "#src/services/coderabbit/collect/readDrainLimitResetMs";
 import { getFeedbackReport } from "#src/services/coderabbit/feedback/getFeedbackReport";
 import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
 
-// A limit the last run hit — Claude Code's own, read off the marker it wrote — ends the run rather than
-// Downloading Claude Code to be refused again; so does a drain that could not start, since porting would put a
-// Window ahead of findings that must lead it.
+// A drain that could not start ends the run, since porting would put a window ahead of findings that must lead
+// It; a limit Claude Code hit is the cycle's to hold, before this step is reached (`runCycle`).
 export const runDrainStep = async ({
   collectorSha,
   cwd,
@@ -52,16 +50,6 @@ export const runDrainStep = async ({
     console.info("would drain — a dry run runs no Claude session");
     return { reviewFixesSha };
   }
-
-  const drainLimitResetMs = readDrainLimitResetMs(issueComments, viewerLogin);
-  if (drainLimitResetMs !== undefined && drainLimitResetMs > Date.now())
-    return {
-      outcome: {
-        kind: CycleOutcomeKind.Idle,
-        reason: `the drain is limited until ${new Date(drainLimitResetMs).toISOString()} — the findings stay open, so nothing ports ahead of them`,
-      },
-      reviewFixesSha,
-    };
 
   const drain = await drainFindings({
     baseSha: owingFixesSha ?? developSha,

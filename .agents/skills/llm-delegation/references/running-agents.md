@@ -7,7 +7,7 @@ Read while a subagent is running, before launching several at once, or when clea
 
 ## Running several agents at once
 
-One agent per unit of work, each in its own git worktree (`isolation: "worktree"` on the Agent tool), is the way to run a batch in parallel. The shared-working-tree boundary rule above only holds for a single agent; two agents in one tree trample each other.
+One agent per unit of work, each in its own git worktree, is the way to run a batch in parallel. The Agent tool's `isolation: "worktree"` refuses this repository, since `.claude` is a committed symlink (`apps/web/content/docs/architecture/agent-configuration.md`), so the prompt has the agent make its own: `git worktree add -b agent/<unit> <scratchpad>/wt-<unit> origin/ai/queue`, every later command inside it. The shared-working-tree boundary rule above only holds for a single agent; two agents in one tree trample each other.
 
 A batch is earned by its prompts: every one a self-contained spec (`references/delegation-prompt.md`), each on the cheapest family its work allows. Its failure mode is agents burning their budget re-reading context and never producing work, which is what a prompt that is a topic instead of a spec produces. Ideation, triage and docs authoring stay in the main session, one area at a time; the one docs work a batch may take is the fan-out over separate areas that the `docs` skill allows, an agent per area (`references/area-passes.md`).
 

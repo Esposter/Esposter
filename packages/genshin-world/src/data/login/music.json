@@ -4,7 +4,9 @@
   "segments": [
     {
       "duration": 104,
-      "expression": [-18.017, -5.11, -7.903, -9.379, -5.984, 7.756, 3.933, 9.376, 7.018, 5.931, -8.569, -8.692, -7.716],
+      "expression": [
+        -18.227, -5.029, -7.816, -9.428, -6.179, 7.943, 3.743, 9.666, 6.733, 6.255, -8.779, -8.705, -7.702
+      ],
       "voices": [
         {
           "instrument": {
@@ -961,7 +963,7 @@
     { "duration": 10.014, "expression": [], "voices": [], "volume": -3 },
     {
       "duration": 92.75,
-      "expression": [-2.235, -3.238, -0.885, 0.644, 0.491, -6.321, -3.055, 3.24, -1.369, -0.595, 4.708, -19.55],
+      "expression": [-2.688, -3.653, -1.498, -0.069, 0.251, -6.771, -3.548, 3.024, -2.012, -1.089, 4.805, -21.14],
       "voices": [
         {
           "instrument": {
@@ -970,7 +972,7 @@
             "harmonics": [1, 0.401, 0.227, 0.18, 0.04, 0.109, 0.019, 0.011, 0.016, 0.011, 0.006, 0.017],
             "level": 0.08,
             "noiseBands": [0.009, 0.018, 0, 0, 0, 0, 0.002, 0.002],
-            "recordingLevel": 0.022,
+            "recordingLevel": 0.028,
             "recordings": [
               {
                 "file": "vcsl-idiophones-struck-idiophones-hand-chimes-sus-c3-r01-main.ogg",
@@ -1153,7 +1155,7 @@
             "harmonics": [1, 0.066, 0.032, 0.016],
             "level": 0.283,
             "noiseBands": [0.002, 0.004, 0, 0, 0, 0, 0.001, 0],
-            "recordingLevel": 0.132,
+            "recordingLevel": 0.164,
             "recordings": [
               {
                 "file": "vcsl-chordophones-composite-chordophones-folk-harp-ewharp-normal-a-2-v2-rr1.ogg",
@@ -1528,7 +1530,7 @@
             "harmonics": [1, 0.129, 0.049, 0.035, 0.015],
             "level": 0.25,
             "noiseBands": [0.003, 0.006, 0, 0, 0, 0, 0.002, 0.001],
-            "recordingLevel": 0.28,
+            "recordingLevel": 0.333,
             "recordings": [
               {
                 "file": "vcsl-idiophones-struck-idiophones-hand-chimes-sus-a-3-r01-main.ogg",

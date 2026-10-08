@@ -39,6 +39,25 @@ export const LOGIN_DOOR_LIGHT_MS = 400;
 // The door's sound starts this long after the click, from the English recording: its screen first whitens at 14.633
 // Seconds and the sound's rumble rises from 14.95, fitted over the burst its audio holds above the music
 export const LOGIN_DOOR_SOUND_DELAY_MS = 320;
+// The effects bus's compressor the door's sounds pass in the game's mix, read from its banks: -9 decibels, 4 to 1, no
+// Attack, 0.15 seconds' release. The door's data already carries the master's 5 decibels down, so the threshold sits
+// 5 lower to compress the same signal; its detector is unpublished, so the browser's own stands in
+export const LOGIN_EFFECTS_COMPRESSOR_OPTIONS = {
+  attack: 0,
+  knee: 0,
+  ratio: 4,
+  release: 0.15,
+  threshold: -14,
+} as const satisfies DynamicsCompressorOptions;
+// The master's peak limiter, -2 decibels at 50 to 1 in the game's mix, at the most a browser's compressor takes, 20 to
+// 1, and the release the effects bus's compressor holds, the master's own being unread
+export const LOGIN_MASTER_LIMITER_OPTIONS = {
+  attack: 0,
+  knee: 0,
+  ratio: 20,
+  release: 0.15,
+  threshold: -2,
+} as const satisfies DynamicsCompressorOptions;
 // Where the login music's recordings sit in the package, written by `genshin:parity instruments`, which the parity page
 // Serves them from as it serves any of the package's files
 export const LOGIN_MUSIC_RECORDING_DIRECTORY = "src/data/login/recordings";

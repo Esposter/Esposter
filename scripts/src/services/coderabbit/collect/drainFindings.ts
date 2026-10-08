@@ -22,7 +22,6 @@ import { getDrainPrompt } from "#src/services/coderabbit/collect/getDrainPrompt"
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getUnansweredFindings } from "#src/services/coderabbit/collect/getUnansweredFindings";
 import { postComment } from "#src/services/coderabbit/collect/postComment";
-import { postDrainLimited } from "#src/services/coderabbit/collect/postDrainLimited";
 import { postDrainVerdicts } from "#src/services/coderabbit/collect/postDrainVerdicts";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
@@ -92,15 +91,12 @@ export const drainFindings = async ({
       const commentIdSeverityMap = await readFindingSeverities(drainInput.openThreads);
       const promptInput = { ...drainInput, commentIdSeverityMap, installFailure, rejectionsPath, verdictPath };
       const prompt = getDrainPrompt(promptInput);
-      const { isEnded, isStarted, limitResetAtMs } = await runSession({
+      const { isEnded, isStarted } = await runSession({
         cwd: REPOSITORY_ROOT,
         model: SessionRoleModelMap[SessionRole.Drain],
         prompt,
       });
-      if (!isStarted) {
-        if (limitResetAtMs !== undefined) postDrainLimited(pullRequest, limitResetAtMs);
-        return { isStarted: false, reviewFixesSha };
-      }
+      if (!isStarted) return { isStarted: false, reviewFixesSha };
       // A zero exit says the session ended, never that it finished: a drain that stopped mid-fix leaves the rest in
       // The working tree, and reading `HEAD` there would push half a finding as though it were whole
       const dirtyPaths = readDirtyPaths();

@@ -3,12 +3,12 @@ import type { WorldCameraPose } from "#src/models/world/WorldCameraPose";
 import type { TresCanvasInstance, TresRendererSetupContext } from "@tresjs/core";
 import type { QualityTier } from "genshin-engine";
 
+import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
-import { OrbitControls } from "@tresjs/cientos";
 import { TresCanvas } from "@tresjs/core";
 import { createGenshinRenderer, GENSHIN_TONE_MAPPING, QualityTierSettingsMap } from "genshin-engine";
-import { Euler, MathUtils, PCFShadowMap } from "three";
+import { Euler, MathUtils, PCFShadowMap, Vector3 } from "three";
 import { unref } from "vue";
 
 interface Props {
@@ -34,6 +34,8 @@ const canvas = useTemplateRef<TresCanvasInstance>("canvas");
 // A witness render's tools set the camera themselves, which the controls would move off the pose they set
 // oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see
 const witness = inject(SceneWitnessKey, null);
+// The world's origin, owned here so the free camera reads the ground through it before the floating origin shifts it
+const origin = new Vector3();
 const cameraRotation = computed(() =>
   cameraPose
     ? new Euler(MathUtils.degToRad(cameraPose.pitch), MathUtils.degToRad(cameraPose.heading), 0, "YXZ")
@@ -75,19 +77,13 @@ watch(
       />
       <template v-else>
         <TresPerspectiveCamera :far="2000" :fov="45" :look-at="[0, 14, 0]" :position="[62, 26, 58]" />
-        <OrbitControls
-          v-if="!witness"
-          make-default
-          :max-distance="220"
-          :max-polar-angle="Math.PI * 0.47"
-          :min-distance="12"
-          :target="[0, 14, 0]"
-        />
+        <WorldFreeCamera v-if="!witness" :origin />
       </template>
       <WorldWindrise
         :create-terrain-worker
         :held-minutes
         :is-tuning="Boolean(isTuning)"
+        :origin
         :quality-tier
         :region-data-base-url
         @ready="emit('ready')"
