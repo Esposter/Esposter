@@ -49,3 +49,13 @@ export const SETTINGS_RING_WIDTH = 1.9;
 export const FIXTURE_VARIANT_SEPARATOR = "-";
 // The key the prompts' selected row is marked with, the game's default for Pick Up and Interact
 export const INTERACTION_KEY_LABEL = "F";
+// Each constellation ring's top left from the panel's top left, in units, read off the reference's six rings: their
+// Centres sit 111 units apart down the panel, bowing right at the middle and back left at the ends
+export const CONSTELLATION_NODE_PLACES: readonly { left: number; top: number }[] = [
+  { left: 15.25, top: 116 },
+  { left: 69.25, top: 227 },
+  { left: 105.25, top: 338.75 },
+  { left: 105.25, top: 449.75 },
+  { left: 69.25, top: 560.75 },
+  { left: -2.75, top: 671.75 },
+];

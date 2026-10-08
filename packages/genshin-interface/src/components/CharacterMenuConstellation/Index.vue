@@ -1,21 +1,13 @@
 <script setup lang="ts">
+import { CONSTELLATION_NODE_PLACES } from "#src/services/constants";
+
 interface Props {
   // Each of the character's six constellations in the order it takes them, true where it is activated
   activated: boolean[];
 }
 
 const { activated } = defineProps<Props>();
-// Each ring's top left from the panel's top left, in units, read off the reference's six rings: their centres sit 111
-// Units apart down the panel, bowing right at the middle and back left at the ends
-const NODE_PLACES: readonly { left: number; top: number }[] = [
-  { left: 15.25, top: 116 },
-  { left: 69.25, top: 227 },
-  { left: 105.25, top: 338.75 },
-  { left: 105.25, top: 449.75 },
-  { left: 69.25, top: 560.75 },
-  { left: -2.75, top: 671.75 },
-];
-const nodeStyles = NODE_PLACES.map(({ left, top }) => ({
+const nodeStyles = CONSTELLATION_NODE_PLACES.map(({ left, top }) => ({
   left: `calc(var(--unit) * ${left})`,
   top: `calc(var(--unit) * ${top})`,
 }));
@@ -40,7 +32,7 @@ const nodeStyles = NODE_PLACES.map(({ left, top }) => ({
 <style scoped>
 /* Measured off the English PC client's Constellation tab at 21:9, its settled frame at 158.3 seconds of session-2.mp4
    (the star map's right-hand list), in units from the panel's top left: each ring is 72 units across, its gold border 4
-   units wide with a 2-unit white band inside it, and the six are placed by NODE_PLACES. Colours are provisional */
+   units wide with a 2-unit white band inside it, and the six are placed by CONSTELLATION_NODE_PLACES. Colours are provisional */
 .constellations {
   position: absolute;
   inset: 0;
