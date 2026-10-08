@@ -95,6 +95,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Puzzles](/docs/genshin/puzzles)                           | the official map's puzzle marks fitted into each region's slice by kind, and an Elemental Monument lit by its element or a reaction, a timed one going out, nothing placed in the world yet |
 | [Exploration progress](/docs/genshin/exploration-progress) | the map's area labels with each area's count and percentage once a statue is unlocked, Galesong Hill first, its scale waiting on a recording                                                |
 | [Shops](/docs/genshin/shops)                               | Paimon's Bargains' Fates bought with Masterless Starglitter or Stardust from the game's shop table, restocked monthly, nothing yet on a screen                                              |
+| [Expeditions](/docs/genshin/expeditions)                   | Mondstadt's expedition places sent for 4 to 20 hours, returned on the moment they left and claimed for items and Mora, nothing yet on a screen                                              |
 | [Interface library](/docs/genshin/interface-library)       | `genshin-interface`: the game's screen root, units, pointer, and the pieces its screens share                                                                                               |
 | [Interface layout](/docs/genshin/interface-layout)         | every screen laid out from the game's own RectTransform tree, nothing by hand                                                                                                               |
 | [Title splash](/docs/genshin/title-splash)                 | the game's title logo as each language's client draws it                                                                                                                                    |
@@ -139,6 +140,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - The official Teyvat map's statues and waypoints read into the references folder and fitted to the scene's transport points: one similarity over the whole map, its residual printed, and each region's Oculi checked against the wiki's.
 - The official map's puzzle marks fitted into each region's slices by kind, and the Elemental Monument's state machine: lit by its element or a reaction of its own, a timed one going out after its time, and a puzzle of monuments solved once all are lit together.
 - Paimon's Bargains' Fates bought with Masterless Starglitter or Stardust: the goods read from the game's shop table into one slice, each offered from its Adventure Rank and within its dates, a buy limit restocked on the monthly refresh, and the price taken from the wallet.
+- Expeditions: Mondstadt's places sent and returned on the moment they left, claimed for their items and Mora, recalled for nothing, and the limit raised by rank, with Katheryne and the screen not yet built.
 
 ## Key files
 
