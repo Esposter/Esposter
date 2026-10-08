@@ -63,6 +63,12 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Character attributes](/docs/genshin/character-attributes) | the roster, weapons and artifacts from the game's tables, and a character's attributes summed as the game sums them |
 | [Character screen](/docs/genshin/character-screen)         | the C screen's frame, its six tabs in the game's words, and the Attributes tab's level and attributes               |
 | [Party](/docs/genshin/party)                               | the teams, the one deployed and the member on the field, switched on 1 to 4 past the one second cooldown            |
+| [Interaction](/docs/genshin/interaction)                   | the F prompts: what is in reach nearest first, the selection kept by its thing and stepped by the wheel             |
+| [Inventory](/docs/genshin/inventory)                       | the bag's nine tabs, its stacks, room and sorts, the wallet's currencies, and its screen on B                       |
+| [Wish](/docs/genshin/wish)                                 | the banners' rates, pity and guarantees, Capturing Radiance, the Epitomized Path and returns, and its screen on F3  |
+| [Dialogue](/docs/genshin/dialogue)                         | a talk's graph of lines and replies, its runner, the dialogue screen with auto-play and skip, and residents         |
+| [Quests](/docs/genshin/quests)                             | the quests' kinds, steps and objectives, their progression, the quest screen, navigation and the reader             |
+| [Adventurer Handbook](/docs/genshin/adventurer-handbook)   | F1's book and its six tabs, their pages waiting on what they track                                                  |
 | [Parity](/docs/genshin/parity)                             | matching a screen to the game's: references, tracing, scoring, motion and the visual suite                          |
 | [Scene derivation](/docs/genshin/scene-derivation)         | how the game's own assets are re-derived into a scene, each loss priced first                                       |
 | [Derived assets](/docs/genshin/derived-assets)             | which reference each part is measured from, how it becomes ours, and each part's progress                           |
@@ -98,6 +104,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - Characters read from HoYoverse's official MMD packs by the engine's own PMX reader and drawn at rest on the toon ramp.
 - Combat's rules as pure, tested functions: auras and reactions, the damage formula, internal cooldown, shields and energy.
 - The party switched on 1 to 4, the character screen on C, and a character's attributes summed from the game's own tables.
+- The F prompts' rules, the bag and its wallet on B, and the wish pulled by the game's published rules on F3, spending earned Fates and nothing bought with money.
 
 ## Key files
 
