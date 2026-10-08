@@ -36,7 +36,7 @@ The order is the reason for the registration. The floating origin reads the came
 - **Mouse**: a click on the canvas locks the pointer, and while it is locked the pointer turns the look.
 - **Gamepad**: the first connected gamepad's left stick moves over the ground, and its right stick turns the look at a rate of 2.5 radians a second. Both have a deadzone at the stick's centre.
 
-The camera's motion and look are per second, so a key held for a frame moves it the same distance at any frame rate. The input is read once a frame: its look turns the camera once, before the frame's steps, and the steps of that frame all use its move, so no pointer movement is lost or repeated at any frame rate. Losing focus clears the keys held, since their releases never reach the page. The input's listeners and the canvas's click are released when the component unmounts, so a remount does not stack them.
+The camera's motion is per second, so a key held for the same time moves it the same distance at any frame rate. The look is not: the mouse turns it by a fixed angle for each pixel the pointer moves, and only the gamepad's right stick turns it per second. The input is read once a frame: its look turns the camera once, before the frame's steps, and the steps of that frame all use its move, so no pointer movement is lost or repeated at any frame rate. Losing focus clears the keys held, since their releases never reach the page. The input's listeners and the canvas's click are released when the component unmounts, so a remount does not stack them.
 
 ## The motion
 
