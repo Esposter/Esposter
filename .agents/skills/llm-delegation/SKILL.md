@@ -60,7 +60,7 @@ Ask the lowest tier first, and let it hand up what it cannot answer. A tier that
 
 ## A headless session delegates in the foreground, and only the drain does
 
-The drain session is the one headless session that delegates. Its fixes may go to `haiku` subagents, each called with `model: "haiku"` and `run_in_background: false`, one finding at a time, with the session judging each diff before the next (`apps/web/content/docs/infra/review-collector/drain.md`). Foreground is forced by the shape: a `claude -p` session has no next turn in which to read a backgrounded result. The sync, fold, reshape and repair sessions carry no such clause and stay on the opus tier. The subagent tier is named per call, and `CLAUDE_CODE_SUBAGENT_MODEL_FORCE` stays unset, so no environment setting overrides it.
+The drain session is the one headless session that delegates. Its fixes may go to `haiku` subagents, as `apps/web/content/docs/infra/review-collector/drain.md` sets out. Foreground is forced by the shape: a `claude -p` session has no next turn in which to read a backgrounded result. The subagent tier is named per call, and the runner's environment leaves `CLAUDE_CODE_SUBAGENT_MODEL_FORCE` unset (`apps/web/content/docs/infra/review-collector/runner.md`).
 
 ## A deterministic tier does not have to know whether it applies
 

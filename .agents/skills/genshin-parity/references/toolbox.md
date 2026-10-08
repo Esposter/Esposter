@@ -109,15 +109,15 @@ What each pass's tools stand on, and the runner that checks them in order.
 
 ### Light
 
-| Unknown                                 | Tool                                                                                                                                                                                                  |
-| :-------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| The stone's light at an hour            | `genshin:parity calibrate`: ramp, sky and height fade, none below none, by NNLS                                                                                                                       |
-| Whether the stone's light holds         | `passes --pass Light`: each bin's shown colour against the light's, in ΔE, gated at our own render under it                                                                                           |
-| Our glow against the game's frame       | `passes --pass Light`: each family's pixels the exports' glow lies on, the reference's frame against our stand-in lit under the same camera, colour in ΔE and structure gated at the frame's softness |
-| Whether a light solve models the render | `calibrate --self`: our render solved, its light handed back                                                                                                                                          |
-| Whether a height's error is light, haze | `rank`'s height bands by depth: one ratio a light, a growing one haze                                                                                                                                 |
-| Where a light's error lies on the frame | `rank`'s light map: the exports' light over the reference's, smoothed                                                                                                                                 |
-| The sun's direction                     | `genshin:parity shadows`: the exports' shadows cast from each direction tried against the reference's edges over flat receivers; `passes --pass Light` reads the scene's own                          |
+| Unknown                                 | Tool                                                                                                                                                                         |
+| :-------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The stone's light at an hour            | `genshin:parity calibrate`: ramp, sky and height fade, none below none, by NNLS                                                                                              |
+| Whether the stone's light holds         | `passes --pass Light`: each bin's shown colour against the light's, in ΔE, gated at our own render under it                                                                  |
+| Our glow against the game's frame       | `passes --pass Light`: each family's pixels the exports' glow lies on, as `apps/web/content/docs/genshin/parity.md` gives its gates                                          |
+| Whether a light solve models the render | `calibrate --self`: our render solved, its light handed back                                                                                                                 |
+| Whether a height's error is light, haze | `rank`'s height bands by depth: one ratio a light, a growing one haze                                                                                                        |
+| Where a light's error lies on the frame | `rank`'s light map: the exports' light over the reference's, smoothed                                                                                                        |
+| The sun's direction                     | `genshin:parity shadows`: the exports' shadows cast from each direction tried against the reference's edges over flat receivers; `passes --pass Light` reads the scene's own |
 
 ### Atmosphere
 

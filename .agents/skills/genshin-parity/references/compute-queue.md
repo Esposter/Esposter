@@ -41,6 +41,6 @@ An item missing any of these is not queued: the gap is a call, and calls are the
 The queue is never left idle while it holds items.
 
 - **Who starts runners:** the main session starts a runner for each lane with work as soon as an item lands.
-- **How many:** each lane has one runner, and the runner runs several items at once, each in the background. The `[page]` lane runs its items' pages on its one server, each item a page of its own by its screen query, for items whose measures read different scenes. The `[cpu]` lane runs as many items as the cores and the memory gate allow, each at below-normal priority.
+- **How many:** each lane has one runner, and the runner runs several items at once, each in the background. The `[page]` lane runs its items' pages on its one server, each item a page of its own by its screen query, for items whose measures read different scenes. Items reading the same scene stay in order. The `[cpu]` lane runs as many items as the cores and the memory gate allow, each at below-normal priority.
 - **When it ends:** a runner ends when no item of its lane can run. It never waits for one to become runnable, and the main session starts it again when one does.
 - **Nothing schedules it:** a runner loops through its lane by itself (step 6).
