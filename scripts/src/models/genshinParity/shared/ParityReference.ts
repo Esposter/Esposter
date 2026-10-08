@@ -1,3 +1,4 @@
+import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityRegion } from "#src/models/genshinParity/shared/ParityRegion";
 
 // A reference is a wiki file, or one frame of a recording kept in the captures folder: a still the wiki lacks is taken
@@ -9,6 +10,9 @@ export type ParityReference = ParityReferenceBase &
     | { capture?: never; crop?: never; seconds?: never; wikiTitle: string }
   );
 interface ParityReferenceBase {
+  // The component whose witness the passes judge the reference by: a screen several components share is measured by
+  // Each over the references naming it alone, and a reference naming none is read by no component's passes
+  component?: DerivedAssetComponent;
   // The reference is drawn behind the screen, for an overlay (an interface over a scene) judged over the very frame
   // It was taken from, so only the overlay can differ
   isBackdrop?: true;
