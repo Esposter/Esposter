@@ -4,7 +4,8 @@ import { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
 import { createRimNode } from "#src/nodes/createRimNode";
 import { createWetDarkeningNode } from "#src/nodes/createWetDarkeningNode";
 import { createWetSheenNode } from "#src/nodes/createWetSheenNode";
-import { materialColor } from "three/tsl";
+import { Color } from "three";
+import { uniform } from "three/tsl";
 
 // The environment's one material: three's toon lighting reading the world's ramp, so light steps from shade to lit
 // Across a narrow band and shade is whatever the ambient light is, plus the sky's rim on the lit silhouette. Wet ground
@@ -21,7 +22,11 @@ export const createToonMaterial = ({
     { ...(color === undefined ? {} : { color }), gradientMap: rampTexture, vertexColors: isVertexColors },
     isOutlined,
   );
-  toonMaterial.colorNode = materialColor.mul(createWetDarkeningNode(lightUniforms));
+  // The colour as a uniform of the material's own, not `materialColor`, which reads the colour of whichever material is
+  // drawn: a witness target drawn with its own material read white where the stone's colour stands, so no family's
+  // Colour was ever measured. White is the default colour a material without one draws
+  const colorUniform = uniform(new Color(color ?? 0xffffff));
+  toonMaterial.colorNode = colorUniform.mul(createWetDarkeningNode(lightUniforms));
   toonMaterial.emissiveNode = createRimNode(lightUniforms).add(createWetSheenNode(lightUniforms));
   return toonMaterial;
 };
