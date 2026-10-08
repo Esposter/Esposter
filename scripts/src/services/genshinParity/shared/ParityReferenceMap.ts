@@ -338,10 +338,6 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       statueTop: [840, 497],
       trunkAxis: [643, 580],
     },
-    // Its rigid landmarks cluster at the statue, and the far pedestals cannot be named from the tile data, so no landmark
-    // Pins the camera's far field: the pose holds at about 7 px where the camera pass keeps its 2 px gate, so its misfit
-    // Shows there
-    poseBar: 7.5,
     props: {
       cameraPose: { fov: 58.365, heading: 64.614, pitch: 8.047, position: [70.818, -4.053, 8.283] },
       heldMinutes: 720,
