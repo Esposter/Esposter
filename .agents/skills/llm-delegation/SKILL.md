@@ -42,7 +42,7 @@ The prompt is the agent's whole world: the spec with its judgement calls resolve
 
 ## While agents run
 
-Edit only files the agent will not stage; a batch runs one agent per worktree over disjoint, self-contained specs, landed on `ai/queue` in a stated order; and only the branches you created are yours to sweep (`references/running-agents.md`).
+A batch runs in the shared checkout on `ai/queue`, never a worktree: each agent commits its own paths, shared files are edited by whoever needs them, no agent runs a check, and one agent runs and fixes the batch's checks once every agent has reported (`references/running-agents.md`).
 
 ## In automation — the tiers
 
@@ -80,6 +80,6 @@ Every feature is designed agentic-first: resource creation (and eventually most 
 
 - `references/reading-passes.md` — when a task reads a whole tree to change part of it.
 - `references/delegation-prompt.md` — when writing a subagent's prompt.
-- `references/running-agents.md` — while an agent runs, before a parallel batch, or when cleaning up worktrees.
+- `references/running-agents.md` — while an agent runs, before a parallel batch, or when cleaning up after one.
 - `references/jev.md` — when a judgement goes to Jev.
 - `references/sessions.md` — when automation launches a headless session.

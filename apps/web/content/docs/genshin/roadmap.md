@@ -7,6 +7,10 @@ description: Open work for Genshin part by part, each in the recreation passes' 
 
 Open work only, part by part of the game. What was decided against is in [deferred](/docs/genshin/deferred); read it before adding an item. Each part's items run in the [recreation passes](/docs/proposals/genshin/recreation-passes)' order, each pass answering one kind of unknown from its most exact source, judged by its own measure and frozen once it holds: an item waits for every earlier pass however large its own gap, since a later pass's solve absorbs an earlier one's error. Inside a pass, `genshin:parity rank`'s first table orders the items over the part's own frames, re-read each pass: the opening's over the login's four frames, the world's over Windrise's once it has references, since a rank prices one scene and never orders two against each other. Each item names the measure that says it is done: a placement, a shape or a surface by its gap from the game's own exports, the clouds by their statistics (`passes --pass Atmosphere`, `layer`, `cover`), the music by `listen`, a sound by its bands against the game's own, and the frame by `compare` against its reference once every pass before it holds, checked by eye ([parity](/docs/genshin/parity)).
 
+## Compute queue
+
+Runs owed with every call already made: the exact command, what it reads, what it writes, and the measure that says it worked. A run that meets its measure commits what it wrote and leaves the queue; one that misses goes back as a call, never run again with a value guessed.
+
 ## Opening
 
 ### Next
