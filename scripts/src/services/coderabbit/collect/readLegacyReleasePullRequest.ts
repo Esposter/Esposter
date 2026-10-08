@@ -4,11 +4,11 @@ import { DEVELOP_BRANCH, MAIN_BRANCH } from "#src/services/coderabbit/collect/co
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { runGh } from "#src/services/shared/runGh";
 
-// The newest pull request from `develop` to `main` in any state: the release the collector ran before the stack. The
-// stack never reviews it, so one still open is a pull request no window may be cut over, and one closed without merging
-// is a person's pause, as it was before the stack.
-export const readLegacyReleasePullRequest = (): Pick<WindowPullRequest, "number" | "state"> | undefined =>
-  parseMachineJson<Pick<WindowPullRequest, "number" | "state">[]>(
+// The newest pull request from `develop` to `main` in any state: the release the collector ran before the stack. It is
+// Read as a window is, so an open one is the stack's bottom — gated, merged and drained the way a window is — and one
+// Closed without merging is a person's pause, as it was before the stack.
+export const readLegacyReleasePullRequest = (): undefined | WindowPullRequest =>
+  parseMachineJson<WindowPullRequest[]>(
     runGh([
       "pr",
       "list",
@@ -21,6 +21,6 @@ export const readLegacyReleasePullRequest = (): Pick<WindowPullRequest, "number"
       "--limit",
       "1",
       "--json",
-      "number,state",
+      "number,state,headRefName,baseRefName,createdAt",
     ]),
   ).at(0);

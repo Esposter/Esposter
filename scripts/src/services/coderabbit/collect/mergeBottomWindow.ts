@@ -3,6 +3,7 @@ import type { WindowMergeStep } from "#src/models/coderabbit/collect/WindowMerge
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
+import { checkIsWindowBranch } from "#src/services/coderabbit/collect/checkIsWindowBranch";
 import {
   ATTEMPT_RETRY_DELAY_SECONDS,
   MAIN_BRANCH,
@@ -29,10 +30,11 @@ const retargetPullRequest = (pullRequest: number): boolean =>
     },
   );
 
-// The bottom window of the stack, merged once its review completes, and its findings drained before anything above it
-// Is looked at. Order matters: the next window is retargeted to `main` before this one's branch is deleted, since
-// Deleting a base branch closes every pull request stacked on it. A session has to be able to start first, since the
-// Findings are answered after the merge.
+// The bottom of the stack — a window, or the release from `develop` while it is open — merged once its review completes,
+// And its findings drained before anything above it is looked at. Order matters: the next window is retargeted to `main`
+// Before this one's branch is deleted, since deleting a base branch closes every pull request stacked on it. Only a
+// Window's own branch is deleted: `develop` is the release's head and outlives its merge. A session has to be able to
+// Start first, since the findings are answered after the merge.
 export const mergeBottomWindow = async ({
   collectorSha,
   cwd,
@@ -83,7 +85,8 @@ export const mergeBottomWindow = async ({
   // Stack (`retargetStrandedWindows`). The branch stays until it lands, and the drain below does not wait on it
   const isRetargeted = next === undefined || isDryRun || retargetPullRequest(next.number);
   if (next && isDryRun) console.info(`would retarget pull request #${next.number} to ${MAIN_BRANCH}`);
-  if (!isDryRun && isRetargeted)
+  const isWindowBranch = checkIsWindowBranch(headRefName);
+  if (!isDryRun && isRetargeted && isWindowBranch)
     getResult(() => runGit(["push", "origin", "--delete", headRefName], cwd)).match(noop, console.error);
 
   const { mainSha: mergedMainSha } = readBranchShas(cwd);
@@ -107,8 +110,8 @@ export const mergeBottomWindow = async ({
         kind: CycleOutcomeKind.Idle,
         reason: `pull request #${next.number} could not be retargeted to ${MAIN_BRANCH} — the next run retargets it before it reads the stack`,
       },
-      reviewFixesSha: drain.reviewFixesSha,
       retriggerDelaySeconds: ATTEMPT_RETRY_DELAY_SECONDS,
+      reviewFixesSha: drain.reviewFixesSha,
     };
   return { reviewFixesSha: drain.reviewFixesSha };
 };
