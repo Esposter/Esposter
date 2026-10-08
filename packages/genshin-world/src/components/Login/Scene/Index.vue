@@ -167,13 +167,15 @@ const skyGradient = createSkyGradientTexture(sky.gradient);
 const cloudLayerTextureMap = createCloudLayerTextures(cloudLayerTextures);
 const cloudLayer = createCloudLayerUniforms(sky.cloudLayer, cloudLayerTextureMap);
 let isCloudLayerSynthesized = false;
-// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and the setup has nothing to await it
+// A failure is thrown on unhandled, where the browser logs it and the parity page, whose scene would otherwise never be
+// Ready, fails with it
+// oxlint-disable-next-line typescript/no-floating-promises -- the setup has nothing to await it, and its one rejection is the failure thrown on
 getResultAsync(() => synthesizeCloudLayerTextures(cloudLayerTextures, cloudLayerTextureMap)).match(
   () => {
     isCloudLayerSynthesized = true;
   },
   (error) => {
-    console.error(error);
+    throw error;
   },
 );
 cloudLayer.curlAmplitude.value = sky.cloudLayerMaterial.curlAmplitude;
