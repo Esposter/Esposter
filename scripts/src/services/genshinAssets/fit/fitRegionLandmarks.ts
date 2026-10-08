@@ -2,8 +2,8 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 
 import { toRegionPlace } from "#src/services/genshinAssets/fit/toRegionPlace";
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
-import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
+import { readWorldOptions } from "#src/services/genshinAssets/world/readWorldOptions";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldPlacements } from "#src/services/genshinAssets/world/readWorldPlacements";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
@@ -16,7 +16,7 @@ import { join } from "node:path";
 // That is the kit's until its shape is derived. A landmark the world names that the file lacks, or a prefab placed
 // Nowhere, is an error. Returns the file's path
 export const fitRegionLandmarks = async (component: DerivedAssetComponent, regionFile: string): Promise<string> => {
-  const regionLandmarks = DerivedAssetComponentMap[component].world?.regionLandmarks ?? [];
+  const regionLandmarks = (await readWorldOptions(component))?.regionLandmarks ?? [];
   const [placements, origin, regionJson] = await Promise.all([
     readWorldPlacements(component),
     readWorldOrigin(component),

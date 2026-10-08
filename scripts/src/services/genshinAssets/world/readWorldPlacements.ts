@@ -4,10 +4,10 @@ import type { WorldPrefabPlacements } from "#src/models/genshinAssets/world/Worl
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { UNITY_EULER_ORDER } from "#src/services/genshinAssets/shared/constants";
-import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { parseStreamingIndex } from "#src/services/genshinAssets/world/parseStreamingIndex";
 import { parseStreamingPlacements } from "#src/services/genshinAssets/world/parseStreamingPlacements";
+import { readWorldOptions } from "#src/services/genshinAssets/world/readWorldOptions";
 import { GAME_TEXT_DIRECTORY } from "#src/services/genshinText/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -25,7 +25,7 @@ const toVector = ({ _x = 0, _y = 0, _z = 0 }: DumpedVector): [number, number, nu
 // Index `extract` wrote. A point or a field the dump does not hold is an error, so a dump that renamed its fields is
 // Caught rather than read as the origin
 export const readWorldPlacements = async (component: DerivedAssetComponent): Promise<WorldPrefabPlacements[]> => {
-  const { world } = DerivedAssetComponentMap[component];
+  const world = await readWorldOptions(component);
   if (!world) return [];
   const directory = getComponentDirectory(component);
   const pointPlacements = await Promise.all(

@@ -25,11 +25,14 @@ import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSou
 import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
 import { toMaterialValues } from "#src/services/genshinAssets/shared/toMaterialValues";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
+import { WORLD_JSON_NAME } from "#src/services/genshinAssets/world/constants";
+import { deriveCapitalWorld } from "#src/services/genshinAssets/world/deriveCapitalWorld";
+import { exportWorld } from "#src/services/genshinAssets/world/exportWorld";
 import { extractWorld } from "#src/services/genshinAssets/world/extractWorld";
 import { getWorldRoots } from "#src/services/genshinAssets/world/getWorldRoots";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { existsSync } from "node:fs";
-import { mkdir, readFile, rm } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 const GROUP_BY_TYPE = ["--group_assets", AnimeStudioGroupType.ByType];
@@ -94,14 +97,32 @@ const exportResolvedAssets = async (
 export const extractComponent = async (component: DerivedAssetComponent): Promise<string> => {
   const options = DerivedAssetComponentMap[component];
   const { namePattern, roots: componentRoots, spawns = [] } = options;
-  const roots = [...componentRoots, ...spawns.map(({ prefab }) => prefab), ...getWorldRoots(options)];
   const directory = getComponentDirectory(component);
   const cabMap = parseCabMap(await readFile(CAB_MAP_PATH));
-  await Promise.all([directory.assets, directory.layout].map((path) => rm(path, { force: true, recursive: true })));
-  await mkdir(directory.layout, { recursive: true });
-  for (const rootBlock of new Set(roots.map(({ block }) => block)))
-    // oxlint-disable-next-line no-await-in-loop -- AnimeStudio reads one block at a time
-    await exportBlockBySource(rootBlock, LAYOUT_ASSET_TYPES, AnimeStudioExportType.Json, directory.layout);
+  await Promise.all(
+    [directory.assets, directory.layout, directory.world].map((path) => rm(path, { force: true, recursive: true })),
+  );
+  await Promise.all([directory.layout, directory.world].map((path) => mkdir(path, { recursive: true })));
+  // A block's layout is dumped once, however many roots and derived prefabs name it
+  const dumpedBlocks = new Set<string>();
+  const dumpLayouts = async (blocks: readonly string[]): Promise<void> => {
+    for (const block of blocks) {
+      if (dumpedBlocks.has(block)) continue;
+      dumpedBlocks.add(block);
+      // oxlint-disable-next-line no-await-in-loop -- AnimeStudio reads one block at a time
+      await exportBlockBySource(block, LAYOUT_ASSET_TYPES, AnimeStudioExportType.Json, directory.layout);
+    }
+  };
+  await dumpLayouts(
+    [...componentRoots, ...spawns.map(({ prefab }) => prefab), ...getWorldRoots(options.world)].map(
+      ({ block }) => block,
+    ),
+  );
+  // A capital's open world is derived before the closure, since the prefabs it places are roots the closure starts from
+  const derived = options.isCapitalWorld ? await deriveCapitalWorld(component, directory, dumpLayouts) : undefined;
+  if (derived) await writeFile(join(directory.world, WORLD_JSON_NAME), JSON.stringify(derived.world));
+  const world = derived?.world ?? options.world;
+  const roots = [...componentRoots, ...spawns.map(({ prefab }) => prefab), ...getWorldRoots(world)];
   const { gameObjectDrawingMap, objects } = await readSceneLayout(directory.layout);
   const closure = walkAssetClosure(objects, gameObjectDrawingMap, roots, cabMap);
   const drawn = await exportResolvedAssets(closure.assets, [AssetType.Mesh, AssetType.Material], directory.assets);
@@ -146,11 +167,14 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
         ...EXPORTED_ASSET_TYPES,
         ...GROUP_BY_TYPE,
       ]);
-  const world = await extractWorld(component);
+  // A set-by-hand world is exported here; a derived one was exported by its derivation, which read the placements from it
+  if (options.world) await exportWorld(options.world, directory.world);
+  const worldLines = world ? await extractWorld(world, directory) : [];
   const unresolved = [...closure.unresolved, ...drawn.unresolved, ...sharedNames, ...sampled.unresolved];
   return [
     `${closure.objects.length} objects reached from ${roots.length} roots, ${drawn.assets.length} meshes and materials, ${sampled.assets.length} textures`,
-    ...world,
+    ...(derived?.lines ?? []),
+    ...worldLines,
     ...(unresolved.length > 0 ? [`${unresolved.length} unresolved:`, ...unresolved.map((line) => `  ${line}`)] : []),
   ].join("\n");
 };
