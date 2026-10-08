@@ -1,8 +1,8 @@
 import type { ParityRegion } from "#src/models/genshinParity/shared/ParityRegion";
 
 // The pixels a comparison scores, read on a raster of the given size over the region: 1 where the middle of the raster
-// pixel lies in one of the rectangles, which are in the reference's own pixels. A raster smaller than the region, such
-// as FLIP's, takes each pixel at the place its middle has in the region
+// Pixel lies in one of the rectangles, which are in the reference's own pixels. A raster smaller than the region, such
+// As FLIP's, takes each pixel at the place its middle has in the region
 export const computeScoredMask = (
   rectangles: ParityRegion[],
   region: ParityRegion,

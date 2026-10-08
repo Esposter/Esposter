@@ -16,7 +16,7 @@ describe(checkIsArchitectureName, () => {
         "Area_Ly_Build_HZ_HotelTree_Col",
         "Eff_Build_Hili_House_10_Destory",
         "Level_Common_Build_Root_RcvDecal_05_Col",
-      ].map(checkIsArchitectureName),
+      ].map((name) => checkIsArchitectureName(name)),
     ).toStrictEqual([true, true, true, false, false, false, false, false, false]);
   });
 });
