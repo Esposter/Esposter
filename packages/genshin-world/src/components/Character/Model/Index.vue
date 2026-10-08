@@ -12,6 +12,7 @@ interface Props {
 }
 
 const { characterId, characterPackBaseUrl, lightUniforms, rampTexture } = defineProps<Props>();
+const emit = defineEmits<{ error: [] }>();
 const mesh = shallowRef<SkinnedMesh<BufferGeometry, ToonNodeMaterial[]>>();
 let isUnmounted = false;
 const disposeMesh = ({ geometry, material, skeleton }: SkinnedMesh<BufferGeometry, ToonNodeMaterial[]>) => {
@@ -24,8 +25,8 @@ const disposeMesh = ({ geometry, material, skeleton }: SkinnedMesh<BufferGeometr
     if (texture.image instanceof ImageBitmap) texture.image.close();
   }
 };
-// The character's model from its pack, drawn once it has all arrived. A failure is logged and leaves nothing drawn, and
-// A model arriving after its character has gone is released at once
+// The character's model from its pack, drawn once it has all arrived. A failure is logged and emitted, leaving what holds
+// The model to draw something in its place, and a model arriving after its character has gone is released at once
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject
 readCharacterMesh(characterPackBaseUrl, characterId, { lightUniforms, rampTexture }).match(
   (characterMesh) => {
@@ -34,6 +35,7 @@ readCharacterMesh(characterPackBaseUrl, characterId, { lightUniforms, rampTextur
   },
   (error) => {
     console.error(error);
+    emit("error");
   },
 );
 

@@ -74,7 +74,8 @@ interface Props {
   // What the character is drawn on, which the screen's controller moves in the world's own coordinates, so it is placed
   // Among everything in the world
   characterBody?: Object3D;
-  // The character on the field, drawn on the body from its pack, or as its body's capsule where no pack is served
+  // The character on the field, drawn on the body from its pack, or as its body's capsule where no pack is served or its
+  // Model fails to load
   characterId: number;
   // Where the host serves the characters' model packs, without which the character is drawn as its body's capsule
   characterPackBaseUrl?: string;
@@ -175,6 +176,8 @@ watch(
     if (minutes !== undefined) gameClock.minutes = minutes;
   },
 );
+// The character whose model failed to load, drawn as its body's capsule in its place
+const failedCharacterId = ref<number>();
 // The tiles the terrain draws, which it writes each frame and what reads the ground compares against what it last read
 const terrainDraws = createTerrainSelection(TILE_SELECTION_CAPACITY);
 // The ground under the camera from above, which the grass redraws as the camera moves and grows on, and the rain's
@@ -294,12 +297,13 @@ onUnmounted(() => {
     <!-- The character on the field, on the controller's body -->
     <primitive v-if="characterBody" :object="characterBody">
       <CharacterModel
-        v-if="characterPackBaseUrl"
+        v-if="characterPackBaseUrl && failedCharacterId !== characterId"
         :key="characterId"
         :character-id
         :character-pack-base-url
         :light-uniforms
         :ramp-texture
+        @error="failedCharacterId = characterId"
       />
       <WorldCharacterPlaceholder v-else :character-id :light-uniforms :ramp-texture />
     </primitive>
