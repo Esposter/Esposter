@@ -206,6 +206,7 @@ Clips nothing published shows, which the user records: each 30 seconds or less, 
 - [ ] `handbook-open-close.mkv` — F1 pressed in the open world, the Adventurer Handbook opening over the blurred scene, a tab clicked and its hover in view, then F1 closing it, 30 seconds at most at 60 frames a second; the open and close timings and the blur behind the book are read off it.
 - [ ] `bag-sort-open.png` — the weapons tab's sort dropdown opened on Quality at 1080 high, its list in view, the English PC client, no other screen. The published frames show it closed only, so the list's look and its open motion wait on this still.
 - [ ] `character-details.mkv` — Xilonen's Attributes tab with Details pressed, the advanced and elemental lists in view, then Details pressed again, 20 seconds at most at 60 frames a second, on the 21:9 frame's client. Its open motion and the list's layout are owed; nothing published shows it.
+- [ ] `weapon-levelling.mkv` — the Weapons tab on the English PC client: a three-star weapon at level 1 with no EXP fed one Enhancement Ore, with the Mora its change costs; then a weapon at its phase's cap fed ores past it, with the ores returned. 30 seconds at most. It settles the EXP each level takes, the Mora per ten points, and the EXP under the smallest ore that the game returns.
 - [ ] `character-attributes-1080.png` — the Attributes tab on the English PC client at 1080 high, the chosen character's panel and the portraits in view, to check the panel's place at 16:9 against the 21:9 frame it is measured from.
 
 ## Opening
