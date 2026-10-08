@@ -5,7 +5,11 @@ import type { WishPity } from "#src/models/wish/WishPity";
 import { Currency } from "#src/models/inventory/Currency";
 import { WishItemKind } from "#src/models/wish/WishItemKind";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
-import { BEGINNERS_WISH_LIMIT, FIVE_STAR_DUPLICATE_STARGLITTER } from "#src/services/wish/constants";
+import {
+  BEGINNERS_WISH_LIMIT,
+  FIVE_STAR_COMPLETE_STARGLITTER,
+  FIVE_STAR_DUPLICATE_STARGLITTER,
+} from "#src/services/wish/constants";
 import { makeWishes } from "#src/services/wish/makeWishes";
 import { BannerKind } from "genshin-interface";
 import { describe, expect, test } from "vitest";
@@ -53,7 +57,41 @@ describe(makeWishes, () => {
           wishReturn: { currency: Currency.MasterlessStarglitter, quantity: FIVE_STAR_DUPLICATE_STARGLITTER },
         },
       ],
+      stellaFortunaCountMap: new Map([[character.id, 1]]),
       wallet: { ...wallet, [Currency.MasterlessStarglitter]: FIVE_STAR_DUPLICATE_STARGLITTER },
+    });
+  });
+
+  test("counts a duplicate's Stella Fortuna to its character, and a five-star past six copies' Masterless one to the wallet", () => {
+    expect.hasAssertions();
+
+    expect(
+      makeWishes(
+        {
+          banner,
+          count: 1,
+          heldCountMap: new Map([[character.id, 7]]),
+          pity,
+          wallet: { ...wallet, [Currency.AcquaintFate]: 1 },
+        },
+        random,
+      ),
+    ).toStrictEqual({
+      heldCountMap: new Map([[character.id, 8]]),
+      pity: { ...pity, fourStarCount: 1, wishCount: 1 },
+      results: [
+        {
+          isCapturingRadiance: false,
+          item: character,
+          wishReturn: { currency: Currency.MasterlessStarglitter, quantity: FIVE_STAR_COMPLETE_STARGLITTER },
+        },
+      ],
+      stellaFortunaCountMap: new Map(),
+      wallet: {
+        ...wallet,
+        [Currency.MasterlessStarglitter]: FIVE_STAR_COMPLETE_STARGLITTER,
+        [Currency.MasterlessStellaFortuna]: 1,
+      },
     });
   });
 

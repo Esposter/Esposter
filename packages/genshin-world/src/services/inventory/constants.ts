@@ -21,6 +21,7 @@ export const PRECIOUS_CURRENCIES: readonly Currency[] = [
   Currency.MasterlessStardust,
   Currency.IntertwinedFate,
   Currency.AcquaintFate,
+  Currency.MasterlessStellaFortuna,
 ];
 // A new player's bag holds nothing, and their wallet nothing but Original Resin at its regeneration cap, from the epoch
 export const EMPTY_INVENTORY: Readonly<Inventory> = { items: [], nextId: 0 };
@@ -30,6 +31,7 @@ export const EMPTY_WALLET: Readonly<Wallet> = {
   [Currency.IntertwinedFate]: 0,
   [Currency.MasterlessStardust]: 0,
   [Currency.MasterlessStarglitter]: 0,
+  [Currency.MasterlessStellaFortuna]: 0,
   [Currency.Mora]: 0,
   [Currency.OriginalResin]: ORIGINAL_RESIN_CAP,
   [Currency.Primogem]: 0,
