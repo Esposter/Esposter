@@ -34,7 +34,7 @@ The `genshin:assets archive` writer reads each section's codex table from the du
 | :------------ | :------------------------------------------------------------------------ | :---------------------------------------- | :------------------------------------------------- |
 | Equipment     | `WeaponCodexExcelConfigData`, then `ReliquaryCodexExcelConfigData` by set | the weapon's row; a set's equip affix     | a weapon, when it is in the bag                    |
 | Living Beings | `AnimalCodexExcelConfigData`, animal rows only                            | `AnimalDescribeExcelConfigData`           | not yet: no animal is struck (see Notes)           |
-| Tutorials     | `PushTipsCodexExcelConfigData`                                            | nothing in the dump, so it holds no entry | not built                                          |
+| Tutorials     | "PushTipsCodexExcelConfigData"                                            | nothing in the dump, so it holds no entry | not built                                          |
 | Geography     | `ViewCodexExcelConfigData`                                                | the view's own row                        | not yet: no viewpoint is taken in                  |
 | Travel Log    | `QuestCodexExcelConfigData`                                               | the parent main quest's title             | not yet: no quest finish is counted into it        |
 | Books         | `BooksCodexExcelConfigData`                                               | the book's material                       | not yet: no book is read                           |
@@ -64,7 +64,7 @@ The Archive opens once its quest is done, the Archon Quest Unexpected Power, mai
 
 ## Parity
 
-The Archive screen has no parity measure yet. Its places follow the achievements' grid rather than the English client's, and its look waits on a recording of the English client's Archive screen, listed on the roadmap's Recordings owed list.
+The Archive screen has no parity measure yet. Its places follow the achievements' grid rather than the English client's, and its look waits on the `archive-screen.mkv` recording the roadmap still owes.
 
 ## Key files
 

@@ -36,7 +36,7 @@ flowchart TD
 
 ## Scope and order
 
-**Built:** the season schedule and the difficulties, Vigor and the stage's readiness, Blessing Level and its stats, the opening character's bonus and the Stella rewards, as the [as-built page](/docs/genshin/imaginarium-theater) states.
+**Built:** the rules and schedule, as the [as-built page](/docs/genshin/imaginarium-theater) states.
 
 **This adds, in order:**
 

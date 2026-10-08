@@ -25,7 +25,7 @@ The table, the quest triggers and the Achievements screen are built, and the [ac
 ## Data and measures
 
 - **Read from the wiki:** what a server-fired achievement asks for, wherever its own words are vague.
-- **Read from a recording:** the Achievements screen's look, once `achievements-screen.mkv` is on the roadmap's Recordings owed list.
+- **Read from a recording:** the Achievements screen's look, once `achievements-screen.mkv` is owed on the roadmap.
 
 ## Key files
 
@@ -37,5 +37,4 @@ The table, the quest triggers and the Achievements screen are built, and the [ac
 
 ## Sources
 
-- [Achievements](https://genshin-impact.fandom.com/wiki/Achievements), Genshin Impact Wiki: the Primogems for each, a namecard for a category done, open-ended categories, and tiers shown as stars.
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the achievement table with each one's category, trigger, progress, reward and tier, and the categories' table.
+- [Achievements](https://genshin-impact.fandom.com/wiki/Achievements), Genshin Impact Wiki: the namecard a category pays once it is done, as the namecard decision takes it.
