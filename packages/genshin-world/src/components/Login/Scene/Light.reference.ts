@@ -371,7 +371,21 @@ export const lightTopic: ReferenceTopic = {
         "The walkway's and the bridges' glow terms read at their fitted strength, which holds none, against the frame's glow colour (passes --pass Light)",
       outcome: InvestigationOutcome.Found,
       result:
-        "Both families draw no glow, so no scale reaches them: the walkway's colour stands at 41.01 ΔE and the bridges' at 15.21 ΔE. The walkway's glow was taken out for its near-white middle lane; restoring it at an eighth, as the door and the towers take theirs, is unmeasured and waits on a call, since the paving's glow loops are not in the scene yet",
+        "Both families draw no glow, so no scale reaches them: the walkway's colour stands at 41.01 ΔE and the bridges' at 15.21 ΔE. The walkway's glow was taken out for its near-white middle lane; restoring it at an eighth, as the door and the towers take theirs, was measured with the paving's glow loops drawn into its material and rejected, in the two entries below",
+    },
+    {
+      method:
+        "passes --pass Light's walkway glow terms with the paving's loops drawn into the walkway's material: the middle lane's over its tops and the edges' over the tops they cover and every face that is not a top, at none (the baseline), the edges alone at a quarter, then the lane at an eighth and at a quarter with the edges at a quarter, each read by ΔE and its structure against the frame",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "With none the walkway reads 41.01 ΔE and structure 0.428. The edges alone at a quarter read 40.97 and 0.429, their rim drawing no pixel at that share. The lane at an eighth reads 26.78 and 0.594, at a quarter 20.13 and 0.612, so the lane's glow lowers the colour and raises the structure at each step. Both scales at a quarter (walkwayLane 0.25, walkwayEdge 0.25) leave the colour at 20.13 ΔE against its gate of 2.30 and the structure at 0.612 against 0.125, both still failing, and the approved login-screen images (LoginScreen, -dawn, -day, -dusk) change with it, which only the user approves, so it was reverted. One scale per family cannot hold: a lit rim brightens toward its grazing end, while the game's middle lane stays a pale grey-blue, so the lane's colour and structure pull apart at every share. What is left to try is a glow that falls off toward the grazing angle",
+    },
+    {
+      method:
+        "passes --pass Light's bridges glow term with the bridges' rim drawn over every piece from the mean of Edge01's and Ground01's rims, at a half of its strength, an eighth and none, each read by ΔE and its structure against the frame",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "The bridges' colour reads 15.27 ΔE at a half and 15.21 at none, its structure 0.394 against 0.387. At an eighth the rim stays under the stone's glow range and draws no pixel, so it reads 15.21 as none does. No fraction improved the bridges' glow, so the bridges draw none",
     },
   ],
   openQuestions: [
