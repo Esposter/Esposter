@@ -31,9 +31,12 @@ const emit = defineEmits<{ quit: [] }>();
     @open="(titledScreenKind) => (screenKind = titledScreenKind)"
     @quit="emit('quit')"
   />
-  <slot v-else-if="screenKind !== ScreenKind.World && slots[screenKind]" :name="screenKind" />
+  <slot
+    v-else-if="screenKind !== ScreenKind.World && screenKind !== ScreenKind.Dialogue && slots[screenKind]"
+    :name="screenKind"
+  />
   <MenuPlaceholder
-    v-else-if="screenKind !== ScreenKind.World"
+    v-else-if="screenKind !== ScreenKind.World && screenKind !== ScreenKind.Dialogue"
     :game-text
     :title="gameText[ScreenKindGameTextKeyMap[screenKind]]"
     @close="screenKind = ScreenKind.World"

@@ -1,6 +1,6 @@
 ---
 title: HUD
-description: The heads-up display over the world, holding only the pieces the world backs. The Paimon button and the minimap in the top left with the quest tracker under them, the stamina meter following the character, places for the party, the member on the field's health and the skill and burst buttons, and on a touch screen the touch controls under them. It hides on the backslash, as the game's Hide UI does, and under any menu or photo mode.
+description: The heads-up display over the world, holding only the pieces the world backs. The Paimon button and the minimap in the top left with the quest tracker under them, the stamina meter following the character, places for the party, the member on the field's health and the skill and burst buttons, and on a touch screen the touch controls under them. It hides on the backslash, as the game's Hide UI does, and under any menu, a talk or photo mode.
 ---
 
 # HUD
@@ -13,7 +13,7 @@ While a player is in the world, the game keeps a heads-up display over it. The w
 flowchart TD
   KIND["The screen open over the world"] --> HIDDEN{"Hidden?"}
   KEY["Backslash, the input's HideInterface"] --> HIDDEN
-  HIDDEN -->|"a menu, the map, photo mode, or hidden by the key"| NONE["No HUD"]
+  HIDDEN -->|"a menu, the map, a talk, photo mode, or hidden by the key"| NONE["No HUD"]
   HIDDEN -->|"in play and shown"| HUD["Hud/Screen"]
   HUD --> PB["Paimon button"]
   HUD --> MINI["Minimap"]
@@ -37,7 +37,7 @@ flowchart TD
 - **The stamina meter follows the character.** The world screen reads the party's stamina off the character on the field, which hands its controller's pool up, and while the pool is spent or refilling it projects the follow camera's pivot over the character onto the screen each frame. Both go into one reactive frame object, `HudFrame`, which the meter reads, so the frame re-renders the meter alone. The meter stands beside that point as a curved bar filled from its foot, as the wiki has the game draw it to the character's right, flashes once the pool falls under a quarter, and fades out once the pool is full, held where it last stood. It carries `role="meter"` with the pool's value and the game's word for stamina.
 - **The quest tracker shows the quest V navigates to.** Under the minimap it shows the navigated quest's title over its step's line and how far its counted objective has come, as the quest screen counts it (`getQuestCounter`). With no quest navigated it shows the first quest in progress, the one V would navigate to. V, in play, or a press on the tracker navigates to the tracker's quest, and the world raises the [quests](/docs/genshin/quests)' beam over its step's first objective. While no quest is loaded both stay empty.
 - **A piece presses what its key does.** A HUD piece the player presses holds its action's own key in the world's input, as the touch controls do (`getActionKeyCode`), so a press passes the same checks as the key: the tracker presses V.
-- **It hides as the game's does.** The backslash, bound to the input's `HideInterface` action as the game's Hide UI key is ([controls](/docs/genshin/controls)), hides and shows it. Every menu and the map hide it too, as does photo mode, through the screen's own behaviour ([screens](/docs/genshin/screens)).
+- **It hides as the game's does.** The backslash, bound to the input's `HideInterface` action as the game's Hide UI key is ([controls](/docs/genshin/controls)), hides and shows it. Every menu, the map and a talk hide it too, as does photo mode, through the screen's own behaviour ([screens](/docs/genshin/screens)).
 - **The world stays reachable through it.** The HUD's root lets every pointer through to the world, and only its pieces take one, so a click on the world between them still locks the pointer and turns the camera. A mouse press on a piece stops at the HUD's root, so the world's input never reads it as an attack.
 - **The Paimon button is named for a screen reader.** It shows a mark alone, so it carries Paimon's name in the game's words.
 

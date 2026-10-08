@@ -1,6 +1,6 @@
 ---
 title: Screens
-description: How the world moves between the screens the game opens over it — one at a time, each opened by its shortcut or the Paimon menu and closed back to the world by Escape, a pad's Start or cancel, or its own shortcut. Each screen holds the world's fixed-step loops and clock or not, hides the HUD or not, and lets the pointer go or keeps it, by one map. The Paimon menu lists every entry the game has, an unbuilt screen's disabled, and a screen nobody has built opens as a placeholder under its title.
+description: How the world moves between the screens the game opens over it — one at a time, each opened by its shortcut or the Paimon menu and closed back to the world by Escape, a pad's Start or cancel, or its own shortcut, while a talk over the world closes only at its own end. Each screen holds the world's fixed-step loops and clock or not, hides the HUD or not, and lets the pointer go or keeps it, by one map. The Paimon menu lists every entry the game has, an unbuilt screen's disabled, and a screen nobody has built opens as a placeholder under its title.
 ---
 
 # Screens
@@ -16,6 +16,8 @@ stateDiagram-v2
   PaimonMenu --> Screen: an enabled entry
   PaimonMenu --> World: Back, Escape or Start
   Screen --> World: its own shortcut, Escape, Start, a pad's cancel, or its way back
+  World --> Talk: F on a resident
+  Talk --> World: its end, the only key that closes it
   PaimonMenu --> [*]: Quit Game, to the app's home
 ```
 
@@ -24,6 +26,7 @@ stateDiagram-v2
 - **From the world, a shortcut opens its screen.** `InputActionScreenKindMap` names the screen each opening action opens; `Escape` and a pad's `Start` open the Paimon menu, as the game's controls bind them ([controls](/docs/genshin/controls)).
 - **Over a screen, the way back is to the world.** `Escape`, `Start` and a pad's cancel close any screen, and a screen's own shortcut closes it again, as `M` closes the map it opened.
 - **One screen at a time.** Over a screen, every other screen's shortcut waits; the Paimon menu's entries are the one way from a screen to another, and they replace the menu with the screen chosen.
+- **A talk stays open.** Over a talk, every key waits, Escape and a pad's Start among them; only the talk's own end sets the world back. A talk is begun from the world by F on a resident, as the [dialogue](/docs/genshin/dialogue) page describes.
 
 The rule is read only while the world is shown, so nothing opens under the opening that covers it.
 
@@ -37,10 +40,11 @@ The rule is read only while the world is shown, so nothing opens under the openi
 | `isHudHidden`       | the heads-up display is hidden                                                        |
 | `isPointerReleased` | the pointer's lock is let go, for the screen's own cursor                             |
 
-Every menu answers true to all three, as the game's single-player menus pause its simulation and its time while its music and particles carry on. Photo mode alone holds nothing: its clock runs, its camera flies and the pointer still turns it, with the HUD hidden. The world in play answers false to all three.
+Every menu answers true to all three, as the game's single-player menus pause its simulation and its time while its music and particles carry on. Photo mode and a talk hold nothing: their clock runs with the HUD hidden, photo mode's camera flies and its pointer still turns it, while a talk lets the pointer go for its replies. The world in play answers false to all three.
 
-- **Held.** The character's body and its follow camera neither look nor step while the world is held, nor does photo mode's free camera, and Windrise's clock and its clouds stand still. Drawing goes on, so the world stays behind the screen. This is a different thing from the world screen's `isPaused`, which stops drawing altogether while the opening covers the world.
+- **Held.** Under any screen but the world, the character on the field, its body and its follow camera, neither looks nor steps, photo mode's and a talk's included; photo mode's free camera flies on from where the follow camera left it. Only a menu holds the world's fixed-step loops, so Windrise's clock and its clouds stand still under a menu and run on under a talk and in photo mode. Drawing goes on, so the world stays behind the screen. This is a different thing from the world screen's `isPaused`, which stops drawing altogether while the opening covers the world.
 - **Pointer.** A screen that lets the pointer go releases the lock when it opens. Closing it does not take the lock back, since the browser grants one only to a click; a click on the world takes it, as it did the first time.
+- **A press that closes a screen is spent.** When the screen returns to the world, the world reads the input once more, so the key or click that closed it never reaches the world in play as an interact, a jump or an attack.
 - **A lock lost in play opens the menu.** The browser keeps `Escape` for itself while the pointer is locked, so a lock lost with the world in play opens the Paimon menu as the key would have.
 
 ## Drawing the open screen
@@ -53,6 +57,8 @@ Every menu answers true to all three, as the game's single-player menus pause it
 
 Each one is a dialog that takes focus as it opens, so the keyboard reaches it without a pointer.
 
+A talk is none of these: `MenuScreen` draws nothing for it, and the world screen mounts the talk's host over the world while the talk is open ([dialogue](/docs/genshin/dialogue)).
+
 ## The Paimon menu
 
 The shell of the game's pause menu: its side bar down the left, from Back to Quit Game, and its contents beside it, each in the game's own order and every label the game's own text. Its links out to web pages (Special Event, Community, Version Highlights, Feedback, Survey) are left out.
@@ -63,19 +69,19 @@ The shell of the game's pause menu: its side bar down the left, from Back to Qui
 
 ## Key files
 
-| File                                                                     | Its role                                                                                  |
-| :----------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/screen/ScreenKind.ts`                 | the world and every screen opened over it                                                 |
-| `packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`       | what each screen does to the world under it                                               |
-| `packages/genshin-world/src/services/screen/InputActionScreenKindMap.ts` | the screen each shortcut opens                                                            |
-| `packages/genshin-world/src/services/screen/getNextScreenKind.ts`        | the rule moving between screens on a frame's pressed actions                              |
-| `packages/genshin-world/src/services/screen/ScreenKindGameTextKeyMap.ts` | each screen's title in the game's words                                                   |
-| `packages/genshin-world/src/services/menu/constants.ts`                  | the Paimon menu's contents and side bar, in the game's order                              |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`           | reads the input once a frame, keeps what is open, holds the world and lets the pointer go |
-| `packages/genshin-world/src/components/Menu/Screen/Index.vue`            | draws the open screen: the Paimon menu, a built screen's slot or a placeholder            |
-| `packages/genshin-world/src/components/Menu/Paimon/Index.vue`            | the Paimon menu's shell                                                                   |
-| `packages/genshin-world/src/components/Menu/Placeholder/Index.vue`       | an unbuilt screen's title and way back                                                    |
-| `apps/web/app/components/Genshin/World.vue`                              | hands the world its game text, and leaves for the app's home on Quit Game                 |
+| File                                                                     | Its role                                                                                              |
+| :----------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/screen/ScreenKind.ts`                 | the world and every screen opened over it                                                             |
+| `packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`       | what each screen does to the world under it                                                           |
+| `packages/genshin-world/src/services/screen/InputActionScreenKindMap.ts` | the screen each shortcut opens                                                                        |
+| `packages/genshin-world/src/services/screen/getNextScreenKind.ts`        | the rule moving between screens on a frame's pressed actions                                          |
+| `packages/genshin-world/src/services/screen/ScreenKindGameTextKeyMap.ts` | each screen's title in the game's words                                                               |
+| `packages/genshin-world/src/services/menu/constants.ts`                  | the Paimon menu's contents and side bar, in the game's order                                          |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`           | reads the input once a frame, keeps what is open, holds the world, lets the pointer go, mounts a talk |
+| `packages/genshin-world/src/components/Menu/Screen/Index.vue`            | draws the open screen: the Paimon menu, a built screen's slot or a placeholder                        |
+| `packages/genshin-world/src/components/Menu/Paimon/Index.vue`            | the Paimon menu's shell                                                                               |
+| `packages/genshin-world/src/components/Menu/Placeholder/Index.vue`       | an unbuilt screen's title and way back                                                                |
+| `apps/web/app/components/Genshin/World.vue`                              | hands the world its game text, and leaves for the app's home on Quit Game                             |
 
 ## Notes
 
