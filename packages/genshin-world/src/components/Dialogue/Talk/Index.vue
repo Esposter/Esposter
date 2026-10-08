@@ -19,14 +19,17 @@ import { GameTextKey } from "genshin-text";
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
+  // Where the talk is held when it opens, on any of its lines and written out whole or not; its first line unwritten
+  // when absent. The parity page holds a state the reference shows this way, the reveal's clock not running
+  startProgress?: TalkProgress;
   talk: Talk;
   // The talk's own words in the reader's language, by the game's text id
   textMap: Readonly<Record<string, string>>;
 }
 
-const { gameText, talk, textMap } = defineProps<Props>();
+const { gameText, startProgress, talk, textMap } = defineProps<Props>();
 const emit = defineEmits<{ end: [] }>();
-const progress = ref<TalkProgress>({ isRevealed: false, lineId: talk.startLineId });
+const progress = ref<TalkProgress>(startProgress ?? { isRevealed: false, lineId: talk.startLineId });
 const isAutoPlaying = ref(false);
 const selectedChoiceIndex = ref(0);
 // Time since the line on screen was shown, which writes it out, and then since it was whole, which auto-play holds it for
