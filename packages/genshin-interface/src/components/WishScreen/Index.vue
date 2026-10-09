@@ -2,6 +2,7 @@
 import type { BannerKind } from "#src/models/BannerKind";
 import type { CurrencyCount } from "#src/models/CurrencyCount";
 import type { WishPoolCell } from "#src/models/WishPoolCell";
+import type { WishPurchase } from "#src/models/WishPurchase";
 import type { WishResultCell } from "#src/models/WishResultCell";
 import type { WishSet } from "#src/models/WishSet";
 
@@ -19,6 +20,9 @@ interface Props {
   pathLabel: string;
   // What the open banner can draw, the highest rarity first and the featured first of each rarity
   pool: WishPoolCell[];
+  // The Fate bought with Primogems, offered as one button beside the sets while the wallet holds too few Fates for a
+  // Wish, "[]" otherwise
+  purchases: WishPurchase[];
   // What the last wishes drew, one card each in the order the game shows them, over the screen until a click goes on,
   // None before a wish
   results: WishResultCell[];
@@ -28,9 +32,20 @@ interface Props {
 }
 
 const bannerKind = defineModel<BannerKind>("bannerKind");
-const { backLabel, bannerKinds, bannerLabels, currencies, fatePoints, pathLabel, pool, results, sets, title } =
-  defineProps<Props>();
-const emit = defineEmits<{ close: []; dismiss: []; wish: [count: number] }>();
+const {
+  backLabel,
+  bannerKinds,
+  bannerLabels,
+  currencies,
+  fatePoints,
+  pathLabel,
+  pool,
+  purchases,
+  results,
+  sets,
+  title,
+} = defineProps<Props>();
+const emit = defineEmits<{ buy: []; close: []; dismiss: []; wish: [count: number] }>();
 const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rarity));
 </script>
 
@@ -80,6 +95,17 @@ const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rari
         :disabled="!isAffordable"
         type="button"
         @click="emit('wish', count)"
+      >
+        <span class="cost">{{ cost }}</span>
+        {{ label }}
+      </button>
+      <button
+        v-for="{ cost, isAffordable, label } of purchases"
+        :key="label"
+        class="set"
+        :disabled="!isAffordable"
+        type="button"
+        @click="emit('buy')"
       >
         <span class="cost">{{ cost }}</span>
         {{ label }}

@@ -15,8 +15,14 @@ import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
 import { BannerKindFateMap } from "#src/services/wish/BannerKindFateMap";
 import { BannerKindGameTextKeyMap } from "#src/services/wish/BannerKindGameTextKeyMap";
+import { buyWishFate } from "#src/services/wish/buyWishFate";
 import { checkIsWishSetOffered } from "#src/services/wish/checkIsWishSetOffered";
-import { BEGINNERS_WISH_LIMIT, FATE_POINT_LIMIT, TEN_WISH_COUNT } from "#src/services/wish/constants";
+import {
+  BEGINNERS_WISH_LIMIT,
+  FATE_POINT_LIMIT,
+  FATE_PRIMOGEM_COST,
+  TEN_WISH_COUNT,
+} from "#src/services/wish/constants";
 import { createBanners } from "#src/services/wish/createBanners";
 import { getWishCost } from "#src/services/wish/getWishCost";
 import { makeWishes } from "#src/services/wish/makeWishes";
@@ -73,6 +79,26 @@ const sets = computed(() => {
     };
   });
 });
+// The open banner's Fate bought with Primogems once the wallet holds too few Fates for its ×1, the game's direct purchase
+const purchases = computed(() => {
+  const kind = bannerKind.value;
+  if (!kind) return [];
+  const fate = BannerKindFateMap[kind];
+  if (wallet.value[fate] >= getWishCost(kind, 1).quantity) return [];
+  return [
+    {
+      cost: toCountText(Currency.Primogem, FATE_PRIMOGEM_COST),
+      isAffordable: wallet.value[Currency.Primogem] >= FATE_PRIMOGEM_COST,
+      label: fillGameTextValues(gameText[GameTextKey.WishBuyFate], gameText[CurrencyGameTextKeyMap[fate]]),
+    },
+  ];
+});
+// The open banner's Fate bought: the wallet takes its Primogems and gains the Fate
+const buyFate = () => {
+  const kind = bannerKind.value;
+  if (!kind) return;
+  wallet.value = buyWishFate(wallet.value, BannerKindFateMap[kind]);
+};
 const currencies = computed(() =>
   [Currency.Primogem, ...(bannerKind.value ? [BannerKindFateMap[bannerKind.value]] : [])].map((currency) => ({
     id: currency,
@@ -159,9 +185,11 @@ const wish = (count: number) => {
       "
       :path-label="isWeaponWish ? gameText[GameTextKey.WishEpitomizedPath] : ''"
       :pool
+      :purchases
       :results
       :sets
       :title="gameText[GameTextKey.Wish]"
+      @buy="buyFate"
       @close="emit('close')"
       @dismiss="results = []"
       @wish="(count) => wish(count)"

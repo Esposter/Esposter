@@ -11,6 +11,8 @@ export const EQUIPMENT_CATEGORIES: readonly ItemCategory[] = [ItemCategory.Weapo
 export const QUALITY_SORTED_CATEGORIES: readonly ItemCategory[] = [ItemCategory.Gadget, ItemCategory.Quest];
 // How many kinds of item the bag holds beside the weapons, artifacts and furnishings it counts on their own
 export const INVENTORY_KIND_LIMIT = 2300;
+// The highest rarity a weapon or an artifact may be destroyed at, one to four stars
+export const DESTROY_RARITY_LIMIT = 4;
 // A new weapon is at level 1 and a new artifact at 0
 export const WEAPON_START_LEVEL = 1;
 export const ARTIFACT_START_LEVEL = 0;

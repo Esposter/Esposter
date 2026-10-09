@@ -26,6 +26,7 @@ export const props = {
     { id: 11_401, isFeatured: true, name: "Favonius Sword", rarity: 4 },
     { id: 11_301, isFeatured: false, name: "Cool Steel", rarity: 3 },
   ],
+  purchases: [],
   results: [],
   sets: [
     { cost: "Intertwined Fate ×1", count: 1, isAffordable: true, label: "Wish ×1" },
