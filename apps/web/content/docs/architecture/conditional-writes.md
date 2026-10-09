@@ -59,12 +59,13 @@ The hazard an etag answers is general: **a write derived from a view that anothe
 
 **Or make the check the write**, where the condition is one the row can answer for itself. A `SELECT` that decides whether to write is a check-then-act: every concurrent caller reads the same pre-write row, so every one of them passes. Moving the predicate into the `UPDATE`'s own `WHERE` hands the decision to the database — the caller that gets a row back holds the claim and the one that gets none was beaten to it. This is what throttles an automatic [resource revision](/docs/resource/resource-snapshots) to one per interval, and it is the shape to reach for whenever a check reads "has enough time passed" or "is this still unclaimed": those are the row's questions, and asking them anywhere else is asking a copy.
 
-| Where                                          | How it is made safe                  | What that stops                                              |
-| ---------------------------------------------- | ------------------------------------ | ------------------------------------------------------------ |
-| Postgres read-modify-write                     | serialized — `FOR UPDATE`            | two transactions computing from one value concurrently       |
-| Azure Table read-modify-write                  | token — the entity `etag`            | a body computed against a version that has since moved       |
-| An event handler writing what an event reports | token — the event's ordering value   | an older event delivered after a newer one                   |
-| A throttle or a once-per-interval gate         | claim — the predicate in the `WHERE` | two callers passing a check made from the same pre-write row |
+| Where                                          | How it is made safe                   | What that stops                                                   |
+| ---------------------------------------------- | ------------------------------------- | ----------------------------------------------------------------- |
+| Postgres read-modify-write                     | serialized — `FOR UPDATE`             | two transactions computing from one value concurrently            |
+| Azure Table read-modify-write                  | token — the entity `etag`             | a body computed against a version that has since moved            |
+| An event handler writing what an event reports | token — the event's ordering value    | an older event delivered after a newer one                        |
+| A throttle or a once-per-interval gate         | claim — the predicate in the `WHERE`  | two callers passing a check made from the same pre-write row      |
+| A save blob (Clicker, Dungeons, Genshin)       | token — the blob's `ETag` as If-Match | a save written over one another session changed since it was read |
 
 The event-handler row is the one that gets missed, because a handler can pass every idempotency check and still be wrong. **Idempotent is not order-independent.** Idempotency asks "does running this twice differ from running it once" — a redelivery computing a zero delta answers yes and is genuinely safe. Ordering asks a question idempotency never poses: _does an older event arriving after a newer one leave the wrong state behind?_ Replaying the stale event is a well-behaved no-op by every idempotency measure and still overwrites the current value with a superseded one.
 

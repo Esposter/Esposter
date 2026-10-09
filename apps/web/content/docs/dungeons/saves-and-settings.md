@@ -35,10 +35,12 @@ A `Save` is the full run state: `player` (position, direction, party monsters, i
 
 ## Procedures
 
-| Procedure               | Auth | Input            | Purpose                        |
-| ----------------------- | ---- | ---------------- | ------------------------------ |
-| `dungeons.readDungeons` | user | —                | read the user's save blob      |
-| `dungeons.saveDungeons` | user | `dungeonsSchema` | overwrite the user's save blob |
+| Procedure               | Auth | Input                             | Purpose                                       |
+| ----------------------- | ---- | --------------------------------- | --------------------------------------------- |
+| `dungeons.readDungeons` | user | —                                 | read the user's save blob with its ETag       |
+| `dungeons.saveDungeons` | user | `{ data: dungeonsSchema, etag? }` | overwrite the user's save blob under its ETag |
+
+A save is sent under the ETag its last read or save returned. A save over one another session changed is refused as a conflict, and the page reloads to take the server's copy, the same path the Clicker's save takes.
 
 ## Key files
 

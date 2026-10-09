@@ -1,6 +1,8 @@
 # Mutations that write or delete blobs
 
-Read when a mutation deletes or replaces an Azure Blob (profile images, survey assets, message files).
+Read when a mutation deletes or replaces an Azure Blob (profile images, survey assets, message files), or saves a blob a client read.
+
+- **A save of a blob the client read is conditional on the read's ETag.** The shared blob-state procedures answer the read as `{ data, etag }` and take `{ data, etag }` on a save, and the write goes through `writeBlobState`: If-Match on the ETag, create-only when none. A refused write is a CONFLICT the client answers by reloading, so a blob-state save never writes a blob over a read it did not condition on, and never calls `writeJsonBlob` bare (`apps/web/content/docs/architecture/conditional-writes.md`, `apps/web/content/docs/genshin/save-data.md`).
 
 - **Delete idempotently** — use `deleteIfExists()` for user-triggered cleanup. Avoid `delete()` unless a missing blob must fail the whole mutation.
 
