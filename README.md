@@ -350,30 +350,31 @@ skipped window's replacement at half its cap while it stands where that window d
 person opened into windows cut from its commits — and a window off the stack's chain of bases is closed and cut again. A
 commit no window can carry past its attempts is parked on `ai/held/<short-sha>` with an issue, and re-landed by the
 collector itself, on the next run at the `main` head it was parked at, then at every later one and after a lengthening
-wait at one that does not move (`RELAND_RETRY_WAITS_MS`), up to its attempts; one the queue still holds is let go for
-the step that parked it to try again under its own caps, each let-go counted among the re-land's attempts. A commit
-carrying an `Express:` trailer — its claim that nothing in it needs a reviewer — goes straight to `main` unverified, and
-is parked instead once no cut applies it past its attempts — counted by its patch, which the queue's rewrites keep — or
-at once when nothing in flight can move `main`. A red `main` is repaired after the walk and the openings, CI's and
-CodeQL's each on its own — unless the queue's run over its head already passes a job it failed, a transit gap its
-windows heal, which spends nothing, or is still going, which holds the red with a wake for when that run should have
-concluded, as nothing reports a queue run concluding and a quiet queue pushes nothing — each part of an attempt on
-its own clock and the attempts counted per failure signature, with an issue once its attempts run out and a wake for
-when the oldest of them age out. Every session runs under a wall clock, a session that never starts is retried five
-minutes later, a run that fails or is killed is woken five minutes later, and a hold that lifts on a clock schedules its
-own wake, so no stage needs a person to restart it. The one red left unwoken is the same step failing on the same line
-in the newest runs, which a rerun would only meet again: it gets one issue, and the next push or event runs the cycle as
-usual. Its pace is the review budget's, not its own: each of the plan's hourly reviews (`REVIEWS_PER_HOUR`) carries one
-window under the cap, so a backlog of hundreds of queue commits takes hours to drain. What still needs a person is
-billing — a CodeRabbit plan or usage credits that refuse every review, under which windows keep being cut smaller, and
-the Claude Code subscription every session runs on; the tokens — the collector's `gh` login, which `gh auth logout` on
-its machine stops and only a person refreshes, and the Claude Code token only a person mints; a window or a release from
-`develop` a person closes without merging, which pauses the collector until it is reopened; and a commit no resolver can
-land past its caps, which stays on its held branch, its issue carrying the steps that land it by hand. Every issue the
-collector opens is labelled `ready-for-agent`, for a session to take up like any other. An external contributor's pull
-request enters at the same door: opened from an `external/*` branch against `ai/queue` — never `main`, where it would
-spend one of the plan's hourly reviews on arrival — and squash-merged onto the queue by a maintainer, where the
-collector cuts it like any session commit.
+wait at one that does not move (`RELAND_RETRY_WAITS_MS`), up to its attempts; one the queue or the fixes still carry is
+let go for the step that parked it to try again under its own caps, each let-go counted among the re-land's attempts. A
+commit carrying an `Express:` trailer — its claim that nothing in it needs a reviewer — goes straight to `main`
+unverified, and is parked instead once no cut applies it past its attempts — counted by its patch, which the queue's
+rewrites keep — or at once when nothing in flight can move `main`. A red `main` is repaired after the walk and the
+openings, CI's and CodeQL's each on its own — unless the queue's run over its head already passes a job it failed, a
+transit gap its windows heal, which spends nothing, or is still going, which holds the red and wakes the cycle one queue
+run's length later, since nothing reports a queue run concluding — each part of an attempt on its own clock and the
+attempts counted per failure signature, with an issue once its attempts run out and a wake for when the oldest of them
+age out. Every session runs under a wall clock, a session that never starts is retried five minutes later, GitHub
+refusing a request mid-pass — a server error, or a rate limit, waited out for as long as GitHub states — ends the run
+idle rather than red, a run that fails or is killed is woken five minutes later, and a hold that lifts on a clock
+schedules its own wake, so no stage needs a person to restart it. The one red left unwoken is the same step failing on
+the same line in the newest runs, never one GitHub caused, which a rerun would only meet again: it gets one issue, and
+the next push or event runs the cycle as usual. Its pace is the review budget's, not its own: each of the plan's hourly
+reviews (`REVIEWS_PER_HOUR`) carries one window under the cap, so a backlog of hundreds of queue commits takes hours to
+drain. What still needs a person is billing — a CodeRabbit plan or usage credits that refuse every review, under which
+windows keep being cut smaller, and the Claude Code subscription every session runs on; the tokens — the collector's
+`gh` login, which `gh auth logout` on its machine stops and only a person refreshes, and the Claude Code token only a
+person mints; a window or a release from `develop` a person closes without merging, which pauses the collector until it
+is reopened; and a commit no resolver can land past its caps, which stays on its held branch, its issue carrying the
+steps that land it by hand. Every issue the collector opens is labelled `ready-for-agent`, for a session to take up like
+any other. An external contributor's pull request enters at the same door: opened from an `external/*` branch against
+`ai/queue` — never `main`, where it would spend one of the plan's hourly reviews on arrival — and squash-merged onto the
+queue by a maintainer, where the collector cuts it like any session commit.
 The design, the plan's figures and the fine print live in
 [the review collector docs](https://github.com/Esposter/Esposter/tree/main/apps/web/content/docs/infra/review-collector).
 
@@ -396,7 +397,7 @@ flowchart LR
   H -->|re-landed or let go: next run at the head it was parked at,<br/>then each new main head or after a wait| Q
   C -->|Express commits, unverified| M
   M -->|push event, or CI red on its head:<br/>fast-forward develop| C
-  C -->|after the walk, repair a red head — unless the queue<br/>passes a job it failed, a transit gap the windows heal| M
+  C -->|after the walk, repair each red workflow — unless the queue's run<br/>over the head passes a job it failed, or is still going| M
 ```
 
 ## <a name="packages">📦 Packages</a>
