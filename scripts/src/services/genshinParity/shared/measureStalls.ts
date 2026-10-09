@@ -1,11 +1,11 @@
 /* oxlint-disable no-underscore-dangle -- the names are the page's own globals: the window fields the page keeps and the devtools messenger three publishes */
 import type { FrameSample } from "#src/models/genshinParity/shared/FrameSample";
+import type { CpuCapture } from "#src/models/genshinParity/shared/CpuCapture";
 import type { GpuCall } from "#src/models/genshinParity/shared/GpuCall";
 import type { GpuTrace } from "#src/models/genshinParity/shared/GpuTrace";
 import type { StallOptions } from "#src/models/genshinParity/shared/StallOptions";
 import type { StallState } from "#src/models/genshinParity/shared/StallState";
 import type { TracedState } from "#src/models/genshinParity/shared/TracedState";
-import type { Page } from "playwright";
 
 import { PARITY_PAGE_URL, STALLS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { summarizeGpuTrace } from "#src/services/genshinParity/shared/summarizeGpuTrace";
@@ -14,6 +14,7 @@ import { TRACE_GPU_SCRIPT } from "#src/services/genshinParity/shared/traceGpuScr
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import type { BrowserContext, Page } from "playwright";
 import { chromium } from "playwright";
 
 interface DevtoolsMessage {
@@ -48,6 +49,8 @@ const PAUSE_MS = 1000;
 const WALK_MS = 20_000;
 const LOAD_TIMEOUT_MS = 300_000;
 const HOOK_TIMEOUT_MS = 60_000;
+const CPU_SAMPLE_MICROSECONDS = 200;
+const MICROSECONDS_PER_MS = 1000;
 
 // Records every animation frame with the renderer's program count, from before the page's first frame. A script string rather
 // Than a function: the TypeScript runner rewrites a named inner function with a helper the page does not have
@@ -145,6 +148,29 @@ const measureStates = async (page: Page): Promise<(TracedState & { state: StallS
   return [coldOrbit, secondOrbit, walked];
 };
 
+// The page's main-thread samples over the run, which a slow frame with no GPU call in it is named by. The profile's clock is
+// Read against the page's own clock at the start, so each sample's time is the frame times' time
+const startCpuProfile = async (context: BrowserContext, page: Page) => {
+  const session = await context.newCDPSession(page);
+  await session.send("Profiler.enable");
+  await session.send("Profiler.setSamplingInterval", { interval: CPU_SAMPLE_MICROSECONDS });
+  const pageNowMs = await page.evaluate(() => performance.now());
+  await session.send("Profiler.start");
+
+  return {
+    stop: async (): Promise<CpuCapture> => {
+      const { profile } = await session.send("Profiler.stop");
+      return {
+        nodes: profile.nodes ?? [],
+        offsetMs: profile.startTime / MICROSECONDS_PER_MS - pageNowMs,
+        samples: profile.samples ?? [],
+        startTime: profile.startTime,
+        timeDeltas: profile.timeDeltas ?? [],
+      };
+    },
+  };
+};
+
 // Opens the screen on the parity page at a viewport and device ratio, runs the orbit and walk states, prints a row a state,
 // And writes the run beside the rest of the parity tool's output. Its page is the one `genshin:parity` serves. With a trace,
 // Each GPU call the page makes is recorded too, and the slow frames are named by the calls they made
@@ -175,9 +201,14 @@ export const measureStalls = async ({ height, scale, screen, trace, width }: Sta
     await page.waitForFunction(() => window.__TRES__DEVTOOLS__ !== undefined, null, { timeout: HOOK_TIMEOUT_MS });
     await page.evaluate(hookRenderer);
     await page.waitForFunction(() => window.__hooked, null, { timeout: HOOK_TIMEOUT_MS });
+    const cpu = trace ? await startCpuProfile(context, page) : undefined;
     const measuredStates = await measureStates(page);
+    const cpuCapture = cpu ? await cpu.stop() : undefined;
     const tracedGpu: GpuTrace | undefined = trace
-      ? await page.evaluate(() => ({ calls: window.__gpuCalls ?? [], times: window.__traceTimes ?? [] }))
+      ? {
+          ...(await page.evaluate(() => ({ calls: window.__gpuCalls ?? [], times: window.__traceTimes ?? [] }))),
+          cpu: cpuCapture,
+        }
       : undefined;
     return { gpuTrace: tracedGpu, loadMs: loadEnd - loadStart, measured: measuredStates };
   }).match(

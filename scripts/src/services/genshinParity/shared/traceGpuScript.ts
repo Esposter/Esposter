@@ -19,7 +19,7 @@ export const TRACE_GPU_SCRIPT = `
         detail: describe(args, result),
         duration: performance.now() - start,
         frame: window.__traceTimes.length - 1,
-        label: args[0].label ?? args[0].texture?.label ?? args[1]?.texture?.label ?? "",
+        label: args[0]?.label ?? args[0]?.texture?.label ?? args[1]?.texture?.label ?? "",
         name,
         start,
       };
@@ -49,4 +49,6 @@ export const TRACE_GPU_SCRIPT = `
   traceCall(GPUQueue.prototype, "copyExternalImageToTexture", (args) => describeExtent(args[2]));
   traceCall(GPUQueue.prototype, "writeBuffer", (args) => describeBytes(args[2]));
   traceCall(GPUQueue.prototype, "writeTexture", (args) => describeBytes(args[1]) + " " + describeExtent(args[3]));
+  traceCall(GPUQueue.prototype, "submit", (args) => args[0].length + " command buffers");
+  traceCall(GPUCanvasContext.prototype, "getCurrentTexture", () => "swap chain");
 `;

@@ -1,6 +1,7 @@
 import type { GpuCall } from "#src/models/genshinParity/shared/GpuCall";
 import type { GpuTrace } from "#src/models/genshinParity/shared/GpuTrace";
 import type { TracedState } from "#src/models/genshinParity/shared/TracedState";
+import { summarizeCpuWindow } from "#src/services/genshinParity/shared/summarizeCpuWindow";
 
 // A frame is slow past this many milliseconds, the same line the stall summary counts by
 const SLOW_FRAME_MS = 50;
@@ -16,6 +17,7 @@ const getCategory = (name: string): string => {
   if (name.includes("Pipeline")) return "pipelines";
   if (name === "createShaderModule") return "shaders";
   if (name === "createBuffer" || name === "writeBuffer") return "buffers";
+  if (name === "submit" || name === "getCurrentTexture") return "submits";
   return "textures";
 };
 
@@ -46,6 +48,7 @@ const describeFrame = (time: number, gapMs: number, trace: GpuTrace, frameIndexO
     `frame #${frameIndex} at ${roundMs(time - (trace.times[0] ?? 0))} ms: ${roundMs(gapMs)} ms, ${calls.length} GPU calls for ${roundMs(totalMs)} ms`,
     `  ${describeCategories(calls) || "no GPU calls"}`,
     ...listed.map((call) => describeCall(call)),
+    ...(trace.cpu ? summarizeCpuWindow(trace.cpu, time, time + gapMs) : []),
   ];
 };
 
