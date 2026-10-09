@@ -5,6 +5,7 @@ import { fitRegionLandmarks } from "#src/services/genshinAssets/fit/fitRegionLan
 import { fitSurfaceColours } from "#src/services/genshinAssets/fit/fitSurfaceColours";
 import { fitWindriseOak } from "#src/services/genshinAssets/fit/fitWindriseOak";
 import { fitWindrisePaving } from "#src/services/genshinAssets/fit/fitWindrisePaving";
+import { fitWindrisePlants } from "#src/services/genshinAssets/fit/fitWindrisePlants";
 import { fitWindriseStatue } from "#src/services/genshinAssets/fit/fitWindriseStatue";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
@@ -31,6 +32,7 @@ export const fitWindriseScene = (only: readonly string[] = [], angleCount?: numb
       ],
       oak: fitWindriseOak,
       paving: async () => [await writeWorldData("windrise/paving.json", await fitWindrisePaving())],
+      plants: async () => [await writeWorldData("windrise/plants.json", await fitWindrisePlants())],
       statue: () => fitWindriseStatue(angleCount),
       surfaces: async () => [
         await writeWorldData(
