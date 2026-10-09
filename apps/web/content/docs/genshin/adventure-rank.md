@@ -50,7 +50,7 @@ The rank is the EXP's own, held at the cap of the last World Level open. So a pl
 
 From World Level 3 the player may lower it by one, and restore it by one (`toggleWorldLevelLowering`). Either change waits 24 hours after the last, so a lowering cannot be undone at once and a restore cannot be lowered again at once. The World Level played at is the unlocked one less that single step (`computeWorldLevel`).
 
-Hovering or focusing the card's World Level button opens the game's panel (`Menu/WorldLevelTips`): its title, the tips for what the change does, and, once a change has been made, the cooldown left, read as the panel opens (`computeWorldLevelCooldown`). The tips' colour tags are split by `splitGameTextColors`, so the game's orange numbers stay orange.
+Hovering or focusing the card's World Level button opens the game's panel (`Menu/WorldLevelTips`): its title, the tips for what the change does, and, once a change has been made, the cooldown left, read as the panel opens (`computeWorldLevelCooldown`). The panel is not measured yet: no public clip shows the hover panel (the published tutorials open the World Level dialog from its info icon), so its size, place and colours wait on `world-level-panel.mkv` in the roadmap's Recordings owed list. The tips' colour tags are split by `splitGameTextColors`, so the game's orange numbers stay orange.
 
 ## Enemies at a World Level
 
