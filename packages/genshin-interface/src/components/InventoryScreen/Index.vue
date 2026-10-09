@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { CurrencyCount } from "#src/models/CurrencyCount";
 import type { InventoryCell } from "#src/models/InventoryCell";
+import type { InventoryQuickSelect } from "#src/models/InventoryQuickSelect";
 import type { InventorySort } from "#src/models/InventorySort";
 import type { ItemCategory } from "#src/models/ItemCategory";
 
@@ -11,18 +12,41 @@ import { computed } from "vue";
 interface Props {
   // The way back to the world in the reader's language
   backLabel: string;
+  // The dialog's way out without destroying, in the reader's language
+  cancelLabel: string;
   // The open tab's room as the game words it, "" for a tab whose items share the bag's room
   capacity: string;
   // The open tab's entries in the order the game shows them
   cells: InventoryCell[];
   // The counts the bag shows beside its tabs
   currencies: CurrencyCount[];
+  // The Destroy button that opens the dialog, and the dialog's own OK that destroys the chosen entries
+  destroyButtonLabel: string;
+  // The destroy mode's warning that the entry cannot be destroyed, shown on the chosen entry the bag never destroys
+  destroyCannotLabel: string;
+  destroyConfirmButtonLabel: string;
+  // The dialog's title, the line over its list of names, and the warning that the destruction cannot be undone
+  destroyConfirmListLabel: string;
+  destroyConfirmTitle: string;
+  destroyConfirmWarningLabel: string;
   // The trash's way into the destroy mode, in the reader's language
   destroyLabel: string;
+  // The names of the entries chosen for a destroy, listed in its dialog
+  destroyNames: string[];
+  // The count beside the Destroy button, `{0}/{1} selected` filled in the reader's language
+  destroySelectedLabel: string;
+  // The destroy mode's opening line in the reader's language
+  destroyTipLabel: string;
+  // Whether the dialog is open over the bag
+  isConfirming?: true;
+  // Whether the bag is in its destroy mode, where a tick chooses an entry for a destroy rather than showing it
+  isDestroying?: true;
   // Whether the open tab offers the sort, as the weapons' and artifacts' do
   isSortable?: true;
   // The sort's order in the reader's language, which a screen reader says in place of its arrow
   orderLabel: string;
+  // The destroy mode's quick selects on the open tab, each choosing every entry the bag may destroy of its rarity
+  quickSelects: InventoryQuickSelect[];
   sortLabels: Record<InventorySort, string>;
   tabLabels: Record<ItemCategory, string>;
   title: string;
@@ -33,11 +57,40 @@ const sort = defineModel<InventorySort>("sort", { required: true });
 const isDescending = defineModel<boolean>("isDescending", { required: true });
 // The entry the detail panel shows, its id, and the first entry of the open tab while none is chosen
 const selectedId = defineModel<string>("selectedId", { required: true });
-// Whether the bag is in its destroy mode, where a chosen entry the bag may destroy is destroyed rather than shown
-const isDestroying = defineModel<boolean>("isDestroying", { required: true });
-const { backLabel, capacity, cells, currencies, destroyLabel, isSortable, orderLabel, sortLabels, tabLabels, title } =
-  defineProps<Props>();
-const emit = defineEmits<{ close: []; destroy: [id: string] }>();
+const {
+  backLabel,
+  cancelLabel,
+  capacity,
+  cells,
+  currencies,
+  destroyButtonLabel,
+  destroyCannotLabel,
+  destroyConfirmButtonLabel,
+  destroyConfirmListLabel,
+  destroyConfirmTitle,
+  destroyConfirmWarningLabel,
+  destroyLabel,
+  destroyNames,
+  destroySelectedLabel,
+  destroyTipLabel,
+  isConfirming,
+  isDestroying,
+  isSortable,
+  orderLabel,
+  quickSelects,
+  sortLabels,
+  tabLabels,
+  title,
+} = defineProps<Props>();
+const emit = defineEmits<{
+  cancelDestroy: [];
+  choose: [id: string];
+  close: [];
+  confirmDestroy: [];
+  destroy: [];
+  quickSelect: [rarity: number];
+  toggleDestroy: [];
+}>();
 const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.value) ?? cells[0]);
 </script>
 
@@ -69,8 +122,9 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
           :aria-label="cell.name"
           :aria-pressed="cell.id === selectedCell?.id"
           :data-rarity="cell.rarity"
+          :data-selected="cell.isSelected"
           type="button"
-          @click="isDestroying && cell.isDestroyable ? emit('destroy', cell.id) : (selectedId = cell.id)"
+          @click="isDestroying && cell.isDestroyable ? emit('choose', cell.id) : (selectedId = cell.id)"
         >
           <span class="caption">{{ cell.caption }}</span>
         </button>
@@ -85,9 +139,26 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
       :aria-label="destroyLabel"
       :aria-pressed="isDestroying"
       type="button"
-      @click="isDestroying = !isDestroying"
+      @click="emit('toggleDestroy')"
     />
-    <template v-if="isSortable">
+    <!-- The destroy mode's foot, in place of the sort or the currencies: its opening line, the quick selects by rarity,
+         the count of the chosen entries and the Destroy button that opens the dialog. Provisional until the mode is recorded -->
+    <section v-if="isDestroying" class="destroy">
+      <p class="destroy-tip">{{ destroyTipLabel }}</p>
+      <p v-if="selectedCell && !selectedCell.isDestroyable" class="destroy-cannot">{{ destroyCannotLabel }}</p>
+      <ul class="quick-selects">
+        <li v-for="{ label, rarity } of quickSelects" :key="rarity">
+          <button class="quick-select" :data-rarity="rarity" type="button" @click="emit('quickSelect', rarity)">
+            {{ label }}
+          </button>
+        </li>
+      </ul>
+      <p class="destroy-count">{{ destroySelectedLabel }}</p>
+      <button class="destroy-button" :disabled="!destroyNames.length" type="button" @click="emit('destroy')">
+        {{ destroyButtonLabel }}
+      </button>
+    </section>
+    <template v-else-if="isSortable">
       <span class="filter" />
       <div class="sort">
         <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -- the sort's caption is no game text key yet, so no name in the reader's language exists until the bag's sort recording keys it; its options name it meanwhile -->
@@ -113,6 +184,22 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
         <span v-if="isTopUp" class="top-up" />
       </li>
     </ul>
+    <!-- The dialog the Destroy button opens over the bag: the entries to be destroyed, and the warning that it cannot be
+         undone, in the game's own wording. Provisional until the dialog is recorded -->
+    <section v-if="isConfirming" class="confirm" role="dialog" aria-modal="true" :aria-label="destroyConfirmTitle">
+      <p class="confirm-title">{{ destroyConfirmTitle }}</p>
+      <p class="confirm-list-label">{{ destroyConfirmListLabel }}</p>
+      <ul class="confirm-names">
+        <li v-for="(name, index) of destroyNames" :key="index">{{ name }}</li>
+      </ul>
+      <p class="confirm-warning">{{ destroyConfirmWarningLabel }}</p>
+      <div class="confirm-buttons">
+        <button class="confirm-button" type="button" @click="emit('cancelDestroy')">{{ cancelLabel }}</button>
+        <button class="confirm-button" type="button" @click="emit('confirmDestroy')">
+          {{ destroyConfirmButtonLabel }}
+        </button>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -219,6 +306,10 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
   box-shadow: 0 0 0 calc(var(--unit) * 3) #ece3d8;
 }
 
+.cell[data-selected] {
+  background: #a154de;
+}
+
 .caption {
   width: 100%;
   padding: calc(var(--unit) * 4) 0;
@@ -299,6 +390,90 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
 
 .trash[aria-pressed="true"] {
   background: #a154de;
+}
+
+/* The destroy mode's foot and dialog are placed in the game's 1080-high units by the recording, not yet measured, so
+   they sit in the foot's band and the screen's centre until then */
+.destroy {
+  position: absolute;
+  top: calc(var(--unit) * 960);
+  left: calc(var(--unit) * 230);
+  right: calc(var(--unit) * 47);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(var(--unit) * 12);
+}
+
+.destroy-tip,
+.destroy-cannot,
+.destroy-count {
+  margin: 0;
+  width: 100%;
+}
+
+.destroy-cannot {
+  color: #ff9a7a;
+}
+
+.quick-selects {
+  display: flex;
+  gap: calc(var(--unit) * 10);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.quick-select,
+.destroy-button,
+.confirm-button {
+  padding: calc(var(--unit) * 10) calc(var(--unit) * 20);
+  border: none;
+  border-radius: calc(var(--unit) * 8);
+  background: rgb(255 255 255 / 0.14);
+  color: inherit;
+  font: inherit;
+}
+
+.destroy-button:disabled {
+  opacity: 0.4;
+}
+
+.confirm {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--unit) * 560);
+  padding: calc(var(--unit) * 32);
+  transform: translate(-50%, -50%);
+  border-radius: calc(var(--unit) * 12);
+  background: #2b2a3d;
+}
+
+.confirm-title,
+.confirm-list-label,
+.confirm-warning {
+  margin: 0 0 calc(var(--unit) * 12);
+}
+
+.confirm-title {
+  font-size: calc(var(--unit) * 22);
+}
+
+.confirm-names {
+  margin: 0 0 calc(var(--unit) * 12);
+  padding: 0;
+  list-style: none;
+}
+
+.confirm-warning {
+  color: #ff9a7a;
+}
+
+.confirm-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: calc(var(--unit) * 12);
 }
 
 .filter {

@@ -63,6 +63,8 @@ export enum GameTextKey {
   BulleFruit = "457891068",
   Cacahuatl = "1982182708",
   CallaLily = "4260602356",
+  // A dialog's way out without its action, the generic word the game's own dialogs share
+  Cancel = "UI_BEYOND_CANCEL",
   CandlecapMushroom = "767225220",
   Carrot = "3407195260",
   Cecilia = "3828726124",
@@ -199,6 +201,27 @@ export enum GameTextKey {
   InventoryArtifacts = "ITEM_EQUIP",
   InventoryCapacity = "UI_STC_BAGPAGE_CAPACITY_TITLE",
   InventoryCharacterDevelopmentItems = "ITEM_AVATAR",
+  // The bag's destroy mode, on its trash, and the quick select's rarities, each named as the destroy page names them
+  InventoryDestroy = "UI_STC_BAGPAGE_DESTROY_TITLE",
+  InventoryDestroyArtifactFourStar = "UI_STC_BAGPAGE_DESTROY_TAB_EQUIP_4",
+  InventoryDestroyArtifactOneStar = "UI_STC_BAGPAGE_DESTROY_TAB_EQUIP_1",
+  InventoryDestroyArtifactThreeStar = "UI_STC_BAGPAGE_DESTROY_TAB_EQUIP_3",
+  InventoryDestroyArtifactTwoStar = "UI_STC_BAGPAGE_DESTROY_TAB_EQUIP_2",
+  // The destroy page's button that confirms the selection, and its dialog's title, list, warning and OK
+  InventoryDestroyButton = "UI_STC_BAGPAGE_DESTROY_BUTTON_CONFIRM",
+  // The line an entry the bag may not destroy shows in the destroy mode
+  InventoryDestroyCannot = "UI_STC_BAGPAGE_CANNOT_DESTROY_TIPS",
+  InventoryDestroyConfirmButton = "UI_STC_BAGPAGE_DESTROY_CONFIRM_BUTTON",
+  InventoryDestroyConfirmList = "UI_STC_BAGPAGE_DESTROY_CONFIRM_1",
+  InventoryDestroyConfirmTitle = "UI_STC_BAGPAGE_DESTROY_CONFIRM_TITTLE",
+  InventoryDestroyConfirmWarning = "UI_STC_BAGPAGE_DESTROY_CONFIRM_3",
+  // The count beside the destroy button, `{0}/{1} selected`
+  InventoryDestroySelected = "UI_STC_BAGPAGE_DESTROY_BUTTON_SELECTED",
+  // The line the destroy mode opens with
+  InventoryDestroyTip = "UI_STC_BAGPAGE_DESTROY_TIPS",
+  InventoryDestroyWeaponOneStar = "UI_STC_BAGPAGE_DESTROY_WEAPON_1",
+  InventoryDestroyWeaponThreeStar = "UI_STC_BAGPAGE_DESTROY_WEAPON_3",
+  InventoryDestroyWeaponTwoStar = "UI_STC_BAGPAGE_DESTROY_WEAPON_2",
   InventoryFood = "ITEM_FOOD",
   InventoryFurnishings = "ITEM_FURNITURE",
   InventoryGadget = "ITEM_CITY_REPUTATION",
