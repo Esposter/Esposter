@@ -10,7 +10,7 @@ import { mergeGameDataLock } from "#src/services/gameData/mergeGameDataLock";
 import { planGameDataPublication } from "#src/services/gameData/planGameDataPublication";
 import { publishGameDataToTarget } from "#src/services/gameData/publishGameDataToTarget";
 import { readGameDataReachableHashes } from "#src/services/gameData/readGameDataReachableHashes";
-import { compressJson } from "@esposter/db";
+import { compressZstd } from "@esposter/db";
 import { DEFAULT_COMPRESSION_LEVEL, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
 // Stores what a publication names in every account, and returns the entries it planned for the caller to merge into the
@@ -37,7 +37,7 @@ export const publishGameData = async ({
   const compressedJsonMap = new Map<string, Promise<Buffer>>();
   // Compressed once per object and shared by both accounts, which hold the same bytes
   const getCompressedJson = (record: GameDataRecord) => {
-    const compressedJson = compressedJsonMap.get(record.hash) ?? compressJson(record.json, DEFAULT_COMPRESSION_LEVEL);
+    const compressedJson = compressedJsonMap.get(record.hash) ?? compressZstd(record.json, DEFAULT_COMPRESSION_LEVEL);
     compressedJsonMap.set(record.hash, compressedJson);
     return compressedJson;
   };

@@ -22,7 +22,7 @@ flowchart TD
 
 ## The writer and the reader
 
-- **`writeJsonBlob(containerClient, blobName, serializedJson)`** compresses the document and uploads it with `Content-Encoding: zstd` and `Content-Type: application/json`, then returns the stored length. It is `compressJson` and `uploadCompressedJson` composed, and the two halves are exported for a caller that stores one frame in more than one account, or writes an object create-only with its own cache header.
+- **`writeJsonBlob(containerClient, blobName, serializedJson)`** compresses the document and uploads it with `Content-Encoding: zstd` and `Content-Type: application/json`, then returns the stored length. It is `compressZstd` and `uploadCompressedJson` composed, and the two halves are exported for a caller that stores one frame in more than one account, or writes an object create-only with its own cache header.
 - **`readJsonBlob(containerClient, blobName)`** downloads and decompresses the blob, and reads a 404 as undefined, meaning nothing has been saved yet. Every other failure surfaces rather than passing for an empty document.
 - **A browser reading through a SAS needs neither.** Blob Storage serves a blob's stored `Content-Encoding` on every read, and the network stack decodes it before `fetch` returns the body. A large resource's read therefore still receives the JSON bytes that it hashes, parses and keeps as its delta baseline ([large documents](/docs/architecture/large-documents)).
 
@@ -61,7 +61,7 @@ A save gains one compression, and every server read gains one decompression. Nei
 | File                                                                 | Role                                                                    |
 | -------------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | `packages/db/src/services/azure/container/writeJsonBlob.ts`          | async compress and upload with `Content-Encoding: zstd`                 |
-| `packages/db/src/services/azure/container/compressJson.ts`           | the one frame, at the level the caller names                            |
+| `packages/db/src/services/azure/container/compressZstd.ts`           | the one frame, of a document or any file, at the level the caller names |
 | `packages/db/src/services/azure/container/uploadCompressedJson.ts`   | a frame uploaded, with a cache header and create-only conditions        |
 | `packages/db/src/services/azure/container/readJsonBlob.ts`           | download and async decompress, a 404 read as undefined                  |
 | `packages/db/src/services/azure/container/decompressJsonBlob.ts`     | the zstd decode both readers share, a body read off a download included |

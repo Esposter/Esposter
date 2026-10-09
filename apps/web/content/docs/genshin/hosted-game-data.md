@@ -17,6 +17,8 @@ An entity collection a screen opens one entity of is an index object. `profile/<
 
 The container is AppAssets rather than GenshinAssets, because AppAssets is already public and serves the character packs, while GenshinAssets holds each player's save and must stay private.
 
+A character's pack follows the same principles under `genshin/characters/`. Its record in the `characterPacks` dataset, `characterPacks/<id>`, lists each of the pack's files by its sha256, and the record's own hash names the folder the files are stored in, `genshin/characters/<id>/<packHash>/`, each with the same immutable cache header. The model and the terms are zstd frames, the textures their own images. The publisher and the world's reader are the [characters](/docs/genshin/characters) page's.
+
 ```mermaid
 flowchart TD
   Step["genshin:assets profile or archive"] --> Build["builder: each entry parsed by its reader's schema"]
@@ -54,7 +56,8 @@ flowchart TD
   Fetch["git fetch origin"] -->|fails| Skipped["prune skipped, with a note"]
   Fetch --> Locks["live locks: working tree, HEAD, each origin head, origin/main within 90 days"]
   Locks --> Live["every object and index entry they name"]
-  Listing["the account's listing with lastModified"] --> Candidates["listed, not live, older than 90 days"]
+  Listing["the account's listing of genshin/data/ with lastModified"] --> Candidates["listed, not live, older than 90 days"]
+  Packs["the listing of genshin/characters/, live by the packHash folder each file sits in"] --> Candidates
   Live --> Candidates
   Candidates --> Delete["batch delete, ifUnmodifiedSince the cutoff"]
   Delete --> Outcome{"sub-response"}
@@ -69,7 +72,8 @@ flowchart TD
 - A rerun on the same dump reports `unchanged` and makes no request.
 - A dry run that reports `N records would be published` means the builder's records differ from the lock: the dump has moved past the committed files, or the lock has gone stale for that dataset, and the publish is a separate step.
 - The lock is written only after both accounts hold every object, so a failed account leaves the committed lock naming nothing new, and a rerun converges.
-- `pnpm -C scripts genshin:data verify` fetches every object the lock reaches from each account, anonymously, and checks that each hashes to its name.
+- `pnpm -C scripts genshin:data verify` fetches every object the lock reaches from each account, anonymously, and checks that each hashes to its name, then asks each account for the headers of every file each character pack's record lists.
+- `pnpm -C scripts genshin:characters publish <folder>` publishes the characters' packs: their files first, create-only in both accounts, then each record through the same step and lock as every other dataset, one key scope a character.
 
 A publish names the scopes it replaces. A dataset scope replaces every key under its dataset; a key scope (`login/music`) replaces that one key and keeps its dataset's other keys as the lock holds them, so a fit that refits one part publishes one key. A key scope is checked to sit under a dataset before anything is published (`toGameDataKeyScopes`).
 
@@ -105,7 +109,7 @@ flowchart TD
 
 ## Deleting
 
-`pnpm -C scripts genshin:data prune [--dry-run]` deletes what no live lock reaches and what is older than 90 days, one account at a time, after fetching origin. The live set is the working tree's lock, HEAD's, each remote branch's, and every version of origin/main within the window, plus the one in force when the window opened. A batch delete carries the cutoff as `ifUnmodifiedSince`, so an object rewritten after the listing is kept. The account's seven-day soft delete is the last net.
+`pnpm -C scripts genshin:data prune [--dry-run]` deletes what no live lock reaches and what is older than 90 days, one account at a time, after fetching origin. A character pack's file is reached through its folder: it is live while a live lock names the record whose hash names the folder. The live set is the working tree's lock, HEAD's, each remote branch's, and every version of origin/main within the window, plus the one in force when the window opened. A batch delete carries the cutoff as `ifUnmodifiedSince`, so an object rewritten after the listing is kept. The account's seven-day soft delete is the last net.
 
 A publish does not prune. A revert resolves within the 90-day window, since its objects are still stored.
 
@@ -182,6 +186,8 @@ Wall times move with the machine's load, so the median of three is the steadier 
 | `scripts/src/services/gameData/pruneGameData.ts`                                      | Deletes the objects no live lock reaches and that are past retention                                                 |
 | `scripts/src/services/gameData/readLiveGameDataLocks.ts`                              | The locks a stored object may still be reached by                                                                    |
 | `scripts/src/services/gameData/storeGameDataRecord.ts`                                | Writes one object create-only, or rewrites a stale copy with the same bytes                                          |
+| `scripts/src/services/gameData/storeBlob.ts`                                          | A create-only write that finds its blob already stored resolves as not written, shared with the character packs      |
+| `scripts/src/services/genshinCharacters/verifyCharacterPacks.ts`                      | Asks each account for every file a character pack's record lists                                                     |
 | `scripts/src/services/gameData/createGameDataContainerClient.ts`                      | The keyless container client each account is published through                                                       |
 | `scripts/src/services/gameData/commands/verifyCommand.ts`                             | `genshin:data verify`                                                                                                |
 | `scripts/src/services/gameData/commands/pruneCommand.ts`                              | `genshin:data prune`                                                                                                 |
