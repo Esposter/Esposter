@@ -6,15 +6,19 @@ import { computeSpectrogram } from "#src/services/genshinAssets/shared/computeSp
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { computeNoteSupport } from "#src/services/genshinParity/music/computeNoteSupport";
-import { renderMusicSegments } from "#src/services/genshinParity/music/renderMusicSegments";
+import { readGameMusicSegments } from "#src/services/genshinParity/music/readGameMusicSegments";
+import { renderMusicOnPage } from "#src/services/genshinParity/music/renderMusicOnPage";
 import {
   LISTEN_SAMPLE_RATE,
   LOGIN_MUSIC_SCREEN,
+  MUSIC_PAGE_SIZE,
   NOTE_SUPPORT_FOLDS,
   NOTE_SUPPORT_FRAME_LENGTH,
   NOTE_SUPPORT_HOP_LENGTH,
   NOTE_SUPPORT_MIN_DECIBELS,
 } from "#src/services/genshinParity/shared/constants";
+import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
+import { withFinalizerAsync } from "@esposter/shared";
 import { defineCommand } from "citty";
 
 export const notesCommand: SubCommandsDef[string] = defineCommand({
@@ -33,42 +37,49 @@ export const notesCommand: SubCommandsDef[string] = defineCommand({
         .toSorted((firstNote, secondNote) => firstNote.start - secondNote.start || firstNote.pitch - secondNote.pitch)
         .entries())
         noteFoldMap.set(note, index % NOTE_SUPPORT_FOLDS);
+    // The game's sound and its spectrogram are read once for every fold, and one page renders all of them
+    const games = (await readGameMusicSegments(DerivedAssetComponent.Login)).map(({ game, index }) => ({
+      index,
+      spectrogram: computeSpectrogram(game, LISTEN_SAMPLE_RATE, NOTE_SUPPORT_FRAME_LENGTH, NOTE_SUPPORT_HOP_LENGTH),
+    }));
     const noteSupportMap = new Map<MusicNote, number>();
-    for (let fold = 0; fold < NOTE_SUPPORT_FOLDS; fold++) {
-      const segmentVoicesMap = new Map<number, MusicVoice[]>(
-        music.segments.map(({ voices }, index) => [
-          index,
-          voices.map((voice) => ({ ...voice, notes: voice.notes.filter((note) => noteFoldMap.get(note) !== fold) })),
-        ]),
-      );
-      // oxlint-disable-next-line no-await-in-loop -- the page renders one fold at a time
-      const renders = await renderMusicSegments(
-        DerivedAssetComponent.Login,
-        LOGIN_MUSIC_SCREEN,
-        true,
-        segmentVoicesMap,
-      );
-      for (const { game, index, ours } of renders) {
-        const gameSpectrogram = computeSpectrogram(
-          game,
-          LISTEN_SAMPLE_RATE,
-          NOTE_SUPPORT_FRAME_LENGTH,
-          NOTE_SUPPORT_HOP_LENGTH,
-        );
-        const oursSpectrogram = computeSpectrogram(
-          ours,
-          LISTEN_SAMPLE_RATE,
-          NOTE_SUPPORT_FRAME_LENGTH,
-          NOTE_SUPPORT_HOP_LENGTH,
-        );
-        for (const { notes } of music.segments[index]?.voices ?? [])
-          for (const note of notes) {
-            if (noteFoldMap.get(note) !== fold) continue;
-            const support = computeNoteSupport(gameSpectrogram, oursSpectrogram, note);
-            if (support !== undefined) noteSupportMap.set(note, support);
+    const { close, page } = await openParityPage({
+      height: MUSIC_PAGE_SIZE,
+      screen: LOGIN_MUSIC_SCREEN,
+      width: MUSIC_PAGE_SIZE,
+    });
+    await withFinalizerAsync(
+      async () => {
+        for (let fold = 0; fold < NOTE_SUPPORT_FOLDS; fold++) {
+          const segmentVoicesMap = new Map<number, MusicVoice[]>(
+            music.segments.map(({ voices }, index) => [
+              index,
+              voices.map((voice) => ({
+                ...voice,
+                notes: voice.notes.filter((note) => noteFoldMap.get(note) !== fold),
+              })),
+            ]),
+          );
+          for (const { index, spectrogram } of games) {
+            // oxlint-disable-next-line no-await-in-loop -- the page renders one segment at a time
+            const ours = await renderMusicOnPage(page, index, true, segmentVoicesMap.get(index));
+            const oursSpectrogram = computeSpectrogram(
+              ours,
+              LISTEN_SAMPLE_RATE,
+              NOTE_SUPPORT_FRAME_LENGTH,
+              NOTE_SUPPORT_HOP_LENGTH,
+            );
+            for (const { notes } of music.segments[index]?.voices ?? [])
+              for (const note of notes) {
+                if (noteFoldMap.get(note) !== fold) continue;
+                const support = computeNoteSupport(spectrogram, oursSpectrogram, note);
+                if (support !== undefined) noteSupportMap.set(note, support);
+              }
           }
-      }
-    }
+        }
+      },
+      () => close(),
+    );
     for (const [index, { voices }] of music.segments.entries())
       for (const [voiceIndex, voice] of voices.entries()) {
         const keptNotes = voice.notes.filter(
