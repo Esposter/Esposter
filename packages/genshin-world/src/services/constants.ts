@@ -46,6 +46,9 @@ export const CAMERA_FRAME_PRIORITY = -1;
 // The frame priority what decides whether the sun's shadows are drawn again runs at, after the sky has turned the sun
 // And the camera and the floating origin have moved, so the decision reads where each now stands
 export const SHADOW_FRAME_PRIORITY = 1;
+// The nearest cascades, the only ones the character's body casts into: the cascades past them are split from ground that a
+// Body's shadow, a few metres long at this sun, never reaches, so a walk leaves them drawn
+export const BODY_SHADOW_CASCADES = 2;
 // The numbers an enemy's pose is kept as, its position's x and z and its heading, for the sun's shadows to tell an
 // Enemy has moved since they were drawn
 export const ENEMY_POSE_LENGTH = 3;

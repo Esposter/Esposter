@@ -1,7 +1,7 @@
+import type { AnchoredCascadeShadowNode } from "#src/models/nodes/AnchoredCascadeShadowNode";
 import type { DirectionalLight } from "three";
-import type { CSMShadowNode } from "three/examples/jsm/csm/CSMShadowNode.js";
 
 export interface SunLight {
-  cascadedShadowNode: CSMShadowNode;
+  cascadedShadowNode: AnchoredCascadeShadowNode;
   light: DirectionalLight;
 }

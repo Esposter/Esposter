@@ -58,9 +58,9 @@ flowchart TD
 
 ### Shadows
 
-- **The sun casts through cascades.** `createSunLight` attaches three's `CSMShadowNode` to the sun: the view is split from the eye outward in the practical scheme, each cascade with its own map. Near shadows stay crisp and far ones cheap, and each cascade spans more ground than the last, which softens the far shadows into the blotches the game draws. Neighbouring cascades fade into each other rather than meeting at a seam. The cascades follow the camera on their own, so the light's position sets only the sun's direction, and the last cascade ends at the region's `SHADOW_MAX_FAR`.
+- **The sun casts through cascades.** `createSunLight` attaches `AnchoredCascadeShadowNode`, three's `CSMShadowNode` with each cascade fitted to a sphere about the camera's pivot rather than to its slice of the view: the view is split from the eye outward in the practical scheme, each cascade with its own map. Near shadows stay crisp and far ones cheap, and each cascade spans more ground than the last, which softens the far shadows into the blotches the game draws. Neighbouring cascades fade into each other rather than meeting at a seam. The light's position sets only the sun's direction, and the last cascade ends at the region's `SHADOW_MAX_FAR`.
 - **The ground casts too**, but only within the shadows' reach: a terrain ring casts when its range is within the region's `SHADOW_MAX_FAR` (`checkTerrainTileCasts`), so a hill shadows the slope behind it when the sun is low, and the rings past the reach draw into the view alone.
-- **The cascades are drawn only when something they show has turned.** `createSunLight` turns off the cascades' automatic drawing, and `useSunShadow` flags them to be drawn again when the sun has turned past the angle the god rays' map is redrawn at (`checkSunTurned`), when the view has moved, since the cascades split from it, when the character's body has moved, or when an enemy has walked or turned past a quarter of a metre or a tenth of a radian since its shadow was drawn (`checkEnemiesMoved`), so a wandering enemy costs a redraw a few times a second rather than a frame. A still frame draws four passes where it drew eight, and a frame in which the view moves draws every cascade, as before. The trees' crowns sway in the wind in the shadow pass as well, but a sway is not a turn, so a crown's shadow holds between redraws.
+- **The cascades are drawn only when something they show has turned.** `createSunLight` turns off the cascades' automatic drawing. `useSunShadow` centres the sun's `anchor` on the character's body raised by the camera's pivot height, and flags the cascades to be drawn again when the sun has turned past the angle the god rays' map is redrawn at (`checkSunTurned`), when an enemy has walked or turned past a quarter of a metre or a tenth of a radian since its shadow was drawn (`checkEnemiesMoved`), or when the character's body has moved, which redraws only the two nearest cascades, since a body's shadow reaches no further. The node draws a cascade again on its own when the anchor has moved a step of sixteen texels, so the origin snaps to that grid and a move within a step leaves the map as it was. **An orbit redraws no shadow cascade**: the sphere is the same whichever way the eye faces, and the follow camera keeps the eye within its arm of the pivot. Measured on the parity page's WorldScreen at the High tier: an orbit's median frame fell from about 11 ms to about 4 ms, from about two hundred draws in six or seven passes to about forty in five, against about 4 ms standing still. A walk costs about a third more draws (about 250 to about 340), its median frame about the same (about 12 to 13 ms), since each sphere holds ground its slice of the view does not. The trees' crowns sway in the wind in the shadow pass as well, but a sway is not a turn, so a crown's shadow holds between redraws.
 
 ### After the scene
 
@@ -89,31 +89,32 @@ In a Vite development build, `createGenshinRenderer` puts three's inspector on e
 
 ## Key files
 
-| File                                                             | Role                                                                               |
-| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
-| `packages/genshin-engine/src/nodes/createToonMaterial.ts`        | The environment material: ramp, rim, and whether it is outlined                    |
-| `packages/genshin-engine/src/models/nodes/ToonNodeMaterial.ts`   | The toon material with the emissive rim and the outline flag                       |
-| `packages/genshin-engine/src/nodes/createRimNode.ts`             | The rim: Fresnel on the lit side, tinted by the sky                                |
-| `packages/genshin-engine/src/materials/computeRampValues.ts`     | The ramp's bytes, from dark through a narrow step to lit                           |
-| `packages/genshin-engine/src/atmosphere/createSunLight.ts`       | The sun and its fading cascades, drawn only when flagged                           |
-| `packages/genshin-engine/src/atmosphere/checkSunTurned.ts`       | Whether the sun has turned far enough to redraw its shadows                        |
-| `packages/genshin-engine/src/terrain/checkTerrainTileCasts.ts`   | Which terrain rings cast into the shadow maps, by their reach                      |
-| `packages/genshin-world/src/composables/useSunShadow.ts`         | What turns the sun's cascades: the sun, the view, the character and the enemies    |
-| `packages/genshin-engine/src/post/createGodraysLight.ts`         | The unlit sun whose one map the god rays march through                             |
-| `packages/genshin-engine/src/post/createPostPipeline.ts`         | The frame after the scene: outlines, occlusion, god rays, fog, bloom, grade and AA |
-| `packages/genshin-engine/src/post/createOcclusionNode.ts`        | The screen-space occlusion over the depth, the scene's and the witness's           |
-| `packages/genshin-engine/src/post/createHeightFogNode.ts`        | The height fog integrated along each pixel's ray                                   |
-| `packages/genshin-engine/src/renderer/constants.ts`              | The tone curve's contrast and exposure, and the none every canvas passes           |
-| `packages/genshin-engine/src/post/toneMapGenshinNode.ts`         | The game's tone curve, which the post pipeline ends on                             |
-| `packages/genshin-engine/src/renderer/attachInspector.ts`        | Three's inspector on a renderer, shared by whatever asks for it                    |
-| `packages/genshin-engine/src/post/toSceneColor.ts`               | A measured display colour as the scene colour the tone curve shows as it           |
-| `packages/genshin-engine/src/post/computeWhiteBalance.ts`        | The white balance the frame passes through before the tone curve                   |
-| `packages/genshin-engine/src/post/computeGradeLut.ts`            | A region's grade as a cube of display colours                                      |
-| `packages/genshin-engine/src/renderer/QualityTierSettingsMap.ts` | What each tier spends, and what none drops                                         |
-| `packages/genshin-world/src/components/World/Windrise/Index.vue` | The Windrise scene: its lights, look, ground, water, grass and landmarks           |
-| `packages/genshin-world/src/services/windrise/constants.ts`      | Windrise's ramp, sun, fog, shadow reach and grade                                  |
-| `packages/genshin-world/src/composables/usePostPipeline.ts`      | The engine's chain in place of TresJS's render, rebuilt on a new camera or tier    |
-| `packages/genshin-world/src/composables/useGenshinTuning.ts`     | Development's tuning panel over the look                                           |
+| File                                                                    | Role                                                                                         |
+| :---------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/nodes/createToonMaterial.ts`               | The environment material: ramp, rim, and whether it is outlined                              |
+| `packages/genshin-engine/src/models/nodes/ToonNodeMaterial.ts`          | The toon material with the emissive rim and the outline flag                                 |
+| `packages/genshin-engine/src/nodes/createRimNode.ts`                    | The rim: Fresnel on the lit side, tinted by the sky                                          |
+| `packages/genshin-engine/src/materials/computeRampValues.ts`            | The ramp's bytes, from dark through a narrow step to lit                                     |
+| `packages/genshin-engine/src/atmosphere/createSunLight.ts`              | The sun and its fading cascades, drawn only when flagged                                     |
+| `packages/genshin-engine/src/models/nodes/AnchoredCascadeShadowNode.ts` | The cascades fitted to a sphere about the anchor, snapped to a step of texels                |
+| `packages/genshin-engine/src/atmosphere/checkSunTurned.ts`              | Whether the sun has turned far enough to redraw its shadows                                  |
+| `packages/genshin-engine/src/terrain/checkTerrainTileCasts.ts`          | Which terrain rings cast into the shadow maps, by their reach                                |
+| `packages/genshin-world/src/composables/useSunShadow.ts`                | What turns the sun's cascades: the sun, the character's body and the enemies, and the anchor |
+| `packages/genshin-engine/src/post/createGodraysLight.ts`                | The unlit sun whose one map the god rays march through                                       |
+| `packages/genshin-engine/src/post/createPostPipeline.ts`                | The frame after the scene: outlines, occlusion, god rays, fog, bloom, grade and AA           |
+| `packages/genshin-engine/src/post/createOcclusionNode.ts`               | The screen-space occlusion over the depth, the scene's and the witness's                     |
+| `packages/genshin-engine/src/post/createHeightFogNode.ts`               | The height fog integrated along each pixel's ray                                             |
+| `packages/genshin-engine/src/renderer/constants.ts`                     | The tone curve's contrast and exposure, and the none every canvas passes                     |
+| `packages/genshin-engine/src/post/toneMapGenshinNode.ts`                | The game's tone curve, which the post pipeline ends on                                       |
+| `packages/genshin-engine/src/renderer/attachInspector.ts`               | Three's inspector on a renderer, shared by whatever asks for it                              |
+| `packages/genshin-engine/src/post/toSceneColor.ts`                      | A measured display colour as the scene colour the tone curve shows as it                     |
+| `packages/genshin-engine/src/post/computeWhiteBalance.ts`               | The white balance the frame passes through before the tone curve                             |
+| `packages/genshin-engine/src/post/computeGradeLut.ts`                   | A region's grade as a cube of display colours                                                |
+| `packages/genshin-engine/src/renderer/QualityTierSettingsMap.ts`        | What each tier spends, and what none drops                                                   |
+| `packages/genshin-world/src/components/World/Windrise/Index.vue`        | The Windrise scene: its lights, look, ground, water, grass and landmarks                     |
+| `packages/genshin-world/src/services/windrise/constants.ts`             | Windrise's ramp, sun, fog, shadow reach and grade                                            |
+| `packages/genshin-world/src/composables/usePostPipeline.ts`             | The engine's chain in place of TresJS's render, rebuilt on a new camera or tier              |
+| `packages/genshin-world/src/composables/useGenshinTuning.ts`            | Development's tuning panel over the look                                                     |
 
 ## Notes
 
