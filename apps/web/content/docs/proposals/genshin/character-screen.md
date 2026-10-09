@@ -2,8 +2,14 @@
 title: Character screen
 description: Proposal — what is left of the game's character screen once its frame, its tabs and the Attributes tab are built. The look measured off the English client, the chosen character standing in the middle, the element's mark, the Details view, the other five tabs' panels, levelling up and ascending, levels 95 and 100, and the Traveler's resonance and quest bonuses.
 model: claude-opus-5-5
-needs: [game-install]
-touches: ["packages/genshin-world/src/components/Character/**"]
+needs: [game-install, game-exports]
+touches:
+  [
+    "packages/genshin-world/src/components/Character/**",
+    "packages/genshin-world/src/data/character/**",
+    "scripts/src/models/genshinAssets/shared/**",
+    "scripts/src/services/genshinAssets/fit/**",
+  ]
 ---
 
 # Character screen
@@ -13,6 +19,8 @@ This page builds on the [character screen](/docs/genshin/character-screen) as bu
 ## Decisions
 
 - **Measured like every screen.** The screen's references are recordings of the English client's character screen at 1080 high, published ones first; its frame's places, sizes and colours come from its rect tree and its passes, and every value marked provisional in its styles is replaced by a measured one.
+- **The screen's block is found by its page's Animator.** The asset index holds `AvatarInfoDialogV2`, an Animator in `00/04803507.blk`, beside `AvatarInfoDescDialog`, the Details dialog, and `AvatarLevelUpDialog`; the screen's root is the page's GameObject of the same name, as `LoginMainPage` is the login's. A tree whose nodes name no tabs (the game's `Property`, `Weapon`, `Reliquary`, `Talent`, `Skill` or `Fetter`) is the wrong page, and the step goes back as a miss naming what it held.
+- **Details is the game's `AvatarInfoDescDialog`**, laid out by its own tree from the same block. It adds the attributes the summary lacks: Incoming Healing Bonus, CD Reduction (`FIGHT_PROP_SKILL_CD_MINUS_RATIO`, which `Attribute` gains), Shield Strength and each element's RES, which `Attribute` already holds.
 - **The chosen character stands in the middle**, its official model on the toon ramp, over a background that moves with its element: lightning, water bubbles, snow, ash, wind, leaves or rocks.
 - **The element's mark at the top left**, the Vision of the character's region and element as the game draws it, traced into a path of our own as the interface's glyphs are; the Traveler's is their alignment's.
 - **Details opens every attribute**, the advanced ones past the summary (Incoming Healing Bonus, CD Reduction and Shield Strength among them) and each element's RES, in the game's three groups.
@@ -27,10 +35,10 @@ This page builds on the [character screen](/docs/genshin/character-screen) as bu
 
 **This adds, in order:**
 
-1. **The references and the look**, through the passes, replacing every provisional value.
-2. **The character in the middle and the element's mark.**
-3. **Details**, then the **Weapons** and **Artifacts** tabs over the [character attributes](/docs/genshin/character-attributes)' tables.
-4. **The roster's names**, each character's name read from the world's names by its `nameTextId`, `nameText[characterData.nameTextId]`, not a key of the [game text](/docs/genshin/game-text).
+1. **The screen's tree, exported and fitted.** `DerivedAssetComponent` gains `Character = "character"`, and `DerivedAssetComponentMap` its entry: `{ interface: { anchorPattern: "^AvatarInfoDialogV2$", root: "AvatarInfoDialogV2" }, roots: [], screen: "CharacterScreen" }`. `pnpm -C scripts genshin:assets interface character` exports the tree into `~/Esposter/genshin-parity/extracted/character/interface/interface.json` and prints it; the builder checks the tabs' nodes in it. A new `scripts/src/services/genshinAssets/fit/fitCharacterScreen.ts`, keyed in `DerivedAssetFitMap`, writes `packages/genshin-world/src/data/character/interfaceRects.json` through `fitInterfaceRects`, as `fitLoginScene`'s `interfaceRects` does, run by `pnpm -C scripts genshin:assets fit character --only interfaceRects`. `fitInterfaceRects` is already tested, so no new test is owed; the written file, holding the tabs' and the panel's paths, is the proof.
+2. **The look, placed by the fitted rects.** `Character/Screen` hands `CharacterMenu` its rects, which nests a `GameRect` per piece in the tree's order, and every value marked provisional gives way to the tree's. `pnpm -C scripts genshin:parity compare character-attributes` and the four other tabs' references must not rise from the scores the [character screen](/docs/genshin/character-screen) page holds, and the comparison is queued for the user's eyes.
+3. **The character in the middle and the element's mark.**
+4. **Details**, from `AvatarInfoDescDialog`'s tree, then the **Weapons** and **Artifacts** tabs over the [character attributes](/docs/genshin/character-attributes)' tables.
 5. **Level Up and Ascend**, on the [inventory](/docs/proposals/genshin/inventory)'s materials.
 6. **Constellation and Talents**, then the Profile tab's voice-over list and namecard view, then levels 95 and 100 and the Traveler's bonuses.
 
