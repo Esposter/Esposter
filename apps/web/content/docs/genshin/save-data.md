@@ -124,7 +124,7 @@ Paths relative to the repository root.
 | `packages/genshin-world/src/models/reputation/ReputationProgressSave.ts`               | Mondstadt's Reputation slice                                                                     |
 | `packages/genshin-world/src/models/wish/WishPityMapSave.ts`                            | the wish counters' slice, keyed by the kind of wish                                              |
 | `packages/genshin-world/src/services/save/constants.ts`                                | the bounds, the ceiling derived from them, the slices' empty values and the new player's save    |
-| `packages/genshin-world/src/services/inventory/bagLimits.ts`                           | the bag's kind limit and the most of one item, which the save's bag and stack bounds read        |
+| `packages/genshin-world/src/services/inventory/bagLimits.ts`                           | the kind and per-item bounds the save's bag is checked against                                   |
 | `packages/genshin-world/src/data/achievements/achievementCount.json`                   | the count of the achievements the table keeps, which the achievement slice is bounded by         |
 | `packages/genshin-world/src/services/save/toInventory.ts`                              | the bag read from its save, each definition read by item id, a weapon from the weapon table      |
 | `packages/genshin-world/src/services/save/toInventorySave.ts`                          | the bag written as its save, each entry by item id                                               |
