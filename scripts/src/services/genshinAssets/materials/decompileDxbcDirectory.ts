@@ -19,6 +19,7 @@ export const decompileDxbcDirectory = async (directory: string): Promise<number>
     directory: DECOMPILER_DIRECTORY,
     downloadTimeoutMs: PINNED_TOOL_DOWNLOAD_TIMEOUT_MS,
     executablePattern: "cmd_Decompiler.exe",
+    isArchive: true,
   });
   const programs = (await readdir(directory)).filter((name) => name.endsWith(".dxbc"));
   for (let start = 0; start < programs.length; start += DECOMPILER_BATCH_SIZE) {

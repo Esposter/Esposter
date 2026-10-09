@@ -1,4 +1,6 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import type { PinnedTool } from "#src/models/shared/PinnedTool";
+
+import { PINNED_TOOL_DOWNLOAD_TIMEOUT_MS, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { SITE_NAME } from "@esposter/shared";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -33,6 +35,28 @@ export const FFMPEG_DIRECTORY: string = join(REPOSITORY_ROOT, "scripts", "node_m
 export const FFMPEG_ARCHIVE_URL =
   "https://github.com/GyanD/codexffmpeg/releases/download/9.0.2/ffmpeg-9.0.2-essentials_build.zip";
 export const FFMPEG_ARCHIVE_SHA256 = "60f467265b1e312373dbcd92200c2618a74850f98d3d078e94296bb3fa2047ba";
+// The yt-dlp that reads public videos, pinned to one release and its checksum: the standalone Windows build is the
+// Executable itself, not an archive, and its folder is named for the release so a bump never reuses the old one. The
+// Pinned FFmpeg merges the streams it downloads
+export const YT_DLP_DIRECTORY: string = join(
+  REPOSITORY_ROOT,
+  "scripts",
+  "node_modules",
+  ".cache",
+  "yt-dlp",
+  "2026.08.19",
+);
+export const YT_DLP_PINNED_TOOL: PinnedTool = {
+  archiveSha256: "66674953fe251b89f4d08c5f0e35e0728679bd67ab3d7d05c0562af101dd3e7a",
+  archiveUrl: "https://github.com/yt-dlp/yt-dlp/releases/download/2026.08.19/yt-dlp.exe",
+  directory: YT_DLP_DIRECTORY,
+  downloadTimeoutMs: PINNED_TOOL_DOWNLOAD_TIMEOUT_MS,
+  executablePattern: "yt-dlp.exe",
+  isArchive: false,
+};
+// A clip's file name carries its video's id, eleven characters, and a clip name of letters, digits and dashes
+export const YT_CAPTURE_REGEX = /^yt-(?<videoId>[\w-]{11})(?:-|\.)/u;
+export const CLIP_NAME_REGEX = /^[\w-]+$/u;
 // The world package's parity page, which renders a screen without Nuxt. Its port is 3011 unless `GENSHIN_PARITY_PORT`
 // Names another: the shared checkout's page, which the main session serves once for every agent. A runner's worktree
 // Serves its own on 3002 (`pnpm -C packages/genshin-world parity`) and names that port

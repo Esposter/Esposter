@@ -6,6 +6,7 @@ import { bandsCommand } from "#src/services/genshinParity/commands/bandsCommand"
 import { benchCommand } from "#src/services/genshinParity/commands/benchCommand";
 import { blackCommand } from "#src/services/genshinParity/commands/blackCommand";
 import { calibrateCommand } from "#src/services/genshinParity/commands/calibrateCommand";
+import { clipCommand } from "#src/services/genshinParity/commands/clipCommand";
 import { compareCommand } from "#src/services/genshinParity/commands/compareCommand";
 import { coverCommand } from "#src/services/genshinParity/commands/coverCommand";
 import { decayCommand } from "#src/services/genshinParity/commands/decayCommand";
@@ -13,6 +14,7 @@ import { expressionCommand } from "#src/services/genshinParity/commands/expressi
 import { fetchCommand } from "#src/services/genshinParity/commands/fetchCommand";
 import { filmCommand } from "#src/services/genshinParity/commands/filmCommand";
 import { fogCommand } from "#src/services/genshinParity/commands/fogCommand";
+import { frameCommand } from "#src/services/genshinParity/commands/frameCommand";
 import { framesCommand } from "#src/services/genshinParity/commands/framesCommand";
 import { gbufferCommand } from "#src/services/genshinParity/commands/gbufferCommand";
 import { glideCommand } from "#src/services/genshinParity/commands/glideCommand";
@@ -92,5 +94,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     still: stillCommand,
     rank: rankCommand,
     record: recordCommand,
+    clip: clipCommand,
+    frame: frameCommand,
   },
 });
