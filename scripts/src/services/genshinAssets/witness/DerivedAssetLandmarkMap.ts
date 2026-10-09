@@ -7,6 +7,7 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<string, Landmark>> = {
   // The Court's landmarks name its capital's meshes and their shares, which the extraction has not yet given
   [DerivedAssetComponent.Fontaine]: {},
+  [DerivedAssetComponent.Hud]: {},
   // Inazuma City's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given:
   // The keep's eaves and ledges, the platform's corners, the houses' bases and roofs and the pavilion's eaves, each read
   // By eye off the reference's 4x crops (ParityReferenceMap's inazuma-city-location)
