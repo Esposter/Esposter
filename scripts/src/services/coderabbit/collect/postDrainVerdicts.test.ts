@@ -19,6 +19,7 @@ const getOpenThread = (commentId: number): ReviewThread => ({
   lastAuthorLogin: "coderabbitai",
   lastBody: "",
   path: "scripts/src/services/coderabbit/collect/postDrainVerdicts.ts",
+  replyAuthorLogins: [],
 });
 
 describe(postDrainVerdicts, () => {

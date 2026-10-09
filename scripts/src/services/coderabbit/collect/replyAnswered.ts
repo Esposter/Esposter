@@ -7,12 +7,18 @@ import { getDrainsVerdictBody } from "#src/services/coderabbit/collect/getDrains
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { postComment } from "#src/services/coderabbit/collect/postComment";
 import { postReply } from "#src/services/coderabbit/collect/postReply";
+import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { getResult, noop } from "@esposter/shared";
 
-// Every commit in the range that answers a finding gets the reply citing its sha. Predicate-guarded per thread,
-// So a run that pushed and died before replying is finished by a later one. Each post is best-effort: GitHub
-// Answers 500 on a thread often enough, and the predicate re-attempts it next run.
+// The newest reply one login wrote in a thread, by id, which GitHub mints in posting order; 0 when it wrote none
+const getNewestReplyId = (replies: PullRequestComment[], login: string): number =>
+  Math.max(0, ...replies.filter(({ user }) => user.login === login).map(({ id }) => id));
+// A commit in the range that answers a finding gets the reply citing its sha, once per thread and bot comment: a
+// Thread whose newest word is already the viewer's has its answer, so a second commit answering it — in this range
+// Or a later one — posts nothing, and only a bot comment after that answer earns another. Predicate-guarded per
+// Thread, so a run that pushed and died before replying is finished by a later one. Each post is best-effort:
+// GitHub answers 500 on a thread often enough, and the predicate re-attempts it next run.
 export const replyAnswered = ({
   commits,
   isDryRun,
@@ -28,14 +34,24 @@ export const replyAnswered = ({
     ),
     ({ in_reply_to_id }) => in_reply_to_id,
   );
+  // The finding itself is the bot's and older than every reply, so a viewer reply with no bot reply after it is newest
+  const repliedIds = new Set(
+    repliesByParent
+      .entries()
+      .filter(
+        ([, replies]) => getNewestReplyId(replies, viewerLogin) > getNewestReplyId(replies, CODERABBIT_REST_LOGIN),
+      )
+      .map(([commentId]) => commentId),
+  );
   for (const { answers, sha, subject } of commits)
     for (const commentId of answers) {
       const replies = repliesByParent.get(commentId) ?? [];
-      if (replies.some((reply) => checkIsMarked(reply, viewerLogin, sha))) continue;
+      if (repliedIds.has(commentId) || replies.some((reply) => checkIsMarked(reply, viewerLogin, sha))) continue;
 
       const body = `Agreed, fixed in ${sha} — ${subject}`;
       console.info(`reply ${commentId}: ${body}`);
       if (!isDryRun) getResult(() => postReply(pullRequest, commentId, body)).match(noop, console.error);
+      repliedIds.add(commentId);
     }
   // The predicate is the marker and the shas together: the rejections comment carries the marker and none of
   // These commits, so a review partly rejected and partly fixed owes both

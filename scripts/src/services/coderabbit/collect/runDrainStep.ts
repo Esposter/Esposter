@@ -1,8 +1,6 @@
 import type { DrainStepInput } from "#src/models/coderabbit/collect/DrainStepInput";
 import type { DrainStepResult } from "#src/models/coderabbit/collect/DrainStepResult";
 
-import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
-import { OUTAGE_RETRY_DELAY_SECONDS } from "#src/services/coderabbit/collect/constants";
 import { drainFindings } from "#src/services/coderabbit/collect/drainFindings";
 import { getOpenBodyReviewId } from "#src/services/coderabbit/collect/getOpenBodyReviewId";
 import { getOpenFindings } from "#src/services/coderabbit/collect/getOpenFindings";
@@ -11,9 +9,8 @@ import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas"
 import { getFeedbackReport } from "#src/services/coderabbit/feedback/getFeedbackReport";
 import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
 
-// A drain that could not start ends the run, since porting would put a window ahead of findings that must lead
-// It, and wakes the next one as an outage does: no event reports a launcher that wrote nothing coming back. A limit
-// Claude Code hit is the cycle's to hold, before this step is reached (`runCycle`).
+// A drain that could not start throws, and ends the pass the way every launch that wrote nothing does
+// (`SessionUnstartedError`). A limit Claude Code hit is the cycle's to hold, before this step is reached (`runCycle`).
 export const runDrainStep = async ({
   collectorSha,
   cwd,
@@ -41,7 +38,7 @@ export const runDrainStep = async ({
   const answeredIds = new Set(answeringCommits.flatMap(({ answers }) => answers));
   const drainedReviewIds = new Set(answeringCommits.flatMap(({ drains }) => drains));
   const threads = readUnresolvedThreads(pullRequest);
-  const openThreads = getOpenFindings(threads, answeredIds);
+  const openThreads = getOpenFindings(threads, answeredIds, viewerLogin);
   const openBodyReviewId = getOpenBodyReviewId({ drainedReviewIds, issueComments, newestReview, viewerLogin });
   console.info(
     `open findings: ${openThreads.length} inline, body-only review ${openBodyReviewId?.toString() ?? "none"}`,
@@ -53,26 +50,18 @@ export const runDrainStep = async ({
     return { reviewFixesSha };
   }
 
-  const drain = await drainFindings({
-    baseSha: owingFixesSha ?? developSha,
-    collectorSha,
-    feedback: getFeedbackReport({ issueComments, isThreadListed: false, review: newestReview, threads }),
-    issueComments,
-    newestReviewId: newestReview.id,
-    openThreads,
-    pullRequest,
-    reviewFixesSha,
-    reviewId: openBodyReviewId,
-    viewerLogin,
-  });
-  if (drain.isStarted) return { reviewFixesSha: drain.reviewFixesSha };
-  else
-    return {
-      outcome: {
-        kind: CycleOutcomeKind.Idle,
-        reason: "the drain could not start — the findings stay open",
-        retriggerDelaySeconds: OUTAGE_RETRY_DELAY_SECONDS,
-      },
+  return {
+    reviewFixesSha: await drainFindings({
+      baseSha: owingFixesSha ?? developSha,
+      collectorSha,
+      feedback: getFeedbackReport({ issueComments, isThreadListed: false, review: newestReview, threads }),
+      issueComments,
+      newestReviewId: newestReview.id,
+      openThreads,
+      pullRequest,
       reviewFixesSha,
-    };
+      reviewId: openBodyReviewId,
+      viewerLogin,
+    }),
+  };
 };

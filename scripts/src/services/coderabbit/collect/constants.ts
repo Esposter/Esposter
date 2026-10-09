@@ -133,9 +133,6 @@ export const DRAIN_FAILED_MARKER = "review-collector drain-failed";
 // Marker carries the instant it lifts, because nothing announces that.
 export const SESSION_LIMITED_MARKER = "review-collector session-limited";
 
-// A review whose drain failed past the attempt cap, noted once per basis on its pull request
-export const DRAIN_HELD_MARKER = "review-collector drain-held";
-
 export const DRAINS_MARKER = "review-collector drains";
 // A queue commit whose conflict with the tree the fixes built the sync could not resolve, counted against the
 // Same cap in a comment on the commit itself, since the sync runs with no release open to hold a count: past it

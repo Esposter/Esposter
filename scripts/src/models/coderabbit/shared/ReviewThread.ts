@@ -9,4 +9,7 @@ export interface ReviewThread {
   lastBody: string;
   line?: number;
   path: string;
+  // The author of every comment after the finding, oldest first — whether the collector has answered the thread
+  // Before, which a bot comment after that answer does not undo
+  replyAuthorLogins: string[];
 }

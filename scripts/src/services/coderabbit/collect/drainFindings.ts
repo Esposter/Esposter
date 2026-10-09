@@ -1,22 +1,18 @@
 import type { DrainFindingsInput } from "#src/models/coderabbit/collect/DrainFindingsInput";
-import type { DrainFindingsResult } from "#src/models/coderabbit/collect/DrainFindingsResult";
 
 import { AttemptFailedError } from "#src/models/coderabbit/collect/AttemptFailedError";
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
-  ANSWERS_TRAILER,
   DRAIN_FAILED_MARKER,
-  DRAIN_HELD_MARKER,
   DRAIN_VERDICT_PREFIX,
-  DRAINS_TRAILER,
-  QUEUE_BRANCH,
   REJECTIONS_FILE,
   REVIEW_FIXES_BRANCH,
   SESSION_ATTEMPT_CAP,
   SessionRoleModelMap,
   VERDICT_FILE,
 } from "#src/services/coderabbit/collect/constants";
+import { deferFindings } from "#src/services/coderabbit/collect/deferFindings";
 import { getAttempts } from "#src/services/coderabbit/collect/getAttempts";
 import { getDrainPrompt } from "#src/services/coderabbit/collect/getDrainPrompt";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
@@ -31,16 +27,17 @@ import { runInstall } from "#src/services/coderabbit/collect/runInstall";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
-import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
+import { withFinalizerAsync } from "@esposter/shared";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 // Claude works on the fixes branch — ai/review-fixes while it still owes develop commits, develop's head
 // Otherwise — pushed only after a clean exit, so a drain that dies leaves no trace. Past the attempt cap the
-// Review is held: every run fails red and nothing ports, since a window opened over findings no drain answered
-// Is a release merged with them unread. Claude Code's own limit is the one non-zero exit that is not this review's
-// Failure: its deadline goes into a marker comment every run reads until it lifts.
+// Findings are deferred rather than drained again: each is answered with why and listed in one issue, and the drain
+// Is complete, so the walk goes on. Claude Code's own limit is the one non-zero exit that is not this review's
+// Failure: its deadline goes into a marker comment every run reads until it lifts. Resolves to the fixes branch the
+// Port reads — the one pushed, or the one it started from when nothing was.
 export const drainFindings = async ({
   baseSha,
   collectorSha,
@@ -49,7 +46,7 @@ export const drainFindings = async ({
   reviewFixesSha,
   viewerLogin,
   ...drainInput
-}: DrainFindingsInput): Promise<DrainFindingsResult> => {
+}: DrainFindingsInput): Promise<string | undefined> => {
   const { pullRequest } = drainInput;
   // Counted from the pull request's comments the caller already read, and recorded back to that pull request
   const { attempts, recordFailure } = getAttempts({
@@ -63,19 +60,16 @@ export const drainFindings = async ({
     viewerLogin,
   });
   if (attempts >= SESSION_ATTEMPT_CAP) {
-    // The hold is the cap's own verdict, so it names the basis the count did: a collector that changed since drains
-    // The review again. Noted once per basis, where the person the red run sends looks
-    const heldMarker = getMarker(DRAIN_HELD_MARKER, newestReviewId, [collectorSha]);
-    if (!issueComments.some((comment) => checkIsMarked(comment, viewerLogin, heldMarker)))
-      postComment(
-        pullRequest,
-        `${heldMarker}\nThe drain of review ${newestReviewId} failed ${attempts} times. Nothing ports until its findings are answered — a commit on \`${QUEUE_BRANCH}\` carrying \`${ANSWERS_TRAILER}:\` or \`${DRAINS_TRAILER}:\`, a resolved thread, or a fix to the collector.`,
-      );
-    throw new InvalidOperationError(
-      Operation.Update,
-      "coderabbit",
-      `the drain of review ${newestReviewId} failed ${attempts} times — nothing ports ahead of its open findings until they are answered`,
-    );
+    // The cause is the newest failure's own sentence, the line under the marker the count read (`getAttemptFailure`)
+    const attemptMarker = getMarker(DRAIN_FAILED_MARKER, newestReviewId, [collectorSha]);
+    const cause =
+      issueComments
+        .findLast((comment) => checkIsMarked(comment, viewerLogin, attemptMarker))
+        ?.body.split("\n")
+        .at(1) ?? "the drain session failed";
+    // A dry run returns before the drain is reached (`runDrainStep`)
+    deferFindings({ ...drainInput, attempts, cause, isDryRun: false, viewerLogin });
+    return reviewFixesSha;
   }
 
   runGit(["switch", "--force-create", REVIEW_FIXES_BRANCH, baseSha]);
@@ -84,19 +78,18 @@ export const drainFindings = async ({
   // Outside the checkout, so the drain's "leave the working tree clean" and its verdicts never contend, and
   // Removed with the drain that made it — every run mints its own, and none of them is read again
   const verdictDirectory = mkdtempSync(join(tmpdir(), DRAIN_VERDICT_PREFIX));
-  const drainOutcome = await withFinalizerAsync(
+  const fixesSha = await withFinalizerAsync(
     async () => {
       const rejectionsPath = join(verdictDirectory, REJECTIONS_FILE);
       const verdictPath = join(verdictDirectory, VERDICT_FILE);
       const commentIdSeverityMap = await readFindingSeverities(drainInput.openThreads);
       const promptInput = { ...drainInput, commentIdSeverityMap, installFailure, rejectionsPath, verdictPath };
       const prompt = getDrainPrompt(promptInput);
-      const { isEnded, isStarted } = await runSession({
+      const { isEnded } = await runSession({
         cwd: REPOSITORY_ROOT,
         model: SessionRoleModelMap[SessionRole.Drain],
         prompt,
       });
-      if (!isStarted) return { isStarted: false, reviewFixesSha };
       // A zero exit says the session ended, never that it finished: a drain that stopped mid-fix leaves the rest in
       // The working tree, and reading `HEAD` there would push half a finding as though it were whole
       const dirtyPaths = readDirtyPaths();
@@ -131,11 +124,11 @@ export const drainFindings = async ({
         recordFailure(`drain review ${newestReviewId}`, detail);
         throw new AttemptFailedError(`the drain ${detail}`);
       }
-      return { isStarted: true, reviewFixesSha: headSha === baseSha ? reviewFixesSha : headSha };
+      return headSha === baseSha ? reviewFixesSha : headSha;
     },
     () => {
       rmSync(verdictDirectory, { force: true, recursive: true });
     },
   );
-  return drainOutcome;
+  return fixesSha;
 };
