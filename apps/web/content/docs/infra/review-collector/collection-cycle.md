@@ -270,7 +270,7 @@ flowchart TD
 | port   | `git cherry` lists unported commits, readiness                                                                                                                    | a local branch                                              | same branch, discarded with the runner                                                             |
 | push   | `origin/develop` unchanged since the read, `review/<n>` absent                                                                                                    | creates `review/<n>`, fast-forwards `develop`               | the branch exists — the opening finishes it                                                        |
 | open   | `develop` ahead of the stack with nothing to add, the budget holds                                                                                                | opens the window's pull request                             | one is open over it — the gate                                                                     |
-| repair | CI red on `main`'s head, its signature under the cap within the span                                                                                              | the regenerators else a session, a cut, a push              | the push made a new head CI has not concluded on — nothing                                         |
+| repair | CI red on `main`'s head in no job the queue's newest verdict passes, its signature under the cap within the span                                                  | the regenerators else a session, a cut, a push              | the push made a new head CI has not concluded on — nothing                                         |
 
 ## Notes
 

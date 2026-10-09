@@ -1,8 +1,7 @@
 import type { FailureSignature } from "#src/models/coderabbit/collect/FailureSignature";
 
-import { CI_FAILURE_CONCLUSION } from "#src/services/coderabbit/collect/constants";
+import { CI_FAILURE_CONCLUSION, CI_SUCCESS_CONCLUSION } from "#src/services/coderabbit/collect/constants";
 import {
-  CI_SUCCESS_CONCLUSION,
   GUARD_RUN_LIST_LIMIT,
   RUN_CANCELLED_CONCLUSION,
   RUN_IN_PROGRESS_STATUS,

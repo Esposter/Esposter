@@ -4,4 +4,5 @@ export interface MainCheck {
   databaseId: number;
   status: string;
   url: string;
+  workflowDatabaseId: number;
 }
