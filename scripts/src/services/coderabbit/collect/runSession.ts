@@ -47,7 +47,8 @@ export const runSession = async ({ cwd, model, prompt, signal }: SessionInput): 
       "stream-json",
       "--verbose",
     ],
-    { cwd, env: environment, stdio: ["pipe", "pipe", "inherit"] },
+    // Its own process group off Windows, so the deadline can signal the session `pnpm` launched along with `pnpm`
+    { cwd, detached: process.platform !== "win32", env: environment, stdio: ["pipe", "pipe", "inherit"] },
   );
   // Registered before the read loop: `close` fires on the tick after stdout ends, before the loop resumes
   const closed = once(child, "close");
@@ -57,17 +58,14 @@ export const runSession = async ({ cwd, model, prompt, signal }: SessionInput): 
   const lines = createInterface({ input: child.stdout });
   // A deadline ends the whole tree, and the read with our end of the pipe, since a session `pnpm` launched can outlive
   // It holding stdout open; the run then settles as one that did not end clean
-  signal?.addEventListener(
-    "abort",
-    () => {
-      if (process.platform === "win32")
-        spawnSync("taskkill", ["/PID", String(child.pid), "/T", "/F"], { stdio: "ignore", windowsHide: true });
-      else child.kill();
-      lines.close();
-      child.stdout.destroy();
-    },
-    { once: true },
-  );
+  const onAbort = () => {
+    if (process.platform === "win32")
+      spawnSync("taskkill", ["/PID", String(child.pid), "/T", "/F"], { stdio: "ignore", windowsHide: true });
+    else spawnSync("kill", ["-s", "KILL", "--", `-${child.pid}`], { stdio: "ignore" });
+    lines.close();
+    child.stdout.destroy();
+  };
+  signal?.addEventListener("abort", onAbort, { once: true });
   const ownLines: string[] = [];
   let hasOutput = false;
   for await (const line of lines) {
@@ -79,6 +77,8 @@ export const runSession = async ({ cwd, model, prompt, signal }: SessionInput): 
     if (!logLine.isNarration) ownLines.push(logLine.text);
   }
   await closed;
+  // Released once the child is gone, so a later deadline cannot signal a process group its id was reused for
+  signal?.removeEventListener("abort", onAbort);
   // A limit is a refusal to start, read only off a non-zero exit: the refusal's own result frame states `success`,
   // And reading a clean exit's output for the sentence would discard work over text the session merely echoed
   const isEnded = child.exitCode === 0;
