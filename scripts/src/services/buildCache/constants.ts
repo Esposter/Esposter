@@ -15,3 +15,14 @@ export const BUILD_CACHE_RUN_IN_SLOT_PATH = ".agents/skills/throughput/scripts/r
 export const BUILD_STAMP_FILE = ".build-cache-key";
 // Under a key's folder, the generated barrels, at the paths they have in the package
 export const BUILD_GENERATED_DIRECTORY = "generated";
+// The flags a cached build runs tsdown with. A worktree's `dist` is only ever run, by `nuxt dev`, the scripts and the
+// App's tests, and every reader of a sibling's types resolves its source, so the declarations, the published-shape
+// Checks and the manifest are left to `pnpm build` and CI's package build. They enter the key, so no output built
+// Otherwise is restored as this one.
+export const BUILD_CACHE_TSDOWN_FLAGS = [
+  "--no-clean",
+  "--no-dts",
+  "--no-attw",
+  "--no-publint",
+  "--no-exports",
+] as const;
