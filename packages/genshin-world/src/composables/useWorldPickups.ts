@@ -16,6 +16,7 @@ import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { openArchiveBook } from "#src/services/archive/openArchiveBook";
 import { checkIsGatheringPlaceStanding } from "#src/services/gathering/checkIsGatheringPlaceStanding";
 import { GATHERING_CLOCK_INTERVAL_MS } from "#src/services/gathering/constants";
+import { OreItemIdBreakPoiseMap } from "#src/services/gathering/OreItemIdBreakPoiseMap";
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
 import { placeEnemyDrops } from "#src/services/interaction/placeEnemyDrops";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
@@ -72,9 +73,14 @@ export const useWorldPickups = ({
       position: { x, y: getWorldHeight(x, z), z },
     }));
     const now = Temporal.Instant.fromEpochMilliseconds(gatheringClock.value.getTime() + serverClockOffsetMs);
+    // An ore is struck until it breaks rather than picked up, so its points are left out of the pick ups
     const gatherings = gatheringPlaces.value.flatMap(({ id, kind, position: { x, z } }) => {
       const item = idGatheringItemMap.value.get(kind);
-      if (!item || !checkIsGatheringPlaceStanding(gatheringPlaceIdPickedAtMap.value.get(id), item.respawn, now))
+      if (
+        !item ||
+        kind in OreItemIdBreakPoiseMap ||
+        !checkIsGatheringPlaceStanding(gatheringPlaceIdPickedAtMap.value.get(id), item.respawn, now)
+      )
         return [];
       return [
         {

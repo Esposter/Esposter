@@ -1,6 +1,7 @@
 import type { GatherRow } from "#src/models/genshinAssets/gathering/GatherRow";
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 import type { InteractiveMapLabel } from "#src/models/genshinAssets/points/InteractiveMapLabel";
+import type { FlatInteractiveMapLabel } from "#src/services/genshinAssets/points/flattenLabelTree";
 import type { GatheringItem } from "genshin-world";
 
 import {
@@ -8,6 +9,7 @@ import {
   GATHER_POINT_LOCATION_GROUND,
   GATHER_SAVE_TYPE_NONE,
   GATHER_TABLE_FILENAME,
+  LABEL_RESPAWN_MAP,
 } from "#src/services/genshinAssets/gathering/constants";
 import { MATERIAL_TABLE_FILENAME } from "#src/services/genshinAssets/items/constants";
 import { flattenLabelTree } from "#src/services/genshinAssets/points/flattenLabelTree";
@@ -20,7 +22,11 @@ import { MaterialType } from "genshin-world";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-// The plants and specialties the gathering points give. An item is one when the gather table picks it off the ground, and
+// How a label's points come back once picked or broken: by its own rule where it has one, else by its category
+const getLabelRespawn = ({ categoryId, id }: FlatInteractiveMapLabel) =>
+  LABEL_RESPAWN_MAP[id] ?? CATEGORY_RESPAWN_MAP[categoryId];
+
+// The plants, specialties and ores the gathering points give. An item is one when the gather table picks it off the ground, and
 // Its English name is the name of a label the official map files under a category that respawns, which is the label
 // Its points are marked by. Returns the items, and each label's item by the label's id, the first item of a name taking
 // The label where two items share one. An item of a material type the world does not name is left out
@@ -34,7 +40,7 @@ export const readGatheringItems = async (
   const gatherRows = parseMachineJson<GatherRow[]>(gatherContent);
   const materialRows = parseMachineJson<MaterialRow[]>(materialContent);
   const englishText = readTextMap(GameLanguage.English);
-  const categoryLabels = flattenLabelTree(labels).filter(({ categoryId }) => CATEGORY_RESPAWN_MAP[categoryId]);
+  const categoryLabels = flattenLabelTree(labels).filter((label) => getLabelRespawn(label) !== undefined);
   const materialRowMap = new Map(materialRows.map((materialRow) => [materialRow.id, materialRow]));
   const itemIds = [
     ...new Set(
@@ -53,9 +59,12 @@ export const readGatheringItems = async (
     if (!materialRow)
       throw new InvalidOperationError(Operation.Read, String(itemId), "has no row in the material table");
     const name = englishText.get(String(materialRow.nameTextMapHash));
-    const matchedLabels = categoryLabels.filter((label) => name !== undefined && label.name === name);
+    // The official map spells some labels with no-break spaces where the text map has plain ones, as White Iron Chunk
+    const matchedLabels = categoryLabels.filter(
+      (label) => name !== undefined && label.name.replaceAll(" ", " ") === name,
+    );
     const [firstLabel] = matchedLabels;
-    const respawn = firstLabel && CATEGORY_RESPAWN_MAP[firstLabel.categoryId];
+    const respawn = firstLabel && getLabelRespawn(firstLabel);
     const materialType = Object.values(MaterialType).find((type) => type === materialRow.materialType);
     if (!firstLabel || !respawn || !materialType) continue;
     const nameTextId = GameTextKeys.find((gameTextKey) => gameTextKey === String(materialRow.nameTextMapHash));
