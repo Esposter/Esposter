@@ -103,7 +103,7 @@ export const traceCoveredGrid = (
     );
     const halves = [
       ...simplifyPath(loop.slice(0, farthestIndex + 1), tolerance).slice(0, -1),
-      ...simplifyPath([...loop.slice(farthestIndex), loop[0] ?? [0, 0]], tolerance).slice(0, -1),
+      ...simplifyPath<[number, number]>([...loop.slice(farthestIndex), loop[0] ?? [0, 0]], tolerance).slice(0, -1),
     ];
     // The split corners are kept by both halves, so one lying on the line through its neighbours is dropped
     const simplified = halves.filter(([x, y], index) => {
