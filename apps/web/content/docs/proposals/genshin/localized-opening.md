@@ -4,6 +4,7 @@ description: Proposal — the rest of the opening as each client language's buil
 model: claude-opus-5-5
 needs: [media-engine]
 touches: ["scripts/src/services/genshinParity/shared/ParityReferenceMap.ts"]
+waiting: "the user's Japanese and Korean PC launch recordings on the roadmap's Recordings owed list, japanese-launch.mkv and korean-launch.mkv, each 30 seconds from the launch with the splash, notice and door in view"
 ---
 
 # Localized opening
@@ -28,7 +29,7 @@ flowchart LR
 ## Scope
 
 - **Done: the Japanese PC client's health notice.** Its reference `health-notice-japanese` is the public recording's frame at 30 seconds (`yt-57d2PwbOdr0-opening-japanese.mp4`, clipped by `genshin:parity clip`), whole in its own words, scored over a region clear of the PC watermark and the recorder's icons. Its compare is a `[page]` item on the roadmap for the user's eyes.
-- **Not in the public clips.** The Japanese clip shows the PC client's title only as its iPhone capture, and no PC publisher splash, so `title-splash-japanese` and `publisher-splash-japanese` wait on a PC recording. The Korean clip (`yt-HFxhJB_N4Nk-opening-korean.mp4`, 720 high) is the account login form for all 105 seconds, with no splash, health notice or door stage, so no Korean reference can be built from it, and it waits on a Korean launch recording.
+- **Not in any public clip.** Searches for each client's PC launch found none: the Japanese clip shows the PC client's title only as its iPhone capture, and no Japanese PC splash or door. The Korean clip (`yt-HFxhJB_N4Nk-opening-korean.mp4`, 720 high) is the account login form for all 105 seconds. A 2020 Korean PC gameplay video (`yt-4zVvDgStMWQ`, 1080 high) opens on a title card and cuts to the world, with no splash, notice or door. So `title-splash-japanese`, `publisher-splash-japanese`, the Korean launch's stages and both clients' door stages wait on `japanese-launch.mkv` and `korean-launch.mkv` in the roadmap's Recordings owed list.
 
 - The publisher splash where a client shows a different publisher's logo.
 - The health notice and login screen's layout where a recording shows a difference.
