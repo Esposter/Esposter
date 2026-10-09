@@ -7,7 +7,7 @@ import { writeGenshinSaveEnvelope } from "#server/services/genshin/writeGenshinS
 import { AzureContainer } from "@esposter/db-schema";
 
 export interface StartGenshinResult {
-  etag: string | undefined;
+  etag?: string;
   save: GenshinSave;
   serverNow: string;
   sessionId: string;

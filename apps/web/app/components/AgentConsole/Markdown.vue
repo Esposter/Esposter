@@ -35,7 +35,7 @@ const blocks = computed(() =>
 </script>
 
 <template>
-  <div class="markdown" flex flex-col gap-2 min-w-0 @click="openLinkInPane">
+  <div class="markdown" flex flex-col gap-2 min-w-0 @click="openLinkInPane($event)">
     <template v-for="(block, index) of blocks" :key="index">
       <!-- eslint-disable-next-line vue/no-v-html -- sanitized above -->
       <div v-if="typeof block === 'string'" v-html="block" />

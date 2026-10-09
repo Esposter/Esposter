@@ -2,13 +2,14 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createCallerFactory } from "#server/trpc";
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { getSaveBlobName } from "#server/services/blobState/getSaveBlobName";
+import { createCallerFactory } from "#server/trpc";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { genshinRouter } from "#server/trpc/routers/genshin";
 import { readJsonBlob, writeJsonBlob } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { EMPTY_GENSHIN_SAVE } from "genshin-world/save";
 import { beforeAll, describe, expect, test } from "vitest";
 
@@ -48,10 +49,12 @@ describe("genshinRouter", () => {
 
     const containerClient = await useContainerClient(AzureContainer.GenshinAssets);
     const blobName = getSaveBlobName(getMockSession().user.id);
-    const storedJson = JSON.stringify({ save: {}, sessionId: "" });
-    await writeJsonBlob(containerClient, blobName, storedJson);
+    const storedText = "not a save";
+    await writeJsonBlob(containerClient, blobName, storedText);
 
-    await expect(genshinCaller.startGenshin()).rejects.toThrow(blobName);
-    expect((await readJsonBlob(containerClient, blobName))?.toString()).toBe(storedJson);
+    await expect(genshinCaller.startGenshin()).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, blobName, "✖ Invalid input: expected object, received undefined").message}]`,
+    );
+    expect((await readJsonBlob(containerClient, blobName))?.toString()).toBe(storedText);
   });
 });
