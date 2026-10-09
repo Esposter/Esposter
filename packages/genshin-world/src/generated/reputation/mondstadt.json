@@ -169,6 +169,47 @@
       }
     }
   ],
+  "explores": [
+    {
+      "exploreId": 1,
+      "exploreProgress": 20,
+      "reward": {
+        "exp": 200,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      }
+    },
+    {
+      "exploreId": 2,
+      "exploreProgress": 40,
+      "reward": {
+        "exp": 200,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      }
+    },
+    {
+      "exploreId": 3,
+      "exploreProgress": 60,
+      "reward": {
+        "exp": 200,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      }
+    }
+  ],
   "levels": [
     {
       "functionIds": [],

@@ -6,7 +6,7 @@ import { defineCommand } from "citty";
 export const reputationCommand: SubCommandsDef[string] = defineCommand({
   meta: {
     description:
-      "Write Mondstadt's Reputation from the dump into genshin-world: its levels and rewards, its requests and its weekly bounties",
+      "Write Mondstadt's Reputation from the dump into genshin-world: its levels and rewards, its requests, its exploration thresholds and its weekly bounties",
     name: "reputation",
   },
   run: () => {
