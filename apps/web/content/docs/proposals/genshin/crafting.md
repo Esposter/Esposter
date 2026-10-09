@@ -3,6 +3,7 @@ title: Crafting
 description: Proposal — the crafting bench's parts still to build: its place in the city, the gadgets from their wiki instructions, and the save's craft count. The recipes, their rules, the instruction unlocks, the characters' crafting talents with their regional materials and the screen with its tabs are built, as the crafting page records.
 model: claude-haiku-5-5
 needs: [game-exports]
+waiting: "the bench's place, the first step, which the other machine's scene group export gives (the official map marks no bench, so the streaming records must); the gadgets follow it in order"
 touches:
   [
     "packages/genshin-world/src/services/crafting/**",
