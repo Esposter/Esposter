@@ -1,6 +1,6 @@
 ---
 title: Character kits
-description: Genshin's character kits as built — every playable character's skill sets read from the game's tables into genshin-world, each with its skill's cooldown and charges and its burst's cooldown, energy cost and element, per element form. The Traveler's kit reads its multipliers from the game's proud skill table and sits in its own character module, and Diluc's kit is built the same way, with its burst's infusion. A kit's action turns to its target by the wiki's score, a hit can deal its own element, a buff bonus its pricing, and a party member can be healed. Per-character modules beyond these are still proposed.
+description: Genshin's character kits as built — every playable character's skill sets read from the game's tables into genshin-world, each with its skill's cooldown and charges and its burst's cooldown, energy cost and element, per element form. The Traveler's kit reads its multipliers from the game's proud skill table and sits in its own character module, and Diluc's and Bennett's kits are built the same way, with Dawn's infusion and Fantastic Voyage's field. A kit's action turns to its target by the wiki's score, a hit can deal its own element, a buff bonus its pricing, and a party member can be healed. Per-character modules beyond these are still proposed.
 ---
 
 # Character kits
@@ -52,6 +52,7 @@ A hit can name its own element, which strikes the enemy as that element whatever
 Each character with a module has one file under `services/kit/characters/`, exporting its kit shaped like `TRAVELER_KIT`. `CharacterIdKitMap` keys them by avatar id, and a character with none fights with the Traveler's kit.
 
 - **Diluc** (`DILUC_KIT`, avatar 10000016): four strikes, a charged attack, a collision and two plunges, Searing Onslaught's first press, and Dawn's slashing hit. Its multipliers are read from proud skill groups 1631, 1632 and 1639, and match the wiki's Tempered Sword and gcsim's level-1 values to two decimal places. Dawn's infusion and the A4 passive are built, as the shared effects below.
+- **Bennett** (`BENNETT_KIT`, avatar 10000032): five strikes, a charged attack, a collision and two plunges, Passion Overload's press, and Fantastic Voyage's damage. Its multipliers are read from proud skill groups 3231, 3232 and 3239, and match the wiki's Strike of Fortune, Passion Overload and Fantastic Voyage values to two decimal places. Fantastic Voyage's field, its heal, its ATK bonus and its self infusion are built, as the shared effects below.
 
 ## Shared effects
 
@@ -62,7 +63,8 @@ Each effect is on the party, in a list the character component holds, so a switc
 - **Buff** adds a stat bonus to the character's pricing for its seconds: a flat ATK adds to its attack and any other bonus to its attribute total. It is refreshed the same way.
 - **Heal** is `healPartyMember`: a share of a standing member's max HP, never above all of it. A downed member stays down, as only a revive brings one back.
 - **Energy** is the party's `gainPartyEnergy`, which an enemy's drop already calls.
-- **Fields and summons** are not built. Dawn's damage-over-time and explosion and Mirror Reflection of Doom wait on them.
+- **Field** is a circle placed where its character casts, for its seconds, with a tick on a schedule. Each tick runs while the body stands inside it, reading the character on the field and the team, and a tick's own buffs and infusions start at their full seconds.
+- **Summons** are not built. Dawn's damage-over-time and explosion and Mirror Reflection of Doom wait on them.
 
 ## Decisions
 
@@ -76,6 +78,9 @@ Each effect is on the party, in a list the character component holds, so a switc
 - **Poise is the wiki's where gcsim gives none.** gcsim sets no poise on Diluc's skill, burst or collision; the wiki's advanced properties give 120, 100 and 35.
 - **A collision infused at 0U still deals the element.** A hit's element no longer needs a gauge, so the collision's Pyro damage lands with no aura, as the wiki's table gives it.
 - **Diluc's A1 and the phase-0 passive are not built.** gcsim models no combat effect for either.
+- **A field's tick reads the character on the field.** Fantastic Voyage's heal and ATK bonus go to the character standing in the circle, not to each member of the team, as gcsim applies them.
+- **Bennett's heal ignores Healing Bonus.** The heal is the table's flat HP plus its share of Bennett's max HP, unscaled.
+- **Bennett's A1 and A4 are not built.** Both cut Passion Overload's cooldown, which the kit holds as one value, and A4 also stops a level-2 hold from launching Bennett. Passion Overload's hold levels are not built either.
 
 ## Key files
 
@@ -91,6 +96,8 @@ Each effect is on the party, in a list the character component holds, so a switc
 | `packages/genshin-world/src/services/kit/getTalentMultiplier.ts`        | A talent's parameter at a level, by its index                                          |
 | `packages/genshin-world/src/services/kit/selectAttackTarget.ts`         | The targeting score an action turns the body to                                        |
 | `packages/genshin-world/src/services/kit/characters/travelerKit.ts`     | `TRAVELER_KIT`, the Traveler's Anemo kit                                               |
+| `packages/genshin-world/src/services/kit/characters/bennettKit.ts`      | `BENNETT_KIT`, Bennett's kit with Fantastic Voyage's field                             |
+| `packages/genshin-world/src/services/kit/effects/stepKitField.ts`       | A field's schedule, run on each step, ticking while the body stands in it              |
 | `packages/genshin-world/src/services/kit/characters/dilucKit.ts`        | `DILUC_KIT`, Diluc's kit with Dawn's infusion and A4                                   |
 | `packages/genshin-world/src/services/kit/CharacterIdKitMap.ts`          | Each built character's kit by avatar id, read by the roster                            |
 | `packages/genshin-world/src/services/kit/effects/addKitEffect.ts`       | Adds an effect, refreshing one of its kind on the same character                       |
@@ -107,4 +114,6 @@ Each effect is on the party, in a list the character component holds, so a switc
 - [Tempered Sword](https://genshin-impact.fandom.com/wiki/Tempered_Sword), Genshin Impact Wiki: Diluc's advanced properties (gauge, internal cooldown, poise, blunt) and the charged attack's and plunges' values.
 - [Searing Onslaught](https://genshin-impact.fandom.com/wiki/Searing_Onslaught), [Dawn](https://genshin-impact.fandom.com/wiki/Dawn) and [Elemental Gauge Theory: Character Data](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Character_Data), Genshin Impact Wiki: the skill's and burst's gauges and poise, and the infused collision's 0U.
 - [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/diluc), MIT: Diluc's strikes', skill's, burst's and plunges' hitmarks, cancel frames and areas, and the burst's infusion and A4.
+- [Strike of Fortune](https://genshin-impact.fandom.com/wiki/Strike_of_Fortune), [Passion Overload](https://genshin-impact.fandom.com/wiki/Passion_Overload) and [Fantastic Voyage](https://genshin-impact.fandom.com/wiki/Fantastic_Voyage), Genshin Impact Wiki: Bennett's advanced properties, gauges, poise and the field's heal and ATK bonus.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/bennett), MIT: Bennett's hitmarks, cancel frames, areas and the field's ticks.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the avatar, skill depot and skill tables the table is read from, and the proud skill table the multipliers are read from.

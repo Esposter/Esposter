@@ -149,7 +149,8 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     isSkillPressed,
     locomotionState: phase.state,
   };
-  stepKitEffects(effects, FIXED_STEP_SECONDS);
+  const kitBody: KitBody = { facing: characterController.facing, height, position };
+  stepKitEffects(effects, FIXED_STEP_SECONDS, { activeCombatant: combatant, body: kitBody.position, party });
   const infusedElement = getInfusedElement(effects, characterId);
   const landedStart = landedHits.length;
   const action = stepKit(
@@ -162,7 +163,6 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     landedHits,
   );
   if (infusedElement !== undefined) infuseKitHits(combatant.kit, infusedElement, landedHits, landedStart);
-  const kitBody: KitBody = { facing: characterController.facing, height, position };
   if (action) {
     // A started action turns the body to the enemy it targets, and the hits that follow are drawn from the turned body
     const target = selectAttackTarget(action.targetingArea, kitBody, enemyMap.values());
