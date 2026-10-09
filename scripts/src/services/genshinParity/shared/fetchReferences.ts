@@ -39,7 +39,7 @@ export const fetchReferences = async (): Promise<void> => {
       // A crop placed in its frame is drawn on the frame's black, so the reference is the whole frame at its scale. One
       // That no longer fits where it is placed is a file the wiki has changed, so it is reported rather than drawn
       if (placement) {
-        const { height = 0, width = 0 } = await sharp(file).metadata();
+        const { height, width } = await sharp(file).metadata();
         if (placement.x + width > placement.frameWidth || placement.y + height > placement.frameHeight)
           return `${id}: ${width}×${height} on the wiki no longer fits its frame at ${placement.x}, ${placement.y}`;
         await sharp({
