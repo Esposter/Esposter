@@ -1,0 +1,57 @@
+# The Fleet — Any Number of Machines, One Queue
+
+Read when more than one machine works the backlog: when a machine joins, when one goes idle, when work is claimed, synced or pushed, when game data has to reach a machine, and when the fleet's load is read.
+
+The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all follow the same rules. So no rule may cost the coordinator anything per machine: no assignment by message, no report read per machine, no machine named in a rule. The architecture page, with the diagram and the fleet's current machines, is `apps/web/content/docs/architecture/fleet.md`.
+
+## A machine
+
+- **A machine is a checkout of its own with one main Claude session on it.** Its session fans work out to its own `haiku` agents, as many as its watcher's idle lines allow.
+- **Its profile is `~/.esposter/machine.json`:**
+  - `id`;
+  - `areas`, the areas the user lent it for (the MacBook's is `["genshin"]`, and `["*"]` is everything);
+  - `capabilities`: its OS, plus `game-install`, `game-exports`, `parity-page` and `media-engine` as it holds them.
+
+  `pnpm ai:fleet:profile` writes what it detects and keeps what the user set.
+
+- **An area the user did not lend is never worked**, however idle the machine is.
+
+## The queue is pulled, never pushed
+
+- **Work is an entry with an id and its needs:** a compute-queue item on the roadmap, or an open proposal unit. An entry names what it writes, which is also its touch set.
+- **An idle machine takes its own next entry.** When its watcher prints an idle line, its session runs `pnpm ai:fleet:next`. That returns, and claims, the first entry that meets all of these:
+  - its needs are within the machine's capabilities;
+  - its area is lent;
+  - no one holds it;
+  - its touch set overlaps no held claim's.
+
+  Nothing ready means the machine stays idle and says nothing.
+
+- **The coordinator writes entries and settles calls.** It never assigns work by message and never waits on a machine's report, so the fleet grows without its cost growing.
+
+## A claim is a ref
+
+- **Claiming creates `refs/claims/<entry-id>` on origin, by pushing a parentless commit.** Git refuses the second create as not a fast-forward, so exactly one machine wins. There is no lock service, and two different entries never contend.
+- **The holder renews it every ten minutes** with an explicit `--force-with-lease=refs/claims/<id>:<its sha>`, and the renewal's message carries its latest utilization line.
+- **A claim unrenewed for thirty minutes is stale.** It is taken over the same way, leased from the stale sha.
+- **Finishing deletes the ref** right after the entry's landing commit is pushed. A missed entry keeps its claim ref, its message naming the miss, until the coordinator's call changes the entry.
+- **A claim never touches `ai/queue`**, so it starts no CI run. The old claim, a ` — running` line committed and pushed, cost a commit, a push and a CI run each.
+
+## Load is read, not reported
+
+- **Each machine runs `pnpm ai:machine:watch` under Monitor.** It is the same command on every OS, and it pushes `refs/machines/<id>` every ten minutes with the machine's CPU, GPU and free memory.
+- **`pnpm ai:fleet:status` is the coordinator's whole view:** every machine's last sample, and every claim with its holder and age.
+- **A machine messages the coordinator only for a miss, a failure, or a call it cannot make.** Its idle lines are its own signal to claim.
+
+## Sync
+
+- **A machine's own checkout** runs `git pull --rebase` before each entry and before each push. It pushes through `pnpm ai:queue:push` after each coherent chunk, never once at the end of a long entry. With many machines a push loses its race routinely, and the script retries with jittered backoff.
+- **A shared checkout**, the one a machine's agents all edit, is always dirty, so it never pulls. Its session runs `pnpm ai:queue:push` after every agent report. The script replays the session commits onto origin in a throwaway worktree, pushes, and moves the checkout's branch when no dirty file conflicts.
+- **Never stash, never `git add -A`, never a bare `--force-with-lease`**, on any machine (the `review-queue` skill).
+
+## Game data crosses the local network only
+
+- **Exports and recordings never travel through git, GitHub, a cloud drive or a Claude channel.** They move over SSH on the LAN, authenticated and encrypted. Remote Login on a Mac is the user's switch, set once per machine, and a peer's public key goes in the receiver's `authorized_keys`.
+- **`pnpm ai:fleet:data pull <peer>` copies only what the local manifest lacks**, as one tar stream. Every machine that holds the data serves it, so a new machine pulls from any peer and the fan-out grows with the fleet.
+- **Each machine's `GENSHIN_PARITY_DIRECTORY` is `~/Esposter/genshin-parity`.** What is copied is `extracted`, `text`, `references`, `captures`, `city-areas` and `plans`. `frames` and `tmp` are rebuilt where they are used.
+- **A machine off the LAN never holds `game-exports`**, so it takes only the entries that need no game data.
