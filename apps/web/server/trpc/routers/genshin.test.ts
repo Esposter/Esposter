@@ -3,8 +3,12 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "#server/trpc";
-import { createMockContext } from "#server/trpc/context.test";
+import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
+import { getSaveBlobName } from "#server/services/blobState/getSaveBlobName";
+import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { genshinRouter } from "#server/trpc/routers/genshin";
+import { readJsonBlob, writeJsonBlob } from "@esposter/db";
+import { AzureContainer } from "@esposter/db-schema";
 import { EMPTY_GENSHIN_SAVE } from "genshin-world/save";
 import { beforeAll, describe, expect, test } from "vitest";
 
@@ -37,5 +41,17 @@ describe("genshinRouter", () => {
     const result = await genshinCaller.saveGenshin({ save: EMPTY_GENSHIN_SAVE, sessionId });
 
     expect(result.serverNow).toBeTypeOf("string");
+  });
+
+  test("a start over a save that does not parse is refused and leaves the save as it was", async () => {
+    expect.hasAssertions();
+
+    const containerClient = await useContainerClient(AzureContainer.GenshinAssets);
+    const blobName = getSaveBlobName(getMockSession().user.id);
+    const storedJson = JSON.stringify({ save: {}, sessionId: "" });
+    await writeJsonBlob(containerClient, blobName, storedJson);
+
+    await expect(genshinCaller.startGenshin()).rejects.toThrow(blobName);
+    expect((await readJsonBlob(containerClient, blobName))?.toString()).toBe(storedJson);
   });
 });
