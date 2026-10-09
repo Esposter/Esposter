@@ -7,7 +7,7 @@ import { selectReplayCommits } from "#src/services/queue/selectReplayCommits";
 import { syncCheckout } from "#src/services/queue/syncCheckout";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
-import { getResult, getResultAsync } from "@esposter/shared";
+import { getResult, getResultAsync, noop } from "@esposter/shared";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -48,7 +48,7 @@ export const pushQueue = async (cwd: string = REPOSITORY_ROOT): Promise<QueuePus
   // Apart from its directory, so it is removed on every path, a refused push included, or one is left per retry
   const replayCwd = mkdtempSync(join(tmpdir(), WORKTREE_PREFIX));
   getResult(() => runGit(["worktree", "add", "--quiet", "--detach", replayCwd, REMOTE_QUEUE_REF], cwd)).match(
-    () => undefined,
+    noop,
     (error) => {
       rmSync(replayCwd, { force: true, recursive: true });
       throw error;
@@ -75,7 +75,7 @@ export const pushQueue = async (cwd: string = REPOSITORY_ROOT): Promise<QueuePus
       ),
     // A replay that failed is the error thrown, and a removal that failed beside it is logged rather than masking it
     (error) => {
-      removal.match(() => undefined, console.error);
+      removal.match(noop, console.error);
       throw error;
     },
   );
