@@ -13,6 +13,8 @@ Time and effort are the limit, so every resource the session holds works at once
 - **Ending a turn to report while independent work is still ready.** The report goes out with the work still running, and names what runs and what is queued.
 - **A question to the user that blocks the rest of the turn.** Asks of the user's ear or eye are batched at the end of a reply, and everything not waiting on the answer carries on.
 
+- **A maintenance tier inside the usage reserve**, where sessions past 90% turn to reviews, sweeps and docs on `haiku` before the wind-down. The user declined it on 2026-10-10: the compute queue's runs change code too, and the reserve keeps the last tenth for them, since that is where refactors, simplifications and optimisations turn up.
+
 ## Rules
 
 - **A run of a minute or more starts in the background**, and the same turn picks up the next unit that does not depend on it. A step whose input is that run's result waits for its notification and is never run ahead on a guess.
