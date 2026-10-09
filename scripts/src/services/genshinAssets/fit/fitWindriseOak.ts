@@ -13,6 +13,7 @@ import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { sampleFaceUvs } from "#src/services/genshinAssets/fit/sampleFaceUvs";
 import { sampleSurfaceTexture } from "#src/services/genshinAssets/fit/sampleSurfaceTexture";
 import { toWorldVertices } from "#src/services/genshinAssets/fit/toWorldVertices";
+import { traceRootCentrelines } from "#src/services/genshinAssets/fit/traceRootCentrelines";
 import {
   CUTOFF_PROPERTY,
   OAK_BARK_MESH,
@@ -20,6 +21,9 @@ import {
   OAK_CLUSTER_SEED,
   OAK_LEAF_MESH,
   OAK_NORMAL_CELL_SIZE,
+  OAK_ROOT_LEVEL_STEP,
+  OAK_ROOT_SUBMESH,
+  OAK_ROOT_TOLERANCE,
   OAK_TRUNK_HEIGHTS,
   OAK_TRUNK_REACH,
   OAK_TRUNK_SLAB_HALF_HEIGHT,
@@ -50,7 +54,7 @@ const readMeshInThree = async (
   placement: AssetPlacement,
   origin: readonly [number, number, number],
 ): Promise<
-  Pick<Awaited<ReturnType<typeof readObjMesh>>, "faces" | "faceUvs" | "uvs"> & {
+  Pick<Awaited<ReturnType<typeof readObjMesh>>, "faceGroups" | "faces" | "faceUvs" | "uvs"> & {
     normals: (undefined | Vector)[];
     vertices: Vector[];
   }
@@ -60,6 +64,7 @@ const readMeshInThree = async (
   const rotation = new Quaternion(...placement.rotation);
   const normal = new Vector3();
   return {
+    faceGroups: mesh.faceGroups,
     faces: mesh.faces,
     faceUvs: mesh.faceUvs,
     normals: computeVertexNormals(mesh).map((vertexNormal) => {
@@ -97,10 +102,11 @@ const findOakPlacement = (placements: AssetPlacement[], mesh: string): AssetPlac
   if (!placement) throw new InvalidOperationError(Operation.Read, DerivedAssetComponent.Windrise, `places no ${mesh}`);
   return placement;
 };
-// The great oak's canopy and trunk read off its export's Lod1 meshes, in three's axes round its foot: each leaf
-// Triangle's centroid, the centre of the card it is half of, with the leaf it keeps (its area times the share of its
-// Texture its material's cutoff keeps), grouped into the clusters `clusterCardCentres` finds, and the bark's radius at
-// Each trunk station, as the record `windrise/oak` with its report
+// The great oak's canopy, trunk and surface roots read off its export's Lod1 meshes, in three's axes round its foot: each
+// Leaf triangle's centroid, the centre of the card it is half of, with the leaf it keeps (its area times the share of
+// Its texture its material's cutoff keeps), grouped into the clusters `clusterCardCentres` finds, the bark's radius at
+// Each trunk station, and its roots' submesh traced into the centrelines their tubes are swept along, as the record
+// `windrise/oak` with its report
 export const fitWindriseOak = async (): Promise<GameDataBuild> => {
   const meshDirectory = join(getComponentDirectory(DerivedAssetComponent.Windrise).assets, AssetType.Mesh);
   const [placements, origin] = await Promise.all([
@@ -157,8 +163,17 @@ export const fitWindriseOak = async (): Promise<GameDataBuild> => {
       throw new InvalidOperationError(Operation.Read, OAK_BARK_MESH, `has no bark at the trunk's height ${height}`);
     return { height, radius: roundFitted(radius) };
   });
+  const rootGroup = `${OAK_BARK_MESH}_${OAK_ROOT_SUBMESH}`;
+  const roots = traceRootCentrelines(
+    bark.vertices,
+    bark.faces.filter((_face, index) => bark.faceGroups[index] === rootGroup),
+    { levelStep: OAK_ROOT_LEVEL_STEP, tolerance: OAK_ROOT_TOLERANCE },
+  );
+  if (roots.length === 0) throw new InvalidOperationError(Operation.Read, rootGroup, "has no surface roots");
   return {
-    notes: [`oak: ${clusters.length} clusters over ${cards.length} leaf triangles, trunk ${trunk.length} stations`],
+    notes: [
+      `oak: ${clusters.length} clusters over ${cards.length} leaf triangles, trunk ${trunk.length} stations, ${roots.length} roots through ${roots.reduce((sum, root) => sum + root.length, 0)} points`,
+    ],
     objects: {
       "windrise/oak": {
         clusters: clusters.map(({ leafArea, radius, x, y, z }) => ({
@@ -169,6 +184,14 @@ export const fitWindriseOak = async (): Promise<GameDataBuild> => {
           z: roundFitted(z),
         })),
         normalField,
+        roots: roots.map((root) =>
+          root.map(({ radius, x, y, z }) => ({
+            radius: roundFitted(radius),
+            x: roundFitted(x),
+            y: roundFitted(y),
+            z: roundFitted(z),
+          })),
+        ),
         trunk,
       },
     },
