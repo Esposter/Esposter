@@ -2,7 +2,7 @@
 import type { NoteSlashItem } from "@/models/resource/note/NoteSlashItem";
 import type { Item } from "@/models/shared/Item";
 import type { MenuItem } from "@/models/shared/MenuItem";
-import type { Editor } from "@tiptap/vue-3";
+import type { Editor } from "@tiptap/core";
 
 import { getNoteBlockMenuItems } from "@/services/resource/note/getNoteBlockMenuItems";
 import { NoteSlashAliasMap } from "@/services/resource/note/NoteSlashAliasMap";

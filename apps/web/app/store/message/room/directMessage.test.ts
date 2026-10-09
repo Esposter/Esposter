@@ -105,7 +105,12 @@ describe(useDirectMessageStore, () => {
     trpcMsw.room.directMessage.createDirectMessage.mutation(() => friendDirectMessage);
     trpcMsw.message.createMessage.mutation(({ input }) => {
       sentMessages.push(input);
-      return createMessageEntity({ message: input.message, roomId: input.roomId, type: input.type, userId: sender.id });
+      return createMessageEntity({
+        message: input.message,
+        roomId: input.roomId,
+        type: MessageType.Message,
+        userId: sender.id,
+      });
     });
     const directMessageStore = useDirectMessageStore();
     const { directMessages } = storeToRefs(directMessageStore);

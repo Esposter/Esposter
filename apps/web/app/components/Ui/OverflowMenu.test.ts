@@ -18,7 +18,7 @@ describe("uiOverflowMenu", () => {
     test("runs the item picked by the keyboard, and draws a destructive one in the error colour", async () => {
       expect.hasAssertions();
 
-      const rename = vi.fn<(event: KeyboardEvent | MouseEvent) => void>();
+      const rename = vi.fn<NonNullable<Item["onClick"]>>();
       const items: Item[] = [
         { icon: "", onClick: rename, title: "Rename" },
         { icon: "", isDanger: true, title: "Delete" },
