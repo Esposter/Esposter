@@ -134,7 +134,7 @@ A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit fille
 - **Edits it applies to the clone:** every project retargets `net10.0`, and the `win-x64` runtime identifier is dropped.
 - **Natives:** `Texture2DDecoderNative` and Ooz build and load; ACL's MHY library builds and loads. The other ACL libraries (SR, ZZZ, DB) fail to compile under clang, and ZZZV2 needs `windows.h`, so animation clips from those are not available.
 - **Requirements:** .NET 10 and CMake to build. The CLI is published self-contained, so it runs with no `DOTNET_ROOT` however .NET was installed, and the game-running check, which reads Windows' process list, passes on macOS, where the game has no build.
-- **Not on arm64:** FMOD audio, FBX export and HLSL shader decompilation (`AnimeStudio.HLSLDecompiler`) are Windows-only or proprietary, so `genshin:assets` steps that need them do not run here.
+- **Not on arm64:** FMOD audio, FBX export and HLSL shader decompilation ("AnimeStudio.HLSLDecompiler") are Windows-only or proprietary, so `genshin:assets` steps that need them do not run here.
 
 Then set `GENSHIN_ANIMESTUDIO_CLI` to the printed path (the default is `~/Downloads/AnimeStudio/AnimeStudio.CLI.exe`).
 

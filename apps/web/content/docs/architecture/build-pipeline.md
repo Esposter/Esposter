@@ -42,7 +42,7 @@ The `.chunk.ts` exclude trims only the program's root files. The loaders' `impor
 | After, quiet machine                   | 63 s            | 2,837 MB           | 55 s           |
 | After, two more runs on a busy machine | 122 s and 110 s | 2,778 and 2,693 MB | 63 s and 93 s  |
 
-The busy runs shared the machine's slots and free memory, so their wall time is contention, not the build. The declaration seconds were not timed separately. The emitted `index.d.ts` keeps its size (92,523 bytes before and after) and differs only in renumbered aliases. `characters.json` is one static import now, which removes the `INEFFECTIVE_DYNAMIC_IMPORT` warning without moving a byte out of the entry.
+The busy runs shared the machine's slots and free memory, so their wall time is contention, not the build. The declaration seconds were not timed separately. The emitted `index.d.ts` keeps its size (92,523 bytes before and after) and differs only in renumbered aliases. `characters.json` is one static import now, which removes the "INEFFECTIVE_DYNAMIC_IMPORT" warning without moving a byte out of the entry.
 
 ## The shared configuration package
 

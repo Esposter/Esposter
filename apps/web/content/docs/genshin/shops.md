@@ -51,6 +51,6 @@ flowchart TD
 
 ## Sources
 
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ShopGoodsExcelConfigData`, the goods, their prices, limits, refreshes, ranks and dates, and `ShopExcelConfigData`, the shops and their refreshes. The table's refresh kinds are none, daily, weekly and monthly.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ShopGoodsExcelConfigData`, the goods, their prices, limits, refreshes, ranks and dates, and "ShopExcelConfigData", the shops and their refreshes. The table's refresh kinds are none, daily, weekly and monthly.
 - [Paimon's Bargains](https://genshin-impact.fandom.com/wiki/Paimon%27s_Bargains), Genshin Impact Wiki: the monthly reset, the Fates' prices and the rotation's schedule, read through the repo's wiki reader.
 - [General Goods](https://genshin-impact.fandom.com/wiki/General_Goods), Genshin Impact Wiki: the Mondstadt general goods vendor, Blanche.

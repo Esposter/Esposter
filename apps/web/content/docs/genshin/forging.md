@@ -89,7 +89,7 @@ flowchart TD
 
 ## Sources
 
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ForgeExcelConfigData` for the recipes and their forge points, `ForgeUpdateExcelConfigData` for the queues by rank, `ForgeRandomExcelConfigData` for each drop's random table, and `MaterialExcelConfigData`, whose `ITEM_USE_UNLOCK_FORGE` uses name the recipes each diagram opens.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ForgeExcelConfigData` for the recipes and their forge points, "ForgeUpdateExcelConfigData" for the queues by rank, `ForgeRandomExcelConfigData` for each drop's random table, and `MaterialExcelConfigData`, whose `ITEM_USE_UNLOCK_FORGE` uses name the recipes each diagram opens.
 - `ProudSkillExcelConfigData` for the five forging talents' effects, and `AvatarSkillDepotExcelConfigData` for the depot each character's talent is in: Venti's and Bennett's in the talents list, Diluc's, Zhongli's and Ganyu's in the inherent proud skill list.
 - The English text map in the dump, by the three forge refusal lines' text ids, which name the day's cap and its reset.
 - [Forging](https://genshin-impact.fandom.com/wiki/Forging), Genshin Impact Wiki: the cap and the reset. That page was unreachable from this build, so its claims wait on a source.
