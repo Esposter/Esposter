@@ -27,9 +27,17 @@ export const useResidentSpots = (
   const shownSpots = new Map<string, ResidentSpot | undefined>();
   const visitedIds = new Set<string>();
   const residentSpots = shallowRef<ReadonlyMap<string, ResidentSpot>>(new Map());
+  // A spot's ground height is fixed by its place, so it is read once per spot rather than every frame it is tested
+  const groundHeightMap = new WeakMap<ResidentSpot, number>();
   // The frustum is in world coordinates, as the terrain's is, so a resident's ground point is tested where it stands
-  const checkIsInView = ({ position: { x, z } }: ResidentSpot): boolean => {
-    point.set(x, getWorldHeight(x, z), z);
+  const checkIsInView = (spot: ResidentSpot): boolean => {
+    const { x, z } = spot.position;
+    let height = groundHeightMap.get(spot);
+    if (height === undefined) {
+      height = getWorldHeight(x, z);
+      groundHeightMap.set(spot, height);
+    }
+    point.set(x, height, z);
     return frustum.containsPoint(point);
   };
 
