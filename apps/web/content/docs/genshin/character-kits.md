@@ -1,6 +1,6 @@
 ---
 title: Character kits
-description: Genshin's character kits as built — every playable character's skill sets read from the game's tables into genshin-world, each with its skill's cooldown and charges and its burst's cooldown, energy cost and element, per element form. The Traveler's kit reads its multipliers from the game's proud skill table and sits in its own character module, and Diluc's, Bennett's and Mona's kits are built the same way, with Dawn's infusion, Fantastic Voyage's field and Mirror Reflection's summon. A kit's action turns to its target by the wiki's score, a hit can deal its own element, a buff bonus its pricing, and a party member can be healed. Per-character modules beyond these are still proposed.
+description: Genshin's character kits as built — every playable character's skill sets read from the game's tables into genshin-world, each with its skill's cooldown and charges and its burst's cooldown, energy cost and element, per element form. The Traveler's kit reads its multipliers from the game's proud skill table and sits in its own character module, and Diluc's, Bennett's and Mona's kits are built the same way, with Dawn's infusion, Fantastic Voyage's field, Mirror Reflection's summon and Baron Bunny's taunt. Amber's kit is built the same way, with Fiery Rain's summon. A kit's action turns to its target by the wiki's score, a hit can deal its own element, a buff bonus its pricing, and a party member can be healed. Per-character modules beyond these are still proposed.
 ---
 
 # Character kits
@@ -54,6 +54,7 @@ A hit can name its own element, which strikes the enemy as that element whatever
 Each character with a module has one file under `services/kit/characters/`, exporting a factory that builds its kit from the loaded multipliers, as `createTravelerKit` does. `CharacterIdCreateKitMap` keys them by avatar id, the world builds a character's kit once its chunk has arrived, and a character with none fights with the Traveler's kit.
 
 - **Diluc** (`createDilucKit`, avatar 10000016): four strikes, a charged attack, a collision and two plunges, Searing Onslaught's first press, and Dawn's slashing hit. Its multipliers are read from proud skill groups 1631, 1632 and 1639, and match the wiki's Tempered Sword and gcsim's level-1 values to two decimal places. Dawn's infusion and the A4 passive are built, as the shared effects below.
+- **Amber** (`createAmberKit`, avatar 10000021): five arrows, a fully charged aimed shot, a collision and two plunges, Explosive Puppet's Baron Bunny and Fiery Rain. Its multipliers are read from proud skill groups 2131, 2132 and 2139, and match the wiki's Sharpshooter, Explosive Puppet and Fiery Rain values to two decimal places. Baron Bunny is a taunt, built as the shared effects below, and Fiery Rain is a summon of eighteen arrows, with Ascension 1's CRIT Rate and AoE.
 - **Mona** (`createMonaKit`, avatar 10000041): four strikes, a charged attack, a collision and two plunges, all Hydro catalyst hits, Mirror Reflection of Doom and Stellaris Phantasm's bubble. Its multipliers are read from proud skill groups 4131 and 4132, and match the wiki's Ripple of Fate and Mirror Reflection of Doom values to two decimal places. Mirror Reflection is a summon, built as the shared effects below; the bubble's Hydro is built, its explosion is not.
 - **Bennett** (`createBennettKit`, avatar 10000032): five strikes, a charged attack, a collision and two plunges, Passion Overload's press, and Fantastic Voyage's damage. Its multipliers are read from proud skill groups 3231, 3232 and 3239, and match the wiki's Strike of Fortune, Passion Overload and Fantastic Voyage values to two decimal places. Fantastic Voyage's field, its heal, its ATK bonus and its self infusion are built, as the shared effects below.
 
@@ -69,6 +70,7 @@ Each effect is on the party, in a list the character component holds, so a switc
 - **Field** is a circle placed where its character casts, for its seconds, with a tick on a schedule. Each tick runs while the body stands inside it, reading the character on the field and the team, and a tick's own buffs and infusions start at their full seconds.
 - **Summon** is an entity cast where its character stands, which lands its own hits on the seconds their hitmarks fall at, for its seconds. It is priced by the combatant that cast it, as it stood then, and its hits land from its own body, not the character's.
 - **Dawn's damage-over-time and explosion** are not built. They move with a box a fixed summon does not hold.
+- **A taunt** is an entity placed where its character cast it, with health, which draws the enemies' strikes while it stands. It explodes once, from its body and priced by the combatant that cast it, when its seconds run out or its health is gone. Its health is taken by `damageKitTaunt`, which no enemy strike calls yet, so a taunt explodes on its timer.
 
 ## Decisions
 
@@ -87,6 +89,10 @@ Each effect is on the party, in a list the character component holds, so a switc
 - **Mona's strikes are priced round her body.** gcsim centres them on the primary target, which an area does not hold yet. Her plunges' reach is provisional, as gcsim has no plunge file for her.
 - **Mona's A1 and A4 are not built.** A1 casts a phantom from her dash, which the kit does not hold. A4 raises her Hydro bonus by 20% of her Energy Recharge, a standing bonus with no hook to read it yet.
 - **Stellaris Phantasm's explosion is not built.** Its damage, the Omen it leaves and the damage bonus wait on the enemy's statuses, so the bubble applies its Hydro and no damage.
+- **Amber's fully charged aimed shot is the bow's charged attack.** Only the fully charged shot deals Pyro, under a charged attack internal cooldown, so the unlit Aimed Shot and its weak-point hits are not built. A bow's `R` aim is not read by the kit, so the shot targets as the others do until the kit reads the aim binding.
+- **Fiery Rain's arrows are priced at twice the burst radius.** Each arrow lands at random within a radius of 2 round the burst's centre and is itself a circle of that radius, so a summon's arrow is priced at 4 round the body. Ascension 1, Every Arrow Finds Its Target, adds 10% CRIT Rate, priced on the summon's combatant, and widens the radius by 30%.
+- **Baron Bunny lands where Amber stands.** The wiki's throw, 1.4 metres ahead and the hold's distance, is not built, so it is priced round Amber's body. Its HP is 41.36% of Amber's Max HP, from the table.
+- **Amber's A4 is not built.** Its ATK bonus after a weak-point hit needs the weak point, which no hit tests yet.
 - **Bennett's A1 and A4 are not built.** Both cut Passion Overload's cooldown, which the kit holds as one value, and A4 also stops a level-2 hold from launching Bennett. Passion Overload's hold levels are not built either.
 
 ## Key files
@@ -108,6 +114,8 @@ Each effect is on the party, in a list the character component holds, so a switc
 | `packages/genshin-world/src/services/kit/characters/bennettKit.ts`      | `createBennettKit`, Bennett's kit with Fantastic Voyage's field                        |
 | `packages/genshin-world/src/services/kit/effects/stepKitField.ts`       | A field's schedule, run on each step, ticking while the body stands in it              |
 | `packages/genshin-world/src/services/kit/characters/monaKit.ts`         | `createMonaKit`, Mona's kit with Mirror Reflection's summon                            |
+| `packages/genshin-world/src/services/kit/characters/amberKit.ts`        | `createAmberKit`, Amber's kit with Baron Bunny's taunt and Fiery Rain's summon         |
+| `packages/genshin-world/src/services/kit/effects/stepKitTaunt.ts`       | A taunt's explosion, once its seconds or its health run out                            |
 | `packages/genshin-world/src/services/kit/effects/stepKitSummon.ts`      | A summon's clock, landing the hits whose hitmarks fall within each step                |
 | `packages/genshin-world/src/services/kit/characters/dilucKit.ts`        | `createDilucKit`, Diluc's kit with Dawn's infusion and A4                              |
 | `packages/genshin-world/src/services/kit/CharacterIdCreateKitMap.ts`    | Each built character's kit factory by avatar id, read by the roster                    |
@@ -129,4 +137,6 @@ Each effect is on the party, in a list the character component holds, so a switc
 - [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/bennett), MIT: Bennett's hitmarks, cancel frames, areas and the field's ticks.
 - [Ripple of Fate](https://genshin-impact.fandom.com/wiki/Ripple_of_Fate), [Mirror Reflection of Doom](https://genshin-impact.fandom.com/wiki/Mirror_Reflection_of_Doom) and [Stellaris Phantasm](https://genshin-impact.fandom.com/wiki/Stellaris_Phantasm), Genshin Impact Wiki: Mona's advanced properties, gauges, poise and the phantom's values.
 - [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mona), MIT: Mona's strikes', charged attack's and skill's hitmarks, cancel frames and areas, and the phantom's ticks and explosion.
+- [Sharpshooter](https://genshin-impact.fandom.com/wiki/Sharpshooter), [Explosive Puppet](https://genshin-impact.fandom.com/wiki/Explosive_Puppet) and [Fiery Rain](https://genshin-impact.fandom.com/wiki/Fiery_Rain), Genshin Impact Wiki: Amber's arrows' and shots' poise and gauges, the bunny's explosion, and Fiery Rain's arrows.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/amber), MIT: Amber's arrows', aimed shot's, skill's and burst's hitmarks, cancel frames and areas, and the bunny's explosion.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the avatar, skill depot and skill tables the table is read from, and the proud skill table the multipliers are read from.
