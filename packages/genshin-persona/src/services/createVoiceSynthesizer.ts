@@ -209,7 +209,7 @@ export const createVoiceSynthesizer = async (
 
     // The generation's own waveform is the whole sentence, so its last chunk is what is left past the seam
     const result = await takeChunk(
-      outcome?.status === "fulfilled" ? Float32Array.from(outcome.value.data) : new Float32Array(0),
+      outcome?.status === "fulfilled" ? Float32Array.from(outcome.value.data, Number) : new Float32Array(0),
       true,
       1,
     );
@@ -243,7 +243,7 @@ export const createVoiceSynthesizer = async (
           return undefined;
         }
 
-        const clip = { sampleRate: VOICE_SAMPLE_RATE, samples: Float32Array.from(outcome.value.data) };
+        const clip = { sampleRate: VOICE_SAMPLE_RATE, samples: Float32Array.from(outcome.value.data, Number) };
         if (checkIsSpeech(clip)) return clip;
         // oxlint-disable-next-line no-await-in-loop -- Retry: a rung is tried only because the one above it failed or went silent
         if (!(await stepDown("synthesized silence"))) return undefined;

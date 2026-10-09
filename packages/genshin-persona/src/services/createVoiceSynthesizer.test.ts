@@ -19,14 +19,12 @@ import { createVoiceSynthesizer } from "#src/services/createVoiceSynthesizer";
 import { getVoiceDeviceLadder } from "#src/services/getVoiceDeviceLadder";
 import { describe, expect, test, vi } from "vitest";
 
-// The runtime's tensor, reduced to the two fields the plugin reads
+// The runtime's tensor, reduced to the one field the plugin reads
 class TestTensor {
-  data: ArrayLike<number> | BigInt64Array;
-  dims: number[];
+  data: BigInt64Array | Float32Array;
 
-  constructor(_type: string, data: ArrayLike<number> | BigInt64Array, dims: number[]) {
+  constructor(_type: string, data: BigInt64Array | Float32Array) {
     this.data = data;
-    this.dims = dims;
   }
 }
 
@@ -49,7 +47,7 @@ describe(createVoiceSynthesizer, () => {
   const modelsDirectory = "modelsDirectory";
   const deviceLadder = getVoiceDeviceLadder();
   const text = "text";
-  const tensor: VoiceTensor = { data: new Float32Array(), dims: [] };
+  const tensor: VoiceTensor = { data: new Float32Array() };
   const speaker: SpeakerTensors = {
     audio_features: tensor,
     audio_tokens: tensor,
@@ -69,12 +67,12 @@ describe(createVoiceSynthesizer, () => {
       generate: vi.fn<VoiceModel["generate"]>(() =>
         waveform instanceof Error
           ? Promise.reject(waveform)
-          : Promise.resolve({ data: waveform ?? new Float32Array(), dims: [] }),
+          : Promise.resolve({ data: waveform ?? new Float32Array() }),
       ),
       sessions: {
         conditional_decoder: {
           run: vi.fn<VoiceModel["sessions"]["conditional_decoder"]["run"]>(() =>
-            Promise.resolve({ waveform: { data: new Float32Array(), dims: [] } }),
+            Promise.resolve({ waveform: { data: new Float32Array() } }),
           ),
         },
       },
@@ -222,7 +220,7 @@ describe(createVoiceSynthesizer, () => {
         decodeCount >= silentFrom
           ? getQuiet(passLength * SAMPLES_PER_TOKEN)
           : concatenate([getSignal(speechLength), getQuiet(SILENCE_TOKEN_COUNT * SAMPLES_PER_TOKEN)]);
-      return Promise.resolve({ waveform: { data, dims: [] } });
+      return Promise.resolve({ waveform: { data } });
     });
     const generate = vi.fn<VoiceModel["generate"]>(async (inputs) => {
       const { end, put } = inputs.streamer as { end: () => void; put: (rows: bigint[][]) => void };
@@ -235,7 +233,7 @@ describe(createVoiceSynthesizer, () => {
         });
       }
       end();
-      return { data: getSignal(streamTokenCount * SAMPLES_PER_TOKEN), dims: [] };
+      return { data: getSignal(streamTokenCount * SAMPLES_PER_TOKEN) };
     });
     const model: VoiceModel = {
       dispose: vi.fn<VoiceModel["dispose"]>(() => Promise.resolve([])),
