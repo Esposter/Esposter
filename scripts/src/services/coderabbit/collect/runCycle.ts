@@ -32,7 +32,7 @@ import { retargetStrandedWindows } from "#src/services/coderabbit/collect/retarg
 import { runExpressLane } from "#src/services/coderabbit/collect/runExpressLane";
 import { runReturnStroke } from "#src/services/coderabbit/collect/runReturnStroke";
 import { walkWindowStack } from "#src/services/coderabbit/collect/walkWindowStack";
-import { REVIEWS_PER_HOUR } from "#src/services/coderabbit/shared/constants";
+import { REVIEW_FILE_CAP, REVIEWS_PER_HOUR } from "#src/services/coderabbit/shared/constants";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 
 // An outcome carries the retrigger a hold lifting at a stated instant owes — a rate limit's deadline, the reset Claude
@@ -251,8 +251,8 @@ export const runCycle = async ({
       cwd,
       drainedPullRequests: answeredPullRequests,
       expressHeldCount: expressed.heldShas.length,
+      fileCap: REVIEW_FILE_CAP,
       isDryRun,
-      isFirstWindow: openingOutcome === undefined,
       openPullRequests: openedStack,
       viewerLogin,
       windowNumber: getNextWindowNumber(history),
