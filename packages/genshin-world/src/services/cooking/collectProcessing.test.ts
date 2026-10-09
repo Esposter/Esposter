@@ -92,4 +92,23 @@ describe(collectProcessing, () => {
 
     expect(result).toStrictEqual({ inventory: fullInventory, job });
   });
+
+  test("should take in the done units the bag has room for and hold the first it has none for with those behind it", () => {
+    expect.hasAssertions();
+
+    const definition = createDefinition(RESULT_ID, 3);
+    const result = collectProcessing(
+      recipe,
+      { count: 3, startedAt: EPOCH },
+      {
+        inventory: { items: [{ definition, id: 1, quantity: 1 }], nextId: 2 },
+        now: EPOCH.add({ seconds: 3 * UNIT_SECONDS }),
+        resultDefinition: definition,
+      },
+    );
+
+    expect(countInventoryItem(result.inventory.items, RESULT_ID)).toBe(3);
+    expect(result.job?.count).toBe(1);
+    expect(result.job?.startedAt.equals(EPOCH.add({ seconds: 2 * UNIT_SECONDS }))).toBe(true);
+  });
 });

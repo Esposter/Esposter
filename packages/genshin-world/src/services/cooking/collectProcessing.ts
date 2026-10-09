@@ -6,8 +6,8 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 
 // The bag and queue after every unit of a processing done by `now` is taken into the bag. The units done are counted from
-// The moment the queue began, and a unit's results are taken all together, so a unit the bag has no room for waits in the
-// Queue for the room, with the units behind it. A queue emptied is no job
+// The moment the queue began, and a unit's results are taken all together, so the units done before the first the bag has
+// No room for are taken in, and that unit waits in the queue for the room, with the units behind it. A queue emptied is no job
 export const collectProcessing = (
   recipe: ProcessingRecipe,
   job: ProcessingJob | undefined,
@@ -21,12 +21,14 @@ export const collectProcessing = (
   const elapsedSeconds = now.since(job.startedAt).total({ unit: "second" });
   const doneCount = Math.min(job.count, Math.max(Math.floor(elapsedSeconds / recipe.costTime), 0));
   if (doneCount === 0) return { inventory, job };
-  const addition = addInventoryItem(inventory, resultDefinition, doneCount * recipe.result.count);
-  if (addition.overflow > 0) return { inventory, job };
-  const remainingCount = job.count - doneCount;
+  const { overflow } = addInventoryItem(inventory, resultDefinition, doneCount * recipe.result.count);
+  const collectedCount = doneCount - Math.ceil(overflow / recipe.result.count);
+  if (collectedCount === 0) return { inventory, job };
+  const addition = addInventoryItem(inventory, resultDefinition, collectedCount * recipe.result.count);
+  const remainingCount = job.count - collectedCount;
   if (remainingCount === 0) return { inventory: addition.inventory };
   return {
     inventory: addition.inventory,
-    job: { count: remainingCount, startedAt: job.startedAt.add({ seconds: doneCount * recipe.costTime }) },
+    job: { count: remainingCount, startedAt: job.startedAt.add({ seconds: collectedCount * recipe.costTime }) },
   };
 };
