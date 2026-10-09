@@ -28,13 +28,13 @@ flowchart LR
 
 The stats run writes each playable character's combat talent multipliers into a chunk of its own, `talentMultipliers/<avatarId>.json`, keyed by the talent's proud skill group. A level keeps its parameters (`paramList`) up to the last one that is not zero, so a read past that point is zero. The labels, the text id naming each parameter (`paramDescList`), go apart into `talentLabels/<avatarId>.json`, which the talents screen loads when it opens and the combat table never carries.
 
-`TalentMultiplierLoaderMap` is keyed by avatar id and imports a chunk on demand. `readTalentMultipliers` checks each chunk against its schema and merges it by group, and `getTalentMultiplier` reads a parameter from the merged table by its index. The world loads the deployed team's multipliers as it starts and again whenever the team changes, and a kit is built from the loaded table, so the world's entry carries none of them. The one static import this replaced was 1.4 MB of it.
+Each character's multipliers are an entry of the hosted `talentMultipliers` index, under its avatar id ([hosted game data](/docs/genshin/hosted-game-data)). `TalentMultiplierLoaderMap` is keyed by avatar id, and each entry reads that character's record from the world's game data base and checks it against its schema. `readTalentMultipliers` merges the records by group, and `getTalentMultiplier` reads a parameter from the merged table by its index. The world loads the deployed team's multipliers as it starts and again whenever the team changes, and a kit is built from the loaded table, so the world's entry carries none of them. The one static import this replaced was 1.4 MB of it.
 
 ```mermaid
 flowchart LR
-  P["ProudSkillExcelConfigData: each group's levels and their parameters"] -->|"stats run, one chunk per character"| M["talentMultipliers/avatarId.json, keyed by group"]
-  M -->|"dynamic import when the character joins the party, checked by its schema"| R["readTalentMultipliers: merged by group"]
-  R -->|"getTalentMultiplier reads a parameter by its index"| T["createTravelerKit, createDilucKit, createBennettKit, createMonaKit: each kit's hits' multipliers"]
+  P["ProudSkillExcelConfigData: each group's levels and their parameters"] -->|"stats run, one record per character"| M["talentMultipliers index: avatar id to its record, keyed by group"]
+  M -->|"fetched when the character joins the party, checked by its schema"| R["readTalentMultipliers: merged by group"]
+  R -->|"getTalentMultiplier reads a parameter by its index"| T["createTravelerKit: the Anemo form's hits' multipliers"]
 ```
 
 ## Targeting
@@ -246,9 +246,9 @@ Each effect is on the party, in the list a `KitEffectState` holds, so a switch l
 | `scripts/src/services/genshinAssets/stats/getCharacterSkillKits.ts`       | Every playable character's skill sets, from the dump's tables                                                                     |
 | `scripts/src/services/genshinAssets/stats/toSkillDepot.ts`                | One skill set, from its depot row and the skill rows                                                                              |
 | `scripts/src/services/genshinAssets/stats/toTalentTables.ts`              | Each character's talent groups: their levels, parameters and labels, apart                                                        |
-| `scripts/src/services/genshinAssets/stats/writeTalentTables.ts`           | Each character's chunk and the loader map the world imports them through                                                          |
+| `scripts/src/services/genshinAssets/stats/writeTalentTables.ts`           | Each character's files and the loader map whose entries read the hosted index                                                     |
 | `packages/genshin-world/src/generated/stats/characterSkillKits.json`      | The written table the app loads on demand                                                                                         |
-| `packages/genshin-world/src/generated/talentMultipliers/`                 | Each character's multipliers per level, loaded on demand as the character joins                                                   |
+| `packages/genshin-world/src/generated/talentMultipliers/`                 | Each character's multipliers per level, and the loader map reading each from the hosted index as the character joins              |
 | `packages/genshin-world/src/services/kit/readTalentMultipliers.ts`        | The loaded characters' multipliers, checked and merged by proud skill group                                                       |
 | `packages/genshin-world/src/services/kit/getTalentMultiplier.ts`          | A talent's parameter at a level, by its index                                                                                     |
 | `packages/genshin-world/src/services/kit/selectAttackTarget.ts`           | The targeting score an action turns the body to                                                                                   |

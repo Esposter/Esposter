@@ -6,15 +6,14 @@ model: claude-haiku-5-5
 
 # Hosted game data: the remaining datasets
 
-The Profile tab and the book reader already fetch their records from the published game data, as [hosted game data](/docs/genshin/hosted-game-data) sets out. This proposal is what is left of the same move: the thirty-five folders of generated JSON that the package still imports, the three reads that still happen synchronously at import time, and the suites and fixtures that read them. Nothing here changes the mechanism; it extends the one that shipped.
+The Profile tab and the book reader already fetch their records from the published game data, as [hosted game data](/docs/genshin/hosted-game-data) sets out. Every dataset the package bundles is published there too, from its committed files, with the talent multipliers already read from their index and the suites' mirror in place. This proposal is what is left of the same move: the readers of the thirty-five folders of generated JSON and the fitted data files that the package still imports, the three reads that still happen synchronously at import time, the builders that still write files, and the suites and fixtures that read them. Nothing here changes the mechanism; it extends the one that shipped.
 
 ## Decisions
 
 - **Each dataset is one builder that returns records.** A step stops writing files and hands its records to the publisher, scoped to the dataset it replaces. Code-named records take a key of their own (`stats/weapons`, `gcg/standardRule`). Gcg decks take `gcg/deck<id>`, one key each.
-- **Entity collections the screens open one at a time become indexes.** Talent multipliers and talent labels follow the profile's shape, one index each, so the talents screen fetches one record and not the collection.
+- **The talents screen reads one character's labels** from the published `talentLabels` index, as the combat reads its multipliers, so it fetches one record and not the collection.
 - **Synchronous reads become awaited reads.** The Bennett kit reads a weapon type it has no access to today, the gcg game table is imported at module load, and the Windrise wildlife layer is a static import. Each becomes a value loaded at mount and handed down, so no screen waits on a module it did not need.
 - **Scripts read what the publisher wrote, from the account.** A step that reads another step's output reads it through the lock and the dev account, never through `genshin-world`'s build, which a step running under `tsx` may load stale.
-- **Tests read a local mirror.** Suites and the parity page read the records through a content-addressed cache that a missing record fills from the dev account, so no test reads a copy of the game data.
 - **The develop deployment reads the dev account.** The owner admitted `https://esposter-develop.up.railway.app` on `devstesposter001`'s Blob CORS (2026-10-09), beside `http://localhost:3000` and with its methods, so a develop World mount reads its records from the dev account rather than from production's.
 
 ## Datasets
@@ -42,7 +41,7 @@ The dataset list is what the builders publish, in the order each one depends on 
 - Three fixtures stop importing JSON statically: the character screen, the card game screen and the HUD screen.
 - Nine suites that read named records take the same route. Kit suites and the card game's effect suites read through the mirror, given the base URL they now take.
 - About forty-five test files call the readers that gain a base argument. The change at each call site is the base, and the expectation stays as it is.
-- A CI cache keeps each shard's mirror, keyed on the lock, so a run fetches only the objects a patch changed.
+- One CI step fills the mirror with every object and index entry the lock names and saves it, keyed on the lock, before the shards that only restore it run, so a run fetches only the objects a patch changed.
 
 ## Removing the generated tree
 
