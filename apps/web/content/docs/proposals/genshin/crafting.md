@@ -1,6 +1,6 @@
 ---
 title: Crafting
-description: Proposal — the crafting bench's parts still to build: its place in the city, the regional talent materials of two characters, and the gadgets from their wiki instructions. The recipes, their rules, the instruction unlocks, the characters' crafting talents and the screen with its tabs are built, as the crafting page records.
+description: Proposal — the crafting bench's parts still to build: its place in the city, the gadgets from their wiki instructions, and the save's craft count. The recipes, their rules, the instruction unlocks, the characters' crafting talents with their regional materials and the screen with its tabs are built, as the crafting page records.
 model: claude-haiku-5-5
 needs: [game-exports]
 touches:
@@ -14,7 +14,7 @@ touches:
 
 # Crafting
 
-The crafting bench, which the game calls alchemy, turns materials into better ones: three of a tier into one of the next, potions and baits from ingredients, gadgets from their instructions, and Condensed Resin from Original Resin. Most of what levels a character, a talent or a weapon passes through it at some tier. Its recipes, their rules and the instructions that open them are [built](/docs/genshin/crafting). What is left is the bench's place in the world, the gadgets, and two talents' regional materials. It spends from the [inventory](/docs/genshin/inventory)'s bag and wallet, and takes Condensed Resin's resin from the [Original Resin](/docs/genshin/original-resin) wallet.
+The crafting bench, which the game calls alchemy, turns materials into better ones: three of a tier into one of the next, potions and baits from ingredients, gadgets from their instructions, and Condensed Resin from Original Resin. Most of what levels a character, a talent or a weapon passes through it at some tier. Its recipes, their rules and the instructions that open them are [built](/docs/genshin/crafting). What is left is the bench's place in the world and the gadgets. It spends from the [inventory](/docs/genshin/inventory)'s bag and wallet, and takes Condensed Resin's resin from the [Original Resin](/docs/genshin/original-resin) wallet.
 
 ## Decisions
 
@@ -25,6 +25,7 @@ The crafting bench, which the game calls alchemy, turns materials into better on
 - **A character's crafting talent.** The wiki's Crafting Talents category holds thirteen talents, one per character, read from each talent page's infobox. Each is one of four effects, applied to the crafter's craft through the world's seeded random source: a double product at 10% (Eula, Sucrose, Layla, Albedo, Ayaka, Alhaitham, Wriothesley, on their kind of recipe), a refund of one material at 25% (Xingqiu, Mona, Dori), a refund of one material at 20% for potions (Lisa), or one extra regional talent material at 25% for a talent book (Yae Miko) or 10% (Prune). The effects are settled.
 - **A crafting talent is keyed by its character's avatar id, with no proud skill join.** Each talent is one character's utility passive, unlocked from the start, so the character alone says whether it applies. The wiki's talent pages (read through the persona's reader, `Category:Crafting Talents`) and `generated/stats/characters.json` give each: double at 10% on Character Talent Materials for Eula 10000051 and Layla 10000074; on Weapon Ascension Materials for Albedo 10000038, Ayaka 10000002, Alhaitham 10000078 and Wriothesley 10000086; on Character and Weapon Enhancement Materials for Sucrose 10000043; a refund at 25% on Character Talent Materials for Xingqiu 10000025, on Weapon Ascension Materials for Mona 10000041 and on Character and Weapon Enhancement Materials for Dori 10000068; a refund at 20% on potions for Lisa 10000006; and one regional Character Talent Material of the base material's rarity at 25% for Yae Miko 10000058 and 10% for Prune 10000132.
 - **A recipe's tab is the combine table's `combineType`.** 1 is Character and Weapon Enhancement Materials (the common drops' tiers, `112xxx`), 2 Weapon Ascension Materials (`114xxx`), 3 Character Talent Materials (`1043xx`), 5 Character Ascension Materials, 4 and 12 potions and 10 baits, so a talent names the combine types it applies to and `CraftingRecipeKind` stays as built.
+- **The regional extra is the same tier of another series in the book's region.** A talent book's craft adds one book of the same tier as its first material (a Teachings for a Guide, a Guide for a Philosophies), from one of the region's other two series, picked by the seeded random source. The bonus names no tier of its own, so the first material's tier is read as "the base material's rarity". The series are the wiki's Character Talent Material page's grouping, and their chains are the recipe table's: Mondstadt, Liyue, Inazuma, Sumeru, Fontaine, Natlan and Nod-Krai. Snezhnaya's books take no craft at the bench, so none of them is an extra.
 - **A talent's bonus is drawn per craft.** Each of a count's crafts draws once from the world's seeded random source: a double adds one more result, and a refund gives back one of the recipe's first listed material. The crafter is chosen as the cook is, by the avatar id passed to the craft; a character with no talent crafts plainly.
 - **Crafted many at once.** A recipe is crafted as many times as the bag and wallet can pay for, checked whole before anything is spent, and refused whole where the bag has no room for every result. This is built.
 - **The bench is where the game puts one.** Each crafting bench stands where the city's streaming records place it, or where the [spawned places](/docs/proposals/genshin/spawned-places) fit it if they do not, and is used through the [interaction](/docs/proposals/genshin/interaction) prompts. The official map marks no crafting bench, so the spawned places cannot place one; the streaming records must, which the scene's extraction reads and which is not read yet.
@@ -52,18 +53,17 @@ flowchart TD
 
 ## Scope and order
 
-**Built:** the recipes of the tiers, potions, baits and Condensed Resin, their rules, the instructions that open them, the characters' crafting talents' doubles and refunds, the bench's screen with its recipe tabs through its fixture, as the [crafting](/docs/genshin/crafting) page records.
+**Built:** the recipes of the tiers, potions, baits and Condensed Resin, their rules, the instructions that open them, the characters' crafting talents' doubles, refunds and regional materials, the bench's screen with its recipe tabs through its fixture, as the [crafting](/docs/genshin/crafting) page records.
 
 **Still to build, in order:**
 
 1. **The bench's place.** Waits on the other machine's scene group export, since the official map marks no bench and the wiki places Mondstadt's in the Market District. Its prompt then goes through the interaction page.
-2. **Yae Miko's and Prune's regional material.** Each region's three talent book series are read from the wiki's Character Talent Material page through the persona's reader and typed as a map of each series' base item id by region; the extra is drawn from the crafted book's region's other two series at the base material's rarity.
-3. **Gadgets**, their instructions read from the wiki's gadget pages, as the Decisions settle.
-4. **The save's craft count.** The Crafting Performed line counts this visit's batches until the save holds a count per recipe.
+2. **Gadgets**, their instructions read from the wiki's gadget pages, as the Decisions settle.
+3. **The save's craft count.** The Crafting Performed line counts this visit's batches until the save holds a count per recipe.
 
 ## Data and measures
 
-- **Read from the wiki:** the crafting talents (built into the Decisions above), the regions' talent book series and the gadgets' instructions, from the wiki's gadget pages.
+- **Read from the wiki:** the crafting talents and the regions' talent book series (built into the Decisions above), and the gadgets' instructions, from the wiki's gadget pages.
 - **Not measured.** Crafting takes no time in the game and has no timed state, so no compute-queue item is owed.
 
 ## Key files
