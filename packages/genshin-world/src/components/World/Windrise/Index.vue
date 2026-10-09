@@ -15,6 +15,7 @@ import WorldEnemies from "#src/components/World/Enemies/Index.vue";
 import WorldGrass from "#src/components/World/Grass/Index.vue";
 import WorldInteractables from "#src/components/World/Interactables/Index.vue";
 import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
+import WorldPlants from "#src/components/World/Plants/Index.vue";
 import WorldTerrain from "#src/components/World/Terrain/Index.vue";
 import WorldWater from "#src/components/World/Water/Index.vue";
 import WorldWeather from "#src/components/World/Weather/Index.vue";
@@ -397,6 +398,13 @@ onUnmounted(() => {
       :region-data-map
       :wind-uniforms
     />
+    <!-- The plants the game places round the oak, instanced once per prefab, drawn as the grass family alone where the witness does not -->
+    <TresGroup
+      :visible="checkIsOwnFamilyDrawn(WindrisePartFamily.Grass)"
+      :user-data="{ [SCENE_FAMILY_KEY]: WindrisePartFamily.Grass }"
+    >
+      <WorldPlants :light-uniforms :ramp-texture />
+    </TresGroup>
     <!-- Enemies wander where the references show none, so a witness render, judged against them, draws none -->
     <WorldEnemies
       v-if="!witness"

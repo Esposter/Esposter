@@ -8,6 +8,7 @@ import type { Vector } from "#src/models/shared/Vector";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { composeLatheAxisPoint } from "#src/services/genshinAssets/fit/composeLatheAxisPoint";
 import { readTowerProfiles } from "#src/services/genshinAssets/fit/readTowerProfiles";
+import { WindrisePlantArrangementFamilies } from "#src/services/genshinAssets/scene/WindrisePlantArrangementFamilies";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { Quaternion, Vector3 } from "three";
@@ -151,6 +152,7 @@ export const DerivedAssetArrangementMap: Record<
   [DerivedAssetComponent.Snezhnaya]: { explainedOffsets: {}, families: [], ratios: {} },
   // Sumeru City's parts stand where the world's own data places them, as Windrise's do
   [DerivedAssetComponent.Sumeru]: { explainedOffsets: {}, families: [], ratios: {} },
-  // Windrise's parts stand where the world's own data places them, so its ratios wait on a fitted family to hold
-  [DerivedAssetComponent.Windrise]: { explainedOffsets: {}, families: [], ratios: {} },
+  // Windrise's parts stand where the world's own data places them, so its ratios wait on a fitted family to hold. Its plants
+  // Are the families it fits, the grass and the trees, each beside the game's placements of it
+  [DerivedAssetComponent.Windrise]: { explainedOffsets: {}, families: WindrisePlantArrangementFamilies, ratios: {} },
 };
