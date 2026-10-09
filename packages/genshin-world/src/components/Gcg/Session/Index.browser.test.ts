@@ -26,8 +26,13 @@ describe("gcgSession", () => {
 
     vi.spyOn(console, "error").mockImplementation(() => {});
     const onLeave = vi.fn<() => void>();
-    render(GcgSession, { props: { gameId: -1, gameText: ENGLISH_GAME_TEXT, language: GameLanguage.English, onLeave } });
+    await new Promise<void>((resolve) => {
+      onLeave.mockImplementation(resolve);
+      render(GcgSession, {
+        props: { gameId: -1, gameText: ENGLISH_GAME_TEXT, language: GameLanguage.English, onLeave },
+      });
+    });
 
-    await expect.poll(() => onLeave).toHaveBeenCalledOnce();
+    expect(onLeave).toHaveBeenCalledTimes(1);
   });
 });
