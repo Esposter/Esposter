@@ -44,7 +44,7 @@ A point is kept as picked with the instant of the pick, and stands again once it
 
 ## The ores' rules
 
-An ore is struck until it breaks, and its rules are built as pure functions the world does not call yet. Each hit adds its poise damage over the ore's requirement for its kind, blunt or melee, so the ore breaks at a share of one. A hit that is neither blunt nor melee adds nothing. A broken ore drops its certain piece, and one more for each of two draws that comes under 10%. An ore comes back one day after it breaks for a White Iron Chunk or Starsilver, and three days after for a Crystal Chunk away from a mining outcrop, both as the wiki's Reset page gives them. The respawn reads the same as the plants', from the instant of the break.
+An ore is struck until it breaks, and its rules are built as pure functions the world does not call yet. Each hit adds its poise damage over the ore's requirement for its kind, blunt or melee, so the ore breaks at a share of one. A hit that is neither blunt nor melee adds nothing. A broken ore drops its certain piece, and one more for each of two draws that comes under 10%. An ore comes back two days after it breaks for a White Iron Chunk or Starsilver, and three days after for a Crystal Chunk away from a mining outcrop, both as the wiki's Reset page gives them. The respawn reads the same as the plants', from the instant of the break.
 
 ## The pick
 
