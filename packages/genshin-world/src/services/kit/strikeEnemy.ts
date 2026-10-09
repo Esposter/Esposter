@@ -1,7 +1,7 @@
 import type { Reaction } from "#src/models/combat/Reaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
-import type { EnergyDrop } from "#src/models/enemy/EnergyDrop";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { EnemyStrikeResult } from "#src/models/kit/EnemyStrikeResult";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -29,9 +29,15 @@ import { ID_SEPARATOR } from "@esposter/shared";
 
 // A kit hit landing on an enemy, written into it in place: a blunt hit first shatters a Freeze, then an elemental hit
 // Is applied at the gauge its internal cooldown leaves of it, and the hit's damage takes what its reactions amplify,
-// Catalyze or add, with each transformative reaction's damage added to it, before damageEnemy takes it. It returns the
-// Energy the hit dropped
-export const strikeEnemy = (enemy: Enemy, kitHit: KitHit, combatant: Combatant, random: () => number): EnergyDrop[] => {
+// Catalyze or add, with each transformative reaction's damage added to it, before damageEnemy takes it. The enemy's RES
+// To the element is its own less each status's reduction of it. It returns the energy the hit dropped and the reactions
+// It triggered
+export const strikeEnemy = (
+  enemy: Enemy,
+  kitHit: KitHit,
+  combatant: Combatant,
+  random: () => number,
+): EnemyStrikeResult => {
   const { elementalState } = enemy;
   const { attack, attributeTotalMap } = combatant.attributes;
   const { gauge, internalCooldownTag, isBlunt } = kitHit;
@@ -99,9 +105,13 @@ export const strikeEnemy = (enemy: Enemy, kitHit: KitHit, combatant: Combatant, 
     isCritical:
       random() <
       attributeTotalMap[Attribute.CriticalRate] + (isShatteringIceTarget ? SHATTERING_ICE_CRITICAL_RATE_BONUS : 0),
-    resistance: element === undefined ? kind.physicalResistance : kind.elementResistances[element],
+    resistance:
+      element === undefined
+        ? kind.physicalResistance
+        : kind.elementResistances[element] -
+          enemy.statuses.reduce((total, { resistanceReduction }) => total + (resistanceReduction?.[element] ?? 0), 0),
     stat: attack,
     talentMultiplier,
   });
-  return damageEnemy(enemy, { damage: damage + transformativeDamage, poiseDamage });
+  return { energyDrops: damageEnemy(enemy, { damage: damage + transformativeDamage, poiseDamage }), reactions };
 };

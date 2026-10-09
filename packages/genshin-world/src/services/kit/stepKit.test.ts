@@ -1,7 +1,9 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { Kit } from "#src/models/kit/Kit";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
 
+import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
@@ -133,6 +135,33 @@ describe(stepKit, () => {
     for (let index = 0; index < 11; index++) step();
 
     expect(step({ isSkillPressed: true })).toBeUndefined();
+  });
+
+  test("shortens a skill's cooldown by 5% under Impetuous Winds, composed with the kit's own multiplier", () => {
+    expect.hasAssertions();
+
+    const KIT_COOLDOWN_MULTIPLIER = 0.8;
+    const IMPETUOUS_WINDS_COOLDOWN_MULTIPLIER = 0.95;
+    const partyMember = createPartyMember();
+    const kit: Kit = { ...TRAVELER_KIT, getSkillCooldownMultiplier: () => KIT_COOLDOWN_MULTIPLIER };
+    stepKit(
+      createKitState(),
+      kit,
+      { ...IDLE_INPUT, isSkillPressed: true },
+      partyMember,
+      createStamina(STAMINA_MAX),
+      STEP_SECONDS,
+      [],
+      {
+        body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+        combatant: { ...TRAVELER_COMBATANT, elementalResonances: [Element.Anemo] },
+        kitEffectState: { effects: [] },
+      },
+    );
+
+    expect(partyMember.skillCooldownSeconds).toBeCloseTo(
+      TRAVELER_KIT.skillCooldownSeconds * KIT_COOLDOWN_MULTIPLIER * IMPETUOUS_WINDS_COOLDOWN_MULTIPLIER,
+    );
   });
 
   test("starts a burst only at full energy and empties the energy", () => {

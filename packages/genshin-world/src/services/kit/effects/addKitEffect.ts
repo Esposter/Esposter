@@ -2,11 +2,15 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 // Whether an effect restarts an earlier one: a buff or an infusion of the same kind on the same character, and for a
-// Buff the same attribute, or for an infusion the same element. A field, a bubble and a summon are never restarted, as
-// Each one is its own
+// Buff the same attribute from the same source, or for an infusion the same element. A field, a bubble and a summon are
+// Never restarted, as each one is its own
 const checkIsRestartedBy = (earlier: KitEffect, effect: KitEffect): boolean => {
   if (earlier.kind === "buff" && effect.kind === "buff")
-    return earlier.characterId === effect.characterId && earlier.attribute === effect.attribute;
+    return (
+      earlier.characterId === effect.characterId &&
+      earlier.attribute === effect.attribute &&
+      earlier.source === effect.source
+    );
   if (earlier.kind === "infusion" && effect.kind === "infusion")
     return earlier.characterId === effect.characterId && earlier.element === effect.element;
   return false;
