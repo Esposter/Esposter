@@ -13,6 +13,9 @@ export const PARTY_TEAM_MAX_COUNT = 15;
 export const PARTY_ADDED_TEAM_NAME = "Team Standing By";
 // The members of one element a full team needs to give that element's resonance
 export const PARTY_RESONANCE_MEMBER_COUNT = 2;
+// The CRIT Rate Shattering Ice adds against an enemy Frozen or affected by Cryo, as the Elemental Resonance page of the
+// Genshin Impact Wiki gives it
+export const SHATTERING_ICE_CRITICAL_RATE_BONUS = 0.15;
 // The actions switching to each slot of the deployed team, its first slot first: 1 to 4, and a pad's directions
 export const PARTY_MEMBER_INPUT_ACTIONS: readonly InputAction[] = [
   InputAction.SwitchToPartyMember1,

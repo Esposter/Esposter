@@ -15,7 +15,8 @@ export type Item = {
   // The member of a group of choices the reader has now, which makes each of the group's rows a radio
   isSelected?: boolean;
   loading?: boolean;
-  onClick?: (event: KeyboardEvent | MouseEvent) => Promisable<void>;
+  // The event is optional so an item runs without one, from a suggestion's selection or a list's keys
+  onClick?: (event?: KeyboardEvent | MouseEvent) => Promisable<void>;
   shortTitle?: string;
   title: string;
 } & ({ icon: string; meaning?: never } | { icon?: never; meaning: UiIconMeaning });

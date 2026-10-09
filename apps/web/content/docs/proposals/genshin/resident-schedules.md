@@ -10,7 +10,7 @@ The game's people keep hours. A hunter sells meat in Springvale by day and goes 
 
 ## Decisions
 
-- **Day and night, at the game's hours.** A resident's day runs from 06:00 to 19:00 and their night from 19:00 to 06:00, the hours the wiki's resident pages give, such as Draff selling in Springvale during the day. A resident has a spot for each, or for one only and is absent in the other.
+- **Day and night, at the game's hours.** A resident's day runs from 06:00 to 19:00 and their night from 19:00 to 06:00, the hours the wiki's resident pages give, such as Draff selling in Springvale during the day. A resident has a day spot and, where the game places them differently, a night spot. A resident with no night spot keeps their day spot through the night. Absence at night is an explicit `absentAtNight` in the data, set only where the game shows the resident by day alone; no record sets it yet, so no resident is absent at night. Most of the game's NPCs stand in the same place day and night, so a resident is not absent at night unless the data says so.
 - **Their spots are the game's own records.** `BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json` places every open-world resident: its NPC id, its place and its turn. A resident the records place twice in one region is the same NPC at nearly the same spot, so its first place is its day spot and it has no night spot until one is matched. Built by `genshin:assets residents`, which writes the residents of each fitted region.
 - **Moved out of sight.** At the turn of the hour, a resident in view stays until out of view and then stands at their new spot, so nobody is seen to jump. Built.
 - **A vendor sells in their hours.** A resident who sells does so only in the hours their page gives, and offers no shop outside them, once the [shops](/docs/proposals/genshin/shops) sell.
@@ -25,7 +25,6 @@ The game's people keep hours. A hunter sells meat in Springvale by day and goes 
 ## Needs the user
 
 - **Which placement is the day's, where a resident has two.** A recording of the resident's spot at each hour settles it, which only the user can make.
-- **Residents at night.** A resident with a day spot and no night spot is absent from seven at night to six in the morning, so most residents are absent at night. Whether they stay absent until night spots exist, or keep their day spot at night, is the user's call.
 
 ## What this does not propose
 

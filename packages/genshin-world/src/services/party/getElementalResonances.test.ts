@@ -1,4 +1,5 @@
 import { Element } from "#src/models/Element";
+import { SpecialResonance } from "#src/models/party/SpecialResonance";
 import { getElementalResonances } from "#src/services/party/getElementalResonances";
 import { describe, expect, test } from "vitest";
 
@@ -12,12 +13,12 @@ describe(getElementalResonances, () => {
     ]);
   });
 
-  test("gives none to a team not full, or a full team with no two of an element", () => {
+  test("gives the Protective Canopy to a full team of four unique elements, and none to a team not full", () => {
     expect.hasAssertions();
 
     expect([
-      getElementalResonances([Element.Pyro, Element.Pyro, Element.Pyro]),
       getElementalResonances([Element.Pyro, Element.Hydro, Element.Anemo, Element.Geo]),
-    ]).toStrictEqual([[], []]);
+      getElementalResonances([Element.Pyro, Element.Pyro, Element.Pyro]),
+    ]).toStrictEqual([[SpecialResonance.ProtectiveCanopy], []]);
   });
 });

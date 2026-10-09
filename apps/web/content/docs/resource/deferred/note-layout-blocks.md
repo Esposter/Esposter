@@ -9,7 +9,7 @@ Beyond text, lists, images and tables, Notion's basic blocks include blocks that
 
 ## Why deferred
 
-None of them is in Tiptap's StarterKit, and each needs a custom node designed twice: once as an editor node view and once as the `generateHTML` output the published view sanitizes. A toggle also needs state in the published page, and columns need a drag-to-arrange interaction plus a mobile layout. That is a design and a sanitizer allowance per block. Meanwhile the writing kit, with [images](/docs/proposals/resource/note-images) and [tables](/docs/proposals/resource/note-tables), already covers the documents a single owner writes. Until the [slash menu](/docs/proposals/resource/note-slash-menu) ships, a new block would also be one more menu-bar button.
+None of them is in Tiptap's StarterKit, and each needs a custom node designed twice: once as an editor node view and once as the `generateHTML` output the published view sanitizes. A toggle also needs state in the published page, and columns need a drag-to-arrange interaction plus a mobile layout. That is a design and a sanitizer allowance per block. Meanwhile the writing kit, with [images](/docs/proposals/resource/note-images) and [tables](/docs/proposals/resource/note-tables), already covers the documents a single owner writes. With the [slash menu](/docs/resource/note-slash-menu) shipped, a new block would be one more slash item and one more menu-bar button.
 
 ## Revisit when
 

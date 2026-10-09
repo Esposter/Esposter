@@ -4,5 +4,6 @@ import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 export const SuggestionTriggerTitleMap: Record<SuggestionTrigger, string> = {
   [SuggestionTrigger.Emoji]: "EMOJI",
   [SuggestionTrigger.Mention]: "MEMBERS",
+  [SuggestionTrigger.NoteBlock]: "BLOCKS",
   [SuggestionTrigger.SlashCommand]: "COMMANDS",
 };

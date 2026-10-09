@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useNoteSlashExtension } from "@/composables/resource/note/useNoteSlashExtension";
 import { getNoteExtensions } from "@/services/resource/note/getNoteExtensions";
 import { useNoteStore } from "@/store/resource/note";
 import { ResourceType } from "@esposter/db-schema";
@@ -13,7 +14,7 @@ const debouncedSave = useAutosaveFunction(saveNote);
 // `useEditor` constructs the editor in onMounted, which is after the load above, so the doc is already there
 const editor = useEditor({
   content: note.value.doc,
-  extensions: getNoteExtensions(),
+  extensions: [...getNoteExtensions(), useNoteSlashExtension()],
   onUpdate: ({ editor: updatedEditor }) => {
     note.value.doc = updatedEditor.getJSON();
     debouncedSave();
@@ -32,6 +33,7 @@ useAdoptResourceContent(ResourceType.Note, () => {
     boxing the one region there is -->
   <div flex flex-col h-full>
     <ResourceNoteEditorMenuBar :editor px-2 ui-bar />
+    <RichTextEditorSuggestions :editor />
     <EditorContent class="rich-text-content" flex-1 of-y-auto :editor />
   </div>
 </template>

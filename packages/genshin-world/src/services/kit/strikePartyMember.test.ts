@@ -17,11 +17,13 @@ describe(strikePartyMember, () => {
   const MAX_HEALTH = 1000;
   const DEFENSE = 100;
   const combatant: Combatant = {
+    ascension: 0,
     attributes: computeCharacterAttributes([
       { attribute: Attribute.Health, value: MAX_HEALTH },
       { attribute: Attribute.Defense, value: DEFENSE },
     ]),
     characterId: 1,
+    elementalResonances: [],
     kit: TRAVELER_KIT,
     level: 1,
   };

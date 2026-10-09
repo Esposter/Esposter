@@ -35,7 +35,7 @@ flowchart TD
 | Exquisite | 2 to 5    | 756 to 1,367 |
 | Precious  | 5 to 10   | 1,433        |
 
-A kind with no entry stays unopened: Luxurious, whose Mora the table leaves unstated, and Remarkable, whose blueprints are not built, and the buried and sealed places, which the map gives no tier. Each roll is uniform within its range, a provisional draw until a recording of openings reads its spread. The high zone-level areas (Dragonspine, the Stormbearer Mountains, Guyun Stone Forest, Lisha and the Chasm) give more Primogems than the default, which the places cannot yet tell, since they name no area.
+A kind with no entry stays unopened: Luxurious, whose Mora the table leaves unstated, and Remarkable, whose blueprints are not built, and the buried and sealed places, which the map gives no tier. Each roll is uniform within its range, a provisional draw until a recording of openings reads its spread. Opening also pours out what the wiki lists for the tier, as provisional pools: one weapon picked from the one-star weapons Common and Exquisite chests name, and the Character EXP materials by star with their counts (Wanderer's Advice, Adventurer's Experience, Hero's Wit). The artifacts are not rolled yet, since an artifact needs its slot and rarity, and the pour-out is not yet placed in the world. The high zone-level areas (Dragonspine, the Stormbearer Mountains, Guyun Stone Forest, Lisha and the Chasm) give more Primogems than the default, which the places cannot yet tell, since they name no area.
 
 ## The writer
 
@@ -46,6 +46,7 @@ A kind with no entry stays unopened: Luxurious, whose Mora the table leaves unst
 - **Mora chests are not chests of these kinds.** The map's Mora chests are not among the seven, so the writer does not place them.
 - **Not landmarks.** A landmark is built by a region kit, and a chest is acted on, so the places live in their own model rather than in `LandmarkKind`, and no kit draws them.
 - **Regions, not catalogue areas.** Each slice is a region, and a place does not yet name its catalogue area, since that needs the region outlines the exploration progress reads. The area each chest counts toward is not set.
+- **Region axes.** The fit carries a point into the game's axes, so the writer carries each place round the Windrise origin into its region's axes, x less the origin's x and z the origin's less the place's, as the landmarks and residents are. Puzzles, gathering, fishing and the Frostbearing Tree write the game's axes without this step, and need the same conversion.
 - **No height is written.** A place stands on the ground at its point, and that height is read where the place is stood on, which the runtime step does when it lands.
 
 ## Key files

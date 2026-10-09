@@ -48,6 +48,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "claude-mods",
       "engineering-loops",
       "agent-batches",
+      "machine-efficiency",
       "server-testing",
       "test-harness-workarounds",
       "lint-toolchain",

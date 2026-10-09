@@ -40,6 +40,7 @@
     "ai:coderabbit:feedback": "pnpm -C scripts ai:coderabbit:feedback",
     "ai:coderabbit:state": "pnpm -C scripts ai:coderabbit:state",
     "ai:identifiers:rename": "pnpm -C scripts ai:identifiers:rename",
+    "ai:machine:watch": "pnpm -C scripts ai:machine:watch",
     "ai:proposals:report": "pnpm -C scripts ai:proposals:report",
     "ai:queue:push": "pnpm -C scripts ai:queue:push",
     "ai:skills:extract": "pnpm -C scripts ai:skills:extract",

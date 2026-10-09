@@ -13,11 +13,12 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 
 ## Checks run once, before the commit
 
-- **An agent typechecks each package it edited once, before its commit.** It runs that package's own incremental check, `pnpm exec tsc --noEmit` (or `pnpm exec vue-tsc --noEmit` in a package with `.vue` files), at below-normal priority after the memory gate. A pass takes a few seconds and peaks under about two gigabytes, so a one-off check beats a standing watcher unless it runs more than about 750 times an hour, the break-even measured for `scripts`. An agent never checks `apps/web`, whose typecheck is CI's.
+- **Every heavy run takes a slot.** An agent's one-off typecheck, build and test run goes through `bash .agents/skills/throughput/scripts/run-in-slot.sh <command>`, which runs it in one of two machine-wide slots, taken by an atomic `mkdir`, and frees a slot whose holder died. Measured with four heavy runs launched together, four ran at once without it and two with it. A tsdown build peaks near 2 GB, so an unslotted wave took free memory down to about 1.3 GB.
+- **An agent typechecks each package it edited once, before its commit.** It runs that package's own incremental check, `pnpm exec tsc --noEmit` (or `pnpm exec vue-tsc --noEmit` in a package with `.vue` files), through the slot, at below-normal priority after the memory gate. A pass takes a few seconds and peaks under about two gigabytes, so a one-off check beats a standing watcher unless it runs more than about 750 times an hour, the break-even measured for `scripts`. An agent never checks `apps/web`, whose typecheck is CI's.
 - **It fixes the errors in its own files.** One in another agent's half-written file is that agent's to fix.
 - **Lint: the touched files only.** Run `vp lint --disable-nested-config <files>` and `pnpm exec eslint <files>` from the package, never the package's whole `pnpm lint`.
-- **Tests: the touched tests only.** Run `pnpm exec vitest run <paths>`.
-- **Build: only to regenerate a barrel.** After an agent adds, renames or deletes a module file, it runs `pnpm exec tsdown --no-clean`, never `pnpm build`; otherwise it does not build at all. The parity page and every sibling's typecheck read a package's source through its `source` export condition and the generated barrel, and the user's `nuxt dev` rebuilds every package itself.
+- **Tests: the touched tests only,** through the slot: `pnpm exec vitest run <paths>`.
+- **Build: only to regenerate a barrel.** After an agent adds, renames or deletes a module file, it runs `pnpm exec tsdown --no-clean` through the slot, never `pnpm build`; otherwise it does not build at all. The parity page and every sibling's typecheck read a package's source through its `source` export condition and the generated barrel, and the user's `nuxt dev` rebuilds every package itself.
 - **Everything else is the fixer's, once.** When every report is in, one `haiku` fixer runs each touched package's full checks and its build once and repairs what fails. CI on the push is the backstop.
 
 ## Search what git tracks
@@ -31,13 +32,13 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 - **Run a long CPU job at below-normal priority.** Use PowerShell `Start-Process … -PassThru` and then set `.PriorityClass = 'BelowNormal'`, or `start /belownormal`. The agents' checks and the page lane then keep their cores.
 - **Decode a whole-video scan on the GPU, at a small size.** Pass `-hwaccel d3d11va` to use the GPU's video engine, and scale each frame down before any per-frame filter (`scale=64:-2` ahead of `signalstats`). A luma scan only needs one number per frame.
 - **Sweep the orphans.** An agent that ends can leave its background processes running.
-  - The machine watcher stops an orphaned `find`, `du`, `grep` or `rg` on sight, once it has burnt more than half a minute of CPU. An agent's `find /` ran for half an hour on 2026-10-09 before anyone saw it.
+  - The machine watcher (`pnpm ai:machine:watch`) stops an orphaned `find`, `du`, `grep` or `rg` on sight, once it has burnt more than half a minute of CPU. An agent's `find /` ran for half an hour on 2026-10-09 before anyone saw it.
   - The main session sweeps the rest: an `ffmpeg`, or a `tail -f` feeding a dead monitor.
 - **Never scan the disk for a file whose home is known.** The game's data is under `GENSHIN_PARITY_DIRECTORY` (`~/Esposter/genshin-parity`) and its text under the `GENSHIN_TEXT_*` folders. Look there; never `find /` or `du` a home folder.
 
 ## Watch the machine
 
-- **A watcher wakes the session, so nothing polls.** While agents or runners are working, the main session runs `.agents/skills/throughput/scripts/watch-machine.ps1` under the Monitor tool, re-armed at each expiry. It is silent while the machine is busy. It prints one line when the CPU has averaged under 80% for three minutes with more than 6 GB free, and one when free memory falls under the 4 GB gate. Either line repeats every 15 minutes while its state holds.
+- **A watcher wakes the session, so nothing polls.** While agents or runners are working, the main session runs `pnpm ai:machine:watch` under the Monitor tool, re-armed at each expiry. It is one command on Windows and macOS alike, reading the CPU, the GPU and the free memory each minute. It is silent while the machine is busy. It prints one line when the CPU has averaged under 80% for three minutes with more than 6 GB free, and one when free memory falls under the 4 GB gate. Either line repeats every 15 minutes while its state holds.
 - **An idle line is a call to start what can run:** a lane's runner for a runnable item, a page per independent scene, the next wave's ready units.
 - **A machine idle because nothing can run is correct.** That line is answered by saying so. No item is queued, and no unit invented, to fill the cores: a queue that only grows is never digested.
 - **A tight line holds new starts** until memory comes back.

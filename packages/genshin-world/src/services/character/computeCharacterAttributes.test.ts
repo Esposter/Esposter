@@ -1,4 +1,6 @@
 import { Attribute } from "#src/models/character/Attribute";
+import { Element } from "#src/models/Element";
+import { SpecialResonance } from "#src/models/party/SpecialResonance";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { describe, expect, test } from "vitest";
 
@@ -23,5 +25,43 @@ describe(computeCharacterAttributes, () => {
       defense: 0,
       maxHealth: 1100,
     });
+  });
+
+  test("raises ATK by Pyro's resonance of 25%", () => {
+    expect.hasAssertions();
+
+    expect(computeCharacterAttributes([{ attribute: Attribute.BaseAttack, value: 100 }], [Element.Pyro]).attack).toBe(
+      125,
+    );
+  });
+
+  test("raises Max HP by Hydro's resonance of 25%", () => {
+    expect.hasAssertions();
+
+    expect(
+      computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 1000 }], [Element.Hydro]).maxHealth,
+    ).toBe(1250);
+  });
+
+  test("adds Dendro's resonance of 50 Elemental Mastery", () => {
+    expect.hasAssertions();
+
+    expect(computeCharacterAttributes([], [Element.Dendro]).attributeTotalMap[Attribute.ElementalMastery]).toBe(50);
+  });
+
+  test("raises Shield Strength by Geo's resonance of 15%", () => {
+    expect.hasAssertions();
+
+    expect(computeCharacterAttributes([], [Element.Geo]).attributeTotalMap[Attribute.ShieldStrength]).toBe(0.15);
+  });
+
+  test("raises Physical RES by the Protective Canopy's 15%", () => {
+    expect.hasAssertions();
+
+    expect(
+      computeCharacterAttributes([], [SpecialResonance.ProtectiveCanopy]).attributeTotalMap[
+        Attribute.PhysicalResistance
+      ],
+    ).toBe(0.15);
   });
 });

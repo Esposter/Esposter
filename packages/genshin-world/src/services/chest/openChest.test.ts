@@ -13,6 +13,11 @@ describe(openChest, () => {
     expect.hasAssertions();
 
     const lowest = openChest(commonChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0);
+    expect(lowest.drops).toStrictEqual([
+      { count: 1, itemId: 11_101 },
+      { count: 4, itemId: 104_001 },
+      { count: 1, itemId: 104_002 },
+    ]);
     expect(lowest.openedChestIds).toStrictEqual(new Set([CHEST_ID]));
     expect(lowest.wallet).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: 257, [Currency.Primogem]: 0 });
 
@@ -25,6 +30,7 @@ describe(openChest, () => {
 
     const opened = new Set([CHEST_ID]);
     expect(openChest(commonChest, opened, EMPTY_WALLET, () => 0)).toStrictEqual({
+      drops: [],
       openedChestIds: opened,
       wallet: EMPTY_WALLET,
     });
@@ -35,6 +41,7 @@ describe(openChest, () => {
 
     const luxuriousChest = { ...commonChest, kind: ChestKind.Luxurious };
     expect(openChest(luxuriousChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0)).toStrictEqual({
+      drops: [],
       openedChestIds: NO_OPENED_CHESTS,
       wallet: EMPTY_WALLET,
     });

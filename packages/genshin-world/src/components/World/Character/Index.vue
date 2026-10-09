@@ -2,6 +2,7 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { Party } from "#src/models/party/Party";
@@ -15,6 +16,10 @@ import { CAMERA_FRAME_PRIORITY, FIXED_STEP_SECONDS } from "#src/services/constan
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { createKitState } from "#src/services/kit/createKitState";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { getInfusedElement } from "#src/services/kit/effects/getInfusedElement";
+import { infuseKitHits } from "#src/services/kit/effects/infuseKitHits";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKit } from "#src/services/kit/stepKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { PARTY_MEMBER_BURST_INPUT_ACTIONS } from "#src/services/party/constants";
@@ -96,6 +101,9 @@ const characterController = createCharacterController({
 let followCamera: FollowCamera | undefined;
 // The kit of the character on the field, which starts over when a switch brings another on
 let kitState = createKitState();
+// The effects on the deployed team, which outlive a switch as the field's buffs and infusions do, and are cleared on a
+// Drown or a jump
+const effects: KitEffect[] = [];
 let kitCharacterId: number | undefined;
 // The strikes a step lands, emptied once each has struck the enemies in its area
 const landedHits: KitHit[] = [];
@@ -121,6 +129,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
   stepPartyCooldowns(party, FIXED_STEP_SECONDS);
   if (phase.state === LocomotionState.Drown && previousState !== LocomotionState.Drown) {
     drownParty(party);
+    effects.length = 0;
     emit("drown");
   }
 
@@ -140,6 +149,10 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     isSkillPressed,
     locomotionState: phase.state,
   };
+  const kitBody: KitBody = { facing: characterController.facing, height, position };
+  stepKitEffects(effects, FIXED_STEP_SECONDS, { activeCombatant: combatant, body: kitBody.position, party });
+  const infusedElement = getInfusedElement(effects, characterId);
+  const landedStart = landedHits.length;
   const action = stepKit(
     kitState,
     combatant.kit,
@@ -149,7 +162,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     FIXED_STEP_SECONDS,
     landedHits,
   );
-  const kitBody: KitBody = { facing: characterController.facing, height, position };
+  if (infusedElement !== undefined) infuseKitHits(combatant.kit, infusedElement, landedHits, landedStart);
   if (action) {
     // A started action turns the body to the enemy it targets, and the hits that follow are drawn from the turned body
     const target = selectAttackTarget(action.targetingArea, kitBody, enemyMap.values());
@@ -161,6 +174,8 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     }
   }
 
+  action?.onStart?.({ body: kitBody, combatant, effects });
+  const pricedCombatant = getBuffedCombatant(combatant, effects);
   for (const hit of landedHits)
     for (const enemy of enemyMap.values()) {
       if (
@@ -168,7 +183,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
         !checkIsInAttackArea(hit.hitArea, kitBody, enemy)
       )
         continue;
-      for (const energyDrop of strikeEnemy(enemy, hit, combatant, Math.random))
+      for (const energyDrop of strikeEnemy(enemy, hit, pricedCombatant, Math.random))
         gainPartyEnergy(party, energyDrop, combatant.element, characterIdCombatantMap);
     }
   landedHits.length = 0;
@@ -209,6 +224,7 @@ defineExpose({
   place: ({ point, yaw }: WorldJumpPose) => {
     characterController.place(placedPosition.set(point.x, getWorldHeight(point.x, point.z), point.z), yaw);
     kitState = createKitState();
+    effects.length = 0;
     followCamera?.reset(yaw);
   },
   stamina: characterController.stamina,

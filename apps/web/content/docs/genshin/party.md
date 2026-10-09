@@ -29,7 +29,7 @@ flowchart TD
 - **The character on the field** is `getActiveCharacterId`, the deployed team's member at the active index.
 - **Teams are added, renamed and disbanded under the game's limits.** `addPartyTeam` adds an empty team named "Team Standing By" until renamed, and answers `Full` past fifteen teams. `disbandPartyTeam` keeps the four default teams and the deployed one (`Kept`), and a team disbanded before the deployed one moves its index down so the same team stays deployed. `renamePartyTeam` with an empty name gives a team its own name back.
 - **A burst on a switch.** [Controls](/docs/genshin/controls) binds `Left Alt` with `1` to `4` to `SwitchToPartyMemberAndBurst1` to `4`, a chord that takes the press over from the plain key. The character's fixed step reads that press (`PARTY_MEMBER_BURST_INPUT_ACTIONS`) and uses its burst once the member is on the field, switched to by the world screen's key that frame or already there, so a refused switch (a cooldown, a fallen member, an empty slot) uses no burst.
-- **Elemental Resonance is a rule over the deployed team's elements.** `getElementalResonances` gives each element that two or more of a full team's four members share, in the game's element order, and none for a team not full.
+- **Elemental Resonance is a rule over the deployed team's elements, and its effects hold on the team while it has them.** `getElementalResonances` gives each element that two or more of a full team's four members share, in the game's element order, the Protective Canopy for four unique elements, and none for a team not full. The resonances that change a stat are summed into every member's attributes by `computeCharacterAttributes`, from `ElementalResonanceAttributeLinesMap`: Pyro's ATK +25%, Hydro's Max HP +25%, Geo's Shield Strength +15%, Dendro's Elemental Mastery +50, and the Protective Canopy's All Elemental RES and Physical RES +15%. Cryo's CRIT Rate +15% against a Frozen or Cryo-affected enemy is read where a hit is struck, in [combat](/docs/genshin/combat). Each figure is the Elemental Resonance page's in the Genshin Impact Wiki, and the resonances whose effect needs a mechanism not built yet are on the [party proposal](/docs/proposals/genshin/party).
 
 ## The world screen
 
@@ -39,26 +39,27 @@ The character on the field fights through its kit, which prices every character'
 
 ## Key files
 
-| File                                                                  | Role                                                                                 |
-| :-------------------------------------------------------------------- | :----------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/party/Party.ts`                    | The teams, the one deployed, the field, each member, the clock                       |
-| `packages/genshin-world/src/services/party/createParty.ts`            | A party as the game starts one                                                       |
-| `packages/genshin-world/src/services/party/switchPartyMember.ts`      | A key's switch, or the game's reason for refusing it                                 |
-| `packages/genshin-world/src/services/party/deployPartyTeam.ts`        | A team deployed, its first member standing on the field                              |
-| `packages/genshin-world/src/services/party/setPartyTeamCharacters.ts` | A team's members set, the field keeping its slot                                     |
-| `packages/genshin-world/src/services/party/damagePartyMember.ts`      | HP taken, a fall, and the next member brought on                                     |
-| `packages/genshin-world/src/services/party/gainPartyEnergy.ts`        | A particle's energy to each standing member of the deployed team                     |
-| `packages/genshin-world/src/services/party/stepPartyCooldowns.ts`     | Each member's skill and burst cooldowns, lowered each step                           |
-| `packages/genshin-world/src/services/party/addPartyTeam.ts`           | A team added to Party Setup, named until renamed, at most fifteen                    |
-| `packages/genshin-world/src/services/party/disbandPartyTeam.ts`       | A team disbanded, the defaults and the deployed one kept                             |
-| `packages/genshin-world/src/services/party/renamePartyTeam.ts`        | A team renamed, an empty name giving its own back                                    |
-| `packages/genshin-world/src/services/party/getElementalResonances.ts` | The resonances a full team's elements give                                           |
-| `packages/genshin-world/src/services/party/drownParty.ts`             | A drowning: every member's energy and a tenth of its Max HP                          |
-| `packages/genshin-world/src/services/party/reviveParty.ts`            | A fallen team brought back at 35% of its Max HP                                      |
-| `packages/genshin-world/src/services/map/findNearestLandmark.ts`      | The loaded statue nearest the body, where a fallen team is jumped to                 |
-| `packages/genshin-world/src/services/party/constants.ts`              | The team size, the cooldown, the default teams and the keys                          |
-| `packages/genshin-world/src/components/World/Character/Index.vue`     | Steps the field's kit, its cooldowns, a drowning and a burst on a switch             |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`        | Keeps the characters and the party, switches on the keys, and respawns a fallen team |
+| File                                                                               | Role                                                                                 |
+| :--------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/party/Party.ts`                                 | The teams, the one deployed, the field, each member, the clock                       |
+| `packages/genshin-world/src/services/party/createParty.ts`                         | A party as the game starts one                                                       |
+| `packages/genshin-world/src/services/party/switchPartyMember.ts`                   | A key's switch, or the game's reason for refusing it                                 |
+| `packages/genshin-world/src/services/party/deployPartyTeam.ts`                     | A team deployed, its first member standing on the field                              |
+| `packages/genshin-world/src/services/party/setPartyTeamCharacters.ts`              | A team's members set, the field keeping its slot                                     |
+| `packages/genshin-world/src/services/party/damagePartyMember.ts`                   | HP taken, a fall, and the next member brought on                                     |
+| `packages/genshin-world/src/services/party/gainPartyEnergy.ts`                     | A particle's energy to each standing member of the deployed team                     |
+| `packages/genshin-world/src/services/party/stepPartyCooldowns.ts`                  | Each member's skill and burst cooldowns, lowered each step                           |
+| `packages/genshin-world/src/services/party/addPartyTeam.ts`                        | A team added to Party Setup, named until renamed, at most fifteen                    |
+| `packages/genshin-world/src/services/party/disbandPartyTeam.ts`                    | A team disbanded, the defaults and the deployed one kept                             |
+| `packages/genshin-world/src/services/party/renamePartyTeam.ts`                     | A team renamed, an empty name giving its own back                                    |
+| `packages/genshin-world/src/services/party/getElementalResonances.ts`              | The resonances a full team's elements give                                           |
+| `packages/genshin-world/src/services/party/ElementalResonanceAttributeLinesMap.ts` | The attribute lines each resonance adds to every member of the deployed team         |
+| `packages/genshin-world/src/services/party/drownParty.ts`                          | A drowning: every member's energy and a tenth of its Max HP                          |
+| `packages/genshin-world/src/services/party/reviveParty.ts`                         | A fallen team brought back at 35% of its Max HP                                      |
+| `packages/genshin-world/src/services/map/findNearestLandmark.ts`                   | The loaded statue nearest the body, where a fallen team is jumped to                 |
+| `packages/genshin-world/src/services/party/constants.ts`                           | The team size, the cooldown, the default teams and the keys                          |
+| `packages/genshin-world/src/components/World/Character/Index.vue`                  | Steps the field's kit, its cooldowns, a drowning and a burst on a switch             |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`                     | Keeps the characters and the party, switches on the keys, and respawns a fallen team |
 
 ## Notes
 

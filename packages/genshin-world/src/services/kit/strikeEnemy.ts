@@ -6,8 +6,10 @@ import type { KitHit } from "#src/models/kit/KitHit";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AmplifyingReactionType } from "#src/models/combat/AmplifyingReactionType";
+import { AuraType } from "#src/models/combat/AuraType";
 import { CatalyzeReactionType } from "#src/models/combat/CatalyzeReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+import { Element } from "#src/models/Element";
 import { applyBluntHit } from "#src/services/combat/aura/applyBluntHit";
 import { applyElement } from "#src/services/combat/aura/applyElement";
 import { ElementDamageBonusAttributeMap } from "#src/services/combat/damage/ElementDamageBonusAttributeMap";
@@ -20,6 +22,7 @@ import { DEFAULT_INTERNAL_COOLDOWN_GROUP } from "#src/services/combat/internalCo
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
+import { SHATTERING_ICE_CRITICAL_RATE_BONUS } from "#src/services/party/constants";
 import { ID_SEPARATOR } from "@esposter/shared";
 
 // A kit hit landing on an enemy, written into it in place: a blunt hit first shatters a Freeze, then an elemental hit
@@ -30,13 +33,21 @@ export const strikeEnemy = (enemy: Enemy, kitHit: KitHit, combatant: Combatant, 
   const { elementalState } = enemy;
   const { attack, attributeTotalMap } = combatant.attributes;
   const { gauge, internalCooldownTag, isBlunt, poiseDamage, talentMultiplier } = kitHit;
+  // Shattering Ice's CRIT Rate reads the enemy as the hit finds it, before its Freeze shatters or its element lands
+  const isShatteringIceTarget =
+    combatant.elementalResonances.includes(Element.Cryo) &&
+    (elementalState.auras.has(AuraType.Freeze) || elementalState.auras.has(AuraType.Cryo));
   const reactions: Reaction[] = isBlunt ? applyBluntHit(elementalState, poiseDamage) : [];
-  const element = gauge === undefined ? undefined : (kitHit.element ?? combatant.element);
-  if (gauge !== undefined && element !== undefined && internalCooldownTag !== undefined) {
-    const cooldownKey = `${combatant.characterId}${ID_SEPARATOR}${internalCooldownTag}`;
-    const internalCooldown = enemy.internalCooldownMap.get(cooldownKey) ?? { hitIndex: 0, startSeconds: -Infinity };
-    enemy.internalCooldownMap.set(cooldownKey, internalCooldown);
-    const share = applyInternalCooldown(internalCooldown, DEFAULT_INTERNAL_COOLDOWN_GROUP, elementalState.seconds);
+  const element = kitHit.element ?? (gauge === undefined ? undefined : combatant.element);
+  if (gauge !== undefined && gauge > 0 && element !== undefined) {
+    // A hit with no internal cooldown applies its whole gauge, and one under a cooldown shares it through the cooldown
+    let share = 1;
+    if (internalCooldownTag !== undefined) {
+      const cooldownKey = `${combatant.characterId}${ID_SEPARATOR}${internalCooldownTag}`;
+      const internalCooldown = enemy.internalCooldownMap.get(cooldownKey) ?? { hitIndex: 0, startSeconds: -Infinity };
+      enemy.internalCooldownMap.set(cooldownKey, internalCooldown);
+      share = applyInternalCooldown(internalCooldown, DEFAULT_INTERNAL_COOLDOWN_GROUP, elementalState.seconds);
+    }
     reactions.push(...applyElement(elementalState, element, gauge * share));
   }
 
@@ -78,7 +89,9 @@ export const strikeEnemy = (enemy: Enemy, kitHit: KitHit, combatant: Combatant, 
         element === undefined ? Attribute.PhysicalDamageBonus : ElementDamageBonusAttributeMap[element]
       ],
     defense,
-    isCritical: random() < attributeTotalMap[Attribute.CriticalRate],
+    isCritical:
+      random() <
+      attributeTotalMap[Attribute.CriticalRate] + (isShatteringIceTarget ? SHATTERING_ICE_CRITICAL_RATE_BONUS : 0),
     resistance: element === undefined ? kind.physicalResistance : kind.elementResistances[element],
     stat: attack,
     talentMultiplier,

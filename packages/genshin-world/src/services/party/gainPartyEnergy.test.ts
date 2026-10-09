@@ -11,9 +11,11 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
 const createCombatant = (characterId: number, element: Element): Combatant => ({
+  ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.EnergyRecharge, value: 1 }]),
   characterId,
   element,
+  elementalResonances: [],
   kit: TRAVELER_KIT,
   level: 1,
 });
