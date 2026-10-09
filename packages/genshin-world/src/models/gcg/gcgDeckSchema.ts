@@ -4,8 +4,8 @@ import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { z } from "zod";
 
-// One line of a cost as the slice writes it: dice of an element, or a Matching, Unaligned or energy cost with no element
-const gcgTutorialCostSchema = z.union([
+// One line of a cost as a deck slice writes it: dice of an element, or a Matching, Unaligned or energy cost with no element
+const gcgDeckCostSchema = z.union([
   z.object({ count: z.int().positive(), element: z.enum(Element), kind: z.literal(GcgCostKind.Dice) }),
   z.object({
     count: z.int().positive(),
@@ -13,12 +13,12 @@ const gcgTutorialCostSchema = z.union([
   }),
 ]);
 
-// The tutorial deck's slice, written from the game's tables and checked against its shapes before a duel reads it
-export const gcgTutorialDeckSchema = z.object({
+// A deck's slice, written from the game's tables and checked against its shapes before a duel reads it
+export const gcgDeckSchema = z.object({
   cardIds: z.array(z.int().positive()),
   cards: z.array(
     z.object({
-      costs: z.array(gcgTutorialCostSchema),
+      costs: z.array(gcgDeckCostSchema),
       effects: z.array(z.string()),
       id: z.int().positive(),
       kind: z.enum(GcgCardKind),
@@ -33,7 +33,7 @@ export const gcgTutorialDeckSchema = z.object({
       maxEnergy: z.int().nonnegative(),
       skills: z.array(
         z.object({
-          costs: z.array(gcgTutorialCostSchema),
+          costs: z.array(gcgDeckCostSchema),
           effect: z.string(),
           energyGain: z.int().nonnegative(),
           id: z.int().positive(),

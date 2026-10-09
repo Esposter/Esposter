@@ -4,27 +4,27 @@ import type { ExcelGcgCostRow } from "#src/models/genshinAssets/gcg/ExcelGcgCost
 import type { ExcelGcgDeckRow } from "#src/models/genshinAssets/gcg/ExcelGcgDeckRow";
 import type { ExcelGcgSkillRow } from "#src/models/genshinAssets/gcg/ExcelGcgSkillRow";
 import type {
-  GcgTutorialCard,
-  GcgTutorialCharacter,
-  GcgTutorialDeck,
-  GcgTutorialSkill,
-} from "#src/models/genshinAssets/gcg/GcgTutorialDeck";
+  GcgDeckSlice,
+  GcgDeckSliceCard,
+  GcgDeckSliceCharacter,
+  GcgDeckSliceSkill,
+} from "#src/models/genshinAssets/gcg/GcgDeckSlice";
 import type { Element, GcgCost } from "genshin-world";
 
 import { GcgCostTableElementMap } from "#src/services/genshinAssets/gcg/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GcgCardKind, GcgCostKind, GcgSkillKind } from "genshin-world";
 
-// The tutorial deck's slice, read from the dump's deck, character, skill and card rows. Its cards are the deck's distinct
-// Cards and the cards the tutorial characters create, each with the effect names its skills carry
-export const toGcgTutorialDeck = (
+// A deck's slice, read from the dump's deck, character, skill and card rows. Its cards are the deck's distinct cards and
+// The cards its skills create, each with the effect names its skills carry
+export const toGcgDeck = (
   deckRow: ExcelGcgDeckRow,
   characterRows: ExcelGcgCharRow[],
   skillRows: ExcelGcgSkillRow[],
   cardRows: ExcelGcgCardRow[],
   createdCardIds: number[],
   costRows: ExcelGcgCostRow[],
-): GcgTutorialDeck => {
+): GcgDeckSlice => {
   const costTypes = new Set(costRows.map(({ type }) => type));
   const characters = deckRow.characterList.map((characterId) => {
     const characterRow = findRow(characterRows, characterId, "character");
@@ -43,7 +43,7 @@ const toCharacter = (
   characterRow: ExcelGcgCharRow,
   skillRows: ExcelGcgSkillRow[],
   costTypes: Set<string>,
-): GcgTutorialCharacter => {
+): GcgDeckSliceCharacter => {
   const elementTag = characterRow.tagList.find((tag) => tag.startsWith("GCG_TAG_ELEMENT_"));
   const element = elementTag ? toElement(`GCG_COST_DICE_${elementTag.slice("GCG_TAG_ELEMENT_".length)}`) : undefined;
   if (!element) throw invalidRead(`character ${characterRow.id} names no element`);
@@ -58,7 +58,7 @@ const toCharacter = (
   };
 };
 
-const toSkill = (skillRow: ExcelGcgSkillRow, costTypes: Set<string>): GcgTutorialSkill => {
+const toSkill = (skillRow: ExcelGcgSkillRow, costTypes: Set<string>): GcgDeckSliceSkill => {
   const kind = toSkillKind(skillRow.skillTagList);
   return {
     costs: toCosts(skillRow.costList, skillRow.id, costTypes),
@@ -69,7 +69,7 @@ const toSkill = (skillRow: ExcelGcgSkillRow, costTypes: Set<string>): GcgTutoria
   };
 };
 
-const toCard = (cardRow: ExcelGcgCardRow, skillRows: ExcelGcgSkillRow[], costTypes: Set<string>): GcgTutorialCard => ({
+const toCard = (cardRow: ExcelGcgCardRow, skillRows: ExcelGcgSkillRow[], costTypes: Set<string>): GcgDeckSliceCard => ({
   costs: toCosts(cardRow.costList, cardRow.id, costTypes),
   effects: cardRow.skillList.map((skillId) => findRow(skillRows, skillId, "skill").skillJson),
   id: cardRow.id,
@@ -135,4 +135,4 @@ const findRow = <TRow extends { id: number }>(rows: TRow[], id: number, name: st
   return row;
 };
 
-const invalidRead = (message: string) => new InvalidOperationError(Operation.Read, "tutorial deck", message);
+const invalidRead = (message: string) => new InvalidOperationError(Operation.Read, "deck", message);

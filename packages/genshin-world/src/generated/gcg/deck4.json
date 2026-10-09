@@ -1,0 +1,490 @@
+{
+  "cardIds": [
+    312201,
+    312201,
+    312501,
+    312501,
+    312301,
+    312301,
+    311201,
+    311201,
+    332004,
+    321001,
+    322011,
+    322011,
+    322001,
+    322001,
+    322007,
+    322007,
+    321005,
+    321005,
+    332008,
+    332008,
+    322002,
+    322002,
+    222011,
+    222011,
+    225011,
+    225011,
+    333006,
+    333006,
+    213051,
+    213051
+  ],
+  "cards": [
+    {
+      "costs": [
+        {
+          "count": 2,
+          "kind": "Unaligned"
+        }
+      ],
+      "effects": [
+        "Effect_Cost_Water_1"
+      ],
+      "id": 312201,
+      "kind": "Artifact"
+    },
+    {
+      "costs": [
+        {
+          "count": 2,
+          "kind": "Unaligned"
+        }
+      ],
+      "effects": [
+        "Effect_Cost_Wind_1"
+      ],
+      "id": 312501,
+      "kind": "Artifact"
+    },
+    {
+      "costs": [
+        {
+          "count": 2,
+          "kind": "Unaligned"
+        }
+      ],
+      "effects": [
+        "Effect_Cost_Fire_1"
+      ],
+      "id": 312301,
+      "kind": "Artifact"
+    },
+    {
+      "costs": [
+        {
+          "count": 2,
+          "kind": "Matching"
+        }
+      ],
+      "effects": [
+        "Effect_Weapon_Dmg_1"
+      ],
+      "id": 311201,
+      "kind": "Weapon"
+    },
+    {
+      "costs": [
+        {
+          "count": 1,
+          "kind": "Matching"
+        }
+      ],
+      "effects": [
+        "Card_Event_3320041"
+      ],
+      "id": 332004,
+      "kind": "Event"
+    },
+    {
+      "costs": [
+        {
+          "count": 2,
+          "kind": "Matching"
+        }
+      ],
+      "effects": [
+        "Card_Support_3210011"
+      ],
+      "id": 321001,
+      "kind": "Support"
+    },
+    {
+      "costs": [
+        {
+          "count": 2,
+          "kind": "Unaligned"
+        }
+      ],
+      "effects": [
+        "Card_Support_3220111"
+      ],
+      "id": 322011,
+      "kind": "Support"
+    },
+    {
+      "costs": [
+        {
+          "count": 3,
+          "kind": "Matching"
+        }
+      ],
+      "effects": [
+        "Card_Support_3220011"
+      ],
+      "id": 322001,
+      "kind": "Support"
+    },
+    {
+      "costs": [],
+      "effects": [
+        "Card_Support_3220071"
+      ],
+      "id": 322007,
+      "kind": "Support"
+    },
+    {
+      "costs": [
+        {
+          "count": 2,
+          "kind": "Matching"
+        }
+      ],
+      "effects": [
+        "Card_Support_3210051"
+      ],
+      "id": 321005,
+      "kind": "Support"
+    },
+    {
+      "costs": [
+        {
+          "count": 2,
+          "kind": "Unaligned"
+        }
+      ],
+      "effects": [
+        "Card_Event_3320081"
+      ],
+      "id": 332008,
+      "kind": "Event"
+    },
+    {
+      "costs": [
+        {
+          "count": 1,
+          "kind": "Matching"
+        }
+      ],
+      "effects": [
+        "Card_Support_3220021"
+      ],
+      "id": 322002,
+      "kind": "Support"
+    },
+    {
+      "costs": [
+        {
+          "count": 4,
+          "element": "Water",
+          "kind": "Dice"
+        },
+        {
+          "count": 3,
+          "kind": "Energy"
+        }
+      ],
+      "effects": [
+        "Char_Skill_22014_Talent_1"
+      ],
+      "id": 222011,
+      "kind": "Talent"
+    },
+    {
+      "costs": [
+        {
+          "count": 3,
+          "element": "Wind",
+          "kind": "Dice"
+        }
+      ],
+      "effects": [
+        "Char_Skill_25012_Talent_1"
+      ],
+      "id": 225011,
+      "kind": "Talent"
+    },
+    {
+      "costs": [
+        {
+          "count": 1,
+          "kind": "Matching"
+        }
+      ],
+      "effects": [
+        "Card_Event_3330061"
+      ],
+      "id": 333006,
+      "kind": "Event"
+    },
+    {
+      "costs": [
+        {
+          "count": 1,
+          "element": "Fire",
+          "kind": "Dice"
+        }
+      ],
+      "effects": [
+        "Char_Skill_13052_Talent_1"
+      ],
+      "id": 213051,
+      "kind": "Talent"
+    },
+    {
+      "costs": [],
+      "effects": [
+        "Char_Skill_25012_Ex_1",
+        "Char_Skill_25012_Ex_2"
+      ],
+      "id": 125011,
+      "kind": "Summon"
+    },
+    {
+      "costs": [],
+      "effects": [
+        "Char_Skill_25013_Ex_1",
+        "Char_Skill_25013_Ex_2"
+      ],
+      "id": 125012,
+      "kind": "Summon"
+    },
+    {
+      "costs": [],
+      "effects": [
+        "Char_Skill_22012_Ex_1"
+      ],
+      "id": 122011,
+      "kind": "Summon"
+    },
+    {
+      "costs": [],
+      "effects": [
+        "Char_Skill_22012_Ex_2"
+      ],
+      "id": 122012,
+      "kind": "Summon"
+    },
+    {
+      "costs": [],
+      "effects": [
+        "Char_Skill_22012_Ex_3",
+        "_Global_ShieldAsShield_Once"
+      ],
+      "id": 122013,
+      "kind": "Summon"
+    }
+  ],
+  "characterIds": [
+    2201,
+    2501,
+    1305
+  ],
+  "characters": [
+    {
+      "element": "Water",
+      "hp": 11,
+      "id": 2201,
+      "maxEnergy": 3,
+      "skills": [
+        {
+          "costs": [
+            {
+              "count": 1,
+              "element": "Water",
+              "kind": "Dice"
+            },
+            {
+              "count": 2,
+              "kind": "Unaligned"
+            }
+          ],
+          "effect": "Effect_Damage_Water_1",
+          "energyGain": 1,
+          "id": 22011,
+          "kind": "NormalAttack"
+        },
+        {
+          "costs": [
+            {
+              "count": 3,
+              "element": "Water",
+              "kind": "Dice"
+            }
+          ],
+          "effect": "Char_Skill_22012",
+          "energyGain": 1,
+          "id": 22012,
+          "kind": "ElementalSkill"
+        },
+        {
+          "costs": [
+            {
+              "count": 5,
+              "element": "Water",
+              "kind": "Dice"
+            }
+          ],
+          "effect": "Char_Skill_22013",
+          "energyGain": 1,
+          "id": 22013,
+          "kind": "ElementalSkill"
+        },
+        {
+          "costs": [
+            {
+              "count": 3,
+              "element": "Water",
+              "kind": "Dice"
+            },
+            {
+              "count": 3,
+              "kind": "Energy"
+            }
+          ],
+          "effect": "Char_Skill_22014",
+          "energyGain": 0,
+          "id": 22014,
+          "kind": "ElementalBurst"
+        }
+      ],
+      "weapon": "NONE"
+    },
+    {
+      "element": "Wind",
+      "hp": 10,
+      "id": 2501,
+      "maxEnergy": 3,
+      "skills": [
+        {
+          "costs": [
+            {
+              "count": 1,
+              "element": "Wind",
+              "kind": "Dice"
+            },
+            {
+              "count": 2,
+              "kind": "Unaligned"
+            }
+          ],
+          "effect": "Effect_Damage_Physic_2",
+          "energyGain": 1,
+          "id": 25011,
+          "kind": "NormalAttack"
+        },
+        {
+          "costs": [
+            {
+              "count": 3,
+              "element": "Wind",
+              "kind": "Dice"
+            }
+          ],
+          "effect": "Char_Skill_25012",
+          "energyGain": 1,
+          "id": 25012,
+          "kind": "ElementalSkill"
+        },
+        {
+          "costs": [
+            {
+              "count": 3,
+              "element": "Ice",
+              "kind": "Dice"
+            }
+          ],
+          "effect": "Char_Skill_25013",
+          "energyGain": 1,
+          "id": 25013,
+          "kind": "ElementalSkill"
+        },
+        {
+          "costs": [
+            {
+              "count": 3,
+              "element": "Wind",
+              "kind": "Dice"
+            },
+            {
+              "count": 3,
+              "kind": "Energy"
+            }
+          ],
+          "effect": "Effect_Damage_Wind_4",
+          "energyGain": 0,
+          "id": 25014,
+          "kind": "ElementalBurst"
+        }
+      ],
+      "weapon": "NONE"
+    },
+    {
+      "element": "Fire",
+      "hp": 10,
+      "id": 1305,
+      "maxEnergy": 3,
+      "skills": [
+        {
+          "costs": [
+            {
+              "count": 1,
+              "element": "Fire",
+              "kind": "Dice"
+            },
+            {
+              "count": 2,
+              "kind": "Unaligned"
+            }
+          ],
+          "effect": "Effect_Damage_Physic_2",
+          "energyGain": 1,
+          "id": 13051,
+          "kind": "NormalAttack"
+        },
+        {
+          "costs": [
+            {
+              "count": 1,
+              "element": "Fire",
+              "kind": "Dice"
+            }
+          ],
+          "effect": "Char_Skill_13052",
+          "energyGain": 0,
+          "id": 13052,
+          "kind": "ElementalSkill"
+        },
+        {
+          "costs": [
+            {
+              "count": 3,
+              "element": "Fire",
+              "kind": "Dice"
+            },
+            {
+              "count": 3,
+              "kind": "Energy"
+            }
+          ],
+          "effect": "Char_Skill_13053",
+          "energyGain": 0,
+          "id": 13053,
+          "kind": "ElementalBurst"
+        }
+      ],
+      "weapon": "BOW"
+    }
+  ]
+}

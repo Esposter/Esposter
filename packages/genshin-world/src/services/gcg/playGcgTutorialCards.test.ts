@@ -6,7 +6,7 @@ import type { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import { createGcgDuel } from "#src/services/gcg/createGcgDuel";
 import { playGcgCard } from "#src/services/gcg/playGcgCard";
 import { prepareGcgSide } from "#src/services/gcg/prepareGcgSide";
-import { readGcgTutorialDeck } from "#src/services/gcg/readGcgTutorialDeck";
+import { readGcgDeck } from "#src/services/gcg/readGcgDeck";
 import { rerollGcgDice } from "#src/services/gcg/rerollGcgDice";
 import { switchGcgCharacter } from "#src/services/gcg/switchGcgCharacter";
 import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
@@ -15,6 +15,7 @@ import { describe, expect, test } from "vitest";
 import { takeOne } from "@esposter/shared";
 
 const SEED = 11;
+const TUTORIAL_DECK_ID = 1;
 const CRIMSON_WITCH_OF_FLAMES_HAND_INDEX = 0;
 // The tutorial deck's characters: Diluc, Bennett and Mona, in the order the deck fields them
 const DILUC_INDEX = 0;
@@ -25,7 +26,7 @@ const MONA_INDEX = 2;
 // On its side
 const openTutorialDuel = async (dice: (Element | GcgDieFace)[]): Promise<GcgDuel> => {
   const random = createSeededRandom(SEED);
-  const deck = await readGcgTutorialDeck();
+  const deck = await readGcgDeck(TUTORIAL_DECK_ID);
   const { gcgStandardRuleSchema } = await import("#src/models/gcg/gcgStandardRuleSchema");
   const { default: standardRule } = await import("#src/generated/gcg/standardRule.json");
   const duel = createGcgDuel([deck, deck], random, gcgStandardRuleSchema.parse(standardRule));

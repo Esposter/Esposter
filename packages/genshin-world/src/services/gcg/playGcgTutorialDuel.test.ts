@@ -8,7 +8,7 @@ import { playGcgCard } from "#src/services/gcg/playGcgCard";
 import { prepareGcgSide } from "#src/services/gcg/prepareGcgSide";
 import { replaceGcgCharacter } from "#src/services/gcg/replaceGcgCharacter";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
-import { readGcgTutorialDeck } from "#src/services/gcg/readGcgTutorialDeck";
+import { readGcgDeck } from "#src/services/gcg/readGcgDeck";
 import { rerollGcgDice } from "#src/services/gcg/rerollGcgDice";
 import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
 import { takeOne } from "@esposter/shared";
@@ -16,6 +16,7 @@ import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const SEED = 7;
+const TUTORIAL_DECK_ID = 1;
 const MAX_STEPS = 2000;
 const SKILL_KIND_ORDER = ["ElementalBurst", "ElementalSkill", "NormalAttack"];
 
@@ -78,7 +79,7 @@ describe("a duel between two copies of the tutorial deck", () => {
   test("should be played to its end through the engine's public functions", async () => {
     expect.hasAssertions();
 
-    const tutorialDeck = await readGcgTutorialDeck();
+    const tutorialDeck = await readGcgDeck(TUTORIAL_DECK_ID);
     const rule = await readGcgStandardRule();
     const duel = playGcgDuel([tutorialDeck, tutorialDeck], rule);
 
