@@ -36,18 +36,22 @@ describe(computeTextureDetail, () => {
 });
 
 describe(averageSurfaceDetails, () => {
-  it("averages each band and the variance over the details it is given", () => {
+  it("averages each band and the variance over the details it is given, each weighted by its area", () => {
     expect.hasAssertions();
     expect(
       averageSurfaceDetails([
-        { bands: [1, 2], variance: 4 },
-        { bands: [3, 0], variance: 0 },
+        { detail: { bands: [1, 2], variance: 4 }, weight: 3 },
+        { detail: { bands: [5, 6], variance: 0 }, weight: 1 },
       ]),
-    ).toStrictEqual({ bands: [2, 1], variance: 2 });
+    ).toStrictEqual({ bands: [2, 3], variance: 3 });
   });
   it("gives no detail for no surface", () => {
     expect.hasAssertions();
     expect(averageSurfaceDetails([])).toBeUndefined();
+  });
+  it("gives no detail for surfaces sampled over no area", () => {
+    expect.hasAssertions();
+    expect(averageSurfaceDetails([{ detail: { bands: [1], variance: 1 }, weight: 0 }])).toBeUndefined();
   });
 });
 

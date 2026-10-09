@@ -34,7 +34,7 @@ import { basename, join } from "node:path";
 import sharp from "sharp";
 
 type ObjMesh = Awaited<ReturnType<typeof readObjMesh>>;
-// A placed mesh or a terrain tile read apart: its part, its samples, and the detail of the texture it was read through
+// A placed mesh or a terrain tile read apart: its part, its samples, and the detail of the textures its covered faces drew
 interface ReadSurface {
   detail?: SurfaceDetail;
   part: string;
@@ -55,14 +55,15 @@ const computeTriangleArea = ([ax, ay, az]: Vector, [bx, by, bz]: Vector, [cx, cy
 // The samples of a mesh's faces where its vertices stand in the world. Each face is read at the points `sampleFaceUvs`
 // Spreads over its UV triangle, through the texture its submesh draws with (`diffuses`, by submesh index), each point
 // Weighted by an equal share of the face's world area and how far its texel is covered, and tagged with the `part` it
-// Is read for. A face whose centroid `checkKept` refuses counts for nothing
+// Is read for, each face's samples kept with the texture they were read through. A face whose centroid `checkKept`
+// Refuses counts for nothing
 const readFaceSamples = (
   { faceGroups, faces, faceUvs, uvs }: ObjMesh,
   world: Vector[],
   diffuses: (Texture | undefined)[],
   part: string,
   checkKept: (centroid: Vector) => boolean = () => true,
-): SurfaceSample[] =>
+): { diffuse: Texture; samples: SurfaceSample[] }[] =>
   faces.flatMap(([firstIndex, secondIndex, thirdIndex], face) => {
     const [first, second, third] = [world[firstIndex], world[secondIndex], world[thirdIndex]];
     const submesh = Number(SUBMESH_REGEX.exec(faceGroups[face] ?? "")?.groups?.submesh ?? 0);
@@ -77,14 +78,38 @@ const readFaceSamples = (
     ];
     const points = sampleFaceUvs([firstUv, secondUv, thirdUv], diffuse.info);
     const weight = computeTriangleArea(first, second, third) / points.length;
-    return points.map((uv) => {
+    const samples = points.map((uv) => {
       const { colour, coverage } = sampleSurfaceTexture(diffuse, uv);
       return { colour, part, weight: weight * coverage };
     });
+    return [{ diffuse, samples }];
   });
-// A surface's detail as the mean of the textures its reads drew, or the surface itself when none drew a texture
-const withDetail = <Surface extends FittedSurface>(surface: Surface, details: readonly SurfaceDetail[]): Surface => {
-  const detail = averageSurfaceDetails(details);
+const sumWeights = (samples: readonly SurfaceSample[]): number => samples.reduce((sum, { weight }) => sum + weight, 0);
+// A mesh read through its submeshes' textures: its samples, and its detail as the mean of every texture its covered faces
+// Drew, each weighted by the area read through it, so a texture no covered face draws counts for nothing
+const readSurface = (
+  mesh: ObjMesh,
+  world: Vector[],
+  diffuses: (Texture | undefined)[],
+  part: string,
+  checkKept?: (centroid: Vector) => boolean,
+): ReadSurface => {
+  const faceSamples = readFaceSamples(mesh, world, diffuses, part, checkKept);
+  const diffuseWeightMap = new Map<Texture, number>();
+  for (const { diffuse, samples } of faceSamples)
+    diffuseWeightMap.set(diffuse, (diffuseWeightMap.get(diffuse) ?? 0) + sumWeights(samples));
+  const details = [...diffuseWeightMap].flatMap(([diffuse, weight]) => {
+    const detail = weight > 0 ? computeTextureDetail(diffuse) : undefined;
+    return detail ? [{ detail, weight }] : [];
+  });
+  return { detail: averageSurfaceDetails(details), part, samples: faceSamples.flatMap(({ samples }) => samples) };
+};
+// A surface's detail as the mean of its reads' details, each weighted by the area it covers, or the surface itself when
+// None drew a texture over a covered face
+const withDetail = <Surface extends FittedSurface>(surface: Surface, reads: readonly ReadSurface[]): Surface => {
+  const detail = averageSurfaceDetails(
+    reads.flatMap((read) => (read.detail ? [{ detail: read.detail, weight: sumWeights(read.samples) }] : [])),
+  );
   return detail === undefined ? surface : { ...surface, detail };
 };
 // The part surfaces, each with the detail of the textures its own placed meshes drew
@@ -97,7 +122,7 @@ const withPartDetails = (
       part,
       withDetail(
         surface,
-        reads.flatMap((read) => (read.part === part && read.detail ? [read.detail] : [])),
+        reads.filter((read) => read.part === part),
       ),
     ]),
   );
@@ -153,12 +178,7 @@ export const fitSurfaceColours = async <Family extends string>(
         return texture;
       }),
     );
-    const texture = diffuses.find((diffuse) => diffuse !== undefined);
-    return {
-      detail: texture && computeTextureDetail(texture),
-      part: placement.mesh,
-      samples: readFaceSamples(mesh, toWorldVertices(mesh.vertices, placement), diffuses, placement.mesh),
-    };
+    return readSurface(mesh, toWorldVertices(mesh.vertices, placement), diffuses, placement.mesh);
   };
   // A terrain tile is never placed: its vertices are local to its column and row, which are its offset in the world
   const readTerrainSurface = async (tile: string): Promise<ReadSurface> => {
@@ -168,17 +188,7 @@ export const fitSurfaceColours = async <Family extends string>(
     const world = mesh.vertices.map(([x, y, z]): Vector => [x + offsetX, y, z + offsetZ]);
     const baseMap = join(textureDirectory, `${tile}${TERRAIN_BASE_MAP_SUFFIX}.png`);
     const diffuses = [existsSync(baseMap) ? await getTexture(baseMap) : undefined];
-    return {
-      detail: diffuses[0] && computeTextureDetail(diffuses[0]),
-      part: "",
-      samples: readFaceSamples(
-        mesh,
-        world,
-        diffuses,
-        "",
-        ([x, , z]) => Math.hypot(x - originX, z - originZ) <= terrainRadius,
-      ),
-    };
+    return readSurface(mesh, world, diffuses, "", ([x, , z]) => Math.hypot(x - originX, z - originZ) <= terrainRadius);
   };
   const readFamilySurfaces = async (regex: RegExp): Promise<ReadSurface[]> => {
     const placed = await Promise.all(
@@ -202,10 +212,7 @@ export const fitSurfaceColours = async <Family extends string>(
             family,
             "has no placed mesh or terrain tile whose covered faces can be read",
           );
-        const familySurface = withDetail(
-          computeSurfaceTones(samples),
-          reads.flatMap((read) => (read.detail ? [read.detail] : [])),
-        );
+        const familySurface = withDetail(computeSurfaceTones(samples), reads);
         return [family, { ...familySurface, parts: withPartDetails(computePartSurfaces(samples), reads) }] as const;
       }),
     ),
