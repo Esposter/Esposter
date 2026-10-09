@@ -6,12 +6,12 @@ describe(getSuggestionListTitle, () => {
   test("returns the bare title without a query", () => {
     expect.hasAssertions();
 
-    expect(getSuggestionListTitle(SuggestionTrigger.Emoji, "")).toBe("EMOJI");
+    expect(getSuggestionListTitle("EMOJI", SuggestionTrigger.Emoji, "")).toBe("EMOJI");
   });
 
   test("appends the triggered query when there is one", () => {
     expect.hasAssertions();
 
-    expect(getSuggestionListTitle(SuggestionTrigger.Mention, "a")).toBe("MEMBERS MATCHING @a");
+    expect(getSuggestionListTitle("MEMBERS", SuggestionTrigger.Mention, "a")).toBe("MEMBERS MATCHING @a");
   });
 });

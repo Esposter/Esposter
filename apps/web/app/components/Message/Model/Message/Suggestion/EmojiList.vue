@@ -25,7 +25,7 @@ defineExpose({ onKeyDown });
     max-w-80
     :is-visible="items.length > 0"
     :selected-index
-    :title="getSuggestionListTitle(SuggestionTrigger.Emoji, query)"
+    :title="getSuggestionListTitle("EMOJI", SuggestionTrigger.Emoji, query)"
   >
     <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- focus stays in the editor, which walks the options -->
     <div
