@@ -19,7 +19,7 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 - **Lint: the touched files only.** Run `vp lint --disable-nested-config <files>` and `pnpm exec eslint <files>` from the package, never the package's whole `pnpm lint`.
 - **Tests: the touched tests only,** through the slot: `pnpm exec vitest run <paths>`.
 - **Build: only to regenerate a barrel.** After an agent adds, renames or deletes a module file, it runs `build-cached.sh` on that package, which builds it through the slot under a key that moves with its source, never `pnpm build`; otherwise it does not build at all. The parity page and every sibling's typecheck read a package's source through its `source` export condition and the generated barrel, and the user's `nuxt dev` rebuilds every package itself.
-- **A worktree commit never runs `pnpm`.** The pre-commit hook takes its tools from the main checkout's install when the worktree has none, because `pnpm` there installs the whole workspace first.
+- **A worktree commit never runs `pnpm`.** The pre-commit hook takes its formatter from the main checkout's install when the worktree has none, because `pnpm` there installs the whole workspace first.
 - **Everything else is the fixer's, once.** When every report is in, one `haiku` fixer runs each touched package's full checks and its build once and repairs what fails. CI on the push is the backstop.
 
 ## Search what git tracks

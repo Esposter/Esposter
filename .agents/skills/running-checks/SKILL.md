@@ -9,8 +9,8 @@ description: Apply when about to run pnpm typecheck, lint, lint:fix, test, forma
 lint, format and the whole suite. The session watches its push's run in the background and fixes a red typecheck
 or lint job itself, in a commit behind the push (`AGENTS.md`, "Finishing a change", step 6); only a red that
 reaches `main` is the collector's repair — its regenerators first, then a session
-(`apps/web/content/docs/infra/review-collector/repair.md`). The pre-commit hook formats what
-is staged and lints what you stage; a red lint blocks the commit (`.githooks/pre-commit`). The command and its directory are the `package-scripts` skill's; this page is
+(`apps/web/content/docs/infra/review-collector/repair.md`). The pre-commit hook only formats what is staged and
+runs no check (`.githooks/pre-commit`). The command and its directory are the `package-scripts` skill's; this page is
 which checks a session runs and how it waits on them.
 
 ## Settled — do not re-propose
@@ -21,6 +21,8 @@ which checks a session runs and how it waits on them.
   a CI run, at the session's price.
 - **Dropping the touched tests with them.** Their cost scales with the change rather than the repository, and they
   catch what neither a typecheck nor a lint can — the behaviour the change was for.
+- **Lint, a typecheck or any other check in the pre-commit hook.** Rejected by the user's decision of 2026-10-09: keep
+  checks at a minimum and delegate every check to CI. The hook only formats.
 
 ## The tests of what the change touched, in the background
 

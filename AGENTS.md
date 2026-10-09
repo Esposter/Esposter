@@ -48,7 +48,7 @@ pnpm dev                                # start dev server
 pnpm test path/to/file.test.ts --run    # the suites a change touched; never a bare full run locally
 ```
 
-**The checks are CI's**, all of them on every push; locally a session runs only the tests of what it touched, and the pre-commit hook formats what is staged (the `running-checks` skill).
+**The checks are CI's**, all of them on every push; locally a session runs only the tests of what it touched, and the pre-commit hook only formats what is staged (the `running-checks` skill).
 
 From the repo root: `pnpm i` after a manifest change, `pnpm update:node [version]` to bump node everywhere, `pnpm graph:gen` for `dependency-graph.svg`. In a package that gained, renamed or lost a module file: `pnpm build` regenerates its barrel, which is all a sibling typechecking against its source needs. Migrations are generated from `packages/db-schema/` and applied at app startup, never from the CLI — the `drizzle` skill owns all of it.
 
