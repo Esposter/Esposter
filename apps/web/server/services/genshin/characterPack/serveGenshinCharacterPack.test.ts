@@ -1,6 +1,6 @@
 import { TEST_FILENAME } from "#server/services/genshin/characterPack/constants.test";
 import { serveGenshinCharacterPack } from "#server/services/genshin/characterPack/serveGenshinCharacterPack";
-import { CHARACTER_MODEL_PATH, CHARACTER_PACK_INDEX_PATH, CHARACTER_TERMS_PATH } from "genshin-world";
+import { CHARACTER_MODEL_PATH, CHARACTER_PACK_INDEX_PATH, CHARACTER_TERMS_PATH } from "genshin-world/characterPack";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";

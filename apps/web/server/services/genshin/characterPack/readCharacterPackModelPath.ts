@@ -1,5 +1,5 @@
 import { parsePmx } from "genshin-engine";
-import { chooseCharacterPackModel, readCharacterNames } from "genshin-world";
+import { chooseCharacterPackModel, readCharacterNames } from "genshin-world/characterPack";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 

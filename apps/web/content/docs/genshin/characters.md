@@ -43,7 +43,7 @@ An official release is extracted as it shipped: its folder names its files in Ch
 
 ### The development server's packs
 
-Under `nuxt dev`, the app's module `apps/web/modules/serveGenshinCharacterPacks.ts` registers a route at `GENSHIN_CHARACTER_PACK_BASE_URL`, "/data/genshin/characters", and the app's world component hands the world that address. A build registers no route, bundles neither the route's handler nor the readers it imports, and hands the world no address. The route reads the folder `GENSHIN_CHARACTER_PACKS_DIRECTORY` names, by default `~/Esposter/character-packs/extracted`, which holds one folder a character named by its id, each an official release extracted as it shipped, and answers the layout above from it through `serveGenshinCharacterPack`.
+Under `nuxt dev`, the app's module `apps/web/modules/serveGenshinCharacterPacks.ts` registers a route at `GENSHIN_CHARACTER_PACK_BASE_URL`, "/data/genshin/characters", and the app's world component hands the world that address. A build registers no route, bundles neither the route's handler nor the readers it imports, and hands the world no address. The route reads the folder `GENSHIN_CHARACTER_PACKS_DIRECTORY` names, by default `~/Esposter/character-packs/extracted`, which holds one folder a character named by its id, each an official release extracted as it shipped, and answers the layout above from it through `serveGenshinCharacterPack`. The server reaches the world's rules through the package's `genshin-world/characterPack` entry, which reaches none of its components.
 
 ```mermaid
 flowchart TD
@@ -110,6 +110,7 @@ There is no cache of the parsed model. `parsePmx.bench.md` reads a model of tens
 | `packages/genshin-world/src/services/character/resolveCharacterPackTextures.ts` | Each texture matched to its file case-insensitively, kept at the model's spelling            |
 | `packages/genshin-world/src/services/character/chooseCharacterTermsFile.ts`     | The terms file a folder holds                                                                |
 | `packages/genshin-world/src/services/character/decodeCharacterTerms.ts`         | The terms decoded strictly, from UTF-16, UTF-8, Shift-JIS or GBK                             |
+| `packages/genshin-world/src/characterPack.ts`                                   | The rules and readers the app's server imports, with none of the world's components          |
 | `packages/genshin-world/src/services/character/readCharacterMesh.ts`            | A pack's model and its textures into one mesh, as a Result                                   |
 | `packages/genshin-world/src/services/character/readCharacterTerms.ts`           | A pack's terms, as a Result                                                                  |
 | `packages/genshin-world/src/services/character/constants.ts`                    | A pack's index and file names, the terms' names and encodings' tell, and each read's wait    |

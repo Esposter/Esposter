@@ -1,10 +1,11 @@
 import type { Nuxt } from "nuxt/schema";
 
-import { GENSHIN_CHARACTER_PACK_BASE_URL } from "#shared/services/genshin/constants";
-import serveGenshinCharacterPacks from "@@/modules/serveGenshinCharacterPacks";
 import { join } from "node:path";
 import { addServerHandler } from "nuxt/kit";
 import { describe, expect, test, vi } from "vitest";
+
+import { GENSHIN_CHARACTER_PACK_BASE_URL } from "../shared/services/genshin/constants.ts";
+import serveGenshinCharacterPacks from "./serveGenshinCharacterPacks.ts";
 
 vi.mock(import("nuxt/kit"), async (importOriginal) => ({
   ...(await importOriginal()),
