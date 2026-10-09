@@ -27,8 +27,6 @@ export const ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS: number = Temporal.Duration.f
   "milliseconds",
 );
 export const ASSET_PATH_INDEX_PATH: string = join(PARITY_DIRECTORY, "asset-index", "gi-2.6.0.json");
-// The prefab paths this derivation names by hashing (`buildDerivedPathNames`), beside the community's index
-export const DERIVED_ASSET_PATH_INDEX_PATH: string = join(PARITY_DIRECTORY, "asset-index", "gi-7.1.0-derived.json");
 // A prefab's stem starts with one of the open world's name roots, each the folder its prefabs sit under in the game's tree
 export const PREFAB_ROOT_MAP: Record<string, string> = {
   Area: "ART/Stages/Area",

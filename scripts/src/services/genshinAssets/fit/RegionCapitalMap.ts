@@ -2,16 +2,15 @@ import type { RegionCapital } from "#src/models/genshinAssets/world/RegionCapita
 
 // Each region's first landmark by its region data file's id, and the areas whose waypoints place it: the capital, or
 // For Natlan, the first tribe the game enters it through. Snezhnaya's areas are not in the community's dump yet, so its
-// Capital is set at the place the scene has always been set at by hand. Each capital's city area is the code of its own
-// StreamGen blob (`Area_<code>_City`) where the name lookup holds it: Mondstadt's and Liyue's, kept until `city-areas`
-// Has shown the place lookup picks the same. The rest are "", found by their place (`selectCapitalCityArea`)
+// Capital is set at the place the scene has always been set at by hand. Each capital's city area is found by its place
+// (`readCapitalCityCode`)
 export const RegionCapitalMap: Record<string, RegionCapital> = {
-  fontaine: { areaNames: ["Court of Fontaine"], cityArea: "", landmarkId: "court-of-fontaine" },
-  inazuma: { areaNames: ["Inazuma City"], cityArea: "", landmarkId: "inazuma-city" },
-  liyue: { areaNames: ["Liyue Harbor"], cityArea: "LYG", landmarkId: "liyue-harbor" },
-  mondstadt: { areaNames: ["Mondstadt"], cityArea: "Mengde", landmarkId: "mondstadt-city" },
-  natlan: { areaNames: ['"People of the Springs"'], cityArea: "", landmarkId: "people-of-the-springs" },
-  "nod-krai": { areaNames: ["Nasha Town"], cityArea: "", landmarkId: "nasha-town" },
-  snezhnaya: { cityArea: "", landmarkId: "snezhnograd", position: { x: 3750, z: -10730 } },
-  sumeru: { areaNames: ["Sumeru City"], cityArea: "", landmarkId: "sumeru-city" },
+  fontaine: { areaNames: ["Court of Fontaine"], landmarkId: "court-of-fontaine" },
+  inazuma: { areaNames: ["Inazuma City"], landmarkId: "inazuma-city" },
+  liyue: { areaNames: ["Liyue Harbor"], landmarkId: "liyue-harbor" },
+  mondstadt: { areaNames: ["Mondstadt"], landmarkId: "mondstadt-city" },
+  natlan: { areaNames: ['"People of the Springs"'], landmarkId: "people-of-the-springs" },
+  "nod-krai": { areaNames: ["Nasha Town"], landmarkId: "nasha-town" },
+  snezhnaya: { landmarkId: "snezhnograd", position: { x: 3750, z: -10730 } },
+  sumeru: { areaNames: ["Sumeru City"], landmarkId: "sumeru-city" },
 };

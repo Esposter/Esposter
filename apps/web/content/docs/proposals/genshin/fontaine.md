@@ -79,7 +79,7 @@ packages/genshin-world/src/services/fontaine/   ← aqueduct, clock tower and ma
 
 1. **The Court of Fontaine's witness claims**, for the roadmap's `fontaine-every-renderer`, as [Inazuma](/docs/proposals/genshin/inazuma)'s Decisions shape a capital's claims; its first step adds `witnessComponents` to `ScreenFixture` if no region has yet.
    - `models/fontaine/FontainePartFamily.ts` (`Ground`, `Buildings`) and `services/fontaine/FontainePartFamilyMeshRegexMap.ts`: `/^BigWorldTerrain_/u` for `Ground`, and for `Buildings` `/^Area_Fd_Build_/u`, Fontaine's code in the game's mesh names.
-   - `services/fontaine/FontaineUndrawnMeshRegexMap.ts` over `~/Esposter/genshin-parity/extracted/fontaine/`: `props` `/^Area_(?:Fd|Common)_Prop_/u`, `plants` `/^Area_Xm_Lvy_/u`, `stagePlanes` `/^Stages_Plane_/u` and `effects` `/^Eff_/u`. Today's witness places little past the terrain tiles, since the city is found again by `city-areas-reextract`; these entries already match every mesh name the export holds.
+   - `services/fontaine/FontaineUndrawnMeshRegexMap.ts` over `~/Esposter/genshin-parity/extracted/fontaine/`: `props` `/^Area_(?:Fd|Common)_Prop_/u`, `plants` `/^Area_Xm_Lvy_/u`, `stagePlanes` `/^Stages_Plane_/u` and `effects` `/^Eff_/u`. The export now holds the city's architecture, and about a fifth of its mesh names match none of these entries yet: its lights, its own ivy (`Area_Fd_Lvy_`), rocks, grass and decals, which the map takes entries for.
    - The fixture's `witnessComponents` takes `fontaine` with the two maps.
    - Proof: `pnpm -C scripts genshin:parity passes fontaine --pass Inventory` counts 0 renderers unclaimed.
 2. **The aqueduct, clock tower and machinery generators**, each fitted against its exports when the passes reach its shape.

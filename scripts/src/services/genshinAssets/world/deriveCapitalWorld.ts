@@ -17,6 +17,7 @@ import { exportTerrainTiles } from "#src/services/genshinAssets/world/exportTerr
 import { exportWorldStreams } from "#src/services/genshinAssets/world/exportWorldStreams";
 import { getCityStreamName } from "#src/services/genshinAssets/world/getCityStreamName";
 import { getCoveredTiles } from "#src/services/genshinAssets/world/getCoveredTiles";
+import { getPathHashKey } from "#src/services/genshinAssets/world/getPathHashKey";
 import { getPrefabNames } from "#src/services/genshinAssets/world/getPrefabNames";
 import { getStreamBlobName } from "#src/services/genshinAssets/world/getStreamBlobName";
 import { getTerrainTileNames } from "#src/services/genshinAssets/world/getTerrainTileNames";
@@ -26,6 +27,7 @@ import { parseStreamingPlacements } from "#src/services/genshinAssets/world/pars
 import { readAssetPathNames } from "#src/services/genshinAssets/world/readAssetPathNames";
 import { readCapitalCityCode } from "#src/services/genshinAssets/world/readCapitalCityCode";
 import { readCapitalWorldPlace } from "#src/services/genshinAssets/world/readCapitalWorldPlace";
+import { readDerivedPathNames } from "#src/services/genshinAssets/world/readDerivedPathNames";
 import { resolvePrefabRoot } from "#src/services/genshinAssets/world/resolvePrefabRoot";
 import { selectCapitalPlacements } from "#src/services/genshinAssets/world/selectCapitalPlacements";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -37,8 +39,9 @@ import { join } from "node:path";
 // Those select (every one in view, and each architecture placement within the radius), each prefab of them rooted at
 // The game object its name finds in the blocks that name it or, failing that, in any block dumped for the derivation (a
 // Game object's block need not index its own mesh or material), and the 2x2 of terrain tiles its capital stands in.
-// Each step reads the game's own data (the asset index, the blobs, the community's path names, the dumped layouts), so
-// A region gives only its capital's place. Returns the block with the lines that report what did not resolve
+// Each step reads the game's own data (the asset index, the blobs, the community's path names and the ones the asset
+// Index's own names hash to, the dumped layouts), so a region gives only its capital's place. Returns the block with
+// The lines that report what did not resolve
 export const deriveCapitalWorld = async (
   component: DerivedAssetComponent,
   directory: ComponentDirectory,
@@ -80,7 +83,20 @@ export const deriveCapitalWorld = async (
       return parseStreamingPlacements(blobBytes, parseStreamingIndex(indexBytes));
     }),
   );
+  // Each path hash the community's index leaves unnamed is named in the same run by hashing the asset index's own
+  // Prefab names, so no step after the extraction is owed before its prefabs are named
   const pathNames = await readAssetPathNames();
+  const unnamedKeys = new Set(
+    streamPlacements
+      .flat()
+      .flatMap(({ pathHash }) => (pathHash ? [getPathHashKey(pathHash)] : []))
+      .filter((key) => !pathNames.has(key)),
+  );
+  const derivedPathNames = await readDerivedPathNames(unnamedKeys);
+  for (const [key, path] of derivedPathNames) pathNames.set(key, path);
+  lines.push(
+    `${derivedPathNames.size} of ${unnamedKeys.size} path hashes past the community's index named by their folders`,
+  );
   const streamPrefabNames = getPrefabNames(streamPlacements.flat(), pathNames);
   // A prefab no path names is left out of the world, so it is counted here, with the placements it draws in the view
   const unnamedPlacements = streamPlacements.flat().filter(({ prefabId }) => !streamPrefabNames.has(prefabId));
