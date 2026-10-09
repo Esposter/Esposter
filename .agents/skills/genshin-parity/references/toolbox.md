@@ -4,15 +4,15 @@ Read before any pass or round on a Genshin screen or scene, and whenever its loo
 
 ## The interface
 
-| Unknown                       | Tool                                                    |
-| :---------------------------- | :------------------------------------------------------ |
-| A piece's place and anchoring | `genshin:assets interface`, then `fit`'s rects by path  |
-| A piece's motion              | `genshin:assets clips`: the decoded clip curves         |
-| A mark's shape                | `trace`, or the vector on Commons                       |
-| A colour, a size, a place     | `measure`, `zoom`, `polar`                              |
-| A timing                      | `frames`, `luma`                                        |
-| Whether the piece matches     | `compare` over the reference's own frame (`isBackdrop`) |
-| The game's words              | `genshin:text decode`, the install's text maps          |
+| Unknown                       | Tool                                                      |
+| :---------------------------- | :-------------------------------------------------------- |
+| A piece's place and anchoring | `genshin:assets interface`, then `fit`'s rects by path    |
+| A piece's motion              | `genshin:assets clips`: the decoded clip curves           |
+| A mark's shape                | `trace`, or the vector on Commons                         |
+| A colour, a size, a place     | `measure`, `zoom`, `polar`                                |
+| A timing                      | `frames`, `luma`                                          |
+| Whether the piece matches     | `compare` over the reference's clean plate (`isBackdrop`) |
+| The game's words              | `genshin:text decode`, the install's text maps            |
 
 ## A scene, pass by pass
 
