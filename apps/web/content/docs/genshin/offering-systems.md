@@ -41,7 +41,7 @@ flowchart TD
 ## Notes
 
 - **Not yet wired.** No tree stands in the world, and nothing calls `offerItems` on a screen. The tree's place in Dragonspine, its offering in reach and the taking of the bag's items wait on Mondstadt's region page and on the spawned places that place the items.
-- **One rule with the statues.** The statues' `offerOculus` became `offerItems`, which takes the count offered rather than one Oculus, and the level shape they share is `itemCount` and `itemId`, in place of `oculusCount` and `oculusItemId`. The statue slice was rewritten under those names.
+- **One rule with the statues.** The statues' offerOculus became `offerItems`, which takes the count offered rather than one Oculus, and the level shape they share is `itemCount` and `itemId`, in place of oculusCount and oculusItemId. The statue slice was rewritten under those names.
 - **Reading the wiki.** The [Offering System](https://genshin-impact.fandom.com/wiki/Offering_System) page answered HTTP 402 when this was built, so the calls above rest on the game's table alone, and the wiki's wording of each is still to be checked.
 
 ## Sources

@@ -8,7 +8,7 @@ import {
   EXPEDITION_RANK_CONDITION,
   EXPEDITION_SCENE_ID,
 } from "#src/services/genshinAssets/expeditions/constants";
-import { parseRewardCount } from "#src/services/genshinAssets/expeditions/parseRewardCount";
+import { toPreviewItems } from "#src/services/genshinAssets/rewards/toPreviewItems";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One place as the world reads it. Its Adventure Rank is the highest rank condition it names, its statue a point of the
@@ -43,15 +43,7 @@ export const toExpeditionPlaceRow = (
           String(row.id),
           `has no reward preview ${duration.rewardPreview}`,
         );
-      return {
-        hours: duration.GBGCPBEJAEN,
-        items: rewardPreview.previewItems
-          .filter(({ id }) => id !== 0)
-          .map(({ count, id }) => {
-            const { maxCount, minCount } = parseRewardCount(count);
-            return { itemId: id, maxCount, minCount };
-          }),
-      };
+      return { hours: duration.GBGCPBEJAEN, items: toPreviewItems(rewardPreview) };
     }),
     id: row.id,
     nameTextId: String(row.nameTextMapHash),

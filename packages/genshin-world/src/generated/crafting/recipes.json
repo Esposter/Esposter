@@ -1,0 +1,3867 @@
+[
+  {
+    "id": 11001,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112002
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 1,
+    "resultCount": 1,
+    "resultItemId": 112003,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11002,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112003
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 112004,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11003,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112005
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 112006,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11004,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112006
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112007,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11005,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112008
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 112009,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11006,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112009
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112010,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11007,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112011
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 112012,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11008,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112012
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112013,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11009,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112014
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112015,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11010,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112015
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112016,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11013,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112020
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112021,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11014,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112021
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112022,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11015,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112023
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112024,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11016,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112024
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112025,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11017,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112026
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112027,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11018,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112027
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112028,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11019,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112029
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112030,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11020,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112030
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112031,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11021,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112032
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112033,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11022,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112033
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112034,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11023,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112035
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 112036,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11024,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112036
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112037,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11025,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112038
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 112039,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11026,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112039
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112040,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11027,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112041
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 112042,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11028,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112042
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112043,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11029,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112044
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 112045,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11030,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112045
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112046,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11031,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112047
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112048,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11032,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112048
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112049,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11033,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112050
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 112051,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11034,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112051
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112052,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11035,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112053
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 112054,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11036,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112054
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112055,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11037,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112056
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112057,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11038,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112057
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112058,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11039,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112017
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112018,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11040,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112018
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112019,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11041,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112059
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 112060,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11042,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112060
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112061,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11043,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112062
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112063,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11044,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112063
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112064,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11045,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112065
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 112066,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11046,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112066
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112067,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11047,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112068
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112069,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11048,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112069
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112070,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11049,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112071
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112072,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11050,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112072
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112073,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11051,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112074
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112075,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11052,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112075
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112076,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11053,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112077
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112078,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11054,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112078
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112079,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11055,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112086
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112087,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11056,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112087
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112088,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11057,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112089
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112090,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11058,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112090
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112091,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11059,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112092
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112093,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11060,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112093
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112094,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11061,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112095
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112096,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11062,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112096
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112097,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11063,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112098
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112099,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11064,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112099
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112100,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11065,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112107
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112108,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11066,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112108
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112109,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11067,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112110
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112111,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11068,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112111
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112112,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11069,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112113
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112114,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11070,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112114
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112115,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11071,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112116
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112117,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11072,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112117
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112118,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11073,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112119
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112120,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11074,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112120
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112121,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11075,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112128
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112129,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11076,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112129
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112130,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11077,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112131
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112132,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11078,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112132
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112133,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11079,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112134
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112135,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11080,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112135
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112136,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11081,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112137
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112138,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11082,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112138
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112139,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11083,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112140
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 15,
+    "resultCount": 1,
+    "resultItemId": 112141,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11084,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112141
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 20,
+    "resultCount": 1,
+    "resultItemId": 112142,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11201,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112080
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 112081,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11202,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112081
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112082,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11203,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112083
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 112084,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11204,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112084
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112085,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11205,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112101
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 112102,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11206,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112102
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112103,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11207,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112104
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 112105,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11208,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112105
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112106,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11209,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112122
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 112123,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11210,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112123
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112124,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11211,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112125
+      }
+    ],
+    "mora": 25,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 112126,
+    "unlockItemIds": []
+  },
+  {
+    "id": 11212,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 112126
+      }
+    ],
+    "mora": 50,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 112127,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12001,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114001
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114002,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12002,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114002
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114003,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12003,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114003
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114004,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12004,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114005
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114006,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12005,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114006
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114007,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12006,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114007
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114008,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12007,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114009
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114010,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12008,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114010
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114011,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12009,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114011
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114012,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12010,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114013
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114014,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12011,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114014
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114015,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12012,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114015
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114016,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12013,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114017
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114018,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12014,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114018
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114019,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12015,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114019
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114020,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12016,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114021
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114022,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12017,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114022
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114023,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12018,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114023
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114024,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12019,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114025
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114026,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12020,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114026
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114027,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12021,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114027
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114028,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12022,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114029
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114030,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12023,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114030
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114031,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12024,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114031
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114032,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12025,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114033
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114034,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12026,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114034
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114035,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12027,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114035
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114036,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12028,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114037
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114038,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12029,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114038
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114039,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12030,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114039
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114040,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12031,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114041
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114042,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12032,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114042
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114043,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12033,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114043
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114044,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12034,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114045
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114046,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12035,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114046
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114047,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12036,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114047
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114048,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12037,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114049
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114050,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12038,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114050
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114051,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12039,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114051
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114052,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12040,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114053
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114054,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12041,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114054
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114055,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12042,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114055
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114056,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12043,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114057
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114058,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12044,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114058
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114059,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12045,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114059
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114060,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12046,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114061
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114062,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12047,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114062
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114063,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12048,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114063
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114064,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12049,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114065
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114066,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12050,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114066
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114067,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12051,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114067
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114068,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12052,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114069
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114070,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12053,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114070
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114071,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12054,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114071
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114072,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12055,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114073
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114074,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12056,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114074
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114075,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12057,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114075
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114076,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12058,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114077
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114078,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12059,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114078
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114079,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12060,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114079
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114080,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12061,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114081
+      }
+    ],
+    "mora": 125,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 114082,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12062,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114082
+      }
+    ],
+    "mora": 350,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 114083,
+    "unlockItemIds": []
+  },
+  {
+    "id": 12063,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 114083
+      }
+    ],
+    "mora": 1075,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 114084,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13001,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104301
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104302,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13002,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104302
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104303,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13003,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104304
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104305,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13004,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104305
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104306,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13005,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104307
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104308,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13006,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104308
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104309,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13007,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104310
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104311,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13008,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104311
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104312,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13009,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104313
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104314,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13010,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104314
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104315,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13011,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104316
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104317,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13012,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104317
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104318,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13013,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104320
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104321,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13014,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104321
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104322,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13015,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104323
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104324,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13016,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104324
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104325,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13017,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104326
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104327,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13018,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104327
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104328,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13019,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104329
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104330,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13020,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104330
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104331,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13021,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104332
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104333,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13022,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104333
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104334,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13023,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104335
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104336,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13024,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104336
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104337,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13025,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104338
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104339,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13026,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104339
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104340,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13027,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104341
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104342,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13028,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104342
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104343,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13029,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104344
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104345,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13030,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104345
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104346,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13031,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104347
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104348,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13032,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104348
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104349,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13033,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104350
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104351,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13034,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104351
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104352,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13035,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104353
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104354,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13036,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104354
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104355,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13037,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104356
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104357,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13038,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104357
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104358,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13039,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104359
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104360,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13040,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104360
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104361,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13041,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104362
+      }
+    ],
+    "mora": 175,
+    "playerLevel": 30,
+    "resultCount": 1,
+    "resultItemId": 104363,
+    "unlockItemIds": []
+  },
+  {
+    "id": 13042,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104363
+      }
+    ],
+    "mora": 550,
+    "playerLevel": 40,
+    "resultCount": 1,
+    "resultItemId": 104364,
+    "unlockItemIds": []
+  },
+  {
+    "id": 14001,
+    "kind": "Potion",
+    "materials": [
+      {
+        "count": 1,
+        "id": 100072
+      },
+      {
+        "count": 1,
+        "id": 100053
+      }
+    ],
+    "mora": 100,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 111006,
+    "unlockItemIds": []
+  },
+  {
+    "id": 14002,
+    "kind": "Potion",
+    "materials": [
+      {
+        "count": 1,
+        "id": 100072
+      },
+      {
+        "count": 1,
+        "id": 100026
+      }
+    ],
+    "mora": 100,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 111007,
+    "unlockItemIds": []
+  },
+  {
+    "id": 14003,
+    "kind": "Potion",
+    "materials": [
+      {
+        "count": 1,
+        "id": 100085
+      },
+      {
+        "count": 1,
+        "id": 100052
+      }
+    ],
+    "mora": 100,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 111008,
+    "unlockItemIds": []
+  },
+  {
+    "id": 14004,
+    "kind": "Potion",
+    "materials": [
+      {
+        "count": 1,
+        "id": 100085
+      },
+      {
+        "count": 1,
+        "id": 100057
+      }
+    ],
+    "mora": 100,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 111009,
+    "unlockItemIds": []
+  },
+  {
+    "id": 14005,
+    "kind": "Potion",
+    "materials": [
+      {
+        "count": 1,
+        "id": 100072
+      },
+      {
+        "count": 1,
+        "id": 100054
+      }
+    ],
+    "mora": 100,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 111010,
+    "unlockItemIds": []
+  },
+  {
+    "id": 14006,
+    "kind": "Potion",
+    "materials": [
+      {
+        "count": 1,
+        "id": 100072
+      },
+      {
+        "count": 1,
+        "id": 100058
+      }
+    ],
+    "mora": 100,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 111011,
+    "unlockItemIds": []
+  },
+  {
+    "id": 14007,
+    "kind": "Potion",
+    "materials": [
+      {
+        "count": 1,
+        "id": 100085
+      },
+      {
+        "count": 1,
+        "id": 101219
+      }
+    ],
+    "mora": 100,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 111012,
+    "unlockItemIds": []
+  },
+  {
+    "id": 14008,
+    "kind": "Potion",
+    "materials": [
+      {
+        "count": 1,
+        "id": 100081
+      },
+      {
+        "count": 1,
+        "id": 100053
+      }
+    ],
+    "mora": 100,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 111013,
+    "unlockItemIds": []
+  },
+  {
+    "id": 14009,
+    "kind": "Potion",
+    "materials": [
+      {
+        "count": 1,
+        "id": 100081
+      },
+      {
+        "count": 1,
+        "id": 100026
+      }
+    ],
+    "mora": 100,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 111014,
+    "unlockItemIds": []
+  },
+  {
+    "id": 14010,
+    "kind": "Potion",
+    "materials": [
+      {
+        "count": 1,
+        "id": 100083
+      },
+      {
+        "count": 1,
+        "id": 100052
+      }
+    ],
+    "mora": 100,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 111015,
+    "unlockItemIds": []
+  },
+  {
+    "id": 14011,
+    "kind": "Potion",
+    "materials": [
+      {
+        "count": 1,
+        "id": 100083
+      },
+      {
+        "count": 1,
+        "id": 100057
+      }
+    ],
+    "mora": 100,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 111016,
+    "unlockItemIds": []
+  },
+  {
+    "id": 14012,
+    "kind": "Potion",
+    "materials": [
+      {
+        "count": 1,
+        "id": 100081
+      },
+      {
+        "count": 1,
+        "id": 100054
+      }
+    ],
+    "mora": 100,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 111017,
+    "unlockItemIds": []
+  },
+  {
+    "id": 14013,
+    "kind": "Potion",
+    "materials": [
+      {
+        "count": 1,
+        "id": 100081
+      },
+      {
+        "count": 1,
+        "id": 100058
+      }
+    ],
+    "mora": 100,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 111018,
+    "unlockItemIds": []
+  },
+  {
+    "id": 14014,
+    "kind": "Potion",
+    "materials": [
+      {
+        "count": 1,
+        "id": 100083
+      },
+      {
+        "count": 1,
+        "id": 101219
+      }
+    ],
+    "mora": 100,
+    "playerLevel": 5,
+    "resultCount": 1,
+    "resultItemId": 111019,
+    "unlockItemIds": []
+  },
+  {
+    "id": 14101,
+    "kind": "Potion",
+    "materials": [
+      {
+        "count": 3,
+        "id": 100017
+      },
+      {
+        "count": 2,
+        "id": 100020
+      },
+      {
+        "count": 1,
+        "id": 101234
+      }
+    ],
+    "mora": 100,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 111029,
+    "unlockItemIds": [
+      221061
+    ]
+  },
+  {
+    "id": 14102,
+    "kind": "Potion",
+    "materials": [
+      {
+        "count": 2,
+        "id": 101244
+      },
+      {
+        "count": 1,
+        "id": 101250
+      }
+    ],
+    "mora": 100,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 111032,
+    "unlockItemIds": [
+      221062
+    ]
+  },
+  {
+    "id": 15001,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104111
+      }
+    ],
+    "mora": 300,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 104112,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15002,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104112
+      }
+    ],
+    "mora": 900,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 104113,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15003,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104113
+      }
+    ],
+    "mora": 2700,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 104114,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15004,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104121
+      }
+    ],
+    "mora": 300,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 104122,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15005,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104122
+      }
+    ],
+    "mora": 900,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 104123,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15006,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104123
+      }
+    ],
+    "mora": 2700,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 104124,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15007,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104131
+      }
+    ],
+    "mora": 300,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 104132,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15008,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104132
+      }
+    ],
+    "mora": 900,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 104133,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15009,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104133
+      }
+    ],
+    "mora": 2700,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 104134,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15010,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104141
+      }
+    ],
+    "mora": 300,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 104142,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15011,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104142
+      }
+    ],
+    "mora": 900,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 104143,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15012,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104143
+      }
+    ],
+    "mora": 2700,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 104144,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15013,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104151
+      }
+    ],
+    "mora": 300,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 104152,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15014,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104152
+      }
+    ],
+    "mora": 900,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 104153,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15015,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104153
+      }
+    ],
+    "mora": 2700,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 104154,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15016,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104161
+      }
+    ],
+    "mora": 300,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 104162,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15017,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104162
+      }
+    ],
+    "mora": 900,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 104163,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15018,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104163
+      }
+    ],
+    "mora": 2700,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 104164,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15019,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104171
+      }
+    ],
+    "mora": 300,
+    "playerLevel": 25,
+    "resultCount": 1,
+    "resultItemId": 104172,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15020,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104172
+      }
+    ],
+    "mora": 900,
+    "playerLevel": 35,
+    "resultCount": 1,
+    "resultItemId": 104173,
+    "unlockItemIds": []
+  },
+  {
+    "id": 15021,
+    "kind": "Tier",
+    "materials": [
+      {
+        "count": 3,
+        "id": 104173
+      }
+    ],
+    "mora": 2700,
+    "playerLevel": 45,
+    "resultCount": 1,
+    "resultItemId": 104174,
+    "unlockItemIds": []
+  },
+  {
+    "id": 22007,
+    "kind": "CondensedResin",
+    "materials": [
+      {
+        "count": 1,
+        "id": 100085
+      },
+      {
+        "count": 60,
+        "id": 106
+      }
+    ],
+    "mora": 100,
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 220007,
+    "unlockItemIds": [
+      221007,
+      221067
+    ]
+  },
+  {
+    "id": 22033,
+    "kind": "Bait",
+    "materials": [
+      {
+        "count": 1,
+        "id": 100002
+      },
+      {
+        "count": 1,
+        "id": 100017
+      }
+    ],
+    "mora": 0,
+    "playerLevel": 28,
+    "resultCount": 10,
+    "resultItemId": 111023,
+    "unlockItemIds": [
+      221035
+    ]
+  },
+  {
+    "id": 22034,
+    "kind": "Bait",
+    "materials": [
+      {
+        "count": 1,
+        "id": 101204
+      },
+      {
+        "count": 1,
+        "id": 100064
+      }
+    ],
+    "mora": 0,
+    "playerLevel": 28,
+    "resultCount": 10,
+    "resultItemId": 111024,
+    "unlockItemIds": [
+      221036
+    ]
+  },
+  {
+    "id": 22035,
+    "kind": "Bait",
+    "materials": [
+      {
+        "count": 1,
+        "id": 112002
+      },
+      {
+        "count": 1,
+        "id": 100051
+      }
+    ],
+    "mora": 0,
+    "playerLevel": 28,
+    "resultCount": 10,
+    "resultItemId": 111025,
+    "unlockItemIds": [
+      221037
+    ]
+  },
+  {
+    "id": 22036,
+    "kind": "Bait",
+    "materials": [
+      {
+        "count": 1,
+        "id": 101202
+      },
+      {
+        "count": 1,
+        "id": 100032
+      }
+    ],
+    "mora": 0,
+    "playerLevel": 28,
+    "resultCount": 10,
+    "resultItemId": 111026,
+    "unlockItemIds": [
+      221038
+    ]
+  },
+  {
+    "id": 22037,
+    "kind": "Bait",
+    "materials": [
+      {
+        "count": 1,
+        "id": 101216
+      },
+      {
+        "count": 1,
+        "id": 101219
+      }
+    ],
+    "mora": 0,
+    "playerLevel": 28,
+    "resultCount": 10,
+    "resultItemId": 111028,
+    "unlockItemIds": [
+      221039
+    ]
+  },
+  {
+    "id": 22038,
+    "kind": "Bait",
+    "materials": [
+      {
+        "count": 1,
+        "id": 101230
+      },
+      {
+        "count": 1,
+        "id": 100017
+      }
+    ],
+    "mora": 0,
+    "playerLevel": 28,
+    "resultCount": 10,
+    "resultItemId": 111030,
+    "unlockItemIds": [
+      221040
+    ]
+  },
+  {
+    "id": 22039,
+    "kind": "Bait",
+    "materials": [
+      {
+        "count": 1,
+        "id": 101231
+      },
+      {
+        "count": 1,
+        "id": 101001
+      }
+    ],
+    "mora": 0,
+    "playerLevel": 28,
+    "resultCount": 10,
+    "resultItemId": 111031,
+    "unlockItemIds": [
+      221041
+    ]
+  },
+  {
+    "id": 22040,
+    "kind": "Bait",
+    "materials": [
+      {
+        "count": 1,
+        "id": 101245
+      },
+      {
+        "count": 1,
+        "id": 101243
+      }
+    ],
+    "mora": 0,
+    "playerLevel": 28,
+    "resultCount": 10,
+    "resultItemId": 111033,
+    "unlockItemIds": [
+      221065
+    ]
+  },
+  {
+    "id": 22041,
+    "kind": "Bait",
+    "materials": [
+      {
+        "count": 1,
+        "id": 101251
+      },
+      {
+        "count": 1,
+        "id": 100017
+      }
+    ],
+    "mora": 0,
+    "playerLevel": 28,
+    "resultCount": 10,
+    "resultItemId": 111034,
+    "unlockItemIds": [
+      221066
+    ]
+  },
+  {
+    "id": 22042,
+    "kind": "Bait",
+    "materials": [
+      {
+        "count": 1,
+        "id": 101265
+      },
+      {
+        "count": 1,
+        "id": 110001
+      }
+    ],
+    "mora": 0,
+    "playerLevel": 28,
+    "resultCount": 10,
+    "resultItemId": 111035,
+    "unlockItemIds": [
+      221068
+    ]
+  },
+  {
+    "id": 22043,
+    "kind": "Bait",
+    "materials": [
+      {
+        "count": 1,
+        "id": 101264
+      },
+      {
+        "count": 1,
+        "id": 100016
+      }
+    ],
+    "mora": 0,
+    "playerLevel": 28,
+    "resultCount": 10,
+    "resultItemId": 111036,
+    "unlockItemIds": [
+      221069
+    ]
+  }
+]

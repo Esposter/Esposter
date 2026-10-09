@@ -4,10 +4,13 @@ import { behavioursCommand } from "#src/services/genshinAssets/commands/behaviou
 import { chestsCommand } from "#src/services/genshinAssets/commands/chestsCommand";
 import { clearanceCommand } from "#src/services/genshinAssets/commands/clearanceCommand";
 import { clipsCommand } from "#src/services/genshinAssets/commands/clipsCommand";
+import { commissionsCommand } from "#src/services/genshinAssets/commands/commissionsCommand";
+import { craftingCommand } from "#src/services/genshinAssets/commands/craftingCommand";
 import { enemiesCommand } from "#src/services/genshinAssets/commands/enemiesCommand";
 import { expeditionsCommand } from "#src/services/genshinAssets/commands/expeditionsCommand";
 import { explorationCommand } from "#src/services/genshinAssets/commands/explorationCommand";
 import { extractCommand } from "#src/services/genshinAssets/commands/extractCommand";
+import { fishingCommand } from "#src/services/genshinAssets/commands/fishingCommand";
 import { fitCommand } from "#src/services/genshinAssets/commands/fitCommand";
 import { gadgetsCommand } from "#src/services/genshinAssets/commands/gadgetsCommand";
 import { gatheringCommand } from "#src/services/genshinAssets/commands/gatheringCommand";
@@ -60,6 +63,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     points: pointsCommand,
     "points-fit": pointsFitCommand,
     fit: fitCommand,
+    fishing: fishingCommand,
     rank: rankCommand,
     statues: statuesCommand,
     offerings: offeringsCommand,
@@ -69,6 +73,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     items: itemsCommand,
     outcrops: leyLineCommand,
     chests: chestsCommand,
+    crafting: craftingCommand,
     exploration: explorationCommand,
     puzzles: puzzlesCommand,
     gathering: gatheringCommand,
@@ -78,5 +83,6 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     reputation: reputationCommand,
     wildlife: wildlifeCommand,
     expeditions: expeditionsCommand,
+    commissions: commissionsCommand,
   },
 });

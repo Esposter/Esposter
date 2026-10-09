@@ -1,20 +1,23 @@
 ---
 title: Fishing
-description: Proposal — fishing as the game runs it, every number from its own fish tables. A fishing point's day and night stocks come back every 72 hours; a cast lands a lure that draws a fish within its attract range and scares it within its flee range; a bite is struck within its timeout; and reeling is the game's tension minigame, the fish's health worn down while the line holds in its moving zone, its struggles its own skills and the rod's pull the rod's.
+description: Proposal — fishing as the game runs it, every number from its own fish tables. The points, stocks, fish, rods and the rules of a cast and a reel are built; the bite and its skills, bait, the rod's pull, the screen and the Fishing Associations' exchanges are what remains, each waiting on a call or a recording.
 model: claude-opus-5-5
 ---
 
 # Fishing
 
-Fishing is one of the game's pastimes: bait crafted for the fish wanted, a line cast at a rippling fishing point, a bite struck, and the fish reeled in by keeping the line's tension in its zone. Fish are cooked, kept in the Serenitea Pot's ponds, and traded at each region's Fishing Association for rods and rewards. The game holds all of it in tables the client keeps whole, so it can be rebuilt to the number. Its bait is crafted ([crafting](/docs/proposals/genshin/crafting)) and its points stand where the [spawned places](/docs/proposals/genshin/spawned-places) fit them, so this page waits on both.
+Fishing is one of the game's pastimes: bait crafted for the fish wanted, a line cast at a rippling fishing point, a bite struck, and the fish reeled in by keeping the line's tension in its zone. Fish are cooked, kept in the Serenitea Pot's ponds, and traded at each region's Fishing Association for rods and rewards. The game holds all of it in tables the client keeps whole, so it can be rebuilt to the number. Its bait is crafted ([crafting](/docs/proposals/genshin/crafting)), and the points, stocks, fish, rods and the cast's and reel's rules are [built](/docs/genshin/fishing).
 
 ## Decisions
 
-- **A fishing point's stock is the game's.** `FishPoolExcelConfigData` gives each point its stocks for the day and the night and how many fish it holds, and `FishStockExcelConfigData` each stock's fish by weight. A point's fish come back every 72 hours, kept with when it was emptied, and the day's and the night's are separate, so a point fished by day still holds its night fish.
-- **Cast, drawn, scared.** The cast's spot is aimed, and a fish whose `attractRange` reaches the lure turns toward it if the bait is the one it takes, and flees if the lure lands within its `fleeRange`. It nibbles for its `feelerTimes` and bites; the bite is struck within its `biteTimeout` or lost.
-- **Reeled by the game's minigame.** The fish has its `hp`. Reeling wears it down by the rod's attack (`FishRodExcelConfigData`) while the line's tension holds inside the moving zone, whose width, speed, offset and duration are the fish's own (`bonusWidth`, `bonusSpeed`, `bonusOffset`, `bonusDuration`), and the fish fights back with its skills from `FishSkillExcelConfigData`. The fish is caught at no health, and lost if the tension leaves the zone for too long.
-- **Each fish takes one bait.** Each kind is drawn only by its own bait, crafted from its recipe.
-- **What a catch gives.** The fish itself, its reward row, and proficiency toward the Fishing Association's rewards, exchanged at its shop ([shops](/docs/proposals/genshin/shops)).
+- **A point's stock is its region's pools, for now.** Each region's pools are the game's, filed by city. Neither the official map's points nor the dump's tables tie a point to one pool, so until a recording shows which pool a point draws from, a point draws from every pool of its region. Nod-Krai's city is filed under no pool, so its points draw nothing, and the fifty-four pools filed under city zero, which no region names, are left out until a recording places them.
+- **Stocks come back as the game sets them.** The day's stock is drawn from six to eighteen on the game's clock and the night's otherwise, and an emptied stock is back in full seventy-two hours on, the day's and the night's kept apart (built).
+- **Bait is not tied to a fish yet.** The bait table's feature tags name no fish, and no fish row names the tags it wants, so which bait draws which fish waits on the crafting recipes and a recording of a bait at work. Each kind is drawn only by its own bait, crafted from its recipe.
+- **The bite is the fish's own.** A fish nibbles for a time within its feeler range and bites, and the bite is struck within its `biteTimeout` or lost. The timing and the caller's clock are not yet built.
+- **The reel's zone moves by the fish's own fields.** The moving zone's width, speed, offset and duration are the fish's, and the reel takes the zone as its input meanwhile. How the zone travels over its duration waits on a recording of the minigame, as the tension rate and the allowance do.
+- **The fish fights back with its skills.** Each fish's skills from `FishSkillExcelConfigData` act on the tension and the hit points on a clock of their own; the rod's pull and the struggles are read from the skill rows once the reel's zone is.
+- **The stock limits stay unread.** Each pool's two limit numbers have scrambled names, and their meaning is not settled by any table here, so they wait on a reading.
+- **What a catch gives.** The fish itself into the bag, its reward row, and proficiency toward the Fishing Association's rewards, exchanged at its shop ([shops](/docs/proposals/genshin/shops)).
 - **Opened as the game opens it**, once the Serenitea Pot is owned and its quest is done, as the wiki gives the unlock.
 
 ## How it works
@@ -34,19 +37,20 @@ stateDiagram-v2
 
 ## Scope and order
 
-**Today:** the world holds water and no fish.
+**Built** ([fishing](/docs/genshin/fishing)): the fishing points by region, the fish, rods and each region's pools, the day and night stocks and their refill, the weighted draw, the lure's reaction and the reel's tension and allowance.
 
 **This adds, in order:**
 
-1. **A fishing point and its stocks**, by Mondstadt's lake.
-2. **Casting, the bite and reeling**, on the tables' numbers.
-3. **Bait and rods.**
-4. **The Fishing Associations' exchanges.**
+1. **The bite and the nibbles**, on the fish's timeout and feeler range, with the cast's `Biting` phase.
+2. **The reel's zone and the fish's skills**, once a recording shows how the zone travels and the rod's pull is set.
+3. **Bait and the rod's choice**, from the bait table's tags, the crafting recipes and the rod's multiplier and accuracy.
+4. **The screen, the prompt in reach, the cast's input and the catch into the bag.**
+5. **The Fishing Associations' exchanges.**
 
 ## Data and measures
 
-- **Read from the game's tables:** `FishExcelConfigData`, `FishPoolExcelConfigData`, `FishStockExcelConfigData`, `FishSkillExcelConfigData`, `FishRodExcelConfigData`, `FishBaitExcelConfigData` and `FishProficientExcelConfigData`.
-- **Measured:** how long the tension may leave the zone, and how the reel's input moves the tension, off a recording of the minigame, provisional until then.
+- **Read from the game's tables:** `FishSkillExcelConfigData`, `FishBaitExcelConfigData` and `FishProficientExcelConfigData` are not read yet; the fish, pool, stock and rod tables are.
+- **Waiting on a recording:** the reel's tension rate and its allowance, the zone's travel over its duration, and which pool a point draws from. Each is listed on the [roadmap](/docs/genshin/roadmap)'s Recordings owed list, and a provisional constant holds each meanwhile.
 
 ## Key files
 
