@@ -52,7 +52,7 @@ The camera's numbers are in `packages/genshin-engine/src/camera/constants.ts`, e
 
 ## Decisions
 
-- **The game's data over a solve.** Each number the game's camera profile holds is read from it rather than solved off recordings, since the profile is exact where a solve carries its landmarks' noise. Its fields are named by the il2cpp dummy scripts of a 2022 build, whose order the current build keeps with fields added. A name is trusted only where its neighbours' values take the shapes their names give, and the reader throws once a flag reads anything but 0 or 1, so a build that moves the config fails the read rather than naming the wrong words.
+- **The game's data over a solve.** Each number the game's camera profile holds is read from it rather than solved off recordings, since the profile is exact where a solve carries its landmarks' noise. Its fields carry the names an older build's code metadata gives them, laid over the raw words as [game data formats](/docs/genshin/game-data-formats) sets out, and a later build that moves the config makes the reader throw rather than name the wrong words.
 - **The pivot is a share of the body's height, not a height.** The recordings measure where the screen's centre falls on a character as a share of that character's height, and the game raises its look by body type, so each body's pivot follows its own capsule.
 - **What the profile holds is modelled only once it is seen in play.** The radius the profile adds at the steepest elevation waits for a recording to show the arm lengthening as the camera looks down ([follow camera proposal](/docs/proposals/genshin/follow-camera)), the combat camera's pull comes with combat, and the recentering the game ships switched off is not modelled.
 
@@ -78,5 +78,5 @@ The camera's numbers are in `packages/genshin-engine/src/camera/constants.ts`, e
 - [Photo Mode](https://genshin-impact.fandom.com/wiki/Photo_Mode), Genshin Impact Wiki: photo mode reached from the Paimon menu.
 - [Time](https://genshin-impact.fandom.com/wiki/Time), Genshin Impact Wiki: the clock running in photo mode.
 - [Fix your timestep!](https://gafferongames.com/post/fix_your_timestep/), Glenn Fiedler: the shown state as a blend of the two latest steps, weighted by what the accumulator has left over.
-- [WorldReverse](https://github.com/fengjixuchui/WorldReverse/tree/main/Assets/DummyScripts/Assembly-CSharp), fengjixuchui: the il2cpp dummy scripts of a 2022 build, whose `CameraProfile`, `PipelineCameraGlobalConfig`, `PipelineCameraModuleConfig` and `CameraModuleType` name the camera profile's fields in order.
+- [WorldReverse](https://github.com/fengjixuchui/WorldReverse/tree/main/Assets/DummyScripts/Assembly-CSharp), fengjixuchui: the camera profile's classes, its global config's and each module config's fields in declaration order, and the numbers of its camera modules.
 - [genshin-utility](https://github.com/lanylow/genshin-utility/blob/main/src/library/src/hooks/hooks.cpp), lanylow: a field-of-view tool that takes the game's own call setting 45 as its world camera's.
