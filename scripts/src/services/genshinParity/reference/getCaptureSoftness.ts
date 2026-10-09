@@ -30,9 +30,12 @@ export const getCaptureSoftness = async (capture: string): Promise<number> => {
   if (referenceId === undefined)
     throw new InvalidOperationError(Operation.Read, capture, "no reference is taken from it");
   const cachePath = join(REFERENCES_DIRECTORY, `${capture}.softness-${await hashFile(capturePath)}.txt`);
-  const softness = existsSync(cachePath)
-    ? Number(await readFile(cachePath, "utf8"))
-    : await measureCapture(join(REFERENCES_DIRECTORY, `${referenceId}.png`), cachePath);
+  const cachedText = existsSync(cachePath) ? await readFile(cachePath, "utf8") : "";
+  const cachedSoftness = cachedText ? Number(cachedText) : Number.NaN;
+  // A cache file left empty or unreadable by a run that stopped mid-write is measured again, and the measure rewrites it
+  const softness = Number.isNaN(cachedSoftness)
+    ? await measureCapture(join(REFERENCES_DIRECTORY, `${referenceId}.png`), cachePath)
+    : cachedSoftness;
   console.log(`${capture} softness ${softness.toFixed(3)} sigma`);
   captureSoftnessMap.set(capture, softness);
   return softness;
