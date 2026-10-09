@@ -71,7 +71,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
     });
   };
   // The invite a friend is sent: the direct message is created where none exists, and the reader stays on the
-  // screen they are on, so unlike createDirectMessage this does not navigate. The message is the reader's own
+  // Screen they are on, so unlike createDirectMessage this does not navigate. The message is the reader's own
   const inviteFriend = async (friendId: PublicUser["id"], inviteLink: string) => {
     await executeInviteFriendMutation(() => $trpc.room.directMessage.createDirectMessage.mutate([friendId]), {
       key: friendId,
