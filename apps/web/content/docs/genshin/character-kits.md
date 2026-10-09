@@ -207,7 +207,7 @@ Each effect is on the party, in the list a `KitEffectState` holds, so a switch l
 | `packages/genshin-world/src/services/kit/characters/monaKit.ts`           | `createMonaKit`, Mona's kit with Mirror Reflection's summon, the bubble and its Omen, A1's phantom and A4's bonus                 |
 | `packages/genshin-world/src/services/kit/characters/amberKit.ts`          | `createAmberKit`, Amber's kit with Baron Bunny's taunt and Fiery Rain's summon                                                    |
 | `packages/genshin-world/src/services/kit/effects/stepKitTaunt.ts`         | A taunt's explosion, once its seconds or its health run out                                                                       |
-| `packages/genshin-world/src/services/kit/selectEnemyTaunt.ts`             | The nearest live taunt in an enemy's aggro range, which it strikes                                                                |
+| `packages/genshin-world/src/services/kit/selectEnemyTaunt.ts`             | The taunt an enemy's aggro picks, as the [enemies](/docs/genshin/enemies) page sets out                                           |
 | `packages/genshin-world/src/services/kit/characters/kaeyaKit.ts`          | `createKaeyaKit`, Kaeya's kit with Glacial Waltz's icicles                                                                        |
 | `packages/genshin-world/src/services/kit/characters/lisaKit.ts`           | `createLisaKit`, Lisa's kit with Violet Arc's hold and Conductive stacks, and Lightning Rose's discharges                         |
 | `packages/genshin-world/src/services/kit/readKitStackedHit.ts`            | A stacked hit's multiplier and poise by the stacks on an enemy, which the hit consumes                                            |

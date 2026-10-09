@@ -39,12 +39,12 @@ A kind with no entry stays unopened: Luxurious, whose Mora the table leaves unst
 
 ## The writer
 
-`pnpm -C scripts genshin:assets chests` reads the points and the fit, and writes one slice per region as a compact list of places, each with its id (the map's point id), its kind and its position in its region's axes. It writes only its own slices, and the report counts each region's chests and what it left out. It does not read the game's tables, the wiki or the installed game.
+`pnpm -C scripts genshin:assets chests` reads the points and the fit, and writes one slice per region, a list of places laid out as the [spawned places](/docs/genshin/spawned-places) page's Oculi slices are, each in its region's axes. It writes only its own slices, and the report counts each region's chests and what it left out. It does not read the game's tables, the wiki or the installed game.
 
-- **The ground only.** Points on a layer under the ground stand on floors of their own, which the place does not yet know, so they are counted and left out.
+- **The ground only.** Underground chests are counted and left out for the reason the [Oculi](/docs/genshin/spawned-places#the-oculi) section gives.
 - **Mapped areas only.** A point in an area no region is mapped to has no region to join, so it is counted and left out. The current run leaves none out.
 - **Mora chests are not chests of these kinds.** The map's Mora chests are not among the seven, so the writer does not place them.
-- **Not landmarks.** A landmark is built by a region kit, and a chest is acted on, so the places live in their own model rather than in `LandmarkKind`, and no kit draws them.
+- **Not landmarks.** A landmark is built by a region kit, and a chest is acted on, so the [spawned places](/docs/genshin/spawned-places#the-oculi) rule keeps it out of `LandmarkKind`.
 - **Regions, not catalogue areas.** Each slice is a region, and a place does not yet name its catalogue area, since that needs the region outlines the exploration progress reads. The area each chest counts toward is not set.
 - **Region axes.** The fit carries a point into the game's axes, so `placeMapPoints` carries each place round the Windrise origin into its region's axes, x less the origin's x and z the origin's less the place's, as the landmarks and residents are. Every writer of a map point takes the same step through it, so no slice is left in the game's axes.
 - **No height is written.** A place stands on the ground at its point, and that height is read where the place is stood on, which the runtime step does when it lands.
@@ -62,7 +62,7 @@ A kind with no entry stays unopened: Luxurious, whose Mora the table leaves unst
 | `packages/genshin-world/src/models/chest/ChestPlace.ts`            | A placed chest: its id, kind and ground position                                                                 |
 | `packages/genshin-world/src/services/chest/openChest.ts`           | Opens a chest once and rolls its Primogems and Mora into the wallet                                              |
 | `packages/genshin-world/src/services/chest/ChestKindRewardMap.ts`  | Each tier's Primogem and Mora ranges, from the wiki's chest reward table                                         |
-| `packages/genshin-world/src/generated/chests/`                     | One slice per region, imported on demand by the world                                                            |
+| `packages/genshin-world/src/generated/chests/`                     | The chest slices, one per region                                                                                 |
 
 ## Sources
 

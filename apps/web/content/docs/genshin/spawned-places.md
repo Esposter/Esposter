@@ -52,7 +52,7 @@ Each region is reported in turn, Mondstadt first, with its matched points, the r
 
 - **Ground only.** Oculi on a layer under the ground stand on floors of their own, which the place does not yet know, so they are counted and left out. Fontaine holds the only ones, which is why its ground count sits below the fit's count of its Oculi.
 - **Not landmarks.** A place is acted on by the statues' rules, so it lives in its own model rather than in `LandmarkKind`, and no kit draws it.
-- **No height is written.** An Oculus stands on the ground at its point, and that height is read where it is stood on, as the chests' places are.
+- **No height is written.** An Oculus stands on the ground at its point, its height read where it is stood on, as the [chests](/docs/genshin/chests) page sets out.
 
 ## Key files
 

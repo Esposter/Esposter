@@ -5,7 +5,7 @@ description: Genshin's investigation spots as built — the daily cap of a hundr
 
 # Investigation
 
-The rule that caps the investigation spots a player may investigate in a game day: a hundred, after which no more spawn. A spot that sparkles gives a few artifacts, ingredients, ores or Mora once investigated. Nothing places the spots or gives a reward yet, so the cap is the only part built, and the [proposal](/docs/proposals/genshin/gathering) keeps the rest.
+The rule that caps the investigation spots a player may investigate in a game day: a hundred, after which no more spawn. Nothing places the spots or gives a reward yet, so the cap is the only part built, and the [proposal](/docs/proposals/genshin/gathering) keeps the rest.
 
 ## How it works
 

@@ -34,7 +34,7 @@ flowchart LR
 
 ## Data and measures
 
-- **Provisional:** each claim kind's Companionship EXP, until the Recordings owed clips show what a claim gives.
+- **Provisional:** each claim kind's Companionship EXP, until the Recordings owed clips show what a claim pays out.
 
 ## Key files
 
