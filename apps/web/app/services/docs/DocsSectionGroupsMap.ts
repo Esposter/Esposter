@@ -144,6 +144,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "survey-resource",
       "program-resource",
       "note-resource",
+      "note-slash-menu",
       "blueprint-resource",
       "blueprint-capture",
       "resource-file-assets",
