@@ -20,7 +20,6 @@ import type { MapCamera } from "#src/models/map/MapCamera";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { WorldCameraPose } from "#src/models/world/WorldCameraPose";
-import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext } from "@tresjs/core";
 import type { QualityTier } from "genshin-engine";
@@ -45,14 +44,13 @@ import WorldEnemyNameTags from "#src/components/World/EnemyNameTags/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { useExplorationAreas } from "#src/composables/useExplorationAreas";
-import { useGatheringPoints } from "#src/composables/useGatheringPoints";
 import { useInteraction } from "#src/composables/useInteraction";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { useWorldSave } from "#src/composables/useWorldSave";
+import { useWorldPickups } from "#src/composables/useWorldPickups";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldArchive } from "#src/composables/useWorldArchive";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
-import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { Currency } from "#src/models/inventory/Currency";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
@@ -61,7 +59,6 @@ import { advanceAchievements } from "#src/services/achievement/advanceAchievemen
 import { readAchievements } from "#src/services/achievement/readAchievements";
 import { computeAdventureRankProgress } from "#src/services/adventureRank/computeAdventureRankProgress";
 import { computeAdventureRankStanding } from "#src/services/adventureRank/computeAdventureRankStanding";
-import { openArchiveBook } from "#src/services/archive/openArchiveBook";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
@@ -70,14 +67,7 @@ import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
-import { checkIsGatheringPlaceStanding } from "#src/services/gathering/checkIsGatheringPlaceStanding";
-import { GATHERING_CLOCK_INTERVAL_MS } from "#src/services/gathering/constants";
-import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
-import { placeEnemyDrops } from "#src/services/interaction/placeEnemyDrops";
-import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
-import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
-import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
 import { createCharacterKit } from "#src/services/kit/createCharacterKit";
 import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
@@ -106,7 +96,7 @@ import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharac
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { getResultAsync } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
-import { useEventListener, useIntervalFn, useNow, useRafFn, watchImmediate } from "@vueuse/core";
+import { useEventListener, useRafFn, watchImmediate } from "@vueuse/core";
 import {
   createGenshinRenderer,
   createInput,
@@ -402,10 +392,21 @@ const clearKitEffects = () => {
 };
 // The world's one seeded random source, which the combat and the kit draw their rolls on, so a session's rolls repeat
 const worldRandom = createSeededRandom(WORLD_RANDOM_SEED);
-// The drops lying in the world, which each defeated enemy's are placed among, and how many drops the page has placed,
-// Which numbers the next ones
-const worldDrops = shallowRef<WorldDrop[]>([]);
-let placedDropCount = 0;
+// Every saved timer is read against the server's clock, which this machine's own runs behind or ahead of by the offset
+const getWorldNow = () => Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs });
+// The drops and the gathering points the character picks up, taken into the bag or the wallet
+const { bagFullHint, pickUpGatheringPlace, pickUpInteractables, pickUpWorldDrop, placeWorldDrops, worldDrops } =
+  useWorldPickups({
+    archive: { archiveData, archiveProgressMap },
+    events,
+    gameText,
+    getWorldNow,
+    inventory,
+    serverClockOffsetMs,
+    setInventory,
+    setWallet,
+    wallet,
+  });
 const windrise = useTemplateRef<InstanceType<typeof WorldWindrise>>("windrise");
 // Each talk the quests in progress hold by its id, which a resident's talk is begun from
 const talkMap = computed(
@@ -424,14 +425,6 @@ const getTalkDuelGameId = (talkId: string) =>
 const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl);
 // The areas the map counts the exploration of, read as the world opens and shown on each area the unlocked statues fill
 const explorationAreas = useExplorationAreas();
-// Mondstadt's gathering points and the items they give, read as the world opens. A point picked is kept with the instant
-// It was picked, and stands again once its respawn has come, read each time the clock is looked at
-const { gatheringItems, gatheringPlaces } = useGatheringPoints();
-const idGatheringItemMap = computed(() => new Map(gatheringItems.value.map((item) => [item.id, item] as const)));
-const gatheringPlaceIdPickedAtMap = shallowRef<ReadonlyMap<string, Temporal.Instant>>(new Map());
-const gatheringClock = useNow({ scheduler: (callback) => useIntervalFn(callback, GATHERING_CLOCK_INTERVAL_MS) });
-// Every saved timer is read against the server's clock, which this machine's own runs behind or ahead of by the offset
-const getWorldNow = () => Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs });
 const unlockedLandmarkIds = shallowRef<ReadonlySet<string>>(savedState.unlockedLandmarkIds);
 const unlockedLandmarks = computed(() => jumpLandmarks.value.filter(({ id }) => unlockedLandmarkIds.value.has(id)));
 // The Adventure EXP, the Reputation and the Companionship EXP no source changes yet, so they are carried as they were saved
@@ -453,12 +446,6 @@ useWorldSaveSync({
 // Whose talk the world holds, named by its text, and each jump landmark still locked, which it resonates with. Each
 // Stands on the ground beneath its point
 const interactables = computed<Interactable[]>(() => {
-  const drops = worldDrops.value.map(({ id, itemId, position: { x, z } }) => ({
-    id,
-    kind: InteractionKind.PickUp,
-    name: itemId === MORA_ITEM_ID ? gameText[GameTextKey.Mora] : getItemDefinition(itemId, gameText).name,
-    position: { x, y: getWorldHeight(x, z), z },
-  }));
   // A resident is a row only at the spot they are shown at this hour, so one absent from it is no row
   const residents = [...(windrise.value?.regionDataMap.values() ?? [])]
     .flatMap(({ residents: regionResidents }) => regionResidents)
@@ -484,22 +471,7 @@ const interactables = computed<Interactable[]>(() => {
       name: gameText[GameTextKey.StatueOfTheSeven],
       position: { x, y: getWorldHeight(x, z), z },
     }));
-  // Each gathering point that stands now, named by its item, and drawn beside the drops as the same kind of row
-  const now = Temporal.Instant.fromEpochMilliseconds(gatheringClock.value.getTime() + serverClockOffsetMs);
-  const gatherings = gatheringPlaces.value.flatMap(({ id, kind, position: { x, z } }) => {
-    const item = idGatheringItemMap.value.get(kind);
-    if (!item || !checkIsGatheringPlaceStanding(gatheringPlaceIdPickedAtMap.value.get(id), item.respawn, now))
-      return [];
-    return [
-      {
-        id,
-        kind: InteractionKind.PickUp,
-        name: toItemDefinition(item, gameText).name,
-        position: { x, y: getWorldHeight(x, z), z },
-      },
-    ];
-  });
-  return [...drops, ...gatherings, ...residents, ...statues];
+  return [...pickUpInteractables.value, ...residents, ...statues];
 });
 const { interactionPrompts, readInteraction } = useInteraction(() => interactables.value, characterBody);
 // The achievements a finished step or quest moves, read off their table when first needed, and the Primogems of those
@@ -557,46 +529,9 @@ const endTalk = () => {
 // A defeated enemy's drops lie where it fell, numbered on from the drops placed before them, and the defeat is a doing
 // The quests in progress count
 const defeatEnemy = (enemy: Enemy, enemyDrops: EnemyDrops) => {
-  const drops = placeEnemyDrops(enemy, enemyDrops, placedDropCount);
-  placedDropCount += drops.length;
-  worldDrops.value = [...worldDrops.value, ...drops];
+  placeWorldDrops(enemy, enemyDrops);
   events.emit("defeatEnemy", enemy);
   events.emit("questEvent", { kind: QuestObjectiveKind.Defeat, targetId: String(enemy.enemyKindId) });
-};
-// The game's hint over the world for a pick up the bag had no room for, cleared by the next pick up that fits
-const bagFullHint = ref("");
-// A pick up takes the drop's Mora or item into the wallet or the bag, and what the bag has no room for stays on the
-// Ground as a smaller drop
-const pickUpWorldDrop = (worldDrop: WorldDrop) => {
-  // A volume is taken straight into the Archive, which opens its entry, and never into the bag
-  const books = archiveData.value?.sectionEntriesMap[ArchiveSection.Books] ?? [];
-  if (books.some(({ materialId }) => materialId === worldDrop.itemId)) {
-    archiveProgressMap.value = openArchiveBook(archiveProgressMap.value, books, worldDrop.itemId);
-    worldDrops.value = worldDrops.value.filter((drop) => drop !== worldDrop);
-    return;
-  }
-  const pickUp = pickUpDroppedItem(worldDrop, inventory.value, wallet.value, gameText);
-  setInventory(pickUp.inventory);
-  setWallet(pickUp.wallet);
-  bagFullHint.value = pickUp.overflow > 0 ? gameText[GameTextKey.BagFull] : "";
-  events.emit("questEvent", { kind: QuestObjectiveKind.Collect, targetId: String(worldDrop.itemId) });
-  worldDrops.value =
-    pickUp.overflow > 0
-      ? worldDrops.value.map((drop) => (drop === worldDrop ? { ...drop, count: pickUp.overflow } : drop))
-      : worldDrops.value.filter((drop) => drop !== worldDrop);
-};
-// A gathering point is picked into the bag as one of its item, and is kept as picked only once the bag has taken it
-const pickUpGatheringPlace = (placeId: string) => {
-  const place = gatheringPlaces.value.find(({ id }) => id === placeId);
-  if (!place) return;
-  const item = idGatheringItemMap.value.get(place.kind);
-  if (!item) return;
-  const addition = addInventoryItem(inventory.value, toItemDefinition(item, gameText), 1);
-  setInventory(addition.inventory);
-  bagFullHint.value = addition.overflow > 0 ? gameText[GameTextKey.BagFull] : "";
-  events.emit("questEvent", { kind: QuestObjectiveKind.Collect, targetId: String(item.id) });
-  if (addition.overflow === 0)
-    gatheringPlaceIdPickedAtMap.value = new Map([...gatheringPlaceIdPickedAtMap.value, [placeId, getWorldNow()]]);
 };
 const character = useTemplateRef("character");
 // Whether the backslash has hidden the HUD, as the game's Hide UI does, apart from the screens that hide it
