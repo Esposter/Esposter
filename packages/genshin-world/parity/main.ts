@@ -17,6 +17,7 @@ import { setSceneCloudCover } from "#parity/setSceneCloudCover";
 import { setSceneCloudHeights } from "#parity/setSceneCloudHeights";
 import { setSceneCloudLayer } from "#parity/setSceneCloudLayer";
 import { setSceneLights } from "#parity/setSceneLights";
+import { computeSurfaceStatisticsFromBase64 } from "#parity/surfaceStatistics/computeSurfaceStatisticsFromBase64";
 import { claimWitnessRenderers } from "#parity/witness/claimWitnessRenderers";
 import { computeWitnessParts } from "#parity/witness/computeWitnessParts";
 import { computeWitnessPoints } from "#parity/witness/computeWitnessPoints";
@@ -51,6 +52,8 @@ window.addEventListener("error", ({ error }) => {
 window.addEventListener("unhandledrejection", ({ reason }) => {
   recordError(reason);
 });
+// A surface's statistics, reduced on the GPU for the host, which hands each array over as base64 and keeps the rest
+Reflect.set(window, "computeSurfaceStatistics", computeSurfaceStatisticsFromBase64);
 const searchParameters = new URLSearchParams(window.location.search);
 const name = searchParameters.get("screen");
 const motion = searchParameters.get("motion");
