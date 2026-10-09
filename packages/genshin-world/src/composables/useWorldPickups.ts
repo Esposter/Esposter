@@ -29,7 +29,6 @@ import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
-import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { useIntervalFn, useNow } from "@vueuse/core";
 import { InteractionKind } from "genshin-interface";
@@ -42,6 +41,7 @@ export const useWorldPickups = ({
   events,
   gameDataBaseUrl,
   gameText,
+  getGroundHeight,
   getWorldNow,
   inventory,
   materialDataMap,
@@ -55,6 +55,7 @@ export const useWorldPickups = ({
   events: WorldEvents;
   gameDataBaseUrl: string;
   gameText: GameText;
+  getGroundHeight: (x: number, z: number) => number;
   getWorldNow: () => Temporal.Instant;
   inventory: Ref<Inventory>;
   materialDataMap: ReadonlyMap<number, MaterialData>;
@@ -86,7 +87,7 @@ export const useWorldPickups = ({
         itemId === MORA_ITEM_ID
           ? gameText[GameTextKey.Mora]
           : getItemDefinition(itemId, nameText, materialDataMap).name,
-      position: { x, y: getWorldHeight(x, z), z },
+      position: { x, y: getGroundHeight(x, z), z },
     }));
     const now = Temporal.Instant.fromEpochMilliseconds(gatheringClock.value.getTime() + serverClockOffsetMs);
     // An ore is struck until it breaks rather than picked up, so its points are left out of the pick ups
@@ -103,7 +104,7 @@ export const useWorldPickups = ({
           id,
           kind: InteractionKind.PickUp,
           name: toItemDefinition(item, nameText).name,
-          position: { x, y: getWorldHeight(x, z), z },
+          position: { x, y: getGroundHeight(x, z), z },
         },
       ];
     });

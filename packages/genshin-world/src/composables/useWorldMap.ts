@@ -1,4 +1,5 @@
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { Catalogue } from "#src/models/world/Catalogue";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { Ref } from "vue";
@@ -14,6 +15,7 @@ import { getResultAsync } from "@esposter/shared";
 // The landmarks the world holds and the ones the player has unlocked, the first unlock of each paid, and the pose a jump
 // Lands at. A landmark is unlocked by resonating with it, and each is paid once
 export const useWorldMap = ({
+  catalogue,
   events,
   gainWorldAdventureExp,
   gameDataBaseUrl,
@@ -22,6 +24,7 @@ export const useWorldMap = ({
   unlockedLandmarkIds: savedUnlockedLandmarkIds,
   wallet,
 }: {
+  catalogue: Catalogue;
   events: WorldEvents;
   gainWorldAdventureExp: (amount: number) => void;
   gameDataBaseUrl: string;
@@ -32,7 +35,7 @@ export const useWorldMap = ({
 }) => {
   // Every landmark a jump lands at, and the ones the player has unlocked: the map, the minimap, the jump list and a revive
   // Offer only those. A new player has unlocked none, and each is unlocked by resonating with it
-  const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl);
+  const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl, catalogue);
   // The areas the map counts the exploration of, read as the world opens and shown on each area the unlocked statues fill
   const explorationAreas = useExplorationAreas(gameDataBaseUrl);
   const unlockedLandmarkIds = shallowRef<ReadonlySet<string>>(savedUnlockedLandmarkIds);

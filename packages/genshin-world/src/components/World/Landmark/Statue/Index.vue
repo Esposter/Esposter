@@ -1,28 +1,35 @@
 <script setup lang="ts">
+import type { WindriseStatue } from "#src/models/windrise/WindriseStatue";
+import type { WindriseSurfaces } from "#src/models/windrise/WindriseSurfaces";
 import type { StatueLandmark } from "#src/models/world/StatueLandmark";
 import type { ToonNodeMaterial } from "genshin-engine";
 
-import statue from "#src/data/windrise/statue.json";
-import { getStatuePartColor, getStatuePartDetail } from "#src/services/windrise/constants";
-import { getWorldHeight } from "#src/services/world/getWorldHeight";
+import { getWindrisePartColor } from "#src/services/windrise/getWindrisePartColor";
+import { getWindrisePartDetail } from "#src/services/windrise/getWindrisePartDetail";
 import { createStatueGeometries, setObjectSurface } from "genshin-engine";
 import { Mesh } from "three";
 
 interface Props {
+  // The world's ground at a point in its own coordinates, which the statue stands on
+  getGroundHeight: (x: number, z: number) => number;
   landmark: StatueLandmark;
   // The one material every landmark's part draws in, each in the surface its mesh carries
   partMaterial: ToonNodeMaterial;
+  // The statue's parts and the sections of their shafts
+  statue: WindriseStatue;
+  // The families' surfaces, the statue's painting each of its parts
+  surfaces: WindriseSurfaces;
 }
 
-const { landmark, partMaterial } = defineProps<Props>();
+const { getGroundHeight, landmark, partMaterial, statue, surfaces } = defineProps<Props>();
 const { heightOffset, position, rotation } = landmark;
-const groundHeight = getWorldHeight(position.x, position.z);
+const groundHeight = getGroundHeight(position.x, position.z);
 // Each part of the statue is drawn in its own colour and detail, as its export mesh's textures paint it
 const statueMeshes = Object.entries(createStatueGeometries(statue.parts)).map(([part, geometry]) => {
   const mesh = new Mesh(geometry, partMaterial);
   mesh.castShadow = true;
   mesh.receiveShadow = true;
-  setObjectSurface(mesh, getStatuePartColor(part), getStatuePartDetail(part));
+  setObjectSurface(mesh, getWindrisePartColor(surfaces.Statue, part), getWindrisePartDetail(surfaces.Statue, part));
   return mesh;
 });
 

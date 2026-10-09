@@ -7,6 +7,7 @@ import type { MapCamera } from "#src/models/map/MapCamera";
 import type { Party } from "#src/models/party/Party";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
+import type { Catalogue } from "#src/models/world/Catalogue";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { Input } from "genshin-engine";
 import type { GameText } from "genshin-text";
@@ -27,6 +28,8 @@ import { GameRect, GameScreen } from "genshin-interface";
 
 interface Props {
   camera: MapCamera;
+  // The regions and their areas, whose drawn outlines the minimap shows
+  catalogue: Catalogue;
   // The deployed team's characters' data, which the team stays hidden without until the stat tables arrive
   characterDataMap?: ReadonlyMap<number, CharacterData>;
   // The world's frame: the stamina the meter fills by, where the follow camera's pivot stands, and the world's clock
@@ -56,6 +59,7 @@ defineSlots<{
 }>();
 const {
   camera,
+  catalogue,
   characterDataMap,
   frame,
   gameText,
@@ -95,7 +99,7 @@ const isTouch = useMediaQuery("(pointer: coarse)");
           :rect="interfaceRects[HudInterfaceRectName.MiniMap]"
         >
           <GameRect :parent="miniMapRect" :rect="interfaceRects[HudInterfaceRectName.BackMap]">
-            <HudMinimap :camera :game-text :landmarks @open="emit('map')" />
+            <HudMinimap :camera :catalogue :game-text :landmarks @open="emit('map')" />
           </GameRect>
         </GameRect>
       </GameRect>

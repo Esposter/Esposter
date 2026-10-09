@@ -1,32 +1,7 @@
-import type {
-  GradeOptions,
-  GrassRing,
-  GroundPaint,
-  GroundPoint,
-  RampOptions,
-  SkyKeyframe,
-  SurfaceDetail,
-  TerrainOptions,
-} from "genshin-engine";
+import type { GradeOptions, GrassRing, GroundPoint, RampOptions, SkyKeyframe } from "genshin-engine";
 
-import baseGround from "#src/data/windrise/base-ground.json";
-import groundLayers from "#src/data/windrise/ground-layers.json";
-import surfaces from "#src/data/windrise/surfaces.json";
-import { GroundLayer } from "genshin-engine";
 import { Color, Vector2 } from "three";
 
-// The ground's quadtree: half-metre cells under the eye in tiles of sixteen metres, six levels out to a root tile of
-// Half a kilometre drawn two kilometres away, well past where the fog closes. A level's morph runs from a tile's
-// Diagonal past half its range to its range, so the finest range buys that morph about nine metres to blend over
-// Beyond twice the diagonal it must clear. Every tile's box spans the heights the fitted ground stands between
-export const WINDRISE_TERRAIN_OPTIONS: TerrainOptions = {
-  cellsPerSide: 32,
-  finestRange: 64,
-  finestTileSize: 16,
-  levelCount: 6,
-  maxHeight: baseGround.maxHeight,
-  minHeight: baseGround.minHeight,
-};
 export const WINDRISE_SEED = 0;
 // Clear shallows over the pale bed turning a deep blue in the middle, as Mondstadt's lakes read, and a green haze
 // Under the surface
@@ -40,59 +15,16 @@ export const UNDERWATER_FOG_DENSITY = 0.08;
 // How far the sun and the god rays' sun stand from what they look at
 export const SUN_DISTANCE = 120;
 export const RIM_STRENGTH = 0.55;
-// Windrise's ground as its terrain paints it: grass, bare earth and rock lie where the base maps place them, as fitted
-// Into `ground-layers.json`'s field of their shares, never by a slope or a height, and each layer paints the mean of the
-// Base-map texels classed into it, as fitted into `surfaces.json`'s `Ground.layers` (a layer the base maps hold no
-// Texel of takes the ground's mean). Its layers' weights also place the flowers
-// The fit writes only the layers some texel is classed into, so the file holds a few of the ground's layers by name
-const groundLayerColors: Partial<Record<GroundLayer, string>> = surfaces.Ground.layers;
-const getGroundLayerColors = (layer: GroundLayer) => {
-  const color = new Color(groundLayerColors[layer] ?? surfaces.Ground.color).getHex();
-  return { color, patchColor: color };
-};
-export const WINDRISE_GROUND_PAINT: GroundPaint = {
-  layerColors: {
-    [GroundLayer.Earth]: getGroundLayerColors(GroundLayer.Earth),
-    [GroundLayer.Grass]: getGroundLayerColors(GroundLayer.Grass),
-    [GroundLayer.Path]: getGroundLayerColors(GroundLayer.Path),
-    [GroundLayer.Rock]: getGroundLayerColors(GroundLayer.Rock),
-    [GroundLayer.Sand]: getGroundLayerColors(GroundLayer.Sand),
-    [GroundLayer.Snow]: getGroundLayerColors(GroundLayer.Snow),
-  },
-  layerField: groundLayers,
-  patchScale: 18,
-  pathFalloff: 0.6,
-  paths: [],
-};
 // Where a character starts in Windrise: on the slope before the statue, in the free camera's first view, its back to
 // The camera as the game shows a character
 export const WINDRISE_START_POINT: GroundPoint = { x: 36, z: 12 };
-// The families' colours as their exports' textures paint them, fitted into `surfaces.json`, and each family's parts, the
-// Meshes it is drawn with, each in its own colour. A part the export gave no weight to takes its family's colour
-const getPartColor = (family: { color: string; parts: Record<string, { color: string }> }, part: string): string =>
-  family.parts[part]?.color ?? family.color;
-// Each part's detail, as its export's textures carry it, and a family's where the part has none of its own
-const getPartDetail = (
-  family: { detail: SurfaceDetail; parts: Record<string, { detail?: SurfaceDetail }> },
-  part: string,
-): SurfaceDetail => family.parts[part]?.detail ?? family.detail;
 // The oak's bark is its trunk and its leaves are its cards, each the export's mesh of that name
-const OAK_BARK_PART = "Stages_Unique_CyTree01_Bark_Lod1";
-const OAK_LEAF_PART = "Stages_Unique_CyTree01_Leaf_Lod1";
-export const BARK_COLOR = getPartColor(surfaces.Oak, OAK_BARK_PART);
-export const LEAF_COLOR = getPartColor(surfaces.Oak, OAK_LEAF_PART);
-export const BARK_DETAIL = getPartDetail(surfaces.Oak, OAK_BARK_PART);
-export const LEAF_DETAIL = getPartDetail(surfaces.Oak, OAK_LEAF_PART);
-export const PAVING_COLOR = surfaces.Paving.color;
-export const PAVING_DETAIL = surfaces.Paving.detail;
-// The low domes the plants other than trees stand as, in the ground's own green and detail, scaled to a tuft's height
-export const PLANT_DOME_COLOR = surfaces.Ground.color;
-export const PLANT_DOME_DETAIL = surfaces.Ground.detail;
+export const OAK_BARK_PART = "Stages_Unique_CyTree01_Bark_Lod1";
+export const OAK_LEAF_PART = "Stages_Unique_CyTree01_Leaf_Lod1";
+// The low domes the plants other than trees stand as, scaled to a tuft's height
 export const PLANT_DOME_SCALE: [number, number, number] = [0.4, 0.3, 0.4];
 // A plant prefab whose name holds this is a tree, drawn as the oak's impostor, and every other plant as a low dome
 export const TREE_PREFAB_NAME_PART = "Tree";
-export const getStatuePartColor = (part: string): string => getPartColor(surfaces.Statue, part);
-export const getStatuePartDetail = (part: string): SurfaceDetail => getPartDetail(surfaces.Statue, part);
 // The ramp every material shades through: a narrow step, a little past the grazing angle
 export const WINDRISE_RAMP_OPTIONS: RampOptions = { resolution: 64, softness: 0.08, terminator: 0.52 };
 // A haze thickest on the valley floor and gone a few hundred metres up, starting past the knoll so the oak stays clear

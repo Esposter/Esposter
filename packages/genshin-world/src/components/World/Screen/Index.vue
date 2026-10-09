@@ -12,12 +12,16 @@ import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { STARTING_TEAM_CHARACTER_IDS } from "#src/services/party/constants";
+import { readMondstadtWildlifePlaces } from "#src/services/wildlife/readMondstadtWildlifePlaces";
+import { readWindriseData } from "#src/services/windrise/readWindriseData";
+import { readCatalogue } from "#src/services/world/readCatalogue";
 import { getResultAsync } from "@esposter/shared";
 
 // The world, opened once the names and the game's tables it reads its save and runs its rules by have arrived, with the
-// Starting team's talent multipliers its first frame builds their combatants from. The bag's weapons, materials and names
-// Are read as the save loads, so the world is made only then. A table that fails to arrive is logged and the world stays
-// Shut, ready all the same, as a world that cannot start is, so a host waiting on it moves on
+// Starting team's talent multipliers its first frame builds their combatants from, and the ground, the catalogue and the
+// Animals its first frame draws. The bag's weapons, materials and names are read as the save loads, so the world is made
+// Only then. A record that fails to arrive is logged and the world stays shut, ready all the same, as a world that cannot
+// Start is, so a host waiting on it moves on
 const props = defineProps<WorldScreenProps>();
 const emit = defineEmits<{ grant: []; quit: []; ready: []; save: [save: GenshinSave] }>();
 const tables = shallowRef<WorldTables>();
@@ -31,6 +35,9 @@ getResultAsync(() =>
     readMaterialDataMap(props.gameDataBaseUrl),
     readHudInterfaceRects(props.gameDataBaseUrl),
     readTalentMultipliers(props.gameDataBaseUrl, STARTING_TEAM_CHARACTER_IDS),
+    readWindriseData(props.gameDataBaseUrl),
+    readCatalogue(props.gameDataBaseUrl),
+    readMondstadtWildlifePlaces(props.gameDataBaseUrl),
   ]),
 ).match(
   ([
@@ -41,15 +48,21 @@ getResultAsync(() =>
     materialDataMap,
     hudInterfaceRects,
     startingTalentMultipliers,
+    windriseData,
+    catalogue,
+    wildlifePlaces,
   ]) => {
     tables.value = {
       adventureRankTables,
+      catalogue,
       enemyTables,
       hudInterfaceRects,
       materialDataMap,
       nameText,
       startingTalentMultipliers,
       statTables,
+      wildlifePlaces,
+      windriseData,
     };
   },
   (error) => {

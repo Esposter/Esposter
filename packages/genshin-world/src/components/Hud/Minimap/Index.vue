@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { MapCamera } from "#src/models/map/MapCamera";
+import type { Catalogue } from "#src/models/world/Catalogue";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { GameText } from "genshin-text";
 
@@ -11,12 +12,14 @@ import { MathUtils } from "three";
 
 interface Props {
   camera: MapCamera;
+  // The regions and their areas, whose drawn outlines the minimap shows
+  catalogue: Catalogue;
   // The game's words in the reader's language
   gameText: GameText;
   landmarks: Landmark[];
 }
 
-const { camera, gameText, landmarks } = defineProps<Props>();
+const { camera, catalogue, gameText, landmarks } = defineProps<Props>();
 const emit = defineEmits<{ open: [] }>();
 </script>
 
@@ -29,7 +32,7 @@ const emit = defineEmits<{ open: [] }>();
       aria-hidden="true"
     >
       <g :transform="`rotate(${MathUtils.radToDeg(camera.yaw)}) translate(${-camera.x} ${-camera.z})`">
-        <MapDrawing :landmarks :mark-radius="MINIMAP_RADIUS * 2 * MAP_MARK_SHARE" />
+        <MapDrawing :catalogue :landmarks :mark-radius="MINIMAP_RADIUS * 2 * MAP_MARK_SHARE" />
       </g>
       <MapPointer :size="MINIMAP_RADIUS * 2 * MAP_MARK_SHARE" />
     </svg>

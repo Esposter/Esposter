@@ -1,17 +1,19 @@
 <script setup lang="ts">
+import type { Catalogue } from "#src/models/world/Catalogue";
 import type { Landmark } from "#src/models/world/Landmark";
 
 import { computeFilledAreaIds } from "#src/services/map/computeFilledAreaIds";
-import { catalogue } from "#src/services/world/catalogue";
 
 interface Props {
+  // The regions and their areas, whose drawn outlines the map fills in
+  catalogue: Catalogue;
   // The landmarks the player has unlocked, which mark the map and fill in their areas
   landmarks: Landmark[];
   // How far a landmark's mark reaches from its point, in metres, so a mark is drawn one size at any view's scale
   markRadius: number;
 }
 
-const { landmarks, markRadius } = defineProps<Props>();
+const { catalogue, landmarks, markRadius } = defineProps<Props>();
 const emit = defineEmits<{ select: [landmark: Landmark] }>();
 // Only a filled area's outline is drawn: the rest of the map is blank until a statue of it is resonated with
 const areaOutlines = computed(() => {

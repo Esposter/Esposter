@@ -4,7 +4,6 @@ import type { GameClock } from "genshin-engine";
 
 import { computeResidentSpot } from "#src/services/resident/computeResidentSpot";
 import { computeShownResidentSpot } from "#src/services/resident/computeShownResidentSpot";
-import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { useLoop, useTres } from "@tresjs/core";
 import { Frustum, Matrix4, Vector3 } from "three";
 import { shallowRef } from "vue";
@@ -17,6 +16,7 @@ export const useResidentSpots = (
   regionDataMap: ReadonlyMap<string, RegionData>,
   gameClock: GameClock,
   origin: Vector3,
+  getGroundHeight: (x: number, z: number) => number,
 ) => {
   const { camera } = useTres();
   const { onBeforeRender } = useLoop();
@@ -34,7 +34,7 @@ export const useResidentSpots = (
     const { x, z } = spot.position;
     let height = groundHeightMap.get(spot);
     if (height === undefined) {
-      height = getWorldHeight(x, z);
+      height = getGroundHeight(x, z);
       groundHeightMap.set(spot, height);
     }
     point.set(x, height, z);

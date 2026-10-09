@@ -34,7 +34,6 @@ import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { stepEnemy } from "#src/services/enemy/stepEnemy";
 import { wakeEnemyCamps } from "#src/services/enemy/wakeEnemyCamps";
 import { selectEnemyTaunt } from "#src/services/kit/selectEnemyTaunt";
-import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { useLoop } from "@tresjs/core";
 import { watchImmediate } from "@vueuse/core";
@@ -55,6 +54,8 @@ interface Props {
   enemyMap: Map<string, Enemy>;
   // The game's enemy tables, which each spawn's kind, stats and drops are read from
   enemyTables: EnemyTables;
+  // The world's ground at a point in its own coordinates, which each enemy stands on
+  getGroundHeight: (x: number, z: number) => number;
   // Whether a screen over the world holds it, as the game's menus pause its enemies
   isHeld?: true;
   // The effects on the team, whose live taunts draw the enemies' strikes within their aggro range
@@ -75,6 +76,7 @@ interface Props {
 const {
   enemyMap,
   enemyTables,
+  getGroundHeight,
   isHeld,
   kitEffectState,
   lightUniforms,
@@ -191,7 +193,7 @@ onBeforeRender(({ delta }) => {
   let flashCount = 0;
   for (const { elementalState, enemyKindId, heading, hitSeconds, position, state } of enemyMap.values()) {
     if (count === ENEMY_CAPACITY) break;
-    point.set(position.x, getWorldHeight(position.x, position.z) + ENEMY_CAPSULE_HEIGHT / 2, position.z);
+    point.set(position.x, getGroundHeight(position.x, position.z) + ENEMY_CAPSULE_HEIGHT / 2, position.z);
     enemyMesh.setMatrixAt(count, matrix.compose(point, rotation.setFromAxisAngle(up, heading), scale));
     enemyMesh.setColorAt(
       count,

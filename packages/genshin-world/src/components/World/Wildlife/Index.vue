@@ -13,12 +13,13 @@ import {
 } from "#src/services/wildlife/constants";
 import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { stepWildlife } from "#src/services/wildlife/stepWildlife";
-import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { useLoop } from "@tresjs/core";
 import { createFixedStepLoop, createToonMaterial } from "genshin-engine";
 import { CapsuleGeometry, InstancedMesh, Matrix4, Quaternion, Vector3 } from "three";
 
 interface Props {
+  // The world's ground at a point in its own coordinates, which each animal stands on
+  getGroundHeight: (x: number, z: number) => number;
   // Whether a screen over the world holds it, as the game's menus hold its animals
   isHeld?: true;
   lightUniforms: LightUniforms;
@@ -29,7 +30,7 @@ interface Props {
   target?: GroundPoint;
 }
 
-const { isHeld, lightUniforms, places, rampTexture, target } = defineProps<Props>();
+const { getGroundHeight, isHeld, lightUniforms, places, rampTexture, target } = defineProps<Props>();
 const { onBeforeRender } = useLoop();
 // Each place's animal, made once as the places are, so each keeps its flight across the frames
 const wildlifeList: Wildlife[] = places.map((place) => createWildlife(place));
@@ -55,7 +56,7 @@ onBeforeRender(({ delta }) => {
   let count = 0;
   for (const { heading, position } of wildlifeList) {
     if (count === WILDLIFE_CAPACITY) break;
-    point.set(position.x, getWorldHeight(position.x, position.z) + WILDLIFE_CAPSULE_HEIGHT / 2, position.z);
+    point.set(position.x, getGroundHeight(position.x, position.z) + WILDLIFE_CAPSULE_HEIGHT / 2, position.z);
     wildlifeMesh.setMatrixAt(count, matrix.compose(point, rotation.setFromAxisAngle(up, heading), scale));
     count += 1;
   }
