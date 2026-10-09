@@ -78,7 +78,7 @@ Every generator and every per-frame selection is benched under the `bench` skill
 
 ## The world screen is composition
 
-`World/Screen/Index.vue` loads the names and the game's tables the save is read by and the rules run on, each from the [hosted game data](/docs/genshin/hosted-game-data), then opens `World/Session/Index.vue`, which only composes. Each system of the world (the save and the bag, the pick ups, the quests, the talks and residents, the Archive, the party and its combat, the landmarks and the jump, the achievements) is one composable under `composables/`, taking its dependencies as arguments and returning what the template or another system reads. A system reacts to another's doing through one typed event map, `WorldEventMap`, emitted on one `WorldEvents` the screen creates:
+`World/Screen/Index.vue` loads the names and the game's tables the save is read by and the rules run on, and the ground, the catalogue and the animals the first frame draws, each from the [hosted game data](/docs/genshin/hosted-game-data), then opens `World/Session/Index.vue`, which only composes. The session builds the world's one ground from Windrise's base and the regions' grounds once (`getGroundHeight`) and hands it, and each record, down to what reads it. Each system of the world (the save and the bag, the pick ups, the quests, the talks and residents, the Archive, the party and its combat, the landmarks and the jump, the achievements) is one composable under `composables/`, taking its dependencies as arguments and returning what the template or another system reads. A system reacts to another's doing through one typed event map, `WorldEventMap`, emitted on one `WorldEvents` the screen creates:
 
 ```mermaid
 flowchart LR

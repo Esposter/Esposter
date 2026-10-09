@@ -11,7 +11,7 @@ The world map is the one place a region is described. Every other page reads the
 
 ```mermaid
 flowchart TD
-  CAT[Catalogue: regions, areas, subareas, layers, imported] --> R{Camera moved a stretch: which regions have an area in reach?}
+  CAT[Catalogue: regions, areas, subareas, layers, read at the world's gate] --> R{Camera moved a stretch: which regions have an area in reach?}
   CAM[Camera plus the floating origin] --> R
   R -->|newly in reach| F["Fetch /data/genshin/regions/<region>.json"]
   F --> Z{Valid against the schema?}
@@ -20,7 +20,7 @@ flowchart TD
   R -->|out of reach| DROP[Region data released, its landmarks unmounted]
 ```
 
-- **The catalogue follows the game's hierarchy.** It runs region, then area, then subarea, with the names the game and its wiki use, and an area's subregion where it has one, such as Liyue's Chenyu Vale or Sumeru's Dharma Forest. Windrise is a subarea of Galesong Hill in Mondstadt. The catalogue is imported with the world's code, since every view needs it, and parsed against its schema as it loads (`catalogueSchema`).
+- **The catalogue follows the game's hierarchy.** It runs region, then area, then subarea, with the names the game and its wiki use, and an area's subregion where it has one, such as Liyue's Chenyu Vale or Sumeru's Dharma Forest. Windrise is a subarea of Galesong Hill in Mondstadt. The catalogue is the file people edit (`data/catalogue.json`), published by `genshin:data authored` as the `catalogue/catalogue` record of the [hosted game data](/docs/genshin/hosted-game-data). The world's screen reads it before it opens, since every view needs it, parsed against its schema as it arrives (`readCatalogue`), and hands it to each view that reads it: the region data's reach, the weather, the map, the minimap and the jumps.
 - **Layers for places on their own map.** The surface is one layer. Enkanomiya, the Chasm's underground mines and the Sea of Bygone Eras, which the game draws on maps of their own, are layers (`WorldLayer`) that will carry their own terrain, sky and water, entered at their gates.
 - **An area's outline decides reach.** An area carries its outline in world metres. Until it has one the outline is empty and counts as infinitely far, so a region with no outlined area never loads. Galesong Hill's outline is provisional, drawn by hand around the Windrise valley and the lake east of it as the scene has them, and each area holding a region's capital is a provisional square round it ([region buildings](/docs/genshin/region-buildings)).
 - **An area names its weather.** Each area lists the weathers it can have, its own first, as the wiki ties weather to areas; whichever area holds the camera sets the world's weather ([weather](/docs/genshin/weather)).
@@ -30,16 +30,17 @@ flowchart TD
 
 ## Key files
 
-| File                                                              | Role                                                            |
-| :---------------------------------------------------------------- | :-------------------------------------------------------------- |
-| `packages/genshin-world/src/data/catalogue.json`                  | Every region, area and subarea the game ships, and their layers |
-| `packages/genshin-world/src/models/world/Catalogue.ts`            | The catalogue's shape: regions, areas, subareas and outlines    |
-| `packages/genshin-world/src/models/world/RegionData.ts`           | A region's authored data: its landmarks                         |
-| `packages/genshin-world/src/models/world/Landmark.ts`             | A landmark, by kind, with the options its kit builds it from    |
-| `packages/genshin-world/src/data/regions/mondstadt.json`          | Mondstadt's landmarks: Windrise's oak and statue                |
-| `packages/genshin-world/src/composables/useRegionData.ts`         | Regions fetched by reach, validated and released                |
-| `packages/genshin-engine/src/world/computeOutlineDistance.ts`     | How far a point is from an area's outline                       |
-| `packages/genshin-world/src/components/World/Landmarks/Index.vue` | Every landmark in reach, built by its kind's kit                |
+| File                                                              | Role                                                             |
+| :---------------------------------------------------------------- | :--------------------------------------------------------------- |
+| `packages/genshin-world/src/data/catalogue.json`                  | Every region, area and subarea the game ships, and their layers  |
+| `packages/genshin-world/src/services/world/readCatalogue.ts`      | The catalogue read from the hosted game data at the world's gate |
+| `packages/genshin-world/src/models/world/Catalogue.ts`            | The catalogue's shape: regions, areas, subareas and outlines     |
+| `packages/genshin-world/src/models/world/RegionData.ts`           | A region's authored data: its landmarks                          |
+| `packages/genshin-world/src/models/world/Landmark.ts`             | A landmark, by kind, with the options its kit builds it from     |
+| `packages/genshin-world/src/data/regions/mondstadt.json`          | Mondstadt's landmarks: Windrise's oak and statue                 |
+| `packages/genshin-world/src/composables/useRegionData.ts`         | Regions fetched by reach, validated and released                 |
+| `packages/genshin-engine/src/world/computeOutlineDistance.ts`     | How far a point is from an area's outline                        |
+| `packages/genshin-world/src/components/World/Landmarks/Index.vue` | Every landmark in reach, built by its kind's kit                 |
 
 ## Notes
 

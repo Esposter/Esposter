@@ -48,7 +48,7 @@ The camera is never held under the ground or the water's surface: after each ste
 
 ## The ground
 
-`collision` answers the ground's height and normal at a point from the height function the terrain is built from. The world screen passes it `getWorldHeight` read at the scene's origin plus the camera's own place, on the main thread, so the answer is the one the terrain draws, never a read back from a worker's tile. The normal is read from the same function's slopes across a tenth of a metre. The sample object is reused by every query, so a frame reads the ground allocating nothing.
+`collision` answers the ground's height and normal at a point from the height function the terrain is built from. The world's session passes it the ground it builds (`getGroundHeight`, from `createWorldHeight`) read at the scene's origin plus the camera's own place, with the water's level read from the hosted game data before the world opened, on the main thread, so the answer is the one the terrain draws, never a read back from a worker's tile. The normal is read from the same function's slopes across a tenth of a metre. The sample object is reused by every query, so a frame reads the ground allocating nothing.
 
 ## Key files
 

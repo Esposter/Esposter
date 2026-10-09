@@ -40,25 +40,25 @@ The numbers are provisional, each marked in `services/wildlife/constants.ts`:
 
 `pnpm -C scripts genshin:assets wildlife` publishes each region's animals as one slice to the wildlife dataset of the [hosted game data](/docs/genshin/hosted-game-data), the chest slices' pattern. Mondstadt's slice holds about a hundred animals, and the other regions hold the same kinds where their labels are marked.
 
-`WorldWildlife` stands each animal in Windrise's scene as a capsule of one instanced draw, the enemies' stand-in, stood on the ground under it and turned to its heading. Windrise parses the Mondstadt slice with `wildlifePlaceSchema` when it loads, and the animals are not drawn in a witness render, as the enemies are not.
+`WorldWildlife` stands each animal in Windrise's scene as a capsule of one instanced draw, the enemies' stand-in, stood on the ground under it and turned to its heading. The world's screen reads the Mondstadt slice from the hosted game data before it opens (`readMondstadtWildlifePlaces`, each place's id unique) and hands it down to Windrise, and the animals are not drawn in a witness render, as the enemies are not.
 
 Every animal of the slice exists from the scene's load. The rule that most animals come into being only when the player is near is not built, and neither are their shadows nor the elemental sight over them.
 
 ## Key files
 
-| File                                                                    | Role                                                        |
-| :---------------------------------------------------------------------- | :---------------------------------------------------------- |
-| `packages/genshin-world/src/models/wildlife/WildlifeKind.ts`            | The three fleeing kinds                                     |
-| `packages/genshin-world/src/models/wildlife/WildlifePlace.ts`           | A placed animal, and the schema its slice is parsed with    |
-| `packages/genshin-world/src/models/wildlife/Wildlife.ts`                | One animal as its flight moves it                           |
-| `packages/genshin-world/src/services/wildlife/stepWildlife.ts`          | The flight, one fixed step at a time                        |
-| `packages/genshin-world/src/services/wildlife/constants.ts`             | The provisional escape radius, escape time and flight speed |
-| `packages/genshin-world/src/components/World/Wildlife/Index.vue`        | The instanced stand-ins, stepped and drawn                  |
-| `packages/genshin-world/src/components/World/Windrise/Index.vue`        | Mounts the stand-ins over Mondstadt's slice                 |
-| `packages/genshin-world/src/generated/wildlife/`                        | One slice per region                                        |
-| `scripts/src/services/genshinAssets/wildlife/buildWildlifePlaces.ts`    | Carries the map's animals into each region's slice          |
-| `scripts/src/services/genshinAssets/wildlife/WildlifeKindLabelIdMap.ts` | Each kind's label on the official map                       |
-| `scripts/src/services/genshinAssets/commands/wildlifeCommand.ts`        | `genshin:assets wildlife`                                   |
+| File                                                                          | Role                                                        |
+| :---------------------------------------------------------------------------- | :---------------------------------------------------------- |
+| `packages/genshin-world/src/models/wildlife/WildlifeKind.ts`                  | The three fleeing kinds                                     |
+| `packages/genshin-world/src/models/wildlife/WildlifePlace.ts`                 | A placed animal, and the schema its slice is parsed with    |
+| `packages/genshin-world/src/models/wildlife/Wildlife.ts`                      | One animal as its flight moves it                           |
+| `packages/genshin-world/src/services/wildlife/stepWildlife.ts`                | The flight, one fixed step at a time                        |
+| `packages/genshin-world/src/services/wildlife/constants.ts`                   | The provisional escape radius, escape time and flight speed |
+| `packages/genshin-world/src/components/World/Wildlife/Index.vue`              | The instanced stand-ins, stepped and drawn                  |
+| `packages/genshin-world/src/components/World/Windrise/Index.vue`              | Mounts the stand-ins over Mondstadt's slice                 |
+| `packages/genshin-world/src/services/wildlife/readMondstadtWildlifePlaces.ts` | Mondstadt's slice, read at the world's gate                 |
+| `scripts/src/services/genshinAssets/wildlife/buildWildlifePlaces.ts`          | Carries the map's animals into each region's slice          |
+| `scripts/src/services/genshinAssets/wildlife/WildlifeKindLabelIdMap.ts`       | Each kind's label on the official map                       |
+| `scripts/src/services/genshinAssets/commands/wildlifeCommand.ts`              | `genshin:assets wildlife`                                   |
 
 ## Sources
 
