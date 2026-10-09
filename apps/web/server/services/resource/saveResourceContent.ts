@@ -86,7 +86,7 @@ export const saveResourceContent = async (
   const contentBlobName = getContentBlobName(id);
   const writeContentBlob = async () => {
     isContentBlobWriteAttempted = true;
-    storedContentSize = await writeJsonBlob(containerClient, contentBlobName, serializedContent);
+    storedContentSize = (await writeJsonBlob(containerClient, contentBlobName, serializedContent)).size;
   };
   // What the blob holds once decoded: the hash so the client can tell whether the bytes it sent are the bytes
   // Stored — a delta save is computed against exactly these — and the size a read picks its transport by, both of
