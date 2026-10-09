@@ -24,15 +24,20 @@ export const WET_SHEEN_STRENGTH = 0.25;
 // The Gaussian blur sigmas, in texels, that a surface detail is split into octave bands by: each band is the energy of the
 // Difference between two neighbouring blurs, from the texel itself up to the coarsest sigma
 export const SURFACE_DETAIL_BAND_SIGMAS: number[] = [1, 2, 4, 8];
-// The texel frequency of each octave a surface's detail is drawn from: one at each band's peak, which is a cycle per 2 pi
-// Sigma texels at its coarse edge, then one at half the coarsest band's, which holds the variance the bands leave
-export const SURFACE_OCTAVE_TEXEL_FREQUENCIES: number[] = [
-  ...SURFACE_DETAIL_BAND_SIGMAS.map((sigma) => 1 / (2 * Math.PI * sigma)),
-  1 / (4 * Math.PI * (SURFACE_DETAIL_BAND_SIGMAS.at(-1) ?? 0)),
+// The texel frequencies the surface detail octaves are drawn at, a cycle per this many texels: one a factor of three
+// Coarser than the next, which spreads the octaves across the bands and the variance so their responses are independent
+export const SURFACE_OCTAVE_TEXEL_FREQUENCIES: number[] = [0.9, 0.3, 0.1, 0.033, 0.011];
+// The statistics one unit amplitude of each octave's noise draws, as the detail's own statistics read them: the four
+// Bands finest first, then the variance, per octave in `SURFACE_OCTAVE_TEXEL_FREQUENCIES`' order. Measured by sampling the
+// Engine's `mx_noise_float` at each frequency (`computeMxPerlinNoise`), so the amplitudes solve against the energy the
+// Render draws rather than a sinusoid's
+export const SURFACE_OCTAVE_RESPONSES: number[][] = [
+  [0.0529, 0.00115, 0.00013, 0.0000385, 0.0618],
+  [0.0162, 0.00896, 0.00235, 0.000251, 0.0605],
+  [0.000543, 0.00257, 0.00927, 0.00654, 0.0626],
+  [0.0000099, 0.0000654, 0.000742, 0.0048, 0.0534],
+  [0.000000419, 0.00000155, 0.0000169, 0.000188, 0.0379],
 ];
-// The scale a surface's detail octaves are drawn at, over the amplitudes that reproduce its export's energies: the
-// Render's noise carries less energy per unit amplitude than the octaves model, and the surface pass settles it
-export const SURFACE_DETAIL_RENDER_GAIN = 4;
 // The user data keys a mesh carries its own surface and fade under, which a material shared by many meshes reads as each is
 // Drawn (`setObjectSurface`, `setObjectFade`)
 export const OBJECT_SURFACE_KEY = "surface";

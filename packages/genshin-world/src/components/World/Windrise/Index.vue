@@ -454,6 +454,7 @@ onUnmounted(() => {
       <TresGroup :user-data="{ [SCENE_FAMILY_KEY]: WindrisePartFamily.Ground }">
         <WorldTerrain
           :create-terrain-worker
+          :detail="surfaces.Ground.detail"
           :draws="terrainDraws"
           :is-ground-settled="isRegionDataSettled"
           :light-uniforms

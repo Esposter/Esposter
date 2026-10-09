@@ -1,6 +1,6 @@
 import type { SurfaceDetail } from "#src/models/nodes/SurfaceDetail";
 
-import { SURFACE_DETAIL_BAND_SIGMAS, SURFACE_OCTAVE_TEXEL_FREQUENCIES } from "#src/nodes/constants";
+import { SURFACE_OCTAVE_RESPONSES, SURFACE_OCTAVE_TEXEL_FREQUENCIES } from "#src/nodes/constants";
 
 interface SurfaceOctave {
   amplitude: number;
@@ -11,23 +11,12 @@ interface SurfaceOctave {
 const SOLVE_ITERATIONS = 300;
 // Where the amplitudes start, a little above zero, since a multiplicative update cannot leave zero
 const SOLVE_START_ENERGY = 1e-6;
-// The blur edges each band lies between, from the texel itself (sigma zero) up to the coarsest sigma
-const BAND_EDGE_SIGMAS = [0, ...SURFACE_DETAIL_BAND_SIGMAS];
-// The energy a unit-variance sinusoid at a texel frequency leaves in the difference of two blurs, which is the band's
-// Share of it. The variance a sinusoid holds is half its amplitude squared, so its target row is a half
-const computeBandResponse = (fineSigma: number, coarseSigma: number, texelFrequency: number): number => {
-  const decay = 2 * Math.PI ** 2 * texelFrequency ** 2;
-  return (Math.exp(-decay * fineSigma ** 2) - Math.exp(-decay * coarseSigma ** 2)) ** 2 / 2;
-};
-// Each octave's response in every band of the detail and in its variance, the rows the bands and the variance are,
+// Each octave's response in every band of the detail and in its variance, the measured rows of `SURFACE_OCTAVE_RESPONSES`,
 // Relative to the target a row holds, so a band of little energy weighs as much as the variance
 const computeResponses = (targets: number[]): number[][] =>
-  SURFACE_OCTAVE_TEXEL_FREQUENCIES.map((texelFrequency) => [
-    ...BAND_EDGE_SIGMAS.slice(0, -1).map((fineSigma, band) =>
-      computeBandResponse(fineSigma, BAND_EDGE_SIGMAS[band + 1] ?? 0, texelFrequency),
-    ),
-    0.5,
-  ]).map((responses) => responses.map((response, row) => (targets[row] ? response / targets[row] : 0)));
+  SURFACE_OCTAVE_RESPONSES.map((responses) =>
+    responses.map((response, row) => (targets[row] ? response / targets[row] : 0)),
+  );
 // The non-negative energies of the octaves whose responses sum to the targets, by multiplicative updates on the
 // Squared error (Lee and Seung), each octave's energy scaled by how far its responses fall short of the targets
 const solveOctaveEnergies = (responses: number[][], targets: number[]): number[] => {

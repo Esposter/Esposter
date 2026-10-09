@@ -1,5 +1,6 @@
 import type { Texture } from "#src/models/genshinAssets/fit/Texture";
 
+import { computeMxPerlinNoise } from "#src/services/genshinAssets/fit/computeMxPerlinNoise";
 import { computeTextureDetail } from "#src/services/genshinAssets/fit/computeTextureDetail";
 import { computeStatisticalStructure } from "#src/services/genshinParity/passes/computeStatisticalStructure";
 import { computeSurfaceOctaves } from "genshin-engine";
@@ -36,13 +37,21 @@ describe("detail closure", () => {
   // The metres a texel of a test texture spans, a base map's
   const METRES_PER_TEXEL = 2;
 
-  // The luminance of a texture whose texels are a sum of waves, each octave one cosine at its frequency in the world
-  const createWaveLuminance =
-    (octaves: { amplitude: number; frequency: number; phase: number }[]) =>
-    (x: number, _y: number): number => {
-      const worldX = x * METRES_PER_TEXEL;
+  // The luminance the engine draws from its octaves: each a unit-amplitude mx noise at the octave's world frequency, scaled
+  // By its amplitude, as `createSurfaceDetailNode` multiplies the colour by it. An offset moves the noise to another
+  // Realisation of the same statistics, so an export and its reproduction share no texel
+  const createNoiseLuminance =
+    (octaves: { amplitude: number; frequency: number }[], offset: number) =>
+    (x: number, y: number): number => {
       const variation = octaves.reduce(
-        (sum, { amplitude, frequency, phase }) => sum + amplitude * Math.cos(2 * Math.PI * frequency * worldX + phase),
+        (sum, { amplitude, frequency }) =>
+          sum +
+          amplitude *
+            computeMxPerlinNoise(
+              (x + offset) * METRES_PER_TEXEL * frequency,
+              (y + offset) * METRES_PER_TEXEL * frequency,
+              0,
+            ),
         0,
       );
       return 128 * (1 + variation);
@@ -57,19 +66,20 @@ describe("detail closure", () => {
 
   test("reproduces an export's band energies within the gate from octaves fitted to it", () => {
     expect.hasAssertions();
+    // An export whose detail is the engine's own noise at three of its octave texel frequencies, another realisation
     const exported = createTexture(
-      createWaveLuminance([
-        { amplitude: 0.2, frequency: 1 / (2 * Math.PI * 1) / METRES_PER_TEXEL, phase: 0.3 },
-        { amplitude: 0.1, frequency: 1 / (2 * Math.PI * 4) / METRES_PER_TEXEL, phase: 1.1 },
-      ]),
+      createNoiseLuminance(
+        [
+          { amplitude: 0.05, frequency: 0.3 / METRES_PER_TEXEL },
+          { amplitude: 0.1, frequency: 0.1 / METRES_PER_TEXEL },
+          { amplitude: 0.04, frequency: 0.033 / METRES_PER_TEXEL },
+        ],
+        37.3,
+      ),
     );
     const detail = computeTextureDetail(exported, METRES_PER_TEXEL);
     if (!detail) throw new Error("the export holds detail");
-    const ours = createTexture(
-      createWaveLuminance(
-        computeSurfaceOctaves(detail).map(({ amplitude, frequency }) => ({ amplitude, frequency, phase: 0.7 })),
-      ),
-    );
+    const ours = createTexture(createNoiseLuminance(computeSurfaceOctaves(detail), 0));
     expect(
       computeStatisticalStructure(toLuminance(exported), toLuminance(ours), FULL_MASK, FULL_MASK, SIZE, SIZE),
     ).toBeLessThan(GATE);

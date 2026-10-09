@@ -6,6 +6,7 @@ import type { Vector3 } from "three";
 import type { UniformNode } from "three/webgpu";
 
 import { createCausticsNode } from "#src/nodes/createCausticsNode";
+import { createMaterialDetailNode } from "#src/nodes/createMaterialDetailNode";
 import { createRimNode } from "#src/nodes/createRimNode";
 import { createToonMaterial } from "#src/nodes/createToonMaterial";
 import { createWetDarkeningNode } from "#src/nodes/createWetDarkeningNode";
@@ -41,7 +42,7 @@ export const createTerrainMaterial = (
   // The view's eye in the scene's coordinates, written each frame by whatever selects the tiles
   eye: UniformNode<"vec3", Vector3>,
   // No colour of its own: the colour node is the morphed vertex colour, which replaces the material's
-  toonMaterialOptions: Pick<ToonMaterialOptions, "lightUniforms" | "rampTexture">,
+  toonMaterialOptions: Pick<ToonMaterialOptions, "detail" | "lightUniforms" | "rampTexture">,
   waterUniforms?: WaterUniforms,
 ): ToonNodeMaterial => {
   const terrainMaterial = createToonMaterial({ ...toonMaterialOptions, isOutlined: false });
@@ -58,14 +59,15 @@ export const createTerrainMaterial = (
     normalLocal.assign(mix(normalLocal, attribute("coarseNormal", "vec3"), morphAmount).normalize());
     return mix(positionGeometry, coarsePosition.xyz, morphAmount);
   })();
+  const { detail, lightUniforms } = toonMaterialOptions;
+  const detailNode = detail === undefined ? float(1) : createMaterialDetailNode(detail);
   terrainMaterial.colorNode = vec4(
-    varying(mix(attribute("color", "vec3"), attribute("coarseColor", "vec3"), morphAmount)).mul(
-      createWetDarkeningNode(toonMaterialOptions.lightUniforms),
-    ),
+    varying(mix(attribute("color", "vec3"), attribute("coarseColor", "vec3"), morphAmount))
+      .mul(createWetDarkeningNode(lightUniforms))
+      .mul(detailNode),
     1,
   );
   if (waterUniforms) {
-    const { lightUniforms } = toonMaterialOptions;
     terrainMaterial.emissiveNode = createRimNode(lightUniforms)
       .add(createWetSheenNode(lightUniforms))
       .add(createCausticsNode(lightUniforms, waterUniforms));
