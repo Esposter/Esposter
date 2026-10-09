@@ -1,13 +1,14 @@
+import type { DirectionalLight } from "three";
 import type { CSMFrustum } from "three/examples/jsm/csm/CSMFrustum.js";
 import type { CSMShadowNodeData } from "three/examples/jsm/csm/CSMShadowNode.js";
 import type { NodeFrame } from "three/webgpu";
 
 import { FOLLOW_CAMERA_MAX_DISTANCE } from "#src/camera/constants";
-import { DirectionalLight, Matrix4, PerspectiveCamera, Vector3 } from "three";
+import { Matrix4, PerspectiveCamera, Vector3 } from "three";
 import { CSMShadowNode } from "three/examples/jsm/csm/CSMShadowNode.js";
 
 const UP = new Vector3(0, 1, 0);
-const NOT_DRAWN = new Vector3(NaN, NaN, NaN);
+const NOT_DRAWN = new Vector3(Number.NaN, Number.NaN, Number.NaN);
 // The anchor snaps to a step this many texels wide, so a cascade is drawn again only once the anchor has moved that far
 const ANCHOR_STEP_TEXELS = 16;
 
@@ -40,13 +41,13 @@ export class AnchoredCascadeShadowNode extends CSMShadowNode {
     this.#lightOrientationInverse.copy(this.#lightOrientation).invert();
     this.#anchorLight.copy(this.anchor).applyMatrix4(this.#lightOrientationInverse);
     this.#lightDirection.subVectors(sunLight.target.position, sunLight.position).normalize();
-    for (let index = 0; index < this.lights.length; index++) {
-      const lwLight = this.lights[index]!;
+    for (const [index, lwLight] of this.lights.entries()) {
       const { shadow } = lwLight;
-      if (shadow === undefined) continue;
+      const frustum = this.frustums[index];
+      if (shadow === undefined || frustum === undefined) continue;
       const shadowCamera = shadow.camera;
       // The sphere grows by the snap, which moves the anchor by up to half a step on each axis, so the map still holds it
-      const reach = FOLLOW_CAMERA_MAX_DISTANCE + this.#getFrustumExtent(this.frustums[index]!);
+      const reach = FOLLOW_CAMERA_MAX_DISTANCE + this.#getFrustumExtent(frustum);
       const radius = reach / (1 - ANCHOR_STEP_TEXELS / shadow.mapSize.width);
       const step = (ANCHOR_STEP_TEXELS * 2 * radius) / shadow.mapSize.width;
       // The origin snaps to a step of the map's texels, and the depth is pushed past the sphere by the light margin, so a
@@ -80,9 +81,10 @@ export class AnchoredCascadeShadowNode extends CSMShadowNode {
     let extent = 0;
     for (const vertices of [frustum.vertices.near, frustum.vertices.far])
       for (const vertex of vertices) extent = Math.max(extent, vertex.length());
-    if (this.fade && this.camera instanceof PerspectiveCamera) {
+    const [farCorner] = frustum.vertices.far;
+    if (this.fade && farCorner && this.camera instanceof PerspectiveCamera) {
       const far = Math.max(this.camera.far, this.maxFar);
-      const linearDepth = frustum.vertices.far[0]!.z / (far - this.camera.near);
+      const linearDepth = farCorner.z / (far - this.camera.near);
       extent += 0.25 * linearDepth ** 2 * (far - this.camera.near);
     }
     return extent;
