@@ -13,6 +13,12 @@ await runMain(
         required: false,
         type: "string",
       },
+      skipParity: {
+        default: false,
+        description: "Build without the parity check, only when the game's blocks are absent; the skip is printed",
+        required: false,
+        type: "boolean",
+      },
     },
     meta: {
       description:
@@ -20,7 +26,7 @@ await runMain(
       name: "genshin:animestudio:build",
     },
     async run({ args }) {
-      const cliPath = await buildAnimeStudio(args.directory);
+      const cliPath = await buildAnimeStudio(args.directory, args.skipParity);
       console.log(`\nCLI published: ${cliPath}\nSet GENSHIN_ANIMESTUDIO_CLI to it.`);
     },
   }),

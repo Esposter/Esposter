@@ -137,11 +137,42 @@ Every step runs AnimeStudio through one runner, which fails a run that exits 0 y
 
 - **Pinned commits:** AnimeStudio `db860e1f9bf0e0314b892782304d44f3ac42c261` (the CLI, its Ooz and ACL sources), Texture2DDecoder `c974dbda1209a6af34cb03941fa0b999627c3623` (`KiruyaMomochi/Texture2DDecoder`, the native behind the `Kyaru.Texture2DDecoder` wrapper, the one whose macOS build the NuGet package does not ship).
 - **Edits it applies to the clone:** every project retargets `net10.0`, and the `win-x64` runtime identifier is dropped. Ooz's match copy is replaced by one that copies a byte at a time when the match is closer than eight bytes: the stock copy reads bytes the decode has not yet written, so the output followed whatever the buffer held, and blocks lost assets that AnimeStudio logged without failing the run.
+- **Maps:** a rebuild keeps the CAB map. AnimeStudio writes it to `Maps` beside the published CLI, so the build moves that folder aside under `~/Esposter/tools/animestudio-maps` before clearing the publish folder and moves it back after publish.
+- **Acceptance:** after publish, the build exports each reference block in `PARITY_REFERENCE_BLOCKS` with the new CLI and fails unless the file total and each listed type match Windows AnimeStudio's counts on game 7.1.0, and the output names no exception. Only `00/15508490` is recorded so far. `--skip-parity` skips the check only when the game's blocks are absent, and prints why.
+- **Open:** a few Leviathan (decoder 12) chunks still read output they have not written, so some reference blocks still log exceptions and the namecard step still fails on them.
 - **Natives:** `Texture2DDecoderNative` and Ooz build and load; ACL's MHY library builds and loads. The other ACL libraries (SR, ZZZ, DB) fail to compile under clang, and ZZZV2 needs `windows.h`, so animation clips from those are not available.
 - **Requirements:** .NET 10 and CMake to build. The CLI is published self-contained, so it runs with no `DOTNET_ROOT` however .NET was installed, and the game-running check, which reads Windows' process list, passes on macOS, where the game has no build.
 - **Not on arm64:** FMOD audio, FBX export and HLSL shader decompilation ("AnimeStudio.HLSLDecompiler") are Windows-only or proprietary, so `genshin:assets` steps that need them do not run here.
 
 Then set `GENSHIN_ANIMESTUDIO_CLI` to the printed path (the default is `~/Downloads/AnimeStudio/AnimeStudio.CLI.exe`).
+
+### Upstream
+
+The Ooz source AnimeStudio vendors (`AnimeStudio.Ooz/kraken.cpp` at the pinned commit) has the defect below. This is drafted text for Escartem/AnimeStudio, kept here and not filed or posted anywhere.
+
+**Title:** Ooz: the 8-byte match copy reads output not yet written when the match distance is under 8
+
+- `COPY_64` and `COPY_64_ADD` copy eight bytes at once from `dst + offset`. When the distance is under eight, the source overlaps bytes this copy has not written yet, so the result depends on what the output buffer held before the call.
+- Minimal repro: `AnimeStudio.CLI` on `00/10850306.blk` from game 7.1.0, `--types Texture2D`, names set to that block's `UI_NameCardPic_*` entries, `--logger_flags Warning Error`. Stock source: 398 exception lines (`EndOfStreamException`, `OverflowException`, and an `ArgumentOutOfRangeException` in `ProcessAssetData`) and no textures. With the copy changed to byte-wise when the distance is under eight: no exception lines and 91 textures.
+- The stock decoder is also wrong with a zero-filled buffer: against the patched output, 226 of 466 Oodle calls in that block differ.
+- Patch: when `dst - src < 8`, copy one byte at a time; otherwise keep the eight-byte copy.
+
+```c
+static inline void oozCopy64(void *destination, const void *source) {
+  uint8_t *d = (uint8_t *)destination;
+  const uint8_t *s = (const uint8_t *)source;
+  if ((uintptr_t)(d - s) < 8) {
+    for (int i = 0; i < 8; i++) d[i] = s[i];
+  } else {
+    uint64_t value;
+    memcpy(&value, s, 8);
+    memcpy(d, &value, 8);
+  }
+}
+```
+
+- Not established: why the Windows build of the same source is clean on `00/15508490`. An explanation based on x86 store-to-load forwarding is not verified and is not claimed here.
+- Open: a Leviathan path (decoder type 12) still reads unwritten output after this patch, in `00/06104869` (calls 601 and 603) and `00/10850306` (call 193). Making every copy byte-wise did not remove it, so the copy macros are ruled out, and the read is not yet located.
 
 ## Inventory
 
