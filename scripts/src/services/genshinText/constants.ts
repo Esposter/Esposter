@@ -147,6 +147,7 @@ export const ANIME_GAME_DATA_TREES_URL = "https://api.github.com/repos/Dimbreath
 // The tables a reader names, which the dump's `ExcelBinOutput/` may lack
 export const DUMP_TABLE_NAMES: readonly string[] = [
   "DocumentExcelConfigData",
+  "FetterStoryExcelConfigData",
   "DocumentLocalizationFormatExcelConfigData",
   "LocalizationExcelConfigData",
 ];
