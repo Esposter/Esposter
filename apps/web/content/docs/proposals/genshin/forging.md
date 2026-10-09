@@ -21,7 +21,6 @@ The blacksmith's recipes, queues, orders, daily cap, drop-table Mystic, forging 
 
 1. **The forge screen and the blacksmith's place.** After the recording owed on the roadmap, and with the region's placements.
 2. **The screen's wiring to the built rules.** The Adventure EXP a Mystic unit yields goes to the Adventure Rank, wired by the screen that forges them.
-3. **The weapons' item definitions.** The reason is in the [forging](/docs/genshin/forging) page's notes, and until the definitions are written a weapon unit's result has no definition in the bag.
 
 ## Data and measures
 
