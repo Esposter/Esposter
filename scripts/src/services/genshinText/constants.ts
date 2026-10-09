@@ -70,7 +70,7 @@ export const VOICE_LINE_FETTER_TYPE = 1;
 export const GENSHIN_TEXT_SOURCE_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-text", "src");
 export const GENSHIN_TEXT_GENERATED_DIRECTORY: string = join(GENSHIN_TEXT_SOURCE_DIRECTORY, "generated");
 // Where the world's quests are written, one file a quest, and their words, one chunk a language; and the names its stat
-// Tables cite, one chunk a language
+// Tables cite, one chunk a language, and the card game's names and descriptions, one chunk a language too
 const GENSHIN_WORLD_GENERATED_DIRECTORY: string = join(
   REPOSITORY_ROOT,
   "packages",
@@ -81,6 +81,7 @@ const GENSHIN_WORLD_GENERATED_DIRECTORY: string = join(
 export const QUESTS_DIRECTORY: string = join(GENSHIN_WORLD_GENERATED_DIRECTORY, "quests");
 export const QUEST_TEXT_DIRECTORY: string = join(GENSHIN_WORLD_GENERATED_DIRECTORY, "questText");
 export const NAME_TEXT_DIRECTORY: string = join(GENSHIN_WORLD_GENERATED_DIRECTORY, "nameText");
+export const GCG_TEXT_DIRECTORY: string = join(GENSHIN_WORLD_GENERATED_DIRECTORY, "gcgText");
 const PERSONA_GENERATED_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-persona", "src", "generated");
 export const CHARACTER_LINES_DIRECTORY: string = join(PERSONA_GENERATED_DIRECTORY, "characterLines");
 // The persona is installed alone by a stranger's `npm ci` and so takes no workspace package; it gets a copy of the

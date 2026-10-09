@@ -15,7 +15,7 @@ const FULL_HP = 10;
 
 const createCharacterState = (element: Element, aura: Element | GcgAura = GcgAura.None): GcgCharacterState => ({
   aura,
-  character: { element, hp: FULL_HP, id: 1, maxEnergy: 3, skills: [], weapon: "" },
+  character: { descriptionTextId: 2, element, hp: FULL_HP, id: 1, maxEnergy: 3, nameTextId: 1, skills: [], weapon: "" },
   energy: 0,
   hp: FULL_HP,
   isFrozen: false,

@@ -45,7 +45,7 @@ The card game is a rules engine of its own in `genshin-world`: a duel is a plain
 - **Playing a card is a fast action.** A card passes no turn. Flowing Flame's Searing Onslaught is used at once when it is equipped, without its cost.
 - **The field holds what the cards say, up to their limits.** A dice cap of sixteen, four supports, and one equipment of each kind a character holds, as the game gives them. Timmie's Pigeon is gained at each end phase, the one round trigger the card's text does not name.
 - **Mona's Illusory Torrent is recorded when it applies.** The passive makes the first switch away from Mona in a round a fast action, and the switch records the passive as used for the round.
-- **The slice carries no text.** The duel screen reads each card's name and description by its text id through the game-text package, which this unit leaves to the screen.
+- **The slice carries the text ids, and the words are the world's.** Each character and action card carries `nameTextId` and `descriptionTextId`, the dump's `nameTextMapHash` and `descTextMapHash` as numbers, and `pnpm -C scripts genshin:text gcg` writes every name and description the slices name into `generated/gcgText/<language>.json`, one chunk a language, which `GcgTextLoaderMap` imports on demand. A description is the card's full text, since the on-table text the dump also gives is missing from the text map for many cards. Two things a screen must handle: a character's description id names no text in any language of the dump, so its entry is empty, and most descriptions keep the game's reference tokens (`$[K…]` for a keyword, a character, a skill or a card, and `{SPRITE_PRESET#…}` for an icon) for the screen to resolve.
 
 Charged and plunging attacks are markers no tutorial skill uses, so the engine deals them no damage. The decks beyond the three this page names are the proposal's, not this page's.
 
@@ -110,7 +110,7 @@ A skill follows the same path with its own costs, then its effect: a shared dama
 | `packages/genshin-world/src/services/gcg/rerollGcgDice.ts`                     | A side's one reroll, and the action phase once both have rolled                          |
 | `packages/genshin-world/src/services/gcg/useGcgSkill.ts`                       | A skill paid in dice and energy, then the turn passes                                    |
 | `scripts/src/services/genshinAssets/gcg/writeGcgDeck.ts`                       | Writes one deck's slice from the dump's deck, character, skill, card and cost tables     |
-| `scripts/src/services/genshinAssets/gcg/toGcgDeck.ts`                          | The slice's rows, each cost and each card's kind from the dump's plain fields            |
+| `scripts/src/services/genshinAssets/gcg/toGcgDeck.ts`                          | The slice's rows: costs, kinds and text ids from the dump's plain fields                 |
 | `packages/genshin-world/src/generated/gcg/deck<id>.json`                       | The written slice of each opponent deck, imported on demand                              |
 | `packages/genshin-world/src/services/gcg/GcgDeckLoaderMap.ts`                  | Each opponent deck's slice by its deck id, imported on demand                            |
 | `packages/genshin-world/src/services/gcg/readGcgDeck.ts`                       | Reads a deck's slice by its id and checks it against its schema                          |
@@ -137,6 +137,9 @@ A skill follows the same path with its own costs, then its effect: a shared dama
 | `packages/genshin-world/src/services/gcg/replaceGcgCharacter.ts`               | The free replacement a defeated active owes                                              |
 | `packages/genshin-world/src/services/gcg/payGcgCost.ts`                        | The dice a cost takes from the dice chosen, Omni standing in                             |
 | `packages/genshin-world/src/services/gcg/getGcgReactionKind.ts`                | The reaction an element pair makes under a rule                                          |
+| `scripts/src/services/genshinText/writeGcgText.ts`                             | The names and descriptions the slices name, one chunk of the world's per language        |
+| `packages/genshin-world/src/services/gcg/GcgTextLoaderMap.ts`                  | Each language's card game chunk by text id, imported on demand                           |
+| `packages/genshin-world/src/generated/gcgText/`                                | The card game's names and descriptions, one chunk a language                             |
 
 ## Sources
 

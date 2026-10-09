@@ -1,20 +1,25 @@
 import type { Element, GcgCardKind, GcgCost, GcgSkillKind } from "genshin-world";
 
-// A card of a deck or a card its skills create, as the slice writes it: its id, its kind, its cost and the
-// Effect names of its skills
+// A card of a deck or a card its skills create, as the slice writes it: its id, its name and description text ids, its
+// Kind, its cost and the effect names of its skills
 export interface GcgDeckSliceCard {
   costs: GcgCost[];
+  descriptionTextId: number;
   effects: string[];
   id: number;
   kind: GcgCardKind;
+  nameTextId: number;
 }
 
-// A character of a deck as the slice writes it: its element, HP and energy, its weapon's kind and its skills
+// A character of a deck as the slice writes it: its id, its name and description text ids, its element, HP and energy,
+// Its weapon's kind and its skills
 export interface GcgDeckSliceCharacter {
+  descriptionTextId: number;
   element: Element;
   hp: number;
   id: number;
   maxEnergy: number;
+  nameTextId: number;
   skills: GcgDeckSliceSkill[];
   weapon: string;
 }

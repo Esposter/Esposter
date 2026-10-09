@@ -14,10 +14,12 @@ export const readGcgDeck = async (deckId: number): Promise<GcgDeck> => {
     cardIds: parsedDeck.cardIds,
     cards: parsedDeck.cards,
     characters: parsedDeck.characters.map((character) => ({
+      descriptionTextId: character.descriptionTextId,
       element: character.element,
       hp: character.hp,
       id: character.id,
       maxEnergy: character.maxEnergy,
+      nameTextId: character.nameTextId,
       skills: character.skills,
       weapon: character.weapon,
     })),
