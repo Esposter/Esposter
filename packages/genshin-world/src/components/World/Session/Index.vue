@@ -579,6 +579,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :inventory
           :wallet
           @close="screenKind = ScreenKind.World"
+          @update:inventory="(nextInventory) => setInventory(nextInventory)"
         />
       </template>
       <template #[ScreenKind.Wish]>

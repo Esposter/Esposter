@@ -17,6 +17,8 @@ interface Props {
   cells: InventoryCell[];
   // The counts the bag shows beside its tabs
   currencies: CurrencyCount[];
+  // The trash's way into the destroy mode, in the reader's language
+  destroyLabel: string;
   // Whether the open tab offers the sort, as the weapons' and artifacts' do
   isSortable?: true;
   // The sort's order in the reader's language, which a screen reader says in place of its arrow
@@ -31,9 +33,11 @@ const sort = defineModel<InventorySort>("sort", { required: true });
 const isDescending = defineModel<boolean>("isDescending", { required: true });
 // The entry the detail panel shows, its id, and the first entry of the open tab while none is chosen
 const selectedId = defineModel<string>("selectedId", { required: true });
-const { backLabel, capacity, cells, currencies, isSortable, orderLabel, sortLabels, tabLabels, title } =
+// Whether the bag is in its destroy mode, where a chosen entry the bag may destroy is destroyed rather than shown
+const isDestroying = defineModel<boolean>("isDestroying", { required: true });
+const { backLabel, capacity, cells, currencies, destroyLabel, isSortable, orderLabel, sortLabels, tabLabels, title } =
   defineProps<Props>();
-const emit = defineEmits<{ close: [] }>();
+const emit = defineEmits<{ close: []; destroy: [id: string] }>();
 const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.value) ?? cells[0]);
 </script>
 
@@ -66,7 +70,7 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
           :aria-pressed="cell.id === selectedCell?.id"
           :data-rarity="cell.rarity"
           type="button"
-          @click="selectedId = cell.id"
+          @click="isDestroying && cell.isDestroyable ? emit('destroy', cell.id) : (selectedId = cell.id)"
         >
           <span class="caption">{{ cell.caption }}</span>
         </button>
@@ -76,7 +80,13 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
       <p class="detail-name">{{ selectedCell.name }}</p>
       <p class="detail-caption">{{ selectedCell.caption }}</p>
     </section>
-    <span class="trash" />
+    <button
+      class="trash"
+      :aria-label="destroyLabel"
+      :aria-pressed="isDestroying"
+      type="button"
+      @click="isDestroying = !isDestroying"
+    />
     <template v-if="isSortable">
       <span class="filter" />
       <div class="sort">
@@ -285,6 +295,10 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
   left: calc(var(--unit) * 47);
   width: calc(var(--unit) * 58);
   height: calc(var(--unit) * 58);
+}
+
+.trash[aria-pressed="true"] {
+  background: #a154de;
 }
 
 .filter {

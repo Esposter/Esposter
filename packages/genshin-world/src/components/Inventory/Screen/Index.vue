@@ -4,11 +4,13 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { GameText } from "genshin-text";
 
 import { Currency } from "#src/models/inventory/Currency";
+import { checkIsInventoryItemDestroyable } from "#src/services/inventory/checkIsInventoryItemDestroyable";
 import { computeInventoryTab } from "#src/services/inventory/computeInventoryTab";
 import { EQUIPMENT_CATEGORIES, INVENTORY_CURRENCIES, PRECIOUS_CURRENCIES } from "#src/services/inventory/constants";
 import { countCategoryPieces } from "#src/services/inventory/countCategoryPieces";
 import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
 import { CurrencyRarityMap } from "#src/services/inventory/CurrencyRarityMap";
+import { destroyInventoryItem } from "#src/services/inventory/destroyInventoryItem";
 import { InventorySortGameTextKeyMap } from "#src/services/inventory/InventorySortGameTextKeyMap";
 import { ItemCategoryGameTextKeyMap } from "#src/services/inventory/ItemCategoryGameTextKeyMap";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
@@ -25,9 +27,10 @@ interface Props {
 }
 
 const { gameText, initialCategory, inventory, wallet } = defineProps<Props>();
-const emit = defineEmits<{ close: [] }>();
+const emit = defineEmits<{ close: []; "update:inventory": [inventory: Inventory] }>();
 const category = ref(initialCategory);
 const selectedId = ref("");
+const isDestroying = ref(false);
 const sort = ref(InventorySort.Level);
 const isDescending = ref(true);
 const tabLabels = computed(() =>
@@ -57,14 +60,20 @@ const cells = computed(() => {
   const itemCells = computeInventoryTab(inventory.items, category.value, {
     isDescending: isDescending.value,
     sort: sort.value,
-  }).map(({ definition: { name, rarity }, id, level, quantity }) => {
+  }).map((item) => {
+    const {
+      definition: { name, rarity },
+      id,
+      level,
+      quantity,
+    } = item;
     let caption = String(quantity);
     if (level !== undefined)
       caption =
         category.value === ItemCategory.Weapon
           ? fillGameTextValues(gameText[GameTextKey.LevelFormat], level)
           : `+${level}`;
-    return { caption, id: String(id), name, rarity };
+    return { caption, id: String(id), isDestroyable: checkIsInventoryItemDestroyable(item) || undefined, name, rarity };
   });
   if (category.value !== ItemCategory.PreciousItem) return itemCells;
   const currencyCells = PRECIOUS_CURRENCIES.filter((currency) => wallet[currency] > 0).map((currency) => ({
@@ -93,16 +102,21 @@ const currencies = computed(() =>
       v-model:is-descending="isDescending"
       v-model:sort="sort"
       v-model:selected-id="selectedId"
+      v-model:is-destroying="isDestroying"
       :back-label="gameText[GameTextKey.Back]"
       :capacity
       :cells
       :currencies
+      :destroy-label="gameText[GameTextKey.InventoryDestroy]"
       :is-sortable="EQUIPMENT_CATEGORIES.includes(category) || undefined"
       :order-label="gameText[isDescending ? GameTextKey.SortDescending : GameTextKey.SortAscending]"
       :sort-labels
       :tab-labels
       :title="gameText[GameTextKey.Inventory]"
       @close="emit('close')"
+      @destroy="
+        (id) => emit('update:inventory', { ...inventory, items: destroyInventoryItem(inventory.items, Number(id)) })
+      "
     />
   </GameScreen>
 </template>
