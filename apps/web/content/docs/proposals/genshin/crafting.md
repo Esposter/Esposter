@@ -3,7 +3,6 @@ title: Crafting
 description: Proposal — the crafting bench's parts still to build: its place in the city, the gadgets from their wiki instructions, and the save's craft count. The recipes, their rules, the instruction unlocks, the characters' crafting talents with their regional materials and the screen with its tabs are built, as the crafting page records.
 model: claude-haiku-5-5
 needs: [game-exports]
-waiting: "the bench's place, the first step, which the other machine's scene group export gives (the official map marks no bench, so the streaming records must); the gadgets follow it in order"
 touches:
   [
     "packages/genshin-world/src/services/crafting/**",
@@ -58,9 +57,9 @@ flowchart TD
 
 **Still to build, in order:**
 
-1. **The bench's place.** Waits on the other machine's scene group export, since the official map marks no bench and the wiki places Mondstadt's in the Market District. Its prompt then goes through the interaction page.
-2. **Gadgets**, their instructions read from the wiki's gadget pages, as the Decisions settle.
-3. **The save's craft count.** The Crafting Performed line counts this visit's batches until the save holds a count per recipe.
+1. **Gadgets**, their instructions read from the wiki's gadget pages, as the Decisions settle.
+2. **The save's craft count.** The Crafting Performed line counts this visit's batches until the save holds a count per recipe.
+3. **The bench's place.** Waits on the other machine's scene group export, since the official map marks no bench and the wiki places Mondstadt's in the Market District. Its prompt then goes through the interaction page. Once the two steps above are built, the unit carries a `waiting:` line for this one.
 
 ## Data and measures
 
