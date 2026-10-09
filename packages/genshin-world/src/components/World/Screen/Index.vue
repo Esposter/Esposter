@@ -9,7 +9,8 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { getResultAsync } from "@esposter/shared";
 
 // The world, opened once the names and the stat tables it reads its save by have arrived. The bag's weapons and names are
-// Read as the save loads, so the world is made only then, and a table that fails to arrive is logged and the world stays shut
+// Read as the save loads, so the world is made only then. A table that fails to arrive is logged and the world stays shut,
+// Ready all the same, as a world that cannot start is, so a host waiting on it moves on
 const props = defineProps<WorldScreenProps>();
 const emit = defineEmits<{ grant: []; quit: []; ready: []; save: [save: GenshinSave] }>();
 const loaded = shallowRef<{ nameText: Readonly<Record<string, string>>; statTables: StatTables }>();
@@ -20,6 +21,7 @@ getResultAsync(() => Promise.all([NameTextLoaderMap[props.language](), readStatT
   },
   (error) => {
     console.error(error);
+    emit("ready");
   },
 );
 </script>
