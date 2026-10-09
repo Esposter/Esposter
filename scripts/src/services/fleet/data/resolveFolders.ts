@@ -1,6 +1,5 @@
 import { EXCLUDED_FOLDERS } from "#src/services/fleet/data/constants";
-import { Operation } from "@esposter/shared";
-import { InvalidOperationError } from "@esposter/shared";
+import { Operation, InvalidOperationError } from "@esposter/shared";
 
 // The folders a command names, comma-separated, refusing any the copy never takes
 export const resolveFolders = (folders: string): string[] => {

@@ -44,7 +44,7 @@ onMounted(() => {
     :quality-tier="GENSHIN_QUALITY_TIER"
     :region-data-base-url="GENSHIN_REGION_DATA_BASE_URL"
     :save
-    :server-clock-offset-ms="serverClockOffsetMs"
+    :server-clock-offset-ms
     @grant="emit('grant')"
     @quit="navigateTo(RoutePath.Index)"
     @ready="emit('ready')"

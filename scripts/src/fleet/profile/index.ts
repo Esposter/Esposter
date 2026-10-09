@@ -6,7 +6,7 @@ import { defineCommand, runMain } from "citty";
 import { hostname } from "node:os";
 
 // `pnpm ai:fleet:profile` — writes what this machine detects into its profile, keeping the id and areas the user set,
-// and prints the profile (the throughput skill, `references/fleet.md`)
+// And prints the profile (the throughput skill, `references/fleet.md`)
 await runMain(
   defineCommand({
     meta: {

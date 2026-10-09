@@ -8,8 +8,8 @@ import { getResultAsync } from "@esposter/shared";
 // Rather than passing unseen. Overlapping the two would let the JSON be the older and the write pass. A blob that is
 // Not there has neither
 export interface BlobStateRead {
-  etag: string | undefined;
-  json: Buffer | undefined;
+  etag?: string;
+  json?: Buffer;
 }
 
 export const readBlobState = async (containerClient: ContainerClient, blobName: string): Promise<BlobStateRead> => {

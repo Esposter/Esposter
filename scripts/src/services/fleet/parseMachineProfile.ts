@@ -8,7 +8,7 @@ const checkIsStringArray = (value: unknown): value is string[] =>
 
 // The profile a machine file holds, or undefined for a file missing its id, areas or capabilities
 export const parseMachineProfile = (json: string): MachineProfile | undefined =>
-  getResult(() => parseMachineJson<unknown>(json)).match(
+  getResult(() => parseMachineJson(json)).match(
     (parsed) => {
       if (typeof parsed !== "object" || parsed === null) return undefined;
       const isComplete =

@@ -11,7 +11,7 @@ import { join } from "node:path";
 // Every name and description the opponent decks' slices name by text id, each character's and each action card's, as
 // `genshin:assets gcg` last wrote them, into the world's own chunk per language
 export const writeGcgText = (): string[] => {
-  const slices = [...GcgDeckIdCreatedCardIdsMap.keys()].map((deckId) =>
+  const slices = Array.from(GcgDeckIdCreatedCardIdsMap.keys(), (deckId) =>
     parseMachineJson<GcgDeckSlice>(readFileSync(join(GCG_GENERATED_DIRECTORY, `deck${deckId}.json`), "utf8")),
   );
   const textIds = [

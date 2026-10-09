@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL } from "#shared/services/genshin/constants";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL } from "#shared/services/genshin/constants";
 import { GameLanguageTagMap, GameTextKey } from "genshin-text";
 import { GameOpening } from "genshin-world";
 
@@ -29,11 +29,11 @@ const { initialSave, isReplaced, onWorldGrant, onWorldSave, serverClockOffsetMs,
         :is-paused="isOpeningShown || isReplaced || undefined"
         :language="gameText.language"
         :save="initialSave"
-        :server-clock-offset-ms="serverClockOffsetMs"
-        @grant="onWorldGrant"
+        :server-clock-offset-ms
+        @grant="(grant) => onWorldGrant(grant)"
         @load="isLoaded = true"
         @ready="isReady = true"
-        @save="onWorldSave"
+        @save="(save) => onWorldSave(save)"
       />
     </ClientOnly>
     <!-- The replacing session holds the save now, so this page stops saving and pauses the world, and a take back starts the lease again -->
@@ -46,7 +46,7 @@ const { initialSave, isReplaced, onWorldGrant, onWorldSave, serverClockOffsetMs,
       <div p-3 flex flex-col gap-3>
         <p>This game was started in another session, which now holds your save.</p>
         <footer flex justify-end>
-          <UiButton :variant="UiButtonVariant.Accent" @click="takeBack">Take back</UiButton>
+          <UiButton :variant="UiButtonVariant.Accent" @click="takeBack()">Take back</UiButton>
         </footer>
       </div>
     </UiDialog>

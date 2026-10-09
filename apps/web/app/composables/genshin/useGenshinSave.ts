@@ -43,7 +43,7 @@ export const useGenshinSave = async () => {
       .orTee(console.error)
       .unwrapOr(null);
     if (!guestJson) return undefined;
-    // eslint-disable-next-line no-restricted-properties -- the save keeps its instants as ISO strings, which a date revival would turn into Dates
+
     const parsedJson: unknown = getResult(() => JSON.parse(guestJson))
       .orTee(console.error)
       .unwrapOr(undefined);

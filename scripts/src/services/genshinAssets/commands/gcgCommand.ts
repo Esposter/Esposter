@@ -1,9 +1,9 @@
 import type { SubCommandsDef } from "citty";
 
 import { GcgDeckIdCreatedCardIdsMap } from "#src/services/genshinAssets/gcg/constants";
+import { writeGcgDeck } from "#src/services/genshinAssets/gcg/writeGcgDeck";
 import { writeGcgGames } from "#src/services/genshinAssets/gcg/writeGcgGames";
 import { writeGcgStandardRule } from "#src/services/genshinAssets/gcg/writeGcgStandardRule";
-import { writeGcgDeck } from "#src/services/genshinAssets/gcg/writeGcgDeck";
 import { defineCommand } from "citty";
 
 export const gcgCommand: SubCommandsDef[string] = defineCommand({

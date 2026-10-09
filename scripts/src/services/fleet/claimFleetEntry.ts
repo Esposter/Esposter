@@ -23,8 +23,7 @@ export interface FleetClaimResult {
 export const claimFleetEntry = (entry: string, machine: string, load: string): FleetClaimResult => {
   const claims = readClaimedRefs();
   const existing = claims.get(entry);
-  if (existing !== undefined && existing.message.machine === machine)
-    return { attempt: ClaimAttempt.Won, claimed: existing };
+  if (existing?.message.machine === machine) return { attempt: ClaimAttempt.Won, claimed: existing };
   if (
     existing !== undefined &&
     getClaimStatus(existing.message, Temporal.Now.instant().epochMilliseconds) !== ClaimStatus.Stale

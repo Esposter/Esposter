@@ -11,7 +11,7 @@ import { z } from "zod";
 export const createSaveBlobStateProcedure = <TSchema extends z.ZodType>(container: AzureContainer, schema: TSchema) =>
   standardAuthedProcedure
     .input(z.object({ data: schema, etag: z.string().optional() }))
-    .mutation<{ etag: string | undefined }>(async ({ ctx, input }) => {
+    .mutation<{ etag?: string }>(async ({ ctx, input }) => {
       const containerClient = await useContainerClient(container);
       const etag = await writeBlobState(
         containerClient,

@@ -16,9 +16,9 @@ const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers([TRAVELER_CHA
 
 const createCombatant = (characterId: number, element: Element): Combatant => ({
   ascension: 0,
-  constellationCount: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.EnergyRecharge, value: 1 }]),
   characterId,
+  constellationCount: 0,
   element,
   elementalResonances: [],
   kit: TRAVELER_KIT,

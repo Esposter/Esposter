@@ -5,7 +5,7 @@ import { runMachineCommand } from "#src/services/machine/runMachineCommand";
 import { getResultAsync } from "@esposter/shared";
 import { freemem, totalmem } from "node:os";
 
-// macOS's own pressure figure, the share of memory it counts as available, read as a share of the machine's total RAM.
+// MacOS's own pressure figure, the share of memory it counts as available, read as a share of the machine's total RAM.
 // A failed read is logged and gives undefined, so the caller falls back to `vm_stat`
 const readMemoryStatusGigabytes = async (): Promise<number | undefined> =>
   (

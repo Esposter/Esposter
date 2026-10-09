@@ -13,7 +13,7 @@ const GENSHIN_AREA = "genshin";
 // The paths an item writes: the backticked tokens in the sentence its `Writes` opens, so a prose mention of a constant
 // Is not a path. A token with neither a slash nor a dot is a name rather than a file, and is left out
 const readWrittenPaths = (rest: string): string[] => {
-  const writesSentence = rest.match(WRITES_REGEX)?.groups?.writes?.split(SENTENCE_END_REGEX)[0] ?? "";
+  const writesSentence = WRITES_REGEX.exec(rest)?.groups?.writes?.split(SENTENCE_END_REGEX)[0] ?? "";
   return Array.from(writesSentence.matchAll(BACKTICKED_REGEX), ({ groups }) => groups?.token ?? "").filter((token) =>
     PATH_REGEX.test(token),
   );
@@ -21,7 +21,7 @@ const readWrittenPaths = (rest: string): string[] => {
 
 // One compute-queue line as a fleet entry, or undefined for a line that is not an item with an id
 export const parseComputeQueueItem = (line: string): FleetEntry | undefined => {
-  const groups = line.match(ITEM_REGEX)?.groups;
+  const groups = ITEM_REGEX.exec(line)?.groups;
   if (groups === undefined) return undefined;
   return {
     area: GENSHIN_AREA,

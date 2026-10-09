@@ -16,7 +16,7 @@ export const pathNamesCommand: SubCommandsDef[string] = defineCommand({
     const regionKeysMap = new Map<string, string[] | undefined>();
     for (const region of Object.keys(RegionCapitalMap))
       regionKeysMap.set(region, await readCityPathKeys(parseDerivedAssetComponent(region)));
-    const keys = new Set(Array.from(regionKeysMap.values()).flatMap((regionKeys) => regionKeys ?? []));
+    const keys = new Set([...regionKeysMap.values()].flatMap((regionKeys) => regionKeys ?? []));
     const matches = await buildDerivedPathNames(keys);
     const regionLines = Array.from(regionKeysMap, ([region, regionKeys]) => {
       if (!regionKeys) return `${region}: no extracted city blob`;
