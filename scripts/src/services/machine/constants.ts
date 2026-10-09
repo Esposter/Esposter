@@ -3,8 +3,10 @@ import { KIBIBYTE } from "@esposter/configuration";
 // The thresholds the watcher decides a state by, and the output it wakes the session with
 export const CPU_TARGET_PERCENTAGE = 80;
 export const WINDOW_MINUTES = 3;
-export const GATE_GIGABYTES = 4;
-export const ROOM_GIGABYTES = 6;
+// The memory gate and the idle room are shares of the machine's own RAM, an eighth and three sixteenths, so a 32 GB
+// Machine gets 4 and 6 GB and a 16 GB one 2 and 3 GB
+export const GATE_MEMORY_SHARE = 0.125;
+export const ROOM_MEMORY_SHARE = 0.1875;
 export const REMINDER_MINUTES = 15;
 export const GIBIBYTE: number = KIBIBYTE ** 3;
 export const SAMPLE_MILLISECONDS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");

@@ -63,7 +63,7 @@ Each character with a module has one file under `services/kit/characters/`, expo
 
 ## Shared effects
 
-Each effect is on the party, in a list the character component holds, so a switch leaves it running, and a drown or a jump clears it. Each one is ticked each step.
+Each effect is on the party, in the list a `KitEffectState` holds, so a switch leaves it running, and a drown or a jump clears it. Each one is ticked each step.
 
 - **Damage** is a hit: its talent multiplier, its gauge of an element, and the element it names when it is not its character's own. A hit with no internal cooldown applies its whole gauge, and one under a cooldown shares it through it.
 - **Infusion** makes the character's normal attacks, charged attack and plunges deal its element at the gauge the hit gives it, 1U for a strike and 0U for a collision. It is refreshed by a second one of its kind on the same character, not stacked.
@@ -121,7 +121,7 @@ Each effect is on the party, in a list the character component holds, so a switc
 - **An enemy's strike takes a shield through the combat shield.** `absorbKitShield` prices the strike's damage by `absorbShieldDamage` with the character's shield strength, the rule the combat page gives, so the Geo shield's 150% and the shield strength are the combat's, and the overflow is the damage to HP. The kit keeps no second absorption arithmetic.
 - **An enemy strikes the nearest live taunt within its aggro range.** `selectEnemyTaunt` picks, for each enemy on each step, the nearest taunt within `ENEMY_AGGRO_RANGE` ahead of the character, and a taunt with no seconds or no health left is not picked. The taunt takes the damage the strike would deal the active character, as the kit gives a taunt no defence of its own.
 - **An enemy's statuses add to the damage of each hit on it.** An enemy carries statuses for their seconds, stepped with the enemy. A hit's `enemyStatus` gives it to each enemy it strikes before the hit's damage is taken, restarting a status of its id, and each status's `damageTakenBonus` adds to the damage bonus the hit reads.
-- **The team's effects are the world screen's.** The screen holds them, the character on the field steps them, and the enemies and their strikes read them. The character clears them when it unmounts, so a shield or taunt does not outlive the character that cast it.
+- **The team's effects are the world screen's.** The screen holds one `KitEffectState`, the character on the field steps it, and the enemies and their strikes read its list. A write reassigns the list rather than changing it, as the stepping and the adding do, and the character emits `clearKitEffects` on a drown, a jump and its unmount, which the screen answers by emptying the list, so a shield or taunt does not outlive the character that cast it.
 
 ## Key files
 
@@ -160,6 +160,7 @@ Each effect is on the party, in a list the character component holds, so a switc
 | `packages/genshin-world/src/models/kit/KitSkillChain.ts`                | A skill's follow-up presses and the window each press leaves open                                                 |
 | `packages/genshin-world/src/services/kit/CharacterIdCreateKitMap.ts`    | Each built character's kit factory by avatar id, read by the roster                                               |
 | `packages/genshin-world/src/services/kit/effects/healKitStriker.ts`     | Heals the character that struck an enemy by a hit's share of its ATK, per enemy struck                            |
+| `packages/genshin-world/src/models/kit/KitEffectState.ts`               | The team's effects, held on one owner so each write reassigns the list                                            |
 | `packages/genshin-world/src/services/kit/effects/addKitEffect.ts`       | Adds an effect, refreshing one of its kind on the same character                                                  |
 | `packages/genshin-world/src/services/kit/effects/stepKitEffects.ts`     | Runs the effects' seconds down and drops those that run out                                                       |
 | `packages/genshin-world/src/services/kit/effects/getKitInfusion.ts`     | The infusion on a character's normal attacks, charged attack and plunges, if one is on it                         |

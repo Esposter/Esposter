@@ -25,17 +25,38 @@ describe("clickerRouter", () => {
     expect.hasAssertions();
 
     const clickerSave = new ClickerSave();
-    await caller.saveClicker(clickerSave);
-    const storedClickerSave = await caller.readClicker();
+    await caller.saveClicker({ data: clickerSave });
+    const { data: storedClickerSave } = await caller.readClicker();
 
     expect(storedClickerSave).toStrictEqual(clickerSave);
+  });
+
+  test("refuses a save sent under an etag another save has replaced", async () => {
+    expect.hasAssertions();
+
+    const { etag: firstEtag } = await caller.saveClicker({ data: new ClickerSave() });
+    await caller.saveClicker({ data: new ClickerSave(), etag: firstEtag });
+
+    await expect(
+      caller.saveClicker({ data: new ClickerSave(), etag: firstEtag }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: The save changed since it was read]`);
+  });
+
+  test("refuses a save that would create a save another session already created", async () => {
+    expect.hasAssertions();
+
+    await caller.saveClicker({ data: new ClickerSave() });
+
+    await expect(caller.saveClicker({ data: new ClickerSave() })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: The save changed since it was read]`,
+    );
   });
 
   // Answered with a fresh game, a failed read would have the client's next autosave overwrite the save it missed
   test("fails a read of a save it cannot decode rather than answering with a fresh game", async () => {
     expect.hasAssertions();
 
-    await caller.saveClicker(new ClickerSave());
+    await caller.saveClicker({ data: new ClickerSave() });
     const container = MockContainerDatabase.get(AzureContainer.ClickerAssets);
     assert.exists(container);
     const [blobName] = container.keys();

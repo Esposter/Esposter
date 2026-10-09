@@ -4,7 +4,6 @@ import type { WorldOptions } from "#src/models/genshinAssets/world/WorldOptions"
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { RegionCapitalMap } from "#src/services/genshinAssets/fit/RegionCapitalMap";
 import { TERRAIN_TILE_SIZE } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { readIndexedAssets } from "#src/services/genshinAssets/shared/readIndexedAssets";
@@ -25,10 +24,9 @@ import { getWorldTileName } from "#src/services/genshinAssets/world/getWorldTile
 import { parseStreamingIndex } from "#src/services/genshinAssets/world/parseStreamingIndex";
 import { parseStreamingPlacements } from "#src/services/genshinAssets/world/parseStreamingPlacements";
 import { readAssetPathNames } from "#src/services/genshinAssets/world/readAssetPathNames";
+import { readCapitalCityCode } from "#src/services/genshinAssets/world/readCapitalCityCode";
 import { readCapitalWorldPlace } from "#src/services/genshinAssets/world/readCapitalWorldPlace";
-import { readCityAreas } from "#src/services/genshinAssets/world/readCityAreas";
 import { resolvePrefabRoot } from "#src/services/genshinAssets/world/resolvePrefabRoot";
-import { selectCapitalCityArea } from "#src/services/genshinAssets/world/selectCapitalCityArea";
 import { selectCapitalPlacements } from "#src/services/genshinAssets/world/selectCapitalPlacements";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFile } from "node:fs/promises";
@@ -46,8 +44,6 @@ export const deriveCapitalWorld = async (
   directory: ComponentDirectory,
   dumpLayouts: (blocks: readonly string[]) => Promise<void>,
 ): Promise<{ lines: string[]; world: WorldOptions }> => {
-  const capital = RegionCapitalMap[component];
-  if (!capital) throw new InvalidOperationError(Operation.Read, component, "has no capital in the region capital map");
   const windriseWorld = DerivedAssetComponentMap[DerivedAssetComponent.Windrise].world;
   if (!windriseWorld) throw new InvalidOperationError(Operation.Read, component, "has no origin to stand round");
   const place = await readCapitalWorldPlace(component);
@@ -57,7 +53,7 @@ export const deriveCapitalWorld = async (
   const tileNames = getCoveredTiles(place, ARCHITECTURE_VIEW_METRES).map(({ column, row }) =>
     getWorldTileName(column, row),
   );
-  const cityCode = capital.cityArea || (selectCapitalCityArea(await readCityAreas(), place)?.code ?? "");
+  const cityCode = await readCapitalCityCode(component);
   if (!cityCode) lines.push(`no city area within ${ARCHITECTURE_VIEW_METRES} metres of the capital`);
   const streamNames = cityCode ? [...tileNames, getCityStreamName(cityCode)] : tileNames;
   const streamAssetNames = new Set(
@@ -86,6 +82,13 @@ export const deriveCapitalWorld = async (
   );
   const pathNames = await readAssetPathNames();
   const streamPrefabNames = getPrefabNames(streamPlacements.flat(), pathNames);
+  // A prefab no path names is left out of the world, so it is counted here, with the placements it draws in the view
+  const unnamedPlacements = streamPlacements.flat().filter(({ prefabId }) => !streamPrefabNames.has(prefabId));
+  const unnamedPrefabIds = new Set(unnamedPlacements.map(({ prefabId }) => prefabId));
+  const unhashedCount = unnamedPlacements.filter(({ pathHash }) => !pathHash).length;
+  lines.push(
+    `${unnamedPrefabIds.size} prefabs named by no path (${unnamedPlacements.length} placements, ${unhashedCount} with no path hash): ${[...unnamedPrefabIds].join(", ")}`,
+  );
   // The placements the capital keeps, and the prefabs of those alone are rooted
   const viewPlacements = streamPlacements.map((placements) =>
     selectCapitalPlacements(placements, streamPrefabNames, place),

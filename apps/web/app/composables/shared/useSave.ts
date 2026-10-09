@@ -1,5 +1,4 @@
 import type { ItemMetadata } from "@esposter/shared";
-import type { Resolver, TRPCResolverDef } from "@trpc/client";
 import type { z } from "zod";
 
 import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
@@ -10,12 +9,12 @@ import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 // What saving stamps, which every saved state carries whether it is a content item or a row
 type SavedMetadata = Pick<ItemMetadata, "updatedAt">;
 
-interface UseSaveAuthOptions<TDef extends TRPCResolverDef> {
-  save: Resolver<TDef>;
+interface UseSaveAuthOptions<T extends SavedMetadata> {
+  save: (value: T) => Promise<unknown>;
 }
 
-interface UseSaveOptions<TState extends SavedMetadata, T extends SavedMetadata, TDef extends TRPCResolverDef> {
-  auth?: UseSaveAuthOptions<TDef>;
+interface UseSaveOptions<TState extends SavedMetadata, T extends SavedMetadata> {
+  auth?: UseSaveAuthOptions<T>;
   toSave?: (state: TState) => NoInfer<T>;
   unauth?: UseSaveUnauthOptions<T>;
 }
@@ -30,9 +29,9 @@ const getSnapshotJson = (value: SavedMetadata) =>
     key === ItemMetadataPropertyNames.updatedAt ? undefined : propertyValue,
   );
 
-export const useSave = <TState extends SavedMetadata, TDef extends TRPCResolverDef, T extends SavedMetadata = TState>(
+export const useSave = <TState extends SavedMetadata, T extends SavedMetadata = TState>(
   state: Ref<TState>,
-  { auth, toSave, unauth }: UseSaveOptions<TState, T, TDef>,
+  { auth, toSave, unauth }: UseSaveOptions<TState, T>,
 ) => {
   const session = authClient.useSession();
   const { executeMutation: executeSaveMutation } = useMutation();

@@ -32,6 +32,7 @@ import { mapCommand } from "#src/services/genshinAssets/commands/mapCommand";
 import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand";
 import { oculiCommand } from "#src/services/genshinAssets/commands/oculiCommand";
 import { offeringsCommand } from "#src/services/genshinAssets/commands/offeringsCommand";
+import { pathNamesCommand } from "#src/services/genshinAssets/commands/pathNamesCommand";
 import { playlistCommand } from "#src/services/genshinAssets/commands/playlistCommand";
 import { pointsCommand } from "#src/services/genshinAssets/commands/pointsCommand";
 import { pointsFitCommand } from "#src/services/genshinAssets/commands/pointsFitCommand";
@@ -69,6 +70,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     timings: timingsCommand,
     witness: witnessCommand,
     "city-areas": cityAreasCommand,
+    "path-names": pathNamesCommand,
     music: musicCommand,
     sounds: soundsCommand,
     playlist: playlistCommand,

@@ -24,9 +24,20 @@ describe("dungeonsRouter", () => {
     expect.hasAssertions();
 
     const dungeons = new Dungeons();
-    await caller.saveDungeons(dungeons);
-    const storedDungeons = await caller.readDungeons();
+    await caller.saveDungeons({ data: dungeons });
+    const { data: storedDungeons } = await caller.readDungeons();
 
     expect(storedDungeons).toStrictEqual(dungeons);
+  });
+
+  test("refuses a save sent under an etag another save has replaced", async () => {
+    expect.hasAssertions();
+
+    const { etag: firstEtag } = await caller.saveDungeons({ data: new Dungeons() });
+    await caller.saveDungeons({ data: new Dungeons(), etag: firstEtag });
+
+    await expect(
+      caller.saveDungeons({ data: new Dungeons(), etag: firstEtag }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: The save changed since it was read]`);
   });
 });

@@ -2,7 +2,7 @@
 import type { Reaction } from "#src/models/combat/Reaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
-import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { RegionData } from "#src/models/world/RegionData";
 import type { GroundPoint, LightUniforms } from "genshin-engine";
@@ -51,10 +51,10 @@ import {
 interface Props {
   // The enemies in the world by their spawn key, which this writes as the camps load and unload and as enemies die
   enemyMap: Map<string, Enemy>;
-  // The effects on the team, whose live taunts draw the enemies' strikes within their aggro range
-  effects: KitEffect[];
   // Whether a screen over the world holds it, as the game's menus pause its enemies
   isHeld?: true;
+  // The effects on the team, whose live taunts draw the enemies' strikes within their aggro range
+  kitEffectState: KitEffectState;
   lightUniforms: LightUniforms;
   rampTexture: DataTexture;
   regionDataMap: ReadonlyMap<string, RegionData>;
@@ -66,7 +66,7 @@ interface Props {
   worldLevel: number;
 }
 
-const { effects, enemyMap, isHeld, lightUniforms, rampTexture, regionDataMap, sightScene, target, worldLevel } =
+const { enemyMap, isHeld, kitEffectState, lightUniforms, rampTexture, regionDataMap, sightScene, target, worldLevel } =
   defineProps<Props>();
 // A strike for combat to land on the active character, and a defeated enemy's drops for the bag and the party
 const emit = defineEmits<{
@@ -115,7 +115,7 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
   for (const enemy of enemyMap.values()) {
     advanceElementalState(enemy.elementalState, ENEMY_STEP_SECONDS, elementalReactions);
     elementalReactions.length = 0;
-    const taunt = selectEnemyTaunt(enemy, effects);
+    const taunt = selectEnemyTaunt(enemy, kitEffectState.effects);
     const enemyEvent = stepEnemy(enemy, taunt ? taunt.body.position : target, ENEMY_STEP_SECONDS);
     if (enemyEvent === EnemyEvent.Strike) emit("strike", enemy, taunt);
     else if (enemyEvent === EnemyEvent.Defeated) {

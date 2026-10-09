@@ -14,7 +14,8 @@ export const useReadDungeons = async () => {
       setDungeons(dungeonsJson ? new Dungeons(jsonDateParse(dungeonsJson)) : new Dungeons());
     },
     async () => {
-      setDungeons(await $trpc.dungeons.readDungeons.query());
+      const { data, etag } = await $trpc.dungeons.readDungeons.query();
+      setDungeons(data, etag);
     },
   );
 };

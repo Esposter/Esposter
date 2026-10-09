@@ -35,14 +35,14 @@ flowchart TD
 
 **Normalized save data** — the save stores only what the player _did_: `boughtUpgrades` as `UpgradeId[]` and `boughtBuildings` as `{ id, amount, producedValue }[]` (the `ClickerSave` entity). On write, `toClickerSave` strips the in-memory definitions down to ids, and on load `toClicker` resolves them back through `UpgradeMap`/`BuildingMap` — so a balance change to the content maps reaches every existing save on its next load. The in-memory `Clicker` keeps full definition objects, leaving the effect engine and components untouched. There is no migration or self-heal path ([latest shape only](/docs/architecture/persisted-data-latest-shape-only)): a save that fails `clickerSaveSchema` (old shape, removed content ids) resets to a fresh game.
 
-**Persistence** — `useSave` and `useReadData` are the app-wide single-blob-per-user pattern (shared with dungeons): authenticated users read/write through `clicker.readClicker` / `clicker.saveClicker` (generic blob-state procedures over the `clicker-assets` container, blob name `${userId}/save`, validated by `clickerSaveSchema`); anonymous users get the same state in localStorage under `ClickerStore`. Why games stay off the resource layer: [games integration](/docs/resource/rejected/games-integration).
+**Persistence** — `useSave` and `useReadData` are the app-wide single-blob-per-user pattern (shared with dungeons): authenticated users read/write through `clicker.readClicker` / `clicker.saveClicker` (generic blob-state procedures over the `clicker-assets` container, blob name `${userId}/save`, validated by `clickerSaveSchema`). A read answers the save with the ETag it was read under, and each save is sent under the ETag its last read or save returned, so a save over one another session changed is refused as a conflict and the page reloads to take the server's copy ([conditional writes](/docs/architecture/conditional-writes)); anonymous users get the same state in localStorage under `ClickerStore`. Why games stay off the resource layer: [games integration](/docs/resource/rejected/games-integration).
 
 ## Procedures
 
-| Procedure             | Auth | Input               | Purpose                        |
-| --------------------- | ---- | ------------------- | ------------------------------ |
-| `clicker.readClicker` | user | —                   | read the user's save blob      |
-| `clicker.saveClicker` | user | `clickerSaveSchema` | overwrite the user's save blob |
+| Procedure             | Auth | Input                                | Purpose                                       |
+| --------------------- | ---- | ------------------------------------ | --------------------------------------------- |
+| `clicker.readClicker` | user | —                                    | read the user's save blob with its ETag       |
+| `clicker.saveClicker` | user | `{ data: clickerSaveSchema, etag? }` | overwrite the user's save blob under its ETag |
 
 `saveClicker` is also the trigger path for every clicker achievement: save-count thresholds and milestones whose `condition` reads the save payload ([unlock pipeline](/docs/achievement/unlock-pipeline)) — ClickerMillionaire / ClickerBillionaire / ClickerTrillionaire (`pointCount` at 1e6/1e9/1e12), ClickerArchitect (every building owned), and ClickerCompletionist (every upgrade bought). The 60-second autosave cadence works for the milestones: progress is evaluated at least once a minute while playing, and unlocks are idempotent.
 

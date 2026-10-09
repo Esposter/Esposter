@@ -106,8 +106,8 @@ export const createKaeyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   // Icicles are a summon's hits, landing from where Kaeya cast it and priced by him
   elementalBurst: {
     hits: [],
-    onStart: ({ body, combatant, effects }) =>
-      addKitEffect(effects, {
+    onStart: ({ body, combatant, kitEffectState }) =>
+      addKitEffect(kitEffectState, {
         body: { facing: body.facing, height: body.height, position: { x: body.position.x, z: body.position.z } },
         combatant,
         elapsedSeconds: 0,

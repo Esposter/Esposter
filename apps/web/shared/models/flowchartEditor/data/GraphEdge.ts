@@ -7,14 +7,15 @@ import { ConnectionLineType, MarkerType } from "@vue-flow/core";
 import { z } from "zod";
 
 // An edge is its two ends, its path's kind, its arrowhead and its label. Its coordinates and the copies of both end
-// Nodes the canvas hangs on it are derived from the nodes on every render, so they are never stored
+// Nodes the canvas hangs on it are derived from the nodes on every render, so they are never stored. Its label is a
+// String and its arrowhead a marker type, the two forms the editor writes, not the wider forms the canvas accepts
 export type GraphEdge = SetRequired<
   Pick<
     DefaultEdge<Record<string, unknown>, Record<string, CustomEvent>, ConnectionLineType>,
-    "data" | "id" | "label" | "markerEnd" | "source" | "sourceHandle" | "target" | "targetHandle" | "type"
+    "data" | "id" | "source" | "sourceHandle" | "target" | "targetHandle" | "type"
   >,
   "data" | "type"
->;
+> & { label?: string; markerEnd?: MarkerType };
 
 export const graphEdgeSchema = z.object({
   data: z.record(z.string().max(MAX_RESOURCE_CONTENT_SIZE), z.unknown()),

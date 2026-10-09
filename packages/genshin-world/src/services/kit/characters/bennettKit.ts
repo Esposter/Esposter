@@ -11,7 +11,7 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { isInKitField } from "#src/services/kit/effects/isInKitField";
+import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { healPartyMember } from "#src/services/party/healPartyMember";
@@ -169,14 +169,16 @@ const createChargeLevel2 = (talentMultiplierMap: TalentMultiplierMap): KitAction
 // Ascension 1 lowers every Passion Overload's cooldown by 20%
 // Measured: gcsim v2.47.2 (MIT) bennett/asc.go, the A1 factor of 0.8 and the A4 factor of 0.5 within the field
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/asc.go
-const getSkillCooldownMultiplier = ({ body, combatant, effects }: KitStepContext): number => {
+const getSkillCooldownMultiplier = ({ body, combatant, kitEffectState }: KitStepContext): number => {
   let multiplier = 1;
   if (combatant.ascension >= 1) multiplier *= 0.8;
   if (
     combatant.ascension >= 4 &&
-    effects.some(
+    kitEffectState.effects.some(
       (effect) =>
-        effect.kind === "field" && effect.characterId === combatant.characterId && isInKitField(effect, body.position),
+        effect.kind === "field" &&
+        effect.characterId === combatant.characterId &&
+        checkIsInKitField(effect, body.position),
     )
   )
     multiplier *= 0.5;
@@ -188,7 +190,7 @@ const getSkillCooldownMultiplier = ({ body, combatant, effects }: KitStepContext
 // The character on the field is infused with Pyro for 2.1 seconds. The heal's Healing Bonus is not read
 const createFieldTick =
   (talentMultiplierMap: TalentMultiplierMap, owner: Combatant) =>
-  ({ activeCombatant, effects, party, tickIndex }: KitFieldTick): void => {
+  ({ activeCombatant, kitEffectState, party, tickIndex }: KitFieldTick): void => {
     const { characterId } = activeCombatant;
     const { healthShare } = getPartyMember(party, characterId);
     const flatHeal = getTalentMultiplier(talentMultiplierMap, BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 2);
@@ -198,7 +200,7 @@ const createFieldTick =
       healPartyMember(party, characterId, heal / activeCombatant.attributes.maxHealth);
     }
     if (healthShare > BENNETT_FIELD_HP_THRESHOLD)
-      addKitEffect(effects, {
+      addKitEffect(kitEffectState, {
         amount:
           getTalentMultiplier(talentMultiplierMap, BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 3) *
           owner.attributes.attributeTotalMap[Attribute.BaseAttack],
@@ -207,7 +209,7 @@ const createFieldTick =
         kind: "buff",
         secondsRemaining: BENNETT_FIELD_BUFF_SECONDS,
       });
-    addKitEffect(effects, {
+    addKitEffect(kitEffectState, {
       characterId,
       element: Element.Pyro,
       kind: "infusion",
@@ -255,8 +257,8 @@ export const createBennettKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
         talentMultiplier: getTalentMultiplier(talentMultiplierMap, BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
       },
     ],
-    onStart: ({ body, combatant, effects }) =>
-      addKitEffect(effects, {
+    onStart: ({ body, combatant, kitEffectState }) =>
+      addKitEffect(kitEffectState, {
         centre: { x: body.position.x, z: body.position.z },
         characterId: combatant.characterId,
         kind: "field",

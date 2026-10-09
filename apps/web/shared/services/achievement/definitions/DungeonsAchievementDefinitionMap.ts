@@ -22,7 +22,7 @@ const defineMonsterLevelAchievementDefinition = ({
     condition: {
       operation: (value) => value.some(({ statistics }) => statistics.level >= level),
       operator: AchievementOperator.Operation,
-      path: "save.player.monsters",
+      path: "data.save.player.monsters",
       type: AchievementConditionType.Property,
     },
     description: `Train a monster to level ${level} in your dungeon game`,
@@ -47,7 +47,7 @@ export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(A
         return chests.length > 0 && chests.every(({ isOpened }) => isOpened);
       },
       operator: AchievementOperator.Operation,
-      path: "save.world",
+      path: "data.save.world",
       type: AchievementConditionType.Property,
     },
     description: "Open every chest you have discovered in your dungeon game",
@@ -68,7 +68,7 @@ export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(A
       // The starter is the party's first member, so a second member means a capture
       operation: (value) => value.length >= 2,
       operator: AchievementOperator.Operation,
-      path: "save.player.monsters",
+      path: "data.save.player.monsters",
       type: AchievementConditionType.Property,
     },
     description: "Catch your first monster in your dungeon game",
@@ -81,7 +81,7 @@ export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(A
     condition: {
       operation: (value) => MonsterKeys.every((monsterKey) => value.some(({ key }) => key === monsterKey)),
       operator: AchievementOperator.Operation,
-      path: "save.player.monsters",
+      path: "data.save.player.monsters",
       type: AchievementConditionType.Property,
     },
     description: "Catch every monster species in your dungeon game",

@@ -1,5 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -38,7 +38,7 @@ describe(strikePartyMember, () => {
     const enemy = createEnemy(ENEMY_CAMP_MEMBER, "");
     const damage = computeEnemyStrikeDamage(enemy, combatant);
 
-    strikePartyMember(party, enemy, combatant, []);
+    strikePartyMember(party, enemy, combatant, { effects: [] });
 
     expect(getPartyMember(party, 1).healthShare).toBeCloseTo(1 - damage / MAX_HEALTH);
   });
@@ -50,11 +50,13 @@ describe(strikePartyMember, () => {
     const enemy = createEnemy(ENEMY_CAMP_MEMBER, "");
     const damage = computeEnemyStrikeDamage(enemy, combatant);
     const shieldHealth = damage / 2;
-    const effects: KitEffect[] = [{ characterId: 1, health: shieldHealth, kind: "shield", secondsRemaining: 12 }];
+    const kitEffectState: KitEffectState = {
+      effects: [{ characterId: 1, health: shieldHealth, kind: "shield", secondsRemaining: 12 }],
+    };
 
-    strikePartyMember(party, enemy, combatant, effects);
+    strikePartyMember(party, enemy, combatant, kitEffectState);
 
     expect(getPartyMember(party, 1).healthShare).toBeCloseTo(1 - (damage - shieldHealth) / MAX_HEALTH);
-    expect(effects).toStrictEqual([{ characterId: 1, health: 0, kind: "shield", secondsRemaining: 0 }]);
+    expect(kitEffectState.effects).toStrictEqual([{ characterId: 1, health: 0, kind: "shield", secondsRemaining: 0 }]);
   });
 });

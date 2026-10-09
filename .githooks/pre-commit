@@ -7,8 +7,11 @@ STAGED_FILE=$(mktemp)
 trap 'rm -f "$STAGED_FILE"' EXIT
 git diff --cached --name-only --diff-filter=ACMR -z > "$STAGED_FILE"
 [ -s "$STAGED_FILE" ] || exit 0
+# A worktree with no install of its own borrows the main checkout's tools: pnpm there would install the whole workspace first
+TOOLS_ROOT=.
+[ -e ./node_modules/.bin/oxfmt ] || TOOLS_ROOT=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")
 # A staged file may import a file the commit does not hold, which the checkout built from it could never resolve
-pnpm -C scripts hooks:staged-imports
+node "$TOOLS_ROOT/scripts/src/hooks/stagedImports/index.ts"
 xargs -0 git ls-files -s -- < "$STAGED_FILE" > "$(git rev-parse --git-path "pre-commit-entries-$PPID")"
-xargs -0 -n 50 ./node_modules/.bin/oxfmt --no-error-on-unmatched-pattern < "$STAGED_FILE" || true
+xargs -0 -n 50 "$TOOLS_ROOT/node_modules/.bin/oxfmt" --config "$TOOLS_ROOT/oxfmt.config.ts" --no-error-on-unmatched-pattern < "$STAGED_FILE" || true
 xargs -0 -n 50 git add < "$STAGED_FILE"

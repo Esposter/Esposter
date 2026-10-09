@@ -21,16 +21,10 @@ describe("uiContextMenuHost", () => {
     setupUiStyle(uiStyle);
 
     const key = "key";
-    const rename = vi.fn<(event: KeyboardEvent | MouseEvent) => void>();
+    const rename = vi.fn<NonNullable<Item["onClick"]>>();
     const items: Item[] = [
       { icon: "", onClick: rename, title: "Rename" },
-      {
-        icon: "",
-        isDanger: true,
-        isGroupStart: true,
-        onClick: vi.fn<(event: KeyboardEvent | MouseEvent) => void>(),
-        title: "Delete",
-      },
+      { icon: "", isDanger: true, isGroupStart: true, onClick: vi.fn<NonNullable<Item["onClick"]>>(), title: "Delete" },
     ];
     const mountTarget = async () => {
       const component = await mountSuspended(

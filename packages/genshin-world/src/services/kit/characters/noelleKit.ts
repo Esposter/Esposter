@@ -133,11 +133,11 @@ export const createNoelleKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           talentMultiplier: getTalentMultiplier(talentMultiplierMap, NOELLE_BURST_GROUP_ID, TALENT_START_LEVEL, 1),
         },
       ],
-      onStart: ({ combatant, effects }) => {
+      onStart: ({ combatant, kitEffectState }) => {
         const seconds =
           getTalentMultiplier(talentMultiplierMap, NOELLE_BURST_GROUP_ID, TALENT_START_LEVEL, 3) +
           SWEEPING_TIME_START_SECONDS;
-        addKitEffect(effects, {
+        addKitEffect(kitEffectState, {
           amount:
             getTalentMultiplier(talentMultiplierMap, NOELLE_BURST_GROUP_ID, TALENT_START_LEVEL, 2) *
             combatant.attributes.defense,
@@ -146,7 +146,7 @@ export const createNoelleKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           kind: "buff",
           secondsRemaining: seconds,
         });
-        addKitEffect(effects, {
+        addKitEffect(kitEffectState, {
           characterId: combatant.characterId,
           element: Element.Geo,
           isConverted: true,
@@ -173,8 +173,8 @@ export const createNoelleKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           talentMultiplier: getTalentMultiplier(talentMultiplierMap, NOELLE_SKILL_GROUP_ID, TALENT_START_LEVEL, 5),
         },
       ],
-      onStart: ({ combatant, effects }) =>
-        addKitEffect(effects, {
+      onStart: ({ combatant, kitEffectState }) =>
+        addKitEffect(kitEffectState, {
           characterId: combatant.characterId,
           element: Element.Geo,
           health:

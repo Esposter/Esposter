@@ -14,11 +14,12 @@ A **lane** is one thing doing work on the machine: the main session, a `haiku` a
 - **Each worktree serves its own parity page.** A runner's worktree starts its dev server on port 3002, and the shared checkout's page is served once on 3011 for the main session. A server holds its memory flat across page loads, so one per lane costs little.
 - **Each command launches its own browser.** A parity command opens an Edge for its own life and closes it with its page, so no browser outlives the command that started it, and a browser that grows across pages never builds up.
 - **Every heavy run takes a slot.** A typecheck, a build or a test run goes through `run-in-slot.sh`, which lets two of them run at once and holds the rest back. A tsdown build peaks near 2 GB, and many agents building at once took free memory down to about 1.3 GB.
-- **The memory gate and the machine watcher hold the rest.** Before a heavy run starts it reads the free memory and waits while it is under about 4 GB. The machine watcher (`pnpm ai:machine:watch`, under Monitor) wakes the session only when the machine has gone idle or the gate is hit, so nothing polls.
+- **A worktree commit borrows the main checkout's tools.** The pre-commit hook used to run `pnpm` in a fresh worktree, which installed the whole workspace there and failed on an unbuilt `@esposter/shared` (102 to 179 s across three runs, each failing); its check and formatter now run from the main checkout's install, and a commit takes about 2 s (1.6 to 2.1 s across three runs).
+- **The memory gate and the machine watcher hold the rest.** Before a heavy run starts it reads the free memory and waits while it is under an eighth of the machine's RAM, about 4 GB here. The machine watcher (`pnpm ai:machine:watch`, under Monitor) wakes the session only when the machine has gone idle or the gate is hit, so nothing polls. It also pushes the machine's heartbeat, a `refs/machines/<id>` commit every ten minutes carrying its CPU, GPU and free memory, which `pnpm ai:fleet:status` reads for the whole fleet ([Fleet](/docs/architecture/fleet)); a failed push prints one line and the watcher carries on.
 
 ```mermaid
 flowchart TD
-  G["Memory gate — read free RAM,<br/>wait while under about 4 GB"] -->|"holds new starts"| L
+  G["Memory gate — read free RAM,<br/>wait while under an eighth of RAM, about 4 GB here"] -->|"holds new starts"| L
   W["pnpm ai:machine:watch under Monitor —<br/>silent while busy, one line when idle or tight"] -->|"idle: start what can run"| L
   L["A lane — the main session, a haiku agent or a runner"] --> DS["Its worktree's dev server<br/>3002 runner, 3011 shared checkout"]
   L --> CMD["A parity command"]
@@ -46,11 +47,11 @@ The shared Edge saved time while it was kept, and it was removed once its growth
 
 ## Key files
 
-| File                                                          | Role                                                                                                   |
-| :------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------- |
-| `.agents/skills/throughput/references/machine-efficiency.md`  | The rules an agent follows: slots, one check per package, search and long-run placement                |
-| `.agents/skills/throughput/scripts/run-in-slot.sh`            | Runs one heavy command in one of two machine-wide slots                                                |
-| `scripts/src/machine/watch/index.ts`                          | Watches the CPU, GPU and free memory under Monitor, prints the idle and tight lines and sweeps orphans |
-| `scripts/src/services/genshinParity/shared/openParityPage.ts` | Launches the page's own Edge with the flags an unlimited frame rate needs, and closes it with the page |
-| `scripts/src/services/genshinParity/shared/constants.ts`      | The page's port, `GENSHIN_PARITY_PORT`, 3011 for the shared checkout and 3002 for a runner             |
-| `packages/genshin-world/parity/vite.config.ts`                | The parity page's dev server, which each worktree serves on its own port                               |
+| File                                                          | Role                                                                                                                         |
+| :------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------- |
+| `.agents/skills/throughput/references/machine-efficiency.md`  | The rules an agent follows: slots, one check per package, search and long-run placement                                      |
+| `.agents/skills/throughput/scripts/run-in-slot.sh`            | Runs one heavy command in one of two machine-wide slots                                                                      |
+| `scripts/src/machine/watch/index.ts`                          | Watches the CPU, GPU and free memory under Monitor, prints the idle and tight lines, sweeps orphans and pushes the heartbeat |
+| `scripts/src/services/genshinParity/shared/openParityPage.ts` | Launches the page's own Edge with the flags an unlimited frame rate needs, and closes it with the page                       |
+| `scripts/src/services/genshinParity/shared/constants.ts`      | The page's port, `GENSHIN_PARITY_PORT`, 3011 for the shared checkout and 3002 for a runner                                   |
+| `packages/genshin-world/parity/vite.config.ts`                | The parity page's dev server, which each worktree serves on its own port                                                     |

@@ -1,4 +1,6 @@
+| `scripts/src/fleet/data/index.ts` | The `ai:fleet:data` command: manifest, files, pull and push over ssh |
 ---
+
 title: Fleet
 description: How any number of machines share one backlog — each machine pulls its own next entry, claims it as a ref on origin and publishes its load as a ref, so the coordinator's cost does not grow with the machines.
 ---
@@ -71,6 +73,16 @@ The watcher (`pnpm ai:machine:watch`, under Monitor) pushes `refs/machines/<id>`
 ## Game data crosses the local network only
 
 Exports and recordings never travel through git, GitHub, a cloud drive or a Claude channel. They move over SSH on the local network, authenticated and encrypted, and a machine off the network never holds the game exports, so it takes only the entries that need no game data. The design, including which folders are copied, is in the throughput skill's `references/fleet.md`.
+
+## Game data over the LAN
+
+A machine's first route to the game data is the game itself: download it from HoYoverse's official CDN, then run the `genshin:assets` extraction locally. That works on any machine, on or off the LAN. `pnpm ai:fleet:data` is the faster route between machines whose owners allow SSH, because it copies the extracted files instead of re-extracting them.
+
+- **One-time setup on the receiving side:** enable Remote Login (on a Mac, System Settings, General, Sharing, Remote Login). Then on the pulling or pushing machine run `ssh-keygen -t ed25519 -f ~/.ssh/<name>` for a dedicated key, and append its public key to the receiver's `~/.ssh/authorized_keys`.
+- **The peer row** goes in `~/.esposter/peers.json`: `host`, `user`, `identityFile` (the dedicated key, never the commit-signing key), `repository` (the peer's checkout) and `parityDirectory` (its `~/Esposter/genshin-parity`).
+- **Commands:** `pnpm ai:fleet:data manifest` prints each directory's digest as JSON. `pull <peer>` and `push <peer>` compare the two manifests, list only the directories whose digests differ, and stream the files the receiver lacks through one tar pipe over ssh. `--dry-run` counts without copying, `--folders` overrides the default folders, `--source <dir>` copies a local folder instead of the parity directory, and `--into <subfolder>` lands it in a subfolder of the peer's parity directory.
+- **Magnitude:** the manifest walk over this PC's six copied folders takes about 3.6 minutes (median of three, 202 to 238 s) and peaks at about 480 MiB of resident memory, with the folders written by another session during the walk. Its JSON is about 36 MiB across roughly 250,000 directories. Nothing is listed for a directory whose digest matches, so an unchanged copy costs one manifest per side.
+- **What is never copied:** `frames` and `tmp`. Deleting on the receiver is out of scope, so a copy only adds or replaces files.
 
 ## Machines now
 

@@ -1,5 +1,6 @@
 {
   "extends": "../packages/configuration/tsconfig.node.json",
+  "compilerOptions": { "types": ["node", "@webgpu/types"] },
   "include": [
     "../packages/configuration/types/*.d.ts",
     "../packages/genshin-world/auto-imports.d.ts",

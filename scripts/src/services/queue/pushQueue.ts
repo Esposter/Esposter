@@ -39,6 +39,18 @@ const pushQueueHead = (sha: string, cwd: string): boolean =>
     },
   );
 
+// Removes the replay worktree. Its removal never decides the push: on Windows git cannot delete a worktree holding an
+// Install's junctions ("Invalid argument"), and throwing there lost a push that had replayed cleanly, so the
+// Registration is pruned and the directory removed by node, which unlinks a junction without following it
+const removeReplayWorktree = (replayCwd: string, cwd: string): void => {
+  getResult(() => runGit(["worktree", "remove", "--force", replayCwd], cwd)).match(noop, () => {
+    runGit(["worktree", "prune"], cwd);
+    getResult(() => rmSync(replayCwd, { force: true, maxRetries: 3, recursive: true })).match(noop, (error) =>
+      console.warn(`The replay worktree ${replayCwd} is left behind: ${error.message}`),
+    );
+  });
+};
+
 // One fetch, replay and push of the session's commits, as `pushQueue` describes. A push refused as stale is reported as
 // `Refused`, so the caller can make it again on the remote as it now stands
 const attemptPush = async (cwd: string): Promise<QueuePushOutcome> => {
@@ -74,18 +86,10 @@ const attemptPush = async (cwd: string): Promise<QueuePushOutcome> => {
     syncCheckout(replayed, head, cwd);
     return QueuePushOutcome.Pushed;
   });
-  const removal = getResult(() => runGit(["worktree", "remove", "--force", replayCwd], cwd));
+  removeReplayWorktree(replayCwd, cwd);
   return result.match(
-    (outcome) =>
-      removal.match(
-        () => outcome,
-        (error) => {
-          throw error;
-        },
-      ),
-    // A replay that failed is the error thrown, and a removal that failed beside it is logged rather than masking it
+    (outcome) => outcome,
     (error) => {
-      removal.match(noop, console.error);
       throw error;
     },
   );

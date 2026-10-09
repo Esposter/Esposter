@@ -1,5 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
@@ -49,13 +49,13 @@ describe("noelle kit", () => {
   test("its Breastplate shields her for 160% of her DEF plus 769 for 12 seconds", () => {
     expect.hasAssertions();
     const combatant = createNoelleCombatant();
-    const effects: KitEffect[] = [];
+    const kitEffectState: KitEffectState = { effects: [] };
     NOELLE_KIT.elementalSkill.onStart?.({
       body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
       combatant,
-      effects,
+      kitEffectState,
     });
-    expect(effects).toStrictEqual([
+    expect(kitEffectState.effects).toStrictEqual([
       {
         characterId: NOELLE_CHARACTER_ID,
         element: Element.Geo,
@@ -69,13 +69,13 @@ describe("noelle kit", () => {
   test("its Sweeping Time converts her attacks to Geo and adds 40% of her DEF to her ATK", () => {
     expect.hasAssertions();
     const combatant = createNoelleCombatant();
-    const effects: KitEffect[] = [];
+    const kitEffectState: KitEffectState = { effects: [] };
     NOELLE_KIT.elementalBurst.onStart?.({
       body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
       combatant,
-      effects,
+      kitEffectState,
     });
-    expect(effects).toStrictEqual([
+    expect(kitEffectState.effects).toStrictEqual([
       {
         amount: 0.4 * combatant.attributes.defense,
         attribute: Attribute.Attack,

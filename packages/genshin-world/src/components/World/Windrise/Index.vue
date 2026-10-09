@@ -2,7 +2,7 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { Interactable } from "#src/models/interaction/Interactable";
-import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { LandmarkCollider, Locomotion, QualityTier } from "genshin-engine";
@@ -111,8 +111,6 @@ interface Props {
   elementalSight?: ElementalSight;
   // The enemies in the world by their spawn key, which the enemies write as camps load and enemies die
   enemyMap: Map<string, Enemy>;
-  // The effects on the team, whose live taunts the enemies strike instead of the character within their aggro range
-  effects: KitEffect[];
   // The game's minute of the day the clock is held at, in place of its running from the region's start
   heldMinutes?: number;
   // The drops and the residents in the world, each a row of the prompts and drawn as a stand-in
@@ -121,6 +119,8 @@ interface Props {
   isHeld?: true;
   // Whether the development tuning panel is shown, which the app decides
   isTuning: boolean;
+  // The effects on the team, whose live taunts the enemies strike instead of the character within their aggro range
+  kitEffectState: KitEffectState;
   // What the character's body and the camera collide with, which the landmarks are given to as they arrive
   landmarkCollider: LandmarkCollider;
   // The world coordinate the scene's origin stands on, which the screen's free camera reads the ground through
@@ -140,13 +140,13 @@ const {
   characterLocomotion,
   characterPackBaseUrl,
   createTerrainWorker,
-  effects,
   elementalSight,
   enemyMap,
   heldMinutes,
   interactables,
   isHeld,
   isTuning,
+  kitEffectState,
   landmarkCollider,
   origin,
   qualityTier,
@@ -393,7 +393,7 @@ onUnmounted(() => {
     <!-- Enemies wander where the references show none, so a witness render, judged against them, draws none -->
     <WorldEnemies
       v-if="!witness"
-      :effects
+      :kit-effect-state
       :enemy-map
       :is-held
       :light-uniforms

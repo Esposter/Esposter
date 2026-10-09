@@ -3,12 +3,11 @@ import type { ContainerClient } from "@azure/storage-blob";
 
 import { genshinSaveEnvelopeSchema } from "#server/models/genshin/GenshinSaveEnvelope";
 import { getSaveBlobName } from "#server/services/blobState/getSaveBlobName";
-import { checkIsNotFound, readJsonBlob } from "@esposter/db";
-import { getResult, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { readBlobState } from "#server/services/blobState/readBlobState";
+import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { z } from "zod";
 
-// The blob's envelope and its ETag. The ETag is read first, so a write that lands between the two reads makes the
-// Next save a conflict, which the session treats as its lease being lost rather than merging anything
+// The blob's envelope and its ETag, the ETag the write that follows is conditioned on
 export interface GenshinSaveState {
   envelope?: GenshinSaveEnvelope;
   etag?: string;
@@ -33,13 +32,6 @@ export const readGenshinSaveState = async (
   userId: string,
 ): Promise<GenshinSaveState> => {
   const blobName = getSaveBlobName(userId);
-  const etag = await getResultAsync(() => containerClient.getBlockBlobClient(blobName).getProperties()).match(
-    (properties) => properties.etag,
-    (error) => {
-      if (checkIsNotFound(error)) return undefined;
-      throw error;
-    },
-  );
-  const json = await readJsonBlob(containerClient, blobName);
+  const { etag, json } = await readBlobState(containerClient, blobName);
   return { envelope: parseEnvelope(blobName, json), etag };
 };

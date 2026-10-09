@@ -15,7 +15,7 @@ description: Apply when writing tRPC routers, procedures, or router tests. Espos
 - `references/router-tests.md` — when writing or reviewing a test that drives a tRPC caller.
 - `references/subscriptions.md` — when adding a subscription procedure, or deciding whether the caller of a mutation also updates its own store.
 - `references/read-endpoints.md` — when writing a `read*` procedure, its pagination input schema, or the `useRead*` composable that calls it.
-- `references/blob-mutations.md` — when a mutation deletes or replaces a blob.
+- `references/blob-mutations.md` — when a mutation deletes or replaces a blob, or saves a blob a client read.
 - `references/procedure-arity.md` — when a procedure acts on an entity, or a surface starts acting on a set of them.
 - `references/file-placement.md` — when adding an input schema, a server helper, a shared service or an event emitter.
 - `references/client-calls.md` — when client code calls a procedure.

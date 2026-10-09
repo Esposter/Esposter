@@ -1,6 +1,6 @@
 // @unocss-include
 import type { MenuItem } from "@/models/shared/MenuItem";
-import type { Editor } from "@tiptap/vue-3";
+import type { Editor } from "@tiptap/core";
 
 // The block-level items the Note's menu bar and its slash menu both offer, in the order both draw them. The list items
 // Are the shared ones, and the text marks are the composer's, so only the Note's own blocks are listed here

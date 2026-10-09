@@ -1,4 +1,5 @@
 import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 // Whether an effect restarts an earlier one: a buff or an infusion of the same kind on the same character, and for a
 // Buff the same attribute, or for an infusion the same element, or a shield on the same character. A field is never
@@ -14,8 +15,8 @@ const checkIsRestartedBy = (earlier: KitEffect, effect: KitEffect): boolean => {
 };
 
 // Adds an effect to the field's list, the game restarting a buff or an infusion it is given again rather than stacking it
-export const addKitEffect = (effects: KitEffect[], effect: KitEffect): void => {
-  const index = effects.findIndex((earlier) => checkIsRestartedBy(earlier, effect));
-  if (index === -1) effects.push(effect);
-  else effects[index] = effect;
+export const addKitEffect = (kitEffectState: KitEffectState, effect: KitEffect): void => {
+  const index = kitEffectState.effects.findIndex((earlier) => checkIsRestartedBy(earlier, effect));
+  kitEffectState.effects =
+    index === -1 ? [...kitEffectState.effects, effect] : kitEffectState.effects.with(index, effect);
 };

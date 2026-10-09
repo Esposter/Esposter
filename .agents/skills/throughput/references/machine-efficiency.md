@@ -19,6 +19,7 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 - **Lint: the touched files only.** Run `vp lint --disable-nested-config <files>` and `pnpm exec eslint <files>` from the package, never the package's whole `pnpm lint`.
 - **Tests: the touched tests only,** through the slot: `pnpm exec vitest run <paths>`.
 - **Build: only to regenerate a barrel.** After an agent adds, renames or deletes a module file, it runs `pnpm exec tsdown --no-clean` through the slot, never `pnpm build`; otherwise it does not build at all. The parity page and every sibling's typecheck read a package's source through its `source` export condition and the generated barrel, and the user's `nuxt dev` rebuilds every package itself.
+- **A worktree commit never runs `pnpm`.** The pre-commit hook takes its tools from the main checkout's install when the worktree has none, because `pnpm` there installs the whole workspace first.
 - **Everything else is the fixer's, once.** When every report is in, one `haiku` fixer runs each touched package's full checks and its build once and repairs what fails. CI on the push is the backstop.
 
 ## Search what git tracks
@@ -28,7 +29,7 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 
 ## Long runs
 
-- **Read the memory gate first.** Before a test run, a build or a page, read the free memory (`(Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory/1MB`) and wait while it is under about 4 GB. A machine that swaps slows every run more than one that waits.
+- **Read the memory gate first.** Before a test run, a build or a page, read the free memory (`(Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory/1MB`) and wait while it is under an eighth of the machine's RAM, about 4 GB here. A machine that swaps slows every run more than one that waits.
 - **Run a long CPU job at below-normal priority.** Use PowerShell `Start-Process … -PassThru` and then set `.PriorityClass = 'BelowNormal'`, or `start /belownormal`. The agents' checks and the page lane then keep their cores.
 - **Decode a whole-video scan on the GPU, at a small size.** Pass `-hwaccel d3d11va` to use the GPU's video engine, and scale each frame down before any per-frame filter (`scale=64:-2` ahead of `signalstats`). A luma scan only needs one number per frame.
 - **Sweep the orphans.** An agent that ends can leave its background processes running.
@@ -38,7 +39,7 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 
 ## Watch the machine
 
-- **A watcher wakes the session, so nothing polls.** While agents or runners are working, the main session runs `pnpm ai:machine:watch` under the Monitor tool, re-armed at each expiry. It is one command on Windows and macOS alike, reading the CPU, the GPU and the free memory each minute. It is silent while the machine is busy. It prints one line when the CPU has averaged under 80% for three minutes with more than 6 GB free, and one when free memory falls under the 4 GB gate. Either line repeats every 15 minutes while its state holds.
+- **A watcher wakes the session, so nothing polls.** While agents or runners are working, the main session runs `pnpm ai:machine:watch` under the Monitor tool, re-armed at each expiry. It is one command on Windows and macOS alike, reading the CPU, the GPU and the free memory each minute. It is silent while the machine is busy. It prints one line when the CPU has averaged under 80% for three minutes with more than three sixteenths of the machine's RAM free (6 GB here), and one when free memory falls under an eighth of it (the 4 GB gate here). Either line repeats every 15 minutes while its state holds.
 - **An idle line is a call to start what can run:** a lane's runner for a runnable item, a page per independent scene, the next wave's ready units.
 - **A machine idle because nothing can run is correct.** That line is answered by saying so. No item is queued, and no unit invented, to fill the cores: a queue that only grows is never digested.
 - **A tight line holds new starts** until memory comes back.

@@ -10,7 +10,7 @@ describe("noteSlashSuggestion", () => {
 
     assert.exists(NoteSlashSuggestion.items);
     const editor = new Editor({ extensions: getNoteExtensions() });
-    const items = await NoteSlashSuggestion.items({ editor, query: "h1" });
+    const items = await NoteSlashSuggestion.items({ editor, query: "h1", signal: new AbortController().signal });
     editor.destroy();
 
     expect(items.map(({ title }) => title)).toStrictEqual(["Heading 1"]);

@@ -40,7 +40,8 @@ export const useReadClicker = async () => {
       await applyOfflineProgress();
     },
     async () => {
-      setClicker(toClicker(await $trpc.clicker.readClicker.query()));
+      const { data, etag } = await $trpc.clicker.readClicker.query();
+      setClicker(toClicker(data), etag);
       await applyOfflineProgress();
     },
   );
