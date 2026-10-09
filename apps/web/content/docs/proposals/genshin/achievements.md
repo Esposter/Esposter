@@ -3,6 +3,7 @@ title: Achievements
 description: Proposal — the achievements beyond the quest triggers already built: exploring's triggers as their pages land, and the server-fired ones written one by one from their descriptions. The table, the quest triggers and the screen are built, as the achievements page describes.
 model: claude-opus-5-5
 touches: ["packages/genshin-world/src/services/achievement/**"]
+waiting: "every remaining trigger waits on another unit or data: the waypoint and area triggers on the statues of the seven's scene points and areas for every region (the region data holds Windrise only), the chest triggers on the chests unit calling openChest, the offering levels on the offering systems unit, and the server-fired ones on their pages"
 ---
 
 # Achievements
