@@ -29,6 +29,7 @@
   "types": "dist/index.d.ts",
   "imports": {
     "#parity/*": "./parity/*.ts",
+    "#scripts/*": "./scripts/*.ts",
     "#src/*": "./src/*.ts",
     "#src/*.json": "./src/*.json",
     "#src/*.vue": "./src/*.vue"

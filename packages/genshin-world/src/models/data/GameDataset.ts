@@ -1,15 +1,18 @@
-// The folders of generated game data, one per dataset the generators write. A dataset names the scope a step replaces
-// When it publishes, and the lock keeps only the keys of a dataset still listed here
+// The datasets of the hosted game data, one per scope a step publishes: the generated folders and the fitted or authored
+// Data files the package no longer imports. The lock keeps only the keys of a dataset still listed here
 export enum GameDataset {
   Achievements = "achievements",
   AchievementText = "achievementText",
+  AdventureRank = "adventureRank",
   Archive = "archive",
   ArchiveText = "archiveText",
   BookBody = "bookBody",
+  Catalogue = "catalogue",
   Chests = "chests",
   Commissions = "commissions",
   Cooking = "cooking",
   Crafting = "crafting",
+  Enemies = "enemies",
   Expeditions = "expeditions",
   Exploration = "exploration",
   Fishing = "fishing",
@@ -20,8 +23,12 @@ export enum GameDataset {
   Gathering = "gathering",
   Gcg = "gcg",
   GcgText = "gcgText",
+  Ground = "ground",
   Home = "home",
+  Hud = "hud",
   Imaginarium = "imaginarium",
+  Items = "items",
+  Login = "login",
   NameText = "nameText",
   Oculi = "oculi",
   Offerings = "offerings",
@@ -32,10 +39,12 @@ export enum GameDataset {
   Reputation = "reputation",
   Shops = "shops",
   SpiralAbyss = "spiralAbyss",
+  Splash = "splash",
   Stats = "stats",
   StatueLevels = "statueLevels",
   TalentLabels = "talentLabels",
   TalentMultipliers = "talentMultipliers",
   TransPoints = "transPoints",
   Wildlife = "wildlife",
+  Windrise = "windrise",
 }

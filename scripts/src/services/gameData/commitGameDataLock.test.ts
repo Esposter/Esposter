@@ -60,4 +60,23 @@ describe(commitGameDataLock, () => {
       objects: { "stats/weapons": createHash("b") },
     });
   });
+
+  // A fit republishes one key of a dataset whose other keys another step wrote
+  test("replaces only the key a key scope names", async () => {
+    expect.hasAssertions();
+
+    const doorKey = `${GameDataset.Login}/door` as const;
+    const musicKey = `${GameDataset.Login}/music` as const;
+    await writeGameDataLock(
+      { indexes: {}, objects: { [doorKey]: createHash("a"), [musicKey]: createHash("b") } },
+      lockPath,
+    );
+
+    await commitGameDataLock([musicKey], { indexes: {}, objects: { [musicKey]: createHash("c") } }, lockPath);
+
+    await expect(readGameDataLock(lockPath)).resolves.toStrictEqual({
+      indexes: {},
+      objects: { [doorKey]: createHash("a"), [musicKey]: createHash("c") },
+    });
+  });
 });

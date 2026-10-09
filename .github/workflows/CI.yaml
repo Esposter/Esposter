@@ -104,6 +104,14 @@ jobs:
       # so they are built here, from the source this shard checked out.
       - name: 🏗️ Build the app bundles the suite asserts against
         run: pnpm --filter "@esposter/functions" --filter "@esposter/infra" build
+      # The suites read the hosted game data by hash from this mirror, filling a miss from the dev account. Restored
+      # only, since a shard reads a subset of what the lock names and saving it would key that subset as the whole
+      - name: ♻️ Restore the game data mirror
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: packages/genshin-world/node_modules/.cache/game-data
+          key: game-data-mirror-${{ hashFiles('packages/genshin-world/src/generated/gameDataLock.json') }}
+          restore-keys: game-data-mirror-
       # `default` beside `blob`: the blob reporter alone prints only where it wrote, hiding why a shard failed
       - name: 🧪 Test
         env:
