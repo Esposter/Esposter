@@ -45,3 +45,5 @@ export const MEDIA_ENGINE_ACCELERATION = "d3d11va";
 export const ROADMAP_PATH = "apps/web/content/docs/genshin/roadmap.md";
 // The compute queue's heading in the roadmap, which the queue section runs under
 export const COMPUTE_QUEUE_HEADING = "## Compute queue";
+// A worker's name: letters, digits and dashes, since it names a pid file and follows the slash in `machine/worker`
+export const WORKER_NAME_REGEX = /^[\w-]+$/u;
