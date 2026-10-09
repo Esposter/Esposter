@@ -5,6 +5,7 @@ import type {
   GroundPoint,
   RampOptions,
   SkyKeyframe,
+  SurfaceDetail,
   TerrainOptions,
 } from "genshin-engine";
 
@@ -67,13 +68,22 @@ export const WINDRISE_START_POINT: GroundPoint = { x: 36, z: 12 };
 // Meshes it is drawn with, each in its own colour. A part the export gave no weight to takes its family's colour
 const getPartColor = (family: { color: string; parts: Record<string, { color: string }> }, part: string): string =>
   family.parts[part]?.color ?? family.color;
+// Each part's detail, as its export's textures carry it, and a family's where the part has none of its own
+const getPartDetail = (
+  family: { detail: SurfaceDetail; parts: Record<string, { detail?: SurfaceDetail }> },
+  part: string,
+): SurfaceDetail => family.parts[part]?.detail ?? family.detail;
 // The oak's bark is its trunk and its leaves are its cards, each the export's mesh of that name
 const OAK_BARK_PART = "Stages_Unique_CyTree01_Bark_Lod1";
 const OAK_LEAF_PART = "Stages_Unique_CyTree01_Leaf_Lod1";
 export const BARK_COLOR = getPartColor(surfaces.Oak, OAK_BARK_PART);
 export const LEAF_COLOR = getPartColor(surfaces.Oak, OAK_LEAF_PART);
+export const BARK_DETAIL = getPartDetail(surfaces.Oak, OAK_BARK_PART);
+export const LEAF_DETAIL = getPartDetail(surfaces.Oak, OAK_LEAF_PART);
 export const PAVING_COLOR = surfaces.Paving.color;
+export const PAVING_DETAIL = surfaces.Paving.detail;
 export const getStatuePartColor = (part: string): string => getPartColor(surfaces.Statue, part);
+export const getStatuePartDetail = (part: string): SurfaceDetail => getPartDetail(surfaces.Statue, part);
 // The ramp every material shades through: a narrow step, a little past the grazing angle
 export const WINDRISE_RAMP_OPTIONS: RampOptions = { resolution: 64, softness: 0.08, terminator: 0.52 };
 // A haze thickest on the valley floor and gone a few hundred metres up, starting past the knoll so the oak stays clear
