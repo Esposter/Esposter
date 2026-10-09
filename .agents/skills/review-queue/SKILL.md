@@ -21,6 +21,7 @@ The session works on **one permanent branch, `ai/queue`**, and pushes it after e
 - **A worktree per session to work in.** Each costs a full install and build, and a cleanup step nobody wants; the shared checkout stays the one place work is done. A dirty tree still never holds a push: `pnpm ai:queue:push` runs the replay alone in a throwaway detached worktree (loop step 2), which needs no install until a lockfile conflict rebuilds it.
 - **Holding a window until its checks go green.** The review is the gate, never CI — a red check at that point is a snapshot, a lint rule or a bundle, and it lands as a commit in a later window (`apps/web/content/docs/infra/review-collector/index.md`).
 - **Merging a window's pull request by hand, or holding it for its findings.** The collector merges the bottom window the moment its one review completes, whatever the review found — held only while Claude Code is out of session, since nothing could then drain them; the findings are the next window's, fixed on `ai/review-fixes` and read by that window's own full review. A person's one lever is closing a window without merging, which pauses the collector (`apps/web/content/docs/infra/review-collector/index.md`).
+- **Landing a collector change over several pushes while its workflow runs.** Every run checks out the `ai/queue` head, so a queue push is a deploy, and a change pushed in parts runs half-landed — run 37952229125 spent a $5.92 session and then threw on the mismatch, pushing nothing it paid for. A collector change is made with the workflow disabled and lands in one push (`references/running-by-hand.md`).
 
 ## The refs
 
@@ -49,4 +50,4 @@ Nothing is owed by the session; a red `main` is the collector's repair, and a me
 - `references/answering-findings.md` — when the session fixes a CodeRabbit finding itself.
 - `references/held-commits.md` — when the collector opens an issue for parked commits or deferred findings, or a collector run is red.
 - `references/after-a-release.md` — when a release has merged, `main` is red, or a merge got into the queue.
-- `references/running-by-hand.md` — when the collector's workflow is off and the cycle is run from a checkout.
+- `references/running-by-hand.md` — when the collector's workflow is off, the cycle is run from a checkout, or a change to the collector is about to land.
