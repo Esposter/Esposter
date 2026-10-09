@@ -5,7 +5,6 @@
     "${configDir}/scripts/**/*.ts",
     "${configDir}/**/*.bench.ts",
     "${configDir}/**/*.fixture.ts",
-    "${configDir}/**/*.chunk.ts",
     "${configDir}/**/*.reference.ts",
     "${configDir}/**/*.test.ts",
     "${configDir}/**/*.test-d.ts"
