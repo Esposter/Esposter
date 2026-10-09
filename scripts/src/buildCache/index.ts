@@ -2,8 +2,7 @@ import { buildPackageCached } from "#src/services/buildCache/buildPackageCached"
 import { defineCommand, runMain } from "citty";
 
 // `bash .agents/skills/throughput/scripts/build-cached.sh <package directory>` — restores a workspace package's `dist`
-// From the cache when its inputs are unchanged, and otherwise builds it and stores it (the throughput skill's
-// `references/build-cache.md`)
+// From the cache when its inputs are unchanged, and otherwise builds it and stores it (the build skill's cache rule)
 await runMain(
   defineCommand({
     args: {
