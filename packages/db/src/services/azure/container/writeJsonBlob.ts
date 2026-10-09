@@ -15,7 +15,7 @@ export const writeJsonBlob = async (
   blobName: string,
   serializedJson: string,
   conditions?: BlobRequestConditions,
-): Promise<{ etag: string | undefined; size: number }> => {
+): Promise<{ etag?: string; size: number }> => {
   const compressedJson = await compress(serializedJson, {
     params: {
       [constants.ZSTD_c_compressionLevel]: JSON_BLOB_COMPRESSION_LEVEL,
