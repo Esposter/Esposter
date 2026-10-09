@@ -2,6 +2,8 @@
 title: Quests
 description: Proposal — what remains of Genshin's quests once the carried Archon quests start and the world's doings advance them: the go-to triggers placed in region data, the world and story quests started by the talks that offer them, the commissions dealt at the reset, and the clues the quests leave for companionship and Elemental Sight. The quest model, its progression, the quest screen, the navigation beam, the HUD's tracker and V, the handbook's tabs, the reader, the start and finish of the Archon quests, and the achievements and Travel Log they reach are built, as the quests page describes.
 model: claude-opus-5-5
+needs: [game-exports, game-install]
+touches: ["packages/genshin-world/src/services/quest/**", "packages/genshin-world/src/components/Quest/**"]
 ---
 
 # Quests

@@ -2,6 +2,7 @@
 title: Characters
 description: Proposal — what is left of drawing the game's characters from HoYoverse's official MMD models. The model stands on the character controller's body and faces where it faces, moves as the game's own locomotion clips move it, with only fitted parameters shipped, stands at the height the game's own model does, and has its terms shown wherever it is chosen.
 model: claude-opus-5-5
+needs: [game-exports]
 ---
 
 # Characters

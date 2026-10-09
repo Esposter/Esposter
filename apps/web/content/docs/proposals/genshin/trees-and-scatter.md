@@ -2,6 +2,7 @@
 title: Trees and scatter
 description: Proposal — the rest of Genshin's plants on the vegetation's wind field. Every tree, bush and rock the game places stands where its record sets it, each species' parameters fitted to its own export and instanced per species, culled per instance on the GPU, and grass that yields to what passes through it. Species, impostors and the flowers scattered on each finest tile are built.
 model: claude-opus-5-5
+needs: [game-exports]
 ---
 
 # Trees and scatter

@@ -2,6 +2,7 @@
 title: Gathering
 description: Proposal — the ores struck until they break, each region's mining outcrops of Magical Crystal Chunks, drawn each day from Adventure Rank 30 beside the ley line places, and the investigation spots that give artifacts, ingredients, ores or Mora. The plants and specialties are built as gathering points, all but five the world's types do not name yet, and the mining outcrops' rank, respawn and the investigation cap are built as rules.
 model: claude-haiku-5-5
+needs: [game-exports]
 ---
 
 # Gathering

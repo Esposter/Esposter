@@ -2,6 +2,7 @@
 title: Serenitea Pot
 description: Proposal — the Serenitea Pot's realm: a gadget that opens a realm of its own scene from the game's layouts, a placement editor that furnishes it within each area's load, the Realm Depot, gardens and ponds, the Adeptal Mirror, and characters who live there as companions. Tubby's furnishings, Trust Rank, Adeptal Energy and the realm's stores are built.
 model: claude-opus-5-5
+needs: [game-exports]
 ---
 
 # Serenitea Pot

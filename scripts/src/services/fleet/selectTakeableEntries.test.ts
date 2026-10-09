@@ -18,6 +18,7 @@ const createEntry = (overrides: Partial<FleetEntry>): FleetEntry => ({
   lane: "cpu",
   needs: [],
   touches: [],
+  waiting: "",
   ...overrides,
 });
 const createClaim = (renewedAt: string, miss?: string): ClaimedRef => ({
@@ -103,5 +104,58 @@ describe(selectTakeableEntries, () => {
     const claims = new Map([["writer", createClaim(RECENT)]]);
 
     expect(selectTakeableEntries(entries, PROFILE, claims, NOW).map(({ id }) => id)).toStrictEqual(["separate"]);
+  });
+
+  test("skips a unit waiting on a blocker, and lists it again once the blocker is gone", () => {
+    expect.hasAssertions();
+
+    const waiting = createEntry({ id: "companionship", kind: FleetEntryKind.Unit, lane: "", waiting: "namecard art" });
+    const ready = createEntry({ id: "ready", kind: FleetEntryKind.Unit, lane: "" });
+
+    expect(selectTakeableEntries([waiting, ready], PROFILE, new Map(), NOW).map(({ id }) => id)).toStrictEqual([
+      "ready",
+    ]);
+    expect(
+      selectTakeableEntries([{ ...waiting, waiting: "" }], PROFILE, new Map(), NOW).map(({ id }) => id),
+    ).toStrictEqual(["companionship"]);
+  });
+
+  test("skips a unit needing a capability the machine lacks", () => {
+    expect.hasAssertions();
+
+    const unit = createEntry({ id: "profile", kind: FleetEntryKind.Unit, lane: "", needs: ["game-exports"] });
+
+    expect(selectTakeableEntries([unit], PROFILE, new Map(), NOW)).toStrictEqual([]);
+    expect(selectTakeableEntries([unit], { ...PROFILE, capabilities: ["game-exports"] }, new Map(), NOW)).toStrictEqual(
+      [unit],
+    );
+  });
+
+  test("skips a unit whose touch globs overlap a live claim's touch set", () => {
+    expect.hasAssertions();
+
+    const claimed = createEntry({
+      id: "profile-tab",
+      kind: FleetEntryKind.Unit,
+      lane: "",
+      touches: ["apps/web/app/components/Genshin/Profile/*.vue"],
+    });
+    const overlapping = createEntry({
+      id: "profile-header",
+      kind: FleetEntryKind.Unit,
+      lane: "",
+      touches: ["apps/web/app/components/Genshin/Profile/**"],
+    });
+    const separate = createEntry({
+      id: "inventory",
+      kind: FleetEntryKind.Unit,
+      lane: "",
+      touches: ["apps/web/app/components/Genshin/Inventory/*.vue"],
+    });
+    const claims = new Map([["profile-tab", createClaim(RECENT)]]);
+
+    expect(
+      selectTakeableEntries([claimed, overlapping, separate], PROFILE, claims, NOW).map(({ id }) => id),
+    ).toStrictEqual(["inventory"]);
   });
 });

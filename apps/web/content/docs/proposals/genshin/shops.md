@@ -2,6 +2,7 @@
 title: Shops
 description: Proposal — the game's shops on one rule over its own goods table, its first parts built as Paimon's Bargains' Fates and the Mondstadt grocery's Mora-priced goods. Still to build: Paimon's Bargains' rotation, weapons and materials, every other vendor's goods and restocks, each region's Souvenir Shop taking its Sigils, and nothing that costs Genesis Crystals.
 model: claude-opus-5-5
+needs: [game-exports]
 ---
 
 # Shops

@@ -2,6 +2,7 @@
 title: Spiral Abyss
 description: Proposal — what is left of the Spiral Abyss once its floors, chambers, clock, stars, unlocks, rewards and the Moon Spire's period are built from the game's tower tables: the chambers' enemies and scenes, the screen that enters them, the wormhole at Cape Oath, and the blessings of the Corridor and the Moon Spire.
 model: claude-opus-5-5
+needs: [game-exports]
 ---
 
 # Spiral Abyss

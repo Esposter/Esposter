@@ -2,6 +2,8 @@
 title: Character screen
 description: Proposal — what is left of the game's character screen once its frame, its tabs and the Attributes tab are built. The look measured off the English client, the chosen character standing in the middle, the element's mark, the Details view, the other five tabs' panels, levelling up and ascending, levels 95 and 100, and the Traveler's resonance and quest bonuses.
 model: claude-opus-5-5
+needs: [game-install]
+touches: ["packages/genshin-world/src/components/Character/**"]
 ---
 
 # Character screen

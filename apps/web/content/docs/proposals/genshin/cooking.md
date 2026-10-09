@@ -2,6 +2,7 @@
 title: Cooking
 description: Proposal — the stove and the cooking screen, what a dish does once eaten through the character kits, passives included. What is built is recorded on the Genshin area's cooking page.
 model: claude-opus-5-5
+needs: [game-exports]
 ---
 
 # Cooking

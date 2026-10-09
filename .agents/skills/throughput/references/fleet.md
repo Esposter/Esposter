@@ -19,9 +19,14 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 ## The queue is pulled, never pushed
 
 - **Work is an entry with an id and its needs:** a compute-queue item on the roadmap, or an open proposal unit. An entry names what it writes, which is also its touch set.
+- **A proposal unit carries the same three fields a queue item does, in its frontmatter** (the `docs` skill, `references/page-frontmatter.md`), each optional:
+  - `needs: [<capability>, ...]`, the same vocabulary as a queue item's needs;
+  - `waiting: "<blocker>"`, set while the unit cannot be built yet, such as on another unit or on data that is not extracted; a waiting unit is never offered, and `pnpm ai:fleet:status` lists it with its blocker;
+  - `touches: [<glob>, ...]`, added to its Key files paths. A glob names the directory it opens in, so `dir/*` and `dir/**` both overlap anything under `dir`.
 - **An idle machine takes its own next entry.** When its watcher prints an idle line, its session runs `pnpm ai:fleet:next --lane <lane>`, its lane as the runner names it. That returns, and claims, the first entry that meets all of these:
   - its needs are within the machine's capabilities;
   - its area is lent;
+  - it is not waiting on a blocker;
   - no one holds it;
   - its touch set overlaps no held claim's.
 

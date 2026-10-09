@@ -2,6 +2,7 @@
 title: Fishing
 description: Proposal — fishing as the game runs it, every number from its own fish tables. The points, stocks, fish, rods and the rules of a cast and a reel are built; the bite and its skills, bait, the rod's pull, the screen and the Fishing Associations' exchanges are what remains, each waiting on a call or a recording.
 model: claude-opus-5-5
+needs: [game-exports, game-install]
 ---
 
 # Fishing

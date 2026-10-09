@@ -2,6 +2,7 @@
 title: Flowing water
 description: Proposal — what is still unbuilt of Genshin's rivers and waterfalls. The river ribbon and waterfall sheet, and the flow they move with, are built; what remains is where the game places each river's course and each fall, fitted to the game's own water, and the mist and foam pool at a fall's foot, judged by their statistics.
 model: claude-opus-5-5
+needs: [game-exports]
 ---
 
 # Flowing water

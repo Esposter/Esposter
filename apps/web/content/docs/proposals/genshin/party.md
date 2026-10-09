@@ -2,6 +2,7 @@
 title: Party
 description: Proposal — what is left of the game's party once its state, its switching, its falls and the HUD's list of it are built. Party Setup on L as a screen with its Quick Setup; the player's choice of the next member and the game over screen after a fall; the Elemental Resonance effects that wait on affliction durations, a reaction particle, and the Moondrift and Lunar-Bloom clauses; and the party kept between visits.
 model: claude-opus-5-5
+touches: ["packages/genshin-world/src/services/party/**"]
 ---
 
 # Party

@@ -11,6 +11,7 @@ const createEntry = (overrides: Partial<FleetEntry>): FleetEntry => ({
   lane: "cpu",
   needs: [],
   touches: [],
+  waiting: "",
   ...overrides,
 });
 const ENTRIES = [

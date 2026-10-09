@@ -2,6 +2,7 @@
 title: Localized opening
 description: Proposal — the rest of the opening as each client language's build shows it, the publisher's splash and every layout difference measured off recordings of those clients, chosen by the reader's language like the opening's text and its title logo.
 model: claude-opus-5-5
+needs: [game-install]
 ---
 
 # Localized opening

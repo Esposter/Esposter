@@ -2,6 +2,7 @@
 title: Character controller
 description: Proposal — what the character controller still lacks past its states, its body and its stamina: every number the body moves by, read for each body type from the game's own clips, its data and recordings of it, in place of the provisional table every type but the medium female body's clip-read speeds moves by today, and each state approved by its own measure against those readings.
 model: claude-opus-5-5
+needs: [game-exports]
 ---
 
 # Character controller

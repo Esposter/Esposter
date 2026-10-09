@@ -2,6 +2,8 @@
 title: Menu screens
 description: Proposal — the Paimon menu measured against the English PC client's still and built with its icons traced, and the screens it opens that are not built yet: the Time and Settings screens' bodies, the exit prompt, and Paimon drawn beside it. Each is laid out in the reference's own pixels and held to its own score.
 model: claude-opus-5-5
+needs: [game-install]
+touches: ["packages/genshin-world/src/components/Menu/**"]
 ---
 
 # Menu screens

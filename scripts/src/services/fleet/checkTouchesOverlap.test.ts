@@ -20,6 +20,13 @@ describe(checkTouchesOverlap, () => {
     expect(checkTouchesOverlap(["extracted/natlan"], ["extracted/natlan-2/world.json"])).toBe(false);
   });
 
+  test("reads a glob as the directory it opens in, so the paths it matches overlap", () => {
+    expect.hasAssertions();
+
+    expect(checkTouchesOverlap(["extracted/natlan/*.json"], ["extracted/natlan/world/world.json"])).toBe(true);
+    expect(checkTouchesOverlap(["extracted/natlan/**"], ["extracted/liyue/world.json"])).toBe(false);
+  });
+
   test("reads an empty touch set as overlapping nothing", () => {
     expect.hasAssertions();
 

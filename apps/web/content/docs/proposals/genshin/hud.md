@@ -2,6 +2,8 @@
 title: HUD
 description: Proposal — what the heads-up display still lacks past its shell and its built pieces: each piece placed by the HUD's own RectTransform tree, its places and looks measured against a recording of the English PC client, and Paimon's mark traced onto its button.
 model: claude-opus-5-5
+needs: [game-install]
+touches: ["packages/genshin-world/src/components/Hud/**"]
 ---
 
 # HUD

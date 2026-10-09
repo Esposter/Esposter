@@ -2,6 +2,7 @@
 title: Combat
 description: Proposal — the combat rules the built ones leave out. The Lunar and Stellar Glimmer reactions of the game's newest characters, the auras no attack applies, the enemies' and the environment's own level multiplier, the limits on how often a reaction lands, Superconduct's resistance shred, the reach of a reaction round its target, and the energy normal attacks generate, each from the community's documented mechanics.
 model: claude-opus-5-5
+touches: ["packages/genshin-world/src/services/combat/**"]
 ---
 
 # Combat

@@ -2,6 +2,7 @@
 title: Interaction
 description: Proposal — the held F's interval, the prompt list's window and the reach, each read off a recording of the game. The prompts over the world, the drops and residents in reach, F, the wheel and a held F's repeat are built, and the three numbers are provisional until the recording measures them.
 model: claude-opus-5-5
+needs: [game-install, media-engine]
 ---
 
 # Interaction

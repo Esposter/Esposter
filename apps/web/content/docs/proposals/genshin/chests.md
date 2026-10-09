@@ -2,6 +2,8 @@
 title: Chests
 description: Proposal — the open world's chests, whose places are built and whose Common, Exquisite and Precious openings now pay their Primogems and Mora; still to build are the drops that pour out, the Adventure EXP and Sigils, the Luxurious and Remarkable rewards, the chests the camps and puzzles lock, the buried and sealed ones dug or freed, and the join that lets an opened chest count toward the achievements and the exploration progress.
 model: claude-haiku-5-5
+needs: [game-exports]
+touches: ["packages/genshin-world/src/services/chest/**"]
 ---
 
 # Chests

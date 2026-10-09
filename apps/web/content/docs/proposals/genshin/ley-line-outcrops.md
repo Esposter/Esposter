@@ -2,6 +2,7 @@
 title: Ley line outcrops
 description: Proposal — the open world's ley line outcrops' touch, fight and claim. Each region's two blossoms are touched to spawn its enemies at the World Level, cleared to reveal the blossom, and claimed with resin for a reward that follows the World Level. Their kinds, openings, starts and moves are built.
 model: claude-opus-5-5
+needs: [game-exports]
 ---
 
 # Ley line outcrops

@@ -2,6 +2,7 @@
 title: Original Resin
 description: Proposal — the claim every resin challenge shares: a cleared ley line, domain or boss leaves a blossom whose reward is claimed by spending resin, its fixed reward from the game's table and its rolled drops from the wiki's, and Condensed Resin crafted at the bench. The resin's count, regeneration, refills and the claim's price are built.
 model: claude-haiku-5-5
+needs: [game-exports]
 ---
 
 # Original Resin

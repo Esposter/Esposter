@@ -2,6 +2,7 @@
 title: Terrain shapes
 description: Proposal — the continent's ground fitted to the game's own terrain tiles, one region at a time, by the least representation that holds its heights within the reference's noise — hills, then the sharp features hills smear, with noise only for a residual too fine to fit, matched by its statistics. The ground is painted by layers fitted to the game's own, judged against the exports, and what a heightfield cannot hold is a placed object. The terrain's tiles already stream; this is what they are generated from.
 model: claude-opus-5-5
+needs: [game-exports]
 ---
 
 # Terrain shapes

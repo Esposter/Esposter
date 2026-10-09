@@ -76,7 +76,8 @@
   },
   "dependencies": {
     "citty": "catalog:",
-    "genshin-text": "workspace:*"
+    "genshin-text": "workspace:*",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",

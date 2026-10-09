@@ -2,6 +2,7 @@
 title: Commissions
 description: Proposal — the parts of the daily commissions still unbuilt: a scene task swapping its area's camp, a quest task finishing with its quest, the day kept between visits, the handbook's Commissions tab with its words, the other regions' pools, and the sources of Encounter Points. Mondstadt's daily tasks, their dealing, claims, Katheryne's bonus and Encounter Point claims are built, as the commissions page describes.
 model: claude-haiku-5-5
+needs: [game-exports]
 ---
 
 # Commissions
