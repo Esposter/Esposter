@@ -5,6 +5,7 @@ import type { Page } from "playwright";
 
 import { PARITY_PAGE_URL, STALLS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { summarizeStallState } from "#src/services/genshinParity/shared/summarizeStallState";
+import { getResultAsync } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { chromium } from "playwright";
@@ -30,11 +31,11 @@ declare global {
   }
 }
 
-// Mouse look turns 0.002 radians a pixel, and a full turn takes six seconds of events every 16 milliseconds
+// Mouse look turns 0.002 radians a pixel, and a full turn is spread over six seconds of events every 16 milliseconds
 const MOUSE_LOOK_RADIANS_PER_PIXEL = 0.002;
 const ORBIT_EVENT_MS = 16;
 const ORBIT_MS = 6000;
-const ORBIT_MOUSE_PIXELS = (2 * Math.PI) / MOUSE_LOOK_RADIANS_PER_PIXEL / (ORBIT_MS / ORBIT_EVENT_MS);
+const ORBIT_MOUSE_PIXELS = (2 * Math.PI) / MOUSE_LOOK_RADIANS_PER_PIXEL;
 const PAUSE_MS = 1000;
 const WALK_MS = 20_000;
 const LOAD_TIMEOUT_MS = 300_000;
@@ -76,14 +77,20 @@ const orbit = (page: Page, durationMs: number) =>
     ({ durationMs, eventMs, mousePixels }) =>
       new Promise<void>((resolve) => {
         window.__fakeLock = true;
+        const startMs = performance.now();
+        let sentPixels = 0;
+        // The browser truncates an event's movement to whole pixels, so each event sends the whole pixels the turn owes by
+        // Its time, and a late timer neither truncates nor drops any of the turn
         const timer = setInterval(() => {
-          window.dispatchEvent(new MouseEvent("mousemove", { bubbles: true, movementX: mousePixels, movementY: 0 }));
-        }, eventMs);
-        setTimeout(() => {
+          const progress = Math.min((performance.now() - startMs) / durationMs, 1);
+          const movementX = Math.round(mousePixels * progress) - sentPixels;
+          sentPixels += movementX;
+          window.dispatchEvent(new MouseEvent("mousemove", { bubbles: true, movementX, movementY: 0 }));
+          if (progress < 1) return;
           clearInterval(timer);
           window.__fakeLock = false;
           resolve();
-        }, durationMs);
+        }, eventMs);
       }),
     { durationMs, eventMs: ORBIT_EVENT_MS, mousePixels: ORBIT_MOUSE_PIXELS },
   );
@@ -134,27 +141,38 @@ export const measureStalls = async ({ height, scale, screen, width }: StallOptio
     args: ["--disable-gpu-vsync", "--disable-frame-rate-limit"],
     channel: "msedge",
   });
-  const context = await browser.newContext({ deviceScaleFactor: scale, viewport: { height, width } });
-  await context.addInitScript({ content: RECORD_FRAMES_SCRIPT });
-
-  const page = await context.newPage();
   const errors: string[] = [];
-  page.on("pageerror", (error) => errors.push(String(error)));
-  page.on("console", (message) => {
-    if (message.type() === "error") errors.push(message.text());
-  });
+  // The browser is closed whether the run measures or fails
+  const { loadMs, states } = await getResultAsync(async () => {
+    const context = await browser.newContext({ deviceScaleFactor: scale, viewport: { height, width } });
+    await context.addInitScript({ content: RECORD_FRAMES_SCRIPT });
 
-  const loadStart = Date.now();
-  await page.goto(`${PARITY_PAGE_URL}${screen}`, { waitUntil: "networkidle" });
-  await page.locator("body[data-parity-ready], body[data-parity-error]").waitFor({ timeout: LOAD_TIMEOUT_MS });
-  const parityError = await page.evaluate(() => window.document.body.dataset.parityError);
-  if (parityError) throw new Error(`page failed: ${parityError}`);
-  const loadMs = Date.now() - loadStart;
-  await page.waitForFunction(() => window.__TRES__DEVTOOLS__ !== undefined, null, { timeout: HOOK_TIMEOUT_MS });
-  await page.evaluate(hookRenderer);
-  await page.waitForFunction(() => window.__hooked, null, { timeout: HOOK_TIMEOUT_MS });
-  const states = await measureStates(page);
-  await browser.close();
+    const page = await context.newPage();
+    page.on("pageerror", (error) => errors.push(String(error)));
+    page.on("console", (message) => {
+      if (message.type() === "error") errors.push(message.text());
+    });
+
+    const loadStart = Date.now();
+    await page.goto(`${PARITY_PAGE_URL}${screen}`, { waitUntil: "networkidle" });
+    await page.locator("body[data-parity-ready], body[data-parity-error]").waitFor({ timeout: LOAD_TIMEOUT_MS });
+    const parityError = await page.evaluate(() => window.document.body.dataset.parityError);
+    if (parityError) throw new Error(`page failed: ${parityError}`);
+    const loadMs = Date.now() - loadStart;
+    await page.waitForFunction(() => window.__TRES__DEVTOOLS__ !== undefined, null, { timeout: HOOK_TIMEOUT_MS });
+    await page.evaluate(hookRenderer);
+    await page.waitForFunction(() => window.__hooked, null, { timeout: HOOK_TIMEOUT_MS });
+    return { loadMs, states: await measureStates(page) };
+  }).match(
+    async (value) => {
+      await browser.close();
+      return value;
+    },
+    async (error) => {
+      await browser.close();
+      throw error;
+    },
+  );
 
   const label = `${screen} ${width}x${height} at scale ${scale}`;
   const rows = states.map(
