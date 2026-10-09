@@ -47,7 +47,10 @@ export const TRACE_GPU_SCRIPT = `
   });
   traceCall(GPUDevice.prototype, "createTexture", (args) => describeExtent(args[0].size) + " " + args[0].format);
   traceCall(GPUQueue.prototype, "copyExternalImageToTexture", (args) => describeExtent(args[2]));
-  traceCall(GPUQueue.prototype, "writeBuffer", (args) => describeBytes(args[2]));
+  // A ranged write names its range: its size counts the data's elements, a typed array's or an ArrayBuffer's bytes
+  traceCall(GPUQueue.prototype, "writeBuffer", (args) =>
+    args[4] === undefined ? describeBytes(args[2]) : args[4] * (args[2].BYTES_PER_ELEMENT ?? 1) + " B",
+  );
   traceCall(GPUQueue.prototype, "writeTexture", (args) => describeBytes(args[1]) + " " + describeExtent(args[3]));
   traceCall(GPUQueue.prototype, "submit", (args) => args[0].length + " command buffers");
   traceCall(GPUCanvasContext.prototype, "getCurrentTexture", () => "swap chain");
