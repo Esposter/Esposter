@@ -9,6 +9,7 @@ import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 export const isMotionOnly = true;
 export const props = {
   createTerrainWorker: () => new TerrainTileWorker(),
+  gameDataBaseUrl: "game-data",
   gameText: ENGLISH_GAME_TEXT,
   language: GameLanguage.English,
   qualityTier: QualityTier.High,

@@ -2,7 +2,7 @@
   "extends": ["./tsconfig.json", "../configuration/tsconfig.build.base.json"],
   "compilerOptions": {
     "paths": {
-      "#src/generated/bookBody/*/index.chunk": ["./build/generatedChunk.d.ts"],
+      "#src/generated/gameDataLock.json": ["./src/generated/gameDataLock.json"],
       "#src/generated/*": ["./build/generatedJson.d.ts"]
     }
   },

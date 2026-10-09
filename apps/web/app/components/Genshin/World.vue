@@ -7,7 +7,7 @@ import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { GENSHIN_QUALITY_TIER } from "@/services/genshin/constants";
 import { AzureContainer } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
-import { WorldScreen } from "genshin-world";
+import { GAME_DATA_BLOB_PATH, WorldScreen } from "genshin-world";
 import TerrainTileWorker from "genshin-world/terrainTileWorker?worker";
 
 interface Props {
@@ -37,6 +37,7 @@ onMounted(() => {
   <WorldScreen
     :character-pack-base-url="`${containerBaseUrl}/${AzureContainer.AppAssets}/${GENSHIN_CHARACTER_PACK_PATH}`"
     :create-terrain-worker="() => new TerrainTileWorker()"
+    :game-data-base-url="`${containerBaseUrl}/${AzureContainer.AppAssets}/${GAME_DATA_BLOB_PATH}`"
     :game-text
     :is-paused
     :is-tuning="IS_DEVELOPMENT || undefined"
