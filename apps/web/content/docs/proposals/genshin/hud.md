@@ -3,7 +3,6 @@ title: HUD
 description: Proposal — what the heads-up display still lacks past its built pieces, each already placed by the HUD's own RectTransform tree: their looks measured against a recording of the English PC client.
 model: claude-opus-5-5
 needs: [game-install, game-exports]
-waiting: "the navigated objective's height: region data carries only x and z (GroundPoint), so the tracker's altitude line has no value until a height is extracted and published"
 touches:
   [
     "packages/genshin-world/src/components/Hud/**",
@@ -39,7 +38,7 @@ flowchart TD
 
 **This adds, in order:**
 
-1. **The looks.** Waits on the navigated objective's height for the tracker's altitude line ("Higher 1540m"), which no region data carries. Each piece's look is replaced with the game's, read off the copied captures and `hud-world-pickup`. Paimon's mark is built (traced from the same frame, as the Decisions say). `world-hud-hidden.mkv` re-measures the composite later; it gates nothing.
+1. **The looks.** Each piece's look is replaced with the game's, read off the copied captures and `hud-world-pickup`. Paimon's mark is built (traced from the same frame, as the Decisions say). `world-hud-hidden.mkv` re-measures the composite later; it gates nothing. The stamina meter, party, health and skill buttons are built first, each measured with `genshin:parity compare hud-world-pickup` before and after; the quest tracker's altitude line ("Higher 1540m") comes last, since it waits on the navigated objective's height, which no region data carries until a height is extracted and published by the Mac.
 
 ## What this does not propose
 
