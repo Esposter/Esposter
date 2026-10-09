@@ -31,6 +31,21 @@ describe(resolveImportTarget, () => {
     });
   });
 
+  test("takes the most specific pattern when several match, as Node does", () => {
+    expect.hasAssertions();
+
+    const aliases = { "#src/*": "./src/*.ts", "#src/*.vue": "./src/*.vue" };
+
+    expect(
+      resolveImportTarget(
+        "#src/components/World/Character/Index.vue",
+        "packages/genshin-world/src/a.ts",
+        PACKAGE_DIRECTORY,
+        aliases,
+      )?.path,
+    ).toBe("packages/genshin-world/src/components/World/Character/Index.vue");
+  });
+
   test("resolves a relative path against the importing file's directory", () => {
     expect.hasAssertions();
 

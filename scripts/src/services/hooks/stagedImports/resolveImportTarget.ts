@@ -6,8 +6,11 @@ import { posix } from "node:path";
 const PROBE_SUFFIXES = ["", ".ts", ".mts", ".vue", ".json", "/index.ts", "/index.mts", "/index.vue", "/index.json"];
 
 // The path a `#` specifier names through its package's `imports` map, a pattern's `*` standing for what it captures.
-// Only a string target is a path; a conditions object is not one this resolver reads
+// Only a string target is a path; a conditions object is not one this resolver reads. Several patterns can match one
+// Specifier (`#src/*` and `#src/*.vue` both match `#src/Foo.vue`), and Node takes the most specific: the longest
+// Prefix, then the longest pattern. So does this, or a `.vue` import resolves through `#src/*` to `Foo.vue.ts`
 const getAliasPath = (specifier: string, packageDirectory: string, aliases: Readonly<Record<string, unknown>>) => {
+  let best: { path: string; patternLength: number; prefixLength: number } | undefined;
   for (const [pattern, target] of Object.entries(aliases)) {
     if (typeof target !== "string") continue;
     const starIndex = pattern.indexOf("*");
@@ -19,12 +22,20 @@ const getAliasPath = (specifier: string, packageDirectory: string, aliases: Read
     const suffix = pattern.slice(starIndex + 1);
     const isMatch =
       specifier.length >= prefix.length + suffix.length && specifier.startsWith(prefix) && specifier.endsWith(suffix);
-    if (isMatch) {
+    const isMoreSpecific =
+      !best ||
+      prefix.length > best.prefixLength ||
+      (prefix.length === best.prefixLength && pattern.length > best.patternLength);
+    if (isMatch && isMoreSpecific) {
       const captured = specifier.slice(prefix.length, specifier.length - suffix.length);
-      return posix.join(packageDirectory, target.replace("*", captured));
+      best = {
+        path: posix.join(packageDirectory, target.replace("*", captured)),
+        patternLength: pattern.length,
+        prefixLength: prefix.length,
+      };
     }
   }
-  return undefined;
+  return best?.path;
 };
 
 // The repository paths an import names, or undefined when it names nothing inside the repository: a bare package
