@@ -372,6 +372,15 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "LoginInterface",
     seconds: 14,
   },
+  // Mainland China's interface at the door with its prompt, over the launch recording's own frame at 15.5 seconds, the
+  // First frame the prompt stands whole on the 12 to 17 second stills, scored over the whole frame, its rating included
+  "login-interface-door-mainland": {
+    capture: "bili-av532052219.mp4",
+    isBackdrop: true,
+    props: { isWelcomeShown: false, language: "ChineseSimplified", stage: "Door" },
+    screen: "LoginInterface",
+    seconds: 15.5,
+  },
   "login-interface-loading": {
     capture: "yt-rBnfA4pXw6U.mp4",
     isBackdrop: true,
