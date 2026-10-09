@@ -26,7 +26,7 @@ export const takeGcgScriptedAction = (duel: GcgDuel, sideIndex: number, random: 
       }
   const active = takeOne(side.characters, side.activeIndex);
   const skills = active.character.skills.toSorted(
-    (first, second) => SKILL_KIND_ORDER.indexOf(first.kind) - SKILL_KIND_ORDER.indexOf(second.kind),
+    (firstSkill, secondSkill) => SKILL_KIND_ORDER.indexOf(firstSkill.kind) - SKILL_KIND_ORDER.indexOf(secondSkill.kind),
   );
   for (const skill of skills)
     for (const dice of diceSubsets) {
