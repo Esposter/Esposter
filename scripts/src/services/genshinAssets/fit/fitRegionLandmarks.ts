@@ -3,13 +3,13 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { toRegionPlace } from "#src/services/genshinAssets/fit/toRegionPlace";
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWorldGroundHeight";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readWorldOptions } from "#src/services/genshinAssets/world/readWorldOptions";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldPlacements } from "#src/services/genshinAssets/world/readWorldPlacements";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { getWorldHeight } from "genshin-world";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -19,10 +19,11 @@ import { join } from "node:path";
 // A landmark the world names that the file lacks, or a prefab placed nowhere, is an error. Returns the file's path
 export const fitRegionLandmarks = async (component: DerivedAssetComponent, regionFile: string): Promise<string> => {
   const regionLandmarks = (await readWorldOptions(component))?.regionLandmarks ?? [];
-  const [placements, origin, regionJson] = await Promise.all([
+  const [placements, origin, regionJson, getWorldHeight] = await Promise.all([
     readWorldPlacements(component),
     readWorldOrigin(component),
     readFile(join(WORLD_DATA_DIRECTORY, regionFile), "utf8"),
+    readWorldGroundHeight(),
   ]);
   const [, originY] = origin;
   // The world package's region data, whose fields beyond each landmark's id are carried through as the file holds them

@@ -1,3 +1,4 @@
+import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { Vector } from "#src/models/shared/Vector";
 import type { StatuePart, StatueStack } from "genshin-engine";
@@ -23,7 +24,6 @@ import { readComponentPlacements } from "#src/services/genshinAssets/shared/read
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { toRightHandedRotation } from "#src/services/genshinAssets/shared/toRightHandedRotation";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { join } from "node:path";
@@ -51,8 +51,8 @@ const roundStack = ({ position, rotation, sections }: StatueStack): StatueStack 
 // Place and turn set it down. Every statue mesh is taken into that frame by its placement and split into the pieces its
 // Triangles join into, and each piece is fitted as one upright stack or as blades along their own lengths, whichever
 // Lies nearer its surface (`fitStatueComponent`); each stack is named for the export mesh it came from, so the surface
-// Pass colours each part of the statue its own colour. Writes `windrise/statue.json` and returns the report and its path
-export const fitWindriseStatue = async (): Promise<string[]> => {
+// Pass colours each part of the statue its own colour. Returns the record `windrise/statue` with its report
+export const fitWindriseStatue = async (): Promise<GameDataBuild> => {
   const meshDirectory = join(getComponentDirectory(DerivedAssetComponent.Windrise).assets, AssetType.Mesh);
   // The statue is spawned by its scene point, so its placements are read as the copies the witness lays out
   const placements = await readComponentPlacements(DerivedAssetComponent.Windrise, { isCopied: true });
@@ -83,6 +83,5 @@ export const fitWindriseStatue = async (): Promise<string[]> => {
       `${placement.mesh}: ${pieces.length} pieces as ${pieces.reduce((sum, { stacks }) => sum + stacks.length, 0)} stacks, mean score ${meanScore.toFixed(2)}`,
     );
   }
-  const path = await writeWorldData("windrise/statue.json", { parts });
-  return [...reports, `statue: ${parts.length} stacks`, path];
+  return { notes: [...reports, `statue: ${parts.length} stacks`], objects: { "windrise/statue": { parts } } };
 };

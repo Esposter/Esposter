@@ -29,3 +29,5 @@ export const MAX_CONCURRENT_VERIFY_FETCHES = 16;
 // Where a step reads what another step published: the dev account, which holds every object the lock names as prod does
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const GAME_DATA_DEV_BASE_URL: string = `${GameDataTargetBlobServiceUrlMap[GameDataTarget.Dev]}/${AzureContainer.AppAssets}/${GAME_DATA_BLOB_PATH}`;
+// The login's age rating, the one authored record of a dataset a fit otherwise publishes, so it is published as its key
+export const AGE_RATING_KEY = "login/ageRating";

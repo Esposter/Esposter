@@ -1,3 +1,4 @@
+import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 import type { ExportedMesh } from "#src/models/genshinAssets/shared/ExportedMesh";
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
 import type { SoundEffect } from "genshin-engine";
@@ -26,7 +27,6 @@ import { getComponentDirectory } from "#src/services/genshinAssets/shared/getCom
 import { readComponentClips } from "#src/services/genshinAssets/shared/readComponentClips";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
 import { readComponentPlacements } from "#src/services/genshinAssets/shared/readComponentPlacements";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { DerivedAssetSoundEffectMap } from "#src/services/genshinAssets/sound/DerivedAssetSoundEffectMap";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFile } from "node:fs/promises";
@@ -41,60 +41,63 @@ const CLOUD_LAYER_MATERIAL_SETTING_MAP = {
   curlTiling: "_CloudCurlTiling",
   wispsOpacity: "_CloudWispsOpacity",
 } as const;
-// The login scene's parts fitted as our own kits' parameters, each written as a data file of the world package's,
-// With its interface's rects and clips and the rows its script scrolls them in: each copied spawn's count and the
-// Length of its step, by its prefab, its music, whose fit's report stands before its path, and its sounds
-export const fitLoginScene = async (only: readonly string[] = []): Promise<string> => {
+// The login scene's parts fitted as our own kits' parameters, each a record under `login/`, with its interface's rects
+// And clips and the rows its script scrolls them in: each copied spawn's count and the length of its step, by its
+// Prefab, its music, whose fit's report is its note, and its sounds. Its title logos are a record each, by their logo
+export const fitLoginScene = async (only: readonly string[] = []): Promise<GameDataBuild> => {
   const directory = getComponentDirectory(DerivedAssetComponent.Login);
   const placements = await readComponentPlacements(DerivedAssetComponent.Login);
   const meshDirectory = join(directory.assets, AssetType.Mesh);
   const textureDirectory = join(directory.assets, AssetType.Texture2D);
-  const fits: Record<string, () => Promise<string[]>> = {
+  const fits: Record<string, () => Promise<GameDataBuild>> = {
     // The cloud layer's textures as the statistics ours are synthesized from
-    cloudLayerTextures: async () => [
-      await writeWorldData("login/cloudLayerTextures.json", await fitCloudLayerTextures(textureDirectory)),
-    ],
-    clouds: async () => [await writeWorldData("login/clouds.json", await fitLoginClouds(textureDirectory))],
-    door: async () => [
-      await writeWorldData(
-        "login/door.json",
-        await fitLoginDoor(
+    cloudLayerTextures: async () => ({
+      notes: [],
+      objects: { "login/cloudLayerTextures": await fitCloudLayerTextures(textureDirectory) },
+    }),
+    clouds: async () => ({ notes: [], objects: { "login/clouds": await fitLoginClouds(textureDirectory) } }),
+    door: async () => ({
+      notes: [],
+      objects: {
+        "login/door": await fitLoginDoor(
           placements,
           await readComponentClips(DerivedAssetComponent.Login),
           meshDirectory,
           textureDirectory,
         ),
-      ),
-    ],
-    hulls: async () => [await writeWorldData("login/hulls.json", await fitLoginHulls(placements, meshDirectory))],
-    interfaceClips: async () => [
-      await writeWorldData(
-        "login/interfaceClips.json",
-        fitInterfaceClips(await readComponentClips(DerivedAssetComponent.Login)),
-      ),
-    ],
+      },
+    }),
+    hulls: async () => ({ notes: [], objects: { "login/hulls": await fitLoginHulls(placements, meshDirectory) } }),
+    interfaceClips: async () => ({
+      notes: [],
+      objects: { "login/interfaceClips": fitInterfaceClips(await readComponentClips(DerivedAssetComponent.Login)) },
+    }),
     // The interface's tree as `genshin:assets interface` exported it
     interfaceRects: async () => {
       const interfaceTree = parseMachineJson<InterfaceNode>(
         await readFile(join(directory.root, "interface", "interface.json"), "utf8"),
       );
-      return [await writeWorldData("login/interfaceRects.json", fitInterfaceRects(interfaceTree))];
+      return { notes: [], objects: { "login/interfaceRects": fitInterfaceRects(interfaceTree) } };
     },
     music: async () => {
       const { music, report } = await fitLoginMusic();
-      return [...report, await writeWorldData("login/music.json", music)];
+      return { notes: report, objects: { "login/music": music } };
     },
-    paving: async () => [
-      await writeWorldData("login/paving.json", await fitLoginPaving(placements, meshDirectory, textureDirectory)),
-    ],
-    scroll: async () => {
-      const scroll = Object.fromEntries(
-        (DerivedAssetComponentMap[DerivedAssetComponent.Login].spawns ?? []).flatMap(({ copies, prefab }) =>
-          copies ? [[prefab.name, { count: copies.count, length: Math.hypot(...copies.step) }]] : [],
-        ),
-      );
-      return [await writeWorldData("login/scroll.json", scroll)];
-    },
+    paving: async () => ({
+      notes: [],
+      objects: { "login/paving": await fitLoginPaving(placements, meshDirectory, textureDirectory) },
+    }),
+    scroll: () =>
+      Promise.resolve({
+        notes: [],
+        objects: {
+          "login/scroll": Object.fromEntries(
+            (DerivedAssetComponentMap[DerivedAssetComponent.Login].spawns ?? []).flatMap(({ copies, prefab }) =>
+              copies ? [[prefab.name, { count: copies.count, length: Math.hypot(...copies.step) }]] : [],
+            ),
+          ),
+        },
+      }),
     // The sky's gradient, and the dome its cloud layer is drawn on with its material's curl and wisps
     sky: async () => {
       const [gradient, cloudDome, materials] = await Promise.all([
@@ -107,10 +110,10 @@ export const fitLoginScene = async (only: readonly string[] = []): Promise<strin
       const cloudLayerMaterial = Object.fromEntries(
         Object.entries(CLOUD_LAYER_MATERIAL_SETTING_MAP).map(([setting, property]) => [setting, floats[property] ?? 0]),
       );
-      return [
-        `the cloud layer's dome drawn from its profiles stands ${residual.toFixed(4)} off its own projections`,
-        await writeWorldData("login/sky.json", { cloudLayer: dome, cloudLayerMaterial, gradient }),
-      ];
+      return {
+        notes: [`the cloud layer's dome drawn from its profiles stands ${residual.toFixed(4)} off its own projections`],
+        objects: { "login/sky": { cloudLayer: dome, cloudLayerMaterial, gradient } },
+      };
     },
     // The sounds the login plays beside its music, each from the game's sounds matched for it
     sounds: async () => {
@@ -118,21 +121,29 @@ export const fitLoginScene = async (only: readonly string[] = []): Promise<strin
       for (const [name, { pattern, sounds }] of Object.entries(DerivedAssetSoundEffectMap[DerivedAssetComponent.Login]))
         // oxlint-disable-next-line no-await-in-loop -- each effect's sounds are decoded into one folder in turn
         effects[name] = await fitSoundEffect(pattern, sounds);
-      return [await writeWorldData("login/sounds.json", effects)];
+      return { notes: [], objects: { "login/sounds": effects } };
     },
     stone: async () => {
       const materials = await readComponentMaterials(DerivedAssetComponent.Login);
-      return [await writeWorldData("login/stone.json", await fitLoginStone(materials, textureDirectory))];
+      return { notes: [], objects: { "login/stone": await fitLoginStone(materials, textureDirectory) } };
     },
-    titleLogos: async () => [await writeWorldData("splash/titleLogos.json", await fitTitleLogos(directory.root))],
+    titleLogos: async () => ({
+      notes: [],
+      objects: Object.fromEntries(
+        Object.entries(await fitTitleLogos(directory.root)).map(([logo, path]) => [`splash/titleLogo/${logo}`, path]),
+      ),
+    }),
     towers: async () => {
       const [towers, facades] = await Promise.all([
         fitLoginTowers(placements, meshDirectory),
         fitLoginTowerFacades(placements, meshDirectory, textureDirectory),
       ]);
-      return [await writeWorldData("login/towers.json", { ...towers, facades })];
+      return { notes: [], objects: { "login/towers": { ...towers, facades } } };
     },
-    walkway: async () => [await writeWorldData("login/walkway.json", await fitLoginWalkway(placements, meshDirectory))],
+    walkway: async () => ({
+      notes: [],
+      objects: { "login/walkway": await fitLoginWalkway(placements, meshDirectory) },
+    }),
   };
   return runFits(fits, only);
 };

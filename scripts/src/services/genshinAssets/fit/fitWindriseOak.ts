@@ -1,3 +1,4 @@
+import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 import type { Texture } from "#src/models/genshinAssets/fit/Texture";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { Vector } from "#src/models/shared/Vector";
@@ -31,7 +32,6 @@ import { readComponentPlacements } from "#src/services/genshinAssets/shared/read
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toDiffusePath } from "#src/services/genshinAssets/shared/toDiffusePath";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { getPercentile } from "#src/services/shared/getPercentile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -100,8 +100,8 @@ const findOakPlacement = (placements: AssetPlacement[], mesh: string): AssetPlac
 // The great oak's canopy and trunk read off its export's Lod1 meshes, in three's axes round its foot: each leaf
 // Triangle's centroid, the centre of the card it is half of, with the leaf it keeps (its area times the share of its
 // Texture its material's cutoff keeps), grouped into the clusters `clusterCardCentres` finds, and the bark's radius at
-// Each trunk station. Writes `windrise/oak.json` and returns the report and its path
-export const fitWindriseOak = async (): Promise<string[]> => {
+// Each trunk station, as the record `windrise/oak` with its report
+export const fitWindriseOak = async (): Promise<GameDataBuild> => {
   const meshDirectory = join(getComponentDirectory(DerivedAssetComponent.Windrise).assets, AssetType.Mesh);
   const [placements, origin] = await Promise.all([
     readComponentPlacements(DerivedAssetComponent.Windrise),
@@ -157,16 +157,20 @@ export const fitWindriseOak = async (): Promise<string[]> => {
       throw new InvalidOperationError(Operation.Read, OAK_BARK_MESH, `has no bark at the trunk's height ${height}`);
     return { height, radius: roundFitted(radius) };
   });
-  const path = await writeWorldData("windrise/oak.json", {
-    clusters: clusters.map(({ leafArea, radius, x, y, z }) => ({
-      leafArea: roundFitted(leafArea),
-      radius: roundFitted(radius),
-      x: roundFitted(x),
-      y: roundFitted(y),
-      z: roundFitted(z),
-    })),
-    normalField,
-    trunk,
-  });
-  return [`oak: ${clusters.length} clusters over ${cards.length} leaf triangles, trunk ${trunk.length} stations`, path];
+  return {
+    notes: [`oak: ${clusters.length} clusters over ${cards.length} leaf triangles, trunk ${trunk.length} stations`],
+    objects: {
+      "windrise/oak": {
+        clusters: clusters.map(({ leafArea, radius, x, y, z }) => ({
+          leafArea: roundFitted(leafArea),
+          radius: roundFitted(radius),
+          x: roundFitted(x),
+          y: roundFitted(y),
+          z: roundFitted(z),
+        })),
+        normalField,
+        trunk,
+      },
+    },
+  };
 };

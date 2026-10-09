@@ -2,9 +2,9 @@ import type { SubCommandsDef } from "citty";
 import type { Music } from "genshin-engine";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { publishGameDataRecord } from "#src/services/gameData/publishGameDataRecord";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
 import { roundMusic } from "#src/services/genshinAssets/shared/roundMusic";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { computeAudibleFrames } from "#src/services/genshinParity/music/computeAudibleFrames";
 import { computeBandLevels } from "#src/services/genshinParity/music/computeBandLevels";
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
@@ -46,6 +46,6 @@ export const expressionCommand: SubCommandsDef[string] = defineCommand({
         `segment ${id}: ${distance.toFixed(1)} dB under the refitted windows, ${heldOutDistance.toFixed(1)} dB held out across bands; expression ${segment.expression.map((gain) => gain.toFixed(1)).join(", ")}`,
       );
     }
-    console.log(await writeWorldData("login/music.json", music));
+    console.log(await publishGameDataRecord("login/music", music));
   },
 });

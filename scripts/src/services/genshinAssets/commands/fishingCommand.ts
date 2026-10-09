@@ -1,6 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
 import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
+import { mergeGameDataBuilds } from "#src/services/gameData/mergeGameDataBuilds";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildFishingPoints } from "#src/services/genshinAssets/fishing/buildFishingPoints";
 import { buildFishingTables } from "#src/services/genshinAssets/fishing/buildFishingTables";
@@ -15,13 +16,12 @@ export const fishingCommand: SubCommandsDef[string] = defineCommand({
     name: "fishing",
   },
   run: async ({ args }) => {
-    const points = await buildFishingPoints();
-    const tables = buildFishingTables();
-    console.log([...points.notes, ...tables.notes].join("\n"));
+    const { notes, objects } = mergeGameDataBuilds([await buildFishingPoints(), buildFishingTables()]);
+    console.log(notes.join("\n"));
     console.log(
       await publishGameDataStep({
         isDryRun: args["dry-run"],
-        publication: { indexes: {}, objects: { ...points.objects, ...tables.objects } },
+        publication: { indexes: {}, objects },
         scopes: [GameDataset.Fishing],
       }),
     );
