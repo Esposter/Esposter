@@ -55,27 +55,26 @@ const pressMemberKey = (index: number) => {
         type="button"
         @click="pressMemberKey(index)"
       >
-        <span class="portrait" aria-hidden="true" />
         <span class="details">
           <span class="name">{{ getName(characterId) }}</span>
           <span class="hp" aria-hidden="true"><span class="fill" /></span>
         </span>
-        <span class="number">{{ index + 1 }}</span>
+        <span class="portrait" aria-hidden="true" />
       </button>
     </li>
   </ol>
 </template>
 
 <style scoped>
-/* Provisional: the rows' sizes, places, colours, portraits and HP bars, the mark on the member on the field, the grey of a
-   Member who is down and the darkening after a switch, measured off a recording of the English PC client's world HUD
-   Through a switch */
+/* Provisional: the rows' portraits, HP bars and the mark on the member on the field, the grey of a member who is down and
+   the darkening after a switch, measured off a recording of the English PC client's world HUD through a switch. The
+   Names sit left of each round portrait, the bar under them, and the rows come on a 119-unit pitch */
 .party {
   display: flex;
   margin: 0;
   padding: 0;
   flex-direction: column;
-  gap: calc(var(--unit) * 14);
+  gap: calc(var(--unit) * 63);
   list-style: none;
 }
 
@@ -90,10 +89,10 @@ const pressMemberKey = (index: number) => {
   color: #fff;
   cursor: inherit;
   font: inherit;
-  gap: calc(var(--unit) * 10);
+  gap: calc(var(--unit) * 8);
   pointer-events: auto;
   filter: grayscale(var(--grey, 0)) brightness(calc(1 - var(--shade, 0) * 0.6));
-  text-align: start;
+  text-align: end;
   text-shadow: 0 0 calc(var(--unit) * 4) rgb(0 0 0 / 0.6);
 }
 
@@ -119,12 +118,13 @@ const pressMemberKey = (index: number) => {
   min-width: 0;
   flex: 1;
   flex-direction: column;
+  align-items: flex-end;
   gap: calc(var(--unit) * 6);
 }
 
 .name {
   overflow: hidden;
-  font-size: calc(var(--unit) * 20);
+  font-size: calc(var(--unit) * 22);
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -132,6 +132,7 @@ const pressMemberKey = (index: number) => {
 
 .hp {
   display: block;
+  width: calc(var(--unit) * 94);
   height: calc(var(--unit) * 6);
   overflow: hidden;
   border-radius: calc(var(--unit) * 3);
@@ -143,10 +144,5 @@ const pressMemberKey = (index: number) => {
   width: calc(var(--health) * 100%);
   height: 100%;
   background: #8fd14f;
-}
-
-.number {
-  font-size: calc(var(--unit) * 22);
-  font-weight: 600;
 }
 </style>
