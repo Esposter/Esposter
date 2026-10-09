@@ -15,6 +15,7 @@ import { getCharacterTalentKits } from "#src/services/genshinAssets/stats/getCha
 import { getWeaponDatas } from "#src/services/genshinAssets/stats/getWeaponDatas";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { toGrowCurves } from "#src/services/genshinAssets/stats/toGrowCurves";
+import { toTalentMultiplierMap } from "#src/services/genshinAssets/stats/toTalentMultiplierMap";
 import { toTalentUpgradeMap } from "#src/services/genshinAssets/stats/toTalentUpgradeMap";
 import { toWeaponLevelRequiredExps } from "#src/services/genshinAssets/stats/toWeaponLevelRequiredExps";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -29,6 +30,8 @@ export const writeStatTables = (): string[] => {
   const characterDatas = getCharacterDatas(notes);
   const weaponDatas = getWeaponDatas(notes);
   const characterTalentKits = getCharacterTalentKits();
+  const proudSkillRows = readExcelTable<ExcelProudSkillRow>("ProudSkillExcelConfigData");
+  const combatGroupIds = new Set(characterTalentKits.flatMap(({ talentGroupIds }) => Object.values(talentGroupIds)));
   const tableMap = {
     "artifactExpMaterials.json": getArtifactExpMaterials(),
     "artifactMainAffixCurves.json": getArtifactMainAffixCurves(notes),
@@ -43,10 +46,8 @@ export const writeStatTables = (): string[] => {
     "characters.json": characterDatas,
     "characterSkillKits.json": getCharacterSkillKits(),
     "characterTalentKits.json": characterTalentKits,
-    "talentUpgrades.json": toTalentUpgradeMap(
-      readExcelTable<ExcelProudSkillRow>("ProudSkillExcelConfigData"),
-      new Set(characterTalentKits.flatMap(({ talentGroupIds }) => Object.values(talentGroupIds))),
-    ),
+    "talentMultipliers.json": toTalentMultiplierMap(proudSkillRows, combatGroupIds),
+    "talentUpgrades.json": toTalentUpgradeMap(proudSkillRows, combatGroupIds),
     "weaponGrowCurves.json": toGrowCurves(
       readExcelTable<ExcelCurveRow>("WeaponCurveExcelConfigData"),
       new Set(weaponDatas.flatMap(({ growAttributes }) => growAttributes.map(({ curve }) => curve))),

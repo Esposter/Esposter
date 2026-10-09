@@ -4,7 +4,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { TRAVELER_KIT } from "#src/services/kit/constants";
+import { TRAVELER_KIT } from "#src/services/kit/characters/travelerKit";
 import { createParty } from "#src/services/party/createParty";
 import { gainPartyEnergy } from "#src/services/party/gainPartyEnergy";
 import { getPartyMember } from "#src/services/party/getPartyMember";

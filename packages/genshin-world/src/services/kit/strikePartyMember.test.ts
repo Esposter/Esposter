@@ -7,7 +7,7 @@ import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
-import { TRAVELER_KIT } from "#src/services/kit/constants";
+import { TRAVELER_KIT } from "#src/services/kit/characters/travelerKit";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
