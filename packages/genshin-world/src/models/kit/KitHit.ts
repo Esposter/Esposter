@@ -13,8 +13,12 @@ import type { KitStackedHit } from "#src/models/kit/KitStackedHit";
 export interface KitHit {
   // The bubble it holds each enemy it strikes in, if it casts one
   bubble?: KitBubbleSpec;
+  // The cylinder the hit reaches while its attacks are converted by an infusion that converts them, if it reaches another
+  convertedHitArea?: AttackArea;
   // The poise the hit deals while its attacks are converted by an infusion that converts them, if it has one
   convertedPoiseDamage?: number;
+  // The DMG Bonus the hit adds to its striker's as it is priced, if it carries one of its own
+  damageBonus?: number;
   element?: Element;
   // The status it gives each enemy it strikes, given its striker, before its damage is taken
   enemyStatus?: (combatant: Combatant) => EnemyStatus | undefined;

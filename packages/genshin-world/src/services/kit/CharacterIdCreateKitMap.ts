@@ -16,6 +16,7 @@ import {
   RAZOR_CHARACTER_ID,
   VENTI_CHARACTER_ID,
   XIANGLING_CHARACTER_ID,
+  XIAO_CHARACTER_ID,
   XINGQIU_CHARACTER_ID,
 } from "#src/services/character/constants";
 import { createAmberKit } from "#src/services/kit/characters/amberKit";
@@ -32,6 +33,7 @@ import { createNoelleKit } from "#src/services/kit/characters/noelleKit";
 import { createRazorKit } from "#src/services/kit/characters/razorKit";
 import { createVentiKit } from "#src/services/kit/characters/ventiKit";
 import { createXianglingKit } from "#src/services/kit/characters/xianglingKit";
+import { createXiaoKit } from "#src/services/kit/characters/xiaoKit";
 import { createXingqiuKit } from "#src/services/kit/characters/xingqiuKit";
 
 // Each character's kit by its avatar id, for those whose module is built, made from the loaded talent multipliers. A
@@ -51,5 +53,6 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [RAZOR_CHARACTER_ID]: createRazorKit,
   [VENTI_CHARACTER_ID]: createVentiKit,
   [XIANGLING_CHARACTER_ID]: createXianglingKit,
+  [XIAO_CHARACTER_ID]: createXiaoKit,
   [XINGQIU_CHARACTER_ID]: createXingqiuKit,
 };
