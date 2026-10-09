@@ -12,6 +12,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { healPartyMember } from "#src/services/party/healPartyMember";
@@ -58,9 +59,6 @@ const DROPLET_SUMMON_SECONDS = Math.max(...DROPLET_HITMARK_FRAMES) / 60 + 0.1;
 // Wiki's Let the Show Begin♪ notes give
 const MELODY_LOOP_START_FRAMES = 3;
 const MELODY_LOOP_TICK_INTERVAL_SECONDS = 5;
-// The Melody Loop rings the character on the field wherever it moves, and Shining Miracle♪ heals with no area, so each
-// Field's circle holds every body
-const UNBOUNDED_FIELD_RADIUS = Number.POSITIVE_INFINITY;
 // A charged attack's heal is four times a strike's, as the wiki's Let the Show Begin♪ gives it
 const CHARGED_ATTACK_HEAL_FACTOR = 4;
 // Measured: gcsim v2.47.2 (MIT) barbara/burst.go, Shining Miracle's heal at 77 frames, once
