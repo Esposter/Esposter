@@ -57,3 +57,5 @@ scheduled_tasks.lock
 
 # OS
 .DS_Store
+# A crashed MSYS bash (Git Bash) writes its stack trace into the working directory
+*.stackdump
