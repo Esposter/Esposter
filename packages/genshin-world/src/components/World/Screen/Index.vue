@@ -46,6 +46,7 @@ import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { useExplorationAreas } from "#src/composables/useExplorationAreas";
 import { useInteraction } from "#src/composables/useInteraction";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
+import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldPickups } from "#src/composables/useWorldPickups";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
@@ -165,11 +166,6 @@ const input = createInput(window);
 const inputState = input.readInput(0);
 // What is open over the world, one screen at a time, and what it does to the world under it
 const screenKind = ref(ScreenKind.World);
-// The talk a resident has begun, which the talk host runs over the world while the talk screen is open
-const talk = shallowRef<Talk>();
-// The game of the card game the resident's talk offers a duel of, if it offers one, and the game being played now
-const talkDuelGameId = shallowRef<number>();
-const gcgGameId = shallowRef<number>();
 // The game's stat tables, read as the world starts rather than with the package, which the opening downloads, and the
 // Player's characters made from them and their party: the Traveler alone, as a new player's, on the field. Until the
 // Tables arrive nobody walks the field and the character screen opens as a placeholder, and tables that fail to arrive
@@ -408,18 +404,15 @@ const { bagFullHint, pickUpGatheringPlace, pickUpInteractables, pickUpWorldDrop,
     wallet,
   });
 const windrise = useTemplateRef<InstanceType<typeof WorldWindrise>>("windrise");
-// Each talk the quests in progress hold by its id, which a resident's talk is begun from
-const talkMap = computed(
-  () =>
-    new Map(
-      questsInProgress.value.flatMap(({ talks }) => talks.map((questTalk) => [questTalk.id, questTalk] as const)),
-    ),
-);
-// The card game's duel a resident offers from the talk it begins, if that resident offers one
-const getTalkDuelGameId = (talkId: string) =>
-  [...(windrise.value?.regionDataMap.values() ?? [])]
-    .flatMap(({ residents }) => residents)
-    .find((resident) => resident.talkId === talkId)?.duelGameId;
+// The talks a resident begins and the talk the world runs, held by id, with the duel a resident offers from each talk
+const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameId, talkMap } = useWorldTalks({
+  getResidentSpot: (residentId) => windrise.value?.residentSpots.get(residentId),
+  getResidents: () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents),
+  questsInProgress,
+  questTextMap,
+  // No resident holds a standing talk yet, so no standing talk is merged in
+  standingTalkMap: new Map<string, Talk>(),
+});
 // Every landmark a jump lands at, and the ones the player has unlocked: the map, the minimap, the jump list and a revive
 // Offer only those. A new player has unlocked none, and each is unlocked by resonating with it
 const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl);
@@ -446,22 +439,6 @@ useWorldSaveSync({
 // Whose talk the world holds, named by its text, and each jump landmark still locked, which it resonates with. Each
 // Stands on the ground beneath its point
 const interactables = computed<Interactable[]>(() => {
-  // A resident is a row only at the spot they are shown at this hour, so one absent from it is no row
-  const residents = [...(windrise.value?.regionDataMap.values() ?? [])]
-    .flatMap(({ residents: regionResidents }) => regionResidents)
-    .flatMap(({ id, nameTextId, talkId }) => {
-      const spot = windrise.value?.residentSpots.get(id);
-      if (!spot || !talkMap.value.has(talkId)) return [];
-      const { x, z } = spot.position;
-      return [
-        {
-          id: talkId,
-          kind: InteractionKind.Talk,
-          name: questTextMap.value[nameTextId] ?? "",
-          position: { x, y: getWorldHeight(x, z), z },
-        },
-      ];
-    });
   // A jump landmark is a Statue of The Seven until waypoints join the jumps, so each locked one is named by the statue
   const statues = jumpLandmarks.value
     .filter(({ id }) => !unlockedLandmarkIds.value.has(id))
@@ -471,7 +448,7 @@ const interactables = computed<Interactable[]>(() => {
       name: gameText[GameTextKey.StatueOfTheSeven],
       position: { x, y: getWorldHeight(x, z), z },
     }));
-  return [...pickUpInteractables.value, ...residents, ...statues];
+  return [...pickUpInteractables.value, ...residentInteractables.value, ...statues];
 });
 const { interactionPrompts, readInteraction } = useInteraction(() => interactables.value, characterBody);
 // The achievements a finished step or quest moves, read off their table when first needed, and the Primogems of those
