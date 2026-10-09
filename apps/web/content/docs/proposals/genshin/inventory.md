@@ -2,6 +2,7 @@
 title: Inventory
 description: Proposal — what the bag still lacks: using food on its own target and destroying equipment from the bag's screen, with the party's health and the game's destroy mode.
 model: claude-opus-5-5
+touches: ["packages/genshin-world/src/components/Inventory/**"]
 ---
 
 # Inventory

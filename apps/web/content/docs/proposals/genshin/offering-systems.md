@@ -2,6 +2,7 @@
 title: Offering systems
 description: Proposal — the regions' offering systems on one rule. A sacred tree, a fountain or a shrine takes every offering item of its kind the bag holds at once, rises a level for each threshold reached and gives that level's reward once. The rule, the bag's offer, the Frostbearing Tree's levels and its place in Mondstadt are built, on the Offering systems page; the tree's landmark and offer on F, and each region's offerings, are what is left.
 model: claude-haiku-5-5
+needs: [game-exports]
 ---
 
 # Offering systems

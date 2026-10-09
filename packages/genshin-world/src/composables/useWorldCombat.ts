@@ -69,8 +69,8 @@ export const useWorldCombat = ({
   const loadedCharacterIds = shallowRef<number[]>([]);
   const deployedCharacterIds = computed(() => party.teams[party.deployedTeamIndex]?.characterIds ?? []);
   watchImmediate(deployedCharacterIds, (characterIds) => {
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
     // The Traveler's chunk is read beside the team's, since a character with no kit of its own fights with the Traveler's
+    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
     getResultAsync(() => readTalentMultipliers([...new Set([TRAVELER_CHARACTER_ID, ...characterIds])])).match(
       (newTalentMultipliers) => {
         talentMultipliers.value = { ...talentMultipliers.value, ...newTalentMultipliers };

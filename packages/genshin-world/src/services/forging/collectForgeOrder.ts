@@ -5,17 +5,21 @@ import type { ForgeTalent } from "#src/models/forging/ForgeTalent";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
+import { ForgeRecipeKind } from "#src/models/forging/ForgeRecipeKind";
 import { ForgeTalentKind } from "#src/models/forging/ForgeTalent";
 import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
 import { drawForgeResult } from "#src/services/forging/drawForgeResult";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { ItemCategory } from "genshin-interface";
 
 // The bag, the Adventure EXP and order after every unit of a queue's order done by `now` is taken in. Each done unit yields
 // One result drawn by weight from its recipe's results, and an extra copy of it at the chance the talents of this forge type
-// Give. The units done are counted from the moment the order began at its seconds a unit, and a unit's result is taken
-// Whole, so the units done before the first the bag has no room for are taken in, and that unit waits in the queue with the
-// Units behind it. An order fully collected is no order, and its queue is free again
+// Give. A material result is taken from the item definitions, and a weapon result, the weapon recipes' only kind, from the
+// Weapons' names and rarities, each a weapon entry of its own. The units done are counted from the moment the order began
+// At its seconds a unit, and a unit's result is taken whole, so the units done before the first the bag has no room for
+// Are taken in, and that unit waits in the queue with the units behind it. An order fully collected is no order, and its
+// Queue is free again
 export const collectForgeOrder = (
   recipe: ForgeRecipe,
   order: ForgeOrder,
@@ -25,12 +29,14 @@ export const collectForgeOrder = (
     now,
     random,
     talents,
+    weapons,
   }: {
     definitions: Map<number, ItemDefinition>;
     inventory: Inventory;
     now: Temporal.Instant;
     random: () => number;
     talents: ForgeTalent[];
+    weapons: Map<number, Pick<ItemDefinition, "name" | "rarity">>;
   },
 ): { adventureExp: number; inventory: Inventory; order?: ForgeOrder } => {
   const elapsedSeconds = now.since(order.startedAt).total({ unit: "second" });
@@ -53,9 +59,7 @@ export const collectForgeOrder = (
       };
       continue;
     }
-    const definition = definitions.get(itemId);
-    if (!definition) throw new InvalidOperationError(Operation.Read, String(itemId), "has no definition in the bag");
-    const added = addInventoryItem(addition.inventory, definition, count);
+    const added = addInventoryItem(addition.inventory, toResultDefinition(recipe, itemId, definitions, weapons), count);
     if (added.overflow > 0) break;
     addition = { ...addition, collectedCount: addition.collectedCount + 1, inventory: added.inventory };
   }
@@ -73,4 +77,29 @@ export const collectForgeOrder = (
       unitSeconds: order.unitSeconds,
     },
   };
+};
+
+// A weapon is in the bag as the wish grants one: a weapon category entry of one, with no rank of its own, since its tab
+// Sorts it by level and quality. A material's definition is read from its item id
+const toResultDefinition = (
+  recipe: ForgeRecipe,
+  itemId: number,
+  definitions: Map<number, ItemDefinition>,
+  weapons: Map<number, Pick<ItemDefinition, "name" | "rarity">>,
+): ItemDefinition => {
+  if (recipe.kind === ForgeRecipeKind.Weapon) {
+    const weapon = weapons.get(itemId);
+    if (!weapon) throw new InvalidOperationError(Operation.Read, String(itemId), "has no weapon definition");
+    return {
+      category: ItemCategory.Weapon,
+      id: itemId,
+      name: weapon.name,
+      rank: 0,
+      rarity: weapon.rarity,
+      stackLimit: 1,
+    };
+  }
+  const definition = definitions.get(itemId);
+  if (!definition) throw new InvalidOperationError(Operation.Read, String(itemId), "has no definition in the bag");
+  return definition;
 };

@@ -12,8 +12,8 @@ interface Props {
 
 const { roles, roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
-const { memberPermissionOverrideMap, selectMember, selectRole } = roleStore;
-const { selectedMemberId, selectedRoleId } = storeToRefs(roleStore);
+const { selectMember, selectRole } = roleStore;
+const { memberPermissionOverrideMap, selectedMemberId, selectedRoleId } = storeToRefs(roleStore);
 const memberStore = useMemberStore();
 const { getMemberName } = memberStore;
 const roleMap = computed(() => new Map(roles.map((role) => [role.id, role])));
@@ -28,7 +28,7 @@ const roleItems = computed(() =>
 );
 // A member is listed while an override holds them, and while they are the one being added, which has no row yet
 const memberIds = computed(() => {
-  const overriddenMemberIds = [...memberPermissionOverrideMap.keys()];
+  const overriddenMemberIds = [...memberPermissionOverrideMap.value.keys()];
   return selectedMemberId.value && !overriddenMemberIds.includes(selectedMemberId.value)
     ? [...overriddenMemberIds, selectedMemberId.value]
     : overriddenMemberIds;

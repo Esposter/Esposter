@@ -11,15 +11,16 @@ const STALLED_FRAME_MS = 250;
 export const summarizeStallState = (
   name: string,
   frames: FrameSample[],
-  programsBefore: number | null,
-  programsAfter: number | null,
+  programsBefore: null | number,
+  programsAfter: null | number,
 ): StallState => {
   const frameMs = frames.slice(1).map((frame, index) => frame.time - (frames[index]?.time ?? 0));
   const growthAt: StallState["growthAt"] = [];
   const firstTime = frames[0]?.time ?? 0;
   for (const [index, frame] of frames.entries()) {
     const previousProgramCount = frames[index - 1]?.programs;
-    if (index === 0 || frame.programs === null || frame.programs === previousProgramCount) continue;
+    // A count falling is programs released, not a pipeline's first draw
+    if (index === 0 || frame.programs === null || frame.programs <= (previousProgramCount ?? 0)) continue;
     growthAt.push({ atMs: Math.round(frame.time - firstTime), programs: frame.programs });
   }
 

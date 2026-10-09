@@ -3,7 +3,9 @@ import { SURFACE_STATISTICS_SHADER } from "#parity/surfaceStatistics/surfaceStat
 interface SurfaceStatisticsPipelines {
   blur: GPUComputePipeline;
   combine: GPUComputePipeline;
+  halve: GPUComputePipeline;
   reduce: GPUComputePipeline;
+  similarity: GPUComputePipeline;
 }
 
 // The kernels compiled for one device, kept for every statistic it reads
@@ -18,7 +20,9 @@ export const getSurfaceStatisticsPipelines = (device: GPUDevice): SurfaceStatist
   const pipelines = {
     blur: createPipeline("blurPass"),
     combine: createPipeline("combinePass"),
+    halve: createPipeline("halvePass"),
     reduce: createPipeline("reducePass"),
+    similarity: createPipeline("similarityPass"),
   };
   pipelinesByDevice.set(device, pipelines);
   return pipelines;

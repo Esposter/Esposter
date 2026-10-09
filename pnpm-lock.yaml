@@ -2591,6 +2591,9 @@ importers:
       genshin-text:
         specifier: workspace:*
         version: link:../packages/genshin-text
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.5
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*

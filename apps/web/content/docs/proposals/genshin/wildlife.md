@@ -2,6 +2,7 @@
 title: Wildlife
 description: Proposal — the open world's animals as the game runs them. Birds and beasts flee within their escape radius and drop meat or fowl when struck, boars charge, Sumeru's fight back with health bars, crystalflies, butterflies, lizards and crabs are picked up as materials and vanish in smoke, cats and dogs simply live there, and each kind's numbers and weathers are the game's own environment animal rows. Mondstadt's fleeing birds and beasts are built, their drops and the rest still to come.
 model: claude-haiku-5-5
+needs: [game-exports]
 ---
 
 # Wildlife

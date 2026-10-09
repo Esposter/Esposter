@@ -7,6 +7,6 @@ export interface StallState {
   name: string;
   over50: number;
   over250: number;
-  programsAfter: number | null;
-  programsBefore: number | null;
+  programsAfter: null | number;
+  programsBefore: null | number;
 }

@@ -1,10 +1,9 @@
+import type { ProfileText } from "#src/models/profile/ProfileText";
 import type { GameLanguage } from "genshin-text";
 
-import type { ProfileText } from "#src/models/profile/ProfileText";
-
-import { ProfileTextLoaderMap } from "#src/services/profile/ProfileTextLoaderMap";
-import { readFriendshipLevels } from "#src/services/friendship/readFriendshipLevels";
 import { computeFriendshipLevel } from "#src/services/friendship/computeFriendshipLevel";
+import { readFriendshipLevels } from "#src/services/friendship/readFriendshipLevels";
+import { ProfileTextLoaderMap } from "#src/services/profile/ProfileTextLoaderMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A character's profile in the language, and the Friendship Level its total Companionship EXP has reached, both read on

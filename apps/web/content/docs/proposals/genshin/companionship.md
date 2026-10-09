@@ -2,6 +2,8 @@
 title: Companionship
 description: Proposal — the Serenitea Pot dialogue and namecard a Friendship Level opens, once a namecard view is drawn, and the commissions and random events that give the rest of the EXP.
 model: claude-opus-5-5
+touches: ["packages/genshin-world/src/components/Character/**"]
+waiting: "the namecard art extraction (the other machine)"
 ---
 
 # Companionship

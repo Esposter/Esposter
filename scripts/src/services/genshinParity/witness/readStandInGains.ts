@@ -7,7 +7,7 @@ import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErr
 import { readWitnessFamilies } from "#src/services/genshinParity/shared/readWitnessFamilies";
 import { readWitnessPartTarget } from "#src/services/genshinParity/shared/readWitnessPartTarget";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
-import { scoreLabelSimilarity } from "#src/services/genshinParity/witness/scoreLabelSimilarity";
+import { computeLabelSimilarity } from "#src/services/genshinParity/witness/computeLabelSimilarity";
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
 import { BYTE } from "#src/services/shared/constants";
 import { getOrCreate, withFinalizerAsync } from "@esposter/shared";
@@ -63,14 +63,14 @@ export const readStandInGains = async (
         readGrey(exportsShot, width, height),
         readGrey(ourShot, width, height),
       ]);
-      const { labelSimilarities } = scoreLabelSimilarity(
-        exportsGrey,
-        ourGrey,
-        width,
+      const { labelSimilarities } = await computeLabelSimilarity(page, {
         height,
+        labelCount: layerFamilies.length,
         labels,
-        layerFamilies.length,
-      );
+        reference: exportsGrey,
+        shot: ourGrey,
+        width,
+      });
       const nameTermMap = new Map<string, { count: number; error: number; similarity: number }>();
       let scoredCount = 0;
       for (const [pixel, error] of errorMap.entries()) {

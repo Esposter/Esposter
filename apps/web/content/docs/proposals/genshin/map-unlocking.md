@@ -2,6 +2,8 @@
 title: Map unlocking
 description: Proposal — what is left of the map's unlocking past the statues. A Teleport Waypoint or a domain's entrance is unlocked by reaching it, its first unlock rewarded from the game's table, a waypoint the game hides until a further step stays hidden, and a locked waypoint within 30 metres is pointed to. The statues' unlocking, the filled areas and the jumps are built ([map unlocking](/docs/genshin/map-unlocking)).
 model: claude-haiku-5-5
+needs: [game-exports]
+waiting: "the exploring proposal's Teleport Waypoints"
 ---
 
 # Map unlocking

@@ -2,6 +2,7 @@
 title: Weapon enhancement
 description: Proposal — a weapon's passive at its refinement rank, as a module over the kits' shared effects, its numbers read from the game's affix table. Levelling, ascension and refinement are built and documented in the Genshin area.
 model: claude-haiku-5-5
+needs: [game-exports]
 ---
 
 # Weapon enhancement

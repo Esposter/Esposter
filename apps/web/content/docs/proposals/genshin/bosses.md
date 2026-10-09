@@ -2,6 +2,7 @@
 title: Bosses
 description: Proposal — the game's bosses as it runs them. A normal boss waits in its arena near a waypoint, fights by its own moves, and leaves a Trounce Blossom claimed for 40 resin; a weekly boss waits in its trounce domain once its quest is done, its reward claimed once a week, and their materials are the ones characters ascend and talents rise past six with. The claim's respawn and the weekly reset and count are built.
 model: claude-opus-5-5
+needs: [game-exports]
 ---
 
 # Bosses

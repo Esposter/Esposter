@@ -17,6 +17,7 @@ describe(parseComputeQueueItem, () => {
       lane: "cpu",
       needs: ["game-install", "game-exports"],
       touches: ["extracted/liyue/world/world.json", "packages/genshin-world/src/data/liyue.json"],
+      waiting: "",
     });
   });
 
@@ -34,6 +35,7 @@ describe(parseComputeQueueItem, () => {
       lane: "page",
       needs: [],
       touches: ["packages/a/constants.ts"],
+      waiting: "",
     });
   });
 

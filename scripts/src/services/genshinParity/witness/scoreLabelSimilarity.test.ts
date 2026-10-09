@@ -9,13 +9,15 @@ describe(scoreLabelSimilarity, () => {
     Float32Array.from({ length: size * size }, (_value, index) =>
       Math.floor(((index % size) + shift) / 4) % 2 ? 0.8 : 0.2,
     );
+  const scoreOf = (reference: Float32Array, shot: Float32Array, pixelLabels: Int32Array, labelCount: number) =>
+    scoreLabelSimilarity({ height: size, labelCount, labels: pixelLabels, reference, shot, width: size });
 
   test("scores an image against itself as identical, pixel by pixel at each scale", () => {
     expect.hasAssertions();
 
     const stripes = drawStripes(0);
 
-    expect(scoreLabelSimilarity(stripes, stripes, size, size, labels, 1)).toStrictEqual({
+    expect(scoreOf(stripes, stripes, labels, 1)).toStrictEqual({
       labelSimilarities: [{ scales: [1, 1, 1, 1, 1], similarity: 1 }],
       termMaps: [64, 32, 16, 8, 4].map((side) => ({
         height: side,
@@ -31,8 +33,12 @@ describe(scoreLabelSimilarity, () => {
     const stripes = drawStripes(0);
     const halves = Int32Array.from({ length: size * size }, (_value, index) => ((index % size) * 2 < size ? 0 : 1));
     const neighbourChanged = stripes.map((value, index) => (halves[index] === 1 ? 1 - value : value));
-    const [{ similarity: own } = { similarity: 0 }, { similarity: neighbour } = { similarity: 0 }] =
-      scoreLabelSimilarity(stripes, neighbourChanged, size, size, halves, 2).labelSimilarities;
+    const [{ similarity: own } = { similarity: 0 }, { similarity: neighbour } = { similarity: 0 }] = scoreOf(
+      stripes,
+      neighbourChanged,
+      halves,
+      2,
+    ).labelSimilarities;
 
     expect(own).toBeCloseTo(1);
     expect(neighbour).toBeLessThan(own);
@@ -43,22 +49,8 @@ describe(scoreLabelSimilarity, () => {
 
     const stripes = drawStripes(0);
     const flat = new Float32Array(size * size).fill(0.5);
-    const [{ similarity: shifted } = { similarity: 0 }] = scoreLabelSimilarity(
-      stripes,
-      drawStripes(1),
-      size,
-      size,
-      labels,
-      1,
-    ).labelSimilarities;
-    const [{ similarity: bare } = { similarity: 0 }] = scoreLabelSimilarity(
-      stripes,
-      flat,
-      size,
-      size,
-      labels,
-      1,
-    ).labelSimilarities;
+    const [{ similarity: shifted } = { similarity: 0 }] = scoreOf(stripes, drawStripes(1), labels, 1).labelSimilarities;
+    const [{ similarity: bare } = { similarity: 0 }] = scoreOf(stripes, flat, labels, 1).labelSimilarities;
 
     expect(shifted).toBeGreaterThan(bare);
   });

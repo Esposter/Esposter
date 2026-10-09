@@ -2,6 +2,7 @@
 title: Nod-Krai
 description: Proposal — Nod-Krai, the moonlit borderland archipelago at Snezhnaya's southern tip. Islands formed from what was left over when the Three Moons were made, dieselpunk ports and Fatui works, the Frostmoon Scions' enclaves, and Statues of the New Moon in place of the Seven. The look is set by the game's own data and references more than by any other region's precedent.
 model: claude-opus-5-5
+needs: [game-exports]
 ---
 
 # Nod-Krai

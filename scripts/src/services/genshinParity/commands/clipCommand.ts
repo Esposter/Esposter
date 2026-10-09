@@ -20,7 +20,8 @@ export const clipCommand: SubCommandsDef[string] = defineCommand({
     name: "clip",
   },
   run: async ({ args }) => {
-    const name = args.name || `${args.from}-${args.to}`;
+    // A clip name holds no period, so a fractional second is written with an underscore
+    const name = args.name || `${args.from}-${args.to}`.replaceAll(".", "_");
     console.log(await downloadClip(args.url, Number(args.from), Number(args.to), name));
   },
 });

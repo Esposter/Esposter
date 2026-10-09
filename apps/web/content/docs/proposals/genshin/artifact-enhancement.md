@@ -2,6 +2,7 @@
 title: Artifact enhancement
 description: Proposal — each artifact set's conditional bonus, the four-piece effects that wait on combat, as a module per set over the character kits' shared effects, its numbers from the set table.
 model: claude-opus-5-5
+needs: [game-exports]
 ---
 
 # Artifact enhancement

@@ -2,6 +2,7 @@
 title: Recreation passes
 description: Proposal — every Genshin screen is rebuilt in ordered passes, each answering one kind of unknown from its most exact source, judged by its own measure at the references' cameras, gated and then frozen by a test, so no later pass retunes an earlier one. Layout, shape, motion and surface are judged against the game's own exports and never against a recording; the camera, and any motion no clip holds, are read off a recording only by where the exports' landmarks land in it; the recording's colour enters only for what exists at run time, the display transform, the light, the atmosphere and the sounds; and the frame's perceptual score is the last check, not the loop.
 model: claude-opus-5-5
+needs: [game-exports, game-install, media-engine]
 ---
 
 # Recreation passes

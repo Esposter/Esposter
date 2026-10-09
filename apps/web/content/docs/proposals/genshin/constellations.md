@@ -2,6 +2,7 @@
 title: Constellations
 description: Proposal — each constellation's effect written in its character's kit module, the Traveler's element sets from their own sources, and the Constellation tab's activation. The table, the activation rule, the talent levels the raises add and the Stella Fortuna from wishes are built, as the constellations page describes.
 model: claude-haiku-5-5
+needs: [game-exports]
 ---
 
 # Constellations

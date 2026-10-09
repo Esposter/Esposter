@@ -6,9 +6,9 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 
 import { ForgeTalentKind } from "#src/models/forging/ForgeTalent";
 import { Currency } from "#src/models/inventory/Currency";
+import { ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { checkIsForgeDailyCapReached } from "#src/services/forging/checkIsForgeDailyCapReached";
 import { checkIsForgeRecipeOpen } from "#src/services/forging/checkIsForgeRecipeOpen";
-import { ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { checkIsForgeRecipeRefusedInRealm } from "#src/services/forging/checkIsForgeRecipeRefusedInRealm";
 import { computeForgeQueueCount } from "#src/services/forging/computeForgeQueueCount";
 import { computeForgeTalents } from "#src/services/forging/computeForgeTalents";

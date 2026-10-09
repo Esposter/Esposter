@@ -2,6 +2,8 @@
 title: Character kits
 description: Proposal — every character's combat kit as the game plays it, on one framework the Traveler's kit already runs on. The kits run reads each character's talent multipliers from the game's tables, the Traveler's skill and burst take the element its statue gives, and what each character uniquely does is a small module over shared effects, each hit priced by combat as built.
 model: claude-opus-5-5
+needs: [game-exports]
+touches: ["packages/genshin-world/src/services/kit/**"]
 ---
 
 # Character kits

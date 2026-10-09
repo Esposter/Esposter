@@ -14,6 +14,7 @@ import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitne
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
 import { getPixelDisplayColor } from "#src/services/genshinParity/sky/getPixelDisplayColor";
+import { computeLabelSimilarity } from "#src/services/genshinParity/witness/computeLabelSimilarity";
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
 import { withFinalizerAsync } from "@esposter/shared";
 import sharp from "sharp";
@@ -57,7 +58,7 @@ export const measureGlow = async (component: DerivedAssetComponent): Promise<Par
           if (family >= 0 && isGlowing && checkIsScored(pixel, width)) glowPart.set([1, family, 0, 1], pixel * 4);
         }
         const referenceColour = toColourTarget(referenceShot, pixelCount);
-        const gate = compareFamilyColour(
+        const gate = await compareFamilyColour(
           { colour: referenceColour, part: glowPart },
           {
             colour: shiftTargetAcross(referenceColour, width, FRAME_GATE_PIXELS),
@@ -65,6 +66,7 @@ export const measureGlow = async (component: DerivedAssetComponent): Promise<Par
           },
           width,
           families.length,
+          (input) => computeLabelSimilarity(page, input),
         );
         const familyGateMap = new Map(
           gate.comparisons.map((comparison) => [
@@ -72,11 +74,12 @@ export const measureGlow = async (component: DerivedAssetComponent): Promise<Par
             Number.isFinite(comparison.structure) ? comparison.structure : 0,
           ]),
         );
-        const glow = compareFamilyColour(
+        const glow = await compareFamilyColour(
           { colour: referenceColour, part: glowPart },
           { colour: toColourTarget(oursFrame, pixelCount), part: glowPart },
           width,
           families.length,
+          (input) => computeLabelSimilarity(page, input),
         );
         return {
           notes: glow.comparisons.map(

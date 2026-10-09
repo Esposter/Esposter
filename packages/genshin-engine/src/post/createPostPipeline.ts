@@ -2,8 +2,8 @@ import type { PostPipeline } from "#src/models/post/PostPipeline";
 import type { PostPipelineOptions } from "#src/models/post/PostPipelineOptions";
 import type { Node } from "three/webgpu";
 
-import { AntialiasingMode } from "#src/models/renderer/AntialiasingMode";
 import { SharedToonOutlinePassNode } from "#src/models/nodes/SharedToonOutlinePassNode";
+import { AntialiasingMode } from "#src/models/renderer/AntialiasingMode";
 import { STONE_MASK_OUTPUT } from "#src/nodes/constants";
 import { createHeightFogNode } from "#src/post/createHeightFogNode";
 import { createOcclusionNode } from "#src/post/createOcclusionNode";

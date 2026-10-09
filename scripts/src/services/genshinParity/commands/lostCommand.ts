@@ -6,6 +6,7 @@ import { carryLossToPlan } from "#src/services/genshinParity/passes/carryLossToP
 import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";
 import { measureFamilyTargets } from "#src/services/genshinParity/passes/measureFamilyTargets";
 import { PLANS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { computeLabelSimilarity } from "#src/services/genshinParity/witness/computeLabelSimilarity";
 import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { toByte } from "#src/services/shared/toByte";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -67,7 +68,7 @@ export const lostCommand: SubCommandsDef[string] = defineCommand({
     const { notes } = await measureFamilyTargets(
       args.component,
       [WitnessTargetName.Part, WitnessTargetName.Albedo, WitnessTargetName.Position],
-      async (referenceId, exportsRead, oursRead) => {
+      async (referenceId, exportsRead, oursRead, page) => {
         const { families, width } = exportsRead;
         const family = families.indexOf(args.family);
         if (family === -1)
@@ -80,11 +81,12 @@ export const lostCommand: SubCommandsDef[string] = defineCommand({
           colour: targets.albedo ?? new Float32Array(),
           part: targets.part ?? new Float32Array(),
         });
-        const { termMaps } = compareFamilyColour(
+        const { termMaps } = await compareFamilyColour(
           read(exportsRead.targets),
           read(oursRead.targets),
           width,
           families.length,
+          (input) => computeLabelSimilarity(page, input),
         );
         const plan = carryLossToPlan(
           termMaps,

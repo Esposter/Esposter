@@ -2,6 +2,7 @@
 title: Dialogue
 description: Proposal — Genshin's dialogue, still to come. F on a resident begins their talk with the world's controls held, a talk's words are loaded in the reader's language with the Traveler's name and gender filled in, a resident offers each talk open to them with its mark, and narration is drawn on its black screen. The replies' marks are traced, and the screen's look and timings are measured. The talk graph, its runner, the dialogue screen with auto-play and skip, and residents in region data are built, as the dialogue page describes.
 model: claude-opus-5-5
+needs: [game-exports, game-install, media-engine]
 ---
 
 # Dialogue

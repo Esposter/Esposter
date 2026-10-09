@@ -2,6 +2,7 @@
 import type { DiffComment } from "@/models/agentConsole/DiffComment";
 import type { DiffRow } from "@/models/agentConsole/DiffRow";
 import type { FileEdit } from "@/models/agentConsole/FileEdit";
+import type { Except } from "type-fest";
 
 import { DiffRowType } from "@/models/agentConsole/DiffRowType";
 import { DiffSide } from "@/models/agentConsole/DiffSide";
@@ -24,7 +25,7 @@ const { diffCommentMap } = storeToRefs(agentConsoleSessionStore);
 const { deleteDiffComment, saveDiffComment } = agentConsoleSessionStore;
 const rows = computed(() => toDiffRows(fileEdit.oldText, fileEdit.newText));
 // The line whose comment box is open, and the text typed into it
-const openedLine = ref<Omit<DiffComment, "text">>();
+const openedLine = ref<Except<DiffComment, "text">>();
 const commentText = ref("");
 
 const openComment = (side: DiffSide, lineNumber: number, lineText: string) => {
@@ -33,6 +34,19 @@ const openComment = (side: DiffSide, lineNumber: number, lineText: string) => {
   openedLine.value = { filePath: fileEdit.filePath, lineNumber, lineText, side };
   commentText.value = diffCommentMap.value.get(toDiffCommentKey(openedLine.value))?.text || "";
 };
+// An unchanged line is the same line on both sides, so it takes its comment on the new side alone, where the prompt
+// Names it as it stands rather than as removed
+const toOldLineNumber = (row: DiffRow) => (row.type === DiffRowType.Unchanged ? 0 : row.oldLineNumber);
+// A commentable line is a button, so a keyboard opens its comment box as a click does
+const toLineControlAttributes = (side: DiffSide, lineNumber: number) =>
+  isCommentable && lineNumber
+    ? {
+        "aria-label": `Comment on ${side === DiffSide.Old ? "old" : "new"} line ${lineNumber}`,
+        class: "cursor-pointer",
+        role: "button",
+        tabindex: 0,
+      }
+    : {};
 // An emptied comment is removed rather than saved blank
 const saveComment = () => {
   const line = openedLine.value;
@@ -47,7 +61,7 @@ const toRowCommentBoxes = (row: DiffRow) => {
   if (!isCommentable) return [];
 
   const sideLines = [
-    { lineNumber: row.oldLineNumber, lineText: row.oldLine, side: DiffSide.Old },
+    { lineNumber: toOldLineNumber(row), lineText: row.oldLine, side: DiffSide.Old },
     { lineNumber: row.newLineNumber, lineText: row.newLine, side: DiffSide.New },
   ];
   return sideLines.flatMap(({ lineNumber, lineText, side }) => {
@@ -69,9 +83,11 @@ const toRowCommentBoxes = (row: DiffRow) => {
         <div
           px-2
           ws-pre
-          :class="{ 'cursor-pointer': isCommentable }"
           :style="DiffRowStyleMap[row.type].old"
-          @click="openComment(DiffSide.Old, row.oldLineNumber, row.oldLine)"
+          :="toLineControlAttributes(DiffSide.Old, toOldLineNumber(row))"
+          @click="openComment(DiffSide.Old, toOldLineNumber(row), row.oldLine)"
+          @keydown.enter.self.prevent="openComment(DiffSide.Old, toOldLineNumber(row), row.oldLine)"
+          @keydown.space.self.prevent="openComment(DiffSide.Old, toOldLineNumber(row), row.oldLine)"
         >
           {{ row.oldLine }}
         </div>
@@ -81,9 +97,11 @@ const toRowCommentBoxes = (row: DiffRow) => {
           b-l-2
           b-l-solid
           ws-pre
-          :class="{ 'cursor-pointer': isCommentable }"
           :style="DiffRowStyleMap[row.type].new"
+          :="toLineControlAttributes(DiffSide.New, row.newLineNumber)"
           @click="openComment(DiffSide.New, row.newLineNumber, row.newLine)"
+          @keydown.enter.self.prevent="openComment(DiffSide.New, row.newLineNumber, row.newLine)"
+          @keydown.space.self.prevent="openComment(DiffSide.New, row.newLineNumber, row.newLine)"
         >
           {{ row.newLine }}
         </div>

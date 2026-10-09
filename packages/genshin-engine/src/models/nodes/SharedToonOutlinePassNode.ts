@@ -12,11 +12,9 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   #isCompiling = false;
   #outlineMaterial: NodeMaterial | undefined;
 
-  override updateBefore(frame: NodeFrame): boolean | undefined {
-    // The compile holds each toon mesh in the outline material, which the frame must not draw
-    if (this.#isCompiling) return undefined;
-
-    return super.updateBefore(frame);
+  // Every toon material is outlined by the one shared material, which three would build once per toon material given
+  _getOutlineMaterial(_originalMaterial: Material): NodeMaterial {
+    return this.#getSharedOutlineMaterial();
   }
 
   // Compiles the scene's pipelines, then the outline's over the same meshes: three's compile ignores the render-object
@@ -24,14 +22,23 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   // Compile sets its render target and MRT, which fails to build some of the scene's shaders, so the renderer's is used
   override async compileAsync(renderer: Renderer): Promise<void> {
     await renderer.compileAsync(this.scene, this.camera);
-    const heldMeshes: [Mesh, Material][] = [];
-    this.scene.traverse((object) => {
-      if (object instanceof Mesh && !Array.isArray(object.material) && checkIsOutlined(object.material))
-        heldMeshes.push([object, object.material]);
-    });
     const outlineMaterial = this.#getSharedOutlineMaterial();
+    // A multi-material mesh is outlined group by group, so only its toon groups are held in the outline material
+    const heldMeshes: [Mesh, Material | Material[], Material | Material[]][] = [];
+    this.scene.traverse((object) => {
+      if (!(object instanceof Mesh)) return;
+      const material: Material | Material[] = object.material;
+      if (Array.isArray(material)) {
+        if (material.some((groupMaterial) => checkIsOutlined(groupMaterial)))
+          heldMeshes.push([
+            object,
+            material,
+            material.map((groupMaterial) => (checkIsOutlined(groupMaterial) ? outlineMaterial : groupMaterial)),
+          ]);
+      } else if (checkIsOutlined(material)) heldMeshes.push([object, material, outlineMaterial]);
+    });
     this.#isCompiling = true;
-    for (const [mesh] of heldMeshes) mesh.material = outlineMaterial;
+    for (const [mesh, , heldMaterial] of heldMeshes) mesh.material = heldMaterial;
     try {
       await renderer.compileAsync(this.scene, this.camera);
     } finally {
@@ -40,9 +47,11 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
     }
   }
 
-  // Every toon material is outlined by the one shared material, which three would build once per toon material given
-  _getOutlineMaterial(_originalMaterial: Material): NodeMaterial {
-    return this.#getSharedOutlineMaterial();
+  override updateBefore(frame: NodeFrame): boolean | undefined {
+    // The compile holds each toon mesh in the outline material, which the frame must not draw
+    if (this.#isCompiling) return undefined;
+
+    return super.updateBefore(frame);
   }
 
   #getSharedOutlineMaterial(): NodeMaterial {

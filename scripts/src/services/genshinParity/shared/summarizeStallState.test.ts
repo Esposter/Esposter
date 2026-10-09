@@ -47,6 +47,18 @@ describe(summarizeStallState, () => {
     ]);
   });
 
+  test("places no growth at a frame whose programs fell", () => {
+    expect.hasAssertions();
+
+    const RELEASED_PROGRAMS = 70;
+    const frames: FrameSample[] = [
+      { programs: PROGRAMS, time: 0 },
+      { programs: RELEASED_PROGRAMS, time: FRAME_MS },
+    ];
+
+    expect(summarizeStallState(STATE_NAME, frames, PROGRAMS, RELEASED_PROGRAMS).growthAt).toStrictEqual([]);
+  });
+
   test("reports no frames for a state that drew none", () => {
     expect.hasAssertions();
 

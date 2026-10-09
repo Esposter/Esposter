@@ -2,6 +2,8 @@
 title: Talents
 description: Proposal — the Talents tab's upgrade pressed on the character screen, and a kit reading each talent at its own level plus its constellations' additions. The levelling, its costs, the passives each phase opens and the additions are built, as the talents and constellations pages describe.
 model: claude-haiku-5-5
+needs: [game-exports]
+touches: ["packages/genshin-world/src/components/Character/**"]
 ---
 
 # Talents

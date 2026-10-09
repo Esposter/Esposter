@@ -11,6 +11,8 @@ const CONFIGURATION_PACKAGE_NAME = "configuration";
 // The exit code Windows gives a process the console's Ctrl+C ended, which Node reports with no `SIGINT` signal
 const STATUS_CONTROL_C_EXIT = 0xc000013a;
 const WATCHER_RESPAWN_DELAY = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
+// The line tsdown prints as a build writes its `dist`, which marks a watcher's first build as done
+const BUILD_COMPLETE_TEXT = "Build complete";
 const WORKSPACE_PROTOCOL = "workspace:";
 const SOURCE_PATTERNS = ["src/**/*.ts", "src/**/*.vue"];
 const logger = useLogger("watch-packages");
@@ -36,7 +38,7 @@ const readSourceFileList = (packageDirectory: string): string =>
 // From under them
 export default defineNuxtModule({
   meta: { name: "watch-packages" },
-  setup: (_options, nuxt) => {
+  setup: async (_options, nuxt) => {
     if (!nuxt.options.dev || process.env.VITEST) return;
     const packagesDirectory = join(nuxt.options.workspaceDir, "packages");
     const packageDirectoryMap = new Map(
@@ -72,12 +74,37 @@ export default defineNuxtModule({
     // Cleaning it mid-reload, so an exit respawns it after a pause rather than leaving its package silently stale. A
     // Ctrl+C reaches every watcher before Nuxt's close hook runs, so a watcher it ended stays ended rather than being
     // Respawned into a shutting-down process and orphaned on the console
+    // Each `dist` was just cleared, so a page served before a package's first build lands fails on a missing module:
+    // Nuxt waits for every watcher's first build before it serves. A watcher that exits first releases its wait too,
+    // So a package whose build fails leaves its error in the console rather than holding the server back for good
+    const firstBuildResolverMap = new Map<string, () => void>();
+    const firstBuilds = Array.from(
+      watchedPackageNames,
+      (packageName) =>
+        new Promise<void>((resolve) => {
+          firstBuildResolverMap.set(packageName, resolve);
+        }),
+    );
+    const resolveFirstBuild = (packageName: string) => {
+      firstBuildResolverMap.get(packageName)?.();
+      firstBuildResolverMap.delete(packageName);
+    };
     const spawnWatcher = (packageName: string) => {
       const watcher = spawn(process.execPath, [tsdownPath, "--watch", "--no-clean"], {
         cwd: packageDirectoryMap.get(packageName),
-        stdio: ["ignore", "inherit", "inherit"],
+        stdio: ["ignore", "pipe", "inherit"],
+      });
+      // The watcher's output still reaches the console; a tail of the last chunk is kept so the marker is found even
+      // When a chunk boundary splits it
+      let outputTail = "";
+      watcher.stdout?.on("data", (chunk: Buffer) => {
+        process.stdout.write(chunk);
+        const output = outputTail + chunk.toString();
+        if (output.includes(BUILD_COMPLETE_TEXT)) resolveFirstBuild(packageName);
+        outputTail = output.slice(-BUILD_COMPLETE_TEXT.length);
       });
       watcher.on("exit", (code, signal) => {
+        resolveFirstBuild(packageName);
         if (isClosing || signal === "SIGINT" || code === STATUS_CONTROL_C_EXIT) return;
         if (restartingPackageNames.delete(packageName))
           logger.info(`A source file of ${packageName} was added or removed, restarting its tsdown watcher`);
@@ -115,5 +142,7 @@ export default defineNuxtModule({
       for (const sourceWatcher of sourceWatchers) sourceWatcher.close();
       for (const watcher of watcherMap.values()) watcher.kill();
     });
+    logger.info(`Waiting for the first build of ${watchedPackageNames.size} watched packages`);
+    await Promise.all(firstBuilds);
   },
 });

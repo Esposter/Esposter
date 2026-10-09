@@ -2,6 +2,7 @@
 title: Adventure Rank
 description: Proposal — the parts of the player's Adventure Rank still unbuilt: the Adventure EXP each source gives, Katheryne's rewards for each rank, the systems each rank opens, and the profile card's lowering. The rank, its holds, the World Level, the enemies it raises and the profile card's values are built.
 model: claude-opus-5-5
+needs: [game-exports]
 ---
 
 # Adventure Rank

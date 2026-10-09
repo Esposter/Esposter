@@ -5,7 +5,7 @@ description: The character screen's Profile tab as built — each playable chara
 
 # Character profile
 
-The character screen's Profile tab lists a character's stories down its left, `Character Details`, the five character stories, the pet's story and `Vision` in the game's order, and then its voice-overs in the order the game lists them. It shows the chosen entry's title and text down its right. A story or voice-over opens at the Friendship Level its fetter names. One that waits on another condition, a quest for instance, stays locked whatever the level, and the locked list shows the game's unlock line in place of its title.
+The character screen's Profile tab lists a character's stories down its left, `Character Details`, the five character stories, the pet's story and `Vision` in the game's order, and then its voice-overs in the order the game lists them. It shows the chosen entry's title and text down its right. A story or voice-over opens at the Friendship Level its fetter names. One that waits on another condition, a quest for instance, stays locked whatever the level. The locked list shows the game's unlock line in place of a story's title, or its title alone when no level opens it.
 
 ## How it works
 
@@ -23,8 +23,8 @@ flowchart LR
 
 - **Stories are the fetter story table's rows, one each.** A character's rows are taken in the order the table gives them, by fetter id, and each title and text is the game's own string by its text id, read from the language's text map and English where that map lacks one.
 - **Voice-overs are the fetters table's rows, read as stories.** Each row's title is its voice title's text id and its text the line it speaks, so one conversion serves both. The rows the game hides are left out, and the rest keep the table's order by fetter id after the stories.
-- **A story or voice-over opens at its Friendship Level.** Its open conditions name the level, and one with no level opens at once. One whose conditions name anything besides a level or none stays locked whatever the level, and shows its title alone.
-- **A locked story shows the game's unlock line,** `Lv. {0} unlocks: {1}`, with the level it opens at and its title, and no text. This is the game's own line by its text id, so nothing is phrased here.
+- **A story or voice-over opens at its Friendship Level.** Its open conditions name the level, and one with no level opens at once. One whose conditions name anything besides a level or none stays locked whatever the level.
+- **A locked story with a level to open at shows the game's unlock line,** `Lv. {0} unlocks: {1}`, with that level and its title, and no text. This is the game's own line by its text id, so nothing is phrased here. A locked story no level opens shows its title alone.
 - **The tab sits in the character menu's panel,** widened from the characters' row's left edge so the list and the text share it. The reference is the game's separate Profile / Story page with its own header, and that page is not built; the tab's layout and colours are provisional until the user compares them.
 - **The namecard is the avatar icon's name with the namecard prefix,** for every playable character but Xinyan, Yae Miko and Momoka, who have none. The writer stores it per character; the namecard view that shows it is not built.
 - **The Friendship Level is read from the save's Companionship EXP,** through the [companionship](/docs/genshin/companionship) level table, once the screen is given the save's companionship slice.

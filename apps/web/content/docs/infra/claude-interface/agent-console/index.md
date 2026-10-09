@@ -49,7 +49,7 @@ What the terminal shows and does, and where the console carries each part, is [t
 | [Claude Agent SDK driver](/docs/infra/claude-interface/agent-console/claude-agent-sdk-driver) | sessions, the one place SDK messages become events, permissions, resume and fork             |
 | [Side pane](/docs/infra/claude-interface/agent-console/side-pane)                             | any page of the app beside the conversation, opened with the embed flag and no code          |
 | [Console overlay](/docs/infra/claude-interface/agent-console/console-overlay)                 | the bar, the keys, the console sheet, the pause menu, the loading screen and what they cost  |
-| [Diff comments](/docs/infra/claude-interface/agent-console/diff-comments)                     | a comment on any line of the changes tab, sent to the session together as one prompt         |
+| [Diff comments](/docs/infra/claude-interface/agent-console/diff-comments)                     | a comment on any line of a file's whole diff in the changes tab, sent together as one prompt |
 | [Terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity)                 | every terminal surface and action, and the part of the page that carries it                  |
 | [Workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison)         | the terminal's workflow against the console's, task by task, and what the console costs      |
 

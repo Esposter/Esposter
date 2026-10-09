@@ -153,7 +153,7 @@ const talentLevels = computed(() => COMBAT_TALENT_ORDER.map((talent) => characte
         :key="`${character.id}-${language}`"
         :avatar-id="character.id"
         :friendship-exp="companionshipExpMap.get(character.id) ?? 0"
-        :game-text="gameText"
+        :game-text
         :language
       />
     </CharacterMenu>

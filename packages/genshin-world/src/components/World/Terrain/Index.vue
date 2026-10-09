@@ -66,7 +66,7 @@ const {
   windUniforms,
 } = defineProps<Props>();
 const emit = defineEmits<{ ready: [] }>();
-const { camera } = useTres();
+const { camera, renderer, scene } = useTres();
 const { onBeforeRender } = useLoop();
 const { cellsPerSide, finestRange, finestTileSize } = terrainOptions;
 const morphEye = uniform(new Vector3());
@@ -112,7 +112,7 @@ const tileStreamer = createTileStreamer<Mesh | PlantedTerrainTile>({
     requestCount++;
   },
 });
-const receiveTile = (event: MessageEvent<PlantedTerrainTile>) => {
+const receiveTile = async (event: MessageEvent<PlantedTerrainTile>) => {
   const terrainTile = event.data;
   const { key, plantColors, plantMatrices } = terrainTile;
   if (!checkIsNear(key)) {
@@ -129,7 +129,6 @@ const receiveTile = (event: MessageEvent<PlantedTerrainTile>) => {
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   mesh.layers.enable(TERRAIN_LAYER);
-  mesh.visible = false;
   if (plantMatrices.length > 0) {
     const flowerMesh = new InstancedMesh(flowerGeometry, flowerMaterial, plantMatrices.length / 16);
     flowerMesh.instanceMatrix = new InstancedBufferAttribute(plantMatrices, 16);
@@ -138,12 +137,18 @@ const receiveTile = (event: MessageEvent<PlantedTerrainTile>) => {
     flowerMesh.computeBoundingSphere();
     mesh.add(flowerMesh);
   }
+  // Three compiles only what is visible and unparented, so the tile's pipelines build before any frame can draw it,
+  // Then it is held hidden and handed to the streamer, which shows it from the next frame that draws it
+  const activeCamera = camera.value;
+  const activeScene = scene.value;
+  if (activeCamera && activeScene) await renderer.compileAsync(mesh, activeCamera, activeScene);
+  mesh.visible = false;
   tileGroup.add(mesh);
   tileStreamer.receive(key, mesh);
 };
 for (const worker of workers)
   worker.addEventListener("message", (event) => {
-    receiveTile(event);
+    void receiveTile(event);
   });
 // Built once, since the draws are resolved every frame
 const checkTileLoaded = (key: number): boolean => tileStreamer.has(key);

@@ -2,6 +2,7 @@
 title: Genius Invokation TCG
 description: Proposal — the card game against its residents, past its rules engine, its decks and its duel board, which are built: the board opens from a resident's talk, and what follows is a resident's talk held in the world, the game's own decks, each further card's module, and invitationals, tavern challengers, the Card Shop and the Player Level.
 model: claude-opus-5-5
+needs: [game-exports]
 ---
 
 # Genius Invokation TCG

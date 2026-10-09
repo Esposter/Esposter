@@ -32,5 +32,6 @@ export const parseComputeQueueItem = (line: string): FleetEntry | undefined => {
     lane: groups.lane ?? "",
     needs: groups.needs?.split(", ") ?? [],
     touches: readWrittenPaths(groups.rest ?? ""),
+    waiting: "",
   };
 };
