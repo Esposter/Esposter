@@ -354,8 +354,10 @@ wait at one that does not move (`RELAND_RETRY_WAITS_MS`), up to its attempts; on
 the step that parked it to try again under its own caps, each let-go counted among the re-land's attempts. A commit
 carrying an `Express:` trailer — its claim that nothing in it needs a reviewer — goes straight to `main` unverified, and
 is parked instead once no cut applies it past its attempts — counted by its patch, which the queue's rewrites keep — or
-at once when nothing in flight can move `main`. A red `main` is repaired after the walk and the openings — unless the
-queue already passes a job it failed, a transit gap its windows heal, which spends nothing — each part of an attempt on
+at once when nothing in flight can move `main`. A red `main` is repaired after the walk and the openings, CI's and
+CodeQL's each on its own — unless the queue's run over its head already passes a job it failed, a transit gap its
+windows heal, which spends nothing, or is still going, which holds the red with a wake for when that run should have
+concluded, as nothing reports a queue run concluding and a quiet queue pushes nothing — each part of an attempt on
 its own clock and the attempts counted per failure signature, with an issue once its attempts run out and a wake for
 when the oldest of them age out. Every session runs under a wall clock, a session that never starts is retried five
 minutes later, a run that fails or is killed is woken five minutes later, and a hold that lifts on a clock schedules its

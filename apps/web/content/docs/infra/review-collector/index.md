@@ -59,8 +59,9 @@ flowchart TD
   BW -->|no window open| SY
   SY[Rewrite ai/queue onto develop or the fixes,<br/>parking a commit it cannot carry on ai/held/*] --> OB{A slot free in the rolling hour,<br/>stacking allowed, something owed}
   OB -->|yes| W[Cut the next window, push review/n,<br/>fast-forward develop, open its pull request] --> OB
-  OB -->|no| MR{main red on CI}
-  MR -->|yes, but a job it failed passes on the queue| TG[A transit gap the windows heal —<br/>recorded on main's head, exit]
+  OB -->|no| MR{main red on CI or CodeQL,<br/>each workflow judged on its own}
+  MR -->|yes, but a job it failed passes on the queue's run over it| TG[A transit gap the windows heal —<br/>recorded on main's head, exit]
+  MR -->|yes, and the queue's run over it is still going| HD[Held — exit, waking once a queue run's span has passed]
   MR -->|yes, in no job the queue passes,<br/>its signature under the cap| RG[Regenerators, else Claude repairs,<br/>each part on its own clock — push, exit]
   MR -->|yes, past the cap| RI[One issue for the signature, exit —<br/>waking when its oldest attempts age out]
   MR -->|no| X[Exit, waking at the soonest instant a run stated —<br/>the hour's oldest opening ageing out, an ask's wait, a check's wait]
