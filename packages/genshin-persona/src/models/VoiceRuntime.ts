@@ -12,5 +12,5 @@ export interface VoiceRuntime {
   AutoProcessor: { from_pretrained: (modelId: string) => Promise<VoiceProcessor> };
   ChatterboxModel: { from_pretrained: (modelId: string, options: VoiceModelOptions) => Promise<VoiceModel> };
   env: { cacheDir: string };
-  Tensor: new (type: "float32", data: Float32Array, dims: number[]) => VoiceTensor;
+  Tensor: new (type: string, data: BigInt64Array | Float32Array, dims: number[]) => VoiceTensor;
 }

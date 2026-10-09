@@ -90,27 +90,33 @@ const speak = async (request: SpeechRequest, player: AudioPlayer | undefined, ch
     if (playerFailure) writeVoiceLog(`the player did not play: ${playerFailure}`);
   };
   let playback: Promise<void> = Promise.resolve();
-  for (const line of request.lines) {
+  for (const [lineIndex, line] of request.lines.entries()) {
+    let isSpoken = false;
+    // Each chunk plays as it is vocoded, and a line that stops short is cut where it stood; leaving this loop early
+    // Ends the generation behind it
+    const label = `reply ${request.messageId}, line ${lineIndex + 1}`;
     // oxlint-disable-next-line no-await-in-loop -- One device: lines synthesize and play back one after another
-    const clip = await synthesizer.synthesize(line, speaker);
-    if (!clip) {
+    for await (const clip of synthesizer.streamSpeech(line, speaker, label, checkIsSuperseded)) {
+      isSpoken = true;
+      if (synthesizer.device !== settledDevice) {
+        settledDevice = synthesizer.device;
+        writeVoiceDevice(settledDevice);
+      }
+
+      if (!player) continue;
+
+      // oxlint-disable-next-line no-await-in-loop -- One device: chunks play back one after another
+      await playback;
+      if (checkIsSuperseded()) return VoiceStatus.Superseded;
+
+      playback = play(player, clip);
+    }
+
+    if (!isSpoken) {
       // oxlint-disable-next-line no-await-in-loop -- One device: lines synthesize and play back one after another
       await playback;
       return VoiceStatus.Error;
     }
-
-    if (synthesizer.device !== settledDevice) {
-      settledDevice = synthesizer.device;
-      writeVoiceDevice(settledDevice);
-    }
-
-    if (!player) continue;
-
-    // oxlint-disable-next-line no-await-in-loop -- One device: lines synthesize and play back one after another
-    await playback;
-    if (checkIsSuperseded()) return VoiceStatus.Superseded;
-
-    playback = play(player, clip);
   }
 
   await playback;
