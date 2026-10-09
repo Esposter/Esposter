@@ -6,6 +6,6 @@ export const encodeBase64 = (values: Float32Array): string => {
   const bytes = new Uint8Array(values.buffer, values.byteOffset, values.byteLength);
   let binary = "";
   for (let offset = 0; offset < bytes.length; offset += CHUNK_BYTES)
-    binary += String.fromCharCode(...bytes.subarray(offset, offset + CHUNK_BYTES));
+    binary += String.fromCodePoint(...bytes.subarray(offset, offset + CHUNK_BYTES));
   return btoa(binary);
 };

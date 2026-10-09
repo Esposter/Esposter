@@ -237,7 +237,7 @@ export const computeLabelSimilarity = async ({
     shotBuffer,
     weightBuffer,
     partialBuffer,
-    ...scales.flatMap(listScaleBuffers),
+    ...scales.flatMap((buffers) => listScaleBuffers(buffers)),
     ...recorder.parameterBuffers,
   ]);
   return { labelSimilarities, termMaps };

@@ -27,7 +27,7 @@ getResultAsync(() => Promise.all([NameTextLoaderMap[props.language](), readStatT
 <template>
   <WorldSession
     v-if="loaded"
-    v-bind="props"
+    :="props"
     :name-text="loaded.nameText"
     :stat-tables="loaded.statTables"
     @grant="emit('grant')"

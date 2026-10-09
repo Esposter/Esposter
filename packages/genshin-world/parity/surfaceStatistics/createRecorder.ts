@@ -100,8 +100,8 @@ export const createRecorder = (device: GPUDevice, encoder: GPUCommandEncoder) =>
       output: GPUBuffer,
       count: number,
       mode: CombineMode,
-      mean: number = 0,
-      label: number = 0,
+      mean = 0,
+      label = 0,
     ): void =>
       dispatchPerPixel(
         pipelines.combine,

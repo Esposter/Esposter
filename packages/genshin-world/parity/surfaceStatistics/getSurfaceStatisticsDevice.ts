@@ -5,7 +5,7 @@ let device: Promise<GPUDevice> | undefined;
 
 export const getSurfaceStatisticsDevice = (): Promise<GPUDevice> => {
   device ??= (async () => {
-    const adapter = await navigator.gpu.requestAdapter({ powerPreference: "high-performance" });
+    const adapter = await window.navigator.gpu.requestAdapter({ powerPreference: "high-performance" });
     if (!adapter) throw new InvalidOperationError(Operation.Read, "WebGPU adapter", "none on the parity page");
     return adapter.requestDevice();
   })();

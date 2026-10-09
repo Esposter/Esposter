@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Character } from "#src/models/character/Character";
+import type { StatTables } from "#src/models/character/StatTables";
 import type { Talk } from "#src/models/dialogue/Talk";
 import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Interactable } from "#src/models/interaction/Interactable";
-import type { StatTables } from "#src/models/character/StatTables";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
@@ -93,8 +93,8 @@ const {
   qualityTier,
   regionDataBaseUrl,
   save,
-  statTables,
   serverClockOffsetMs = 0,
+  statTables,
 } = defineProps<Props>();
 // Quitting the game leaves the world, which its host does. A grant is a change to the bag or the wallet the host saves
 // At once, and a save is every change to what the world holds, which the host saves on its own cadence

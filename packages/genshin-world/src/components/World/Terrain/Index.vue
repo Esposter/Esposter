@@ -148,7 +148,7 @@ const receiveTile = async (event: MessageEvent<PlantedTerrainTile>) => {
 };
 for (const worker of workers)
   worker.addEventListener("message", (event) => {
-    void receiveTile(event);
+    receiveTile(event);
   });
 // Built once, since the draws are resolved every frame
 const checkTileLoaded = (key: number): boolean => tileStreamer.has(key);

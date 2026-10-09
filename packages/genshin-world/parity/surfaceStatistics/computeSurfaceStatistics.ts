@@ -1,10 +1,7 @@
 import type { SurfaceStatisticsInput } from "#parity/surfaceStatistics/SurfaceStatisticsInput";
 
 import { CombineMode } from "#parity/surfaceStatistics/CombineMode";
-import {
-  SURFACE_STATISTICS_PARTIAL_COUNT,
-  SURFACE_STATISTICS_WORKGROUP_SIZE,
-} from "#parity/surfaceStatistics/constants";
+import { SURFACE_STATISTICS_PARTIAL_COUNT } from "#parity/surfaceStatistics/constants";
 import { createRecorder } from "#parity/surfaceStatistics/createRecorder";
 import { createStorageBuffer } from "#parity/surfaceStatistics/createStorageBuffer";
 import { destroyBuffers } from "#parity/surfaceStatistics/destroyBuffers";
@@ -66,21 +63,21 @@ export const computeSurfaceStatistics = async ({
   recorder.combine(valueBuffer, maskBuffer, maskBuffer, weightedBuffer, count, CombineMode.Product);
   recorder.reduce(maskBuffer, partialBuffer, count, Slot.Count);
   recorder.reduce(weightedBuffer, partialBuffer, count, Slot.Sum);
-  sigmas.forEach((sigma, level) => {
+  for (const [level, sigma] of sigmas.entries()) {
     const radius = Math.ceil(3 * sigma);
     const weights = takeOne(weightBuffers, level);
     const levelBuffer = takeOne(levelBuffers, level);
     recorder.blur(weightedBuffer, blurredValuesBuffer, temporaryBuffer, weights, width, height, radius);
     recorder.blur(maskBuffer, blurredMaskBuffer, temporaryBuffer, weights, width, height, radius);
     recorder.combine(blurredValuesBuffer, blurredMaskBuffer, maskBuffer, levelBuffer, count, CombineMode.Ratio);
-  });
+  }
   // Each band is the mask's squared difference between a level and the next coarser one, the first level being the values
-  sigmas.forEach((_sigma, band) => {
+  for (const band of sigmas.keys()) {
     const finer = band === 0 ? valueBuffer : takeOne(levelBuffers, band - 1);
     const coarser = takeOne(levelBuffers, band);
     recorder.combine(finer, coarser, maskBuffer, termBuffer, count, CombineMode.SquaredDifference);
     recorder.reduce(termBuffer, partialBuffer, count, Slot.FirstBand + band);
-  });
+  }
   const [firstSlots = new Float32Array()] = await submitAndReadBuffers(device, encoder, [
     { buffer: partialBuffer, length: (Slot.FirstBand + sigmas.length) * SURFACE_STATISTICS_PARTIAL_COUNT },
   ]);
