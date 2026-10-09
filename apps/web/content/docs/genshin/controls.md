@@ -9,7 +9,7 @@ The world reads its controls the way the game binds them. Every action a player'
 
 ## A binding is chords
 
-Each action's binding is a list of chords, and a chord is the codes held together, its last code the one whose press triggers it. Most chords are one code: `M` opens the map, `Q` is the elemental burst, a pad's top face button is the burst too. A few are two: on a pad, the left bumper held with the right face button is the quick-use gadget, and with the directional pad's right the co-op screen.
+Each action's binding is a list of chords, and a chord is the codes held together, its last code the one whose press triggers it. Most chords are one code: `M` opens the map, `Q` is the elemental burst, a pad's top face button is the burst too. A few are two: on a pad, the left bumper held with the right face button is the quick-use gadget, and with the directional pad's right the co-op screen; on a keyboard, Left Alt held with a number switches to that party member and uses its burst.
 
 Keys, mouse buttons and gamepad buttons share one namespace of codes. A key is its physical code (`KeyM`), so a layout does not move it; a mouse button and a gamepad button are each an enum value spelt apart from every key code (`MouseButton`, `GamepadButton`), so one chord can name any of them. A gamepad's buttons are read in the browser's standard layout and named by where they sit, so a PlayStation pad's cross and an Xbox pad's A are both `FaceBottom`.
 
@@ -55,7 +55,7 @@ While the pointer is locked to turn the camera, the browser keeps `Escape` for i
 
 ## Not bound
 
-The bindings of places and modes the world does not have are left out: the Serenitea Pot's and the Cat's Tail's screens (`F6`, `F7`), Stellar Reunion (`F8`), a fifth party member, a challenge's abandon, the tutorial, notification and special environment pop-ups, the switch-and-burst on `Alt` with a number, and every Miliastra Wonderland control.
+The bindings of places and modes the world does not have are left out: the Serenitea Pot's and the Cat's Tail's screens (`F6`, `F7`), Stellar Reunion (`F8`), a fifth party member, a challenge's abandon, the tutorial, notification and special environment pop-ups, and every Miliastra Wonderland control.
 
 ## Key files
 

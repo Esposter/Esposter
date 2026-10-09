@@ -1,4 +1,6 @@
 import type { FittedFamily } from "#src/models/genshinAssets/fit/FittedFamily";
+import type { FittedSurface } from "#src/models/genshinAssets/fit/FittedSurface";
+import type { SurfaceDetail } from "#src/models/genshinAssets/fit/SurfaceDetail";
 import type { SurfaceSample } from "#src/models/genshinAssets/fit/SurfaceSample";
 import type { Texture } from "#src/models/genshinAssets/fit/Texture";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
@@ -6,6 +8,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { Vector } from "#src/models/shared/Vector";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
+import { averageSurfaceDetails, computeTextureDetail } from "#src/services/genshinAssets/fit/computeTextureDetail";
 import { computePartSurfaces } from "#src/services/genshinAssets/fit/computePartSurfaces";
 import { computeSurfaceTones } from "#src/services/genshinAssets/fit/computeSurfaceTones";
 import { sampleFaceUvs } from "#src/services/genshinAssets/fit/sampleFaceUvs";
@@ -31,6 +34,12 @@ import { basename, join } from "node:path";
 import sharp from "sharp";
 
 type ObjMesh = Awaited<ReturnType<typeof readObjMesh>>;
+// A placed mesh or a terrain tile read apart: its part, its samples, and the detail of the texture it was read through
+interface ReadSurface {
+  detail?: SurfaceDetail;
+  part: string;
+  samples: SurfaceSample[];
+}
 
 // A face's submesh, named for its index among its renderer's materials
 const SUBMESH_REGEX = /_(?<submesh>\d+)$/u;
@@ -116,7 +125,7 @@ export const fitSurfaceColours = async <Family extends string>(
   };
   // A placed mesh is one part, named by its mesh, since a material can span parts: the statue's stone levels all draw one
   // Material, and its gold dish sits in it
-  const readPlacementSamples = async (placement: AssetPlacement): Promise<SurfaceSample[]> => {
+  const readPlacementSurface = async (placement: AssetPlacement): Promise<ReadSurface> => {
     const mesh = await readObjMesh(join(meshDirectory, `${placement.mesh}${OBJ_EXTENSION}`));
     const diffuses = await Promise.all(
       placement.materials.map(async (materialPathId) => {
@@ -125,46 +134,79 @@ export const fitSurfaceColours = async <Family extends string>(
         return texture;
       }),
     );
-    return readFaceSamples(mesh, toWorldVertices(mesh.vertices, placement), diffuses, placement.mesh);
+    const texture = diffuses.find((diffuse) => diffuse !== undefined);
+    return {
+      detail: texture && computeTextureDetail(texture),
+      part: placement.mesh,
+      samples: readFaceSamples(mesh, toWorldVertices(mesh.vertices, placement), diffuses, placement.mesh),
+    };
   };
   // A terrain tile is never placed: its vertices are local to its column and row, which are its offset in the world
-  const readTerrainSamples = async (tile: string): Promise<SurfaceSample[]> => {
+  const readTerrainSurface = async (tile: string): Promise<ReadSurface> => {
     const mesh = await readObjMesh(join(meshDirectory, `${tile}${OBJ_EXTENSION}`));
     const { column, row } = TERRAIN_TILE_REGEX.exec(tile)?.groups ?? {};
     const [offsetX, offsetZ] = [Number(column) * TERRAIN_TILE_SIZE, Number(row) * TERRAIN_TILE_SIZE];
     const world = mesh.vertices.map(([x, y, z]): Vector => [x + offsetX, y, z + offsetZ]);
     const baseMap = join(textureDirectory, `${tile}${TERRAIN_BASE_MAP_SUFFIX}.png`);
     const diffuses = [existsSync(baseMap) ? await getTexture(baseMap) : undefined];
-    return readFaceSamples(
-      mesh,
-      world,
-      diffuses,
-      "",
-      ([x, , z]) => Math.hypot(x - originX, z - originZ) <= terrainRadius,
-    );
+    return {
+      detail: diffuses[0] && computeTextureDetail(diffuses[0]),
+      part: "",
+      samples: readFaceSamples(
+        mesh,
+        world,
+        diffuses,
+        "",
+        ([x, , z]) => Math.hypot(x - originX, z - originZ) <= terrainRadius,
+      ),
+    };
   };
-  const readFamilySamples = async (regex: RegExp): Promise<SurfaceSample[]> => {
+  const readFamilySurfaces = async (regex: RegExp): Promise<ReadSurface[]> => {
     const placed = await Promise.all(
-      placements.filter(({ mesh }) => regex.test(mesh)).map((placement) => readPlacementSamples(placement)),
+      placements.filter(({ mesh }) => regex.test(mesh)).map((placement) => readPlacementSurface(placement)),
     );
     const tiles = meshFiles
       .filter((file) => file.endsWith(OBJ_EXTENSION))
       .map((file) => basename(file, OBJ_EXTENSION))
       .filter((tile) => regex.test(tile) && TERRAIN_TILE_REGEX.test(tile));
-    const terrain = await Promise.all(tiles.map((tile) => readTerrainSamples(tile)));
-    return [...placed.flat(), ...terrain.flat()];
+    const terrain = await Promise.all(tiles.map((tile) => readTerrainSurface(tile)));
+    return [...placed, ...terrain];
   };
+  // A surface's detail as the mean of the textures its reads drew, or the surface itself when none drew a texture
+  const withDetail = <Surface extends FittedSurface>(surface: Surface, details: readonly SurfaceDetail[]): Surface => {
+    const detail = averageSurfaceDetails(details);
+    return detail === undefined ? surface : { ...surface, detail };
+  };
+  // The part surfaces, each with the detail of the textures its own placed meshes drew
+  const withPartDetails = (
+    parts: Record<string, FittedSurface>,
+    reads: readonly ReadSurface[],
+  ): Record<string, FittedSurface> =>
+    Object.fromEntries(
+      Object.entries(parts).map(([part, surface]) => [
+        part,
+        withDetail(
+          surface,
+          reads.flatMap((read) => (read.part === part && read.detail ? [read.detail] : [])),
+        ),
+      ]),
+    );
   return Object.fromEntries(
     await Promise.all(
       (Object.entries(meshRegexMap) as [Family, RegExp][]).map(async ([family, regex]) => {
-        const samples = await readFamilySamples(regex);
-        if (samples.length === 0)
+        const reads = await readFamilySurfaces(regex);
+        const samples = reads.flatMap((read) => read.samples);
+        if (!samples.some(({ weight }) => weight > 0))
           throw new InvalidOperationError(
             Operation.Read,
             family,
-            "has no placed mesh or terrain tile its faces can be read from",
+            "has no placed mesh or terrain tile whose covered faces can be read",
           );
-        return [family, { ...computeSurfaceTones(samples), parts: computePartSurfaces(samples) }] as const;
+        const familySurface = withDetail(
+          computeSurfaceTones(samples),
+          reads.flatMap((read) => (read.detail ? [read.detail] : [])),
+        );
+        return [family, { ...familySurface, parts: withPartDetails(computePartSurfaces(samples), reads) }] as const;
       }),
     ),
   ) as Record<Family, FittedFamily>;

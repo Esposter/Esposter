@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Achievement } from "#src/models/achievement/Achievement";
 import type { AchievementCategory } from "#src/models/achievement/AchievementCategory";
+import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
 import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
 import type { ArchiveEntry } from "#src/models/archive/ArchiveEntry";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
@@ -18,6 +19,7 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { Quest } from "#src/models/quest/Quest";
+import type { QuestEvent } from "#src/models/quest/QuestEvent";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { WorldCameraPose } from "#src/models/world/WorldCameraPose";
@@ -47,7 +49,10 @@ import { useExplorationAreas } from "#src/composables/useExplorationAreas";
 import { useGatheringPoints } from "#src/composables/useGatheringPoints";
 import { useInteraction } from "#src/composables/useInteraction";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
+import { Currency } from "#src/models/inventory/Currency";
+import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { advanceAchievements } from "#src/services/achievement/advanceAchievements";
 import { AchievementTextLoaderMap } from "#src/services/achievement/AchievementTextLoaderMap";
 import { readAchievements } from "#src/services/achievement/readAchievements";
 import { computeAdventureRankProgress } from "#src/services/adventureRank/computeAdventureRankProgress";
@@ -77,12 +82,18 @@ import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { findNearestLandmark } from "#src/services/map/findNearestLandmark";
 import { checkIsPartyDown } from "#src/services/party/checkIsPartyDown";
-import { PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
+import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { reviveParty } from "#src/services/party/reviveParty";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
+import { advanceQuest } from "#src/services/quest/advanceQuest";
+import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
+import { getFinishedQuestEvents } from "#src/services/quest/getFinishedQuestEvents";
+import { QuestTextLoaderMap } from "#src/services/quest/QuestTextLoaderMap";
+import { readQuests } from "#src/services/quest/readQuests";
+import { startQuests } from "#src/services/quest/startQuests";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
@@ -181,6 +192,27 @@ getResultAsync(() => NameTextLoaderMap[language]()).match(
     console.error(error);
   },
 );
+// The carried quests, read as the world starts with their words in the reader's language, and the Archon quests started
+// From the prologue's first. A quest that fails to read is logged and leaves the quest screen empty
+// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+getResultAsync(readQuests).match(
+  (newQuests) => {
+    quests.value = newQuests;
+    questProgressMap.value = startQuests(newQuests, questProgressMap.value);
+  },
+  (error) => {
+    console.error(error);
+  },
+);
+// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+getResultAsync(() => QuestTextLoaderMap[language]()).match(
+  (newQuestTextMap) => {
+    questTextMap.value = newQuestTextMap;
+  },
+  (error) => {
+    console.error(error);
+  },
+);
 const party = reactive(createParty([TRAVELER_CHARACTER_ID]));
 // How the character on the field moves, its body type's, once the roster has arrived
 const locomotion = computed(() =>
@@ -226,33 +258,42 @@ const inventory = ref<Inventory>(EMPTY_INVENTORY);
 const wallet = ref<Wallet>(EMPTY_WALLET);
 const wishPityMap = ref(InitialBannerKindWishPityMap);
 const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(new Map());
-// The quests in progress, how far each has come, their words and the one navigated to. Nothing starts a quest yet, so
-// The quest screen opens empty
-const quests: Quest[] = [];
-const questProgressMap = new Map<string, QuestProgress>();
+// The carried quests, read as the world starts, with how far each has come. A quest shows once it starts, and a finished
+// One stays in the progress map at its last step, so the quests in progress are those started and not yet finished
+const quests = shallowRef<Quest[]>([]);
+const questProgressMap = shallowRef<ReadonlyMap<string, QuestProgress>>(new Map());
+const questsInProgress = computed(() =>
+  quests.value.filter((quest) => {
+    const progress = questProgressMap.value.get(quest.id);
+    return progress !== undefined && !checkIsQuestFinished(quest, progress);
+  }),
+);
 // The World Level the camps spawn at, from the player's Adventure EXP and quests. No source adds Adventure EXP or
 // Completes a main quest yet, so the player stands at a new player's World Level 0
 const adventureRankStanding = computeAdventureRankStanding(0, new Set<string>());
 const worldLevel = adventureRankStanding.worldLevel;
 const adventureExpProgress = computeAdventureRankProgress(0, adventureRankStanding.rank);
-const questTextMap: Record<string, string> = {};
+const questTextMap = shallowRef<Readonly<Record<string, string>>>({});
 const trackedQuestId = ref("");
 // The quest on the HUD's tracker, the one navigated to or with none the first in progress, which V navigates to, and the
 // Navigated one's objective, which its beam rises over
-const trackerQuest = computed(() => quests.find(({ id }) => id === trackedQuestId.value) ?? quests[0]);
+const trackerQuest = computed(
+  () => questsInProgress.value.find(({ id }) => id === trackedQuestId.value) ?? questsInProgress.value[0],
+);
 const questTargetId = computed(() => {
   if (!trackedQuestId.value || !trackerQuest.value) return "";
   const { id, steps } = trackerQuest.value;
-  return steps[questProgressMap.get(id)?.stepIndex ?? 0]?.objectives[0]?.targetId ?? "";
+  return steps[questProgressMap.value.get(id)?.stepIndex ?? 0]?.objectives[0]?.targetId ?? "";
 });
 // The achievements, their categories and their words in the reader's language, read the first time the Achievements
-// Screen opens rather than with the world. No doing moves an achievement yet, so the progress opens empty
+// Screen opens rather than with the world. The quests a player finishes move the achievements whatever screen is open,
+// Which reads their table on its own
 const achievementData = shallowRef<{
   achievements: Achievement[];
   categories: AchievementCategory[];
   textMap: Readonly<Record<string, string>>;
 }>();
-const achievementProgressMap = new Map<number, AchievementProgress>();
+const achievementProgressMap = shallowRef<ReadonlyMap<number, AchievementProgress>>(new Map());
 // The Archive's entries by section and their names, read once the quest it opens after is done, as the game opens it.
 // Its progress starts empty, and the bag's items open their entries as it takes them in
 const archiveData = shallowRef<{
@@ -260,8 +301,15 @@ const archiveData = shallowRef<{
   textMap: Readonly<Record<string, string>>;
 }>();
 const archiveProgressMap = shallowRef<ArchiveProgress>(new Map());
-// The main quests done, by id. Nothing completes one yet, so the Archive stays locked
-const finishedMainQuestIds = shallowRef<ReadonlySet<number>>(new Set());
+// The main quests done, by id. The Archive opens once the quest it opens after is among them
+const finishedMainQuestIds = computed(
+  () =>
+    new Set(
+      quests.value
+        .filter((quest) => checkIsQuestFinished(quest, questProgressMap.value.get(quest.id)))
+        .map(({ id }) => Number(id)),
+    ),
+);
 const isArchiveUnlocked = computed(() => finishedMainQuestIds.value.has(ARCHIVE_UNLOCK_QUEST_ID));
 watch(isArchiveUnlocked, (newIsArchiveUnlocked) => {
   if (!newIsArchiveUnlocked || archiveData.value) return;
@@ -346,7 +394,12 @@ const worldDrops = shallowRef<WorldDrop[]>([]);
 let placedDropCount = 0;
 const windrise = useTemplateRef<InstanceType<typeof WorldWindrise>>("windrise");
 // Each talk the quests in progress hold by its id, which a resident's talk is begun from
-const talkMap = new Map(quests.flatMap(({ talks }) => talks.map((questTalk) => [questTalk.id, questTalk] as const)));
+const talkMap = computed(
+  () =>
+    new Map(
+      questsInProgress.value.flatMap(({ talks }) => talks.map((questTalk) => [questTalk.id, questTalk] as const)),
+    ),
+);
 // Every landmark a jump lands at, and the ones the player has unlocked: the map, the minimap, the jump list and a revive
 // Offer only those. A new player has unlocked none, and each is unlocked by resonating with it
 const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl);
@@ -370,15 +423,22 @@ const interactables = computed<Interactable[]>(() => {
     name: itemId === MORA_ITEM_ID ? gameText[GameTextKey.Mora] : getItemDefinition(itemId, gameText).name,
     position: { x, y: getWorldHeight(x, z), z },
   }));
+  // A resident is a row only at the spot they are shown at this hour, so one absent from it is no row
   const residents = [...(windrise.value?.regionDataMap.values() ?? [])]
     .flatMap(({ residents: regionResidents }) => regionResidents)
-    .filter(({ talkId }) => talkMap.has(talkId))
-    .map(({ nameTextId, position: { x, z }, talkId }) => ({
-      id: talkId,
-      kind: InteractionKind.Talk,
-      name: questTextMap[nameTextId] ?? "",
-      position: { x, y: getWorldHeight(x, z), z },
-    }));
+    .flatMap(({ id, nameTextId, talkId }) => {
+      const spot = windrise.value?.residentSpots.get(id);
+      if (!spot || !talkMap.value.has(talkId)) return [];
+      const { x, z } = spot.position;
+      return [
+        {
+          id: talkId,
+          kind: InteractionKind.Talk,
+          name: questTextMap.value[nameTextId] ?? "",
+          position: { x, y: getWorldHeight(x, z), z },
+        },
+      ];
+    });
   // A jump landmark is a Statue of The Seven until waypoints join the jumps, so each locked one is named by the statue
   const statues = jumpLandmarks.value
     .filter(({ id }) => !unlockedLandmarkIds.value.has(id))
@@ -406,23 +466,72 @@ const interactables = computed<Interactable[]>(() => {
   return [...drops, ...gatherings, ...residents, ...statues];
 });
 const { interactionPrompts, readInteraction } = useInteraction(() => interactables.value, characterBody);
-// A defeated enemy's drops lie where it fell, numbered on from the drops placed before them
-const placeWorldDrops = (enemy: Enemy, enemyDrops: EnemyDrops) => {
+// The achievements a finished step or quest moves, read off their table when first needed, and the Primogems of those
+// Finished are paid into the wallet
+const advanceAchievementsWith = (achievementEvents: AchievementEvent[]) => {
+  if (achievementEvents.length === 0) return;
+  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+  getResultAsync(readAchievements).match(
+    ({ achievements }) => {
+      const now = Temporal.Instant.fromEpochMilliseconds(Date.now());
+      let primogems = 0;
+      let nextProgressMap = achievementProgressMap.value;
+      for (const achievementEvent of achievementEvents) {
+        const advance = advanceAchievements(achievements, nextProgressMap, achievementEvent, now);
+        primogems += advance.primogems;
+        nextProgressMap = advance.progressMap;
+      }
+      achievementProgressMap.value = nextProgressMap;
+      wallet.value = { ...wallet.value, [Currency.Primogem]: wallet.value[Currency.Primogem] + primogems };
+    },
+    (error) => {
+      console.error(error);
+    },
+  );
+};
+// A doing the world records is handed to every quest in progress, each advanced by it. The steps and quests it finishes
+// Reach the achievements
+const doQuestEvent = (questEvent: QuestEvent) => {
+  const nextProgressMap = new Map(questProgressMap.value);
+  const achievementEvents: AchievementEvent[] = [];
+  for (const quest of questsInProgress.value) {
+    const progress = nextProgressMap.get(quest.id);
+    if (!progress) continue;
+    const nextProgress = advanceQuest(quest, progress, questEvent);
+    nextProgressMap.set(quest.id, nextProgress);
+    achievementEvents.push(...getFinishedQuestEvents(quest, progress, nextProgress));
+  }
+  questProgressMap.value = startQuests(quests.value, nextProgressMap);
+  advanceAchievementsWith(achievementEvents);
+};
+// A talk that ends is a talk-to for the quests in progress, and the world is back under the Traveler
+const endTalk = () => {
+  if (talk.value) doQuestEvent({ kind: QuestObjectiveKind.TalkTo, targetId: talk.value.id });
+  screenKind.value = ScreenKind.World;
+};
+// A defeated enemy's drops lie where it fell, numbered on from the drops placed before them, and the defeat is a doing
+// The quests in progress count
+const defeatEnemy = (enemy: Enemy, enemyDrops: EnemyDrops) => {
   const drops = placeEnemyDrops(enemy, enemyDrops, placedDropCount);
   placedDropCount += drops.length;
   worldDrops.value = [...worldDrops.value, ...drops];
+  doQuestEvent({ kind: QuestObjectiveKind.Defeat, targetId: String(enemy.enemyKindId) });
 };
 // Every change to the bag goes through here, so the Archive opens the entries of what the bag takes in
 const setInventory = (nextInventory: Inventory) => {
   inventory.value = nextInventory;
   archiveProgressMap.value = openArchiveEntries(archiveProgressMap.value, nextInventory.items);
 };
+// The game's hint over the world for a pick up the bag had no room for, cleared by the next pick up that fits
+const bagFullHint = ref("");
 // A pick up takes the drop's Mora or item into the wallet or the bag, and what the bag has no room for stays on the
 // Ground as a smaller drop
 const pickUpWorldDrop = (worldDrop: WorldDrop) => {
   const pickUp = pickUpDroppedItem(worldDrop, inventory.value, wallet.value, gameText);
   setInventory(pickUp.inventory);
   wallet.value = pickUp.wallet;
+  bagFullHint.value = pickUp.overflow > 0 ? gameText[GameTextKey.BagFull] : "";
+  doQuestEvent({ kind: QuestObjectiveKind.Collect, targetId: String(worldDrop.itemId) });
   worldDrops.value =
     pickUp.overflow > 0
       ? worldDrops.value.map((drop) => (drop === worldDrop ? { ...drop, count: pickUp.overflow } : drop))
@@ -436,6 +545,8 @@ const pickUpGatheringPlace = (placeId: string) => {
   if (!item) return;
   const addition = addInventoryItem(inventory.value, toItemDefinition(item, gameText), 1);
   setInventory(addition.inventory);
+  bagFullHint.value = addition.overflow > 0 ? gameText[GameTextKey.BagFull] : "";
+  doQuestEvent({ kind: QuestObjectiveKind.Collect, targetId: String(item.id) });
   if (addition.overflow === 0)
     gatheringPlaceIdPickedAtMap.value = new Map([
       ...gatheringPlaceIdPickedAtMap.value,
@@ -542,8 +653,11 @@ defineExpose({ jumpTo, readCameraPosition });
             );
           else elementalSight.isOn = false;
           if (inputState.pressedActions.has(InputAction.ShowCursor)) showCursor();
-          const partyMemberIndex = PARTY_MEMBER_INPUT_ACTIONS.findIndex((action) =>
-            inputState.pressedActions.has(action),
+          // A switch with a burst switches as a plain one does, so its member is on the field when the kit reads the burst
+          const partyMemberIndex = PARTY_MEMBER_INPUT_ACTIONS.findIndex(
+            (action, index) =>
+              inputState.pressedActions.has(action) ||
+              inputState.pressedActions.has(PARTY_MEMBER_BURST_INPUT_ACTIONS[index] ?? action),
           );
           if (!isPaused && screenKind === ScreenKind.World && partyMemberIndex !== -1)
             switchPartyMember(party, partyMemberIndex, context.elapsed);
@@ -559,9 +673,10 @@ defineExpose({ jumpTo, readCameraPosition });
             const worldDrop = worldDrops.find(({ id }) => id === interactable?.id);
             if (interactable?.kind === InteractionKind.PickUp && worldDrop) pickUpWorldDrop(worldDrop);
             else if (interactable?.kind === InteractionKind.PickUp) pickUpGatheringPlace(interactable.id);
-            else if (interactable?.kind === InteractionKind.Activate)
+            else if (interactable?.kind === InteractionKind.Activate) {
               unlockedLandmarkIds = new Set([...unlockedLandmarkIds, interactable.id]);
-            else if (interactable?.kind === InteractionKind.Talk) {
+              doQuestEvent({ kind: QuestObjectiveKind.Interact, targetId: interactable.id });
+            } else if (interactable?.kind === InteractionKind.Talk) {
               talk = talkMap.get(interactable.id);
               screenKind = ScreenKind.Dialogue;
             }
@@ -623,7 +738,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :quest-target-id
         :region-data-base-url
         :world-level
-        @defeat="(enemy, enemyDrops) => placeWorldDrops(enemy, enemyDrops)"
+        @defeat="(enemy, enemyDrops) => defeatEnemy(enemy, enemyDrops)"
         @ready="emit('ready')"
         @strike="(enemy) => strikeParty(enemy)"
       />
@@ -649,6 +764,7 @@ defineExpose({ jumpTo, readCameraPosition });
     >
       <template #prompts>
         <InteractionPromptList :interaction-prompts />
+        <p v-if="bagFullHint" class="bag-full-hint">{{ bagFullHint }}</p>
       </template>
     </HudScreen>
     <MenuScreen
@@ -698,7 +814,7 @@ defineExpose({ jumpTo, readCameraPosition });
         <QuestScreen
           :game-text
           :quest-progress-map
-          :quests
+          :quests="questsInProgress"
           :text-map="questTextMap"
           :tracked-quest-id
           @close="screenKind = ScreenKind.World"
@@ -749,7 +865,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :game-text
       :talk
       :text-map="questTextMap"
-      @end="screenKind = ScreenKind.World"
+      @end="endTalk"
     />
     <div
       class="teleport-fade"
@@ -767,6 +883,17 @@ defineExpose({ jumpTo, readCameraPosition });
 
 <style scoped>
 /* The package carries no utility classes, so the screen fills its host with a style of its own */
+/* Provisional: where the game's hint sits and how long it stays wait on a recording of the English client at 1080 high */
+.bag-full-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  color: #ece5d8;
+  text-shadow: 0 0 4px rgb(0 0 0 / 0.8);
+}
+
 .world-screen {
   position: relative;
   width: 100%;

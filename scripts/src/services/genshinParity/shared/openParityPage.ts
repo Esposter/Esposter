@@ -78,8 +78,8 @@ export const openParityPage = async ({
       await page.route(`**${WITNESS_PATH_PREFIX}**`, (route) => {
         const path = decodeURIComponent(new URL(route.request().url()).pathname.slice(WITNESS_PATH_PREFIX.length));
         const filePath = path === WITNESS_LAYOUT_PATH ? join(root, WITNESS_LAYOUT_FILE_NAME) : join(assets, path);
-        // An export not on disk is answered as missing: the page fails loading it, and the failure is thrown below with
-        // The path. Fulfilling from a file that is not there would reject inside this handler, where nothing awaits it
+        // An export not on disk is answered as missing: the page fails loading it, and whatever failure follows is thrown
+        // With the path. Fulfilling from a file that is not there would reject inside this handler, where nothing awaits it
         if (!existsSync(filePath)) {
           missingFiles.push(filePath);
           return route.fulfill({ status: 404 });
@@ -109,14 +109,7 @@ export const openParityPage = async ({
       // oxlint-disable-next-line no-await-in-loop -- read after the frame it drew
       ({ parityError, parityReady: readyScreen } = await readPageState());
     }
-    if (parityError !== undefined) {
-      const [missingFile] = missingFiles;
-      throw new InvalidOperationError(
-        Operation.Read,
-        screen,
-        missingFile === undefined ? parityError : `${parityError}, its export ${missingFile} is not on disk`,
-      );
-    }
+    if (parityError !== undefined) throw new InvalidOperationError(Operation.Read, screen, parityError);
     // An unknown name draws the list of screens, which would otherwise be shot and scored as the screen
     if (readyScreen !== screen)
       throw new InvalidOperationError(Operation.Read, screen, "not a screen with a fixture on the parity page");
@@ -125,6 +118,10 @@ export const openParityPage = async ({
     (value) => value,
     async (error) => {
       await close();
+      // A missing export can fail the page in any way, an error the page reports or a readiness that never comes, so
+      // Whatever failed it names the first export that was not on disk
+      const [missingFile] = missingFiles;
+      if (missingFile !== undefined) error.message = `${error.message}, its export ${missingFile} is not on disk`;
       throw error;
     },
   );

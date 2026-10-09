@@ -3,7 +3,7 @@ import type { TreeLandmark } from "#src/models/world/TreeLandmark";
 import type { Impostor, LightUniforms, ToonNodeMaterial, WindUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
 
-import { BARK_COLOR, LEAF_COLOR } from "#src/services/windrise/constants";
+import { BARK_COLOR, BARK_DETAIL, LEAF_COLOR, LEAF_DETAIL } from "#src/services/windrise/constants";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { TreeSpeciesOptionsMap } from "#src/services/world/TreeSpeciesOptionsMap";
 import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
@@ -37,9 +37,12 @@ const { branchGeometry, leafGeometry } = createTreeGeometry(TreeSpeciesOptionsMa
 // How far the impostor has faded in over the mesh, which draws the pixels it does not
 const fade = uniform(0);
 const meshMask = createDitherFadeNode(fade).not();
-const barkMaterial = createToonMaterial({ color: BARK_COLOR, lightUniforms, rampTexture });
+const barkMaterial = createToonMaterial({ color: BARK_COLOR, detail: BARK_DETAIL, lightUniforms, rampTexture });
 barkMaterial.maskNode = meshMask;
-const leafMaterial = createLeafMaterial({ color: LEAF_COLOR, lightUniforms, rampTexture }, windUniforms);
+const leafMaterial = createLeafMaterial(
+  { color: LEAF_COLOR, detail: LEAF_DETAIL, lightUniforms, rampTexture },
+  windUniforms,
+);
 leafMaterial.maskNode = meshMask;
 const branchMesh = new Mesh(branchGeometry, barkMaterial);
 const leafMesh = new Mesh(leafGeometry, leafMaterial);

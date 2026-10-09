@@ -1,4 +1,5 @@
 import type { ExcelHuntingRefreshRow } from "#src/models/genshinAssets/reputation/ExcelHuntingRefreshRow";
+import type { ExcelReputationExploreRow } from "#src/models/genshinAssets/reputation/ExcelReputationExploreRow";
 import type { ExcelReputationCityRow } from "#src/models/genshinAssets/reputation/ExcelReputationCityRow";
 import type { ExcelReputationLevelRow } from "#src/models/genshinAssets/reputation/ExcelReputationLevelRow";
 import type { ExcelReputationRequestRow } from "#src/models/genshinAssets/reputation/ExcelReputationRequestRow";
@@ -28,7 +29,8 @@ const readReward = (rewardMap: Map<number, ExcelRewardRow>, rewardId: number, ow
   return reward;
 };
 // Mondstadt's Reputation from the dump: its levels with each level's reward, the requests of the groups its levels name
-// And its weekly bounties, each reward split into the Reputation EXP and the items it also gives. Written as one slice in
+// Its exploration thresholds and its weekly bounties, each reward split into the Reputation EXP and the items it also gives.
+// Written as one slice in
 // The world's generated folder
 export const writeMondstadtReputation = (): void => {
   const city = readExcelTable<ExcelReputationCityRow>("ReputationCityExcelConfigData").find(
@@ -74,6 +76,20 @@ export const writeMondstadtReputation = (): void => {
         city.virtualItemId,
       ),
     }));
+  const explores = readExcelTable<ExcelReputationExploreRow>("ReputationExploreExcelConfigData")
+    .filter(({ cityId }) => cityId === MONDSTADT_CITY_ID)
+    .toSorted((firstExplore, secondExplore) => firstExplore.exploreProgress - secondExplore.exploreProgress)
+    .map((exploreRow) => ({
+      exploreId: exploreRow.exploreId,
+      exploreProgress: exploreRow.exploreProgress,
+      reward: toReputationReward(
+        readReward(rewardMap, exploreRow.rewardId, `exploration ${exploreRow.exploreId}`),
+        city.virtualItemId,
+      ),
+    }));
   mkdirSync(REPUTATION_GENERATED_DIRECTORY, { recursive: true });
-  writeFileSync(MONDSTADT_REPUTATION_PATH, `${JSON.stringify({ bounties, levels, requests }, undefined, 2)}\n`);
+  writeFileSync(
+    MONDSTADT_REPUTATION_PATH,
+    `${JSON.stringify({ bounties, explores, levels, requests }, undefined, 2)}\n`,
+  );
 };

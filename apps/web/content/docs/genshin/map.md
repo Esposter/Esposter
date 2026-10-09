@@ -12,7 +12,7 @@ The game's map opens on M and is how a player crosses the continent: they choose
 ```mermaid
 flowchart TD
   M["M, or the HUD's minimap"] --> SCR["The screen kind becomes Map, which holds the world as a menu does"]
-  SCR --> OV["The overlay: the player-centred drawing, area names, pointer, close button and zoom slider"]
+  SCR --> OV["The overlay: the drawing placed on the player, area names, pointer, close button and zoom slider"]
   REG["Every region's data, read once"] --> LM["The landmarks a jump lands at"]
   LM --> OV
   OV -->|"a landmark chosen, on the map or in the jump list"| POSE["The jump's pose: in front of it, facing it"]
@@ -22,7 +22,7 @@ flowchart TD
   PLACE --> IN["The screen fades back in"]
 ```
 
-- **One drawing, two views.** `Map/Drawing` draws the outlines of the filled areas and every unlocked landmark a jump lands at ([map unlocking](/docs/genshin/map-unlocking)), in world metres with x east and z south, so north is up. The overlay centres it on the player and the [minimap](/docs/genshin/minimap) cuts it to a circle round the camera, so the two never disagree about what the world holds. A mark's radius is a share of the extent a view shows, so it is drawn one size at any scale.
+- **One drawing, two views.** `Map/Drawing` draws the outlines of the filled areas and every unlocked landmark a jump lands at ([map unlocking](/docs/genshin/map-unlocking)), in world metres with x east and z south, so north is up. The overlay places it relative to the player and the [minimap](/docs/genshin/minimap) cuts it to a circle round the camera, so the two never disagree about what the world holds. A mark's radius is a share of the extent a view shows, so it is drawn one size at any scale.
 - **The overlay is the open map at full screen.** It places the drawing on the player with `MAP_VIEW_METRES` metres across its width, the player's pointer at the place the reference shows it, and the screen's own aspect fills the rest. The view starts at that width and moves from it as the map is panned and zoomed. Each filled area's name sits at the middle of its outline, or of its unlocked landmarks where its outline is not drawn yet, and an area with neither has no name on the map; an area no unlocked statue stands in is blank. The name's size is a share of the same extent, so it reads one size at any scale.
 - **The game's chrome sits where the reference puts it.** The close button stands at the top right and the zoom slider down the left, each at its place in the wiki's 1080 high screenshot and drawn in `--unit`. The slider's thumb sits at the zoom the map shows.
 - **The map is a screen.** It is the `Map` screen kind, opened by M through the input's `OpenMap` action ([controls](/docs/genshin/controls)) and closed by M, Escape or its own button, as every screen opens and closes ([screens](/docs/genshin/screens)). It holds the world under it as the game's menus do, and the HUD is hidden while it is open.

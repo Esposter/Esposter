@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Adventure Rank
 
-The rank, its holds, the World Level, the enemies it raises and the profile card's values are built ([Adventure Rank](/docs/genshin/adventure-rank)). What remains reaches the player through other pages: the Adventure EXP that quests, chests, unlocks, commissions and spent resin give, the rewards each rank hands out, the systems a rank opens, and the profile card that shows the rank. Each waits on its own page, so each is built there.
+The rank, its holds, the World Level, the enemies it raises and the profile card's values are built ([Adventure Rank](/docs/genshin/adventure-rank)). What remains reaches the player through other pages: the Adventure EXP that quests, chests, unlocks, commissions and spent resin give, the rewards each rank hands out, the systems a rank opens, and the profile card's World Level lowering. Each waits on its own page, so each is built there.
 
 ## Decisions
 
@@ -15,7 +15,7 @@ The rank, its holds, the World Level, the enemies it raises and the profile card
 - **What a rank opens is stated by its system.** Each page names the rank its system opens at, from the wiki's table of unlocks, since the game's own open-state table names each system only by a number. The Paimon menu's entry for a system not yet open stays disabled, as it already is for one not built.
 - **Kept with the player's progress.** The rank, its EXP, the World Level and the ranks' rewards claimed are kept in the browser with the quests' progress, since the world is the person's own. The quests' progress is not kept yet, so this waits on it.
 - **Bosses and ley line outcrops stand at the World Level.** Their enemies and rewards follow the World Level as the wiki gives them, on the pages that build them.
-- **The profile card shows the rank and World Level, and offers the lowering.** The card shows the rank, the EXP's bar toward the next rank and the World Level from the standing. The bar is full at rank 60 and at a rank held by a quest, where the EXP already runs past the next rank's total (`computeAdventureRankProgress`). The World Level's tooltip lowers it by one from World Level 3 through `toggleWorldLevelLowering`; the words for that tooltip are not in the game text yet, so the lowering waits on them.
+- **The profile card's lowering is what is left of it.** The card already shows the rank, the EXP's bar toward the next rank and the World Level from the standing. The bar is full at rank 60 and at a rank held by a quest, where the EXP already runs past the next rank's total (`computeAdventureRankProgress`). The World Level's tooltip is to lower it by one from World Level 3 through `toggleWorldLevelLowering`; the words for that tooltip are not in the game text yet, so the lowering waits on them.
 
 ## How it works
 

@@ -27,7 +27,7 @@ flowchart TD
 
 ## The floors and chambers
 
-`pnpm -C scripts genshin:assets spiral-abyss` writes three slices from the game's tower tables, each imported on demand from `packages/genshin-world/src/generated/spiralAbyss/`. The community dump the scripts read lacks the five tower tables, which were fetched into the dump from the AnimeGameData repository and kept out of the commit. Its combine and forge tables match the dump's byte for byte, which makes the two one revision.
+`pnpm -C scripts genshin:assets spiral-abyss` writes three slices from the game's tower tables, each imported on demand from `packages/genshin-world/src/generated/spiralAbyss/`. The community dump the scripts read lacks the tower tables: the four the slices are written from, and a fifth fetched beside them but not read, were fetched into the dump from the AnimeGameData repository and kept out of the commit. Its combine and forge tables match the dump's byte for byte, which makes the two one revision.
 
 - **Floors.** Every floor the tower table holds: its id and its place in the twelve, the level group that lists its three chambers, its teams and the stars its chambers must hold for the floor above. The Corridor's eight floors and each Moon Spire period's four are among them.
 - **Chambers.** Each chamber's three star conditions. A time condition is a mark on the clock's seconds left, and a monolith condition a mark on the monolith's health percent, each as the table names it.
@@ -43,7 +43,7 @@ flowchart TD
 - **Rewards once a cycle.** A chamber's first clear gives its own reward, and each star milestone a floor's stars reach gives its reward. Each reward is given only the first time in its cycle, and a clear returns the rewards it gives now for the caller to hand out.
 - **Cycles.** The Corridor is one cycle that never resets. Each Moon Spire period is a cycle of its own, so its chambers, stars and rewards start again when the next period begins.
 - **Opening.** The Abyss is open from Adventure Rank 20, a constant the proposal settles.
-- **The period.** The Moon Spire runs the period that began latest before now, in the game's own time (UTC+8). A period has no recorded end, so a dump read months on keeps its last period rather than none.
+- **The period.** The Moon Spire runs the period that began latest before now, in the game's own time (UTC+8). A period has no recorded end, so a dump read months on keeps its last period rather than none. The search is `findLatestBegun`, the one the [Imaginarium Theater](/docs/genshin/imaginarium-theater)'s season runs, and nothing in the Abyss calls it yet.
 
 ## Decisions
 
@@ -57,21 +57,21 @@ flowchart TD
 
 ## Key files
 
-| File                                                                             | Role                                                               |
-| :------------------------------------------------------------------------------- | :----------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/spiralAbyss/writeSpiralAbyss.ts`             | The three slices written from the tower tables                     |
-| `scripts/src/services/genshinAssets/spiralAbyss/toAbyssFloor.ts`                 | One floor and its three chambers from the floor and level rows     |
-| `scripts/src/services/genshinAssets/spiralAbyss/toAbyssStarCondition.ts`         | A star condition read by its kind and its mark                     |
-| `scripts/src/services/genshinAssets/spiralAbyss/toAbyssPeriod.ts`                | One Moon Spire period from its schedule row                        |
-| `packages/genshin-world/src/models/spiralAbyss/AbyssFloor.ts`                    | A floor: its chambers, its teams and its unlock stars              |
-| `packages/genshin-world/src/services/spiralAbyss/createAbyssChallenge.ts`        | A chamber about to be fought, its clock and its monolith           |
-| `packages/genshin-world/src/services/spiralAbyss/checkIsAbyssChallengeFailed.ts` | A chamber lost to its clock or its monolith                        |
-| `packages/genshin-world/src/services/spiralAbyss/computeAbyssChamberStars.ts`    | The stars a clear earns from the conditions it meets               |
-| `packages/genshin-world/src/services/spiralAbyss/recordAbyssChamberClear.ts`     | A clear's best stars kept, and its rewards given once a cycle      |
-| `packages/genshin-world/src/services/spiralAbyss/checkIsAbyssFloorUnlocked.ts`   | Whether the floor above a floor is open in a cycle                 |
-| `packages/genshin-world/src/services/shared/findLatestBegun.ts`                  | The Moon Spire's period at a moment, the search the Theater shares |
-| `packages/genshin-world/src/services/spiralAbyss/checkIsAbyssOpenAtRank.ts`      | Whether the Abyss is open to a player's Adventure Rank             |
-| `packages/genshin-world/src/generated/spiralAbyss/floors.json`                   | The floors and their chambers, every floor the table holds         |
+| File                                                                             | Role                                                           |
+| :------------------------------------------------------------------------------- | :------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/spiralAbyss/writeSpiralAbyss.ts`             | The three slices written from the tower tables                 |
+| `scripts/src/services/genshinAssets/spiralAbyss/toAbyssFloor.ts`                 | One floor and its three chambers from the floor and level rows |
+| `scripts/src/services/genshinAssets/spiralAbyss/toAbyssStarCondition.ts`         | A star condition read by its kind and its mark                 |
+| `scripts/src/services/genshinAssets/spiralAbyss/toAbyssPeriod.ts`                | One Moon Spire period from its schedule row                    |
+| `packages/genshin-world/src/models/spiralAbyss/AbyssFloor.ts`                    | A floor: its chambers, its teams and its unlock stars          |
+| `packages/genshin-world/src/services/spiralAbyss/createAbyssChallenge.ts`        | A chamber about to be fought, its clock and its monolith       |
+| `packages/genshin-world/src/services/spiralAbyss/checkIsAbyssChallengeFailed.ts` | A chamber lost to its clock or its monolith                    |
+| `packages/genshin-world/src/services/spiralAbyss/computeAbyssChamberStars.ts`    | The stars a clear earns from the conditions it meets           |
+| `packages/genshin-world/src/services/spiralAbyss/recordAbyssChamberClear.ts`     | A clear's best stars kept, and its rewards given once a cycle  |
+| `packages/genshin-world/src/services/spiralAbyss/checkIsAbyssFloorUnlocked.ts`   | Whether the floor above a floor is open in a cycle             |
+| `packages/genshin-world/src/services/spiralAbyss/readAbyssPeriods.ts`            | The Moon Spire's periods, loaded and checked from their slice  |
+| `packages/genshin-world/src/services/spiralAbyss/checkIsAbyssOpenAtRank.ts`      | Whether the Abyss is open to a player's Adventure Rank         |
+| `packages/genshin-world/src/generated/spiralAbyss/floors.json`                   | The floors and their chambers, every floor the table holds     |
 
 ## Not built yet
 

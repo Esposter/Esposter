@@ -2,6 +2,7 @@ import type { ToonMaterialOptions } from "#src/models/nodes/ToonMaterialOptions"
 
 import { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
 import { createRimNode } from "#src/nodes/createRimNode";
+import { createSurfaceDetailNode } from "#src/nodes/createSurfaceDetailNode";
 import { createWetDarkeningNode } from "#src/nodes/createWetDarkeningNode";
 import { createWetSheenNode } from "#src/nodes/createWetSheenNode";
 import { Color } from "three";
@@ -12,6 +13,7 @@ import { uniform } from "three/tsl";
 // Darkens and takes the sun's glint, both by the one wetness the light uniforms hold, and a dry world draws as it did
 export const createToonMaterial = ({
   color,
+  detail,
   isOutlined = true,
   isVertexColors = false,
   lightUniforms,
@@ -26,7 +28,8 @@ export const createToonMaterial = ({
   // A witness target drawn with its own material read white where the stone's colour stands, so no family's colour was ever measured.
   // White is the default colour a material without one draws
   const colorUniform = uniform(new Color(color ?? 0xffffff));
-  toonMaterial.colorNode = colorUniform.mul(createWetDarkeningNode(lightUniforms));
+  const surfaceNode = detail === undefined ? colorUniform : colorUniform.mul(createSurfaceDetailNode(detail));
+  toonMaterial.colorNode = surfaceNode.mul(createWetDarkeningNode(lightUniforms));
   toonMaterial.emissiveNode = createRimNode(lightUniforms).add(createWetSheenNode(lightUniforms));
   return toonMaterial;
 };

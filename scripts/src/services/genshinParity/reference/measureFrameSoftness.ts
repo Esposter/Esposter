@@ -17,7 +17,7 @@ const readLineSigmas = (line: Float64Array, sigmas: number[]): void => {
     const previousGradient = Math.abs((line[index] ?? 0) - (line[index - 2] ?? 0));
     const nextGradient = Math.abs((line[index + 2] ?? 0) - (line[index] ?? 0));
     if (gradient === 0 || gradient <= previousGradient || gradient < nextGradient) continue;
-    const profile = Array.from(line.subarray(index - PROFILE_RADIUS, index + PROFILE_RADIUS + 1));
+    const profile = [...line.subarray(index - PROFILE_RADIUS, index + PROFILE_RADIUS + 1)];
     if (Math.max(...profile) - Math.min(...profile) < MIN_CONTRAST) continue;
     const sigma = estimateEdgeSigma(profile);
     if (sigma !== undefined) sigmas.push(sigma);
@@ -44,7 +44,7 @@ export const measureFrameSoftness = async (framePath: string): Promise<number> =
   if (sigmas.length === 0)
     throw new InvalidOperationError(Operation.Read, framePath, "no interface edge to measure the capture's blur from");
   const sharpest = sigmas
-    .toSorted((first, second) => first - second)
+    .toSorted((firstSigma, secondSigma) => firstSigma - secondSigma)
     .slice(0, Math.ceil(sigmas.length * SHARPEST_SHARE));
   const middle = Math.floor(sharpest.length / 2);
   return sharpest.length % 2 === 0

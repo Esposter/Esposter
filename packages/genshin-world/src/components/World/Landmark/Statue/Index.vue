@@ -4,7 +4,7 @@ import type { LightUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
 
 import statue from "#src/data/windrise/statue.json";
-import { getStatuePartColor } from "#src/services/windrise/constants";
+import { getStatuePartColor, getStatuePartDetail } from "#src/services/windrise/constants";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { createStatueGeometries, createToonMaterial } from "genshin-engine";
 
@@ -20,7 +20,12 @@ const groundHeight = getWorldHeight(position.x, position.z);
 // Each part of the statue is drawn in its own colour, as its export mesh's textures paint it
 const statueParts = Object.entries(createStatueGeometries(statue.parts)).map(([part, geometry]) => ({
   geometry,
-  material: createToonMaterial({ color: getStatuePartColor(part), lightUniforms, rampTexture }),
+  material: createToonMaterial({
+    color: getStatuePartColor(part),
+    detail: getStatuePartDetail(part),
+    lightUniforms,
+    rampTexture,
+  }),
 }));
 
 onUnmounted(() => {

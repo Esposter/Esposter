@@ -36,15 +36,19 @@ export const fetchReferences = async (): Promise<void> => {
       const url = urls.get(wikiTitle);
       const file = url ? await readWikiFile(url) : undefined;
       if (!file) return `${id}: not on the wiki as ${wikiTitle}`;
-      // A crop placed in its frame is drawn on the frame's black, so the reference is the whole frame at its scale
-      if (placement)
+      // A crop placed in its frame is drawn on the frame's black, so the reference is the whole frame at its scale. One
+      // That no longer fits where it is placed is a file the wiki has changed, so it is reported rather than drawn
+      if (placement) {
+        const { height, width } = await sharp(file).metadata();
+        if (placement.x + width > placement.frameWidth || placement.y + height > placement.frameHeight)
+          return `${id}: ${width}×${height} on the wiki no longer fits its frame at ${placement.x}, ${placement.y}`;
         await sharp({
           create: { background: "#000", channels: 3, height: placement.frameHeight, width: placement.frameWidth },
         })
           .composite([{ input: await sharp(file).png().toBuffer(), left: placement.x, top: placement.y }])
           .png()
           .toFile(path);
-      else await sharp(file).png().toFile(path);
+      } else await sharp(file).png().toFile(path);
       return path;
     }),
   );

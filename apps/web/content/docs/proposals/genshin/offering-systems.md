@@ -1,6 +1,6 @@
 ---
 title: Offering systems
-description: Proposal — the regions' offering systems on one rule. A sacred tree, a fountain or a shrine takes every offering item of its kind the bag holds at once, rises a level for each threshold reached and gives that level's reward once. The rule and the Frostbearing Tree's levels are built, on the Offering systems page; the tree's place in Dragonspine and each region's offerings are what is left.
+description: Proposal — the regions' offering systems on one rule. A sacred tree, a fountain or a shrine takes every offering item of its kind the bag holds at once, rises a level for each threshold reached and gives that level's reward once. The rule, the bag's offer, the Frostbearing Tree's levels and its place in Mondstadt are built, on the Offering systems page; the tree's landmark and offer on F, and each region's offerings, are what is left.
 model: claude-haiku-5-5
 ---
 
@@ -17,14 +17,16 @@ Beside the Statues of The Seven, many areas keep an offering of their own: the F
 - **Its items are found exploring its place.** Each offering's items stand at the [spawned places](/docs/proposals/genshin/spawned-places) or come from its region's quests, as the wiki lists for each.
 - **What a level unlocks is its region's.** A level that changes the place itself, such as a stronger Lumenstone Adjuvant, belongs to its region's page, which reads the offering's level.
 - **One offering at a time, as its region is built.** Each is written with its region, on this rule.
+- **The tree's place is its own slice.** The Frostbearing Tree's place is written per region into `generated/frostbearingTreePlaces`, as the chests are, rather than into the region's landmark data, since the tree is not yet a landmark the world draws.
+- **Offering items are read by id.** An offering's offering items are the item ids its levels take, and the bag's count of each is offered together, so a tree whose levels take one item and an offering that takes several are one rule.
 
 ## Scope and order
 
-**Built:** the rule, `offerItems`, shared with the statues, and the Frostbearing Tree's levels, read from the game's table and written as their slice, on the [Offering systems](/docs/genshin/offering-systems) page.
+**Built:** the rule, `offerItems`, shared with the statues; the bag's offer, `offerBagItems`, which takes the items out of the bag and pays the rewards in; the Frostbearing Tree's levels, read from the game's table; and its place in Mondstadt, written from the official map, on the [Offering systems](/docs/genshin/offering-systems) page.
 
 **This still adds, in order:**
 
-1. **The tree in Dragonspine**, Mondstadt's: its place in the world, F on it offering every offering item the bag holds, and the bag's removal of the items taken. Its items are placed by the spawned places, so the tree is wired with them.
+1. **The tree in Dragonspine**, Mondstadt's: its landmark, drawn on the ground at its place, and F on it offering through `offerBagItems`. This waits on the item definitions of the tree's item 107010 and its reward items, which the materials table does not hold, and on the game text id of the Offer prompt's verb, which is decoded from the install.
 2. **Each region's offerings**, with its region.
 
 ## Data and measures

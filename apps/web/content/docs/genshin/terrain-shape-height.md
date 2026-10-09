@@ -47,5 +47,5 @@ The residual is simplex noise with the given seed, its first octave's amplitude 
 
 ## Notes
 
-- **Windrise's ground has hills only.** Its data is the fitted hills and no features or residual. The world's features are the other regions' provisional plateaus, each raised under its capital ([region buildings](/docs/genshin/region-buildings)). Fitting features and the residual to the game's tiles is the [terrain shapes](/docs/proposals/genshin/terrain-shapes) proposal, not yet built.
+- **Windrise's ground has hills only, so far.** Its data is the fitted hills; the world's features are the other regions' provisional plateaus, each raised under its capital ([region buildings](/docs/genshin/region-buildings)). The fit now also writes the plateaus its hills leave and the residual's noise into each region's `base-ground.json`, greedily over the tiles and matched by the residual's statistics; the run for Windrise is queued, and cliffs, ridges and the world's merge of Windrise's own features are the [terrain shapes](/docs/proposals/genshin/terrain-shapes) proposal's.
 - **A feature's falloff is positive.** The blends divide by their falloff, so a sharp edge is a falloff of a small positive length rather than zero.

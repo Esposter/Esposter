@@ -8,7 +8,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // The softness of each capture read this run, so a run over many references hashes each recording once
-const softnessByCapture = new Map<string, number>();
+const captureSoftnessMap = new Map<string, number>();
 
 // Measures a capture's frame into its cache file, so the next run reads it instead
 const measureCapture = async (framePath: string, cachePath: string): Promise<number> => {
@@ -21,7 +21,7 @@ const measureCapture = async (framePath: string, cachePath: string): Promise<num
 // Beside the references under the file's hash, so a changed recording is measured again. Only a reference taken from a
 // Recording asks for it: a still shot in the game is never softened
 export const getCaptureSoftness = async (capture: string): Promise<number> => {
-  const memoised = softnessByCapture.get(capture);
+  const memoised = captureSoftnessMap.get(capture);
   if (memoised !== undefined) return memoised;
   const capturePath = join(CAPTURES_DIRECTORY, capture);
   if (!existsSync(capturePath))
@@ -34,6 +34,6 @@ export const getCaptureSoftness = async (capture: string): Promise<number> => {
     ? Number.parseFloat(await readFile(cachePath, "utf8"))
     : await measureCapture(join(REFERENCES_DIRECTORY, `${referenceId}.png`), cachePath);
   console.log(`${capture} softness ${softness.toFixed(3)} sigma`);
-  softnessByCapture.set(capture, softness);
+  captureSoftnessMap.set(capture, softness);
   return softness;
 };

@@ -30,6 +30,7 @@ import { leyLineCommand } from "#src/services/genshinAssets/commands/leyLineComm
 import { locomotionCommand } from "#src/services/genshinAssets/commands/locomotionCommand";
 import { mapCommand } from "#src/services/genshinAssets/commands/mapCommand";
 import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand";
+import { oculiCommand } from "#src/services/genshinAssets/commands/oculiCommand";
 import { offeringsCommand } from "#src/services/genshinAssets/commands/offeringsCommand";
 import { playlistCommand } from "#src/services/genshinAssets/commands/playlistCommand";
 import { pointsCommand } from "#src/services/genshinAssets/commands/pointsCommand";
@@ -82,6 +83,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     items: itemsCommand,
     outcrops: leyLineCommand,
     chests: chestsCommand,
+    oculi: oculiCommand,
     crafting: craftingCommand,
     cooking: cookingCommand,
     forging: forgingCommand,

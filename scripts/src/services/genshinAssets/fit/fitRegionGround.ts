@@ -4,11 +4,14 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { checkIsInsideRegionOutlines } from "#src/services/genshinAssets/fit/checkIsInsideRegionOutlines";
 import { computeGroundBounds } from "#src/services/genshinAssets/fit/computeGroundBounds";
 import { fitGaussianHills } from "#src/services/genshinAssets/fit/fitGaussianHills";
+import { fitTerrainPlateaus } from "#src/services/genshinAssets/fit/fitTerrainPlateaus";
+import { fitTerrainResidual } from "#src/services/genshinAssets/fit/fitTerrainResidual";
 import { GROUND_RADIUS, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldTerrainHeight } from "#src/services/genshinAssets/world/readWorldTerrainHeight";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { createGaussianHillsHeight } from "genshin-engine";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -29,8 +32,9 @@ interface Catalogue {
 // A region's ground as our Gaussian hills over its terrain tiles' heightfields, in the world's axes round the oak's foot,
 // Which every region shares: Three's, x as the game's and z its mirror, every height over the foot's. Fitted round the
 // Region's centre and only inside its catalogue outlines, so no region's ground runs into another's; a region the
-// Catalogue gives no outline (Windrise, the valley its views see) is fitted over its disc. Writes the hills, with the
-// Heights they stand between, as `<region>/base-ground.json`, and returns the report and that path
+// Catalogue gives no outline (Windrise, the valley its views see) is fitted over its disc. Writes the hills, the
+// Plateaus the hills leave, the residual's noise and the heights they stand between, as `<region>/base-ground.json`,
+// And returns the report and that path
 export const fitRegionGround = async (region: DerivedAssetComponent, centre: GroundPoint): Promise<string[]> => {
   const [getGameHeight, [originX, originY, originZ], catalogueJson] = await Promise.all([
     readWorldTerrainHeight(region),
@@ -52,13 +56,37 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
     step: GROUND_STEP,
     widths: GROUND_WIDTHS,
   });
+  const getHillsHeight = createGaussianHillsHeight(hills);
+  const size = Math.floor((2 * GROUND_RADIUS) / GROUND_STEP) + 1;
+  const gridOriginX = centre.x - GROUND_RADIUS;
+  const gridOriginZ = centre.z - GROUND_RADIUS;
   const heights: number[] = [];
-  for (let x = centre.x - GROUND_RADIUS; x <= centre.x + GROUND_RADIUS; x += GROUND_STEP)
-    for (let z = centre.z - GROUND_RADIUS; z <= centre.z + GROUND_RADIUS; z += GROUND_STEP)
-      heights.push(getHeight(x, z));
-  const path = await writeWorldData(join(region, "base-ground.json"), { ...hills, ...computeGroundBounds(heights) });
+  const values = new Float64Array(size * size);
+  for (let row = 0; row < size; row++)
+    for (let column = 0; column < size; column++) {
+      const x = gridOriginX + column * GROUND_STEP;
+      const z = gridOriginZ + row * GROUND_STEP;
+      const height = getHeight(x, z);
+      heights.push(height);
+      values[row * size + column] = height - getHillsHeight(x, z);
+    }
+  const { features, remainder } = fitTerrainPlateaus({
+    originX: gridOriginX,
+    originZ: gridOriginZ,
+    size,
+    step: GROUND_STEP,
+    values,
+  });
+  const residual = fitTerrainResidual(remainder);
+  const path = await writeWorldData(join(region, "base-ground.json"), {
+    ...hills,
+    features,
+    ...computeGroundBounds(heights),
+    residual,
+  });
   return [
     `ground: ${hills.hills.length} hills, ${errors.map(({ rms, within }) => `${rms} metres within ${within}`).join(", ")}`,
+    `ground: ${features.length} plateaus, a residual of ${residual.amplitude} metres at a ${residual.scale} metre scale`,
     path,
   ];
 };

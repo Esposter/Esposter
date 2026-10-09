@@ -1,28 +1,26 @@
 ---
 title: Inventory
-description: Proposal — what the bag still lacks: the full-bag hint, Fates bought with earned Primogems, using and destroying items, and the screen's look measured off the game.
+description: Proposal — what the bag still lacks: using food on the party and destroying equipment from the bag's screen, with the party's health and the game's destroy mode.
 model: claude-opus-5-5
 ---
 
 # Inventory
 
-This page builds on the [inventory](/docs/genshin/inventory), whose bag, wallet, screen and the materials the enemies drop are built. The game's bag does more than hold: it uses food on the party, destroys what a player no longer wants, and says when it is full. What is left here is that.
+This page builds on the [inventory](/docs/genshin/inventory), whose bag, wallet, screen and the materials the enemies drop are built, and on which the full-bag hint, the Fates bought with Primogems and the destroy rule are built as well. What is left is using an item and the bag's destroy mode.
 
 ## Decisions
 
-- **The full-bag hint is the game's.** A pick up with something left over shows the game's own hint, "No space left in Inventory. Please free up some space and try again.", over the world, as the game does.
-- **Fates are bought with Primogems, never money.** Short of a wish's Fates, the wish screen offers the game's own purchase: either Fate for 160 Primogems. Genesis Crystals are never sold, so the offer to convert them never shows.
-- **Using and destroying.** Food heals the party's members and the game's destroy picks the one-star to four-star items it allows; both wait on the party's health and an artifact's level.
+- **Food heals the party's members.** Using a food takes one from the bag and heals each party member by the food's own amount, never past full. It waits on the heal each food gives, which is the game's own figure and not yet read into the bag's data.
+- **Destroying from the screen.** The bag's destroy mode picks one entry at a time, and the destroy rule it uses is built: a weapon or an artifact of up to four stars.
 
 ## Scope and order
 
-**Today:** the bag, its room and sort, the wallet, the screen on B, and the materials the enemies drop, defined from the game's table and picked up into the bag, are built. The enemies' drops are the only items the world gives yet.
+**Today:** the bag, its room and sort, the wallet, the screen on B, the materials the enemies drop, the full-bag hint on a pick up, the Fates bought with Primogems on the wish screen, and the destroy rule are built.
 
 **This adds, in order:**
 
-1. **The full-bag hint**, shown on a pick up the bag cannot take.
-2. **Fates bought with Primogems**, on the wish screen.
-3. **Using and destroying**, with the party's health.
+1. **Using food**, on the party's members, with the party's health.
+2. **The destroy mode** on the bag's screen, with the rule the bag already holds.
 
 ## What this does not propose
 
@@ -31,13 +29,11 @@ This page builds on the [inventory](/docs/genshin/inventory), whose bag, wallet,
 
 ## Key files
 
-| File                                                               | Role after the change                            |
-| :----------------------------------------------------------------- | :----------------------------------------------- |
-| `packages/genshin-world/src/components/Inventory/Screen/Index.vue` | Gains using and destroying an item               |
-| `packages/genshin-world/src/components/Wish/Screen/Index.vue`      | Offers Fates for Primogems when short of them    |
-| `packages/genshin-text/src/models/GameTextKey.ts`                  | Gains the full-bag hint and the purchase's words |
+| File                                                               | Role after the change                         |
+| :----------------------------------------------------------------- | :-------------------------------------------- |
+| `packages/genshin-world/src/components/Inventory/Screen/Index.vue` | Gains using a food and the destroy mode       |
+| `packages/genshin-world/src/services/party/`                       | The party's health, which using a food raises |
 
 ## Sources
 
-- [Inventory](https://genshin-impact.fandom.com/wiki/Inventory), Genshin Impact Wiki: the full-bag hint, and what each tab can use or destroy.
-- [Primogem](https://genshin-impact.fandom.com/wiki/Primogem), Genshin Impact Wiki: either Fate for 160 Primogems.
+- [Inventory](https://genshin-impact.fandom.com/wiki/Inventory), Genshin Impact Wiki: what each tab can use or destroy.

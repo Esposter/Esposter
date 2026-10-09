@@ -8,6 +8,8 @@ export const CAPTURING_RADIANCE_RATE = 0.03;
 export const CAPTURING_RADIANCE_LOSS_LIMIT = 3;
 // One Fate Point charts the next five-star to the Epitomized Path's weapon
 export const FATE_POINT_LIMIT = 1;
+// One Fate of a wish's kind bought with Primogems, the game's direct purchase
+export const FATE_PRIMOGEM_COST = 160;
 // The larger of a wish's two sets
 export const TEN_WISH_COUNT = 10;
 // The beginners' wish ends after twenty wishes, its eighth draws its featured four-star, and ten cost eight Fates

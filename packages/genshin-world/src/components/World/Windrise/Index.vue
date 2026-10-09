@@ -22,6 +22,7 @@ import { useFloatingOrigin } from "#src/composables/useFloatingOrigin";
 import { useGenshinTuning } from "#src/composables/useGenshinTuning";
 import { usePostPipeline } from "#src/composables/usePostPipeline";
 import { useRegionData } from "#src/composables/useRegionData";
+import { useResidentSpots } from "#src/composables/useResidentSpots";
 import { useSky } from "#src/composables/useSky";
 import { useSunShadow } from "#src/composables/useSunShadow";
 import water from "#src/data/windrise/water.json";
@@ -44,6 +45,7 @@ import {
   MIDDLE_GRASS_RING,
   NEAR_GRASS_RING,
   PAVING_COLOR,
+  PAVING_DETAIL,
   RIM_STRENGTH,
   SHADOW_MAX_FAR,
   SUN_DISTANCE,
@@ -163,7 +165,7 @@ const lightUniforms = createLightUniforms();
 lightUniforms.rimStrength.value = RIM_STRENGTH;
 // The paving stones round the statue, cut from the stone the statue is made of
 const pavingGeometry = createWindrisePavingGeometry();
-const pavingMaterial = createToonMaterial({ color: PAVING_COLOR, lightUniforms, rampTexture });
+const pavingMaterial = createToonMaterial({ color: PAVING_COLOR, detail: PAVING_DETAIL, lightUniforms, rampTexture });
 
 const windUniforms = createWindUniforms();
 windUniforms.direction.value.copy(WIND_DIRECTION);
@@ -178,9 +180,6 @@ const { cascadedShadowNode, light: sun } = createSunLight({ cascadeCount, maxFar
 const hemisphere = new HemisphereLight();
 const worldOffset = useFloatingOrigin(origin);
 const { isRegionDataSettled, regionDataMap } = useRegionData(origin, regionDataBaseUrl);
-const questTargetPosition = computed(() =>
-  questTargetId ? findQuestTargetPosition(regionDataMap, questTargetId) : undefined,
-);
 const fogUniforms = createFogUniforms();
 fogUniforms.heightFalloff.value = FOG_HEIGHT_FALLOFF;
 fogUniforms.startDistance.value = FOG_START_DISTANCE;
@@ -239,6 +238,11 @@ watch(
     if (minutes !== undefined) gameClock.minutes = minutes;
   },
 );
+// Where the residents stand at the clock's minute, which the quest's target and the world's prompts read
+const { residentSpots } = useResidentSpots(regionDataMap, gameClock, origin);
+const questTargetPosition = computed(() =>
+  questTargetId ? findQuestTargetPosition(regionDataMap, residentSpots.value, questTargetId) : undefined,
+);
 // The character whose model failed to load, drawn as its body's capsule in its place
 const failedCharacterId = ref<number>();
 // The tiles the terrain draws, which it writes each frame and what reads the ground compares against what it last read
@@ -291,8 +295,8 @@ if (isTuning)
     windUniforms,
   });
 
-// The regions' data, which the world screen reads the residents of the regions in reach from
-defineExpose({ regionDataMap });
+// The regions' data, and the spot each resident is shown at, which the world screen reads the residents from
+defineExpose({ regionDataMap, residentSpots });
 onUnmounted(() => {
   rampTexture.dispose();
   pavingGeometry.dispose();

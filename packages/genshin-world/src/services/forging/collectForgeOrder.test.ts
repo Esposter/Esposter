@@ -75,4 +75,23 @@ describe(collectForgeOrder, () => {
     expect(result.inventory.items).toStrictEqual([]);
     expect(result.order).toStrictEqual(order);
   });
+
+  test("should take in the done units the bag has room for and hold the first it has none for with those behind it", () => {
+    expect.hasAssertions();
+
+    const fullDefinition = { ...resultDefinition, stackLimit: 3 };
+    const result = collectForgeOrder(
+      recipe,
+      { count: 3, recipeId: recipe.id, startedAt: EPOCH },
+      {
+        inventory: { items: [{ definition: fullDefinition, id: 1, quantity: 1 }], nextId: 2 },
+        now: EPOCH.add({ seconds: 3 * UNIT_SECONDS }),
+        resultDefinition: fullDefinition,
+      },
+    );
+
+    expect(countInventoryItem(result.inventory.items, RESULT_ID)).toBe(3);
+    expect(result.order?.count).toBe(1);
+    expect(result.order?.startedAt.equals(EPOCH.add({ seconds: 2 * UNIT_SECONDS }))).toBe(true);
+  });
 });

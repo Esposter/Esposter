@@ -4,7 +4,7 @@ import { fillRegionHarmonically } from "#src/services/genshinParity/reference/fi
 import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
-import { readFile } from "node:fs/promises";
+import { readFile, rename } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
 
@@ -41,8 +41,11 @@ export const getCleanPlatePath = async (
     height,
     region,
   );
+  // Written beside its name and renamed onto it, so a write cut short is never taken for a cached plate
+  const partialPath = `${platePath}.partial`;
   await sharp(plate, { raw: { channels: 4, height, width } })
     .png()
-    .toFile(platePath);
+    .toFile(partialPath);
+  await rename(partialPath, platePath);
   return platePath;
 };

@@ -28,4 +28,4 @@ export const CITY_AREA_FILE_PATH: string = join(PARITY_DIRECTORY, "city-areas.js
 export const CITY_AREA_EXPORTS_DIRECTORY: string = join(PARITY_DIRECTORY, "city-areas", "exports");
 // The free physical memory an AnimeStudio run waits for, in bytes, and how long it waits between readings, in milliseconds
 export const MIN_FREE_MEMORY_BYTES: number = 4 * 1024 ** 3;
-export const MEMORY_WAIT_MILLISECONDS: number = 30_000;
+export const MEMORY_WAIT_MILLISECONDS = 30_000;

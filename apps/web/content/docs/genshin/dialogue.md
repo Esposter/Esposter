@@ -47,19 +47,19 @@ Where a talk stands is a `TalkProgress`: the id of the line on screen, empty onc
 
 ### On screen
 
-`DialogueScreen` in `genshin-interface` draws a talk's state and nothing else. It shows the speaker's name over the line, which is laid out whole with its unwritten tail held in place unseen, so the line never rewraps as it is written. The replies run down the right, with the one F would choose lit. A screen reader hears the whole line once, not its characters one by one.
+`DialogueScreen` in `genshin-interface` draws a talk's state and nothing else. It shows the speaker's name over the line, which is laid out whole with its unwritten tail held in place unseen, so the line never rewraps as it is written. The replies run down the right, with the one F would choose lit once one is. A screen reader hears the whole line once, not its characters one by one.
 
 `DialogueTalk` in `genshin-world` runs a talk over the world. The world screen mounts it while the talk screen is open, with the talk its resident began and the words of the quests, and its end sets the world back. The talk screen hides the HUD and lets the pointer go for the replies, and holds nothing else ([screens](/docs/genshin/screens)).
 
 - **The line is written out** a character at a time, at `TALK_REVEAL_MS_PER_CHARACTER`, and is then shown whole.
-- **A click goes on, and so do F and Space.** These keys are read off the engine's own `InputActionBindingMap`, as its Interact and Jump, so they stay the game's default bindings. While replies are on offer, F chooses the lit one and the arrows move the light between them.
+- **A click goes on, and so do F and Space.** These keys are read off the engine's own `InputActionBindingMap`, as its Interact and Jump, so they stay the game's default bindings. While replies are on offer, none is lit until the pointer passes over one or an arrow lights the first, F chooses the lit one, and the arrows move the light between them.
 - **Auto-play** holds each whole line for `TALK_AUTO_PLAY_HOLD_MS` and then goes on, stopping at replies. Its button reads the game's own "Auto" and "Playing".
 - **Skip** runs on to the next replies or to the end. Its button reads the game's own "Skip".
 - **A reply's speaker is the Traveler**, named with the game's own title for them.
 
 ### Residents
 
-A region's data lists its residents beside its landmarks. Each resident has the game's own id, a name by text id, the spot they idle at and the way they face there, their catalogue area, and the talk F begins with them. The [quests](/docs/genshin/quests) page's navigation finds a resident by their id or by their talk's id.
+A region's data lists its residents beside its landmarks. Each resident has the game's own id, a name by text id, their day and night spots (either one absent for a resident the game shows at one time only), their catalogue area, and the talk F begins with them. The [resident schedules](/docs/genshin/resident-schedules) page places them at the hour. The [quests](/docs/genshin/quests) page's navigation finds a resident by their id or by their talk's id.
 
 ## Parity
 
@@ -110,7 +110,7 @@ The reveal and auto-play timings wait on `dialogue-reveal.mkv` and `dialogue-aut
 - **The screen's place and colour are read off one frame.** The speaker's name is gold `#ffc700`, the brightest saturated pixel of its letters. The replies are dark pills 45 high and 15 apart, the first at 1275 by 698 of 1920 by 1080. The screen is drawn over the clean plate of its frame (Parity above), so the score covers the band's text and the pills over the game's own scene, and the band has no gradient, since the game's scene under its line is not darkened.
 - **The speaker's role comes from the talk.** A spoken line names its role by `speakerRoleTextId`, drawn under the name in a smaller gold when it is set. The dump's dialog table gives the title text id, which the generator does not read yet, so a generated talk has no role.
 - **The Confirm prompt is not drawn.** The frame shows a controller's X mark and the word Confirm bottom right. The keyboard client's key for it is the reader's call.
-- **The selected reply's look is not settled.** Both replies in the frame are the same dark pill, and the first is marked by a controller's X prompt, which the keyboard client does not show. The screen still lights the selected reply white, which no frame shows.
+- **The selected reply's look is not settled.** Both replies in the frame are the same dark pill, and the first is marked by a controller's X prompt, which the keyboard client does not show. So the replies start unlit on every line, as the frame shows them, and the screen lights a reply white only once the pointer or an arrow selects it, a look no frame shows.
 - **No voice plays.** A line carries the id of its voice-over, but nothing of the game's audio ships, so the voice-over is never played.
 - **The replies' marks are not drawn yet.** Each reply carries its mark, and its place beside the reply is kept, until the game's marks are traced into paths of our own.
 

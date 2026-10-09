@@ -8,7 +8,13 @@ import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { CharacterMenuTabGameTextKeyMap } from "#src/services/character/CharacterMenuTabGameTextKeyMap";
-import { ARTIFACT_SLOT_ORDER, COMBAT_TALENT_ORDER, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import {
+  ARTIFACT_SLOT_ORDER,
+  COMBAT_TALENT_ORDER,
+  TRAVELER_CHARACTER_ID,
+  WHOLE_ATTRIBUTES,
+} from "#src/services/character/constants";
 import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
 import { LOGIN_TRAVELER_GENDER } from "#src/services/login/constants";
 import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
@@ -66,23 +72,30 @@ const weaponPanel = computed(() => {
   const weapon = character.value?.weapon;
   const weaponData = weapon && statTables.weaponDataMap.get(weapon.id);
   if (!weapon || !weaponData) return undefined;
-  const attributeLines = getGrownAttributeLines(
-    weaponData,
-    statTables.weaponGrowCurveMap,
-    weapon.level,
-    weapon.ascension,
+  // Every line of an attribute is summed, since an ascension phase can add to the base ATK the weapon's level grows
+  const { attributeTotalMap } = computeCharacterAttributes(
+    getGrownAttributeLines(weaponData, statTables.weaponGrowCurveMap, weapon.level, weapon.ascension),
   );
-  const getAttributeValue = (attribute: Attribute): number =>
-    attributeLines.find((line) => line.attribute === attribute)?.value ?? 0;
+  // The secondary attribute is the one the weapon grows beside its base ATK, written whole or as a percentage as the
+  // Game writes it, and nothing for a weapon that grows none
+  const subStatAttribute = weaponData.growAttributes.find(
+    ({ attribute }) => attribute !== Attribute.BaseAttack,
+  )?.attribute;
+  const subStatValue =
+    subStatAttribute === undefined
+      ? ""
+      : WHOLE_ATTRIBUTES.includes(subStatAttribute)
+        ? `${Math.round(attributeTotalMap[subStatAttribute])}`
+        : `${(attributeTotalMap[subStatAttribute] * 100).toFixed(1)}%`;
   const maxLevel = weaponData.ascensionPhases[weapon.ascension]?.maxLevel ?? weapon.level;
   return {
     ascension: weapon.ascension,
-    baseAttack: Math.round(getAttributeValue(Attribute.BaseAttack)),
+    baseAttack: Math.round(attributeTotalMap[Attribute.BaseAttack]),
     levelText: fillGameTextValues(gameText[GameTextKey.LevelFormat], `${weapon.level}/${maxLevel}`),
     name: nameText[weaponData.nameTextId] || "",
     rarity: weaponData.rarity,
     refinement: weapon.refinement,
-    subStatValue: `${(getAttributeValue(Attribute.DefensePercent) * 100).toFixed(1)}%`,
+    subStatValue,
   };
 });
 // Which artifact slots the character wears one in, in the game's order

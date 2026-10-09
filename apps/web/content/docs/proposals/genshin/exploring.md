@@ -27,7 +27,7 @@ flowchart TD
 
 ## Scope
 
-**Today:** a jump lands a provisional distance in front of a Statue of The Seven, the only kind a jump goes to, and the map shows everything it draws at its one fixed zoom.
+**Today:** a jump lands a provisional distance in front of a Statue of The Seven, the only kind a jump goes to, and the map is panned by a drag and zoomed by the wheel or its slider.
 
 **This adds:**
 
