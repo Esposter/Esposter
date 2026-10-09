@@ -13,9 +13,11 @@ import { totalmem } from "node:os";
 export const getMachineState = (
   cpuAveragePercentage: number,
   sampleCount: number,
-  freeGigabytes: number,
+  freeGigabytes: number | undefined,
   totalGigabytes: number = totalmem() / GIBIBYTE,
 ): MachineState => {
+  // Neither tight nor idle can be claimed without a memory reading, and idle claims room, so the machine reads busy
+  if (freeGigabytes === undefined) return MachineState.Busy;
   if (freeGigabytes < totalGigabytes * GATE_MEMORY_SHARE) return MachineState.Tight;
   if (
     sampleCount >= WINDOW_MINUTES &&
