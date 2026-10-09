@@ -35,8 +35,8 @@ onUnmounted(() => {
   <TresMesh
     v-for="({ geometry, material }, index) in statueParts"
     :key="index"
-    :geometry="geometry"
-    :material="material"
+    :geometry
+    :material
     :position="[position.x, groundHeight + heightOffset, position.z]"
     :rotation-y="rotation"
     cast-shadow
