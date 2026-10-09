@@ -85,6 +85,7 @@ The review budget reads two figures off the CodeRabbit plan the repository is on
 | `scripts/src/services/coderabbit/shared/constants.ts` | the file cap and the plan's hourly figure — the review budget's two knobs                                                                                                                                   |
 | `.coderabbit.yaml`                                    | see the [collection cycle](/docs/infra/review-collector/collection-cycle)                                                                                                                                   |
 | `scripts/src/coderabbit/feedback/index.ts`            | the finding report, printed by hand and handed to the drain                                                                                                                                                 |
+| `scripts/src/coderabbit/state/index.ts`               | the collector's state as JSON — `pnpm ai:coderabbit:state`, the same reads a pass makes, read by the agent console's harbour                                                                                |
 | `.agents/skills/review-queue/SKILL.md`                | the session's side of the loop — pushing `ai/queue` and catching up after a window                                                                                                                          |
 
 ## Notes

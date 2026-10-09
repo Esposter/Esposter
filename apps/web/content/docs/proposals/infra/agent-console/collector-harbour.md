@@ -12,12 +12,12 @@ Unlike the other views this one is Esposter's own: it reads the collector's bran
 
 ## Scope
 
-**Today:** the collector's state is the Actions tab, the release pull request and the comments on commits.
+**Built:** the read. `pnpm ai:coderabbit:state` prints the collector's state as JSON, through the same reads a pass makes: the branch heads, the commits `ai/queue` owes `develop`, the claimed ones, the first commit's held marker and the open release pull request's gate. See the [review collector](/docs/infra/review-collector) index for where it sits among the collector's parts.
 
-**This adds:**
+**Left:**
 
-1. **A read.** A repository may declare commands the host runs for a view and returns as JSON; this one declares `pnpm ai:coderabbit:state`, a new script over the reads the collector's own dry run already makes — the branch heads, the owed commits by patch id, the claimed ones, the release pull request's gate, the held marker — through the `gh` login the person already has, run on the view opening and on each push the session makes. No new token and no API beyond the free one.
-2. **The picture.** Boats in queue order upstream; claimed boats in the canal; the window as the boats inside the lock; the lock gate open or shut by the review gate's decision; a red `main` as a storm over the sea.
+1. **The host's declared command.** A repository declares the command the host runs for a view and reads back as JSON, run on the view opening and on each push the session makes. Waits on the console's view registry ([extensions](/docs/proposals/infra/agent-console/extensions), the Views tier), which is not built.
+2. **The picture.** Boats in queue order upstream; claimed boats in the canal; the window as the boats inside the lock; the lock gate open or shut by the review gate's decision; a red `main` as a storm over the sea. The window's own boats need the stacked windows read too, which the read does not yet do: it reads only the release pull request.
 3. **A click.** A boat opens its commit on GitHub; the held boat opens the comment that holds it.
 
 ## How it works
@@ -32,20 +32,25 @@ flowchart LR
 
 ```text
 scripts/src/coderabbit/state/
-  index.ts                   ← `ai:coderabbit:state`: the collector's own reads as JSON
-apps/web/app/components/AgentConsole/View/Harbour/
-  AgentConsoleHarbour.vue    ← the river, the boats, the lock, the storm
+  index.ts                              ← `ai:coderabbit:state`: the collector's state as JSON
+scripts/src/services/coderabbit/state/
+  readHarbourState.ts                   ← gathers the collector's own reads into one state
+scripts/src/models/coderabbit/state/
+  HarbourState.ts                       ← the state the view reads
+apps/web/app/components/AgentConsole/View/Harbour/   ← not built
+  AgentConsoleHarbour.vue               ← the river, the boats, the lock, the storm
 ```
 
 **Rendering:** TresJS, with cientos `Ocean` for the water, `Instances` for the boats and `Precipitation` for a red `main`'s storm; nothing needs raw Three.js.
 
 ## Key files
 
-| File                                                         | Role                                               |
-| :----------------------------------------------------------- | :------------------------------------------------- |
-| `scripts/src/services/coderabbit/collect/readCherryShas.ts`  | What the queue owes, the question the boats answer |
-| `scripts/src/services/coderabbit/collect/readClaimedShas.ts` | Which boats take the canal                         |
-| `scripts/src/services/coderabbit/collect/getGateDecision.ts` | Whether the lock is open                           |
+| File                                                         | Role                                                   |
+| :----------------------------------------------------------- | :----------------------------------------------------- |
+| `scripts/src/services/coderabbit/state/readHarbourState.ts`  | Gathers the collector's reads into the harbour's state |
+| `scripts/src/services/coderabbit/collect/readCherryShas.ts`  | What the queue owes, the question the boats answer     |
+| `scripts/src/services/coderabbit/collect/readClaimedShas.ts` | Which boats take the canal                             |
+| `scripts/src/services/coderabbit/collect/getGateDecision.ts` | Whether the lock is open                               |
 
 ## Notes
 
