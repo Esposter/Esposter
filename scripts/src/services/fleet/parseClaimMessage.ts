@@ -29,6 +29,6 @@ const checkIsClaimMessage = (value: unknown): value is ClaimMessage =>
 // The message of a claim commit, or undefined for a commit that is not a claim this fleet wrote
 export const parseClaimMessage = (message: string): ClaimMessage | undefined =>
   getResult(() => parseMachineJson(message)).match(
-    (parsed) => (checkIsClaimMessage(parsed) ? parsed : undefined),
+    (claimValue) => (checkIsClaimMessage(claimValue) ? claimValue : undefined),
     () => undefined,
   );

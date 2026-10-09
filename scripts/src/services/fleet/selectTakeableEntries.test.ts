@@ -6,8 +6,8 @@ import { STALE_MILLISECONDS } from "#src/services/fleet/constants";
 import { selectTakeableEntries } from "#src/services/fleet/selectTakeableEntries";
 import { describe, expect, test } from "vitest";
 
-const NOW = Temporal.Instant.from("2026-10-09T01:00:00Z").epochMilliseconds;
-const RECENT = "2026-10-09T00:55:00Z";
+const NOW = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).epochMilliseconds;
+const RECENT = Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: 55 }).toString();
 const OLD = Temporal.Instant.fromEpochMilliseconds(NOW - STALE_MILLISECONDS - 1).toString();
 const PROFILE: MachineProfile = { areas: ["genshin"], capabilities: ["game-install"], id: "pc" };
 const createEntry = (overrides: Partial<FleetEntry>): FleetEntry => ({

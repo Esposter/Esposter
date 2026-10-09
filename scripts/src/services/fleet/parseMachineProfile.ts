@@ -9,16 +9,16 @@ const checkIsStringArray = (value: unknown): value is string[] =>
 // The profile a machine file holds, or undefined for a file missing its id, areas or capabilities
 export const parseMachineProfile = (json: string): MachineProfile | undefined =>
   getResult(() => parseMachineJson(json)).match(
-    (parsed) => {
-      if (typeof parsed !== "object" || parsed === null) return undefined;
+    (profileValue) => {
+      if (typeof profileValue !== "object" || profileValue === null) return undefined;
       const isComplete =
-        "id" in parsed &&
-        typeof parsed.id === "string" &&
-        "areas" in parsed &&
-        checkIsStringArray(parsed.areas) &&
-        "capabilities" in parsed &&
-        checkIsStringArray(parsed.capabilities);
-      return isComplete ? (parsed as MachineProfile) : undefined;
+        "id" in profileValue &&
+        typeof profileValue.id === "string" &&
+        "areas" in profileValue &&
+        checkIsStringArray(profileValue.areas) &&
+        "capabilities" in profileValue &&
+        checkIsStringArray(profileValue.capabilities);
+      return isComplete ? (profileValue as MachineProfile) : undefined;
     },
     () => undefined,
   );

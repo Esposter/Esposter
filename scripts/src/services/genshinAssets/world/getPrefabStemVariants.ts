@@ -3,11 +3,12 @@
 export const getPrefabStemVariants = (name: string): Set<string> => {
   const stems = new Set([
     name,
-    name.replace(/_Col$/, ""),
-    name.replace(/_Col$/, "").replace(/_Lod\d+$/, ""),
-    name.replace(/_Lod\d+$/, ""),
+    name.replace(/_Col$/u, ""),
+    name.replace(/_Col$/u, "").replace(/_Lod\d+$/u, ""),
+    name.replace(/_Lod\d+$/u, ""),
   ]);
-  for (const stem of [...stems])
-    for (const variant of [stem.replace(/_Vo$/, ""), `${stem}_Vo`, stem.replace(/_Group$/, "")]) stems.add(variant);
+  const originalStems = [...stems];
+  for (const stem of originalStems)
+    for (const variant of [stem.replace(/_Vo$/u, ""), `${stem}_Vo`, stem.replace(/_Group$/u, "")]) stems.add(variant);
   return stems;
 };

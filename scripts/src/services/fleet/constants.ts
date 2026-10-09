@@ -1,6 +1,8 @@
 import { homedir } from "node:os";
 import { join } from "node:path";
 
+import { SITE_NAME } from "@esposter/shared";
+
 export const FLEET_REMOTE = "origin";
 export const CLAIM_REF_PREFIX = "refs/claims/";
 export const MACHINE_REF_PREFIX = "refs/machines/";
@@ -12,7 +14,7 @@ export const EMPTY_TREE_SHA = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
 // A fresh machine may have no commit identity configured, and nothing reads the identity of a claim or a heartbeat
 export const FLEET_IDENTITY_ARGUMENTS: readonly string[] = [
   "-c",
-  "user.name=esposter-fleet",
+  `user.name=${SITE_NAME.toLowerCase()}-fleet`,
   "-c",
   "user.email=fleet@esposter.invalid",
 ];
@@ -23,7 +25,7 @@ export const RENEW_MILLISECONDS: number = Temporal.Duration.from({ minutes: 10 }
 export const STALE_MILLISECONDS: number = Temporal.Duration.from({ minutes: 30 }).total("milliseconds");
 // A renewal's load line samples the machine over this window, so a renewal is quick
 export const LOAD_SAMPLE_MILLISECONDS: number = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
-export const MACHINE_PROFILE_PATH: string = join(homedir(), ".esposter", "machine.json");
+export const MACHINE_PROFILE_PATH: string = join(homedir(), `.${SITE_NAME.toLowerCase()}`, "machine.json");
 // The areas a machine holds when its profile is new: every area, until the user lends it fewer
 export const ALL_AREAS: readonly string[] = ["*"];
 // The capabilities read off the machine itself, which every run rewrites. Any other capability in a profile was set by

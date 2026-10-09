@@ -63,7 +63,8 @@ export const watchMachine = async (): Promise<void> => {
     if (profile !== undefined && now - lastHeartbeatMilliseconds >= RENEW_MILLISECONDS) {
       lastHeartbeatMilliseconds = now;
       // A failed push is one line, and forgets the last commit, so the next push leases from the remote's own commit
-      getResult(() =>
+      const heartbeatParentSha = lastHeartbeatSha;
+      lastHeartbeatSha = getResult(() =>
         pushMachineHeartbeat(
           {
             at: Temporal.Now.instant().toString(),
@@ -72,15 +73,13 @@ export const watchMachine = async (): Promise<void> => {
             ...(gpuPercentage === undefined ? {} : { gpu: gpuPercentage }),
             machine: profile.id,
           },
-          lastHeartbeatSha,
+          heartbeatParentSha,
         ),
       ).match(
-        (sha) => {
-          lastHeartbeatSha = sha;
-        },
+        (sha) => sha,
         (error) => {
-          lastHeartbeatSha = undefined;
           console.error(`heartbeat not pushed: ${error.message}`);
+          return undefined;
         },
       );
     }

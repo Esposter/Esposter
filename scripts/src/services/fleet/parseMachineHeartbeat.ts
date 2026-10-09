@@ -19,6 +19,6 @@ const checkIsHeartbeat = (value: unknown): value is MachineHeartbeat =>
 // The heartbeat a machine's commit carries, or undefined for a commit that is not one
 export const parseMachineHeartbeat = (message: string): MachineHeartbeat | undefined =>
   getResult(() => parseMachineJson(message)).match(
-    (parsed) => (checkIsHeartbeat(parsed) ? parsed : undefined),
+    (heartbeatValue) => (checkIsHeartbeat(heartbeatValue) ? heartbeatValue : undefined),
     () => undefined,
   );

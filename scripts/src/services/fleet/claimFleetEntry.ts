@@ -22,18 +22,18 @@ export interface FleetClaimResult {
 // Leased from the stale commit when it is not, so exactly one machine's push lands
 export const claimFleetEntry = (entry: string, machine: string, load: string): FleetClaimResult => {
   const claims = readClaimedRefs();
-  const existing = claims.get(entry);
-  if (existing?.message.machine === machine) return { attempt: ClaimAttempt.Won, claimed: existing };
+  const existingClaim = claims.get(entry);
+  if (existingClaim?.message.machine === machine) return { attempt: ClaimAttempt.Won, claimed: existingClaim };
   if (
-    existing !== undefined &&
-    getClaimStatus(existing.message, Temporal.Now.instant().epochMilliseconds) !== ClaimStatus.Stale
+    existingClaim !== undefined &&
+    getClaimStatus(existingClaim.message, Temporal.Now.instant().epochMilliseconds) !== ClaimStatus.Stale
   )
-    return { attempt: ClaimAttempt.Held, claimed: existing };
+    return { attempt: ClaimAttempt.Held, claimed: existingClaim };
 
   const now = Temporal.Now.instant().toString();
   const message: ClaimMessage = { claimedAt: now, entry, load, machine, renewedAt: now };
   const sha = createFleetCommit(message);
-  if (pushFleetRef(`${CLAIM_REF_PREFIX}${entry}`, sha, existing?.sha) === FleetPushOutcome.Pushed)
+  if (pushFleetRef(`${CLAIM_REF_PREFIX}${entry}`, sha, existingClaim?.sha) === FleetPushOutcome.Pushed)
     return { attempt: ClaimAttempt.Won, claimed: { message, sha } };
 
   const holder = readClaimedRefs().get(entry);
