@@ -289,6 +289,8 @@ export const HULL_CELL_SIZE = 1;
 // How far a ratio's cross-ratio in the fitted data may stray from its reference's: a pixel off at each end of widths
 // About two hundred pixels across moves it by about a hundredth
 export const ARRANGEMENT_CROSS_RATIO_TOLERANCE = 0.01;
+// The region data file the open world's landmarks are written to, the one Windrise's landmarks and capitals are fitted into
+export const WINDRISE_REGION_FILE = "regions/mondstadt.json";
 // The path ID a root's parent is written as
 export const ROOT_PARENT_ID = "0";
 // How far a world position may stand from the origin and still count as at it, in metres: a placement a float off zero is

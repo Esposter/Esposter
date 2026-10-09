@@ -8,7 +8,7 @@ import { fitWindrisePaving } from "#src/services/genshinAssets/fit/fitWindrisePa
 import { fitWindriseStatue } from "#src/services/genshinAssets/fit/fitWindriseStatue";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
-import { GROUND_RADIUS } from "#src/services/genshinAssets/shared/constants";
+import { GROUND_RADIUS, WINDRISE_REGION_FILE } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldWaterLevel } from "#src/services/genshinAssets/world/readWorldWaterLevel";
@@ -26,7 +26,7 @@ export const fitWindriseScene = (only: readonly string[] = [], angleCount?: numb
       ground: () => fitRegionGround(DerivedAssetComponent.Windrise, { x: 0, z: 0 }),
       // Mondstadt's capital is in the file Windrise's landmarks are, so the two are written one after the other
       landmarks: async () => [
-        await fitRegionLandmarks(DerivedAssetComponent.Windrise, "regions/mondstadt.json"),
+        await fitRegionLandmarks(DerivedAssetComponent.Windrise, WINDRISE_REGION_FILE),
         ...(await fitRegionCapitals()),
       ],
       oak: fitWindriseOak,

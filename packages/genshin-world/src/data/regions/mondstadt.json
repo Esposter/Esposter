@@ -23,7 +23,7 @@
   "landmarks": [
     {
       "areaId": "galesong-hill",
-      "heightOffset": -0.5,
+      "heightOffset": 0.03,
       "id": "windrise-great-oak",
       "kind": "Tree",
       "position": { "x": 0, "z": 0 },
