@@ -13,5 +13,6 @@ export const props = {
   revealedLength: LINE.length,
   selectedChoiceId: "1",
   speakerName: "Sara",
+  speakerRole: "Waitress, Good Hunter",
 };
 export const variants = { revealing: { choices: [], revealedLength: Math.floor(LINE.length / 2) } };

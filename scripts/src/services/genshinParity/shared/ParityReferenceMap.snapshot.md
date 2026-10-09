@@ -19,11 +19,11 @@ committed.
 | `character-talents-tabs` | `CharacterScreen` | 6.94% | 0.470 | 5.07% | 0.3231 |
 | `character-weapons` | `CharacterScreen` | 10.21% | 0.476 | 6.42% | 0.4153 |
 | `character-weapons-tabs` | `CharacterScreen` | 7.39% | 0.499 | 5.26% | 0.3384 |
-| `dialogue-choices-line` | `DialogueTalk` | 10.03% | 0.225 | 6.99% | 0.2960 |
-| `dialogue-choices-replies` | `DialogueTalk` | 22.03% | 0.735 | 13.67% | 0.5781 |
-| `dialogue-choices-speaker` | `DialogueTalk` | 10.32% | 0.000 | 8.12% | 0.3272 |
-| `dialogue-line` | `DialogueTalk` | 11.55% | 0.164 | 6.11% | 0.3967 |
-| `dialogue-paimon-line` | `DialogueTalk` | 12.95% | 0.379 | 7.19% | 0.3395 |
+| `dialogue-choices-line` | `DialogueTalk` | 8.66% | 0.917 | 2.09% | 0.2807 |
+| `dialogue-choices-replies` | `DialogueTalk` | 15.08% | 0.754 | 8.51% | 0.4770 |
+| `dialogue-choices-speaker` | `DialogueTalk` | 8.38% | 0.633 | 4.99% | 0.3228 |
+| `dialogue-line` | `DialogueTalk` | 10.47% | 0.981 | 2.29% | 0.3740 |
+| `dialogue-paimon-line` | `DialogueTalk` | 9.73% | 0.926 | 3.04% | 0.3121 |
 | `everfrozen-earth-location` | `WorldScreen` | 20.11% | 0.239 | 19.70% | 0.6298 |
 | `exit-prompt` | `MenuExit` | 8.36% | 0.909 | 33.71% | 0.2227 |
 | `handbook-experience` | `HandbookScreen` | 18.12% | 0.173 | 13.29% | 0.5150 |

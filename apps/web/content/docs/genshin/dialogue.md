@@ -65,19 +65,26 @@ A region's data lists its residents beside its landmarks. Each resident has the 
 
 Registered, not yet within the bar. Five references are cut from the English PC client's dialogue in `yt-nWBqOXWZuFg.mp4` (1280 by 720) and shot as `DialogueTalk`, which takes a `startProgress` naming the line the talk is held on, so each state is the reference's own props rather than the reveal's clock. Sara's line with the Traveler's two replies is scored three ways, the speaker, the line and the replies, at 19 seconds. Sara's line with no replies is at 23 seconds, and Paimon's line at 29 seconds.
 
-The five are judged over their clean plate, the reference frame with its region filled from its surroundings (`isBackdrop`, see Parity above), so the game's own dialogue is gone from under the band and the overlay is scored against what the world shows there. The band carries no gradient: restored, it scored worse on four of the five under the plate (`dialogue-line` 11.55% to 17.23%) and better only on the speaker (10.32% to 10.02%), so it stays removed.
+The five are judged over their clean plate, the reference frame with its scored region filled from its surroundings (`isBackdrop`, see Parity above), so the overlay is scored against what the world shows there. The bare render is that plate with nothing drawn on it, so a state beats its bare render only by drawing the dialogue closer than the plate already is.
 
-| Reference                  | Old backdrop        | Clean plate         | Bare render over the plate |
-| :------------------------- | :------------------ | :------------------ | :------------------------- |
-| `dialogue-choices-replies` | 20.77%, FLIP 0.5373 | 22.03%, FLIP 0.5781 | 17.80%                     |
-| `dialogue-line`            | 0.33%, FLIP 0.0111  | 11.55%, FLIP 0.3967 | 11.65%                     |
-| `dialogue-choices-line`    | 1.55%, FLIP 0.0406  | 10.03%, FLIP 0.2960 | 9.64%                      |
-| `dialogue-paimon-line`     | 1.91%, FLIP 0.0481  | 12.95%, FLIP 0.3395 | 11.84%                     |
-| `dialogue-choices-speaker` | 0.00%, FLIP 0.0000  | 10.32%, FLIP 0.3272 | 12.60%                     |
+| Reference                  | Plate before        | Plate now           | Bare render |
+| :------------------------- | :------------------ | :------------------ | :---------- |
+| `dialogue-choices-line`    | 10.03%, FLIP 0.2960 | 8.66%, FLIP 0.2807  | 9.64%       |
+| `dialogue-choices-replies` | 22.03%, FLIP 0.5781 | 15.08%, FLIP 0.4770 | 17.80%      |
+| `dialogue-choices-speaker` | 10.32%, FLIP 0.3272 | 8.38%, FLIP 0.3228  | 12.60%      |
+| `dialogue-line`            | 11.55%, FLIP 0.3967 | 10.47%, FLIP 0.3740 | 11.65%      |
+| `dialogue-paimon-line`     | 12.95%, FLIP 0.3395 | 9.73%, FLIP 0.3121  | 11.84%      |
 
-The old backdrop's near-zero figures were the flaw itself: the frame drew the game's band under ours, so an overlay that drew less scored better. On the plate the overlay is worse than the bare render on three of the five (the replies, the paimon line and the choices line) and level with it on the line, so the states are not within their bar, and the roadmap item stays open.
+Every state now beats its bare render, by one to three and a half points, which is not yet the roadmap's 2% bar. What moved each figure, in the order it was fixed:
 
-The line's remaining difference is the face's and its outline's, a line of Signika over the game's HYWenHei; the line sits 42 units from the band's top, where its ink lands on the game's. The replies are the largest error, and it is the lit reply: the first is drawn white where the frame shows both pills dark, since the screen lights its first reply from the start and the game's frame does not (see Notes). The reveal and auto-play timings wait on `dialogue-reveal.mkv` and `dialogue-auto-skip.mkv`.
+- **Position.** The line's first ascender lands on the reference's row, 591 of 720 for Sara's lines. The speaker's role line, `Waitress, Good Hunter`, sits between the name and the line and is drawn from the talk line's `speakerRoleTextId`. Paimon's line has no role, so its line sits a role's height higher, as the frame shows: scored at the role's place it was 21.93%, and at the frame's place 9.73%. The margin under the name is 13.5 units, so the line sits 30 units under the name with a role and 13.5 without.
+- **Size and letter spacing.** The line is 26 units with 2.3 units of letter spacing, where it was 32 units. Its x-height and ascender then match the recording's, and its width matches within four pixels.
+- **Softness.** The recording is soft and the game's face is not Signika, so a glyph a pixel off its place scores twice. The line is blurred 1.5 units: `dialogue-line` scored 11.22% at 0.5, 10.62% at 1, 10.47% at 1.5 and 10.64% at 2.5.
+- **Colour.** The line stays white, the recording's peak. A paler white scored lower only by making up for the blur, so it was refused.
+- **Band.** The band's gradient stays removed. Restored at 0.3 and 0.5, it scored worse on the three line states and on Paimon's line (`dialogue-line` 11.96% and 13.61%), and better only on the speaker.
+- **Replies.** The pill's darkness is 0.22 of black, the best of 0.15 to 0.45 swept against the plate. The text starts 48 units in, past the mark's place, and moving the first pill up three pixels scored worse (23.78% against 22.03%), so its top stays where it was.
+
+The reveal and auto-play timings wait on `dialogue-reveal.mkv` and `dialogue-auto-skip.mkv`.
 
 ## Key files
 
@@ -101,7 +108,7 @@ The line's remaining difference is the face's and its outline's, a line of Signi
 - **The reveal is not visible in the published recording.** An English-language public recording of the dialogue choices, at 30 frames a second and 1280 by 720, shows each line whole in its first frame: two lines measured in full, the text's ink filling in one frame and not character by character. So `TALK_REVEAL_MS_PER_CHARACTER` stays provisional, and the next line is timed off a 60 frames a second recording of a line being written out, which is owed.
 - **The auto-play hold is not measured.** `TALK_AUTO_PLAY_HOLD_MS` waits on the same recording as the reveal, since no published clip found shows auto-play on.
 - **The screen's place and colour are read off one frame.** The speaker's name is gold `#ffc700`, the brightest saturated pixel of its letters. The replies are dark pills 45 high and 15 apart, the first at 1275 by 698 of 1920 by 1080. The screen is drawn over the clean plate of its frame (Parity above), so the score covers the band's text and the pills over the game's own scene, and the band has no gradient, since the game's scene under its line is not darkened.
-- **The speaker's role is not drawn.** The recording sets a role under the name, as "Waitress, Good Hunter" does under Sara, from the dialog table's title text id, which the talk's schema does not hold yet.
+- **The speaker's role comes from the talk.** A spoken line names its role by `speakerRoleTextId`, drawn under the name in a smaller gold when it is set. The dump's dialog table gives the title text id, which the generator does not read yet, so a generated talk has no role.
 - **The Confirm prompt is not drawn.** The frame shows a controller's X mark and the word Confirm bottom right. The keyboard client's key for it is the reader's call.
 - **The selected reply's look is not settled.** Both replies in the frame are the same dark pill, and the first is marked by a controller's X prompt, which the keyboard client does not show. The screen still lights the selected reply white, which no frame shows.
 - **No voice plays.** A line carries the id of its voice-over, but nothing of the game's audio ships, so the voice-over is never played.

@@ -29,6 +29,7 @@ describe(skipTalk, () => {
           kind: TalkLineKind.Spoken,
           nextLineIds: ["0"],
           speakerTextId: "speakerTextId",
+          speakerRoleTextId: "",
           textId: "textId",
           voiceId: "voiceId",
         },
