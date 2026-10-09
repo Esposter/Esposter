@@ -778,8 +778,8 @@ const respawnParty = () => {
   const nearestLandmark = findNearestLandmark(unlockedLandmarks.value, characterBody.position);
   if (nearestLandmark) jumpTo(computeJumpPose(nearestLandmark));
 };
-// An enemy's strike lands on the taunt it struck, or on the character on the field through her shield, and a team it
-// Fells respawns
+// An enemy's strike lands on the taunt it struck, or on the character on the field through the team's shields, and a team
+// It fells respawns
 const strikeParty = (enemy: Enemy, taunt?: KitTaunt) => {
   const combatant = activeCombatant.value;
   if (!combatant) return;
