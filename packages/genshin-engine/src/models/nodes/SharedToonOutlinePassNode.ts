@@ -29,7 +29,7 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
       if (!(object instanceof Mesh)) return;
       const material: Material | Material[] = object.material;
       if (Array.isArray(material)) {
-        if (material.some(checkIsOutlined))
+        if (material.some((groupMaterial) => checkIsOutlined(groupMaterial)))
           heldMeshes.push([
             object,
             material,

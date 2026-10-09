@@ -1,6 +1,6 @@
-import { SharedToonOutlinePassNode } from "#src/models/nodes/SharedToonOutlinePassNode";
 import type { Material, Renderer } from "three/webgpu";
 
+import { SharedToonOutlinePassNode } from "#src/models/nodes/SharedToonOutlinePassNode";
 import { BoxGeometry, Camera, Mesh, Scene } from "three";
 import { float, vec3 } from "three/tsl";
 import { MeshBasicNodeMaterial, MeshToonNodeMaterial } from "three/webgpu";

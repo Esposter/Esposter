@@ -158,11 +158,11 @@ export const measureStalls = async ({ height, scale, screen, width }: StallOptio
     await page.locator("body[data-parity-ready], body[data-parity-error]").waitFor({ timeout: LOAD_TIMEOUT_MS });
     const parityError = await page.evaluate(() => window.document.body.dataset.parityError);
     if (parityError) throw new Error(`page failed: ${parityError}`);
-    const loadMs = Date.now() - loadStart;
+    const loadEnd = Date.now();
     await page.waitForFunction(() => window.__TRES__DEVTOOLS__ !== undefined, null, { timeout: HOOK_TIMEOUT_MS });
     await page.evaluate(hookRenderer);
     await page.waitForFunction(() => window.__hooked, null, { timeout: HOOK_TIMEOUT_MS });
-    return { loadMs, states: await measureStates(page) };
+    return { loadMs: loadEnd - loadStart, states: await measureStates(page) };
   }).match(
     async (value) => {
       await browser.close();
