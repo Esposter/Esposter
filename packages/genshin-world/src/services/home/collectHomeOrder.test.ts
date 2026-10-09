@@ -78,4 +78,23 @@ describe(collectHomeOrder, () => {
 
     expect(again.progress.trustExp).toBe(TRUST_EXP);
   });
+
+  test("should give nothing for an order no longer queued", () => {
+    expect.hasAssertions();
+
+    const first = collectHomeOrder(order, blueprint, {
+      inventory: emptyInventory,
+      now: EPOCH.add({ seconds: SECONDS }),
+      progress,
+      resultDefinition,
+    });
+    const again = collectHomeOrder(order, blueprint, {
+      inventory: first.inventory,
+      now: EPOCH.add({ seconds: SECONDS }),
+      progress: first.progress,
+      resultDefinition: { ...resultDefinition, stackLimit: 2 },
+    });
+
+    expect(again).toStrictEqual(first);
+  });
 });
