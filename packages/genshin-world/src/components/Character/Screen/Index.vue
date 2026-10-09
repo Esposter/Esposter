@@ -150,7 +150,7 @@ const talentLevels = computed(() => COMBAT_TALENT_ORDER.map((talent) => characte
       <CharacterMenuTalents v-else-if="character && tab === CharacterMenuTab.Talents" :levels="talentLevels" />
       <CharacterProfile
         v-else-if="character && tab === CharacterMenuTab.Profile"
-        :key="`${character.id}-${language}`"
+        :key="`${character.id}-${language}-${companionshipExpMap.get(character.id) ?? 0}`"
         :avatar-id="character.id"
         :friendship-exp="companionshipExpMap.get(character.id) ?? 0"
         :game-text
