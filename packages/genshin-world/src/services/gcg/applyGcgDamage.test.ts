@@ -10,6 +10,12 @@ import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { describe, expect, test } from "vitest";
+import { takeOne } from "@esposter/shared";
+
+import standardRule from "#src/generated/gcg/standardRule.json";
+import { gcgStandardRuleSchema } from "#src/models/gcg/gcgStandardRuleSchema";
+
+const TEST_RULE = gcgStandardRuleSchema.parse(standardRule);
 
 const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
@@ -21,6 +27,12 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   hasPrepared: true,
   hasRolled: true,
   isReplacementPending: false,
+  cards: [],
+  onstages: [],
+  summons: [],
+  supports: [],
+  usedCardIds: [],
+  usedSkillIds: [],
 });
 const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
   actingSideIndex: 0,
@@ -29,6 +41,7 @@ const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
   outcome: undefined,
   phase: GcgPhase.Action,
   round: 1,
+  rule: TEST_RULE,
   sides,
   winnerSideIndex: undefined,
 });
@@ -41,11 +54,13 @@ describe(applyGcgDamage, () => {
 
   const createCharacterState = (element: Element, aura: Element | GcgAura = GcgAura.None): GcgCharacterState => ({
     aura,
-    character: { element, hp: FULL_HP, id: 1, maxEnergy: 3, skills: [] },
+    character: { element, hp: FULL_HP, id: 1, maxEnergy: 3, skills: [], weapon: "" },
     energy: 0,
     hp: FULL_HP,
     isFrozen: false,
     shield: 0,
+    equipments: [],
+    statuses: [],
   });
 
   test("should consume a Cryo aura under a Pyro hit and add the Melt damage in its place", async () => {
@@ -58,10 +73,10 @@ describe(applyGcgDamage, () => {
     ]);
     applyGcgDamage(duel, 0, { damageType: Element.Pyro, value: PYRO_VALUE }, rule);
 
-    expect({ aura: duel.sides[1].characters[0]?.aura, hp: duel.sides[1].characters[0]?.hp }).toStrictEqual({
-      aura: GcgAura.None,
-      hp: FULL_HP - PYRO_VALUE - 2,
-    });
+    expect({
+      aura: takeOne(takeOne(duel.sides, 1).characters, 0)?.aura,
+      hp: takeOne(takeOne(duel.sides, 1).characters, 0)?.hp,
+    }).toStrictEqual({ aura: GcgAura.None, hp: FULL_HP - PYRO_VALUE - 2 });
   });
 
   test("should apply a Pyro aura on a hit that reacts with nothing, and leave none for an Anemo hit", async () => {
@@ -73,10 +88,10 @@ describe(applyGcgDamage, () => {
       createSideState([createCharacterState(Element.Hydro)]),
     ]);
     applyGcgDamage(duel, 0, { damageType: Element.Anemo, value: ELEMENT_VALUE }, rule);
-    const auraAfterAnemo = duel.sides[1].characters[0]?.aura;
+    const auraAfterAnemo = takeOne(takeOne(duel.sides, 1).characters, 0)?.aura;
     applyGcgDamage(duel, 0, { damageType: Element.Pyro, value: PYRO_VALUE }, rule);
 
-    expect({ auraAfterAnemo, auraAfterPyro: duel.sides[1].characters[0]?.aura }).toStrictEqual({
+    expect({ auraAfterAnemo, auraAfterPyro: takeOne(takeOne(duel.sides, 1).characters, 0)?.aura }).toStrictEqual({
       auraAfterAnemo: GcgAura.None,
       auraAfterPyro: Element.Pyro,
     });
@@ -91,15 +106,15 @@ describe(applyGcgDamage, () => {
       createSideState([createCharacterState(Element.Hydro, Element.Hydro)]),
     ]);
     applyGcgDamage(duel, 0, { damageType: Element.Cryo, value: ELEMENT_VALUE }, rule);
-    const frozenHp = duel.sides[1].characters[0]?.hp;
-    const isFrozenAfterFreeze = duel.sides[1].characters[0]?.isFrozen;
+    const frozenHp = takeOne(takeOne(duel.sides, 1).characters, 0)?.hp;
+    const isFrozenAfterFreeze = takeOne(takeOne(duel.sides, 1).characters, 0)?.isFrozen;
     applyGcgDamage(duel, 0, { damageType: Element.Pyro, value: PYRO_VALUE }, rule);
 
     expect({
       frozenHp,
-      hpAfterPyro: duel.sides[1].characters[0]?.hp,
+      hpAfterPyro: takeOne(takeOne(duel.sides, 1).characters, 0)?.hp,
       isFrozenAfterFreeze,
-      isFrozenAfterPyro: duel.sides[1].characters[0]?.isFrozen,
+      isFrozenAfterPyro: takeOne(takeOne(duel.sides, 1).characters, 0)?.isFrozen,
     }).toStrictEqual({
       frozenHp: FULL_HP - ELEMENT_VALUE - 1,
       hpAfterPyro: FULL_HP - ELEMENT_VALUE - 1 - PYRO_VALUE - 2,
@@ -136,10 +151,10 @@ describe(applyGcgDamage, () => {
     ]);
     applyGcgDamage(duel, 0, { damageType: Element.Pyro, value: PYRO_VALUE }, rule);
 
-    expect({ activeIndex: duel.sides[1].activeIndex, hp: duel.sides[1].characters[0]?.hp }).toStrictEqual({
-      activeIndex: 1,
-      hp: FULL_HP - PYRO_VALUE - 2,
-    });
+    expect({
+      activeIndex: takeOne(duel.sides, 1).activeIndex,
+      hp: takeOne(takeOne(duel.sides, 1).characters, 0)?.hp,
+    }).toStrictEqual({ activeIndex: 1, hp: FULL_HP - PYRO_VALUE - 2 });
   });
 
   test("should pierce the other opposing characters for one under Superconduct", async () => {
@@ -152,7 +167,10 @@ describe(applyGcgDamage, () => {
     ]);
     applyGcgDamage(duel, 0, { damageType: Element.Electro, value: ELEMENT_VALUE }, rule);
 
-    expect(duel.sides[1].characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - ELEMENT_VALUE - 1, FULL_HP - 1]);
+    expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([
+      FULL_HP - ELEMENT_VALUE - 1,
+      FULL_HP - 1,
+    ]);
   });
 
   test("should grant the attacker's active character a shield point under Crystallize, at most the limit", async () => {
@@ -182,7 +200,7 @@ describe(applyGcgDamage, () => {
       createSideState([defeated, standing]),
     ]);
     applyGcgDamage(duel, 0, { damageType: Element.Pyro, value: PYRO_VALUE }, rule);
-    const isReplacementPending = duel.sides[1].isReplacementPending;
+    const isReplacementPending = takeOne(duel.sides, 1).isReplacementPending;
     const phaseWithStanding = duel.phase;
     standing.hp = 0;
     applyGcgDamage(duel, 0, { damageType: Element.Pyro, value: PYRO_VALUE }, rule);

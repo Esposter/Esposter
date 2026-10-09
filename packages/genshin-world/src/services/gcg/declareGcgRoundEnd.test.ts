@@ -13,13 +13,20 @@ import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
+import standardRule from "#src/generated/gcg/standardRule.json";
+import { gcgStandardRuleSchema } from "#src/models/gcg/gcgStandardRuleSchema";
+
+const TEST_RULE = gcgStandardRuleSchema.parse(standardRule);
+
 const createCharacterState = (): GcgCharacterState => ({
   aura: GcgAura.None,
-  character: { element: Element.Pyro, hp: 10, id: 1, maxEnergy: 3, skills: [] },
+  character: { element: Element.Pyro, hp: 10, id: 1, maxEnergy: 3, skills: [], weapon: "" },
   energy: 0,
   hp: 10,
   isFrozen: false,
   shield: 0,
+  equipments: [],
+  statuses: [],
 });
 
 describe(declareGcgRoundEnd, () => {
@@ -36,6 +43,12 @@ describe(declareGcgRoundEnd, () => {
     hasPrepared: true,
     hasRolled: true,
     isReplacementPending: false,
+    cards: [],
+    onstages: [],
+    summons: [],
+    supports: [],
+    usedCardIds: [],
+    usedSkillIds: [],
   });
   const createDuel = (round = 1): GcgDuel => ({
     actingSideIndex: 0,
@@ -44,6 +57,7 @@ describe(declareGcgRoundEnd, () => {
     outcome: undefined,
     phase: GcgPhase.Action,
     round,
+    rule: TEST_RULE,
     sides: [createSideState(), createSideState()],
     winnerSideIndex: undefined,
   });

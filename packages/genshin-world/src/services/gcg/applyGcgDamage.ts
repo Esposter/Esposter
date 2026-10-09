@@ -20,16 +20,19 @@ import {
 } from "#src/services/gcg/constants";
 import { findGcgNextCharacterIndex } from "#src/services/gcg/findGcgNextCharacterIndex";
 import { getGcgReactionKind } from "#src/services/gcg/getGcgReactionKind";
+import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
+import { reduceGcgReceivedDamage } from "#src/services/gcg/reduceGcgReceivedDamage";
 import { takeOne } from "@esposter/shared";
 
 // One damage a skill deals to the opposing active character, from the side at sourceSideIndex. An element applies its aura
 // Or reacts with the aura there, a reaction's damage and effects settle with it, and a defeated character is cleared, with
 // A side that has none standing losing the duel, and a side whose active fell with one standing owing a replacement
 export const applyGcgDamage = (duel: GcgDuel, sourceSideIndex: number, damage: GcgDamage, rule: GcgRule): void => {
-  const targetSide = takeOne(duel.sides, 1 - sourceSideIndex);
-  const hit = targetSide.characters.at(targetSide.activeIndex);
-  if (hit) hitGcgCharacter(duel, sourceSideIndex, hit, damage, rule);
+  const targetSideIndex = 1 - sourceSideIndex;
+  const hit = takeOne(duel.sides, targetSideIndex).characters.at(takeOne(duel.sides, targetSideIndex).activeIndex);
+  if (hit) hitGcgCharacter(duel, sourceSideIndex, hit, reduceGcgReceivedDamage(duel, targetSideIndex, damage), rule);
   settleGcgDefeats(duel);
+  for (const side of duel.sides) pruneGcgZoneCards(side);
 };
 
 const hitGcgCharacter = (

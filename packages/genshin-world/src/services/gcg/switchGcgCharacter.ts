@@ -2,6 +2,8 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
+import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { checkGcgActingSide } from "#src/services/gcg/checkGcgActingSide";
 import { GCG_SWITCH_DICE_COUNT } from "#src/services/gcg/constants";
 import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
@@ -31,7 +33,12 @@ export const switchGcgCharacter = (
     )
   )
     return GcgActionResult.Unpayable;
+  const isFast = active.character.skills.some(
+    ({ effect, kind }) =>
+      kind === GcgSkillKind.Passive &&
+      GcgEffectNameSkillModuleMap.get(effect)?.isSwitchFast?.({ duel, sideIndex }) === true,
+  );
   side.activeIndex = characterIndex;
-  passGcgTurn(duel, sideIndex);
+  if (!isFast) passGcgTurn(duel, sideIndex);
   return GcgActionResult.Done;
 };
