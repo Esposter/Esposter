@@ -1,3 +1,4 @@
+/* oxlint-disable no-underscore-dangle -- the test reads the outline hook three names _getOutlineMaterial */
 import type { Material, Renderer } from "three/webgpu";
 
 import { SharedToonOutlinePassNode } from "#src/models/nodes/SharedToonOutlinePassNode";

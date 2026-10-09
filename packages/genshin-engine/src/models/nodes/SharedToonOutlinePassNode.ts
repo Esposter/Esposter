@@ -10,7 +10,7 @@ import { ToonOutlinePassNode } from "three/webgpu";
 export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   declare _createMaterial: () => NodeMaterial;
   #isCompiling = false;
-  #outlineMaterial: NodeMaterial | undefined;
+  #outlineMaterial?: NodeMaterial;
 
   // Every toon material is outlined by the one shared material, which three would build once per toon material given
   _getOutlineMaterial(_originalMaterial: Material): NodeMaterial {
@@ -39,12 +39,11 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
     });
     this.#isCompiling = true;
     for (const [mesh, , heldMaterial] of heldMeshes) mesh.material = heldMaterial;
-    try {
-      await renderer.compileAsync(this.scene, this.camera);
-    } finally {
-      for (const [mesh, material] of heldMeshes) mesh.material = material;
-      this.#isCompiling = false;
-    }
+    // The compile's failure is held until the meshes are restored, so no mesh stays in the outline material
+    const compiled = await Promise.allSettled([renderer.compileAsync(this.scene, this.camera)]);
+    for (const [mesh, material] of heldMeshes) mesh.material = material;
+    this.#isCompiling = false;
+    if (compiled[0].status === "rejected") throw compiled[0].reason;
   }
 
   override updateBefore(frame: NodeFrame): boolean | undefined {
@@ -55,6 +54,8 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   }
 
   #getSharedOutlineMaterial(): NodeMaterial {
+    // Three's own hook for building the outline material, which this pass answers once for every toon material
+    // oxlint-disable-next-line no-underscore-dangle -- three names its build hook _createMaterial
     this.#outlineMaterial ??= this._createMaterial();
 
     return this.#outlineMaterial;
