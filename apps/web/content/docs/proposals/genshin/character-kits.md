@@ -58,10 +58,10 @@ flowchart TD
 
 ## Key files
 
-| File                                                                | Role after the change                    |
-| :------------------------------------------------------------------ | :--------------------------------------- |
-| `packages/genshin-engine/src/input/InputActionBindingMap.ts`        | The aim binding a bow's kit reads        |
-| `packages/genshin-world/src/services/kit/characters/travelerKit.ts` | `TRAVELER_KIT`, the Traveler's Anemo kit |
+| File                                                                | Role after the change                         |
+| :------------------------------------------------------------------ | :-------------------------------------------- |
+| `packages/genshin-engine/src/input/InputActionBindingMap.ts`        | The aim binding a bow's kit reads             |
+| `packages/genshin-world/src/services/kit/characters/travelerKit.ts` | `createTravelerKit`, the Traveler's Anemo kit |
 
 New files, as the modules come:
 

@@ -26,13 +26,15 @@ flowchart LR
 
 ## Talent multipliers
 
-Each combat talent's multipliers are written per level by the same run, into `talentMultipliers.json`, keyed by the talent's proud skill group. A level keeps its parameters (`paramList`) up to the last one that is not zero, each with the text id labelling it (`paramDescList`), so a read past that point is zero. The table is loaded synchronously by `getTalentMultiplier`, which reads a parameter by its index. It holds the groups the talent kits name, 352 of them, and a level past 10 is the constellation's.
+The stats run writes each playable character's combat talent multipliers into a chunk of its own, `talentMultipliers/<avatarId>.json`, keyed by the talent's proud skill group. A level keeps its parameters (`paramList`) up to the last one that is not zero, so a read past that point is zero. The labels, the text id naming each parameter (`paramDescList`), go apart into `talentLabels/<avatarId>.json`, which the talents screen loads when it opens and the combat table never carries.
+
+`TalentMultiplierLoaderMap` is keyed by avatar id and imports a chunk on demand. `readTalentMultipliers` checks each chunk against its schema and merges it by group, and `getTalentMultiplier` reads a parameter from the merged table by its index. The world loads the deployed team's multipliers as it starts and again whenever the team changes, and a kit is built from the loaded table, so the world's entry carries none of them. The one static import this replaced was 1.4 MB of it.
 
 ```mermaid
 flowchart LR
-  P["ProudSkillExcelConfigData: each group's levels and their parameters"] -->|"stats run, the groups the talent kits name"| M["talentMultipliers.json, keyed by group"]
-  M -->|"static import, checked by its schema once"| G["getTalentMultiplier: a level's parameter by its index"]
-  G --> T["TRAVELER_KIT: the Anemo form's hits' multipliers"]
+  P["ProudSkillExcelConfigData: each group's levels and their parameters"] -->|"stats run, one chunk per character"| M["talentMultipliers/avatarId.json, keyed by group"]
+  M -->|"dynamic import when the character joins the party, checked by its schema"| R["readTalentMultipliers: merged by group"]
+  R -->|"getTalentMultiplier reads a parameter by its index"| T["createTravelerKit: the Anemo form's hits' multipliers"]
 ```
 
 ## Targeting
@@ -41,7 +43,7 @@ An action turns the body to the enemy it targets as it starts. That is the livin
 
 ## The Traveler's kit
 
-`TRAVELER_KIT`, in the Traveler's character module, is the first kit, at talent level 1. Its hitmarks and seconds are gcsim v2.47.2's frames, and the plunges' poise is gcsim's pyro plunge's. gcsim sets no poise on the Anemo skill or burst, so both hit with none. Its strikes' poise is not in that file, so each is provisional, as are the charged attack's and the plunge collision's.
+`createTravelerKit`, in the Traveler's character module, built from the loaded table, is the first kit, at talent level 1. Its hitmarks and seconds are gcsim v2.47.2's frames, and the plunges' poise is gcsim's pyro plunge's. gcsim sets no poise on the Anemo skill or burst, so both hit with none. Its strikes' poise is not in that file, so each is provisional, as are the charged attack's and the plunge collision's.
 
 Its multipliers are read from the Anemo form's proud skill groups, 731 for the attacks, 732 for Palm Vortex and 739 for Gust Surge. Those agree with the wiki's values to two decimal places. The charged attack's second hit is 731's 0.7224, where the male form's group 730 gives 0.60716, so the kit reads 731 for it.
 
@@ -95,12 +97,14 @@ Each effect is on the party, in a list the character component holds, so a switc
 | `packages/genshin-world/src/models/character/CharacterSkillKit.ts`      | A playable character's skill sets by its id                                            |
 | `scripts/src/services/genshinAssets/stats/getCharacterSkillKits.ts`     | Every playable character's skill sets, from the dump's tables                          |
 | `scripts/src/services/genshinAssets/stats/toSkillDepot.ts`              | One skill set, from its depot row and the skill rows                                   |
-| `scripts/src/services/genshinAssets/stats/toTalentMultiplierMap.ts`     | Each named talent group's levels, parameters and labels                                |
+| `scripts/src/services/genshinAssets/stats/toTalentTables.ts`            | Each character's talent groups: their levels, parameters and labels, apart             |
+| `scripts/src/services/genshinAssets/stats/writeTalentTables.ts`         | Each character's chunk and the loader map the world imports them through               |
 | `packages/genshin-world/src/generated/stats/characterSkillKits.json`    | The written table the app loads on demand                                              |
-| `packages/genshin-world/src/generated/stats/talentMultipliers.json`     | The talent multipliers per level, loaded statically                                    |
+| `packages/genshin-world/src/generated/talentMultipliers/`               | Each character's multipliers per level, loaded on demand as the character joins        |
+| `packages/genshin-world/src/services/kit/readTalentMultipliers.ts`      | The loaded characters' multipliers, checked and merged by proud skill group            |
 | `packages/genshin-world/src/services/kit/getTalentMultiplier.ts`        | A talent's parameter at a level, by its index                                          |
 | `packages/genshin-world/src/services/kit/selectAttackTarget.ts`         | The targeting score an action turns the body to                                        |
-| `packages/genshin-world/src/services/kit/characters/travelerKit.ts`     | `TRAVELER_KIT`, the Traveler's Anemo kit                                               |
+| `packages/genshin-world/src/services/kit/characters/travelerKit.ts`     | `createTravelerKit`, the Traveler's Anemo kit over the loaded multipliers              |
 | `packages/genshin-world/src/services/kit/characters/bennettKit.ts`      | `BENNETT_KIT`, Bennett's kit with Fantastic Voyage's field                             |
 | `packages/genshin-world/src/services/kit/effects/stepKitField.ts`       | A field's schedule, run on each step, ticking while the body stands in it              |
 | `packages/genshin-world/src/services/kit/characters/monaKit.ts`         | `MONA_KIT`, Mona's kit with Mirror Reflection's summon                                 |
