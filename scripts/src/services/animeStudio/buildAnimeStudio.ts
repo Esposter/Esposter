@@ -10,6 +10,7 @@ import {
   OOZ_LIBRARY_FILE_NAME,
   PARITY_DIRECTORY_NAME,
   PARITY_REFERENCE_BLOCKS,
+  PARITY_TYPE_EXPORT_ARGUMENTS,
   PUBLISH_DIRECTORY_NAME,
   RUNTIME_IDENTIFIER,
   TARGET_FRAMEWORK,
@@ -159,52 +160,48 @@ const buildAclLibrary = (projectDirectory: string, output: string): string => {
 const countFiles = (directory: string): number =>
   readdirSync(directory, { recursive: true, withFileTypes: true }).filter((entry) => entry.isFile()).length;
 
-// Exports one reference block with the freshly published CLI, every type, and compares what it wrote with the table.
-// The file total and each listed type's count must match, and the output must name no exception.
-const checkParityBlock = (
-  cliPath: string,
-  block: string,
-  total: number,
-  types: Record<string, number>,
-  directory: string,
-): void => {
-  const outputDirectory = join(directory, PARITY_DIRECTORY_NAME, parse(block).name);
-  rmSync(outputDirectory, { force: true, recursive: true });
-  mkdirSync(outputDirectory, { recursive: true });
-  const { error, status, stderr, stdout } = spawnSync(
-    cliPath,
-    [
-      join(GAME_BLOCKS_DIRECTORY, block),
-      outputDirectory,
-      "--group_assets",
-      "ByType",
-      "--game",
-      "GI",
-      "--logger_flags",
-      "Warning",
-      "Error",
-    ],
-    { cwd: dirname(cliPath), encoding: "utf8", maxBuffer: 1024 ** 3 },
-  );
-  if (status !== 0)
-    throw new InvalidOperationError(Operation.Create, block, stderr || stdout || error?.message || `exited ${status}`);
-  const exceptions = readAnimeStudioExceptions(`${stdout}\n${stderr}`);
-  const typeCounts = Object.fromEntries(
-    readdirSync(outputDirectory, { withFileTypes: true })
-      .filter((entry) => entry.isDirectory())
-      .map((entry) => [entry.name, countFiles(join(outputDirectory, entry.name))]),
-  );
-  const actualTotal = countFiles(outputDirectory);
-  const mismatches = [
-    ...(actualTotal === total ? [] : [`total ${actualTotal}, Windows ${total}`]),
-    ...Object.entries(types)
-      .filter(([type, count]) => (typeCounts[type] ?? 0) !== count)
-      .map(([type, count]) => `${type} ${typeCounts[type] ?? 0}, Windows ${count}`),
-    ...exceptions.slice(0, 5),
-  ];
+// Exports one reference block with the freshly published CLI, one run per parity type as Windows' counts were taken,
+// And compares each type's file count with the table. No run may name an exception
+const checkParityBlock = (cliPath: string, block: string, types: Record<string, number>, directory: string): void => {
+  const mismatches: string[] = [];
+  const typeCounts: Record<string, number> = {};
+  for (const [type, exportArguments] of Object.entries(PARITY_TYPE_EXPORT_ARGUMENTS)) {
+    const outputDirectory = join(directory, PARITY_DIRECTORY_NAME, parse(block).name, type);
+    rmSync(outputDirectory, { force: true, recursive: true });
+    mkdirSync(outputDirectory, { recursive: true });
+    const { error, status, stderr, stdout } = spawnSync(
+      cliPath,
+      [
+        join(GAME_BLOCKS_DIRECTORY, block),
+        outputDirectory,
+        "--types",
+        type,
+        ...exportArguments,
+        "--group_assets",
+        "ByType",
+        "--game",
+        "GI",
+        "--logger_flags",
+        "Warning",
+        "Error",
+      ],
+      { cwd: dirname(cliPath), encoding: "utf8", maxBuffer: 1024 ** 3 },
+    );
+    if (status !== 0)
+      throw new InvalidOperationError(
+        Operation.Create,
+        block,
+        stderr || stdout || error?.message || `exited ${status}`,
+      );
+    mismatches.push(...readAnimeStudioExceptions(`${stdout}\n${stderr}`).slice(0, 5));
+    const typeDirectory = join(outputDirectory, type);
+    typeCounts[type] = existsSync(typeDirectory) ? countFiles(typeDirectory) : 0;
+    if (typeCounts[type] !== (types[type] ?? 0))
+      mismatches.push(`${type} ${typeCounts[type]}, Windows ${types[type] ?? 0}`);
+  }
   if (mismatches.length > 0)
     throw new InvalidOperationError(Operation.Create, block, `does not match Windows: ${mismatches.join("; ")}`);
-  console.log(`${block}: ${actualTotal} files, ${JSON.stringify(typeCounts)}, matches Windows`);
+  console.log(`${block}: ${JSON.stringify(typeCounts)}, matches Windows`);
 };
 
 // The parity acceptance test, run after publish: each reference block in the table is exported and compared.
@@ -230,8 +227,7 @@ const checkParity = (cliPath: string, directory: string, skipParity: boolean): v
       GAME_EXECUTABLE_NAME,
       "is running: close the game before AnimeStudio reads its blocks",
     );
-  for (const { block, total, types } of PARITY_REFERENCE_BLOCKS)
-    checkParityBlock(cliPath, block, total, types, directory);
+  for (const { block, types } of PARITY_REFERENCE_BLOCKS) checkParityBlock(cliPath, block, types, directory);
   rmSync(join(directory, PARITY_DIRECTORY_NAME), { force: true, recursive: true });
 };
 

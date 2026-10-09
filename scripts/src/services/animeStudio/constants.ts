@@ -20,10 +20,22 @@ export const MAPS_DIRECTORY_NAME = "Maps";
 export const KEPT_MAPS_DIRECTORY_NAME = "animestudio-maps";
 // Where the parity check exports each reference block, beside the build and outside the repository
 export const PARITY_DIRECTORY_NAME = "parity";
-// The file counts Windows AnimeStudio gives the reference blocks on game 7.1.0, by every type it exports.
-// A build's export of each must match them and log no exception. Only 00/15508490 is recorded so far; the rest follow
-export const PARITY_REFERENCE_BLOCKS: readonly { block: string; total: number; types: Record<string, number> }[] = [
-  { block: "00/15508490.blk", total: 579, types: { Sprite: 246, Texture2D: 325 } },
+// The types the parity check exports, one run each as the Windows reference was taken: the textures and sprites as
+// PNG with no export type, the MonoBehaviours as JSON
+export const PARITY_TYPE_EXPORT_ARGUMENTS: Readonly<Record<string, readonly string[]>> = {
+  MonoBehaviour: ["--export_type", "JSON"],
+  Sprite: [],
+  Texture2D: [],
+};
+// The file counts Windows AnimeStudio gives the reference blocks on game 7.1.0, one export run per parity type with
+// Group by type, every regular file under each type's folder. A build's export of each must match and log no exception
+export const PARITY_REFERENCE_BLOCKS: readonly { block: string; types: Record<string, number> }[] = [
+  { block: "00/15508490.blk", types: { MonoBehaviour: 8, Sprite: 246, Texture2D: 325 } },
+  { block: "00/10850306.blk", types: { MonoBehaviour: 0, Sprite: 308, Texture2D: 308 } },
+  { block: "00/06104869.blk", types: { MonoBehaviour: 16, Sprite: 573, Texture2D: 485 } },
+  { block: "00/10418262.blk", types: { MonoBehaviour: 5013, Sprite: 655, Texture2D: 589 } },
+  { block: "00/12714647.blk", types: { MonoBehaviour: 36, Sprite: 327, Texture2D: 390 } },
+  { block: "00/14949020.blk", types: { MonoBehaviour: 907, Sprite: 184, Texture2D: 229 } },
 ];
 // The names the CLI's native imports resolve to on macOS. .NET probes `lib<import name>.dylib` and `<import name>.dylib`
 // Next to the app; the Ooz import keeps its `.dll` suffix, so its library is `libAnimeStudio.Ooz.dll.dylib`
