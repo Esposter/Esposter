@@ -87,7 +87,7 @@ flowchart TD
 - **The Mystic's drop id names no table in the dump.** The row's drop id, 208001500, is in neither the dump nor the repository's other tables, so the writer maps it to the forge random table whose Mystic Enhancement Ore count is the row's own, six, which is the table 20001. The split between the two results is the table's weights. A game check of that split is not owed; it is read off the table.
 - **The Adventure EXP outcome is returned, not granted.** The collection returns the EXP a unit yields, and the Adventure Rank that takes it is not called yet.
 - **The enhancement ores' items are in the items slice.** The bag takes a result by its item definition, so `pnpm -C scripts genshin:assets items` writes every item the enhancement recipes name, the Mystic ore and the Magical Crystal Chunk among them, into the items slice beside the drop and expedition items.
-- **The weapons' items are not, yet.** A weapon's billets and ores name text ids the game text has no key for, and a weapon is in the weapon table, not the material table. A weapon unit's result therefore has no definition in the bag, and [collecting](/docs/genshin/forging) it throws until the weapons' definitions are written.
+- **The weapons' items are not, yet.** A weapon's billets and ores name text ids the game text has no key for, and a weapon is in the weapon table, not the material table. A weapon unit's result therefore has no definition in the bag, and collecting it throws until the weapons' definitions are written.
 
 ## Sources
 
