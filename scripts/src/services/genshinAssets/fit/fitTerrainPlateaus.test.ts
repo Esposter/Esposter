@@ -1,7 +1,7 @@
 import type { TerrainResidualGrid } from "#src/models/genshinAssets/fit/TerrainResidualGrid";
 
 import { fitTerrainPlateaus } from "#src/services/genshinAssets/fit/fitTerrainPlateaus";
-import { getPlateauHeight, TerrainFeatureKind } from "genshin-engine";
+import { getPlateauBlend, TerrainFeatureKind } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 describe(fitTerrainPlateaus, () => {
@@ -28,7 +28,7 @@ describe(fitTerrainPlateaus, () => {
       x: 0,
       z: 0,
     } as const;
-    const { features } = fitTerrainPlateaus(createGrid((x, z) => getPlateauHeight(plateau, x, z)));
+    const { features } = fitTerrainPlateaus(createGrid((x, z) => plateau.height * getPlateauBlend(plateau, x, z)));
 
     expect(features[0]?.kind).toBe(TerrainFeatureKind.Plateau);
     expect(Math.hypot(features[0]?.x ?? Number.NaN, features[0]?.z ?? Number.NaN)).toBeLessThan(PLATEAU_RADIUS / 2);
