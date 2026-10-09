@@ -1,3 +1,4 @@
+import { RESIDENT_DUEL_GAME_ID_MAP } from "#src/services/genshinAssets/residents/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { Element } from "genshin-world";
 import { join } from "node:path";
@@ -15,9 +16,9 @@ export const GCG_GENERATED_DIRECTORY: string = join(
   "gcg",
 );
 export const GCG_STANDARD_RULE_PATH: string = join(GCG_GENERATED_DIRECTORY, "standardRule.json");
-// The duels the world's residents play, by their game id in the game table; their decks are written into one map beside
-// The standard rule
-export const GCG_DUEL_GAME_IDS: number[] = [12];
+// The duels the world's residents play, by their game id in the game table: the games their seats name. Their decks are
+// Written into one map beside the standard rule
+export const GCG_DUEL_GAME_IDS: number[] = [...RESIDENT_DUEL_GAME_ID_MAP.values()];
 export const GCG_GAMES_PATH: string = join(GCG_GENERATED_DIRECTORY, "games.json");
 // The deck the player plays when the game names one no slice is written for: deck 3 stands in until the game's own deck is
 // Built, a provisional call recorded on the as-built page
