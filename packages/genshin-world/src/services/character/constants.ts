@@ -47,3 +47,13 @@ export const ELEMENTAL_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, 
   [Attribute.GeoDamageBonus, GameTextKey.AttributeGeoDamageBonus],
   [Attribute.PhysicalDamageBonus, GameTextKey.AttributePhysicalDamageBonus],
 ];
+// The attributes the game writes whole rather than as a percentage: the bases, the flats and Elemental Mastery
+export const WHOLE_ATTRIBUTES: readonly Attribute[] = [
+  Attribute.BaseAttack,
+  Attribute.BaseDefense,
+  Attribute.BaseHealth,
+  Attribute.Attack,
+  Attribute.Defense,
+  Attribute.Health,
+  Attribute.ElementalMastery,
+];
