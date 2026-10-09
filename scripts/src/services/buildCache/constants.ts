@@ -10,3 +10,6 @@ export const BUILD_OUTPUT_DIRECTORY = "dist";
 // A temporary folder's name starts with a dot, so the eviction never counts one as a key
 export const BUILD_CACHE_TEMPORARY_PREFIX = ".";
 export const BUILD_CACHE_RUN_IN_SLOT_PATH = ".agents/skills/throughput/scripts/run-in-slot.sh";
+// The file a package's dist carries the key it was built or restored under in, so a dist that no longer matches its
+// Sources is seen without rebuilding anything. Written beside the output rather than into the cache, which stores the bare build.
+export const BUILD_STAMP_FILE = ".build-cache-key";

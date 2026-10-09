@@ -14,10 +14,17 @@ const hashContent = (content: Buffer | string): string => createHash("sha256").u
 
 // The one name a package's cache is kept under: its own inputs by content, the lockfile's resolved versions of its
 // Importer and their transitive snapshots, the Node version it builds under, and the key of every workspace package it
-// Links, recursively, so a change anywhere it builds from moves every key downstream. Mtimes never enter it.
-export const computeBuildKey = (packageDirectory: string, repositoryRoot: string = REPOSITORY_ROOT): string => {
+// Links, recursively, so a change anywhere it builds from moves every key downstream. Mtimes never enter it. A `keys`
+// Map shared across one run hashes each package's sources once, however many dependents link it.
+export const computeBuildKey = (
+  packageDirectory: string,
+  repositoryRoot: string = REPOSITORY_ROOT,
+  keys: Map<string, string> = new Map<string, string>(),
+): string => {
   const lockfileLines = readLockfileLines(repositoryRoot);
   const computeKeyAt = (directory: string, visiting: Set<string>): string => {
+    const known = keys.get(directory);
+    if (known !== undefined) return known;
     if (visiting.has(directory))
       throw new InvalidOperationError(Operation.Read, directory, "its workspace dependencies form a cycle");
 
@@ -31,7 +38,7 @@ export const computeBuildKey = (packageDirectory: string, repositoryRoot: string
       key: computeKeyAt(resolve(directory, path), nextVisiting),
       name,
     }));
-    return hashContent(
+    const key = hashContent(
       JSON.stringify({
         importer: importer.lines,
         inputs,
@@ -40,6 +47,8 @@ export const computeBuildKey = (packageDirectory: string, repositoryRoot: string
         snapshots: readLockfileSnapshotClosure(lockfileLines, importer.snapshotKeys),
       }),
     );
+    keys.set(directory, key);
+    return key;
   };
 
   return computeKeyAt(packageDirectory, new Set());
