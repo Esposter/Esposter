@@ -38,6 +38,11 @@ export enum InputAction {
   SwitchToPartyMember2 = "SwitchToPartyMember2",
   SwitchToPartyMember3 = "SwitchToPartyMember3",
   SwitchToPartyMember4 = "SwitchToPartyMember4",
+  // Left Alt with a number switches to that slot and uses its Elemental Burst, as the game's controls bind it
+  SwitchToPartyMemberAndBurst1 = "SwitchToPartyMemberAndBurst1",
+  SwitchToPartyMemberAndBurst2 = "SwitchToPartyMemberAndBurst2",
+  SwitchToPartyMemberAndBurst3 = "SwitchToPartyMemberAndBurst3",
+  SwitchToPartyMemberAndBurst4 = "SwitchToPartyMemberAndBurst4",
   // Between walking and running, as the game's left Control switches
   SwitchWalkRun = "SwitchWalkRun",
 }

@@ -41,5 +41,9 @@ export const InputActionBindingMap: Readonly<Record<InputAction, readonly (reado
   [InputAction.SwitchToPartyMember2]: [["Digit2"], [GamepadButton.DirectionalPadRight]],
   [InputAction.SwitchToPartyMember3]: [["Digit3"], [GamepadButton.DirectionalPadLeft]],
   [InputAction.SwitchToPartyMember4]: [["Digit4"], [GamepadButton.DirectionalPadDown]],
+  [InputAction.SwitchToPartyMemberAndBurst1]: [["AltLeft", "Digit1"]],
+  [InputAction.SwitchToPartyMemberAndBurst2]: [["AltLeft", "Digit2"]],
+  [InputAction.SwitchToPartyMemberAndBurst3]: [["AltLeft", "Digit3"]],
+  [InputAction.SwitchToPartyMemberAndBurst4]: [["AltLeft", "Digit4"]],
   [InputAction.SwitchWalkRun]: [["ControlLeft"]],
 };

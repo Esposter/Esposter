@@ -17,6 +17,7 @@ import { createKitState } from "#src/services/kit/createKitState";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
 import { stepKit } from "#src/services/kit/stepKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
+import { PARTY_MEMBER_BURST_INPUT_ACTIONS } from "#src/services/party/constants";
 import { drownParty } from "#src/services/party/drownParty";
 import { gainPartyEnergy } from "#src/services/party/gainPartyEnergy";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
@@ -105,7 +106,11 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
   const { heldPresses, phase, position } = characterController;
   const previousState = phase.state;
   const isAttackPressed = heldPresses.has(InputAction.NormalAttack);
-  const isBurstPressed = heldPresses.has(InputAction.ElementalBurst);
+  // A switch with a burst uses the burst once its member is on the field, the world screen having switched to it this
+  // Frame, so a refused switch uses none
+  const burstSwitchIndex = PARTY_MEMBER_BURST_INPUT_ACTIONS.findIndex((action) => heldPresses.has(action));
+  const isBurstPressed =
+    heldPresses.has(InputAction.ElementalBurst) || (burstSwitchIndex !== -1 && burstSwitchIndex === party.activeIndex);
   const isSkillPressed = heldPresses.has(InputAction.ElementalSkill);
   characterController.step(
     kitState.action ? stillInput : inputState,
