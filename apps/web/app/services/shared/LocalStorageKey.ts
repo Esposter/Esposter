@@ -21,6 +21,9 @@ export const LocalStorageKey = {
   Drafts: "drafts",
   DungeonsStore: "dungeons-store",
   EmojiSkinTone: "emoji-skin-tone",
+  // The Genshin save an account has not had acknowledged, kept per account with the session that held it, until it is, so a
+  // Page left mid-save leaves it for the next start to adopt
+  GenshinPending: (userId: string) => `genshin-pending${LOCAL_STORAGE_KEY_SEPARATOR}${userId}`,
   // The Genshin save a signed-out player plays, kept with the browser until a sign-in uploads or merges it into the account
   GenshinSave: "genshin-save",
   MessageCategoryCollapsed: (categoryId: string) => `message-category-${categoryId}-collapsed`,
