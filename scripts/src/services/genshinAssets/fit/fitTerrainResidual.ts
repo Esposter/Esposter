@@ -12,17 +12,37 @@ const SCALE_CANDIDATES = [8, 16, 32, 64, 128, 256];
 // The farthest lag the correlation length is searched out to, in metres
 const MAX_CORRELATION_LENGTH = 400;
 
-// The distance at which a grid's values stop being correlated, the first lag their autocorrelation falls to 1/e
-const getCorrelationLength = ({ size, step, values }: TerrainResidualGrid): number => {
-  const maxLag = Math.floor(MAX_CORRELATION_LENGTH / step);
-  let variance = 0;
+// The mean of a grid's finite values, which its statistics are taken about, so an offset the residual keeps is not read as
+// Its roughness
+const getMean = (values: Float64Array): number => {
+  let sum = 0;
   let count = 0;
   for (const value of values)
     if (Number.isFinite(value)) {
-      variance += value ** 2;
+      sum += value;
       count++;
     }
-  variance /= count;
+  return sum / count;
+};
+
+const getStandardDeviation = (values: Float64Array): number => {
+  const mean = getMean(values);
+  let sum = 0;
+  let count = 0;
+  for (const value of values)
+    if (Number.isFinite(value)) {
+      sum += (value - mean) ** 2;
+      count++;
+    }
+  return Math.sqrt(sum / count);
+};
+
+// The distance at which a grid's values stop being correlated, the first lag their autocorrelation about their mean falls
+// To 1/e
+const getCorrelationLength = ({ size, step, values }: TerrainResidualGrid): number => {
+  const maxLag = Math.floor(MAX_CORRELATION_LENGTH / step);
+  const variance = getStandardDeviation(values) ** 2;
+  const mean = getMean(values);
   for (let lag = 1; lag <= maxLag; lag++) {
     let covariance = 0;
     let pairs = 0;
@@ -31,7 +51,7 @@ const getCorrelationLength = ({ size, step, values }: TerrainResidualGrid): numb
         const value = values[row * size + column] ?? Number.NaN;
         const neighbour = values[row * size + column + lag] ?? Number.NaN;
         if (!Number.isFinite(value) || !Number.isFinite(neighbour)) continue;
-        covariance += value * neighbour;
+        covariance += (value - mean) * (neighbour - mean);
         pairs++;
       }
     if (pairs > 0 && covariance / pairs < variance / Math.E) return lag * step;
@@ -49,19 +69,8 @@ const sampleUnitNoise = (grid: TerrainResidualGrid, scale: number): TerrainResid
   return { ...grid, values };
 };
 
-const getRootMeanSquare = (values: Float64Array): number => {
-  let sum = 0;
-  let count = 0;
-  for (const value of values)
-    if (Number.isFinite(value)) {
-      sum += value ** 2;
-      count++;
-    }
-  return Math.sqrt(sum / count);
-};
-
 // The fine ground a residual leaves as simplex noise: the scale whose noise's correlation length is nearest the
-// Residual's, and the amplitude that makes the noise's root-mean-square over the same grid the residual's. Both are
+// Residual's, and the amplitude that makes the noise's standard deviation over the same grid the residual's. Both are
 // Judged by the residual's statistics, never by its heights point for point
 export const fitTerrainResidual = (grid: TerrainResidualGrid): TerrainResidual => {
   const correlationLength = getCorrelationLength(grid);
@@ -73,7 +82,7 @@ export const fitTerrainResidual = (grid: TerrainResidualGrid): TerrainResidual =
     candidate.mismatch < nearest.mismatch ? candidate : nearest,
   );
   return {
-    amplitude: roundFitted(getRootMeanSquare(grid.values) / getRootMeanSquare(noise.values)),
+    amplitude: roundFitted(getStandardDeviation(grid.values) / getStandardDeviation(noise.values)),
     octaves: RESIDUAL_OCTAVES,
     scale,
     seed: RESIDUAL_SEED,

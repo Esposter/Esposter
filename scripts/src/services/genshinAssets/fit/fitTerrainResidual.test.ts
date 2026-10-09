@@ -34,4 +34,13 @@ describe(fitTerrainResidual, () => {
 
     expect(rough.scale).toBeLessThan(smooth.scale);
   });
+
+  test("fits a residual left with an offset as it fits the same residual without one", () => {
+    expect.hasAssertions();
+
+    const residual = sampleResidual(16);
+    const offset = { ...residual, values: residual.values.map((value) => value + 10) };
+
+    expect(fitTerrainResidual(offset)).toStrictEqual(fitTerrainResidual(residual));
+  });
 });
