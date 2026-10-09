@@ -16,8 +16,9 @@ import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { basename, join } from "node:path";
 
 // Every language's text of each book's body, read from the readable file its localization row names in that language,
-// And written as one chunk a body and a language beside a loader map that imports each chunk on demand, so a reader
-// Downloads only its own language's text of the volume it opens. Returns a note of the count
+// And written as two levels: one chunk a body and a language, and one module a body holding its languages' loaders, both
+// Beside a loader map that imports each body's module on demand, so a reader downloads its body's module and then only its
+// Own language's chunk. Returns a note of the count
 export const writeBookBodies = (bodyIds: readonly number[]): string[] => {
   const localizationRowMap = new Map(
     readExcelTable<ExcelLocalizationRow>(LOCALIZATION_TABLE_NAME).map((localizationRow) => [
@@ -36,17 +37,31 @@ export const writeBookBodies = (bodyIds: readonly number[]): string[] => {
     mkdirSync(bodyDirectory, { recursive: true });
     const languageLines = GameLanguages.map((language) => {
       writeFileSync(join(bodyDirectory, `${language}.json`), JSON.stringify(readBookBody(localizationRow, language)));
-      return `    ${language}: async () => (await import("#src/generated/bookBody/${bodyId}/${language}.json")).default,`;
+      return `  ${language}: async () => (await import("#src/generated/bookBody/${bodyId}/${language}.json")).default,`;
     });
-    return `  [${bodyId}, {\n${languageLines.join("\n")}\n  }],`;
+    writeFileSync(
+      join(bodyDirectory, "index.chunk.ts"),
+      `import type { GameLanguage } from "genshin-text";
+
+// Written by \`pnpm -C scripts genshin:assets archive\`, never by hand. Each language's chunk is a dynamic import of its own,
+// So a reader downloads only the language it reads
+export default {
+${languageLines.join("\n")}
+} satisfies Readonly<Record<GameLanguage, () => Promise<string>>>;
+`,
+    );
+    return `  [${bodyId}, async () => (await import("#src/generated/bookBody/${bodyId}/index.chunk")).default],`;
   });
   writeFileSync(
     BOOK_BODY_LOADER_MAP_PATH,
     `import type { GameLanguage } from "genshin-text";
 
-// The loader of each book's body's chunk by the id of its localization text and then its language, as
-// \`genshin:assets archive\` writes them. A chunk holds one language's text of its body, and is imported on demand
-export const BookBodyLoaderMap: ReadonlyMap<number, Readonly<Record<GameLanguage, () => Promise<string>>>> = new Map([
+// The loader of each book's body by the id of its localization text, as \`genshin:assets archive\` writes them. A body's
+// Module holds its loader of each language's chunk, and is imported on demand
+export const BookBodyLoaderMap: ReadonlyMap<
+  number,
+  () => Promise<Readonly<Record<GameLanguage, () => Promise<string>>>>
+> = new Map([
 ${loaderLines.join("\n")}
 ]);
 `,

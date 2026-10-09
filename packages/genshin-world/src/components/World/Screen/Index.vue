@@ -382,10 +382,10 @@ const readBook = (bookId: number) => {
   if (!archiveData.value) return;
   const { sectionEntriesMap, textMap } = archiveData.value;
   const book = sectionEntriesMap[ArchiveSection.Books].find(({ id }) => id === bookId);
-  const loadBody = book ? BookBodyLoaderMap.get(book.bodyId)?.[language] : undefined;
+  const loadBody = book ? BookBodyLoaderMap.get(book.bodyId) : undefined;
   if (!book || !loadBody) return;
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => loadBody()).match(
+  getResultAsync(async () => (await loadBody())[language]()).match(
     (body) => {
       bookReading.value = { body, title: textMap[book.nameTextId] || "" };
     },
