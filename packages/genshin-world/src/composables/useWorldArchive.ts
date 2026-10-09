@@ -6,6 +6,7 @@ import type { GameLanguage } from "genshin-text";
 import type { ComputedRef, Ref } from "vue";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
+import { GameDataset } from "#src/models/data/GameDataset";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { ArchiveTextLoaderMap } from "#src/services/archive/ArchiveTextLoaderMap";
 import { ARCHIVE_UNLOCK_QUEST_ID } from "#src/services/archive/constants";
@@ -48,7 +49,8 @@ export const useWorldArchive = ({
   });
   // The defeats of each Living Being, counted under its entry for the Archive to show
   const archiveKillsMap = shallowRef<ArchiveKills>(new Map());
-  // A volume the Archive's Books section opens has its text loaded with its own chunk, in the reader's language
+  // A volume the Archive's Books section opens has its text read from the hosted game data in the reader's language,
+  // When it opens
   const readBook = (bookId: number) => {
     if (!archiveData.value) return;
     const { sectionEntriesMap, textMap } = archiveData.value;
@@ -57,7 +59,7 @@ export const useWorldArchive = ({
     loadingBookId = bookId;
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
     getResultAsync(() =>
-      readGameDataEntry(gameDataBaseUrl, `bookBody/${language}`, String(book.bodyId), z.string()),
+      readGameDataEntry(gameDataBaseUrl, `${GameDataset.BookBody}/${language}`, String(book.bodyId), z.string()),
     ).match(
       (body) => {
         if (loadingBookId !== bookId) return;

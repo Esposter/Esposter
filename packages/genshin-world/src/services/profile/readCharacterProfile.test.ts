@@ -1,5 +1,6 @@
 import type { ProfileText } from "#src/models/profile/ProfileText";
 
+import { GameDataset } from "#src/models/data/GameDataset";
 import { gameDataLock } from "#src/services/data/gameDataLock";
 import { readCharacterProfile } from "#src/services/profile/readCharacterProfile";
 import { GameLanguage } from "genshin-text";
@@ -22,7 +23,7 @@ describe(readCharacterProfile, () => {
   test("should give the namecard's name text id only from Friendship Level 10, and 0 one EXP below it", async () => {
     expect.hasAssertions();
 
-    const indexUrl = `${GAME_DATA_TEST_BASE_URL}/${gameDataLock.indexes[`profile/${GameLanguage.English}`]}.json`;
+    const indexUrl = `${GAME_DATA_TEST_BASE_URL}/${gameDataLock.indexes[`${GameDataset.Profile}/${GameLanguage.English}`]}.json`;
     vi.spyOn(globalThis, "fetch").mockImplementation((url) =>
       Promise.resolve(Response.json(url === indexUrl ? { [AMBER_CHARACTER_ID]: PROFILE_RECORD_HASH } : profileText)),
     );

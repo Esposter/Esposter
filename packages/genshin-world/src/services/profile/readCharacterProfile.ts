@@ -1,6 +1,7 @@
 import type { ProfileText } from "#src/models/profile/ProfileText";
 import type { GameLanguage } from "genshin-text";
 
+import { GameDataset } from "#src/models/data/GameDataset";
 import { profileTextSchema } from "#src/models/profile/ProfileText";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { computeFriendshipLevel } from "#src/services/friendship/computeFriendshipLevel";
@@ -19,7 +20,7 @@ export const readCharacterProfile = async (
   const [friendshipLevels, namecards, profileText] = await Promise.all([
     readFriendshipLevels(),
     readFriendshipNamecards(),
-    readGameDataEntry(gameDataBaseUrl, `profile/${language}`, String(avatarId), profileTextSchema),
+    readGameDataEntry(gameDataBaseUrl, `${GameDataset.Profile}/${language}`, String(avatarId), profileTextSchema),
   ]);
   const friendshipLevel = computeFriendshipLevel(friendshipExp, friendshipLevels);
   const namecard = namecards.find(({ characterId }) => characterId === avatarId);
