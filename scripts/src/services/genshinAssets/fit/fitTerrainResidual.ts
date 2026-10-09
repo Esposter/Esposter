@@ -1,6 +1,7 @@
 import type { TerrainResidualGrid } from "#src/models/genshinAssets/fit/TerrainResidualGrid";
 import type { TerrainResidual } from "genshin-engine";
 
+import { mapTerrainResidualGrid } from "#src/services/genshinAssets/fit/mapTerrainResidualGrid";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { createResidualHeight } from "genshin-engine";
 
@@ -59,30 +60,37 @@ const getCorrelationLength = ({ size, step, values }: TerrainResidualGrid): numb
   return MAX_CORRELATION_LENGTH;
 };
 
-// The noise a scale draws over the same grid, with the amplitude of one metre
-const sampleUnitNoise = (grid: TerrainResidualGrid, scale: number): TerrainResidualGrid => {
+// The noise a scale draws with the amplitude of one metre at each of the grid's samples, weighted as they are
+const sampleUnitNoise = (
+  grid: TerrainResidualGrid,
+  scale: number,
+  getWeight: (x: number, z: number) => number,
+): TerrainResidualGrid => {
   const getNoise = createResidualHeight({ amplitude: 1, octaves: RESIDUAL_OCTAVES, scale, seed: RESIDUAL_SEED });
-  const values = new Float64Array(grid.size * grid.size);
-  for (let row = 0; row < grid.size; row++)
-    for (let column = 0; column < grid.size; column++)
-      values[row * grid.size + column] = getNoise(grid.originX + column * grid.step, grid.originZ + row * grid.step);
-  return { ...grid, values };
+  return mapTerrainResidualGrid(grid, (x, z, value) =>
+    Number.isFinite(value) ? getWeight(x, z) * getNoise(x, z) : Number.NaN,
+  );
 };
 
-// The fine ground a residual leaves as simplex noise: the scale whose noise's correlation length is nearest the
-// Residual's, and the amplitude that makes the noise's standard deviation over the same grid the residual's. Both are
-// Judged by the residual's statistics, never by its heights point for point
-export const fitTerrainResidual = (grid: TerrainResidualGrid): TerrainResidual => {
-  const correlationLength = getCorrelationLength(grid);
+// The fine ground a residual leaves as simplex noise, each sample weighed by how much of the noise is drawn there: the
+// Scale whose weighted noise's correlation length is nearest the weighted residual's, and the amplitude that makes the
+// Weighted noise's standard deviation over the same samples the weighted residual's, so the noise matches the ground it
+// Is drawn on. Both are judged by the residual's statistics about its mean, never by its heights point for point
+export const fitTerrainResidual = (
+  grid: TerrainResidualGrid,
+  getWeight: (x: number, z: number) => number,
+): TerrainResidual => {
+  const residual = mapTerrainResidualGrid(grid, (x, z, value) => getWeight(x, z) * value);
+  const correlationLength = getCorrelationLength(residual);
   const candidates = SCALE_CANDIDATES.map((scale) => {
-    const noise = sampleUnitNoise(grid, scale);
+    const noise = sampleUnitNoise(residual, scale, getWeight);
     return { mismatch: Math.abs(getCorrelationLength(noise) - correlationLength), noise, scale };
   });
   const { noise, scale } = candidates.reduce((nearest, candidate) =>
     candidate.mismatch < nearest.mismatch ? candidate : nearest,
   );
   return {
-    amplitude: roundFitted(getStandardDeviation(grid.values) / getStandardDeviation(noise.values)),
+    amplitude: roundFitted(getStandardDeviation(residual.values) / getStandardDeviation(noise.values)),
     octaves: RESIDUAL_OCTAVES,
     scale,
     seed: RESIDUAL_SEED,

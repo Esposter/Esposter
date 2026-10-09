@@ -1,17 +1,23 @@
+import type { TerrainResidualGrid } from "#src/models/genshinAssets/fit/TerrainResidualGrid";
 import type { GroundPoint } from "genshin-engine";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { checkIsInsideRegionOutlines } from "#src/services/genshinAssets/fit/checkIsInsideRegionOutlines";
 import { computeGroundBounds } from "#src/services/genshinAssets/fit/computeGroundBounds";
+import { computeRootMeanSquare } from "#src/services/genshinAssets/fit/computeRootMeanSquare";
 import { fitGaussianHills } from "#src/services/genshinAssets/fit/fitGaussianHills";
 import { fitTerrainPlateaus } from "#src/services/genshinAssets/fit/fitTerrainPlateaus";
 import { fitTerrainResidual } from "#src/services/genshinAssets/fit/fitTerrainResidual";
+import { fitTerrainResidualFade } from "#src/services/genshinAssets/fit/fitTerrainResidualFade";
+import { mapTerrainResidualGrid } from "#src/services/genshinAssets/fit/mapTerrainResidualGrid";
+import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { computeMean } from "#src/services/genshinAssets/shared/computeMean";
 import { GROUND_RADIUS, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldTerrainHeight } from "#src/services/genshinAssets/world/readWorldTerrainHeight";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { createGaussianHillsHeight } from "genshin-engine";
+import { createGaussianHillsHeight, createTerrainShapeHeight, sampleTerrainResidualFade } from "genshin-engine";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -23,6 +29,11 @@ const GROUND_FALLOFF = 200;
 const GROUND_WIDTHS = [200, 120, 70, 40, 24, 14];
 // The distances round the centre the fit's error is reported within
 const GROUND_ERROR_BANDS = [60, 150, 300, 700];
+// The side of the residual's fade cells, in metres: the residual is drawn by how far the ground above it misses in each
+const GROUND_FADE_CELL_SIZE = 64;
+// The hills' bar within 60 metres of the centre, in metres: a fade cell whose ground misses by less draws none of the
+// Residual, and one missing by twice it draws all
+const GROUND_RESIDUAL_GATE_METRES = 0.62;
 
 // The catalogue's regions, each with its areas' outlines, which a region's ground is fitted inside
 interface Catalogue {
@@ -33,8 +44,9 @@ interface Catalogue {
 // Which every region shares: Three's, x as the game's and z its mirror, every height over the foot's. Fitted round the
 // Region's centre and only inside its catalogue outlines, so no region's ground runs into another's; a region the
 // Catalogue gives no outline (Windrise, the valley its views see) is fitted over its disc. Writes the hills, the
-// Plateaus the hills leave, the residual's noise and the heights they stand between, as `<region>/base-ground.json`,
-// And returns the report and that path
+// Plateaus the hills leave, the residual's noise faded out where they hold and the heights they stand between, as
+// `<region>/base-ground.json`. Returns that path after the report, which holds the composed ground's error with and
+// Without the residual
 export const fitRegionGround = async (region: DerivedAssetComponent, centre: GroundPoint): Promise<string[]> => {
   const [getGameHeight, [originX, originY, originZ], catalogueJson] = await Promise.all([
     readWorldTerrainHeight(region),
@@ -56,37 +68,52 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
     step: GROUND_STEP,
     widths: GROUND_WIDTHS,
   });
-  const getHillsHeight = createGaussianHillsHeight(hills);
   const size = Math.floor((2 * GROUND_RADIUS) / GROUND_STEP) + 1;
-  const gridOriginX = centre.x - GROUND_RADIUS;
-  const gridOriginZ = centre.z - GROUND_RADIUS;
-  const heights: number[] = [];
-  const values = new Float64Array(size * size);
-  for (let row = 0; row < size; row++)
-    for (let column = 0; column < size; column++) {
-      const x = gridOriginX + column * GROUND_STEP;
-      const z = gridOriginZ + row * GROUND_STEP;
-      const height = getHeight(x, z);
-      heights.push(height);
-      values[row * size + column] = height - getHillsHeight(x, z);
-    }
-  const { features, remainder } = fitTerrainPlateaus({
-    originX: gridOriginX,
-    originZ: gridOriginZ,
-    size,
-    step: GROUND_STEP,
-    values,
-  });
-  const residual = fitTerrainResidual(remainder);
+  const heightGrid = mapTerrainResidualGrid(
+    {
+      originX: centre.x - GROUND_RADIUS,
+      originZ: centre.z - GROUND_RADIUS,
+      size,
+      step: GROUND_STEP,
+      values: new Float64Array(size * size),
+    },
+    getHeight,
+  );
+  const computeMisses = (getGroundHeight: (x: number, z: number) => number): TerrainResidualGrid =>
+    mapTerrainResidualGrid(heightGrid, (x, z, height) => height - getGroundHeight(x, z));
+  const { features, remainder } = fitTerrainPlateaus(computeMisses(createGaussianHillsHeight(hills)));
+  const fade = fitTerrainResidualFade(remainder, GROUND_FADE_CELL_SIZE, GROUND_RESIDUAL_GATE_METRES);
+  const getFadeWeight = (x: number, z: number): number => sampleTerrainResidualFade(fade, x, z);
+  const residual = { ...fitTerrainResidual(remainder, getFadeWeight), fade };
   const path = await writeWorldData(join(region, "base-ground.json"), {
     ...hills,
     features,
-    ...computeGroundBounds(heights),
+    ...computeGroundBounds(heightGrid.values),
     residual,
   });
+  const groundMisses = computeMisses(createTerrainShapeHeight({ ...hills, features, residual }));
+  const unfadedMisses = computeMisses(createTerrainShapeHeight({ ...hills, features }));
+  const fadeWeights = mapTerrainResidualGrid(heightGrid, (x, z, height) =>
+    Number.isFinite(height) ? getFadeWeight(x, z) : Number.NaN,
+  );
+  const getBandsReport = (
+    grid: TerrainResidualGrid,
+    compute: (values: readonly number[]) => number,
+    unit: string,
+  ): string =>
+    GROUND_ERROR_BANDS.map((within) => {
+      const values = mapTerrainResidualGrid(grid, (x, z, value) =>
+        Math.hypot(x - centre.x, z - centre.z) < within ? value : Number.NaN,
+      ).values.filter(Number.isFinite);
+      return `${roundFitted(compute([...values]))}${unit} within ${within}`;
+    }).join(", ");
+  const getShareReport = (checkIsCounted: (weight: number) => boolean): string =>
+    `${roundFitted((100 * fade.weights.filter(checkIsCounted).length) / fade.weights.length)}%`;
   return [
     `ground: ${hills.hills.length} hills, ${errors.map(({ rms, within }) => `${rms} metres within ${within}`).join(", ")}`,
     `ground: ${features.length} plateaus, a residual of ${residual.amplitude} metres at a ${residual.scale} metre scale`,
+    `ground: the residual's fade over ${fade.weights.length} cells of ${GROUND_FADE_CELL_SIZE} metres, ${getShareReport((weight) => weight === 0)} at none, ${getShareReport((weight) => weight > 0 && weight < 1)} between and ${getShareReport((weight) => weight === 1)} at one, its mean weight ${getBandsReport(fadeWeights, computeMean, "")}`,
+    `ground: composed ${getBandsReport(groundMisses, computeRootMeanSquare, " metres")}, ${roundFitted(computeRootMeanSquare(groundMisses.values))} over the fitted extent and ${roundFitted(computeRootMeanSquare(unfadedMisses.values))} without its residual`,
     path,
   ];
 };
