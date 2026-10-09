@@ -36,6 +36,7 @@ import { pathNamesCommand } from "#src/services/genshinAssets/commands/pathNames
 import { playlistCommand } from "#src/services/genshinAssets/commands/playlistCommand";
 import { pointsCommand } from "#src/services/genshinAssets/commands/pointsCommand";
 import { pointsFitCommand } from "#src/services/genshinAssets/commands/pointsFitCommand";
+import { profileCommand } from "#src/services/genshinAssets/commands/profileCommand";
 import { puzzlesCommand } from "#src/services/genshinAssets/commands/puzzlesCommand";
 import { rankCommand } from "#src/services/genshinAssets/commands/rankCommand";
 import { reputationCommand } from "#src/services/genshinAssets/commands/reputationCommand";
@@ -76,6 +77,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     playlist: playlistCommand,
     points: pointsCommand,
     "points-fit": pointsFitCommand,
+    profile: profileCommand,
     fit: fitCommand,
     fishing: fishingCommand,
     rank: rankCommand,
