@@ -4,6 +4,7 @@ import type { StatTables } from "#src/models/character/StatTables";
 import type { GameText } from "genshin-text";
 
 import CharacterAttributeList from "#src/components/Character/AttributeList/Index.vue";
+import CharacterProfile from "#src/components/Character/Profile/Index.vue";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
@@ -28,17 +29,21 @@ import {
   CharacterMenuWeapons,
   GameScreen,
 } from "genshin-interface";
-import { fillGameTextValues, fillLinePlaceholders, GameTextKey } from "genshin-text";
+import { fillGameTextValues, fillLinePlaceholders, GameLanguage, GameTextKey } from "genshin-text";
 
 interface Props {
   // The character the screen opens on, the one on the field
   activeCharacterId: number;
   // The player's characters, across the screen's top in the order given
   characters: Character[];
+  // The Companionship EXP each character has earned, by its id, from which its Friendship Level is read
+  companionshipExpMap?: ReadonlyMap<number, number>;
   // The game's words in the reader's language
   gameText: GameText;
   // The tab the screen opens on, Attributes as the game's C opens it
   initialTab: CharacterMenuTab;
+  // The reader's game language, whose text the Profile tab shows
+  language?: GameLanguage;
   // The party's stamina, which the Attributes tab shows with every character's own attributes
   maxStamina: number;
   // The names the stat tables cite, in the reader's language, by their text id
@@ -47,7 +52,17 @@ interface Props {
   statTables: StatTables;
 }
 
-const { activeCharacterId, characters, gameText, initialTab, maxStamina, nameText, statTables } = defineProps<Props>();
+const {
+  activeCharacterId,
+  characters,
+  companionshipExpMap = new Map<number, number>(),
+  gameText,
+  initialTab,
+  language = GameLanguage.English,
+  maxStamina,
+  nameText,
+  statTables,
+} = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const characterId = ref(activeCharacterId);
 const tab = ref(initialTab);
@@ -133,6 +148,14 @@ const talentLevels = computed(() => COMBAT_TALENT_ORDER.map((talent) => characte
         :activated="constellationsActivated"
       />
       <CharacterMenuTalents v-else-if="character && tab === CharacterMenuTab.Talents" :levels="talentLevels" />
+      <CharacterProfile
+        v-else-if="character && tab === CharacterMenuTab.Profile"
+        :key="`${character.id}-${language}`"
+        :avatar-id="character.id"
+        :friendship-exp="companionshipExpMap.get(character.id) ?? 0"
+        :game-text="gameText"
+        :language
+      />
     </CharacterMenu>
     <span class="grid" />
     <p class="training-guide">{{ gameText[GameTextKey.TrainingGuide] }}</p>

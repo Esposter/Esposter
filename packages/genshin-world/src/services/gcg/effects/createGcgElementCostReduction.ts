@@ -17,12 +17,12 @@ export const createGcgElementCostReduction = (
     takeOne(context.duel.sides, context.sideIndex).usedCardIds.push(cardId);
   },
   reduceCost: (context: GcgEffectContext, subject: GcgCostSubject) => {
-    if (!isGcgReductionDue(context, subject, cardId, element)) return undefined;
+    if (!checkIsGcgReductionDue(context, subject, cardId, element)) return undefined;
     return { count: 1, element };
   },
 });
 
-const isGcgReductionDue = (
+const checkIsGcgReductionDue = (
   context: GcgEffectContext,
   subject: GcgCostSubject,
   cardId: number,

@@ -4,6 +4,7 @@ import type { FittedInterfaceRect } from "#src/models/FittedInterfaceRect";
 import { GameRectKey } from "#src/services/GameRectKey";
 import { toCanvasRect } from "#src/services/toCanvasRect";
 import { toCanvasRectStyle } from "#src/services/toCanvasRectStyle";
+import { computed, inject, provide } from "vue";
 
 interface Props {
   // The piece's RectTransform as the screen's fit wrote it

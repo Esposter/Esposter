@@ -30,15 +30,15 @@ import WorldEnemyNameTags from "#src/components/World/EnemyNameTags/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { useInteraction } from "#src/composables/useInteraction";
-import { useWorldTalks } from "#src/composables/useWorldTalks";
-import { useWorldSave } from "#src/composables/useWorldSave";
-import { useWorldPickups } from "#src/composables/useWorldPickups";
-import { useWorldQuests } from "#src/composables/useWorldQuests";
-import { useWorldArchive } from "#src/composables/useWorldArchive";
 import { useWorldAchievements } from "#src/composables/useWorldAchievements";
+import { useWorldArchive } from "#src/composables/useWorldArchive";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldMap } from "#src/composables/useWorldMap";
+import { useWorldPickups } from "#src/composables/useWorldPickups";
+import { useWorldQuests } from "#src/composables/useWorldQuests";
+import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
+import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { computeAdventureRankProgress } from "#src/services/adventureRank/computeAdventureRankProgress";
@@ -57,8 +57,8 @@ import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
-import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
+import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { getResultAsync } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
 import { useEventListener, useRafFn } from "@vueuse/core";
@@ -266,8 +266,8 @@ const {
 const windrise = useTemplateRef<InstanceType<typeof WorldWindrise>>("windrise");
 // The talks a resident begins and the talk the world runs, held by id, with the duel a resident offers from each talk
 const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameId, talkMap } = useWorldTalks({
-  getResidentSpot: (residentId) => windrise.value?.residentSpots.get(residentId),
   getResidents: () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents),
+  getResidentSpot: (residentId) => windrise.value?.residentSpots.get(residentId),
   questsInProgress,
   questTextMap,
   // No resident holds a standing talk yet, so no standing talk is merged in
@@ -581,8 +581,10 @@ defineExpose({ jumpTo, readCameraPosition });
         <CharacterScreen
           :active-character-id="getActiveCharacterId(party)"
           :characters
+          :companionship-exp-map="savedState.companionshipExpMap"
           :game-text
           :initial-tab="CharacterMenuTab.Attributes"
+          :language
           :max-stamina="STAMINA_MAX"
           :name-text
           :stat-tables

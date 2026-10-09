@@ -1,4 +1,5 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
+
 import { takeOne } from "@esposter/shared";
 
 const ILLUSORY_TORRENT_ID = 12_034;

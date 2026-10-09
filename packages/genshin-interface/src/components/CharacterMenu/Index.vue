@@ -3,6 +3,7 @@ import type { CharacterMenuEntry } from "#src/models/CharacterMenuEntry";
 import type { CharacterMenuTab } from "#src/models/CharacterMenuTab";
 
 import { CharacterMenuTabs } from "#src/models/CharacterMenuTab";
+import { computed } from "vue";
 
 interface Props {
   // The player's characters, across the screen's top in the order given
@@ -205,5 +206,11 @@ const characterName = computed(() => characters.find(({ id }) => id === characte
   bottom: calc(var(--unit) * 40);
   width: calc(var(--unit) * 330);
   overflow-y: auto;
+}
+
+/* The Profile tab's stories and their text take the width the characters' row across the top leaves, from where it starts */
+.character-menu[data-tab="Profile"] .panel {
+  left: calc(var(--unit) * 608);
+  width: auto;
 }
 </style>

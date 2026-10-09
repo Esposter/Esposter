@@ -1,7 +1,7 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { shadowswordLoneGale } from "#src/services/gcg/cards/shadowswordLoneGale";
+import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
 const SHADOWSWORD_LONE_GALE_ID = 125_011;

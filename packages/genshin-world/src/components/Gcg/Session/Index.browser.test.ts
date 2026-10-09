@@ -1,8 +1,8 @@
 import GcgSession from "#src/components/Gcg/Session/Index.vue";
 import { ENGLISH_GAME_TEXT, fillGameTextValues, GameLanguage, GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
-import { page } from "vitest/browser";
 import { render } from "vitest-browser-vue";
+import { page } from "vitest/browser";
 
 // A duel of the tutorial deck against deck 1 through the board's own buttons: the preparation confirmed, the first roll
 // Passed, then the round ended, the opponent's turns taken by the scripted policy until the round's second roll opens

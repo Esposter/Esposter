@@ -33,3 +33,6 @@ export const ENEMY_STRIKE_TALENT_MULTIPLIER = 1;
 // A summon lives this many seconds past its last hitmark, so the step that lands its last hit still has it on the field
 // However its clock and its seconds left round
 export const SUMMON_LINGER_SECONDS = 0.1;
+// A field's radius when it holds every body, as a field that rings the character on the field wherever it moves, or one
+// That only runs its ticks on a schedule, does
+export const UNBOUNDED_FIELD_RADIUS = Number.POSITIVE_INFINITY;

@@ -5,7 +5,7 @@ import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 export const findGcgAdjacentCharacterIndex = (
   side: GcgSideState,
   fromIndex: number,
-  step: 1 | -1,
+  step: -1 | 1,
 ): number | undefined => {
   const { length } = side.characters;
   for (let offset = 1; offset < length; offset++) {

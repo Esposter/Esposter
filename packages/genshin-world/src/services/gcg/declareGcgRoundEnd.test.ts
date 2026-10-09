@@ -2,19 +2,18 @@ import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
+import standardRule from "#src/generated/gcg/standardRule.json";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgOutcome } from "#src/models/gcg/GcgOutcome";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { gcgStandardRuleSchema } from "#src/models/gcg/gcgStandardRuleSchema";
 import { GCG_ROUND_LIMIT } from "#src/services/gcg/constants";
 import { declareGcgRoundEnd } from "#src/services/gcg/declareGcgRoundEnd";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
-
-import standardRule from "#src/generated/gcg/standardRule.json";
-import { gcgStandardRuleSchema } from "#src/models/gcg/gcgStandardRuleSchema";
 
 const TEST_RULE = gcgStandardRuleSchema.parse(standardRule);
 
@@ -31,10 +30,10 @@ const createCharacterState = (): GcgCharacterState => ({
     weapon: "",
   },
   energy: 0,
+  equipments: [],
   hp: 10,
   isFrozen: false,
   shield: 0,
-  equipments: [],
   statuses: [],
 });
 
@@ -44,6 +43,7 @@ describe(declareGcgRoundEnd, () => {
   const DRAW_PILE_CARD_IDS = [201, 202, 203];
   const createSideState = (): GcgSideState => ({
     activeIndex: 0,
+    cards: [],
     characters: [createCharacterState()],
     dice: [Element.Pyro],
     drawPile: [...DRAW_PILE_CARD_IDS],
@@ -52,7 +52,6 @@ describe(declareGcgRoundEnd, () => {
     hasPrepared: true,
     hasRolled: true,
     isReplacementPending: false,
-    cards: [],
     onstages: [],
     summons: [],
     supports: [],

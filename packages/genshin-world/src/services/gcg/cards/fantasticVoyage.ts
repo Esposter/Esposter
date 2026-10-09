@@ -1,8 +1,8 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { inspirationField } from "#src/services/gcg/cards/inspirationField";
+import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
 const INSPIRATION_FIELD_ID = 113_031;

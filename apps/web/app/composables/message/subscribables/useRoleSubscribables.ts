@@ -1,3 +1,4 @@
+import { authClient } from "@/services/auth/authClient";
 import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
@@ -7,7 +8,16 @@ export const useRoleSubscribables = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const roleStore = useRoleStore();
-  const { getMemberRoleMap, getMemberRoles, getRoles, mutateMemberRoles, setRoles } = roleStore;
+  const {
+    getMemberRoleMap,
+    getMemberRoles,
+    getRoles,
+    mutateMemberRoles,
+    readMyPermissions,
+    setMemberPermissionOverride,
+    setRoles,
+  } = roleStore;
+  const session = authClient.useSession();
 
   useOnlineSubscribable(currentRoomId, (roomId) => {
     if (!roomId) return undefined;
@@ -59,6 +69,17 @@ export const useRoleSubscribables = () => {
               userId,
               getMemberRoles(eventRoomId, userId).filter(({ id }) => id !== roleId),
             );
+          },
+        },
+      ),
+      $trpc.role.onUpdateMemberPermissionOverride.subscribe(
+        { roomId },
+        {
+          onData: ({ allow, deny, roomId: eventRoomId, userId }) => {
+            setMemberPermissionOverride(eventRoomId, userId, { allow, deny });
+            // A member's own bitfield is what every permission gate reads, so their change re-reads it rather than
+            // Recomputing it here from the roles the client may not hold in full
+            if (userId === session.value.data?.user.id) readMyPermissions({ roomIds: [eventRoomId] });
           },
         },
       ),

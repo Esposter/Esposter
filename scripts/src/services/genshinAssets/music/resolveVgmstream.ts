@@ -14,4 +14,5 @@ export const resolveVgmstream = (): Promise<string> =>
     directory: VGMSTREAM_DIRECTORY,
     downloadTimeoutMs: PINNED_TOOL_DOWNLOAD_TIMEOUT_MS,
     executablePattern: "vgmstream-cli.exe",
+    isArchive: true,
   });

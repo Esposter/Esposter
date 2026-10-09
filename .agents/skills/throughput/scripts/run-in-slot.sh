@@ -34,6 +34,12 @@ while :; do
         # Renamed into place, so a reader never sees half a pid. A slot whose holder was never written is freed a minute
         # On, so the command never starts in one
         echo "$$" > "$slotPath/pid.$$" && mv "$slotPath/pid.$$" "$slotPath/pid" || exit 1
+        # No one run takes more than a quarter of the machine's RAM: a node heap past it fails fast, as the app's
+        # Whole-workspace typecheck does at 10-12 GB, rather than swapping every other run on the machine
+        read -r _ total <<< "$(readMemory)"
+        if [ -n "$total" ] && [[ "${NODE_OPTIONS:-}" != *max-old-space-size* ]]; then
+          export NODE_OPTIONS="${NODE_OPTIONS:-} --max-old-space-size=$((total / 4 / 1024))"
+        fi
         "$@"
         exit $?
       fi

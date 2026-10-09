@@ -16,5 +16,6 @@ export const resolveFfmpeg = (): Promise<string> =>
         directory: FFMPEG_DIRECTORY,
         downloadTimeoutMs: PINNED_TOOL_DOWNLOAD_TIMEOUT_MS,
         executablePattern: "*/bin/ffmpeg.exe",
+        isArchive: true,
       })
     : Promise.resolve("ffmpeg");

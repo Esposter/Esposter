@@ -300,4 +300,126 @@ describe("roleRouter", () => {
     expect(data.name).toBe(name);
     expect(data.roomId).toBe(roomId);
   });
+
+  test("writes an override's three states, each bit in one of them at a time", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    const allowed = await roleCaller.upsertMemberPermissionOverride({
+      allow: RoomPermission.ManageMessages,
+      deny: 0n,
+      inherit: 0n,
+      roomId,
+      userId: member.id,
+    });
+    const denied = await roleCaller.upsertMemberPermissionOverride({
+      allow: 0n,
+      deny: RoomPermission.ManageMessages,
+      inherit: 0n,
+      roomId,
+      userId: member.id,
+    });
+    const inherited = await roleCaller.upsertMemberPermissionOverride({
+      allow: 0n,
+      deny: 0n,
+      inherit: RoomPermission.ManageMessages,
+      roomId,
+      userId: member.id,
+    });
+
+    expect(allowed).toStrictEqual({ allow: RoomPermission.ManageMessages, deny: 0n });
+    expect(denied).toStrictEqual({ allow: 0n, deny: RoomPermission.ManageMessages });
+    expect(inherited).toStrictEqual({ allow: 0n, deny: 0n });
+    await expect(roleCaller.readMemberPermissionOverrides({ roomId })).resolves.toStrictEqual([]);
+  });
+
+  test("fails an override that names a bit as both allowed and denied", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+
+    await expect(
+      roleCaller.upsertMemberPermissionOverride({
+        allow: RoomPermission.ManageMessages,
+        deny: RoomPermission.ManageMessages,
+        inherit: 0n,
+        roomId,
+        userId: member.id,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: UserToRoom, {"allow":"4","deny":"4"}]`,
+    );
+  });
+
+  test("fails an override that names Administrator", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+
+    await expect(
+      roleCaller.upsertMemberPermissionOverride({
+        allow: RoomPermission.Administrator,
+        deny: 0n,
+        inherit: 0n,
+        roomId,
+        userId: member.id,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: UserToRoom, {"allow":"16384","deny":"0"}]`,
+    );
+  });
+
+  test("fails an override allowing a permission the actor does not hold", async () => {
+    expect.hasAssertions();
+
+    const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
+    const targetMember = await createMember();
+    await mockSessionOnce(mockContext.db, actor);
+
+    await expect(
+      roleCaller.upsertMemberPermissionOverride({
+        allow: RoomPermission.ManageMessages,
+        deny: 0n,
+        inherit: 0n,
+        roomId,
+        userId: targetMember.id,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
+  test("deletes an override and the member's roles decide again", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await roleCaller.upsertMemberPermissionOverride({
+      allow: RoomPermission.ManageMessages,
+      deny: 0n,
+      inherit: 0n,
+      roomId,
+      userId: member.id,
+    });
+    await roleCaller.deleteMemberPermissionOverride({ roomId, userId: member.id });
+
+    await expect(roleCaller.readMemberPermissionOverrides({ roomId })).resolves.toStrictEqual([]);
+  });
+
+  test("subscription emits the override state a write left", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    const subscription = await roleCaller.onUpdateMemberPermissionOverride({ roomId });
+    const data = await getFirstEmit(
+      () => subscription,
+      () =>
+        roleCaller.upsertMemberPermissionOverride({
+          allow: RoomPermission.ManageMessages,
+          deny: 0n,
+          inherit: 0n,
+          roomId,
+          userId: member.id,
+        }),
+    );
+
+    expect(data).toStrictEqual({ allow: RoomPermission.ManageMessages, deny: 0n, roomId, userId: member.id });
+  });
 });

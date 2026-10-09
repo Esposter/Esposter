@@ -14,6 +14,8 @@ Read before any pass or round on a Genshin screen or scene, and whenever its loo
 | Whether the piece matches     | `compare` over the reference's clean plate (`isBackdrop`)                                                                 |
 | The game's words              | `genshin:text decode`, the install's text maps                                                                            |
 | A recording's own blur        | `getCaptureSoftness`: its Gaussian sigma off the frame's interface edges, applied to our shot by `compare` (see Softness) |
+| A published video's section   | `genshin:parity clip <url> --from <s> --to <s>`: the section at 1080p into `captures`, its path printed                   |
+| A frame of a capture          | `genshin:parity frame <capture> --at <s>`: one PNG into `references/<name>/`, beside a `SOURCE.txt` naming it             |
 
 ## Softness
 

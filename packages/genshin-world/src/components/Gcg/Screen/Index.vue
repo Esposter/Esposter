@@ -8,6 +8,7 @@ import GcgScreenDie from "#src/components/Gcg/Screen/Die/Index.vue";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { GCG_EQUIPMENT_CARD_KINDS, GCG_SKILL_KIND_DISPLAY_ORDER } from "#src/services/gcg/constants";
 import { countGcgDiceCost } from "#src/services/gcg/countGcgDiceCost";
 import { takeOne } from "@esposter/shared";
 import { GameScreen } from "genshin-interface";
@@ -30,8 +31,8 @@ const emit = defineEmits<{
   leave: [];
   playCard: [handIndex: number, targetIndex: number | undefined, dieIndices: number[]];
   prepare: [switchedHandIndices: number[], activeIndex: number];
-  reroll: [dieIndices: number[]];
   replaceCharacter: [characterIndex: number];
+  reroll: [dieIndices: number[]];
   switchCharacter: [characterIndex: number, dieIndices: number[]];
   tuneDie: [handIndex: number, dieIndex: number];
   useSkill: [skillId: number, dieIndices: number[]];
@@ -52,12 +53,13 @@ const playerHandCards = computed(() => {
   const cardMap = new Map(playerSide.value.cards.map((card) => [card.id, card]));
   return playerSide.value.hand.flatMap((cardId) => cardMap.get(cardId) ?? []);
 });
-// The skills the active character offers the player as its buttons, its normal attack, elemental skill and burst
-const SKILL_KIND_ORDER = [GcgSkillKind.NormalAttack, GcgSkillKind.ElementalSkill, GcgSkillKind.ElementalBurst];
 const activeSkills = computed(() =>
   takeOne(playerSide.value.characters, playerSide.value.activeIndex)
     .character.skills.filter(({ kind }) => kind !== GcgSkillKind.Passive)
-    .toSorted((first, second) => SKILL_KIND_ORDER.indexOf(first.kind) - SKILL_KIND_ORDER.indexOf(second.kind)),
+    .toSorted(
+      (firstSkill, secondSkill) =>
+        GCG_SKILL_KIND_DISPLAY_ORDER.indexOf(firstSkill.kind) - GCG_SKILL_KIND_DISPLAY_ORDER.indexOf(secondSkill.kind),
+    ),
 );
 const bandTextKey = computed(() => {
   if (duel.phase === GcgPhase.Preparation) return GameTextKey.GcgStartingHand;
@@ -66,8 +68,6 @@ const bandTextKey = computed(() => {
   return duel.winnerSideIndex === playerSideIndex ? GameTextKey.GcgVictory : GameTextKey.GcgDefeat;
 });
 const roundLabel = computed(() => fillGameTextValues(gameText[GameTextKey.GcgRoundTitle], duel.round));
-// The action card kinds that are equipped to a character, so a click on one waits for the character it goes onto
-const EQUIPMENT_CARD_KINDS = new Set<GcgCardKind>([GcgCardKind.Artifact, GcgCardKind.Talent, GcgCardKind.Weapon]);
 
 const toggleList = (list: number[], value: number): number[] =>
   list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
@@ -76,7 +76,7 @@ const clearSelection = () => {
   armedHandIndex.value = undefined;
   isTuning.value = false;
 };
-const isCharacterChoosable = (characterIndex: number): boolean => {
+const checkIsCharacterChoosable = (characterIndex: number): boolean => {
   const character = takeOne(playerSide.value.characters, characterIndex);
   if (duel.phase === GcgPhase.Preparation) return true;
   else if (playerSide.value.isReplacementPending) return character.hp > 0;
@@ -89,7 +89,7 @@ const selectCard = (handIndex: number) => {
   else if (isTuning.value) {
     if (selectedDieIndices.value.length === 1) emit("tuneDie", handIndex, takeOne(selectedDieIndices.value, 0));
     clearSelection();
-  } else if (EQUIPMENT_CARD_KINDS.has(card.kind)) armedHandIndex.value = handIndex;
+  } else if (GCG_EQUIPMENT_CARD_KINDS.has(card.kind)) armedHandIndex.value = handIndex;
   else {
     emit("playCard", handIndex, undefined, selectedDieIndices.value);
     clearSelection();
@@ -103,7 +103,7 @@ const selectCharacter = (characterIndex: number) => {
   } else if (armedHandIndex.value !== undefined) {
     emit("playCard", armedHandIndex.value, characterIndex, selectedDieIndices.value);
     clearSelection();
-  } else if (isCharacterChoosable(characterIndex) && selectedDieIndices.value.length === 1) {
+  } else if (checkIsCharacterChoosable(characterIndex) && selectedDieIndices.value.length === 1) {
     emit("switchCharacter", characterIndex, selectedDieIndices.value);
     clearSelection();
   }
@@ -148,7 +148,7 @@ const reroll = () => {
         :class="{ active: index === playerSide.activeIndex }"
         :energy="character.energy"
         :hp="character.hp"
-        :is-choosable="isCharacterChoosable(index)"
+        :is-choosable="checkIsCharacterChoosable(index)"
         :max-energy="character.character.maxEnergy"
         :name="textMap[character.character.nameTextId] ?? ''"
         :shield="character.shield"

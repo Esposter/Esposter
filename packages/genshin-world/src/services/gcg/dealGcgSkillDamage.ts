@@ -1,8 +1,8 @@
 import type { GcgDamage } from "#src/models/gcg/GcgDamage";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { takeOne } from "@esposter/shared";
 

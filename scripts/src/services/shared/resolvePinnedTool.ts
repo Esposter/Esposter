@@ -9,13 +9,14 @@ import { mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // A pinned tool's executable: fetched, checked against its checksum and unpacked the first time it is needed, and found
-// In its folder after that
+// In its folder after that. A bare executable is the download itself, kept under the name its pattern names
 export const resolvePinnedTool = async ({
   archiveSha256,
   archiveUrl,
   directory,
   downloadTimeoutMs,
   executablePattern,
+  isArchive,
 }: PinnedTool): Promise<string> => {
   const [held] = globSync(executablePattern, { cwd: directory });
   if (held) return join(directory, held);
@@ -25,6 +26,11 @@ export const resolvePinnedTool = async ({
   if (checksum !== archiveSha256)
     throw new InvalidOperationError(Operation.Read, archiveUrl, `has checksum ${checksum}, not the pinned one`);
   await mkdir(directory, { recursive: true });
+  if (!isArchive) {
+    const executablePath = join(directory, executablePattern);
+    await writeFile(executablePath, archive);
+    return executablePath;
+  }
   const archivePath = join(directory, "archive.zip");
   await writeFile(archivePath, archive);
   // Windows' own tar unpacks a zip; elsewhere the tar on the PATH does, as bsdtar and GNU tar both read one

@@ -9,6 +9,7 @@ import { describe, expect, test } from "vitest";
 
 const createSideState = (dice: (Element | GcgDieFace)[]): GcgSideState => ({
   activeIndex: 0,
+  cards: [],
   characters: [],
   dice,
   drawPile: [],
@@ -17,7 +18,6 @@ const createSideState = (dice: (Element | GcgDieFace)[]): GcgSideState => ({
   hasPrepared: true,
   hasRolled: true,
   isReplacementPending: false,
-  cards: [],
   onstages: [],
   summons: [],
   supports: [],

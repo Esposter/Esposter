@@ -14,15 +14,14 @@ export const writeGcgText = (): string[] => {
   const slices = Array.from(GcgDeckIdCreatedCardIdsMap.keys(), (deckId) =>
     parseMachineJson<GcgDeckSlice>(readFileSync(join(GCG_GENERATED_DIRECTORY, `deck${deckId}.json`), "utf8")),
   );
-  const textIds = [
-    ...new Set(
+  const textIds = Array.from(
+    new Set(
       slices.flatMap(({ cards, characters }) =>
         [...cards, ...characters].flatMap(({ descriptionTextId, nameTextId }) => [nameTextId, descriptionTextId]),
       ),
     ),
-  ]
-    .map(String)
-    .toSorted();
+    (textId) => String(textId),
+  ).toSorted();
   const notes = writeTextChunks(GCG_TEXT_DIRECTORY, textIds);
   notes.push(`${textIds.length} texts written in ${GameLanguages.length} languages`);
   return notes;

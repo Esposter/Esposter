@@ -1,8 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
-import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
 import { drawGcgCards } from "#src/services/gcg/drawGcgCards";
+import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
 import { takeOne } from "@esposter/shared";
 
 const TIMMIE_ID = 322_007;

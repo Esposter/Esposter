@@ -3,6 +3,7 @@ import type { UiListItem } from "@/models/ui/UiListItem";
 import type { RoomInMessage, RoomRoleInMessage } from "@esposter/db-schema";
 
 import { useRoleStore } from "@/store/message/room/role";
+import { useMemberStore } from "@/store/message/user/member";
 
 interface Props {
   roles: RoomRoleInMessage[];
@@ -11,8 +12,10 @@ interface Props {
 
 const { roles, roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
-const { selectRole } = roleStore;
-const { selectedRoleId } = storeToRefs(roleStore);
+const { memberPermissionOverrideMap, selectMember, selectRole } = roleStore;
+const { selectedMemberId, selectedRoleId } = storeToRefs(roleStore);
+const memberStore = useMemberStore();
+const { getMemberName } = memberStore;
 const roleMap = computed(() => new Map(roles.map((role) => [role.id, role])));
 // Each row is marked by the role's own colour, which the mark's slot draws
 const roleItems = computed(() =>
@@ -21,6 +24,21 @@ const roleItems = computed(() =>
     isCurrent: id === selectedRoleId.value,
     title: name,
     value: id,
+  })),
+);
+// A member is listed while an override holds them, and while they are the one being added, which has no row yet
+const memberIds = computed(() => {
+  const overriddenMemberIds = [...(memberPermissionOverrideMap.value?.keys() ?? [])];
+  return selectedMemberId.value && !overriddenMemberIds.includes(selectedMemberId.value)
+    ? [...overriddenMemberIds, selectedMemberId.value]
+    : overriddenMemberIds;
+});
+const memberItems = computed(() =>
+  memberIds.value.map<UiListItem<string>>((userId) => ({
+    hasMarkSlot: true,
+    isCurrent: userId === selectedMemberId.value,
+    title: getMemberName(userId),
+    value: userId,
   })),
 );
 </script>
@@ -32,6 +50,11 @@ const roleItems = computed(() =>
     </template>
     <template #actions="{ item }">
       <MessageModelRoomSettingsTypeRoleDeleteButton v-if="!roleMap.get(item.value)?.isEveryone" :role-id="item.value" />
+    </template>
+  </UiList>
+  <UiList v-if="memberItems.length > 0" :items="memberItems" label="Members" @select="(userId) => selectMember(userId)">
+    <template #mark="{ item }">
+      <UiAvatar :name="item.title" is-small />
     </template>
   </UiList>
   <MessageModelRoomSettingsTypeRoleConfirmDeleteDialog :room-id />

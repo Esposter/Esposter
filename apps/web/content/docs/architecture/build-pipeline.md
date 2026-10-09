@@ -34,6 +34,16 @@ The barrel is one `export * from` line per module that exports something, read f
 
 A module that exists only to be imported lazily takes the `.chunk.ts` suffix, which the barrel and the build program leave out. Listed, a module with a static export is imported statically, so the bundler folds the module into the entry rather than keeping the dynamic import a chunk. The book reader is the case that found it: its 267 per-body loader modules, listed, folded about 340 KB into `genshin-world`'s entry (`index.js` 3.35 MB against 3.00 MB), and as `.chunk.ts` modules their map is about 25 KB in the entry, each body's languages in chunks of their own.
 
+The `.chunk.ts` exclude trims only the program's root files. The loaders' `import()` calls still pull each chunk and its JSON into the declaration program, so a generated data chunk never enters the declaration program: `genshin-world`'s `tsconfig.build.json` maps the generated `#src/generated/*` paths to a stand-in declaration (`build/generatedChunk.d.ts`, `build/generatedJson.d.ts`) that carries only the shape, and its `include` drops the `parity` page and the tests, whose `vitest` and `happy-dom` types the program had been reading. Measured on this PC, `genshin-world`'s declaration program fell from 7,983 files to 2,095 (4,294 JSON and 267 chunks to none), and the build (`node node_modules/tsdown/dist/run.mjs --no-clean`) measured:
+
+| Run                                    | Wall            | Peak process tree  | Build complete |
+| :------------------------------------- | :-------------- | :----------------- | :------------- |
+| Before (HEAD)                          | 108 s           | 3,615 MB           | 95 s           |
+| After, quiet machine                   | 63 s            | 2,837 MB           | 55 s           |
+| After, two more runs on a busy machine | 122 s and 110 s | 2,778 and 2,693 MB | 63 s and 93 s  |
+
+The busy runs shared the machine's slots and free memory, so their wall time is contention, not the build. The declaration seconds were not timed separately. The emitted `index.d.ts` keeps its size (92,523 bytes before and after) and differs only in renumbered aliases. `characters.json` is one static import now, which removes the `INEFFECTIVE_DYNAMIC_IMPORT` warning without moving a byte out of the entry.
+
 ## The shared configuration package
 
 `@esposter/configuration` owns every build input. A package's config is a factory call plus what is genuinely its own, and the factories compose with `mergeConfig` rather than by spreading — a spread replaces a whole key, so a config adding one `deps` field would silently drop everything the base set there.

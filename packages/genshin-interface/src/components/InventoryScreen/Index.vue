@@ -6,6 +6,7 @@ import type { ItemCategory } from "#src/models/ItemCategory";
 
 import { InventorySorts } from "#src/models/InventorySort";
 import { ItemCategories } from "#src/models/ItemCategory";
+import { computed } from "vue";
 
 interface Props {
   // The way back to the world in the reader's language

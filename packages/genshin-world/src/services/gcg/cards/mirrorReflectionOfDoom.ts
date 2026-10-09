@@ -1,8 +1,8 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { reflection } from "#src/services/gcg/cards/reflection";
+import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
 const REFLECTION_ID = 112_031;

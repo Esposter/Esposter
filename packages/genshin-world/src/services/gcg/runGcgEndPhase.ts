@@ -1,8 +1,8 @@
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
+import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
-import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
 
 // Runs the end-phase hooks of the cards on the field, the first side first, then ages every card that lasts rounds by one,

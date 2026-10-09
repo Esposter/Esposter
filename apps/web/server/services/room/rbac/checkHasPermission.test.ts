@@ -1,3 +1,4 @@
+import { setMemberPermissionOverride } from "#server/services/room/rbac/setMemberPermissionOverride";
 import { getMockSession } from "#server/trpc/context.test";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { checkHasPermission } from "@esposter/db";
@@ -61,5 +62,28 @@ describe(checkHasPermission, () => {
 
     expect(hasReadPermission).toBe(true);
     expect(hasManagePermission).toBe(false);
+  });
+
+  test("a member's override removes a permission the roles give and adds one they do not", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await updateEveryoneRole(RoomPermission.ReadMessages | RoomPermission.SendMessages);
+    await setMemberPermissionOverride(getMockContext().db, {
+      allow: RoomPermission.ManageMessages,
+      deny: RoomPermission.SendMessages,
+      inherit: 0n,
+      roomId: getRoomId(),
+      userId: member.id,
+    });
+    const [hasReadPermission, hasSendPermission, hasManagePermission] = await Promise.all([
+      checkHasPermission(getMockContext().db, member.id, getRoomId(), RoomPermission.ReadMessages),
+      checkHasPermission(getMockContext().db, member.id, getRoomId(), RoomPermission.SendMessages),
+      checkHasPermission(getMockContext().db, member.id, getRoomId(), RoomPermission.ManageMessages),
+    ]);
+
+    expect(hasReadPermission).toBe(true);
+    expect(hasSendPermission).toBe(false);
+    expect(hasManagePermission).toBe(true);
   });
 });
