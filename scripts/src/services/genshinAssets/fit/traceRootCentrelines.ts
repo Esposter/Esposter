@@ -178,13 +178,13 @@ const toPaths = (nodes: readonly SkeletonNode[]): PathPoint[][] => {
   const paths: PathPoint[][] = [];
   const forks: [number, number | undefined][] = [[0, undefined]];
   for (let fork = forks.pop(); fork; fork = forks.pop()) {
-    const [start, firstChild] = fork;
+    const [start, forkChild] = fork;
     const startNode = nodes[start];
     if (!startNode) continue;
     const path = [toPoint(startNode)];
-    let current = firstChild ?? start;
-    if (firstChild !== undefined) {
-      const child = nodes[firstChild];
+    let current = forkChild ?? start;
+    if (forkChild !== undefined) {
+      const child = nodes[forkChild];
       path[0] = toPoint({ ...startNode, radius: child?.radius ?? startNode.radius });
       if (child) path.push(toPoint(child));
     }
