@@ -47,8 +47,12 @@ export const PARITY_BACKDROP_FILE = "parity-backdrop.png";
 // Under the same folder by their export folders (`Mesh/<name>.obj`, `Texture2D/<name>.png`)
 export const WITNESS_PATH_PREFIX = "/witness-exports/";
 export const WITNESS_LAYOUT_PATH = "layout.json";
-export const GAME_EXECUTABLE_PATH: string = String.raw`C:\Program Files\Genshin Impact\Genshin Impact game\GenshinImpact.exe`;
+// The folder holding the installed game's `GenshinImpact_Data`, read from `GENSHIN_GAME_DIRECTORY` so a machine that
+// Installed the game elsewhere points the tooling at it
+export const GAME_DIRECTORY: string =
+  process.env.GENSHIN_GAME_DIRECTORY ?? String.raw`C:\Program Files\Genshin Impact\Genshin Impact game`;
 export const GAME_EXECUTABLE_NAME = "GenshinImpact.exe";
+export const GAME_EXECUTABLE_PATH: string = join(GAME_DIRECTORY, GAME_EXECUTABLE_NAME);
 // The game lays its interface out for a 1080-pixel-high screen and scales it with the height, so a shot is taken at
 // That height in CSS pixels and scaled to the reference's
 export const INTERFACE_HEIGHT = 1080;
