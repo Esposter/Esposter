@@ -14,9 +14,8 @@ const WATCHER_RESPAWN_DELAY = Temporal.Duration.from({ seconds: 1 }).total("mill
 // The lines tsdown prints as a build starts and as it has written its `dist`
 const BUILD_START_TEXT = "Build start";
 const BUILD_COMPLETE_TEXT = "Build complete";
-// The app only runs a package's JavaScript and CSS: its types come from the package's source through the `source`
-// Condition, so a dev watcher skips the declaration pass and the published-shape checks, which `build` still runs
-const DEV_WATCH_ARGUMENTS = ["--watch", "--no-clean", "--no-dts", "--no-attw", "--no-publint"];
+// The published-shape checks read what `build` packs, which a dev watcher never publishes, so `build` alone runs them
+const DEV_WATCH_ARGUMENTS = ["--watch", "--no-clean", "--no-attw", "--no-publint"];
 const WORKSPACE_PROTOCOL = "workspace:";
 const SOURCE_PATTERNS = ["src/**/*.ts", "src/**/*.vue"];
 const logger = useLogger("watch-packages");
