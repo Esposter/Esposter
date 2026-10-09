@@ -4,8 +4,8 @@ import type { AchievementCategory } from "#src/models/achievement/AchievementCat
 import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
 import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
 import type { ArchiveEntry } from "#src/models/archive/ArchiveEntry";
+import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
-import type { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { Talk } from "#src/models/dialogue/Talk";
@@ -49,8 +49,10 @@ import { useExplorationAreas } from "#src/composables/useExplorationAreas";
 import { useGatheringPoints } from "#src/composables/useGatheringPoints";
 import { useInteraction } from "#src/composables/useInteraction";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
+import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { Currency } from "#src/models/inventory/Currency";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
+import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { advanceAchievements } from "#src/services/achievement/advanceAchievements";
 import { AchievementTextLoaderMap } from "#src/services/achievement/AchievementTextLoaderMap";
@@ -59,8 +61,12 @@ import { computeAdventureRankProgress } from "#src/services/adventureRank/comput
 import { computeAdventureRankStanding } from "#src/services/adventureRank/computeAdventureRankStanding";
 import { ArchiveTextLoaderMap } from "#src/services/archive/ArchiveTextLoaderMap";
 import { ARCHIVE_UNLOCK_QUEST_ID } from "#src/services/archive/constants";
+import { countArchiveDefeat } from "#src/services/archive/countArchiveDefeat";
 import { openArchiveEntries } from "#src/services/archive/openArchiveEntries";
+import { openArchiveEntry } from "#src/services/archive/openArchiveEntry";
+import { openTravelLogEntries } from "#src/services/archive/openTravelLogEntries";
 import { readArchiveEntries } from "#src/services/archive/readArchiveEntries";
+import { readTravelLogEntries } from "#src/services/archive/readTravelLogEntries";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
@@ -68,6 +74,7 @@ import { getCharacterAttributeLines } from "#src/services/character/getCharacter
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
+import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { checkIsGatheringPlaceStanding } from "#src/services/gathering/checkIsGatheringPlaceStanding";
 import { GATHERING_CLOCK_INTERVAL_MS } from "#src/services/gathering/constants";
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
@@ -76,7 +83,7 @@ import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
-import { TRAVELER_KIT } from "#src/services/kit/constants";
+import { TRAVELER_KIT } from "#src/services/kit/characters/travelerKit";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
@@ -97,6 +104,8 @@ import { startQuests } from "#src/services/quest/startQuests";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
+import { LandmarkIdStatuePointIdMap } from "#src/services/statue/LandmarkIdStatuePointIdMap";
+import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { InitialBannerKindWishPityMap } from "#src/services/wish/InitialBannerKindWishPityMap";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
@@ -301,6 +310,8 @@ const archiveData = shallowRef<{
   textMap: Readonly<Record<string, string>>;
 }>();
 const archiveProgressMap = shallowRef<ArchiveProgress>(new Map());
+// The defeats of each Living Being, counted under its entry for the Archive to show
+const archiveKillsMap = shallowRef<ArchiveKills>(new Map());
 // The main quests done, by id. The Archive opens once the quest it opens after is among them
 const finishedMainQuestIds = computed(
   () =>
@@ -489,6 +500,23 @@ const advanceAchievementsWith = (achievementEvents: AchievementEvent[]) => {
     },
   );
 };
+// The Primogems a statue pays on its first unlock, from the open world's transport points by its scene point. Only a
+// Locked landmark is offered to resonate with, so each is paid once
+const payFirstUnlockReward = (landmarkId: string) => {
+  const pointId = LandmarkIdStatuePointIdMap[landmarkId];
+  if (pointId === undefined) return;
+  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+  getResultAsync(readOpenWorldTransPointRewards).match(
+    (rewards) => {
+      const reward = rewards.find((transPointReward) => transPointReward.pointId === pointId);
+      if (reward)
+        wallet.value = { ...wallet.value, [Currency.Primogem]: wallet.value[Currency.Primogem] + reward.primogems };
+    },
+    (error) => {
+      console.error(error);
+    },
+  );
+};
 // A doing the world records is handed to every quest in progress, each advanced by it. The steps and quests it finishes
 // Reach the achievements
 const doQuestEvent = (questEvent: QuestEvent) => {
@@ -503,6 +531,20 @@ const doQuestEvent = (questEvent: QuestEvent) => {
   }
   questProgressMap.value = startQuests(quests.value, nextProgressMap);
   advanceAchievementsWith(achievementEvents);
+  if (achievementEvents.some(({ kind }) => kind === AchievementEventKind.ParentQuestFinished)) openTravelLog();
+};
+// The Travel Log entries of the main quests finished are opened as each one finishes, read off the Archive's table when
+// First needed, since the Archive's own screen may not have been opened
+const openTravelLog = () => {
+  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+  getResultAsync(readTravelLogEntries).match(
+    (entries) => {
+      archiveProgressMap.value = openTravelLogEntries(archiveProgressMap.value, entries, finishedMainQuestIds.value);
+    },
+    (error) => {
+      console.error(error);
+    },
+  );
 };
 // A talk that ends is a talk-to for the quests in progress, and the world is back under the Traveler
 const endTalk = () => {
@@ -515,6 +557,9 @@ const defeatEnemy = (enemy: Enemy, enemyDrops: EnemyDrops) => {
   const drops = placeEnemyDrops(enemy, enemyDrops, placedDropCount);
   placedDropCount += drops.length;
   worldDrops.value = [...worldDrops.value, ...drops];
+  const { archiveEntryId } = getEnemyKind(enemy.enemyKindId);
+  archiveProgressMap.value = openArchiveEntry(archiveProgressMap.value, ArchiveSection.LivingBeings, archiveEntryId);
+  archiveKillsMap.value = countArchiveDefeat(archiveKillsMap.value, archiveEntryId);
   doQuestEvent({ kind: QuestObjectiveKind.Defeat, targetId: String(enemy.enemyKindId) });
 };
 // Every change to the bag goes through here, so the Archive opens the entries of what the bag takes in
@@ -675,6 +720,7 @@ defineExpose({ jumpTo, readCameraPosition });
             else if (interactable?.kind === InteractionKind.PickUp) pickUpGatheringPlace(interactable.id);
             else if (interactable?.kind === InteractionKind.Activate) {
               unlockedLandmarkIds = new Set([...unlockedLandmarkIds, interactable.id]);
+              payFirstUnlockReward(interactable.id);
               doQuestEvent({ kind: QuestObjectiveKind.Interact, targetId: interactable.id });
             } else if (interactable?.kind === InteractionKind.Talk) {
               talk = talkMap.get(interactable.id);
@@ -804,6 +850,7 @@ defineExpose({ jumpTo, readCameraPosition });
       <template v-if="archiveData" #[ScreenKind.Archive]>
         <ArchiveScreen
           :game-text
+          :kills-map="archiveKillsMap"
           :progress-map="archiveProgressMap"
           :section-entries-map="archiveData.sectionEntriesMap"
           :text-map="archiveData.textMap"
