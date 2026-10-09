@@ -67,7 +67,7 @@ const createStrike = (
 
 // The discharges of Lightning Rose: each Electro under an Elemental Burst internal cooldown, the wiki's 1U and 10 poise
 const createDischarges = (talentMultiplierMap: TalentMultiplierMap): KitHit[] =>
-  Array.from({ length: LIGHTNING_ROSE_TICK_COUNT }, (_, index) => ({
+  Array.from({ length: LIGHTNING_ROSE_TICK_COUNT }, (_value, index) => ({
     element: Element.Electro,
     gauge: 1,
     hitArea: LIGHTNING_ROSE_HIT_AREA,
