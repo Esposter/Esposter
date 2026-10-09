@@ -19,7 +19,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 import { copyFileSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { availableParallelism } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 
 const run = (command: string, args: string[], cwd?: string): void => {
   const result = spawnSync(command, args, { cwd, stdio: "inherit" });
@@ -92,10 +92,12 @@ const buildAclLibrary = (projectDirectory: string, output: string): string => {
 };
 
 // Builds the CLI and its natives for macOS, and returns the path the CLI is published to. The CLI carries its own runtime,
-// So it starts wherever .NET was installed from, with no DOTNET_ROOT for the asset runs to pass it
+// So it starts wherever .NET was installed from, with no DOTNET_ROOT for the asset runs to pass it. The directory is
+// Resolved first, since clang++ runs from ACL's source and the printed path is set from anywhere
 export const buildAnimeStudio = async (directory: string): Promise<string> => {
-  const workDirectory = join(directory, WORK_DIRECTORY_NAME);
-  const publishDirectory = join(directory, PUBLISH_DIRECTORY_NAME);
+  const outputDirectory = resolve(directory);
+  const workDirectory = join(outputDirectory, WORK_DIRECTORY_NAME);
+  const publishDirectory = join(outputDirectory, PUBLISH_DIRECTORY_NAME);
   rmSync(workDirectory, { force: true, recursive: true });
   rmSync(publishDirectory, { force: true, recursive: true });
   mkdirSync(workDirectory, { recursive: true });
