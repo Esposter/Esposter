@@ -110,7 +110,7 @@ export const runCycle = async ({
     );
   // The express lane, before the stack is looked at: a commit claiming no review reaches `main` directly and the fold
   // Carries it to `develop` with the next window
-  const expressed = runExpressLane({ cwd, developSha, isDryRun, mainSha, queueSha });
+  const expressed = runExpressLane({ collectorSha, cwd, developSha, isDryRun, mainSha, queueSha, viewerLogin });
   if (expressed.outcome) return expressed.outcome;
   // A window closed without merging is a person's pause, as a closed release was: opening another over it would spend
   // The slot they were withholding. A window a re-cut closed is no pause, since its replacement is owed at once

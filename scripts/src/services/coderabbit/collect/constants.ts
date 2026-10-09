@@ -119,8 +119,9 @@ export const ANSWERED_COMMIT_FORMAT = "%H%x1F%s%x1F%B%x1E";
 export const COMMIT_BODY_FORMAT = "%H%x1F%B%x1E";
 // How many times one unit of work's session may fail against one basis before the work is routed around it: past the
 // Cap a review's findings are deferred, a commit is parked, a fold's window is re-cut and a red signature gets an
-// Issue. Nothing fails red or waits on a person. The basis is what every attempt's marker names (`getMarker`): a
-// Count that outlived the collector code that failed it would leave the work waiting on a number nobody resets.
+// Issue. A claimed commit's cut onto `main` counts against it too, though no session makes the cut, once per `main`
+// Head it failed on. Nothing fails red or waits on a person. Every attempt's marker names its basis (`getMarker`):
+// A count that outlived the collector code that failed it would leave the work waiting on a number nobody resets.
 export const SESSION_ATTEMPT_CAP = 3;
 // The tree whose hash at the run's start is the basis every attempt count names — a change to any of it is a fresh
 // Turn for whatever failed under the old. The collector's own services rather than the `scripts` package around
@@ -142,6 +143,8 @@ export const SYNC_FAILED_MARKER = "review-collector sync-failed";
 export const HELD_MARKER = "review-collector held";
 // A commit alone over the cap whose reshaping failed, counted on the commit itself like the sync's marker
 export const RESHAPE_FAILED_MARKER = "review-collector reshape-failed";
+// A claimed commit whose express cut did not apply to `main`, counted on the commit itself like the sync's marker
+export const EXPRESS_FAILED_MARKER = "review-collector express-failed";
 // A fold of `main` whose conflict the resolver failed on, counted on `main`'s head
 export const FOLD_FAILED_MARKER = "review-collector fold-failed";
 // An attempt at a red `main`, failed or pushed, posted on the head it was made at and keyed by the red's failure
