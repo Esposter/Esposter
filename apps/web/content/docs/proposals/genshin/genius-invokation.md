@@ -1,6 +1,6 @@
 ---
 title: Genius Invokation TCG
-description: Proposal — the card game against its residents, past its rules engine, its three decks and its duel board, which are built: the board opens from a resident's talk, and what follows is a resident's talk held in the world, the game's own decks, each further card's module, and invitationals, tavern challengers, the Card Shop and the Player Level.
+description: Proposal — the card game against its residents, past its rules engine, its decks and its duel board, which are built: the board opens from a resident's talk, and what follows is a resident's talk held in the world, the game's own decks, each further card's module, and invitationals, tavern challengers, the Card Shop and the Player Level.
 model: claude-opus-5-5
 ---
 
@@ -18,13 +18,13 @@ The card game's rules engine is built, so [Genius Invokation TCG](/docs/genshin/
 
 ## Scope and order
 
-**Today:** the rules engine stands on the standard rule, and the tutorial deck and decks 3 and 4 each have their characters, skills and action cards built. The duel board opens from a resident's talk and plays the one seated duel, game 12, against deck 1 with deck 3 standing in for the player's deck; the [as-built page](/docs/genshin/genius-invokation) records the calls. The world holds only quests' talks, so no fresh save reaches that resident's talk yet.
+**Today:** the rules engine stands on the standard rule, and the tutorial deck, decks 3 and 4, and the tutorial quest's decks 7, 30111 and 30112, each have their characters, skills and action cards built, and the tutorial quest's two duels are played to their ends by the engine's tests. The duel board opens from a resident's talk and plays the one seated duel, game 12, against deck 1 with deck 3 standing in for the player's deck; the [as-built page](/docs/genshin/genius-invokation) records the calls. The world holds only quests' talks, so no fresh save reaches that resident's talk yet.
 
 **This adds, in order:**
 
 1. **Resident talks in the world.** A resident's talk is held only when a quest in progress carries it, and the world carries two quests, of which only Bird's Eye View has talks, none of them a resident's. Writing each resident's talk into the world is what makes a seated duel reachable from a fresh save.
 2. **The game's own player deck for game 12.** The game names deck 2 for the player, which is not built; deck 3 stands in until it is, and the stand-in is recorded as provisional on the as-built page.
-3. **The other opponent decks**, each given the modules its cards and skills need. Deck 2 is next, the smallest of the rest, since deck 10 is not legal without Xiangling in its deck. Deck 2 is the enemy deck of the Oceanid duel (game 11), which no quest or tavern row names, so it is next as the smallest deck rather than as an early opponent's. The early duels play decks 30111 and 30112 (the tutorial quest's) and 11005 and 11002 (the Mondstadt challengers'), which the duel rows name and nothing has built; the [as-built page](/docs/genshin/genius-invokation) records the rows.
+3. **The other opponent decks**, each given the modules its cards and skills need. Deck 2 is next, the smallest of the rest, since deck 10 is not legal without Xiangling in its deck. Deck 2 is the enemy deck of the Oceanid duel (game 11), which no quest or tavern row names, so it is next as the smallest deck rather than as an early opponent's. The Mondstadt challengers' decks 11005 and 11002, which the duel rows name and nothing has built, come after it: deck 11002 is monsters with no cards, so its modules are their skills and passives alone. The [as-built page](/docs/genshin/genius-invokation) records the rows.
 4. **Invitationals, tavern challengers, the Card Shop and the Player Level.**
 
 ## Data and measures
