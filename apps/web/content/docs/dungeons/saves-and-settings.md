@@ -40,7 +40,7 @@ A `Save` is the full run state: `player` (position, direction, party monsters, i
 | `dungeons.readDungeons` | user | —                                 | read the user's save blob with its ETag       |
 | `dungeons.saveDungeons` | user | `{ data: dungeonsSchema, etag? }` | overwrite the user's save blob under its ETag |
 
-A save is sent under the ETag its last read or save returned. A save over one another session changed is refused as a conflict, and the page reloads to take the server's copy, the same path the Clicker's save takes.
+A save is sent under its ETag, the rule the [conditional writes](/docs/architecture/conditional-writes) page sets out. A refused save reloads the page, which takes the server's copy, as the Clicker's does.
 
 ## Key files
 
