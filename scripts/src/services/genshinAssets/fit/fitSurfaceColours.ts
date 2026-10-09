@@ -11,12 +11,12 @@ import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { computePartSurfaces } from "#src/services/genshinAssets/fit/computePartSurfaces";
 import { computeSurfaceTones } from "#src/services/genshinAssets/fit/computeSurfaceTones";
 import { averageSurfaceDetails, computeTextureDetail } from "#src/services/genshinAssets/fit/computeTextureDetail";
+import { computeTriangleArea } from "#src/services/genshinAssets/fit/computeTriangleArea";
 import { computeGroundLayerColours } from "#src/services/genshinAssets/fit/fitGroundLayerColours";
 import { sampleFaceUvs } from "#src/services/genshinAssets/fit/sampleFaceUvs";
 import { sampleSurfaceTexture } from "#src/services/genshinAssets/fit/sampleSurfaceTexture";
 import { toWorldVertices } from "#src/services/genshinAssets/fit/toWorldVertices";
 import {
-  MAIN_TEXTURE_SLOT,
   TERRAIN_BASE_MAP_SUFFIX,
   TERRAIN_TILE_REGEX,
   TERRAIN_TILE_SIZE,
@@ -27,6 +27,7 @@ import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetName
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
 import { readComponentPlacements } from "#src/services/genshinAssets/shared/readComponentPlacements";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
+import { toDiffusePath } from "#src/services/genshinAssets/shared/toDiffusePath";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
@@ -47,12 +48,6 @@ const SUBMESH_REGEX = /_(?<submesh>\d+)$/u;
 const OBJ_EXTENSION = ".obj";
 
 const readTexture = (path: string): Promise<Texture> => sharp(path).raw().toBuffer({ resolveWithObject: true });
-// The area of a triangle from its corners
-const computeTriangleArea = ([ax, ay, az]: Vector, [bx, by, bz]: Vector, [cx, cy, cz]: Vector): number => {
-  const [ux, uy, uz] = [bx - ax, by - ay, bz - az];
-  const [vx, vy, vz] = [cx - ax, cy - ay, cz - az];
-  return Math.hypot(uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx) / 2;
-};
 // The samples of a mesh's faces where its vertices stand in the world. Each face is read at the points `sampleFaceUvs`
 // Spreads over its UV triangle, through the texture its submesh draws with (`diffuses`, by submesh index), each point
 // Weighted by an equal share of the face's world area and how far its texel is covered, and tagged with the `part` it
@@ -158,12 +153,8 @@ export const fitSurfaceColours = async <Family extends string>(
     ]),
   );
   // The exported diffuse texture a placed material draws with, if it was exported
-  const getDiffusePath = (materialPathId: string): string | undefined => {
-    const material = materialMap.get(pathIdNameMap.get(materialPathId) ?? "");
-    const textureName = pathIdNameMap.get(material?.textures[MAIN_TEXTURE_SLOT]?.pathId ?? "");
-    const path = textureName === undefined ? undefined : join(textureDirectory, `${textureName}.png`);
-    return path && existsSync(path) ? path : undefined;
-  };
+  const getDiffusePath = (materialPathId: string): string | undefined =>
+    toDiffusePath(textureDirectory, materialMap.get(pathIdNameMap.get(materialPathId) ?? ""), pathIdNameMap);
   const textures = new Map<string, Promise<Texture>>();
   const getTexture = (path: string): Promise<Texture> => {
     const texture = textures.get(path) ?? readTexture(path);
