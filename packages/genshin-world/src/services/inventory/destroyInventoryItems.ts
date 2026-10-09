@@ -1,5 +1,6 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
+import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 
 import { addDestroyReturn } from "#src/services/inventory/addDestroyReturn";
@@ -15,11 +16,12 @@ export const destroyInventoryItems = (
   wallet: Wallet,
   ids: number[],
   names: Readonly<Record<string, string>>,
+  materialDataMap: ReadonlyMap<number, MaterialData>,
 ): InventoryDestruction | undefined => {
   const destroyedItems = Array.from(new Set(ids), (id) => getDestroyableItem(items, id));
   const remainingInventory: Inventory = { items: items.filter((item) => !destroyedItems.includes(item)), nextId };
   return getDestroyReturns(destroyedItems).reduce<InventoryDestruction | undefined>(
-    (destruction, itemCount) => destruction && addDestroyReturn(destruction, itemCount, names),
+    (destruction, itemCount) => destruction && addDestroyReturn(destruction, itemCount, names, materialDataMap),
     { inventory: remainingInventory, wallet },
   );
 };

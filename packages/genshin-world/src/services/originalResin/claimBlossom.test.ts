@@ -1,7 +1,9 @@
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Currency } from "#src/models/inventory/Currency";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
+import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
 import { CONDENSED_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
@@ -9,6 +11,8 @@ import { claimBlossom } from "#src/services/originalResin/claimBlossom";
 import { ADVENTURE_EXP_PER_RESIN } from "#src/services/originalResin/constants";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
+
+const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 
 describe(claimBlossom, () => {
   const epoch = Temporal.Instant.fromEpochMilliseconds(0);
@@ -23,6 +27,7 @@ describe(claimBlossom, () => {
 
     expect(
       claimBlossom(
+        adventureRankTables,
         wallet,
         EMPTY_INVENTORY,
         { claimCount: 1, condensedResinCount: 0, resin: RESIN },
@@ -31,6 +36,7 @@ describe(claimBlossom, () => {
         noQuest,
         epoch,
         names,
+        new Map(),
         () => [
           { count: MORA_COUNT, id: MORA_ITEM_ID },
           { count: 100, id: ADVENTURE_EXP_ITEM_ID },
@@ -62,6 +68,7 @@ describe(claimBlossom, () => {
 
     expect(
       claimBlossom(
+        adventureRankTables,
         wallet,
         { items: [condensedResinItem], nextId: 1 },
         { claimCount: 3, condensedResinCount: 1, resin: 0 },
@@ -70,6 +77,7 @@ describe(claimBlossom, () => {
         noQuest,
         epoch,
         names,
+        new Map(),
         () => {
           drawCount++;
           return [];
@@ -84,6 +92,7 @@ describe(claimBlossom, () => {
 
     expect(
       claimBlossom(
+        adventureRankTables,
         wallet,
         EMPTY_INVENTORY,
         { claimCount: 1, condensedResinCount: 0, resin: 101 },
@@ -92,6 +101,7 @@ describe(claimBlossom, () => {
         noQuest,
         epoch,
         names,
+        new Map(),
         () => [],
       ),
     ).toBeUndefined();

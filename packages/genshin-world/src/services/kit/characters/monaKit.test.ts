@@ -10,6 +10,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { MONA_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createMonaKit } from "#src/services/kit/characters/monaKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
@@ -24,11 +25,16 @@ import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const MONA_KIT = createMonaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [MONA_CHARACTER_ID]));
 
 const NEVER_CRITICAL = (): number => 1;
 
-const createSturdyEnemy = (): Enemy => ({ ...createEnemy(ENEMY_CAMP_MEMBER, ""), health: 1e9, maxHealth: 1e9 });
+const createSturdyEnemy = (): Enemy => ({
+  ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+  health: 1e9,
+  maxHealth: 1e9,
+});
 
 const createMonaCombatant = (): Combatant => ({
   ascension: 0,
@@ -139,7 +145,7 @@ describe("mona kit", () => {
     const enemy = createSturdyEnemy();
     strikeKitBubble(kitEffectState, enemy, combatant, takeOne(MONA_KIT.elementalBurst.hits));
     const poiseHit = MONA_KIT.plungeCollision;
-    strikeEnemy(enemy, poiseHit, combatant, NEVER_CRITICAL);
+    strikeEnemy(enemyTables, enemy, poiseHit, combatant, NEVER_CRITICAL);
     strikeKitBubble(kitEffectState, enemy, combatant, poiseHit);
 
     // The Omen's 4 seconds and 42% DMG taken, from the burst at index 3 and 9 of the burst group

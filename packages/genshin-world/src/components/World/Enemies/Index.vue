@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { WorldLevelRow } from "#src/models/adventureRank/WorldLevelRow";
 import type { Reaction } from "#src/models/combat/Reaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
+import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { RegionData } from "#src/models/world/RegionData";
@@ -51,6 +53,8 @@ import {
 interface Props {
   // The enemies in the world by their spawn key, which this writes as the camps load and unload and as enemies die
   enemyMap: Map<string, Enemy>;
+  // The game's enemy tables, which each spawn's kind, stats and drops are read from
+  enemyTables: EnemyTables;
   // Whether a screen over the world holds it, as the game's menus pause its enemies
   isHeld?: true;
   // The effects on the team, whose live taunts draw the enemies' strikes within their aggro range
@@ -64,10 +68,23 @@ interface Props {
   target?: GroundPoint;
   // The World Level the camps spawn at, which a change of it spawns every camp anew at
   worldLevel: number;
+  // The game's world level table, which a camp's level under a World Level is read from
+  worldLevelRows: readonly WorldLevelRow[];
 }
 
-const { enemyMap, isHeld, kitEffectState, lightUniforms, rampTexture, regionDataMap, sightScene, target, worldLevel } =
-  defineProps<Props>();
+const {
+  enemyMap,
+  enemyTables,
+  isHeld,
+  kitEffectState,
+  lightUniforms,
+  rampTexture,
+  regionDataMap,
+  sightScene,
+  target,
+  worldLevel,
+  worldLevelRows,
+} = defineProps<Props>();
 // A strike for combat to land on the active character, and a defeated enemy's drops for the bag and the party
 const emit = defineEmits<{
   defeat: [enemy: Enemy, enemyDrops: EnemyDrops];
@@ -98,14 +115,16 @@ watchImmediate(
     for (const { id, members } of enemyCamps) {
       if (loadedCampIds.has(id)) continue;
       loadedCampIds.add(id);
-      const campEnemyTypes = members.map(({ enemyKindId }) => getEnemyKind(enemyKindId).enemyType);
+      const campEnemyTypes = members.map(
+        ({ enemyKindId }) => getEnemyKind(enemyTables.enemyKindMap, enemyKindId).enemyType,
+      );
       for (const member of members) {
         const spawnKey = getSpawnKey(id, member.id);
         const defeatedAt = spawnKeyDefeatedAtMap.get(spawnKey);
         if (defeatedAt && Temporal.ZonedDateTime.compare(computeEnemyRespawnTime(campEnemyTypes, defeatedAt), now) > 0)
           continue;
         spawnKeyDefeatedAtMap.delete(spawnKey);
-        enemyMap.set(spawnKey, createEnemy(member, id, currentWorldLevel));
+        enemyMap.set(spawnKey, createEnemy(enemyTables, worldLevelRows, member, id, currentWorldLevel));
       }
     }
   },
@@ -124,7 +143,7 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
       emit(
         "defeat",
         enemy,
-        computeEnemyDrops(getEnemyKind(enemy.enemyKindId), enemy.level, () => Math.random()),
+        computeEnemyDrops(getEnemyKind(enemyTables.enemyKindMap, enemy.enemyKindId), enemy.level, () => Math.random()),
       );
     }
   }

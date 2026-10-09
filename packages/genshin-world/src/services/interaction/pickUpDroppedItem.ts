@@ -1,6 +1,7 @@
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { DroppedItemPickUp } from "#src/models/interaction/DroppedItemPickUp";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 
 import { Currency } from "#src/models/inventory/Currency";
@@ -15,9 +16,10 @@ export const pickUpDroppedItem = (
   inventory: Inventory,
   wallet: Wallet,
   names: Readonly<Record<string, string>>,
+  materialDataMap: ReadonlyMap<number, MaterialData>,
 ): DroppedItemPickUp => {
   if (itemId === MORA_ITEM_ID)
     return { inventory, overflow: 0, wallet: { ...wallet, [Currency.Mora]: wallet[Currency.Mora] + count } };
-  const definition = getItemDefinition(itemId, names);
+  const definition = getItemDefinition(itemId, names, materialDataMap);
   return { ...addInventoryItem(inventory, definition, count), wallet };
 };

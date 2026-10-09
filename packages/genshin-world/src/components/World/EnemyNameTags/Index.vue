@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { Enemy } from "#src/models/enemy/Enemy";
+import type { EnemyKind } from "#src/models/enemy/EnemyKind";
+import type { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { SightNameTag } from "#src/models/sight/SightNameTag";
 import type { Camera } from "three";
@@ -14,6 +16,8 @@ import { Vector3 } from "three";
 
 interface Props {
   elementalSight: ElementalSight;
+  // The kinds the world places by their id, whose text ids an enemy's name is read by
+  enemyKindMap: ReadonlyMap<EnemyKindId, EnemyKind>;
   // The enemies in the world by their spawn key, whose names the sight shows once they lie within its reach
   enemyMap: Map<string, Enemy>;
   // The camera the world is drawn through, none until the canvas has one
@@ -24,7 +28,7 @@ interface Props {
   origin: Vector3;
 }
 
-const { elementalSight, enemyMap, getCamera, nameText, origin } = defineProps<Props>();
+const { elementalSight, enemyKindMap, enemyMap, getCamera, nameText, origin } = defineProps<Props>();
 const nameTags = shallowRef<SightNameTag[]>([]);
 const point = new Vector3();
 // Each living enemy within the sight's reach that has a name is projected through the camera where it stands, its head
@@ -36,7 +40,7 @@ useRafFn(() => {
     return;
   }
   nameTags.value = [...enemyMap].flatMap(([key, { enemyKindId, position, state }]) => {
-    const name = nameText?.[String(getEnemyKind(enemyKindId).nameTextId)] ?? "";
+    const name = nameText?.[String(getEnemyKind(enemyKindMap, enemyKindId).nameTextId)] ?? "";
     if (state === EnemyState.Dead || !name || !checkIsInSightReach(elementalSight, position)) return [];
     point
       .set(position.x - origin.x, getWorldHeight(position.x, position.z) + ENEMY_CAPSULE_HEIGHT, position.z - origin.z)

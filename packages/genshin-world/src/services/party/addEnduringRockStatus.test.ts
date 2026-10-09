@@ -12,12 +12,14 @@ import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { addEnduringRockStatus } from "#src/services/party/addEnduringRockStatus";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
 
 const NEVER_CRITICAL = (): number => 1;
@@ -27,10 +29,10 @@ describe(addEnduringRockStatus, () => {
   const ATTACK = 100;
   const LEVEL = 90;
   const STURDY_HEALTH = 1e9;
-  const kind = getEnemyKind(ENEMY_CAMP_MEMBER.enemyKindId);
-  const { defense } = computeEnemyStats(kind, ENEMY_CAMP_MEMBER.level);
+  const kind = getEnemyKind(enemyTables.enemyKindMap, ENEMY_CAMP_MEMBER.enemyKindId);
+  const { defense } = computeEnemyStats(enemyTables.enemyLevelCurves, kind, ENEMY_CAMP_MEMBER.level);
   const createSturdyEnemy = (): Enemy => ({
-    ...createEnemy(ENEMY_CAMP_MEMBER, ""),
+    ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
     health: STURDY_HEALTH,
     maxHealth: STURDY_HEALTH,
   });
@@ -59,7 +61,7 @@ describe(addEnduringRockStatus, () => {
       talentMultiplier: kitHit.talentMultiplier,
     });
 
-    strikeEnemy(enemy, kitHit, geoCombatant, NEVER_CRITICAL);
+    strikeEnemy(enemyTables, enemy, kitHit, geoCombatant, NEVER_CRITICAL);
 
     expect(enemy.statuses).toStrictEqual([
       { damageTakenBonus: 0, id: "enduringRock", resistanceReduction: { [Element.Geo]: 0.2 }, secondsRemaining: 15 },

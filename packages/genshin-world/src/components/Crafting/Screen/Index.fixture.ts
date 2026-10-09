@@ -8,10 +8,12 @@ import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { createSeededRandom } from "genshin-engine";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
 const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
+const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
 
 // The Tier recipe that makes a second-tier enhancement material, and Condensed Resin, which the player has learned from its
 // Instruction, both open at Adventure Rank 10, with the party's Sucrose, who doubles an enhancement material's craft
@@ -45,8 +47,8 @@ const recipes: CraftingRecipe[] = [
   },
 ];
 const items: InventoryItem[] = [
-  { definition: getItemDefinition(112_002, englishNameText), id: 1, quantity: 9 },
-  { definition: getItemDefinition(100_085, englishNameText), id: 2, quantity: 1 },
+  { definition: getItemDefinition(112_002, englishNameText, materialDataMap), id: 1, quantity: 9 },
+  { definition: getItemDefinition(100_085, englishNameText, materialDataMap), id: 2, quantity: 1 },
 ];
 
 export const props = {
@@ -58,6 +60,7 @@ export const props = {
   ],
   gameText: ENGLISH_GAME_TEXT,
   inventory: { items, nextId: 3 },
+  materialDataMap,
   nameText: englishNameText,
   progress: { learnedRecipeIds: [22_007] },
   random: createSeededRandom(WORLD_RANDOM_SEED),

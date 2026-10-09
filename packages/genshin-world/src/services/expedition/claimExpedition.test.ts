@@ -6,11 +6,13 @@ import { Currency } from "#src/models/inventory/Currency";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { claimExpedition } from "#src/services/expedition/claimExpedition";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
+import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { ItemCategory } from "genshin-interface";
 import { ENGLISH_GAME_TEXT, GameLanguage, GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
 
 const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
+const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
 
 const random = (): number => 0;
 
@@ -43,6 +45,7 @@ describe(claimExpedition, () => {
         EMPTY_INVENTORY,
         EMPTY_WALLET,
         englishNameText,
+        materialDataMap,
         returnedAt.subtract({ nanoseconds: 1 }),
         random,
       ),
@@ -65,6 +68,7 @@ describe(claimExpedition, () => {
         EMPTY_INVENTORY,
         EMPTY_WALLET,
         englishNameText,
+        materialDataMap,
         returnedAt,
         random,
       )?.inventory.items,
@@ -95,6 +99,7 @@ describe(claimExpedition, () => {
         EMPTY_INVENTORY,
         EMPTY_WALLET,
         englishNameText,
+        materialDataMap,
         returnedAt,
         random,
       ),

@@ -10,6 +10,7 @@ While a player is in the world, the game keeps a heads-up display over it. The w
 ## Decisions
 
 - **The HUD's rects are the game's own tree.** The HUD's page is the `InLevelMainPage` GameObject in `00/04803507.blk`, found through its party button's Animator `TeamBtn_MP`, which no other block holds. Its tree holds the minimap, Paimon's button, the stamina meter, the party and the skill buttons, and `fitHud` writes its rects to `data/hud/interfaceRects.json` as the login's are fitted ([interface layout](/docs/genshin/interface-layout)).
+- **The screen reads its rects from the hosted game data.** The world reads the published `hud/interfaceRects` record as it opens (`readHudInterfaceRects`) and hands it to `Hud/Screen` as its `interfaceRects` prop, as the HUD's fixture reads it through the mirror. The record holds every piece of the fitted tree, and its schema keeps only the nine the screen places a piece by, each named by `HudInterfaceRectName` with its path in the tree as its value. A refit reaches the screen once its record is published.
 
 ## How it works
 
@@ -63,6 +64,9 @@ flowchart TD
 | :---------------------------------------------------------------------- | :----------------------------------------------------------------------- |
 | `packages/genshin-world/src/components/Hud/Screen/Index.vue`            | The HUD: its pieces, their places and the slots others fill              |
 | `packages/genshin-world/src/data/hud/interfaceRects.json`               | The HUD's interface rects, fitted from the game's tree                   |
+| `packages/genshin-world/src/services/hud/readHudInterfaceRects.ts`      | The HUD's rects, read from the hosted game data as the world opens       |
+| `packages/genshin-world/src/models/hud/HudInterfaceRectName.ts`         | The pieces of the tree the screen places by, each by its path            |
+| `packages/genshin-world/src/models/hud/HudInterfaceRects.ts`            | The record's schema, keeping only those pieces' rects                    |
 | `scripts/src/services/genshinAssets/fit/fitHud.ts`                      | Fits the HUD's interface rects from its exported tree                    |
 | `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts` | Names the HUD's page: its anchor `TeamBtn_MP` and root `InLevelMainPage` |
 | `packages/genshin-world/src/components/Hud/PaimonButton/Index.vue`      | The corner button that opens the Paimon menu                             |

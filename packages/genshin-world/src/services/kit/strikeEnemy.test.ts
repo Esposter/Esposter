@@ -18,6 +18,7 @@ import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
@@ -25,6 +26,7 @@ import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
 
 const NEVER_CRITICAL = (): number => 1;
@@ -34,11 +36,11 @@ describe(strikeEnemy, () => {
   const LEVEL = 90;
   const ATTACK = 100;
   const STURDY_HEALTH = 1e9;
-  const kind = getEnemyKind(ENEMY_CAMP_MEMBER.enemyKindId);
-  const { defense } = computeEnemyStats(kind, ENEMY_CAMP_MEMBER.level);
+  const kind = getEnemyKind(enemyTables.enemyKindMap, ENEMY_CAMP_MEMBER.enemyKindId);
+  const { defense } = computeEnemyStats(enemyTables.enemyLevelCurves, kind, ENEMY_CAMP_MEMBER.level);
 
   const createSturdyEnemy = (): Enemy => ({
-    ...createEnemy(ENEMY_CAMP_MEMBER, ""),
+    ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
     health: STURDY_HEALTH,
     maxHealth: STURDY_HEALTH,
   });
@@ -92,8 +94,14 @@ describe(strikeEnemy, () => {
     const resonatedEnemy = createCryoEnemy();
     const unresonatedEnemy = createCryoEnemy();
 
-    strikeEnemy(resonatedEnemy, TRAVELER_KIT.plungeCollision, createCriticalCombatant([Element.Cryo]), () => ROLL);
-    strikeEnemy(unresonatedEnemy, TRAVELER_KIT.plungeCollision, createCriticalCombatant([]), () => ROLL);
+    strikeEnemy(
+      enemyTables,
+      resonatedEnemy,
+      TRAVELER_KIT.plungeCollision,
+      createCriticalCombatant([Element.Cryo]),
+      () => ROLL,
+    );
+    strikeEnemy(enemyTables, unresonatedEnemy, TRAVELER_KIT.plungeCollision, createCriticalCombatant([]), () => ROLL);
 
     expect([resonatedEnemy.health, unresonatedEnemy.health]).toStrictEqual([
       resonatedEnemy.maxHealth - damage(true),
@@ -119,7 +127,7 @@ describe(strikeEnemy, () => {
       const random = createSeededRandom(seed);
       return Array.from({ length: STRIKE_COUNT }, () => {
         const enemy = createSturdyEnemy();
-        strikeEnemy(enemy, TRAVELER_KIT.plungeCollision, combatant, random);
+        strikeEnemy(enemyTables, enemy, TRAVELER_KIT.plungeCollision, combatant, random);
         return enemy.maxHealth - enemy.health;
       });
     };
@@ -141,7 +149,7 @@ describe(strikeEnemy, () => {
       talentMultiplier,
     });
 
-    strikeEnemy(enemy, TRAVELER_KIT.plungeCollision, createCombatant(), NEVER_CRITICAL);
+    strikeEnemy(enemyTables, enemy, TRAVELER_KIT.plungeCollision, createCombatant(), NEVER_CRITICAL);
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
@@ -151,7 +159,7 @@ describe(strikeEnemy, () => {
 
     const enemy = createSturdyEnemy();
     const kitHit = { ...takeOne(TRAVELER_KIT.elementalSkill.hits, 0), element: Element.Hydro };
-    strikeEnemy(enemy, kitHit, createCombatant(Element.Pyro), NEVER_CRITICAL);
+    strikeEnemy(enemyTables, enemy, kitHit, createCombatant(Element.Pyro), NEVER_CRITICAL);
 
     expect(enemy.elementalState.auras.has(AuraType.Hydro)).toBe(true);
     expect(enemy.elementalState.auras.has(AuraType.Pyro)).toBe(false);
@@ -161,7 +169,13 @@ describe(strikeEnemy, () => {
     expect.hasAssertions();
 
     const enemy = createSturdyEnemy();
-    strikeEnemy(enemy, takeOne(TRAVELER_KIT.elementalSkill.hits, 0), createCombatant(Element.Pyro), NEVER_CRITICAL);
+    strikeEnemy(
+      enemyTables,
+      enemy,
+      takeOne(TRAVELER_KIT.elementalSkill.hits, 0),
+      createCombatant(Element.Pyro),
+      NEVER_CRITICAL,
+    );
 
     expect(enemy.elementalState.auras.has(AuraType.Pyro)).toBe(true);
     expect(
@@ -184,7 +198,7 @@ describe(strikeEnemy, () => {
     });
     const shatterDamage = getTransformativeDamage(ReactionType.Shattered, LEVEL, 0, kind.physicalResistance);
 
-    strikeEnemy(enemy, kitHit, createCombatant(), NEVER_CRITICAL);
+    strikeEnemy(enemyTables, enemy, kitHit, createCombatant(), NEVER_CRITICAL);
 
     expect(enemy.elementalState.auras.has(AuraType.Freeze)).toBe(false);
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage - shatterDamage);
@@ -194,7 +208,13 @@ describe(strikeEnemy, () => {
     expect.hasAssertions();
 
     const enemy = createSturdyEnemy();
-    strikeEnemy(enemy, takeOne(TRAVELER_KIT.elementalBurst.hits, 0), createCombatant(Element.Pyro), NEVER_CRITICAL);
+    strikeEnemy(
+      enemyTables,
+      enemy,
+      takeOne(TRAVELER_KIT.elementalBurst.hits, 0),
+      createCombatant(Element.Pyro),
+      NEVER_CRITICAL,
+    );
     const healthBeforeHydro = enemy.health;
     const hydroHit = takeOne(TRAVELER_KIT.elementalSkill.hits, 0);
     const damage = getDamage({
@@ -206,7 +226,7 @@ describe(strikeEnemy, () => {
       talentMultiplier: hydroHit.talentMultiplier,
     });
 
-    strikeEnemy(enemy, hydroHit, createCombatant(Element.Hydro), NEVER_CRITICAL);
+    strikeEnemy(enemyTables, enemy, hydroHit, createCombatant(Element.Hydro), NEVER_CRITICAL);
 
     expect(healthBeforeHydro - enemy.health).toBeCloseTo(damage);
   });
@@ -227,7 +247,7 @@ describe(strikeEnemy, () => {
       talentMultiplier,
     });
 
-    strikeEnemy(enemy, TRAVELER_KIT.plungeCollision, createCombatant(), NEVER_CRITICAL);
+    strikeEnemy(enemyTables, enemy, TRAVELER_KIT.plungeCollision, createCombatant(), NEVER_CRITICAL);
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
@@ -247,7 +267,7 @@ describe(strikeEnemy, () => {
       talentMultiplier: hit.talentMultiplier,
     });
 
-    strikeEnemy(enemy, hit, createCombatant(), NEVER_CRITICAL);
+    strikeEnemy(enemyTables, enemy, hit, createCombatant(), NEVER_CRITICAL);
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
@@ -261,7 +281,7 @@ describe(strikeEnemy, () => {
       enemyStatus: () => ({ damageTakenBonus: 0.42, id: "omen", secondsRemaining: 4 }),
     };
 
-    strikeEnemy(enemy, hit, createCombatant(), NEVER_CRITICAL);
+    strikeEnemy(enemyTables, enemy, hit, createCombatant(), NEVER_CRITICAL);
 
     expect(enemy.statuses).toStrictEqual([{ damageTakenBonus: 0.42, id: "omen", secondsRemaining: 4 }]);
   });
@@ -285,7 +305,7 @@ describe(strikeEnemy, () => {
       talentMultiplier: hit.talentMultiplier,
     });
 
-    strikeEnemy(enemy, hit, combatant, NEVER_CRITICAL);
+    strikeEnemy(enemyTables, enemy, hit, combatant, NEVER_CRITICAL);
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
@@ -309,7 +329,7 @@ describe(strikeEnemy, () => {
       talentMultiplier: TRAVELER_KIT.plungeCollision.talentMultiplier,
     });
 
-    strikeEnemy(enemy, TRAVELER_KIT.plungeCollision, createCombatant(), NEVER_CRITICAL);
+    strikeEnemy(enemyTables, enemy, TRAVELER_KIT.plungeCollision, createCombatant(), NEVER_CRITICAL);
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });

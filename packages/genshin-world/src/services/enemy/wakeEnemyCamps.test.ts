@@ -1,17 +1,21 @@
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { setEnemyState } from "#src/services/enemy/setEnemyState";
 import { wakeEnemyCamps } from "#src/services/enemy/wakeEnemyCamps";
 import { describe, expect, test } from "vitest";
+
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 describe(wakeEnemyCamps, () => {
   test("alerts the idle members of a camp with an engaged ENEMY_CAMP_MEMBER, and no other camp's", () => {
     expect.hasAssertions();
 
-    const engagedEnemy = createEnemy(ENEMY_CAMP_MEMBER, "");
-    const campMate = createEnemy(ENEMY_CAMP_MEMBER, "");
-    const otherCampEnemy = createEnemy(ENEMY_CAMP_MEMBER, " ");
+    const engagedEnemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const campMate = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const otherCampEnemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, " ");
     setEnemyState(engagedEnemy, EnemyState.Chase);
     wakeEnemyCamps([engagedEnemy, campMate, otherCampEnemy]);
 

@@ -3,6 +3,7 @@ import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
+import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { ItemCategory } from "genshin-interface";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
@@ -32,6 +33,7 @@ export const props = {
   gameText: ENGLISH_GAME_TEXT,
   initialCategory: ItemCategory.Weapon,
   inventory: { items: weapons, nextId: WEAPON_COUNT },
+  materialDataMap: await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL),
   names: englishNameText,
   wallet: EMPTY_WALLET,
 };

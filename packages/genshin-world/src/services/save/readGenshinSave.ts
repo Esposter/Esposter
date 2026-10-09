@@ -1,3 +1,4 @@
+import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
@@ -25,6 +26,7 @@ export const readGenshinSave = (
   }: GenshinSave,
   nameText: Readonly<Record<string, string>>,
   weaponDataMap: ReadonlyMap<number, WeaponData>,
+  materialDataMap: ReadonlyMap<number, MaterialData>,
 ): GenshinSaveState => ({
   achievementProgressMap: toAchievementProgressMap(achievements),
   adventureExp,
@@ -35,7 +37,7 @@ export const readGenshinSave = (
     Object.entries(crafting.craftedCounts).map(([recipeId, count]) => [Number(recipeId), count]),
   ),
   craftingProgress: { learnedRecipeIds: crafting.learnedRecipeIds },
-  inventory: toInventory(inventory, nameText, weaponDataMap),
+  inventory: toInventory(inventory, nameText, weaponDataMap, materialDataMap),
   quests: new Map(Object.entries(quests)),
   reputation,
   unlockedLandmarkIds: new Set(unlockedLandmarks),

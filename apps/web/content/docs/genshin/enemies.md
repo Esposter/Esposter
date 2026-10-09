@@ -42,7 +42,7 @@ stateDiagram-v2
 
 ## Kinds and their stats
 
-A kind is the game's own monster, named by the game's monster id (`EnemyKindId`). Its row of the game's table holds its family, its type, its name's text id, its base HP, ATK and DEF with the level curve each grows by, and its resistance to each element and to physical damage. `genshin:assets enemies` writes that row for every kind a region's camps place, and every curve they name, from the community's dump of the game's tables. The family is the archive's group, and the type is the table's security level: common, elite or boss. Both are spelt as the game spells them, so the tables parse into the world's enums.
+A kind is the game's own monster, named by the game's monster id (`EnemyKindId`). Its row of the game's table holds its family, its type, its name's text id, its base HP, ATK and DEF with the level curve each grows by, and its resistance to each element and to physical damage. `genshin:assets enemies` publishes that row for every kind a region's camps place, and every curve they name, from the community's dump of the game's tables, to the [hosted game data](/docs/genshin/hosted-game-data). The world reads both records as it opens (`readEnemyTables`), and every rule over a kind takes the tables as an argument: the spawn, the strikes both ways, the drops, the Archive's count and the sight's name tags. The family is the archive's group, and the type is the table's security level: common, elite or boss. Both are spelt as the game spells them, so the tables parse into the world's enums.
 
 `computeEnemyStats` scales each base stat by its curve's multiplier at the enemy's level, as the wiki's formulas do: max HP and ATK by their curves, and DEF by one plus a hundredth of the level.
 
@@ -94,14 +94,15 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 | `packages/genshin-world/src/services/kit/strikePartyMember.ts`         | An enemy's strike on the member on the field                            |
 | `packages/genshin-world/src/services/kit/computeEnemyStrikeDamage.ts`  | An enemy's strike's damage to a combatant, through its defence          |
 | `packages/genshin-world/src/services/kit/selectEnemyTaunt.ts`          | The nearest live taunt in an enemy's aggro range, which it strikes      |
-| `packages/genshin-world/src/data/enemies/kinds.json`                   | The kinds' rows of the game's monster table                             |
+| `packages/genshin-world/src/services/enemy/readEnemyTables.ts`         | The kinds and their level curves, read as the world opens               |
+| `packages/genshin-world/src/models/enemy/EnemyTables.ts`               | Each kind by its id, and the level curves its stats grow along          |
 | `packages/genshin-world/src/data/regions/mondstadt.json`               | Windrise's hilichurl camp                                               |
 | `packages/genshin-world/src/components/World/Enemies/Index.vue`        | Spawns, steps and draws the enemies in reach, at the body or a taunt    |
 | `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts`        | Builds the kinds and their level curves from the game's tables          |
 
 ## Notes
 
-- **The tables hold one kind until they are read.** `kinds.json` holds the Hilichurl Fighter as the game's table has it, and `levelCurves.json` its curves' first ten levels, until `genshin:assets enemies` publishes them whole from the dump.
+- **The tables hold one kind until the step runs on the dump.** The published `enemies/kinds` record holds the Hilichurl Fighter as the game's table has it, and `enemies/levelCurves` its curves' first ten levels, until `genshin:assets enemies` publishes them whole from the dump.
 - **The AI's numbers are provisional.** Its ranges, speeds and timings, the leash, the capsule's size, and the hit's tint and flash are starting points marked in `services/enemy/constants.ts`, each to be measured off a recording or the Hilichurl's own clips.
 - **Character EXP is computed, not yet given.** The party has no levels to take it, so a defeat's EXP is rolled and left. A defeat's drops are placed and picked up by the world's screen, and the component emits `strike` and `defeat` for it.
 - **Electro-Charged and Burning ticks deal no damage yet.** Combat prices them by the character who triggered them once a kit's module does, so an enemy's ticks only decay its auras for now.

@@ -5,7 +5,7 @@ description: Genshin's Adventure Rank as built — the rank to 60 on the game's 
 
 # Adventure Rank
 
-The player's rank on the game's table, the World Level that follows it, and the enemies raised by that World Level. Adventure EXP accrues toward rank 60's total even while an ascension quest holds the rank lower, the rank catches up the moment that quest is done, and EXP past rank 60 is paid in Mora. The rank, its EXP and the World Level are pure services in `genshin-world`, read off the game's tables that `genshin:assets rank` writes from the dump. The session holds the EXP live from the save: a statue's first unlock adds its transport point's Adventure EXP, and the other sources add theirs as their pages land. Until a main quest is completed, the World Level stays at 0.
+The player's rank on the game's table, the World Level that follows it, and the enemies raised by that World Level. Adventure EXP accrues toward rank 60's total even while an ascension quest holds the rank lower, the rank catches up the moment that quest is done, and EXP past rank 60 is paid in Mora. The rank, its EXP and the World Level are pure services in `genshin-world` over the game's tables, which `genshin:assets rank` publishes from the dump to the [hosted game data](/docs/genshin/hosted-game-data). The world reads them as it opens (`readAdventureRankTables`), and each rule takes them as an argument. The session holds the EXP live from the save: a statue's first unlock adds its transport point's Adventure EXP, and the other sources add theirs as their pages land. Until a main quest is completed, the World Level stays at 0.
 
 ## How it works
 
@@ -67,10 +67,9 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 | File                                                                                | Its role                                                              |
 | :---------------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
 | `scripts/src/services/genshinAssets/adventureRank/buildAdventureRankTables.ts`      | builds the rank, lock and World Level records from the dump           |
-| `packages/genshin-world/src/data/adventureRank/levels.json`                         | each rank's Adventure EXP                                             |
-| `packages/genshin-world/src/data/adventureRank/locks.json`                          | each World Level's rank cap, unlock rank and main quest               |
-| `packages/genshin-world/src/data/adventureRank/worldLevels.json`                    | each World Level's monster level                                      |
-| `packages/genshin-world/src/services/adventureRank/constants.ts`                    | the tables, and the constants the rules read                          |
+| `packages/genshin-world/src/services/adventureRank/readAdventureRankTables.ts`      | the rank, lock and World Level tables, read as the world opens        |
+| `packages/genshin-world/src/models/adventureRank/AdventureRankTables.ts`            | each rank's EXP, each World Level's lock and its monster level        |
+| `packages/genshin-world/src/services/adventureRank/constants.ts`                    | the constants the rules read                                          |
 | `packages/genshin-world/src/composables/useWorldAdventureRank.ts`                   | the live EXP, its standing and the gain a source adds                 |
 | `packages/genshin-world/src/services/adventureRank/computeAdventureRankStanding.ts` | the rank, its cap and the World Level from EXP and quests             |
 | `packages/genshin-world/src/services/adventureRank/gainAdventureExp.ts`             | the EXP gain, its cap and the Mora past rank 60                       |

@@ -1,6 +1,7 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { InventorySave } from "#src/models/inventory/InventorySave";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
+import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
@@ -13,9 +14,10 @@ const toEntryDefinition = (
   itemId: number,
   names: Readonly<Record<string, string>>,
   weaponDataMap: ReadonlyMap<number, WeaponData>,
+  materialDataMap: ReadonlyMap<number, MaterialData>,
 ): ItemDefinition => {
   const weaponData = weaponDataMap.get(itemId);
-  if (!weaponData) return getItemDefinition(itemId, names);
+  if (!weaponData) return getItemDefinition(itemId, names, materialDataMap);
   return toWeaponDefinition(weaponData, getItemName(weaponData.nameTextId, names));
 };
 
@@ -25,10 +27,11 @@ export const toInventory = (
   { items, nextId }: InventorySave,
   names: Readonly<Record<string, string>>,
   weaponDataMap: ReadonlyMap<number, WeaponData>,
+  materialDataMap: ReadonlyMap<number, MaterialData>,
 ): Inventory => ({
   items: items.map(({ itemId, ...entry }) => ({
     ...entry,
-    definition: toEntryDefinition(itemId, names, weaponDataMap),
+    definition: toEntryDefinition(itemId, names, weaponDataMap, materialDataMap),
   })),
   nextId,
 });

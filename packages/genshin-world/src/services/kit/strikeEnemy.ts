@@ -1,5 +1,6 @@
 import type { Reaction } from "#src/models/combat/Reaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
+import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { EnemyStrikeResult } from "#src/models/kit/EnemyStrikeResult";
 import type { KitHit } from "#src/models/kit/KitHit";
@@ -33,6 +34,7 @@ import { ID_SEPARATOR } from "@esposter/shared";
 // The enemy takes it through damageEnemy. The enemy's RES to the element, or its Physical RES, is its own less each
 // Status's reduction of it. It returns the energy the hit dropped and the reactions it triggered
 export const strikeEnemy = (
+  { enemyKindMap, enemyLevelCurves }: EnemyTables,
   enemy: Enemy,
   kitHit: KitHit,
   combatant: Combatant,
@@ -63,8 +65,8 @@ export const strikeEnemy = (
     reactions.push(...applyElement(elementalState, element, gauge * share));
   }
 
-  const kind = getEnemyKind(enemy.enemyKindId);
-  const { defense } = computeEnemyStats(kind, enemy.level);
+  const kind = getEnemyKind(enemyKindMap, enemy.enemyKindId);
+  const { defense } = computeEnemyStats(enemyLevelCurves, kind, enemy.level);
   const elementalMastery = attributeTotalMap[Attribute.ElementalMastery];
   let amplifyingMultiplier = 1;
   let additiveBaseDamageBonus = kitHit.additiveBaseDamageBonus?.(combatant) ?? 0;

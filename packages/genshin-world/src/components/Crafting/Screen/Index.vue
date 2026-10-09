@@ -2,6 +2,7 @@
 import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
 import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { CraftingCell } from "genshin-interface";
 import type { GameText } from "genshin-text";
@@ -26,6 +27,8 @@ interface Props {
   crafters: CraftingCell[];
   // The game's words in the reader's language
   gameText: GameText;
+  // The game's material table by item id, which each crafted item is defined from
+  materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the items and recipes in the reader's language, by their game text ids
   nameText: Readonly<Record<string, string>>;
   // What the player has learned from instructions
@@ -36,7 +39,8 @@ interface Props {
   recipes: CraftingRecipe[];
 }
 
-const { adventureRank, crafters, gameText, nameText, progress, random, recipes } = defineProps<Props>();
+const { adventureRank, crafters, gameText, materialDataMap, nameText, progress, random, recipes } =
+  defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
@@ -92,7 +96,7 @@ const craft = () => {
   const recipe = pickedRecipe.value;
   if (!recipe) return;
   const craftCount = pickedAmount.value;
-  const crafted = craftRecipe(recipe, craftCount, getItemDefinition(recipe.resultItemId, nameText), {
+  const crafted = craftRecipe(recipe, craftCount, getItemDefinition(recipe.resultItemId, nameText, materialDataMap), {
     adventureRank,
     inventory: inventory.value,
     now: Temporal.Now.instant(),
@@ -101,7 +105,7 @@ const craft = () => {
   });
   if (!crafted) return;
   inventory.value = rollCraftingTalent(crafterId.value, recipe, craftCount, random).reduce(
-    (bag, { count, id }) => addInventoryItem(bag, getItemDefinition(id, nameText), count).inventory,
+    (bag, { count, id }) => addInventoryItem(bag, getItemDefinition(id, nameText, materialDataMap), count).inventory,
     crafted.inventory,
   );
   wallet.value = crafted.wallet;

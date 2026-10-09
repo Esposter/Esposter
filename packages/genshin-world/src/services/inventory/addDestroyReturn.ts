@@ -1,5 +1,6 @@
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { ItemCount } from "#src/models/inventory/ItemCount";
+import type { MaterialData } from "#src/models/inventory/MaterialData";
 
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { WALLET_ITEM_IDS } from "#src/services/inventory/constants";
@@ -13,9 +14,10 @@ export const addDestroyReturn = (
   { inventory, wallet }: InventoryDestruction,
   { count, id }: ItemCount,
   names: Readonly<Record<string, string>>,
+  materialDataMap: ReadonlyMap<number, MaterialData>,
 ): InventoryDestruction | undefined => {
   if (!WALLET_ITEM_IDS.includes(id)) {
-    const addition = addInventoryItem(inventory, getItemDefinition(id, names), count);
+    const addition = addInventoryItem(inventory, getItemDefinition(id, names, materialDataMap), count);
     return addition.overflow > 0 ? undefined : { inventory: addition.inventory, wallet };
   }
   const currency = getWalletCurrency(id);

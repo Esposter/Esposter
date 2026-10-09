@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { WorldLevelRow } from "#src/models/adventureRank/WorldLevelRow";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
+import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
@@ -112,6 +114,8 @@ interface Props {
   elementalSight?: ElementalSight;
   // The enemies in the world by their spawn key, which the enemies write as camps load and enemies die
   enemyMap: Map<string, Enemy>;
+  // The game's enemy tables, which the camps spawn their enemies from
+  enemyTables: EnemyTables;
   // The game's minute of the day the clock is held at, in place of its running from the region's start
   heldMinutes?: number;
   // The drops and the residents in the world, each a row of the prompts and drawn as a stand-in
@@ -133,6 +137,8 @@ interface Props {
   regionDataBaseUrl: string;
   // The World Level the camps spawn at, from the player's Adventure EXP and quests
   worldLevel: number;
+  // The game's world level table, which raises the camps' levels under a World Level
+  worldLevelRows: readonly WorldLevelRow[];
 }
 
 const {
@@ -143,6 +149,7 @@ const {
   createTerrainWorker,
   elementalSight,
   enemyMap,
+  enemyTables,
   heldMinutes,
   interactables,
   isHeld,
@@ -154,6 +161,7 @@ const {
   questTargetId,
   regionDataBaseUrl,
   worldLevel,
+  worldLevelRows,
 } = defineProps<Props>();
 const emit = defineEmits<{
   defeat: [enemy: Enemy, enemyDrops: EnemyDrops];
@@ -410,6 +418,7 @@ onUnmounted(() => {
       v-if="!witness"
       :kit-effect-state
       :enemy-map
+      :enemy-tables
       :is-held
       :light-uniforms
       :ramp-texture
@@ -417,6 +426,7 @@ onUnmounted(() => {
       :sight-scene
       :target="characterBody?.position"
       :world-level
+      :world-level-rows
       @defeat="(enemy, enemyDrops) => emit('defeat', enemy, enemyDrops)"
       @strike="(enemy, taunt) => emit('strike', enemy, taunt)"
     />

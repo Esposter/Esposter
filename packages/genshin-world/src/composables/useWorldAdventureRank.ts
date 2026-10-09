@@ -1,3 +1,4 @@
+import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { WorldLevelAdjustment } from "#src/models/adventureRank/WorldLevelAdjustment";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ComputedRef, Ref } from "vue";
@@ -15,6 +16,7 @@ import { computed, shallowRef } from "vue";
 // That passes rank 60 is paid into the wallet as Mora, and the World Level the world plays at is that one less the
 // Step the player has lowered it by
 export const useWorldAdventureRank = ({
+  adventureRankTables,
   finishedMainQuestIds,
   getWorldNow,
   savedAdventureExp,
@@ -22,6 +24,7 @@ export const useWorldAdventureRank = ({
   setWallet,
   wallet,
 }: {
+  adventureRankTables: AdventureRankTables;
   finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
   getWorldNow: () => Temporal.Instant;
   savedAdventureExp: number;
@@ -33,9 +36,13 @@ export const useWorldAdventureRank = ({
   const worldLevelAdjustment = shallowRef(savedWorldLevelAdjustment);
   // The ascension quests are named by the string ids the ranks' locks hold
   const completedMainQuestIds = computed(() => new Set(Array.from(finishedMainQuestIds.value, String)));
-  const standing = computed(() => computeAdventureRankStanding(adventureExp.value, completedMainQuestIds.value));
+  const standing = computed(() =>
+    computeAdventureRankStanding(adventureRankTables, adventureExp.value, completedMainQuestIds.value),
+  );
   const unlockedWorldLevel = computed(() => standing.value.worldLevel);
-  const adventureExpProgress = computed(() => computeAdventureRankProgress(adventureExp.value, standing.value.rank));
+  const adventureExpProgress = computed(() =>
+    computeAdventureRankProgress(adventureRankTables, adventureExp.value, standing.value.rank),
+  );
   // The World Level can be lowered from the unlocked minimum, and a lowered one restored whatever it stands at
   const isWorldLevelAdjustable = computed(
     () => unlockedWorldLevel.value >= WORLD_LEVEL_LOWERING_MINIMUM || worldLevelAdjustment.value.isLowered,
@@ -48,7 +55,7 @@ export const useWorldAdventureRank = ({
     );
   };
   const gainWorldAdventureExp = (amount: number) => {
-    const gain = gainAdventureExp(adventureExp.value, amount, completedMainQuestIds.value);
+    const gain = gainAdventureExp(adventureRankTables, adventureExp.value, amount, completedMainQuestIds.value);
     adventureExp.value = gain.adventureExp;
     if (gain.moraPaid > 0) setWallet({ ...wallet.value, [Currency.Mora]: wallet.value[Currency.Mora] + gain.moraPaid });
   };

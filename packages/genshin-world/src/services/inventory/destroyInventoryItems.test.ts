@@ -7,11 +7,13 @@ import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { destroyInventoryItems } from "#src/services/inventory/destroyInventoryItems";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { ItemCategory } from "genshin-interface";
 import { GameLanguage } from "genshin-text";
 import { describe, expect, test } from "vitest";
 
 const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
+const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
 
 describe(destroyInventoryItems, () => {
   const ORE_ID = 104_011;
@@ -41,9 +43,18 @@ describe(destroyInventoryItems, () => {
     const weapon = createWeapon(0, 3, DestroyRule.ReturnMaterial);
 
     expect(
-      destroyInventoryItems({ items: [weapon], nextId: 1 }, EMPTY_WALLET, [weapon.id], englishNameText),
+      destroyInventoryItems(
+        { items: [weapon], nextId: 1 },
+        EMPTY_WALLET,
+        [weapon.id],
+        englishNameText,
+        materialDataMap,
+      ),
     ).toStrictEqual({
-      inventory: { items: [{ definition: getItemDefinition(ORE_ID, englishNameText), id: 1, quantity: 3 }], nextId: 2 },
+      inventory: {
+        items: [{ definition: getItemDefinition(ORE_ID, englishNameText, materialDataMap), id: 1, quantity: 3 }],
+        nextId: 2,
+      },
       wallet: EMPTY_WALLET,
     });
   });
@@ -82,7 +93,13 @@ describe(destroyInventoryItems, () => {
     };
 
     expect(
-      destroyInventoryItems({ items: [artifact], nextId: 1 }, EMPTY_WALLET, [artifact.id], englishNameText),
+      destroyInventoryItems(
+        { items: [artifact], nextId: 1 },
+        EMPTY_WALLET,
+        [artifact.id],
+        englishNameText,
+        materialDataMap,
+      ),
     ).toStrictEqual({ inventory: { items: [], nextId: 1 }, wallet: { ...EMPTY_WALLET, [Currency.Mora]: 420 } });
   });
 
@@ -98,6 +115,7 @@ describe(destroyInventoryItems, () => {
         EMPTY_WALLET,
         [weapon.id, fourStarWeapon.id],
         englishNameText,
+        materialDataMap,
       ),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Delete, name: getDestroyableItem, 1]`,
@@ -109,13 +127,15 @@ describe(destroyInventoryItems, () => {
 
     const weapon = createWeapon(0, 3, DestroyRule.ReturnMaterial);
     const fullOreStack: InventoryItem = {
-      definition: getItemDefinition(ORE_ID, englishNameText),
+      definition: getItemDefinition(ORE_ID, englishNameText, materialDataMap),
       id: 1,
       quantity: ORE_STACK_LIMIT,
     };
     const inventory = { items: [weapon, fullOreStack], nextId: 2 };
 
-    expect(destroyInventoryItems(inventory, EMPTY_WALLET, [weapon.id], englishNameText)).toBeUndefined();
+    expect(
+      destroyInventoryItems(inventory, EMPTY_WALLET, [weapon.id], englishNameText, materialDataMap),
+    ).toBeUndefined();
     expect(inventory.items).toStrictEqual([weapon, fullOreStack]);
   });
 });

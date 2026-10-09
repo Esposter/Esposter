@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { CharacterData } from "#src/models/character/CharacterData";
 import type { HudFrame } from "#src/models/hud/HudFrame";
+import type { HudInterfaceRects } from "#src/models/hud/HudInterfaceRects";
 import type { HudMember } from "#src/models/hud/HudMember";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { Party } from "#src/models/party/Party";
@@ -19,7 +20,7 @@ import HudQuest from "#src/components/Hud/Quest/Index.vue";
 import HudSkills from "#src/components/Hud/Skills/Index.vue";
 import HudStamina from "#src/components/Hud/Stamina/Index.vue";
 import HudTouch from "#src/components/Hud/Touch/Index.vue";
-import interfaceRects from "#src/data/hud/interfaceRects.json";
+import { HudInterfaceRectName } from "#src/models/hud/HudInterfaceRectName";
 import { useMediaQuery } from "@vueuse/core";
 import { STAMINA_MAX } from "genshin-engine";
 import { GameRect, GameScreen } from "genshin-interface";
@@ -33,6 +34,8 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   input: Input;
+  // The HUD's pieces' rects as the game's tree places them, read before the world opens
+  interfaceRects: HudInterfaceRects;
   landmarks: Landmark[];
   // The field member's HP, level and cooldowns, hidden until the character on the field is known
   member?: HudMember;
@@ -57,6 +60,7 @@ const {
   frame,
   gameText,
   input,
+  interfaceRects,
   landmarks,
   member,
   nameTextMap,
@@ -80,17 +84,17 @@ const isTouch = useMediaQuery("(pointer: coarse)");
     <HudTouch v-if="isTouch" :game-text :input />
     <!-- The page as the game's tree under `GrpMainPage` nests it: each piece a `GameRect` placed by its RectTransform
          inside its game parent's -->
-    <GameRect #default="{ rect: hudRect }" :rect="interfaceRects.GrpMainPage">
-      <GameRect #default="{ rect: mapInfoRect }" :parent="hudRect" :rect="interfaceRects['GrpMainPage/MapInfo']">
-        <GameRect :parent="mapInfoRect" :rect="interfaceRects['GrpMainPage/MapInfo/BtnPlayerProfile']">
+    <GameRect #default="{ rect: hudRect }" :rect="interfaceRects[HudInterfaceRectName.MainPage]">
+      <GameRect #default="{ rect: mapInfoRect }" :parent="hudRect" :rect="interfaceRects[HudInterfaceRectName.MapInfo]">
+        <GameRect :parent="mapInfoRect" :rect="interfaceRects[HudInterfaceRectName.PlayerProfileButton]">
           <HudPaimonButton :game-text @press="emit('menu')" />
         </GameRect>
         <GameRect
           #default="{ rect: miniMapRect }"
           :parent="mapInfoRect"
-          :rect="interfaceRects['GrpMainPage/MapInfo/GrpMiniMap']"
+          :rect="interfaceRects[HudInterfaceRectName.MiniMap]"
         >
-          <GameRect :parent="miniMapRect" :rect="interfaceRects['GrpMainPage/MapInfo/GrpMiniMap/GrpBackMap']">
+          <GameRect :parent="miniMapRect" :rect="interfaceRects[HudInterfaceRectName.BackMap]">
             <HudMinimap :camera :game-text :landmarks @open="emit('map')" />
           </GameRect>
         </GameRect>
@@ -98,13 +102,17 @@ const isTouch = useMediaQuery("(pointer: coarse)");
       <div v-if="trackedQuest" class="quest">
         <HudQuest :input :quest="trackedQuest" :quest-progress :text-map="questTextMap" />
       </div>
-      <GameRect v-if="characterDataMap" :parent="hudRect" :rect="interfaceRects['GrpMainPage/TeamBtnContainer']">
+      <GameRect
+        v-if="characterDataMap"
+        :parent="hudRect"
+        :rect="interfaceRects[HudInterfaceRectName.TeamButtonContainer]"
+      >
         <HudParty :character-data-map :frame :input :name-text-map :party />
       </GameRect>
-      <GameRect v-if="member" :parent="hudRect" :rect="interfaceRects['GrpMainPage/GameInfo/HPBarContainer']">
+      <GameRect v-if="member" :parent="hudRect" :rect="interfaceRects[HudInterfaceRectName.HealthBarContainer]">
         <HudHealth :game-text :health="member.health" :level="member.level" :max-health="member.maxHealth" />
       </GameRect>
-      <GameRect v-if="member" :parent="hudRect" :rect="interfaceRects['GrpMainPage/GrpActionBtn']">
+      <GameRect v-if="member" :parent="hudRect" :rect="interfaceRects[HudInterfaceRectName.ActionButtons]">
         <HudSkills
           :burst-cooldown="member.burstCooldown"
           :burst-cooldown-seconds="member.burstCooldownSeconds"
@@ -116,7 +124,7 @@ const isTouch = useMediaQuery("(pointer: coarse)");
           :skill-cooldown-seconds="member.skillCooldownSeconds"
         />
       </GameRect>
-      <GameRect :parent="hudRect" :rect="interfaceRects['GrpMainPage/GameInfo/SPBar']">
+      <GameRect :parent="hudRect" :rect="interfaceRects[HudInterfaceRectName.StaminaBar]">
         <HudStamina :frame :game-text :max-stamina="STAMINA_MAX" />
       </GameRect>
     </GameRect>
