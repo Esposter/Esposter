@@ -91,16 +91,41 @@ describe("genshinSaveSchema", () => {
     expect(genshinSaveSchema.safeParse(save).success).toBe(true);
   });
 
-  // A slice a save predates is refused rather than defaulted: a stored save is backfilled to the shape, so a default
-  // Would only hide a save nobody brought to it
-  test("refuses a save written before the slices were added", () => {
+  // A slice a save predates takes its empty value, so a save written before the slice existed still loads with every
+  // Other slice as it was
+  test("parses a save missing a slice with that slice empty and every other slice intact", () => {
     expect.hasAssertions();
-    const predatingSave = {
-      quests: EMPTY_GENSHIN_SAVE.quests,
-      unlockedLandmarks: EMPTY_GENSHIN_SAVE.unlockedLandmarks,
-      wallet: EMPTY_GENSHIN_SAVE.wallet,
+    const save = { ...EMPTY_GENSHIN_SAVE, adventureExp: 1 };
+    const predatingSave = Object.fromEntries(Object.entries(save).filter(([key]) => key !== "crafting"));
+
+    expect(genshinSaveSchema.parse(predatingSave)).toStrictEqual(save);
+  });
+
+  test("parses a save missing two slices with both empty and every other slice intact", () => {
+    expect.hasAssertions();
+    const save = { ...EMPTY_GENSHIN_SAVE, adventureExp: 1 };
+    const predatingSave = Object.fromEntries(
+      Object.entries(save).filter(([key]) => key !== "quests" && key !== "wallet"),
+    );
+
+    expect(genshinSaveSchema.parse(predatingSave)).toStrictEqual(save);
+  });
+
+  test("parses a full save unchanged", () => {
+    expect.hasAssertions();
+    const save = {
+      ...EMPTY_GENSHIN_SAVE,
+      adventureExp: 1,
+      crafting: { craftedCounts: { 1: 2 }, learnedRecipeIds: [3] },
     };
 
-    expect(genshinSaveSchema.safeParse(predatingSave).success).toBe(false);
+    expect(genshinSaveSchema.parse(save)).toStrictEqual(save);
+  });
+
+  test("refuses a slice that is present but invalid", () => {
+    expect.hasAssertions();
+    const save = { ...EMPTY_GENSHIN_SAVE, crafting: { craftedCounts: {}, learnedRecipeIds: [0] } };
+
+    expect(genshinSaveSchema.safeParse(save).success).toBe(false);
   });
 });

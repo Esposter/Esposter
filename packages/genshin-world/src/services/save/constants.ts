@@ -1,4 +1,3 @@
-import type { InventorySave } from "#src/models/inventory/InventorySave";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 
@@ -93,36 +92,48 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
       level: MAX_SAVE_NUMBER,
       quantity: MAX_ITEM_QUANTITY,
     });
+// Each slice's empty value, which its schema takes as its default, so a save written before the slice existed parses with
+// The slice empty. They are untyped, since the schemas take them as their defaults and a type read from a schema would
+// Read the schema back
+export const EMPTY_ACHIEVEMENT_PROGRESS_SAVE = {};
+export const EMPTY_ADVENTURE_EXP_SAVE = 0;
+export const EMPTY_COMPANIONSHIP_EXP_SAVE = {};
+export const EMPTY_CRAFTING_SAVE = { craftedCounts: {}, learnedRecipeIds: [] };
 // A new player's bag, which holds nothing until the world gives it something
-export const EMPTY_INVENTORY_SAVE: InventorySave = { items: [], nextId: 0 };
+export const EMPTY_INVENTORY_SAVE = { items: [], nextId: 0 };
+export const EMPTY_QUEST_PROGRESS_SAVE = {};
 // Mondstadt's Reputation at its first level, with no EXP toward the next
 export const EMPTY_REPUTATION_SAVE: ReputationProgress = { exp: 0, level: 1 };
-// A new player's save: the wallet as a new player's holds it, its Original Resin at the cap from the epoch, and nothing
-// Else. The instants are ISO strings, as the save stores them
-export const EMPTY_GENSHIN_SAVE: GenshinSave = {
-  achievements: {},
-  adventureExp: 0,
-  companionshipExp: {},
-  crafting: { craftedCounts: {}, learnedRecipeIds: [] },
-  inventory: EMPTY_INVENTORY_SAVE,
-  quests: {},
-  reputation: EMPTY_REPUTATION_SAVE,
-  unlockedLandmarks: [],
-  wallet: {
-    currencies: {
-      [Currency.AcquaintFate]: 0,
-      [Currency.GenesisCrystal]: 0,
-      [Currency.IntertwinedFate]: 0,
-      [Currency.MasterlessStardust]: 0,
-      [Currency.MasterlessStarglitter]: 0,
-      [Currency.MasterlessStellaFortuna]: 0,
-      [Currency.Mora]: 0,
-      [Currency.OriginalResin]: ORIGINAL_RESIN_CAP,
-      [Currency.Primogem]: 0,
-    },
-    originalResinChangedAt: "1970-01-01T00:00:00Z",
-    primogemResinRefillCount: 0,
-    primogemResinRefillDay: "1970-01-01",
+export const EMPTY_UNLOCKED_LANDMARK_SAVE = [];
+// The wallet as a new player's holds it, its Original Resin at the cap from the epoch. Its instants are ISO strings, as the
+// Save stores them
+export const EMPTY_WALLET_SAVE = {
+  currencies: {
+    [Currency.AcquaintFate]: 0,
+    [Currency.GenesisCrystal]: 0,
+    [Currency.IntertwinedFate]: 0,
+    [Currency.MasterlessStardust]: 0,
+    [Currency.MasterlessStarglitter]: 0,
+    [Currency.MasterlessStellaFortuna]: 0,
+    [Currency.Mora]: 0,
+    [Currency.OriginalResin]: ORIGINAL_RESIN_CAP,
+    [Currency.Primogem]: 0,
   },
-  wishPity: InitialBannerKindWishPityMap,
+  originalResinChangedAt: "1970-01-01T00:00:00Z",
+  primogemResinRefillCount: 0,
+  primogemResinRefillDay: "1970-01-01",
+};
+export const EMPTY_WISH_PITY_MAP_SAVE = InitialBannerKindWishPityMap;
+// A new player's save: every slice at its empty value
+export const EMPTY_GENSHIN_SAVE: GenshinSave = {
+  achievements: EMPTY_ACHIEVEMENT_PROGRESS_SAVE,
+  adventureExp: EMPTY_ADVENTURE_EXP_SAVE,
+  companionshipExp: EMPTY_COMPANIONSHIP_EXP_SAVE,
+  crafting: EMPTY_CRAFTING_SAVE,
+  inventory: EMPTY_INVENTORY_SAVE,
+  quests: EMPTY_QUEST_PROGRESS_SAVE,
+  reputation: EMPTY_REPUTATION_SAVE,
+  unlockedLandmarks: EMPTY_UNLOCKED_LANDMARK_SAVE,
+  wallet: EMPTY_WALLET_SAVE,
+  wishPity: EMPTY_WISH_PITY_MAP_SAVE,
 };
