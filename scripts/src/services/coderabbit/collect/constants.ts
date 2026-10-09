@@ -148,6 +148,10 @@ export const REPAIR_EXHAUSTED_MARKER = "review-collector repair-exhausted";
 // Carry is seconds, so past this the session is pushing faster than any lease can be read
 export const SYNC_PUSH_ATTEMPT_CAP = 3;
 
+// How long the carry session in `pnpm ai:queue:push` may run, which no job's timeout bounds as it does the runner's:
+// One haiku session settling one conflict takes minutes, so past this it has lost its way and the push waits
+export const CARRY_SESSION_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 15 }).total("milliseconds");
+
 export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";
 // What every headless session in the runner is denied: it holds no credential that can act on this repository,
 // And the collector does each of these itself once the session has exited clean

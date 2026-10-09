@@ -6,7 +6,7 @@ import { CLAUDE_CODE_PACKAGE } from "#src/services/coderabbit/collect/constants"
 import { getDrainEventLine } from "#src/services/coderabbit/collect/getDrainEventLine";
 import { getSessionLimitResetMs } from "#src/services/coderabbit/collect/getSessionLimitResetMs";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { once } from "node:events";
 import { createInterface } from "node:readline";
 
@@ -23,7 +23,7 @@ const SECRET_VARIABLE_REGEX = /credential|key|password|secret|token/iu;
 // Prints on its way out — parsed off its own lines, never the model's narration — is what separates a session
 // That failed from one that never started. A limit throws rather than returns: no step can go on without a
 // Session, so the pass ends where it stood and the entry point marks when the limit lifts.
-export const runSession = async ({ cwd, model, prompt }: SessionInput): Promise<SessionRun> => {
+export const runSession = async ({ cwd, model, prompt, signal }: SessionInput): Promise<SessionRun> => {
   const environment = Object.fromEntries(
     Object.keys(process.env)
       .filter((key) => EXEMPT_SECRET_VARIABLES.has(key) || !SECRET_VARIABLE_REGEX.test(key))
@@ -54,9 +54,23 @@ export const runSession = async ({ cwd, model, prompt }: SessionInput): Promise<
   // A refusal to start closes the pipe under the write; the exit status already says what happened
   child.stdin.on("error", console.error);
   child.stdin.end(prompt);
+  const lines = createInterface({ input: child.stdout });
+  // A deadline ends the whole tree, and the read with our end of the pipe, since a session `pnpm` launched can outlive
+  // It holding stdout open; the run then settles as one that did not end clean
+  signal?.addEventListener(
+    "abort",
+    () => {
+      if (process.platform === "win32")
+        spawnSync("taskkill", ["/PID", String(child.pid), "/T", "/F"], { stdio: "ignore", windowsHide: true });
+      else child.kill();
+      lines.close();
+      child.stdout.destroy();
+    },
+    { once: true },
+  );
   const ownLines: string[] = [];
   let hasOutput = false;
-  for await (const line of createInterface({ input: child.stdout })) {
+  for await (const line of lines) {
     hasOutput = true;
     const logLine = getDrainEventLine(line);
     if (logLine === undefined) continue;

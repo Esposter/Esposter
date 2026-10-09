@@ -1,6 +1,6 @@
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { checkIsSequencing } from "#src/services/coderabbit/collect/checkIsSequencing";
-import { SessionRoleModelMap } from "#src/services/coderabbit/collect/constants";
+import { CARRY_SESSION_TIMEOUT_MS, SessionRoleModelMap } from "#src/services/coderabbit/collect/constants";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
@@ -12,10 +12,18 @@ import { pickCommit } from "#src/services/queue/pickCommit";
 import { getResultAsync } from "@esposter/shared";
 
 // One headless session settles the stopped pick. Anything but a session that started and exited clean counts as not
-// Settled — a failure, a refusal to start and a limit alike — so the push waits as it did before sessions settled it
+// Settled — a failure, a refusal to start, a limit and a session past its deadline alike — so the push waits as it did
+// Before sessions settled it
 const runCarrySession = async (conflictSha: string, cwd: string): Promise<boolean> => {
   const prompt = getCarryPrompt(conflictSha, readUnmergedPaths(cwd));
-  const result = await getResultAsync(() => runSession({ cwd, model: SessionRoleModelMap[SessionRole.Carry], prompt }));
+  const result = await getResultAsync(() =>
+    runSession({
+      cwd,
+      model: SessionRoleModelMap[SessionRole.Carry],
+      prompt,
+      signal: AbortSignal.timeout(CARRY_SESSION_TIMEOUT_MS),
+    }),
+  );
   return result.match(
     ({ isEnded, isStarted }) => isStarted && isEnded,
     (error) => {
