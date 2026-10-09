@@ -206,4 +206,10 @@ const characterName = computed(() => characters.find(({ id }) => id === characte
   width: calc(var(--unit) * 330);
   overflow-y: auto;
 }
+
+/* The Profile tab's stories and their text take the width the characters' row across the top leaves, from where it starts */
+.character-menu[data-tab="Profile"] .panel {
+  left: calc(var(--unit) * 608);
+  width: auto;
+}
 </style>
