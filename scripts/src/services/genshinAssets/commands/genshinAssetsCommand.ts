@@ -30,6 +30,7 @@ import { leyLineCommand } from "#src/services/genshinAssets/commands/leyLineComm
 import { locomotionCommand } from "#src/services/genshinAssets/commands/locomotionCommand";
 import { mapCommand } from "#src/services/genshinAssets/commands/mapCommand";
 import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand";
+import { namecardsCommand } from "#src/services/genshinAssets/commands/namecardsCommand";
 import { oculiCommand } from "#src/services/genshinAssets/commands/oculiCommand";
 import { offeringsCommand } from "#src/services/genshinAssets/commands/offeringsCommand";
 import { pathNamesCommand } from "#src/services/genshinAssets/commands/pathNamesCommand";
@@ -75,6 +76,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     music: musicCommand,
     sounds: soundsCommand,
     playlist: playlistCommand,
+    namecards: namecardsCommand,
     points: pointsCommand,
     "points-fit": pointsFitCommand,
     profile: profileCommand,
