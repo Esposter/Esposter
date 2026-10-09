@@ -1,7 +1,5 @@
+import { getCharacterNameKey } from "#src/services/character/getCharacterNameKey";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-
-// A name as it is matched: in one Unicode form and case, and with no spaces, since a pack spells a name as it likes
-const getNameKey = (name: string): string => name.normalize("NFKC").toLowerCase().replaceAll(" ", "");
 
 // The model a pack's folder draws its character with, by its path in the folder: its one .pmx, or, of several, the one
 // Whose own name is one of the character's names. The names are read only for a folder of several, and a folder with
@@ -20,9 +18,9 @@ export const chooseCharacterPackModel = async (
     readCharacterNames(),
     Promise.all(modelPaths.map((modelPath) => readModelName(modelPath))),
   ]);
-  const characterNameKeys = new Set(characterNames.map((characterName) => getNameKey(characterName)));
+  const characterNameKeys = new Set(characterNames.map((characterName) => getCharacterNameKey(characterName)));
   const namedModelPaths = modelPaths.filter((_modelPath, index) =>
-    characterNameKeys.has(getNameKey(takeOne(modelNames, index))),
+    characterNameKeys.has(getCharacterNameKey(takeOne(modelNames, index))),
   );
   if (namedModelPaths.length !== 1)
     throw new InvalidOperationError(

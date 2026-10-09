@@ -14,6 +14,7 @@ import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext
 import AchievementScreen from "#src/components/Achievement/Screen/Index.vue";
 import BookReaderScreen from "#src/components/Archive/BookReader/Index.vue";
 import ArchiveScreen from "#src/components/Archive/Screen/Index.vue";
+import CharacterPackLoader from "#src/components/Character/PackLoader/Index.vue";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
 import GcgSession from "#src/components/Gcg/Session/Index.vue";
@@ -29,6 +30,7 @@ import WorldCharacter from "#src/components/World/Character/Index.vue";
 import WorldEnemyNameTags from "#src/components/World/EnemyNameTags/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
+import { useCharacterPacks } from "#src/composables/useCharacterPacks";
 import { useInteraction } from "#src/composables/useInteraction";
 import { useWorldAchievements } from "#src/composables/useWorldAchievements";
 import { useWorldAdventureRank } from "#src/composables/useWorldAdventureRank";
@@ -281,6 +283,15 @@ const {
   startingTalentMultipliers,
   statTables,
 });
+// The characters' packs: the ones the browser keeps, which a player loads on the character screen, read ahead of the
+// Host's
+const {
+  activeCharacterPackReader,
+  characterIdPackHashMap,
+  getCharacterPackReader,
+  removeCharacterPack,
+  storeCharacterPack,
+} = useCharacterPacks({ characterPackBaseUrl, getActiveCharacterId: () => getActiveCharacterId(party) });
 const windrise = useTemplateRef<InstanceType<typeof WorldWindrise>>("windrise");
 // The talks a resident begins and the talk the world runs, held by id, with the duel a resident offers from each talk
 const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameId, talkMap } = useWorldTalks({
@@ -503,9 +514,8 @@ defineExpose({ jumpTo, readCameraPosition });
         ref="windrise"
         :catalogue
         :character-body="cameraPose || witness || !locomotion ? undefined : characterBody"
-        :character-id="getActiveCharacterId(party)"
         :character-locomotion="locomotion"
-        :character-pack-base-url
+        :character-pack-reader="activeCharacterPackReader"
         :create-terrain-worker
         :kit-effect-state
         :elemental-sight
@@ -651,7 +661,18 @@ defineExpose({ jumpTo, readCameraPosition });
           :name-text
           :stat-tables
           @close="screenKind = ScreenKind.World"
-        />
+        >
+          <template #default="{ characterId }">
+            <CharacterPackLoader
+              :character-id
+              :game-data-base-url
+              :has-character-pack="Boolean(getCharacterPackReader(characterId))"
+              :is-character-pack-kept="characterIdPackHashMap.has(characterId)"
+              :confirm-removal="() => removeCharacterPack(characterId)"
+              @keep="(characterPack) => storeCharacterPack(characterPack)"
+            />
+          </template>
+        </CharacterScreen>
       </template>
       <template #[ScreenKind.Inventory]>
         <InventoryScreen

@@ -54,6 +54,8 @@ interface Props {
   statTables: StatTables;
 }
 
+// What the host lays over the screen for the character it shows, outside the game's own screen
+defineSlots<{ default?: (props: { characterId: number }) => unknown }>();
 const {
   activeCharacterId,
   characters,
@@ -165,6 +167,7 @@ const talentLevels = computed(() => COMBAT_TALENT_ORDER.map((talent) => characte
     <span class="grid" />
     <p class="training-guide">{{ gameText[GameTextKey.TrainingGuide] }}</p>
     <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">×</button>
+    <slot :character-id />
   </GameScreen>
 </template>
 
