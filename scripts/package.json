@@ -58,7 +58,7 @@
     "ai:triage:label": "tsx src/triage/index.ts",
     "ai:voice-match": "node src/voiceMatch/index.ts",
     "bench": "vitest bench --run",
-    "build:cached": "tsx src/buildCache/index.ts",
+    "build:cached": "tsx --conditions=source src/buildCache/index.ts",
     "crossOS": "node src/crossOS/index.ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
