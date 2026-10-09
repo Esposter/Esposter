@@ -275,6 +275,7 @@
   "UI_SKIP_BUTTON": "ข้าม",
   "UI_STC_BAGPAGE_BAG": "ช่องเก็บของ",
   "UI_STC_BAGPAGE_CAPACITY_TITLE": "{0} {1}/{2}",
+  "UI_STC_BAGPAGE_DESTROY_TITLE": "ทำลาย",
   "UI_STC_CHARACTERPAGE_RELIC": "อาร์ติแฟกต์",
   "UI_STC_CHARACTERPAGE_SKILL": "พรสวรรค์",
   "UI_STC_CHARACTERPAGE_TALENT": "กลุ่มดาว",

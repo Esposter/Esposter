@@ -275,6 +275,7 @@
   "UI_SKIP_BUTTON": "Пропустить",
   "UI_STC_BAGPAGE_BAG": "Инвентарь",
   "UI_STC_BAGPAGE_CAPACITY_TITLE": "{0} {1}/{2}",
+  "UI_STC_BAGPAGE_DESTROY_TITLE": "Уничтожить",
   "UI_STC_CHARACTERPAGE_RELIC": "Артефакты",
   "UI_STC_CHARACTERPAGE_SKILL": "Таланты",
   "UI_STC_CHARACTERPAGE_TALENT": "Созвездие",

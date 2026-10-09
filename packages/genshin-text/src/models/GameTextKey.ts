@@ -198,6 +198,8 @@ export enum GameTextKey {
   InventoryArtifacts = "ITEM_EQUIP",
   InventoryCapacity = "UI_STC_BAGPAGE_CAPACITY_TITLE",
   InventoryCharacterDevelopmentItems = "ITEM_AVATAR",
+  // The bag's destroy mode, on its trash
+  InventoryDestroy = "UI_STC_BAGPAGE_DESTROY_TITLE",
   InventoryFood = "ITEM_FOOD",
   InventoryFurnishings = "ITEM_FURNITURE",
   InventoryGadget = "ITEM_CITY_REPUTATION",

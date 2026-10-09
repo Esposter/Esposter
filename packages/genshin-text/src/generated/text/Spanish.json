@@ -275,6 +275,7 @@
   "UI_SKIP_BUTTON": "Saltar",
   "UI_STC_BAGPAGE_BAG": "Inventario",
   "UI_STC_BAGPAGE_CAPACITY_TITLE": "{0} {1}/{2}",
+  "UI_STC_BAGPAGE_DESTROY_TITLE": "Destruir",
   "UI_STC_CHARACTERPAGE_RELIC": "Artefactos",
   "UI_STC_CHARACTERPAGE_SKILL": "Talentos",
   "UI_STC_CHARACTERPAGE_TALENT": "Constelación",

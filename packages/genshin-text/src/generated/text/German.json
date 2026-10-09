@@ -275,6 +275,7 @@
   "UI_SKIP_BUTTON": "Überspringen",
   "UI_STC_BAGPAGE_BAG": "Inventar",
   "UI_STC_BAGPAGE_CAPACITY_TITLE": "{0} {1}/{2}",
+  "UI_STC_BAGPAGE_DESTROY_TITLE": "Zerstören",
   "UI_STC_CHARACTERPAGE_RELIC": "Artefakte",
   "UI_STC_CHARACTERPAGE_SKILL": "Talente",
   "UI_STC_CHARACTERPAGE_TALENT": "Sternbild",
