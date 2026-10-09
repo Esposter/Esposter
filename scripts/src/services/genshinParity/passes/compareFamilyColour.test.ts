@@ -1,4 +1,5 @@
 import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";
+import { scoreLabelSimilarity } from "#src/services/genshinParity/witness/scoreLabelSimilarity";
 import { describe, expect, test } from "vitest";
 
 const createTargets = (
@@ -10,16 +11,15 @@ const createTargets = (
 });
 
 describe(compareFamilyColour, () => {
-  test("reads the mean colours' distance where both draw a family, and none where ours draws it nowhere", () => {
+  test("reads the mean colours' distance where both draw a family, and none where ours draws it nowhere", async () => {
     expect.hasAssertions();
 
     const exportsTargets = createTargets([0, 0, 1, 1], [1, 1, 1, 1]);
     const oursTargets = createTargets([0, 0, undefined, undefined], [0, 0, 0, 0]);
 
-    const colours = compareFamilyColour(exportsTargets, oursTargets, 4, 2).comparisons.map(({ colour, family }) => ({
-      colour,
-      family,
-    }));
+    const colours = (
+      await compareFamilyColour(exportsTargets, oursTargets, 4, 2, async (input) => scoreLabelSimilarity(input))
+    ).comparisons.map(({ colour, family }) => ({ colour, family }));
 
     expect(colours).toStrictEqual([
       { colour: 100, family: 0 },

@@ -12,6 +12,7 @@ import { readTargetLightness } from "#src/services/genshinParity/passes/readTarg
 import { writeStructureDiff } from "#src/services/genshinParity/passes/writeStructureDiff";
 import { writeSurfaceDiff } from "#src/services/genshinParity/passes/writeSurfaceDiff";
 import { openSurfaceStatisticsPage } from "#src/services/genshinParity/shared/openSurfaceStatisticsPage";
+import { computeLabelSimilarity } from "#src/services/genshinParity/witness/computeLabelSimilarity";
 import { withFinalizerAsync } from "@esposter/shared";
 import { SURFACE_DETAIL_BAND_SIGMAS } from "genshin-engine";
 
@@ -48,7 +49,7 @@ const computeFamilyMask = (
 // Its detail lies. A glow the materials add over their lit colour is lit, not unlit, so it is scored by the light pass
 // Against the game's frame (`measureGlow`)
 export const measureSurface = (component: DerivedAssetComponent): Promise<ParityPassMeasure> =>
-  measureFamilyTargets(component, TARGET_NAMES, async (referenceId, exportsRead, oursRead) => {
+  measureFamilyTargets(component, TARGET_NAMES, async (referenceId, exportsRead, oursRead, page) => {
     const { families, width } = exportsRead;
     const exportsAlbedo = exportsRead.targets.albedo ?? new Float32Array();
     const exportsPart = exportsRead.targets.part ?? new Float32Array();
@@ -58,7 +59,13 @@ export const measureSurface = (component: DerivedAssetComponent): Promise<Parity
     const height = exportsPart.length / 4 / width;
     const exportsLightness = readTargetLightness(exportsAlbedo);
     const oursLightness = readTargetLightness(oursAlbedo);
-    const albedo = compareFamilyColour(exportsTargets, { colour: oursAlbedo, part: oursPart }, width, families.length);
+    const albedo = await compareFamilyColour(
+      exportsTargets,
+      { colour: oursAlbedo, part: oursPart },
+      width,
+      families.length,
+      (input) => computeLabelSimilarity(page, input),
+    );
     const [diffPath, structurePath] = await Promise.all([
       writeSurfaceDiff(
         referenceId,

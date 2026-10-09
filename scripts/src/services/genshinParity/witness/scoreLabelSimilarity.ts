@@ -1,8 +1,11 @@
 import type { LabelPlanes } from "#src/models/genshinParity/witness/LabelPlanes";
-import type { SimilarityTermMap } from "#src/models/genshinParity/witness/SimilarityTermMap";
+import type { LabelSimilarityInput } from "#src/models/genshinParity/witness/LabelSimilarityInput";
+import type { LabelSimilarityResult } from "#src/models/genshinParity/witness/LabelSimilarityResult";
 
 import { blurGrey } from "#src/services/genshinParity/shared/blurGrey";
 
+// The CPU reference of each label's similarity, which the parity page computes on its GPU (`computeLabelSimilarity`).
+// Only the unit test reads it, to check the definition the page must agree with
 // Multi-scale structural similarity (Wang, Simoncelli and Bovik, 2003) over two grey images, read apart for each label
 // Of a map: at each of five scales, halving the size each time, a Gaussian window's means, variances and covariance
 // Give each pixel its contrast and structure term, the coarsest its luminance term too, each scale's terms averaged
@@ -34,14 +37,14 @@ const halve = (values: Float32Array, width: number, height: number): Float32Arra
 // Scale carries each label's share of a pixel rather than one label per pixel, so a pixel two labels share reads for
 // Both. Each scale's terms are kept pixel by pixel too, finest first, so where on the image a label loses them can be
 // Seen
-export const scoreLabelSimilarity = (
-  reference: Float32Array,
-  shot: Float32Array,
-  width: number,
-  height: number,
-  labels: Int32Array,
-  labelCount: number,
-): { labelSimilarities: { scales: number[]; similarity: number }[]; termMaps: SimilarityTermMap[] } => {
+export const scoreLabelSimilarity = ({
+  height,
+  labelCount,
+  labels,
+  reference,
+  shot,
+  width,
+}: LabelSimilarityInput): LabelSimilarityResult => {
   // Repeated halving rounds down at each step as one division by the scale's power of two does
   const levels = SCALE_WEIGHTS.map((weight, scale) => {
     const levelWidth = Math.floor(width / 2 ** scale);
