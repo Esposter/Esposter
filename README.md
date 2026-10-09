@@ -346,9 +346,10 @@ rewritten onto them, and the collector replies once per finding — a bot reply 
 unless it carries a new suggestion. A review the bot skips, or a bottom window with no check, is asked for a wait
 apart up to the ask cap (`REVIEW_ASK_WAITS_MS`) and then cut again at half the cap. A commit no window can carry past
 its attempts is parked on `ai/held/<short-sha>` with an issue saying how to re-land it. A commit carrying an
-`Express:` trailer — its claim that nothing in it needs a reviewer — goes straight to `main` unverified, and a red
-`main` is repaired after the walk and the openings, under a deadline per attempt and counted per failure signature,
-with an issue once its attempts run out. Every session runs under a wall clock, a session that never starts is
+`Express:` trailer — its claim that nothing in it needs a reviewer — goes straight to `main` unverified, and is
+parked instead once no cut applies it past its attempts. A red `main` is repaired after the walk and the openings,
+under a deadline per attempt and counted per failure signature, with an issue once its attempts run out. Every
+session runs under a wall clock, a session that never starts is
 retried five minutes later, and a hold that lifts on a clock schedules its own wake, so no stage needs a person to
 restart it. Its pace is the review budget's, not its own: each of the plan's hourly reviews (`REVIEWS_PER_HOUR`)
 carries one window under the cap, so a backlog of hundreds of queue commits takes hours to drain. What still needs a
